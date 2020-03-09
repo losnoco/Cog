@@ -20,8 +20,8 @@
     NSURLSession * session;
     NSURLSessionDataTask * task;
     
-    Boolean cancelled;
-    Boolean errorOccurred;
+    Boolean redirected;
+    NSMutableArray * redirectURLs;
     
     NSMutableArray * bufferedData;
 	

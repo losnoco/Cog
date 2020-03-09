@@ -31,7 +31,7 @@
           dataTask:(NSURLSessionDataTask *)dataTask
     didReceiveData:(NSData *)data{
     long bytesBuffered = 0;
-    if (cancelled) return;
+    if (!task) return;
     @synchronized(bufferedData) {
         [bufferedData addObject:data];
         _bytesBuffered += [data length];
@@ -39,6 +39,38 @@
     }
     if (bytesBuffered > BUFFER_SIZE) {
         [task suspend];
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+              task:(NSURLSessionTask *)task
+willPerformHTTPRedirection:(NSHTTPURLResponse *)response
+        newRequest:(NSURLRequest *)request
+ completionHandler:(void (^)(NSURLRequest *))completionHandler {
+    NSURL * url = [request URL];
+    if ([redirectURLs containsObject:url]) {
+        @synchronized(self->task) {
+            self->task = nil;
+        }
+    }
+    else {
+        [redirectURLs addObject:url];
+        redirected = YES;
+        @synchronized(bufferedData) {
+            [bufferedData removeAllObjects];
+            _bytesBuffered = 0;
+        }
+        @synchronized(self->task) {
+            self->task = [session dataTaskWithRequest:request];
+            [self->task resume];
+        }
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session
+didBecomeInvalidWithError:(NSError *)error {
+    @synchronized(task) {
+        task = nil;
     }
 }
 
@@ -50,18 +82,21 @@
 - (void)URLSession:(NSURLSession *)session
               task:(NSURLSessionTask *)task
 didCompleteWithError:(NSError *)error{
-    cancelled = YES;
-    errorOccurred = YES;
+    @synchronized(self->task) {
+        self->task = nil;
+    }
 }
 
 - (BOOL)open:(NSURL *)url
 {
-    cancelled = NO;
-    errorOccurred = NO;
+    redirected = NO;
     
+    redirectURLs = [[NSMutableArray alloc] init];
     bufferedData = [[NSMutableArray alloc] init];
     
     URL = url;
+    [redirectURLs addObject:URL];
+    
     NSURLRequest * request = [NSURLRequest requestWithURL:url];
     session = [self createSession];
     task = [session dataTaskWithRequest:request];
@@ -69,12 +104,21 @@ didCompleteWithError:(NSError *)error{
     
     NSURLResponse * response = nil;
     while (!response) {
-        response = [task response];
-        if (response) break;
-        if (errorOccurred) return NO;
+        @synchronized(task) {
+            if (!task) return NO;
+            redirected = NO;
+            response = [task response];
+        }
+        if (response && !redirected) break;
+        if (redirected) continue;
         usleep(100);
     }
     if (response) {
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+            if (statusCode != 200)
+                return NO;
+        }
         _mimeType = [response MIMEType];
     }
     
@@ -114,8 +158,9 @@ didCompleteWithError:(NSError *)error{
                 dataBlock = [bufferedData objectAtIndex:0];
         }
         if (!dataBlock) {
-            if (errorOccurred) return totalRead;
-            if (cancelled) return 0;
+            @synchronized(task) {
+                if (!task) return totalRead;
+            }
             usleep(1000);
             continue;
         }
@@ -163,9 +208,7 @@ didCompleteWithError:(NSError *)error{
 
 - (void)close
 {
-    cancelled = YES;
-    
-    [task cancel];
+    if (task) [task cancel];
     task = nil;
 	
 	_mimeType = nil;
