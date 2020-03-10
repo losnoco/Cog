@@ -20,10 +20,14 @@
     NSURLSession * session;
     NSURLSessionDataTask * task;
     
+    Boolean didReceiveResponse;
+    Boolean didReceiveRandomData;
+    Boolean didComplete;
+    
     Boolean redirected;
     NSMutableArray * redirectURLs;
     
-    NSMutableArray * bufferedData;
+    NSMutableData * bufferedData;
 	
     long _bytesBuffered;
 	long _byteCount;
