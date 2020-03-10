@@ -101,8 +101,8 @@
 {
 	if (returnCode == NSOKButton)
 	{
-		[playlistLoader willInsertURLs:[NSArray arrayWithObject:[panel url]] origin:URLOriginExternal];
-		[playlistLoader didInsertURLs:[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO] origin:URLOriginExternal];
+		[playlistLoader willInsertURLs:[NSArray arrayWithObject:[panel url]] origin:URLOriginInternal];
+		[playlistLoader didInsertURLs:[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO] origin:URLOriginInternal];
 	}
 }
 
