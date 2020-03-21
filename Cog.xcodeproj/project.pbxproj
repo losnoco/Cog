@@ -2670,6 +2670,8 @@
 					CogAudio,
 					"-weak_framework",
 					MediaPlayer,
+					"-weak_framework",
+					UserNotifications,
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -2710,6 +2712,8 @@
 					CogAudio,
 					"-weak_framework",
 					MediaPlayer,
+					"-weak_framework",
+					UserNotifications,
 					"-undefined",
 					dynamic_lookup,
 				);

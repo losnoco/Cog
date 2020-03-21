@@ -7,12 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <UserNotifications/UserNotifications.h>
 
 #import "PlaybackController.h"
 #import "PlaylistEntry.h"
 
 @class AudioScrobbler;
-@interface PlaybackEventController : NSObject <NSUserNotificationCenterDelegate> {
+@interface PlaybackEventController : NSObject <NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate> {
 	NSOperationQueue *queue;
     
     PlaylistEntry *entry;
@@ -23,6 +24,9 @@
     
     IBOutlet NSWindow *mainWindow;
     IBOutlet NSWindow *miniWindow;
+    
+    Boolean didGainUN;
+
 }
 
 @end

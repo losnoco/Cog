@@ -51,6 +51,30 @@ typedef enum
 	if (self)
 	{
 		[self initDefaults];
+        
+        didGainUN = NO;
+        
+        if (@available(macOS 10.14,*)) {
+            UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+            [center requestAuthorizationWithOptions:UNAuthorizationOptionAlert
+               completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                self->didGainUN = granted;
+
+                if (granted) {
+                    UNNotificationAction * skipAction = [UNNotificationAction actionWithIdentifier:@"skip" title:@"Skip" options:UNNotificationActionOptionNone];
+                    
+                    UNNotificationCategory* playCategory = [UNNotificationCategory
+                    categoryWithIdentifier:@"play"
+                    actions:@[skipAction]
+                    intentIdentifiers:@[]
+                    options:UNNotificationCategoryOptionNone];
+                    
+                    [center setNotificationCategories:[NSSet setWithObjects:playCategory, nil]];
+                }
+            }];
+            
+            [center setDelegate:self];
+        }
 		
 		queue = [[NSOperationQueue alloc] init];
 		[queue setMaxConcurrentOperationCount:1];
@@ -62,6 +86,23 @@ typedef enum
 	}
 	
 	return self;
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler API_AVAILABLE(macos(10.14)){
+    UNNotificationPresentationOptions presentationOptions =
+      UNNotificationPresentationOptionAlert;
+  
+    completionHandler(presentationOptions);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler API_AVAILABLE(macos(10.14)){
+    if ([[response actionIdentifier] isEqualToString:@"skip"]) {
+        [playbackController next:self];
+    }
 }
 
 - (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status
@@ -106,6 +147,39 @@ typedef enum
                 if ([AudioScrobbler isRunning]) return;
             }
 
+            if (@available(macOS 10.14,*))
+            {
+                if (didGainUN) {
+                    UNUserNotificationCenter * center = [UNUserNotificationCenter currentNotificationCenter];
+
+                    UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+                    
+                    content.title = @"Now Playing";
+                    
+                    NSString *subtitle;
+                    if ([pe artist] && [pe album]) {
+                        subtitle = [NSString stringWithFormat:@"%@ - %@", [pe artist], [pe album]];
+                    } else if ([pe artist]) {
+                        subtitle = [pe artist];
+                    } else if ([pe album]) {
+                        subtitle = [pe album];
+                    } else {
+                        subtitle = @"";
+                    }
+                    
+                    NSString *body = [NSString stringWithFormat:@"%@\n%@", [pe title], subtitle];
+                    content.body = body;
+                    content.sound = nil;
+                    content.categoryIdentifier = @"play";
+                    
+                    UNNotificationRequest * request = [UNNotificationRequest requestWithIdentifier:@"PlayTrack" content:content trigger:nil];
+                    
+                    [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+                        NSLog(@"%@", error.localizedDescription);
+                    }];
+                }
+            }
+            else
             {
                 NSUserNotification *notif = [[NSUserNotification alloc] init];
                 notif.title = [pe title];
