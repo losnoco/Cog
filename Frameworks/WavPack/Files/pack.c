@@ -336,6 +336,19 @@ static void write_channel_info (WavpackContext *wpc, WavpackMetadata *wpmd)
     wpmd->byte_length = (int32_t)(byteptr - (char *) wpmd->data);
 }
 
+// Allocate room for and copy the multichannel identities into the specified
+// metadata structure. Data is an array of unsigned characters representing
+// any channels in the file that DO NOT match one the 18 Microsoft standard
+// channels (and are represented in the channel mask). A value of 0 is not
+// allowed and 0xff means an unknown or undefined channel identity.
+
+static void write_channel_identities_info (WavpackContext *wpc, WavpackMetadata *wpmd)
+{
+    wpmd->byte_length = (int) strlen ((char *) wpc->channel_identities);
+    wpmd->data = strdup ((char *) wpc->channel_identities);
+    wpmd->id = ID_CHANNEL_IDENTITIES;
+}
+
 // Allocate room for and copy the configuration information into the specified
 // metadata structure. Currently, we just store the upper 3 bytes of
 // config.flags and only in the first block of audio data. Note that this is
@@ -374,7 +387,7 @@ static void write_new_config_info (WavpackContext *wpc, WavpackMetadata *wpmd)
 
     wpmd->id = ID_NEW_CONFIG_BLOCK;
 
-    if (wpc->file_format || wpc->config.qmode || wpc->channel_layout) {
+    if (wpc->file_format || (wpc->config.qmode & 0xff) || wpc->channel_layout) {
         *byteptr++ = (char) wpc->file_format;
         *byteptr++ = (char) wpc->config.qmode;
 
@@ -454,6 +467,13 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
     int32_t sample_count = wps->wphdr.block_samples, *orig_data = NULL;
     int dynamic_shaping_done = FALSE;
 
+    // This is done first because this code can potentially change the size of the block about to
+    // be encoded. This can happen because the dynamic noise shaping algorithm wants to send a
+    // shorter block because the desired noise-shaping profile is changing quickly. It can also
+    // be that the --merge-blocks feature wants to create a longer block because it combines areas
+    // with equal redundancy. These are not applicable for anything besides the first stream of
+    // the file and they are not applicable with float data or >24-bit data.
+
     if (!wpc->current_stream && !(flags & FLOAT_DATA) && (flags & MAG_MASK) >> MAG_LSB < 24) {
         if ((wpc->config.flags & CONFIG_DYNAMIC_SHAPING) && !wpc->config.block_samples) {
             dynamic_noise_shaping (wpc, buffer, TRUE);
@@ -462,7 +482,7 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
         }
         else if (wpc->block_boundary && sample_count >= (int32_t) wpc->block_boundary * 2) {
             int bc = sample_count / wpc->block_boundary, chans = (flags & MONO_DATA) ? 1 : 2;
-            int res = scan_redundancy (buffer, wpc->block_boundary * chans), i; 
+            int res = scan_redundancy (buffer, wpc->block_boundary * chans), i;
 
             for (i = 1; i < bc; ++i)
                 if (res != scan_redundancy (buffer + (i * wpc->block_boundary * chans),
@@ -474,10 +494,9 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
     }
 
     // This code scans stereo data to check whether it can be stored as mono data
-    // (i.e., all L/R samples identical). This used to be an option because
-    // decoders < 4.30 pre-dated this feature, but now it's standard.
+    // (i.e., all L/R samples identical). Only available with MAX_STREAM_VERS.
 
-    if (!(flags & MONO_FLAG)) {
+    if (!(flags & MONO_FLAG) && wpc->stream_version == MAX_STREAM_VERS) {
         int32_t lor = 0, diff = 0;
         int32_t *sptr, *dptr, i;
 
@@ -511,6 +530,9 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
         }
     }
 
+    // This is where we handle any fixed shift which occurs when the integer size does not evenly fit
+    // in bytes (like 12-bit or 20-bit) and is the same for the entire file (not based on scanning)
+
     if (flags & SHIFT_MASK) {
         int shift = (flags & SHIFT_MASK) >> SHIFT_LSB;
         int mag = (flags & MAG_MASK) >> MAG_LSB;
@@ -534,12 +556,23 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
         wps->wphdr.flags = flags;
     }
 
-    if ((flags & FLOAT_DATA) || (flags & MAG_MASK) >> MAG_LSB >= 24) {
+    // The regular WavPack decorrelation and entropy encoding can handle up to 24-bit integer data. If
+    // we have float data or integers larger than 24-bit, then we have to potentially do extra processing.
+    // For lossy encoding, we can simply convert this data in-place to 24-bit data and encode and sent
+    // that, along with some metadata about how to restore the original format (even if the restoration
+    // is not exact). However, for lossless operation we must make a copy of the original data that will
+    // be used to create a "extension stream" that will allow verbatim restoration of the original data.
+    // In the hybrid mode that extension goes in the correction file, otherwise it goes in the mail file.
+
+    if ((flags & FLOAT_DATA) || (flags & MAG_MASK) >> MAG_LSB >= 24) {      // if float data or >24-bit integers...
+
+        // if lossless we have to copy the data to use later...
+
         if ((!(flags & HYBRID_FLAG) || wpc->wvc_flag) && !(wpc->config.flags & CONFIG_SKIP_WVX)) {
             orig_data = malloc (sizeof (f32) * ((flags & MONO_DATA) ? sample_count : sample_count * 2));
             memcpy (orig_data, buffer, sizeof (f32) * ((flags & MONO_DATA) ? sample_count : sample_count * 2));
 
-            if (flags & FLOAT_DATA) {
+            if (flags & FLOAT_DATA) {                                       // if lossless float data come here
                 wps->float_norm_exp = wpc->config.float_norm_exp;
 
                 if (!scan_float_data (wps, (f32 *) buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2)) {
@@ -547,14 +580,14 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
                     orig_data = NULL;
                 }
             }
-            else {
+            else {                                                          // otherwise lossless > 24-bit integers
                 if (!scan_int32_data (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2)) {
                     free (orig_data);
                     orig_data = NULL;
                 }
             }
         }
-        else {
+        else {                                                              // otherwise, we're lossy, so no copy
             if (flags & FLOAT_DATA) {
                 wps->float_norm_exp = wpc->config.float_norm_exp;
 
@@ -565,19 +598,29 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
                 wpc->lossy_blocks = TRUE;
         }
 
+        // if there's any chance of magnitude change, clear the noise-shaping error term
+        // and also reset the entropy encoder (which this does)
+
+        wps->dc.error [0] = wps->dc.error [1] = 0;
         wps->num_terms = 0;
     }
+    // if 24-bit integers or less we do a "quick" scan which just scans for redundancy and does NOT set the flag's "magnitude" value
     else {
         scan_int32_quick (wps, buffer, (flags & MONO_DATA) ? sample_count : sample_count * 2);
 
-        if (wps->shift != wps->int32_zeros + wps->int32_ones + wps->int32_dups) {
+        if (wps->shift != wps->int32_zeros + wps->int32_ones + wps->int32_dups) {   // detect a change in any redundancy shifting here
             wps->shift = wps->int32_zeros + wps->int32_ones + wps->int32_dups;
-            wps->num_terms = 0;
+            wps->dc.error [0] = wps->dc.error [1] = 0;                              // on a change, clear the noise-shaping error term and
+            wps->num_terms = 0;                                                     // also reset the entropy encoder (which this does)
         }
     }
 
-    if ((wpc->config.flags & CONFIG_DYNAMIC_SHAPING) && !dynamic_shaping_done)
+    if ((wpc->config.flags & CONFIG_DYNAMIC_SHAPING) && !dynamic_shaping_done)      // calculate dynamic noise profile
         dynamic_noise_shaping (wpc, buffer, FALSE);
+
+    // In some cases we need to start the decorrelation and entropy encoding from scratch. This
+    // could be because we switched from stereo to mono encoding or because the magnitude of
+    // the data changed, or just because this is the first block.
 
     if (!wps->num_passes && !wps->num_terms) {
         wps->num_passes = 1;
@@ -590,6 +633,8 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
         wps->num_passes = 0;
     }
 
+    // actually pack the block here and return on an error (which pretty much can only be a block buffer overrun)
+
     if (!pack_samples (wpc, buffer)) {
         wps->wphdr.flags = sflags;
 
@@ -601,6 +646,8 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
     else
         wps->wphdr.flags = sflags;
 
+    // potentially move any unused dynamic noise shaping profile data to use next time
+
     if (wps->dc.shaping_data) {
         if (wps->dc.shaping_samples != sample_count)
             memmove (wps->dc.shaping_data, wps->dc.shaping_data + sample_count,
@@ -608,6 +655,10 @@ int pack_block (WavpackContext *wpc, int32_t *buffer)
 
         wps->dc.shaping_samples -= sample_count;
     }
+
+    // finally, if we're doing lossless float data or lossless >24-bit integers, this is where we take the
+    // original data that we saved earlier and create the "extension" stream containing the information
+    // required to refine the "lossy" 24-bit data into the lossless original
 
     if (orig_data) {
         uint32_t data_count;
@@ -866,6 +917,12 @@ void send_general_metadata (WavpackContext *wpc)
             write_channel_info (wpc, &wpmd);
             copy_metadata (&wpmd, wps->blockbuff, wps->blockend);
             free_metadata (&wpmd);
+
+            if (wpc->channel_identities) {
+                write_channel_identities_info (wpc, &wpmd);
+                copy_metadata (&wpmd, wps->blockbuff, wps->blockend);
+                free_metadata (&wpmd);
+            }
     }
 
     if ((flags & INITIAL_BLOCK) && !wps->sample_index) {
@@ -902,7 +959,7 @@ void send_general_metadata (WavpackContext *wpc)
         (pack_cpu_has_feature_x86 (CPU_FEATURE_MMX) ?   \
             scan_max_magnitude_x86 (a, b) :             \
             scan_max_magnitude (a, b))
-#elif defined(OPT_ASM_X64) && (defined (_WIN64) || defined(__CYGWIN__) || defined(__MINGW64__))
+#elif defined(OPT_ASM_X64) && (defined (_WIN64) || defined(__CYGWIN__) || defined(__MINGW64__) || defined(__midipix__))
     #define DECORR_STEREO_PASS pack_decorr_stereo_pass_x64win
     #define DECORR_MONO_BUFFER pack_decorr_mono_buffer_x64win
     #define SCAN_MAX_MAGNITUDE scan_max_magnitude_x64win

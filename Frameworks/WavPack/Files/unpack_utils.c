@@ -41,7 +41,7 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
     uint32_t bcount, samples_unpacked = 0, samples_to_unpack;
     int32_t *bptr = buffer;
 
-#ifndef VER4_ONLY
+#ifdef ENABLE_LEGACY
     if (wpc->stream3)
         return unpack_samples3 (wpc, buffer, samples);
 #endif
@@ -69,14 +69,9 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 
                 wpc->filepos = nexthdrpos + bcount;
 
-                if (wpc->open_flags & OPEN_STREAMING)
-                    SET_BLOCK_INDEX (wps->wphdr, wps->sample_index = 0);
-                else
-                    SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
-
                 // allocate the memory for the entire raw block and read it in
 
-                wps->blockbuff = malloc (wps->wphdr.ckSize + 8);
+                wps->blockbuff = (unsigned char *)malloc (wps->wphdr.ckSize + 8);
 
                 if (!wps->blockbuff)
                     break;
@@ -91,6 +86,21 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
                         break;
                 }
 
+                // render corrupt blocks harmless
+                if (!WavpackVerifySingleBlock (wps->blockbuff, !(wpc->open_flags & OPEN_NO_CHECKSUM))) {
+                    wps->wphdr.ckSize = sizeof (WavpackHeader) - 8;
+                    wps->wphdr.block_samples = 0;
+                    memcpy (wps->blockbuff, &wps->wphdr, 32);
+                }
+
+                // potentially adjusting block_index must be done AFTER verifying block
+
+                if (wpc->open_flags & OPEN_STREAMING)
+                    SET_BLOCK_INDEX (wps->wphdr, wps->sample_index = 0);
+                else
+                    SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
+
+                memcpy (wps->blockbuff, &wps->wphdr, 32);
                 wps->init_done = FALSE;     // we have not yet called unpack_init() for this block
 
                 // if this block has audio, but not the sample index we were expecting, flag an error
@@ -168,7 +178,7 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
         // to stereo), then enter this conditional block...otherwise we just unpack the samples directly
 
         if (!wpc->reduced_channels && !(wps->wphdr.flags & FINAL_BLOCK)) {
-            int32_t *temp_buffer = malloc (samples_to_unpack * 8), *src, *dst;
+            int32_t *temp_buffer = (int32_t *)malloc (samples_to_unpack * 8), *src, *dst;
             int offset = 0;     // offset to next channel in sequence (0 to num_channels - 1)
             uint32_t samcnt;
 
@@ -185,12 +195,12 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
                 // if the stream has not been allocated and corresponding block read, do that here...
 
                 if (wpc->current_stream == wpc->num_streams) {
-                    wpc->streams = realloc (wpc->streams, (wpc->num_streams + 1) * sizeof (wpc->streams [0]));
+                    wpc->streams = (WavpackStream **)realloc (wpc->streams, (wpc->num_streams + 1) * sizeof (wpc->streams [0]));
 
                     if (!wpc->streams)
 			break;
 
-                    wps = wpc->streams [wpc->num_streams++] = malloc (sizeof (WavpackStream));
+                    wps = wpc->streams [wpc->num_streams++] = (WavpackStream *)malloc (sizeof (WavpackStream));
 
                     if (!wps)
 			break;
@@ -205,12 +215,7 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
                         break;
                     }
 
-                    if (wpc->open_flags & OPEN_STREAMING)
-                        SET_BLOCK_INDEX (wps->wphdr, wps->sample_index = 0);
-                    else
-                        SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
-
-                    wps->blockbuff = malloc (wps->wphdr.ckSize + 8);
+                    wps->blockbuff = (unsigned char *)malloc (wps->wphdr.ckSize + 8);
 
                     if (!wps->blockbuff)
 		        break;
@@ -224,6 +229,22 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
                             file_done = TRUE;
                             break;
                     }
+
+                    // render corrupt blocks harmless
+                    if (!WavpackVerifySingleBlock (wps->blockbuff, !(wpc->open_flags & OPEN_NO_CHECKSUM))) {
+                        wps->wphdr.ckSize = sizeof (WavpackHeader) - 8;
+                        wps->wphdr.block_samples = 0;
+                        memcpy (wps->blockbuff, &wps->wphdr, 32);
+                    }
+
+                    // potentially adjusting block_index must be done AFTER verifying block
+
+                    if (wpc->open_flags & OPEN_STREAMING)
+                        SET_BLOCK_INDEX (wps->wphdr, wps->sample_index = 0);
+                    else
+                        SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
+
+                    memcpy (wps->blockbuff, &wps->wphdr, 32);
 
                     // if this block has audio, and we're in hybrid lossless mode, read the matching wvc block
 
@@ -242,9 +263,11 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
 
                 // unpack the correct number of samples (either mono or stereo) into the temp buffer
 
+#ifdef ENABLE_DSD
                 if (wps->wphdr.flags & DSD_FLAG)
                     unpack_dsd_samples (wpc, src = temp_buffer, samples_to_unpack);
                 else
+#endif
                     unpack_samples (wpc, src = temp_buffer, samples_to_unpack);
 
                 samcnt = samples_to_unpack;
@@ -325,8 +348,10 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
             wps->sample_index += samples_to_unpack;
             wpc->crc_errors++;
         }
+#ifdef ENABLE_DSD
         else if (wps->wphdr.flags & DSD_FLAG)
             unpack_dsd_samples (wpc, bptr, samples_to_unpack);
+#endif
         else
             unpack_samples (wpc, bptr, samples_to_unpack);
 
@@ -377,8 +402,10 @@ uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t sa
             break;
     }
 
+#ifdef ENABLE_DSD
     if (wpc->decimation_context)
         decimate_dsd_run (wpc->decimation_context, buffer, samples_unpacked);
+#endif
 
     return samples_unpacked;
 }

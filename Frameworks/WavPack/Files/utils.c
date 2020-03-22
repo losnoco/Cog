@@ -691,7 +691,7 @@ int64_t DoGetFileSize (FILE *hFile)
 {
     struct stat statbuf;
 
-    if (!hFile || fstat (fileno (hFile), &statbuf) || !(statbuf.st_mode & S_IFREG))
+    if (!hFile || fstat (fileno (hFile), &statbuf) || !S_ISREG(statbuf.st_mode))
         return 0;
 
     return (int64_t) statbuf.st_size;

@@ -10,6 +10,7 @@
 
 // This module provides seeking support for WavPack files prior to version 4.0.
 
+#ifdef ENABLE_LEGACY
 #ifndef NO_SEEKING
 
 #include <stdlib.h>
@@ -207,4 +208,5 @@ static void bs_restore3 (Bitstream3 *bs)
     }
 }
 
-#endif
+#endif      // NO_SEEKING
+#endif      // ENABLE_LEGACY

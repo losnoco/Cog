@@ -52,6 +52,14 @@
 #ifdef _WIN32
 #define fileno _fileno
 static FILE *fopen_utf8 (const char *filename_utf8, const char *mode_utf8);
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#endif
+#endif
+
+#ifdef HAVE_FSEEKO
+#define fseek fseeko
+#define ftell ftello
 #endif
 
 static int32_t read_bytes (void *id, void *data, int32_t bcount)
@@ -120,7 +128,7 @@ static int64_t get_length (void *id)
     FILE *file = id;
     struct stat statbuf;
 
-    if (!file || fstat (fileno (file), &statbuf) || !(statbuf.st_mode & S_IFREG))
+    if (!file || fstat (fileno (file), &statbuf) || !S_ISREG(statbuf.st_mode))
         return 0;
 
     return statbuf.st_size;
@@ -133,7 +141,7 @@ static int can_seek (void *id)
     FILE *file = id;
     struct stat statbuf;
 
-    return file && !fstat (fileno (file), &statbuf) && (statbuf.st_mode & S_IFREG);
+    return file && !fstat (fileno (file), &statbuf) && S_ISREG(statbuf.st_mode);
 }
 
 static int32_t write_bytes (void *id, void *data, int32_t bcount)
@@ -239,7 +247,7 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
         return NULL;
     }
 
-    if (wv_id != stdin && (flags & OPEN_WVC)) {
+    if (*infilename != '-' && (flags & OPEN_WVC)) {
         char *in2filename = malloc (strlen (infilename) + 10);
 
         strcpy (in2filename, infilename);
@@ -279,7 +287,7 @@ static FILE *fopen_utf8(const char *filename_utf8, const char *mode_utf8)
 	FILE *ret = NULL;
 	wchar_t *filename_utf16 = utf8_to_utf16(filename_utf8);
 	wchar_t *mode_utf16 = utf8_to_utf16(mode_utf8);
-	
+
 	if(filename_utf16 && mode_utf16)
 	{
 		ret = _wfopen(filename_utf16, mode_utf16);

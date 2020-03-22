@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 //                           **** WAVPACK ****                            //
 //                  Hybrid Lossless Wavefile Compressor                   //
-//                Copyright (c) 1998 - 2016 David Bryant.                 //
+//                Copyright (c) 1998 - 2019 David Bryant.                 //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
@@ -132,13 +132,16 @@ typedef struct {
 #define SRATE_MASK      (0xfL << SRATE_LSB)
 
 #define FALSE_STEREO    0x40000000      // block is stereo, but data is mono
-
-#define IGNORED_FLAGS   0x18000000      // reserved, but ignore if encountered
 #define NEW_SHAPING     0x20000000      // use IIR filter for negative shaping
-#define UNKNOWN_FLAGS   0x80000000      // also reserved, but refuse decode if
-                                        //  encountered
 
 #define MONO_DATA (MONO_FLAG | FALSE_STEREO)
+
+// Introduced in WavPack 5.0:
+#define HAS_CHECKSUM    0x10000000      // block contains a trailing checksum
+#define DSD_FLAG        0x80000000      // block is encoded DSD (1-bit PCM)
+
+#define IGNORED_FLAGS   0x08000000      // reserved, but ignore if encountered
+#define UNKNOWN_FLAGS   0x00000000      // we no longer have any of these spares
 
 #define MIN_STREAM_VERS     0x402       // lowest stream version we'll decode
 #define MAX_STREAM_VERS     0x410       // highest stream version we'll decode or encode
@@ -175,6 +178,7 @@ typedef struct {
 #define ID_ALT_EXTENSION        (ID_OPTIONAL_DATA | 0x8)
 #define ID_ALT_MD5_CHECKSUM     (ID_OPTIONAL_DATA | 0x9)
 #define ID_NEW_CONFIG_BLOCK     (ID_OPTIONAL_DATA | 0xa)
+#define ID_BLOCK_CHECKSUM       (ID_OPTIONAL_DATA | 0xf)
 
 ///////////////////////// WavPack Configuration ///////////////////////////////
 
@@ -206,6 +210,7 @@ typedef struct {
 #define CONFIG_CREATE_EXE       0x40000 // create executable
 #define CONFIG_CREATE_WVC       0x80000 // create correction file
 #define CONFIG_OPTIMIZE_WVC     0x100000 // maximize bybrid compression
+#define CONFIG_COMPATIBLE_WRITE 0x400000 // write files for decoders < 4.3
 #define CONFIG_CALC_NOISE       0x800000 // calc noise in hybrid mode
 #define CONFIG_EXTRA_MODE       0x2000000 // extra processing mode
 #define CONFIG_SKIP_WVX         0x4000000 // no wvx stream w/ floats & big ints
@@ -275,13 +280,18 @@ typedef int (*WavpackBlockOutput)(void *id, void *data, int32_t bcount);
 
 //////////////////////////// function prototypes /////////////////////////////
 
-typedef void WavpackContext;
+typedef struct WavpackContext WavpackContext;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define MAX_WAVPACK_SAMPLES ((1LL << 40) - 257)
+
+WavpackContext *WavpackOpenRawDecoder (
+    void *main_data, int32_t main_size,
+    void *corr_data, int32_t corr_size,
+    int16_t version, char *error, int flags, int norm_offset);
 
 WavpackContext *WavpackOpenFileInputEx64 (WavpackStreamReader64 *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
 WavpackContext *WavpackOpenFileInputEx (WavpackStreamReader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
@@ -304,6 +314,7 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 #define OPEN_DSD_AS_PCM 0x200   // open DSD files as 24-bit PCM (decimated 8x)
 #define OPEN_ALT_TYPES  0x400   // application is aware of alternate file types & qmode
                                 // (just affects retrieving wrappers & MD5 checksums)
+#define OPEN_NO_CHECKSUM 0x800  // don't verify block checksums before decoding
 
 int WavpackGetMode (WavpackContext *wpc);
 
@@ -322,6 +333,7 @@ int WavpackGetMode (WavpackContext *wpc);
 #define MODE_XMODE      0x7000  // mask for extra level (1-6, 0=unknown)
 #define MODE_DNS        0x8000
 
+int WavpackVerifySingleBlock (unsigned char *buffer, int verify_checksum);
 int WavpackGetQualifyMode (WavpackContext *wpc);
 char *WavpackGetErrorMessage (WavpackContext *wpc);
 int WavpackGetVersion (WavpackContext *wpc);
@@ -330,6 +342,7 @@ unsigned char WavpackGetFileFormat (WavpackContext *wpc);
 uint32_t WavpackUnpackSamples (WavpackContext *wpc, int32_t *buffer, uint32_t samples);
 uint32_t WavpackGetNumSamples (WavpackContext *wpc);
 int64_t WavpackGetNumSamples64 (WavpackContext *wpc);
+uint32_t WavpackGetNumSamplesInFrame (WavpackContext *wpc);
 uint32_t WavpackGetSampleIndex (WavpackContext *wpc);
 int64_t WavpackGetSampleIndex64 (WavpackContext *wpc);
 int WavpackGetNumErrors (WavpackContext *wpc);
@@ -338,6 +351,7 @@ int WavpackSeekSample (WavpackContext *wpc, uint32_t sample);
 int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample);
 WavpackContext *WavpackCloseFile (WavpackContext *wpc);
 uint32_t WavpackGetSampleRate (WavpackContext *wpc);
+uint32_t WavpackGetNativeSampleRate (WavpackContext *wpc);
 int WavpackGetBitsPerSample (WavpackContext *wpc);
 int WavpackGetBytesPerSample (WavpackContext *wpc);
 int WavpackGetNumChannels (WavpackContext *wpc);
@@ -345,6 +359,7 @@ int WavpackGetChannelMask (WavpackContext *wpc);
 int WavpackGetReducedChannels (WavpackContext *wpc);
 int WavpackGetFloatNormExp (WavpackContext *wpc);
 int WavpackGetMD5Sum (WavpackContext *wpc, unsigned char data [16]);
+void WavpackGetChannelIdentities (WavpackContext *wpc, unsigned char *identities);
 uint32_t WavpackGetChannelLayout (WavpackContext *wpc, unsigned char *reorder);
 uint32_t WavpackGetWrapperBytes (WavpackContext *wpc);
 unsigned char *WavpackGetWrapperData (WavpackContext *wpc);
@@ -377,7 +392,7 @@ void WavpackSetFileInformation (WavpackContext *wpc, char *file_extension, unsig
 #define WP_FORMAT_DSF   4       // Sony DSD Format
 
 int WavpackSetConfiguration (WavpackContext *wpc, WavpackConfig *config, uint32_t total_samples);
-int WavpackSetConfiguration64 (WavpackContext *wpc, WavpackConfig *config, int64_t total_samples);
+int WavpackSetConfiguration64 (WavpackContext *wpc, WavpackConfig *config, int64_t total_samples, const unsigned char *chan_ids);
 int WavpackSetChannelLayout (WavpackContext *wpc, uint32_t layout_tag, const unsigned char *reorder);
 int WavpackAddWrapper (WavpackContext *wpc, void *data, uint32_t bcount);
 int WavpackStoreMD5Sum (WavpackContext *wpc, unsigned char data [16]);

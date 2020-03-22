@@ -22,7 +22,7 @@
 
 static int64_t find_sample (WavpackContext *wpc, void *infile, int64_t header_pos, int64_t sample);
 
-// Seek to the specifed sample index, returning TRUE on success. Note that
+// Seek to the specified sample index, returning TRUE on success. Note that
 // files generated with version 4.0 or newer will seek almost immediately.
 // Older files can take quite long if required to seek through unplayed
 // portions of the file, but will create a seek map so that reverse seeks
@@ -38,7 +38,7 @@ int WavpackSeekSample (WavpackContext *wpc, uint32_t sample)
 int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
 {
     WavpackStream *wps = wpc->streams ? wpc->streams [wpc->current_stream = 0] : NULL;
-    uint32_t bcount, samples_to_skip;
+    uint32_t bcount, samples_to_skip, samples_to_decode = 0;
     int32_t *buffer;
 
     if (wpc->total_samples == -1 || sample >= wpc->total_samples ||
@@ -46,9 +46,22 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
         (wpc->wvc_flag && !wpc->reader->can_seek (wpc->wvc_in)))
             return FALSE;
 
-#ifndef VER4_ONLY
+#ifdef ENABLE_LEGACY
     if (wpc->stream3)
         return seek_sample3 (wpc, (uint32_t) sample);
+#endif
+
+#ifdef ENABLE_DSD
+    if (wpc->decimation_context) {      // the decimation code needs some context to be sample accurate
+        if (sample < 16) {
+            samples_to_decode = (uint32_t) sample;
+            sample = 0;
+        }
+        else {
+            samples_to_decode = 16;
+            sample -= 16;
+        }
+    }
 #endif
 
     if (!wps->wphdr.block_samples || !(wps->wphdr.flags & INITIAL_BLOCK) || sample < GET_BLOCK_INDEX (wps->wphdr) ||
@@ -72,8 +85,13 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
         wpc->reader->set_pos_abs (wpc->wv_in, wpc->filepos);
         wpc->reader->read_bytes (wpc->wv_in, &wps->wphdr, sizeof (WavpackHeader));
         WavpackLittleEndianToNative (&wps->wphdr, WavpackHeaderFormat);
-        SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
-        wps->blockbuff = malloc (wps->wphdr.ckSize + 8);
+
+        if ((wps->wphdr.ckSize & 1) || wps->wphdr.ckSize < 24 || wps->wphdr.ckSize >= 1024 * 1024) {
+            free_streams (wpc);
+            return FALSE;
+        }
+
+        wps->blockbuff = (unsigned char *)malloc (wps->wphdr.ckSize + 8);
         memcpy (wps->blockbuff, &wps->wphdr, sizeof (WavpackHeader));
 
         if (wpc->reader->read_bytes (wpc->wv_in, wps->blockbuff + sizeof (WavpackHeader), wps->wphdr.ckSize - 24) !=
@@ -82,14 +100,28 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
                 return FALSE;
         }
 
+        // render corrupt blocks harmless
+        if (!WavpackVerifySingleBlock (wps->blockbuff, !(wpc->open_flags & OPEN_NO_CHECKSUM))) {
+            wps->wphdr.ckSize = sizeof (WavpackHeader) - 8;
+            wps->wphdr.block_samples = 0;
+            memcpy (wps->blockbuff, &wps->wphdr, 32);
+        }
+
+        SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
+        memcpy (wps->blockbuff, &wps->wphdr, sizeof (WavpackHeader));
         wps->init_done = FALSE;
 
         if (wpc->wvc_flag) {
             wpc->reader->set_pos_abs (wpc->wvc_in, wpc->file2pos);
             wpc->reader->read_bytes (wpc->wvc_in, &wps->wphdr, sizeof (WavpackHeader));
             WavpackLittleEndianToNative (&wps->wphdr, WavpackHeaderFormat);
-            SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
-            wps->block2buff = malloc (wps->wphdr.ckSize + 8);
+
+            if ((wps->wphdr.ckSize & 1) || wps->wphdr.ckSize < 24 || wps->wphdr.ckSize >= 1024 * 1024) {
+                free_streams (wpc);
+                return FALSE;
+            }
+
+            wps->block2buff = (unsigned char *)malloc (wps->wphdr.ckSize + 8);
             memcpy (wps->block2buff, &wps->wphdr, sizeof (WavpackHeader));
 
             if (wpc->reader->read_bytes (wpc->wvc_in, wps->block2buff + sizeof (WavpackHeader), wps->wphdr.ckSize - 24) !=
@@ -97,6 +129,16 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
                     free_streams (wpc);
                     return FALSE;
             }
+
+            // render corrupt blocks harmless
+            if (!WavpackVerifySingleBlock (wps->block2buff, !(wpc->open_flags & OPEN_NO_CHECKSUM))) {
+                wps->wphdr.ckSize = sizeof (WavpackHeader) - 8;
+                wps->wphdr.block_samples = 0;
+                memcpy (wps->block2buff, &wps->wphdr, 32);
+            }
+
+            SET_BLOCK_INDEX (wps->wphdr, GET_BLOCK_INDEX (wps->wphdr) - wpc->initial_index);
+            memcpy (wps->block2buff, &wps->wphdr, sizeof (WavpackHeader));
         }
 
         if (!wps->init_done && !unpack_init (wpc)) {
@@ -115,8 +157,8 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
                 return FALSE;
             }
 
-            wpc->streams = realloc (wpc->streams, (wpc->num_streams + 1) * sizeof (wpc->streams [0]));
-            wps = wpc->streams [wpc->num_streams++] = malloc (sizeof (WavpackStream));
+            wpc->streams = (WavpackStream **)realloc (wpc->streams, (wpc->num_streams + 1) * sizeof (wpc->streams [0]));
+            wps = wpc->streams [wpc->num_streams++] = (WavpackStream *)malloc (sizeof (WavpackStream));
             CLEAR (*wps);
             bcount = read_next_header (wpc->reader, wpc->wv_in, &wps->wphdr);
 
@@ -125,13 +167,20 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
                 return FALSE;
             }
 
-            wps->blockbuff = malloc (wps->wphdr.ckSize + 8);
+            wps->blockbuff = (unsigned char *)malloc (wps->wphdr.ckSize + 8);
             memcpy (wps->blockbuff, &wps->wphdr, 32);
 
             if (wpc->reader->read_bytes (wpc->wv_in, wps->blockbuff + 32, wps->wphdr.ckSize - 24) !=
                 wps->wphdr.ckSize - 24) {
                     free_streams (wpc);
                     return FALSE;
+            }
+
+            // render corrupt blocks harmless
+            if (!WavpackVerifySingleBlock (wps->blockbuff, !(wpc->open_flags & OPEN_NO_CHECKSUM))) {
+                wps->wphdr.ckSize = sizeof (WavpackHeader) - 8;
+                wps->wphdr.block_samples = 0;
+                memcpy (wps->blockbuff, &wps->wphdr, 32);
             }
 
             wps->init_done = FALSE;
@@ -168,12 +217,14 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
     }
 
     if (samples_to_skip) {
-        buffer = malloc (samples_to_skip * 8);
+        buffer = (int32_t *)malloc (samples_to_skip * 8);
 
         for (wpc->current_stream = 0; wpc->current_stream < wpc->num_streams; wpc->current_stream++)
+#ifdef ENABLE_DSD
             if (wpc->streams [wpc->current_stream]->wphdr.flags & DSD_FLAG)
                 unpack_dsd_samples (wpc, buffer, samples_to_skip);
             else
+#endif
                 unpack_samples (wpc, buffer, samples_to_skip);
 
         free (buffer);
@@ -181,8 +232,19 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
 
     wpc->current_stream = 0;
 
+#ifdef ENABLE_DSD
     if (wpc->decimation_context)
         decimate_dsd_reset (wpc->decimation_context);
+
+    if (samples_to_decode) {
+        buffer = (int32_t *)malloc (samples_to_decode * wpc->config.num_channels * 4);
+
+        if (buffer) {
+            WavpackUnpackSamples (wpc, buffer, samples_to_decode);
+            free (buffer);
+        }
+    }
+#endif
 
     return TRUE;
 }
@@ -198,7 +260,7 @@ int WavpackSeekSample64 (WavpackContext *wpc, int64_t sample)
 
 static int64_t find_header (WavpackStreamReader64 *reader, void *id, int64_t filepos, WavpackHeader *wphdr)
 {
-    unsigned char *buffer = malloc (BUFSIZE), *sp = buffer, *ep = buffer;
+    unsigned char *buffer = (unsigned char *)malloc (BUFSIZE), *sp = buffer, *ep = buffer;
 
     if (filepos != (uint32_t) -1 && reader->set_pos_abs (id, filepos)) {
         free (buffer);
@@ -210,7 +272,7 @@ static int64_t find_header (WavpackStreamReader64 *reader, void *id, int64_t fil
 
         if (sp < ep) {
             bleft = (int)(ep - sp);
-            memcpy (buffer, sp, bleft);
+            memmove (buffer, sp, bleft);
             ep -= (sp - buffer);
             sp = buffer;
         }

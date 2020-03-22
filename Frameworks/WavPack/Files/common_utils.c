@@ -11,7 +11,7 @@
 // This module provides a lot of the trivial WavPack API functions and several
 // functions that are common to both reading and writing WavPack files (like
 // WavpackCloseFile()). Functions here are restricted to those that have few
-// external dependancies and this is done so that applications that statically
+// external dependencies and this is done so that applications that statically
 // link to the WavPack library (like the command-line utilities on Windows)
 // do not need to include the entire library image if they only use a subset
 // of it. This module will be loaded for ANY WavPack application.
@@ -40,7 +40,7 @@ const uint32_t sample_rates [] = { 6000, 8000, 9600, 11025, 12000, 16000, 22050,
 // MODE_LOSSLESS:  file is lossless (either pure or hybrid)
 // MODE_HYBRID:  file is hybrid mode (either lossy or lossless)
 // MODE_FLOAT:  audio data is 32-bit ieee floating point
-// MODE_VALID_TAG:  file conatins a valid ID3v1 or APEv2 tag
+// MODE_VALID_TAG:  file contains a valid ID3v1 or APEv2 tag
 // MODE_HIGH:  file was created in "high" mode (information only)
 // MODE_FAST:  file was created in "fast" mode (information only)
 // MODE_EXTRA:  file was created using "extra" mode (information only)
@@ -164,7 +164,7 @@ uint32_t WavpackGetSampleIndex (WavpackContext *wpc)
 int64_t WavpackGetSampleIndex64 (WavpackContext *wpc)
 {
     if (wpc) {
-#ifndef VER4_ONLY
+#ifdef ENABLE_LEGACY
         if (wpc->stream3)
             return get_sample_index3 (wpc);
         else if (wpc->streams && wpc->streams [0])
@@ -292,6 +292,13 @@ double WavpackGetInstantBitrate (WavpackContext *wpc)
 // then that much space must be allocated. Note that all the reordering is actually done
 // outside of this library, and that if reordering is done then the appropriate qmode bit
 // will be set.
+//
+// Note: Normally this function would not be used by an application unless it specifically
+// wanted to restore a non-standard channel order (to check an MD5, for example) or obtain
+// the Core Audio channel layout ID. For simple file decoding for playback, the channel_mask
+// should provide all the information required unless there are non-Microsoft channels
+// involved, in which case WavpackGetChannelIdentities() will provide the identities of
+// the other channels (if they are known).
 
 uint32_t WavpackGetChannelLayout (WavpackContext *wpc, unsigned char *reorder)
 {
@@ -301,11 +308,60 @@ uint32_t WavpackGetChannelLayout (WavpackContext *wpc, unsigned char *reorder)
     return wpc->channel_layout;
 }
 
+// This function provides the identities of ALL the channels in the file, including the
+// standard Microsoft channels (which come first, in order, and are numbered 1-18) and also
+// any non-Microsoft channels (which can be in any order and have values from 33-254). The
+// value 0x00 is invalid and 0xFF indicates an "unknown" or "unnassigned" channel. The
+// string is NULL terminated so the caller must supply enough space for the number
+// of channels indicated by WavpackGetNumChannels(), plus one.
+//
+// Note that this function returns the actual order of the channels in the Wavpack file
+// (i.e., the order returned by WavpackUnpackSamples()). If the file includes a "reordering"
+// string because the source file was not in Microsoft order that is NOT taken into account
+// here and really only needs to be considered if doing an MD5 verification or if it's
+// required to restore the original order/file (like wvunpack does).
+
+void WavpackGetChannelIdentities (WavpackContext *wpc, unsigned char *identities)
+{
+    int num_channels = wpc->config.num_channels, index = 1;
+    uint32_t channel_mask = wpc->config.channel_mask;
+    unsigned char *src = wpc->channel_identities;
+
+    while (num_channels--) {
+        if (channel_mask) {
+            while (!(channel_mask & 1)) {
+                channel_mask >>= 1;
+                index++;
+            }
+
+            *identities++ = index++;
+            channel_mask >>= 1;
+        }
+        else if (src && *src)
+            *identities++ = *src++;
+        else
+            *identities++ = 0xff;
+    }
+
+    *identities = 0;
+}
+
+// For local use only. Install a callback to be executed when WavpackCloseFile() is called,
+// usually used to dump some statistics accumulated during encode or decode.
+
+void install_close_callback (WavpackContext *wpc, void cb_func (void *wpc))
+{
+    wpc->close_callback = cb_func;
+}
+
 // Close the specified WavPack file and release all resources used by it.
 // Returns NULL.
 
 WavpackContext *WavpackCloseFile (WavpackContext *wpc)
 {
+    if (wpc->close_callback)
+        wpc->close_callback (wpc);
+
     if (wpc->streams) {
         free_streams (wpc);
 
@@ -315,7 +371,7 @@ WavpackContext *WavpackCloseFile (WavpackContext *wpc)
         free (wpc->streams);
     }
 
-#ifndef VER4_ONLY
+#ifdef ENABLE_LEGACY
     if (wpc->stream3)
         free_stream3 (wpc);
 #endif
@@ -328,6 +384,19 @@ WavpackContext *WavpackCloseFile (WavpackContext *wpc)
 
     WavpackFreeWrapper (wpc);
 
+    if (wpc->metadata) {
+        int i;
+
+        for (i = 0; i < wpc->metacount; ++i)
+            if (wpc->metadata [i].data)
+                free (wpc->metadata [i].data);
+
+        free (wpc->metadata);
+    }
+
+    if (wpc->channel_identities)
+        free (wpc->channel_identities);
+
     if (wpc->channel_reordering)
         free (wpc->channel_reordering);
 
@@ -335,8 +404,10 @@ WavpackContext *WavpackCloseFile (WavpackContext *wpc)
     free_tag (&wpc->m_tag);
 #endif
 
+#ifdef ENABLE_DSD
     if (wpc->decimation_context)
         decimate_dsd_destroy (wpc->decimation_context);
+#endif
 
     free (wpc);
 
@@ -372,6 +443,15 @@ void WavpackFreeWrapper (WavpackContext *wpc)
 uint32_t WavpackGetSampleRate (WavpackContext *wpc)
 {
     return wpc ? (wpc->dsd_multiplier ? wpc->config.sample_rate * wpc->dsd_multiplier : wpc->config.sample_rate) : 44100;
+}
+
+// Returns the native sample rate of the specified WavPack file
+// (provides the native rate for DSD files rather than the "byte" rate that's used for
+//   seeking, duration, etc. and would generally be used just for user facing reports)
+
+uint32_t WavpackGetNativeSampleRate (WavpackContext *wpc)
+{
+    return wpc ? (wpc->dsd_multiplier ? wpc->config.sample_rate * wpc->dsd_multiplier * 8 : wpc->config.sample_rate) : 44100;
 }
 
 // Returns the number of channels of the specified WavPack file. Note that
@@ -440,7 +520,7 @@ int WavpackGetReducedChannels (WavpackContext *wpc)
 }
 
 // Free all memory allocated for raw WavPack blocks (for all allocated streams)
-// and free all additonal streams. This does not free the default stream ([0])
+// and free all additional streams. This does not free the default stream ([0])
 // which is always kept around.
 
 void free_streams (WavpackContext *wpc)
@@ -468,31 +548,9 @@ void free_streams (WavpackContext *wpc)
             wpc->streams [si]->dc.shaping_data = NULL;
         }
 
-        if (wpc->streams [si]->dsd.probabilities) {
-            free (wpc->streams [si]->dsd.probabilities);
-            wpc->streams [si]->dsd.probabilities = NULL;
-        }
-
-        if (wpc->streams [si]->dsd.summed_probabilities) {
-            free (wpc->streams [si]->dsd.summed_probabilities);
-            wpc->streams [si]->dsd.summed_probabilities = NULL;
-        }
-
-        if (wpc->streams [si]->dsd.value_lookup) {
-            int i;
-
-            for (i = 0; i < wpc->streams [si]->dsd.history_bins; ++i)
-                if (wpc->streams [si]->dsd.value_lookup [i])
-                    free (wpc->streams [si]->dsd.value_lookup [i]);
-
-            free (wpc->streams [si]->dsd.value_lookup);
-            wpc->streams [si]->dsd.value_lookup = NULL;
-        }
-
-        if (wpc->streams [si]->dsd.ptable) {
-            free (wpc->streams [si]->dsd.ptable);
-            wpc->streams [si]->dsd.ptable = NULL;
-        }
+#ifdef ENABLE_DSD
+        free_dsd_tables (wpc->streams [si]);
+#endif
 
         if (si) {
             wpc->num_streams--;
@@ -502,6 +560,34 @@ void free_streams (WavpackContext *wpc)
     }
 
     wpc->current_stream = 0;
+}
+
+void free_dsd_tables (WavpackStream *wps)
+{
+    if (wps->dsd.probabilities) {
+        free (wps->dsd.probabilities);
+        wps->dsd.probabilities = NULL;
+    }
+
+    if (wps->dsd.summed_probabilities) {
+        free (wps->dsd.summed_probabilities);
+        wps->dsd.summed_probabilities = NULL;
+    }
+
+    if (wps->dsd.lookup_buffer) {
+        free (wps->dsd.lookup_buffer);
+        wps->dsd.lookup_buffer = NULL;
+    }
+
+    if (wps->dsd.value_lookup) {
+        free (wps->dsd.value_lookup);
+        wps->dsd.value_lookup = NULL;
+    }
+
+    if (wps->dsd.ptable) {
+        free (wps->dsd.ptable);
+        wps->dsd.ptable = NULL;
+    }
 }
 
 void WavpackFloatNormalize (int32_t *values, int32_t num_values, int delta_exp)

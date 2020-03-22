@@ -124,13 +124,20 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 
     wv = [[WavPackReader alloc] initWithSource:s];
     
-    id audioSourceClass = NSClassFromString(@"AudioSource");
-    NSURL *wvcurl = [[s url] URLByDeletingPathExtension];
-    wvcurl = [wvcurl URLByAppendingPathExtension:@"wvc"];
-    id<CogSource> wvcsrc = [audioSourceClass audioSourceForURL:wvcurl];
-    if ([wvcsrc open:wvcurl])
+    if ([s seekable])
     {
-        wvc = [[WavPackReader alloc] initWithSource:wvcsrc];
+        id audioSourceClass = NSClassFromString(@"AudioSource");
+        NSURL *wvcurl = [[s url] URLByDeletingPathExtension];
+        wvcurl = [wvcurl URLByAppendingPathExtension:@"wvc"];
+        id<CogSource> wvcsrc = [audioSourceClass audioSourceForURL:wvcurl];
+        if ([wvcsrc open:wvcurl])
+        {
+            wvc = [[WavPackReader alloc] initWithSource:wvcsrc];
+        }
+        else
+        {
+            wvc = nil;
+        }
     }
     else
     {
@@ -147,6 +154,9 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	reader.write_bytes = WriteBytesProc;
     
     open_flags |= OPEN_DSD_AS_PCM | OPEN_ALT_TYPES;
+    
+    if (![s seekable])
+        open_flags |= OPEN_STREAMING;
 
 	wpc = WavpackOpenFileInputEx(&reader, (__bridge void *)(wv), (__bridge void *)(wvc), error, open_flags, 0);
 	if (!wpc) {

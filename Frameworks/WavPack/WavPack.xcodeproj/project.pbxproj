@@ -348,6 +348,8 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					ENABLE_DSD,
+					ENABLE_LEGACY,
 					PACK,
 					UNPACK,
 					USE_FSTREAMS,
@@ -356,8 +358,8 @@
 					VER3,
 					"PACKAGE_NAME='\"wavpack\"'",
 					"PACKAGE_TARNAME='\"wavpack\"'",
-					"PACKAGE_VERSION='\"4.70.0\"'",
-					"PACKAGE_STRING='\"wavpack 4.70.0\"'",
+					"PACKAGE_VERSION='\"5.2.0\"'",
+					"PACKAGE_STRING='\"wavpack 5.2.0\"'",
 					"PACKAGE_BUGREPORT='\"bryant@wavpack.com\"'",
 					"VERSION_OS='\"Darwin\"'",
 				);
@@ -383,6 +385,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					ENABLE_DSD,
+					ENABLE_LEGACY,
 					PACK,
 					UNPACK,
 					USE_FSTREAMS,
