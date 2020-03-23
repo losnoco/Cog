@@ -1,4 +1,4 @@
-    //
+//
 //  OutputCoreAudio.m
 //  Cog
 //
@@ -225,7 +225,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	};
     UInt32 dataSize;
 	
-    ComponentDescription desc;
+    AudioComponentDescription desc;
 	OSStatus err;
 	
 	desc.componentType = kAudioUnitType_Output;
@@ -234,11 +234,11 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
 	
-	Component comp = FindNextComponent(NULL, &desc);  //Finds an component that meets the desc spec's
+	AudioComponent comp = AudioComponentFindNext(NULL, &desc);  //Finds an component that meets the desc spec's
 	if (comp == NULL)
 		return NO;
 	
-	err = OpenAComponent(comp, &outputUnit);  //gains access to the services provided by the component
+	err = AudioComponentInstanceNew(comp, &outputUnit);  //gains access to the services provided by the component
 	if (err)
 		return NO;
 	
@@ -344,7 +344,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 					deviceChannelMap[i] = i;
 			}
             
-			free(preferredChannelLayout), preferredChannelLayout = nil;
+            free(preferredChannelLayout); preferredChannelLayout = nil;
 		}
 		else {
 			// Just use a channel map that makes sense
@@ -415,7 +415,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	{
         AudioOutputUnitStop(outputUnit);
 		AudioUnitUninitialize (outputUnit);
-		CloseComponent(outputUnit);
+		AudioComponentInstanceDispose(outputUnit);
 		outputUnit = NULL;
 	}
 }

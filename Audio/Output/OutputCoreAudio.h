@@ -6,6 +6,7 @@
 //  Copyright 2005 Vincent Spader. All rights reserved.
 //
 
+#import <AssertMacros.h>
 #import <Cocoa/Cocoa.h>
 
 #import <CoreAudio/AudioHardware.h>
