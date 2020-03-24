@@ -45,7 +45,6 @@ private:
 		int delay;
 		Blip_Buffer* output;
 		short last_amp;
-		short wave_pos;
 	};
 	
 	Namco_Osc oscs [osc_count];
