@@ -64,6 +64,7 @@ static const char* extension_list[] = {
     "akb",
     "al",
     "al2",
+    "ams", //txth/reserved [Super Dragon Ball Z (PS2) ELF names]
     "amts", //fake extension/header id for .stm (renamed? to be removed?)
     "ao",
     "apc",
@@ -297,6 +298,8 @@ static const char* extension_list[] = {
     "mihb",
     "mnstr",
     "mogg",
+    //"m4a", //common
+    //"m4v", //common
     //"mp+", //common [Moonshine Runners (PC)]
     //"mp2", //common
     //"mp3", //common
@@ -450,6 +453,7 @@ static const char* extension_list[] = {
     "snr",
     "sns",
     "snu",
+    "snz", //txth/reserved [Killzone HD (PS3)]
     "sod",
     "son",
     "spd",
@@ -458,6 +462,7 @@ static const char* extension_list[] = {
     "spsd",
     "spw",
     "ss2",
+    "ssd", //txth/reserved [Zack & Wiki (Wii)]
     "ssm",
     "sss",
     "ster",
@@ -514,6 +519,7 @@ static const char* extension_list[] = {
     "vgm", //txth/reserved [Maximo (PS2)]
     "vgs",
     "vgv",
+    "vid",
     "vig",
     "vis",
     "vms",
@@ -608,6 +614,8 @@ static const char* common_extension_list[] = {
     "aiff", //common
     "bin", //common
     "flac", //common
+    "m4a", //common
+    "m4v", //common
     "mp+", //common [Moonshine Runners (PC)]
     "mp2", //common
     "mp3", //common
@@ -719,7 +727,6 @@ static const coding_info coding_info_list[] = {
         {coding_REF_IMA,            "Reflections 4-bit IMA ADPCM"},
         {coding_AWC_IMA,            "Rockstar AWC 4-bit IMA ADPCM"},
         {coding_UBI_IMA,            "Ubisoft 4-bit IMA ADPCM"},
-
         {coding_H4M_IMA,            "Hudson HVQM4 4-bit IMA ADPCM"},
 
         {coding_MSADPCM,            "Microsoft 4-bit ADPCM"},
@@ -758,7 +765,7 @@ static const coding_info coding_info_list[] = {
         {coding_UBI_ADPCM,          "Ubisoft 4/6-bit ADPCM"},
 
         {coding_EA_MT,              "Electronic Arts MicroTalk"},
-
+        {coding_CIRCUS_VQ,          "Circus VQ"},
         {coding_RELIC,              "Relic Codec"},
         {coding_CRI_HCA,            "CRI HCA"},
         
@@ -790,6 +797,9 @@ static const coding_info coding_info_list[] = {
 #endif
 #ifdef VGM_USE_FFMPEG
         {coding_FFmpeg,             "FFmpeg"},
+#endif
+#ifdef VGM_USE_FDKAAC
+		{coding_MP4_AAC,            "MPEG-4 AAC"},
 #endif
 };
 
@@ -838,6 +848,8 @@ static const layout_info layout_info_list[] = {
         {layout_blocked_h4m,            "blocked (H4M)"},
         {layout_blocked_xa_aiff,        "blocked (XA AIFF)"},
         {layout_blocked_vs_square,      "blocked (Square VS)"},
+        {layout_blocked_vid1,           "blocked (VID1)"},
+        {layout_blocked_ubi_sce,        "blocked (Ubi SCE)"},
 };
 
 static const meta_info meta_info_list[] = {
@@ -1168,7 +1180,7 @@ static const meta_info meta_info_list[] = {
         {meta_VXN,                  "Gameloft VXN header"},
         {meta_EA_SNR_SNS,           "Electronic Arts SNR+SNS header"},
         {meta_EA_SPS,               "Electronic Arts SPS header"},
-        {meta_NGC_VID1,             "Neversoft VID1 header"},
+        {meta_VID1,                 "Factor 5 VID1 header"},
         {meta_PC_FLX,               "Ultima IX .FLX header"},
         {meta_MOGG,                 "Harmonix Music Systems MOGG Vorbis"},
         {meta_OGG_VORBIS,           "Ogg Vorbis header"},
@@ -1272,6 +1284,7 @@ static const meta_info meta_info_list[] = {
         {meta_TGC,                  "Tiger Game.com .4 header"},
         {meta_KWB,                  "Koei Tecmo WaveBank header"},
         {meta_LRMD,                 "Sony LRMD header"},
+        {meta_WWISE_FX,             "Audiokinetic Wwise FX header"},
 
 };
 

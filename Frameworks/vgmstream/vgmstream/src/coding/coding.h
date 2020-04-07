@@ -35,7 +35,7 @@ void decode_apple_ima4(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channel
 void decode_fsb_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_wwise_ima(VGMSTREAM * vgmstream, VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_awc_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
-void decode_ubi_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_ubi_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int codec_config);
 void decode_h4m_ima(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, uint16_t frame_format);
 size_t ima_bytes_to_samples(size_t bytes, int channels);
 size_t ms_ima_bytes_to_samples(size_t bytes, int block_align, int channels);
@@ -167,6 +167,7 @@ void decode_fadpcm(VGMSTREAMCHANNEL *stream, sample_t *outbuf, int channelspacin
 
 /* asf_decoder */
 void decode_asf(VGMSTREAMCHANNEL *stream, sample_t *outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+int32_t asf_bytes_to_samples(size_t bytes, int channels);
 
 /* dsa_decoder */
 void decode_dsa(VGMSTREAMCHANNEL *stream, sample_t *outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
@@ -178,7 +179,13 @@ void decode_xmd(VGMSTREAMCHANNEL *stream, sample_t *outbuf, int channelspacing, 
 void decode_derf(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 
 /* circus_decoder */
-void decode_circus_adpcm(VGMSTREAMCHANNEL * stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+typedef struct circus_codec_data circus_codec_data;
+circus_codec_data* init_circus_vq(STREAMFILE* sf, off_t start, uint8_t codec, uint8_t flags);
+void decode_circus_vq(circus_codec_data* data, sample_t* outbuf, int32_t samples_to_do, int channels);
+void reset_circus_vq(circus_codec_data* data);
+void seek_circus_vq(circus_codec_data* data, int32_t num_sample);
+void free_circus_vq(circus_codec_data* data);
+void decode_circus_adpcm(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 
 /* oki_decoder */
 void decode_pcfx(VGMSTREAMCHANNEL * stream, sample_t * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int mode);

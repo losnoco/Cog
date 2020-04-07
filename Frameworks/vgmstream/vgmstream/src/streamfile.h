@@ -109,9 +109,14 @@ STREAMFILE* open_clamp_streamfile(STREAMFILE *streamfile, off_t start, size_t si
 STREAMFILE* open_clamp_streamfile_f(STREAMFILE *streamfile, off_t start, size_t size);
 
 /* Opens a STREAMFILE that uses custom IO for streamfile reads.
- * Can be used to modify data on the fly (ex. decryption), or even transform it from a format to another. */
+ * Can be used to modify data on the fly (ex. decryption), or even transform it from a format to another. 
+ * Data is an optional state struct of some size what will be malloc+copied on open. */
 STREAMFILE* open_io_streamfile(STREAMFILE *streamfile, void *data, size_t data_size, void *read_callback, void *size_callback);
 STREAMFILE* open_io_streamfile_f(STREAMFILE *streamfile, void *data, size_t data_size, void *read_callback, void *size_callback);
+/* Same, but calls init on SF open and close on close, when malloc/free is needed.
+ * Data struct may be used to hold malloc'd pointers and stuff. */
+STREAMFILE* open_io_streamfile_ex(STREAMFILE *streamfile, void *data, size_t data_size, void *read_callback, void *size_callback, void* init_callback, void* close_callback);
+STREAMFILE* open_io_streamfile_ex_f(STREAMFILE *streamfile, void *data, size_t data_size, void *read_callback, void *size_callback, void* init_callback, void* close_callback);
 
 /* Opens a STREAMFILE that reports a fake name, but still re-opens itself properly.
  * Can be used to trick a meta's extension check (to call from another, with a modified SF).
@@ -331,7 +336,9 @@ size_t read_line(char *buf, int buf_size, off_t offset, STREAMFILE *sf, int *p_l
 /* reads a c-string (ANSI only), up to bufsize or NULL, returning size. buf is optional (works as get_string_size). */
 size_t read_string(char *buf, size_t buf_size, off_t offset, STREAMFILE *sf);
 /* reads a UTF16 string... but actually only as ANSI (discards the upper byte) */
-size_t read_string_utf16le(char *buf, size_t buf_size, off_t offset, STREAMFILE *sf);
+size_t read_string_utf16(char* buf, size_t buf_size, off_t offset, STREAMFILE* sf, int big_endian);
+size_t read_string_utf16le(char* buf, size_t buf_size, off_t offset, STREAMFILE* sf);
+size_t read_string_utf16be(char* buf, size_t buf_size, off_t offset, STREAMFILE* sf);
 
 /* Opens a file containing decryption keys and copies to buffer.
  * Tries "(name.ext)key" (per song), "(.ext)key" (per folder) keynames.

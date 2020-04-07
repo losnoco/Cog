@@ -190,7 +190,7 @@ typedef enum {
     coding_UBI_ADPCM,       /* Ubisoft 4/6-bit ADPCM */
 
     coding_EA_MT,           /* Electronic Arts MicroTalk (linear-predictive speech codec) */
-
+    coding_CIRCUS_VQ,       /* Circus VQ */
     coding_RELIC,           /* Relic Codec (DCT-based) */
     coding_CRI_HCA,         /* CRI High Compression Audio (MDCT-based) */
 
@@ -283,6 +283,8 @@ typedef enum {
     layout_blocked_h4m, /* H4M video */
     layout_blocked_xa_aiff, /* XA in AIFF files [Crusader: No Remorse (SAT), Road Rash (3DO)] */
     layout_blocked_vs_square,
+    layout_blocked_vid1,
+    layout_blocked_ubi_sce,
 
     /* otherwise odd */
     layout_segmented,       /* song divided in segments (song sections) */
@@ -629,7 +631,7 @@ typedef enum {
     meta_VXN,               /* Gameloft mobile games */
     meta_EA_SNR_SNS,        /* Electronic Arts SNR+SNS (Burnout Paradise) */
     meta_EA_SPS,            /* Electronic Arts SPS (Burnout Crash) */
-    meta_NGC_VID1,          /* Neversoft .ogg (Gun GC) */
+    meta_VID1,
     meta_PC_FLX,            /* Ultima IX PC */
     meta_MOGG,              /* Harmonix Music Systems MOGG Vorbis */
     meta_OGG_VORBIS,        /* Ogg Vorbis */
@@ -732,6 +734,7 @@ typedef enum {
     meta_TGC,
     meta_KWB,
     meta_LRMD,
+    meta_WWISE_FX,
 } meta_t;
 
 /* standard WAVEFORMATEXTENSIBLE speaker positions */
