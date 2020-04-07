@@ -7,7 +7,7 @@
  *
  */
 
-#define MAX_VOLUME 400.0
+#define MAX_VOLUME 800.0
 
 double logarithmicToLinear(double logarithmic);
 double linearToLogarithmic(double linear);
