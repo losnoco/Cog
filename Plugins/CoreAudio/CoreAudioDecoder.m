@@ -24,8 +24,6 @@
 
 #import "Logging.h"
 
-#define REWIND_SIZE 131072
-
 @interface CoreAudioDecoder (Private)
 - (BOOL) readInfoFromExtAudioFileRef;
 @end
@@ -42,46 +40,14 @@ static OSStatus readProc(void* clientData,
     id<CogSource> source = pSelf->_audioSource;
     
     if (position != pSelf->_lastPosition) {
-        if ([source seekable])
-            [source seek:position whence:SEEK_SET];
-        else if (position < pSelf->rewindStart)
-            return seekErr;
+        [source seek:position whence:SEEK_SET];
     }
 
     size_t copyMax = 0;
     size_t bytesRead = 0;
-    size_t rewindBytes = 0;
 
-    if (![source seekable]) {
-        long rewindStart = pSelf->rewindStart;
-        rewindBytes = [pSelf->rewindBuffer length];
-
-        if ( position < rewindStart + rewindBytes ) {
-            const uint8_t * rewindBuffer = (const uint8_t *)([pSelf->rewindBuffer bytes]);
-            copyMax = rewindStart + rewindBytes - position;
-            if (copyMax > requestCount)
-                copyMax = requestCount;
-            memcpy(buffer, rewindBuffer + (position - rewindStart), copyMax);
-            requestCount -= copyMax;
-            position += copyMax;
-        }
-    }
-    
     if ( requestCount )
         bytesRead = [source read:(((uint8_t *)buffer) + copyMax) amount:requestCount];
-    
-    if (![source seekable]) {
-        size_t copyBytes = bytesRead;
-        if (copyBytes) {
-            ssize_t removeBytes = ((rewindBytes + copyBytes) - REWIND_SIZE);
-            if (removeBytes > 0) {
-                NSRange range = NSMakeRange(0, removeBytes);
-                [pSelf->rewindBuffer replaceBytesInRange:range withBytes:NULL length:0];
-                pSelf->rewindStart += removeBytes;
-            }
-            [pSelf->rewindBuffer appendBytes:buffer length:copyBytes];
-        }
-    }
     
     pSelf->_lastPosition = position + bytesRead;
 
@@ -99,14 +65,9 @@ static SInt64 getSizeProc(void* clientData) {
     
     SInt64 size;
     
-    if ([source seekable]) {
-        [source seek:0 whence:SEEK_END];
-        size = [source tell];
-        [source seek:pSelf->_lastPosition whence:SEEK_SET];
-    }
-    else {
-        size = INT64_MAX;
-    }
+    [source seek:0 whence:SEEK_END];
+    size = [source tell];
+    [source seek:pSelf->_lastPosition whence:SEEK_SET];
     
     return size;
 }
@@ -139,12 +100,12 @@ static SInt64 getSizeProc(void* clientData) {
 {
 	OSStatus						err;
     
+    if (![source seekable])
+        return NO;
+    
     _audioSource = source;
     _lastPosition = [source tell];
     
-    rewindStart = _lastPosition;
-    rewindBuffer = [[NSMutableData alloc] init];
-
     err = AudioFileOpenWithCallbacks((__bridge void *)self, readProc, 0, getSizeProc, 0, 0, &_audioFile);
     if(noErr != err) {
         ALog(@"Error opening callback interface to file: %d", err);
@@ -297,7 +258,7 @@ static SInt64 getSizeProc(void* clientData) {
 
 + (float)priority
 {
-    return 1.0;
+    return 0.5;
 }
 
 - (NSDictionary *)properties
@@ -309,7 +270,7 @@ static SInt64 getSizeProc(void* clientData) {
 		[NSNumber numberWithInt:bitrate],@"bitrate",
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithLong:totalFrames],@"totalFrames",
-		[NSNumber numberWithBool:[_audioSource seekable]], @"seekable",
+		[NSNumber numberWithBool:YES], @"seekable",
         floatingPoint ? @"host" : @"big", @"endian",
 		nil];
 }

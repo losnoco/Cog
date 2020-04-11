@@ -32,9 +32,6 @@
     AudioFileID             _audioFile;
 	ExtAudioFileRef			_in;
     
-    long                    rewindStart;
-    NSMutableData         * rewindBuffer;
-
 	int bitrate;
 	int bitsPerSample;
     BOOL floatingPoint;
