@@ -14,7 +14,7 @@
 #import <stdlib.h>
 #import <string.h>
 
-#define BUFFER_SIZE 131072
+#define BUFFER_SIZE 262144
 
 @implementation HTTPSource
 
@@ -122,7 +122,8 @@ didReceiveResponse:(NSURLResponse *)response
         }
     }
     _mimeType = [response MIMEType];
-    if ([_mimeType isEqualToString:@"application/octet-stream"])
+    if ([_mimeType isEqualToString:@"application/octet-stream"] ||
+        [_mimeType isEqualToString:@"text/plain"])
         didReceiveRandomData = YES;
     else
         didReceiveResponse = YES;
