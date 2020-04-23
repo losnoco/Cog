@@ -193,6 +193,9 @@ static const adxkey_info adxkey8_list[] = {
         /* Katekyoo Hitman Reborn! Let's Ansatsu! Nerawareta 10-daime! (PS2) */
         {0x5381,0x52E5,0x53E9, "REBHITMAN",0},
 
+        /* 428: Fuusasareta Shibuya de (PS3) */
+        {0x52ff,0x649f,0x448f, "hj1kviaqqdzUacryoacwmscfvwtlfkVbbbqpqmzqnbile2euljywazejgyxxvqlf",0},
+
 };
 
 static const adxkey_info adxkey9_list[] = {
@@ -234,8 +237,8 @@ static const adxkey_info adxkey9_list[] = {
         /* Detective Conan Runner / Case Closed Runner (Android) */
         {0x0613,0x0e3d,0x6dff, NULL,1175268187653273344},   // 104f643098e3f700
 
-        /* Persona 5 Royal (PS4)*/
-        {0x0000,0x1c85,0x1043, NULL,29902882},              // guessed with VGAudio
+        /* Persona 5 Royal (PS4) */
+        {0x0000,0x1c85,0x7043, NULL,29915170},              // 0000000001C87822
 
 };
 

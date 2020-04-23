@@ -498,6 +498,7 @@
 		837CEB0423487F2C00E62A4A /* jstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAEF23487F2C00E62A4A /* jstm.c */; };
 		837CEB0523487F2C00E62A4A /* sqex_sead_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 837CEAF023487F2C00E62A4A /* sqex_sead_streamfile.h */; };
 		837CEB072348809400E62A4A /* seb.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEB062348809400E62A4A /* seb.c */; };
+		8385D4E6245174C700FF8E67 /* diva.c in Sources */ = {isa = PBXBuildFile; fileRef = 8385D4E2245174C600FF8E67 /* diva.c */; };
 		838BDB641D3AF08C0022CA6F /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB611D3AF08C0022CA6F /* libavcodec.a */; };
 		838BDB651D3AF08C0022CA6F /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB621D3AF08C0022CA6F /* libavformat.a */; };
 		838BDB661D3AF08C0022CA6F /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB631D3AF08C0022CA6F /* libavutil.a */; };
@@ -1201,6 +1202,7 @@
 		837CEAEF23487F2C00E62A4A /* jstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jstm.c; sourceTree = "<group>"; };
 		837CEAF023487F2C00E62A4A /* sqex_sead_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqex_sead_streamfile.h; sourceTree = "<group>"; };
 		837CEB062348809400E62A4A /* seb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = seb.c; sourceTree = "<group>"; };
+		8385D4E2245174C600FF8E67 /* diva.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diva.c; sourceTree = "<group>"; };
 		838BDB611D3AF08C0022CA6F /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ../../ThirdParty/ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
 		838BDB621D3AF08C0022CA6F /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ../../ThirdParty/ffmpeg/lib/libavformat.a; sourceTree = "<group>"; };
 		838BDB631D3AF08C0022CA6F /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../../ThirdParty/ffmpeg/lib/libavutil.a; sourceTree = "<group>"; };
@@ -1664,6 +1666,7 @@
 				8373341E23F60CDB00DE14DC /* deblock_streamfile.h */,
 				8349A8EE1FE6257C00E26435 /* dec.c */,
 				834FE0CD215C79E8000A5D3D /* derf.c */,
+				8385D4E2245174C600FF8E67 /* diva.c */,
 				836F6E4318BDC2180095E648 /* dmsg_segh.c */,
 				8351F32C2212B57000A606E4 /* dsf.c */,
 				83299FCF1E7660C7003A3242 /* dsp_adx.c */,
@@ -2663,6 +2666,7 @@
 				8306B0B220984552000302D4 /* blocked_mxch.c in Sources */,
 				837CEAFA23487F2C00E62A4A /* xa_04sw.c in Sources */,
 				836F6F8618BDC2190095E648 /* excitebots.c in Sources */,
+				8385D4E6245174C700FF8E67 /* diva.c in Sources */,
 				836F6FF418BDC2190095E648 /* rws.c in Sources */,
 				834FE100215C79ED000A5D3D /* svg.c in Sources */,
 				836F6F2518BDC2190095E648 /* g721_decoder.c in Sources */,

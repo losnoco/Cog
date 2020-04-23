@@ -735,6 +735,7 @@ typedef enum {
     meta_KWB,
     meta_LRMD,
     meta_WWISE_FX,
+    meta_DIVA,
 } meta_t;
 
 /* standard WAVEFORMATEXTENSIBLE speaker positions */
