@@ -213,7 +213,7 @@
 				17B5E14F0CC074D3004E2AF4 /* share */,
 			);
 			name = include;
-			path = "flac-1.2.1/include";
+			path = "flac-1.3.3/include";
 			sourceTree = "<group>";
 		};
 		17B5E1450CC074D3004E2AF4 /* FLAC */ = {
@@ -264,7 +264,7 @@
 				17B5E15D0CC074D3004E2AF4 /* libFLAC */,
 			);
 			name = src;
-			path = "flac-1.2.1/src";
+			path = "flac-1.3.3/src";
 			sourceTree = "<group>";
 		};
 		17B5E15D0CC074D3004E2AF4 /* libFLAC */ = {
@@ -501,8 +501,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
-					"flac-1.2.1/include",
-					"flac-1.2.1/src/libFLAC/include",
+					"flac-1.3.3/include",
+					"flac-1.3.3/src/libFLAC/include",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
@@ -512,8 +512,10 @@
 					"-DFLAC__SYS_DARWIN",
 					"$(OTHER_CFLAGS_QUOTED_1)",
 					"-D__MACOSX__",
+					"-DHAVE_LROUND",
+					"-DFLAC__HAS_OGG=0",
 				);
-				OTHER_CFLAGS_QUOTED_1 = "-DVERSION=\\\"1.2.1\\\"";
+				OTHER_CFLAGS_QUOTED_1 = "-DVERSION=\\\"1.3.3\\\" -DPACKAGE_VERSION=\\\"1.3.3\\\"";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.libflac;
@@ -540,8 +542,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = (
-					"flac-1.2.1/include",
-					"flac-1.2.1/src/libFLAC/include",
+					"flac-1.3.3/include",
+					"flac-1.3.3/src/libFLAC/include",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
@@ -551,8 +553,10 @@
 					"-DFLAC__SYS_DARWIN",
 					"$(OTHER_CFLAGS_QUOTED_1)",
 					"-D__MACOSX__",
+					"-DHAVE_LROUND",
+					"-DFLAC__HAS_OGG=0",
 				);
-				OTHER_CFLAGS_QUOTED_1 = "-DVERSION=\\\"1.2.1\\\"";
+				OTHER_CFLAGS_QUOTED_1 = "-DVERSION=\\\"1.3.3\\\" -DPACKAGE_VERSION=\\\"1.3.3\\\"";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/PrivateHeaders";
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.libflac;
