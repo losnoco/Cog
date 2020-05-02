@@ -592,6 +592,9 @@
 		83F0AA5F21E2028C004BBC04 /* smp.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F0AA5C21E2028B004BBC04 /* smp.c */; };
 		83F0AA6021E2028C004BBC04 /* vsv_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F0AA5D21E2028B004BBC04 /* vsv_streamfile.h */; };
 		83F0AA6121E2028C004BBC04 /* vsv.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F0AA5E21E2028C004BBC04 /* vsv.c */; };
+		83F1EE2D245D4FB20076E182 /* imuse_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F1EE28245D4FB10076E182 /* imuse_decoder.c */; };
+		83F1EE2E245D4FB20076E182 /* vadpcm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F1EE2C245D4FB20076E182 /* vadpcm_decoder.c */; };
+		83F1EE30245D4FC10076E182 /* imuse.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F1EE2F245D4FC10076E182 /* imuse.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
 		83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */; };
 		83FC176D23AC58D100E1025F /* xma_ue3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FC176A23AC58D100E1025F /* xma_ue3.c */; };
@@ -1294,6 +1297,9 @@
 		83F0AA5C21E2028B004BBC04 /* smp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smp.c; sourceTree = "<group>"; };
 		83F0AA5D21E2028B004BBC04 /* vsv_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vsv_streamfile.h; sourceTree = "<group>"; };
 		83F0AA5E21E2028C004BBC04 /* vsv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vsv.c; sourceTree = "<group>"; };
+		83F1EE28245D4FB10076E182 /* imuse_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imuse_decoder.c; sourceTree = "<group>"; };
+		83F1EE2C245D4FB20076E182 /* vadpcm_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vadpcm_decoder.c; sourceTree = "<group>"; };
+		83F1EE2F245D4FC10076E182 /* imuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imuse.c; sourceTree = "<group>"; };
 		83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = ../Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
 		83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riff_ogg_streamfile.h; sourceTree = "<group>"; };
@@ -1495,6 +1501,7 @@
 				836F6DE818BDC2180095E648 /* g7221_decoder.c */,
 				832389511D224C0800482226 /* hca_decoder.c */,
 				836F6DEA18BDC2180095E648 /* ima_decoder.c */,
+				83F1EE28245D4FB10076E182 /* imuse_decoder.c */,
 				836F6DEB18BDC2180095E648 /* l5_555_decoder.c */,
 				836F6DEC18BDC2180095E648 /* lsf_decoder.c */,
 				83709E0B1ECBC1C3005C03D3 /* mc3_decoder.c */,
@@ -1527,6 +1534,7 @@
 				836F6DFC18BDC2180095E648 /* sdx2_decoder.c */,
 				8373341023F60C7A00DE14DC /* tgcadpcm_decoder.c */,
 				837CEA7623487E2400E62A4A /* ubi_adpcm_decoder.c */,
+				83F1EE2C245D4FB20076E182 /* vadpcm_decoder.c */,
 				839E21D61F2EDAF000EE54D7 /* vorbis_custom_data_fsb.h */,
 				839E21DC1F2EDAF000EE54D7 /* vorbis_custom_data_wwise.h */,
 				839E21D71F2EDAF000EE54D7 /* vorbis_custom_decoder.c */,
@@ -1717,6 +1725,7 @@
 				83C7280922BC893C00678B4A /* ikm.c */,
 				837CEAE623487F2B00E62A4A /* ima.c */,
 				832BF81121E05149006F50F1 /* imc.c */,
+				83F1EE2F245D4FC10076E182 /* imuse.c */,
 				836F6E5518BDC2180095E648 /* ios_psnd.c */,
 				83AFABBB23795202002F3947 /* isb.c */,
 				836F6E5618BDC2180095E648 /* ish_isd.c */,
@@ -2304,6 +2313,7 @@
 				8373341B23F60C7B00DE14DC /* g7221_decoder_lib.c in Sources */,
 				836F705318BDC2190095E648 /* streamfile.c in Sources */,
 				836F6F7418BDC2190095E648 /* bgw.c in Sources */,
+				83F1EE2D245D4FB20076E182 /* imuse_decoder.c in Sources */,
 				836F6F7218BDC2190095E648 /* baf.c in Sources */,
 				83F5F8831908D0A400C8E65F /* fsb5.c in Sources */,
 				836F6FD418BDC2190095E648 /* ps2_dxh.c in Sources */,
@@ -2399,6 +2409,7 @@
 				834FE107215C79ED000A5D3D /* mib_mih.c in Sources */,
 				836F703618BDC2190095E648 /* thp.c in Sources */,
 				836F6F7818BDC2190095E648 /* Cstr.c in Sources */,
+				83F1EE30245D4FC10076E182 /* imuse.c in Sources */,
 				836F6F1E18BDC2190095E648 /* acm_decoder.c in Sources */,
 				836F6FD818BDC2190095E648 /* ps2_gbts.c in Sources */,
 				831BA61A1EAC61A500CF89B0 /* ps2_vds_vdm.c in Sources */,
@@ -2759,6 +2770,7 @@
 				8306B0B920984552000302D4 /* blocked_matx.c in Sources */,
 				83A21F7B201D895B000F04B9 /* blocked_xvag.c in Sources */,
 				836F6FBA18BDC2190095E648 /* ngc_ymf.c in Sources */,
+				83F1EE2E245D4FB20076E182 /* vadpcm_decoder.c in Sources */,
 				836F705018BDC2190095E648 /* ydsp.c in Sources */,
 				8306B0B720984552000302D4 /* blocked_str_snds.c in Sources */,
 				836F702718BDC2190095E648 /* sat_baka.c in Sources */,
