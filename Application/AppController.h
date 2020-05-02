@@ -75,6 +75,7 @@
 - (IBAction)savePlaylist:(id)sender;
 
 - (IBAction)donate:(id)sender;
+- (IBAction)patreon:(id)sender;
 - (IBAction)feedback:(id)sender;
 
 - (IBAction)toggleInfoDrawer:(id)sender;

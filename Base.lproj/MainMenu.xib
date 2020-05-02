@@ -50,7 +50,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
                                     <rect key="frame" x="0.0" y="0.0" width="800" height="377"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" id="207" customClass="PlaylistView">
                                             <rect key="frame" x="0.0" y="0.0" width="800" height="360"/>
@@ -786,9 +786,23 @@
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
                             <menuItem title="Support Cog..." id="751">
-                                <connections>
-                                    <action selector="donate:" target="226" id="752"/>
-                                </connections>
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" id="kue-p2-G0Y">
+                                    <items>
+                                        <menuItem title="PayPal" id="xcs-tx-Viz">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="donate:" target="-1" id="4Br-dF-by5"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Patreon" id="Bls-an-3wW">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="patreon:" target="-1" id="Hgn-8M-pW2"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="Send Feedback..." id="303">
                                 <connections>

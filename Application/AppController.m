@@ -335,6 +335,11 @@
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.me/kode54"]];
 }
 
+- (IBAction)patreon:(id)sender
+{
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
+}
+
 - (IBAction)feedback:(id)sender
 {
     NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
