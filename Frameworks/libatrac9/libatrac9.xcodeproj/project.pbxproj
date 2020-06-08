@@ -35,7 +35,6 @@
 		835FC6FE23F62B0F006960FA /* bit_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FC6E223F62B0F006960FA /* bit_reader.h */; };
 		835FC6FF23F62B0F006960FA /* error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FC6E323F62B0F006960FA /* error_codes.h */; };
 		835FC70023F62B0F006960FA /* huffCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FC6E423F62B0F006960FA /* huffCodes.h */; };
-		836C052423F62E9300FA07C7 /* libatrac9-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 836C052323F62E9200FA07C7 /* libatrac9-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -186,7 +185,7 @@
 		835FC6A723F61BF0006960FA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					835FC6AF23F61BF0006960FA = {
@@ -217,7 +216,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				836C052423F62E9300FA07C7 /* libatrac9-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
