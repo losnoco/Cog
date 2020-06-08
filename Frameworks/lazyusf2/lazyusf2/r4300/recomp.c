@@ -26,6 +26,10 @@
 #include <unistd.h>
 #ifndef __MINGW32__
 #include <sys/mman.h>
+#if defined(__APPLE__)
+#include <stdio.h>
+#include <sys/sysctl.h>
+#endif
 #endif
 #endif
 
@@ -2518,6 +2522,19 @@ void recompile_opcode(usf_state_t * state)
    state->delay_slot_compiled = 2;
 }
 
+#if defined(__APPLE__)
+static inline int macos_release()
+{
+   char buf[64];
+   size_t size = sizeof(buf);
+   int err = sysctlbyname("kern.osrelease", buf, &size, NULL, 0);
+   if (err != 0) return 0;
+   int major;
+   if (sscanf(buf, "%d", &major) != 1) return 0;
+   return major;
+}
+#endif
+
 /**********************************************************************
  ************** allocate memory with executable bit set ***************
  **********************************************************************/
@@ -2537,7 +2554,16 @@ static void *malloc_exec(usf_state_t * state, size_t size)
       #define MAP_JIT 0
    #endif
 
+   #if defined(__APPLE__)
+   static int flags;
+   /* Don't use MAP_JIT unless running on Mojave (release 18) or later */
+   if (!flags) flags = MAP_PRIVATE | MAP_ANONYMOUS | (macos_release() >= 18 ? MAP_JIT : 0);
+
+   void *block = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC, flags, -1, 0);
+   #else
    void *block = mmap(NULL, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | MAP_JIT, -1, 0);
+   #endif
+
    if (block == MAP_FAILED)
        { DebugMessage(state, M64MSG_ERROR, "Memory error: couldn't allocate %zi byte block of aligned RWX memory.", size); return NULL; }
 
