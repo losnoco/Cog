@@ -680,9 +680,12 @@ STREAMFILE* open_fakename_streamfile(STREAMFILE *streamfile, const char *fakenam
     }
 
     if (fakeext) {
-        char * ext = strrchr(this_sf->fakename,'.');
-        if (ext != NULL)
+        char* ext = strrchr(this_sf->fakename,'.');
+        if (ext != NULL) {
             ext[1] = '\0'; /* truncate past dot */
+        } else {
+            strcat(this_sf->fakename, "."); /* no extension = add dot */
+        }
         strcat(this_sf->fakename, fakeext);
     }
 
@@ -1186,6 +1189,9 @@ static int find_chunk_internal(STREAMFILE *streamFile, uint32_t chunk_id, off_t 
         uint32_t chunk_type = read_32bit_type(offset + 0x00,streamFile);
         uint32_t chunk_size = read_32bit_size(offset + 0x04,streamFile);
         //;VGM_LOG("CHUNK: type=%x, size=%x at %lx\n", chunk_type, chunk_size, offset);
+
+        if (chunk_type == 0xFFFFFFFF || chunk_size == 0xFFFFFFFF)
+            return 0;
 
         if (chunk_type == chunk_id) {
             if (out_chunk_offset) *out_chunk_offset = offset + 0x08;

@@ -312,7 +312,6 @@
 		836F6FA318BDC2190095E648 /* naomi_spsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E6718BDC2180095E648 /* naomi_spsd.c */; };
 		836F6FA418BDC2190095E648 /* nds_hwas.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E6818BDC2180095E648 /* nds_hwas.c */; };
 		836F6FA518BDC2190095E648 /* nds_rrds.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E6918BDC2180095E648 /* nds_rrds.c */; };
-		836F6FA618BDC2190095E648 /* nds_sad.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E6A18BDC2180095E648 /* nds_sad.c */; };
 		836F6FA718BDC2190095E648 /* nds_strm.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E6B18BDC2180095E648 /* nds_strm.c */; };
 		836F6FA818BDC2190095E648 /* nds_swav.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E6C18BDC2180095E648 /* nds_swav.c */; };
 		836F6FA918BDC2190095E648 /* ngc_adpdtk.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E6D18BDC2180095E648 /* ngc_adpdtk.c */; };
@@ -579,6 +578,14 @@
 		83C7282922BC8C1500678B4A /* mixing.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7282522BC8C1400678B4A /* mixing.c */; };
 		83C7282A22BC8C1500678B4A /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7282622BC8C1400678B4A /* plugins.c */; };
 		83CD428A1F787879000F77BE /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CD42851F787878000F77BE /* libswresample.a */; };
+		83D2007A248DDB770048BD24 /* fsb_encrypted_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D20072248DDB760048BD24 /* fsb_encrypted_streamfile.h */; };
+		83D2007B248DDB770048BD24 /* mups_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D20073248DDB760048BD24 /* mups_streamfile.h */; };
+		83D2007C248DDB770048BD24 /* ktsr.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20074248DDB760048BD24 /* ktsr.c */; };
+		83D2007D248DDB770048BD24 /* kat.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20075248DDB760048BD24 /* kat.c */; };
+		83D2007E248DDB770048BD24 /* pcm_success.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20076248DDB770048BD24 /* pcm_success.c */; };
+		83D2007F248DDB770048BD24 /* mups.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20077248DDB770048BD24 /* mups.c */; };
+		83D20080248DDB770048BD24 /* sadf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20078248DDB770048BD24 /* sadf.c */; };
+		83D20081248DDB770048BD24 /* sadl.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20079248DDB770048BD24 /* sadl.c */; };
 		83D2F58E2356B266007646ED /* libopus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D2F58A2356B266007646ED /* libopus.a */; };
 		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
 		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1019,7 +1026,6 @@
 		836F6E6718BDC2180095E648 /* naomi_spsd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = naomi_spsd.c; sourceTree = "<group>"; };
 		836F6E6818BDC2180095E648 /* nds_hwas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_hwas.c; sourceTree = "<group>"; };
 		836F6E6918BDC2180095E648 /* nds_rrds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_rrds.c; sourceTree = "<group>"; };
-		836F6E6A18BDC2180095E648 /* nds_sad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_sad.c; sourceTree = "<group>"; };
 		836F6E6B18BDC2180095E648 /* nds_strm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_strm.c; sourceTree = "<group>"; };
 		836F6E6C18BDC2180095E648 /* nds_swav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_swav.c; sourceTree = "<group>"; };
 		836F6E6D18BDC2180095E648 /* ngc_adpdtk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ngc_adpdtk.c; sourceTree = "<group>"; };
@@ -1285,6 +1291,14 @@
 		83C7282522BC8C1400678B4A /* mixing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mixing.c; sourceTree = "<group>"; };
 		83C7282622BC8C1400678B4A /* plugins.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugins.c; sourceTree = "<group>"; };
 		83CD42851F787878000F77BE /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = ../../ThirdParty/ffmpeg/lib/libswresample.a; sourceTree = "<group>"; };
+		83D20072248DDB760048BD24 /* fsb_encrypted_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsb_encrypted_streamfile.h; sourceTree = "<group>"; };
+		83D20073248DDB760048BD24 /* mups_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mups_streamfile.h; sourceTree = "<group>"; };
+		83D20074248DDB760048BD24 /* ktsr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ktsr.c; sourceTree = "<group>"; };
+		83D20075248DDB760048BD24 /* kat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kat.c; sourceTree = "<group>"; };
+		83D20076248DDB770048BD24 /* pcm_success.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcm_success.c; sourceTree = "<group>"; };
+		83D20077248DDB770048BD24 /* mups.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mups.c; sourceTree = "<group>"; };
+		83D20078248DDB770048BD24 /* sadf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sadf.c; sourceTree = "<group>"; };
+		83D20079248DDB770048BD24 /* sadl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sadl.c; sourceTree = "<group>"; };
 		83D2F58A2356B266007646ED /* libopus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libopus.a; path = ../../ThirdParty/ffmpeg/lib/libopus.a; sourceTree = "<group>"; };
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
 		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
@@ -1699,6 +1713,7 @@
 				838BDB6D1D3B043C0022CA6F /* ffmpeg.c */,
 				836F6E4B18BDC2180095E648 /* ffw.c */,
 				8349A8FD1FE6257F00E26435 /* flx.c */,
+				83D20072248DDB760048BD24 /* fsb_encrypted_streamfile.h */,
 				83A21F81201D8981000F04B9 /* fsb_encrypted.c */,
 				834FE0C4215C79E6000A5D3D /* fsb_interleave_streamfile.h */,
 				83A21F7E201D8980000F04B9 /* fsb_keys.h */,
@@ -1734,9 +1749,11 @@
 				836F6E5818BDC2180095E648 /* ivb.c */,
 				837CEAE923487F2B00E62A4A /* jstm_streamfile.h */,
 				837CEAEF23487F2C00E62A4A /* jstm.c */,
+				83D20075248DDB760048BD24 /* kat.c */,
 				834FE0C3215C79E6000A5D3D /* kma9_streamfile.h */,
 				83A21F83201D8981000F04B9 /* kma9.c */,
 				836F6E5918BDC2180095E648 /* kraw.c */,
+				83D20074248DDB760048BD24 /* ktsr.c */,
 				830EBE122004656E0023AA10 /* ktss.c */,
 				8373342423F60CDB00DE14DC /* kwb.c */,
 				8373341F23F60CDB00DE14DC /* lrmd_streamfile.h */,
@@ -1764,6 +1781,8 @@
 				83C7280322BC893A00678B4A /* mtaf.c */,
 				83031ED5243C510400C3F3E0 /* mul_streamfile.h */,
 				832BF81221E05149006F50F1 /* mul.c */,
+				83D20073248DDB760048BD24 /* mups_streamfile.h */,
+				83D20077248DDB770048BD24 /* mups.c */,
 				836F6E6218BDC2180095E648 /* mus_acm.c */,
 				83C7280622BC893B00678B4A /* mus_vc.c */,
 				836F6E6318BDC2180095E648 /* musc.c */,
@@ -1776,7 +1795,6 @@
 				836F6E6718BDC2180095E648 /* naomi_spsd.c */,
 				836F6E6818BDC2180095E648 /* nds_hwas.c */,
 				836F6E6918BDC2180095E648 /* nds_rrds.c */,
-				836F6E6A18BDC2180095E648 /* nds_sad.c */,
 				830165991F256BD000CA0941 /* nds_strm_ffta2.c */,
 				836F6E6B18BDC2180095E648 /* nds_strm.c */,
 				836F6E6C18BDC2180095E648 /* nds_swav.c */,
@@ -1822,6 +1840,7 @@
 				8349A8F01FE6257C00E26435 /* pc_ast.c */,
 				836F6E8618BDC2180095E648 /* pc_mxst.c */,
 				8306B0D12098458F000302D4 /* pcm_sre.c */,
+				83D20076248DDB770048BD24 /* pcm_success.c */,
 				836F6E8B18BDC2180095E648 /* pona.c */,
 				836F6E8C18BDC2180095E648 /* pos.c */,
 				8306B0C52098458D000302D4 /* ppst_streamfile.h */,
@@ -1907,6 +1926,8 @@
 				836F6EE918BDC2190095E648 /* rwx.c */,
 				836F6EEA18BDC2190095E648 /* s14_sss.c */,
 				8349A8F11FE6257D00E26435 /* sab.c */,
+				83D20078248DDB770048BD24 /* sadf.c */,
+				83D20079248DDB770048BD24 /* sadl.c */,
 				836F6EEB18BDC2190095E648 /* sat_baka.c */,
 				836F6EEC18BDC2190095E648 /* sat_dvi.c */,
 				836F6EED18BDC2190095E648 /* sat_sap.c */,
@@ -2072,6 +2093,7 @@
 				834FE0ED215C79ED000A5D3D /* fsb_interleave_streamfile.h in Headers */,
 				8351F32E2212B57000A606E4 /* ubi_bao_streamfile.h in Headers */,
 				8349A9111FE6258200E26435 /* bar_streamfile.h in Headers */,
+				83D2007A248DDB770048BD24 /* fsb_encrypted_streamfile.h in Headers */,
 				836F6F2718BDC2190095E648 /* g72x_state.h in Headers */,
 				83FC176F23AC58D100E1025F /* cri_utf.h in Headers */,
 				83C7282822BC8C1500678B4A /* mixing.h in Headers */,
@@ -2115,6 +2137,7 @@
 				8373341D23F60C7B00DE14DC /* g7221_decoder_lib.h in Headers */,
 				8306B0E820984590000302D4 /* opus_interleave_streamfile.h in Headers */,
 				83031EDD243C510500C3F3E0 /* xnb_streamfile.h in Headers */,
+				83D2007B248DDB770048BD24 /* mups_streamfile.h in Headers */,
 				8373341623F60C7B00DE14DC /* g7221_decoder_aes.h in Headers */,
 				8373341923F60C7B00DE14DC /* g7221_decoder_lib_data.h in Headers */,
 				83AFABBD23795202002F3947 /* ea_eaac_opus_streamfile.h in Headers */,
@@ -2167,7 +2190,7 @@
 		836F6B3018BDB8880095E648 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					836F6B3818BDB8880095E648 = {
@@ -2384,6 +2407,7 @@
 				834FE105215C79ED000A5D3D /* xmd.c in Sources */,
 				837CEADA23487E8300E62A4A /* acb.c in Sources */,
 				834FE0F6215C79ED000A5D3D /* derf.c in Sources */,
+				83D20081248DDB770048BD24 /* sadl.c in Sources */,
 				836F6F8B18BDC2190095E648 /* genh.c in Sources */,
 				83C7281922BC893D00678B4A /* fsb5_fev.c in Sources */,
 				8349A8EA1FE6253900E26435 /* blocked_ea_schl.c in Sources */,
@@ -2475,7 +2499,9 @@
 				836F6FD318BDC2190095E648 /* ps2_ccc.c in Sources */,
 				83C7281C22BC893D00678B4A /* sfh.c in Sources */,
 				834FE0FC215C79ED000A5D3D /* vai.c in Sources */,
+				83D2007F248DDB770048BD24 /* mups.c in Sources */,
 				83AA5D171F6E2F600020821C /* mpeg_custom_utils_ealayer3.c in Sources */,
+				83D20080248DDB770048BD24 /* sadf.c in Sources */,
 				83345A521F8AEB2800B2EAA4 /* xvag.c in Sources */,
 				836F6F3918BDC2190095E648 /* SASSC_decoder.c in Sources */,
 				8306B0A920984552000302D4 /* blocked_adm.c in Sources */,
@@ -2507,7 +2533,6 @@
 				83AA5D191F6E2F600020821C /* ea_xas_decoder.c in Sources */,
 				836F6F9318BDC2190095E648 /* ivaud.c in Sources */,
 				836F6F8518BDC2190095E648 /* exakt_sc.c in Sources */,
-				836F6FA618BDC2190095E648 /* nds_sad.c in Sources */,
 				8306B0F120984590000302D4 /* ppst.c in Sources */,
 				832BF81C21E0514B006F50F1 /* xpcm.c in Sources */,
 				836F702B18BDC2190095E648 /* sdt.c in Sources */,
@@ -2726,6 +2751,7 @@
 				836F6FEA18BDC2190095E648 /* ps2_msa.c in Sources */,
 				836F6F3618BDC2190095E648 /* ogg_vorbis_decoder.c in Sources */,
 				8306B0E520984590000302D4 /* ubi_lyn.c in Sources */,
+				83D2007D248DDB770048BD24 /* kat.c in Sources */,
 				836F6F7618BDC2190095E648 /* brstm.c in Sources */,
 				836F700718BDC2190095E648 /* ps2_vgv.c in Sources */,
 				836F704F18BDC2190095E648 /* xwb.c in Sources */,
@@ -2753,6 +2779,7 @@
 				83A21F8C201D8982000F04B9 /* kma9.c in Sources */,
 				8342469420C4D23000926E48 /* h4m.c in Sources */,
 				834FE111215C79ED000A5D3D /* ck.c in Sources */,
+				83D2007C248DDB770048BD24 /* ktsr.c in Sources */,
 				836F704E18BDC2190095E648 /* xss.c in Sources */,
 				836F6FD118BDC2190095E648 /* ps2_bg00.c in Sources */,
 				836F6F4118BDC2190095E648 /* blocked.c in Sources */,
@@ -2772,6 +2799,7 @@
 				836F6FBA18BDC2190095E648 /* ngc_ymf.c in Sources */,
 				83F1EE2E245D4FB20076E182 /* vadpcm_decoder.c in Sources */,
 				836F705018BDC2190095E648 /* ydsp.c in Sources */,
+				83D2007E248DDB770048BD24 /* pcm_success.c in Sources */,
 				8306B0B720984552000302D4 /* blocked_str_snds.c in Sources */,
 				836F702718BDC2190095E648 /* sat_baka.c in Sources */,
 				832389501D2246C300482226 /* hca.c in Sources */,
@@ -2956,7 +2984,7 @@
 		836F6B6218BDB8880095E648 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
@@ -2986,7 +3014,7 @@
 		836F6B6318BDB8880095E648 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";

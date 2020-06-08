@@ -351,6 +351,9 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_ubi_sb,
     init_vgmstream_ubi_sm,
     init_vgmstream_ubi_bnm,
+    init_vgmstream_ubi_bnm_ps2,
+    init_vgmstream_ubi_dat,
+    init_vgmstream_ubi_blk,
     init_vgmstream_ezw,
     init_vgmstream_vxn,
     init_vgmstream_ea_snr_sns,
@@ -494,6 +497,10 @@ VGMSTREAM * (*init_vgmstream_functions[])(STREAMFILE *streamFile) = {
     init_vgmstream_bkhd_fx,
     init_vgmstream_diva,
     init_vgmstream_imuse,
+    init_vgmstream_ktsr,
+    init_vgmstream_mups,
+    init_vgmstream_kat,
+    init_vgmstream_pcm_success,
 
     /* lowest priority metas (should go after all metas, and TXTH should go before raw formats) */
     init_vgmstream_txth,            /* proper parsers should supersede TXTH, once added */

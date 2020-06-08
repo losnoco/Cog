@@ -137,7 +137,6 @@ VGMSTREAM * init_vgmstream_hca_subkey(STREAMFILE *streamFile, uint16_t subkey);
 
 #ifdef VGM_USE_FFMPEG
 VGMSTREAM * init_vgmstream_ffmpeg(STREAMFILE *streamFile);
-VGMSTREAM * init_vgmstream_ffmpeg_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size);
 
 VGMSTREAM * init_vgmstream_mp4_aac_ffmpeg(STREAMFILE * streamFile);
 #endif
@@ -654,7 +653,10 @@ VGMSTREAM * init_vgmstream_naac(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_ubi_sb(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_ubi_sm(STREAMFILE * streamFile);
+VGMSTREAM * init_vgmstream_ubi_dat(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_ubi_bnm(STREAMFILE * streamFile);
+VGMSTREAM * init_vgmstream_ubi_bnm_ps2(STREAMFILE * streamFile);
+VGMSTREAM * init_vgmstream_ubi_blk(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_ezw(STREAMFILE * streamFile);
 
@@ -896,5 +898,13 @@ VGMSTREAM* init_vgmstream_encrypted(STREAMFILE* sf);
 VGMSTREAM* init_vgmstream_diva(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_imuse(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_ktsr(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_mups(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_kat(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_pcm_success(STREAMFILE* sf);
 
 #endif /*_META_H*/
