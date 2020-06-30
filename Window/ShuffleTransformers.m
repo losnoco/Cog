@@ -24,13 +24,13 @@
 	ShuffleMode mode = (ShuffleMode) [value integerValue];
 	
 	if (mode == ShuffleOff) {
-		return [NSImage imageNamed:@"shuffleOffTemplate"];
+		return [NSImage imageNamed:@"sf.arrow.right"];
 	}
 	else if (mode == ShuffleAlbums) {
 		return [NSImage imageNamed:@"shuffleAlbumTemplate"];
 	}
 	else if (mode == ShuffleAll) {
-		return [NSImage imageNamed:@"shuffleOnTemplate"];
+		return [NSImage imageNamed:@"sf.shuffle"];
 	}
 	
 	return nil;

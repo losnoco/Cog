@@ -46,10 +46,18 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 		NSImage *image = nil;
 
 		if (playbackStatus == kCogStatusPlaying) {
-			image = [NSImage imageNamed:@"pauseTemplate"];
+            if (@available(macOS 11, *)) {
+                image = [NSImage imageWithSystemSymbolName:@"pause" accessibilityDescription:@"pause"];
+            } else {
+                image = [NSImage imageNamed:@"sf.pause"];
+            }
 		}
 		else {
-			image = [NSImage imageNamed:@"playTemplate"];
+            if (@available(macOS 11, *)) {
+                image = [NSImage imageWithSystemSymbolName:@"play" accessibilityDescription:@"play"];
+            } else {
+                image = [NSImage imageNamed:@"sf.play"];
+            }
 		}
 		
 		[self setImage:image forSegment:1];

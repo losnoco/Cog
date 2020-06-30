@@ -74,16 +74,16 @@
 	RepeatMode mode = (RepeatMode) [value integerValue];
 	
 	if (mode == RepeatNone) {
-		return [NSImage imageNamed:@"repeatModeOffTemplate"];
+		return [NSImage imageNamed:@"sf.arrow.turn.up.right"];
 	}
 	else if (mode == RepeatOne) {
-		return [NSImage imageNamed:@"repeatModeOneTemplate"];
+		return [NSImage imageNamed:@"sf.repeat.one"];
 	}
 	else if (mode == RepeatAlbum) {
 		return [NSImage imageNamed:@"repeatModeAlbumTemplate"];
 	}
 	else if (mode == RepeatAll) {
-		return [NSImage imageNamed:@"repeatModeAllTemplate"];
+		return [NSImage imageNamed:@"sf.repeat"];
 	}
 
 	return nil;

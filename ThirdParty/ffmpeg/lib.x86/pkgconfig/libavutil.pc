@@ -1,0 +1,14 @@
+prefix=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg
+exec_prefix=${prefix}
+libdir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/lib
+includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 56.51.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil 
+Libs.private: -pthread -lm -framework VideoToolbox -framework CoreFoundation -framework CoreMedia -framework CoreVideo -framework CoreServices
+Cflags: -I${includedir}
