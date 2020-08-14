@@ -29,7 +29,7 @@
                         <rect key="frame" x="17" y="4" width="758" height="15"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
-                            <font key="font" metaFont="controlContent" size="11"/>
+                            <font key="font" metaFont="message" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -416,7 +416,7 @@
                             <rect key="frame" x="15" y="14" width="46" height="15"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="1567">
-                                <font key="font" metaFont="controlContent" size="11"/>
+                                <font key="font" metaFont="message" size="11"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
@@ -581,7 +581,7 @@
         <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
             <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="400" height="0.0"/>
             <value key="maxSize" type="size" width="600" height="0.0"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
@@ -623,7 +623,7 @@
                             <rect key="frame" x="0.0" y="14" width="96" height="15"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="2294" customClass="TrackingCell">
-                                <font key="font" metaFont="controlContent" size="11"/>
+                                <font key="font" metaFont="message" size="11"/>
                             </sliderCell>
                             <connections>
                                 <action selector="seek:" target="705" id="2387"/>
@@ -642,7 +642,7 @@
                             <rect key="frame" x="19" y="14" width="38" height="15"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" bezelStyle="round" id="2292">
-                                <font key="font" metaFont="controlContent" size="11"/>
+                                <font key="font" metaFont="message" size="11"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
@@ -1154,7 +1154,7 @@ CA
                                     <action selector="remove:" target="218" id="1409"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show in Finder" keyEquivalent="r" id="1135">
+                            <menuItem title="Show in Finder" keyEquivalent="R" id="1135">
                                 <connections>
                                     <action selector="showEntryInFinder:" target="218" id="1346"/>
                                     <binding destination="218" name="enabled" keyPath="selection.index" id="1449">
@@ -1265,7 +1265,7 @@ CA
                                         <menuItem isSeparatorItem="YES" id="2471">
                                             <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                         </menuItem>
-                                        <menuItem title="Toggle" keyEquivalent="R" id="2472">
+                                        <menuItem title="Toggle" keyEquivalent="r" id="2472">
                                             <connections>
                                                 <action selector="toggleRepeat:" target="218" id="2474"/>
                                             </connections>
