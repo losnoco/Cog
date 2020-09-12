@@ -41,9 +41,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #define __MACOSX__
 
+#ifndef __aarch64__
 #define OPUS_HAVE_RTCD 1
 #define OPUS_X86_MAY_HAVE_SSE 1
 #define OPUS_X86_MAY_HAVE_SSE2 1
 #define OPUS_X86_MAY_HAVE_SSE4_1 1
+
+#else
+
+#undef OPUS_HAVE_RTCD
+#define OPUS_ARM_MAY_HAVE_NEON 1
+#define OPUS_ARM_MAY_HAVE_NEON_INTR 1
+#define OPUS_ARM_PRESUME_NEON 1
+#define OPUS_ARM_PRESUME_NEON_INTR 1
+#endif
 
 #endif CONFIG_H

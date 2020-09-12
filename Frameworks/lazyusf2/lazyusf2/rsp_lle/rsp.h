@@ -27,6 +27,12 @@
 /*
  * Streaming SIMD Extensions version import management
  */
+#ifdef __aarch64__
+#define ARCH_MIN_ARM_NEON 1
+#else
+#define ARCH_MIN_SSE2 1
+#endif
+
 #ifdef ARCH_MIN_SSSE3
 #define ARCH_MIN_SSE2
 #include <tmmintrin.h>

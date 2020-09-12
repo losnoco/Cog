@@ -29,10 +29,16 @@
 #include "config.h"
 #endif
 
+#ifdef __x86_64__
+
+#include "cpu_support.h"
+#include "arch.h"
+
 #include "x86/x86cpu.h"
 #include "celt_lpc.h"
 #include "pitch.h"
 #include "pitch_sse.h"
+
 
 #if defined(OPUS_HAVE_RTCD)
 
@@ -145,4 +151,6 @@ void (*const COMB_FILTER_CONST_IMPL[OPUS_ARCHMASK + 1])(
 #endif
 
 #endif
+#endif
+
 #endif

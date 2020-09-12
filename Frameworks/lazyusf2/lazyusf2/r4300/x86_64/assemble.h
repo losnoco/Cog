@@ -77,6 +77,7 @@
 #define RP3 RCX
 #endif
 
+#ifdef DYNAREC
 void jump_start_rel8(usf_state_t *);
 void jump_end_rel8(usf_state_t *);
 void jump_start_rel32(usf_state_t *);
@@ -1192,6 +1193,7 @@ static inline void ffree_fpreg(usf_state_t * state, int fpreg)
    put8(state, 0xDD);
    put8(state, 0xC0 + fpreg);
 }
+#endif
 
 #endif /* M64P_R4300_ASSEMBLE_H */
 

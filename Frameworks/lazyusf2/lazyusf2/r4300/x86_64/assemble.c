@@ -44,6 +44,7 @@
 
 /* Static Functions */
 
+#ifdef DYNAREC
 void add_jump(usf_state_t * state, unsigned int pc_addr, unsigned int mi_addr, unsigned int absolute64)
 {
   if (state->jumps_number == state->max_jumps_number)
@@ -199,3 +200,6 @@ void jump_end_rel32(usf_state_t * state)
   put32(state, jump_vec);
   state->code_length = jump_end;
 }
+
+#endif
+

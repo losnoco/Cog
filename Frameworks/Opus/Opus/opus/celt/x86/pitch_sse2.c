@@ -29,6 +29,8 @@
 #include "config.h"
 #endif
 
+#ifdef __x86_64__
+
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
@@ -92,4 +94,6 @@ opus_val32 celt_inner_prod_sse2(const opus_val16 *x, const opus_val16 *y,
 
     return sum;
 }
+#endif
+
 #endif

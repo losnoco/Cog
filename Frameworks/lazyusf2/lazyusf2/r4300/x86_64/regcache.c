@@ -34,6 +34,7 @@
 #include "r4300/r4300.h"
 #include "r4300/recomph.h"
 
+#ifdef DYNAREC
 void init_cache(usf_state_t * state, precomp_instr* start)
 {
   int i;
@@ -622,4 +623,4 @@ void build_wrappers(usf_state_t * state, precomp_instr *instr, int start, int en
       }
      }
 }
-
+#endif

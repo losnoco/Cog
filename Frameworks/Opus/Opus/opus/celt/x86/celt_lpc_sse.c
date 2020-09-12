@@ -29,7 +29,7 @@
 #include "config.h"
 #endif
 
-#if defined(FIXED_POINT)
+#if defined(FIXED_POINT) && defined(OPUS_X86_MAY_HAVE_SSE4_1)
 
 #include <xmmintrin.h>
 #include <emmintrin.h>

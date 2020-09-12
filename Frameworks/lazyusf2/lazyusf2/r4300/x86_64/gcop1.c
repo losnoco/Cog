@@ -42,6 +42,7 @@
 #include "r4300/instr_counters.h"
 #endif
 
+#ifdef DYNAREC
 void genmfc1(usf_state_t * state)
 {
 #if defined(COUNT_INSTR)
@@ -160,4 +161,4 @@ void genctc1(usf_state_t * state)
    fldcw_m16rel(state, (unsigned short*)&state->rounding_mode);
 #endif
 }
-
+#endif

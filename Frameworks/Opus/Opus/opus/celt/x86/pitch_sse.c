@@ -29,6 +29,8 @@
 #include "config.h"
 #endif
 
+#ifdef __x86_64__
+
 #include "macros.h"
 #include "celt_lpc.h"
 #include "stack_alloc.h"
@@ -181,5 +183,7 @@ void comb_filter_const_sse(opus_val32 *y, opus_val32 *x, int T, int N,
 #endif
 }
 
+
+#endif
 
 #endif

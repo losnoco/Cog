@@ -5,7 +5,9 @@
 
 #define HAVE_BOOL 1
 
+#if !defined(__aarch64__)
 #define HAVE_MMINTRIN_H 1
+#endif
 
 #define HAVE_STRCASECMP 1
 

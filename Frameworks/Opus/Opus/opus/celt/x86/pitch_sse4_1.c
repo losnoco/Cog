@@ -29,6 +29,8 @@
 #include "config.h"
 #endif
 
+#if defined(OPUS_X86_MAY_HAVE_SSE4_1) && defined(FIXED_POINT)
+
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
@@ -38,7 +40,6 @@
 #include "mathops.h"
 #include "pitch.h"
 
-#if defined(OPUS_X86_MAY_HAVE_SSE4_1) && defined(FIXED_POINT)
 #include <smmintrin.h>
 #include "x86cpu.h"
 

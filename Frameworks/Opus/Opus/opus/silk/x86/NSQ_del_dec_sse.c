@@ -29,6 +29,8 @@
 #include "config.h"
 #endif
 
+#if defined(OPUS_X86_MAY_HAVE_SSE4_1)
+
 #include <xmmintrin.h>
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -855,3 +857,5 @@ static OPUS_INLINE void silk_nsq_del_dec_scale_states_sse4_1(
         }
     }
 }
+
+#endif

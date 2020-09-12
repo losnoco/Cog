@@ -25,6 +25,7 @@
 
 #include "r4300/recomp.h"
 
+#ifdef DYNAREC
 void init_cache(usf_state_t *, precomp_instr* start);
 void free_registers_move_start(usf_state_t *);
 void free_all_registers(usf_state_t *);
@@ -42,6 +43,7 @@ int allocate_register_64_w(usf_state_t *, unsigned long long *addr);
 void allocate_register_32_manually(usf_state_t *, int reg, unsigned int *addr);
 void allocate_register_32_manually_w(usf_state_t *, int reg, unsigned int *addr);
 void build_wrappers(usf_state_t *, precomp_instr*, int, int, precomp_block*);
+#endif
 
 #endif /* M64P_R4300_REGCACHE_H */
 

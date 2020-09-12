@@ -49,6 +49,7 @@
 
 /* static functions */
 
+#ifdef DYNAREC
 static void genupdate_count(usf_state_t * state, unsigned int addr)
 {
    mov_reg32_imm32(state, EAX, addr);
@@ -2257,4 +2258,4 @@ void gensc(usf_state_t * state)
 #endif
    gencallinterp(state, (unsigned long long)state->current_instruction_table.SC, 0);
 }
-
+#endif

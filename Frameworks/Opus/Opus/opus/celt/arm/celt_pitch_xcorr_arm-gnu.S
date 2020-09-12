@@ -549,3 +549,4 @@ celt_pitch_xcorr_edsp_done:
 
 @ END:
     .section	.note.GNU-stack,"",%progbits
+

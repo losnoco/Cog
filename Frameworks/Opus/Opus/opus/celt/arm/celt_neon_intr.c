@@ -34,10 +34,11 @@
 #include "config.h"
 #endif
 
+#if !defined(FIXED_POINT) && defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
+
 #include <arm_neon.h>
 #include "../pitch.h"
 
-#if !defined(FIXED_POINT)
 /*
  * Function: xcorr_kernel_neon_float
  * ---------------------------------

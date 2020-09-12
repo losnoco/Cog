@@ -42,6 +42,7 @@
 #include "r4300/instr_counters.h"
 #endif
 
+#ifdef DYNAREC
 static void genbltz_test(usf_state_t * state)
 {
   int rs_64bit = is64(state, (unsigned int *)state->dst->f.i.rs);
@@ -608,4 +609,4 @@ void genbgezall_idle(usf_state_t * state)
    genbgezall(state);
 #endif
 }
-
+#endif
