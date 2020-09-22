@@ -12,6 +12,7 @@
 #define IDC_SLIDER_STEREOSEPARATION     1006
 #define IDC_COMBO_RAMPING               1007
 #define IDC_FILEINFO                    1008
+#define IDC_COMBO_AMIGA_FILTER          1008
 #define IDC_CHECK_AMIGA_RESAMPLER       1009
 
 // Next default values for new objects

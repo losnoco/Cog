@@ -47,10 +47,10 @@ public:
 		ZeroMemory( &waveformatex, sizeof( WAVEFORMATEX ) );
 		waveformatex.cbSize = 0;
 		waveformatex.wFormatTag = flags.use_float ? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
-		waveformatex.nChannels = flags.channels;
+		waveformatex.nChannels = static_cast<WORD>( flags.channels );
 		waveformatex.nSamplesPerSec = flags.samplerate;
 		waveformatex.wBitsPerSample = flags.use_float ? 32 : 16;
-		waveformatex.nBlockAlign = flags.channels * ( waveformatex.wBitsPerSample / 8 );
+		waveformatex.nBlockAlign = static_cast<WORD>( flags.channels * ( waveformatex.wBitsPerSample / 8 ) );
 		waveformatex.nAvgBytesPerSec = waveformatex.nSamplesPerSec * waveformatex.nBlockAlign;
 
 		#if defined(WIN32) && defined(UNICODE)

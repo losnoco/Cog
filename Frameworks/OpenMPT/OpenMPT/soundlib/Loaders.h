@@ -47,7 +47,7 @@ constexpr uint16 MagicBE(const char(&id)[3])
 template<typename T, size_t arraySize>
 bool ReadOrderFromArray(ModSequence &order, const T(&orders)[arraySize], size_t howMany = arraySize, uint16 stopIndex = uint16_max, uint16 ignoreIndex = uint16_max)
 {
-	STATIC_ASSERT(mpt::is_binary_safe<T>::value);
+	static_assert(mpt::is_binary_safe<T>::value);
 	LimitMax(howMany, arraySize);
 	LimitMax(howMany, MAX_ORDERS);
 	ORDERINDEX readEntries = static_cast<ORDERINDEX>(howMany);
@@ -69,7 +69,7 @@ bool ReadOrderFromArray(ModSequence &order, const T(&orders)[arraySize], size_t 
 template<typename T>
 bool ReadOrderFromFile(ModSequence &order, FileReader &file, size_t howMany, uint16 stopIndex = uint16_max, uint16 ignoreIndex = uint16_max)
 {
-	STATIC_ASSERT(mpt::is_binary_safe<T>::value);
+	static_assert(mpt::is_binary_safe<T>::value);
 	if(!file.CanRead(howMany * sizeof(T)))
 		return false;
 	LimitMax(howMany, MAX_ORDERS);

@@ -13,13 +13,12 @@
 #include "mod_specifications.h"
 #ifdef MODPLUG_TRACKER
 #include "../mptrack/Moddoc.h"
-#include "../mptrack/TrackerSettings.h"
 #include "Dlsbank.h"
-#endif //MODPLUG_TRACKER
+#endif // MODPLUG_TRACKER
 #include "../soundlib/AudioCriticalSection.h"
 #ifndef MODPLUG_NO_FILESAVE
 #include "../common/mptFileIO.h"
-#endif
+#endif // !MODPLUG_NO_FILESAVE
 #include "../common/misc_util.h"
 #include "Tagging.h"
 #include "ITTools.h"
@@ -29,10 +28,10 @@
 #include "../common/version.h"
 #include "Loaders.h"
 #include "ChunkReader.h"
-#include "modsmp_ctrl.h"
 #include "../soundbase/SampleFormatConverters.h"
 #include "../soundbase/SampleFormatCopy.h"
 #include "../soundlib/ModSampleCopy.h"
+#include <functional>
 #include <map>
 
 
@@ -53,6 +52,7 @@ bool CSoundFile::ReadSampleFromFile(SAMPLEINDEX nSample, FileReader &file, bool 
 		&& !ReadS3ISample(nSample, file)
 		&& !ReadSBISample(nSample, file)
 		&& !ReadAUSample(nSample, file, mayNormalize)
+		&& !ReadBRRSample(nSample, file)
 		&& !ReadFLACSample(nSample, file)
 		&& !ReadOpusSample(nSample, file)
 		&& !ReadVorbisSample(nSample, file)
@@ -261,9 +261,9 @@ bool CSoundFile::ReadInstrumentFromSong(INSTRUMENTINDEX targetInstr, const CSoun
 	}
 
 #ifdef MODPLUG_TRACKER
-	if(!strcmp(pIns->filename, "") && srcSong.GetpModDoc() != nullptr && &srcSong != this)
+	if(pIns->filename.empty() && srcSong.GetpModDoc() != nullptr && &srcSong != this)
 	{
-		mpt::String::Copy(pIns->filename, srcSong.GetpModDoc()->GetPathNameMpt().GetFullFileName().ToLocale());
+		pIns->filename = srcSong.GetpModDoc()->GetPathNameMpt().GetFullFileName().ToLocale();
 	}
 #endif
 	pIns->Convert(srcSong.GetType(), GetType());
@@ -294,7 +294,7 @@ bool CSoundFile::ReadSampleFromSong(SAMPLEINDEX targetSample, const CSoundFile &
 
 	if(GetNumSamples() < targetSample) m_nSamples = targetSample;
 	targetSmp = sourceSmp;
-	strcpy(m_szNames[targetSample], srcSong.m_szNames[sourceSample]);
+	m_szNames[targetSample] = srcSong.m_szNames[sourceSample];
 
 	if(sourceSmp.HasSampleData())
 	{
@@ -314,9 +314,9 @@ bool CSoundFile::ReadSampleFromSong(SAMPLEINDEX targetSample, const CSoundFile &
 	}
 
 #ifdef MODPLUG_TRACKER
-	if(!strcmp(targetSmp.filename, "") && srcSong.GetpModDoc() != nullptr && &srcSong != this)
+	if((targetSmp.filename.empty()) && srcSong.GetpModDoc() != nullptr && &srcSong != this)
 	{
-		mpt::String::Copy(targetSmp.filename, mpt::ToCharset(GetCharsetInternal(), srcSong.GetpModDoc()->GetTitle()));
+		targetSmp.filename = mpt::ToCharset(GetCharsetInternal(), srcSong.GetpModDoc()->GetTitle());
 	}
 #endif
 
@@ -339,8 +339,8 @@ bool CSoundFile::ReadSampleFromSong(SAMPLEINDEX targetSample, const CSoundFile &
 
 static bool IMAADPCMUnpack16(int16 *target, SmpLength sampleLen, FileReader file, uint16 blockAlign, uint32 numChannels)
 {
-	static const int32 IMAIndexTab[8] =  { -1, -1, -1, -1, 2, 4, 6, 8 };
-	static const int32 IMAUnpackTable[90] =
+	static constexpr int8 IMAIndexTab[8] =  { -1, -1, -1, -1, 2, 4, 6, 8 };
+	static constexpr int16 IMAUnpackTable[90] =
 	{
 		7,     8,     9,     10,    11,    12,    13,    14,
 		16,    17,    19,    21,    23,    25,    28,    31,
@@ -365,7 +365,7 @@ static bool IMAADPCMUnpack16(int16 *target, SmpLength sampleLen, FileReader file
 	{
 		FileReader block = file.ReadChunk(blockAlign);
 		FileReader::PinnedRawDataView blockView = block.GetPinnedRawDataView();
-		const mpt::byte *data = blockView.data();
+		const std::byte *data = blockView.data();
 		const uint32 blockSize = static_cast<uint32>(blockView.size());
 
 		for(uint32 chn = 0; chn < numChannels; chn++)
@@ -431,7 +431,7 @@ bool CSoundFile::ReadWAVSample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 	}
 
 	DestroySampleThreadsafe(nSample);
-	strcpy(m_szNames[nSample], "");
+	m_szNames[nSample] = "";
 	ModSample &sample = Samples[nSample];
 	sample.Initialize();
 	sample.nLength = wavFile.GetSampleLength();
@@ -538,14 +538,15 @@ bool CSoundFile::ReadWAVSample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 #ifndef MODPLUG_NO_FILESAVE
 bool CSoundFile::SaveWAVSample(SAMPLEINDEX nSample, std::ostream &f) const
 {
+	const ModSample &sample = Samples[nSample];
+	if(sample.uFlags[CHN_ADLIB])
+		return false;
+
 	WAVWriter file(&f);
 
 	if(!file.IsValid())
-	{
 		return false;
-	}
 
-	const ModSample &sample = Samples[nSample];
 	file.WriteFormat(sample.GetSampleRate(GetType()), sample.GetElementarySampleSize() * 8, sample.GetNumChannels(), WAVFormatChunk::fmtPCM);
 
 	// Write sample data
@@ -640,7 +641,7 @@ static void Wave64TagFromLISTINFO(mpt::ustring & dst, uint16 codePage, const Chu
 	textChunk.ReadString<mpt::String::maybeNullTerminated>(str, textChunk.GetLength());
 	str = mpt::String::Replace(str, std::string("\r\n"), std::string("\n"));
 	str = mpt::String::Replace(str, std::string("\r"), std::string("\n"));
-	dst = mpt::ToUnicode(codePage, mpt::CharsetWindows1252, str);
+	dst = mpt::ToUnicode(codePage, mpt::Charset::Windows1252, str);
 }
 
 
@@ -755,7 +756,7 @@ bool CSoundFile::ReadW64Sample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 
 	FileTags tags;
 
-	uint16 codePage = 28591; // mpt::CharsetISO8859_1
+	uint16 codePage = 28591; // mpt::Charset::ISO8859_1
 	FileReader csetChunk = chunkList.GetChunk(guidCSET);
 	if(csetChunk.IsValid())
 	{
@@ -804,7 +805,7 @@ bool CSoundFile::ReadW64Sample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 
 	sampleIO.ReadSample(mptSample, audioData);
 
-	mpt::String::Copy(m_szNames[nSample], mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags)));
+	m_szNames[nSample] = mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags));
 
 	mptSample.Convert(MOD_TYPE_IT, GetType());
 	mptSample.PrecomputeLoops(*this, false);
@@ -989,7 +990,7 @@ static void PatchToSample(CSoundFile *that, SAMPLEINDEX nSample, GF1SampleHeader
 	sample.Convert(MOD_TYPE_IT, that->GetType());
 	sample.PrecomputeLoops(*that, false);
 
-	mpt::String::Read<mpt::String::maybeNullTerminated>(that->m_szNames[nSample], sampleHeader.name);
+	that->m_szNames[nSample] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.name);
 }
 
 
@@ -1018,7 +1019,7 @@ bool CSoundFile::ReadPATSample(SAMPLEINDEX nSample, FileReader &file)
 
 	if(instrHeader.name[0] > ' ')
 	{
-		mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[nSample], instrHeader.name);
+		m_szNames[nSample] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, instrHeader.name);
 	}
 	return true;
 }
@@ -1054,7 +1055,7 @@ bool CSoundFile::ReadPATInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 	if (nInstr > m_nInstruments) m_nInstruments = nInstr;
 	Instruments[nInstr] = pIns;
 
-	mpt::String::Read<mpt::String::maybeNullTerminated>(pIns->name, instrHeader.name);
+	pIns->name = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, instrHeader.name);
 	pIns->nFadeOut = 2048;
 	if(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT))
 	{
@@ -1076,7 +1077,7 @@ bool CSoundFile::ReadPATInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 		GF1SampleHeader sampleHeader;
 		PatchToSample(this, nextSample, sampleHeader, file);
 		int32 nMinNote = (sampleHeader.low_freq > 100) ? PatchFreqToNoteInt(sampleHeader.low_freq) : 0;
-		int32 nMaxNote = (sampleHeader.high_freq > 100) ? PatchFreqToNoteInt(sampleHeader.high_freq) : NOTE_MAX;
+		int32 nMaxNote = (sampleHeader.high_freq > 100) ? PatchFreqToNoteInt(sampleHeader.high_freq) : static_cast<uint8>(NOTE_MAX);
 		int32 nBaseNote = (sampleHeader.root_freq > 100) ? PatchFreqToNoteInt(sampleHeader.root_freq) : -1;
 		if(!sampleHeader.scale_factor && layerHeader.samples == 1) { nMinNote = 0; nMaxNote = NOTE_MAX; }
 		// Fill Note Map
@@ -1139,7 +1140,7 @@ bool CSoundFile::ReadS3ISample(SAMPLEINDEX nSample, FileReader &file)
 
 	ModSample &sample = Samples[nSample];
 	sampleHeader.ConvertToMPT(sample);
-	mpt::String::Read<mpt::String::nullTerminated>(m_szNames[nSample], sampleHeader.name);
+	m_szNames[nSample] = mpt::String::ReadBuf(mpt::String::nullTerminated, sampleHeader.name);
 
 	if(sampleHeader.sampleType < S3MSampleHeader::typeAdMel)
 		sampleHeader.GetSampleFormat(false).ReadSample(sample, file);
@@ -1161,8 +1162,8 @@ bool CSoundFile::SaveS3ISample(SAMPLEINDEX smp, std::ostream &f) const
 	S3MSampleHeader sampleHeader;
 	MemsetZero(sampleHeader);
 	SmpLength length = sampleHeader.ConvertToS3M(sample);
-	mpt::String::Write<mpt::String::nullTerminated>(sampleHeader.name, m_szNames[smp]);
-	mpt::String::Write<mpt::String::maybeNullTerminated>(sampleHeader.reserved2, mpt::ToCharset(mpt::CharsetUTF8, Version::Current().GetOpenMPTVersionString()));
+	mpt::String::WriteBuf(mpt::String::nullTerminated, sampleHeader.name) = m_szNames[smp];
+	mpt::String::WriteBuf(mpt::String::maybeNullTerminated, sampleHeader.reserved2) = mpt::ToCharset(mpt::Charset::UTF8, Version::Current().GetOpenMPTVersionString());
 	if(length)
 		sampleHeader.dataPointer[1] = sizeof(S3MSampleHeader) >> 4;
 	mpt::IO::Write(f, sampleHeader);
@@ -1290,8 +1291,8 @@ bool CSoundFile::ReadXIInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 			mptSample.uFlags &= ~CHN_PANNING;
 		}
 
-		mpt::String::Read<mpt::String::spacePadded>(mptSample.filename, sampleHeader.name);
-		mpt::String::Read<mpt::String::spacePadded>(m_szNames[sampleMap[i]], sampleHeader.name);
+		mptSample.filename = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
+		m_szNames[sampleMap[i]] = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
 
 		sampleFlags[i] = sampleHeader.GetSampleFormat();
 	}
@@ -1352,7 +1353,7 @@ bool CSoundFile::SaveXIInstrument(INSTRUMENTINDEX nInstr, std::ostream &f) const
 		}
 		sampleFlags[i] = xmSample.GetSampleFormat();
 
-		mpt::String::Write<mpt::String::spacePadded>(xmSample.name, m_szNames[samples[i]]);
+		mpt::String::WriteBuf(mpt::String::spacePadded, xmSample.name) = m_szNames[samples[i]];
 
 		mpt::IO::Write(f, xmSample);
 	}
@@ -1425,8 +1426,8 @@ bool CSoundFile::ReadXISample(SAMPLEINDEX nSample, FileReader &file)
 	fileHeader.instrument.ApplyAutoVibratoToMPT(mptSample);
 	mptSample.Convert(MOD_TYPE_XM, GetType());
 
-	mpt::String::Read<mpt::String::spacePadded>(mptSample.filename, sampleHeader.name);
-	mpt::String::Read<mpt::String::spacePadded>(m_szNames[nSample], sampleHeader.name);
+	mptSample.filename = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
+	m_szNames[nSample] = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
 
 	// Read sample data
 	sampleHeader.GetSampleFormat().ReadSample(Samples[nSample], file);
@@ -1434,860 +1435,6 @@ bool CSoundFile::ReadXISample(SAMPLEINDEX nSample, FileReader &file)
 
 	return true;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// SFZ Instrument
-
-#ifdef MPT_EXTERNAL_SAMPLES
-
-struct SFZControl
-{
-	std::string defaultPath;
-	int8 octaveOffset = 0, noteOffset = 0;
-
-	void Parse(const std::string &key, const std::string &value)
-	{
-		if(key == "default_path")
-			defaultPath = value;
-		else if(key == "octave_offset")
-			octaveOffset = ConvertStrTo<int8>(value);
-		else if(key == "note_offset")
-			noteOffset = ConvertStrTo<int8>(value);
-	}
-};
-
-struct SFZEnvelope
-{
-	float startLevel = 0, delay = 0, attack = 0, hold = 0,
-		decay = 0, sustainLevel = 100, release = 0, depth = 0;
-
-	void Parse(std::string key, const std::string &value)
-	{
-		key.erase(0, key.find('_') + 1);
-		float v = ConvertStrTo<float>(value);
-		if(key == "depth")
-			Limit(v, -12000.0f, 12000.0f);
-		else if(key == "start" || key == "sustain")
-			Limit(v, -100.0f, 100.0f);
-		else
-			Limit(v, 0.0f, 100.0f);
-
-		if(key == "start")
-			startLevel = v;
-		else if(key == "delay")
-			delay = v;
-		else if(key == "attack")
-			attack = v;
-		else if(key == "hold")
-			hold = v;
-		else if(key == "decay")
-			decay = v;
-		else if(key == "sustain")
-			sustainLevel = v;
-		else if(key == "release")
-			release = v;
-		else if(key == "depth")
-			depth = v;
-	}
-
-	static EnvelopeNode::tick_t ToTicks(float duration, float tickDuration)
-	{
-		return std::max(EnvelopeNode::tick_t(1), mpt::saturate_round<EnvelopeNode::tick_t>(duration / tickDuration));
-	}
-
-	EnvelopeNode::value_t ToValue(float value, EnvelopeType envType) const
-	{
-		value *= (ENVELOPE_MAX / 100.0f);
-		if(envType == ENV_PITCH)
-		{
-			value *= depth / 3200.0f;
-			value += ENVELOPE_MID;
-		}
-		Limit<float, float>(value, ENVELOPE_MIN, ENVELOPE_MAX);
-		return mpt::saturate_round<EnvelopeNode::value_t>(value);
-	}
-
-	void ConvertToMPT(ModInstrument *ins, const CSoundFile &sndFile, EnvelopeType envType) const
-	{
-		auto &env = ins->GetEnvelope(envType);
-		float tickDuration = sndFile.m_PlayState.m_nSamplesPerTick / static_cast<float>(sndFile.GetSampleRate());
-		if(tickDuration <= 0)
-			return;
-		env.clear();
-		if(envType != ENV_VOLUME && attack == 0 && delay == 0 && hold == 0 && decay == 0 && sustainLevel == 100 && release == 0 && depth == 0)
-		{
-			env.dwFlags.reset(ENV_SUSTAIN | ENV_ENABLED);
-			return;
-		}
-		if(attack > 0 || delay > 0)
-		{
-			env.push_back(0, ToValue(startLevel, envType));
-			if(delay > 0)
-				env.push_back(ToTicks(delay, tickDuration), env.back().value);
-			env.push_back(env.back().tick + ToTicks(attack, tickDuration), ToValue(100, envType));
-		}
-		if(hold > 0)
-		{
-			if(env.empty())
-				env.push_back(0, ToValue(100, envType));
-			env.push_back(env.back().tick + ToTicks(hold, tickDuration), env.back().value);
-		}
-		if(env.empty())
-			env.push_back(0, ToValue(100, envType));
-		auto sustain = ToValue(sustainLevel, envType);
-		if(env.back().value != sustain)
-			env.push_back(env.back().tick + ToTicks(decay, tickDuration), sustain);
-		env.nSustainStart = env.nSustainEnd = static_cast<uint8>(env.size() - 1);
-		if(sustainLevel != 0)
-		{
-			if(envType == ENV_VOLUME && env.nSustainEnd > 0)
-				env.nReleaseNode = env.nSustainEnd;
-			env.push_back(env.back().tick + ToTicks(release, tickDuration), ToValue(0, envType));
-			env.dwFlags.set(ENV_SUSTAIN);
-		}
-		env.dwFlags.set(ENV_ENABLED);
-	}
-};
-
-struct SFZRegion
-{
-	enum class LoopMode
-	{
-		kUnspecified,
-		kContinuous,
-		kOneShot,
-		kSustain,
-		kNoLoop
-	};
-
-	enum class LoopType
-	{
-		kUnspecified,
-		kForward,
-		kBackward,
-		kAlternate,
-	};
-
-	std::string filename, name;
-	SFZEnvelope ampEnv, pitchEnv, filterEnv;
-	SmpLength loopStart = 0, loopEnd = 0;
-	SmpLength end = MAX_SAMPLE_LENGTH, offset = 0;
-	double loopCrossfade = 0.0;
-	LoopMode loopMode = LoopMode::kUnspecified;
-	LoopType loopType = LoopType::kUnspecified;
-	int32 cutoff = 0;			// in Hz
-	int32 filterRandom = 0;		// 0...9600 cents
-	int16 volume = 0;			// -144dB...+6dB
-	int16 pitchBend = 200;		// -9600...9600 cents
-	float pitchLfoFade = 0;		// 0...100 seconds
-	int16 pitchLfoDepth = 0;	// -1200...12000
-	uint8 pitchLfoFreq = 0;		// 0...20 Hz
-	int8 panning = -128;		// -100...+100
-	int8 transpose = 0;
-	int8 finetune = 0;
-	uint8 keyLo = 0, keyHi = 127, keyRoot = 60;
-	uint8 resonance = 0;		// 0...40dB
-	InstrFilterMode filterType = FLTMODE_UNCHANGED;
-	uint8 polyphony = 255;
-	bool useSampleKeyRoot = false;
-	bool invertPhase = false;
-
-	template<typename T, typename Tc>
-	static void Read(const std::string &valueStr, T &value, Tc valueMin = std::numeric_limits<T>::min(), Tc valueMax = std::numeric_limits<T>::max())
-	{
-		double valueF = ConvertStrTo<double>(valueStr);
-		MPT_CONSTANT_IF(std::numeric_limits<T>::is_integer)
-		{
-			valueF = mpt::round(valueF);
-		}
-		Limit(valueF, static_cast<double>(valueMin), static_cast<double>(valueMax));
-		value = static_cast<T>(valueF);
-	}
-
-	static uint8 ReadKey(const std::string &value, const SFZControl &control)
-	{
-		if(value.empty())
-			return 0;
-
-		int key = 0;
-		if(value[0] >= '0' && value[0] <= '9')
-		{
-			// MIDI key
-			key = ConvertStrTo<uint8>(value);
-		} else if(value.length() < 2)
-		{
-			return 0;
-		} else
-		{
-			// Scientific pitch
-			static const int8 keys[] = { 9, 11, 0, 2, 4, 5, 7 };
-			STATIC_ASSERT(CountOf(keys) == 'g' - 'a' + 1);
-			auto keyC = value[0];
-			if(keyC >= 'A' && keyC <= 'G')
-				key = keys[keyC - 'A'];
-			if(keyC >= 'a' && keyC <= 'g')
-				key = keys[keyC - 'a'];
-			else
-				return 0;
-
-			uint8 octaveOffset = 1;
-			if(value[1] == '#')
-			{
-				key++;
-				octaveOffset = 2;
-			} else if(value[1] == 'b' || value[1] == 'B')
-			{
-				key--;
-				octaveOffset = 2;
-			}
-			if(octaveOffset >= value.length())
-				return 0;
-
-			int8 octave = ConvertStrTo<int8>(value.c_str() + octaveOffset);
-			key += (octave + 1) * 12;
-		}
-		key += control.octaveOffset * 12 + control.noteOffset;
-		return static_cast<uint8>(Clamp(key, 0, 127));
-}
-
-	void Parse(const std::string &key, const std::string &value, const SFZControl &control)
-	{
-		if(key == "sample")
-			filename = control.defaultPath + value;
-		else if(key == "region_label")
-			name = value;
-		else if(key == "lokey")
-			keyLo = ReadKey(value, control);
-		else if(key == "hikey")
-			keyHi = ReadKey(value, control);
-		else if(key == "pitch_keycenter")
-		{
-			keyRoot = ReadKey(value, control);
-			useSampleKeyRoot = (value == "sample");
-		}
-		else if(key == "key")
-		{
-			keyLo = keyHi = keyRoot = ReadKey(value, control);
-			useSampleKeyRoot = false;
-		}
-		else if(key == "bend_up" || key == "bendup")
-			Read(value, pitchBend, -9600, 9600);
-		else if(key == "pitchlfo_fade")
-			Read(value, pitchLfoFade, 0.0f, 100.0f);
-		else if(key == "pitchlfo_depth")
-			Read(value, pitchLfoDepth, -12000, 12000);
-		else if(key == "pitchlfo_freq")
-			Read(value, pitchLfoFreq, 0, 20);
-		else if(key == "volume")
-			Read(value, volume, -144, 6);
-		else if(key == "pan")
-			Read(value, panning, -100, 100);
-		else if(key == "transpose")
-			Read(value, transpose, -127, 127);
-		else if(key == "tune")
-			Read(value, finetune, -100, 100);
-		else if(key == "end")
-			Read(value, end, SmpLength(0), MAX_SAMPLE_LENGTH);
-		else if(key == "offset")
-			Read(value, offset, SmpLength(0), MAX_SAMPLE_LENGTH);
-		else if(key == "loop_start" || key == "loopstart")
-			Read(value, loopStart, SmpLength(0), MAX_SAMPLE_LENGTH);
-		else if(key == "loop_end" || key == "loopend")
-			Read(value, loopEnd, SmpLength(0), MAX_SAMPLE_LENGTH);
-		else if(key == "loop_crossfade")
-			Read(value, loopCrossfade, 0.0, DBL_MAX);
-		else if(key == "loop_mode" || key == "loopmode")
-		{
-			if(value == "loop_continuous")
-				loopMode = LoopMode::kContinuous;
-			else if(value == "one_shot")
-				loopMode = LoopMode::kOneShot;
-			else if(value == "loop_sustain")
-				loopMode = LoopMode::kSustain;
-			else if(value == "no_loop")
-				loopMode = LoopMode::kNoLoop;
-		}
-		else if(key == "loop_type" || key == "looptype")
-		{
-			if(value == "forward")
-				loopType = LoopType::kForward;
-			else if(value == "backward")
-				loopType = LoopType::kBackward;
-			else if(value == "alternate")
-				loopType = LoopType::kAlternate;
-		}
-		else if(key == "cutoff")
-			Read(value, cutoff, 0, 96000);
-		else if(key == "fil_random")
-			Read(value, filterRandom, 0, 9600);
-		else if(key == "resonance")
-			Read(value, resonance, 0u, 40u);
-		else if(key == "polyphony")
-			Read(value, polyphony, 0u, 255u);
-		else if(key == "phase")
-			invertPhase = (value == "invert");
-		else if(key == "fil_type" || key == "filtype")
-		{
-			if(value == "lpf_1p" || value == "lpf_2p" || value == "lpf_4p" || value == "lpf_6p")
-				filterType = FLTMODE_LOWPASS;
-			else if(value == "hpf_1p" || value == "hpf_2p" || value == "hpf_4p" || value == "hpf_6p")
-				filterType = FLTMODE_HIGHPASS;
-			// Alternatives: bpf_2p, brf_2p
-		}
-		else if(key.substr(0, 6) == "ampeg_")
-			ampEnv.Parse(key, value);
-		else if(key.substr(0, 6) == "fileg_")
-			filterEnv.Parse(key, value);
-		else if(key.substr(0, 8) == "pitcheg_")
-			pitchEnv.Parse(key, value);
-	}
-};
-
-bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
-{
-	file.Rewind();
-
-	enum { kNone, kGlobal, kMaster, kGroup, kRegion, kControl, kCurve, kUnknown } section = kNone;
-	SFZControl control;
-	SFZRegion group, master, globals;
-	std::vector<SFZRegion> regions;
-	std::map<std::string, std::string> macros;
-
-	std::string s;
-	while(file.ReadLine(s, 1024))
-	{
-		// First, terminate line at the start of a comment block
-		auto commentPos = s.find("//");
-		if(commentPos != std::string::npos)
-		{
-			s.resize(commentPos);
-		}
-
-		// Now, read the tokens.
-		// This format is so funky that no general tokenizer approach seems to work here...
-		// Consider this jolly good example found at https://stackoverflow.com/questions/5923895/tokenizing-a-custom-text-file-format-file-using-c-sharp
-		// <region>sample=piano C3.wav key=48 ampeg_release=0.7 // a comment here
-		// <region>key = 49 sample = piano Db3.wav
-		// <region>
-		// group=1
-		// key = 48
-		//     sample = piano D3.ogg
-		// The original sfz specification claims that spaces around = are not allowed, but a quick look into the real world tells us otherwise.
-
-		while(!s.empty())
-		{
-			s.erase(0, s.find_first_not_of(" \t"));
-
-			// Replace macros
-			for(const auto &m : macros)
-			{
-				auto &oldStr = m.first;
-				auto &newStr = m.second;
-				std::string::size_type pos = 0;
-				while((pos = s.find(oldStr, pos)) != std::string::npos)
-				{
-					s.replace(pos, oldStr.length(), newStr);
-					pos += newStr.length();
-				}
-			}
-
-			if(s.empty())
-			{
-				break;
-			}
-
-			std::string::size_type charsRead = 0;
-
-			if(s[0] == '<' && (charsRead = s.find('>')) != std::string::npos)
-			{
-				// Section header
-				std::string sec = s.substr(1, charsRead - 1);
-				section = kUnknown;
-				if(sec == "global")
-				{
-					section = kGlobal;
-					// Reset global parameters
-					globals = SFZRegion();
-				} else if(sec == "master")
-				{
-					section = kMaster;
-					// Reset master parameters
-					master = globals;
-				} else if(sec == "group")
-				{
-					section = kGroup;
-					// Reset group parameters
-					group = master;
-				} else if(sec == "region")
-				{
-					section = kRegion;
-					regions.push_back(group);
-				} else if(sec == "control")
-				{
-					section = kControl;
-				} else if(sec == "curve")
-				{
-					section = kCurve;
-				}
-				charsRead++;
-			} else if(s.substr(0, 8) == "#define " || s.substr(0, 8) == "#define\t")
-			{
-				// Macro definition
-				auto keyStart = s.find_first_not_of(" \t", 8);
-				auto keyEnd = s.find_first_of(" \t", keyStart);
-				auto valueStart = s.find_first_not_of(" \t", keyEnd);
-				std::string key = s.substr(keyStart, keyEnd - keyStart);
-				if(valueStart != std::string::npos && key.length() > 1 && key[0] == '$')
-				{
-					charsRead = s.find_first_of(" \t", valueStart);
-					macros[key] = s.substr(valueStart, charsRead - valueStart);
-				}
-			} else if(s.substr(0, 9) == "#include " || s.substr(0, 9) == "#include\t")
-			{
-				AddToLog(LogWarning, U_("#include directive is not supported."));
-				auto fileStart = s.find("\"", 9);	// Yes, there can be arbitrary characters before the opening quote, at least that's how sforzando does it.
-				auto fileEnd = s.find("\"", fileStart + 1);
-				if(fileStart != std::string::npos && fileEnd != std::string::npos)
-				{
-					charsRead = fileEnd + 1;
-				} else
-				{
-					return false;
-				}
-			} else if(section == kNone)
-			{
-				// Garbage before any section, probably not an sfz file
-				return false;
-			} else if(s.find('=') != std::string::npos)
-			{
-				// Read key=value pair
-				auto keyEnd = s.find_first_of(" \t=");
-				auto valueStart = s.find_first_not_of(" \t=", keyEnd);
-				std::string key = mpt::ToLowerCaseAscii(s.substr(0, keyEnd));
-				if(key == "sample" || key == "default_path" || key.substr(0, 8) == "label_cc" || key.substr(0, 12) == "region_label")
-				{
-					// Sample / CC name may contain spaces...
-					charsRead = s.find_first_of("=\t<", valueStart);
-					if(charsRead != std::string::npos && s[charsRead] == '=')
-					{
-						// Backtrack to end of key
-						while(charsRead > valueStart && s[charsRead] == ' ')
-							charsRead--;
-						// Backtrack to start of key
-						while(charsRead > valueStart && s[charsRead] != ' ')
-							charsRead--;
-					}
-				} else
-				{
-					charsRead = s.find_first_of(" \t<", valueStart);
-				}
-				std::string value = s.substr(valueStart, charsRead - valueStart);
-
-				switch(section)
-				{
-				case kGlobal:
-					globals.Parse(key, value, control);
-					MPT_FALLTHROUGH;
-				case kMaster:
-					master.Parse(key, value, control);
-					MPT_FALLTHROUGH;
-				case kGroup:
-					group.Parse(key, value, control);
-					break;
-				case kRegion:
-					regions.back().Parse(key, value, control);
-					break;
-				case kControl:
-					control.Parse(key, value);
-					break;
-				}
-			} else
-			{
-				// Garbage, probably not an sfz file
-				MPT_ASSERT(false);
-				return false;
-			}
-
-			// Remove the token(s) we just read
-			s.erase(0, charsRead);
-		}
-	}
-
-	if(regions.empty())
-	{
-		return false;
-	}
-
-
-	ModInstrument *pIns = new (std::nothrow) ModInstrument();
-	if(pIns == nullptr)
-	{
-		return false;
-	}
-
-	RecalculateSamplesPerTick();
-	DestroyInstrument(nInstr, deleteAssociatedSamples);
-	if(nInstr > m_nInstruments) m_nInstruments = nInstr;
-	Instruments[nInstr] = pIns;
-
-	SAMPLEINDEX prevSmp = 0;
-	for(auto &region : regions)
-	{
-		uint8 keyLo = region.keyLo, keyHi = region.keyHi;
-		if(keyLo > keyHi)
-			continue;
-		Clamp<uint8, uint8>(keyLo, 0, NOTE_MAX - NOTE_MIN);
-		Clamp<uint8, uint8>(keyHi, 0, NOTE_MAX - NOTE_MIN);
-		SAMPLEINDEX smp = GetNextFreeSample(nInstr, prevSmp + 1);
-		if(smp == SAMPLEINDEX_INVALID)
-			break;
-		prevSmp = smp;
-
-		ModSample &sample = Samples[smp];
-		mpt::PathString filename = mpt::PathString::FromUTF8(region.filename);
-		if(!filename.empty())
-		{
-			if(region.filename.find(':') == std::string::npos)
-			{
-				filename = file.GetFileName().GetPath() + filename;
-			}
-			SetSamplePath(smp, filename);
-			InputFile f(filename);
-			FileReader smpFile = GetFileReader(f);
-			if(!ReadSampleFromFile(smp, smpFile, false))
-			{
-				AddToLog(LogWarning, U_("Unable to load sample: ") + filename.ToUnicode());
-				prevSmp--;
-				continue;
-			}
-			if(!region.name.empty())
-			{
-				mpt::String::Copy(m_szNames[smp], mpt::ToCharset(GetCharsetInternal(), mpt::CharsetUTF8, region.name));
-			}
-			if(!m_szNames[smp][0])
-			{
-				mpt::String::Copy(m_szNames[smp], filename.GetFileName().ToLocale());
-			}
-		}
-		sample.uFlags.set(SMP_KEEPONDISK, sample.HasSampleData());
-
-		if(region.useSampleKeyRoot)
-		{
-			if(sample.rootNote != NOTE_NONE)
-				region.keyRoot = sample.rootNote - NOTE_MIN;
-			else
-				region.keyRoot = 60;
-		}
-
-		const auto origSampleRate = sample.GetSampleRate(GetType());
-		int8 transp = region.transpose + (60 - region.keyRoot);
-		for(uint8 i = keyLo; i <= keyHi; i++)
-		{
-			pIns->Keyboard[i] = smp;
-			if(GetType() != MOD_TYPE_XM)
-				pIns->NoteMap[i] = NOTE_MIN + i + transp;
-		}
-		if(GetType() == MOD_TYPE_XM)
-			sample.Transpose(transp / 12.0);
-
-		pIns->nFilterMode = region.filterType;
-		if(region.cutoff != 0)
-			pIns->SetCutoff(FrequencyToCutOff(region.cutoff), true);
-		if(region.resonance != 0)
-			pIns->SetResonance(mpt::saturate_cast<uint8>(Util::muldivr(region.resonance, 128, 24)), true);
-		pIns->nCutSwing = mpt::saturate_cast<uint8>(Util::muldivr(region.filterRandom, m_SongFlags[SONG_EXFILTERRANGE] ? 20 : 24, 1200));
-		pIns->midiPWD = static_cast<int8>(region.pitchBend / 100);
-
-		pIns->nNNA = NNA_NOTEOFF;
-		if(region.polyphony == 1)
-		{
-			pIns->nDNA = DNA_NOTECUT;
-			pIns->nDCT = DCT_SAMPLE;
-		}
-		region.ampEnv.ConvertToMPT(pIns, *this, ENV_VOLUME);
-		region.pitchEnv.ConvertToMPT(pIns, *this, ENV_PITCH);
-		//region.filterEnv.ConvertToMPT(pIns, *this, ENV_PITCH);
-
-		sample.rootNote = region.keyRoot + NOTE_MIN;
-		sample.nGlobalVol = mpt::saturate_round<decltype(sample.nGlobalVol)>(64 * std::pow(10.0, region.volume / 20.0));
-		if(region.panning != -128)
-		{
-			sample.nPan = static_cast<decltype(sample.nPan)>(Util::muldivr_unsigned(region.panning + 100, 256, 200));
-			sample.uFlags.set(CHN_PANNING);
-		}
-		sample.Transpose(region.finetune / 1200.0);
-
-		if(region.pitchLfoDepth && region.pitchLfoFreq)
-		{
-			sample.nVibSweep = 255;
-			if(region.pitchLfoFade > 0)
-				sample.nVibSweep = mpt::saturate_round<uint8>(255 / region.pitchLfoFade);
-			sample.nVibDepth = static_cast<uint8>(Util::muldivr(region.pitchLfoDepth, 32, 100));
-			sample.nVibRate = region.pitchLfoFreq * 4;
-		}
-
-		if(region.loopMode != SFZRegion::LoopMode::kUnspecified)
-		{
-			switch(region.loopMode)
-			{
-			case SFZRegion::LoopMode::kContinuous:
-			case SFZRegion::LoopMode::kOneShot:
-				sample.uFlags.set(CHN_LOOP);
-				break;
-			case SFZRegion::LoopMode::kSustain:
-				sample.uFlags.set(CHN_SUSTAINLOOP);
-				break;
-			case SFZRegion::LoopMode::kNoLoop:
-				sample.uFlags.reset(CHN_LOOP | CHN_SUSTAINLOOP);
-			}
-		}
-		if(region.loopEnd > region.loopStart)
-		{
-			// Loop may also be defined in file, in which case loopStart and loopEnd are unset.
-			if(region.loopMode == SFZRegion::LoopMode::kSustain)
-			{
-				sample.nSustainStart = region.loopStart;
-				sample.nSustainEnd = region.loopEnd + 1;
-			} else if(region.loopMode == SFZRegion::LoopMode::kContinuous || region.loopMode == SFZRegion::LoopMode::kOneShot)
-			{
-				sample.nLoopStart = region.loopStart;
-				sample.nLoopEnd = region.loopEnd + 1;
-			}
-		} else if(sample.nLoopEnd <= sample.nLoopStart && region.loopMode != SFZRegion::LoopMode::kUnspecified && region.loopMode != SFZRegion::LoopMode::kNoLoop)
-		{
-			sample.nLoopEnd = sample.nLength;
-		}
-		switch(region.loopType)
-		{
-		case SFZRegion::LoopType::kUnspecified:
-			break;
-		case SFZRegion::LoopType::kForward:
-			sample.uFlags.reset(CHN_PINGPONGLOOP | CHN_PINGPONGSUSTAIN | CHN_REVERSE);
-			break;
-		case SFZRegion::LoopType::kBackward:
-			sample.uFlags.set(CHN_REVERSE);
-			break;
-		case SFZRegion::LoopType::kAlternate:
-			sample.uFlags.set(CHN_PINGPONGLOOP | CHN_PINGPONGSUSTAIN);
-			break;
-		default:
-			break;
-		}
-		if(sample.nSustainEnd <= sample.nSustainStart && sample.nLoopEnd > sample.nLoopStart && region.loopMode == SFZRegion::LoopMode::kSustain)
-		{
-			// Turn normal loop (imported from sample) into sustain loop
-			std::swap(sample.nSustainStart, sample.nLoopStart);
-			std::swap(sample.nSustainEnd, sample.nLoopEnd);
-			sample.uFlags.set(CHN_SUSTAINLOOP);
-			sample.uFlags.set(CHN_PINGPONGSUSTAIN, sample.uFlags[CHN_PINGPONGLOOP]);
-			sample.uFlags.reset(CHN_LOOP | CHN_PINGPONGLOOP);
-		}
-
-		// Loop cross-fade
-		SmpLength fadeSamples = mpt::saturate_round<SmpLength>(region.loopCrossfade * origSampleRate);
-		LimitMax(fadeSamples, sample.uFlags[CHN_SUSTAINLOOP] ? sample.nSustainStart : sample.nLoopStart);
-		if(fadeSamples > 0)
-		{
-			ctrlSmp::XFadeSample(sample, fadeSamples, 50000, true, sample.uFlags[CHN_SUSTAINLOOP], *this);
-			sample.uFlags.set(SMP_MODIFIED);
-		}
-
-		// Sample offset
-		if(region.offset && region.offset < sample.nLength)
-		{
-			auto offset = region.offset * sample.GetBytesPerSample();
-			memmove(sample.sampleb(), sample.sampleb() + offset, sample.nLength * sample.GetBytesPerSample() - offset);
-			if(region.end > region.offset)
-				region.end -= region.offset;
-			sample.nLength -= region.offset;
-			sample.nLoopStart -= region.offset;
-			sample.nLoopEnd -= region.offset;
-			sample.uFlags.set(SMP_MODIFIED);
-		}
-		LimitMax(sample.nLength, region.end);
-
-		if(region.invertPhase)
-		{
-			ctrlSmp::InvertSample(sample, 0, sample.nLength, *this);
-			sample.uFlags.set(SMP_MODIFIED);
-		}
-
-		sample.PrecomputeLoops(*this, false);
-		sample.Convert(MOD_TYPE_MPT, GetType());
-	}
-
-	pIns->Sanitize(MOD_TYPE_MPT);
-	pIns->Convert(MOD_TYPE_MPT, GetType());
-	return true;
-}
-
-#ifndef MODPLUG_NO_FILESAVE
-
-static double SFZLinear2dB(double volume)
-{
-	return (volume > 0.0 ? 20.0 * std::log10(volume) : -144.0);
-}
-
-bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, const mpt::PathString &filename, bool useFLACsamples) const
-{
-#ifdef MODPLUG_TRACKER
-	const mpt::FlushMode flushMode = mpt::FlushModeFromBool(TrackerSettings::Instance().MiscFlushFileBuffersOnSave);
-#else
-	const mpt::FlushMode flushMode = mpt::FlushMode::Full;
-#endif
-	const ModInstrument *ins = Instruments[nInstr];
-	if(ins == nullptr)
-	{
-		return false;
-	}
-	const mpt::PathString sampleBaseName = filename.GetFileName();
-	const mpt::PathString sampleDirName = sampleBaseName + P_("/");
-	const mpt::PathString sampleBasePath = filename.GetPath() + sampleDirName;
-	if(!sampleBasePath.IsDirectory() && !::CreateDirectory(sampleBasePath.AsNative().c_str(), nullptr))
-	{
-		return false;
-	}
-
-	if(strcmp(ins->name, ""))
-	{
-		f << "// Name: " << mpt::ToCharset(mpt::CharsetUTF8, GetCharsetInternal(), ins->name) << "\n";
-	}
-	f << "// Created with " << mpt::ToCharset(mpt::CharsetUTF8, Version::Current().GetOpenMPTVersionString()) << "\n\n";
-
-	f << "<control>\ndefault_path=" << sampleDirName.ToUTF8() << "\n\n";
-	f << "<group>";
-	f << "\nbend_up=" << ins->midiPWD * 100;
-	if(ins->IsCutoffEnabled())
-	{
-		f << "\ncutoff=" << CSoundFile::CutOffToFrequency(ins->GetCutoff());
-	}
-	if(ins->IsResonanceEnabled())
-	{
-		f << "\nresonance=" << Util::muldivr_unsigned(ins->GetResonance(), 24, 128);
-	}
-	if(ins->IsCutoffEnabled() || ins->IsResonanceEnabled())
-	{
-		f << "\nfil_type=" << (ins->nFilterMode == FLTMODE_HIGHPASS ? "hpf_2p" : "lpf_2p");
-	}
-	if(ins->dwFlags[INS_SETPANNING])
-	{
-		f << "\npan=" << (Util::muldivr_unsigned(ins->nPan, 200, 256) - 100);
-	}
-	if(ins->nGlobalVol != 64)
-	{
-		f << "\nvolume=" << SFZLinear2dB(ins->nGlobalVol / 64.0);
-	}
-
-	size_t numSamples = 0;
-	for(size_t i = 0; i < mpt::size(ins->Keyboard); i++)
-	{
-		if(ins->Keyboard[i] < 1 || ins->Keyboard[i] > GetNumSamples())
-			continue;
-
-		numSamples++;
-		size_t endOfRegion = i + 1;
-		while(endOfRegion < mpt::size(ins->Keyboard))
-		{
-			if(ins->Keyboard[endOfRegion] != ins->Keyboard[i] || ins->NoteMap[endOfRegion] != (ins->NoteMap[i] + endOfRegion - i))
-				break;
-			endOfRegion++;
-		}
-		endOfRegion--;
-
-		mpt::PathString sampleName = sampleBasePath + sampleBaseName + P_(" ") + mpt::PathString::FromUnicode(mpt::ufmt::val(numSamples));
-		if(useFLACsamples)
-			sampleName += P_(".flac");
-		else
-			sampleName += P_(".wav");
-
-		try
-		{
-			mpt::SafeOutputFile fSmp(sampleName, std::ios::binary, flushMode);
-			if(fSmp)
-			{
-				//fSmp.exceptions(fSmp.exceptions() | std::ios::badbit | std::ios::failbit);
-
-				if(useFLACsamples)
-					SaveFLACSample(ins->Keyboard[i], fSmp);
-				else
-					SaveWAVSample(ins->Keyboard[i], fSmp);
-			}
-		} catch(const std::exception &)
-		{
-			AddToLog(LogError, MPT_USTRING("Unable to save sample: ") + sampleName.ToUnicode());
-		}
-
-		const ModSample &sample = Samples[ins->Keyboard[i]];
-		f << "\n\n<region>";
-		if(strcmp(m_szNames[ins->Keyboard[i]], ""))
-		{
-			f << "\nregion_label=" << mpt::ToCharset(mpt::CharsetUTF8, GetCharsetInternal(), m_szNames[ins->Keyboard[i]]);
-		}
-		f << "\nsample=" << sampleName.GetFullFileName().ToUTF8();
-		f << "\nlokey=" << i;
-		f << "\nhikey=" << endOfRegion;
-		if(sample.rootNote != NOTE_NONE)
-		{
-			f << "\npitch_keycenter=" << sample.rootNote - NOTE_MIN;
-		} else
-		{
-			f << "\npitch_keycenter=" << NOTE_MIDDLEC + i - ins->NoteMap[i];
-		}
-		if(sample.uFlags[CHN_PANNING])
-		{
-			f << "\npan=" << (Util::muldivr_unsigned(sample.nPan, 200, 256) - 100);
-		}
-		if(sample.nGlobalVol != 64)
-		{
-			f << "\nvolume=" << SFZLinear2dB((ins->nGlobalVol * sample.nGlobalVol) / 4096.0);
-		}
-		const char *loopMode;
-		SmpLength loopStart = 0, loopEnd = 0;
-		bool loopType = false;
-		if(sample.uFlags[CHN_SUSTAINLOOP])
-		{
-			loopMode = "loop_sustain";
-			loopStart = sample.nSustainStart;
-			loopEnd = sample.nSustainEnd;
-			loopType = sample.uFlags[CHN_PINGPONGSUSTAIN];
-		} else if(sample.uFlags[CHN_LOOP])
-		{
-			loopMode = "loop_continuous";
-			loopStart = sample.nLoopStart;
-			loopEnd = sample.nLoopEnd;
-			loopType = sample.uFlags[CHN_SUSTAINLOOP];
-			// TODO backward loop (supported by engine but no UI)
-		} else
-		{
-			loopMode = "no_loop";
-		}
-		f << "\nloop_mode=" << loopMode;
-		if(loopStart < loopEnd)
-		{
-			f << "\nloop_start=" << loopStart;
-			f << "\nloop_end=" << loopEnd;
-			f << "\nloop_type=" << (loopType ? "alternate" : "forward");
-		}
-		if(sample.uFlags.test_all(CHN_SUSTAINLOOP | CHN_LOOP))
-		{
-			f << "\n// Warning: Only sustain loop was exported!";
-		}
-		i = endOfRegion;
-	}
-
-	return true;
-}
-
-#endif // MODPLUG_NO_FILESAVE
-
-#else
-bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX, FileReader &)
-{
-	return false;
-}
-#endif // MPT_EXTERNAL_SAMPLES
-
 
 
 ///////////////
@@ -2394,7 +1541,7 @@ static void CAFSetTagFromInfoKey(mpt::ustring & dst, const std::map<std::string,
 	{
 		return;
 	}
-	dst = mpt::ToUnicode(mpt::CharsetUTF8, item->second);
+	dst = mpt::ToUnicode(mpt::Charset::UTF8, item->second);
 }
 
 
@@ -2591,7 +1738,7 @@ bool CSoundFile::ReadCAFSample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 
 	sampleIO.ReadSample(mptSample, audioData);
 
-	mpt::String::Copy(m_szNames[nSample], mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags)));
+	m_szNames[nSample] = mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags));
 
 	mptSample.Convert(MOD_TYPE_IT, GetType());
 	mptSample.PrecomputeLoops(*this, false);
@@ -2883,7 +2030,7 @@ bool CSoundFile::ReadAIFFSample(SAMPLEINDEX nSample, FileReader &file, bool mayN
 		nameChunk.ReadString<mpt::String::spacePadded>(m_szNames[nSample], nameChunk.GetLength());
 	} else
 	{
-		strcpy(m_szNames[nSample], "");
+		m_szNames[nSample] = "";
 	}
 
 	mptSample.Convert(MOD_TYPE_IT, GetType());
@@ -2892,7 +2039,7 @@ bool CSoundFile::ReadAIFFSample(SAMPLEINDEX nSample, FileReader &file, bool mayN
 }
 
 
-static bool AUIsAnnotationLineWithField(const std::string & line)
+static bool AUIsAnnotationLineWithField(const std::string &line)
 {
 	std::size_t pos = line.find('=');
 	if(pos == std::string::npos)
@@ -2903,23 +2050,19 @@ static bool AUIsAnnotationLineWithField(const std::string & line)
 	{
 		return false;
 	}
-	std::string field = line.substr(0, pos);
-	bool invalidChars = false;
+	const auto field = std::string_view(line).substr(0, pos);
+	// Scan for invalid chars
 	for(auto c : field)
 	{
 		if(!IsInRange(c, 'a', 'z') && !IsInRange(c, 'A', 'Z') && !IsInRange(c, '0', '9') && c != '-' && c != '_')
 		{
-			invalidChars = true;
+			return false;
 		}
-	}
-	if(invalidChars)
-	{
-		return false;
 	}
 	return true;
 }
 
-static std::string AUTrimFieldFromAnnotationLine(const std::string & line)
+static std::string AUTrimFieldFromAnnotationLine(const std::string &line)
 {
 	if(!AUIsAnnotationLineWithField(line))
 	{
@@ -2929,7 +2072,7 @@ static std::string AUTrimFieldFromAnnotationLine(const std::string & line)
 	return line.substr(pos + 1);
 }
 
-static std::string AUGetAnnotationFieldFromLine(const std::string & line)
+static std::string AUGetAnnotationFieldFromLine(const std::string &line)
 {
 	if(!AUIsAnnotationLineWithField(line))
 	{
@@ -2944,14 +2087,19 @@ bool CSoundFile::ReadAUSample(SAMPLEINDEX nSample, FileReader &file, bool mayNor
 	file.Rewind();
 
 	// Verify header
-	if(!file.ReadMagic(".snd"))
+	const auto magic = file.ReadArray<char, 4>();
+	const bool bigEndian = !std::memcmp(magic.data(), ".snd", 4);
+	const bool littleEndian = !std::memcmp(magic.data(), "dns.", 4);
+	if(!bigEndian && !littleEndian)
 		return false;
 
-	uint32 dataOffset = file.ReadUint32BE();  // must be divisible by 8 according to spec, however, there are files that ignore this requirement
-	uint32 dataSize = file.ReadUint32BE();
-	uint32 encoding = file.ReadUint32BE();
-	uint32 sampleRate = file.ReadUint32BE();
-	uint32 channels = file.ReadUint32BE();
+	auto readUint32 = std::bind(bigEndian ? &FileReader::ReadUint32BE : &FileReader::ReadUint32LE, file);
+
+	uint32 dataOffset = readUint32();  // must be divisible by 8 according to spec, however, there are files that ignore this requirement
+	uint32 dataSize = readUint32();
+	uint32 encoding = readUint32();
+	uint32 sampleRate = readUint32();
+	uint32 channels = readUint32();
 
 	// According to spec, a minimum 8 byte annotation field after the header fields is required,
 	// however, there are files in the wild that violate this requirement.
@@ -2964,22 +2112,22 @@ bool CSoundFile::ReadAUSample(SAMPLEINDEX nSample, FileReader &file, bool mayNor
 	if(channels < 1 || channels > 2)
 		return false;
 
-	SampleIO sampleIO(SampleIO::_8bit, channels == 1 ? SampleIO::mono : SampleIO::stereoInterleaved, SampleIO::bigEndian, SampleIO::signedPCM);
+	SampleIO sampleIO(SampleIO::_8bit, channels == 1 ? SampleIO::mono : SampleIO::stereoInterleaved, bigEndian ? SampleIO::bigEndian : SampleIO::littleEndian, SampleIO::signedPCM);
 	switch(encoding)
 	{
-	case 1: sampleIO |= SampleIO::_16bit;			// u-law
+	case 1: sampleIO |= SampleIO::_16bit;         // u-law
 		sampleIO |= SampleIO::uLaw; break;
-	case 2: break;									// 8-bit linear PCM
-	case 3: sampleIO |= SampleIO::_16bit; break;	// 16-bit linear PCM
-	case 4: sampleIO |= SampleIO::_24bit; break;	// 24-bit linear PCM
-	case 5: sampleIO |= SampleIO::_32bit; break;	// 32-bit linear PCM
-	case 6: sampleIO |= SampleIO::_32bit;			// 32-bit IEEE floating point
+	case 2: break;                                // 8-bit linear PCM
+	case 3: sampleIO |= SampleIO::_16bit; break;  // 16-bit linear PCM
+	case 4: sampleIO |= SampleIO::_24bit; break;  // 24-bit linear PCM
+	case 5: sampleIO |= SampleIO::_32bit; break;  // 32-bit linear PCM
+	case 6: sampleIO |= SampleIO::_32bit;         // 32-bit IEEE floating point
 		sampleIO |= SampleIO::floatPCM;
 		break;
-	case 7: sampleIO |= SampleIO::_64bit;			// 64-bit IEEE floating point
+	case 7: sampleIO |= SampleIO::_64bit;         // 64-bit IEEE floating point
 		sampleIO |= SampleIO::floatPCM;
 		break;
-	case 27: sampleIO |= SampleIO::_16bit;			// a-law
+	case 27: sampleIO |= SampleIO::_16bit;        // a-law
 		sampleIO |= SampleIO::aLaw; break;
 	default: return false;
 	}
@@ -2993,46 +2141,41 @@ bool CSoundFile::ReadAUSample(SAMPLEINDEX nSample, FileReader &file, bool mayNor
 
 	// This reads annotation metadata as written by OpenMPT, sox, ffmpeg.
 	// Additionally, we fall back to just reading the whole field as a single comment.
+	// We only read up to the first \0 byte.
 	file.Seek(24);
-	std::vector<char> annotationData;
-	file.ReadVector<char>(annotationData, dataOffset - 24);
-	std::string annotation(annotationData.begin(), annotationData.end());
-	annotation = mpt::String::RTrim(annotation, std::string(1, '\0'));
-	std::size_t term = annotation.find(std::string(1, '\0'));
-	if(term != std::string::npos)
-	{ // only up to first \0 byte
-		annotation = annotation.substr(0, term);
-	}
+	std::string annotation;
+	file.ReadString<mpt::String::maybeNullTerminated>(annotation, dataOffset - 24);
 	annotation = mpt::String::Replace(annotation, "\r\n", "\n");
 	annotation = mpt::String::Replace(annotation, "\r", "\n");
-	mpt::Charset charset = mpt::IsUTF8(annotation) ? mpt::CharsetUTF8 : mpt::CharsetISO8859_1;
-	std::vector<std::string> lines = mpt::String::Split<std::string>(annotation, "\n");
-	bool has_fields = false;
-	for(const auto & line : lines)
+	mpt::Charset charset = mpt::IsUTF8(annotation) ? mpt::Charset::UTF8 : mpt::Charset::ISO8859_1;
+	const auto lines = mpt::String::Split<std::string>(annotation, "\n");
+	bool hasFields = false;
+	for(const auto &line : lines)
 	{
 		if(AUIsAnnotationLineWithField(line))
 		{
-			has_fields = true;
+			hasFields = true;
+			break;
 		}
 	}
-	if(has_fields)
+	if(hasFields)
 	{
-		std::map<std::string, std::vector<std::string>> lines_per_field;
-		std::string last_field = "comment";
-		for(const auto & line : lines)
+		std::map<std::string, std::vector<std::string>> linesPerField;
+		std::string lastField = "comment";
+		for(const auto &line : lines)
 		{
 			if(AUIsAnnotationLineWithField(line))
 			{
-				last_field = mpt::ToLowerCaseAscii(mpt::String::Trim(AUGetAnnotationFieldFromLine(line)));
+				lastField = mpt::ToLowerCaseAscii(mpt::String::Trim(AUGetAnnotationFieldFromLine(line)));
 			}
-			lines_per_field[last_field].push_back(AUTrimFieldFromAnnotationLine(line));
+			linesPerField[lastField].push_back(AUTrimFieldFromAnnotationLine(line));
 		}
-		tags.title    = mpt::ToUnicode(charset, mpt::String::Combine(lines_per_field["title"  ], std::string("\n")));
-		tags.artist   = mpt::ToUnicode(charset, mpt::String::Combine(lines_per_field["artist" ], std::string("\n")));
-		tags.album    = mpt::ToUnicode(charset, mpt::String::Combine(lines_per_field["album"  ], std::string("\n")));
-		tags.trackno  = mpt::ToUnicode(charset, mpt::String::Combine(lines_per_field["track"  ], std::string("\n")));
-		tags.genre    = mpt::ToUnicode(charset, mpt::String::Combine(lines_per_field["genre"  ], std::string("\n")));
-		tags.comments = mpt::ToUnicode(charset, mpt::String::Combine(lines_per_field["comment"], std::string("\n")));
+		tags.title    = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["title"  ], std::string("\n")));
+		tags.artist   = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["artist" ], std::string("\n")));
+		tags.album    = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["album"  ], std::string("\n")));
+		tags.trackno  = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["track"  ], std::string("\n")));
+		tags.genre    = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["genre"  ], std::string("\n")));
+		tags.comments = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["comment"], std::string("\n")));
 	} else
 	{
 		// Most applications tend to write their own name here,
@@ -3051,7 +2194,7 @@ bool CSoundFile::ReadAUSample(SAMPLEINDEX nSample, FileReader &file, bool mayNor
 		LimitMax(length, dataSize);
 	mptSample.nLength = (length * 8u) / (sampleIO.GetEncodedBitsPerSample() * channels);
 	mptSample.nC5Speed = sampleRate;
-	mpt::String::Copy(m_szNames[nSample], mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags)));
+	m_szNames[nSample] = mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags));
 
 	if(mayNormalize)
 	{
@@ -3087,7 +2230,7 @@ bool CSoundFile::ReadITSSample(SAMPLEINDEX nSample, FileReader &file, bool rewin
 
 	ModSample &sample = Samples[nSample];
 	file.Seek(sampleHeader.ConvertToMPT(sample));
-	mpt::String::Read<mpt::String::spacePaddedNull>(m_szNames[nSample], sampleHeader.name);
+	m_szNames[nSample] = mpt::String::ReadBuf(mpt::String::spacePaddedNull, sampleHeader.name);
 
 	if(sample.uFlags[CHN_ADLIB])
 	{
@@ -3282,7 +2425,7 @@ bool CSoundFile::SaveITIInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 		itss.ConvertToIT(Samples[smp], GetType(), compress, compress, allowExternal);
 		const bool isExternal = itss.cvt == ITSample::cvtExternalSample;
 
-		mpt::String::Write<mpt::String::nullTerminated>(itss.name, m_szNames[smp]);
+		mpt::String::WriteBuf(mpt::String::nullTerminated, itss.name) = m_szNames[smp];
 
 		itss.samplepointer = filePos;
 		mpt::IO::Write(f, itss);
@@ -3423,7 +2566,7 @@ bool CSoundFile::ReadIFFSample(SAMPLEINDEX nSample, FileReader &file)
 		nameChunk.ReadString<mpt::String::maybeNullTerminated>(m_szNames[nSample], nameChunk.GetLength());
 	} else
 	{
-		strcpy(m_szNames[nSample], "");
+		m_szNames[nSample] = "";
 	}
 
 	sample.nLength = mpt::saturate_cast<SmpLength>(bodyChunk.GetLength() / bytesPerSample);

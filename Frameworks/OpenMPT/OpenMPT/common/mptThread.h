@@ -104,6 +104,18 @@ public:
 		DWORD dummy = 0;	// For Win9x
 		threadHandle = CreateThread(NULL, 0, function, userData, 0, &dummy);
 	}
+
+	UnmanagedThread(UnmanagedThread &&) = default;
+	UnmanagedThread & operator=(UnmanagedThread &&) = default;
+
+	UnmanagedThread(const UnmanagedThread &) = delete;
+	UnmanagedThread & operator=(const UnmanagedThread &) = delete;
+
+	// unmanaged, user has to free resources
+	~UnmanagedThread()
+	{
+	}
+
 };
 
 // Thread that operates on a member function

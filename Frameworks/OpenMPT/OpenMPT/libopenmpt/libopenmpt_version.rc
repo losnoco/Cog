@@ -192,7 +192,7 @@ BEGIN
             VALUE "FileDescription",  VER_FILEDESC_STR
             VALUE "FileVersion",      VER_FILEVERSION_STR
             VALUE "InternalName",     VER_FILENAME_STR
-            VALUE "LegalCopyright",   "Copyright © 2004-2019 OpenMPT contributors, Copyright © 1997-2003 Olivier Lapicque"
+            VALUE "LegalCopyright",   "Copyright © 2004-2020 OpenMPT contributors, Copyright © 1997-2003 Olivier Lapicque"
             VALUE "OriginalFilename", VER_FILENAME_STR
             VALUE "ProductName",      "libopenmpt"
             VALUE "ProductVersion",   VER_FILEVERSION_STR

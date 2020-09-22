@@ -56,7 +56,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
-#if defined(_MFC_VER) && !defined(MPT_CPPCHECK_CUSTOM)
+#if defined(MPT_WITH_MFC) && !defined(MPT_CPPCHECK_CUSTOM)
 
 #if !defined(ASSERT)
 #error "MFC is expected to #define ASSERT"
@@ -72,7 +72,7 @@ OPENMPT_NAMESPACE_BEGIN
 // let MFC handle our asserts
 #define MPT_ASSERT_USE_FRAMEWORK 1
 
-#else // !_MFC_VER
+#else // !MPT_WITH_MFC
 
 #if defined(ASSERT)
 #define MPT_FRAMEWORK_ASSERT_IS_DEFINED
@@ -86,7 +86,7 @@ OPENMPT_NAMESPACE_BEGIN
 // handle assert in our own way without relying on some platform-/framework-specific assert implementation
 #define MPT_ASSERT_USE_FRAMEWORK 0
 
-#endif // _MFC_VER
+#endif // MPT_WITH_MFC
 
 #if defined(MPT_FRAMEWORK_ASSERT_IS_DEFINED) && (MPT_ASSERT_USE_FRAMEWORK == 1)
 
@@ -117,7 +117,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 #else // !NO_ASSERTS
 
-#define MPT_ASSERT_NOTREACHED()          MPT_DO { MPT_CONSTANT_IF(!(0)) { AssertHandler(MPT_SOURCE_LOCATION_CURRENT(), "0"); } MPT_CHECKER_ASSUME(0); } MPT_WHILE_0
+#define MPT_ASSERT_NOTREACHED()          MPT_DO { if constexpr(!(0)) { AssertHandler(MPT_SOURCE_LOCATION_CURRENT(), "0"); } MPT_CHECKER_ASSUME(0); } MPT_WHILE_0
 #define MPT_ASSERT(expr)                 MPT_DO { if(!(expr)) { AssertHandler(MPT_SOURCE_LOCATION_CURRENT(), #expr); } MPT_CHECKER_ASSUME(expr); } MPT_WHILE_0
 #define MPT_ASSERT_MSG(expr, msg)        MPT_DO { if(!(expr)) { AssertHandler(MPT_SOURCE_LOCATION_CURRENT(), #expr, msg); } MPT_CHECKER_ASSUME(expr); } MPT_WHILE_0
 #define MPT_ASSERT_ALWAYS(expr)          MPT_DO { if(!(expr)) { AssertHandler(MPT_SOURCE_LOCATION_CURRENT(), #expr); } MPT_CHECKER_ASSUME(expr); } MPT_WHILE_0
@@ -136,17 +136,9 @@ MPT_NOINLINE void AssertHandler(const mpt::source_location &loc, const char *exp
 
 
 
-#define MPT_CONSTEXPR11_ASSERT MPT_STATIC_ASSERT
-#if MPT_CXX_AT_LEAST(14) && !MPT_MSVC_BEFORE(2017,5)
-#define MPT_CONSTEXPR14_ASSERT MPT_STATIC_ASSERT
-#else
-#define MPT_CONSTEXPR14_ASSERT MPT_ASSERT
-#endif
-#if MPT_CXX_AT_LEAST(17) && !MPT_MSVC_BEFORE(2017,5)
-#define MPT_CONSTEXPR17_ASSERT MPT_STATIC_ASSERT
-#else
-#define MPT_CONSTEXPR17_ASSERT MPT_ASSERT
-#endif
+#define MPT_CONSTEXPR11_ASSERT static_assert
+#define MPT_CONSTEXPR14_ASSERT static_assert
+#define MPT_CONSTEXPR17_ASSERT static_assert
 
 
 

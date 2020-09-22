@@ -21,7 +21,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-class I3DL2Reverb : public IMixPlugin
+class I3DL2Reverb final : public IMixPlugin
 {
 protected:
 	enum Parameters
@@ -64,6 +64,7 @@ protected:
 	};
 
 	float m_param[kI3DL2ReverbNumParameters];
+	int32 m_program = 0;
 
 	// Calculated parameters
 	uint32 m_quality;
@@ -85,9 +86,9 @@ protected:
 	// Remaining frame for downsampled reverb
 	float m_prevL;
 	float m_prevR;
-	bool m_remain;
+	bool m_remain = false;
 
-	bool m_ok, m_recalcParams;
+	bool m_ok = false, m_recalcParams = true;
 
 public:
 	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
@@ -103,9 +104,10 @@ public:
 
 	float RenderSilence(uint32) override { return 0.0f; }
 
-	int32 GetNumPrograms() const override { return 0; }
-	int32 GetCurrentProgram() override { return 0; }
-	void SetCurrentProgram(int32) override { }
+	int32 GetNumPrograms() const override;
+	int32 GetCurrentProgram() override { return m_program; }
+	// cppcheck-suppress virtualCallInConstructor
+	void SetCurrentProgram(int32) override;
 
 	PlugParamIndex GetNumParameters() const override { return kI3DL2ReverbNumParameters; }
 	PlugParamValue GetParameter(PlugParamIndex index) override;
@@ -125,9 +127,9 @@ public:
 	CString GetParamLabel(PlugParamIndex) override;
 	CString GetParamDisplay(PlugParamIndex param) override;
 
-	CString GetCurrentProgramName() override { return CString(); }
+	CString GetCurrentProgramName() override;
 	void SetCurrentProgramName(const CString &) override { }
-	CString GetProgramName(int32) override { return CString(); }
+	CString GetProgramName(int32 program) override;
 
 	bool HasEditor() const override { return false; }
 #endif

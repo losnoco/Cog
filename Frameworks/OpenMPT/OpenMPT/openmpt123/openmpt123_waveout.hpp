@@ -53,7 +53,7 @@ public:
 		WAVEFORMATEX wfx;
 		ZeroMemory( &wfx, sizeof( wfx ) );
 		wfx.wFormatTag = flags.use_float ? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
-		wfx.nChannels = flags.channels;
+		wfx.nChannels = static_cast<WORD>( flags.channels );
 		wfx.nSamplesPerSec = flags.samplerate;
 		wfx.wBitsPerSample = flags.use_float ? 32 : 16;
 		wfx.nBlockAlign = ( wfx.wBitsPerSample / 8 ) * wfx.nChannels;

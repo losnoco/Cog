@@ -36,7 +36,7 @@ static bool CopyWavChannel(ModSample &sample, const FileReader &file, size_t cha
 		return false;
 	}
 
-	const mpt::byte *inBuf = file.GetRawData<mpt::byte>();
+	const std::byte *inBuf = file.GetRawData<std::byte>();
 	CopySample<SampleConversion>(reinterpret_cast<typename SampleConversion::output_t*>(sample.samplev()), sample.nLength, 1, inBuf + offset, file.BytesLeft() - offset, numChannels, conv);
 	return true;
 }
@@ -87,7 +87,7 @@ bool CSoundFile::ReadWAV(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("RIFF WAVE");
 	m_modFormat.type = U_("wav");
-	m_modFormat.charset = mpt::CharsetWindows1252;
+	m_modFormat.charset = mpt::Charset::Windows1252;
 	
 	const SmpLength sampleLength = wavFile.GetSampleLength();
 
@@ -95,7 +95,7 @@ bool CSoundFile::ReadWAV(FileReader &file, ModLoadingFlags loadFlags)
 	// Calculate sample length in ticks at tempo 125
 	const uint32 sampleRate = std::max(uint32(1), wavFile.GetSampleRate());
 	const uint32 sampleTicks = mpt::saturate_cast<uint32>(((sampleLength * 50) / sampleRate) + 1);
-	uint32 ticksPerRow = std::max<uint32>((sampleTicks + 63u) / 63u, 1u);
+	uint32 ticksPerRow = std::max((sampleTicks + 63u) / 63u, uint32(1));
 
 	Order().assign(1, 0);
 	ORDERINDEX numOrders = 1;
@@ -136,7 +136,7 @@ bool CSoundFile::ReadWAV(FileReader &file, ModLoadingFlags loadFlags)
 		sample.uFlags = CHN_PANNING;
 		sample.nLength =  sampleLength;
 		sample.nC5Speed = wavFile.GetSampleRate();
-		strcpy(m_szNames[channel + 1], "");
+		m_szNames[channel + 1] = "";
 		wavFile.ApplySampleSettings(sample, GetCharsetInternal(), m_szNames[channel + 1]);
 
 		if(wavFile.GetNumChannels() > 1)

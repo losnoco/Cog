@@ -17,7 +17,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-class Gargle : public IMixPlugin
+class Gargle final : public IMixPlugin
 {
 protected:
 	enum Parameters

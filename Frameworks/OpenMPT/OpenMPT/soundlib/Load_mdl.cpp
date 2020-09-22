@@ -154,9 +154,9 @@ enum
 };
 
 
-static const VibratoType MDLVibratoType[] = { VIB_SINE, VIB_RAMP_DOWN, VIB_SQUARE, VIB_SINE };
+static constexpr VibratoType MDLVibratoType[] = { VIB_SINE, VIB_RAMP_DOWN, VIB_SQUARE, VIB_SINE };
 
-static const ModCommand::COMMAND MDLEffTrans[] =
+static constexpr ModCommand::COMMAND MDLEffTrans[] =
 {
 	/* 0 */ CMD_NONE,
 	/* 1st column only */
@@ -187,7 +187,7 @@ static const ModCommand::COMMAND MDLEffTrans[] =
 
 
 // receive an MDL effect, give back a 'normal' one.
-static void ConvertMDLCommand(uint8_t &cmd, uint8_t &param)
+static void ConvertMDLCommand(uint8 &cmd, uint8 &param)
 {
 	if(cmd >= CountOf(MDLEffTrans))
 		return;
@@ -224,11 +224,11 @@ static void ConvertMDLCommand(uint8_t &cmd, uint8_t &param)
 			break;
 		case 0x1: // Pan Slide Left
 			cmd = CMD_PANNINGSLIDE;
-			param = (std::min<uint8>(param & 0x0F, 0x0E) << 4) | 0x0F;
+			param = (std::min(static_cast<uint8>(param & 0x0F), uint8(0x0E)) << 4) | 0x0F;
 			break;
 		case 0x2: // Pan Slide Right
 			cmd = CMD_PANNINGSLIDE;
-			param = 0xF0 | std::min<uint8>(param & 0x0F, 0x0E);
+			param = 0xF0 | std::min(static_cast<uint8>(param & 0x0F), uint8(0x0E));
 			break;
 		case 0x4: // Vibrato Waveform
 			param = 0x30 | (param & 0x0F);
@@ -361,7 +361,7 @@ static bool ImportMDLCommands(ModCommand &m, uint8 vol, uint8 e1, uint8 e2, uint
 		e1 = CMD_NONE;
 	} else if(!vol)
 	{
-		lostCommand |= !ModCommand::TwoRegularCommandsToMPT(e1, p1, e2, p2);
+		lostCommand |= (ModCommand::TwoRegularCommandsToMPT(e1, p1, e2, p2).first != CMD_NONE);
 		m.volcmd = e1;
 		m.vol = p1;
 	} else
@@ -473,14 +473,10 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 		: (fileHeader.version == 0x10) ? U_("2.3")
 		: (fileHeader.version == 0x00) ? U_("2.0 - 2.2b") // there was no 1.x release
 		: U_(""));
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
-	mpt::String::Read<mpt::String::spacePadded>(m_songName, info.title);
-	{
-		std::string artist;
-		mpt::String::Read<mpt::String::spacePadded>(artist, info.composer);
-		m_songArtist = mpt::ToUnicode(mpt::CharsetCP437, artist);
-	}
+	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, info.title);
+	m_songArtist = mpt::ToUnicode(mpt::Charset::CP437, mpt::String::ReadBuf(mpt::String::spacePadded, info.composer));
 
 	m_nDefaultGlobalVolume = info.globalVol + 1;
 	m_nDefaultSpeed = Clamp<uint8, uint8>(info.speed, 1, 255);
@@ -582,8 +578,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 		uint8 numInstruments = chunk.ReadUint8();
 		for(uint8 i = 0; i < numInstruments; i++)
 		{
-			uint8 ins = chunk.ReadUint8();
-			uint8 numSamples = chunk.ReadUint8();
+			const auto [ins, numSamples] = chunk.ReadArray<uint8, 2>();
 			uint8 firstNote = 0;
 			ModInstrument *mptIns = nullptr;
 			if(ins == 0
@@ -595,27 +590,14 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			chunk.ReadString<mpt::String::spacePadded>(mptIns->name, 32);
-			while(numSamples--)
+			for(uint8 smp = 0; smp < numSamples; smp++)
 			{
 				MDLSampleHeader sampleHeader;
 				chunk.ReadStruct(sampleHeader);
-				if(sampleHeader.smpNum == 0)
+				if(sampleHeader.smpNum == 0 || sampleHeader.smpNum > GetNumSamples())
 					continue;
-				#if 1
-					#if MPT_GCC_BEFORE(6,1,0)
-					#pragma GCC diagnostic push
-					#pragma GCC diagnostic ignored "-Wtype-limits"
-					#endif
-					STATIC_ASSERT((mpt::limits<decltype(sampleHeader.smpNum)>::max)() < MAX_SAMPLES);
-					#if MPT_GCC_BEFORE(6,1,0)
-					#pragma GCC diagnostic pop
-					#endif
-				#else
-					MPT_MAYBE_CONSTANT_IF(sampleHeader.smpNum >= MAX_SAMPLES)
-						continue;
-				#endif
 
-				LimitMax(sampleHeader.lastNote, static_cast<uint8>(CountOf(mptIns->Keyboard)));
+				LimitMax(sampleHeader.lastNote, static_cast<uint8>(std::size(mptIns->Keyboard)));
 				for(uint8 n = firstNote; n <= sampleHeader.lastNote; n++)
 				{
 					mptIns->Keyboard[n] = sampleHeader.smpNum;
@@ -650,7 +632,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 					mptSmp.nVolume = sampleHeader.volume;
 				else
 					mptSmp.uFlags.set(SMP_NODEFAULTVOLUME);
-				mptSmp.nPan = std::min<uint16>(sampleHeader.panning * 2, 254);
+				mptSmp.nPan = std::min(static_cast<uint16>(sampleHeader.panning * 2), uint16(254));
 				mptSmp.nVibType = MDLVibratoType[sampleHeader.vibType & 3];
 				mptSmp.nVibSweep = sampleHeader.vibSweep;
 				mptSmp.nVibDepth = sampleHeader.vibDepth;
@@ -703,14 +685,14 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			CHANNELINDEX numChans = 32;
 			ROWINDEX numRows = 64;
-			char name[17] = "";
+			std::string name;
 			if(fileHeader.version >= 0x10)
 			{
 				MDLPatternHeader patHead;
 				chunk.ReadStruct(patHead);
 				numChans = patHead.channels;
 				numRows = patHead.lastRow + 1;
-				mpt::String::Read<mpt::String::spacePadded>(name, patHead.name);
+				name = mpt::String::ReadBuf(mpt::String::spacePadded, patHead.name);
 			}
 
 			if(!Patterns.Insert(pat, numRows))
@@ -766,7 +748,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 						if(x & MDLNOTE_NOTE)
 						{
 							b = track.ReadUint8();
-							m->note = (b > 120) ? NOTE_KEYOFF : b;
+							m->note = (b > 120) ? static_cast<ModCommand::NOTE>(NOTE_KEYOFF) : static_cast<ModCommand::NOTE>(b);
 						}
 						if(x & MDLNOTE_SAMPLE)
 						{

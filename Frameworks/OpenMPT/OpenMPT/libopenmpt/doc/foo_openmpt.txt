@@ -1,9 +1,0 @@
-
-foo_openmpt
-===========
-
-foo_openmpt is a module file (https://en.wikipedia.org/wiki/Module_file) decoder
-component for foobar2000 >= 1.3.0. foo_openmpt is based on libopenmpt.
-
-
-See https://lib.openmpt.org/ for documentation, FAQ and other details.

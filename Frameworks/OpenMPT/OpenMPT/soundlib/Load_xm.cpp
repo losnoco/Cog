@@ -13,16 +13,130 @@
 #include "Loaders.h"
 #include "../common/version.h"
 #include "XMTools.h"
+#include "mod_specifications.h"
 #ifndef MODPLUG_NO_FILESAVE
 #include "../common/mptFileIO.h"
 #endif
+#include "OggStream.h"
 #include <algorithm>
 #ifdef MODPLUG_TRACKER
 #include "../mptrack/TrackerSettings.h"	// For super smooth ramping option
 #endif // MODPLUG_TRACKER
 
+#if defined(MPT_WITH_VORBIS) && defined(MPT_WITH_VORBISFILE)
+#include <sstream>
+#endif
+
+#if defined(MPT_WITH_VORBIS)
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
+#include <vorbis/codec.h>
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
+#endif
+
+#if defined(MPT_WITH_VORBISFILE)
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
+#include <vorbis/vorbisfile.h>
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
+#include "../soundbase/SampleFormatConverters.h"
+#include "../soundbase/SampleFormatCopy.h"
+#endif
+
+#ifdef MPT_WITH_STBVORBIS
+#include <stb_vorbis/stb_vorbis.c>
+#include "../soundbase/SampleFormatConverters.h"
+#include "../soundbase/SampleFormatCopy.h"
+#endif // MPT_WITH_STBVORBIS
+
 
 OPENMPT_NAMESPACE_BEGIN
+
+
+
+#if defined(MPT_WITH_VORBIS) && defined(MPT_WITH_VORBISFILE)
+
+static size_t VorbisfileFilereaderRead(void *ptr, size_t size, size_t nmemb, void *datasource)
+{
+	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
+	return file.ReadRaw(mpt::void_cast<std::byte*>(ptr), size * nmemb) / size;
+}
+
+static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int whence)
+{
+	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
+	switch(whence)
+	{
+	case SEEK_SET:
+		{
+			if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+			{
+				return -1;
+			}
+			return file.Seek(mpt::saturate_cast<FileReader::off_t>(offset)) ? 0 : -1;
+		}
+		break;
+	case SEEK_CUR:
+		{
+			if(offset < 0)
+			{
+				if(offset == std::numeric_limits<ogg_int64_t>::min())
+				{
+					return -1;
+				}
+				if(!Util::TypeCanHoldValue<FileReader::off_t>(0-offset))
+				{
+					return -1;
+				}
+				return file.SkipBack(mpt::saturate_cast<FileReader::off_t>(0 - offset)) ? 0 : -1;
+			} else
+			{
+				if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+				{
+					return -1;
+				}
+				return file.Skip(mpt::saturate_cast<FileReader::off_t>(offset)) ? 0 : -1;
+			}
+		}
+		break;
+	case SEEK_END:
+		{
+			if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+			{
+				return -1;
+			}
+			if(!Util::TypeCanHoldValue<FileReader::off_t>(file.GetLength() + offset))
+			{
+				return -1;
+			}
+			return file.Seek(mpt::saturate_cast<FileReader::off_t>(file.GetLength() + offset)) ? 0 : -1;
+		}
+		break;
+	default:
+		return -1;
+	}
+}
+
+static long VorbisfileFilereaderTell(void *datasource)
+{
+	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
+	FileReader::off_t result = file.GetPosition();
+	if(!Util::TypeCanHoldValue<long>(result))
+	{
+		return -1;
+	}
+	return static_cast<long>(result);
+}
+
+#endif // MPT_WITH_VORBIS && MPT_WITH_VORBISFILE
 
 
 // Allocate samples for an instrument
@@ -144,10 +258,10 @@ static void ReadXMPatterns(FileReader &file, const XMFileHeader &fileHeader, CSo
 		// A packed size of 0 indicates a completely empty pattern.
 		const uint16 packedSize = file.ReadUint16LE();
 
-		if(numRows == 0 || numRows > MAX_PATTERN_ROWS)
-		{
+		if(numRows == 0)
 			numRows = 64;
-		}
+		else if(numRows > MAX_PATTERN_ROWS)
+			numRows = MAX_PATTERN_ROWS;
 
 		file.Seek(curPos + headerSize);
 		FileReader patternChunk = file.ReadChunk(packedSize);
@@ -221,7 +335,7 @@ static void ReadXMPatterns(FileReader &file, const XMFileHeader &fileHeader, CSo
 			} else if (vol >= 0x60)
 			{
 				// Volume commands 6-F translation.
-				static const ModCommand::VOLCMD volEffTrans[] =
+				static constexpr ModCommand::VOLCMD volEffTrans[] =
 				{
 					VOLCMD_VOLSLIDEDOWN, VOLCMD_VOLSLIDEUP, VOLCMD_FINEVOLDOWN, VOLCMD_FINEVOLUP,
 					VOLCMD_VIBRATOSPEED, VOLCMD_VIBRATODEPTH, VOLCMD_PANNING, VOLCMD_PANSLIDELEFT,
@@ -294,6 +408,174 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderXM(MemoryFileReader file, con
 }
 
 
+static bool ReadSampleData(ModSample &sample, SampleIO sampleFlags, FileReader &sampleChunk, bool &isOXM)
+{
+	bool unsupportedSample = false;
+
+	bool isOGG = false;
+	if(sampleChunk.CanRead(8))
+	{
+		isOGG = true;
+		sampleChunk.Skip(4);
+		// In order to avoid false-detecting PCM as OggVorbis as much as possible,
+		// we parse and verify the complete sample data and only assume OggVorbis,
+		// if all Ogg checksums are correct a no single byte of non-Ogg data exists.
+		// The fast-path for regular PCM will only check "OggS" magic and do no other work after failing that check.
+		while(!sampleChunk.EndOfFile())
+		{
+			if(!Ogg::ReadPage(sampleChunk))
+			{
+				isOGG = false;
+				break;
+			}
+		}
+	}
+	isOXM = isOXM || isOGG;
+	sampleChunk.Rewind();
+	if(isOGG)
+	{
+		uint32 originalSize = sampleChunk.ReadInt32LE();
+		FileReader sampleData = sampleChunk.ReadChunk(sampleChunk.BytesLeft());
+
+		sample.uFlags.set(CHN_16BIT, sampleFlags.GetBitDepth() >= 16);
+		sample.uFlags.set(CHN_STEREO, sampleFlags.GetChannelFormat() != SampleIO::mono);
+		sample.nLength = originalSize / (sample.uFlags[CHN_16BIT] ? 2 : 1) / (sample.uFlags[CHN_STEREO] ? 2 : 1);
+
+#if defined(MPT_WITH_VORBIS) && defined(MPT_WITH_VORBISFILE)
+
+		ov_callbacks callbacks = {
+			&VorbisfileFilereaderRead,
+			&VorbisfileFilereaderSeek,
+			NULL,
+			&VorbisfileFilereaderTell
+		};
+		OggVorbis_File vf;
+		MemsetZero(vf);
+		if(ov_open_callbacks(&sampleData, &vf, nullptr, 0, callbacks) == 0)
+		{
+			if(ov_streams(&vf) == 1)
+			{ // we do not support chained vorbis samples
+				vorbis_info *vi = ov_info(&vf, -1);
+				if(vi && vi->rate > 0 && vi->channels > 0)
+				{
+					sample.AllocateSample();
+					SmpLength offset = 0;
+					int channels = vi->channels;
+					int current_section = 0;
+					long decodedSamples = 0;
+					bool eof = false;
+					while(!eof && offset < sample.nLength && sample.HasSampleData())
+					{
+						float **output = nullptr;
+						long ret = ov_read_float(&vf, &output, 1024, &current_section);
+						if(ret == 0)
+						{
+							eof = true;
+						} else if(ret < 0)
+						{
+							// stream error, just try to continue
+						} else
+						{
+							decodedSamples = ret;
+							LimitMax(decodedSamples, mpt::saturate_cast<long>(sample.nLength - offset));
+							if(decodedSamples > 0 && channels == sample.GetNumChannels())
+							{
+								for(int chn = 0; chn < channels; chn++)
+								{
+									if(sample.uFlags[CHN_16BIT])
+									{
+										CopyChannelToInterleaved<SC::Convert<int16, float> >(sample.sample16() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
+									} else
+									{
+										CopyChannelToInterleaved<SC::Convert<int8, float> >(sample.sample8() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
+									}
+								}
+							}
+							offset += decodedSamples;
+						}
+					}
+				} else
+				{
+					unsupportedSample = true;
+				}
+			} else
+			{
+				unsupportedSample = true;
+			}
+			ov_clear(&vf);
+		} else
+		{
+			unsupportedSample = true;
+		}
+
+#elif defined(MPT_WITH_STBVORBIS)
+
+		// NOTE/TODO: stb_vorbis does not handle inferred negative PCM sample
+		// position at stream start. (See
+		// <https://www.xiph.org/vorbis/doc/Vorbis_I_spec.html#x1-132000A.2>).
+		// This means that, for remuxed and re-aligned/cutted (at stream start)
+		// Vorbis files, stb_vorbis will include superfluous samples at the
+		// beginning. OXM files with this property are yet to be spotted in the
+		// wild, thus, this behaviour is currently not problematic.
+
+		int consumed = 0, error = 0;
+		stb_vorbis *vorb = nullptr;
+		FileReader::PinnedRawDataView sampleDataView = sampleData.GetPinnedRawDataView();
+		const std::byte* data = sampleDataView.data();
+		std::size_t dataLeft = sampleDataView.size();
+		vorb = stb_vorbis_open_pushdata(mpt::byte_cast<const unsigned char*>(data), mpt::saturate_cast<int>(dataLeft), &consumed, &error, nullptr);
+		sampleData.Skip(consumed);
+		data += consumed;
+		dataLeft -= consumed;
+		if(vorb)
+		{
+			// Header has been read, proceed to reading the sample data
+			sample.AllocateSample();
+			SmpLength offset = 0;
+			while((error == VORBIS__no_error || (error == VORBIS_need_more_data && dataLeft > 0))
+				&& offset < sample.nLength && sample.HasSampleData())
+			{
+				int channels = 0, decodedSamples = 0;
+				float **output;
+				consumed = stb_vorbis_decode_frame_pushdata(vorb, mpt::byte_cast<const unsigned char*>(data), mpt::saturate_cast<int>(dataLeft), &channels, &output, &decodedSamples);
+				sampleData.Skip(consumed);
+				data += consumed;
+				dataLeft -= consumed;
+				LimitMax(decodedSamples, mpt::saturate_cast<int>(sample.nLength - offset));
+				if(decodedSamples > 0 && channels == sample.GetNumChannels())
+				{
+					for(int chn = 0; chn < channels; chn++)
+					{
+						if(sample.uFlags[CHN_16BIT])
+							CopyChannelToInterleaved<SC::Convert<int16, float> >(sample.sample16() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
+						else
+							CopyChannelToInterleaved<SC::Convert<int8, float> >(sample.sample8() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
+					}
+				}
+				offset += decodedSamples;
+				error = stb_vorbis_get_error(vorb);
+			}
+			stb_vorbis_close(vorb);
+		} else
+		{
+			unsupportedSample = true;
+		}
+
+#else // !VORBIS
+
+		unsupportedSample = true;
+
+#endif // VORBIS
+
+	} else
+	{
+		sampleFlags.ReadSample(sample, sampleChunk);
+	}
+
+	return !unsupportedSample;
+}
+
+
 bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 {
 	file.Rewind();
@@ -322,33 +604,25 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	FlagSet<TrackerVersions> madeWith(verUnknown);
 	mpt::ustring madeWithTracker;
 
-	if(!memcmp(fileHeader.trackerName, "FastTracker ", 12))
+	if(!memcmp(fileHeader.trackerName, "FastTracker v2.00   ", 20) && fileHeader.size == 276)
 	{
-		if(fileHeader.size == 276 && !memcmp(fileHeader.trackerName + 12, "v2.00   ", 8))
-		{
-			if(fileHeader.version < 0x0104)
-				madeWith = verFT2Generic | verConfirmed;
-			else if(memchr(fileHeader.songName, '\0', 20) != nullptr)
-				// FT2 pads the song title with spaces, some other trackers use null chars
-				madeWith = verFT2Clone | verNewModPlug | verEmptyOrders;
-			else
-				madeWith = verFT2Generic | verNewModPlug;
-		} else if(!memcmp(fileHeader.trackerName + 12, "v 2.00  ", 8))
-		{
-			// MPT 1.0 (exact version to be determined later)
-			madeWith = verOldModPlug;
-		} else
-		{
-			// ???
-			madeWith.set(verConfirmed);
-			madeWithTracker = U_("FastTracker Clone");
-		}
+		if(fileHeader.version < 0x0104)
+			madeWith = verFT2Generic | verConfirmed;
+		else if(memchr(fileHeader.songName, '\0', 20) != nullptr)
+			// FT2 pads the song title with spaces, some other trackers use null chars
+			madeWith = verFT2Clone | verNewModPlug | verEmptyOrders;
+		else
+			madeWith = verFT2Generic | verNewModPlug;
+	} else if(!memcmp(fileHeader.trackerName, "FastTracker v 2.00  ", 20))
+	{
+		// MPT 1.0 (exact version to be determined later)
+		madeWith = verOldModPlug;
 	} else
 	{
 		// Something else!
 		madeWith = verUnknown | verConfirmed;
 
-		mpt::String::Read<mpt::String::spacePadded>(madeWithTracker, mpt::CharsetCP437, fileHeader.trackerName);
+		madeWithTracker = mpt::ToUnicode(mpt::Charset::CP437, mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.trackerName));
 
 		if(!memcmp(fileHeader.trackerName, "OpenMPT ", 8))
 		{
@@ -361,6 +635,10 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				m_nMixLevels = mixLevelsCompatibleFT2;
 			}
+		} else if(!memcmp(fileHeader.trackerName, "Fasttracker II clone", 20))
+		{
+			// 8bitbubsy's FT2 clone should be treated exactly like FT2
+			madeWith = verFT2Generic | verConfirmed;
 		} else if(!memcmp(fileHeader.trackerName, "MadTracker 2.0\0", 15))
 		{
 			// Fix channel 2 in m3_cha.xm
@@ -369,25 +647,25 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			m_playBehaviour.reset(kFT2Arpeggio);
 		} else if(!memcmp(fileHeader.trackerName, "Skale Tracker\0", 14))
 		{
-			m_playBehaviour.reset(kFT2OffsetOutOfRange);
+			m_playBehaviour.reset(kFT2ST3OffsetOutOfRange);
 		} else if(!memcmp(fileHeader.trackerName, "*Converted ", 11))
 		{
 			madeWith = verDigiTrakker;
 		}
 	}
 
-	mpt::String::Read<mpt::String::spacePadded>(m_songName, fileHeader.songName);
+	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songName);
 
 	m_nMinPeriod = 1;
 	m_nMaxPeriod = 31999;
 
 	Order().SetRestartPos(fileHeader.restartPos);
 	m_nChannels = fileHeader.channels;
-	m_nInstruments = std::min<uint16>(fileHeader.instruments, MAX_INSTRUMENTS - 1u);
+	m_nInstruments = std::min(static_cast<uint16>(fileHeader.instruments), static_cast<uint16>(MAX_INSTRUMENTS - 1));
 	if(fileHeader.speed)
 		m_nDefaultSpeed = fileHeader.speed;
 	if(fileHeader.tempo)
-		m_nDefaultTempo.Set(Clamp<uint16, uint16>(fileHeader.tempo, 32, 512));
+		m_nDefaultTempo = Clamp(TEMPO(fileHeader.tempo, 0), ModSpecs::xmEx.GetTempoMin(), ModSpecs::xmEx.GetTempoMax());
 
 	m_SongFlags.reset();
 	m_SongFlags.set(SONG_LINEARSLIDES, (fileHeader.flags & XMFileHeader::linearSlides) != 0);
@@ -410,10 +688,13 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 		ReadXMPatterns(file, fileHeader, *this);
 	}
 
+	bool isOXM = false;
+
 	// In case of XM versions < 1.04, we need to memorize the sample flags for all samples, as they are not stored immediately after the sample headers.
 	std::vector<SampleIO> sampleFlags;
 	uint8 sampleReserved = 0;
 	int instrType = -1;
+	bool unsupportedSamples = false;
 
 	// Reading instruments
 	for(INSTRUMENTINDEX instr = 1; instr <= m_nInstruments; instr++)
@@ -437,12 +718,12 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			if(instrHeader.size == 245)
 			{
 				// ModPlug Tracker Alpha
-				m_dwLastSavedWithVersion = MAKE_VERSION_NUMERIC(1, 00, 00, A5);
+				m_dwLastSavedWithVersion = MPT_V("1.00.00.A5");
 				madeWithTracker = U_("ModPlug Tracker 1.0 alpha");
 			} else if(instrHeader.size == 263)
 			{
 				// ModPlug Tracker Beta (Beta 1 still behaves like Alpha, but Beta 3.3 does it this way)
-				m_dwLastSavedWithVersion = MAKE_VERSION_NUMERIC(1, 00, 00, B3);
+				m_dwLastSavedWithVersion = MPT_V("1.00.00.B3");
 				madeWithTracker = U_("ModPlug Tracker 1.0 beta");
 			} else
 			{
@@ -532,7 +813,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 					sampleHeader.ConvertToMPT(Samples[mptSample]);
 					instrHeader.instrument.ApplyAutoVibratoToMPT(Samples[mptSample]);
 
-					mpt::String::Read<mpt::String::spacePadded>(m_szNames[mptSample], sampleHeader.name);
+					m_szNames[mptSample] = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
 
 					if((sampleHeader.flags & 3) == 3 && madeWith[verNewModPlug])
 					{
@@ -552,7 +833,10 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 					FileReader sampleChunk = file.ReadChunk(sampleFlags[sample].GetEncoding() != SampleIO::ADPCM ? sampleSize[sample] : (16 + (sampleSize[sample] + 1) / 2));
 					if(sample < sampleSlots.size() && (loadFlags & loadSampleData))
 					{
-						sampleFlags[sample].ReadSample(Samples[sampleSlots[sample]], sampleChunk);
+						if(!ReadSampleData(Samples[sampleSlots[sample]], sampleFlags[sample], sampleChunk, isOXM))
+						{
+							unsupportedSamples = true;
+						}
 					}
 				}
 			}
@@ -580,6 +864,11 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 				sampleFlags[sample - 1].ReadSample(Samples[sample], file);
 			}
 		}
+	}
+
+	if(unsupportedSamples)
+	{
+		AddToLog(LogWarning, U_("Some compressed samples could not be loaded because they use an unsupported codec."));
 	}
 
 	// Read song comments: "text"
@@ -639,11 +928,11 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		if(madeWith[verModPlug1_09])
 		{
-			m_dwLastSavedWithVersion = MAKE_VERSION_NUMERIC(1, 09, 00, 00);
+			m_dwLastSavedWithVersion = MPT_V("1.09.00.00");
 			madeWithTracker = U_("ModPlug Tracker 1.09");
 		} else if(madeWith[verNewModPlug])
 		{
-			m_dwLastSavedWithVersion = MAKE_VERSION_NUMERIC(1, 16, 00, 00);
+			m_dwLastSavedWithVersion = MPT_V("1.16.00.00");
 			madeWithTracker = U_("ModPlug Tracker 1.10 - 1.16");
 		}
 	}
@@ -652,10 +941,10 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		// Hey, I know this tracker!
 		std::string mptVersion(fileHeader.trackerName + 8, 12);
-		m_dwLastSavedWithVersion = Version::Parse(mpt::ToUnicode(mpt::CharsetASCII, mptVersion));
+		m_dwLastSavedWithVersion = Version::Parse(mpt::ToUnicode(mpt::Charset::ASCII, mptVersion));
 		madeWith = verOpenMPT | verConfirmed;
 
-		if(m_dwLastSavedWithVersion < MAKE_VERSION_NUMERIC(1, 22, 07, 19))
+		if(m_dwLastSavedWithVersion < MPT_V("1.22.07.19"))
 			m_nMixLevels = mixLevelsCompatible;
 		else
 			m_nMixLevels = mixLevelsCompatibleFT2;
@@ -711,20 +1000,20 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 
 	LoadExtendedSongProperties(file, true, &isOpenMPTMade);
 
-	if(isOpenMPTMade && m_dwLastSavedWithVersion < MAKE_VERSION_NUMERIC(1, 17, 00, 00))
+	if(isOpenMPTMade && m_dwLastSavedWithVersion < MPT_V("1.17.00.00"))
 	{
 		// Up to OpenMPT 1.17.02.45 (r165), it was possible that the "last saved with" field was 0
 		// when saving a file in OpenMPT for the first time.
-		m_dwLastSavedWithVersion = MAKE_VERSION_NUMERIC(1, 17, 00, 00);
+		m_dwLastSavedWithVersion = MPT_V("1.17.00.00");
 	}
 
-	if(m_dwLastSavedWithVersion >= MAKE_VERSION_NUMERIC(1, 17, 00, 00))
+	if(m_dwLastSavedWithVersion >= MPT_V("1.17.00.00"))
 	{
 		madeWithTracker = U_("OpenMPT ") + m_dwLastSavedWithVersion.ToUString();
 	}
 
 	// We no longer allow any --- or +++ items in the order list now.
-	if(m_dwLastSavedWithVersion && m_dwLastSavedWithVersion < MAKE_VERSION_NUMERIC(1, 22, 02, 02))
+	if(m_dwLastSavedWithVersion && m_dwLastSavedWithVersion < MPT_V("1.22.02.02"))
 	{
 		if(!Patterns.IsValidPat(0xFE))
 			Order().RemovePattern(0xFE);
@@ -732,10 +1021,21 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			Order().Replace(0xFF, Order.GetInvalidPatIndex());
 	}
 
-	m_modFormat.formatName = mpt::format(U_("FastTracker 2 v%1.%2"))(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
-	m_modFormat.type = U_("xm");
-	m_modFormat.madeWithTracker = std::move(madeWithTracker);
-	m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::CharsetWindows1252 : mpt::CharsetCP437;
+	if(isOXM)
+	{
+		m_modFormat.formatName = U_("OggMod FastTracker 2");
+		m_modFormat.type = U_("oxm");
+		m_modFormat.originalFormatName = mpt::format(U_("FastTracker 2 v%1.%2"))(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
+		m_modFormat.originalType = U_("xm");
+		m_modFormat.madeWithTracker = std::move(madeWithTracker);
+		m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::Charset::Windows1252 : mpt::Charset::CP437;
+	} else
+	{
+		m_modFormat.formatName = mpt::format(U_("FastTracker 2 v%1.%2"))(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
+		m_modFormat.type = U_("xm");
+		m_modFormat.madeWithTracker = std::move(madeWithTracker);
+		m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::Charset::Windows1252 : mpt::Charset::CP437;
+	}
 
 	return true;
 }
@@ -756,10 +1056,10 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 	MemsetZero(fileHeader);
 
 	memcpy(fileHeader.signature, "Extended Module: ", 17);
-	mpt::String::Write<mpt::String::spacePadded>(fileHeader.songName, m_songName);
+	mpt::String::WriteBuf(mpt::String::spacePadded, fileHeader.songName) = m_songName;
 	fileHeader.eof = 0x1A;
 	const std::string openMptTrackerName = mpt::ToCharset(GetCharsetFile(), Version::Current().GetOpenMPTVersionString());
-	mpt::String::Write<mpt::String::spacePadded>(fileHeader.trackerName, openMptTrackerName);
+	mpt::String::WriteBuf(mpt::String::spacePadded, fileHeader.trackerName) = openMptTrackerName;
 
 	// Writing song header
 	fileHeader.version = 0x0104;					// XM Format v1.04
@@ -826,7 +1126,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 	mpt::IO::Write(f, fileHeader);
 
 	// Write processed order list
-	mpt::IO::WriteRaw(f, orderList.data(), orderList.size());
+	mpt::IO::Write(f, orderList);
 
 	// Writing patterns
 
@@ -1051,7 +1351,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 			}
 			sampleFlags[smp] = xmSample.GetSampleFormat();
 
-			mpt::String::Write<mpt::String::spacePadded>(xmSample.name, m_szNames[samples[smp]]);
+			mpt::String::WriteBuf(mpt::String::spacePadded, xmSample.name) = m_szNames[samples[smp]];
 
 			mpt::IO::Write(f, xmSample);
 		}
@@ -1092,7 +1392,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 			for(PATTERNINDEX pat = 0; pat < numNamedPats; pat++)
 			{
 				char name[MAX_PATTERNNAME];
-				mpt::String::Write<mpt::String::maybeNullTerminated>(name, Patterns[pat].GetName());
+				mpt::String::WriteBuf(mpt::String::maybeNullTerminated, name) = Patterns[pat].GetName();
 				mpt::IO::Write(f, name);
 			}
 		}
@@ -1111,7 +1411,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 				for(CHANNELINDEX chn = 0; chn < numNamedChannels; chn++)
 				{
 					char name[MAX_CHANNELNAME];
-					mpt::String::Write<mpt::String::maybeNullTerminated>(name, ChnSettings[chn].szName);
+					mpt::String::WriteBuf(mpt::String::maybeNullTerminated, name) = ChnSettings[chn].szName;
 					mpt::IO::Write(f, name);
 				}
 			}

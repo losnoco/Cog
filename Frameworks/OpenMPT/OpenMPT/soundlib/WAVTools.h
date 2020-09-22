@@ -322,7 +322,7 @@ public:
 	SmpLength GetSampleLength() const { return mpt::saturate_cast<SmpLength>(sampleLength); }
 
 	// Apply sample settings from file (loop points, MPT extra settings, ...) to a sample.
-	void ApplySampleSettings(ModSample &sample, mpt::Charset charset, char (&sampleCharset)[MAX_SAMPLENAME]);
+	void ApplySampleSettings(ModSample &sample, mpt::Charset sampleCharset, mpt::charbuf<MAX_SAMPLENAME> &sampleName);
 };
 
 
@@ -373,12 +373,12 @@ public:
 	template<typename T>
 	void Write(const T &data)
 	{
-		MPT_STATIC_ASSERT((mpt::is_binary_safe<T>::value));
+		static_assert((mpt::is_binary_safe<T>::value));
 		Write(&data, sizeof(T));
 	}
 
 	// Write a buffer to the file.
-	void WriteBuffer(const char *data, size_t size)
+	void WriteBuffer(const std::byte *data, size_t size)
 	{
 		Write(data, size);
 	}

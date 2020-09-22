@@ -207,7 +207,7 @@ namespace Util
 namespace Util
 {
 
-std::vector<mpt::byte> HexToBin(const mpt::ustring &src);
+std::vector<std::byte> HexToBin(const mpt::ustring &src);
 mpt::ustring BinToHex(mpt::const_byte_span src);
 
 template <typename T> inline mpt::ustring BinToHex(mpt::span<T> src) { return Util::BinToHex(mpt::byte_cast<mpt::const_byte_span>(src)); }

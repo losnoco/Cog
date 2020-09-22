@@ -34,7 +34,8 @@ protected:
 
 public:
 	RowVisitor(const CSoundFile &sf, SEQUENCEINDEX sequence = SEQUENCEINDEX_INVALID);
-	RowVisitor& operator=(RowVisitor &&other);
+	
+	void MoveVisitedRowsFrom(RowVisitor &other);
 
 	// Resize / Clear the row vector.
 	// If reset is true, the vector is not only resized to the required dimensions, but also completely cleared (i.e. all visited rows are unset).
@@ -68,6 +69,9 @@ public:
 
 	// Set all rows of a previous pattern loop as unvisited.
 	void ResetPatternLoop(ORDERINDEX ord, ROWINDEX startRow);
+
+	// Returns the last visited row index of the current pattern, or ROWINDEX_INVALID if there is none.
+	ROWINDEX GetLastVisitedRow() const;
 
 protected:
 

@@ -35,10 +35,9 @@ RowVisitor::RowVisitor(const CSoundFile &sf, SEQUENCEINDEX sequence)
 }
 
 
-RowVisitor& RowVisitor::operator=(RowVisitor &&other)
+void RowVisitor::MoveVisitedRowsFrom(RowVisitor &other)
 {
 	m_visitedRows = std::move(other.m_visitedRows);
-	return *this;
 }
 
 
@@ -251,6 +250,15 @@ void RowVisitor::AddVisitedRow(ORDERINDEX ord, ROWINDEX row)
 	}
 	// And now add the played row to our memory.
 	m_visitOrder.push_back(row);
+}
+
+
+// Returns the last visited row index of the current pattern, or ROWINDEX_INVALID if there is none.
+ROWINDEX RowVisitor::GetLastVisitedRow() const
+{
+	if(m_visitOrder.empty())
+		return ROWINDEX_INVALID;
+	return m_visitOrder.back();
 }
 
 

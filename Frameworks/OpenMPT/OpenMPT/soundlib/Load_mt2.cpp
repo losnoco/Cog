@@ -457,10 +457,10 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = mpt::format(U_("MadTracker %1.%2"))(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
 	m_modFormat.type = U_("mt2");
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_modFormat.madeWithTracker, mpt::CharsetWindows1252, fileHeader.trackerName);
-	m_modFormat.charset = mpt::CharsetWindows1252;
+	m_modFormat.madeWithTracker = mpt::ToUnicode(mpt::Charset::Windows1252, mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.trackerName));
+	m_modFormat.charset = mpt::Charset::Windows1252;
 
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songName);
+	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songName);
 	m_nChannels = fileHeader.numChannels;
 	m_nDefaultSpeed = Clamp<uint8, uint8>(fileHeader.ticksPerLine, 1, 31);
 	m_nDefaultTempo.Set(125);
@@ -482,7 +482,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 
 	const CHANNELINDEX channelsWithoutDrums = m_nChannels;
 	const bool hasDrumChannels = drumData.CanRead(sizeof(MT2DrumsData));
-	STATIC_ASSERT(MAX_BASECHANNELS >= 64 + 8);
+	static_assert(MAX_BASECHANNELS >= 64 + 8);
 	if(hasDrumChannels)
 	{
 		m_nChannels += 8;
@@ -549,12 +549,12 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			for(ROWINDEX row = 0; row < numRows; row++)
 			{
-				ModCommand *m = Patterns[pat].GetRow(row);
-				for(CHANNELINDEX chn = 0; chn < channelsWithoutDrums; chn++, m++)
+				auto rowData = Patterns[pat].GetRow(row);
+				for(CHANNELINDEX chn = 0; chn < channelsWithoutDrums; chn++)
 				{
 					MT2Command cmd;
 					chunk.ReadStruct(cmd);
-					hasLegacyTempo |= ConvertMT2Command(this, *m, cmd);
+					hasLegacyTempo |= ConvertMT2Command(this, rowData[chn], cmd);
 				}
 			}
 		}
@@ -609,9 +609,8 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				MT2TrackSettings trackSettings;
 				if(chunk.ReadStruct(trackSettings))
 				{
-					ChnSettings[c].nVolume = trackSettings.volume >> 10;	// 32768 is 0dB
+					ChnSettings[c].nVolume = static_cast<uint8>(trackSettings.volume >> 10);	// 32768 is 0dB
 					trackRouting[c] = trackSettings.output;
-					LimitMax(ChnSettings[c].nVolume, uint16(64));
 				}
 			}
 			break;
@@ -621,7 +620,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				std::string name;
 				chunk.ReadNullString(name);
-				mpt::String::Read<mpt::String::spacePadded>(ChnSettings[i].szName, name.c_str(), name.length());
+				ChnSettings[i].szName = mpt::String::ReadBuf(mpt::String::spacePadded, name.c_str(), name.length());
 			}
 			break;
 
@@ -650,7 +649,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				chunk.ReadNullString(artist);
 				if(artist != "Unregistered")
 				{
-					m_songArtist = mpt::ToUnicode(mpt::CharsetWindows1252, artist);
+					m_songArtist = mpt::ToUnicode(mpt::Charset::Windows1252, artist);
 				}
 			}
 			break;
@@ -679,14 +678,14 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 
 					SNDMIXPLUGIN &mixPlug = m_MixPlugins[i];
 					mixPlug.Destroy();
-					mpt::String::Read<mpt::String::maybeNullTerminated>(mixPlug.Info.szLibraryName, vstHeader.dll);
-					mpt::String::Read<mpt::String::maybeNullTerminated>(mixPlug.Info.szName, vstHeader.programName);
-					const size_t len = strlen(mixPlug.Info.szLibraryName);
-					if(len > 4 && mixPlug.Info.szLibraryName[len - 4] == '.')
+					std::string libraryName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, vstHeader.dll);
+					mixPlug.Info.szName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, vstHeader.programName);
+					if(libraryName.length() > 4 && libraryName[libraryName.length() - 4] == '.')
 					{
 						// Remove ".dll" from library name
-						mixPlug.Info.szLibraryName[len - 4] = '\0';
+						libraryName.resize(libraryName.length() - 4 );
 					}
+					mixPlug.Info.szLibraryName = libraryName;
 					mixPlug.Info.dwPluginId1 = Vst::kEffectMagic;
 					mixPlug.Info.dwPluginId2 = vstHeader.fxID;
 					if(vstHeader.track >= m_nChannels)
@@ -797,8 +796,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				ModInstrument *mptIns = AllocateInstrument(drumMap[i], drumHeader.DrumSamples[i] + 1);
 				if(mptIns != nullptr)
 				{
-					strcpy(mptIns->name, "Drum #x");
-					mptIns->name[6] = '1' + char(i);
+					mptIns->name = mpt::format("Drum #%1")(i+1);
 				}
 			} else
 			{
@@ -910,7 +908,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 		if(mptIns == nullptr)
 			continue;
 
-		mpt::String::Read<mpt::String::maybeNullTerminated>(mptIns->name, instrName);
+		mptIns->name = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, instrName);
 
 		if(!dataLength)
 			continue;
@@ -945,7 +943,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				mptEnv.dwFlags.set(ENV_ENABLED, (mt2Env.flags & 1) != 0);
 				mptEnv.dwFlags.set(ENV_SUSTAIN, (mt2Env.flags & 2) != 0);
 				mptEnv.dwFlags.set(ENV_LOOP, (mt2Env.flags & 4) != 0);
-				mptEnv.resize(std::min<uint8>(mt2Env.numPoints, 16));
+				mptEnv.resize(std::min(mt2Env.numPoints.get(), uint8(16)));
 				mptEnv.nSustainStart = mptEnv.nSustainEnd = mt2Env.sustainPos;
 				mptEnv.nLoopStart = mt2Env.loopStart;
 				mptEnv.nLoopEnd = mt2Env.loopEnd;
@@ -976,7 +974,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				mptIns->SetCutoff(FrequencyToCutOff(synthData.cutoff), true);
 				mptIns->SetResonance(synthData.resonance, true);
 			}
-			mptIns->nFilterMode = synthData.effectID == 1 ? FLTMODE_HIGHPASS : FLTMODE_LOWPASS;
+			mptIns->filterMode = synthData.effectID == 1 ? FilterMode::HighPass : FilterMode::LowPass;
 			if(flags & 4)
 			{
 				// VSTi / MIDI synth enabled
@@ -989,7 +987,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				}
 				if(synthData.transpose)
 				{
-					for(uint32 n = 0; n < CountOf(mptIns->NoteMap); n++)
+					for(uint32 n = 0; n < std::size(mptIns->NoteMap); n++)
 					{
 						int note = NOTE_MIN + n + synthData.transpose;
 						Limit(note, NOTE_MIN, NOTE_MAX);
@@ -1015,7 +1013,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 
 		if(i < fileHeader.numSamples)
 		{
-			mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[i + 1], sampleName);
+			m_szNames[i + 1] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleName);
 		}
 
 		if(dataLength && i < fileHeader.numSamples)
@@ -1144,7 +1142,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			file.Skip(12); // Reserved
 			std::string filename;
 			file.ReadString<mpt::String::maybeNullTerminated>(filename, filenameSize);
-			mpt::String::Copy(mptSmp.filename, filename);
+			mptSmp.filename = filename;
 
 #if defined(MPT_EXTERNAL_SAMPLES)
 			if(filename.length() >= 2

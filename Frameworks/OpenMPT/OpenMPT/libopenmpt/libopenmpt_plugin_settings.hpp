@@ -29,6 +29,7 @@ struct libopenmpt_settings {
 	int mastergain_millibel;
 	int stereoseparation;
 	int use_amiga_resampler;
+	int amiga_filter_type;
 	int repeatcount;
 	int interpolationfilterlength;
 	int ramping;
@@ -55,7 +56,7 @@ protected:
 			regkey = HKEY();
 		}
 	}
-	virtual void write_setting( const std::string & /* key */ , const std::wstring & keyW, int val ) {
+	virtual void write_setting( const std::string & /* key */, const std::wstring & keyW, int val ) {
 		HKEY regkey = HKEY();
 		if ( RegCreateKeyEx( HKEY_CURRENT_USER, ( L"Software\\libopenmpt\\" + subkey ).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &regkey, NULL ) == ERROR_SUCCESS ) {
 			DWORD v = val;
@@ -81,6 +82,7 @@ public:
 		repeatcount = 0;
 		interpolationfilterlength = 8;
 		use_amiga_resampler = 0;
+		amiga_filter_type = 0;
 		ramping = -1;
 		vis_allow_scroll = 1;
 		changed = 0;
@@ -94,7 +96,8 @@ public:
 			read_setting( subkey, "StereoSeparation_Percent", stereoseparation );
 			read_setting( subkey, "RepeatCount", repeatcount );
 			read_setting( subkey, "InterpolationFilterLength", interpolationfilterlength );
-			read_setting( subkey, "UseAmigaResampler", use_amiga_resampler);
+			read_setting( subkey, "UseAmigaResampler", use_amiga_resampler );
+			read_setting( subkey, "AmigaFilterType", amiga_filter_type );
 			read_setting( subkey, "VolumeRampingStrength", ramping );
 			read_setting( subkey, "VisAllowScroll", vis_allow_scroll );
 		#undef read_setting
@@ -108,7 +111,8 @@ public:
 			write_setting( subkey, "StereoSeparation_Percent", stereoseparation );
 			write_setting( subkey, "RepeatCount", repeatcount );
 			write_setting( subkey, "InterpolationFilterLength", interpolationfilterlength );
-			write_setting( subkey, "UseAmigaResampler", use_amiga_resampler);
+			write_setting( subkey, "UseAmigaResampler", use_amiga_resampler );
+			write_setting( subkey, "AmigaFilterType", amiga_filter_type );
 			write_setting( subkey, "VolumeRampingStrength", ramping );
 			write_setting( subkey, "VisAllowScroll", vis_allow_scroll );
 		#undef write_setting

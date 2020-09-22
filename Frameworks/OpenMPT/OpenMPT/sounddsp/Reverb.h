@@ -21,10 +21,6 @@ OPENMPT_NAMESPACE_BEGIN
 ////////////////////////////////////////////////////////////////////////
 // Reverberation
 
-#define NUM_REVERBTYPES			29
-
-mpt::ustring GetReverbPresetName(uint32 nPreset);
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // SW Reverb structures
@@ -142,9 +138,9 @@ public:
 
 	// Shared reverb state
 private:
-	mixsample_t MixReverbBuffer[MIXBUFFERSIZE * 2];
+	MixSampleInt MixReverbBuffer[MIXBUFFERSIZE * 2];
 public:
-	mixsample_t gnRvbROfsVol = 0, gnRvbLOfsVol = 0;
+	MixSampleInt gnRvbROfsVol = 0, gnRvbLOfsVol = 0;
 
 private:
 	const SNDMIX_REVERB_PROPERTIES *m_currentPreset = nullptr;
@@ -176,10 +172,10 @@ public:
 	void Initialize(bool bReset, uint32 MixingFreq);
 
 	// can be called multiple times or never (if no data is sent to reverb)
-	mixsample_t *GetReverbSendBuffer(uint32 nSamples);
+	MixSampleInt *GetReverbSendBuffer(uint32 nSamples);
 
 	// call once after all data has been sent.
-	void Process(mixsample_t *MixSoundBuffer, uint32 nSamples);
+	void Process(MixSampleInt *MixSoundBuffer, uint32 nSamples);
 
 private:
 	void Shutdown();
@@ -204,79 +200,26 @@ private:
 // I3DL2 reverb presets
 //
 
-#define SNDMIX_REVERB_PRESET_DEFAULT \
--10000,    0, 1.00f,0.50f,-10000,0.020f,-10000,0.040f,100.0f,100.0f
+struct SNDMIX_REVERB_PROPERTIES
+{
+	int32 lRoom;               // [-10000, 0]      default: -10000 mB
+	int32 lRoomHF;             // [-10000, 0]      default: 0 mB
+	float flDecayTime;         // [0.1, 20.0]      default: 1.0 s
+	float flDecayHFRatio;      // [0.1, 2.0]       default: 0.5
+	int32 lReflections;        // [-10000, 1000]   default: -10000 mB
+	float flReflectionsDelay;  // [0.0, 0.3]       default: 0.02 s
+	int32 lReverb;             // [-10000, 2000]   default: -10000 mB
+	float flReverbDelay;       // [0.0, 0.1]       default: 0.04 s
+	float flDiffusion;         // [0.0, 100.0]     default: 100.0 %
+	float flDensity;           // [0.0, 100.0]     default: 100.0 %
+};
 
-#define SNDMIX_REVERB_PRESET_GENERIC \
- -1000, -100, 1.49f,0.83f, -2602,0.007f,   200,0.011f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_PADDEDCELL \
- -1000,-6000, 0.17f,0.10f, -1204,0.001f,   207,0.002f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_ROOM \
- -1000, -454, 0.40f,0.83f, -1646,0.002f,    53,0.003f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_BATHROOM \
- -1000,-1200, 1.49f,0.54f,  -370,0.007f,  1030,0.011f,100.0f, 60.0f
-#define SNDMIX_REVERB_PRESET_LIVINGROOM \
- -1000,-6000, 0.50f,0.10f, -1376,0.003f, -1104,0.004f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_STONEROOM \
- -1000, -300, 2.31f,0.64f,  -711,0.012f,    83,0.017f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_AUDITORIUM \
- -1000, -476, 4.32f,0.59f,  -789,0.020f,  -289,0.030f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_CONCERTHALL \
- -1000, -500, 3.92f,0.70f, -1230,0.020f,    -2,0.029f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_CAVE \
- -1000,    0, 2.91f,1.30f,  -602,0.015f,  -302,0.022f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_ARENA \
- -1000, -698, 7.24f,0.33f, -1166,0.020f,    16,0.030f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_HANGAR \
- -1000,-1000,10.05f,0.23f,  -602,0.020f,   198,0.030f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_CARPETEDHALLWAY \
- -1000,-4000, 0.30f,0.10f, -1831,0.002f, -1630,0.030f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_HALLWAY \
- -1000, -300, 1.49f,0.59f, -1219,0.007f,   441,0.011f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_STONECORRIDOR \
- -1000, -237, 2.70f,0.79f, -1214,0.013f,   395,0.020f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_ALLEY \
- -1000, -270, 1.49f,0.86f, -1204,0.007f,    -4,0.011f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_FOREST \
- -1000,-3300, 1.49f,0.54f, -2560,0.162f,  -613,0.088f, 79.0f,100.0f
-#define SNDMIX_REVERB_PRESET_CITY \
- -1000, -800, 1.49f,0.67f, -2273,0.007f, -2217,0.011f, 50.0f,100.0f
-#define SNDMIX_REVERB_PRESET_MOUNTAINS \
- -1000,-2500, 1.49f,0.21f, -2780,0.300f, -2014,0.100f, 27.0f,100.0f
-#define SNDMIX_REVERB_PRESET_QUARRY \
- -1000,-1000, 1.49f,0.83f,-10000,0.061f,   500,0.025f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_PLAIN \
- -1000,-2000, 1.49f,0.50f, -2466,0.179f, -2514,0.100f, 21.0f,100.0f
-#define SNDMIX_REVERB_PRESET_PARKINGLOT \
- -1000,    0, 1.65f,1.50f, -1363,0.008f, -1153,0.012f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_SEWERPIPE \
- -1000,-1000, 2.81f,0.14f,   429,0.014f,   648,0.021f, 80.0f, 60.0f
-#define SNDMIX_REVERB_PRESET_UNDERWATER \
- -1000,-4000, 1.49f,0.10f,  -449,0.007f,  1700,0.011f,100.0f,100.0f
-
-// Examples simulating General MIDI 2'musical' reverb presets
-//
-// Name  (Decay time)  Description
-//
-// Small Room  (1.1s)  A small size room with a length of 5m or so.
-// Medium Room (1.3s)  A medium size room with a length of 10m or so.
-// Large Room  (1.5s)  A large size room suitable for live performances.
-// Medium Hall (1.8s)  A medium size concert hall.
-// Large Hall  (1.8s)  A large size concert hall suitable for a full orchestra.
-// Plate       (1.3s)  A plate reverb simulation.
-
-#define SNDMIX_REVERB_PRESET_SMALLROOM \
- -1000, -600, 1.10f,0.83f,  -400,0.005f,   500,0.010f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_MEDIUMROOM \
- -1000, -600, 1.30f,0.83f, -1000,0.010f,  -200,0.020f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_LARGEROOM \
- -1000, -600, 1.50f,0.83f, -1600,0.020f, -1000,0.040f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_MEDIUMHALL \
- -1000, -600, 1.80f,0.70f, -1300,0.015f,  -800,0.030f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_LARGEHALL \
- -1000, -600, 1.80f,0.70f, -2000,0.030f, -1400,0.060f,100.0f,100.0f
-#define SNDMIX_REVERB_PRESET_PLATE \
- -1000, -200, 1.30f,0.90f,     0,0.002f,     0,0.010f,100.0f, 75.0f
+enum : uint32
+{
+	NUM_REVERBTYPES = 29
+};
+mpt::ustring GetReverbPresetName(uint32 preset);
+const SNDMIX_REVERB_PROPERTIES *GetReverbPreset(uint32 preset);
 
 OPENMPT_NAMESPACE_END
 

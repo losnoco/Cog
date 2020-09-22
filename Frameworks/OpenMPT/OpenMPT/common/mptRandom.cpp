@@ -34,16 +34,16 @@ static T log2(T x)
 }
 
 
-static MPT_CONSTEXPR11_FUN int lower_bound_entropy_bits(unsigned int x)
+static MPT_CONSTEXPR14_FUN int lower_bound_entropy_bits(unsigned int x)
 {
 	return detail::lower_bound_entropy_bits(x);
 }
 
 
 template <typename T>
-static inline bool is_mask(T x)
+static MPT_CONSTEXPR14_FUN bool is_mask(T x)
 {
-	STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+	static_assert(std::numeric_limits<T>::is_integer);
 	typedef typename std::make_unsigned<T>::type unsigned_T;
 	unsigned_T ux = static_cast<unsigned_T>(x);
 	unsigned_T mask = 0;
@@ -86,7 +86,7 @@ static T generate_timeseed()
 	{
 		uint64be time;
 		time = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock().now().time_since_epoch()).count();
-		mpt::byte bytes[sizeof(time)];
+		std::byte bytes[sizeof(time)];
 		std::memcpy(bytes, &time, sizeof(time));
 		hash(std::begin(bytes), std::end(bytes));
 	}
@@ -94,7 +94,7 @@ static T generate_timeseed()
 	{
 		uint64be time;
 		time = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock().now().time_since_epoch()).count();
-		mpt::byte bytes[sizeof(time)];
+		std::byte bytes[sizeof(time)];
 		std::memcpy(bytes, &time, sizeof(time));
 		hash(std::begin(bytes), std::end(bytes));
 	}
@@ -126,8 +126,19 @@ crand::result_type crand::operator()()
 #endif // MODPLUG_TRACKER
 
 sane_random_device::sane_random_device()
-	: rd_reliable(rd.entropy() > 0.0)
+	: rd_reliable(false)
 {
+	try
+	{
+		prd = std::make_unique<std::random_device>();
+		rd_reliable = ((*prd).entropy() > 0.0);
+	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	{
+		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
+	} catch(const std::exception &)
+	{
+		rd_reliable = false;	
+	}
 	if(!rd_reliable)
 	{
 		init_fallback();
@@ -136,9 +147,19 @@ sane_random_device::sane_random_device()
 
 sane_random_device::sane_random_device(const std::string & token_)
 	: token(token_)
-	, rd(token)
-	, rd_reliable(rd.entropy() > 0.0)
+	, rd_reliable(false)
 {
+	try
+	{
+		prd = std::make_unique<std::random_device>(token);
+		rd_reliable = ((*prd).entropy() > 0.0);
+	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	{
+		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
+	} catch(const std::exception &)
+	{
+		rd_reliable = false;	
+	}
 	if(!rd_reliable)
 	{
 		init_fallback();
@@ -160,7 +181,7 @@ void sane_random_device::init_fallback()
 				seeds.push_back(static_cast<unsigned int>(static_cast<unsigned char>(token[i])));
 			}
 			std::seed_seq seed(seeds.begin(), seeds.end());
-			rd_fallback = mpt::make_unique<std::mt19937>(seed);
+			rd_fallback = std::make_unique<std::mt19937>(seed);
 		} else
 		{
 			uint64 seed_val = mpt::generate_timeseed<uint64>();
@@ -168,53 +189,59 @@ void sane_random_device::init_fallback()
 			seeds[0] = static_cast<uint32>(seed_val >> 32);
 			seeds[1] = static_cast<uint32>(seed_val >>  0);
 			std::seed_seq seed(seeds + 0, seeds + 2);
-			rd_fallback = mpt::make_unique<std::mt19937>(seed);
+			rd_fallback = std::make_unique<std::mt19937>(seed);
 		}
 	}
 }
 
 sane_random_device::result_type sane_random_device::operator()()
 {
-	MPT_LOCK_GUARD<mpt::mutex> l(m);
+	mpt::lock_guard<mpt::mutex> l(m);
 	result_type result = 0;
-	try
+	if(prd)
 	{
-		if(rd.min() != 0 || !mpt::is_mask(rd.max()))
-		{ // insane std::random_device
-			//  This implementation is not exactly uniformly distributed but good enough
-			// for OpenMPT.
-			double rd_min = static_cast<double>(rd.min());
-			double rd_max = static_cast<double>(rd.max());
-			double rd_range = rd_max - rd_min;
-			double rd_size = rd_range + 1.0;
-			double rd_entropy = mpt::log2(rd_size);
-			int iterations = static_cast<int>(std::ceil(result_bits() / rd_entropy));
-			double tmp = 0.0;
-			for(int i = 0; i < iterations; ++i)
-			{
-				tmp = (tmp * rd_size) + (static_cast<double>(rd()) - rd_min);
-			}
-			double result_01 = std::floor(tmp / std::pow(rd_size, iterations));
-			result = static_cast<result_type>(std::floor(result_01 * (static_cast<double>(max() - min()) + 1.0))) + min();
-		} else
-		{ // sane std::random_device
-			result = 0;
-			std::size_t rd_bits = mpt::lower_bound_entropy_bits(rd.max());
-			for(std::size_t entropy = 0; entropy < (sizeof(result_type) * 8); entropy += rd_bits)
-			{
-				if(rd_bits < (sizeof(result_type) * 8))
+		try
+		{
+			if constexpr(std::random_device::min() != 0 || !mpt::is_mask(std::random_device::max()))
+			{ // insane std::random_device
+				//  This implementation is not exactly uniformly distributed but good enough
+				// for OpenMPT.
+				double rd_min = static_cast<double>(std::random_device::min());
+				double rd_max = static_cast<double>(std::random_device::max());
+				double rd_range = rd_max - rd_min;
+				double rd_size = rd_range + 1.0;
+				double rd_entropy = mpt::log2(rd_size);
+				int iterations = static_cast<int>(std::ceil(result_bits() / rd_entropy));
+				double tmp = 0.0;
+				for(int i = 0; i < iterations; ++i)
 				{
-					result = (result << rd_bits) | static_cast<result_type>(rd());
-				} else
+					tmp = (tmp * rd_size) + (static_cast<double>((*prd)()) - rd_min);
+				}
+				double result_01 = std::floor(tmp / std::pow(rd_size, iterations));
+				result = static_cast<result_type>(std::floor(result_01 * (static_cast<double>(max() - min()) + 1.0))) + min();
+			} else
+			{ // sane std::random_device
+				result = 0;
+				std::size_t rd_bits = mpt::lower_bound_entropy_bits(std::random_device::max());
+				for(std::size_t entropy = 0; entropy < (sizeof(result_type) * 8); entropy += rd_bits)
 				{
-					result = result | static_cast<result_type>(rd());
+					if(rd_bits < (sizeof(result_type) * 8))
+					{
+						result = (result << rd_bits) | static_cast<result_type>((*prd)());
+					} else
+					{
+						result = result | static_cast<result_type>((*prd)());
+					}
 				}
 			}
+		} catch(const std::exception &)
+		{
+			rd_reliable = false;
+			init_fallback();
 		}
-	} catch(const std::exception &)
+	} else
 	{
 		rd_reliable = false;
-		init_fallback();
 	}
 	if(!rd_reliable)
 	{ // std::random_device is unreliable

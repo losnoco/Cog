@@ -190,7 +190,7 @@ private:
 	template <typename Tx, typename Ty, typename Teps>
 	inline bool IsEqualEpsilon(const Tx &x, const Ty &y, const Teps &eps)
 	{
-		return mpt::abs(x - y) <= eps;
+		return std::abs(x - y) <= eps;
 	}
 
 public:

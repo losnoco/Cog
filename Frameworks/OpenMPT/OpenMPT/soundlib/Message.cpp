@@ -24,7 +24,7 @@ OPENMPT_NAMESPACE_BEGIN
 // [in]  length: number of characters that should be read, not including a possible trailing null terminator (it is automatically appended).
 // [in]  lineEnding: line ending formatting of the text in memory.
 // [out] returns true on success.
-bool SongMessage::Read(const mpt::byte *data, size_t length, LineEnding lineEnding)
+bool SongMessage::Read(const std::byte *data, size_t length, LineEnding lineEnding)
 {
 	const char *str = mpt::byte_cast<const char *>(data);
 	while(length != 0 && str[length - 1] == '\0')
@@ -120,7 +120,7 @@ bool SongMessage::Read(FileReader &file, const size_t length, LineEnding lineEnd
 // [in]  lineLength: The fixed length of a line.
 // [in]  lineEndingLength: The padding space between two fixed lines. (there could for example be a null char after every line)
 // [out] returns true on success.
-bool SongMessage::ReadFixedLineLength(const mpt::byte *data, const size_t length, const size_t lineLength, const size_t lineEndingLength)
+bool SongMessage::ReadFixedLineLength(const std::byte *data, const size_t length, const size_t lineLength, const size_t lineEndingLength)
 {
 	if(lineLength == 0)
 		return false;
@@ -203,7 +203,7 @@ std::string SongMessage::GetFormatted(const LineEnding lineEnding) const
 bool SongMessage::SetFormatted(std::string message, LineEnding lineEnding)
 {
 	MPT_ASSERT(lineEnding == leLF || lineEnding == leCR || lineEnding == leCRLF);
-	switch (lineEnding)
+	switch(lineEnding)
 	{
 	case leLF:
 		message = mpt::String::Replace(message, "\n", std::string(1, InternalLineEnding));
@@ -222,7 +222,7 @@ bool SongMessage::SetFormatted(std::string message, LineEnding lineEnding)
 	{
 		return false;
 	}
-	assign(message);
+	assign(std::move(message));
 	return true;
 }
 

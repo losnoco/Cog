@@ -19,7 +19,7 @@
 #endif
 #endif /* _MSC_VER */
 
-#include "libopenmpt.h"
+#include <libopenmpt/libopenmpt.h>
 
 #include <limits.h>
 #include <math.h>

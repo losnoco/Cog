@@ -50,7 +50,7 @@ struct UltSample
 	{
 		mptSmp.Initialize();
 
-		mpt::String::Read<mpt::String::maybeNullTerminated>(mptSmp.filename, filename);
+		mptSmp.filename = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, filename);
 
 		if(sizeEnd <= sizeStart)
 		{
@@ -85,21 +85,8 @@ struct UltSample
 MPT_BINARY_STRUCT(UltSample, 66)
 
 
-struct UltPatternCommand
-{
-	uint8 instr;
-	uint8 cmd;
-	uint8 param1;
-	uint8 param2;
-};
-
-MPT_BINARY_STRUCT(UltPatternCommand, 4)
-
-
 /* Unhandled effects:
 5x1 - do not loop sample (x is unused)
-9xx - set sample offset to xx * 1024
-    with 9yy: set sample offset to xxyy * 4
 E0x - set vibrato strength (2 is normal)
 
 The logarithmic volume scale used in older format versions here, or pretty
@@ -110,7 +97,7 @@ convert them. */
 static void TranslateULTCommands(uint8 &effect, uint8 &param, uint8 version)
 {
 
-	static const uint8 ultEffTrans[] =
+	static constexpr uint8 ultEffTrans[] =
 	{
 		CMD_ARPEGGIO,
 		CMD_PORTAMENTOUP,
@@ -215,25 +202,23 @@ static void TranslateULTCommands(uint8 &effect, uint8 &param, uint8 version)
 
 static int ReadULTEvent(ModCommand &m, FileReader &file, uint8 version)
 {
-	uint8 b, repeat = 1;
-	uint8 cmd1, cmd2;	// 1 = vol col, 2 = fx col in the original schismtracker code
-	uint8 param1, param2;
-
-	b = file.ReadUint8();
-	if (b == 0xFC)	// repeat event
+	uint8 repeat = 1;
+	uint8 b = file.ReadUint8();
+	if(b == 0xFC)	// repeat event
 	{
 		repeat = file.ReadUint8();
 		b = file.ReadUint8();
 	}
 
 	m.note = (b > 0 && b < 61) ? (b + 35 + NOTE_MIN) : NOTE_NONE;
-	UltPatternCommand patCmd;
-	file.ReadStruct(patCmd);
-	m.instr = patCmd.instr;
-	cmd1 = patCmd.cmd & 0x0F;
-	cmd2 = patCmd.cmd >> 4;
-	param1 = patCmd.param1;
-	param2 = patCmd.param2;
+
+	const auto [instr, cmd, para1, para2] = file.ReadArray<uint8, 4>();
+	
+	m.instr = instr;
+	uint8 cmd1 = cmd & 0x0F;
+	uint8 cmd2 = cmd >> 4;
+	uint8 param1 = para1;
+	uint8 param2 = para2;
 	TranslateULTCommands(cmd1, param1, version);
 	TranslateULTCommands(cmd2, param2, version);
 
@@ -287,7 +272,7 @@ struct PostFixUltCommands
 		isPortaActive.resize(numChannels, false);
 	}
 
-	void operator()(ModCommand& m)
+	void operator()(ModCommand &m)
 	{
 		// Attempt to fix portamentos.
 		// UltraTracker will slide until the destination note is reached or 300 is encountered.
@@ -359,7 +344,7 @@ static bool ValidateHeader(const UltFileHeader &fileHeader)
 
 static uint64 GetHeaderMinimumAdditionalSize(const UltFileHeader &fileHeader)
 {
-	return fileHeader.messageLength * 32u;
+	return fileHeader.messageLength * 32u + 3u + 256u;
 }
 
 CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderULT(MemoryFileReader file, const uint64 *pfilesize)
@@ -400,13 +385,13 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(MOD_TYPE_ULT);
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songName);
+	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songName);
 
-	const MPT_UCHAR_TYPE *versions[] = {UL_("<1.4"), UL_("1.4"), UL_("1.5"), UL_("1.6")};
+	const mpt::uchar *versions[] = {UL_("<1.4"), UL_("1.4"), UL_("1.5"), UL_("1.6")};
 	m_modFormat.formatName = U_("UltraTracker");
 	m_modFormat.type = U_("ult");
 	m_modFormat.madeWithTracker = U_("UltraTracker ") + versions[fileHeader.version - '1'];
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_SongFlags = SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS;	// this will be converted to IT format by MPT.
 
@@ -433,7 +418,7 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 		}
 
 		sampleHeader.ConvertToMPT(Samples[smp]);
-		mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[smp], sampleHeader.name);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.name);
 	}
 
 	ReadOrderFromFile<uint8>(Order(), file, 256, 0xFF, 0xFE);

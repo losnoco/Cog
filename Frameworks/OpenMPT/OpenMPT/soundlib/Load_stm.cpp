@@ -17,14 +17,14 @@ OPENMPT_NAMESPACE_BEGIN
 // STM sample header struct
 struct STMSampleHeader
 {
-	char     filename[12];	// Can't have long comments - just filename comments :)
+	char     filename[12];  // Can't have long comments - just filename comments :)
 	uint8le  zero;
-	uint8le  disk;			// A blast from the past
-	uint16le offset;		// 20-bit offset in file (lower 4 bits are zero)
-	uint16le length;		// Sample length
-	uint16le loopStart;		// Loop start point
-	uint16le loopEnd;		// Loop end point
-	uint8le  volume;		// Volume
+	uint8le  disk;       // A blast from the past
+	uint16le offset;     // 20-bit offset in file (lower 4 bits are zero)
+	uint16le length;     // Sample length
+	uint16le loopStart;  // Loop start point
+	uint16le loopEnd;    // Loop end point
+	uint8le  volume;     // Volume
 	uint8le  reserved2;
 	uint16le sampleRate;
 	uint8le  reserved3[6];
@@ -33,10 +33,10 @@ struct STMSampleHeader
 	void ConvertToMPT(ModSample &mptSmp) const
 	{
 		mptSmp.Initialize();
-		mpt::String::Read<mpt::String::maybeNullTerminated>(mptSmp.filename, filename);
+		mptSmp.filename = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, filename);
 
 		mptSmp.nC5Speed = sampleRate;
-		mptSmp.nVolume = std::min<uint8>(volume, 64) * 4;
+		mptSmp.nVolume = std::min(volume.get(), uint8(64)) * 4;
 		mptSmp.nLength = length;
 		mptSmp.nLoopStart = loopStart;
 		mptSmp.nLoopEnd = loopEnd;
@@ -60,13 +60,13 @@ MPT_BINARY_STRUCT(STMSampleHeader, 32)
 struct STMFileHeader
 {
 	char  songname[20];
-	char  trackername[8];	// !Scream! for ST 2.xx
-	uint8 dosEof;			// 0x1A
-	uint8 filetype;			// 1=song, 2=module (only 2 is supported, of course) :)
+	char  trackername[8];  // !Scream! for ST 2.xx
+	uint8 dosEof;          // 0x1A
+	uint8 filetype;        // 1=song, 2=module (only 2 is supported, of course) :)
 	uint8 verMajor;
 	uint8 verMinor;
-	uint8 initTempo;		// Ticks per row.
-	uint8 numPatterns;		// number of patterns
+	uint8 initTempo;
+	uint8 numPatterns;
 	uint8 globalVolume;
 	uint8 reserved[13];
 };
@@ -144,12 +144,12 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 
 	InitializeGlobals(MOD_TYPE_STM);
 
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songname);
+	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songname);
 
 	m_modFormat.formatName = U_("Scream Tracker 2");
 	m_modFormat.type = U_("stm");
 	m_modFormat.madeWithTracker = mpt::format(U_("Scream Tracker %1.%2"))(fileHeader.verMajor, mpt::ufmt::dec0<2>(fileHeader.verMinor));
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_nSamples = 31;
 	m_nChannels = 4;
@@ -165,7 +165,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultTempo = ConvertST2Tempo(initTempo);
 	m_nDefaultSpeed = initTempo >> 4;
 	if(fileHeader.verMinor > 10)
-		m_nDefaultGlobalVolume = std::min<uint8>(fileHeader.globalVolume, 64) * 4u;
+		m_nDefaultGlobalVolume = std::min(fileHeader.globalVolume, uint8(64)) * 4u;
 
 	// Setting up channels
 	for(CHANNELINDEX chn = 0; chn < 4; chn++)
@@ -183,7 +183,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 		if(sampleHeader.zero != 0 && sampleHeader.zero != 46)	// putup10.stm has zero = 46
 			return false;
 		sampleHeader.ConvertToMPT(Samples[smp]);
-		mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[smp], sampleHeader.filename);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.filename);
 		sampleOffsets[smp - 1] = sampleHeader.offset;
 	}
 
@@ -214,126 +214,137 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 
 		auto m = Patterns[pat].begin();
 		ORDERINDEX breakPos = ORDERINDEX_INVALID;
-		ROWINDEX breakRow = 63;	// Candidate row for inserting pattern break
-	
-		for(unsigned int i = 0; i < 64 * 4; i++, m++)
+		ROWINDEX breakRow = 63;  // Candidate row for inserting pattern break
+
+		for(ROWINDEX row = 0; row < 64; row++)
 		{
-			uint8 note = file.ReadUint8(), insvol, volcmd, cmdinf;
-			switch(note)
+			uint8 newTempo = 0;
+			for(CHANNELINDEX chn = 0; chn < 4; chn++, m++)
 			{
-			case 0xFB:
-				note = insvol = volcmd = cmdinf = 0x00;
-				break;
-			case 0xFC:
-				continue;
-			case 0xFD:
-				m->note = NOTE_NOTECUT;
-				continue;
-			default:
+				uint8 note = file.ReadUint8(), insVol, volCmd, cmdInf;
+				switch(note)
 				{
-				uint8 patData[3];
-				file.ReadArray(patData);
-				insvol = patData[0];
-				volcmd = patData[1];
-				cmdinf = patData[2];
+				case 0xFB:
+					note = insVol = volCmd = cmdInf = 0x00;
+					break;
+				case 0xFC:
+					continue;
+				case 0xFD:
+					m->note = NOTE_NOTECUT;
+					continue;
+				default:
+					{
+					const auto patData = file.ReadArray<uint8, 3>();
+					insVol = patData[0];
+					volCmd = patData[1];
+					cmdInf = patData[2];
+					}
+					break;
 				}
-				break;
-			}
 
-			if(note == 0xFE)
-				m->note = NOTE_NOTECUT;
-			else if(note < 0x60)
-				m->note = (note >> 4) * 12 + (note & 0x0F) + 36 + NOTE_MIN;
+				if(note == 0xFE)
+					m->note = NOTE_NOTECUT;
+				else if(note < 0x60)
+					m->note = (note >> 4) * 12 + (note & 0x0F) + 36 + NOTE_MIN;
 
-			m->instr = insvol >> 3;
-			if(m->instr > 31)
-			{
-				m->instr = 0;
-			}
+				m->instr = insVol >> 3;
+				if(m->instr > 31)
+				{
+					m->instr = 0;
+				}
 			
-			uint8 vol = (insvol & 0x07) | ((volcmd & 0xF0) >> 1);
-			if(vol <= 64)
-			{
-				m->volcmd = VOLCMD_VOLUME;
-				m->vol = vol;
-			}
-
-			static const EffectCommand stmEffects[] =
-			{
-				CMD_NONE,        CMD_SPEED,          CMD_POSITIONJUMP, CMD_PATTERNBREAK,   // .ABC
-				CMD_VOLUMESLIDE, CMD_PORTAMENTODOWN, CMD_PORTAMENTOUP, CMD_TONEPORTAMENTO, // DEFG
-				CMD_VIBRATO,     CMD_TREMOR,         CMD_ARPEGGIO,     CMD_NONE,           // HIJK
-				CMD_NONE,        CMD_NONE,           CMD_NONE,         CMD_NONE,           // LMNO
-				// KLMNO can be entered in the editor but don't do anything
-			};
-
-			m->command = stmEffects[volcmd & 0x0F];
-			m->param = cmdinf;
-
-			switch(m->command)
-			{
-			case CMD_VOLUMESLIDE:
-				// Lower nibble always has precedence, and there are no fine slides.
-				if(m->param & 0x0F)
-					m->param &= 0x0F;
-				else
-					m->param &= 0xF0;
-				break;
-
-			case CMD_PATTERNBREAK:
-				m->param = (m->param & 0xF0) * 10 + (m->param & 0x0F);
-				if(breakPos != ORDERINDEX_INVALID && m->param == 0)
+				uint8 vol = (insVol & 0x07) | ((volCmd & 0xF0) >> 1);
+				if(vol <= 64)
 				{
-					// Merge Bxx + C00 into just Bxx
-					m->command = CMD_POSITIONJUMP;
-					m->param = static_cast<ModCommand::PARAM>(breakPos);
-					breakPos = ORDERINDEX_INVALID;
+					m->volcmd = VOLCMD_VOLUME;
+					m->vol = vol;
 				}
-				LimitMax(breakRow, i / 4u);
-				break;
 
-			case CMD_POSITIONJUMP:
-				// This effect is also very weird.
-				// Bxx doesn't appear to cause an immediate break -- it merely
-				// sets the next order for when the pattern ends (either by
-				// playing it all the way through, or via Cxx effect)
-				breakPos = m->param;
-				breakRow = 63;
-				m->command = CMD_NONE;
-				break;
-
-			case CMD_TREMOR:
-				// this actually does something with zero values, and has no
-				// effect memory. which makes SENSE for old-effects tremor,
-				// but ST3 went and screwed it all up by adding an effect
-				// memory and IT followed that, and those are much more popular
-				// than STM so we kind of have to live with this effect being
-				// broken... oh well. not a big loss.
-				break;
-
-			case CMD_SPEED:
-				if(fileHeader.verMinor < 21)
+				static constexpr EffectCommand stmEffects[] =
 				{
-					m->param = ((m->param / 10u) << 4u) + m->param % 10u;
-				}
+					CMD_NONE,        CMD_SPEED,          CMD_POSITIONJUMP, CMD_PATTERNBREAK,   // .ABC
+					CMD_VOLUMESLIDE, CMD_PORTAMENTODOWN, CMD_PORTAMENTOUP, CMD_TONEPORTAMENTO, // DEFG
+					CMD_VIBRATO,     CMD_TREMOR,         CMD_ARPEGGIO,     CMD_NONE,           // HIJK
+					CMD_NONE,        CMD_NONE,           CMD_NONE,         CMD_NONE,           // LMNO
+					// KLMNO can be entered in the editor but don't do anything
+				};
+
+				m->command = stmEffects[volCmd & 0x0F];
+				m->param = cmdInf;
+
+				switch(m->command)
+				{
+				case CMD_VOLUMESLIDE:
+					// Lower nibble always has precedence, and there are no fine slides.
+					if(m->param & 0x0F)
+						m->param &= 0x0F;
+					else
+						m->param &= 0xF0;
+					break;
+
+				case CMD_PATTERNBREAK:
+					m->param = (m->param & 0xF0) * 10 + (m->param & 0x0F);
+					if(breakPos != ORDERINDEX_INVALID && m->param == 0)
+					{
+						// Merge Bxx + C00 into just Bxx
+						m->command = CMD_POSITIONJUMP;
+						m->param = static_cast<ModCommand::PARAM>(breakPos);
+						breakPos = ORDERINDEX_INVALID;
+					}
+					LimitMax(breakRow, row);
+					break;
+
+				case CMD_POSITIONJUMP:
+					// This effect is also very weird.
+					// Bxx doesn't appear to cause an immediate break -- it merely
+					// sets the next order for when the pattern ends (either by
+					// playing it all the way through, or via Cxx effect)
+					breakPos = m->param;
+					breakRow = 63;
+					m->command = CMD_NONE;
+					break;
+
+				case CMD_TREMOR:
+					// this actually does something with zero values, and has no
+					// effect memory. which makes SENSE for old-effects tremor,
+					// but ST3 went and screwed it all up by adding an effect
+					// memory and IT followed that, and those are much more popular
+					// than STM so we kind of have to live with this effect being
+					// broken... oh well. not a big loss.
+					break;
+
+				case CMD_SPEED:
+					if(fileHeader.verMinor < 21)
+					{
+						m->param = ((m->param / 10u) << 4u) + m->param % 10u;
+					}
+
+					if(!m->param)
+					{
+						m->command = CMD_NONE;
+						break;
+					}
 
 #ifdef MODPLUG_TRACKER
-				// ST2 has a very weird tempo mode where the length of a tick depends both
-				// on the ticks per row and a scaling factor. This is probably the closest
-				// we can get with S3M-like semantics.
-				m->param >>= 4;
+					// ST2 has a very weird tempo mode where the length of a tick depends both
+					// on the ticks per row and a scaling factor. Try to write the tempo into a separate command.
+					newTempo = m->param;
+					m->param >>= 4;
 #endif // MODPLUG_TRACKER
+					break;
 
-				MPT_FALLTHROUGH;
-
-			default:
-				// Anything not listed above is a no-op if there's no value.
-				// (ST2 doesn't have effect memory)
-				if(!m->param)
-				{
-					m->command = CMD_NONE;
+				default:
+					// Anything not listed above is a no-op if there's no value, as ST2 doesn't have effect memory.
+					if(!m->param)
+					{
+						m->command = CMD_NONE;
+					}
+					break;
 				}
-				break;
+			}
+			if(newTempo != 0)
+			{
+				Patterns[pat].WriteEffect(EffectWriter(CMD_TEMPO, mpt::saturate_round<ModCommand::PARAM>(ConvertST2Tempo(newTempo).ToDouble())).Row(row).RetryPreviousRow());
 			}
 		}
 

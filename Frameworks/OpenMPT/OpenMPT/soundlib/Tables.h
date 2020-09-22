@@ -15,8 +15,8 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-extern const MPT_UCHAR_TYPE NoteNamesSharp[12][4];
-extern const MPT_UCHAR_TYPE NoteNamesFlat[12][4];
+extern const mpt::uchar NoteNamesSharp[12][4];
+extern const mpt::uchar NoteNamesFlat[12][4];
 
 extern const uint8 ImpulseTrackerPortaVolCmd[16];
 extern const uint16 ProTrackerPeriodTable[7*12];

@@ -174,7 +174,7 @@ public:
 
 #if MPT_MUTEX_STD
 
-#define MPT_LOCK_GUARD std::lock_guard
+template <typename T> using lock_guard = std::lock_guard<T>;
 
 #else // !MPT_MUTEX_STD
 
@@ -187,8 +187,6 @@ public:
 	lock_guard( mutex_type & m ) : mutex(m) { mutex.lock(); }
 	~lock_guard() { mutex.unlock(); }
 };
-
-#define MPT_LOCK_GUARD mpt::lock_guard
 
 #endif // MPT_MUTEX_STD
 

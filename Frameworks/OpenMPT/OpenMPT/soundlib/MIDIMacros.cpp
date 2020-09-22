@@ -96,6 +96,14 @@ void MIDIMacroConfig::CreateParameteredMacro(Macro &parameteredMacro, Parametere
 }
 
 
+std::string MIDIMacroConfig::CreateParameteredMacro(ParameteredMacro macroType, int subType) const
+{
+	Macro parameteredMacro;
+	CreateParameteredMacro(parameteredMacro, macroType, subType);
+	return mpt::String::ReadAutoBuf(parameteredMacro);
+}
+
+
 // Create Zxx (Z80 - ZFF) from preset
 void MIDIMacroConfig::CreateFixedMacro(Macro (&fixedMacros)[128], FixedMacro macroType) const
 {

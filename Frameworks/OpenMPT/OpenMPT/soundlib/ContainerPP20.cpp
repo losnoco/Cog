@@ -23,10 +23,10 @@ OPENMPT_NAMESPACE_BEGIN
 
 struct PPBITBUFFER
 {
-	uint32 bitcount;
-	uint32 bitbuffer;
-	const uint8 *pStart;
-	const uint8 *pSrc;
+	uint32 bitcount = 0;
+	uint32 bitbuffer = 0;
+	const uint8 *pStart = nullptr;
+	const uint8 *pSrc = nullptr;
 
 	uint32 GetBits(uint32 n);
 };
@@ -36,15 +36,16 @@ uint32 PPBITBUFFER::GetBits(uint32 n)
 {
 	uint32 result = 0;
 
-	for (uint32 i=0; i<n; i++)
+	for(uint32 i = 0; i < n; i++)
 	{
-		if (!bitcount)
+		if(!bitcount)
 		{
 			bitcount = 8;
-			if (pSrc != pStart) pSrc--;
+			if(pSrc != pStart)
+				pSrc--;
 			bitbuffer = *pSrc;
 		}
-		result = (result<<1) | (bitbuffer&1);
+		result = (result << 1) | (bitbuffer & 1);
 		bitbuffer >>= 1;
 		bitcount--;
 	}
@@ -52,58 +53,54 @@ uint32 PPBITBUFFER::GetBits(uint32 n)
 }
 
 
-static bool PP20_DoUnpack(const uint8 *pSrc, uint32 nSrcLen, uint8 *pDst, uint32 nDstLen)
+static bool PP20_DoUnpack(const uint8 *pSrc, uint32 srcLen, uint8 *pDst, uint32 dstLen)
 {
+	const std::array<uint8, 4> modeTable{pSrc[0], pSrc[1], pSrc[2], pSrc[3]};
 	PPBITBUFFER BitBuffer;
-	uint32 nBytesLeft;
-
 	BitBuffer.pStart = pSrc;
-	BitBuffer.pSrc = pSrc + nSrcLen - 4;
-	BitBuffer.bitbuffer = 0;
-	BitBuffer.bitcount = 0;
-	BitBuffer.GetBits(pSrc[nSrcLen-1]);
-	nBytesLeft = nDstLen;
-	while (nBytesLeft > 0)
+	BitBuffer.pSrc = pSrc + srcLen - 4;
+	BitBuffer.GetBits(pSrc[srcLen - 1]);
+	uint32 bytesLeft = dstLen;
+	while(bytesLeft > 0)
 	{
-		if (!BitBuffer.GetBits(1))
+		if(!BitBuffer.GetBits(1))
 		{
-			uint32 n = 1;
-			while (n < nBytesLeft)
+			uint32 count = 1, countAdd;
+			do
 			{
-				uint32 code = BitBuffer.GetBits(2);
-				n += code;
-				if (code != 3) break;
-			}
-			LimitMax(n, nBytesLeft);
-			for (uint32 i=0; i<n; i++)
+				countAdd = BitBuffer.GetBits(2);
+				count += countAdd;
+			} while(countAdd == 3);
+			LimitMax(count, bytesLeft);
+			for(uint32 i = 0; i < count; i++)
 			{
-				pDst[--nBytesLeft] = (uint8)BitBuffer.GetBits(8);
+				pDst[--bytesLeft] = (uint8)BitBuffer.GetBits(8);
 			}
-			if (!nBytesLeft) break;
+			if(!bytesLeft)
+				break;
 		}
 		{
-			uint32 n = BitBuffer.GetBits(2)+1;
-			if(n < 1 || n-1 >= nSrcLen) return false;
-			uint32 nbits = pSrc[n-1];
-			uint32 nofs;
-			if (n==4)
+			uint32 modeIndex = BitBuffer.GetBits(2);
+			MPT_CHECKER_ASSUME(modeIndex < 4);
+			uint32 count = modeIndex + 2, offset;
+			if(modeIndex == 3)
 			{
-				nofs = BitBuffer.GetBits( (BitBuffer.GetBits(1)) ? nbits : 7 );
-				while (n < nBytesLeft)
+				offset = BitBuffer.GetBits((BitBuffer.GetBits(1)) ? modeTable[modeIndex] : 7);
+				uint32 countAdd = 7;
+				do
 				{
-					uint32 code = BitBuffer.GetBits(3);
-					n += code;
-					if (code != 7) break;
-				}
+					countAdd = BitBuffer.GetBits(3);
+					count += countAdd;
+				} while(countAdd == 7);
 			} else
 			{
-				nofs = BitBuffer.GetBits(nbits);
+				offset = BitBuffer.GetBits(modeTable[modeIndex]);
 			}
-			LimitMax(n, nBytesLeft);
-			for (uint32 i=0; i<=n; i++)
+			LimitMax(count, bytesLeft);
+			for(uint32 i = 0; i < count; i++)
 			{
-				pDst[nBytesLeft-1] = (nBytesLeft+nofs < nDstLen) ? pDst[nBytesLeft+nofs] : 0;
-				if (!--nBytesLeft) break;
+				pDst[bytesLeft - 1] = (bytesLeft + offset < dstLen) ? pDst[bytesLeft + offset] : 0;
+				--bytesLeft;
 			}
 		}
 	}
@@ -113,8 +110,8 @@ static bool PP20_DoUnpack(const uint8 *pSrc, uint32 nSrcLen, uint8 *pDst, uint32
 
 struct PP20header
 {
-	char    magic[4];       // "PP20"
-	uint8be efficiency[4];
+	char  magic[4];       // "PP20"
+	uint8 efficiency[4];
 };
 
 MPT_BINARY_STRUCT(PP20header, 8)
@@ -178,7 +175,7 @@ bool UnpackPP20(std::vector<ContainerItem> &containerItems, FileReader &file, Co
 	}
 
 	containerItems.emplace_back();
-	containerItems.back().data_cache = mpt::make_unique<std::vector<char> >();
+	containerItems.back().data_cache = std::make_unique<std::vector<char> >();
 	std::vector<char> & unpackedData = *(containerItems.back().data_cache);
 
 	FileReader::off_t length = file.GetLength();

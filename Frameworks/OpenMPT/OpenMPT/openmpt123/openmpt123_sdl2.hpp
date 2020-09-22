@@ -15,24 +15,41 @@
 
 #if defined(MPT_WITH_SDL2)
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // __clang__
 #include <SDL.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 #ifdef main
 #undef main
 #endif
 #ifdef SDL_main
 #undef SDL_main
 #endif
+#if (SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 4))
+MPT_WARNING("Support for SDL2 < 2.0.4 has been deprecated and will be removed in a future openmpt123 version.")
+#endif
 
 namespace openmpt123 {
 
 struct sdl2_exception : public exception {
-	sdl2_exception( int /*code*/ ) : exception( "SDL2 error" ) { }
+private:
+	static std::string text_from_code( int code ) {
+		std::ostringstream s;
+		s << code;
+		return s.str();
+	}
+public:
+	sdl2_exception( int code, const char * error ) : exception( text_from_code( code ) + " (" + ( error ? std::string(error) : std::string("NULL") ) + ")" ) { }
 };
 
 static void check_sdl2_error( int e ) {
 	if ( e < 0 ) {
-		throw sdl2_exception( e );
-		return;
+		throw sdl2_exception( e, SDL_GetError() );
 	}
 }
 
@@ -46,13 +63,16 @@ public:
 	}
 };
 
-class sdl2_stream_raii : public write_buffers_blocking_wrapper {
+class sdl2_stream_raii : public write_buffers_interface {
 private:
 	std::ostream & log;
 	sdl2_raii sdl2;
 	int dev;
 	std::size_t channels;
 	bool use_float;
+	std::size_t sampleQueueMaxFrames;
+	std::vector<float> sampleBufFloat;
+	std::vector<std::int16_t> sampleBufInt;
 protected:
 	std::uint32_t round_up_power2(std::uint32_t x)
 	{
@@ -64,12 +84,12 @@ protected:
 	}
 public:
 	sdl2_stream_raii( commandlineflags & flags, std::ostream & log_ )
-		: write_buffers_blocking_wrapper(flags)
-		, log(log_)
+		: log(log_)
 		, sdl2( SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER | SDL_INIT_AUDIO )
 		, dev(-1)
 		, channels(flags.channels)
 		, use_float(flags.use_float)
+		, sampleQueueMaxFrames(0)
 	{
 		if ( flags.buffer == default_high ) {
 			flags.buffer = 160;
@@ -90,14 +110,14 @@ public:
 		audiospec.silence = 0;
 		audiospec.samples = round_up_power2( ( flags.buffer * flags.samplerate ) / ( 1000 * 2 ) );
 		audiospec.size = audiospec.samples * audiospec.channels * ( flags.use_float ? sizeof( float ) : sizeof( std::int16_t ) );
-		audiospec.callback = &sdl2_callback_wrapper;
-		audiospec.userdata = this;
+		audiospec.callback = NULL;
+		audiospec.userdata = NULL;
 		if ( flags.verbose ) {
 			log << "SDL2:" << std::endl;
 			log << " latency: " << ( audiospec.samples * 2.0 / flags.samplerate ) << " (2 * " << audiospec.samples << ")" << std::endl;
 			log << std::endl;
 		}
-		set_queue_size_frames( round_up_power2( ( flags.buffer * flags.samplerate ) / ( 1000 * 2 ) ) );
+		sampleQueueMaxFrames = round_up_power2( ( flags.buffer * flags.samplerate ) / ( 1000 * 2 ) );
 		SDL_AudioSpec audiospec_obtained;
 		std::memset( &audiospec_obtained, 0, sizeof( SDL_AudioSpec ) );
 		std::memcpy( &audiospec_obtained, &audiospec, sizeof( SDL_AudioSpec ) );
@@ -114,24 +134,45 @@ public:
 		SDL_CloseAudioDevice( dev );
 	}
 private:
-	static void sdl2_callback_wrapper( void * userdata, Uint8 * stream, int len ) {
-		return reinterpret_cast<sdl2_stream_raii*>( userdata )->sdl2_callback( stream, len );
+	std::size_t get_num_writeable_frames() {
+		std::size_t num_queued_frames = SDL_GetQueuedAudioSize( dev ) / ( use_float ? sizeof( float ) : sizeof( std::int16_t ) ) / channels;
+		if ( num_queued_frames > sampleQueueMaxFrames ) {
+			return 0;
+		}
+		return sampleQueueMaxFrames - num_queued_frames;
 	}
-	void sdl2_callback( Uint8 * stream, int len ) {
-		return ( use_float ? sdl2_callback_impl<float>( stream, len ) : sdl2_callback_impl<std::int16_t>( stream, len ) );
-	}
-	template < typename Tsample >
-	void sdl2_callback_impl( Uint8 * stream, int len ) {
-		std::size_t framesToRender = len / sizeof( Tsample ) / channels;
-		for ( std::size_t frame = 0; frame < framesToRender; ++frame ) {
-			for ( std::size_t channel = 0; channel < channels; ++channel ) {
-				Tsample sample = pop_queue<Tsample>();
-				std::memcpy( stream, &sample, sizeof( Tsample ) );
-				stream += sizeof( Tsample );
+	template<typename Tsample>
+	void write_frames( const Tsample * buffer, std::size_t frames ) {
+		while ( frames > 0 ) {
+			std::size_t chunk_frames = std::min( frames, get_num_writeable_frames() );
+			if ( chunk_frames > 0 ) {
+				check_sdl2_error( SDL_QueueAudio( dev, buffer, chunk_frames * channels * ( use_float ? sizeof( float ) : sizeof( std::int16_t ) ) ) );
+				frames -= chunk_frames;
+				buffer += chunk_frames * channels;
+			} else {
+				SDL_Delay( 1 );
 			}
 		}
 	}
 public:
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
+		sampleBufFloat.clear();
+		for ( std::size_t frame = 0; frame < frames; ++frame ) {
+			for ( std::size_t channel = 0; channel < channels; ++channel ) {
+				sampleBufFloat.push_back( buffers[channel][frame] );
+			}
+		}
+		write_frames( sampleBufFloat.data(), frames );
+	}
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
+		sampleBufInt.clear();
+		for ( std::size_t frame = 0; frame < frames; ++frame ) {
+			for ( std::size_t channel = 0; channel < channels; ++channel ) {
+				sampleBufInt.push_back( buffers[channel][frame] );
+			}
+		}
+		write_frames( sampleBufInt.data(), frames );
+	}
 	bool pause() override {
 		SDL_PauseAudioDevice( dev, 1 );
 		return true;
@@ -139,12 +180,6 @@ public:
 	bool unpause() override {
 		SDL_PauseAudioDevice( dev, 0 );
 		return true;
-	}
-	void lock() override {
-		SDL_LockAudioDevice( dev );
-	}
-	void unlock() override {
-		SDL_UnlockAudioDevice( dev );
 	}
 	bool sleep( int ms ) override {
 		SDL_Delay( ms );

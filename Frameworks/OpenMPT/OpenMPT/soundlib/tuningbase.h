@@ -29,40 +29,46 @@ enum class SerializationResult : int {
 };
 
 
-	//NOTEINDEXTYPE: Some signed integer-type.
-	//UNOTEINDEXTYPE: Unsigned NOTEINDEXTYPE
-	//RATIOTYPE: Some 'real figure' type able to present ratios.
-	//STEPINDEXTYPE: Counter of steps between notes. If there is no 'finetune'(finestepcount == 0),
-			//then 'step difference' between notes is the
-			//same as differences in NOTEINDEXTYPE. In a way similar to ticks and rows in pattern -
-			//ticks <-> STEPINDEX, rows <-> NOTEINDEX
+using NOTEINDEXTYPE = int16;    // Some signed integer-type.
+using UNOTEINDEXTYPE = uint16;  // Unsigned NOTEINDEXTYPE.
 
-	typedef int16 NOTEINDEXTYPE;
-	typedef uint16 UNOTEINDEXTYPE;
-	typedef float32 RATIOTYPE; //If changing RATIOTYPE, serialization methods may need modifications.
-	typedef int32 STEPINDEXTYPE;
-	typedef uint32 USTEPINDEXTYPE;
+using RATIOTYPE = float32;      // Some 'real figure' type able to present ratios. If changing RATIOTYPE, serialization methods may need modifications.
 
-	typedef std::pair<NOTEINDEXTYPE, NOTEINDEXTYPE> VRPAIR;
+// Counter of steps between notes. If there is no 'finetune'(finestepcount == 0),
+// then 'step difference' between notes is the
+// same as differences in NOTEINDEXTYPE. In a way similar to ticks and rows in pattern -
+// ticks <-> STEPINDEX, rows <-> NOTEINDEX
+using STEPINDEXTYPE = int32;
+using USTEPINDEXTYPE = uint32;
 
-	typedef uint16 TUNINGTYPE;
+struct NoteRange
+{
+  NOTEINDEXTYPE first;
+  NOTEINDEXTYPE last;
+};
 
 
 // Derived from old IsStepCountRangeSufficient(), this is actually a more
 // sensible value than what was calculated in earlier versions.
-static MPT_CONSTEXPR11_VAR STEPINDEXTYPE FINESTEPCOUNT_MAX = 0xffff;
+static constexpr STEPINDEXTYPE FINESTEPCOUNT_MAX = 0xffff;
+
+static constexpr auto NOTEINDEXTYPE_MIN = std::numeric_limits<NOTEINDEXTYPE>::min();
+static constexpr auto NOTEINDEXTYPE_MAX = std::numeric_limits<NOTEINDEXTYPE>::max();
+static constexpr auto UNOTEINDEXTYPE_MAX = std::numeric_limits<UNOTEINDEXTYPE>::max();
+static constexpr auto STEPINDEXTYPE_MIN = std::numeric_limits<STEPINDEXTYPE>::min();
+static constexpr auto STEPINDEXTYPE_MAX = std::numeric_limits<STEPINDEXTYPE>::max();
+static constexpr auto USTEPINDEXTYPE_MAX = std::numeric_limits<USTEPINDEXTYPE>::max();
 
 
-#define NOTEINDEXTYPE_MIN (std::numeric_limits<NOTEINDEXTYPE>::min)()
-#define NOTEINDEXTYPE_MAX (std::numeric_limits<NOTEINDEXTYPE>::max)()
-#define UNOTEINDEXTYPE_MAX (std::numeric_limits<UNOTEINDEXTYPE>::max)()
-#define STEPINDEXTYPE_MIN (std::numeric_limits<STEPINDEXTYPE>::min)()
-#define STEPINDEXTYPE_MAX (std::numeric_limits<STEPINDEXTYPE>::max)()
-#define USTEPINDEXTYPE_MAX (std::numeric_limits<USTEPINDEXTYPE>::max)()
+enum class Type : uint16
+{
+	GENERAL        = 0,
+	GROUPGEOMETRIC = 1,
+	GEOMETRIC      = 3,
+};
 
 
-class CTuningRTI;
-typedef CTuningRTI CTuning;
+class CTuning;
 
 
 } // namespace Tuning

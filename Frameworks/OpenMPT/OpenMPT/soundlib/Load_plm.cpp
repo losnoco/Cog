@@ -151,10 +151,10 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("Disorder Tracker 2");
 	m_modFormat.type = U_("plm");
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	// Some PLMs use ASCIIZ, some space-padding strings...weird. Oh, and the file browser stops at 0 bytes in the name, the main GUI doesn't.
-	mpt::String::Read<mpt::String::spacePadded>(m_songName, fileHeader.songName);
+	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songName);
 	m_nChannels = fileHeader.numChannels + 1;	// Additional channel for writing pattern breaks
 	m_nSamplePreAmp = fileHeader.amplify;
 	m_nDefaultTempo.Set(fileHeader.tempo);
@@ -183,14 +183,14 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 			|| !file.ReadStruct(sampleHeader))
 				continue;
 
-		mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[smp + 1], sampleHeader.name);
-		mpt::String::Read<mpt::String::maybeNullTerminated>(sample.filename, sampleHeader.filename);
+		m_szNames[smp + 1] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.name);
+		sample.filename = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.filename);
 		if(sampleHeader.panning <= 15)
 		{
 			sample.uFlags.set(CHN_PANNING);
 			sample.nPan = sampleHeader.panning * 0x11;
 		}
-		sample.nGlobalVol = std::min<uint8>(sampleHeader.volume, 64);
+		sample.nGlobalVol = std::min(sampleHeader.volume.get(), uint8(64));
 		sample.nC5Speed = sampleHeader.sampleRate;
 		sample.nLoopStart = sampleHeader.loopStart;
 		sample.nLoopEnd = sampleHeader.loopEnd;
@@ -229,7 +229,7 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 	const ROWINDEX rowsPerPat = 64;
 	uint32 maxPos = 0;
 
-	static const ModCommand::COMMAND effTrans[] =
+	static constexpr ModCommand::COMMAND effTrans[] =
 	{
 		CMD_NONE,
 		CMD_PORTAMENTOUP,
@@ -267,10 +267,10 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 		file.ReadStruct(patHeader);
 		if(!patHeader.numRows) continue;
 
-		STATIC_ASSERT(ORDERINDEX_MAX >= ((mpt::limits<decltype(ord.x)>::max)() + 255) / rowsPerPat);
+		static_assert(ORDERINDEX_MAX >= ((mpt::limits<decltype(ord.x)>::max)() + 255) / rowsPerPat);
 		ORDERINDEX curOrd = static_cast<ORDERINDEX>(ord.x / rowsPerPat);
 		ROWINDEX curRow = static_cast<ROWINDEX>(ord.x % rowsPerPat);
-		const CHANNELINDEX numChannels = std::min<uint8>(patHeader.numChannels, fileHeader.numChannels - ord.y);
+		const CHANNELINDEX numChannels = std::min(patHeader.numChannels.get(), static_cast<uint8>(fileHeader.numChannels - ord.y));
 		const uint32 patternEnd = ord.x + patHeader.numRows;
 		maxPos = std::max(maxPos, patternEnd);
 
@@ -293,25 +293,24 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 			ModCommand *m = Patterns[pat].GetpModCommand(curRow, ord.y);
 			for(CHANNELINDEX c = 0; c < numChannels; c++, m++)
 			{
-				uint8 data[5];
-				file.ReadArray(data);
-				if(data[0])
-					lastNote[c] = m->note = (data[0] >> 4) * 12 + (data[0] & 0x0F) + 12 + NOTE_MIN;
+				const auto [note, instr, volume, command, param] = file.ReadArray<uint8, 5>();
+				if(note > 0 && note < 0x90)
+					lastNote[c] = m->note = (note >> 4) * 12 + (note & 0x0F) + 12 + NOTE_MIN;
 				else
 					m->note = NOTE_NONE;
-				m->instr = data[1];
+				m->instr = instr;
 				m->volcmd = VOLCMD_VOLUME;
-				if(data[2] != 0xFF)
-					m->vol = data[2];
+				if(volume != 0xFF)
+					m->vol = volume;
 				else
 					m->volcmd = VOLCMD_NONE;
 
-				if(data[3] < CountOf(effTrans))
+				if(command < CountOf(effTrans))
 				{
-					m->command = effTrans[data[3]];
-					m->param = data[4];
+					m->command = effTrans[command];
+					m->param = param;
 					// Fix some commands
-					switch(data[3])
+					switch(command)
 					{
 					case 0x07:	// Tremolo waveform
 						m->param = 0x40 | (m->param & 0x03);
@@ -341,13 +340,13 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 						m->param = 0x80 | (m->param & 0x0F);
 						break;
 					case 0x10:	// Delay Note
-						m->param = 0xD0 | std::min<ModCommand::PARAM>(m->param, 0x0F);
+						m->param = 0xD0 | std::min(m->param, ModCommand::PARAM(0x0F));
 						break;
 					case 0x11:	// Cut Note
-						m->param = 0xC0 | std::min<ModCommand::PARAM>(m->param, 0x0F);
+						m->param = 0xC0 | std::min(m->param, ModCommand::PARAM(0x0F));
 						break;
 					case 0x12:	// Pattern Delay
-						m->param = 0xE0 | std::min<ModCommand::PARAM>(m->param, 0x0F);
+						m->param = 0xE0 | std::min(m->param, ModCommand::PARAM(0x0F));
 						break;
 					case 0x04:	// Volume Slide
 					case 0x14:	// Vibrato + Volume Slide

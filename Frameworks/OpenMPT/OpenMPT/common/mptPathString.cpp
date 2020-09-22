@@ -524,7 +524,7 @@ bool DeleteWholeDirectoryTree(mpt::PathString path)
 
 #if defined(MPT_ENABLE_DYNBIND) || defined(MPT_ENABLE_TEMPFILE)
 
-mpt::PathString GetAppPath()
+mpt::PathString GetExecutablePath()
 {
 	std::vector<TCHAR> exeFileName(MAX_PATH);
 	while(GetModuleFileName(0, exeFileName.data(), mpt::saturate_cast<DWORD>(exeFileName.size())) >= exeFileName.size())
@@ -578,8 +578,8 @@ mpt::PathString GetTempDirectory()
 			return mpt::PathString::FromNative(tempPath.data());
 		}
 	}
-	// use app directory as fallback
-	return mpt::GetAppPath();
+	// use exe directory as fallback
+	return mpt::GetExecutablePath();
 }
 
 mpt::PathString CreateTempFileName(const mpt::PathString &fileNamePrefix, const mpt::PathString &fileNameExtension)
@@ -735,7 +735,7 @@ void SanitizeFilename(mpt::u8string &str)
 }
 #endif // MPT_USTRING_MODE_UTF8
 
-#if defined(_MFC_VER)
+#if defined(MPT_WITH_MFC)
 void SanitizeFilename(CString &str)
 {
 	for(int i = 0; i < str.GetLength(); i++)
@@ -743,7 +743,7 @@ void SanitizeFilename(CString &str)
 		str.SetAt(i, SanitizeFilenameChar(str.GetAt(i)));
 	}
 }
-#endif // MFC
+#endif // MPT_WITH_MFC
 
 #endif // MODPLUG_TRACKER
 

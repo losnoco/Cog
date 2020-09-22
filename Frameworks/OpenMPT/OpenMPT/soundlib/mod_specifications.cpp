@@ -24,7 +24,7 @@ namespace ModSpecs
 #define SongFlag(x) (FlagSet<SongFlags>::store_type(0) | x)
 
 
-MPT_CONSTEXPR11_VAR CModSpecifications mptm_ =
+constexpr CModSpecifications mptm_ =
 {
 	/*
 	TODO: Proper, less arbitrarily chosen values here.
@@ -41,7 +41,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications mptm_ =
 	1,											// Channel min
 	127,										// Channel max
 	32,											// Min tempo
-	512,										// Max tempo
+	1000,										// Max tempo
 	1,											// Min Speed
 	255,										// Max Speed
 	1,											// Min pattern rows
@@ -72,14 +72,14 @@ MPT_CONSTEXPR11_VAR CModSpecifications mptm_ =
 	true,										// Has artist name
 	true,										// Has default resampling
 	true,										// Fixed point tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\:#???????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\:#????????",	// Supported Effects
 	" vpcdabuh??gfe?o",							// Supported Volume Column commands
 };
 
 
 
 
-MPT_CONSTEXPR11_VAR CModSpecifications mod_ =
+constexpr CModSpecifications mod_ =
 {
 	MOD_TYPE_MOD,								// Internal MODTYPE value
 	"mod",										// File extension
@@ -122,12 +122,12 @@ MPT_CONSTEXPR11_VAR CModSpecifications mod_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCD?FF?E??????????????????????",	// Supported Effects
+	" 0123456789ABCD?FF?E???????????????????????",	// Supported Effects
 	" ???????????????",							// Supported Volume Column commands
 };
 
 
-MPT_CONSTEXPR11_VAR CModSpecifications xm_ =
+constexpr CModSpecifications xm_ =
 {
 	MOD_TYPE_XM,								// Internal MODTYPE value
 	"xm",										// File extension
@@ -139,7 +139,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications xm_ =
 	1,											// Channel min
 	32,											// Channel max
 	32,											// Min tempo
-	512,										// Max tempo
+	1000,										// Max tempo
 	1,											// Min Speed
 	31,											// Max Speed
 	1,											// Min pattern rows
@@ -170,12 +170,12 @@ MPT_CONSTEXPR11_VAR CModSpecifications xm_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCDRFFTE???GHK??XPL???????????",	// Supported Effects
+	" 0123456789ABCDRFFTE???GHK??XPL????????????",	// Supported Effects
 	" vpcdabuhlrg????",							// Supported Volume Column commands
 };
 
 // XM with MPT extensions
-MPT_CONSTEXPR11_VAR CModSpecifications xmEx_ =
+constexpr CModSpecifications xmEx_ =
 {
 	MOD_TYPE_XM,								// Internal MODTYPE value
 	"xm",										// File extension
@@ -187,7 +187,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications xmEx_ =
 	1,											// Channel min
 	127,										// Channel max
 	32,											// Min tempo
-	512,										// Max tempo
+	1000,										// Max tempo
 	1,											// Min Speed
 	31,											// Max Speed
 	1,											// Min pattern rows
@@ -218,11 +218,11 @@ MPT_CONSTEXPR11_VAR CModSpecifications xmEx_ =
 	true,										// Has artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCDRFFTE???GHK?YXPLZ\\?#???????",	// Supported Effects
+	" 0123456789ABCDRFFTE???GHK?YXPLZ\\?#????????",	// Supported Effects
 	" vpcdabuhlrg????",							// Supported Volume Column commands
 };
 
-MPT_CONSTEXPR11_VAR CModSpecifications s3m_ =
+constexpr CModSpecifications s3m_ =
 {
 	MOD_TYPE_S3M,								// Internal MODTYPE value
 	"s3m",										// File extension
@@ -265,12 +265,12 @@ MPT_CONSTEXPR11_VAR CModSpecifications s3m_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?U???????????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?U??????????????? ",	// Supported Effects
 	" vp?????????????",							// Supported Volume Column commands
 };
 
 // S3M with MPT extensions
-MPT_CONSTEXPR11_VAR CModSpecifications s3mEx_ =
+constexpr CModSpecifications s3mEx_ =
 {
 	MOD_TYPE_S3M,								// Internal MODTYPE value
 	"s3m",										// File extension
@@ -313,11 +313,11 @@ MPT_CONSTEXPR11_VAR CModSpecifications s3mEx_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z??????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z?????????? ",	// Supported Effects
 	" vp?????????????",							// Supported Volume Column commands
 };
 
-MPT_CONSTEXPR11_VAR CModSpecifications it_ =
+constexpr CModSpecifications it_ =
 {
 	MOD_TYPE_IT,								// Internal MODTYPE value
 	"it",										// File extension
@@ -360,11 +360,11 @@ MPT_CONSTEXPR11_VAR CModSpecifications it_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z??????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z?????????? ",	// Supported Effects
 	" vpcdab?h??gfe??",							// Supported Volume Column commands
 };
 
-MPT_CONSTEXPR11_VAR CModSpecifications itEx_ =
+constexpr CModSpecifications itEx_ =
 {
 	MOD_TYPE_IT,								// Internal MODTYPE value
 	"it",										// File extension
@@ -407,7 +407,7 @@ MPT_CONSTEXPR11_VAR CModSpecifications itEx_ =
 	true,										// Has artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\?#???????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\?#??????? ",	// Supported Effects
 	" vpcdab?h??gfe??",							// Supported Volume Column commands
 };
 

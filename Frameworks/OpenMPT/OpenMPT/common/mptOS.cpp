@@ -15,8 +15,69 @@
 #include <windows.h>
 #endif
 
+#if defined(MODPLUG_TRACKER)
+#if !MPT_OS_WINDOWS
+#include <sys/utsname.h>
+#endif // !MPT_OS_WINDOWS
+#endif // MODPLUG_TRACKER
+
 
 OPENMPT_NAMESPACE_BEGIN
+
+
+#if defined(MODPLUG_TRACKER)
+
+namespace mpt
+{
+namespace OS
+{
+
+mpt::OS::Class GetClassFromSysname(mpt::ustring sysname)
+{
+	mpt::OS::Class result = mpt::OS::Class::Unknown;
+	if(sysname == U_(""))
+	{
+		result = mpt::OS::Class::Unknown;
+	} else if(sysname == U_("Windows") || sysname == U_("WindowsNT") || sysname == U_("Windows_NT"))
+	{
+		result = mpt::OS::Class::Windows;
+	} else if(sysname == U_("Linux"))
+	{
+		result = mpt::OS::Class::Linux;
+	} else if(sysname == U_("Darwin"))
+	{
+		result = mpt::OS::Class::Darwin;
+	} else if(sysname == U_("FreeBSD") || sysname == U_("DragonFly") || sysname == U_("NetBSD") || sysname == U_("OpenBSD") || sysname == U_("MidnightBSD"))
+	{
+		result = mpt::OS::Class::BSD;
+	} else if(sysname == U_("Haiku"))
+	{
+		result = mpt::OS::Class::Haiku;
+	} else if(sysname == U_("MS-DOS"))
+	{
+		result = mpt::OS::Class::DOS;
+	}
+	return result;
+}
+
+mpt::OS::Class GetClass()
+{
+	#if MPT_OS_WINDOWS
+		return mpt::OS::Class::Windows;
+	#else // !MPT_OS_WINDOWS
+		utsname uname_result;
+		if(uname(&uname_result) != 0)
+		{
+			return mpt::OS::Class::Unknown;
+		}
+		return mpt::OS::GetClassFromSysname(mpt::ToUnicode(mpt::Charset::ASCII, mpt::String::ReadAutoBuf(uname_result.sysname)));
+	#endif // MPT_OS_WINDOWS
+}
+
+}  // namespace OS
+}  // namespace mpt
+
+#endif // MODPLUG_TRACKER
 
 
 namespace mpt
@@ -52,7 +113,7 @@ static mpt::Windows::Version VersionFromNTDDI_VERSION() noexcept
 			mpt::Windows::Version::WinNT4
 		#endif
 		;
-	return mpt::Windows::Version(System, mpt::Windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0);
+	return mpt::Windows::Version(System, mpt::Windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
 }
 
 
@@ -77,6 +138,7 @@ static mpt::Windows::Version GatherWindowsVersion() noexcept
 #if MPT_COMPILER_MSVC
 #pragma warning(push)
 #pragma warning(disable:4996) // 'GetVersionExW': was declared deprecated
+#pragma warning(disable:28159) // Consider using 'IsWindows*' instead of 'GetVersionExW'. Reason: Deprecated. Use VerifyVersionInfo* or IsWindows* macros from VersionHelpers.
 #endif // MPT_COMPILER_MSVC
 #if MPT_COMPILER_CLANG
 #pragma clang diagnostic push
@@ -96,10 +158,17 @@ static mpt::Windows::Version GatherWindowsVersion() noexcept
 	{
 		return VersionFromNTDDI_VERSION();
 	}
+	DWORD dwProductType = 0;
+	dwProductType = PRODUCT_UNDEFINED;
+	if(GetProductInfo(versioninfoex.dwMajorVersion, versioninfoex.dwMinorVersion, versioninfoex.wServicePackMajor, versioninfoex.wServicePackMinor, &dwProductType) == FALSE)
+	{
+		dwProductType = PRODUCT_UNDEFINED;
+	}
 	return mpt::Windows::Version(
 		mpt::Windows::Version::System(versioninfoex.dwMajorVersion, versioninfoex.dwMinorVersion),
 		mpt::Windows::Version::ServicePack(versioninfoex.wServicePackMajor, versioninfoex.wServicePackMinor),
-		versioninfoex.dwBuildNumber
+		versioninfoex.dwBuildNumber,
+		dwProductType
 		);
 #endif // MPT_OS_WINDOWS_WINRT
 }
@@ -135,6 +204,7 @@ Version::Version() noexcept
 	, m_System()
 	, m_ServicePack()
 	, m_Build()
+	, m_Type()
 {
 }
 
@@ -145,11 +215,12 @@ Version Version::NoWindows() noexcept
 }
 
 
-Version::Version(mpt::Windows::Version::System system, mpt::Windows::Version::ServicePack servicePack, mpt::Windows::Version::Build build) noexcept
+Version::Version(mpt::Windows::Version::System system, mpt::Windows::Version::ServicePack servicePack, mpt::Windows::Version::Build build, mpt::Windows::Version::TypeId type) noexcept
 	: m_SystemIsWindows(true)
 	, m_System(system)
 	, m_ServicePack(servicePack)
 	, m_Build(build)
+	, m_Type(type)
 {
 }
 
@@ -284,7 +355,13 @@ mpt::Windows::Version::Build Version::GetBuild() const noexcept
 }
 
 
-static MPT_CONSTEXPR11_VAR struct { Version::System version; const MPT_UCHAR_TYPE * name; bool showDetails; } versionMap[] =
+mpt::Windows::Version::TypeId Version::GetTypeId() const noexcept
+{
+	return m_Type;
+}
+
+
+static constexpr struct { Version::System version; const mpt::uchar * name; bool showDetails; } versionMap[] =
 {
 	{ mpt::Windows::Version::WinNewer, UL_("Windows 10 (or newer)"), false },
 	{ mpt::Windows::Version::Win10, UL_("Windows 10"), true },
@@ -369,7 +446,7 @@ mpt::ustring Version::GetName() const
 			} else
 			{
 				result = mpt::format(U_("Wine (unknown version: '%1') (%2)"))(
-					  mpt::ToUnicode(mpt::CharsetUTF8, v.RawVersion())
+					  mpt::ToUnicode(mpt::Charset::UTF8, v.RawVersion())
 					, name
 					);
 			}
@@ -410,11 +487,7 @@ mpt::Windows::Version::System Version::GetMinimumKernelLevel() noexcept
 {
 	uint64 minimumKernelVersion = 0;
 	#if MPT_OS_WINDOWS && MPT_COMPILER_MSVC
-		#if !defined(MPT_BUILD_TARGET_XP)
-			minimumKernelVersion = std::max<uint64>(minimumKernelVersion, mpt::Windows::Version::WinVista);
-		#else
-			minimumKernelVersion = std::max<uint64>(minimumKernelVersion, mpt::Windows::Version::WinXP);
-		#endif
+		minimumKernelVersion = std::max(minimumKernelVersion, static_cast<uint64>(mpt::Windows::Version::WinVista));
 	#endif
 	return mpt::Windows::Version::System(minimumKernelVersion);
 }
@@ -502,7 +575,7 @@ struct ArchitectureInfo
 {
 	Architecture Arch;
 	int Bitness;
-	const MPT_UCHAR_TYPE * Name;
+	const mpt::uchar * Name;
 };
 static constexpr ArchitectureInfo architectureInfo [] = {
 	{ Architecture::x86    , 32, UL_("x86")     },
@@ -836,8 +909,7 @@ mpt::Wine::Version GetMinimumWineVersion()
 
 VersionContext::VersionContext()
 	: m_IsWine(false)
-	, m_HostIsLinux(false)
-	, m_HostIsBSD(false)
+	, m_HostClass(mpt::OS::Class::Unknown)
 {
 	#if MPT_OS_WINDOWS
 		m_IsWine = mpt::Windows::IsWine();
@@ -869,9 +941,8 @@ VersionContext::VersionContext()
 			m_RawHostSysName = wine_host_sysname ? wine_host_sysname : "";
 			m_RawHostRelease = wine_host_release ? wine_host_release : "";
 		}
-		m_Version = mpt::Wine::Version(mpt::ToUnicode(mpt::CharsetUTF8, m_RawVersion));
-		m_HostIsLinux = (m_RawHostSysName == "Linux");
-		m_HostIsBSD = (m_RawHostSysName == "FreeBSD" || m_RawHostSysName == "DragonFly" || m_RawHostSysName == "NetBSD" || m_RawHostSysName == "OpenBSD");
+		m_Version = mpt::Wine::Version(mpt::ToUnicode(mpt::Charset::UTF8, m_RawVersion));
+		m_HostClass = mpt::OS::GetClassFromSysname(mpt::ToUnicode(mpt::Charset::UTF8, m_RawHostSysName));
 	#endif // MPT_OS_WINDOWS
 }
 

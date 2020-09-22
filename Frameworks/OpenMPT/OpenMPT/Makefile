@@ -54,7 +54,7 @@
 #  ONLY_TEST=0      Only build the test suite.
 #  STRICT=0         Treat warnings as errors.
 #  MODERN=0         Pass more modern compiler options.
-#  STDCXX=c++11     C++ standard version (only for GCC and clang)
+#  STDCXX=c++14     C++ standard version (only for GCC and clang)
 #  CHECKED=0        Enable run-time assertions.
 #  CHECKED_ADDRESS=0   Enable address sanitizer
 #  CHECKED_UNDEFINED=0 Enable undefined behaviour sanitizer
@@ -68,6 +68,11 @@
 #  NO_OGG=1         Avoid using libogg, even if found
 #  NO_VORBIS=1      Avoid using libvorbis, even if found
 #  NO_VORBISFILE=1  Avoid using libvorbisfile, even if found
+#
+#  LOCAL_ZLIB=1        Build local copy of zlib, even if found
+#  LOCAL_MPG123=1      Build local copy of libmpg123, even if found
+#  LOCAL_OGG=1         Build local copy of libogg, even if found
+#  LOCAL_VORBIS=1      Build local copy of libvorbis, even if found
 #
 #  NO_MINIMP3=1     Do not fallback to minimp3
 #  NO_STBVORBIS=1   Do not fallback to stb_vorbis
@@ -86,7 +91,6 @@
 #  (defaults are 0):
 #
 #  NO_PULSEAUDIO=1     Avoid using PulseAudio, even if found
-#  NO_SDL=1            Avoid using SDL, even if found
 #  NO_SDL2=1           Avoid using SDL2, even if found
 #  NO_FLAC=1           Avoid using FLAC, even if found
 #  NO_SNDFILE=1        Avoid using libsndfile, even if found
@@ -158,6 +162,7 @@ TEST=1
 ONLY_TEST=0
 SOSUFFIX=.so
 SOSUFFIXWINDOWS=0
+NO_SHARED_LINKER_FLAG=0
 OPENMPT123=1
 MODERN=0
 STRICT=0
@@ -290,7 +295,7 @@ INSTALL_LIB = $(INSTALL) -m 0644
 INSTALL_DATA_DIR = $(INSTALL_DIR)
 INSTALL_MAKE_DIR += -m 0755
 
-CPPFLAGS += -Icommon -I. -Iinclude/modplug/include -Iinclude
+CPPFLAGS += -Icommon -I. -Iinclude
 
 ifeq ($(MPT_COMPILER_GENERIC),1)
 
@@ -407,6 +412,30 @@ ifeq ($(HACK_ARCHIVE_SUPPORT),1)
 NO_ZLIB:=1
 endif
 
+ifeq ($(LOCAL_ZLIB),1)
+CPPFLAGS_ZLIB := -DMPT_WITH_ZLIB
+LDFLAGS_ZLIB  :=
+LDLIBS_ZLIB   :=
+CPPFLAGS_ZLIB += -Iinclude/zlib/
+LOCAL_ZLIB_SOURCES := 
+LOCAL_ZLIB_SOURCES += include/zlib/adler32.c
+LOCAL_ZLIB_SOURCES += include/zlib/compress.c
+LOCAL_ZLIB_SOURCES += include/zlib/crc32.c
+LOCAL_ZLIB_SOURCES += include/zlib/deflate.c
+LOCAL_ZLIB_SOURCES += include/zlib/gzclose.c
+LOCAL_ZLIB_SOURCES += include/zlib/gzlib.c
+LOCAL_ZLIB_SOURCES += include/zlib/gzread.c
+LOCAL_ZLIB_SOURCES += include/zlib/gzwrite.c
+LOCAL_ZLIB_SOURCES += include/zlib/infback.c
+LOCAL_ZLIB_SOURCES += include/zlib/inffast.c
+LOCAL_ZLIB_SOURCES += include/zlib/inflate.c
+LOCAL_ZLIB_SOURCES += include/zlib/inftrees.c
+LOCAL_ZLIB_SOURCES += include/zlib/trees.c
+LOCAL_ZLIB_SOURCES += include/zlib/uncompr.c
+LOCAL_ZLIB_SOURCES += include/zlib/zutil.c
+include/zlib/%.o : CFLAGS+=$(CFLAGS_SILENT) -DSTDC -DZ_HAVE_UNISTD_H
+include/zlib/%.test.o : CFLAGS+=$(CFLAGS_SILENT) -DSTDC -DZ_HAVE_UNISTD_H
+else
 ifeq ($(NO_ZLIB),1)
 else
 #LDLIBS   += -lz
@@ -424,7 +453,44 @@ endif
 NO_ZLIB:=1
 endif
 endif
+endif
 
+ifeq ($(LOCAL_MPG123),1)
+CPPFLAGS_MPG123 := -DMPT_WITH_MPG123
+LDFLAGS_MPG123  := 
+LDLIBS_MPG123   := 
+CPPFLAGS_MPG123 += -Iinclude/mpg123/src/libmpg123/ -Iinclude/mpg123/src/compat/ -Iinclude/mpg123/src/ -Iinclude/mpg123/ports/makefile/
+LOCAL_MPG123_SOURCES := 
+LOCAL_MPG123_SOURCES += include/mpg123/src/compat/compat.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/compat/compat_str.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/dct64.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/equalizer.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/feature.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/format.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/frame.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/icy.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/icy2utf8.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/id3.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/index.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/layer1.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/layer2.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/layer3.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/libmpg123.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/ntom.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/optimize.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/parse.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/readers.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/stringbuf.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/synth.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/synth_8bit.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/synth_real.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/synth_s32.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/tabinit.c
+include/mpg123/src/compat/%.o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENERIC
+include/mpg123/src/compat/%.test.o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENERIC
+include/mpg123/src/libmpg123/%.o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENERIC
+include/mpg123/src/libmpg123/%.test.o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENERIC
+else
 ifeq ($(NO_MPG123),1)
 else
 #LDLIBS   += -lmpg123
@@ -442,7 +508,19 @@ endif
 NO_MPG123:=1
 endif
 endif
+endif
 
+ifeq ($(LOCAL_OGG),1)
+CPPFLAGS_OGG := -DMPT_WITH_OGG
+LDFLAGS_OGG  := 
+LDLIBS_OGG   := 
+CPPFLAGS_OGG += -Iinclude/ogg/include/ -Iinclude/ogg/ports/makefile/
+LOCAL_OGG_SOURCES := 
+LOCAL_OGG_SOURCES += include/ogg/src/bitwise.c
+LOCAL_OGG_SOURCES += include/ogg/src/framing.c
+include/ogg/src/%.o : CFLAGS+=$(CFLAGS_SILENT)
+include/ogg/src/%.test.o : CFLAGS+=$(CFLAGS_SILENT)
+else
 ifeq ($(NO_OGG),1)
 else
 #LDLIBS   += -logg
@@ -460,7 +538,39 @@ endif
 NO_OGG:=1
 endif
 endif
+endif
 
+ifeq ($(LOCAL_VORBIS),1)
+CPPFLAGS_VORBIS := -DMPT_WITH_VORBIS
+LDFLAGS_VORBIS  := 
+LDLIBS_VORBIS   := 
+CPPFLAGS_VORBIS += -Iinclude/vorbis/include/ -Iinclude/vorbis/lib/ -DHAVE_ALLOCA_H
+LOCAL_VORBIS_SOURCES := 
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/analysis.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/bitrate.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/block.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/codebook.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/envelope.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/floor0.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/floor1.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/info.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/lookup.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/lpc.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/lsp.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/mapping0.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/mdct.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/psy.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/registry.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/res0.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/sharedbook.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/smallft.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/synthesis.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/vorbisenc.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/vorbisfile.c
+LOCAL_VORBIS_SOURCES += include/vorbis/lib/window.c
+include/vorbis/lib/%.o : CFLAGS+=$(CFLAGS_SILENT)
+include/vorbis/lib/%.test.o : CFLAGS+=$(CFLAGS_SILENT)
+else
 ifeq ($(NO_VORBIS),1)
 else
 #LDLIBS   += -lvorbis
@@ -478,7 +588,13 @@ endif
 NO_VORBIS:=1
 endif
 endif
+endif
 
+ifeq ($(LOCAL_VORBIS),1)
+CPPFLAGS_VORBISFILE := -DMPT_WITH_VORBISFILE
+LDFLAGS_VORBISFILE  := 
+LDLIBS_VORBISFILE   := 
+else
 ifeq ($(NO_VORBISFILE),1)
 else
 #LDLIBS   += -lvorbisfile
@@ -496,15 +612,15 @@ endif
 NO_VORBISFILE:=1
 endif
 endif
+endif
 
 ifeq ($(NO_SDL2),1)
 else
 #LDLIBS   += -lsdl2
-ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists sdl2 && echo yes),yes)
-CPPFLAGS_SDL := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I sdl2 ) -DMPT_WITH_SDL2
-LDFLAGS_SDL  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   sdl2 ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other sdl2 )
-LDLIBS_SDL   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   sdl2 )
-NO_SDL:=1
+ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists 'sdl2 >= 2.0.4' && echo yes),yes)
+CPPFLAGS_SDL2 := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I 'sdl2 >= 2.0.4' ) -DMPT_WITH_SDL2
+LDFLAGS_SDL2  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   'sdl2 >= 2.0.4' ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other 'sdl2 >= 2.0.4' )
+LDLIBS_SDL2   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   'sdl2 >= 2.0.4' )
 else
 ifeq ($(FORCE_DEPS),1)
 $(error sdl2 not found)
@@ -512,23 +628,6 @@ else
 $(warning warning: sdl2 not found)
 endif
 NO_SDL2:=1
-endif
-endif
-
-ifeq ($(NO_SDL),1)
-else
-#LDLIBS   += -lsdl
-ifeq ($(shell pkg-config$(TOOLCHAIN_SUFFIX) --exists sdl && echo yes),yes)
-CPPFLAGS_SDL := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --cflags-only-I sdl ) -DMPT_WITH_SDL
-LDFLAGS_SDL  := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-L   sdl ) $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-other sdl )
-LDLIBS_SDL   := $(shell pkg-config$(TOOLCHAIN_SUFFIX) --libs-only-l   sdl )
-else
-ifeq ($(FORCE_DEPS),1)
-$(error sdl not found)
-else
-$(warning warning: sdl not found)
-endif
-NO_SDL:=1
 endif
 endif
 
@@ -629,7 +728,7 @@ CPPFLAGS += -DMPT_BUILD_HACK_ARCHIVE_SUPPORT
 endif
 
 CPPCHECK_FLAGS += -j $(NUMTHREADS)
-CPPCHECK_FLAGS += --std=c99 --std=c++11
+CPPCHECK_FLAGS += --std=c99 --std=c++14
 CPPCHECK_FLAGS += --quiet
 CPPCHECK_FLAGS += --enable=warning --inline-suppr --template='{file}:{line}: warning: {severity}: {message} [{id}]'
 CPPCHECK_FLAGS += --suppress=missingIncludeSystem
@@ -639,9 +738,9 @@ CPPFLAGS += $(CPPFLAGS_ZLIB) $(CPPFLAGS_MPG123) $(CPPFLAGS_OGG) $(CPPFLAGS_VORBI
 LDFLAGS += $(LDFLAGS_ZLIB) $(LDFLAGS_MPG123) $(LDFLAGS_OGG) $(LDFLAGS_VORBIS) $(LDFLAGS_VORBISFILE)
 LDLIBS += $(LDLIBS_ZLIB) $(LDLIBS_MPG123) $(LDLIBS_OGG) $(LDLIBS_VORBIS) $(LDLIBS_VORBISFILE)
 
-CPPFLAGS_OPENMPT123 += $(CPPFLAGS_SDL2) $(CPPFLAGS_SDL) $(CPPFLAGS_PORTAUDIO) $(CPPFLAGS_PULSEAUDIO) $(CPPFLAGS_FLAC) $(CPPFLAGS_SNDFILE) $(CPPFLAGS_ALLEGRO42)
-LDFLAGS_OPENMPT123  += $(LDFLAGS_SDL2) $(LDFLAGS_SDL) $(LDFLAGS_PORTAUDIO) $(LDFLAGS_PULSEAUDIO) $(LDFLAGS_FLAC) $(LDFLAGS_SNDFILE) $(LDFLAGS_ALLEGRO42)
-LDLIBS_OPENMPT123   += $(LDLIBS_SDL2) $(LDLIBS_SDL) $(LDLIBS_PORTAUDIO) $(LDLIBS_PULSEAUDIO) $(LDLIBS_FLAC) $(LDLIBS_SNDFILE) $(LDLIBS_ALLEGRO42)
+CPPFLAGS_OPENMPT123 += $(CPPFLAGS_SDL2) $(CPPFLAGS_PORTAUDIO) $(CPPFLAGS_PULSEAUDIO) $(CPPFLAGS_FLAC) $(CPPFLAGS_SNDFILE) $(CPPFLAGS_ALLEGRO42)
+LDFLAGS_OPENMPT123  += $(LDFLAGS_SDL2) $(LDFLAGS_PORTAUDIO) $(LDFLAGS_PULSEAUDIO) $(LDFLAGS_FLAC) $(LDFLAGS_SNDFILE) $(LDFLAGS_ALLEGRO42)
+LDLIBS_OPENMPT123   += $(LDLIBS_SDL2) $(LDLIBS_PORTAUDIO) $(LDLIBS_PULSEAUDIO) $(LDLIBS_FLAC) $(LDLIBS_SNDFILE) $(LDLIBS_ALLEGRO42)
 
 
 %: %.o
@@ -761,14 +860,23 @@ LIBOPENMPT_CXX_SOURCES += \
  
 include/miniz/miniz.o : CFLAGS+=$(CFLAGS_SILENT)
 include/miniz/miniz.test.o : CFLAGS+=$(CFLAGS_SILENT)
+ifeq ($(LOCAL_ZLIB),1)
+LIBOPENMPT_C_SOURCES += $(LOCAL_ZLIB_SOURCES)
+LIBOPENMPTTEST_C_SOURCES += $(LOCAL_ZLIB_SOURCES)
+else
 ifeq ($(NO_ZLIB),1)
 LIBOPENMPT_C_SOURCES += include/miniz/miniz.c
 LIBOPENMPTTEST_C_SOURCES += include/miniz/miniz.c
 CPPFLAGS += -DMPT_WITH_MINIZ
 endif
+endif
 
 include/minimp3/minimp3.o : CFLAGS+=$(CFLAGS_SILENT)
 include/minimp3/minimp3.test.o : CFLAGS+=$(CFLAGS_SILENT)
+ifeq ($(LOCAL_MPG123),1)
+LIBOPENMPT_C_SOURCES += $(LOCAL_MPG123_SOURCES)
+LIBOPENMPTTEST_C_SOURCES += $(LOCAL_MPG123_SOURCES)
+else
 ifeq ($(NO_MPG123),1)
 ifeq ($(NO_MINIMP3),1)
 else
@@ -777,9 +885,18 @@ LIBOPENMPTTEST_C_SOURCES += include/minimp3/minimp3.c
 CPPFLAGS += -DMPT_WITH_MINIMP3
 endif
 endif
+endif
 
 include/stb_vorbis/stb_vorbis.o : CFLAGS+=$(CFLAGS_SILENT)
 include/stb_vorbis/stb_vorbis.test.o : CFLAGS+=$(CFLAGS_SILENT)
+ifeq ($(LOCAL_VORBIS),1)
+ifeq ($(LOCAL_OGG),1)
+LIBOPENMPT_C_SOURCES += $(LOCAL_OGG_SOURCES)
+LIBOPENMPTTEST_C_SOURCES += $(LOCAL_OGG_SOURCES)
+endif
+LIBOPENMPT_C_SOURCES += $(LOCAL_VORBIS_SOURCES)
+LIBOPENMPTTEST_C_SOURCES += $(LOCAL_VORBIS_SOURCES)
+else
 ifeq ($(NO_OGG),1)
 ifeq ($(NO_STBVORBIS),1)
 else
@@ -807,6 +924,7 @@ else
 endif
 endif
 endif
+endif
 
 LIBOPENMPT_OBJECTS += $(LIBOPENMPT_CXX_SOURCES:.cpp=.o) $(LIBOPENMPT_C_SOURCES:.c=.o)
 LIBOPENMPT_DEPENDS = $(LIBOPENMPT_OBJECTS:.o=.d)
@@ -818,18 +936,6 @@ OUTPUT_LIBOPENMPT += bin/libopenmpt$(SOSUFFIX)
 else
 OBJECTS_LIBOPENMPT += $(LIBOPENMPT_OBJECTS)
 endif
-
-
-LIBOPENMPT_MODPLUG_C_SOURCES += \
- libopenmpt/libopenmpt_modplug.c \
- 
-LIBOPENMPT_MODPLUG_CPP_SOURCES += \
- libopenmpt/libopenmpt_modplug_cpp.cpp \
- 
-LIBOPENMPT_MODPLUG_OBJECTS = $(LIBOPENMPT_MODPLUG_C_SOURCES:.c=.o) $(LIBOPENMPT_MODPLUG_CPP_SOURCES:.cpp=.o)
-LIBOPENMPT_MODPLUG_DEPENDS = $(LIBOPENMPT_MODPLUG_OBJECTS:.o=.d)
-ALL_OBJECTS += $(LIBOPENMPT_MODPLUG_OBJECTS)
-ALL_DEPENDS += $(LIBOPENMPT_MODPLUG_DEPENDS)
 
 
 OPENMPT123_CXX_SOURCES += \
@@ -879,7 +985,6 @@ all:
 
 ifeq ($(DYNLINK),1)
 OUTPUTS += bin/libopenmpt$(SOSUFFIX)
-OUTPUTS += bin/libopenmpt_modplug$(SOSUFFIX)
 endif
 ifeq ($(SHARED_LIB),1)
 OUTPUTS += bin/libopenmpt$(SOSUFFIX)
@@ -937,22 +1042,30 @@ MISC_OUTPUTS += libopenmpt$(SOSUFFIX)
 MISC_OUTPUTS += bin/.docs
 MISC_OUTPUTS += bin/libopenmpt_test$(EXESUFFIX)
 MISC_OUTPUTS += bin/libopenmpt_test.wasm
+MISC_OUTPUTS += bin/libopenmpt_test.wasm.js
 MISC_OUTPUTS += bin/libopenmpt_test.js.mem
 MISC_OUTPUTS += bin/made.docs
 MISC_OUTPUTS += bin/$(LIBOPENMPT_SONAME)
 MISC_OUTPUTS += bin/libopenmpt.wasm
+MISC_OUTPUTS += bin/libopenmpt.wasm.js
 MISC_OUTPUTS += bin/libopenmpt.js.mem
 MISC_OUTPUTS += bin/libopenmpt_example_c.wasm 
+MISC_OUTPUTS += bin/libopenmpt_example_c.wasm.js
 MISC_OUTPUTS += bin/libopenmpt_example_c.js.mem 
 MISC_OUTPUTS += bin/libopenmpt_example_c_mem.wasm 
+MISC_OUTPUTS += bin/libopenmpt_example_c_mem.wasm.js
 MISC_OUTPUTS += bin/libopenmpt_example_c_mem.js.mem 
 MISC_OUTPUTS += bin/libopenmpt_example_c_pipe.wasm
+MISC_OUTPUTS += bin/libopenmpt_example_c_pipe.wasm.js
 MISC_OUTPUTS += bin/libopenmpt_example_c_pipe.js.mem
 MISC_OUTPUTS += bin/libopenmpt_example_c_probe.wasm
+MISC_OUTPUTS += bin/libopenmpt_example_c_probe.wasm.js
 MISC_OUTPUTS += bin/libopenmpt_example_c_probe.js.mem
 MISC_OUTPUTS += bin/libopenmpt_example_c_stdout.wasm
+MISC_OUTPUTS += bin/libopenmpt_example_c_stdout.wasm.js
 MISC_OUTPUTS += bin/libopenmpt_example_c_stdout.js.mem
 MISC_OUTPUTS += bin/libopenmpt_example_c_unsafe.wasm
+MISC_OUTPUTS += bin/libopenmpt_example_c_unsafe.wasm.js
 MISC_OUTPUTS += bin/libopenmpt_example_c_unsafe.js.mem
 MISC_OUTPUTS += bin/openmpt.a
 #old
@@ -1095,24 +1208,6 @@ ifeq ($(MPT_WITH_DOXYGEN),1)
 	$(INSTALL_DATA_DIR) bin/docs/html $(DESTDIR)$(PREFIX)/share/doc/libopenmpt/html
 endif
 
-.PHONY: install-openmpt-modplug
-install-openmpt-modplug: $(OUTPUTS)
-ifeq ($(SHARED_LIB),1)
-	$(INSTALL_MAKE_DIR) $(DESTDIR)$(PREFIX)/lib
-	$(INSTALL_LIB) bin/libopenmpt_modplug$(SOSUFFIX) $(DESTDIR)$(PREFIX)/lib/libopenmpt_modplug$(SOSUFFIX)
-	$(INSTALL_LIB) bin/libopenmpt_modplug$(SOSUFFIX) $(DESTDIR)$(PREFIX)/lib/libopenmpt_modplug$(SOSUFFIX).1
-	$(INSTALL_LIB) bin/libopenmpt_modplug$(SOSUFFIX) $(DESTDIR)$(PREFIX)/lib/libopenmpt_modplug$(SOSUFFIX).1.0.0
-endif
-
-.PHONY: install-modplug
-install-modplug: $(OUTPUTS)
-ifeq ($(SHARED_LIB),1)
-	$(INSTALL_MAKE_DIR) $(DESTDIR)$(PREFIX)/lib
-	$(INSTALL_LIB) bin/libopenmpt_modplug$(SOSUFFIX) $(DESTDIR)$(PREFIX)/lib/libmodplug$(SOSUFFIX)
-	$(INSTALL_LIB) bin/libopenmpt_modplug$(SOSUFFIX) $(DESTDIR)$(PREFIX)/lib/libmodplug$(SOSUFFIX).1
-	$(INSTALL_LIB) bin/libopenmpt_modplug$(SOSUFFIX) $(DESTDIR)$(PREFIX)/lib/libmodplug$(SOSUFFIX).1.0.0
-endif
-
 .PHONY: dist
 dist: bin/dist-tar.tar bin/dist-zip.tar bin/dist-doc.tar
 
@@ -1209,6 +1304,7 @@ bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION).makefile.tar: bin/dist.mk bin
 	svn export ./LICENSE            bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSE
 	svn export ./README.md          bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/README.md
 	svn export ./Makefile           bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/Makefile
+	svn export ./.clang-format      bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/.clang-format
 	svn export ./bin                bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin
 	svn export ./build/android_ndk  bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/android_ndk
 	svn export ./build/make         bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/make
@@ -1229,7 +1325,6 @@ bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION).makefile.tar: bin/dist.mk bin
 	svn export ./include/cwsdpmi    bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/cwsdpmi
 	svn export ./include/minimp3    bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/minimp3
 	svn export ./include/miniz      bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/miniz
-	svn export ./include/modplug    bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/modplug
 	svn export ./include/stb_vorbis bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/stb_vorbis
 	cp bin/dist.mk bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/dist.mk
 	cp bin/svn_version_dist.h bin/dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/svn_version/svn_version.h
@@ -1248,6 +1343,7 @@ bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION).msvc.zip: bin/dist.mk bin/svn
 	svn export ./LICENSE               bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSE               --native-eol CRLF
 	svn export ./README.md             bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/README.md             --native-eol CRLF
 	svn export ./Makefile              bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/Makefile              --native-eol CRLF
+	svn export ./.clang-format         bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/.clang-format         --native-eol CRLF
 	svn export ./bin                   bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin                   --native-eol CRLF
 	svn export ./build/genie/def              bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/genie/def              --native-eol CRLF
 	svn export ./build/premake/def            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/premake/def            --native-eol CRLF
@@ -1257,13 +1353,14 @@ bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION).msvc.zip: bin/dist.mk bin/svn
 	svn export ./build/svn_version            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/svn_version            --native-eol CRLF
 	svn export ./build/vcpkg                  bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vcpkg                  --native-eol CRLF
 	svn export ./build/vs                     bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs                     --native-eol CRLF
-	svn export ./build/vs2015                 bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2015                 --native-eol CRLF
-	svn export ./build/vs2015xp               bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2015xp               --native-eol CRLF
-	svn export ./build/vs2017                 bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017                 --native-eol CRLF
-	svn export ./build/vs2017win10            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017win10       
-	svn export ./build/vs2017xp               bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017xp               --native-eol CRLF
-	svn export ./build/windesktop81           bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/windesktop81           --native-eol CRLF
-	svn export ./build/winstore82             bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/winstore82             --native-eol CRLF
+	svn export ./build/vs2017win7             bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017win7             --native-eol CRLF
+	svn export ./build/vs2017win81            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017win81            --native-eol CRLF
+	svn export ./build/vs2017win10            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017win10            --native-eol CRLF
+	svn export ./build/vs2017uwp              bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017uwp              --native-eol CRLF
+	svn export ./build/vs2019win7             bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2019win7             --native-eol CRLF
+	svn export ./build/vs2019win81            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2019win81            --native-eol CRLF
+	svn export ./build/vs2019win10            bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2019win10            --native-eol CRLF
+	svn export ./build/vs2019uwp              bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2019uwp              --native-eol CRLF
 	svn export ./build/download_externals.cmd bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/download_externals.cmd --native-eol CRLF
 	svn export ./common                bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/common                --native-eol CRLF
 	svn export ./doc/contributing.md          bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/doc/contributing.md          --native-eol CRLF
@@ -1282,8 +1379,6 @@ bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION).msvc.zip: bin/dist.mk bin/svn
 	svn export ./include/mpg123        bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/mpg123        --native-eol CRLF
 	svn export ./include/flac          bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/flac          --native-eol CRLF
 	svn export ./include/portaudio     bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/portaudio     --native-eol CRLF
-	svn export ./include/modplug       bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/modplug       --native-eol CRLF
-	svn export ./include/foobar2000sdk bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/foobar2000sdk --native-eol CRLF
 	svn export ./include/ogg           bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/ogg           --native-eol CRLF
 	svn export ./include/pugixml       bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/pugixml       --native-eol CRLF
 	svn export ./include/stb_vorbis    bin/dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/include/stb_vorbis    --native-eol CRLF
@@ -1314,15 +1409,14 @@ bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar:
 	svn export ./include/miniz/miniz.c           bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/licenses/license.miniz.txt
 	svn export ./include/stb_vorbis/stb_vorbis.c bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/licenses/license.stb_vorbis.txt
 	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin
+	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/all
+	cp bin/stage/all/libopenmpt.js               bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/all/libopenmpt.js
+	cp bin/stage/all/libopenmpt.js.mem           bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/all/libopenmpt.js.mem
+	cp bin/stage/all/libopenmpt.wasm             bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/all/libopenmpt.wasm
+	cp bin/stage/all/libopenmpt.wasm.js          bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/all/libopenmpt.wasm.js
 	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/wasm
 	cp bin/stage/wasm/libopenmpt.js              bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/wasm/libopenmpt.js
 	cp bin/stage/wasm/libopenmpt.wasm            bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/wasm/libopenmpt.wasm
-	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs128m
-	cp bin/stage/asmjs128m/libopenmpt.js         bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs128m/libopenmpt.js
-	cp bin/stage/asmjs128m/libopenmpt.js.mem     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs128m/libopenmpt.js.mem
-	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs
-	cp bin/stage/asmjs/libopenmpt.js             bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs/libopenmpt.js
-	cp bin/stage/asmjs/libopenmpt.js.mem         bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/asmjs/libopenmpt.js.mem
 	mkdir -p                                     bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/js
 	cp bin/stage/js/libopenmpt.js                bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/js/libopenmpt.js
 	cp bin/stage/js/libopenmpt.js.mem            bin/dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/js/libopenmpt.js.mem
@@ -1361,15 +1455,15 @@ bin/libopenmpt.a: $(LIBOPENMPT_OBJECTS)
 
 bin/libopenmpt$(SOSUFFIX): $(LIBOPENMPT_OBJECTS)
 	$(INFO) [LD] $@
+ifeq ($(NO_SHARED_LINKER_FLAG),1)
+	$(SILENT)$(LINK.cc) $(LIBOPENMPT_LDFLAGS) $(SO_LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
+else
 	$(SILENT)$(LINK.cc) -shared $(LIBOPENMPT_LDFLAGS) $(SO_LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
+endif
 ifeq ($(SHARED_SONAME),1)
 	$(SILENT)mv bin/libopenmpt$(SOSUFFIX) bin/$(LIBOPENMPT_SONAME)
 	$(SILENT)ln -sf $(LIBOPENMPT_SONAME) bin/libopenmpt$(SOSUFFIX)
 endif
-
-bin/libopenmpt_modplug$(SOSUFFIX): $(LIBOPENMPT_MODPLUG_OBJECTS) $(OUTPUT_LIBOPENMPT)
-	$(INFO) [LD] $@
-	$(SILENT)$(LINK.cc) -shared $(SO_LDFLAGS) $(LDFLAGS_LIBOPENMPT) $(LIBOPENMPT_MODPLUG_OBJECTS) $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@
 
 bin/openmpt123.1: bin/openmpt123$(EXESUFFIX) openmpt123/openmpt123.h2m
 	$(INFO) [HELP2MAN] $@

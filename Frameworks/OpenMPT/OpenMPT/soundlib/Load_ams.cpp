@@ -42,7 +42,7 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 	};
 
 	// Effect translation table for extended (non-Protracker) effects
-	static const ModCommand::COMMAND effTrans[] =
+	static constexpr ModCommand::COMMAND effTrans[] =
 	{
 		CMD_S3MCMDEX,		// Forward / Backward
 		CMD_PORTAMENTOUP,	// Extra fine slide up
@@ -157,7 +157,7 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 							}
 							break;
 						}
-					} else if(effect - 0x10 < (int)CountOf(effTrans))
+					} else if(effect < 0x10 + CountOf(effTrans))
 					{
 						// Extended commands
 						m.command = effTrans[effect - 0x10];
@@ -299,7 +299,7 @@ struct AMSSampleHeader
 		mptSmp.nLoopStart = std::min(loopStart, length);
 		mptSmp.nLoopEnd = std::min(loopEnd, length);
 
-		mptSmp.nVolume = (std::min<uint8>(127, volume) * 256 + 64) / 127;
+		mptSmp.nVolume = (std::min(uint8(127), volume.get()) * 256 + 64) / 127;
 		if(panFinetune & 0xF0)
 		{
 			mptSmp.nPan = (panFinetune & 0xF0);
@@ -409,11 +409,11 @@ bool CSoundFile::ReadAMS(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("Extreme's Tracker");
 	m_modFormat.type = U_("ams");
 	m_modFormat.madeWithTracker = mpt::format(U_("Extreme's Tracker %1.%2"))(fileHeader.versionHigh, fileHeader.versionLow);
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	std::vector<bool> packSample(fileHeader.numSamps);
 
-	STATIC_ASSERT(MAX_SAMPLES > 255);
+	static_assert(MAX_SAMPLES > 255);
 	for(SAMPLEINDEX smp = 1; smp <= GetNumSamples(); smp++)
 	{
 		AMSSampleHeader sampleHeader;
@@ -471,10 +471,10 @@ bool CSoundFile::ReadAMS(FileReader &file, ModLoadingFlags loadFlags)
 			}
 		}
 
-		textOut = mpt::ToCharset(mpt::CharsetCP437, mpt::CharsetCP437AMS, textOut);
+		textOut = mpt::ToCharset(mpt::Charset::CP437, mpt::Charset::CP437AMS, textOut);
 
 		// Packed text doesn't include any line breaks!
-		m_songMessage.ReadFixedLineLength(mpt::byte_cast<const mpt::byte*>(textOut.c_str()), textOut.length(), 76, 0);
+		m_songMessage.ReadFixedLineLength(mpt::byte_cast<const std::byte*>(textOut.c_str()), textOut.length(), 76, 0);
 	}
 
 	// Read Order List
@@ -556,7 +556,7 @@ struct AMS2Envelope
 			return;
 		}
 
-		STATIC_ASSERT(MAX_ENVPOINTS >= CountOf(data));
+		static_assert(MAX_ENVPOINTS >= CountOf(data));
 		mptEnv.resize(std::min(numPoints, uint8(CountOf(data))));
 		mptEnv.nLoopStart = loopStart;
 		mptEnv.nLoopEnd = loopEnd;
@@ -661,7 +661,7 @@ struct AMS2SampleHeader
 		uint32 newC4speed = ModSample::TransposeToFrequency(relativeTone, MOD2XMFineTune(panFinetune & 0x0F));
 		mptSmp.nC5Speed = (mptSmp.nC5Speed * newC4speed) / 8363;
 
-		mptSmp.nVolume = (std::min<uint8>(volume, 127) * 256 + 64) / 127;
+		mptSmp.nVolume = (std::min(volume.get(), uint8(127)) * 256 + 64) / 127;
 		if(panFinetune & 0xF0)
 		{
 			mptSmp.nPan = (panFinetune & 0xF0);
@@ -784,7 +784,7 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("Velvet Studio");
 	m_modFormat.type = U_("ams");
 	m_modFormat.madeWithTracker = mpt::format(U_("Velvet Studio %1.%2"))(fileHeader.versionHigh.get(), mpt::ufmt::dec0<2>(fileHeader.versionLow.get()));
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	uint16 headerFlags;
 	if(fileHeader.versionLow >= 2)
@@ -814,7 +814,7 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 		packStatusMask		= 0x8000,	// If bit is set, sample is packed
 	};
 
-	STATIC_ASSERT(MAX_INSTRUMENTS > 255);
+	static_assert(MAX_INSTRUMENTS > 255);
 	for(INSTRUMENTINDEX ins = 1; ins <= m_nInstruments; ins++)
 	{
 		ModInstrument *instrument = AllocateInstrument(ins);
@@ -835,7 +835,7 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 
-		STATIC_ASSERT(CountOf(instrument->Keyboard) >= CountOf(sampleAssignment));
+		static_assert(mpt::array_size<decltype(instrument->Keyboard)>::size >= std::size(sampleAssignment));
 		for(size_t i = 0; i < 120; i++)
 		{
 			instrument->Keyboard[i] = sampleAssignment[i] + GetNumSamples() + 1;
@@ -908,7 +908,7 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		std::string str;
 		file.ReadString<mpt::String::spacePadded>(str, composerLength);
-		m_songArtist = mpt::ToUnicode(mpt::CharsetCP437AMS2, str);
+		m_songArtist = mpt::ToUnicode(mpt::Charset::CP437AMS2, str);
 	}
 
 	// Channel names
@@ -946,9 +946,9 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 				textOut.push_back(c);
 			}
 		}
-		textOut = mpt::ToCharset(mpt::CharsetCP437, mpt::CharsetCP437AMS2, textOut);
+		textOut = mpt::ToCharset(mpt::Charset::CP437, mpt::Charset::CP437AMS2, textOut);
 		// Packed text doesn't include any line breaks!
-		m_songMessage.ReadFixedLineLength(mpt::byte_cast<const mpt::byte*>(textOut.c_str()), textOut.length(), 74, 0);
+		m_songMessage.ReadFixedLineLength(mpt::byte_cast<const std::byte*>(textOut.c_str()), textOut.length(), 74, 0);
 	}
 
 	// Read Order List

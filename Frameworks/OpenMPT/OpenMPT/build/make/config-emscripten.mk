@@ -1,8 +1,9 @@
 
-CC  = emcc
-CXX = em++
+CC  = emcc -c
+CXX = em++ -c
 LD  = em++
 AR  = emar
+LINK.cc = em++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 EMSCRIPTEN_TARGET?=default
 
@@ -11,14 +12,6 @@ CXXFLAGS_STDCXX = -std=$(STDCXX)
 else
 ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++17 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++17' ; fi ), c++17)
 CXXFLAGS_STDCXX = -std=c++17
-else
-ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++14 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++14' ; fi ), c++14)
-CXXFLAGS_STDCXX = -std=c++14
-else
-ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++11 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++11' ; fi ), c++11)
-CXXFLAGS_STDCXX = -std=c++11
-endif
-endif
 endif
 endif
 CFLAGS_STDC = -std=c99
@@ -45,50 +38,49 @@ LDFLAGS  +=
 
 LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
-else ifeq ($(EMSCRIPTEN_TARGET),wasm)
-# emits native wasm AND an emulator for running wasm in asmjs/js with full wasm optimizations.
+else ifeq ($(EMSCRIPTEN_TARGET),all)
+# emits native wasm AND javascript with full wasm optimizations.
 # as of emscripten 1.38, this is equivalent to default.
 CPPFLAGS += -DMPT_BUILD_WASM
-CXXFLAGS += -s WASM=1 -s BINARYEN_METHOD='native-wasm'
-CFLAGS   += -s WASM=1 -s BINARYEN_METHOD='native-wasm'
-LDFLAGS  += -s WASM=1 -s BINARYEN_METHOD='native-wasm'
+CXXFLAGS += -s WASM=2 -s LEGACY_VM_SUPPORT=1
+CFLAGS   += -s WASM=2 -s LEGACY_VM_SUPPORT=1
+LDFLAGS  += -s WASM=2 -s LEGACY_VM_SUPPORT=1
 
 LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
-else ifeq ($(EMSCRIPTEN_TARGET),asmjs128m)
-# emits only asmjs
-CPPFLAGS += -DMPT_BUILD_ASMJS
-CXXFLAGS += -s WASM=0 -s ASM_JS=1
-CFLAGS   += -s WASM=0 -s ASM_JS=1
-LDFLAGS  += -s WASM=0 -s ASM_JS=1
+else ifeq ($(EMSCRIPTEN_TARGET),wasm)
+# emits native wasm.
+CPPFLAGS += -DMPT_BUILD_WASM
+CXXFLAGS += -s WASM=1
+CFLAGS   += -s WASM=1
+LDFLAGS  += -s WASM=1
 
-LDFLAGS += -s ALLOW_MEMORY_GROWTH=0 -s ABORTING_MALLOC=0 -s TOTAL_MEMORY=134217728
-
-else ifeq ($(EMSCRIPTEN_TARGET),asmjs)
-# emits only asmjs
-CPPFLAGS += -DMPT_BUILD_ASMJS
-CXXFLAGS += -s WASM=0 -s ASM_JS=1
-CFLAGS   += -s WASM=0 -s ASM_JS=1
-LDFLAGS  += -s WASM=0 -s ASM_JS=1
-
-LDFLAGS += -s ALLOW_MEMORY_GROWTH=0 -s ABORTING_MALLOC=0
+LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
 else ifeq ($(EMSCRIPTEN_TARGET),js)
 # emits only plain javascript with plain javascript focused optimizations.
 CPPFLAGS += -DMPT_BUILD_ASMJS
-CXXFLAGS += -s WASM=0 -s ASM_JS=2 -s LEGACY_VM_SUPPORT=1
-CFLAGS   += -s WASM=0 -s ASM_JS=2 -s LEGACY_VM_SUPPORT=1
-LDFLAGS  += -s WASM=0 -s ASM_JS=2 -s LEGACY_VM_SUPPORT=1
+CXXFLAGS += -s WASM=0 -s LEGACY_VM_SUPPORT=1
+CFLAGS   += -s WASM=0 -s LEGACY_VM_SUPPORT=1
+LDFLAGS  += -s WASM=0 -s LEGACY_VM_SUPPORT=1
 
 LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
 endif
 
-CXXFLAGS += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -ffast-math
-CFLAGS   += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -ffast-math -fno-strict-aliasing
-LDFLAGS  += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s EXPORT_NAME="'libopenmpt'"
+CXXFLAGS += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s ERROR_ON_MISSING_LIBRARIES=1 -ffast-math
+CFLAGS   += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s ERROR_ON_MISSING_LIBRARIES=1 -ffast-math -fno-strict-aliasing
+LDFLAGS  += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s ERROR_ON_MISSING_LIBRARIES=1 -s EXPORT_NAME="'libopenmpt'"
 
-CFLAGS_SILENT += -Wno-unused-parameter -Wno-unused-function -Wno-cast-qual
+CFLAGS_SILENT += -Wno-\#warnings
+CFLAGS_SILENT += -Wno-cast-align
+CFLAGS_SILENT += -Wno-cast-qual
+CFLAGS_SILENT += -Wno-format
+CFLAGS_SILENT += -Wno-missing-prototypes
+CFLAGS_SILENT += -Wno-sign-compare
+CFLAGS_SILENT += -Wno-unused-function
+CFLAGS_SILENT += -Wno-unused-parameter
+CFLAGS_SILENT += -Wno-unused-variable
 
 CXXFLAGS_WARNINGS += -Wmissing-declarations
 CFLAGS_WARNINGS   += -Wmissing-prototypes
@@ -98,7 +90,7 @@ REQUIRES_RUNPREFIX=1
 EXESUFFIX=.js
 SOSUFFIX=.js
 RUNPREFIX=node 
-TEST_LDFLAGS= --pre-js build/make/test-pre.js 
+TEST_LDFLAGS= --pre-js build/make/test-pre.js -lnodefs.js 
 
 DYNLINK=0
 SHARED_LIB=1
@@ -106,6 +98,7 @@ STATIC_LIB=0
 EXAMPLES=1
 OPENMPT123=0
 SHARED_SONAME=0
+NO_SHARED_LINKER_FLAG=1
 
 # Disable the generic compiler optimization flags as emscripten is sufficiently different.
 # Optimization flags are hard-coded for emscripten in this file.

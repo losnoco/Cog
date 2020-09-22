@@ -36,7 +36,7 @@ Metadata and other state is not provided or updated.
 #endif
 #endif /* _MSC_VER */
 
-#include "libopenmpt.hpp"
+#include <libopenmpt/libopenmpt.hpp>
 
 #include <string>
 #include <vector>

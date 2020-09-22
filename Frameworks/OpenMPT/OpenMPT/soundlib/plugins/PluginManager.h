@@ -23,6 +23,7 @@ OPENMPT_NAMESPACE_BEGIN
 class CSoundFile;
 class IMixPlugin;
 struct SNDMIXPLUGIN;
+enum PluginArch : int;
 
 struct VSTPluginLib
 {
@@ -66,7 +67,7 @@ public:
 	bool isInstrument : 1;
 	bool useBridge : 1, shareBridgeInstance : 1;
 protected:
-	mutable uint8 dllBits = 0;
+	mutable uint8 dllArch = 0;
 
 public:
 	VSTPluginLib(CreateProc factoryProc, bool isBuiltIn, const mpt::PathString &dllPath, const mpt::PathString &libraryName
@@ -86,23 +87,34 @@ public:
 	{
 	}
 
+#ifndef NO_VST
+
+	// Get native phost process arch encoded as plugin arch
+	static uint8 GetNativePluginArch();
+	static mpt::ustring GetPluginArchName(uint8 arch);
+	static mpt::ustring GetPluginArchNameUser(uint8 arch);
+
 	// Check whether a plugin can be hosted inside OpenMPT or requires bridging
-	uint8 GetDllBits(bool fromCache = true) const;
-	bool IsNative(bool fromCache = true) const { return GetDllBits(fromCache) == mpt::arch_bits; }
+	uint8 GetDllArch(bool fromCache = true) const;
+	mpt::ustring GetDllArchName(bool fromCache = true) const;
+	mpt::ustring GetDllArchNameUser(bool fromCache = true) const;
+	bool IsNative(bool fromCache = true) const;
 	// Check if a plugin is native, and if it is currently unknown, assume that it is native. Use this function only for performance reasons
 	// (e.g. if tons of unscanned plugins would slow down generation of the plugin selection dialog)
-	bool IsNativeFromCache() const { return dllBits == mpt::arch_bits || dllBits == 0; }
+	bool IsNativeFromCache() const;
+
+#endif // !NO_VST
 
 	void WriteToCache() const;
 
 	uint32 EncodeCacheFlags() const
 	{
-		// Format: 00000000.00000000.DDDDDDSB.CCCCCCCI
+		// Format: 00000000.00000000.AAAAAASB.CCCCCCCI
 		return (isInstrument ? 1 : 0)
 			| (category << 1)
 			| (useBridge ? 0x100 : 0)
 			| (shareBridgeInstance ? 0x200 : 0)
-			| ((dllBits / 8) << 10);
+			| ((dllArch / 8) << 10);
 	}
 
 	void DecodeCacheFlags(uint32 flags)
@@ -119,7 +131,7 @@ public:
 		}
 		useBridge = (flags & 0x100) != 0;
 		shareBridgeInstance = (flags & 0x200) != 0;
-		dllBits = ((flags >> 10) & 0x3F) * 8;
+		dllArch = ((flags >> 10) & 0x3F) * 8;
 	}
 };
 
@@ -128,7 +140,7 @@ class CVstPluginManager
 {
 #ifndef NO_PLUGINS
 protected:
-#ifndef NO_DMO
+#if defined(MPT_WITH_DMO)
 	bool MustUnInitilizeCOM = false;
 #endif
 	std::vector<VSTPluginLib *> pluginList;
@@ -137,14 +149,15 @@ public:
 	CVstPluginManager();
 	~CVstPluginManager();
 
-	typedef std::vector<VSTPluginLib *>::iterator iterator;
-	typedef std::vector<VSTPluginLib *>::const_iterator const_iterator;
+	using iterator = std::vector<VSTPluginLib *>::iterator;
+	using const_iterator = std::vector<VSTPluginLib *>::const_iterator;
 
 	iterator begin() { return pluginList.begin(); }
 	const_iterator begin() const { return pluginList.begin(); }
 	iterator end() { return pluginList.end(); }
 	const_iterator end() const { return pluginList.end(); }
 	void reserve(size_t num) { pluginList.reserve(num); }
+	size_t size() const { return pluginList.size(); }
 
 	bool IsValidPlugin(const VSTPluginLib *pLib) const;
 	VSTPluginLib *AddPlugin(const mpt::PathString &dllPath, const mpt::ustring &tags = mpt::ustring(), bool fromCache = true, bool *fileFound = nullptr);
@@ -161,6 +174,7 @@ public:
 	const VSTPluginLib **begin() const { return nullptr; }
 	const VSTPluginLib **end() const { return nullptr; }
 	void reserve(size_t) { }
+	size_t size() const { return 0; }
 
 	void OnIdle() {}
 #endif // NO_PLUGINS

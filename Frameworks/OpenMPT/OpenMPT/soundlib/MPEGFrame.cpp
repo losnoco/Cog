@@ -15,13 +15,13 @@
 OPENMPT_NAMESPACE_BEGIN
 
 // Samples per frame - for each MPEG version and all three layers
-static const uint16 samplesPerFrame[2][3] =
+static constexpr uint16 samplesPerFrame[2][3] =
 {
 	{ 384, 1152, 1152 },	// MPEG 1
 	{ 384, 1152,  576 }		// MPEG 2 / 2.5
 };
 // Bit rates for each MPEG version and all three layers
-static const uint16 bitRates[2][3][15] =
+static constexpr uint16 bitRates[2][3][15] =
 {
 	// MPEG 1
 	{
@@ -37,7 +37,7 @@ static const uint16 bitRates[2][3][15] =
 	}
 };
 // Sampling rates for each MPEG version and all three layers
-static const uint16 samplingRates[4][3] =
+static constexpr uint16 samplingRates[4][3] =
 { 
 	{ 11025, 12000,  8000 },	// MPEG 2.5
 	{     0,     0,     0 },	// Invalid
@@ -45,13 +45,13 @@ static const uint16 samplingRates[4][3] =
 	{ 44100, 48000, 32000 }		// MPEG 1
 };
 // Samples per Frame / 8
-static const uint8 mpegCoefficients[2][3] =
+static constexpr uint8 mpegCoefficients[2][3] =
 {
 	{ 12, 144, 144 },	// MPEG 1
 	{ 12, 144,  72 }	// MPEG 2 / 2.5
 };
 // Side info size = Offset in frame where Xing/Info magic starts
-static const uint8 sideInfoSize[2][2] =
+static constexpr uint8 sideInfoSize[2][2] =
 {
 	{ 17, 32 },	// MPEG 1
 	{  9, 17 }	// MPEG 2 / 2.5

@@ -1,6 +1,7 @@
 // This is the Opal OPL3 emulator from Reality Adlib Tracker v2.0a (http://www.3eality.com/productions/reality-adlib-tracker).
 // It was released by Shayde/Reality into the public domain.
 // Minor modifications to silence some warnings and fix a bug in the envelope generator have been applied.
+// Additional fixes by JP Cimalando.
 
 /*
 
@@ -144,6 +145,7 @@ class Opal {
             uint16_t        GetOctave() const {  return Octave;  }
             uint16_t        GetKeyScaleNumber() const {  return KeyScaleNumber;  }
             uint16_t        GetModulationType() const {  return ModulationType;  }
+            Channel *       GetChannelPair() const { return ChannelPair; }
 
             void            ComputeKeyScaleNumber();
 
@@ -307,6 +309,7 @@ void Opal::Init(int sample_rate) {
 
     Clock = 0;
     TremoloClock = 0;
+    TremoloLevel = 0;
     VibratoTick = 0;
     VibratoClock = 0;
     NoteSel = false;
@@ -375,7 +378,7 @@ void Opal::SetSampleRate(int sample_rate) {
 //==================================================================================================
 void Opal::Port(uint16_t reg_num, uint8_t val) {
 
-    static const int8_t op_lookup[] = {
+    static constexpr int8_t op_lookup[] = {
     //  00  01  02  03  04  05  06  07  08  09  0A  0B  0C  0D  0E  0F
         0,  1,  2,  3,  4,  5,  -1, -1, 6,  7,  8,  9,  10, 11, -1, -1,
     //  10  11  12  13  14  15  16  17  18  19  1A  1B  1C  1D  1E  1F
@@ -450,20 +453,28 @@ void Opal::Port(uint16_t reg_num, uint8_t val) {
 
         Channel &chan = Chan[chan_num];
 
+        // Registers Ax and Bx affect both channels
+        Channel *chans[2] = {&chan, chan.GetChannelPair()};
+        int numchans = chans[1] ? 2 : 1;
+
         // Do specific registers
         switch (reg_num & 0xF0) {
 
             // Frequency low
             case 0xA0: {
-                chan.SetFrequencyLow(val);
+                for (int i = 0; i < numchans; i++) {
+                    chans[i]->SetFrequencyLow(val);
+                }
                 break;
             }
 
             // Key-on / Octave / Frequency High
             case 0xB0: {
-                chan.SetKeyOn((val & 0x20) != 0);
-                chan.SetOctave(val >> 2 & 7);
-                chan.SetFrequencyHigh(val & 3);
+                for (int i = 0; i < numchans; i++) {
+                    chans[i]->SetKeyOn((val & 0x20) != 0);
+                    chans[i]->SetOctave(val >> 2 & 7);
+                    chans[i]->SetFrequencyHigh(val & 3);
+                }
                 break;
             }
 
@@ -900,11 +911,11 @@ int16_t Opal::Operator::Output(uint16_t /*keyscalenum*/, uint32_t phase_step, in
 
         // Attack stage
         case EnvAtt: {
-            if (AttackRate == 0)
-                break;
-            if (AttackMask && (Master->Clock & AttackMask))
-                break;
             uint16_t add = ((AttackAdd >> AttackTab[Master->Clock >> AttackShift & 7]) * ~EnvelopeLevel) >> 3;
+            if (AttackRate == 0)
+                add = 0;
+            if (AttackMask && (Master->Clock & AttackMask))
+                add = 0;
             EnvelopeLevel += add;
             if (EnvelopeLevel <= 0) {
                 EnvelopeLevel = 0;
@@ -915,12 +926,12 @@ int16_t Opal::Operator::Output(uint16_t /*keyscalenum*/, uint32_t phase_step, in
 
         // Decay stage
         case EnvDec: {
+            uint16_t add = DecayAdd >> DecayTab[Master->Clock >> DecayShift & 7];
+            if (DecayRate == 0)
+                add = 0;
             if (DecayMask && (Master->Clock & DecayMask))
-                break;
-            if (DecayRate != 0) {
-                uint16_t add = DecayAdd >> DecayTab[Master->Clock >> DecayShift & 7];
-                EnvelopeLevel += add;
-            }
+                add = 0;
+            EnvelopeLevel += add;
             if (EnvelopeLevel >= SustainLevel) {
                 EnvelopeLevel = SustainLevel;
                 EnvelopeStage = EnvSus;
@@ -935,16 +946,16 @@ int16_t Opal::Operator::Output(uint16_t /*keyscalenum*/, uint32_t phase_step, in
                 break;
 
             // Note: fall-through!
-            MPT_FALLTHROUGH;
+            [[fallthrough]];
         }
 
         // Release stage
         case EnvRel: {
-            if (ReleaseRate == 0)
-                break;
-            if (ReleaseMask && (Master->Clock & ReleaseMask))
-                break;
             uint16_t add = ReleaseAdd >> ReleaseTab[Master->Clock >> ReleaseShift & 7];
+            if (ReleaseRate == 0)
+                add = 0;
+            if (ReleaseMask && (Master->Clock & ReleaseMask))
+                add = 0;
             EnvelopeLevel += add;
             if (EnvelopeLevel >= 0x1FF) {
                 EnvelopeLevel = 0x1FF;
@@ -1185,7 +1196,7 @@ void Opal::Operator::SetFrequencyMultiplier(uint16_t scale) {
 //==================================================================================================
 void Opal::Operator::SetKeyScale(uint16_t scale) {
 
-    static const uint8_t kslShift[4] = { 15, 1, 2, 0 };
+    static constexpr uint8_t kslShift[4] = { 8, 1, 2, 0 };
     KeyScaleShift = kslShift[scale];
     ComputeKeyScaleLevel();
 }
@@ -1314,7 +1325,7 @@ void Opal::Operator::ComputeRates() {
 //==================================================================================================
 void Opal::Operator::ComputeKeyScaleLevel() {
 
-    static const uint8_t levtab[] = {
+    static constexpr uint8_t levtab[] = {
         0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
         0,      0,      0,      0,      0,      0,      0,      0,      0,      8,      12,     16,     20,     24,     28,     32,
         0,      0,      0,      0,      0,      12,     20,     28,     32,     40,     44,     48,     52,     56,     60,     64,

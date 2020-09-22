@@ -195,17 +195,17 @@ static uint8 DMFporta2MPT(uint8 val, const uint8 internalTicks, const bool hasFi
 	else if((val <= 0x0F && hasFine) || internalTicks < 2)
 		return (val | 0xF0);
 	else
-		return std::max<uint8>(1, (val / (internalTicks - 1)));	// no porta on first tick!
+		return std::max(uint8(1), static_cast<uint8>((val / (internalTicks - 1))));	// no porta on first tick!
 }
 
 
 // Convert portamento / volume slide value (not very accurate due to X-Tracker's higher granularity, to say the least)
 static uint8 DMFslide2MPT(uint8 val, const uint8 internalTicks, const bool up)
 {
-	val = std::max<uint8>(1, val / 4);
+	val = std::max(uint8(1), static_cast<uint8>(val / 4));
 	const bool isFine = (val < 0x0F) || (internalTicks < 2);
 	if(!isFine)
-		val = std::max<uint8>(1, (val + internalTicks - 2) / (internalTicks - 1));	// no slides on first tick! "+ internalTicks - 2" for rounding precision
+		val = std::max(uint8(1), static_cast<uint8>((val + internalTicks - 2) / (internalTicks - 1)));	// no slides on first tick! "+ internalTicks - 2" for rounding precision
 
 	if(up)
 		return (isFine ? 0x0F : 0x00) | (val << 4);
@@ -242,7 +242,7 @@ static uint8 DMFvibrato2MPT(uint8 val, const uint8 internalTicks)
 	// X-Tracker: Period length specified in rows!
 	const int periodInTicks = std::max(1, (val >> 4)) * internalTicks;
 	const uint8 matchingPeriod = static_cast<uint8>(Clamp((128 / periodInTicks), 1, 15));
-	return (matchingPeriod << 4) | std::max<uint8>(1, (val & 0x0F));
+	return (matchingPeriod << 4) | std::max(uint8(1), static_cast<uint8>(val & 0x0F));
 }
 
 
@@ -340,7 +340,7 @@ static PATTERNINDEX ConvertDMFPattern(FileReader &file, DMFPatternSettings &sett
 	}
 
 	PatternRow m = sndFile.Patterns[pat].GetRow(0);
-	const CHANNELINDEX numChannels = std::min<CHANNELINDEX>(sndFile.GetNumChannels() - 1, patHead.numTracks);
+	const CHANNELINDEX numChannels = std::min(static_cast<CHANNELINDEX>(sndFile.GetNumChannels() - 1), static_cast<CHANNELINDEX>(patHead.numTracks));
 
 	// When breaking to a pattern with less channels that the previous pattern,
 	// all voices in the now unused channels are killed:
@@ -463,21 +463,19 @@ static PATTERNINDEX ConvertDMFPattern(FileReader &file, DMFPatternSettings &sett
 				// => Tempo = 60 * Rows per Second * Speed / 24
 				// For some reason, using settings.tempoTicks + 1 gives more accurate results than just settings.tempoTicks... (same problem in the old libmodplug DMF loader)
 				// Original unoptimized formula:
-				//const int tickspeed = (tempoRealBPMmode) ? MAX(1, (tempoData * beat * 4) / 60) : tempoData;
+				//const int tickspeed = (tempoRealBPMmode) ? std::max(1, (tempoData * beat * 4) / 60) : tempoData;
 				const int tickspeed = (settings.realBPMmode) ? std::max(1, settings.tempoBPM * settings.beat * 2) : ((settings.tempoTicks + 1) * 30);
 				// Try to find matching speed - try higher speeds first, so that effects like arpeggio and tremor work better.
-				for(speed = 255; speed > 2; speed--)
+				for(speed = 255; speed >= 1; speed--)
 				{
 					// Original unoptimized formula:
 					// tempo = 30 * tickspeed * speed / 48;
 					tempo = tickspeed * speed / 48;
 					if(tempo >= 32 && tempo <= 255)
-					{
 						break;
-					}
 				}
 				Limit(tempo, 32, 255);
-				settings.internalTicks = (uint8)speed;
+				settings.internalTicks = static_cast<uint8>(std::max(1, speed));
 			} else
 			{
 				tempoChange = false;
@@ -915,14 +913,10 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = mpt::format(U_("X-Tracker v%1"))(fileHeader.version);
 	m_modFormat.type = U_("dmf");
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
-	mpt::String::Read<mpt::String::spacePadded>(m_songName, fileHeader.songname);
-	{
-		std::string artist;
-		mpt::String::Read<mpt::String::spacePadded>(artist, fileHeader.composer);
-		m_songArtist = mpt::ToUnicode(mpt::CharsetCP437, artist);
-	}
+	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songname);
+	m_songArtist = mpt::ToUnicode(mpt::Charset::CP437, mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.composer));
 
 	FileHistory mptHistory;
 	mptHistory.loadDate.tm_mday = Clamp(fileHeader.creationDay, uint8(1), uint8(31));

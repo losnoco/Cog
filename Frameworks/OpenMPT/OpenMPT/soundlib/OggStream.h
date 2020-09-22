@@ -51,6 +51,7 @@ struct PageInfo
 		MemsetZero(segment_table);
 	}
 	uint16 GetPagePhysicalSize() const;
+	uint16 GetPageHeaderSize() const;
 	uint16 GetPageDataSize() const;
 };
 
@@ -58,7 +59,9 @@ struct PageInfo
 // returns false on EOF
 bool AdvanceToPageMagic(FileReader &file);
 
+bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> *pageData = nullptr);
 bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData);
+bool ReadPage(FileReader &file);
 
 bool ReadPageAndSkipJunk(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData);
 

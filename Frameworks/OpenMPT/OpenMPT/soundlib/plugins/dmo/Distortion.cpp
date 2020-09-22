@@ -222,7 +222,7 @@ void Distortion::RecalculateDistortionParams()
 		shift = 5;
 	m_shift = shift;
 
-	static const float LogNorm[32] =
+	static constexpr float LogNorm[32] =
 	{
 		1.00f, 1.00f, 1.50f, 1.00f, 1.75f, 1.40f, 1.17f, 1.00f,
 		1.88f, 1.76f, 1.50f, 1.36f, 1.25f, 1.15f, 1.07f, 1.00f,

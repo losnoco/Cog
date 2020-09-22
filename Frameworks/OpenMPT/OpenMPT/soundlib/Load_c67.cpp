@@ -104,7 +104,7 @@ static void TranslateVolume(ModCommand &m, uint8 volume, bool isFM)
 	// CDFM uses a linear volume scale for FM instruments.
 	// ScreamTracker, on the other hand, directly uses the OPL chip's logarithmic volume scale.
 	// Neither FM nor PCM instruments can be fully muted in CDFM.
-	static const uint8 fmVolume[16] =
+	static constexpr uint8 fmVolume[16] =
 	{
 		0x08, 0x10, 0x18, 0x20, 0x28, 0x2C, 0x30, 0x34,
 		0x36, 0x38, 0x3A, 0x3C, 0x3D, 0x3E, 0x3F, 0x40,
@@ -160,7 +160,7 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("CDFM");
 	m_modFormat.type = U_("c67");
 	m_modFormat.madeWithTracker = U_("Composer 670");
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_nDefaultSpeed = fileHeader.speed;
 	m_nDefaultTempo.Set(143);
@@ -180,7 +180,7 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		ModSample &mptSmp = Samples[smp + 1];
 		mptSmp.Initialize(MOD_TYPE_S3M);
-		mpt::String::Read<mpt::String::nullTerminated>(m_szNames[smp + 1], fileHeader.sampleNames[smp]);
+		m_szNames[smp + 1] = mpt::String::ReadBuf(mpt::String::nullTerminated, fileHeader.sampleNames[smp]);
 		mptSmp.nLength = fileHeader.samples[smp].length;
 		if(fileHeader.samples[smp].loopEnd <= fileHeader.samples[smp].length)
 		{
@@ -195,7 +195,7 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		ModSample &mptSmp = Samples[smp + 33];
 		mptSmp.Initialize(MOD_TYPE_S3M);
-		mpt::String::Read<mpt::String::nullTerminated>(m_szNames[smp + 33], fileHeader.fmInstrNames[smp]);
+		m_szNames[smp + 33] = mpt::String::ReadBuf(mpt::String::nullTerminated, fileHeader.fmInstrNames[smp]);
 		// Reorder OPL patch bytes (interleave modulator and carrier)
 		const auto &fm = fileHeader.fmInstr[smp];
 		OPLPatch patch{{}};
@@ -227,9 +227,7 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				// Note, instrument, volume
 				ModCommand &m = *pattern.GetpModCommand(row, cmd);
-				uint8 data[2];
-				patChunk.ReadArray(data);
-				uint8 note = data[0], instrVol = data[1];
+				const auto [note, instrVol] = patChunk.ReadArray<uint8, 2>();
 				bool fmChn = (cmd >= 4);
 				m.note = NOTE_MIN + (fmChn ? 12 : 36) + (note & 0x0F) + ((note >> 4) & 0x07) * 12;
 				m.instr = (fmChn ? 33 : 1) + (instrVol >> 4) + ((note & 0x80) >> 3);

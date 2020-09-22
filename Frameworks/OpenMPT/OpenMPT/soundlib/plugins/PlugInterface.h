@@ -209,16 +209,18 @@ public:
 	void SetModified();
 #endif
 
-	virtual void BeginSetProgram(int32 /*program*/ = -1) { }
-	virtual void EndSetProgram() { }
-
 	virtual int GetNumInputChannels() const = 0;
 	virtual int GetNumOutputChannels() const = 0;
 
-	typedef mpt::const_byte_span ChunkData;
+	using ChunkData = mpt::const_byte_span;
 	virtual bool ProgramsAreChunks() const { return false; }
 	virtual ChunkData GetChunk(bool /*isBank*/) { return ChunkData(); }
 	virtual void SetChunk(const ChunkData &/*chunk*/, bool /*isBank*/) { }
+
+	virtual void BeginSetProgram(int32 /*program*/ = -1) {}
+	virtual void EndSetProgram() {}
+	virtual void BeginGetProgram(int32 /*program*/ = -1) {}
+	virtual void EndGetProgram() {}
 };
 
 

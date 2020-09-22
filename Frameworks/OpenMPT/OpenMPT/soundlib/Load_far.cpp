@@ -171,9 +171,9 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("Farandole Composer");
 	m_modFormat.type = U_("far");
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songName);
+	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songName);
 
 	// Read channel settings
 	for(CHANNELINDEX chn = 0; chn < 16; chn++)
@@ -201,7 +201,7 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 	file.Seek(fileHeader.headerLength);
 	
 	// Pattern effect LUT
-	static const EffectCommand farEffects[] =
+	static constexpr EffectCommand farEffects[] =
 	{
 		CMD_NONE,
 		CMD_PORTAMENTOUP,
@@ -257,24 +257,23 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				ModCommand &m = rowBase[chn];
 
-				uint8 data[4];
-				patternChunk.ReadArray(data);
+				const auto [note, instr, volume, effect] = patternChunk.ReadArray<uint8, 4>();
 
-				if(data[0] > 0 && data[0] < 85)
+				if(note > 0 && note <= 72)
 				{
-					m.note = data[0] + 35 + NOTE_MIN;
-					m.instr = data[1] + 1;
+					m.note = note + 35 + NOTE_MIN;
+					m.instr = instr + 1;
 				}
 
-				if(m.note != NOTE_NONE || data[2] > 0)
+				if(m.note != NOTE_NONE || volume > 0)
 				{
 					m.volcmd = VOLCMD_VOLUME;
-					m.vol = (Clamp(data[2], uint8(1), uint8(16)) - 1u) * 4u;
+					m.vol = (Clamp(volume, uint8(1), uint8(16)) - 1u) * 4u;
 				}
 				
-				m.param = data[3] & 0x0F;
+				m.param = effect & 0x0F;
 
-				switch(data[3] >> 4)
+				switch(effect >> 4)
 				{
 				case 0x03:	// Porta to note
 					m.param <<= 2;
@@ -297,7 +296,7 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 					m.param = 6 / (1 + m.param) + 1;
 					m.param |= 0x0D;
 				}
-				m.command = farEffects[data[3] >> 4];
+				m.command = farEffects[effect >> 4];
 			}
 		}
 
@@ -328,7 +327,7 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 
 		m_nSamples = smp + 1;
 		ModSample &sample = Samples[m_nSamples];
-		mpt::String::Read<mpt::String::nullTerminated>(m_szNames[m_nSamples], sampleHeader.name);
+		m_szNames[m_nSamples] = mpt::String::ReadBuf(mpt::String::nullTerminated, sampleHeader.name);
 		sampleHeader.ConvertToMPT(sample);
 		sampleHeader.GetSampleFormat().ReadSample(sample, file);
 	}

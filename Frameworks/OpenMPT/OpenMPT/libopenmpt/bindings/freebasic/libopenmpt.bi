@@ -480,7 +480,7 @@ Const OPENMPT_PROBE_FILE_HEADER_RESULT_ERROR = -255
 
 /'* \brief Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
 
-  \param flags Ored mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
+  \param flags Bit mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
   \param data Beginning of the file data.
   \param size Size of the beginning of the file data.
   \param filesize Full size of the file data on disk.
@@ -506,7 +506,7 @@ Declare Function openmpt_probe_file_header(ByVal flags As ULongInt, ByVal Data A
 
 /'* \brief Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
 
-  \param flags Ored mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
+  \param flags Bit mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
   \param data Beginning of the file data.
   \param size Size of the beginning of the file data.
   \param logfunc Logging function where warning and errors are written. May be NULL.
@@ -532,7 +532,7 @@ Declare Function openmpt_probe_file_header_without_filesize(ByVal flags As ULong
 
 /'* \brief Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
 
-  \param flags Ored mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
+  \param flags Bit mask of OPENMPT_PROBE_FILE_HEADER_FLAGS_MODULES and OPENMPT_PROBE_FILE_HEADER_FLAGS_CONTAINERS, or OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT.
   \param stream_callbacks Input stream callback operations.
   \param stream Input stream to scan.
   \param logfunc Logging function where warning and errors are written. May be NULL.
@@ -1055,6 +1055,15 @@ Declare Function openmpt_module_get_metadata_keys_ Alias "openmpt_module_get_met
 '/
 Declare Function openmpt_module_get_metadata_ Alias "openmpt_module_get_metadata" (ByVal module As openmpt_module Ptr, ByVal key As Const ZString Ptr) As Const ZString Ptr
 
+/'* \brief Get the current estimated beats per minute (BPM).
+
+  \param module The module handle to work on.
+  \remarks Many module formats lack time signature metadata. It is common that this estimate is off by a factor of two, but other multipliers are also possible.
+  \remarks Due to the nature of how module tempo works, the estimate may change slightly after switching libopenmpt's output to a different sample rate.
+  \return The current estimated BPM.
+'/
+Declare Function openmpt_module_get_current_estimated_bpm(ByVal module As openmpt_module Ptr) As Double
+
 /'* \brief Get the current speed
 
   \param module The module handle to work on.
@@ -1356,6 +1365,11 @@ Declare Function openmpt_module_highlight_pattern_row_channel_ Alias "openmpt_mo
            - play.tempo_factor: Set a floating point tempo factor. "1.0" is the default tempo.
            - play.pitch_factor: Set a floating point pitch factor. "1.0" is the default pitch.
            - render.resampler.emulate_amiga: Set to "1" to enable the Amiga resampler for Amiga modules. This emulates the sound characteristics of the Paula chip and overrides the selected interpolation filter. Non-Amiga module formats are not affected by this setting.
+           - render.resampler.emulate_amiga_type: Configures the filter type to use for the Amiga resampler. Supported values are:
+                     - "auto": Filter type is chosen by the library and might change. This is the default.
+                     - "a500": Amiga A500 filter.
+                     - "a1200": Amiga A1200 filter.
+                     - "unfiltered": BLEP synthesis without model-specific filters. The LED filter is ignored by this setting. This filter mode is considered to be experimental and might change in the future.
            - render.opl.volume_factor: Set volume factor applied to synthesized OPL sounds, relative to the default OPL volume.
            - dither: Set the dither algorithm that is used for the 16 bit versions of openmpt_module_read. Supported values are:
                      - 0: No dithering.

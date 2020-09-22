@@ -52,7 +52,7 @@ struct ProfileBlock
 	class Statistics * stats;
 };
 
-static const std::size_t MAX_PROFILES = 1024;
+static constexpr std::size_t MAX_PROFILES = 1024;
 
 static ProfileBlock Profiles[ MAX_PROFILES ];
 

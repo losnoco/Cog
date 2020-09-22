@@ -44,7 +44,7 @@ size_t SampleIO::ReadSample(ModSample &sample, FileReader &file) const
 	FileReader::off_t bytesRead = 0;	// Amount of memory that has been read from file
 
 	FileReader::off_t filePosition = file.GetPosition();
-	const mpt::byte * sourceBuf = nullptr;
+	const std::byte * sourceBuf = nullptr;
 	FileReader::PinnedRawDataView restrictedSampleDataView;
 	FileReader::off_t fileSize = 0;
 	if(UsesFileReaderForDecoding())
@@ -232,7 +232,7 @@ size_t SampleIO::ReadSample(ModSample &sample, FileReader &file) const
 	} else if((GetEncoding() == uLaw || GetEncoding() == aLaw) && GetBitDepth() == 16 && (GetChannelFormat() == mono || GetChannelFormat() == stereoInterleaved))
 	{
 		// 8-to-16 bit G.711 u-law / a-law
-		static const int16 uLawTable[256] =
+		static constexpr int16 uLawTable[256] =
 		{
 			-32124,-31100,-30076,-29052,-28028,-27004,-25980,-24956,
 			-23932,-22908,-21884,-20860,-19836,-18812,-17788,-16764,
@@ -268,7 +268,7 @@ size_t SampleIO::ReadSample(ModSample &sample, FileReader &file) const
 			    56,    48,    40,    32,    24,    16,     8,     0,
 		};
 
-		static const int16 aLawTable[256] =
+		static constexpr int16 aLawTable[256] =
 		{
 			 -5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,
 			 -7552, -7296, -8064, -7808, -6528, -6272, -7040, -6784,
@@ -861,7 +861,7 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 		return 0;
 	}
 
-	std::array<mpt::byte, mpt::IO::BUFFERSIZE_TINY> writeBuffer;
+	std::array<std::byte, mpt::IO::BUFFERSIZE_TINY> writeBuffer;
 	mpt::IO::WriteBuffer<std::ostream> fb{f, mpt::as_span(writeBuffer)};
 
 	SmpLength numSamples = sample.nLength;
@@ -962,7 +962,7 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 		// Stereo signed interleaved
 		MPT_ASSERT(len == numSamples * 2);
 		const int8 *const pSample8 = sample.sample8();
-		mpt::IO::WriteRaw(f, reinterpret_cast<const mpt::byte*>(pSample8), len);
+		mpt::IO::WriteRaw(f, reinterpret_cast<const std::byte*>(pSample8), len);
 	}
 
 	else if(GetBitDepth() == 16 && GetChannelFormat() == stereoInterleaved && GetEncoding() == signedPCM && GetEndianness() == littleEndian)

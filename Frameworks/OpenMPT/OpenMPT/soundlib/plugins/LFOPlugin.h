@@ -19,7 +19,7 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-class LFOPlugin : public IMixPlugin
+class LFOPlugin final : public IMixPlugin
 {
 	friend class LFOPluginEditor;
 
@@ -49,7 +49,7 @@ protected:
 		kNumWaveforms
 	};
 
-	std::vector<mpt::byte> m_chunkData;
+	std::vector<std::byte> m_chunkData;
 
 	// LFO parameters
 	float m_amplitude, m_offset, m_frequency;

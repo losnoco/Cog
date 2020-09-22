@@ -327,13 +327,13 @@ uint32 CSoundFile::MapMidiInstrument(uint8 program, uint16 bank, uint8 midiChann
 	// Set GM program / drum name
 	if (!isDrum)
 	{
-		strcpy(pIns->name, szMidiProgramNames[program]);
+		pIns->name = szMidiProgramNames[program];
 	} else
 	{
 		if (note >= 24 && note <= 84)
-			strcpy(pIns->name, szMidiPercussionNames[note - 24]);
+			pIns->name = szMidiPercussionNames[note - 24];
 		else
-			strcpy(pIns->name, "Percussions");
+			pIns->name = "Percussions";
 	}
 	return m_nInstruments;
 }
@@ -350,7 +350,7 @@ struct MThd
 MPT_BINARY_STRUCT(MThd, 10);
 
 
-typedef uint32 tick_t;
+using tick_t = uint32;
 
 struct TrackState
 {
@@ -362,15 +362,15 @@ struct TrackState
 
 struct ModChannelState
 {
-	enum : uint8 { NOMIDI = 0xFF };	// No MIDI channel assigned.
+	static constexpr uint8 NOMIDI = 0xFF;  // No MIDI channel assigned.
 
-	tick_t age = 0;						// At which MIDI tick the channel was triggered
-	int32 porta = 0;					// Current portamento position in extra-fine slide units (1/64th of a semitone)
-	uint8 vol = 100;					// MIDI note volume (0...127)
-	uint8 pan = 128;					// MIDI channel panning (0...256)
-	uint8 midiCh = NOMIDI;				// MIDI channel that was last played on this channel
-	ModCommand::NOTE note = NOTE_NONE;	// MIDI note that was last played on this channel
-	bool sustained = false;				// If true, the note was already released by a note-off event, but sustain pedal CC is still active
+	tick_t age = 0;                     // At which MIDI tick the channel was triggered
+	int32 porta = 0;                    // Current portamento position in extra-fine slide units (1/64th of a semitone)
+	uint8 vol = 100;                    // MIDI note volume (0...127)
+	uint8 pan = 128;                    // MIDI channel panning (0...256)
+	uint8 midiCh = NOMIDI;              // MIDI channel that was last played on this channel
+	ModCommand::NOTE note = NOTE_NONE;  // MIDI note that was last played on this channel
+	bool sustained = false;             // If true, the note was already released by a note-off event, but sustain pedal CC is still active
 };
 
 struct MidiChannelState
@@ -389,7 +389,7 @@ struct MidiChannelState
 	bool  monoMode = false;   // Mono/Poly operation       126/127  n/a        Poly
 	bool  sustain = false;    // Sustain pedal             64       on/off     off
 
-	std::array<CHANNELINDEX, 128> noteOn;	// Value != CHANNELINDEX_INVALID: Note is active and mapped to mod channel in value
+	std::array<CHANNELINDEX, 128> noteOn;  // Value != CHANNELINDEX_INVALID: Note is active and mapped to mod channel in value
 
 	MidiChannelState()
 	{
@@ -638,7 +638,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("Standard MIDI File");
 	m_modFormat.type = isRIFF ? UL_("rmi") : UL_("mid");
 	m_modFormat.madeWithTracker = U_("Standard MIDI File");
-	m_modFormat.charset = mpt::CharsetISO8859_1;
+	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
 	SetMixLevels(mixLevels1_17RC3);
 	m_nTempoMode = tempoModeModern;
@@ -669,14 +669,28 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	std::bitset<16> drumChns;
 	drumChns.set(MIDI_DRUMCHANNEL - 1);
 
-	for(uint16 t = 0; t < numTracks; t++)
+	tick_t timeShift = 0;
+	for(auto &track : tracks)
 	{
 		if(!file.ReadMagic("MTrk"))
 			return false;
-		tracks[t].track = file.ReadChunk(file.ReadUint32BE());
+		track.track = file.ReadChunk(file.ReadUint32BE());
 		tick_t delta = 0;
-		tracks[t].track.ReadVarInt(delta);
-		tracks[t].nextEvent = delta;
+		track.track.ReadVarInt(delta);
+		// Work-around for some MID files that assume that negative deltas exist (they don't according to the standard)
+		if(delta > int32_max)
+			timeShift = std::max(static_cast<tick_t>(~delta  + 1), timeShift);
+		track.nextEvent = delta;
+	}
+	if(timeShift != 0)
+	{
+		for(auto &track : tracks)
+		{
+			if(track.nextEvent > int32_max)
+				track.nextEvent = timeShift - static_cast<tick_t>(~track.nextEvent + 1);
+			else
+				track.nextEvent += timeShift;
+		}
 	}
 
 	uint16 finishedTracks = 0;
@@ -687,7 +701,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	int8 masterTranspose = 0;
 	bool isXG = false;
 	bool isEMIDI = false;
-	bool isType2 = (fileHeader.format == 2);
+	const bool isType2 = (fileHeader.format == 2);
 
 	while(finishedTracks < numTracks)
 	{
@@ -901,7 +915,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 						midiChnStatus[midiCh].pan = data2 * 2u;
 						for(auto chn : midiChnStatus[midiCh].noteOn)
 						{
-							if(chn != CHANNELINDEX_INVALID)
+							if(chn != CHANNELINDEX_INVALID && modChnStatus[chn].pan != midiChnStatus[midiCh].pan)
 							{
 								if(Patterns[pat].WriteEffect(EffectWriter(CMD_PANNING8, midiChnStatus[midiCh].pan).Channel(chn).Row(row)))
 								{
@@ -1151,7 +1165,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			m.command = static_cast<ModCommand::COMMAND>(diff < 0 ? CMD_PORTAMENTODOWN : CMD_PORTAMENTOUP);
-			int32 absDiff = mpt::abs(diff);
+			int32 absDiff = std::abs(diff);
 			int32 realDiff = 0;
 			if(absDiff < 16)
 			{
@@ -1187,7 +1201,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			// Add another sub-song for type-2 files
 			if(isType2 && finishedTracks < numTracks)
 			{
-				if(Order.AddSequence(false) == SEQUENCEINDEX_INVALID)
+				if(Order.AddSequence() == SEQUENCEINDEX_INVALID)
 					break;
 				Order().clear();
 			}
@@ -1222,11 +1236,11 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			channels.push_back(i);
 			if(modChnStatus[i].midiCh != ModChannelState::NOMIDI)
-				mpt::String::WriteAutoBuf(ChnSettings[i].szName) = mpt::format("MIDI Ch %1")(1 + modChnStatus[i].midiCh);
+				ChnSettings[i].szName = mpt::format("MIDI Ch %1")(1 + modChnStatus[i].midiCh);
 			else if(i == tempoChannel)
-				mpt::String::WriteAutoBuf(ChnSettings[i].szName) = "Tempo";
+				ChnSettings[i].szName = "Tempo";
 			else if(i == globalVolChannel)
-				mpt::String::WriteAutoBuf(ChnSettings[i].szName) = "Global Volume";
+				ChnSettings[i].szName = "Global Volume";
 		}
 	}
 	if(channels.empty())
@@ -1236,7 +1250,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	if(GetpModDoc() != nullptr)
 	{
 		// Keep MIDI channels in patterns neatly grouped
-		std::sort(channels.begin(), channels.end(), [&modChnStatus] (CHANNELINDEX c1, CHANNELINDEX c2) -> bool
+		std::sort(channels.begin(), channels.end(), [&modChnStatus] (CHANNELINDEX c1, CHANNELINDEX c2)
 		{
 			if(modChnStatus[c1].midiCh == modChnStatus[c2].midiCh)
 				return c1 < c2;
@@ -1309,24 +1323,24 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				// Load from Instrument or Sample file
 				InputFile f;
-				if(f.Open(midiMapName))
+				if(f.Open(midiMapName, SettingCacheCompleteFileBeforeLoading()))
 				{
 					FileReader insFile = GetFileReader(f);
 					if(ReadInstrumentFromFile(ins, insFile, false))
 					{
 						mpt::PathString filename = midiMapName.GetFullFileName();
 						pIns = Instruments[ins];
-						if(!pIns->filename[0]) mpt::String::Copy(pIns->filename, filename.ToLocale().c_str());
+						if(!pIns->filename[0]) pIns->filename = filename.ToLocale();
 						if(!pIns->name[0])
 						{
 							if(midiCode < 0x80)
 							{
-								mpt::String::CopyN(pIns->name, szMidiProgramNames[midiCode]);
+								pIns->name = szMidiProgramNames[midiCode];
 							} else
 							{
 								uint32 key = midiCode & 0x7F;
-								if((key >= 24) && (key < 24 + mpt::size(szMidiPercussionNames)))
-									mpt::String::CopyN(pIns->name, szMidiPercussionNames[key - 24]);
+								if((key >= 24) && (key < 24 + std::size(szMidiPercussionNames)))
+									pIns->name = szMidiPercussionNames[key - 24];
 							}
 						}
 					}

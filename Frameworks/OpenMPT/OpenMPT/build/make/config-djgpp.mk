@@ -1,19 +1,19 @@
 
-CC  = i586-pc-msdosdjgpp-gcc
-CXX = i586-pc-msdosdjgpp-g++
-LD  = i586-pc-msdosdjgpp-g++
-AR  = i586-pc-msdosdjgpp-ar
+CC  = i386-pc-msdosdjgpp-gcc
+CXX = i386-pc-msdosdjgpp-g++
+LD  = i386-pc-msdosdjgpp-g++
+AR  = i386-pc-msdosdjgpp-ar
 
 # Note that we are using GNU extensions instead of 100% standards-compliant
 # mode, because otherwise DJGPP-specific headers/functions are unavailable.
-CXXFLAGS_STDCXX = -std=gnu++11
+CXXFLAGS_STDCXX = -std=gnu++17
 CFLAGS_STDC = -std=gnu99
 CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)
 
 CPPFLAGS += 
-CXXFLAGS += -march=pentium -mtune=pentium
-CFLAGS   += -march=pentium -mtune=pentium
+CXXFLAGS += -march=i386 -m80387 -mtune=pentium
+CFLAGS   += -march=i386 -m80387 -mtune=pentium
 LDFLAGS  +=
 LDLIBS   += -lm
 ARFLAGS  := rcs

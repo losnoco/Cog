@@ -3,11 +3,10 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=${prefix}/include
 
-Name: libmodplug
+Name: libopenmpt_modplug
 Description: The ModPlug mod file playing library (emulated via libopenmpt).
-Version: 0.8.8.5
+Version: @PACKAGE_VERSION@
 Requires.private: libopenmpt
-Libs: -L${libdir} -lmodplug
+Libs: -L${libdir} -lopenmpt_modplug
 Libs.private: 
 Cflags: -I${includedir}
-

@@ -19,25 +19,25 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
-typedef uint32 ROWINDEX;
+using ROWINDEX = uint32;
 	const ROWINDEX ROWINDEX_INVALID = uint32_max;
-typedef uint16 CHANNELINDEX;
+using CHANNELINDEX = uint16;
 	const CHANNELINDEX CHANNELINDEX_INVALID = uint16_max;
-typedef uint16 ORDERINDEX;
+using ORDERINDEX = uint16;
 	const ORDERINDEX ORDERINDEX_INVALID = uint16_max;
 	const ORDERINDEX ORDERINDEX_MAX = uint16_max - 1;
-typedef uint16 PATTERNINDEX;
+using PATTERNINDEX = uint16;
 	const PATTERNINDEX PATTERNINDEX_INVALID = uint16_max;
-typedef uint8  PLUGINDEX;
+using PLUGINDEX = uint8;
 	const PLUGINDEX PLUGINDEX_INVALID = uint8_max;
-typedef uint16 SAMPLEINDEX;
+using SAMPLEINDEX = uint16;
 	const SAMPLEINDEX SAMPLEINDEX_INVALID = uint16_max;
-typedef uint16 INSTRUMENTINDEX;
+using INSTRUMENTINDEX = uint16;
 	const INSTRUMENTINDEX INSTRUMENTINDEX_INVALID = uint16_max;
-typedef uint8 SEQUENCEINDEX;
+using SEQUENCEINDEX = uint8;
 	const SEQUENCEINDEX SEQUENCEINDEX_INVALID = uint8_max;
 
-typedef uint32 SmpLength;
+using SmpLength = uint32;
 
 
 const SmpLength MAX_SAMPLE_LENGTH = 0x10000000; // Sample length in frames. Sample size in bytes can be more than this (= 256 MB).
@@ -54,15 +54,18 @@ const SEQUENCEINDEX MAX_SEQUENCES     = 50;
 const CHANNELINDEX MAX_BASECHANNELS   = 127; // Maximum pattern channels.
 const CHANNELINDEX MAX_CHANNELS       = 256; // Maximum number of mixing channels.
 
-#define FREQ_FRACBITS           4 // Number of fractional bits in return value of CSoundFile::GetFreqFromPeriod()
+enum { FREQ_FRACBITS = 4 }; // Number of fractional bits in return value of CSoundFile::GetFreqFromPeriod()
 
 // String lengths (including trailing null char)
-#define MAX_SAMPLENAME          32
-#define MAX_SAMPLEFILENAME      22
-#define MAX_INSTRUMENTNAME      32
-#define MAX_INSTRUMENTFILENAME  32
-#define MAX_PATTERNNAME         32
-#define MAX_CHANNELNAME         20
+enum
+{
+	MAX_SAMPLENAME         = 32,
+	MAX_SAMPLEFILENAME     = 22,
+	MAX_INSTRUMENTNAME     = 32,
+	MAX_INSTRUMENTFILENAME = 32,
+	MAX_PATTERNNAME        = 32,
+	MAX_CHANNELNAME        = 20,
+};
 
 enum MODTYPE
 {
@@ -160,7 +163,7 @@ DECLARE_FLAGSET(ChannelFlags)
 #define CHN_CHANNELFLAGS (~CHN_SAMPLEFLAGS | CHN_SURROUND)
 
 // Sample flags fit into the first 16 bits, and with the current memory layout, storing them as a 16-bit integer packs struct ModSample nicely.
-typedef FlagSet<ChannelFlags, uint16> SampleFlags;
+using SampleFlags = FlagSet<ChannelFlags, uint16>;
 
 
 // Instrument envelope-specific flags
@@ -202,11 +205,11 @@ enum EnvelopeType : uint8
 };
 
 // Filter Modes
-enum InstrFilterMode : uint8
+enum class FilterMode : uint8
 {
-	FLTMODE_UNCHANGED = 0xFF,
-	FLTMODE_LOWPASS   = 0,
-	FLTMODE_HIGHPASS  = 1,
+	Unchanged = 0xFF,
+	LowPass   = 0,
+	HighPass  = 1,
 };
 
 
@@ -274,6 +277,7 @@ DECLARE_FLAGSET(SongFlags)
 #ifndef NO_DSP
 #define SNDDSP_MEGABASS       0x02     // Bass expansion
 #define SNDDSP_SURROUND       0x08     // Surround mix
+#define SNDDSP_BITCRUSH       0x01
 #endif // NO_DSP
 #ifndef NO_REVERB
 #define SNDDSP_REVERB         0x20     // Apply reverb
@@ -310,22 +314,30 @@ enum ResamplingMode : uint8
 namespace Resampling
 {
 
+enum class AmigaFilter
+{
+	Off        = 0,
+	A500       = 1,
+	A1200      = 2,
+	Unfiltered = 3,
+};
+
 static inline std::array<ResamplingMode, 5> AllModes() noexcept { return { { SRCMODE_NEAREST, SRCMODE_LINEAR, SRCMODE_CUBIC, SRCMODE_SINC8, SRCMODE_SINC8LP } }; }
 
 static inline std::array<ResamplingMode, 6> AllModesWithDefault() noexcept { return { { SRCMODE_NEAREST, SRCMODE_LINEAR, SRCMODE_CUBIC, SRCMODE_SINC8, SRCMODE_SINC8LP, SRCMODE_DEFAULT } }; }
 
-static MPT_CONSTEXPR11_FUN ResamplingMode Default() noexcept { return SRCMODE_SINC8LP; }
+static constexpr ResamplingMode Default() noexcept { return SRCMODE_SINC8LP; }
 
-static MPT_CONSTEXPR11_FUN bool IsKnownMode(int mode) noexcept { return (mode >= 0) && (mode < SRCMODE_DEFAULT); }
+static constexpr bool IsKnownMode(int mode) noexcept { return (mode >= 0) && (mode < SRCMODE_DEFAULT); }
 
-static MPT_CONSTEXPR11_FUN ResamplingMode ToKnownMode(int mode) noexcept
+static constexpr ResamplingMode ToKnownMode(int mode) noexcept
 {
 	return Resampling::IsKnownMode(mode) ? static_cast<ResamplingMode>(mode)
 		: (mode == SRCMODE_AMIGA) ? SRCMODE_LINEAR
 		: Resampling::Default();
 }
 
-static MPT_CONSTEXPR11_FUN int Length(ResamplingMode mode) noexcept
+static constexpr int Length(ResamplingMode mode) noexcept
 {
 	return mode == SRCMODE_NEAREST ? 1
 		: mode == SRCMODE_LINEAR ? 2
@@ -335,11 +347,11 @@ static MPT_CONSTEXPR11_FUN int Length(ResamplingMode mode) noexcept
 		: 0;
 }
 
-static MPT_CONSTEXPR11_FUN bool HasAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP); }
+static constexpr bool HasAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP); }
 
-static MPT_CONSTEXPR11_FUN ResamplingMode AddAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8) ? SRCMODE_SINC8LP : mode; }
+static constexpr ResamplingMode AddAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8) ? SRCMODE_SINC8LP : mode; }
 
-static MPT_CONSTEXPR11_FUN ResamplingMode RemoveAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP) ? SRCMODE_SINC8 : mode; }
+static constexpr ResamplingMode RemoveAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP) ? SRCMODE_SINC8 : mode; }
 
 }
 
@@ -348,7 +360,7 @@ static MPT_CONSTEXPR11_FUN ResamplingMode RemoveAA(ResamplingMode mode) noexcept
 // Release node defines
 #define ENV_RELEASE_NODE_UNSET	0xFF
 #define NOT_YET_RELEASED		(-1)
-STATIC_ASSERT(ENV_RELEASE_NODE_UNSET > MAX_ENVPOINTS);
+static_assert(ENV_RELEASE_NODE_UNSET > MAX_ENVPOINTS);
 
 
 enum PluginPriority
@@ -447,7 +459,7 @@ enum PlayBehaviour
 	kITNoSurroundPan,               // Panning and surround are mutually exclusive
 	kITShortSampleRetrig,           // Don't retrigger already stopped channels
 	kITPortaNoNote,                 // Don't apply any portamento if no previous note is playing
-	kITDontResetNoteOffOnPorta,     // Only reset note-off status on portamento in IT Compatible Gxx mode
+	kITFT2DontResetNoteOffOnPorta,  // Only reset note-off status on portamento in IT Compatible Gxx mode
 	kITVolColMemory,                // IT volume column effects share their memory with the effect column
 	kITPortamentoSwapResetsPos,     // Portamento with sample swap plays the new sample from the beginning
 	kITEmptyNoteMapSlot,            // IT ignores instrument note map entries with no note completely
@@ -456,7 +468,7 @@ enum PlayBehaviour
 	kITClearPortaTarget,            // New notes reset portamento target in IT
 	kITPanbrelloHold,               // Don't reset panbrello effect until next note or panning effect
 	kITPanningReset,                // Sample and instrument panning is only applied on note change, not instrument change
-	kITPatternLoopWithJumps,        // Bxx on the same row as SBx terminates the loop in IT
+	kITPatternLoopWithJumpsOld,     // Bxx on the same row as SBx terminates the loop in IT (old implementation of kITPatternLoopWithJumps)
 	kITInstrWithNoteOff,            // Instrument number with note-off recalls default volume
 
 	kFT2Arpeggio,                   // FT2 arpeggio algorithm
@@ -465,7 +477,7 @@ enum PlayBehaviour
 	kFT2PortaNoNote,                // Don't play portamento-ed note if no previous note is playing
 	kFT2KeyOff,                     // FT2-style Kxx handling
 	kFT2PanSlide,                   // Volume-column pan slides should be handled like fine slides
-	kFT2OffsetOutOfRange,           // FT2-style 9xx edge case handling
+	kFT2ST3OffsetOutOfRange,        // Offset past sample end stops the note
 	kFT2RestrictXCommand,           // Don't allow MPT extensions to Xxx command in XM
 	kFT2RetrigWithNoteDelay,        // Retrigger envelopes if there is a note delay with no note
 	kFT2SetPanEnvPos,               // Lxx only sets the pan env position if the volume envelope's sustain flag is set
@@ -488,7 +500,7 @@ enum PlayBehaviour
 
 	kST3NoMutedChannels,            // Don't process any effects on muted S3M channels
 	kST3EffectMemory,               // Most effects share the same memory in ST3
-	kST3PortaSampleChange,          // Portamento plus instrument number applies the volume settings of the new sample, but not the new sample itself.
+	kST3PortaSampleChange,          // Portamento plus instrument number applies the volume settings of the new sample, but not the new sample itself (GUS behaviour).
 	kST3VibratoMemory,              // Do not remember vibrato type in effect memory
 	kST3LimitPeriod,                // Cut note instead of limiting  final period (ModPlug Tracker style)
 	KST3PortaAfterArpeggio,         // Portamento after arpeggio continues at the note where the arpeggio left off
@@ -515,6 +527,14 @@ enum PlayBehaviour
 	kOPLFlexibleNoteOff,            // Full control after note-off over OPL voices, ^^^ sends note cut instead of just note-off
 	kITInstrWithNoteOffOldEffects,  // Instrument number with note-off recalls default volume - special cases with Old Effects enabled
 	kMIDIVolumeOnNoteOffBug,        // Update MIDI channel volume on note-off (legacy bug emulation)
+	kITDoNotOverrideChannelPan,     // Sample / instrument pan does not override channel pan for following samples / instruments that are not panned
+	kITPatternLoopWithJumps,        // Bxx right of SBx terminates the loop in IT
+	kITDCTBehaviour,                // DCT="Sample" requires sample instrument, DCT="Note" checks old pattern note against new pattern note (previously was checking old pattern note against new translated note)
+	kOPLwithNNA,                    // NNA note-off / fade are applied to OPL channels
+	kST3RetrigAfterNoteCut,         // Qxy does not retrigger note after it has been cut with ^^^ or SCx
+	kST3SampleSwap,                 // On-the-fly sample swapping (SoundBlaster behaviour)
+	kOPLRealRetrig,                 // Retrigger effect (Qxy) restarts OPL notes
+	kOPLNoResetAtEnvelopeEnd,       // Do not reset OPL channel status at end of envelope (OpenMPT 1.28 inconsistency with samples)
 
 	// Add new play behaviours here.
 
@@ -539,8 +559,8 @@ public:
 // Sample position and sample position increment value
 struct SamplePosition
 {
-	typedef int64 value_t;
-	typedef uint64 unsigned_value_t;
+	using value_t = int64;
+	using unsigned_value_t = uint64;
 
 protected:
 	value_t v = 0;
@@ -548,40 +568,40 @@ protected:
 public:
 	enum : uint32 { fractMax = 0xFFFFFFFFu };
 
-	SamplePosition() { }
-	explicit SamplePosition(value_t pos) : v(pos) { }
-	SamplePosition(int32 intPart, uint32 fractPart) : v((static_cast<value_t>(intPart) * (1ll<<32)) | fractPart) { }
+	MPT_CONSTEXPR11_FUN SamplePosition() { }
+	MPT_CONSTEXPR11_FUN explicit SamplePosition(value_t pos) : v(pos) { }
+	MPT_CONSTEXPR11_FUN SamplePosition(int32 intPart, uint32 fractPart) : v((static_cast<value_t>(intPart) * (1ll << 32)) | fractPart) { }
 	static SamplePosition Ratio(uint32 dividend, uint32 divisor) { return SamplePosition((static_cast<int64>(dividend) << 32) / divisor); }
 	static SamplePosition FromDouble(double pos) { return SamplePosition(static_cast<value_t>(pos * 4294967296.0)); }
 
 	// Set integer and fractional part
-	MPT_FORCEINLINE SamplePosition &Set(int32 intPart, uint32 fractPart = 0) { v = (static_cast<int64>(intPart) << 32) | fractPart; return *this; }
+	MPT_CONSTEXPR14_FUN SamplePosition &Set(int32 intPart, uint32 fractPart = 0) { v = (static_cast<int64>(intPart) << 32) | fractPart; return *this; }
 	// Set integer part, keep fractional part
-	MPT_FORCEINLINE SamplePosition &SetInt(int32 intPart) { v = (static_cast<value_t>(intPart) << 32) | GetFract(); return *this; }
+	MPT_CONSTEXPR14_FUN SamplePosition &SetInt(int32 intPart) { v = (static_cast<value_t>(intPart) << 32) | GetFract(); return *this; }
 	// Get integer part (as sample length / position)
-	MPT_FORCEINLINE SmpLength GetUInt() const { return static_cast<SmpLength>(static_cast<unsigned_value_t>(v) >> 32); }
+	MPT_CONSTEXPR11_FUN SmpLength GetUInt() const { return static_cast<SmpLength>(static_cast<unsigned_value_t>(v) >> 32); }
 	// Get integer part
-	MPT_FORCEINLINE int32 GetInt() const { return static_cast<int32>(static_cast<unsigned_value_t>(v) >> 32); }
+	MPT_CONSTEXPR11_FUN int32 GetInt() const { return static_cast<int32>(static_cast<unsigned_value_t>(v) >> 32); }
 	// Get fractional part
-	MPT_FORCEINLINE uint32 GetFract() const { return static_cast<uint32>(v); }
+	MPT_CONSTEXPR11_FUN uint32 GetFract() const { return static_cast<uint32>(v); }
 	// Get the inverted fractional part
-	MPT_FORCEINLINE SamplePosition GetInvertedFract() const { return SamplePosition(0x100000000ll - GetFract()); }
+	MPT_CONSTEXPR11_FUN SamplePosition GetInvertedFract() const { return SamplePosition(0x100000000ll - GetFract()); }
 	// Get the raw fixed-point value
-	MPT_FORCEINLINE int64 GetRaw() const { return v; }
+	MPT_CONSTEXPR11_FUN int64 GetRaw() const { return v; }
 	// Negate the current value
-	MPT_FORCEINLINE SamplePosition &Negate() { v = -v; return *this; }
+	MPT_CONSTEXPR14_FUN SamplePosition &Negate() { v = -v; return *this; }
 	// Multiply and divide by given integer scalars
-	MPT_FORCEINLINE SamplePosition &MulDiv(uint32 mul, uint32 div) { v = (v * mul) / div; return *this; }
+	MPT_CONSTEXPR14_FUN SamplePosition &MulDiv(uint32 mul, uint32 div) { v = (v * mul) / div; return *this; }
 	// Removes the integer part, only keeping fractions
-	MPT_FORCEINLINE SamplePosition &RemoveInt() { v &= fractMax; return *this; }
+	MPT_CONSTEXPR14_FUN SamplePosition &RemoveInt() { v &= fractMax; return *this; }
 	// Check if value is 1.0
-	MPT_FORCEINLINE bool IsUnity() const { return v == 0x100000000ll; }
+	MPT_CONSTEXPR11_FUN bool IsUnity() const { return v == 0x100000000ll; }
 	// Check if value is 0
-	MPT_FORCEINLINE bool IsZero() const { return v == 0; }
+	MPT_CONSTEXPR11_FUN bool IsZero() const { return v == 0; }
 	// Check if value is > 0
-	MPT_FORCEINLINE bool IsPositive() const { return v > 0; }
+	MPT_CONSTEXPR11_FUN bool IsPositive() const { return v > 0; }
 	// Check if value is < 0
-	MPT_FORCEINLINE bool IsNegative() const { return v < 0; }
+	MPT_CONSTEXPR11_FUN bool IsNegative() const { return v < 0; }
 
 	// Addition / subtraction of another fixed-point number
 	SamplePosition operator+ (const SamplePosition &other) const { return SamplePosition(v + other.v); }
@@ -600,12 +620,12 @@ public:
 	// Division by scalar; returns fractional point number
 	SamplePosition operator/ (int div) const { return SamplePosition(v / div); }
 
-	bool operator== (const SamplePosition &other) const { return v == other.v; }
-	bool operator!= (const SamplePosition &other) const { return v != other.v; }
-	bool operator<= (const SamplePosition &other) const { return v <= other.v; }
-	bool operator>= (const SamplePosition &other) const { return v >= other.v; }
-	bool operator< (const SamplePosition &other) const { return v < other.v; }
-	bool operator> (const SamplePosition &other) const { return v > other.v; }
+	MPT_CONSTEXPR11_FUN bool operator==(const SamplePosition &other) const { return v == other.v; }
+	MPT_CONSTEXPR11_FUN bool operator!=(const SamplePosition &other) const { return v != other.v; }
+	MPT_CONSTEXPR11_FUN bool operator<=(const SamplePosition &other) const { return v <= other.v; }
+	MPT_CONSTEXPR11_FUN bool operator>=(const SamplePosition &other) const { return v >= other.v; }
+	MPT_CONSTEXPR11_FUN bool operator<(const SamplePosition &other) const { return v < other.v; }
+	MPT_CONSTEXPR11_FUN bool operator>(const SamplePosition &other) const { return v > other.v; }
 };
 
 
@@ -623,7 +643,7 @@ protected:
 
 public:
 	enum : size_t { fractFact = FFact };
-	typedef T store_t;
+	using store_t = T;
 
 	MPT_CONSTEXPR11_FUN FPInt() : v(0) { }
 	MPT_CONSTEXPR11_FUN FPInt(T intPart, T fractPart) : v((intPart * fractFact) + (fractPart % fractFact)) { }
@@ -643,21 +663,21 @@ public:
 	// Formats the stored value as a floating-point value
 	MPT_CONSTEXPR11_FUN double ToDouble() const { return v / double(fractFact); }
 
-	MPT_CONSTEXPR11_FUN FPInt<fractFact, T> operator+ (const FPInt<fractFact, T> &other) const { return FPInt<fractFact, T>(v + other.v); }
-	MPT_CONSTEXPR11_FUN FPInt<fractFact, T> operator- (const FPInt<fractFact, T> &other) const { return FPInt<fractFact, T>(v - other.v); }
-	MPT_CONSTEXPR14_FUN FPInt<fractFact, T> operator+= (const FPInt<fractFact, T> &other) { v += other.v; return *this; }
-	MPT_CONSTEXPR14_FUN FPInt<fractFact, T> operator-= (const FPInt<fractFact, T> &other) { v -= other.v; return *this; }
+	MPT_CONSTEXPR11_FUN friend FPInt<fractFact, T> operator+ (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return FPInt<fractFact, T>(a.v + b.v); }
+	MPT_CONSTEXPR11_FUN friend FPInt<fractFact, T> operator- (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return FPInt<fractFact, T>(a.v - b.v); }
+	MPT_CONSTEXPR14_FUN FPInt<fractFact, T> operator+= (const FPInt<fractFact, T> &other) noexcept { v += other.v; return *this; }
+	MPT_CONSTEXPR14_FUN FPInt<fractFact, T> operator-= (const FPInt<fractFact, T> &other) noexcept { v -= other.v; return *this; }
 
-	MPT_CONSTEXPR11_FUN bool operator== (const FPInt<fractFact, T> &other) const { return v == other.v; }
-	MPT_CONSTEXPR11_FUN bool operator!= (const FPInt<fractFact, T> &other) const { return v != other.v; }
-	MPT_CONSTEXPR11_FUN bool operator<= (const FPInt<fractFact, T> &other) const { return v <= other.v; }
-	MPT_CONSTEXPR11_FUN bool operator>= (const FPInt<fractFact, T> &other) const { return v >= other.v; }
-	MPT_CONSTEXPR11_FUN bool operator< (const FPInt<fractFact, T> &other) const { return v < other.v; }
-	MPT_CONSTEXPR11_FUN bool operator> (const FPInt<fractFact, T> &other) const { return v > other.v; }
+	MPT_CONSTEXPR11_FUN friend bool operator== (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return a.v == b.v; }
+	MPT_CONSTEXPR11_FUN friend bool operator!= (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return a.v != b.v; }
+	MPT_CONSTEXPR11_FUN friend bool operator<= (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return a.v <= b.v; }
+	MPT_CONSTEXPR11_FUN friend bool operator>= (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return a.v >= b.v; }
+	MPT_CONSTEXPR11_FUN friend bool operator< (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return a.v < b.v; }
+	MPT_CONSTEXPR11_FUN friend bool operator> (const FPInt<fractFact, T> &a, const FPInt<fractFact, T> &b) noexcept { return a.v > b.v; }
 };
 
-typedef FPInt<10000, uint32> TEMPO;
+using TEMPO = FPInt<10000, uint32>;
 
-typedef std::array<uint8, 12> OPLPatch;
+using OPLPatch = std::array<uint8, 12>;
 
 OPENMPT_NAMESPACE_END

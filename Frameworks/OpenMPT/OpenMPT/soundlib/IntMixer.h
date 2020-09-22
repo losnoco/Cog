@@ -51,16 +51,16 @@ struct AmigaBlepInterpolation
 {
 	SamplePosition subIncrement;
 	Paula::State *paula;
+	const Paula::BlepArray *WinSincIntegral;
 	int numSteps;
-	bool filter;
 
-	MPT_FORCEINLINE void Start(ModChannel &chn, const CResampler &)
+	MPT_FORCEINLINE void Start(ModChannel &chn, const CResampler &resampler)
 	{
 		paula = &chn.paulaState;
 		numSteps = paula->numSteps;
-		filter = chn.dwFlags[CHN_AMIGAFILTER];
+		WinSincIntegral = &resampler.blepTables.GetAmigaTable(resampler.m_Settings.emulateAmiga, chn.dwFlags[CHN_AMIGAFILTER]);
 		if(numSteps)
-			subIncrement = chn.increment / paula->numSteps;
+			subIncrement = chn.increment / numSteps;
 	}
 
 	MPT_FORCEINLINE void End(const ModChannel &) { }
@@ -94,8 +94,8 @@ struct AmigaBlepInterpolation
 			paula->remainder.RemoveInt();
 		}
 
-		auto out = paula->OutputSample(filter);
-		for(unsigned int i = 0; i < Traits::numChannelsOut; i++)
+		auto out = paula->OutputSample(*WinSincIntegral);
+		for(int i = 0; i < Traits::numChannelsOut; i++)
 			outSample[i] = out;
 	}
 };

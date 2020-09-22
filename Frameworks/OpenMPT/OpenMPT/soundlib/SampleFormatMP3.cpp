@@ -56,11 +56,7 @@ typedef size_t mpg123_size_t;
 typedef ssize_t mpg123_ssize_t;
 
 class ComponentMPG123
-#if defined(MPT_ENABLE_MPG123_DELAYLOAD)
-	: public ComponentBundledDLL
-#else
 	: public ComponentBuiltin
-#endif
 {
 	MPT_DECLARE_COMPONENT_MEMBERS
 
@@ -90,22 +86,12 @@ public:
 
 public:
 	ComponentMPG123()
-#if defined(MPT_ENABLE_MPG123_DELAYLOAD)
-		: ComponentBundledDLL(P_("openmpt-mpg123"))
-#else
 		: ComponentBuiltin()
-#endif
 	{
 		return;
 	}
 	bool DoInitialize() override
 	{
-#if defined(MPT_ENABLE_MPG123_DELAYLOAD)
-		if(!ComponentBundledDLL::DoInitialize())
-		{
-			return false;
-		}
-#endif
 		if(mpg123_init() != 0)
 		{
 			return false;
@@ -133,7 +119,7 @@ static mpt::ustring ReadMPG123String(const mpg123_string &str)
 	{
 		return result;
 	}
-	result = mpt::ToUnicode(mpt::CharsetUTF8, std::string(str.p, str.p + str.fill - 1));
+	result = mpt::ToUnicode(mpt::Charset::UTF8, std::string(str.p, str.p + str.fill - 1));
 	return result;
 }
 
@@ -151,7 +137,7 @@ static mpt::ustring ReadMPG123String(const mpg123_string *str)
 template <std::size_t N>
 static mpt::ustring ReadMPG123String(const char (&str)[N])
 {
-	return mpt::ToUnicode(mpt::CharsetISO8859_1, mpt::String::ReadBuf(mpt::String::spacePadded, str));
+	return mpt::ToUnicode(mpt::Charset::ISO8859_1, mpt::String::ReadBuf(mpt::String::spacePadded, str));
 }
 
 #endif // MPT_WITH_MPG123
@@ -500,7 +486,7 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 		}
 	}
 
-	std::vector<mpt::byte> buf_bytes;
+	std::vector<std::byte> buf_bytes;
 	std::vector<int16> buf_samples;
 	bool decode_error = false;
 	bool decode_done = false;
@@ -564,7 +550,7 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	DestroySampleThreadsafe(sample);
 	if(!mo3Decode)
 	{
-		mpt::String::Copy(m_szNames[sample], mpt::ToCharset(GetCharsetInternal(), sampleName));
+		m_szNames[sample] = mpt::ToCharset(GetCharsetInternal(), sampleName);
 		Samples[sample].Initialize();
 		Samples[sample].nC5Speed = rate;
 	}
@@ -623,8 +609,8 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			channels = info.channels;
 			if(rate <= 0) break; // broken stream
 			if(channels != 1 && channels != 2) break; // broken stream
-			stream_pos += mpt::clamp(info.frame_bytes, 0, mpt::saturate_cast<int>(bytes_left));
-			bytes_left -= mpt::clamp(info.frame_bytes, 0, mpt::saturate_cast<int>(bytes_left));
+			stream_pos += std::clamp(info.frame_bytes, 0, mpt::saturate_cast<int>(bytes_left));
+			bytes_left -= std::clamp(info.frame_bytes, 0, mpt::saturate_cast<int>(bytes_left));
 			if(frame_samples > 0)
 			{
 				try
@@ -656,7 +642,7 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	DestroySampleThreadsafe(sample);
 	if(!mo3Decode)
 	{
-		strcpy(m_szNames[sample], "");
+		m_szNames[sample] = "";
 		Samples[sample].Initialize();
 		Samples[sample].nC5Speed = rate;
 	}

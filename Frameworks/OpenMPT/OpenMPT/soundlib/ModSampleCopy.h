@@ -29,10 +29,10 @@ size_t CopyMonoSample(ModSample &sample, const Tbyte *sourceBuffer, size_t sourc
 	MPT_ASSERT(sample.GetElementarySampleSize() == sizeof(typename SampleConversion::output_t));
 
 	const size_t frameSize =  SampleConversion::input_inc;
-	const size_t countFrames = std::min<size_t>(sourceSize / frameSize, sample.nLength);
+	const size_t countFrames = std::min(sourceSize / frameSize, static_cast<std::size_t>(sample.nLength));
 	size_t numFrames = countFrames;
 	SampleConversion sampleConv(conv);
-	const mpt::byte * MPT_RESTRICT inBuf = mpt::byte_cast<const mpt::byte*>(sourceBuffer);
+	const std::byte * MPT_RESTRICT inBuf = mpt::byte_cast<const std::byte*>(sourceBuffer);
 	typename SampleConversion::output_t * MPT_RESTRICT outBuf = static_cast<typename SampleConversion::output_t *>(sample.samplev());
 	while(numFrames--)
 	{
@@ -52,11 +52,11 @@ size_t CopyStereoInterleavedSample(ModSample &sample, const Tbyte *sourceBuffer,
 	MPT_ASSERT(sample.GetElementarySampleSize() == sizeof(typename SampleConversion::output_t));
 
 	const size_t frameSize = 2 * SampleConversion::input_inc;
-	const size_t countFrames = std::min<size_t>(sourceSize / frameSize, sample.nLength);
+	const size_t countFrames = std::min(sourceSize / frameSize, static_cast<std::size_t>(sample.nLength));
 	size_t numFrames = countFrames;
 	SampleConversion sampleConvLeft(conv);
 	SampleConversion sampleConvRight(conv);
-	const mpt::byte * MPT_RESTRICT inBuf = mpt::byte_cast<const mpt::byte*>(sourceBuffer);
+	const std::byte * MPT_RESTRICT inBuf = mpt::byte_cast<const std::byte*>(sourceBuffer);
 	typename SampleConversion::output_t * MPT_RESTRICT outBuf = static_cast<typename SampleConversion::output_t *>(sample.samplev());
 	while(numFrames--)
 	{
@@ -79,14 +79,14 @@ size_t CopyStereoSplitSample(ModSample &sample, const Tbyte *sourceBuffer, size_
 	MPT_ASSERT(sample.GetElementarySampleSize() == sizeof(typename SampleConversion::output_t));
 
 	const size_t sampleSize = SampleConversion::input_inc;
-	const size_t sourceSizeLeft = std::min<size_t>(sample.nLength * SampleConversion::input_inc, sourceSize);
-	const size_t sourceSizeRight = std::min<size_t>(sample.nLength * SampleConversion::input_inc, sourceSize - sourceSizeLeft);
+	const size_t sourceSizeLeft = std::min(static_cast<std::size_t>(sample.nLength) * SampleConversion::input_inc, sourceSize);
+	const size_t sourceSizeRight = std::min(static_cast<std::size_t>(sample.nLength) * SampleConversion::input_inc, sourceSize - sourceSizeLeft);
 	const size_t countSamplesLeft = sourceSizeLeft / sampleSize;
 	const size_t countSamplesRight = sourceSizeRight / sampleSize;
 
 	size_t numSamplesLeft = countSamplesLeft;
 	SampleConversion sampleConvLeft(conv);
-	const mpt::byte * MPT_RESTRICT inBufLeft = mpt::byte_cast<const mpt::byte*>(sourceBuffer);
+	const std::byte * MPT_RESTRICT inBufLeft = mpt::byte_cast<const std::byte*>(sourceBuffer);
 	typename SampleConversion::output_t * MPT_RESTRICT outBufLeft = static_cast<typename SampleConversion::output_t *>(sample.samplev());
 	while(numSamplesLeft--)
 	{
@@ -97,7 +97,7 @@ size_t CopyStereoSplitSample(ModSample &sample, const Tbyte *sourceBuffer, size_
 
 	size_t numSamplesRight = countSamplesRight;
 	SampleConversion sampleConvRight(conv);
-	const mpt::byte * MPT_RESTRICT inBufRight = mpt::byte_cast<const mpt::byte*>(sourceBuffer) + sample.nLength * SampleConversion::input_inc;
+	const std::byte * MPT_RESTRICT inBufRight = mpt::byte_cast<const std::byte*>(sourceBuffer) + sample.nLength * SampleConversion::input_inc;
 	typename SampleConversion::output_t * MPT_RESTRICT outBufRight = static_cast<typename SampleConversion::output_t *>(sample.samplev()) + 1;
 	while(numSamplesRight--)
 	{
@@ -121,7 +121,7 @@ size_t CopyAndNormalizeSample(ModSample &sample, const Tbyte *sourceBuffer, size
 	size_t numSamples = sample.nLength * sample.GetNumChannels();
 	LimitMax(numSamples, sourceSize / inSize);
 
-	const mpt::byte * inBuf = mpt::byte_cast<const mpt::byte*>(sourceBuffer);
+	const std::byte * inBuf = mpt::byte_cast<const std::byte*>(sourceBuffer);
 	// Finding max value
 	SampleConversion sampleConv(conv);
 	for(size_t i = numSamples; i != 0; i--)

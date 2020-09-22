@@ -29,7 +29,7 @@ protected:
 	off_t m_bufPos = 0, m_bufSize = 0;
 	uint32 bitBuf = 0; // Current bit buffer
 	int m_bitNum = 0;  // Currently available number of bits
-	mpt::byte buffer[mpt::IO::BUFFERSIZE_TINY];
+	std::byte buffer[mpt::IO::BUFFERSIZE_TINY]{};
 
 public:
 
@@ -39,7 +39,7 @@ public:
 		eof() : std::range_error("Truncated bit buffer") { }
 	};
 
-	BitReader(mpt::span<const mpt::byte> bytedata) : FileReader(bytedata) { }
+	BitReader(mpt::span<const std::byte> bytedata) : FileReader(bytedata) { }
 	BitReader(const FileReader &other = FileReader()) : FileReader(other) { }
 
 	off_t GetLength() const

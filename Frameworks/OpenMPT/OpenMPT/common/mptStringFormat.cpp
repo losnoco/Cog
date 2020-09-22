@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "mptStringFormat.h"
 
-#if MPT_CXX_AT_LEAST(17) && MPT_COMPILER_MSVC
+#if MPT_COMPILER_MSVC
 #define MPT_FORMAT_CXX17_INT 1
 #else
 #define MPT_FORMAT_CXX17_INT 0
@@ -59,7 +59,7 @@ template<typename Tstream> inline void SaneInsert(Tstream & s, const unsigned ch
 #if MPT_FORMAT_CXX17_INT
 
 #if MPT_WSTRING_FORMAT
-std::wstring ToWideSimple(const std::string &nstr)
+static std::wstring ToWideSimple(const std::string &nstr)
 {
 	std::wstring wstr(nstr.size(), L'\0');
 	for(std::size_t i = 0; i < nstr.size(); ++i)
@@ -148,17 +148,6 @@ static inline std::wstring ToWStringHelperFloat(const T & x)
 }
 #endif
 
-#if MPT_WSTRING_CONVERT
-std::string ToString(const std::wstring & x) { return mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x); }
-std::string ToString(const wchar_t * const & x) { return mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x); }
-std::string ToString(const wchar_t & x) { return mpt::ToCharset(mpt::CharsetLocaleOrUTF8, std::wstring(1, x)); }
-#endif
-#if MPT_USTRING_MODE_UTF8
-std::string ToString(const mpt::ustring & x) { return mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x); }
-#endif
-#if defined(_MFC_VER)
-std::string ToString(const CString & x) { return mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x); }
-#endif
 std::string ToString(const bool & x) { return ToStringHelperInt(static_cast<int>(x)); }
 std::string ToString(const signed char & x) { return ToStringHelperInt(x); }
 std::string ToString(const unsigned char & x) { return ToStringHelperInt(x); }
@@ -174,19 +163,15 @@ std::string ToString(const float & x) { return ToStringHelperFloat(x); }
 std::string ToString(const double & x) { return ToStringHelperFloat(x); }
 std::string ToString(const long double & x) { return ToStringHelperFloat(x); }
 
-mpt::ustring ToUString(const std::string & x) { return mpt::ToUnicode(mpt::CharsetLocaleOrUTF8, x); }
-mpt::ustring ToUString(const char * const & x) { return mpt::ToUnicode(mpt::CharsetLocaleOrUTF8, x); }
-mpt::ustring ToUString(const char & x) { return mpt::ToUnicode(mpt::CharsetLocaleOrUTF8, std::string(1, x)); }
 #if MPT_WSTRING_FORMAT
 #if MPT_USTRING_MODE_UTF8
 mpt::ustring ToUString(const std::wstring & x) { return mpt::ToUnicode(x); }
 #endif
 mpt::ustring ToUString(const wchar_t * const & x) { return mpt::ToUnicode(x); }
-mpt::ustring ToUString(const wchar_t & x) { return mpt::ToUnicode(std::wstring(1, x)); }
 #endif
-#if defined(_MFC_VER)
+#if defined(MPT_WITH_MFC)
 mpt::ustring ToUString(const CString & x)  { return mpt::ToUnicode(x); }
-#endif
+#endif // MPT_WITH_MFC
 #if MPT_USTRING_MODE_WIDE
 mpt::ustring ToUString(const bool & x) { return ToWStringHelperInt(static_cast<int>(x)); }
 mpt::ustring ToUString(const signed char & x) { return ToWStringHelperInt(x); }
@@ -204,32 +189,29 @@ mpt::ustring ToUString(const double & x) { return ToWStringHelperFloat(x); }
 mpt::ustring ToUString(const long double & x) { return ToWStringHelperFloat(x); }
 #endif
 #if MPT_USTRING_MODE_UTF8
-mpt::ustring ToUString(const bool & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(static_cast<int>(x))); }
-mpt::ustring ToUString(const signed char & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const unsigned char & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const signed short & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const unsigned short & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const signed int & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const unsigned int & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const signed long & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const unsigned long & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const signed long long & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const unsigned long long & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperInt(x)); }
-mpt::ustring ToUString(const float & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperFloat(x)); }
-mpt::ustring ToUString(const double & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperFloat(x)); }
-mpt::ustring ToUString(const long double & x) { return mpt::ToUnicode(mpt::CharsetUTF8, ToStringHelperFloat(x)); }
+mpt::ustring ToUString(const bool & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(static_cast<int>(x))); }
+mpt::ustring ToUString(const signed char & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const unsigned char & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const signed short & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const unsigned short & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const signed int & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const unsigned int & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const signed long & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const unsigned long & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const signed long long & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const unsigned long long & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperInt(x)); }
+mpt::ustring ToUString(const float & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperFloat(x)); }
+mpt::ustring ToUString(const double & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperFloat(x)); }
+mpt::ustring ToUString(const long double & x) { return mpt::ToUnicode(mpt::Charset::UTF8, ToStringHelperFloat(x)); }
 #endif
 
 #if MPT_WSTRING_FORMAT
-std::wstring ToWString(const std::string & x) { return mpt::ToWide(mpt::CharsetLocaleOrUTF8, x); }
-std::wstring ToWString(const char * const & x) { return mpt::ToWide(mpt::CharsetLocaleOrUTF8, x); }
-std::wstring ToWString(const char & x) { return mpt::ToWide(mpt::CharsetLocaleOrUTF8, std::string(1, x)); }
 #if MPT_USTRING_MODE_UTF8
 std::wstring ToWString(const mpt::ustring & x) { return mpt::ToWide(x); }
 #endif
-#if defined(_MFC_VER)
+#if defined(MPT_WITH_MFC)
 std::wstring ToWString(const CString & x) { return mpt::ToWide(x); }
-#endif
+#endif // MPT_WITH_MFC
 std::wstring ToWString(const bool & x) { return ToWStringHelperInt(static_cast<int>(x)); }
 std::wstring ToWString(const signed char & x) { return ToWStringHelperInt(x); }
 std::wstring ToWString(const unsigned char & x) { return ToWStringHelperInt(x); }
@@ -468,10 +450,6 @@ static inline std::wstring FormatValWHelperFloat(const T & x, const FormatSpec &
 #endif
 
 
-std::string FormatVal(const char & x, const FormatSpec & f) { return FormatValHelperInt(x, f); }
-#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
-std::string FormatVal(const wchar_t & x, const FormatSpec & f) { return FormatValHelperInt(x, f); }
-#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 std::string FormatVal(const bool & x, const FormatSpec & f) { return FormatValHelperInt(static_cast<int>(x), f); }
 std::string FormatVal(const signed char & x, const FormatSpec & f) { return FormatValHelperInt(x, f); }
 std::string FormatVal(const unsigned char & x, const FormatSpec & f) { return FormatValHelperInt(x, f); }
@@ -488,8 +466,6 @@ std::string FormatVal(const double & x, const FormatSpec & f) { return FormatVal
 std::string FormatVal(const long double & x, const FormatSpec & f) { return FormatValHelperFloat(x, f); }
 
 #if MPT_USTRING_MODE_WIDE
-mpt::ustring FormatValU(const char & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
-mpt::ustring FormatValU(const wchar_t & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
 mpt::ustring FormatValU(const bool & x, const FormatSpec & f) { return FormatValWHelperInt(static_cast<int>(x), f); }
 mpt::ustring FormatValU(const signed char & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
 mpt::ustring FormatValU(const unsigned char & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
@@ -506,31 +482,23 @@ mpt::ustring FormatValU(const double & x, const FormatSpec & f) { return FormatV
 mpt::ustring FormatValU(const long double & x, const FormatSpec & f) { return FormatValWHelperFloat(x, f); }
 #endif
 #if MPT_USTRING_MODE_UTF8
-mpt::ustring FormatValU(const char & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
-mpt::ustring FormatValU(const wchar_t & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
-mpt::ustring FormatValU(const bool & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(static_cast<int>(x), f)); }
-mpt::ustring FormatValU(const signed char & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const unsigned char & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const signed short & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const unsigned short & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const signed int & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const unsigned int & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const signed long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const unsigned long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const signed long long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const unsigned long long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperInt(x, f)); }
-mpt::ustring FormatValU(const float & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperFloat(x, f)); }
-mpt::ustring FormatValU(const double & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperFloat(x, f)); }
-mpt::ustring FormatValU(const long double & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::CharsetUTF8, FormatValHelperFloat(x, f)); }
+mpt::ustring FormatValU(const bool & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(static_cast<int>(x), f)); }
+mpt::ustring FormatValU(const signed char & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const unsigned char & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const signed short & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const unsigned short & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const signed int & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const unsigned int & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const signed long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const unsigned long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const signed long long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const unsigned long long & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperInt(x, f)); }
+mpt::ustring FormatValU(const float & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperFloat(x, f)); }
+mpt::ustring FormatValU(const double & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperFloat(x, f)); }
+mpt::ustring FormatValU(const long double & x, const FormatSpec & f) { return mpt::ToUnicode(mpt::Charset::UTF8, FormatValHelperFloat(x, f)); }
 #endif
 
 #if MPT_WSTRING_FORMAT
-std::wstring FormatValW(const char & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
-#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
-std::wstring FormatValW(const wchar_t & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
-#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 std::wstring FormatValW(const bool & x, const FormatSpec & f) { return FormatValWHelperInt(static_cast<int>(x), f); }
 std::wstring FormatValW(const signed char & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
 std::wstring FormatValW(const unsigned char & x, const FormatSpec & f) { return FormatValWHelperInt(x, f); }
@@ -546,145 +514,6 @@ std::wstring FormatValW(const float & x, const FormatSpec & f) { return FormatVa
 std::wstring FormatValW(const double & x, const FormatSpec & f) { return FormatValWHelperFloat(x, f); }
 std::wstring FormatValW(const long double & x, const FormatSpec & f) { return FormatValWHelperFloat(x, f); }
 #endif
-
-
-namespace String
-{
-
-
-namespace detail
-{
-
-template<typename Tstring>
-Tstring PrintImplTemplate(const Tstring & format
-	, const Tstring & x1
-	, const Tstring & x2
-	, const Tstring & x3
-	, const Tstring & x4
-	, const Tstring & x5
-	, const Tstring & x6
-	, const Tstring & x7
-	, const Tstring & x8
-	)
-{
-	typedef typename mpt::string_traits<Tstring> traits;
-	Tstring result;
-	const typename traits::size_type len = traits::length(format);
-	traits::reserve(result, len);
-	for(typename traits::size_type pos = 0; pos != len; ++pos)
-	{
-		typename traits::char_type c = format[pos];
-		if(pos + 1 != len && c == typename traits::char_type('%'))
-		{
-			pos++;
-			c = format[pos];
-			if(typename traits::char_type('1') <= c && c <= typename traits::char_type('9'))
-			{
-				const std::size_t n = c - typename traits::char_type('0');
-				switch(n)
-				{
-					case 1: traits::append(result, x1); break;
-					case 2: traits::append(result, x2); break;
-					case 3: traits::append(result, x3); break;
-					case 4: traits::append(result, x4); break;
-					case 5: traits::append(result, x5); break;
-					case 6: traits::append(result, x6); break;
-					case 7: traits::append(result, x7); break;
-					case 8: traits::append(result, x8); break;
-				}
-				continue;
-			} else if(c != typename traits::char_type('%'))
-			{
-				traits::append(result, 1, typename traits::char_type('%'));
-			}
-		}
-		traits::append(result, 1, c);
-	}
-	return result;
-}
-
-std::string PrintImpl(const std::string & format
-	, const std::string & x1
-	, const std::string & x2
-	, const std::string & x3
-	, const std::string & x4
-	, const std::string & x5
-	, const std::string & x6
-	, const std::string & x7
-	, const std::string & x8
-	)
-{
-	return PrintImplTemplate<std::string>(format, x1,x2,x3,x4,x5,x6,x7,x8);
-}
-
-#if MPT_WSTRING_FORMAT
-std::wstring PrintImpl(const std::wstring & format
-	, const std::wstring & x1
-	, const std::wstring & x2
-	, const std::wstring & x3
-	, const std::wstring & x4
-	, const std::wstring & x5
-	, const std::wstring & x6
-	, const std::wstring & x7
-	, const std::wstring & x8
-	)
-{
-	return PrintImplTemplate<std::wstring>(format, x1,x2,x3,x4,x5,x6,x7,x8);
-}
-#endif
-
-#if MPT_USTRING_MODE_UTF8
-mpt::ustring PrintImpl(const mpt::ustring & format
-	, const mpt::ustring & x1
-	, const mpt::ustring & x2
-	, const mpt::ustring & x3
-	, const mpt::ustring & x4
-	, const mpt::ustring & x5
-	, const mpt::ustring & x6
-	, const mpt::ustring & x7
-	, const mpt::ustring & x8
-	)
-{
-	return PrintImplTemplate<mpt::ustring>(format, x1,x2,x3,x4,x5,x6,x7,x8);
-}
-#endif
-
-#if defined(MPT_ENABLE_CHARSET_LOCALE)
-mpt::lstring PrintImpl(const mpt::lstring & format
-	, const mpt::lstring & x1
-	, const mpt::lstring & x2
-	, const mpt::lstring & x3
-	, const mpt::lstring & x4
-	, const mpt::lstring & x5
-	, const mpt::lstring & x6
-	, const mpt::lstring & x7
-	, const mpt::lstring & x8
-	)
-{
-	return PrintImplTemplate<mpt::lstring>(format, x1,x2,x3,x4,x5,x6,x7,x8);
-}
-#endif // MPT_ENABLE_CHARSET_LOCALE
-
-#if defined(_MFC_VER)
-CString PrintImpl(const CString & format
-	, const CString & x1
-	, const CString & x2
-	, const CString & x3
-	, const CString & x4
-	, const CString & x5
-	, const CString & x6
-	, const CString & x7
-	, const CString & x8
-	)
-{
-	return PrintImplTemplate<CString>(format, x1,x2,x3,x4,x5,x6,x7,x8);
-}
-#endif
-
-} // namespace detail
-
-
-} // namespace String
 
 
 } // namespace mpt

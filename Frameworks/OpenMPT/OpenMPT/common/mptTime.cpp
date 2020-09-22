@@ -47,7 +47,7 @@ uint64 Now()
 
 mpt::ustring ToUString(uint64 time100ns)
 {
-	static const std::size_t bufsize = 256;
+	constexpr std::size_t bufsize = 256;
 
 	mpt::ustring result;
 
@@ -233,7 +233,7 @@ void MultimediaClock::SetPeriod(uint32 ms)
 	{
 		return;
 	}
-	ms = mpt::clamp<uint32>(ms, caps.wPeriodMin, caps.wPeriodMax);
+	ms = std::clamp(mpt::saturate_cast<UINT>(ms), caps.wPeriodMin, caps.wPeriodMax);
 	if(timeBeginPeriod(ms) != MMSYSERR_NOERROR)
 	{
 		return;

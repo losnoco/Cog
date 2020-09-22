@@ -17,14 +17,14 @@
 #include "mptBaseMacros.h"
 
 #include <exception>
-#if !defined(_MFC_VER)
+#if !defined(MPT_WITH_MFC)
 #include <new>
-#endif // !_MFC_VER
+#endif // !MPT_WITH_MFC
 
-#if defined(_MFC_VER)
+#if defined(MPT_WITH_MFC)
 // cppcheck-suppress missingInclude
 #include <afx.h>
-#endif // _MFC_VER
+#endif // MPT_WITH_MFC
 
 
 
@@ -35,21 +35,21 @@ OPENMPT_NAMESPACE_BEGIN
 // Exception handling helpers, because MFC requires explicit deletion of the exception object,
 // Thus, always call exactly one of MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY() or MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e).
 
-#if defined(_MFC_VER)
+#if defined(MPT_WITH_MFC)
 
 #define MPT_EXCEPTION_THROW_OUT_OF_MEMORY()    MPT_DO { AfxThrowMemoryException(); } MPT_WHILE_0
 #define MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)   catch ( CMemoryException * e )
 #define MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e) MPT_DO { MPT_UNUSED_VARIABLE(e); throw; } MPT_WHILE_0
 #define MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e)  MPT_DO { if(e) { e->Delete(); e = nullptr; } } MPT_WHILE_0
 
-#else // !_MFC_VER
+#else // !MPT_WITH_MFC
 
 #define MPT_EXCEPTION_THROW_OUT_OF_MEMORY()    MPT_DO { throw std::bad_alloc(); } MPT_WHILE_0
 #define MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)   catch ( const std::bad_alloc & e )
 #define MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e) MPT_DO { MPT_UNUSED_VARIABLE(e); throw; } MPT_WHILE_0
 #define MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e)  MPT_DO { MPT_UNUSED_VARIABLE(e); } MPT_WHILE_0
 
-#endif // _MFC_VER
+#endif // MPT_WITH_MFC
 
 
 

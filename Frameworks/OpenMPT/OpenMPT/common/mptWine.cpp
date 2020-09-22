@@ -247,11 +247,12 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 	{
 		throw mpt::Wine::Exception("Creating temporary directoy failed.");
 	}
-	std::string dirPosix = PathToPosix(dirWindowsTemp.GetDirname());
+	const std::string dirPosix = PathToPosix(dirWindowsTemp.GetDirname());
 	if(dirPosix.empty())
 	{
 		throw mpt::Wine::Exception("mpt::Wine::ConvertWindowsPathToHost returned empty path.");
 	}
+	const std::string dirPosixEscape = EscapePosixShell(dirPosix);
 	const mpt::PathString dirWindows = dirWindowsTemp.GetDirname();
 
 	progress(userdata);
@@ -267,11 +268,12 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 			throw mpt::Wine::Exception("Error writing script.sh.");
 		}
 	}
-	std::string scriptFilenamePosix = PathToPosix(scriptFilenameWindows);
+	const std::string scriptFilenamePosix = PathToPosix(scriptFilenameWindows);
 	if(scriptFilenamePosix.empty())
 	{
 		throw mpt::Wine::Exception("Error converting script.sh path.");
 	}
+	const std::string scriptFilenamePosixEscape = EscapePosixShell(scriptFilenamePosix);
 
 	progress(userdata);
 
@@ -280,8 +282,8 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 	{
 		mpt::ofstream tempfile(wrapperstarterFilenameWindows, std::ios::binary);
 		std::string wrapperstarterscript;
-		wrapperstarterscript += std::string() + "#!/usr/bin/env sh" + "\n";
-		wrapperstarterscript += std::string() + "exec /usr/bin/env sh " + EscapePosixShell(dirPosix) + "wrapper.sh" + "\n";
+		wrapperstarterscript += std::string() + "#!/usr/bin/env sh" "\n";
+		wrapperstarterscript += std::string() + "exec /usr/bin/env sh " + dirPosixEscape + "wrapper.sh" "\n";
 		tempfile << wrapperstarterscript;
 		tempfile.flush();
 		if(!tempfile)
@@ -296,41 +298,41 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 		std::string wrapperscript;
 		if(!flags[ExecFlagSilent])
 		{
-			wrapperscript += std::string() + "printf \"\\033]0;" + title + "\\a\"" + "\n";
+			wrapperscript += "printf \"\\033]0;" + title + "\\a\"" "\n";
 		}
-		wrapperscript += std::string() + "chmod u+x " + EscapePosixShell(scriptFilenamePosix) + "\n";
-		wrapperscript += std::string() + "cd " + EscapePosixShell(dirPosix) + "filetree" + "\n";
+		wrapperscript += "chmod u+x " + scriptFilenamePosixEscape + "\n";
+		wrapperscript += "cd " + dirPosixEscape + "filetree" "\n";
 		if(flags[ExecFlagInteractive])
 		{ // no stdout/stderr capturing for interactive scripts
-			wrapperscript += std::string() + EscapePosixShell(scriptFilenamePosix) + "\n";
-			wrapperscript += std::string() + "MPT_RESULT=$?" + "\n";
-			wrapperscript += std::string() + "echo ${MPT_RESULT} > " + EscapePosixShell(dirPosix) + "exit" + "\n";
+			wrapperscript += scriptFilenamePosixEscape + "\n";
+			wrapperscript += "MPT_RESULT=$?" "\n";
+			wrapperscript += "echo ${MPT_RESULT} > " + dirPosixEscape + "exit" "\n";
 		} else if(flags[ExecFlagSplitOutput])
 		{
-			wrapperscript += std::string() + "(" + EscapePosixShell(scriptFilenamePosix) + "; echo $? >&4) 4>" + EscapePosixShell(dirPosix) + "exit 1>" + EscapePosixShell(dirPosix) + "out 2>" + EscapePosixShell(dirPosix) + "err" + "\n";
+			wrapperscript += "(" + scriptFilenamePosixEscape + "; echo $? >&4) 4>" + dirPosixEscape + "exit 1>" + dirPosixEscape + "out 2>" + dirPosixEscape + "err" "\n";
 		} else
 		{
-			wrapperscript += std::string() + "(" + EscapePosixShell(scriptFilenamePosix) + "; echo $? >&4) 2>&1 4>" + EscapePosixShell(dirPosix) + "exit | tee " + EscapePosixShell(dirPosix) + "out" + "\n";
+			wrapperscript += "(" + scriptFilenamePosixEscape + "; echo $? >&4) 2>&1 4>" + dirPosixEscape + "exit | tee " + dirPosixEscape + "out" "\n";
 		}
-		wrapperscript += std::string() + "echo done > " + EscapePosixShell(dirPosix) + "done" + "\n";
-		cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "done" + "\n";
-		cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "exit" + "\n";
+		wrapperscript += "echo done > " + dirPosixEscape + "done" "\n";
+		cleanupscript += "rm " + dirPosixEscape + "done" "\n";
+		cleanupscript += "rm " + dirPosixEscape + "exit" "\n";
 		if(flags[ExecFlagInteractive])
 		{
 			// nothing
 		} else if(flags[ExecFlagSplitOutput])
 		{
-			cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "out" + "\n";
-			cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "err" + "\n";
+			cleanupscript += "rm " + dirPosixEscape + "out" "\n";
+			cleanupscript += "rm " + dirPosixEscape + "err" "\n";
 		} else
 		{
-			cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "out" + "\n";
+			cleanupscript += "rm " + dirPosixEscape + "out" "\n";
 		}
-		cleanupscript += std::string() + "rm -r " + EscapePosixShell(dirPosix) + "filetree" + "\n";
-		cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "script.sh" + "\n";
-		cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "wrapper.sh" + "\n";
-		cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "wrapperstarter.sh" + "\n";
-		cleanupscript += std::string() + "rm " + EscapePosixShell(dirPosix) + "terminal.sh" + "\n";
+		cleanupscript += "rm -r " + dirPosixEscape + "filetree" "\n";
+		cleanupscript += "rm " + dirPosixEscape + "script.sh" "\n";
+		cleanupscript += "rm " + dirPosixEscape + "wrapper.sh" "\n";
+		cleanupscript += "rm " + dirPosixEscape + "wrapperstarter.sh" "\n";
+		cleanupscript += "rm " + dirPosixEscape + "terminal.sh" "\n";
 		if(flags[ExecFlagAsync])
 		{
 			wrapperscript += cleanupscript;
@@ -346,10 +348,10 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 
 	progress(userdata);
 
-	::CreateDirectory((dirWindows + P_("filetree")).AsNative().c_str(), NULL);
+	::CreateDirectory((dirWindows + P_("filetree")).AsNative().c_str(), nullptr);
 	for(const auto &file : filetree)
 	{
-		std::vector<mpt::ustring> path = mpt::String::Split<mpt::ustring>(mpt::ToUnicode(mpt::CharsetUTF8, file.first), U_("/"));
+		std::vector<mpt::ustring> path = mpt::String::Split<mpt::ustring>(mpt::ToUnicode(mpt::Charset::UTF8, file.first), U_("/"));
 		mpt::PathString combinedPath = dirWindows + P_("filetree") + P_("\\");
 		if(path.size() > 1)
 		{
@@ -362,7 +364,7 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 				combinedPath += mpt::PathString::FromUnicode(path[singlepath]);
 				if(!combinedPath.IsDirectory())
 				{
-					if(::CreateDirectory(combinedPath.AsNative().c_str(), NULL) == 0)
+					if(::CreateDirectory(combinedPath.AsNative().c_str(), nullptr) == 0)
 					{
 						throw mpt::Wine::Exception("Error writing filetree.");
 					}
@@ -406,8 +408,8 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 			// mate-terminal on Debian 8 cannot execute commands with arguments,
 			// thus we use a separate script that requires no arguments to execute.
 			terminalscript += "if command -v " + terminal + " 2>/dev/null 1>/dev/null ; then" "\n";
-			terminalscript += " chmod u+x " + EscapePosixShell(dirPosix) + "wrapperstarter.sh" "\n";
-			terminalscript += " exec `command -v " + terminal + "` -e \"" + EscapePosixShell(dirPosix) + "wrapperstarter.sh\"" "\n";
+			terminalscript += " chmod u+x " + dirPosixEscape + "wrapperstarter.sh" "\n";
+			terminalscript += " exec `command -v " + terminal + "` -e \"" + dirPosixEscape + "wrapperstarter.sh\"" "\n";
 			terminalscript += "fi" "\n";
 		}
 
@@ -430,21 +432,19 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 
 		if(flags[ExecFlagSilent])
 		{
-			unixcommand = "/usr/bin/env sh \"" + EscapePosixShell(dirPosix) + "wrapper.sh\"";
+			unixcommand = "/usr/bin/env sh \"" + dirPosixEscape + "wrapper.sh\"";
 		} else
 		{
-			unixcommand = "/usr/bin/env sh \"" + EscapePosixShell(dirPosix) + "terminal.sh\"";
+			unixcommand = "/usr/bin/env sh \"" + dirPosixEscape + "terminal.sh\"";
 		}
 
 		progress(userdata);
 
-		std::wstring unixcommandW = mpt::ToWide(mpt::CharsetUTF8, unixcommand);
-		std::vector<WCHAR> commandline = std::vector<WCHAR>(unixcommandW.data(), unixcommandW.data() + unixcommandW.length() + 1);
-		std::wstring titleW = mpt::ToWide(mpt::CharsetUTF8, title);
-		std::vector<WCHAR> titleWv = std::vector<WCHAR>(titleW.data(), titleW.data() + titleW.length() + 1);
+		std::wstring unixcommandW = mpt::ToWide(mpt::Charset::UTF8, unixcommand);
+		std::wstring titleW = mpt::ToWide(mpt::Charset::UTF8, title);
 		STARTUPINFOW startupInfo;
 		MemsetZero(startupInfo);
-		startupInfo.lpTitle = &titleWv[0];
+		startupInfo.lpTitle = titleW.data();
 		startupInfo.cb = sizeof(startupInfo);
 		PROCESS_INFORMATION processInformation;
 		MemsetZero(processInformation);
@@ -454,15 +454,15 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 		BOOL success = FALSE;
 		if(flags[ExecFlagSilent])
 		{
-			success = CreateProcessW(NULL, &commandline[0], NULL, NULL, FALSE, DETACHED_PROCESS, NULL, NULL, &startupInfo, &processInformation);
+			success = CreateProcessW(NULL, unixcommandW.data(), NULL, NULL, FALSE, DETACHED_PROCESS, NULL, NULL, &startupInfo, &processInformation);
 		} else
 		{
-			success = CreateProcessW(NULL, &commandline[0], NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &startupInfo, &processInformation);
+			success = CreateProcessW(NULL, unixcommandW.data(), NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &startupInfo, &processInformation);
 		}
 
 		progress(userdata);
 
-		createProcessSuccess = (success ? true : false);
+		createProcessSuccess = (success != FALSE);
 
 		progress(userdata);
 
@@ -495,29 +495,26 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 
 	progress(userdata);
 
-	// Work around Wine being able to execute PIE binaries on Debian 9.
+	// Work around Wine being unable to execute PIE binaries on Debian 9.
 	// Luckily, /bin/bash is still non-PIE on Debian 9.
 
 	if(!createProcessSuccess)
 	{
-
 		if(flags[ExecFlagSilent])
 		{
-			unixcommand = "/bin/bash \"" + EscapePosixShell(dirPosix) + "wrapper.sh\"";
+			unixcommand = "/bin/bash \"" + dirPosixEscape + "wrapper.sh\"";
 		} else
 		{
-			unixcommand = "/bin/bash \"" + EscapePosixShell(dirPosix) + "terminal.sh\"";
+			unixcommand = "/bin/bash \"" + dirPosixEscape + "terminal.sh\"";
 		}
 
 		progress(userdata);
 
-		std::wstring unixcommandW = mpt::ToWide(mpt::CharsetUTF8, unixcommand);
-		std::vector<WCHAR> commandline = std::vector<WCHAR>(unixcommandW.data(), unixcommandW.data() + unixcommandW.length() + 1);
-		std::wstring titleW = mpt::ToWide(mpt::CharsetUTF8, title);
-		std::vector<WCHAR> titleWv = std::vector<WCHAR>(titleW.data(), titleW.data() + titleW.length() + 1);
+		std::wstring unixcommandW = mpt::ToWide(mpt::Charset::UTF8, unixcommand);
+		std::wstring titleW = mpt::ToWide(mpt::Charset::UTF8, title);
 		STARTUPINFOW startupInfo;
 		MemsetZero(startupInfo);
-		startupInfo.lpTitle = &titleWv[0];
+		startupInfo.lpTitle = titleW.data();
 		startupInfo.cb = sizeof(startupInfo);
 		PROCESS_INFORMATION processInformation;
 		MemsetZero(processInformation);
@@ -527,21 +524,20 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 		BOOL success = FALSE;
 		if(flags[ExecFlagSilent])
 		{
-			success = CreateProcessW(NULL, &commandline[0], NULL, NULL, FALSE, DETACHED_PROCESS, NULL, NULL, &startupInfo, &processInformation);
+			success = CreateProcessW(NULL, unixcommandW.data(), NULL, NULL, FALSE, DETACHED_PROCESS, NULL, NULL, &startupInfo, &processInformation);
 		} else
 		{
-			success = CreateProcessW(NULL, &commandline[0], NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &startupInfo, &processInformation);
+			success = CreateProcessW(NULL, unixcommandW.data(), NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &startupInfo, &processInformation);
 		}
 
 		progress(userdata);
 
-		createProcessSuccess = (success ? true : false);
+		createProcessSuccess = (success != FALSE);
 
 		progress(userdata);
 
 		if(success)
 		{
-
 			if(!flags[ExecFlagAsync])
 			{
 				// note: execution is not syncronous with all Wine versions,
@@ -561,7 +557,6 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 
 			CloseHandle(processInformation.hThread);
 			CloseHandle(processInformation.hProcess);
-
 		}
 
 	}
@@ -702,8 +697,8 @@ ExecResult Context::ExecutePosixShellScript(std::string script, FlagSet<ExecFlag
 int Context::ExecutePosixShellCommand(std::string command, std::string & output, std::string & error)
 {
 	std::string script;
-	script += std::string() + "#!/usr/bin/env sh" + "\n";
-	script += std::string() + "exec " + command + "\n";
+	script += "#!/usr/bin/env sh" "\n";
+	script += "exec " + command + "\n";
 	mpt::Wine::ExecResult execResult = ExecutePosixShellScript
 		( script
 		, mpt::Wine::ExecFlagSilent | mpt::Wine::ExecFlagSplitOutput, std::map<std::string, std::vector<char> >()

@@ -12,7 +12,10 @@
 
 #include "BuildSettings.h"
 
+#include "mptString.h"
 #include "FlagSet.h"
+
+#include <stdexcept>
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -106,6 +109,74 @@ public:
 	// Returns true if a given version number is from a test build, false if it's a release build.
 	bool IsTestVersion() const noexcept;
 
+public:
+
+	struct LiteralParser
+	{
+	
+	public:
+
+		// Work-around for GCC 5 which complains about instanciating non-literal type inside a constexpr function when using mpt::constexpr_throw(std::runtime_error("")).
+		struct ParseException {};
+
+	private:
+
+		static MPT_CONSTEXPR11_FUN uint8 NibbleFromChar(char x)
+		{
+			return
+				('0' <= x && x <= '9') ? static_cast<uint8>(x - '0' +  0) :
+				('a' <= x && x <= 'z') ? static_cast<uint8>(x - 'a' + 10) :
+				('A' <= x && x <= 'Z') ? static_cast<uint8>(x - 'A' + 10) :
+				mpt::constexpr_throw<uint8>(std::domain_error(""));
+		}
+
+	public:
+
+		static MPT_CONSTEXPR14_FUN Version Parse(const char * str, std::size_t len)
+		{
+			// 0123456789
+			// 1.23.45.67
+			uint8 v[4] = {0, 0, 0, 0};
+			std::size_t field = 0;
+			std::size_t fieldlen = 0;
+			for(std::size_t i = 0; i < len; ++i)
+			{
+				char c = str[i];
+				if(c == '.')
+				{
+					if(field >= 3)
+					{
+						mpt::constexpr_throw(ParseException());
+					}
+					if(fieldlen == 0)
+					{
+						mpt::constexpr_throw(ParseException());
+					}
+					field++;
+					fieldlen = 0;
+				} else if(('0' <= c && c <= '9') || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
+				{
+					fieldlen++;
+					if(fieldlen > 2)
+					{
+						mpt::constexpr_throw(ParseException());
+					}
+					v[field] <<= 4;
+					v[field] |= NibbleFromChar(c);
+				} else
+				{
+					mpt::constexpr_throw(ParseException());
+				}
+			}
+			if(fieldlen == 0)
+			{
+				mpt::constexpr_throw(ParseException());
+			}
+			return Version(v[0], v[1], v[2], v[3]);
+		}
+
+	};
+
 };
 
 MPT_CONSTEXPR11_FUN bool operator == (const Version &a, const Version &b) noexcept
@@ -134,11 +205,15 @@ MPT_CONSTEXPR11_FUN bool operator > (const Version &a, const Version &b) noexcep
 }
 
 
-//Creates version number from version parts that appears in version string.
-//For example MAKE_VERSION_NUMERIC(1,17,02,28) gives version number of 
-//version 1.17.02.28. 
-#define MPT_MAKE_VERSION_NUMERIC_HELPER(prefix,v0,v1,v2,v3) Version( prefix ## v0 , prefix ## v1 , prefix ## v2 , prefix ## v3 )
-#define MAKE_VERSION_NUMERIC(v0,v1,v2,v3) MPT_MAKE_VERSION_NUMERIC_HELPER(0x, v0, v1, v2, v3)
+MPT_CONSTEXPR14_FUN Version operator "" _LiteralVersionImpl (const char * str, std::size_t len)
+{
+	return Version::LiteralParser::Parse(str, len);
+}
+
+// Create Version object from version string and check syntax, all at compile time.
+// cppcheck false-positive
+// cppcheck-suppress preprocessorErrorDirective
+#define MPT_V(strver) Version{MPT_FORCE_CONSTEXPR(( strver ## _LiteralVersionImpl ).GetRawVersion())}
 
 
 

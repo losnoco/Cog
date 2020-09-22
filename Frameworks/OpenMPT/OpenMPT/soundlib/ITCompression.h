@@ -28,39 +28,43 @@ public:
 	ITCompression(const ModSample &sample, bool it215, std::ostream *f, SmpLength maxLength = 0);
 	size_t GetCompressedSize() const { return packedTotalLength; }
 
-	enum : size_t { bufferSize = 2 + 0xFFFF };	// Our output buffer can't be longer than this.
-	enum : size_t { blockSize = 0x8000 };			// Block size (in bytes) in which samples are being processed
+	static constexpr size_t bufferSize = 2 + 0xFFFF;  // Our output buffer can't be longer than this.
+	static constexpr size_t blockSize = 0x8000;       // Block size (in bytes) in which samples are being processed
 
 protected:
-	std::vector<int8> bwt;			// Bit width table for each sampling point
-	uint8 *packedData;				// Compressed data for current sample block
-	std::ostream *file;				// File to which compressed data will be written (can be nullptr if you only want to find out the sample size)
-	void *sampleData;				// Pre-processed sample data for currently compressed sample block
-	const ModSample &mptSample;		// Sample that is being processed
-	size_t packedLength;			// Size of currently compressed sample block
-	size_t packedTotalLength;		// Size of all compressed data so far
-	SmpLength baseLength;			// Length of the currently compressed sample block (in samples)
+	std::vector<int8> bwt;           // Bit width table for each sampling point
+	std::vector<uint8> packedData;   // Compressed data for current sample block
+	std::ostream *file = nullptr;    // File to which compressed data will be written (can be nullptr if you only want to find out the sample size)
+	std::vector<int8> sampleData8;   // Pre-processed sample data for currently compressed sample block
+	std::vector<int16> sampleData16; // Pre-processed sample data for currently compressed sample block
+	const ModSample &mptSample;      // Sample that is being processed
+	size_t packedLength = 0;         // Size of currently compressed sample block
+	size_t packedTotalLength = 0;    // Size of all compressed data so far
+	SmpLength baseLength = 0;        // Length of the currently compressed sample block (in samples)
 
 	// Bit writer
-	int8 bitPos;	// Current bit position in this byte
-	int8 remBits;	// Remaining bits in this byte
-	uint8 byteVal;	// Current byte value to be written
+	int8 bitPos = 0;    // Current bit position in this byte
+	int8 remBits = 0;   // Remaining bits in this byte
+	uint8 byteVal = 0;  // Current byte value to be written
 
-	bool is215;		// Use IT2.15 compression (double deltas)
-
-	template<typename T>
-	static void CopySample(void *target, const void *source, SmpLength offset, SmpLength length, SmpLength skip);
-
-	template<typename T>
-	void Deltafy();
+	const bool is215;  // Use IT2.15 compression (double deltas)
 
 	template<typename Properties>
-	void Compress(const void *data, SmpLength offset, SmpLength actualLength);
+	void Compress(const typename Properties::sample_t *mptSampleData, SmpLength maxLength);
+
+	template<typename T>
+	static void CopySample(T *target, const T *source, SmpLength offset, SmpLength length, SmpLength skip);
+
+	template<typename T>
+	void Deltafy(T *sampleData);
+
+	template<typename Properties>
+	void CompressBlock(const typename Properties::sample_t *data, SmpLength offset, SmpLength actualLength, typename Properties::sample_t *sampleData);
 
 	static int8 GetWidthChangeSize(int8 w, bool is16);
 
 	template<typename Properties>
-	void SquishRecurse(int8 sWidth, int8 lWidth, int8 rWidth, int8 width, SmpLength offset, SmpLength length);
+	void SquishRecurse(int8 sWidth, int8 lWidth, int8 rWidth, int8 width, SmpLength offset, SmpLength length, const typename Properties::sample_t *sampleData);
 
 	static int8 ConvertWidth(int8 curWidth, int8 newWidth);
 	void WriteBits(int8 width, int v);
@@ -76,13 +80,14 @@ public:
 
 protected:
 	BitReader bitFile;
-	ModSample &mptSample;		// Sample that is being processed
+	ModSample &mptSample;  // Sample that is being processed
 
-	SmpLength writtenSamples;	// Number of samples so far written on this channel
-	SmpLength writePos;			// Absolut write position in sample (for stereo samples)
-	SmpLength curLength;		// Length of currently processed block
-	unsigned int mem1, mem2;	// Integrator memory
-	bool is215;					// Use IT2.15 compression (double deltas)
+	SmpLength writtenSamples = 0;     // Number of samples so far written on this channel
+	SmpLength writePos = 0;           // Absolut write position in sample (for stereo samples)
+	SmpLength curLength = 0;          // Length of currently processed block
+	unsigned int mem1 = 0, mem2 = 0;  // Integrator memory
+	
+	const bool is215;  // Use IT2.15 compression (double deltas)
 
 	template<typename Properties>
 	void Uncompress(typename Properties::sample_t *target);
