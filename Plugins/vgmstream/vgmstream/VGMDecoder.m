@@ -198,11 +198,26 @@
     if ( !stream )
         return NO;
     
+    vgmstream_mixing_autodownmix(stream, 6);
+    
+    playForever = IsRepeatOneSet();
+    
     sampleRate = stream->sample_rate;
     channels = stream->channels;
     totalFrames = get_vgmstream_play_samples( 2.0, 10.0, 10.0, stream );
     framesFade = stream->loop_flag ? sampleRate * 10 : 0;
     framesLength = totalFrames - framesFade;
+    
+    vgmstream_cfg_t vcfg = {0};
+    
+    vcfg.allow_play_forever = 1;
+    vcfg.play_forever = playForever;
+    vcfg.loop_count = 2;
+    vcfg.fade_time = 10;
+    vcfg.fade_delay = 0;
+    vcfg.ignore_loop = 0;
+    
+    vgmstream_apply_config(stream, &vcfg);
     
     framesRead = 0;
     
@@ -231,6 +246,11 @@
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
     BOOL repeatone = IsRepeatOneSet();
+    
+    if (repeatone != playForever) {
+        playForever = repeatone;
+        vgmstream_set_play_forever(stream, repeatone);
+    }
     
     BOOL loopokay = repeatone && stream->loop_flag;
     
