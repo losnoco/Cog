@@ -225,8 +225,9 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE* sf) {
             goto fail;
         }
 
-        if (ww.codec == PCM || ww.codec == IMA || ww.codec == DSP || ww.codec == VORBIS || ww.codec == XMA2 || ww.codec == OPUSNX || ww.codec == OPUS) {
-            ww.truncated = 1; /* only seen those, probably all exist */
+        if (ww.codec == PCM || ww.codec == IMA || ww.codec == VORBIS || ww.codec == DSP || ww.codec == XMA2 ||
+            ww.codec == OPUSNX || ww.codec == OPUS || ww.codec == PTADPCM) {
+            ww.truncated = 1; /* only seen those, probably all exist (XWMA, AAC, HEVAG, ATRAC9?) */
         } else {
             VGM_LOG("WWISE: wrong size, maybe truncated\n");
             goto fail;
@@ -373,7 +374,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE* sf) {
             else {
                 /* newer Wwise (>2012) */
                 off_t extra_offset = ww.fmt_offset + 0x18; /* after flag + channels */
-                int is_wem = check_extensions(sf,"wem");
+                int is_wem = check_extensions(sf,"wem,bnk"); /* use extension as a guide for faster vorbis inits */
 
                 switch(ww.extra_size) {
                     case 0x30:
@@ -382,7 +383,7 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE* sf) {
                         cfg.header_type = WWV_TYPE_2;
                         cfg.packet_type = WWV_MODIFIED;
 
-                        /* setup not detectable by header, so we'll try both; hopefully libvorbis will reject wrong codebooks
+                        /* setup not detectable by header, so we'll try both; libvorbis should reject wrong codebooks
                          * - standard: early (<2012), ex. The King of Fighters XIII (X360)-2011/11, .ogg (cbs are from aoTuV, too)
                          * - aoTuV603: later (>2012), ex. Sonic & All-Stars Racing Transformed (PC)-2012/11, .wem */
                         cfg.setup_type  = is_wem ? WWV_AOTUV603_CODEBOOKS : WWV_EXTERNAL_CODEBOOKS; /* aoTuV came along .wem */
@@ -678,6 +679,10 @@ VGMSTREAM * init_vgmstream_wwise(STREAMFILE* sf) {
             vgmstream->layout_type = layout_interleave;
             vgmstream->interleave_block_size = ww.block_align / ww.channels;
           //vgmstream->codec_endian = ww.big_endian; //?
+
+            if (ww.truncated) {
+                ww.data_size = ww.file_size - ww.data_offset;
+            }
 
             vgmstream->num_samples = ptadpcm_bytes_to_samples(ww.data_size, ww.channels, vgmstream->interleave_block_size);
             break;

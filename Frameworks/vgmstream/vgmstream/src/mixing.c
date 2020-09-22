@@ -119,6 +119,10 @@ static int is_active(mixing_data *data, int32_t current_start, int32_t current_e
 static int32_t get_current_pos(VGMSTREAM* vgmstream, int32_t sample_count) {
     int32_t current_pos;
 
+    if (vgmstream->config_enabled) {
+        return vgmstream->pstate.play_position;
+    }
+
     if (vgmstream->loop_flag && vgmstream->loop_count > 0) {
         int loop_pre = vgmstream->loop_start_sample; /* samples before looping */
         int loop_into = (vgmstream->current_sample - vgmstream->loop_start_sample); /* samples after loop */
@@ -713,12 +717,40 @@ void mixing_macro_track(VGMSTREAM* vgmstream, uint32_t mask) {
     }
 }
 
+
+/* get highest channel count */
+static int get_layered_max_channels(VGMSTREAM* vgmstream) {
+    int i, max;
+    layered_layout_data* data;
+
+    if (vgmstream->layout_type != layout_layered)
+        return 0;
+
+    data = vgmstream->layout_data;
+
+    max = 0;
+    for (i = 0; i < data->layer_count; i++) {
+        int output_channels = 0;
+
+        mixing_info(data->layers[i], NULL, &output_channels);
+
+        if (max < output_channels)
+            max = output_channels;
+    }
+
+    return max;
+}
+
 void mixing_macro_layer(VGMSTREAM* vgmstream, int max, uint32_t mask, char mode) {
     mixing_data *data = vgmstream->mixing_data;
     int current, ch, output_channels, selected_channels;
 
     if (!data)
         return;
+
+    if (max == 0) /* auto calculate */
+        max = get_layered_max_channels(vgmstream);
+
     if (max <= 0 || data->output_channels <= max)
         return;
 
@@ -807,8 +839,11 @@ void mixing_macro_crosstrack(VGMSTREAM* vgmstream, int max) {
 
     /* set loops to hear all track changes */
     track_num = output_channels / max;
-    if (vgmstream->config.loop_count < track_num)
+    if (vgmstream->config.loop_count < track_num) {
         vgmstream->config.loop_count = track_num;
+        vgmstream->config.loop_count_set = 1;
+        vgmstream->config.config_set = 1;
+    }
 
     ch = 0;
     for (track = 0; track < track_num; track++) {
@@ -868,8 +903,11 @@ void mixing_macro_crosslayer(VGMSTREAM* vgmstream, int max, char mode) {
 
     /* set loops to hear all track changes */
     layer_num = output_channels / max;
-    if (vgmstream->config.loop_count < layer_num)
+    if (vgmstream->config.loop_count < layer_num) {
         vgmstream->config.loop_count = layer_num;
+        vgmstream->config.loop_count_set = 1;
+        vgmstream->config.config_set = 1;
+    }
 
     /* mode 'v': constant volume
      * mode 'e': sets fades to successively lower/equalize volume per loop for each layer
@@ -1062,12 +1100,6 @@ void mixing_setup(VGMSTREAM * vgmstream, int32_t max_sample_count) {
 
     if (!data) goto fail;
 
-    /* a bit wonky but eh... */
-    if (vgmstream->channel_layout && vgmstream->channels != data->output_channels) {
-        vgmstream->channel_layout = 0;
-        ((VGMSTREAM*)vgmstream->start_vgmstream)->channel_layout = 0;
-    }
-
     /* special value to not actually enable anything (used to query values) */
     if (max_sample_count <= 0)
         goto fail;
@@ -1079,6 +1111,12 @@ void mixing_setup(VGMSTREAM * vgmstream, int32_t max_sample_count) {
     data->mixbuf = mixbuf_re;
     data->mixing_on = 1;
 
+    /* a bit wonky but eh... */
+    if (vgmstream->channel_layout && vgmstream->channels != data->output_channels) {
+        vgmstream->channel_layout = 0;
+        ((VGMSTREAM*)vgmstream->start_vgmstream)->channel_layout = 0;
+    }
+
     /* since data exists on its own memory and pointer is already set
      * there is no need to propagate to start_vgmstream */
 
@@ -1089,7 +1127,7 @@ fail:
     return;
 }
 
-void mixing_info(VGMSTREAM * vgmstream, int *out_input_channels, int *out_output_channels) {
+void mixing_info(VGMSTREAM* vgmstream, int* p_input_channels, int* p_output_channels) {
     mixing_data *data = vgmstream->mixing_data;
     int input_channels, output_channels;
 
@@ -1101,11 +1139,13 @@ void mixing_info(VGMSTREAM * vgmstream, int *out_input_channels, int *out_output
     else
         input_channels = vgmstream->channels;
 
-    if (out_input_channels)  *out_input_channels = input_channels;
-    if (out_output_channels) *out_output_channels = output_channels;
+    if (p_input_channels)  *p_input_channels = input_channels;
+    if (p_output_channels) *p_output_channels = output_channels;
 
     //;VGM_LOG("MIX: channels %i, in=%i, out=%i, mix=%i\n", vgmstream->channels, input_channels, output_channels, data->mixing_channels);
     return;
 fail:
+    if (p_input_channels)  *p_input_channels = vgmstream->channels;
+    if (p_output_channels) *p_output_channels = vgmstream->channels;
     return;
 }

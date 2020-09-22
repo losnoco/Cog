@@ -3,6 +3,9 @@
 
 #include "../vgmstream.h"
 
+VGMSTREAM* init_vgmstream_silence(int channels, int sample_rate, int32_t num_samples);
+
+
 VGMSTREAM * init_vgmstream_adx(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_afc(STREAMFILE *streamFile);
@@ -76,7 +79,7 @@ VGMSTREAM * init_vgmstream_raw_int(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ps2_exst(STREAMFILE *streamFile);
 
-VGMSTREAM * init_vgmstream_ps2_svag(STREAMFILE *streamFile);
+VGMSTREAM * init_vgmstream_svag_kcet(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ps_headerless(STREAMFILE *streamFile);
 
@@ -565,7 +568,7 @@ VGMSTREAM * init_vgmstream_mca(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_btsnd(STREAMFILE* streamFile);
 
-VGMSTREAM * init_vgmstream_ps2_svag_snk(STREAMFILE* streamFile);
+VGMSTREAM * init_vgmstream_svag_snk(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_xma(STREAMFILE* streamFile);
 
@@ -906,5 +909,15 @@ VGMSTREAM* init_vgmstream_mups(STREAMFILE* sf);
 VGMSTREAM* init_vgmstream_kat(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_pcm_success(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_ktsc(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_adp_konami(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_zwv(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_dsb(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_bsf(STREAMFILE* sf);
 
 #endif /*_META_H*/
