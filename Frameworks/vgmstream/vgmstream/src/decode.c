@@ -343,6 +343,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_CBD2:
         case coding_ACM:
         case coding_DERF:
+        case coding_WADY:
         case coding_NWA:
         case coding_SASSC:
         case coding_CIRCUS_ADPCM:
@@ -424,7 +425,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_AICA_int:
             return 2;
         case coding_ASKA:
-            return (0x40-0x04*vgmstream->channels) * 2 / vgmstream->channels;
+            return (vgmstream->frame_size - 0x04*vgmstream->channels) * 2 / vgmstream->channels;
         case coding_NXAP:
             return (0x40-0x04) * 2;
         case coding_NDS_PROCYON:
@@ -540,6 +541,7 @@ int get_vgmstream_frame_size(VGMSTREAM* vgmstream) {
         case coding_SDX2_int:
         case coding_CBD2:
         case coding_DERF:
+        case coding_WADY:
         case coding_NWA:
         case coding_SASSC:
         case coding_CIRCUS_ADPCM:
@@ -624,6 +626,7 @@ int get_vgmstream_frame_size(VGMSTREAM* vgmstream) {
         case coding_AICA_int:
             return 0x01;
         case coding_ASKA:
+            return vgmstream->frame_size;
         case coding_NXAP:
             return 0x40;
         case coding_NDS_PROCYON:
@@ -938,17 +941,14 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
             }
             break;
         case coding_EA_XA:
+        case coding_EA_XA_int: {
+            int is_stereo = (vgmstream->channels > 1 && vgmstream->coding_type == coding_EA_XA);
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_ea_xa(&vgmstream->ch[ch], buffer+ch,
-                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch);
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch, is_stereo);
             }
             break;
-        case coding_EA_XA_int:
-            for (ch = 0; ch < vgmstream->channels; ch++) {
-                decode_ea_xa_int(&vgmstream->ch[ch], buffer+ch,
-                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch);
-            }
-            break;
+        }
         case coding_EA_XA_V2:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_ea_xa_v2(&vgmstream->ch[ch], buffer+ch,
@@ -1028,6 +1028,12 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_DERF:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_derf(&vgmstream->ch[ch], buffer+ch,
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
+            }
+            break;
+        case coding_WADY:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_wady(&vgmstream->ch[ch], buffer+ch,
                         vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
@@ -1241,7 +1247,7 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_ASKA:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_aska(&vgmstream->ch[ch], buffer+ch,
-                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch);
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch, vgmstream->frame_size);
             }
             break;
         case coding_NXAP:

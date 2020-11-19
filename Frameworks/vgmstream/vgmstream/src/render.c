@@ -294,7 +294,7 @@ static int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstre
         case layout_blocked_ea_sns:
         case layout_blocked_awc:
         case layout_blocked_vgs:
-        case layout_blocked_vawx:
+        case layout_blocked_xwav:
         case layout_blocked_xvag_subsong:
         case layout_blocked_ea_wve_au00:
         case layout_blocked_ea_wve_ad10:
@@ -404,13 +404,21 @@ static int render_fade(VGMSTREAM* vgmstream, sample_t* buf, int samples_done) {
     }
 }
 
-static int render_pad_end(VGMSTREAM* vgmstream, sample_t* buf, int samples_to_do) {
+static int render_pad_end(VGMSTREAM* vgmstream, sample_t* buf, int samples_done) {
+    play_state_t* ps = &vgmstream->pstate;
     int channels = vgmstream->pstate.output_channels;
+    int start = 0;
 
-    /* since anything beyond pad end is silence no need to check ranges */
+    /* since anything beyond pad end is silence no need to check end */
+    if (ps->play_position < ps->pad_end_start) {
+        start = samples_done - (ps->play_position + samples_done - ps->pad_end_start);
+    }
+    else {
+        start = 0;
+    }
 
-    memset(buf, 0, samples_to_do * sizeof(sample_t) * channels);
-    return samples_to_do;
+    memset(buf + (start * channels), 0, (samples_done - start) * channels * sizeof(sample_t));
+    return samples_done;
 }
 
 
@@ -445,9 +453,10 @@ int render_vgmstream(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) 
         tmpbuf += done * vgmstream->pstate.output_channels; /* as if mixed */
     }
 
-    /* end padding (done before to avoid decoding if possible) */
+    /* end padding (done before to avoid decoding if possible, samples_to_do becomes 0) */
     if (!vgmstream->config.play_forever /* && ps->pad_end_left */
-            && ps->play_position + samples_done >= ps->pad_end_start) {
+            && ps->play_position + samples_done >= ps->pad_end_start
+            && samples_to_do) {
         done = render_pad_end(vgmstream, tmpbuf, samples_to_do);
         samples_done += done;
         samples_to_do -= done;
@@ -462,10 +471,16 @@ int render_vgmstream(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) 
 
         samples_done += done;
 
-        /* simple fadeout */
-        if (!vgmstream->config.play_forever && ps->fade_left
-                && ps->play_position + done >= ps->fade_start) {
-            render_fade(vgmstream, tmpbuf, done);
+        if (!vgmstream->config.play_forever) {
+            /* simple fadeout */
+            if (ps->fade_left && ps->play_position + done >= ps->fade_start) {
+                render_fade(vgmstream, tmpbuf, done);
+            }
+
+            /* silence leftover buf samples (rarely used when no fade is set) */
+            if (ps->play_position + done >= ps->pad_end_start) {
+                render_pad_end(vgmstream, tmpbuf, done);
+            }
         }
 
         tmpbuf += done * vgmstream->pstate.output_channels;

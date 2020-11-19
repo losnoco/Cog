@@ -32,13 +32,14 @@ VGMSTREAM* init_vgmstream_bkhd(STREAMFILE* sf) {
      * as other chunks, and may have a DATA/DIDX index to memory .wem in DATA.
      * We support the internal .wem mainly for quick tests, as the HIRC is
      * complex and better handled with TXTP (some info from Nicknine's script).
-     * unlike RIFF, first chunk follows chunk rules */
+     * Use this to explore HIRC and covert to .txtp: https://github.com/bnnm/wwiser */
 
     version = read_u32(base_offset + 0x08, sf);
     if (version == 0 || version == 1) { /* early games */
         version = read_u32(base_offset + 0x10, sf);
     }
 
+    /* first chunk also follows standard chunk sizes unlike RIFF */
     if (version <= 26) {
         off_t data_offset, data_start, offset;
         if (!find_chunk(sf, 0x44415441, base_offset, 0, &data_offset, NULL, big_endian, 0)) /* "DATA" */
@@ -50,7 +51,7 @@ VGMSTREAM* init_vgmstream_bkhd(STREAMFILE* sf) {
          * 08: entries size
          * 0c: padding size after entries
          * 10: data size
-         * 14: size?
+         * 14: size? or null
          * 18: data start
          * 1c: data size
          * per entry:
@@ -135,13 +136,23 @@ VGMSTREAM* init_vgmstream_bkhd(STREAMFILE* sf) {
 
 
     vgmstream->num_streams = total_subsongs;
-    
-    if (is_dummy)
-        snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%u/dummy", subfile_id);
-    else if (is_wmid)
-        snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%u/wmid", subfile_id);
-    else if (subfile_id != 0xFFFFFFFF)
-        snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%u", subfile_id);
+
+    {
+        const char* info = NULL;
+        if (is_dummy)
+            info = "dummy";
+        else if (is_wmid)
+            info = "wmid";
+
+        /* old Wwise shows index or (more often) -1, unify to index*/
+        if (subfile_id == 0xFFFFFFFF)
+            subfile_id = target_subsong - 1;
+
+        if (info)
+            snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%u/%s", subfile_id, info);
+        else
+            snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%u", subfile_id);
+    }
 
     close_streamfile(temp_sf);
     return vgmstream;
@@ -153,7 +164,7 @@ fail:
 }
 
 
-/* BKHD mini format, probably from a FX generator plugin [Borderlands 2 (X360)] */
+/* BKHD mini format, for FX plugins [Borderlands 2 (X360), Warhammer 40000 (PC)] */
 VGMSTREAM* init_vgmstream_bkhd_fx(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
     off_t start_offset, data_size;
@@ -162,29 +173,48 @@ VGMSTREAM* init_vgmstream_bkhd_fx(STREAMFILE* sf) {
 
 
     /* checks */
-    if (!check_extensions(sf,"wem,bnk")) /* assumed */
+    /* .wem: used when (rarely) external */
+    if (!check_extensions(sf,"wem,bnk"))
         goto fail;
     big_endian = guess_endianness32bit(0x00, sf);
     read_u32 = big_endian ? read_u32be : read_u32le;
 
-    if (read_u32(0x00, sf) != 0x0400) /* codec? */
-        goto fail;
-    if (read_u32(0x04, sf) != 0x0800) /* codec? */
-        goto fail;
-    sample_rate = read_u32(0x08, sf);
-    channels    = read_u32(0x0c, sf);
-    /* 0x10: some id or small size? */
-    /* 0x14/18: some float? */
-    entries     = read_u32(0x1c, sf);
-    /* 0x20 data size / 0x10 */
-    /* 0x24 usually 4, sometimes higher values? */
-    /* 0x30: unknown table of 16b that goes up and down */
+    /* Not an actual stream but typically convolution reverb models and other FX plugin helpers.
+     * Useless but to avoid "subsong not playing" complaints. */
 
-    start_offset = 0x30 + align_size_to_block(entries * 0x02, 0x10);
-    data_size = get_streamfile_size(sf) - start_offset;
+    if (read_u32(0x00, sf) == 0x0400 &&
+        read_u32(0x04, sf) == 0x0800) {
+        sample_rate = read_u32(0x08, sf);
+        channels    = read_u32(0x0c, sf) & 0xFF; /* 0x31 at 0x0d in PC, field is 32b vs X360 */
+        /* 0x10: some id or small size? (related to entries?) */
+        /* 0x14/18: some float? */
+        entries     = read_u32(0x1c, sf);
+        /* 0x20 data size / 0x10 */
+        /* 0x24 usually 4, sometimes higher values? */
+        /* 0x30: unknown table of 16b that goes up and down, or is fixed */
+
+        start_offset = 0x30 + align_size_to_block(entries * 0x02, 0x10);
+        data_size = get_streamfile_size(sf) - start_offset;
+    }
+    else if (read_u32be(0x04, sf) == 0x00004844 && /* floats actually? */
+             read_u32be(0x08, sf) == 0x0000FA45 &&
+             read_u32be(0x1c, sf) == 0x80000000) {
+        /* seen in Crucible banks */
+        sample_rate = 48000; /* meh */
+        channels    = 1;
+
+        start_offset = 0;
+        data_size = get_streamfile_size(sf);
+        big_endian = 0;
+    }
+    else {
+        goto fail;
+    }
+
     loop_flag = 0;
 
-    /* output sounds a bit funny, maybe not an actual stream but parts using the table */
+
+    /* data seems divided in chunks of 0x2000 */
 
     /* build the VGMSTREAM */
     vgmstream = allocate_vgmstream(channels, loop_flag);
@@ -200,7 +230,7 @@ VGMSTREAM* init_vgmstream_bkhd_fx(STREAMFILE* sf) {
 
     vgmstream->num_samples = pcm_bytes_to_samples(data_size, channels, 32);
 
-    if (!vgmstream_open_stream(vgmstream,sf,start_offset))
+    if (!vgmstream_open_stream(vgmstream, sf, start_offset))
         goto fail;
     return vgmstream;
 fail:

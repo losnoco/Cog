@@ -120,6 +120,7 @@ typedef struct {
     int is_dat;
     int is_ps2_bnm;
     int is_blk;
+    int has_numbered_banks;
     STREAMFILE* sf_header;
     uint32_t version;           /* 16b+16b major+minor version */
     uint32_t version_empty;     /* map sbX versions are empty */
@@ -631,24 +632,20 @@ static VGMSTREAM *init_vgmstream_ubi_dat_main(ubi_sb_header *sb, STREAMFILE *sf_
     STREAMFILE *sf_data = NULL;
 
     if (sb->is_external) {
-        if (strcmp(sb->resource_name, "silence.wav") == 0) {
-            /* some Rayman 2 banks reference non-existent silence.wav, looks like some kind of hack? */
-            sb->duration = (float)(sb->stream_size / sb->channels / 2) / (float)sb->sample_rate;
-            return init_vgmstream_ubi_sb_silence(sb, sf_index, sf);
-        }
-
         sf_data = open_streamfile_by_filename(sf, sb->resource_name);
         if (!sf_data) {
-            VGM_LOG("UBI DAT: no matching KAT found\n");
-            goto fail;
+            /* play silence if external file is not found since Rayman 2 seems to rely on this behavior */
+            VGM_LOG("UBI DAT: external stream '%s' not found\n", sb->resource_name);
+            strncat(sb->readable_name, " (missing)", sizeof(sb->readable_name));
+            sb->duration = (float)pcm_bytes_to_samples(sb->stream_size, sb->channels, 16) / (float)sb->sample_rate;
+            return init_vgmstream_ubi_sb_silence(sb, sf_index, sf);
         }
     }
 
     /* DAT banks don't work with raw audio data, they open full external files and rely almost entirely
      * on their metadata, that's why we're handling this here, separately from other types */
     switch (sb->stream_type) {
-        case 0x01:
-        {
+        case 0x01: {
             if (!sb->is_external) { /* Dreamcast bank */
                 if (sb->version == 0x00000000) {
                     uint32_t entry_offset, start_offset, num_samples, codec;
@@ -725,7 +722,7 @@ static VGMSTREAM *init_vgmstream_ubi_dat_main(ubi_sb_header *sb, STREAMFILE *sf_
             }
             break;
         }
-        case 0x04:{ /* standard WAV */
+        case 0x04: { /* standard WAV */
             if (!sb->is_external) {
                 VGM_LOG("Ubi DAT: Found RAM stream_type 0x04\n");
                 goto fail;
@@ -1410,7 +1407,7 @@ static VGMSTREAM* init_vgmstream_ubi_sb_sequence(ubi_sb_header* sb, STREAMFILE* 
 
 
         /* bnm sequences may use to entries from other banks, do some voodoo */
-        if (sb->is_bnm || sb->is_dat || sb->is_ps2_bnm) {
+        if (sb->has_numbered_banks) {
             /* see if *current* bank has changed (may use a different bank N times) */
             if (is_other_bank(sb, sf_bank, sb->sequence_banks[i])) {
                 char bank_name[255];
@@ -1947,7 +1944,7 @@ static int parse_type_sequence(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) 
         uint32_t entry_number = (uint32_t)read_32bit(table_offset+sb->cfg.sequence_entry_number, sf);
 
         /* bnm sequences may refer to entries from different banks, whee */
-        if (sb->is_bnm || sb->is_dat || sb->is_ps2_bnm) {
+        if (sb->has_numbered_banks) {
             int16_t bank_number = (entry_number >> 16) & 0xFFFF;
             entry_number        = (entry_number >> 00) & 0xFFFF;
 
@@ -2113,7 +2110,7 @@ static int parse_type_random(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) {
         uint32_t entry_number = (uint32_t)read_32bit(table_offset+0x00, sf);
         //uint32_t entry_chance = (uint32_t)read_32bit(table_offset+0x04, sf);
 
-        if (sb->is_bnm) {
+        if (sb->has_numbered_banks) {
             int16_t bank_number = (entry_number >> 16) & 0xFFFF;
             entry_number        = (entry_number >> 00) & 0xFFFF;
 
@@ -2866,6 +2863,10 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
     /* games <= 0x00100000 seem to use old types, rest new types */
 
+    if (sb->is_bnm || sb->is_dat || sb->is_ps2_bnm) {
+        /* these all have names in BNK_%num% format and can reference each other by index */
+        sb->has_numbered_banks = 1;
+    }
 
     /* maybe 0x20/0x24 for some but ok enough (null terminated) */
     sb->cfg.resource_name_size          = 0x28; /* min for Brother in Arms 2 (PS2) */

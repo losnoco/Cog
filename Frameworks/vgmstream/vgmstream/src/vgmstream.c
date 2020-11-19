@@ -167,7 +167,6 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_seg,
     init_vgmstream_nds_strm_ffta2,
     init_vgmstream_str_asr,
-    init_vgmstream_zwdsp,
     init_vgmstream_gca,
     init_vgmstream_spt_spd,
     init_vgmstream_ish_isd,
@@ -273,7 +272,8 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_ps2_iab,
     init_vgmstream_vs_str,
     init_vgmstream_lsf_n1nj4n,
-    init_vgmstream_vawx,
+    init_vgmstream_xwav_new,
+    init_vgmstream_xwav_old,
     init_vgmstream_ps2_wmus,
     init_vgmstream_hyperscan_kvag,
     init_vgmstream_ios_psnd,
@@ -318,11 +318,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_ogl,
     init_vgmstream_mc3,
     init_vgmstream_gtd,
-    init_vgmstream_ta_aac_x360,
-    init_vgmstream_ta_aac_ps3,
-    init_vgmstream_ta_aac_mobile,
-    init_vgmstream_ta_aac_mobile_vorbis,
-    init_vgmstream_ta_aac_vita,
+    init_vgmstream_ta_aac,
     init_vgmstream_va3,
     init_vgmstream_mta2,
     init_vgmstream_mta2_container,
@@ -392,7 +388,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_txtp,
     init_vgmstream_smc_smh,
     init_vgmstream_ppst,
-    init_vgmstream_opus_sps_n1_segmented,
+    init_vgmstream_sps_n1_segmented,
     init_vgmstream_ubi_bao_pk,
     init_vgmstream_ubi_bao_atomic,
     init_vgmstream_dsp_switch_audio,
@@ -508,6 +504,14 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_zwv,
     init_vgmstream_dsb,
     init_vgmstream_bsf,
+    init_vgmstream_xse_new,
+    init_vgmstream_xse_old,
+    init_vgmstream_wady,
+    init_vgmstream_dsp_sqex,
+    init_vgmstream_dsp_wiivoice,
+    init_vgmstream_xws,
+    init_vgmstream_cpk,
+    init_vgmstream_opus_nsopus,
 
     /* lowest priority metas (should go after all metas, and TXTH should go before raw formats) */
     init_vgmstream_txth,            /* proper parsers should supersede TXTH, once added */
@@ -519,6 +523,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_raw_pcm,         /* .raw raw PCM */
     init_vgmstream_s14_sss,         /* .s14/sss raw siren14 */
     init_vgmstream_raw_al,          /* .al/al2 raw A-LAW */
+    init_vgmstream_zwdsp,           /* fake format */
 #ifdef VGM_USE_FFMPEG
     init_vgmstream_ffmpeg,          /* may play anything incorrectly, since FFmpeg doesn't check extensions */
 #endif
@@ -1039,6 +1044,95 @@ void describe_vgmstream(VGMSTREAM* vgmstream, char* desc, int length) {
     }
 }
 
+void describe_vgmstream_info(VGMSTREAM* vgmstream, vgmstream_info* info) {
+    if (!info) {
+        return;
+    }
+
+    memset(info, 0, sizeof(*info));
+
+    if (!vgmstream) {
+        return;
+    }
+
+    info->sample_rate = vgmstream->sample_rate;
+
+    info->channels = vgmstream->channels;
+
+    {
+        int output_channels = 0;
+        mixing_info(vgmstream, NULL, &output_channels);
+
+        if (output_channels != vgmstream->channels) {
+            info->mixing_info.input_channels = vgmstream->channels;
+            info->mixing_info.output_channels = output_channels;
+        }
+    }
+
+    info->channel_layout = vgmstream->channel_layout;
+
+    if (vgmstream->loop_start_sample >= 0 && vgmstream->loop_end_sample > vgmstream->loop_start_sample) {
+        info->loop_info.start = vgmstream->loop_start_sample;
+        info->loop_info.end = vgmstream->loop_end_sample;
+    }
+
+    info->num_samples = vgmstream->num_samples;
+
+    get_vgmstream_coding_description(vgmstream, info->encoding, sizeof(info->encoding));
+
+    get_vgmstream_layout_description(vgmstream, info->layout, sizeof(info->layout));
+
+    if (vgmstream->layout_type == layout_interleave && vgmstream->channels > 1) {
+        info->interleave_info.value = vgmstream->interleave_block_size;
+
+        if (vgmstream->interleave_first_block_size && vgmstream->interleave_first_block_size != vgmstream->interleave_block_size) {
+            info->interleave_info.first_block = vgmstream->interleave_first_block_size;
+        }
+
+        if (vgmstream->interleave_last_block_size && vgmstream->interleave_last_block_size != vgmstream->interleave_block_size) {
+            info->interleave_info.last_block = vgmstream->interleave_last_block_size;
+        }
+    }
+
+    /* codecs with configurable frame size */
+    if (vgmstream->frame_size > 0 || vgmstream->interleave_block_size > 0) {
+        int32_t frame_size = vgmstream->frame_size > 0 ? vgmstream->frame_size : vgmstream->interleave_block_size;
+        switch (vgmstream->coding_type) {
+        case coding_MSADPCM:
+        case coding_MSADPCM_int:
+        case coding_MSADPCM_ck:
+        case coding_MS_IMA:
+        case coding_MC3:
+        case coding_WWISE_IMA:
+        case coding_REF_IMA:
+        case coding_PSX_cfg:
+            info->frame_size = frame_size;
+            break;
+        default:
+            break;
+        }
+    }
+
+    get_vgmstream_meta_description(vgmstream, info->metadata, sizeof(info->metadata));
+
+    info->bitrate = get_vgmstream_average_bitrate(vgmstream);
+
+    /* only interesting if more than one */
+    if (vgmstream->num_streams > 1) {
+        info->stream_info.total = vgmstream->num_streams;
+    }
+    else {
+        info->stream_info.total = 1;
+    }
+
+    if (vgmstream->num_streams > 1) {
+        info->stream_info.current = vgmstream->stream_index == 0 ? 1 : vgmstream->stream_index;
+    }
+
+    if (vgmstream->stream_name[0] != '\0') {
+        snprintf(info->stream_info.name, sizeof(info->stream_info.name), "%s", vgmstream->stream_name);
+    }
+}
 
 /* See if there is a second file which may be the second channel, given an already opened mono vgmstream.
  * If a suitable file is found, open it and change opened_vgmstream to a stereo vgmstream. */

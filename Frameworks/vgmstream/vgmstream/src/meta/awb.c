@@ -178,9 +178,13 @@ static void load_awb_name(STREAMFILE* sf, STREAMFILE* sf_acb, VGMSTREAM* vgmstre
         char filename[PATH_LIMIT];
         int len_name, len_cmp;
 
+        /* try parsing TXTM if present */
+        sf_acb = read_filemap_file(sf, 0);
 
         /* try (name).awb + (name).awb */
-        sf_acb = open_streamfile_by_ext(sf, "acb");
+        if (!sf_acb) {
+            sf_acb = open_streamfile_by_ext(sf, "acb");
+        }
 
         /* try (name)_streamfiles.awb + (name).acb */
         if (!sf_acb) {
