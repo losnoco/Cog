@@ -112,15 +112,7 @@ bool CPatternContainer::IsPatternEmpty(const PATTERNINDEX nPat) const
 
 void CPatternContainer::ResizeArray(const PATTERNINDEX newSize)
 {
-	if(Size() <= newSize)
-	{
-		m_Patterns.resize(newSize, CPattern(*this));
-	} else
-	{
-		for(PATTERNINDEX i = Size(); i > newSize; i--)
-			Remove(i - 1);
-		m_Patterns.resize(newSize, CPattern(*this));
-	}
+	m_Patterns.resize(newSize, CPattern(*this));
 }
 
 

@@ -207,6 +207,8 @@ bool ModSequence::IsValidPat(ORDERINDEX ord) const
 ORDERINDEX ModSequence::FindOrder(PATTERNINDEX pat, ORDERINDEX startSearchAt, bool searchForward) const
 {
 	const ORDERINDEX length = GetLength();
+	if(startSearchAt >= length)
+		return ORDERINDEX_INVALID;
 	ORDERINDEX ord = startSearchAt;
 	for(ORDERINDEX p = 0; p < length; p++)
 	{

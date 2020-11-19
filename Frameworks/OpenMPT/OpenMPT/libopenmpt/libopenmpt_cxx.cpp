@@ -126,7 +126,7 @@ std::vector<std::string> get_supported_extensions() {
 bool is_extension_supported( const std::string & extension ) {
 	return openmpt::module_impl::is_extension_supported( extension );
 }
-bool is_extension_supported( std::string_view extension ) {
+bool is_extension_supported2( std::string_view extension ) {
 	return openmpt::module_impl::is_extension_supported( extension );
 }
 

@@ -563,10 +563,7 @@ namespace FileReader
 		static_assert(mpt::is_binary_safe<T>::value);
 		if(f.CanRead(sizeof(destArray)))
 		{
-			for(auto &element : destArray)
-			{
-				Read(f, element);
-			}
+			f.ReadRaw(mpt::as_raw_memory(destArray));
 			return true;
 		} else
 		{
@@ -584,10 +581,7 @@ namespace FileReader
 		static_assert(mpt::is_binary_safe<T>::value);
 		if(f.CanRead(sizeof(destArray)))
 		{
-			for(auto &element : destArray)
-			{
-				Read(f, element);
-			}
+			f.ReadRaw(mpt::as_raw_memory(destArray));
 			return true;
 		} else
 		{
@@ -606,10 +600,7 @@ namespace FileReader
 		destVector.resize(destSize);
 		if(f.CanRead(sizeof(T) * destSize))
 		{
-			for(auto &element : destVector)
-			{
-				Read(f, element);
-			}
+			f.ReadRaw(mpt::as_raw_memory(destVector));
 			return true;
 		} else
 		{
@@ -679,18 +670,9 @@ namespace FileReader
 		typename TFileCursor::off_t avail = f.GetRaw(bytes, sizeof(bytes));
 		typename TFileCursor::off_t readPos = 1;
 		
-		size_t writtenBits = 0;
 		uint8 b = mpt::byte_cast<uint8>(bytes[0]);
 		target = (b & 0x7F);
-
-		// Count actual bits used in most significant byte (i.e. this one)
-		for(size_t bit = 0; bit < 7; bit++)
-		{
-			if((b & (1u << bit)) != 0)
-			{
-				writtenBits = bit + 1;
-			}
-		}
+		size_t writtenBits = static_cast<size_t>(mpt::bit_width(target));  // Bits used in the most significant byte
 
 		while(readPos < avail && (b & 0x80) != 0)
 		{

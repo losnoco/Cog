@@ -255,6 +255,7 @@ void WAVReader::ApplySampleSettings(ModSample &sample, mpt::Charset sampleCharse
 			cueChunk.ReadStruct(cuePoint);
 			sample.cues[i] = cuePoint.position;
 		}
+		std::fill(std::begin(sample.cues) + numPoints, std::end(sample.cues), MAX_SAMPLE_LENGTH);
 	}
 
 	// Read MPT extra info
@@ -598,15 +599,24 @@ void WAVWriter::WriteLoopInformation(const ModSample &sample)
 // Write a sample's cue points to the file.
 void WAVWriter::WriteCueInformation(const ModSample &sample)
 {
-	StartChunk(RIFFChunk::idcue_);
+	uint32 numMarkers = 0;
+	for(const auto cue : sample.cues)
 	{
-		Write(mpt::as_le(static_cast<uint32>(CountOf(sample.cues))));
+		if(cue < sample.nLength)
+			numMarkers++;
 	}
-	for(uint32 i = 0; i < CountOf(sample.cues); i++)
+
+	StartChunk(RIFFChunk::idcue_);
+	Write(mpt::as_le(numMarkers));
+	uint32 i = 0;
+	for(const auto cue : sample.cues)
 	{
-		WAVCuePoint cuePoint;
-		cuePoint.ConvertToWAV(i, sample.cues[i]);
-		Write(cuePoint);
+		if(cue < sample.nLength)
+		{
+			WAVCuePoint cuePoint;
+			cuePoint.ConvertToWAV(i++, cue);
+			Write(cuePoint);
+		}
 	}
 }
 

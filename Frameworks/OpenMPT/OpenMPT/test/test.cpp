@@ -2000,7 +2000,7 @@ static MPT_NOINLINE void TestMisc2()
 	VERIFY_EQUAL(mpt::crc32_ogg(std::string("123456789")), 0x89a1897fu);
 
 	// Check floating-point accuracy in TransposeToFrequency
-	int32 transposeToFrequency[] =
+	static constexpr int32 transposeToFrequency[] =
 	{
 		      5,       5,       5,       5,
 		     31,      32,      33,      34,
@@ -2014,8 +2014,23 @@ static MPT_NOINLINE void TestMisc2()
 
 	int freqIndex = 0;
 	for(int32 transpose = -128; transpose < 128; transpose += 32)
+	{
 		for(int32 finetune = -128; finetune < 128; finetune += 64, freqIndex++)
-			VERIFY_EQUAL_EPS(transposeToFrequency[freqIndex], static_cast<int32>(ModSample::TransposeToFrequency(transpose, finetune)), 1);
+		{
+			const auto freq = ModSample::TransposeToFrequency(transpose, finetune);
+			VERIFY_EQUAL_EPS(transposeToFrequency[freqIndex], static_cast<int32>(freq), 1);
+			if(transpose >= -96)
+			{
+				// Verify transpose+finetune <-> frequency roundtrip
+				// (not for transpose = -128 because it would require fractional precision that we don't have here)
+				ModSample smp;
+				smp.nC5Speed = freq;
+				smp.FrequencyToTranspose();
+				smp.TransposeToFrequency();
+				VERIFY_EQUAL(freq, smp.nC5Speed);
+			}
+		}
+	}
 
 	{
 		ModSample smp;
@@ -3043,7 +3058,7 @@ static void TestLoadXMFile(const CSoundFile &sndFile)
 
 	// Global Variables
 	VERIFY_EQUAL_NONCONT(sndFile.GetTitle(), "Test Module");
-	VERIFY_EQUAL_NONCONT(sndFile.m_songMessage.at(0), 'O');
+	VERIFY_EQUAL_NONCONT(sndFile.m_songMessage.substr(0, 32), "OpenMPT Module Loader Test Suite");
 	VERIFY_EQUAL_NONCONT(sndFile.m_nDefaultTempo, TEMPO(139, 0));
 	VERIFY_EQUAL_NONCONT(sndFile.m_nDefaultSpeed, 5);
 	VERIFY_EQUAL_NONCONT(sndFile.m_nDefaultGlobalVolume, 128);
@@ -3243,7 +3258,7 @@ static void TestLoadMPTMFile(const CSoundFile &sndFile)
 
 	// Global Variables
 	VERIFY_EQUAL_NONCONT(sndFile.GetTitle(), "Test Module_____________X");
-	VERIFY_EQUAL_NONCONT(sndFile.m_songMessage.at(0), 'O');
+	VERIFY_EQUAL_NONCONT(sndFile.m_songMessage.substr(0, 32), "OpenMPT Module Loader Test Suite");
 	VERIFY_EQUAL_NONCONT(sndFile.m_nDefaultTempo, TEMPO(139, 999));
 	VERIFY_EQUAL_NONCONT(sndFile.m_nDefaultSpeed, 5);
 	VERIFY_EQUAL_NONCONT(sndFile.m_nDefaultGlobalVolume, 128);
@@ -3271,7 +3286,7 @@ static void TestLoadMPTMFile(const CSoundFile &sndFile)
 
 	// Edit history
 	VERIFY_EQUAL_NONCONT(sndFile.GetFileHistory().size() > 0, true);
-	const FileHistory &fh = sndFile.GetFileHistory().at(0);
+	const FileHistory &fh = sndFile.GetFileHistory().front();
 	VERIFY_EQUAL_NONCONT(fh.loadDate.tm_year, 111);
 	VERIFY_EQUAL_NONCONT(fh.loadDate.tm_mon, 5);
 	VERIFY_EQUAL_NONCONT(fh.loadDate.tm_mday, 14);
@@ -4078,21 +4093,21 @@ static MPT_NOINLINE void TestEditing()
 	sndFile.GetSample(2).AllocateSample();
 	modDoc->ReArrangeSamples({ 2, SAMPLEINDEX_INVALID, 1 });
 	VERIFY_EQUAL_NONCONT(sndFile.GetSample(1).HasSampleData(), true);
-	VERIFY_EQUAL_NONCONT(sndFile.GetSample(1).filename, std::string("2"));
-	VERIFY_EQUAL_NONCONT(sndFile.m_szNames[1], std::string("2"));
-	VERIFY_EQUAL_NONCONT(sndFile.GetSample(2).filename, std::string());
-	VERIFY_EQUAL_NONCONT(sndFile.m_szNames[2], std::string());
-	VERIFY_EQUAL_NONCONT(sndFile.GetSample(3).filename, std::string("1"));
-	VERIFY_EQUAL_NONCONT(sndFile.m_szNames[3], std::string("1"));
+	VERIFY_EQUAL_NONCONT(sndFile.GetSample(1).filename, "2");
+	VERIFY_EQUAL_NONCONT(sndFile.m_szNames[1], "2");
+	VERIFY_EQUAL_NONCONT(sndFile.GetSample(2).filename, "");
+	VERIFY_EQUAL_NONCONT(sndFile.m_szNames[2], "");
+	VERIFY_EQUAL_NONCONT(sndFile.GetSample(3).filename, "1");
+	VERIFY_EQUAL_NONCONT(sndFile.m_szNames[3], "1");
 	VERIFY_EQUAL_NONCONT(sndFile.Patterns[1].GetpModCommand(37, 4)->instr, 3);
 
 	// Convert / rearrange instruments
 	modDoc->ConvertSamplesToInstruments();
 	modDoc->ReArrangeInstruments({ INSTRUMENTINDEX_INVALID, 2, 1, 3 });
-	VERIFY_EQUAL_NONCONT(sndFile.Instruments[1]->name, std::string());
-	VERIFY_EQUAL_NONCONT(sndFile.Instruments[2]->name, std::string());
-	VERIFY_EQUAL_NONCONT(sndFile.Instruments[3]->name, std::string("2"));
-	VERIFY_EQUAL_NONCONT(sndFile.Instruments[4]->name, std::string("1"));
+	VERIFY_EQUAL_NONCONT(sndFile.Instruments[1]->name, "");
+	VERIFY_EQUAL_NONCONT(sndFile.Instruments[2]->name, "");
+	VERIFY_EQUAL_NONCONT(sndFile.Instruments[3]->name, "2");
+	VERIFY_EQUAL_NONCONT(sndFile.Instruments[4]->name, "1");
 	VERIFY_EQUAL_NONCONT(sndFile.Patterns[1].GetpModCommand(37, 4)->instr, 4);
 	modDoc->ConvertInstrumentsToSamples();
 	VERIFY_EQUAL_NONCONT(sndFile.Patterns[1].GetpModCommand(37, 4)->instr, 3);

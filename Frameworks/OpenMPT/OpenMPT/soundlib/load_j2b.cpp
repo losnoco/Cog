@@ -302,16 +302,16 @@ struct AMEnvelope
 	struct EnvPoint
 	{
 		uint16le tick;
-		uint16le value;
+		int16le value;
 	};
 
 	uint16le flags;
-	uint8le  numPoints;		// actually, it's num. points - 1, and 0xFF if there is no envelope
+	uint8le  numPoints;  // actually, it's num. points - 1, and 0xFF if there is no envelope
 	uint8le  sustainPoint;
 	uint8le  loopStart;
 	uint8le  loopEnd;
 	EnvPoint values[10];
-	uint16le fadeout;		// why is this here? it's only needed for the volume envelope...
+	uint16le fadeout;  // why is this here? it's only needed for the volume envelope...
 
 	// Convert envelope data to OpenMPT's internal format.
 	void ConvertToMPT(InstrumentEnvelope &mptEnv, EnvelopeType envType) const
@@ -326,6 +326,23 @@ struct AMEnvelope
 		mptEnv.nLoopStart = loopStart;
 		mptEnv.nLoopEnd = loopEnd;
 
+		int32 scale = 0, offset = 0;
+		switch(envType)
+		{
+		case ENV_VOLUME:  // 0....32767
+		default:
+			scale = 32767 / ENVELOPE_MAX;
+			break;
+		case ENV_PITCH:  // -4096....4096
+			scale = 8192 / ENVELOPE_MAX;
+			offset = 4096;
+			break;
+		case ENV_PANNING:  // -32768...32767
+			scale = 65536 / ENVELOPE_MAX;
+			offset = 32768;
+			break;
+		}
+
 		for(uint32 i = 0; i < mptEnv.size(); i++)
 		{
 			mptEnv[i].tick = values[i].tick >> 4;
@@ -334,21 +351,9 @@ struct AMEnvelope
 			else if(mptEnv[i].tick < mptEnv[i - 1].tick)
 				mptEnv[i].tick = mptEnv[i - 1].tick + 1;
 
-			const uint16 val = values[i].value;
-			switch(envType)
-			{
-			case ENV_VOLUME:	// 0....32767
-			default:
-				mptEnv[i].value = (uint8)((val + 1) >> 9);
-				break;
-			case ENV_PITCH:		// -4096....4096
-				mptEnv[i].value = (uint8)((((int16)val) + 0x1001) >> 7);
-				break;
-			case ENV_PANNING:	// -32768...32767
-				mptEnv[i].value = (uint8)((((int16)val) + 0x8001) >> 10);
-				break;
-			}
-			Limit(mptEnv[i].value, uint8(ENVELOPE_MIN), uint8(ENVELOPE_MAX));
+			int32 val = values[i].value + offset;
+			val = (val + scale / 2) / scale;
+			mptEnv[i].value = static_cast<EnvelopeNode::value_t>(std::clamp(val, int32(ENVELOPE_MIN), int32(ENVELOPE_MAX)));
 		}
 
 		mptEnv.dwFlags.set(ENV_ENABLED, (flags & AMFFEnvelope::envEnabled) != 0);
@@ -825,7 +830,7 @@ bool CSoundFile::ReadAM(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				AMFFSampleHeader sampleHeader;
 
-				if(m_nSamples + 1 >= MAX_SAMPLES || !chunk.ReadStruct(sampleHeader))
+				if(!CanAddMoreSamples() || !chunk.ReadStruct(sampleHeader))
 				{
 					continue;
 				}
@@ -887,7 +892,7 @@ bool CSoundFile::ReadAM(FileReader &file, ModLoadingFlags loadFlags)
 
 			for(auto sampleChunk : sampleChunks)
 			{
-				if(sampleChunk.ReadUint32LE() != AMFFRiffChunk::idAS__ || m_nSamples + 1 >= MAX_SAMPLES)
+				if(sampleChunk.ReadUint32LE() != AMFFRiffChunk::idAS__ || !CanAddMoreSamples())
 				{
 					continue;
 				}

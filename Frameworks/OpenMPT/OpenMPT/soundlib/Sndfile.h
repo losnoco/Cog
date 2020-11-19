@@ -197,6 +197,8 @@ enum enmGetLengthResetMode
 	eAdjustOnSuccess = 0x02 | eAdjust,
 	// Same as previous option, but will also try to emulate sample playback so that voices from previous patterns will sound when continuing playback at the target position.
 	eAdjustSamplePositions = 0x04 | eAdjustOnSuccess,
+	// Only adjust the visited rows state
+	eAdjustOnlyVisitedRows = 0x08,
 };
 
 
@@ -706,6 +708,9 @@ public:
 	PATTERNINDEX GetCurrentPattern() const { return m_PlayState.m_nPattern; }
 	ORDERINDEX GetCurrentOrder() const { return m_PlayState.m_nCurrentOrder; }
 	CHANNELINDEX GetNumChannels() const { return m_nChannels; }
+
+	constexpr bool CanAddMoreSamples(SAMPLEINDEX amount = 1) const noexcept { return (amount < MAX_SAMPLES) && m_nSamples < (MAX_SAMPLES - amount); }
+	constexpr bool CanAddMoreInstruments(INSTRUMENTINDEX amount = 1) const noexcept { return (amount < MAX_INSTRUMENTS) && m_nInstruments < (MAX_INSTRUMENTS - amount); }
 
 #ifndef NO_PLUGINS
 	IMixPlugin* GetInstrumentPlugin(INSTRUMENTINDEX instr) const;

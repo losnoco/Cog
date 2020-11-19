@@ -5,6 +5,31 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.3 (2020-10-25)
+
+ *  [**Sec**] Possible hang if a MED file claimed to contain 256 songs. (r13704)
+
+ *  [**Bug**] libopenmpt: `openmpt::is_extension_supported2()` exported symbol
+    was missing (C++).
+ *  [**Bug**] `openmpt::module::set_position_seconds` sometimes behaved as if
+    the song end was reached when seeking into a pattern loop and in some other
+    corner cases.
+
+ *  Increase threshold for ignoring panning commands from 820 to 830.
+ *  Subsong names now fall back to the first pattern's name if empty.
+ *  MO3: Avoid certain ModPlug hacks from being fixed up twice, which could lead
+    to e.g. very narrow pan swing range for old OpenMPT IT files saved with a
+    recent MO3 encoder version. 
+ *  MO3: Some files with corrupted envelope data could be rejected completely
+    (normally libopenmpt should fix up the envelope data).
+ *  MO3: Song metadata didn't correctly identify MPTM as source format (it
+    appeared as IT instead).
+ *  STM: Change tempo computation to behave like Scream Tracker 2.3 instead of
+    Scream Tracker 2.2, as the playback frequencies we use for sample playback
+    are closer to those of Scream Tracker 2.3.
+ *  PLM: Percentage offset (Mxx) was slightly off.
+ *  WOW: Fix loading of several files and harden WOW detection.
+
 ### libopenmpt 0.5.2 (2020-08-30)
 
  *  [**Change**] `Makefile` `CONFIG=emscripten` now supports

@@ -26,8 +26,8 @@ class ModSequence: public std::vector<PATTERNINDEX>
 	friend class ModSequenceSet;
 
 protected:
-	mpt::ustring m_name;          // Sequence name.
-	CSoundFile &m_sndFile;        // Associated CSoundFile.
+	mpt::ustring m_name;          // Sequence name
+	CSoundFile &m_sndFile;        // Associated CSoundFile
 	ORDERINDEX m_restartPos = 0;  // Restart position when playback of this order ended
 
 public:
@@ -128,7 +128,7 @@ class ModSequenceSet
 	friend void ReadModSequences(std::istream& iStrm, ModSequenceSet& seq, const size_t, mpt::Charset defaultCharset);
 
 protected:
-	std::vector<ModSequence> m_Sequences;  // Array of sequences.
+	std::vector<ModSequence> m_Sequences;  // Array of sequences
 	CSoundFile &m_sndFile;
 	SEQUENCEINDEX m_currentSeq = 0;  // Index of current sequence.
 

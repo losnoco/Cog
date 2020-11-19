@@ -170,7 +170,7 @@ constexpr CModSpecifications xm_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCDRFFTE???GHK??XPL????????????",	// Supported Effects
+	" 0123456789ABCDRFFTE???GHK??XPL???????????W",	// Supported Effects
 	" vpcdabuhlrg????",							// Supported Volume Column commands
 };
 
@@ -218,7 +218,7 @@ constexpr CModSpecifications xmEx_ =
 	true,										// Has artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCDRFFTE???GHK?YXPLZ\\?#????????",	// Supported Effects
+	" 0123456789ABCDRFFTE???GHK?YXPLZ\\?#???????W",	// Supported Effects
 	" vpcdabuhlrg????",							// Supported Volume Column commands
 };
 

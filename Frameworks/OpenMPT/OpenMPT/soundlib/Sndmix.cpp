@@ -608,8 +608,23 @@ bool CSoundFile::ProcessRow()
 				// Let's check again if this really is the end of the song.
 				// The visited rows vector might have been screwed up while editing...
 				// This is of course not possible during rendering to WAV, so we ignore that case.
-				GetLengthType t = GetLength(eNoAdjust).back();
-				if(IsRenderingToDisc() || (t.lastOrder == m_PlayState.m_nCurrentOrder && t.lastRow == m_PlayState.m_nRow))
+				bool isReallyAtEnd = false;
+				if(IsRenderingToDisc())
+				{
+					isReallyAtEnd = true;
+				} else
+				{
+					for(const auto &t : GetLength(eNoAdjust, GetLengthTarget(true)))
+					{
+						if(t.lastOrder == m_PlayState.m_nCurrentOrder && t.lastRow == m_PlayState.m_nRow)
+						{
+							isReallyAtEnd = true;
+							break;
+						}
+					}
+				}
+				
+				if(isReallyAtEnd)
 				{
 					// This is really the song's end!
 					visitedSongRows.Initialize(true);
@@ -617,7 +632,7 @@ bool CSoundFile::ProcessRow()
 				} else
 				{
 					// Ok, this is really dirty, but we have to update the visited rows vector...
-					GetLength(eAdjustOnSuccess, GetLengthTarget(m_PlayState.m_nCurrentOrder, m_PlayState.m_nRow));
+					GetLength(eAdjustOnlyVisitedRows, GetLengthTarget(m_PlayState.m_nCurrentOrder, m_PlayState.m_nRow));
 				}
 #else
 				if(m_SongFlags[SONG_PLAYALLSONGS])

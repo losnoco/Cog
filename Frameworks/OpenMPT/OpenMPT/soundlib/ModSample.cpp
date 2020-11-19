@@ -469,11 +469,10 @@ int32 ModSample::FrequencyToTranspose(uint32 freq)
 
 void ModSample::FrequencyToTranspose()
 {
-	int f2t = 0;
-	if(nC5Speed)
-		f2t = Clamp(FrequencyToTranspose(nC5Speed), -16384, 16383);
-	RelativeTone = static_cast<int8>(f2t / 128);
-	nFineTune = static_cast<int8>(f2t & 0x7F);
+	const int f2t = Clamp(FrequencyToTranspose(nC5Speed), -16384, 16383);
+	const auto fine = std::div(f2t, 128);
+	RelativeTone = static_cast<int8>(fine.quot);
+	nFineTune = static_cast<int8>(fine.rem);
 }
 
 

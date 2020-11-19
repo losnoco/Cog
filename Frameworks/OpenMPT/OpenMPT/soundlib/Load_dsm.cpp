@@ -313,7 +313,7 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 				}
 			}
 			patNum++;
-		} else if(!memcmp(chunkHeader.magic, "INST", 4) && GetNumSamples() < SAMPLEINDEX(MAX_SAMPLES - 1))
+		} else if(!memcmp(chunkHeader.magic, "INST", 4) && CanAddMoreSamples())
 		{
 			// Read sample
 			m_nSamples++;

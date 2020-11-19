@@ -627,7 +627,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 						m.param--;
 						if(m.param < loopList.size())
 						{
-							if(!loopList[m.param].looped && m_nSamples < MAX_SAMPLES - 1)
+							if(!loopList[m.param].looped && CanAddMoreSamples())
 								loopList[m.param].looped = ++m_nSamples;
 							m.instr = static_cast<ModCommand::INSTR>(loopList[m.param].looped);
 						}
@@ -648,7 +648,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 							m.vol = m.param;
 						}
 						// switch to non-looped version of sample and create it if needed
-						if(!nonLooped[m.instr - 1] && m_nSamples < MAX_SAMPLES - 1)
+						if(!nonLooped[m.instr - 1] && CanAddMoreSamples())
 							nonLooped[m.instr - 1] = ++m_nSamples;
 						m.instr = static_cast<ModCommand::INSTR>(nonLooped[m.instr - 1]);
 					}
@@ -664,7 +664,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 						m.param--;
 						if(m.param < loopList.size())
 						{
-							if(!loopList[m.param].nonLooped && m_nSamples < MAX_SAMPLES-1)
+							if(!loopList[m.param].nonLooped && CanAddMoreSamples())
 								loopList[m.param].nonLooped = ++m_nSamples;
 							m.instr = static_cast<ModCommand::INSTR>(loopList[m.param].nonLooped);
 						}

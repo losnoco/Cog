@@ -118,16 +118,12 @@ struct MMDSong
 	MMD0Song GetMMD0Song() const
 	{
 		static_assert(sizeof(MMD0Song) == sizeof(song));
-		MMD0Song result;
-		std::memcpy(&result, song, sizeof(result));
-		return result;
+		return mpt::bit_cast<MMD0Song>(song);
 	}
 	MMD2Song GetMMD2Song() const
 	{
 		static_assert(sizeof(MMD2Song) == sizeof(song));
-		MMD2Song result;
-		std::memcpy(&result, song, sizeof(result));
-		return result;
+		return mpt::bit_cast<MMD2Song>(song);
 	}
 	uint16be defaultTempo;
 	int8be   playTranspose;  // The global play transpose value for current song
@@ -575,24 +571,24 @@ static void MEDReadNextSong(FileReader &file, MMD0FileHeader &fileHeader, MMD0Ex
 }
 
 
-static CHANNELINDEX MEDScanNumChannels(FileReader &file, const uint8 version)
+static std::pair<CHANNELINDEX, SEQUENCEINDEX> MEDScanNumChannels(FileReader &file, const uint8 version)
 {
 	MMD0FileHeader fileHeader;
 	MMD0Exp expData;
 	MMDSong songHeader;
 
 	file.Rewind();
+	uint32 songOffset = 0;
 	MEDReadNextSong(file, fileHeader, expData, songHeader);
 
-	auto numSongs = fileHeader.expDataOffset ? fileHeader.extraSongs + 1 : 1;
-
+	SEQUENCEINDEX numSongs = std::min(MAX_SEQUENCES, mpt::saturate_cast<SEQUENCEINDEX>(fileHeader.expDataOffset ? fileHeader.extraSongs + 1 : 1));
 	CHANNELINDEX numChannels = 4;
 	// Scan patterns for max number of channels
 	for(SEQUENCEINDEX song = 0; song < numSongs; song++)
 	{
 		const PATTERNINDEX numPatterns = songHeader.numBlocks;
 		if(songHeader.numSamples > 63 || numPatterns > 0x7FFF)
-			return 0;
+			return {};
 
 		for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
 		{
@@ -604,11 +600,16 @@ static CHANNELINDEX MEDScanNumChannels(FileReader &file, const uint8 version)
 			numChannels = std::max(numChannels, static_cast<CHANNELINDEX>(version < 1 ? file.ReadUint8() : file.ReadUint16BE()));
 		}
 
-		if(!expData.nextModOffset || !file.Seek(expData.nextModOffset))
+		// If song offsets are going backwards, reject the file
+		if(expData.nextModOffset <= songOffset || !file.Seek(expData.nextModOffset))
+		{
+			numSongs = song + 1;
 			break;
+		}
+		songOffset = expData.nextModOffset;
 		MEDReadNextSong(file, fileHeader, expData, songHeader);
 	}
-	return numChannels;
+	return {numChannels, numSongs};
 }
 
 
@@ -680,9 +681,10 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 		file.ReadStruct(expData);
 	}
 
-	m_nChannels = MEDScanNumChannels(file, version);
-	if(m_nChannels < 1 || m_nChannels > MAX_BASECHANNELS)
+	const auto [numChannels, numSongs] = MEDScanNumChannels(file, version);
+	if(numChannels < 1 || numChannels > MAX_BASECHANNELS)
 		return false;
+	m_nChannels = numChannels;
 
 	// Start with the instruments, as those are shared between songs
 
@@ -992,8 +994,6 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 			}
 		}
 	}
-
-	const auto numSongs = std::min<SEQUENCEINDEX>(MAX_SEQUENCES, fileHeader.expDataOffset ? fileHeader.extraSongs + 1 : 1);
 
 	file.Rewind();
 	PATTERNINDEX basePattern = 0;

@@ -393,13 +393,14 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.madeWithTracker = U_("UltraTracker ") + versions[fileHeader.version - '1'];
 	m_modFormat.charset = mpt::Charset::CP437;
 
-	m_SongFlags = SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS;	// this will be converted to IT format by MPT.
+	m_SongFlags = SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS;  // this will be converted to IT format by MPT.
 
-	// read "messageLength" lines, each containing 32 characters.
+	// Read "messageLength" lines, each containing 32 characters.
 	m_songMessage.ReadFixedLineLength(file, fileHeader.messageLength * 32, 32, 0);
 
-	m_nSamples = static_cast<SAMPLEINDEX>(file.ReadUint8());
-	if(GetNumSamples() >= MAX_SAMPLES)
+	if(SAMPLEINDEX numSamples = file.ReadUint8(); numSamples < MAX_SAMPLES)
+		m_nSamples = numSamples;
+	else
 		return false;
 
 	for(SAMPLEINDEX smp = 1; smp <= GetNumSamples(); smp++)
@@ -423,11 +424,12 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 
 	ReadOrderFromFile<uint8>(Order(), file, 256, 0xFF, 0xFE);
 
-	m_nChannels = file.ReadUint8() + 1;
-	PATTERNINDEX numPats = file.ReadUint8() + 1;
-
-	if(GetNumChannels() > MAX_BASECHANNELS)
+	if(CHANNELINDEX numChannels = file.ReadUint8() + 1u; numChannels <= MAX_BASECHANNELS)
+		m_nChannels = numChannels;
+	else
 		return false;
+
+	PATTERNINDEX numPats = file.ReadUint8() + 1;
 
 	for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 	{

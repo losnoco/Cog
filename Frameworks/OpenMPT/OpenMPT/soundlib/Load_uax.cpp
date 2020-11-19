@@ -168,7 +168,7 @@ bool CSoundFile::ReadUAX(FileReader &file, ModLoadingFlags loadFlags)
 
 			FileReader fileChunk = chunk.ReadChunk(size);
 
-			if(GetNumSamples() < MAX_SAMPLES - 1)
+			if(CanAddMoreSamples())
 			{
 				// Read as sample
 				if(ReadSampleFromFile(GetNumSamples() + 1, fileChunk, true))

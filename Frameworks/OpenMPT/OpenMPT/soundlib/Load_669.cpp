@@ -190,7 +190,7 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 
-		const ModCommand::COMMAND effTrans[] =
+		static constexpr ModCommand::COMMAND effTrans[] =
 		{
 			CMD_PORTAMENTOUP,	// Slide up (param * 80) Hz on every tick
 			CMD_PORTAMENTODOWN,	// Slide down (param * 80) Hz on every tick

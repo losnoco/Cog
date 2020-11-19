@@ -43,7 +43,7 @@ void InstrumentEnvelope::Convert(MODTYPE fromType, MODTYPE toType)
 		}
 
 		// XM -> IT / MPTM: Shorten loop by one tick by inserting bogus point
-		if(nLoopEnd > nLoopStart && dwFlags[ENV_LOOP])
+		if(nLoopEnd > nLoopStart && dwFlags[ENV_LOOP] && nLoopEnd < size())
 		{
 			if(at(nLoopEnd).tick - 1 > at(nLoopEnd - 1).tick)
 			{
