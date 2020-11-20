@@ -43,6 +43,9 @@
 		[self setShowsToolbarButton: NO];
 		[self setShowsResizeIndicator:NO];
 		[self center];
+        if (@available(macOS 11, *)) {
+            [self setToolbarStyle:NSWindowToolbarStylePreference];
+        }
 		
 		[self createToolbar];
 	}
