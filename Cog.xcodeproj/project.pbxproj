@@ -925,7 +925,7 @@
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
 		838F850025687C5C00C3E614 /* PlaybackStatusToHiddenTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaybackStatusToHiddenTransformer.swift; path = Transformers/PlaybackStatusToHiddenTransformer.swift; sourceTree = "<group>"; };
-		838F851B256B4AC400C3E614 /* icon_blank.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon_blank.icns; path = ../../../../Desktop/icon_blank.icns; sourceTree = "<group>"; };
+		838F851B256B4AC400C3E614 /* icon_blank.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon_blank.icns; sourceTree = "<group>"; };
 		838F851D256B4E5E00C3E614 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };

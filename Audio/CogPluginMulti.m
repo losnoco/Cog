@@ -78,7 +78,10 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
         Class decoder = NSClassFromString(classString);
         theDecoder = [[decoder alloc] init];
         for (NSDictionary *obsItem in cachedObservers) {
-            [theDecoder addObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"] options:[obsItem objectForKey:@"options"] context:(__bridge void *)([obsItem objectForKey:@"context"])];
+            [theDecoder addObserver:[obsItem objectForKey:@"observer"]
+                         forKeyPath:[obsItem objectForKey:@"keyPath"]
+                            options:[[obsItem objectForKey:@"options"] unsignedIntegerValue]
+                            context:(__bridge void *)([obsItem objectForKey:@"context"])];
         }
         if ([theDecoder open:source])
             return YES;
@@ -118,7 +121,11 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
 /* By the current design, the core adds its observers to decoders before they are opened */
 - (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
 {
-    [cachedObservers addObject:[NSDictionary dictionaryWithObjectsAndKeys:observer, @"observer", keyPath, @"keyPath", options, @"options", context, @"context", nil]];
+    if(context != nil) {
+        [cachedObservers addObject:[NSDictionary dictionaryWithObjectsAndKeys:observer, @"observer", keyPath, @"keyPath", @(options), @"options", context, @"context", nil]];
+    } else {
+        [cachedObservers addObject:[NSDictionary dictionaryWithObjectsAndKeys:observer, @"observer", keyPath, @"keyPath", @(options), @"options", nil]];
+    }
 }
 
 /* And this is currently called after the decoder is closed */
