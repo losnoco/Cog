@@ -14,52 +14,51 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Cog" animationBehavior="default" toolbarStyle="expanded" id="21" userLabel="Window" customClass="MainWindow">
+        <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Cog" animationBehavior="default" toolbarStyle="compact" titleVisibility="hidden" id="21" userLabel="Window" customClass="MainWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" topStrut="YES"/>
             <rect key="contentRect" x="331" y="367" width="800" height="400"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="875"/>
             <value key="minSize" type="size" width="400" height="200"/>
-            <view key="contentView" id="2">
+            <stackView key="contentView" orientation="vertical" alignment="centerX" hasEqualSpacing="YES" detachesHiddenViews="YES" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="800" height="400"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                <subviews>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="778">
-                        <rect key="frame" x="17" y="4" width="758" height="15"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
-                            <font key="font" metaFont="controlContent" size="11"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
+                <middleViews>
+                    <button toolTip="Click to select currently playing track" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gev-jg-41I">
+                        <rect key="frame" x="313" y="384" width="174" height="16"/>
+                        <buttonCell key="cell" type="bevel" title="Now Playing Track title here" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" imageScaling="proportionallyDown" inset="2" id="oXd-7z-UQS">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
                         <connections>
-                            <binding destination="218" name="displayPatternValue1" keyPath="totalTime" id="1891">
+                            <action selector="scrollToCurrentEntry:" target="207" id="e2T-5R-8Eo"/>
+                            <binding destination="705" name="hidden" keyPath="playbackStatus" id="Kl1-lE-Z5C">
                                 <dictionary key="options">
-                                    <string key="NSDisplayPattern">Total Duration: %{value1}@</string>
+                                    <string key="NSValueTransformerName">PlaybackStatusToHiddenTransformer</string>
                                 </dictionary>
                             </binding>
+                            <binding destination="1897" name="title" keyPath="content.display" id="fno-Aq-DvV"/>
                         </connections>
-                    </textField>
+                    </button>
                     <splitView fixedFrame="YES" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
-                        <rect key="frame" x="0.0" y="24" width="800" height="377"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
+                        <rect key="frame" x="0.0" y="22" width="800" height="354"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
-                                <rect key="frame" x="0.0" y="0.0" width="800" height="377"/>
+                                <rect key="frame" x="0.0" y="0.0" width="800" height="354"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
-                                    <rect key="frame" x="0.0" y="0.0" width="800" height="377"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="800" height="354"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" id="207" customClass="PlaylistView">
-                                            <rect key="frame" x="0.0" y="0.0" width="800" height="360"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="800" height="337"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="6"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn identifier="index" editable="NO" width="37" minWidth="28" maxWidth="64" id="209">
+                                                <tableColumn identifier="index" editable="NO" width="36" minWidth="28" maxWidth="64" id="209">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="#">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
@@ -97,7 +96,7 @@
                                                         </binding>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="title" editable="NO" width="122" minWidth="96" maxWidth="1024" id="208">
+                                                <tableColumn identifier="title" editable="NO" width="121" minWidth="96" maxWidth="1024" id="208">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
@@ -118,7 +117,7 @@
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1914"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="artist" editable="NO" width="121.5" minWidth="96" maxWidth="1024" id="391">
+                                                <tableColumn identifier="artist" editable="NO" width="120.5" minWidth="96" maxWidth="1024" id="391">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Artist">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -308,8 +307,35 @@
                             <outlet property="delegate" destination="2172" id="2182"/>
                         </connections>
                     </splitView>
-                </subviews>
-            </view>
+                </middleViews>
+                <endViews>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="778">
+                        <rect key="frame" x="270" y="0.0" width="261" height="14"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
+                            <font key="font" metaFont="controlContent" size="11"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="218" name="displayPatternValue1" keyPath="totalTime" id="1891">
+                                <dictionary key="options">
+                                    <string key="NSDisplayPattern">Total Duration: %{value1}@</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </textField>
+                </endViews>
+                <visibilityPriorities>
+                    <integer value="1000"/>
+                    <integer value="1000"/>
+                    <integer value="1000"/>
+                </visibilityPriorities>
+                <customSpacing>
+                    <real value="3.4028234663852886e+38"/>
+                    <real value="3.4028234663852886e+38"/>
+                    <real value="3.4028234663852886e+38"/>
+                </customSpacing>
+            </stackView>
             <toolbar key="toolbar" implicitIdentifier="B4998081-90DD-45DD-8243-0F7039C7DEA2" displayMode="iconOnly" sizeMode="regular" id="1523">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="1552"/>
@@ -319,15 +345,15 @@
                     <toolbarItem implicitItemIdentifier="A06F7688-72A2-4AAD-B9E1-C66720B2B0D3" label="Playback Control" paletteLabel="Playback Control" sizingBehavior="auto" id="1539">
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="1537" customClass="PlaybackButtons">
-                            <rect key="frame" x="0.0" y="14" width="121" height="24"/>
+                            <rect key="frame" x="0.0" y="14" width="133" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="1538">
+                            <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="momentary" id="1538">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment toolTip="Previous" image="sf.backward" imageScaling="none" width="28"/>
-                                    <segment toolTip="Play" image="sf.play" imageScaling="none" width="28" tag="1"/>
-                                    <segment toolTip="Next" image="sf.stop" imageScaling="none" width="28"/>
-                                    <segment image="sf.forward" imageScaling="none" width="28">
+                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="playTemplate" width="28" tag="1"/>
+                                    <segment toolTip="Next" image="stopTemplate" imageScaling="none" width="28"/>
+                                    <segment image="nextTemplate" imageScaling="none" width="28">
                                         <nil key="label"/>
                                     </segment>
                                 </segments>
@@ -414,12 +440,12 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="sf.speaker.wave.3" sizingBehavior="auto" id="1610">
+                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" sizingBehavior="auto" id="1610">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1608" customClass="VolumeButton">
                             <rect key="frame" x="9" y="14" width="29" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.speaker.wave.3" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="1609">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="1609">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -428,12 +454,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="sf.info.circle" sizingBehavior="auto" id="1629">
+                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" sizingBehavior="auto" id="1629">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1627">
-                            <rect key="frame" x="28" y="14" width="25" height="23"/>
+                            <rect key="frame" x="26" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.info.circle" imagePosition="only" alignment="center" borderStyle="border" id="1628">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1628">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -442,12 +468,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="6EE50288-54ED-448F-BB25-347479AE119F" label="File Tree" paletteLabel="File Tree" image="sf.folder" sizingBehavior="auto" id="1630">
+                    <toolbarItem implicitItemIdentifier="6EE50288-54ED-448F-BB25-347479AE119F" label="File Tree" paletteLabel="File Tree" image="navigatorTemplate" sizingBehavior="auto" id="1630">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1631">
-                            <rect key="frame" x="13" y="14" width="27" height="23"/>
+                            <rect key="frame" x="12" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.folder" imagePosition="only" alignment="center" borderStyle="border" id="1632">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="navigatorTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1632">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -456,12 +482,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="sf.questionmark.diamond" sizingBehavior="auto" id="2466">
+                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" sizingBehavior="auto" id="2466">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2467">
-                            <rect key="frame" x="19" y="14" width="27" height="23"/>
+                            <rect key="frame" x="18" y="14" width="29" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.questionmark.diamond" imagePosition="only" alignment="center" borderStyle="border" id="2468">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2468">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -470,12 +496,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="384C0EB5-D1D6-4D39-8113-03FB4958D7ED" label="Shuffle" paletteLabel="Shuffle" image="sf.arrow.right" sizingBehavior="auto" id="1636">
+                    <toolbarItem implicitItemIdentifier="384C0EB5-D1D6-4D39-8113-03FB4958D7ED" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" sizingBehavior="auto" id="1636">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1637">
-                            <rect key="frame" x="11" y="14" width="24" height="23"/>
+                            <rect key="frame" x="7" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.arrow.right" imagePosition="only" alignment="center" borderStyle="border" id="1638">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1638">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -489,12 +515,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F3591DBA-E0EC-4564-896A-C6EFFABC7873" label="Repeat" paletteLabel="Repeat" image="sf.arrow.turn.up.right" sizingBehavior="auto" id="1639">
+                    <toolbarItem implicitItemIdentifier="F3591DBA-E0EC-4564-896A-C6EFFABC7873" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" sizingBehavior="auto" id="1639">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1640">
-                            <rect key="frame" x="10" y="14" width="24" height="23"/>
+                            <rect key="frame" x="6" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.arrow.turn.up.right" imagePosition="only" alignment="center" borderStyle="border" id="1641">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1641">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -508,12 +534,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F636F7BD-E049-4DF5-B758-35DF87C40AA0" label="Mini Mode" paletteLabel="Mini Mode" image="sf.arrow.down.right.and.arrow.up.left" sizingBehavior="auto" id="2532">
+                    <toolbarItem implicitItemIdentifier="F636F7BD-E049-4DF5-B758-35DF87C40AA0" label="Mini Mode" paletteLabel="Mini Mode" image="miniModeOnTemplate" sizingBehavior="auto" id="2532">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2533">
-                            <rect key="frame" x="19" y="14" width="25" height="23"/>
+                            <rect key="frame" x="17" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.arrow.down.right.and.arrow.up.left" imagePosition="only" alignment="center" borderStyle="border" id="2534">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOnTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2534">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -578,10 +604,10 @@
                             <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="momentary" id="2296">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment toolTip="Previous" image="sf.backward" imageScaling="none" width="28"/>
-                                    <segment toolTip="Play" image="sf.play" imageScaling="none" width="28" tag="1"/>
-                                    <segment toolTip="Stop" image="sf.stop" imageScaling="none" width="28"/>
-                                    <segment toolTip="Next" image="sf.forward" imageScaling="none" width="28">
+                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Stop" image="stopTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28">
                                         <nil key="label"/>
                                     </segment>
                                 </segments>
@@ -620,12 +646,12 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="sf.speaker.wave.3" sizingBehavior="auto" id="2275">
+                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume3Template" sizingBehavior="auto" id="2275">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2289" customClass="VolumeButton">
                             <rect key="frame" x="9" y="14" width="29" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.speaker.wave.3" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="2290">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="2290">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -634,12 +660,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="sf.arrow.right" sizingBehavior="auto" id="2278">
+                    <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" sizingBehavior="auto" id="2278">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2283">
-                            <rect key="frame" x="11" y="14" width="24" height="23"/>
+                            <rect key="frame" x="7" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.arrow.right" imagePosition="only" alignment="center" borderStyle="border" id="2284">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2284">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -653,12 +679,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9A52F396-9BBC-4791-AC12-664859F26F89" label="Repeat" paletteLabel="Repeat" image="sf.arrow.turn.up.right" sizingBehavior="auto" id="2279">
+                    <toolbarItem implicitItemIdentifier="9A52F396-9BBC-4791-AC12-664859F26F89" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" sizingBehavior="auto" id="2279">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2281">
-                            <rect key="frame" x="10" y="14" width="24" height="23"/>
+                            <rect key="frame" x="6" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.arrow.turn.up.right" imagePosition="only" alignment="center" borderStyle="border" id="2282">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2282">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -672,12 +698,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2064CD41-7C2B-4EE0-BCE9-8E18E09F02EF" label="Normal Mode" paletteLabel="Normal Mode" image="sf.arrow.up.backward.and.arrow.down.forward" sizingBehavior="auto" id="2526">
+                    <toolbarItem implicitItemIdentifier="2064CD41-7C2B-4EE0-BCE9-8E18E09F02EF" label="Normal Mode" paletteLabel="Normal Mode" image="miniModeOffTemplate" sizingBehavior="auto" id="2526">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2527">
-                            <rect key="frame" x="27" y="14" width="24" height="23"/>
+                            <rect key="frame" x="25" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.arrow.up.backward.and.arrow.down.forward" imagePosition="only" alignment="center" borderStyle="border" id="2528">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2528">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -689,12 +715,12 @@
                             <action selector="toggleMiniMode:" target="226" id="2531"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="sf.info.circle" sizingBehavior="auto" id="2429">
+                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" sizingBehavior="auto" id="2429">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2430">
-                            <rect key="frame" x="28" y="14" width="25" height="23"/>
+                            <rect key="frame" x="26" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="sf.info.circle" imagePosition="only" alignment="center" borderStyle="border" id="2431">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2431">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1547,6 +1573,7 @@ Gw
                     </connections>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="-439" y="76"/>
         </menu>
         <customObject id="705" userLabel="PlaybackController" customClass="PlaybackController">
             <connections>
@@ -1899,17 +1926,17 @@ GgAkACkAMgA3AEkATABRAFMAYgBoAHUAfACLAJIAnwCmAK4AsACyALQAuQC7AL0AxgDLANYA2ADaANwA
 oCGoIashsCG4AAAAAAAAAgEAAAAAAAAAQwAAAAAAAAAAAAAAAAAAIbs
 </mutableData>
         </image>
-        <image name="sf.arrow.down.right.and.arrow.up.left" width="13" height="13"/>
-        <image name="sf.arrow.right" width="12" height="10"/>
-        <image name="sf.arrow.turn.up.right" width="12" height="10"/>
-        <image name="sf.arrow.up.backward.and.arrow.down.forward" width="12" height="12"/>
-        <image name="sf.backward" width="18" height="10"/>
-        <image name="sf.folder" width="15" height="12"/>
-        <image name="sf.forward" width="18" height="10"/>
-        <image name="sf.info.circle" width="13" height="13"/>
-        <image name="sf.play" width="10" height="11"/>
-        <image name="sf.questionmark.diamond" width="15" height="15"/>
-        <image name="sf.speaker.wave.3" width="17" height="13"/>
-        <image name="sf.stop" width="11" height="11"/>
+        <image name="infoTemplate" width="16" height="16"/>
+        <image name="miniModeOffTemplate" width="16" height="16"/>
+        <image name="miniModeOnTemplate" width="16" height="16"/>
+        <image name="navigatorTemplate" width="16" height="16"/>
+        <image name="nextTemplate" width="20" height="19"/>
+        <image name="playTemplate" width="16" height="16"/>
+        <image name="previousTemplate" width="20" height="19"/>
+        <image name="randomizeTemplate" width="17" height="16"/>
+        <image name="repeatModeOffTemplate" width="20" height="19"/>
+        <image name="shuffleOffTemplate" width="20" height="19"/>
+        <image name="stopTemplate" width="16" height="16"/>
+        <image name="volume3Template" width="17" height="16"/>
     </resources>
 </document>

@@ -43,6 +43,10 @@
 		[self setShowsToolbarButton: NO];
 		[self setShowsResizeIndicator:NO];
 		[self center];
+        
+        [[self standardWindowButton:NSWindowZoomButton] setEnabled:FALSE];
+        
+        
         if (@available(macOS 11, *)) {
             [self setToolbarStyle:NSWindowToolbarStylePreference];
         }

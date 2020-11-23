@@ -323,12 +323,26 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"flac", nil];
+    if (@available(macOS 10.13, *))
+    {
+        return [NSArray array];
+    }
+    else
+    {
+        return [NSArray arrayWithObjects:@"flac", nil];
+    }
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-flac", nil];
+    if (@available(macOS 10.13, *))
+    {
+        return [NSArray array];
+    }
+    else
+    {
+        return [NSArray arrayWithObjects:@"audio/x-flac", nil];
+    }
 }
 
 + (float)priority

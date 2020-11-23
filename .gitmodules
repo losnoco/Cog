@@ -16,6 +16,3 @@
 [submodule "Frameworks/libatrac9/libatrac9"]
 	path = Frameworks/libatrac9/libatrac9
 	url = https://github.com/Thealexbarney/LibAtrac9.git
-[submodule "Frameworks/Sparkle"]
-	path = Frameworks/Sparkle
-	url = https://git.lopez-snowhill.net/chris/Sparkle.git

@@ -12,6 +12,7 @@
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
 #import "FontSizetoLineHeightTransformer.h"
+#import "Cog-Swift.h"
 #import "PathNode.h"
 #import <CogAudio/Status.h>
 
@@ -36,6 +37,9 @@
     NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
     [NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
                                     forName:@"MiniModeMenuTitleTransformer"];
+    
+    NSValueTransformer *playbackStatusToHiddenTransformer = [[PlaybackStatusToHiddenTransformer alloc] init];
+    [NSValueTransformer setValueTransformer:playbackStatusToHiddenTransformer forName:@"PlaybackStatusToHiddenTransformer"];
 }
 
 
