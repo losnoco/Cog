@@ -591,6 +591,10 @@
 		83C7282922BC8C1500678B4A /* mixing.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7282522BC8C1400678B4A /* mixing.c */; };
 		83C7282A22BC8C1500678B4A /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C7282622BC8C1400678B4A /* plugins.c */; };
 		83D0381824A4129A004CF90F /* swav.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D0381724A4129A004CF90F /* swav.c */; };
+		83D11A17256CE2E900565AD3 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D11A0F256CE08D00565AD3 /* libavcodec.a */; };
+		83D11A18256CE2EE00565AD3 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D11A10256CE08D00565AD3 /* libavformat.a */; };
+		83D11A19256CE2FA00565AD3 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D11A11256CE08D00565AD3 /* libavutil.a */; };
+		83D11A1B256CE30300565AD3 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D11A12256CE08D00565AD3 /* libswresample.a */; };
 		83D2007A248DDB770048BD24 /* fsb_encrypted_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D20072248DDB760048BD24 /* fsb_encrypted_streamfile.h */; };
 		83D2007B248DDB770048BD24 /* mups_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D20073248DDB760048BD24 /* mups_streamfile.h */; };
 		83D2007C248DDB770048BD24 /* ktsr.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20074248DDB760048BD24 /* ktsr.c */; };
@@ -603,14 +607,6 @@
 		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D7318C1A749EEE00CA1366 /* g719_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D7318B1A749EEE00CA1366 /* g719_decoder.c */; };
 		83E56BA51F2EE3520026BC60 /* vorbis_custom_utils_ogl.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E56BA01F2EE3500026BC60 /* vorbis_custom_utils_ogl.c */; };
-		83EC716724A98B9900B807C1 /* libavcodec.58.91.100.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EC716324A98B7200B807C1 /* libavcodec.58.91.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83EC716824A98B9B00B807C1 /* libavformat.58.45.100.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EC716524A98B7200B807C1 /* libavformat.58.45.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83EC716924A98B9D00B807C1 /* libavutil.56.51.100.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EC716424A98B7200B807C1 /* libavutil.56.51.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83EC716A24A98BA000B807C1 /* libswresample.3.7.100.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EC716224A98B7200B807C1 /* libswresample.3.7.100.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83EC716B24A98BC600B807C1 /* libavcodec.58.91.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EC716324A98B7200B807C1 /* libavcodec.58.91.100.dylib */; };
-		83EC716C24A98BC900B807C1 /* libavformat.58.45.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EC716524A98B7200B807C1 /* libavformat.58.45.100.dylib */; };
-		83EC716D24A98BCC00B807C1 /* libavutil.56.51.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EC716424A98B7200B807C1 /* libavutil.56.51.100.dylib */; };
-		83EC716E24A98BCF00B807C1 /* libswresample.3.7.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EC716224A98B7200B807C1 /* libswresample.3.7.100.dylib */; };
 		83EDE5D81A70951A005F5D84 /* mca.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D61A70951A005F5D84 /* mca.c */; };
 		83EDE5D91A70951A005F5D84 /* btsnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EDE5D71A70951A005F5D84 /* btsnd.c */; };
 		83EED5D3203A8BC7008BEB45 /* ea_swvr.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EED5D1203A8BC7008BEB45 /* ea_swvr.c */; };
@@ -745,10 +741,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				83EC716724A98B9900B807C1 /* libavcodec.58.91.100.dylib in CopyFiles */,
-				83EC716824A98B9B00B807C1 /* libavformat.58.45.100.dylib in CopyFiles */,
-				83EC716924A98B9D00B807C1 /* libavutil.56.51.100.dylib in CopyFiles */,
-				83EC716A24A98BA000B807C1 /* libswresample.3.7.100.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1337,6 +1329,10 @@
 		83C7282522BC8C1400678B4A /* mixing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mixing.c; sourceTree = "<group>"; };
 		83C7282622BC8C1400678B4A /* plugins.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugins.c; sourceTree = "<group>"; };
 		83D0381724A4129A004CF90F /* swav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = swav.c; sourceTree = "<group>"; };
+		83D11A0F256CE08D00565AD3 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ../../ThirdParty/ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
+		83D11A10256CE08D00565AD3 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ../../ThirdParty/ffmpeg/lib/libavformat.a; sourceTree = "<group>"; };
+		83D11A11256CE08D00565AD3 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../../ThirdParty/ffmpeg/lib/libavutil.a; sourceTree = "<group>"; };
+		83D11A12256CE08D00565AD3 /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = ../../ThirdParty/ffmpeg/lib/libswresample.a; sourceTree = "<group>"; };
 		83D20072248DDB760048BD24 /* fsb_encrypted_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fsb_encrypted_streamfile.h; sourceTree = "<group>"; };
 		83D20073248DDB760048BD24 /* mups_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mups_streamfile.h; sourceTree = "<group>"; };
 		83D20074248DDB760048BD24 /* ktsr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ktsr.c; sourceTree = "<group>"; };
@@ -1348,10 +1344,6 @@
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
 		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
 		83E56BA01F2EE3500026BC60 /* vorbis_custom_utils_ogl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_ogl.c; sourceTree = "<group>"; };
-		83EC716224A98B7200B807C1 /* libswresample.3.7.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.3.7.100.dylib; path = ../../ThirdParty/ffmpeg/lib/libswresample.3.7.100.dylib; sourceTree = "<group>"; };
-		83EC716324A98B7200B807C1 /* libavcodec.58.91.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.91.100.dylib; path = ../../ThirdParty/ffmpeg/lib/libavcodec.58.91.100.dylib; sourceTree = "<group>"; };
-		83EC716424A98B7200B807C1 /* libavutil.56.51.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.51.100.dylib; path = ../../ThirdParty/ffmpeg/lib/libavutil.56.51.100.dylib; sourceTree = "<group>"; };
-		83EC716524A98B7200B807C1 /* libavformat.58.45.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.45.100.dylib; path = ../../ThirdParty/ffmpeg/lib/libavformat.58.45.100.dylib; sourceTree = "<group>"; };
 		83EDE5D61A70951A005F5D84 /* mca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mca.c; sourceTree = "<group>"; };
 		83EDE5D71A70951A005F5D84 /* btsnd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btsnd.c; sourceTree = "<group>"; };
 		83EED5D1203A8BC7008BEB45 /* ea_swvr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ea_swvr.c; sourceTree = "<group>"; };
@@ -1388,14 +1380,14 @@
 				838BDB711D3B1F990022CA6F /* CoreFoundation.framework in Frameworks */,
 				838BDB6A1D3AF7140022CA6F /* libiconv.tbd in Frameworks */,
 				838BDB681D3AF70D0022CA6F /* libz.tbd in Frameworks */,
+				83D11A17256CE2E900565AD3 /* libavcodec.a in Frameworks */,
+				83D11A18256CE2EE00565AD3 /* libavformat.a in Frameworks */,
+				83D11A19256CE2FA00565AD3 /* libavutil.a in Frameworks */,
+				83D11A1B256CE30300565AD3 /* libswresample.a in Frameworks */,
 				83D731891A749D1500CA1366 /* g719.framework in Frameworks */,
 				8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */,
 				834D795520E4F0D400C4A5CC /* Vorbis.framework in Frameworks */,
 				836C052B23F62F1A00FA07C7 /* libatrac9.framework in Frameworks */,
-				83EC716B24A98BC600B807C1 /* libavcodec.58.91.100.dylib in Frameworks */,
-				83EC716C24A98BC900B807C1 /* libavformat.58.45.100.dylib in Frameworks */,
-				83EC716D24A98BCC00B807C1 /* libavutil.56.51.100.dylib in Frameworks */,
-				83EC716E24A98BCF00B807C1 /* libswresample.3.7.100.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1466,10 +1458,10 @@
 		836F6B3E18BDB8880095E648 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				83EC716324A98B7200B807C1 /* libavcodec.58.91.100.dylib */,
-				83EC716524A98B7200B807C1 /* libavformat.58.45.100.dylib */,
-				83EC716424A98B7200B807C1 /* libavutil.56.51.100.dylib */,
-				83EC716224A98B7200B807C1 /* libswresample.3.7.100.dylib */,
+				83D11A0F256CE08D00565AD3 /* libavcodec.a */,
+				83D11A10256CE08D00565AD3 /* libavformat.a */,
+				83D11A11256CE08D00565AD3 /* libavutil.a */,
+				83D11A12256CE08D00565AD3 /* libswresample.a */,
 				835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */,
 				8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */,
 				83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */,

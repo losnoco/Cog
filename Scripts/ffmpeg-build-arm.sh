@@ -1,6 +1,6 @@
 # This is the commands used to build the ffmpeg libs provided here
-./configure --arch=arm64 --enable-neon --extra-cflags="-arch arm64 -fPIC -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.0.sdk -mmacosx-version-min=11.0" --extra-ldflags="-arch arm64 -mmacosx-version-min=11.0" --enable-cross-compile\
-    --enable-shared --disable-static --prefix=$HOME/Source/Repos/cog/ThirdParty/ffmpeg\
+./configure --arch=arm64 --enable-neon --extra-cflags="-arch arm64 -fPIC -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=11.0" --extra-ldflags="-arch arm64 -mmacosx-version-min=11.0" --enable-cross-compile\
+    --enable-static --disable-shared --prefix=$HOME/Source/Repos/cog/ThirdParty/ffmpeg/arm\
     --enable-pic --enable-gpl --disable-doc --disable-ffplay\
     --disable-ffprobe --disable-avdevice --disable-ffmpeg\
     --disable-postproc --disable-avfilter\
