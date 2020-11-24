@@ -273,7 +273,7 @@
 				GCC_PREFIX_HEADER = Ogg_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.ogg;
 				PRODUCT_NAME = Ogg;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -299,7 +299,7 @@
 				GCC_PREFIX_HEADER = Ogg_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.ogg;
 				PRODUCT_NAME = Ogg;
 				PROVISIONING_PROFILE_SPECIFIER = "";
