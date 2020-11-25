@@ -26,19 +26,19 @@
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <middleViews>
                     <button toolTip="Click to select currently playing track" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gev-jg-41I">
-                        <rect key="frame" x="313" y="384" width="174" height="16"/>
+                        <rect key="frame" x="314" y="384" width="173" height="16"/>
                         <buttonCell key="cell" type="bevel" title="Now Playing Track title here" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" imageScaling="proportionallyDown" inset="2" id="oXd-7z-UQS">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                         <connections>
                             <action selector="scrollToCurrentEntry:" target="207" id="e2T-5R-8Eo"/>
+                            <binding destination="1897" name="title" keyPath="content.display" id="fno-Aq-DvV"/>
                             <binding destination="705" name="hidden" keyPath="playbackStatus" id="Kl1-lE-Z5C">
                                 <dictionary key="options">
                                     <string key="NSValueTransformerName">PlaybackStatusToHiddenTransformer</string>
                                 </dictionary>
                             </binding>
-                            <binding destination="1897" name="title" keyPath="content.display" id="fno-Aq-DvV"/>
                         </connections>
                     </button>
                     <splitView fixedFrame="YES" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
@@ -774,20 +774,46 @@
                             <menuItem isSeparatorItem="YES" id="1100">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Support Cog..." id="751">
+                            <menuItem title="Donate" id="751">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" id="kue-p2-G0Y">
+                                <menu key="submenu" title="Donate" id="kue-p2-G0Y">
                                     <items>
+                                        <menuItem title="LiberaPay" id="nyW-nI-abw">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openLiberapayPage:" target="226" id="pS6-Hj-tIm"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Mbf-yW-WGC"/>
+                                        <menuItem title="One time" enabled="NO" id="wLp-NA-5u2">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
                                         <menuItem title="PayPal" id="xcs-tx-Viz">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="donate:" target="-1" id="4Br-dF-by5"/>
+                                                <action selector="openPaypalPage:" target="226" id="oxr-P1-35O"/>
                                             </connections>
+                                        </menuItem>
+                                        <menuItem title="Bitcoin" id="xtG-EN-CR6">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openBitcoinPage:" target="226" id="nK8-Vz-Qnc"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="txC-Jd-Gez"/>
+                                        <menuItem title="Recurring" enabled="NO" id="iRb-7e-iMC">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                         <menuItem title="Patreon" id="Bls-an-3wW">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="patreon:" target="-1" id="Hgn-8M-pW2"/>
+                                                <action selector="openPatreonPage:" target="226" id="AdW-US-V3l"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Ko-fi" id="CVM-rp-UJe">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openKofiPage:" target="226" id="gax-6q-SuW"/>
                                             </connections>
                                         </menuItem>
                                     </items>
