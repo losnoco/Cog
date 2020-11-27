@@ -22,7 +22,7 @@ OPENMPT_NAMESPACE_BEGIN
 // Convert OpenMPT's internal envelope representation to XM envelope data.
 void XMInstrument::ConvertEnvelopeToXM(const InstrumentEnvelope &mptEnv, uint8le &numPoints, uint8le &flags, uint8le &sustain, uint8le &loopStart, uint8le &loopEnd, EnvType env)
 {
-	numPoints = static_cast<uint8>(std::min<std::size_t>(12u, mptEnv.size()));
+	numPoints = static_cast<uint8>(std::min(std::size_t(12), static_cast<std::size_t>(mptEnv.size())));
 
 	// Envelope Data
 	for(uint8 i = 0; i < numPoints; i++)
@@ -125,7 +125,7 @@ std::vector<SAMPLEINDEX> XMInstrument::GetSampleList(const ModInstrument &mptIns
 // Convert XM envelope data to an OpenMPT's internal envelope representation.
 void XMInstrument::ConvertEnvelopeToMPT(InstrumentEnvelope &mptEnv, uint8 numPoints, uint8 flags, uint8 sustain, uint8 loopStart, uint8 loopEnd, EnvType env) const
 {
-	mptEnv.resize(std::min<uint8>(numPoints, 12));
+	mptEnv.resize(std::min(numPoints, uint8(12)));
 
 	// Envelope Data
 	for(uint32 i = 0; i < mptEnv.size(); i++)
@@ -142,16 +142,15 @@ void XMInstrument::ConvertEnvelopeToMPT(InstrumentEnvelope &mptEnv, uint8 numPoi
 			break;
 		}
 
-		if(i > 0 && mptEnv[i].tick < mptEnv[i - 1].tick)
+		if(i > 0 && mptEnv[i].tick < mptEnv[i - 1].tick && !(mptEnv[i].tick & 0xFF00))
 		{
 			// libmikmod code says: "Some broken XM editing program will only save the low byte of the position
 			// value. Try to compensate by adding the missing high byte."
-			// Note: It appears that MPT 1.07's XI instrument saver omitted the high byte of envelope nodes.
+			// Note: MPT 1.07's XI instrument saver omitted the high byte of envelope nodes.
 			// This might be the source for some broken envelopes in IT and XM files.
-
-			mptEnv[i].tick &= 0xFF;
-			mptEnv[i].tick += mptEnv[i - 1].tick & 0xFF00;
-			if(mptEnv[i].tick < mptEnv[i - 1].tick) mptEnv[i].tick += 0x100;
+			mptEnv[i].tick |= mptEnv[i - 1].tick & 0xFF00;
+			if(mptEnv[i].tick < mptEnv[i - 1].tick)
+				mptEnv[i].tick += 0x100;
 		}
 	}
 
@@ -194,7 +193,7 @@ void XMInstrument::ConvertToMPT(ModInstrument &mptIns) const
 	{
 		mptIns.nMidiChannel = midiChannel + MidiFirstChannel;
 		Limit(mptIns.nMidiChannel, uint8(MidiFirstChannel), uint8(MidiLastChannel));
-		mptIns.nMidiProgram = static_cast<uint8>(std::min<uint16>(midiProgram, 127) + 1);
+		mptIns.nMidiProgram = static_cast<uint8>(std::min(static_cast<uint16>(midiProgram), uint16(127)) + 1);
 	}
 	mptIns.midiPWD = static_cast<int8>(pitchWheelRange);
 }
@@ -248,7 +247,7 @@ void XMInstrumentHeader::Finalise()
 void XMInstrumentHeader::ConvertToXM(const ModInstrument &mptIns, bool compatibilityExport)
 {
 	numSamples = instrument.ConvertToXM(mptIns, compatibilityExport);
-	mpt::String::Write<mpt::String::spacePadded>(name, mptIns.name);
+	mpt::String::WriteBuf(mpt::String::spacePadded, name) = mptIns.name;
 
 	type = mptIns.nMidiProgram;	// If FT2 writes crap here, we can do so, too! (we probably shouldn't, though. This is just for backwards compatibility with old MPT versions.)
 }
@@ -271,7 +270,7 @@ void XMInstrumentHeader::ConvertToMPT(ModInstrument &mptIns) const
 		}
 	}
 
-	mpt::String::Read<mpt::String::spacePadded>(mptIns.name, name);
+	mptIns.name = mpt::String::ReadBuf(mpt::String::spacePadded, name);
 
 	// Old MPT backwards compatibility
 	if(!instrument.midiEnabled)
@@ -287,11 +286,11 @@ void XIInstrumentHeader::ConvertToXM(const ModInstrument &mptIns, bool compatibi
 	numSamples = instrument.ConvertToXM(mptIns, compatibilityExport);
 
 	memcpy(signature, "Extended Instrument: ", 21);
-	mpt::String::Write<mpt::String::spacePadded>(name, mptIns.name);
+	mpt::String::WriteBuf(mpt::String::spacePadded, name) = mptIns.name;
 	eof = 0x1A;
 
-	const std::string openMptTrackerName = mpt::ToCharset(mpt::CharsetCP437, Version::Current().GetOpenMPTVersionString());
-	mpt::String::Write<mpt::String::spacePadded>(trackerName, openMptTrackerName);
+	const std::string openMptTrackerName = mpt::ToCharset(mpt::Charset::CP437, Version::Current().GetOpenMPTVersionString());
+	mpt::String::WriteBuf(mpt::String::spacePadded, trackerName) = openMptTrackerName;
 
 	version = 0x102;
 }
@@ -311,7 +310,7 @@ void XIInstrumentHeader::ConvertToMPT(ModInstrument &mptIns) const
 		}
 	}
 
-	mpt::String::Read<mpt::String::spacePadded>(mptIns.name, name);
+	mptIns.name = mpt::String::ReadBuf(mpt::String::spacePadded, name);
 }
 
 
@@ -332,8 +331,8 @@ void XMSample::ConvertToXM(const ModSample &mptSmp, MODTYPE fromType, bool compa
 	} else
 	{
 		int f2t = ModSample::FrequencyToTranspose(mptSmp.nC5Speed);
-		relnote = (int8)(f2t >> 7);
-		finetune = (int8)(f2t & 0x7F);
+		relnote = static_cast<int8>(f2t / 128);
+		finetune = static_cast<int8>(f2t & 0x7F);
 	}
 
 	flags = 0;
@@ -401,7 +400,7 @@ void XMSample::ConvertToMPT(ModSample &mptSmp) const
 		mptSmp.nLoopEnd /= 2;
 	}
 
-	if((flags & (XMSample::sampleLoop | XMSample::sampleBidiLoop)) && mptSmp.nLoopStart < mptSmp.nLength && mptSmp.nLoopEnd > mptSmp.nLoopStart)
+	if((flags & (XMSample::sampleLoop | XMSample::sampleBidiLoop)) && mptSmp.nLoopEnd > mptSmp.nLoopStart)
 	{
 		mptSmp.uFlags.set(CHN_LOOP);
 		if((flags & XMSample::sampleBidiLoop))
@@ -410,7 +409,7 @@ void XMSample::ConvertToMPT(ModSample &mptSmp) const
 		}
 	}
 
-	strcpy(mptSmp.filename, "");
+	mptSmp.filename = "";
 }
 
 

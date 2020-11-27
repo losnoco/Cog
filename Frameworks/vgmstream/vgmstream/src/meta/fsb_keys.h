@@ -1,13 +1,6 @@
 #ifndef _FSB_KEYS_H_
 #define _FSB_KEYS_H_
 
-typedef struct {
-    int is_fsb5; /* FSB5 or FSB4/3*/
-    int is_alt; /* alt XOR mode (seemingly not tied to FSB version or anything) */
-    size_t fsbkey_size;
-    const uint8_t *fsbkey;
-} fsbkey_info;
-
 /**
  * List of known keys, found in aluigi's site (http://aluigi.altervista.org), forums, guessfsb.exe or manually.
  */
@@ -78,21 +71,37 @@ static const uint8_t key_gh5[] = { 0xFC,0xF9,0xE4,0xB3,0xF5,0x57,0x5C,0xA5,0xAC,
 /* Sekiro: Shadows Die Twice (PC) */ //"G0KTrWjS9syqF7vVD6RaVXlFD91gMgkC"
 static const uint8_t key_sek[] = { 0x47,0x30,0x4B,0x54,0x72,0x57,0x6A,0x53,0x39,0x73,0x79,0x71,0x46,0x37,0x76,0x56,0x44,0x36,0x52,0x61,0x56,0x58,0x6C,0x46,0x44,0x39,0x31,0x67,0x4D,0x67,0x6B,0x43 };
 
+/* SCP: Unity (PC) */ //"BasicEncryptionKey"
+static const uint8_t key_scp[] = { 0x42,0x61,0x73,0x69,0x63,0x45,0x6E,0x63,0x72,0x79,0x70,0x74,0x69,0x6F,0x6E,0x4B,0x65,0x79 };
+
+/* Guitar Hero: Metallica (X360) */
+static const uint8_t key_ghm[] = { 0x8C,0xFA,0xF3,0x14,0xB1,0x53,0xDA,0xAB,0x2B,0x82,0x6B,0xD5,0x55,0x16,0xCF,0x01,0x90,0x20,0x28,0x14,0xB1,0x53,0xD8 };
+
+/* Worms Rumble Beta (PC) */ //"FXnTffGJ9LS855Gc"
+static const uint8_t key_wrb[] = { 0x46,0x58,0x6E,0x54,0x66,0x66,0x47,0x4A,0x39,0x4C,0x53,0x38,0x35,0x35,0x47,0x63 };
+
 // Unknown:
 // - Battle: Los Angeles
 // - Guitar Hero: Warriors of Rock, DJ hero FSB
 // - Longmenkezhan
 // - Gas Guzzlers: Combat Carnage (PC?) "C5FA83EA64B34EC2BFE" hex or text? [FSB5]
 
+typedef struct {
+    int is_fsb5; /* FSB5 or FSB4/3*/
+    int is_alt; /* alt XOR mode (seemingly not tied to FSB version or anything) */
+    size_t fsbkey_size;
+    const uint8_t *fsbkey;
+} fsbkey_info;
+
 static const fsbkey_info fsbkey_list[] = {
         { 0,0, sizeof(key_dj2),key_dj2 },
-        { 0,0, sizeof(key_dfp),key_dfp },
+        { 0,0, sizeof(key_dfp),key_dfp },//FSB4
         { 1,0, sizeof(key_dfp),key_dfp },//untested
         { 1,1, sizeof(key_dfp),key_dfp },//untested
-        { 1,0, sizeof(key_npp),key_npp },
-        { 1,0, sizeof(key_sms),key_sms },
-        { 1,0, sizeof(key_gfs),key_gfs },
-        { 1,0, sizeof(key_rev),key_rev },
+        { 1,0, sizeof(key_npp),key_npp },//FSB5
+        { 1,0, sizeof(key_sms),key_sms },//FSB5
+        { 1,0, sizeof(key_gfs),key_gfs },//FSB5
+        { 1,0, sizeof(key_rev),key_rev },//FSB5
         { 1,0, sizeof(key_ds3),key_ds3 },//untested
         { 1,1, sizeof(key_ds3),key_ds3 },
         { 1,0, sizeof(key_mkx),key_mkx },//untested
@@ -141,7 +150,9 @@ static const fsbkey_info fsbkey_list[] = {
         { 0,1, sizeof(key_mtj),key_mtj },// FSB3
         { 0,1, sizeof(key_gh5),key_gh5 },// FSB4
         { 1,0, sizeof(key_sek),key_sek },// FSB5
-
+        { 1,0, sizeof(key_scp),key_scp },// FSB5
+        { 0,1, sizeof(key_ghm),key_ghm },// FSB4
+        { 1,0, sizeof(key_wrb),key_wrb },// FSB5
 };
 static const int fsbkey_list_count = sizeof(fsbkey_list) / sizeof(fsbkey_list[0]);
 

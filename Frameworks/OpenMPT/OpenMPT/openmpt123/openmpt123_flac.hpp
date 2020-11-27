@@ -21,9 +21,16 @@
 typedef _off_t off_t;
 #endif
 #endif
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
 #include <FLAC/metadata.h>
 #include <FLAC/format.h>
 #include <FLAC/stream_encoder.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 namespace openmpt123 {
 	

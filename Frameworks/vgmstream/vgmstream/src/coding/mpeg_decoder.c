@@ -3,11 +3,7 @@
 #include "../vgmstream.h"
 
 #ifdef VGM_USE_MPEG
-#ifdef __MACOSX__
 #include <mpg123/mpg123.h>
-#else
-#include <mpg123.h>
-#endif
 #include "mpeg_decoder.h"
 
 
@@ -509,8 +505,7 @@ void free_mpeg(mpeg_codec_data *data) {
 }
 
 /* seeks stream to 0 */
-void reset_mpeg(VGMSTREAM *vgmstream) {
-    mpeg_codec_data *data = vgmstream->codec_data;
+void reset_mpeg(mpeg_codec_data* data) {
     if (!data) return;
 
     flush_mpeg(data);
@@ -595,6 +590,10 @@ void flush_mpeg(mpeg_codec_data * data) {
     data->bytes_in_buffer = 0;
     data->buffer_full = 0;
     data->buffer_used = 0;
+}
+
+int mpeg_get_sample_rate(mpeg_codec_data* data) {
+    return data->sample_rate_per_frame;
 }
 
 long mpeg_bytes_to_samples(long bytes, const mpeg_codec_data *data) {

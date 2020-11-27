@@ -29,15 +29,11 @@ General hints
   determined beforehand.
 * Strings can be safely handled using:
   * `FileReader::ReadString` and friends for reading them directly from a file
-  * `mpt::String::Read` for reading them from a struct or char array,
-  * `mpt::String::Copy` for copying between char arrays or `std::string`.
+  * `mpt::String::ReadBuf` for reading them from a struct or char array
 
-  "Read" functions take care of string padding (zero / space padding), so those
-  should be used when extracting strings from files. "Copy" should only be used
-  on strings that have previously been read using the "Read" functions.
-  If the target is a char array rather than a `std::string`, these will take
-  care of properly null-terminating the target char array, and prevent reading
-  past the end of a (supposedly null-terminated) source char array.
+  These functions take care of string padding (zero / space padding) and will
+  avoid reading past the end of the string if there is no terminating null
+  character.
 * Do not use non-const static variables in your loader. Loaders need to be
   thread-safe for libopenmpt.
 * `FileReader` instances may be used to treat a portion of another file as its
@@ -52,7 +48,8 @@ General hints
   `MODTYPE`.
 * Do not rely on hard-coded magic numbers. For example, when comparing if an
   index is valid for a given array, do not hard-code the array size but rather
-  use `mpt::size` or, for ensuring that char arrays are null-terminated,
+  use `std::size` (or `mpt::array_size` in contexts where `std::size` is not
+  usable) or, for ensuring that char arrays are null-terminated,
   `mpt::String::SetNullTerminator`. Similarly, do not assume any specific
   quantities for OpenMPT's constants like MAX_SAMPLES, MAX_PATTERN_ROWS, etc.
   These may change at any time.

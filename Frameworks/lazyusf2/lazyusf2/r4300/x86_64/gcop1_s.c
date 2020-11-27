@@ -39,6 +39,7 @@
 #include "r4300/instr_counters.h"
 #endif
 
+#ifdef DYNAREC
 void genadd_s(usf_state_t * state)
 {
 #if defined(COUNT_INSTR)
@@ -715,4 +716,4 @@ void genc_ngt_s(usf_state_t * state)
    and_m32rel_imm32(state, (unsigned int*)&state->FCR31, ~0x800000); // 11
 #endif
 }
-
+#endif

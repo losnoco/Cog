@@ -124,29 +124,6 @@ VGMSTREAM* init_vgmstream_ktsr(STREAMFILE* sf) {
             vgmstream->layout_type = layout_layered;
             vgmstream->coding_type = coding_ATRAC9;
             break;
-
-#if 0
-            atrac9_config cfg = {0};
-            if (ktsr.channels > 1) {
-                VGM_LOG("1\n");
-                goto fail;
-            }
-
-            /* 0x00: samples per frame */
-            /* 0x02: frame size */
-            cfg.config_data = read_u32be(ktsr.extra_offset + 0x04, sf_b);
-            if ((cfg.config_data & 0xFF) == 0xFE) /* later versions(?) in LE */
-                cfg.config_data = read_u32le(ktsr.extra_offset + 0x04, sf_b);
-
-            cfg.channels = vgmstream->channels;
-            cfg.encoder_delay = 256; /* observed default (ex. Attack on Titan PC vs Vita) */
-
-            vgmstream->codec_data = init_atrac9(&cfg);
-            if (!vgmstream->codec_data) goto fail;
-            vgmstream->coding_type = coding_ATRAC9;
-            vgmstream->layout_type = layout_none;
-            break;
-#endif
         }
 #endif
 
@@ -312,6 +289,8 @@ static int parse_ktsr_subfile(ktsr_header* ktsr, STREAMFILE* sf, off_t offset) {
     switch(type) { /* hash-id? */
 
         case 0x38D0437D: /* external [Nioh (PC), Atelier Ryza (PC)] */
+        case 0xDF92529F: /* external [Atelier Ryza (PC)] */
+        case 0x6422007C: /* external [Atelier Ryza (PC)] */
             /* 08 subtype? (ex. 0x522B86B9)
              * 0c channels
              * 10 ? (always 0x002706B8)
@@ -465,7 +444,6 @@ static void parse_longname(ktsr_header* ktsr, STREAMFILE* sf, uint32_t target_id
 
         offset += size;
     }
-
 }
 
 static int parse_ktsr(ktsr_header* ktsr, STREAMFILE* sf) {
@@ -503,6 +481,7 @@ static int parse_ktsr(ktsr_header* ktsr, STREAMFILE* sf) {
             case 0x6172DBA8: /* padding (empty) */
             case 0xBD888C36: /* config (floats, stream id, etc, may have extended name) */
             case 0xC9C48EC1: /* unknown (has some string inside like "boss") */
+            case 0xA9D23BF1: /* "state container", some kind of config/floats, witgh names like 'State_bgm01'..N */
                 break;
 
             case 0xC5CCCB70: /* sound (internal data or external stream) */

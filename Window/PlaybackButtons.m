@@ -46,10 +46,10 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 		NSImage *image = nil;
 
 		if (playbackStatus == kCogStatusPlaying) {
-			image = [NSImage imageNamed:@"pauseTemplate"];
+            image = [NSImage imageNamed:@"pauseTemplate"];
 		}
 		else {
-			image = [NSImage imageNamed:@"playTemplate"];
+            image = [NSImage imageNamed:@"playTemplate"];
 		}
 		
 		[self setImage:image forSegment:1];

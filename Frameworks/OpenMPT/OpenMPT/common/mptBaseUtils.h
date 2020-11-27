@@ -30,6 +30,10 @@
 #include <math.h>
 #include <stdlib.h>
 
+#if MPT_COMPILER_MSVC
+#include <intrin.h>
+#endif
+
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -49,45 +53,65 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
+namespace mpt
+{
+template <typename T, std::size_t N, typename Tx>
+MPT_CONSTEXPR14_FUN std::array<T, N> init_array(const Tx & x)
+{
+	std::array<T, N> result{};
+	for(std::size_t i = 0; i < N; ++i)
+	{
+		result[i] = x;
+	}
+	return result;
+}
+} // namespace mpt
+
+
+
+namespace mpt
+{
+
+// Work-around for the requirement of at least 1 non-throwing function argument combination in C++ (17,2a).
+
+template <typename Exception>
+MPT_CONSTEXPR14_FUN bool constexpr_throw_helper(Exception && e, bool really = true)
+{
+	//return !really ? really : throw std::forward<Exception>(e);
+	if(really)
+	{
+		throw std::forward<Exception>(e);
+	}
+	// cppcheck-suppress identicalConditionAfterEarlyExit
+	return really;
+}
+template <typename Exception>
+MPT_CONSTEXPR14_FUN bool constexpr_throw(Exception && e)
+{
+	return mpt::constexpr_throw_helper(std::forward<Exception>(e));
+}
+
+template <typename T, typename Exception>
+constexpr T constexpr_throw_helper(Exception && e, bool really = true)
+{
+	//return !really ? really : throw std::forward<Exception>(e);
+	if(really)
+	{
+		throw std::forward<Exception>(e);
+	}
+	return T{};
+}
+template <typename T, typename Exception>
+constexpr T constexpr_throw(Exception && e)
+{
+	return mpt::constexpr_throw_helper<T>(std::forward<Exception>(e));
+}
+
+}  // namespace mpt
+
+
 
 namespace mpt {
-
-//  GCC 4.5 and up provides templated overloads of std::abs that convert
-// integer type narrower than int to double.
-//  This is fixed as of GCC 7.1.
-//  As this is apparently valid by the current standard, Library Working Group
-// Issue #2735 has been filed (see
-// <https://cplusplus.github.io/LWG/lwg-defects.html#2735>).
-//  In any case, avoid this insanity and provide our own mpt::abs implementation
-// for signed integer and floating point types.
-//  Note: We stick to a C++98-style implementation only overloading int and
-// greater types in order to keep promotion rules consistent for narrower types,
-// which a templated version returning the argument type would not do. OpenMPT
-// probably assumes this semantic when calling abs(int8) in various places.
-inline int abs(int x)
-{
-	return std::abs(x);
-}
-inline long abs(long x)
-{
-	return std::abs(x);
-}
-inline long long abs(long long x)
-{
-	return std::abs(x);
-}
-inline float abs(float x)
-{
-	return std::fabs(x);
-}
-inline double abs(double x)
-{
-	return std::fabs(x);
-}
-inline long double abs(long double x)
-{
-	return std::fabs(x);
-}
 
 // Modulo with more intuitive behaviour for some contexts:
 // Instead of being symmetrical around 0, the pattern for positive numbers is repeated in the negative range.
@@ -118,46 +142,46 @@ template <typename Tdst, typename Tsrc>
 inline Tdst saturate_cast(Tsrc src)
 {
 	// This code tries not only to obviously avoid overflows but also to avoid signed/unsigned comparison warnings and type truncation warnings (which in fact would be safe here) by explicit casting.
-	STATIC_ASSERT(std::numeric_limits<Tdst>::is_integer);
-	STATIC_ASSERT(std::numeric_limits<Tsrc>::is_integer);
-	MPT_CONSTANT_IF(std::numeric_limits<Tdst>::is_signed && std::numeric_limits<Tsrc>::is_signed)
+	static_assert(std::numeric_limits<Tdst>::is_integer);
+	static_assert(std::numeric_limits<Tsrc>::is_integer);
+	if constexpr(std::numeric_limits<Tdst>::is_signed && std::numeric_limits<Tsrc>::is_signed)
 	{
-		MPT_CONSTANT_IF(sizeof(Tdst) >= sizeof(Tsrc))
+		if constexpr(sizeof(Tdst) >= sizeof(Tsrc))
 		{
 			return static_cast<Tdst>(src);
 		} else
 		{
-			return static_cast<Tdst>(std::max<Tsrc>(static_cast<Tsrc>(std::numeric_limits<Tdst>::min()), std::min<Tsrc>(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max()))));
+			return static_cast<Tdst>(std::max(static_cast<Tsrc>(std::numeric_limits<Tdst>::min()), std::min(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max()))));
 		}
-	} else MPT_CONSTANT_IF(!std::numeric_limits<Tdst>::is_signed && !std::numeric_limits<Tsrc>::is_signed)
+	} else if constexpr(!std::numeric_limits<Tdst>::is_signed && !std::numeric_limits<Tsrc>::is_signed)
 	{
-		MPT_CONSTANT_IF(sizeof(Tdst) >= sizeof(Tsrc))
+		if constexpr(sizeof(Tdst) >= sizeof(Tsrc))
 		{
 			return static_cast<Tdst>(src);
 		} else
 		{
-			return static_cast<Tdst>(std::min<Tsrc>(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max())));
+			return static_cast<Tdst>(std::min(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max())));
 		}
-	} else MPT_CONSTANT_IF(std::numeric_limits<Tdst>::is_signed && !std::numeric_limits<Tsrc>::is_signed)
+	} else if constexpr(std::numeric_limits<Tdst>::is_signed && !std::numeric_limits<Tsrc>::is_signed)
 	{
-		MPT_CONSTANT_IF(sizeof(Tdst) > sizeof(Tsrc))
+		if constexpr(sizeof(Tdst) > sizeof(Tsrc))
 		{
 			return static_cast<Tdst>(src);
-		} else MPT_CONSTANT_IF(sizeof(Tdst) == sizeof(Tsrc))
+		} else if constexpr(sizeof(Tdst) == sizeof(Tsrc))
 		{
-			return static_cast<Tdst>(std::min<Tsrc>(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max())));
+			return static_cast<Tdst>(std::min(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max())));
 		} else
 		{
-			return static_cast<Tdst>(std::min<Tsrc>(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max())));
+			return static_cast<Tdst>(std::min(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max())));
 		}
 	} else // Tdst unsigned, Tsrc signed
 	{
-		MPT_CONSTANT_IF(sizeof(Tdst) >= sizeof(Tsrc))
+		if constexpr(sizeof(Tdst) >= sizeof(Tsrc))
 		{
-			return static_cast<Tdst>(std::max<Tsrc>(0, src));
+			return static_cast<Tdst>(std::max(static_cast<Tsrc>(0), src));
 		} else
 		{
-			return static_cast<Tdst>(std::max<Tsrc>(0, std::min<Tsrc>(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max()))));
+			return static_cast<Tdst>(std::max(static_cast<Tsrc>(0), std::min(src, static_cast<Tsrc>(std::numeric_limits<Tdst>::max()))));
 		}
 	}
 }
@@ -165,11 +189,11 @@ inline Tdst saturate_cast(Tsrc src)
 template <typename Tdst>
 inline Tdst saturate_cast(double src)
 {
-	if(src >= std::numeric_limits<Tdst>::max())
+	if(src >= static_cast<double>(std::numeric_limits<Tdst>::max()))
 	{
 		return std::numeric_limits<Tdst>::max();
 	}
-	if(src <= std::numeric_limits<Tdst>::min())
+	if(src <= static_cast<double>(std::numeric_limits<Tdst>::min()))
 	{
 		return std::numeric_limits<Tdst>::min();
 	}
@@ -179,11 +203,11 @@ inline Tdst saturate_cast(double src)
 template <typename Tdst>
 inline Tdst saturate_cast(float src)
 {
-	if(src >= std::numeric_limits<Tdst>::max())
+	if(src >= static_cast<float>(std::numeric_limits<Tdst>::max()))
 	{
 		return std::numeric_limits<Tdst>::max();
 	}
-	if(src <= std::numeric_limits<Tdst>::min())
+	if(src <= static_cast<float>(std::numeric_limits<Tdst>::min()))
 	{
 		return std::numeric_limits<Tdst>::min();
 	}
@@ -191,51 +215,51 @@ inline Tdst saturate_cast(float src)
 }
 
 
-template <typename T>
-MPT_CONSTEXPR14_FUN std::size_t weight(T val) noexcept
-{
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	typedef typename std::make_unsigned<T>::type Tunsigned;
-	Tunsigned uval = static_cast<Tunsigned>(val);
-	std::size_t result = 0;
-	while(uval > 0)
-	{
-		if(uval & 0x1)
-		{
-			result++;
-		}
-		uval >>= 1;
-	}
-	return result;
-}
-
 #if MPT_CXX_AT_LEAST(20)
 
-using std::ispow2;
-using std::ceil2;
-using std::floor2;
-using std::log2p1;
+using std::popcount;
+using std::has_single_bit;
+using std::bit_ceil;
+using std::bit_floor;
+using std::bit_width;
+using std::rotl;
+using std::rotr;
 
 #else
 
 // C++20 <bit> header.
 // Note that we do not use SFINAE here but instead rely on static_assert.
-// Also note that for C++11 compilers, these functions are not constexpr.
-// They could be implemented recursively to make them C++11 constexpr compatible if needed.
 
 template <typename T>
-MPT_CONSTEXPR14_FUN bool ispow2(T x) noexcept
+MPT_CONSTEXPR14_FUN int popcount(T val) noexcept
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::is_unsigned<T>::value);
-	return mpt::weight(x) == 1;
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::is_unsigned<T>::value);
+	int result = 0;
+	while(val > 0)
+	{
+		if(val & 0x1)
+		{
+			result++;
+		}
+		val >>= 1;
+	}
+	return result;
 }
 
 template <typename T>
-MPT_CONSTEXPR14_FUN T ceil2(T x) noexcept
+MPT_CONSTEXPR14_FUN bool has_single_bit(T x) noexcept
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::is_unsigned<T>::value);
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::is_unsigned<T>::value);
+	return mpt::popcount(x) == 1;
+}
+
+template <typename T>
+MPT_CONSTEXPR14_FUN T bit_ceil(T x) noexcept
+{
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::is_unsigned<T>::value);
 	T result = 1;
 	while(result < x)
 	{
@@ -250,10 +274,10 @@ MPT_CONSTEXPR14_FUN T ceil2(T x) noexcept
 }
 
 template <typename T>
-MPT_CONSTEXPR14_FUN T floor2(T x) noexcept
+MPT_CONSTEXPR14_FUN T bit_floor(T x) noexcept
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::is_unsigned<T>::value);
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::is_unsigned<T>::value);
 	if(x == 0)
 	{
 		return 0;
@@ -272,10 +296,10 @@ MPT_CONSTEXPR14_FUN T floor2(T x) noexcept
 }
  
 template <typename T>
-MPT_CONSTEXPR14_FUN T log2p1(T x) noexcept
+MPT_CONSTEXPR14_FUN T bit_width(T x) noexcept
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::is_unsigned<T>::value);
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::is_unsigned<T>::value);
 	T result = 0;
 	while(x > 0)
 	{
@@ -285,56 +309,48 @@ MPT_CONSTEXPR14_FUN T log2p1(T x) noexcept
 	return result;
 }
 
+namespace detail
+{
+
+template <typename T>
+MPT_CONSTEXPR14_FUN T rotl(T x, int r) noexcept
+{
+	auto N = std::numeric_limits<T>::digits;
+	return (x >> (N - r)) | (x << r);
+}
+
+template <typename T>
+MPT_CONSTEXPR14_FUN T rotr(T x, int r) noexcept
+{
+	auto N = std::numeric_limits<T>::digits;
+	return (x << (N - r)) | (x >> r);
+}
+
+} // namespace detail
+
+template <typename T>
+MPT_CONSTEXPR14_FUN T rotl(T x, int s) noexcept
+{
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::is_unsigned<T>::value);
+	auto N = std::numeric_limits<T>::digits;
+	auto r = s % N;
+	return (s < 0) ? detail::rotr(x, -s) : ((x >> (N - r)) | (x << r));
+}
+
+template <typename T>
+MPT_CONSTEXPR14_FUN T rotr(T x, int s) noexcept
+{
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::is_unsigned<T>::value);
+	auto N = std::numeric_limits<T>::digits;
+	auto r = s % N;
+	return (s < 0) ? detail::rotl(x, -s) : ((x << (N - r)) | (x >> r));
+}
+
 #endif
 
 } // namespace mpt
-
-
-#if defined(MODPLUG_TRACKER)
-// Tracker code requires MIN/MAX to work in constexpr contexts.
-// We could make MIN/MAX constexpr for supporting compilers,
-// but that would just needlessly complicate the support matrix
-// for now.
-#ifndef MPT_MINMAX_MACROS
-#define MPT_MINMAX_MACROS
-#endif
-#endif
-
-#if MPT_COMPILER_MSVC
-// MSVC disables a bunch of type conversion warnings once a macro is involved.
-// Replacing the macro with a template thus spews a TON OF WARNINGS for now.
-#ifndef MPT_MINMAX_MACROS
-#define MPT_MINMAX_MACROS
-#endif
-#endif
-
-#if defined(MPT_MINMAX_MACROS)
-
-#define MAX(a,b) (((a) > (b)) ? (a) : (b))
-
-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
-
-#else
-
-namespace mpt { namespace Legacy {
-
-template <typename Ta, typename Tb>
-MPT_FORCEINLINE auto MAX(const Ta &a, const Tb &b) -> decltype((a>b)?a:b)
-{
-	return (a > b) ? a : b;
-}
-
-template <typename Ta, typename Tb>
-MPT_FORCEINLINE auto MIN(const Ta &a, const Tb &b) -> decltype((a<b)?a:b)
-{
-	return (a < b) ? a : b;
-}
-
-} } // namespace mpt::Legacy
-
-using namespace mpt::Legacy;
-
-#endif
 
 
 namespace Util
@@ -348,10 +364,10 @@ struct ModIfNotZeroImpl
 	template <typename Tval>
 	inline Tval mod(Tval x)
 	{
-		STATIC_ASSERT(std::numeric_limits<Tmod>::is_integer);
-		STATIC_ASSERT(!std::numeric_limits<Tmod>::is_signed);
-		STATIC_ASSERT(std::numeric_limits<Tval>::is_integer);
-		STATIC_ASSERT(!std::numeric_limits<Tval>::is_signed);
+		static_assert(std::numeric_limits<Tmod>::is_integer);
+		static_assert(!std::numeric_limits<Tmod>::is_signed);
+		static_assert(std::numeric_limits<Tval>::is_integer);
+		static_assert(!std::numeric_limits<Tval>::is_signed);
 		return static_cast<Tval>(x % m);
 	}
 };
@@ -389,8 +405,8 @@ inline T ExponentialGrow(const T &x, const Tlimit &limit)
 	{
 		return 2;
 	}
-	T add = std::min<T>(x >> 1, std::numeric_limits<T>::max() - x);
-	return std::min<T>(x + add, mpt::saturate_cast<T>(limit));
+	T add = std::min(x >> 1, std::numeric_limits<T>::max() - x);
+	return std::min(x + add, mpt::saturate_cast<T>(limit));
 }
 									
 template <typename T>
@@ -400,34 +416,6 @@ inline T ExponentialGrow(const T &x)
 }
 
 } //namespace Util
-
-
-namespace mpt
-{
-
-// C++17 clamp
-
-#if MPT_CXX_AT_LEAST(17)
-
-using std::clamp;
-
-#else
-
-template<typename T, typename Compare>
-MPT_CONSTEXPR11_FUN const T & clamp(const T & v, const T & lo, const T & hi, Compare comp)
-{
-	return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
-}
-
-template<typename T>
-MPT_CONSTEXPR11_FUN const T & clamp(const T & v, const T & lo, const T & hi)
-{
-	return mpt::clamp(v, lo, hi, std::less<T>());
-}
-
-#endif
-
-} // namespace mpt
 
 
 // Limits 'val' to given range. If 'val' is less than 'lowerLimit', 'val' is set to value 'lowerLimit'.
@@ -489,8 +477,8 @@ namespace mpt
 template <typename T>
 MPT_FORCEINLINE auto rshift_signed_standard(T x, int y) -> decltype(x >> y)
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_signed);
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::numeric_limits<T>::is_signed);
 	typedef decltype(x >> y) result_type;
 	typedef typename std::make_unsigned<result_type>::type unsigned_result_type;
 	const unsigned_result_type roffset = static_cast<unsigned_result_type>(1) << ((sizeof(result_type) * 8) - 1);
@@ -505,8 +493,8 @@ MPT_FORCEINLINE auto rshift_signed_standard(T x, int y) -> decltype(x >> y)
 template <typename T>
 MPT_FORCEINLINE auto lshift_signed_standard(T x, int y) -> decltype(x << y)
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_signed);
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::numeric_limits<T>::is_signed);
 	typedef decltype(x << y) result_type;
 	typedef typename std::make_unsigned<result_type>::type unsigned_result_type;
 	const unsigned_result_type roffset = static_cast<unsigned_result_type>(1) << ((sizeof(result_type) * 8) - 1);
@@ -523,16 +511,16 @@ MPT_FORCEINLINE auto lshift_signed_standard(T x, int y) -> decltype(x << y)
 template <typename T>
 MPT_FORCEINLINE auto rshift_signed_undefined(T x, int y) -> decltype(x >> y)
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_signed);
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::numeric_limits<T>::is_signed);
 	return x >> y;
 }
 
 template <typename T>
 MPT_FORCEINLINE auto lshift_signed_undefined(T x, int y) -> decltype(x << y)
 {
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_integer);
-	MPT_STATIC_ASSERT(std::numeric_limits<T>::is_signed);
+	static_assert(std::numeric_limits<T>::is_integer);
+	static_assert(std::numeric_limits<T>::is_signed);
 	return x << y;
 }
 
@@ -564,9 +552,22 @@ MPT_FORCEINLINE auto lshift_signed(T x, int y) -> decltype(x << y)
 
 #endif
 
-} // namespace mpt
+template<typename>
+struct array_size;
 
+template <typename T, std::size_t N>
+struct array_size<std::array<T, N>>
+{
+	static constexpr std::size_t size = N;
+};
 
+template <typename T, std::size_t N>
+struct array_size<T[N]>
+{
+	static constexpr std::size_t size = N;
+};
+
+}  // namespace mpt
 
 namespace Util
 {
@@ -574,8 +575,7 @@ namespace Util
 	// Returns maximum value of given integer type.
 	template <class T> constexpr T MaxValueOfType(const T&) {static_assert(std::numeric_limits<T>::is_integer == true, "Only integer types are allowed."); return (std::numeric_limits<T>::max)();}
 
-}
-
+}  // namespace Util
 
 namespace mpt
 {
@@ -674,60 +674,6 @@ namespace Util {
 	}
 
 } // namespace Util
-
-
-
-namespace mpt
-{
-
-#if MPT_CXX_AT_LEAST(17)
-
-using std::gcd;
-using std::lcm;
-
-#else
-
-	// Greatest Common Divisor. Always returns non-negative number.
-	// compatible with C++17 std::gcd
-	template <typename A, typename B>
-	inline typename std::common_type<A, B>::type gcd(A a_, B b_)
-	{
-		typename std::common_type<A, B>::type a = a_;
-		typename std::common_type<A, B>::type b = b_;
-		if(a < 0)
-			a = -a;
-		if(b < 0)
-			b = -b;
-		for(;;)
-		{
-			if(a == 0)
-				return b;
-			b %= a;
-			if(b == 0)
-				return a;
-			a %= b;
-		}
-	}
-
-	// Least Common Multiple. Always returns non-negative number.
-	// compatible with C++17 std::lcm
-	template <typename A, typename B>
-	inline typename std::common_type<A, B>::type lcm(A a_, B b_)
-	{
-		typename std::common_type<A, B>::type a = a_;
-		typename std::common_type<A, B>::type b = b_;
-		if(a < 0)
-			a = -a;
-		if(b < 0)
-			b = -b;
-		if((a | b) == 0)
-			return 0;
-		return a / mpt::gcd(a, b) * b;
-	}
-
-#endif
-
-} // namespace mpt
 
 
 

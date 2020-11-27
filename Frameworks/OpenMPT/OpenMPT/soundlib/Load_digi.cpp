@@ -130,7 +130,7 @@ bool CSoundFile::ReadDIGI(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("DigiBooster");
 	m_modFormat.type = U_("digi");
 	m_modFormat.madeWithTracker = mpt::format(U_("Digi Booster %1.%2"))(fileHeader.versionInt >> 4, fileHeader.versionInt & 0x0F);
-	m_modFormat.charset = mpt::CharsetISO8859_1;
+	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
 	ReadOrderFromArray(Order(), fileHeader.orders, fileHeader.lastOrdIndex + 1);
 
@@ -148,7 +148,7 @@ bool CSoundFile::ReadDIGI(FileReader &file, ModLoadingFlags loadFlags)
 		}
 		sample.SanitizeLoops();
 	
-		sample.nVolume = std::min<uint8>(fileHeader.smpVolume[smp], 64) * 4;
+		sample.nVolume = std::min(fileHeader.smpVolume[smp].get(), uint8(64)) * 4;
 		sample.nFineTune = MOD2XMFineTune(fileHeader.smpFinetune[smp]);
 	}
 

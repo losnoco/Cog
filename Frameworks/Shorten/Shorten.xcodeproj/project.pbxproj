@@ -176,8 +176,8 @@
 				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
-						DevelopmentTeam = N6E749HJ2X;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 4S876G9VCD;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -245,8 +245,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -260,6 +263,7 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -271,7 +275,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -285,6 +292,7 @@
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "$(CACHE_ROOT)/SharedPrecompiledHeaders";
 				SKIP_INSTALL = YES;
@@ -333,7 +341,7 @@
 					../../include,
 					include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
@@ -378,7 +386,7 @@
 					../../include,
 					include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};

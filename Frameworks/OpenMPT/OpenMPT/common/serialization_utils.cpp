@@ -14,9 +14,9 @@
 
 #include <istream>
 #include <ostream>
+#include <sstream>
 
 #include "misc_util.h"
-#include "mptBufferIO.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -26,11 +26,13 @@ namespace srlztn
 {
 
 
-//#define SSB_LOGGING
+#ifdef MPT_ALL_LOGGING
+#define SSB_LOGGING
+#endif
 
 
 #ifdef SSB_LOGGING
-#define SSB_LOG(x) Log(x)
+#define SSB_LOG(x) MPT_LOG(LogDebug, "serialization", x)
 #else
 #define SSB_LOG(x) MPT_DO { } MPT_WHILE_0
 #endif
@@ -73,7 +75,7 @@ static void WriteAdaptive12String(std::ostream& oStrm, const std::string& str)
 
 void WriteItemString(std::ostream& oStrm, const std::string &str)
 {
-	uint32 id = static_cast<uint32>(std::min<std::size_t>(str.size(), (uint32_max >> 4))) << 4;
+	uint32 id = static_cast<uint32>(std::min(str.size(), static_cast<std::size_t>((uint32_max >> 4)))) << 4;
 	id |= 12; // 12 == 1100b
 	Binarywrite<uint32>(oStrm, id);
 	id >>= 4;
@@ -91,7 +93,7 @@ void ReadItemString(std::istream& iStrm, std::string& str, const DataSize)
 	const uint8 nSizeBytes = (id & 12) >> 2; // 12 == 1100b
 	if (nSizeBytes > 0)
 	{
-		uint8 bytes = std::min<uint8>(3, nSizeBytes);
+		uint8 bytes = std::min(uint8(3), nSizeBytes);
 		uint8 v2 = 0;
 		uint8 v3 = 0;
 		uint8 v4 = 0;
@@ -102,7 +104,7 @@ void ReadItemString(std::istream& iStrm, std::string& str, const DataSize)
 		id |= (v2 << 8) | (v3 << 16) | (v4 << 24);
 	}
 	// Limit to 1 MB.
-	str.resize(std::min<std::size_t>(id >> 4, 1000000));
+	str.resize(std::min(id >> 4, uint32(1000000)));
 	for(size_t i = 0; i < str.size(); i++)
 		iStrm.read(&str[i], 1);
 
@@ -116,7 +118,7 @@ mpt::ustring ID::AsString() const
 {
 	if(IsPrintable())
 	{
-		return mpt::ToUnicode(mpt::CharsetISO8859_1, m_ID);
+		return mpt::ToUnicode(mpt::Charset::ISO8859_1, m_ID);
 	}
 	if(m_ID.length() > 8)
 	{
@@ -133,22 +135,22 @@ const char Ssb::s_EntryID[3] = {'2','2','8'};
 
 
 #ifdef SSB_LOGGING
-static const MPT_UCHAR_TYPE tstrWriteHeader[] = UL_("Write header with ID = %1\n");
-static const MPT_UCHAR_TYPE tstrWriteProgress[] = UL_("Wrote entry: {num, id, rpos, size} = {%1, %2, %3, %4}\n");
-static const MPT_UCHAR_TYPE tstrWritingMap[] = UL_("Writing map to rpos: %1\n");
-static const MPT_UCHAR_TYPE tstrMapEntryWrite[] = UL_("Writing map entry: id=%1, rpos=%2, size=%3\n");
-static const MPT_UCHAR_TYPE strWriteNote[] = UL_("Write note: ");
-static const MPT_UCHAR_TYPE tstrEndOfStream[] = UL_("End of stream(rpos): %1\n");
+static const mpt::uchar tstrWriteHeader[] = UL_("Write header with ID = %1\n");
+static const mpt::uchar tstrWriteProgress[] = UL_("Wrote entry: {num, id, rpos, size} = {%1, %2, %3, %4}\n");
+static const mpt::uchar tstrWritingMap[] = UL_("Writing map to rpos: %1\n");
+static const mpt::uchar tstrMapEntryWrite[] = UL_("Writing map entry: id=%1, rpos=%2, size=%3\n");
+static const mpt::uchar strWriteNote[] = UL_("Write note: ");
+static const mpt::uchar tstrEndOfStream[] = UL_("End of stream(rpos): %1\n");
 
-static const MPT_UCHAR_TYPE tstrReadingHeader[] = UL_("Read header with expected ID = %1\n");
-static const MPT_UCHAR_TYPE strNoMapInFile[] = UL_("No map in the file.\n");
-static const MPT_UCHAR_TYPE strIdMismatch[] = UL_("ID mismatch, terminating read.\n");
-static const MPT_UCHAR_TYPE strIdMatch[] = UL_("ID match, continuing reading.\n");
-static const MPT_UCHAR_TYPE tstrReadingMap[] = UL_("Reading map from rpos: %1\n");
-static const MPT_UCHAR_TYPE tstrEndOfMap[] = UL_("End of map(rpos): %1\n");
-static const MPT_UCHAR_TYPE tstrReadProgress[] = UL_("Read entry: {num, id, rpos, size, desc} = {%1, %2, %3, %4, %5}\n");
-static const MPT_UCHAR_TYPE tstrNoEntryFound[] = UL_("No entry with id %1 found.\n");
-static const MPT_UCHAR_TYPE strReadNote[] = UL_("Read note: ");
+static const mpt::uchar tstrReadingHeader[] = UL_("Read header with expected ID = %1\n");
+static const mpt::uchar strNoMapInFile[] = UL_("No map in the file.\n");
+static const mpt::uchar strIdMismatch[] = UL_("ID mismatch, terminating read.\n");
+static const mpt::uchar strIdMatch[] = UL_("ID match, continuing reading.\n");
+static const mpt::uchar tstrReadingMap[] = UL_("Reading map from rpos: %1\n");
+static const mpt::uchar tstrEndOfMap[] = UL_("End of map(rpos): %1\n");
+static const mpt::uchar tstrReadProgress[] = UL_("Read entry: {num, id, rpos, size, desc} = {%1, %2, %3, %4, %5}\n");
+static const mpt::uchar tstrNoEntryFound[] = UL_("No entry with id %1 found.\n");
+static const mpt::uchar strReadNote[] = UL_("Read note: ");
 #endif
 
 
@@ -246,7 +248,7 @@ void SsbWrite::WriteMapItem(const ID &id,
 					rposDataStart,
 					nDatasize));
 
-	mpt::ostringstream mapStream;
+	std::ostringstream mapStream;
 
 	if(m_nIdbytes > 0)
 	{
@@ -386,8 +388,11 @@ void SsbWrite::OnWroteItem(const ID &id, const Postype& posBeforeWrite)
 {
 	const Offtype nRawEntrySize = oStrm.tellp() - posBeforeWrite;
 
-	if (nRawEntrySize < 0 || static_cast<uint64>(nRawEntrySize) > std::numeric_limits<DataSize>::max())
-		{ AddWriteNote(SNW_INSUFFICIENT_DATASIZETYPE); return; }
+	MPT_MAYBE_CONSTANT_IF(nRawEntrySize < 0 || static_cast<uint64>(nRawEntrySize) > std::numeric_limits<DataSize>::max())
+	{
+		AddWriteNote(SNW_INSUFFICIENT_DATASIZETYPE);
+		return;
+	}
 
 	if(GetFlag(RwfRMapHasSize) && (nRawEntrySize < 0 || static_cast<uint64>(nRawEntrySize) > (std::numeric_limits<DataSize>::max() >> 2)))
 		{ AddWriteNote(SNW_DATASIZETYPE_OVERFLOW); return; }
@@ -555,8 +560,11 @@ void SsbRead::BeginRead(const ID &id, const uint64& nVersion)
 
 	const Offtype rawEndOfHdrData = iStrm.tellg() - m_posStart;
 
-	if (rawEndOfHdrData < 0 || static_cast<uint64>(rawEndOfHdrData) > std::numeric_limits<RposType>::max())
-		{ AddReadNote(SNR_INSUFFICIENT_RPOSTYPE); return; }
+	MPT_MAYBE_CONSTANT_IF(rawEndOfHdrData < 0 || static_cast<uint64>(rawEndOfHdrData) > std::numeric_limits<RposType>::max())
+	{
+		AddReadNote(SNR_INSUFFICIENT_RPOSTYPE);
+		return;
+	}
 
 	m_rposEndofHdrData = static_cast<RposType>(rawEndOfHdrData);
 	m_rposMapBegin = (GetFlag(RwfRwHasMap)) ? static_cast<RposType>(tempU64) : m_rposEndofHdrData;
@@ -718,7 +726,7 @@ void SsbWrite::FinishWrite()
 	}
 
 	// Seek to end.
-	oStrm.seekp(std::max<Postype>(posMapEnd, posDataEnd)); 
+	oStrm.seekp(std::max(posMapEnd, posDataEnd)); 
 
 	SSB_LOG(mpt::format(mpt::ustring(tstrEndOfStream))(oStrm.tellp() - m_posStart));
 }

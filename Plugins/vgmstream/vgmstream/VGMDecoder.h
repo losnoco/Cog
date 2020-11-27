@@ -28,6 +28,7 @@
 @interface VGMDecoder : NSObject <CogDecoder> {
     VGMSTREAM *stream;
 
+    BOOL playForever;
     int sampleRate;
     int channels;
     int bitrate;

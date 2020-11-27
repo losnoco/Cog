@@ -9,6 +9,22 @@
 /* Begin PBXBuildFile section */
 		830F884C19C9107E00420FB0 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		830F885F19C9145E00420FB0 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; };
+		8374715B2509BC1A00A6D7CA /* fft_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374714A2509BC1A00A6D7CA /* fft_arm.h */; };
+		8374715C2509BC1A00A6D7CA /* kiss_fft_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374714B2509BC1A00A6D7CA /* kiss_fft_armv4.h */; };
+		8374715F2509BC1A00A6D7CA /* fixed_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374714E2509BC1A00A6D7CA /* fixed_armv4.h */; };
+		837471612509BC1A00A6D7CA /* kiss_fft_armv5e.h in Headers */ = {isa = PBXBuildFile; fileRef = 837471502509BC1A00A6D7CA /* kiss_fft_armv5e.h */; };
+		837471622509BC1A00A6D7CA /* pitch_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 837471512509BC1A00A6D7CA /* pitch_arm.h */; };
+		837471632509BC1A00A6D7CA /* mdct_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 837471522509BC1A00A6D7CA /* mdct_arm.h */; };
+		837471642509BC1A00A6D7CA /* armcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 837471532509BC1A00A6D7CA /* armcpu.c */; };
+		837471652509BC1A00A6D7CA /* fixed_armv5e.h in Headers */ = {isa = PBXBuildFile; fileRef = 837471542509BC1A00A6D7CA /* fixed_armv5e.h */; };
+		837471662509BC1A00A6D7CA /* arm_celt_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 837471552509BC1A00A6D7CA /* arm_celt_map.c */; };
+		837471692509BC1A00A6D7CA /* celt_neon_intr.c in Sources */ = {isa = PBXBuildFile; fileRef = 837471582509BC1A00A6D7CA /* celt_neon_intr.c */; };
+		8374716A2509BC1A00A6D7CA /* armopts.s.in in Resources */ = {isa = PBXBuildFile; fileRef = 837471592509BC1A00A6D7CA /* armopts.s.in */; };
+		8374716B2509BC1A00A6D7CA /* armcpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374715A2509BC1A00A6D7CA /* armcpu.h */; };
+		837471712509C5D100A6D7CA /* macros_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374716D2509C5D100A6D7CA /* macros_armv4.h */; };
+		837471722509C5D100A6D7CA /* SigProc_FIX_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374716E2509C5D100A6D7CA /* SigProc_FIX_armv4.h */; };
+		837471732509C5D100A6D7CA /* macros_armv5e.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374716F2509C5D100A6D7CA /* macros_armv5e.h */; };
+		837471742509C5D100A6D7CA /* SigProc_FIX_armv5e.h in Headers */ = {isa = PBXBuildFile; fileRef = 837471702509C5D100A6D7CA /* SigProc_FIX_armv5e.h */; };
 		8375B07017FFEABB0092A79F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8375B06E17FFEABB0092A79F /* InfoPlist.strings */; };
 		8375B20B17FFEB2C0092A79F /* _kiss_fft_guts.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A317FFEB2C0092A79F /* _kiss_fft_guts.h */; };
 		8375B20C17FFEB2C0092A79F /* arch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A417FFEB2C0092A79F /* arch.h */; };
@@ -273,6 +289,22 @@
 /* Begin PBXFileReference section */
 		830F884119C9105E00420FB0 /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = ../Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
 		833F68421CDBCABC00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8374714A2509BC1A00A6D7CA /* fft_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft_arm.h; sourceTree = "<group>"; };
+		8374714B2509BC1A00A6D7CA /* kiss_fft_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft_armv4.h; sourceTree = "<group>"; };
+		8374714E2509BC1A00A6D7CA /* fixed_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed_armv4.h; sourceTree = "<group>"; };
+		837471502509BC1A00A6D7CA /* kiss_fft_armv5e.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft_armv5e.h; sourceTree = "<group>"; };
+		837471512509BC1A00A6D7CA /* pitch_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pitch_arm.h; sourceTree = "<group>"; };
+		837471522509BC1A00A6D7CA /* mdct_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mdct_arm.h; sourceTree = "<group>"; };
+		837471532509BC1A00A6D7CA /* armcpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = armcpu.c; sourceTree = "<group>"; };
+		837471542509BC1A00A6D7CA /* fixed_armv5e.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed_armv5e.h; sourceTree = "<group>"; };
+		837471552509BC1A00A6D7CA /* arm_celt_map.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = arm_celt_map.c; sourceTree = "<group>"; };
+		837471582509BC1A00A6D7CA /* celt_neon_intr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = celt_neon_intr.c; sourceTree = "<group>"; };
+		837471592509BC1A00A6D7CA /* armopts.s.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = armopts.s.in; sourceTree = "<group>"; };
+		8374715A2509BC1A00A6D7CA /* armcpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = armcpu.h; sourceTree = "<group>"; };
+		8374716D2509C5D100A6D7CA /* macros_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros_armv4.h; sourceTree = "<group>"; };
+		8374716E2509C5D100A6D7CA /* SigProc_FIX_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigProc_FIX_armv4.h; sourceTree = "<group>"; };
+		8374716F2509C5D100A6D7CA /* macros_armv5e.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros_armv5e.h; sourceTree = "<group>"; };
+		837471702509C5D100A6D7CA /* SigProc_FIX_armv5e.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigProc_FIX_armv5e.h; sourceTree = "<group>"; };
 		8375B06217FFEABB0092A79F /* Opus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Opus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8375B06D17FFEABB0092A79F /* Opus-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Opus-Info.plist"; sourceTree = "<group>"; };
 		8375B06F17FFEABB0092A79F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -520,6 +552,36 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		837471492509BC1A00A6D7CA /* arm */ = {
+			isa = PBXGroup;
+			children = (
+				837471552509BC1A00A6D7CA /* arm_celt_map.c */,
+				837471532509BC1A00A6D7CA /* armcpu.c */,
+				8374715A2509BC1A00A6D7CA /* armcpu.h */,
+				837471592509BC1A00A6D7CA /* armopts.s.in */,
+				837471582509BC1A00A6D7CA /* celt_neon_intr.c */,
+				8374714A2509BC1A00A6D7CA /* fft_arm.h */,
+				8374714E2509BC1A00A6D7CA /* fixed_armv4.h */,
+				837471542509BC1A00A6D7CA /* fixed_armv5e.h */,
+				8374714B2509BC1A00A6D7CA /* kiss_fft_armv4.h */,
+				837471502509BC1A00A6D7CA /* kiss_fft_armv5e.h */,
+				837471522509BC1A00A6D7CA /* mdct_arm.h */,
+				837471512509BC1A00A6D7CA /* pitch_arm.h */,
+			);
+			path = arm;
+			sourceTree = "<group>";
+		};
+		8374716C2509C5D100A6D7CA /* arm */ = {
+			isa = PBXGroup;
+			children = (
+				8374716D2509C5D100A6D7CA /* macros_armv4.h */,
+				8374716E2509C5D100A6D7CA /* SigProc_FIX_armv4.h */,
+				8374716F2509C5D100A6D7CA /* macros_armv5e.h */,
+				837471702509C5D100A6D7CA /* SigProc_FIX_armv5e.h */,
+			);
+			path = arm;
+			sourceTree = "<group>";
+		};
 		8375B05817FFEABB0092A79F = {
 			isa = PBXGroup;
 			children = (
@@ -588,6 +650,7 @@
 		8375B0A217FFEB2C0092A79F /* celt */ = {
 			isa = PBXGroup;
 			children = (
+				837471492509BC1A00A6D7CA /* arm */,
 				837928B81C293C78005DBCEA /* x86 */,
 				837928AF1C293C6F005DBCEA /* cpu_support.h */,
 				837928DA1C29406E005DBCEA /* celt_encoder.c */,
@@ -656,6 +719,7 @@
 		8375B10917FFEB2C0092A79F /* silk */ = {
 			isa = PBXGroup;
 			children = (
+				8374716C2509C5D100A6D7CA /* arm */,
 				837928CB1C293CA1005DBCEA /* x86 */,
 				8375B10A17FFEB2C0092A79F /* A2NLSF.c */,
 				8375B10B17FFEB2C0092A79F /* ana_filt_bank_1.c */,
@@ -900,11 +964,14 @@
 				8375B30417FFEB2C0092A79F /* tables.h in Headers */,
 				8375B2B817FFEB2C0092A79F /* main_FLP.h in Headers */,
 				8375B2D817FFEB2C0092A79F /* macros.h in Headers */,
+				837471712509C5D100A6D7CA /* macros_armv4.h in Headers */,
 				837928D61C293CA1005DBCEA /* SigProc_FIX_sse.h in Headers */,
 				837928C51C293C78005DBCEA /* pitch_sse.h in Headers */,
 				8375B27617FFEB2C0092A79F /* control.h in Headers */,
 				8375B2E417FFEB2C0092A79F /* pitch_est_defines.h in Headers */,
+				837471732509C5D100A6D7CA /* macros_armv5e.h in Headers */,
 				8375B2D917FFEB2C0092A79F /* main.h in Headers */,
+				837471612509BC1A00A6D7CA /* kiss_fft_armv5e.h in Headers */,
 				8375B22417FFEB2C0092A79F /* laplace.h in Headers */,
 				8375B23117FFEB2C0092A79F /* quant_bands.h in Headers */,
 				8375B22F17FFEB2C0092A79F /* pitch.h in Headers */,
@@ -917,12 +984,15 @@
 				8375B30117FFEB2C0092A79F /* structs.h in Headers */,
 				8375B31C17FFEB2C0092A79F /* opus_private.h in Headers */,
 				8375B25417FFEB2C0092A79F /* opus_custom.h in Headers */,
+				837471652509BC1A00A6D7CA /* fixed_armv5e.h in Headers */,
 				8375B20C17FFEB2C0092A79F /* arch.h in Headers */,
 				8375B22817FFEB2C0092A79F /* mdct.h in Headers */,
 				8375B30C17FFEB2C0092A79F /* tuning_parameters.h in Headers */,
 				8375B2E717FFEB2C0092A79F /* PLC.h in Headers */,
 				8375B2ED17FFEB2C0092A79F /* resampler_private.h in Headers */,
+				837471622509BC1A00A6D7CA /* pitch_arm.h in Headers */,
 				8375B27B17FFEB2C0092A79F /* debug.h in Headers */,
+				837471742509C5D100A6D7CA /* SigProc_FIX_armv5e.h in Headers */,
 				8375B21417FFEB2C0092A79F /* celt_lpc.h in Headers */,
 				8375B36917FFEFFF0092A79F /* version.h in Headers */,
 				8375B2F717FFEB2C0092A79F /* SigProc_FIX.h in Headers */,
@@ -934,6 +1004,7 @@
 				8375B23317FFEB2C0092A79F /* rate.h in Headers */,
 				8375B22017FFEB2C0092A79F /* float_cast.h in Headers */,
 				8375B20B17FFEB2C0092A79F /* _kiss_fft_guts.h in Headers */,
+				8374715C2509BC1A00A6D7CA /* kiss_fft_armv4.h in Headers */,
 				8375B21717FFEB2C0092A79F /* ecintrin.h in Headers */,
 				837928B41C293C6F005DBCEA /* static_modes_fixed_arm_ne10.h in Headers */,
 				8375B30D17FFEB2C0092A79F /* typedef.h in Headers */,
@@ -941,14 +1012,18 @@
 				8375B22217FFEB2C0092A79F /* kiss_fft.h in Headers */,
 				8375B23517FFEB2C0092A79F /* static_modes_fixed.h in Headers */,
 				8375B22917FFEB2C0092A79F /* mfrngcod.h in Headers */,
+				8374715F2509BC1A00A6D7CA /* fixed_armv4.h in Headers */,
+				837471632509BC1A00A6D7CA /* mdct_arm.h in Headers */,
 				8375B22617FFEB2C0092A79F /* mathops.h in Headers */,
 				837928B51C293C6F005DBCEA /* static_modes_float_arm_ne10.h in Headers */,
 				8375B21D17FFEB2C0092A79F /* entenc.h in Headers */,
 				8375B36817FFEFFF0092A79F /* config.h in Headers */,
 				8375B21F17FFEB2C0092A79F /* fixed_generic.h in Headers */,
 				8375B2D617FFEB2C0092A79F /* MacroCount.h in Headers */,
+				8374715B2509BC1A00A6D7CA /* fft_arm.h in Headers */,
 				8375B21617FFEB2C0092A79F /* cwrs.h in Headers */,
 				837928D31C293CA1005DBCEA /* main_sse.h in Headers */,
+				8374716B2509BC1A00A6D7CA /* armcpu.h in Headers */,
 				8375B2D717FFEB2C0092A79F /* MacroDebug.h in Headers */,
 				837928E01C2940A9005DBCEA /* analysis.h in Headers */,
 				8375B35217FFEB2C0092A79F /* internal.h in Headers */,
@@ -956,6 +1031,7 @@
 				8375B2C717FFEB2C0092A79F /* structs_FLP.h in Headers */,
 				8375B28417FFEB2C0092A79F /* define.h in Headers */,
 				8375B21B17FFEB2C0092A79F /* entdec.h in Headers */,
+				837471722509C5D100A6D7CA /* SigProc_FIX_armv4.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -992,8 +1068,8 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8375B06117FFEABB0092A79F = {
-						DevelopmentTeam = N6E749HJ2X;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 4S876G9VCD;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -1045,6 +1121,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8375B07017FFEABB0092A79F /* InfoPlist.strings in Resources */,
+				8374716A2509BC1A00A6D7CA /* armopts.s.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1096,6 +1173,7 @@
 				8375B27C17FFEB2C0092A79F /* dec_API.c in Sources */,
 				8375B2EA17FFEB2C0092A79F /* resampler.c in Sources */,
 				837928D81C293CA1005DBCEA /* VQ_WMat_EC_sse.c in Sources */,
+				837471662509BC1A00A6D7CA /* arm_celt_map.c in Sources */,
 				837928C41C293C78005DBCEA /* pitch_sse.c in Sources */,
 				8375B2F517FFEB2C0092A79F /* shell_coder.c in Sources */,
 				8375B2CC17FFEB2C0092A79F /* init_decoder.c in Sources */,
@@ -1107,6 +1185,7 @@
 				8375B28317FFEB2C0092A79F /* decoder_set_fs.c in Sources */,
 				8375B2E817FFEB2C0092A79F /* process_NLSFs.c in Sources */,
 				8375B26D17FFEB2C0092A79F /* A2NLSF.c in Sources */,
+				837471692509BC1A00A6D7CA /* celt_neon_intr.c in Sources */,
 				8375B2E217FFEB2C0092A79F /* NSQ.c in Sources */,
 				8375B2AE17FFEB2C0092A79F /* find_LTP_FLP.c in Sources */,
 				8375B2B917FFEB2C0092A79F /* noise_shape_analysis_FLP.c in Sources */,
@@ -1184,6 +1263,7 @@
 				8375B2E017FFEB2C0092A79F /* NLSF_VQ.c in Sources */,
 				8375B30E17FFEB2C0092A79F /* VAD.c in Sources */,
 				8375B23017FFEB2C0092A79F /* quant_bands.c in Sources */,
+				837471642509BC1A00A6D7CA /* armcpu.c in Sources */,
 				8375B21A17FFEB2C0092A79F /* entdec.c in Sources */,
 				8375B27E17FFEB2C0092A79F /* decode_frame.c in Sources */,
 				8375B2A817FFEB2C0092A79F /* burg_modified_FLP.c in Sources */,
@@ -1278,7 +1358,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -1325,7 +1405,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -1333,7 +1413,10 @@
 		8375B08B17FFEABB0092A79F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1364,6 +1447,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.libopus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -1373,7 +1457,10 @@
 		8375B08C17FFEABB0092A79F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1401,6 +1488,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.libopus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;

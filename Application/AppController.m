@@ -12,6 +12,7 @@
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
 #import "FontSizetoLineHeightTransformer.h"
+#import "Cog-Swift.h"
 #import "PathNode.h"
 #import <CogAudio/Status.h>
 
@@ -36,6 +37,9 @@
     NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
     [NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
                                     forName:@"MiniModeMenuTitleTransformer"];
+    
+    NSValueTransformer *playbackStatusToHiddenTransformer = [[PlaybackStatusToHiddenTransformer alloc] init];
+    [NSValueTransformer setValueTransformer:playbackStatusToHiddenTransformer forName:@"PlaybackStatusToHiddenTransformer"];
 }
 
 
@@ -330,15 +334,31 @@
 	}
 }
 
-- (IBAction)donate:(id)sender
+- (IBAction)openLiberapayPage:(id)sender
 {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.me/kode54"]];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://liberapay.com/kode54"]];
 }
 
-- (IBAction)patreon:(id)sender
+- (IBAction)openPaypalPage:(id)sender
 {
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.com/paypalme/kode54"]];
 }
+
+- (IBAction)openBitcoinPage:(id)sender
+{
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://kode54.net/donateBitcoin"]];
+}
+
+- (IBAction)openPatreonPage:(id)sender
+{
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://patreon.com/kode54"]];
+}
+
+- (IBAction)openKofiPage:(id)sender
+{
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://ko-fi.com/kode54"]];
+}
+
 
 - (IBAction)feedback:(id)sender
 {

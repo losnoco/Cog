@@ -43,7 +43,7 @@ void InstrumentEnvelope::Convert(MODTYPE fromType, MODTYPE toType)
 		}
 
 		// XM -> IT / MPTM: Shorten loop by one tick by inserting bogus point
-		if(nLoopEnd > nLoopStart && dwFlags[ENV_LOOP])
+		if(nLoopEnd > nLoopStart && dwFlags[ENV_LOOP] && nLoopEnd < size())
 		{
 			if(at(nLoopEnd).tick - 1 > at(nLoopEnd - 1).tick)
 			{
@@ -138,46 +138,15 @@ void InstrumentEnvelope::Sanitize(uint8 maxValue)
 
 ModInstrument::ModInstrument(SAMPLEINDEX sample)
 {
-	nFadeOut = 256;
-	dwFlags.reset();
-	nGlobalVol = 64;
-	nPan = 32 * 4;
-
-	nNNA = NNA_NOTECUT;
-	nDCT = DCT_NONE;
-	nDNA = DNA_NOTECUT;
-
-	nPanSwing = 0;
-	nVolSwing = 0;
 	SetCutoff(0, false);
 	SetResonance(0, false);
 
-	wMidiBank = 0;
-	nMidiProgram = 0;
-	nMidiChannel = 0;
-	nMidiDrumKey = 0;
-	midiPWD = 2;
-
-	nPPC = NOTE_MIDDLEC - 1;
-	nPPS = 0;
-
-	nMixPlug = 0;
-	nVolRampUp = 0;
-	resampling = SRCMODE_DEFAULT;
-	nCutSwing = 0;
-	nResSwing = 0;
-	nFilterMode = FLTMODE_UNCHANGED;
 	pitchToTempoLock.Set(0);
-	pluginVelocityHandling = PLUGIN_VELOCITYHANDLING_CHANNEL;
-	pluginVolumeHandling = PLUGIN_VOLUMEHANDLING_IGNORE;
 
 	pTuning = CSoundFile::GetDefaultTuning();
 
 	AssignSample(sample);
 	ResetNoteMap();
-
-	MemsetZero(name);
-	MemsetZero(filename);
 }
 
 
@@ -195,7 +164,7 @@ void ModInstrument::Convert(MODTYPE fromType, MODTYPE toType)
 		dwFlags.reset(INS_SETPANNING);
 		SetCutoff(GetCutoff(), false);
 		SetResonance(GetResonance(), false);
-		nFilterMode = FLTMODE_UNCHANGED;
+		filterMode = FilterMode::Unchanged;
 
 		nCutSwing = nPanSwing = nResSwing = nVolSwing = 0;
 
@@ -208,11 +177,11 @@ void ModInstrument::Convert(MODTYPE fromType, MODTYPE toType)
 
 		if(nMidiChannel == MidiMappedChannel)
 		{
-			nMidiChannel = 1;
+			nMidiChannel = MidiFirstChannel;
 		}
 
 		// FT2 only has unsigned Pitch Wheel Depth, and it's limited to 0...36 (in the GUI, at least. As you would expect it from FT2, this value is actually not sanitized on load).
-		midiPWD = static_cast<int8>(mpt::abs(midiPWD));
+		midiPWD = static_cast<int8>(std::abs(midiPWD));
 		Limit(midiPWD, int8(0), int8(36));
 
 		nGlobalVol = 64;
@@ -253,7 +222,7 @@ void ModInstrument::Convert(MODTYPE fromType, MODTYPE toType)
 		SetTuning(nullptr);
 		pitchToTempoLock.Set(0);
 		nCutSwing = nResSwing = 0;
-		nFilterMode = FLTMODE_UNCHANGED;
+		filterMode = FilterMode::Unchanged;
 		nVolRampUp = 0;
 	}
 }
@@ -264,12 +233,11 @@ std::set<SAMPLEINDEX> ModInstrument::GetSamples() const
 {
 	std::set<SAMPLEINDEX> referencedSamples;
 
-	for(size_t i = 0; i < CountOf(Keyboard); i++)
+	for(const auto sample : Keyboard)
 	{
-		// 0 isn't a sample.
-		if(Keyboard[i] != 0)
+		if(sample)
 		{
-			referencedSamples.insert(Keyboard[i]);
+			referencedSamples.insert(sample);
 		}
 	}
 
@@ -281,12 +249,11 @@ std::set<SAMPLEINDEX> ModInstrument::GetSamples() const
 // The caller has to initialize the vector.
 void ModInstrument::GetSamples(std::vector<bool> &referencedSamples) const
 {
-	for(size_t i = 0; i < CountOf(Keyboard); i++)
+	for(const auto sample : Keyboard)
 	{
-		// 0 isn't a sample.
-		if(Keyboard[i] != 0 && Keyboard[i] < referencedSamples.size())
+		if(sample != 0 && sample < referencedSamples.size())
 		{
-			referencedSamples[Keyboard[i]] = true;
+			referencedSamples[sample] = true;
 		}
 	}
 }
@@ -324,10 +291,22 @@ void ModInstrument::Sanitize(MODTYPE modType)
 	PanEnv.Sanitize();
 	PitchEnv.Sanitize(range);
 
-	for(size_t i = 0; i < CountOf(NoteMap); i++)
+	for(size_t i = 0; i < std::size(NoteMap); i++)
 	{
 		if(NoteMap[i] < NOTE_MIN || NoteMap[i] > NOTE_MAX)
 			NoteMap[i] = static_cast<uint8>(i + NOTE_MIN);
+	}
+
+	if(!Resampling::IsKnownMode(resampling))
+		resampling = SRCMODE_DEFAULT;
+}
+
+
+void ModInstrument::Transpose(int8 amount)
+{
+	for(auto &note : NoteMap)
+	{
+		note = static_cast<uint8>(Clamp(note + amount, NOTE_MIN, NOTE_MAX));
 	}
 }
 

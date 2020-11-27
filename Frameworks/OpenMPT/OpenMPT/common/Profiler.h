@@ -98,7 +98,7 @@ public:
 /**/
 
 
-#define OPENMPT_PROFILE_FUNCTION(cat) OPENMPT_PROFILE_SCOPE(cat, __FUNCTION__)
+#define OPENMPT_PROFILE_FUNCTION(cat) OPENMPT_PROFILE_SCOPE(cat, __func__)
 
 
 #else // !USE_PROFILER

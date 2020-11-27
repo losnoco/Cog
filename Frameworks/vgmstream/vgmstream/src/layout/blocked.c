@@ -1,11 +1,12 @@
 #include "layout.h"
 #include "../vgmstream.h"
+#include "../decode.h"
 
 
 /* Decodes samples for blocked streams.
  * Data is divided into headered blocks with a bunch of data. The layout calls external helper functions
  * when a block is decoded, and those must parse the new block and move offsets accordingly. */
-void render_vgmstream_blocked(sample_t * buffer, int32_t sample_count, VGMSTREAM * vgmstream) {
+void render_vgmstream_blocked(sample_t* buffer, int32_t sample_count, VGMSTREAM* vgmstream) {
     int samples_written = 0;
     int frame_size, samples_per_frame, samples_this_block;
 
@@ -52,7 +53,7 @@ void render_vgmstream_blocked(sample_t * buffer, int32_t sample_count, VGMSTREAM
             break;
         }
 
-        samples_to_do = vgmstream_samples_to_do(samples_this_block, samples_per_frame, vgmstream);
+        samples_to_do = get_vgmstream_samples_to_do(samples_this_block, samples_per_frame, vgmstream);
         if (samples_to_do > sample_count - samples_written)
             samples_to_do = sample_count - samples_written;
 
@@ -181,8 +182,8 @@ void block_update(off_t block_offset, VGMSTREAM * vgmstream) {
         case layout_blocked_vgs:
             block_update_vgs(block_offset,vgmstream);
             break;
-        case layout_blocked_vawx:
-            block_update_vawx(block_offset,vgmstream);
+        case layout_blocked_xwav:
+            block_update_xwav(block_offset,vgmstream);
             break;
         case layout_blocked_xvag_subsong:
             block_update_xvag_subsong(block_offset,vgmstream);

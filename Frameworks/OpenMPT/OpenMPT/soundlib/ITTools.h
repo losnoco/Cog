@@ -275,9 +275,9 @@ struct FileHistory;
 // IT Header extension: Save history
 struct ITHistoryStruct
 {
-	uint16le fatdate;	// DOS / FAT date when the file was opened / created in the editor. For details, read http://msdn.microsoft.com/en-us/library/ms724247(VS.85).aspx
-	uint16le fattime;	// DOS / FAT time when the file was opened / created in the editor.
-	uint32le runtime;	// The time how long the file was open in the editor, in 1/18.2th seconds. (= ticks of the DOS timer)
+	uint16le fatdate;  // DOS / FAT date when the file was opened / created in the editor. For details, read https://docs.microsoft.com/de-de/windows/win32/api/winbase/nf-winbase-dosdatetimetofiletime
+	uint16le fattime;  // DOS / FAT time when the file was opened / created in the editor.
+	uint32le runtime;  // The time how long the file was open in the editor, in 1/18.2th seconds. (= ticks of the DOS timer)
 
 	// Convert an ITHistoryStruct to OpenMPT's internal edit history representation
 	void ConvertToMPT(FileHistory &mptHistory) const;
@@ -307,9 +307,9 @@ enum IT_ReaderBitMasks
 template<int32 y, int32 m, int32 d>
 struct SchismVersionFromDate
 {
-	enum : int32 { mm = (m + 9) % 12 };
-	enum : int32 { yy = y - mm / 10 };
-	enum : int32 { date = yy * 365 + yy / 4 - yy / 100 + yy / 400 + (mm * 306 + 5) / 10 + (d - 1) };
+	static constexpr int32 mm = (m + 9) % 12;
+	static constexpr int32 yy = y - mm / 10;
+	static constexpr int32 date = yy * 365 + yy / 4 - yy / 100 + yy / 400 + (mm * 306 + 5) / 10 + (d - 1);
 
 	static constexpr int32 Version(const int32 trackerID = 0x1000)
 	{

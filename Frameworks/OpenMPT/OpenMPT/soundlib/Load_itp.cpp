@@ -47,7 +47,7 @@ struct ITPModCommand
 	operator ModCommand() const
 	{
 		ModCommand result;
-		result.note = (ModCommand::IsNote(note) || ModCommand::IsSpecialNote(note)) ? note : NOTE_NONE;
+		result.note = (ModCommand::IsNote(note) || ModCommand::IsSpecialNote(note)) ? static_cast<ModCommand::NOTE>(note.get()) : static_cast<ModCommand::NOTE>(NOTE_NONE);
 		result.instr = instr;
 		result.command = (command < MAX_EFFECTS) ? static_cast<EffectCommand>(command.get()) : CMD_NONE;
 		result.volcmd = (volcmd < MAX_VOLCMDS) ? static_cast<VolumeCommand>(volcmd.get()) : VOLCMD_NONE;
@@ -237,9 +237,9 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 			instrPaths[ins] = mpt::PathString::FromUTF8(path);
 		}
 #ifdef MODPLUG_TRACKER
-		if(!file.GetFileName().empty())
+		if(const auto fileName = file.GetFileName(); !fileName.empty())
 		{
-			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(file.GetFileName().GetPath());
+			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(fileName.GetPath());
 		} else if(GetpModDoc() != nullptr)
 		{
 			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(GetpModDoc()->GetPathNameMpt().GetPath());
@@ -327,7 +327,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 		   && !memcmp(sampleHeader.id, "IMPS", 4))
 		{
 			sampleHeader.ConvertToMPT(Samples[realSample]);
-			mpt::String::Read<mpt::String::nullTerminated>(m_szNames[realSample], sampleHeader.name);
+			m_szNames[realSample] = mpt::String::ReadBuf(mpt::String::nullTerminated, sampleHeader.name);
 
 			// Read sample data
 			sampleHeader.GetSampleFormat().ReadSample(Samples[realSample], sampleData);
@@ -341,7 +341,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 
 #ifdef MPT_EXTERNAL_SAMPLES
-		InputFile f(instrPaths[ins]);
+		InputFile f(instrPaths[ins], SettingCacheCompleteFileBeforeLoading());
 		FileReader instrFile = GetFileReader(f);
 		if(!ReadInstrumentFromFile(ins + 1, instrFile, true))
 		{
@@ -390,7 +390,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 	m_nMinPeriod = 8;
 
 	// Before OpenMPT 1.20.01.09, the MIDI macros were always read from the file, even if the "embed" flag was not set.
-	if(m_dwLastSavedWithVersion >= MAKE_VERSION_NUMERIC(1,20,01,09) && !(songFlags & ITP_EMBEDMIDICFG))
+	if(m_dwLastSavedWithVersion >= MPT_V("1.20.01.09") && !(songFlags & ITP_EMBEDMIDICFG))
 	{
 		m_MidiCfg.Reset();
 	}
@@ -398,7 +398,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("Impulse Tracker Project");
 	m_modFormat.type = U_("itp");
 	m_modFormat.madeWithTracker = U_("OpenMPT ") + mpt::ufmt::val(m_dwLastSavedWithVersion);
-	m_modFormat.charset = mpt::CharsetWindows1252;
+	m_modFormat.charset = mpt::Charset::Windows1252;
 
 	return true;
 #endif // MPT_EXTERNAL_SAMPLES

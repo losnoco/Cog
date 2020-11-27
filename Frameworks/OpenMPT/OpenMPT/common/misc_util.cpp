@@ -20,13 +20,13 @@ namespace Util
 {
 
 
-static const MPT_UCHAR_TYPE EncodeNibble[16] = {
+static constexpr mpt::uchar EncodeNibble[16] = {
 	UC_('0'), UC_('1'), UC_('2'), UC_('3'),
 	UC_('4'), UC_('5'), UC_('6'), UC_('7'),
 	UC_('8'), UC_('9'), UC_('A'), UC_('B'),
 	UC_('C'), UC_('D'), UC_('E'), UC_('F') };
 
-static inline bool DecodeByte(uint8 &byte, MPT_UCHAR_TYPE c1, MPT_UCHAR_TYPE c2)
+static inline bool DecodeByte(uint8 &byte, mpt::uchar c1, mpt::uchar c2)
 {
 	byte = 0;
 	if(UC_('0') <= c1 && c1 <= UC_('9'))
@@ -62,7 +62,7 @@ mpt::ustring BinToHex(mpt::const_byte_span src)
 {
 	mpt::ustring result;
 	result.reserve(src.size() * 2);
-	for(mpt::byte byte : src)
+	for(std::byte byte : src)
 	{
 		result.push_back(EncodeNibble[(mpt::byte_cast<uint8>(byte) & 0xf0) >> 4]);
 		result.push_back(EncodeNibble[mpt::byte_cast<uint8>(byte) & 0x0f]);
@@ -70,9 +70,9 @@ mpt::ustring BinToHex(mpt::const_byte_span src)
 	return result;
 }
 
-std::vector<mpt::byte> HexToBin(const mpt::ustring &src)
+std::vector<std::byte> HexToBin(const mpt::ustring &src)
 {
-	std::vector<mpt::byte> result;
+	std::vector<std::byte> result;
 	result.reserve(src.size() / 2);
 	for(std::size_t i = 0; (i + 1) < src.size(); i += 2)
 	{
@@ -81,7 +81,7 @@ std::vector<mpt::byte> HexToBin(const mpt::ustring &src)
 		{
 			return result;
 		}
-		result.push_back(mpt::byte_cast<mpt::byte>(byte));
+		result.push_back(mpt::byte_cast<std::byte>(byte));
 	}
 	return result;
 }

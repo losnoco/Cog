@@ -31,11 +31,11 @@ OPENMPT_NAMESPACE_BEGIN
 
 // Formats which have 7-bit (0...128) instead of 6-bit (0...64) global volume commands, or which are imported to this range (mostly formats which are converted to IT internally)
 #ifdef MODPLUG_TRACKER
-#define GLOBALVOL_7BIT_FORMATS_EXT (MOD_TYPE_MT2)
+static constexpr auto GLOBALVOL_7BIT_FORMATS_EXT = MOD_TYPE_MT2;
 #else
-#define GLOBALVOL_7BIT_FORMATS_EXT (MOD_TYPE_NONE)
+static constexpr auto GLOBALVOL_7BIT_FORMATS_EXT = MOD_TYPE_NONE;
 #endif // MODPLUG_TRACKER
-#define GLOBALVOL_7BIT_FORMATS (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_IMF | MOD_TYPE_J2B | MOD_TYPE_MID | MOD_TYPE_AMS | MOD_TYPE_DBM | MOD_TYPE_PTM | MOD_TYPE_MDL | MOD_TYPE_DTM | GLOBALVOL_7BIT_FORMATS_EXT)
+static constexpr auto GLOBALVOL_7BIT_FORMATS = MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_IMF | MOD_TYPE_J2B | MOD_TYPE_MID | MOD_TYPE_AMS | MOD_TYPE_DBM | MOD_TYPE_PTM | MOD_TYPE_MDL | MOD_TYPE_DTM | GLOBALVOL_7BIT_FORMATS_EXT;
 
 
 // Compensate frequency slide LUTs depending on whether we are handling periods or frequency - "up" and "down" in function name are seen from frequency perspective.
@@ -73,11 +73,11 @@ public:
 #endif
 	std::vector<ChnSettings> chnSettings;
 	double elapsedTime;
-	static const uint32 IGNORE_CHANNEL = uint32_max;
+	static constexpr uint32 IGNORE_CHANNEL = uint32_max;
 
 	GetLengthMemory(const CSoundFile &sf)
 		: sndFile(sf)
-		, state(mpt::make_unique<CSoundFile::PlayState>(sf.m_PlayState))
+		, state(std::make_unique<CSoundFile::PlayState>(sf.m_PlayState))
 	{
 		Reset();
 	}
@@ -127,22 +127,19 @@ public:
 			if(i >= portaStart)
 			{
 				chn.isFirstTick = false;
-				const ModCommand &p = *sndFile.Patterns[state->m_nPattern].GetpModCommand(state->m_nRow, channel);
-				if(p.command == CMD_TONEPORTAMENTO) sndFile.TonePortamento(chn, p.param);
-				else if(p.command == CMD_TONEPORTAVOL) sndFile.TonePortamento(chn, 0);
-				if(p.volcmd == VOLCMD_TONEPORTAMENTO)
+				const ModCommand &m = *sndFile.Patterns[state->m_nPattern].GetpModCommand(state->m_nRow, channel);
+				auto command = m.command;
+				if(m.volcmd == VOLCMD_TONEPORTAMENTO)
 				{
-					uint32 param = p.vol;
-					if(sndFile.GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_AMS | MOD_TYPE_DMF | MOD_TYPE_DBM | MOD_TYPE_IMF | MOD_TYPE_PSM | MOD_TYPE_J2B | MOD_TYPE_ULT | MOD_TYPE_OKT | MOD_TYPE_MT2 | MOD_TYPE_MDL))
-					{
-						param = ImpulseTrackerPortaVolCmd[param & 0x0F];
-					} else
-					{
-						// Close enough. Do not bother with idiosyncratic FT2 behaviour here.
-						param <<= 4;
-					}
-					sndFile.TonePortamento(chn, param);
+					const auto [porta, clearEffectCommand] = sndFile.GetVolCmdTonePorta(m, 0);
+					sndFile.TonePortamento(chn, porta);
+					if(clearEffectCommand)
+						command = CMD_NONE;
 				}
+				if(command == CMD_TONEPORTAMENTO)
+					sndFile.TonePortamento(chn, m.param);
+				else if(command == CMD_TONEPORTAVOL)
+					sndFile.TonePortamento(chn, 0);
 				updateInc = true;
 			}
 
@@ -159,6 +156,14 @@ public:
 
 			if(updateInc || chnSettings[channel].incChanged)
 			{
+				if(chn.m_CalculateFreq || chn.m_ReCalculateFreqOnFirstTick)
+				{
+					chn.RecalcTuningFreq(1, 0, sndFile);
+					if(!chn.m_CalculateFreq)
+						chn.m_ReCalculateFreqOnFirstTick = false;
+					else
+						chn.m_CalculateFreq = false;
+				}
 				chn.increment = sndFile.GetChannelIncrement(chn, period, 0);
 				chnSettings[channel].incChanged = false;
 				inc = chn.increment * tickDuration;
@@ -239,7 +244,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 	retval.startRow = target.startRow;
 
 	// Are we trying to reach a certain pattern position?
-	const bool hasSearchTarget = target.mode != GetLengthTarget::NoTarget;
+	const bool hasSearchTarget = target.mode != GetLengthTarget::NoTarget && target.mode != GetLengthTarget::GetAllSubsongs;
 	const bool adjustSamplePos = (adjustMode & eAdjustSamplePositions) == eAdjustSamplePositions;
 
 	SEQUENCEINDEX sequence = target.sequence;
@@ -277,7 +282,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 			const PATTERNINDEX seekPat = orderList[target.pos.order];
 			if(Patterns.IsValidPat(seekPat) && Patterns[seekPat].IsValidRow(target.pos.row))
 			{
-				const ModCommand *m = Patterns[seekPat].GetRow(target.pos.row);
+				const ModCommand *m = Patterns[seekPat].GetpModCommand(target.pos.row, 0);
 				for(CHANNELINDEX i = 0; i < GetNumChannels(); i++, m++)
 				{
 					if(m->note == NOTE_NOTECUT || m->note == NOTE_KEYOFF || (m->note == NOTE_FADE && GetNumInstruments())
@@ -295,14 +300,6 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 
 	for (;;)
 	{
-		// Time target reached.
-		if(target.mode == GetLengthTarget::SeekSeconds && memory.elapsedTime >= target.time)
-		{
-			retval.targetReached = true;
-			break;
-		}
-
-		uint32 rowDelay = 0, tickDelay = 0;
 		playState.m_nRow = playState.m_nNextRow;
 		playState.m_nCurrentOrder = playState.m_nNextOrder;
 
@@ -317,9 +314,16 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 			playState.m_nCurrentOrder = ++playState.m_nNextOrder;
 		}
 
+		// Time target reached.
+		if(target.mode == GetLengthTarget::SeekSeconds && memory.elapsedTime >= target.time)
+		{
+			retval.targetReached = true;
+			break;
+		}
+
 		// Check if pattern is valid
 		playState.m_nPattern = playState.m_nCurrentOrder < orderList.size() ? orderList[playState.m_nCurrentOrder] : orderList.GetInvalidPatIndex();
-		bool positionJumpOnThisRow = false;
+		bool positionJumpOnThisRow = false, positionJumpRightOfPatternLoop = false;
 		bool patternBreakOnThisRow = false;
 		bool patternLoopEndedOnThisRow = false, patternLoopStartedOnThisRow = false;
 
@@ -347,7 +351,12 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 			playState.m_nNextOrder = playState.m_nCurrentOrder;
 			if((!Patterns.IsValidPat(playState.m_nPattern)) && visitedRows.IsVisited(playState.m_nCurrentOrder, 0, true))
 			{
-				if(!hasSearchTarget || !visitedRows.GetFirstUnvisitedRow(playState.m_nNextOrder, playState.m_nRow, true))
+				if(!hasSearchTarget)
+				{
+					retval.lastOrder = playState.m_nCurrentOrder;
+					retval.lastRow = 0;
+				}
+				if(target.mode == GetLengthTarget::NoTarget || !visitedRows.GetFirstUnvisitedRow(playState.m_nNextOrder, playState.m_nRow, true))
 				{
 					// We aren't searching for a specific row, or we couldn't find any more unvisited rows.
 					break;
@@ -379,7 +388,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 			// If there isn't even a tune, we should probably stop here.
 			if(playState.m_nCurrentOrder == orderList.GetRestartPos())
 			{
-				if(!hasSearchTarget || !visitedRows.GetFirstUnvisitedRow(playState.m_nNextOrder, playState.m_nRow, true))
+				if(target.mode == GetLengthTarget::NoTarget || !visitedRows.GetFirstUnvisitedRow(playState.m_nNextOrder, playState.m_nRow, true))
 				{
 					// We aren't searching for a specific row, or we couldn't find any more unvisited rows.
 					break;
@@ -411,7 +420,12 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 
 		if(visitedRows.IsVisited(playState.m_nCurrentOrder, playState.m_nRow, true))
 		{
-			if(!hasSearchTarget || !visitedRows.GetFirstUnvisitedRow(playState.m_nNextOrder, playState.m_nRow, true))
+			if(!hasSearchTarget)
+			{
+				retval.lastOrder = playState.m_nCurrentOrder;
+				retval.lastRow = playState.m_nRow;
+			}
+			if(target.mode == GetLengthTarget::NoTarget || !visitedRows.GetFirstUnvisitedRow(playState.m_nNextOrder, playState.m_nRow, true))
 			{
 				// We aren't searching for a specific row, or we couldn't find any more unvisited rows.
 				break;
@@ -450,6 +464,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 		}
 
 		// For various effects, we need to know first how many ticks there are in this row.
+		uint32 rowDelay = 0, tickDelay = 0;
 		const ModCommand *p = Patterns[playState.m_nPattern].GetpModCommand(playState.m_nRow, 0);
 		for(CHANNELINDEX nChn = 0; nChn < GetNumChannels(); nChn++, p++)
 		{
@@ -541,7 +556,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 					if(chn.nNewIns <= GetNumInstruments() && (pIns = Instruments[chn.nNewIns]) != nullptr)
 					{
 						if(pIns->dwFlags[INS_SETPANNING])
-							chn.nPan = pIns->nPan;
+							chn.SetInstrumentPan(pIns->nPan, *this);
 						if(ModCommand::IsNote(note))
 							smp = pIns->Keyboard[note - NOTE_MIN];
 					}
@@ -552,7 +567,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				if(smp > 0 && smp <= GetNumSamples())
 				{
 					if(Samples[smp].uFlags[CHN_PANNING])
-						chn.nPan = Samples[smp].nPan;
+						chn.SetInstrumentPan(Samples[smp].nPan, *this);
 					if(Samples[smp].uFlags[CHN_ADLIB])
 					{
 						memory.state->Chn[nChn].Stop();
@@ -571,13 +586,22 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				if(chn.rowCommand.vol != 0)
 					chn.nOldVolParam = chn.rowCommand.vol;
 				break;
+			case VOLCMD_TONEPORTAMENTO:
+				if(chn.rowCommand.vol)
+				{
+					const auto [porta, clearEffectCommand] = GetVolCmdTonePorta(chn.rowCommand, 0);
+					chn.nPortamentoSlide = porta * 4;
+					if(clearEffectCommand)
+						command = CMD_NONE;
+				}
+				break;
 			}
 
 			switch(command)
 			{
 			// Position Jump
 			case CMD_POSITIONJUMP:
-				positionJumpOnThisRow = true;
+				positionJumpOnThisRow = positionJumpRightOfPatternLoop = true;
 				playState.m_nNextOrder = static_cast<ORDERINDEX>(CalculateXParam(playState.m_nPattern, playState.m_nRow, nChn));
 				playState.m_nNextPatStartRow = 0;  // FT2 E60 bug
 				// see https://forum.openmpt.org/index.php?topic=2769.0 - FastTracker resets Dxx if Bxx is called _after_ Dxx
@@ -665,11 +689,8 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				
 				case 0xB0:
 					// Pattern Loop
-					if (param & 0x0F)
 					{
-						patternLoopEndedOnThisRow = true;
-					} else
-					{
+						positionJumpRightOfPatternLoop = false;
 						CHANNELINDEX firstChn = nChn, lastChn = nChn;
 						if(GetType() == MOD_TYPE_S3M)
 						{
@@ -677,13 +698,28 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 							firstChn = 0;
 							lastChn = GetNumChannels() - 1;
 						}
-						for(CHANNELINDEX c = firstChn; c <= lastChn; c++)
+						if(param & 0x0F)
 						{
-							memory.chnSettings[c].patLoop = memory.elapsedTime;
-							memory.chnSettings[c].patLoopSmp = playState.m_lTotalSampleCount;
-							memory.chnSettings[c].patLoopStart = playState.m_nRow;
+							if(m_playBehaviour[kITPatternLoopTargetReset] || (GetType() == MOD_TYPE_S3M))
+							{
+								for(CHANNELINDEX c = firstChn; c <= lastChn; c++)
+								{
+									playState.Chn[c].nPatternLoop = playState.m_nRow + 1;
+								}
+							}
+							patternLoopEndedOnThisRow = true;
 						}
-						patternLoopStartedOnThisRow = true;
+						else
+						{
+							for(CHANNELINDEX c = firstChn; c <= lastChn; c++)
+							{
+								memory.chnSettings[c].patLoop = memory.elapsedTime;
+								memory.chnSettings[c].patLoopSmp = playState.m_lTotalSampleCount;
+								memory.chnSettings[c].patLoopStart = playState.m_nRow;
+								playState.Chn[c].nPatternLoop = playState.m_nRow;
+							}
+							patternLoopStartedOnThisRow = true;
+						}
 					}
 					break;
 
@@ -709,6 +745,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 						memory.chnSettings[nChn].patLoop = memory.elapsedTime;
 						memory.chnSettings[nChn].patLoopSmp = playState.m_lTotalSampleCount;
 						memory.chnSettings[nChn].patLoopStart = playState.m_nRow;
+						playState.Chn[nChn].nPatternLoop = playState.m_nRow;
 					}
 					break;
 
@@ -844,7 +881,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 						playState.Chn[channel].dwFlags.set(CHN_AMIGAFILTER, !(param & 1));
 					}
 				}
-				MPT_FALLTHROUGH;
+				[[fallthrough]];
 			case CMD_S3MCMDEX:
 				if((param & 0xF0) == 0x80)
 				{
@@ -855,7 +892,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 			case CMD_VIBRATOVOL:
 				if (param) chn.nOldVolumeSlide = param;
 				param = 0;
-				MPT_FALLTHROUGH;
+				[[fallthrough]];
 			case CMD_VIBRATO:
 				Vibrato(chn, param);
 				break;
@@ -1006,7 +1043,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 						SampleOffset(chn, offset);
 					} else if(m.command == CMD_OFFSETPERCENTAGE)
 					{
-						SampleOffset(chn, Util::muldiv_unsigned(chn.nLength, m.param, 255));
+						SampleOffset(chn, Util::muldiv_unsigned(chn.nLength, m.param, 256));
 					} else if(m.command == CMD_REVERSEOFFSET && chn.pModSample != nullptr)
 					{
 						memory.RenderChannel(nChn, oldTickDuration);	// Re-sync what we've got so far
@@ -1172,12 +1209,13 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 		oldTickDuration = tickDuration;
 
 		// Pattern loop is not executed in FT2 if there are any position jump or pattern break commands on the same row.
-		// Pattern loop is not executed in IT if there are any position jump commands on the same row.
+		// Pattern loop is not executed in IT if there are any position jump commands to the right (and to the left in older OpenMPT versions).
 		// Test case for FT2 exception: PatLoop-Jumps.xm, PatLoop-Various.xm
-		// Test case for IT: exception: LoopBreak.it
+		// Test case for IT: exception: LoopBreak.it, sbx-priority.it
 		if(patternLoopEndedOnThisRow
-			&& (!m_playBehaviour[kFT2PatternLoopWithJumps] || !(positionJumpOnThisRow || patternBreakOnThisRow))
-			&& (!m_playBehaviour[kITPatternLoopWithJumps] || !positionJumpOnThisRow))
+		   && (!m_playBehaviour[kFT2PatternLoopWithJumps] || !(positionJumpOnThisRow || patternBreakOnThisRow))
+		   && (!m_playBehaviour[kITPatternLoopWithJumpsOld] || !positionJumpOnThisRow)
+		   && (!m_playBehaviour[kITPatternLoopWithJumps] || !positionJumpRightOfPatternLoop))
 		{
 			std::map<double, int> startTimes;
 			// This is really just a simple estimation for nested pattern loops. It should handle cases correctly where all parallel loops start and end on the same row.
@@ -1193,17 +1231,18 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				{
 					const double start = memory.chnSettings[nChn].patLoop;
 					if(!startTimes[start]) startTimes[start] = 1;
-					startTimes[start] = mpt::lcm(startTimes[start], 1 + (param & 0x0F));
+					startTimes[start] = std::lcm(startTimes[start], 1 + (param & 0x0F));
 				}
 			}
-			for(const auto &i : startTimes)
+			for(const auto &[startTime, loopCount] : startTimes)
 			{
-				memory.elapsedTime += (memory.elapsedTime - i.first) * (double)(i.second - 1);
+				memory.elapsedTime += (memory.elapsedTime - startTime) * (loopCount - 1);
+				//memory.elapsedBeats += 1.0 / playState.m_nCurrentRowsPerBeat;
 				for(CHANNELINDEX nChn = 0; nChn < GetNumChannels(); nChn++)
 				{
-					if(memory.chnSettings[nChn].patLoop == i.first)
+					if(memory.chnSettings[nChn].patLoop == startTime)
 					{
-						playState.m_lTotalSampleCount += (playState.m_lTotalSampleCount - memory.chnSettings[nChn].patLoopSmp) * (i.second - 1);
+						playState.m_lTotalSampleCount += (playState.m_lTotalSampleCount - memory.chnSettings[nChn].patLoopSmp) * (loopCount - 1);
 						if(m_playBehaviour[kITPatternLoopTargetReset] || (GetType() == MOD_TYPE_S3M))
 						{
 							memory.chnSettings[nChn].patLoop = memory.elapsedTime;
@@ -1242,7 +1281,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 		}
 	}
 
-	if(retval.targetReached || target.mode == GetLengthTarget::NoTarget)
+	if(retval.targetReached)
 	{
 		retval.lastOrder = playState.m_nCurrentOrder;
 		retval.lastRow = playState.m_nRow;
@@ -1316,11 +1355,11 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 		{
 			Order.SetSequence(sequence);
 		}
-		visitedSongRows = std::move(visitedRows);
 	}
+	if(adjustMode & (eAdjust | eAdjustOnlyVisitedRows))
+		visitedSongRows.MoveVisitedRowsFrom(visitedRows);
 
 	return results;
-
 }
 
 
@@ -1389,11 +1428,11 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 		}
 
 		// Special XM hack (also applies to MOD / S3M, except when playing IT-style S3Ms, such as k_vision.s3m)
-		// Test case: PortaSmpChange.mod, PortaSmpChange.s3m
+		// Test case: PortaSmpChange.mod, PortaSmpChange.s3m, PortaSwap.s3m
 		if((!instrumentChanged && (GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2)) && pIns)
 			|| (GetType() == MOD_TYPE_PLM)
 			|| (GetType() == MOD_TYPE_MOD && chn.IsSamplePlaying())
-			|| m_playBehaviour[kST3PortaSampleChange])
+			|| (m_playBehaviour[kST3PortaSampleChange] && chn.IsSamplePlaying()))
 		{
 			// FT2 doesn't change the sample in this case,
 			// but still uses the sample info from the old one (bug?)
@@ -1448,11 +1487,16 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 		}
 	}
 
-	if(returnAfterVolumeAdjust && sampleChanged && m_playBehaviour[kMODSampleSwap] && pSmp != nullptr)
+	if(returnAfterVolumeAdjust && sampleChanged && pSmp != nullptr)
 	{
 		// ProTracker applies new instrument's finetune but keeps the old sample playing.
 		// Test case: PortaSwapPT.mod
-		chn.nFineTune = pSmp->nFineTune;
+		if(m_playBehaviour[kMODSampleSwap])
+			chn.nFineTune = pSmp->nFineTune;
+		// ST3 does it similarly for middle-C speed.
+		// Test case: PortaSwap.s3m, SampleSwap.s3m
+		if(GetType() == MOD_TYPE_S3M && pSmp->HasSampleData())
+			chn.nC5Speed = pSmp->nC5Speed;
 	}
 
 	if(returnAfterVolumeAdjust) return;
@@ -1496,12 +1540,9 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 		if(m_playBehaviour[kITEnvelopeReset])
 		{
 			const bool insNumber = (instr != 0);
-			// IT compatibility: Note-off with instrument number + Old Effects retriggers envelopes.
-			// Test case: ResetEnvNoteOffOldFx.it
-			const bool isKeyOff = chn.dwFlags[CHN_NOTEFADE | CHN_KEYOFF] || (chn.rowCommand.note == NOTE_KEYOFF && m_playBehaviour[kITInstrWithNoteOffOldEffects]);
 			reset = (!chn.nLength
 				|| (insNumber && bPorta && m_SongFlags[SONG_ITCOMPATGXX])
-				|| (insNumber && !bPorta && isKeyOff && m_SongFlags[SONG_ITOLDEFFECTS]));
+				|| (insNumber && !bPorta && chn.dwFlags[CHN_NOTEFADE | CHN_KEYOFF] && m_SongFlags[SONG_ITOLDEFFECTS]));
 			// NOTE: IT2.14 with SB/GUS/etc. output is different. We are going after IT's WAV writer here.
 			// For SB/GUS/etc. emulation, envelope carry should only apply when the NNA isn't set to "Note Cut".
 			// Test case: CarryNNA.it
@@ -1558,15 +1599,18 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 	if(bPorta && pSmp == chn.pModSample && pSmp != nullptr)
 	{
 		// If channel length is 0, we cut a previous sample using SCx. In that case, we have to update sample length, loop points, etc...
-		if(GetType() & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_MPT) && chn.nLength != 0) return;
-		chn.dwFlags.reset(CHN_KEYOFF | CHN_NOTEFADE);
+		if(GetType() & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_MPT) && chn.nLength != 0)
+			return;
+		// FT2 compatibility: Do not reset key-off status on portamento without instrument number
+		// Test case: Off-Porta.xm
+		if(GetType() != MOD_TYPE_XM || !m_playBehaviour[kITFT2DontResetNoteOffOnPorta] || chn.rowCommand.instr != 0)
+			chn.dwFlags.reset(CHN_KEYOFF | CHN_NOTEFADE);
 		chn.dwFlags = (chn.dwFlags & (CHN_CHANNELFLAGS | CHN_PINGPONGFLAG));
 	} else //if(!instrumentChanged || chn.rowCommand.instr != 0 || !IsCompatibleMode(TRK_FASTTRACKER2))	// SampleChange.xm?
 	{
 		chn.dwFlags.reset(CHN_KEYOFF | CHN_NOTEFADE);
 
-		// IT compatibility tentative fix: Don't change bidi loop direction when
-		// no sample nor instrument is changed.
+		// IT compatibility: Don't change bidi loop direction when no sample nor instrument is changed.
 		if((m_playBehaviour[kITPingPongNoReset] || !(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT))) && pSmp == chn.pModSample && !instrumentChanged)
 			chn.dwFlags = (chn.dwFlags & (CHN_CHANNELFLAGS | CHN_PINGPONGFLAG));
 		else
@@ -1616,7 +1660,7 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 		}
 		chn.nInsVol = oldInsVol;
 		chn.nVolume = pSmp->nVolume;
-		if(pSmp->uFlags[CHN_PANNING]) chn.nPan = pSmp->nPan;
+		if(pSmp->uFlags[CHN_PANNING]) chn.SetInstrumentPan(pSmp->nPan, *this);
 		return;
 	}
 
@@ -1693,7 +1737,7 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 	// save the note that's actually used, as it's necessary to properly calculate PPS and stuff
 	const int realnote = note;
 
-	if((pIns) && (note - NOTE_MIN < (int)CountOf(pIns->Keyboard)))
+	if((pIns) && (note - NOTE_MIN < (int)std::size(pIns->Keyboard)))
 	{
 		uint32 n = pIns->Keyboard[note - NOTE_MIN];
 		if((n) && (n < MAX_SAMPLES))
@@ -1844,9 +1888,9 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 			if(pIns->nPanSwing)
 			{
 				chn.nPanSwing = static_cast<int16>(((mpt::random<int8>(AccessPRNG()) * pIns->nPanSwing * 4) / 128));
-				if(!m_playBehaviour[kITSwingBehaviour])
+				if(!m_playBehaviour[kITSwingBehaviour] && chn.nRestorePanOnNewNote == 0)
 				{
-					chn.nRestorePanOnNewNote = static_cast<int16>(chn.nPan + 1);
+					chn.nRestorePanOnNewNote = static_cast<uint16>(chn.nPan + 1);
 				}
 			}
 			// Cutoff Swing
@@ -1893,7 +1937,7 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 			chn.position.Set(0);
 			if((m_SongFlags[SONG_PT_MODE] || m_playBehaviour[kST3OffsetWithoutInstrument]) && !chn.rowCommand.instr)
 			{
-				chn.position.SetInt(std::min<SmpLength>(chn.prevNoteOffset, chn.nLength - 1));
+				chn.position.SetInt(std::min(chn.prevNoteOffset, chn.nLength - SmpLength(1)));
 			} else
 			{
 				chn.prevNoteOffset = 0;
@@ -1972,9 +2016,9 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 		}
 	}
 
-	// IT compatibility: Don't reset key-off flag on porta notes unless Compat Gxx is enabled
-	// Test case: Off-Porta.it, Off-Porta-CompatGxx.it
-	if(m_playBehaviour[kITDontResetNoteOffOnPorta] && bPorta && (!m_SongFlags[SONG_ITCOMPATGXX] || chn.rowCommand.instr == 0))
+	// IT compatibility: Don't reset key-off flag on porta notes unless Compat Gxx is enabled.
+	// Test case: Off-Porta.it, Off-Porta-CompatGxx.it, Off-Porta.xm
+	if(m_playBehaviour[kITFT2DontResetNoteOffOnPorta] && bPorta && (!m_SongFlags[SONG_ITCOMPATGXX] || chn.rowCommand.instr == 0))
 		chn.dwFlags.reset(CHN_EXTRALOUD);
 	else
 		chn.dwFlags.reset(CHN_EXTRALOUD | CHN_KEYOFF);
@@ -2017,9 +2061,9 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 				chn.nCutOff = pIns->GetCutoff();
 				useFilter = true;
 			}
-			if(useFilter && (pIns->nFilterMode != FLTMODE_UNCHANGED))
+			if(useFilter && (pIns->filterMode != FilterMode::Unchanged))
 			{
-				chn.nFilterMode = pIns->nFilterMode;
+				chn.nFilterMode = pIns->filterMode;
 			}
 		} else
 		{
@@ -2063,7 +2107,7 @@ void CSoundFile::ApplyInstrumentPanning(ModChannel &chn, const ModInstrument *in
 
 	if(newPan != int32_min)
 	{
-		chn.nPan = newPan;
+		chn.SetInstrumentPan(newPan, *this);
 		// IT compatibility: Sample and instrument panning overrides channel surround status.
 		// Test case: SmpInsPanSurround.it
 		if(m_playBehaviour[kPanOverride] && !m_SongFlags[SONG_SURROUNDPAN])
@@ -2077,7 +2121,7 @@ void CSoundFile::ApplyInstrumentPanning(ModChannel &chn, const ModInstrument *in
 CHANNELINDEX CSoundFile::GetNNAChannel(CHANNELINDEX nChn) const
 {
 	// Check for empty channel
-	for (CHANNELINDEX i = m_nChannels; i < MAX_CHANNELS; i++)
+	for(CHANNELINDEX i = m_nChannels; i < MAX_CHANNELS; i++)
 	{
 		const ModChannel &c = m_PlayState.Chn[i];
 		// No sample and no plugin playing
@@ -2086,20 +2130,24 @@ CHANNELINDEX CSoundFile::GetNNAChannel(CHANNELINDEX nChn) const
 		// Plugin channel with already released note
 		if(!c.nLength && c.dwFlags[CHN_KEYOFF | CHN_NOTEFADE])
 			return i;
+		// Stopped OPL channel
+		if(c.dwFlags[CHN_ADLIB] && (!m_opl || !m_opl->IsActive(i)))
+			return i;
 	}
 
 	uint32 vol = 0x800000;
 	if(nChn < MAX_CHANNELS)
 	{
 		const ModChannel &srcChn = m_PlayState.Chn[nChn];
-		if(!srcChn.nFadeOutVol && srcChn.nLength) return 0;
+		if(!srcChn.nFadeOutVol && srcChn.nLength)
+			return CHANNELINDEX_INVALID;
 		vol = (srcChn.nRealVolume << 9) | srcChn.nVolume;
 	}
 
 	// All channels are used: check for lowest volume
-	CHANNELINDEX result = 0;
+	CHANNELINDEX result = CHANNELINDEX_INVALID;
 	uint32 envpos = 0;
-	for (CHANNELINDEX i = m_nChannels; i < MAX_CHANNELS; i++)
+	for(CHANNELINDEX i = m_nChannels; i < MAX_CHANNELS; i++)
 	{
 		const ModChannel &c = m_PlayState.Chn[i];
 		if(c.nLength && !c.nFadeOutVol)
@@ -2108,7 +2156,8 @@ CHANNELINDEX CSoundFile::GetNNAChannel(CHANNELINDEX nChn) const
 		// Rationale: We need volume envelopes in case e.g. all NNA channels are playing at full volume but are looping on a 0-volume envelope node.
 		// But if global volume is not applied to master and the global volume temporarily drops to 0, we would kill arbitrary channels. Hence, add the note volume as well.
 		uint32 v = (c.nRealVolume << 9) | c.nVolume;
-		if(c.dwFlags[CHN_LOOP]) v /= 2;
+		if(c.dwFlags[CHN_LOOP])
+			v /= 2;
 		if((v < vol) || ((v == vol) && (c.VolEnv.nEnvPosition > envpos)))
 		{
 			envpos = c.VolEnv.nEnvPosition;
@@ -2122,23 +2171,20 @@ CHANNELINDEX CSoundFile::GetNNAChannel(CHANNELINDEX nChn) const
 
 CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, bool forceCut)
 {
-	CHANNELINDEX nnaChn = CHANNELINDEX_INVALID;
 	ModChannel &srcChn = m_PlayState.Chn[nChn];
 	const ModInstrument *pIns = nullptr;
 	if(!ModCommand::IsNote(static_cast<ModCommand::NOTE>(note)))
-	{
-		return nnaChn;
-	}
+		return CHANNELINDEX_INVALID;
+
 	// Always NNA cut - using
 	if((!(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_MT2)) || !m_nInstruments || forceCut) && !srcChn.HasMIDIOutput())
 	{
 		if(!srcChn.nLength || srcChn.dwFlags[CHN_MUTE] || !(srcChn.rightVol | srcChn.leftVol))
-		{
 			return CHANNELINDEX_INVALID;
-		}
 
-		nnaChn = GetNNAChannel(nChn);
-		if(!nnaChn) return CHANNELINDEX_INVALID;
+		const CHANNELINDEX nnaChn = GetNNAChannel(nChn);
+		if(nnaChn == CHANNELINDEX_INVALID)
+			return CHANNELINDEX_INVALID;
 		ModChannel &chn = m_PlayState.Chn[nnaChn];
 		// Copy Channel
 		chn = srcChn;
@@ -2161,18 +2207,24 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 		}
 		return nnaChn;
 	}
-	if(instr > GetNumInstruments()) instr = 0;
+	if(instr > GetNumInstruments())
+		instr = 0;
 	const ModSample *pSample = srcChn.pModSample;
 	// If no instrument is given, assume previous instrument to still be valid.
 	// Test case: DNA-NoInstr.it
 	pIns = instr > 0 ? Instruments[instr] : srcChn.pModInstrument;
+	auto dnaNote = note;
 	if(pIns != nullptr)
 	{
-		uint32 n = pIns->Keyboard[note - NOTE_MIN];
-		note = pIns->NoteMap[note - NOTE_MIN];
-		if ((n) && (n < MAX_SAMPLES))
+		auto smp = pIns->Keyboard[note - NOTE_MIN];
+		// IT compatibility: DCT = note uses pattern notes for comparison
+		// Note: This is not applied in case kITRealNoteMapping is not set to keep playback of legacy modules simple (chn.nNote is translated note in that case)
+		// Test case: dct_smp_note_test.it
+		if(!m_playBehaviour[kITDCTBehaviour] || !m_playBehaviour[kITRealNoteMapping])
+			dnaNote = pIns->NoteMap[note - NOTE_MIN];
+		if(smp > 0 && smp < MAX_SAMPLES)
 		{
-			pSample = &Samples[n];
+			pSample = &Samples[smp];
 		} else if(m_playBehaviour[kITEmptyNoteMapSlot] && !pIns->HasValidMIDIChannel())
 		{
 			// Impulse Tracker ignores empty slots.
@@ -2181,17 +2233,20 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 			return CHANNELINDEX_INVALID;
 		}
 	}
-	if (srcChn.dwFlags[CHN_MUTE])
+	if(srcChn.dwFlags[CHN_MUTE])
 		return CHANNELINDEX_INVALID;
 
 	for(CHANNELINDEX i = nChn; i < MAX_CHANNELS; i++)
-	if(i >= m_nChannels || i == nChn)
 	{
+		// Only apply to background channels, or the same pattern channel
+		if(i < m_nChannels && i != nChn)
+			continue;
+
 		ModChannel &chn = m_PlayState.Chn[i];
 		bool applyDNAtoPlug = false;
 		if((chn.nMasterChn == nChn + 1 || i == nChn) && chn.pModInstrument != nullptr)
 		{
-			bool bOk = false;
+			bool applyDNA = false;
 			// Duplicate Check Type
 			switch(chn.pModInstrument->nDCT)
 			{
@@ -2199,33 +2254,40 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 				break;
 			// Note
 			case DCT_NOTE:
-				if(note && chn.nNote == note && pIns == chn.pModInstrument) bOk = true;
-				if(pIns && pIns->nMixPlug) applyDNAtoPlug = true;
+				if(dnaNote != NOTE_NONE && chn.nNote == dnaNote && pIns == chn.pModInstrument)
+					applyDNA = true;
+				if(pIns && pIns->nMixPlug)
+					applyDNAtoPlug = true;
 				break;
 			// Sample
 			case DCT_SAMPLE:
-				if(pSample != nullptr && pSample == chn.pModSample) bOk = true;
+				// IT compatibility: DCT = sample only applies to same instrument
+				// Test case: dct_smp_note_test.it
+				if(pSample != nullptr && pSample == chn.pModSample && (pIns == chn.pModInstrument || !m_playBehaviour[kITDCTBehaviour]))
+					applyDNA = true;
 				break;
 			// Instrument
 			case DCT_INSTRUMENT:
-				if(pIns == chn.pModInstrument) bOk = true;
-				if(pIns && pIns->nMixPlug) applyDNAtoPlug = true;
+				if(pIns == chn.pModInstrument)
+					applyDNA = true;
+				if(pIns && pIns->nMixPlug)
+					applyDNAtoPlug = true;
 				break;
 			// Plugin
 			case DCT_PLUGIN:
 				if(pIns && (pIns->nMixPlug) && (pIns->nMixPlug == chn.pModInstrument->nMixPlug))
 				{
 					applyDNAtoPlug = true;
-					bOk = true;
+					applyDNA = true;
 				}
 				break;
-
 			}
+			
 			// Duplicate Note Action
-			if (bOk)
+			if(applyDNA)
 			{
 #ifndef NO_PLUGINS
-				if (applyDNAtoPlug && chn.nNote != NOTE_NONE)
+				if(applyDNAtoPlug && chn.nNote != NOTE_NONE)
 				{
 					switch(chn.pModInstrument->nDNA)
 					{
@@ -2258,7 +2320,7 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 				// Note Fade
 				case DNA_NOTEFADE:
 					chn.dwFlags.set(CHN_NOTEFADE);
-					if(chn.dwFlags[CHN_ADLIB] && m_opl)
+					if(chn.dwFlags[CHN_ADLIB] && m_opl && !m_playBehaviour[kOPLwithNNA])
 						m_opl->NoteOff(i);
 					break;
 				}
@@ -2293,72 +2355,84 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 #endif // NO_PLUGINS
 
 	// New Note Action
-	if(srcChn.IsSamplePlaying() || applyNNAtoPlug)
-	{
-		nnaChn = GetNNAChannel(nChn);
-		if(nnaChn != 0)
-		{
-			ModChannel &chn = m_PlayState.Chn[nnaChn];
-			// Copy Channel
-			chn = srcChn;
-			chn.dwFlags.reset(CHN_VIBRATO | CHN_TREMOLO | CHN_PORTAMENTO);
-			chn.nPanbrelloOffset = 0;
+	if(!srcChn.IsSamplePlaying() && !applyNNAtoPlug)
+		return CHANNELINDEX_INVALID;
 
-			chn.nMasterChn = nChn < GetNumChannels() ? nChn + 1 : 0;
-			chn.nCommand = CMD_NONE;
+	CHANNELINDEX nnaChn = GetNNAChannel(nChn);
+	if(nnaChn == CHANNELINDEX_INVALID)
+		return CHANNELINDEX_INVALID;
+
+	ModChannel &chn = m_PlayState.Chn[nnaChn];
+	if(chn.dwFlags[CHN_ADLIB] && m_opl)
+		m_opl->NoteCut(nnaChn);
+	// Copy Channel
+	chn = srcChn;
+	chn.dwFlags.reset(CHN_VIBRATO | CHN_TREMOLO | CHN_PORTAMENTO);
+	chn.nPanbrelloOffset = 0;
+
+	chn.nMasterChn = nChn < GetNumChannels() ? nChn + 1 : 0;
+	chn.nCommand = CMD_NONE;
 #ifndef NO_PLUGINS
-			if(applyNNAtoPlug && pPlugin)
-			{
-				switch(srcChn.nNNA)
-				{
-				case NNA_NOTEOFF:
-				case NNA_NOTECUT:
-				case NNA_NOTEFADE:
-					// Switch off note played on this plugin, on this tracker channel and midi channel
-					SendMIDINote(nChn, NOTE_KEYOFF, 0);
-					srcChn.nArpeggioLastNote = NOTE_NONE;
-					break;
-				case NNA_CONTINUE:
-					break;
-				}
-			}
-#endif // NO_PLUGINS
-
-			// Key Off the note
-			switch(srcChn.nNNA)
-			{
-			case NNA_NOTEOFF:
-				KeyOff(chn);
-				if(chn.dwFlags[CHN_ADLIB] && m_opl)
-					m_opl->NoteOff(nChn);
-				break;
-			case NNA_NOTECUT:
-				chn.nFadeOutVol = 0;
-				chn.dwFlags.set(CHN_NOTEFADE);
-				if(chn.dwFlags[CHN_ADLIB] && m_opl)
-					m_opl->NoteCut(nChn);
-				break;
-			case NNA_NOTEFADE:
-				chn.dwFlags.set(CHN_NOTEFADE);
-				if(chn.dwFlags[CHN_ADLIB] && m_opl)
-					m_opl->NoteOff(nChn);
-				break;
-			case NNA_CONTINUE:
-				if(chn.dwFlags[CHN_ADLIB] && m_opl)
-					m_opl->MoveChannel(nChn, nnaChn);
-				break;
-			}
-			if(!chn.nVolume)
-			{
-				chn.nFadeOutVol = 0;
-				chn.dwFlags.set(CHN_NOTEFADE | CHN_FASTVOLRAMP);
-			}
-			// Stop this channel
-			srcChn.nLength = 0;
-			srcChn.position.Set(0);
-			srcChn.nROfs = srcChn.nLOfs = 0;
+	if(applyNNAtoPlug && pPlugin)
+	{
+		switch(srcChn.nNNA)
+		{
+		case NNA_NOTEOFF:
+		case NNA_NOTECUT:
+		case NNA_NOTEFADE:
+			// Switch off note played on this plugin, on this tracker channel and midi channel
+			SendMIDINote(nChn, NOTE_KEYOFF, 0);
+			srcChn.nArpeggioLastNote = NOTE_NONE;
+			break;
+		case NNA_CONTINUE:
+			break;
 		}
 	}
+#endif // NO_PLUGINS
+
+	// Key Off the note
+	switch(srcChn.nNNA)
+	{
+	case NNA_NOTEOFF:
+		KeyOff(chn);
+		if(chn.dwFlags[CHN_ADLIB] && m_opl)
+		{
+			m_opl->NoteOff(nChn);
+			if(m_playBehaviour[kOPLwithNNA])
+				m_opl->MoveChannel(nChn, nnaChn);
+		}
+		break;
+	case NNA_NOTECUT:
+		chn.nFadeOutVol = 0;
+		chn.dwFlags.set(CHN_NOTEFADE);
+		if(chn.dwFlags[CHN_ADLIB] && m_opl)
+			m_opl->NoteCut(nChn);
+		break;
+	case NNA_NOTEFADE:
+		chn.dwFlags.set(CHN_NOTEFADE);
+		if(chn.dwFlags[CHN_ADLIB] && m_opl)
+		{
+			if(m_playBehaviour[kOPLwithNNA])
+				m_opl->MoveChannel(nChn, nnaChn);
+			else
+				m_opl->NoteOff(nChn);
+		}
+		break;
+	case NNA_CONTINUE:
+		if(chn.dwFlags[CHN_ADLIB] && m_opl)
+			m_opl->MoveChannel(nChn, nnaChn);
+		break;
+	}
+	if(!chn.nVolume)
+	{
+		chn.nFadeOutVol = 0;
+		chn.dwFlags.set(CHN_NOTEFADE | CHN_FASTVOLRAMP);
+	}
+	// Stop this channel
+	srcChn.nLength = 0;
+	srcChn.position.Set(0);
+	srcChn.nROfs = srcChn.nLOfs = 0;
+	
 	return nnaChn;
 }
 
@@ -2419,7 +2493,7 @@ bool CSoundFile::ProcessEffects()
 				{
 					PlugParamValue targetvalue = ModCommand::GetValueEffectCol(chn.rowCommand.command, chn.rowCommand.param) / PlugParamValue(ModCommand::maxColumnValue);
 					chn.m_plugParamTargetValue = targetvalue;
-					chn.m_plugParamValueStep = (targetvalue - m_MixPlugins[plugin-1].pMixPlugin->GetParameter(plugparam)) / float(GetNumTicksOnCurrentRow());
+					chn.m_plugParamValueStep = (targetvalue - m_MixPlugins[plugin - 1].pMixPlugin->GetParameter(plugparam)) / PlugParamValue(GetNumTicksOnCurrentRow());
 				}
 				if(m_PlayState.m_nTickCount + 1 == GetNumTicksOnCurrentRow())
 				{	// On last tick, set parameter exactly to target value.
@@ -2507,6 +2581,10 @@ bool CSoundFile::ProcessEffects()
 						}
 
 						nPatLoopRow = nloop;
+						// IT compatibility: SBx is prioritized over Position Jump (Bxx) effects that are located left of the SBx effect.
+						// Test case: sbx-priority.it, LoopBreak.it
+						if(m_playBehaviour[kITPatternLoopWithJumps])
+							nPosJump = ORDERINDEX_INVALID;
 					}
 
 					if(GetType() == MOD_TYPE_S3M)
@@ -2664,8 +2742,10 @@ bool CSoundFile::ProcessEffects()
 			// Test cases: keyoff+instr.xm, delay.xm
 			bool reloadSampleSettings = (m_playBehaviour[kFT2ReloadSampleSettings] && instr != 0);
 			// ProTracker Compatibility: If a sample was stopped before, lone instrument numbers can retrigger it
-			// Test case: PTSwapEmpty.mod
-			bool keepInstr = (GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT)) || (m_playBehaviour[kMODSampleSwap] && !chn.IsSamplePlaying() && chn.pModSample != nullptr && !chn.pModSample->HasSampleData());
+			// Test case: PTSwapEmpty.mod, PTInstrVolume.mod, SampleSwap.s3m
+			bool keepInstr = (GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT))
+				|| m_playBehaviour[kST3SampleSwap]
+				|| (m_playBehaviour[kMODSampleSwap] && !chn.IsSamplePlaying() && (chn.pModSample == nullptr || !chn.pModSample->HasSampleData()));
 
 			// Now it's time for some FT2 crap...
 			if (GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2))
@@ -2735,12 +2815,12 @@ bool CSoundFile::ProcessEffects()
 
 				if(oldSample != nullptr)
 				{
-					if(!oldSample->uFlags[SMP_NODEFAULTVOLUME])
+					if(!oldSample->uFlags[SMP_NODEFAULTVOLUME] && (GetType() != MOD_TYPE_S3M || oldSample->HasSampleData()))
 						chn.nVolume = oldSample->nVolume;
 					if(reloadSampleSettings)
 					{
 						// Also reload panning
-						chn.nPan = oldSample->nPan;
+						chn.SetInstrumentPan(oldSample->nPan, *this);
 					}
 				}
 			}
@@ -2750,6 +2830,26 @@ bool CSoundFile::ProcessEffects()
 			if(m_playBehaviour[kFT2Tremor] && instr != 0)
 			{
 				chn.nTremorCount = 0x20;
+			}
+
+			// IT compatibility: Envelope retriggering with instrument number based on Old Effects and Compatible Gxx flags:
+			// OldFX CompatGxx Env Behaviour
+			// ----- --------- -------------
+			//  off     off    never reset
+			//  on      off    reset on instrument without portamento
+			//  off     on     reset on instrument with portamento
+			//  on      on     always reset
+			// Test case: ins-xx.it, ins-ox.it, ins-oc.it, ins-xc.it, ResetEnvNoteOffOldFx.it, ResetEnvNoteOffOldFx2.it, noteoff3.it
+			if(GetNumInstruments() && m_playBehaviour[kITInstrWithNoteOffOldEffects]
+				&& instr && !ModCommand::IsNote(note))
+			{
+				if((bPorta && m_SongFlags[SONG_ITCOMPATGXX])
+					|| (!bPorta && m_SongFlags[SONG_ITOLDEFFECTS]))
+				{
+					chn.ResetEnvelopes();
+					chn.dwFlags.set(CHN_FASTVOLRAMP);
+					chn.nFadeOutVol = 65536;
+				}
 			}
 
 			if(retrigEnv) //Case: instrument with no note data.
@@ -2773,7 +2873,7 @@ bool CSoundFile::ProcessEffects()
 					}
 				}
 
-				if (GetNumInstruments() && (GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)))
+				if(GetNumInstruments() && (GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2 | MOD_TYPE_MED)))
 				{
 					chn.ResetEnvelopes();
 					chn.dwFlags.set(CHN_FASTVOLRAMP);
@@ -2829,7 +2929,9 @@ bool CSoundFile::ProcessEffects()
 			{
 				if(chn.nRestorePanOnNewNote > 0)
 				{
-					chn.nPan = chn.nRestorePanOnNewNote - 1;
+					chn.nPan = (chn.nRestorePanOnNewNote & 0x7FFF) - 1;
+					if(chn.nRestorePanOnNewNote & 0x8000)
+						chn.dwFlags.set(CHN_SURROUND);
 					chn.nRestorePanOnNewNote = 0;
 				}
 				if(chn.nRestoreResonanceOnNewNote > 0)
@@ -2876,11 +2978,18 @@ bool CSoundFile::ProcessEffects()
 						//const bool newInstrument = oldInstrument != chn.pModInstrument && chn.pModInstrument->Keyboard[chn.nNewNote - NOTE_MIN] != 0;
 						chn.position.Set(0);
 					}
-				} else if ((GetType() & (MOD_TYPE_S3M | MOD_TYPE_IT | MOD_TYPE_MPT) && oldSample != chn.pModSample && ModCommand::IsNote(note)))
+				} else if((GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT)) && oldSample != chn.pModSample && ModCommand::IsNote(note))
 				{
 					// Special IT case: portamento+note causes sample change -> ignore portamento
 					bPorta = false;
-				} else if(m_playBehaviour[kMODSampleSwap] && chn.increment.IsZero())
+				} else if(m_playBehaviour[kST3SampleSwap] && oldSample != chn.pModSample && (bPorta || !ModCommand::IsNote(note)) && chn.position.GetUInt() > chn.nLength)
+				{
+					// ST3 with SoundBlaster does sample swapping and continues playing the new sample where the old sample was stopped.
+					// If the new sample is shorter than that, it is stopped, even if it could be looped.
+					// This also applies to portamento between different samples.
+					// Test case: SampleSwap.s3m
+					chn.nLength = 0;
+				} else if(m_playBehaviour[kMODSampleSwap] && !chn.IsSamplePlaying())
 				{
 					// If channel was paused and is resurrected by a lone instrument number, reset the sample position.
 					// Test case: PTSwapEmpty.mod
@@ -2958,30 +3067,10 @@ bool CSoundFile::ProcessEffects()
 		{
 			if (volcmd == VOLCMD_TONEPORTAMENTO)
 			{
-				uint32 porta = 0;
-				if(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_AMS | MOD_TYPE_DMF | MOD_TYPE_DBM | MOD_TYPE_IMF | MOD_TYPE_PSM | MOD_TYPE_J2B | MOD_TYPE_ULT | MOD_TYPE_OKT | MOD_TYPE_MT2 | MOD_TYPE_MDL))
-				{
-					porta = ImpulseTrackerPortaVolCmd[vol & 0x0F];
-				} else
-				{
-					if(cmd == CMD_TONEPORTAMENTO && GetType() == MOD_TYPE_XM)
-					{
-						// Yes, FT2 is *that* weird. If there is a Mx command in the volume column
-						// and a normal 3xx command, the 3xx command is ignored but the Mx command's
-						// effectiveness is doubled.
-						// Test case: TonePortamentoMemory.xm
-						cmd = CMD_NONE;
-						vol *= 2;
-					}
-					porta = vol << 4;
+				const auto [porta, clearEffectCommand] = GetVolCmdTonePorta(chn.rowCommand, nStartTick);
+				if(clearEffectCommand)
+					cmd = CMD_NONE;
 
-					// FT2 compatibility: If there's a portamento and a note delay, execute the portamento, but don't update the parameter
-					// Test case: PortaDelay.xm
-					if(m_playBehaviour[kFT2PortaDelay] && nStartTick != 0)
-					{
-						porta = 0;
-					}
-				}
 				TonePortamento(chn, porta);
 			} else
 			{
@@ -3001,7 +3090,7 @@ bool CSoundFile::ProcessEffects()
 						{
 							chn.nPan = 0;
 						}
-						MPT_FALLTHROUGH;
+						[[fallthrough]];
 					default:
 						// no memory here.
 						volcmd = VOLCMD_NONE;
@@ -3203,7 +3292,7 @@ bool CSoundFile::ProcessEffects()
 		case CMD_OFFSETPERCENTAGE:
 			if(triggerNote)
 			{
-				SampleOffset(chn, Util::muldiv_unsigned(chn.nLength, param, 255));
+				SampleOffset(chn, Util::muldiv_unsigned(chn.nLength, param, 256));
 			}
 			break;
 
@@ -3529,9 +3618,12 @@ bool CSoundFile::ProcessEffects()
 		// Pattern Break / Position Jump only if no loop running
 		// Exception: FastTracker 2 in all cases, Impulse Tracker in case of position jump
 		// Test case for FT2 exception: PatLoop-Jumps.xm, PatLoop-Various.xm
-		// Test case for IT: exception: LoopBreak.it
+		// Test case for IT: exception: LoopBreak.it, sbx-priority.it
 		if((doBreakRow || doPosJump)
-			&& (!doPatternLoop || m_playBehaviour[kFT2PatternLoopWithJumps] || (m_playBehaviour[kITPatternLoopWithJumps] && doPosJump)))
+		   && (!doPatternLoop
+		       || m_playBehaviour[kFT2PatternLoopWithJumps]
+		       || (m_playBehaviour[kITPatternLoopWithJumps] && doPosJump)
+		       || (m_playBehaviour[kITPatternLoopWithJumpsOld] && doPosJump)))
 		{
 			if(!doPosJump) nPosJump = m_PlayState.m_nCurrentOrder + 1;
 			if(!doBreakRow) nBreakRow = 0;
@@ -3561,7 +3653,12 @@ bool CSoundFile::ProcessEffects()
 			// Pattern Loop
 			m_PlayState.m_nNextOrder = m_PlayState.m_nCurrentOrder;
 			m_PlayState.m_nNextRow = nPatLoopRow;
-			if(m_PlayState.m_nPatternDelay)
+			// FT2 skips the first row of the pattern loop if there's a pattern delay, ProTracker sometimes does it too (didn't quite figure it out yet).
+			// But IT and ST3 don't do this.
+			// Test cases: PatLoopWithDelay.it, PatLoopWithDelay.s3m
+			if(m_PlayState.m_nPatternDelay
+			   && (GetType() != MOD_TYPE_IT || !m_playBehaviour[kITPatternLoopWithJumps])
+			   && GetType() != MOD_TYPE_S3M)
 			{
 				m_PlayState.m_nNextRow++;
 			}
@@ -3723,7 +3820,10 @@ void CSoundFile::PortamentoUp(CHANNELINDEX nChn, ModCommand::PARAM param, const 
 		}
 	}
 	// Regular Slide
-	if(!chn.isFirstTick || (m_PlayState.m_nMusicSpeed == 1 && m_playBehaviour[kSlidesAtSpeed1]) || GetType() == MOD_TYPE_669)
+	if(!chn.isFirstTick
+	   || (m_PlayState.m_nMusicSpeed == 1 && m_playBehaviour[kSlidesAtSpeed1])
+	   || GetType() == MOD_TYPE_669
+	   || (GetType() == MOD_TYPE_MED && m_SongFlags[SONG_FASTVOLSLIDES]))
 	{
 		DoFreqSlide(chn, -int(param) * 4);
 	}
@@ -3788,7 +3888,10 @@ void CSoundFile::PortamentoDown(CHANNELINDEX nChn, ModCommand::PARAM param, cons
 		}
 	}
 
-	if(!chn.isFirstTick || (m_PlayState.m_nMusicSpeed == 1 && m_playBehaviour[kSlidesAtSpeed1]) || GetType() == MOD_TYPE_669)
+	if(!chn.isFirstTick
+	   || (m_PlayState.m_nMusicSpeed == 1 && m_playBehaviour[kSlidesAtSpeed1])
+	   || GetType() == MOD_TYPE_669
+	   || (GetType() == MOD_TYPE_MED && m_SongFlags[SONG_FASTVOLSLIDES]))
 	{
 		DoFreqSlide(chn, int(param) * 4);
 	}
@@ -3798,7 +3901,7 @@ void CSoundFile::PortamentoDown(CHANNELINDEX nChn, ModCommand::PARAM param, cons
 // Send portamento commands to plugins
 void CSoundFile::MidiPortamento(CHANNELINDEX nChn, int param, bool doFineSlides)
 {
-	int actualParam = mpt::abs(param);
+	int actualParam = std::abs(param);
 	int pitchBend = 0;
 
 	// Old MIDI Pitch Bends:
@@ -3845,6 +3948,7 @@ void CSoundFile::MidiPortamento(CHANNELINDEX nChn, int param, bool doFineSlides)
 
 void CSoundFile::FinePortamentoUp(ModChannel &chn, ModCommand::PARAM param) const
 {
+	MPT_ASSERT(!chn.HasCustomTuning());
 	if(GetType() == MOD_TYPE_XM)
 	{
 		// FT2 compatibility: E1x / E2x / X1x / X2x memory is not linked
@@ -3890,6 +3994,7 @@ void CSoundFile::FinePortamentoUp(ModChannel &chn, ModCommand::PARAM param) cons
 
 void CSoundFile::FinePortamentoDown(ModChannel &chn, ModCommand::PARAM param) const
 {
+	MPT_ASSERT(!chn.HasCustomTuning());
 	if(GetType() == MOD_TYPE_XM)
 	{
 		// FT2 compatibility: E1x / E2x / X1x / X2x memory is not linked
@@ -3927,6 +4032,7 @@ void CSoundFile::FinePortamentoDown(ModChannel &chn, ModCommand::PARAM param) co
 
 void CSoundFile::ExtraFinePortamentoUp(ModChannel &chn, ModCommand::PARAM param) const
 {
+	MPT_ASSERT(!chn.HasCustomTuning());
 	if(GetType() == MOD_TYPE_XM)
 	{
 		// FT2 compatibility: E1x / E2x / X1x / X2x memory is not linked
@@ -3966,6 +4072,7 @@ void CSoundFile::ExtraFinePortamentoUp(ModChannel &chn, ModCommand::PARAM param)
 
 void CSoundFile::ExtraFinePortamentoDown(ModChannel &chn, ModCommand::PARAM param) const
 {
+	MPT_ASSERT(!chn.HasCustomTuning());
 	if(GetType() == MOD_TYPE_XM)
 	{
 		// FT2 compatibility: E1x / E2x / X1x / X2x memory is not linked
@@ -4014,8 +4121,11 @@ void CSoundFile::NoteSlide(ModChannel &chn, uint32 param, bool slideUp, bool ret
 		{
 			chn.nNoteSlideCounter = chn.nNoteSlideSpeed;
 			// update it
-			chn.nPeriod = GetPeriodFromNote
-				((slideUp ? 1 : -1)  * chn.nNoteSlideStep + GetNoteFromPeriod(chn.nPeriod), 8363, 0);
+			const int32 delta = (slideUp ? 1 : -1) * chn.nNoteSlideStep;
+			if(chn.HasCustomTuning())
+				chn.m_PortamentoFineSteps += delta * chn.pModInstrument->pTuning->GetFineStepCount();
+			else
+				chn.nPeriod = GetPeriodFromNote(delta + GetNoteFromPeriod(chn.nPeriod), 8363, 0);
 
 			if(retrig)
 			{
@@ -4024,6 +4134,36 @@ void CSoundFile::NoteSlide(ModChannel &chn, uint32 param, bool slideUp, bool ret
 		}
 	}
 }
+
+
+std::pair<uint32, bool> CSoundFile::GetVolCmdTonePorta(const ModCommand &m, uint32 startTick) const
+{
+	if(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_AMS | MOD_TYPE_DMF | MOD_TYPE_DBM | MOD_TYPE_IMF | MOD_TYPE_PSM | MOD_TYPE_J2B | MOD_TYPE_ULT | MOD_TYPE_OKT | MOD_TYPE_MT2 | MOD_TYPE_MDL))
+	{
+		return {ImpulseTrackerPortaVolCmd[m.vol & 0x0F], false};
+	} else
+	{
+		bool clearEffectColumn = false;
+		uint32 vol = m.vol;
+		if(m.command == CMD_TONEPORTAMENTO && GetType() == MOD_TYPE_XM)
+		{
+			// Yes, FT2 is *that* weird. If there is a Mx command in the volume column
+			// and a normal 3xx command, the 3xx command is ignored but the Mx command's
+			// effectiveness is doubled.
+			// Test case: TonePortamentoMemory.xm
+			clearEffectColumn = true;
+			vol *= 2;
+		}
+
+		// FT2 compatibility: If there's a portamento and a note delay, execute the portamento, but don't update the parameter
+		// Test case: PortaDelay.xm
+		if(m_playBehaviour[kFT2PortaDelay] && startTick != 0)
+			return {0, clearEffectColumn};
+		else
+			return {vol * 16, clearEffectColumn};
+	}
+}
+
 
 // Portamento Slide
 void CSoundFile::TonePortamento(ModChannel &chn, uint32 param) const
@@ -4037,11 +4177,11 @@ void CSoundFile::TonePortamento(ModChannel &chn, uint32 param) const
 		chn.nOldPortaUp = chn.nOldPortaDown = static_cast<uint8>(param);
 	}
 
-	if(GetType() == MOD_TYPE_MPT && chn.pModInstrument && chn.pModInstrument->pTuning)
+	if(chn.HasCustomTuning())
 	{
 		//Behavior: Param tells number of finesteps(or 'fullsteps'(notes) with glissando)
 		//to slide per row(not per tick).
-		const int32 old_PortamentoTickSlide = (m_PlayState.m_nTickCount != 0) ? chn.m_PortamentoTickSlide : 0;
+		const int32 oldPortamentoTickSlide = (m_PlayState.m_nTickCount != 0) ? chn.m_PortamentoTickSlide : 0;
 
 		if(param)
 			chn.nPortamentoSlide = param;
@@ -4062,9 +4202,9 @@ void CSoundFile::TonePortamento(ModChannel &chn, uint32 param) const
 			//With glissando interpreting param as notes instead of finesteps.
 		}
 
-		const int32 slide = chn.m_PortamentoTickSlide - old_PortamentoTickSlide;
+		const int32 slide = chn.m_PortamentoTickSlide - oldPortamentoTickSlide;
 
-		if(mpt::abs(chn.nPortamentoDest) <= mpt::abs(slide))
+		if(std::abs(chn.nPortamentoDest) <= std::abs(slide))
 		{
 			if(chn.nPortamentoDest != 0)
 			{
@@ -4080,9 +4220,12 @@ void CSoundFile::TonePortamento(ModChannel &chn, uint32 param) const
 		}
 
 		return;
-	} //End candidate MPT behavior.
+	}
 
-	bool doPorta = !chn.isFirstTick || (GetType() & (MOD_TYPE_DBM | MOD_TYPE_669)) || (m_PlayState.m_nMusicSpeed == 1 && m_playBehaviour[kSlidesAtSpeed1]);
+	bool doPorta = !chn.isFirstTick
+	               || (GetType() & (MOD_TYPE_DBM | MOD_TYPE_669))
+	               || (m_PlayState.m_nMusicSpeed == 1 && m_playBehaviour[kSlidesAtSpeed1])
+	               || (GetType() == MOD_TYPE_MED && m_SongFlags[SONG_FASTVOLSLIDES]);
 	if(GetType() == MOD_TYPE_PLM && param >= 0xF0)
 	{
 		param -= 0xF0;
@@ -4484,9 +4627,7 @@ void CSoundFile::ExtendedMODCommands(CHANNELINDEX nChn, ModCommand::PARAM param)
 	case 0x40:	chn.nVibratoType = param & 0x07; break;
 	// E5x: Set FineTune
 	case 0x50:	if(!m_SongFlags[SONG_FIRSTTICK])
-				{
 					break;
-				}
 				if(GetType() & (MOD_TYPE_MOD | MOD_TYPE_DIGI | MOD_TYPE_AMF0 | MOD_TYPE_MED))
 				{
 					chn.nFineTune = MOD2XMFineTune(param);
@@ -4551,12 +4692,14 @@ void CSoundFile::ExtendedS3MCommands(CHANNELINDEX nChn, ModCommand::PARAM param)
 	// S1x: Set Glissando Control
 	case 0x10:	chn.dwFlags.set(CHN_GLISSANDO, param != 0); break;
 	// S2x: Set FineTune
-	case 0x20:	if(!m_SongFlags[SONG_FIRSTTICK]) break;
+	case 0x20:	if(!m_SongFlags[SONG_FIRSTTICK])
+					break;
 				if(GetType() != MOD_TYPE_669)
 				{
 					chn.nC5Speed = S3MFineTuneTable[param];
 					chn.nFineTune = MOD2XMFineTune(param);
-					if (chn.nPeriod) chn.nPeriod = GetPeriodFromNote(chn.nNote, chn.nFineTune, chn.nC5Speed);
+					if(chn.nPeriod)
+						chn.nPeriod = GetPeriodFromNote(chn.nNote, chn.nFineTune, chn.nC5Speed);
 				} else if(chn.pModSample != nullptr)
 				{
 					chn.nC5Speed = chn.pModSample->nC5Speed + param * 80;
@@ -4800,7 +4943,7 @@ void CSoundFile::InvertLoop(ModChannel &chn)
 	// TRASH IT!!! (Yes, the sample!)
 	uint8 &sample = mpt::byte_cast<uint8 *>(pModSample->sampleb())[pModSample->nLoopStart + chn.nEFxOffset];
 	sample = ~sample;
-	ctrlSmp::PrecomputeLoops(*pModSample, *this, false);
+	pModSample->PrecomputeLoops(*this, false);
 }
 
 
@@ -4855,22 +4998,22 @@ void CSoundFile::ProcessMIDIMacro(CHANNELINDEX nChn, bool isSmooth, const char *
 			const int swing = (m_playBehaviour[kITSwingBehaviour] || m_playBehaviour[kMPTOldSwingBehaviour]) ? chn.nVolSwing : 0;
 			const int vol = Util::muldiv((chn.nVolume + swing) * m_PlayState.m_nGlobalVolume, chn.nGlobalVol * chn.nInsVol, 1 << 20);
 			data = static_cast<uint8>(Clamp(vol / 2, 1, 127));
-			//data = (unsigned char)MIN((chn.nVolume * chn.nGlobalVol * m_nGlobalVolume) >> (1 + 6 + 8), 127);
+			//data = (unsigned char)std::min((chn.nVolume * chn.nGlobalVol * m_nGlobalVolume) >> (1 + 6 + 8), 127);
 		} else if(macro[pos] == 'u')
 		{
 			// Calculated volume
 			// Same note as with velocity applies here, but apparently also for instrument / sample volumes?
 			const int vol = Util::muldiv(chn.nCalcVolume * m_PlayState.m_nGlobalVolume, chn.nGlobalVol * chn.nInsVol, 1 << 26);
 			data = static_cast<uint8>(Clamp(vol / 2, 1, 127));
-			//data = (unsigned char)MIN((chn.nCalcVolume * chn.nGlobalVol * m_nGlobalVolume) >> (7 + 6 + 8), 127);
+			//data = (unsigned char)std::min((chn.nCalcVolume * chn.nGlobalVol * m_nGlobalVolume) >> (7 + 6 + 8), 127);
 		} else if(macro[pos] == 'x')
 		{
 			// Pan set
-			data = static_cast<uint8>(std::min<int>(chn.nPan / 2, 127));
+			data = static_cast<uint8>(std::min(static_cast<int>(chn.nPan / 2), 127));
 		} else if(macro[pos] == 'y')
 		{
 			// Calculated pan
-			data = static_cast<uint8>(std::min<int>(chn.nRealPan / 2, 127));
+			data = static_cast<uint8>(std::min(static_cast<int>(chn.nRealPan / 2), 127));
 		} else if(macro[pos] == 'a')
 		{
 			// High byte of bank select
@@ -5012,7 +5155,7 @@ void CSoundFile::ProcessMIDIMacro(CHANNELINDEX nChn, bool isSmooth, const char *
 		} else
 		{
 			// Other MIDI messages
-			sendLen = std::min<uint32>(MIDIEvents::GetEventLength(out[sendPos]), outPos - sendPos);
+			sendLen = std::min(static_cast<uint32>(MIDIEvents::GetEventLength(out[sendPos])), outPos - sendPos);
 		}
 
 		if(sendLen == 0)
@@ -5124,7 +5267,7 @@ uint32 CSoundFile::SendMIDIData(CHANNELINDEX nChn, bool isSmooth, const unsigned
 			// F0.F0.02.xx: Set filter mode (high nibble determines filter mode)
 			if(param < 0x20)
 			{
-				chn.nFilterMode = (param >> 4);
+				chn.nFilterMode = static_cast<FilterMode>(param >> 4);
 				SetupChannelFilter(chn, !chn.dwFlags[CHN_FILTER]);
 			}
 
@@ -5194,10 +5337,10 @@ uint32 CSoundFile::SendMIDIData(CHANNELINDEX nChn, bool isSmooth, const unsigned
 				{
 					if(macro[0] == 0xF0)
 					{
-						pPlugin->MidiSysexSend(mpt::as_span(mpt::byte_cast<const mpt::byte*>(macro), macroLen));
+						pPlugin->MidiSysexSend(mpt::as_span(mpt::byte_cast<const std::byte*>(macro), macroLen));
 					} else
 					{
-						uint32 len = std::min<uint32>(MIDIEvents::GetEventLength(macro[0]), macroLen);
+						uint32 len = std::min(static_cast<uint32>(MIDIEvents::GetEventLength(macro[0])), macroLen);
 						uint32 curData = 0;
 						memcpy(&curData, macro, len);
 						pPlugin->MidiSend(curData);
@@ -5251,9 +5394,11 @@ void CSoundFile::SampleOffset(ModChannel &chn, SmpLength param) const
 	
 	chn.prevNoteOffset += param;
 
-	if(param >= chn.nLoopEnd && GetType() == MOD_TYPE_MTM && chn.dwFlags[CHN_LOOP] && chn.nLoopEnd > 0)
+	if(param >= chn.nLoopEnd && (GetType() & (MOD_TYPE_S3M | MOD_TYPE_MTM)) && chn.dwFlags[CHN_LOOP] && chn.nLoopEnd > 0)
 	{
 		// Offset wrap-around
+		// Note that ST3 only does this in GUS mode. SoundBlaster stops the sample entirely instead.
+		// Test case: OffsetLoopWraparound.s3m
 		param = (param - chn.nLoopStart) % (chn.nLoopEnd - chn.nLoopStart) + chn.nLoopStart;
 	}
 
@@ -5288,7 +5433,14 @@ void CSoundFile::SampleOffset(ModChannel &chn, SmpLength param) const
 		if (chn.position.GetUInt() >= chn.nLength || (chn.dwFlags[CHN_LOOP] && chn.position.GetUInt() >= chn.nLoopEnd))
 		{
 			// Offset beyond sample size
-			if (!(GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2 | MOD_TYPE_MOD | MOD_TYPE_MTM)))
+			if(m_playBehaviour[kFT2ST3OffsetOutOfRange] || GetType() == MOD_TYPE_MTM)
+			{
+				// FT2 Compatibility: Don't play note if offset is beyond sample length
+				// ST3 Compatibility: Don't play note if offset is beyond sample length (non-looped samples only)
+				// Test cases: 3xx-no-old-samp.xm, OffsetPastSampleEnd.s3m
+				chn.dwFlags.set(CHN_FASTVOLRAMP);
+				chn.nPeriod = 0;
+			} else if(!(GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2 | MOD_TYPE_MOD)))
 			{
 				// IT Compatibility: Offset
 				if(m_playBehaviour[kITOffset])
@@ -5305,12 +5457,6 @@ void CSoundFile::SampleOffset(ModChannel &chn, SmpLength param) const
 						chn.position.Set(chn.nLength - 2);
 					}
 				}
-			} else if(m_playBehaviour[kFT2OffsetOutOfRange] || GetType() == MOD_TYPE_MTM)
-			{
-				// FT2 Compatibility: Don't play note if offset is beyond sample length
-				// Test case: 3xx-no-old-samp.xm
-				chn.dwFlags.set(CHN_FASTVOLRAMP);
-				chn.nPeriod = 0;
 			} else if(GetType() == MOD_TYPE_MOD && chn.dwFlags[CHN_LOOP])
 			{
 				chn.position.Set(chn.nLoopStart);
@@ -5332,7 +5478,7 @@ void CSoundFile::ReverseSampleOffset(ModChannel &chn, ModCommand::PARAM param) c
 		chn.dwFlags.set(CHN_PINGPONGFLAG);
 		chn.dwFlags.reset(CHN_LOOP);
 		chn.nLength = chn.pModSample->nLength;	// If there was a loop, extend sample to whole length.
-		chn.position.Set((chn.nLength - 1) - std::min<SmpLength>(SmpLength(param) << 8, chn.nLength - 1), 0);
+		chn.position.Set((chn.nLength - 1) - std::min(SmpLength(param) << 8, chn.nLength - SmpLength(1)), 0);
 	}
 }
 
@@ -5364,7 +5510,8 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		{
 			// Here are some really stupid things FT2 does on the first tick.
 			// Test case: RetrigTick0.xm
-			if(chn.rowCommand.instr > 0 && chn.rowCommand.IsNoteOrEmpty()) retrigCount = 1;
+			if(chn.rowCommand.instr > 0 && chn.rowCommand.IsNoteOrEmpty())
+				retrigCount = 1;
 			if(chn.rowCommand.volcmd == VOLCMD_VOLUME && chn.rowCommand.vol != 0)
 			{
 				// I guess this condition simply checked if the volume byte was != 0 in FT2.
@@ -5385,8 +5532,10 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		// old routines
 		if (GetType() & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_MPT))
 		{
-			if (!retrigSpeed) retrigSpeed = 1;
-			if ((retrigCount) && (!(retrigCount % retrigSpeed))) doRetrig = true;
+			if(!retrigSpeed)
+				retrigSpeed = 1;
+			if(retrigCount && !(retrigCount % retrigSpeed))
+				doRetrig = true;
 			retrigCount++;
 		} else if(GetType() == MOD_TYPE_MTM)
 		{
@@ -5396,16 +5545,21 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		{
 			int realspeed = retrigSpeed;
 			// FT2 bug: if a retrig (Rxy) occurs together with a volume command, the first retrig interval is increased by one tick
-			if ((param & 0x100) && (chn.rowCommand.volcmd == VOLCMD_VOLUME) && (chn.rowCommand.param & 0xF0)) realspeed++;
+			if((param & 0x100) && (chn.rowCommand.volcmd == VOLCMD_VOLUME) && (chn.rowCommand.param & 0xF0))
+				realspeed++;
 			if(!m_SongFlags[SONG_FIRSTTICK] || (param & 0x100))
 			{
-				if (!realspeed) realspeed = 1;
-				if ((!(param & 0x100)) && (m_PlayState.m_nMusicSpeed) && (!(m_PlayState.m_nTickCount % realspeed))) doRetrig = true;
+				if(!realspeed)
+					realspeed = 1;
+				if(!(param & 0x100) && m_PlayState.m_nMusicSpeed && !(m_PlayState.m_nTickCount % realspeed))
+					doRetrig = true;
 				retrigCount++;
-			} else if (GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)) retrigCount = 0;
+			} else if(GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2))
+				retrigCount = 0;
 			if (retrigCount >= realspeed)
 			{
-				if ((m_PlayState.m_nTickCount) || ((param & 0x100) && (!chn.rowCommand.note))) doRetrig = true;
+				if(m_PlayState.m_nTickCount || ((param & 0x100) && !chn.rowCommand.note))
+					doRetrig = true;
 			}
 			if(m_playBehaviour[kFT2Retrigger] && param == 0)
 			{
@@ -5418,21 +5572,23 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 	// IT compatibility: If a sample is shorter than the retrig time (i.e. it stops before the retrig counter hits zero), it is not retriggered.
 	// Test case: retrig-short.it
 	if(chn.nLength == 0 && m_playBehaviour[kITShortSampleRetrig] && !chn.HasMIDIOutput())
-	{
 		return;
-	}
+	// ST3 compatibility: No retrig after Note Cut
+	// Test case: RetrigAfterNoteCut.s3m
+	if(m_playBehaviour[kST3RetrigAfterNoteCut] && !chn.nFadeOutVol)
+		return;
 
 	if(doRetrig)
 	{
 		uint32 dv = (param >> 4) & 0x0F;
 		int vol = chn.nVolume;
-		if (dv)
+		if(dv)
 		{
 
 			// FT2 compatibility: Retrig + volume will not change volume of retrigged notes
 			if(!m_playBehaviour[kFT2Retrigger] || !(chn.rowCommand.volcmd == VOLCMD_VOLUME))
 			{
-				if (retrigTable1[dv])
+				if(retrigTable1[dv])
 					vol = (vol * retrigTable1[dv]) >> 4;
 				else
 					vol += ((int)retrigTable2[dv]) << 2;
@@ -5443,22 +5599,34 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		}
 		uint32 note = chn.nNewNote;
 		int32 oldPeriod = chn.nPeriod;
-		if (note >= NOTE_MIN && note <= NOTE_MAX && chn.nLength)
+		const bool retrigAdlib = chn.dwFlags[CHN_ADLIB] && m_playBehaviour[kOPLRealRetrig];
+		if(note >= NOTE_MIN && note <= NOTE_MAX && chn.nLength && retrigAdlib)
 			CheckNNA(nChn, 0, note, true);
 		bool resetEnv = false;
 		if(GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2))
 		{
-			if((chn.rowCommand.instr) && (param < 0x100))
+			if(chn.rowCommand.instr && param < 0x100)
 			{
 				InstrumentChange(chn, chn.rowCommand.instr, false, false);
 				resetEnv = true;
 			}
-			if (param < 0x100) resetEnv = true;
+			if(param < 0x100)
+				resetEnv = true;
 		}
-		bool fading = chn.dwFlags[CHN_NOTEFADE];
+		if(retrigAdlib && chn.pModSample && m_opl)
+		{
+			m_opl->NoteCut(nChn);
+			m_opl->Patch(nChn, chn.pModSample->adlib);
+		}
+
+		const bool fading = chn.dwFlags[CHN_NOTEFADE];
+		const auto oldPrevNoteOffset = chn.prevNoteOffset;
+		chn.prevNoteOffset = 0;  // Retriggered notes should not use previous offset (test case: OxxMemoryWithRetrig.s3m)
 		// IT compatibility: Really weird combination of envelopes and retrigger (see Storlek's q.it testcase)
 		// Test case: retrig.it
 		NoteChange(chn, note, m_playBehaviour[kITRetrigger], resetEnv, false, nChn);
+		if(!chn.rowCommand.instr)
+			chn.prevNoteOffset = oldPrevNoteOffset;
 		// XM compatibility: Prevent NoteChange from resetting the fade flag in case an instrument number + note-off is present.
 		// Test case: RetrigFade.xm
 		if(fading && GetType() == MOD_TYPE_XM)
@@ -5471,22 +5639,27 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 			ProcessMidiOut(nChn);	//Send retrig to Midi
 #endif // NO_PLUGINS
 		}
-		if ((GetType() & (MOD_TYPE_IT|MOD_TYPE_MPT)) && (!chn.rowCommand.note) && (oldPeriod)) chn.nPeriod = oldPeriod;
-		if (!(GetType() & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_MPT))) retrigCount = 0;
+		if((GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT)) && chn.rowCommand.note == NOTE_NONE && oldPeriod != 0)
+			chn.nPeriod = oldPeriod;
+		if(!(GetType() & (MOD_TYPE_S3M | MOD_TYPE_IT | MOD_TYPE_MPT)))
+			retrigCount = 0;
 		// IT compatibility: see previous IT compatibility comment =)
 		if(m_playBehaviour[kITRetrigger]) chn.position.Set(0);
 
 		offset--;
 		if(offset >= 0 && offset <= static_cast<int>(CountOf(chn.pModSample->cues)) && chn.pModSample != nullptr)
 		{
-			if(offset == 0) offset = chn.oldOffset;
-			else offset = chn.oldOffset = chn.pModSample->cues[offset - 1];
+			if(offset == 0)
+				offset = chn.oldOffset;
+			else
+				offset = chn.oldOffset = chn.pModSample->cues[offset - 1];
 			SampleOffset(chn, offset);
 		}
 	}
 
 	// buggy-like-hell FT2 Rxy retrig!
-	if(m_playBehaviour[kFT2Retrigger] && (param & 0x100)) retrigCount++;
+	if(m_playBehaviour[kFT2Retrigger] && (param & 0x100))
+		retrigCount++;
 
 	// Now we can also store the retrig value for IT...
 	if(!m_playBehaviour[kITRetrigger])
@@ -5496,7 +5669,10 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 
 void CSoundFile::DoFreqSlide(ModChannel &chn, int32 nFreqSlide) const
 {
-	if(!chn.nPeriod) return;
+	if(!chn.nPeriod)
+		return;
+	MPT_ASSERT(!chn.HasCustomTuning());
+
 	if(GetType() == MOD_TYPE_669)
 	{
 		// Like other oldskool trackers, Composer 669 doesn't have linear slides...
@@ -5508,7 +5684,7 @@ void CSoundFile::DoFreqSlide(ModChannel &chn, int32 nFreqSlide) const
 	{
 		// IT Linear slides
 		const auto nOldPeriod = chn.nPeriod;
-		uint32 n = mpt::abs(nFreqSlide) / 4u;
+		uint32 n = std::abs(nFreqSlide) / 4u;
 		LimitMax(n, 255u);
 		if(n != 0)
 		{
@@ -5559,7 +5735,7 @@ void CSoundFile::NoteCut(CHANNELINDEX nChn, uint32 nTick, bool cutSample)
 		
 		if(chn.dwFlags[CHN_ADLIB] && m_opl)
 		{
-			m_opl->NoteCut(nChn);
+			m_opl->NoteCut(nChn, false);
 		}
 	}
 }
@@ -5634,7 +5810,7 @@ void CSoundFile::SetSpeed(PlayState &playState, uint32 param) const
 	if(param > 0) playState.m_nMusicSpeed = param;
 	if(GetType() == MOD_TYPE_STM && param > 0)
 	{
-		playState.m_nMusicSpeed = std::max<uint32>(param >> 4u, 1);
+		playState.m_nMusicSpeed = std::max(param >> 4, uint32(1));
 		playState.m_nMusicTempo = ConvertST2Tempo(static_cast<uint8>(param));
 	}
 }
@@ -5643,11 +5819,12 @@ void CSoundFile::SetSpeed(PlayState &playState, uint32 param) const
 // Convert a ST2 tempo byte to classic tempo and speed combination
 TEMPO CSoundFile::ConvertST2Tempo(uint8 tempo)
 {
-	static const uint8 ST2TempoFactor[] = { 140, 50, 25, 15, 10, 7, 6, 4, 3, 3, 2, 2, 2, 2, 1, 1 };
-	static const uint32 st2MixingRate = 23863; // Highest possible setting in ST2
+	static constexpr uint8 ST2TempoFactor[] = { 140, 50, 25, 15, 10, 7, 6, 4, 3, 3, 2, 2, 2, 2, 1, 1 };
+	static constexpr uint32 st2MixingRate = 23863; // Highest possible setting in ST2
 
 	// This underflows at tempo 06...0F, and the resulting tick lengths depend on the mixing rate.
-	int32 samplesPerTick = st2MixingRate / (49 - ((ST2TempoFactor[tempo >> 4u] * (tempo & 0x0F)) >> 4u));
+	// Note: ST2.3 uses the constant 50 below, earlier versions use 49 but they also play samples at a different speed.
+	int32 samplesPerTick = st2MixingRate / (50 - ((ST2TempoFactor[tempo >> 4u] * (tempo & 0x0F)) >> 4u));
 	if(samplesPerTick <= 0)
 		samplesPerTick += 65536;
 	return TEMPO().SetRaw(Util::muldivrfloor(st2MixingRate, 5 * TEMPO::fractFact, samplesPerTick * 2));
@@ -5670,12 +5847,7 @@ void CSoundFile::SetTempo(TEMPO param, bool setFromUI)
 		// ProTracker sets the tempo after the first tick.
 		// Note: The case of one tick per row is handled in ProcessRow() instead.
 		// Test case: TempoChange.mod
-#if MPT_MSVC_AT_LEAST(2017,8) && MPT_MSVC_BEFORE(2019,0)
-		// Work-around MSVC getting confused about deduced const input type in noexcept operator inside noexcept condition.
-		m_PlayState.m_nMusicTempo.SetRaw(std::min(param.GetRaw(), specs.GetTempoMax().GetRaw()));
-#else
 		m_PlayState.m_nMusicTempo = std::min(param, specs.GetTempoMax());
-#endif
 	} else if(param < minTempo && !m_SongFlags[SONG_FIRSTTICK])
 	{
 		// Tempo Slide
@@ -5896,7 +6068,7 @@ uint32 CSoundFile::GetPeriodFromNote(uint32 note, int32 nFineTune, uint32 nC5Spe
 	} else
 	{
 		nFineTune = XM2MODFineTune(nFineTune);
-		if ((nFineTune) || (note < 24) || (note >= 24 + mpt::size(ProTrackerPeriodTable)))
+		if ((nFineTune) || (note < 24) || (note >= 24 + std::size(ProTrackerPeriodTable)))
 			return (ProTrackerTunedPeriods[nFineTune * 12u + note % 12u] << 5) >> (note / 12u);
 		else
 			return (ProTrackerPeriodTable[note - 24] << 2);
@@ -6016,7 +6188,7 @@ PLUGINDEX CSoundFile::GetChannelPlugin(CHANNELINDEX nChn, PluginMutePriority res
 	const ModChannel &channel = m_PlayState.Chn[nChn];
 
 	PLUGINDEX plugin;
-	if((respectMutes == RespectMutes && channel.dwFlags[CHN_MUTE]) || channel.dwFlags[CHN_NOFX])
+	if((respectMutes == RespectMutes && channel.dwFlags[CHN_MUTE | CHN_SYNCMUTE]) || channel.dwFlags[CHN_NOFX])
 	{
 		plugin = 0;
 	} else
@@ -6094,7 +6266,7 @@ IMixPlugin *CSoundFile::GetChannelInstrumentPlugin(CHANNELINDEX chn) const
 // Get the MIDI channel currently associated with a given tracker channel
 uint8 CSoundFile::GetBestMidiChannel(CHANNELINDEX trackerChn) const
 {
-	if(trackerChn >= mpt::size(m_PlayState.Chn))
+	if(trackerChn >= std::size(m_PlayState.Chn))
 	{
 		return 0;
 	}
@@ -6183,9 +6355,9 @@ void CSoundFile::PortamentoFineMPT(ModChannel &chn, int param)
 	const int tickParam = static_cast<int>((m_PlayState.m_nTickCount + 1.0) * param / m_PlayState.m_nMusicSpeed);
 	chn.m_PortamentoFineSteps += (param >= 0) ? tickParam - chn.nOldFinePortaUpDown : tickParam + chn.nOldFinePortaUpDown;
 	if(m_PlayState.m_nTickCount + 1 == m_PlayState.m_nMusicSpeed)
-		chn.nOldFinePortaUpDown = static_cast<int8>(mpt::abs(param));
+		chn.nOldFinePortaUpDown = static_cast<int8>(std::abs(param));
 	else
-		chn.nOldFinePortaUpDown = static_cast<int8>(mpt::abs(tickParam));
+		chn.nOldFinePortaUpDown = static_cast<int8>(std::abs(tickParam));
 
 	chn.m_CalculateFreq = true;
 }

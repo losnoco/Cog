@@ -21,7 +21,9 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
-//#define MMCMP_LOG
+#ifdef MPT_ALL_LOGGING
+#define MMCMP_LOG
+#endif
 
 
 struct XPKFILEHEADER
@@ -102,11 +104,11 @@ static int32 bfexts(std::size_t p, int32 bo, int32 bc, XPK_BufferBounds &bufs)
 
 static uint8 XPK_ReadTable(int32 index)
 {
-	static const uint8 xpk_table[] = {
+	static constexpr uint8 xpk_table[] = {
 		2,3,4,5,6,7,8,0,3,2,4,5,6,7,8,0,4,3,5,2,6,7,8,0,5,4,6,2,3,7,8,0,6,5,7,2,3,4,8,0,7,6,8,2,3,4,5,0,8,7,6,2,3,4,5,0
 	};
 	if(index < 0) throw XPK_error();
-	if(static_cast<std::size_t>(index) >= mpt::size(xpk_table)) throw XPK_error();
+	if(static_cast<std::size_t>(index) >= std::size(xpk_table)) throw XPK_error();
 	return xpk_table[index];
 }
 
@@ -157,9 +159,9 @@ static bool XPK_DoUnpack(const uint8 *src_, uint32 srcLen, std::vector<char> &un
 
 		if (type != 1)
 		{
-		#ifdef MMCMP_LOG
-			Log("Invalid XPK type! (%d bytes left)\n", len);
-		#endif
+			#ifdef MMCMP_LOG
+				MPT_LOG(LogDebug, "XPK", mpt::format(U_("Invalid XPK type! (%1 bytes left)"))(len));
+			#endif
 			break;
 		}
 		len -= cup1;
@@ -344,7 +346,7 @@ static bool ValidateHeader(const XPKFILEHEADER &header)
 	{
 		return false;
 	}
-	MPT_STATIC_ASSERT(sizeof(XPKFILEHEADER) >= 8);
+	static_assert(sizeof(XPKFILEHEADER) >= 8);
 	if(header.SrcLen < (sizeof(XPKFILEHEADER) - 8))
 	{
 		return false;
@@ -410,12 +412,12 @@ bool UnpackXPK(std::vector<ContainerItem> &containerItems, FileReader &file, Con
 	}
 
 	containerItems.emplace_back();
-	containerItems.back().data_cache = mpt::make_unique<std::vector<char> >();
+	containerItems.back().data_cache = std::make_unique<std::vector<char> >();
 	std::vector<char> & unpackedData = *(containerItems.back().data_cache);
 
-#ifdef MMCMP_LOG
-	Log("XPK detected (SrcLen=%d DstLen=%d) filesize=%d\n", header.SrcLen, header.DstLen, file.GetLength());
-#endif
+	#ifdef MMCMP_LOG
+		MPT_LOG(LogDebug, "XPK", mpt::uformat(U_("XPK detected (SrcLen=%1 DstLen=%2) filesize=%3"))(static_cast<uint32>(header.SrcLen), static_cast<uint32>(header.DstLen), file.GetLength()));
+	#endif
 	bool result = false;
 	try
 	{

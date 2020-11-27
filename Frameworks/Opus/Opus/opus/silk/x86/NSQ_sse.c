@@ -29,6 +29,8 @@
 #include "config.h"
 #endif
 
+#ifdef __x86_64__
+
 #include <xmmintrin.h>
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -718,3 +720,5 @@ static OPUS_INLINE void silk_nsq_scale_states_sse4_1(
         }
     }
 }
+
+#endif

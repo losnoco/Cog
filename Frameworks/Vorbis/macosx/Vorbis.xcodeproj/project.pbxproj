@@ -578,8 +578,8 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					730F23A1091827B100AB638C = {
-						DevelopmentTeam = N6E749HJ2X;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 4S876G9VCD;
+						ProvisioningStyle = Automatic;
 					};
 					738835E30B18F870005C7A69 = {
 						DevelopmentTeam = N6E749HJ2X;
@@ -757,11 +757,11 @@
 		730F23ED091827B100AB638C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
@@ -772,7 +772,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.vorbis;
 				PRODUCT_NAME = Vorbis;
@@ -792,11 +792,11 @@
 		730F23EE091827B100AB638C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
@@ -805,7 +805,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.vorbis;
 				PRODUCT_NAME = Vorbis;

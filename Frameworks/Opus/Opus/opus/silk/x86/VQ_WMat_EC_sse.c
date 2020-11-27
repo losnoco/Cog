@@ -29,6 +29,8 @@
 #include "config.h"
 #endif
 
+#ifdef __x86_64__
+
 #include <xmmintrin.h>
 #include <emmintrin.h>
 #include <smmintrin.h>
@@ -140,3 +142,5 @@ void silk_VQ_WMat_EC_sse4_1(
         cb_row_Q7 += LTP_ORDER;
     }
 }
+
+#endif

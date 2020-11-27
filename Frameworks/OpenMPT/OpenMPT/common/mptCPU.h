@@ -16,26 +16,30 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
-#ifdef ENABLE_ASM
+#ifdef MODPLUG_TRACKER
 
-#define PROCSUPPORT_LM           0x00001 // Processor supports long mode (amd64)
-#define PROCSUPPORT_CMOV         0x00004 // Processor supports conditional move instructions (i686)
+#define PROCSUPPORT_ASM_INTRIN   0x00001 // assembly and intrinsics are enabled at runtime
+#define PROCSUPPORT_CPUID        0x00002 // Processor supports modern cpuid
+#define PROCSUPPORT_LM           0x00004 // Processor supports long mode (amd64)
 #define PROCSUPPORT_MMX          0x00010 // Processor supports MMX instructions
-#define PROCSUPPORT_AMD_MMXEXT   0x00020 // Processor supports AMD MMX extensions
-#define PROCSUPPORT_AMD_3DNOW    0x00040 // Processor supports AMD 3DNow! instructions
-#define PROCSUPPORT_AMD_3DNOWEXT 0x00080 // Processor supports AMD 3DNow!2 instructions
 #define PROCSUPPORT_SSE          0x00100 // Processor supports SSE instructions
 #define PROCSUPPORT_SSE2         0x00200 // Processor supports SSE2 instructions
 #define PROCSUPPORT_SSE3         0x00400 // Processor supports SSE3 instructions
 #define PROCSUPPORT_SSSE3        0x00800 // Processor supports SSSE3 instructions
 #define PROCSUPPORT_SSE4_1       0x01000 // Processor supports SSE4.1 instructions
 #define PROCSUPPORT_SSE4_2       0x02000 // Processor supports SSE4.2 instructions
+#define PROCSUPPORT_AVX          0x10000 // Processor supports AVX instructions
+#define PROCSUPPORT_AVX2         0x20000 // Processor supports AVX2 instructions
 
-static const uint32 PROCSUPPORT_i586     = 0u                                                                         ;
-static const uint32 PROCSUPPORT_i686     = 0u | PROCSUPPORT_CMOV                                                      ;
-static const uint32 PROCSUPPORT_x86_SSE  = 0u | PROCSUPPORT_CMOV | PROCSUPPORT_SSE                                    ;
-static const uint32 PROCSUPPORT_x86_SSE2 = 0u | PROCSUPPORT_CMOV | PROCSUPPORT_SSE | PROCSUPPORT_SSE2                 ;
-static const uint32 PROCSUPPORT_AMD64    = 0u | PROCSUPPORT_CMOV | PROCSUPPORT_SSE | PROCSUPPORT_SSE2 | PROCSUPPORT_LM;
+static constexpr uint32 PROCSUPPORT_i586     = 0u                                                      ;
+static constexpr uint32 PROCSUPPORT_x86_SSE  = 0u | PROCSUPPORT_SSE                                    ;
+static constexpr uint32 PROCSUPPORT_x86_SSE2 = 0u | PROCSUPPORT_SSE | PROCSUPPORT_SSE2                 ;
+static constexpr uint32 PROCSUPPORT_AMD64    = 0u | PROCSUPPORT_SSE | PROCSUPPORT_SSE2 | PROCSUPPORT_LM;
+
+#endif
+
+
+#ifdef ENABLE_ASM
 
 extern uint32 RealProcSupport;
 extern uint32 ProcSupport;

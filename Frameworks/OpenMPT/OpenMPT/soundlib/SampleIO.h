@@ -119,7 +119,7 @@ public:
 
 	void MayNormalize()
 	{
-		if(GetBitDepth() == 24 || GetBitDepth() == 32)
+		if(GetBitDepth() >= 24)
 		{
 			if(GetEncoding() == SampleIO::signedPCM)
 			{

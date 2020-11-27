@@ -16,17 +16,9 @@ OPENMPT_NAMESPACE_BEGIN
 
 class FileReaderTraitsMemory;
 
-#if defined(MPT_FILEREADER_STD_ISTREAM)
-
 class FileReaderTraitsStdStream;
 
-typedef FileReaderTraitsStdStream FileReaderTraitsDefault;
-
-#else // !MPT_FILEREADER_STD_ISTREAM
-
-typedef FileReaderTraitsMemory FileReaderTraitsDefault;
-
-#endif // MPT_FILEREADER_STD_ISTREAM
+using FileReaderTraitsDefault = FileReaderTraitsStdStream;
 
 namespace detail {
 
@@ -35,9 +27,9 @@ class FileReader;
 
 } // namespace detail
 
-typedef detail::FileReader<FileReaderTraitsDefault> FileReader;
+using FileReader = detail::FileReader<FileReaderTraitsDefault>;
 
-typedef detail::FileReader<FileReaderTraitsMemory> MemoryFileReader;
+using MemoryFileReader = detail::FileReader<FileReaderTraitsMemory>;
 
 OPENMPT_NAMESPACE_END
 

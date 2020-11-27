@@ -649,7 +649,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey&apos;s Audio File</string>
+			<string>Monkey's Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -1002,8 +1002,6 @@
 	<string>Cog.help</string>
 	<key>CFBundleHelpBookName</key>
 	<string>org.cogx.cog.help</string>
-	<key>CFBundleIconFile</key>
-	<string>icon_main</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -1020,35 +1018,36 @@
 	<string>public.app-category.music</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.8.0</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSAppleScriptEnabled</key>
 	<string>YES</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Cog is an audio player. It will never use your camera. Why is it asking for permission to use your camera?</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Cog has no use for your location information. Something is obviously wrong with the application.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Cog is an audio player. It does not, however, record audio. Why is it asking for permission to use your microphone?</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cog is an audio player. Why are you trying to access your Photos Library with an audio player?</string>
 	<key>NSPrincipalClass</key>
 	<string>MediaKeysApplication</string>
-	<key>NSAppTransportSecurity</key>  
-	<dict>  
-		<key>NSAllowsArbitraryLoads</key><true/>  
-	</dict>
+	<key>NSRemindersUsageDescription</key>
+	<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>
 	<key>SUFeedURL</key>
 	<string>https://f.losno.co/cog/mercury.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 	<key>SUPublicEDKey</key>
 	<string>omxG7Rp0XK9/YEvKbVy7cd44eVAh1LJB6CmjQwjOJz4=</string>
-	<key>NSLocationUsageDescription</key>
-	<string>Cog has no use for your location information. Something is obviously wrong with the application.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Cog is an audio player. Why are you trying to access your Photos Library with an audio player?</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Cog is an audio player. It will never use your camera. Why is it asking for permission to use your camera?</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Cog is an audio player. It does not, however, record audio. Why is it asking for permission to use your microphone?</string>
 </dict>
 </plist>

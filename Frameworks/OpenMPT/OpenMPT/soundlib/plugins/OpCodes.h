@@ -15,7 +15,7 @@
 OPENMPT_NAMESPACE_BEGIN
 
 #ifndef NO_VST
-static const char *VstOpCodes[] =
+static constexpr const char *VstOpCodes[] =
 {
 	"effOpen",
 	"effClose",

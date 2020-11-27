@@ -86,8 +86,8 @@ void Chorus::Process(float *pOutL, float *pOutR, uint32 numFrames)
 				m_waveShapeMin -= 2;
 			if(m_waveShapeMax > 1)
 				m_waveShapeMax -= 2;
-			waveMin = mpt::abs(m_waveShapeMin) * 2 - 1;
-			waveMax = mpt::abs(m_waveShapeMax) * 2 - 1;
+			waveMin = std::abs(m_waveShapeMin) * 2 - 1;
+			waveMax = std::abs(m_waveShapeMax) * 2 - 1;
 		} else
 		{
 			m_waveShapeMin = m_waveShapeMax * m_waveShapeVal + m_waveShapeMin;

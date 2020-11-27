@@ -187,13 +187,21 @@ struct SPU_struct
    void ShutUp();
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 SoundInterface_struct *SPU_SoundCore(NDS_state *);
 
 void SPU_Pause(NDS_state *, int pause);
 void SPU_SetVolume(NDS_state *, int volume);
 void SPU_KeyOn(NDS_state *, int channel);
 void SPU_Emulate_core(NDS_state *);
-void SPU_Emulate_user(NDS_state *, bool mix = true);
+void SPU_Emulate_user(NDS_state *, BOOL mix = true);
+
+#ifdef __cplusplus
+}
+#endif
 
 class WavWriter
 {
@@ -207,10 +215,17 @@ private:
 	FILE *spufp;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void WAV_End(NDS_state *);
 bool WAV_Begin(NDS_state *, const char* fname);
 bool WAV_IsRecording(NDS_state *);
 void WAV_WavSoundUpdate(NDS_state *, void* soundData, int numSamples);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

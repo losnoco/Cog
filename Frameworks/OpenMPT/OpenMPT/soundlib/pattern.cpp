@@ -240,7 +240,7 @@ bool CPattern::Shrink()
 			}
 		}
 	}
-	m_ModCommands.resize(m_ModCommands.size() / 2);
+	m_ModCommands.resize(m_Rows * nChns);
 
 	return true;
 }
@@ -262,7 +262,7 @@ bool CPattern::SetName(const char *newName, size_t maxChars)
 	{
 		return false;
 	}
-	m_PatternName.assign(newName, mpt::strnlen(newName, maxChars));
+	m_PatternName = mpt::truncate(newName, maxChars);
 	return true;
 }
 

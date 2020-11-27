@@ -39,6 +39,7 @@
 #include "r4300/instr_counters.h"
 #endif
 
+#ifdef DYNAREC
 static void genbc1f_test(usf_state_t * state)
 {
    test_m32rel_imm32(state, (unsigned int*)&state->FCR31, 0x800000);
@@ -303,3 +304,4 @@ void genbc1tl_idle(usf_state_t * state)
 #endif
 }
 
+#endif

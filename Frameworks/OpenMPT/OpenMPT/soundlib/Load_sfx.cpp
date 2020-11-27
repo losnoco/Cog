@@ -40,7 +40,7 @@ struct SFXSampleHeader
 		mptSmp.Initialize(MOD_TYPE_MOD);
 		mptSmp.nLength = length;
 		mptSmp.nFineTune = MOD2XMFineTune(finetune);
-		mptSmp.nVolume = 4u * std::min<uint8>(volume, 64);
+		mptSmp.nVolume = 4u * std::min(volume.get(), uint8(64));
 
 		SmpLength lStart = loopStart;
 		SmpLength lLength = loopLength * 2u;
@@ -89,7 +89,7 @@ static uint8 ClampSlideParam(uint8 value, uint8 lowNote, uint8 highNote)
 
 		// with a fixed speed of 6 ticks/row, and excluding the first row,
 		// 1xx/2xx param has a max value of (low-high)/5 to avoid sliding too far
-		return std::min<uint8>(value, static_cast<uint8>((lowPeriod - highPeriod) / 5));
+		return std::min(value, static_cast<uint8>((lowPeriod - highPeriod) / 5));
 	}
 
 	return 0;
@@ -236,13 +236,13 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 		}
 		if(invalidChars >= 128)
 			return false;
-		mpt::String::Read<mpt::String::spacePadded>(m_szNames[smp], sampleHeader.name);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
 	}
 
 	// Broken conversions of the "Operation Stealth" soundtrack (BOND23 / BOND32)
 	// There is a converter that shifts all note values except FFFD (empty note) to the left by 1 bit,
 	// but it should not do that for FFFE (STP) notes - as a consequence, they turn into pattern breaks (FFFC).
-	const bool fixPatternBreaks = !strcmp(m_szNames[1], "BASSE2.AMI") || !strcmp(m_szNames[1], "PRA1.AMI");
+	const bool fixPatternBreaks = (m_szNames[1] == "BASSE2.AMI") || (m_szNames[1] == "PRA1.AMI");
 
 	SFXFileHeader fileHeader;
 	if(!file.ReadStruct(fileHeader))
@@ -261,7 +261,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 	PATTERNINDEX numPatterns = 0;
 	for(ORDERINDEX ord = 0; ord < fileHeader.numOrders; ord++)
 	{
-		numPatterns = std::max<PATTERNINDEX>(numPatterns, fileHeader.orderList[ord] + 1u);
+		numPatterns = std::max(numPatterns, static_cast<PATTERNINDEX>(fileHeader.orderList[ord] + 1));
 	}
 
 	if(fileHeader.restartPos < fileHeader.numOrders)
@@ -297,8 +297,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 			for(CHANNELINDEX chn = 0; chn < 4; chn++)
 			{
 				ModCommand &m = rowBase[chn];
-				uint8 data[4];
-				file.ReadArray(data);
+				auto data = file.ReadArray<uint8, 4>();
 
 				if(data[0] == 0xFF)
 				{
@@ -438,7 +437,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 
 					case 0x9: // 9xy: Auto slide
 						version = std::max(version, uint8(8));
-						MPT_FALLTHROUGH;
+						[[fallthrough]];
 					default:
 						m.command = CMD_NONE;
 						break;
@@ -476,7 +475,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = m_nSamples == 15 ? mpt::format(U_("SoundFX 1.%1"))(version) : U_("SoundFX 2.0 / MultiMedia Sound");
 	m_modFormat.type = m_nSamples == 15 ? UL_("sfx") : UL_("sfx2");
-	m_modFormat.charset = mpt::CharsetISO8859_1;
+	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
 	return true;
 }

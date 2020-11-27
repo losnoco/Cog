@@ -100,7 +100,7 @@ public:
 		if(WindowsVersion.IsAtLeast(mpt::Windows::Version::Win8))
 		{
 			hasKB2533623 = true;
-		} else if(WindowsVersion.IsAtLeast(mpt::Windows::Version::WinVista))
+		} else
 		{
 			HMODULE hKernel32DLL = LoadLibraryW(L"kernel32.dll");
 			if(hKernel32DLL)
@@ -133,7 +133,7 @@ public:
 					// Just rely on the default search path here.
 				case mpt::LibrarySearchPathApplication:
 					{
-						const mpt::PathString dllPath = mpt::GetAppPath();
+						const mpt::PathString dllPath = mpt::GetExecutablePath();
 						if(!dllPath.empty() && mpt::PathIsAbsolute(dllPath) && dllPath.IsDirectory())
 						{
 							hModule = LoadLibrary((dllPath + path.GetFileName()).AsNative().c_str());
@@ -165,7 +165,7 @@ public:
 					break;
 				case mpt::LibrarySearchPathApplication:
 					{
-						const mpt::PathString dllPath = mpt::GetAppPath();
+						const mpt::PathString dllPath = mpt::GetExecutablePath();
 						if(!dllPath.empty() && mpt::PathIsAbsolute(dllPath) && dllPath.IsDirectory())
 						{
 							hModule = LoadLibrary((dllPath + path.GetFileName()).AsNative().c_str());
@@ -193,6 +193,10 @@ public:
 #endif // MPT_OS_WINDOWS_WINRT
 
 	}
+
+	LibraryHandle(const LibraryHandle &) = delete;
+
+	LibraryHandle & operator=(const LibraryHandle &) = delete;
 
 	~LibraryHandle()
 	{
@@ -236,6 +240,10 @@ public:
 	{
 		return;
 	}
+
+	LibraryHandle(const LibraryHandle &) = delete;
+
+	LibraryHandle & operator=(const LibraryHandle &) = delete;
 
 	~LibraryHandle()
 	{
@@ -286,6 +294,10 @@ public:
 		inited = true;
 		handle = lt_dlopenext(path.GetFileName().AsNative().c_str());
 	}
+
+	LibraryHandle(const LibraryHandle &) = delete;
+
+	LibraryHandle & operator=(const LibraryHandle &) = delete;
 
 	~LibraryHandle()
 	{
@@ -338,6 +350,10 @@ public:
 		handle = dlopen(path.GetFileName().AsNative().c_str(), RTLD_NOW);
 	}
 
+	LibraryHandle(const LibraryHandle &) = delete;
+
+	LibraryHandle & operator=(const LibraryHandle &) = delete;
+
 	~LibraryHandle()
 	{
 		if(IsValid())
@@ -380,6 +396,10 @@ public:
 		MPT_UNREFERENCED_PARAMETER(path);
 		return;
 	}
+
+	LibraryHandle(const LibraryHandle &) = delete;
+
+	LibraryHandle & operator=(const LibraryHandle &) = delete;
 
 	~LibraryHandle()
 	{

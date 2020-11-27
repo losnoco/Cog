@@ -219,7 +219,7 @@ static inline Tstring StringReplace( Tstring str, const Tstring2 & oldStr_, cons
 }
 
 static std::string StringUpperCase( std::string str ) {
-	std::transform( str.begin(), str.end(), str.begin(), std::toupper );
+	std::transform( str.begin(), str.end(), str.begin(), []( char c ) { return static_cast<char>( std::toupper( c ) ); } );
 	return str;
 }
 
@@ -247,6 +247,7 @@ static void save_settings_to_map( std::map<std::string,int> & result, const libo
 	result[ "RepeatCount" ] = s.repeatcount;
 	result[ "InterpolationFilterLength" ] = s.interpolationfilterlength;
 	result[ "UseAmigaResampler" ] = s.use_amiga_resampler;
+	result[ "AmigaFilterType" ] = s.amiga_filter_type;
 	result[ "VolumeRampingStrength" ] = s.ramping;
 }
 
@@ -265,6 +266,7 @@ static void load_settings_from_map( libopenmpt::plugin::settings & s, const std:
 	load_map_setting( map, "RepeatCount", s.repeatcount );
 	load_map_setting( map, "InterpolationFilterLength", s.interpolationfilterlength );
 	load_map_setting( map, "UseAmigaResampler", s.use_amiga_resampler );
+	load_map_setting( map, "AmigaFilterType", s.amiga_filter_type );
 	load_map_setting( map, "VolumeRampingStrength", s.ramping );
 }
 
@@ -305,7 +307,21 @@ static void apply_options() {
 		self->mod->set_render_param( openmpt::module::RENDER_STEREOSEPARATION_PERCENT, self->settings.stereoseparation );
 		self->mod->set_render_param( openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH, self->settings.interpolationfilterlength );
 		self->mod->set_render_param( openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, self->settings.ramping );
-		self->mod->ctl_set( "render.resampler.emulate_amiga", self->settings.use_amiga_resampler ? "1" : "0" );
+		self->mod->ctl_set_boolean( "render.resampler.emulate_amiga", self->settings.use_amiga_resampler ? true : false );
+		switch ( self->settings.amiga_filter_type ) {
+			case 0:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "auto" );
+				break;
+			case 1:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "unfiltered" );
+				break;
+			case 0xA500:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "a500" );
+				break;
+			case 0xA1200:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "a1200" );
+				break;
+		}
 	}
 }
 
@@ -374,8 +390,8 @@ static void WINAPI ShortcutHandler( DWORD id ) {
 		break;
 	}
 	
-	self->tempo_factor = std::min ( 48, std::max( -48, self->tempo_factor ) );
-	self->pitch_factor = std::min ( 48, std::max( -48, self->pitch_factor ) );
+	self->tempo_factor = std::min( 48, std::max( -48, self->tempo_factor ) );
+	self->pitch_factor = std::min( 48, std::max( -48, self->pitch_factor ) );
 	const double tempo_factor = std::pow( 2.0, self->tempo_factor / 24.0 );
 	const double pitch_factor = std::pow( 2.0, self->pitch_factor / 24.0 );
 
@@ -449,7 +465,7 @@ static void clear_current_timeinfo() {
 static void WINAPI openmpt_About( HWND win ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2019 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2020 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
@@ -502,7 +518,7 @@ std::streambuf::int_type xmplay_streambuf::underflow() {
 	char * base = &buffer.front();
 	char * start = base;
 	if ( eback() == base ) {
-		std::size_t put_back_count = std::min<std::size_t>( put_back, egptr() - base );
+		std::size_t put_back_count = std::min( put_back, static_cast<std::size_t>( egptr() - base ) );
 		std::memmove( base, egptr() - put_back_count, put_back_count );
 		start += put_back_count;
 	}
@@ -673,7 +689,7 @@ static char * build_xmplay_tags( const openmpt::module & mod ) {
 	return result;
 }
 
-static float * build_xmplay_length( const openmpt::module & mod ) {
+static float * build_xmplay_length( const openmpt::module & /* mod */ ) {
 	float * result = static_cast<float*>( xmpfmisc->Alloc( sizeof( float ) * self->subsong_lengths.size() ) );
 	if ( !result ) {
 		return nullptr;
@@ -749,6 +765,7 @@ static std::string sanitize_xmplay_multiline_string( const std::string & str ) {
 // check if a file is playable by this plugin
 // more thorough checks can be saved for the GetFileInfo and Open functions
 static BOOL WINAPI openmpt_CheckFile( const char * filename, XMPFILE file ) {
+	static_cast<void>( filename );
 	try {
 		#ifdef USE_XMPLAY_FILE_IO
 			#ifdef USE_XMPLAY_ISTREAM
@@ -791,6 +808,7 @@ static BOOL WINAPI openmpt_CheckFile( const char * filename, XMPFILE file ) {
 }
 
 static DWORD WINAPI openmpt_GetFileInfo( const char * filename, XMPFILE file, float * * length, char * * tags ) {
+	static_cast<void>( filename );
 	try {
 		std::map< std::string, std::string > ctls
 		{
@@ -867,6 +885,7 @@ static DWORD WINAPI openmpt_GetFileInfo( const char * filename, XMPFILE file, fl
 // open a file for playback
 // return:  0=failed, 1=success, 2=success and XMPlay can close the file
 static DWORD WINAPI openmpt_Open( const char * filename, XMPFILE file ) {
+	static_cast<void>( filename );
 	xmpopenmpt_lock guard;
 	reset_options();
 	try {
@@ -1134,7 +1153,7 @@ static DWORD WINAPI openmpt_Process( float * dstbuf, DWORD count ) {
 	std::size_t frames_to_render = frames;
 	std::size_t frames_rendered = 0;
 	while ( frames_to_render > 0 ) {
-		std::size_t frames_chunk = std::min<std::size_t>( frames_to_render, ( self->samplerate + 99 ) / 100 ); // 100 Hz timing info update interval
+		std::size_t frames_chunk = std::min( frames_to_render, static_cast<std::size_t>( ( self->samplerate + 99 ) / 100 ) ); // 100 Hz timing info update interval
 		switch ( self->num_channels ) {
 		case 1:
 			{
@@ -1294,18 +1313,18 @@ static BOOL WINAPI VisOpen(DWORD colors[3]) {
 	viscolors[col_global] = invert_color( viscolors[col_background] );
 
 	const int r = viscolors[col_text].r, g = viscolors[col_text].g, b = viscolors[col_text].b;
-	viscolors[col_empty].r = (r + viscolors[col_background].r) / 2;
-	viscolors[col_empty].g = (g + viscolors[col_background].g) / 2;
-	viscolors[col_empty].b = (b + viscolors[col_background].b) / 2;
+	viscolors[col_empty].r = static_cast<std::uint8_t>( (r + viscolors[col_background].r) / 2 );
+	viscolors[col_empty].g = static_cast<std::uint8_t>( (g + viscolors[col_background].g) / 2 );
+	viscolors[col_empty].b = static_cast<std::uint8_t>( (b + viscolors[col_background].b) / 2 );
 	viscolors[col_empty].a = 0;
 
 #define MIXCOLOR(col, c1, c2, c3) { \
 	viscolors[col] = viscolors[col_text]; \
 	int mix = viscolors[col].c1 + 0xA0; \
-	viscolors[col].c1 = mix; \
+	viscolors[col].c1 = static_cast<std::uint8_t>( mix ); \
 	if ( mix > 0xFF ) { \
-		viscolors[col].c2 = std::max<uint8_t>( c2 - viscolors[col].c1 / 2, 0 ); \
-		viscolors[col].c3 = std::max<uint8_t>( c3 - viscolors[col].c1 / 2, 0 ); \
+		viscolors[col].c2 = std::max( static_cast<std::uint8_t>( c2 - viscolors[col].c1 / 2 ), std::uint8_t(0) ); \
+		viscolors[col].c3 = std::max( static_cast<std::uint8_t>( c3 - viscolors[col].c1 / 2 ), std::uint8_t(0) ); \
 		viscolors[col].c1 = 0xFF; \
 	} }
 
@@ -1336,13 +1355,15 @@ static void WINAPI VisClose() {
 
 	DeleteFont( visfont );
 	DeleteBitmap( visbitmap );
-	DeleteDC( visDC );
+	if ( visDC ) {
+		DeleteDC( visDC );
+	}
 }
-static void WINAPI VisSize(HDC dc, SIZE *size) {
+static void WINAPI VisSize( HDC /* dc */ , SIZE * /* size */ ) {
 	xmpopenmpt_lock guard;
 	last_pattern = -1;	// Force redraw
 }
-static BOOL WINAPI VisRender(DWORD *buf, SIZE size, DWORD flags) {
+static BOOL WINAPI VisRender( DWORD * /* buf */ , SIZE /* size */ , DWORD /* flags */ ) {
 	xmpopenmpt_lock guard;
 	return FALSE;
 }
@@ -1392,7 +1413,7 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 	const std::size_t channels = self->mod->get_num_channels();
 	const std::size_t rows = self->mod->get_pattern_num_rows( pattern );
 
-	const std::size_t num_half_chars = std::max<std::size_t>( 2 * size.cx / text_size.cx, 8 ) - 8;
+	const std::size_t num_half_chars = std::max( static_cast<std::size_t>( 2 * size.cx / text_size.cx ), std::size_t(8) ) - 8;
 	const std::size_t num_rows = size.cy / text_size.cy;
 
 	// Spaces between pattern components are half width, full space at channel end
@@ -1428,7 +1449,9 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 
 	if ( !visDC || last_pattern != pattern ) {
 		DeleteBitmap( visbitmap );
-		DeleteDC( visDC );
+		if ( visDC ) {
+			DeleteDC( visDC );
+		}
 
 		visDC = CreateCompatibleDC( dc );
 		visbitmap = CreateCompatibleBitmap( dc, pattern_width, pattern_height );
@@ -1565,13 +1588,13 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 
 	if ( offset_x < 0 ) {
 		src_offset_x -= offset_x;
-		pattern_width = std::min<int>( pattern_width + offset_x, size.cx );
+		pattern_width = std::min( static_cast<int>( pattern_width + offset_x ), static_cast<int>( size.cx ) );
 		offset_x = 0;
 	}
 
 	if ( offset_y < 0 ) {
 		src_offset_y -= offset_y;
-		pattern_height = std::min<int>( pattern_height + offset_y, size.cy );
+		pattern_height = std::min( static_cast<int>( pattern_height + offset_y ), static_cast<int>( size.cy ) );
 		offset_y = 0;
 	}
 
@@ -1589,7 +1612,7 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 	return TRUE;
 }
 
-static void WINAPI VisButton(DWORD x, DWORD y) {
+static void WINAPI VisButton( DWORD /* x */ , DWORD /* y */ ) {
 	//xmpopenmpt_lock guard;
 }
 
@@ -1643,7 +1666,14 @@ static char * file_formats;
 
 static void xmp_openmpt_on_dll_load() {
 	ZeroMemory( &xmpopenmpt_mutex, sizeof( xmpopenmpt_mutex ) );
-	InitializeCriticalSection( &xmpopenmpt_mutex );
+	#if defined(_MSC_VER)
+	#pragma warning(push)
+	#pragma warning(disable:28125) // The function 'InitializeCriticalSection' must be called from within a try/except block:  The requirement might be conditional.
+	#endif // _MSC_VER
+		InitializeCriticalSection( &xmpopenmpt_mutex );
+	#if defined(_MSC_VER)
+	#pragma warning(pop)
+	#endif // _MSC_VER
 	std::vector<std::string> extensions = openmpt::get_supported_extensions();
 	std::string filetypes_string = "OpenMPT";
 	filetypes_string.push_back('\0');

@@ -19,6 +19,34 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
+#if defined(MODPLUG_TRACKER)
+
+namespace mpt
+{
+namespace OS
+{
+
+enum class Class
+{
+	Unknown,
+	Windows,
+	Linux,
+	Darwin,
+	BSD,
+	Haiku,
+	DOS,
+};
+
+mpt::OS::Class GetClassFromSysname(mpt::ustring sysname);
+
+mpt::OS::Class GetClass();
+
+}  // namespace OS
+}  // namespace mpt
+
+#endif // MODPLUG_TRACKER
+
+
 namespace mpt
 {
 namespace Windows
@@ -92,6 +120,8 @@ public:
 
 	typedef uint32 Build;
 
+	typedef uint32 TypeId;
+
 	static mpt::ustring VersionToString(mpt::Windows::Version::System version);
 
 private:
@@ -101,6 +131,7 @@ private:
 	System m_System;
 	ServicePack m_ServicePack;
 	Build m_Build;
+	TypeId m_Type;
 
 private:
 
@@ -110,7 +141,7 @@ public:
 
 	static Version NoWindows() noexcept;
 
-	Version(mpt::Windows::Version::System system, mpt::Windows::Version::ServicePack servicePack, mpt::Windows::Version::Build build) noexcept;
+	Version(mpt::Windows::Version::System system, mpt::Windows::Version::ServicePack servicePack, mpt::Windows::Version::Build build, mpt::Windows::Version::TypeId type) noexcept;
 
 public:
 
@@ -131,6 +162,7 @@ public:
 	mpt::Windows::Version::System GetSystem() const noexcept;
 	mpt::Windows::Version::ServicePack GetServicePack() const noexcept;
 	mpt::Windows::Version::Build GetBuild() const noexcept;
+	mpt::Windows::Version::TypeId GetTypeId() const noexcept;
 
 	mpt::ustring GetName() const;
 #ifdef MODPLUG_TRACKER
@@ -248,8 +280,7 @@ protected:
 	std::string m_RawHostSysName;
 	std::string m_RawHostRelease;
 	mpt::Wine::Version m_Version;
-	bool m_HostIsLinux;
-	bool m_HostIsBSD;
+	mpt::OS::Class m_HostClass;
 public:
 	VersionContext();
 public:
@@ -260,8 +291,7 @@ public:
 	std::string RawHostSysName() const { return m_RawHostSysName; }
 	std::string RawHostRelease() const { return m_RawHostRelease; }
 	mpt::Wine::Version Version() const { return m_Version; }
-	bool HostIsLinux() const { return m_HostIsLinux; }
-	bool HostIsBSD() const { return m_HostIsBSD; }
+	mpt::OS::Class HostClass() const { return m_HostClass; }
 };
 
 } // namespace Wine

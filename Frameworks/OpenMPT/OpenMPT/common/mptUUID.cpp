@@ -20,9 +20,9 @@
 #if MPT_OS_WINDOWS
 #include <windows.h>
 #include <rpc.h>
-#if defined(MODPLUG_TRACKER) || !defined(NO_DMO) || MPT_OS_WINDOWS_WINRT
+#if defined(MODPLUG_TRACKER) || defined(MPT_WITH_DMO) || MPT_OS_WINDOWS_WINRT
 #include <objbase.h>
-#endif // MODPLUG_TRACKER || !NO_DMO || MPT_OS_WINDOWS_WINRT
+#endif // MODPLUG_TRACKER || MPT_WITH_DMO || MPT_OS_WINDOWS_WINRT
 #endif // MPT_OS_WINDOWS
 
 
@@ -36,7 +36,7 @@ namespace Util
 {
 
 
-#if defined(MODPLUG_TRACKER) || !defined(NO_DMO)
+#if defined(MODPLUG_TRACKER) || defined(MPT_WITH_DMO)
 
 
 mpt::winstring CLSIDToString(CLSID clsid)
@@ -298,7 +298,7 @@ bool IsValid(UUID uuid)
 }
 
 
-#endif // MODPLUG_TRACKER || !NO_DMO
+#endif // MODPLUG_TRACKER || MPT_WITH_DMO
 
 
 } // namespace Util
@@ -348,7 +348,7 @@ mpt::UUID UUIDFromWin32(::UUID uuid)
 	return result;
 }
 
-#if defined(MODPLUG_TRACKER) || !defined(NO_DMO)
+#if defined(MODPLUG_TRACKER) || defined(MPT_WITH_DMO)
 
 UUID::UUID(::UUID uuid)
 {
@@ -360,7 +360,7 @@ UUID::operator ::UUID () const
 	return UUIDToWin32(*this);
 }
 
-#endif // MODPLUG_TRACKER || !NO_DMO
+#endif // MODPLUG_TRACKER || MPT_WITH_DMO
 
 #endif // MPT_OS_WINDOWS
 
@@ -535,6 +535,7 @@ UUID::UUID(GUIDms guid)
 UUID::operator UUIDbin() const
 {
 	UUIDbin result;
+	Clear(result);
 	result.Data1 = GetData1();
 	result.Data2 = GetData2();
 	result.Data3 = GetData3();
@@ -545,6 +546,7 @@ UUID::operator UUIDbin() const
 UUID::operator GUIDms() const
 {
 	GUIDms result;
+	Clear(result);
 	result.Data1 = GetData1();
 	result.Data2 = GetData2();
 	result.Data3 = GetData3();

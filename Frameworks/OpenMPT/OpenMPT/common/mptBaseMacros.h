@@ -14,7 +14,9 @@
 
 
 
+#include <array>
 #include <iterator>
+#include <type_traits>
 
 #include <cstddef>
 #include <cstdint>
@@ -28,14 +30,44 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
-// Compile time assert.
-#if (MPT_CXX >= 17)
-#define MPT_STATIC_ASSERT static_assert
+#define MPT_PP_DEFER(m, ...) m(__VA_ARGS__)
+
+#define MPT_PP_STRINGIFY(x) #x
+
+#define MPT_PP_JOIN_HELPER(a, b) a ## b
+#define MPT_PP_JOIN(a, b) MPT_PP_JOIN_HELPER(a, b)
+
+#define MPT_PP_UNIQUE_IDENTIFIER(prefix) MPT_PP_JOIN(prefix , __LINE__)
+
+
+
+#if MPT_COMPILER_MSVC
+
+#define MPT_WARNING(text)           __pragma(message(__FILE__ "(" MPT_PP_DEFER(MPT_PP_STRINGIFY, __LINE__) "): Warning: " text))
+#define MPT_WARNING_STATEMENT(text) __pragma(message(__FILE__ "(" MPT_PP_DEFER(MPT_PP_STRINGIFY, __LINE__) "): Warning: " text))
+
+#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
+
+#define MPT_WARNING(text)           _Pragma(MPT_PP_STRINGIFY(GCC warning text))
+#define MPT_WARNING_STATEMENT(text) _Pragma(MPT_PP_STRINGIFY(GCC warning text))
+
 #else
-#define MPT_STATIC_ASSERT(expr) static_assert((expr), "compile time assertion failed: " #expr)
+
+// portable #pragma message or #warning replacement
+#define MPT_WARNING(text) \
+	static inline int MPT_PP_UNIQUE_IDENTIFIER(MPT_WARNING_NAME) () noexcept { \
+		int warning [[deprecated("Warning: " text)]] = 0; \
+		return warning; \
+	} \
+/**/
+#define MPT_WARNING_STATEMENT(text) \
+	int MPT_PP_UNIQUE_IDENTIFIER(MPT_WARNING_NAME) = [](){ \
+		int warning [[deprecated("Warning: " text)]] = 0; \
+		return warning; \
+	}() \
+/**/
+
 #endif
-// legacy
-#define STATIC_ASSERT(x) MPT_STATIC_ASSERT(x)
 
 
 
@@ -55,43 +87,76 @@ OPENMPT_NAMESPACE_BEGIN
 
 // constexpr
 #define MPT_CONSTEXPR11_FUN constexpr MPT_FORCEINLINE
-#define MPT_CONSTEXPR11_VAR constexpr
-#if MPT_CXX_AT_LEAST(14) && !MPT_MSVC_BEFORE(2017,5)
 #define MPT_CONSTEXPR14_FUN constexpr MPT_FORCEINLINE
-#define MPT_CONSTEXPR14_VAR constexpr
-#else
-#define MPT_CONSTEXPR14_FUN MPT_FORCEINLINE
-#define MPT_CONSTEXPR14_VAR const
-#endif
-#if MPT_CXX_AT_LEAST(17) && !MPT_MSVC_BEFORE(2017,5)
 #define MPT_CONSTEXPR17_FUN constexpr MPT_FORCEINLINE
-#define MPT_CONSTEXPR17_VAR constexpr
-#else
-#define MPT_CONSTEXPR17_FUN MPT_FORCEINLINE
-#define MPT_CONSTEXPR17_VAR const
-#endif
+#if MPT_CXX_AT_LEAST(20)
+#define MPT_CONSTEXPR20_FUN constexpr MPT_FORCEINLINE
+#define MPT_CONSTEXPR20_VAR constexpr
+#else // !C++20
+#define MPT_CONSTEXPR20_FUN MPT_FORCEINLINE
+#define MPT_CONSTEXPR20_VAR const
+#endif // C++20
 
 
 
-// C++17 std::size
-#if MPT_CXX_AT_LEAST(17)
-namespace mpt {
-using std::size;
-} // namespace mpt
-#else
-namespace mpt {
+namespace mpt
+{
+template <auto V> struct constant_value { static constexpr decltype(V) value() { return V; } };
+#define MPT_FORCE_CONSTEXPR(expr) (mpt::constant_value<( expr )>::value())
+}  // namespace mpt
+
+
+
+#if MPT_CXX_AT_LEAST(20)
+#define MPT_IS_CONSTANT_EVALUATED20() std::is_constant_evaluated()
+#define MPT_IS_CONSTANT_EVALUATED() std::is_constant_evaluated()
+#else // !C++20
+#define MPT_IS_CONSTANT_EVALUATED20() false
+// this pessimizes the case for C++17 by always assuming constexpr context, which implies always running constexpr-friendly code
+#define MPT_IS_CONSTANT_EVALUATED() true
+#endif // C++20
+
+
+
+namespace mpt
+{
+
 template <typename T>
-MPT_CONSTEXPR11_FUN auto size(const T & v) -> decltype(v.size())
-{
-	return v.size();
-}
+struct stdarray_extent : std::integral_constant<std::size_t, 0> {};
+
 template <typename T, std::size_t N>
-MPT_CONSTEXPR11_FUN std::size_t size(const T(&)[N]) noexcept
+struct stdarray_extent<std::array<T, N>> : std::integral_constant<std::size_t, N> {};
+
+template <typename T>
+struct is_stdarray : std::false_type {};
+
+template <typename T, std::size_t N>
+struct is_stdarray<std::array<T, N>> : std::true_type {};
+
+// mpt::extent is the same as std::extent,
+// but also works for std::array,
+// and asserts that the given type is actually an array type instead of returning 0.
+// use as:
+// mpt::extent<decltype(expr)>()
+// mpt::extent<decltype(variable)>()
+// mpt::extent<decltype(type)>()
+// mpt::extent<type>()
+template <typename T>
+constexpr std::size_t extent() noexcept
 {
-	return N;
+	using Tarray = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
+	static_assert(std::is_array<Tarray>::value || mpt::is_stdarray<Tarray>::value);
+	if constexpr(mpt::is_stdarray<Tarray>::value)
+	{
+		return mpt::stdarray_extent<Tarray>();
+	} else
+	{
+		return std::extent<Tarray>();
+	}
 }
+
 } // namespace mpt
-#endif
+
 // legacy
 #if MPT_COMPILER_MSVC
 OPENMPT_NAMESPACE_END
@@ -115,41 +180,12 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
-// Some functions might be deprecated although they are still in use.
-// Tag them with "MPT_DEPRECATED".
-#if MPT_COMPILER_MSVC
-#define MPT_DEPRECATED __declspec(deprecated)
-#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
-#define MPT_DEPRECATED __attribute__((deprecated))
-#else
-#define MPT_DEPRECATED
-#endif
-#if defined(MODPLUG_TRACKER)
-#define MPT_DEPRECATED_TRACKER    MPT_DEPRECATED
-#define MPT_DEPRECATED_LIBOPENMPT 
-#elif defined(LIBOPENMPT_BUILD)
-#define MPT_DEPRECATED_TRACKER    
-#define MPT_DEPRECATED_LIBOPENMPT MPT_DEPRECATED
-#else
-#define MPT_DEPRECATED_TRACKER    MPT_DEPRECATED
-#define MPT_DEPRECATED_LIBOPENMPT MPT_DEPRECATED
-#endif
+#define MPT_ATTR_NODISCARD [[nodiscard]]
+#define MPT_DISCARD(expr) static_cast<void>(expr)
 
 
-
-#if MPT_CXX_AT_LEAST(17)
-#define MPT_CONSTANT_IF if constexpr
-#endif
 
 #if MPT_COMPILER_MSVC
-#if !defined(MPT_CONSTANT_IF)
-#define MPT_CONSTANT_IF(x) \
-  __pragma(warning(push)) \
-  __pragma(warning(disable:4127)) \
-  if(x) \
-  __pragma(warning(pop)) \
-/**/
-#endif
 #define MPT_MAYBE_CONSTANT_IF(x) \
   __pragma(warning(push)) \
   __pragma(warning(disable:4127)) \
@@ -176,11 +212,6 @@ OPENMPT_NAMESPACE_BEGIN
   if(x) \
   _Pragma("clang diagnostic pop") \
 /**/
-#endif
-
-#if !defined(MPT_CONSTANT_IF)
-// MPT_CONSTANT_IF disables compiler warnings for conditions that are either always true or always false for some reason (dependent on template arguments for example)
-#define MPT_CONSTANT_IF(x) if(x)
 #endif
 
 #if !defined(MPT_MAYBE_CONSTANT_IF)
@@ -214,35 +245,6 @@ OPENMPT_NAMESPACE_BEGIN
 #endif
 
 #define MPT_UNUSED_VARIABLE(x) MPT_UNREFERENCED_PARAMETER(x)
-
-
-
-// Macro for marking intentional fall-throughs in switch statements - can be used for static analysis if supported.
-#if (MPT_CXX >= 17)
-	#define MPT_FALLTHROUGH [[fallthrough]]
-#elif MPT_COMPILER_MSVC
-	#define MPT_FALLTHROUGH __fallthrough
-#elif MPT_COMPILER_CLANG
-	#define MPT_FALLTHROUGH [[clang::fallthrough]]
-#elif MPT_COMPILER_GCC && MPT_GCC_AT_LEAST(7,1,0)
-	#define MPT_FALLTHROUGH __attribute__((fallthrough))
-#elif defined(__has_cpp_attribute)
-	#if __has_cpp_attribute(fallthrough)
-		#define MPT_FALLTHROUGH [[fallthrough]]
-	#else
-		#define MPT_FALLTHROUGH MPT_DO { } MPT_WHILE_0
-	#endif
-#else
-	#define MPT_FALLTHROUGH MPT_DO { } MPT_WHILE_0
-#endif
-
-
-
-#if MPT_COMPILER_GCC || MPT_COMPILER_CLANG
-#define MPT_PRINTF_FUNC(formatstringindex,varargsindex) __attribute__((format(printf, formatstringindex, varargsindex)))
-#else
-#define MPT_PRINTF_FUNC(formatstringindex,varargsindex)
-#endif
 
 
 

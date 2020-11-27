@@ -80,19 +80,19 @@ template<> inline double ConvertStrTo(const std::wstring &str) { return ConvertS
 template<> inline long double ConvertStrTo(const std::wstring &str) { return ConvertStrToLongDouble(str); }
 #endif
 
-#if defined(_MFC_VER)
+#if defined(MPT_WITH_MFC)
 template<typename T>
 inline T ConvertStrTo(const CString &str)
 {
 	#if defined(UNICODE) && MPT_WSTRING_FORMAT
 		return ConvertStrTo<T>(mpt::ToWide(str));
 	#elif defined(UNICODE)
-		return ConvertStrTo<T>(mpt::ToCharset(mpt::CharsetUTF8, str));
+		return ConvertStrTo<T>(mpt::ToCharset(mpt::Charset::UTF8, str));
 	#else // !UNICODE
-		return ConvertStrTo<T>(mpt::ToCharset(mpt::CharsetLocale, str));
+		return ConvertStrTo<T>(mpt::ToCharset(mpt::Charset::Locale, str));
 	#endif // UNICODE
 }
-#endif // _MFC_VER
+#endif // MPT_WITH_MFC
 
 template<typename T>
 inline T ConvertStrTo(const char *str)
@@ -123,7 +123,7 @@ inline T ConvertStrTo(const wchar_t *str)
 template<typename T>
 inline T ConvertStrTo(const mpt::ustring &str)
 {
-	return ConvertStrTo<T>(mpt::ToCharset(mpt::CharsetUTF8, str));
+	return ConvertStrTo<T>(mpt::ToCharset(mpt::Charset::UTF8, str));
 }
 template<> inline mpt::ustring ConvertStrTo(const mpt::ustring &str) { return str; }
 #if MPT_WSTRING_CONVERT
@@ -135,7 +135,7 @@ template<> inline std::wstring ConvertStrTo(const mpt::ustring &str) { return mp
 template<typename T>
 inline T ConvertStrTo(const mpt::lstring &str)
 {
-	return ConvertStrTo<T>(mpt::ToCharset(mpt::CharsetLocale, str));
+	return ConvertStrTo<T>(mpt::ToCharset(mpt::Charset::Locale, str));
 }
 template<> inline mpt::lstring ConvertStrTo(const mpt::lstring &str) { return str; }
 #endif
@@ -176,7 +176,7 @@ inline T Hex(const char *str)
 template<typename T>
 inline T Hex(const std::wstring &str)
 {
-	return Hex<T>(mpt::ToCharset(mpt::CharsetUTF8, str));
+	return Hex<T>(mpt::ToCharset(mpt::Charset::UTF8, str));
 }
 
 template<typename T>
@@ -195,7 +195,7 @@ inline T Hex(const wchar_t *str)
 template<typename T>
 inline T Hex(const mpt::ustring &str)
 {
-	return Hex<T>(mpt::ToCharset(mpt::CharsetUTF8, str));
+	return Hex<T>(mpt::ToCharset(mpt::Charset::UTF8, str));
 }
 #endif
 

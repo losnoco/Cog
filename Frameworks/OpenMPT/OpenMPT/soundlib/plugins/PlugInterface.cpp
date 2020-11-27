@@ -102,10 +102,10 @@ CString IMixPlugin::GetFormattedParamName(PlugParamIndex param)
 	CString name;
 	if(paramName.IsEmpty())
 	{
-		name.Format(_T("%02u: Parameter %02u"), param, param);
+		name = mpt::cformat(_T("%1: Parameter %2"))(mpt::cfmt::dec0<2>(param), mpt::cfmt::dec0<2>(param));
 	} else
 	{
-		name.Format(_T("%02u: %s"), param, paramName.GetString());
+		name = mpt::cformat(_T("%1: %2"))(mpt::cfmt::dec0<2>(param), paramName);
 	}
 	return name;
 }
@@ -476,7 +476,7 @@ void IMixPlugin::SaveAllParameters()
 	m_pMixStruct->defaultProgram = -1;
 	
 	// Default implementation: Save all parameter values
-	PlugParamIndex numParams = std::min<uint32>(GetNumParameters(), (std::numeric_limits<uint32>::max() - sizeof(uint32)) / sizeof(IEEE754binary32LE));
+	PlugParamIndex numParams = std::min(GetNumParameters(), static_cast<int32>((std::numeric_limits<uint32>::max() - sizeof(uint32)) / sizeof(IEEE754binary32LE)));
 	uint32 nLen = numParams * sizeof(IEEE754binary32LE);
 	if (!nLen) return;
 	nLen += sizeof(uint32);
@@ -486,10 +486,12 @@ void IMixPlugin::SaveAllParameters()
 		m_pMixStruct->pluginData.resize(nLen);
 		auto memFile = std::make_pair(mpt::as_span(m_pMixStruct->pluginData), mpt::IO::Offset(0));
 		mpt::IO::WriteIntLE<uint32>(memFile, 0);	// Plugin data type
+		BeginGetProgram();
 		for(PlugParamIndex i = 0; i < numParams; i++)
 		{
 			mpt::IO::Write(memFile, IEEE754binary32LE(GetParameter(i)));
 		}
+		EndGetProgram();
 	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
 	{
 		m_pMixStruct->pluginData.clear();
@@ -509,7 +511,7 @@ void IMixPlugin::RestoreAllParameters(int32 /*program*/)
 			const uint32 numParams = GetNumParameters();
 			if((m_pMixStruct->pluginData.size() - sizeof(uint32)) >= (numParams * sizeof(IEEE754binary32LE)))
 			{
-				BeginSetProgram(-1);
+				BeginSetProgram();
 				for(uint32 i = 0; i < numParams; i++)
 				{
 					SetParameter(i, memFile.ReadFloatLE());
@@ -588,28 +590,26 @@ void IMixPlugin::AutomateParameter(PlugParamIndex param)
 		modDoc->RecordParamChange(GetSlot(), param);
 	}
 
-	modDoc->PostMessageToAllViews(WM_MOD_PLUGPARAMAUTOMATE, m_nSlot, param);
-	// TODO: This should rather be posted to the GUI thread!
-	CAbstractVstEditor *pVstEditor = GetEditor();
+	modDoc->SendNotifyMessageToAllViews(WM_MOD_PLUGPARAMAUTOMATE, m_nSlot, param);
 
-	if(pVstEditor && pVstEditor->m_hWnd)
+	if(auto *vstEditor = GetEditor(); vstEditor && vstEditor->m_hWnd)
 	{
 		// Mark track modified if GUI is open and format supports plugins
 		SetModified();
 
-		if (CMainFrame::GetInputHandler()->ShiftPressed() && TrackerSettings::Instance().midiMappingInPluginEditor)
+		// Do not use InputHandler in case we are coming from a bridged plugin editor
+		if((GetAsyncKeyState(VK_SHIFT) & 0x8000) && TrackerSettings::Instance().midiMappingInPluginEditor)
 		{
 			// Shift pressed -> Open MIDI mapping dialog
-			CMainFrame::GetInputHandler()->SetModifierMask(ModNone); // Make sure that the dialog will open only once.
 			CMainFrame::GetMainFrame()->PostMessage(WM_MOD_MIDIMAPPING, m_nSlot, param);
 		}
 
 		// Learn macro
-		int macroToLearn = pVstEditor->GetLearnMacro();
+		int macroToLearn = vstEditor->GetLearnMacro();
 		if (macroToLearn > -1)
 		{
 			modDoc->LearnMacro(macroToLearn, param);
-			pVstEditor->SetLearnMacro(-1);
+			vstEditor->SetLearnMacro(-1);
 		}
 	}
 }
@@ -628,7 +628,7 @@ void IMixPlugin::SetModified()
 bool IMixPlugin::SaveProgram()
 {
 	mpt::PathString defaultDir = TrackerSettings::Instance().PathPluginPresets.GetWorkingDir();
-	bool useDefaultDir = !defaultDir.empty();
+	const bool useDefaultDir = !defaultDir.empty();
 	if(!useDefaultDir && m_Factory.dllPath.IsFile())
 	{
 		defaultDir = m_Factory.dllPath.GetPath();
@@ -650,19 +650,21 @@ bool IMixPlugin::SaveProgram()
 		TrackerSettings::Instance().PathPluginPresets.SetWorkingDir(dlg.GetWorkingDirectory());
 	}
 
-	bool bank = (dlg.GetExtension() == P_("fxb"));
+	const bool isBank = (dlg.GetExtension() == P_("fxb"));
 
-	mpt::SafeOutputFile sf(dlg.GetFirstFile(), std::ios::binary, mpt::FlushModeFromBool(TrackerSettings::Instance().MiscFlushFileBuffersOnSave));
-	mpt::ofstream& f = sf;
-	if(f.good() && VSTPresets::SaveFile(f, *this, bank))
+	try
 	{
-		return true;
-	} else
+		mpt::SafeOutputFile sf(dlg.GetFirstFile(), std::ios::binary, mpt::FlushModeFromBool(TrackerSettings::Instance().MiscFlushFileBuffersOnSave));
+		mpt::ofstream &f = sf;
+		f.exceptions(f.exceptions() | std::ios::badbit | std::ios::failbit);
+		if(f.good() && VSTPresets::SaveFile(f, *this, isBank))
+			return true;
+	} catch(const std::exception &)
 	{
-		Reporting::Error("Error saving preset.", m_pEditor);
-		return false;
+		
 	}
-
+	Reporting::Error("Error saving preset.", m_pEditor);
+	return false;
 }
 
 
@@ -694,7 +696,7 @@ bool IMixPlugin::LoadProgram(mpt::PathString fileName)
 	}
 
 	const char *errorStr = nullptr;
-	InputFile f(fileName);
+	InputFile f(fileName, SettingCacheCompleteFileBeforeLoading());
 	if(f.IsValid())
 	{
 		FileReader file = GetFileReader(f);
@@ -922,8 +924,17 @@ void IMidiPlugin::MidiCommand(const ModInstrument &instr, uint16 note, uint16 vo
 		// Problem: if a note dies out naturally and we never send a note off, this counter
 		// will block at max until note off. Is this a problem?
 		// Safe to assume we won't need more than 16 note offs max on a given note?
+#if MPT_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable:6385) // false-positive: Reading invalid data from 'channel.noteOnMap': the readable size is '32768' bytes, but 'note' bytes may be read.
+#endif // MPT_COMPILER_MSVC
 		if(channel.noteOnMap[note][trackChannel] < uint8_max)
+#if MPT_COMPILER_MSVC
+#pragma warning(pop)
+#endif // MPT_COMPILER_MSVC
+		{
 			channel.noteOnMap[note][trackChannel]++;
+		}
 
 		MidiSend(MIDIEvents::NoteOn(midiCh, static_cast<uint8>(note), volume));
 	}

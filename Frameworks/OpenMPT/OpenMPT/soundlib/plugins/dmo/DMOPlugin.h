@@ -8,7 +8,7 @@
  */
 
 
-#ifndef NO_DMO
+#if defined(MPT_WITH_DMO)
 
 #include "../PlugInterface.h"
 #include <dmoreg.h>
@@ -21,7 +21,7 @@ typedef interface IMediaParams IMediaParams;
 
 OPENMPT_NAMESPACE_BEGIN
 
-class DMOPlugin : public IMixPlugin
+class DMOPlugin final : public IMixPlugin
 {
 protected:
 	IMediaObject *m_pMediaObject;
@@ -96,5 +96,5 @@ public:
 
 OPENMPT_NAMESPACE_END
 
-#endif // NO_DMO
+#endif // MPT_WITH_DMO
 

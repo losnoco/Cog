@@ -17,7 +17,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-class WavesReverb : public IMixPlugin
+class WavesReverb final : public IMixPlugin
 {
 protected:
 	enum Parameters

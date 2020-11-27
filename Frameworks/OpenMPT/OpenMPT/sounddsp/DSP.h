@@ -43,6 +43,13 @@ public:
 };
 
 
+struct BitCrushSettings
+{
+	int m_Bits;
+	BitCrushSettings();
+};
+
+
 class CSurround
 {
 public:
@@ -111,6 +118,19 @@ public:
 	void SetSettings(const CMegaBassSettings &settings) { m_Settings = settings; }
 	// [XBass level 0(quiet)-100(loud)], [cutoff in Hz 10-100]
 	void SetXBassParameters(uint32 nDepth, uint32 nRange);
+	void Initialize(bool bReset, DWORD MixingFreq);
+	void Process(int * MixSoundBuffer, int * MixRearBuffer, int count, uint32 nChannels);
+};
+
+
+class BitCrush
+{
+public:
+	BitCrushSettings m_Settings;
+public:
+	BitCrush();
+public:
+	void SetSettings(const BitCrushSettings &settings) { m_Settings = settings; }
 	void Initialize(bool bReset, DWORD MixingFreq);
 	void Process(int * MixSoundBuffer, int * MixRearBuffer, int count, uint32 nChannels);
 };

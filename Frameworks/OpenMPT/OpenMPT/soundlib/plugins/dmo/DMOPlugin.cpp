@@ -12,7 +12,7 @@
 
 #include "stdafx.h"
 
-#ifndef NO_DMO
+#if defined(MPT_WITH_DMO)
 #include "../../Sndfile.h"
 #include "../../../common/mptUUID.h"
 #include "DMOPlugin.h"
@@ -20,15 +20,20 @@
 #include <uuids.h>
 #include <medparam.h>
 #include <mmsystem.h>
-#endif // !NO_DMO
+#endif // MPT_WITH_DMO
 
 OPENMPT_NAMESPACE_BEGIN
 
 
-#ifndef NO_DMO
+#if defined(MPT_WITH_DMO)
 
 
+#ifdef MPT_ALL_LOGGING
 #define DMO_LOG
+#else
+#define DMO_LOG
+#endif
+
 
 IMixPlugin* DMOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 {
@@ -51,11 +56,11 @@ IMixPlugin* DMOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIX
 				return p;
 			}
 #ifdef DMO_LOG
-			Log(factory.libraryName.ToUnicode() + U_(": Unable to use this DMO"));
+			MPT_LOG(LogDebug, "DMO", factory.libraryName.ToUnicode() + U_(": Unable to use this DMO"));
 #endif
 		}
 #ifdef DMO_LOG
-		else Log(factory.libraryName.ToUnicode() + U_(": Failed to get IMediaObject & IMediaObjectInPlace interfaces"));
+		else MPT_LOG(LogDebug, "DMO", factory.libraryName.ToUnicode() + U_(": Failed to get IMediaObject & IMediaObjectInPlace interfaces"));
 #endif
 		if (pMO) pMO->Release();
 		if (pMOIP) pMOIP->Release();
@@ -121,8 +126,8 @@ uint32 DMOPlugin::GetLatency() const
 }
 
 
-static const float _f2si = 32768.0f;
-static const float _si2f = 1.0f / 32768.0f;
+static constexpr float _f2si = 32768.0f;
+static constexpr float _si2f = 1.0f / 32768.0f;
 
 
 static void InterleaveStereo(const float * MPT_RESTRICT inputL, const float * MPT_RESTRICT inputR, float * MPT_RESTRICT output, uint32 numFrames)
@@ -131,7 +136,7 @@ static void InterleaveStereo(const float * MPT_RESTRICT inputL, const float * MP
 	if(GetProcSupport() & PROCSUPPORT_SSE)
 	{
 		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		STATIC_ASSERT((MIXBUFFERSIZE & 7) == 0);
+		static_assert((MIXBUFFERSIZE & 7) == 0);
 		__m128 factor = _mm_set_ps1(_f2si);
 		numFrames = (numFrames + 3) / 4;
 		do
@@ -165,7 +170,7 @@ static void DeinterleaveStereo(const float * MPT_RESTRICT input, float * MPT_RES
 	if(GetProcSupport() & PROCSUPPORT_SSE)
 	{
 		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		STATIC_ASSERT((MIXBUFFERSIZE & 7) == 0);
+		static_assert((MIXBUFFERSIZE & 7) == 0);
 		__m128 factor = _mm_set_ps1(_si2f);
 		numFrames = (numFrames + 3) / 4;
 		do
@@ -202,7 +207,7 @@ static void InterleaveFloatToInt16(const float * MPT_RESTRICT inputL, const floa
 	if((GetProcSupport() & (PROCSUPPORT_MMX | PROCSUPPORT_SSE)) == (PROCSUPPORT_MMX | PROCSUPPORT_SSE))
 	{
 		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		STATIC_ASSERT((MIXBUFFERSIZE & 7) == 0);
+		static_assert((MIXBUFFERSIZE & 7) == 0);
 		__m64 *out = reinterpret_cast<__m64 *>(output);
 		__m128 factor = _mm_set_ps1(_f2si);
 		numFrames = (numFrames + 3) / 4;
@@ -254,7 +259,7 @@ static void DeinterleaveInt16ToFloat(const int16 * MPT_RESTRICT input, float * M
 	if((GetProcSupport() & (PROCSUPPORT_MMX | PROCSUPPORT_SSE)) == (PROCSUPPORT_MMX | PROCSUPPORT_SSE))
 	{
 		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		STATIC_ASSERT((MIXBUFFERSIZE & 7) == 0);
+		static_assert((MIXBUFFERSIZE & 7) == 0);
 		const __m128i *in = reinterpret_cast<const __m128i *>(input);
 		__m128 factor = _mm_set_ps1(_si2f);
 		numFrames = (numFrames + 3) / 4;
@@ -433,7 +438,7 @@ void DMOPlugin::Resume()
 			|| FAILED(m_pMediaObject->SetOutputType(0, &mt, 0)))
 		{
 #ifdef DMO_LOG
-		Log(U_("DMO: Failed to set I/O media type"));
+			MPT_LOG(LogDebug, "DMO", U_("DMO: Failed to set I/O media type"));
 #endif
 		}
 	}
@@ -552,11 +557,11 @@ CString DMOPlugin::GetParamDisplay(PlugParamIndex param)
 
 #endif // MODPLUG_TRACKER
 
-#else // NO_DMO
+#else // !MPT_WITH_DMO
 
 MPT_MSVC_WORKAROUND_LNK4221(DMOPlugin)
 
-#endif // !NO_DMO
+#endif // MPT_WITH_DMO
 
 OPENMPT_NAMESPACE_END
 

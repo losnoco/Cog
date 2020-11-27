@@ -18,13 +18,13 @@
 
 #include <array>
 #include <limits>
+#if MPT_CXX_AT_LEAST(20)
+#include <source_location>
+#endif // C++20
 
 #include <cstddef>
 #include <cstdint>
 
-#if MPT_GCC_BEFORE(4,9,0)
-#include <stddef.h>
-#endif
 #include <stdint.h>
 
 
@@ -33,14 +33,34 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
-typedef std::int8_t   int8;
-typedef std::int16_t  int16;
-typedef std::int32_t  int32;
-typedef std::int64_t  int64;
-typedef std::uint8_t  uint8;
-typedef std::uint16_t uint16;
-typedef std::uint32_t uint32;
-typedef std::uint64_t uint64;
+namespace mpt
+{
+template <bool cond, typename Ta, typename Tb>
+struct select_type
+{
+};
+template <typename Ta, typename Tb>
+struct select_type<true, Ta, Tb>
+{
+	using type = Ta;
+};
+template <typename Ta, typename Tb>
+struct select_type<false, Ta, Tb>
+{
+	using type = Tb;
+};
+} // namespace mpt
+
+
+
+using int8   = std::int8_t;
+using int16  = std::int16_t;
+using int32  = std::int32_t;
+using int64  = std::int64_t;
+using uint8  = std::uint8_t;
+using uint16 = std::uint16_t;
+using uint32 = std::uint32_t;
+using uint64 = std::uint64_t;
 
 constexpr int8 int8_min     = std::numeric_limits<int8>::min();
 constexpr int16 int16_min   = std::numeric_limits<int16>::min();
@@ -58,45 +78,124 @@ constexpr uint32 uint32_max = std::numeric_limits<uint32>::max();
 constexpr uint64 uint64_max = std::numeric_limits<uint64>::max();
 
 
-typedef float float32;
-MPT_STATIC_ASSERT(sizeof(float32) == 4);
 
-typedef double float64;
-MPT_STATIC_ASSERT(sizeof(float64) == 8);
+// fp half
+// n/a
 
+// fp single
+using single = float;
+constexpr single operator"" _fs(long double lit)
+{
+	return static_cast<single>(lit);
+}
 
-MPT_STATIC_ASSERT(sizeof(std::uintptr_t) == sizeof(void*));
+// fp double
+constexpr double operator"" _fd(long double lit)
+{
+	return static_cast<double>(lit);
+}
 
+// fp extended
+constexpr long double operator"" _fe(long double lit)
+{
+	return static_cast<long double>(lit);
+}
 
-MPT_STATIC_ASSERT(std::numeric_limits<unsigned char>::digits == 8);
+// fp quad
+// n/a
 
-MPT_STATIC_ASSERT(sizeof(char) == 1);
+using float32 = mpt::select_type<sizeof(float) == 4,
+		float
+	,
+		mpt::select_type<sizeof(double) == 4,
+			double
+		,
+      mpt::select_type<sizeof(long double) == 4,
+				long double
+			,
+				float
+			>::type
+		>::type
+	>::type;
+constexpr float32 operator"" _f32(long double lit)
+{
+	return static_cast<float32>(lit);
+}
 
-#if MPT_CXX_AT_LEAST(17)
-namespace mpt {
-using byte = std::byte;
-} // namespace mpt
-#define MPT_BYTE_IS_STD_BYTE 1
+using float64 = mpt::select_type<sizeof(float) == 8,
+		float
+	,
+		mpt::select_type<sizeof(double) == 8,
+			double
+		,
+      mpt::select_type<sizeof(long double) == 8,
+				long double
+			,
+				double
+			>::type
+		>::type
+	>::type;
+constexpr float64 operator"" _f64(long double lit)
+{
+	return static_cast<float64>(lit);
+}
+
+namespace mpt
+{
+template <typename T>
+struct float_traits
+{
+	static constexpr bool is_float = !std::numeric_limits<T>::is_integer;
+	static constexpr bool is_hard = is_float && !MPT_COMPILER_QUIRK_FLOAT_EMULATED;
+	static constexpr bool is_soft = is_float && MPT_COMPILER_QUIRK_FLOAT_EMULATED;
+	static constexpr bool is_float32 = is_float && (sizeof(T) == 4);
+	static constexpr bool is_float64 = is_float && (sizeof(T) == 8);
+	static constexpr bool is_native_endian = is_float && !MPT_COMPILER_QUIRK_FLOAT_NOTNATIVEENDIAN;
+	static constexpr bool is_ieee754_binary = is_float && std::numeric_limits<T>::is_iec559 && !MPT_COMPILER_QUIRK_FLOAT_NOTIEEE754;
+	static constexpr bool is_ieee754_binary32 = is_float && is_ieee754_binary && is_float32;
+	static constexpr bool is_ieee754_binary64 = is_float && is_ieee754_binary && is_float64;
+	static constexpr bool is_ieee754_binary32ne = is_float && is_ieee754_binary && is_float32 && is_native_endian;
+	static constexpr bool is_ieee754_binary64ne = is_float && is_ieee754_binary && is_float64 && is_native_endian;
+};
+}  // namespace mpt
+
+#if MPT_COMPILER_QUIRK_FLOAT_PREFER32
+using nativefloat = float32;
+#elif MPT_COMPILER_QUIRK_FLOAT_PREFER64
+using nativefloat = float64;
 #else
-// In C++11 and C++14, a C++17 compatible definition of byte would not be required to be allowed to alias other types,
-// thus just use a typedef for unsigned char which is guaranteed to be allowed to alias.
-//enum class byte : unsigned char { };
-namespace mpt {
-typedef unsigned char byte;
-} // namespace mpt
-#define MPT_BYTE_IS_STD_BYTE 0
+// prefer smaller floats, but try to use IEEE754 floats
+using nativefloat = mpt::select_type<std::numeric_limits<float>::is_iec559,
+		float
+	,
+		mpt::select_type<std::numeric_limits<double>::is_iec559,
+			double
+		,
+			mpt::select_type<std::numeric_limits<long double>::is_iec559,
+				long double
+			,
+				float
+			>::type
+		>::type
+	>::type;	
 #endif
-MPT_STATIC_ASSERT(sizeof(mpt::byte) == 1);
-MPT_STATIC_ASSERT(alignof(mpt::byte) == 1);
+constexpr nativefloat operator"" _nf(long double lit)
+{
+	return static_cast<nativefloat>(lit);
+}
 
 
-namespace mpt {
-#if MPT_GCC_BEFORE(4,9,0)
-typedef ::max_align_t max_align_t;
-#else
-typedef std::max_align_t max_align_t;
-#endif
-} // namespace mpt
+
+static_assert(sizeof(std::uintptr_t) == sizeof(void*));
+
+
+
+static_assert(std::numeric_limits<unsigned char>::digits == 8);
+
+static_assert(sizeof(char) == 1);
+
+static_assert(sizeof(std::byte) == 1);
+static_assert(alignof(std::byte) == 1);
 
 
 namespace mpt {
@@ -104,7 +203,7 @@ constexpr int arch_bits = sizeof(void*) * 8;
 constexpr std::size_t pointer_size = sizeof(void*);
 } // namespace mpt
 
-MPT_STATIC_ASSERT(mpt::arch_bits == static_cast<int>(mpt::pointer_size) * 8);
+static_assert(mpt::arch_bits == static_cast<int>(mpt::pointer_size) * 8);
 
 
 
@@ -123,6 +222,14 @@ struct limits
 
 namespace mpt
 {
+
+#if MPT_CXX_AT_LEAST(20)
+
+using std::source_location;
+
+#define MPT_SOURCE_LOCATION_CURRENT() std::source_location::current()
+
+#else // !C++20
 
 // compatible with std::experimental::source_location from Library Fundamentals TS v2.
 struct source_location
@@ -172,7 +279,9 @@ public:
 	}
 };
 
-#define MPT_SOURCE_LOCATION_CURRENT() mpt::source_location::current( __FILE__ , __FUNCTION__ , __LINE__ , 0 )
+#define MPT_SOURCE_LOCATION_CURRENT() mpt::source_location::current( __FILE__ , __func__ , __LINE__ , 0 )
+
+#endif // C++20
 
 } // namespace mpt
 

@@ -2,8 +2,8 @@
 Contributing
 ============
 
-OpenMPT, libopenmpt, openmpt123, xmp-openmpt, in_openmpt and foo_openmpt are
-developed in the Subversion repository at
+OpenMPT, libopenmpt, openmpt123, xmp-openmpt and in_openmpt are developed in
+the Subversion repository at
 [https://source.openmpt.org/browse/openmpt/trunk/OpenMPT/](https://source.openmpt.org/browse/openmpt/trunk/OpenMPT/).
 Patches can be provided either against this Subversion repository or against our
 GitHub mirror at

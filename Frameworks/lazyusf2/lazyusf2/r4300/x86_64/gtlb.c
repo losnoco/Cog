@@ -37,6 +37,7 @@
 #include "r4300/instr_counters.h"
 #endif
 
+#ifdef DYNAREC
 void gentlbwi(usf_state_t * state)
 {
 #if defined(COUNT_INSTR)
@@ -98,4 +99,4 @@ void gentlbwr(usf_state_t * state)
 #endif
    gencallinterp(state, (unsigned long long)state->current_instruction_table.TLBWR, 0);
 }
-
+#endif

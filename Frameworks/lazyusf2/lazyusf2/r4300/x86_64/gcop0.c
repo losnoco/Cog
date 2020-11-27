@@ -38,6 +38,7 @@
 #include "r4300/instr_counters.h"
 #endif
 
+#ifdef DYNAREC
 void genmfc0(usf_state_t * state)
 {
 #if defined(COUNT_INSTR)
@@ -53,4 +54,4 @@ void genmtc0(usf_state_t * state)
 #endif
     gencallinterp(state, (unsigned long long)state->current_instruction_table.MTC0, 0);
 }
-
+#endif

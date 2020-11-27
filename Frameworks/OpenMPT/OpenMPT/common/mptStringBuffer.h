@@ -13,6 +13,7 @@
 
 #include "BuildSettings.h"
 
+#include "mptMemory.h"
 #include "mptString.h"
 
 #include <algorithm>
@@ -33,19 +34,19 @@ namespace String
 {
 
 
-	enum ReadWriteMode
+	enum ReadWriteMode : uint8
 	{
 		// Reading / Writing: Standard null-terminated string handling.
-		nullTerminated,
+		nullTerminated = 1,
 		// Reading: Source string is not guaranteed to be null-terminated (if it fills the whole char array).
 		// Writing: Destination string is not guaranteed to be null-terminated (if it fills the whole char array).
-		maybeNullTerminated,
+		maybeNullTerminated = 2,
 		// Reading: String may contain null characters anywhere. They should be treated as spaces.
 		// Writing: A space-padded string is written.
-		spacePadded,
+		spacePadded = 3,
 		// Reading: String may contain null characters anywhere. The last character is ignored (it is supposed to be 0).
 		// Writing: A space-padded string with a trailing null is written.
-		spacePaddedNull
+		spacePaddedNull = 4,
 	};
 	
 	namespace detail
@@ -75,7 +76,7 @@ public:
 		: buf(buf)
 		, size(size)
 	{
-		MPT_STATIC_ASSERT(sizeof(Tchar) == sizeof(typename Tstring::value_type));
+		static_assert(sizeof(Tchar) == sizeof(typename Tstring::value_type));
 		MPT_ASSERT(size > 0);
 	}
 	StringBufRefImpl(const StringBufRefImpl &) = delete;
@@ -86,6 +87,10 @@ public:
 	{
 		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
 		return Tstring(buf, buf + len);
+	}
+	bool empty() const
+	{
+		return buf[0] == Tchar('\0');
 	}
 	StringBufRefImpl & operator = (const Tstring & str)
 	{
@@ -109,7 +114,7 @@ public:
 		: buf(buf)
 		, size(size)
 	{
-		MPT_STATIC_ASSERT(sizeof(Tchar) == sizeof(typename Tstring::value_type));
+		static_assert(sizeof(Tchar) == sizeof(typename Tstring::value_type));
 		MPT_ASSERT(size > 0);
 	}
 	StringBufRefImpl(const StringBufRefImpl &) = delete;
@@ -120,6 +125,10 @@ public:
 	{
 		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
 		return Tstring(buf, buf + len);
+	}
+	bool empty() const
+	{
+		return buf[0] == Tchar('\0');
 	}
 };
 
@@ -169,6 +178,49 @@ inline StringBufRefImpl<typename std::basic_string<typename std::remove_const<Tc
 }
 } // namespace String
 
+template <std::size_t len, mpt::String::ReadWriteMode mode = static_cast<mpt::String::ReadWriteMode>(0)> struct charbuf;
+
+template <std::size_t len>
+struct charbuf<len, static_cast<mpt::String::ReadWriteMode>(0)>
+{
+public:
+	typedef char Tchar;
+	using char_type = Tchar;
+	using string_type = std::basic_string<Tchar>;
+	constexpr std::size_t static_length() const { return len; }
+public:
+	Tchar buf[len];
+public:
+	charbuf()
+	{
+		Clear(buf);
+	}
+	charbuf(const charbuf &) = default;
+	charbuf(charbuf &&) = default;
+	charbuf & operator = (const charbuf &) = default;
+	charbuf & operator = (charbuf &&) = default;
+	const Tchar & operator[](std::size_t i) const { return buf[i]; }
+	std::string str() const { return static_cast<std::string>(*this); }
+	operator string_type () const
+	{
+		return mpt::String::ReadAutoBuf(buf);
+	}
+	bool empty() const
+	{
+		return mpt::String::ReadAutoBuf(buf).empty();
+	}
+	charbuf & operator = (const string_type & str)
+	{
+		mpt::String::WriteAutoBuf(buf) = str;
+		return *this;
+	}
+public:
+	friend bool operator!=(const std::string & a, const charbuf & b) { return a != b.str(); }
+	friend bool operator!=(const charbuf & a, const std::string & b) { return a.str() != b; }
+	friend bool operator==(const std::string & a, const charbuf & b) { return a == b.str(); }
+	friend bool operator==(const charbuf & a, const std::string & b) { return a.str() == b; }
+};
+
 template <typename Tchar>
 class StringModeBufRefImpl
 {
@@ -184,7 +236,7 @@ public:
 		, size(size)
 		, mode(mode)
 	{
-		MPT_STATIC_ASSERT(sizeof(Tchar) == 1);
+		static_assert(sizeof(Tchar) == 1);
 	}
 	StringModeBufRefImpl(const StringModeBufRefImpl &) = delete;
 	StringModeBufRefImpl(StringModeBufRefImpl &&) = default;
@@ -193,6 +245,10 @@ public:
 	operator std::string () const
 	{
 		return String::detail::ReadStringBuffer(mode, buf, size);
+	}
+	bool empty() const
+	{
+		return String::detail::ReadStringBuffer(mode, buf, size).empty();
 	}
 	StringModeBufRefImpl & operator = (const std::string & str)
 	{
@@ -216,7 +272,7 @@ public:
 		, size(size)
 		, mode(mode)
 	{
-		MPT_STATIC_ASSERT(sizeof(Tchar) == 1);
+		static_assert(sizeof(Tchar) == 1);
 	}
 	StringModeBufRefImpl(const StringModeBufRefImpl &) = delete;
 	StringModeBufRefImpl(StringModeBufRefImpl &&) = default;
@@ -225,6 +281,10 @@ public:
 	operator std::string () const
 	{
 		return String::detail::ReadStringBuffer(mode, buf, size);
+	}
+	bool empty() const
+	{
+		return String::detail::ReadStringBuffer(mode, buf, size).empty();
 	}
 };
 
@@ -250,6 +310,46 @@ inline StringModeBufRefImpl<Tchar> WriteBuf(String::ReadWriteMode mode, Tchar * 
 	return StringModeBufRefImpl<Tchar>(buf, size, mode);
 }
 } // namespace String
+
+template <std::size_t len, mpt::String::ReadWriteMode mode>
+struct charbuf
+{
+public:
+	typedef char Tchar;
+	using char_type = Tchar;
+	using string_type = std::basic_string<Tchar>;
+public:
+	Tchar buf[len];
+public:
+	charbuf() = default;
+	charbuf(const charbuf &) = default;
+	charbuf(charbuf &&) = default;
+	charbuf & operator = (const charbuf &) = default;
+	charbuf & operator = (charbuf &&) = default;
+	operator string_type () const
+	{
+		return mpt::String::ReadBuf(mode, buf);
+	}
+	bool empty() const
+	{
+		return mpt::String::ReadBuf(mode, buf).empty();
+	}
+	charbuf & operator = (const string_type & str)
+	{
+		mpt::String::WriteBuf(mode, buf) = str;
+		return *this;
+	}
+};
+
+
+// see MPT_BINARY_STRUCT
+template <std::size_t len, mpt::String::ReadWriteMode mode>
+struct is_binary_safe<typename mpt::charbuf<len, mode>> : public std::true_type { };
+template <std::size_t len>
+struct is_binary_safe<typename mpt::charbuf<len, static_cast<mpt::String::ReadWriteMode>(0)>> : public std::false_type { };
+static_assert(sizeof(mpt::charbuf<7>) == 7);
+static_assert(alignof(mpt::charbuf<7>) == 1);
+static_assert(std::is_standard_layout<mpt::charbuf<7>>::value);
 
 
 #ifdef MODPLUG_TRACKER
@@ -279,7 +379,7 @@ inline StringBufRefImpl<typename mpt::windows_char_traits<typename std::remove_c
 }
 } // namespace String
 
-#if defined(_MFC_VER)
+#if defined(MPT_WITH_MFC)
 
 template <typename Tchar>
 class CStringBufRefImpl
@@ -363,7 +463,7 @@ inline CStringBufRefImpl<Tchar> WriteCStringBuf(Tchar * buf, std::size_t size)
 }
 } // namespace String
 
-#endif // _MFC_VER
+#endif // MPT_WITH_MFC
 
 #endif // MPT_OS_WINDOWS
 
@@ -388,7 +488,7 @@ namespace String
 	template <size_t size>
 	void SetNullTerminator(char (&buffer)[size])
 	{
-		STATIC_ASSERT(size > 0);
+		static_assert(size > 0);
 		buffer[size - 1] = 0;
 	}
 
@@ -403,7 +503,7 @@ namespace String
 	template <size_t size>
 	void SetNullTerminator(wchar_t (&buffer)[size])
 	{
-		STATIC_ASSERT(size > 0);
+		static_assert(size > 0);
 		buffer[size - 1] = 0;
 	}
 
@@ -420,7 +520,7 @@ namespace String
 	template <size_t size>
 	void FixNullString(char (&buffer)[size])
 	{
-		STATIC_ASSERT(size > 0);
+		static_assert(size > 0);
 		SetNullTerminator(buffer);
 		size_t pos = 0;
 		// Find the first null char.
@@ -448,244 +548,6 @@ namespace String
 		}
 	}
 
-
-	// Copy a string from srcBuffer to destBuffer using a given read mode.
-	// Used for reading strings from files.
-	// Only use this version of the function if the size of the source buffer is variable.
-	template <ReadWriteMode mode, typename Tbyte>
-	void Read(std::string &dest, const Tbyte *srcBuffer, size_t srcSize)
-	{
-
-		const char *src = mpt::byte_cast<const char*>(srcBuffer);
-
-		dest.clear();
-
-		try
-		{
-			dest = mpt::String::detail::ReadStringBuffer(mode, src, srcSize);
-		} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-		{
-			MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
-		}
-	}
-
-	// Copy a charset encoded string from srcBuffer to destBuffer using a given read mode.
-	// Used for reading strings from files.
-	// Only use this version of the function if the size of the source buffer is variable.
-	template <ReadWriteMode mode, typename Tbyte>
-	void Read(mpt::ustring &dest, mpt::Charset charset, const Tbyte *srcBuffer, size_t srcSize)
-	{
-		std::string tmp;
-		Read<mode>(tmp, srcBuffer, srcSize);
-		dest = mpt::ToUnicode(charset, tmp);
-	}
-
-	// Used for reading strings from files.
-	// Preferrably use this version of the function, it is safer.
-	template <ReadWriteMode mode, size_t srcSize, typename Tbyte>
-	void Read(std::string &dest, const Tbyte (&srcBuffer)[srcSize])
-	{
-		STATIC_ASSERT(srcSize > 0);
-		Read<mode>(dest, srcBuffer, srcSize);
-	}
-
-	// Used for reading charset encoded strings from files.
-	// Preferrably use this version of the function, it is safer.
-	template <ReadWriteMode mode, size_t srcSize, typename Tbyte>
-	void Read(mpt::ustring &dest, mpt::Charset charset, const Tbyte(&srcBuffer)[srcSize])
-	{
-		std::string tmp;
-		Read<mode>(tmp, srcBuffer);
-		dest = mpt::ToUnicode(charset, tmp);
-	}
-
-	// Copy a string from srcBuffer to destBuffer using a given read mode.
-	// Used for reading strings from files.
-	// Only use this version of the function if the size of the source buffer is variable.
-	template <ReadWriteMode mode, size_t destSize, typename Tbyte>
-	void Read(char (&destBuffer)[destSize], const Tbyte *srcBuffer, size_t srcSize)
-	{
-		STATIC_ASSERT(destSize > 0);
-
-		char *dst = destBuffer;
-		const char *src = mpt::byte_cast<const char*>(srcBuffer);
-
-		if(mode == nullTerminated || mode == spacePaddedNull)
-		{
-			// We assume that the last character of the source buffer is null.
-			if(srcSize > 0)
-			{
-				srcSize -= 1;
-			}
-		}
-
-		if(mode == nullTerminated || mode == maybeNullTerminated)
-		{
-
-			// Copy string and leave one character space in the destination buffer for null.
-			dst = std::copy(src, std::find(src, src + std::min(srcSize, destSize - 1), '\0'), dst);
-	
-		} else if(mode == spacePadded || mode == spacePaddedNull)
-		{
-
-			// Copy string and leave one character space in the destination buffer for null.
-			// Convert nulls to spaces while copying and counts the length that contains actual characters.
-			std::size_t lengthWithoutNullOrSpace = 0;
-			for(std::size_t pos = 0; pos < srcSize; ++pos)
-			{
-				char c = srcBuffer[pos];
-				if(c != '\0' && c != ' ')
-				{
-					lengthWithoutNullOrSpace = pos + 1;
-				}
-				if(c == '\0')
-				{
-					c = ' ';
-				}
-				if(pos < destSize - 1)
-				{
-					destBuffer[pos] = c;
-				}
-			}
-
-			std::size_t destLength = std::min(lengthWithoutNullOrSpace, destSize - 1);
-
-			dst += destLength;
-
-		}
-
-		// Fill rest of string with nulls.
-		std::fill(dst, destBuffer + destSize, '\0');
-
-	}
-
-	// Used for reading strings from files.
-	// Preferrably use this version of the function, it is safer.
-	template <ReadWriteMode mode, size_t destSize, size_t srcSize, typename Tbyte>
-	void Read(char (&destBuffer)[destSize], const Tbyte (&srcBuffer)[srcSize])
-	{
-		STATIC_ASSERT(destSize > 0);
-		STATIC_ASSERT(srcSize > 0);
-		Read<mode, destSize>(destBuffer, srcBuffer, srcSize);
-	}
-
-
-	// Copy a string from srcBuffer to destBuffer using a given write mode.
-	// You should only use this function if src and dest are dynamically sized,
-	// otherwise use one of the safer overloads below.
-	template <ReadWriteMode mode>
-	void Write(char *destBuffer, const size_t destSize, const char *srcBuffer, const size_t srcSize)
-	{
-		MPT_ASSERT(destSize > 0);
-
-		mpt::String::detail::WriteStringBuffer(mode, destBuffer, destSize, srcBuffer, srcSize);
-
-	}
-
-	// Copy a string from srcBuffer to a dynamically sized std::vector destBuffer using a given write mode.
-	// Used for writing strings to files.
-	// Only use this version of the function if the size of the source buffer is variable and the destination buffer also has variable size.
-	template <ReadWriteMode mode>
-	void Write(std::vector<char> &destBuffer, const char *srcBuffer, const size_t srcSize)
-	{
-		MPT_ASSERT(destBuffer.size() > 0);
-		Write<mode>(destBuffer.data(), destBuffer.size(), srcBuffer, srcSize);
-	}
-
-	// Copy a string from srcBuffer to destBuffer using a given write mode.
-	// Used for writing strings to files.
-	// Only use this version of the function if the size of the source buffer is variable.
-	template <ReadWriteMode mode, size_t destSize>
-	void Write(char (&destBuffer)[destSize], const char *srcBuffer, const size_t srcSize)
-	{
-		STATIC_ASSERT(destSize > 0);
-		Write<mode>(destBuffer, destSize, srcBuffer, srcSize);
-	}
-
-	// Copy a string from srcBuffer to destBuffer using a given write mode.
-	// Used for writing strings to files.
-	// Preferrably use this version of the function, it is safer.
-	template <ReadWriteMode mode, size_t destSize, size_t srcSize>
-	void Write(char (&destBuffer)[destSize], const char (&srcBuffer)[srcSize])
-	{
-		STATIC_ASSERT(destSize > 0);
-		STATIC_ASSERT(srcSize > 0);
-		Write<mode, destSize>(destBuffer, srcBuffer, srcSize);
-	}
-
-	template <ReadWriteMode mode>
-	void Write(char *destBuffer, const size_t destSize, const std::string &src)
-	{
-		MPT_ASSERT(destSize > 0);
-		Write<mode>(destBuffer, destSize, src.c_str(), src.length());
-	}
-
-	template <ReadWriteMode mode>
-	void Write(std::vector<char> &destBuffer, const std::string &src)
-	{
-		MPT_ASSERT(destBuffer.size() > 0);
-		Write<mode>(destBuffer, src.c_str(), src.length());
-	}
-
-	template <ReadWriteMode mode, size_t destSize>
-	void Write(char (&destBuffer)[destSize], const std::string &src)
-	{
-		STATIC_ASSERT(destSize > 0);
-		Write<mode, destSize>(destBuffer, src.c_str(), src.length());
-	}
-
-
-#if MPT_GCC_AT_LEAST(8,1,0)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstringop-truncation"
-#endif
-
-	// Copy from a char array to a fixed size char array.
-	template <size_t destSize>
-	void CopyN(char (&destBuffer)[destSize], const char *srcBuffer, const size_t srcSize = std::numeric_limits<size_t>::max())
-	{
-		const size_t copySize = std::min(destSize - 1u, srcSize);
-		std::strncpy(destBuffer, srcBuffer, copySize);
-		destBuffer[copySize] = '\0';
-	}
-
-	// Copy at most srcSize characters from srcBuffer to a std::string.
-	static inline void CopyN(std::string &dest, const char *srcBuffer, const size_t srcSize = std::numeric_limits<size_t>::max())
-	{
-		dest.assign(srcBuffer, srcBuffer + mpt::strnlen(srcBuffer, srcSize));
-	}
-
-
-	// Copy from one fixed size char array to another one.
-	template <size_t destSize, size_t srcSize>
-	void Copy(char (&destBuffer)[destSize], const char (&srcBuffer)[srcSize])
-	{
-		CopyN(destBuffer, srcBuffer, srcSize);
-	}
-
-	// Copy from a std::string to a fixed size char array.
-	template <size_t destSize>
-	void Copy(char (&destBuffer)[destSize], const std::string &src)
-	{
-		CopyN(destBuffer, src.c_str(), src.length());
-	}
-
-	// Copy from a fixed size char array to a std::string.
-	template <size_t srcSize>
-	void Copy(std::string &dest, const char (&srcBuffer)[srcSize])
-	{
-		CopyN(dest, srcBuffer, srcSize);
-	}
-
-	// Copy from a std::string to a std::string.
-	static inline void Copy(std::string &dest, const std::string &src)
-	{
-		dest.assign(src);
-	}
-
-#if MPT_GCC_AT_LEAST(8,1,0)
-#pragma GCC diagnostic pop
-#endif
 
 
 #if MPT_COMPILER_MSVC

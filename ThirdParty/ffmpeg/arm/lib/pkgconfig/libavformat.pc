@@ -1,0 +1,14 @@
+prefix=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm
+exec_prefix=${prefix}
+libdir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm/lib
+includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 58.45.100
+Requires: libavcodec >= 58.91.100, libswresample >= 3.7.100, libavutil >= 56.51.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavformat -lm -lz
+Libs.private: 
+Cflags: -I${includedir}

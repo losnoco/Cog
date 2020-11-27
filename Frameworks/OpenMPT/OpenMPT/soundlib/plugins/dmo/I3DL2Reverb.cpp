@@ -13,6 +13,9 @@
 #ifndef NO_PLUGINS
 #include "../../Sndfile.h"
 #include "I3DL2Reverb.h"
+#ifdef MODPLUG_TRACKER
+#include "../../../sounddsp/Reverb.h"
+#endif // MODPLUG_TRACKER
 #endif // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
@@ -76,7 +79,6 @@ IMixPlugin* I3DL2Reverb::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDM
 
 I3DL2Reverb::I3DL2Reverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
-	, m_recalcParams(true)
 {
 	m_param[kI3DL2ReverbRoom] = 0.9f;
 	m_param[kI3DL2ReverbRoomHF] = 0.99f;
@@ -91,6 +93,8 @@ I3DL2Reverb::I3DL2Reverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGI
 	m_param[kI3DL2ReverbDensity] = 1.0f;
 	m_param[kI3DL2ReverbHFReference] = (5000.0f - 20.0f) / 19980.0f;
 	m_param[kI3DL2ReverbQuality] = 2.0f / 3.0f;
+
+	SetCurrentProgram(m_program);
 
 	m_mixBuffer.Initialize(2, 2);
 	InsertIntoFactoryList();
@@ -266,8 +270,8 @@ void I3DL2Reverb::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		float outL = earlyRefOutL + lateRevOutL;
 		float outR = earlyRefOutR + lateRevOutR;
 
-		for(std::size_t d = 0; d < mpt::size(m_delayLines); d++)
-			m_delayLines[d].Advance();
+		for(auto &line : m_delayLines)
+			line.Advance();
 
 		if(!(m_quality & kFullSampleRate))
 		{
@@ -289,6 +293,42 @@ void I3DL2Reverb::Process(float *pOutL, float *pOutR, uint32 numFrames)
 	}
 
 	ProcessMixOps(pOutL, pOutR, m_mixBuffer.GetOutputBuffer(0), m_mixBuffer.GetOutputBuffer(1), numFrames);
+}
+
+
+int32 I3DL2Reverb::GetNumPrograms() const
+{
+#ifdef MODPLUG_TRACKER
+	return NUM_REVERBTYPES;
+#else
+	return 0;
+#endif
+}
+
+void I3DL2Reverb::SetCurrentProgram(int32 program)
+{
+#ifdef MODPLUG_TRACKER
+	if(program < NUM_REVERBTYPES)
+	{
+		m_program = program;
+		const auto &preset = *GetReverbPreset(m_program);
+		m_param[kI3DL2ReverbRoom] = (preset.lRoom + 10000) / 10000.0f;
+		m_param[kI3DL2ReverbRoomHF] = (preset.lRoomHF + 10000) / 10000.0f;
+		m_param[kI3DL2ReverbRoomRolloffFactor] = 0.0f;
+		m_param[kI3DL2ReverbDecayTime] = (preset.flDecayTime - 0.1f) / 19.9f;
+		m_param[kI3DL2ReverbDecayHFRatio] = (preset.flDecayHFRatio - 0.1f) / 1.9f;
+		m_param[kI3DL2ReverbReflections] = (preset.lReflections + 10000) / 11000.0f;
+		m_param[kI3DL2ReverbReflectionsDelay] = preset.flReflectionsDelay / 0.3f;
+		m_param[kI3DL2ReverbReverb] = (preset.lReverb + 10000) / 12000.0f;
+		m_param[kI3DL2ReverbReverbDelay] = preset.flReverbDelay / 0.1f;
+		m_param[kI3DL2ReverbDiffusion] = preset.flDiffusion / 100.0f;
+		m_param[kI3DL2ReverbDensity] = preset.flDensity / 100.0f;
+		m_param[kI3DL2ReverbHFReference] = (5000.0f - 20.0f) / 19980.0f;
+		RecalculateI3DL2ReverbParams();
+	}
+#else
+	MPT_UNUSED_VARIABLE(program);
+#endif
 }
 
 
@@ -410,7 +450,7 @@ CString I3DL2Reverb::GetParamLabel(PlugParamIndex param)
 
 CString I3DL2Reverb::GetParamDisplay(PlugParamIndex param)
 {
-	static const TCHAR *modes[] = { _T("LQ"), _T("LQ+"), _T("HQ"), _T("HQ+") };
+	static constexpr const TCHAR * const modes[] = { _T("LQ"), _T("LQ+"), _T("HQ"), _T("HQ+") };
 	float value = m_param[param];
 	switch(param)
 	{
@@ -431,6 +471,18 @@ CString I3DL2Reverb::GetParamDisplay(PlugParamIndex param)
 	CString s;
 	s.Format(_T("%.2f"), value);
 	return s;
+}
+
+
+CString I3DL2Reverb::GetCurrentProgramName()
+{
+	return GetProgramName(m_program);
+}
+
+
+CString I3DL2Reverb::GetProgramName(int32 program)
+{
+	return mpt::ToCString(GetReverbPresetName(program));
 }
 
 #endif // MODPLUG_TRACKER
@@ -468,7 +520,7 @@ void I3DL2Reverb::RecalculateI3DL2ReverbParams()
 void I3DL2Reverb::SetDelayTaps()
 {
 	// Early reflections
-	static const float delays[] =
+	static constexpr float delays[] =
 	{
 		1.0000f, 1.0000f, 0.0000f, 0.1078f, 0.1768f, 0.2727f,
 		0.3953f, 0.5386f, 0.6899f, 0.8306f, 0.9400f, 0.9800f,
@@ -490,7 +542,7 @@ void I3DL2Reverb::SetDelayTaps()
 	for(int i = 0, power = 0; i < 6; i++)
 	{
 		power += i;
-		float factor = std::pow(0.93f, power);
+		float factor = std::pow(0.93f, static_cast<float>(power));
 		m_delayTaps[i + 0] = static_cast<int32>(delayL * factor);
 		m_delayTaps[i + 6] = static_cast<int32>(delayR * factor);
 	}
@@ -499,7 +551,7 @@ void I3DL2Reverb::SetDelayTaps()
 	m_delayTaps[13] = static_cast<int32>(3.25f / 1000.0f * sampleRate);
 	m_delayTaps[14] = static_cast<int32>(3.53f / 1000.0f * sampleRate);
 
-	for(std::size_t d = 0; d < mpt::size(m_delayTaps); d++)
+	for(std::size_t d = 0; d < std::size(m_delayTaps); d++)
 		m_delayLines[d].SetDelayTap(m_delayTaps[d]);
 }
 
@@ -569,7 +621,7 @@ float I3DL2Reverb::CalcDecayCoeffs(int32 index)
 		float c22 = -2.0f * c21 - 2.0f;
 		float c23 = std::sqrt(c22 * c22 - c21 * c21 * 4.0f);
 		c2 = (c23 - c22) / (c21 + c21);
-		if(mpt::abs(c2) > 1.0f)
+		if(std::abs(c2) > 1.0f)
 			c2 = (-c22 - c23) / (c21 + c21);
 	}
 	m_delayCoeffs[index][0] = c1;

@@ -10,7 +10,8 @@
 
 
 #include "stdafx.h"
-#include "../sounddsp/DSP.h"
+#include "DSP.h"
+#include "../soundbase/SampleTypes.h"
 #include <math.h>
 
 OPENMPT_NAMESPACE_BEGIN
@@ -171,8 +172,8 @@ void CMegaBass::Initialize(bool bReset, DWORD MixingFreq)
 		int32 a1 = 0, b0 = 1024, b1 = 0;
 		int nXBassCutOff = 50 + (m_Settings.m_nXBassRange+2) * 20;
 		int nXBassGain = m_Settings.m_nXBassDepth;
-		nXBassGain = mpt::clamp(nXBassGain, 2, 8);
-		nXBassCutOff = mpt::clamp(nXBassCutOff, 60, 600);
+		nXBassGain = std::clamp(nXBassGain, 2, 8);
+		nXBassCutOff = std::clamp(nXBassCutOff, 60, 600);
 		ShelfEQ(1024, a1, b0, b1, nXBassCutOff, MixingFreq,
 				1.0f + (1.0f/16.0f) * (0x300 >> nXBassGain),
 				1.0f,
@@ -415,6 +416,62 @@ void CSurround::SetSurroundParameters(uint32 nDepth, uint32 nDelay)
 	if (nDelay < 4) nDelay = 4;
 	if (nDelay > 50) nDelay = 50;
 	m_Settings.m_nProLogicDelay = nDelay;
+}
+
+
+BitCrushSettings::BitCrushSettings()
+	: m_Bits(8)
+{
+	return;
+}
+
+
+BitCrush::BitCrush()
+{
+}
+
+
+void BitCrush::Initialize(bool bReset, DWORD MixingFreq)
+{
+	MPT_UNREFERENCED_PARAMETER(bReset);
+	MPT_UNREFERENCED_PARAMETER(MixingFreq);
+}
+
+
+void BitCrush::Process(int * MixSoundBuffer, int * MixRearBuffer, int count, uint32 nChannels)
+{
+	if(m_Settings.m_Bits <= 0)
+	{
+		return;
+	}
+	if(m_Settings.m_Bits > MixSampleIntTraits::mix_precision_bits())
+	{
+		return;
+	}
+	unsigned int mask = ~((1u << (MixSampleIntTraits::mix_precision_bits() - m_Settings.m_Bits)) - 1u);
+	if(nChannels == 4)
+	{
+		for(int frame = 0; frame < count; ++frame)
+		{
+			MixSoundBuffer[frame*2 + 0] &= mask;
+			MixSoundBuffer[frame*2 + 1] &= mask;
+			MixRearBuffer[frame*2 + 0] &= mask;
+			MixRearBuffer[frame*2 + 1] &= mask;
+		}
+	} else if(nChannels == 2)
+	{
+		for(int frame = 0; frame < count; ++frame)
+		{
+			MixSoundBuffer[frame*2 + 0] &= mask;
+			MixSoundBuffer[frame*2 + 1] &= mask;
+		}
+	} else if(nChannels == 1)
+	{
+		for(int frame = 0; frame < count; ++frame)
+		{
+			MixSoundBuffer[frame] &= mask;
+		}
+	}
 }
 
 

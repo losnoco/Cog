@@ -154,7 +154,9 @@ static void osal_fastcall FIN_BLOCK(usf_state_t * state)
 Used by dynarec only, check should be unnecessary
 */
     state->PC->ops(state);
+#ifdef DYNAREC
     if (state->r4300emu == CORE_DYNAREC) dyna_jump(state);
+#endif
      }
    else
      {
@@ -176,7 +178,9 @@ Used by dynarec only, check should be unnecessary
     else
       state->PC->ops(state);
     
+#ifdef DYNAREC
     if (state->r4300emu == CORE_DYNAREC) dyna_jump(state);
+#endif
      }
 }
 
@@ -196,8 +200,10 @@ The preceeding update_debugger SHOULD be unnecessary since it should have been
 called before NOTCOMPILED would have been executed
 */
    state->PC->ops(state);
+#ifdef DYNAREC
    if (state->r4300emu == CORE_DYNAREC)
      dyna_jump(state);
+#endif
 }
 
 static void osal_fastcall NOTCOMPILED2(usf_state_t * state)
@@ -537,7 +543,9 @@ void osal_fastcall jump_to_func(usf_state_t * state)
      }
    state->PC=state->actual->block+((addr-state->actual->start)>>2);
    
+#ifdef DYNAREC
    if (state->r4300emu == CORE_DYNAREC) dyna_jump(state);
+#endif
 }
 #undef addr
 

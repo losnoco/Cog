@@ -20,7 +20,7 @@ OPENMPT_NAMESPACE_BEGIN
 void S3MSampleHeader::ConvertToMPT(ModSample &mptSmp) const
 {
 	mptSmp.Initialize(MOD_TYPE_S3M);
-	mpt::String::Read<mpt::String::maybeNullTerminated>(mptSmp.filename, filename);
+	mptSmp.filename = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, filename);
 
 	if(sampleType == typePCM || sampleType == typeNone)
 	{
@@ -28,8 +28,8 @@ void S3MSampleHeader::ConvertToMPT(ModSample &mptSmp) const
 		if(sampleType == typePCM)
 		{
 			mptSmp.nLength = length;
-			mptSmp.nLoopStart = MIN(loopStart, mptSmp.nLength - 1);
-			mptSmp.nLoopEnd = MIN(loopEnd, mptSmp.nLength);
+			mptSmp.nLoopStart = std::min(static_cast<SmpLength>(loopStart), mptSmp.nLength - 1);
+			mptSmp.nLoopEnd = std::min(static_cast<SmpLength>(loopEnd), mptSmp.nLength);
 			mptSmp.uFlags.set(CHN_LOOP, (flags & smpLoop) != 0);
 		}
 
@@ -48,7 +48,7 @@ void S3MSampleHeader::ConvertToMPT(ModSample &mptSmp) const
 	}
 
 	// Volume / Panning
-	mptSmp.nVolume = std::min<uint8>(defaultVolume, 64) * 4;
+	mptSmp.nVolume = std::min(static_cast<uint8>(defaultVolume), uint8(64)) * 4;
 
 	// C-5 frequency
 	mptSmp.nC5Speed = c5speed;
@@ -67,7 +67,7 @@ void S3MSampleHeader::ConvertToMPT(ModSample &mptSmp) const
 SmpLength S3MSampleHeader::ConvertToS3M(const ModSample &mptSmp)
 {
 	SmpLength smpLength = 0;
-	mpt::String::Write<mpt::String::maybeNullTerminated>(filename, mptSmp.filename);
+	mpt::String::WriteBuf(mpt::String::maybeNullTerminated, filename) = mptSmp.filename;
 	memcpy(magic, "SCRS", 4);
 
 	if(mptSmp.uFlags[CHN_ADLIB])
@@ -100,7 +100,7 @@ SmpLength S3MSampleHeader::ConvertToS3M(const ModSample &mptSmp)
 		sampleType = typeNone;
 	}
 
-	defaultVolume = static_cast<uint8>(MIN(mptSmp.nVolume / 4, 64));
+	defaultVolume = static_cast<uint8>(std::min(static_cast<uint16>(mptSmp.nVolume / 4), uint16(64)));
 	if(mptSmp.nC5Speed != 0)
 	{
 		c5speed = mptSmp.nC5Speed;

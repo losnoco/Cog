@@ -73,14 +73,14 @@ struct DSMSampleHeader
 	void ConvertToMPT(ModSample &mptSmp) const
 	{
 		mptSmp.Initialize();
-		mpt::String::Read<mpt::String::nullTerminated>(mptSmp.filename, filename);
+		mptSmp.filename = mpt::String::ReadBuf(mpt::String::nullTerminated, filename);
 
 		mptSmp.nC5Speed = sampleRate;
 		mptSmp.uFlags.set(CHN_LOOP, (flags & 1) != 0);
 		mptSmp.nLength = length;
 		mptSmp.nLoopStart = loopStart;
 		mptSmp.nLoopEnd = loopEnd;
-		mptSmp.nVolume = std::min<uint8>(volume, 64) * 4;
+		mptSmp.nVolume = std::min(volume.get(), uint8(64)) * 4;
 	}
 
 	// Retrieve the internal sample format flags for this sample.
@@ -210,13 +210,13 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("DSIK Format");
 	m_modFormat.type = U_("dsm");
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, songHeader.songName);
-	m_nChannels = std::max<uint16>(songHeader.numChannels, 1);
+	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, songHeader.songName);
+	m_nChannels = std::max(songHeader.numChannels.get(), uint16(1));
 	m_nDefaultSpeed = songHeader.speed;
 	m_nDefaultTempo.Set(songHeader.bpm);
-	m_nDefaultGlobalVolume = std::min<uint8>(songHeader.globalVol, 64) * 4u;
+	m_nDefaultGlobalVolume = std::min(songHeader.globalVol.get(), uint8(64)) * 4u;
 	if(!m_nDefaultGlobalVolume) m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
 	if(songHeader.mastervol == 0x80)
 	{
@@ -289,8 +289,7 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 				}
 				if(flag & 0x10)
 				{
-					uint8 command = chunk.ReadUint8();
-					uint8 param = chunk.ReadUint8();
+					auto [command, param] = chunk.ReadArray<uint8, 2>();
 					switch(command)
 					{
 						// Portamentos
@@ -314,7 +313,7 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 				}
 			}
 			patNum++;
-		} else if(!memcmp(chunkHeader.magic, "INST", 4) && GetNumSamples() < SAMPLEINDEX(MAX_SAMPLES - 1))
+		} else if(!memcmp(chunkHeader.magic, "INST", 4) && CanAddMoreSamples())
 		{
 			// Read sample
 			m_nSamples++;
@@ -324,7 +323,7 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 			chunk.ReadStruct(sampleHeader);
 			sampleHeader.ConvertToMPT(sample);
 
-			mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[m_nSamples], sampleHeader.sampleName);
+			m_szNames[m_nSamples] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.sampleName);
 
 			if(loadFlags & loadSampleData)
 			{

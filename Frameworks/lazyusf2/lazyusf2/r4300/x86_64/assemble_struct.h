@@ -23,6 +23,7 @@
 #ifndef M64P_R4300_ASSEMBLE_STRUCT_H
 #define M64P_R4300_ASSEMBLE_STRUCT_H
 
+#ifdef DYNAREC
 typedef struct _reg_cache_struct
 {
    int need_map;
@@ -30,5 +31,6 @@ typedef struct _reg_cache_struct
    unsigned char jump_wrapper[84];
    int need_cop1_check;
 } reg_cache_struct;
+#endif
 
 #endif /* M64P_R4300_ASSEMBLE_STRUCT_H */

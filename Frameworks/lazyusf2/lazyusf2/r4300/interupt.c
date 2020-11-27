@@ -506,7 +506,9 @@ void osal_fastcall gen_interupt(usf_state_t * state)
     if (state->stop == 1)
     {
         state->g_gs_vi_counter = 0; // debug
+#ifdef DYNAREC
         dyna_stop(state);
+#endif
     }
 
     if (!state->interupt_unsafe_state)

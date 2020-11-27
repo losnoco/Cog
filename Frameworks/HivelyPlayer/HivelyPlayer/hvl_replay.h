@@ -18,7 +18,12 @@ typedef char TEXT;
 #ifdef _WIN32
 typedef int BOOL;
 #else
+#ifdef __aarch64__
+#include <stdbool.h>
+typedef bool BOOL;
+#else
 typedef signed char BOOL;
+#endif
 #endif
 
 #define TRUE 1

@@ -180,7 +180,7 @@ template <>
 inline void Binaryread<float>(std::istream& iStrm, float& data, const Offtype bytecount)
 {
 	typedef IEEE754binary32LE T;
-	mpt::byte bytes[sizeof(T)];
+	std::byte bytes[sizeof(T)];
 	std::memset(bytes, 0, sizeof(T));
 	mpt::IO::ReadRaw(iStrm, bytes, std::min(static_cast<std::size_t>(bytecount), sizeof(T)));
 	// There is not much we can sanely do for truncated floats,
@@ -192,7 +192,7 @@ template <>
 inline void Binaryread<double>(std::istream& iStrm, double& data, const Offtype bytecount)
 {
 	typedef IEEE754binary64LE T;
-	mpt::byte bytes[sizeof(T)];
+	std::byte bytes[sizeof(T)];
 	std::memset(bytes, 0, sizeof(T));
 	mpt::IO::ReadRaw(iStrm, bytes, std::min(static_cast<std::size_t>(bytecount), sizeof(T)));
 	// There is not much we can sanely do for truncated floats,
@@ -234,7 +234,7 @@ public:
 	template <typename T>
 	static ID FromInt(const T &val)
 	{
-		STATIC_ASSERT(std::numeric_limits<T>::is_integer);
+		static_assert(std::numeric_limits<T>::is_integer);
 		typename mpt::make_le<T>::type valle;
 		valle = val;
 		return ID(std::string(mpt::byte_cast<const char*>(mpt::as_raw_memory(valle).data()), mpt::byte_cast<const char*>(mpt::as_raw_memory(valle).data() + sizeof(valle))));

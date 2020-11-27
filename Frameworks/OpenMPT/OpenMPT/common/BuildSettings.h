@@ -20,35 +20,9 @@
 
 #if MPT_OS_WINDOWS
 
-#if defined(MPT_BUILD_MSVC)
-
-#if defined(MPT_BUILD_TARGET_XP)
-
-#if defined(_M_X64)
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0502 // _WIN32_WINNT_WS03
-#endif
-#else // !_M_X64
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501 // _WIN32_WINNT_WINXP
-#endif
-#endif // _M_X64
-
-#else // MPT_BUILD_TARGET
-
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0601 // _WIN32_WINNT_WIN7
 #endif
-
-#endif // MPT_BUILD_TARGET
-
-#else // !MPT_BUILD_MSVC
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501 // _WIN32_WINNT_WINXP
-#endif
-
-#endif // MPT_BUILD_MSVC
 
 #ifndef WINVER
 #define WINVER       _WIN32_WINNT
@@ -98,8 +72,15 @@
 
 #if defined(MODPLUG_TRACKER)
 
+#if MPT_OS_WINDOWS
+#if !defined(MPT_BUILD_WINESUPPORT)
+#define MPT_WITH_MFC
+#endif // !MPT_BUILD_WINESUPPORT
+#endif // MPT_OS_WINDOWS
+
 // OpenMPT-only dependencies
 #define MPT_WITH_ASIO
+#define MPT_WITH_DMO
 #define MPT_WITH_LAME
 #define MPT_WITH_LHASA
 #define MPT_WITH_MINIZIP
@@ -118,12 +99,9 @@
 // OpenMPT and libopenmpt dependencies (not for openmp123, player plugins or examples)
 //#define MPT_WITH_DL
 #define MPT_WITH_FLAC
-//#define MPT_WITH_ICONV
 //#define MPT_WITH_LTDL
 #if MPT_OS_WINDOWS
-#if (_WIN32_WINNT >= 0x0601)
 #define MPT_WITH_MEDIAFOUNDATION
-#endif
 #endif
 //#define MPT_WITH_MINIMP3
 //#define MPT_WITH_MINIZ
@@ -132,6 +110,11 @@
 //#define MPT_WITH_STBVORBIS
 #define MPT_WITH_VORBIS
 #define MPT_WITH_VORBISFILE
+#if MPT_OS_WINDOWS
+#if (_WIN32_WINNT >= 0x0A00)
+#define MPT_WITH_WINDOWS10
+#endif
+#endif
 #define MPT_WITH_ZLIB
 
 #endif // MODPLUG_TRACKER
@@ -147,7 +130,6 @@
 
 //#define MPT_WITH_DL
 //#define MPT_WITH_FLAC
-//#define MPT_WITH_ICONV
 //#define MPT_WITH_LTDL
 //#define MPT_WITH_MEDIAFOUNDATION
 #define MPT_WITH_MINIMP3
@@ -163,7 +145,6 @@
 
 //#define MPT_WITH_DL
 //#define MPT_WITH_FLAC
-//#define MPT_WITH_ICONV
 //#define MPT_WITH_LTDL
 //#define MPT_WITH_MEDIAFOUNDATION
 //#define MPT_WITH_MINIMP3
@@ -194,7 +175,6 @@
 
 //#define MPT_WITH_DL
 //#define MPT_WITH_FLAC
-//#define MPT_WITH_ICONV
 //#define MPT_WITH_LTDL
 //#define MPT_WITH_MEDIAFOUNDATION
 //#define MPT_WITH_MINIMP3
@@ -229,13 +209,13 @@
 #define MPT_LOG_GLOBAL_LEVEL 0
 #endif
 
+// Enable all individual logging macros and MPT_LOG calls
+//#define MPT_ALL_LOGGING
+
 // Disable all runtime asserts
 #if !defined(MPT_BUILD_DEBUG) && !defined(MPT_BUILD_CHECKED) && !defined(MPT_BUILD_WINESUPPORT)
 #define NO_ASSERTS
 #endif
-
-// Enable std::istream support in class FileReader (this is generally not needed for the tracker, local files can easily be mmapped as they have been before introducing std::istream support)
-//#define MPT_FILEREADER_STD_ISTREAM
 
 // Enable callback stream wrapper for FileReader (required by libopenmpt C API).
 //#define MPT_FILEREADER_CALLBACK_STREAM
@@ -267,9 +247,6 @@
 // Define to build without VST plugin support; makes build possible without VST SDK.
 //#define NO_VST
 
-// Define to build without DMO plugin support
-//#define NO_DMO
-
 // (HACK) Define to build without any plugin support
 //#define NO_PLUGINS
 
@@ -300,7 +277,7 @@
 #define NO_ASSERTS
 #endif
 //#define NO_LOGGING
-#define MPT_FILEREADER_STD_ISTREAM
+//#define MPT_ALL_LOGGING
 #define MPT_FILEREADER_CALLBACK_STREAM
 //#define MPT_EXTERNAL_SAMPLES
 #if defined(ENABLE_TESTS) || defined(MPT_BUILD_HACK_ARCHIVE_SUPPORT)
@@ -320,9 +297,6 @@
 #define NO_EQ
 #define NO_AGC
 #define NO_VST
-//#if !MPT_OS_WINDOWS || MPT_OS_WINDOWS_WINRT || !MPT_COMPILER_MSVC || !defined(LIBOPENMPT_BUILD_FULL)
-#define NO_DMO
-//#endif
 //#define NO_PLUGINS
 //#define NO_LIBOPENMPT_C
 //#define NO_LIBOPENMPT_CXX
@@ -333,50 +307,27 @@
 
 #if MPT_OS_WINDOWS
 
-	#define MPT_CHARSET_WIN32
 	#ifndef MPT_ENABLE_CHARSET_LOCALE
 	#define MPT_ENABLE_CHARSET_LOCALE
 	#endif
 
 #elif MPT_OS_LINUX
 
-	#define MPT_CHARSET_ICONV
-
 #elif MPT_OS_ANDROID
-
-	#define MPT_CHARSET_INTERNAL
 
 #elif MPT_OS_EMSCRIPTEN
 
-	#define MPT_CHARSET_INTERNAL
 	#ifndef MPT_LOCALE_ASSUME_CHARSET
-	#define MPT_LOCALE_ASSUME_CHARSET CharsetUTF8
+	#define MPT_LOCALE_ASSUME_CHARSET Charset::UTF8
 	#endif
 
 #elif MPT_OS_MACOSX_OR_IOS
 
-	#if defined(MPT_WITH_ICONV)
-		#define MPT_CHARSET_ICONV
-		#ifndef MPT_ICONV_NO_WCHAR
-		#define MPT_ICONV_NO_WCHAR
-		#endif
-	#else
-		#define MPT_CHARSET_INTERNAL
-	#endif
-	//#ifndef MPT_LOCALE_ASSUME_CHARSET
-	//#define MPT_LOCALE_ASSUME_CHARSET CharsetUTF8
-	//#endif
-
 #elif MPT_OS_DJGPP
 
-	#define MPT_CHARSET_INTERNAL
 	#ifndef MPT_LOCALE_ASSUME_CHARSET
-	#define MPT_LOCALE_ASSUME_CHARSET CharsetCP437
+	#define MPT_LOCALE_ASSUME_CHARSET Charset::CP437
 	#endif
-
-#elif defined(MPT_WITH_ICONV)
-
-	#define MPT_CHARSET_ICONV
 
 #endif
 
@@ -457,6 +408,7 @@
 #if defined(ENABLE_ASM)
 #if MPT_COMPILER_MSVC && defined(_M_IX86)
 
+#define ENABLE_CPUID
 // Generate general x86 inline assembly and intrinsics.
 #define ENABLE_X86
 // Generate MMX instructions (only used when the CPU supports it).
@@ -469,14 +421,14 @@
 #define ENABLE_SSE3
 // Generate SSE4 instructions (only used when the CPU supports it).
 #define ENABLE_SSE4
-
-#if defined(MPT_BUILD_TARGET_XP)
-// Generate AMD specific instruction set extensions (only used when the CPU supports it).
-#define ENABLE_X86_AMD
-#endif
+// Generate AVX instructions (only used when the CPU supports it).
+#define ENABLE_AVX
+// Generate AVX2 instructions (only used when the CPU supports it).
+#define ENABLE_AVX2
 
 #elif MPT_COMPILER_MSVC && defined(_M_X64)
 
+#define ENABLE_CPUID
 // Generate general x64 intrinsics.
 #define ENABLE_X64
 // Generate SSE instructions (only used when the CPU supports it).
@@ -487,17 +439,13 @@
 #define ENABLE_SSE3
 // Generate SSE4 instructions (only used when the CPU supports it).
 #define ENABLE_SSE4
+// Generate AVX instructions (only used when the CPU supports it).
+#define ENABLE_AVX
+// Generate AVX2 instructions (only used when the CPU supports it).
+#define ENABLE_AVX2
 
 #endif // arch
 #endif // ENABLE_ASM
-
-#if defined(MPT_WITH_LAME) && defined(MPT_BUILD_MSVC) && defined(MPT_BUILD_MSVC_STATIC) && defined(MODPLUG_TRACKER) && !MPT_OS_WINDOWS_WINRT
-#define MPT_ENABLE_LAME_DELAYLOAD
-#endif
-
-#if defined(MPT_WITH_MPG123) && defined(MPT_BUILD_MSVC) && defined(MPT_BUILD_MSVC_STATIC) && defined(MODPLUG_TRACKER) && !MPT_OS_WINDOWS_WINRT
-#define MPT_ENABLE_MPG123_DELAYLOAD
-#endif
 
 #if defined(ENABLE_TESTS) && defined(MODPLUG_NO_FILESAVE)
 #undef MODPLUG_NO_FILESAVE // tests recommend file saving
@@ -524,24 +472,8 @@
 #define MPT_ENABLE_TEMPFILE
 #endif
 
-#if MPT_CXX_AT_LEAST(17) && defined(MPT_CHARSET_CODECVTUTF8)
-#undef MPT_CHARSET_CODECVTUTF8 // std::codecvt_utf8 is deprecated in c++17
-#endif
-
-#if !defined(MPT_CHARSET_WIN32) && !defined(MPT_CHARSET_ICONV) && !defined(MPT_CHARSET_CODECVTUTF8) && !defined(MPT_CHARSET_INTERNAL)
-#define MPT_CHARSET_INTERNAL
-#endif
-
 #if defined(MODPLUG_TRACKER) && !defined(MPT_ENABLE_DYNBIND)
 #define MPT_ENABLE_DYNBIND // Tracker requires dynamic library loading for export codecs
-#endif
-
-#if defined(MPT_ENABLE_LAME_DELAYLOAD) && !defined(MPT_ENABLE_DYNBIND)
-#define MPT_ENABLE_DYNBIND // static MSVC builds require dynbind to load delay-loaded DLLs
-#endif
-
-#if defined(MPT_ENABLE_MPG123_DELAYLOAD) && !defined(MPT_ENABLE_DYNBIND)
-#define MPT_ENABLE_DYNBIND // static MSVC builds require dynbind to load delay-loaded DLLs
 #endif
 
 #if defined(MPT_WITH_MEDIAFOUNDATION) && !defined(MPT_ENABLE_DYNBIND)
@@ -554,10 +486,6 @@
 
 #if defined(ENABLE_TESTS)
 #define MPT_ENABLE_FILEIO // Test suite requires PathString for file loading.
-#endif
-
-#if !MPT_OS_WINDOWS && !defined(MPT_FILEREADER_STD_ISTREAM)
-#define MPT_FILEREADER_STD_ISTREAM // MMAP is only supported on Windows
 #endif
 
 #if defined(MODPLUG_TRACKER) && !defined(MPT_ENABLE_FILEIO)
@@ -575,7 +503,6 @@
 #if defined(NO_PLUGINS)
 // Any plugin type requires NO_PLUGINS to not be defined.
 #define NO_VST
-#define NO_DMO
 #endif
 
 #if defined(ENABLE_ASM) || !defined(NO_VST)
@@ -625,6 +552,10 @@
 
 
 // platform configuration
+
+#ifdef MPT_WITH_MFC
+//#define MPT_MFC_FULL  // use full MFC, including MFC controls
+#endif // MPT_WITH_MFC
 
 #if defined(MODPLUG_TRACKER)
 #if MPT_OS_WINDOWS
@@ -721,11 +652,13 @@
 #pragma warning(disable:4512) // assignment operator could not be generated
 
 #pragma warning(error:4309) // Treat "truncation of constant value"-warning as error.
+#pragma warning(error:4463) // Treat overflow; assigning value to bit-field that can only hold values from low_value to high_value"-warning as error.
 
 #ifdef MPT_BUILD_ANALYZED
 // Disable Visual Studio static analyzer warnings that generate too many false positives in VS2010.
 //#pragma warning(disable:6246)
 //#pragma warning(disable:6262)
+#pragma warning(disable:6297) // 32-bit value is shifted, then cast to 64-bit value.  Results might not be an expected value. 
 #pragma warning(disable:6326) // Potential comparison of a constant with another constant
 //#pragma warning(disable:6385)
 //#pragma warning(disable:6386)
@@ -733,31 +666,29 @@
 
 #endif // MPT_COMPILER_MSVC
 
+#if MPT_COMPILER_CLANG
+
+#if defined(MPT_BUILD_MSVC)
+#pragma clang diagnostic warning "-Wimplicit-fallthrough"
+#endif // MPT_BUILD_MSVC
+
+#if defined(MODPLUG_TRACKER)
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif // MODPLUG_TRACKER
+
+#endif // MPT_COMPILER_CLANG
+
 
 
 
 
 // standard library quirks
 
-#if MPT_CXX_AT_LEAST(17)
-#if (MPT_COMPILER_GCC || MPT_COMPILER_CLANG)
-// we need to detect the standard library via macro __GLIBCXX__
-#include <vector>
-#endif
-#if MPT_COMPILER_MSVC || MPT_GCC_BEFORE(8,1,0) || MPT_CLANG_BEFORE(5,0,0) || (MPT_COMPILER_GCC && defined(__GLIBCXX__) && (defined(__MINGW32__) || defined(__MINGW64__))) || (MPT_COMPILER_CLANG && defined(__GLIBCXX__)) || (MPT_COMPILER_CLANG && MPT_OS_MACOSX_OR_IOS) || MPT_OS_OPENBSD || MPT_OS_EMSCRIPTEN || MPT_OS_HAIKU || (defined(__clang__) && defined(_MSC_VER))
-#define MPT_COMPILER_QUIRK_NO_ALIGNEDALLOC
-#endif
-#endif
-
 
 
 
 
 // third-party library configuration
-
-#if defined(MODPLUG_TRACKER)
-//#define MPT_MFC_FULL  // use full MFC, including MFC controls
-#endif
 
 #ifdef MPT_WITH_FLAC
 #ifdef MPT_BUILD_MSVC_STATIC

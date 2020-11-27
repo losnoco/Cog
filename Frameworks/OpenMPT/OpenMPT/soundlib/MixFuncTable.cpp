@@ -29,15 +29,15 @@ OPENMPT_NAMESPACE_BEGIN
 namespace MixFuncTable
 {
 #ifdef MPT_INTMIXER
-	typedef Int8MToIntS I8M;
-	typedef Int16MToIntS I16M;
-	typedef Int8SToIntS I8S;
-	typedef Int16SToIntS I16S;
+using I8M = Int8MToIntS;
+using I16M = Int16MToIntS;
+using I8S = Int8SToIntS;
+using I16S = Int16SToIntS;
 #else
-	typedef Int8MToFloatS I8M;
-	typedef Int16MToFloatS I16M;
-	typedef Int8SToFloatS I8S;
-	typedef Int16SToFloatS I16S;
+using I8M = Int8MToFloatS;
+using I16M = Int16MToFloatS;
+using I8S = Int8SToFloatS;
+using I16S = Int16SToFloatS;
 #endif // MPT_INTMIXER
 
 // Build mix function table for given resampling, filter and ramping settings: One function each for 8-Bit / 16-Bit Mono / Stereo
@@ -59,14 +59,13 @@ namespace MixFuncTable
 
 const MixFuncInterface Functions[6 * 16] =
 {
-	BuildMixFuncTable(NoInterpolation),			// No SRC
-	BuildMixFuncTable(LinearInterpolation),		// Linear SRC
-	BuildMixFuncTable(FastSincInterpolation),	// Fast Sinc (Cubic Spline) SRC
-	BuildMixFuncTable(PolyphaseInterpolation),	// Kaiser SRC
-	BuildMixFuncTable(FIRFilterInterpolation),	// FIR SRC
-	BuildMixFuncTable(AmigaBlepInterpolation),	// Amiga emulation
+	BuildMixFuncTable(NoInterpolation),        // No SRC
+	BuildMixFuncTable(LinearInterpolation),    // Linear SRC
+	BuildMixFuncTable(FastSincInterpolation),  // Fast Sinc (Cubic Spline) SRC
+	BuildMixFuncTable(PolyphaseInterpolation), // Kaiser SRC
+	BuildMixFuncTable(FIRFilterInterpolation), // FIR SRC
+	BuildMixFuncTable(AmigaBlepInterpolation), // Amiga emulation
 };
-
 
 #undef BuildMixFuncTableRamp
 #undef BuildMixFuncTableFilter
@@ -77,13 +76,13 @@ ResamplingIndex ResamplingModeToMixFlags(ResamplingMode resamplingMode)
 {
 	switch(resamplingMode)
 	{
-	case SRCMODE_NEAREST:   return ndxNoInterpolation;
-	case SRCMODE_LINEAR:    return ndxLinear;
-	case SRCMODE_CUBIC:     return ndxFastSinc;
-	case SRCMODE_SINC8LP:   return ndxKaiser;
-	case SRCMODE_SINC8:     return ndxFIRFilter;
-	case SRCMODE_AMIGA:     return ndxAmigaBlep;
-	default:                MPT_ASSERT_NOTREACHED();
+	case SRCMODE_NEAREST: return ndxNoInterpolation;
+	case SRCMODE_LINEAR:  return ndxLinear;
+	case SRCMODE_CUBIC:   return ndxFastSinc;
+	case SRCMODE_SINC8LP: return ndxKaiser;
+	case SRCMODE_SINC8:   return ndxFIRFilter;
+	case SRCMODE_AMIGA:   return ndxAmigaBlep;
+	default:              MPT_ASSERT_NOTREACHED();
 	}
 	return ndxNoInterpolation;
 }

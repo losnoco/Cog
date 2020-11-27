@@ -68,7 +68,7 @@ revision_code = revision_split[1]
 
 if 1 #appcast_revision < latest_revision
   #Get the changelog
-  changelog = %x[/usr/bin/git log #{appcast_revision_code}..#{revision_code} --pretty=format:'<li> <a href="https://g.losno.co/chris/Cog/commit/%H">view commit</a> &bull; %s</li> ' --reverse]
+  changelog = %x[/usr/bin/git log #{appcast_revision_code}..#{revision_code} --pretty=format:'<li> <a href="https://git.lopez-snowhill.net/chris/cog/-/commit/%H">view commit</a> &bull; %s</li> ' --reverse]
 
   description = changelog
 

@@ -68,7 +68,7 @@ template<typename Tbase>
 inline void fstream_open(Tbase & base, const mpt::PathString & filename, std::ios_base::openmode mode)
 {
 #if defined(MPT_FSTREAM_DO_CONVERSIONS_ANSI)
-	base.open(mpt::ToCharset(mpt::CharsetLocale, filename.AsNative()).c_str(), mode);
+	base.open(mpt::ToCharset(mpt::Charset::Locale, filename.AsNative()).c_str(), mode);
 #else
 	base.open(filename.AsNativePrefixed().c_str(), mode);
 #endif
@@ -181,7 +181,7 @@ class SafeOutputFile
 private:
 	FlushMode m_FlushMode;
 #if MPT_COMPILER_MSVC
-	FILE *m_f;
+	FILE *m_f = nullptr;
 #endif // MPT_COMPILER_MSVC
 	mpt::ofstream m_s;
 #if MPT_COMPILER_MSVC
@@ -198,6 +198,8 @@ public:
 		, m_s(filename, mode)
 #endif // MPT_COMPILER_MSVC
 	{
+		if(!stream().is_open())
+			stream().setstate(mpt::ofstream::failbit);
 	}
 	mpt::ofstream& stream()
 	{
@@ -245,10 +247,10 @@ public:
 		return;
 	}
 public:
-	LazyFileRef & operator = (const std::vector<mpt::byte> &data);
+	LazyFileRef & operator = (const std::vector<std::byte> &data);
 	LazyFileRef & operator = (const std::vector<char> &data);
 	LazyFileRef & operator = (const std::string &data);
-	operator std::vector<mpt::byte> () const;
+	operator std::vector<std::byte> () const;
 	operator std::vector<char> () const;
 	operator std::string () const;
 };
@@ -259,59 +261,25 @@ public:
 } // namespace mpt
 
 
-
-#ifdef MODPLUG_TRACKER
-#if MPT_OS_WINDOWS
-class CMappedFile
-{
-protected:
-	HANDLE m_hFile;
-	HANDLE m_hFMap;
-	void *m_pData;
-	mpt::PathString m_FileName;
-
-public:
-	CMappedFile() : m_hFile(nullptr), m_hFMap(nullptr), m_pData(nullptr) { }
-	~CMappedFile();
-
-public:
-	bool Open(const mpt::PathString &filename);
-	bool IsOpen() const { return m_hFile != NULL && m_hFile != INVALID_HANDLE_VALUE; }
-	const mpt::PathString * GetpFilename() const { return &m_FileName; }
-	void Close();
-	size_t GetLength();
-	const mpt::byte *Lock();
-};
-#endif // MPT_OS_WINDOWS
-#endif // MODPLUG_TRACKER
-
-
 class InputFile
 {
 private:
 	mpt::PathString m_Filename;
-	#ifdef MPT_FILEREADER_STD_ISTREAM
-		mpt::ifstream m_File;
-	#else
-		CMappedFile m_File;
-	#endif
+	mpt::ifstream m_File;
+	bool m_IsCached;
+	std::vector<std::byte> m_Cache;
+public:
+	static bool DefaultToLargeAddressSpaceUsage();
 public:
 	InputFile();
-	InputFile(const mpt::PathString &filename);
+	InputFile(const mpt::PathString &filename, bool allowWholeFileCaching = DefaultToLargeAddressSpaceUsage());
 	~InputFile();
-	bool Open(const mpt::PathString &filename);
+	bool Open(const mpt::PathString &filename, bool allowWholeFileCaching = DefaultToLargeAddressSpaceUsage());
 	bool IsValid() const;
-#if defined(MPT_FILEREADER_STD_ISTREAM)
-	typedef std::pair<std::istream*, const mpt::PathString*> ContentsRef;
-#else
-	struct Data
-	{
-		const mpt::byte *data;
-		std::size_t size;
-	};
-	typedef std::pair<InputFile::Data, const mpt::PathString*> ContentsRef;
-#endif
-	InputFile::ContentsRef Get();
+	bool IsCached() const;
+	const mpt::PathString& GetFilenameRef() const;
+	std::istream* GetStream();
+	mpt::const_byte_span GetCache();
 };
 
 

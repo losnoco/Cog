@@ -4,7 +4,7 @@ CXX ?= c++
 LD  ?= c++
 AR  = ar
 
-CXXFLAGS_STDCXX = -std=c++11
+CXXFLAGS_STDCXX = -std=c++17
 CFLAGS_STDC = -std=c99
 CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)

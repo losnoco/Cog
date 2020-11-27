@@ -28,12 +28,26 @@
 //#include "../common/mptCRC.h"
 #include "OggStream.h"
 #ifdef MPT_WITH_OGG
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
 #include <ogg/ogg.h>
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
 #endif // MPT_WITH_OGG
 #ifdef MPT_WITH_FLAC
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
 #include <FLAC/stream_decoder.h>
 #include <FLAC/stream_encoder.h>
 #include <FLAC/metadata.h>
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
 #endif // MPT_WITH_FLAC
 
 
@@ -167,7 +181,7 @@ struct FLACDecoder
 		{
 			// Init sample information
 			client.sndFile.DestroySampleThreadsafe(client.sample);
-			strcpy(client.sndFile.m_szNames[client.sample], "");
+			client.sndFile.m_szNames[client.sample] = "";
 			sample.Initialize();
 			sample.uFlags.set(CHN_16BIT, metadata->data.stream_info.bits_per_sample > 8);
 			sample.uFlags.set(CHN_STEREO, metadata->data.stream_info.channels > 1);
@@ -195,9 +209,7 @@ struct FLACDecoder
 				const FLAC__uint32 length = metadata->data.vorbis_comment.comments[i].length;
 				if(length > 6 && !mpt::CompareNoCaseAscii(tag, "TITLE=", 6))
 				{
-					mpt::ustring sampleName;
-					mpt::String::Read<mpt::String::maybeNullTerminated>(sampleName, mpt::CharsetUTF8, tag + 6, length - 6);
-					mpt::String::Copy(client.sndFile.m_szNames[client.sample], mpt::ToCharset(client.sndFile.GetCharsetInternal(), sampleName));
+					client.sndFile.m_szNames[client.sample] = mpt::ToCharset(client.sndFile.GetCharsetInternal(), mpt::Charset::UTF8, mpt::String::ReadBuf(mpt::String::maybeNullTerminated, tag + 6, length - 6));
 				} else if(length > 11 && !mpt::CompareNoCaseAscii(tag, "SAMPLERATE=", 11))
 				{
 					uint32 sampleRate = ConvertStrTo<uint32>(tag + 11);
@@ -246,7 +258,7 @@ bool CSoundFile::ReadFLACSample(SAMPLEINDEX sample, FileReader &file)
 		file.Rewind();
 		bool oggOK = false;
 		bool needMoreData = true;
-		static const long bufsize = 65536;
+		constexpr long bufsize = 65536;
 		std::size_t readSize = 0;
 		char *buf = nullptr;
 		ogg_sync_state oy;
@@ -539,13 +551,14 @@ public:
 bool CSoundFile::SaveFLACSample(SAMPLEINDEX nSample, std::ostream &f) const
 {
 #ifdef MPT_WITH_FLAC
+	const ModSample &sample = Samples[nSample];
+	if(sample.uFlags[CHN_ADLIB])
+		return false;
+
 	FLAC__StreamEncoder_RAII encoder(f);
 	if(encoder == nullptr)
-	{
 		return false;
-	}
 
-	const ModSample &sample = Samples[nSample];
 	uint32 sampleRate = sample.GetSampleRate(GetType());
 
 	// First off, set up all the metadata...
@@ -562,9 +575,9 @@ bool CSoundFile::SaveFLACSample(SAMPLEINDEX nSample, std::ostream &f) const
 	{
 		// Store sample name
 		FLAC__StreamMetadata_VorbisComment_Entry entry;
-		FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair(&entry, "TITLE", mpt::ToCharset(mpt::CharsetUTF8, GetCharsetInternal(), m_szNames[nSample]).c_str());
+		FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair(&entry, "TITLE", mpt::ToCharset(mpt::Charset::UTF8, GetCharsetInternal(), m_szNames[nSample]).c_str());
 		FLAC__metadata_object_vorbiscomment_append_comment(metadata[0], entry, false);
-		FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair(&entry, "ENCODER", mpt::ToCharset(mpt::CharsetUTF8, Version::Current().GetOpenMPTVersionString()).c_str());
+		FLAC__metadata_object_vorbiscomment_entry_from_name_value_pair(&entry, "ENCODER", mpt::ToCharset(mpt::Charset::UTF8, Version::Current().GetOpenMPTVersionString()).c_str());
 		FLAC__metadata_object_vorbiscomment_append_comment(metadata[0], entry, false);
 		if(sampleRate > FLAC__MAX_SAMPLE_RATE)
 		{
@@ -679,7 +692,7 @@ bool CSoundFile::SaveFLACSample(SAMPLEINDEX nSample, std::ostream &f) const
 	FLAC__int32 buffer[mpt::IO::BUFFERSIZE_TINY];
 	while(framesRemain && success)
 	{
-		const SmpLength copyFrames = std::min(framesRemain, mpt::saturate_cast<SmpLength>(mpt::size(buffer) / numChannels));
+		const SmpLength copyFrames = std::min(framesRemain, mpt::saturate_cast<SmpLength>(std::size(buffer) / numChannels));
 
 		// First, convert to a 32-bit integer buffer
 		switch(sample.GetElementarySampleSize())
@@ -690,7 +703,7 @@ bool CSoundFile::SaveFLACSample(SAMPLEINDEX nSample, std::ostream &f) const
 		}
 
 		// Now do the actual encoding
-		success = FLAC__stream_encoder_process_interleaved(encoder, buffer, copyFrames) != false;
+		success = FLAC__stream_encoder_process_interleaved(encoder, buffer, copyFrames) != static_cast<FLAC__bool>(false);
 
 		framesRead += copyFrames;
 		framesRemain -= copyFrames;

@@ -1,33 +1,48 @@
 #include "layout.h"
 #include "../vgmstream.h"
+#include "../decode.h"
 #include "../mixing.h"
+#include "../plugins.h"
 
-
-/* NOTE: if loop settings change the layered vgmstreams must be notified (preferably using vgmstream_force_loop) */
 #define VGMSTREAM_MAX_LAYERS 255
 #define VGMSTREAM_LAYER_SAMPLE_BUFFER 8192
 
 
 /* Decodes samples for layered streams.
- * Similar to interleave layout, but decodec samples are mixed from complete vgmstreams, each
- * with custom codecs and different number of channels, creating a single super-vgmstream.
+ * Similar to flat layout, but decoded vgmstream are mixed into a final buffer, each vgmstream
+ * may have different codecs and number of channels, creating a single super-vgmstream.
  * Usually combined with custom streamfiles to handle data interleaved in weird ways. */
-void render_vgmstream_layered(sample_t * outbuf, int32_t sample_count, VGMSTREAM * vgmstream) {
+void render_vgmstream_layered(sample_t* outbuf, int32_t sample_count, VGMSTREAM* vgmstream) {
     int samples_written = 0;
-    layered_layout_data *data = vgmstream->layout_data;
+    layered_layout_data* data = vgmstream->layout_data;
+    int samples_per_frame, samples_this_block;
 
+    samples_per_frame = VGMSTREAM_LAYER_SAMPLE_BUFFER;
+    samples_this_block = vgmstream->num_samples; /* do all samples if possible */
 
     while (samples_written < sample_count) {
-        int samples_to_do = VGMSTREAM_LAYER_SAMPLE_BUFFER;
-        int layer, ch = 0;
+        int samples_to_do;
+        int layer, ch;
 
+
+        if (vgmstream->loop_flag && vgmstream_do_loop(vgmstream)) {
+            /* handle looping (loop_layout has been called below) */
+            continue;
+        }
+
+        samples_to_do = get_vgmstream_samples_to_do(samples_this_block, samples_per_frame, vgmstream);
         if (samples_to_do > sample_count - samples_written)
             samples_to_do = sample_count - samples_written;
 
+        if (samples_to_do <= 0) { /* when decoding more than num_samples */
+            VGM_LOG_ONCE("LAYERED: samples_to_do 0\n");
+            goto decode_fail;
+        }
+
+        /* decode all layers */
+        ch = 0;
         for (layer = 0; layer < data->layer_count; layer++) {
             int s, layer_ch, layer_channels;
-
-            /* each layer will handle its own looping/mixing internally */
 
             /* layers may have its own number of channels */
             mixing_info(data->layers[layer], NULL, &layer_channels);
@@ -49,12 +64,48 @@ void render_vgmstream_layered(sample_t * outbuf, int32_t sample_count, VGMSTREAM
             }
         }
 
+
         samples_written += samples_to_do;
-        /* needed for info (ex. for mixing) */
-        vgmstream->current_sample = data->layers[0]->current_sample;
-        vgmstream->loop_count = data->layers[0]->loop_count;
-        //vgmstream->samples_into_block = 0; /* handled in each layer */
+        vgmstream->current_sample += samples_to_do;
+        vgmstream->samples_into_block += samples_to_do;
     }
+
+    return;
+decode_fail:
+    memset(outbuf + samples_written * data->output_channels, 0, (sample_count - samples_written) * data->output_channels * sizeof(sample_t));
+}
+
+
+void loop_layout_layered(VGMSTREAM* vgmstream, int32_t loop_sample) {
+    int layer;
+    layered_layout_data* data = vgmstream->layout_data;
+
+
+    for (layer = 0; layer < data->layer_count; layer++) {
+        if (data->external_looping) {
+            /* looping is applied over resulting decode, as each layer is its own "solid" block with
+             * config and needs 'external' seeking */
+            seek_vgmstream(data->layers[layer], loop_sample);
+        }
+        else {
+            /* looping is aplied as internal loops. normally each layer does it automatically, but
+             * just calls do_loop manually to behave a bit more controlled, and so that manual
+             * calls to do_loop work (used in seek_vgmstream) */
+            if (data->layers[layer]->loop_flag) { /* mixing looping and non-looping layers is allowed */
+                data->layers[layer]->current_sample = data->layers[layer]->loop_end_sample; /* forces do loop */
+                vgmstream_do_loop(data->layers[layer]); /* guaranteed to work should loop_layout be called */
+            }
+            else {
+                /* needed when mixing non-looping layers and installing loop externally */
+                seek_vgmstream(data->layers[layer], loop_sample);
+            }
+        }
+    }
+
+    /* could always call seek_vgmstream, but it's not optimized to loop non-config vgmstreams ATM */
+
+    vgmstream->current_sample = loop_sample;
+    vgmstream->samples_into_block = loop_sample;
 }
 
 
@@ -88,12 +139,12 @@ int setup_layout_layered(layered_layout_data* data) {
         int layer_input_channels, layer_output_channels;
 
         if (data->layers[i] == NULL) {
-            VGM_LOG("layered: no vgmstream in %i\n", i);
+            VGM_LOG("LAYERED: no vgmstream in %i\n", i);
             goto fail;
         }
 
         if (data->layers[i]->num_samples <= 0) {
-            VGM_LOG("layered: no samples in %i\n", i);
+            VGM_LOG("LAYERED: no samples in %i\n", i);
             goto fail;
         }
 
@@ -107,21 +158,25 @@ int setup_layout_layered(layered_layout_data* data) {
         if (i > 0) {
             /* a bit weird, but no matter */
             if (data->layers[i]->sample_rate != data->layers[i-1]->sample_rate) {
-                VGM_LOG("layered: layer %i has different sample rate\n", i);
+                VGM_LOG("LAYERED: layer %i has different sample rate\n", i);
             }
 
             /* also weird */
             if (data->layers[i]->coding_type != data->layers[i-1]->coding_type) {
-                VGM_LOG("layered: layer %i has different coding type\n", i);
+                VGM_LOG("LAYERED: layer %i has different coding type\n", i);
             }
         }
 
-        /* loops and other values could be mismatched but hopefully not */
+        /* loops and other values could be mismatched, but should be handled on allocate */
 
+        /* init mixing */
+        mixing_setup(data->layers[i], VGMSTREAM_LAYER_SAMPLE_BUFFER);
 
-        setup_vgmstream(data->layers[i]); /* final setup in case the VGMSTREAM was created manually */
+        /* allow config if set for fine-tuned parts (usually TXTP only) */
+        data->layers[i]->config_enabled = data->layers[i]->config.config_set;
 
-        mixing_setup(data->layers[i], VGMSTREAM_LAYER_SAMPLE_BUFFER); /* init mixing */
+        /* final setup in case the VGMSTREAM was created manually */
+        setup_vgmstream(data->layers[i]);
     }
 
     if (max_output_channels > VGMSTREAM_MAX_CHANNELS || max_input_channels > VGMSTREAM_MAX_CHANNELS)
@@ -168,29 +223,66 @@ void reset_layout_layered(layered_layout_data *data) {
 }
 
 /* helper for easier creation of layers */
-VGMSTREAM *allocate_layered_vgmstream(layered_layout_data* data) {
-    VGMSTREAM *vgmstream = NULL;
-    int i, channels, loop_flag;
+VGMSTREAM* allocate_layered_vgmstream(layered_layout_data* data) {
+    VGMSTREAM* vgmstream = NULL;
+    int i, channels, loop_flag, sample_rate, external_looping;
+    int32_t num_samples, loop_start, loop_end;
+    int delta = 1024;
 
     /* get data */
     channels = data->output_channels;
+
+    num_samples = 0;
     loop_flag = 1;
+    loop_start = data->layers[0]->loop_start_sample;
+    loop_end = data->layers[0]->loop_end_sample;
+    external_looping = 0;
+    sample_rate = 0;
     for (i = 0; i < data->layer_count; i++) {
-        if (loop_flag && !data->layers[i]->loop_flag)
+        int32_t layer_samples = vgmstream_get_samples(data->layers[i]);
+        int layer_loop = data->layers[i]->loop_flag;
+        int32_t layer_loop_start = data->layers[i]->loop_start_sample;
+        int32_t layer_loop_end = data->layers[i]->loop_end_sample;
+        int layer_rate = data->layers[i]->sample_rate;
+
+        /* internal has own config (and maybe looping), looping now must be done on layout level
+         * (instead of on each layer, that is faster) */
+        if (data->layers[i]->config_enabled) {
             loop_flag = 0;
+            layer_loop = 0;
+            external_looping = 1;
+        }
+
+        /* all layers should share loop pointsto consider looping enabled,
+         * but allow some leeway (ex. Dragalia Lost bgm+vocals ~12 samples) */
+        if (!layer_loop
+                || !(loop_start >= layer_loop_start - delta && loop_start <= layer_loop_start + delta)
+                || !(loop_end >= layer_loop_end - delta && loop_start <= layer_loop_end + delta)) {
+            loop_flag = 0;
+            loop_start = 0;
+            loop_end = 0;
+        }
+
+        if (num_samples < layer_samples) /* max */
+            num_samples = layer_samples;
+
+        if (sample_rate < layer_rate)
+            sample_rate = layer_rate;
     }
+
+    data->external_looping = external_looping;
 
 
     /* build the VGMSTREAM */
     vgmstream = allocate_vgmstream(channels, loop_flag);
     if (!vgmstream) goto fail;
 
-    vgmstream->meta_type = data->layers[0]->meta_type;
-    vgmstream->sample_rate = data->layers[0]->sample_rate;
-    vgmstream->num_samples = data->layers[0]->num_samples;
-    vgmstream->loop_start_sample = data->layers[0]->loop_start_sample;
-    vgmstream->loop_end_sample = data->layers[0]->loop_end_sample;
-    vgmstream->coding_type = data->layers[0]->coding_type;
+    vgmstream->sample_rate = sample_rate;
+    vgmstream->num_samples = num_samples;
+    vgmstream->loop_start_sample = loop_start;
+    vgmstream->loop_end_sample = loop_end;
+    vgmstream->meta_type = data->layers[0]->meta_type; /* info */
+    vgmstream->coding_type = data->layers[0]->coding_type; /* info */
 
     vgmstream->layout_type = layout_layered;
     vgmstream->layout_data = data;

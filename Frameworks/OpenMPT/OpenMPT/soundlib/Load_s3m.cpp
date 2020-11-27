@@ -28,37 +28,38 @@ void CSoundFile::S3MConvert(ModCommand &m, bool fromIT)
 {
 	switch(m.command | 0x40)
 	{
-	case 'A':	m.command = CMD_SPEED; break;
-	case 'B':	m.command = CMD_POSITIONJUMP; break;
-	case 'C':	m.command = CMD_PATTERNBREAK; if (!fromIT) m.param = (m.param >> 4) * 10 + (m.param & 0x0F); break;
-	case 'D':	m.command = CMD_VOLUMESLIDE; break;
-	case 'E':	m.command = CMD_PORTAMENTODOWN; break;
-	case 'F':	m.command = CMD_PORTAMENTOUP; break;
-	case 'G':	m.command = CMD_TONEPORTAMENTO; break;
-	case 'H':	m.command = CMD_VIBRATO; break;
-	case 'I':	m.command = CMD_TREMOR; break;
-	case 'J':	m.command = CMD_ARPEGGIO; break;
-	case 'K':	m.command = CMD_VIBRATOVOL; break;
-	case 'L':	m.command = CMD_TONEPORTAVOL; break;
-	case 'M':	m.command = CMD_CHANNELVOLUME; break;
-	case 'N':	m.command = CMD_CHANNELVOLSLIDE; break;
-	case 'O':	m.command = CMD_OFFSET; break;
-	case 'P':	m.command = CMD_PANNINGSLIDE; break;
-	case 'Q':	m.command = CMD_RETRIG; break;
-	case 'R':	m.command = CMD_TREMOLO; break;
-	case 'S':	m.command = CMD_S3MCMDEX; break;
-	case 'T':	m.command = CMD_TEMPO; break;
-	case 'U':	m.command = CMD_FINEVIBRATO; break;
-	case 'V':	m.command = CMD_GLOBALVOLUME; break;
-	case 'W':	m.command = CMD_GLOBALVOLSLIDE; break;
-	case 'X':	m.command = CMD_PANNING8; break;
-	case 'Y':	m.command = CMD_PANBRELLO; break;
-	case 'Z':	m.command = CMD_MIDI; break;
-	case '\\':	m.command = static_cast<ModCommand::COMMAND>(fromIT ? CMD_SMOOTHMIDI : CMD_MIDI); break;
+	case '@': m.command = (m.param ? CMD_DUMMY : CMD_NONE); break;
+	case 'A': m.command = CMD_SPEED; break;
+	case 'B': m.command = CMD_POSITIONJUMP; break;
+	case 'C': m.command = CMD_PATTERNBREAK; if (!fromIT) m.param = (m.param >> 4) * 10 + (m.param & 0x0F); break;
+	case 'D': m.command = CMD_VOLUMESLIDE; break;
+	case 'E': m.command = CMD_PORTAMENTODOWN; break;
+	case 'F': m.command = CMD_PORTAMENTOUP; break;
+	case 'G': m.command = CMD_TONEPORTAMENTO; break;
+	case 'H': m.command = CMD_VIBRATO; break;
+	case 'I': m.command = CMD_TREMOR; break;
+	case 'J': m.command = CMD_ARPEGGIO; break;
+	case 'K': m.command = CMD_VIBRATOVOL; break;
+	case 'L': m.command = CMD_TONEPORTAVOL; break;
+	case 'M': m.command = CMD_CHANNELVOLUME; break;
+	case 'N': m.command = CMD_CHANNELVOLSLIDE; break;
+	case 'O': m.command = CMD_OFFSET; break;
+	case 'P': m.command = CMD_PANNINGSLIDE; break;
+	case 'Q': m.command = CMD_RETRIG; break;
+	case 'R': m.command = CMD_TREMOLO; break;
+	case 'S': m.command = CMD_S3MCMDEX; break;
+	case 'T': m.command = CMD_TEMPO; break;
+	case 'U': m.command = CMD_FINEVIBRATO; break;
+	case 'V': m.command = CMD_GLOBALVOLUME; break;
+	case 'W': m.command = CMD_GLOBALVOLSLIDE; break;
+	case 'X': m.command = CMD_PANNING8; break;
+	case 'Y': m.command = CMD_PANBRELLO; break;
+	case 'Z': m.command = CMD_MIDI; break;
+	case '\\': m.command = static_cast<ModCommand::COMMAND>(fromIT ? CMD_SMOOTHMIDI : CMD_MIDI); break;
 	// Chars under 0x40 don't save properly, so map : to ] and # to [.
-	case ']':	m.command = CMD_DELAYCUT; break;
-	case '[':	m.command = CMD_XPARAM; break;
-	default:	m.command = CMD_NONE;
+	case ']': m.command = CMD_DELAYCUT; break;
+	case '[': m.command = CMD_XPARAM; break;
+	default: m.command = CMD_NONE;
 	}
 }
 
@@ -68,29 +69,30 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 {
 	switch(command)
 	{
-	case CMD_SPEED:				command = 'A'; break;
-	case CMD_POSITIONJUMP:		command = 'B'; break;
-	case CMD_PATTERNBREAK:		command = 'C'; if(!toIT) param = ((param / 10) << 4) + (param % 10); break;
-	case CMD_VOLUMESLIDE:		command = 'D'; break;
-	case CMD_PORTAMENTODOWN:	command = 'E'; if (param >= 0xE0 && (GetType() & (MOD_TYPE_MOD | MOD_TYPE_XM))) param = 0xDF; break;
-	case CMD_PORTAMENTOUP:		command = 'F'; if (param >= 0xE0 && (GetType() & (MOD_TYPE_MOD | MOD_TYPE_XM))) param = 0xDF; break;
-	case CMD_TONEPORTAMENTO:	command = 'G'; break;
-	case CMD_VIBRATO:			command = 'H'; break;
-	case CMD_TREMOR:			command = 'I'; break;
-	case CMD_ARPEGGIO:			command = 'J'; break;
-	case CMD_VIBRATOVOL:		command = 'K'; break;
-	case CMD_TONEPORTAVOL:		command = 'L'; break;
-	case CMD_CHANNELVOLUME:		command = 'M'; break;
-	case CMD_CHANNELVOLSLIDE:	command = 'N'; break;
-	case CMD_OFFSET:			command = 'O'; break;
-	case CMD_PANNINGSLIDE:		command = 'P'; break;
-	case CMD_RETRIG:			command = 'Q'; break;
-	case CMD_TREMOLO:			command = 'R'; break;
-	case CMD_S3MCMDEX:			command = 'S'; break;
-	case CMD_TEMPO:				command = 'T'; break;
-	case CMD_FINEVIBRATO:		command = 'U'; break;
-	case CMD_GLOBALVOLUME:		command = 'V'; break;
-	case CMD_GLOBALVOLSLIDE:	command = 'W'; break;
+	case CMD_DUMMY:           command = (param ? '@' : 0); break;
+	case CMD_SPEED:           command = 'A'; break;
+	case CMD_POSITIONJUMP:    command = 'B'; break;
+	case CMD_PATTERNBREAK:    command = 'C'; if(!toIT) param = ((param / 10) << 4) + (param % 10); break;
+	case CMD_VOLUMESLIDE:     command = 'D'; break;
+	case CMD_PORTAMENTODOWN:  command = 'E'; if (param >= 0xE0 && (GetType() & (MOD_TYPE_MOD | MOD_TYPE_XM))) param = 0xDF; break;
+	case CMD_PORTAMENTOUP:    command = 'F'; if (param >= 0xE0 && (GetType() & (MOD_TYPE_MOD | MOD_TYPE_XM))) param = 0xDF; break;
+	case CMD_TONEPORTAMENTO:  command = 'G'; break;
+	case CMD_VIBRATO:         command = 'H'; break;
+	case CMD_TREMOR:          command = 'I'; break;
+	case CMD_ARPEGGIO:        command = 'J'; break;
+	case CMD_VIBRATOVOL:      command = 'K'; break;
+	case CMD_TONEPORTAVOL:    command = 'L'; break;
+	case CMD_CHANNELVOLUME:   command = 'M'; break;
+	case CMD_CHANNELVOLSLIDE: command = 'N'; break;
+	case CMD_OFFSET:          command = 'O'; break;
+	case CMD_PANNINGSLIDE:    command = 'P'; break;
+	case CMD_RETRIG:          command = 'Q'; break;
+	case CMD_TREMOLO:         command = 'R'; break;
+	case CMD_S3MCMDEX:        command = 'S'; break;
+	case CMD_TEMPO:           command = 'T'; break;
+	case CMD_FINEVIBRATO:     command = 'U'; break;
+	case CMD_GLOBALVOLUME:    command = 'V'; break;
+	case CMD_GLOBALVOLSLIDE:  command = 'W'; break;
 	case CMD_PANNING8:
 		command = 'X';
 		if(toIT && !(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM | MOD_TYPE_MOD)))
@@ -104,8 +106,8 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 			param >>= 1;
 		}
 		break;
-	case CMD_PANBRELLO:			command = 'Y'; break;
-	case CMD_MIDI:				command = 'Z'; break;
+	case CMD_PANBRELLO: command = 'Y'; break;
+	case CMD_MIDI:      command = 'Z'; break;
 	case CMD_SMOOTHMIDI:
 		if(compatibilityExport || !toIT)
 			command = 'Z';
@@ -115,10 +117,10 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 	case CMD_XFINEPORTAUPDOWN:
 		switch(param & 0xF0)
 		{
-		case 0x10:	command = 'F'; param = (param & 0x0F) | 0xE0; break;
-		case 0x20:	command = 'E'; param = (param & 0x0F) | 0xE0; break;
-		case 0x90:	command = 'S'; break;
-		default:	command = 0;
+		case 0x10: command = 'F'; param = (param & 0x0F) | 0xE0; break;
+		case 0x20: command = 'E'; param = (param & 0x0F) | 0xE0; break;
+		case 0x90: command = 'S'; break;
+		default:   command = 0;
 		}
 		break;
 	case CMD_MODCMDEX:
@@ -134,16 +136,10 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 		return;
 	// Chars under 0x40 don't save properly, so map : to ] and # to [.
 	case CMD_DELAYCUT:
-		if(compatibilityExport || !toIT)
-			command = 0;
-		else
-			command = ']';
+		command = (compatibilityExport || !toIT) ? 0 : ']';
 		break;
 	case CMD_XPARAM:
-		if(compatibilityExport || !toIT)
-			command = 0;
-		else
-			command = '[';
+		command = (compatibilityExport || !toIT) ? 0 : '[';
 		break;
 	default:
 		command = 0;
@@ -248,7 +244,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		if(fileHeader.cwtv == S3MFileHeader::trkST3_20 && fileHeader.special == 0 && (fileHeader.ordNum & 0x0F) == 0 && fileHeader.ultraClicks == 0 && (fileHeader.flags & ~0x50) == 0)
 		{
 			// MPT 1.16 and older versions of OpenMPT - Simply keep default (filter) MIDI macros
-			m_dwLastSavedWithVersion = MAKE_VERSION_NUMERIC(1, 16, 00, 00);
+			m_dwLastSavedWithVersion = MPT_V("1.16.00.00");
 			madeWithTracker = U_("ModPlug Tracker / OpenMPT");
 			keepMidiMacros = true;
 			nonCompatTracker = true;
@@ -287,6 +283,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			m_FileHistory.push_back(hist);
 		}
 		nonCompatTracker = true;
+		m_playBehaviour.set(kST3SampleSwap);  // Not exactly like ST3, but close enough
 		m_nMinPeriod = 1;
 		break;
 	case S3MFileHeader::trkSchismTracker:
@@ -327,7 +324,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("ScreamTracker 3");
 	m_modFormat.type = U_("s3m");
 	m_modFormat.madeWithTracker = std::move(madeWithTracker);
-	m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::CharsetWindows1252 : mpt::CharsetCP437;
+	m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::Charset::Windows1252 : mpt::Charset::CP437;
 
 	if(nonCompatTracker)
 	{
@@ -355,12 +352,12 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		m_MidiCfg.ClearZxxMacros();
 	}
 
-	mpt::String::Read<mpt::String::nullTerminated>(m_songName, fileHeader.name);
+	m_songName = mpt::String::ReadBuf(mpt::String::nullTerminated, fileHeader.name);
 
 	if(fileHeader.flags & S3MFileHeader::amigaLimits) m_SongFlags.set(SONG_AMIGALIMITS);
 	if(fileHeader.flags & S3MFileHeader::st2Vibrato) m_SongFlags.set(SONG_S3MOLDVIBRATO);
 
-	if(fileHeader.cwtv < S3MFileHeader::trkST3_20 || (fileHeader.flags & S3MFileHeader::fastVolumeSlides) != 0)
+	if(fileHeader.cwtv == S3MFileHeader::trkST3_00 || (fileHeader.flags & S3MFileHeader::fastVolumeSlides) != 0)
 	{
 		m_SongFlags.set(SONG_FASTVOLSLIDES);
 	}
@@ -382,7 +379,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	// Global Volume
-	m_nDefaultGlobalVolume = std::min<uint32>(fileHeader.globalVol, 64) * 4u;
+	m_nDefaultGlobalVolume = std::min(fileHeader.globalVol.get(), uint8(64)) * 4u;
 	// The following check is probably not very reliable, but it fixes a few tunes, e.g.
 	// DARKNESS.S3M by Purple Motion (ST 3.00) and "Image of Variance" by C.C.Catch (ST 3.01):
 	if(m_nDefaultGlobalVolume == 0 && fileHeader.cwtv < S3MFileHeader::trkST3_20)
@@ -390,8 +387,15 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
 	}
 
-	// Bit 7 = Stereo (we always use stereo)
-	m_nSamplePreAmp = std::max(fileHeader.masterVolume & 0x7F, 0x10);
+	if(fileHeader.formatVersion == S3MFileHeader::oldVersion && fileHeader.masterVolume < 8)
+		m_nSamplePreAmp = std::min((fileHeader.masterVolume + 1) * 0x10, 0x7F);
+	// These changes were probably only supposed to be done for older format revisions, where supposedly 0x10 was the stereo flag.
+	// However, this version check is missing in ST3, so any mono file with a master volume of 18 will be converted to a stereo file with master volume 32.
+	else if(fileHeader.masterVolume == 2 || fileHeader.masterVolume == (2 | 0x10))
+		m_nSamplePreAmp = 0x20;
+	else
+		m_nSamplePreAmp = std::max(fileHeader.masterVolume & 0x7F, 0x10);  // Bit 7 = Stereo (we always use stereo)
+
 	// Approximately as loud as in DOSBox and a real SoundBlaster 16
 	m_nVSTiVolume = 36;
 	if(isSchism && fileHeader.cwtv < SchismVersionFromDate<2018, 11, 12>::Version(S3MFileHeader::trkSchismTracker))
@@ -451,7 +455,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	// Reading sample headers
-	m_nSamples = std::min<SAMPLEINDEX>(fileHeader.smpNum, MAX_SAMPLES - 1);
+	m_nSamples = std::min(static_cast<SAMPLEINDEX>(fileHeader.smpNum), static_cast<SAMPLEINDEX>(MAX_SAMPLES - 1));
 	for(SAMPLEINDEX smp = 0; smp < m_nSamples; smp++)
 	{
 		S3MSampleHeader sampleHeader;
@@ -462,7 +466,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		}
 
 		sampleHeader.ConvertToMPT(Samples[smp + 1]);
-		mpt::String::Read<mpt::String::nullTerminated>(m_szNames[smp + 1], sampleHeader.name);
+		m_szNames[smp + 1] = mpt::String::ReadBuf(mpt::String::nullTerminated, sampleHeader.name);
 
 		if(sampleHeader.sampleType < S3MSampleHeader::typeAdMel)
 		{
@@ -489,7 +493,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 	// Order list cannot contain pattern indices > 255, so do not even try to load higher patterns
-	const PATTERNINDEX readPatterns = std::min<PATTERNINDEX>(fileHeader.patNum, uint8_max);
+	const PATTERNINDEX readPatterns = std::min(static_cast<PATTERNINDEX>(fileHeader.patNum), static_cast<PATTERNINDEX>(uint8_max));
 	Patterns.ResizeArray(readPatterns);
 	for(PATTERNINDEX pat = 0; pat < readPatterns; pat++)
 	{
@@ -528,23 +532,13 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 			if(info & s3mNotePresent)
 			{
-				uint8 note = file.ReadUint8(), instr = file.ReadUint8();
-
+				const auto [note, instr] = file.ReadArray<uint8, 2>();
 				if(note < 0xF0)
-				{
-					// Note
-					note = (note & 0x0F) + 12 * (note >> 4) + 12 + NOTE_MIN;
-				} else if(note == s3mNoteOff)
-				{
-					// ^^
-					note = NOTE_NOTECUT;
-				} else if(note == s3mNoteNone)
-				{
-					// ..
-					note = NOTE_NONE;
-				}
-
-				m.note = note;
+					m.note = (note & 0x0F) + 12 * (note >> 4) + 12 + NOTE_MIN;
+				else if(note == s3mNoteOff)
+					m.note = NOTE_NOTECUT;
+				else if(note == s3mNoteNone)
+					m.note = NOTE_NONE;
 				m.instr = instr;
 			}
 
@@ -558,20 +552,16 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 				} else
 				{
 					m.volcmd = VOLCMD_VOLUME;
-					m.vol = MIN(volume, 64);
+					m.vol = std::min(volume, uint8(64));
 				}
 			}
 
 			if(info & s3mEffectPresent)
 			{
-				uint8 command = file.ReadUint8(), param = file.ReadUint8();
-
-				if(command != 0)
-				{
-					m.command = command;
-					m.param = param;
-					S3MConvert(m, false);
-				}
+				const auto [command, param] = file.ReadArray<uint8, 2>();
+				m.command = command;
+				m.param = param;
+				S3MConvert(m, false);
 
 				if(m.command == CMD_S3MCMDEX && (m.param & 0xF0) == 0xA0 && fileHeader.cwtv < S3MFileHeader::trkST3_20)
 				{
@@ -620,7 +610,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 bool CSoundFile::SaveS3M(std::ostream &f) const
 {
-	static const uint8 filler[16] =
+	static constexpr uint8 filler[16] =
 	{
 		0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
 		0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
@@ -641,7 +631,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 	S3MFileHeader fileHeader;
 	MemsetZero(fileHeader);
 
-	mpt::String::Write<mpt::String::nullTerminated>(fileHeader.name, m_songName);
+	mpt::String::WriteBuf(mpt::String::nullTerminated, fileHeader.name) = m_songName;
 	fileHeader.dosEof = S3MFileHeader::idEOF;
 	fileHeader.fileType = S3MFileHeader::idS3MType;
 
@@ -668,7 +658,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 	fileHeader.smpNum = static_cast<uint16>(writeSamples);
 
 	// Patterns
-	PATTERNINDEX writePatterns = MIN(Patterns.GetNumPatterns(), 100u);
+	PATTERNINDEX writePatterns = std::min(Patterns.GetNumPatterns(), PATTERNINDEX(100));
 	fileHeader.patNum = static_cast<uint16>(writePatterns);
 
 	// Flags
@@ -693,7 +683,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 	memcpy(fileHeader.magic, "SCRM", 4);
 
 	// Song Variables
-	fileHeader.globalVol = static_cast<uint8>(std::min<unsigned int>(m_nDefaultGlobalVolume / 4u, 64u));
+	fileHeader.globalVol = static_cast<uint8>(std::min(m_nDefaultGlobalVolume / 4u, uint32(64)));
 	fileHeader.speed = static_cast<uint8>(Clamp(m_nDefaultSpeed, 1u, 254u));
 	fileHeader.tempo = static_cast<uint8>(Clamp(m_nDefaultTempo.GetInt(), 33u, 255u));
 	fileHeader.masterVolume = static_cast<uint8>(Clamp(m_nSamplePreAmp, 16u, 127u) | 0x80);
@@ -719,7 +709,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 	std::vector<uint16le> sampleOffsets(writeSamples);
 	for(SAMPLEINDEX smp = 0; smp < writeSamples; smp++)
 	{
-		STATIC_ASSERT((sizeof(S3MSampleHeader) % 16) == 0);
+		static_assert((sizeof(S3MSampleHeader) % 16) == 0);
 		sampleOffsets[smp] = static_cast<uint16>((sampleHeaderOffset + smp * sizeof(S3MSampleHeader)) / 16);
 	}
 	mpt::IO::Write(f, sampleOffsets);
@@ -840,7 +830,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 					{
 						command = CMD_NONE;
 						volcmd = VOLCMD_VOLUME;
-						vol = MIN(param, 64);
+						vol = std::min(param, uint8(64));
 					}
 
 					if(volcmd == VOLCMD_VOLUME)
@@ -855,7 +845,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 					if(command != CMD_NONE)
 					{
 						S3MSaveConvert(command, param, false, true);
-						if(command)
+						if(command || param)
 						{
 							info |= s3mEffectPresent;
 							if(saveMuteStatus && ChnSettings[chn].dwFlags[CHN_MUTE] && m.IsGlobalCommand())
@@ -907,7 +897,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 	}
 	if(globalCmdOnMutedChn)
 	{
-		//AddToLog(LogWarning, U_("Global commands on muted channels are interpreted by only some S3M players."));
+		//AddToLog(LogWarning, U_("Global commands on muted channels are interpreted only by some S3M players."));
 	}
 
 	mpt::IO::Offset sampleDataOffset = mpt::IO::TellWrite(f);
@@ -937,7 +927,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 		}
 
 		const SmpLength smpLength = sampleHeader[smp].ConvertToS3M(Samples[realSmp]);
-		mpt::String::Write<mpt::String::nullTerminated>(sampleHeader[smp].name, m_szNames[realSmp]);
+		mpt::String::WriteBuf(mpt::String::nullTerminated, sampleHeader[smp].name) = m_szNames[realSmp];
 
 		if(smpLength != 0)
 		{

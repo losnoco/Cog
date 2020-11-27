@@ -99,12 +99,12 @@ mpt::tstring SafeOutputFile::convert_mode(std::ios_base::openmode mode, FlushMod
 		fopen_mode = _T("r");
 		break;
 	case std::ios_base::out:
-		MPT_FALLTHROUGH;
+		[[fallthrough]];
 	case std::ios_base::out | std::ios_base::trunc:
 		fopen_mode = _T("w");
 		break;
 	case std::ios_base::app:
-		MPT_FALLTHROUGH;
+		[[fallthrough]];
 	case std::ios_base::out | std::ios_base::app:
 		fopen_mode = _T("a");
 		break;
@@ -115,7 +115,7 @@ mpt::tstring SafeOutputFile::convert_mode(std::ios_base::openmode mode, FlushMod
 		fopen_mode = _T("w+");
 		break;
 	case std::ios_base::out | std::ios_base::in | std::ios_base::app:
-		MPT_FALLTHROUGH;
+		[[fallthrough]];
 	case std::ios_base::in | std::ios_base::app:
 		fopen_mode = _T("a+");
 		break;
@@ -171,12 +171,25 @@ FILE * SafeOutputFile::internal_fopen(const mpt::PathString &filename, std::ios_
 // cppcheck-suppress exceptThrowInDestructor
 SafeOutputFile::~SafeOutputFile() noexcept(false)
 {
+	const bool mayThrow = (std::uncaught_exceptions() == 0);
 	if(!stream())
 	{
+		#if MPT_COMPILER_MSVC
+			if(m_f)
+			{
+				fclose(m_f);
+			}
+		#endif // MPT_COMPILER_MSVC
 		return;
 	}
 	if(!stream().rdbuf())
 	{
+		#if MPT_COMPILER_MSVC
+			if(m_f)
+			{
+				fclose(m_f);
+			}
+		#endif // MPT_COMPILER_MSVC
 		return;
 	}
 #if MPT_COMPILER_MSVC
@@ -210,8 +223,12 @@ SafeOutputFile::~SafeOutputFile() noexcept(false)
 				errorOnFlush = true;
 			}
 #endif // MPT_COMPILER_MSVC
-			// ignore errorOnFlush here, and re-throw the earlier exception
-			throw;
+			if(mayThrow)
+			{
+				// ignore errorOnFlush here, and re-throw the earlier exception
+				// cppcheck-suppress exceptThrowInDestructor
+				throw;
+			}
 		}
 	}
 #if MPT_COMPILER_MSVC
@@ -227,8 +244,9 @@ SafeOutputFile::~SafeOutputFile() noexcept(false)
 		errorOnFlush = true;
 	}
 #endif // MPT_COMPILER_MSVC
-	if(errorOnFlush && (stream().exceptions() & (std::ios::badbit | std::ios::failbit)))
+	if(mayThrow && errorOnFlush && (stream().exceptions() & (std::ios::badbit | std::ios::failbit)))
 	{
+		// cppcheck-suppress exceptThrowInDestructor
 		throw std::ios_base::failure(std::string("Error flushing file buffers."));
 	}
 }
@@ -243,11 +261,11 @@ SafeOutputFile::~SafeOutputFile() noexcept(false)
 
 namespace mpt {
 
-LazyFileRef & LazyFileRef::operator = (const std::vector<mpt::byte> &data)
+LazyFileRef & LazyFileRef::operator = (const std::vector<std::byte> &data)
 {
 	mpt::ofstream file(m_Filename, std::ios::binary);
 	file.exceptions(std::ios_base::failbit | std::ios_base::badbit);
-	mpt::IO::WriteRaw(file, data.data(), data.size());
+	mpt::IO::WriteRaw(file, mpt::as_span(data));
 	mpt::IO::Flush(file);
 	return *this;
 }
@@ -256,7 +274,7 @@ LazyFileRef & LazyFileRef::operator = (const std::vector<char> &data)
 {
 	mpt::ofstream file(m_Filename, std::ios::binary);
 	file.exceptions(std::ios_base::failbit | std::ios_base::badbit);
-	mpt::IO::WriteRaw(file, data.data(), data.size());
+	mpt::IO::WriteRaw(file, mpt::as_span(data));
 	mpt::IO::Flush(file);
 	return *this;
 }
@@ -265,23 +283,23 @@ LazyFileRef & LazyFileRef::operator = (const std::string &data)
 {
 	mpt::ofstream file(m_Filename, std::ios::binary);
 	file.exceptions(std::ios_base::failbit | std::ios_base::badbit);
-	mpt::IO::WriteRaw(file, data.data(), data.size());
+	mpt::IO::WriteRaw(file, mpt::as_span(data));
 	mpt::IO::Flush(file);
 	return *this;
 }
 
-LazyFileRef::operator std::vector<mpt::byte> () const
+LazyFileRef::operator std::vector<std::byte> () const
 {
 	mpt::ifstream file(m_Filename, std::ios::binary);
 	if(!mpt::IO::IsValid(file))
 	{
-		return std::vector<mpt::byte>();
+		return std::vector<std::byte>();
 	}
 	file.exceptions(std::ios_base::failbit | std::ios_base::badbit);
 	mpt::IO::SeekEnd(file);
-	std::vector<mpt::byte> buf(mpt::saturate_cast<std::size_t>(mpt::IO::TellRead(file)));
+	std::vector<std::byte> buf(mpt::saturate_cast<std::size_t>(mpt::IO::TellRead(file)));
 	mpt::IO::SeekBegin(file);
-	mpt::IO::ReadRaw(file, buf.data(), buf.size());
+	mpt::IO::ReadRaw(file, mpt::as_span(buf));
 	return buf;
 }
 
@@ -296,7 +314,7 @@ LazyFileRef::operator std::vector<char> () const
 	mpt::IO::SeekEnd(file);
 	std::vector<char> buf(mpt::saturate_cast<std::size_t>(mpt::IO::TellRead(file)));
 	mpt::IO::SeekBegin(file);
-	mpt::IO::ReadRaw(file, buf.data(), buf.size());
+	mpt::IO::ReadRaw(file, mpt::as_span(buf));
 	return buf;
 }
 
@@ -311,7 +329,7 @@ LazyFileRef::operator std::string () const
 	mpt::IO::SeekEnd(file);
 	std::vector<char> buf(mpt::saturate_cast<std::size_t>(mpt::IO::TellRead(file)));
 	mpt::IO::SeekBegin(file);
-	mpt::IO::ReadRaw(file, buf.data(), buf.size());
+	mpt::IO::ReadRaw(file, mpt::as_span(buf));
 	return std::string(buf.begin(), buf.end());
 }
 
@@ -320,149 +338,22 @@ LazyFileRef::operator std::string () const
 #endif // MODPLUG_TRACKER
 
 
-
-#ifdef MODPLUG_TRACKER
-
-#if MPT_OS_WINDOWS
-
-CMappedFile::~CMappedFile()
+bool InputFile::DefaultToLargeAddressSpaceUsage()
 {
-	Close();
+	return false;
 }
-
-
-bool CMappedFile::Open(const mpt::PathString &filename)
-{
-	m_hFile = CreateFile(
-		filename.AsNativePrefixed().c_str(),
-		GENERIC_READ,
-		FILE_SHARE_READ,
-		NULL,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL);
-	if(m_hFile == INVALID_HANDLE_VALUE)
-	{
-		m_hFile = nullptr;
-		return false;
-	}
-	m_FileName = filename;
-	return true;
-}
-
-
-void CMappedFile::Close()
-{
-	m_FileName = mpt::PathString();
-	// Unlock file
-	if(m_hFMap)
-	{
-		if(m_pData)
-		{
-			UnmapViewOfFile(m_pData);
-			m_pData = nullptr;
-		}
-		CloseHandle(m_hFMap);
-		m_hFMap = nullptr;
-	} else if(m_pData)
-	{
-		free(m_pData);
-		m_pData = nullptr;
-	}
-
-	// Close file handle
-	if(m_hFile)
-	{
-		CloseHandle(m_hFile);
-		m_hFile = nullptr;
-	}
-}
-
-
-size_t CMappedFile::GetLength()
-{
-	LARGE_INTEGER size;
-	if(GetFileSizeEx(m_hFile, &size) == FALSE)
-	{
-		return 0;
-	}
-	return mpt::saturate_cast<size_t>(size.QuadPart);
-}
-
-
-const mpt::byte *CMappedFile::Lock()
-{
-	size_t length = GetLength();
-	if(!length) return nullptr;
-
-	void *lpStream;
-
-	HANDLE hmf = CreateFileMapping(
-		m_hFile,
-		NULL,
-		PAGE_READONLY,
-		0, 0,
-		NULL);
-
-	// Try memory-mapping first
-	if(hmf)
-	{
-		lpStream = MapViewOfFile(
-			hmf,
-			FILE_MAP_READ,
-			0, 0,
-			length);
-		if(lpStream)
-		{
-			m_hFMap = hmf;
-			m_pData = lpStream;
-			return mpt::void_cast<const mpt::byte*>(lpStream);
-		}
-		CloseHandle(hmf);
-		hmf = nullptr;
-	}
-
-	// Fallback if memory-mapping fails for some weird reason
-	if((lpStream = malloc(length)) == nullptr) return nullptr;
-	memset(lpStream, 0, length);
-	size_t bytesToRead = length;
-	size_t bytesRead = 0;
-	while(bytesToRead > 0)
-	{
-		DWORD chunkToRead = mpt::saturate_cast<DWORD>(length);
-		DWORD chunkRead = 0;
-		if(ReadFile(m_hFile, mpt::void_cast<mpt::byte*>(lpStream) + bytesRead, chunkToRead, &chunkRead, NULL) == FALSE)
-		{
-			// error
-			free(lpStream);
-			return nullptr;
-		}
-		bytesRead += chunkRead;
-		bytesToRead -= chunkRead;
-	}
-	m_pData = lpStream;
-	return mpt::void_cast<const mpt::byte*>(lpStream);
-}
-
-#endif // MPT_OS_WINDOWS
-
-#endif // MODPLUG_TRACKER
-
 
 
 InputFile::InputFile()
+	: m_IsCached(false)
 {
 	return;
 }
 
-InputFile::InputFile(const mpt::PathString &filename)
-	: m_Filename(filename)
+InputFile::InputFile(const mpt::PathString &filename, bool allowWholeFileCaching)
+	: m_IsCached(false)
 {
-#if defined(MPT_FILEREADER_STD_ISTREAM)
-	m_File.open(m_Filename, std::ios::binary | std::ios::in);
-#else
-	m_File.Open(m_Filename);
-#endif
+	Open(filename, allowWholeFileCaching);
 }
 
 InputFile::~InputFile()
@@ -471,57 +362,82 @@ InputFile::~InputFile()
 }
 
 
-bool InputFile::Open(const mpt::PathString &filename)
+bool InputFile::Open(const mpt::PathString &filename, bool allowWholeFileCaching)
 {
+	m_IsCached = false;
+	m_Cache.resize(0);
+	m_Cache.shrink_to_fit();
 	m_Filename = filename;
-#if defined(MPT_FILEREADER_STD_ISTREAM)
 	m_File.open(m_Filename, std::ios::binary | std::ios::in);
+	if(allowWholeFileCaching)
+	{
+		if(mpt::IO::IsReadSeekable(m_File))
+		{
+			if(!mpt::IO::SeekEnd(m_File))
+			{
+				m_File.close();
+				return false;
+			}
+			mpt::IO::Offset filesize = mpt::IO::TellRead(m_File);
+			if(!mpt::IO::SeekBegin(m_File))
+			{
+				m_File.close();
+				return false;
+			}
+			if(Util::TypeCanHoldValue<std::size_t>(filesize))
+			{
+				std::size_t buffersize = mpt::saturate_cast<std::size_t>(filesize);
+				m_Cache.resize(buffersize);
+				if(mpt::IO::ReadRaw(m_File, mpt::as_span(m_Cache)) != filesize)
+				{
+					m_File.close();
+					return false;
+				}
+				if(!mpt::IO::SeekBegin(m_File))
+				{
+					m_File.close();
+					return false;
+				}
+				m_IsCached = true;
+				return true;
+			}
+		}
+	}
 	return m_File.good();
-#else
-	return m_File.Open(m_Filename);
-#endif
 }
 
 
 bool InputFile::IsValid() const
 {
-#if defined(MPT_FILEREADER_STD_ISTREAM)
 	return m_File.good();
-#else
-	return m_File.IsOpen();
-#endif
 }
 
-#if defined(MPT_FILEREADER_STD_ISTREAM)
 
-InputFile::ContentsRef InputFile::Get()
+bool InputFile::IsCached() const
 {
-	InputFile::ContentsRef result;
-	result.first = &m_File;
-	result.second = m_File.good() ? &m_Filename : nullptr;
-	return result;
+	return m_IsCached;
 }
 
-#else
 
-InputFile::ContentsRef InputFile::Get()
+const mpt::PathString& InputFile::GetFilenameRef() const
 {
-	InputFile::ContentsRef result;
-	result.first.data = nullptr;
-	result.first.size = 0;
-	result.second = nullptr;
-	if(!m_File.IsOpen())
-	{
-		return result;
-	}
-	result.first.data = m_File.Lock();
-	if(result.first.data)
-		result.first.size = m_File.GetLength();
-	result.second = &m_Filename;
-	return result;
+	return m_Filename;
 }
 
-#endif
+
+std::istream* InputFile::GetStream()
+{
+	MPT_ASSERT(!m_IsCached);
+	return &m_File;
+}
+
+
+mpt::const_byte_span InputFile::GetCache()
+{
+	MPT_ASSERT(m_IsCached);
+	return mpt::as_span(m_Cache);
+}
+
 
 #else // !MPT_ENABLE_FILEIO
 

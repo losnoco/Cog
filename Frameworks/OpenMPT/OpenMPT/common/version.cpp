@@ -23,6 +23,13 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
+#define MPT_MAKE_VERSION_NUMERIC_HELPER(prefix,v0,v1,v2,v3) Version( prefix ## v0 , prefix ## v1 , prefix ## v2 , prefix ## v3 )
+#define MPT_MAKE_VERSION_NUMERIC(v0,v1,v2,v3) MPT_MAKE_VERSION_NUMERIC_HELPER(0x, v0, v1, v2, v3)
+
+#define MPT_VERSION_CURRENT MPT_MAKE_VERSION_NUMERIC(VER_MAJORMAJOR,VER_MAJOR,VER_MINOR,VER_MINORMINOR)
+
+
+
 static_assert((MPT_VERSION_CURRENT.GetRawVersion() & 0xffffu) != 0x0000u, "Version numbers ending in .00.00 shall never exist again, as they make interpreting the version number ambiguous for file formats which can only store the two major parts of the version number (e.g. IT and S3M).");
 
 
@@ -80,10 +87,10 @@ bool Version::IsTestVersion() const noexcept
 {
 	return (
 			// Legacy
-			(*this > MAKE_VERSION_NUMERIC(1,17,02,54) && *this < MAKE_VERSION_NUMERIC(1,18,02,00) && *this != MAKE_VERSION_NUMERIC(1,18,00,00))
+			(*this > MPT_V("1.17.02.54") && *this < MPT_V("1.18.02.00") && *this != MPT_V("1.18.00.00"))
 		||
 			// Test builds have non-zero VER_MINORMINOR
-			(*this > MAKE_VERSION_NUMERIC(1,18,02,00) && ((m_Version & 0xFFFFFF00u) != m_Version))
+			(*this > MPT_V("1.18.02.00") && ((m_Version & 0xFFFFFF00u) != m_Version))
 		);
 }
 
@@ -94,7 +101,7 @@ namespace Source {
 static mpt::ustring GetUrl()
 {
 	#ifdef OPENMPT_VERSION_URL
-		return mpt::ToUnicode(mpt::CharsetASCII, OPENMPT_VERSION_URL);
+		return mpt::ToUnicode(mpt::Charset::ASCII, OPENMPT_VERSION_URL);
 	#else
 		return mpt::ustring();
 	#endif
@@ -132,15 +139,7 @@ static int GetRevision()
 		}
 		return ConvertStrTo<int>(svnversion);
 	#else
-		#if MPT_COMPILER_MSVC
-			#pragma message("SVN revision unknown. Please check your build system.")
-		#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
-			#warning "SVN revision unknown. Please check your build system."
-		#else
-			// There is no portable way to display a warning.
-			// Try to provoke a warning with an unused variable.
-			int SVN_revision_unknown__Please_check_your_build_system;
-		#endif
+		MPT_WARNING_STATEMENT("SVN revision unknown. Please check your build system.");
 		return 0;
 	#endif
 }
@@ -209,7 +208,7 @@ static bool IsPackage()
 static mpt::ustring GetSourceDate()
 {
 	#if defined(OPENMPT_VERSION_DATE)
-		return mpt::ToUnicode(mpt::CharsetASCII, OPENMPT_VERSION_DATE);
+		return mpt::ToUnicode(mpt::Charset::ASCII, OPENMPT_VERSION_DATE);
 	#else
 		return mpt::ustring();
 	#endif
@@ -286,9 +285,9 @@ mpt::ustring GetBuildDateString()
 	mpt::ustring result;
 	#ifdef MODPLUG_TRACKER
 		#if defined(OPENMPT_BUILD_DATE)
-			result = mpt::ToUnicode(mpt::CharsetASCII, OPENMPT_BUILD_DATE );
+			result = mpt::ToUnicode(mpt::Charset::ASCII, OPENMPT_BUILD_DATE );
 		#else
-			result = mpt::ToUnicode(mpt::CharsetASCII, __DATE__ " " __TIME__ );
+			result = mpt::ToUnicode(mpt::Charset::ASCII, __DATE__ " " __TIME__ );
 		#endif
 	#else // !MODPLUG_TRACKER
 		result = SourceInfo::Current().Date();
@@ -317,18 +316,6 @@ mpt::ustring GetBuildFeaturesString()
 	mpt::ustring retval;
 	#ifdef LIBOPENMPT_BUILD
 		retval = UL_("")
-		#if defined(MPT_CHARSET_WIN32)
-			UL_(" +WINAPI")
-		#endif
-		#if defined(MPT_CHARSET_ICONV)
-			UL_(" +ICONV")
-		#endif
-		#if defined(MPT_CHARSET_CODECVTUTF8)
-			UL_(" +CODECVTUTF8")
-		#endif
-		#if defined(MPT_CHARSET_INTERNAL)
-			UL_(" +INTERNALCHARSETS")
-		#endif
 		#if defined(MPT_WITH_ZLIB)
 			UL_(" +ZLIB")
 		#endif
@@ -364,13 +351,13 @@ mpt::ustring GetBuildFeaturesString()
 		#else
 			UL_(" -PLUGINS")
 		#endif
-		#if !defined(NO_DMO)
+		#if defined(MPT_WITH_DMO)
 			UL_(" +DMO")
 		#endif
 		;
 	#endif
 	#ifdef MODPLUG_TRACKER
-		MPT_CONSTANT_IF(mpt::arch_bits == 64)
+		if constexpr(mpt::arch_bits == 64)
 		{
 			if (true
 				&& (mpt::Windows::Version::GetMinimumKernelLevel() <= mpt::Windows::Version::WinXP64)
@@ -378,7 +365,7 @@ mpt::ustring GetBuildFeaturesString()
 			) {
 				retval += UL_(" WIN64OLD");
 			}
-		} else MPT_CONSTANT_IF(mpt::arch_bits == 32)
+		} else if constexpr(mpt::arch_bits == 32)
 		{
 			if (true
 				&& (mpt::Windows::Version::GetMinimumKernelLevel() <= mpt::Windows::Version::WinXP)
@@ -396,7 +383,7 @@ mpt::ustring GetBuildFeaturesString()
 		#ifdef NO_VST
 			UL_(" NO_VST")
 		#endif
-		#ifdef NO_DMO
+		#ifndef MPT_WITH_DMO
 			UL_(" NO_DMO")
 		#endif
 		#ifdef NO_PLUGINS
@@ -588,19 +575,19 @@ mpt::ustring GetURL(Build::Url key)
 
 mpt::ustring GetFullCreditsString()
 {
-	return mpt::ToUnicode(mpt::CharsetUTF8,
+	return mpt::ToUnicode(mpt::Charset::UTF8,
 #ifdef MODPLUG_TRACKER
 		"OpenMPT / ModPlug Tracker\n"
 #else
 		"libopenmpt (based on OpenMPT / ModPlug Tracker)\n"
 #endif
 		"\n"
-		"Copyright \xC2\xA9 2004-2019 Contributors\n"
+		"Copyright \xC2\xA9 2004-2020 Contributors\n"
 		"Copyright \xC2\xA9 1997-2003 Olivier Lapicque\n"
 		"\n"
 		"Contributors:\n"
-		"Johannes Schultz (2008-2019)\n"
-		"J\xC3\xB6rn Heusipp (2012-2019)\n"
+		"Johannes Schultz (2008-2020)\n"
+		"J\xC3\xB6rn Heusipp (2012-2020)\n"
 		"Ahti Lepp\xC3\xA4nen (2005-2011)\n"
 		"Robin Fernandes (2004-2007)\n"
 		"Sergiy Pylypenko (2007)\n"
@@ -610,6 +597,7 @@ mpt::ustring GetFullCreditsString()
 		"\n"
 		"Additional patch submitters:\n"
 		"coda (https://coda.s3m.us/)\n"
+		"Jo\xC3\xA3o Baptista de Paula e Silva (https://joaobapt.com/)\n"
 		"kode54 (https://kode54.net/)\n"
 		"Revenant (https://revenant1.net/)\n"
 		"xaimus (http://xaimus.com/)\n"
@@ -656,6 +644,9 @@ mpt::ustring GetFullCreditsString()
 		"\n"
 		"Shayde / Reality Productions for Opal OPL3 emulator\n"
 		"https://www.3eality.com/\n"
+		"\n"
+		"Ryuhei Mori for TinyFFT\n"
+		"https://github.com/ryuhei-mori/tinyfft\n"
 		"\n"
 #ifdef MPT_WITH_ZLIB
 		"Jean-loup Gailly and Mark Adler for zlib\n"
@@ -736,7 +727,8 @@ mpt::ustring GetFullCreditsString()
 #endif
 #if defined(MPT_WITH_LAME)
 		"The LAME project for LAME\n"
-		"http://lame.sourceforge.net/\n"
+		"https://lame.sourceforge.io/\n"
+		"\n"
 #endif
 #if defined(MPT_WITH_NLOHMANNJSON)
 		"Niels Lohmann et al. for nlohmann-json\n"
@@ -785,7 +777,7 @@ mpt::ustring GetFullCreditsString()
 mpt::ustring GetLicenseString()
 {
 	return MPT_UTF8(
-		"Copyright (c) 2004-2019, OpenMPT contributors" "\n"
+		"Copyright (c) 2004-2020, OpenMPT contributors" "\n"
 		"Copyright (c) 1997-2003, Olivier Lapicque" "\n"
 		"All rights reserved." "\n"
 		"" "\n"

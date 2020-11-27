@@ -15,11 +15,13 @@
 
 #include "Endianness.h"
 
+#include <stdexcept>
+
 #if MPT_OS_WINDOWS
-#if defined(MODPLUG_TRACKER) || !defined(NO_DMO)
+#if defined(MODPLUG_TRACKER) || defined(MPT_WITH_DMO)
 #include <guiddef.h>
 #include <rpc.h>
-#endif // MODPLUG_TRACKER || !NO_DMO
+#endif // MODPLUG_TRACKER || MPT_WITH_DMO
 #endif // MPT_OS_WINDOWS
 
 
@@ -30,7 +32,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace Util
 {
 
-#if defined(MODPLUG_TRACKER) || !defined(NO_DMO)
+#if defined(MODPLUG_TRACKER) || defined(MPT_WITH_DMO)
 
 // COM CLSID<->string conversion
 // A CLSID string is not necessarily a standard UUID string,
@@ -56,7 +58,7 @@ GUID CreateGUID();
 // Checks the UUID against the NULL UUID. Returns false if it is NULL, true otherwise.
 bool IsValid(UUID uuid);
 
-#endif // MODPLUG_TRACKER || !NO_DMO
+#endif // MODPLUG_TRACKER || MPT_WITH_DMO
 
 } // namespace Util
 
@@ -97,6 +99,9 @@ public:
 	MPT_CONSTEXPR11_FUN uint16 GetData3() const noexcept { return Data3; }
 	MPT_CONSTEXPR11_FUN uint64 GetData4() const noexcept { return Data4; }
 public:
+	MPT_CONSTEXPR11_FUN uint64 GetData64_1() const noexcept { return (static_cast<uint64>(Data1) << 32) | (static_cast<uint64>(Data2) << 16) | (static_cast<uint64>(Data3) << 0); }
+	MPT_CONSTEXPR11_FUN uint64 GetData64_2() const noexcept { return Data4; }
+public:
 	// xxxxxxxx-xxxx-Mmxx-Nnxx-xxxxxxxxxxxx
 	// <--32-->-<16>-<16>-<-------64------>
 	MPT_CONSTEXPR11_FUN bool IsNil() const noexcept { return (Data1 == 0) && (Data2 == 0) && (Data3 == 0) && (Data4 == 0); }
@@ -109,10 +114,10 @@ private:
 	MPT_CONSTEXPR11_FUN uint8 Nn() const noexcept { return static_cast<uint8>((Data4 >> 56) & 0xffu); }
 	void MakeRFC4122(uint8 version) noexcept;
 public:
-#if MPT_OS_WINDOWS && (defined(MODPLUG_TRACKER) || !defined(NO_DMO))
+#if MPT_OS_WINDOWS && (defined(MODPLUG_TRACKER) || defined(MPT_WITH_DMO))
 	explicit UUID(::UUID uuid);
 	operator ::UUID () const;
-#endif // MPT_OS_WINDOWS && (MODPLUG_TRACKER || !NO_DMO)
+#endif // MPT_OS_WINDOWS && (MODPLUG_TRACKER || MPT_WITH_DMO)
 private:
 	static MPT_CONSTEXPR11_FUN uint8 NibbleFromChar(char x)
 	{
@@ -120,7 +125,7 @@ private:
 			('0' <= x && x <= '9') ? static_cast<uint8>(x - '0' +  0) :
 			('a' <= x && x <= 'z') ? static_cast<uint8>(x - 'a' + 10) :
 			('A' <= x && x <= 'Z') ? static_cast<uint8>(x - 'A' + 10) :
-			throw std::domain_error("");
+			mpt::constexpr_throw<uint8>(std::domain_error(""));
 	}
 	static MPT_CONSTEXPR11_FUN uint8 ByteFromHex(char x, char y)
 	{
@@ -159,7 +164,7 @@ public:
 					| (static_cast<uint64>(ParseHex16(str + 24)) << 32)
 					| (static_cast<uint64>(ParseHex32(str + 28)) <<  0)
 			)
-			: throw std::domain_error("");
+			: mpt::constexpr_throw<mpt::UUID>(std::domain_error(""));
 	}
 public:
 	MPT_CONSTEXPR11_FUN UUID() noexcept : Data1(0), Data2(0), Data3(0), Data4(0) { }

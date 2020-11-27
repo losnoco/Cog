@@ -36,7 +36,7 @@ typedef struct {
 static layered_layout_data* build_layered_fsb5_celt(STREAMFILE* sf, fsb5_header* fsb5);
 static layered_layout_data* build_layered_fsb5_atrac9(STREAMFILE* sf, fsb5_header* fsb5, off_t configs_offset, size_t configs_size);
 
-/* FSB5 - FMOD Studio multiplatform format */
+/* FSB5 - Firelight's FMOD Studio SoundBank format */
 VGMSTREAM* init_vgmstream_fsb5(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
     fsb5_header fsb5 = {0};
@@ -207,10 +207,11 @@ VGMSTREAM* init_vgmstream_fsb5(STREAMFILE* sf) {
                              * (xN entries)
                              */
                             break;
-                        case 0x0d:  /* unknown 32b (config? usually 0x3fnnnn00 BE and sometimes 0x3dnnnn00 BE) */
-                            /* found in some XMA2/Vorbis/FADPCM */
-                            VGM_LOG("FSB5: stream %i flag %x with value %08x\n", i, extraflag_type, read_32bitLE(extraflag_offset+0x04,sf));
+                        case 0x0d:  /* peak volume float (optional setting when making fsb) */
                             break;
+                        case 0x0f:  /* OPUS data size not counting frames headers */
+                            break;
+                        case 0x0e:  /* number of layered Vorbis channels [Invisible, Inc. (Switch)] */
                         default:
                             VGM_LOG("FSB5: stream %i unknown flag 0x%x at %x + 0x04 (size 0x%x)\n", i, extraflag_type, (uint32_t)extraflag_offset, extraflag_size);
                             break;
@@ -219,12 +220,18 @@ VGMSTREAM* init_vgmstream_fsb5(STREAMFILE* sf) {
 
                 extraflag_offset += 0x04 + extraflag_size;
                 stream_header_size += 0x04 + extraflag_size;
-            } while (extraflag_end != 0x00);
+            }
+            while (extraflag_end != 0x00);
         }
 
         /* target found */
         if (i + 1 == target_subsong) {
             fsb5.stream_offset = fsb5.base_header_size + fsb5.sample_header_size + fsb5.name_table_size + data_offset;
+
+            /* catch bad rips (like incorrectly split +1.5GB .fsb with wrong header+data) */
+            if (fsb5.stream_offset > get_streamfile_size(sf))
+                goto fail;
+
 
             /* get stream size from next stream offset or full size if there is only one */
             if (i + 1 == fsb5.total_subsongs) {
@@ -472,6 +479,20 @@ VGMSTREAM* init_vgmstream_fsb5(STREAMFILE* sf) {
             vgmstream->interleave_block_size = 0x8c;
             break;
 
+#if 0 		//disabled until some game is found, can be created in the GUI tool
+#ifdef VGM_USE_FFMPEG
+        case 0x11: { /* FMOD_SOUND_FORMAT_OPUS */
+            int skip = 312; //fsb_opus_get_encoder_delay(fsb5.stream_offset, sf); /* returns 120 but this seems correct */
+            //vgmstream->num_samples -= skip;
+
+            vgmstream->codec_data = init_ffmpeg_fsb_opus(sf, fsb5.stream_offset, fsb5.stream_size, vgmstream->channels, skip, vgmstream->sample_rate);
+            if (!vgmstream->codec_data) goto fail;
+            vgmstream->coding_type = coding_FFmpeg;
+            vgmstream->layout_type = layout_none;
+            break;
+        }
+#endif
+#endif
         default:
             VGM_LOG("FSB5: unknown codec %x found\n", fsb5.codec);
             goto fail;

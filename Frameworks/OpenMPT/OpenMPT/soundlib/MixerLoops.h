@@ -17,6 +17,8 @@
 OPENMPT_NAMESPACE_BEGIN
 
 struct ModChannel;
+template <typename SampleType> struct audio_buffer_interleaved;
+template <typename SampleType> struct audio_buffer_planar;
 
 void StereoMixToFloat(const int32 *pSrc, float *pOut1, float *pOut2, uint32 nCount, const float _i2fc);
 void FloatToStereoMix(const float *pIn1, const float *pIn2, int32 *pOut, uint32 uint32, const float _f2ic);
@@ -24,8 +26,10 @@ void MonoMixToFloat(const int32 *pSrc, float *pOut, uint32 uint32, const float _
 void FloatToMonoMix(const float *pIn, int32 *pOut, uint32 uint32, const float _f2ic);
 
 #ifndef MODPLUG_TRACKER
-void ApplyGain(int32 *soundBuffer, std::size_t channels, std::size_t countChunk, int32 gainFactor16_16);
-void ApplyGain(float *outputBuffer, float * const *outputBuffers, std::size_t offset, std::size_t channels, std::size_t countChunk, float gainFactor);
+void ApplyGain(MixSampleInt *soundBuffer, std::size_t channels, std::size_t countChunk, int32 gainFactor16_16);
+void ApplyGain(MixSampleFloat *soundBuffer, std::size_t channels, std::size_t countChunk, float gainFactor);
+void ApplyGain(audio_buffer_interleaved<float> outputBuffer, std::size_t offset, std::size_t channels, std::size_t countChunk, float gainFactor);
+void ApplyGain(audio_buffer_planar<float> outputBuffer, std::size_t offset, std::size_t channels, std::size_t countChunk, float gainFactor);
 #endif // !MODPLUG_TRACKER
 
 void InitMixBuffer(mixsample_t *pBuffer, uint32 nSamples);

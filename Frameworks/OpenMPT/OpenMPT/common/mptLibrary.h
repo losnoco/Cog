@@ -104,7 +104,7 @@ public:
 		#if !(MPT_OS_WINDOWS && MPT_COMPILER_GCC)
 			// MinGW64 std::is_function is always false for non __cdecl functions.
 			// See https://connect.microsoft.com/VisualStudio/feedback/details/774720/stl-is-function-bug .
-			STATIC_ASSERT(std::is_function<Tfunc>::value);
+			static_assert(std::is_function<Tfunc>::value);
 		#endif
 		const FuncPtr addr = GetProcAddress(symbol);
 		f = reinterpret_cast<Tfunc*>(addr);

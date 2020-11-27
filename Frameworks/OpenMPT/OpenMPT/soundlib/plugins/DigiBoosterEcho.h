@@ -14,7 +14,7 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-class DigiBoosterEcho : public IMixPlugin
+class DigiBoosterEcho final : public IMixPlugin
 {
 public:
 	enum Parameters
@@ -34,7 +34,7 @@ public:
 
 		static PluginChunk Create(uint8 delay, uint8 feedback, uint8 mix, uint8 cross)
 		{
-			STATIC_ASSERT(sizeof(PluginChunk) == 8);
+			static_assert(sizeof(PluginChunk) == 8);
 			PluginChunk result;
 			memcpy(result.id, "Echo", 4);
 			result.param[kEchoDelay] = delay;

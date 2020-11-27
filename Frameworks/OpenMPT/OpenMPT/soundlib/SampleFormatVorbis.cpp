@@ -24,14 +24,35 @@
 //#include "../common/mptCRC.h"
 #include "OggStream.h"
 #ifdef MPT_WITH_OGG
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
 #include <ogg/ogg.h>
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
 #endif // MPT_WITH_OGG
 #if defined(MPT_WITH_VORBIS)
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
 #include <vorbis/codec.h>
-#endif
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
+#endif // MPT_WITH_VORBIS
 #if defined(MPT_WITH_VORBISFILE)
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
 #include <vorbis/vorbisfile.h>
-#endif
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
+#endif // MPT_WITH_VORBISFILE
 #ifdef MPT_WITH_STBVORBIS
 #include <stb_vorbis/stb_vorbis.c>
 #endif // MPT_WITH_STBVORBIS
@@ -48,7 +69,7 @@ OPENMPT_NAMESPACE_BEGIN
 static size_t VorbisfileFilereaderRead(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
 	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
-	return file.ReadRaw(mpt::void_cast<mpt::byte*>(ptr), size * nmemb) / size;
+	return file.ReadRaw(mpt::void_cast<std::byte*>(ptr), size * nmemb) / size;
 }
 
 static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int whence)
@@ -119,7 +140,7 @@ static long VorbisfileFilereaderTell(void *datasource)
 #if defined(MPT_WITH_VORBIS)
 static mpt::ustring UStringFromVorbis(const char *str)
 {
-	return str ? mpt::ToUnicode(mpt::CharsetUTF8, str) : mpt::ustring();
+	return str ? mpt::ToUnicode(mpt::Charset::UTF8, str) : mpt::ustring();
 }
 #endif // MPT_WITH_VORBIS
 
@@ -247,7 +268,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 	// files, stb_vorbis will include superfluous samples at the beginning.
 
 	FileReader::PinnedRawDataView fileView = file.GetPinnedRawDataView();
-	const mpt::byte* data = fileView.data();
+	const std::byte* data = fileView.data();
 	std::size_t dataLeft = fileView.size();
 
 	std::size_t offset = 0;
@@ -309,7 +330,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 	}
 
 	DestroySampleThreadsafe(sample);
-	mpt::String::Copy(m_szNames[sample], sampleName);
+	m_szNames[sample] = sampleName;
 	Samples[sample].Initialize();
 	Samples[sample].nC5Speed = rate;
 	Samples[sample].nLength = mpt::saturate_cast<SmpLength>(raw_sample_data.size() / channels);

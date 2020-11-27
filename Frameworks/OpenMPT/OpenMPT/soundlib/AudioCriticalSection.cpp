@@ -26,7 +26,7 @@ CriticalSection::CriticalSection()
 	Enter();
 }
 
-CriticalSection::CriticalSection(CriticalSection &&other)
+CriticalSection::CriticalSection(CriticalSection &&other) noexcept
 	: m_refGlobalMutex(other.m_refGlobalMutex)
 	, inSection(other.inSection)
 {

@@ -23,64 +23,53 @@ OPENMPT_NAMESPACE_BEGIN
 // Algorithm parameters for 16-Bit samples
 struct IT16BitParams
 {
-	typedef int16 sample_t;
-	static const int16 lowerTab[];
-	static const int16 upperTab[];
-	static const int8 fetchA;
-	static const int8 lowerB;
-	static const int8 upperB;
-	static const int8 defWidth;
-	static const int mask;
+	using sample_t = int16;
+	static constexpr int16 lowerTab[] = {0, -1, -3, -7, -15, -31, -56, -120, -248, -504, -1016, -2040, -4088, -8184, -16376, -32760, -32768};
+	static constexpr int16 upperTab[] = {0, 1, 3, 7, 15, 31, 55, 119, 247, 503, 1015, 2039, 4087, 8183, 16375, 32759, 32767};
+	static constexpr int8 fetchA = 4;
+	static constexpr int8 lowerB = -8;
+	static constexpr int8 upperB = 7;
+	static constexpr int8 defWidth = 17;
+	static constexpr int mask = 0xFFFF;
 };
-
-const int16 IT16BitParams::lowerTab[] = { 0, -1, -3, -7, -15, -31, -56, -120, -248, -504, -1016, -2040, -4088, -8184, -16376, -32760, -32768 };
-const int16 IT16BitParams::upperTab[] = { 0, 1, 3, 7, 15, 31, 55, 119, 247, 503, 1015, 2039, 4087, 8183, 16375, 32759, 32767 };
-const int8 IT16BitParams::fetchA = 4;
-const int8 IT16BitParams::lowerB = -8;
-const int8 IT16BitParams::upperB = 7;
-const int8 IT16BitParams::defWidth = 17;
-const int IT16BitParams::mask = 0xFFFF;
 
 // Algorithm parameters for 8-Bit samples
 struct IT8BitParams
 {
-	typedef int8 sample_t;
-	static const int8 lowerTab[];
-	static const int8 upperTab[];
-	static const int8 fetchA;
-	static const int8 lowerB;
-	static const int8 upperB;
-	static const int8 defWidth;
-	static const int mask;
+	using sample_t = int8;
+	static constexpr int8 lowerTab[] = {0, -1, -3, -7, -15, -31, -60, -124, -128};
+	static constexpr int8 upperTab[] = {0, 1, 3, 7, 15, 31, 59, 123, 127};
+	static constexpr int8 fetchA = 3;
+	static constexpr int8 lowerB = -4;
+	static constexpr int8 upperB = 3;
+	static constexpr int8 defWidth = 9;
+	static constexpr int mask = 0xFF;
 };
 
-const int8 IT8BitParams::lowerTab[] = { 0, -1, -3, -7, -15, -31, -60, -124, -128 };
-const int8 IT8BitParams::upperTab[] = { 0, 1, 3, 7, 15, 31, 59, 123, 127 };
-const int8 IT8BitParams::fetchA = 3;
-const int8 IT8BitParams::lowerB = -4;
-const int8 IT8BitParams::upperB = 3;
-const int8 IT8BitParams::defWidth = 9;
-const int IT8BitParams::mask = 0xFF;
-
-static const int8 ITWidthChangeSize[] = { 4, 5, 6, 7, 8, 9, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+static constexpr int8 ITWidthChangeSize[] = { 4, 5, 6, 7, 8, 9, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
 
 //////////////////////////////////////////////////////////////////////////////
 // IT 2.14 compression
 
 
 ITCompression::ITCompression(const ModSample &sample, bool it215, std::ostream *f, SmpLength maxLength)
-	: file(f)
-	, mptSample(sample)
-	, is215(it215)
+    : file(f)
+    , mptSample(sample)
+    , is215(it215)
 {
-	packedData = new (std::nothrow) uint8[bufferSize];
-	sampleData = new (std::nothrow) uint8[blockSize];
-	packedTotalLength = 0;
-	if(packedData == nullptr || sampleData == nullptr)
-	{
-		return;
-	}
+	if(mptSample.GetElementarySampleSize() > 1)
+		Compress<IT16BitParams>(mptSample.sample16(), maxLength);
+	else
+		Compress<IT8BitParams>(mptSample.sample8(), maxLength);
+}
 
+
+template<typename Properties>
+void ITCompression::Compress(const typename Properties::sample_t *mptSampleData, SmpLength maxLength)
+{
+	packedData.resize(bufferSize);
+	std::vector<typename Properties::sample_t> sampleData;
+	sampleData.resize(blockSize / sizeof(typename Properties::sample_t));
 	if(maxLength == 0 || maxLength > mptSample.nLength)
 		maxLength = mptSample.nLength;
 	for(uint8 chn = 0; chn < mptSample.GetNumChannels(); chn++)
@@ -95,29 +84,25 @@ ITCompression::ITCompression(const ModSample &sample, bool it215, std::ostream *
 			remBits = 8;
 			byteVal = 0;
 
-			if(mptSample.GetElementarySampleSize() > 1)
-				Compress<IT16BitParams>(sample.sample16() + chn, offset, remain);
-			else
-				Compress<IT8BitParams>(sample.sample8() + chn, offset, remain);
+			CompressBlock<Properties>(mptSampleData + chn, offset, remain, sampleData.data());
 
-			if(file) mpt::IO::WriteRaw(*file, packedData, packedLength);
+			if(file) mpt::IO::WriteRaw(*file, packedData.data(), packedLength);
 			packedTotalLength += packedLength;
 
 			offset += baseLength;
 			remain -= baseLength;
 		}
 	}
-
-	delete[] packedData;
-	delete[] reinterpret_cast<uint8*>(sampleData);
+	packedData.resize(0);
+	packedData.shrink_to_fit();
 }
 
 
 template<typename T>
-void ITCompression::CopySample(void *target, const void *source, SmpLength offset, SmpLength length, SmpLength skip)
+void ITCompression::CopySample(T *target, const T *source, SmpLength offset, SmpLength length, SmpLength skip)
 {
-	T *out = static_cast<T *>(target);
-	const T *in = static_cast<const T *>(source) + offset * skip;
+	T *out = target;
+	const T *in = source + offset * skip;
 	for(SmpLength i = 0, j = 0; j < length; i += skip, j++)
 	{
 		out[j] = in[i];
@@ -127,9 +112,9 @@ void ITCompression::CopySample(void *target, const void *source, SmpLength offse
 
 // Convert sample to delta values.
 template<typename T>
-void ITCompression::Deltafy()
+void ITCompression::Deltafy(T *sampleData)
 {
-	T *p = static_cast<T *>(sampleData);
+	T *p = sampleData;
 	int oldVal = 0;
 	for(SmpLength i = 0; i < baseLength; i++)
 	{
@@ -141,26 +126,26 @@ void ITCompression::Deltafy()
 
 
 template<typename Properties>
-void ITCompression::Compress(const void *data, SmpLength offset, SmpLength actualLength)
+void ITCompression::CompressBlock(const typename Properties::sample_t *data, SmpLength offset, SmpLength actualLength, typename Properties::sample_t *sampleData)
 {
 	baseLength = std::min(actualLength, SmpLength(blockSize / sizeof(typename Properties::sample_t)));
 
 	CopySample<typename Properties::sample_t>(sampleData, data, offset, baseLength, mptSample.GetNumChannels());
 
-	Deltafy<typename Properties::sample_t>();
+	Deltafy(sampleData);
 	if(is215)
 	{
-		Deltafy<typename Properties::sample_t>();
+		Deltafy(sampleData);
 	}
 
 	// Initialise bit width table with initial values
 	bwt.assign(baseLength, Properties::defWidth);
 
 	// Recurse!
-	SquishRecurse<Properties>(Properties::defWidth, Properties::defWidth, Properties::defWidth, Properties::defWidth - 2, 0, baseLength);
+	SquishRecurse<Properties>(Properties::defWidth, Properties::defWidth, Properties::defWidth, Properties::defWidth - 2, 0, baseLength, sampleData);
 	
 	// Write those bits!
-	const typename Properties::sample_t *p = static_cast<typename Properties::sample_t *>(sampleData);
+	const typename Properties::sample_t *p = sampleData;
 	int8 width = Properties::defWidth;
 	for(size_t i = 0; i < baseLength; i++)
 	{
@@ -207,7 +192,7 @@ int8 ITCompression::GetWidthChangeSize(int8 w, bool is16)
 
 
 template<typename Properties>
-void ITCompression::SquishRecurse(int8 sWidth, int8 lWidth, int8 rWidth, int8 width, SmpLength offset, SmpLength length)
+void ITCompression::SquishRecurse(int8 sWidth, int8 lWidth, int8 rWidth, int8 width, SmpLength offset, SmpLength length, const typename Properties::sample_t *sampleData)
 {
 	if(width + 1 < 1)
 	{
@@ -220,7 +205,7 @@ void ITCompression::SquishRecurse(int8 sWidth, int8 lWidth, int8 rWidth, int8 wi
 
 	SmpLength i = offset;
 	SmpLength end = offset + length;
-	const typename Properties::sample_t *p = static_cast<typename Properties::sample_t *>(sampleData);
+	const typename Properties::sample_t *p = sampleData;
 
 	while(i < end)
 	{
@@ -264,7 +249,7 @@ void ITCompression::SquishRecurse(int8 sWidth, int8 lWidth, int8 rWidth, int8 wi
 
 				comparison = (keepDown <= levelLeft);
 			}
-			SquishRecurse<Properties>(comparison ? (width + 1) : sWidth, xlwidth, xrwidth, width - 1, start, blockLength);
+			SquishRecurse<Properties>(comparison ? (width + 1) : sWidth, xlwidth, xrwidth, width - 1, start, blockLength, sampleData);
 		} else
 		{
 			bwt[i] = sWidth;
@@ -325,8 +310,8 @@ void ITCompression::WriteByte(uint8 v)
 
 
 ITDecompression::ITDecompression(FileReader &file, ModSample &sample, bool it215)
-	: mptSample(sample)
-	, is215(it215)
+    : mptSample(sample)
+    , is215(it215)
 {
 	for(uint8 chn = 0; chn < mptSample.GetNumChannels(); chn++)
 	{

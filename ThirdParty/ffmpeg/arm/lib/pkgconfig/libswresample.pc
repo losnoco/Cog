@@ -1,0 +1,14 @@
+prefix=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm
+exec_prefix=${prefix}
+libdir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm/lib
+includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm/include
+
+Name: libswresample
+Description: FFmpeg audio resampling library
+Version: 3.7.100
+Requires: libavutil >= 56.51.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lswresample -lm
+Libs.private: 
+Cflags: -I${includedir}

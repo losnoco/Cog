@@ -35,44 +35,19 @@ How to compile
 
  -  Supported Visual Studio versions:
 
-     -  Visual Studio 2015 Update 3 Community/Professional/Enterprise
+     -  Visual Studio 2017 and 2019 Community/Professional/Enterprise
 
-        To compile the project, open `build/vs2015/OpenMPT.sln` and hit the
-        compile button.
-
-     -  Visual Studio 2017 Community/Professional/Enterprise
-
-        To compile the project, open `build/vs2017/OpenMPT.sln` and hit the
-        compile button.
+        To compile the project, open `build/vsVERSIONwin7/OpenMPT.sln` (VERSION
+        being 2017 or 2019) and hit the compile button. Other target systems can
+        be found in the `vs2017*` and `vs2019*` sibling folders.
 
  -  OpenMPT requires the compile host system to be 64bit x86-64.
 
- -  The Windows 8.1 SDK and Microsoft Foundation Classes (MFC) are required to
-    build OpenMPT (both are included with Visual Studio, however may need to be
-    selected explicitly during setup). In order to build OpenMPT for Windows XP,
-    the XP targetting toolset also needs to be installed.
+ -  The Windows 8.1 SDK is required to build OpenMPT with Visual Studio 2017
+    (this is included with Visual Studio, however may need to be selected
+    explicitly during setup).
 
- -  The ASIO SDK is needed for compiling with ASIO support.
-
-    If you don't want this, comment out `#define MPT_WITH_ASIO` in the file
-    `common/BuildSettings.h`.
-
-    The ASIO SDK can be downloaded automatically on Windows 7 or later by just
-    running the `build/download_externals.cmd` script.
-
-    If you do not want to or cannot use this script, you may follow these manual
-    steps instead:
-
-     -  Visit
-        [steinberg.net](https://www.steinberg.net/en/company/developers.html) to
-        download the SDK.
-
-     -  Put the ASIO SDK in the `include/ASIOSDK2` folder. The top level
-        directory of the SDK is already named `ASIOSDK2`, so simply move that
-        directory in the include folder.
-
-    If you need further help with the ASIO SDK, get in touch with the
-    main OpenMPT developers. 
+ -  Microsoft Foundation Classes (MFC) are required to build OpenMPT.
 
 
 ### libopenmpt and openmpt123
@@ -104,15 +79,13 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
  -  Visual Studio:
 
-     -  You will find solutions for Visual Studio 2015 to 2017 in the
-        corresponding `build/vsVERSION/` folder.
-        Projects that target Windows versions before Windows 7 are available in
-        `build/vsVERSIONxp/`.
-        Projects that target Windows 10 1709 Desktop (10.0.16299.0, including
-        ARM and ARM64) or later versions are available in
-        `build/vsVERSIONwin10/`.
+     -  You will find solutions for Visual Studio 2017 and 2019 in the
+        corresponding `build/vsVERSIONwin7/` folder.
+        Projects that target Windows 10 Desktop (including ARM and ARM64) are
+        available in `build/vsVERSIONwin10/` (Visual Studio 2017 requires SDK
+        version 10.0.16299).
         Minimal projects that target Windows 10 UWP are available in
-        `build/winstore82/`.
+        `build/vsVERSIONuwp/`.
         Most projects are supported with any of the mentioned Visual Studio
         verions, with the following exceptions:
 
@@ -161,7 +134,7 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
      -  mingw-w64:
 
-        The required version is at least 4.8.
+        The required compiler version is at least GCC 7.
 
             make CONFIG=mingw64-win32    # for win32
 
@@ -172,9 +145,9 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
         The minimum required compiler versions are:
 
-         -  gcc 4.8
+         -  gcc 7
 
-         -  clang 3.6
+         -  clang 5
 
         The Makefile requires pkg-config for native builds.
         For sound output in openmpt123, PortAudio or SDL is required.
@@ -256,7 +229,7 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
      -  other compilers:
 
-        To compile libopenmpt with other C++11 compliant compilers, run:
+        To compile libopenmpt with other C++14 compliant compilers, run:
         
             make CONFIG=generic
         

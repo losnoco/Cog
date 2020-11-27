@@ -42,7 +42,9 @@ struct ModSample
 	uint8  rootNote;						// For multisample import
 
 	//char name[MAX_SAMPLENAME];			// Maybe it would be nicer to have sample names here, but that would require some refactoring.
-	char filename[MAX_SAMPLEFILENAME];
+	mpt::charbuf<MAX_SAMPLEFILENAME> filename;
+	std::string GetFilename() const { return filename; }
+
 	union
 	{
 		SmpLength cues[9];
@@ -69,13 +71,13 @@ struct ModSample
 	{
 		return pData.pSample;
 	}
-	MPT_FORCEINLINE const mpt::byte *sampleb() const noexcept
+	MPT_FORCEINLINE const std::byte *sampleb() const noexcept
 	{
-		return mpt::void_cast<const mpt::byte*>(pData.pSample);
+		return mpt::void_cast<const std::byte*>(pData.pSample);
 	}
-	MPT_FORCEINLINE mpt::byte *sampleb() noexcept
+	MPT_FORCEINLINE std::byte *sampleb() noexcept
 	{
-		return mpt::void_cast<mpt::byte*>(pData.pSample);
+		return mpt::void_cast<std::byte*>(pData.pSample);
 	}
 	MPT_FORCEINLINE const int8 *sample8() const noexcept
 	{
@@ -144,7 +146,7 @@ struct ModSample
 	// Transpose <-> Frequency conversions
 	static uint32 TransposeToFrequency(int transpose, int finetune = 0);
 	void TransposeToFrequency();
-	static int FrequencyToTranspose(uint32 freq);
+	static int32 FrequencyToTranspose(uint32 freq);
 	void FrequencyToTranspose();
 
 	// Transpose the sample by amount specified in octaves (i.e. amount=1 transposes one octave up)

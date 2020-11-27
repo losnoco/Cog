@@ -148,7 +148,7 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("Composer 669");
 	m_modFormat.type = U_("669");
 	m_modFormat.madeWithTracker = !memcmp(fileHeader.magic, "if", 2) ? UL_("Composer 669") : UL_("UNIS 669");
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_nSamples = fileHeader.samples;
 	for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
@@ -160,13 +160,13 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 		if(sampleHeader.length >= 0x4000000)
 			return false;
 		sampleHeader.ConvertToMPT(Samples[smp]);
-		mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[smp], sampleHeader.filename);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.filename);
 	}
 
 	// Copy first song message line into song title
-	mpt::String::Read<mpt::String::spacePadded>(m_songName, fileHeader.songMessage, 36);
+	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songMessage, 36);
 	// Song Message
-	m_songMessage.ReadFixedLineLength(mpt::byte_cast<const mpt::byte*>(fileHeader.songMessage), 108, 36, 0);
+	m_songMessage.ReadFixedLineLength(mpt::byte_cast<const std::byte*>(fileHeader.songMessage), 108, 36, 0);
 
 	// Reading Orders
 	ReadOrderFromArray(Order(), fileHeader.orders, MPT_ARRAY_COUNT(fileHeader.orders), 0xFF, 0xFE);
@@ -190,7 +190,7 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 
-		const ModCommand::COMMAND effTrans[] =
+		static constexpr ModCommand::COMMAND effTrans[] =
 		{
 			CMD_PORTAMENTOUP,	// Slide up (param * 80) Hz on every tick
 			CMD_PORTAMENTODOWN,	// Slide down (param * 80) Hz on every tick
@@ -209,29 +209,28 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 
 			for(CHANNELINDEX chn = 0; chn < 8; chn++, m++)
 			{
-				uint8 data[3];
-				file.ReadArray(data);
+				const auto [noteInstr, instrVol, effParam] = file.ReadArray<uint8, 3>();
 
-				uint8 note = data[0] >> 2;
-				uint8 instr = ((data[0] & 0x03) << 4) | (data[1] >> 4);
-				uint8 vol = data[1] & 0x0F;
-				if(data[0] < 0xFE)
+				uint8 note = noteInstr >> 2;
+				uint8 instr = ((noteInstr & 0x03) << 4) | (instrVol >> 4);
+				uint8 vol = instrVol & 0x0F;
+				if(noteInstr < 0xFE)
 				{
 					m->note = note + 36 + NOTE_MIN;
 					m->instr = instr + 1;
 					effect[chn] = 0xFF;
 				}
-				if(data[0] <= 0xFE)
+				if(noteInstr <= 0xFE)
 				{
 					m->volcmd = VOLCMD_VOLUME;
 					m->vol = ((vol * 64 + 8) / 15);
 				}
 
-				if(data[2] != 0xFF)
+				if(effParam != 0xFF)
 				{
-					effect[chn] = data[2];
+					effect[chn] = effParam;
 				}
-				if((data[2] & 0x0F) == 0 && data[2] != 0x30)
+				if((effParam & 0x0F) == 0 && effParam != 0x30)
 				{
 					// A param value of 0 resets the effect.
 					effect[chn] = 0xFF;

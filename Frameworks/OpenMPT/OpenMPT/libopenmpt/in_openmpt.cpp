@@ -165,7 +165,21 @@ static void apply_options() {
 		self->mod->set_render_param( openmpt::module::RENDER_STEREOSEPARATION_PERCENT, self->settings.stereoseparation );
 		self->mod->set_render_param( openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH, self->settings.interpolationfilterlength );
 		self->mod->set_render_param( openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, self->settings.ramping );
-		self->mod->ctl_set( "render.resampler.emulate_amiga", self->settings.use_amiga_resampler ? "1" : "0" );
+		self->mod->ctl_set_boolean( "render.resampler.emulate_amiga", self->settings.use_amiga_resampler ? true : false );
+		switch ( self->settings.amiga_filter_type ) {
+			case 0:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "auto" );
+				break;
+			case 1:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "unfiltered" );
+				break;
+			case 0xA500:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "a500" );
+				break;
+			case 0xA1200:
+				self->mod->ctl_set_text( "render.resampler.emulate_amiga_type", "a1200" );
+				break;
+		}
 	}
 	self->settings.save();
 }
@@ -196,7 +210,7 @@ static void config( HWND hwndParent ) {
 static void about( HWND hwndParent ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2019 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2020 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
@@ -225,7 +239,7 @@ static void quit() {
 	}
 }
 
-static int isourfile( const in_char * fn ) {
+static int isourfile( const in_char * /* fn */ ) {
 	return 0;
 }
 
@@ -358,7 +372,7 @@ static void getfileinfo( const in_char * filename, in_char * title, int * length
 	}
 }
 
-static void eq_set( int on, char data[10], int preamp ) {
+static void eq_set( int /* on */ , char /* data */ [10], int /* preamp */ ) {
 	return;
 }
 

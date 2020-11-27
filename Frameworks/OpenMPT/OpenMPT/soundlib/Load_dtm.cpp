@@ -107,7 +107,7 @@ struct DTMSample
 			transposeAmount += (48 - transpose) * 128;
 		}
 		mptSmp.Transpose(transposeAmount * (1.0 / (12.0 * 128.0)));
-		mptSmp.nVolume = std::min<uint8>(volume, 64u) * 4u;
+		mptSmp.nVolume = std::min(volume.get(), uint8(64)) * 4u;
 		if(stereo & 1)
 		{
 			mptSmp.uFlags.set(CHN_STEREO);
@@ -290,14 +290,14 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 		for(CHANNELINDEX chn = 0; chn < 32 && chn < GetNumChannels(); chn++)
 		{
 			// Panning is in range 0...180, 90 = center
-			ChnSettings[chn].nPan = static_cast<uint16>(128 + Util::muldivr(std::min<int>(panning[chn], 180) - 90, 128, 90));
+			ChnSettings[chn].nPan = static_cast<uint16>(128 + Util::muldivr(std::min(static_cast<int>(panning[chn]), int(180)) - 90, 128, 90));
 		}
 
 		chunk.Skip(16);
 		// Chunk ends here for old DTM modules
 		if(chunk.CanRead(2))
 		{
-			m_nDefaultGlobalVolume = std::min<uint32>(chunk.ReadUint16BE(), MAX_GLOBAL_VOLUME);
+			m_nDefaultGlobalVolume = std::min(chunk.ReadUint16BE(), static_cast<uint16>(MAX_GLOBAL_VOLUME));
 		}
 		chunk.Skip(128);
 		uint16be volume[32];
@@ -306,7 +306,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 			for(CHANNELINDEX chn = 0; chn < 32 && chn < GetNumChannels(); chn++)
 			{
 				// Volume is in range 0...128, 64 = normal
-				ChnSettings[chn].nVolume = static_cast<uint8>(std::min<int>(volume[chn], 128) / 2);
+				ChnSettings[chn].nVolume = static_cast<uint8>(std::min(static_cast<int>(volume[chn]), int(128)) / 2);
 			}
 			m_nSamplePreAmp *= 2;	// Compensate for channel volume range
 		}
@@ -348,13 +348,13 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 			m_nSamples = std::max(m_nSamples, realSample);
 			ModSample &mptSmp = Samples[realSample];
 			dtmSample.ConvertToMPT(mptSmp, fileHeader.forcedSampleRate, patternFormat);
-			mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[realSample], dtmSample.name);
+			m_szNames[realSample] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, dtmSample.name);
 		}
 	
 		if(chunk.ReadUint16BE() == 0x0004)
 		{
 			// Digital Home Studio instruments
-			m_nInstruments = std::min<INSTRUMENTINDEX>(m_nSamples, MAX_INSTRUMENTS - 1);
+			m_nInstruments = std::min(static_cast<INSTRUMENTINDEX>(m_nSamples), static_cast<INSTRUMENTINDEX>(MAX_INSTRUMENTS - 1));
 
 			FileReader envChunk = chunks.GetChunk(DTMChunk::idIENV);
 			while(chunk.CanRead(sizeof(DTMInstrument)))
@@ -372,16 +372,16 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 					if(mptIns != nullptr)
 					{
 						InstrumentEnvelope &mptEnv = mptIns->VolEnv;
-						mptIns->nFadeOut = std::min<uint16>(instr.fadeout, 0xFFF);
+						mptIns->nFadeOut = std::min(static_cast<uint16>(instr.fadeout), uint16(0xFFF));
 						if(instr.envelope != 0xFF && envChunk.Seek(2 + sizeof(DTMEnvelope) * instr.envelope))
 						{
 							DTMEnvelope env;
 							envChunk.ReadStruct(env);
 							mptEnv.dwFlags.set(ENV_ENABLED);
-							mptEnv.resize(std::min<size_t>({ env.numPoints, mpt::size(env.points), MAX_ENVPOINTS }));
+							mptEnv.resize(std::min({ static_cast<std::size_t>(env.numPoints), std::size(env.points), static_cast<std::size_t>(MAX_ENVPOINTS) }));
 							for(size_t i = 0; i < mptEnv.size(); i++)
 							{
-								mptEnv[i].value = std::min<uint8>(64, env.points[i].value);
+								mptEnv[i].value = std::min(uint8(64), static_cast<uint8>(env.points[i].value));
 								mptEnv[i].tick = env.points[i].tick;
 							}
 
@@ -432,17 +432,16 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 				{
 					ModCommand *m = Patterns[patNum].GetpModCommand(position.quot, chn);
 
-					uint8 data[6];
-					rowChunk.ReadArray(data);
-					if(data[0] > 0 && data[0] <= 96)
+					const auto [note, volume, instr, command, param, delay] = rowChunk.ReadArray<uint8, 6>();
+					if(note > 0 && note <= 96)
 					{
-						m->note = data[0] + NOTE_MIN + 12;
+						m->note = note + NOTE_MIN + 12;
 						if(position.rem)
 						{
 							m->command = CMD_MODCMDEX;
 							m->param = 0xD0 | static_cast<ModCommand::PARAM>(std::min(position.rem, 15));
 						}
-					} else if(data[0] & 0x80)
+					} else if(note & 0x80)
 					{
 						// Lower 7 bits contain note, probably intended for MIDI-like note-on/note-off events
 						if(position.rem)
@@ -454,19 +453,19 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 							m->note = NOTE_NOTECUT;
 						}
 					}
-					if(data[1])
+					if(volume)
 					{
 						m->volcmd = VOLCMD_VOLUME;
-						m->vol = std::min(data[1], uint8(64)); // Volume can go up to 255, but we do not support over-amplification at the moment.
+						m->vol = std::min(volume, uint8(64));  // Volume can go up to 255, but we do not support over-amplification at the moment.
 					}
-					if(data[2])
+					if(instr)
 					{
-						m->instr = data[2];
+						m->instr = instr;
 					}
-					if(data[3] || data[4])
+					if(command || param)
 					{
-						m->command = data[3];
-						m->param = data[4];
+						m->command = command;
+						m->param = param;
 						ConvertModCommand(*m);
 #ifdef MODPLUG_TRACKER
 						m->Convert(MOD_TYPE_MOD, MOD_TYPE_IT, *this);
@@ -474,10 +473,10 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 						// G is 8-bit volume
 						// P is tremor (need to disable oldfx)
 					}
-					if(data[5] & 0x80)
-						tick += (data[5] & 0x7F) * 0x100 + rowChunk.ReadUint8();
+					if(delay & 0x80)
+						tick += (delay & 0x7F) * 0x100 + rowChunk.ReadUint8();
 					else
-						tick += data[5];
+						tick += delay;
 					position = std::div(tick, m_nDefaultSpeed);
 				}
 			}
@@ -488,23 +487,23 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++, m++)
 				{
-					uint8 data[4];
-					chunk.ReadArray(data);
+					const auto data = chunk.ReadArray<uint8, 4>();
 					if(patternFormat == DTM_204_PATTERN_FORMAT)
 					{
-						if(data[0] > 0 && data[0] < 0x80)
+						const auto [note, instrVol, instrCmd, param] = data;
+						if(note > 0 && note < 0x80)
 						{
-							m->note = (data[0] >> 4) * 12 + (data[0] & 0x0F) + NOTE_MIN + 11;
+							m->note = (note >> 4) * 12 + (note & 0x0F) + NOTE_MIN + 11;
 						}
-						uint8 vol = data[1] >> 2;
+						uint8 vol = instrVol >> 2;
 						if(vol)
 						{
 							m->volcmd = VOLCMD_VOLUME;
 							m->vol = vol - 1u;
 						}
-						m->instr = ((data[1] & 0x03) << 4) | (data[2] >> 4);
-						m->command = data[2] & 0x0F;
-						m->param = data[3];
+						m->instr = ((instrVol & 0x03) << 4) | (instrCmd >> 4);
+						m->command = instrCmd & 0x0F;
+						m->param = param;
 					} else
 					{
 						ReadMODPatternEntry(data, *m);
@@ -564,7 +563,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 		while(chunk.CanRead(1) && chn < GetNumChannels())
 		{
 			chunk.ReadNullString(name, 32);
-			mpt::String::Copy(ChnSettings[chn].szName, name);
+			ChnSettings[chn].szName = name;
 			chn++;
 		}
 	}
@@ -601,7 +600,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("Digital Tracker");
 	m_modFormat.type = U_("dtm");
 	m_modFormat.madeWithTracker = std::move(tracker);
-	m_modFormat.charset = mpt::CharsetISO8859_1;
+	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
 	return true;
 }

@@ -117,12 +117,7 @@ public:
 	{
 		CreateParameteredMacro(szMidiSFXExt[macroIndex], macroType, subType);
 	}
-	std::string CreateParameteredMacro(ParameteredMacro macroType, int subType = 0) const
-	{
-		Macro parameteredMacro;
-		CreateParameteredMacro(parameteredMacro, macroType, subType);
-		return std::string(parameteredMacro);
-	}
+	std::string CreateParameteredMacro(ParameteredMacro macroType, int subType = 0) const;
 
 protected:
 	void CreateFixedMacro(Macro (&fixedMacros)[128], FixedMacro macroType) const;
@@ -176,7 +171,7 @@ protected:
 
 };
 
-STATIC_ASSERT(sizeof(MIDIMacroConfig) == sizeof(MIDIMacroConfigData)); // this is directly written to files, so the size must be correct!
+static_assert(sizeof(MIDIMacroConfig) == sizeof(MIDIMacroConfigData)); // this is directly written to files, so the size must be correct!
 
 
 OPENMPT_NAMESPACE_END

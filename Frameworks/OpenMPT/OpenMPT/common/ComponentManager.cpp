@@ -191,7 +191,7 @@ void ComponentFactoryBase::PreConstruct() const
 {
 	MPT_LOG(LogInformation, "Components", 
 		mpt::format(U_("Constructing Component %1"))
-			( mpt::ToUnicode(mpt::CharsetASCII, m_ID)
+			( mpt::ToUnicode(mpt::Charset::ASCII, m_ID)
 			)
 		);
 }
@@ -233,7 +233,7 @@ static ComponentListEntry * & ComponentListHead()
 
 bool ComponentListPush(ComponentListEntry *entry)
 {
-	MPT_LOCK_GUARD<mpt::mutex> guard(ComponentListMutex());
+	mpt::lock_guard<mpt::mutex> guard(ComponentListMutex());
 	entry->next = ComponentListHead();
 	ComponentListHead() = entry;
 	return true;
@@ -267,7 +267,7 @@ std::shared_ptr<ComponentManager> ComponentManager::Instance()
 ComponentManager::ComponentManager(const IComponentManagerSettings &settings)
 	: m_Settings(settings)
 {
-	MPT_LOCK_GUARD<mpt::mutex> guard(ComponentListMutex());
+	mpt::lock_guard<mpt::mutex> guard(ComponentListMutex());
 	for(ComponentListEntry *entry = ComponentListHead(); entry; entry = entry->next)
 	{
 		entry->reg(*this);

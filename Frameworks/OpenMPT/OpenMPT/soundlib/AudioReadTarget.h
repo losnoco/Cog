@@ -12,10 +12,11 @@
 #include "BuildSettings.h"
 
 #include "Sndfile.h"
-#include "Dither.h"
 #include "../soundbase/SampleFormat.h"
 #include "../soundbase/SampleFormatConverters.h"
 #include "../soundbase/SampleFormatCopy.h"
+#include "../soundbase/SampleBuffer.h"
+#include "../soundbase/Dither.h"
 #include "MixerLoops.h"
 #include "Mixer.h"
 
@@ -23,7 +24,7 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
-template<typename Tsample, bool clipOutput = false>
+template<typename Tbuffer>
 class AudioReadTargetBuffer
 	: public IAudioReadTarget
 {
@@ -31,251 +32,116 @@ private:
 	std::size_t countRendered;
 	Dither &dither;
 protected:
-	Tsample *outputBuffer;
-	Tsample * const *outputBuffers;
+	Tbuffer outputBuffer;
 public:
-	AudioReadTargetBuffer(Dither &dither_, Tsample *buffer, Tsample * const *buffers)
+	AudioReadTargetBuffer(Tbuffer buf, Dither &dither_)
 		: countRendered(0)
 		, dither(dither_)
-		, outputBuffer(buffer)
-		, outputBuffers(buffers)
+		, outputBuffer(buf)
 	{
-		MPT_ASSERT(SampleFormat(SampleFormatTraits<Tsample>::sampleFormat()).IsValid());
+		MPT_ASSERT(SampleFormat(SampleFormatTraits<typename Tbuffer::sample_type>::sampleFormat()).IsValid());
 	}
 	std::size_t GetRenderedCount() const { return countRendered; }
 public:
-	void DataCallback(int32 *MixSoundBuffer, std::size_t channels, std::size_t countChunk) override
+	void DataCallback(MixSampleInt *MixSoundBuffer, std::size_t channels, std::size_t countChunk) override
 	{
-		// Convert to output sample format and optionally perform dithering and clipping if needed
-
-		const SampleFormat sampleFormat = SampleFormatTraits<Tsample>::sampleFormat();
-
-		if(sampleFormat.IsInt())
-		{
-			dither.Process(MixSoundBuffer, countChunk, channels, sampleFormat.GetBitsPerSample());
-		}
-
-		if(outputBuffer)
-		{
-			ConvertInterleavedFixedPointToInterleaved<MIXING_FRACTIONAL_BITS, clipOutput>(outputBuffer + (channels * countRendered), MixSoundBuffer, channels, countChunk);
-		}
-		if(outputBuffers)
-		{
-			Tsample *buffers[4] = { nullptr, nullptr, nullptr, nullptr };
-			for(std::size_t channel = 0; channel < channels; ++channel)
+		dither.WithDither(
+			[&](auto &ditherInstance)
 			{
-				buffers[channel] = outputBuffers[channel] + countRendered;
+				ConvertBufferMixFixedToBuffer<MixSampleIntTraits::mix_fractional_bits(), false>(advance_audio_buffer(outputBuffer, countRendered), audio_buffer_interleaved<MixSampleInt>(MixSoundBuffer, channels, countChunk), ditherInstance, channels, countChunk);
 			}
-			ConvertInterleavedFixedPointToNonInterleaved<MIXING_FRACTIONAL_BITS, clipOutput>(buffers, MixSoundBuffer, channels, countChunk);
-		}
-
+		);
+		countRendered += countChunk;
+	}
+	void DataCallback(MixSampleFloat *MixSoundBuffer, std::size_t channels, std::size_t countChunk) override
+	{
+		dither.WithDither(
+			[&](auto &ditherInstance)
+			{
+				ConvertBufferMixFloatToBuffer<false>(advance_audio_buffer(outputBuffer, countRendered), audio_buffer_interleaved<MixSampleFloat>(MixSoundBuffer, channels, countChunk), ditherInstance, channels, countChunk);
+			}
+		);
 		countRendered += countChunk;
 	}
 };
 
 
-#if defined(MODPLUG_TRACKER)
-
-
-class AudioReadTargetBufferInterleavedDynamic
-	: public IAudioReadTarget
-{
-private:
-	const SampleFormat sampleFormat;
-	bool clipFloat;
-	Dither &dither;
-	void *buffer;
-public:
-	AudioReadTargetBufferInterleavedDynamic(SampleFormat sampleFormat_, bool clipFloat_, Dither &dither_, void *buffer_)
-		: sampleFormat(sampleFormat_)
-		, clipFloat(clipFloat_)
-		, dither(dither_)
-		, buffer(buffer_)
-	{
-		MPT_ASSERT_ALWAYS(sampleFormat.IsValid());
-	}
-	void DataCallback(int32 *MixSoundBuffer, std::size_t channels, std::size_t countChunk) override
-	{
-		switch(sampleFormat.value)
-		{
-			case SampleFormatUnsigned8:
-				{
-					typedef SampleFormatToType<SampleFormatUnsigned8>::type Tsample;
-					AudioReadTargetBuffer<Tsample> target(dither, reinterpret_cast<Tsample*>(buffer), nullptr);
-					target.DataCallback(MixSoundBuffer, channels, countChunk);
-				}
-				break;
-			case SampleFormatInt16:
-				{
-					typedef SampleFormatToType<SampleFormatInt16>::type Tsample;
-					AudioReadTargetBuffer<Tsample> target(dither, reinterpret_cast<Tsample*>(buffer), nullptr);
-					target.DataCallback(MixSoundBuffer, channels, countChunk);
-				}
-				break;
-			case SampleFormatInt24:
-				{
-					typedef SampleFormatToType<SampleFormatInt24>::type Tsample;
-					AudioReadTargetBuffer<Tsample> target(dither, reinterpret_cast<Tsample*>(buffer), nullptr);
-					target.DataCallback(MixSoundBuffer, channels, countChunk);
-				}
-				break;
-			case SampleFormatInt32:
-				{
-					typedef SampleFormatToType<SampleFormatInt32>::type Tsample;
-					AudioReadTargetBuffer<Tsample> target(dither, reinterpret_cast<Tsample*>(buffer), nullptr);
-					target.DataCallback(MixSoundBuffer, channels, countChunk);
-				}
-				break;
-			case SampleFormatFloat32:
-				if(clipFloat)
-				{
-					typedef SampleFormatToType<SampleFormatFloat32>::type Tsample;
-					AudioReadTargetBuffer<Tsample, true> target(dither, reinterpret_cast<Tsample*>(buffer), nullptr);
-					target.DataCallback(MixSoundBuffer, channels, countChunk);
-				} else
-				{
-					typedef SampleFormatToType<SampleFormatFloat32>::type Tsample;
-					AudioReadTargetBuffer<Tsample, false> target(dither, reinterpret_cast<Tsample*>(buffer), nullptr);
-					target.DataCallback(MixSoundBuffer, channels, countChunk);
-				}
-				break;
-		}
-		// increment output buffer for potentially next callback
-		buffer = reinterpret_cast<char*>(buffer) + (sampleFormat.GetBitsPerSample()/8) * channels * countChunk;
-	}
-};
-
-
-class AudioSourceBuffer
-	: public IAudioSource
-{
-private:
-	std::size_t countRendered;
-protected:
-	SampleFormat sampleFormat;
-	const void *inputBuffer;
-public:
-	AudioSourceBuffer(SampleFormat sampleFormat, const void *buffer)
-		: countRendered(0)
-		, sampleFormat(sampleFormat)
-		, inputBuffer(buffer)
-	{
-		MPT_ASSERT(sampleFormat.IsValid());
-	}
-	virtual ~AudioSourceBuffer() { }
-	std::size_t GetRenderedCount() const { return countRendered; }
-private:
-	template<typename Tsample>
-	void Fill(const Tsample *inputBuffer, int32 * const *MixInputBuffers, std::size_t channels, std::size_t countChunk)
-	{
-		for(std::size_t channel = 0; channel < channels; ++channel)
-		{
-			SC::ConvertToFixedPoint<int32, Tsample, MIXING_FRACTIONAL_BITS> conv;
-			for(std::size_t frame = 0; frame < countChunk; ++frame)
-			{
-				MixInputBuffers[channel][frame] = conv(inputBuffer[channel + ((countRendered + frame) * channels)]);
-			}
-		}
-		countRendered += countChunk;
-	}
-public:
-	virtual void FillCallback(int32 * const *MixInputBuffers, std::size_t channels, std::size_t countChunk)
-	{
-		switch(sampleFormat.value)
-		{
-		case SampleFormatUnsigned8:
-			{
-				typedef SampleFormatToType<SampleFormatUnsigned8>::type Tsample;
-				Fill(reinterpret_cast<const Tsample*>(inputBuffer), MixInputBuffers, channels, countChunk);
-			}
-			break;
-		case SampleFormatInt16:
-			{
-				typedef SampleFormatToType<SampleFormatInt16>::type Tsample;
-				Fill(reinterpret_cast<const Tsample*>(inputBuffer), MixInputBuffers, channels, countChunk);
-			}
-			break;
-		case SampleFormatInt24:
-			{
-				typedef SampleFormatToType<SampleFormatInt24>::type Tsample;
-				Fill(reinterpret_cast<const Tsample*>(inputBuffer), MixInputBuffers, channels, countChunk);
-			}
-			break;
-		case SampleFormatInt32:
-			{
-				typedef SampleFormatToType<SampleFormatInt32>::type Tsample;
-				Fill(reinterpret_cast<const Tsample*>(inputBuffer), MixInputBuffers, channels, countChunk);
-			}
-			break;
-		case SampleFormatFloat32:
-			{
-				typedef SampleFormatToType<SampleFormatFloat32>::type Tsample;
-				Fill(reinterpret_cast<const Tsample*>(inputBuffer), MixInputBuffers, channels, countChunk);
-			}
-			break;
-		}
-	}
-};
-
-
-#else // !MODPLUG_TRACKER
+#if defined(LIBOPENMPT_BUILD)
 
 
 template<typename Tsample>
-void ApplyGainBeforeConversionIfAppropriate(int32 *MixSoundBuffer, std::size_t channels, std::size_t countChunk, float gainFactor)
+void ApplyGainBeforeConversionIfAppropriateFixed(MixSampleInt *MixSoundBuffer, std::size_t channels, std::size_t countChunk, float gainFactor)
 {
 	// Apply final output gain for non floating point output
 	ApplyGain(MixSoundBuffer, channels, countChunk, mpt::saturate_round<int32>(gainFactor * (1<<16)));
 }
 template<>
-void ApplyGainBeforeConversionIfAppropriate<float>(int32 * /*MixSoundBuffer*/, std::size_t /*channels*/, std::size_t /*countChunk*/, float /*gainFactor*/)
+void ApplyGainBeforeConversionIfAppropriateFixed<float>(MixSampleInt * /*MixSoundBuffer*/, std::size_t /*channels*/, std::size_t /*countChunk*/, float /*gainFactor*/)
 {
 	// nothing
 }
 
 template<typename Tsample>
-void ApplyGainAfterConversionIfAppropriate(Tsample * /*buffer*/, Tsample * const * /*buffers*/, std::size_t /*countRendered*/, std::size_t /*channels*/, std::size_t /*countChunk*/, float /*gainFactor*/)
+void ApplyGainAfterConversionIfAppropriateFixed(audio_buffer_interleaved<Tsample> /*buffer*/, std::size_t /*countRendered*/, std::size_t /*channels*/, std::size_t /*countChunk*/, float /*gainFactor*/)
+{
+	// nothing
+}
+template<typename Tsample>
+void ApplyGainAfterConversionIfAppropriateFixed(audio_buffer_planar<Tsample> /*buffer*/, std::size_t /*countRendered*/, std::size_t /*channels*/, std::size_t /*countChunk*/, float /*gainFactor*/)
 {
 	// nothing
 }
 template<>
-void ApplyGainAfterConversionIfAppropriate<float>(float *buffer, float * const *buffers, std::size_t countRendered, std::size_t channels, std::size_t countChunk, float gainFactor)
+void ApplyGainAfterConversionIfAppropriateFixed<float>(audio_buffer_interleaved<float> buffer, std::size_t countRendered, std::size_t channels, std::size_t countChunk, float gainFactor)
 {
 	// Apply final output gain for floating point output after conversion so we do not suffer underflow or clipping
-	ApplyGain(buffer, buffers, countRendered, channels, countChunk, gainFactor);
+	ApplyGain(buffer, countRendered, channels, countChunk, gainFactor);
+}
+template<>
+void ApplyGainAfterConversionIfAppropriateFixed<float>(audio_buffer_planar<float> buffer, std::size_t countRendered, std::size_t channels, std::size_t countChunk, float gainFactor)
+{
+	// Apply final output gain for floating point output after conversion so we do not suffer underflow or clipping
+	ApplyGain(buffer, countRendered, channels, countChunk, gainFactor);
 }
 
-template<typename Tsample>
+inline void ApplyGainBeforeConversionIfAppropriateFloat(MixSampleFloat *MixSoundBuffer, std::size_t channels, std::size_t countChunk, float gainFactor)
+{
+	// Apply final output gain for non floating point output
+	ApplyGain(MixSoundBuffer, channels, countChunk, gainFactor);
+}
+
+template<typename Tbuffer>
 class AudioReadTargetGainBuffer
-	: public AudioReadTargetBuffer<Tsample>
+	: public AudioReadTargetBuffer<Tbuffer>
 {
 private:
-	typedef AudioReadTargetBuffer<Tsample> Tbase;
+	typedef AudioReadTargetBuffer<Tbuffer> Tbase;
 private:
 	const float gainFactor;
 public:
-	AudioReadTargetGainBuffer(Dither &dither, Tsample *buffer, Tsample * const *buffers, float gainFactor_)
-		: Tbase(dither, buffer, buffers)
+	AudioReadTargetGainBuffer(Tbuffer buf, Dither &dither, float gainFactor_)
+		: Tbase(buf, dither)
 		, gainFactor(gainFactor_)
 	{
 		return;
 	}
 public:
-	void DataCallback(int32 *MixSoundBuffer, std::size_t channels, std::size_t countChunk) override
+	void DataCallback(MixSampleInt *MixSoundBuffer, std::size_t channels, std::size_t countChunk) override
 	{
 		const std::size_t countRendered_ = Tbase::GetRenderedCount();
-
-		ApplyGainBeforeConversionIfAppropriate<Tsample>(MixSoundBuffer, channels, countChunk, gainFactor);
-
+		ApplyGainBeforeConversionIfAppropriateFixed<typename Tbuffer::sample_type>(MixSoundBuffer, channels, countChunk, gainFactor);
 		Tbase::DataCallback(MixSoundBuffer, channels, countChunk);
-
-		ApplyGainAfterConversionIfAppropriate<Tsample>(Tbase::outputBuffer, Tbase::outputBuffers, countRendered_, channels, countChunk, gainFactor);
-
+		ApplyGainAfterConversionIfAppropriateFixed<typename Tbuffer::sample_type>(Tbase::outputBuffer, countRendered_, channels, countChunk, gainFactor);
+	}
+	void DataCallback(MixSampleFloat *MixSoundBuffer, std::size_t channels, std::size_t countChunk) override
+	{
+		ApplyGainBeforeConversionIfAppropriateFloat(MixSoundBuffer, channels, countChunk, gainFactor);
+		Tbase::DataCallback(MixSoundBuffer, channels, countChunk);
 	}
 };
 
 
-#endif // MODPLUG_TRACKER
+#endif // LIBOPENMPT_BUILD
 
 
 OPENMPT_NAMESPACE_END

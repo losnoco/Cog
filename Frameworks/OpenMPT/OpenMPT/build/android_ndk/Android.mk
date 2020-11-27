@@ -7,7 +7,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := openmpt
 
 LOCAL_CFLAGS   +=#-std=c99
-LOCAL_CPPFLAGS += -std=c++11 -fexceptions -frtti
+LOCAL_CPPFLAGS += -std=c++17 -fexceptions -frtti
 
 LOCAL_CPP_FEATURES += exceptions rtti
 
@@ -111,12 +111,12 @@ LOCAL_SRC_FILES += \
 	libopenmpt/libopenmpt_cxx.cpp \
 	libopenmpt/libopenmpt_impl.cpp \
 	libopenmpt/libopenmpt_ext_impl.cpp \
+	soundbase/Dither.cpp \
 	soundlib/AudioCriticalSection.cpp \
 	soundlib/ContainerMMCMP.cpp \
 	soundlib/ContainerPP20.cpp \
 	soundlib/ContainerUMX.cpp \
 	soundlib/ContainerXPK.cpp \
-	soundlib/Dither.cpp \
 	soundlib/Dlsbank.cpp \
 	soundlib/Fastmix.cpp \
 	soundlib/InstrumentExtensions.cpp \
@@ -178,10 +178,12 @@ LOCAL_SRC_FILES += \
 	soundlib/RowVisitor.cpp \
 	soundlib/S3MTools.cpp \
 	soundlib/SampleFormats.cpp \
+	soundlib/SampleFormatBRR.cpp \
 	soundlib/SampleFormatFLAC.cpp \
 	soundlib/SampleFormatMediaFoundation.cpp \
 	soundlib/SampleFormatMP3.cpp \
 	soundlib/SampleFormatOpus.cpp \
+	soundlib/SampleFormatSFZ.cpp \
 	soundlib/SampleFormatVorbis.cpp \
 	soundlib/SampleIO.cpp \
 	soundlib/Sndfile.cpp \
@@ -193,7 +195,7 @@ LOCAL_SRC_FILES += \
 	soundlib/UpgradeModule.cpp \
 	soundlib/Tables.cpp \
 	soundlib/Tagging.cpp \
-	soundlib/tuningbase.cpp \
+	soundlib/TinyFFT.cpp \
 	soundlib/tuningCollection.cpp \
 	soundlib/tuning.cpp \
 	soundlib/WAVTools.cpp \

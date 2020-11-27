@@ -9,14 +9,6 @@ CXXFLAGS_STDCXX = -std=$(STDCXX)
 else
 ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++17 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++17' ; fi ), c++17)
 CXXFLAGS_STDCXX = -std=c++17
-else
-ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++14 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++14' ; fi ), c++14)
-CXXFLAGS_STDCXX = -std=c++14
-else
-ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++11 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++11' ; fi ), c++11)
-CXXFLAGS_STDCXX = -std=c++11
-endif
-endif
 endif
 endif
 CFLAGS_STDC = -std=c99

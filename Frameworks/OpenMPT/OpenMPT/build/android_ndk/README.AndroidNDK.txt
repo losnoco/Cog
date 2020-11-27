@@ -3,7 +3,7 @@
 This is preliminary documentation.
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
- 0. The minimum required Android NDK version is r16b.
+ 0. The minimum required Android NDK version is r18b.
  1. Copy the whole libopenmpt source tree below your jni directory.
  2. Copy build/android_ndk/* into the root of libopenmpt, i.e. also into the
     jni directory and adjust as needed.

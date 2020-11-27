@@ -42,7 +42,7 @@ public:
 	// [in]  length: number of characters that should be read, not including a possible trailing null terminator (it is automatically appended).
 	// [in]  lineEnding: line ending formatting of the text in memory.
 	// [out] returns true on success.
-	bool Read(const mpt::byte *data, const size_t length, LineEnding lineEnding);
+	bool Read(const std::byte *data, const size_t length, LineEnding lineEnding);
 	bool Read(FileReader &file, const size_t length, LineEnding lineEnding);
 
 	// Read comments with fixed line length from a mapped file.
@@ -51,7 +51,7 @@ public:
 	// [in]  lineLength: The fixed length of a line.
 	// [in]  lineEndingLength: The padding space between two fixed lines. (there could for example be a null char after every line)
 	// [out] returns true on success.
-	bool ReadFixedLineLength(const mpt::byte *data, const size_t length, const size_t lineLength, const size_t lineEndingLength);
+	bool ReadFixedLineLength(const std::byte *data, const size_t length, const size_t lineLength, const size_t lineEndingLength);
 	bool ReadFixedLineLength(FileReader &file, const size_t length, const size_t lineLength, const size_t lineEndingLength);
 
 	// Retrieve song message.
@@ -64,6 +64,8 @@ public:
 	// [out] returns true if the message has been changed.
 	bool SetFormatted(std::string message, LineEnding lineEnding);
 
+	// Sets the song message. Expects the provided string to already use the internal line ending character.
+	void SetRaw(std::string message) noexcept { assign(std::move(message)); }
 };
 
 OPENMPT_NAMESPACE_END

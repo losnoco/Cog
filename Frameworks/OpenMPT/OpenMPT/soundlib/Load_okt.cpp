@@ -51,7 +51,7 @@ MPT_BINARY_STRUCT(OktSample, 32)
 // Parse the sample header block
 static void ReadOKTSamples(FileReader &chunk, std::vector<bool> &sample7bit, CSoundFile &sndFile)
 {
-	sndFile.m_nSamples = std::min<SAMPLEINDEX>(static_cast<SAMPLEINDEX>(chunk.BytesLeft() / sizeof(OktSample)), MAX_SAMPLES - 1u);
+	sndFile.m_nSamples = std::min(static_cast<SAMPLEINDEX>(chunk.BytesLeft() / sizeof(OktSample)), static_cast<SAMPLEINDEX>(MAX_SAMPLES - 1));
 	sample7bit.resize(sndFile.GetNumSamples());
 
 	for(SAMPLEINDEX smp = 1; smp <= sndFile.GetNumSamples(); smp++)
@@ -61,11 +61,11 @@ static void ReadOKTSamples(FileReader &chunk, std::vector<bool> &sample7bit, CSo
 		chunk.ReadStruct(oktSmp);
 
 		mptSmp.Initialize();
-		mpt::String::Read<mpt::String::maybeNullTerminated>(sndFile.m_szNames[smp], oktSmp.name);
+		sndFile.m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, oktSmp.name);
 
 		mptSmp.nC5Speed = 8287;
 		mptSmp.nGlobalVol = 64;
-		mptSmp.nVolume = std::min<uint16>(oktSmp.volume, 64u) * 4u;
+		mptSmp.nVolume = std::min(oktSmp.volume.get(), uint16(64)) * 4u;
 		mptSmp.nLength = oktSmp.length & ~1;	// round down
 		// Parse loops
 		const SmpLength loopStart = oktSmp.loopStart * 2;
@@ -106,10 +106,8 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 		for(CHANNELINDEX chn = 0; chn < chns; chn++)
 		{
 			ModCommand &m = rowCmd[chn];
-			uint8 note = chunk.ReadUint8();
-			uint8 instr = chunk.ReadUint8();
-			uint8 effect = chunk.ReadUint8();
-			m.param = chunk.ReadUint8();
+			const auto [note, instr, effect, param] = chunk.ReadArray<uint8, 4>();
+			m.param = param;
 
 			if(note > 0 && note <= 36)
 			{
@@ -154,14 +152,14 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 				if (m.param)
 				{
 					m.command = CMD_NOTESLIDEDOWN;
-					m.param = 0x10 | MIN(0x0F, m.param);
+					m.param = 0x10 | std::min(uint8(0x0F), m.param);
 				}
 				break;
 			case 30: // U Slide Up (Notes)
 				if (m.param)
 				{
 					m.command = CMD_NOTESLIDEUP;
-					m.param = 0x10 | MIN(0x0F, m.param);
+					m.param = 0x10 | std::min(uint8(0x0F), m.param);
 				}
 				break;
 			// We don't have fine note slide, but this is supposed to happen once
@@ -171,14 +169,14 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 				if (m.param)
 				{
 					m.command = CMD_NOTESLIDEDOWN;
-					m.param = 0x50 | MIN(0x0F, m.param);
+					m.param = 0x50 | std::min(uint8(0x0F), m.param);
 				}
 				break;
 			case 17: // H Slide Up Once (Notes)
 				if (m.param)
 				{
 					m.command = CMD_NOTESLIDEUP;
-					m.param = 0x50 | MIN(0x0F, m.param);
+					m.param = 0x50 | std::min(uint8(0x0F), m.param);
 				}
 				break;
 
@@ -211,7 +209,7 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 						break;
 					}
 					// 0x40 is set volume -- fall through
-					MPT_FALLTHROUGH;
+					[[fallthrough]];
 				case 0: case 1: case 2: case 3:
 					m.volcmd = VOLCMD_VOLUME;
 					m.vol = m.param;
@@ -222,10 +220,10 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 					m.param = (m.param & 0x0F) << 4; // Dx0
 					break;
 				case 6:
-					m.param = 0xF0 | MIN(m.param & 0x0F, 0x0E); // DFx
+					m.param = 0xF0 | std::min(static_cast<uint8>(m.param & 0x0F), uint8(0x0E)); // DFx
 					break;
 				case 7:
-					m.param = (MIN(m.param & 0x0F, 0x0E) << 4) | 0x0F; // DxF
+					m.param = (std::min(static_cast<uint8>(m.param & uint8(0x0F)), uint8(0x0E)) << 4) | 0x0F; // DxF
 					break;
 				default:
 					// Junk.
@@ -243,7 +241,8 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 #endif
 
 			default:
-				m.command = m.param = 0;
+				m.command = CMD_NONE;
+				m.param = 0;
 				break;
 			}
 		}
@@ -297,7 +296,7 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("Oktalyzer");
 	m_modFormat.type = U_("okt");
-	m_modFormat.charset = mpt::CharsetISO8859_1;
+	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
 	// Go through IFF chunks...
 	while(file.CanRead(sizeof(OktIffChunk)))

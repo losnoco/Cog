@@ -174,7 +174,7 @@ bool UnpackUMX(std::vector<ContainerItem> &containerItems, FileReader &file, Con
 
 			if(objName >= 0 && static_cast<std::size_t>(objName) < names.size())
 			{
-				item.name = mpt::ToUnicode(mpt::CharsetISO8859_1, names[objName]);
+				item.name = mpt::ToUnicode(mpt::Charset::ISO8859_1, names[objName]);
 			}
 
 			item.file = chunk.ReadChunk(size);

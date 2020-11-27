@@ -12,6 +12,7 @@
 
 #include "BuildSettings.h"
 
+#include "modcommand.h"
 #include "tuningbase.h"
 #include "Snd_defs.h"
 #include "../common/FlagSet.h"
@@ -64,87 +65,93 @@ struct InstrumentEnvelope : public std::vector<EnvelopeNode>
 // Instrument Struct
 struct ModInstrument
 {
-	uint32 nFadeOut;                             // Instrument fadeout speed
-	uint32 nGlobalVol;                           // Global volume (0...64, all sample volumes are multiplied with this - TODO: This is 0...128 in Impulse Tracker)
-	uint32 nPan;                                 // Default pan (0...256), if the appropriate flag is set. Sample panning overrides instrument panning.
+	uint32 nFadeOut = 256;   // Instrument fadeout speed
+	uint32 nGlobalVol = 64;  // Global volume (0...64, all sample volumes are multiplied with this - TODO: This is 0...128 in Impulse Tracker)
+	uint32 nPan = 32 * 4;    // Default pan (0...256), if the appropriate flag is set. Sample panning overrides instrument panning.
 
-	uint16 nVolRampUp;                           // Default sample ramping up, 0 = use global default
+	uint16 nVolRampUp = 0;  // Default sample ramping up, 0 = use global default
 
-	uint16 wMidiBank;                            // MIDI Bank (1...16384). 0 = Don't send.
-	uint8 nMidiProgram;                          // MIDI Program (1...128). 0 = Don't send.
-	uint8 nMidiChannel;                          // MIDI Channel (1...16). 0 = Don't send. 17 = Mapped (Send to tracker channel modulo 16).
-	uint8 nMidiDrumKey;                          // Drum set note mapping (currently only used by the .MID loader)
-	int8 midiPWD;                                // MIDI Pitch Wheel Depth in semitones
+	ResamplingMode resampling = SRCMODE_DEFAULT;  // Resampling mode
 
-	FlagSet<InstrumentFlags> dwFlags;            // Instrument flags
-	NewNoteAction nNNA;                          // New note action
-	DuplicateCheckType nDCT;                     // Duplicate check type (i.e. which condition will trigger the duplicate note action)
-	DuplicateNoteAction nDNA;                    // Duplicate note action
-	uint8 nPanSwing;                             // Random panning factor (0...64)
-	uint8 nVolSwing;                             // Random volume factor (0...100)
-	uint8 nIFC;                                  // Default filter cutoff (0...127). Used if the high bit is set
-	uint8 nIFR;                                  // Default filter resonance (0...127). Used if the high bit is set
+	FlagSet<InstrumentFlags> dwFlags;        // Instrument flags
+	NewNoteAction nNNA = NNA_NOTECUT;        // New note action
+	DuplicateCheckType nDCT = DCT_NONE;      // Duplicate check type (i.e. which condition will trigger the duplicate note action)
+	DuplicateNoteAction nDNA = DNA_NOTECUT;  // Duplicate note action
+	uint8 nPanSwing = 0;                     // Random panning factor (0...64)
+	uint8 nVolSwing = 0;                     // Random volume factor (0...100)
 
-	int8 nPPS;                                   // Pitch/Pan separation (i.e. how wide the panning spreads, -32...32)
-	uint8 nPPC;                                  // Pitch/Pan centre (zero-based, default is NOTE_MIDDLE_C - 1)
+	uint8 nIFC = 0;                                 // Default filter cutoff (0...127). Used if the high bit is set
+	uint8 nIFR = 0;                                 // Default filter resonance (0...127). Used if the high bit is set
+	uint8 nCutSwing = 0;                            // Random cutoff factor (0...64)
+	uint8 nResSwing = 0;                            // Random resonance factor (0...64)
+	FilterMode filterMode = FilterMode::Unchanged;  // Default filter mode
 
-	PLUGINDEX nMixPlug;                          // Plugin assigned to this instrument (0 = no plugin, 1 = first plugin)
-	uint8 nCutSwing;                             // Random cutoff factor (0...64)
-	uint8 nResSwing;                             // Random resonance factor (0...64)
-	InstrFilterMode nFilterMode;                 // Default filter mode
-	PlugVelocityHandling pluginVelocityHandling; // How to deal with plugin velocity
-	PlugVolumeHandling pluginVolumeHandling;     // How to deal with plugin volume
-	ResamplingMode resampling;                   // Resampling mode
-	TEMPO pitchToTempoLock;                      // BPM at which the samples assigned to this instrument loop correctly (0 = unset)
-	CTuning *pTuning;                            // sample tuning assigned to this instrument
+	int8 nPPS = 0;                               // Pitch/Pan separation (i.e. how wide the panning spreads, -32...32)
+	uint8 nPPC = NOTE_MIDDLEC - NOTE_MIN;        // Pitch/Pan centre (zero-based)
 
-	InstrumentEnvelope VolEnv;                   // Volume envelope data
-	InstrumentEnvelope PanEnv;                   // Panning envelope data
-	InstrumentEnvelope PitchEnv;                 // Pitch / filter envelope data
+	uint16 wMidiBank = 0;    // MIDI Bank (1...16384). 0 = Don't send.
+	uint8 nMidiProgram = 0;  // MIDI Program (1...128). 0 = Don't send.
+	uint8 nMidiChannel = 0;  // MIDI Channel (1...16). 0 = Don't send. 17 = Mapped (Send to tracker channel modulo 16).
+	uint8 nMidiDrumKey = 0;  // Drum set note mapping (currently only used by the .MID loader)
+	int8 midiPWD = 2;        // MIDI Pitch Wheel Depth in semitones
+	PLUGINDEX nMixPlug = 0;  // Plugin assigned to this instrument (0 = no plugin, 1 = first plugin)
 
-	uint8 NoteMap[128];                          // Note mapping, e.g. C-5 => D-5.
-	SAMPLEINDEX Keyboard[128];                   // Sample mapping, e.g. C-5 => Sample 1
+	PlugVelocityHandling pluginVelocityHandling = PLUGIN_VELOCITYHANDLING_CHANNEL;  // How to deal with plugin velocity
+	PlugVolumeHandling pluginVolumeHandling = PLUGIN_VOLUMEHANDLING_IGNORE;         // How to deal with plugin volume
 
-	char name[MAX_INSTRUMENTNAME];
-	char filename[MAX_INSTRUMENTFILENAME];
+	TEMPO pitchToTempoLock;      // BPM at which the samples assigned to this instrument loop correctly (0 = unset)
+	CTuning *pTuning = nullptr;  // sample tuning assigned to this instrument
+
+	InstrumentEnvelope VolEnv;    // Volume envelope data
+	InstrumentEnvelope PanEnv;    // Panning envelope data
+	InstrumentEnvelope PitchEnv;  // Pitch / filter envelope data
+
+	std::array<uint8, 128> NoteMap;         // Note mapping, e.g. C-5 => D-5
+	std::array<SAMPLEINDEX, 128> Keyboard;  // Sample mapping, e.g. C-5 => Sample 1
+
+	mpt::charbuf<MAX_INSTRUMENTNAME> name;
+	mpt::charbuf<MAX_INSTRUMENTFILENAME> filename;
+
+	std::string GetName() const { return name; }
+	std::string GetFilename() const { return filename; }
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// WHEN adding new members here, ALSO update InstrumentExtensions.cpp
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-	void SetTuning(CTuning* pT)
-	{
-		pTuning = pT;
-	}
 
 	ModInstrument(SAMPLEINDEX sample = 0);
 
 	// Assign all notes to a given sample.
 	void AssignSample(SAMPLEINDEX sample)
 	{
-		for(size_t n = 0; n < CountOf(Keyboard); n++)
-		{
-			Keyboard[n] = sample;
-		}
+		Keyboard.fill(sample);
 	}
 
 	// Reset note mapping (i.e. every note is mapped to itself)
 	void ResetNoteMap()
 	{
-		for(size_t n = 0; n < CountOf(NoteMap); n++)
+		for(size_t n = 0; n < std::size(NoteMap); n++)
 		{
 			NoteMap[n] = static_cast<uint8>(n + 1);
 		}
 	}
 
+	// Transpose entire note mapping by given number of semitones
+	void Transpose(int8 amount);
+
 	bool IsCutoffEnabled() const { return (nIFC & 0x80) != 0; }
 	bool IsResonanceEnabled() const { return (nIFR & 0x80) != 0; }
 	uint8 GetCutoff() const { return (nIFC & 0x7F); }
 	uint8 GetResonance() const { return (nIFR & 0x7F); }
-	void SetCutoff(uint8 cutoff, bool enable) { nIFC = std::min<uint8>(cutoff, 0x7F) | (enable ? 0x80 : 0x00); }
-	void SetResonance(uint8 resonance, bool enable) { nIFR = std::min<uint8>(resonance, 0x7F) | (enable ? 0x80 : 0x00); }
+	void SetCutoff(uint8 cutoff, bool enable) { nIFC = std::min(cutoff, uint8(0x7F)) | (enable ? 0x80 : 0x00); }
+	void SetResonance(uint8 resonance, bool enable) { nIFR = std::min(resonance, uint8(0x7F)) | (enable ? 0x80 : 0x00); }
 
 	bool HasValidMIDIChannel() const { return (nMidiChannel >= 1 && nMidiChannel <= 17); }
+
+	void SetTuning(CTuning *pT)
+	{
+		pTuning = pT;
+	}
 
 	// Get a reference to a specific envelope of this instrument
 	const InstrumentEnvelope &GetEnvelope(EnvelopeType envType) const

@@ -24,11 +24,18 @@
 //#include "../common/mptCRC.h"
 #include "OggStream.h"
 #ifdef MPT_WITH_OGG
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif // MPT_COMPILER_CLANG
 #include <ogg/ogg.h>
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
 #endif // MPT_WITH_OGG
 #if defined(MPT_WITH_OPUSFILE)
 #include <opusfile.h>
-#endif
+#endif // MPT_WITH_OPUSFILE
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -41,7 +48,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 static mpt::ustring UStringFromOpus(const char *str)
 {
-	return str ? mpt::ToUnicode(mpt::CharsetUTF8, str) : mpt::ustring();
+	return str ? mpt::ToUnicode(mpt::Charset::UTF8, str) : mpt::ustring();
 }
 
 static FileTags GetOpusFileTags(OggOpusFile *of)
@@ -156,7 +163,7 @@ bool CSoundFile::ReadOpusSample(SAMPLEINDEX sample, FileReader &file)
 	}
 
 	DestroySampleThreadsafe(sample);
-	mpt::String::Copy(m_szNames[sample], sampleName);
+	m_szNames[sample] = sampleName;
 	Samples[sample].Initialize();
 	Samples[sample].nC5Speed = rate;
 	Samples[sample].nLength = mpt::saturate_cast<SmpLength>(raw_sample_data.size() / channels);

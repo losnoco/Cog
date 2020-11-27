@@ -27,7 +27,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
-static const UINT gEqLinearToDB[33] =
+static constexpr UINT gEqLinearToDB[33] =
 {
 	16, 19, 22, 25, 28, 31, 34, 37,
 	40, 43, 46, 49, 52, 55, 58, 61,
@@ -35,7 +35,7 @@ static const UINT gEqLinearToDB[33] =
 	160, 172, 184, 196, 208, 220, 232, 244, 256
 };
 
-static const EQBANDSTRUCT gEQDefaults[MAX_EQ_BANDS*2] =
+static constexpr EQBANDSTRUCT gEQDefaults[MAX_EQ_BANDS*2] =
 {
 	// Default: Flat EQ
 	{0,0,0,0,0, 0,0,0,0, 1,   120, false},
@@ -69,7 +69,7 @@ static const EQBANDSTRUCT gEQDefaults[MAX_EQ_BANDS*2] =
 #define PBS_Y1	DWORD PTR [eax + EQBANDSTRUCT.y1]
 #define PBS_Y2	DWORD PTR [eax + EQBANDSTRUCT.y2]
 
-static void EQFilter(EQBANDSTRUCT *pbs, float32 *pbuffer, UINT nCount)
+static void X86_EQFilter(EQBANDSTRUCT *pbs, float32 *pbuffer, UINT nCount)
 {
 	_asm {
 	mov eax, pbs		// eax = pbs
@@ -115,96 +115,11 @@ EQ_Loop:
 }
 
 
-#ifdef ENABLE_X86_AMD
-
-static void AMD_StereoEQ(EQBANDSTRUCT *pbl, EQBANDSTRUCT *pbr, float32 *pbuffer, UINT nCount)
-{
-	float tmp[16];
-
-	_asm {
-	mov eax, pbl
-	mov edx, pbr
-	mov ebx, pbuffer
-	mov ecx, nCount
-	lea edi, [tmp+8]
-	and edi, 0xfffffff8
-	movd mm7, [eax+EQBANDSTRUCT.a0]
-	movd mm0, [edx+EQBANDSTRUCT.a0]
-	movd mm6, [eax+EQBANDSTRUCT.a1]
-	movd mm1, [edx+EQBANDSTRUCT.a1]
-	punpckldq mm7, mm0
-	punpckldq mm6, mm1
-	movq [edi], mm7						// [edi] = a0
-	movq [edi+8], mm6					// [edi+8] = a1
-	movd mm5, [eax+EQBANDSTRUCT.a2]
-	movd mm0, [edx+EQBANDSTRUCT.a2]
-	movd mm4, [eax+EQBANDSTRUCT.b1]
-	movd mm1, [edx+EQBANDSTRUCT.b1]
-	movd mm3, [eax+EQBANDSTRUCT.b2]
-	movd mm2, [edx+EQBANDSTRUCT.b2]
-	punpckldq mm5, mm0
-	punpckldq mm4, mm1
-	punpckldq mm3, mm2
-	movq [edi+16], mm5					// [edi+16] = a2
-	movq [edi+24], mm4					// [edi+24] = b1
-	movq [edi+32], mm3					// [edi+32] = b2
-	movd mm4, [eax+EQBANDSTRUCT.x1]
-	movd mm0, [edx+EQBANDSTRUCT.x1]
-	movd mm5, [eax+EQBANDSTRUCT.x2]
-	movd mm1, [edx+EQBANDSTRUCT.x2]
-	punpckldq mm4, mm0					// mm4 = x1
-	punpckldq mm5, mm1					// mm5 = x2
-	movd mm6, [eax+EQBANDSTRUCT.y1]
-	movd mm2, [edx+EQBANDSTRUCT.y1]
-	movd mm7, [eax+EQBANDSTRUCT.y2]
-	movd mm3, [edx+EQBANDSTRUCT.y2]
-	punpckldq mm6, mm2					// mm6 = y1
-	punpckldq mm7, mm3					// mm7 = y2
-mainloop:
-	movq mm0, [ebx]
-	movq mm3, [edi+8]
-	add ebx, 8
-	movq mm1, [edi+16]
-	pfmul mm3, mm4						// x1 * a1
-	movq mm2, [edi+32]
-	pfmul mm1, mm5						// x2 * a2
-	movq mm5, mm4						// x2 = x1
-	pfmul mm2, mm7						// y2 * b2
-	movq mm7, mm6						// y2 = y1
-	pfmul mm6, [edi+24]					// y1 * b1
-	movq mm4, mm0						// x1 = x
-	pfmul mm0, [edi]					// x * a0
-	pfadd mm6, mm1						// x2*a2 + y1*b1
-	pfadd mm6, mm2						// x2*a2 + y1*b1 + y2*b2
-	pfadd mm6, mm3						// x1*a1 + x2*a2 + y1*b1 + y2*b2
-	pfadd mm6, mm0						// x*a0 + x1*a1 + x2*a2 + y1*b1 + y2*b2
-	dec ecx
-	movq [ebx-8], mm6
-	jnz mainloop
-	movd [eax+EQBANDSTRUCT.x1], mm4
-	punpckhdq mm4, mm4
-	movd [eax+EQBANDSTRUCT.x2], mm5
-	punpckhdq mm5, mm5
-	movd [eax+EQBANDSTRUCT.y1], mm6
-	punpckhdq mm6, mm6
-	movd [eax+EQBANDSTRUCT.y2], mm7
-	punpckhdq mm7, mm7
-	movd [edx+EQBANDSTRUCT.x1], mm4
-	movd [edx+EQBANDSTRUCT.x2], mm5
-	movd [edx+EQBANDSTRUCT.y1], mm6
-	movd [edx+EQBANDSTRUCT.y2], mm7
-	emms
-	}
-}
-
-#endif // ENABLE_X86_AMD
-
-
 #if defined(ENABLE_X86) && defined(ENABLE_SSE)
 
 static void SSE_StereoEQ(EQBANDSTRUCT *pbl, EQBANDSTRUCT *pbr, float32 *pbuffer, UINT nCount)
 {
-	static const float gk1 = 1.0f;
+	static constexpr float gk1 = 1.0f;
 	_asm {
 	mov eax, pbl
 	mov edx, pbr
@@ -299,7 +214,7 @@ done:;
 #pragma warning(pop)
 #endif // MPT_COMPILER_MSVC
 
-#else
+#endif
 
 static void EQFilter(EQBANDSTRUCT *pbs, float32 *pbuffer, UINT nCount)
 {
@@ -315,15 +230,21 @@ static void EQFilter(EQBANDSTRUCT *pbs, float32 *pbuffer, UINT nCount)
 	}
 }
 
-#endif
-
 
 void CEQ::ProcessMono(int *pbuffer, float *MixFloatBuffer, UINT nCount)
 {
 	MonoMixToFloat(pbuffer, MixFloatBuffer, nCount, 1.0f/MIXING_SCALEF);
 	for (UINT b=0; b<MAX_EQ_BANDS; b++)
 	{
-		if ((gEQ[b].bEnable) && (gEQ[b].Gain != 1.0f)) EQFilter(&gEQ[b], MixFloatBuffer, nCount);
+		#ifdef ENABLE_X86
+			if(GetProcSupport() & PROCSUPPORT_ASM_INTRIN)
+			{
+				if ((gEQ[b].bEnable) && (gEQ[b].Gain != 1.0f)) X86_EQFilter(&gEQ[b], MixFloatBuffer, nCount);
+			} else
+		#endif // ENABLE_X86
+			{
+				if ((gEQ[b].bEnable) && (gEQ[b].Gain != 1.0f)) EQFilter(&gEQ[b], MixFloatBuffer, nCount);
+			}
 	}
 	FloatToMonoMix(MixFloatBuffer, pbuffer, nCount, MIXING_SCALEF);
 }
@@ -355,25 +276,27 @@ void CEQ::ProcessStereo(int *pbuffer, float *MixFloatBuffer, UINT nCount)
 
 #endif // ENABLE_X86 && ENABLE_SSE
 
-#ifdef ENABLE_X86_AMD
+#ifdef ENABLE_X86
+	if(GetProcSupport() & PROCSUPPORT_ASM_INTRIN)
+	{
 
-	if(GetProcSupport() & PROCSUPPORT_AMD_3DNOW)
-	{ 
-		MonoMixToFloat(pbuffer, MixFloatBuffer, nCount*2, 1.0f/MIXING_SCALEF);
-
-		for (UINT b=0; b<MAX_EQ_BANDS; b++)
+		StereoMixToFloat(pbuffer, MixFloatBuffer, MixFloatBuffer+MIXBUFFERSIZE, nCount, 1.0f/MIXING_SCALEF);
+		
+		for (UINT bl=0; bl<MAX_EQ_BANDS; bl++)
 		{
-			if (((gEQ[b].bEnable) && (gEQ[b].Gain != 1.0f))
-			 || ((gEQ[b+MAX_EQ_BANDS].bEnable) && (gEQ[b+MAX_EQ_BANDS].Gain != 1.0f)))
-				AMD_StereoEQ(&gEQ[b], &gEQ[b+MAX_EQ_BANDS], MixFloatBuffer, nCount);
+			if ((gEQ[bl].bEnable) && (gEQ[bl].Gain != 1.0f)) X86_EQFilter(&gEQ[bl], MixFloatBuffer, nCount);
+		}
+		for (UINT br=MAX_EQ_BANDS; br<MAX_EQ_BANDS*2; br++)
+		{
+			if ((gEQ[br].bEnable) && (gEQ[br].Gain != 1.0f)) X86_EQFilter(&gEQ[br], MixFloatBuffer+MIXBUFFERSIZE, nCount);
 		}
 
-		FloatToMonoMix(MixFloatBuffer, pbuffer, nCount*2, MIXING_SCALEF);
-		
-	} else
-#endif // ENABLE_X86_AMD
+		FloatToStereoMix(MixFloatBuffer, MixFloatBuffer+MIXBUFFERSIZE, pbuffer, nCount, MIXING_SCALEF);
 
-	{	
+	} else
+#endif // ENABLE_X86
+
+	{
 
 		StereoMixToFloat(pbuffer, MixFloatBuffer, MixFloatBuffer+MIXBUFFERSIZE, nCount, 1.0f/MIXING_SCALEF);
 		

@@ -21,7 +21,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-class Flanger : public Chorus
+class Flanger final : public Chorus
 {
 protected:
 	enum Parameters

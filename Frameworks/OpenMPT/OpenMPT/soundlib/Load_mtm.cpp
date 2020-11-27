@@ -134,14 +134,14 @@ bool CSoundFile::ReadMTM(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(MOD_TYPE_MTM);
-	mpt::String::Read<mpt::String::maybeNullTerminated>(m_songName, fileHeader.songName);
+	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songName);
 	m_nSamples = fileHeader.numSamples;
 	m_nChannels = fileHeader.numChannels;
 	
 	m_modFormat.formatName = U_("MultiTracker");
 	m_modFormat.type = U_("mtm");
 	m_modFormat.madeWithTracker = mpt::format(U_("MultiTracker %1.%2"))(fileHeader.version >> 4, fileHeader.version & 0x0F);
-	m_modFormat.charset = mpt::CharsetCP437;
+	m_modFormat.charset = mpt::Charset::CP437;
 
 	// Reading instruments
 	for(SAMPLEINDEX smp = 1; smp <= GetNumSamples(); smp++)
@@ -149,7 +149,7 @@ bool CSoundFile::ReadMTM(FileReader &file, ModLoadingFlags loadFlags)
 		MTMSampleHeader sampleHeader;
 		file.ReadStruct(sampleHeader);
 		sampleHeader.ConvertToMPT(Samples[smp]);
-		mpt::String::Read<mpt::String::maybeNullTerminated>(m_szNames[smp], sampleHeader.samplename);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.samplename);
 	}
 
 	// Setting Channel Pan Position
@@ -190,13 +190,13 @@ bool CSoundFile::ReadMTM(FileReader &file, ModLoadingFlags loadFlags)
 			ModCommand *m = Patterns[pat].GetpModCommand(0, chn);
 			for(ROWINDEX row = 0; row < rowsPerPat; row++, m += GetNumChannels())
 			{
-				uint8 data[3];
-				tracks.ReadArray(data);
+				const auto [noteInstr, instrCmd, par] = tracks.ReadArray<uint8, 3>();
 
-				if(data[0] & 0xFC) m->note = (data[0] >> 2) + 36 + NOTE_MIN;
-				m->instr = ((data[0] & 0x03) << 4) | (data[1] >> 4);
-				uint8 cmd = data[1] & 0x0F;
-				uint8 param = data[2];
+				if(noteInstr & 0xFC)
+					m->note = (noteInstr >> 2) + 36 + NOTE_MIN;
+				m->instr = ((noteInstr & 0x03) << 4) | (instrCmd >> 4);
+				uint8 cmd = instrCmd & 0x0F;
+				uint8 param = par;
 				if(cmd == 0x0A)
 				{
 					if(param & 0xF0) param &= 0xF0; else param &= 0x0F;

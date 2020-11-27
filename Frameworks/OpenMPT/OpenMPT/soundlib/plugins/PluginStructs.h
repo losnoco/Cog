@@ -52,8 +52,8 @@ struct SNDMIXPLUGININFO
 	uint8le reserved;
 	uint32le dwOutputRouting;		// 0 = send to master 0x80 + x = send to plugin x
 	uint32le dwReserved[4];			// Reserved for routing info
-	char    szName[32];				// User-chosen plugin display name - this is locale ANSI!
-	char    szLibraryName[64];		// original DLL name - this is UTF-8!
+	mpt::charbuf<32, mpt::String::nullTerminated> szName;         // User-chosen plugin display name - this is locale ANSI!
+	mpt::charbuf<64, mpt::String::nullTerminated> szLibraryName;  // original DLL name - this is UTF-8!
 
 	// Should only be called from SNDMIXPLUGIN::SetBypass() and IMixPlugin::Bypass()
 	void SetBypass(bool bypass = true) { if(bypass) routingFlags |= irBypass; else routingFlags &= uint8(~irBypass); }
@@ -65,7 +65,7 @@ MPT_BINARY_STRUCT(SNDMIXPLUGININFO, 128)	// this is directly written to files, s
 struct SNDMIXPLUGIN
 {
 	IMixPlugin *pMixPlugin;
-	std::vector<mpt::byte> pluginData;
+	std::vector<std::byte> pluginData;
 	SNDMIXPLUGININFO Info;
 	float fDryRatio;
 	int32 defaultProgram;
@@ -81,9 +81,9 @@ struct SNDMIXPLUGIN
 	}
 
 	const char *GetName() const
-		{ return Info.szName; }
+		{ return Info.szName.buf; }
 	const char *GetLibraryName() const
-		{ return Info.szLibraryName; }
+		{ return Info.szLibraryName.buf; }
 
 	// Check if a plugin is loaded into this slot (also returns true if the plugin in this slot has not been found)
 	bool IsValidPlugin() const { return (Info.dwPluginId1 | Info.dwPluginId2) != 0; }

@@ -151,7 +151,7 @@ opus_int64 sourceTell(void *_stream)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"opus",nil];
+	return [NSArray arrayWithObjects:@"opus",@"ogg",nil];
 }
 
 + (NSArray *)mimeTypes

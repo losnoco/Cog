@@ -37,7 +37,6 @@ static const char* extension_list[] = {
     "abk",
     //"ac3", //common, FFmpeg/not parsed (AC3)
     "acb",
-    "ace", //fake extension for tri-Ace's .aac (renamed, to be removed)
     "acm",
     "ad", //txth/reserved [Xenosaga Freaks (PS2)]
     "adc", //txth/reserved [Tomb Raider The Last Revelation (DC), Tomb Raider Chronicles (DC)]
@@ -67,6 +66,7 @@ static const char* extension_list[] = {
     "ams", //txth/reserved [Super Dragon Ball Z (PS2) ELF names]
     "amts", //fake extension/header id for .stm (renamed? to be removed?)
     "ao",
+    "ap",
     "apc",
     "as4",
     "asd",
@@ -126,6 +126,7 @@ static const char* extension_list[] = {
     "ccc",
     "cd",
     "cfn", //fake extension for CAF (renamed, to be removed?)
+    "chk",
     "ckb",
     "ckd",
     "cks",
@@ -138,7 +139,7 @@ static const char* extension_list[] = {
     "cxs",
 
     "da",
-    "dat",
+    //"dat", //common
     "data",
     "dax",
     "dbm",
@@ -150,6 +151,7 @@ static const char* extension_list[] = {
     "diva",
     "dmsg",
     "ds2", //txth/reserved [Star Wars Bounty Hunter (GC)]
+    "dsb",
     "dsf",
     "dsp",
     "dspw",
@@ -165,7 +167,6 @@ static const char* extension_list[] = {
     "enm",
     "eno",
     "ens",
-    "enth",
     "exa",
     "ezw",
 
@@ -242,7 +243,6 @@ static const char* extension_list[] = {
     "kat",
     "kces",
     "kcey", //fake extension/header id for .pcm (renamed, to be removed)
-    "khv", //fake extension/header id for .vas (renamed, to be removed)
     "km9",
     "kovs", //fake extension/header id for .kvs
     "kns",
@@ -261,6 +261,7 @@ static const char* extension_list[] = {
     "lasf", //fake extension for .asf (various)
     "lbin", //fake extension for .bin (various)
     "leg",
+    "lep",
     "lflac", //fake extension for .flac, FFmpeg/not parsed
     "lin",
     "lm0",
@@ -277,6 +278,7 @@ static const char* extension_list[] = {
     "lmpc", //fake extension for .mpc, FFmpeg/not parsed
     "logg", //fake extension for .ogg
     "lopus", //fake extension for .opus
+    "lp",
     "lpcm",
     "lpk",
     "lps",
@@ -343,6 +345,7 @@ static const char* extension_list[] = {
     "nop",
     "nps",
     "npsf", //fake extension/header id for .nps (in bigfiles)
+    "nsopus",
     "nub",
     "nub2",
     "nus3audio",
@@ -395,6 +398,7 @@ static const char* extension_list[] = {
     "rsd",
     "rsf",
     "rsm",
+    "rsp",
     "rstm", //fake extension/header id for .rstm (in bigfiles)
     "rvws",
     "rwar",
@@ -552,6 +556,7 @@ static const char* extension_list[] = {
     "wavebatch",
     "wavm",
     "wavx", //txth/reserved [LEGO Star Wars (Xbox)]
+    "way",
     "wb",
     "wb2",
     "wbd",
@@ -559,6 +564,7 @@ static const char* extension_list[] = {
     "wem",
     "wii",
     "wip", //txth/reserved [Colin McRae DiRT (PC)]
+    "wlv", //txth/reserved [ToeJam & Earl III: Mission to Earth (DC)]
     "wma", //common
     "wmus",
     "wp2",
@@ -586,6 +592,7 @@ static const char* extension_list[] = {
     "xmu",
     "xnb",
     "xsf",
+    "xse",
     "xsew",
     "xss",
     "xvag",
@@ -609,6 +616,7 @@ static const char* extension_list[] = {
     "zsm",
     "zss",
     "zwdsp",
+    "zwv",
 
     "vgmstream" /* fake extension, catch-all for FFmpeg/txth/etc */
 
@@ -621,6 +629,7 @@ static const char* common_extension_list[] = {
     "aif", //common
     "aiff", //common
     "bin", //common
+    "dat", //common
     "flac", //common
     "m4a", //common
     "m4v", //common
@@ -666,6 +675,8 @@ typedef struct {
 
 
 static const coding_info coding_info_list[] = {
+        {coding_SILENCE,            "Silence"},
+
         {coding_PCM16LE,            "Little Endian 16-bit PCM"},
         {coding_PCM16BE,            "Big Endian 16-bit PCM"},
         {coding_PCM16_int,          "16-bit PCM with 2 byte interleave (block)"},
@@ -737,6 +748,7 @@ static const coding_info coding_info_list[] = {
         {coding_AWC_IMA,            "Rockstar AWC 4-bit IMA ADPCM"},
         {coding_UBI_IMA,            "Ubisoft 4-bit IMA ADPCM"},
         {coding_H4M_IMA,            "Hudson HVQM4 4-bit IMA ADPCM"},
+        {coding_CD_IMA,             "Crystal Dynamics 4-bit IMA ADPCM"},
 
         {coding_MSADPCM,            "Microsoft 4-bit ADPCM"},
         {coding_MSADPCM_int,        "Microsoft 4-bit ADPCM (mono/interleave)"},
@@ -761,6 +773,7 @@ static const coding_info coding_info_list[] = {
         {coding_OKI16,              "OKI 4-bit ADPCM (16-bit output)"},
         {coding_OKI4S,              "OKI 4-bit ADPCM (4-shift)"},
         {coding_PTADPCM,            "Platinum 4-bit ADPCM"},
+        {coding_IMUSE,              "LucasArts iMUSE VIMA ADPCM"},
 
         {coding_SDX2,               "Squareroot-delta-exact (SDX2) 8-bit DPCM"},
         {coding_SDX2_int,           "Squareroot-delta-exact (SDX2) 8-bit DPCM with 1 byte interleave"},
@@ -768,11 +781,11 @@ static const coding_info coding_info_list[] = {
         {coding_CBD2_int,           "Cuberoot-delta-exact (CBD2) 8-bit DPCM with 1 byte interleave"},
         {coding_SASSC,              "Activision / EXAKT SASSC 8-bit DPCM"},
         {coding_DERF,               "Xilam DERF 8-bit DPCM"},
-        {coding_ACM,                "InterPlay ACM"},
+        {coding_WADY,               "Marble WADY 8-bit DPCM"},
         {coding_NWA,                "VisualArt's NWA DPCM"},
+        {coding_ACM,                "InterPlay ACM"},
         {coding_CIRCUS_ADPCM,       "Circus 8-bit ADPCM"},
         {coding_UBI_ADPCM,          "Ubisoft 4/6-bit ADPCM"},
-        {coding_IMUSE,              "LucasArts iMUSE VIMA ADPCM"},
 
         {coding_EA_MT,              "Electronic Arts MicroTalk"},
         {coding_CIRCUS_VQ,          "Circus VQ"},
@@ -850,7 +863,7 @@ static const layout_info layout_info_list[] = {
         {layout_blocked_ea_sns,         "blocked (EA SNS)"},
         {layout_blocked_awc,            "blocked (AWC)"},
         {layout_blocked_vgs,            "blocked (VGS)"},
-        {layout_blocked_vawx,           "blocked (VAWX)"},
+        {layout_blocked_xwav,           "blocked (XWAV)"},
         {layout_blocked_xvag_subsong,   "blocked (XVAG subsong)"},
         {layout_blocked_ea_wve_au00,    "blocked (EA WVE au00)"},
         {layout_blocked_ea_wve_ad10,    "blocked (EA WVE Ad10)"},
@@ -863,6 +876,7 @@ static const layout_info layout_info_list[] = {
 };
 
 static const meta_info meta_info_list[] = {
+        {meta_SILENCE,              "Silence"},
         {meta_RSTM,                 "Nintendo RSTM header"},
         {meta_STRM,                 "Nintendo STRM header"},
         {meta_ADX_03,               "CRI ADX header type 03"},
@@ -896,7 +910,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_OMU,              "Alter Echo OMU Header"},
         {meta_DSP_STM,              "Intelligent Systems STM header"},
         {meta_PS2_EXST,             "Sony EXST header"},
-        {meta_PS2_SVAG,             "Konami SVAG header"},
+        {meta_SVAG_KCET,            "Konami SVAG header"},
         {meta_PS_HEADERLESS,        "Headerless PS-ADPCM raw header"},
         {meta_PS2_MIB_MIH,          "Sony MultiStream MIH+MIB header"},
         {meta_DSP_MPDSP,            "Single DSP header stereo by .mpdsp extension"},
@@ -945,11 +959,11 @@ static const meta_info meta_info_list[] = {
         {meta_EA_1SNH,              "Electronic Arts 1SNh header"},
         {meta_EA_EACS,              "Electronic Arts EACS header"},
         {meta_SL3,                  "Atari Melbourne House SL3 header"},
-        {meta_FSB1,                 "FMOD Sample Bank (FSB1) Header"},
-        {meta_FSB2,                 "FMOD Sample Bank (FSB2) Header"},
-        {meta_FSB3,                 "FMOD Sample Bank (FSB3) Header"},
-        {meta_FSB4,                 "FMOD Sample Bank (FSB4) Header"},
-        {meta_FSB5,                 "FMOD Sample Bank (FSB5) Header"},
+        {meta_FSB1,                 "FMOD FSB1 header"},
+        {meta_FSB2,                 "FMOD FSB2 header"},
+        {meta_FSB3,                 "FMOD FSB3 header"},
+        {meta_FSB4,                 "FMOD FSB4 header"},
+        {meta_FSB5,                 "FMOD FSB5 header"},
         {meta_RWX,                  "RWX Header"},
         {meta_XWB,                  "Microsoft XWB header"},
         {meta_PS2_XA30,             "Reflections XA30 PS2 header"},
@@ -1036,7 +1050,7 @@ static const meta_info meta_info_list[] = {
         {meta_RIFF_WAVE_MWV,        "RIFF WAVE header with .mwv flavoring"},
         {meta_FFCC_STR,             "Final Fantasy: Crystal Chronicles STR header"},
         {meta_SAT_BAKA,             "BAKA header from Crypt Killer"},
-        {meta_NDS_SWAV,             "SWAV Header"},
+        {meta_SWAV,                 "Nintendo SWAV header"},
         {meta_VSF,                  "Square-Enix VSF header"},
         {meta_NDS_RRDS,             "Ridger Racer DS Header"},
         {meta_PS2_TK5,              "Tekken 5 Stream Header"},
@@ -1062,7 +1076,7 @@ static const meta_info meta_info_list[] = {
         {meta_NGC_SCK_DSP,          "The Scorpion King SCK Header"},
         {meta_CAFF,                 "Apple Core Audio Format File header"},
         {meta_PC_MXST,              "Lego Island MxSt Header"},
-        {meta_SAB,                  "Team17 SAB header"},
+        {meta_SAB,                  "Sensaura SAB header"},
         {meta_MAXIS_XA,             "Maxis XAI/XAJ Header"},
         {meta_EXAKT_SC,             "assumed Activision / EXAKT SC by extension"},
         {meta_WII_BNS,              "Nintendo BNS header"},
@@ -1121,7 +1135,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_IAB,              "Runtime .IAB header"},
         {meta_VS_STR,               "Square .VS STR* header"},
         {meta_LSF_N1NJ4N,           ".lsf !n1nj4n header"},
-        {meta_VAWX,                 "feelplus VAWX header"},
+        {meta_XWAV,                 "feelplus XWAV header"},
         {meta_RAW_SNDS,             "PC .snds raw header"},
         {meta_PS2_WMUS,             "assumed The Warriors Sony ADPCM by .wmus extension"},
         {meta_HYPERSCAN_KVAG,       "Mattel Hyperscan KVAG"},
@@ -1152,7 +1166,7 @@ static const meta_info meta_info_list[] = {
         {meta_MCA,                  "Capcom MCA header"},
         {meta_XB3D_ADX,             "Xenoblade 3D ADX header"},
         {meta_HCA,                  "CRI HCA header"},
-        {meta_PS2_SVAG_SNK,         "SNK SVAG header"},
+        {meta_SVAG_SNK,             "SNK SVAG header"},
         {meta_PS2_VDS_VDM,          "Procyon Studio VDS/VDM header"},
         {meta_FFMPEG,               "FFmpeg supported file format"},
         {meta_X360_CXS,             "tri-Crescendo CXS header"},
@@ -1166,9 +1180,7 @@ static const meta_info meta_info_list[] = {
         {meta_OGL,                  "Shin'en OGL header"},
         {meta_MC3,                  "Paradigm MC3 header"},
         {meta_GTD,                  "GTD/GHS header"},
-        {meta_TA_AAC_X360,          "tri-Ace AAC (X360) header"},
-        {meta_TA_AAC_PS3,           "tri-Ace AAC (PS3) header"},
-        {meta_TA_AAC_MOBILE,        "tri-Ace AAC (Mobile) header"},
+        {meta_TA_AAC,               "tri-Ace AAC header"},
         {meta_MTA2,                 "Konami MTA2 header"},
         {meta_NGC_ULW,              "Criterion ULW raw header"},
         {meta_XA_XA30,              "Reflections XA30 header"},
@@ -1219,10 +1231,9 @@ static const meta_info meta_info_list[] = {
         {meta_TXTP,                 "TXTP generic header"},
         {meta_SMC_SMH,              "Genki SMC+SMH header"},
         {meta_PPST,                 "Parappa PPST header"},
-        {meta_OPUS_PPP,             "AT9 OPUS header"},
+        {meta_SPS_N1,               "Nippon Ichi .SPS header"},
         {meta_UBI_BAO,              "Ubisoft BAO header"},
         {meta_DSP_SWITCH_AUDIO,     "UE4 Switch Audio header"},
-        {meta_TA_AAC_VITA,          "tri-Ace AAC (Vita) header"},
         {meta_SADF,                 "Procyon Studio SADF header"},
         {meta_H4M,                  "Hudson HVQM4 header"},
         {meta_ASF,                  "Argonaut ASF header"},
@@ -1300,9 +1311,14 @@ static const meta_info meta_info_list[] = {
         {meta_KTSR,                 "Koei Tecmo KTSR header"},
         {meta_KAT,                  "Sega KAT header"},
         {meta_PCM_SUCCESS,          "Success PCM header"},
+        {meta_ADP_KONAMI,           "Konami ADP header"},
+        {meta_SDRH,                 "feelplus SDRH header"},
+        {meta_WADY,                 "Marble WADY header"},
+        {meta_DSP_SQEX,             "Square Enix DSP header"},
+        {meta_DSP_WIIVOICE,         "Koei Tecmo WiiVoice header"},
 };
 
-void get_vgmstream_coding_description(VGMSTREAM *vgmstream, char *out, size_t out_size) {
+void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
     int i, list_length;
     const char *description;
 
@@ -1313,7 +1329,8 @@ void get_vgmstream_coding_description(VGMSTREAM *vgmstream, char *out, size_t ou
             layered_layout_data* layout_data = vgmstream->layout_data;
             get_vgmstream_coding_description(layout_data->layers[0], out, out_size);
             return;
-        } else if (vgmstream->layout_type == layout_segmented) {
+        }
+        else if (vgmstream->layout_type == layout_segmented) {
             segmented_layout_data* layout_data = vgmstream->layout_data;
             get_vgmstream_coding_description(layout_data->segments[0], out, out_size);
             return;
@@ -1342,7 +1359,8 @@ void get_vgmstream_coding_description(VGMSTREAM *vgmstream, char *out, size_t ou
 
     strncpy(out, description, out_size);
 }
-const char * get_vgmstream_layout_name(layout_t layout_type) {
+
+static const char* get_layout_name(layout_t layout_type) {
     int i, list_length;
 
     list_length = sizeof(layout_info_list) / sizeof(layout_info);
@@ -1353,40 +1371,103 @@ const char * get_vgmstream_layout_name(layout_t layout_type) {
 
     return NULL;
 }
-void get_vgmstream_layout_description(VGMSTREAM *vgmstream, char *out, size_t out_size) {
-    char temp[256];
-    VGMSTREAM* vgmstreamsub = NULL;
-    const char* description;
 
-    description = get_vgmstream_layout_name(vgmstream->layout_type);
+static int has_sublayouts(VGMSTREAM** vgmstreams, int count) {
+    int i;
+    for (i = 0; i < count; i++) {
+        if (vgmstreams[i]->layout_type == layout_segmented || vgmstreams[i]->layout_type == layout_layered)
+            return 1;
+    }
+    return 0;
+}
+
+/* Makes a mixed description, considering a segments/layers can contain segments/layers infinitely, like:
+ *
+ * "(L3[S2L2]S3)"        "(S3[L2[S2S2]])"
+ *  L3                    S3
+ *    S2                    L2
+ *      file                  S2
+ *      file                    file
+ *    file                      file
+ *    L2                      file
+ *      file                file
+ *      file                file
+ *
+ * ("mixed" is added externally)
+ */
+static int get_layout_mixed_description(VGMSTREAM* vgmstream, char* dst, int dst_size) {
+    int i, count, done = 0;
+    VGMSTREAM** vgmstreams = NULL;
+
+    if (vgmstream->layout_type == layout_layered) {
+        layered_layout_data* data = vgmstream->layout_data;
+        vgmstreams = data->layers;
+        count = data->layer_count;
+        done = snprintf(dst, dst_size, "L%i", count);
+    }
+    else if (vgmstream->layout_type == layout_segmented) {
+        segmented_layout_data* data = vgmstream->layout_data;
+        vgmstreams = data->segments;
+        count = data->segment_count;
+        done = snprintf(dst, dst_size, "S%i", count);
+    }
+
+    if (!vgmstreams || done == 0 || done >= dst_size)
+        return 0;
+
+    if (!has_sublayouts(vgmstreams, count))
+        return done;
+
+    if (done + 1 < dst_size) {
+        dst[done++] = '[';
+    }
+
+    for (i = 0; i < count; i++) {
+        done += get_layout_mixed_description(vgmstreams[i], dst + done, dst_size - done);
+    }
+
+    if (done + 1 < dst_size) {
+        dst[done++] = ']';
+    }
+
+    return done;
+}
+
+void get_vgmstream_layout_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
+    const char* description;
+    int mixed = 0;
+
+    description = get_layout_name(vgmstream->layout_type);
     if (!description) description = "INCONCEIVABLE";
 
     if (vgmstream->layout_type == layout_layered) {
-        vgmstreamsub = ((layered_layout_data*)vgmstream->layout_data)->layers[0];
-        snprintf(temp, sizeof(temp), "%s (%i layers)", description, ((layered_layout_data*)vgmstream->layout_data)->layer_count);
-    } else if (vgmstream->layout_type == layout_segmented) {
-        snprintf(temp, sizeof(temp), "%s (%i segments)", description, ((segmented_layout_data*)vgmstream->layout_data)->segment_count);
-        vgmstreamsub = ((segmented_layout_data*)vgmstream->layout_data)->segments[0];
-    } else {
-        snprintf(temp, sizeof(temp), "%s", description);
+        layered_layout_data* data = vgmstream->layout_data;
+        mixed = has_sublayouts(data->layers, data->layer_count);
+        if (!mixed)
+            snprintf(out, out_size, "%s (%i layers)", description, data->layer_count);
     }
-    strncpy(out, temp, out_size);
+    else if (vgmstream->layout_type == layout_segmented) {
+        segmented_layout_data* data = vgmstream->layout_data;
+        mixed = has_sublayouts(data->segments, data->segment_count);
+        if (!mixed)
+            snprintf(out, out_size, "%s (%i segments)", description, data->segment_count);
+    }
+    else {
+        snprintf(out, out_size, "%s", description);
+    }
 
-    /* layouts can contain layouts infinitely let's leave it at one level deep (most common) */
-    /* TODO: improve this somehow */
-    if (vgmstreamsub && vgmstreamsub->layout_type == layout_layered) {
-        description = get_vgmstream_layout_name(vgmstreamsub->layout_type);
-        snprintf(temp, sizeof(temp), " + %s (%i layers)", description, ((layered_layout_data*)vgmstreamsub->layout_data)->layer_count);
-        concatn(out_size, out, temp);
-    } else if (vgmstreamsub && vgmstreamsub->layout_type == layout_segmented) {
-        description = get_vgmstream_layout_name(vgmstreamsub->layout_type);
-        snprintf(temp, sizeof(temp), " + %s (%i segments)", description, ((segmented_layout_data*)vgmstream->layout_data)->segment_count);
-        concatn(out_size, out, temp);
+    if (mixed) {
+        char tmp[256] = {0};
+
+        get_layout_mixed_description(vgmstream, tmp, sizeof(tmp) - 1);
+        snprintf(out, out_size, "mixed (%s)", tmp);
+        return;
     }
 }
-void get_vgmstream_meta_description(VGMSTREAM *vgmstream, char *out, size_t out_size) {
+
+void get_vgmstream_meta_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
     int i, list_length;
-    const char *description;
+    const char* description;
 
     description = "THEY SHOULD HAVE SENT A POET";
 

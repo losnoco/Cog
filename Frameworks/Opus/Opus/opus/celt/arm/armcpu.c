@@ -31,7 +31,7 @@
 #include "config.h"
 #endif
 
-#ifdef OPUS_HAVE_RTCD
+#if defined(OPUS_HAVE_RTCD) && defined(__aarch64__)
 
 #include "armcpu.h"
 #include "cpu_support.h"

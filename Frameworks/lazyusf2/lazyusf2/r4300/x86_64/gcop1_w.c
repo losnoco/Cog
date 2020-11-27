@@ -38,6 +38,7 @@
 #include "r4300/instr_counters.h"
 #endif
 
+#ifdef DYNAREC
 void gencvt_s_w(usf_state_t * state)
 {
 #if defined(COUNT_INSTR)
@@ -69,4 +70,4 @@ void gencvt_d_w(usf_state_t * state)
    fstp_preg64_qword(state, RAX);
 #endif
 }
-
+#endif

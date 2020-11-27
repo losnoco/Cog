@@ -1,5 +1,6 @@
 #include "layout.h"
 #include "../vgmstream.h"
+#include "../decode.h"
 
 
 /* Decodes samples for interleaved streams.
@@ -82,7 +83,7 @@ void render_vgmstream_interleave(sample_t * buffer, int32_t sample_count, VGMSTR
             continue;
         }
 
-        samples_to_do = vgmstream_samples_to_do(samples_this_block, samples_per_frame, vgmstream);
+        samples_to_do = get_vgmstream_samples_to_do(samples_this_block, samples_per_frame, vgmstream);
         if (samples_to_do > sample_count - samples_written)
             samples_to_do = sample_count - samples_written;
 
@@ -144,6 +145,6 @@ void render_vgmstream_interleave(sample_t * buffer, int32_t sample_count, VGMSTR
     }
     return;
 fail:
-    VGM_LOG("layout_interleave: wrong values found\n");
+    VGM_LOG_ONCE("layout_interleave: wrong values found\n");
     memset(buffer + samples_written*vgmstream->channels, 0, (sample_count - samples_written) * vgmstream->channels * sizeof(sample_t));
 }

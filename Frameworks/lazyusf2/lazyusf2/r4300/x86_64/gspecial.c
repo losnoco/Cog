@@ -45,6 +45,7 @@
 #   define offsetof(TYPE,MEMBER) ((unsigned int) &((TYPE*)0)->MEMBER)
 #endif
 
+#ifdef DYNAREC
 void gensll(usf_state_t * state)
 {
 #if defined(COUNT_INSTR)
@@ -1075,4 +1076,4 @@ void genbreak(usf_state_t * state)
 {
    gencallinterp(state, (unsigned long long)state->current_instruction_table.BREAK, 0);
 }
-
+#endif

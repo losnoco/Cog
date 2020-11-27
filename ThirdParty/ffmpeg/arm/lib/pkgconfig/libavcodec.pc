@@ -1,0 +1,14 @@
+prefix=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm
+exec_prefix=${prefix}
+libdir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm/lib
+includedir=/Users/chris/Source/Repos/cog/ThirdParty/ffmpeg/arm/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 58.91.100
+Requires: libswresample >= 3.7.100, libavutil >= 56.51.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavcodec -pthread -liconv -lm
+Libs.private: 
+Cflags: -I${includedir}

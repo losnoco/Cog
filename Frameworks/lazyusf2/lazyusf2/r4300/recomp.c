@@ -49,27 +49,34 @@
 #include "ops.h"
 #include "tlb.h"
 
+#ifdef DYNAREC
 static void *malloc_exec(usf_state_t *, size_t size);
 static void free_exec(void *ptr, size_t length);
-
+#endif
 
 
 static void RSV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.RESERVED;
-   state->recomp_func = genreserved;
+#ifdef DYNAREC
+    state->recomp_func = genreserved;
+#endif
 }
 
 static void RFIN_BLOCK(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.FIN_BLOCK;
+#ifdef DYNAREC
    state->recomp_func = genfin_block;
+#endif
 }
 
 static void RNOTCOMPILED(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NOTCOMPILED;
+#ifdef DYNAREC
    state->recomp_func = gennotcompiled;
+#endif
 }
 
 static void recompile_standard_i_type(usf_state_t * state)
@@ -113,13 +120,17 @@ static void recompile_standard_cf_type(usf_state_t * state)
 static void RNOP(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NOP;
+#ifdef DYNAREC
    state->recomp_func = gennop;
+#endif
 }
 
 static void RSLL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SLL;
+#ifdef DYNAREC
    state->recomp_func = gensll;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -127,7 +138,9 @@ static void RSLL(usf_state_t * state)
 static void RSRL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SRL;
+#ifdef DYNAREC
    state->recomp_func = gensrl;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -135,7 +148,9 @@ static void RSRL(usf_state_t * state)
 static void RSRA(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SRA;
+#ifdef DYNAREC
    state->recomp_func = gensra;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -143,7 +158,9 @@ static void RSRA(usf_state_t * state)
 static void RSLLV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SLLV;
+#ifdef DYNAREC
    state->recomp_func = gensllv;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -151,7 +168,9 @@ static void RSLLV(usf_state_t * state)
 static void RSRLV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SRLV;
+#ifdef DYNAREC
    state->recomp_func = gensrlv;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -159,7 +178,9 @@ static void RSRLV(usf_state_t * state)
 static void RSRAV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SRAV;
+#ifdef DYNAREC
    state->recomp_func = gensrav;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -167,40 +188,52 @@ static void RSRAV(usf_state_t * state)
 static void RJR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.JR;
+#ifdef DYNAREC
    state->recomp_func = genjr;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RJALR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.JALR;
+#ifdef DYNAREC
    state->recomp_func = genjalr;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RSYSCALL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SYSCALL;
+#ifdef DYNAREC
    state->recomp_func = gensyscall;
+#endif
 }
 
 /* Idle loop hack from 64th Note */
 static void RBREAK(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.BREAK;
+#ifdef DYNAREC
    state->recomp_func = genbreak;
+#endif
 }
 
 static void RSYNC(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SYNC;
+#ifdef DYNAREC
    state->recomp_func = gensync;
+#endif
 }
 
 static void RMFHI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MFHI;
+#ifdef DYNAREC
    state->recomp_func = genmfhi;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -208,14 +241,18 @@ static void RMFHI(usf_state_t * state)
 static void RMTHI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MTHI;
+#ifdef DYNAREC
    state->recomp_func = genmthi;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RMFLO(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MFLO;
+#ifdef DYNAREC
    state->recomp_func = genmflo;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -223,14 +260,18 @@ static void RMFLO(usf_state_t * state)
 static void RMTLO(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MTLO;
+#ifdef DYNAREC
    state->recomp_func = genmtlo;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RDSLLV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSLLV;
+#ifdef DYNAREC
    state->recomp_func = gendsllv;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -238,7 +279,9 @@ static void RDSLLV(usf_state_t * state)
 static void RDSRLV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSRLV;
+#ifdef DYNAREC
    state->recomp_func = gendsrlv;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -246,7 +289,9 @@ static void RDSRLV(usf_state_t * state)
 static void RDSRAV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSRAV;
+#ifdef DYNAREC
    state->recomp_func = gendsrav;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -254,63 +299,81 @@ static void RDSRAV(usf_state_t * state)
 static void RMULT(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MULT;
+#ifdef DYNAREC
    state->recomp_func = genmult;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RMULTU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MULTU;
+#ifdef DYNAREC
    state->recomp_func = genmultu;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RDIV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DIV;
+#ifdef DYNAREC
    state->recomp_func = gendiv;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RDIVU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DIVU;
+#ifdef DYNAREC
    state->recomp_func = gendivu;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RDMULT(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DMULT;
+#ifdef DYNAREC
    state->recomp_func = gendmult;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RDMULTU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DMULTU;
+#ifdef DYNAREC
    state->recomp_func = gendmultu;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RDDIV(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DDIV;
+#ifdef DYNAREC
    state->recomp_func = genddiv;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RDDIVU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DDIVU;
+#ifdef DYNAREC
    state->recomp_func = genddivu;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RADD(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ADD;
+#ifdef DYNAREC
    state->recomp_func = genadd;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -318,7 +381,9 @@ static void RADD(usf_state_t * state)
 static void RADDU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ADDU;
+#ifdef DYNAREC
    state->recomp_func = genaddu;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -326,7 +391,9 @@ static void RADDU(usf_state_t * state)
 static void RSUB(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SUB;
+#ifdef DYNAREC
    state->recomp_func = gensub;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -334,7 +401,9 @@ static void RSUB(usf_state_t * state)
 static void RSUBU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SUBU;
+#ifdef DYNAREC
    state->recomp_func = gensubu;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -342,7 +411,9 @@ static void RSUBU(usf_state_t * state)
 static void RAND(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.AND;
+#ifdef DYNAREC
    state->recomp_func = genand;
+#endif
    recompile_standard_r_type(state);
    if(state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -350,7 +421,9 @@ static void RAND(usf_state_t * state)
 static void ROR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.OR;
+#ifdef DYNAREC
    state->recomp_func = genor;
+#endif
    recompile_standard_r_type(state);
    if(state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -358,7 +431,9 @@ static void ROR(usf_state_t * state)
 static void RXOR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.XOR;
+#ifdef DYNAREC
    state->recomp_func = genxor;
+#endif
    recompile_standard_r_type(state);
    if(state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -366,7 +441,9 @@ static void RXOR(usf_state_t * state)
 static void RNOR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NOR;
+#ifdef DYNAREC
    state->recomp_func = gennor;
+#endif
    recompile_standard_r_type(state);
    if(state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -374,7 +451,9 @@ static void RNOR(usf_state_t * state)
 static void RSLT(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SLT;
+#ifdef DYNAREC
    state->recomp_func = genslt;
+#endif
    recompile_standard_r_type(state);
    if(state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -382,7 +461,9 @@ static void RSLT(usf_state_t * state)
 static void RSLTU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SLTU;
+#ifdef DYNAREC
    state->recomp_func = gensltu;
+#endif
    recompile_standard_r_type(state);
    if(state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -390,7 +471,9 @@ static void RSLTU(usf_state_t * state)
 static void RDADD(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DADD;
+#ifdef DYNAREC
    state->recomp_func = gendadd;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -398,7 +481,9 @@ static void RDADD(usf_state_t * state)
 static void RDADDU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DADDU;
+#ifdef DYNAREC
    state->recomp_func = gendaddu;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -406,7 +491,9 @@ static void RDADDU(usf_state_t * state)
 static void RDSUB(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSUB;
+#ifdef DYNAREC
    state->recomp_func = gendsub;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -414,7 +501,9 @@ static void RDSUB(usf_state_t * state)
 static void RDSUBU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSUBU;
+#ifdef DYNAREC
    state->recomp_func = gendsubu;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -422,44 +511,58 @@ static void RDSUBU(usf_state_t * state)
 static void RTGE(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTGEU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTLT(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTLTU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTEQ(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TEQ;
+#ifdef DYNAREC
    state->recomp_func = genteq;
+#endif
    recompile_standard_r_type(state);
 }
 
 static void RTNE(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RDSLL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSLL;
+#ifdef DYNAREC
    state->recomp_func = gendsll;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -467,7 +570,9 @@ static void RDSLL(usf_state_t * state)
 static void RDSRL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSRL;
+#ifdef DYNAREC
    state->recomp_func = gendsrl;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -475,7 +580,9 @@ static void RDSRL(usf_state_t * state)
 static void RDSRA(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSRA;
+#ifdef DYNAREC
    state->recomp_func = gendsra;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -483,7 +590,9 @@ static void RDSRA(usf_state_t * state)
 static void RDSLL32(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSLL32;
+#ifdef DYNAREC
    state->recomp_func = gendsll32;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -491,7 +600,9 @@ static void RDSLL32(usf_state_t * state)
 static void RDSRL32(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSRL32;
+#ifdef DYNAREC
    state->recomp_func = gendsrl32;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -499,7 +610,9 @@ static void RDSRL32(usf_state_t * state)
 static void RDSRA32(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DSRA32;
+#ifdef DYNAREC
    state->recomp_func = gendsra32;
+#endif
    recompile_standard_r_type(state);
    if (state->dst->f.r.rd == state->reg) RNOP(state);
 }
@@ -524,7 +637,9 @@ static void RBLTZ(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BLTZ;
+#ifdef DYNAREC
    state->recomp_func = genbltz;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -532,13 +647,17 @@ static void RBLTZ(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BLTZ_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbltz_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BLTZ_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbltz_out;
+#endif
    }
 }
 
@@ -546,7 +665,9 @@ static void RBGEZ(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BGEZ;
+#ifdef DYNAREC
    state->recomp_func = genbgez;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -554,13 +675,17 @@ static void RBGEZ(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BGEZ_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbgez_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BGEZ_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbgez_out;
+#endif
    }
 }
 
@@ -568,7 +693,9 @@ static void RBLTZL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BLTZL;
+#ifdef DYNAREC
    state->recomp_func = genbltzl;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -576,13 +703,17 @@ static void RBLTZL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BLTZL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbltzl_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BLTZL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbltzl_out;
+#endif
    }
 }
 
@@ -590,7 +721,9 @@ static void RBGEZL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BGEZL;
+#ifdef DYNAREC
    state->recomp_func = genbgezl;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -598,57 +731,75 @@ static void RBGEZL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BGEZL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbgezl_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BGEZL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbgezl_out;
+#endif
    }
 }
 
 static void RTGEI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTGEIU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTLTI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTLTIU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTEQI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RTNEI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
 }
 
 static void RBLTZAL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BLTZAL;
+#ifdef DYNAREC
    state->recomp_func = genbltzal;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -656,13 +807,17 @@ static void RBLTZAL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BLTZAL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbltzal_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BLTZAL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbltzal_out;
+#endif
    }
 }
 
@@ -670,7 +825,9 @@ static void RBGEZAL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BGEZAL;
+#ifdef DYNAREC
    state->recomp_func = genbgezal;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -678,13 +835,17 @@ static void RBGEZAL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BGEZAL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbgezal_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BGEZAL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbgezal_out;
+#endif
    }
 }
 
@@ -692,7 +853,9 @@ static void RBLTZALL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BLTZALL;
+#ifdef DYNAREC
    state->recomp_func = genbltzall;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -700,13 +863,17 @@ static void RBLTZALL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BLTZALL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbltzall_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BLTZALL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbltzall_out;
+#endif
    }
 }
 
@@ -714,7 +881,9 @@ static void RBGEZALL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BGEZALL;
+#ifdef DYNAREC
    state->recomp_func = genbgezall;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -722,13 +891,17 @@ static void RBGEZALL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BGEZALL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbgezall_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BGEZALL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbgezall_out;
+#endif
    }
 }
 
@@ -747,31 +920,41 @@ static void (*recomp_regimm[32])(usf_state_t *) =
 static void RTLBR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TLBR;
+#ifdef DYNAREC
    state->recomp_func = gentlbr;
+#endif
 }
 
 static void RTLBWI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TLBWI;
+#ifdef DYNAREC
    state->recomp_func = gentlbwi;
+#endif
 }
 
 static void RTLBWR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TLBWR;
+#ifdef DYNAREC
    state->recomp_func = gentlbwr;
+#endif
 }
 
 static void RTLBP(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TLBP;
+#ifdef DYNAREC
    state->recomp_func = gentlbp;
+#endif
 }
 
 static void RERET(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ERET;
+#ifdef DYNAREC
    state->recomp_func = generet;
+#endif
 }
 
 static void (*recomp_tlb[64])(usf_state_t *) =
@@ -793,7 +976,9 @@ static void (*recomp_tlb[64])(usf_state_t *) =
 static void RMFC0(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MFC0;
+#ifdef DYNAREC
    state->recomp_func = genmfc0;
+#endif
    recompile_standard_r_type(state);
    state->dst->f.r.rd = (long long*)(state->g_cp0_regs + ((state->src >> 11) & 0x1F));
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
@@ -803,7 +988,9 @@ static void RMFC0(usf_state_t * state)
 static void RMTC0(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MTC0;
+#ifdef DYNAREC
    state->recomp_func = genmtc0;
+#endif
    recompile_standard_r_type(state);
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
 }
@@ -829,7 +1016,9 @@ static void RBC1F(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BC1F;
+#ifdef DYNAREC
    state->recomp_func = genbc1f;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -837,13 +1026,17 @@ static void RBC1F(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BC1F_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbc1f_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BC1F_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbc1f_out;
+#endif
    }
 }
 
@@ -851,7 +1044,9 @@ static void RBC1T(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BC1T;
+#ifdef DYNAREC
    state->recomp_func = genbc1t;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -859,13 +1054,17 @@ static void RBC1T(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BC1T_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbc1t_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BC1T_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbc1t_out;
+#endif
    }
 }
 
@@ -873,7 +1072,9 @@ static void RBC1FL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BC1FL;
+#ifdef DYNAREC
    state->recomp_func = genbc1fl;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -881,13 +1082,17 @@ static void RBC1FL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BC1FL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbc1fl_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BC1FL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbc1fl_out;
+#endif
    }
 }
 
@@ -895,7 +1100,9 @@ static void RBC1TL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BC1TL;
+#ifdef DYNAREC
    state->recomp_func = genbc1tl;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -903,13 +1110,17 @@ static void RBC1TL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BC1TL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbc1tl_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BC1TL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbc1tl_out;
+#endif
    }
 }
 
@@ -926,245 +1137,315 @@ static void (*recomp_bc[4])(usf_state_t *) =
 static void RADD_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ADD_S;
+#ifdef DYNAREC
    state->recomp_func = genadd_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RSUB_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SUB_S;
+#ifdef DYNAREC
    state->recomp_func = gensub_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RMUL_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MUL_S;
+#ifdef DYNAREC
    state->recomp_func = genmul_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RDIV_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DIV_S;
+#ifdef DYNAREC
    state->recomp_func = gendiv_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RSQRT_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SQRT_S;
+#ifdef DYNAREC
    state->recomp_func = gensqrt_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RABS_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ABS_S;
+#ifdef DYNAREC
    state->recomp_func = genabs_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RMOV_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MOV_S;
+#ifdef DYNAREC
    state->recomp_func = genmov_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RNEG_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NEG_S;
+#ifdef DYNAREC
    state->recomp_func = genneg_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RROUND_L_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ROUND_L_S;
+#ifdef DYNAREC
    state->recomp_func = genround_l_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RTRUNC_L_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TRUNC_L_S;
+#ifdef DYNAREC
    state->recomp_func = gentrunc_l_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCEIL_L_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CEIL_L_S;
+#ifdef DYNAREC
    state->recomp_func = genceil_l_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RFLOOR_L_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.FLOOR_L_S;
+#ifdef DYNAREC
    state->recomp_func = genfloor_l_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RROUND_W_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ROUND_W_S;
+#ifdef DYNAREC
    state->recomp_func = genround_w_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RTRUNC_W_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TRUNC_W_S;
+#ifdef DYNAREC
    state->recomp_func = gentrunc_w_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCEIL_W_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CEIL_W_S;
+#ifdef DYNAREC
    state->recomp_func = genceil_w_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RFLOOR_W_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.FLOOR_W_S;
+#ifdef DYNAREC
    state->recomp_func = genfloor_w_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_D_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_D_S;
+#ifdef DYNAREC
    state->recomp_func = gencvt_d_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_W_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_W_S;
+#ifdef DYNAREC
    state->recomp_func = gencvt_w_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_L_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_L_S;
+#ifdef DYNAREC
    state->recomp_func = gencvt_l_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_F_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_F_S;
+#ifdef DYNAREC
    state->recomp_func = genc_f_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_UN_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_UN_S;
+#ifdef DYNAREC
    state->recomp_func = genc_un_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_EQ_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_EQ_S;
+#ifdef DYNAREC
    state->recomp_func = genc_eq_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_UEQ_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_UEQ_S;
+#ifdef DYNAREC
    state->recomp_func = genc_ueq_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_OLT_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_OLT_S;
+#ifdef DYNAREC
    state->recomp_func = genc_olt_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_ULT_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_ULT_S;
+#ifdef DYNAREC
    state->recomp_func = genc_ult_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_OLE_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_OLE_S;
+#ifdef DYNAREC
    state->recomp_func = genc_ole_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_ULE_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_ULE_S;
+#ifdef DYNAREC
    state->recomp_func = genc_ule_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_SF_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_SF_S;
+#ifdef DYNAREC
    state->recomp_func = genc_sf_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGLE_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGLE_S;
+#ifdef DYNAREC
    state->recomp_func = genc_ngle_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_SEQ_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_SEQ_S;
+#ifdef DYNAREC
    state->recomp_func = genc_seq_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGL_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGL_S;
+#ifdef DYNAREC
    state->recomp_func = genc_ngl_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_LT_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_LT_S;
+#ifdef DYNAREC
    state->recomp_func = genc_lt_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGE_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGE_S;
+#ifdef DYNAREC
    state->recomp_func = genc_nge_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_LE_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_LE_S;
+#ifdef DYNAREC
    state->recomp_func = genc_le_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGT_S(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGT_S;
+#ifdef DYNAREC
    state->recomp_func = genc_ngt_s;
+#endif
    recompile_standard_cf_type(state);
 }
 
@@ -1187,245 +1468,315 @@ static void (*recomp_s[64])(usf_state_t *) =
 static void RADD_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ADD_D;
+#ifdef DYNAREC
    state->recomp_func = genadd_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RSUB_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SUB_D;
+#ifdef DYNAREC
    state->recomp_func = gensub_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RMUL_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MUL_D;
+#ifdef DYNAREC
    state->recomp_func = genmul_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RDIV_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DIV_D;
+#ifdef DYNAREC
    state->recomp_func = gendiv_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RSQRT_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SQRT_D;
+#ifdef DYNAREC
    state->recomp_func = gensqrt_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RABS_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ABS_D;
+#ifdef DYNAREC
    state->recomp_func = genabs_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RMOV_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MOV_D;
+#ifdef DYNAREC
    state->recomp_func = genmov_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RNEG_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NEG_D;
+#ifdef DYNAREC
    state->recomp_func = genneg_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RROUND_L_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ROUND_L_D;
+#ifdef DYNAREC
    state->recomp_func = genround_l_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RTRUNC_L_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TRUNC_L_D;
+#ifdef DYNAREC
    state->recomp_func = gentrunc_l_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCEIL_L_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CEIL_L_D;
+#ifdef DYNAREC
    state->recomp_func = genceil_l_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RFLOOR_L_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.FLOOR_L_D;
+#ifdef DYNAREC
    state->recomp_func = genfloor_l_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RROUND_W_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ROUND_W_D;
+#ifdef DYNAREC
    state->recomp_func = genround_w_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RTRUNC_W_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.TRUNC_W_D;
+#ifdef DYNAREC
    state->recomp_func = gentrunc_w_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCEIL_W_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CEIL_W_D;
+#ifdef DYNAREC
    state->recomp_func = genceil_w_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RFLOOR_W_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.FLOOR_W_D;
+#ifdef DYNAREC
    state->recomp_func = genfloor_w_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_S_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_S_D;
+#ifdef DYNAREC
    state->recomp_func = gencvt_s_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_W_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_W_D;
+#ifdef DYNAREC
    state->recomp_func = gencvt_w_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_L_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_L_D;
+#ifdef DYNAREC
    state->recomp_func = gencvt_l_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_F_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_F_D;
+#ifdef DYNAREC
    state->recomp_func = genc_f_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_UN_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_UN_D;
+#ifdef DYNAREC
    state->recomp_func = genc_un_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_EQ_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_EQ_D;
+#ifdef DYNAREC
    state->recomp_func = genc_eq_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_UEQ_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_UEQ_D;
+#ifdef DYNAREC
    state->recomp_func = genc_ueq_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_OLT_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_OLT_D;
+#ifdef DYNAREC
    state->recomp_func = genc_olt_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_ULT_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_ULT_D;
+#ifdef DYNAREC
    state->recomp_func = genc_ult_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_OLE_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_OLE_D;
+#ifdef DYNAREC
    state->recomp_func = genc_ole_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_ULE_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_ULE_D;
+#ifdef DYNAREC
    state->recomp_func = genc_ule_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_SF_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_SF_D;
+#ifdef DYNAREC
    state->recomp_func = genc_sf_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGLE_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGLE_D;
+#ifdef DYNAREC
    state->recomp_func = genc_ngle_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_SEQ_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_SEQ_D;
+#ifdef DYNAREC
    state->recomp_func = genc_seq_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGL_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGL_D;
+#ifdef DYNAREC
    state->recomp_func = genc_ngl_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_LT_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_LT_D;
+#ifdef DYNAREC
    state->recomp_func = genc_lt_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGE_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGE_D;
+#ifdef DYNAREC
    state->recomp_func = genc_nge_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_LE_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_LE_D;
+#ifdef DYNAREC
    state->recomp_func = genc_le_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RC_NGT_D(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.C_NGT_D;
+#ifdef DYNAREC
    state->recomp_func = genc_ngt_d;
+#endif
    recompile_standard_cf_type(state);
 }
 
@@ -1448,14 +1799,18 @@ static void (*recomp_d[64])(usf_state_t *) =
 static void RCVT_S_W(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_S_W;
+#ifdef DYNAREC
    state->recomp_func = gencvt_s_w;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_D_W(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_D_W;
+#ifdef DYNAREC
    state->recomp_func = gencvt_d_w;
+#endif
    recompile_standard_cf_type(state);
 }
 
@@ -1478,14 +1833,18 @@ static void (*recomp_w[64])(usf_state_t *) =
 static void RCVT_S_L(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_S_L;
+#ifdef DYNAREC
    state->recomp_func = gencvt_s_l;
+#endif
    recompile_standard_cf_type(state);
 }
 
 static void RCVT_D_L(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CVT_D_L;
+#ifdef DYNAREC
    state->recomp_func = gencvt_d_l;
+#endif
    recompile_standard_cf_type(state);
 }
 
@@ -1508,7 +1867,9 @@ static void (*recomp_l[64])(usf_state_t *) =
 static void RMFC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MFC1;
+#ifdef DYNAREC
    state->recomp_func = genmfc1;
+#endif
    recompile_standard_r_type(state);
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
    if (state->dst->f.r.rt == state->reg) RNOP(state);
@@ -1517,7 +1878,9 @@ static void RMFC1(usf_state_t * state)
 static void RDMFC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DMFC1;
+#ifdef DYNAREC
    state->recomp_func = gendmfc1;
+#endif
    recompile_standard_r_type(state);
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
    if (state->dst->f.r.rt == state->reg) RNOP(state);
@@ -1526,7 +1889,9 @@ static void RDMFC1(usf_state_t * state)
 static void RCFC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CFC1;
+#ifdef DYNAREC
    state->recomp_func = gencfc1;
+#endif
    recompile_standard_r_type(state);
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
    if (state->dst->f.r.rt == state->reg) RNOP(state);
@@ -1536,7 +1901,9 @@ static void RMTC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.MTC1;
    recompile_standard_r_type(state);
+#ifdef DYNAREC
    state->recomp_func = genmtc1;
+#endif
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
 }
 
@@ -1544,7 +1911,9 @@ static void RDMTC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DMTC1;
    recompile_standard_r_type(state);
+#ifdef DYNAREC
    state->recomp_func = gendmtc1;
+#endif
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
 }
 
@@ -1552,7 +1921,9 @@ static void RCTC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.CTC1;
    recompile_standard_r_type(state);
+#ifdef DYNAREC
    state->recomp_func = genctc1;
+#endif
    state->dst->f.r.nrd = (state->src >> 11) & 0x1F;
 }
 
@@ -1607,7 +1978,9 @@ static void RJ(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.J;
+#ifdef DYNAREC
    state->recomp_func = genj;
+#endif
    recompile_standard_j_type(state);
    target = (state->dst->f.j.inst_index<<2) | (state->dst->addr & 0xF0000000);
    if (target == state->dst->addr)
@@ -1615,13 +1988,17 @@ static void RJ(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.J_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genj_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.J_OUT;
+#ifdef DYNAREC
       state->recomp_func = genj_out;
+#endif
    }
 }
 
@@ -1629,7 +2006,9 @@ static void RJAL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.JAL;
+#ifdef DYNAREC
    state->recomp_func = genjal;
+#endif
    recompile_standard_j_type(state);
    target = (state->dst->f.j.inst_index<<2) | (state->dst->addr & 0xF0000000);
    if (target == state->dst->addr)
@@ -1637,13 +2016,17 @@ static void RJAL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.JAL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genjal_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.JAL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genjal_out;
+#endif
    }
 }
 
@@ -1651,7 +2034,9 @@ static void RBEQ(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BEQ;
+#ifdef DYNAREC
    state->recomp_func = genbeq;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1659,13 +2044,17 @@ static void RBEQ(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BEQ_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbeq_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BEQ_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbeq_out;
+#endif
    }
 }
 
@@ -1673,7 +2062,9 @@ static void RBNE(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BNE;
+#ifdef DYNAREC
    state->recomp_func = genbne;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1681,13 +2072,17 @@ static void RBNE(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BNE_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbne_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BNE_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbne_out;
+#endif
    }
 }
 
@@ -1695,7 +2090,9 @@ static void RBLEZ(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BLEZ;
+#ifdef DYNAREC
    state->recomp_func = genblez;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1703,13 +2100,17 @@ static void RBLEZ(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BLEZ_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genblez_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BLEZ_OUT;
+#ifdef DYNAREC
       state->recomp_func = genblez_out;
+#endif
    }
 }
 
@@ -1717,7 +2118,9 @@ static void RBGTZ(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BGTZ;
+#ifdef DYNAREC
    state->recomp_func = genbgtz;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1725,20 +2128,26 @@ static void RBGTZ(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BGTZ_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbgtz_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BGTZ_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbgtz_out;
+#endif
    }
 }
 
 static void RADDI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ADDI;
+#ifdef DYNAREC
    state->recomp_func = genaddi;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1746,7 +2155,9 @@ static void RADDI(usf_state_t * state)
 static void RADDIU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ADDIU;
+#ifdef DYNAREC
    state->recomp_func = genaddiu;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1754,7 +2165,9 @@ static void RADDIU(usf_state_t * state)
 static void RSLTI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SLTI;
+#ifdef DYNAREC
    state->recomp_func = genslti;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1762,7 +2175,9 @@ static void RSLTI(usf_state_t * state)
 static void RSLTIU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SLTIU;
+#ifdef DYNAREC
    state->recomp_func = gensltiu;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1770,7 +2185,9 @@ static void RSLTIU(usf_state_t * state)
 static void RANDI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ANDI;
+#ifdef DYNAREC
    state->recomp_func = genandi;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1778,7 +2195,9 @@ static void RANDI(usf_state_t * state)
 static void RORI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.ORI;
+#ifdef DYNAREC
    state->recomp_func = genori;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1786,7 +2205,9 @@ static void RORI(usf_state_t * state)
 static void RXORI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.XORI;
+#ifdef DYNAREC
    state->recomp_func = genxori;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1794,7 +2215,9 @@ static void RXORI(usf_state_t * state)
 static void RLUI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LUI;
+#ifdef DYNAREC
    state->recomp_func = genlui;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1813,7 +2236,9 @@ static void RBEQL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BEQL;
+#ifdef DYNAREC
    state->recomp_func = genbeql;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1821,13 +2246,17 @@ static void RBEQL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BEQL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbeql_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BEQL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbeql_out;
+#endif
    }
 }
 
@@ -1835,7 +2264,9 @@ static void RBNEL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BNEL;
+#ifdef DYNAREC
    state->recomp_func = genbnel;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1843,13 +2274,17 @@ static void RBNEL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BNEL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbnel_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BNEL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbnel_out;
+#endif
    }
 }
 
@@ -1857,7 +2292,9 @@ static void RBLEZL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BLEZL;
+#ifdef DYNAREC
    state->recomp_func = genblezl;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1865,13 +2302,17 @@ static void RBLEZL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BLEZL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genblezl_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BLEZL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genblezl_out;
+#endif
    }
 }
 
@@ -1879,7 +2320,9 @@ static void RBGTZL(usf_state_t * state)
 {
    unsigned int target;
    state->dst->ops = state->current_instruction_table.BGTZL;
+#ifdef DYNAREC
    state->recomp_func = genbgtzl;
+#endif
    recompile_standard_i_type(state);
    target = state->dst->addr + state->dst->f.i.immediate*4 + 4;
    if (target == state->dst->addr)
@@ -1887,20 +2330,26 @@ static void RBGTZL(usf_state_t * state)
       if (state->check_nop)
       {
          state->dst->ops = state->current_instruction_table.BGTZL_IDLE;
+#ifdef DYNAREC
          state->recomp_func = genbgtzl_idle;
+#endif
       }
    }
    else if (target < state->dst_block->start || target >= state->dst_block->end || state->dst->addr == (state->dst_block->end-4))
    {
       state->dst->ops = state->current_instruction_table.BGTZL_OUT;
+#ifdef DYNAREC
       state->recomp_func = genbgtzl_out;
+#endif
    }
 }
 
 static void RDADDI(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DADDI;
+#ifdef DYNAREC
    state->recomp_func = gendaddi;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1908,7 +2357,9 @@ static void RDADDI(usf_state_t * state)
 static void RDADDIU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.DADDIU;
+#ifdef DYNAREC
    state->recomp_func = gendaddiu;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1916,7 +2367,9 @@ static void RDADDIU(usf_state_t * state)
 static void RLDL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LDL;
+#ifdef DYNAREC
    state->recomp_func = genldl;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1924,7 +2377,9 @@ static void RLDL(usf_state_t * state)
 static void RLDR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LDR;
+#ifdef DYNAREC
    state->recomp_func = genldr;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1932,7 +2387,9 @@ static void RLDR(usf_state_t * state)
 static void RLB(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LB;
+#ifdef DYNAREC
    state->recomp_func = genlb;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1940,7 +2397,9 @@ static void RLB(usf_state_t * state)
 static void RLH(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LH;
+#ifdef DYNAREC
    state->recomp_func = genlh;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1948,7 +2407,9 @@ static void RLH(usf_state_t * state)
 static void RLWL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LWL;
+#ifdef DYNAREC
    state->recomp_func = genlwl;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1956,7 +2417,9 @@ static void RLWL(usf_state_t * state)
 static void RLW(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LW;
+#ifdef DYNAREC
    state->recomp_func = genlw;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1964,7 +2427,9 @@ static void RLW(usf_state_t * state)
 static void RLBU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LBU;
+#ifdef DYNAREC
    state->recomp_func = genlbu;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1972,7 +2437,9 @@ static void RLBU(usf_state_t * state)
 static void RLHU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LHU;
+#ifdef DYNAREC
    state->recomp_func = genlhu;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1980,7 +2447,9 @@ static void RLHU(usf_state_t * state)
 static void RLWR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LWR;
+#ifdef DYNAREC
    state->recomp_func = genlwr;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1988,7 +2457,9 @@ static void RLWR(usf_state_t * state)
 static void RLWU(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LWU;
+#ifdef DYNAREC
    state->recomp_func = genlwu;
+#endif
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -1996,61 +2467,79 @@ static void RLWU(usf_state_t * state)
 static void RSB(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SB;
+#ifdef DYNAREC
    state->recomp_func = gensb;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RSH(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SH;
+#ifdef DYNAREC
    state->recomp_func = gensh;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RSWL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SWL;
+#ifdef DYNAREC
    state->recomp_func = genswl;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RSW(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SW;
+#ifdef DYNAREC
    state->recomp_func = gensw;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RSDL(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SDL;
+#ifdef DYNAREC
    state->recomp_func = gensdl;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RSDR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SDR;
+#ifdef DYNAREC
    state->recomp_func = gensdr;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RSWR(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SWR;
+#ifdef DYNAREC
    state->recomp_func = genswr;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RCACHE(usf_state_t * state)
 {
+#ifdef DYNAREC
    state->recomp_func = gencache;
+#endif
    state->dst->ops = state->current_instruction_table.CACHE;
 }
 
 static void RLL(usf_state_t * state)
 {
+#ifdef DYNAREC
    state->recomp_func = genll;
+#endif
    state->dst->ops = state->current_instruction_table.LL;
    recompile_standard_i_type(state);
    if(state->dst->f.i.rt == state->reg) RNOP(state);
@@ -2059,28 +2548,36 @@ static void RLL(usf_state_t * state)
 static void RLWC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LWC1;
+#ifdef DYNAREC
    state->recomp_func = genlwc1;
+#endif
    recompile_standard_lf_type(state);
 }
 
 static void RLLD(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RLDC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LDC1;
+#ifdef DYNAREC
    state->recomp_func = genldc1;
+#endif
    recompile_standard_lf_type(state);
 }
 
 static void RLD(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.LD;
+#ifdef DYNAREC
    state->recomp_func = genld;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -2088,7 +2585,9 @@ static void RLD(usf_state_t * state)
 static void RSC(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SC;
+#ifdef DYNAREC
    state->recomp_func = gensc;
+#endif
    recompile_standard_i_type(state);
    if (state->dst->f.i.rt == state->reg) RNOP(state);
 }
@@ -2096,28 +2595,36 @@ static void RSC(usf_state_t * state)
 static void RSWC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SWC1;
+#ifdef DYNAREC
    state->recomp_func = genswc1;
+#endif
    recompile_standard_lf_type(state);
 }
 
 static void RSCD(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.NI;
+#ifdef DYNAREC
    state->recomp_func = genni;
+#endif
    recompile_standard_i_type(state);
 }
 
 static void RSDC1(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SDC1;
+#ifdef DYNAREC
    state->recomp_func = gensdc1;
+#endif
    recompile_standard_lf_type(state);
 }
 
 static void RSD(usf_state_t * state)
 {
    state->dst->ops = state->current_instruction_table.SD;
+#ifdef DYNAREC
    state->recomp_func = gensd;
+#endif
    recompile_standard_i_type(state);
 }
 
@@ -2156,6 +2663,7 @@ void init_block(usf_state_t * state, precomp_block *block)
   if (!block->block)
   {
     size_t memsize = get_block_memsize(block);
+#ifdef DYNAREC
     if (state->r4300emu == CORE_DYNAREC) {
         block->block = (precomp_instr *) malloc_exec(state, memsize);
         if (!block->block) {
@@ -2163,7 +2671,9 @@ void init_block(usf_state_t * state, precomp_block *block)
             return;
         }
     }
-    else {
+    else
+#endif
+    {
         block->block = (precomp_instr *) malloc(memsize);
         if (!block->block) {
             DebugMessage(state, M64MSG_ERROR, "Memory error: couldn't allocate memory for cached interpreter.");
@@ -2175,6 +2685,7 @@ void init_block(usf_state_t * state, precomp_block *block)
     already_exist = 0;
   }
 
+#ifdef DYNAREC
   if (state->r4300emu == CORE_DYNAREC)
   {
     if (!block->code)
@@ -2202,6 +2713,7 @@ void init_block(usf_state_t * state, precomp_block *block)
     init_assembler(state, NULL, 0, NULL, 0);
     init_cache(state, block->block);
   }
+#endif
    
   if (!already_exist)
   {
@@ -2209,10 +2721,14 @@ void init_block(usf_state_t * state, precomp_block *block)
     {
       state->dst = block->block + i;
       state->dst->addr = block->start + i*4;
+#ifdef DYNAREC
       state->dst->reg_cache_infos.need_map = 0;
+#endif
       state->dst->local_addr = state->code_length;
       RNOTCOMPILED(state);
+#ifdef DYNAREC
       if (state->r4300emu == CORE_DYNAREC) state->recomp_func(state);
+#endif
     }
   state->init_length = state->code_length;
   }
@@ -2222,12 +2738,15 @@ void init_block(usf_state_t * state, precomp_block *block)
     for (i=0; i<length; i++)
     {
       state->dst = block->block + i;
+#ifdef DYNAREC
       state->dst->reg_cache_infos.need_map = 0;
+#endif
       state->dst->local_addr = i * (state->init_length / length);
       state->dst->ops = state->current_instruction_table.NOTCOMPILED;
     }
   }
    
+#ifdef DYNAREC
   if (state->r4300emu == CORE_DYNAREC)
   {
     free_all_registers(state);
@@ -2237,6 +2756,7 @@ void init_block(usf_state_t * state, precomp_block *block)
     block->max_code_length = state->max_code_length;
     free_assembler(state, &block->jumps_table, &block->jumps_number, &block->riprel_table, &block->riprel_number);
   }
+#endif
    
   /* here we're marking the block as a valid code even if it's not compiled
    * yet as the game should have already set up the code correctly.
@@ -2309,16 +2829,22 @@ void init_block(usf_state_t * state, precomp_block *block)
 
 void free_block(usf_state_t * state, precomp_block *block)
 {
+#ifdef DYNAREC
     size_t memsize = get_block_memsize(block);
+#endif
 
     if (block->block) {
+#ifdef DYNAREC
         if (state->r4300emu == CORE_DYNAREC)
             free_exec(block->block, memsize);
         else
+#endif
             free(block->block);
         block->block = NULL;
     }
+#ifdef DYNAREC
     if (block->code) { free_exec(block->code, block->max_code_length); block->code = NULL; }
+#endif
     if (block->jumps_table) { free(block->jumps_table); block->jumps_table = NULL; }
     if (block->riprel_table) { free(block->riprel_table); block->riprel_table = NULL; }
 }
@@ -2335,6 +2861,7 @@ void recompile_block(usf_state_t * state, int *source, precomp_block *block, uns
    //for (i=0; i<16; i++) block->md5[i] = 0;
    block->adler32 = 0;
    
+#ifdef DYNAREC
    if (state->r4300emu == CORE_DYNAREC)
      {
     state->code_length = block->code_length;
@@ -2343,6 +2870,7 @@ void recompile_block(usf_state_t * state, int *source, precomp_block *block, uns
     init_assembler(state, block->jumps_table, block->jumps_number, block->riprel_table, block->riprel_number);
     init_cache(state, block->block + (func & 0xFFF) / 4);
      }
+#endif
 
    for (i = (func & 0xFFF) / 4; finished != 2; i++)
      {
@@ -2359,11 +2887,15 @@ void recompile_block(usf_state_t * state, int *source, precomp_block *block, uns
     state->check_nop = source[i+1] == 0;
     state->dst = block->block + i;
     state->dst->addr = block->start + i*4;
+#ifdef DYNAREC
     state->dst->reg_cache_infos.need_map = 0;
+#endif
     state->dst->local_addr = state->code_length;
     state->recomp_func = NULL;
     recomp_ops[((state->src >> 26) & 0x3F)](state);
+#ifdef DYNAREC
     if (state->r4300emu == CORE_DYNAREC) state->recomp_func(state);
+#endif
     state->dst = block->block + i;
 
     /*if ((dst+1)->ops != NOTCOMPILED && !delay_slot_compiled &&
@@ -2375,7 +2907,9 @@ void recompile_block(usf_state_t * state, int *source, precomp_block *block, uns
     if (state->delay_slot_compiled)
       {
          state->delay_slot_compiled--;
+#ifdef DYNAREC
          free_all_registers(state);
+#endif
       }
     
     if (i >= length-2+(length>>2)) finished = 2;
@@ -2396,7 +2930,9 @@ void recompile_block(usf_state_t * state, int *source, precomp_block *block, uns
      {
     state->dst = block->block + i;
     state->dst->addr = block->start + i*4;
+#ifdef DYNAREC
     state->dst->reg_cache_infos.need_map = 0;
+#endif
     state->dst->local_addr = state->code_length;
     RFIN_BLOCK(state);
     if (state->r4300emu == CORE_DYNAREC) state->recomp_func(state);
@@ -2405,13 +2941,18 @@ void recompile_block(usf_state_t * state, int *source, precomp_block *block, uns
       {
          state->dst = block->block + i;
          state->dst->addr = block->start + i*4;
+#ifdef DYNAREC
          state->dst->reg_cache_infos.need_map = 0;
+#endif
          state->dst->local_addr = state->code_length;
          RFIN_BLOCK(state);
+#ifdef DYNAREC
          if (state->r4300emu == CORE_DYNAREC) state->recomp_func(state);
+#endif
          i++;
       }
      }
+#ifdef DYNAREC
    else if (state->r4300emu == CORE_DYNAREC) genlink_subblock(state);
 
    if (state->r4300emu == CORE_DYNAREC)
@@ -2422,6 +2963,7 @@ void recompile_block(usf_state_t * state, int *source, precomp_block *block, uns
     block->max_code_length = state->max_code_length;
     free_assembler(state, &block->jumps_table, &block->jumps_number, &block->riprel_table, &block->riprel_number);
      }
+#endif
 }
 
 static int is_jump(usf_state_t * state)
@@ -2507,21 +3049,28 @@ void recompile_opcode(usf_state_t * state)
    state->src = *state->SRC;
    state->dst++;
    state->dst->addr = (state->dst-1)->addr + 4;
+#ifdef DYNAREC
    state->dst->reg_cache_infos.need_map = 0;
+#endif
    if(!is_jump(state))
    {
      state->recomp_func = NULL;
      recomp_ops[((state->src >> 26) & 0x3F)](state);
+#ifdef DYNAREC
      if (state->r4300emu == CORE_DYNAREC) state->recomp_func(state);
+#endif
    }
    else
    {
      RNOP(state);
+#ifdef DYNAREC
      if (state->r4300emu == CORE_DYNAREC) state->recomp_func(state);
+#endif
    }
    state->delay_slot_compiled = 2;
 }
 
+#ifdef DYNAREC
 #if defined(__APPLE__)
 static inline int macos_release()
 {
@@ -2605,3 +3154,4 @@ static void free_exec(void *ptr, size_t length)
    free(ptr);
 #endif
 }
+#endif

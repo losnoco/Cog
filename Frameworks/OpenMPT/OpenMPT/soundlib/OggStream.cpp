@@ -34,6 +34,15 @@ uint16 PageInfo::GetPagePhysicalSize() const
 }
 
 
+uint16 PageInfo::GetPageHeaderSize() const
+{
+	uint16 size = 0;
+	size += sizeof(PageHeader);
+	size += header.page_segments;
+	return size;
+}
+
+
 uint16 PageInfo::GetPageDataSize() const
 {
 	uint16 size = 0;
@@ -70,10 +79,13 @@ bool AdvanceToPageMagic(FileReader &file)
 }
 
 
-bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData)
+bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> *pageData)
 {
 	pageInfo = PageInfo();
-	pageData.clear();
+	if(pageData)
+	{
+		(*pageData).clear();
+	}
 	if(!file.ReadMagic("OggS"))
 	{
 		return false;
@@ -98,7 +110,13 @@ bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData
 	{
 		return false;
 	}
-	filePageReader.ReadVector(pageData, pageDataSize);
+	if(pageData)
+	{
+		filePageReader.ReadVector(*pageData, pageDataSize);
+	} else
+	{
+		filePageReader.Skip(pageDataSize);
+	}
 	filePageReader.SkipBack(pageInfo.GetPagePhysicalSize());
 	{
 		mpt::crc32_ogg calculatedCRC;
@@ -107,8 +125,18 @@ bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData
 		filePageReader.ReadArray(rawHeader);
 		std::memset(rawHeader + 22, 0, 4); // clear out old crc
 		calculatedCRC.process(rawHeader, rawHeader + sizeof(rawHeader));
+		filePageReader.Skip(pageInfo.header.page_segments);
 		calculatedCRC.process(pageInfo.segment_table, pageInfo.segment_table + pageInfo.header.page_segments);
-		calculatedCRC.process(pageData);
+		if(pageData)
+		{
+			filePageReader.Skip(pageDataSize);
+			calculatedCRC.process(*pageData);
+		} else
+		{
+			FileReader pageDataReader = filePageReader.ReadChunk(pageDataSize);
+			auto pageDataView = pageDataReader.GetPinnedRawDataView();
+			calculatedCRC.process(pageDataView.GetSpan());
+		}
 		if(calculatedCRC != pageInfo.header.CRC_checksum)
 		{
 			return false;
@@ -116,6 +144,19 @@ bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData
 	}
 	file.Skip(pageInfo.GetPagePhysicalSize());
 	return true;
+}
+
+
+bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData)
+{
+	return ReadPage(file, pageInfo, &pageData);
+}
+
+
+bool ReadPage(FileReader &file)
+{
+	PageInfo pageInfo;
+	return ReadPage(file, pageInfo);
 }
 
 

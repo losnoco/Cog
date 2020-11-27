@@ -120,18 +120,18 @@ public:
 			streamparameters.suggestedLatency = flags.buffer * 0.001;
 		}
 		unsigned long framesperbuffer = 0;
-		if ( flags.mode != ModeUI ) {
+		if ( flags.mode != Mode::UI ) {
 			framesperbuffer = paFramesPerBufferUnspecified;
 			flags.period = 50;
-			flags.period = std::min<std::int32_t>( flags.period, flags.buffer / 3 );
+			flags.period = std::min( flags.period, flags.buffer / 3 );
 		} else if ( flags.period == default_high ) {
 			framesperbuffer = paFramesPerBufferUnspecified;
 			flags.period = 50;
-			flags.period = std::min<std::int32_t>( flags.period, flags.buffer / 3 );
+			flags.period = std::min( flags.period, flags.buffer / 3 );
 		} else if ( flags.period == default_low ) {
 			framesperbuffer = paFramesPerBufferUnspecified;
 			flags.period = 10;
-			flags.period = std::min<std::int32_t>( flags.period, flags.buffer / 3 );
+			flags.period = std::min( flags.period, flags.buffer / 3 );
 		} else {
 			framesperbuffer = flags.period * flags.samplerate / 1000;
 		}
@@ -187,7 +187,7 @@ private:
 	template<typename Tsample>
 	void write_frames( const Tsample * buffer, std::size_t frames ) {
 		while ( frames > 0 ) {
-			unsigned long chunk_frames = static_cast<unsigned long>( std::min<std::size_t>( frames, std::numeric_limits<unsigned long>::max() ) );
+			unsigned long chunk_frames = static_cast<unsigned long>( std::min( static_cast<std::uint64_t>( frames ), static_cast<std::uint64_t>( std::numeric_limits<unsigned long>::max() ) ) );
 			check_portaudio_error( Pa_WriteStream( stream, buffer, chunk_frames ) );
 			buffer += chunk_frames * channels;
 			frames -= chunk_frames;
@@ -196,7 +196,7 @@ private:
 	template<typename Tsample>
 	void write_frames( std::vector<Tsample*> buffers, std::size_t frames ) {
 		while ( frames > 0 ) {
-			unsigned long chunk_frames = static_cast<unsigned long>( std::min<std::size_t>( frames, std::numeric_limits<unsigned long>::max() ) );
+			unsigned long chunk_frames = static_cast<unsigned long>( std::min( static_cast<std::uint64_t>( frames ), static_cast<std::uint64_t>( std::numeric_limits<unsigned long>::max() ) ) );
 			check_portaudio_error( Pa_WriteStream( stream, buffers.data(), chunk_frames ) );
 			for ( std::size_t channel = 0; channel < channels; ++channel ) {
 				buffers[channel] += chunk_frames;

@@ -24,7 +24,7 @@ OPENMPT_NAMESPACE_BEGIN
 template <typename Tenum>
 struct enum_traits
 {
-	typedef typename std::make_unsigned<Tenum>::type store_type;
+	using store_type = typename std::make_unsigned<Tenum>::type;
 };
 
 
@@ -35,9 +35,9 @@ template <typename enum_t>
 class enum_value_type
 {
 public:
-	typedef enum_t enum_type;
-	typedef enum_value_type value_type;
-	typedef typename enum_traits<enum_t>::store_type store_type;
+	using enum_type = enum_t;
+	using value_type = enum_value_type;
+	using store_type = typename enum_traits<enum_t>::store_type;
 private:
 	store_type bits;
 public:
@@ -94,10 +94,10 @@ template <typename enum_t>
 class Enum
 {
 public:
-	typedef Enum self_type;
-	typedef enum_t enum_type;
-	typedef enum_value_type<enum_t> value_type;
-	typedef typename value_type::store_type store_type;
+	using self_type = Enum;
+	using enum_type = enum_t;
+	using value_type = enum_value_type<enum_t>;
+	using store_type = typename value_type::store_type;
 private:
 	enum_type value;
 public:
@@ -150,10 +150,10 @@ template <typename enum_t, typename store_t = typename enum_value_type<enum_t>::
 class FlagSet
 {
 public:
-	typedef FlagSet self_type;
-	typedef enum_t enum_type;
-	typedef enum_value_type<enum_t> value_type;
-	typedef store_t store_type;
+	using self_type = FlagSet;
+	using enum_type = enum_t;
+	using value_type = enum_value_type<enum_t>;
+	using store_type = store_t;
 	
 private:
 
@@ -195,8 +195,7 @@ public:
 	{
 		return load();
 	}
-	// The macro-based extended instrument fields writer in InstrumentExtensions.cpp currently needs this conversion.
-	/*MPT_DEPRECATED*/ MPT_CONSTEXPR11_FUN operator store_type () const noexcept
+	MPT_CONSTEXPR11_FUN explicit operator store_type () const noexcept
 	{
 		return load().as_bits();
 	}
