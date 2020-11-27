@@ -585,7 +585,7 @@
         <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" toolbarStyle="expanded" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
             <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="875"/>
             <value key="minSize" type="size" width="400" height="0.0"/>
             <value key="maxSize" type="size" width="600" height="0.0"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
