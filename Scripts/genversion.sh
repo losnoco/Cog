@@ -1,6 +1,6 @@
 #!/bin/sh
 
-git_version=$(/usr/bin/git describe --tags --first-parent | sed -e 's/k54-//')
+git_version=$(/usr/bin/git describe --tags | sed -e 's/k54-//')
 short_version=${git_version%-*}
 
 build_time=$(date)
