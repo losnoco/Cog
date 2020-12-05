@@ -30,7 +30,8 @@ typedef struct {
     size_t smpl_size;
     off_t  seek_offset;
     size_t seek_size;
-
+    off_t  meta_offset;
+    size_t meta_size;
 
     /* standard fmt stuff */
     wwise_codec codec;
@@ -40,6 +41,7 @@ typedef struct {
     int block_align;
     int average_bps;
     int bits_per_sample;
+    uint8_t channel_type;
     uint32_t channel_layout;
     size_t extra_size;
 
@@ -65,7 +67,7 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
 
     /* checks */
     /* .wem: newer "Wwise Encoded Media" used after the 2011.2 SDK (~july 2011)
-     * .wav: older ADPCM files [Punch Out!! (Wii)]
+     * .wav: older PCM/ADPCM files [Spider-Man: Web of Shadows (PC), Punch Out!! (Wii)]
      * .xma: older XMA files [Too Human (X360), Tron Evolution (X360)]
      * .ogg: older Vorbis files [The King of Fighters XII (X360)]
      * .bnk: Wwise banks for memory .wem detection */
@@ -253,6 +255,12 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
                 cfg.blocksize_1_exp = read_u8(extra_offset + block_offsets + 0x00, sf); /* small */
                 cfg.blocksize_0_exp = read_u8(extra_offset + block_offsets + 0x01, sf); /* big */
                 ww.data_size -= audio_offset;
+
+                /* mutant .wem with metadata (voice strings/etc) between seek table and vorbis setup [Gears of War 4 (PC)] */
+                if (ww.meta_offset) {
+                    /* 0x00: original setup_offset */
+                    setup_offset += read_u32(ww.meta_offset + 0x04, sf); /* metadata size */
+                }
 
                 /* detect normal packets */
                 if (ww.extra_size == 0x30) {
@@ -462,7 +470,7 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
             break;
         }
 
-        case OPUS: { /* alt to Vorbis [Girl Cafe Gun (Mobile)] */
+        case OPUS: { /* fully standard Ogg Opus [Girl Cafe Gun (Mobile)] */
             if (ww.block_align != 0 || ww.bits_per_sample != 0) goto fail;
 
             /* extra: size 0x12 */
@@ -484,19 +492,27 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
             break;
         }
 
-#if 0   // disabled until more files/tests
-        case OPUSWW: {   /* updated Opus [Assassin's Creed Valhalla (PC)] */
-            int skip, table_count;
-        
-            if (ww.block_align != 0 || ww.bits_per_sample != 0) goto fail;
-            if (!ww.seek_offset)) goto fail;
+        case OPUSWW: { /* updated Opus [Assassin's Creed Valhalla (PC)] */
+            int mapping;
+            opus_config cfg = {0};
 
-            /* extra: size 0x10 */
+            if (ww.block_align != 0 || ww.bits_per_sample != 0) goto fail;
+            if (!ww.seek_offset) goto fail;
+            if (ww.channels > 8) goto fail; /* mapping not defined */
+
+            cfg.channels = ww.channels;
+            cfg.table_offset = ww.seek_offset;
+
+            /* extra: size 0x10 (though last 2 fields are beyond, AK plz) */
             /* 0x12: samples per frame */
             vgmstream->num_samples = read_s32(ww.fmt_offset + 0x18, sf);
-            table_count = read_u32(ww.fmt_offset + 0x1c, sf); /* same as seek size / 2 */
-            skip = read_u16(ww.fmt_offset + 0x20, sf);
-            /* 0x22: 1? (though extra size is declared as 0x10 so this is outsize, AK plz */
+            cfg.table_count = read_u32(ww.fmt_offset + 0x1c, sf); /* same as seek size / 2 */
+            cfg.skip = read_u16(ww.fmt_offset + 0x20, sf);
+            /* 0x22: codec version */
+            mapping = read_u8(ww.fmt_offset + 0x23, sf);
+
+            if (read_u8(ww.fmt_offset + 0x22, sf) != 1)
+                goto fail;
 
             /* OPUS is VBR so this is very approximate percent, meh */
             if (ww.truncated) {
@@ -505,14 +521,47 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
                 ww.data_size = ww.file_size - start_offset;
             }
 
+            /* AK does some wonky implicit config for multichannel */
+            if (mapping == 1 && ww.channel_type == 1) { /* only allowed values ATM, set when >2ch */
+                static const int8_t mapping_matrix[8][8] = {
+                    { 0, 0, 0, 0, 0, 0, 0, 0, },
+                    { 0, 1, 0, 0, 0, 0, 0, 0, },
+                    { 0, 2, 1, 0, 0, 0, 0, 0, },
+                    { 0, 1, 2, 3, 0, 0, 0, 0, },
+                    { 0, 4, 1, 2, 3, 0, 0, 0, },
+                    { 0, 4, 1, 2, 3, 5, 0, 0, },
+                    { 0, 6, 1, 2, 3, 4, 5, 0, },
+                    { 0, 6, 1, 2, 3, 4, 5, 7, },
+                };
+                int i;
+
+                /* find coupled OPUS streams (internal streams using 2ch) */
+                switch(ww.channel_layout) {
+                    case mapping_7POINT1_surround:  cfg.coupled_count = 3; break;   /* 2ch+2ch+2ch+1ch+1ch, 5 streams */
+                    case mapping_5POINT1_surround:                                  /* 2ch+2ch+1ch+1ch, 4 streams */
+                    case mapping_QUAD_side:         cfg.coupled_count = 2; break;   /* 2ch+2ch, 2 streams */
+                    case mapping_2POINT1_xiph:                                      /* 2ch+1ch, 2 streams */
+                    case mapping_STEREO:            cfg.coupled_count = 1; break;   /* 2ch, 1 stream */
+                    default:                        cfg.coupled_count = 0; break;   /* 1ch, 1 stream */
+                    //TODO: AK OPUS doesn't seem to handles others mappings, though AK's .h imply they exist (uses 0 coupleds?)
+                }
+
+                /* total number internal OPUS streams (should be >0) */
+                cfg.stream_count = ww.channels - cfg.coupled_count;
+
+                /* channel assignments */
+                for (i = 0; i < ww.channels; i++) {
+                    cfg.channel_mapping[i] = mapping_matrix[ww.channels - 1][i];
+                }
+            }
+
             /* Wwise Opus saves all frame sizes in the seek table */
-            vgmstream->codec_data = init_ffmpeg_wwise_opus(sf, ww.seek_offset, table_count, ww.data_offset, ww.data_size, ww.channels, skip);
+            vgmstream->codec_data = init_ffmpeg_wwise_opus(sf, ww.data_offset, ww.data_size, &cfg);
             if (!vgmstream->codec_data) goto fail;
             vgmstream->coding_type = coding_FFmpeg;
             vgmstream->layout_type = layout_none;
             break;
         }
-#endif
 
 #endif
         case HEVAG: /* PSV */
@@ -650,6 +699,7 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
      * - HEVAG: very off
      * - XMA2: exact file size
      * - some RIFX have LE size
+     * Value is ignored by AK's parser (set to -1).
      * (later we'll validate "data" which fortunately is correct)
      */
     if (read_u32(0x04,sf) + 0x04 + 0x04 != ww->file_size) {
@@ -694,6 +744,10 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
                 case 0x736D706C: /* "smpl" */
                     ww->smpl_offset = offset;
                     ww->smpl_size = size;
+                    break;
+                case 0x6D657461: /* "meta" */
+                    ww->meta_offset = offset;
+                    ww->meta_size = size;
                     break;
 
                 case 0x66616374: /* "fact" */
@@ -745,6 +799,7 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
              * - 4b: eConfigType  (0=none, 1=standard, 2=ambisonic)
              * - 19b: uChannelMask */
             if ((ww->channel_layout & 0xFF) == ww->channels) {
+                ww->channel_type = (ww->channel_layout >> 8) & 0x0F;
                 ww->channel_layout = (ww->channel_layout >> 12);
             }
         }
@@ -773,7 +828,7 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
     /* format to codec */
     switch(ww->format) {
         case 0x0001: ww->codec = PCM; break; /* older Wwise */
-        case 0x0002: ww->codec = IMA; break; /* newer Wwise (conflicts with MSADPCM, probably means "platform's ADPCM") */
+        case 0x0002: ww->codec = IMA; break; /* newer Wwise (variable, probably means "platform's ADPCM") */
         case 0x0069: ww->codec = IMA; break; /* older Wwise [Spiderman Web of Shadows (X360), LotR Conquest (PC)] */
         case 0x0161: ww->codec = XWMA; break; /* WMAv2 */
         case 0x0162: ww->codec = XWMA; break; /* WMAPro */
@@ -781,13 +836,13 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
         case 0x0166: ww->codec = XMA2; break; /* fmt-chunk XMA */
         case 0xAAC0: ww->codec = AAC; break;
         case 0xFFF0: ww->codec = DSP; break;
-        case 0xFFFB: ww->codec = HEVAG; break;
+        case 0xFFFB: ww->codec = HEVAG; break; /* "VAG" */
         case 0xFFFC: ww->codec = ATRAC9; break;
         case 0xFFFE: ww->codec = PCM; break; /* "PCM for Wwise Authoring" */
         case 0xFFFF: ww->codec = VORBIS; break;
         case 0x3039: ww->codec = OPUSNX; break; /* renamed from "OPUS" on Wwise 2018.1 */
         case 0x3040: ww->codec = OPUS; break;
-        case 0x3041: ww->codec = OPUSWW; break; /* added on Wwise 2019.2.3, presumably replaces OPUS */
+        case 0x3041: ww->codec = OPUSWW; break; /* "OPUS_WEM", added on Wwise 2019.2.3, replaces OPUS */
         case 0x8311: ww->codec = PTADPCM; break; /* added on Wwise 2019.1, replaces IMA */
         default:
             goto fail;
@@ -839,61 +894,54 @@ fail:
 /*
 - old format
 "fmt" size 0x28, extra size 0x16 / size 0x18, extra size 0x06
-0x12 (2): flag? (00,10,18): not related to seek table, codebook type, chunk count, looping
-0x14 (4): channel config
 0x18-24 (16): ? (fixed: 0x01000000 00001000 800000AA 00389B71)  [removed when extra size is 0x06]
 
 "vorb" size 0x34
-0x00 (4): num_samples
+0x00 (4): dwTotalPCMFrames
 0x04 (4): skip samples?
-0x08 (4): ? (small if loop, 0 otherwise)
-0x0c (4): data start offset after seek table+setup, or loop start when "smpl" is present
-0x10 (4): ? (small, 0..~0x400)
-0x14 (4): approximate data size without seek table? (almost setup+packets)
-0x18 (4): setup_offset within data (0 = no seek table)
-0x1c (4): audio_offset within data
-0x20 (2): biggest packet size (not including header)?
-0x22 (2): ? (small, N..~0x100) uLastGranuleExtra?
-0x24 (4): ? (mid, 0~0x5000) dwDecodeAllocSize?
-0x28 (4): ? (mid, 0~0x5000) dwDecodeX64AllocSize?
-0x2c (4): parent bank/event id? uHashCodebook? (shared by several .wem a game, but not all need to share it)
-0x30 (1): blocksize_1_exp (small)
-0x31 (1): blocksize_0_exp (large)
+0x08 (4): LoopInfo.uLoopBeginExtra? (present if loop)
+0x0c (4): LoopInfo.dwLoopStartPacketOffset (data start, or loop start when "smpl" is present)
+0x10 (4): LoopInfo.uLoopEndExtra? (0..~0x400)
+0x14 (4): LoopInfo.dwLoopEndPacketOffset?
+0x18 (4): dwSeekTableSize (0 = no seek table)
+0x1c (4): dwVorbisDataOffset (offset within data)
+0x20 (2): uMaxPacketSize (not including header) 
+0x22 (2): uLastGranuleExtra (0..~0x100)
+0x24 (4): dwDecodeAllocSize (0~0x5000)
+0x28 (4): dwDecodeX64AllocSize (mid, 0~0x5000)
+0x2c (4): uHashCodebook? (shared by several .wem a game, but not all need to share it)
+0x30 (1): uBlockSizes[0] (blocksize_1_exp, small)
+0x31 (1): uBlockSizes[1] (blocksize_0_exp, large)
 0x32 (2): empty
 
 "vorb" size 0x28 / 0x2c / 0x2a
-0x00 (4): num_samples
-0x04 (4): data start offset after seek table+setup, or loop start when "smpl" is present
-0x08 (4): data end offset after seek table (setup+packets), or loop end when "smpl" is present
+0x00 (4): dwTotalPCMFrames
+0x04 (4): LoopInfo.dwLoopStartPacketOffset (data start, or loop start when "smpl" is present)
+0x08 (4): LoopInfo.dwLoopEndPacketOffset (data end, or loop end when "smpl" is present)
 0x0c (2): ? (small, 0..~0x400) [(4) when size is 0x2C]
-0x10 (4): setup_offset within data (0 = no seek table)
-0x14 (4): audio_offset within data
-0x18 (2): biggest packet size (not including header)?
-0x1a (2): ? (small, N..~0x100) uLastGranuleExtra? [(4) when size is 0x2C]
-0x1c (4): ? (mid, 0~0x5000) dwDecodeAllocSize?
-0x20 (4): ? (mid, 0~0x5000) dwDecodeX64AllocSize?
-0x24 (4): parent bank/event id? uHashCodebook? (shared by several .wem a game, but not all need to share it)
-0x28 (1): blocksize_1_exp (small) [removed when size is 0x28]
-0x29 (1): blocksize_0_exp (large) [removed when size is 0x28]
+0x10 (4): dwSeekTableSize (0 = no seek table)
+0x14 (4): dwVorbisDataOffset (offset within data)
+0x18 (2): uMaxPacketSize (not including header) 
+0x1a (2): uLastGranuleExtra (0..~0x100) [(4) when size is 0x2C]
+0x1c (4): dwDecodeAllocSize (0~0x5000)
+0x20 (4): dwDecodeX64AllocSize (0~0x5000)
+0x24 (4): uHashCodebook? (shared by several .wem a game, but not all need to share it)
+0x28 (1): uBlockSizes[0] (blocksize_1_exp, small) [removed when size is 0x28]
+0x29 (1): uBlockSizes[1] (blocksize_0_exp, large) [removed when size is 0x28]
 
 - new format:
 "fmt" size 0x42, extra size 0x30
-0x12 (2): flag? (00,10,18): not related to seek table, codebook type, chunk count, looping, etc
-0x14 (4): channel config
-0x18 (4): num_samples
-0x1c (4): data start offset after seek table+setup, or loop start when "smpl" is present
-0x20 (4): data end offset after seek table (setup+packets), or loop end when "smpl" is present
-0x24 (2): ?1 (small, 0..~0x400)
-0x26 (2): ?2 (small, N..~0x100): not related to seek table, codebook type, chunk count, looping, packet size, samples, etc
-0x28 (4): setup offset within data (0 = no seek table)
-0x2c (4): audio offset within data
-0x30 (2): biggest packet size (not including header)
-0x32 (2): (small, 0..~0x100) uLastGranuleExtra?
-0x34 (4): ? (mid, 0~0x5000) dwDecodeAllocSize?
-0x38 (4): ? (mid, 0~0x5000) dwDecodeX64AllocSize?
-0x40 (1): blocksize_1_exp (small)
-0x41 (1): blocksize_0_exp (large)
-
-Wwise encoder options, unknown fields above may be reflect these:
- https://www.audiokinetic.com/library/edge/?source=Help&id=vorbis_encoder_parameters
+0x18 (4): dwTotalPCMFrames
+0x1c (4): LoopInfo.dwLoopStartPacketOffset (data start, or loop start when "smpl" is present)
+0x20 (4): LoopInfo.dwLoopEndPacketOffset (data end, or loop end when "smpl" is present)
+0x24 (2): LoopInfo.uLoopBeginExtra (small, 0..~0x400)
+0x26 (2): LoopInfo.uLoopEndExtra (extra samples after seek?)
+0x28 (4): dwSeekTableSize (0 = no seek table)
+0x2c (4): dwVorbisDataOffset (offset within data)
+0x30 (2): uMaxPacketSize (not including header) 
+0x32 (2): uLastGranuleExtra (small, 0..~0x100)
+0x34 (4): dwDecodeAllocSize (mid, 0~0x5000)
+0x38 (4): dwDecodeX64AllocSize (mid, 0~0x5000)
+0x40 (1): uBlockSizes[0] (blocksize_1_exp, small)
+0x41 (1): uBlockSizes[1] (blocksize_0_exp, large)
 */
