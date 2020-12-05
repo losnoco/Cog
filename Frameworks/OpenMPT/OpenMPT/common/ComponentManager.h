@@ -423,7 +423,7 @@ std::shared_ptr<const type> ReloadComponent()
 }
 
 
-static inline mpt::PathString GetComponentPath()
+inline mpt::PathString GetComponentPath()
 {
 	return ComponentManager::Instance()->GetComponentPath();
 }
@@ -454,7 +454,7 @@ std::shared_ptr<const type> GetComponent()
 }
 
 
-static inline mpt::PathString GetComponentPath()
+inline mpt::PathString GetComponentPath()
 {
 	return mpt::PathString();
 }

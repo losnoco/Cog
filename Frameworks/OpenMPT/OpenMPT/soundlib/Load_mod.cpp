@@ -963,10 +963,11 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	// - Scan patterns to check if file could be a NoiseTracker file in disguise.
 	//   In this case, the parameter of Dxx commands needs to be ignored.
 	// - Use the same code to find notes that would be out-of-range on Amiga.
-	// - Detect 7-bit panning.
+	// - Detect 7-bit panning and whether 8xx / E8x commands should be interpreted as panning at all.
 	bool onlyAmigaNotes = true;
 	bool fix7BitPanning = false;
 	uint8 maxPanning = 0;  // For detecting 8xx-as-sync
+	const uint8 ENABLE_MOD_PANNING_THRESHOLD = 0x30;
 	if(!isNoiseTracker)
 	{
 		bool leftPanning = false, extendedPanning = false;  // For detecting 800-880 panning
@@ -1003,7 +1004,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 				}
 			}
 		}
-		fix7BitPanning = leftPanning && !extendedPanning;
+		fix7BitPanning = leftPanning && !extendedPanning && maxPanning >= ENABLE_MOD_PANNING_THRESHOLD;
 	}
 	file.Seek(1084);
 
@@ -1140,7 +1141,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 		m_playBehaviour.set(kMODOutOfRangeNoteDelay);
 		m_playBehaviour.set(kMODTempoOnSecondTick);
 		// Arbitrary threshold for deciding that 8xx effects are only used as sync markers
-		if(maxPanning < 0x30)
+		if(maxPanning < ENABLE_MOD_PANNING_THRESHOLD)
 		{
 			m_playBehaviour.set(kMODIgnorePanning);
 			if(fileHeader.restartPos != 0x7F)

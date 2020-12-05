@@ -14,8 +14,6 @@
 #include "libopenmpt_impl.hpp"
 #include "libopenmpt_ext.hpp"
 
-using namespace OpenMPT;
-
 namespace openmpt {
 
 class module_ext_impl

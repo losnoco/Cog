@@ -755,7 +755,13 @@ void IMidiPlugin::ApplyPitchWheelDepth(int32 &value, int8 pwd)
 // Get the MIDI channel currently associated with a given tracker channel
 uint8 IMidiPlugin::GetMidiChannel(CHANNELINDEX trackChannel) const
 {
-	return m_SndFile.GetBestMidiChannel(trackChannel);
+	if(trackChannel >= std::size(m_SndFile.m_PlayState.Chn))
+		return 0;
+
+	if(auto ins = m_SndFile.m_PlayState.Chn[trackChannel].pModInstrument; ins != nullptr)
+		return ins->GetMIDIChannel(m_SndFile, trackChannel);
+	else
+		return 0;
 }
 
 

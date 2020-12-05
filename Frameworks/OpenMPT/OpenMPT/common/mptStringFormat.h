@@ -76,8 +76,8 @@ template <typename T> auto ToString(const T & x) -> decltype(mpt::ToCharset(mpt:
 template <typename T> auto ToString(const T & x) -> decltype(mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x.ToUString())) { return mpt::ToCharset(mpt::CharsetLocaleOrUTF8, x.ToUString()); }
 #endif
 
-static inline std::string ToString(const std::string & x) { return x; }
-static inline std::string ToString(const char * const & x) { return x; }
+inline std::string ToString(const std::string & x) { return x; }
+inline std::string ToString(const char * const & x) { return x; }
 std::string ToString(const char &x) = delete; // deprecated to catch potential API mis-use, use std::string(1, x) instead
 #if MPT_WSTRING_FORMAT
 std::string ToString(const std::wstring & x) = delete; // Unknown encoding.
@@ -108,7 +108,7 @@ std::string ToString(const long double & x);
 // fallback to member function ToUString()
 template <typename T> auto ToUString(const T & x) -> decltype(x.ToUString()) { return x.ToUString(); }
 
-static inline mpt::ustring ToUString(const mpt::ustring & x) { return x; }
+inline mpt::ustring ToUString(const mpt::ustring & x) { return x; }
 mpt::ustring ToUString(const std::string & x) = delete; // Unknown encoding.
 mpt::ustring ToUString(const char * const & x) = delete; // Unknown encoding. Note that this also applies to TCHAR in !UNICODE builds as the type is indistinguishable from char. Wrap with CString or FromTcharStr in this case.
 mpt::ustring ToUString(const char & x) = delete; // deprecated to catch potential API mis-use, use std::string(1, x) instead
@@ -141,8 +141,8 @@ mpt::ustring ToUString(const long double & x);
 std::wstring ToWString(const std::string & x) = delete; // Unknown encoding.
 std::wstring ToWString(const char * const & x) = delete; // Unknown encoding. Note that this also applies to TCHAR in !UNICODE builds as the type is indistinguishable from char. Wrap with CString or FromTcharStr in this case.
 std::wstring ToWString(const char & x) = delete; // deprecated to catch potential API mis-use, use std::string(1, x) instead
-static inline std::wstring ToWString(const std::wstring & x) { return x; }
-static inline std::wstring ToWString(const wchar_t * const & x) { return x; }
+inline std::wstring ToWString(const std::wstring & x) { return x; }
+inline std::wstring ToWString(const wchar_t * const & x) { return x; }
 std::wstring ToWString(const wchar_t & x) = delete; // deprecated to catch potential API mis-use, use std::wstring(1, x) instead
 #if MPT_USTRING_MODE_UTF8
 std::wstring ToWString(const mpt::ustring & x);

@@ -958,7 +958,7 @@ static widestring FromUTF8(const Tsrcstring &str, widechar replacement = wide_de
 		if ( charsleft == 0 ) {
 
 			if ( ( c & 0x80 ) == 0x00 ) {
-				out.push_back( (wchar_t)c );
+				out.push_back( (widechar)c );
 			} else if ( ( c & 0xE0 ) == 0xC0 ) {
 				ucs4 = c & 0x1F;
 				charsleft = 1;
@@ -1030,7 +1030,7 @@ static Tdststring ToUTF8(const widestring &str, char replacement = '?')
 
 	for ( std::size_t i=0; i<in.length(); i++ ) {
 
-		wchar_t wc = in[i];
+		widechar wc = in[i];
 
 		char32_t ucs4 = 0;
 		if constexpr ( sizeof( widechar ) == 2 ) {

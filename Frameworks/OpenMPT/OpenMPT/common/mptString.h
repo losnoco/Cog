@@ -179,7 +179,7 @@ inline Tstring Replace(Tstring str, const Tstring2 &oldStr_, const Tstring3 &new
 } // namespace String
 
 
-static inline std::string truncate(std::string str, std::size_t maxLen)
+inline std::string truncate(std::string str, std::size_t maxLen)
 {
 	if(str.length() > maxLen)
 	{
@@ -343,10 +343,10 @@ using u8string = MPT_ENCODED_STRING_TYPE(mpt::Charset::UTF8);
 // The wide encoding is UTF-16 or UTF-32, based on sizeof(wchar_t).
 // If str does not contain any invalid characters, this conversion is lossless.
 // Invalid source bytes will be replaced by some replacement character or string.
-static inline std::wstring ToWide(const std::wstring &str) { return str; }
-static inline std::wstring ToWide(const wchar_t * str) { return (str ? std::wstring(str) : std::wstring()); }
+inline std::wstring ToWide(const std::wstring &str) { return str; }
+inline std::wstring ToWide(const wchar_t * str) { return (str ? std::wstring(str) : std::wstring()); }
 std::wstring ToWide(Charset from, const std::string &str);
-static inline std::wstring ToWide(Charset from, const char * str) { return ToWide(from, str ? std::string(str) : std::string()); }
+inline std::wstring ToWide(Charset from, const char * str) { return ToWide(from, str ? std::string(str) : std::string()); }
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
 std::wstring ToWide(const mpt::lstring &str);
 #endif // MPT_ENABLE_CHARSET_LOCALE
@@ -360,10 +360,10 @@ std::wstring ToWide(const mpt::lstring &str);
 // destination charset will be replaced by some replacement character or string.
 #if MPT_WSTRING_CONVERT
 std::string ToCharset(Charset to, const std::wstring &str);
-static inline std::string ToCharset(Charset to, const wchar_t * str) { return ToCharset(to, str ? std::wstring(str) : std::wstring()); }
+inline std::string ToCharset(Charset to, const wchar_t * str) { return ToCharset(to, str ? std::wstring(str) : std::wstring()); }
 #endif
 std::string ToCharset(Charset to, Charset from, const std::string &str);
-static inline std::string ToCharset(Charset to, Charset from, const char * str) { return ToCharset(to, from, str ? std::string(str) : std::string()); }
+inline std::string ToCharset(Charset to, Charset from, const char * str) { return ToCharset(to, from, str ? std::string(str) : std::string()); }
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
 std::string ToCharset(Charset to, const mpt::lstring &str);
 #endif // MPT_ENABLE_CHARSET_LOCALE
@@ -371,20 +371,20 @@ std::string ToCharset(Charset to, const mpt::lstring &str);
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
 #if MPT_WSTRING_CONVERT
 mpt::lstring ToLocale(const std::wstring &str);
-static inline mpt::lstring ToLocale(const wchar_t * str) { return ToLocale(str ? std::wstring(str): std::wstring()); }
+inline mpt::lstring ToLocale(const wchar_t * str) { return ToLocale(str ? std::wstring(str): std::wstring()); }
 #endif
 mpt::lstring ToLocale(Charset from, const std::string &str);
-static inline mpt::lstring ToLocale(Charset from, const char * str) { return ToLocale(from, str ? std::string(str): std::string()); }
-static inline mpt::lstring ToLocale(const mpt::lstring &str) { return str; }
+inline mpt::lstring ToLocale(Charset from, const char * str) { return ToLocale(from, str ? std::string(str): std::string()); }
+inline mpt::lstring ToLocale(const mpt::lstring &str) { return str; }
 #endif // MPT_ENABLE_CHARSET_LOCALE
 
 #if MPT_OS_WINDOWS
 #if MPT_WSTRING_CONVERT
 mpt::winstring ToWin(const std::wstring &str);
-static inline mpt::winstring ToWin(const wchar_t * str) { return ToWin(str ? std::wstring(str): std::wstring()); }
+inline mpt::winstring ToWin(const wchar_t * str) { return ToWin(str ? std::wstring(str): std::wstring()); }
 #endif
 mpt::winstring ToWin(Charset from, const std::string &str);
-static inline mpt::winstring ToWin(Charset from, const char * str) { return ToWin(from, str ? std::string(str): std::string()); }
+inline mpt::winstring ToWin(Charset from, const char * str) { return ToWin(from, str ? std::string(str): std::string()); }
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
 mpt::winstring ToWin(const mpt::lstring &str);
 #endif // MPT_ENABLE_CHARSET_LOCALE
@@ -399,11 +399,11 @@ mpt::winstring ToWin(const mpt::lstring &str);
 // Convert to a MFC CString. The CString encoding depends on UNICODE.
 // This should also be used when converting to TCHAR strings.
 // If UNICODE is defined, this is a completely lossless operation.
-static inline CString ToCString(const CString &str) { return str; }
+inline CString ToCString(const CString &str) { return str; }
 CString ToCString(const std::wstring &str);
-static inline CString ToCString(const wchar_t * str) { return ToCString(str ? std::wstring(str) : std::wstring()); }
+inline CString ToCString(const wchar_t * str) { return ToCString(str ? std::wstring(str) : std::wstring()); }
 CString ToCString(Charset from, const std::string &str);
-static inline CString ToCString(Charset from, const char * str) { return ToCString(from, str ? std::string(str) : std::string()); }
+inline CString ToCString(Charset from, const char * str) { return ToCString(from, str ? std::string(str) : std::string()); }
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
 CString ToCString(const mpt::lstring &str);
 mpt::lstring ToLocale(const CString &str);
@@ -476,24 +476,24 @@ using uchar = MPT_U8CHAR_TYPE;
 #if !(MPT_WSTRING_CONVERT)
 #error "MPT_USTRING_MODE_WIDE depends on MPT_WSTRING_CONVERT)"
 #endif
-static inline mpt::ustring ToUnicode(const std::wstring &str) { return str; }
-static inline mpt::ustring ToUnicode(const wchar_t * str) { return (str ? std::wstring(str) : std::wstring()); }
-static inline mpt::ustring ToUnicode(Charset from, const std::string &str) { return ToWide(from, str); }
-static inline mpt::ustring ToUnicode(Charset from, const char * str) { return ToUnicode(from, str ? std::string(str) : std::string()); }
+inline mpt::ustring ToUnicode(const std::wstring &str) { return str; }
+inline mpt::ustring ToUnicode(const wchar_t * str) { return (str ? std::wstring(str) : std::wstring()); }
+inline mpt::ustring ToUnicode(Charset from, const std::string &str) { return ToWide(from, str); }
+inline mpt::ustring ToUnicode(Charset from, const char * str) { return ToUnicode(from, str ? std::string(str) : std::string()); }
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
-static inline mpt::ustring ToUnicode(const mpt::lstring &str) { return ToWide(str); }
+inline mpt::ustring ToUnicode(const mpt::lstring &str) { return ToWide(str); }
 #endif // MPT_ENABLE_CHARSET_LOCALE
 #if defined(MPT_WITH_MFC)
-static inline mpt::ustring ToUnicode(const CString &str) { return ToWide(str); }
+inline mpt::ustring ToUnicode(const CString &str) { return ToWide(str); }
 #endif // MFC
 #else // !MPT_USTRING_MODE_WIDE
-static inline mpt::ustring ToUnicode(const mpt::ustring &str) { return str; }
+inline mpt::ustring ToUnicode(const mpt::ustring &str) { return str; }
 #if MPT_WSTRING_CONVERT
 mpt::ustring ToUnicode(const std::wstring &str);
-static inline mpt::ustring ToUnicode(const wchar_t * str) { return ToUnicode(str ? std::wstring(str) : std::wstring()); }
+inline mpt::ustring ToUnicode(const wchar_t * str) { return ToUnicode(str ? std::wstring(str) : std::wstring()); }
 #endif
 mpt::ustring ToUnicode(Charset from, const std::string &str);
-static inline mpt::ustring ToUnicode(Charset from, const char * str) { return ToUnicode(from, str ? std::string(str) : std::string()); }
+inline mpt::ustring ToUnicode(Charset from, const char * str) { return ToUnicode(from, str ? std::string(str) : std::string()); }
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
 mpt::ustring ToUnicode(const mpt::lstring &str);
 #endif // MPT_ENABLE_CHARSET_LOCALE

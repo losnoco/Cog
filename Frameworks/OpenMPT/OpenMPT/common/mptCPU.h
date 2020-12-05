@@ -52,13 +52,13 @@ extern uint8 ProcStepping;
 void InitProcSupport();
 
 // enabled processor features for inline asm and intrinsics
-static inline uint32 GetProcSupport()
+inline uint32 GetProcSupport()
 {
 	return ProcSupport;
 }
 
 // available processor features
-static inline uint32 GetRealProcSupport()
+inline uint32 GetRealProcSupport()
 {
 	return RealProcSupport;
 }

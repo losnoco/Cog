@@ -311,4 +311,21 @@ void ModInstrument::Transpose(int8 amount)
 }
 
 
+uint8 ModInstrument::GetMIDIChannel(const CSoundFile &sndFile, CHANNELINDEX chn) const
+{
+	if(chn >= std::size(sndFile.m_PlayState.Chn))
+		return 0;
+
+	// For mapped channels, return their pattern channel, modulo 16 (because there are only 16 MIDI channels)
+	const ModChannel &channel = sndFile.m_PlayState.Chn[chn];
+	if(nMidiChannel == MidiMappedChannel)
+		return static_cast<uint8>((channel.nMasterChn ? (channel.nMasterChn - 1u) : chn) % 16u);
+	else if(HasValidMIDIChannel())
+		return (nMidiChannel - MidiFirstChannel) % 16u;
+	else
+		return 0;
+
+}
+
+
 OPENMPT_NAMESPACE_END

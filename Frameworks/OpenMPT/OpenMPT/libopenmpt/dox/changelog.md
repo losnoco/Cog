@@ -5,6 +5,20 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.4 (2020-11-29)
+
+ *  AMS: An upper bound for uncompressed sample size is now established to
+    avoid memory exhaustion from malformed files.
+ *  DMF: Support early format beta versions (in particular versions 1-4).
+ *  MED: Also use octave wrapping in 8-channel mode for MMD0/MMD1 modules.
+ *  MED: If 8-channel mode is activated, ignore BPM mode.
+ *  MED: Emulate tempo commands F01 and F02 quirk.
+ *  MED: Tempo commands below 32 BPM were interpreted as tempo slides.
+ *  IMF: Instrument sample mapping was off by one octave, notable in the guitar
+    part of Astaris by Karsten Koch.
+
+ *  pugixml: Update to v1.11 (2020-11-26).
+
 ### libopenmpt 0.5.3 (2020-10-25)
 
  *  [**Sec**] Possible hang if a MED file claimed to contain 256 songs. (r13704)

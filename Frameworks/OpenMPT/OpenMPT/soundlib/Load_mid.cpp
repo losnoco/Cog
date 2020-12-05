@@ -430,16 +430,17 @@ struct MidiChannelState
 		}
 	}
 
-	uint8 GetRPN() const
+	void SetRPNRelative(int8 value)
 	{
 		switch(rpn)
 		{
 		case 0: // Pitch Bend Range
-			return pitchBendRange;
+			pitchBendRange = static_cast<uint8>(std::clamp(pitchBendRange + value, 1, 0x7F));
+			break;
 		case 2: // Coarse Tune
-			return transpose;
+			transpose = mpt::saturate_cast<int8>(transpose + value);
+			break;
 		}
-		return 0;
 	}
 };
 
@@ -979,7 +980,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 
 					case MIDIEvents::MIDICC_DataButtonincrement:
 					case MIDIEvents::MIDICC_DataButtondecrement:
-						midiChnStatus[midiCh].SetRPN(midiChnStatus[midiCh].GetRPN() + ((data1 == MIDIEvents::MIDICC_DataButtonincrement) ? 1 : -1));
+						midiChnStatus[midiCh].SetRPNRelative((data1 == MIDIEvents::MIDICC_DataButtonincrement) ? 1 : -1);
 						break;
 
 					case MIDIEvents::MIDICC_NonRegisteredParameter_Fine:
@@ -1350,7 +1351,6 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 #endif // MODPLUG_TRACKER
-
 	return true;
 }
 

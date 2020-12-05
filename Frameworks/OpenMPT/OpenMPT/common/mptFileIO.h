@@ -169,7 +169,7 @@ enum class FlushMode
 	Full   = 2,  // explicitly flush *all* layers, up to and including disk write caches
 };
 
-static inline FlushMode FlushModeFromBool(bool flush)
+inline FlushMode FlushModeFromBool(bool flush)
 {
 	return flush ? FlushMode::Full : FlushMode::None;
 }

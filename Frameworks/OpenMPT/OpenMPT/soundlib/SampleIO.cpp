@@ -100,6 +100,21 @@ size_t SampleIO::ReadSample(ModSample &sample, FileReader &file) const
 		else
 			maxLength = Util::MaxValueOfType(maxLength);
 		LimitMax(sample.nLength, mpt::saturate_cast<SmpLength>(maxLength));
+	} else if(GetEncoding() == AMS)
+	{
+		if(fileSize <= 9)
+			return 0;
+
+		file.Skip(4);  // Target sample size (we already know this)
+		SmpLength maxLength = std::min(file.ReadUint32LE(), mpt::saturate_cast<uint32>(fileSize));
+		file.SkipBack(8);
+
+		// In the best case, every byte triplet can decode to 255 bytes, which is a ratio of exactly 1:85
+		if(Util::MaxValueOfType(maxLength) / 85 >= maxLength)
+			maxLength *= 85;
+		else
+			maxLength = Util::MaxValueOfType(maxLength);
+		LimitMax(sample.nLength, maxLength / (m_bitdepth / 8u));
 	}
 
 	if(sample.nLength < 1)
@@ -153,18 +168,23 @@ size_t SampleIO::ReadSample(ModSample &sample, FileReader &file) const
 	} else if(GetEncoding() == AMS && GetChannelFormat() == mono)
 	{
 		// AMS compressed samples
-		if(fileSize > 9)
-		{
-			file.Skip(4);	// Target sample size (we already know this)
-			uint32 sourceSize = file.ReadUint32LE();
-			int8 packCharacter = file.ReadUint8();
-			bytesRead += 9;
-			
-			FileReader::PinnedRawDataView packedDataView = file.ReadPinnedRawDataView(sourceSize);
-			LimitMax(sourceSize, mpt::saturate_cast<uint32>(packedDataView.size()));
-			bytesRead += sourceSize;
+		file.Skip(4);  // Target sample size (we already know this)
+		uint32 sourceSize = file.ReadUint32LE();
+		int8 packCharacter = file.ReadUint8();
+		bytesRead += 9;
 
-			AMSUnpack(reinterpret_cast<const int8 *>(packedDataView.data()), packedDataView.size(), sample.samplev(), sample.GetSampleSizeInBytes(), packCharacter);
+		FileReader::PinnedRawDataView packedDataView = file.ReadPinnedRawDataView(sourceSize);
+		LimitMax(sourceSize, mpt::saturate_cast<uint32>(packedDataView.size()));
+		bytesRead += sourceSize;
+
+		AMSUnpack(reinterpret_cast<const int8 *>(packedDataView.data()), packedDataView.size(), sample.samplev(), sample.GetSampleSizeInBytes(), packCharacter);
+		if(sample.uFlags[CHN_16BIT] && !mpt::endian_is_little())
+		{
+			auto p = sample.sample16();
+			for(SmpLength length = sample.nLength; length != 0; length--, p++)
+			{
+				*p = mpt::bit_cast<int16le>(*p);
+			}
 		}
 	} else if(GetEncoding() == PTM8Dto16 && GetChannelFormat() == mono && GetBitDepth() == 16)
 	{

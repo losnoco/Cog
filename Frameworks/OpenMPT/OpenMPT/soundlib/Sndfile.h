@@ -1170,7 +1170,6 @@ private:
 
 public:
 	PLUGINDEX GetBestPlugin(CHANNELINDEX nChn, PluginPriority priority, PluginMutePriority respectMutes) const;
-	uint8 GetBestMidiChannel(CHANNELINDEX nChn) const;
 
 };
 

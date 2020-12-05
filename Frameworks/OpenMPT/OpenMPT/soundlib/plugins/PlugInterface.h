@@ -266,13 +266,13 @@ public:
 	void MidiCommand(const ModInstrument &instr, uint16 note, uint16 vol, CHANNELINDEX trackChannel) override;
 	bool IsNotePlaying(uint32 note, CHANNELINDEX trackerChn) override;
 
+	// Get the MIDI channel currently associated with a given tracker channel
+	virtual uint8 GetMidiChannel(CHANNELINDEX trackChannel) const;
+
 protected:
 	// Plugin wants to send MIDI to OpenMPT
 	virtual void ReceiveMidi(uint32 midiCode);
 	virtual void ReceiveSysex(mpt::const_byte_span sysex);
-
-	// Get the MIDI channel currently associated with a given tracker channel
-	virtual uint8 GetMidiChannel(CHANNELINDEX trackChannel) const;
 
 	// Converts a 14-bit MIDI pitch bend position to our internal pitch bend position representation
 	static constexpr int32 EncodePitchBendParam(int32 position) { return (position << vstPitchBendShift); }

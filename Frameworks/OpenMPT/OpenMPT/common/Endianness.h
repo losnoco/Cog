@@ -44,22 +44,22 @@ using std::endian;
 
 static_assert(mpt::endian::big != mpt::endian::little, "platform with all scalar types having size 1 is not supported");
 
-static constexpr mpt::endian get_endian() noexcept
+constexpr mpt::endian get_endian() noexcept
 {
 	return mpt::endian::native;
 }
 
-static constexpr bool endian_is_little() noexcept
+constexpr bool endian_is_little() noexcept
 {
 	return get_endian() == mpt::endian::little;
 }
 
-static constexpr bool endian_is_big() noexcept
+constexpr bool endian_is_big() noexcept
 {
 	return get_endian() == mpt::endian::big;
 }
 
-static constexpr bool endian_is_weird() noexcept
+constexpr bool endian_is_weird() noexcept
 {
 	return !endian_is_little() && !endian_is_big();
 }
@@ -128,7 +128,7 @@ static_assert(mpt::endian::big != mpt::endian::little, "platform with all scalar
 
 namespace detail {
 
-	static MPT_FORCEINLINE mpt::endian endian_probe() noexcept
+	MPT_FORCEINLINE mpt::endian endian_probe() noexcept
 	{
 		using endian_probe_type = uint32;
 		static_assert(sizeof(endian_probe_type) == 4);
@@ -154,7 +154,7 @@ namespace detail {
 
 } // namespace detail
 
-static MPT_FORCEINLINE mpt::endian get_endian() noexcept
+MPT_FORCEINLINE mpt::endian get_endian() noexcept
 {
 #if MPT_COMPILER_MSVC
 #pragma warning(push)
@@ -172,17 +172,17 @@ static MPT_FORCEINLINE mpt::endian get_endian() noexcept
 #endif // MPT_COMPILER_MSVC
 }
 
-static MPT_FORCEINLINE bool endian_is_little() noexcept
+MPT_FORCEINLINE bool endian_is_little() noexcept
 {
 	return get_endian() == mpt::endian::little;
 }
 
-static MPT_FORCEINLINE bool endian_is_big() noexcept
+MPT_FORCEINLINE bool endian_is_big() noexcept
 {
 	return get_endian() == mpt::endian::big;
 }
 
-static MPT_FORCEINLINE bool endian_is_weird() noexcept
+MPT_FORCEINLINE bool endian_is_weird() noexcept
 {
 	return !endian_is_little() && !endian_is_big();
 }
@@ -265,19 +265,19 @@ namespace mpt { namespace detail {
 // catch system macros
 #ifndef MPT_bswap16
 #ifdef bswap16
-static MPT_FORCEINLINE uint16 mpt_bswap16(uint16 x) { return bswap16(x); }
+MPT_FORCEINLINE uint16 mpt_bswap16(uint16 x) { return bswap16(x); }
 #define MPT_bswap16 mpt::detail::mpt_bswap16
 #endif
 #endif
 #ifndef MPT_bswap32
 #ifdef bswap32
-static MPT_FORCEINLINE uint32 mpt_bswap32(uint32 x) { return bswap32(x); }
+MPT_FORCEINLINE uint32 mpt_bswap32(uint32 x) { return bswap32(x); }
 #define MPT_bswap32 mpt::detail::mpt_bswap32
 #endif
 #endif
 #ifndef MPT_bswap64
 #ifdef bswap64
-static MPT_FORCEINLINE uint64 mpt_bswap64(uint64 x) { return bswap64(x); }
+MPT_FORCEINLINE uint64 mpt_bswap64(uint64 x) { return bswap64(x); }
 #define MPT_bswap64 mpt::detail::mpt_bswap64
 #endif
 #endif
@@ -297,7 +297,7 @@ static MPT_FORCEINLINE uint64 mpt_bswap64(uint64 x) { return bswap64(x); }
 
 
 template <typename T, typename Tendian, std::size_t size>
-static MPT_CONSTEXPR17_FUN std::array<std::byte, size> EndianEncode(T val) noexcept
+MPT_CONSTEXPR17_FUN std::array<std::byte, size> EndianEncode(T val) noexcept
 {
 	static_assert(Tendian::endian == mpt::endian::little || Tendian::endian == mpt::endian::big);
 	static_assert(std::numeric_limits<T>::is_integer);
@@ -325,7 +325,7 @@ static MPT_CONSTEXPR17_FUN std::array<std::byte, size> EndianEncode(T val) noexc
 }
 
 template <typename T, typename Tendian, std::size_t size>
-static MPT_CONSTEXPR17_FUN T EndianDecode(std::array<std::byte, size> data) noexcept
+MPT_CONSTEXPR17_FUN T EndianDecode(std::array<std::byte, size> data) noexcept
 {
 	static_assert(Tendian::endian == mpt::endian::little || Tendian::endian == mpt::endian::big);
 	static_assert(std::numeric_limits<T>::is_integer);
@@ -359,20 +359,20 @@ namespace mpt
 namespace detail
 {
 
-static MPT_CONSTEXPR20_FUN uint64 SwapBytes(uint64 value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap64(value); } else { return MPT_bswap64(value); } }
-static MPT_CONSTEXPR20_FUN uint32 SwapBytes(uint32 value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap32(value); } else { return MPT_bswap32(value); } }
-static MPT_CONSTEXPR20_FUN uint16 SwapBytes(uint16 value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap16(value); } else { return MPT_bswap16(value); } }
-static MPT_CONSTEXPR20_FUN int64  SwapBytes(int64  value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap64(value); } else { return MPT_bswap64(value); } }
-static MPT_CONSTEXPR20_FUN int32  SwapBytes(int32  value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap32(value); } else { return MPT_bswap32(value); } }
-static MPT_CONSTEXPR20_FUN int16  SwapBytes(int16  value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap16(value); } else { return MPT_bswap16(value); } }
+MPT_CONSTEXPR20_FUN uint64 SwapBytes(uint64 value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap64(value); } else { return MPT_bswap64(value); } }
+MPT_CONSTEXPR20_FUN uint32 SwapBytes(uint32 value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap32(value); } else { return MPT_bswap32(value); } }
+MPT_CONSTEXPR20_FUN uint16 SwapBytes(uint16 value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap16(value); } else { return MPT_bswap16(value); } }
+MPT_CONSTEXPR20_FUN int64  SwapBytes(int64  value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap64(value); } else { return MPT_bswap64(value); } }
+MPT_CONSTEXPR20_FUN int32  SwapBytes(int32  value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap32(value); } else { return MPT_bswap32(value); } }
+MPT_CONSTEXPR20_FUN int16  SwapBytes(int16  value) noexcept { MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) { return MPT_constexpr_bswap16(value); } else { return MPT_bswap16(value); } }
 
 // Do NOT remove these overloads, even if they seem useless.
 // We do not want risking to extend 8bit integers to int and then
 // endian-converting and casting back to int.
 // Thus these overloads.
-static MPT_CONSTEXPR20_FUN uint8  SwapBytes(uint8  value) noexcept { return value; }
-static MPT_CONSTEXPR20_FUN int8   SwapBytes(int8   value) noexcept { return value; }
-static MPT_CONSTEXPR20_FUN char   SwapBytes(char   value) noexcept { return value; }
+MPT_CONSTEXPR20_FUN uint8  SwapBytes(uint8  value) noexcept { return value; }
+MPT_CONSTEXPR20_FUN int8   SwapBytes(int8   value) noexcept { return value; }
+MPT_CONSTEXPR20_FUN char   SwapBytes(char   value) noexcept { return value; }
 
 } // namespace detail
 } // namespace mpt
@@ -387,7 +387,7 @@ static MPT_CONSTEXPR20_FUN char   SwapBytes(char   value) noexcept { return valu
 
 
 // 1.0f --> 0x3f800000u
-static MPT_FORCEINLINE uint32 EncodeIEEE754binary32(float32 f)
+MPT_FORCEINLINE uint32 EncodeIEEE754binary32(float32 f)
 {
 	if constexpr(mpt::float_traits<float32>::is_ieee754_binary32ne)
 	{
@@ -419,7 +419,7 @@ static MPT_FORCEINLINE uint32 EncodeIEEE754binary32(float32 f)
 		}
 	}
 }
-static MPT_FORCEINLINE uint64 EncodeIEEE754binary64(float64 f)
+MPT_FORCEINLINE uint64 EncodeIEEE754binary64(float64 f)
 {
 	if constexpr(mpt::float_traits<float64>::is_ieee754_binary64ne)
 	{
@@ -453,7 +453,7 @@ static MPT_FORCEINLINE uint64 EncodeIEEE754binary64(float64 f)
 }
 
 // 0x3f800000u --> 1.0f
-static MPT_FORCEINLINE float32 DecodeIEEE754binary32(uint32 i)
+MPT_FORCEINLINE float32 DecodeIEEE754binary32(uint32 i)
 {
 	if constexpr(mpt::float_traits<float32>::is_ieee754_binary32ne)
 	{
@@ -479,7 +479,7 @@ static MPT_FORCEINLINE float32 DecodeIEEE754binary32(uint32 i)
 		}
 	}
 }
-static MPT_FORCEINLINE float64 DecodeIEEE754binary64(uint64 i)
+MPT_FORCEINLINE float64 DecodeIEEE754binary64(uint64 i)
 {
 	if constexpr(mpt::float_traits<float64>::is_ieee754_binary64ne)
 	{
