@@ -350,7 +350,7 @@ static OSType getOSType(const char * in_)
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"mid", @"midi", @"kar", @"rmi", @"mids", @"mds", @"hmi", @"hmp", @"mus", @"xmi", @"lds", nil];
+	return [NSArray arrayWithObjects:@"mid", @"midi", @"kar", @"rmi", @"mids", @"mds", @"hmi", @"hmp", @"hmq", @"mus", @"xmi", @"lds", nil];
 }
 
 + (NSArray *)mimeTypes 
