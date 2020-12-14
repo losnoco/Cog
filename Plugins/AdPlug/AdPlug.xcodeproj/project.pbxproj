@@ -350,10 +350,10 @@
 		83D3C5FA201C674D005564CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4S876G9VCD;
+				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio/libbinio/src",
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio",
@@ -372,10 +372,10 @@
 		83D3C5FB201C674D005564CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4S876G9VCD;
+				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio/libbinio/src",
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio",

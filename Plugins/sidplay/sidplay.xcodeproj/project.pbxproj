@@ -167,7 +167,7 @@
 				TargetAttributes = {
 					8314D6301A354DFE00EEE8E6 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = 4S876G9VCD;
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -341,10 +341,10 @@
 		8314D6391A354DFE00EEE8E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4S876G9VCD;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = sidplay/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
@@ -359,10 +359,10 @@
 		8314D63A1A354DFE00EEE8E6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 4S876G9VCD;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = sidplay/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
