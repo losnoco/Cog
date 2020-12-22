@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,15 +18,15 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" topStrut="YES"/>
-            <rect key="contentRect" x="331" y="367" width="800" height="400"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="875"/>
+            <rect key="contentRect" x="331" y="367" width="847" height="400"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="400" height="200"/>
             <stackView key="contentView" orientation="vertical" alignment="centerX" hasEqualSpacing="YES" detachesHiddenViews="YES" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="800" height="400"/>
+                <rect key="frame" x="0.0" y="0.0" width="847" height="400"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <middleViews>
                     <button toolTip="Click to select currently playing track" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gev-jg-41I">
-                        <rect key="frame" x="314" y="384" width="173" height="16"/>
+                        <rect key="frame" x="337" y="384" width="173" height="16"/>
                         <buttonCell key="cell" type="bevel" title="Now Playing Track title here" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" imageScaling="proportionallyDown" inset="2" id="oXd-7z-UQS">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -42,7 +42,7 @@
                         </connections>
                     </button>
                     <splitView fixedFrame="YES" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
-                        <rect key="frame" x="0.0" y="22" width="800" height="354"/>
+                        <rect key="frame" x="24" y="22" width="800" height="354"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
                                 <rect key="frame" x="0.0" y="0.0" width="800" height="354"/>
@@ -310,7 +310,7 @@
                 </middleViews>
                 <endViews>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="778">
-                        <rect key="frame" x="270" y="0.0" width="261" height="14"/>
+                        <rect key="frame" x="293" y="0.0" width="261" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
                             <font key="font" metaFont="controlContent" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -366,7 +366,7 @@
                     <toolbarItem implicitItemIdentifier="0D05748D-3258-44F5-9D1C-CBF211C15E2D" label="Search" paletteLabel="Search" sizingBehavior="auto" id="1533">
                         <nil key="toolTip"/>
                         <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" id="1531">
-                            <rect key="frame" x="0.0" y="14" width="96" height="22"/>
+                            <rect key="frame" x="0.0" y="14" width="79" height="22"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="All" bezelStyle="round" recentsAutosaveName="CogFilter" id="1532">
                                 <font key="font" metaFont="system"/>
@@ -413,7 +413,7 @@
                             </searchFieldCell>
                         </searchField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2CDD90B4-2355-4E8A-AE42-A6C872DF700A" label="Position" paletteLabel="Position" sizingBehavior="auto" id="1551">
+                    <toolbarItem implicitItemIdentifier="2CDD90B4-2355-4E8A-AE42-A6C872DF700A" label="Position" paletteLabel="Position" visibilityPriority="10" sizingBehavior="auto" id="1551">
                         <nil key="toolTip"/>
                         <slider key="view" verticalHuggingPriority="750" id="1549" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="28"/>
@@ -428,7 +428,7 @@
                             </connections>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="B042D8A5-AFF4-43B2-9DFB-E87A09B7F861" label="Current Time" paletteLabel="Current Time" sizingBehavior="auto" id="1568">
+                    <toolbarItem implicitItemIdentifier="B042D8A5-AFF4-43B2-9DFB-E87A09B7F861" label="Current Time" paletteLabel="Current Time" visibilityPriority="5" sizingBehavior="auto" id="1568">
                         <nil key="toolTip"/>
                         <textField key="view" verticalHuggingPriority="750" id="1566" customClass="TimeField">
                             <rect key="frame" x="14" y="14" width="49" height="19"/>
@@ -580,12 +580,12 @@
                 <outlet property="itemLionSeparator" destination="2455" id="0p5-i7-wLz"/>
                 <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
             </connections>
-            <point key="canvasLocation" x="107" y="131"/>
+            <point key="canvasLocation" x="130.5" y="131"/>
         </window>
         <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" toolbarStyle="expanded" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
             <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="875"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="400" height="0.0"/>
             <value key="maxSize" type="size" width="600" height="0.0"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
