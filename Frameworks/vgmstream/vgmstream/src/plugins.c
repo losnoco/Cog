@@ -81,7 +81,7 @@ void vgmstream_get_title(char* buf, int buf_len, const char* filename, VGMSTREAM
     strncpy(buf, pos, buf_len);
 
     /* name without extension */
-    if (cfg->remove_extension) {
+    if (cfg && cfg->remove_extension) {
         pos2 = strrchr(buf, '.');
         if (pos2 && strlen(pos2) < 15) /* too big extension = file name probably has a dot in the middle */
             pos2[0] = '\0';
@@ -167,14 +167,14 @@ static void load_default_config(play_config_t* def, play_config_t* tcfg) {
         def->fade_time_set = 1;
     }
 
-    /* loop priority: #i > #e > #E */
+    /* loop priority: #i > #e > #E (respect player's ignore too) */
     if (tcfg->really_force_loop) {
-        def->ignore_loop = 0;
+        //def->ignore_loop = 0;
         def->force_loop = 0;
         def->really_force_loop = 1;
     }
     if (tcfg->force_loop) {
-        def->ignore_loop = 0;
+        //def->ignore_loop = 0;
         def->force_loop = 1;
         def->really_force_loop = 0;
     }

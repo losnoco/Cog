@@ -7,6 +7,9 @@
 #define SB_MAX_LAYER_COUNT 16  /* arbitrary max */
 #define SB_MAX_CHAIN_COUNT 256 /* +150 exist in Tonic Trouble */
 
+#define LAYER_HIJACK_GRAW_X360  1
+#define LAYER_HIJACK_SCPT_PS2   2
+
 typedef enum { UBI_IMA, UBI_ADPCM, RAW_PCM, RAW_PSX, RAW_DSP, RAW_XBOX, FMT_VAG, FMT_AT3, RAW_AT3, FMT_XMA1, RAW_XMA1, FMT_OGG, FMT_CWAV, FMT_APM, FMT_MPDX, UBI_IMA_SCE } ubi_sb_codec;
 typedef enum { UBI_PC, UBI_DC, UBI_PS2, UBI_XBOX, UBI_GC, UBI_X360, UBI_PSP, UBI_PS3, UBI_WII, UBI_3DS } ubi_sb_platform;
 typedef enum { UBI_NONE = 0, UBI_AUDIO, UBI_LAYER, UBI_SEQUENCE, UBI_SILENCE } ubi_sb_type;
@@ -14,6 +17,7 @@ typedef enum { UBI_NONE = 0, UBI_AUDIO, UBI_LAYER, UBI_SEQUENCE, UBI_SILENCE } u
 typedef struct {
     int map_version;
     size_t map_entry_size;
+    off_t map_name;
     size_t section1_entry_size;
     size_t section2_entry_size;
     size_t section3_entry_size;
@@ -30,6 +34,7 @@ typedef struct {
     off_t audio_loop_flag;
     off_t audio_loc_flag;
     off_t audio_stereo_flag;
+    off_t audio_ram_streamed_flag;
     off_t audio_internal_flag;
     off_t audio_num_samples;
     off_t audio_num_samples2;
@@ -45,9 +50,11 @@ typedef struct {
     int audio_subblock_and;
     int audio_loc_and;
     int audio_stereo_and;
+    int audio_ram_streamed_and;
     int audio_has_internal_names;
     size_t audio_interleave;
     int audio_fix_psx_samples;
+    int has_rs_files;
 
     off_t sequence_extra_offset;
     off_t sequence_sequence_loop;
@@ -86,7 +93,6 @@ typedef struct {
     int is_padded_sectionX_offset;
     int is_padded_sounds_offset;
     int ignore_layer_error;
-    int default_codec_for_subblock0;
 } ubi_sb_config;
 
 typedef struct {
@@ -161,8 +167,6 @@ typedef struct {
     uint32_t stream_type;       /* rough codec value */
     uint32_t subblock_id;       /* internal id to reference in section3 */
     uint8_t subbank_index;      /* ID of the entry in DC bank */
-    int is_localized;
-    int is_stereo;
 
     int loop_flag;              /* stream loops (normally internal sfx, but also external music) */
     int loop_start;             /* usually 0 */
@@ -184,7 +188,9 @@ typedef struct {
 
     int is_streamed;            /* sound is streamed from storage */
     int is_cd_streamed;         /* found in PS2 BNM */
+    int is_ram_streamed;        /* found in some PS2 games */
     int is_external;            /* sound is in an external file */
+    int is_localized;           /* found in old PS2 games, determines which file the sound is in */
     char resource_name[0x28];   /* filename to the external stream, or internal stream info for some games */
 
     char readable_name[255];    /* final subsong name */
@@ -345,7 +351,7 @@ VGMSTREAM* init_vgmstream_ubi_sm(STREAMFILE* sf) {
         sb.map_zero     = read_32bit(offset + 0x04, sf);
         sb.map_offset   = read_32bit(offset + 0x08, sf);
         sb.map_size     = read_32bit(offset + 0x0c, sf); /* includes sbX header, but not internal streams */
-        read_string(sb.map_name, sizeof(sb.map_name), offset + 0x10, sf); /* null-terminated and may contain garbage after null */
+        read_string(sb.map_name, sizeof(sb.map_name), offset + sb.cfg.map_name, sf); /* null-terminated and may contain garbage after null */
         if (sb.cfg.map_version >= 3)
             sb.map_unknown  = read_32bit(offset + 0x30, sf); /* uncommon, id/config? longer name? mem garbage? */
 
@@ -984,7 +990,7 @@ static VGMSTREAM* init_vgmstream_ubi_sb_base(ubi_sb_header* sb, STREAMFILE* sf_h
             break;
 
         case UBI_IMA_SCE:
-            vgmstream->coding_type = coding_UBI_IMA;
+            vgmstream->coding_type = coding_UBI_SCE_IMA;
             vgmstream->layout_type = layout_blocked_ubi_sce;
             vgmstream->full_block_size = read_32bitLE(0x18, sf_data);
 
@@ -995,10 +1001,12 @@ static VGMSTREAM* init_vgmstream_ubi_sb_base(ubi_sb_header* sb, STREAMFILE* sf_h
 
         case UBI_ADPCM:
             /* custom Ubi 4/6-bit ADPCM used in early games:
-             * - Splinter Cell (PC): 4-bit w/ 2ch (music), 6-bit w/ 1ch (sfx)
-             * - Batman: Vengeance (PC): 4-bit w/ 2ch (music), 6-bit w/ 1ch (sfx)
-             * - Myst IV (PC/Xbox): 4bit-1ch (amb), some files only (ex. sfx_si_puzzle_stream.sb2)
-             * - possibly others */
+             * - Splinter Cell (PC): 4-bit w/ 1ch/2ch (all streams + menu music)
+             * - Batman: Vengeance (PC): 4-bit w/ 1ch/2ch (all streams)
+             * - Myst IV (PC/Xbox): 4-bit w/ 1ch (amb), some files only (ex. sfx_si_puzzle_stream.sb2)
+             * - The Jungle Book: Rhythm N'Groove (PC): 4-bit w/ 2ch (music/amb), 6-bit w/ 1ch (speech)
+             * - possibly others
+             * internal extension is .adp, maybe this can be called FMT_ADP */
 
             /* skip extra header (some kind of id?) found in Myst IV */
             if (read_32bitBE(start_offset + 0x00, sf_data) != 0x08000000 &&
@@ -1027,6 +1035,13 @@ static VGMSTREAM* init_vgmstream_ubi_sb_base(ubi_sb_header* sb, STREAMFILE* sf_h
         case RAW_PSX:
             vgmstream->coding_type = coding_PSX;
             vgmstream->layout_type = layout_interleave;
+
+            if (sb->cfg.has_rs_files) {
+                /* SC:PT PS2 has extra 0x30 bytes, presumably from (missing) VAG header */
+                sb->stream_size -= 0x30;
+                vgmstream->stream_size -= 0x30;
+            }
+
             if (sb->is_ps2_bnm) {
                 vgmstream->interleave_block_size = (sb->is_cd_streamed) ?
                     sb->cfg.audio_interleave :
@@ -1039,7 +1054,12 @@ static VGMSTREAM* init_vgmstream_ubi_sb_base(ubi_sb_header* sb, STREAMFILE* sf_h
 
             if (vgmstream->num_samples == 0) { /* early PS2 games may not set it for internal streams */
                 vgmstream->num_samples = ps_bytes_to_samples(sb->stream_size, sb->channels);
-                vgmstream->loop_end_sample = vgmstream->num_samples;
+
+                if (sb->loop_start == 0) {
+                    ps_find_loop_offsets(sf_data, sb->stream_offset, sb->stream_size,
+                        sb->channels, vgmstream->interleave_block_size,
+                        &vgmstream->loop_start_sample, &vgmstream->loop_end_sample);
+                }
             }
 
             /* late PS3 SBs have double sample count here for who knows why
@@ -1108,7 +1128,7 @@ static VGMSTREAM* init_vgmstream_ubi_sb_base(ubi_sb_header* sb, STREAMFILE* sf_h
             break;
         }
 
-        //TODO: Ubi XMA1 (raw or fmt) is a bit strange, FFmpeg decodes some frames slightly wrong
+        // TODO: Ubi XMA1 (raw or fmt) is a bit strange, FFmpeg decodes some frames slightly wrong
         // XMA1 normally has a frame counter in the first nibble but Ubi's is always set to 0.
         // Probably a beta/custom encoder that creates some buggy frames, that a real X360 handles ok, but trips FFmpeg
         // xmaencode decodes correctly if counters are fixed (otherwise has clicks on every frame).
@@ -1751,6 +1771,7 @@ static int parse_type_audio_ps2_old(ubi_sb_header* sb, off_t offset, STREAMFILE*
     int32_t(*read_32bit)(off_t, STREAMFILE*) = sb->big_endian ? read_32bitBE : read_32bitLE;
     uint32_t pitch;
     uint32_t test_sample_rate;
+    int is_stereo;
 
     sb->stream_size     = read_32bit(offset + sb->cfg.audio_stream_size, sf);
     sb->stream_offset   = read_32bit(offset + sb->cfg.audio_stream_offset, sf);
@@ -1768,10 +1789,10 @@ static int parse_type_audio_ps2_old(ubi_sb_header* sb, off_t offset, STREAMFILE*
     sb->is_streamed     = read_32bit(offset + sb->cfg.audio_streamed_flag, sf) & sb->cfg.audio_streamed_and;
     sb->loop_flag       = read_32bit(offset + sb->cfg.audio_loop_flag, sf) & sb->cfg.audio_loop_and;
     sb->is_localized    = read_32bit(offset + sb->cfg.audio_loc_flag, sf) & sb->cfg.audio_loc_and;
-    sb->is_stereo       = read_32bit(offset + sb->cfg.audio_stereo_flag, sf) & sb->cfg.audio_stereo_and;
+    is_stereo           = read_32bit(offset + sb->cfg.audio_stereo_flag, sf) & sb->cfg.audio_stereo_and;
 
     sb->num_samples = 0; /* calculate from size */
-    sb->channels = sb->is_stereo ? 2 : 1;
+    sb->channels = is_stereo ? 2 : 1;
     sb->stream_size *= sb->channels;
     sb->subblock_id = 0;
 
@@ -1791,6 +1812,7 @@ fail:
 
 static int parse_type_layer_ps2_old(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) {
     int32_t(*read_32bit)(off_t, STREAMFILE*) = sb->big_endian ? read_32bitBE : read_32bitLE;
+    uint32_t pitch;
 
     /* much simpler than later iteration */
     sb->layer_count     = read_32bit(offset + sb->cfg.layer_layer_count, sf);
@@ -1807,7 +1829,8 @@ static int parse_type_layer_ps2_old(ubi_sb_header* sb, off_t offset, STREAMFILE*
         goto fail;
     }
 
-    sb->sample_rate     = ubi_ps2_pitch_to_freq(read_32bit(offset + sb->cfg.layer_pitch, sf));
+    pitch               = read_32bit(offset + sb->cfg.layer_pitch, sf);
+    sb->sample_rate     = ubi_ps2_pitch_to_freq(pitch);
     sb->is_localized    = read_32bit(offset + sb->cfg.layer_loc_flag, sf) & sb->cfg.layer_loc_and;
 
     sb->num_samples = 0; /* calculate from size */
@@ -1865,10 +1888,22 @@ static int parse_type_audio(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) {
 
     /* apparently, there may also be other subblocks based on various flags but they were not seen so far */
     if (sb->cfg.audio_subblock_flag && sb->cfg.audio_subblock_and) {
+        /* flag probably means "software decoded" */
         int subblock_flag = read_32bit(offset + sb->cfg.audio_subblock_flag, sf) & sb->cfg.audio_subblock_and;
         sb->subblock_id = (!subblock_flag) ? 0 : 1;
+
+        /* stream_type field is not used if the flag is not set (it even contains garbage in some versions)
+         * except for PS3 which has two hardware codecs (PSX and AT3) */
+        if (!subblock_flag && sb->platform != UBI_PS3)
+            sb->stream_type = 0x00;
     } else {
         sb->subblock_id = (sb->stream_type == 0x01) ? 0 : 1;
+    }
+
+    if (sb->cfg.has_rs_files && !sb->is_external) {
+        /* found in Splinter Cell: Pandora Tomorrow (PS2) */
+        sb->is_ram_streamed = read_32bit(offset + sb->cfg.audio_ram_streamed_flag, sf) & sb->cfg.audio_ram_streamed_and;
+        sb->is_external = sb->is_ram_streamed;
     }
 
     sb->loop_flag = read_32bit(offset + sb->cfg.audio_loop_flag, sf) & sb->cfg.audio_loop_and;
@@ -1896,7 +1931,9 @@ static int parse_type_audio(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) {
     if (sb->cfg.audio_stream_name) {
         if (sb->is_dat && !sb->is_external) {
             sb->subbank_index = read_8bit(offset + sb->cfg.audio_stream_name + 0x01, sf);
-        } else {
+        } else if (sb->cfg.has_rs_files && sb->is_ram_streamed) {
+            strcpy(sb->resource_name, "MAPS.RS1");
+        } else if (sb->is_external || sb->cfg.audio_has_internal_names) {
             read_string(sb->resource_name, sb->cfg.resource_name_size, offset + sb->cfg.audio_stream_name, sf);
         }
     }
@@ -1955,8 +1992,7 @@ static int parse_type_sequence(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) 
             if (!sb->sequence_multibank) {
                 sb->sequence_multibank = is_other_bank(sb, sf, bank_number);
             }
-        }
-        else {
+        } else {
             entry_number = entry_number & 0x3FFFFFFF;
             if (entry_number > sb->section2_num) {
                 VGM_LOG("UBI SB: chain with wrong entry %i vs %i at %x\n", entry_number, sb->section2_num, (uint32_t)sb->extra_offset);
@@ -2032,7 +2068,9 @@ static int parse_type_layer(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) {
 
         if (sb->sample_rate != sample_rate || sb->stream_type != stream_type) {
             VGM_LOG("UBI SB: %i layer headers don't match at %x > %x\n", sb->layer_count, (uint32_t)offset, (uint32_t)table_offset);
-            if (!sb->cfg.ignore_layer_error) /* layers of different rates happens sometimes */
+            /* Layers of different rates happens sometimes. From decompilations, first layer's sample rate
+             * looks used as main, though lower sample rate layer only seem to appear to after first. */
+            if (!sb->cfg.ignore_layer_error)
                 goto fail;
         }
 
@@ -2122,6 +2160,12 @@ static int parse_type_random(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) {
                 VGM_LOG("UBI SB: random in other bank\n");
                 goto fail;
             }
+        } else {
+            entry_number = entry_number & 0x3FFFFFFF;
+            if (entry_number > sb->section2_num) {
+                VGM_LOG("UBI SB: random with wrong entry %i vs %i at %x\n", entry_number, sb->section2_num, (uint32_t)sb->extra_offset);
+                goto fail;
+            }
         }
 
         //todo make rand or stuff (old chance: int from 0 to 0x10000, new: float from 0.0 to 1.0)
@@ -2138,7 +2182,7 @@ fail:
     return 0;
 }
 
-static int set_default_codec_for_platform(ubi_sb_header *sb) {
+static int set_hardware_codec_for_platform(ubi_sb_header *sb) {
     switch (sb->platform) {
         case UBI_PC:
             sb->codec = RAW_PCM;
@@ -2162,16 +2206,11 @@ static int set_default_codec_for_platform(ubi_sb_header *sb) {
         case UBI_X360:
             sb->codec = RAW_XMA1;
             break;
-#if 0
-        case UBI_PS3: /* assumed, but no games seem to use it */
-            sb->codec = RAW_AT3;
-            break;
-#endif
         case UBI_3DS:
             sb->codec = FMT_CWAV;
             break;
         default:
-            VGM_LOG("UBI SB: unknown internal format\n");
+            VGM_LOG("UBI SB: unknown hardware codec\n");
             return 0;
     }
 
@@ -2199,7 +2238,9 @@ static int parse_stream_codec(ubi_sb_header* sb) {
     if (sb->is_bnm || sb->version < 0x00000007) { /* bnm is ~v0 but some games have wonky versions */
         switch (sb->stream_type) {
             case 0x01:
-                if (!set_default_codec_for_platform(sb))
+                if (sb->is_streamed)
+                    sb->codec = RAW_PCM;
+                else if (!set_hardware_codec_for_platform(sb))
                     goto fail;
                 break;
 
@@ -2211,10 +2252,14 @@ static int parse_stream_codec(ubi_sb_header* sb) {
                 sb->codec = FMT_APM;
                 break;
 
-            case 0x06: /* The Jungle Book (internal extension is .adp, maybe Ubi ADPCM can be considered FMT_ADP) */
+            case 0x06:
                 sb->codec = UBI_ADPCM;
                 break;
-
+#if 0
+            case 0x07:
+                sb->codec = FMT_PFK; /* not seen yet, some MPEG based codec, referred to as "PFK" in the code */
+                break;
+#endif
             case 0x08:
                 sb->codec = UBI_IMA; /* Ubi IMA v2/v3 */
                 break;
@@ -2226,7 +2271,9 @@ static int parse_stream_codec(ubi_sb_header* sb) {
     } else if (sb->version < 0x000A0000) {
         switch (sb->stream_type) {
             case 0x01:
-                if (!set_default_codec_for_platform(sb))
+                if (sb->is_streamed)
+                    sb->codec = RAW_PCM;
+                else if (!set_hardware_codec_for_platform(sb))
                     goto fail;
                 break;
 
@@ -2235,7 +2282,7 @@ static int parse_stream_codec(ubi_sb_header* sb) {
                 break;
 #if 0
             case 0x03:
-                sb->codec = FMT_MPDX; /* not seen yet, some MPEG based codec */
+                sb->codec = FMT_PFK; /* not seen yet, some MPEG based codec, referred to as "PFK" in the code */
                 break;
 #endif
             case 0x04:
@@ -2251,14 +2298,9 @@ static int parse_stream_codec(ubi_sb_header* sb) {
                 goto fail;
         }
     } else {
-        /* some Xbox games default to codec 0 if subblock flag isn't set while the actual field contains garbage */
-        if (sb->cfg.default_codec_for_subblock0 && sb->type == UBI_AUDIO && sb->subblock_id == 0) {
-            sb->stream_type = 0x00;
-        }
-
         switch (sb->stream_type) {
             case 0x00:
-                if (!set_default_codec_for_platform(sb))
+                if (!set_hardware_codec_for_platform(sb))
                     goto fail;
                 break;
 
@@ -2358,9 +2400,6 @@ static int parse_offsets(ubi_sb_header* sb, STREAMFILE* sf) {
 
     VGM_ASSERT(!sb->is_map && sb->section3_num > 2, "UBI SB: section3 > 2 found\n");
 
-    if (sb->is_external)
-        return 1;
-
     /* Internal sounds are split into subblocks, with their offsets being relative to subblock start.
      * A table contains sizes of each subblock, so we adjust offsets based on the subblock ID of our sound.
      * Headers normally only use 0 or 1, and section3 may only define id1 (which the internal sound would use).
@@ -2384,6 +2423,9 @@ static int parse_offsets(ubi_sb_header* sb, STREAMFILE* sf) {
          *   0x0c - absolute subblock offset
          */
 
+        if (sb->is_external && !sb->is_ram_streamed)
+            return 1;
+
         for (i = 0; i < sb->section3_num; i++) {
             off_t offset = sb->section3_offset + 0x14 * i;
             off_t table_offset  = read_32bit(offset + 0x04, sf) + sb->section3_offset;
@@ -2396,6 +2438,9 @@ static int parse_offsets(ubi_sb_header* sb, STREAMFILE* sf) {
 
                 if (index == sb->header_index) {
                     sb->stream_offset = read_32bit(table_offset + 0x08 * j + 0x04, sf);
+                    if (sb->is_ram_streamed)
+                        break;
+
                     for (k = 0; k < table2_num; k++) {
                         uint32_t id = read_32bit(table2_offset + 0x10 * k + 0x00, sf);
 
@@ -2423,21 +2468,23 @@ static int parse_offsets(ubi_sb_header* sb, STREAMFILE* sf) {
         }
     } else {
         /* banks store internal sounds after all headers and adjusted by the subblock table, find the matching entry */
+        off_t sounds_offset;
 
-        off_t sounds_offset = sb->section3_offset + sb->cfg.section3_entry_size*sb->section3_num;
+        if (sb->is_external)
+            return 1;
+
+        sounds_offset = sb->section3_offset + sb->cfg.section3_entry_size*sb->section3_num;
         if (sb->cfg.is_padded_sounds_offset)
             sounds_offset = align_size_to_block(sounds_offset, 0x10);
         sb->stream_offset = sounds_offset + sb->stream_offset;
 
-        if (sb->section3_num > 1) { /* maybe should always test this? */
-            for (i = 0; i < sb->section3_num; i++) {
-                off_t offset = sb->section3_offset + sb->cfg.section3_entry_size * i;
+        for (i = 0; i < sb->section3_num; i++) {
+            off_t offset = sb->section3_offset + sb->cfg.section3_entry_size * i;
 
-                /* table has unordered ids+size, so if our id doesn't match current data offset must be beyond */
-                if (read_32bit(offset + 0x00, sf) == sb->subblock_id)
-                    break;
-                sb->stream_offset += read_32bit(offset + 0x04, sf);
-            }
+            /* table has unordered ids+size, so if our id doesn't match current data offset must be beyond */
+            if (read_32bit(offset + 0x00, sf) == sb->subblock_id)
+                break;
+            sb->stream_offset += read_32bit(offset + 0x04, sf);
         }
     }
 
@@ -2639,28 +2686,6 @@ static void config_sb_audio_fb(ubi_sb_header* sb, off_t flag_bits, int streamed_
     sb->cfg.audio_subblock_and      = subblock_and;
     sb->cfg.audio_loop_and          = loop_and;
 }
-static void config_sb_audio_fb_ps2_bnm(ubi_sb_header *sb, off_t flag_bits, int streamed_and, int cd_streamed_and, int loop_and) {
-    /* audio header with standard flags */
-    sb->cfg.audio_streamed_flag     = flag_bits;
-    sb->cfg.audio_cd_streamed_flag  = flag_bits;
-    sb->cfg.audio_loop_flag         = flag_bits;
-    sb->cfg.audio_streamed_and      = streamed_and;
-    sb->cfg.audio_cd_streamed_and   = cd_streamed_and;
-    sb->cfg.audio_loop_and          = loop_and;
-}
-static void config_sb_audio_ps2_old(ubi_sb_header* sb, off_t flag_bits, int streamed_and, int loop_and, int loc_and, int stereo_and, off_t pitch, off_t sample_rate) {
-    /* sample rate only, bit flags */
-    sb->cfg.audio_streamed_flag     = flag_bits;
-    sb->cfg.audio_loop_flag         = flag_bits;
-    sb->cfg.audio_loc_flag          = flag_bits;
-    sb->cfg.audio_stereo_flag       = flag_bits;
-    sb->cfg.audio_streamed_and      = streamed_and;
-    sb->cfg.audio_loop_and          = loop_and;
-    sb->cfg.audio_loc_and           = loc_and;
-    sb->cfg.audio_stereo_and        = stereo_and;
-    sb->cfg.audio_pitch             = pitch;
-    sb->cfg.audio_sample_rate       = sample_rate;
-}
 static void config_sb_audio_hs(ubi_sb_header* sb, off_t channels, off_t sample_rate, off_t num_samples, off_t num_samples2, off_t stream_name, off_t stream_type) {
     /* audio header with stream name */
     sb->cfg.audio_channels          = channels;
@@ -2678,6 +2703,30 @@ static void config_sb_audio_he(ubi_sb_header* sb, off_t channels, off_t sample_r
     sb->cfg.audio_num_samples2      = num_samples2;
     sb->cfg.audio_extra_name        = extra_name;
     sb->cfg.audio_stream_type       = stream_type;
+}
+static void config_sb_audio_ps2_bnm(ubi_sb_header *sb, off_t flag_bits, int streamed_and, int cd_streamed_and, int loop_and, off_t channels, off_t sample_rate) {
+    /* bit flags, channels and sample rate */
+    sb->cfg.audio_streamed_flag = flag_bits;
+    sb->cfg.audio_cd_streamed_flag = flag_bits;
+    sb->cfg.audio_loop_flag = flag_bits;
+    sb->cfg.audio_streamed_and = streamed_and;
+    sb->cfg.audio_cd_streamed_and = cd_streamed_and;
+    sb->cfg.audio_loop_and = loop_and;
+    sb->cfg.audio_channels = channels;
+    sb->cfg.audio_sample_rate = sample_rate;
+}
+static void config_sb_audio_ps2_old(ubi_sb_header *sb, off_t flag_bits, int streamed_and, int loop_and, int loc_and, int stereo_and, off_t pitch, off_t sample_rate) {
+    /* bit flags, sample rate only */
+    sb->cfg.audio_streamed_flag = flag_bits;
+    sb->cfg.audio_loop_flag = flag_bits;
+    sb->cfg.audio_loc_flag = flag_bits;
+    sb->cfg.audio_stereo_flag = flag_bits;
+    sb->cfg.audio_streamed_and = streamed_and;
+    sb->cfg.audio_loop_and = loop_and;
+    sb->cfg.audio_loc_and = loc_and;
+    sb->cfg.audio_stereo_and = stereo_and;
+    sb->cfg.audio_pitch = pitch;
+    sb->cfg.audio_sample_rate = sample_rate;
 }
 static void config_sb_sequence(ubi_sb_header* sb, off_t sequence_count, off_t entry_size) {
     /* sequence header and chain table */
@@ -2762,6 +2811,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
     int is_bia_ps2 = 0, is_biadd_psp = 0;
     int is_sc2_ps2_gc = 0;
     int is_sc4_pc_online = 0;
+    int is_myst4_pc = 0;
 
     /* Most of the format varies with almost every game + platform (struct serialization?).
      * Support is configured case-by-case as offsets/order/fields only change slightly,
@@ -2879,6 +2929,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         sb->cfg.map_version             = 3;
 
     sb->cfg.map_entry_size = (sb->cfg.map_version < 2) ? 0x30 : 0x34;
+    sb->cfg.map_name = 0x10;
     if (sb->is_blk) {
         sb->cfg.map_entry_size = 0x30;
     }
@@ -2936,7 +2987,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
     if (sb->is_bnm || sb->is_dat || sb->is_ps2_bnm) {
       //sb->allowed_types[0x0a] = 1; /* only needed inside sequences */
         sb->allowed_types[0x0b] = 1;
-        sb->allowed_types[0x09] = 1;
     }
 
 #if 0
@@ -2965,7 +3015,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         (sb->version == 0xCDCDCDCD && sb->platform == UBI_PC)) {
         sb->version = 0x00000000;
     }
-
 
     /* Tonic Touble beta has garbage instead of version */
     if (sb->is_bnm && sb->version > 0x00000000 && sb->platform == UBI_PC) {
@@ -3028,7 +3077,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         config_sb_sequence(sb, 0x2c, 0x1c);
 
         /* no layers */
-
         return 1;
     }
 
@@ -3053,7 +3101,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         config_sb_audio_fs(sb, 0x2c, 0x00, 0x30);
         config_sb_audio_hs(sb, 0x42, 0x3c, 0x34, 0x34, 0x48, 0x44);
-        /* has internal names but they're partially overwritten by sound index */
+        /* has internal names but they're partially overwritten by subbank index */
 
         config_sb_sequence(sb, 0x24, 0x18);
 
@@ -3066,12 +3114,11 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
     /* Rayman 2: Revolution (2000)(PS2)-bnm */
     /* Disney's Dinosaur (2000)(PS2)-bnm */
     /* Hype: The Time Quest (2001)(PS2)-bnm */
-    if (sb->version == 0x32787370 && sb->platform == UBI_PS2 && sb->is_ps2_bnm) {
+    if (sb->version == 0x32787370 && sb->platform == UBI_PS2) {
         sb->version = 0x00000000; /* for convenience */
         config_sb_entry(sb, 0x1c, 0x44);
 
-        config_sb_audio_fb_ps2_bnm(sb, 0x18, (1 << 5), (1 << 6), (1 << 7));
-        config_sb_audio_hs(sb, 0x20, 0x22, 0x00, 0x00, 0x00, 0x1c);
+        config_sb_audio_ps2_bnm(sb, 0x18, (1 << 5), (1 << 6), (1 << 7), 0x20, 0x22);
         sb->cfg.audio_interleave = 0x400;
 
         config_sb_sequence(sb, 0x24, 0x14);
@@ -3143,20 +3190,16 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         return 1;
     }
 
-#if 0
-    //todo group flags and maybe num_samples for sfx are off
     /* Myst III: Exile (2001)(PS2)-map */
     if (sb->version == 0x00000004 && sb->platform == UBI_PS2) {
         config_sb_entry(sb, 0x34, 0x70);
 
-        config_sb_audio_fb(sb, 0x1c, (1 << 3), (1 << 6), (1 << 4)); //???
-        config_sb_audio_hs(sb, 0x24, 0x28, 0x2c, 0x34, 0x44, 0x6c);
-        sb->cfg.audio_streamed_flag = 0x6c; /* no streamed flag? use codec as flag */
+        config_sb_audio_fb(sb, 0x1c, (1 << 4), 0, (1 << 5));
+        config_sb_audio_hs(sb, 0x24, 0x28, 0x34, 0x3c, 0x44, 0x6c);
 
         config_sb_sequence(sb, 0x2c, 0x24);
         return 1;
     }
-#endif
 
     /* Splinter Cell (2002)(PC)-map */
     /* Splinter Cell: Pandora Tomorrow (2004)(PC)-map */
@@ -3207,7 +3250,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
     if (sb->version == 0x00000007 && sb->platform == UBI_PS2) {
         config_sb_entry(sb, 0x40, 0x70);
 
-        config_sb_audio_fb(sb, 0x1c, (1 << 2), 0, (1 << 4));
+        config_sb_audio_fb(sb, 0x1c, (1 << 2), 0, (1 << 3));
         config_sb_audio_hs(sb, 0x24, 0x28, 0x34, 0x3c, 0x44, 0x6c); /* num_samples may be null */
 
         config_sb_sequence(sb, 0x2c, 0x30);
@@ -3217,8 +3260,13 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         if (is_sc2_ps2_gc) {
             sb->cfg.map_entry_size = 0x38;
-            /* some amb .ss2 have bad sizes with mixed random data, bad extraction/unused crap? */
-            /* Pandora Tomorrow voices have bad offsets too */
+            sb->cfg.map_name = 0x18;
+            sb->cfg.has_rs_files = 1;
+            sb->cfg.audio_ram_streamed_flag = 0x1c;
+            sb->cfg.audio_ram_streamed_and = (1 << 3);
+            sb->cfg.audio_loop_and = (1 << 4);
+            /* some RAM sounds have bad sizes (ex #252, #10874) */
+            sb->cfg.layer_hijack = LAYER_HIJACK_SCPT_PS2; /* some amb .ss1 layers (ex. #226, not #1927) have mixed garbage */
         }
         return 1;
     }
@@ -3238,6 +3286,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         if (is_sc2_ps2_gc) {
             sb->cfg.map_entry_size = 0x38;
+            sb->cfg.map_name = 0x18;
             sb->cfg.audio_streamed_and = 0x01000000; /* did somebody forget about BE? */
         }
         return 1;
@@ -3313,7 +3362,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
     /* Prince of Persia: The Sands of Time (2003)(PS2)-bank 0x000A0004 / 0x000A0002 (POP1 port/Demo) */
     /* Tom Clancy's Rainbow Six 3 (2003)(PS2)-bank 0x000A0007 */
     /* Tom Clancy's Ghost Recon 2 (2004)(PS2)-bank 0x000A0007 */
-    /* Splinter Cell: Pandora Tomorrow (2004)(PS2)-bank 0x000A0008 (separate banks from main map) */
+    /* Splinter Cell: Pandora Tomorrow-online (2004)(PS2)-bank 0x000A0008 */
     /* Prince of Persia: Warrior Within (Demo)(2004)(PS2)-bank 0x00100000 */
     /* Prince of Persia: Warrior Within (2004)(PS2)-bank 0x00120009 */
     if ((sb->version == 0x000A0002 && sb->platform == UBI_PS2) ||
@@ -3364,7 +3413,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         config_sb_audio_fs(sb, 0x24, 0x28, 0x34);
         config_sb_audio_hs(sb, 0x52, 0x4c, 0x38, 0x40, 0x58, 0x54);
         sb->cfg.audio_has_internal_names = 1;
-        sb->cfg.default_codec_for_subblock0 = 1;
 
         config_sb_sequence(sb, 0x28, 0x14);
 
@@ -3381,8 +3429,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         config_sb_audio_fs(sb, 0x24, 0x28, 0x2c);
         config_sb_audio_hs(sb, 0x4a, 0x44, 0x30, 0x38, 0x50, 0x4c);
-        sb->cfg.audio_has_internal_names = 1;
-        sb->cfg.default_codec_for_subblock0 = 1;
 
         config_sb_sequence(sb, 0x28, 0x14);
 
@@ -3418,7 +3464,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         config_sb_audio_fs(sb, 0x24, 0x28, 0x40);
         config_sb_audio_hs(sb, 0x5e, 0x58, 0x44, 0x4c, 0x64, 0x60);
         sb->cfg.audio_has_internal_names = 1;
-        sb->cfg.default_codec_for_subblock0 = 1;
 
         config_sb_sequence(sb, 0x28, 0x14);
 
@@ -3429,7 +3474,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         return 1;
     }
 
-    /* Myst IV (Demo)(2004)(PC)-bank */
+    /* Myst IV: Revelation (Demo)(2004)(PC)-bank */
     if (sb->version == 0x00100000 && sb->platform == UBI_PC) {
         config_sb_entry(sb, 0x68, 0xa4);
 
@@ -3439,11 +3484,21 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         return 1;
     }
 
+    /* two configs with same id; use project file as identifier */
+    if (sb->version == 0x00120006 && sb->platform == UBI_PC) {
+        if (check_project_file(sf, "gamesnd_myst4.sp0", 1)) {
+            is_myst4_pc = 1;
+        }
+    }
+
+    /* Myst IV: Revelation (2004)(PC)-bank 0x00120006 */
     /* Prince of Persia: Warrior Within (Demo)(2004)(PC)-bank 0x00120006 */
     /* Prince of Persia: Warrior Within (2004)(PC)-bank 0x00120009 */
     if ((sb->version == 0x00120006 && sb->platform == UBI_PC) ||
         (sb->version == 0x00120009 && sb->platform == UBI_PC)) {
         config_sb_entry(sb, 0x6c, 0x84);
+        if (is_myst4_pc)
+            config_sb_entry(sb, 0x6c, 0xa4);
 
         config_sb_audio_fs(sb, 0x24, 0x2c, 0x28);
         config_sb_audio_hs(sb, 0x4c, 0x44, 0x30, 0x38, 0x54, 0x50);
@@ -3460,7 +3515,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         config_sb_audio_fs(sb, 0x24, 0x28, 0x40);
         config_sb_audio_hs(sb, 0x60, 0x58, 0x44, 0x4c, 0x68, 0x64);
         sb->cfg.audio_has_internal_names = 1;
-        sb->cfg.default_codec_for_subblock0 = 1;
 
         config_sb_sequence(sb, 0x28, 0x14);
         return 1;
@@ -3489,6 +3543,8 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
     /* Beowulf: The Game (2007)(PSP)-map */
     if (sb->version == 0x0012000C && sb->platform == UBI_PSP && !is_biadd_psp) {
         config_sb_entry(sb, 0x68, 0x84);
+        if (is_biadd_psp)
+            config_sb_entry(sb, 0x80, 0x94);
 
         config_sb_audio_fs(sb, 0x24, 0x2c, 0x28);
         config_sb_audio_hs(sb, 0x4c, 0x44, 0x30, 0x38, 0x54, 0x50);
@@ -3498,17 +3554,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         config_sb_layer_hs(sb, 0x1c, 0x60, 0x64, 0x30);
         config_sb_layer_sh(sb, 0x18, 0x00, 0x08, 0x0c, 0x14);
-        return 1;
-    }
-
-    //todo some .sbX have bad external stream offsets, but not all (ex. offset 0xE3641 but should be 0x0A26)
-    /* Brothers in Arms: D-Day (2006)(PSP)-bank */
-    if (sb->version == 0x0012000C && sb->platform == UBI_PSP && is_biadd_psp) {
-        config_sb_entry(sb, 0x80, 0x94);
-
-        config_sb_audio_fs(sb, 0x24, 0x2c, 0x28);
-        config_sb_audio_hs(sb, 0x4c, 0x44, 0x30, 0x38, 0x54, 0x50);
-        sb->cfg.audio_has_internal_names = 1;
+        //todo some .sbX in BiA:DD have bad external stream offsets, but not all (ex. offset 0xE3641 but should be 0x0A26)
         return 1;
     }
 
@@ -3523,7 +3569,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         return 1;
     }
 
-    /* Myst IV: Revelation (2005)(PC)-bank */
+    /* Myst IV: Revelation (2005)(Xbox)-bank */
     /* Splinter Cell: Chaos Theory (2005)(Xbox)-map */
     if (sb->version == 0x00120012 && sb->platform == UBI_XBOX) {
         config_sb_entry(sb, 0x48, 0x4c);
@@ -3532,6 +3578,20 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         config_sb_audio_he(sb, 0x38, 0x30, 0x1c, 0x24, 0x40, 0x3c);
 
         config_sb_sequence(sb, 0x28, 0x10);
+        return 1;
+    }
+
+    /* Splinter Cell: Chaos Theory (2005)(PS2)-map */
+    if (sb->version == 0x00130001 && sb->platform == UBI_PS2) {
+        config_sb_entry(sb, 0x48, 0x4c);
+
+        config_sb_audio_fb(sb, 0x18, (1 << 2), (1 << 3), (1 << 4));
+        config_sb_audio_he(sb, 0x20, 0x24, 0x30, 0x38, 0x40, 0x44);
+
+        config_sb_sequence(sb, 0x28, 0x10);
+
+        //config_sb_layer_he(sb, 0x1c, 0x28, 0x30, 0x34);
+        //config_sb_layer_sh(sb, 0x18, 0x00, 0x08, 0x0c, 0x14);
         return 1;
     }
 
@@ -3689,7 +3749,7 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         config_sb_layer_he(sb, 0x20, 0x38, 0x40, 0x48);
         config_sb_layer_sh(sb, 0x30, 0x00, 0x08, 0x0c, 0x14);
-        sb->cfg.layer_hijack = 1; /* WTF!!! layer format different from other layers using same id!!! */
+        sb->cfg.layer_hijack = LAYER_HIJACK_GRAW_X360; /* WTF!!! layer format different from other layers using same id!!! */
         return 1;
     }
 
@@ -3749,23 +3809,11 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         }
     }
 
-    /* Splinter Cell: Double Agent (2006)(PC)-map (offline) */
-    if (sb->version == 0x00180006 && sb->platform == UBI_PC && !is_sc4_pc_online) {
+    /* Splinter Cell: Double Agent (2006)(PC)-map */
+    if (sb->version == 0x00180006 && sb->platform == UBI_PC) {
         config_sb_entry(sb, 0x68, 0x7c);
-
-        config_sb_audio_fs(sb, 0x2c, 0x34, 0x30);
-        config_sb_audio_he(sb, 0x5c, 0x54, 0x40, 0x48, 0x64, 0x60);
-
-        config_sb_sequence(sb, 0x2c, 0x14);
-
-        config_sb_layer_he(sb, 0x20, 0x38, 0x3c, 0x44);
-        config_sb_layer_sh(sb, 0x34, 0x00, 0x08, 0x0c, 0x14);
-        return 1;
-    }
-
-    /* Splinter Cell: Double Agent (2006)(PC)-map (online) */
-    if (sb->version == 0x00180006 && sb->platform == UBI_PC && is_sc4_pc_online) {
-        config_sb_entry(sb, 0x68, 0x78);
+        if (is_sc4_pc_online)
+            config_sb_entry(sb, 0x68, 0x78);
 
         config_sb_audio_fs(sb, 0x2c, 0x34, 0x30);
         config_sb_audio_he(sb, 0x5c, 0x54, 0x40, 0x48, 0x64, 0x60);
@@ -3819,7 +3867,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         sb->cfg.audio_xma_offset = 0x68;
 
         config_sb_sequence(sb, 0x2c, 0x14);
-
         return 1;
     }
 
@@ -3899,7 +3946,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         config_sb_layer_he(sb, 0x20, 0x34, 0x38, 0x40);
         config_sb_layer_sh(sb, 0x30, 0x00, 0x04, 0x08, 0x10);
-
         return 1;
     }
 
@@ -3939,7 +3985,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
 
         config_sb_audio_fs(sb, 0x2c, 0x30, 0x34);
         config_sb_audio_he(sb, 0x40, 0x44, 0x4c, 0x54, 0x5c, 0x60);
-
         return 1;
     }
 

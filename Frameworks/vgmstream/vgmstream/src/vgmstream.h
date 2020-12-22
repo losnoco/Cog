@@ -146,6 +146,7 @@ typedef enum {
     coding_REF_IMA,         /* Reflections IMA ADPCM */
     coding_AWC_IMA,         /* Rockstar AWC IMA ADPCM */
     coding_UBI_IMA,         /* Ubisoft IMA ADPCM */
+    coding_UBI_SCE_IMA,     /* Ubisoft SCE IMA ADPCM */
     coding_H4M_IMA,         /* H4M IMA ADPCM (stereo or mono, high nibble first) */
     coding_MTF_IMA,         /* Capcom MT Framework IMA ADPCM */
     coding_CD_IMA,          /* Crystal Dynamics IMA ADPCM */
@@ -745,6 +746,9 @@ typedef enum {
     meta_WADY,
     meta_DSP_SQEX,
     meta_DSP_WIIVOICE,
+    meta_SBK,
+    meta_DSP_WIIADPCM,
+    meta_DSP_CWAC,
 } meta_t;
 
 /* standard WAVEFORMATEXTENSIBLE speaker positions */
