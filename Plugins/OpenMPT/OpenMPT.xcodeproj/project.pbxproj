@@ -342,10 +342,10 @@
 		83E5EFAA1FFEF78100659F0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = FK9S39L3SK;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
@@ -359,10 +359,10 @@
 		83E5EFAB1FFEF78100659F0F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = FK9S39L3SK;
+				DEVELOPMENT_TEAM = 4S876G9VCD;
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
