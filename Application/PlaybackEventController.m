@@ -174,6 +174,32 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                     content.sound = nil;
                     content.categoryIdentifier = @"play";
                     
+                    if ([defaults boolForKey:@"notifications.show-album-art"] && [pe albumArtInternal]) {
+                        NSError *error = nil;
+                        NSFileManager *fileManager = [NSFileManager defaultManager];
+                        NSString *tmpSubFolderName = [NSProcessInfo.processInfo globallyUniqueString];
+                        NSURL *tmpSubFolderURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()]
+                                URLByAppendingPathComponent:tmpSubFolderName isDirectory:true];
+                        if ([fileManager createDirectoryAtPath:[tmpSubFolderURL path]
+                                   withIntermediateDirectories:true
+                                                    attributes:nil
+                                                         error:&error]) {
+                            NSURL *fileURL = [tmpSubFolderURL URLByAppendingPathComponent:@"art.png"];
+                            NSImage *image = [pe albumArt];
+                            CGImageRef cgRef = [image CGImageForProposedRect:NULL context:nil hints:nil];
+                            NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+                            [newRep setSize:[image size]];
+                            NSData *pngData = [newRep representationUsingType:NSBitmapImageFileTypePNG properties:@{}];
+                            [pngData writeToURL:fileURL atomically:YES];
+
+                            UNNotificationAttachment *icon = [UNNotificationAttachment attachmentWithIdentifier:@"art"
+                                                                                                            URL:fileURL
+                                                                                                        options:nil
+                                                                                                          error:&error];
+                            content.attachments = @[icon];
+                        }
+                    }
+
                     UNNotificationRequest * request = [UNNotificationRequest requestWithIdentifier:@"PlayTrack" content:content trigger:nil];
                     
                     [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
