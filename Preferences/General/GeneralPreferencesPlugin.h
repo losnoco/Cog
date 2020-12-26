@@ -25,6 +25,8 @@
     IBOutlet NSView *growlView;
     IBOutlet NSView *appearanceView;
     IBOutlet NSView *midiView;
+
+    __weak IBOutlet NSButton *iTunesStyleCheck;
 }
 
 - (HotKeyPane *)hotKeyPane;
