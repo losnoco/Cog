@@ -87,9 +87,7 @@ index 9d6bff301..ed5d489cb 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -102,9 +100,7 @@ index 9d6bff301..ed5d489cb 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -129,9 +125,7 @@ index 897b799da..10f974bbe 100644
  				CLANG_ENABLE_MODULES = YES;
  				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
  				ENABLE_HARDENED_RUNTIME = YES;
@@ -140,9 +134,7 @@ index 897b799da..10f974bbe 100644
  				CLANG_ENABLE_MODULES = YES;
  				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				ENABLE_HARDENED_RUNTIME = YES;
  				FRAMEWORK_SEARCH_PATHS = (
@@ -155,9 +147,7 @@ index ffad57a29..ec6c53cac 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -169,9 +159,7 @@ index ffad57a29..ec6c53cac 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -196,9 +184,7 @@ index 4614815a5..4a3e01a7d 100644
  			buildSettings = {
  				CLANG_ENABLE_OBJC_WEAK = YES;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -211,9 +197,7 @@ index 4614815a5..4a3e01a7d 100644
  			buildSettings = {
  				CLANG_ENABLE_OBJC_WEAK = YES;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -238,9 +222,7 @@ index f931d80cd..635b8b77e 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -252,9 +234,7 @@ index f931d80cd..635b8b77e 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -279,9 +259,7 @@ index 2cd6d447a..c12a3688f 100644
  				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
  				CLANG_CXX_LIBRARY = "libc++";
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -294,9 +272,7 @@ index 2cd6d447a..c12a3688f 100644
  				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
  				CLANG_CXX_LIBRARY = "libc++";
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -321,9 +297,7 @@ index 85d8691c2..a256776be 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -335,9 +309,7 @@ index 85d8691c2..a256776be 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -362,9 +334,7 @@ index bbfe64a0d..9625ce331 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -376,9 +346,7 @@ index bbfe64a0d..9625ce331 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -403,9 +371,7 @@ index 94d8a1091..21bb19166 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -417,9 +383,7 @@ index 94d8a1091..21bb19166 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -444,9 +408,7 @@ index 94e47b1fa..70ca5ff20 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -458,9 +420,7 @@ index 94e47b1fa..70ca5ff20 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -485,9 +445,7 @@ index beeb8ac7f..acc1f142d 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -499,9 +457,7 @@ index beeb8ac7f..acc1f142d 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -526,9 +482,7 @@ index 923909044..b7c64c810 100644
  			buildSettings = {
  				CLANG_ENABLE_OBJC_WEAK = YES;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -541,9 +495,7 @@ index 923909044..b7c64c810 100644
  			buildSettings = {
  				CLANG_ENABLE_OBJC_WEAK = YES;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -568,9 +520,7 @@ index 88d18abb5..71f3c0790 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -582,9 +532,7 @@ index 88d18abb5..71f3c0790 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -609,9 +557,7 @@ index 6c56d692a..b0ea55f95 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -624,9 +570,7 @@ index 6c56d692a..b0ea55f95 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -643,9 +587,7 @@ index 0e711dac9..25938c2c0 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -657,9 +599,7 @@ index 0e711dac9..25938c2c0 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -684,9 +624,7 @@ index 30c956b7e..b28eff16a 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -698,9 +636,7 @@ index 30c956b7e..b28eff16a 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -725,9 +661,7 @@ index 8e6be9a37..2110ccc74 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -739,9 +673,7 @@ index 8e6be9a37..2110ccc74 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -766,9 +698,7 @@ index 6954c5be5..6a5dfe8cb 100644
  			buildSettings = {
  				CLANG_ENABLE_OBJC_WEAK = YES;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -781,9 +711,7 @@ index 6954c5be5..6a5dfe8cb 100644
  			buildSettings = {
  				CLANG_ENABLE_OBJC_WEAK = YES;
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -808,9 +736,7 @@ index 0977ca7ea..c1d855e5e 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -822,9 +748,7 @@ index 0977ca7ea..c1d855e5e 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -849,9 +773,7 @@ index 32a394891..ac7cec40f 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -863,9 +785,7 @@ index 32a394891..ac7cec40f 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -890,9 +810,7 @@ index 7f1a2444c..31cdd93a1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -905,9 +823,7 @@ index 7f1a2444c..31cdd93a1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -933,9 +849,7 @@ index 9aa70f979..f4314277d 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -948,9 +862,7 @@ index 9aa70f979..f4314277d 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -975,9 +887,7 @@ index 5724a4150..8e986d4c9 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -989,9 +899,7 @@ index 5724a4150..8e986d4c9 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1016,9 +924,7 @@ index 5166212bf..ed3a4eba0 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				DEFINES_MODULE = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1031,9 +937,7 @@ index 5166212bf..ed3a4eba0 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				DEFINES_MODULE = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1059,9 +963,7 @@ index 4a12c4396..e17faf3c2 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1073,9 +975,7 @@ index 4a12c4396..e17faf3c2 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1100,9 +1000,7 @@ index a129defe7..85a6c40ab 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1114,9 +1012,7 @@ index a129defe7..85a6c40ab 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1141,9 +1037,7 @@ index d49e5dfd3..5e6eb66cf 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1155,9 +1049,7 @@ index d49e5dfd3..5e6eb66cf 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1182,9 +1074,7 @@ index fcefda657..23eaa4a82 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1196,9 +1086,7 @@ index fcefda657..23eaa4a82 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1223,9 +1111,7 @@ index 34427c58c..9269f5ca3 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1237,9 +1123,7 @@ index 34427c58c..9269f5ca3 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1264,9 +1148,7 @@ index c5af62cb8..c77220abe 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1279,9 +1161,7 @@ index c5af62cb8..c77220abe 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1298,9 +1178,7 @@ index d1a8d535a..e21f15c22 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1312,9 +1190,7 @@ index d1a8d535a..e21f15c22 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1339,9 +1215,7 @@ index 4ea7a7947..444d53a1b 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1353,9 +1227,7 @@ index 4ea7a7947..444d53a1b 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1380,9 +1252,7 @@ index 149299fe4..4dcc448c5 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1395,9 +1265,7 @@ index 149299fe4..4dcc448c5 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1422,9 +1290,7 @@ index f739c3fe2..b9b2d2bab 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1437,9 +1303,7 @@ index f739c3fe2..b9b2d2bab 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1464,9 +1328,7 @@ index 5615c48f7..a9db8f0e8 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1479,9 +1341,7 @@ index 5615c48f7..a9db8f0e8 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1506,9 +1366,7 @@ index 9907df628..43a92c4a0 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1520,9 +1378,7 @@ index 9907df628..43a92c4a0 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1547,9 +1403,7 @@ index 9015c3597..f42a6bb62 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1562,9 +1416,7 @@ index 9015c3597..f42a6bb62 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1589,9 +1441,7 @@ index 6cb1443b9..67e9f93ac 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1604,9 +1454,7 @@ index 6cb1443b9..67e9f93ac 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1631,9 +1479,7 @@ index 211a3d83d..fa8bbe83a 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1646,9 +1492,7 @@ index 211a3d83d..fa8bbe83a 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1673,9 +1517,7 @@ index 9a0414469..6ee042ba9 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1687,9 +1529,7 @@ index 9a0414469..6ee042ba9 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1714,9 +1554,7 @@ index d946f32c4..569a699ec 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1728,9 +1566,7 @@ index d946f32c4..569a699ec 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1755,9 +1591,7 @@ index 84370f3bb..92463f9ae 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1770,9 +1604,7 @@ index 84370f3bb..92463f9ae 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1797,9 +1629,7 @@ index 6c2659457..577ec43af 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1811,9 +1641,7 @@ index 6c2659457..577ec43af 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1838,9 +1666,7 @@ index a98eb0baf..e1e7c98d4 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1853,9 +1679,7 @@ index a98eb0baf..e1e7c98d4 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1871,9 +1695,7 @@ index 26663b547..70d31eef1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = FK9S39L3SK;
@@ -1885,9 +1707,7 @@ index 26663b547..70d31eef1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = FK9S39L3SK;
@@ -1912,9 +1732,7 @@ index e4e42e1c3..0f8408e55 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1926,9 +1744,7 @@ index e4e42e1c3..0f8408e55 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1953,9 +1769,7 @@ index 00e9534c5..548526c80 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -1968,9 +1782,7 @@ index 00e9534c5..548526c80 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -1995,9 +1807,7 @@ index 370b003c2..28e8bfe46 100644
  			buildSettings = {
  				CLANG_CXX_LIBRARY = "libc++";
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -2010,9 +1820,7 @@ index 370b003c2..28e8bfe46 100644
  			buildSettings = {
  				CLANG_CXX_LIBRARY = "libc++";
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2037,9 +1845,7 @@ index 61740ca54..f56f0b6b8 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2051,9 +1857,7 @@ index 61740ca54..f56f0b6b8 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2078,9 +1882,7 @@ index 31a2c023c..b1e1f7d6f 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2092,9 +1894,7 @@ index 31a2c023c..b1e1f7d6f 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2119,9 +1919,7 @@ index 03f7c8852..e7705c81c 100644
  			buildSettings = {
  				CLANG_CXX_LIBRARY = "libc++";
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -2134,9 +1932,7 @@ index 03f7c8852..e7705c81c 100644
  			buildSettings = {
  				CLANG_CXX_LIBRARY = "libc++";
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2161,9 +1957,7 @@ index 5f0bf4cda..01506c7ed 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -2176,9 +1970,7 @@ index 5f0bf4cda..01506c7ed 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2203,9 +1995,7 @@ index b4e7bd674..4ac345c2e 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
@@ -2218,9 +2008,7 @@ index b4e7bd674..4ac345c2e 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2245,9 +2033,7 @@ index 3acd5749d..77b6e7bf1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2259,9 +2045,7 @@ index 3acd5749d..77b6e7bf1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2286,9 +2070,7 @@ index 676475fd5..a4ae3c4b1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2300,9 +2082,7 @@ index 676475fd5..a4ae3c4b1 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
 -				DEVELOPMENT_TEAM = 4S876G9VCD;
 +				DEVELOPMENT_TEAM = "";
@@ -2327,9 +2107,7 @@ index 1693aadc8..1508fc1dc 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				COPY_PHASE_STRIP = NO;
  				GCC_DYNAMIC_NO_PIC = NO;
@@ -2338,9 +2116,7 @@ index 1693aadc8..1508fc1dc 100644
  			isa = XCBuildConfiguration;
  			buildSettings = {
 -				CODE_SIGN_IDENTITY = "Apple Development";
--				CODE_SIGN_STYLE = Automatic;
 +				CODE_SIGN_IDENTITY = "";
-+				CODE_SIGN_STYLE = Manual;
  				COMBINE_HIDPI_IMAGES = YES;
  				GCC_MODEL_TUNING = G5;
  				GCC_PRECOMPILE_PREFIX_HEADER = YES;
