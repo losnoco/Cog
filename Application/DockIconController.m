@@ -66,7 +66,7 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
     
     [badgeImage drawInRect:NSMakeRect(0, 0, 128, 128)
                   fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
-                 operation:NSCompositeSourceOver fraction:1.0];
+                 operation:NSCompositingOperationSourceOver fraction:1.0];
     
     [newDockImage unlockFocus];
     [NSApp setApplicationIconImage:newDockImage];
