@@ -622,6 +622,7 @@
 		83F1EE2D245D4FB20076E182 /* imuse_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F1EE28245D4FB10076E182 /* imuse_decoder.c */; };
 		83F1EE2E245D4FB20076E182 /* vadpcm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F1EE2C245D4FB20076E182 /* vadpcm_decoder.c */; };
 		83F1EE30245D4FC10076E182 /* imuse.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F1EE2F245D4FC10076E182 /* imuse.c */; };
+		83F2CCE525A5B41600F46FA8 /* acx.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F2CCE125A5B41600F46FA8 /* acx.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
 		83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */; };
 		83FC176D23AC58D100E1025F /* xma_ue3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FC176A23AC58D100E1025F /* xma_ue3.c */; };
@@ -1363,6 +1364,7 @@
 		83F1EE28245D4FB10076E182 /* imuse_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imuse_decoder.c; sourceTree = "<group>"; };
 		83F1EE2C245D4FB20076E182 /* vadpcm_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vadpcm_decoder.c; sourceTree = "<group>"; };
 		83F1EE2F245D4FC10076E182 /* imuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imuse.c; sourceTree = "<group>"; };
+		83F2CCE125A5B41600F46FA8 /* acx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = acx.c; sourceTree = "<group>"; };
 		83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = ../Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
 		83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riff_ogg_streamfile.h; sourceTree = "<group>"; };
@@ -1685,6 +1687,7 @@
 				836F6E2A18BDC2180095E648 /* aax.c */,
 				837CEAD623487E8300E62A4A /* acb.c */,
 				836F6E2B18BDC2180095E648 /* acm.c */,
+				83F2CCE125A5B41600F46FA8 /* acx.c */,
 				83AA7F7A2519C042004C5298 /* adp_konami.c */,
 				834FE0CF215C79E8000A5D3D /* adpcm_capcom.c */,
 				836F6E2C18BDC2180095E648 /* ads.c */,
@@ -2674,6 +2677,7 @@
 				836F6F9918BDC2190095E648 /* maxis_xa.c in Sources */,
 				836F702118BDC2190095E648 /* rs03.c in Sources */,
 				836F6F8818BDC2190095E648 /* fsb.c in Sources */,
+				83F2CCE525A5B41600F46FA8 /* acx.c in Sources */,
 				83FC176D23AC58D100E1025F /* xma_ue3.c in Sources */,
 				836F6FE518BDC2190095E648 /* ps2_lpcm.c in Sources */,
 				8375737321F9507D00F01AF5 /* oki_decoder.c in Sources */,
