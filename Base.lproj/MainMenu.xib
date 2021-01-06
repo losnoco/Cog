@@ -342,7 +342,7 @@
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1529"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="1673"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="1645"/>
-                    <toolbarItem implicitItemIdentifier="A06F7688-72A2-4AAD-B9E1-C66720B2B0D3" label="Playback Control" paletteLabel="Playback Control" sizingBehavior="auto" id="1539">
+                    <toolbarItem implicitItemIdentifier="A06F7688-72A2-4AAD-B9E1-C66720B2B0D3" label="Playback Control" paletteLabel="Playback Control" visibilityPriority="15" sizingBehavior="auto" id="1539">
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="1537" customClass="PlaybackButtons">
                             <rect key="frame" x="0.0" y="14" width="133" height="23"/>
@@ -363,7 +363,7 @@
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0D05748D-3258-44F5-9D1C-CBF211C15E2D" label="Search" paletteLabel="Search" sizingBehavior="auto" id="1533">
+                    <toolbarItem implicitItemIdentifier="0D05748D-3258-44F5-9D1C-CBF211C15E2D" label="Search" paletteLabel="Search" sizingBehavior="auto" id="1533" customClass="NSSearchToolbarItem">
                         <nil key="toolTip"/>
                         <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" id="1531">
                             <rect key="frame" x="0.0" y="14" width="79" height="22"/>
@@ -413,7 +413,7 @@
                             </searchFieldCell>
                         </searchField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2CDD90B4-2355-4E8A-AE42-A6C872DF700A" label="Position" paletteLabel="Position" visibilityPriority="10" sizingBehavior="auto" id="1551">
+                    <toolbarItem implicitItemIdentifier="2CDD90B4-2355-4E8A-AE42-A6C872DF700A" label="Position" paletteLabel="Position" visibilityPriority="10" sizingBehavior="auto" id="1551" customClass="PositionSliderToolbarItem" customModule="Cog" customModuleProvider="target">
                         <nil key="toolTip"/>
                         <slider key="view" verticalHuggingPriority="750" id="1549" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="28"/>
