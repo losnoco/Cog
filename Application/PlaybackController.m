@@ -590,6 +590,14 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 		DLog(@"PLAYING!");
 		[self setSeekable:YES];
 	}
+    
+    if (status == kCogStatusStopped) {
+        status = kCogStatusStopping;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            if ([self playbackStatus] == kCogStatusStopping)
+                [self setPlaybackStatus:kCogStatusStopped];
+        });
+    }
 	
 	[self setPlaybackStatus:status];
 }

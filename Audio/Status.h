@@ -12,4 +12,5 @@ enum
 	kCogStatusStopped = 0,
 	kCogStatusPaused,
 	kCogStatusPlaying,
+    kCogStatusStopping,
 };

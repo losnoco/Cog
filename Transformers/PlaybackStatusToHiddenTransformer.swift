@@ -21,7 +21,8 @@ class PlaybackStatusToHiddenTransformer : ValueTransformer {
         case kCogStatusStopped as Int:
             return true
         case kCogStatusPaused as Int,
-             kCogStatusPlaying as Int:
+             kCogStatusPlaying as Int,
+             kCogStatusStopping as Int:
             return false
         case .none:
             return true
