@@ -402,6 +402,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = ogg;
+				SDKROOT = macosx;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -414,6 +415,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = ogg;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
