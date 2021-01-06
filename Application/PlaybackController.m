@@ -73,7 +73,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	
 - (IBAction)playPauseResume:(id)sender
 {
-	if (playbackStatus == kCogStatusStopped)
+	if (playbackStatus == kCogStatusStopped || playbackStatus == kCogStatusStopping)
 	{
 		[self play:self];
 	}
@@ -160,7 +160,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused
 {
-	if (playbackStatus != kCogStatusStopped)
+	if (playbackStatus != kCogStatusStopped && playbackStatus != kCogStatusStopping)
 		[self stop:self];
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);

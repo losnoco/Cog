@@ -241,6 +241,9 @@
     int lastTrackPlaying = -1;
     double lastTrackPosition = 0;
     
+    if (currentStatus == kCogStatusStopping)
+        currentStatus = kCogStatusStopped;
+    
     [[NSUserDefaults standardUserDefaults] setInteger:currentStatus forKey:@"lastPlaybackStatus"];
     
     if (currentStatus != kCogStatusStopped)
