@@ -31,17 +31,3 @@ You will need to run the following to retrieve all the source code:
 git submodule update --init --recursive
 ```
 
---Christopher Snowhill (chris@kode54.net)
-
-ADDENDUM - 2020-12-22
-
-Please feel free to contribute, but if you need to build it yourself
-for testing, please do the following:
-
-1) `git commit` all of your changes in however many steps
-2) `git apply Scripts/fix_team_ids.patch` and hopefully it applies
-3) Build and test your changes
-
-Please try not to commit any parts of that patch to the tree, as it
-breaks code signing and notarization. Maybe someone will know an
-alternative solution?
