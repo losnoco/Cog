@@ -409,6 +409,8 @@ struct usf_state
     
     int init_length;
 
+    int cycle_count;
+
 #ifdef DYNAREC
 #ifdef _MSC_VER
 #define __i386__

@@ -177,6 +177,12 @@ static osal_inline void test_reg32_imm32(usf_state_t * state, int reg32, unsigne
    put32(state, imm32);
 }
 
+static osal_inline void test_reg32_reg32(usf_state_t * state, int reg1, int reg2)
+{
+    put8(state, 0x85);
+    put8(state, ((reg2 << 3) | reg1 | 0xC0));
+}
+
 static osal_inline void test_m32_imm32(usf_state_t * state, unsigned int *m32, unsigned int imm32)
 {
    put8(state, 0xF7);
@@ -190,6 +196,13 @@ static osal_inline void add_m32_reg32(usf_state_t * state, unsigned int *m32, in
    put8(state, 0x01);
    put8(state, (reg32 << 3) | 5);
    put32(state, (unsigned int)(m32));
+}
+
+static osal_inline void sub_m32_reg32(usf_state_t * state, unsigned int *m32, int reg32)
+{
+    put8(state, 0x29);
+    put8(state, (reg32 << 3) | 5);
+    put32(state, (unsigned int)(m32));
 }
 
 static osal_inline void sub_reg32_m32(usf_state_t * state, int reg32, unsigned int *m32)
@@ -288,6 +301,18 @@ static osal_inline void jp_rj(usf_state_t * state, unsigned char saut)
 {
    put8(state, 0x7A);
    put8(state, saut);
+}
+
+static osal_inline void jns_rj(usf_state_t * state, unsigned char saut)
+{
+    put8(state, 0x79);
+    put8(state, saut);
+}
+
+static osal_inline void js_rj(usf_state_t * state, unsigned char saut)
+{
+    put8(state, 0x78);
+    put8(state, saut);
 }
 
 static osal_inline void je_near_rj(usf_state_t * state, unsigned int saut)

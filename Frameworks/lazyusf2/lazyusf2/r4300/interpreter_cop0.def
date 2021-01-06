@@ -71,7 +71,7 @@ DECLARE_INSTRUCTION(MTC0)
     case CP0_COUNT_REG:
       update_count(state);
       state->interupt_unsafe_state = 1;
-      if (state->next_interupt <= state->g_cp0_regs[CP0_COUNT_REG]) gen_interupt(state);
+      if (state->cycle_count >= 0) gen_interupt(state);
       state->interupt_unsafe_state = 0;
       translate_event_queue(state, (unsigned int) rrt & 0xFFFFFFFF);
       state->g_cp0_regs[CP0_COUNT_REG] = (unsigned int) rrt & 0xFFFFFFFF;
@@ -82,7 +82,14 @@ DECLARE_INSTRUCTION(MTC0)
     case CP0_COMPARE_REG:
       update_count(state);
       remove_event(state, COMPARE_INT);
-      add_interupt_event_count(state, COMPARE_INT, (unsigned int)rrt);
+      /* Add count_per_op to avoid wrong event order in case CP0_COUNT_REG == CP0_COMPARE_REG */
+      state->g_cp0_regs[CP0_COUNT_REG] += state->count_per_op;
+      state->cycle_count += state->count_per_op;
+      add_interupt_event_count(state, COMPARE_INT, rrt);
+      state->g_cp0_regs[CP0_COUNT_REG] -= state->count_per_op;
+
+      /* Update next interrupt in case first event is COMPARE_INT */
+      state->cycle_count = state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count;
       state->g_cp0_regs[CP0_COMPARE_REG] = (unsigned int) rrt;
       state->g_cp0_regs[CP0_CAUSE_REG] &= 0xFFFF7FFF; //Timer interupt is clear
       break;
@@ -97,7 +104,7 @@ DECLARE_INSTRUCTION(MTC0)
       ADD_TO_PC(1);
       check_interupt(state);
       state->interupt_unsafe_state = 1;
-      if (state->next_interupt <= state->g_cp0_regs[CP0_COUNT_REG]) gen_interupt(state);
+      if (state->cycle_count >= 0) gen_interupt(state);
       state->interupt_unsafe_state = 0;
       ADD_TO_PC(-1);
       break;

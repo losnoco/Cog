@@ -131,30 +131,12 @@ static void clear_queue(usf_state_t * state)
 
 static int before_event(usf_state_t * state, unsigned int evt1, unsigned int evt2, int type2)
 {
-    if(evt1 - state->g_cp0_regs[CP0_COUNT_REG] < 0x80000000)
-    {
-        if(evt2 - state->g_cp0_regs[CP0_COUNT_REG] < 0x80000000)
-        {
-            if((evt1 - state->g_cp0_regs[CP0_COUNT_REG]) < (evt2 - state->g_cp0_regs[CP0_COUNT_REG])) return 1;
-            else return 0;
-        }
-        else
-        {
-            if((state->g_cp0_regs[CP0_COUNT_REG] - evt2) < 0x10000000)
-            {
-                switch(type2)
-                {
-                    case SPECIAL_INT:
-                        if(state->SPECIAL_done) return 1;
-                        else return 0;
-                        break;
-                    default:
-                        return 0;
-                }
-            }
-            else return 1;
-        }
-    }
+    int count = state->g_cp0_regs[CP0_COUNT_REG];
+
+    if (state->cycle_count > 0)
+        count -= state->cycle_count;
+
+    if ((evt1 - count) < (evt2 - count)) return 1;
     else return 0;
 }
 
@@ -167,19 +149,9 @@ void add_interupt_event_count(usf_state_t * state, int type, unsigned int count)
 {
     struct node* event;
     struct node* e;
-    int special;
-
-    special = (type == SPECIAL_INT);
-   
-    if(state->g_cp0_regs[CP0_COUNT_REG] > 0x80000000) state->SPECIAL_done = 0;
    
     if (get_event(state, type)) {
         DebugMessage(state, M64MSG_WARNING, "two events of type 0x%x in interrupt queue", type);
-        /* FIXME: hack-fix for freezing in Perfect Dark
-         * http://code.google.com/p/mupen64plus/issues/detail?id=553
-         * https://github.com/mupen64plus-ae/mupen64plus-ae/commit/802d8f81d46705d64694d7a34010dc5f35787c7d
-         */
-        return;
     }
 
     event = alloc_node(&state->q.pool);
@@ -197,18 +169,20 @@ void add_interupt_event_count(usf_state_t * state, int type, unsigned int count)
         state->q.first = event;
         event->next = NULL;
         state->next_interupt = state->q.first->data.count;
+        state->cycle_count = state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count;
     }
-    else if (before_event(state, count, state->q.first->data.count, state->q.first->data.type) && !special)
+    else if (before_event(state, count, state->q.first->data.count, state->q.first->data.type))
     {
         event->next = state->q.first;
         state->q.first = event;
         state->next_interupt = state->q.first->data.count;
+        state->cycle_count = state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count;
     }
     else
     {
         for(e = state->q.first;
             e->next != NULL &&
-            (!before_event(state, count, e->next->data.count, e->next->data.type) || special);
+            (!before_event(state, count, e->next->data.count, e->next->data.type));
             e = e->next);
 
         if (e->next == NULL)
@@ -218,8 +192,7 @@ void add_interupt_event_count(usf_state_t * state, int type, unsigned int count)
         }
         else
         {
-            if (!special)
-                for(; e->next != NULL && e->next->data.count == count; e = e->next);
+            for(; e->next != NULL && e->next->data.count == count; e = e->next);
 
             event->next = e->next;
             e->next = event;
@@ -235,10 +208,12 @@ static void remove_interupt_event(usf_state_t * state)
     state->q.first = e->next;
     free_node(&state->q.pool, e);
 
-    state->next_interupt = (state->q.first != NULL
-         && (state->q.first->data.count > state->g_cp0_regs[CP0_COUNT_REG]
-         || (state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count) < 0x80000000))
+    state->next_interupt = (state->q.first != NULL)
         ? state->q.first->data.count
+        : 0;
+
+    state->cycle_count = (state->q.first != NULL)
+        ? (state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count)
         : 0;
 }
 
@@ -303,8 +278,18 @@ void translate_event_queue(usf_state_t * state, unsigned int base)
     {
         e->data.count = (e->data.count - state->g_cp0_regs[CP0_COUNT_REG]) + base;
     }
+
+    state->g_cp0_regs[CP0_COUNT_REG] = base;
+    add_interupt_event_count(state, SPECIAL_INT, ((state->g_cp0_regs[CP0_COUNT_REG] & UINT32_C(0x80000000)) ^ UINT32_C(0x80000000)));
+
+    /* Add count_per_op to avoid wrong event order in case CP0_COUNT_REG == CP0_COMPARE_REG */
+    state->g_cp0_regs[CP0_COUNT_REG] += state->count_per_op;
+    state->cycle_count += state->count_per_op;
     add_interupt_event_count(state, COMPARE_INT, state->g_cp0_regs[CP0_COMPARE_REG]);
-    add_interupt_event_count(state, SPECIAL_INT, 0);
+    state->g_cp0_regs[CP0_COUNT_REG] -= state->count_per_op;
+
+    /* Update next interrupt in case first event is COMPARE_INT */
+    state->cycle_count = state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count;
 }
 
 int save_eventqueue_infos(usf_state_t * state, char *buf)
@@ -336,6 +321,8 @@ void load_eventqueue_infos(usf_state_t * state, char *buf)
         add_interupt_event_count(state, type, count);
         len += 8;
     }
+    remove_event(state, SPECIAL_INT);
+    add_interupt_event_count(state, SPECIAL_INT, ((state->g_cp0_regs[CP0_COUNT_REG] & UINT32_C(0x80000000)) ^ UINT32_C(0x80000000)));
 }
 
 void init_interupt(usf_state_t * state)
@@ -346,7 +333,8 @@ void init_interupt(usf_state_t * state)
 
     clear_queue(state);
     add_interupt_event_count(state, VI_INT, state->g_vi.next_vi);
-    add_interupt_event_count(state, SPECIAL_INT, 0);
+    add_interupt_event_count(state, SPECIAL_INT, 0x80000000);
+    add_interupt_event_count(state, COMPARE_INT, 0);
 }
 
 void check_interupt(usf_state_t * state)
@@ -388,6 +376,7 @@ void check_interupt(usf_state_t * state)
 
         event->data.count = state->next_interupt = state->g_cp0_regs[CP0_COUNT_REG];
         event->data.type = CHECK_INT;
+        state->cycle_count = 0;
 
         if (state->q.first == NULL)
         {
@@ -434,20 +423,20 @@ void raise_maskable_interrupt(usf_state_t * state, uint32_t cause)
 
 static void special_int_handler(usf_state_t * state)
 {
-    if (state->g_cp0_regs[CP0_COUNT_REG] > 0x10000000)
-        return;
-
-    state->SPECIAL_done = 1;
     remove_interupt_event(state);
-    add_interupt_event_count(state, SPECIAL_INT, 0);
+    add_interupt_event_count(state, SPECIAL_INT, ((state->g_cp0_regs[CP0_COUNT_REG] & UINT32_C(0x80000000)) ^ UINT32_C(0x80000000)));
 }
 
 static void compare_int_handler(usf_state_t * state)
 {
     remove_interupt_event(state);
     state->g_cp0_regs[CP0_COUNT_REG]+=state->count_per_op;
+    state->cycle_count += state->count_per_op;
     add_interupt_event_count(state, COMPARE_INT, state->g_cp0_regs[CP0_COMPARE_REG]);
     state->g_cp0_regs[CP0_COUNT_REG]-=state->count_per_op;
+
+    /* Update next interrupt in case first event is COMPARE_INT */
+    state->cycle_count = state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count;
 
     if (state->enablecompare)
         raise_maskable_interrupt(state, 0x8000);
@@ -526,9 +515,12 @@ void osal_fastcall gen_interupt(usf_state_t * state)
         unsigned int dest = state->skip_jump;
         state->skip_jump = 0;
 
-        state->next_interupt = (state->q.first->data.count > state->g_cp0_regs[CP0_COUNT_REG]
-                || (state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count) < 0x80000000)
+        state->next_interupt = (state->q.first != NULL)
             ? state->q.first->data.count
+            : 0;
+
+        state->cycle_count = (state->q.first != NULL)
+            ? (state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count)
             : 0;
 
         state->last_addr = dest;

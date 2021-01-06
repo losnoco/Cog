@@ -111,6 +111,7 @@ void TLB_refill_exception(usf_state_t * state, unsigned int address, int w)
       {
          state->skip_jump = state->PC->addr;
          state->next_interupt = 0;
+         state->cycle_count = 0;
       }
      }
 }
@@ -147,6 +148,7 @@ void osal_fastcall exception_general(usf_state_t * state)
       {
          state->skip_jump = state->PC->addr;
          state->next_interupt = 0;
+         state->cycle_count = 0;
       }
      }
 }

@@ -105,7 +105,7 @@ int write_mi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
 
         check_interupt(r4300->state);
         update_count(r4300->state);
-        if (r4300->state->next_interupt <= r4300->state->g_cp0_regs[CP0_COUNT_REG]) gen_interupt(r4300->state);
+        if (r4300->state->cycle_count >= 0) gen_interupt(r4300->state);
         break;
     }
 

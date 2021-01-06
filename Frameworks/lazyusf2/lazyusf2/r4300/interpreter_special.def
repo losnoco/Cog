@@ -404,5 +404,7 @@ DECLARE_INSTRUCTION(DSRA32)
 DECLARE_INSTRUCTION(BREAK)
 {
    state->g_cp0_regs[CP0_COUNT_REG] = state->next_interupt;
+   state->cycle_count = 0;
+
    ADD_TO_PC(1);
 }

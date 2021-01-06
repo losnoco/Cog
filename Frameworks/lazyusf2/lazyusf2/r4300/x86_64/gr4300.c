@@ -58,13 +58,14 @@ static void genupdate_count(usf_state_t * state, unsigned int addr)
    mov_xreg32_m32rel(state, EDX, (void*)&state->count_per_op);
    mul_reg32(state, EDX);
    add_m32rel_xreg32(state, (unsigned int*)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX);
+   add_m32rel_xreg32(state, (unsigned int*)(&state->cycle_count), EAX);
 }
 
 static void gencheck_interupt(usf_state_t * state, unsigned long long instr_structure)
 {
-   mov_xreg32_m32rel(state, EAX, (void*)(&state->next_interupt));
-   cmp_xreg32_m32rel(state, EAX, (void*)&state->g_cp0_regs[CP0_COUNT_REG]);
-   ja_rj(state, 0);
+   mov_xreg32_m32rel(state, EAX, (void*)(&state->cycle_count));
+   test_reg32_reg32(state, EAX, EAX);
+   js_rj(state, 0);
    jump_start_rel8(state);
 
    mov_reg64_imm64(state, RAX, (unsigned long long) instr_structure);
@@ -79,9 +80,9 @@ static void gencheck_interupt(usf_state_t * state, unsigned long long instr_stru
 
 static void gencheck_interupt_out(usf_state_t * state, unsigned int addr)
 {
-   mov_xreg32_m32rel(state, EAX, (void*)(&state->next_interupt));
-   cmp_xreg32_m32rel(state, EAX, (void*)&state->g_cp0_regs[CP0_COUNT_REG]);
-   ja_rj(state, 0);
+   mov_xreg32_m32rel(state, EAX, (void*)(&state->cycle_count));
+   test_reg32_reg32(state, EAX, EAX);
+   js_rj(state, 0);
    jump_start_rel8(state);
 
    mov_m32rel_imm32(state, (unsigned int*)(&state->fake_instr.addr), addr);
@@ -322,9 +323,9 @@ void genfin_block(usf_state_t * state)
 
 void gencheck_interupt_reg(usf_state_t * state) // addr is in EAX
 {
-   mov_xreg32_m32rel(state, EBX, (void*)&state->next_interupt);
-   cmp_xreg32_m32rel(state, EBX, (void*)&state->g_cp0_regs[CP0_COUNT_REG]);
-   ja_rj(state, 0);
+   mov_xreg32_m32rel(state, EBX, (void*)(&state->cycle_count));
+   test_reg32_reg32(state, EBX, EBX);
+   js_rj(state, 0);
    jump_start_rel8(state);
 
    mov_m32rel_xreg32(state, (unsigned int*)(&state->fake_instr.addr), EAX);
@@ -416,13 +417,13 @@ void genj_idle(usf_state_t * state)
     return;
      }
    
-   mov_xreg32_m32rel(state, EAX, (unsigned int *)(&state->next_interupt));
-   sub_xreg32_m32rel(state, EAX, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]));
-   cmp_reg32_imm8(state, EAX, 3);
-   jbe_rj(state, 12);
+   mov_xreg32_m32rel(state, EAX, (unsigned int *)(&state->cycle_count));
+   test_reg32_reg32(state, EAX, EAX);
+   jns_rj(state, 18);
 
-   and_eax_imm32(state, 0xFFFFFFFC);  // 5
-   add_m32rel_xreg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX); // 7
+
+   sub_m32rel_xreg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX); // 7
+   mov_m32rel_imm32(state, (unsigned int *)(&state->cycle_count), 0); // 11
 
    genj(state);
 #endif
@@ -515,13 +516,12 @@ void genjal_idle(usf_state_t * state)
     return;
      }
    
-   mov_xreg32_m32rel(state, EAX, (unsigned int *)(&state->next_interupt));
-   sub_xreg32_m32rel(state, EAX, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]));
-   cmp_reg32_imm8(state, EAX, 3);
-   jbe_rj(state, 12);
+   mov_xreg32_m32rel(state, EAX, (unsigned int *)(&state->cycle_count));
+   test_reg32_reg32(state, EAX, EAX);
+   jns_rj(state, 18);
    
-   and_eax_imm32(state, 0xFFFFFFFC);  // 5
-   add_m32rel_xreg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX); // 7
+   sub_m32rel_xreg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX); // 7
+   mov_m32rel_imm32(state, (unsigned int *)(&state->cycle_count), 0); // 11
   
    genjal(state);
 #endif
@@ -619,14 +619,14 @@ void gentest_idle(usf_state_t * state)
    je_near_rj(state, 0);
    jump_start_rel32(state);
 
-   mov_xreg32_m32rel(state, reg, (unsigned int *)(&state->next_interupt));
-   sub_xreg32_m32rel(state, reg, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]));
-   cmp_reg32_imm8(state, reg, 3);
-   jbe_rj(state, 0);
+   mov_xreg32_m32rel(state, reg, (unsigned int *)(&state->cycle_count));
+   test_reg32_reg32(state, reg, reg);
+   jns_rj(state, 0);
+
    jump_start_rel8(state);
    
-   and_reg32_imm32(state, reg, 0xFFFFFFFC);
-   add_m32rel_xreg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), reg);
+   sub_m32rel_xreg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), reg);
+   mov_m32rel_imm32(state, (unsigned int *)(&state->cycle_count), 0);
    
    jump_end_rel8(state);
    jump_end_rel32(state);

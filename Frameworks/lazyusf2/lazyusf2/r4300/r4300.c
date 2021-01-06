@@ -133,6 +133,8 @@ void r4300_reset_hard(usf_state_t * state)
     state->g_cp0_regs[CP0_EPC_REG] = 0xFFFFFFFF;
     state->g_cp0_regs[CP0_BADVADDR_REG] = 0xFFFFFFFF;
     state->g_cp0_regs[CP0_ERROREPC_REG] = 0xFFFFFFFF;
+
+    state->cycle_count = 0;
    
     state->rounding_mode = 0x33F;
 }

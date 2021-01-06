@@ -246,5 +246,5 @@ DECLARE_INSTRUCTION(ERET)
    state->llbit = 0;
    check_interupt(state);
    state->last_addr = PCADDR;
-   if (state->next_interupt <= state->g_cp0_regs[CP0_COUNT_REG]) gen_interupt(state);
+   if (state->cycle_count >= 0) gen_interupt(state);
 }

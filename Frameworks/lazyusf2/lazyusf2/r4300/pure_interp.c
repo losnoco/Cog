@@ -76,7 +76,7 @@ static void InterpretOpcode(usf_state_t * state);
          update_count(state); \
       } \
       state->last_addr = state->interp_PC.addr; \
-      if (state->next_interupt <= state->g_cp0_regs[CP0_COUNT_REG]) gen_interupt(state); \
+      if (state->cycle_count >= 0) gen_interupt(state); \
    } \
    static void name##_IDLE(usf_state_t * state, uint32_t op) \
    { \
@@ -86,11 +86,13 @@ static void InterpretOpcode(usf_state_t * state);
       if (take_jump) \
       { \
          update_count(state); \
-         skip = state->next_interupt - state->g_cp0_regs[CP0_COUNT_REG]; \
-         if (skip > 3) state->g_cp0_regs[CP0_COUNT_REG] += (skip & 0xFFFFFFFC); \
-         else name(state, op); \
+         if(state->cycle_count < 0) \
+         { \
+             state->g_cp0_regs[CP0_COUNT_REG] -= state->cycle_count; \
+             state->cycle_count = 0; \
+         } \
       } \
-      else name(state, op); \
+      name(state, op); \
    }
 #define CHECK_MEMORY()
 

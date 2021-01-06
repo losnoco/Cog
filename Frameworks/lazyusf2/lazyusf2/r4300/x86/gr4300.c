@@ -44,14 +44,15 @@ static void genupdate_count(usf_state_t * state, unsigned int addr)
    mov_reg32_m32(state, EDX, &state->count_per_op);
    mul_reg32(state, EDX);
    add_m32_reg32(state, (unsigned int*)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX);
+   add_m32_reg32(state, (unsigned int*)(&state->cycle_count), EAX);
 }
 
 static void gencheck_interupt(usf_state_t * state, unsigned int instr_structure)
 {
    free_register(state, EBX);
-   mov_eax_memoffs32(state, &state->next_interupt);
-   cmp_reg32_m32(state, EAX, &state->g_cp0_regs[CP0_COUNT_REG]);
-   ja_rj(state, 19);
+   mov_eax_memoffs32(state, &state->cycle_count);
+   test_reg32_reg32(state, EAX, EAX);
+   js_rj(state, 19);
    mov_m32_imm32(state, (unsigned int*)(&state->PC), instr_structure); // 10
    mov_reg32_imm32(state, EBX, (unsigned int)gen_interupt); // 5
    mov_reg32_reg32(state, RP0, ESI); // 2
@@ -61,9 +62,9 @@ static void gencheck_interupt(usf_state_t * state, unsigned int instr_structure)
 static void gencheck_interupt_out(usf_state_t * state, unsigned int addr)
 {
    free_register(state, EBX);
-   mov_eax_memoffs32(state, &state->next_interupt);
-   cmp_reg32_m32(state, EAX, &state->g_cp0_regs[CP0_COUNT_REG]);
-   ja_rj(state, 29);
+   mov_eax_memoffs32(state, &state->cycle_count);
+   test_reg32_reg32(state, EAX, EAX);
+   js_rj(state, 29);
    mov_m32_imm32(state, (unsigned int*)(&state->fake_instr.addr), addr); // 10
    mov_m32_imm32(state, (unsigned int*)(&state->PC), (unsigned int)(&state->fake_instr)); // 10
    mov_reg32_imm32(state, EBX, (unsigned int)gen_interupt); // 5
@@ -359,9 +360,9 @@ void genfin_block(usf_state_t * state)
 void gencheck_interupt_reg(usf_state_t * state) // addr is in EAX
 {
    free_register(state, ECX);
-   mov_reg32_m32(state, EBX, &state->next_interupt);
-   cmp_reg32_m32(state, EBX, &state->g_cp0_regs[CP0_COUNT_REG]);
-   ja_rj(state, 24);
+   mov_reg32_m32(state, EBX, &state->cycle_count);
+   test_reg32_reg32(state, EBX, EBX);
+   js_rj(state, 24);
    mov_memoffs32_eax(state, (unsigned int*)(&state->fake_instr.addr)); // 5
    mov_m32_imm32(state, (unsigned int*)(&state->PC), (unsigned int)(&state->fake_instr)); // 10
    mov_reg32_imm32(state, EBX, (unsigned int)gen_interupt); // 5
@@ -427,6 +428,7 @@ void genj_out(usf_state_t * state)
 
 void genj_idle(usf_state_t * state)
 {
+
 #ifdef INTERPRET_J_IDLE
    gencallinterp(state, (unsigned int)state->current_instruction_table.J_IDLE, 1);
 #else
@@ -436,14 +438,13 @@ void genj_idle(usf_state_t * state)
     gencallinterp(state, (unsigned int)state->current_instruction_table.J_IDLE, 1);
     return;
      }
+
+   mov_eax_memoffs32(state, (unsigned int *)(&state->cycle_count));
+   test_reg32_reg32(state, EAX, EAX);
+   js_rj(state, 16);
    
-   mov_eax_memoffs32(state, (unsigned int *)(&state->next_interupt));
-   sub_reg32_m32(state, EAX, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]));
-   cmp_reg32_imm8(state, EAX, 3);
-   jbe_rj(state, 11);
-   
-   and_eax_imm32(state, 0xFFFFFFFC);  // 5
-   add_m32_reg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX); // 6
+   sub_m32_reg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX); // 6
+   mov_m32_imm32(state, (unsigned int *)(&state->cycle_count), 0); //10
   
    genj(state);
 #endif
@@ -527,13 +528,12 @@ void genjal_idle(usf_state_t * state)
     return;
      }
    
-   mov_eax_memoffs32(state, (unsigned int *)(&state->next_interupt));
-   sub_reg32_m32(state, EAX, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]));
-   cmp_reg32_imm8(state, EAX, 3);
-   jbe_rj(state, 11);
+   mov_eax_memoffs32(state, (unsigned int *)(&state->cycle_count));
+   test_reg32_reg32(state, EAX, EAX);
+   jns_rj(state, 16);
    
-   and_eax_imm32(state, 0xFFFFFFFC);
-   add_m32_reg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX);
+   sub_m32_reg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), EAX); // 6
+   mov_m32_imm32(state, (unsigned int *)(&state->cycle_count), 0); //10
   
    genjal(state);
 #endif
@@ -629,14 +629,12 @@ void gentest_idle(usf_state_t * state)
 
    jump_start_rel32(state);
    
-   mov_reg32_m32(state, reg, (unsigned int *)(&state->next_interupt));
-   sub_reg32_m32(state, reg, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]));
-   cmp_reg32_imm8(state, reg, 3);
-   jbe_rj(state, 12);
-   
-   //sub_reg32_imm32(state, reg, 2); // 6
-   and_reg32_imm32(state, reg, 0xFFFFFFFC); // 6
-   add_m32_reg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), reg); // 6
+   mov_reg32_m32(state, reg, (unsigned int *)(&state->cycle_count));
+   test_reg32_reg32(state, reg, reg);
+   jns_rj(state, 16);
+
+   sub_m32_reg32(state, (unsigned int *)(&state->g_cp0_regs[CP0_COUNT_REG]), reg); // 6
+   mov_m32_imm32(state, (unsigned int *)(&state->cycle_count), 0); //10
    
    jump_end_rel32(state);
 }

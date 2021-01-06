@@ -422,6 +422,8 @@ static int savestates_load_pj64(usf_state_t * state, unsigned char * ptr, unsign
 
     load_eventqueue_infos(state, buffer);
 
+    state->cycle_count = state->g_cp0_regs[CP0_COUNT_REG] - state->q.first->data.count;
+
     // FPCR
     state->FCR0 = GETDATA(curr, int);
     curr += 30 * 4; // FCR1...FCR30 not supported
