@@ -582,21 +582,21 @@
             </connections>
             <point key="canvasLocation" x="130.5" y="131"/>
         </window>
-        <window title="Cog" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" toolbarStyle="expanded" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
-            <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
-            <value key="minSize" type="size" width="400" height="0.0"/>
-            <value key="maxSize" type="size" width="600" height="0.0"/>
+        <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" titlebarAppearsTransparent="YES" toolbarStyle="expanded" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <rect key="contentRect" x="192" y="547" width="480" height="1"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <value key="minSize" type="size" width="280" height="1"/>
+            <value key="maxSize" type="size" width="600" height="1"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="0.0"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="1"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             </view>
             <toolbar key="toolbar" implicitIdentifier="35998ECE-5AD8-429E-8479-657249B22C9C" displayMode="iconOnly" sizeMode="regular" id="2222" userLabel="Mini Toolbar">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="2227"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="2228"/>
-                    <toolbarItem implicitItemIdentifier="6F5A6C43-A09C-462A-AEE2-C86DC3C55128" label="Playback Buttons" paletteLabel="Playback Buttons" sizingBehavior="auto" id="2272">
+                    <toolbarItem implicitItemIdentifier="6F5A6C43-A09C-462A-AEE2-C86DC3C55128" label="Playback Buttons" paletteLabel="Playback Buttons" visibilityPriority="15" sizingBehavior="auto" id="2272">
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="2295" customClass="PlaybackButtons">
                             <rect key="frame" x="0.0" y="14" width="133" height="23"/>
@@ -617,7 +617,7 @@
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="C10E329B-9AB7-47DB-B3BA-7C40B57792E8" label="Position" paletteLabel="Position" sizingBehavior="auto" id="2273">
+                    <toolbarItem implicitItemIdentifier="C10E329B-9AB7-47DB-B3BA-7C40B57792E8" label="Position" paletteLabel="Position" visibilityPriority="15" sizingBehavior="auto" id="2273" customClass="PositionSliderToolbarItem" customModule="Cog" customModuleProvider="target">
                         <nil key="toolTip"/>
                         <slider key="view" verticalHuggingPriority="750" id="2293" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="20"/>
