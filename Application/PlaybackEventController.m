@@ -174,6 +174,37 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                     content.sound = nil;
                     content.categoryIdentifier = @"play";
                     
+                    if ([defaults boolForKey:@"notifications.show-album-art"] && [pe albumArtInternal]) {
+                        NSError *error = nil;
+                        NSFileManager *fileManager = [NSFileManager defaultManager];
+                        NSURL *tmpSubFolderURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()]
+                                URLByAppendingPathComponent:@"cog-artworks-cache" isDirectory:true];
+                        if ([fileManager createDirectoryAtPath:[tmpSubFolderURL path]
+                                   withIntermediateDirectories:true
+                                                    attributes:nil
+                                                         error:&error]) {
+                            NSString *tmpFileName = [[NSProcessInfo.processInfo globallyUniqueString] stringByAppendingString:@".jpg"];
+                            NSURL *fileURL = [tmpSubFolderURL URLByAppendingPathComponent:tmpFileName];
+                            NSImage *image = [pe albumArt];
+                            CGImageRef cgRef = [image CGImageForProposedRect:NULL context:nil hints:nil];
+                            NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+                            NSData *jpgData = [newRep representationUsingType:NSBitmapImageFileTypeJPEG
+                                                                   properties:@{NSImageCompressionFactor: @0.5f}];
+                            [jpgData writeToURL:fileURL atomically:YES];
+
+                            UNNotificationAttachment *icon = [UNNotificationAttachment attachmentWithIdentifier:@"art"
+                                                                                                            URL:fileURL
+                                                                                                        options:nil
+                                                                                                          error:&error];
+                            if (error) {
+                                // We have size limit of 10MB per image attachment.
+                                NSLog(@"%@", error.localizedDescription);
+                            } else {
+                                content.attachments = @[icon];
+                            }
+                        }
+                    }
+
                     UNNotificationRequest * request = [UNNotificationRequest requestWithIdentifier:@"PlayTrack" content:content trigger:nil];
                     
                     [center addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {

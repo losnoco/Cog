@@ -71,6 +71,15 @@
 
 - (GeneralPreferencePane *)growlPane
 {
+    if (@available(macOS 10.14, *)) {
+        if (iTunesStyleCheck) {
+            iTunesStyleCheck.hidden = YES;
+            NSSize size = growlView.frame.size;
+            size.height -= 18;
+            [growlView setFrameSize:size];
+        }
+    }
+
     return [GeneralPreferencePane preferencePaneWithView:growlView title:NSLocalizedStringFromTableInBundle(@"Growl", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"growl"];
 }
 

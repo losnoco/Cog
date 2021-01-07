@@ -11,6 +11,7 @@
                 <outlet property="appearanceView" destination="CgN-sy-RmM" id="wvB-aW-Gfx"/>
                 <outlet property="growlView" destination="U4w-jw-ca5" id="IUJ-gB-jwT"/>
                 <outlet property="hotKeyPane" destination="6" id="14"/>
+                <outlet property="iTunesStyleCheck" destination="AIz-WH-Wqk" id="2n1-pY-cZR"/>
                 <outlet property="midiPane" destination="i5B-ga-Atm" id="rbe-uK-5n2"/>
                 <outlet property="outputPane" destination="57" id="75"/>
                 <outlet property="playlistView" destination="231" id="244"/>
@@ -400,12 +401,12 @@
             <point key="canvasLocation" x="-78" y="-31.5"/>
         </customView>
         <customView id="U4w-jw-ca5" userLabel="GrowlView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="114"/>
+            <rect key="frame" x="0.0" y="0.0" width="500" height="94"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="njn-Xl-9k9">
-                    <rect key="frame" x="18" y="78" width="158" height="18"/>
-                    <autoresizingMask key="autoresizingMask"/>
+                    <rect key="frame" x="18" y="58" width="158" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Enable notifications" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="hqT-nY-NoU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -415,7 +416,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AIz-WH-Wqk">
-                    <rect key="frame" x="18" y="58" width="131" height="18"/>
+                    <rect key="frame" x="18" y="18" width="131" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Use iTunes style" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cOb-hQ-7K8">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
