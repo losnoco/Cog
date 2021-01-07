@@ -68,7 +68,7 @@
     [p setResolvesAliases:YES];
 	
 	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
-        if ( result == NSFileHandlingPanelOKButton ) {
+        if ( result == NSModalResponseOK ) {
             [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
             [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
         } else {
@@ -84,7 +84,7 @@
 	p = [NSSavePanel savePanel];
 	
 	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
-        if ( result == NSFileHandlingPanelOKButton ) {
+        if ( result == NSModalResponseOK ) {
             [self->playlistLoader save:[[p URL] path]];
         } else {
             [p close];
@@ -103,7 +103,7 @@
 
 - (void)openURLPanelDidEnd:(OpenURLPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	if (returnCode == NSOKButton)
+	if (returnCode == NSModalResponseOK)
 	{
 		[playlistLoader willInsertURLs:[NSArray arrayWithObject:[panel url]] origin:URLOriginInternal];
 		[playlistLoader didInsertURLs:[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO] origin:URLOriginInternal];
@@ -170,6 +170,7 @@
         }
     }
 
+    [[miniWindow standardWindowButton:NSWindowZoomButton] setHidden:YES];
     // Restore mini mode
     [self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
 
@@ -377,7 +378,7 @@
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
 	
     // Font defaults
-    float fFontSize = [NSFont systemFontSizeForControlSize:NSSmallControlSize];
+    float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeSmall];
     NSNumber *fontSize = [NSNumber numberWithFloat:fFontSize];
     [userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
 	
