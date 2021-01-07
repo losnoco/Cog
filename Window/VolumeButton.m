@@ -7,29 +7,45 @@
 //
 
 #import "VolumeButton.h"
-#import "VolumeSlider.h"
 #import "PlaybackController.h"
 
-@implementation VolumeButton
+@implementation VolumeButton {
+    NSPopover *popover;
+}
+
+- (void)awakeFromNib
+{
+    popover = [[NSPopover alloc] init];
+
+    NSViewController * viewController = [[NSViewController alloc] init];
+    viewController.view = _popView;
+    popover.contentViewController = viewController;
+    popover.behavior = NSPopoverBehaviorTransient;
+    [popover setContentSize:_popView.bounds.size];
+}
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-	double change = [theEvent deltaY];
-	
-	[(VolumeSlider *)_popView setDoubleValue:[(VolumeSlider *)_popView doubleValue] + change];
-	
-	[[(VolumeSlider *)_popView target] changeVolume:_popView];
-	
-	[(VolumeSlider *)_popView showToolTipForView:self closeAfter:1.0];
+    if ([popover isShown]) {
+        [_popView scrollWheel:theEvent];
+        return;
+    }
+
+    double change = [theEvent deltaY];
+
+    [_popView setDoubleValue:[_popView doubleValue] + change];
+
+    [[_popView target] changeVolume:_popView];
+
+    [_popView showToolTipForView:self closeAfter:1.0];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-	[(VolumeSlider *)_popView hideToolTip];
-	
-	[super mouseDown:theEvent];
+    [_popView hideToolTip];
+    [popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMaxY];
 
-	[(VolumeSlider *)_popView hideToolTip];
+    [super mouseDown:theEvent];
 }
 
 
