@@ -10,87 +10,126 @@
 #import "PlaybackController.h"
 #import "CogAudio/Helper.h"
 
-@implementation VolumeSlider
+@implementation VolumeSlider {
+    NSTimer *currentTimer;
+}
 
 - (id)initWithFrame:(NSRect)frame
 {
-	self = [super initWithFrame:frame];
-	if (self)
-	{
-		toolTip = [[ToolTipWindow alloc] init];
-	}
-	
-	return self;
+    self = [super initWithFrame:frame];
+    return self;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-	self = [super initWithCoder:coder];
-	if (self)
-	{
-		toolTip = [[ToolTipWindow alloc] init];
-	}
-	
-	return self;
+    self = [super initWithCoder:coder];
+    return self;
+}
+
+- (void) awakeFromNib {
+    textView = [[NSText alloc] init];
+    [textView setFrame:NSMakeRect(0, 0, 50, 20)];
+    textView.drawsBackground = NO;
+    textView.editable = NO;
+    textView.alignment = NSTextAlignmentCenter;
+
+    NSViewController * viewController = [[NSViewController alloc] init];
+    viewController.view = textView;
+
+    popover = [[NSPopover alloc] init];
+    popover.contentViewController = viewController;
+    // Don't hide the popover automatically.
+    popover.behavior = NSPopoverBehaviorApplicationDefined;
+    popover.animates = NO;
+    [popover setContentSize:textView.bounds.size];
 }
 
 - (void)updateToolTip
 {
-	double value = [self doubleValue];
-	double volume = linearToLogarithmic(value);
-	
-	NSString *text = [[NSString alloc] initWithFormat:@"%0.lf%%", volume];
-	
-	NSSize size = [toolTip suggestedSizeForTooltip:text];
-	NSPoint mouseLocation = [NSEvent mouseLocation];
-	
-	[toolTip setToolTip:text];
-	[toolTip setFrame:NSMakeRect(mouseLocation.x, mouseLocation.y, size.width, size.height) display:YES];
+    double value = [self doubleValue];
+    double volume = linearToLogarithmic(value);
+
+    NSString *text = [NSString stringWithFormat:@"%0.lf%%", volume];
+
+    [textView setString:text];
 }
 
 - (void)showToolTip
 {
-	[self updateToolTip];
-	
-	[toolTip orderFront];
+    [self updateToolTip];
+
+    double progress = (self.maxValue - [self doubleValue]) / (self.maxValue - self.minValue);
+    CGFloat width = self.knobThickness - 1;
+    // Show tooltip to the left of the Slider Knob
+    CGFloat height = self.knobThickness / 2.f + (self.bounds.size.height - self.knobThickness) * progress - 1;
+    
+    [popover showRelativeToRect:NSMakeRect(width, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMaxX];
+    [self.window.parentWindow makeKeyWindow];
 }
 
 - (void)showToolTipForDuration:(NSTimeInterval)duration
 {
-	[self updateToolTip];
-	[toolTip orderFrontForDuration:duration];
+    [self showToolTip];
+
+    [self hideToolTipAfterDelay:duration];
 }
 
+- (void)showToolTipForView:(NSView *)view closeAfter:(NSTimeInterval)duration
+{
+    [self updateToolTip];
+
+    [popover showRelativeToRect:view.bounds ofView:view preferredEdge:NSRectEdgeMaxY];
+
+    [self hideToolTipAfterDelay:duration];
+}
 
 - (void)hideToolTip
 {
-	[toolTip close];
+    [popover close];
 }
 
+- (void) hideToolTipAfterDelay:(NSTimeInterval)duration
+{
+    if (currentTimer)
+    {
+        [currentTimer invalidate];
+        currentTimer = nil;
+    }
+
+    if (duration > 0.0) {
+        currentTimer = [NSTimer scheduledTimerWithTimeInterval:duration
+                                                        target:self
+                                                      selector:@selector(hideToolTip)
+                                                      userInfo:nil
+                                                       repeats:NO];
+        [[NSRunLoop mainRunLoop] addTimer:currentTimer forMode:NSRunLoopCommonModes];
+    }
+}
 
 - (BOOL)sendAction:(SEL)theAction to:(id)theTarget
 {
-	double oneLog = logarithmicToLinear(100.0);
-	double distance = [self frame].size.height*([self doubleValue] - oneLog)/100.0;
-	if (fabs(distance) < 2.0)
-	{
-		[self setDoubleValue:oneLog];
-	}
+    // Snap to 100% if value is close
+    double snapTarget = logarithmicToLinear(100.0);
+    double snapProgress = ([self doubleValue] - snapTarget) / (self.maxValue - self.minValue);
+    if (fabs(snapProgress) < 0.005)
+    {
+        [self setDoubleValue:snapTarget];
+    }
 
-	[self showToolTip];
-	
-	return [super sendAction:theAction to:theTarget];
+    [self showToolTip];
+
+    return [super sendAction:theAction to:theTarget];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
-	double change = [theEvent deltaY];
-	
-	[self setDoubleValue:[self doubleValue] + change];
-	
-	[[self target] changeVolume:self];
-	
-	[self showToolTipForDuration:1.0];
+    double change = [theEvent deltaY];
+
+    [self setDoubleValue:[self doubleValue] + change];
+
+    [[self target] changeVolume:self];
+
+    [self showToolTipForDuration:1.0];
 }
 
 @end

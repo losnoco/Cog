@@ -20,7 +20,7 @@
 	
 	[[(VolumeSlider *)_popView target] changeVolume:_popView];
 	
-	[(VolumeSlider *)_popView showToolTipForDuration:1.0];
+	[(VolumeSlider *)_popView showToolTipForView:self closeAfter:1.0];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent

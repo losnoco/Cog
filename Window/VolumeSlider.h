@@ -10,11 +10,13 @@
 #import "ToolTipWindow.h"
 
 @interface VolumeSlider : NSSlider {
-	ToolTipWindow *toolTip;
+    NSPopover *popover;
+    NSText *textView;
 }
 
 - (void)showToolTip;
 - (void)showToolTipForDuration:(NSTimeInterval)duration;
+- (void)showToolTipForView:(NSView *)view closeAfter:(NSTimeInterval)duration;
 - (void)hideToolTip;
 
 @end
