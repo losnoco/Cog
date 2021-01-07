@@ -1739,19 +1739,19 @@ Gw
             </items>
         </menu>
         <customView id="1611" userLabel="Volume View">
-            <rect key="frame" x="0.0" y="0.0" width="26" height="168"/>
-            <autoresizingMask key="autoresizingMask"/>
+            <rect key="frame" x="0.0" y="0.0" width="32" height="168"/>
+            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
             <subviews>
                 <slider horizontalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1612" customClass="VolumeSlider">
-                    <rect key="frame" x="6" y="19" width="15" height="129"/>
+                    <rect key="frame" x="6" y="2" width="20" height="164"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="left" sliderType="linear" id="1613"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="10" maxValue="100" doubleValue="55" tickMarkPosition="left" sliderType="linear" id="1613"/>
                     <connections>
                         <action selector="changeVolume:" target="705" id="1614"/>
                     </connections>
                 </slider>
             </subviews>
-            <point key="canvasLocation" x="-137" y="118"/>
+            <point key="canvasLocation" x="615" y="-25"/>
         </customView>
         <customObject id="1675" customClass="SpotlightWindowController">
             <connections>
