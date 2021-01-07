@@ -12,6 +12,7 @@
 
 @implementation VolumeSlider {
     NSTimer *currentTimer;
+    BOOL wasInsideSnapRange;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -27,6 +28,7 @@
 }
 
 - (void) awakeFromNib {
+    wasInsideSnapRange = NO;
     textView = [[NSText alloc] init];
     [textView setFrame:NSMakeRect(0, 0, 50, 20)];
     textView.drawsBackground = NO;
@@ -39,7 +41,7 @@
     popover = [[NSPopover alloc] init];
     popover.contentViewController = viewController;
     // Don't hide the popover automatically.
-    popover.behavior = NSPopoverBehaviorApplicationDefined;
+    popover.behavior = NSPopoverBehaviorTransient;
     popover.animates = NO;
     [popover setContentSize:textView.bounds.size];
 }
@@ -111,9 +113,23 @@
     // Snap to 100% if value is close
     double snapTarget = logarithmicToLinear(100.0);
     double snapProgress = ([self doubleValue] - snapTarget) / (self.maxValue - self.minValue);
+
     if (fabs(snapProgress) < 0.005)
     {
         [self setDoubleValue:snapTarget];
+        if (!wasInsideSnapRange)
+        {
+            if (@available(macOS 10.11, *))
+            {
+                [[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternGeneric
+                                                                   performanceTime:NSHapticFeedbackPerformanceTimeDefault];
+            }
+        }
+        wasInsideSnapRange = YES;
+    }
+    else
+    {
+        wasInsideSnapRange = NO;
     }
 
     [self showToolTip];
