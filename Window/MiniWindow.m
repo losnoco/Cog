@@ -8,27 +8,23 @@
 
 #import "MiniWindow.h"
 
-
 @implementation MiniWindow
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
-	self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
-	if (self)
-	{
-		[self setShowsResizeIndicator:NO];
-		[self setExcludedFromWindowsMenu:YES];
+    self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+    if (self)
+    {
+        [self setShowsResizeIndicator:NO];
+        [self setExcludedFromWindowsMenu:YES];
+        [[self standardWindowButton:NSWindowZoomButton] setEnabled:NO];
+        // Disallow height resize.
+        [self setContentMinSize:NSMakeSize(280, 0)];
+        [self setContentMaxSize:NSMakeSize(CGFLOAT_MAX, 0)];
         [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
-	}
-	
-	return self;
-}
+    }
 
-- (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)proposedFrameSize {
-	// Do not allow height to change
-	proposedFrameSize.height = [self frame].size.height;
-	
-	return proposedFrameSize;
+    return self;
 }
 
 - (void)toggleToolbarShown:(id)sender {
@@ -37,39 +33,51 @@
 }
 
 - (void)keyDown:(NSEvent *)e {
-    unsigned int   modifiers = [e modifierFlags] & (NSCommandKeyMask | NSShiftKeyMask | NSControlKeyMask | NSAlternateKeyMask);
-    NSString       *characters = [e characters];
-    unichar        c;
+    BOOL modifiersUsed =
+        ([e modifierFlags] & (NSEventModifierFlagShift |
+                              NSEventModifierFlagControl |
+                              NSEventModifierFlagOption |
+                              NSEventModifierFlagCommand)) ? YES : NO;
+    NSString *characters = [e charactersIgnoringModifiers];
     
-    if ([characters length] != 1)
+    if (modifiersUsed || [characters length] != 1)
     {
         [super keyDown:e];
-        
+
         return;
     }
-    
-    c = [characters characterAtIndex:0];
-    if (modifiers == 0 && c == ' ')
-    {
-        [playbackController playPauseResume:self];
-    }
-    else if (modifiers == 0 && (c == NSEnterCharacter || c == NSCarriageReturnCharacter))
-    {
-        [playbackController play:self];
-    }
-    else if (modifiers == 0 && c == NSLeftArrowFunctionKey)
-    {
-        [playbackController eventSeekBackward:self];
-    }
-    else if (modifiers == 0 && c == NSRightArrowFunctionKey)
-    {
-        [playbackController eventSeekForward:self];
-    }
-    else
-    {
-        [super keyDown:e];
-    }
 
+    unichar c = [characters characterAtIndex:0];
+    switch (c) {
+        case 0x20: // Spacebar
+            [playbackController playPauseResume:self];
+            break;
+
+        case NSEnterCharacter:
+        case NSCarriageReturnCharacter:
+            [playbackController play:self];
+            break;
+
+        case NSLeftArrowFunctionKey:
+            [playbackController eventSeekBackward:self];
+            break;
+
+        case NSRightArrowFunctionKey:
+            [playbackController eventSeekForward:self];
+            break;
+
+        case NSUpArrowFunctionKey:
+            [playbackController volumeUp:self];
+            break;
+
+        case NSDownArrowFunctionKey:
+            [playbackController volumeDown:self];
+            break;
+
+        default:
+            [super keyDown:e];
+            break;
+    }
 }
 
 

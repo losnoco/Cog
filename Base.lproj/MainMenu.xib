@@ -584,12 +584,10 @@
         </window>
         <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" titlebarAppearsTransparent="YES" toolbarStyle="expanded" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <rect key="contentRect" x="192" y="547" width="480" height="1"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
-            <value key="minSize" type="size" width="280" height="1"/>
-            <value key="maxSize" type="size" width="600" height="1"/>
+            <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1792" height="1095"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="1"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="0.0"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             </view>
             <toolbar key="toolbar" implicitIdentifier="35998ECE-5AD8-429E-8479-657249B22C9C" displayMode="iconOnly" sizeMode="regular" id="2222" userLabel="Mini Toolbar">
