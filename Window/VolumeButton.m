@@ -11,15 +11,12 @@
 
 @implementation VolumeButton {
     NSPopover *popover;
+    NSViewController *viewController;
 }
 
 - (void)awakeFromNib
 {
     popover = [[NSPopover alloc] init];
-
-    NSViewController * viewController = [[NSViewController alloc] init];
-    viewController.view = _popView;
-    popover.contentViewController = viewController;
     popover.behavior = NSPopoverBehaviorTransient;
     [popover setContentSize:_popView.bounds.size];
 }
@@ -42,7 +39,12 @@
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-    [_popView hideToolTip];
+    [popover close];
+
+    viewController = [[NSViewController alloc] init];
+    viewController.view = _popView;
+    popover.contentViewController = viewController;
+
     [popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMaxY];
 
     [super mouseDown:theEvent];
