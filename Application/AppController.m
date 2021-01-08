@@ -170,7 +170,6 @@
         }
     }
 
-    [[miniWindow standardWindowButton:NSWindowZoomButton] setHidden:YES];
     // Restore mini mode
     [self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
 
