@@ -13,11 +13,13 @@
 
 - (NSString *)title
 {
-	return NSLocalizedStringFromTableInBundle(@"Output", nil, [NSBundle bundleForClass:[self class]], @"");
+	return NSLocalizedPrefString(@"Output");
 }
 
 - (NSImage *)icon
 {
+	if (@available(macOS 11.0, *))
+		return [NSImage imageWithSystemSymbolName:@"hifispeaker.2.fill" accessibilityDescription:nil];
 	return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"output"]];
 }
 

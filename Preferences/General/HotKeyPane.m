@@ -31,11 +31,13 @@ static void setControlText(HotKeyControl* control, NSString* kcprop, NSString* m
 
 - (NSString *)title
 {
-    return NSLocalizedStringFromTableInBundle(@"Hot Keys", nil, [NSBundle bundleForClass:[self class]], @"");
+    return NSLocalizedPrefString(@"Hot Keys");
 }
 
 - (NSImage *)icon
 {
+    if (@available(macOS 11.0, *))
+        return [NSImage imageWithSystemSymbolName:@"keyboard" accessibilityDescription:nil];
     return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"hot_keys"]];
 }
 

@@ -25,28 +25,28 @@
 + (NSArray *)preferencePanes
 {
 	GeneralPreferencesPlugin *plugin = [[GeneralPreferencesPlugin alloc] init];
-	[NSBundle loadNibNamed:@"Preferences" owner:plugin];
-	
-	return [NSArray arrayWithObjects:
-			[plugin playlistPane],
-			[plugin hotKeyPane],
-			[plugin updatesPane],
-			[plugin outputPane],
-			[plugin scrobblerPane],
-            [plugin growlPane],
-            [plugin appearancePane],
-            [plugin midiPane],
-			nil];
-}	
+	[[NSBundle bundleWithIdentifier:@"org.cogx.cog.preferences"] loadNibNamed:@"Preferences"
+                                                                        owner:plugin
+                                                              topLevelObjects:nil];
+
+    return @[[plugin playlistPane],
+             [plugin hotKeyPane],
+             [plugin updatesPane],
+             [plugin outputPane],
+             [plugin scrobblerPane],
+             [plugin notificationsPane],
+             [plugin appearancePane],
+             [plugin midiPane]];
+}
 
 - (HotKeyPane *)hotKeyPane
 {
-	return hotKeyPane;
+    return hotKeyPane;
 }
 
 - (OutputPane *)outputPane
 {
-	return outputPane;
+    return outputPane;
 }
 
 - (MIDIPane *)midiPane
@@ -56,36 +56,51 @@
 
 - (GeneralPreferencePane *)updatesPane
 {
-	return [GeneralPreferencePane preferencePaneWithView:updatesView title:NSLocalizedStringFromTableInBundle(@"Updates", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"updates"];
+    return [GeneralPreferencePane preferencePaneWithView:updatesView
+                                                   title:NSLocalizedPrefString(@"Updates")
+                                          systemIconName:@"arrow.triangle.2.circlepath.circle.fill"
+                                          orOldIconNamed:@"updates"];
 }
 
 - (GeneralPreferencePane *)scrobblerPane
 {
-	return [GeneralPreferencePane preferencePaneWithView:scrobblerView title:NSLocalizedStringFromTableInBundle(@"Last.fm", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"lastfm"];
+    return [GeneralPreferencePane preferencePaneWithView:scrobblerView
+                                                   title:NSLocalizedPrefString(@"Scrobble")
+                                          systemIconName:@"dot.radiowaves.left.and.right"
+                                          orOldIconNamed:@"lastfm"];
 }
 
 - (GeneralPreferencePane *)playlistPane
 {
-	return [GeneralPreferencePane preferencePaneWithView:playlistView title:NSLocalizedStringFromTableInBundle(@"Playlist", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"playlist"];
+    return [GeneralPreferencePane preferencePaneWithView:playlistView
+                                                   title:NSLocalizedPrefString(@"Playlist")
+                                          systemIconName:@"music.note.list"
+                                          orOldIconNamed:@"playlist"];
 }
 
-- (GeneralPreferencePane *)growlPane
+- (GeneralPreferencePane *)notificationsPane
 {
     if (@available(macOS 10.14, *)) {
         if (iTunesStyleCheck) {
             iTunesStyleCheck.hidden = YES;
-            NSSize size = growlView.frame.size;
+            NSSize size = notificationsView.frame.size;
             size.height -= 18;
-            [growlView setFrameSize:size];
+            [notificationsView setFrameSize:size];
         }
     }
 
-    return [GeneralPreferencePane preferencePaneWithView:growlView title:NSLocalizedStringFromTableInBundle(@"Growl", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"growl"];
+    return [GeneralPreferencePane preferencePaneWithView:notificationsView
+                                                   title:NSLocalizedPrefString(@"Notifications")
+                                          systemIconName:@"bell.fill"
+                                          orOldIconNamed:@"growl"];
 }
 
 - (GeneralPreferencePane *)appearancePane
 {
-    return [GeneralPreferencePane preferencePaneWithView:appearanceView title:NSLocalizedStringFromTableInBundle(@"Appearance", nil, [NSBundle bundleForClass:[self class]], @"")  iconNamed:@"appearance"];
+    return [GeneralPreferencePane preferencePaneWithView:appearanceView
+                                                   title:NSLocalizedPrefString(@"Appearance")
+                                          systemIconName:@"paintpalette.fill"
+                                          orOldIconNamed:@"appearance"];
 }
 
 @end

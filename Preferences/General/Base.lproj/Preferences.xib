@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15400" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15400"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,6 +13,7 @@
                 <outlet property="hotKeyPane" destination="6" id="14"/>
                 <outlet property="iTunesStyleCheck" destination="AIz-WH-Wqk" id="2n1-pY-cZR"/>
                 <outlet property="midiPane" destination="i5B-ga-Atm" id="rbe-uK-5n2"/>
+                <outlet property="notificationsView" destination="U4w-jw-ca5" id="wVJ-GH-A21"/>
                 <outlet property="outputPane" destination="57" id="75"/>
                 <outlet property="playlistView" destination="231" id="244"/>
                 <outlet property="scrobblerView" destination="0nK-XQ-5MY" id="dFj-Pk-FCG"/>
@@ -21,6 +22,95 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="231" userLabel="PlaylistView">
+            <rect key="frame" x="0.0" y="0.0" width="530" height="139"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="310">
+                    <rect key="frame" x="18" y="35" width="395" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Read CUE sheets when adding folders to playlist" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="311">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.readCueSheetsInFolders" id="328"/>
+                    </connections>
+                </button>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="261">
+                    <rect key="frame" x="17" y="59" width="138" height="35"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When opening file with ⇧ or ⌃⌘ held:" id="262">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="259">
+                    <rect key="frame" x="17" y="102" width="129" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="When opening files:" id="260">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="253">
+                    <rect key="frame" x="157" y="63" width="257" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" id="254">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="255">
+                            <items>
+                                <menuItem title="Item 1" id="256"/>
+                                <menuItem title="Item 2" id="257"/>
+                                <menuItem title="Item 3" id="258"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="246" name="content" keyPath="arrangedObjects" id="264"/>
+                        <binding destination="246" name="contentValues" keyPath="arrangedObjects.name" previousBinding="307" id="308"/>
+                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="264" id="307"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.openingFilesAlteredBehavior" previousBinding="308" id="309"/>
+                    </connections>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="247">
+                    <rect key="frame" x="157" y="95" width="257" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" selectedItem="250" id="248">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="249">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="250"/>
+                                <menuItem title="Item 2" id="251"/>
+                                <menuItem title="Item 3" id="252"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="246" name="content" keyPath="arrangedObjects" id="263"/>
+                        <binding destination="246" name="contentValues" keyPath="arrangedObjects.name" previousBinding="304" id="305"/>
+                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="263" id="304"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.openingFilesBehavior" previousBinding="305" id="306"/>
+                    </connections>
+                </popUpButton>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6QS-GF-Vnc">
+                    <rect key="frame" x="18" y="15" width="388" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Resume playback on startup" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fUg-Cg-gXa">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.resumePlaybackOnStartup" id="8OB-tj-Hd0"/>
+                    </connections>
+                </button>
+            </subviews>
+            <point key="canvasLocation" x="-151" y="-239"/>
+        </customView>
         <customObject id="6" userLabel="HotKeyPane" customClass="HotKeyPane">
             <connections>
                 <outlet property="nextHotKeyControl" destination="28" id="36"/>
@@ -31,7 +121,7 @@
             </connections>
         </customObject>
         <customView id="11" userLabel="HotKeyView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="131"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="131"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="28" customClass="HotKeyControl">
@@ -119,10 +209,10 @@
                     </textFieldCell>
                 </textField>
             </subviews>
-            <point key="canvasLocation" x="123" y="139"/>
+            <point key="canvasLocation" x="-151" y="-33"/>
         </customView>
         <customView id="50" userLabel="UpdatesView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="82"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="82"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="111">
@@ -139,7 +229,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="208">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="107">
                             <items>
                                 <menuItem title="Stable" id="108"/>
@@ -167,6 +257,7 @@
                     </connections>
                 </button>
             </subviews>
+            <point key="canvasLocation" x="-151" y="153"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="52" userLabel="Shared Defaults"/>
         <customObject id="57" userLabel="OutputPane" customClass="OutputPane">
@@ -176,7 +267,7 @@
             </connections>
         </customObject>
         <customView id="58" userLabel="OutputView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="103"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="103"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="65">
@@ -193,7 +284,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Item1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="62" id="210">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="61">
                             <items>
                                 <menuItem title="Item1" state="on" id="62"/>
@@ -223,7 +314,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="vmS-eb-zen">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="V8o-Xy-HUW">
                             <items>
                                 <menuItem title="Item 1" id="oWh-lD-mFH"/>
@@ -240,6 +331,7 @@
                     </connections>
                 </popUpButton>
             </subviews>
+            <point key="canvasLocation" x="-151" y="322"/>
         </customView>
         <customObject id="i5B-ga-Atm" userLabel="MIDIPane" customClass="MIDIPane">
             <connections>
@@ -273,7 +365,7 @@
             </declaredKeys>
         </arrayController>
         <customView id="0nK-XQ-5MY" userLabel="ScrobblerView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="94"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="94"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3gi-0d-78Z">
@@ -310,98 +402,10 @@
                     </connections>
                 </button>
             </subviews>
+            <point key="canvasLocation" x="450" y="-262"/>
         </customView>
-        <customView id="231" userLabel="PlaylistView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="139"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <subviews>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="310">
-                    <rect key="frame" x="18" y="35" width="395" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Read CUE sheets when adding folders to playlist" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="311">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="52" name="value" keyPath="values.readCueSheetsInFolders" id="328"/>
-                    </connections>
-                </button>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="261">
-                    <rect key="frame" x="17" y="59" width="138" height="35"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When opening file with ⇧ or ⌃⌘ held:" id="262">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="259">
-                    <rect key="frame" x="17" y="102" width="129" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="When opening files:" id="260">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="253">
-                    <rect key="frame" x="157" y="63" width="257" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" id="254">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                        <menu key="menu" title="OtherViews" id="255">
-                            <items>
-                                <menuItem title="Item 1" id="256"/>
-                                <menuItem title="Item 2" id="257"/>
-                                <menuItem title="Item 3" id="258"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <binding destination="246" name="content" keyPath="arrangedObjects" id="264"/>
-                        <binding destination="246" name="contentValues" keyPath="arrangedObjects.name" previousBinding="307" id="308"/>
-                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="264" id="307"/>
-                        <binding destination="52" name="selectedObject" keyPath="values.openingFilesAlteredBehavior" previousBinding="308" id="309"/>
-                    </connections>
-                </popUpButton>
-                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="247">
-                    <rect key="frame" x="157" y="95" width="257" height="26"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" selectedItem="250" id="248">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                        <menu key="menu" title="OtherViews" id="249">
-                            <items>
-                                <menuItem title="Item 1" state="on" id="250"/>
-                                <menuItem title="Item 2" id="251"/>
-                                <menuItem title="Item 3" id="252"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <binding destination="246" name="content" keyPath="arrangedObjects" id="263"/>
-                        <binding destination="246" name="contentValues" keyPath="arrangedObjects.name" previousBinding="304" id="305"/>
-                        <binding destination="246" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="263" id="304"/>
-                        <binding destination="52" name="selectedObject" keyPath="values.openingFilesBehavior" previousBinding="305" id="306"/>
-                    </connections>
-                </popUpButton>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6QS-GF-Vnc">
-                    <rect key="frame" x="18" y="15" width="388" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Resume playback on startup" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fUg-Cg-gXa">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="52" name="value" keyPath="values.resumePlaybackOnStartup" id="8OB-tj-Hd0"/>
-                    </connections>
-                </button>
-            </subviews>
-            <point key="canvasLocation" x="-78" y="-31.5"/>
-        </customView>
-        <customView id="U4w-jw-ca5" userLabel="GrowlView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="94"/>
+        <customView id="U4w-jw-ca5" userLabel="NotificationsView">
+            <rect key="frame" x="0.0" y="0.0" width="530" height="94"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="njn-Xl-9k9">
@@ -438,10 +442,10 @@
                     </connections>
                 </button>
             </subviews>
-            <point key="canvasLocation" x="348" y="132"/>
+            <point key="canvasLocation" x="450" y="-52"/>
         </customView>
         <customView id="CgN-sy-RmM" userLabel="AppearanceView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="54"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="54"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="haX-dq-OIe">
@@ -456,9 +460,10 @@
                     </connections>
                 </button>
             </subviews>
+            <point key="canvasLocation" x="450" y="139"/>
         </customView>
         <customView wantsLayer="YES" id="JXu-ar-J3Y" userLabel="MIDIView">
-            <rect key="frame" x="0.0" y="0.0" width="500" height="137"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="137"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SBO-WF-DVS" userLabel="Push Button - Select a SoundFont">
@@ -521,7 +526,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="vaQ-pZ-jXy" id="xcv-1b-kTI">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" id="pRc-b6-sMR">
                             <items>
                                 <menuItem title="Item 1" state="on" id="vaQ-pZ-jXy"/>
@@ -551,7 +556,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" altersStateOfSelectedItem="NO" selectedItem="XzK-h2-vIT" id="qzt-Ox-taI">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" autoenablesItems="NO" id="q1g-E5-NwQ">
                             <items>
                                 <menuItem title="Item 1" id="XzK-h2-vIT"/>
@@ -577,7 +582,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3Gx-cs-3B0" id="5q7-83-7V6">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="menu"/>
                         <menu key="menu" title="OtherViews" id="HKM-FW-dhH">
                             <items>
                                 <menuItem title="Item 1" state="on" id="3Gx-cs-3B0"/>
@@ -594,7 +599,7 @@
                     </connections>
                 </popUpButton>
             </subviews>
-            <point key="canvasLocation" x="340" y="567.5"/>
+            <point key="canvasLocation" x="450" y="339"/>
         </customView>
         <arrayController objectClassName="NSDictionary" editable="NO" id="JB6-r9-XpG" userLabel="ResamplerBehavior" customClass="ResamplerBehaviorArrayController">
             <declaredKeys>

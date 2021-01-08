@@ -8,14 +8,18 @@
 
 #import <Cocoa/Cocoa.h>
 
+/**
+ * TODO: Use NSTabViewController.
+ * This will allow to manage Toolbar automatically, lazy load
+ * preference panes and and crossfade between them.
+ */
+@interface PreferencesWindow : NSWindow<NSToolbarDelegate>
 
-@interface PreferencesWindow : NSWindow<NSToolbarDelegate> {
-	NSMutableArray *preferencePaneOrder;
-	NSMutableDictionary *preferencePanes;
-	NSMutableDictionary *toolbarItems;
-}
-
-- (id)initWithPreferencePanes:(NSArray *)preferencePanes;
+- (instancetype)initWithPreferencePanes:(NSArray *)preferencePanes NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithContentRect:(NSRect)contentRect
+                          styleMask:(NSWindowStyleMask)style
+                            backing:(NSBackingStoreType)backingStoreType
+                              defer:(BOOL)flag NS_UNAVAILABLE;
 
 - (void)show;
 
