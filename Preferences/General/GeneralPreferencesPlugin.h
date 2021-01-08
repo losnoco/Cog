@@ -15,17 +15,16 @@
 #import "MIDIPane.h"
 
 @interface GeneralPreferencesPlugin : NSObject <PreferencePanePlugin> {
-	IBOutlet HotKeyPane *hotKeyPane;
-	IBOutlet OutputPane *outputPane;
+    IBOutlet HotKeyPane *hotKeyPane;
+    IBOutlet OutputPane *outputPane;
     IBOutlet MIDIPane *midiPane;
-	
-	IBOutlet NSView *playlistView;
-	IBOutlet NSView *scrobblerView;
-	IBOutlet NSView *updatesView;
-    IBOutlet NSView *growlView;
-    IBOutlet NSView *appearanceView;
-    IBOutlet NSView *midiView;
 
+    IBOutlet NSView *playlistView;
+    IBOutlet NSView *scrobblerView;
+    IBOutlet NSView *updatesView;
+    IBOutlet NSView *notificationsView;
+    IBOutlet NSView *appearanceView;
+    
     __weak IBOutlet NSButton *iTunesStyleCheck;
 }
 
@@ -36,7 +35,7 @@
 - (GeneralPreferencePane *)updatesPane;
 - (GeneralPreferencePane *)scrobblerPane;
 - (GeneralPreferencePane *)playlistPane;
-- (GeneralPreferencePane *)growlPane;
+- (GeneralPreferencePane *)notificationsPane;
 - (GeneralPreferencePane *)appearancePane;
 
 

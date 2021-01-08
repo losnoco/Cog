@@ -11,49 +11,39 @@
 
 @implementation GeneralPreferencePane
 
-+ (GeneralPreferencePane *)preferencePaneWithView:(NSView *)v title:(NSString *)t iconNamed:(NSString *)n
-{
-	GeneralPreferencePane *pane = [[GeneralPreferencePane alloc] init];
-	if (pane)
-	{
-		[pane setView:v];
-		[pane setTitle:t];
+@synthesize title = _title;
+@synthesize icon = _icon;
+@synthesize view;
 
-		NSImage *i = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:n]];
-		[pane setIcon:i];
-	}
-	
-	return pane;
++ (instancetype)preferencePaneWithView:(NSView *)view
+                                 title:(NSString *)title
+                        systemIconName:(NSString *)systemIconName
+                        orOldIconNamed:(NSString *)oldIconName
+{
+    NSImage *icon;
+    if (@available(macOS 11.0, *))
+    {
+        if (systemIconName)
+            icon = [NSImage imageWithSystemSymbolName:systemIconName accessibilityDescription:nil];
+    }
+    if (icon == nil)
+    {
+        NSString *file = [[NSBundle bundleForClass:[self class]] pathForImageResource:oldIconName];
+        icon = [[NSImage alloc] initWithContentsOfFile:file];
+    }
+
+    return [[GeneralPreferencePane alloc] initWithView:view title:title icon:icon];
 }
 
-- (NSView *)view
-{
-	return view;
-}
-
-- (NSString *)title
-{
-	return title;
-}
-
-- (NSImage *)icon
-{
-	return icon;
-}
-
-- (void)setView:(NSView *)v
-{
-	view = v;
-}
-
-- (void)setTitle:(NSString *)t
-{
-	title = t;
-}
-
-- (void)setIcon:(NSImage *)i
-{
-    icon = i;
+- (instancetype)initWithView:(NSView *)contentView title:(NSString *)title icon:(NSImage *)image {
+    self = [[[self class] alloc] init];
+    if (self)
+    {
+        view = contentView;
+        _title = title;
+        _icon = image;
+    }
+    return self;
 }
 
 @end

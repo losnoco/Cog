@@ -17,17 +17,13 @@
     if (nil == window) {
         // Determine path to the sample preference panes
         NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"General" ofType:@"preferencePane"];
-		NSBundle *bundle = [NSBundle bundleWithPath:pluginPath];
+        NSBundle *bundle = [NSBundle bundleWithPath:pluginPath];
 
-        
-		PreferencePluginController *pluginController = [[PreferencePluginController alloc] initWithPlugins:[NSArray arrayWithObject:bundle]];
-		
-		window = [[PreferencesWindow alloc] initWithPreferencePanes:[pluginController preferencePanes]];
-		
-        // Set which panes are included, and their order.
-        //[prefs setPanesOrder:[NSArray arrayWithObjects:@"General", @"Updating", @"A Non-Existent Preference Pane", nil]];
+        PreferencePluginController *pluginController = [[PreferencePluginController alloc] initWithPlugins:@[bundle]];
+
+        window = [[PreferencesWindow alloc] initWithPreferencePanes:[pluginController preferencePanes]];
     }
-    
+
     // Show the preferences window.
     [window show];
 }

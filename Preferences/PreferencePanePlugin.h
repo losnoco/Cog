@@ -8,20 +8,21 @@
 
 #import <Cocoa/Cocoa.h>
 
+#define NSLocalizedPrefString(key) \
+        [[NSBundle bundleWithIdentifier:@"org.cogx.cog.preferences"] localizedStringForKey:(key) value:@"" table:nil]
+
+@protocol PreferencePane <NSObject>
+@required
+@property(readonly) NSView *view;
+@property(readonly, copy) NSString *title;
+@property(readonly) NSImage *icon;
+
+@end
 
 @protocol PreferencePanePlugin <NSObject> 
 @required
 
 // An array of PrefPaneController instances that the plugin has available
-+ (NSArray *)preferencePanes;
-
-@end
-
-@protocol PreferencePane <NSObject>
-@required
-
-- (NSView *)view;
-- (NSString *)title;
-- (NSImage *)icon;
++ (NSArray<id<PreferencePane>> *)preferencePanes;
 
 @end

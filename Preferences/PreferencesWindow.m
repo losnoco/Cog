@@ -20,144 +20,148 @@
 @end
 
 
-@implementation PreferencesWindow
+@implementation PreferencesWindow {
+    NSMutableArray<NSToolbarItemIdentifier> *preferencePaneOrder;
+    NSMutableDictionary<NSToolbarItemIdentifier, id<PreferencePane>> *preferencePanes;
+    NSMutableDictionary<NSToolbarItemIdentifier, NSToolbarItem *> *toolbarItems;
+}
 
-- (id)initWithPreferencePanes:(NSArray *)panes
+- (instancetype)initWithPreferencePanes:(NSArray<id<PreferencePane>> *)panes
 {
-    self = [super initWithContentRect:NSMakeRect(0, 0, 350, 200)
-                                              styleMask:(NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask)
-                                                backing:NSBackingStoreBuffered
-                                                  defer:NO];
-	if (self)
-	{
-		preferencePaneOrder = [[NSMutableArray alloc] init];
-		preferencePanes = [[NSMutableDictionary alloc] init];
-		
-		for (id<PreferencePane> pane in panes) {
-			[preferencePaneOrder addObject:[pane title]];
-			[preferencePanes setObject:pane forKey:[pane title]];
-		}
-		
-		[self setReleasedWhenClosed:NO];
-		[self setTitle:@"Preferences"]; // initial default title
-		[self setShowsToolbarButton: NO];
-		[self setShowsResizeIndicator:NO];
-		[self center];
-        
-        [[self standardWindowButton:NSWindowZoomButton] setEnabled:FALSE];
-        
-        
+    NSWindowStyleMask windowStyleMask =
+        (NSWindowStyleMaskClosable | NSWindowStyleMaskTitled);
+    self = [super initWithContentRect:NSMakeRect(0, 0, 530, 300)
+                            styleMask:windowStyleMask
+                              backing:NSBackingStoreBuffered
+                                defer:NO];
+    if (self)
+    {
+        preferencePaneOrder = [[NSMutableArray alloc] init];
+        preferencePanes = [[NSMutableDictionary alloc] init];
+
+        for (id<PreferencePane> pane in panes) {
+            [preferencePaneOrder addObject:[pane title]];
+            [preferencePanes setObject:pane forKey:[pane title]];
+        }
+
+        [self setReleasedWhenClosed:NO];
+        [self setTitle:@"Preferences"];
+        [self center];
+
         if (@available(macOS 11, *)) {
             [self setToolbarStyle:NSWindowToolbarStylePreference];
         }
-		
-		[self createToolbar];
-	}
-	
+
+        [self createToolbar];
+    }
+
 	return self;
 }
 
 - (NSString *)lastPaneDefaultsKey
 {
-	return @"LastPreferencePane";
-}
-
--(NSRect)newFrameForNewContentView:(NSView *)view {
-	NSRect newFrame = [self frame];
-    newFrame.size.height = [view frame].size.height + ([self frame].size.height - [[self contentView] frame].size.height);
-    newFrame.size.width = [view frame].size.width;
-    newFrame.origin.y += ([[self contentView] frame].size.height - [view frame].size.height);
-
-	return newFrame;
+    return @"LastPreferencePane";
 }
 
 - (void)setContentView:(NSView *)view animate:(BOOL)animate
 {
+    NSSize newSize = view.bounds.size;
+    NSSize oldSize = [self contentView].bounds.size;
+
+    CGFloat diff = newSize.height - oldSize.height;
+    NSRect newFrame = [self frame];
+    newFrame.size.height += diff;
+    newFrame.origin.y -= diff;
+
     if (animate) {
-        NSView *tempView = [[NSView alloc] initWithFrame:[[self contentView] frame]];
-        [self setContentView:tempView];
+        [self setContentView:nil];
     }
-	
-	NSRect newFrame = [self newFrameForNewContentView:view];
-	[self setFrame:newFrame display:animate animate:animate];
-	
-	[self setContentView:view];
+    [self setFrame:newFrame display:animate animate:animate];
+
+    [self setContentView:view];
+    [self setContentSize:newSize];
 }
 
 - (BOOL)loadPaneNamed:(NSString *)name display:(BOOL)display
 {
-    id<PreferencePane> paneController = [preferencePanes objectForKey:name];
+    id<PreferencePane> paneController = preferencePanes[name];
     if (!paneController) {
         return NO;
     }
     
     NSView *paneView = [paneController view];
-    if (!paneView) {
+    if (!paneView || [self contentView] == paneView) {
         return NO;
     }
-	
-	[self setContentView:paneView animate:display];
-    
-	
-	[self setTitle:name];
-    
+
+    [self setContentView:paneView animate:display];
+
     // Update defaults
     [[NSUserDefaults standardUserDefaults] setObject:name forKey:[self lastPaneDefaultsKey]];
-	
+
     [[self toolbar] setSelectedItemIdentifier:name];
-    
+
     return YES;
 }
 
 - (void)createToolbar
 {
-	toolbarItems = [[NSMutableDictionary alloc] init];
-	for (NSString *name in preferencePaneOrder) {
-		id<PreferencePane> pane = [preferencePanes objectForKey:name];
-		
-		NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:name];
-		[item setPaletteLabel:name]; // item's label in the "Customize Toolbar" sheet (not relevant here, but we set it anyway)
-		[item setLabel:name]; // item's label in the toolbar
-		
-		[item setToolTip:name];
-		[item setImage:[pane icon]];
-		
-		[item setTarget:self];
-		[item setAction:@selector(toolbarItemClicked:)]; // action called when item is clicked
-		
-		[toolbarItems setObject:item forKey:name];
-	}
-	
-	NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-	NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:[bundleIdentifier stringByAppendingString:@" Preferences Toolbar"]];
-	[toolbar setDelegate:self];
-	[toolbar setAllowsUserCustomization:NO];
-	[toolbar setAutosavesConfiguration:NO];
-	[toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
-	
-	[toolbar setSizeMode:NSToolbarSizeModeDefault];
-	
-	[self setToolbar:toolbar];
+    toolbarItems = [[NSMutableDictionary alloc] init];
+    for (NSString *name in preferencePaneOrder) {
+        id<PreferencePane> pane = preferencePanes[name];
+
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:name];
+        [item setPaletteLabel:name]; // item's label in the "Customize Toolbar" sheet (not relevant here, but we set it anyway)
+        [item setLabel:name]; // item's label in the toolbar
+
+        [item setToolTip:name];
+        [item setImage:[pane icon]];
+
+        [item setTarget:self];
+        [item setAction:@selector(toolbarItemClicked:)]; // action called when item is clicked
+
+        toolbarItems[name] = item;
+    }
+
+    NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+    NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:[bundleIdentifier stringByAppendingString:@" Preferences Toolbar"]];
+    [toolbar setDelegate:self];
+    [toolbar setAllowsUserCustomization:NO];
+    [toolbar setAutosavesConfiguration:NO];
+    [toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
+
+    [toolbar setSizeMode:NSToolbarSizeModeDefault];
+
+    [self setToolbar:toolbar];
 }
-
-
 
 - (void)show
 {
-	NSString *lastPane = [[NSUserDefaults standardUserDefaults] objectForKey:[self lastPaneDefaultsKey]];
-	if (nil == lastPane) {
-		if (0 >= [preferencePaneOrder count]) {
-			ALog(@"Error: Preference panes not found!");
-		}
-		
-		lastPane = [preferencePaneOrder objectAtIndex:0];
-	}
-	
-	[self loadPaneNamed:lastPane display:NO];
-	
-	[self makeKeyAndOrderFront:self];
+    NSString *lastPane = [[NSUserDefaults standardUserDefaults] objectForKey:[self lastPaneDefaultsKey]];
+    // Previous pane names migrations.
+    if ([lastPane isEqualToString:NSLocalizedPrefString(@"Growl")]) {
+        lastPane = NSLocalizedPrefString(@"Notifications");
+    }
+    if ([lastPane isEqualToString:NSLocalizedPrefString(@"Last.fm")]) {
+        lastPane = NSLocalizedPrefString(@"Scrobble");
+    }
+    if (nil == lastPane) {
+        if (0 >= [preferencePaneOrder count]) {
+            ALog(@"Error: Preference panes not found!");
+        }
+
+        lastPane = preferencePaneOrder[0];
+    }
+
+    [self loadPaneNamed:lastPane display:NO];
+
+    [self makeKeyAndOrderFront:self];
 }
 
+// Close on Esc pressed.
+- (void)cancelOperation:(id)sender {
+    [self close];
+}
 
 #pragma mark Delegate methods
 
@@ -180,14 +184,12 @@
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag
 {
-    return [toolbarItems objectForKey:itemIdentifier];
+    return toolbarItems[itemIdentifier];
 }
 
 - (void)toolbarItemClicked:(NSToolbarItem *)item
 {
-    if (![[item itemIdentifier] isEqualToString:[self title]]) {
-        [self loadPaneNamed:[item itemIdentifier] display:YES];
-    }
+    [self loadPaneNamed:[item itemIdentifier] display:YES];
 }
 
 @end
