@@ -33,8 +33,6 @@
     IBOutlet NSButton *randomizeButton;
 
 	IBOutlet NSTextField *totalTimeField;
-	
-	IBOutlet NSDrawer *infoDrawer;
 
 	IBOutlet PlaylistView *playlistView;
 	
@@ -81,10 +79,6 @@
 - (IBAction)openKofiPage:(id)sender;
 
 - (IBAction)feedback:(id)sender;
-
-- (IBAction)toggleInfoDrawer:(id)sender;
-- (void)drawerDidOpen:(NSNotification *)notification;
-- (void)drawerDidClose:(NSNotification *)notification;
 
 - (void)initDefaults;
 
