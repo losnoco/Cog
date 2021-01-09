@@ -13,28 +13,20 @@
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
 {
-	self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
-	if (self)
-	{
-		[self setExcludedFromWindowsMenu:YES];
-		[self setContentBorderThickness:24.0 forEdge:NSMinYEdge];
+    self = [super initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+    if (self)
+    {
+        [self setExcludedFromWindowsMenu:YES];
         [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
     }
-	
-	return self;
+    return self;
 }
 
 - (void)awakeFromNib
 {
-    if ([self respondsToSelector:@selector(toggleFullScreen:)])
-    {
-        [itemLionSeparator setHidden:NO];
-        [itemLionFullscreenToggle setHidden:NO];
-    }
-    
+    [super awakeFromNib];
+
     [playlistView setNextResponder:self];
-    
-	[super awakeFromNib];
 }
 
 @end

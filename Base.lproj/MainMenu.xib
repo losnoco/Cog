@@ -566,6 +566,7 @@
                     <toolbarItem reference="1533"/>
                 </defaultToolbarItems>
             </toolbar>
+            <contentBorderThickness minY="22"/>
             <connections>
                 <binding destination="1897" name="title" keyPath="content.display" id="1903">
                     <dictionary key="options">
@@ -576,8 +577,6 @@
                 </binding>
                 <outlet property="delegate" destination="226" id="481"/>
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
-                <outlet property="itemLionFullscreenToggle" destination="2456" id="5yZ-Jj-awr"/>
-                <outlet property="itemLionSeparator" destination="2455" id="0p5-i7-wLz"/>
                 <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
             </connections>
             <point key="canvasLocation" x="130.5" y="131"/>
@@ -997,10 +996,10 @@
                                     <action selector="decreaseFontSize:" target="226" id="1872"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" hidden="YES" id="2455">
+                            <menuItem isSeparatorItem="YES" id="2455">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Enter Full Screen" hidden="YES" keyEquivalent="f" id="2456">
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="2456">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
                                     <action selector="toggleFullScreen:" target="-1" id="2457"/>
