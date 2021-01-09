@@ -316,27 +316,6 @@
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
-- (IBAction)toggleInfoDrawer:(id)sender
-{
-	[mainWindow makeKeyAndOrderFront:self];
-	
-	[infoDrawer toggle:self];
-}
-
-- (void)drawerDidOpen:(NSNotification *)notification
-{
-	if ([notification object] == infoDrawer) {
-		[infoButton setState:NSOnState];
-	}
-}
-
-- (void)drawerDidClose:(NSNotification *)notification
-{
-	if ([notification object] == infoDrawer) {
-		[infoButton setState:NSOffState];
-	}
-}
-
 - (IBAction)openLiberapayPage:(id)sender
 {
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://liberapay.com/kode54"]];
