@@ -55,8 +55,15 @@
 {
 	if ([[self window] isVisible])
 		[[self window] orderOut:self];
-	else
-		[self showWindow:self];
+    else {
+        if ([NSApp mainWindow]) {
+            NSRect rect = [[NSApp mainWindow] frame];
+            // Align Info Inspector HUD Panel to the right of Main Window.
+            NSPoint point = NSMakePoint(NSMaxX(rect), NSMaxY(rect));
+            [[self window] setFrameTopLeftPoint:point];
+        }
+        [self showWindow:self];
+    }
 }
 
 @end
