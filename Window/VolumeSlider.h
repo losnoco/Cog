@@ -7,7 +7,6 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "ToolTipWindow.h"
 
 @interface VolumeSlider : NSSlider {
     NSPopover *popover;
