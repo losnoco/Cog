@@ -35,7 +35,7 @@
     if ( oldPath != nil )
         [panel setDirectoryURL:[NSURL fileURLWithPath:oldPath]];
     NSInteger result = [panel runModal];
-    if(result == NSOKButton)
+    if(result == NSModalResponseOK)
     {
         [[NSUserDefaults standardUserDefaults] setValue:[[panel URL] path] forKey:@"soundFontPath"];
     }
