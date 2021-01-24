@@ -105,7 +105,6 @@
 		17E41E070C130DFF00AC744D /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 17E41E060C130DFF00AC744D /* Credits.html */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		17F562390C3BD91B0019975C /* Preferences.preferencePane in Resources */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* Preferences.preferencePane */; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
 		17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAEBAB0F662985007C8707 /* ToolTipTextField.m */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
@@ -203,6 +202,7 @@
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B09E96630D74A7BC0064F138 /* stop_current.png in Resources */ = {isa = PBXBuildFile; fileRef = B09E96620D74A7BC0064F138 /* stop_current.png */; };
+		ED69CA3B25BE2A390090B90D /* Preferences.preferencePane in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* Preferences.preferencePane */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */; };
 		F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */; };
 /* End PBXBuildFile section */
@@ -623,6 +623,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
+				ED69CA3B25BE2A390090B90D /* Preferences.preferencePane in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1880,10 +1881,6 @@
 					ProjectRef = 17C8087A0C3BD173005707C4 /* Flac.xcodeproj */;
 				},
 				{
-					ProductGroup = 17F562270C3BD8FB0019975C /* Products */;
-					ProjectRef = 17F562260C3BD8FB0019975C /* Preferences.xcodeproj */;
-				},
-				{
 					ProductGroup = 17C8F3C90CBED663008D969D /* Products */;
 					ProjectRef = 17C8F3C80CBED663008D969D /* GME.xcodeproj */;
 				},
@@ -1926,6 +1923,10 @@
 				{
 					ProductGroup = 8E8D41C30CBB0DA000135C1B /* Products */;
 					ProjectRef = 8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */;
+				},
+				{
+					ProductGroup = 17F562270C3BD8FB0019975C /* Products */;
+					ProjectRef = 17F562260C3BD8FB0019975C /* Preferences.xcodeproj */;
 				},
 				{
 					ProductGroup = 83CA5AFA20E4E394003E463A /* Products */;
@@ -2185,7 +2186,6 @@
 				83BC5AC120E4CE8700631CD4 /* OpenURLPanel.xib in Resources */,
 				83BC5AC020E4CE7D00631CD4 /* MainMenu.xib in Resources */,
 				83BC5ABF20E4CE7A00631CD4 /* InfoInspector.xib in Resources */,
-				17F562390C3BD91B0019975C /* Preferences.preferencePane in Resources */,
 				8384915B18083EAB00E7332D /* navigatorTemplate.pdf in Resources */,
 				832C1253180BD1E2005507C1 /* Cog.help in Resources */,
 				8384916218083EAB00E7332D /* randomizeTemplate.pdf in Resources */,
