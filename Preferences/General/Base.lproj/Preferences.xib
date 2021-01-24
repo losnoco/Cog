@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -9,7 +8,6 @@
         <customObject id="-2" userLabel="File's Owner" customClass="GeneralPreferencesPlugin">
             <connections>
                 <outlet property="appearanceView" destination="CgN-sy-RmM" id="wvB-aW-Gfx"/>
-                <outlet property="growlView" destination="U4w-jw-ca5" id="IUJ-gB-jwT"/>
                 <outlet property="hotKeyPane" destination="6" id="14"/>
                 <outlet property="iTunesStyleCheck" destination="AIz-WH-Wqk" id="2n1-pY-cZR"/>
                 <outlet property="midiPane" destination="i5B-ga-Atm" id="rbe-uK-5n2"/>
