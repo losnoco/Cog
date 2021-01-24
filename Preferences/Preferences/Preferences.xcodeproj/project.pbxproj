@@ -94,7 +94,7 @@
 		17C7E5AF0DCCC30A003CBCF7 /* playlist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = playlist.png; path = Icons/playlist.png; sourceTree = "<group>"; };
 		17D1B3F60F6349CE00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = ../PreferencePanePlugin.h; sourceTree = SOURCE_ROOT; };
 		17E78A7D0D68BE3C005C5A59 /* file_tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_tree.png; path = Icons/file_tree.png; sourceTree = "<group>"; };
-		32DBCF630370AF2F00C91783 /* General_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = General_Prefix.pch; sourceTree = "<group>"; };
+		32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences_Prefix.pch; sourceTree = "<group>"; };
 		3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		3DFAC48F235B6B8100A29416 /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		833F681B1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -129,7 +129,7 @@
 		83F27E6A1810DD3A00CEF538 /* updates@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "updates@2x.png"; path = "Icons/updates@2x.png"; sourceTree = "<group>"; };
 		83F27E721810E45D00CEF538 /* PathToFileTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathToFileTransformer.h; sourceTree = "<group>"; };
 		83F27E731810E45D00CEF538 /* PathToFileTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathToFileTransformer.m; sourceTree = "<group>"; };
-		8D5B49B6048680CD000E48DA /* General.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = General.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D5B49B6048680CD000E48DA /* Preferences.preferencePane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Preferences.preferencePane; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E07AA800AAC8EA200A4B32F /* HotKeyPane.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HotKeyPane.h; sourceTree = "<group>"; };
 		8E07AA810AAC8EA200A4B32F /* HotKeyPane.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = HotKeyPane.m; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		089C166AFE841209C02AAC07 /* General */ = {
+		089C166AFE841209C02AAC07 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
 				08FB77AFFE84173DC02AAC07 /* Classes */,
@@ -170,7 +170,7 @@
 				3DFAC48D235B6B8100A29416 /* Xcode-config */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 			);
-			name = General;
+			name = Preferences;
 			sourceTree = "<group>";
 		};
 		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
@@ -269,7 +269,7 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D5B49B6048680CD000E48DA /* General.preferencePane */,
+				8D5B49B6048680CD000E48DA /* Preferences.preferencePane */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -277,7 +277,7 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				32DBCF630370AF2F00C91783 /* General_Prefix.pch */,
+				32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -337,9 +337,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* General */ = {
+		8D5B49AC048680CD000E48DA /* Preferences */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "General" */;
+			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Preferences" */;
 			buildPhases = (
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
@@ -351,10 +351,10 @@
 			dependencies = (
 				8384918A1808594800E7332D /* PBXTargetDependency */,
 			);
-			name = General;
+			name = Preferences;
 			productInstallPath = "$(HOME)/Library/Bundles";
-			productName = General;
-			productReference = 8D5B49B6048680CD000E48DA /* General.preferencePane */;
+			productName = Preferences;
+			productReference = 8D5B49B6048680CD000E48DA /* Preferences.preferencePane */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -371,7 +371,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "General" */;
+			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Preferences" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
@@ -387,7 +387,7 @@
 				sv,
 				he,
 			);
-			mainGroup = 089C166AFE841209C02AAC07 /* General */;
+			mainGroup = 089C166AFE841209C02AAC07 /* Preferences */;
 			projectDirPath = "";
 			projectReferences = (
 				{
@@ -397,7 +397,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				8D5B49AC048680CD000E48DA /* General */,
+				8D5B49AC048680CD000E48DA /* Preferences */,
 			);
 		};
 /* End PBXProject section */
@@ -517,11 +517,11 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = General_Prefix.pch;
+				GCC_PREFIX_HEADER = Preferences_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.preferences;
-				PRODUCT_NAME = General;
+				PRODUCT_NAME = Preferences;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
@@ -537,11 +537,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = General_Prefix.pch;
+				GCC_PREFIX_HEADER = Preferences_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.preferences;
-				PRODUCT_NAME = General;
+				PRODUCT_NAME = Preferences;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
@@ -642,7 +642,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "General" */ = {
+		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Preferences" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913B08733D840010E9CD /* Debug */,
@@ -651,7 +651,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "General" */ = {
+		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Preferences" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913F08733D840010E9CD /* Debug */,

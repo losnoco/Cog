@@ -16,7 +16,7 @@
 {
     if (nil == window) {
         // Determine path to the sample preference panes
-        NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"General" ofType:@"preferencePane"];
+        NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"Preferences" ofType:@"preferencePane"];
         NSBundle *bundle = [NSBundle bundleWithPath:pluginPath];
 
         PreferencePluginController *pluginController = [[PreferencePluginController alloc] initWithPlugins:@[bundle]];
