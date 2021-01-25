@@ -270,6 +270,17 @@ void seek_imuse(imuse_codec_data* data, int32_t num_sample);
 void free_imuse(imuse_codec_data* data);
 
 
+/* compresswave_decoder */
+typedef struct compresswave_codec_data compresswave_codec_data;
+
+compresswave_codec_data* init_compresswave(STREAMFILE* sf);
+void decode_compresswave(compresswave_codec_data* data, sample_t* outbuf, int32_t samples_to_do);
+void reset_compresswave(compresswave_codec_data* data);
+void seek_compresswave(compresswave_codec_data* data, int32_t num_sample);
+void free_compresswave(compresswave_codec_data* data);
+STREAMFILE* compresswave_get_streamfile(compresswave_codec_data* data);
+
+
 /* ea_mt_decoder*/
 typedef struct ea_mt_codec_data ea_mt_codec_data;
 
@@ -509,6 +520,18 @@ void decode_celt_fsb(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t samples_to_
 void reset_celt_fsb(celt_codec_data* data);
 void seek_celt_fsb(VGMSTREAM* vgmstream, int32_t num_sample);
 void free_celt_fsb(celt_codec_data* data);
+#endif
+
+
+#ifdef VGM_USE_SPEEX
+/* speex_decoder */
+typedef struct speex_codec_data speex_codec_data;
+
+speex_codec_data* init_speex_ea(int channels);
+void decode_speex(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t samples_to_do);
+void reset_speex(speex_codec_data* data);
+void seek_speex(VGMSTREAM* vgmstream, int32_t num_sample);
+void free_speex(speex_codec_data* data);
 #endif
 
 
