@@ -1,5 +1,7 @@
 #import "OutputsArrayController.h"
 
+#import <CoreAudio/AudioHardware.h>
+
 @implementation OutputsArrayController
 
 - (void)awakeFromNib
