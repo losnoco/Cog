@@ -8,15 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 #import "GeneralPreferencePane.h"
-#import "HotKeyControl.h"
+#import <MASShortcut/Shortcut.h>
 
-@interface HotKeyPane : GeneralPreferencePane {
-	IBOutlet HotKeyControl *playHotKeyControl;
-	IBOutlet HotKeyControl *prevHotKeyControl;
-	IBOutlet HotKeyControl *nextHotKeyControl;
-    IBOutlet HotKeyControl *spamHotKeyControl;
-}
+@interface HotKeyPane : GeneralPreferencePane
 
-- (IBAction) hotKeyChanged:(id)sender;
+@property(strong) IBOutlet MASShortcutView *playShortcutView;
+@property(strong) IBOutlet MASShortcutView *nextShortcutView;
+@property(strong) IBOutlet MASShortcutView *prevShortcutView;
+@property(strong) IBOutlet MASShortcutView *spamShortcutView;
+
+- (IBAction)resetToDefaultShortcuts:(id)sender;
 
 @end
