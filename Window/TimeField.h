@@ -9,14 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface TimeField : NSTextField {
-	BOOL showTimeRemaining;
-	
-	double value;
-	double maxValue;
-}
+@interface TimeField : NSTextField
 
-- (void)setMaxDoubleValue:(double)v;
-- (void)setDoubleValue:(double)v;
+@property (nonatomic) NSInteger currentTime;
+@property (nonatomic) NSInteger duration;
 
 @end

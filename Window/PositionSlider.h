@@ -11,8 +11,8 @@
 
 @class TimeField;
 
-@interface PositionSlider : TrackingSlider {
-	IBOutlet TimeField *positionTextField;
-}
+@interface PositionSlider : TrackingSlider
+
+@property (nonatomic) IBOutlet TimeField *positionTextField;
 
 @end

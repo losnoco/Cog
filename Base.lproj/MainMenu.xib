@@ -21,12 +21,13 @@
             <rect key="contentRect" x="331" y="367" width="847" height="400"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="400" height="200"/>
-            <stackView key="contentView" orientation="vertical" alignment="centerX" hasEqualSpacing="YES" detachesHiddenViews="YES" id="2">
+            <stackView key="contentView" orientation="vertical" alignment="centerX" spacing="4" hasEqualSpacing="YES" detachesHiddenViews="YES" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="847" height="400"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <edgeInsets key="edgeInsets" left="0.0" right="0.0" top="0.0" bottom="4"/>
                 <middleViews>
                     <button toolTip="Click to select currently playing track" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gev-jg-41I">
-                        <rect key="frame" x="337" y="384" width="173" height="16"/>
+                        <rect key="frame" x="337" y="384" width="174" height="16"/>
                         <buttonCell key="cell" type="bevel" title="Now Playing Track title here" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" imageScaling="proportionallyDown" inset="2" id="oXd-7z-UQS">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -42,17 +43,17 @@
                         </connections>
                     </button>
                     <splitView fixedFrame="YES" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
-                        <rect key="frame" x="24" y="22" width="800" height="354"/>
+                        <rect key="frame" x="24" y="22" width="800" height="358"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
-                                <rect key="frame" x="0.0" y="0.0" width="800" height="354"/>
+                                <rect key="frame" x="0.0" y="0.0" width="800" height="358"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
-                                    <rect key="frame" x="0.0" y="0.0" width="800" height="354"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="800" height="358"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" id="207" customClass="PlaylistView">
-                                            <rect key="frame" x="0.0" y="0.0" width="800" height="337"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="800" height="341"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="6"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -310,7 +311,7 @@
                 </middleViews>
                 <endViews>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="778">
-                        <rect key="frame" x="293" y="0.0" width="261" height="14"/>
+                        <rect key="frame" x="293" y="4" width="261" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
                             <font key="font" metaFont="controlContent" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -631,12 +632,12 @@
                             </connections>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="C0FF70A3-EE67-43F6-9956-95B89425CF0E" label="Current Time" paletteLabel="Current Time" sizingBehavior="auto" id="2274">
+                    <toolbarItem implicitItemIdentifier="C0FF70A3-EE67-43F6-9956-95B89425CF0E" label="Current Time" paletteLabel="Current Time" visibilityPriority="5" sizingBehavior="auto" id="2274">
                         <nil key="toolTip"/>
-                        <textField key="view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2291" customClass="TimeField">
+                        <textField key="view" verticalHuggingPriority="750" id="2291" customClass="TimeField">
                             <rect key="frame" x="14" y="14" width="49" height="19"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" bezelStyle="round" id="2292">
+                            <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="2292">
                                 <font key="font" metaFont="message" size="11"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
