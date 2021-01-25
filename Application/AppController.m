@@ -6,7 +6,6 @@
 #import "PlaylistController.h"
 #import "PlaylistView.h"
 #import "PlaylistEntry.h"
-#import <NDHotKey/NDHotKeyEvent.h>
 #import "PlaylistLoader.h"
 #import "OpenURLPanel.h"
 #import "SpotlightWindowController.h"
@@ -19,6 +18,9 @@
 #import "Logging.h"
 #import "MiniModeMenuTitleTransformer.h"
 #import "DualWindow.h"
+
+#import <MASShortcut/Shortcut.h>
+#import "Shortcuts.h"
 
 @implementation AppController
 
@@ -359,18 +361,6 @@
     float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeSmall];
     NSNumber *fontSize = [NSNumber numberWithFloat:fFontSize];
     [userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
-	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:35] forKey:@"hotKeyPlayKeyCode"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeyPlayModifiers"];
-	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:45] forKey:@"hotKeyNextKeyCode"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeyNextModifiers"];
-	
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:15] forKey:@"hotKeyPreviousKeyCode"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeyPreviousModifiers"];
-    
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:8] forKey:@"hotKeySpamKeyCode"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInt:(NSEventModifierFlagControl|NSEventModifierFlagCommand)] forKey:@"hotKeySpamModifiers"];
 
     NSString *feedURLdefault = @"https://f.losno.co/cog/mercury.xml";
     [userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
@@ -406,76 +396,27 @@
     if ([brokenFeedURLs containsObject:feedURL]) {
         [[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
     }
-
-	//Add observers
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPlayKeyCode"		options:0 context:nil];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyPreviousKeyCode"	options:0 context:nil];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hotKeyNextKeyCode"		options:0 context:nil];
-    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self
-        forKeyPath:@"values.hotKeySpamKeyCode"      options:0 context:nil];
-}
-
-- (void) observeValueForKeyPath:(NSString *)keyPath
-					   ofObject:(id)object
-						 change:(NSDictionary *)change
-                        context:(void *)context
-{
-	if ([keyPath isEqualToString:@"values.hotKeyPlayKeyCode"]) {
-		[self registerHotKeys];
-	}
-	else if ([keyPath isEqualToString:@"values.hotKeyPreviousKeyCode"]) {
-		[self registerHotKeys];
-	}
-	else if ([keyPath isEqualToString:@"values.hotKeyNextKeyCode"]) {
-		[self registerHotKeys];
-	}
-    else if ([keyPath isEqualToString:@"values.hotKeySpamKeyCode"]) {
-        [self registerHotKeys];
-    }
 }
 
 /* Unassign previous handler first, so dealloc can unregister it from the global map before the new instances are assigned */
 - (void)registerHotKeys
 {
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]) {
-        playHotKey = nil;
-        playHotKey = [[NDHotKeyEvent alloc]
-                      initWithKeyCode: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayKeyCode"] intValue]
-                      modifierFlags: [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPlayModifiers"] intValue]
-                      ];
-        [playHotKey setTarget:self selector:@selector(clickPlay)];
-        [playHotKey setEnabled:YES];
-    }
-	
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyPreviousModifiers"] intValue]) {
-        prevHotKey = nil;
-        prevHotKey = [[NDHotKeyEvent alloc]
-                      initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousKeyCode"]
-                      modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyPreviousModifiers"]
-                      ];
-        [prevHotKey setTarget:self selector:@selector(clickPrev)];
-        [prevHotKey setEnabled:YES];
-    }
-	
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeyNextModifiers"] intValue]) {
-        nextHotKey = nil;
-        nextHotKey = [[NDHotKeyEvent alloc]
-                      initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextKeyCode"]
-                      modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeyNextModifiers"]
-                      ];
-        [nextHotKey setTarget:self selector:@selector(clickNext)];
-        [nextHotKey setEnabled:YES];
-    }
+    MASShortcutBinder *binder = [MASShortcutBinder sharedBinder];
+    [binder bindShortcutWithDefaultsKey:CogPlayShortcutKey toAction:^{
+        [self clickPlay];
+    }];
 
-    if ([[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"hotKeySpamModifiers"] intValue]) {
-        spamHotKey = nil;
-        spamHotKey = [[NDHotKeyEvent alloc]
-                      initWithKeyCode: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamKeyCode"]
-                      modifierFlags: [[NSUserDefaults standardUserDefaults] integerForKey:@"hotKeySpamModifiers"]
-                      ];
-        [spamHotKey setTarget:self selector:@selector(clickSpam)];
-        [spamHotKey setEnabled:YES];
-    }
+    [binder bindShortcutWithDefaultsKey:CogNextShortcutKey toAction:^{
+        [self clickNext];
+    }];
+
+    [binder bindShortcutWithDefaultsKey:CogPrevShortcutKey toAction:^{
+        [self clickPrev];
+    }];
+
+    [binder bindShortcutWithDefaultsKey:CogSpamShortcutKey toAction:^{
+        [self clickSpam];
+    }];
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification

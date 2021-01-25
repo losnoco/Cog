@@ -7,26 +7,70 @@
 //
 
 #import "HotKeyPane.h"
-#import "NDHotKey/NDHotKeyEvent.h"
-#import "NDHotKey/NDKeyboardLayout.h"
-#import "HotKeyControl.h"
+#import "Shortcuts.h"
 
-@implementation HotKeyPane
+MASShortcut * shortcutWithMigration(NSString *oldKeyCodePrefName,
+                                    NSString *oldKeyModifierPrefName,
+                                    NSString *newShortcutPrefName,
+                                    NSInteger newDefaultKeyCode) {
+    NSEventModifierFlags defaultModifiers = NSEventModifierFlagControl | NSEventModifierFlagCommand;
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:oldKeyCodePrefName]) {
+        NSInteger oldKeyCode = [defaults integerForKey:oldKeyCodePrefName];
+        NSEventModifierFlags oldKeyModifiers = [defaults integerForKey:oldKeyModifierPrefName];
+        // Should we consider temporarily save these values for further migration?
+        [defaults removeObjectForKey:oldKeyCodePrefName];
+        [defaults removeObjectForKey:oldKeyModifierPrefName];
+        return [MASShortcut shortcutWithKeyCode:oldKeyCode modifierFlags:oldKeyModifiers];
+    } else {
+        return [MASShortcut shortcutWithKeyCode:newDefaultKeyCode modifierFlags:defaultModifiers];
+    }
+}
 
-static void setControlText(HotKeyControl* control, NSString* kcprop, NSString* mprop)
-{
-    UInt16 keyCode = [[NSUserDefaults standardUserDefaults] integerForKey:kcprop];
-    NSUInteger modifiers = [[NSUserDefaults standardUserDefaults] integerForKey:mprop];
-    NSString *str = [[NDKeyboardLayout keyboardLayout] stringForKeyCode:keyCode modifierFlags:(UInt32)modifiers];
-    [control setStringValue:str];
+@implementation HotKeyPane {
+    NSUserDefaultsController *defaultsController;
 }
 
 - (void)awakeFromNib
 {
-    setControlText(prevHotKeyControl, @"hotKeyPreviousKeyCode", @"hotKeyPreviousModifiers");
-    setControlText(nextHotKeyControl, @"hotKeyNextKeyCode", @"hotKeyNextModifiers");
-    setControlText(playHotKeyControl, @"hotKeyPlayKeyCode", @"hotKeyPlayModifiers");
-    setControlText(spamHotKeyControl, @"hotKeySpamKeyCode", @"hotKeySpamModifiers");
+    MASShortcut *playShortcut = shortcutWithMigration(@"hotKeyPlayKeyCode",
+                                                      @"hotKeyPlayModifiers",
+                                                      CogPlayShortcutKey,
+                                                      kVK_ANSI_P);
+    MASShortcut *nextShortcut = shortcutWithMigration(@"hotKeyNextKeyCode",
+                                                      @"hotKeyNextModifiers",
+                                                      CogNextShortcutKey,
+                                                      kVK_ANSI_N);
+    MASShortcut *prevShortcut = shortcutWithMigration(@"hotKeyPreviousKeyCode",
+                                                      @"hotKeyPreviousModifiers",
+                                                      CogPrevShortcutKey,
+                                                      kVK_ANSI_R);
+    MASShortcut *spamShortcut = shortcutWithMigration(@"hotKeySpamKeyCode",
+                                                      @"hotKeySpamModifiers",
+                                                      CogSpamShortcutKey,
+                                                      kVK_ANSI_C);
+
+    NSData *playShortcutData = [NSKeyedArchiver archivedDataWithRootObject:playShortcut];
+    NSData *nextShortcutData = [NSKeyedArchiver archivedDataWithRootObject:nextShortcut];
+    NSData *prevShortcutData = [NSKeyedArchiver archivedDataWithRootObject:prevShortcut];
+    NSData *spamShortcutData = [NSKeyedArchiver archivedDataWithRootObject:spamShortcut];
+
+    // Register default values to be used for the first app start
+    NSDictionary<NSString *, NSData *> *defaultShortcuts = @{
+        CogPlayShortcutKey : playShortcutData,
+        CogNextShortcutKey : nextShortcutData,
+        CogPrevShortcutKey : prevShortcutData,
+        CogSpamShortcutKey : spamShortcutData
+    };
+
+    defaultsController =
+        [[NSUserDefaultsController sharedUserDefaultsController] initWithDefaults:nil
+                                                                    initialValues:defaultShortcuts];
+
+    _playShortcutView.associatedUserDefaultsKey = CogPlayShortcutKey;
+    _nextShortcutView.associatedUserDefaultsKey = CogNextShortcutKey;
+    _prevShortcutView.associatedUserDefaultsKey = CogPrevShortcutKey;
+    _spamShortcutView.associatedUserDefaultsKey = CogSpamShortcutKey;
 }
 
 - (NSString *)title
@@ -41,24 +85,8 @@ static void setControlText(HotKeyControl* control, NSString* kcprop, NSString* m
     return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"hot_keys"]];
 }
 
-- (IBAction) hotKeyChanged:(id)sender
-{
-    if (sender == playHotKeyControl) {
-        [[NSUserDefaults standardUserDefaults] setInteger:[playHotKeyControl modifierFlags] forKey:@"hotKeyPlayModifiers"];
-        [[NSUserDefaults standardUserDefaults] setInteger:[playHotKeyControl keyCode] forKey:@"hotKeyPlayKeyCode"];
-    }
-    else if (sender == prevHotKeyControl) {
-        [[NSUserDefaults standardUserDefaults] setInteger:[prevHotKeyControl modifierFlags] forKey:@"hotKeyPreviousModifiers"];
-        [[NSUserDefaults standardUserDefaults] setInteger:[prevHotKeyControl keyCode] forKey:@"hotKeyPreviousKeyCode"];
-    }
-    else if (sender == nextHotKeyControl) {
-        [[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl modifierFlags] forKey:@"hotKeyNextModifiers"];
-        [[NSUserDefaults standardUserDefaults] setInteger:[nextHotKeyControl keyCode] forKey:@"hotKeyNextKeyCode"];
-    }
-    else if (sender == spamHotKeyControl) {
-        [[NSUserDefaults standardUserDefaults] setInteger:[spamHotKeyControl modifierFlags] forKey:@"hotKeySpamModifiers"];
-        [[NSUserDefaults standardUserDefaults] setInteger:[spamHotKeyControl keyCode] forKey:@"hotKeySpamKeyCode"];
-    }
+- (IBAction)resetToDefaultShortcuts:(id)sender {
+    [defaultsController revertToInitialValues:sender];
 }
 
 @end

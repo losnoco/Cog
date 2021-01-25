@@ -2,7 +2,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <NDHotKey/NDHotKeyEvent.h>
 #import "NowPlayingBarController.h"
 
 @class FileTreeViewController;
@@ -48,11 +47,6 @@
     IBOutlet NSWindowController *spotlightWindowController;
     
     IBOutlet FileTreeViewController *fileTreeViewController;
-	
-	NDHotKeyEvent *playHotKey;
-	NDHotKeyEvent *prevHotKey;
-	NDHotKeyEvent *nextHotKey;
-    NDHotKeyEvent *spamHotKey;
     
     NowPlayingBarController *nowPlaying;
 	
@@ -88,8 +82,6 @@
 - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames;
 
 - (void)registerHotKeys;
-OSStatus handleHotKey(EventHandlerCallRef nextHandler,EventRef theEvent,void *userData);
-
 
 - (void)clickPlay;
 - (void)clickPause;

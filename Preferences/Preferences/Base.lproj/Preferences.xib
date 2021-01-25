@@ -111,10 +111,10 @@
         </customView>
         <customObject id="6" userLabel="HotKeyPane" customClass="HotKeyPane">
             <connections>
-                <outlet property="nextHotKeyControl" destination="28" id="36"/>
-                <outlet property="playHotKeyControl" destination="16" id="34"/>
-                <outlet property="prevHotKeyControl" destination="27" id="35"/>
-                <outlet property="spamHotKeyControl" destination="2Eh-AY-mzV" id="B2t-Ar-T97"/>
+                <outlet property="nextShortcutView" destination="Dse-4d-oBd" id="mYF-gy-OEU"/>
+                <outlet property="playShortcutView" destination="OBW-Zy-nz0" id="OkD-1k-vay"/>
+                <outlet property="prevShortcutView" destination="Ujw-ux-fCg" id="oOW-gF-QBo"/>
+                <outlet property="spamShortcutView" destination="80X-iX-vxp" id="3P3-KR-8Ih"/>
                 <outlet property="view" destination="11" id="12"/>
             </connections>
         </customObject>
@@ -122,46 +122,10 @@
             <rect key="frame" x="0.0" y="0.0" width="530" height="131"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="28" customClass="HotKeyControl">
-                    <rect key="frame" x="91" y="42" width="82" height="19"/>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="24">
+                    <rect key="frame" x="47" y="94" width="39" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="202">
-                        <font key="font" metaFont="label" size="11"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <action selector="hotKeyChanged:" target="6" id="38"/>
-                    </connections>
-                </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Eh-AY-mzV" customClass="HotKeyControl">
-                    <rect key="frame" x="91" y="17" width="82" height="19"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="A8w-Tx-TAd">
-                        <font key="font" metaFont="label" size="11"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <action selector="hotKeyChanged:" target="6" id="WrA-Jp-1SV"/>
-                    </connections>
-                </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="27" customClass="HotKeyControl">
-                    <rect key="frame" x="91" y="67" width="82" height="19"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="201">
-                        <font key="font" metaFont="label" size="11"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <action selector="hotKeyChanged:" target="6" id="37"/>
-                    </connections>
-                </textField>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="26">
-                    <rect key="frame" x="42" y="44" width="44" height="17"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Next:" id="200">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Play:" id="198">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -176,26 +140,14 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="24">
-                    <rect key="frame" x="47" y="94" width="39" height="17"/>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="26">
+                    <rect key="frame" x="42" y="44" width="44" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Play:" id="198">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Next:" id="200">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
-                </textField>
-                <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="16" customClass="HotKeyControl">
-                    <rect key="frame" x="91" y="92" width="82" height="19"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="left" drawsBackground="YES" id="196">
-                        <font key="font" metaFont="label" size="11"/>
-                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                    <connections>
-                        <action selector="hotKeyChanged:" target="6" id="20"/>
-                    </connections>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eid-M4-6Cs">
                     <rect key="frame" x="24" y="19" width="62" height="17"/>
@@ -206,6 +158,33 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OBW-Zy-nz0" userLabel="Play Shortcut" customClass="MASShortcutView">
+                    <rect key="frame" x="92" y="93" width="163" height="19"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ujw-ux-fCg" userLabel="Previous Shortcut" customClass="MASShortcutView">
+                    <rect key="frame" x="92" y="68" width="163" height="19"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dse-4d-oBd" userLabel="Next Shortcut" customClass="MASShortcutView">
+                    <rect key="frame" x="92" y="43" width="163" height="19"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="80X-iX-vxp" userLabel="Spam Shortcut" customClass="MASShortcutView">
+                    <rect key="frame" x="92" y="18" width="163" height="19"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </customView>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YtT-gE-hX3">
+                    <rect key="frame" x="380" y="10" width="137" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
+                    <buttonCell key="cell" type="push" title="Reset to defaults" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1y7-iZ-BhE">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="resetToDefaultShortcuts:" target="6" id="SSH-OG-OHD"/>
+                    </connections>
+                </button>
             </subviews>
             <point key="canvasLocation" x="-151" y="-33"/>
         </customView>
