@@ -323,7 +323,7 @@
 				TargetAttributes = {
 					8313E30E1901FBDC00B4B6F1 = {
 						DevelopmentTeam = N6E749HJ2X;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -515,6 +515,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "mpg123/mpg123-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -532,6 +533,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "mpg123/mpg123-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";

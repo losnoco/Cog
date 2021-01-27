@@ -1366,6 +1366,7 @@
 					"HAVE_STRTOF_L=1",
 					MGBA_STANDALONE,
 				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/mGBA/mgba/src",
 					"$(SRCROOT)/mGBA/mgba/include",
@@ -1399,6 +1400,7 @@
 					"HAVE_STRTOF_L=1",
 					MGBA_STANDALONE,
 				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/mGBA/mgba/src",
 					"$(SRCROOT)/mGBA/mgba/include",

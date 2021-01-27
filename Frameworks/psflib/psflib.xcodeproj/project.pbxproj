@@ -303,6 +303,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "psflib/psflib-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.psflib;
@@ -325,6 +326,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "psflib/psflib-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.psflib;
