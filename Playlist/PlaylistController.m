@@ -867,7 +867,7 @@
 	pe.current = YES;
 	
 	if (pe != nil)
-		[tableView scrollRowToVisible:pe.index];
+		[self.tableView scrollRowToVisible:pe.index];
 	
 	currentEntry = pe;
 }

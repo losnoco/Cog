@@ -1,22 +1,28 @@
 
 #import <Cocoa/Cocoa.h>
 
-extern NSString *MovedRowsType;
+extern NSString *CogPlaylistItemType;
 extern NSString *CogUrlsPboardType;
 extern NSString *iTunesDropType;
 
-@interface DNDArrayController : NSArrayController
-{
-    IBOutlet NSTableView *tableView;
-}
+@interface DNDArrayController : NSArrayController <NSTableViewDataSource>
+
+@property IBOutlet NSTableView *tableView;
 
 // table view drag and drop support
-- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard;
-- (NSDragOperation)tableView:(NSTableView*)tv validateDrop:(id <NSDraggingInfo>)info proposedRow:(int)row proposedDropOperation:(NSTableViewDropOperation)op;
-- (BOOL)tableView:(NSTableView*)tv acceptDrop:(id <NSDraggingInfo>)info row:(int)row dropOperation:(NSTableViewDropOperation)op;
-    
+- (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView
+               pasteboardWriterForRow:(NSInteger)row;
+- (NSDragOperation)tableView:(NSTableView *)tableView
+                validateDrop:(id <NSDraggingInfo>)info
+                 proposedRow:(int)row
+       proposedDropOperation:(NSTableViewDropOperation)dropOperation;
+- (BOOL)tableView:(NSTableView *)tableView
+       acceptDrop:(id <NSDraggingInfo>)info
+              row:(int)row
+    dropOperation:(NSTableViewDropOperation)dropOperation;
 
 // utility methods
--(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet*)indexSet toIndex:(unsigned int)insertIndex;
+-(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
+                                       toIndex:(unsigned int)insertIndex;
 
 @end
