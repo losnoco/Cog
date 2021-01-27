@@ -194,7 +194,7 @@
     
     NSLog(@"Opening %@ subsong %d", path, track_num);
 
-    stream = init_vgmstream_from_cogfile([[path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String], track_num);
+    stream = init_vgmstream_from_cogfile([[path stringByRemovingPercentEncoding] UTF8String], track_num);
     if ( !stream )
         return NO;
     

@@ -42,7 +42,7 @@
             path = [path substringToIndex:fragmentRange.location];
         }
         
-        VGMSTREAM * stream = init_vgmstream_from_cogfile([[path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String], track_num);
+        VGMSTREAM * stream = init_vgmstream_from_cogfile([[path stringByRemovingPercentEncoding] UTF8String], track_num);
         if ( !stream )
             return nil;
         

@@ -81,7 +81,7 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
         mod->set_render_param( openmpt::module::RENDER_STEREOSEPARATION_PERCENT, 100 );
         mod->set_render_param( openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH, interp );
         mod->set_render_param( openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, -1 );
-        mod->ctl_set( "render.resampler.emulate_amiga", "1" );
+        mod->ctl_set_boolean("render.resampler.emulate_amiga", true);
         
         left.resize( 1024 );
         right.resize( 1024 );

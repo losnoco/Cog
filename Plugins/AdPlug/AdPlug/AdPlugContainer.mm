@@ -51,7 +51,7 @@
     
     Copl * p_emu = new CSilentopl;
     
-    std::string path = [[[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
+    std::string path = [[[url absoluteString] stringByRemovingPercentEncoding] UTF8String];
     CPlayer * p_player = CAdPlug::factory(path, p_emu, CAdPlug::players, CProvider_cog( path, source ));
     
     if ( !p_player )

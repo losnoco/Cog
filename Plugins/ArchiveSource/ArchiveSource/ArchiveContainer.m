@@ -62,7 +62,7 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
     while ( !fex_done(fex) ) {
         NSString *name = [NSString stringWithUTF8String:fex_name(fex)];
         if ([[NSClassFromString(@"AudioPlayer") fileTypes] containsObject:[[name pathExtension] lowercaseString]])
-            [files addObject:[NSURL URLWithString:[g_make_unpack_path([url path], name, @"fex") stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+            [files addObject:[NSURL URLWithString:[g_make_unpack_path([url path], name, @"fex") stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]]];
         fex_next(fex);
     }
     

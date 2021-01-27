@@ -9,6 +9,7 @@
 #import "Node.h"
 
 #import "Logging.h"
+#import "BufferChain.h"
 
 @implementation Node
 

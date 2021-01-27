@@ -30,7 +30,11 @@ AUPluginUI::AUPluginUI (AudioUnit & _au)
     }
     
     if (au_view) {
-        cocoa_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, req_width, req_height) styleMask:(NSTitledWindowMask | NSClosableWindowMask) backing:NSBackingStoreBuffered defer:NO];
+        cocoa_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, req_width, req_height)
+                                                   styleMask:(NSWindowStyleMaskTitled |
+                                                              NSWindowStyleMaskClosable)
+                                                     backing:NSBackingStoreBuffered
+                                                       defer:NO];
 
         [cocoa_window setAutodisplay:YES];
         [cocoa_window setTitle:@"AU Plug-in"];

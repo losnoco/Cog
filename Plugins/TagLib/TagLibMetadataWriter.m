@@ -8,8 +8,8 @@
 
 #import "TagLibMetadataWriter.h"
 
-#import <TagLib/fileref.h>
-#import <TagLib/tag.h>
+#import <taglib/fileref.h>
+#import <taglib/tag.h>
 
 #import "Logging.h"
 
