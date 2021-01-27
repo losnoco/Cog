@@ -95,7 +95,7 @@ static SpotlightWindowController * searchController;
     if (value == nil) return nil;
     
     // If there's an NS/CFNumber hiding in here...
-    if([value respondsToSelector:@selector(stringValue:)])
+    if([value respondsToSelector:@selector(stringValue)])
     {
         return [value stringValue];
     }

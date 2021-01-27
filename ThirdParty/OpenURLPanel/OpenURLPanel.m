@@ -203,10 +203,13 @@ typedef id (*myIMP)(id, SEL, ...);
         }
         else
         {
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = NSLocalizedString(@"InvalidURLShort", @"");
+            alert.informativeText = NSLocalizedString(@"InvalidURLLong", @"");
             if (mIsSheet)
-                NSRunAlertPanel(NSLocalizedString(@"InvalidURLShort", @""), NSLocalizedString(@"InvalidURLLong", @""), nil, nil, nil);
+                [alert runModal];
             else
-                NSBeginAlertSheet(NSLocalizedString(@"InvalidURLShort", @""), nil, nil, nil, mPanel, nil, nil, nil, nil, NSLocalizedString(@"InvalidURLLong", @""));
+                [alert beginSheetModalForWindow:mPanel completionHandler:nil];
 
             informDelegate = NO;
         }
@@ -240,7 +243,7 @@ typedef id (*myIMP)(id, SEL, ...);
         [[NSBundle mainBundle] loadNibNamed:@"OpenURLPanel" owner:self topLevelObjects:&objects];
 
     // start the sheet (or window)
-    [NSApp beginSheet:mPanel modalForWindow:window modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    [window beginSheet:mPanel completionHandler:nil];
 }
 
 - (void)close
