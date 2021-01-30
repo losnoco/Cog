@@ -15,55 +15,48 @@
 @class SpotlightWindowController;
 @class PlaybackController;
 
-typedef enum {
-	RepeatNone = 0,
-	RepeatOne,
-	RepeatAlbum,
-	RepeatAll
-} RepeatMode;
+typedef NS_ENUM(NSInteger, RepeatMode) {
+    RepeatModeNoRepeat = 0,
+    RepeatModeRepeatOne,
+    RepeatModeRepeatAlbum,
+    RepeatModeRepeatAll
+};
 
-static inline BOOL IsRepeatOneSet()
-{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatOne;
+static inline BOOL IsRepeatOneSet() {
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatModeRepeatOne;
 }
 
-typedef enum {
-	ShuffleOff = 0,
-	ShuffleAlbums,
-	ShuffleAll
-} ShuffleMode;
-	
+typedef enum { ShuffleOff = 0, ShuffleAlbums, ShuffleAll } ShuffleMode;
 
-typedef enum {
-	URLOriginInternal = 0,
-	URLOriginExternal,
-} URLOrigin;
+typedef NS_ENUM(NSInteger, URLOrigin) {
+    URLOriginInternal = 0,
+    URLOriginExternal
+};
 
-@interface PlaylistController : DNDArrayController {
-	IBOutlet PlaylistLoader *playlistLoader;
-	IBOutlet SpotlightWindowController *spotlightWindowController;
-	IBOutlet PlaybackController *playbackController;
-	
-	NSMutableArray *shuffleList;
-	NSMutableArray *queueList;
-	
-	NSString *totalTime;
-	
-	PlaylistEntry *currentEntry;
-    
+@interface PlaylistController : DNDArrayController <NSTableViewDelegate> {
+    IBOutlet PlaylistLoader *playlistLoader;
+    IBOutlet SpotlightWindowController *spotlightWindowController;
+    IBOutlet PlaybackController *playbackController;
+
+    NSMutableArray *shuffleList;
+    NSMutableArray *queueList;
+
+    NSString *totalTime;
+
+    PlaylistEntry *currentEntry;
+
     NSUndoManager *undoManager;
 }
 
 @property(nonatomic, retain) PlaylistEntry *currentEntry;
 @property(retain) NSString *totalTime;
 
-//Private Methods
+// Private Methods
 - (void)updateTotalTime;
 - (void)updatePlaylistIndexes;
 - (IBAction)stopAfterCurrent:(id)sender;
 
-
-//PUBLIC METHODS
+// PUBLIC METHODS
 - (void)setShuffle:(ShuffleMode)s;
 - (ShuffleMode)shuffle;
 - (void)setRepeat:(RepeatMode)r;
@@ -95,7 +88,7 @@ typedef enum {
 - (IBAction)searchByArtist:(id)sender;
 - (IBAction)searchByAlbum:(id)sender;
 
-//FUN PLAYLIST MANAGEMENT STUFF!
+// FUN PLAYLIST MANAGEMENT STUFF!
 - (BOOL)next;
 - (BOOL)prev;
 
@@ -107,12 +100,15 @@ typedef enum {
 - (PlaylistEntry *)entryAtIndex:(int)i;
 
 // Event inlets:
-- (void)willInsertURLs:(NSArray*)urls origin:(URLOrigin)origin;
-- (void)didInsertURLs:(NSArray*)urls origin:(URLOrigin)origin;
+- (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin;
+- (void)didInsertURLs:(NSArray *)urls origin:(URLOrigin)origin;
 
 // queue methods
 - (IBAction)toggleQueued:(id)sender;
 - (IBAction)emptyQueueList:(id)sender;
 - (NSMutableArray *)queueList;
+
+- (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
+                                        toIndex:(unsigned int)insertIndex;
 
 @end

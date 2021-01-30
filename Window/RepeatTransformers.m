@@ -7,55 +7,47 @@
 //
 
 #import "RepeatTransformers.h"
-#import "PlaylistController.h"
 
 #import "Logging.h"
 
-@implementation RepeatModeTransformer
+@implementation RepeatModeTransformer {
+    RepeatMode repeatMode;
+}
 
 + (Class)transformedValueClass { return [NSNumber class]; }
 + (BOOL)allowsReverseTransformation { return YES; }
 
-- (id)initWithMode:(RepeatMode) r
-{
-	self = [super init];
-	if (self)
-	{
-		repeatMode = r;
-	}
-	
-	return self;
+- (id)initWithMode:(RepeatMode)r {
+    self = [super init];
+    if (self) {
+        repeatMode = r;
+    }
+
+    return self;
 }
 
 // Convert from RepeatMode to BOOL
 - (id)transformedValue:(id)value {
-	DLog(@"Transforming value: %@", value);
-	
-    if (value == nil) return nil;
-	
-	RepeatMode mode = (RepeatMode) [value integerValue];
-	
-	if (repeatMode == mode) {
-		return [NSNumber numberWithBool:YES];
-	}
-	
+    DLog(@"Transforming value: %@", value);
 
-	return [NSNumber numberWithBool:NO];
+    if (value == nil) return nil;
+
+    RepeatMode mode = (RepeatMode) [value integerValue];
+
+    return @(repeatMode == mode);
 }
 
 - (id)reverseTransformedValue:(id)value {
     if (value == nil) return nil;
-	
-	BOOL enabled = [value boolValue];
-	if (enabled) {
-		return [NSNumber numberWithInt:repeatMode];
-	}
-	else if(repeatMode == RepeatNone) {
-		return [NSNumber numberWithInt:RepeatAll];
-	}
-	else {
-		return [NSNumber numberWithInt:RepeatNone];
-	}
+
+    BOOL enabled = [value boolValue];
+    if (enabled) {
+        return @(repeatMode);
+    } else if (repeatMode == RepeatModeNoRepeat) {
+        return @(RepeatModeRepeatAll);
+    } else {
+        return @(RepeatModeNoRepeat);
+    }
 }
 
 @end
@@ -67,26 +59,26 @@
 
 // Convert from string to RepeatMode
 - (id)transformedValue:(id)value {
-	DLog(@"Transforming value: %@", value);
-	
+    DLog(@"Transforming value: %@", value);
+
     if (value == nil) return nil;
 
-	RepeatMode mode = (RepeatMode) [value integerValue];
-	
-	if (mode == RepeatNone) {
-		return [NSImage imageNamed:@"repeatModeOffTemplate"];
-	}
-	else if (mode == RepeatOne) {
-		return [NSImage imageNamed:@"repeatModeOneTemplate"];
-	}
-	else if (mode == RepeatAlbum) {
-		return [NSImage imageNamed:@"repeatModeAlbumTemplate"];
-	}
-	else if (mode == RepeatAll) {
-		return [NSImage imageNamed:@"repeatModeAllTemplate"];
-	}
+    RepeatMode mode = (RepeatMode) [value integerValue];
 
-	return nil;
+    if (mode == RepeatModeNoRepeat) {
+        return [NSImage imageNamed:@"repeatModeOffTemplate"];
+    }
+    else if (mode == RepeatModeRepeatOne) {
+        return [NSImage imageNamed:@"repeatModeOneTemplate"];
+    }
+    else if (mode == RepeatModeRepeatAlbum) {
+        return [NSImage imageNamed:@"repeatModeAlbumTemplate"];
+    }
+    else if (mode == RepeatModeRepeatAll) {
+        return [NSImage imageNamed:@"repeatModeAllTemplate"];
+    }
+
+    return nil;
 }
 
 @end

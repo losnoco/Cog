@@ -1,7 +1,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-extern NSString *CogPlaylistItemType;
+extern NSString *CogDNDIndexType;
 extern NSString *CogUrlsPboardType;
 extern NSString *iTunesDropType;
 
@@ -12,13 +12,17 @@ extern NSString *iTunesDropType;
 // table view drag and drop support
 - (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView
                pasteboardWriterForRow:(NSInteger)row;
+- (void)tableView:(NSTableView *)tableView
+  draggingSession:(NSDraggingSession *)session
+ willBeginAtPoint:(NSPoint)screenPoint
+    forRowIndexes:(NSIndexSet *)rowIndexes;
 - (NSDragOperation)tableView:(NSTableView *)tableView
                 validateDrop:(id <NSDraggingInfo>)info
-                 proposedRow:(int)row
+                 proposedRow:(NSInteger)row
        proposedDropOperation:(NSTableViewDropOperation)dropOperation;
 - (BOOL)tableView:(NSTableView *)tableView
        acceptDrop:(id <NSDraggingInfo>)info
-              row:(int)row
+              row:(NSInteger)row
     dropOperation:(NSTableViewDropOperation)dropOperation;
 
 // utility methods

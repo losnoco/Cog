@@ -8,9 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface XmlContainer : NSObject {
-
-}
+@interface XmlContainer : NSObject
 
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename;
 
