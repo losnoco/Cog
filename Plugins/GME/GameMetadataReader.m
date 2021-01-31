@@ -48,7 +48,7 @@
 	if (!type) 
 	{
 		ALog(@"GME: No type!");
-		return NO;
+		return nil;
 	}
 	
 	Music_Emu* emu;
@@ -56,7 +56,7 @@
 	if (!emu)
 	{
 		ALog(@"GME: No new emu!");
-		return NO;
+		return nil;
 	}
 	
 	[source seek:0 whence:SEEK_END];
@@ -68,7 +68,7 @@
 	if (error)
 	{
 		ALog(@"GME: ERROR Loding file!");
-		return NO;
+		return nil;
 	}
     
     NSURL *m3uurl = [url URLByDeletingPathExtension];

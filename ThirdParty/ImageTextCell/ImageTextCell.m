@@ -47,8 +47,8 @@
 
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView {
     if (image != nil) {
-        NSSize	imageSize;
-        NSRect	imageFrame;
+        NSSize  imageSize;
+        NSRect  imageFrame;
 
         imageSize = [image size];
         NSDivideRect(cellFrame, &imageFrame, &cellFrame, 3 + imageSize.width, NSMinXEdge);
@@ -58,10 +58,10 @@
         }
         imageFrame.origin.x += 3;
         imageFrame.size = imageSize;
-
+        
         imageFrame.origin.y += ceil((cellFrame.size.height - imageFrame.size.height) / 2);
-
-        [image drawInRect:imageFrame fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:nil];
+        
+        [image drawInRect:imageFrame fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1.0 respectFlipped:YES hints:nil];
     }
     [super drawWithFrame:cellFrame inView:controlView];
 }

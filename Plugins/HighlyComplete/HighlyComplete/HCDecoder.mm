@@ -112,7 +112,7 @@ void * source_fopen(const char * path)
     if ( ![[psf_file_container instance] try_hint:[NSString stringWithUTF8String:path] source:&source] )
     {
         NSString * urlString = [NSString stringWithUTF8String:path];
-        NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]];
         
         id audioSourceClass = NSClassFromString(@"AudioSource");
         source = [audioSourceClass audioSourceForURL:url];
@@ -1271,7 +1271,7 @@ static int usf_info(void * context, const char * name, const char * value)
     info.trackPeak = 0;
     info.volume = 1;
     
-    currentUrl = [[[source url] absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    currentUrl = [[[source url] absoluteString] stringByRemovingPercentEncoding];
     
     [[psf_file_container instance] add_hint:currentUrl source:currentSource];
     hintAdded = YES;
@@ -1706,7 +1706,7 @@ static int usf_info(void * context, const char * name, const char * value)
     info.tag_length_ms = 0;
     info.tag_fade_ms = 0;
     
-    NSString * decodedUrl = [[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString * decodedUrl = [[url absoluteString] stringByRemovingPercentEncoding];
 
     psf_load( [decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info, 0 );
     

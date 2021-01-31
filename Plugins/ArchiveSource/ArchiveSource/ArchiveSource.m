@@ -75,7 +75,7 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
 {
 	[self setURL:url];
 	
-    NSString * urlDecoded = [[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString * urlDecoded = [[url absoluteString] stringByRemovingPercentEncoding];
     
     NSString * type;
 	NSString * archive;

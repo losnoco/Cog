@@ -11,16 +11,12 @@
 @class PathNode;
 @class PathWatcher;
 
-@interface FileTreeDataSource : NSObject {
-	PathNode *rootNode;
-	
-	IBOutlet NSPathControl *pathControl;
-	IBOutlet PathWatcher *watcher;
-	IBOutlet NSOutlineView *outlineView;
-}
+@interface FileTreeDataSource : NSObject <NSOutlineViewDataSource>
 
-- (NSURL *)rootURL;
-- (void)setRootURL:(NSURL *)rootURL;
+@property(nonatomic, weak) IBOutlet NSOutlineView *outlineView;
+@property(nonatomic, weak) IBOutlet NSPathControl *pathControl;
+@property(nonatomic, weak) IBOutlet PathWatcher *watcher;
+
 - (void)changeURL:(NSURL *)rootURL;
 
 - (void)reloadPathNode:(PathNode *)item;

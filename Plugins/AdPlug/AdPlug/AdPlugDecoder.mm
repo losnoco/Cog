@@ -40,7 +40,7 @@
         path = [path substringToIndex:fragmentRange.location];
     }
     
-    std::string _path = [[path stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String];
+    std::string _path = [[path stringByRemovingPercentEncoding] UTF8String];
     m_player = CAdPlug::factory(_path, m_emu, CAdPlug::players, CProvider_cog( _path, source ));
     
     if ( !m_player )

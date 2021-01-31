@@ -10,9 +10,7 @@
 
 #import "PlaylistController.h"
 
-@interface RepeatModeTransformer : NSValueTransformer {
-	RepeatMode repeatMode;
-}
+@interface RepeatModeTransformer : NSValueTransformer
 
 - (id)initWithMode:(RepeatMode) r;
 

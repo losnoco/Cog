@@ -100,7 +100,7 @@ binistream * CProvider_cog::open(std::string filename) const
             fragmentString = [urlString substringFromIndex:fragmentRange.location];
             urlString = [urlString substringToIndex:fragmentRange.location];
         }
-        NSURL * url = [NSURL URLWithString:[[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] stringByAppendingString:fragmentString]];
+        NSURL * url = [NSURL URLWithString:[[urlString stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLFragmentAllowedCharacterSet] stringByAppendingString:fragmentString]];
         id audioSourceClass = NSClassFromString(@"AudioSource");
         p_file = [audioSourceClass audioSourceForURL:url];
         

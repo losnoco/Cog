@@ -80,8 +80,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     {
         av_log_set_flags(AV_LOG_SKIP_REPEATED);
         av_log_set_level(AV_LOG_ERROR);
-        av_register_all();
-        av_lockmgr_register(lockmgr_callback);
     }
 }
 
@@ -190,8 +188,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         ALog(@"Can't copy codec parameters to context, errcode = %d, error = %s", errcode, errDescr);
         return NO;
     }
-    
-    av_codec_set_pkt_timebase(codecCtx, stream->time_base);
 
     AVCodec * codec = avcodec_find_decoder(codecCtx->codec_id);
     if (!codec) {

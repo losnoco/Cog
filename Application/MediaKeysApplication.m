@@ -101,17 +101,17 @@
 {
     BOOL shouldHandleMediaKeyEventLocally = ![SPMediaKeyTap usesGlobalMediaKeyTap];
 
-	if(shouldHandleMediaKeyEventLocally && [event type] == NSSystemDefined && [event subtype] == 8 )
-	{
-		[self mediaKeyTap:nil receivedMediaKeyEvent:event];
-	}
+    if(shouldHandleMediaKeyEventLocally && [event type] == NSEventTypeSystemDefined && [event subtype] == 8 )
+    {
+        [self mediaKeyTap:nil receivedMediaKeyEvent:event];
+    }
 
-	[super sendEvent: event];
+    [super sendEvent: event];
 }
 
 -(void)mediaKeyTap:(SPMediaKeyTap*)keyTap receivedMediaKeyEvent:(NSEvent*)event;
 {
-    NSAssert([event type] == NSSystemDefined && [event subtype] == SPSystemDefinedEventMediaKeys, @"Unexpected NSEvent in mediaKeyTap:receivedMediaKeyEvent:");
+    NSAssert([event type] == NSEventTypeSystemDefined && [event subtype] == SPSystemDefinedEventMediaKeys, @"Unexpected NSEvent in mediaKeyTap:receivedMediaKeyEvent:");
     
     int keyCode = (([event data1] & 0xFFFF0000) >> 16);
     int keyFlags = ([event data1] & 0x0000FFFF);

@@ -82,7 +82,7 @@ static STREAMFILE *cogsf_create(id file, const char *path) {
 
 STREAMFILE *cogsf_create_from_path(const char *path) {
     NSString * urlString = [NSString stringWithUTF8String:path];
-    NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]];
     
     return cogsf_create_from_url(url);
 }
@@ -98,7 +98,7 @@ STREAMFILE *cogsf_create_from_url(NSURL * url) {
     if (![source seekable])
         return 0;
     
-    return cogsf_create(source, [[[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] UTF8String]);
+    return cogsf_create(source, [[[url absoluteString] stringByRemovingPercentEncoding] UTF8String]);
 }
 
 VGMSTREAM *init_vgmstream_from_cogfile(const char *path, int subsong) {

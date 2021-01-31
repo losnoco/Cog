@@ -36,7 +36,7 @@
         return [NSMutableArray arrayWithObject:url];
     }
     
-    NSString * path = [[url absoluteString] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString * path = [[url absoluteString] stringByRemovingPercentEncoding];
 
     VGMSTREAM * stream = init_vgmstream_from_cogfile([path UTF8String], 0);
 	if (!stream)
