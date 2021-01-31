@@ -82,7 +82,7 @@ static STREAMFILE *cogsf_create(id file, const char *path) {
 
 STREAMFILE *cogsf_create_from_path(const char *path) {
     NSString * urlString = [NSString stringWithUTF8String:path];
-    NSURL * url = [NSURL URLWithString:[urlString stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]];
+    NSURL * url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
     
     return cogsf_create_from_url(url);
 }
