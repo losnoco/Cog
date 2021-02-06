@@ -49,14 +49,17 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
     
     BOOL colorfulIcons = [[NSUserDefaults standardUserDefaults] boolForKey:@"colorfulDockIcons"];
     
-    if (playbackStatus == kCogStatusPlaying) {
-        badgeImage = [NSImage imageNamed:getBadgeName(@"playDockBadge", colorfulIcons)];
-    }
-    else if (playbackStatus == kCogStatusPaused) {
-        badgeImage = [NSImage imageNamed:getBadgeName(@"pauseDockBadge", colorfulIcons)];
-    }
-    else {
-        badgeImage = [NSImage imageNamed:getBadgeName(@"stopDockBadge", colorfulIcons)];
+    switch (playbackStatus) {
+        case CogStatusPlaying:
+            badgeImage = [NSImage imageNamed:getBadgeName(@"playDockBadge", colorfulIcons)];
+            break;
+        case CogStatusPaused:
+            badgeImage = [NSImage imageNamed:getBadgeName(@"pauseDockBadge", colorfulIcons)];
+            break;
+
+        default:
+            badgeImage = [NSImage imageNamed:getBadgeName(@"stopDockBadge", colorfulIcons)];
+            break;
     }
     
     NSSize badgeSize = [badgeImage size];

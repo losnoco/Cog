@@ -3,6 +3,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "CogAudio/AudioPlayer.h"
+#import "CogAudio/Status.h"
 #import "TrackingSlider.h"
 #import "AudioScrobbler.h"
 
@@ -34,13 +35,13 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 		
 	AudioPlayer *audioPlayer;
 	
-	int playbackStatus;
+	CogStatus playbackStatus;
 	double position;
 	BOOL seekable;
 	BOOL fading;
  }
 
-@property int playbackStatus;
+@property CogStatus playbackStatus;
 
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;

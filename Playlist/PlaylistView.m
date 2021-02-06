@@ -362,8 +362,8 @@
     }
 
     if (action == @selector(scrollToCurrentEntry:) &&
-            (([playbackController playbackStatus] == kCogStatusStopped) ||
-                    ([playbackController playbackStatus] == kCogStatusStopping)))
+        (([playbackController playbackStatus] == CogStatusStopped) ||
+                    ([playbackController playbackStatus] == CogStatusStopping)))
         return NO;
 
     return [super validateUserInterfaceItem:anItem];

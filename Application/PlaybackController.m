@@ -44,7 +44,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	
 		audioPlayer = [[AudioPlayer alloc] init];
 		[audioPlayer setDelegate:self];
-		[self setPlaybackStatus: kCogStatusStopped];
+		[self setPlaybackStatus: CogStatusStopped];
 	}
 	
 	return self;
@@ -73,7 +73,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	
 - (IBAction)playPauseResume:(id)sender
 {
-	if (playbackStatus == kCogStatusStopped || playbackStatus == kCogStatusStopping)
+	if (playbackStatus == CogStatusStopped || playbackStatus == CogStatusStopping)
 	{
 		[self play:self];
 	}
@@ -87,7 +87,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 - (IBAction)pauseResume:(id)sender
 {
-	if (playbackStatus == kCogStatusPaused)
+	if (playbackStatus == CogStatusPaused)
 		[self resume:self];
 	else
 		[self pause:self];
@@ -96,7 +96,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 - (IBAction)pause:(id)sender
 {
 	[audioPlayer pause];
-	[self setPlaybackStatus: kCogStatusPaused];
+	[self setPlaybackStatus: CogStatusPaused];
     
     [self sendMetaData];
 }
@@ -160,7 +160,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused
 {
-	if (playbackStatus != kCogStatusStopped && playbackStatus != kCogStatusStopping)
+	if (playbackStatus != CogStatusStopped && playbackStatus != CogStatusStopping)
 		[self stop:self];
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
@@ -382,7 +382,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	NSNumber  *originalVolume = [NSNumber numberWithDouble: [audioPlayer volume]];
 	NSTimer   *fadeTimer;
 	
-	if (playbackStatus == kCogStatusPlaying) {
+	if (playbackStatus == CogStatusPlaying) {
 		fadeTimer = [NSTimer timerWithTimeInterval:time
 												 target:self
 											   selector:@selector(audioFadeDown:) 
@@ -551,7 +551,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(NSNumber *)s userInfo:(id)userInfo
 {
 	int status = [s intValue];
-	if (status == kCogStatusStopped || status == kCogStatusPaused)
+	if (status == CogStatusStopped || status == CogStatusPaused)
 	{
 		if (positionTimer)
 		{
@@ -559,7 +559,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 			positionTimer = NULL;
 		}
 		
-		if (status == kCogStatusStopped)
+		if (status == CogStatusStopped)
 		{
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
@@ -571,7 +571,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotficiation object:nil];
 		}
 	}
-	else if (status == kCogStatusPlaying)
+	else if (status == CogStatusPlaying)
 	{
 		if (!positionTimer) {
 			positionTimer = [NSTimer timerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
@@ -581,7 +581,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidResumeNotficiation object:nil];
 	}
 	
-	if (status == kCogStatusStopped) {
+	if (status == CogStatusStopped) {
 		DLog(@"DONE!");
 		[playlistController setCurrentEntry:nil];
 		[self setSeekable:NO]; // the player stopped, disable the slider
@@ -591,11 +591,11 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 		[self setSeekable:YES];
 	}
     
-    if (status == kCogStatusStopped) {
-        status = kCogStatusStopping;
+    if (status == CogStatusStopped) {
+        status = CogStatusStopping;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            if ([self playbackStatus] == kCogStatusStopping)
-                [self setPlaybackStatus:kCogStatusStopped];
+            if ([self playbackStatus] == CogStatusStopping)
+                [self setPlaybackStatus:CogStatusStopped];
         });
     }
 	
@@ -648,12 +648,17 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
             [songInfo setObject:[NSNumber numberWithFloat:[entry index]] forKey:MPMediaItemPropertyPersistentID];
         }
 
-        if (playbackStatus == kCogStatusPlaying) {
-            defaultCenter.playbackState = MPNowPlayingPlaybackStatePlaying;
-        } else if (playbackStatus == kCogStatusPaused) {
-            defaultCenter.playbackState = MPNowPlayingPlaybackStatePaused;
-        } else {
-            defaultCenter.playbackState = MPNowPlayingPlaybackStateStopped;
+        switch (playbackStatus) {
+            case CogStatusPlaying:
+                defaultCenter.playbackState = MPNowPlayingPlaybackStatePlaying;
+                break;
+            case CogStatusPaused:
+                defaultCenter.playbackState = MPNowPlayingPlaybackStatePaused;
+                break;
+                
+            default:
+                defaultCenter.playbackState = MPNowPlayingPlaybackStateStopped;
+                break;
         }
 
         [defaultCenter setNowPlayingInfo:songInfo];

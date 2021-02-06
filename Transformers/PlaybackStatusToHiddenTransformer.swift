@@ -17,17 +17,19 @@ class PlaybackStatusToHiddenTransformer : ValueTransformer {
     }
     
     override func transformedValue(_ value: Any?) -> Any? {
-        switch value {
-        case kCogStatusStopped as Int:
+        guard let intValue = value as? Int,
+              let status = CogStatus(rawValue: intValue) else {
+            return true;
+        }
+        switch status {
+        case .stopped:
             return true
-        case kCogStatusPaused as Int,
-             kCogStatusPlaying as Int,
-             kCogStatusStopping as Int:
+        case .paused,
+             .playing,
+             .stopping:
             return false
-        case .none:
-            return true
-        case .some(_):
-            return true
+        @unknown default:
+            return false;
         }
     }
 }

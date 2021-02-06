@@ -45,7 +45,7 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 
 		NSImage *image = nil;
 
-		if (playbackStatus == kCogStatusPlaying) {
+		if (playbackStatus == CogStatusPlaying) {
             image = [NSImage imageNamed:@"pauseTemplate"];
 		}
 		else {

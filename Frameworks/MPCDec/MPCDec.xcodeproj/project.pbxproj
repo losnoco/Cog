@@ -64,7 +64,7 @@
 		8E6096C009F314CF006D8BD7 /* mpc_reader.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = mpc_reader.c; path = Files/src/mpc_reader.c; sourceTree = "<group>"; };
 		8E6096C109F314CF006D8BD7 /* requant.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = requant.c; path = Files/src/requant.c; sourceTree = "<group>"; };
 		8E6096C309F314CF006D8BD7 /* streaminfo.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = streaminfo.c; path = Files/src/streaminfo.c; sourceTree = "<group>"; };
-		8E6096C409F314CF006D8BD7 /* synth_filter.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = synth_filter.c; path = Files/src/synth_filter.c; sourceTree = "<group>"; };
+		8E6096C409F314CF006D8BD7 /* synth_filter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_filter.c; path = Files/src/synth_filter.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

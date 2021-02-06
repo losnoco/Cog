@@ -107,21 +107,21 @@
 	[bufferChain launchThreads];
     
     if (paused)
-        [self setPlaybackStatus:kCogStatusPaused waitUntilDone:YES];
+        [self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
 }
 
 - (void)stop
 {
 	//Set shouldoContinue to NO on allll things
 	[self setShouldContinue:NO];
-	[self setPlaybackStatus:kCogStatusStopped waitUntilDone:YES];
+	[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
 }
 
 - (void)pause
 {
 	[output pause];
 
-	[self setPlaybackStatus:kCogStatusPaused waitUntilDone:YES];
+	[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
 }
 
 - (void)resume
@@ -135,7 +135,7 @@
     
 	[output resume];
 
-	[self setPlaybackStatus:kCogStatusPlaying waitUntilDone:YES];	
+	[self setPlaybackStatus:CogStatusPlaying waitUntilDone:YES];
 }
 
 - (void)seekToTime:(double)time
@@ -208,7 +208,7 @@
 {
     initialBufferFilled = YES;
 	if (outputLaunched == NO && startedPaused == NO) {
-		[self setPlaybackStatus:kCogStatusPlaying];	
+		[self setPlaybackStatus:CogStatusPlaying];	
 		[output launchThread];
 		outputLaunched = YES;
 	}

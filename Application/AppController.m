@@ -165,9 +165,9 @@
         int lastStatus = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
         int lastIndex = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
     
-        if (lastStatus != kCogStatusStopped && lastIndex >= 0)
+        if (lastStatus != CogStatusStopped && lastIndex >= 0)
         {
-            [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == kCogStatusPaused)];
+            [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused)];
             [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
         }
     }
@@ -239,16 +239,16 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-    int currentStatus = [playbackController playbackStatus];
+    CogStatus currentStatus = [playbackController playbackStatus];
     int lastTrackPlaying = -1;
     double lastTrackPosition = 0;
     
-    if (currentStatus == kCogStatusStopping)
-        currentStatus = kCogStatusStopped;
+    if (currentStatus == CogStatusStopping)
+        currentStatus = CogStatusStopped;
     
     [[NSUserDefaults standardUserDefaults] setInteger:currentStatus forKey:@"lastPlaybackStatus"];
     
-    if (currentStatus != kCogStatusStopped)
+    if (currentStatus != CogStatusStopped)
     {
         PlaylistEntry * pe = [playlistController currentEntry];
         lastTrackPlaying = [pe index];
@@ -372,7 +372,7 @@
 
     [userDefaultsValuesDict setObject:@"cubic" forKey:@"resampling"];
     
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:kCogStatusStopped] forKey:@"lastPlaybackStatus"];
+    [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:CogStatusStopped] forKey:@"lastPlaybackStatus"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
     
