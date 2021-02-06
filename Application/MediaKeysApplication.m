@@ -16,10 +16,13 @@
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPRemoteCommandEvent.h>
 
-@implementation MediaKeysApplication
+@implementation MediaKeysApplication {
+    AppController *_appController;
+}
 
 - (void)finishLaunching {
     [super finishLaunching];
+    _appController = (AppController *)[self delegate];
 
     MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
 
@@ -41,32 +44,32 @@
 }
 
 - (MPRemoteCommandHandlerStatus)clickPlay {
-    [(AppController *)[self delegate] clickPlay];
+    [_appController clickPlay];
     return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickPause {
-    [(AppController *)[self delegate] clickPause];
+    [_appController clickPause];
     return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickStop {
-    [(AppController *)[self delegate] clickStop];
+    [_appController clickStop];
     return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickNext {
-    [(AppController *)[self delegate] clickNext];
+    [_appController clickNext];
     return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickPrev {
-    [(AppController *)[self delegate] clickPrev];
+    [_appController clickPrev];
     return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickSeek: (MPChangePlaybackPositionCommandEvent*)event {
-    [(AppController *)[self delegate] clickSeek:event.positionTime];
+    [_appController clickSeek:event.positionTime];
     return MPRemoteCommandHandlerStatusSuccess;
 }
 
