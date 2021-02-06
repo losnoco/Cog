@@ -630,39 +630,37 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 }
 
 - (void)sendMetaData {
-    if (NSClassFromString(@"MPNowPlayingInfoCenter")) {
-        MPNowPlayingInfoCenter * defaultCenter = [MPNowPlayingInfoCenter defaultCenter];
+    MPNowPlayingInfoCenter * defaultCenter = [MPNowPlayingInfoCenter defaultCenter];
 
-        PlaylistEntry * entry = [playlistController currentEntry];
-        NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
-        
-        if (entry) {
-            if ([entry title])
-                [songInfo setObject:[entry title] forKey:MPMediaItemPropertyTitle];
-            if ([entry artist])
-                [songInfo setObject:[entry artist] forKey:MPMediaItemPropertyArtist];
-            if ([entry album])
-                [songInfo setObject:[entry album] forKey:MPMediaItemPropertyAlbumTitle];
-            [songInfo setObject:[NSNumber numberWithFloat:[entry currentPosition]] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
-            [songInfo setObject:[entry length] forKey:MPMediaItemPropertyPlaybackDuration];
-            [songInfo setObject:[NSNumber numberWithFloat:[entry index]] forKey:MPMediaItemPropertyPersistentID];
-        }
-
-        switch (playbackStatus) {
-            case CogStatusPlaying:
-                defaultCenter.playbackState = MPNowPlayingPlaybackStatePlaying;
-                break;
-            case CogStatusPaused:
-                defaultCenter.playbackState = MPNowPlayingPlaybackStatePaused;
-                break;
-                
-            default:
-                defaultCenter.playbackState = MPNowPlayingPlaybackStateStopped;
-                break;
-        }
-
-        [defaultCenter setNowPlayingInfo:songInfo];
+    PlaylistEntry * entry = [playlistController currentEntry];
+    NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+    
+    if (entry) {
+        if ([entry title])
+            [songInfo setObject:[entry title] forKey:MPMediaItemPropertyTitle];
+        if ([entry artist])
+            [songInfo setObject:[entry artist] forKey:MPMediaItemPropertyArtist];
+        if ([entry album])
+            [songInfo setObject:[entry album] forKey:MPMediaItemPropertyAlbumTitle];
+        [songInfo setObject:[NSNumber numberWithFloat:[entry currentPosition]] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+        [songInfo setObject:[entry length] forKey:MPMediaItemPropertyPlaybackDuration];
+        [songInfo setObject:[NSNumber numberWithFloat:[entry index]] forKey:MPMediaItemPropertyPersistentID];
     }
+
+    switch (playbackStatus) {
+        case CogStatusPlaying:
+            defaultCenter.playbackState = MPNowPlayingPlaybackStatePlaying;
+            break;
+        case CogStatusPaused:
+            defaultCenter.playbackState = MPNowPlayingPlaybackStatePaused;
+            break;
+            
+        default:
+            defaultCenter.playbackState = MPNowPlayingPlaybackStateStopped;
+            break;
+    }
+
+    [defaultCenter setNowPlayingInfo:songInfo];
 }
 
 
