@@ -978,6 +978,12 @@
                                     <action selector="toggleVertical:" target="2172" id="2176"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Toggle Toolbar Style" id="vBH-Mr-XWi">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleToolbarStyle:" target="226" id="EYr-kR-yZK"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="2155"/>
                             <menuItem title="Customize Toolbar..." id="1856">
                                 <connections>

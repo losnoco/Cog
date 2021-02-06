@@ -102,6 +102,7 @@
 - (void)windowDidExitFullScreen:(NSNotification *)notification;
 
 - (IBAction)toggleMiniMode:(id)sender;
+- (IBAction)toggleToolbarStyle:(id)sender;
 
 @property BOOL miniMode;
 

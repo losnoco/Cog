@@ -22,7 +22,9 @@
 #import <MASShortcut/Shortcut.h>
 #import "Shortcuts.h"
 
-@implementation AppController
+@implementation AppController {
+    BOOL _isFullToolbarStyle;
+}
 
 + (void)initialize
 {
@@ -174,6 +176,8 @@
 
     // Restore mini mode
     [self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
+
+    [self setToolbarStyle:[[NSUserDefaults standardUserDefaults] boolForKey:@"toolbarStyleFull"]];
 
     // We need file tree view to restore its state here
     // so attempt to access file tree view controller's root view
@@ -547,6 +551,30 @@
     NSWindow *windowToHide = miniMode ? mainWindow : miniWindow;
     [windowToHide close];
     [windowToShow makeKeyAndOrderFront:self];
+}
+
+- (IBAction)toggleToolbarStyle:(id)sender {
+    [self setToolbarStyle:!_isFullToolbarStyle];
+}
+
+- (void)setToolbarStyle:(BOOL)full {
+    _isFullToolbarStyle = full;
+    [[NSUserDefaults standardUserDefaults] setBool:full forKey:@"toolbarStyleFull"];
+    DLog("Changed toolbar style: %@", (full ? @"full" : @"compact"));
+
+    if (@available(macOS 11.0, *)) {
+        NSWindowToolbarStyle style =
+            full ? NSWindowToolbarStyleExpanded : NSWindowToolbarStyleUnifiedCompact;
+        mainWindow.toolbarStyle = style;
+        miniWindow.toolbarStyle = style;
+    }
+
+    NSWindowTitleVisibility visibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
+    mainWindow.titleVisibility = visibility;
+    miniWindow.titleVisibility = visibility;
+
+    // Fix empty area after changing toolbar style in mini window as it has no content view
+    [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 0)];
 }
 
 @end
