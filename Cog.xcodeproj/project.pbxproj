@@ -131,8 +131,6 @@
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
 		836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8314D6411A354DFF00EEE8E6 /* sidplay.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83790D501809F4980073CF51 /* NSObject+SPInvocationGrabbing.m in Sources */ = {isa = PBXBuildFile; fileRef = 83790D4D1809F4980073CF51 /* NSObject+SPInvocationGrabbing.m */; };
-		83790D511809F4980073CF51 /* SPMediaKeyTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 83790D4F1809F4980073CF51 /* SPMediaKeyTap.m */; };
 		838491211807F38A00E7332D /* NowPlayingBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911D1807F38A00E7332D /* NowPlayingBarView.m */; };
 		838491221807F38A00E7332D /* NowPlayingBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8384911E1807F38A00E7332D /* NowPlayingBarController.xib */; };
 		838491231807F38A00E7332D /* NowPlayingBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911F1807F38A00E7332D /* NowPlayingBarController.m */; };
@@ -888,10 +886,6 @@
 		836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vgmstream.xcodeproj; path = Plugins/vgmstream/vgmstream.xcodeproj; sourceTree = "<group>"; };
 		836FB5421820538700B3AD2D /* Hively.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Hively.xcodeproj; path = Plugins/Hively/Hively.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpusPlugin.xcodeproj; path = Plugins/Opus/OpusPlugin.xcodeproj; sourceTree = "<group>"; };
-		83790D4C1809F4980073CF51 /* NSObject+SPInvocationGrabbing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SPInvocationGrabbing.h"; sourceTree = "<group>"; };
-		83790D4D1809F4980073CF51 /* NSObject+SPInvocationGrabbing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SPInvocationGrabbing.m"; sourceTree = "<group>"; };
-		83790D4E1809F4980073CF51 /* SPMediaKeyTap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPMediaKeyTap.h; sourceTree = "<group>"; };
-		83790D4F1809F4980073CF51 /* SPMediaKeyTap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPMediaKeyTap.m; sourceTree = "<group>"; };
 		8384911D1807F38A00E7332D /* NowPlayingBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NowPlayingBarView.m; path = Window/NowPlayingBarView.m; sourceTree = "<group>"; };
 		8384911E1807F38A00E7332D /* NowPlayingBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = NowPlayingBarController.xib; path = Window/NowPlayingBarController.xib; sourceTree = "<group>"; };
 		8384911F1807F38A00E7332D /* NowPlayingBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NowPlayingBarController.m; path = Window/NowPlayingBarController.m; sourceTree = "<group>"; };
@@ -1097,7 +1091,6 @@
 		177EBF770B8BC2A70000BC8C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
-				83790D4A1809F4980073CF51 /* SPMediaKeyTap */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
 				179790DD0C087AB7001D6996 /* OpenURLPanel */,
 			);
@@ -1596,25 +1589,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		83790D4A1809F4980073CF51 /* SPMediaKeyTap */ = {
-			isa = PBXGroup;
-			children = (
-				83790D4B1809F4980073CF51 /* SPInvocationGrabbing */,
-				83790D4E1809F4980073CF51 /* SPMediaKeyTap.h */,
-				83790D4F1809F4980073CF51 /* SPMediaKeyTap.m */,
-			);
-			path = SPMediaKeyTap;
-			sourceTree = "<group>";
-		};
-		83790D4B1809F4980073CF51 /* SPInvocationGrabbing */ = {
-			isa = PBXGroup;
-			children = (
-				83790D4C1809F4980073CF51 /* NSObject+SPInvocationGrabbing.h */,
-				83790D4D1809F4980073CF51 /* NSObject+SPInvocationGrabbing.m */,
-			);
-			path = SPInvocationGrabbing;
-			sourceTree = "<group>";
-		};
 		83B0669D180D5668008E3612 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1837,7 +1811,7 @@
 				LastUpgradeCheck = 1100;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = RXH4D9SUXM;
 						LastSwiftMigration = 1220;
 						ProvisioningStyle = Automatic;
 					};
@@ -2324,7 +2298,6 @@
 				8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */,
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
-				83790D511809F4980073CF51 /* SPMediaKeyTap.m in Sources */,
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
 				8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
@@ -2340,7 +2313,6 @@
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
 				EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */,
-				83790D501809F4980073CF51 /* NSObject+SPInvocationGrabbing.m in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
 				838491211807F38A00E7332D /* NowPlayingBarView.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,

@@ -8,7 +8,6 @@
 
 #import "MediaKeysApplication.h"
 #import "AppController.h"
-#import "SPMediaKeyTap.h"
 #import "Logging.h"
 
 #import <MediaPlayer/MPNowPlayingInfoCenter.h>
@@ -21,11 +20,6 @@
 
 - (void)finishLaunching {
     [super finishLaunching];
-    
-    [[NSUserDefaults standardUserDefaults] addObserver:self
-                                            forKeyPath:@"allowLastfmMediaKeys"
-                                               options:NSKeyValueObservingOptionNew
-                                               context:nil];
 
     MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
 
