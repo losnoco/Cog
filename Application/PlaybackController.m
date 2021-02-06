@@ -582,14 +582,24 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	}
 	
 	if (status == CogStatusStopped) {
-		DLog(@"DONE!");
 		[playlistController setCurrentEntry:nil];
 		[self setSeekable:NO]; // the player stopped, disable the slider
 	}
 	else {
-		DLog(@"PLAYING!");
 		[self setSeekable:YES];
 	}
+    switch (status) {
+        case CogStatusPlaying:
+            DLog(@"PLAYING!");
+            break;
+        case CogStatusPaused:
+            DLog(@"PAUSED!");
+            break;
+            
+        default:
+            DLog(@"STOPED!");
+            break;
+    }
     
     if (status == CogStatusStopped) {
         status = CogStatusStopping;
