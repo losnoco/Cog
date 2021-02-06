@@ -230,15 +230,12 @@
 
     // Get files from a normal file drop (such as from Finder)
     if ([bestType isEqualToString:NSPasteboardTypeFileURL]) {
-        NSMutableArray *urls = [[NSMutableArray alloc] init];
-
-        for (NSString *file in
-                [[info draggingPasteboard] propertyListForType:NSPasteboardTypeFileURL]) {
-            [urls addObject:[NSURL fileURLWithPath:file]];
-        }
+        NSArray<Class> *classes = @[[NSURL class]];
+        NSDictionary *options = @{};
+        NSArray<NSURL*> *files = [pboard readObjectsForClasses:classes options:options];
 
         //[playlistLoader insertURLs:urls atIndex:row sort:YES];
-        [acceptedURLs addObjectsFromArray:urls];
+        [acceptedURLs addObjectsFromArray:files];
     }
 
     // Get files from an iTunes drop
