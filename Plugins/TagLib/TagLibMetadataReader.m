@@ -148,7 +148,8 @@
 				// Gather list of candidate image files
 				
 			NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
-			NSArray *imageFileNames = [fileNames pathsMatchingExtensions:[NSImage imageTypes]];
+            NSArray *types = @[@"jpg", @"jpeg", @"png"];
+			NSArray *imageFileNames = [fileNames pathsMatchingExtensions:types];
 
             for (NSString *fileName in imageFileNames) {
 				if ([TagLibMetadataReader isCoverFile:fileName]) {
