@@ -9,8 +9,12 @@
 #import "TagLibMetadataReader.h"
 #import <taglib/fileref.h>
 #import <taglib/tag.h>
+#import <taglib/mpcproperties.h>
+#import <taglib/audioproperties.h>
 #import <taglib/mpeg/mpegfile.h>
 #import <taglib/mp4/mp4file.h>
+#import <taglib/xiphcomment.h>
+#import <taglib/vorbisfile.h>
 #import <taglib/mpeg/id3v2/id3v2tag.h>
 #import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 
@@ -24,39 +28,39 @@
 	
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 	
-	if ( !*TagLib::ascii_encoding ) {
-		NSStringEncoding enc = [NSString defaultCStringEncoding];
-		CFStringEncoding cfenc = CFStringConvertNSStringEncodingToEncoding(enc);
-		NSString *ref = (NSString *)CFStringConvertEncodingToIANACharSetName(cfenc);
-		UInt32 cp = CFStringConvertEncodingToWindowsCodepage(cfenc);
-		
-		// Most tags are using windows codepage, so remap OS X codepage to Windows one.
-		
-		static struct {
-			UInt32 from, to;
-		} codepage_remaps[] = {
-			{ 10001, 932 },		// Japanese Shift-JIS
-			{ 10002, 950 },		// Traditional Chinese
-			{ 10003, 949 },		// Korean
-			{ 10004, 1256 },	// Arabic
-			{ 10005, 1255 },	// Hebrew
-			{ 10006, 1253 },	// Greek
-			{ 10007, 1251 },	// Cyrillic
-			{ 10008, 936 },		// Simplified Chinese
-			{ 10029, 1250 },	// Central European (latin2)
-		};
-		
-		int i;
-		int max = sizeof(codepage_remaps)/sizeof(codepage_remaps[0]);
-		for ( i=0; i<max; i++ )
-			if ( codepage_remaps[i].from == cp )
-				break;
-		if ( i < max )
-			sprintf(TagLib::ascii_encoding, "windows-%d", codepage_remaps[i].to);
-		else
-			strcpy(TagLib::ascii_encoding, [ref UTF8String]);
-	
-	}
+//	if ( !*TagLib::ascii_encoding ) {
+//		NSStringEncoding enc = [NSString defaultCStringEncoding];
+//		CFStringEncoding cfenc = CFStringConvertNSStringEncodingToEncoding(enc);
+//		NSString *ref = (NSString *)CFStringConvertEncodingToIANACharSetName(cfenc);
+//		UInt32 cp = CFStringConvertEncodingToWindowsCodepage(cfenc);
+//
+//		// Most tags are using windows codepage, so remap OS X codepage to Windows one.
+//
+//		static struct {
+//			UInt32 from, to;
+//		} codepage_remaps[] = {
+//			{ 10001, 932 },		// Japanese Shift-JIS
+//			{ 10002, 950 },		// Traditional Chinese
+//			{ 10003, 949 },		// Korean
+//			{ 10004, 1256 },	// Arabic
+//			{ 10005, 1255 },	// Hebrew
+//			{ 10006, 1253 },	// Greek
+//			{ 10007, 1251 },	// Cyrillic
+//			{ 10008, 936 },		// Simplified Chinese
+//			{ 10029, 1250 },	// Central European (latin2)
+//		};
+//
+//		int i;
+//		int max = sizeof(codepage_remaps)/sizeof(codepage_remaps[0]);
+//		for ( i=0; i<max; i++ )
+//			if ( codepage_remaps[i].from == cp )
+//				break;
+//		if ( i < max )
+//			sprintf(TagLib::ascii_encoding, "windows-%d", codepage_remaps[i].to);
+//		else
+//			strcpy(TagLib::ascii_encoding, [ref UTF8String]);
+//
+//	}
 	
 	
 	TagLib::FileRef f((const char *)[[url path] UTF8String], false);
@@ -68,7 +72,6 @@
 		{
 			TagLib::String artist, title, album, genre, comment;
 			int year, track;
-            float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
 			
 			artist = tag->artist();
 			title = tag->title();;
@@ -81,28 +84,31 @@
 			
 			track = tag->track();
 			[dict setObject:[NSNumber numberWithInt:track] forKey:@"track"];
+			
+			if (!artist.isEmpty())
+				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
 
-            rgAlbumGain = tag->rgAlbumGain();
-            rgAlbumPeak = tag->rgAlbumPeak();
-            rgTrackGain = tag->rgTrackGain();
-            rgTrackPeak = tag->rgTrackPeak();
+			if (!album.isEmpty())
+				[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
+			
+			if (!title.isEmpty())
+				[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
+			
+			if (!genre.isEmpty())
+				[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
+		}
+
+        if (auto props = dynamic_cast<TagLib::MPC::Properties*>(f.audioProperties())) {
+            float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
+            rgAlbumGain = 64.82f - (props->albumGain() / 256.0f);
+            rgAlbumPeak = props->albumPeak() / 256.0f;
+            rgTrackGain = 64.82f - (props->trackGain() / 256.0f);
+            rgTrackPeak = props->trackPeak() / 256.0f;
             [dict setObject:[NSNumber numberWithFloat:rgAlbumGain] forKey:@"replayGainAlbumGain"];
             [dict setObject:[NSNumber numberWithFloat:rgAlbumPeak] forKey:@"replayGainAlbumPeak"];
             [dict setObject:[NSNumber numberWithFloat:rgTrackGain] forKey:@"replayGainTrackGain"];
             [dict setObject:[NSNumber numberWithFloat:rgTrackPeak] forKey:@"replayGainTrackPeak"];
-			
-			if (!artist.isNull())
-				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
-
-			if (!album.isNull())
-				[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
-			
-			if (!title.isNull())
-				[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
-			
-			if (!genre.isNull())
-				[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
-		}
+        }
 		
 		// Try to load the image.
 		NSData * image = nil;
@@ -128,13 +134,31 @@
         if (m4f) {
             TagLib::MP4::Tag *tag = m4f->tag();
             if (tag) {
-                TagLib::MP4::ItemListMap itemsListMap = tag->itemListMap();
-                if (itemsListMap.contains("covr")) {
-                    TagLib::MP4::Item coverItem = itemsListMap["covr"];
-                    TagLib::MP4::CoverArtList coverArtList = coverItem.toCoverArtList();
+                auto covr = tag->item("covr");
+                if (covr.isValid()) {
+                    auto coverArtList = covr.toCoverArtList();
                     if (!coverArtList.isEmpty()) {
                         TagLib::MP4::CoverArt coverArt = coverArtList.front();
                         image = [NSData dataWithBytes:coverArt.data().data() length:coverArt.data().size()];
+                    }
+                }
+            }
+        }
+
+        TagLib::Ogg::Vorbis::File *vorbis = dynamic_cast<TagLib::Ogg::Vorbis::File*>(f.file());
+        if (vorbis) {
+            TagLib::Ogg::XiphComment *tag = vorbis->tag();
+            if (tag) {
+                auto list = tag->pictureList();
+                if (!list.isEmpty()) {
+                    // Just get the first image for now.
+                    TagLib::FLAC::Picture* coverArt = list.front();
+                    if (coverArt) {
+                        // Look into TagLib::FLAC::Picture::Type for type description.
+                        NSLog(@"Loading image metadata from Ogg Vorbis, type = %d",
+                             static_cast<int>(coverArt->type()));
+                        image = [NSData dataWithBytes:coverArt->data().data()
+                                               length:coverArt->data().size()];
                     }
                 }
             }
