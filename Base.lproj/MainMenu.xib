@@ -419,7 +419,7 @@
                         <slider key="view" verticalHuggingPriority="750" id="1549" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="28"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <sliderCell key="cell" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="1550" customClass="TrackingCell"/>
+                            <sliderCell key="cell" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="1550" customClass="TrackingCell"/>
                             <connections>
                                 <action selector="seek:" target="705" id="1597"/>
                                 <binding destination="1897" name="maxValue" keyPath="content.length" id="YY5-Mn-b4V"/>
