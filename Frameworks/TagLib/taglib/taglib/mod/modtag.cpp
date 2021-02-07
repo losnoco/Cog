@@ -89,6 +89,26 @@ unsigned int Mod::Tag::track() const
   return 0;
 }
 
+float Mod::Tag::rgAlbumGain() const
+{
+  return 0;
+}
+
+float Mod::Tag::rgAlbumPeak() const
+{
+  return 0;
+}
+
+float Mod::Tag::rgTrackGain() const
+{
+  return 0;
+}
+
+float Mod::Tag::rgTrackPeak() const
+{
+  return 0;
+}
+
 String Mod::Tag::trackerName() const
 {
   return d->trackerName;
@@ -121,6 +141,22 @@ void Mod::Tag::setYear(unsigned int)
 }
 
 void Mod::Tag::setTrack(unsigned int)
+{
+}
+
+void Mod::Tag::setRGAlbumGain(float)
+{
+}
+
+void Mod::Tag::setRGAlbumPeak(float)
+{
+}
+
+void Mod::Tag::setRGTrackGain(float)
+{
+}
+
+void Mod::Tag::setRGTrackPeak(float)
 {
 }
 

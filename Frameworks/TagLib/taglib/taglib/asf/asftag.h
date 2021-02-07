@@ -98,6 +98,11 @@ namespace TagLib {
        */
       virtual unsigned int track() const;
 
+      virtual float rgAlbumGain() const;
+      virtual float rgAlbumPeak() const;
+      virtual float rgTrackGain() const;
+      virtual float rgTrackPeak() const;
+
       /*!
        * Sets the title to \a s.
        */
@@ -143,6 +148,11 @@ namespace TagLib {
        * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
        */
       virtual void setTrack(unsigned int i);
+
+      virtual void setRGAlbumGain(float f);
+      virtual void setRGAlbumPeak(float f);
+      virtual void setRGTrackGain(float f);
+      virtual void setRGTrackPeak(float f);
 
       /*!
        * Returns true if the tag does not contain any data.  This should be

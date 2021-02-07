@@ -123,6 +123,26 @@ unsigned int RIFF::Info::Tag::track() const
   return fieldText("IPRT").toInt();
 }
 
+float RIFF::Info::Tag::rgAlbumGain() const
+{
+  return 0;
+}
+
+float RIFF::Info::Tag::rgAlbumPeak() const
+{
+  return 0;
+}
+
+float RIFF::Info::Tag::rgTrackGain() const
+{
+  return 0;
+}
+
+float RIFF::Info::Tag::rgTrackPeak() const
+{
+  return 0;
+}
+
 void RIFF::Info::Tag::setTitle(const String &s)
 {
   setFieldText("INAM", s);
@@ -162,6 +182,22 @@ void RIFF::Info::Tag::setTrack(unsigned int i)
     setFieldText("IPRT", String::number(i));
   else
     d->fieldListMap.erase("IPRT");
+}
+
+void RIFF::Info::Tag::setRGAlbumGain(float)
+{
+}
+
+void RIFF::Info::Tag::setRGAlbumPeak(float)
+{
+}
+
+void RIFF::Info::Tag::setRGTrackGain(float)
+{
+}
+
+void RIFF::Info::Tag::setRGTrackPeak(float)
+{
 }
 
 bool RIFF::Info::Tag::isEmpty() const

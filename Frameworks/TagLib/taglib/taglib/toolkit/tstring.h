@@ -373,6 +373,24 @@ namespace TagLib {
     int toInt(bool *ok) const;
 
     /*!
+     * Convert the string to a float.
+     *
+     * Returns the float if the conversion was successful or 0 if the
+     * string does not represent a number.
+     */
+    // BIC: merge with the method below
+    float toFloat() const;
+
+    /*!
+     * Convert the string to a float.
+     *
+     * If the conversion was successful, it sets the value of \a *ok to
+     * true and returns the float. Otherwise it sets \a *ok to false
+     * and the result is undefined.
+     */
+    float toFloat(bool *ok) const;
+
+    /*!
      * Returns a string with the leading and trailing whitespace stripped.
      */
     String stripWhiteSpace() const;
@@ -391,6 +409,11 @@ namespace TagLib {
      * Converts the base-10 integer \a n to a string.
      */
     static String number(int n);
+
+    /*!
+     * Converts the base-10 float \a n to a string.
+     */
+    static String numberFloat(float n);
 
     /*!
      * Returns a reference to the character at position \a i.

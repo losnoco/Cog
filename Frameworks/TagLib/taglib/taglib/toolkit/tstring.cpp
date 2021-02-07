@@ -24,6 +24,7 @@
  ***************************************************************************/
 
 #include <cerrno>
+#include <cfloat>
 #include <climits>
 
 #include <utf8-cpp/checked.h>
@@ -514,6 +515,27 @@ int String::toInt(bool *ok) const
   return static_cast<int>(value);
 }
 
+float String::toFloat() const
+{
+  return toFloat(0);
+}
+
+float String::toFloat(bool *ok) const
+{
+  const wchar_t *begin = d->data.c_str();
+  wchar_t *end;
+  errno = 0;
+  const float value = ::wcstof(begin, &end);
+
+  // Has wcstof() consumed the entire string and not overflowed?
+  if(ok) {
+    *ok = (errno == 0 && end > begin && *end == L'\0');
+    *ok = (*ok && value > FLT_MIN && value < FLT_MAX);
+  }
+
+  return value;
+}
+
 String String::stripWhiteSpace() const
 {
   static const wchar_t *WhiteSpaceChars = L"\t\n\f\r ";
@@ -547,6 +569,11 @@ bool String::isAscii() const
 String String::number(int n) // static
 {
   return Utils::formatString("%d", n);
+}
+
+String String::numberFloat(float n) // static
+{
+  return Utils::formatString("%f", n);
 }
 
 wchar_t &String::operator[](int i)

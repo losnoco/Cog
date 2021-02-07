@@ -89,6 +89,26 @@ namespace TagLib {
       virtual unsigned int track() const;
 
       /*!
+       * Not supported by module files.  Therefore always returns 0.
+       */
+      virtual float rgAlbumGain() const;
+
+      /*!
+       * Not supported by module files.  Therefore always returns 0.
+       */
+      virtual float rgAlbumPeak() const;
+
+      /*!
+       * Not supported by module files.  Therefore always returns 0.
+       */
+      virtual float rgTrackGain() const;
+
+      /*!
+       * Not supported by module files.  Therefore always returns 0.
+       */
+      virtual float rgTrackPeak() const;
+
+      /*!
        * Returns the name of the tracker used to create/edit the module file.
        * Only XM files store this tag to the file as such, for other formats
        * (Mod, S3M, IT) this is derived from the file type or the flavour of
@@ -150,6 +170,26 @@ namespace TagLib {
        * Not supported by module files and therefore ignored.
        */
       virtual void setTrack(unsigned int track);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setRGAlbumGain(float f);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setRGAlbumPeak(float f);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setRGTrackGain(float f);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setRGTrackPeak(float f);
 
       /*!
        * Sets the tracker name to \a trackerName.  If \a trackerName is

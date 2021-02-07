@@ -238,6 +238,40 @@ unsigned int ID3v2::Tag::track() const
   return 0;
 }
 
+float ID3v2::Tag::rg(const String &type) const
+{
+  const FrameList &list = d->frameListMap["TXXX"];
+  if (!list.isEmpty()) {
+    for (FrameList::ConstIterator it = list.begin(); it != list.end(); ++it) {
+      UserTextIdentificationFrame const* frame = static_cast<UserTextIdentificationFrame *>(*it);
+      if (!frame->description().isNull() && frame->description() == type) {
+        return frame->toString().toFloat();
+      }
+    }
+  }
+  return 0;
+}
+
+float ID3v2::Tag::rgAlbumGain() const
+{
+  return rg("replaygain_album_gain");
+}
+
+float ID3v2::Tag::rgAlbumPeak() const
+{
+  return rg("replaygain_album_peak");
+}
+
+float ID3v2::Tag::rgTrackGain() const
+{
+  return rg("replaygain_track_gain");
+}
+
+float ID3v2::Tag::rgTrackPeak() const
+{
+  return rg("replaygain_track_peak");
+}
+
 void ID3v2::Tag::setTitle(const String &s)
 {
   setTextFrame("TIT2", s);
@@ -322,6 +356,52 @@ void ID3v2::Tag::setTrack(unsigned int i)
     return;
   }
   setTextFrame("TRCK", String::number(i));
+}
+
+void ID3v2::Tag::setRG(const String &type, float f, bool peak)
+{
+  bool createdFrame = false;
+  UserTextIdentificationFrame * frame = NULL;
+  FrameList &list = d->frameListMap["TXXX"];
+  for (FrameList::Iterator it = list.begin(); it != list.end(); ++it) {
+    if (static_cast<UserTextIdentificationFrame *>(*it)->description() == type) {
+      frame = static_cast<UserTextIdentificationFrame*>(*it);
+      break;
+    }
+  }
+  if (f == 0) {
+    if (frame)
+      removeFrame(frame);
+    return;
+  }
+  if (frame == NULL) {
+    frame = new UserTextIdentificationFrame;
+    frame->setDescription(type);
+    createdFrame = true;
+  }
+  frame->setText(String::number(f) + (peak ? "" : " dB"));
+  if (createdFrame)
+    addFrame(frame);
+}
+
+void ID3v2::Tag::setRGAlbumGain(float f)
+{
+  setRG("replaygain_album_gain", f, false);
+}
+
+void ID3v2::Tag::setRGAlbumPeak(float f)
+{
+  setRG("replaygain_album_peak", f, true);
+}
+
+void ID3v2::Tag::setRGTrackGain(float f)
+{
+  setRG("replaygain_track_gain", f, false);
+}
+
+void ID3v2::Tag::setRGTrackPeak(float f)
+{
+  setRG("replaygain_track_peak", f, true);
 }
 
 bool ID3v2::Tag::isEmpty() const

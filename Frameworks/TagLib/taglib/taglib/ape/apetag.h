@@ -94,6 +94,10 @@ namespace TagLib {
       virtual String genre() const;
       virtual unsigned int year() const;
       virtual unsigned int track() const;
+      virtual float rgAlbumGain() const;
+      virtual float rgAlbumPeak() const;
+      virtual float rgTrackGain() const;
+      virtual float rgTrackPeak() const;
 
       virtual void setTitle(const String &s);
       virtual void setArtist(const String &s);
@@ -102,6 +106,10 @@ namespace TagLib {
       virtual void setGenre(const String &s);
       virtual void setYear(unsigned int i);
       virtual void setTrack(unsigned int i);
+      virtual void setRGAlbumGain(float f);
+      virtual void setRGAlbumPeak(float f);
+      virtual void setRGTrackGain(float f);
+      virtual void setRGTrackPeak(float f);
 
       /*!
        * Implements the unified tag dictionary interface -- export function.

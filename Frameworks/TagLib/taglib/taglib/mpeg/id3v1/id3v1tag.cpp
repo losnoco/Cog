@@ -162,6 +162,26 @@ unsigned int ID3v1::Tag::track() const
   return d->track;
 }
 
+float ID3v1::Tag::rgAlbumGain() const
+{
+  return 0;
+}
+
+float ID3v1::Tag::rgAlbumPeak() const
+{
+  return 0;
+}
+
+float ID3v1::Tag::rgTrackGain() const
+{
+  return 0;
+}
+
+float ID3v1::Tag::rgTrackPeak() const
+{
+  return 0;
+}
+
 void ID3v1::Tag::setTitle(const String &s)
 {
   d->title = s;
@@ -195,6 +215,22 @@ void ID3v1::Tag::setYear(unsigned int i)
 void ID3v1::Tag::setTrack(unsigned int i)
 {
   d->track = i < 256 ? i : 0;
+}
+
+void ID3v1::Tag::setRGAlbumGain(float)
+{
+}
+
+void ID3v1::Tag::setRGAlbumPeak(float)
+{
+}
+
+void ID3v1::Tag::setRGTrackGain(float)
+{
+}
+
+void ID3v1::Tag::setRGTrackPeak(float)
+{
 }
 
 unsigned int ID3v1::Tag::genreNumber() const

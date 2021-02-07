@@ -772,6 +772,30 @@ MP4::Tag::track() const
   return 0;
 }
 
+float
+MP4::Tag::rgAlbumGain() const
+{
+  return 0;
+}
+
+float
+MP4::Tag::rgAlbumPeak() const
+{
+  return 0;
+}
+
+float
+MP4::Tag::rgTrackGain() const
+{
+  return 0;
+}
+
+float
+MP4::Tag::rgTrackPeak() const
+{
+  return 0;
+}
+
 void
 MP4::Tag::setTitle(const String &value)
 {
@@ -832,6 +856,26 @@ MP4::Tag::setTrack(unsigned int value)
   else {
     d->items["trkn"] = MP4::Item(value, 0);
   }
+}
+
+void
+MP4::Tag::setRGAlbumGain(float f)
+{
+}
+
+void
+MP4::Tag::setRGAlbumPeak(float f)
+{
+}
+
+void
+MP4::Tag::setRGTrackGain(float f)
+{
+}
+
+void
+MP4::Tag::setRGTrackPeak(float f)
+{
 }
 
 bool MP4::Tag::isEmpty() const

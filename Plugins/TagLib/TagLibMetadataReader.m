@@ -72,6 +72,7 @@
 		{
 			TagLib::String artist, title, album, genre, comment;
 			int year, track;
+            float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
 			
 			artist = tag->artist();
 			title = tag->title();;
@@ -84,6 +85,15 @@
 			
 			track = tag->track();
 			[dict setObject:[NSNumber numberWithInt:track] forKey:@"track"];
+
+            rgAlbumGain = tag->rgAlbumGain();
+            rgAlbumPeak = tag->rgAlbumPeak();
+            rgTrackGain = tag->rgTrackGain();
+            rgTrackPeak = tag->rgTrackPeak();
+            [dict setObject:[NSNumber numberWithFloat:rgAlbumGain] forKey:@"replayGainAlbumGain"];
+            [dict setObject:[NSNumber numberWithFloat:rgAlbumPeak] forKey:@"replayGainAlbumPeak"];
+            [dict setObject:[NSNumber numberWithFloat:rgTrackGain] forKey:@"replayGainTrackGain"];
+            [dict setObject:[NSNumber numberWithFloat:rgTrackPeak] forKey:@"replayGainTrackPeak"];
 			
 			if (!artist.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
@@ -98,18 +108,6 @@
 				[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
 		}
 
-        if (auto props = dynamic_cast<TagLib::MPC::Properties*>(f.audioProperties())) {
-            float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
-            rgAlbumGain = 64.82f - (props->albumGain() / 256.0f);
-            rgAlbumPeak = props->albumPeak() / 256.0f;
-            rgTrackGain = 64.82f - (props->trackGain() / 256.0f);
-            rgTrackPeak = props->trackPeak() / 256.0f;
-            [dict setObject:[NSNumber numberWithFloat:rgAlbumGain] forKey:@"replayGainAlbumGain"];
-            [dict setObject:[NSNumber numberWithFloat:rgAlbumPeak] forKey:@"replayGainAlbumPeak"];
-            [dict setObject:[NSNumber numberWithFloat:rgTrackGain] forKey:@"replayGainTrackGain"];
-            [dict setObject:[NSNumber numberWithFloat:rgTrackPeak] forKey:@"replayGainTrackPeak"];
-        }
-		
 		// Try to load the image.
 		NSData * image = nil;
         

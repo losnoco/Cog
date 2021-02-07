@@ -110,6 +110,26 @@ String ASF::Tag::genre() const
   return String();
 }
 
+float ASF::Tag::rgAlbumGain() const
+{
+  return 0;
+}
+
+float ASF::Tag::rgAlbumPeak() const
+{
+  return 0;
+}
+
+float ASF::Tag::rgTrackGain() const
+{
+  return 0;
+}
+
+float ASF::Tag::rgTrackPeak() const
+{
+  return 0;
+}
+
 void ASF::Tag::setTitle(const String &value)
 {
   d->title = value;
@@ -153,6 +173,22 @@ void ASF::Tag::setYear(unsigned int value)
 void ASF::Tag::setTrack(unsigned int value)
 {
   setAttribute("WM/TrackNumber", String::number(value));
+}
+
+void ASF::Tag::setRGAlbumGain(float)
+{
+}
+
+void ASF::Tag::setRGAlbumPeak(float)
+{
+}
+
+void ASF::Tag::setRGTrackGain(float)
+{
+}
+
+void ASF::Tag::setRGTrackPeak(float)
+{
 }
 
 ASF::AttributeListMap& ASF::Tag::attributeListMap()
