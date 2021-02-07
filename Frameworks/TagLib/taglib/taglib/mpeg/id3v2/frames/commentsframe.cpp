@@ -29,6 +29,7 @@
 #include <tstringlist.h>
 
 #include "commentsframe.h"
+#include "tpropertymap.h"
 
 using namespace TagLib;
 using namespace ID3v2;
@@ -47,15 +48,17 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-CommentsFrame::CommentsFrame(String::Type encoding) : Frame("COMM")
+CommentsFrame::CommentsFrame(String::Type encoding) :
+  Frame("COMM"),
+  d(new CommentsFramePrivate())
 {
-  d = new CommentsFramePrivate;
   d->textEncoding = encoding;
 }
 
-CommentsFrame::CommentsFrame(const ByteVector &data) : Frame(data)
+CommentsFrame::CommentsFrame(const ByteVector &data) :
+  Frame(data),
+  d(new CommentsFramePrivate())
 {
-  d = new CommentsFramePrivate;
   setData(data);
 }
 
@@ -109,6 +112,17 @@ void CommentsFrame::setTextEncoding(String::Type encoding)
   d->textEncoding = encoding;
 }
 
+PropertyMap CommentsFrame::asProperties() const
+{
+  String key = description().upper();
+  PropertyMap map;
+  if(key.isEmpty() || key == "COMMENT")
+    map.insert("COMMENT", text());
+  else
+    map.insert("COMMENT:" + key, text());
+  return map;
+}
+
 CommentsFrame *CommentsFrame::findByDescription(const ID3v2::Tag *tag, const String &d) // static
 {
   ID3v2::FrameList comments = tag->frameList("COMM");
@@ -144,8 +158,13 @@ void CommentsFrame::parseFields(const ByteVector &data)
   ByteVectorList l = ByteVectorList::split(data.mid(4), textDelimiter(d->textEncoding), byteAlign, 2);
 
   if(l.size() == 2) {
-    d->description = String(l.front(), d->textEncoding);
-    d->text = String(l.back(), d->textEncoding);
+    if(d->textEncoding == String::Latin1) {
+      d->description = Tag::latin1StringHandler()->parse(l.front());
+      d->text = Tag::latin1StringHandler()->parse(l.back());
+    } else {
+      d->description = String(l.front(), d->textEncoding);
+      d->text = String(l.back(), d->textEncoding);
+    }
   }
 }
 
@@ -155,8 +174,8 @@ ByteVector CommentsFrame::renderFields() const
 
   String::Type encoding = d->textEncoding;
 
-  encoding = checkEncoding(d->description, encoding);
-  encoding = checkEncoding(d->text, encoding);
+  encoding = checkTextEncoding(d->description, encoding);
+  encoding = checkTextEncoding(d->text, encoding);
 
   v.append(char(encoding));
   v.append(d->language.size() == 3 ? d->language : "XXX");
@@ -171,8 +190,9 @@ ByteVector CommentsFrame::renderFields() const
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-CommentsFrame::CommentsFrame(const ByteVector &data, Header *h) : Frame(h)
+CommentsFrame::CommentsFrame(const ByteVector &data, Header *h) :
+  Frame(h),
+  d(new CommentsFramePrivate())
 {
-  d = new CommentsFramePrivate();
   parseFields(fieldData(data));
 }

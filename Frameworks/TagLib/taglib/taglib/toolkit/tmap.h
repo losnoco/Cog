@@ -27,7 +27,6 @@
 #define TAGLIB_MAP_H
 
 #include <map>
-using namespace std;
 
 #include "taglib.h"
 
@@ -120,7 +119,7 @@ namespace TagLib {
      *
      * \see isEmpty()
      */
-    uint size() const;
+    unsigned int size() const;
 
     /*!
      * Returns true if the map is empty.
@@ -174,6 +173,11 @@ namespace TagLib {
      * pass-by-value usage.
      */
     Map<Key, T> &operator=(const Map<Key, T> &m);
+
+    /*!
+     * Exchanges the content of this map by the content of \a m.
+     */
+    void swap(Map<Key, T> &m);
 
   protected:
     /*

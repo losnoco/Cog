@@ -56,11 +56,24 @@ namespace TagLib {
       {
       public:
         /*!
-         * Contructs a Speex file from \a file.  If \a readProperties is true the
-         * file's audio properties will also be read using \a propertiesStyle.  If
-         * false, \a propertiesStyle is ignored.
+         * Constructs a Speex file from \a file.  If \a readProperties is true the
+         * file's audio properties will also be read.
+         *
+         * \note In the current implementation, \a propertiesStyle is ignored.
          */
         File(FileName file, bool readProperties = true,
+             Properties::ReadStyle propertiesStyle = Properties::Average);
+
+        /*!
+         * Constructs a Speex file from \a stream.  If \a readProperties is true the
+         * file's audio properties will also be read.
+         *
+         * \note TagLib will *not* take ownership of the stream, the caller is
+         * responsible for deleting it after the File object.
+         *
+         * \note In the current implementation, \a propertiesStyle is ignored.
+         */
+        File(IOStream *stream, bool readProperties = true,
              Properties::ReadStyle propertiesStyle = Properties::Average);
 
         /*!
@@ -76,18 +89,44 @@ namespace TagLib {
         virtual Ogg::XiphComment *tag() const;
 
         /*!
+         * Implements the unified property interface -- export function.
+         * This forwards directly to XiphComment::properties().
+         */
+        PropertyMap properties() const;
+
+        /*!
+         * Implements the unified tag dictionary interface -- import function.
+         * Like properties(), this is a forwarder to the file's XiphComment.
+         */
+        PropertyMap setProperties(const PropertyMap &);
+
+        /*!
          * Returns the Speex::Properties for this file.  If no audio properties
          * were read then this will return a null pointer.
          */
         virtual Properties *audioProperties() const;
 
+        /*!
+         * Save the file.
+         *
+         * This returns true if the save was successful.
+         */
         virtual bool save();
+
+        /*!
+         * Returns whether or not the given \a stream can be opened as a Speex
+         * file.
+         *
+         * \note This method is designed to do a quick check.  The result may
+         * not necessarily be correct.
+         */
+        static bool isSupported(IOStream *stream);
 
       private:
         File(const File &);
         File &operator=(const File &);
 
-        void read(bool readProperties, Properties::ReadStyle propertiesStyle);
+        void read(bool readProperties);
 
         class FilePrivate;
         FilePrivate *d;

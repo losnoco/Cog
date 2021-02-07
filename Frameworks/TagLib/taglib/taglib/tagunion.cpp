@@ -23,18 +23,26 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tagunion.h"
+#include <tagunion.h>
+#include <tstringlist.h>
+#include <tpropertymap.h>
+
+#include "id3v1tag.h"
+#include "id3v2tag.h"
+#include "apetag.h"
+#include "xiphcomment.h"
+#include "infotag.h"
 
 using namespace TagLib;
 
 #define stringUnion(method)                                          \
-  if(tag(0) && !tag(0)->method().isNull() && !tag(0)->method().isEmpty()) \
+  if(tag(0) && !tag(0)->method().isEmpty())                          \
     return tag(0)->method();                                         \
-  if(tag(1) && !tag(1)->method().isNull() && !tag(1)->method().isEmpty()) \
+  if(tag(1) && !tag(1)->method().isEmpty())                          \
     return tag(1)->method();                                         \
-  if(tag(2) && !tag(2)->method().isNull() && !tag(2)->method().isEmpty()) \
+  if(tag(2) && !tag(2)->method().isEmpty())                          \
     return tag(2)->method();                                         \
-  return String::null                                                \
+  return String();                                                   \
 
 #define numberUnion(method)                                          \
   if(tag(0) && tag(0)->method() > 0)                                 \
@@ -42,15 +50,6 @@ using namespace TagLib;
   if(tag(1) && tag(1)->method() > 0)                                 \
     return tag(1)->method();                                         \
   if(tag(2) && tag(2)->method() > 0)                                 \
-    return tag(2)->method();                                         \
-  return 0
-
-#define floatUnion(method)                                           \
-  if(tag(0) && tag(0)->method() != 0)                                \
-    return tag(0)->method();                                         \
-  if(tag(1) && tag(1)->method() != 0)                                \
-    return tag(1)->method();                                         \
-  if(tag(2) && tag(2)->method() != 0)                                \
     return tag(2)->method();                                         \
   return 0
 
@@ -80,10 +79,9 @@ public:
   std::vector<Tag *> tags;
 };
 
-TagUnion::TagUnion(Tag *first, Tag *second, Tag *third)
+TagUnion::TagUnion(Tag *first, Tag *second, Tag *third) :
+  d(new TagUnionPrivate())
 {
-  d = new TagUnionPrivate;
-
   d->tags[0] = first;
   d->tags[1] = second;
   d->tags[2] = third;
@@ -108,6 +106,62 @@ void TagUnion::set(int index, Tag *tag)
 {
   delete d->tags[index];
   d->tags[index] = tag;
+}
+
+PropertyMap TagUnion::properties() const
+{
+  // This is an ugly workaround but we can't add a virtual function.
+  // Should be virtual in taglib2.
+
+  for(size_t i = 0; i < 3; ++i) {
+
+    if(d->tags[i] && !d->tags[i]->isEmpty()) {
+
+      if(dynamic_cast<const ID3v1::Tag *>(d->tags[i]))
+        return dynamic_cast<const ID3v1::Tag *>(d->tags[i])->properties();
+
+      else if(dynamic_cast<const ID3v2::Tag *>(d->tags[i]))
+        return dynamic_cast<const ID3v2::Tag *>(d->tags[i])->properties();
+
+      else if(dynamic_cast<const APE::Tag *>(d->tags[i]))
+        return dynamic_cast<const APE::Tag *>(d->tags[i])->properties();
+
+      else if(dynamic_cast<const Ogg::XiphComment *>(d->tags[i]))
+        return dynamic_cast<const Ogg::XiphComment *>(d->tags[i])->properties();
+
+      else if(dynamic_cast<const RIFF::Info::Tag *>(d->tags[i]))
+        return dynamic_cast<const RIFF::Info::Tag *>(d->tags[i])->properties();
+    }
+  }
+
+  return PropertyMap();
+}
+
+void TagUnion::removeUnsupportedProperties(const StringList &unsupported)
+{
+  // This is an ugly workaround but we can't add a virtual function.
+  // Should be virtual in taglib2.
+
+  for(size_t i = 0; i < 3; ++i) {
+
+    if(d->tags[i]) {
+
+      if(dynamic_cast<ID3v1::Tag *>(d->tags[i]))
+        dynamic_cast<ID3v1::Tag *>(d->tags[i])->removeUnsupportedProperties(unsupported);
+
+      else if(dynamic_cast<ID3v2::Tag *>(d->tags[i]))
+        dynamic_cast<ID3v2::Tag *>(d->tags[i])->removeUnsupportedProperties(unsupported);
+
+      else if(dynamic_cast<APE::Tag *>(d->tags[i]))
+        dynamic_cast<APE::Tag *>(d->tags[i])->removeUnsupportedProperties(unsupported);
+
+      else if(dynamic_cast<Ogg::XiphComment *>(d->tags[i]))
+        dynamic_cast<Ogg::XiphComment *>(d->tags[i])->removeUnsupportedProperties(unsupported);
+
+      else if(dynamic_cast<RIFF::Info::Tag *>(d->tags[i]))
+        dynamic_cast<RIFF::Info::Tag *>(d->tags[i])->removeUnsupportedProperties(unsupported);
+    }
+  }
 }
 
 String TagUnion::title() const
@@ -135,34 +189,14 @@ String TagUnion::genre() const
   stringUnion(genre);
 }
 
-TagLib::uint TagUnion::year() const
+unsigned int TagUnion::year() const
 {
   numberUnion(year);
 }
 
-TagLib::uint TagUnion::track() const
+unsigned int TagUnion::track() const
 {
   numberUnion(track);
-}
-
-float TagUnion::rgAlbumGain() const
-{
-  floatUnion(rgAlbumGain);
-}
-
-float TagUnion::rgAlbumPeak() const
-{
-  floatUnion(rgAlbumPeak);
-}
-
-float TagUnion::rgTrackGain() const
-{
-  floatUnion(rgTrackGain);
-}
-
-float TagUnion::rgTrackPeak() const
-{
-  floatUnion(rgTrackPeak);
 }
 
 void TagUnion::setTitle(const String &s)
@@ -190,34 +224,14 @@ void TagUnion::setGenre(const String &s)
   setUnion(Genre, s);
 }
 
-void TagUnion::setYear(uint i)
+void TagUnion::setYear(unsigned int i)
 {
   setUnion(Year, i);
 }
 
-void TagUnion::setTrack(uint i)
+void TagUnion::setTrack(unsigned int i)
 {
   setUnion(Track, i);
-}
-
-void TagUnion::setRGAlbumGain(float f)
-{
-  setUnion(RGAlbumGain, f);
-}
-
-void TagUnion::setRGAlbumPeak(float f)
-{
-  setUnion(RGAlbumPeak, f);
-}
-
-void TagUnion::setRGTrackGain(float f)
-{
-  setUnion(RGTrackGain, f);
-}
-
-void TagUnion::setRGTrackPeak(float f)
-{
-  setUnion(RGTrackPeak, f);
 }
 
 bool TagUnion::isEmpty() const

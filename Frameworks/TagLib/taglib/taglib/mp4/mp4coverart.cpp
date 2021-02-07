@@ -23,14 +23,9 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifdef WITH_MP4
-
 #include <taglib.h>
 #include <tdebug.h>
+#include "trefcounter.h"
 #include "mp4coverart.h"
 
 using namespace TagLib;
@@ -38,20 +33,27 @@ using namespace TagLib;
 class MP4::CoverArt::CoverArtPrivate : public RefCounter
 {
 public:
-  CoverArtPrivate() : RefCounter(), format(MP4::CoverArt::JPEG) {}
+  CoverArtPrivate() :
+    RefCounter(),
+    format(MP4::CoverArt::JPEG) {}
 
   Format format;
   ByteVector data;
 };
 
-MP4::CoverArt::CoverArt(Format format, const ByteVector &data)
+////////////////////////////////////////////////////////////////////////////////
+// public members
+////////////////////////////////////////////////////////////////////////////////
+
+MP4::CoverArt::CoverArt(Format format, const ByteVector &data) :
+  d(new CoverArtPrivate())
 {
-  d = new CoverArtPrivate;
   d->format = format;
   d->data = data;
 }
 
-MP4::CoverArt::CoverArt(const CoverArt &item) : d(item.d)
+MP4::CoverArt::CoverArt(const CoverArt &item) :
+  d(item.d)
 {
   d->ref();
 }
@@ -59,12 +61,16 @@ MP4::CoverArt::CoverArt(const CoverArt &item) : d(item.d)
 MP4::CoverArt &
 MP4::CoverArt::operator=(const CoverArt &item)
 {
-  if(d->deref()) {
-    delete d;
-  }
-  d = item.d;
-  d->ref();
+  CoverArt(item).swap(*this);
   return *this;
+}
+
+void
+MP4::CoverArt::swap(CoverArt &item)
+{
+  using std::swap;
+
+  swap(d, item.d);
 }
 
 MP4::CoverArt::~CoverArt()
@@ -85,5 +91,3 @@ MP4::CoverArt::data() const
 {
   return d->data;
 }
-
-#endif

@@ -31,11 +31,6 @@
 using namespace TagLib;
 using namespace ID3v2;
 
-static inline int bitsToBytes(int i)
-{
-  return i % 8 == 0 ? i / 8 : (i - i % 8) / 8 + 1;
-}
-
 struct ChannelData
 {
   ChannelData() : channelType(RelativeVolumeFrame::Other), volumeAdjustment(0) {}
@@ -56,14 +51,16 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-RelativeVolumeFrame::RelativeVolumeFrame() : Frame("RVA2")
+RelativeVolumeFrame::RelativeVolumeFrame() :
+  Frame("RVA2"),
+  d(new RelativeVolumeFramePrivate())
 {
-  d = new RelativeVolumeFramePrivate;
 }
 
-RelativeVolumeFrame::RelativeVolumeFrame(const ByteVector &data) : Frame(data)
+RelativeVolumeFrame::RelativeVolumeFrame(const ByteVector &data) :
+  Frame(data),
+  d(new RelativeVolumeFramePrivate())
 {
-  d = new RelativeVolumeFramePrivate;
   setData(data);
 }
 
@@ -185,19 +182,18 @@ void RelativeVolumeFrame::parseFields(const ByteVector &data)
 
   while(pos <= (int)data.size() - 4) {
 
-
     ChannelType type = ChannelType(data[pos]);
     pos += 1;
 
     ChannelData &channel = d->channels[type];
 
-    channel.volumeAdjustment = data.mid(pos, 2).toShort();
+    channel.volumeAdjustment = data.toShort(static_cast<unsigned int>(pos));
     pos += 2;
 
     channel.peakVolume.bitsRepresentingPeak = data[pos];
     pos += 1;
 
-    int bytes = bitsToBytes(channel.peakVolume.bitsRepresentingPeak);
+    const int bytes = (channel.peakVolume.bitsRepresentingPeak + 7) / 8;
     channel.peakVolume.peakVolume = data.mid(pos, bytes);
     pos += bytes;
   }
@@ -229,8 +225,9 @@ ByteVector RelativeVolumeFrame::renderFields() const
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-RelativeVolumeFrame::RelativeVolumeFrame(const ByteVector &data, Header *h) : Frame(h)
+RelativeVolumeFrame::RelativeVolumeFrame(const ByteVector &data, Header *h) :
+  Frame(h),
+  d(new RelativeVolumeFramePrivate())
 {
-  d = new RelativeVolumeFramePrivate;
   parseFields(fieldData(data));
 }

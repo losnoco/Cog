@@ -70,7 +70,7 @@ namespace TagLib
       /*!
        * Constructs an attribute with \a key and a BytesType \a value.
        */
-      Attribute(const ByteVector &value);      
+      Attribute(const ByteVector &value);
 
       /*!
        * Constructs an attribute with \a key and a Picture \a value.
@@ -113,7 +113,12 @@ namespace TagLib
       /*!
        * Copies the contents of \a other into this item.
        */
-      ASF::Attribute &operator=(const Attribute &other);
+      Attribute &operator=(const Attribute &other);
+
+      /*!
+       * Exchanges the content of the Attribute by the content of \a other.
+       */
+      void swap(Attribute &other);
 
       /*!
        * Destroys the attribute.

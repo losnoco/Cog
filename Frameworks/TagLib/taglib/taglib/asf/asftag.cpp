@@ -23,12 +23,7 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifdef WITH_ASF
-
+#include <tpropertymap.h>
 #include "asftag.h"
 
 using namespace TagLib;
@@ -44,16 +39,15 @@ public:
   AttributeListMap attributeListMap;
 };
 
-ASF::Tag::Tag()
-: TagLib::Tag()
+ASF::Tag::Tag() :
+  TagLib::Tag(),
+  d(new TagPrivate())
 {
-  d = new TagPrivate;
 }
 
 ASF::Tag::~Tag()
 {
-  if(d)
-    delete d;
+  delete d;
 }
 
 String ASF::Tag::title() const
@@ -70,7 +64,7 @@ String ASF::Tag::album() const
 {
   if(d->attributeListMap.contains("WM/AlbumTitle"))
     return d->attributeListMap["WM/AlbumTitle"][0].toString();
-  return String::null;
+  return String();
 }
 
 String ASF::Tag::copyright() const
@@ -113,31 +107,7 @@ String ASF::Tag::genre() const
 {
   if(d->attributeListMap.contains("WM/Genre"))
     return d->attributeListMap["WM/Genre"][0].toString();
-  return String::null;
-}
-
-float
-ASF::Tag::rgAlbumGain() const
-{
-  return 0;
-}
-
-float
-ASF::Tag::rgAlbumPeak() const
-{
-  return 0;
-}
-
-float
-ASF::Tag::rgTrackGain() const
-{
-  return 0;
-}
-
-float
-ASF::Tag::rgTrackPeak() const
-{
-  return 0;
+  return String();
 }
 
 void ASF::Tag::setTitle(const String &value)
@@ -175,34 +145,14 @@ void ASF::Tag::setGenre(const String &value)
   setAttribute("WM/Genre", value);
 }
 
-void ASF::Tag::setYear(uint value)
+void ASF::Tag::setYear(unsigned int value)
 {
   setAttribute("WM/Year", String::number(value));
 }
 
-void ASF::Tag::setTrack(uint value)
+void ASF::Tag::setTrack(unsigned int value)
 {
   setAttribute("WM/TrackNumber", String::number(value));
-}
-
-void
-ASF::Tag::setRGAlbumGain(float)
-{
-}
-
-void
-ASF::Tag::setRGAlbumPeak(float)
-{
-}
-
-void
-ASF::Tag::setRGTrackGain(float)
-{
-}
-
-void
-ASF::Tag::setRGTrackPeak(float)
-{
 }
 
 ASF::AttributeListMap& ASF::Tag::attributeListMap()
@@ -210,11 +160,24 @@ ASF::AttributeListMap& ASF::Tag::attributeListMap()
   return d->attributeListMap;
 }
 
+const ASF::AttributeListMap &ASF::Tag::attributeListMap() const
+{
+  return d->attributeListMap;
+}
+
+bool ASF::Tag::contains(const String &key) const
+{
+  return d->attributeListMap.contains(key);
+}
+
 void ASF::Tag::removeItem(const String &key)
 {
-  AttributeListMap::Iterator it = d->attributeListMap.find(key);
-  if(it != d->attributeListMap.end())
-    d->attributeListMap.erase(it);
+  d->attributeListMap.erase(key);
+}
+
+ASF::AttributeList ASF::Tag::attribute(const String &name) const
+{
+  return d->attributeListMap[name];
 }
 
 void ASF::Tag::setAttribute(const String &name, const Attribute &attribute)
@@ -222,6 +185,11 @@ void ASF::Tag::setAttribute(const String &name, const Attribute &attribute)
   AttributeList value;
   value.append(attribute);
   d->attributeListMap.insert(name, value);
+}
+
+void ASF::Tag::setAttribute(const String &name, const AttributeList &values)
+{
+  d->attributeListMap.insert(name, values);
 }
 
 void ASF::Tag::addAttribute(const String &name, const Attribute &attribute)
@@ -242,4 +210,175 @@ bool ASF::Tag::isEmpty() const
          d->attributeListMap.isEmpty();
 }
 
-#endif
+namespace
+{
+  const char *keyTranslation[][2] = {
+    { "WM/AlbumTitle", "ALBUM" },
+    { "WM/AlbumArtist", "ALBUMARTIST" },
+    { "WM/Composer", "COMPOSER" },
+    { "WM/Writer", "LYRICIST" },
+    { "WM/Conductor", "CONDUCTOR" },
+    { "WM/ModifiedBy", "REMIXER" },
+    { "WM/Year", "DATE" },
+    { "WM/OriginalReleaseYear", "ORIGINALDATE" },
+    { "WM/Producer", "PRODUCER" },
+    { "WM/ContentGroupDescription", "GROUPING" },
+    { "WM/SubTitle", "SUBTITLE" },
+    { "WM/SetSubTitle", "DISCSUBTITLE" },
+    { "WM/TrackNumber", "TRACKNUMBER" },
+    { "WM/PartOfSet", "DISCNUMBER" },
+    { "WM/Genre", "GENRE" },
+    { "WM/BeatsPerMinute", "BPM" },
+    { "WM/Mood", "MOOD" },
+    { "WM/ISRC", "ISRC" },
+    { "WM/Lyrics", "LYRICS" },
+    { "WM/Media", "MEDIA" },
+    { "WM/Publisher", "LABEL" },
+    { "WM/CatalogNo", "CATALOGNUMBER" },
+    { "WM/Barcode", "BARCODE" },
+    { "WM/EncodedBy", "ENCODEDBY" },
+    { "WM/AlbumSortOrder", "ALBUMSORT" },
+    { "WM/AlbumArtistSortOrder", "ALBUMARTISTSORT" },
+    { "WM/ArtistSortOrder", "ARTISTSORT" },
+    { "WM/TitleSortOrder", "TITLESORT" },
+    { "WM/Script", "SCRIPT" },
+    { "WM/Language", "LANGUAGE" },
+    { "WM/ARTISTS", "ARTISTS" },
+    { "ASIN", "ASIN" },
+    { "MusicBrainz/Track Id", "MUSICBRAINZ_TRACKID" },
+    { "MusicBrainz/Artist Id", "MUSICBRAINZ_ARTISTID" },
+    { "MusicBrainz/Album Id", "MUSICBRAINZ_ALBUMID" },
+    { "MusicBrainz/Album Artist Id", "MUSICBRAINZ_ALBUMARTISTID" },
+    { "MusicBrainz/Album Release Country", "RELEASECOUNTRY" },
+    { "MusicBrainz/Album Status", "RELEASESTATUS" },
+    { "MusicBrainz/Album Type", "RELEASETYPE" },
+    { "MusicBrainz/Release Group Id", "MUSICBRAINZ_RELEASEGROUPID" },
+    { "MusicBrainz/Release Track Id", "MUSICBRAINZ_RELEASETRACKID" },
+    { "MusicBrainz/Work Id", "MUSICBRAINZ_WORKID" },
+    { "MusicIP/PUID", "MUSICIP_PUID" },
+    { "Acoustid/Id", "ACOUSTID_ID" },
+    { "Acoustid/Fingerprint", "ACOUSTID_FINGERPRINT" },
+  };
+  const size_t keyTranslationSize = sizeof(keyTranslation) / sizeof(keyTranslation[0]);
+
+  String translateKey(const String &key)
+  {
+    for(size_t i = 0; i < keyTranslationSize; ++i) {
+      if(key == keyTranslation[i][0])
+        return keyTranslation[i][1];
+    }
+
+    return String();
+  }
+}
+
+PropertyMap ASF::Tag::properties() const
+{
+  PropertyMap props;
+
+  if(!d->title.isEmpty()) {
+    props["TITLE"] = d->title;
+  }
+  if(!d->artist.isEmpty()) {
+    props["ARTIST"] = d->artist;
+  }
+  if(!d->copyright.isEmpty()) {
+    props["COPYRIGHT"] = d->copyright;
+  }
+  if(!d->comment.isEmpty()) {
+    props["COMMENT"] = d->comment;
+  }
+
+  ASF::AttributeListMap::ConstIterator it = d->attributeListMap.begin();
+  for(; it != d->attributeListMap.end(); ++it) {
+    const String key = translateKey(it->first);
+    if(!key.isEmpty()) {
+      AttributeList::ConstIterator it2 = it->second.begin();
+      for(; it2 != it->second.end(); ++it2) {
+        if(key == "TRACKNUMBER") {
+          if(it2->type() == ASF::Attribute::DWordType)
+            props.insert(key, String::number(it2->toUInt()));
+          else
+            props.insert(key, it2->toString());
+        }
+        else {
+          props.insert(key, it2->toString());
+        }
+      }
+    }
+    else {
+      props.unsupportedData().append(it->first);
+    }
+  }
+  return props;
+}
+
+void ASF::Tag::removeUnsupportedProperties(const StringList &props)
+{
+  StringList::ConstIterator it = props.begin();
+  for(; it != props.end(); ++it)
+    d->attributeListMap.erase(*it);
+}
+
+PropertyMap ASF::Tag::setProperties(const PropertyMap &props)
+{
+  static Map<String, String> reverseKeyMap;
+  if(reverseKeyMap.isEmpty()) {
+    int numKeys = sizeof(keyTranslation) / sizeof(keyTranslation[0]);
+    for(int i = 0; i < numKeys; i++) {
+      reverseKeyMap[keyTranslation[i][1]] = keyTranslation[i][0];
+    }
+  }
+
+  PropertyMap origProps = properties();
+  PropertyMap::ConstIterator it = origProps.begin();
+  for(; it != origProps.end(); ++it) {
+    if(!props.contains(it->first) || props[it->first].isEmpty()) {
+      if(it->first == "TITLE") {
+        d->title.clear();
+      }
+      else if(it->first == "ARTIST") {
+        d->artist.clear();
+      }
+      else if(it->first == "COMMENT") {
+        d->comment.clear();
+      }
+      else if(it->first == "COPYRIGHT") {
+        d->copyright.clear();
+      }
+      else {
+        d->attributeListMap.erase(reverseKeyMap[it->first]);
+      }
+    }
+  }
+
+  PropertyMap ignoredProps;
+  it = props.begin();
+  for(; it != props.end(); ++it) {
+    if(reverseKeyMap.contains(it->first)) {
+      String name = reverseKeyMap[it->first];
+      removeItem(name);
+      StringList::ConstIterator it2 = it->second.begin();
+      for(; it2 != it->second.end(); ++it2) {
+        addAttribute(name, *it2);
+      }
+    }
+    else if(it->first == "TITLE") {
+      d->title = it->second.toString();
+    }
+    else if(it->first == "ARTIST") {
+      d->artist = it->second.toString();
+    }
+    else if(it->first == "COMMENT") {
+      d->comment = it->second.toString();
+    }
+    else if(it->first == "COPYRIGHT") {
+      d->copyright = it->second.toString();
+    }
+    else {
+      ignoredProps.insert(it->first, it->second);
+    }
+  }
+
+  return ignoredProps;
+}

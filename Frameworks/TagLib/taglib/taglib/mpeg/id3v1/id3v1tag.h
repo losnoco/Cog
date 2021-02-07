@@ -62,6 +62,7 @@ namespace TagLib {
       TAGLIB_IGNORE_MISSING_DESTRUCTOR
     public:
       // BIC: Add virtual destructor.
+      StringHandler();
 
       /*!
        * Decode a string from \a data.  The default implementation assumes that
@@ -84,7 +85,7 @@ namespace TagLib {
     //! The main class in the ID3v1 implementation
 
     /*!
-     * This is an implementation of the ID3v1 format.  ID3v1 is both the simplist
+     * This is an implementation of the ID3v1 format.  ID3v1 is both the simplest
      * and most common of tag formats but is rather limited.  Because of its
      * pervasiveness and the way that applications have been written around the
      * fields that it provides, the generic TagLib::Tag API is a mirror of what is
@@ -139,28 +140,40 @@ namespace TagLib {
       virtual String album() const;
       virtual String comment() const;
       virtual String genre() const;
-      virtual uint year() const;
-      virtual uint track() const;
-      virtual float rgAlbumGain() const;
-      virtual float rgAlbumPeak() const;
-      virtual float rgTrackGain() const;
-      virtual float rgTrackPeak() const;
+      virtual unsigned int year() const;
+      virtual unsigned int track() const;
 
       virtual void setTitle(const String &s);
       virtual void setArtist(const String &s);
       virtual void setAlbum(const String &s);
       virtual void setComment(const String &s);
       virtual void setGenre(const String &s);
-      virtual void setYear(uint i);
-      virtual void setTrack(uint i);
-      virtual void setRGAlbumGain(float f);
-      virtual void setRGAlbumPeak(float f);
-      virtual void setRGTrackGain(float f);
-      virtual void setRGTrackPeak(float f);
+      virtual void setYear(unsigned int i);
+      virtual void setTrack(unsigned int i);
+
+      /*!
+       * Returns the genre in number.
+       *
+       * \note Normally 255 indicates that this tag contains no genre.
+       */
+      unsigned int genreNumber() const;
+
+      /*!
+       * Sets the genre in number to \a i.
+       *
+       * \note Valid value is from 0 up to 255. Normally 255 indicates that
+       * this tag contains no genre.
+       */
+      void setGenreNumber(unsigned int i);
 
       /*!
        * Sets the string handler that decides how the ID3v1 data will be
        * converted to and from binary data.
+       * If the parameter \a handler is null, the previous handler is
+       * released and default ISO-8859-1 handler is restored.
+       *
+       * \note The caller is responsible for deleting the previous handler
+       * as needed after it is released.
        *
        * \see StringHandler
        */

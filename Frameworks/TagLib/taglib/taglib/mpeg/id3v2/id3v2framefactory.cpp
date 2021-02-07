@@ -23,11 +23,8 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifndef HAVE_ZLIB
-#include <config.h>
-#endif
-
 #include <tdebug.h>
+#include <tzlib.h>
 
 #include "id3v2framefactory.h"
 #include "id3v2synchdata.h"
@@ -44,9 +41,51 @@
 #include "frames/unsynchronizedlyricsframe.h"
 #include "frames/popularimeterframe.h"
 #include "frames/privateframe.h"
+#include "frames/ownershipframe.h"
+#include "frames/synchronizedlyricsframe.h"
+#include "frames/eventtimingcodesframe.h"
+#include "frames/chapterframe.h"
+#include "frames/tableofcontentsframe.h"
+#include "frames/podcastframe.h"
 
 using namespace TagLib;
 using namespace ID3v2;
+
+namespace
+{
+  void updateGenre(TextIdentificationFrame *frame)
+  {
+    StringList fields = frame->fieldList();
+    StringList newfields;
+
+    for(StringList::ConstIterator it = fields.begin(); it != fields.end(); ++it) {
+      String s = *it;
+      int offset = 0;
+      int end = 0;
+
+      while(s.length() > offset && s[offset] == '(' &&
+            (end = s.find(")", offset + 1)) > offset) {
+        // "(12)Genre"
+        const String genreCode = s.substr(offset + 1, end - 1);
+        s = s.substr(end + 1);
+        bool ok;
+        int number = genreCode.toInt(&ok);
+        if((ok && number >= 0 && number <= 255 &&
+            !(ID3v1::genre(number) == s)) ||
+           genreCode == "RX" || genreCode == "CR")
+          newfields.append(genreCode);
+      }
+      if(!s.isEmpty())
+        // "Genre" or "12"
+        newfields.append(s);
+    }
+
+    if(newfields.isEmpty())
+      fields.append(String());
+
+    frame->setText(newfields);
+  }
+}
 
 class FrameFactory::FrameFactoryPrivate
 {
@@ -65,7 +104,7 @@ public:
   }
 };
 
-FrameFactory *FrameFactory::factory = 0;
+FrameFactory FrameFactory::factory;
 
 ////////////////////////////////////////////////////////////////////////////////
 // public members
@@ -73,17 +112,15 @@ FrameFactory *FrameFactory::factory = 0;
 
 FrameFactory *FrameFactory::instance()
 {
-  if(!factory)
-    factory = new FrameFactory;
-  return factory;
+  return &factory;
 }
 
 Frame *FrameFactory::createFrame(const ByteVector &data, bool synchSafeInts) const
 {
-  return createFrame(data, uint(synchSafeInts ? 4 : 3));
+  return createFrame(data, static_cast<unsigned int>(synchSafeInts ? 4 : 3));
 }
 
-Frame *FrameFactory::createFrame(const ByteVector &data, uint version) const
+Frame *FrameFactory::createFrame(const ByteVector &data, unsigned int version) const
 {
   Header tagHeader;
   tagHeader.setMajorVersion(version);
@@ -92,24 +129,40 @@ Frame *FrameFactory::createFrame(const ByteVector &data, uint version) const
 
 Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) const
 {
+    return createFrame(origData, const_cast<const Header *>(tagHeader));
+}
+
+Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHeader) const
+{
   ByteVector data = origData;
-  uint version = tagHeader->majorVersion();
+  unsigned int version = tagHeader->majorVersion();
   Frame::Header *header = new Frame::Header(data, version);
   ByteVector frameID = header->frameID();
 
   // A quick sanity check -- make sure that the frameID is 4 uppercase Latin1
   // characters.  Also make sure that there is data in the frame.
 
-  if(!(frameID.size() == (version < 3 ? 3 : 4)) ||
-     header->frameSize() <= uint(header->dataLengthIndicator() ? 4 : 0) ||
+  if(frameID.size() != (version < 3 ? 3 : 4) ||
+     header->frameSize() <= static_cast<unsigned int>(header->dataLengthIndicator() ? 4 : 0) ||
      header->frameSize() > data.size())
   {
     delete header;
     return 0;
   }
 
+#ifndef NO_ITUNES_HACKS
+  if(version == 3 && frameID.size() == 4 && frameID[3] == '\0') {
+    // iTunes v2.3 tags store v2.2 frames - convert now
+    frameID = frameID.mid(0, 3);
+    header->setFrameID(frameID);
+    header->setVersion(2);
+    updateFrame(header);
+    header->setVersion(3);
+  }
+#endif
+
   for(ByteVector::ConstIterator it = frameID.begin(); it != frameID.end(); it++) {
-    if( (*it < 'A' || *it > 'Z') && (*it < '1' || *it > '9') ) {
+    if( (*it < 'A' || *it > 'Z') && (*it < '0' || *it > '9') ) {
       delete header;
       return 0;
     }
@@ -126,12 +179,11 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) 
   // TagLib doesn't mess with encrypted frames, so just treat them
   // as unknown frames.
 
-#if HAVE_ZLIB == 0
-  if(header->compression()) {
+  if(!zlib::isAvailable() && header->compression()) {
     debug("Compressed frames are currently not supported.");
     return new UnknownFrame(data, header);
   }
-#endif
+
   if(header->encryption()) {
     debug("Encrypted frames are currently not supported.");
     return new UnknownFrame(data, header);
@@ -153,7 +205,8 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) 
 
   // Text Identification (frames 4.2)
 
-  if(frameID.startsWith("T")) {
+  // Apple proprietary WFED (Podcast URL), MVNM (Movement Name), MVIN (Movement Number), GRP1 (Grouping) are in fact text frames.
+  if(frameID.startsWith("T") || frameID == "WFED" || frameID == "MVNM" || frameID == "MVIN" || frameID == "GRP1") {
 
     TextIdentificationFrame *f = frameID != "TXXX"
       ? new TextIdentificationFrame(data, header)
@@ -185,13 +238,13 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) 
 
   // ID3v2.2 Attached Picture
 
-	if(frameID == "PIC") {
+  if(frameID == "PIC") {
     AttachedPictureFrame *f = new AttachedPictureFrameV22(data, header);
     d->setTextEncoding(f);
     return f;
   }
 
-	// Relative Volume Adjustment (frames 4.11)
+  // Relative Volume Adjustment (frames 4.11)
 
   if(frameID == "RVA2")
     return new RelativeVolumeFrame(data, header);
@@ -231,6 +284,20 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) 
     return f;
   }
 
+  // Synchronized lyrics/text (frames 4.9)
+
+  if(frameID == "SYLT") {
+    SynchronizedLyricsFrame *f = new SynchronizedLyricsFrame(data, header);
+    if(d->useDefaultEncoding)
+      f->setTextEncoding(d->defaultEncoding);
+    return f;
+  }
+
+  // Event timing codes (frames 4.5)
+
+  if(frameID == "ETCO")
+    return new EventTimingCodesFrame(data, header);
+
   // Popularimeter (frames 4.17)
 
   if(frameID == "POPM")
@@ -241,7 +308,62 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) 
   if(frameID == "PRIV")
     return new PrivateFrame(data, header);
 
+  // Ownership (frames 4.22)
+
+  if(frameID == "OWNE") {
+    OwnershipFrame *f = new OwnershipFrame(data, header);
+    d->setTextEncoding(f);
+    return f;
+  }
+
+  // Chapter (ID3v2 chapters 1.0)
+
+  if(frameID == "CHAP")
+    return new ChapterFrame(tagHeader, data, header);
+
+  // Table of contents (ID3v2 chapters 1.0)
+
+  if(frameID == "CTOC")
+    return new TableOfContentsFrame(tagHeader, data, header);
+
+  // Apple proprietary PCST (Podcast)
+
+  if(frameID == "PCST")
+    return new PodcastFrame(data, header);
+
   return new UnknownFrame(data, header);
+}
+
+void FrameFactory::rebuildAggregateFrames(ID3v2::Tag *tag) const
+{
+  if(tag->header()->majorVersion() < 4 &&
+     tag->frameList("TDRC").size() == 1 &&
+     tag->frameList("TDAT").size() == 1)
+  {
+    TextIdentificationFrame *tdrc =
+      dynamic_cast<TextIdentificationFrame *>(tag->frameList("TDRC").front());
+    UnknownFrame *tdat = static_cast<UnknownFrame *>(tag->frameList("TDAT").front());
+
+    if(tdrc &&
+       tdrc->fieldList().size() == 1 &&
+       tdrc->fieldList().front().size() == 4 &&
+       tdat->data().size() >= 5)
+    {
+      String date(tdat->data().mid(1), String::Type(tdat->data()[0]));
+      if(date.length() == 4) {
+        tdrc->setText(tdrc->toString() + '-' + date.substr(2, 2) + '-' + date.substr(0, 2));
+        if(tag->frameList("TIME").size() == 1) {
+          UnknownFrame *timeframe = static_cast<UnknownFrame *>(tag->frameList("TIME").front());
+          if(timeframe->data().size() >= 5) {
+            String time(timeframe->data().mid(1), String::Type(timeframe->data()[0]));
+            if(time.length() == 4) {
+              tdrc->setText(tdrc->toString() + 'T' + time.substr(0, 2) + ':' + time.substr(2, 2));
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 String::Type FrameFactory::defaultTextEncoding() const
@@ -259,9 +381,9 @@ void FrameFactory::setDefaultTextEncoding(String::Type encoding)
 // protected members
 ////////////////////////////////////////////////////////////////////////////////
 
-FrameFactory::FrameFactory()
+FrameFactory::FrameFactory() :
+  d(new FrameFactoryPrivate())
 {
-  d = new FrameFactoryPrivate;
 }
 
 FrameFactory::~FrameFactory()
@@ -269,9 +391,97 @@ FrameFactory::~FrameFactory()
   delete d;
 }
 
+namespace
+{
+  // Frame conversion table ID3v2.2 -> 2.4
+  const char *frameConversion2[][2] = {
+    { "BUF", "RBUF" },
+    { "CNT", "PCNT" },
+    { "COM", "COMM" },
+    { "CRA", "AENC" },
+    { "ETC", "ETCO" },
+    { "GEO", "GEOB" },
+    { "IPL", "TIPL" },
+    { "MCI", "MCDI" },
+    { "MLL", "MLLT" },
+    { "POP", "POPM" },
+    { "REV", "RVRB" },
+    { "SLT", "SYLT" },
+    { "STC", "SYTC" },
+    { "TAL", "TALB" },
+    { "TBP", "TBPM" },
+    { "TCM", "TCOM" },
+    { "TCO", "TCON" },
+    { "TCP", "TCMP" },
+    { "TCR", "TCOP" },
+    { "TDY", "TDLY" },
+    { "TEN", "TENC" },
+    { "TFT", "TFLT" },
+    { "TKE", "TKEY" },
+    { "TLA", "TLAN" },
+    { "TLE", "TLEN" },
+    { "TMT", "TMED" },
+    { "TOA", "TOAL" },
+    { "TOF", "TOFN" },
+    { "TOL", "TOLY" },
+    { "TOR", "TDOR" },
+    { "TOT", "TOAL" },
+    { "TP1", "TPE1" },
+    { "TP2", "TPE2" },
+    { "TP3", "TPE3" },
+    { "TP4", "TPE4" },
+    { "TPA", "TPOS" },
+    { "TPB", "TPUB" },
+    { "TRC", "TSRC" },
+    { "TRD", "TDRC" },
+    { "TRK", "TRCK" },
+    { "TS2", "TSO2" },
+    { "TSA", "TSOA" },
+    { "TSC", "TSOC" },
+    { "TSP", "TSOP" },
+    { "TSS", "TSSE" },
+    { "TST", "TSOT" },
+    { "TT1", "TIT1" },
+    { "TT2", "TIT2" },
+    { "TT3", "TIT3" },
+    { "TXT", "TOLY" },
+    { "TXX", "TXXX" },
+    { "TYE", "TDRC" },
+    { "UFI", "UFID" },
+    { "ULT", "USLT" },
+    { "WAF", "WOAF" },
+    { "WAR", "WOAR" },
+    { "WAS", "WOAS" },
+    { "WCM", "WCOM" },
+    { "WCP", "WCOP" },
+    { "WPB", "WPUB" },
+    { "WXX", "WXXX" },
+
+    // Apple iTunes nonstandard frames
+    { "PCS", "PCST" },
+    { "TCT", "TCAT" },
+    { "TDR", "TDRL" },
+    { "TDS", "TDES" },
+    { "TID", "TGID" },
+    { "WFD", "WFED" },
+    { "MVN", "MVNM" },
+    { "MVI", "MVIN" },
+    { "GP1", "GRP1" },
+  };
+  const size_t frameConversion2Size = sizeof(frameConversion2) / sizeof(frameConversion2[0]);
+
+  // Frame conversion table ID3v2.3 -> 2.4
+  const char *frameConversion3[][2] = {
+    { "TORY", "TDOR" },
+    { "TYER", "TDRC" },
+    { "IPLS", "TIPL" },
+  };
+  const size_t frameConversion3Size = sizeof(frameConversion3) / sizeof(frameConversion3[0]);
+}
+
 bool FrameFactory::updateFrame(Frame::Header *header) const
 {
-  TagLib::ByteVector frameID = header->frameID();
+  const ByteVector frameID = header->frameID();
 
   switch(header->version()) {
 
@@ -293,61 +503,12 @@ bool FrameFactory::updateFrame(Frame::Header *header) const
     // ID3v2.2 only used 3 bytes for the frame ID, so we need to convert all of
     // the frames to their 4 byte ID3v2.4 equivalent.
 
-    convertFrame("BUF", "RBUF", header);
-    convertFrame("CNT", "PCNT", header);
-    convertFrame("COM", "COMM", header);
-    convertFrame("CRA", "AENC", header);
-    convertFrame("ETC", "ETCO", header);
-    convertFrame("GEO", "GEOB", header);
-    convertFrame("IPL", "TIPL", header);
-    convertFrame("MCI", "MCDI", header);
-    convertFrame("MLL", "MLLT", header);
-    convertFrame("POP", "POPM", header);
-    convertFrame("REV", "RVRB", header);
-    convertFrame("SLT", "SYLT", header);
-    convertFrame("STC", "SYTC", header);
-    convertFrame("TAL", "TALB", header);
-    convertFrame("TBP", "TBPM", header);
-    convertFrame("TCM", "TCOM", header);
-    convertFrame("TCO", "TCON", header);
-    convertFrame("TCR", "TCOP", header);
-    convertFrame("TDY", "TDLY", header);
-    convertFrame("TEN", "TENC", header);
-    convertFrame("TFT", "TFLT", header);
-    convertFrame("TKE", "TKEY", header);
-    convertFrame("TLA", "TLAN", header);
-    convertFrame("TLE", "TLEN", header);
-    convertFrame("TMT", "TMED", header);
-    convertFrame("TOA", "TOAL", header);
-    convertFrame("TOF", "TOFN", header);
-    convertFrame("TOL", "TOLY", header);
-    convertFrame("TOR", "TDOR", header);
-    convertFrame("TOT", "TOAL", header);
-    convertFrame("TP1", "TPE1", header);
-    convertFrame("TP2", "TPE2", header);
-    convertFrame("TP3", "TPE3", header);
-    convertFrame("TP4", "TPE4", header);
-    convertFrame("TPA", "TPOS", header);
-    convertFrame("TPB", "TPUB", header);
-    convertFrame("TRC", "TSRC", header);
-    convertFrame("TRD", "TDRC", header);
-    convertFrame("TRK", "TRCK", header);
-    convertFrame("TSS", "TSSE", header);
-    convertFrame("TT1", "TIT1", header);
-    convertFrame("TT2", "TIT2", header);
-    convertFrame("TT3", "TIT3", header);
-    convertFrame("TXT", "TOLY", header);
-    convertFrame("TXX", "TXXX", header);
-    convertFrame("TYE", "TDRC", header);
-    convertFrame("UFI", "UFID", header);
-    convertFrame("ULT", "USLT", header);
-    convertFrame("WAF", "WOAF", header);
-    convertFrame("WAR", "WOAR", header);
-    convertFrame("WAS", "WOAS", header);
-    convertFrame("WCM", "WCOM", header);
-    convertFrame("WCP", "WCOP", header);
-    convertFrame("WPB", "WPUB", header);
-    convertFrame("WXX", "WXXX", header);
+    for(size_t i = 0; i < frameConversion2Size; ++i) {
+      if(frameID == frameConversion2[i][0]) {
+        header->setFrameID(frameConversion2[i][1]);
+        break;
+      }
+    }
 
     break;
   }
@@ -366,8 +527,12 @@ bool FrameFactory::updateFrame(Frame::Header *header) const
       return false;
     }
 
-    convertFrame("TORY", "TDOR", header);
-    convertFrame("TYER", "TDRC", header);
+    for(size_t i = 0; i < frameConversion3Size; ++i) {
+      if(frameID == frameConversion3[i][0]) {
+        header->setFrameID(frameConversion3[i][1]);
+        break;
+      }
+    }
 
     break;
   }
@@ -377,57 +542,11 @@ bool FrameFactory::updateFrame(Frame::Header *header) const
     // This should catch a typo that existed in TagLib up to and including
     // version 1.1 where TRDC was used for the year rather than TDRC.
 
-    convertFrame("TRDC", "TDRC", header);
+    if(frameID == "TRDC")
+      header->setFrameID("TDRC");
+
     break;
   }
 
   return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// private members
-////////////////////////////////////////////////////////////////////////////////
-
-void FrameFactory::convertFrame(const char *from, const char *to,
-                                Frame::Header *header) const
-{
-  if(header->frameID() != from)
-    return;
-
-  // debug("ID3v2.4 no longer supports the frame type " + String(from) + "  It has" +
-  //       "been converted to the type " + String(to) + ".");
-
-  header->setFrameID(to);
-}
-
-void FrameFactory::updateGenre(TextIdentificationFrame *frame) const
-{
-  StringList fields = frame->fieldList();
-  StringList newfields;
-
-  for(StringList::Iterator it = fields.begin(); it != fields.end(); ++it) {
-    String s = *it;
-    int end = s.find(")");
-
-    if(s.startsWith("(") && end > 0) {
-      // "(12)Genre"
-      String text = s.substr(end + 1);
-      bool ok;
-      int number = s.substr(1, end - 1).toInt(&ok);
-      if(ok && number >= 0 && number <= 255 && !(ID3v1::genre(number) == text))
-        newfields.append(s.substr(1, end - 1));
-      if(!text.isEmpty())
-        newfields.append(text);
-    }
-    else {
-      // "Genre" or "12"
-      newfields.append(s);
-    }
-  }
-
-  if(newfields.isEmpty())
-    fields.append(String::null);
-
-  frame->setText(newfields);
-
 }

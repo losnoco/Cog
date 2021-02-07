@@ -58,11 +58,24 @@ namespace TagLib {
       {
       public:
         /*!
-         * Contructs an AIFF file from \a file.  If \a readProperties is true the
-         * file's audio properties will also be read using \a propertiesStyle.  If
-         * false, \a propertiesStyle is ignored.
+         * Constructs an AIFF file from \a file.  If \a readProperties is true the
+         * file's audio properties will also be read.
+         *
+         * \note In the current implementation, \a propertiesStyle is ignored.
          */
         File(FileName file, bool readProperties = true,
+             Properties::ReadStyle propertiesStyle = Properties::Average);
+
+        /*!
+         * Constructs an AIFF file from \a stream.  If \a readProperties is true the
+         * file's audio properties will also be read.
+         *
+         * \note TagLib will *not* take ownership of the stream, the caller is
+         * responsible for deleting it after the File object.
+         *
+         * \note In the current implementation, \a propertiesStyle is ignored.
+         */
+        File(IOStream *stream, bool readProperties = true,
              Properties::ReadStyle propertiesStyle = Properties::Average);
 
         /*!
@@ -72,8 +85,28 @@ namespace TagLib {
 
         /*!
          * Returns the Tag for this file.
+         *
+         * \note This always returns a valid pointer regardless of whether or not
+         * the file on disk has an ID3v2 tag.  Use hasID3v2Tag() to check if the file
+         * on disk actually has an ID3v2 tag.
+         *
+         * \see hasID3v2Tag()
          */
         virtual ID3v2::Tag *tag() const;
+
+        /*!
+         * Implements the unified property interface -- export function.
+         * This method forwards to ID3v2::Tag::properties().
+         */
+        PropertyMap properties() const;
+
+        void removeUnsupportedProperties(const StringList &properties);
+
+        /*!
+         * Implements the unified property interface -- import function.
+         * This method forwards to ID3v2::Tag::setProperties().
+         */
+        PropertyMap setProperties(const PropertyMap &);
 
         /*!
          * Returns the AIFF::Properties for this file.  If no audio properties
@@ -86,11 +119,33 @@ namespace TagLib {
          */
         virtual bool save();
 
+        /*!
+         * Save using a specific ID3v2 version (e.g. v3)
+         */
+        bool save(ID3v2::Version version);
+
+        /*!
+         * Returns whether or not the file on disk actually has an ID3v2 tag.
+         *
+         * \see ID3v2Tag()
+         */
+        bool hasID3v2Tag() const;
+
+        /*!
+         * Check if the given \a stream can be opened as an AIFF file.
+         *
+         * \note This method is designed to do a quick check.  The result may
+         * not necessarily be correct.
+         */
+        static bool isSupported(IOStream *stream);
+
       private:
         File(const File &);
         File &operator=(const File &);
 
-        void read(bool readProperties, Properties::ReadStyle propertiesStyle);
+        void read(bool readProperties);
+
+        friend class Properties;
 
         class FilePrivate;
         FilePrivate *d;

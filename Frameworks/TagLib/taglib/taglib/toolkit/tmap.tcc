@@ -23,31 +23,34 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#include "trefcounter.h"
+
 namespace TagLib {
 
 ////////////////////////////////////////////////////////////////////////////////
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
+// BIC change to RefCounter
 template <class Key, class T>
 template <class KeyP, class TP>
-class Map<Key, T>::MapPrivate : public RefCounter
+class Map<Key, T>::MapPrivate : public RefCounterOld
 {
 public:
-  MapPrivate() : RefCounter() {}
+  MapPrivate() : RefCounterOld() {}
 #ifdef WANT_CLASS_INSTANTIATION_OF_MAP
-  MapPrivate(const std::map<class KeyP, class TP>& m) : RefCounter(), map(m) {}
+  MapPrivate(const std::map<class KeyP, class TP>& m) : RefCounterOld(), map(m) {}
   std::map<class KeyP, class TP> map;
 #else
-  MapPrivate(const std::map<KeyP, TP>& m) : RefCounter(), map(m) {}
+  MapPrivate(const std::map<KeyP, TP>& m) : RefCounterOld(), map(m) {}
   std::map<KeyP, TP> map;
 #endif
 };
 
 template <class Key, class T>
-Map<Key, T>::Map()
+Map<Key, T>::Map() :
+  d(new MapPrivate<Key, T>())
 {
-  d = new MapPrivate<Key, T>;
 }
 
 template <class Key, class T>
@@ -142,16 +145,14 @@ template <class Key, class T>
 Map<Key, T> &Map<Key,T>::erase(const Key &key)
 {
   detach();
-  Iterator it = d->map.find(key);
-  if(it != d->map.end())
-    d->map.erase(it);
+  d->map.erase(key);
   return *this;
 }
 
 template <class Key, class T>
-TagLib::uint Map<Key, T>::size() const
+unsigned int Map<Key, T>::size() const
 {
-  return d->map.size();
+  return static_cast<unsigned int>(d->map.size());
 }
 
 template <class Key, class T>
@@ -170,14 +171,16 @@ T &Map<Key, T>::operator[](const Key &key)
 template <class Key, class T>
 Map<Key, T> &Map<Key, T>::operator=(const Map<Key, T> &m)
 {
-  if(&m == this)
-    return *this;
-
-  if(d->deref())
-    delete(d);
-  d = m.d;
-  d->ref();
+  Map<Key, T>(m).swap(*this);
   return *this;
+}
+
+template <class Key, class T>
+void Map<Key, T>::swap(Map<Key, T> &m)
+{
+  using std::swap;
+
+  swap(d, m.d);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

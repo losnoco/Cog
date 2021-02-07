@@ -23,33 +23,42 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifndef NDEBUG
-#include <iostream>
-#include <bitset>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#if !defined(NDEBUG) || defined(TRACE_IN_RELEASE)
 
 #include "tdebug.h"
 #include "tstring.h"
+#include "tdebuglistener.h"
+#include "tutils.h"
 
-using namespace TagLib;
+#include <bitset>
+#include <cstdio>
+#include <cstdarg>
 
-void TagLib::debug(const String &s)
+namespace TagLib
 {
-  std::cerr << "TagLib: " << s << std::endl;
-}
+  // The instance is defined in tdebuglistener.cpp.
+  extern DebugListener *debugListener;
 
-void TagLib::debugData(const ByteVector &v)
-{
-  for(uint i = 0; i < v.size(); i++) {
+  void debug(const String &s)
+  {
+    debugListener->printMessage("TagLib: " + s + "\n");
+  }
 
-    std::cout << "*** [" << i << "] - '" << char(v[i]) << "' - int " << int(v[i])
-              << std::endl;
+  void debugData(const ByteVector &v)
+  {
+    for(unsigned int i = 0; i < v.size(); ++i) {
+      const std::string bits = std::bitset<8>(v[i]).to_string();
+      const String msg = Utils::formatString(
+        "*** [%u] - char '%c' - int %d, 0x%02x, 0b%s\n",
+        i, v[i], v[i], v[i], bits.c_str());
 
-    std::bitset<8> b(v[i]);
-
-    for(int j = 0; j < 8; j++)
-      std::cout << i << ":" << j << " " << b.test(j) << std::endl;
-
-    std::cout << std::endl;
+      debugListener->printMessage(msg);
+    }
   }
 }
+
 #endif

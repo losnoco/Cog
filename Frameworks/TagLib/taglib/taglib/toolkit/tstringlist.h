@@ -31,14 +31,14 @@
 #include "tbytevectorlist.h"
 #include "taglib_export.h"
 
-#include <ostream>
+#include <iostream>
 
 namespace TagLib {
 
   //! A list of strings
 
   /*!
-   * This is a spcialization of the List class with some members convention for
+   * This is a specialization of the List class with some members convention for
    * string operations.
    */
 

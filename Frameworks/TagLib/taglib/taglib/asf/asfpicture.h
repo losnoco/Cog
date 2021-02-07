@@ -118,6 +118,11 @@ namespace TagLib
       Picture& operator=(const Picture& other);
 
       /*!
+       * Exchanges the content of the Picture by the content of \a other.
+       */
+      void swap(Picture &other);
+
+      /*!
        * Returns true if Picture stores valid picture
        */
       bool isValid() const;
@@ -205,11 +210,11 @@ namespace TagLib
       /* THIS IS PRIVATE, DON'T TOUCH IT! */
       void parse(const ByteVector& );
       static Picture fromInvalid();
-      friend class Attribute;
 #endif
+
       private:
-        struct PicturePriavte;
-        PicturePriavte *d;
+        class PicturePrivate;
+        PicturePrivate *d;
       };
   }
 }

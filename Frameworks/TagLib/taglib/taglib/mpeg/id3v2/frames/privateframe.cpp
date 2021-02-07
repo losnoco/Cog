@@ -45,15 +45,17 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-PrivateFrame::PrivateFrame() : Frame("PRIV")
+PrivateFrame::PrivateFrame() :
+  Frame("PRIV"),
+  d(new PrivateFramePrivate())
 {
-  d = new PrivateFramePrivate;
 }
 
-PrivateFrame::PrivateFrame(const ByteVector &data) : Frame(data)
+PrivateFrame::PrivateFrame(const ByteVector &data) :
+  Frame(data),
+  d(new PrivateFramePrivate())
 {
-  d = new PrivateFramePrivate;
-  setData(data);
+  Frame::setData(data);
 }
 
 PrivateFrame::~PrivateFrame()
@@ -98,7 +100,7 @@ void PrivateFrame::parseFields(const ByteVector &data)
   }
 
   // Owner identifier is assumed to be Latin1
-  
+
   const int byteAlign =  1;
   const int endOfOwner = data.find(textDelimiter(String::Latin1), 0, byteAlign);
 
@@ -121,8 +123,9 @@ ByteVector PrivateFrame::renderFields() const
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-PrivateFrame::PrivateFrame(const ByteVector &data, Header *h) : Frame(h)
+PrivateFrame::PrivateFrame(const ByteVector &data, Header *h) :
+  Frame(h),
+  d(new PrivateFramePrivate())
 {
-  d = new PrivateFramePrivate();
   parseFields(fieldData(data));
 }

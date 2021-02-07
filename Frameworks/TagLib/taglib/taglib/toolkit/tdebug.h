@@ -32,11 +32,12 @@ namespace TagLib {
   class ByteVector;
 
 #ifndef DO_NOT_DOCUMENT
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(TRACE_IN_RELEASE)
 
   /*!
-   * A simple function that prints debugging output to cerr if debugging is
-   * not disabled.
+   * A simple function that outputs the debug messages to the listener.
+   * The default listener redirects the messages to \a stderr when NDEBUG is
+   * not defined.
    *
    * \warning Do not use this outside of TagLib, it could lead to undefined
    * symbols in your build if TagLib is built with NDEBUG defined and your
@@ -59,13 +60,11 @@ namespace TagLib {
 
 #else
 
-  // Define these to an empty statement if debugging is disabled.
+  #define debug(x)      ((void)0)
+  #define debugData(x)  ((void)0)
 
-#define debug(x)
-#define debugData(x)
-
-#endif
 #endif
 }
 
+#endif
 #endif

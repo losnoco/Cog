@@ -92,24 +92,47 @@ namespace TagLib {
       virtual String album() const;
       virtual String comment() const;
       virtual String genre() const;
-      virtual uint year() const;
-      virtual uint track() const;
-      virtual float rgAlbumGain() const;
-      virtual float rgAlbumPeak() const;
-      virtual float rgTrackGain() const;
-      virtual float rgTrackPeak() const;
+      virtual unsigned int year() const;
+      virtual unsigned int track() const;
 
       virtual void setTitle(const String &s);
       virtual void setArtist(const String &s);
       virtual void setAlbum(const String &s);
       virtual void setComment(const String &s);
       virtual void setGenre(const String &s);
-      virtual void setYear(uint i);
-      virtual void setTrack(uint i);
-      virtual void setRGAlbumGain(float f);
-      virtual void setRGAlbumPeak(float f);
-      virtual void setRGTrackGain(float f);
-      virtual void setRGTrackPeak(float f);
+      virtual void setYear(unsigned int i);
+      virtual void setTrack(unsigned int i);
+
+      /*!
+       * Implements the unified tag dictionary interface -- export function.
+       * APE tags are perfectly compatible with the dictionary interface because they
+       * support both arbitrary tag names and multiple values. Currently only
+       * APE items of type *Text* are handled by the dictionary interface; all *Binary*
+       * and *Locator* items will be put into the unsupportedData list and can be
+       * deleted on request using removeUnsupportedProperties(). The same happens
+       * to Text items if their key is invalid for PropertyMap (which should actually
+       * never happen).
+       *
+       * The only conversion done by this export function is to rename the APE tags
+       * TRACK to TRACKNUMBER, YEAR to DATE, and ALBUM ARTIST to ALBUMARTIST, respectively,
+       * in order to be compliant with the names used in other formats.
+       */
+      PropertyMap properties() const;
+
+      void removeUnsupportedProperties(const StringList &properties);
+
+      /*!
+       * Implements the unified tag dictionary interface -- import function. The same
+       * comments as for the export function apply; additionally note that the APE tag
+       * specification requires keys to have between 2 and 16 printable ASCII characters
+       * with the exception of the fixed strings "ID3", "TAG", "OGGS", and "MP+".
+       */
+      PropertyMap setProperties(const PropertyMap &);
+
+      /*!
+       * Check if the given String is a valid APE tag key.
+       */
+      static bool checkKey(const String&);
 
       /*!
        * Returns a pointer to the tag's footer.
@@ -120,7 +143,7 @@ namespace TagLib {
        * Returns a reference to the item list map.  This is an ItemListMap of
        * all of the items in the tag.
        *
-       * This is the most powerfull structure for accessing the items of the tag.
+       * This is the most powerful structure for accessing the items of the tag.
        *
        * APE tags are case-insensitive, all keys in this map have been converted
        * to upper case.
@@ -136,11 +159,18 @@ namespace TagLib {
       void removeItem(const String &key);
 
       /*!
-       * Adds to the item specified by \a key the data \a value.  If \a replace
+       * Adds to the text item specified by \a key the data \a value.  If \a replace
        * is true, then all of the other values on the same key will be removed
-       * first.
+       * first.  If a binary item exists for \a key it will be removed first.
        */
       void addValue(const String &key, const String &value, bool replace = true);
+
+     /*!
+      * Set the binary data for the key specified by \a item to \a value
+      * This will convert the item to type \a Binary if it isn't already and
+      * all of the other values on the same key will be removed.
+      */
+      void setData(const String &key, const ByteVector &value);
 
       /*!
        * Sets the \a key item to the value of \a item. If an item with the \a key is already

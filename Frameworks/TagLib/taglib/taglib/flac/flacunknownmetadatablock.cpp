@@ -23,10 +23,6 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <taglib.h>
 #include <tdebug.h>
 #include <tstring.h>
@@ -34,7 +30,7 @@
 
 using namespace TagLib;
 
-class FLAC::UnknownMetadataBlock::UnknownMetadataBlockPrivate 
+class FLAC::UnknownMetadataBlock::UnknownMetadataBlockPrivate
 {
 public:
   UnknownMetadataBlockPrivate() : code(0) {}
@@ -43,11 +39,10 @@ public:
   ByteVector data;
 };
 
-FLAC::UnknownMetadataBlock::UnknownMetadataBlock(int code, const ByteVector &data)
+FLAC::UnknownMetadataBlock::UnknownMetadataBlock(int code, const ByteVector &data) :
+  d(new UnknownMetadataBlockPrivate())
 {
-  d = new UnknownMetadataBlockPrivate;
   d->code = code;
-  //debug(String(data.toHex()));
   d->data = data;
 }
 

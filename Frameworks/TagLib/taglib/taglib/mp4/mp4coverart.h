@@ -29,6 +29,7 @@
 #include "tlist.h"
 #include "tbytevector.h"
 #include "taglib_export.h"
+#include "mp4atom.h"
 
 namespace TagLib {
 
@@ -41,15 +42,27 @@ namespace TagLib {
        * This describes the image type.
        */
       enum Format {
-        JPEG = 0x0D,
-        PNG  = 0x0E
+        JPEG    = TypeJPEG,
+        PNG     = TypePNG,
+        BMP     = TypeBMP,
+        GIF     = TypeGIF,
+        Unknown = TypeImplicit,
       };
 
       CoverArt(Format format, const ByteVector &data);
       ~CoverArt();
 
       CoverArt(const CoverArt &item);
+
+      /*!
+       * Copies the contents of \a item into this CoverArt.
+       */
       CoverArt &operator=(const CoverArt &item);
+
+      /*!
+       * Exchanges the content of the CoverArt by the content of \a item.
+       */
+      void swap(CoverArt &item);
 
       //! Format of the image
       Format format() const;

@@ -56,29 +56,24 @@ namespace TagLib {
 
     void set(int index, Tag *tag);
 
+    PropertyMap properties() const;
+    void removeUnsupportedProperties(const StringList &unsupported);
+
     virtual String title() const;
     virtual String artist() const;
     virtual String album() const;
     virtual String comment() const;
     virtual String genre() const;
-    virtual uint year() const;
-    virtual uint track() const;
-    virtual float rgAlbumGain() const;
-    virtual float rgAlbumPeak() const;
-    virtual float rgTrackGain() const;
-    virtual float rgTrackPeak() const;
+    virtual unsigned int year() const;
+    virtual unsigned int track() const;
 
     virtual void setTitle(const String &s);
     virtual void setArtist(const String &s);
     virtual void setAlbum(const String &s);
     virtual void setComment(const String &s);
     virtual void setGenre(const String &s);
-    virtual void setYear(uint i);
-    virtual void setTrack(uint i);
-    virtual void setRGAlbumGain(float f);
-    virtual void setRGAlbumPeak(float f);
-    virtual void setRGTrackGain(float f);
-    virtual void setRGTrackPeak(float f);
+    virtual void setYear(unsigned int i);
+    virtual void setTrack(unsigned int i);
     virtual bool isEmpty() const;
 
     template <class T> T *access(int index, bool create)

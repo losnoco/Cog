@@ -90,18 +90,13 @@ namespace TagLib {
       /*!
        * Returns the year; if there is no year set, this will return 0.
        */
-      virtual uint year() const;
+      virtual unsigned int year() const;
 
       /*!
        * Returns the track number; if there is no track number set, this will
        * return 0.
        */
-      virtual uint track() const;
-
-      virtual float rgAlbumGain() const;
-      virtual float rgAlbumPeak() const;
-      virtual float rgTrackGain() const;
-      virtual float rgTrackPeak() const;
+      virtual unsigned int track() const;
 
       /*!
        * Sets the title to \a s.
@@ -125,34 +120,29 @@ namespace TagLib {
       virtual void setComment(const String &s);
 
       /*!
-       * Sets the rating to \a s. 
+       * Sets the rating to \a s.
        */
       virtual void setRating(const String &s);
 
       /*!
-       * Sets the copyright to \a s. 
+       * Sets the copyright to \a s.
        */
       virtual void setCopyright(const String &s);
 
       /*!
-       * Sets the genre to \a s. 
+       * Sets the genre to \a s.
        */
       virtual void setGenre(const String &s);
 
       /*!
        * Sets the year to \a i.  If \a s is 0 then this value will be cleared.
        */
-      virtual void setYear(uint i);
+      virtual void setYear(unsigned int i);
 
       /*!
        * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
        */
-      virtual void setTrack(uint i);
-
-      virtual void setRGAlbumGain(float f);
-      virtual void setRGAlbumPeak(float f);
-      virtual void setRGTrackGain(float f);
-      virtual void setRGTrackPeak(float f);
+      virtual void setTrack(unsigned int i);
 
       /*!
        * Returns true if the tag does not contain any data.  This should be
@@ -162,17 +152,32 @@ namespace TagLib {
       virtual bool isEmpty() const;
 
       /*!
-       * Returns a reference to the item list map.  This is an AttributeListMap of
-       * all of the items in the tag.
-       *
-       * This is the most powerfull structure for accessing the items of the tag.
+       * \deprecated
        */
       AttributeListMap &attributeListMap();
+
+      /*!
+       * Returns a reference to the item list map.  This is an AttributeListMap of
+       * all of the items in the tag.
+       */
+      // BIC: return by value
+      const AttributeListMap &attributeListMap() const;
+
+      /*!
+       * \return True if a value for \a attribute is currently set.
+       */
+      bool contains(const String &name) const;
 
       /*!
        * Removes the \a key attribute from the tag
        */
       void removeItem(const String &name);
+
+      /*!
+       * \return The list of values for the key \a name, or an empty list if no
+       * values have been set.
+       */
+      AttributeList attribute(const String &name) const;
 
       /*!
        * Sets the \a key attribute to the value of \a attribute. If an attribute
@@ -181,10 +186,19 @@ namespace TagLib {
       void setAttribute(const String &name, const Attribute &attribute);
 
       /*!
+       * Sets multiple \a values to the key \a name.
+       */
+      void setAttribute(const String &name, const AttributeList &values);
+
+      /*!
        * Sets the \a key attribute to the value of \a attribute. If an attribute
        * with the \a key is already present, it will be added to the list.
        */
       void addAttribute(const String &name, const Attribute &attribute);
+
+      PropertyMap properties() const;
+      void removeUnsupportedProperties(const StringList& properties);
+      PropertyMap setProperties(const PropertyMap &properties);
 
     private:
 

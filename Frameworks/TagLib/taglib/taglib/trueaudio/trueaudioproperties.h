@@ -38,7 +38,7 @@ namespace TagLib {
 
     class File;
 
-    static const uint HeaderSize = 18;
+    static const unsigned int HeaderSize = 18;
 
     //! An implementation of audio property reading for TrueAudio
 
@@ -61,17 +61,57 @@ namespace TagLib {
        */
       virtual ~Properties();
 
-      // Reimplementations.
+      /*!
+       * Returns the length of the file in seconds.  The length is rounded down to
+       * the nearest whole second.
+       *
+       * \note This method is just an alias of lengthInSeconds().
+       *
+       * \deprecated
+       */
+      TAGLIB_DEPRECATED virtual int length() const;
 
-      virtual int length() const;
+      /*!
+       * Returns the length of the file in seconds.  The length is rounded down to
+       * the nearest whole second.
+       *
+       * \see lengthInMilliseconds()
+       */
+      // BIC: make virtual
+      int lengthInSeconds() const;
+
+      /*!
+       * Returns the length of the file in milliseconds.
+       *
+       * \see lengthInSeconds()
+       */
+      // BIC: make virtual
+      int lengthInMilliseconds() const;
+
+      /*!
+       * Returns the average bit rate of the file in kb/s.
+       */
       virtual int bitrate() const;
+
+      /*!
+       * Returns the sample rate in Hz.
+       */
       virtual int sampleRate() const;
+
+      /*!
+       * Returns the number of audio channels.
+       */
       virtual int channels() const;
 
       /*!
-       * Returns number of bits per sample.
+       * Returns the number of bits per audio sample.
        */
       int bitsPerSample() const;
+
+      /*!
+       * Returns the total number of sample frames
+       */
+      unsigned int sampleFrames() const;
 
       /*!
        * Returns the major version number.
@@ -82,7 +122,7 @@ namespace TagLib {
       Properties(const Properties &);
       Properties &operator=(const Properties &);
 
-      void read();
+      void read(const ByteVector &data, long streamLength);
 
       class PropertiesPrivate;
       PropertiesPrivate *d;

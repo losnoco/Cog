@@ -41,14 +41,42 @@ namespace TagLib {
    * in TagLib::AudioProperties, TagLib::File and TagLib::FileRef.
    */
 
+  class PropertyMap;
+
   class TAGLIB_EXPORT Tag
   {
   public:
 
     /*!
-     * Detroys this Tag instance.
+     * Destroys this Tag instance.
      */
     virtual ~Tag();
+
+    /*!
+     * Exports the tags of the file as dictionary mapping (human readable) tag
+     * names (Strings) to StringLists of tag values.
+     * The default implementation in this class considers only the usual built-in
+     * tags (artist, album, ...) and only one value per key.
+     */
+    PropertyMap properties() const;
+
+    /*!
+     * Removes unsupported properties, or a subset of them, from the tag.
+     * The parameter \a properties must contain only entries from
+     * properties().unsupportedData().
+     * BIC: Will become virtual in future releases. Currently the non-virtual
+     * standard implementation of TagLib::Tag does nothing, since there are
+     * no unsupported elements.
+     */
+    void removeUnsupportedProperties(const StringList& properties);
+
+    /*!
+     * Sets the tags of this File to those specified in \a properties. This default
+     * implementation sets only the tags for which setter methods exist in this class
+     * (artist, album, ...), and only one value per key; the rest will be contained
+     * in the returned PropertyMap.
+     */
+    PropertyMap setProperties(const PropertyMap &properties);
 
     /*!
      * Returns the track name; if no track name is present in the tag
@@ -83,38 +111,14 @@ namespace TagLib {
     /*!
      * Returns the year; if there is no year set, this will return 0.
      */
-    virtual uint year() const = 0;
+    virtual unsigned int year() const = 0;
 
     /*!
      * Returns the track number; if there is no track number set, this will
      * return 0.
      */
-    virtual uint track() const = 0;
+    virtual unsigned int track() const = 0;
 
-    /*!
-     * Returns the ReplayGain album gain; if there is no gain level set, this
-     * will return 0.
-     */
-    virtual float rgAlbumGain() const = 0;
-      
-    /*!
-     * Returns the ReplayGain album peak; if there is no gain level set, this
-     * will return 0.
-     */
-    virtual float rgAlbumPeak() const = 0;
-      
-    /*!
-     * Returns the ReplayGain track gain; if there is no gain level set, this
-     * will return 0.
-     */
-    virtual float rgTrackGain() const = 0;
-      
-    /*!
-     * Returns the ReplayGain track peak; if there is no gain level set, this
-     * will return 0.
-     */
-    virtual float rgTrackPeak() const = 0;
-      
     /*!
      * Sets the title to \a s.  If \a s is String::null then this value will be
      * cleared.
@@ -151,12 +155,12 @@ namespace TagLib {
     /*!
      * Sets the year to \a i.  If \a s is 0 then this value will be cleared.
      */
-    virtual void setYear(uint i) = 0;
+    virtual void setYear(unsigned int i) = 0;
 
     /*!
      * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
      */
-    virtual void setTrack(uint i) = 0;
+    virtual void setTrack(unsigned int i) = 0;
 
     /*!
      * Returns true if the tag does not contain any data.  This should be
@@ -165,30 +169,6 @@ namespace TagLib {
      */
     virtual bool isEmpty() const;
 
-    /*!
-     * Sets the ReplayGain album gain to \a f. If \a f is 0 then this value will
-     * be cleared.
-     */
-    virtual void setRGAlbumGain(float i) = 0;
-      
-    /*!
-     * Sets the ReplayGain album peak to \a f. If \a f is 0 then this value will
-     * be cleared.
-     */
-    virtual void setRGAlbumPeak(float i) = 0;
-      
-    /*!
-     * Sets the ReplayGain track gain to \a f. If \a f is 0 then this value will
-     * be cleared.
-     */
-    virtual void setRGTrackGain(float i) = 0;
-      
-    /*!
-     * Sets the ReplayGain track peak to \a f. If \a f is 0 then this value will
-     * be cleared.
-     */
-    virtual void setRGTrackPeak(float i) = 0;
-      
     /*!
      * Copies the generic data from one tag to another.
      *

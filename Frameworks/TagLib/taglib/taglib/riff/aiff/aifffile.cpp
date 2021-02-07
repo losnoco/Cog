@@ -26,6 +26,9 @@
 #include <tbytevector.h>
 #include <tdebug.h>
 #include <id3v2tag.h>
+#include <tstringlist.h>
+#include <tpropertymap.h>
+#include <tagutils.h>
 
 #include "aifffile.h"
 
@@ -37,10 +40,7 @@ public:
   FilePrivate() :
     properties(0),
     tag(0),
-    tagChunkID("ID3 ")
-  {
-
-  }
+    hasID3v2(false) {}
 
   ~FilePrivate()
   {
@@ -50,19 +50,40 @@ public:
 
   Properties *properties;
   ID3v2::Tag *tag;
-  ByteVector tagChunkID;
+
+  bool hasID3v2;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// static members
+////////////////////////////////////////////////////////////////////////////////
+
+bool RIFF::AIFF::File::isSupported(IOStream *stream)
+{
+  // An AIFF file has to start with "FORM????AIFF" or "FORM????AIFC".
+
+  const ByteVector id = Utils::readHeader(stream, 12, false);
+  return (id.startsWith("FORM") && (id.containsAt("AIFF", 8) || id.containsAt("AIFC", 8)));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-RIFF::AIFF::File::File(FileName file, bool readProperties,
-                       Properties::ReadStyle propertiesStyle) : RIFF::File(file, BigEndian)
+RIFF::AIFF::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+  RIFF::File(file, BigEndian),
+  d(new FilePrivate())
 {
-  d = new FilePrivate;
   if(isOpen())
-    read(readProperties, propertiesStyle);
+    read(readProperties);
+}
+
+RIFF::AIFF::File::File(IOStream *stream, bool readProperties, Properties::ReadStyle) :
+  RIFF::File(stream, BigEndian),
+  d(new FilePrivate())
+{
+  if(isOpen())
+    read(readProperties);
 }
 
 RIFF::AIFF::File::~File()
@@ -75,6 +96,21 @@ ID3v2::Tag *RIFF::AIFF::File::tag() const
   return d->tag;
 }
 
+PropertyMap RIFF::AIFF::File::properties() const
+{
+  return d->tag->properties();
+}
+
+void RIFF::AIFF::File::removeUnsupportedProperties(const StringList &unsupported)
+{
+  d->tag->removeUnsupportedProperties(unsupported);
+}
+
+PropertyMap RIFF::AIFF::File::setProperties(const PropertyMap &properties)
+{
+  return d->tag->setProperties(properties);
+}
+
 RIFF::AIFF::Properties *RIFF::AIFF::File::audioProperties() const
 {
   return d->properties;
@@ -82,31 +118,62 @@ RIFF::AIFF::Properties *RIFF::AIFF::File::audioProperties() const
 
 bool RIFF::AIFF::File::save()
 {
+    return save(ID3v2::v4);
+}
+
+bool RIFF::AIFF::File::save(ID3v2::Version version)
+{
   if(readOnly()) {
     debug("RIFF::AIFF::File::save() -- File is read only.");
     return false;
   }
 
-  setChunkData(d->tagChunkID, d->tag->render());
+  if(!isValid()) {
+    debug("RIFF::AIFF::File::save() -- Trying to save invalid file.");
+    return false;
+  }
+
+  if(d->hasID3v2) {
+    removeChunk("ID3 ");
+    removeChunk("id3 ");
+    d->hasID3v2 = false;
+  }
+
+  if(tag() && !tag()->isEmpty()) {
+    setChunkData("ID3 ", d->tag->render(version));
+    d->hasID3v2 = true;
+  }
 
   return true;
+}
+
+bool RIFF::AIFF::File::hasID3v2Tag() const
+{
+  return d->hasID3v2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-void RIFF::AIFF::File::read(bool readProperties, Properties::ReadStyle propertiesStyle)
+void RIFF::AIFF::File::read(bool readProperties)
 {
-  for(uint i = 0; i < chunkCount(); i++) {
-    if(chunkName(i) == "ID3 " || chunkName(i) == "id3 ") {
-      d->tagChunkID = chunkName(i);
-      d->tag = new ID3v2::Tag(this, chunkOffset(i));
+  for(unsigned int i = 0; i < chunkCount(); ++i) {
+    const ByteVector name = chunkName(i);
+    if(name == "ID3 " || name == "id3 ") {
+      if(!d->tag) {
+        d->tag = new ID3v2::Tag(this, chunkOffset(i));
+        d->hasID3v2 = true;
+      }
+      else {
+        debug("RIFF::AIFF::File::read() - Duplicate ID3v2 tag found.");
+      }
     }
-    else if(chunkName(i) == "COMM" && readProperties)
-      d->properties = new Properties(chunkData(i), propertiesStyle);
   }
 
   if(!d->tag)
-    d->tag = new ID3v2::Tag;
+    d->tag = new ID3v2::Tag();
+
+  if(readProperties)
+    d->properties = new Properties(this, Properties::Average);
 }

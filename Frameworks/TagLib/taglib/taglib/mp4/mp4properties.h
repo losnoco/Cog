@@ -40,16 +40,75 @@ namespace TagLib {
     class TAGLIB_EXPORT Properties : public AudioProperties
     {
     public:
+      enum Codec {
+        Unknown = 0,
+        AAC,
+        ALAC
+      };
+
       Properties(File *file, Atoms *atoms, ReadStyle style = Average);
       virtual ~Properties();
 
-      virtual int length() const;
+      /*!
+       * Returns the length of the file in seconds.  The length is rounded down to
+       * the nearest whole second.
+       *
+       * \note This method is just an alias of lengthInSeconds().
+       *
+       * \deprecated
+       */
+      TAGLIB_DEPRECATED virtual int length() const;
+
+      /*!
+       * Returns the length of the file in seconds.  The length is rounded down to
+       * the nearest whole second.
+       *
+       * \see lengthInMilliseconds()
+       */
+      // BIC: make virtual
+      int lengthInSeconds() const;
+
+      /*!
+       * Returns the length of the file in milliseconds.
+       *
+       * \see lengthInSeconds()
+       */
+      // BIC: make virtual
+      int lengthInMilliseconds() const;
+
+      /*!
+       * Returns the average bit rate of the file in kb/s.
+       */
       virtual int bitrate() const;
+
+      /*!
+       * Returns the sample rate in Hz.
+       */
       virtual int sampleRate() const;
+
+      /*!
+       * Returns the number of audio channels.
+       */
       virtual int channels() const;
+
+      /*!
+       * Returns the number of bits per audio sample.
+       */
       virtual int bitsPerSample() const;
 
+      /*!
+       * Returns whether or not the file is encrypted.
+       */
+      bool isEncrypted() const;
+
+      /*!
+       * Returns the codec used in the file.
+       */
+      Codec codec() const;
+
     private:
+      void read(File *file, Atoms *atoms);
+
       class PropertiesPrivate;
       PropertiesPrivate *d;
     };

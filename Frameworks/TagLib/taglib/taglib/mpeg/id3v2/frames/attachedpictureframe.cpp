@@ -48,14 +48,16 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-AttachedPictureFrame::AttachedPictureFrame() : Frame("APIC")
+AttachedPictureFrame::AttachedPictureFrame() :
+  Frame("APIC"),
+  d(new AttachedPictureFramePrivate())
 {
-  d = new AttachedPictureFramePrivate;
 }
 
-AttachedPictureFrame::AttachedPictureFrame(const ByteVector &data) : Frame(data)
+AttachedPictureFrame::AttachedPictureFrame(const ByteVector &data) :
+  Frame(data),
+  d(new AttachedPictureFramePrivate())
 {
-  d = new AttachedPictureFramePrivate;
   setData(data);
 }
 
@@ -136,8 +138,8 @@ void AttachedPictureFrame::parseFields(const ByteVector &data)
   int pos = 1;
 
   d->mimeType = readStringField(data, String::Latin1, &pos);
-  /* Now we need at least two more bytes available */	
-  if (uint(pos) + 1 >= data.size()) {
+  /* Now we need at least two more bytes available */
+  if(static_cast<unsigned int>(pos) + 1 >= data.size()) {
     debug("Truncated picture frame.");
     return;
   }
@@ -152,7 +154,7 @@ ByteVector AttachedPictureFrame::renderFields() const
 {
   ByteVector data;
 
-  String::Type encoding = checkEncoding(d->description, d->textEncoding);
+  String::Type encoding = checkTextEncoding(d->description, d->textEncoding);
 
   data.append(char(encoding));
   data.append(d->mimeType.data(String::Latin1));
@@ -169,9 +171,10 @@ ByteVector AttachedPictureFrame::renderFields() const
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-AttachedPictureFrame::AttachedPictureFrame(const ByteVector &data, Header *h) : Frame(h)
+AttachedPictureFrame::AttachedPictureFrame(const ByteVector &data, Header *h) :
+  Frame(h),
+  d(new AttachedPictureFramePrivate())
 {
-  d = new AttachedPictureFramePrivate;
   parseFields(fieldData(data));
 }
 

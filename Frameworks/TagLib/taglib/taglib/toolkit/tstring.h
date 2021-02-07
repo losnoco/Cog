@@ -31,7 +31,7 @@
 #include "tbytevector.h"
 
 #include <string>
-#include <ostream>
+#include <iostream>
 
 /*!
  * \relates TagLib::String
@@ -41,7 +41,12 @@
  * \note consider conversion via usual char-by-char for loop to avoid UTF16->UTF8->UTF16
  * conversion happening in the background
  */
+
+#if defined(QT_VERSION) && (QT_VERSION >= 0x040000)
+#define QStringToTString(s) TagLib::String(s.toUtf8().data(), TagLib::String::UTF8)
+#else
 #define QStringToTString(s) TagLib::String(s.utf8().data(), TagLib::String::UTF8)
+#endif
 
 /*!
  * \relates TagLib::String
@@ -52,18 +57,20 @@
  * conversion happening in the background
  *
  */
+
 #define TStringToQString(s) QString::fromUtf8(s.toCString(true))
 
 namespace TagLib {
-	extern char ascii_encoding[];
+
+  class StringList;
 
   //! A \e wide string class suitable for unicode.
 
   /*!
    * This is an implicitly shared \e wide string.  For storage it uses
    * TagLib::wstring, but as this is an <i>implementation detail</i> this of
-   * course could change.  Strings are stored internally as UTF-16BE.  (Without
-   * the BOM (Byte Order Mark)
+   * course could change.  Strings are stored internally as UTF-16(without BOM/
+   * CPU byte order)
    *
    * The use of implicit sharing means that copying a string is cheap, the only
    * \e cost comes into play when the copy is modified.  Prior to that the string
@@ -79,8 +86,8 @@ namespace TagLib {
   public:
 
 #ifndef DO_NOT_DOCUMENT
-    typedef std::basic_string<wchar>::iterator Iterator;
-    typedef std::basic_string<wchar>::const_iterator ConstIterator;
+    typedef TagLib::wstring::iterator Iterator;
+    typedef TagLib::wstring::const_iterator ConstIterator;
 #endif
 
     /**
@@ -133,11 +140,19 @@ namespace TagLib {
 
     /*!
      * Makes a deep copy of the data in \a s.
+     *
+     * /note If \a t is UTF16LE, the byte order of \a s will be swapped regardless
+     * of the CPU byte order.  If UTF16BE, it will not be swapped.  This behavior
+     * will be changed in TagLib2.0.
      */
     String(const wstring &s, Type t = UTF16BE);
 
     /*!
      * Makes a deep copy of the data in \a s.
+     *
+     * /note If \a t is UTF16LE, the byte order of \a s will be swapped regardless
+     * of the CPU byte order.  If UTF16BE, it will not be swapped.  This behavior
+     * will be changed in TagLib2.0.
      */
     String(const wchar_t *s, Type t = UTF16BE);
 
@@ -154,7 +169,6 @@ namespace TagLib {
      */
     String(wchar_t c, Type t = Latin1);
 
-
     /*!
      * Makes a deep copy of the data in \a s.
      *
@@ -164,10 +178,7 @@ namespace TagLib {
     String(const char *s, Type t = Latin1);
 
     /*!
-     * Makes a deep copy of the data in \a s.
-     *
-     * \note This should only be used with the 8-bit codecs Latin1 and UTF8, when
-     * used with other codecs it will simply print a warning and exit.
+     * Makes a deep copy of the data in \a v.
      */
     String(const ByteVector &v, Type t = Latin1);
 
@@ -177,33 +188,59 @@ namespace TagLib {
     virtual ~String();
 
     /*!
-     * If \a unicode if false (the default) this will return a \e Latin1 encoded
-     * std::string.  If it is true the returned std::wstring will be UTF-8
-     * encoded.
+     * Returns a deep copy of this String as an std::string.  The returned string
+     * is encoded in UTF8 if \a unicode is true, otherwise Latin1.
+     *
+     * \see toCString()
      */
     std::string to8Bit(bool unicode = false) const;
 
     /*!
-     * Returns a wstring version of the TagLib string as a wide string.
+     * Returns a deep copy of this String as a wstring.  The returned string is
+     * encoded in UTF-16 (without BOM/CPU byte order), not UTF-32 even if wchar_t
+     * is 32-bit wide.
+     *
+     * \see toCWString()
      */
     wstring toWString() const;
 
     /*!
-     * Creates and returns a C-String based on the data.  This string is still
-     * owned by the String (class) and as such should not be deleted by the user.
+     * Creates and returns a standard C-style (null-terminated) version of this
+     * String.  The returned string is encoded in UTF8 if \a unicode is true,
+     * otherwise Latin1.
      *
-     * If \a unicode if false (the default) this string will be encoded in
-     * \e Latin1.  If it is true the returned C-String will be UTF-8 encoded.
+     * The returned string is still owned by this String and should not be deleted
+     * by the user.
      *
-     * This string remains valid until the String instance is destroyed or
-     * another export method is called.
+     * The returned pointer remains valid until this String instance is destroyed
+     * or toCString() is called again.
      *
-     * \warning This however has the side effect that this C-String will remain
-     * in memory <b>in addition to</b> other memory that is consumed by the
+     * \warning This however has the side effect that the returned string will remain
+     * in memory <b>in addition to</b> other memory that is consumed by this
      * String instance.  So, this method should not be used on large strings or
-     * where memory is critical.
+     * where memory is critical.  Consider using to8Bit() instead to avoid it.
+     *
+     * \see to8Bit()
      */
     const char *toCString(bool unicode = false) const;
+
+    /*!
+     * Returns a standard C-style (null-terminated) wide character version of
+     * this String.  The returned string is encoded in UTF-16 (without BOM/CPU byte
+     * order), not UTF-32 even if wchar_t is 32-bit wide.
+     *
+     * The returned string is still owned by this String and should not be deleted
+     * by the user.
+     *
+     * The returned pointer remains valid until this String instance is destroyed
+     * or any other method of this String is called.
+     *
+     * \note This returns a pointer to the String's internal data without any
+     * conversions.
+     *
+     * \see toWString()
+     */
+    const wchar_t *toCWString() const;
 
     /*!
      * Returns an iterator pointing to the beginning of the string.
@@ -241,6 +278,11 @@ namespace TagLib {
     int rfind(const String &s, int offset = -1) const;
 
     /*!
+     * Splits the string on each occurrence of \a separator.
+     */
+    StringList split(const String &separator = " ") const;
+
+    /*!
      * Returns true if the strings starts with the substring \a s.
      */
     bool startsWith(const String &s) const;
@@ -249,13 +291,18 @@ namespace TagLib {
      * Extract a substring from this string starting at \a position and
      * continuing for \a n characters.
      */
-    String substr(uint position, uint n = 0xffffffff) const;
+    String substr(unsigned int position, unsigned int n = 0xffffffff) const;
 
     /*!
      * Append \a s to the current string and return a reference to the current
      * string.
      */
     String &append(const String &s);
+
+    /*!
+     * Clears the string.
+     */
+    String &clear();
 
     /*!
      * Returns an upper case version of the string.
@@ -267,12 +314,12 @@ namespace TagLib {
     /*!
      * Returns the size of the string.
      */
-    uint size() const;
+    unsigned int size() const;
 
     /*!
      * Returns the length of the string.  Equivalent to size().
      */
-    uint length() const;
+    unsigned int length() const;
 
     /*!
      * Returns true if the string is empty.
@@ -285,22 +332,32 @@ namespace TagLib {
      * Returns true if this string is null -- i.e. it is a copy of the
      * String::null string.
      *
-     * \note A string can be empty and not null.
+     * \note A string can be empty and not null.  So do not use this method to
+     * check if the string is empty.
+     *
      * \see isEmpty()
+     *
+     * \deprecated
      */
-    bool isNull() const;
+     // BIC: remove
+    TAGLIB_DEPRECATED bool isNull() const;
 
     /*!
      * Returns a ByteVector containing the string's data.  If \a t is Latin1 or
      * UTF8, this will return a vector of 8 bit characters, otherwise it will use
      * 16 bit characters.
+     *
+     * \note If \a t is UTF16, the returned data is encoded in little-endian
+     * format and has a BOM.
+     *
+     * \note The returned data is not null terminated.
      */
     ByteVector data(Type t) const;
 
     /*!
      * Convert the string to an integer.
      *
-     * Returns the integer if the conversion was successfull or 0 if the
+     * Returns the integer if the conversion was successful or 0 if the
      * string does not represent a number.
      */
     // BIC: merge with the method below
@@ -309,30 +366,12 @@ namespace TagLib {
     /*!
      * Convert the string to an integer.
      *
-     * If the conversion was successfull, it sets the value of \a *ok to
+     * If the conversion was successful, it sets the value of \a *ok to
      * true and returns the integer. Otherwise it sets \a *ok to false
      * and the result is undefined.
      */
     int toInt(bool *ok) const;
 
-    /*!
-     * Convert the string to a float.
-     *
-     * Returns the float if the conversion was successfull or 0 if the
-     * string does not represent a number.
-     */
-    // BIC: merge with the method below
-    float toFloat() const;
-      
-    /*!
-     * Convert the string to a float.
-     *
-     * If the conversion was successfull, it sets the value of \a *ok to
-     * true and returns the float. Otherwise it sets \a *ok to false
-     * and the result is undefined.
-     */
-    float toFloat(bool *ok) const;
-      
     /*!
      * Returns a string with the leading and trailing whitespace stripped.
      */
@@ -349,35 +388,55 @@ namespace TagLib {
     bool isAscii() const;
 
     /*!
-     * Converts the base-10 unsigned integer \a n to a string.
-     */
-    static String number(uint n);
-      
-    /*!
      * Converts the base-10 integer \a n to a string.
      */
     static String number(int n);
 
     /*!
-     * Converts the base-10 float \a n to a string.
-     */
-    static String number(float n);
-      
-    /*!
      * Returns a reference to the character at position \a i.
      */
-    wchar &operator[](int i);
+    wchar_t &operator[](int i);
 
     /*!
      * Returns a const reference to the character at position \a i.
      */
-    const wchar &operator[](int i) const;
+    const wchar_t &operator[](int i) const;
 
     /*!
      * Compares each character of the String with each character of \a s and
      * returns true if the strings match.
      */
     bool operator==(const String &s) const;
+
+    /*!
+     * Compares each character of the String with each character of \a s and
+     * returns false if the strings match.
+     */
+    bool operator!=(const String &s) const;
+
+    /*!
+     * Compares each character of the String with each character of \a s and
+     * returns true if the strings match.
+     */
+    bool operator==(const char *s) const;
+
+    /*!
+     * Compares each character of the String with each character of \a s and
+     * returns false if the strings match.
+     */
+    bool operator!=(const char *s) const;
+
+    /*!
+     * Compares each character of the String with each character of \a s and
+     * returns true if the strings match.
+     */
+    bool operator==(const wchar_t *s) const;
+
+    /*!
+     * Compares each character of the String with each character of \a s and
+     * returns false if the strings match.
+     */
+    bool operator!=(const wchar_t *s) const;
 
     /*!
      * Appends \a s to the end of the String.
@@ -446,16 +505,27 @@ namespace TagLib {
     String &operator=(const ByteVector &v);
 
     /*!
+     * Exchanges the content of the String by the content of \a s.
+     */
+    void swap(String &s);
+
+    /*!
      * To be able to use this class in a Map, this operator needed to be
-     * implemented.  Returns true if \a s is less than this string in a bytewise
+     * implemented.  Returns true if \a s is less than this string in a byte-wise
      * comparison.
      */
     bool operator<(const String &s) const;
 
     /*!
      * A null string provided for convenience.
+     *
+     * \warning Do not modify this variable.  It will mess up the internal state
+     * of TagLib.
+     *
+     * \deprecated
      */
-    static String null;
+     // BIC: remove
+    TAGLIB_DEPRECATED static String null;
 
   protected:
     /*!
@@ -467,17 +537,15 @@ namespace TagLib {
 
   private:
     /*!
-     * This checks to see if the string is in \e UTF-16 (with BOM) or \e UTF-8
-     * format and if so converts it to \e UTF-16BE for internal use.  \e Latin1
-     * does not require conversion since it is a subset of \e UTF-16BE and
-     * \e UTF16-BE requires no conversion since it is used internally.
+     * \deprecated This variable is no longer used, but NEVER remove this. It
+     * may lead to a linkage error.
      */
-    void prepare(Type t);
+     // BIC: remove
+    TAGLIB_DEPRECATED static const Type WCharByteOrder;
 
     class StringPrivate;
     StringPrivate *d;
   };
-
 }
 
 /*!

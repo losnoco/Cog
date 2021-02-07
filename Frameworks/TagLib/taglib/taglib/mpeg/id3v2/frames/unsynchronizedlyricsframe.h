@@ -104,7 +104,7 @@ namespace TagLib {
       /*!
        * Sets the description of the unsynchronized lyrics frame to \a s.
        *
-       * \see decription()
+       * \see description()
        */
       void setDescription(const String &s);
 
@@ -133,6 +133,28 @@ namespace TagLib {
        * \see render()
        */
       void setTextEncoding(String::Type encoding);
+
+
+      /*! Parses this frame as PropertyMap with a single key.
+       * - if description() is empty or "LYRICS", the key will be "LYRICS"
+       * - if description() is not a valid PropertyMap key, the frame will be
+       *   marked unsupported by an entry "USLT/<description>" in the unsupportedData()
+       *   attribute of the returned map.
+       * - otherwise, the key will be "LYRICS:<description>"
+       * - The single value will be the frame's text().
+       * Note that currently the language() field is not supported by the PropertyMap
+       * interface.
+       */
+      PropertyMap asProperties() const;
+
+      /*!
+       * LyricsFrames each have a unique description.  This searches for a lyrics
+       * frame with the description \a d and returns a pointer to it.  If no
+       * frame is found that matches the given description null is returned.
+       *
+       * \see description()
+       */
+      static UnsynchronizedLyricsFrame *findByDescription(const Tag *tag, const String &d);
 
     protected:
       // Reimplementations.
