@@ -352,9 +352,18 @@
 {
     NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 
-    NSString *url = @"https://kode54.net/contact";
-    
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", url, version]]];
+    NSArray<NSURLQueryItem *> *query = @[
+        [NSURLQueryItem queryItemWithName:@"labels" value:@"bug"],
+        [NSURLQueryItem queryItemWithName:@"template" value:@"bug_report.md"],
+        [NSURLQueryItem queryItemWithName:@"title"
+                                    value:[NSString stringWithFormat:@"[Cog %@] ", version]]
+    ];
+    NSURLComponents *components =
+        [NSURLComponents componentsWithString:@"https://github.com/losnoco/Cog/issues/new"];
+
+    components.queryItems = query;
+
+    [[NSWorkspace sharedWorkspace] openURL:components.URL];
 }
 
 - (void)initDefaults
