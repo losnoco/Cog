@@ -620,7 +620,7 @@
                         <slider key="view" verticalHuggingPriority="750" id="2293" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="20"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" maxValue="10000" tickMarkPosition="above" sliderType="linear" id="2294" customClass="TrackingCell">
+                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="2294" customClass="TrackingCell">
                                 <font key="font" metaFont="message" size="11"/>
                             </sliderCell>
                             <connections>
