@@ -286,6 +286,8 @@
     DLog(@"Saving expanded nodes: %@", [expandedNodes description]);
 
     [[NSUserDefaults standardUserDefaults] setValue:[expandedNodes allObjects] forKey:@"fileTreeViewExpandedNodes"];
+    // Workaround window not restoring it's size and position.
+    [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 1)];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
