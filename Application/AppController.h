@@ -23,7 +23,6 @@
     IBOutlet NSSplitView *mainView;
 	
 	IBOutlet NSSegmentedControl *playbackButtons;
-	IBOutlet NSButton *infoButton;
 	IBOutlet NSButton *fileButton;
 	IBOutlet NSButton *shuffleButton;
 	IBOutlet NSButton *repeatButton;
@@ -56,8 +55,8 @@
     BOOL miniMode;
 }
 
-@property (strong) IBOutlet NSButton *nowPlayingBar;
-@property (nonatomic) BOOL isNowPlayingHidden;
+@property (strong) IBOutlet NSButton *infoButton;
+@property (strong) IBOutlet NSButton *infoButtonMini;
 
 - (IBAction)openURL:(id)sender;
 

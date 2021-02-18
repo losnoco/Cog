@@ -158,7 +158,6 @@
 		83849172180843B200E7332D /* pauseDockBadgeColorful.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384916F180843B200E7332D /* pauseDockBadgeColorful.png */; };
 		83849173180843B200E7332D /* playDockBadgeColorful.png in Resources */ = {isa = PBXBuildFile; fileRef = 83849170180843B200E7332D /* playDockBadgeColorful.png */; };
 		83849174180843B200E7332D /* stopDockBadgeColorful.png in Resources */ = {isa = PBXBuildFile; fileRef = 83849171180843B200E7332D /* stopDockBadgeColorful.png */; };
-		838F850125687C5C00C3E614 /* PlaybackStatusToHiddenTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838F850025687C5C00C3E614 /* PlaybackStatusToHiddenTransformer.swift */; };
 		838F851C256B4AC400C3E614 /* icon_blank.icns in Resources */ = {isa = PBXBuildFile; fileRef = 838F851B256B4AC400C3E614 /* icon_blank.icns */; };
 		838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; };
 		838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -913,7 +912,6 @@
 		83849171180843B200E7332D /* stopDockBadgeColorful.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopDockBadgeColorful.png; path = Images/stopDockBadgeColorful.png; sourceTree = "<group>"; };
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
-		838F850025687C5C00C3E614 /* PlaybackStatusToHiddenTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaybackStatusToHiddenTransformer.swift; path = Transformers/PlaybackStatusToHiddenTransformer.swift; sourceTree = "<group>"; };
 		838F851B256B4AC400C3E614 /* icon_blank.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon_blank.icns; sourceTree = "<group>"; };
 		838F851D256B4E5E00C3E614 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
@@ -1352,7 +1350,6 @@
 				17E0D6130F520F87005B6FED /* FontSizetoLineHeightTransformer.m */,
 				17E0D6140F520F87005B6FED /* StringToURLTransformer.h */,
 				17E0D6150F520F87005B6FED /* StringToURLTransformer.m */,
-				838F850025687C5C00C3E614 /* PlaybackStatusToHiddenTransformer.swift */,
 				838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */,
 			);
 			name = Transformers;
@@ -2307,7 +2304,6 @@
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
 				56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */,
-				838F850125687C5C00C3E614 /* PlaybackStatusToHiddenTransformer.swift in Sources */,
 				56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
