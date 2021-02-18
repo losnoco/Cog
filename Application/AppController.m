@@ -22,6 +22,16 @@
 #import <MASShortcut/Shortcut.h>
 #import "Shortcuts.h"
 
+void* kAppControllerContext = &kAppControllerContext;
+
+
+@interface AppController ()
+
+@property (nonatomic) BOOL isNowPlayingForceShown;
+
+@end
+
+
 @implementation AppController {
     BOOL _isFullToolbarStyle;
 }
@@ -222,6 +232,23 @@
         {
             [outlineView expandItem:pn];
         }
+    }
+
+    [self addObserver:self
+           forKeyPath:@"playbackController.playbackStatus"
+              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+              context:kAppControllerContext];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                       context:(void *)context {
+    if ([keyPath isEqualToString:@"playbackController.playbackStatus"]) {
+        NSValueTransformer *transformer =
+            [NSValueTransformer valueTransformerForName:@"PlaybackStatusToHiddenTransformer"];
+        NSNumber *value = [transformer transformedValue:@(playbackController.playbackStatus)];
+        self.isNowPlayingHidden = value.boolValue;
     }
 }
 
@@ -437,56 +464,13 @@
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
     DLog(@"Entering fullscreen");
-    if (nil == nowPlaying)
-    {
-        nowPlaying = [[NowPlayingBarController alloc] init];
-        
-        NSView *contentView = [mainWindow contentView];
-        NSRect contentRect = [contentView frame];
-        const NSSize windowSize = [contentView convertSize:[mainWindow frame].size fromView: nil];
-        
-        [contentView addSubview: [nowPlaying view]];
-        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
-            [context setDuration:0.25];
-            NSRect nowPlayingFrame = [[self->nowPlaying view] frame];
-            nowPlayingFrame.size.width = windowSize.width;
-            [[self->nowPlaying view] setFrame: nowPlayingFrame];
-            [[self->nowPlaying view] setFrameOrigin: NSMakePoint(0.0, NSMaxY(contentRect) - nowPlayingFrame.size.height)];
-            
-            NSRect mainViewFrame = [self->mainView frame];
-            mainViewFrame.size.height -= nowPlayingFrame.size.height;
-            [[self->mainView animator] setFrame:mainViewFrame];
-            
-        } completionHandler:^{
-            
-        }];
-        
-        
-        
-        [[nowPlaying text] bind:@"value" toObject:currentEntryController withKeyPath:@"content.display" options:nil];
-    }
+    self.isNowPlayingForceShown = YES;
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     DLog(@"Exiting fullscreen");
-    if (nowPlaying)
-    {
-        NSRect nowPlayingFrame = [[nowPlaying view] frame];
-        NSRect mainViewFrame = [mainView frame];
-        mainViewFrame.size.height += nowPlayingFrame.size.height;
-        //[mainView setFrame:mainViewFrame];
-        //        [mainView setFrameOrigin:NSMakePoint(0.0, 0.0)];
-        
-        [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
-            [context setDuration:0.25];
-            [[self->mainView animator] setFrame:mainViewFrame];
-            
-        } completionHandler:^{
-            [[self->nowPlaying view] removeFromSuperview];
-            self->nowPlaying = nil;
-        }];
-    }
+    self.isNowPlayingForceShown = NO;
 }
 
 - (void)clickPlay
@@ -580,12 +564,27 @@
         miniWindow.toolbarStyle = style;
     }
 
+    [self.nowPlayingBar setHidden:full];
+
     NSWindowTitleVisibility visibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
     mainWindow.titleVisibility = visibility;
     miniWindow.titleVisibility = visibility;
 
     // Fix empty area after changing toolbar style in mini window as it has no content view
     [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 0)];
+}
+
+- (BOOL)isNowPlayingHidden {
+    if (_isNowPlayingForceShown) {
+        return NO;
+    }
+    return _isNowPlayingHidden;
+}
+
+- (void)setIsNowPlayingForceShown:(BOOL)isNowPlayingForceShown {
+    [self willChangeValueForKey:@"isNowPlayingHidden"];
+    _isNowPlayingForceShown = isNowPlayingForceShown;
+    [self didChangeValueForKey:@"isNowPlayingHidden"];
 }
 
 @end

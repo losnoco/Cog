@@ -131,9 +131,6 @@
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
 		836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8314D6411A354DFF00EEE8E6 /* sidplay.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		838491211807F38A00E7332D /* NowPlayingBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911D1807F38A00E7332D /* NowPlayingBarView.m */; };
-		838491221807F38A00E7332D /* NowPlayingBarController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8384911E1807F38A00E7332D /* NowPlayingBarController.xib */; };
-		838491231807F38A00E7332D /* NowPlayingBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8384911F1807F38A00E7332D /* NowPlayingBarController.m */; };
 		8384913C1808217300E7332D /* randomize.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384913B1808217300E7332D /* randomize.png */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
 		8384915918083EAB00E7332D /* infoTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384914318083EAB00E7332D /* infoTemplate.pdf */; };
@@ -886,11 +883,6 @@
 		836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vgmstream.xcodeproj; path = Plugins/vgmstream/vgmstream.xcodeproj; sourceTree = "<group>"; };
 		836FB5421820538700B3AD2D /* Hively.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Hively.xcodeproj; path = Plugins/Hively/Hively.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpusPlugin.xcodeproj; path = Plugins/Opus/OpusPlugin.xcodeproj; sourceTree = "<group>"; };
-		8384911D1807F38A00E7332D /* NowPlayingBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NowPlayingBarView.m; path = Window/NowPlayingBarView.m; sourceTree = "<group>"; };
-		8384911E1807F38A00E7332D /* NowPlayingBarController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = NowPlayingBarController.xib; path = Window/NowPlayingBarController.xib; sourceTree = "<group>"; };
-		8384911F1807F38A00E7332D /* NowPlayingBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NowPlayingBarController.m; path = Window/NowPlayingBarController.m; sourceTree = "<group>"; };
-		838491201807F38A00E7332D /* NowPlayingBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NowPlayingBarController.h; path = Window/NowPlayingBarController.h; sourceTree = "<group>"; };
-		838491241807F75D00E7332D /* NowPlayingBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NowPlayingBarView.h; path = Window/NowPlayingBarView.h; sourceTree = "<group>"; };
 		8384912518080F2D00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		8384913B1808217300E7332D /* randomize.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = randomize.png; path = Images/randomize.png; sourceTree = "<group>"; };
 		8384913D18083E4E00E7332D /* filetype.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = filetype.icns; sourceTree = "<group>"; };
@@ -1334,10 +1326,6 @@
 				836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */,
 				17E0D5E30F520F02005B6FED /* MiniWindow.h */,
 				17E0D5E40F520F02005B6FED /* MiniWindow.m */,
-				838491201807F38A00E7332D /* NowPlayingBarController.h */,
-				8384911F1807F38A00E7332D /* NowPlayingBarController.m */,
-				838491241807F75D00E7332D /* NowPlayingBarView.h */,
-				8384911D1807F38A00E7332D /* NowPlayingBarView.m */,
 				1752C36A0F59E00100F85F28 /* PlaybackButtons.h */,
 				1752C36B0F59E00100F85F28 /* PlaybackButtons.m */,
 				17E0D5E50F520F02005B6FED /* PositionSlider.h */,
@@ -1447,7 +1435,6 @@
 				178456C00F6320B5007E8021 /* SpotlightPanel.xib */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 				17D1B1DA0F6330D400694C57 /* Feedback.xib */,
-				8384911E1807F38A00E7332D /* NowPlayingBarController.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2185,7 +2172,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				838491221807F38A00E7332D /* NowPlayingBarController.xib in Resources */,
 				83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */,
 				83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */,
 				83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */,
@@ -2314,7 +2300,6 @@
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
 				EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
-				838491211807F38A00E7332D /* NowPlayingBarView.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 				56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */,
@@ -2338,7 +2323,6 @@
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
 				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
-				838491231807F38A00E7332D /* NowPlayingBarController.m in Sources */,
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
 				836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */,
 				17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */,

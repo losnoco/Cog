@@ -2,8 +2,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "NowPlayingBarController.h"
-
 @class FileTreeViewController;
 @class PlaybackController;
 @class PlaylistController;
@@ -47,8 +45,6 @@
     IBOutlet NSWindowController *spotlightWindowController;
     
     IBOutlet FileTreeViewController *fileTreeViewController;
-    
-    NowPlayingBarController *nowPlaying;
 	
 	AppleRemote *remote;
 	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
@@ -59,6 +55,9 @@
     
     BOOL miniMode;
 }
+
+@property (strong) IBOutlet NSButton *nowPlayingBar;
+@property (nonatomic) BOOL isNowPlayingHidden;
 
 - (IBAction)openURL:(id)sender;
 
@@ -97,9 +96,6 @@
 
 - (void)nodeExpanded:(NSNotification*)notification;
 - (void)nodeCollapsed:(NSNotification*)notification;
-
-- (void)windowDidEnterFullScreen:(NSNotification *)notification;
-- (void)windowDidExitFullScreen:(NSNotification *)notification;
 
 - (IBAction)toggleMiniMode:(id)sender;
 - (IBAction)toggleToolbarStyle:(id)sender;

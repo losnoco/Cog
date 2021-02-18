@@ -9,27 +9,32 @@ import Foundation
 
 class PlaybackStatusToHiddenTransformer : ValueTransformer {
     override class func transformedValueClass() -> AnyClass {
-        return NSObject.self
+        return NSNumber.self
     }
-    
+
     override class func allowsReverseTransformation() -> Bool {
         return false
     }
-    
+
     override func transformedValue(_ value: Any?) -> Any? {
+        let titleShown = UserDefaults.standard.bool(forKey: "toolbarStyleFull");
+        if titleShown {
+            return NSNumber(booleanLiteral: true)
+        }
+
         guard let intValue = value as? Int,
               let status = CogStatus(rawValue: intValue) else {
-            return true;
+            return NSNumber(booleanLiteral: true)
         }
         switch status {
         case .stopped:
-            return true
+            return NSNumber(booleanLiteral: true)
         case .paused,
              .playing,
              .stopping:
-            return false
+            return NSNumber(booleanLiteral: false)
         @unknown default:
-            return false;
+            return NSNumber(booleanLiteral: false)
         }
     }
 }

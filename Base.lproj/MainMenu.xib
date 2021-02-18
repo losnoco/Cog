@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18121" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18121"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,7 +19,7 @@
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" topStrut="YES"/>
             <rect key="contentRect" x="331" y="367" width="847" height="400"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="400" height="200"/>
             <stackView key="contentView" orientation="vertical" alignment="centerX" spacing="4" hasEqualSpacing="YES" detachesHiddenViews="YES" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="847" height="400"/>
@@ -35,11 +35,7 @@
                         <connections>
                             <action selector="scrollToCurrentEntry:" target="207" id="e2T-5R-8Eo"/>
                             <binding destination="1897" name="title" keyPath="content.display" id="fno-Aq-DvV"/>
-                            <binding destination="705" name="hidden" keyPath="playbackStatus" id="Kl1-lE-Z5C">
-                                <dictionary key="options">
-                                    <string key="NSValueTransformerName">PlaybackStatusToHiddenTransformer</string>
-                                </dictionary>
-                            </binding>
+                            <binding destination="226" name="hidden" keyPath="isNowPlayingHidden" id="nmX-cN-bua"/>
                         </connections>
                     </button>
                     <splitView fixedFrame="YES" dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
@@ -585,7 +581,7 @@
         <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" titlebarAppearsTransparent="YES" toolbarStyle="expanded" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="192" y="547" width="480" height="0.0"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1792" height="1095"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="0.0"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1454,6 +1450,7 @@ Gw
                 <string>status</string>
                 <mutableString>queued</mutableString>
             </declaredKeys>
+            <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
                 <outlet property="playbackController" destination="705" id="2121"/>
                 <outlet property="playlistLoader" destination="1319" id="1321"/>
@@ -1482,6 +1479,7 @@ Gw
                 <outlet property="mainView" destination="2123" id="2458"/>
                 <outlet property="mainWindow" destination="21" id="359"/>
                 <outlet property="miniWindow" destination="2234" id="2517"/>
+                <outlet property="nowPlayingBar" destination="gev-jg-41I" id="Fqh-sm-eiO"/>
                 <outlet property="playbackController" destination="705" id="1300"/>
                 <outlet property="playlistController" destination="218" id="236"/>
                 <outlet property="playlistLoader" destination="1319" id="1322"/>
@@ -1772,6 +1770,7 @@ Gw
                 <mutableString>title</mutableString>
                 <mutableString>artist</mutableString>
             </declaredKeys>
+            <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
                 <binding destination="218" name="contentObject" keyPath="currentEntry" id="1902"/>
             </connections>
@@ -1783,6 +1782,7 @@ Gw
                 <string>artist</string>
                 <string>album</string>
             </declaredKeys>
+            <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
                 <binding destination="218" name="contentArray" keyPath="arrangedObjects" id="2039"/>
                 <binding destination="218" name="selectionIndexes" keyPath="selectionIndexes" id="2041"/>
@@ -1963,7 +1963,7 @@ oCGoIashsCG4AAAAAAAAAgEAAAAAAAAAQwAAAAAAAAAAAAAAAAAAIbs
         <image name="nextTemplate" width="20" height="19"/>
         <image name="playTemplate" width="16" height="16"/>
         <image name="previousTemplate" width="20" height="19"/>
-        <image name="randomizeTemplate" width="17" height="16"/>
+        <image name="randomizeTemplate" width="16" height="17"/>
         <image name="repeatModeOffTemplate" width="20" height="19"/>
         <image name="shuffleOffTemplate" width="20" height="19"/>
         <image name="stopTemplate" width="16" height="16"/>
