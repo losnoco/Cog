@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		170744AD0BFF3938002475C9 /* AppcastArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 170744AC0BFF3938002475C9 /* AppcastArrayController.m */; };
-		172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */ = {isa = PBXBuildFile; fileRef = 172D72AC0B8926CA00D095BB /* apple_remote.png */; };
 		1766C7A80B912A71004A7AE4 /* lastfm.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C7A70B912A71004A7AE4 /* lastfm.png */; };
 		178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 178E386D0C3DA64500EE6711 /* InfoPlist.strings */; };
 		17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C643360B8A77CC00C53518 /* OutputsArrayController.m */; };
@@ -96,7 +95,6 @@
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170744AB0BFF3938002475C9 /* AppcastArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppcastArrayController.h; sourceTree = "<group>"; };
 		170744AC0BFF3938002475C9 /* AppcastArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppcastArrayController.m; sourceTree = "<group>"; };
-		172D72AC0B8926CA00D095BB /* apple_remote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = apple_remote.png; path = Icons/apple_remote.png; sourceTree = "<group>"; };
 		1766C7A70B912A71004A7AE4 /* lastfm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lastfm.png; path = Icons/lastfm.png; sourceTree = "<group>"; };
 		17C643360B8A77CC00C53518 /* OutputsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputsArrayController.m; sourceTree = "<group>"; };
 		17C643370B8A77CC00C53518 /* OutputsArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputsArrayController.h; sourceTree = "<group>"; };
@@ -331,7 +329,6 @@
 				1766C7A70B912A71004A7AE4 /* lastfm.png */,
 				17C643680B8A788000C53518 /* output.png */,
 				8E15A86B0B894768006DC802 /* updates.png */,
-				172D72AC0B8926CA00D095BB /* apple_remote.png */,
 				8E07ABDB0AAC95BC00A4B32F /* hot_keys.png */,
 			);
 			name = Icons;
@@ -379,7 +376,7 @@
 				LastUpgradeCheck = 1230;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = RXH4D9SUXM;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -448,7 +445,6 @@
 				83F27E6D1810DD3A00CEF538 /* lastfm@2x.png in Resources */,
 				178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */,
 				8E07ABDD0AAC95BC00A4B32F /* hot_keys.png in Resources */,
-				172D72AD0B8926CA00D095BB /* apple_remote.png in Resources */,
 				8384917818084D9F00E7332D /* growl.png in Resources */,
 				8E15A86C0B894768006DC802 /* updates.png in Resources */,
 				8384917718084D9F00E7332D /* appearance.png in Resources */,

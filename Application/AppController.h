@@ -6,7 +6,6 @@
 @class PlaybackController;
 @class PlaylistController;
 @class PlaylistView;
-@class AppleRemote;
 @class PlaylistLoader;
 
 @interface AppController : NSObject
@@ -44,10 +43,7 @@
     IBOutlet NSWindowController *spotlightWindowController;
     
     IBOutlet FileTreeViewController *fileTreeViewController;
-	
-	AppleRemote *remote;
-	BOOL remoteButtonHeld; /* true as long as the user holds the left,right,plus or minus on the remote control */
-	
+
     NSOperationQueue *queue; // Since we are the app delegate, we take care of the op queue
     
     NSMutableSet* expandedNodes;
