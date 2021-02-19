@@ -8,6 +8,8 @@
 
 #import "PlaylistView.h"
 
+#import <Carbon/Carbon.h>
+
 #import "BlankZeroFormatter.h"
 #import "IndexFormatter.h"
 #import "PlaylistEntry.h"
@@ -154,37 +156,44 @@
     return tableViewMenu;
 }
 
-- (void)keyDown:(NSEvent *)e {
-    unsigned int modifiers =
-            [e modifierFlags] & (NSEventModifierFlagCommand | NSEventModifierFlagShift |
-                    NSEventModifierFlagControl | NSEventModifierFlagOption);
-    NSString *characters = [e characters];
-    unichar c;
-
-    if ([characters length] != 1) {
-        [super keyDown:e];
-
+- (void)keyDown:(NSEvent *)event {
+    BOOL modifiersUsed =([event modifierFlags] & (NSEventModifierFlagShift |
+                                                  NSEventModifierFlagControl |
+                                                  NSEventModifierFlagOption |
+                                                  NSEventModifierFlagCommand)) ? YES : NO;
+    if (modifiersUsed) {
+        [super keyDown:event];
         return;
     }
 
-    c = [characters characterAtIndex:0];
-    if (modifiers == 0 &&
-            (c == NSDeleteCharacter || c == NSBackspaceCharacter || c == NSDeleteFunctionKey)) {
-        [playlistController remove:self];
-    } else if (modifiers == 0 && c == ' ') {
-        [playbackController playPauseResume:self];
-    } else if (modifiers == 0 && (c == NSEnterCharacter || c == NSCarriageReturnCharacter)) {
-        [playbackController play:self];
-    } else if (modifiers == 0 && c == NSLeftArrowFunctionKey) {
-        [playbackController eventSeekBackward:self];
-    } else if (modifiers == 0 && c == NSRightArrowFunctionKey) {
-        [playbackController eventSeekForward:self];
-    }
-        // Escape
-    else if (modifiers == 0 && c == 0x1b) {
-        [playlistController clearFilterPredicate:self];
-    } else {
-        [super keyDown:e];
+    switch ([event keyCode]) {
+        case kVK_Space:
+            [playbackController playPauseResume:self];
+            break;
+        case kVK_Escape:
+            [playlistController clearFilterPredicate:self];
+            break;
+
+        case kVK_Delete:
+        case kVK_ForwardDelete:
+            [playlistController remove:self];
+            break;
+
+        case kVK_LeftArrow:
+            [playbackController eventSeekBackward:self];
+            break;
+
+        case kVK_RightArrow:
+            [playbackController eventSeekForward:self];
+            break;
+
+        case kVK_Return:
+            [playbackController play:self];
+            break;
+
+        default:
+            [super keyDown:event];
+            break;
     }
 }
 

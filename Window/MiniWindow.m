@@ -8,6 +8,8 @@
 
 #import "MiniWindow.h"
 
+#import <Carbon/Carbon.h>
+
 @implementation MiniWindow
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation
@@ -32,50 +34,43 @@
     // Do nothing!
 }
 
-- (void)keyDown:(NSEvent *)e {
-    BOOL modifiersUsed =
-        ([e modifierFlags] & (NSEventModifierFlagShift |
-                              NSEventModifierFlagControl |
-                              NSEventModifierFlagOption |
-                              NSEventModifierFlagCommand)) ? YES : NO;
-    NSString *characters = [e charactersIgnoringModifiers];
-    
-    if (modifiersUsed || [characters length] != 1)
-    {
-        [super keyDown:e];
-
+- (void)keyDown:(NSEvent *)event {
+    BOOL modifiersUsed =([event modifierFlags] & (NSEventModifierFlagShift |
+                                                  NSEventModifierFlagControl |
+                                                  NSEventModifierFlagOption |
+                                                  NSEventModifierFlagCommand)) ? YES : NO;
+    if (modifiersUsed) {
+        [super keyDown:event];
         return;
     }
 
-    unichar c = [characters characterAtIndex:0];
-    switch (c) {
-        case 0x20: // Spacebar
+    switch ([event keyCode]) {
+        case kVK_Space:
             [playbackController playPauseResume:self];
             break;
 
-        case NSEnterCharacter:
-        case NSCarriageReturnCharacter:
+        case kVK_Return:
             [playbackController play:self];
             break;
 
-        case NSLeftArrowFunctionKey:
+        case kVK_LeftArrow:
             [playbackController eventSeekBackward:self];
             break;
 
-        case NSRightArrowFunctionKey:
+        case kVK_RightArrow:
             [playbackController eventSeekForward:self];
             break;
 
-        case NSUpArrowFunctionKey:
+        case kVK_UpArrow:
             [playbackController volumeUp:self];
             break;
 
-        case NSDownArrowFunctionKey:
+        case kVK_DownArrow:
             [playbackController volumeDown:self];
             break;
 
         default:
-            [super keyDown:e];
+            [super keyDown:event];
             break;
     }
 }
