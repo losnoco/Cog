@@ -19,7 +19,7 @@
         [self setExcludedFromWindowsMenu:YES];
         [[self standardWindowButton:NSWindowZoomButton] setEnabled:NO];
         // Disallow height resize.
-        [self setContentMinSize:NSMakeSize(280, 0)];
+        [self setContentMinSize:NSMakeSize(675, 0)];
         [self setContentMaxSize:NSMakeSize(CGFLOAT_MAX, 0)];
         [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
     }

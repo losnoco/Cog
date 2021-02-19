@@ -25,13 +25,6 @@
 void* kAppControllerContext = &kAppControllerContext;
 
 
-@interface AppController ()
-
-@property (nonatomic) BOOL isNowPlayingForceShown;
-
-@end
-
-
 @implementation AppController {
     BOOL _isFullToolbarStyle;
 }
@@ -51,9 +44,6 @@ void* kAppControllerContext = &kAppControllerContext;
     NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
     [NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
                                     forName:@"MiniModeMenuTitleTransformer"];
-    
-    NSValueTransformer *playbackStatusToHiddenTransformer = [[PlaybackStatusToHiddenTransformer alloc] init];
-    [NSValueTransformer setValueTransformer:playbackStatusToHiddenTransformer forName:@"PlaybackStatusToHiddenTransformer"];
 }
 
 
@@ -146,7 +136,8 @@ void* kAppControllerContext = &kAppControllerContext;
 	[[playbackButtons cell] setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"") forSegment: 1];
 	[[playbackButtons cell] setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"") forSegment: 0];
 	[[playbackButtons cell] setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment: 2];
-	[infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
+    [self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
+    [self.infoButtonMini setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
     [randomizeButton setToolTip:NSLocalizedString(@"RandomizeButtonTooltip", @"")];
@@ -235,7 +226,7 @@ void* kAppControllerContext = &kAppControllerContext;
     }
 
     [self addObserver:self
-           forKeyPath:@"playbackController.playbackStatus"
+           forKeyPath:@"playlistController.currentEntry"
               options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
               context:kAppControllerContext];
 }
@@ -244,11 +235,69 @@ void* kAppControllerContext = &kAppControllerContext;
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey,id> *)change
                        context:(void *)context {
-    if ([keyPath isEqualToString:@"playbackController.playbackStatus"]) {
-        NSValueTransformer *transformer =
-            [NSValueTransformer valueTransformerForName:@"PlaybackStatusToHiddenTransformer"];
-        NSNumber *value = [transformer transformedValue:@(playbackController.playbackStatus)];
-        self.isNowPlayingHidden = value.boolValue;
+    if (context != kAppControllerContext) {
+        return;
+    }
+
+    if ([keyPath isEqualToString:@"playlistController.currentEntry"]) {
+        PlaylistEntry *entry = playlistController.currentEntry;
+        if (!entry) {
+            miniWindow.title = @"Cog";
+            mainWindow.title = @"Cog";
+            if (@available(macOS 11.0, *)) {
+                miniWindow.subtitle = @"";
+                mainWindow.subtitle = @"";
+            }
+
+            self.infoButton.imageScaling = NSImageScaleNone;
+            self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
+            self.infoButtonMini.imageScaling = NSImageScaleNone;
+            self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
+        }
+
+        if (@available(macOS 11.0, *)) {
+            NSString *title = @"Cog";
+            if (entry.title) {
+                title = entry.title;
+            }
+            miniWindow.title = title;
+            mainWindow.title = title;
+
+            NSString *subtitle = @"";
+            NSMutableArray<NSString *> *subtitleItems = [NSMutableArray array];
+            if (entry.album && ![entry.album isEqualToString:@""]) {
+                [subtitleItems addObject:entry.album];
+            }
+            if (entry.artist && ![entry.artist isEqualToString:@""]) {
+                [subtitleItems addObject:entry.artist];
+            }
+
+            if ([subtitleItems count]) {
+                subtitle = [subtitleItems componentsJoinedByString:@" - "];
+            }
+
+            miniWindow.subtitle = subtitle;
+            mainWindow.subtitle = subtitle;
+        } else {
+            NSString *title = @"Cog";
+            if (entry.display) {
+                title = entry.display;
+            }
+            miniWindow.title = title;
+            mainWindow.title = title;
+        }
+
+        if (entry.albumArt) {
+            self.infoButton.imageScaling = NSImageScaleProportionallyUpOrDown;
+            self.infoButton.image = playlistController.currentEntry.albumArt;
+            self.infoButtonMini.imageScaling = NSImageScaleProportionallyUpOrDown;
+            self.infoButtonMini.image = playlistController.currentEntry.albumArt;
+        } else {
+            self.infoButton.imageScaling = NSImageScaleNone;
+            self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
+            self.infoButtonMini.imageScaling = NSImageScaleNone;
+            self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
+        }
     }
 }
 
@@ -461,18 +510,6 @@ void* kAppControllerContext = &kAppControllerContext;
     }];
 }
 
-- (void)windowDidEnterFullScreen:(NSNotification *)notification
-{
-    DLog(@"Entering fullscreen");
-    self.isNowPlayingForceShown = YES;
-}
-
-- (void)windowDidExitFullScreen:(NSNotification *)notification
-{
-    DLog(@"Exiting fullscreen");
-    self.isNowPlayingForceShown = NO;
-}
-
 - (void)clickPlay
 {
 	[playbackController playPauseResume:self];
@@ -559,32 +596,17 @@ void* kAppControllerContext = &kAppControllerContext;
 
     if (@available(macOS 11.0, *)) {
         NSWindowToolbarStyle style =
-            full ? NSWindowToolbarStyleExpanded : NSWindowToolbarStyleUnifiedCompact;
+            full ? NSWindowToolbarStyleExpanded : NSWindowToolbarStyleUnified;
         mainWindow.toolbarStyle = style;
         miniWindow.toolbarStyle = style;
+    } else {
+        NSWindowTitleVisibility titleVisibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
+        mainWindow.titleVisibility = titleVisibility;
+        miniWindow.titleVisibility = titleVisibility;
     }
-
-    [self.nowPlayingBar setHidden:full];
-
-    NSWindowTitleVisibility visibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
-    mainWindow.titleVisibility = visibility;
-    miniWindow.titleVisibility = visibility;
 
     // Fix empty area after changing toolbar style in mini window as it has no content view
     [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 0)];
-}
-
-- (BOOL)isNowPlayingHidden {
-    if (_isNowPlayingForceShown) {
-        return NO;
-    }
-    return _isNowPlayingHidden;
-}
-
-- (void)setIsNowPlayingForceShown:(BOOL)isNowPlayingForceShown {
-    [self willChangeValueForKey:@"isNowPlayingHidden"];
-    _isNowPlayingForceShown = isNowPlayingForceShown;
-    [self didChangeValueForKey:@"isNowPlayingHidden"];
 }
 
 @end
