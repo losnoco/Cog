@@ -17,7 +17,6 @@
         <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Cog" animationBehavior="default" toolbarStyle="unified" id="21" userLabel="Window" customClass="MainWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
-            <windowPositionMask key="initialPositionMask" topStrut="YES"/>
             <rect key="contentRect" x="331" y="367" width="1000" height="400"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
             <value key="minSize" type="size" width="750" height="200"/>
@@ -335,11 +334,9 @@
                                 <font key="font" metaFont="system"/>
                                 <segments>
                                     <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Play" image="playTemplate" width="28" tag="1"/>
-                                    <segment toolTip="Next" image="stopTemplate" imageScaling="none" width="28"/>
-                                    <segment image="nextTemplate" imageScaling="none" width="28">
-                                        <nil key="label"/>
-                                    </segment>
+                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Stop" image="stopTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28"/>
                                 </segments>
                             </segmentedCell>
                             <connections>
