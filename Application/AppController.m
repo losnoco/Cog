@@ -132,10 +132,7 @@ void* kAppControllerContext = &kAppControllerContext;
 - (void)awakeFromNib
 {
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
-	
-	[[playbackButtons cell] setToolTip:NSLocalizedString(@"PlayButtonTooltip", @"") forSegment: 1];
-	[[playbackButtons cell] setToolTip:NSLocalizedString(@"PrevButtonTooltip", @"") forSegment: 0];
-	[[playbackButtons cell] setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment: 2];
+
     [self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
     [self.infoButtonMini setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
