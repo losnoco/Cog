@@ -31,3 +31,14 @@ You will need to run the following to retrieve all the source code:
 git submodule update --init --recursive
 ```
 
+Setup your `DEVELOPMENT_TEAM` like described in [Xcode-config/Shared.xcconfig](https://github.com/losnoco/Cog/blob/master/Xcode-config/Shared.xcconfig) to build the project.
+
+# Screenshots
+
+## Main window and Info Inspector
+
+![Main window](https://github.com/losnoco/Cog/blob/master/.github/images/MainWindow.png)
+
+## Mini window
+
+![Mini window](https://github.com/losnoco/Cog/blob/master/.github/images/MiniWindow.png)
