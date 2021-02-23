@@ -126,6 +126,7 @@ static SInt64 getSizeProc(void* clientData) {
 	OSStatus						err;
 	UInt32							size;
 	AudioStreamBasicDescription		asbd;
+    AudioFileID                     afi;
 	
 	// Get input file information
 	size	= sizeof(asbd);
@@ -144,17 +145,39 @@ static SInt64 getSizeProc(void* clientData) {
 	}
 	totalFrames = total;
 	
-	//Is there a way to get bitrate with extAudioFile?
-	bitrate				= 0;
+    size    = sizeof(afi);
+    err     = ExtAudioFileGetProperty(_in, kExtAudioFileProperty_AudioFile, &size, &afi);
+    if(err != noErr) {
+        err = ExtAudioFileDispose(_in);
+        return NO;
+    }
+    
+    SInt32    formatBitsPerSample;
+    size    = sizeof(formatBitsPerSample);
+    err     = AudioFileGetProperty(afi, kAudioFilePropertySourceBitDepth, &size, &formatBitsPerSample);
+    if(err != noErr) {
+        err = ExtAudioFileDispose(_in);
+        return NO;
+    }
+    
+    UInt32    _bitrate;
+    size    = sizeof(_bitrate);
+    err     = AudioFileGetProperty(afi, kAudioFilePropertyBitRate, &size, &_bitrate);
+    if(err != noErr) {
+        err = ExtAudioFileDispose(_in);
+        return NO;
+    }
 	
+    bitrate                = (_bitrate + 500) / 1000;
+    
 	// Set our properties
-	bitsPerSample		= asbd.mBitsPerChannel;
+	bitsPerSample		= formatBitsPerSample;
 	channels			= asbd.mChannelsPerFrame;
 	frequency			= asbd.mSampleRate;
 	floatingPoint       = NO;
     
 	// mBitsPerChannel will only be set for lpcm formats
-	if(0 == bitsPerSample) {
+	if(bitsPerSample <= 0) {
 		bitsPerSample = 32;
         floatingPoint = YES;
 	}

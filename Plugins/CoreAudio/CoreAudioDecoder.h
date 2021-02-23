@@ -20,6 +20,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include <AudioToolbox/AudioFile.h>
 #include <AudioToolbox/ExtendedAudioFile.h>
 
 #import "Plugin.h"
