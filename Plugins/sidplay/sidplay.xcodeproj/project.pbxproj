@@ -10,24 +10,15 @@
 		8314D8091A35654900EEE8E6 /* SidDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8041A35654900EEE8E6 /* SidDecoder.mm */; };
 		8314D80A1A35654900EEE8E6 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8061A35654900EEE8E6 /* SidMetadataReader.mm */; };
 		8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8081A35654900EEE8E6 /* SidContainer.mm */; };
-		836F5BE81A357815002730CC /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F5BE51A357804002730CC /* sidplayfp.framework */; };
-		836F5BE91A35781B002730CC /* sidplayfp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836F5BE51A357804002730CC /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836F5BEC1A357915002730CC /* roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836F5BEA1A357915002730CC /* roms.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		836F5BE41A357804002730CC /* PBXContainerItemProxy */ = {
+		EDBE8F0E25E7E74D001EB4A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8314D6711A354E7800EEE8E6 /* sidplayfp.xcodeproj */;
+			containerPortal = EDBE8F0A25E7E74D001EB4A4 /* sidplayfp.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8314D6551A354E7800EEE8E6;
-			remoteInfo = sidplayfp;
-		};
-		836F5BE61A35780B002730CC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8314D6711A354E7800EEE8E6 /* sidplayfp.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8314D6541A354E7800EEE8E6;
+			remoteGlobalIDString = EDBE8EF925E7E641001EB4A4;
 			remoteInfo = sidplayfp;
 		};
 /* End PBXContainerItemProxy section */
@@ -39,7 +30,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				836F5BE91A35781B002730CC /* sidplayfp.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,7 +38,6 @@
 /* Begin PBXFileReference section */
 		8314D6311A354DFE00EEE8E6 /* sidplay.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sidplay.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8314D6351A354DFE00EEE8E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8314D6711A354E7800EEE8E6 /* sidplayfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplayfp.xcodeproj; path = ../../Frameworks/libsidplay/sidplayfp.xcodeproj; sourceTree = "<group>"; };
 		8314D8031A35654900EEE8E6 /* SidDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidDecoder.h; sourceTree = SOURCE_ROOT; };
 		8314D8041A35654900EEE8E6 /* SidDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SidDecoder.mm; sourceTree = SOURCE_ROOT; };
 		8314D8051A35654900EEE8E6 /* SidMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidMetadataReader.h; sourceTree = SOURCE_ROOT; };
@@ -60,6 +49,7 @@
 		8314D80E1A3565AC00EEE8E6 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		836F5BEA1A357915002730CC /* roms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = roms.cpp; sourceTree = SOURCE_ROOT; };
 		836F5BEB1A357915002730CC /* roms.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = roms.hpp; sourceTree = SOURCE_ROOT; };
+		EDBE8F0A25E7E74D001EB4A4 /* sidplayfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplayfp.xcodeproj; path = ../../Frameworks/libsidplayfp/sidplayfp.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,7 +57,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				836F5BE81A357815002730CC /* sidplayfp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,15 +110,15 @@
 		8314D64A1A354E4400EEE8E6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8314D6711A354E7800EEE8E6 /* sidplayfp.xcodeproj */,
+				EDBE8F0A25E7E74D001EB4A4 /* sidplayfp.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		836F5BE11A357804002730CC /* Products */ = {
+		EDBE8F0B25E7E74D001EB4A4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				836F5BE51A357804002730CC /* sidplayfp.framework */,
+				EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -149,7 +138,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				836F5BE71A35780B002730CC /* PBXTargetDependency */,
 			);
 			name = sidplay;
 			productName = sidplay;
@@ -185,8 +173,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 836F5BE11A357804002730CC /* Products */;
-					ProjectRef = 8314D6711A354E7800EEE8E6 /* sidplayfp.xcodeproj */;
+					ProductGroup = EDBE8F0B25E7E74D001EB4A4 /* Products */;
+					ProjectRef = EDBE8F0A25E7E74D001EB4A4 /* sidplayfp.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -197,11 +185,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		836F5BE51A357804002730CC /* sidplayfp.framework */ = {
+		EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = sidplayfp.framework;
-			remoteRef = 836F5BE41A357804002730CC /* PBXContainerItemProxy */;
+			remoteRef = EDBE8F0E25E7E74D001EB4A4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -229,14 +217,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		836F5BE71A35780B002730CC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = sidplayfp;
-			targetProxy = 836F5BE61A35780B002730CC /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8314D6361A354DFE00EEE8E6 /* Debug */ = {

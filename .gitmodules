@@ -16,3 +16,6 @@
 [submodule "Frameworks/shpakovski/MASShortcut"]
 	path = Frameworks/shpakovski/MASShortcut
 	url = https://github.com/shpakovski/MASShortcut.git
+[submodule "Frameworks/libsidplayfp/sidplayfp"]
+	path = Frameworks/libsidplayfp/sidplayfp
+	url = https://github.com/libsidplayfp/libsidplayfp.git
