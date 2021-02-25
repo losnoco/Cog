@@ -84,7 +84,6 @@
 		EDBE908325E7E7A2001EB4A4 /* OpAmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F9825E7E7A0001EB4A4 /* OpAmp.cpp */; };
 		EDBE908425E7E7A2001EB4A4 /* TwoPassSincResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F9A25E7E7A0001EB4A4 /* TwoPassSincResampler.h */; };
 		EDBE908525E7E7A2001EB4A4 /* SincResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F9B25E7E7A0001EB4A4 /* SincResampler.cpp */; };
-		EDBE908625E7E7A2001EB4A4 /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F9C25E7E7A0001EB4A4 /* test.cpp */; };
 		EDBE908725E7E7A2001EB4A4 /* ZeroOrderResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F9D25E7E7A0001EB4A4 /* ZeroOrderResampler.h */; };
 		EDBE908825E7E7A2001EB4A4 /* SincResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F9E25E7E7A0001EB4A4 /* SincResampler.h */; };
 		EDBE908925E7E7A2001EB4A4 /* Resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F9F25E7E7A0001EB4A4 /* Resampler.h */; };
@@ -1240,7 +1239,6 @@
 				EDBE908D25E7E7A2001EB4A4 /* EnvelopeGenerator.cpp in Sources */,
 				EDBE90E525E7E7A2001EB4A4 /* PSID.cpp in Sources */,
 				EDBE907D25E7E7A2001EB4A4 /* resid-builder.cpp in Sources */,
-				EDBE908625E7E7A2001EB4A4 /* test.cpp in Sources */,
 				EDBE907F25E7E7A2001EB4A4 /* resid-emu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1368,6 +1366,7 @@
 		EDBE8F0225E7E641001EB4A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -1379,6 +1378,8 @@
 					"HAVE_CONFIG_H=1",
 					"DEBUG=1",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/generated/src",
 					"$(SRCROOT)/generated/src/sidtune",
@@ -1404,6 +1405,7 @@
 		EDBE8F0325E7E641001EB4A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -1411,6 +1413,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_CONFIG_H=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/generated/src",
 					"$(SRCROOT)/generated/src/sidtune",
