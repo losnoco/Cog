@@ -11,6 +11,8 @@
 		8314D80A1A35654900EEE8E6 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8061A35654900EEE8E6 /* SidMetadataReader.mm */; };
 		8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8081A35654900EEE8E6 /* SidContainer.mm */; };
 		836F5BEC1A357915002730CC /* roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836F5BEA1A357915002730CC /* roms.cpp */; };
+		EDBE911825E7EA01001EB4A4 /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; };
+		EDBE911925E7EA01001EB4A4 /* sidplayfp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +32,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				EDBE911925E7EA01001EB4A4 /* sidplayfp.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDBE911825E7EA01001EB4A4 /* sidplayfp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
