@@ -464,18 +464,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	//Clear the selection
     [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
     
-    NSArray * firstEntry = [NSArray arrayWithObject:[entries objectAtIndex:0]];
-    NSMutableArray * restOfEntries = [NSMutableArray arrayWithArray:entries];
-    [restOfEntries removeObjectAtIndex:0];
-    
-    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:firstEntry waitUntilDone:YES];
-    if ([restOfEntries count])
-        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:restOfEntries];
+    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:entries waitUntilDone:YES];
 	return entries;
-}
-
-static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
-    dispatch_get_current_queue() == queue ? block() : dispatch_sync(queue, block);
 }
 
 // To be called on main thread only
@@ -521,81 +511,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     {
         unsigned long columns = [[[self->playlistView documentView] tableColumns] count];
         [self->playlistView.documentView reloadDataForRowIndexes:update_indexes columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns-1)]];
-    }
-}
-
-- (void)loadInfoForEntries:(NSArray *)entries
-{
-    NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
-    long i, j;
-    
-    i = 0;
-    for (PlaylistEntry *pe in entries)
-    {
-        if ([pe metadataLoaded]) continue;
-        
-        [update_indexes addIndex:pe.index];
-        
-        ++i;
-    }
-    
-    if (!i)
-    {
-        [playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-        return;
-    }
-    
-    NSLock *outLock = [[NSLock alloc] init];
-    NSMutableArray *outArray = [[NSMutableArray alloc] init];
-    
-    __block NSLock *weakLock = outLock;
-    __block NSMutableArray *weakArray = outArray;
-    
-    {
-        __block NSArray *weakA = entries;
-        
-        NSBlockOperation *op = [[NSBlockOperation alloc] init];
-        [op addExecutionBlock:^{
-            for (PlaylistEntry *pe in weakA)
-            {
-                NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
-            
-                NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
-                if (entryProperties == nil)
-                    continue;
-            
-                [entryInfo addEntriesFromDictionary:entryProperties];
-                [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
-
-                [weakLock lock];
-                [weakArray addObject:pe];
-                [weakArray addObject:entryInfo];
-                [weakLock unlock];
-            }
-        }];
-        
-        [queue addOperation:op];
-    }
-
-	[queue waitUntilAllOperationsAreFinished];
-
-    for (i = 0, j = [outArray count]; i < j; i += 2) {
-        __block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
-        __block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
-        dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-            [weakPe setMetadata:entryInfo];
-        });
-    }
-
-	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-    
-    {
-        __block NSScrollView *weakPlaylistView = playlistView;
-        __block NSIndexSet *weakIndexSet = update_indexes;
-        dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-            unsigned long columns = [[[weakPlaylistView documentView] tableColumns] count];
-            [weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns-1)]];
-        });
     }
 }
 
