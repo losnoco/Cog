@@ -1,10 +1,6 @@
 #!/bin/sh
 
-pushd $(dirname $0)
-BASE=`pwd -P`
-popd
+BASEDIR=$(dirname "$0")
+SRCROOT="$BASEDIR/.."
 
-BUILDPRODUCTS="$BASE"/build/Build/Products/Release
-
-xcodebuild -workspace "$BASE"/../Cog.xcodeproj/project.xcworkspace -scheme Cog -configuration Release -derivedDataPath "$BASE"/build
-
+xcodebuild -workspace "$SRCROOT/Cog.xcodeproj/project.xcworkspace" -scheme Cog -configuration Release -derivedDataPath "$BASEDIR/build"
