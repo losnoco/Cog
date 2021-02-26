@@ -174,6 +174,8 @@
 		8E8D41C80CBB0DA900135C1B /* Pls.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E8D41C70CBB0DA000135C1B /* Pls.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		ED32B0AB25E94EBB00A17431 /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED32B0AA25E94EBB00A17431 /* sidplayfp.framework */; };
+		ED32B0AC25E94EBB00A17431 /* sidplayfp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = ED32B0AA25E94EBB00A17431 /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ED69CA3B25BE2A390090B90D /* Preferences.preferencePane in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* Preferences.preferencePane */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; };
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -659,6 +661,7 @@
 				ED69CBCA25BE32E80090B90D /* MASShortcut.framework in CopyFiles */,
 				838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */,
+				ED32B0AC25E94EBB00A17431 /* sidplayfp.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -927,6 +930,7 @@
 		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FFMPEG.xcodeproj; path = Plugins/FFMPEG/FFMPEG.xcodeproj; sourceTree = "<group>"; };
+		ED32B0AA25E94EBB00A17431 /* sidplayfp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = sidplayfp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MASShortcut.xcodeproj; path = Frameworks/shpakovski/MASShortcut/MASShortcut.xcodeproj; sourceTree = "<group>"; };
 		ED69CF0925BE74BB0090B90D /* Shortcuts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shortcuts.h; path = Preferences/Shortcuts.h; sourceTree = "<group>"; };
 		EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSliderToolbarItem.swift; path = Window/PositionSliderToolbarItem.swift; sourceTree = "<group>"; };
@@ -944,6 +948,7 @@
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */,
 				17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */,
+				ED32B0AB25E94EBB00A17431 /* sidplayfp.framework in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
 				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
@@ -1379,6 +1384,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ED32B0AA25E94EBB00A17431 /* sidplayfp.framework */,
 				83AB9031237CEFD300A433D5 /* MediaPlayer.framework */,
 				8355D6B7180613FB00D05687 /* Security.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
