@@ -18,8 +18,6 @@ NSString *TrackLength = @"Total Time";
 NSString *TrackPath = @"Location";
 NSString *TrackState = @"Player State";
 
-typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStopped };
-
 @implementation PlaybackEventController {
     AudioScrobbler *scrobbler;
 
@@ -104,42 +102,6 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStoppe
     if ([[response actionIdentifier] isEqualToString:@"skip"]) {
         [playbackController next:self];
     }
-}
-
-- (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    if (pe == nil) return dict;
-
-    [dict setObject:[[pe URL] absoluteString] forKey:TrackPath];
-    if ([pe title]) [dict setObject:[pe title] forKey:TrackTitle];
-    if ([pe artist]) [dict setObject:[pe artist] forKey:TrackArtist];
-    if ([pe album]) [dict setObject:[pe album] forKey:TrackAlbum];
-    if ([pe genre]) [dict setObject:[pe genre] forKey:TrackGenre];
-    if ([pe track])
-        [dict setObject:[NSString stringWithFormat:@"%@", [pe track]] forKey:TrackNumber];
-    if ([pe length])
-        [dict setObject:[NSNumber numberWithInteger:(NSInteger)([[pe length] doubleValue] * 1000.0)]
-                 forKey:TrackLength];
-
-    NSString *state = nil;
-
-    switch (status) {
-        case TrackPlaying:
-            state = @"Playing";
-            break;
-        case TrackPaused:
-            state = @"Paused";
-            break;
-        case TrackStopped:
-            state = @"Stopped";
-            break;
-        default:
-            break;
-    }
-
-    [dict setObject:state forKey:TrackState];
-
-    return dict;
 }
 
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe {
