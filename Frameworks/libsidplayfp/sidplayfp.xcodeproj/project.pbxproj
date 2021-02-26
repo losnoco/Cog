@@ -1372,7 +1372,7 @@
 				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				DYLIB_INSTALL_NAME_BASE = "@loader_path/../Frameworks";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"VERSION=\\\"2.1.0\\\"",
 					"HAVE_CONFIG_H=1",
@@ -1393,11 +1393,6 @@
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/generated/src/config.h";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.sidplayfp;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1413,7 +1408,7 @@
 				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				DYLIB_INSTALL_NAME_BASE = "@loader_path/../Frameworks";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"VERSION=\\\"2.1.0\\\"",
 					"HAVE_CONFIG_H=1",
@@ -1433,11 +1428,6 @@
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/generated/src/config.h";
 				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.sidplayfp;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
