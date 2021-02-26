@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": false,
+    "files.associations": {
+        "*.h": "objective-c",
+        "*.m": "objective-c"
+    },
+    "clang-format.executable": "/usr/local/bin/clang-format",
+    "clang-format.language.objective-c.style": "{ BasedOnStyle: Google, IndentWidth: 4, ObjCBlockIndentWidth: 4 }"
+}
