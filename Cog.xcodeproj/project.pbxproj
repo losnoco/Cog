@@ -1129,31 +1129,31 @@
 			isa = PBXGroup;
 			children = (
 				83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */,
-				83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */,
-				83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */,
-				8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */,
-				B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */,
 				566D32160D538550004466A5 /* APL.xcodeproj */,
-				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
-				17F3BB830CBC565100864489 /* CueSheet.xcodeproj */,
-				8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */,
-				8E8D40820CBB036600135C1B /* M3u.xcodeproj */,
-				17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */,
-				17C808B70C3BD1D2005707C4 /* VorbisPlugin.xcodeproj */,
-				17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */,
-				17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */,
-				17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */,
-				17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */,
-				17C8087A0C3BD173005707C4 /* Flac.xcodeproj */,
-				17C808710C3BD167005707C4 /* FileSource.xcodeproj */,
-				17C808660C3BD0F8005707C4 /* CoreAudio.xcodeproj */,
 				8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */,
-				8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */,
-				83B0669C180D5668008E3612 /* MIDI.xcodeproj */,
+				17C808660C3BD0F8005707C4 /* CoreAudio.xcodeproj */,
+				17F3BB830CBC565100864489 /* CueSheet.xcodeproj */,
+				B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */,
+				17C808710C3BD167005707C4 /* FileSource.xcodeproj */,
+				17C8087A0C3BD173005707C4 /* Flac.xcodeproj */,
+				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
+				8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */,
 				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
-				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
+				17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */,
+				8E8D40820CBB036600135C1B /* M3u.xcodeproj */,
+				83B0669C180D5668008E3612 /* MIDI.xcodeproj */,
+				17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */,
+				83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */,
+				8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */,
+				8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */,
+				17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */,
 				8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */,
 				83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */,
+				83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */,
+				17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */,
+				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
+				17C808B70C3BD1D2005707C4 /* VorbisPlugin.xcodeproj */,
+				17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */,
 			);
 			name = PlugIns;
 			sourceTree = "<group>";
@@ -1735,7 +1735,7 @@
 				LastUpgradeCheck = 1100;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = RXH4D9SUXM;
 						LastSwiftMigration = 1220;
 						ProvisioningStyle = Automatic;
 					};
