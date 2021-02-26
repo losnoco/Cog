@@ -9,8 +9,6 @@
 
 #import "AudioScrobbler.h"
 
-NSString *TrackNotification = @"com.apple.iTunes.playerInfo";
-
 NSString *TrackArtist = @"Artist";
 NSString *TrackAlbum = @"Album";
 NSString *TrackTitle = @"Name";
@@ -19,8 +17,6 @@ NSString *TrackNumber = @"Track Number";
 NSString *TrackLength = @"Total Time";
 NSString *TrackPath = @"Location";
 NSString *TrackState = @"Player State";
-
-typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStopped };
 
 @implementation PlaybackEventController {
     AudioScrobbler *scrobbler;
@@ -108,52 +104,9 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStoppe
     }
 }
 
-- (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    if (pe == nil) return dict;
-
-    [dict setObject:[[pe URL] absoluteString] forKey:TrackPath];
-    if ([pe title]) [dict setObject:[pe title] forKey:TrackTitle];
-    if ([pe artist]) [dict setObject:[pe artist] forKey:TrackArtist];
-    if ([pe album]) [dict setObject:[pe album] forKey:TrackAlbum];
-    if ([pe genre]) [dict setObject:[pe genre] forKey:TrackGenre];
-    if ([pe track])
-        [dict setObject:[NSString stringWithFormat:@"%@", [pe track]] forKey:TrackNumber];
-    if ([pe length])
-        [dict setObject:[NSNumber numberWithInteger:(NSInteger)([[pe length] doubleValue] * 1000.0)]
-                 forKey:TrackLength];
-
-    NSString *state = nil;
-
-    switch (status) {
-        case TrackPlaying:
-            state = @"Playing";
-            break;
-        case TrackPaused:
-            state = @"Paused";
-            break;
-        case TrackStopped:
-            state = @"Stopped";
-            break;
-        default:
-            break;
-    }
-
-    [dict setObject:state forKey:TrackState];
-
-    return dict;
-}
-
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe {
     if (NO == [pe error]) {
         entry = pe;
-
-        [[NSDistributedNotificationCenter defaultCenter]
-            postNotificationName:TrackNotification
-                          object:nil
-                        userInfo:[self fillNotificationDictionary:pe status:TrackPlaying]
-              deliverImmediately:YES];
-
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
         if ([defaults boolForKey:@"notifications.enable"]) {
@@ -284,33 +237,18 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStoppe
 }
 
 - (void)performPlaybackDidPauseActions {
-    [[NSDistributedNotificationCenter defaultCenter]
-        postNotificationName:TrackNotification
-                      object:nil
-                    userInfo:[self fillNotificationDictionary:entry status:TrackPaused]
-          deliverImmediately:YES];
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
         [scrobbler pause];
     }
 }
 
 - (void)performPlaybackDidResumeActions {
-    [[NSDistributedNotificationCenter defaultCenter]
-        postNotificationName:TrackNotification
-                      object:nil
-                    userInfo:[self fillNotificationDictionary:entry status:TrackPlaying]
-          deliverImmediately:YES];
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
         [scrobbler resume];
     }
 }
 
 - (void)performPlaybackDidStopActions {
-    [[NSDistributedNotificationCenter defaultCenter]
-        postNotificationName:TrackNotification
-                      object:nil
-                    userInfo:[self fillNotificationDictionary:entry status:TrackStopped]
-          deliverImmediately:YES];
     entry = nil;
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
         [scrobbler stop];
