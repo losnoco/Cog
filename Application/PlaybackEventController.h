@@ -13,20 +13,13 @@
 #import "PlaylistEntry.h"
 
 @class AudioScrobbler;
-@interface PlaybackEventController : NSObject <NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate> {
-	NSOperationQueue *queue;
-    
-    PlaylistEntry *entry;
-	
-	AudioScrobbler *scrobbler;
-    
+
+@interface PlaybackEventController
+    : NSObject <NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate> {
     IBOutlet PlaybackController *playbackController;
-    
+
     IBOutlet NSWindow *mainWindow;
     IBOutlet NSWindow *miniWindow;
-    
-    Boolean didGainUN;
-
 }
 
 @end
