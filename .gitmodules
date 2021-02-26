@@ -10,12 +10,12 @@
 [submodule "Frameworks/AdPlug/AdPlug/database"]
 	path = Frameworks/AdPlug/AdPlug/database
 	url = https://github.com/adplug/database.git
-[submodule "Frameworks/libsidplay/sidplay-residfp-code"]
-	path = Frameworks/libsidplay/sidplay-residfp-code
-	url = https://git.lopez-snowhill.net/chris/sidplay-residfp.git
 [submodule "Frameworks/libatrac9/libatrac9"]
 	path = Frameworks/libatrac9/libatrac9
 	url = https://github.com/Thealexbarney/LibAtrac9.git
 [submodule "Frameworks/shpakovski/MASShortcut"]
 	path = Frameworks/shpakovski/MASShortcut
 	url = https://github.com/shpakovski/MASShortcut.git
+[submodule "Frameworks/libsidplayfp/sidplayfp"]
+	path = Frameworks/libsidplayfp/sidplayfp
+	url = https://github.com/libsidplayfp/libsidplayfp.git

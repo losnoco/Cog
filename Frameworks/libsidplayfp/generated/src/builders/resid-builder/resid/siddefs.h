@@ -25,15 +25,22 @@
 #define RESID_INLINE inline
 #define RESID_BRANCH_HINTS 1
 
+#define NEW_8580_FILTER 1
+
 // Compiler specifics.
 #define HAVE_BOOL 1
 #define HAVE_BUILTIN_EXPECT 1
+#define HAVE_LOG1P 1
 
 // Define bool, true, and false for C++ compilers that lack these keywords.
 #if !HAVE_BOOL
 typedef int bool;
 const bool true = 1;
 const bool false = 0;
+#endif
+
+#if HAVE_LOG1P
+#define HAS_LOG1P
 #endif
 
 // Branch prediction macros, lifted off the Linux kernel.
@@ -66,8 +73,12 @@ typedef double double_point[2];
 
 enum chip_model { MOS6581, MOS8580 };
 
-enum sampling_method { SAMPLE_FAST, SAMPLE_INTERPOLATE,
-		       SAMPLE_RESAMPLE, SAMPLE_RESAMPLE_FASTMEM };
+enum sampling_method {
+    SAMPLE_FAST, 
+    SAMPLE_INTERPOLATE,
+    SAMPLE_RESAMPLE, 
+    SAMPLE_RESAMPLE_FASTMEM 
+};
 
 } // namespace reSID
 
@@ -76,11 +87,8 @@ extern "C"
 #ifndef RESID_VERSION_CC
 extern const char* resid_version_string;
 #else
-const char* resid_version_string = "1.0-pre2";
+const char* resid_version_string = VERSION;
 #endif
 }
 
-#define VERSION "1.0-pre2"
-
 #endif // not RESID_SIDDEFS_H
-

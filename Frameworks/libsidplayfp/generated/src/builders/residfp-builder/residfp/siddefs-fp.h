@@ -20,15 +20,15 @@
 #ifndef SIDDEFS_FP_H
 #define SIDDEFS_FP_H
 
-#ifndef M_PI
-#  define M_PI    3.14159265358979323846
-#endif
-
+// Compilation configuration.
 #define RESID_BRANCH_HINTS 1
 
 // Compiler specifics.
-#define HAVE_BOOL 1
 #define HAVE_BUILTIN_EXPECT 1
+
+#ifndef M_PI
+#  define M_PI    3.14159265358979323846
+#endif
 
 // Branch prediction macros, lifted off the Linux kernel.
 #if RESID_BRANCH_HINTS && HAVE_BUILTIN_EXPECT
@@ -51,16 +51,12 @@ extern "C"
 #ifndef __VERSION_CC__
 extern const char* residfp_version_string;
 #else
-const char* residfp_version_string = "2.0.1";
+const char* residfp_version_string = "2.1.0";
 #endif
 }
-
-#undef VERSION
-#define VERSION "2.0.1"
 
 // Inlining on/off.
 #define RESID_INLINING 1
 #define RESID_INLINE inline
 
 #endif // SIDDEFS_FP_H
-
