@@ -20,9 +20,14 @@
         [self setShowsResizeIndicator:NO];
         [self setExcludedFromWindowsMenu:YES];
         [[self standardWindowButton:NSWindowZoomButton] setEnabled:NO];
+
+        NSUInteger minWidth = 675; // Default width
+        for (NSScreen *screen in NSScreen.screens) {
+            minWidth = MIN(screen.visibleFrame.size.width, minWidth);
+        }
         // Disallow height resize.
-        [self setContentMinSize:NSMakeSize(675, 0)];
-        [self setContentMaxSize:NSMakeSize(CGFLOAT_MAX, 0)];
+        [self setContentMinSize:NSMakeSize(minWidth, 1)];
+        [self setContentMaxSize:NSMakeSize(CGFLOAT_MAX, 1)];
         [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
     }
 

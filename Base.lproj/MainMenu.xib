@@ -562,7 +562,7 @@
             </connections>
             <point key="canvasLocation" x="130.5" y="131"/>
         </window>
-        <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" titlebarAppearsTransparent="YES" toolbarStyle="unified" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
+        <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" toolbarStyle="unified" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="192" y="547" width="640" height="0.0"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
