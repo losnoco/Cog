@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#import "SandboxBroker.h"
+
 #define SF2PACK
 
 // #define AUPLAYERVIEW
@@ -175,6 +177,13 @@ void AUPlayer::shutdown()
         free(bufferList);
         bufferList = NULL;
     }
+
+    if ( sSoundFontName.length() ) {
+        id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+        id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+        
+        [sandboxBroker endFolderAccess:[NSURL fileURLWithPath:[NSString stringWithUTF8String:sSoundFontName.c_str()]]];
+    }
 }
 
 void AUPlayer::enumComponents(callback cbEnum)
@@ -336,6 +345,11 @@ bool AUPlayer::startup()
     // Now load instruments
     if (sSoundFontName.length())
     {
+        id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+        id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+        
+        [sandboxBroker beginFolderAccess:[NSURL fileURLWithPath:[NSString stringWithUTF8String:sSoundFontName.c_str()]]];
+
         loadSoundFont( sSoundFontName.c_str() );
     }
     

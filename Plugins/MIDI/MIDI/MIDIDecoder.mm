@@ -15,9 +15,13 @@
 
 #import "Logging.h"
 
+#import "SandboxBroker.h"
+
 #import <midi_processing/midi_processor.h>
 
 #import "PlaylistController.h"
+
+static NSString * scPath = @"/Library/Audio/Plug-Ins/Components/SOUND Canvas VA.component/Contents/Resources/SCCore00.dylib";
 
 static OSType getOSType(const char * in_)
 {
@@ -117,8 +121,17 @@ static OSType getOSType(const char * in_)
 {
     NSString * soundFontPath = @"";
     
+    sandboxPaths = [[NSMutableArray alloc] init];
+
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
     if ( [[source url] isFileURL] )
     {
+        [sandboxBroker beginFolderAccess:[source url]];
+        
+        [sandboxPaths addObject:[source url]];
+        
         // Let's check for a SoundFont
         NSArray * extensions = [NSArray arrayWithObjects:@"sflist", @"sf2pack", @"sf2", nil];
         NSString * filePath = [[source url] path];
@@ -162,8 +175,9 @@ static OSType getOSType(const char * in_)
         bmplayer->setSincInterpolation( resampling_sinc );
         bmplayer->setSampleRate( 44100 );
         
-        if ( [soundFontPath length] )
+        if ( [soundFontPath length] ) {
             bmplayer->setFileSoundFont( [soundFontPath UTF8String] );
+        }
         
         player = bmplayer;
     }
@@ -224,8 +238,12 @@ static OSType getOSType(const char * in_)
                 mode = SCPlayer::sc_sc8850;
             else if ([flavor isEqualToString:@"xg"])
                 mode = SCPlayer::sc_xg;
-            
-            scplayer->set_sccore_path("/Library/Audio/Plug-Ins/Components/SOUND Canvas VA.component/Contents/Resources/SCCore00.dylib");
+                        
+            NSURL * scUrl = [NSURL fileURLWithPath:scPath];
+            [sandboxBroker beginFolderAccess:scUrl];
+            [sandboxPaths addObject:scUrl];
+
+            scplayer->set_sccore_path([scPath UTF8String]);
             scplayer->set_mode( mode );
             scplayer->setSampleRate( 44100 );
             
@@ -341,6 +359,13 @@ static OSType getOSType(const char * in_)
 {
     delete player;
     player = NULL;
+    
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+    for (NSURL * url in sandboxPaths) {
+        [sandboxBroker endFolderAccess:url];
+    }
 }
 
 - (void)dealloc

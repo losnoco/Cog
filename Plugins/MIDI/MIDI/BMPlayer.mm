@@ -1,5 +1,8 @@
 #include "BMPlayer.h"
 
+#import <Cocoa/Cocoa.h>
+#import "SandboxBroker.h"
+
 #include <sflist.h>
 
 #include <stdlib.h>
@@ -23,6 +26,7 @@ struct Cached_SoundFont
     std::chrono::steady_clock::time_point time_released;
     HSOUNDFONT handle;
     sflist_presets * presetlist;
+    std::string path;
     Cached_SoundFont() : handle( 0 ), presetlist( 0 ) { }
 };
 
@@ -47,12 +51,17 @@ static void cache_deinit()
     Cache_Thread->join();
     delete Cache_Thread;
     
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
     for ( auto it = Cache_List.begin(); it != Cache_List.end(); ++it )
     {
         if ( it->second.handle )
             BASS_MIDI_FontFree( it->second.handle );
         if ( it->second.presetlist )
             sflist_free( it->second.presetlist );
+        
+        [sandboxBroker endFolderAccess:[NSURL fileURLWithPath:[NSString stringWithUTF8String:it->second.path.c_str()]]];
     }
 }
 
@@ -60,6 +69,11 @@ static HSOUNDFONT cache_open_font( const char * path )
 {
     HSOUNDFONT font = NULL;
 
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+    [sandboxBroker beginFolderAccess:[NSURL fileURLWithPath:[NSString stringWithUTF8String:path]]];
+    
     std::lock_guard<std::mutex> lock( Cache_Lock );
 
     Cached_SoundFont & entry = Cache_List[ path ];
@@ -71,6 +85,7 @@ static HSOUNDFONT cache_open_font( const char * path )
         {
             entry.handle = font;
             entry.ref_count = 1;
+            entry.path = path;
         }
         else
         {
@@ -132,6 +147,11 @@ static sflist_presets * cache_open_list( const char * path )
 {
     sflist_presets * presetlist = NULL;
     
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+    
+    [sandboxBroker beginFolderAccess:[NSURL fileURLWithPath:[NSString stringWithUTF8String:path]]];
+
     std::lock_guard<std::mutex> lock( Cache_Lock );
     
     Cached_SoundFont & entry = Cache_List[ path ];
@@ -144,6 +164,7 @@ static sflist_presets * cache_open_list( const char * path )
         {
             entry.presetlist = presetlist;
             entry.ref_count = 1;
+            entry.path = path;
         }
         else
         {
@@ -191,6 +212,9 @@ static void cache_close_list( sflist_presets * presetlist )
 
 static void cache_run()
 {
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
     std::chrono::milliseconds dura( 250 );
     
     Cache_Running = true;
@@ -212,6 +236,9 @@ static void cache_run()
                             BASS_MIDI_FontFree( it->second.handle );
                         if ( it->second.presetlist )
                             sflist_free( it->second.presetlist );
+                        
+                        [sandboxBroker endFolderAccess:[NSURL fileURLWithPath:[NSString stringWithUTF8String:it->second.path.c_str()]]];
+                        
                         it = Cache_List.erase( it );
                         continue;
                     }
