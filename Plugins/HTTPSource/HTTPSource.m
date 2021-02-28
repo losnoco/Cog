@@ -111,9 +111,9 @@
           dataTask:(NSURLSessionDataTask *)dataTask
 didReceiveResponse:(NSURLResponse *)response
  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
-    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-        NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-        if (statusCode != 200) {
+    NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+       if (statusCode != 200) { if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+   
             completionHandler(NSURLSessionResponseCancel);
             @synchronized (task) {
                 task = nil;

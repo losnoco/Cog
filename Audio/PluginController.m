@@ -287,6 +287,11 @@ static PluginController *sharedPluginController = nil;
 
 - (NSDictionary *)metadataForURL:(NSURL *)url
 {
+    NSString * urlScheme = [url scheme];
+    if ([urlScheme isEqualToString:@"http"] ||
+        [urlScheme isEqualToString:@"https"])
+        return nil;
+    
 	NSString *ext = [url pathExtension];
     NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
     NSString *classString;
@@ -311,6 +316,11 @@ static PluginController *sharedPluginController = nil;
 //If no properties reader is defined, use the decoder's properties.
 - (NSDictionary *)propertiesForURL:(NSURL *)url
 {
+    NSString * urlScheme = [url scheme];
+    if ([urlScheme isEqualToString:@"http"] ||
+        [urlScheme isEqualToString:@"https"])
+        return nil;
+    
     NSDictionary *properties = nil;
 	NSString *ext = [url pathExtension];
 	
