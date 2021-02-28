@@ -170,7 +170,13 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 	if (pe == nil)
 		return;
-	
+
+    BOOL loadData = YES;
+    NSString * urlScheme = [[pe URL] scheme];
+    if ([urlScheme isEqualToString:@"http"] ||
+        [urlScheme isEqualToString:@"https"])
+        loadData = NO;
+
 #if 0
 	// Race here, but the worst that could happen is we re-read the data
     if ([pe metadataLoaded] != YES) {
@@ -184,7 +190,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     }
 #else
     // Let's do it this way instead
-    if ([pe metadataLoaded] != YES) {
+    if ([pe metadataLoaded] != YES && loadData == YES) {
         NSArray *entries = [NSArray arrayWithObject:pe];
         [playlistLoader performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
     }
