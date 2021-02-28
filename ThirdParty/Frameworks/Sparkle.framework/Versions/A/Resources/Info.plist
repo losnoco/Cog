@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.25.0</string>
+	<string>2.0.0 1141-g8a868914</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleSupportedPlatforms</key>
@@ -25,23 +25,23 @@
 		<string>MacOSX</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.25.0</string>
+	<string>2.0.0</string>
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>12C5020f</string>
+	<string>12E5234g</string>
 	<key>DTPlatformName</key>
 	<string>macosx</string>
 	<key>DTPlatformVersion</key>
-	<string>11.1</string>
+	<string>11.3</string>
 	<key>DTSDKBuild</key>
-	<string>20C5048g</string>
+	<string>20E5186d</string>
 	<key>DTSDKName</key>
-	<string>macosx11.1</string>
+	<string>macosx11.3</string>
 	<key>DTXcode</key>
-	<string>1230</string>
+	<string>1250</string>
 	<key>DTXcodeBuild</key>
-	<string>12C5020f</string>
+	<string>12E5234g</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.9</string>
 </dict>

@@ -16,22 +16,27 @@
 // Do not use <> style includes since 2.x has two frameworks that need to work: Sparkle and SparkleCore
 #pragma clang diagnostic ignored "-Wquoted-include-in-framework-header"
 
+#import "SUExport.h"
 #import "SUAppcast.h"
 #import "SUAppcastItem.h"
 #import "SUStandardVersionComparator.h"
-#import "SUUpdater.h"
-#import "SUUpdaterDelegate.h"
+#import "SPUUpdater.h"
+#import "SPUUpdaterDelegate.h"
+#import "SPUUpdaterSettings.h"
+#import "SPUStandardUpdaterController.h"
 #import "SUVersionComparisonProtocol.h"
 #import "SUVersionDisplayProtocol.h"
 #import "SUErrors.h"
-
-#import "SPUDownloader.h"
-#import "SPUDownloaderDelegate.h"
+#import "SPUUpdatePermissionRequest.h"
+#import "SUUpdatePermissionResponse.h"
+#import "SPUUserDriver.h"
+#import "SPUStandardUserDriver.h"
+#import "SPUStandardUserDriverDelegate.h"
+#import "SPUUserDriverCoreComponent.h"
 #import "SPUDownloadData.h"
-#import "SPUDownloaderProtocol.h"
-#import "SPUDownloaderSession.h"
-#import "SPUURLRequest.h"
-#import "SUCodeSigningVerifier.h"
+
+#import "SUUpdater.h" // deprecated
+#import "SUUpdaterDelegate.h" // deprecated
 
 #pragma clang diagnostic pop
 
