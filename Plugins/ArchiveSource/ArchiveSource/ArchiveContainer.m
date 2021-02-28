@@ -10,6 +10,8 @@
 
 #import <File_Extractor/fex.h>
 
+#import "SandboxBroker.h"
+
 #import "Logging.h"
 
 static NSString * path_pack_string(NSString * src)
@@ -49,6 +51,11 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
 	if (![url isFileURL]) {
 		return [NSArray array];
 	}
+    
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+    
+    [sandboxBroker beginFolderAccess:url];
 	
     fex_t * fex;
     fex_err_t error = fex_open( &fex, [[url path] UTF8String] );
@@ -67,6 +74,8 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
     }
     
     fex_close( fex );
+    
+    [sandboxBroker endFolderAccess:url];
 	
 	return files;
 }

@@ -18,6 +18,8 @@
 #import <taglib/mpeg/id3v2/id3v2tag.h>
 #import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 
+#import "SandboxBroker.h"
+
 @implementation TagLibMetadataReader
 
 + (NSDictionary *)metadataForURL:(NSURL *)url
@@ -27,7 +29,13 @@
 	}
 	
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-	
+
+    // Open sandbox access, may already be granted
+    id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+    id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+    [sandboxBroker beginFolderAccess:url];
+
 //	if ( !*TagLib::ascii_encoding ) {
 //		NSStringEncoding enc = [NSString defaultCStringEncoding];
 //		CFStringEncoding cfenc = CFStringConvertNSStringEncodingToEncoding(enc);
@@ -164,7 +172,6 @@
 
         if (nil == image) {
 			// Try to load image from external file
-
 			NSString *path = [[url path] stringByDeletingLastPathComponent];
 
 				// Gather list of candidate image files
@@ -185,6 +192,8 @@
 			[dict setObject:image forKey:@"albumArt"];
 		}
 	}
+    
+    [sandboxBroker endFolderAccess:url];
 
 	return dict;
 }
@@ -202,7 +211,7 @@
 
 + (NSArray *)coverNames
 {
-	return [NSArray arrayWithObjects:@"cover", @"folder", @"album", @"front", nil];
+	return [NSArray arrayWithObjects:@"cover", @"folder", @"album", @"albumart", @"front", nil];
 }
 
 + (NSArray *)fileTypes

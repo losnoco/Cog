@@ -17,6 +17,8 @@
 #import "StatusImageTransformer.h"
 #import "ToggleQueueTitleTransformer.h"
 
+#import "SandboxBroker.h"
+
 #import "Logging.h"
 
 #define UNDO_STACK_LIMIT 0
@@ -264,7 +266,7 @@
         NSArray *entries = [playlistLoader insertURLs:acceptedURLs atIndex:row sort:YES];
         [self didInsertURLs:entries origin:URLOriginInternal];
     }
-
+    
     if ([self shuffle] != ShuffleOff) [self resetShuffleList];
 
     return YES;
@@ -347,9 +349,12 @@
     DLog(@"Removing indexes: %@", indexes);
     DLog(@"Current index: %i", currentEntry.index);
 
+    SandboxBroker * sandboxBroker = [SandboxBroker sharedSandboxBroker];
+    
     NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
     for (PlaylistEntry *pe in objects) {
         [unarrangedIndexes addIndex:[pe index]];
+        [sandboxBroker removeBookmarkForURL:[pe URL]];
     }
 
     if (currentEntry.index >= 0 && [unarrangedIndexes containsIndex:currentEntry.index]) {
@@ -963,6 +968,12 @@
 
     if (shouldClear) {
         [self clear:self];
+    }
+    
+    SandboxBroker * sandboxBroker = [SandboxBroker sharedSandboxBroker];
+    
+    for (NSURL * url in urls) {
+        [sandboxBroker addBookmarkToDictionary:url];
     }
 }
 

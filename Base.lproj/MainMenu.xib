@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18121" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18121"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,7 +18,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <rect key="contentRect" x="331" y="367" width="1000" height="400"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <value key="minSize" type="size" width="750" height="200"/>
             <stackView key="contentView" distribution="equalSpacing" orientation="vertical" alignment="centerX" spacing="0.0" detachesHiddenViews="YES" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="1000" height="400"/>
@@ -565,7 +565,7 @@
         <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" toolbarStyle="unified" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <rect key="contentRect" x="192" y="547" width="640" height="0.0"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
                 <rect key="frame" x="0.0" y="0.0" width="640" height="0.0"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1435,7 +1435,6 @@ Gw
                 <string>status</string>
                 <mutableString>queued</mutableString>
             </declaredKeys>
-            <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
                 <outlet property="playbackController" destination="705" id="2121"/>
                 <outlet property="playlistLoader" destination="1319" id="1321"/>
@@ -1755,7 +1754,6 @@ Gw
                 <mutableString>title</mutableString>
                 <mutableString>artist</mutableString>
             </declaredKeys>
-            <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
                 <binding destination="218" name="contentObject" keyPath="currentEntry" id="1902"/>
             </connections>
@@ -1767,7 +1765,6 @@ Gw
                 <string>artist</string>
                 <string>album</string>
             </declaredKeys>
-            <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
                 <binding destination="218" name="contentArray" keyPath="arrangedObjects" id="2039"/>
                 <binding destination="218" name="selectionIndexes" keyPath="selectionIndexes" id="2041"/>

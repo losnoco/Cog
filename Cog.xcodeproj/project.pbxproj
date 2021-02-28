@@ -153,6 +153,7 @@
 		83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 178456C00F6320B5007E8021 /* SpotlightPanel.xib */; };
 		83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B1DA0F6330D400694C57 /* Feedback.xib */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83CAEB9125EB3EE100D6ACCC /* SandboxBroker.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CAEB9025EB3EE100D6ACCC /* SandboxBroker.m */; };
 		83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D0380E24A40DF2004CF90F /* CogAssets.xcassets */; };
 		83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */; };
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
@@ -899,6 +900,8 @@
 		83BC5AD820E4D0D900631CD4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SpotlightPanel.strings; sourceTree = "<group>"; };
 		83BC5ADA20E4D0E900631CD4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Feedback.strings; sourceTree = "<group>"; };
 		83BC5ADC20E4D0EC00631CD4 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Feedback.strings; sourceTree = "<group>"; };
+		83CAEB8D25EB3E8B00D6ACCC /* SandboxBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxBroker.h; sourceTree = "<group>"; };
+		83CAEB9025EB3EE100D6ACCC /* SandboxBroker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SandboxBroker.m; sourceTree = "<group>"; };
 		83D0380E24A40DF2004CF90F /* CogAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = CogAssets.xcassets; sourceTree = "<group>"; };
 		83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AdPlug.xcodeproj; path = Plugins/AdPlug/AdPlug.xcodeproj; sourceTree = "<group>"; };
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
@@ -1078,6 +1081,8 @@
 				17FAEBAB0F662985007C8707 /* ToolTipTextField.m */,
 				8355D6B4180612F300D05687 /* NSData+MD5.h */,
 				8355D6B5180612F300D05687 /* NSData+MD5.m */,
+				83CAEB8D25EB3E8B00D6ACCC /* SandboxBroker.h */,
+				83CAEB9025EB3EE100D6ACCC /* SandboxBroker.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1735,7 +1740,7 @@
 				LastUpgradeCheck = 1100;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
-						DevelopmentTeam = RXH4D9SUXM;
+						DevelopmentTeam = 4S876G9VCD;
 						LastSwiftMigration = 1220;
 						ProvisioningStyle = Automatic;
 					};
@@ -2242,6 +2247,7 @@
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
 				836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */,
 				17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */,
+				83CAEB9125EB3EE100D6ACCC /* SandboxBroker.m in Sources */,
 				17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */,
 				17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */,
 				17E0D6160F520F87005B6FED /* FontSizetoLineHeightTransformer.m in Sources */,

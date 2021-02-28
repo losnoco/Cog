@@ -15,6 +15,8 @@
 #import "PathNode.h"
 #import <CogAudio/Status.h>
 
+#import "SandboxBroker.h"
+
 #import "Logging.h"
 #import "MiniModeMenuTitleTransformer.h"
 #import "DualWindow.h"
@@ -72,13 +74,15 @@ void* kAppControllerContext = &kAppControllerContext;
     [p setResolvesAliases:YES];
 	
 	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
+        [p close];
+        [NSApp stopModal];
         if ( result == NSModalResponseOK ) {
             [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
             [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
-        } else {
-            [p close];
         }
     }];
+    
+    [NSApp runModalForWindow:[NSApp mainWindow]];
 }
 
 - (IBAction)savePlaylist:(id)sender
@@ -143,6 +147,12 @@ void* kAppControllerContext = &kAppControllerContext;
 	[self registerHotKeys];
 	
     (void) [spotlightWindowController init];
+    
+    SandboxBroker * sandboxBroker = [SandboxBroker sharedSandboxBroker];
+    if (!sandboxBroker)
+    {
+        ALog("sandbox init failed");
+    }
 	
 	[[playlistController undoManager] disableUndoRegistration];
 	NSString *basePath = [@"~/Library/Application Support/Cog/" stringByExpandingTildeInPath];
@@ -355,6 +365,9 @@ void* kAppControllerContext = &kAppControllerContext;
     
     NSError *error;
     [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+    
+    DLog(@"Saving bookmarks for sandbox access");
+    [[SandboxBroker sharedSandboxBroker] shutdown];
 
     DLog(@"Saving expanded nodes: %@", [expandedNodes description]);
 
@@ -387,10 +400,11 @@ void* kAppControllerContext = &kAppControllerContext;
 {
 	//Need to convert to urls
 	NSMutableArray *urls = [NSMutableArray array];
-	
+    
 	for (NSString *filename in filenames)
 	{
-		[urls addObject:[NSURL fileURLWithPath:filename]];
+        NSURL * fileUrl = [NSURL fileURLWithPath:filename];
+		[urls addObject:fileUrl];
 	}
 	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
 	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginExternal];
