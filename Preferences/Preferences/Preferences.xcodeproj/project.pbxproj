@@ -18,6 +18,7 @@
 		17E41DB80C130AA500AC744D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 17E41DB70C130AA500AC744D /* Localizable.strings */; };
 		17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 17E78A7D0D68BE3C005C5A59 /* file_tree.png */; };
 		17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E78B680D68C1E3005C5A59 /* Preferences.xib */; };
+		836C314125EC8A7000692622 /* MASShortcut.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = ED69CBAE25BE32500090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8372053718E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */; };
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
@@ -42,7 +43,6 @@
 		8E15A86C0B894768006DC802 /* updates.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E15A86B0B894768006DC802 /* updates.png */; };
 		8E6C123A0AACAEF200819171 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6C12390AACAEF200819171 /* Carbon.framework */; };
 		99F1813F0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 99F1813E0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m */; };
-		ED69CBC425BE329D0090B90D /* MASShortcut.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = ED69CBAE25BE32500090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,7 +83,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				ED69CBC425BE329D0090B90D /* MASShortcut.framework in CopyFiles */,
+				836C314125EC8A7000692622 /* MASShortcut.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,7 +376,7 @@
 				LastUpgradeCheck = 1230;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
-						DevelopmentTeam = RXH4D9SUXM;
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
