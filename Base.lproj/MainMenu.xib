@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18121" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18121"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -693,7 +693,7 @@
                             <action selector="toggleMiniMode:" target="226" id="2531"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" sizingBehavior="auto" navigational="YES" id="2429">
+                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" visibilityPriority="15" sizingBehavior="auto" navigational="YES" id="2429">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2430">
                             <rect key="frame" x="26" y="14" width="28" height="23"/>
@@ -1375,8 +1375,8 @@ Gw
                             </menuItem>
                             <menuItem title="Show Mini Player On Top" keyEquivalent="T" id="lXN-EZ-xg0" userLabel="Show Mini Player On Top">
                                 <connections>
-                                    <binding destination="226" name="enabled" keyPath="miniMode" id="ftj-Rc-nqc"/>
                                     <binding destination="226" name="value" keyPath="floatingMiniWindow" id="6rr-FP-Fw2"/>
+                                    <binding destination="226" name="enabled" keyPath="miniMode" id="ftj-Rc-nqc"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="1642">
