@@ -97,4 +97,6 @@
 
 @property BOOL miniMode;
 
+@property (nonatomic) BOOL floatingMiniWindow;
+
 @end

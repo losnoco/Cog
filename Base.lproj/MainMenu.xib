@@ -1373,6 +1373,12 @@ Gw
                                     </binding>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Show Mini Player On Top" keyEquivalent="T" id="lXN-EZ-xg0" userLabel="Show Mini Player On Top">
+                                <connections>
+                                    <binding destination="226" name="enabled" keyPath="miniMode" id="ftj-Rc-nqc"/>
+                                    <binding destination="226" name="value" keyPath="floatingMiniWindow" id="6rr-FP-Fw2"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1642">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

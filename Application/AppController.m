@@ -177,6 +177,9 @@ void* kAppControllerContext = &kAppControllerContext;
 
     [self setToolbarStyle:[[NSUserDefaults standardUserDefaults] boolForKey:@"toolbarStyleFull"]];
 
+    [self setFloatingMiniWindow:[[NSUserDefaults standardUserDefaults]
+                                    boolForKey:@"floatingMiniWindow"]];
+
     // We need file tree view to restore its state here
     // so attempt to access file tree view controller's root view
     // to force it to read nib and create file tree view for us
@@ -604,6 +607,13 @@ void* kAppControllerContext = &kAppControllerContext;
 
     // Fix empty area after changing toolbar style in mini window as it has no content view
     [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 0)];
+}
+
+- (void)setFloatingMiniWindow:(BOOL)floatingMiniWindow {
+    _floatingMiniWindow = floatingMiniWindow;
+    [[NSUserDefaults standardUserDefaults] setBool:floatingMiniWindow forKey:@"floatingMiniWindow"];
+    NSWindowLevel level = floatingMiniWindow ? NSFloatingWindowLevel : NSNormalWindowLevel;
+    [miniWindow setLevel:level];
 }
 
 @end
