@@ -1,6 +1,6 @@
 /* vim: set et ts=3 sw=3 sts=3 ft=c:
  *
- * Copyright (C) 2016 Christopher Snowhill.  All rights reserved.
+ * Copyright (C) 2021 Christopher Snowhill.  All rights reserved.
  * https://github.com/kode54/sflist
  *
  * Redistribution and use in source and binary forms, with or without
