@@ -1051,7 +1051,7 @@ static int parse_values(ubi_bao_header* bao, STREAMFILE* sf) {
     }
     bao->codec = bao->cfg.codec_map[bao->stream_type];
     if (bao->codec == 0x00) {
-        VGM_LOG("UBI BAO: unknown codec at %x\n", (uint32_t)bao->header_offset); goto fail;
+        VGM_LOG("UBI BAO: unknown codec %x at %x\n", bao->stream_type, (uint32_t)bao->header_offset); goto fail;
         goto fail;
     }
 
@@ -1327,6 +1327,27 @@ fail:
 
 /* ************************************************************************* */
 
+/* These are all of the languages that were referenced in Assassin's Creed exe (out of each platform). */
+/* Also, additional languages were referenced in Shawn White Skateboarding (X360) exe in this order, there may be more. */
+static const char* language_bao_formats[] = {
+    "English_BAO_0x%08x",
+    "French_BAO_0x%08x",
+    "Spanish_BAO_0x%08x",
+    "Polish_BAO_0x%08x",
+    "German_BAO_0x%08x",
+    "Chinese_BAO_0x%08x",
+    "Hungarian_BAO_0x%08x",
+    "Italian_BAO_0x%08x",
+    "Japanese_BAO_0x%08x",
+    "Czech_BAO_0x%08x",
+    "Korean_BAO_0x%08x",
+    "Russian_BAO_0x%08x",
+    "Dutch_BAO_0x%08x",
+    "Danish_BAO_0x%08x",
+    "Norwegian_BAO_0x%08x",
+    "Swedish_BAO_0x%08x",
+};
+
 /* opens a file BAO's companion BAO (memory or stream) */
 static STREAMFILE* open_atomic_bao(ubi_bao_file file_type, uint32_t file_id, int is_stream, STREAMFILE* sf) {
     STREAMFILE* sf_bao = NULL;
@@ -1349,47 +1370,17 @@ static STREAMFILE* open_atomic_bao(ubi_bao_file file_type, uint32_t file_id, int
                 sf_bao = open_streamfile_by_filename(sf, buf);
                 if (sf_bao) return sf_bao;
 
-                snprintf(buf,buf_size, "English_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
+                {
+                    int i;
+                    int count = (sizeof(language_bao_formats) / sizeof(language_bao_formats[0]));
+                    for (i = 0; i < count; i++) {
+                        const char* format = language_bao_formats[i];
 
-                snprintf(buf,buf_size, "French_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "Spanish_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "German_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "Italian_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "Japanese_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "Korean_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "Russian_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "Czech_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                snprintf(buf,buf_size, "Polish_BAO_0x%08x", file_id);
-                sf_bao = open_streamfile_by_filename(sf, buf);
-                if (sf_bao) return sf_bao;
-
-                /* these are all of the languages that were referenced in Assassin's Creed exe (out of each platform), there may be more */
+                        snprintf(buf,buf_size, format, file_id);
+                        sf_bao = open_streamfile_by_filename(sf, buf);
+                        if (sf_bao) return sf_bao;
+                    }
+                }
             }
             else {
                 snprintf(buf,buf_size, "BAO_0x%08x", file_id);
@@ -1746,9 +1737,11 @@ static int config_bao_version(ubi_bao_header* bao, STREAMFILE* sf) {
 
             config_bao_silence_f(bao, 0x1c);
 
+            bao->cfg.codec_map[0x00] = RAW_XMA1;
             bao->cfg.codec_map[0x02] = RAW_PSX;
             bao->cfg.codec_map[0x03] = UBI_IMA;
             bao->cfg.codec_map[0x04] = FMT_OGG;
+            bao->cfg.codec_map[0x05] = RAW_XMA1; /* same but streamed? */
             bao->cfg.codec_map[0x07] = RAW_AT3_105;
 
             bao->cfg.file_type = UBI_FORGE;

@@ -110,8 +110,8 @@ void decode_hevag(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing
 
 
 /* xa_decoder */
-void decode_xa(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
-size_t xa_bytes_to_samples(size_t bytes, int channels, int is_blocked, int is_form2);
+void decode_xa(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_xa8);
+size_t xa_bytes_to_samples(size_t bytes, int channels, int is_blocked, int is_form2, int bps);
 
 
 /* ea_xa_decoder */
@@ -315,6 +315,16 @@ int test_hca_key(hca_codec_data* data, unsigned long long keycode);
 void hca_set_encryption_key(hca_codec_data* data, uint64_t keycode);
 clHCA_stInfo* hca_get_info(hca_codec_data* data);
 STREAMFILE* hca_get_streamfile(hca_codec_data* data);
+
+
+/* tac_decoder */
+typedef struct tac_codec_data tac_codec_data;
+
+tac_codec_data* init_tac(STREAMFILE* sf);
+void decode_tac(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t samples_to_do);
+void reset_tac(tac_codec_data* data);
+void seek_tac(tac_codec_data* data, int32_t num_sample);
+void free_tac(tac_codec_data* data);
 
 
 #ifdef VGM_USE_VORBIS
