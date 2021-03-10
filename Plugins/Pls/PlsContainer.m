@@ -95,6 +95,16 @@
         filecontents[size] = '\0';
     }
     
+    // Handle macOS Classic and Windows line endings
+    {
+        char * contentsscan = filecontents;
+        while (*contentsscan) {
+            if (*contentsscan == '\r')
+                *contentsscan = '\n';
+            ++contentsscan;
+        }
+    }
+    
     DLog(@"Trying UTF8");
 	NSStringEncoding encoding = NSUTF8StringEncoding;
     NSString *contents = [NSString stringWithCString:filecontents encoding:encoding];
