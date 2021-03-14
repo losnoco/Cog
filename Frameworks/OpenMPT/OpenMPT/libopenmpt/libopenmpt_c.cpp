@@ -1734,12 +1734,12 @@ int openmpt_module_ext_get_interface( openmpt_module_ext * mod_ext, const char *
 		openmpt::interface::check_pointer( interface );
 		std::memset( interface, 0, interface_size );
 		int result = 0;
-		if ( !strcmp( interface_id, "" ) ) {
+		if ( !std::strcmp( interface_id, "" ) ) {
 			result = 0;
 
 
 
-		} else if ( !strcmp( interface_id, LIBOPENMPT_EXT_C_INTERFACE_PATTERN_VIS ) && ( interface_size == sizeof( openmpt_module_ext_interface_pattern_vis ) ) ) {
+		} else if ( !std::strcmp( interface_id, LIBOPENMPT_EXT_C_INTERFACE_PATTERN_VIS ) && ( interface_size == sizeof( openmpt_module_ext_interface_pattern_vis ) ) ) {
 			openmpt_module_ext_interface_pattern_vis * i = static_cast< openmpt_module_ext_interface_pattern_vis * >( interface );
 			i->get_pattern_row_channel_volume_effect_type = &get_pattern_row_channel_volume_effect_type;
 			i->get_pattern_row_channel_effect_type = &get_pattern_row_channel_effect_type;
@@ -1747,7 +1747,7 @@ int openmpt_module_ext_get_interface( openmpt_module_ext * mod_ext, const char *
 
 
 
-		} else if ( !strcmp( interface_id, LIBOPENMPT_EXT_C_INTERFACE_INTERACTIVE ) && ( interface_size == sizeof( openmpt_module_ext_interface_interactive ) ) ) {
+		} else if ( !std::strcmp( interface_id, LIBOPENMPT_EXT_C_INTERFACE_INTERACTIVE ) && ( interface_size == sizeof( openmpt_module_ext_interface_interactive ) ) ) {
 			openmpt_module_ext_interface_interactive * i = static_cast< openmpt_module_ext_interface_interactive * >( interface );
 			i->set_current_speed = &set_current_speed;
 			i->set_current_tempo = &set_current_tempo;

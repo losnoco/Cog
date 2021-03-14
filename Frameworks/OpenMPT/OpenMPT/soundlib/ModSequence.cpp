@@ -180,18 +180,19 @@ void ModSequence::assign(ORDERINDEX newSize, PATTERNINDEX pat)
 
 ORDERINDEX ModSequence::insert(ORDERINDEX pos, ORDERINDEX count, PATTERNINDEX fill)
 {
-	if (pos >= m_sndFile.GetModSpecifications().ordersMax || count == 0)
+	const auto ordersMax = m_sndFile.GetModSpecifications().ordersMax;
+	if(pos >= ordersMax || GetLengthTailTrimmed() >= ordersMax || count == 0)
 		return 0;
 	// Limit number of orders to be inserted so that we don't exceed the format limit.
-	LimitMax(count, ORDERINDEX(m_sndFile.GetModSpecifications().ordersMax - pos));
-	reserve(pos + count);
+	LimitMax(count, static_cast<ORDERINDEX>(ordersMax - pos));
+	reserve(std::max(pos, GetLength()) + count);
 	// Inserting past the end of the container?
 	if(pos > size())
 		resize(pos);
 	std::vector<PATTERNINDEX>::insert(begin() + pos, count, fill);
 	// Did we overgrow? Remove patterns at end.
-	if(size() > m_sndFile.GetModSpecifications().ordersMax)
-		resize(m_sndFile.GetModSpecifications().ordersMax);
+	if(size() > ordersMax)
+		resize(ordersMax);
 	return count;
 }
 

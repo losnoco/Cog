@@ -276,7 +276,7 @@ void LFOPlugin::HardAllNotesOff()
 }
 
 
-bool LFOPlugin::IsNotePlaying(uint32 note, CHANNELINDEX trackerChn)
+bool LFOPlugin::IsNotePlaying(uint8 note, CHANNELINDEX trackerChn)
 {
 	if(IMixPlugin *plugin = GetOutputPlugin())
 		return plugin->IsNotePlaying(note, trackerChn);

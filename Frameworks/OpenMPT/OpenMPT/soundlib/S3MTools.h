@@ -134,7 +134,7 @@ struct S3MSampleHeader
 	char     magic[4];        // "SCRS" magic bytes ("SCRI" for Adlib instruments)
 
 	// Convert an S3M sample header to OpenMPT's internal sample header.
-	void ConvertToMPT(ModSample &mptSmp) const;
+	void ConvertToMPT(ModSample &mptSmp, bool isST3 = false) const;
 	// Convert OpenMPT's internal sample header to an S3M sample header.
 	SmpLength ConvertToS3M(const ModSample &mptSmp);
 	// Retrieve the internal sample format flags for this sample.

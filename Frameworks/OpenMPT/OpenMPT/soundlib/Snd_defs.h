@@ -512,7 +512,7 @@ enum PlayBehaviour
 	kFT2NoteOffFlags,               // Set and reset the correct fade/key-off flags with note-off and instrument number after note-off
 	kITMultiSampleInstrumentNumber, // After portamento to different sample within multi-sampled instrument, lone instrument numbers in patterns always recall the new sample's default settings
 	kRowDelayWithNoteDelay,         // Retrigger note delays on every reptition of a row
-	kFT2TremoloRampWaveform,        // FT2-compatible tremolo ramp down / triangle waveform
+	kFT2MODTremoloRampWaveform,     // FT2-/ProTracker-compatible tremolo ramp down / triangle waveform
 	kFT2PortaUpDownMemory,          // Portamento up and down have separate memory
 
 	kMODOutOfRangeNoteDelay,        // ProTracker behaviour for out-of-range note delays

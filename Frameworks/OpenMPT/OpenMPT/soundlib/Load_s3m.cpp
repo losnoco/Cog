@@ -84,6 +84,7 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 	case CMD_TONEPORTAVOL:    command = 'L'; break;
 	case CMD_CHANNELVOLUME:   command = 'M'; break;
 	case CMD_CHANNELVOLSLIDE: command = 'N'; break;
+	case CMD_OFFSETPERCENTAGE:
 	case CMD_OFFSET:          command = 'O'; break;
 	case CMD_PANNINGSLIDE:    command = 'P'; break;
 	case CMD_RETRIG:          command = 'Q'; break;
@@ -465,7 +466,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 
-		sampleHeader.ConvertToMPT(Samples[smp + 1]);
+		sampleHeader.ConvertToMPT(Samples[smp + 1], isST3);
 		m_szNames[smp + 1] = mpt::String::ReadBuf(mpt::String::nullTerminated, sampleHeader.name);
 
 		if(sampleHeader.sampleType < S3MSampleHeader::typeAdMel)
@@ -527,7 +528,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			CHANNELINDEX channel = (info & s3mChannelMask);
-			ModCommand dummy = ModCommand::Empty();
+			ModCommand dummy;
 			ModCommand &m = (channel < GetNumChannels()) ? rowBase[channel] : dummy;
 
 			if(info & s3mNotePresent)
@@ -577,12 +578,9 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 					} else
 					{
 						if(m.param < 0x08)
-						{
 							zxxCountLeft++;
-						} else if(m.param > 0x08)
-						{
+						else if(m.param > 0x08)
 							zxxCountRight++;
-						}
 					}
 				}
 			}

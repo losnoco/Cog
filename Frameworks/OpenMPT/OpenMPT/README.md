@@ -170,36 +170,24 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
      -  emscripten (on Unix-like systems):
 
-        libopenmpt has been tested and verified to work with emscripten 1.38.5
-        or later. Earlier versions are not supported.
-
         Run:
 
-            # generates WebAssembly with dynamic heap growth
+            # generates WebAssembly with JavaScript fallback
+            make CONFIG=emscripten EMSCRIPTEN_TARGET=all
+
+        or
+
+            # generates WebAssembly
             make CONFIG=emscripten EMSCRIPTEN_TARGET=wasm
 
         or
 
-            # generates asm.js with a fixed size 128MB heap
-            make CONFIG=emscripten EMSCRIPTEN_TARGET=asmjs128m
-
-        or
-
-            # generates asm.js with a fixed default size heap (as of Emscripten
-            # 1.38.11, this amounts to 16MB)
-            make CONFIG=emscripten EMSCRIPTEN_TARGET=asmjs
-
-        or
-
-            # generates JavaScript with dynamic heap growth and with
-            # compatibility for older VMs
+            # generates JavaScript with compatibility for older VMs
             make CONFIG=emscripten EMSCRIPTEN_TARGET=js
 
         Running the test suite on the command line is also supported by using
-        node.js. Version 8.9.1 or greater has been tested. Earlier versions
-        might or might not work. Depending on how your distribution calls the
-        `node.js` binary, you might have to edit
-        `build/make/config-emscripten.mk`.
+        node.js. Depending on how your distribution calls the `node.js` binary,
+        you might have to edit `build/make/config-emscripten.mk`.
 
      -  DJGPP / DOS
 
@@ -229,7 +217,7 @@ For detailed requirements, see `libopenmpt/dox/quickstart.md`.
 
      -  other compilers:
 
-        To compile libopenmpt with other C++14 compliant compilers, run:
+        To compile libopenmpt with other C++17 compliant compilers, run:
         
             make CONFIG=generic
         

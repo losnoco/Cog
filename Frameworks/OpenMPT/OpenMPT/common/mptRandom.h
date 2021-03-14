@@ -449,8 +449,10 @@ class sane_random_device
 private:
 	mpt::mutex m;
 	std::string token;
+#if !defined(MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE)
 	std::unique_ptr<std::random_device> prd;
 	bool rd_reliable;
+#endif // !MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE
 	std::unique_ptr<std::mt19937> rd_fallback;
 public:
 	typedef unsigned int result_type;

@@ -903,12 +903,9 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 	// Text
 
 	// Read composer name
-	uint8 composerLength = file.ReadUint8();
-	if(composerLength)
+	if(std::string composer; file.ReadSizedString<uint8le, mpt::String::spacePadded>(composer))
 	{
-		std::string str;
-		file.ReadString<mpt::String::spacePadded>(str, composerLength);
-		m_songArtist = mpt::ToUnicode(mpt::Charset::CP437AMS2, str);
+		m_songArtist = mpt::ToUnicode(mpt::Charset::CP437AMS2, composer);
 	}
 
 	// Channel names
@@ -926,11 +923,13 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 	}
 	if(descriptionHeader.packedLen > sizeof(descriptionHeader) && file.CanRead(descriptionHeader.packedLen - sizeof(descriptionHeader)))
 	{
-		const size_t textLength = descriptionHeader.packedLen - sizeof(descriptionHeader);
+		const uint32 textLength = descriptionHeader.packedLen - static_cast<uint32>(sizeof(descriptionHeader));
 		std::vector<uint8> textIn;
 		file.ReadVector(textIn, textLength);
+		// In the best case, every byte triplet can decode to 255 bytes, which is a ratio of exactly 1:85
+		const uint32 maxLength = std::min(textLength, Util::MaxValueOfType(textLength) / 85u) * 85u;
 		std::string textOut;
-		textOut.reserve(descriptionHeader.unpackedLen);
+		textOut.reserve(std::min(maxLength, descriptionHeader.unpackedLen.get()));
 
 		size_t readLen = 0;
 		while(readLen < textLength)

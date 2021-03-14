@@ -91,7 +91,7 @@ public:
 	void MidiVibrato(int32 depth, int8 pwd, CHANNELINDEX trackChannel) override;
 	void MidiCommand(const ModInstrument &instr, uint16 note, uint16 vol, CHANNELINDEX trackChannel) override;
 	void HardAllNotesOff() override;
-	bool IsNotePlaying(uint32 note, CHANNELINDEX trackerChn) override;
+	bool IsNotePlaying(uint8 note, CHANNELINDEX trackerChn) override;
 
 	int32 GetNumPrograms() const override { return 0; }
 	int32 GetCurrentProgram() override { return 0; }

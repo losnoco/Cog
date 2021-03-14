@@ -890,11 +890,19 @@ public:
 
 class textout_ostream_console : public textout {
 private:
+#if defined(UNICODE)
 	std::wostream & s;
+#else
+	std::ostream & s;
+#endif
 	HANDLE handle;
 	bool console;
 public:
+#if defined(UNICODE)
 	textout_ostream_console( std::wostream & s_, DWORD stdHandle_ )
+#else
+	textout_ostream_console( std::ostream & s_, DWORD stdHandle_ )
+#endif
 		: s(s_)
 		, handle(GetStdHandle( stdHandle_ ))
 		, console(IsConsole( stdHandle_ ))

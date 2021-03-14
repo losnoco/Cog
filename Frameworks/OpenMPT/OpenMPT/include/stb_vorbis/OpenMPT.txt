@@ -7,6 +7,7 @@ Modifications:
     fails to compile.
  *  Macro redefinition of alloca with mingw-w64 has been fixed.
  *  Macro redefinition of STB_VORBIS_NO_STDIO has been fixed.
+ *  Bugfix https://github.com/nothings/stb/pull/1064 has been applied.
 Modifications are always additions and have been marked with // OpenMPT.
 
 For building, premake is used to generate Visual Studio project files.

@@ -114,12 +114,12 @@ size_t CopyStereoSplitSample(ModSample &sample, const Tbyte *sourceBuffer, size_
 template <typename SampleConversion, typename Tbyte>
 size_t CopyAndNormalizeSample(ModSample &sample, const Tbyte *sourceBuffer, size_t sourceSize, typename SampleConversion::peak_t *srcPeak = nullptr, SampleConversion conv = SampleConversion())
 {
-	const size_t inSize = sizeof(typename SampleConversion::input_t);
+	const size_t sampleSize = SampleConversion::input_inc;
 
 	MPT_ASSERT(sample.GetElementarySampleSize() == sizeof(typename SampleConversion::output_t));
 
 	size_t numSamples = sample.nLength * sample.GetNumChannels();
-	LimitMax(numSamples, sourceSize / inSize);
+	LimitMax(numSamples, sourceSize / sampleSize);
 
 	const std::byte * inBuf = mpt::byte_cast<const std::byte*>(sourceBuffer);
 	// Finding max value
@@ -150,7 +150,7 @@ size_t CopyAndNormalizeSample(ModSample &sample, const Tbyte *sourceBuffer, size
 		*srcPeak = sampleConv.GetSrcPeak();
 	}
 
-	return numSamples * inSize;
+	return numSamples * sampleSize;
 }
 
 

@@ -750,7 +750,7 @@ public:
 	/*!
 	  \param samplerate Sample rate to render output. Should be in [8000,192000], but this is not enforced.
 	  \param count Number of audio frames to render per channel.
-	  \param interleaved_quad Pointer to a buffer of at least count*4 elements that receives the interleaved suad surround output in the order (L,R,RL,RR).
+	  \param interleaved_quad Pointer to a buffer of at least count*4 elements that receives the interleaved quad surround output in the order (L,R,RL,RR).
 	  \return The number of frames actually rendered.
 	  \retval 0 The end of song has been reached.
 	  \remarks The output buffers are only written to up to the returned number of elements.
@@ -776,7 +776,7 @@ public:
 	/*!
 	  \param samplerate Sample rate to render output. Should be in [8000,192000], but this is not enforced.
 	  \param count Number of audio frames to render per channel.
-	  \param interleaved_quad Pointer to a buffer of at least count*4 elements that receives the interleaved suad surround output in the order (L,R,RL,RR).
+	  \param interleaved_quad Pointer to a buffer of at least count*4 elements that receives the interleaved quad surround output in the order (L,R,RL,RR).
 	  \return The number of frames actually rendered.
 	  \retval 0 The end of song has been reached.
 	  \remarks The output buffers are only written to up to the returned number of elements.
@@ -1119,7 +1119,7 @@ public:
 	  \param value The value that should be set.
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception in case the value is not sensible (e.g. negative tempo factor) or under the circumstances outlined in openmpt::module::get_ctls.
 	  \sa openmpt::module::get_ctls
-	  \deprecated Please use openmpt::module::ctl_set_bool(), openmpt::module::ctl_set_int(), openmpt::module::ctl_set_float(), or openmpt::module::ctl_set_string().
+	  \deprecated Please use openmpt::module::ctl_set_bool(), openmpt::module::ctl_set_int(), openmpt::module::ctl_set_floatingpoint(), or openmpt::module::ctl_set_string().
 	*/
 	LIBOPENMPT_ATTR_DEPRECATED void ctl_set( const std::string & ctl, const std::string & value );
 	//! Set ctl boolean value

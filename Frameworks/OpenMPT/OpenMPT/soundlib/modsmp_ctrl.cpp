@@ -187,10 +187,9 @@ static void ConvertStereoToMonoMixImpl(T *pDest, const SmpLength length)
 
 
 template <class T>
-static void ConvertStereoToMonoOneChannelImpl(T *pDest, const SmpLength length)
+static void ConvertStereoToMonoOneChannelImpl(T *pDest, const T *pSource, const SmpLength length)
 {
-	const T *pEnd = pDest + length;
-	for(T *pSource = pDest; pDest != pEnd; pDest++, pSource += 2)
+	for(const T *pEnd = pDest + length; pDest != pEnd; pDest++, pSource += 2)
 	{
 		*pDest = *pSource;
 	}
@@ -218,9 +217,9 @@ bool ConvertToMono(ModSample &smp, CSoundFile &sndFile, StereoToMonoMode convers
 			conversionMode = onlyLeft;
 		}
 		if(smp.GetElementarySampleSize() == 2)
-			ConvertStereoToMonoOneChannelImpl(smp.sample16() + (conversionMode == onlyLeft ? 0 : 1), smp.nLength);
+			ConvertStereoToMonoOneChannelImpl(smp.sample16(), smp.sample16() + (conversionMode == onlyLeft ? 0 : 1), smp.nLength);
 		else if(smp.GetElementarySampleSize() == 1)
-			ConvertStereoToMonoOneChannelImpl(smp.sample8() + (conversionMode == onlyLeft ? 0 : 1), smp.nLength);
+			ConvertStereoToMonoOneChannelImpl(smp.sample8(), smp.sample8() + (conversionMode == onlyLeft ? 0 : 1), smp.nLength);
 		else
 			return false;
 	}
@@ -241,7 +240,70 @@ bool ConvertToMono(ModSample &smp, CSoundFile &sndFile, StereoToMonoMode convers
 
 
 template <class T>
-static void ConvertMonoToStereoImpl(const T * MPT_RESTRICT src, T * MPT_RESTRICT dst, SmpLength length)
+static void SplitStereoImpl(void *destL, void *destR, const T *source, SmpLength length)
+{
+	T *l = static_cast<T *>(destL), *r = static_cast<T*>(destR);
+	while(length--)
+	{
+		*(l++) = source[0];
+		*(r++) = source[1];
+		source += 2;
+	}
+}
+
+
+// Converts a stereo sample into two mono samples. Source sample will not be deleted.
+bool SplitStereo(const ModSample &source, ModSample &left, ModSample &right, CSoundFile &sndFile)
+{
+	if(!source.HasSampleData() || source.GetNumChannels() != 2 || &left == &right)
+		return false;
+	const bool sourceIsLeft = &left == &source, sourceIsRight = &right == &source;
+	if(left.HasSampleData() && !sourceIsLeft)
+		return false;
+	if(right.HasSampleData() && !sourceIsRight)
+		return false;
+
+	void *leftData  = sourceIsLeft ? left.samplev() : ModSample::AllocateSample(source.nLength, source.GetElementarySampleSize());
+	void *rightData = sourceIsRight ? right.samplev() : ModSample::AllocateSample(source.nLength, source.GetElementarySampleSize());
+	if(!leftData || !rightData)
+	{
+		if(!sourceIsLeft)
+			ModSample::FreeSample(leftData);
+		if(!sourceIsRight)
+			ModSample::FreeSample(rightData);
+		return false;
+	}
+
+	if(source.GetElementarySampleSize() == 2)
+		SplitStereoImpl(leftData, rightData, source.sample16(), source.nLength);
+	else if(source.GetElementarySampleSize() == 1)
+		SplitStereoImpl(leftData, rightData, source.sample8(), source.nLength);
+	else
+		MPT_ASSERT_NOTREACHED();
+
+	CriticalSection cs;
+	left = source;
+	left.uFlags.reset(CHN_STEREO);
+	left.pData.pSample = leftData;
+
+	right = source;
+	right.uFlags.reset(CHN_STEREO);
+	right.pData.pSample = rightData;
+
+	for(auto &chn : sndFile.m_PlayState.Chn)
+	{
+		if(chn.pModSample == &left || chn.pModSample == &right)
+			chn.dwFlags.reset(CHN_STEREO);
+	}
+
+	left.PrecomputeLoops(sndFile, false);
+	right.PrecomputeLoops(sndFile, false);
+	return true;
+}
+
+
+template <class T>
+static void ConvertMonoToStereoImpl(const T *MPT_RESTRICT src, T *MPT_RESTRICT dst, SmpLength length)
 {
 	while(length--)
 	{

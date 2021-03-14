@@ -234,12 +234,13 @@ mpt::ustring CTuning::GetNoteName(const NOTEINDEXTYPE &x, bool addOctave) const
 
 void CTuning::SetNoteName(const NOTEINDEXTYPE &n, const mpt::ustring &str)
 {
+	const NOTEINDEXTYPE pos = (GetGroupSize() < 1) ? n : static_cast<NOTEINDEXTYPE>(mpt::wrapping_modulo(n, m_GroupSize));
 	if(!str.empty())
 	{
-		m_NoteNameMap[n] = str;
+		m_NoteNameMap[pos] = str;
 	} else
 	{
-		const auto iter = m_NoteNameMap.find(n);
+		const auto iter = m_NoteNameMap.find(pos);
 		if(iter != m_NoteNameMap.end())
 		{
 			m_NoteNameMap.erase(iter);

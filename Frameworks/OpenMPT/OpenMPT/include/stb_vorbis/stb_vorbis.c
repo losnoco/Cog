@@ -3652,7 +3652,12 @@ static int start_decoder(vorb *f)
    //user comments
    f->comment_list_length = get32_packet(f);
    f->comment_list = (char**)setup_malloc(f, sizeof(char*) * (f->comment_list_length));
+#if 0 // OpenMPT
    if (f->comment_list == NULL)                     return error(f, VORBIS_outofmem);
+#else // OpenMPT
+   // Bugfix from https://github.com/nothings/stb/pull/1064 // OpenMPT
+   if (f->comment_list_length > 0 && f->comment_list == NULL) return error(f, VORBIS_outofmem); // OpenMPT
+#endif // OpenMPT
 
    for(i=0; i < f->comment_list_length; ++i) {
       len = get32_packet(f);

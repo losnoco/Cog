@@ -1698,6 +1698,7 @@ bool CDLSBank::ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nI
 			if (usUnityNote > 0x7F) usUnityNote = 60;
 			int steps = (60 + transpose - usUnityNote) * 128 + sFineTune;
 			sample.Transpose(steps * (1.0 / (12.0 * 128.0)));
+			sample.RelativeTone = 0;
 
 			Limit(lVolume, 16, 256);
 			sample.nGlobalVol = (uint8)(lVolume / 4);	// 0-64

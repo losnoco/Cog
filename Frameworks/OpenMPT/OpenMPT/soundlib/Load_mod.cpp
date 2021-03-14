@@ -1160,6 +1160,10 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		m_SongFlags.set(SONG_ISAMIGA);
 	}
+	if(isGenericMultiChannel || isMdKd)
+	{
+		m_playBehaviour.set(kFT2MODTremoloRampWaveform);
+	}
 	if(isInconexia)
 	{
 		m_playBehaviour.set(kMODIgnorePanning);

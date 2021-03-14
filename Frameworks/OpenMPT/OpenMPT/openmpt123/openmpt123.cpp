@@ -8,7 +8,7 @@
  */
 
 static const char * const license =
-"Copyright (c) 2004-2020, OpenMPT contributors" "\n"
+"Copyright (c) 2004-2021, OpenMPT contributors" "\n"
 "Copyright (c) 1997-2003, Olivier Lapicque" "\n"
 "All rights reserved." "\n"
 "" "\n"
@@ -74,6 +74,7 @@ static const char * const license =
 #include <conio.h>
 #include <fcntl.h>
 #include <io.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <windows.h>
@@ -459,7 +460,7 @@ static std::string seconds_to_string( double time ) {
 
 static void show_info( std::ostream & log, bool verbose ) {
 	log << "openmpt123" << " v" << OPENMPT123_VERSION_STRING << ", libopenmpt " << openmpt::string::get( "library_version" ) << " (" << "OpenMPT " << openmpt::string::get( "core_version" ) << ")" << std::endl;
-	log << "Copyright (c) 2013-2020 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
+	log << "Copyright (c) 2013-2021 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
 	if ( !verbose ) {
 		log << std::endl;
 		return;
@@ -536,7 +537,7 @@ static void show_info( std::ostream & log, bool verbose ) {
 static void show_man_version( textout & log ) {
 	log << "openmpt123" << " v" << OPENMPT123_VERSION_STRING << std::endl;
 	log << std::endl;
-	log << "Copyright (c) 2013-2020 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
+	log << "Copyright (c) 2013-2021 OpenMPT developers <https://lib.openmpt.org/>" << std::endl;
 }
 
 static void show_short_version( textout & log ) {
@@ -2288,8 +2289,13 @@ static int main( int argc, char * argv [] ) {
 #endif
 	textout_dummy dummy_log;
 #if defined(WIN32)
+#if defined(UNICODE)
 	textout_ostream_console std_out( std::wcout, STD_OUTPUT_HANDLE );
 	textout_ostream_console std_err( std::wclog, STD_ERROR_HANDLE );
+#else
+	textout_ostream_console std_out( std::cout, STD_OUTPUT_HANDLE );
+	textout_ostream_console std_err( std::clog, STD_ERROR_HANDLE );
+#endif
 #else
 	textout_ostream std_out( std::cout );
 	textout_ostream std_err( std::clog );

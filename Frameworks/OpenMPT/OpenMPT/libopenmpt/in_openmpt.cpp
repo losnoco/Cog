@@ -210,7 +210,7 @@ static void config( HWND hwndParent ) {
 static void about( HWND hwndParent ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2020 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2021 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;

@@ -565,7 +565,7 @@ void CSoundFile::UpgradeModule()
 		{
 			{ kFT2NoteOffFlags,              MPT_V("1.27.00.27") },
 			{ kRowDelayWithNoteDelay,        MPT_V("1.27.00.37") },
-			{ kFT2TremoloRampWaveform,       MPT_V("1.27.00.37") },
+			{ kFT2MODTremoloRampWaveform,    MPT_V("1.27.00.37") },
 			{ kFT2PortaUpDownMemory,         MPT_V("1.27.00.37") },
 			{ kFT2PanSustainRelease,         MPT_V("1.28.00.09") },
 			{ kFT2NoteDelayWithoutInstr,     MPT_V("1.28.00.44") },
