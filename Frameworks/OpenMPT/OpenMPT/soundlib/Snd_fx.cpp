@@ -243,8 +243,6 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 {
 	std::vector<GetLengthType> results;
 	GetLengthType retval;
-	retval.startOrder = target.startOrder;
-	retval.startRow = target.startRow;
 
 	// Are we trying to reach a certain pattern position?
 	const bool hasSearchTarget = target.mode != GetLengthTarget::NoTarget && target.mode != GetLengthTarget::GetAllSubsongs;
@@ -259,8 +257,18 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 	// Temporary visited rows vector (so that GetLength() won't interfere with the player code if the module is playing at the same time)
 	RowVisitor visitedRows(*this, sequence);
 
-	playState.m_nNextRow = playState.m_nRow = target.startRow;
-	playState.m_nNextOrder = playState.m_nCurrentOrder = target.startOrder;
+	// If sequence starts with some non-existent patterns, find a better start
+	{
+		ORDERINDEX startOrder = target.startOrder;
+		ROWINDEX startRow = target.startRow;
+		if(visitedRows.GetFirstUnvisitedRow(startOrder, startRow, true))
+		{
+			target.startOrder = startOrder;
+			target.startRow = startRow;
+		}
+	}
+	retval.startRow = playState.m_nNextRow = playState.m_nRow = target.startRow;
+	retval.startOrder = playState.m_nNextOrder = playState.m_nCurrentOrder = target.startOrder;
 
 	// Fast LUTs for commands that are too weird / complicated / whatever to emulate in sample position adjust mode.
 	std::bitset<MAX_EFFECTS> forbiddenCommands;
@@ -1317,6 +1325,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 					m_opl->Patch(n, chn.pModSample->adlib);
 					m_opl->NoteCut(n);
 				}
+				chn.pCurrentSample = nullptr;
 			}
 
 #ifndef NO_PLUGINS
@@ -2928,10 +2937,7 @@ bool CSoundFile::ProcessEffects()
 				{
 					CheckNNA(nChn, instr, note, false);
 				}
-			}
 
-			if(note)
-			{
 				if(chn.nRestorePanOnNewNote > 0)
 				{
 					chn.nPan = (chn.nRestorePanOnNewNote & 0x7FFF) - 1;
@@ -4699,7 +4705,14 @@ void CSoundFile::ExtendedS3MCommands(CHANNELINDEX nChn, ModCommand::PARAM param)
 	// S2x: Set FineTune
 	case 0x20:	if(!m_SongFlags[SONG_FIRSTTICK])
 					break;
-				if(GetType() != MOD_TYPE_669)
+				if(GetType() == MOD_TYPE_IMF)
+				{
+					if(chn.nPeriod && chn.pModSample)
+					{
+						chn.nC5Speed = Util::muldivr(chn.pModSample->nC5Speed, 1712, ProTrackerTunedPeriods[param * 12]);
+						chn.nPeriod = GetPeriodFromNote(chn.nNote, 0, chn.nC5Speed);
+					}
+				} else if(GetType() != MOD_TYPE_669)
 				{
 					chn.nC5Speed = S3MFineTuneTable[param];
 					chn.nFineTune = MOD2XMFineTune(param);

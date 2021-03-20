@@ -1108,8 +1108,9 @@ double module_impl::set_position_seconds( double seconds ) {
 	}
 	m_sndFile->SetCurrentOrder( static_cast<ORDERINDEX>( subsong->start_order ) );
 	GetLengthType t = m_sndFile->GetLength( m_ctl_seek_sync_samples ? eAdjustSamplePositions : eAdjust, GetLengthTarget( seconds ).StartPos( static_cast<SEQUENCEINDEX>( subsong->sequence ), static_cast<ORDERINDEX>( subsong->start_order ), static_cast<ROWINDEX>( subsong->start_row ) ) ).back();
-	m_sndFile->m_PlayState.m_nNextOrder = m_sndFile->m_PlayState.m_nCurrentOrder = t.lastOrder;
-	m_sndFile->m_PlayState.m_nNextRow = t.lastRow;
+	m_sndFile->m_PlayState.m_nNextOrder = m_sndFile->m_PlayState.m_nCurrentOrder = t.targetReached ? t.lastOrder : t.endOrder;
+	m_sndFile->m_PlayState.m_nNextRow = t.targetReached ? t.lastRow : t.endRow;
+	m_sndFile->m_PlayState.m_nTickCount = Util::MaxValueOfType(m_sndFile->m_PlayState.m_nTickCount) - 1;
 	m_currentPositionSeconds = base_seconds + t.duration;
 	return m_currentPositionSeconds;
 }

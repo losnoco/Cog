@@ -333,7 +333,9 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 			STPLoopList &loopList = loopInfo[actualSmp - 1];
 			loopList.clear();
 
-			uint16 numLoops = file.ReadUint16BE();
+			const uint16 numLoops = file.ReadUint16BE();
+			if(!file.CanRead(numLoops * 8u))
+				return false;
 			loopList.reserve(numLoops);
 
 			STPLoopInfo loop;

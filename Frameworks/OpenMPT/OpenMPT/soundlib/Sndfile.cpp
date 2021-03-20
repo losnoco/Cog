@@ -455,15 +455,20 @@ bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags)
 				m_songMessage.assign(mpt::ToCharset(mpt::Charset::Locale, unarchiver.GetComment()));
 			}
 #endif
+#ifdef MODPLUG_TRACKER
 		} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
 		{
 			MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+			return false;
+#endif  // MODPLUG_TRACKER
+		} catch(const std::exception &)
+		{
 #ifdef MODPLUG_TRACKER
 			return false;
 #else
 			// libopenmpt already handles this.
 			throw;
-#endif // MODPLUG_TRACKER
+#endif  // MODPLUG_TRACKER
 		}
 	} else
 	{
@@ -961,10 +966,10 @@ void CSoundFile::LoopPattern(PATTERNINDEX nPat, ROWINDEX nRow)
 		m_PlayState.m_nTickCount = m_PlayState.m_nMusicSpeed;
 		m_PlayState.m_nPatternDelay = 0;
 		m_PlayState.m_nFrameDelay = 0;
-		m_PlayState.m_nBufferCount = 0;
 		m_PlayState.m_nNextPatStartRow = 0;
 		m_SongFlags.set(SONG_PATTERNLOOP);
 	}
+	m_PlayState.m_nBufferCount = 0;
 }
 
 

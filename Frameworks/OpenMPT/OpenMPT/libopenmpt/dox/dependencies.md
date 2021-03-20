@@ -24,7 +24,6 @@ Dependencies
         used for building:
          *  `std::numeric_limits<unsigned char>::digits == 8` (enforced by
             static_assert)
-         *  `sizeof(char) == 1` (enforced by static_assert)
          *  existence of `std::uintptr_t` (enforced by static_assert)
          *  in C++20 mode, `std::endian::little != std::endian::big` (enforced
             by static_assert)
@@ -33,8 +32,6 @@ Dependencies
             assumed)
          *  representation of basic source character set is identical in char
             and `wchar_t` (implicitly assumed)
-         *  libopenmpt also has experimental support for platforms without
-            `wchar_t` support like DJGPP
         
         libopenmpt does not rely on any specific implementation defined or
         undefined behaviour (if it does, that's a bug in libopenmpt). In
@@ -43,23 +40,26 @@ Dependencies
          *  shifting signed values is implementation defined
          *  `signed` integer overflow is undefined
          *  `float` and `double` can be non-IEEE754
+        
+        libopenmpt can optionally support for certain incomplete C++
+        implementations:
+         *  platforms without `wchar_t` support (like DJGPP)
+         *  platforms without working `std::random_device` (like Emscripten when
+            running in `AudioWorkletProcessor` context)
+         *  platforms without working `std::high_resolution_clock` (like
+            Emscripten when running in `AudioWorkletProcessor` context)
 
  *  Required compilers to use libopenmpt:
      *  Any **C89** / **C99** / **C11** compatible compiler should work with
         the C API as long as a **C99** compatible **stdint.h** is available.
      *  Any **C++17** compatible compiler should work with the C++ API.
  *  **J2B** support requires an inflate (deflate decompression) implementation:
-     *  **zlib**
-     *  **miniz** can be used internally if no zlib is available.
- *  Built-in **MO3** support requires:
-     *  **libmpg123 >= 1.14.0**
-     *  **libogg**
-     *  **libvorbis**
-     *  **libvorbisfile**
-     *  Instead of libmpg123, **minimp3 by Lion (github.com/lieff)** can be used
-        internally to decode MP3 samples.
-     *  Instead of libogg, libvorbis and libvorbisfile, **stb_vorbis** can be
-        used internally to decode Vorbis samples.
+     *  **zlib** (or **miniz** can be used internally)
+ *  **MO3** support requires:
+     *  **libmpg123 >= 1.14.0** (or **minimp3 by Lion (github.com/lieff)** can
+        be used internally)
+     *  **libogg**, **libvorbis**, and **libvorbisfile** (or **stb_vorbis** can
+        be used internally)
  *  Building on Unix-like systems requires:
      *  **GNU make**
      *  **pkg-config**

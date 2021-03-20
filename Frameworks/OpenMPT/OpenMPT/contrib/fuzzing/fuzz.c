@@ -20,7 +20,7 @@
 #include <libopenmpt/libopenmpt.h>
 #include <libopenmpt/libopenmpt_stream_callbacks_file.h>
 
-#define BUFFERSIZE 512
+#define BUFFERSIZE 450  // shouldn't match OpenMPT's internal mix buffer size (512)
 #define SAMPLERATE 22050
 
 static int16_t buffer[BUFFERSIZE];
@@ -46,6 +46,11 @@ int main( int argc, char * argv[] ) {
 			break;
 		}
 	}
+	openmpt_module_set_position_seconds( mod, 1.0 );
+	openmpt_module_read_mono( mod, SAMPLERATE, BUFFERSIZE, buffer );
+	openmpt_module_set_position_order_row( mod, 3, 16 );
+	openmpt_module_read_mono( mod, SAMPLERATE, BUFFERSIZE, buffer );
+
 	/* fuzz string-related stuff */
 	openmpt_free_string ( openmpt_module_get_metadata( mod, "date" ) );
 	openmpt_free_string ( openmpt_module_get_metadata( mod, "message" ) );

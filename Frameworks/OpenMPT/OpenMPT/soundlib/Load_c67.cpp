@@ -168,6 +168,7 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 	m_nSamples = 64;
 	m_nChannels = 4 + 9;
 	m_playBehaviour.set(kOPLBeatingOscillators);
+	m_SongFlags.set(SONG_IMPORTED);
 
 	// Pan PCM channels only
 	for(CHANNELINDEX chn = 0; chn < 4; chn++)

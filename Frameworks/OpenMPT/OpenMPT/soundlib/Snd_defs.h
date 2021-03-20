@@ -244,26 +244,27 @@ enum DuplicateNoteAction : uint8
 // Module flags - contains both song configuration and playback state... Use SONG_FILE_FLAGS and SONG_PLAY_FLAGS distinguish between the two.
 enum SongFlags
 {
-	SONG_FASTVOLSLIDES = 0x0002,    // Old Scream Tracker 3.0 volume slides
-	SONG_ITOLDEFFECTS  = 0x0004,    // Old Impulse Tracker effect implementations
-	SONG_ITCOMPATGXX   = 0x0008,    // IT "Compatible Gxx" (IT's flag to behave more like other trackers w/r/t portamento effects)
-	SONG_LINEARSLIDES  = 0x0010,    // Linear slides vs. Amiga slides
-	SONG_PATTERNLOOP   = 0x0020,    // Loop current pattern (pattern editor)
-	SONG_STEP          = 0x0040,    // Song is in "step" mode (pattern editor)
-	SONG_PAUSED        = 0x0080,    // Song is paused (no tick processing, just rendering audio)
-	SONG_FADINGSONG    = 0x0100,    // Song is fading out
-	SONG_ENDREACHED    = 0x0200,    // Song is finished
-	SONG_FIRSTTICK     = 0x1000,    // Is set when the current tick is the first tick of the row
-	SONG_MPTFILTERMODE = 0x2000,    // Local filter mode (reset filter on each note)
-	SONG_SURROUNDPAN   = 0x4000,    // Pan in the rear channels
-	SONG_EXFILTERRANGE = 0x8000,    // Cutoff Filter has double frequency range (up to ~10Khz)
-	SONG_AMIGALIMITS   = 0x10000,   // Enforce amiga frequency limits
-	SONG_S3MOLDVIBRATO = 0x20000,   // ScreamTracker 2 vibrato in S3M files
-	SONG_BREAKTOROW    = 0x80000,   // Break to row command encountered (internal flag, do not touch)
-	SONG_POSJUMP       = 0x100000,  // Position jump encountered (internal flag, do not touch)
-	SONG_PT_MODE       = 0x200000,  // ProTracker 1/2 playback mode
-	SONG_PLAYALLSONGS  = 0x400000,  // Play all subsongs consecutively (libopenmpt)
-	SONG_ISAMIGA       = 0x800000,  // Is an Amiga module and thus qualifies to be played using the Paula BLEP resampler
+	SONG_FASTVOLSLIDES =       0x02,  // Old Scream Tracker 3.0 volume slides
+	SONG_ITOLDEFFECTS  =       0x04,  // Old Impulse Tracker effect implementations
+	SONG_ITCOMPATGXX   =       0x08,  // IT "Compatible Gxx" (IT's flag to behave more like other trackers w/r/t portamento effects)
+	SONG_LINEARSLIDES  =       0x10,  // Linear slides vs. Amiga slides
+	SONG_PATTERNLOOP   =       0x20,  // Loop current pattern (pattern editor)
+	SONG_STEP          =       0x40,  // Song is in "step" mode (pattern editor)
+	SONG_PAUSED        =       0x80,  // Song is paused (no tick processing, just rendering audio)
+	SONG_FADINGSONG    =     0x0100,  // Song is fading out
+	SONG_ENDREACHED    =     0x0200,  // Song is finished
+	SONG_FIRSTTICK     =     0x1000,  // Is set when the current tick is the first tick of the row
+	SONG_MPTFILTERMODE =     0x2000,  // Local filter mode (reset filter on each note)
+	SONG_SURROUNDPAN   =     0x4000,  // Pan in the rear channels
+	SONG_EXFILTERRANGE =     0x8000,  // Cutoff Filter has double frequency range (up to ~10Khz)
+	SONG_AMIGALIMITS   =   0x1'0000,  // Enforce amiga frequency limits
+	SONG_S3MOLDVIBRATO =   0x2'0000,  // ScreamTracker 2 vibrato in S3M files
+	SONG_BREAKTOROW    =   0x8'0000,  // Break to row command encountered (internal flag, do not touch)
+	SONG_POSJUMP       =  0x10'0000,  // Position jump encountered (internal flag, do not touch)
+	SONG_PT_MODE       =  0x20'0000,  // ProTracker 1/2 playback mode
+	SONG_PLAYALLSONGS  =  0x40'0000,  // Play all subsongs consecutively (libopenmpt)
+	SONG_ISAMIGA       =  0x80'0000,  // Is an Amiga module and thus qualifies to be played using the Paula BLEP resampler
+	SONG_IMPORTED      = 0x100'0000,  // Song type does not represent actual module format / was imported from a different format (OpenMPT)
 };
 DECLARE_FLAGSET(SongFlags)
 

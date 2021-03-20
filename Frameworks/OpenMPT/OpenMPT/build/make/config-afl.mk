@@ -1,7 +1,7 @@
 
-CC  = contrib/fuzzing/afl/afl-clang-fast
-CXX = contrib/fuzzing/afl/afl-clang-fast++
-LD  = contrib/fuzzing/afl/afl-clang-fast++
+CC  = contrib/fuzzing/afl/afl-clang-lto
+CXX = contrib/fuzzing/afl/afl-clang-lto++
+LD  = contrib/fuzzing/afl/afl-clang-lto++
 AR  = ar 
 
 ifneq ($(STDCXX),)
@@ -14,6 +14,10 @@ endif
 CFLAGS_STDC = -std=c99
 CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)
+
+DYNLINK=0
+SHARED_LIB=0
+STATIC_LIB=1
 
 CPPFLAGS +=
 CXXFLAGS += -fPIC -fno-strict-aliasing

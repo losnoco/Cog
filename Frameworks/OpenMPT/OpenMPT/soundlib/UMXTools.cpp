@@ -146,7 +146,7 @@ std::string ReadUMXNameTableEntry(FileReader &chunk, uint16 packageVersion)
 		{
 			return "";
 		}
-		name.reserve(length);
+		name.reserve(std::min(length, mpt::saturate_cast<int32>(chunk.BytesLeft())));
 	}
 
 	// Simple zero-terminated string
@@ -174,8 +174,9 @@ std::vector<std::string> ReadUMXNameTable(FileReader &file, const UMXFileHeader 
 	{
 		return names;
 	}
-	names.reserve(fileHeader.nameCount);
-	for(uint32 i = 0; i < fileHeader.nameCount && file.CanRead(4); i++)
+	const uint32 nameCount = std::min(fileHeader.nameCount.get(), mpt::saturate_cast<uint32>(file.BytesLeft() / 5u));
+	names.reserve(nameCount);
+	for(uint32 i = 0; i < nameCount && file.CanRead(5); i++)
 	{
 		names.push_back(ReadUMXNameTableEntry(file, fileHeader.packageVersion));
 	}

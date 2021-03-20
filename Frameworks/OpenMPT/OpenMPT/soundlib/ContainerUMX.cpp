@@ -77,8 +77,9 @@ bool UnpackUMX(std::vector<ContainerItem> &containerItems, FileReader &file, Con
 	}
 
 	std::vector<int32> classes;
-	classes.reserve(fileHeader.importCount);
-	for(uint32 i = 0; i < fileHeader.importCount && file.CanRead(4); i++)
+	const uint32 importCount = std::min(fileHeader.importCount.get(), mpt::saturate_cast<uint32>(file.BytesLeft() / 4u));
+	classes.reserve(importCount);
+	for(uint32 i = 0; i < importCount && file.CanRead(4); i++)
 	{
 		int32 objName = ReadUMXImportTableEntry(file, fileHeader.packageVersion);
 		if(static_cast<size_t>(objName) < names.size())

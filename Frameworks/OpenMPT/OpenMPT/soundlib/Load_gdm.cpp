@@ -163,6 +163,7 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(gdmFormatOrigin[fileHeader.originalFormat]);
+	m_SongFlags.set(SONG_IMPORTED);
 
 	m_modFormat.formatName = U_("General Digital Music");
 	m_modFormat.type = U_("gdm");

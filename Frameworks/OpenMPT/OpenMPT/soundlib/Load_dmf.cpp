@@ -934,10 +934,10 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 		file.Read(chunkHeader);
 		uint32 chunkLength = chunkHeader.length, chunkSkip = 0;
 		// When loop start was added to version 3, the chunk size was not updated...
-		if(fileHeader.version == 3 && chunkHeader.GetID() == DMFChunk::idSEQU && chunkLength < uint32_max - 2)
+		if(fileHeader.version == 3 && chunkHeader.GetID() == DMFChunk::idSEQU)
 			chunkSkip = 2;
 		// ...and when the loop end was added to version 4, it was also note updated! Luckily they fixed it in version 5.
-		else if(fileHeader.version == 4 && chunkHeader.GetID() == DMFChunk::idSEQU && chunkLength < uint32_max - 4)
+		else if(fileHeader.version == 4 && chunkHeader.GetID() == DMFChunk::idSEQU)
 			chunkSkip = 4;
 		// Earlier X-Tracker versions also write a garbage length for the SMPD chunk if samples are compressed.
 		// I don't know when exactly this stopped, but I have no version 5-7 files to check (and no X-Tracker version that writes those versions).

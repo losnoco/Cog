@@ -160,6 +160,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		return false;
 	}
+	m_SongFlags.set(SONG_IMPORTED);
 	if(songFlags & ITP_ITOLDEFFECTS)
 		m_SongFlags.set(SONG_ITOLDEFFECTS);
 	if(songFlags & ITP_ITCOMPATGXX)
