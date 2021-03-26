@@ -42,7 +42,10 @@ hca_codec_data* init_hca(STREAMFILE* sf) {
     clHCA_clear(data->handle);
 
     status = clHCA_DecodeHeader(data->handle, header_buffer, header_size); /* parse header */
-    if (status < 0) goto fail;
+    if (status < 0) {
+        VGM_LOG("HCA: unsupported header found, %i\n", status);
+        goto fail;
+    }
 
     status = clHCA_getInfo(data->handle, &data->info); /* extract header info */
     if (status < 0) goto fail;
@@ -117,6 +120,8 @@ void decode_hca(hca_codec_data* data, sample_t* outbuf, int32_t samples_to_do) {
                 break;
             }
 
+            data->current_block++;
+
             /* decode frame */
             status = clHCA_DecodeBlock(data->handle, (void*)(data->data_buffer), blockSize);
             if (status < 0) {
@@ -127,7 +132,6 @@ void decode_hca(hca_codec_data* data, sample_t* outbuf, int32_t samples_to_do) {
             /* extract samples */
             clHCA_ReadSamples16(data->handle, data->sample_buffer);
 
-            data->current_block++;
             data->samples_consumed = 0;
             data->samples_filled += data->info.samplesPerBlock;
         }
@@ -175,6 +179,13 @@ void free_hca(hca_codec_data* data) {
 }
 
 
+/* ************************************************************************* */
+
+/* Test a single HCA key and assign an score for comparison. Multiple keys could potentially result
+ * in "playable" results (mostly silent with random clips), so it also checks the resulting PCM.
+ * Currently wrong keys should be detected during decoding+un-xor test, so this score may not
+ * be needed anymore, but keep around in case CRI breaks those tests in the future. */
+
 /* arbitrary scale to simplify score comparisons */
 #define HCA_KEY_SCORE_SCALE      10
 /* ignores beginning frames (~10 is not uncommon, Dragalia Lost vocal layers have lots) */
@@ -211,7 +222,8 @@ int test_hca_key(hca_codec_data* data, unsigned long long keycode) {
         /* read and test frame */
         bytes = read_streamfile(data->data_buffer, offset, blockSize, data->streamfile);
         if (bytes != blockSize) {
-            total_score = -1;
+            /* normally this shouldn't happen, but pre-fetch ACB stop with frames in half, so just keep score */
+            //total_score = -1; 
             break;
         }
 
