@@ -214,3 +214,10 @@
 /* #  undef WORDS_BIGENDIAN */
 # endif
 #endif
+
+#if defined(__x86_64__) \
+    || defined(_M_X64)
+#define HAVE_MMINTRIN_H 1
+#elif (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
+#define HAVE_ARM_NEON_H 1
+#endif
