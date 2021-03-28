@@ -1238,6 +1238,11 @@ static int usf_info(void * context, const char * name, const char * value)
     }
     else return NO;
     
+    if ( type == 1 || type == 2 ) {
+        void * pIOP = psx_get_iop_state( emulatorCore );
+        iop_set_compat( pIOP, IOP_COMPAT_HARSH );
+    }
+    
     framesRead = 0;
     
     silence_test_buffer.resize( sampleRate * silence_seconds * 2 );
