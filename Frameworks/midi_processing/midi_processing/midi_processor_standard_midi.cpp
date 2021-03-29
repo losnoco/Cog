@@ -7,7 +7,6 @@ bool midi_processor::is_standard_midi( std::vector<uint8_t> const& p_file )
     if ( p_file[ 4 ] != 0 || p_file[ 5 ] != 0 || p_file[ 6 ] != 0 || p_file[ 7 ] != 6 ) return false;
     if ( p_file[ 10 ] == 0 && p_file[ 11 ] == 0 ) return false; // no tracks
     if ( p_file[ 12 ] == 0 && p_file[ 13 ] == 0 ) return false; // dtx == 0, will cause division by zero on tempo calculations
-    if ( p_file[ 14 ] != 'M' || p_file[ 15 ] != 'T' || p_file[ 16 ] != 'r' || p_file[ 17 ] != 'k' ) return false;
     return true;
 }
 
@@ -195,10 +194,16 @@ bool midi_processor::process_standard_midi( std::vector<uint8_t> const& p_file, 
     for ( std::size_t i = 0; i < track_count; ++i )
     {
         if ( end - it < 8 ) return false;
-        if ( it[0] != 'M' || it[1] != 'T' || it[2] != 'r' || it[3] != 'k' ) return false;
+        while ( it[0] != 'M' || it[1] != 'T' || it[2] != 'r' || it[3] != 'k' ) {
+            uint32_t chunk_size = ( it[4] << 24 ) | ( it[5] << 16 ) | ( it[6] << 8 ) | it[7];
+            if ( (unsigned long)(end - it) < 8 + chunk_size )
+                return false;
+            it += 8 + chunk_size;
+            if ( end - it < 8 ) return false;
+        }
 
         uint32_t track_size = ( it[4] << 24 ) | ( it[5] << 16 ) | ( it[6] << 8 ) | it[7];
-        if ( (unsigned long)(end - it) < track_size ) return false;
+        if ( (unsigned long)(end - it) < 8 + track_size ) return false;
 
         it += 8;
 
