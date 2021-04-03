@@ -5,7 +5,7 @@
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
 /* Define for threaded driver */
-#define EXSID_THREADED 1
+/* #undef EXSID_THREADED */
 
 /* Algorithm AES in gcrypt library */
 /* #undef GCRYPT_WITH_AES */
@@ -85,11 +85,17 @@
 /* Algorithm WHIRLPOOL in gcrypt library */
 /* #undef GCRYPT_WITH_WHIRLPOOL */
 
+/* Define to 1 if you have the <arm_neon.h> header file. */
+/* #undef HAVE_ARM_NEON_H */
+
 /* define if the compiler supports basic C++11 syntax */
 #define HAVE_CXX11 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
+
+/* Define to 1 if you have the <emmintrin.h> header file. */
+/* #undef HAVE_EMMINTRIN_H */
 
 /* Define to 1 if you have libexsid (-lexsid). */
 /* #undef HAVE_EXSID */
@@ -101,7 +107,7 @@
 /* #undef HAVE_FTD2XX_H */
 
 /* Define to 1 if you have ftdi.h */
-#define HAVE_FTDI 1
+/* #undef HAVE_FTDI */
 
 /* Gcrypt library is available */
 /* #undef HAVE_GCRYPT */
@@ -109,20 +115,20 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
-/* Define to 1 if you have the <memory.h> header file. */
-#define HAVE_MEMORY_H 1
-
 /* Define to 1 if you have the <mmintrin.h> header file. */
 /* #undef HAVE_MMINTRIN_H */
 
 /* Define to 1 if you have pthread.h */
-#define HAVE_PTHREAD_H 1
+/* #undef HAVE_PTHREAD_H */
 
 /* Have PTHREAD_PRIO_INHERIT. */
-#define HAVE_PTHREAD_PRIO_INHERIT 1
+/* #undef HAVE_PTHREAD_PRIO_INHERIT */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#define HAVE_STDIO_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
@@ -170,16 +176,16 @@
 #define PACKAGE_NAME "libsidplayfp"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libsidplayfp 2.1.0"
+#define PACKAGE_STRING "libsidplayfp 2.2.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libsidplayfp"
 
 /* Define to the home page for this package. */
-#define PACKAGE_URL "http://sourceforge.net/projects/sidplay-residfp/"
+#define PACKAGE_URL "https://github.com/libsidplayfp/libsidplayfp/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.1.0"
+#define PACKAGE_VERSION "2.2.0"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
@@ -194,11 +200,13 @@
 /* The size of `short', as computed by sizeof. */
 #define SIZEOF_SHORT 2
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.1.0"
+#define VERSION "2.2.0"
 
 /* Path to VICE testsuite. */
 /* #undef VICE_TESTSUITE */
@@ -218,6 +226,7 @@
 #if defined(__x86_64__) \
     || defined(_M_X64)
 #define HAVE_MMINTRIN_H 1
+#define HAVE_EMMINTRIN_H 1
 #elif (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
 #define HAVE_ARM_NEON_H 1
 #endif

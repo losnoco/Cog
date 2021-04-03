@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8354900926186D9E004988A7 /* mos652x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8354900726186D9E004988A7 /* mos652x.cpp */; };
+		8354900A26186D9E004988A7 /* mos652x.h in Headers */ = {isa = PBXBuildFile; fileRef = 8354900826186D9E004988A7 /* mos652x.h */; };
 		EDBE900E25E7E7A2001EB4A4 /* sidrandom.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F1225E7E79F001EB4A4 /* sidrandom.h */; };
 		EDBE900F25E7E7A2001EB4A4 /* reloc65.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F1325E7E79F001EB4A4 /* reloc65.cpp */; };
 		EDBE901025E7E7A2001EB4A4 /* reloc65.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F1425E7E79F001EB4A4 /* reloc65.h */; };
@@ -38,8 +40,6 @@
 		EDBE902B25E7E7A2001EB4A4 /* SerialPort.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F3325E7E79F001EB4A4 /* SerialPort.h */; };
 		EDBE902C25E7E7A2001EB4A4 /* timer.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F3425E7E79F001EB4A4 /* timer.h */; };
 		EDBE902D25E7E7A2001EB4A4 /* interrupt.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F3525E7E79F001EB4A4 /* interrupt.h */; };
-		EDBE902E25E7E7A2001EB4A4 /* mos6526.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F3625E7E79F001EB4A4 /* mos6526.h */; };
-		EDBE902F25E7E7A2001EB4A4 /* mos6526.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F3725E7E79F001EB4A4 /* mos6526.cpp */; };
 		EDBE903025E7E7A2001EB4A4 /* ExtraSidBank.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F3925E7E79F001EB4A4 /* ExtraSidBank.h */; };
 		EDBE903125E7E7A2001EB4A4 /* SystemROMBanks.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F3A25E7E79F001EB4A4 /* SystemROMBanks.h */; };
 		EDBE903225E7E7A2001EB4A4 /* ColorRAMBank.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F3B25E7E79F001EB4A4 /* ColorRAMBank.h */; };
@@ -196,6 +196,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8354900726186D9E004988A7 /* mos652x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mos652x.cpp; sourceTree = "<group>"; };
+		8354900826186D9E004988A7 /* mos652x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mos652x.h; sourceTree = "<group>"; };
 		EDBE8EF925E7E641001EB4A4 /* sidplayfp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sidplayfp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDBE8F1225E7E79F001EB4A4 /* sidrandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidrandom.h; path = sidplayfp/src/sidrandom.h; sourceTree = "<group>"; };
 		EDBE8F1325E7E79F001EB4A4 /* reloc65.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reloc65.cpp; path = sidplayfp/src/reloc65.cpp; sourceTree = "<group>"; };
@@ -229,8 +231,6 @@
 		EDBE8F3325E7E79F001EB4A4 /* SerialPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerialPort.h; sourceTree = "<group>"; };
 		EDBE8F3425E7E79F001EB4A4 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
 		EDBE8F3525E7E79F001EB4A4 /* interrupt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interrupt.h; sourceTree = "<group>"; };
-		EDBE8F3625E7E79F001EB4A4 /* mos6526.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mos6526.h; sourceTree = "<group>"; };
-		EDBE8F3725E7E79F001EB4A4 /* mos6526.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mos6526.cpp; sourceTree = "<group>"; };
 		EDBE8F3925E7E79F001EB4A4 /* ExtraSidBank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraSidBank.h; sourceTree = "<group>"; };
 		EDBE8F3A25E7E79F001EB4A4 /* SystemROMBanks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemROMBanks.h; sourceTree = "<group>"; };
 		EDBE8F3B25E7E79F001EB4A4 /* ColorRAMBank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorRAMBank.h; sourceTree = "<group>"; };
@@ -568,16 +568,16 @@
 		EDBE8F2D25E7E79F001EB4A4 /* CIA */ = {
 			isa = PBXGroup;
 			children = (
-				EDBE8F2E25E7E79F001EB4A4 /* tod.h */,
-				EDBE8F2F25E7E79F001EB4A4 /* tod.cpp */,
-				EDBE8F3025E7E79F001EB4A4 /* SerialPort.cpp */,
 				EDBE8F3125E7E79F001EB4A4 /* interrupt.cpp */,
-				EDBE8F3225E7E79F001EB4A4 /* timer.cpp */,
-				EDBE8F3325E7E79F001EB4A4 /* SerialPort.h */,
-				EDBE8F3425E7E79F001EB4A4 /* timer.h */,
 				EDBE8F3525E7E79F001EB4A4 /* interrupt.h */,
-				EDBE8F3625E7E79F001EB4A4 /* mos6526.h */,
-				EDBE8F3725E7E79F001EB4A4 /* mos6526.cpp */,
+				8354900726186D9E004988A7 /* mos652x.cpp */,
+				8354900826186D9E004988A7 /* mos652x.h */,
+				EDBE8F3025E7E79F001EB4A4 /* SerialPort.cpp */,
+				EDBE8F3325E7E79F001EB4A4 /* SerialPort.h */,
+				EDBE8F3225E7E79F001EB4A4 /* timer.cpp */,
+				EDBE8F3425E7E79F001EB4A4 /* timer.h */,
+				EDBE8F2F25E7E79F001EB4A4 /* tod.cpp */,
+				EDBE8F2E25E7E79F001EB4A4 /* tod.h */,
 			);
 			path = CIA;
 			sourceTree = "<group>";
@@ -1005,6 +1005,7 @@
 				EDBE908825E7E7A2001EB4A4 /* SincResampler.h in Headers */,
 				EDBE908225E7E7A2001EB4A4 /* Dac.h in Headers */,
 				EDBE902C25E7E7A2001EB4A4 /* timer.h in Headers */,
+				8354900A26186D9E004988A7 /* mos652x.h in Headers */,
 				EDBE906F25E7E7A2001EB4A4 /* voice.h in Headers */,
 				EDBE90A925E7E7A2001EB4A4 /* Filter6581.h in Headers */,
 				EDBE90F025E7E7A2001EB4A4 /* SidTuneBase.h in Headers */,
@@ -1104,7 +1105,6 @@
 				EDBE909325E7E7A2001EB4A4 /* EnvelopeGenerator.h in Headers */,
 				EDBE90BD25E7E7A2001EB4A4 /* sidmemory.h in Headers */,
 				EDBE90B625E7E7A2001EB4A4 /* player.h in Headers */,
-				EDBE902E25E7E7A2001EB4A4 /* mos6526.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1206,6 +1206,7 @@
 				EDBE905825E7E7A2001EB4A4 /* envelope.cc in Sources */,
 				EDBE907A25E7E7A2001EB4A4 /* wave.cc in Sources */,
 				EDBE90E025E7E7A2001EB4A4 /* SidTuneInfo.cpp in Sources */,
+				8354900926186D9E004988A7 /* mos652x.cpp in Sources */,
 				EDBE906225E7E7A2001EB4A4 /* sid.cc in Sources */,
 				EDBE909B25E7E7A2001EB4A4 /* Integrator.cpp in Sources */,
 				EDBE903D25E7E7A2001EB4A4 /* hardsid-emu-unix.cpp in Sources */,
@@ -1216,7 +1217,6 @@
 				EDBE90E125E7E7A2001EB4A4 /* psiddrv.cpp in Sources */,
 				EDBE90E625E7E7A2001EB4A4 /* SidTuneBase.cpp in Sources */,
 				EDBE90AA25E7E7A2001EB4A4 /* Spline.cpp in Sources */,
-				EDBE902F25E7E7A2001EB4A4 /* mos6526.cpp in Sources */,
 				EDBE900F25E7E7A2001EB4A4 /* reloc65.cpp in Sources */,
 				EDBE902825E7E7A2001EB4A4 /* SerialPort.cpp in Sources */,
 				EDBE909925E7E7A2001EB4A4 /* Filter6581.cpp in Sources */,
