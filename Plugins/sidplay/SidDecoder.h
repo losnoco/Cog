@@ -26,6 +26,9 @@
 	id<CogSource> source;
 	long length;
     
+    NSString *currentUrl;
+    BOOL hintAdded;
+    
     int n_channels;
     
     long renderedTotal;

@@ -16,20 +16,123 @@
 
 #import "PlaylistController.h"
 
-@implementation SidDecoder
+#include <vector>
 
-- (BOOL)open:(id<CogSource>)s
+static const char * extListEmpty[] = { NULL };
+static const char * extListStr[] = { ".str", NULL };
+
+@interface sid_file_container : NSObject {
+    NSLock * lock;
+    NSMutableDictionary * list;
+}
++ (sid_file_container *)instance;
+- (void)add_hint:(NSString *)path source:(id)source;
+- (void)remove_hint:(NSString *)path;
+- (BOOL)try_hint:(NSString *)path source:(id*)source;
+@end
+
+@implementation sid_file_container
++ (sid_file_container *)instance {
+    static sid_file_container * instance;
+    
+    @synchronized(self) {
+        if (!instance) {
+            instance = [[self alloc] init];
+        }
+    }
+    
+    return instance;
+}
+- (sid_file_container *)init
 {
-	[self setSource:s];
-	
+    if ((self = [super init]))
+    {
+        lock = [[NSLock alloc] init];
+        list = [[NSMutableDictionary alloc] initWithCapacity:0];
+    }
+    return self;
+}
+- (void)add_hint:(NSString *)path source:(id)source
+{
+    [lock lock];
+    [list setObject:source forKey:path];
+    [lock unlock];
+}
+- (void)remove_hint:(NSString *)path
+{
+    [lock lock];
+    [list removeObjectForKey:path];
+    [lock unlock];
+}
+- (BOOL)try_hint:(NSString *)path source:(id *)source
+{
+    [lock lock];
+    *source = [list objectForKey:path];
+    [lock unlock];
+    if ( *source )
+    {
+        [ *source seek:0 whence:0 ];
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+@end
+
+static void sidTuneLoader(const char* fileName, std::vector<uint8_t>& bufferRef) {
+    id<CogSource> source;
+    if ( ![[sid_file_container instance] try_hint:[NSString stringWithUTF8String:fileName] source:&source] ) {
+        NSString * urlString = [NSString stringWithUTF8String:fileName];
+        NSURL * url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
+    
+        id audioSourceClass = NSClassFromString(@"AudioSource");
+        source = [audioSourceClass audioSourceForURL:url];
+    
+        if (![source open:url])
+            return;
+        
+        if (![source seekable])
+            return;
+    }
+    
     [source seek:0 whence:SEEK_END];
     long size = [source tell];
     [source seek:0 whence:SEEK_SET];
     
-    void * data = malloc(size);
-    [source read:data amount:size];
+    bufferRef.resize( size );
+    
+    [source read:&bufferRef[0] amount:size];
+    
+    [source close];
+}
+
+@implementation SidDecoder
+
+- (BOOL)open:(id<CogSource>)s
+{
+    if (![s seekable])
+        return NO;
+    
+	[self setSource:s];
+
+    NSString * path = [[s url] absoluteString];
+    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
+    if (fragmentRange.location != NSNotFound) {
+        path = [path substringToIndex:fragmentRange.location];
+    }
+
+    currentUrl = [path stringByRemovingPercentEncoding];
+    
+    [[sid_file_container instance] add_hint:currentUrl source:s];
+    hintAdded = YES;
+    
+    NSString * extension = [[s url] pathExtension];
+    
+    const char ** extList = [extension isEqualToString:@"mus"] ? extListStr : extListEmpty;
 	
-    tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+    tune = new SidTune([currentUrl UTF8String], extList, true, sidTuneLoader);
     
     if (!tune->getStatus())
         return NO;
@@ -41,7 +144,7 @@
 	else
 		track_num = [[url fragment] intValue];
 
-    n_channels = 2;
+    n_channels = 1;
     
     length = 3 * 60 * 44100;
 
@@ -71,12 +174,20 @@
     }
     else return NO;
     
+    const SidTuneInfo *tuneInfo = tune->getInfo();
+    
     SidConfig conf = engine->config();
     conf.frequency = 44100;
-    conf.playback = SidConfig::STEREO;
     conf.sidEmulation = builder;
+    conf.playback = SidConfig::MONO;
+    if (tuneInfo && (tuneInfo->sidChips() > 1))
+            conf.playback = SidConfig::STEREO;
     if (!engine->config(conf))
         return NO;
+    
+    if (conf.playback == SidConfig::STEREO) {
+        n_channels = 2;
+    }
 
     renderedTotal = 0;
     fadeTotal = fadeRemain = 44100 * 8;
@@ -114,12 +225,14 @@
         if (rendered <= 0)
             break;
         
-        for (int i = 0; i < rendered; i += 2) {
-            int16_t * sample = sampleBuffer + total * 2 + i;
-            int mid = (sample[0] + sample[1]) / 2;
-            int side = (sample[0] - sample[1]) / 4;
-            sample[0] = mid + side;
-            sample[1] = mid - side;
+        if (n_channels == 2) {
+            for (int i = 0, j = rendered * 2; i < j; i += 2) {
+                int16_t * sample = sampleBuffer + total * 2 + i;
+                int mid = (int)(sample[0] + sample[1]) / 2;
+                int side = (int)(sample[0] - sample[1]) / 4;
+                sample[0] = mid + side;
+                sample[1] = mid - side;
+            }
         }
         
         renderedTotal += rendered;
@@ -217,6 +330,13 @@
         delete tune;
         tune = NULL;
     }
+
+    source = nil;
+    if (hintAdded) {
+        [[sid_file_container instance] remove_hint:currentUrl];
+        hintAdded = NO;
+    }
+    currentUrl = nil;
 }
 
 - (void)close
