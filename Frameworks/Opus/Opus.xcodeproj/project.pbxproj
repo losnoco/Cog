@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		830F884C19C9107E00420FB0 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		830F885F19C9145E00420FB0 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; };
 		8374715B2509BC1A00A6D7CA /* fft_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374714A2509BC1A00A6D7CA /* fft_arm.h */; };
 		8374715C2509BC1A00A6D7CA /* kiss_fft_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374714B2509BC1A00A6D7CA /* kiss_fft_armv4.h */; };
 		8374715F2509BC1A00A6D7CA /* fixed_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374714E2509BC1A00A6D7CA /* fixed_armv4.h */; };
@@ -25,7 +23,6 @@
 		837471722509C5D100A6D7CA /* SigProc_FIX_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374716E2509C5D100A6D7CA /* SigProc_FIX_armv4.h */; };
 		837471732509C5D100A6D7CA /* macros_armv5e.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374716F2509C5D100A6D7CA /* macros_armv5e.h */; };
 		837471742509C5D100A6D7CA /* SigProc_FIX_armv5e.h in Headers */ = {isa = PBXBuildFile; fileRef = 837471702509C5D100A6D7CA /* SigProc_FIX_armv5e.h */; };
-		8375B07017FFEABB0092A79F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8375B06E17FFEABB0092A79F /* InfoPlist.strings */; };
 		8375B20B17FFEB2C0092A79F /* _kiss_fft_guts.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A317FFEB2C0092A79F /* _kiss_fft_guts.h */; };
 		8375B20C17FFEB2C0092A79F /* arch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375B0A417FFEB2C0092A79F /* arch.h */; };
 		8375B20D17FFEB2C0092A79F /* bands.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375B0A517FFEB2C0092A79F /* bands.c */; };
@@ -247,6 +244,8 @@
 		837928E51C2940C0005DBCEA /* mlp.h in Headers */ = {isa = PBXBuildFile; fileRef = 837928E21C2940C0005DBCEA /* mlp.h */; };
 		837928E61C2940C0005DBCEA /* mlp_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 837928E31C2940C0005DBCEA /* mlp_data.c */; };
 		837928E71C2940C0005DBCEA /* mlp.c in Sources */ = {isa = PBXBuildFile; fileRef = 837928E41C2940C0005DBCEA /* mlp.c */; };
+		EDA3894E261B776E003FC82B /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; };
+		EDA3894F261B776E003FC82B /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -264,13 +263,6 @@
 			remoteGlobalIDString = 734FB2E50B18B33E00D561D7;
 			remoteInfo = "libogg (static)";
 		};
-		830F884A19C9107300420FB0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
-			remoteInfo = Ogg;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -280,7 +272,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				830F884C19C9107E00420FB0 /* Ogg.framework in CopyFiles */,
+				EDA3894F261B776E003FC82B /* Ogg.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,7 +280,6 @@
 
 /* Begin PBXFileReference section */
 		830F884119C9105E00420FB0 /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = ../Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
-		833F68421CDBCABC00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8374714A2509BC1A00A6D7CA /* fft_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft_arm.h; sourceTree = "<group>"; };
 		8374714B2509BC1A00A6D7CA /* kiss_fft_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft_armv4.h; sourceTree = "<group>"; };
 		8374714E2509BC1A00A6D7CA /* fixed_armv4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fixed_armv4.h; sourceTree = "<group>"; };
@@ -307,7 +298,6 @@
 		837471702509C5D100A6D7CA /* SigProc_FIX_armv5e.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigProc_FIX_armv5e.h; sourceTree = "<group>"; };
 		8375B06217FFEABB0092A79F /* Opus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Opus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8375B06D17FFEABB0092A79F /* Opus-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Opus-Info.plist"; sourceTree = "<group>"; };
-		8375B06F17FFEABB0092A79F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8375B0A317FFEB2C0092A79F /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
 		8375B0A417FFEB2C0092A79F /* arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arch.h; sourceTree = "<group>"; };
 		8375B0A517FFEB2C0092A79F /* bands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bands.c; sourceTree = "<group>"; };
@@ -536,7 +526,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				830F885F19C9145E00420FB0 /* Ogg.framework in Frameworks */,
+				EDA3894E261B776E003FC82B /* Ogg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -629,7 +619,6 @@
 			isa = PBXGroup;
 			children = (
 				8375B06D17FFEABB0092A79F /* Opus-Info.plist */,
-				8375B06E17FFEABB0092A79F /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1051,7 +1040,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				830F884B19C9107300420FB0 /* PBXTargetDependency */,
 			);
 			name = Opus;
 			productName = Opus;
@@ -1120,7 +1108,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8375B07017FFEABB0092A79F /* InfoPlist.strings in Resources */,
 				8374716A2509BC1A00A6D7CA /* armopts.s.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1291,26 +1278,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		830F884B19C9107300420FB0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Ogg;
-			targetProxy = 830F884A19C9107300420FB0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		8375B06E17FFEABB0092A79F /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8375B06F17FFEABB0092A79F /* en */,
-				833F68421CDBCABC00AFB9F0 /* es */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		8375B08817FFEABB0092A79F /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1415,7 +1382,7 @@
 		8375B08B17FFEABB0092A79F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1435,7 +1402,6 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../../Frameworks/Ogg/include,
 					Opus/opus/silk,
 					Opus/opus/celt,
@@ -1443,10 +1409,6 @@
 				);
 				INFOPLIST_FILE = "Opus/Opus-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					Ogg,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.libopus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1459,7 +1421,7 @@
 		8375B08C17FFEABB0092A79F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1476,7 +1438,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../../Frameworks/Ogg/include,
 					Opus/opus/silk,
 					Opus/opus/celt,
@@ -1484,10 +1445,6 @@
 				);
 				INFOPLIST_FILE = "Opus/Opus-Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					Ogg,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.libopus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
