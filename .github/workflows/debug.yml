@@ -32,12 +32,10 @@ jobs:
       - name: Run xcodebuild
         run: >
           xcodebuild
-            -target Ogg
-            -target Opus
-            -scheme Cog
-            -configuration Debug
-            -derivedDataPath output
-            build
+          -scheme Cog
+          -configuration Debug
+          -derivedDataPath output
+          build
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
