@@ -1,3 +1,6 @@
+Cog [![buildable](https://github.com/losnoco/Cog/actions/workflows/debug.yml/badge.svg)](https://github.com/losnoco/Cog/actions/workflows/debug.yml)
+===
+
 Cog is authored by Vincent Spader. It is released under the GPL. See COPYING for details.
 
 The libraries folder contains various decoding and tagging libraries, which i have created Xcode projects for, and possibly modified to make compile on OS X. The various libraries are under each of their own licenses/copyrights.
