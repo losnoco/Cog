@@ -74,7 +74,7 @@
 		EDBE907725E7E7A2001EB4A4 /* filter8580new.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F8A25E7E7A0001EB4A4 /* filter8580new.h */; };
 		EDBE907925E7E7A2001EB4A4 /* extfilt.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F8C25E7E7A0001EB4A4 /* extfilt.cc */; };
 		EDBE907A25E7E7A2001EB4A4 /* wave.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F8D25E7E7A0001EB4A4 /* wave.cc */; };
-		EDBE907C25E7E7A2001EB4A4 /* version.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F8F25E7E7A0001EB4A4 /* version.cc */; };
+		EDBE907C25E7E7A2001EB4A4 /* version.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F8F25E7E7A0001EB4A4 /* version.cc */; settings = {COMPILER_FLAGS = "-include generated/src/config.h"; }; };
 		EDBE907D25E7E7A2001EB4A4 /* resid-builder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F9025E7E7A0001EB4A4 /* resid-builder.cpp */; };
 		EDBE907E25E7E7A2001EB4A4 /* resid.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F9125E7E7A0001EB4A4 /* resid.h */; };
 		EDBE907F25E7E7A2001EB4A4 /* resid-emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F9225E7E7A0001EB4A4 /* resid-emu.cpp */; };
@@ -1374,7 +1374,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@loader_path/../Frameworks";
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"VERSION=\\\"2.1.0\\\"",
 					"HAVE_CONFIG_H=1",
 					"DEBUG=1",
 				);
@@ -1409,10 +1408,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@loader_path/../Frameworks";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"VERSION=\\\"2.1.0\\\"",
-					"HAVE_CONFIG_H=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_CONFIG_H=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
