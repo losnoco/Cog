@@ -17,7 +17,6 @@
 		837471652509BC1A00A6D7CA /* fixed_armv5e.h in Headers */ = {isa = PBXBuildFile; fileRef = 837471542509BC1A00A6D7CA /* fixed_armv5e.h */; };
 		837471662509BC1A00A6D7CA /* arm_celt_map.c in Sources */ = {isa = PBXBuildFile; fileRef = 837471552509BC1A00A6D7CA /* arm_celt_map.c */; };
 		837471692509BC1A00A6D7CA /* celt_neon_intr.c in Sources */ = {isa = PBXBuildFile; fileRef = 837471582509BC1A00A6D7CA /* celt_neon_intr.c */; };
-		8374716A2509BC1A00A6D7CA /* armopts.s.in in Resources */ = {isa = PBXBuildFile; fileRef = 837471592509BC1A00A6D7CA /* armopts.s.in */; };
 		8374716B2509BC1A00A6D7CA /* armcpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374715A2509BC1A00A6D7CA /* armcpu.h */; };
 		837471712509C5D100A6D7CA /* macros_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374716D2509C5D100A6D7CA /* macros_armv4.h */; };
 		837471722509C5D100A6D7CA /* SigProc_FIX_armv4.h in Headers */ = {isa = PBXBuildFile; fileRef = 8374716E2509C5D100A6D7CA /* SigProc_FIX_armv4.h */; };
@@ -244,19 +243,19 @@
 		837928E51C2940C0005DBCEA /* mlp.h in Headers */ = {isa = PBXBuildFile; fileRef = 837928E21C2940C0005DBCEA /* mlp.h */; };
 		837928E61C2940C0005DBCEA /* mlp_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 837928E31C2940C0005DBCEA /* mlp_data.c */; };
 		837928E71C2940C0005DBCEA /* mlp.c in Sources */ = {isa = PBXBuildFile; fileRef = 837928E41C2940C0005DBCEA /* mlp.c */; };
-		EDA3894E261B776E003FC82B /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; };
-		EDA3894F261B776E003FC82B /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F884719C9105E00420FB0 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EDA38966261B839B003FC82B /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDA38962261B8387003FC82B /* Ogg.framework */; };
+		EDA38967261B839B003FC82B /* Ogg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EDA38962261B8387003FC82B /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		830F884619C9105E00420FB0 /* PBXContainerItemProxy */ = {
+		EDA38961261B8387003FC82B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
 			remoteInfo = Ogg;
 		};
-		830F884819C9105E00420FB0 /* PBXContainerItemProxy */ = {
+		EDA38963261B8387003FC82B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
 			proxyType = 2;
@@ -266,14 +265,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8375B36E17FFF6DE0092A79F /* CopyFiles */ = {
+		EDA38968261B839C003FC82B /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EDA3894F261B776E003FC82B /* Ogg.framework in CopyFiles */,
+				EDA38967261B839B003FC82B /* Ogg.framework in Embed Frameworks */,
 			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -522,26 +522,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		8375B05E17FFEABB0092A79F /* Frameworks */ = {
+		EDA38965261B8392003FC82B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDA3894E261B776E003FC82B /* Ogg.framework in Frameworks */,
+				EDA38966261B839B003FC82B /* Ogg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		830F884219C9105E00420FB0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				830F884719C9105E00420FB0 /* Ogg.framework */,
-				830F884919C9105E00420FB0 /* libogg.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		837471492509BC1A00A6D7CA /* arm */ = {
 			isa = PBXGroup;
 			children = (
@@ -932,6 +923,15 @@
 			path = x86;
 			sourceTree = "<group>";
 		};
+		EDA3895D261B835B003FC82B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EDA38962261B8387003FC82B /* Ogg.framework */,
+				EDA38964261B8387003FC82B /* libogg.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1032,10 +1032,9 @@
 			buildConfigurationList = 8375B08A17FFEABB0092A79F /* Build configuration list for PBXNativeTarget "Opus" */;
 			buildPhases = (
 				8375B05D17FFEABB0092A79F /* Sources */,
-				8375B05E17FFEABB0092A79F /* Frameworks */,
 				8375B05F17FFEABB0092A79F /* Headers */,
-				8375B06017FFEABB0092A79F /* Resources */,
-				8375B36E17FFF6DE0092A79F /* CopyFiles */,
+				EDA38965261B8392003FC82B /* Frameworks */,
+				EDA38968261B839C003FC82B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1075,7 +1074,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 830F884219C9105E00420FB0 /* Products */;
+					ProductGroup = EDA3895D261B835B003FC82B /* Products */;
 					ProjectRef = 830F884119C9105E00420FB0 /* Ogg.xcodeproj */;
 				},
 			);
@@ -1087,32 +1086,21 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		830F884719C9105E00420FB0 /* Ogg.framework */ = {
+		EDA38962261B8387003FC82B /* Ogg.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Ogg.framework;
-			remoteRef = 830F884619C9105E00420FB0 /* PBXContainerItemProxy */;
+			remoteRef = EDA38961261B8387003FC82B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		830F884919C9105E00420FB0 /* libogg.a */ = {
+		EDA38964261B8387003FC82B /* libogg.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libogg.a;
-			remoteRef = 830F884819C9105E00420FB0 /* PBXContainerItemProxy */;
+			remoteRef = EDA38963261B8387003FC82B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
-
-/* Begin PBXResourcesBuildPhase section */
-		8375B06017FFEABB0092A79F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8374716A2509BC1A00A6D7CA /* armopts.s.in in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8375B05D17FFEABB0092A79F /* Sources */ = {
