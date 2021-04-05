@@ -36,8 +36,18 @@ jobs:
           -configuration Debug
           -derivedDataPath output
           build
+      - name: Package archive
+        run: >
+          ditto
+          -c
+          -k
+          --sequesterRsrc
+          --keepParent
+          --zlibCompressionLevel 9
+          output/Build/Products/Debug/Cog.app
+          output/Cog.zip
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: Cog
-          path: output/Build/Products/Debug/Cog.app
+          path: output/Cog.zip
