@@ -32,7 +32,6 @@ jobs:
       - name: Run xcodebuild
         run: >
           xcodebuild
-            -workspace Cog.xcodeproj/project.xcworkspace
             -scheme Cog
             -configuration Debug
             -derivedDataPath output
