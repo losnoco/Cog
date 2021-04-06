@@ -37,11 +37,19 @@
     long totalFrames = get_vgmstream_play_samples( 2.0, 10.0, 10.0, stream );
     
     int bitrate = get_vgmstream_average_bitrate(stream);
+
+    NSString * path = [url absoluteString];
+    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
+    if (fragmentRange.location != NSNotFound) {
+        path = [path substringToIndex:fragmentRange.location];
+    }
     
-    NSURL *folder = [url URLByDeletingLastPathComponent];
+    NSURL *urlTrimmed = [NSURL fileURLWithPath:[path stringByRemovingPercentEncoding]];
+
+    NSURL *folder = [urlTrimmed URLByDeletingLastPathComponent];
     NSURL *tagurl = [folder URLByAppendingPathComponent:@"!tags.m3u" isDirectory:NO];
     
-    NSString *filename = [url lastPathComponent];
+    NSString *filename = [urlTrimmed lastPathComponent];
 
     NSString *album = @"";
     NSString *artist = @"";
@@ -116,9 +124,9 @@
 
     if ( [title isEqualToString:@""] ) {
         if ( stream->num_streams > 1 ) {
-            title = [NSString stringWithFormat:@"%@ - %s", [[url URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
+            title = [NSString stringWithFormat:@"%@ - %s", [[urlTrimmed URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
         } else {
-            title = [[url URLByDeletingPathExtension] lastPathComponent];
+            title = [[urlTrimmed URLByDeletingPathExtension] lastPathComponent];
         }
     }
     
