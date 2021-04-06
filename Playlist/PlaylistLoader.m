@@ -309,7 +309,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 				}
 				else
 				{
-					[expandedURLs addObject:url];
+                    [expandedURLs addObject:[NSURL fileURLWithPath:[url path]]];
 				}
 			}
 		}
@@ -472,14 +472,19 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 - (void)syncLoadInfoForEntries:(NSArray *)entries
 {
     NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
-    long i;
+    long i, j;
+    NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
     
     i = 0;
+    j = 0;
     for (PlaylistEntry *pe in entries)
     {
+        long idx = j++;
+        
         if ([pe metadataLoaded]) continue;
         
         [update_indexes addIndex:pe.index];
+        [load_info_indexes addIndex:idx];
         
         ++i;
     }
@@ -490,21 +495,21 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         return;
     }
     
-    {
-        for (PlaylistEntry *pe in entries)
+    [load_info_indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop)
         {
+            PlaylistEntry *pe = [entries objectAtIndex:idx];
+            
             NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
         
             NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
             if (entryProperties == nil)
-                continue;
+                return;
         
             [entryInfo addEntriesFromDictionary:entryProperties];
             [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
             
             [pe setMetadata:entryInfo];
-        }
-    }
+        }];
 
     [self->playlistController updateTotalTime];
     
