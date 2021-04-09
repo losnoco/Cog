@@ -30,7 +30,7 @@ bool midi_processor::process_standard_midi_count( std::vector<uint8_t> const& p_
     return true;
 }
 
-bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end, midi_container & p_out, bool needs_end_marker )
+void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end, midi_container & p_out, bool needs_end_marker )
 {
     midi_track track;
     unsigned current_timestamp = 0;
@@ -55,12 +55,12 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         }
 
         current_timestamp += delta;
-        if ( it == end ) return false;
+        if ( it == end ) break;
         unsigned char event_code = *it++;
         unsigned data_bytes_read = 0;
         if ( event_code < 0x80 )
         {
-            if ( last_event_code == 0xFF ) return false; /*throw exception_io_data("First MIDI track event short encoded");*/
+            if ( last_event_code == 0xFF ) break; /*throw exception_io_data("First MIDI track event short encoded");*/
             buffer[ data_bytes_read++ ] = event_code;
             event_code = last_event_code;
         }
@@ -76,7 +76,7 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             if ( !needs_end_marker && ( event_code & 0xF0 ) == 0xE0 ) continue;
             if ( data_bytes_read < 1 )
             {
-                if ( it == end ) return false;
+                if ( it == end ) break;
                 buffer[ 0 ] = *it++;
                 ++data_bytes_read;
             }
@@ -86,7 +86,7 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             case 0xD0:
                 break;
             default:
-                if ( it == end ) return false;
+                if ( it == end ) break;
                 buffer[ data_bytes_read ] = *it++;
                 ++data_bytes_read;
             }
@@ -101,8 +101,8 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             }
 
             int data_count = decode_delta( it, end );
-            if ( data_count < 0 ) return false; /*throw exception_io_data( "Invalid System Exclusive message" );*/
-            if ( end - it < data_count ) return false;
+            if ( data_count < 0 ) break; /*throw exception_io_data( "Invalid System Exclusive message" );*/
+            if ( end - it < data_count ) break;
             buffer.resize( data_count + 1 );
             buffer[ 0 ] = 0xF0;
             std::copy( it, it + data_count, buffer.begin() + 1 );
@@ -112,10 +112,10 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         }
         else if ( event_code == 0xF7 ) // SysEx continuation
         {
-            if ( !last_sysex_length ) return false;
+            if ( !last_sysex_length ) break;
             int data_count = decode_delta( it, end );
-            if ( data_count < 0 ) return false;
-            if ( end - it < data_count ) return false;
+            if ( data_count < 0 ) break;
+            if ( end - it < data_count ) break;
             buffer.resize( last_sysex_length + data_count );
             std::copy( it, it + data_count, buffer.begin() + last_sysex_length );
             it += data_count;
@@ -129,11 +129,11 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
                 last_sysex_length = 0;
             }
 
-            if ( it == end ) return false;
+            if ( it == end ) break;
             unsigned char meta_type = *it++;
             int data_count = decode_delta( it, end );
-            if ( data_count < 0 ) return false; /*throw exception_io_data( "Invalid meta message" );*/
-            if ( end - it < data_count ) return false;
+            if ( data_count < 0 ) break; /*throw exception_io_data( "Invalid meta message" );*/
+            if ( end - it < data_count ) break;
             buffer.resize( data_count + 2 );
             buffer[ 0 ] = 0xFF;
             buffer[ 1 ] = meta_type;
@@ -153,7 +153,7 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             buffer[ 0 ] = event_code;
             track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &buffer[0], 1 ) );
         }
-        else return false; /*throw exception_io_data("Unhandled MIDI status code");*/
+        else break; /*throw exception_io_data("Unhandled MIDI status code");*/
     }
 
     if ( !needs_end_marker )
@@ -164,8 +164,6 @@ bool midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
     }
 
     p_out.add_track( track );
-
-    return true;
 }
 
 bool midi_processor::process_standard_midi( std::vector<uint8_t> const& p_file, midi_container & p_out )
@@ -193,30 +191,36 @@ bool midi_processor::process_standard_midi( std::vector<uint8_t> const& p_file, 
 
     for ( std::size_t i = 0; i < track_count; ++i )
     {
-        if ( end - it < 8 ) return false;
+        if ( end - it < 8 ) break;
         while ( it[0] != 'M' || it[1] != 'T' || it[2] != 'r' || it[3] != 'k' ) {
             uint32_t chunk_size = ( it[4] << 24 ) | ( it[5] << 16 ) | ( it[6] << 8 ) | it[7];
             if ( (unsigned long)(end - it) < 8 + chunk_size )
-                return false;
+                break;
             it += 8 + chunk_size;
-            if ( end - it < 8 ) return false;
+            if ( end - it < 8 ) break;
         }
+        
+        if ( end - it < 8 ) break;
 
         uint32_t track_size = ( it[4] << 24 ) | ( it[5] << 16 ) | ( it[6] << 8 ) | it[7];
-        if ( (unsigned long)(end - it) < 8 + track_size ) return false;
 
         it += 8;
 
         intptr_t track_data_offset = it - p_file.begin();
 
-        if ( !process_standard_midi_track( it, it + track_size, p_out, true ) ) return false;
+        process_standard_midi_track( it, it + track_size, p_out, true );
 
         track_data_offset += track_size;
-        if ( it - p_file.begin() != track_data_offset )
+        size_t messup_offset = it - p_file.begin();
+        if ( messup_offset != track_data_offset )
         {
-            it = p_file.begin() + track_data_offset;
+            /* Assume messed up track, attempt to skip it. */
+            if ( end - p_file.begin() >= track_data_offset )
+                it = p_file.begin() + track_data_offset;
+            else
+                break;
         }
     }
 
-    return true;
+    return !!p_out.get_track_count();
 }
