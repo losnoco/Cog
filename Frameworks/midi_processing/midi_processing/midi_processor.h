@@ -39,7 +39,7 @@ class midi_processor
     static bool is_gmf( std::vector<uint8_t> const& p_file );
     static bool is_syx( std::vector<uint8_t> const& p_file );
 
-    static void process_standard_midi_track( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end, midi_container & p_out, bool needs_end_marker );
+    static void process_standard_midi_track( std::vector<uint8_t>::const_iterator & it, std::vector<uint8_t>::const_iterator end, midi_container & p_out );
 
     static bool process_standard_midi( std::vector<uint8_t> const& p_file, midi_container & p_out );
     static bool process_riff_midi( std::vector<uint8_t> const& p_file, midi_container & p_out );
