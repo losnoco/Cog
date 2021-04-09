@@ -349,6 +349,8 @@ void* kAppControllerContext = &kAppControllerContext;
 	{
 		[fileManager createDirectoryAtPath: folder withIntermediateDirectories:NO attributes:nil error:nil];
 	}
+    
+    [playlistController clearFilterPredicate:self];
 	
     NSString * fileName = @"Default.xml";
     
