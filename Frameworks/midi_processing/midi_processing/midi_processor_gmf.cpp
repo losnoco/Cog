@@ -48,7 +48,7 @@ bool midi_processor::process_gmf( std::vector<uint8_t> const& p_file, midi_conta
 
     std::vector<uint8_t>::const_iterator it = p_file.begin() + 7;
 
-    process_standard_midi_track( it, p_file.end(), p_out );
+    process_standard_midi_track( it, p_file.end(), p_out, false );
     
     return true;
 }
