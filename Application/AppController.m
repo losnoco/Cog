@@ -86,6 +86,11 @@ void* kAppControllerContext = &kAppControllerContext;
 	NSSavePanel *p;
 	
 	p = [NSSavePanel savePanel];
+    
+    /* Yes, this is deprecated. Yes, this is required to give the dialog
+     * a default set of filename extensions to save, including adding an
+     * extension if the user does not supply one. */
+    [p setAllowedFileTypes:[NSArray arrayWithObjects:@"m3u", @"pls", nil]];
 	
 	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
         if ( result == NSModalResponseOK ) {
