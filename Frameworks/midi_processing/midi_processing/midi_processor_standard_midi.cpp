@@ -34,6 +34,7 @@ void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
 {
     midi_track track;
     unsigned current_timestamp = 0;
+    unsigned last_event_timestamp = 0;
     unsigned char last_event_code = 0xFF;
 
     unsigned last_sysex_length = 0;
@@ -74,7 +75,7 @@ void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         {
             if ( last_sysex_length )
             {
-                track.add_event( midi_event( last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length ) );
+                track.add_event( midi_event( last_event_timestamp = last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length ) );
                 last_sysex_length = 0;
             }
 
@@ -96,13 +97,13 @@ void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
                 buffer[ data_bytes_read ] = *it++;
                 ++data_bytes_read;
             }
-            track.add_event( midi_event( current_timestamp, (midi_event::event_type)(( event_code >> 4 ) - 8), event_code & 0x0F, &buffer[0], data_bytes_read ) );
+            track.add_event( midi_event( last_event_timestamp = current_timestamp, (midi_event::event_type)(( event_code >> 4 ) - 8), event_code & 0x0F, &buffer[0], data_bytes_read ) );
         }
         else if ( event_code == 0xF0 )
         {
             if ( last_sysex_length )
             {
-                track.add_event( midi_event( last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length ) );
+                track.add_event( midi_event( last_event_timestamp = last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length ) );
                 last_sysex_length = 0;
             }
 
@@ -131,7 +132,7 @@ void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         {
             if ( last_sysex_length )
             {
-                track.add_event( midi_event( last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length ) );
+                track.add_event( midi_event( last_event_timestamp = last_sysex_timestamp, midi_event::extended, 0, &buffer[0], last_sysex_length ) );
                 last_sysex_length = 0;
             }
 
@@ -145,6 +146,10 @@ void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
             buffer[ 1 ] = meta_type;
             std::copy( it, it + data_count, buffer.begin() + 2 );
             it += data_count;
+            if (meta_type == 0x2F)
+                current_timestamp = last_event_timestamp;
+            else
+                last_event_timestamp = current_timestamp;
             track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &buffer[0], data_count + 2 ) );
 
             if ( meta_type == 0x2F )
@@ -157,7 +162,7 @@ void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
         {
             /* Sequencer specific events, single byte */
             buffer[ 0 ] = event_code;
-            track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &buffer[0], 1 ) );
+            track.add_event( midi_event( last_event_timestamp = current_timestamp, midi_event::extended, 0, &buffer[0], 1 ) );
         }
         else break; /*throw exception_io_data("Unhandled MIDI status code");*/
     }
@@ -166,7 +171,7 @@ void midi_processor::process_standard_midi_track( std::vector<uint8_t>::const_it
     {
         buffer[ 0 ] = 0xFF;
         buffer[ 1 ] = 0x2F;
-        track.add_event( midi_event( current_timestamp, midi_event::extended, 0, &buffer[0], 2 ) );
+        track.add_event( midi_event( last_event_timestamp, midi_event::extended, 0, &buffer[0], 2 ) );
     }
 
     p_out.add_track( track );
