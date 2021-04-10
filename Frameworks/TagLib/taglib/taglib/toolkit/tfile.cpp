@@ -58,6 +58,7 @@
 #include "aifffile.h"
 #include "wavfile.h"
 #include "apefile.h"
+#include "apegenfile.h"
 #include "modfile.h"
 #include "s3mfile.h"
 #include "itfile.h"
@@ -148,6 +149,8 @@ PropertyMap File::properties() const
     return dynamic_cast<const MP4::File* >(this)->properties();
   if(dynamic_cast<const ASF::File* >(this))
     return dynamic_cast<const ASF::File* >(this)->properties();
+  if(dynamic_cast<const APEGen::File* >(this))
+    return dynamic_cast<const APEGen::File* >(this)->properties();
   return tag()->properties();
 }
 
@@ -177,6 +180,8 @@ void File::removeUnsupportedProperties(const StringList &properties)
     dynamic_cast<MP4::File* >(this)->removeUnsupportedProperties(properties);
   else if(dynamic_cast<ASF::File* >(this))
     dynamic_cast<ASF::File* >(this)->removeUnsupportedProperties(properties);
+  else if(dynamic_cast<APEGen::File* >(this))
+    dynamic_cast<APEGen::File* >(this)->removeUnsupportedProperties(properties);
   else
     tag()->removeUnsupportedProperties(properties);
 }
@@ -219,6 +224,8 @@ PropertyMap File::setProperties(const PropertyMap &properties)
     return dynamic_cast<MP4::File* >(this)->setProperties(properties);
   else if(dynamic_cast<ASF::File* >(this))
     return dynamic_cast<ASF::File* >(this)->setProperties(properties);
+  else if(dynamic_cast<APEGen::File* >(this))
+    return dynamic_cast<APEGen::File* >(this)->setProperties(properties);
   else
     return tag()->setProperties(properties);
 }

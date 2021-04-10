@@ -50,6 +50,7 @@
 #include "aifffile.h"
 #include "wavfile.h"
 #include "apefile.h"
+#include "apegenfile.h"
 #include "modfile.h"
 #include "s3mfile.h"
 #include "itfile.h"
@@ -139,6 +140,8 @@ namespace
       return new IT::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "XM")
       return new XM::File(stream, readAudioProperties, audioPropertiesStyle);
+    if(ext == "TAK")
+      return new APEGen::File(stream, readAudioProperties, audioPropertiesStyle);
 
     return 0;
   }
@@ -178,6 +181,8 @@ namespace
       file = new RIFF::WAV::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(APE::File::isSupported(stream))
       file = new APE::File(stream, readAudioProperties, audioPropertiesStyle);
+    else if(APEGen::File::isSupported(stream))
+      file = new APEGen::File(stream, readAudioProperties, audioPropertiesStyle);
 
     // isSupported() only does a quick check, so double check the file here.
 
@@ -259,6 +264,8 @@ namespace
       return new IT::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "XM")
       return new XM::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(ext == "TAK")
+      return new APEGen::File(fileName, readAudioProperties, audioPropertiesStyle);
 
     return 0;
   }
