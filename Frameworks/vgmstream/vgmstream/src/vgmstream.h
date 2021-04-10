@@ -366,7 +366,7 @@ typedef enum {
     meta_NPS,
     meta_PS2_RXWS,          /* Sony games (Genji, Okage Shadow King, Arc The Lad Twilight of Spirits) */
     meta_RAW_INT,
-    meta_PS2_EXST,          /* Shadow of Colossus EXST */
+    meta_EXST,
     meta_SVAG_KCET,
     meta_PS_HEADERLESS,     /* headerless PS-ADPCM */
     meta_MIB_MIH,
@@ -520,7 +520,7 @@ typedef enum {
     meta_SD9,               /* beatmaniaIIDX16 - EMPRESS (Arcade) */
     meta_2DX9,              /* beatmaniaIIDX16 - EMPRESS (Arcade) */
     meta_PS2_VGV,           /* Rune: Viking Warlord */
-    meta_NGC_GCUB,          /* Sega Soccer Slam */
+    meta_GCUB,
     meta_MAXIS_XA,          /* Sim City 3000 (PC) */
     meta_NGC_SCK_DSP,       /* Scorpion King (NGC) */
     meta_CAFF,              /* iPhone .caf */
@@ -764,6 +764,7 @@ typedef enum {
     meta_TAC,
     meta_IDSP_TOSE,
     meta_DSP_KWA,
+    meta_OGV_3RDEYE,
 } meta_t;
 
 /* standard WAVEFORMATEXTENSIBLE speaker positions */
