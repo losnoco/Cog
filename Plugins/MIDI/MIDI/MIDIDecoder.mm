@@ -60,6 +60,9 @@ static OSType getOSType(const char * in_)
     if ( !midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file) )
         return NO;
     
+    if ( !midi_file.get_timestamp_end( track_num ) )
+        return NO;
+    
 	track_num = [[[s url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
     
     midi_file.scan_for_loops( true, true, true, true );
