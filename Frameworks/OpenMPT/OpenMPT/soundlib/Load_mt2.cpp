@@ -538,6 +538,8 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 					for(ROWINDEX r = 0; r < fillRows; r++)
 					{
 						m += GetNumChannels();
+						// cppcheck false-positive
+						// cppcheck-suppress selfAssignment
 						*m = orig;
 					}
 				}

@@ -362,6 +362,7 @@ void LFOPlugin::SetChunk(const ChunkData &chunk, bool)
 		m_bypassed = data.bypassed != 0;
 		m_outputToCC = data.outputToCC != 0;
 		m_oneshot = data.loopMode != 0;
+		RecalculateFrequency();
 	}
 }
 

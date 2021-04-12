@@ -54,7 +54,7 @@
 #  ONLY_TEST=0      Only build the test suite.
 #  STRICT=0         Treat warnings as errors.
 #  MODERN=0         Pass more modern compiler options.
-#  STDCXX=c++14     C++ standard version (only for GCC and clang)
+#  STDCXX=c++17     C++ standard version (only for GCC and clang)
 #  CHECKED=0        Enable run-time assertions.
 #  CHECKED_ADDRESS=0   Enable address sanitizer
 #  CHECKED_UNDEFINED=0 Enable undefined behaviour sanitizer
@@ -182,6 +182,8 @@ CFLAGS   := $(CFLAGS)
 LDFLAGS  := $(LDFLAGS)
 LDLIBS   := $(LDLIBS)
 ARFLAGS  := $(ARFLAGS)
+
+PC_LIBS_PRIVATE := $(PC_LIBS_PRIVATE)
 
 PREFIX   := $(PREFIX)
 ifeq ($(PREFIX),)
@@ -405,7 +407,6 @@ endif
 
 endif
 
-PC_LIBS_PRIVATE :=
 PC_LIBS_PRIVATE += $(CXXSTDLIB_PCLIBSPRIVATE)
 
 ifeq ($(HACK_ARCHIVE_SUPPORT),1)
@@ -728,7 +729,7 @@ CPPFLAGS += -DMPT_BUILD_HACK_ARCHIVE_SUPPORT
 endif
 
 CPPCHECK_FLAGS += -j $(NUMTHREADS)
-CPPCHECK_FLAGS += --std=c99 --std=c++14
+CPPCHECK_FLAGS += --std=c99 --std=c++17
 CPPCHECK_FLAGS += --quiet
 CPPCHECK_FLAGS += --enable=warning --inline-suppr --template='{file}:{line}: warning: {severity}: {message} [{id}]'
 CPPCHECK_FLAGS += --suppress=missingIncludeSystem

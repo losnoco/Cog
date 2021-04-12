@@ -5,6 +5,27 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.8 (2021-04-11)
+
+ *  [**Sec**] Possible null-pointer dereference read caused by a sequence of
+    `openmpt::module::read`, `openmpt::module::set_position_order_row` pointing
+    to an invalid pattern, and another `openmpt::module::read` call. To trigger
+    the crash, pattern 0 must not exist in the file and the tick speed before
+    the position jump must be lower than the initial speed of the module.
+    (r14530)
+
+ *  [**Bug**] `libopenmpt.pc` did not list required system libraries `ole32.lib`
+    and `rpcrt4.lib` on Windows in `Libs.Private` field for static builds.
+ *  [**Bug**] libopenmpt 0.5.7 broke seeking in some subsongs.
+
+ *  The built-in LFO plugin did not load the correct initial LFO frequency.
+ *  IT command S7x (instrument control) is now supported when seeking with
+    sample sync enabled.
+ *  libopenmpt_ext `play_note` was cutting of channels even when there were
+    plenty of free channels to use.
+
+ *  mpg123: Update to v1.26.5 (2021-03-22).
+
 ### libopenmpt 0.5.7 (2021-03-20)
 
  *  [**Sec**] Possible null-pointer dereference read caused by a sequence of

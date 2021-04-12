@@ -256,19 +256,9 @@ namespace openmpt {
 		}
 
 		// Find a free channel
-		CHANNELINDEX free_channel = MAX_CHANNELS - 1;
-		// Search for available channel
-		for(CHANNELINDEX i = MAX_CHANNELS - 1; i >= get_num_channels(); i--)
-		{
-			const ModChannel &chn = m_sndFile->m_PlayState.Chn[i];
-			if ( chn.nLength == 0 ) {
-				free_channel = i;
-				break;
-			} else if ( chn.dwFlags[CHN_NOTEFADE] ) {
-				// We can probably still do better than this.
-				free_channel = i;
-			}
-		}
+		CHANNELINDEX free_channel = m_sndFile->GetNNAChannel( CHANNELINDEX_INVALID );
+		if ( free_channel == CHANNELINDEX_INVALID )
+			free_channel = MAX_CHANNELS - 1;
 
 		ModChannel &chn = m_sndFile->m_PlayState.Chn[free_channel];
 		chn.Reset(ModChannel::resetTotal, *m_sndFile, CHANNELINDEX_INVALID);

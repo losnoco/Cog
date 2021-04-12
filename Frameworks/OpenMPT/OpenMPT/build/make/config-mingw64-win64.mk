@@ -13,8 +13,10 @@ CPPFLAGS += -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 CXXFLAGS += -municode -mconsole 
 CFLAGS   += -municode -mconsole 
 LDFLAGS  +=
-LDLIBS   += -lm -lrpcrt4 -lwinmm
+LDLIBS   += -lm -lole32 -lrpcrt4 -lwinmm
 ARFLAGS  := rcs
+
+PC_LIBS_PRIVATE += -lole32 -lrpcrt4
 
 CFLAGS_SILENT += -Wno-unused-parameter -Wno-unused-function -Wno-cast-qual -Wno-old-style-declaration -Wno-type-limits -Wno-unused-but-set-variable
 

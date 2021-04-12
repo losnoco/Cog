@@ -199,8 +199,8 @@ static_assert(alignof(std::byte) == 1);
 
 
 namespace mpt {
-constexpr int arch_bits = sizeof(void*) * 8;
-constexpr std::size_t pointer_size = sizeof(void*);
+inline constexpr int arch_bits = sizeof(void*) * 8;
+inline constexpr std::size_t pointer_size = sizeof(void*);
 } // namespace mpt
 
 static_assert(mpt::arch_bits == static_cast<int>(mpt::pointer_size) * 8);

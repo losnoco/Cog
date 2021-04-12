@@ -20,39 +20,39 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 using ROWINDEX = uint32;
-	const ROWINDEX ROWINDEX_INVALID = uint32_max;
+inline constexpr ROWINDEX ROWINDEX_INVALID = uint32_max;
 using CHANNELINDEX = uint16;
-	const CHANNELINDEX CHANNELINDEX_INVALID = uint16_max;
+inline constexpr CHANNELINDEX CHANNELINDEX_INVALID = uint16_max;
 using ORDERINDEX = uint16;
-	const ORDERINDEX ORDERINDEX_INVALID = uint16_max;
-	const ORDERINDEX ORDERINDEX_MAX = uint16_max - 1;
+inline constexpr ORDERINDEX ORDERINDEX_INVALID = uint16_max;
+inline constexpr ORDERINDEX ORDERINDEX_MAX = uint16_max - 1;
 using PATTERNINDEX = uint16;
-	const PATTERNINDEX PATTERNINDEX_INVALID = uint16_max;
+inline constexpr PATTERNINDEX PATTERNINDEX_INVALID = uint16_max;
 using PLUGINDEX = uint8;
-	const PLUGINDEX PLUGINDEX_INVALID = uint8_max;
+inline constexpr PLUGINDEX PLUGINDEX_INVALID = uint8_max;
 using SAMPLEINDEX = uint16;
-	const SAMPLEINDEX SAMPLEINDEX_INVALID = uint16_max;
+inline constexpr SAMPLEINDEX SAMPLEINDEX_INVALID = uint16_max;
 using INSTRUMENTINDEX = uint16;
-	const INSTRUMENTINDEX INSTRUMENTINDEX_INVALID = uint16_max;
+inline constexpr INSTRUMENTINDEX INSTRUMENTINDEX_INVALID = uint16_max;
 using SEQUENCEINDEX = uint8;
-	const SEQUENCEINDEX SEQUENCEINDEX_INVALID = uint8_max;
+inline constexpr SEQUENCEINDEX SEQUENCEINDEX_INVALID = uint8_max;
 
 using SmpLength = uint32;
 
 
-const SmpLength MAX_SAMPLE_LENGTH = 0x10000000; // Sample length in frames. Sample size in bytes can be more than this (= 256 MB).
+inline constexpr SmpLength MAX_SAMPLE_LENGTH = 0x10000000; // Sample length in frames. Sample size in bytes can be more than this (= 256 MB).
 
-const ROWINDEX MAX_PATTERN_ROWS       = 1024;
-const ORDERINDEX MAX_ORDERS           = ORDERINDEX_MAX + 1;
-const PATTERNINDEX MAX_PATTERNS       = 4000;
-const SAMPLEINDEX MAX_SAMPLES         = 4000;
-const INSTRUMENTINDEX MAX_INSTRUMENTS = 256;
-const PLUGINDEX MAX_MIXPLUGINS        = 250;
+inline constexpr ROWINDEX MAX_PATTERN_ROWS       = 1024;
+inline constexpr ORDERINDEX MAX_ORDERS           = ORDERINDEX_MAX + 1;
+inline constexpr PATTERNINDEX MAX_PATTERNS       = 4000;
+inline constexpr SAMPLEINDEX MAX_SAMPLES         = 4000;
+inline constexpr INSTRUMENTINDEX MAX_INSTRUMENTS = 256;
+inline constexpr PLUGINDEX MAX_MIXPLUGINS        = 250;
 
-const SEQUENCEINDEX MAX_SEQUENCES     = 50;
+inline constexpr SEQUENCEINDEX MAX_SEQUENCES     = 50;
 
-const CHANNELINDEX MAX_BASECHANNELS   = 127; // Maximum pattern channels.
-const CHANNELINDEX MAX_CHANNELS       = 256; // Maximum number of mixing channels.
+inline constexpr CHANNELINDEX MAX_BASECHANNELS   = 127; // Maximum pattern channels.
+inline constexpr CHANNELINDEX MAX_CHANNELS       = 256; // Maximum number of mixing channels.
 
 enum { FREQ_FRACBITS = 4 }; // Number of fractional bits in return value of CSoundFile::GetFreqFromPeriod()
 
@@ -323,22 +323,22 @@ enum class AmigaFilter
 	Unfiltered = 3,
 };
 
-static inline std::array<ResamplingMode, 5> AllModes() noexcept { return { { SRCMODE_NEAREST, SRCMODE_LINEAR, SRCMODE_CUBIC, SRCMODE_SINC8, SRCMODE_SINC8LP } }; }
+inline std::array<ResamplingMode, 5> AllModes() noexcept { return { { SRCMODE_NEAREST, SRCMODE_LINEAR, SRCMODE_CUBIC, SRCMODE_SINC8, SRCMODE_SINC8LP } }; }
 
-static inline std::array<ResamplingMode, 6> AllModesWithDefault() noexcept { return { { SRCMODE_NEAREST, SRCMODE_LINEAR, SRCMODE_CUBIC, SRCMODE_SINC8, SRCMODE_SINC8LP, SRCMODE_DEFAULT } }; }
+inline std::array<ResamplingMode, 6> AllModesWithDefault() noexcept { return { { SRCMODE_NEAREST, SRCMODE_LINEAR, SRCMODE_CUBIC, SRCMODE_SINC8, SRCMODE_SINC8LP, SRCMODE_DEFAULT } }; }
 
-static constexpr ResamplingMode Default() noexcept { return SRCMODE_SINC8LP; }
+constexpr ResamplingMode Default() noexcept { return SRCMODE_SINC8LP; }
 
-static constexpr bool IsKnownMode(int mode) noexcept { return (mode >= 0) && (mode < SRCMODE_DEFAULT); }
+constexpr bool IsKnownMode(int mode) noexcept { return (mode >= 0) && (mode < SRCMODE_DEFAULT); }
 
-static constexpr ResamplingMode ToKnownMode(int mode) noexcept
+constexpr ResamplingMode ToKnownMode(int mode) noexcept
 {
 	return Resampling::IsKnownMode(mode) ? static_cast<ResamplingMode>(mode)
 		: (mode == SRCMODE_AMIGA) ? SRCMODE_LINEAR
 		: Resampling::Default();
 }
 
-static constexpr int Length(ResamplingMode mode) noexcept
+constexpr int Length(ResamplingMode mode) noexcept
 {
 	return mode == SRCMODE_NEAREST ? 1
 		: mode == SRCMODE_LINEAR ? 2
@@ -348,11 +348,11 @@ static constexpr int Length(ResamplingMode mode) noexcept
 		: 0;
 }
 
-static constexpr bool HasAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP); }
+constexpr bool HasAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP); }
 
-static constexpr ResamplingMode AddAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8) ? SRCMODE_SINC8LP : mode; }
+constexpr ResamplingMode AddAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8) ? SRCMODE_SINC8LP : mode; }
 
-static constexpr ResamplingMode RemoveAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP) ? SRCMODE_SINC8 : mode; }
+constexpr ResamplingMode RemoveAA(ResamplingMode mode) noexcept { return (mode == SRCMODE_SINC8LP) ? SRCMODE_SINC8 : mode; }
 
 }
 

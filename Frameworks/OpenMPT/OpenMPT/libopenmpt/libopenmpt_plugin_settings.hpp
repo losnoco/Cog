@@ -10,7 +10,9 @@
 #ifndef LIBOPENMPT_PLUGIN_SETTINGS_HPP
 #define LIBOPENMPT_PLUGIN_SETTINGS_HPP
 
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <windows.h>
 
 #include <string>

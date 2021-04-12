@@ -20,10 +20,10 @@ OPENMPT_NAMESPACE_BEGIN
 namespace Paula
 {
 
-constexpr int PAULA_HZ = 3546895;
-constexpr int MINIMUM_INTERVAL = 4;  // Tradeoff between quality and speed (lower = less aliasing)
-constexpr int BLEP_SCALE = 17;  // TODO: Should be 1 for float mixer
-constexpr int BLEP_SIZE = 2048;
+inline constexpr int PAULA_HZ = 3546895;
+inline constexpr int MINIMUM_INTERVAL = 4;  // Tradeoff between quality and speed (lower = less aliasing)
+inline constexpr int BLEP_SCALE = 17;  // TODO: Should be 1 for float mixer
+inline constexpr int BLEP_SIZE = 2048;
 
 using BlepArray = std::array<mixsample_t, BLEP_SIZE>;
 

@@ -50,14 +50,14 @@ struct NoteRange
 
 // Derived from old IsStepCountRangeSufficient(), this is actually a more
 // sensible value than what was calculated in earlier versions.
-static constexpr STEPINDEXTYPE FINESTEPCOUNT_MAX = 0xffff;
+inline constexpr STEPINDEXTYPE FINESTEPCOUNT_MAX = 0xffff;
 
-static constexpr auto NOTEINDEXTYPE_MIN = std::numeric_limits<NOTEINDEXTYPE>::min();
-static constexpr auto NOTEINDEXTYPE_MAX = std::numeric_limits<NOTEINDEXTYPE>::max();
-static constexpr auto UNOTEINDEXTYPE_MAX = std::numeric_limits<UNOTEINDEXTYPE>::max();
-static constexpr auto STEPINDEXTYPE_MIN = std::numeric_limits<STEPINDEXTYPE>::min();
-static constexpr auto STEPINDEXTYPE_MAX = std::numeric_limits<STEPINDEXTYPE>::max();
-static constexpr auto USTEPINDEXTYPE_MAX = std::numeric_limits<USTEPINDEXTYPE>::max();
+inline constexpr auto NOTEINDEXTYPE_MIN = std::numeric_limits<NOTEINDEXTYPE>::min();
+inline constexpr auto NOTEINDEXTYPE_MAX = std::numeric_limits<NOTEINDEXTYPE>::max();
+inline constexpr auto UNOTEINDEXTYPE_MAX = std::numeric_limits<UNOTEINDEXTYPE>::max();
+inline constexpr auto STEPINDEXTYPE_MIN = std::numeric_limits<STEPINDEXTYPE>::min();
+inline constexpr auto STEPINDEXTYPE_MAX = std::numeric_limits<STEPINDEXTYPE>::max();
+inline constexpr auto USTEPINDEXTYPE_MAX = std::numeric_limits<USTEPINDEXTYPE>::max();
 
 
 enum class Type : uint16

@@ -258,14 +258,10 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 	RowVisitor visitedRows(*this, sequence);
 
 	// If sequence starts with some non-existent patterns, find a better start
+	while(target.startOrder < orderList.size() && !orderList.IsValidPat(target.startOrder))
 	{
-		ORDERINDEX startOrder = target.startOrder;
-		ROWINDEX startRow = target.startRow;
-		if(visitedRows.GetFirstUnvisitedRow(startOrder, startRow, true))
-		{
-			target.startOrder = startOrder;
-			target.startRow = startRow;
-		}
+		target.startOrder++;
+		target.startRow = 0;
 	}
 	retval.startRow = playState.m_nNextRow = playState.m_nRow = target.startRow;
 	retval.startOrder = playState.m_nNextOrder = playState.m_nCurrentOrder = target.startOrder;
@@ -1153,12 +1149,12 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 						if(m.param == 0x9E)
 						{
 							// Play forward
-							memory.RenderChannel(nChn, oldTickDuration);	// Re-sync what we've got so far
+							memory.RenderChannel(nChn, oldTickDuration);  // Re-sync what we've got so far
 							chn.dwFlags.reset(CHN_PINGPONGFLAG);
 						} else if(m.param == 0x9F)
 						{
 							// Reverse
-							memory.RenderChannel(nChn, oldTickDuration);	// Re-sync what we've got so far
+							memory.RenderChannel(nChn, oldTickDuration);  // Re-sync what we've got so far
 							chn.dwFlags.set(CHN_PINGPONGFLAG);
 							if(!chn.position.GetInt() && chn.nLength && (m.IsNote() || !chn.dwFlags[CHN_LOOP]))
 							{
@@ -1166,8 +1162,8 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 							}
 						} else if((m.param & 0xF0) == 0x70)
 						{
-							// TODO
-							//ExtendedS3MCommands(nChn, param);
+							if(m.param >= 0x73)
+								chn.InstrumentControl(m.param, *this);
 						}
 						break;
 					}
@@ -1305,7 +1301,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 			m_PlayState.ResetGlobalVolumeRamping();
 			m_PlayState.m_nNextRow = m_PlayState.m_nRow;
 			m_PlayState.m_nFrameDelay = m_PlayState.m_nPatternDelay = 0;
-			m_PlayState.m_nTickCount = Util::MaxValueOfType(m_PlayState.m_nTickCount) - 1;
+			m_PlayState.m_nTickCount = TICKS_ROW_FINISHED;
 			m_PlayState.m_bPositionChanged = true;
 			if(m_opl != nullptr)
 				m_opl->Reset();
@@ -3713,10 +3709,19 @@ void CSoundFile::UpdateS3MEffectMemory(ModChannel &chn, ModCommand::PARAM param)
 
 // Calculate full parameter for effects that support parameter extension at the given pattern location.
 // maxCommands sets the maximum number of XParam commands to look at for this effect
-// isExtended returns if the command is actually using any XParam extensions.
+// extendedRows returns how many extended rows are used (i.e. a value of 0 means the command is not extended).
 uint32 CSoundFile::CalculateXParam(PATTERNINDEX pat, ROWINDEX row, CHANNELINDEX chn, bool *isExtended) const
 {
 	if(isExtended != nullptr) *isExtended = false;
+	if(!Patterns.IsValidPat(pat))
+	{
+#ifdef MPT_BUILD_FUZZER
+		// Ending up in this situation implies a logic error
+		std::abort();
+#else
+		return 0;
+#endif
+	}
 	ROWINDEX maxCommands = 4;
 	const ModCommand *m = Patterns[pat].GetpModCommand(row, chn);
 	uint32 val = m->param;
@@ -4817,23 +4822,8 @@ void CSoundFile::ExtendedS3MCommands(CHANNELINDEX nChn, ModCommand::PARAM param)
 						}
 					}
 					break;
-				case 3:		chn.nNNA = NNA_NOTECUT; break;
-				case 4:		chn.nNNA = NNA_CONTINUE; break;
-				case 5:		chn.nNNA = NNA_NOTEOFF; break;
-				case 6:		chn.nNNA = NNA_NOTEFADE; break;
-				case 7:		chn.VolEnv.flags.reset(ENV_ENABLED); break;
-				case 8:		chn.VolEnv.flags.set(ENV_ENABLED); break;
-				case 9:		chn.PanEnv.flags.reset(ENV_ENABLED); break;
-				case 10:	chn.PanEnv.flags.set(ENV_ENABLED); break;
-				case 11:	chn.PitchEnv.flags.reset(ENV_ENABLED); break;
-				case 12:	chn.PitchEnv.flags.set(ENV_ENABLED); break;
-				case 13:	// S7D: Enable pitch envelope, force to play as pitch envelope
-				case 14:	// S7E: Enable pitch envelope, force to play as filter envelope
-					if(GetType() == MOD_TYPE_MPT)
-					{
-						chn.PitchEnv.flags.set(ENV_ENABLED);
-						chn.PitchEnv.flags.set(ENV_FILTER, param != 13);
-					}
+				default:  // S73-S7E
+					chn.InstrumentControl(param, *this);
 					break;
 				}
 				break;

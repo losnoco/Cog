@@ -196,6 +196,9 @@ struct ModChannel
 	void SetInstrumentPan(int32 pan, const CSoundFile &sndFile);
 
 	void RecalcTuningFreq(Tuning::RATIOTYPE vibratoFactor, Tuning::NOTEINDEXTYPE arpeggioSteps, const CSoundFile &sndFile);
+
+	// IT command S73-S7E
+	void InstrumentControl(uint8 param, const CSoundFile &sndFile);
 };
 
 

@@ -194,6 +194,7 @@ class interactive {
 	//! Gets the current module pitch factor
 	/*!
 	  \return The current pitch factor.
+	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the pitch is outside the specified range.
 	  \sa openmpt::ext::interactive::set_pitch_factor
 	*/
 	virtual double get_pitch_factor( ) const = 0;
@@ -283,7 +284,7 @@ class interactive {
 
 	//! Stop the note playing on the specified channel
 	/*!
-	  \param channel The channel on which the note should be stopped.
+	  \param channel The channel on which the note should be stopped. This is the value returned by a previous play_note call.
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the channel index is invalid.
 	  \sa openmpt::ext::interactive::play_note
 	*/

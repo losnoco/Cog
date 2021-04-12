@@ -27,7 +27,7 @@ using mixsample_t = AudioSampleFloat;
 enum { MIXING_ATTENUATION = MixSampleIntTraits::mix_headroom_bits() };
 enum { MIXING_FRACTIONAL_BITS = MixSampleIntTraits::mix_fractional_bits() };
 
-constexpr float MIXING_SCALEF = MixSampleIntTraits::mix_scale<float>();
+inline constexpr float MIXING_SCALEF = MixSampleIntTraits::mix_scale<float>();
 
 #ifdef MPT_INTMIXER
 static_assert(sizeof(mixsample_t) == 4);

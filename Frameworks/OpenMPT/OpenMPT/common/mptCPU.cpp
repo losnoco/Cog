@@ -24,6 +24,7 @@ uint32 RealProcSupport = 0;
 uint32 ProcSupport = 0;
 char ProcVendorID[16+1] = "";
 char ProcBrandID[4*4*3+1] = "";
+uint32 ProcRawCPUID = 0;
 uint16 ProcFamily = 0;
 uint8 ProcModel = 0;
 uint8 ProcStepping = 0;
@@ -104,6 +105,7 @@ void InitProcSupport()
 	ProcSupport = 0;
 	mpt::String::WriteAutoBuf(ProcVendorID) = "";
 	mpt::String::WriteAutoBuf(ProcBrandID) = "";
+	ProcRawCPUID = 0;
 	ProcFamily = 0;
 	ProcModel = 0;
 	ProcStepping = 0;
@@ -118,6 +120,7 @@ void InitProcSupport()
 		if(VendorString.a >= 0x00000001u)
 		{
 			cpuid_result StandardFeatureFlags = cpuid(0x00000001u);
+			ProcRawCPUID = StandardFeatureFlags.a;
 			uint32 Stepping   = (StandardFeatureFlags.a >>  0) & 0x0f;
 			uint32 BaseModel  = (StandardFeatureFlags.a >>  4) & 0x0f;
 			uint32 BaseFamily = (StandardFeatureFlags.a >>  8) & 0x0f;
@@ -181,6 +184,7 @@ void InitProcSupport()
 	ProcSupport = 0;
 	mpt::String::WriteAutoBuf(ProcVendorID) = "";
 	mpt::String::WriteAutoBuf(ProcBrandID) = "";
+	ProcRawCPUID = 0;
 	ProcFamily = 0;
 	ProcModel = 0;
 	ProcStepping = 0;
