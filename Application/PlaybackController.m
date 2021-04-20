@@ -580,7 +580,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	else if (status == CogStatusPlaying)
 	{
 		if (!positionTimer) {
-			positionTimer = [NSTimer timerWithTimeInterval:1.00 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
+			positionTimer = [NSTimer timerWithTimeInterval:0.2 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
 			[[NSRunLoop currentRunLoop] addTimer:positionTimer forMode:NSRunLoopCommonModes];
 		}
 
