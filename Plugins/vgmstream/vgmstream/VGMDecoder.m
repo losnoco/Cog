@@ -30,11 +30,22 @@
 }
 
 -(void)stuffURL:(NSURL *)url stream:(VGMSTREAM *)stream {
+    vgmstream_cfg_t vcfg = {0};
+    
+    vcfg.allow_play_forever = 1;
+    vcfg.play_forever = 0;
+    vcfg.loop_count = 2;
+    vcfg.fade_time = 10;
+    vcfg.fade_delay = 0;
+    vcfg.ignore_loop = 0;
+    
+    vgmstream_apply_config(stream, &vcfg);
+
     int track_num = [[url fragment] intValue];
     
     int sampleRate = stream->sample_rate;
     int channels = stream->channels;
-    long totalFrames = get_vgmstream_play_samples( 2.0, 10.0, 10.0, stream );
+    long totalFrames = vgmstream_get_samples(stream);
     
     int bitrate = get_vgmstream_average_bitrate(stream);
 
@@ -210,12 +221,6 @@
     
     playForever = IsRepeatOneSet();
     
-    sampleRate = stream->sample_rate;
-    channels = stream->channels;
-    totalFrames = get_vgmstream_play_samples( 2.0, 10.0, 10.0, stream );
-    framesFade = stream->loop_flag ? sampleRate * 10 : 0;
-    framesLength = totalFrames - framesFade;
-    
     vgmstream_cfg_t vcfg = {0};
     
     vcfg.allow_play_forever = 1;
@@ -226,6 +231,10 @@
     vcfg.ignore_loop = 0;
     
     vgmstream_apply_config(stream, &vcfg);
+    
+    sampleRate = stream->sample_rate;
+    channels = stream->channels;
+    totalFrames = vgmstream_get_samples(stream);
     
     framesRead = 0;
     
@@ -254,74 +263,46 @@
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
     BOOL repeatone = IsRepeatOneSet();
+    UInt32 framesMax = frames;
     
     if (repeatone != playForever) {
         playForever = repeatone;
         vgmstream_set_play_forever(stream, repeatone);
     }
     
-    BOOL loopokay = repeatone && stream->loop_flag;
+    if (framesRead + frames > totalFrames && !playForever)
+        frames = totalFrames - framesRead;
+    if (frames > framesMax)
+        frames = 0;
     
-    if (!loopokay) {
-        if (framesRead >= totalFrames) return 0;
-        else if (framesRead + frames > totalFrames)
-            frames = (UInt32)(totalFrames - framesRead);
-    }
-
-    sample * sbuf = (sample *) buf;
+    if (frames) {
+        sample * sbuf = (sample *) buf;
     
-    render_vgmstream( sbuf, frames, stream );
-    
-    if ( !repeatone && framesFade && framesRead + frames > framesLength ) {
-        long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
-        long fadeEnd = (framesRead + frames) > totalFrames ? totalFrames : (framesRead + frames);
-        long fadePos;
-        long i;
+        render_vgmstream( sbuf, frames, stream );
         
-        int64_t fadeScale = (int64_t)(totalFrames - fadeStart) * INT_MAX / framesFade;
-        int64_t fadeStep = INT_MAX / framesFade;
-        sbuf += (fadeStart - framesRead) * channels;
-        for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
-            for (i = 0; i < channels; ++i) {
-                sbuf[ i ] = (int16_t)((int64_t)(sbuf[ i ]) * fadeScale / INT_MAX);
-            }
-            sbuf += channels;
-            fadeScale -= fadeStep;
-            if (fadeScale <= 0) break;
-        }
-        frames = (UInt32)(fadePos - framesRead);
+        framesRead += frames;
     }
-    
-    framesRead += frames;
     
     return frames;
 }
 
 - (long)seek:(long)frame
 {
-    // Constrain the seek offset to within the loop, if any
-    if(stream->loop_flag && (stream->loop_end_sample - stream->loop_start_sample) && frame >= stream->loop_end_sample) {
-        frame -= stream->loop_start_sample;
-        frame %= (stream->loop_end_sample - stream->loop_start_sample);
-        frame += stream->loop_start_sample;
+    BOOL repeatone = IsRepeatOneSet();
+    
+    if (repeatone != playForever) {
+        playForever = repeatone;
+        vgmstream_set_play_forever(stream, repeatone);
     }
     
-    if (frame < framesRead) {
-        reset_vgmstream( stream );
-        framesRead = 0;
-    }
+    if (frame > totalFrames)
+        frame = totalFrames;
     
-    while (framesRead < frame) {
-        sample buffer[1024];
-        long max_sample_count = 1024 / channels;
-        long samples_to_skip = frame - framesRead;
-        if ( samples_to_skip > max_sample_count )
-            samples_to_skip = max_sample_count;
-        render_vgmstream( buffer, (int)samples_to_skip, stream );
-        framesRead += samples_to_skip;
-    }
+    seek_vgmstream(stream, frame);
     
-    return framesRead;
+    framesRead = frame;
+    
+    return frame;
 }
 
 - (void)close

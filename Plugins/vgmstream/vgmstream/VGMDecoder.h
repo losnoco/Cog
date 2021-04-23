@@ -33,8 +33,6 @@
     int channels;
     int bitrate;
 	long totalFrames;
-    long framesLength;
-    long framesFade;
     long framesRead;
 }
 @end
