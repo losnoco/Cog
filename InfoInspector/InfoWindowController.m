@@ -8,6 +8,7 @@
 
 #import "InfoWindowController.h"
 #import "MissingAlbumArtTransformer.h"
+#import "PlaylistEntry.h"
 #import "Logging.h"
 #import "AppController.h"
 
@@ -36,18 +37,12 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    BOOL miniMode = [appController miniMode];
-    BOOL currentEntryChanged = (object == currentEntryController && [keyPath isEqualTo:@"content"]);
-    BOOL selectionChanged = (object == playlistSelectionController && [keyPath isEqualTo:@"selection"]);
-    BOOL miniModeSwitched = (object == appController && [keyPath isEqual:@"miniMode"]);
-
-    if (miniMode && (currentEntryChanged || miniModeSwitched))
-    {
+    // Avoid "selection" because it creates a proxy that's hard to reason with when we don't need to write.
+    PlaylistEntry* currentSelection = [[playlistSelectionController selectedObjects] firstObject];
+    if (currentSelection != NULL) {
+        [self setValueToDisplay: currentSelection];
+    } else {
         [self setValueToDisplay:[currentEntryController content]];
-    }
-    else if (!miniMode && (selectionChanged || miniModeSwitched))
-    {
-        [self setValueToDisplay:[playlistSelectionController selection]];
     }
 }
 
