@@ -242,7 +242,7 @@ public:
 		if ( initialized )
 		{
             cache_deinit();
-			BASS_Free();
+			// BASS_Free(); // this is only called on shutdown anyway
 		}
 	}
 
