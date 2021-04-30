@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83D3C577201C66E3005564CB /* rad.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C504201C66C1005564CB /* rad.h */; };
+		830E1DA1263B90CB005B01D2 /* rad2.h in Headers */ = {isa = PBXBuildFile; fileRef = 830E1D9F263B90CB005B01D2 /* rad2.h */; };
+		830E1DA2263B90CB005B01D2 /* rad2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830E1DA0263B90CB005B01D2 /* rad2.cpp */; };
 		83D3C578201C66E3005564CB /* adplug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C505201C66C1005564CB /* adplug.cpp */; };
 		83D3C579201C66E3005564CB /* mtk.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C506201C66C2005564CB /* mtk.h */; };
 		83D3C57A201C66E3005564CB /* psi.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C507201C66C2005564CB /* psi.h */; };
@@ -31,7 +32,6 @@
 		83D3C58D201C66E3005564CB /* mad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C51A201C66C7005564CB /* mad.cpp */; };
 		83D3C58E201C66E3005564CB /* hsc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C51B201C66C7005564CB /* hsc.h */; };
 		83D3C58F201C66E3005564CB /* msc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C51C201C66C7005564CB /* msc.cpp */; };
-		83D3C590201C66E3005564CB /* rad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C51D201C66C8005564CB /* rad.cpp */; };
 		83D3C591201C66E3005564CB /* mdi.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C51E201C66C8005564CB /* mdi.h */; };
 		83D3C592201C66E3005564CB /* mididata.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C51F201C66C8005564CB /* mididata.h */; };
 		83D3C593201C66E3005564CB /* s3m.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C520201C66C8005564CB /* s3m.h */; };
@@ -162,9 +162,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		830E1D9F263B90CB005B01D2 /* rad2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rad2.h; path = adplug/src/rad2.h; sourceTree = "<group>"; };
+		830E1DA0263B90CB005B01D2 /* rad2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rad2.cpp; path = adplug/src/rad2.cpp; sourceTree = "<group>"; };
 		83D3C4D4201C654F005564CB /* libAdPlug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libAdPlug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C4D8201C6550005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		83D3C504201C66C1005564CB /* rad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rad.h; path = adplug/src/rad.h; sourceTree = "<group>"; };
 		83D3C505201C66C1005564CB /* adplug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = adplug.cpp; path = adplug/src/adplug.cpp; sourceTree = "<group>"; };
 		83D3C506201C66C2005564CB /* mtk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mtk.h; path = adplug/src/mtk.h; sourceTree = "<group>"; };
 		83D3C507201C66C2005564CB /* psi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = psi.h; path = adplug/src/psi.h; sourceTree = "<group>"; };
@@ -188,7 +189,6 @@
 		83D3C51A201C66C7005564CB /* mad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mad.cpp; path = adplug/src/mad.cpp; sourceTree = "<group>"; };
 		83D3C51B201C66C7005564CB /* hsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hsc.h; path = adplug/src/hsc.h; sourceTree = "<group>"; };
 		83D3C51C201C66C7005564CB /* msc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = msc.cpp; path = adplug/src/msc.cpp; sourceTree = "<group>"; };
-		83D3C51D201C66C8005564CB /* rad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rad.cpp; path = adplug/src/rad.cpp; sourceTree = "<group>"; };
 		83D3C51E201C66C8005564CB /* mdi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mdi.h; path = adplug/src/mdi.h; sourceTree = "<group>"; };
 		83D3C51F201C66C8005564CB /* mididata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mididata.h; path = adplug/src/mididata.h; sourceTree = "<group>"; };
 		83D3C520201C66C8005564CB /* s3m.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = s3m.h; path = adplug/src/s3m.h; sourceTree = "<group>"; };
@@ -319,8 +319,6 @@
 		83D3C4D6201C654F005564CB /* AdPlug */ = {
 			isa = PBXGroup;
 			children = (
-				83D3C66F201D2C2C005564CB /* silentopl.h */,
-				83D3C661201C6EC3005564CB /* opl.h */,
 				83D3C55F201C66DC005564CB /* a2m.cpp */,
 				83D3C569201C66DF005564CB /* a2m.h */,
 				83D3C516201C66C6005564CB /* adl.cpp */,
@@ -405,6 +403,7 @@
 				83D3C544201C66D3005564CB /* nemuopl.h */,
 				83D3C50A201C66C3005564CB /* nukedopl.c */,
 				83D3C56B201C66DF005564CB /* nukedopl.h */,
+				83D3C661201C6EC3005564CB /* opl.h */,
 				83D3C517201C66C6005564CB /* player.cpp */,
 				83D3C63A201C6AE2005564CB /* player.h */,
 				83D3C548201C66D4005564CB /* players.cpp */,
@@ -413,8 +412,8 @@
 				83D3C533201C66CD005564CB /* protrack.h */,
 				83D3C53A201C66CF005564CB /* psi.cpp */,
 				83D3C507201C66C2005564CB /* psi.h */,
-				83D3C51D201C66C8005564CB /* rad.cpp */,
-				83D3C504201C66C1005564CB /* rad.h */,
+				830E1DA0263B90CB005B01D2 /* rad2.cpp */,
+				830E1D9F263B90CB005B01D2 /* rad2.h */,
 				83D3C523201C66C9005564CB /* rat.cpp */,
 				83D3C571201C66E1005564CB /* rat.h */,
 				83D3C566201C66DE005564CB /* raw.cpp */,
@@ -427,6 +426,7 @@
 				83D3C520201C66C8005564CB /* s3m.h */,
 				83D3C540201C66D1005564CB /* sa2.cpp */,
 				83D3C554201C66D7005564CB /* sa2.h */,
+				83D3C66F201D2C2C005564CB /* silentopl.h */,
 				83D3C522201C66C9005564CB /* sng.cpp */,
 				83D3C534201C66CE005564CB /* sng.h */,
 				83D3C563201C66DD005564CB /* sop.cpp */,
@@ -495,7 +495,6 @@
 				83D3C5C8201C66E3005564CB /* rol.h in Headers */,
 				83D3C584201C66E3005564CB /* mad.h in Headers */,
 				83D3C57A201C66E3005564CB /* psi.h in Headers */,
-				83D3C577201C66E3005564CB /* rad.h in Headers */,
 				83D3C5D1201C66E3005564CB /* xsm.h in Headers */,
 				83D3C639201C6A81005564CB /* version.h in Headers */,
 				83D3C5A4201C66E3005564CB /* vgm.h in Headers */,
@@ -529,6 +528,7 @@
 				83D3C5BD201C66E3005564CB /* amd.h in Headers */,
 				83D3C5AB201C66E3005564CB /* msc.h in Headers */,
 				83D3C5D0201C66E3005564CB /* lds.h in Headers */,
+				830E1DA1263B90CB005B01D2 /* rad2.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,7 +561,7 @@
 		83D3C4CB201C654F005564CB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83D3C4D3201C654F005564CB = {
@@ -621,13 +621,13 @@
 			files = (
 				83D3C5D6201C66E3005564CB /* sop.cpp in Sources */,
 				83D3C5C6201C66E3005564CB /* mdi.cpp in Sources */,
+				830E1DA2263B90CB005B01D2 /* rad2.cpp in Sources */,
 				83D3C648201C6BB9005564CB /* database.cpp in Sources */,
 				83D3C5E1201C66E3005564CB /* got.cpp in Sources */,
 				83D3C595201C66E3005564CB /* sng.cpp in Sources */,
 				83D3C5E0201C66E3005564CB /* ksm.cpp in Sources */,
 				83D3C5CE201C66E3005564CB /* mid.cpp in Sources */,
 				83D3C5C1201C66E3005564CB /* jbm.cpp in Sources */,
-				83D3C590201C66E3005564CB /* rad.cpp in Sources */,
 				83D3C587201C66E3005564CB /* u6m.cpp in Sources */,
 				83D3C5C0201C66E3005564CB /* rix.cpp in Sources */,
 				83D3C59C201C66E3005564CB /* hsp.cpp in Sources */,
@@ -716,6 +716,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -777,6 +778,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
