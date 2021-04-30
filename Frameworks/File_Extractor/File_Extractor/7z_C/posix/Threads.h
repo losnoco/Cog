@@ -10,7 +10,6 @@
 
 #ifdef __APPLE__
 #include <dispatch/dispatch.h>
-#include <CoreServices/CoreServices.h>
 #else
 #include <semaphore.h>
 #endif
@@ -63,7 +62,6 @@ typedef struct
 {
 #ifdef __APPLE__
     dispatch_semaphore_t sem;
-    SInt32 count;
 #else
     sem_t sem;
 #endif
@@ -74,7 +72,7 @@ CSemaphore;
 #define Semaphore_Construct(p)
 #define Semaphore_Close(p)
 #ifdef __APPLE__
-#define Semaphore_Wait(p) { DecrementAtomic(&((p)->count)); dispatch_semaphore_wait((p)->sem, DISPATCH_TIME_FOREVER); }
+#define Semaphore_Wait(p) { dispatch_semaphore_wait((p)->sem, DISPATCH_TIME_FOREVER); }
 #else
 #define Semaphore_Wait(p) { sem_wait(&((p)->sem)); }
 #endif

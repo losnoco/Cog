@@ -92,7 +92,7 @@ long sourceTell(void *datasource)
     do {
 		lastSection = currentSection;
         float ** pcm;
-        numread = ov_read_float(&vorbisRef, &pcm, frames - total, &currentSection);
+        numread = (int)ov_read_float(&vorbisRef, &pcm, frames - total, &currentSection);
 		if (numread > 0) {
             for (int i = 0; i < channels; i++) {
                 for (int j = 0; j < numread; j++) {

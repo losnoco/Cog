@@ -86,7 +86,7 @@ NSString *iTunesDropType = @"com.apple.tv.metadata";
 
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
-                                        toIndex:(unsigned int)insertIndex {
+                                        toIndex:(NSUInteger)insertIndex {
     NSArray *objects = [self arrangedObjects];
     NSUInteger index = [indexSet lastIndex];
 

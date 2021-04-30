@@ -7,7 +7,7 @@
 #ifndef __SEGA_SEGA_H__
 #define __SEGA_SEGA_H__
 
-#include "emuconfig.h"
+#include <HighlyTheoretical/emuconfig.h>
 
 /////////////////////////////////////////////////////////////////////////////
 

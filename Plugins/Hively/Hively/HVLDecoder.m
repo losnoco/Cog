@@ -10,9 +10,7 @@
 
 #import "PlaylistController.h"
 
-@implementation HVLDecoder
-
-void oneTimeInit()
+static void oneTimeInit(void)
 {
     static BOOL initialized = NO;
     if (!initialized)
@@ -21,6 +19,8 @@ void oneTimeInit()
         initialized = YES;
     }
 }
+
+@implementation HVLDecoder
 
 + (void)initialize
 {

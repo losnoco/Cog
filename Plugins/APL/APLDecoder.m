@@ -105,7 +105,7 @@
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
 	if (framePosition + frames > trackEnd)
-		frames = trackEnd - framePosition;
+		frames = (UInt32)(trackEnd - framePosition);
 
 	if (!frames) {
 		DLog(@"APL readAudio Returning 0");

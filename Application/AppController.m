@@ -325,7 +325,7 @@ void* kAppControllerContext = &kAppControllerContext;
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
     CogStatus currentStatus = [playbackController playbackStatus];
-    int lastTrackPlaying = -1;
+    NSInteger lastTrackPlaying = -1;
     double lastTrackPosition = 0;
     
     if (currentStatus == CogStatusStopping)

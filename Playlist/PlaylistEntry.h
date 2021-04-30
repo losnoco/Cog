@@ -9,8 +9,8 @@
 #import <Cocoa/Cocoa.h>
 
 @interface PlaylistEntry : NSObject {
-	int index;
-	int shuffleIndex;
+	NSInteger index;
+	NSInteger shuffleIndex;
 	
 	BOOL current;
 	BOOL removed;
@@ -18,7 +18,7 @@
 	BOOL stopAfter;
 	
 	BOOL queued;
-	int queuePosition;
+	NSInteger queuePosition;
 	
 	BOOL error;
 	NSString *errorMessage;
@@ -77,8 +77,8 @@
 
 @property(readonly) NSString *lengthText;
 
-@property int index;
-@property int shuffleIndex;
+@property NSInteger index;
+@property NSInteger shuffleIndex;
 
 @property(readonly) NSString *status;
 @property(readonly) NSString *statusMessage;
@@ -89,7 +89,7 @@
 @property BOOL stopAfter;
 
 @property BOOL queued;
-@property int queuePosition;
+@property NSInteger queuePosition;
 
 @property BOOL error;
 @property(retain) NSString *errorMessage;

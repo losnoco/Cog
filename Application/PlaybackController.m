@@ -115,12 +115,12 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 }
 
 //called by double-clicking on table
-- (void)playEntryAtIndex:(int)i
+- (void)playEntryAtIndex:(NSInteger)i
 {
     [self playEntryAtIndex:i startPaused:NO];
 }
 
-- (void)playEntryAtIndex:(int)i startPaused:(BOOL)paused
+- (void)playEntryAtIndex:(NSInteger)i startPaused:(BOOL)paused
 {
 	PlaylistEntry *pe = [playlistController entryAtIndex:i];
 
@@ -413,10 +413,10 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 {
     BOOL found = NO;
 	
-	int index = [[playlistController currentEntry] index];
+	NSInteger index = [[playlistController currentEntry] index];
 	NSString *origAlbum = [[playlistController currentEntry] album];
 	
-	int i;
+	NSInteger i;
 	NSString *curAlbum;
 	
 	PlaylistEntry *pe;
@@ -455,11 +455,11 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	BOOL found = NO;
 	BOOL foundAlbum = NO;
 	
-	int index = [[playlistController currentEntry] index];
+	NSInteger index = [[playlistController currentEntry] index];
 	NSString *origAlbum = [[playlistController currentEntry] album];
 	NSString *curAlbum;
 	
-	int i;
+	NSInteger i;
 	
 	PlaylistEntry *pe;
 

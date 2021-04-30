@@ -13,7 +13,7 @@
 
 #import "Logging.h"
 
-NSURL *defaultMusicDirectory() {
+static NSURL *defaultMusicDirectory(void) {
     return [[NSFileManager defaultManager] URLForDirectory:NSMusicDirectory
                                                   inDomain:NSUserDomainMask
                                          appropriateForURL:nil

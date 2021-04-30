@@ -27,6 +27,6 @@ extern NSString *iTunesDropType;
 
 // utility methods
 -(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
-                                       toIndex:(unsigned int)insertIndex;
+                                       toIndex:(NSUInteger)insertIndex;
 
 @end

@@ -1,7 +1,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "syntrax.h"
+#include <Syntrax_c/syntrax.h>
 
 #ifdef __cplusplus
 extern "C" {

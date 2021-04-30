@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "SBNK.h"
-#include "INFOEntry.h"
-#include "common.h"
+#include <SSEQPlayer/SBNK.h>
+#include <SSEQPlayer/INFOEntry.h>
+#include <SSEQPlayer/common.h>
 
 struct SSEQ
 {

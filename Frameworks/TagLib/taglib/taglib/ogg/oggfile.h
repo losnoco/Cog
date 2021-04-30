@@ -23,9 +23,9 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "taglib_export.h"
-#include "tfile.h"
-#include "tbytevectorlist.h"
+#include <taglib/taglib_export.h>
+#include <taglib/tfile.h>
+#include <taglib/tbytevectorlist.h>
 
 #ifndef TAGLIB_OGGFILE_H
 #define TAGLIB_OGGFILE_H

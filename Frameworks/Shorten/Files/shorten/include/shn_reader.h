@@ -34,8 +34,8 @@
 
 #include <stdio.h>
 #include <pthread.h>
-#include "shorten.h"
-#include "ringbuffer.h"
+#include <Shorten/shorten.h>
+#include <Shorten/ringbuffer.h>
 
 
 /* Derek */

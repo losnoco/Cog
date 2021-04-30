@@ -3,7 +3,7 @@
 extern "C" {
 #endif
 
-#include "blip_buf.h"
+#include <HivelyPlayer/blip_buf.h>
 
 #include <stdint.h>
     

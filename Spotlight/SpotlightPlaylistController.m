@@ -19,8 +19,13 @@
     [spotlightWindowController.query disableUpdates];
     
     NSArray *urls = [[self selectedObjects]valueForKey:@"URL"];
+    NSError *error = nil;
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:urls
+                                         requiringSecureCoding:YES
+                                                         error:&error];
+    if (error) return NO;
     [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
-	[pboard setData:[NSArchiver archivedDataWithRootObject:urls] forType:CogUrlsPboardType];
+    [pboard setData:data forType:CogUrlsPboardType];
     
     [spotlightWindowController.query enableUpdates];
 	
@@ -30,7 +35,7 @@
 // Do not accept drag operations, necessary as long as this class inherits from PlaylistController
 - (NSDragOperation)tableView:(NSTableView*)tv
                 validateDrop:(id <NSDraggingInfo>)info
-                 proposedRow:(int)row
+                 proposedRow:(NSInteger)row
        proposedDropOperation:(NSTableViewDropOperation)op
 {
     return NSDragOperationNone;

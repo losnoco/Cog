@@ -160,13 +160,13 @@
             tableColumn:(NSTableColumn *)tc
                     row:(NSInteger)row
           mouseLocation:(NSPoint)mouseLocation {
-    DLog(@"GETTING STATUS FOR ROW: %i: %@!", row,
+    DLog(@"GETTING STATUS FOR ROW: %li: %@!", row,
             [[[self arrangedObjects] objectAtIndex:row] statusMessage]);
     return [[[self arrangedObjects] objectAtIndex:row] statusMessage];
 }
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
-                                        toIndex:(unsigned int)insertIndex {
+                                        toIndex:(NSUInteger)insertIndex {
     [super moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
 
     [playbackController playlistDidChange:self];
@@ -345,7 +345,7 @@
     [[self undoManager] setActionName:actionName];
 
     DLog(@"Removing indexes: %@", indexes);
-    DLog(@"Current index: %i", currentEntry.index);
+    DLog(@"Current index: %li", currentEntry.index);
 
     NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
     for (PlaylistEntry *pe in objects) {
@@ -354,14 +354,14 @@
 
     if (currentEntry.index >= 0 && [unarrangedIndexes containsIndex:currentEntry.index]) {
         currentEntry.index = -currentEntry.index - 1;
-        DLog(@"Current removed: %i", currentEntry.index);
+        DLog(@"Current removed: %li", currentEntry.index);
     }
 
     if (currentEntry.index < 0)  // Need to update the negative index
     {
-        int i = -currentEntry.index - 1;
-        DLog(@"I is %i", i);
-        int j;
+        NSInteger i = -currentEntry.index - 1;
+        DLog(@"I is %li", i);
+        NSInteger j;
         for (j = i - 1; j >= 0; j--) {
             if ([unarrangedIndexes containsIndex:j]) {
                 DLog(@"Removing 1");
@@ -441,7 +441,7 @@
     }
 }
 
-- (PlaylistEntry *)entryAtIndex:(int)i {
+- (PlaylistEntry *)entryAtIndex:(NSInteger)i {
     RepeatMode repeat = [self repeat];
 
     if (i < 0 || i >= [[self arrangedObjects] count]) {
@@ -509,7 +509,7 @@
     }
 }
 
-- (PlaylistEntry *)shuffledEntryAtIndex:(int)i {
+- (PlaylistEntry *)shuffledEntryAtIndex:(NSInteger)i {
     RepeatMode repeat = [self repeat];
 
     while (i < 0) {
@@ -559,7 +559,7 @@
     if ([self shuffle] != ShuffleOff) {
         return [self shuffledEntryAtIndex:(pe.shuffleIndex + 1)];
     } else {
-        int i;
+        NSInteger i;
         if (pe.index < 0)  // Was a current entry, now removed.
         {
             i = -pe.index - 1;
@@ -605,7 +605,7 @@
     if ([self shuffle] != ShuffleOff) {
         return [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
     } else {
-        int i;
+        NSInteger i;
         if (pe.index < 0)  // Was a current entry, now removed.
         {
             i = -pe.index - 2;

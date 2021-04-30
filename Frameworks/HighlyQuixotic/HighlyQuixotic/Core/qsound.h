@@ -7,7 +7,7 @@
 #ifndef __Q_QSOUND_H__
 #define __Q_QSOUND_H__
 
-#include "emuconfig.h"
+#include <HighlyQuixotic/emuconfig.h>
 
 #ifdef __cplusplus
 extern "C" {

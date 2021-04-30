@@ -362,8 +362,8 @@
 	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:selector]];
     [invocation setTarget:delegate];
 	[invocation setSelector:selector];
-    [invocation setArgument:&self   atIndex:2];
-	[invocation setArgument:&obj	atIndex:3];
+    [invocation setArgument:(void*)&self atIndex:2];
+	[invocation setArgument:&obj	     atIndex:3];
     [invocation retainArguments];
 	
 	[invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:wait];
@@ -374,9 +374,9 @@
 	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:selector]];
     [invocation setTarget:delegate];
     [invocation setSelector:selector];
-    [invocation setArgument:&self   atIndex:2];
-	[invocation setArgument:&obj	atIndex:3];
-	[invocation setArgument:&obj2	atIndex:4];
+    [invocation setArgument:(void*)&self atIndex:2];
+	[invocation setArgument:&obj	     atIndex:3];
+	[invocation setArgument:&obj2	     atIndex:4];
     [invocation retainArguments];
 	
 	[invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:wait];

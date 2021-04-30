@@ -45,8 +45,8 @@
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	int bytesPerFrame = channels * (bitsPerSample/8);
-	int amountRead;
+	long bytesPerFrame = channels * (bitsPerSample/8);
+	long amountRead;
 
 	//For some reason a busy loop is causing pops when output is set to 48000. Probably CPU starvation, since the SHN decoder seems to use a multithreaded nonblocking approach.
 	do
@@ -55,7 +55,7 @@
 	} while(amountRead == -1);
 		
 
-	return amountRead/bytesPerFrame;
+	return (int)(amountRead/bytesPerFrame);
 }
 
 - (long)seek:(long)sample

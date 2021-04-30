@@ -109,7 +109,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"PlaylistEntry %i:(%@)", self.index, self.URL];
+    return [NSString stringWithFormat:@"PlaylistEntry %li:(%@)", self.index, self.URL];
 }
 
 - (id)init
@@ -338,7 +338,7 @@
 	}
 	else if (self.queued)
 	{
-		return [NSString stringWithFormat:@"Queued: %i", self.queuePosition + 1];
+        return [NSString stringWithFormat:@"Queued: %li", self.queuePosition + 1];
 	}
 	else if (self.error)
 	{

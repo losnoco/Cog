@@ -22,7 +22,7 @@
 
 #include <AudioToolbox/AudioFile.h>
 
-BOOL hostIsBigEndian()
+static BOOL hostIsBigEndian(void)
 {
 #ifdef __BIG_ENDIAN__
 	return YES;

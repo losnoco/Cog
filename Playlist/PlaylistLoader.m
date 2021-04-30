@@ -234,7 +234,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     for (PlaylistEntry *pe in [playlistController queueList])
     {
-        [queueList addObject:[NSNumber numberWithInt:pe.index]];
+        [queueList addObject:[NSNumber numberWithInteger:pe.index]];
     }
     
     NSDictionary * dictionary = [NSDictionary dictionaryWithObjectsAndKeys:albumArtSet, @"albumArt", queueList, @"queue", topLevel, @"items", nil];
@@ -279,7 +279,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	return urls;
 }
 
-- (NSArray*)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort
+- (NSArray*)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort
 {
 	NSMutableSet *uniqueURLs = [NSMutableSet set];
 	
@@ -405,7 +405,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     if (!count)
         return [NSArray array];
     
-	int i = 0;
+	NSInteger i = 0;
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
 	for (NSURL *url in validURLs)
 	{
@@ -421,7 +421,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         ++i;
 	}
 
-    int j = index + i;
+    NSInteger j = index + i;
     
     if (xmlData)
     {
@@ -450,7 +450,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         i = 0;
         for (NSNumber *index in [xmlData objectForKey:@"queue"])
         {
-            int indexVal = [index intValue] + j;
+            NSInteger indexVal = [index intValue] + j;
             PlaylistEntry *pe = [entries objectAtIndex:indexVal];
             pe.queuePosition = i;
             pe.queued = YES;
@@ -466,6 +466,11 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:entries waitUntilDone:YES];
 	return entries;
+}
+
+- (void)loadInfoForEntries:(NSArray *)entries
+{
+    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:entries waitUntilDone:YES];
 }
 
 // To be called on main thread only

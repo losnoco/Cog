@@ -10,10 +10,10 @@
 #pragma once
 
 #include <memory>
-#include "SSEQ.h"
-#include "SBNK.h"
-#include "SWAR.h"
-#include "common.h"
+#include <SSEQPlayer/SSEQ.h>
+#include <SSEQPlayer/SBNK.h>
+#include <SSEQPlayer/SWAR.h>
+#include <SSEQPlayer/common.h>
 
 struct SDAT
 {

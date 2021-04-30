@@ -34,9 +34,9 @@
 #define FLAC__METADATA_H
 
 #include <sys/types.h> /* for off_t */
-#include "export.h"
-#include "callback.h"
-#include "format.h"
+#include <flac/export.h>
+#include <flac/callback.h>
+#include <flac/format.h>
 
 /* --------------------------------------------------------------------
    (For an example of how all these routines are used, see the source

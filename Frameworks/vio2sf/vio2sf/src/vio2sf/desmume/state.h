@@ -9,8 +9,8 @@
 #ifndef vio2sf_state_h
 #define vio2sf_state_h
 
-#include "types.h"
-#include "spu_exports.h"
+#include <vio2sf/types.h>
+#include <vio2sf/spu_exports.h>
 
 #ifdef __cplusplus
 extern "C" {

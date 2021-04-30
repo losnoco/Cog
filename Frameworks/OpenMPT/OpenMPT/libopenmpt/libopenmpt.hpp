@@ -10,7 +10,7 @@
 #ifndef LIBOPENMPT_HPP
 #define LIBOPENMPT_HPP
 
-#include "libopenmpt_config.h"
+#include <libOpenMPT/libopenmpt_config.h>
 
 #include <exception>
 #include <iosfwd>

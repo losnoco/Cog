@@ -197,7 +197,7 @@ gme_type_t gme_type( const gme_t* );
 
 /* Pointer to array of all music types, with NULL entry at end. Allows a player linked
 to this library to support new music types without having to be updated. */
-gme_type_t const* gme_type_list();
+gme_type_t const* gme_type_list(void);
 
 /* Name of game system for this music file type */
 const char* gme_type_system( gme_type_t );

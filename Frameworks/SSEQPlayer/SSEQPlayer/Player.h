@@ -12,10 +12,10 @@
 
 #include <memory>
 #include <bitset>
-#include "SSEQ.h"
-#include "Track.h"
-#include "Channel.h"
-#include "consts.h"
+#include <SSEQPlayer/SSEQ.h>
+#include <SSEQPlayer/Track.h>
+#include <SSEQPlayer/Channel.h>
+#include <SSEQPlayer/consts.h>
 
 struct Player
 {

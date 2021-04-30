@@ -33,15 +33,15 @@
 #ifndef FLAC__ALL_H
 #define FLAC__ALL_H
 
-#include "export.h"
+#include <flac/export.h>
 
-#include "FLAC_assert.h"
-#include "callback.h"
-#include "format.h"
-#include "metadata.h"
-#include "ordinals.h"
-#include "stream_decoder.h"
-#include "stream_encoder.h"
+#include <flac/FLAC_assert.h>
+#include <flac/callback.h>
+#include <flac/format.h>
+#include <flac/metadata.h>
+#include <flac/ordinals.h>
+#include <flac/stream_decoder.h>
+#include <flac/stream_encoder.h>
 
 /** \mainpage
  *

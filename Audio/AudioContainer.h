@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "Plugin.h"
+#import <CogAudio/Plugin.h>
 
 @interface AudioContainer : NSObject {
 

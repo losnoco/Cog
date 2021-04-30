@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "common.h"
+#include <SSEQPlayer/common.h>
 
 struct SWAV
 {

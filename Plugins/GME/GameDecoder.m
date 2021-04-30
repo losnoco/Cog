@@ -174,7 +174,7 @@ gme_err_t readCallback( void* data, void* out, long count )
     if ( IsRepeatOneSet() )
         gme_set_fade( emu, -1, 0 );
     else
-        gme_set_fade( emu, (int)(length - fade), fade );
+        gme_set_fade( emu, (int)(length - fade), (int)fade );
 	
 	gme_play(emu, numSamples, (short int *)buf);
 	

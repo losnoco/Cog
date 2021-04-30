@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "SWAR.h"
-#include "INFOEntry.h"
-#include "common.h"
+#include <SSEQPlayer/SWAR.h>
+#include <SSEQPlayer/INFOEntry.h>
+#include <SSEQPlayer/common.h>
 
 struct SBNKInstrumentRange
 {

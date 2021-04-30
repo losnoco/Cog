@@ -270,6 +270,7 @@
     NSArray *supportedTypes = @[CogUrlsPboardType, NSPasteboardTypeFileURL, iTunesDropType];
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
     NSPasteboardType bestType = [pboard availableTypeFromArray:supportedTypes];
+#ifdef _DEBUG
     DLog(@"All types:");
     for (NSPasteboardType type in [pboard types]) {
         DLog(@"    Type: %@", type);
@@ -279,6 +280,7 @@
         DLog(@"    Type: %@", type);
     }
     DLog(@"Best type: %@", bestType);
+#endif
 
     NSMutableArray *acceptedURLs = [NSMutableArray array];
 

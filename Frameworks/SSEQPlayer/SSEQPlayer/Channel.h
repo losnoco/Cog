@@ -16,8 +16,8 @@
 #include <bitset>
 #include <tuple>
 #include <cstdint>
-#include "SWAV.h"
-#include "Track.h"
+#include <SSEQPlayer/SWAV.h>
+#include <SSEQPlayer/Track.h>
 
 /*
  * This structure is meant to be similar to what is stored in the actual

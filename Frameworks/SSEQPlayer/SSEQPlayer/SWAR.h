@@ -10,9 +10,9 @@
 #pragma once
 
 #include <map>
-#include "SWAV.h"
-#include "INFOEntry.h"
-#include "common.h"
+#include <SSEQPlayer/SWAV.h>
+#include <SSEQPlayer/INFOEntry.h>
+#include <SSEQPlayer/common.h>
 
 /*
  * The size has been left out of this structure as it is unused by this player.

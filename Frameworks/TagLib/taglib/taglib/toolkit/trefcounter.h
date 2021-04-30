@@ -30,8 +30,7 @@
 #include "taglib.h"
 
 #ifdef __APPLE__
-#  define OSATOMIC_DEPRECATED 0
-#  include <libkern/OSAtomic.h>
+#  include <atomic>
 #  define TAGLIB_ATOMIC_MAC
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 #  ifndef NOMINMAX
@@ -81,11 +80,11 @@ namespace TagLib
     RefCounterOld() : refCount(1) {}
 
 #ifdef TAGLIB_ATOMIC_MAC
-    void ref() { OSAtomicIncrement32Barrier(const_cast<int32_t*>(&refCount)); }
-    bool deref() { return ! OSAtomicDecrement32Barrier(const_cast<int32_t*>(&refCount)); }
-    int32_t count() { return refCount; }
+    void ref() { atomic_fetch_add(&refCount, 1); }
+    bool deref() { return atomic_fetch_sub(&refCount, 1) == 1; }
+    int32_t count() { return atomic_load(&refCount); }
   private:
-    volatile int32_t refCount;
+    std::atomic<int32_t> refCount;
 #elif defined(TAGLIB_ATOMIC_WIN)
     void ref() { InterlockedIncrement(&refCount); }
     bool deref() { return ! InterlockedDecrement(&refCount); }

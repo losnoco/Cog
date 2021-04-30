@@ -35,7 +35,7 @@ typedef enum {
 // Load arrays of urls...
 - (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort;
 - (NSArray*)addURL:(NSURL *)url;
-- (NSArray*)insertURLs:(NSArray *)urls atIndex:(int)index sort:(BOOL)sort;
+- (NSArray*)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort;
 
 // Save playlist, auto-determines type based on extension. Uses m3u if it cannot be determined.
 - (BOOL)save:(NSString *)filename;

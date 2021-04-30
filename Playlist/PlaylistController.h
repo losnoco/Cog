@@ -96,8 +96,8 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (void)addShuffledListToFront;
 - (void)resetShuffleList;
 
-- (PlaylistEntry *)shuffledEntryAtIndex:(int)i;
-- (PlaylistEntry *)entryAtIndex:(int)i;
+- (PlaylistEntry *)shuffledEntryAtIndex:(NSInteger)i;
+- (PlaylistEntry *)entryAtIndex:(NSInteger)i;
 
 // Event inlets:
 - (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin;
@@ -109,6 +109,6 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (NSMutableArray *)queueList;
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
-                                        toIndex:(unsigned int)insertIndex;
+                                        toIndex:(NSUInteger)insertIndex;
 
 @end

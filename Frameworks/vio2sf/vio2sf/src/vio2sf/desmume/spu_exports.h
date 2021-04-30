@@ -3,7 +3,7 @@
 
 #ifndef _SPU_CPP_
 
-#include "types.h"
+#include <vio2sf/types.h>
 
 typedef struct NDS_state NDS_state;
 

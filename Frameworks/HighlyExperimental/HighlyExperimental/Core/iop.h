@@ -7,7 +7,7 @@
 #ifndef __PSX_IOP_H__
 #define __PSX_IOP_H__
 
-#include "emuconfig.h"
+#include <HighlyExperimental/emuconfig.h>
 
 #ifdef __cplusplus
 extern "C" {

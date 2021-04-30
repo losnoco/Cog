@@ -12,7 +12,7 @@
 
 #include <functional>
 #include <bitset>
-#include "consts.h"
+#include <SSEQPlayer/consts.h>
 
 struct Player;
 

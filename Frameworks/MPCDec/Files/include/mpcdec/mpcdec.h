@@ -39,8 +39,8 @@
 #pragma once
 #endif
 
-#include "reader.h"
-#include "streaminfo.h"
+#include <MPCDec/reader.h>
+#include <MPCDec/streaminfo.h>
 
 #ifdef __cplusplus
 extern "C" {
