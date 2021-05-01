@@ -1160,7 +1160,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83E5EFBC1FFEF7CC00659F0F = {
-						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};

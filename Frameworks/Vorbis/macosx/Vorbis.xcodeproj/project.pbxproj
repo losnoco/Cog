@@ -582,13 +582,16 @@
 						ProvisioningStyle = Automatic;
 					};
 					738835E30B18F870005C7A69 = {
-						DevelopmentTeam = N6E749HJ2X;
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
 					};
 					738836120B190488005C7A69 = {
-						DevelopmentTeam = N6E749HJ2X;
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
 					};
 					738836210B1905E5005C7A69 = {
-						DevelopmentTeam = N6E749HJ2X;
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
