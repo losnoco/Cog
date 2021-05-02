@@ -12,6 +12,8 @@ jobs:
   build:
     name: Build Cog for Intel
     runs-on: macos-latest
+    env:
+      XCODE_DERIVEDDATA_PATH: build
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -32,9 +34,10 @@ jobs:
       - name: Run xcodebuild
         run: >
           xcodebuild
+          -quiet
           -scheme Cog
           -configuration Debug
-          -derivedDataPath output
+          -derivedDataPath $XCODE_DERIVEDDATA_PATH
           build
       - name: Package archive
         run: >
@@ -44,10 +47,10 @@ jobs:
           --sequesterRsrc
           --keepParent
           --zlibCompressionLevel 9
-          output/Build/Products/Debug/Cog.app
-          output/Cog.zip
+          $XCODE_DERIVEDDATA_PATH/Build/Products/Debug/Cog.app
+          $XCODE_DERIVEDDATA_PATH/Cog.zip
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: Cog
-          path: output/Cog.zip
+          path: $XCODE_DERIVEDDATA_PATH/Cog.zip
