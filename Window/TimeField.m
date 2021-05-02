@@ -10,9 +10,53 @@
 
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
 
-NSString * formatTimer(NSTimeInterval minutes, NSTimeInterval seconds, char *prefix) {
-	return [NSString localizedStringWithFormat:@"%s%02u:%02u", prefix, (unsigned)minutes, (unsigned)seconds];
+NSString * timeStringForTimeInterval(NSTimeInterval timeInterval, BOOL enforceMinusSign) {
+	const int64_t signed_total_seconds = (int64_t)timeInterval;
+	const bool need_minus_sign = enforceMinusSign || signed_total_seconds < 0;
+	const int64_t total_seconds = (need_minus_sign ? -1 : 1) * signed_total_seconds;
+	const int64_t seconds = total_seconds % 60;
+	const int64_t total_minutes = (total_seconds - seconds) / 60;
+	const int64_t minutes = total_minutes % 60;
+	const int64_t total_hours = (total_minutes - minutes) / 60;
+	const int64_t hours = total_hours % 24;
+	const int64_t days = (total_hours - hours) / 24;
+	
+	NSString *timeString = nil;
+	
+	if (days > 0) {
+		timeString =
+		[NSString localizedStringWithFormat:@"%s" "%02" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64,
+		 need_minus_sign ? "-" : "",
+		 days,
+		 hours,
+		 minutes,
+		 seconds];
+	}
+	else if (hours > 0) {
+		timeString =
+		[NSString localizedStringWithFormat:@"%s" "%02" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64,
+		 need_minus_sign ? "-" : "",
+		 hours,
+		 minutes,
+		 seconds];
+	}
+	else if (minutes > 0) {
+		timeString =
+		[NSString localizedStringWithFormat:@"%s" "%02" PRIi64 ":" "%02" PRIi64,
+		 need_minus_sign ? "-" : "",
+		 minutes,
+		 seconds];
+	}
+	else {
+		timeString =
+		[NSString localizedStringWithFormat:@"%s" "00" ":" "%02" PRIi64,
+		 need_minus_sign ? "-" : "",
+		 seconds];
+	}
+
+	return timeString;
 }
+
 
 @implementation TimeField {
     BOOL showTimeRemaining;
@@ -36,12 +80,12 @@ NSString * formatTimer(NSTimeInterval minutes, NSTimeInterval seconds, char *pre
     if (showTimeRemaining == NO)
     {
 		NSTimeInterval sec = self.currentTime;
-        text = formatTimer(sec / 60, fmod(sec, 60), ""); // No prefix.
+        text = timeStringForTimeInterval(sec, NO);
     }
     else
     {
-		NSTimeInterval sec = MAX(0.0, self.duration - self.currentTime);
-		text = formatTimer(sec / 60,  fmod(sec, 60), "-"); // Hyphen-minus.
+		NSTimeInterval sec = self.currentTime - self.duration;
+		text = timeStringForTimeInterval(sec, YES);
     }
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text
                                                                  attributes:fontAttributes];
