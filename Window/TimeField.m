@@ -10,8 +10,8 @@
 
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
 
-NSString * formatTimer(long minutes, long seconds, unichar prefix) {
-    return [NSString localizedStringWithFormat:@"%C%lu:%02lu", prefix, minutes, seconds];
+NSString * formatTimer(NSTimeInterval minutes, NSTimeInterval seconds, char *prefix) {
+	return [NSString localizedStringWithFormat:@"%s%02u:%02u", prefix, (unsigned)minutes, (unsigned)seconds];
 }
 
 @implementation TimeField {
@@ -35,13 +35,13 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
     NSString *text;
     if (showTimeRemaining == NO)
     {
-        long sec = self.currentTime;
-        text = formatTimer(sec / 60, sec % 60, 0x2007); // Digit-width space
+		NSTimeInterval sec = self.currentTime;
+        text = formatTimer(sec / 60, fmod(sec, 60), ""); // No prefix.
     }
     else
     {
-        long sec = MAX(0, self.duration - self.currentTime);
-        text = formatTimer(sec / 60, sec % 60, 0x2012); // Hyphen
+		NSTimeInterval sec = MAX(0.0, self.duration - self.currentTime);
+		text = formatTimer(sec / 60,  fmod(sec, 60), "-"); // Hyphen-minus.
     }
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text
                                                                  attributes:fontAttributes];
@@ -55,7 +55,7 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
     [self update];
 }
 
-- (void)setCurrentTime:(NSInteger)currentTime
+- (void)setCurrentTime:(NSTimeInterval)currentTime
 {
     _currentTime = currentTime;
     [self update];

@@ -13,21 +13,21 @@
 
 - (void)setDoubleValue:(double)value
 {
-    self.positionTextField.currentTime = (long)value;
+    self.positionTextField.currentTime = value;
 
     [super setDoubleValue:value];
 }
 
 - (void)setMaxValue:(double)value
 {
-    self.positionTextField.duration = (long)value;
+    self.positionTextField.duration = value;
 
     [super setMaxValue:value];
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
 {
-    self.positionTextField.currentTime = (long)[self doubleValue];
+    self.positionTextField.currentTime = [self doubleValue];
 
     [super mouseDragged:theEvent];
 }
