@@ -11,7 +11,7 @@
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
 
 NSString * formatTimer(long minutes, long seconds, unichar prefix) {
-    return [NSString localizedStringWithFormat:@"%C%lu:%02lu", prefix, minutes, seconds];;
+    return [NSString localizedStringWithFormat:@"%C%lu:%02lu", prefix, minutes, seconds];
 }
 
 @implementation TimeField {
