@@ -132,7 +132,7 @@ static void sidTuneLoader(const char* fileName, std::vector<uint8_t>& bufferRef)
     
     const char ** extList = [extension isEqualToString:@"mus"] ? extListStr : extListEmpty;
 	
-    tune = new SidTune([currentUrl UTF8String], extList, true, sidTuneLoader);
+    tune = new SidTune(sidTuneLoader, [currentUrl UTF8String], extList, true);
     
     if (!tune->getStatus())
         return NO;

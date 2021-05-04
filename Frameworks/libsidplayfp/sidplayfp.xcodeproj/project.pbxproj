@@ -95,23 +95,19 @@
 		EDBE909125E7E7A2001EB4A4 /* Integrator8580.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FA725E7E7A0001EB4A4 /* Integrator8580.h */; };
 		EDBE909225E7E7A2001EB4A4 /* SID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FA825E7E7A0001EB4A4 /* SID.cpp */; };
 		EDBE909325E7E7A2001EB4A4 /* EnvelopeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FA925E7E7A0001EB4A4 /* EnvelopeGenerator.h */; };
-		EDBE909425E7E7A2001EB4A4 /* FilterModelConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FAA25E7E7A0001EB4A4 /* FilterModelConfig.cpp */; };
 		EDBE909525E7E7A2001EB4A4 /* OpAmp.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FAB25E7E7A0001EB4A4 /* OpAmp.h */; };
 		EDBE909625E7E7A2001EB4A4 /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FAC25E7E7A0001EB4A4 /* Filter.cpp */; };
 		EDBE909725E7E7A2001EB4A4 /* Potentiometer.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FAD25E7E7A0001EB4A4 /* Potentiometer.h */; };
 		EDBE909925E7E7A2001EB4A4 /* Filter6581.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FAF25E7E7A0001EB4A4 /* Filter6581.cpp */; };
-		EDBE909B25E7E7A2001EB4A4 /* Integrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FB125E7E7A0001EB4A4 /* Integrator.cpp */; };
 		EDBE909C25E7E7A2001EB4A4 /* array.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FB225E7E7A0001EB4A4 /* array.h */; };
 		EDBE909D25E7E7A2001EB4A4 /* Integrator8580.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FB325E7E7A0001EB4A4 /* Integrator8580.cpp */; };
 		EDBE909E25E7E7A2001EB4A4 /* ExternalFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FB425E7E7A0001EB4A4 /* ExternalFilter.cpp */; };
 		EDBE909F25E7E7A2001EB4A4 /* FilterModelConfig8580.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FB525E7E7A0001EB4A4 /* FilterModelConfig8580.cpp */; };
 		EDBE90A025E7E7A2001EB4A4 /* FilterModelConfig8580.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FB625E7E7A0001EB4A4 /* FilterModelConfig8580.h */; };
-		EDBE90A125E7E7A2001EB4A4 /* Integrator.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FB725E7E7A0001EB4A4 /* Integrator.h */; };
 		EDBE90A225E7E7A2001EB4A4 /* WaveformCalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FB825E7E7A0001EB4A4 /* WaveformCalculator.h */; };
 		EDBE90A325E7E7A2001EB4A4 /* Filter8580.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FB925E7E7A0001EB4A4 /* Filter8580.cpp */; };
 		EDBE90A425E7E7A2001EB4A4 /* WaveformCalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8FBA25E7E7A0001EB4A4 /* WaveformCalculator.cpp */; };
 		EDBE90A525E7E7A2001EB4A4 /* Voice.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FBB25E7E7A0001EB4A4 /* Voice.h */; };
-		EDBE90A625E7E7A2001EB4A4 /* FilterModelConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FBC25E7E7A0001EB4A4 /* FilterModelConfig.h */; };
 		EDBE90A725E7E7A2001EB4A4 /* SID.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FBD25E7E7A0001EB4A4 /* SID.h */; };
 		EDBE90A825E7E7A2001EB4A4 /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FBE25E7E7A0001EB4A4 /* Filter.h */; };
 		EDBE90A925E7E7A2001EB4A4 /* Filter6581.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8FBF25E7E7A0001EB4A4 /* Filter6581.h */; };
@@ -193,6 +189,10 @@
 		EDBE911125E7E7B2001EB4A4 /* siddefs-fp.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE910125E7E7B1001EB4A4 /* siddefs-fp.h */; };
 		EDBE911425E7E7B2001EB4A4 /* sidversion.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE910625E7E7B1001EB4A4 /* sidversion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EDBE911525E7E7B2001EB4A4 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE910725E7E7B1001EB4A4 /* config.h */; };
+		EDECD6272641D7570091D8E5 /* Integrator6581.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDECD6232641D7570091D8E5 /* Integrator6581.cpp */; };
+		EDECD6282641D7570091D8E5 /* FilterModelConfig6581.h in Headers */ = {isa = PBXBuildFile; fileRef = EDECD6242641D7570091D8E5 /* FilterModelConfig6581.h */; };
+		EDECD6292641D7570091D8E5 /* FilterModelConfig6581.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDECD6252641D7570091D8E5 /* FilterModelConfig6581.cpp */; };
+		EDECD62A2641D7570091D8E5 /* Integrator6581.h in Headers */ = {isa = PBXBuildFile; fileRef = EDECD6262641D7570091D8E5 /* Integrator6581.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -331,25 +331,21 @@
 		EDBE8FA725E7E7A0001EB4A4 /* Integrator8580.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integrator8580.h; sourceTree = "<group>"; };
 		EDBE8FA825E7E7A0001EB4A4 /* SID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SID.cpp; sourceTree = "<group>"; };
 		EDBE8FA925E7E7A0001EB4A4 /* EnvelopeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnvelopeGenerator.h; sourceTree = "<group>"; };
-		EDBE8FAA25E7E7A0001EB4A4 /* FilterModelConfig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterModelConfig.cpp; sourceTree = "<group>"; };
 		EDBE8FAB25E7E7A0001EB4A4 /* OpAmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpAmp.h; sourceTree = "<group>"; };
 		EDBE8FAC25E7E7A0001EB4A4 /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
 		EDBE8FAD25E7E7A0001EB4A4 /* Potentiometer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Potentiometer.h; sourceTree = "<group>"; };
 		EDBE8FAE25E7E7A0001EB4A4 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		EDBE8FAF25E7E7A0001EB4A4 /* Filter6581.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter6581.cpp; sourceTree = "<group>"; };
 		EDBE8FB025E7E7A0001EB4A4 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		EDBE8FB125E7E7A0001EB4A4 /* Integrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integrator.cpp; sourceTree = "<group>"; };
 		EDBE8FB225E7E7A0001EB4A4 /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		EDBE8FB325E7E7A0001EB4A4 /* Integrator8580.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integrator8580.cpp; sourceTree = "<group>"; };
 		EDBE8FB425E7E7A0001EB4A4 /* ExternalFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalFilter.cpp; sourceTree = "<group>"; };
 		EDBE8FB525E7E7A0001EB4A4 /* FilterModelConfig8580.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterModelConfig8580.cpp; sourceTree = "<group>"; };
 		EDBE8FB625E7E7A0001EB4A4 /* FilterModelConfig8580.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterModelConfig8580.h; sourceTree = "<group>"; };
-		EDBE8FB725E7E7A0001EB4A4 /* Integrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integrator.h; sourceTree = "<group>"; };
 		EDBE8FB825E7E7A0001EB4A4 /* WaveformCalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveformCalculator.h; sourceTree = "<group>"; };
 		EDBE8FB925E7E7A0001EB4A4 /* Filter8580.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter8580.cpp; sourceTree = "<group>"; };
 		EDBE8FBA25E7E7A0001EB4A4 /* WaveformCalculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveformCalculator.cpp; sourceTree = "<group>"; };
 		EDBE8FBB25E7E7A0001EB4A4 /* Voice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voice.h; sourceTree = "<group>"; };
-		EDBE8FBC25E7E7A0001EB4A4 /* FilterModelConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterModelConfig.h; sourceTree = "<group>"; };
 		EDBE8FBD25E7E7A0001EB4A4 /* SID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SID.h; sourceTree = "<group>"; };
 		EDBE8FBE25E7E7A0001EB4A4 /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter.h; sourceTree = "<group>"; };
 		EDBE8FBF25E7E7A0001EB4A4 /* Filter6581.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter6581.h; sourceTree = "<group>"; };
@@ -441,6 +437,10 @@
 		EDBE910625E7E7B1001EB4A4 /* sidversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sidversion.h; sourceTree = "<group>"; };
 		EDBE910725E7E7B1001EB4A4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = generated/src/config.h; sourceTree = "<group>"; };
 		EDBE911625E7E7F9001EB4A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EDECD6232641D7570091D8E5 /* Integrator6581.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integrator6581.cpp; sourceTree = "<group>"; };
+		EDECD6242641D7570091D8E5 /* FilterModelConfig6581.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterModelConfig6581.h; sourceTree = "<group>"; };
+		EDECD6252641D7570091D8E5 /* FilterModelConfig6581.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterModelConfig6581.cpp; sourceTree = "<group>"; };
+		EDECD6262641D7570091D8E5 /* Integrator6581.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integrator6581.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -764,6 +764,10 @@
 		EDBE8F9625E7E7A0001EB4A4 /* residfp */ = {
 			isa = PBXGroup;
 			children = (
+				EDECD6252641D7570091D8E5 /* FilterModelConfig6581.cpp */,
+				EDECD6242641D7570091D8E5 /* FilterModelConfig6581.h */,
+				EDECD6232641D7570091D8E5 /* Integrator6581.cpp */,
+				EDECD6262641D7570091D8E5 /* Integrator6581.h */,
 				EDBE8F9725E7E7A0001EB4A4 /* Dac.h */,
 				EDBE8F9825E7E7A0001EB4A4 /* OpAmp.cpp */,
 				EDBE8F9925E7E7A0001EB4A4 /* resample */,
@@ -777,25 +781,21 @@
 				EDBE8FA725E7E7A0001EB4A4 /* Integrator8580.h */,
 				EDBE8FA825E7E7A0001EB4A4 /* SID.cpp */,
 				EDBE8FA925E7E7A0001EB4A4 /* EnvelopeGenerator.h */,
-				EDBE8FAA25E7E7A0001EB4A4 /* FilterModelConfig.cpp */,
 				EDBE8FAB25E7E7A0001EB4A4 /* OpAmp.h */,
 				EDBE8FAC25E7E7A0001EB4A4 /* Filter.cpp */,
 				EDBE8FAD25E7E7A0001EB4A4 /* Potentiometer.h */,
 				EDBE8FAE25E7E7A0001EB4A4 /* README */,
 				EDBE8FAF25E7E7A0001EB4A4 /* Filter6581.cpp */,
 				EDBE8FB025E7E7A0001EB4A4 /* COPYING */,
-				EDBE8FB125E7E7A0001EB4A4 /* Integrator.cpp */,
 				EDBE8FB225E7E7A0001EB4A4 /* array.h */,
 				EDBE8FB325E7E7A0001EB4A4 /* Integrator8580.cpp */,
 				EDBE8FB425E7E7A0001EB4A4 /* ExternalFilter.cpp */,
 				EDBE8FB525E7E7A0001EB4A4 /* FilterModelConfig8580.cpp */,
 				EDBE8FB625E7E7A0001EB4A4 /* FilterModelConfig8580.h */,
-				EDBE8FB725E7E7A0001EB4A4 /* Integrator.h */,
 				EDBE8FB825E7E7A0001EB4A4 /* WaveformCalculator.h */,
 				EDBE8FB925E7E7A0001EB4A4 /* Filter8580.cpp */,
 				EDBE8FBA25E7E7A0001EB4A4 /* WaveformCalculator.cpp */,
 				EDBE8FBB25E7E7A0001EB4A4 /* Voice.h */,
-				EDBE8FBC25E7E7A0001EB4A4 /* FilterModelConfig.h */,
 				EDBE8FBD25E7E7A0001EB4A4 /* SID.h */,
 				EDBE8FBE25E7E7A0001EB4A4 /* Filter.h */,
 				EDBE8FBF25E7E7A0001EB4A4 /* Filter6581.h */,
@@ -1038,13 +1038,14 @@
 				EDBE902625E7E7A2001EB4A4 /* tod.h in Headers */,
 				EDBE902425E7E7A2001EB4A4 /* c64env.h in Headers */,
 				EDBE90C025E7E7A2001EB4A4 /* MD5.h in Headers */,
+				EDECD6282641D7570091D8E5 /* FilterModelConfig6581.h in Headers */,
 				EDBE911525E7E7B2001EB4A4 /* config.h in Headers */,
 				EDBE90A725E7E7A2001EB4A4 /* SID.h in Headers */,
 				EDBE905725E7E7A2001EB4A4 /* extfilt.h in Headers */,
 				EDBE90B925E7E7A2001EB4A4 /* romCheck.h in Headers */,
 				EDBE909C25E7E7A2001EB4A4 /* array.h in Headers */,
+				EDECD62A2641D7570091D8E5 /* Integrator6581.h in Headers */,
 				EDBE903425E7E7A2001EB4A4 /* SystemRAMBank.h in Headers */,
-				EDBE90A625E7E7A2001EB4A4 /* FilterModelConfig.h in Headers */,
 				EDBE907E25E7E7A2001EB4A4 /* resid.h in Headers */,
 				EDBE907625E7E7A2001EB4A4 /* sid.h in Headers */,
 				EDBE90CD25E7E7A2001EB4A4 /* iniParser.h in Headers */,
@@ -1062,7 +1063,6 @@
 				EDBE90AF25E7E7A2001EB4A4 /* residfp-emu.h in Headers */,
 				EDBE900E25E7E7A2001EB4A4 /* sidrandom.h in Headers */,
 				EDBE903A25E7E7A2001EB4A4 /* stringutils.h in Headers */,
-				EDBE90A125E7E7A2001EB4A4 /* Integrator.h in Headers */,
 				EDBE90B825E7E7A2001EB4A4 /* SidInfoImpl.h in Headers */,
 				EDBE903125E7E7A2001EB4A4 /* SystemROMBanks.h in Headers */,
 				EDBE907125E7E7A2001EB4A4 /* envelope.h in Headers */,
@@ -1198,9 +1198,9 @@
 				EDBE909625E7E7A2001EB4A4 /* Filter.cpp in Sources */,
 				EDBE90DB25E7E7A2001EB4A4 /* sidbuilder.cpp in Sources */,
 				EDBE905925E7E7A2001EB4A4 /* pot.cc in Sources */,
-				EDBE909425E7E7A2001EB4A4 /* FilterModelConfig.cpp in Sources */,
 				EDBE90EE25E7E7A2001EB4A4 /* SidTuneTools.cpp in Sources */,
 				EDBE901A25E7E7A2001EB4A4 /* mos6510.cpp in Sources */,
+				EDECD6292641D7570091D8E5 /* FilterModelConfig6581.cpp in Sources */,
 				EDBE908025E7E7A2001EB4A4 /* residfp-emu.cpp in Sources */,
 				EDBE908525E7E7A2001EB4A4 /* SincResampler.cpp in Sources */,
 				EDBE905825E7E7A2001EB4A4 /* envelope.cc in Sources */,
@@ -1208,7 +1208,6 @@
 				EDBE90E025E7E7A2001EB4A4 /* SidTuneInfo.cpp in Sources */,
 				8354900926186D9E004988A7 /* mos652x.cpp in Sources */,
 				EDBE906225E7E7A2001EB4A4 /* sid.cc in Sources */,
-				EDBE909B25E7E7A2001EB4A4 /* Integrator.cpp in Sources */,
 				EDBE903D25E7E7A2001EB4A4 /* hardsid-emu-unix.cpp in Sources */,
 				EDBE90D725E7E7A2001EB4A4 /* sidplayfp.cpp in Sources */,
 				EDBE90EF25E7E7A2001EB4A4 /* prg.cpp in Sources */,
@@ -1231,6 +1230,7 @@
 				EDBE908325E7E7A2001EB4A4 /* OpAmp.cpp in Sources */,
 				EDBE90C725E7E7A2001EB4A4 /* stil.cpp in Sources */,
 				EDBE902025E7E7A2001EB4A4 /* c64.cpp in Sources */,
+				EDECD6272641D7570091D8E5 /* Integrator6581.cpp in Sources */,
 				EDBE90A425E7E7A2001EB4A4 /* WaveformCalculator.cpp in Sources */,
 				EDBE902925E7E7A2001EB4A4 /* interrupt.cpp in Sources */,
 				EDBE90DF25E7E7A2001EB4A4 /* SidTune.cpp in Sources */,
