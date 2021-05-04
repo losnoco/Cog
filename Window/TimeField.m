@@ -25,7 +25,7 @@ NSString * timeStringForTimeInterval(NSTimeInterval timeInterval, BOOL enforceMi
 	
 	if (days > 0) {
 		timeString =
-		[NSString localizedStringWithFormat:@"%s" "%02" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64,
+		[NSString localizedStringWithFormat:@"%s" "%" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64,
 		 need_minus_sign ? "-" : "",
 		 days,
 		 hours,
@@ -34,7 +34,7 @@ NSString * timeStringForTimeInterval(NSTimeInterval timeInterval, BOOL enforceMi
 	}
 	else if (hours > 0) {
 		timeString =
-		[NSString localizedStringWithFormat:@"%s" "%02" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64,
+		[NSString localizedStringWithFormat:@"%s" "%" PRIi64 ":" "%02" PRIi64 ":" "%02" PRIi64,
 		 need_minus_sign ? "-" : "",
 		 hours,
 		 minutes,
@@ -42,14 +42,14 @@ NSString * timeStringForTimeInterval(NSTimeInterval timeInterval, BOOL enforceMi
 	}
 	else if (minutes > 0) {
 		timeString =
-		[NSString localizedStringWithFormat:@"%s" "%02" PRIi64 ":" "%02" PRIi64,
+		[NSString localizedStringWithFormat:@"%s" "%" PRIi64 ":" "%02" PRIi64,
 		 need_minus_sign ? "-" : "",
 		 minutes,
 		 seconds];
 	}
 	else {
 		timeString =
-		[NSString localizedStringWithFormat:@"%s" "00" ":" "%02" PRIi64,
+		[NSString localizedStringWithFormat:@"%s" "0" ":" "%02" PRIi64,
 		 need_minus_sign ? "-" : "",
 		 seconds];
 	}
