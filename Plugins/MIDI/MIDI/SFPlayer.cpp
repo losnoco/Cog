@@ -207,7 +207,7 @@ bool SFPlayer::startup()
         size_t dot = sSoundFontName.find_last_of( '.' );
         if ( dot != std::string::npos )
             ext.assign( sSoundFontName.begin() + dot + 1, sSoundFontName.end() );
-        if ( !strcasecmp( ext.c_str(), "sf2" ) )
+        if ( !strcasecmp( ext.c_str(), "sf2" ) || !strcasecmp( ext.c_str(), "sf3" ) )
         {
             if ( FLUID_FAILED == fluid_synth_sfload( _synth, sSoundFontName.c_str(), 1) )
             {
