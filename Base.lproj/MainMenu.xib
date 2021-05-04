@@ -412,10 +412,10 @@
                     <toolbarItem implicitItemIdentifier="B042D8A5-AFF4-43B2-9DFB-E87A09B7F861" label="Current Time" paletteLabel="Current Time" visibilityPriority="5" sizingBehavior="auto" id="1568">
                         <nil key="toolTip"/>
                         <textField key="view" verticalHuggingPriority="750" id="1566" customClass="TimeField">
-                            <rect key="frame" x="14" y="14" width="49" height="19"/>
+                            <rect key="frame" x="8" y="14" width="61" height="22"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="1567">
-                                <font key="font" metaFont="message" size="11"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="1567">
+                                <font key="font" metaFont="system"/>
                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
