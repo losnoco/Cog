@@ -260,6 +260,18 @@ void* kAppControllerContext = &kAppControllerContext;
             self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
         }
 
+        if (entry.albumArt) {
+            self.infoButton.imageScaling = NSImageScaleProportionallyUpOrDown;
+            self.infoButton.image = playlistController.currentEntry.albumArt;
+            self.infoButtonMini.imageScaling = NSImageScaleProportionallyUpOrDown;
+            self.infoButtonMini.image = playlistController.currentEntry.albumArt;
+        } else {
+            self.infoButton.imageScaling = NSImageScaleNone;
+            self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
+            self.infoButtonMini.imageScaling = NSImageScaleNone;
+            self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
+        }
+
         if (@available(macOS 11.0, *)) {
             NSString *title = @"Cog";
             if (entry.title) {
@@ -290,18 +302,6 @@ void* kAppControllerContext = &kAppControllerContext;
             }
             miniWindow.title = title;
             mainWindow.title = title;
-        }
-
-        if (entry.albumArt) {
-            self.infoButton.imageScaling = NSImageScaleProportionallyUpOrDown;
-            self.infoButton.image = playlistController.currentEntry.albumArt;
-            self.infoButtonMini.imageScaling = NSImageScaleProportionallyUpOrDown;
-            self.infoButtonMini.image = playlistController.currentEntry.albumArt;
-        } else {
-            self.infoButton.imageScaling = NSImageScaleNone;
-            self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
-            self.infoButtonMini.imageScaling = NSImageScaleNone;
-            self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
         }
     }
 }

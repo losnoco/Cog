@@ -435,8 +435,10 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" sizingBehavior="auto" navigational="YES" id="1629">
+                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" navigational="YES" id="1629">
                         <nil key="toolTip"/>
+                        <size key="minSize" width="32" height="32"/>
+                        <size key="maxSize" width="32" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="1627">
                             <rect key="frame" x="26" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
