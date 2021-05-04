@@ -90,6 +90,7 @@
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
 		17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAEBAB0F662985007C8707 /* ToolTipTextField.m */; };
+		3D42D1302641739C002A170C /* MonospacedDigitTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D42D12F2641739C002A170C /* MonospacedDigitTextFieldCell.m */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */; };
@@ -809,6 +810,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
+		3D42D12E2641739C002A170C /* MonospacedDigitTextFieldCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MonospacedDigitTextFieldCell.h; sourceTree = "<group>"; };
+		3D42D12F2641739C002A170C /* MonospacedDigitTextFieldCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MonospacedDigitTextFieldCell.m; sourceTree = "<group>"; };
 		3DDFC2462344EC6B000F1453 /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
@@ -1078,6 +1081,8 @@
 				17FAEBAB0F662985007C8707 /* ToolTipTextField.m */,
 				8355D6B4180612F300D05687 /* NSData+MD5.h */,
 				8355D6B5180612F300D05687 /* NSData+MD5.m */,
+				3D42D12E2641739C002A170C /* MonospacedDigitTextFieldCell.h */,
+				3D42D12F2641739C002A170C /* MonospacedDigitTextFieldCell.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2256,6 +2261,7 @@
 				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
 				83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
+				3D42D1302641739C002A170C /* MonospacedDigitTextFieldCell.m in Sources */,
 				178456120F631E31007E8021 /* SideViewController.m in Sources */,
 				17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */,
 				17D1B1680F632ABB00694C57 /* BlankZeroFormatter.m in Sources */,
