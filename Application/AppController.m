@@ -494,6 +494,10 @@ void* kAppControllerContext = &kAppControllerContext;
     if ([brokenFeedURLs containsObject:feedURL]) {
         [[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
     }
+    
+    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"] isEqualToString:@"BASSMIDI"]) {
+        [[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midi.plugin"];
+    }
 }
 
 /* Unassign previous handler first, so dealloc can unregister it from the global map before the new instances are assigned */

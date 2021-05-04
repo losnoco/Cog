@@ -24,7 +24,7 @@
 
 - (IBAction)setSoundFont:(id)sender
 {
-    NSArray *fileTypes = @[@"sf2", @"sf2pack", @"sflist", @"json"];
+    NSArray *fileTypes = @[@"sf3", @"sf2", @"sflist"];
     NSOpenPanel * panel = [NSOpenPanel openPanel];
     [panel setAllowsMultipleSelection:NO];
     [panel setCanChooseDirectories:NO];
