@@ -93,6 +93,7 @@
 		3D42D1302641739C002A170C /* MonospacedDigitTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D42D12F2641739C002A170C /* MonospacedDigitTextFieldCell.m */; };
 		3D42D1B82642BB62002A170C /* CogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D42D1B72642BB62002A170C /* CogTests.m */; };
 		3D42D2772642BEA0002A170C /* SecondsFormatterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D42D2762642BEA0002A170C /* SecondsFormatterTests.m */; };
+		3D42D2C12642BF5D002A170C /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1670F632ABB00694C57 /* SecondsFormatter.m */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */; };
@@ -2323,6 +2324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D42D2772642BEA0002A170C /* SecondsFormatterTests.m in Sources */,
+				3D42D2C12642BF5D002A170C /* SecondsFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
