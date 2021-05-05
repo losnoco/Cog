@@ -24,27 +24,25 @@
 
 - (NSString *) stringForObjectValue:(id)object
 {
-	NSString		*result			= nil;
-	unsigned		value;
-	unsigned		days			= 0;
-	unsigned		hours			= 0;
-	unsigned		minutes			= 0;
-	unsigned		seconds			= 0;
-	
 	if (nil == object || NO == [object isKindOfClass:[NSNumber class]]) {
 		// Docs state: “Returns nil if object is not of the correct class.”
 		return nil;
 	}
 	
-	float floatValue = [object floatValue];
+	double floatValue = [object doubleValue];
 	
 	if (isnan(floatValue)) { return @"NaN"; }
 	if (isinf(floatValue)) { return @"Inf"; }
-
-	value		= (unsigned)(floatValue);
-
-	seconds		= value % 60;
-	minutes		= value / 60;
+	
+	unsigned totalSeconds		= (unsigned)floatValue;
+	
+	unsigned seconds	= totalSeconds % 60;
+	unsigned minutes	= totalSeconds / 60;
+	unsigned hours		= 0;
+	unsigned days		= 0;
+	
+	seconds		= totalSeconds % 60;
+	minutes		= totalSeconds / 60;
 	
 	while(60 <= minutes) {
 		minutes -= 60;
@@ -55,7 +53,9 @@
 		hours -= 24;
 		++days;
 	}
-
+	
+	NSString *result = nil;
+	
 	if(0 < days) {
 		result = [NSString stringWithFormat:@"%u:%.2u:%.2u:%.2u", days, hours, minutes, seconds];
 	}
@@ -72,13 +72,13 @@
 	return result;
 }
 
-- (BOOL) getObjectValue:(id *)object forString:(NSString *)string errorDescription:(NSString  **)error
+- (BOOL)getObjectValue:(out id  _Nullable __autoreleasing *)object forString:(NSString *)string errorDescription:(out NSString * _Nullable __autoreleasing *)error
 {
 	NSScanner		*scanner		= nil;
 	BOOL			result			= NO;
 	int				value			= 0;
 	unsigned		seconds			= 0;
-
+	
 	scanner		= [NSScanner scannerWithString:string];
 	
 	while(NO == [scanner isAtEnd]) {
@@ -106,9 +106,11 @@
 
 - (NSAttributedString *) attributedStringForObjectValue:(id)object withDefaultAttributes:(NSDictionary *)attributes
 {
-	NSAttributedString		*result		= nil;
+	NSString *stringValue = [self stringForObjectValue:object];
+	if(nil == stringValue)
+		return nil;
 	
-	result = [[NSAttributedString alloc] initWithString:[self stringForObjectValue:object] attributes:attributes];
+	NSAttributedString *result = [[NSAttributedString alloc] initWithString:stringValue attributes:attributes];
 	return result;
 }
 
