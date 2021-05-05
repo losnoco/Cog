@@ -92,6 +92,7 @@
 		17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAEBAB0F662985007C8707 /* ToolTipTextField.m */; };
 		3D42D1302641739C002A170C /* MonospacedDigitTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D42D12F2641739C002A170C /* MonospacedDigitTextFieldCell.m */; };
 		3D42D1B82642BB62002A170C /* CogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D42D1B72642BB62002A170C /* CogTests.m */; };
+		3D42D2772642BEA0002A170C /* SecondsFormatterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D42D2762642BEA0002A170C /* SecondsFormatterTests.m */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */; };
@@ -823,6 +824,9 @@
 		3D42D1B52642BB62002A170C /* CogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D42D1B72642BB62002A170C /* CogTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CogTests.m; sourceTree = "<group>"; };
 		3D42D1B92642BB62002A170C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3D42D2742642BEA0002A170C /* SecondsFormatterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SecondsFormatterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D42D2762642BEA0002A170C /* SecondsFormatterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatterTests.m; sourceTree = "<group>"; };
+		3D42D2782642BEA0002A170C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3DDFC2462344EC6B000F1453 /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
@@ -950,6 +954,13 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		3D42D1B22642BB62002A170C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D42D2712642BEA0002A170C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1347,6 +1358,7 @@
 			children = (
 				1770424E0B8BC41800B86321 /* Cog.app */,
 				3D42D1B52642BB62002A170C /* CogTests.xctest */,
+				3D42D2742642BEA0002A170C /* SecondsFormatterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1360,6 +1372,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				3D42D1B62642BB62002A170C /* CogTests */,
+				3D42D2752642BEA0002A170C /* SecondsFormatterTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				17B619FF0B909ED400BC003F /* PlugIns */,
 				3DDFC2452344EC6A000F1453 /* Xcode-config */,
@@ -1419,6 +1432,15 @@
 				3D42D1B92642BB62002A170C /* Info.plist */,
 			);
 			path = CogTests;
+			sourceTree = "<group>";
+		};
+		3D42D2752642BEA0002A170C /* SecondsFormatterTests */ = {
+			isa = PBXGroup;
+			children = (
+				3D42D2762642BEA0002A170C /* SecondsFormatterTests.m */,
+				3D42D2782642BEA0002A170C /* Info.plist */,
+			);
+			path = SecondsFormatterTests;
 			sourceTree = "<group>";
 		};
 		3DDFC2452344EC6A000F1453 /* Xcode-config */ = {
@@ -1727,6 +1749,23 @@
 			productReference = 3D42D1B52642BB62002A170C /* CogTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		3D42D2732642BEA0002A170C /* SecondsFormatterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D42D27D2642BEA1002A170C /* Build configuration list for PBXNativeTarget "SecondsFormatterTests" */;
+			buildPhases = (
+				3D42D2702642BEA0002A170C /* Sources */,
+				3D42D2712642BEA0002A170C /* Frameworks */,
+				3D42D2722642BEA0002A170C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SecondsFormatterTests;
+			productName = SecondsFormatterTests;
+			productReference = 3D42D2742642BEA0002A170C /* SecondsFormatterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8D1107260486CEB800E47090 /* Cog */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Cog" */;
@@ -1791,6 +1830,11 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 						TestTargetID = 8D1107260486CEB800E47090;
+					};
+					3D42D2732642BEA0002A170C = {
+						CreatedOnToolsVersion = 12.4;
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
 					};
 					8D1107260486CEB800E47090 = {
 						DevelopmentTeam = "";
@@ -1939,6 +1983,7 @@
 			targets = (
 				8D1107260486CEB800E47090 /* Cog */,
 				3D42D1B42642BB62002A170C /* CogTests */,
+				3D42D2732642BEA0002A170C /* SecondsFormatterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2171,6 +2216,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3D42D2722642BEA0002A170C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D1107290486CEB800E47090 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2263,6 +2315,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D42D1B82642BB62002A170C /* CogTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D42D2702642BEA0002A170C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D42D2772642BEA0002A170C /* SecondsFormatterTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2662,6 +2722,71 @@
 			};
 			name = Release;
 		};
+		3D42D2792642BEA1002A170C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = SecondsFormatterTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.SecondsFormatterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3D42D27A2642BEA1002A170C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = SecondsFormatterTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.SecondsFormatterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2842,6 +2967,15 @@
 			buildConfigurations = (
 				3D42D1BC2642BB62002A170C /* Debug */,
 				3D42D1BD2642BB62002A170C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D42D27D2642BEA1002A170C /* Build configuration list for PBXNativeTarget "SecondsFormatterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D42D2792642BEA1002A170C /* Debug */,
+				3D42D27A2642BEA1002A170C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
