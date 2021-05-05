@@ -34,15 +34,12 @@
 	if (isnan(floatValue)) { return @"NaN"; }
 	if (isinf(floatValue)) { return @"Inf"; }
 	
-	unsigned totalSeconds		= (unsigned)floatValue;
+	int totalSeconds		= (int)floatValue;
 	
-	unsigned seconds	= totalSeconds % 60;
-	unsigned minutes	= totalSeconds / 60;
-	unsigned hours		= 0;
-	unsigned days		= 0;
-	
-	seconds		= totalSeconds % 60;
-	minutes		= totalSeconds / 60;
+	int seconds	= totalSeconds % 60;
+	int minutes	= totalSeconds / 60;
+	int hours = 0;
+	int days = 0;
 	
 	while(60 <= minutes) {
 		minutes -= 60;
@@ -57,16 +54,16 @@
 	NSString *result = nil;
 	
 	if(0 < days) {
-		result = [NSString stringWithFormat:@"%u:%.2u:%.2u:%.2u", days, hours, minutes, seconds];
+		result = [NSString stringWithFormat:@"%i:%.2i:%.2i:%.2i", days, hours, minutes, seconds];
 	}
 	else if(0 < hours) {
-		result = [NSString stringWithFormat:@"%u:%.2u:%.2u", hours, minutes, seconds];
+		result = [NSString stringWithFormat:@"%i:%.2i:%.2i", hours, minutes, seconds];
 	}
 	else if(0 < minutes) {
-		result = [NSString stringWithFormat:@"%u:%.2u", minutes, seconds];
+		result = [NSString stringWithFormat:@"%i:%.2i", minutes, seconds];
 	}
 	else {
-		result = [NSString stringWithFormat:@"0:%.2u", seconds];
+		result = [NSString stringWithFormat:@"0:%.2i", seconds];
 	}
 	
 	return result;
@@ -77,7 +74,7 @@
 	NSScanner		*scanner		= nil;
 	BOOL			result			= NO;
 	int				value			= 0;
-	unsigned		seconds			= 0;
+	int				seconds			= 0;
 	
 	scanner		= [NSScanner scannerWithString:string];
 	
@@ -95,7 +92,7 @@
 	}
 	
 	if(result && NULL != object) {
-		*object = [NSNumber numberWithUnsignedInt:seconds];
+		*object = [NSNumber numberWithInt:seconds];
 	}
 	else if(NULL != error) {
 		*error = @"Couldn't convert value to seconds";
