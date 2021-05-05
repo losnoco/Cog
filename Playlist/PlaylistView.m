@@ -42,18 +42,6 @@
     }
 #endif
 
-    // Set up formatters
-    NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
-    [[[self tableColumnWithIdentifier:@"length"] dataCell] setFormatter:secondsFormatter];
-
-    NSFormatter *indexFormatter = [[IndexFormatter alloc] init];
-    [[[self tableColumnWithIdentifier:@"index"] dataCell] setFormatter:indexFormatter];
-
-    NSFormatter *blankZeroFormatter = [[BlankZeroFormatter alloc] init];
-    [[[self tableColumnWithIdentifier:@"track"] dataCell] setFormatter:blankZeroFormatter];
-    [[[self tableColumnWithIdentifier:@"year"] dataCell] setFormatter:blankZeroFormatter];
-    // end setting up formatters
-
     [self setVerticalMotionCanBeginDrag:YES];
 
     // Set up header context menu
