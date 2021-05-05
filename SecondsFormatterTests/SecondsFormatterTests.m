@@ -27,11 +27,6 @@
 	[super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
 - (void)testPositive
 {
 	NSDictionary *testsDict =
@@ -61,6 +56,66 @@
 		XCTAssertEqualObjects(string, timeString, TEST_INFO);
 	}];
 }
+
+- (void)testNegative
+{
+	NSDictionary *testsDict =
+	@{
+		// key: test name, value: test string
+		@"Negative One Second": @"-0:01",
+		@"Negative One Minute": @"-1:00",
+		@"Negative One Hour": @"-1:00:00",
+		@"Negative One Day": @"-1:00:00:00",
+		@"Negative One of Each": @"-1:01:01:01",
+	};
+	
+#define TEST_INFO	@"Test name: %@, Source string: %@", testName, string
+	
+	NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+	
+	[testsDict enumerateKeysAndObjectsUsingBlock:
+	 ^(NSString *testName, NSString *string, BOOL * _Nonnull stop) {
+		NSNumber *value;
+		BOOL result =
+		[secondsFormatter getObjectValue:&value
+							   forString:string
+						errorDescription:NULL];
+		XCTAssertTrue(result, TEST_INFO);
+		NSString *timeString = [secondsFormatter stringForObjectValue:value];
+		XCTAssertEqualObjects(string, timeString, TEST_INFO);
+	}];
+}
+
+- (void)testMalformed
+{
+	NSDictionary *testsDict =
+	@{
+		// key: test name, value: test string
+		@"Empty String": @"",
+		@"Random String": @"abc",
+		@"Solitary Minus": @"-",
+		@"Malformed Seconds": @"0:60",
+		@"Malformed Minutes": @"60:00",
+		@"Malformed Hours": @"24:00:00",
+		@"Illegal #1": @":00",
+		@"Illegal #2": @"-:00",
+	};
+	
+#define TEST_INFO	@"Test name: %@, Source string: %@", testName, string
+	
+	NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+	
+	[testsDict enumerateKeysAndObjectsUsingBlock:
+	 ^(NSString *testName, NSString *string, BOOL * _Nonnull stop) {
+		NSNumber *value;
+		BOOL result =
+		[secondsFormatter getObjectValue:&value
+							   forString:string
+						errorDescription:NULL];
+		XCTAssertFalse(result, TEST_INFO);
+	}];
+}
+
 
 #if 0
 - (void)testPerformanceExample

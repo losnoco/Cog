@@ -34,64 +34,129 @@
 	if (isnan(floatValue)) { return @"NaN"; }
 	if (isinf(floatValue)) { return @"Inf"; }
 	
-	int totalSeconds		= (int)floatValue;
+	BOOL isNegative = floatValue < 0;
+
+	int totalSeconds = (int)(isNegative ? -floatValue : floatValue);
 	
 	int seconds	= totalSeconds % 60;
 	int minutes	= totalSeconds / 60;
 	int hours = 0;
 	int days = 0;
 	
-	while(60 <= minutes) {
+	while (60 <= minutes) {
 		minutes -= 60;
 		++hours;
 	}
 	
-	while(24 <= hours) {
+	while (24 <= hours) {
 		hours -= 24;
 		++days;
 	}
 	
 	NSString *result = nil;
 	
-	if(0 < days) {
-		result = [NSString stringWithFormat:@"%i:%.2i:%.2i:%.2i", days, hours, minutes, seconds];
+	const char *signPrefix = isNegative ? "-" : "";
+	
+	if (0 < days) {
+		result = [NSString stringWithFormat:@"%s%i:%.2i:%.2i:%.2i", signPrefix, days, hours, minutes, seconds];
 	}
-	else if(0 < hours) {
-		result = [NSString stringWithFormat:@"%i:%.2i:%.2i", hours, minutes, seconds];
+	else if (0 < hours) {
+		result = [NSString stringWithFormat:@"%s%i:%.2i:%.2i", signPrefix, hours, minutes, seconds];
 	}
-	else if(0 < minutes) {
-		result = [NSString stringWithFormat:@"%i:%.2i", minutes, seconds];
+	else if (0 < minutes) {
+		result = [NSString stringWithFormat:@"%s%i:%.2i", signPrefix, minutes, seconds];
 	}
 	else {
-		result = [NSString stringWithFormat:@"0:%.2i", seconds];
+		result = [NSString stringWithFormat:@"%s0:%.2i", signPrefix, seconds];
 	}
 	
 	return result;
 }
 
-- (BOOL)getObjectValue:(out id  _Nullable __autoreleasing *)object forString:(NSString *)string errorDescription:(out NSString * _Nullable __autoreleasing *)error
+- (BOOL)getObjectValue:(out id  _Nullable __autoreleasing *)object
+			 forString:(NSString *)string
+	  errorDescription:(out NSString * _Nullable __autoreleasing *)error
 {
-	NSScanner		*scanner		= nil;
-	BOOL			result			= NO;
-	int				value			= 0;
-	int				seconds			= 0;
+	NSScanner *scanner = [NSScanner scannerWithString:string];
 	
-	scanner		= [NSScanner scannerWithString:string];
+	BOOL result = NO;
 	
-	while(NO == [scanner isAtEnd]) {
+	const int segmentCount = 4;
+	const int lastSegment = segmentCount - 1;
+	int segments[segmentCount] = {-1, -1, -1, -1};
+	int lastScannedSegment = -1;
+
+	BOOL isNegative = NO;
+	
+	if ([scanner isAtEnd] == NO) {
+		isNegative = [scanner scanString:@"-" intoString:NULL];
 		
-		// Grab a value
-		if([scanner scanInt:&value]) {
-			seconds		*= 60;
-			seconds		+= value;
-			result		= YES;
+		int segmentIndex = 0;
+		
+		while (NO == [scanner isAtEnd]) {
+			// Grab a value
+			if ([scanner scanInt:&(segments[segmentIndex])] == NO) {
+				segments[segmentIndex] = -1;
+				break;
+			}
+			
+			if (segmentIndex == lastSegment) {
+				break;
+			}
+			
+			// Grab the separator, if present
+			if ([scanner scanString:@":" intoString:NULL] == NO) {
+				break;
+			}
+			
+			segmentIndex += 1;
 		}
 		
-		// Grab the separator, if present
-		[scanner scanString:@":" intoString:NULL];
+		lastScannedSegment = segmentIndex;
 	}
 	
-	if(result && NULL != object) {
+	int seconds = 0;
+	
+	const BOOL hasDaysSegment = (lastScannedSegment == 3);
+	const BOOL hasHoursSegment = (lastScannedSegment >= 2);
+
+	for (int i = 0; i <= lastScannedSegment; i += 1) {
+		if (segments[i] < 0) {
+			break;
+		}
+		
+		if (hasDaysSegment &&
+			(i == 1)) {
+			// Special case for days.
+			seconds *= 24;
+		}
+		else {
+			seconds *= 60;
+		}
+		
+		const BOOL isDaysSegment = (hasDaysSegment && (i == 0));
+		const BOOL isHoursSegment = (hasHoursSegment && (((lastScannedSegment == 3) && (i == 1)) || ((lastScannedSegment == 2) && (i == 0))));
+
+		if (isDaysSegment ||
+			((isDaysSegment == NO) &&
+			 ((isHoursSegment && (segments[i] < 24)) ||
+			  ((isHoursSegment == NO) &&
+			   (segments[i] < 60))))) {
+			seconds += segments[i];
+		}
+		else {
+			result = NO;
+			break;
+		}
+		
+		if (i == 0) {
+			result = YES;
+		}
+	}
+	
+	if (isNegative) { seconds *= -1; }
+
+	if (result && NULL != object) {
 		*object = [NSNumber numberWithInt:seconds];
 	}
 	else if(NULL != error) {
