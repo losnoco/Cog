@@ -66,12 +66,6 @@ NSString * timeStringForTimeInterval(NSTimeInterval timeInterval, BOOL enforceMi
 - (void)awakeFromNib
 {
     showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
-    if (@available(macOS 10.11, *)) {
-        fontAttributes =
-            @{NSFontAttributeName : [NSFont monospacedDigitSystemFontOfSize:13
-																	 weight:NSFontWeightRegular]};
-        [self update];
-    }
 }
 
 - (void)update
