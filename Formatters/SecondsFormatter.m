@@ -31,11 +31,17 @@
 	unsigned		minutes			= 0;
 	unsigned		seconds			= 0;
 	
-	if(nil == object || NO == [object isKindOfClass:[NSNumber class]] || isnan([object doubleValue])) {
-		return @"";
+	if (nil == object || NO == [object isKindOfClass:[NSNumber class]]) {
+		// Docs state: “Returns nil if object is not of the correct class.”
+		return nil;
 	}
 	
-	value		= (unsigned)([object doubleValue]);
+	float floatValue = [object floatValue];
+	
+	if (isnan(floatValue)) { return @"NaN"; }
+	if (isinf(floatValue)) { return @"Inf"; }
+
+	value		= (unsigned)(floatValue);
 
 	seconds		= value % 60;
 	minutes		= value / 60;
