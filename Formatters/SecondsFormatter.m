@@ -202,7 +202,7 @@
 		if (isNegative && (timeInterval == 0.0)) { timeInterval = -0.0; }
 		*object = @(timeInterval);
 	}
-	else if(NULL != error) {
+	else if (NULL != error) {
 		*error = @"Couldn't convert value to seconds";
 	}
 	
