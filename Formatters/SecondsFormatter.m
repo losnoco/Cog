@@ -63,16 +63,16 @@
 	const char *signPrefix = isNegative ? "-" : "";
 	
 	if (0 < days) {
-		result = [NSString stringWithFormat:@"%s%i:%.2i:%.2i:%.2i", signPrefix, days, hours, minutes, seconds];
+		result = [NSString stringWithFormat:@"%s" "%" PRIi32 ":" "%02" PRIi32 ":" "%02" PRIi32 ":" "%02" PRIi32 "", signPrefix, days, hours, minutes, seconds];
 	}
 	else if (0 < hours) {
-		result = [NSString stringWithFormat:@"%s%i:%.2i:%.2i", signPrefix, hours, minutes, seconds];
+		result = [NSString stringWithFormat:@"%s" "%" PRIi32 ":" "%02" PRIi32 ":" "%02" PRIi32 "", signPrefix, hours, minutes, seconds];
 	}
 	else if (0 < minutes) {
-		result = [NSString stringWithFormat:@"%s%i:%.2i", signPrefix, minutes, seconds];
+		result = [NSString stringWithFormat:@"%s" "%" PRIi32 ":" "%02" PRIi32 "", signPrefix, minutes, seconds];
 	}
 	else {
-		result = [NSString stringWithFormat:@"%s0:%.2i", signPrefix, seconds];
+		result = [NSString stringWithFormat:@"%s" "0:" "%02" PRIi32 "", signPrefix, seconds];
 	}
 	
 	return result;
