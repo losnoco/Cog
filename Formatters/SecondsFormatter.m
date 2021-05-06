@@ -29,14 +29,14 @@
 		return nil;
 	}
 	
-	double floatValue = [object doubleValue];
+	NSTimeInterval timeInterval = [object doubleValue];
 	
-	if (isnan(floatValue)) { return @"NaN"; }
-	if (isinf(floatValue)) { return @"Inf"; }
+	if (isnan(timeInterval)) { return @"NaN"; }
+	if (isinf(timeInterval)) { return @"Inf"; }
 	
-	BOOL isNegative = signbit(floatValue);
+	BOOL isNegative = signbit(timeInterval);
 
-	int totalSeconds = (int)(isNegative ? -floatValue : floatValue);
+	int totalSeconds = (int)(isNegative ? -timeInterval : timeInterval);
 	
 	int seconds	= totalSeconds % 60;
 	int minutes	= totalSeconds / 60;
