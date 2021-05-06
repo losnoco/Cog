@@ -87,7 +87,14 @@ void SFPlayer::send_event(uint32_t b)
         mSysexMap.get_entry( n, data, size, port );
         if (port >= 3)
             port = 0;
-        fluid_synth_sysex(_synth[port], (const char *)data, size, NULL, NULL, NULL, 0);
+        if (data && size > 2 && data[0] == 0xF0 && data[size-1] == 0xF7)
+        {
+            ++data;
+            size -= 2;
+            fluid_synth_sysex(_synth[0], (const char *)data, size, NULL, NULL, NULL, 0);
+            fluid_synth_sysex(_synth[1], (const char *)data, size, NULL, NULL, NULL, 0);
+            fluid_synth_sysex(_synth[2], (const char *)data, size, NULL, NULL, NULL, 0);
+        }
     }
 }
 
@@ -145,6 +152,7 @@ bool SFPlayer::startup()
 
     for (unsigned int i = 0; i < 3; ++i)
     {
+        fluid_settings_setint(_settings, "synth.device-id", i);
         _synth[i] = new_fluid_synth(_settings);
         if (!_synth[i])
         {
