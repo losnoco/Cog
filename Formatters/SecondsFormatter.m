@@ -77,6 +77,11 @@
 			 forString:(NSString *)string
 	  errorDescription:(out NSString * _Nullable __autoreleasing *)error
 {
+	// In the previous implementation,
+	// all types were incorrectly treated indentically.
+	// This made the code much simpler,
+	// but the added complexity is needed to support both negative and large values.
+	
 	NSScanner *scanner = [NSScanner scannerWithString:string];
 	
 	BOOL malformed = NO;
@@ -123,98 +128,61 @@
 	int seconds = 0;
 	
 	if (malformed == NO) {
-		int secondsIndex;
-		int minutesIndex;
-		int hoursIndex;
-		int daysIndex;
+		// `segments` entries need to be mapped to the correct unit type.
+		// The position of each type depends on the number of scanned segments.
 		
-		switch (lastScannedSegment) {
-			case 0: {
-				secondsIndex = 0;
-				minutesIndex = -1;
-				hoursIndex = -1;
-				daysIndex = -1;
-				break;
-			}
-				
-			case 1: {
-				secondsIndex = 1;
-				minutesIndex = 0;
-				hoursIndex = -1;
-				daysIndex = -1;
-				break;
-			}
-				
-			case 2: {
-				secondsIndex = 2;
-				minutesIndex = 1;
-				hoursIndex = 0;
-				daysIndex = -1;
-				break;
-			}
-				
-			case 3: {
-				secondsIndex = 3;
-				minutesIndex = 2;
-				hoursIndex = 1;
-				daysIndex = 0;
-				break;
-			}
-				
-			default: {
-				secondsIndex = -1;
-				minutesIndex = -1;
-				hoursIndex = -1;
-				daysIndex = -1;
-				break;
-			}
-		}
+		const int typeCount = segmentCount;
 		
-		const BOOL hasDaysSegment = daysIndex >= 0;
-		const BOOL hasHoursSegment = hoursIndex >= 0;
-		const BOOL hasMinutesSegment = minutesIndex >= 0;
-		const BOOL hasSecondsSegment = secondsIndex >= 0;
+		typedef enum : int {
+			DAYS = 0, HOURS = 1, MINUTES = 2, SECONDS = 3,
+		} SegmentType;
 		
-		if (hasDaysSegment) {
-			if ((segments[daysIndex] >= 0) && (segments[daysIndex] < INT32_MAX)) {
-				seconds += segments[daysIndex];
-				seconds *= 24;
+		const int segmentIndexes[segmentCount][typeCount] = {
+			{ -1, -1, -1,  0 },
+			{ -1, -1,  0,  1 },
+			{ -1,  0,  1,  2 },
+			{  0,  1,  2,  3 },
+		};
+		
+#define HAS_SEGMENT(segmentType) \
+		(segmentIndexes[lastScannedSegment][(segmentType)] >= 0)
+		
+		typedef struct {
+			int max;
+			int scaleFactor;
+		} SegmentMetadata;
+		
+		const SegmentMetadata segmentMetadata[segmentCount] = {
+			{.max = INT32_MAX,	.scaleFactor = 24},
+			{.max = 24,			.scaleFactor = 60},
+			{.max = 60,			.scaleFactor = 60},
+			{.max = 60,			.scaleFactor =  1},
+		};
+		
+		for (SegmentType segmentType = DAYS; segmentType < segmentCount; segmentType += 1) {
+			if (!HAS_SEGMENT(segmentType)) {
+				if (segmentType == SECONDS) {
+					// Must have SECONDS.
+					malformed = YES;
+					break;
+				}
+				else {
+					continue;
+				}
+			}
+			
+			const int index = segmentIndexes[lastScannedSegment][segmentType];
+			
+			const SegmentMetadata metadata = segmentMetadata[segmentType];
+			
+			if ((segments[index] >= 0) && (segments[index] < metadata.max)) {
+				seconds += segments[index];
+				seconds *= metadata.scaleFactor;
 			}
 			else {
 				malformed = YES;
+				break;
 			}
-		}
-
-		if (hasHoursSegment) {
-			if ((segments[hoursIndex] >= 0) && (segments[hoursIndex] < 24)) {
-				seconds += segments[hoursIndex];
-				seconds *= 60;
-			}
-			else {
-				malformed = YES;
-			}
-		}
-		
-		if (hasMinutesSegment) {
-			if ((segments[minutesIndex] >= 0) && (segments[minutesIndex] < 60)) {
-				seconds += segments[minutesIndex];
-				seconds *= 60;
-			}
-			else {
-				malformed = YES;
-			}
-		}
-		
-		if (hasSecondsSegment) {
-			if ((segments[secondsIndex] >= 0) && (segments[secondsIndex] < 60)) {
-				seconds += segments[secondsIndex];
-			}
-			else {
-				malformed = YES;
-			}
-		}
-		else {
-			malformed = YES;
 		}
 		
 		seconds *= (isNegative ? -1 : 1);
