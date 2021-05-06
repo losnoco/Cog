@@ -79,8 +79,8 @@
 {
 	NSScanner *scanner = [NSScanner scannerWithString:string];
 	
-	BOOL result = NO;
-	
+	BOOL malformed = NO;
+
 	const int segmentCount = 4;
 	const int lastSegment = segmentCount - 1;
 	int segments[segmentCount] = {-1, -1, -1, -1};
@@ -93,10 +93,11 @@
 		
 		int segmentIndex = 0;
 		
-		while (NO == [scanner isAtEnd]) {
+		while ([scanner isAtEnd] == NO) {
 			// Grab a value
 			if ([scanner scanInt:&(segments[segmentIndex])] == NO) {
 				segments[segmentIndex] = -1;
+				malformed = YES;
 				break;
 			}
 			
@@ -115,47 +116,112 @@
 		lastScannedSegment = segmentIndex;
 	}
 	
-	int seconds = 0;
-	
-	const BOOL hasDaysSegment = (lastScannedSegment == 3);
-	const BOOL hasHoursSegment = (lastScannedSegment >= 2);
-
-	for (int i = 0; i <= lastScannedSegment; i += 1) {
-		if (segments[i] < 0) {
-			break;
-		}
-		
-		if (hasDaysSegment &&
-			(i == 1)) {
-			// Special case for days.
-			seconds *= 24;
-		}
-		else {
-			seconds *= 60;
-		}
-		
-		const BOOL isDaysSegment = (hasDaysSegment && (i == 0));
-		const BOOL isHoursSegment = (hasHoursSegment && (((lastScannedSegment == 3) && (i == 1)) || ((lastScannedSegment == 2) && (i == 0))));
-
-		if (isDaysSegment ||
-			((isDaysSegment == NO) &&
-			 ((isHoursSegment && (segments[i] < 24)) ||
-			  ((isHoursSegment == NO) &&
-			   (segments[i] < 60))))) {
-			seconds += segments[i];
-		}
-		else {
-			result = NO;
-			break;
-		}
-		
-		if (i == 0) {
-			result = YES;
-		}
+	if ([scanner isAtEnd] == NO) {
+		malformed = YES;
 	}
 	
-	if (isNegative) { seconds *= -1; }
+	int seconds = 0;
+	
+	if (malformed == NO) {
+		int secondsIndex;
+		int minutesIndex;
+		int hoursIndex;
+		int daysIndex;
+		
+		switch (lastScannedSegment) {
+			case 0: {
+				secondsIndex = 0;
+				minutesIndex = -1;
+				hoursIndex = -1;
+				daysIndex = -1;
+				break;
+			}
+				
+			case 1: {
+				secondsIndex = 1;
+				minutesIndex = 0;
+				hoursIndex = -1;
+				daysIndex = -1;
+				break;
+			}
+				
+			case 2: {
+				secondsIndex = 2;
+				minutesIndex = 1;
+				hoursIndex = 0;
+				daysIndex = -1;
+				break;
+			}
+				
+			case 3: {
+				secondsIndex = 3;
+				minutesIndex = 2;
+				hoursIndex = 1;
+				daysIndex = 0;
+				break;
+			}
+				
+			default: {
+				secondsIndex = -1;
+				minutesIndex = -1;
+				hoursIndex = -1;
+				daysIndex = -1;
+				break;
+			}
+		}
+		
+		const BOOL hasDaysSegment = daysIndex >= 0;
+		const BOOL hasHoursSegment = hoursIndex >= 0;
+		const BOOL hasMinutesSegment = minutesIndex >= 0;
+		const BOOL hasSecondsSegment = secondsIndex >= 0;
+		
+		if (hasDaysSegment) {
+			if ((segments[daysIndex] >= 0) && (segments[daysIndex] < INT32_MAX)) {
+				seconds += segments[daysIndex];
+				seconds *= 24;
+			}
+			else {
+				malformed = YES;
+			}
+		}
 
+		if (hasHoursSegment) {
+			if ((segments[hoursIndex] >= 0) && (segments[hoursIndex] < 24)) {
+				seconds += segments[hoursIndex];
+				seconds *= 60;
+			}
+			else {
+				malformed = YES;
+			}
+		}
+		
+		if (hasMinutesSegment) {
+			if ((segments[minutesIndex] >= 0) && (segments[minutesIndex] < 60)) {
+				seconds += segments[minutesIndex];
+				seconds *= 60;
+			}
+			else {
+				malformed = YES;
+			}
+		}
+		
+		if (hasSecondsSegment) {
+			if ((segments[secondsIndex] >= 0) && (segments[secondsIndex] < 60)) {
+				seconds += segments[secondsIndex];
+			}
+			else {
+				malformed = YES;
+			}
+		}
+		else {
+			malformed = YES;
+		}
+		
+		seconds *= (isNegative ? -1 : 1);
+	}
+	
+	const BOOL result = (malformed == NO);
+	
 	if (result && NULL != object) {
 		*object = [NSNumber numberWithInt:seconds];
 	}
