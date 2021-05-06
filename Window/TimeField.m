@@ -10,9 +10,9 @@
 
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
 
-NSString * timeStringForTimeInterval(NSTimeInterval timeInterval, BOOL enforceMinusSign) {
+NSString * timeStringForTimeInterval(NSTimeInterval timeInterval) {
 	const int64_t signed_total_seconds = (int64_t)timeInterval;
-	const bool need_minus_sign = enforceMinusSign || signed_total_seconds < 0;
+	const bool need_minus_sign = signbit(timeInterval);
 	const int64_t total_seconds = (need_minus_sign ? -1 : 1) * signed_total_seconds;
 	const int64_t seconds = total_seconds % 60;
 	const int64_t total_minutes = (total_seconds - seconds) / 60;
@@ -74,12 +74,15 @@ NSString * timeStringForTimeInterval(NSTimeInterval timeInterval, BOOL enforceMi
     if (showTimeRemaining == NO)
     {
 		NSTimeInterval sec = self.currentTime;
-        text = timeStringForTimeInterval(sec, NO);
+        text = timeStringForTimeInterval(sec);
     }
     else
     {
 		NSTimeInterval sec = self.currentTime - self.duration;
-		text = timeStringForTimeInterval(sec, YES);
+		// NOTE: The floating point standard has support for negative zero.
+		// We use that to enforce the sign prefix.
+		if (sec == 0.0) { sec = -0.0; }
+		text = timeStringForTimeInterval(sec);
     }
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text
                                                                  attributes:fontAttributes];

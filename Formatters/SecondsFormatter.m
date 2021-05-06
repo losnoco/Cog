@@ -34,7 +34,7 @@
 	if (isnan(floatValue)) { return @"NaN"; }
 	if (isinf(floatValue)) { return @"Inf"; }
 	
-	BOOL isNegative = floatValue < 0;
+	BOOL isNegative = signbit(floatValue);
 
 	int totalSeconds = (int)(isNegative ? -floatValue : floatValue);
 	
@@ -191,7 +191,11 @@
 	const BOOL result = (malformed == NO);
 	
 	if (result && NULL != object) {
-		*object = [NSNumber numberWithInt:seconds];
+		NSTimeInterval timeInterval = (NSTimeInterval)seconds;
+		// NOTE: The floating point standard has support for negative zero.
+		// We use that to represent the parsing result without information loss.
+		if (isNegative && (timeInterval == 0.0)) { timeInterval = -0.0; }
+		*object = @(timeInterval);
 	}
 	else if(NULL != error) {
 		*error = @"Couldn't convert value to seconds";

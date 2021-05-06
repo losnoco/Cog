@@ -32,7 +32,7 @@
 	NSDictionary *testsDict =
 	@{
 		// key: test name, value: test string
-		//@"Example": @"0:00",
+		@"Zero": @"0:00",
 		@"One Second": @"0:01",
 		@"One Minute": @"1:00",
 		@"One Hour": @"1:00:00",
@@ -62,6 +62,7 @@
 	NSDictionary *testsDict =
 	@{
 		// key: test name, value: test string
+		@"Negative Zero": @"-0:00",
 		@"Negative One Second": @"-0:01",
 		@"Negative One Minute": @"-1:00",
 		@"Negative One Hour": @"-1:00:00",
