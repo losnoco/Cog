@@ -31,6 +31,11 @@
 	
 	NSTimeInterval timeInterval = [object doubleValue];
 	
+	return [self stringForTimeInterval:timeInterval];
+}
+
+- (NSString * _Nullable)stringForTimeInterval:(NSTimeInterval)timeInterval;
+{
 	if (isnan(timeInterval)) { return @"NaN"; }
 	if (isinf(timeInterval)) { return @"Inf"; }
 	
