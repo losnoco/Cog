@@ -40,7 +40,7 @@
 	if (isinf(timeInterval)) { return @"Inf"; }
 	
 	BOOL isNegative = signbit(timeInterval);
-
+	
 	int totalSeconds = (int)(isNegative ? -timeInterval : timeInterval);
 	
 	int seconds	= totalSeconds % 60;
