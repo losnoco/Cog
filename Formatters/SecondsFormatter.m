@@ -20,6 +20,19 @@
 
 #import "SecondsFormatter.h"
 
+#define TWO_GIGASECONDS_IS_ENOUGH 1 // 2 Gs is about 68 years.
+#if TWO_GIGASECONDS_IS_ENOUGH
+	typedef int32_t sec_t; // Type used internally for time values (mostly in seconds).
+	#define PRIsec PRIi32
+	#define SEC_MAX INT32_MAX
+	#define scanSec scanInt
+#else
+	typedef NSInteger sec_t;
+	#define PRIsec "zd"
+	#define SEC_MAX NSIntegerMax
+	#define scanSec scanInteger
+#endif
+
 @implementation SecondsFormatter
 
 - (NSString *) stringForObjectValue:(id)object
@@ -41,12 +54,12 @@
 	
 	BOOL isNegative = signbit(timeInterval);
 	
-	int totalSeconds = (int)(isNegative ? -timeInterval : timeInterval);
+	sec_t totalSeconds = (sec_t)(isNegative ? -timeInterval : timeInterval);
 	
-	int seconds	= totalSeconds % 60;
-	int minutes	= totalSeconds / 60;
-	int hours = 0;
-	int days = 0;
+	sec_t seconds	= totalSeconds % 60;
+	sec_t minutes	= totalSeconds / 60;
+	sec_t hours = 0;
+	sec_t days = 0;
 	
 	while (60 <= minutes) {
 		minutes -= 60;
@@ -63,16 +76,16 @@
 	const char *signPrefix = isNegative ? "-" : "";
 	
 	if (0 < days) {
-		result = [NSString stringWithFormat:@"%s" "%" PRIi32 ":" "%02" PRIi32 ":" "%02" PRIi32 ":" "%02" PRIi32 "", signPrefix, days, hours, minutes, seconds];
+		result = [NSString stringWithFormat:@"%s" "%" PRIsec ":" "%02" PRIsec ":" "%02" PRIsec ":" "%02" PRIsec "", signPrefix, days, hours, minutes, seconds];
 	}
 	else if (0 < hours) {
-		result = [NSString stringWithFormat:@"%s" "%" PRIi32 ":" "%02" PRIi32 ":" "%02" PRIi32 "", signPrefix, hours, minutes, seconds];
+		result = [NSString stringWithFormat:@"%s" "%" PRIsec ":" "%02" PRIsec ":" "%02" PRIsec "", signPrefix, hours, minutes, seconds];
 	}
 	else if (0 < minutes) {
-		result = [NSString stringWithFormat:@"%s" "%" PRIi32 ":" "%02" PRIi32 "", signPrefix, minutes, seconds];
+		result = [NSString stringWithFormat:@"%s" "%" PRIsec ":" "%02" PRIsec "", signPrefix, minutes, seconds];
 	}
 	else {
-		result = [NSString stringWithFormat:@"%s" "0:" "%02" PRIi32 "", signPrefix, seconds];
+		result = [NSString stringWithFormat:@"%s" "0:" "%02" PRIsec "", signPrefix, seconds];
 	}
 	
 	return result;
@@ -93,7 +106,7 @@
 
 	const int segmentCount = 4;
 	const int lastSegment = segmentCount - 1;
-	int segments[segmentCount] = {-1, -1, -1, -1};
+	sec_t segments[segmentCount] = {-1, -1, -1, -1};
 	int lastScannedSegment = -1;
 
 	BOOL isNegative = NO;
@@ -105,7 +118,7 @@
 		
 		while ([scanner isAtEnd] == NO) {
 			// Grab a value
-			if ([scanner scanInt:&(segments[segmentIndex])] == NO) {
+			if ([scanner scanSec:&(segments[segmentIndex])] == NO) {
 				segments[segmentIndex] = -1;
 				malformed = YES;
 				break;
@@ -130,7 +143,7 @@
 		malformed = YES;
 	}
 	
-	int seconds = 0;
+	sec_t seconds = 0;
 	
 	if (malformed == NO) {
 		// `segments` entries need to be mapped to the correct unit type.
@@ -153,12 +166,12 @@
 		(segmentIndexes[lastScannedSegment][(segmentType)] >= 0)
 		
 		typedef struct {
-			int max;
-			int scaleFactor;
+			sec_t max;
+			sec_t scaleFactor;
 		} SegmentMetadata;
 		
 		const SegmentMetadata segmentMetadata[segmentCount] = {
-			{.max = INT32_MAX,	.scaleFactor = 24},
+			{.max = SEC_MAX,	.scaleFactor = 24},
 			{.max = 24,			.scaleFactor = 60},
 			{.max = 60,			.scaleFactor = 60},
 			{.max = 60,			.scaleFactor =  1},
