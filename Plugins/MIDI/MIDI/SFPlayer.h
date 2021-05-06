@@ -39,25 +39,11 @@ private:
     std::string       _last_error;
 
     fluid_settings_t * _settings;
-    fluid_synth_t    * _synth;
+    fluid_synth_t    * _synth[3];
     std::string        sSoundFontName;
     std::string        sFileSoundFontName;
 
     unsigned           uInterpolationMethod;
-
-    enum
-    {
-                       mode_gm = 0,
-                       mode_gm2,
-                       mode_gs,
-                       mode_xg
-    }
-                       synth_mode;
-
-    void reset_drums();
-    uint8_t            drum_channels[48];
-    uint8_t            gs_part_to_ch[48];
-    unsigned short     channel_banks[48];
 };
 
 #endif /* SFPlayer_h */
