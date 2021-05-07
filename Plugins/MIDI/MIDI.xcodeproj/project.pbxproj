@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		8309220B2640D0B8005855C1 /* SFPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8309220A2640D0B8005855C1 /* SFPlayer.cpp */; };
 		8309220C2640D3CD005855C1 /* libFLAC.8.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830921FD2640CC16005855C1 /* libFLAC.8.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8309220D2640D3CF005855C1 /* libfluidsynth.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830921FB2640CC16005855C1 /* libfluidsynth.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8309220D2640D3CF005855C1 /* libfluidsynth.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830921FB2640CC16005855C1 /* libfluidsynth.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8309220E2640D3D3005855C1 /* libglib-2.0.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830922022640CC16005855C1 /* libglib-2.0.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8309220F2640D3D8005855C1 /* libgthread-2.0.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830921FF2640CC16005855C1 /* libgthread-2.0.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		830922102640D3E4005855C1 /* libintl.8.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830922042640CC16005855C1 /* libintl.8.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -21,7 +21,7 @@
 		830922162640D3FD005855C1 /* libsndfile.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830922002640CC16005855C1 /* libsndfile.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		830922172640D400005855C1 /* libvorbis.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830922072640CC16005855C1 /* libvorbis.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		830922182640D40D005855C1 /* libvorbisenc.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830921FC2640CC16005855C1 /* libvorbisenc.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		830922192640D45D005855C1 /* libfluidsynth.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 830921FB2640CC16005855C1 /* libfluidsynth.2.dylib */; };
+		830922192640D45D005855C1 /* libfluidsynth.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 830921FB2640CC16005855C1 /* libfluidsynth.3.dylib */; };
 		834BE91B1DE407CB00A07DCD /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 834BE9191DE407CB00A07DCD /* resampler.c */; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
@@ -79,7 +79,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				8309220C2640D3CD005855C1 /* libFLAC.8.dylib in CopyFiles */,
-				8309220D2640D3CF005855C1 /* libfluidsynth.2.dylib in CopyFiles */,
+				8309220D2640D3CF005855C1 /* libfluidsynth.3.dylib in CopyFiles */,
 				8309220F2640D3D8005855C1 /* libgthread-2.0.0.dylib in CopyFiles */,
 				8309220E2640D3D3005855C1 /* libglib-2.0.0.dylib in CopyFiles */,
 				830922102640D3E4005855C1 /* libintl.8.dylib in CopyFiles */,
@@ -98,7 +98,7 @@
 
 /* Begin PBXFileReference section */
 		830921FA2640CBBD005855C1 /* SFPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SFPlayer.h; sourceTree = "<group>"; };
-		830921FB2640CC16005855C1 /* libfluidsynth.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.2.dylib; path = ../../ThirdParty/FluidSynth/libfluidsynth.2.dylib; sourceTree = "<group>"; };
+		830921FB2640CC16005855C1 /* libfluidsynth.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfluidsynth.3.dylib; path = ../../ThirdParty/FluidSynth/libfluidsynth.3.dylib; sourceTree = "<group>"; };
 		830921FC2640CC16005855C1 /* libvorbisenc.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisenc.2.dylib; path = ../../ThirdParty/FluidSynth/libvorbisenc.2.dylib; sourceTree = "<group>"; };
 		830921FD2640CC16005855C1 /* libFLAC.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.8.dylib; path = ../../ThirdParty/FluidSynth/libFLAC.8.dylib; sourceTree = "<group>"; };
 		830921FE2640CC16005855C1 /* libreadline.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.8.dylib; path = ../../ThirdParty/FluidSynth/libreadline.8.dylib; sourceTree = "<group>"; };
@@ -176,7 +176,7 @@
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */,
 				83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */,
-				830922192640D45D005855C1 /* libfluidsynth.2.dylib in Frameworks */,
+				830922192640D45D005855C1 /* libfluidsynth.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +262,7 @@
 			isa = PBXGroup;
 			children = (
 				830921FD2640CC16005855C1 /* libFLAC.8.dylib */,
-				830921FB2640CC16005855C1 /* libfluidsynth.2.dylib */,
+				830921FB2640CC16005855C1 /* libfluidsynth.3.dylib */,
 				830922022640CC16005855C1 /* libglib-2.0.0.dylib */,
 				830921FF2640CC16005855C1 /* libgthread-2.0.0.dylib */,
 				830922042640CC16005855C1 /* libintl.8.dylib */,

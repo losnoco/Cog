@@ -26,24 +26,44 @@ extern "C" {
 #endif
 
 /**
- * @file seq.h
- * @brief MIDI event sequencer.
+ * @defgroup sequencer MIDI Sequencer
+ *
+ * MIDI event sequencer.
+ *
+ * The MIDI sequencer can be used to play MIDI events in a more flexible way than
+ * using the MIDI file player, which expects the events to be stored as
+ * Standard MIDI Files. Using the sequencer, you can provide the events one by
+ * one, with an optional timestamp for scheduling.
+ *
+ * @{
  */
 
 /**
  * Event callback prototype for destination clients.
+ *
  * @param time Current sequencer tick value (see fluid_sequencer_get_tick()).
  * @param event The event being received
  * @param seq The sequencer instance
  * @param data User defined data registered with the client
+ *
+ * @note @p time may not be of the same tick value as the scheduled event! In fact, depending on
+ * the sequencer's scale and the synth's sample-rate, @p time may a few ticks too late. Although this
+ * itself is inaudible, it is important to consider,
+ * when you use this callback for enqueuing additional events over and over again with
+ * fluid_sequencer_send_at(): If you enqueue new events with a relative tick value you might introduce
+ * a timing error, which causes your sequence to sound e.g. slower than it's supposed to be. If this is
+ * your use-case, make sure to enqueue events with an absolute tick value.
  */
 typedef void (*fluid_event_callback_t)(unsigned int time, fluid_event_t *event,
                                        fluid_sequencer_t *seq, void *data);
 
 
+/** @startlifecycle{MIDI Sequencer} */
 FLUID_DEPRECATED FLUIDSYNTH_API fluid_sequencer_t *new_fluid_sequencer(void);
 FLUIDSYNTH_API fluid_sequencer_t *new_fluid_sequencer2(int use_system_timer);
 FLUIDSYNTH_API void delete_fluid_sequencer(fluid_sequencer_t *seq);
+/** @endlifecycle */
+
 FLUIDSYNTH_API int fluid_sequencer_get_use_system_timer(fluid_sequencer_t *seq);
 FLUIDSYNTH_API
 fluid_seq_id_t fluid_sequencer_register_client(fluid_sequencer_t *seq, const char *name,
@@ -63,6 +83,7 @@ void fluid_sequencer_remove_events(fluid_sequencer_t *seq, fluid_seq_id_t source
 FLUIDSYNTH_API unsigned int fluid_sequencer_get_tick(fluid_sequencer_t *seq);
 FLUIDSYNTH_API void fluid_sequencer_set_time_scale(fluid_sequencer_t *seq, double scale);
 FLUIDSYNTH_API double fluid_sequencer_get_time_scale(fluid_sequencer_t *seq);
+/* @} */
 
 #ifdef __cplusplus
 }
