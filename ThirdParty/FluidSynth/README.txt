@@ -4,7 +4,7 @@ paths were patched using install_name_tool.
 
 The following versions are included as of this commit:
 
-fluidsynth: HEAD-9b671b2 from unmerged PR
+fluidsynth: HEAD-d0ec534 from unmerged PR
 flac: 1.3.3
 glib: 2.68.1
 libogg: 1.3.4
