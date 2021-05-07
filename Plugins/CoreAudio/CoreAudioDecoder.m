@@ -77,15 +77,21 @@ static SInt64 getSizeProc(void* clientData) {
 - (void) close
 {
 	OSStatus			err;
-	
-	err = ExtAudioFileDispose(_in);
-	if(noErr != err) {
-		DLog(@"Error closing ExtAudioFile");
-	}
+
+    if (_in_opened) {
+        err = ExtAudioFileDispose(_in);
+        if(noErr != err) {
+            DLog(@"Error closing ExtAudioFile");
+        }
+        _in_opened = NO;
+    }
     
-    err = AudioFileClose(_audioFile);
-    if(noErr != err) {
-        DLog(@"Error closing AudioFile");
+    if (_audioFile_opened) {
+        err = AudioFileClose(_audioFile);
+        if(noErr != err) {
+            DLog(@"Error closing AudioFile");
+        }
+        _audioFile_opened = NO;
     }
     
     _audioSource = nil;
@@ -100,6 +106,9 @@ static SInt64 getSizeProc(void* clientData) {
 {
 	OSStatus						err;
     
+    _audioFile_opened = NO;
+    _in_opened = NO;
+    
     if (![source seekable])
         return NO;
     
@@ -112,11 +121,15 @@ static SInt64 getSizeProc(void* clientData) {
         return NO;
     }
     
+    _audioFile_opened = YES;
+    
     err = ExtAudioFileWrapAudioFileID(_audioFile, false, &_in);
 	if(noErr != err) {
 		ALog(@"Error opening file: %d", err);
 		return NO;
 	}
+    
+    _in_opened = YES;
 	
 	return [self readInfoFromExtAudioFileRef];
 }

@@ -33,6 +33,9 @@
     AudioFileID             _audioFile;
 	ExtAudioFileRef			_in;
     
+    BOOL _audioFile_opened;
+    BOOL _in_opened;
+    
 	int bitrate;
 	int bitsPerSample;
     BOOL floatingPoint;
