@@ -8,26 +8,46 @@
 
 #import "TimeField.h"
 
+#import "SecondsFormatter.h"
+
+
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
 
-NSString * formatTimer(long minutes, long seconds, unichar prefix) {
-    return [NSString localizedStringWithFormat:@"%C%lu:%02lu", prefix, minutes, seconds];;
-}
 
 @implementation TimeField {
     BOOL showTimeRemaining;
     NSDictionary *fontAttributes;
+    SecondsFormatter *secondsFormatter;
 }
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder])
+    {
+        [self commonInit];
+    }
+    
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self commonInit];
+    }
+    
+    return self;
+}
+
+- (void)commonInit
+{
+    secondsFormatter = [[SecondsFormatter alloc] init];
+}
+    
 - (void)awakeFromNib
 {
     showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
-    if (@available(macOS 10.15, *)) {
-        fontAttributes =
-            @{NSFontAttributeName : [NSFont monospacedSystemFontOfSize:13
-                                                                weight:NSFontWeightMedium]};
-        [self update];
-    }
 }
 
 - (void)update
@@ -35,13 +55,16 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
     NSString *text;
     if (showTimeRemaining == NO)
     {
-        long sec = self.currentTime;
-        text = formatTimer(sec / 60, sec % 60, 0x2007); // Digit-width space
+		NSTimeInterval sec = self.currentTime;
+        text = [secondsFormatter stringForTimeInterval:sec];
     }
     else
     {
-        long sec = MAX(0, self.duration - self.currentTime);
-        text = formatTimer(sec / 60, sec % 60, 0x2012); // Hyphen
+		NSTimeInterval sec = self.currentTime - self.duration;
+		// NOTE: The floating point standard has support for negative zero.
+		// We use that to enforce the sign prefix.
+		if (sec == 0.0) { sec = -0.0; }
+        text = [secondsFormatter stringForTimeInterval:sec];
     }
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text
                                                                  attributes:fontAttributes];
@@ -55,7 +78,7 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
     [self update];
 }
 
-- (void)setCurrentTime:(NSInteger)currentTime
+- (void)setCurrentTime:(NSTimeInterval)currentTime
 {
     _currentTime = currentTime;
     [self update];

@@ -24,7 +24,14 @@
 - (void)awakeFromNib {
     [[self menu] setAutoenablesItems:NO];
 
+#if 0
     // Configure bindings to scale font size and row height
+    // NOTE: This currently seems to be without effect.
+    // NSFont value overwritten by
+    // -[NSDisplayFontBinder _adjustFontOfObject:mode:triggerRedisplay:compareDirectly:toFont:]
+    // called by
+    // -[NSWindow makeKeyAndOrderFront:]
+	
     NSControlSize s = NSControlSizeSmall;
     NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
     // NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
@@ -33,18 +40,7 @@
         [[col dataCell] setControlSize:s];
         [[col dataCell] setFont:f];
     }
-
-    // Set up formatters
-    NSFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
-    [[[self tableColumnWithIdentifier:@"length"] dataCell] setFormatter:secondsFormatter];
-
-    NSFormatter *indexFormatter = [[IndexFormatter alloc] init];
-    [[[self tableColumnWithIdentifier:@"index"] dataCell] setFormatter:indexFormatter];
-
-    NSFormatter *blankZeroFormatter = [[BlankZeroFormatter alloc] init];
-    [[[self tableColumnWithIdentifier:@"track"] dataCell] setFormatter:blankZeroFormatter];
-    [[[self tableColumnWithIdentifier:@"year"] dataCell] setFormatter:blankZeroFormatter];
-    // end setting up formatters
+#endif
 
     [self setVerticalMotionCanBeginDrag:YES];
 
