@@ -40,7 +40,7 @@
 		[self initDefaults];
 		
 		queue = [[NSOperationQueue alloc] init];
-		[queue setMaxConcurrentOperationCount:1];
+		[queue setMaxConcurrentOperationCount:8];
 	}
 	
 	return self; 
@@ -464,15 +464,105 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	//Clear the selection
     [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
     
-    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:entries waitUntilDone:YES];
+    NSArray* arrayFirst = [NSArray arrayWithObject:[entries objectAtIndex:0]];
+    NSMutableArray* arrayRest = [entries mutableCopy];
+    [arrayRest removeObjectAtIndex:0];
+    
+    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
+    if ([arrayRest count])
+        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
 	return entries;
+}
+
+static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+    if (dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
+        block();
+    }
+    else {
+        dispatch_sync(queue, block);
+    }
 }
 
 - (void)loadInfoForEntries:(NSArray *)entries
 {
-    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:entries waitUntilDone:YES];
-}
+    NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
+    long i, j;
+    NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
 
+    i = 0;
+    j = 0;
+    for (PlaylistEntry *pe in entries)
+    {
+        long idx = j++;
+        
+        if ([pe metadataLoaded]) continue;
+
+        [update_indexes addIndex:pe.index];
+        [load_info_indexes addIndex:idx];
+
+        ++i;
+    }
+
+    if (!i)
+    {
+        [playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+        return;
+    }
+
+    NSLock *outLock = [[NSLock alloc] init];
+    NSMutableArray *outArray = [[NSMutableArray alloc] init];
+
+    __block NSLock *weakLock = outLock;
+    __block NSMutableArray *weakArray = outArray;
+
+    {
+        [load_info_indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop)
+        {
+            __block PlaylistEntry *weakPe = [entries objectAtIndex:idx];
+
+            NSBlockOperation *op = [[NSBlockOperation alloc] init];
+
+            [op addExecutionBlock:^{
+                NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
+
+                NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
+                if (entryProperties == nil)
+                    return;
+
+                [entryInfo addEntriesFromDictionary:entryProperties];
+                [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:weakPe.URL]];
+
+                [weakLock lock];
+                [weakArray addObject:weakPe];
+                [weakArray addObject:entryInfo];
+                [weakLock unlock];
+            }];
+
+            [queue addOperation:op];
+        }];
+    }
+
+    [queue waitUntilAllOperationsAreFinished];
+
+    for (i = 0, j = [outArray count]; i < j; i += 2) {
+        __block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
+        __block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
+        dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+            [weakPe setMetadata:entryInfo];
+        });
+    }
+
+    [playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+
+    {
+        __block NSScrollView *weakPlaylistView = playlistView;
+        __block NSIndexSet *weakIndexSet = update_indexes;
+        dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+            unsigned long columns = [[[weakPlaylistView documentView] tableColumns] count];
+            [weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns-1)]];
+        });
+    }
+}
 // To be called on main thread only
 - (void)syncLoadInfoForEntries:(NSArray *)entries
 {
