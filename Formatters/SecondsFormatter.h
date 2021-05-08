@@ -24,6 +24,4 @@
 {
 }
 
-- (NSString * _Nullable)stringForTimeInterval:(NSTimeInterval)timeInterval;
-
 @end
