@@ -1,16 +1,9 @@
-These binaries were carefully retrieved from Homebrew for both x86_64
-and arm64, their signatures were removed, then their id and import
-paths were patched using install_name_tool.
+These binaries were built +universal using MacPorts.
 
 The following versions are included as of this commit:
 
-fluidsynth: HEAD-d0ec534 from unmerged PR
-flac: 1.3.3
-glib: 2.68.1
-libogg: 1.3.4
-libvorbis: 1.3.7
-opus: 1.3.1
-pcre: 8.44
-readline: 8.1
-libsndfile: 1.0.31
-portaudio: HEAD-aa05346
+fluidsynth: 1525a6fc0b59acafd309a8de8bfc89e9c2f0cda8
+glib: 2.58.3_1
+pcre: 8.44_1
+readline: 8.1.000_0
+libsndfile: 1.0.28_1

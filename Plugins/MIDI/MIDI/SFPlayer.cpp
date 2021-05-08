@@ -171,7 +171,7 @@ bool SFPlayer::startup()
         size_t dot = sSoundFontName.find_last_of( '.' );
         if ( dot != std::string::npos )
             ext.assign( sSoundFontName.begin() + dot + 1, sSoundFontName.end() );
-        if ( !strcasecmp( ext.c_str(), "sf2" ) || !strcasecmp( ext.c_str(), "sf3" ) )
+        if ( !strcasecmp( ext.c_str(), "sf2" ) )
         {
             for (unsigned i = 0; i < 3; ++i)
             {
