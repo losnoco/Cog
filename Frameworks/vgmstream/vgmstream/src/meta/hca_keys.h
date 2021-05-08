@@ -394,9 +394,12 @@ static const hcakey_info hcakey_list[] = {
 
         /* Fantasia Re: Build (Android) */
         {8430978314079461325},      // 7500DA1B7FBA5FCD
-		
-        /* SaGa Frontier Remastered */
+
+        /* SaGa Frontier Remastered (multi) */
         {5935495141785029458},      // 525F1D6244274B52
+
+        /* Mushoku Tensei: Game ni Nattemo Honki Dasu (Android) */
+        {12281329554827291428u},    // AA700C292CFCAB24
 
         /* D4DJ Groovy Mix (Android) [base files] */
         {393410674916959300},       // 0575ACECA945A444
@@ -602,7 +605,6 @@ static const hcakey_info hcakey_list[] = {
         {0xa691936caf4d91d0},
         {0x94466db0d3c10f4b},
         {0x47f52330df2ead11},
-        {0x33848be13a2884a3},
         {0xc9f159f60b065f91},
         {0xdd9ca800a7123d6f},
         {0xa090c8ebf8463d05},
@@ -612,15 +614,18 @@ static const hcakey_info hcakey_list[] = {
         {0x1980271cfe0da9bd},
         {0x945cdb3cf1f29e52},
         {0x7f0feac6be7def5b},
-        {0xc9f159f60b065f91},
-        {0xdd9ca800a7123d6f},
-        {0x0a90c8ebf8463d05},
-        {0xa5c1adeb7919845f},
-        {0x58d97e6f3d1aee86},
-        {0x71b5fa3761d6726d},
-        {0x1980271cfe0da9bd},
-        {0x945cdb3cf1f29e52},
-        {0x7f0feac6be7def5b},
+        {0xe35d52b6d2c094fb},
+        {0xd45e8ba374b45ff7},
+        {0x09e68da734cc472f},
+        {0xfc3fa77fc33460d4},
+        {0xa2c543b227b8e5e2},
+        {0xe6d1fd6effa46736},
+        {0x75859a7a2b1ed37d},
+        {0x358adfd1bbd3a95e},
+        {0xc86f8564e0b9078c},
+        {0x2e107d849959c430},
+        {0xb96786621e27daf3},
+        {0x1111d6c10e509824},
 
         /* Dragalia Lost (iOS/Android) */
         {2967411924141,         subkeys_dgl, sizeof(subkeys_dgl) / sizeof(subkeys_dgl[0]) },    // 000002B2E7889CAD
