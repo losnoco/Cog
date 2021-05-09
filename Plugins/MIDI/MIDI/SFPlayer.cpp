@@ -18,6 +18,7 @@ SFPlayer::SFPlayer() : MIDIPlayer()
     _synth[1] = 0;
     _synth[2] = 0;
     uInterpolationMethod = FLUID_INTERP_DEFAULT;
+    bDynamicLoading = true;
 
     for (unsigned int i = 0; i < 3; ++i)
     {
@@ -26,6 +27,7 @@ SFPlayer::SFPlayer() : MIDIPlayer()
         fluid_settings_setnum(_settings[i], "synth.gain", 0.2);
         fluid_settings_setnum(_settings[i], "synth.sample-rate", 44100);
         fluid_settings_setint(_settings[i], "synth.midi-channels", 16);
+        fluid_settings_setint(_settings[i], "synth.dynamic-sample-loading", bDynamicLoading ? 1 : 0);
         fluid_settings_setint(_settings[i], "synth.device-id", 0x10 + i);
     }
 }
@@ -41,10 +43,15 @@ SFPlayer::~SFPlayer()
 
 void SFPlayer::setInterpolationMethod(unsigned method)
 {
-    shutdown();
     uInterpolationMethod = method;
     for (unsigned int i = 0; i < 3; ++i)
         if ( _synth[i] ) fluid_synth_set_interp_method( _synth[i], -1, method );
+}
+
+void SFPlayer::setDynamicLoading(bool enabled)
+{
+    shutdown();
+    bDynamicLoading = enabled;
 }
 
 void SFPlayer::send_event(uint32_t b)
@@ -157,6 +164,7 @@ bool SFPlayer::startup()
     for (unsigned int i = 0; i < 3; ++i)
     {
         fluid_settings_setnum(_settings[i], "synth.sample-rate", uSampleRate);
+        fluid_settings_setint(_settings[i], "synth.dynamic-sample-loading", bDynamicLoading ? 1 : 0);
         _synth[i] = new_fluid_synth(_settings[i]);
         if (!_synth[i])
         {
