@@ -11,7 +11,7 @@
 
 @interface TimeField : NSTextField
 
-@property (nonatomic) NSTimeInterval currentTime;
-@property (nonatomic) NSTimeInterval duration;
+@property (nonatomic) NSInteger currentTime;
+@property (nonatomic) NSInteger duration;
 
 @end
