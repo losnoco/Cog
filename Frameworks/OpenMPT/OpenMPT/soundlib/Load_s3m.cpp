@@ -284,6 +284,8 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			m_FileHistory.push_back(hist);
 		}
 		nonCompatTracker = true;
+		m_playBehaviour.set(kITRetrigger);
+		m_playBehaviour.set(kITShortSampleRetrig);
 		m_playBehaviour.set(kST3SampleSwap);  // Not exactly like ST3, but close enough
 		m_nMinPeriod = 1;
 		break;
@@ -297,13 +299,19 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv, fileHeader.reserved2);
 			m_nMinPeriod = 1;
 			isSchism = true;
+			if(fileHeader.cwtv >= SchismVersionFromDate<2016, 05, 13>::Version(S3MFileHeader::trkSchismTracker))
+				m_playBehaviour.set(kITShortSampleRetrig);
 		}
 		nonCompatTracker = true;
 		break;
 	case S3MFileHeader::trkOpenMPT:
-		madeWithTracker = U_("OpenMPT");
-		formatTrackerStr = true;
-		m_dwLastSavedWithVersion = Version((fileHeader.cwtv & S3MFileHeader::versionMask) << 16);
+		{
+			uint32 mptVersion = (fileHeader.cwtv & S3MFileHeader::versionMask) << 16;
+			if(mptVersion >= 0x01'29'00'00)
+				mptVersion |= fileHeader.reserved2;
+			m_dwLastSavedWithVersion = Version(mptVersion);
+			madeWithTracker = U_("OpenMPT ") + mpt::ufmt::val(m_dwLastSavedWithVersion);
+		}
 		break; 
 	case S3MFileHeader::trkBeRoTracker:
 		madeWithTracker = U_("BeRoTracker");
@@ -676,7 +684,9 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 	// Version info following: ST3.20 = 0x1320
 	// Most significant nibble = Tracker ID, see S3MFileHeader::S3MTrackerVersions
 	// Following: One nibble = Major version, one byte = Minor version (hex)
-	fileHeader.cwtv = S3MFileHeader::trkOpenMPT | static_cast<uint16>((Version::Current().GetRawVersion() >> 16) & S3MFileHeader::versionMask);
+	const uint32 mptVersion = Version::Current().GetRawVersion();
+	fileHeader.cwtv = S3MFileHeader::trkOpenMPT | static_cast<uint16>((mptVersion >> 16) & S3MFileHeader::versionMask);
+	fileHeader.reserved2 = static_cast<uint16>(mptVersion);
 	fileHeader.formatVersion = S3MFileHeader::newVersion;
 	memcpy(fileHeader.magic, "SCRM", 4);
 

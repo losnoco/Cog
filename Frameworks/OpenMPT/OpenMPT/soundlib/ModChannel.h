@@ -174,7 +174,7 @@ struct ModChannel
 		resetTotal           = resetSetPosFull,
 	};
 
-	void Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELINDEX sourceChannel);
+	void Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELINDEX sourceChannel, ChannelFlags muteFlag);
 	void Stop();
 
 	bool IsSamplePlaying() const noexcept { return !increment.IsZero(); }

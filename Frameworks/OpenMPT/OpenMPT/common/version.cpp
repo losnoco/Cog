@@ -357,23 +357,6 @@ mpt::ustring GetBuildFeaturesString()
 		;
 	#endif
 	#ifdef MODPLUG_TRACKER
-		if constexpr(mpt::arch_bits == 64)
-		{
-			if (true
-				&& (mpt::Windows::Version::GetMinimumKernelLevel() <= mpt::Windows::Version::WinXP64)
-				&& (mpt::Windows::Version::GetMinimumAPILevel() <= mpt::Windows::Version::WinXP64)
-			) {
-				retval += UL_(" WIN64OLD");
-			}
-		} else if constexpr(mpt::arch_bits == 32)
-		{
-			if (true
-				&& (mpt::Windows::Version::GetMinimumKernelLevel() <= mpt::Windows::Version::WinXP)
-				&& (mpt::Windows::Version::GetMinimumAPILevel() <= mpt::Windows::Version::WinXP)
-			) {
-				retval += UL_(" WIN32OLD");
-			}
-		}
 		retval += UL_("")
 		#if defined(UNICODE)
 			UL_(" UNICODE")

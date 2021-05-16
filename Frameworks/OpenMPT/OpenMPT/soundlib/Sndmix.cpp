@@ -206,18 +206,6 @@ CSoundFile::samplecount_t CSoundFile::Read(samplecount_t count, IAudioReadTarget
 {
 	MPT_ASSERT_ALWAYS(m_MixerSettings.IsValid());
 
-	bool mixPlugins = false;
-#ifndef NO_PLUGINS
-	for(const auto &plug : m_MixPlugins)
-	{
-		if(plug.pMixPlugin)
-		{
-			mixPlugins = true;
-			break;
-		}
-	}
-#endif // NO_PLUGINS
-
 	samplecount_t countRendered = 0;
 	samplecount_t countToRender = count;
 
@@ -303,14 +291,16 @@ CSoundFile::samplecount_t CSoundFile::Read(samplecount_t count, IAudioReadTarget
 			m_opl->Mix(MixSoundBuffer, countChunk, m_OPLVolumeFactor * m_nVSTiVolume / 48);
 		}
 
-		#ifndef NO_REVERB
-			m_Reverb.Process(MixSoundBuffer, countChunk);
-		#endif // NO_REVERB
+#ifndef NO_REVERB
+		m_Reverb.Process(MixSoundBuffer, countChunk);
+#endif  // NO_REVERB
 
-		if(mixPlugins)
+#ifndef NO_PLUGINS
+		if(m_loadedPlugins)
 		{
 			ProcessPlugins(countChunk);
 		}
+#endif  // NO_PLUGINS
 
 		if(m_MixerSettings.gnChannels == 1)
 		{
@@ -653,8 +643,9 @@ bool CSoundFile::ProcessRow()
 						visitedSongRows.Initialize(true);
 					}
 					// When jumping to the next subsong, stop all playing notes from the previous song...
+					const auto muteFlag = CSoundFile::GetChannelMuteFlag();
 					for(CHANNELINDEX i = 0; i < MAX_CHANNELS; i++)
-						m_PlayState.Chn[i].Reset(ModChannel::resetSetPosFull, *this, i);
+						m_PlayState.Chn[i].Reset(ModChannel::resetSetPosFull, *this, i, muteFlag);
 					StopAllVsti();
 					// ...and the global playback information.
 					m_PlayState.m_nMusicSpeed = m_nDefaultSpeed;
@@ -2348,7 +2339,7 @@ bool CSoundFile::ReadNote()
 		}
 
 		// Volume ramping
-		chn.dwFlags.set(CHN_VOLUMERAMP, (chn.nRealVolume | chn.rightVol | chn.leftVol) != 0);
+		chn.dwFlags.set(CHN_VOLUMERAMP, (chn.nRealVolume | chn.rightVol | chn.leftVol) != 0 && !chn.dwFlags[CHN_ADLIB]);
 
 		constexpr uint8 VUMETER_DECAY = 4;
 		chn.nLeftVU = (chn.nLeftVU > VUMETER_DECAY) ? (chn.nLeftVU - VUMETER_DECAY) : 0;

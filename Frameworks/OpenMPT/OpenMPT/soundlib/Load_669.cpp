@@ -74,17 +74,13 @@ static bool ValidateHeader(const _669FileHeader &fileHeader)
 	for(std::size_t i = 0; i < CountOf(fileHeader.breaks); i++)
 	{
 		if(fileHeader.orders[i] >= 128 && fileHeader.orders[i] < 0xFE)
-		{
 			return false;
-		}
 		if(fileHeader.orders[i] < 128 && fileHeader.tempoList[i] == 0)
-		{
 			return false;
-		}
+		if(fileHeader.tempoList[i] > 15)
+			return false;
 		if(fileHeader.breaks[i] >= 64)
-		{
 			return false;
-		}
 	}
 	return true;
 }
@@ -242,6 +238,7 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 
 				m->param = effect[chn] & 0x0F;
 
+				// Weird stuff happening in corehop.669 with effects > 8... they seem to do the same thing as if the high bit wasn't set, but the sample also behaves strangely.
 				uint8 command = effect[chn] >> 4;
 				if(command < static_cast<uint8>(CountOf(effTrans)))
 				{

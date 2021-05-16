@@ -448,7 +448,7 @@ void ITSample::ConvertToIT(const ModSample &mptSmp, MODTYPE fromType, bool compr
 	if(mptSmp.uFlags[CHN_PANNING]) dfp |= ITSample::enablePanning;
 
 	// Sample Format / Loop Flags
-	if(mptSmp.HasSampleData())
+	if(mptSmp.HasSampleData() && !mptSmp.uFlags[CHN_ADLIB])
 	{
 		flags = ITSample::sampleDataPresent;
 		if(mptSmp.uFlags[CHN_LOOP]) flags |= ITSample::sampleLoop;
@@ -498,12 +498,16 @@ void ITSample::ConvertToIT(const ModSample &mptSmp, MODTYPE fromType, bool compr
 	if((vid | vis) != 0 && (fromType & MOD_TYPE_XM))
 	{
 		// Sweep is upside down in XM
-		vir = 255 - vir;
+		if(mptSmp.nVibSweep != 0)
+			vir = mpt::saturate_cast<decltype(vir)::base_type>(Util::muldivr_unsigned(mptSmp.nVibDepth, 256, mptSmp.nVibSweep));
+		else
+			vir = 255;
 	}
 
 	if(mptSmp.uFlags[CHN_ADLIB])
 	{
 		length = 12;
+		flags = ITSample::sampleDataPresent;
 		cvt = ITSample::cvtOPLInstrument;
 	} else if(mptSmp.uFlags[SMP_KEEPONDISK])
 	{
@@ -668,9 +672,9 @@ uint32 DecodeITEditTimer(uint16 cwtv, uint32 editTime)
 	if((cwtv & 0xFFF) >= 0x0208)
 	{
 		editTime ^= 0x4954524B;  // 'ITRK'
-		editTime = (editTime >> 7) | (editTime << (32 - 7));
+		editTime = mpt::rotr(editTime, 7);
 		editTime = ~editTime + 1;
-		editTime = (editTime << 4) | (editTime >> (32 - 4));
+		editTime = mpt::rotl(editTime, 4);
 		editTime ^= 0x4A54484C;  // 'JTHL'
 	}
 	return editTime;

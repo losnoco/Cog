@@ -93,9 +93,10 @@ public:
 		state->m_nMusicTempo = sndFile.m_nDefaultTempo;
 		state->m_nGlobalVolume = sndFile.m_nDefaultGlobalVolume;
 		chnSettings.assign(sndFile.GetNumChannels(), ChnSettings());
+		const auto muteFlag = CSoundFile::GetChannelMuteFlag();
 		for(CHANNELINDEX chn = 0; chn < sndFile.GetNumChannels(); chn++)
 		{
-			state->Chn[chn].Reset(ModChannel::resetTotal, sndFile, chn);
+			state->Chn[chn].Reset(ModChannel::resetTotal, sndFile, chn, muteFlag);
 			state->Chn[chn].nOldGlobalVolSlide = 0;
 			state->Chn[chn].nOldChnVolSlide = 0;
 			state->Chn[chn].nNote = state->Chn[chn].nNewNote = state->Chn[chn].nLastNote = NOTE_NONE;
@@ -592,7 +593,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				if(chn.rowCommand.vol)
 				{
 					const auto [porta, clearEffectCommand] = GetVolCmdTonePorta(chn.rowCommand, 0);
-					chn.nPortamentoSlide = porta * 4;
+					chn.nPortamentoSlide = porta;
 					if(clearEffectCommand)
 						command = CMD_NONE;
 				}
@@ -791,7 +792,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				break;
 			// Tone-Portamento
 			case CMD_TONEPORTAMENTO:
-				if (param) chn.nPortamentoSlide = param << 2;
+				if (param) chn.nPortamentoSlide = param;
 				break;
 			// Offset
 			case CMD_OFFSET:
@@ -2192,6 +2193,12 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 		if(!srcChn.nLength || srcChn.dwFlags[CHN_MUTE] || !(srcChn.rightVol | srcChn.leftVol))
 			return CHANNELINDEX_INVALID;
 
+		if(srcChn.dwFlags[CHN_ADLIB] && m_opl)
+		{
+			m_opl->NoteCut(nChn, false);
+			return CHANNELINDEX_INVALID;
+		}
+
 		const CHANNELINDEX nnaChn = GetNNAChannel(nChn);
 		if(nnaChn == CHANNELINDEX_INVALID)
 			return CHANNELINDEX_INVALID;
@@ -2211,10 +2218,6 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 		srcChn.position.Set(0);
 		srcChn.nROfs = srcChn.nLOfs = 0;
 		srcChn.rightVol = srcChn.leftVol = 0;
-		if(srcChn.dwFlags[CHN_ADLIB] && m_opl)
-		{
-			m_opl->NoteCut(nChn);
-		}
 		return nnaChn;
 	}
 	if(instr > GetNumInstruments())
@@ -4193,18 +4196,17 @@ void CSoundFile::TonePortamento(ModChannel &chn, uint32 param) const
 		chn.nOldPortaUp = chn.nOldPortaDown = static_cast<uint8>(param);
 	}
 
+	if(param)
+		chn.nPortamentoSlide = param;
+
 	if(chn.HasCustomTuning())
 	{
 		//Behavior: Param tells number of finesteps(or 'fullsteps'(notes) with glissando)
 		//to slide per row(not per tick).
 		const int32 oldPortamentoTickSlide = (m_PlayState.m_nTickCount != 0) ? chn.m_PortamentoTickSlide : 0;
 
-		if(param)
-			chn.nPortamentoSlide = param;
-		else
-			if(chn.nPortamentoSlide == 0)
-				return;
-
+		if(chn.nPortamentoSlide == 0)
+			return;
 
 		if((chn.nPortamentoDest > 0 && chn.nPortamentoSlide < 0) ||
 			(chn.nPortamentoDest < 0 && chn.nPortamentoSlide > 0))
@@ -4242,47 +4244,49 @@ void CSoundFile::TonePortamento(ModChannel &chn, uint32 param) const
 	               || (GetType() & (MOD_TYPE_DBM | MOD_TYPE_669))
 	               || (m_PlayState.m_nMusicSpeed == 1 && m_playBehaviour[kSlidesAtSpeed1])
 	               || (GetType() == MOD_TYPE_MED && m_SongFlags[SONG_FASTVOLSLIDES]);
-	if(GetType() == MOD_TYPE_PLM && param >= 0xF0)
+
+	int32 delta = chn.nPortamentoSlide;
+	if(GetType() == MOD_TYPE_PLM && delta >= 0xF0)
 	{
-		param -= 0xF0;
+		delta -= 0xF0;
 		doPorta = chn.isFirstTick;
 	}
 
-	if(param)
+	if(GetType() == MOD_TYPE_669)
 	{
-		if(GetType() == MOD_TYPE_669)
-		{
-			param *= 10;
-		}
-		chn.nPortamentoSlide = param * 4;
+		delta *= 10;
 	}
 
 	if(chn.nPeriod && chn.nPortamentoDest && doPorta)
 	{
 		if (chn.nPeriod < chn.nPortamentoDest)
 		{
-			int32 delta = chn.nPortamentoSlide;
 			if(m_SongFlags[SONG_LINEARSLIDES] && GetType() != MOD_TYPE_XM)
 			{
-				uint32 n = chn.nPortamentoSlide / 4;
+				uint32 n = delta;
 				if (n > 255) n = 255;
 				// Return (a*b+c/2)/c - no divide error
 				// Table is 65536*2(n/192)
 				delta = Util::muldivr(chn.nPeriod, LinearSlideUpTable[n], 65536) - chn.nPeriod;
 				if (delta < 1) delta = 1;
+			} else
+			{
+				delta *= 4;
 			}
 			chn.nPeriod += delta;
 			if (chn.nPeriod > chn.nPortamentoDest) chn.nPeriod = chn.nPortamentoDest;
 		} else
 		if (chn.nPeriod > chn.nPortamentoDest)
 		{
-			int32 delta = -chn.nPortamentoSlide;
 			if(m_SongFlags[SONG_LINEARSLIDES] && GetType() != MOD_TYPE_XM)
 			{
-				uint32 n = chn.nPortamentoSlide / 4;
+				uint32 n = delta;
 				if (n > 255) n = 255;
 				delta = Util::muldivr(chn.nPeriod, LinearSlideDownTable[n], 65536) - chn.nPeriod;
 				if (delta > -1) delta = -1;
+			} else
+			{
+				delta *= -4;
 			}
 			chn.nPeriod += delta;
 			if (chn.nPeriod < chn.nPortamentoDest) chn.nPeriod = chn.nPortamentoDest;
@@ -5562,6 +5566,15 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 			if(retrigCount && !(retrigCount % retrigSpeed))
 				doRetrig = true;
 			retrigCount++;
+		} else if(GetType() == MOD_TYPE_MOD)
+		{
+			// ProTracker-style retrigger
+			// Test case: PTRetrigger.mod
+			const auto tick = m_PlayState.m_nTickCount % m_PlayState.m_nMusicSpeed;
+			if(!tick && chn.rowCommand.IsNote())
+				return;
+			if(retrigSpeed && !(tick % retrigSpeed))
+				doRetrig = true;
 		} else if(GetType() == MOD_TYPE_MTM)
 		{
 			// In MultiTracker, E9x retriggers the last note at exactly the x-th tick of the row
@@ -5624,8 +5637,8 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		}
 		uint32 note = chn.nNewNote;
 		int32 oldPeriod = chn.nPeriod;
-		const bool retrigAdlib = chn.dwFlags[CHN_ADLIB] && m_playBehaviour[kOPLRealRetrig];
-		if(note >= NOTE_MIN && note <= NOTE_MAX && chn.nLength && retrigAdlib)
+		// ST3 doesn't retrigger OPL notes
+		if(note >= NOTE_MIN && note <= NOTE_MAX && chn.nLength && (!chn.dwFlags[CHN_ADLIB] || GetType() != MOD_TYPE_S3M || m_playBehaviour[kOPLRealRetrig]))
 			CheckNNA(nChn, 0, note, true);
 		bool resetEnv = false;
 		if(GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2))
@@ -5637,11 +5650,6 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 			}
 			if(param < 0x100)
 				resetEnv = true;
-		}
-		if(retrigAdlib && chn.pModSample && m_opl)
-		{
-			m_opl->NoteCut(nChn);
-			m_opl->Patch(nChn, chn.pModSample->adlib);
 		}
 
 		const bool fading = chn.dwFlags[CHN_NOTEFADE];

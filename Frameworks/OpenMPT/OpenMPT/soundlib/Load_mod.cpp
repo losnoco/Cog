@@ -552,7 +552,7 @@ static bool ValidateMODPatternData(TFileReader &file, const uint32 threshold, co
 
 
 // Parse the order list to determine how many patterns are used in the file.
-static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERINDEX numOrders, SmpLength totalSampleLen, CHANNELINDEX &numChannels, SmpLength wowSampleLen = 0)
+static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERINDEX numOrders, SmpLength totalSampleLen, CHANNELINDEX &numChannels, SmpLength wowSampleLen, bool validateHiddenPatterns)
 {
 	PATTERNINDEX numPatterns = 0;         // Total number of patterns in file (determined by going through the whole order list) with pattern number < 128
 	PATTERNINDEX officialPatterns = 0;    // Number of patterns only found in the "official" part of the order list (i.e. order positions < claimed order length)
@@ -590,7 +590,7 @@ static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERIN
 		if(ValidateMODPatternData(file, 16, true))
 			numChannels = 8;
 		file.Seek(patternStartOffset);
-	} else if(numPatterns != officialPatterns && numChannels == 4 && !wowSampleLen)
+	} else if(numPatterns != officialPatterns && validateHiddenPatterns)
 	{
 		// Fix SoundTracker modules where "hidden" patterns should be ignored.
 		// razor-1911.mod (MD5 b75f0f471b0ae400185585ca05bf7fe8, SHA1 4de31af234229faec00f1e85e1e8f78f405d454b)
@@ -913,7 +913,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	// Get number of patterns (including some order list sanity checks)
-	PATTERNINDEX numPatterns = GetNumPatterns(file, Order(), realOrders, totalSampleLen, m_nChannels, wowSampleLen);
+	PATTERNINDEX numPatterns = GetNumPatterns(file, Order(), realOrders, totalSampleLen, m_nChannels, wowSampleLen, false);
 	if(maybeWOW && GetNumChannels() == 8)
 	{
 		// M.K. with 8 channels = Mod's Grave
@@ -1511,7 +1511,7 @@ bool CSoundFile::ReadM15(FileReader &file, ModLoadingFlags loadFlags)
 	file.ReadStruct(fileHeader);
 
 	ReadOrderFromArray(Order(), fileHeader.orderList);
-	PATTERNINDEX numPatterns = GetNumPatterns(file, Order(), fileHeader.numOrders, totalSampleLen, m_nChannels);
+	PATTERNINDEX numPatterns = GetNumPatterns(file, Order(), fileHeader.numOrders, totalSampleLen, m_nChannels, 0, true);
 
 	// Most likely just a file with lots of NULs at the start
 	if(fileHeader.restartPos == 0 && fileHeader.numOrders == 0 && numPatterns <= 1)
@@ -2201,7 +2201,7 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 	m_SongFlags.set(SONG_PT_MODE);
 	m_playBehaviour.set(kMODIgnorePanning);
 	m_playBehaviour.set(kMODOneShotLoops);
-	m_playBehaviour.set(kMODSampleSwap);
+	m_playBehaviour.reset(kMODSampleSwap);
 
 	return ok;
 }

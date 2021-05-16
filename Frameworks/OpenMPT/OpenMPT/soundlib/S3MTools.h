@@ -84,7 +84,7 @@ struct S3MFileHeader
 	uint8le  masterVolume;     // Sample Volume (0...127, stereo if high bit is set)
 	uint8le  ultraClicks;      // Number of channels used for ultra click removal
 	uint8le  usePanningTable;  // 0xFC => read extended panning table
-	uint16le reserved2;        // Schism Tracker uses this for its extended version information
+	uint16le reserved2;        // Schism Tracker and OpenMPT use this for their extended version information
 	uint32le reserved3;        // Impulse Tracker hides its edit timer here
 	uint16le reserved4;
 	uint16le special;          // Pointer to special custom data (unused)

@@ -5,6 +5,26 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.9 (2021-05-16)
+
+ *  `Makefile` `CONFIG=emscripten` does not pass linker options to the compiler
+    any more, which caused latest Emscripten to issue warnings.
+
+ *  The retrigger effect didn't work correctly for OPL instruments in some cases
+    depending on the chosen output sample rate.
+ *  S3M: Emulate IT short sample retrigger quirk in S3M files saved with
+    Impulse Tracker and Schism Tracker.
+ *  ProTracker 3.6 doesn't support sample swapping. It is now disabled when
+    loading a ProTracker 3.6 IFF module.
+ *  Some files with "hidden" garbage patterns were not played correctly since
+    libopenmpt 0.5.3.
+ *  MOD: E9x retrigger now works the same way as in ProTracker 2.
+ *  MDL: Improve auto-vibrato accuracy.
+ *  669: Reject files that contain any pattern tempo higher than 15. 
+ *  Reduce memory consumption of malformed XPK-compressed files.
+
+ *  mpg123: Update to v1.27.2 (2021-05-08).
+
 ### libopenmpt 0.5.8 (2021-04-11)
 
  *  [**Sec**] Possible null-pointer dereference read caused by a sequence of

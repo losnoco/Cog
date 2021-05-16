@@ -146,7 +146,7 @@ struct ModSample
 	// Transpose <-> Frequency conversions
 	static uint32 TransposeToFrequency(int transpose, int finetune = 0);
 	void TransposeToFrequency();
-	static int32 FrequencyToTranspose(uint32 freq);
+	static std::pair<int8, int8> FrequencyToTranspose(uint32 freq);
 	void FrequencyToTranspose();
 
 	// Transpose the sample by amount specified in octaves (i.e. amount=1 transposes one octave up)

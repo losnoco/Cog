@@ -30,6 +30,7 @@
 #include "mptTime.h"
 #include "mptLibrary.h"
 
+#include <stdexcept>
 #include <vector>
 
 #include <cstdlib>
@@ -228,6 +229,19 @@ std::string getenv(const std::string &env_var, const std::string &def = std::str
 } // namespace mpt
 
 #endif // MODPLUG_TRACKER || (LIBOPENMPT_BUILD && LIBOPENMPT_BUILD_TEST)
+
+
+#if MPT_OS_WINDOWS
+
+template <typename Tstring, typename Tbuf, typename Tsize>
+Tstring ParseMaybeNullTerminatedStringFromBufferWithSizeInBytes(const Tbuf *buf, Tsize sizeBytes)
+{
+	// REG_SZ may contain a single NUL terminator, multiple NUL terminators, or no NUL terminator at all
+	return Tstring(reinterpret_cast<const typename Tstring::value_type*>(buf), reinterpret_cast<const typename Tstring::value_type*>(buf) + (sizeBytes / sizeof(typename Tstring::value_type))).c_str();
+}
+
+
+#endif // MPT_OS_WINDOWS
 
 
 OPENMPT_NAMESPACE_END

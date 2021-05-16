@@ -103,7 +103,7 @@
  * threads for internal use.
  * - You must ensure to only ever access a particular libopenmpt object via
  * non-const member functions from a single thread at a time.
- * - You may access a particular libopenmpt objects concurrently from different
+ * - You may access a particular libopenmpt object concurrently from different
  * threads when using only const member functions from all threads.
  * - Consecutive accesses can happen from different threads.
  * - Different objects can be accessed concurrently from different threads.
@@ -273,16 +273,16 @@ LIBOPENMPT_ATTR_DEPRECATED LIBOPENMPT_CXX_API double could_open_propability( std
 LIBOPENMPT_CXX_API std::size_t probe_file_header_get_recommended_size();
 
 //! Probe for module formats in openmpt::probe_file_header(). \since 0.3.0
-static const std::uint64_t probe_file_header_flags_modules    = 0x1ul;
+static const std::uint64_t probe_file_header_flags_modules    = 0x1ull;
 
 //! Probe for module-specific container formats in openmpt::probe_file_header(). \since 0.3.0
-static const std::uint64_t probe_file_header_flags_containers = 0x2ul;
+static const std::uint64_t probe_file_header_flags_containers = 0x2ull;
 
 //! Probe for the default set of formats in openmpt::probe_file_header(). \since 0.3.0
 static const std::uint64_t probe_file_header_flags_default    = probe_file_header_flags_modules | probe_file_header_flags_containers;
 
 //! Probe for no formats in openmpt::probe_file_header(). \since 0.3.0
-static const std::uint64_t probe_file_header_flags_none       = 0x0ul;
+static const std::uint64_t probe_file_header_flags_none       = 0x0ull;
 
 //! Possible return values for openmpt::probe_file_header(). \since 0.3.0
 enum probe_file_header_result {

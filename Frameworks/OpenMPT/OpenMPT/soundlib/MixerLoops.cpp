@@ -12,7 +12,7 @@
 
 #include "stdafx.h"
 #include "MixerLoops.h"
-#include "..//soundbase/SampleBuffer.h"
+#include "../soundbase/SampleBuffer.h"
 #include "Snd_defs.h"
 #include "ModChannel.h"
 #ifdef ENABLE_SSE2

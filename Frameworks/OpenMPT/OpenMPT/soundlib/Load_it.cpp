@@ -478,9 +478,12 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				// OpenMPT Version number (Major.Minor)
 				// This will only be interpreted as "made with ModPlug" (i.e. disable compatible playback etc) if the "reserved" field is set to "OMPT" - else, compatibility was used.
-				m_dwLastSavedWithVersion = Version((fileHeader.cwtv & 0x0FFF) << 16);
+				uint32 mptVersion = (fileHeader.cwtv & 0x0FFF) << 16;
 				if(!memcmp(&fileHeader.reserved, "OMPT", 4))
 					interpretModPlugMade = true;
+				else if(mptVersion >= 0x01'29'00'00)
+					mptVersion |= fileHeader.reserved & 0xFFFF;
+				m_dwLastSavedWithVersion = Version(mptVersion);
 			} else if(fileHeader.cmwt == 0x888 || fileHeader.cwtv == 0x888)
 			{
 				// OpenMPT 1.17.02.26 (r122) to 1.18 (raped IT format)
@@ -1416,8 +1419,8 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 	} else
 	{
 		// IT
-		uint32 vVersion = Version::Current().GetRawVersion();
-		itHeader.cwtv = 0x5000 | (uint16)((vVersion >> 16) & 0x0FFF); // format: txyy (t = tracker ID, x = version major, yy = version minor), e.g. 0x5117 (OpenMPT = 5, 117 = v1.17)
+		const uint32 mptVersion = Version::Current().GetRawVersion();
+		itHeader.cwtv = 0x5000 | static_cast<uint16>((mptVersion >> 16) & 0x0FFF); // format: txyy (t = tracker ID, x = version major, yy = version minor), e.g. 0x5117 (OpenMPT = 5, 117 = v1.17)
 		itHeader.cmwt = 0x0214;	// Common compatible tracker :)
 		// Hack from schism tracker:
 		for(INSTRUMENTINDEX nIns = 1; nIns <= GetNumInstruments(); nIns++)
@@ -1429,11 +1432,10 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 			}
 		}
 
-		if(!compatibilityExport)
-		{
-			// This way, we indicate that the file might contain OpenMPT hacks. Compatibility export puts 0 here.
+		if(compatibilityExport)
+			itHeader.reserved = mptVersion & 0xFFFF;
+		else
 			memcpy(&itHeader.reserved, "OMPT", 4);
-		}
 	}
 
 	itHeader.flags = ITFileHeader::useStereoPlayback | ITFileHeader::useMIDIPitchController;

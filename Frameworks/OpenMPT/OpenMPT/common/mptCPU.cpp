@@ -98,6 +98,19 @@ static cpuid_result cpuid(uint32 function)
 }
 
 
+static cpuid_result cpuidex(uint32 function_a, uint32 function_c)
+{
+	cpuid_result result;
+	int CPUInfo[4];
+	__cpuidex(CPUInfo, function_a, function_c);
+	result.a = CPUInfo[0];
+	result.b = CPUInfo[1];
+	result.c = CPUInfo[2];
+	result.d = CPUInfo[3];
+	return result;
+}
+
+
 void InitProcSupport()
 {
 
@@ -150,6 +163,11 @@ void InitProcSupport()
 			if(StandardFeatureFlags.c & (1<<20)) ProcSupport |= PROCSUPPORT_SSE4_2;
 			if(StandardFeatureFlags.c & (1<<28)) ProcSupport |= PROCSUPPORT_AVX;
 		}
+		if(VendorString.a >= 0x00000007u)
+		{
+			cpuid_result ExtendedFeatures = cpuidex(0x00000007u, 0x00000000u);
+			if(ExtendedFeatures.b & (1<< 5)) ProcSupport |= PROCSUPPORT_AVX2;
+		}
 
 		cpuid_result ExtendedVendorString = cpuid(0x80000000u);
 		if(ExtendedVendorString.a >= 0x80000001u)
@@ -160,11 +178,6 @@ void InitProcSupport()
 		if(ExtendedVendorString.a >= 0x80000004u)
 		{
 			mpt::String::WriteAutoBuf(ProcBrandID) = cpuid(0x80000002u).as_string4() + cpuid(0x80000003u).as_string4() + cpuid(0x80000004u).as_string4();
-			if(ExtendedVendorString.a >= 0x80000007u)
-			{
-				cpuid_result ExtendedFeatures = cpuid(0x80000007u);
-				if(ExtendedFeatures.b & (1<< 5)) ProcSupport |= PROCSUPPORT_AVX2;
-			}
 		}
 
 	}

@@ -635,8 +635,13 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 				mptSmp.nPan = std::min(static_cast<uint16>(sampleHeader.panning * 2), uint16(254));
 				mptSmp.nVibType = MDLVibratoType[sampleHeader.vibType & 3];
 				mptSmp.nVibSweep = sampleHeader.vibSweep;
-				mptSmp.nVibDepth = sampleHeader.vibDepth;
+				mptSmp.nVibDepth = (sampleHeader.vibDepth + 3u) / 4u;
 				mptSmp.nVibRate = sampleHeader.vibSpeed;
+				// Convert to IT-like vibrato sweep
+				if(mptSmp.nVibSweep != 0)
+					mptSmp.nVibSweep = mpt::saturate_cast<decltype(mptSmp.nVibSweep)>(Util::muldivr_unsigned(mptSmp.nVibDepth, 256, mptSmp.nVibSweep));
+				else
+					mptSmp.nVibSweep = 255;
 				if(sampleHeader.panEnvFlags & 0x40)
 					mptSmp.uFlags.set(CHN_PANNING);
 			}

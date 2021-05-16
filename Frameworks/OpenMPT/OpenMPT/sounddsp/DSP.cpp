@@ -280,7 +280,7 @@ void CMegaBass::Process(int * MixSoundBuffer, int * MixRearBuffer, int count, ui
 	if(nChannels >= 2)
 	{
 		X86_StereoDCRemoval(MixSoundBuffer, count, nDCRFlt_Y1lf, nDCRFlt_X1lf, nDCRFlt_Y1rf, nDCRFlt_X1rf);
-		if(nChannels > 2) X86_StereoDCRemoval(MixSoundBuffer, count, nDCRFlt_Y1lb, nDCRFlt_X1lb, nDCRFlt_Y1rb, nDCRFlt_X1rb);
+		if(nChannels > 2) X86_StereoDCRemoval(MixRearBuffer, count, nDCRFlt_Y1lb, nDCRFlt_X1lb, nDCRFlt_Y1rb, nDCRFlt_X1rb);
 		int *px = MixSoundBuffer;
 		int *py = MixRearBuffer;
 		int x1 = nXBassFlt_X1;

@@ -656,13 +656,18 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
-	if(GetType() == MOD_TYPE_MPT && GetNumInstruments() && m_dwLastSavedWithVersion >= MPT_V("1.28.00.20") && m_dwLastSavedWithVersion <= MPT_V("1.29.55.00"))
+	if(GetType() & (MOD_TYPE_MPT | MOD_TYPE_S3M))
 	{
 		for(SAMPLEINDEX i = 1; i <= GetNumSamples(); i++)
 		{
 			if(Samples[i].uFlags[CHN_ADLIB])
 			{
-				m_playBehaviour.set(kOPLNoResetAtEnvelopeEnd);
+				if(GetType() == MOD_TYPE_MPT && GetNumInstruments() && m_dwLastSavedWithVersion >= MPT_V("1.28.00.20") && m_dwLastSavedWithVersion <= MPT_V("1.29.00.55"))
+					m_playBehaviour.set(kOPLNoResetAtEnvelopeEnd);
+				if(GetType() == MOD_TYPE_S3M && m_dwLastSavedWithVersion < MPT_V("1.29"))
+					m_playBehaviour.set(kOPLRealRetrig);
+				else if(GetType() != MOD_TYPE_S3M)
+					m_playBehaviour.reset(kOPLRealRetrig);
 				break;
 			}
 		}

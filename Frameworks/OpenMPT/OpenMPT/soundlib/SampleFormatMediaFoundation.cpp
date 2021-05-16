@@ -249,7 +249,7 @@ std::vector<FileType> CSoundFile::GetMediaFoundationFileTypes()
 
 			std::wstring guid = std::wstring(valueNameBuf);
 
-			mpt::ustring description = mpt::ToUnicode(std::wstring(reinterpret_cast<WCHAR*>(valueData)));
+			mpt::ustring description = mpt::ToUnicode(ParseMaybeNullTerminatedStringFromBufferWithSizeInBytes<std::wstring>(valueData, valueDataLen));
 			description = mpt::String::Replace(description, U_("Byte Stream Handler"), U_("Files"));
 			description = mpt::String::Replace(description, U_("ByteStreamHandler"), U_("Files"));
 

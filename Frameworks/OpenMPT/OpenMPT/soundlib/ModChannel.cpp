@@ -15,7 +15,7 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELINDEX sourceChannel)
+void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELINDEX sourceChannel, ChannelFlags muteFlag)
 {
 	if(resetMask & resetSetPosBasic)
 	{
@@ -81,6 +81,11 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 			dwFlags = sndFile.ChnSettings[sourceChannel].dwFlags;
 			nPan = sndFile.ChnSettings[sourceChannel].nPan;
 			nGlobalVol = sndFile.ChnSettings[sourceChannel].nVolume;
+			if(dwFlags[CHN_MUTE])
+			{
+				dwFlags.reset(CHN_MUTE);
+				dwFlags.set(muteFlag);
+			}
 		} else
 		{
 			dwFlags.reset();

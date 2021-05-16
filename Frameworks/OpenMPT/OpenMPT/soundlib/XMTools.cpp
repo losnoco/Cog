@@ -330,9 +330,7 @@ void XMSample::ConvertToXM(const ModSample &mptSmp, MODTYPE fromType, bool compa
 		relnote = mptSmp.RelativeTone;
 	} else
 	{
-		int f2t = ModSample::FrequencyToTranspose(mptSmp.nC5Speed);
-		relnote = static_cast<int8>(f2t / 128);
-		finetune = static_cast<int8>(f2t & 0x7F);
+		std::tie(relnote, finetune) = ModSample::FrequencyToTranspose(mptSmp.nC5Speed);
 	}
 
 	flags = 0;

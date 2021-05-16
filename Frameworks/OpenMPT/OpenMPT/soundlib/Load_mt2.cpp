@@ -721,12 +721,12 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 						// MT2 only ever calls effGetChunk for programs, and OpenMPT uses the defaultProgram value to determine
 						// whether it should use effSetChunk for programs or banks...
 						mixPlug.defaultProgram = -1;
-						LimitMax(vstHeader.n, Util::MaxValueOfType(dataSize) - 4);
+						LimitMax(vstHeader.n, std::numeric_limits<decltype(dataSize)>::max() - 4);
 						dataSize = vstHeader.n + 4;
 					} else
 					{
 						mixPlug.defaultProgram = vstHeader.programNr;
-						LimitMax(vstHeader.n, (Util::MaxValueOfType(dataSize) / 4u) - 1);
+						LimitMax(vstHeader.n, (std::numeric_limits<decltype(dataSize)>::max() / 4u) - 1);
 						dataSize = vstHeader.n * 4 + 4;
 					}
 					mixPlug.pluginData.resize(dataSize);
