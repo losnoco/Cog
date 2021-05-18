@@ -1,0 +1,597 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		83D676F42653A05E00252130 /* float_cast.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676BF2653A05D00252130 /* float_cast.h */; };
+		83D676F52653A05E00252130 /* match-test.sh in Resources */ = {isa = PBXBuildFile; fileRef = 83D676C02653A05D00252130 /* match-test.sh */; };
+		83D676F72653A05E00252130 /* kiss_fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676C22653A05D00252130 /* kiss_fft.h */; };
+		83D676F82653A05E00252130 /* fixed_c5x.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676C32653A05D00252130 /* fixed_c5x.h */; };
+		83D676FA2653A05E00252130 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 83D676C52653A05D00252130 /* Makefile.am */; };
+		83D676FB2653A05E00252130 /* modes.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676C62653A05D00252130 /* modes.c */; };
+		83D676FC2653A05E00252130 /* mdct.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676C72653A05D00252130 /* mdct.h */; };
+		83D676FD2653A05E00252130 /* arch.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676C82653A05D00252130 /* arch.h */; };
+		83D676FF2653A05E00252130 /* celt_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676CA2653A05D00252130 /* celt_header.h */; };
+		83D677002653A05E00252130 /* pitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676CB2653A05D00252130 /* pitch.h */; };
+		83D677012653A05E00252130 /* mfrngcod.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676CC2653A05D00252130 /* mfrngcod.h */; };
+		83D677032653A05E00252130 /* bands.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676CE2653A05D00252130 /* bands.c */; };
+		83D677042653A05E00252130 /* quant_bands.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676CF2653A05D00252130 /* quant_bands.c */; };
+		83D677052653A05E00252130 /* _kiss_fft_guts.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D02653A05D00252130 /* _kiss_fft_guts.h */; };
+		83D677062653A05E00252130 /* laplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D12653A05D00252130 /* laplace.h */; };
+		83D677072653A05E00252130 /* stack_alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D22653A05D00252130 /* stack_alloc.h */; };
+		83D677082653A05E00252130 /* rate.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676D32653A05D00252130 /* rate.c */; };
+		83D677092653A05E00252130 /* entcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D42653A05D00252130 /* entcode.h */; };
+		83D6770A2653A05E00252130 /* entdec.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D52653A05D00252130 /* entdec.h */; };
+		83D6770B2653A05E00252130 /* modes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D62653A05D00252130 /* modes.h */; };
+		83D6770C2653A05E00252130 /* bands.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D72653A05D00252130 /* bands.h */; };
+		83D6770D2653A05E00252130 /* os_support.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D82653A05D00252130 /* os_support.h */; };
+		83D6770E2653A05E00252130 /* fixed_c6x.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676D92653A05D00252130 /* fixed_c6x.h */; };
+		83D6770F2653A05E00252130 /* mathops.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676DA2653A05D00252130 /* mathops.h */; };
+		83D677102653A05E00252130 /* vq.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676DB2653A05D00252130 /* vq.h */; };
+		83D677112653A05E00252130 /* entdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676DC2653A05D00252130 /* entdec.c */; };
+		83D677122653A05E00252130 /* celt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676DD2653A05D00252130 /* celt.c */; };
+		83D677132653A05E00252130 /* cwrs.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676DE2653A05E00252130 /* cwrs.c */; };
+		83D677142653A05E00252130 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676DF2653A05E00252130 /* config.h */; };
+		83D677152653A05E00252130 /* entcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676E02653A05E00252130 /* entcode.c */; };
+		83D677162653A05E00252130 /* laplace.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676E12653A05E00252130 /* laplace.c */; };
+		83D677172653A05E00252130 /* Makefile.in in Resources */ = {isa = PBXBuildFile; fileRef = 83D676E22653A05E00252130 /* Makefile.in */; };
+		83D677182653A05E00252130 /* cwrs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676E32653A05E00252130 /* cwrs.h */; };
+		83D677192653A05E00252130 /* fixed_generic.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676E42653A05E00252130 /* fixed_generic.h */; };
+		83D6771A2653A05E00252130 /* plc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676E52653A05E00252130 /* plc.h */; };
+		83D6771B2653A05E00252130 /* celt_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676E62653A05E00252130 /* celt_types.h */; };
+		83D6771C2653A05E00252130 /* ecintrin.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676E72653A05E00252130 /* ecintrin.h */; };
+		83D6771D2653A05E00252130 /* mathops.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676E82653A05E00252130 /* mathops.c */; };
+		83D6771E2653A05E00252130 /* entenc.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676E92653A05E00252130 /* entenc.c */; };
+		83D6771F2653A05E00252130 /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676EA2653A05E00252130 /* mdct.c */; };
+		83D677202653A05E00252130 /* header.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676EB2653A05E00252130 /* header.c */; };
+		83D677212653A05E00252130 /* entenc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676EC2653A05E00252130 /* entenc.h */; };
+		83D677222653A05E00252130 /* vq.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676ED2653A05E00252130 /* vq.c */; };
+		83D677232653A05E00252130 /* quant_bands.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676EE2653A05E00252130 /* quant_bands.h */; };
+		83D677242653A05E00252130 /* plc.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676EF2653A05E00252130 /* plc.c */; };
+		83D677252653A05E00252130 /* rate.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676F02653A05E00252130 /* rate.h */; };
+		83D677262653A05E00252130 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676F12653A05E00252130 /* kiss_fft.c */; };
+		83D677272653A05E00252130 /* pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676F22653A05E00252130 /* pitch.c */; };
+		83D677282653A05E00252130 /* celt.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676F32653A05E00252130 /* celt.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		83D676AE26539F4E00252130 /* libcelt_0110.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libcelt_0110.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		83D676B226539F4E00252130 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		83D676BF2653A05D00252130 /* float_cast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = float_cast.h; path = "../../celt-0.11.0/libcelt/float_cast.h"; sourceTree = "<group>"; };
+		83D676C02653A05D00252130 /* match-test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "match-test.sh"; path = "../../celt-0.11.0/libcelt/match-test.sh"; sourceTree = "<group>"; };
+		83D676C22653A05D00252130 /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = kiss_fft.h; path = "../../celt-0.11.0/libcelt/kiss_fft.h"; sourceTree = "<group>"; };
+		83D676C32653A05D00252130 /* fixed_c5x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_c5x.h; path = "../../celt-0.11.0/libcelt/fixed_c5x.h"; sourceTree = "<group>"; };
+		83D676C52653A05D00252130 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = "../../celt-0.11.0/libcelt/Makefile.am"; sourceTree = "<group>"; };
+		83D676C62653A05D00252130 /* modes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = modes.c; path = "../../celt-0.11.0/libcelt/modes.c"; sourceTree = "<group>"; };
+		83D676C72653A05D00252130 /* mdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mdct.h; path = "../../celt-0.11.0/libcelt/mdct.h"; sourceTree = "<group>"; };
+		83D676C82653A05D00252130 /* arch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arch.h; path = "../../celt-0.11.0/libcelt/arch.h"; sourceTree = "<group>"; };
+		83D676CA2653A05D00252130 /* celt_header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celt_header.h; path = "../../celt-0.11.0/libcelt/celt_header.h"; sourceTree = "<group>"; };
+		83D676CB2653A05D00252130 /* pitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pitch.h; path = "../../celt-0.11.0/libcelt/pitch.h"; sourceTree = "<group>"; };
+		83D676CC2653A05D00252130 /* mfrngcod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mfrngcod.h; path = "../../celt-0.11.0/libcelt/mfrngcod.h"; sourceTree = "<group>"; };
+		83D676CE2653A05D00252130 /* bands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bands.c; path = "../../celt-0.11.0/libcelt/bands.c"; sourceTree = "<group>"; };
+		83D676CF2653A05D00252130 /* quant_bands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = quant_bands.c; path = "../../celt-0.11.0/libcelt/quant_bands.c"; sourceTree = "<group>"; };
+		83D676D02653A05D00252130 /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _kiss_fft_guts.h; path = "../../celt-0.11.0/libcelt/_kiss_fft_guts.h"; sourceTree = "<group>"; };
+		83D676D12653A05D00252130 /* laplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = laplace.h; path = "../../celt-0.11.0/libcelt/laplace.h"; sourceTree = "<group>"; };
+		83D676D22653A05D00252130 /* stack_alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stack_alloc.h; path = "../../celt-0.11.0/libcelt/stack_alloc.h"; sourceTree = "<group>"; };
+		83D676D32653A05D00252130 /* rate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rate.c; path = "../../celt-0.11.0/libcelt/rate.c"; sourceTree = "<group>"; };
+		83D676D42653A05D00252130 /* entcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = entcode.h; path = "../../celt-0.11.0/libcelt/entcode.h"; sourceTree = "<group>"; };
+		83D676D52653A05D00252130 /* entdec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = entdec.h; path = "../../celt-0.11.0/libcelt/entdec.h"; sourceTree = "<group>"; };
+		83D676D62653A05D00252130 /* modes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = modes.h; path = "../../celt-0.11.0/libcelt/modes.h"; sourceTree = "<group>"; };
+		83D676D72653A05D00252130 /* bands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bands.h; path = "../../celt-0.11.0/libcelt/bands.h"; sourceTree = "<group>"; };
+		83D676D82653A05D00252130 /* os_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os_support.h; path = "../../celt-0.11.0/libcelt/os_support.h"; sourceTree = "<group>"; };
+		83D676D92653A05D00252130 /* fixed_c6x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_c6x.h; path = "../../celt-0.11.0/libcelt/fixed_c6x.h"; sourceTree = "<group>"; };
+		83D676DA2653A05D00252130 /* mathops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mathops.h; path = "../../celt-0.11.0/libcelt/mathops.h"; sourceTree = "<group>"; };
+		83D676DB2653A05D00252130 /* vq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vq.h; path = "../../celt-0.11.0/libcelt/vq.h"; sourceTree = "<group>"; };
+		83D676DC2653A05D00252130 /* entdec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = entdec.c; path = "../../celt-0.11.0/libcelt/entdec.c"; sourceTree = "<group>"; };
+		83D676DD2653A05D00252130 /* celt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = celt.c; path = "../../celt-0.11.0/libcelt/celt.c"; sourceTree = "<group>"; };
+		83D676DE2653A05E00252130 /* cwrs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cwrs.c; path = "../../celt-0.11.0/libcelt/cwrs.c"; sourceTree = "<group>"; };
+		83D676DF2653A05E00252130 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "../../celt-0.11.0/libcelt/config.h"; sourceTree = "<group>"; };
+		83D676E02653A05E00252130 /* entcode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = entcode.c; path = "../../celt-0.11.0/libcelt/entcode.c"; sourceTree = "<group>"; };
+		83D676E12653A05E00252130 /* laplace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = laplace.c; path = "../../celt-0.11.0/libcelt/laplace.c"; sourceTree = "<group>"; };
+		83D676E22653A05E00252130 /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.in; path = "../../celt-0.11.0/libcelt/Makefile.in"; sourceTree = "<group>"; };
+		83D676E32653A05E00252130 /* cwrs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cwrs.h; path = "../../celt-0.11.0/libcelt/cwrs.h"; sourceTree = "<group>"; };
+		83D676E42653A05E00252130 /* fixed_generic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_generic.h; path = "../../celt-0.11.0/libcelt/fixed_generic.h"; sourceTree = "<group>"; };
+		83D676E52653A05E00252130 /* plc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plc.h; path = "../../celt-0.11.0/libcelt/plc.h"; sourceTree = "<group>"; };
+		83D676E62653A05E00252130 /* celt_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celt_types.h; path = "../../celt-0.11.0/libcelt/celt_types.h"; sourceTree = "<group>"; };
+		83D676E72653A05E00252130 /* ecintrin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ecintrin.h; path = "../../celt-0.11.0/libcelt/ecintrin.h"; sourceTree = "<group>"; };
+		83D676E82653A05E00252130 /* mathops.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mathops.c; path = "../../celt-0.11.0/libcelt/mathops.c"; sourceTree = "<group>"; };
+		83D676E92653A05E00252130 /* entenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = entenc.c; path = "../../celt-0.11.0/libcelt/entenc.c"; sourceTree = "<group>"; };
+		83D676EA2653A05E00252130 /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mdct.c; path = "../../celt-0.11.0/libcelt/mdct.c"; sourceTree = "<group>"; };
+		83D676EB2653A05E00252130 /* header.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = header.c; path = "../../celt-0.11.0/libcelt/header.c"; sourceTree = "<group>"; };
+		83D676EC2653A05E00252130 /* entenc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = entenc.h; path = "../../celt-0.11.0/libcelt/entenc.h"; sourceTree = "<group>"; };
+		83D676ED2653A05E00252130 /* vq.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vq.c; path = "../../celt-0.11.0/libcelt/vq.c"; sourceTree = "<group>"; };
+		83D676EE2653A05E00252130 /* quant_bands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = quant_bands.h; path = "../../celt-0.11.0/libcelt/quant_bands.h"; sourceTree = "<group>"; };
+		83D676EF2653A05E00252130 /* plc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plc.c; path = "../../celt-0.11.0/libcelt/plc.c"; sourceTree = "<group>"; };
+		83D676F02653A05E00252130 /* rate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rate.h; path = "../../celt-0.11.0/libcelt/rate.h"; sourceTree = "<group>"; };
+		83D676F12653A05E00252130 /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = kiss_fft.c; path = "../../celt-0.11.0/libcelt/kiss_fft.c"; sourceTree = "<group>"; };
+		83D676F22653A05E00252130 /* pitch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pitch.c; path = "../../celt-0.11.0/libcelt/pitch.c"; sourceTree = "<group>"; };
+		83D676F32653A05E00252130 /* celt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = celt.h; path = "../../celt-0.11.0/libcelt/celt.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		83D676AB26539F4E00252130 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		83D676A426539F4E00252130 = {
+			isa = PBXGroup;
+			children = (
+				83D676B026539F4E00252130 /* libcelt_0110 */,
+				83D676AF26539F4E00252130 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		83D676AF26539F4E00252130 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83D676AE26539F4E00252130 /* libcelt_0110.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83D676B026539F4E00252130 /* libcelt_0110 */ = {
+			isa = PBXGroup;
+			children = (
+				83D676D02653A05D00252130 /* _kiss_fft_guts.h */,
+				83D676C82653A05D00252130 /* arch.h */,
+				83D676CE2653A05D00252130 /* bands.c */,
+				83D676D72653A05D00252130 /* bands.h */,
+				83D676CA2653A05D00252130 /* celt_header.h */,
+				83D676E62653A05E00252130 /* celt_types.h */,
+				83D676DD2653A05D00252130 /* celt.c */,
+				83D676F32653A05E00252130 /* celt.h */,
+				83D676DF2653A05E00252130 /* config.h */,
+				83D676DE2653A05E00252130 /* cwrs.c */,
+				83D676E32653A05E00252130 /* cwrs.h */,
+				83D676E72653A05E00252130 /* ecintrin.h */,
+				83D676E02653A05E00252130 /* entcode.c */,
+				83D676D42653A05D00252130 /* entcode.h */,
+				83D676DC2653A05D00252130 /* entdec.c */,
+				83D676D52653A05D00252130 /* entdec.h */,
+				83D676E92653A05E00252130 /* entenc.c */,
+				83D676EC2653A05E00252130 /* entenc.h */,
+				83D676C32653A05D00252130 /* fixed_c5x.h */,
+				83D676D92653A05D00252130 /* fixed_c6x.h */,
+				83D676E42653A05E00252130 /* fixed_generic.h */,
+				83D676BF2653A05D00252130 /* float_cast.h */,
+				83D676EB2653A05E00252130 /* header.c */,
+				83D676F12653A05E00252130 /* kiss_fft.c */,
+				83D676C22653A05D00252130 /* kiss_fft.h */,
+				83D676E12653A05E00252130 /* laplace.c */,
+				83D676D12653A05D00252130 /* laplace.h */,
+				83D676C52653A05D00252130 /* Makefile.am */,
+				83D676E22653A05E00252130 /* Makefile.in */,
+				83D676C02653A05D00252130 /* match-test.sh */,
+				83D676E82653A05E00252130 /* mathops.c */,
+				83D676DA2653A05D00252130 /* mathops.h */,
+				83D676EA2653A05E00252130 /* mdct.c */,
+				83D676C72653A05D00252130 /* mdct.h */,
+				83D676CC2653A05D00252130 /* mfrngcod.h */,
+				83D676C62653A05D00252130 /* modes.c */,
+				83D676D62653A05D00252130 /* modes.h */,
+				83D676D82653A05D00252130 /* os_support.h */,
+				83D676F22653A05E00252130 /* pitch.c */,
+				83D676CB2653A05D00252130 /* pitch.h */,
+				83D676EF2653A05E00252130 /* plc.c */,
+				83D676E52653A05E00252130 /* plc.h */,
+				83D676CF2653A05D00252130 /* quant_bands.c */,
+				83D676EE2653A05E00252130 /* quant_bands.h */,
+				83D676D32653A05D00252130 /* rate.c */,
+				83D676F02653A05E00252130 /* rate.h */,
+				83D676D22653A05D00252130 /* stack_alloc.h */,
+				83D676ED2653A05E00252130 /* vq.c */,
+				83D676DB2653A05D00252130 /* vq.h */,
+				83D676B226539F4E00252130 /* Info.plist */,
+			);
+			path = libcelt_0110;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		83D676A926539F4E00252130 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83D677232653A05E00252130 /* quant_bands.h in Headers */,
+				83D6770D2653A05E00252130 /* os_support.h in Headers */,
+				83D6771C2653A05E00252130 /* ecintrin.h in Headers */,
+				83D677192653A05E00252130 /* fixed_generic.h in Headers */,
+				83D677012653A05E00252130 /* mfrngcod.h in Headers */,
+				83D677102653A05E00252130 /* vq.h in Headers */,
+				83D6770B2653A05E00252130 /* modes.h in Headers */,
+				83D677142653A05E00252130 /* config.h in Headers */,
+				83D677252653A05E00252130 /* rate.h in Headers */,
+				83D676FD2653A05E00252130 /* arch.h in Headers */,
+				83D6770C2653A05E00252130 /* bands.h in Headers */,
+				83D6770A2653A05E00252130 /* entdec.h in Headers */,
+				83D677052653A05E00252130 /* _kiss_fft_guts.h in Headers */,
+				83D676FF2653A05E00252130 /* celt_header.h in Headers */,
+				83D677072653A05E00252130 /* stack_alloc.h in Headers */,
+				83D6770F2653A05E00252130 /* mathops.h in Headers */,
+				83D677092653A05E00252130 /* entcode.h in Headers */,
+				83D676FC2653A05E00252130 /* mdct.h in Headers */,
+				83D677002653A05E00252130 /* pitch.h in Headers */,
+				83D676F82653A05E00252130 /* fixed_c5x.h in Headers */,
+				83D677282653A05E00252130 /* celt.h in Headers */,
+				83D6770E2653A05E00252130 /* fixed_c6x.h in Headers */,
+				83D677182653A05E00252130 /* cwrs.h in Headers */,
+				83D677062653A05E00252130 /* laplace.h in Headers */,
+				83D677212653A05E00252130 /* entenc.h in Headers */,
+				83D676F42653A05E00252130 /* float_cast.h in Headers */,
+				83D676F72653A05E00252130 /* kiss_fft.h in Headers */,
+				83D6771B2653A05E00252130 /* celt_types.h in Headers */,
+				83D6771A2653A05E00252130 /* plc.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		83D676AD26539F4E00252130 /* libcelt_0110 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83D676B626539F4E00252130 /* Build configuration list for PBXNativeTarget "libcelt" */;
+			buildPhases = (
+				83D676A926539F4E00252130 /* Headers */,
+				83D676AA26539F4E00252130 /* Sources */,
+				83D676AB26539F4E00252130 /* Frameworks */,
+				83D676AC26539F4E00252130 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libcelt_0110;
+			productName = libcelt_0110;
+			productReference = 83D676AE26539F4E00252130 /* libcelt_0110.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83D676A526539F4E00252130 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					83D676AD26539F4E00252130 = {
+						CreatedOnToolsVersion = 12.5;
+					};
+				};
+			};
+			buildConfigurationList = 83D676A826539F4E00252130 /* Build configuration list for PBXProject "libcelt" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 83D676A426539F4E00252130;
+			productRefGroup = 83D676AF26539F4E00252130 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				83D676AD26539F4E00252130 /* libcelt_0110 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		83D676AC26539F4E00252130 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83D677172653A05E00252130 /* Makefile.in in Resources */,
+				83D676F52653A05E00252130 /* match-test.sh in Resources */,
+				83D676FA2653A05E00252130 /* Makefile.am in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		83D676AA26539F4E00252130 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83D677262653A05E00252130 /* kiss_fft.c in Sources */,
+				83D677132653A05E00252130 /* cwrs.c in Sources */,
+				83D677042653A05E00252130 /* quant_bands.c in Sources */,
+				83D677112653A05E00252130 /* entdec.c in Sources */,
+				83D677032653A05E00252130 /* bands.c in Sources */,
+				83D676FB2653A05E00252130 /* modes.c in Sources */,
+				83D677082653A05E00252130 /* rate.c in Sources */,
+				83D677222653A05E00252130 /* vq.c in Sources */,
+				83D677162653A05E00252130 /* laplace.c in Sources */,
+				83D677272653A05E00252130 /* pitch.c in Sources */,
+				83D6771E2653A05E00252130 /* entenc.c in Sources */,
+				83D677122653A05E00252130 /* celt.c in Sources */,
+				83D677152653A05E00252130 /* entcode.c in Sources */,
+				83D6771D2653A05E00252130 /* mathops.c in Sources */,
+				83D677242653A05E00252130 /* plc.c in Sources */,
+				83D677202653A05E00252130 /* header.c in Sources */,
+				83D6771F2653A05E00252130 /* mdct.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		83D676B426539F4E00252130 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"HAVE_CONFIG_H=1",
+					"alg_quant=alg_quant",
+					"alg_unquant=alg_unquant",
+					"celt_decode=celt_0110_decode",
+					"celt_decoder_create=celt_0110_decoder_create",
+					"celt_decoder_create_custom=celt_0110_decoder_create_custom",
+					"celt_decoder_destroy=celt_0110_decoder_destroy",
+					"celt_mode_create=celt_0110_mode_create",
+					"celt_mode_destroy=celt_0110_mode_destroy",
+					"celt_mode_info=celt_0110_mode_info",
+					"celt_encoder_destroy=celt_0110_encoder_destroy",
+					"celt_encoder_create=celt_0110_encoder_create",
+					"celt_encode=celt_0110_encode",
+					"celt_encode_float=celt_0110_encode_float",
+					"celt_encoder_ctl=celt_0110_encoder_ctl",
+					"celt_decode_float=celt_0110_decode_float",
+					"celt_decoder_ctl=celt_0110_decoder_ctl",
+					"compute_allocation=compute_0110_allocation",
+					"compute_band_energies=compute_0110_band_energies",
+					"denormalise_bands=denormalise_0110_bands",
+					"ec_dec_init=ec_0110_dec_init",
+					"ec_decode=ec_0110_decode",
+					"ec_decode_bin=ec_0110_decode_bin",
+					"ec_dec_update=ec_0110_dec_update",
+					"ec_dec_uint=ec_0110_dec_uint",
+					"ec_dec_bits=ec_0110_dec_bits",
+					"ec_enc_init=ec_0110_enc_init",
+					"ec_encode=ec_0110_encode",
+					"ec_encode_bin=ec_0110_encode_bin",
+					"ec_enc_uint=ec_0110_enc_uint",
+					"ec_enc_bits=ec_0110_enc_bits",
+					"ec_enc_done=ec_0110_enc_done",
+					"normalise_bands=normalise_0110_bands",
+					"renormalise_vector=renormalise_0110_vector",
+					"quant_coarse_energy=quant_0110_coarse_energy",
+					"quant_fine_energy=quant_0110_fine_energy",
+					"quant_energy_finalise=quant_0110_energy_finalise",
+					"unquant_coarse_energy=unquant_0110_coarse_energy",
+					"unquant_energy_finalise=unquant_0110_energy_finalise",
+					"unquant_fine_energy=unquant_0110_fine_energy",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		83D676B526539F4E00252130 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"HAVE_CONFIG_H=1",
+					"alg_quant=alg_quant",
+					"alg_unquant=alg_unquant",
+					"celt_decode=celt_0110_decode",
+					"celt_decoder_create=celt_0110_decoder_create",
+					"celt_decoder_create_custom=celt_0110_decoder_create_custom",
+					"celt_decoder_destroy=celt_0110_decoder_destroy",
+					"celt_mode_create=celt_0110_mode_create",
+					"celt_mode_destroy=celt_0110_mode_destroy",
+					"celt_mode_info=celt_0110_mode_info",
+					"celt_encoder_destroy=celt_0110_encoder_destroy",
+					"celt_encoder_create=celt_0110_encoder_create",
+					"celt_encode=celt_0110_encode",
+					"celt_encode_float=celt_0110_encode_float",
+					"celt_encoder_ctl=celt_0110_encoder_ctl",
+					"celt_decode_float=celt_0110_decode_float",
+					"celt_decoder_ctl=celt_0110_decoder_ctl",
+					"compute_allocation=compute_0110_allocation",
+					"compute_band_energies=compute_0110_band_energies",
+					"denormalise_bands=denormalise_0110_bands",
+					"ec_dec_init=ec_0110_dec_init",
+					"ec_decode=ec_0110_decode",
+					"ec_decode_bin=ec_0110_decode_bin",
+					"ec_dec_update=ec_0110_dec_update",
+					"ec_dec_uint=ec_0110_dec_uint",
+					"ec_dec_bits=ec_0110_dec_bits",
+					"ec_enc_init=ec_0110_enc_init",
+					"ec_encode=ec_0110_encode",
+					"ec_encode_bin=ec_0110_encode_bin",
+					"ec_enc_uint=ec_0110_enc_uint",
+					"ec_enc_bits=ec_0110_enc_bits",
+					"ec_enc_done=ec_0110_enc_done",
+					"normalise_bands=normalise_0110_bands",
+					"renormalise_vector=renormalise_0110_vector",
+					"quant_coarse_energy=quant_0110_coarse_energy",
+					"quant_fine_energy=quant_0110_fine_energy",
+					"quant_energy_finalise=quant_0110_energy_finalise",
+					"unquant_coarse_energy=unquant_0110_coarse_energy",
+					"unquant_energy_finalise=unquant_0110_energy_finalise",
+					"unquant_fine_energy=unquant_0110_fine_energy",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		83D676B726539F4E00252130 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = libcelt_0110/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "net.kode54.libcelt-0110";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		83D676B826539F4E00252130 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = libcelt_0110/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "net.kode54.libcelt-0110";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		83D676A826539F4E00252130 /* Build configuration list for PBXProject "libcelt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83D676B426539F4E00252130 /* Debug */,
+				83D676B526539F4E00252130 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83D676B626539F4E00252130 /* Build configuration list for PBXNativeTarget "libcelt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83D676B726539F4E00252130 /* Debug */,
+				83D676B826539F4E00252130 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 83D676A526539F4E00252130 /* Project object */;
+}

@@ -617,6 +617,10 @@
 		83D2007F248DDB770048BD24 /* mups.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20077248DDB770048BD24 /* mups.c */; };
 		83D20080248DDB770048BD24 /* sadf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20078248DDB770048BD24 /* sadf.c */; };
 		83D20081248DDB770048BD24 /* sadl.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20079248DDB770048BD24 /* sadl.c */; };
+		83D6772D2653A30B00252130 /* libcelt_0061.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D6763026539A7200252130 /* libcelt_0061.framework */; };
+		83D6772E2653A31400252130 /* libcelt_0110.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D676BE26539F4F00252130 /* libcelt_0110.framework */; };
+		83D6772F2653A32B00252130 /* libcelt_0061.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D6763026539A7200252130 /* libcelt_0061.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83D677302653A32E00252130 /* libcelt_0110.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D676BE26539F4F00252130 /* libcelt_0110.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
 		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D7318C1A749EEE00CA1366 /* g719_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D7318B1A749EEE00CA1366 /* g719_decoder.c */; };
@@ -698,6 +702,34 @@
 			remoteGlobalIDString = 835FC6AF23F61BF0006960FA;
 			remoteInfo = libatrac9;
 		};
+		83D6762F26539A7200252130 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D6762B26539A7100252130 /* libcelt_0061.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83D6762026539A7100252130;
+			remoteInfo = libcelt_0061;
+		};
+		83D676BD26539F4F00252130 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D676B926539F4E00252130 /* libcelt_0110.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83D676AE26539F4E00252130;
+			remoteInfo = libcelt_0110;
+		};
+		83D677292653A2EB00252130 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D6762B26539A7100252130 /* libcelt_0061.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83D6761F26539A7100252130;
+			remoteInfo = libcelt_0061;
+		};
+		83D6772B2653A2F000252130 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83D676B926539F4E00252130 /* libcelt_0110.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83D676AD26539F4E00252130;
+			remoteInfo = libcelt_0110;
+		};
 		83D7313D1A74968A00CA1366 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83D731381A74968900CA1366 /* g719.xcodeproj */;
@@ -753,6 +785,8 @@
 				832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */,
 				83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */,
 				8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */,
+				83D6772F2653A32B00252130 /* libcelt_0061.framework in CopyFiles */,
+				83D677302653A32E00252130 /* libcelt_0110.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1376,6 +1410,8 @@
 		83D20077248DDB770048BD24 /* mups.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mups.c; sourceTree = "<group>"; };
 		83D20078248DDB770048BD24 /* sadf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sadf.c; sourceTree = "<group>"; };
 		83D20079248DDB770048BD24 /* sadl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sadl.c; sourceTree = "<group>"; };
+		83D6762B26539A7100252130 /* libcelt_0061.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libcelt_0061.xcodeproj; path = ../libcelt_0061/libcelt_0061/libcelt_0061.xcodeproj; sourceTree = "<group>"; };
+		83D676B926539F4E00252130 /* libcelt_0110.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libcelt_0110.xcodeproj; path = ../libcelt_0110/libcelt_0110/libcelt_0110.xcodeproj; sourceTree = "<group>"; };
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
 		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
 		83E56BA01F2EE3500026BC60 /* vorbis_custom_utils_ogl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_ogl.c; sourceTree = "<group>"; };
@@ -1430,6 +1466,8 @@
 				8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */,
 				834D795520E4F0D400C4A5CC /* Vorbis.framework in Frameworks */,
 				836C052B23F62F1A00FA07C7 /* libatrac9.framework in Frameworks */,
+				83D6772D2653A30B00252130 /* libcelt_0061.framework in Frameworks */,
+				83D6772E2653A31400252130 /* libcelt_0110.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1504,10 +1542,12 @@
 				83D11A10256CE08D00565AD3 /* libavformat.a */,
 				83D11A11256CE08D00565AD3 /* libavutil.a */,
 				83D11A12256CE08D00565AD3 /* libswresample.a */,
+				83D731381A74968900CA1366 /* g719.xcodeproj */,
 				835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */,
+				83D6762B26539A7100252130 /* libcelt_0061.xcodeproj */,
+				83D676B926539F4E00252130 /* libcelt_0110.xcodeproj */,
 				8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */,
 				83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */,
-				83D731381A74968900CA1366 /* g719.xcodeproj */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -2175,6 +2215,22 @@
 			path = meta;
 			sourceTree = "<group>";
 		};
+		83D6762C26539A7200252130 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83D6763026539A7200252130 /* libcelt_0061.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83D676BA26539F4E00252130 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83D676BE26539F4F00252130 /* libcelt_0110.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83D731391A74968900CA1366 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2307,6 +2363,8 @@
 				48C265101A5D424500A0A3D6 /* PBXBuildRule */,
 			);
 			dependencies = (
+				83D6772A2653A2EB00252130 /* PBXTargetDependency */,
+				83D6772C2653A2F000252130 /* PBXTargetDependency */,
 				836C052623F62F0000FA07C7 /* PBXTargetDependency */,
 				834D795420E4F0B900C4A5CC /* PBXTargetDependency */,
 				83D731881A749D0D00CA1366 /* PBXTargetDependency */,
@@ -2354,6 +2412,14 @@
 					ProjectRef = 835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */;
 				},
 				{
+					ProductGroup = 83D6762C26539A7200252130 /* Products */;
+					ProjectRef = 83D6762B26539A7100252130 /* libcelt_0061.xcodeproj */;
+				},
+				{
+					ProductGroup = 83D676BA26539F4E00252130 /* Products */;
+					ProjectRef = 83D676B926539F4E00252130 /* libcelt_0110.xcodeproj */;
+				},
+				{
 					ProductGroup = 8313E33E1901FBDC00B4B6F1 /* Products */;
 					ProjectRef = 8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */;
 				},
@@ -2382,6 +2448,20 @@
 			fileType = wrapper.framework;
 			path = libatrac9.framework;
 			remoteRef = 835FC6C523F62AEF006960FA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83D6763026539A7200252130 /* libcelt_0061.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = libcelt_0061.framework;
+			remoteRef = 83D6762F26539A7200252130 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83D676BE26539F4F00252130 /* libcelt_0110.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = libcelt_0110.framework;
+			remoteRef = 83D676BD26539F4F00252130 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83D7313E1A74968A00CA1366 /* g719.framework */ = {
@@ -2989,6 +3069,16 @@
 			name = libatrac9;
 			targetProxy = 836C052523F62F0000FA07C7 /* PBXContainerItemProxy */;
 		};
+		83D6772A2653A2EB00252130 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libcelt_0061;
+			targetProxy = 83D677292653A2EB00252130 /* PBXContainerItemProxy */;
+		};
+		83D6772C2653A2F000252130 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libcelt_0110;
+			targetProxy = 83D6772B2653A2F000252130 /* PBXContainerItemProxy */;
+		};
 		83D731881A749D0D00CA1366 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = g719;
@@ -3050,6 +3140,7 @@
 					BUILD_VGMSTREAM,
 					"VAR_ARRAYS=1",
 					VGM_USE_ATRAC9,
+					VGM_USE_CELT,
 					VGM_USE_FFMPEG,
 					VGM_USE_G719,
 					VGM_USE_G7221,
@@ -3118,6 +3209,7 @@
 					"VAR_ARRAYS=1",
 					"$(inherited)",
 					VGM_USE_ATRAC9,
+					VGM_USE_CELT,
 					VGM_USE_FFMPEG,
 					VGM_USE_G719,
 					VGM_USE_G7221,
