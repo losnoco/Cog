@@ -11,6 +11,7 @@
 #import "Plugin.h"
 
 static void cogsf_seek(COGSTREAMFILE *this, off_t offset) {
+    if (!this) return;
     NSObject* _file = (__bridge NSObject *)(this->file);
     id<CogSource> __unsafe_unretained file = (id) _file;
     if ([file seek:offset whence:SEEK_SET] != 0)
@@ -20,6 +21,7 @@ static void cogsf_seek(COGSTREAMFILE *this, off_t offset) {
 }
 
 static off_t cogsf_get_size(COGSTREAMFILE *this) {
+    if (!this) return 0;
     NSObject* _file = (__bridge NSObject *)(this->file);
     id<CogSource> __unsafe_unretained file = (id) _file;
     off_t offset = [file tell];
@@ -30,15 +32,23 @@ static off_t cogsf_get_size(COGSTREAMFILE *this) {
 }
 
 static off_t cogsf_get_offset(COGSTREAMFILE *this) {
+    if (!this) return 0;
     return this->offset;
 }
 
 static void cogsf_get_name(COGSTREAMFILE *this, char *buffer, size_t length) {
+    if (!this) {
+        memset(buffer, 0, length);
+        return;
+    }
+    if (length > sizeof(this->name))
+        length = sizeof(this->name);
     strncpy(buffer, this->name, length);
     buffer[length-1]='\0';
 }
 
 static size_t cogsf_read(COGSTREAMFILE *this, uint8_t *dest, off_t offset, size_t length) {
+    if (!this) return 0;
     NSObject* _file = (__bridge NSObject *)(this->file);
     id<CogSource> __unsafe_unretained file = (id) _file;
     size_t read;
@@ -51,8 +61,10 @@ static size_t cogsf_read(COGSTREAMFILE *this, uint8_t *dest, off_t offset, size_
 }
 
 static void cogsf_close(COGSTREAMFILE *this) {
-    CFBridgingRelease(this->file);
-    free(this);
+    if (this) {
+        CFBridgingRelease(this->file);
+        free(this);
+    }
 }
 
 static STREAMFILE *cogsf_create_from_path(const char *path);
