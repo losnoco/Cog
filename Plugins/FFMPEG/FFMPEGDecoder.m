@@ -208,6 +208,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     av_new_packet(lastReadPacket, 0);
     readNextPacket = YES;
     bytesConsumedFromDecodedFrame = INT_MAX;
+    seekFrame = -1;
     
     frequency = codecCtx->sample_rate;
     channels = codecCtx->channels;
@@ -246,7 +247,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
     
 	//totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
-    AVRational tb = (AVRational) { 1, codecCtx->sample_rate };
+    AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
     totalFrames = av_rescale_q(stream->duration, stream->time_base, tb);
     bitrate = (int)((codecCtx->bit_rate) / 1000);
     framesRead = 0;
@@ -296,6 +297,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     
     int bytesToRead = frames * frameSize;
     int bytesRead = 0;
+    int seekBytesSkip = 0;
     
     int errcode;
     
@@ -346,6 +348,24 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             }
             
             readNextPacket = NO;     // we probably won't need to consume another chunk
+
+            // FFmpeg seeking by packet is usually inexact, so skip up to
+            // target sample using packet timestamp
+            if (seekFrame >= 0 && errcode >= 0) {
+                DLog(@"Seeking to frame %lld", seekFrame);
+                AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
+                int64_t packetBeginFrame = av_rescale_q(
+                        lastReadPacket->dts,
+                        formatCtx->streams[streamIndex]->time_base,
+                        tb
+                );
+
+                if (packetBeginFrame < seekFrame) {
+                    seekBytesSkip += (int)((seekFrame - packetBeginFrame) * frameSize);
+                }
+
+                seekFrame = -1;
+            }
         }
 
         if (dataSize <= bytesConsumedFromDecodedFrame)
@@ -384,6 +404,10 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 
             if ( dataSize < 0 )
                 dataSize = 0;
+
+            int minSkipped = FFMIN(dataSize, seekBytesSkip);
+            bytesConsumedFromDecodedFrame += minSkipped;
+            seekBytesSkip -= minSkipped;
         }
 
         int toConsume = FFMIN((dataSize - bytesConsumedFromDecodedFrame), (bytesToRead - bytesRead));
@@ -436,6 +460,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     readNextPacket = YES; // so we immediately read next packet
     bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
     framesRead = frame;
+    seekFrame = frame;
     endOfStream = NO;
     endOfAudio = NO;
 	
