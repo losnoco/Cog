@@ -130,6 +130,10 @@
             [NSNumber numberWithBool:NO], @"floatingPoint",
             [NSNumber numberWithInt:channels], @"channels",
             [NSNumber numberWithBool:YES], @"seekable",
+            rgAlbumGain, @"replayGainAlbumGain",
+            rgAlbumPeak, @"replayGainAlbumPeak",
+            rgTrackGain, @"replayGainTrackGain",
+            rgTrackPeak, @"replayGainTrackPeak",
             @"host", @"endian",
             nil];
 
