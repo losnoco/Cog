@@ -29,6 +29,7 @@
     VGMSTREAM *stream;
 
     BOOL playForever;
+    BOOL canPlayForever;
     int sampleRate;
     int channels;
     int bitrate;

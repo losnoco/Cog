@@ -223,7 +223,13 @@
     
     vgmstream_mixing_autodownmix(stream, 6);
     
-    playForever = IsRepeatOneSet();
+    canPlayForever = stream->loop_flag;
+    if (canPlayForever) {
+        playForever = IsRepeatOneSet();
+    }
+    else {
+        playForever = NO;
+    }
     
     vgmstream_cfg_t vcfg = {0};
     
@@ -266,18 +272,21 @@
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-    BOOL repeatone = IsRepeatOneSet();
     UInt32 framesMax = frames;
+
+    if (canPlayForever) {
+        BOOL repeatone = IsRepeatOneSet();
     
-    if (repeatone != playForever) {
-        playForever = repeatone;
-        vgmstream_set_play_forever(stream, repeatone);
+        if (repeatone != playForever) {
+            playForever = repeatone;
+            vgmstream_set_play_forever(stream, repeatone);
+        }
     }
     
     if (framesRead + frames > totalFrames && !playForever)
         frames = totalFrames - framesRead;
     if (frames > framesMax)
-        frames = 0;
+        frames = 0; // integer overflow?
     
     if (frames) {
         sample * sbuf = (sample *) buf;
@@ -292,11 +301,13 @@
 
 - (long)seek:(long)frame
 {
-    BOOL repeatone = IsRepeatOneSet();
+    if (canPlayForever) {
+        BOOL repeatone = IsRepeatOneSet();
     
-    if (repeatone != playForever) {
-        playForever = repeatone;
-        vgmstream_set_play_forever(stream, repeatone);
+        if (repeatone != playForever) {
+            playForever = repeatone;
+            vgmstream_set_play_forever(stream, repeatone);
+        }
     }
     
     if (frame > totalFrames)
