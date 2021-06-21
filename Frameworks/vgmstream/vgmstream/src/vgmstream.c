@@ -40,12 +40,11 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_rfrm,
     init_vgmstream_cstr,
     init_vgmstream_gcsw,
-    init_vgmstream_ps2_ads,
+    init_vgmstream_ads,
     init_vgmstream_nps,
     init_vgmstream_rwsd,
     init_vgmstream_xa,
-    init_vgmstream_ps2_rxws,
-    init_vgmstream_ps2_rxw,
+    init_vgmstream_rxws,
     init_vgmstream_ngc_dsp_stm,
     init_vgmstream_exst,
     init_vgmstream_svag_kcet,
@@ -194,7 +193,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_nds_rrds,
     init_vgmstream_ps2_tk5,
     init_vgmstream_ps2_vsf_tta,
-    init_vgmstream_ads,
+    init_vgmstream_ads_midway,
     init_vgmstream_ps2_mcg,
     init_vgmstream_zsd,
     init_vgmstream_ps2_vgs,
@@ -262,11 +261,9 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_sqex_scd,
     init_vgmstream_ngc_nst_dsp,
     init_vgmstream_baf,
-    init_vgmstream_baf_badrip,
     init_vgmstream_msf,
     init_vgmstream_ps3_past,
     init_vgmstream_sgxd,
-    init_vgmstream_ngca,
     init_vgmstream_wii_ras,
     init_vgmstream_ps2_spm,
     init_vgmstream_x360_tra,
@@ -395,7 +392,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_dsp_switch_audio,
     init_vgmstream_sadf,
     init_vgmstream_h4m,
-    init_vgmstream_ps2_ads_container,
+    init_vgmstream_ads_container,
     init_vgmstream_asf,
     init_vgmstream_xmd,
     init_vgmstream_cks,
@@ -539,6 +536,8 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_s14_sss,         /* .s14/sss raw siren14 */
     init_vgmstream_raw_al,          /* .al/al2 raw A-LAW */
     init_vgmstream_zwdsp,           /* fake format */
+    init_vgmstream_baf_badrip,      /* crap, to be removed */
+    init_vgmstream_rxws_badrip,     /* crap, to be removed */
 #ifdef VGM_USE_FFMPEG
     init_vgmstream_ffmpeg,          /* may play anything incorrectly, since FFmpeg doesn't check extensions */
 #endif
@@ -1409,7 +1408,7 @@ static int get_vgmstream_file_bitrate_from_streamfile(STREAMFILE* sf, int sample
     return get_vgmstream_file_bitrate_from_size(get_streamfile_size(sf), sample_rate, length_samples);
 }
 
-static int get_vgmstream_file_bitrate_main(VGMSTREAM* vgmstream, bitrate_info_t* br) {
+static int get_vgmstream_file_bitrate_main(VGMSTREAM* vgmstream, bitrate_info_t* br, int* p_uniques) {
     int i, ch;
     int bitrate = 0;
 
@@ -1423,15 +1422,18 @@ static int get_vgmstream_file_bitrate_main(VGMSTREAM* vgmstream, bitrate_info_t*
      * become a bit high since its hard to detect only part of the file is needed. */
 
     if (vgmstream->layout_type == layout_segmented) {
+        int uniques = 0;
         segmented_layout_data *data = (segmented_layout_data *) vgmstream->layout_data;
         for (i = 0; i < data->segment_count; i++) {
-            bitrate += get_vgmstream_file_bitrate_main(data->segments[i], br);
+            bitrate += get_vgmstream_file_bitrate_main(data->segments[i], br, &uniques);
         }
+        if (uniques)
+            bitrate /= uniques; /* average */
     }
     else if (vgmstream->layout_type == layout_layered) {
         layered_layout_data *data = vgmstream->layout_data;
         for (i = 0; i < data->layer_count; i++) {
-            bitrate += get_vgmstream_file_bitrate_main(data->layers[i], br);
+            bitrate += get_vgmstream_file_bitrate_main(data->layers[i], br, NULL);
         }
     }
     else {
@@ -1467,6 +1469,8 @@ static int get_vgmstream_file_bitrate_main(VGMSTREAM* vgmstream, bitrate_info_t*
                 br->subsong[br->count] = subsong_cur;
 
                 br->count++;
+                if (p_uniques)
+                    (*p_uniques)++;
 
                 if (vgmstream->stream_size) {
                     /* stream_size applies to both channels but should add once and detect repeats (for current subsong) */
@@ -1494,7 +1498,7 @@ int get_vgmstream_average_bitrate(VGMSTREAM* vgmstream) {
     bitrate_info_t br = {0};
     br.count_max = BITRATE_FILES_MAX;
 
-    return get_vgmstream_file_bitrate_main(vgmstream, &br);
+    return get_vgmstream_file_bitrate_main(vgmstream, &br, NULL);
 }
 
 
