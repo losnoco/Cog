@@ -71,4 +71,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Cog
-          path: $XCODE_DERIVEDDATA_PATH/Cog.zip
+          path: ${{ env.XCODE_DERIVEDDATA_PATH }}/Cog.zip
