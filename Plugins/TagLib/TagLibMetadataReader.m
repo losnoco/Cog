@@ -15,6 +15,7 @@
 #import <taglib/mp4/mp4file.h>
 #import <taglib/xiphcomment.h>
 #import <taglib/vorbisfile.h>
+#import <taglib/flacfile.h>
 #import <taglib/mpeg/id3v2/id3v2tag.h>
 #import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 
@@ -158,6 +159,22 @@
                         image = [NSData dataWithBytes:coverArt->data().data()
                                                length:coverArt->data().size()];
                     }
+                }
+            }
+        }
+
+        TagLib::FLAC::File *flac = dynamic_cast<TagLib::FLAC::File*>(f.file());
+        if (flac) {
+            auto list = flac->pictureList();
+            if (!list.isEmpty()) {
+                // Just get the first image for now.
+                TagLib::FLAC::Picture* coverArt = list.front();
+                if (coverArt) {
+                    // Look into TagLib::FLAC::Picture::Type for type description.
+                    NSLog(@"Loading image metadata from FLAC, type = %d",
+                          static_cast<int>(coverArt->type()));
+                    image = [NSData dataWithBytes:coverArt->data().data()
+                                           length:coverArt->data().size()];
                 }
             }
         }

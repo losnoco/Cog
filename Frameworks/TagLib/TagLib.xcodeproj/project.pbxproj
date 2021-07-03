@@ -152,6 +152,7 @@
 		4872B8881A675CCB00674347 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4872B8871A675CCB00674347 /* libiconv.dylib */; };
 		83790D241809E8CA0073CF51 /* opusfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83790D201809E8CA0073CF51 /* opusfile.cpp */; };
 		83790D261809E8CA0073CF51 /* opusproperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83790D221809E8CA0073CF51 /* opusproperties.cpp */; };
+		83942C67269116530058BD3B /* flacfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AE59BF14E70ED600420CA0 /* flacfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83AF2CBE2622643300538240 /* apegenfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AF2CBC2622643300538240 /* apegenfile.cpp */; };
 		83AF2CBF2622643300538240 /* apegenfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AF2CBD2622643300538240 /* apegenfile.h */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -1084,6 +1085,7 @@
 				32AE5A6D14E70ED600420CA0 /* asfproperties.h in Headers */,
 				32AE5A6F14E70ED600420CA0 /* asftag.h in Headers */,
 				32AE5A7114E70ED600420CA0 /* audioproperties.h in Headers */,
+				83942C67269116530058BD3B /* flacfile.h in Headers */,
 				32AE5A7314E70ED600420CA0 /* fileref.h in Headers */,
 				32AE5A7714E70ED600420CA0 /* flacmetadatablock.h in Headers */,
 				32AE5A7914E70ED600420CA0 /* flacpicture.h in Headers */,
