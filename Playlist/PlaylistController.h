@@ -108,6 +108,9 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (IBAction)emptyQueueList:(id)sender;
 - (NSMutableArray *)queueList;
 
+// reload metadata of selection
+- (IBAction)reloadTags:(id)sender;
+
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
                                         toIndex:(NSUInteger)insertIndex;
 

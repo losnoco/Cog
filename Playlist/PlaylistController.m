@@ -996,4 +996,15 @@
     }
 }
 
+- (IBAction)reloadTags:(id)sender {
+    NSArray * selectedobjects = [self selectedObjects];
+    if ([selectedobjects count]) {
+        for (PlaylistEntry *pe in selectedobjects) {
+            pe.metadataLoaded = NO;
+        }
+        
+        [playlistLoader loadInfoForEntries:selectedobjects];
+    }
+}
+
 @end
