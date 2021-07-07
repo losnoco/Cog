@@ -79,7 +79,11 @@
 #endif // MPT_OS_WINDOWS
 
 // OpenMPT-only dependencies
+#if !MPT_MSVC_BEFORE(2019,0)
+// disabled for VS2017 because of multiple initialization of inline variables
+// https://developercommunity.visualstudio.com/t/static-inline-variable-gets-destroyed-multiple-tim/297876
 #define MPT_WITH_ASIO
+#endif
 #define MPT_WITH_DMO
 #define MPT_WITH_LAME
 #define MPT_WITH_LHASA

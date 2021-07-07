@@ -1,14 +1,12 @@
 ﻿This folder contains the stb_vorbis library from
-https://github.com/nothings/stb/blob/master/stb_vorbis.c v1.20
-commit b42009b3b9d4ca35bc703f5310eedc74f584be58 (2020-07-13)
+https://github.com/nothings/stb/blob/master/stb_vorbis.c v1.21
+commit 8e51be04dc7dcee462e1f09e410faceab52cc6d2 (2021-07-02)
 
 Modifications:
  *  Use of alloca has been replaced with malloc, as alloca is not in C99 and
     fails to compile.
  *  Macro redefinition of alloca with mingw-w64 has been fixed.
  *  Macro redefinition of STB_VORBIS_NO_STDIO has been fixed.
- *  Bugfix https://github.com/nothings/stb/pull/1064 has been applied.
-Modifications are always additions and have been marked with // OpenMPT.
 
 For building, premake is used to generate Visual Studio project files.
 See ../build/premake/ for details.

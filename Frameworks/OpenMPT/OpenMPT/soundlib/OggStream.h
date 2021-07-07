@@ -31,7 +31,7 @@ struct PageHeader
 	uint8le  header_type;
 	uint64le granule_position;
 	uint32le bitstream_serial_number;
-	uint32le page_seqauence_number;
+	uint32le page_sequence_number;
 	uint32le CRC_checksum;
 	uint8le  page_segments;
 };

@@ -279,11 +279,6 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 		forbiddenCommands.set(CMD_NOTESLIDEDOWN);        forbiddenCommands.set(CMD_NOTESLIDEDOWNRETRIG);
 		forbiddenVolCommands.set(VOLCMD_PORTAUP);        forbiddenVolCommands.set(VOLCMD_PORTADOWN);
 
-		// Optimize away channels for which it's pointless to adjust sample positions
-		for(CHANNELINDEX i = 0; i < GetNumChannels(); i++)
-		{
-			if(ChnSettings[i].dwFlags[CHN_MUTE]) memory.chnSettings[i].ticksToRender = GetLengthMemory::IGNORE_CHANNEL;
-		}
 		if(target.mode == GetLengthTarget::SeekPosition && target.pos.order < orderList.size())
 		{
 			// If we know where to seek, we can directly rule out any channels on which a new note would be triggered right at the start.

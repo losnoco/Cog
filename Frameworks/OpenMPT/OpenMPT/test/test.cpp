@@ -2155,6 +2155,61 @@ static MPT_NOINLINE void TestMisc2()
 		VERIFY_EQUAL(uri.fragment, U_(""));
 	}
 	{
+		URI uri = ParseURI(U_("scheme://host"));
+		VERIFY_EQUAL(uri.scheme, U_("scheme"));
+		VERIFY_EQUAL(uri.username, U_(""));
+		VERIFY_EQUAL(uri.password, U_(""));
+		VERIFY_EQUAL(uri.host, U_("host"));
+		VERIFY_EQUAL(uri.port, U_(""));
+		VERIFY_EQUAL(uri.path, U_(""));
+		VERIFY_EQUAL(uri.query, U_(""));
+		VERIFY_EQUAL(uri.fragment, U_(""));
+	}
+	{
+		URI uri = ParseURI(U_("scheme://host?query"));
+		VERIFY_EQUAL(uri.scheme, U_("scheme"));
+		VERIFY_EQUAL(uri.username, U_(""));
+		VERIFY_EQUAL(uri.password, U_(""));
+		VERIFY_EQUAL(uri.host, U_("host"));
+		VERIFY_EQUAL(uri.port, U_(""));
+		VERIFY_EQUAL(uri.path, U_(""));
+		VERIFY_EQUAL(uri.query, U_("query"));
+		VERIFY_EQUAL(uri.fragment, U_(""));
+	}
+	{
+		URI uri = ParseURI(U_("scheme://host#fragment"));
+		VERIFY_EQUAL(uri.scheme, U_("scheme"));
+		VERIFY_EQUAL(uri.username, U_(""));
+		VERIFY_EQUAL(uri.password, U_(""));
+		VERIFY_EQUAL(uri.host, U_("host"));
+		VERIFY_EQUAL(uri.port, U_(""));
+		VERIFY_EQUAL(uri.path, U_(""));
+		VERIFY_EQUAL(uri.query, U_(""));
+		VERIFY_EQUAL(uri.fragment, U_("fragment"));
+	}
+	{
+		URI uri = ParseURI(U_("scheme://host?#"));
+		VERIFY_EQUAL(uri.scheme, U_("scheme"));
+		VERIFY_EQUAL(uri.username, U_(""));
+		VERIFY_EQUAL(uri.password, U_(""));
+		VERIFY_EQUAL(uri.host, U_("host"));
+		VERIFY_EQUAL(uri.port, U_(""));
+		VERIFY_EQUAL(uri.path, U_(""));
+		VERIFY_EQUAL(uri.query, U_(""));
+		VERIFY_EQUAL(uri.fragment, U_(""));
+	}
+	{
+		URI uri = ParseURI(U_("scheme://host#?"));
+		VERIFY_EQUAL(uri.scheme, U_("scheme"));
+		VERIFY_EQUAL(uri.username, U_(""));
+		VERIFY_EQUAL(uri.password, U_(""));
+		VERIFY_EQUAL(uri.host, U_("host"));
+		VERIFY_EQUAL(uri.port, U_(""));
+		VERIFY_EQUAL(uri.path, U_(""));
+		VERIFY_EQUAL(uri.query, U_(""));
+		VERIFY_EQUAL(uri.fragment, U_("?"));
+	}
+	{
 		URI uri = ParseURI(U_("scheme://username:password@[2001:db8::1]:port/path?query#fragment"));
 		VERIFY_EQUAL(uri.scheme, U_("scheme"));
 		VERIFY_EQUAL(uri.username, U_("username"));

@@ -954,6 +954,8 @@ public:
 	void SetSpeed(PlayState &playState, uint32 param) const;
 	static TEMPO ConvertST2Tempo(uint8 tempo);
 
+	void ProcessRamping(ModChannel &chn) const;
+
 protected:
 	// Global variable initializer for loader functions
 	void SetType(MODTYPE type);
@@ -984,8 +986,6 @@ protected:
 	void ProcessArpeggio(CHANNELINDEX nChn, int &period, Tuning::NOTEINDEXTYPE &arpeggioSteps);
 	void ProcessVibrato(CHANNELINDEX nChn, int &period, Tuning::RATIOTYPE &vibratoFactor);
 	void ProcessSampleAutoVibrato(ModChannel &chn, int &period, Tuning::RATIOTYPE &vibratoFactor, int &nPeriodFrac) const;
-
-	void ProcessRamping(ModChannel &chn) const;
 
 	SamplePosition GetChannelIncrement(const ModChannel &chn, uint32 period, int periodFrac) const;
 

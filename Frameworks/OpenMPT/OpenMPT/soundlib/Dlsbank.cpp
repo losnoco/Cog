@@ -22,8 +22,6 @@
 #include "SampleIO.h"
 #include "modsmp_ctrl.h"
 
-#include <math.h>
-
 OPENMPT_NAMESPACE_BEGIN
 
 #ifdef MODPLUG_TRACKER
@@ -1877,7 +1875,7 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 			{
 				// Try to combine stereo samples
 				uint8 pan1 = GetPanning(nIns, nRgn), pan2 = GetPanning(nIns, iDup);
-				if((pan1 == 0 || pan1 == 255) && (pan2 == 0 || pan2 == 255))
+				if((pan1 < 16 && pan2 >= 240) || (pan2 < 16 && pan1 >= 240))
 				{
 					ModSample &sample = sndFile.GetSample(nSmp);
 					ctrlSmp::ConvertToStereo(sample, sndFile);

@@ -433,7 +433,7 @@ void CReverb::Process(MixSampleInt *MixSoundBuffer, uint32 nSamples)
 	if (nIn > 0) ProcessPreDelay(&g_RefDelay, MixReverbBuffer, nIn);
 	// Process Reverb Reflections and Late Reverberation
 	int32 *pRvbOut = MixReverbBuffer;
-	uint32 nRvbSamples = nOut, nCount = 0;
+	uint32 nRvbSamples = nOut;
 	while (nRvbSamples > 0)
 	{
 		uint32 nPosRef = g_RefDelay.nRefOutPos & SNDMIX_REVERB_DELAY_MASK;
@@ -451,7 +451,6 @@ void CReverb::Process(MixSampleInt *MixSoundBuffer, uint32 nSamples)
 		// Update delay positions
 		g_RefDelay.nRefOutPos = (g_RefDelay.nRefOutPos + n) & SNDMIX_REVERB_DELAY_MASK;
 		g_RefDelay.nDelayPos = (g_RefDelay.nDelayPos + n) & SNDMIX_REFLECTIONS_DELAY_MASK;
-		nCount += n*2;
 		pRvbOut += n*2;
 		nRvbSamples -= n;
 	}

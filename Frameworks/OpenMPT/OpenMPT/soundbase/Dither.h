@@ -225,7 +225,7 @@ private:
 public:
 	template <typename Trd>
 	DitherTemplate(Trd & rd)
-		: prng(rd)
+		: prng(mpt::make_prng<mpt::fast_prng>(rd))
 	{
 		return;
 	}

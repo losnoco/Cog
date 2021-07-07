@@ -733,6 +733,7 @@ CPPCHECK_FLAGS += --std=c99 --std=c++17
 CPPCHECK_FLAGS += --quiet
 CPPCHECK_FLAGS += --enable=warning --inline-suppr --template='{file}:{line}: warning: {severity}: {message} [{id}]'
 CPPCHECK_FLAGS += --suppress=missingIncludeSystem
+CPPCHECK_FLAGS += --suppress=uninitMemberVar
 
 CPPCHECK_FLAGS += $(CPPFLAGS)
 CPPFLAGS += $(CPPFLAGS_ZLIB) $(CPPFLAGS_MPG123) $(CPPFLAGS_OGG) $(CPPFLAGS_VORBIS) $(CPPFLAGS_VORBISFILE)

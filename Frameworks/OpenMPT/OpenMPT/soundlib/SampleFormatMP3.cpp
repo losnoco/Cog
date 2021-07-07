@@ -53,7 +53,14 @@ typedef off_t mpg123_off_t;
 
 typedef size_t mpg123_size_t;
 
+// Check for exactly _MSC_VER as libmpg123 does, in order to also catch clang-cl.
+#ifdef _MSC_VER
+// ssize_t definition in libmpg123.h.in should never have existed at all.
+// It got removed from libmpg23.h.in after 1.28.0 and before 1.28.1.
+typedef ptrdiff_t mpg123_ssize_t;
+#else
 typedef ssize_t mpg123_ssize_t;
+#endif
 
 class ComponentMPG123
 	: public ComponentBuiltin

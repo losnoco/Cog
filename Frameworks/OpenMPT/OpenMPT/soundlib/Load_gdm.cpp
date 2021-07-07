@@ -442,9 +442,20 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 							break;
 
 						case CMD_MODCMDEX:
-							if(!modSpecs.HasCommand(CMD_MODCMDEX))
+							switch(m.param >> 4)
 							{
-								m.ExtendedMODtoS3MEffect();
+							case 0x8:
+								m.command = CMD_PORTAMENTOUP;
+								m.param = 0xE0 | (m.param & 0x0F);
+								break;
+							case 0x9:
+								m.command = CMD_PORTAMENTODOWN;
+								m.param = 0xE0 | (m.param & 0x0F);
+								break;
+							default:
+								if(!modSpecs.HasCommand(CMD_MODCMDEX))
+									m.ExtendedMODtoS3MEffect();
+								break;
 							}
 							break;
 
@@ -459,53 +470,20 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 
 						case CMD_S3MCMDEX:
 							// Some really special commands
-							switch(m.param >> 4)
+							if(m.param == 0x01)
 							{
-							case 0x0:
-								switch(m.param & 0x0F)
-								{
-								case 0x0:	// Surround Off
-								case 0x1:	// Surround On
-									m.param += 0x90;
-									break;
-								case 0x2:	// Set normal loop - not implemented in BWSB or 2GDM.
-								case 0x3:	// Set bidi loop - ditto
-									m.command = CMD_NONE;
-									break;
-								case 0x4:	// Play sample forwards
-									m.command = CMD_S3MCMDEX;
-									m.param = 0x9E;
-									break;
-								case 0x5:	// Play sample backwards
-									m.command = CMD_S3MCMDEX;
-									m.param = 0x9F;
-									break;
-								case 0x6:	// Monaural sample - also not implemented.
-								case 0x7:	// Stereo sample - ditto
-								case 0x8:	// Stop sample on end - ditto
-								case 0x9:	// Loop sample on end - ditto
-								default:
-									m.command = CMD_NONE;
-									break;
-								}
-								break;
-
-							case 0x8:		// 4-Bit Panning
-								if(!modSpecs.HasCommand(CMD_S3MCMDEX))
-								{
+								// Surround (implemented in 2GDM but not in BWSB itself)
+								m.param = 0x91;
+							} else if((m.param & 0xF0) == 0x80)
+							{
+								// 4-Bit Panning
+								if (!modSpecs.HasCommand(CMD_S3MCMDEX))
 									m.command = CMD_MODCMDEX;
-								}
-								break;
-
-							case 0xD:	// Adjust frequency (increment in hz) - also not implemented.
-							default:
+							} else
+							{
+								// All other effects are implemented neither in 2GDM nor in BWSB.
 								m.command = CMD_NONE;
-								break;
 							}
-							break;
-
-						case 0x1F:
-							m.command = CMD_TEMPO;
 							break;
 						}
 
@@ -520,9 +498,7 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 
 						if(!(effByte & effectDone)) break; // no other effect follows
 					}
-
 				}
-
 			}
 		}
 	}

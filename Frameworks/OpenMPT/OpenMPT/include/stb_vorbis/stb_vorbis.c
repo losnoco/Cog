@@ -1,4 +1,4 @@
-// Ogg Vorbis audio decoder - v1.20 - public domain
+// Ogg Vorbis audio decoder - v1.21 - public domain
 // http://nothings.org/stb_vorbis/
 //
 // Original version written by Sean Barrett in 2007.
@@ -33,8 +33,10 @@
 //    Timur Gagiev       Maxwell Koo         Peter Waller
 //    github:audinowho   Dougall Johnson     David Reid
 //    github:Clownacy    Pedro J. Estebanez  Remi Verschelde
+//    AnthoFoxo
 //
 // Partial history:
+//    1.21    - 2021-07-02 - fix bug for files with no comments
 //    1.20    - 2020-07-11 - several small fixes
 //    1.19    - 2020-02-05 - warnings
 //    1.18    - 2020-02-02 - fix seek bugs; parse header comments; misc warnings etc.
@@ -3651,13 +3653,12 @@ static int start_decoder(vorb *f)
    f->vendor[len] = (char)'\0';
    //user comments
    f->comment_list_length = get32_packet(f);
-   f->comment_list = (char**)setup_malloc(f, sizeof(char*) * (f->comment_list_length));
-#if 0 // OpenMPT
-   if (f->comment_list == NULL)                     return error(f, VORBIS_outofmem);
-#else // OpenMPT
-   // Bugfix from https://github.com/nothings/stb/pull/1064 // OpenMPT
-   if (f->comment_list_length > 0 && f->comment_list == NULL) return error(f, VORBIS_outofmem); // OpenMPT
-#endif // OpenMPT
+   f->comment_list = NULL;
+   if (f->comment_list_length > 0)
+   {
+      f->comment_list = (char**) setup_malloc(f, sizeof(char*) * (f->comment_list_length));
+      if (f->comment_list == NULL)                  return error(f, VORBIS_outofmem);
+   }
 
    for(i=0; i < f->comment_list_length; ++i) {
       len = get32_packet(f);

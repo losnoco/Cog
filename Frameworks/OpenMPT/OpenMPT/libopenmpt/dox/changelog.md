@@ -5,6 +5,29 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.10 (2021-07-04)
+
+ *  S3M: Honor the Stereo flag not being set. This improves the sound of some
+    tunes like Turbulence by Purple Motion.
+ *  S3M: Detect MPT 1.0 alpha versions which didn't set the Stereo flag. In this
+    case, the unset Stereo flag is also ignored because MPT 1.0 alpha used the
+    default S3M channel panning anyway.
+ *  S3M: Only for OPL instruments the high sample rate bits should be ignored;
+    for PCM instruments they are clamped to 65535 Hz.
+ *  MOD: Do not apply ProTracker loop length quirk to MODs that could have been
+    made with Scream Tracker (fixes Soul-O-Matic by Purple Motion).
+ *  AMF (DSMI): Format revisions 1 and 9, as well as early (technically
+    malformed) revision 10 files, are now supported. Surround panning commands
+    and instrument number without note are now converted correctly.
+ *  AMF (DSMI): Patterns and samples were not read correctly in some files
+    (e.g. AVOID.AMF).
+ *  GDM: Correctly import extra-fine portamentos.
+
+ *  mpg123: Update to v1.28.0 (2021-06-05).
+ *  ogg: Update to v1.3.5 (2021-06-04).
+ *  stb_vorbis: Update v1.21 commit 8e51be04dc7dcee462e1f09e410faceab52cc6d2
+    (2021-07-02).
+
 ### libopenmpt 0.5.9 (2021-05-16)
 
  *  `Makefile` `CONFIG=emscripten` does not pass linker options to the compiler

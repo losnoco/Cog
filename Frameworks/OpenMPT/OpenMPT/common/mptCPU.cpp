@@ -284,12 +284,10 @@ int GetMinimumAVXVersion()
 {
 	int minimumAVXVersion = 0;
 	#if MPT_COMPILER_MSVC
-		#if defined(_M_IX86_FP)
-			#if defined(__AVX2__)
-				minimumAVXVersion = 2;
-			#elif defined(__AVX__)
-				minimumAVXVersion = 1;
-			#endif
+		#if defined(__AVX2__)
+			minimumAVXVersion = 2;
+		#elif defined(__AVX__)
+			minimumAVXVersion = 1;
 		#endif
 	#endif
 	return minimumAVXVersion;
