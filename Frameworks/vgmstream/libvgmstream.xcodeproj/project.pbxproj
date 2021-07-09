@@ -86,6 +86,7 @@
 		8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8315958720FEC832007002F0 /* asf_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315958320FEC831007002F0 /* asf_decoder.c */; };
 		8315958920FEC83F007002F0 /* asf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315958820FEC83F007002F0 /* asf.c */; };
+		8317C24C26982CC1007DD0B8 /* sspr.c in Sources */ = {isa = PBXBuildFile; fileRef = 8317C24826982CC1007DD0B8 /* sspr.c */; };
 		831BA6181EAC61A500CF89B0 /* adx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA60E1EAC61A500CF89B0 /* adx.c */; };
 		831BA6191EAC61A500CF89B0 /* ogl.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA60F1EAC61A500CF89B0 /* ogl.c */; };
 		831BA61A1EAC61A500CF89B0 /* ps2_vds_vdm.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6101EAC61A500CF89B0 /* ps2_vds_vdm.c */; };
@@ -878,6 +879,7 @@
 		8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mpg123.xcodeproj; path = ../mpg123/mpg123.xcodeproj; sourceTree = "<group>"; };
 		8315958320FEC831007002F0 /* asf_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = asf_decoder.c; sourceTree = "<group>"; };
 		8315958820FEC83F007002F0 /* asf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = asf.c; sourceTree = "<group>"; };
+		8317C24826982CC1007DD0B8 /* sspr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sspr.c; sourceTree = "<group>"; };
 		831BA60E1EAC61A500CF89B0 /* adx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adx.c; sourceTree = "<group>"; };
 		831BA60F1EAC61A500CF89B0 /* ogl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogl.c; sourceTree = "<group>"; };
 		831BA6101EAC61A500CF89B0 /* ps2_vds_vdm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_vds_vdm.c; sourceTree = "<group>"; };
@@ -2098,6 +2100,7 @@
 				836F6EF418BDC2190095E648 /* sqex_scd.c */,
 				837CEAF023487F2C00E62A4A /* sqex_sead_streamfile.h */,
 				83A21F84201D8981000F04B9 /* sqex_sead.c */,
+				8317C24826982CC1007DD0B8 /* sspr.c */,
 				8306B0C12098458C000302D4 /* sthd.c */,
 				83AA5D231F6E2F9C0020821C /* stm.c */,
 				836F6EF618BDC2190095E648 /* str_asr.c */,
@@ -2932,6 +2935,7 @@
 				836F6F2518BDC2190095E648 /* g721_decoder.c in Sources */,
 				836F6FE818BDC2190095E648 /* ps2_mic.c in Sources */,
 				836F6F3C18BDC2190095E648 /* xa_decoder.c in Sources */,
+				8317C24C26982CC1007DD0B8 /* sspr.c in Sources */,
 				832BF82521E0514B006F50F1 /* ogg_opus.c in Sources */,
 				83709E091ECBC1A4005C03D3 /* ta_aac.c in Sources */,
 				836F6F9118BDC2190095E648 /* ios_psnd.c in Sources */,
