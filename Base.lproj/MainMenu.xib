@@ -1156,6 +1156,17 @@ CA
                                     <action selector="remove:" target="218" id="1409"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Reload Info" id="kq8-9v-zC0">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="reloadTags:" target="218" id="xRt-Us-Ucg"/>
+                                    <binding destination="2020" name="enabled" keyPath="selection" id="MPs-kU-3LT">
+                                        <dictionary key="options">
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show in Finder" keyEquivalent="R" id="1135">
                                 <connections>
                                     <action selector="showEntryInFinder:" target="218" id="1346"/>
@@ -1666,7 +1677,7 @@ Gw
                 <menuItem title="Information" hidden="YES" id="2212">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Reload info" id="HK9-Am-31h">
+                <menuItem title="Reload Info" id="HK9-Am-31h">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="reloadTags:" target="218" id="Ghx-F8-uF3"/>
