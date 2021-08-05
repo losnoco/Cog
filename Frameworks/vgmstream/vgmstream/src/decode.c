@@ -503,6 +503,8 @@ int get_vgmstream_samples_per_frame(VGMSTREAM* vgmstream) {
             return 256; /* (0x8c - 0xc) * 2 */
         case coding_ASF:
             return 32;  /* (0x11 - 0x1) * 2 */
+        case coding_TANTALUS:
+            return 30; /* (0x10 - 0x01) * 2 */
         case coding_DSA:
             return 14;  /* (0x08 - 0x1) * 2 */
         case coding_XMD:
@@ -716,6 +718,8 @@ int get_vgmstream_frame_size(VGMSTREAM* vgmstream) {
             return 0x8c;
         case coding_ASF:
             return 0x11;
+        case coding_TANTALUS:
+            return 0x10;
         case coding_DSA:
             return 0x08;
         case coding_XMD:
@@ -1008,7 +1012,7 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_EA_XA_V2:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_ea_xa_v2(&vgmstream->ch[ch], buffer+ch,
-                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch);
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
         case coding_MAXIS_XA:
@@ -1020,7 +1024,7 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_EA_XAS_V0:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_ea_xas_v0(&vgmstream->ch[ch], buffer+ch,
-                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch);
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
         case coding_EA_XAS_V1:
@@ -1184,7 +1188,7 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_WWISE_IMA:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_wwise_ima(vgmstream,&vgmstream->ch[ch], buffer+ch,
-                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch);
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
         case coding_REF_IMA:
@@ -1223,7 +1227,7 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_CD_IMA:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_cd_ima(&vgmstream->ch[ch], buffer+ch,
-                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch);
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
 
@@ -1383,6 +1387,12 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_ASF:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_asf(&vgmstream->ch[ch], buffer+ch,
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
+            }
+            break;
+        case coding_TANTALUS:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_tantalus(&vgmstream->ch[ch], buffer+ch,
                         vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;

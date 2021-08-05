@@ -483,10 +483,10 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
                 if (!ffmpeg_data) goto fail;
 
                 if (vgmstream->num_samples == 0)
-                    vgmstream->num_samples = ffmpeg_data->totalSamples; /* sometimes works */
+                    vgmstream->num_samples = ffmpeg_get_samples(ffmpeg_data); /* sometimes works */
             }
             else if (txth.codec == AAC) {
-                ffmpeg_data = init_ffmpeg_aac(txth.sf_body, txth.start_offset, txth.data_size);
+                ffmpeg_data = init_ffmpeg_aac(txth.sf_body, txth.start_offset, txth.data_size, 0);
                 if (!ffmpeg_data) goto fail;
             }
             else {
@@ -1553,7 +1553,7 @@ static int read_name_table_keyval(txth_header* txth, const char* line, char* key
     //todo names with # and subsongs don't work
 
     /* ignore comments (that aren't subsongs) */
-    if (line[0] == '#' && strchr(line,':') < 0)
+    if (line[0] == '#' && strchr(line,':') == NULL)
         return 0;
 
     /* try "(name): (val))" */

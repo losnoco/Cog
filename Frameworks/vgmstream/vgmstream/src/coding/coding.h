@@ -35,12 +35,12 @@ void decode_rad_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* ou
 void decode_rad_ima_mono(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_apple_ima4(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_fsb_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
-void decode_wwise_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_wwise_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_awc_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_ubi_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_ubi_sce_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_h4m_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, uint16_t frame_format);
-void decode_cd_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_cd_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 size_t ima_bytes_to_samples(size_t bytes, int channels);
 size_t ms_ima_bytes_to_samples(size_t bytes, int block_align, int channels);
 size_t xbox_ima_bytes_to_samples(size_t bytes, int channels);
@@ -118,13 +118,13 @@ size_t xa_bytes_to_samples(size_t bytes, int channels, int is_blocked, int is_fo
 
 /* ea_xa_decoder */
 void decode_ea_xa(VGMSTREAMCHANNEL* stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo);
-void decode_ea_xa_v2(VGMSTREAMCHANNEL* stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel);
+void decode_ea_xa_v2(VGMSTREAMCHANNEL* stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_maxis_xa(VGMSTREAMCHANNEL* stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 int32_t ea_xa_bytes_to_samples(size_t bytes, int channels);
 
 
 /* ea_xas_decoder */
-void decode_ea_xas_v0(VGMSTREAMCHANNEL* stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_ea_xas_v0(VGMSTREAMCHANNEL* stream, sample * outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_ea_xas_v1(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 
 
@@ -222,6 +222,11 @@ void decode_dsa(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, 
 
 /* xmd_decoder */
 void decode_xmd(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, size_t frame_size);
+
+
+/* tantalus_decoder */
+void decode_tantalus(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+int32_t tantalus_bytes_to_samples(size_t bytes, int channels);
 
 
 /* derf_decoder */
@@ -336,12 +341,12 @@ void free_tac(tac_codec_data* data);
 typedef struct ogg_vorbis_codec_data ogg_vorbis_codec_data;
 typedef struct { //todo simplify
     STREAMFILE *streamfile;
-    ogg_int64_t start; /* file offset where the Ogg starts */
-    ogg_int64_t offset; /* virtual offset, from 0 to size */
-    ogg_int64_t size; /* virtual size of the Ogg */
+    int64_t start; /* file offset where the Ogg starts */
+    int64_t offset; /* virtual offset, from 0 to size */
+    int64_t size; /* virtual size of the Ogg */
 
     /* decryption setup */
-    void (*decryption_callback)(void *ptr, size_t size, size_t nmemb, void *datasource);
+    void (*decryption_callback)(void* ptr, size_t size, size_t nmemb, void* datasource);
     uint8_t scd_xor;
     off_t scd_xor_length;
     uint32_t xor_value;
@@ -552,6 +557,8 @@ void free_speex(speex_codec_data* data);
 
 #ifdef VGM_USE_FFMPEG
 /* ffmpeg_decoder */
+typedef struct ffmpeg_codec_data ffmpeg_codec_data;
+
 ffmpeg_codec_data* init_ffmpeg_offset(STREAMFILE* sf, uint64_t start, uint64_t size);
 ffmpeg_codec_data* init_ffmpeg_header_offset(STREAMFILE* sf, uint8_t* header, uint64_t header_size, uint64_t start, uint64_t size);
 ffmpeg_codec_data* init_ffmpeg_header_offset_subsong(STREAMFILE* sf, uint8_t* header, uint64_t header_size, uint64_t start, uint64_t size, int target_subsong);
@@ -566,13 +573,20 @@ uint32_t ffmpeg_get_channel_layout(ffmpeg_codec_data* data);
 void ffmpeg_set_channel_remapping(ffmpeg_codec_data* data, int* channels_remap);
 const char* ffmpeg_get_codec_name(ffmpeg_codec_data* data);
 void ffmpeg_set_force_seek(ffmpeg_codec_data* data);
+void ffmpeg_set_invert_floats(ffmpeg_codec_data* data);
 const char* ffmpeg_get_metadata_value(ffmpeg_codec_data* data, const char* key);
+
+int32_t ffmpeg_get_samples(ffmpeg_codec_data* data);
+int ffmpeg_get_sample_rate(ffmpeg_codec_data* data);
+int ffmpeg_get_channels(ffmpeg_codec_data* data);
+int ffmpeg_get_subsong_count(ffmpeg_codec_data* data);
+
 STREAMFILE* ffmpeg_get_streamfile(ffmpeg_codec_data* data);
 
 /* ffmpeg_decoder_utils.c (helper-things) */
 ffmpeg_codec_data* init_ffmpeg_atrac3_raw(STREAMFILE* sf, off_t offset, size_t data_size, int sample_count, int channels, int sample_rate, int block_align, int encoder_delay);
 ffmpeg_codec_data* init_ffmpeg_atrac3_riff(STREAMFILE* sf, off_t offset, int* out_samples);
-ffmpeg_codec_data* init_ffmpeg_aac(STREAMFILE* sf, off_t offset, size_t size);
+ffmpeg_codec_data* init_ffmpeg_aac(STREAMFILE* sf, off_t offset, size_t size, int skip_samples);
 
 
 /* ffmpeg_decoder_custom_opus.c (helper-things) */

@@ -5,8 +5,10 @@
 
 typedef struct {
     uint64_t key;               /* hca key or seed ('user') key */
-    const uint16_t *subkeys;    /* scramble subkey table for seed key */
+#if 0
+    const uint16_t* subkeys;    /* scramble subkey table for seed key */
     size_t subkeys_size;        /* size of the derivation subkey table */
+#endif
 } hcakey_info;
 
 
@@ -410,6 +412,9 @@ static const hcakey_info hcakey_list[] = {
         /* Dragon Quest Tact (Android) */
         {3234477171400153310},      // 2CE32BD9B36A98DE
 
+        /* Alchemy Stars (Android) */
+        {1564789515523},            // 0000016C54B92503
+
         /* D4DJ Groovy Mix (Android) [base files] */
         {393410674916959300},       // 0575ACECA945A444
         /* D4DJ Groovy Mix (Android) [music_* files, per-song later mixed with subkey] */
@@ -711,6 +716,9 @@ static const hcakey_info hcakey_list[] = {
         {0x78bec41dd27d8788},	//music_5050074
         {0x52c250eade92393b},	//music_9010001
         {0xfea0d6adff136868},	//music_9050001
+
+        // Mini 4WD Hyper Dash Grand Prix (Android)
+        {7957824642808300098},    // 6E6FDF59AB704242
 };
 
 #endif/*_HCA_KEYS_H_*/

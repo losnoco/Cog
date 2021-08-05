@@ -31,14 +31,6 @@ enum { VGMSTREAM_MAX_NUM_SAMPLES = 1000000000 }; /* no ~5h vgm hopefully */
 //#define VGM_USE_SPEEX
 
 
-#ifdef VGM_USE_VORBIS
-#include <vorbis/vorbisfile.h>
-#endif
-
-#ifdef VGM_USE_MPEG
-#include <mpg123/mpg123.h>
-#endif
-
 #ifdef VGM_USE_MP4V2
 #define MP4V2_NO_STDINT_DEFS
 #include <mp4v2/mp4v2.h>
@@ -48,24 +40,12 @@ enum { VGMSTREAM_MAX_NUM_SAMPLES = 1000000000 }; /* no ~5h vgm hopefully */
 #include <aacdecoder_lib.h>
 #endif
 
-#ifdef VGM_USE_MAIATRAC3PLUS
-#include <maiatrac3plus.h>
-#endif
-
-#ifdef VGM_USE_FFMPEG
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswresample/swresample.h>
-#endif
-
 #include "clHCA.h"
 
 #ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
-#include "coding/nwa_decoder.h"
 #else
 #include "g72x_state.h"
-#include "nwa_decoder.h"
 #endif
 
 
@@ -175,6 +155,7 @@ typedef enum {
     coding_ASF,             /* Argonaut ASF 4-bit ADPCM */
     coding_DSA,             /* Ocean DSA 4-bit ADPCM */
     coding_XMD,             /* Konami XMD 4-bit ADPCM */
+    coding_TANTALUS,        /* Tantalus 4-bit ADPCM */
     coding_PCFX,            /* PC-FX 4-bit ADPCM */
     coding_OKI16,           /* OKI 4-bit ADPCM with 16-bit output and modified expand */
     coding_OKI4S,           /* OKI 4-bit ADPCM with 16-bit output and cuadruple step */
@@ -763,6 +744,7 @@ typedef enum {
     meta_IDSP_TOSE,
     meta_DSP_KWA,
     meta_OGV_3RDEYE,
+    meta_PIFF_TPCM,
 } meta_t;
 
 /* standard WAVEFORMATEXTENSIBLE speaker positions */
@@ -1046,63 +1028,6 @@ typedef struct {
     void* io_config;
 } acm_codec_data;
 
-
-#ifdef VGM_USE_FFMPEG
-typedef struct {
-    /*** IO internals ***/
-    STREAMFILE* streamfile;
-
-    uint64_t start;             // absolute start within the streamfile
-    uint64_t offset;            // absolute offset within the streamfile
-    uint64_t size;              // max size within the streamfile
-    uint64_t logical_offset;    // computed offset FFmpeg sees (including fake header)
-    uint64_t logical_size;      // computed size FFmpeg sees (including fake header)
-
-    uint64_t header_size;       // fake header (parseable by FFmpeg) prepended on reads
-    uint8_t* header_block;      // fake header data (ie. RIFF)
-
-    /*** "public" API (read-only) ***/
-    // stream info
-    int channels;
-    int sampleRate;
-    int bitrate;
-    // extra info: 0 if unknown or not fixed
-    int64_t totalSamples; // estimated count (may not be accurate for some demuxers)
-    int64_t skipSamples; // number of start samples that will be skipped (encoder delay), for looping adjustments
-    int streamCount; // number of FFmpeg audio streams
-
-    /*** internal state ***/
-    // config
-    int channel_remap_set;
-    int channel_remap[32];      /* map of channel > new position */
-    int invert_floats_set;
-    int skip_samples_set;       /* flag to know skip samples were manually added from vgmstream */
-    int force_seek;             /* flags for special seeking in faulty formats */
-    int bad_init;
-
-    // FFmpeg context used for metadata
-    AVCodec *codec;
-
-    // FFmpeg decoder state
-    unsigned char *buffer;
-    AVIOContext *ioCtx;
-    int streamIndex;
-    AVFormatContext *formatCtx;
-    AVCodecContext *codecCtx;
-    AVFrame *frame;             /* last decoded frame */
-    AVPacket *packet;           /* last read data packet */
-
-    int read_packet;
-    int end_of_stream;
-    int end_of_audio;
-
-    /* sample state */
-    int32_t samples_discard;
-    int32_t samples_consumed;
-    int32_t samples_filled;
-
-} ffmpeg_codec_data;
-#endif
 
 #ifdef VGM_USE_MP4V2
 typedef struct {

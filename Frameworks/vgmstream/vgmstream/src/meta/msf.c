@@ -108,7 +108,7 @@ VGMSTREAM* init_vgmstream_msf(STREAMFILE* sf) {
             encoder_delay = 1024 + 69*2;
             block_align   = (codec==4 ? 0x60 : (codec==5 ? 0x98 : 0xC0)) * vgmstream->channels;
             vgmstream->num_samples = atrac3_bytes_to_samples(data_size, block_align) - encoder_delay;
-            if (vgmstream->sample_rate == 0xFFFFFFFF) /* some MSFv1 (Digi World SP) */
+            if (vgmstream->sample_rate == -1) /* some MSFv1 (Digi World SP) */
                 vgmstream->sample_rate = 44100; /* voice tracks seems to use 44khz, not sure about other tracks */
 
             vgmstream->codec_data = init_ffmpeg_atrac3_raw(sf, start_offset,data_size, vgmstream->num_samples,vgmstream->channels,vgmstream->sample_rate, block_align, encoder_delay);
@@ -144,20 +144,16 @@ VGMSTREAM* init_vgmstream_msf(STREAMFILE* sf) {
         }
 #elif defined(VGM_USE_FFMPEG)
         case 0x07: { /* MPEG (LAME MP3) [Dengeki Bunko Fighting Climax (PS3), Asura's Wrath (PS3)-vbr] */
-            ffmpeg_codec_data *ffmpeg_data = NULL;
+            int is_vbr = (flags & 0x20); /* must calc samples/loop offsets manually */
 
-            ffmpeg_data = init_ffmpeg_offset(sf, start_offset, sf->get_size(sf));
-            if (!ffmpeg_data) goto fail;
-            vgmstream->codec_data = ffmpeg_data;
+            vgmstream->codec_data = init_ffmpeg_offset(sf, start_offset, 0);;
+            if (!vgmstream->codec_data) goto fail;
             vgmstream->coding_type = coding_FFmpeg;
             vgmstream->layout_type = layout_none;
 
-            //todo use same calcs as above
-            vgmstream->num_samples = (int64_t)data_size * ffmpeg_data->sampleRate * 8 / ffmpeg_data->bitrate;
-            if (loop_flag) {
-                vgmstream->loop_start_sample = (int64_t)loop_start * ffmpeg_data->sampleRate * 8 / ffmpeg_data->bitrate;
-                vgmstream->loop_end_sample = (int64_t)loop_end * ffmpeg_data->sampleRate * 8 / ffmpeg_data->bitrate;
-            }
+            vgmstream->num_samples = mpeg_get_samples_clean(sf, start_offset, data_size, &loop_start, &loop_end, is_vbr);
+            vgmstream->loop_start_sample = loop_start;
+            vgmstream->loop_end_sample = loop_end;
             break;
         }
 #endif
