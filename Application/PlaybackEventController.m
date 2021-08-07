@@ -189,7 +189,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStoppe
                     content.categoryIdentifier = @"play";
 
                     if ([defaults boolForKey:@"notifications.show-album-art"] &&
-                        [pe albumArtInternal]) {
+                        [pe albumArt]) {
                         NSError *error = nil;
                         NSFileManager *fileManager = [NSFileManager defaultManager];
                         NSURL *tmpSubFolderURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()]
