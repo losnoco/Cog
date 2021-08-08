@@ -23,8 +23,10 @@ jobs:
         run: >
           xcodebuild
           -quiet
+          -project Cog.xcodeproj
           -scheme Cog
           -configuration Debug
+          -destination 'platform=macOS,arch=x86_64'
           -derivedDataPath $XCODE_DERIVEDDATA_PATH
           CODE_SIGNING_ALLOWED=NO
           build
