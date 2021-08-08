@@ -19,36 +19,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: Setup DEVELOPMENT_TEAM
-        env:
-          MAC_DEVELOPMENT_TEAM: ${{ secrets.MAC_DEVELOPMENT_TEAM }}
-        run: |
-          echo "DEVELOPMENT_TEAM = $MAC_DEVELOPMENT_TEAM" > Xcode-config/DEVELOPMENT_TEAM.xcconfig
-      - name: Install application certificate
-        env: 
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.MAC_DEVELOPMENT_CERTIFICATE_P12 }}
-          APPLICATION_CERTIFICATE_BASE64: ${{ secrets.MAC_APPLICATION_CERTIFICATE_P12 }}
-          P12_PASSWORD: ${{ secrets.MAC_APPLICATION_CERTIFICATE_PASSPHRASE }}
-          KEYCHAIN_PASSWORD: ${{ secrets.MAC_KEYCHAIN_PASSWORD }}
-        run: |
-          # create variables
-          BUILD_CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          APP_CERTIFICATE_PATH=$RUNNER_TEMP/app_certificate.p12
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          
-          # import certificates from secrets
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $BUILD_CERTIFICATE_PATH
-          echo -n "$APPLICATION_CERTIFICATE_BASE64" | base64 --decode --output $APP_CERTIFICATE_PATH
-          
-          # create temporary keychain
-          security create-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
-          
-          # import certificates to keychain
-          security import $BUILD_CERTIFICATE_PATH -P $P12_PASSWORD -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security import $APP_CERTIFICATE_PATH -P $P12_PASSWORD -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Run xcodebuild
         run: >
           xcodebuild
@@ -56,6 +26,7 @@ jobs:
           -scheme Cog
           -configuration Debug
           -derivedDataPath $XCODE_DERIVEDDATA_PATH
+          CODE_SIGNING_ALLOWED=NO
           build
       - name: Package archive
         run: >
