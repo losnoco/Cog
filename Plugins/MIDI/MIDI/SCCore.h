@@ -5,7 +5,7 @@
 
 class SCCore
 {
-	bool duped;
+    unsigned long serial;
 	char * path;
 	void * handle;
 	

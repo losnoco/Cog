@@ -6,9 +6,11 @@
 
 #include "SCCore.h"
 
+static unsigned long g_serial = 0;
+
 SCCore::SCCore()
 {
-	duped = false;
+    serial = g_serial++;
 	path = 0;
 	
 	handle = 0;
@@ -44,11 +46,6 @@ void SCCore::Unload()
 		dlclose(handle);
 		handle = 0;
 	}
-	if (duped && path)
-	{
-		unlink(path);
-		duped = false;
-	}
 	if (path)
 	{
 		free(path);
@@ -56,71 +53,19 @@ void SCCore::Unload()
 	}
 }
 
-static const char name_template[] = "/tmp/SCCore.dylib.XXXXXXXX";
-
 bool SCCore::Load(const char * _path, bool dupe)
 {
-    uintptr_t size = 0;
-    
-	if (dupe)
-	{
-		path = (char *) malloc(strlen(name_template) + 1);
-		strcpy(path, name_template);
-		mktemp(path);
-		
-		const char * uniq = path + strlen(path) - 8;
-		
-		FILE * f = fopen(_path, "rb");
-		if (!f) return false;
-		
-		fseek(f, 0, SEEK_END);
-		size_t fs = ftell(f);
-		fseek(f, 0, SEEK_SET);
-        
-        size = fs;
-		
-		unsigned char * buffer = (unsigned char *) malloc(fs);
-		if (!fs)
-		{
-			fclose(f);
-			return false;
-		}
+    path = (char *) malloc(strlen(_path) + 1);
+    strcpy(path, _path);
 
-		fread(buffer, 1, fs, f);
-		fclose(f);
-		
-		for (size_t i = 0; i < fs - 14; ++i)
-		{
-			if (memcmp(buffer + i, "SCCore00.dylib", 14) == 0)
-			{
-				memcpy(buffer + i, uniq, 8);
-				i += 13;
-			}
-		}
-		
-		duped = true;
-		
-		f = fopen(path, "wb");
-		if (!f)
-		{
-			free(buffer);
-			return false;
-		}
-		
-		fwrite(buffer, 1, fs, f);
-		fclose(f);
-		
-		free(buffer);
-	}
-	else
+    if (dupe)
 	{
-		path = (char *) malloc(strlen(_path) + 1);
-		strcpy(path, _path);
-        
-        FILE * f = fopen(path, "rb");
-        fseek(f, 0, SEEK_END);
-        size = ftell(f);
-        fclose(f);
+        char * name = strstr(path, "SCCore00");
+        if (name) {
+            unsigned long serial_wrapped = serial % 32;
+            name[6] = '0' + (serial_wrapped / 10);
+            name[7] = '0' + (serial_wrapped % 10);
+        }
 	}
 	
 	handle = dlopen(path, RTLD_LAZY | RTLD_LOCAL);
