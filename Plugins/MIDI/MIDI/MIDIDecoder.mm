@@ -19,6 +19,8 @@
 
 #import "PlaylistController.h"
 
+#import <dlfcn.h>
+
 static OSType getOSType(const char * in_)
 {
     const unsigned char * in = (const unsigned char *) in_;
@@ -211,6 +213,11 @@ static OSType getOSType(const char * in_)
         
         if ((componentManufacturer == 'rolD' || componentManufacturer == 'RoCl') && componentSubType == 'Sc55')
         {
+            const char * plugin_path = "/Library/Audio/Plug-Ins/Components/SOUND Canvas VA.component/Contents/Resources/SCCore00.dylib";
+            
+            if (!dlopen_preflight(plugin_path))
+                return NO;
+            
             SCPlayer * scplayer = new SCPlayer;
             
             SCPlayer::sc_mode mode = SCPlayer::sc_sc55;
@@ -232,7 +239,7 @@ static OSType getOSType(const char * in_)
             else if ([flavor isEqualToString:@"xg"])
                 mode = SCPlayer::sc_xg;
             
-            scplayer->set_sccore_path("/Library/Audio/Plug-Ins/Components/SOUND Canvas VA.component/Contents/Resources/SCCore00.dylib");
+            scplayer->set_sccore_path(plugin_path);
             scplayer->set_mode( mode );
             scplayer->setSampleRate( 44100 );
             
