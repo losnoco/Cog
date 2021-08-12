@@ -31,13 +31,22 @@
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
-    if ([url fragment]) {
-        // input url already has fragment defined - no need to expand further
-        return [NSMutableArray arrayWithObject:url];
-    }
-    
     NSString * path = [[url absoluteString] stringByRemovingPercentEncoding];
 
+    if ([url fragment]) {
+        // input url might be a TXTP with fragment parameters, in which case
+        // we need to parse that anyway
+        NSString * frag = [url fragment];
+        NSUInteger len = [frag length];
+        if (len < 5 || ![[frag substringFromIndex:len - 5] isEqualToString:@".txtp"]) {
+            // input url already has fragment defined - no need to expand further
+            return [NSMutableArray arrayWithObject:url];
+        }
+        
+        path = [path stringByAppendingFormat:@"%%23%@", frag];
+        url = [NSURL fileURLWithPath:[path stringByRemovingPercentEncoding]];
+    }
+    
     VGMSTREAM * stream = init_vgmstream_from_cogfile([path UTF8String], 0);
 	if (!stream)
 	{

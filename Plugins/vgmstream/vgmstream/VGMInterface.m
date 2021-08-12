@@ -96,6 +96,16 @@ STREAMFILE *cogsf_create_from_path(const char *path) {
     NSString * urlString = [NSString stringWithUTF8String:path];
     NSURL * url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
     
+    if ([url fragment]) {
+        // .TXTP fragments need an override here
+        NSString * frag = [url fragment];
+        NSUInteger len = [frag length];
+        if (len > 5 && [[frag substringFromIndex:len - 5] isEqualToString:@".txtp"]) {
+            urlString = [urlString stringByReplacingOccurrencesOfString:@"#" withString:@"%23"];
+            url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
+        }
+    }
+    
     return cogsf_create_from_url(url);
 }
 
