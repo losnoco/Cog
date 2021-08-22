@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build Cog for Intel
+    name: Build Universal Cog.app
     runs-on: macos-11
     env:
       XCODE_DERIVEDDATA_PATH: build
@@ -26,9 +26,11 @@ jobs:
           -project Cog.xcodeproj
           -scheme Cog
           -configuration Debug
-          -destination 'platform=macOS,arch=x86_64'
+          -arch x86_64
+          -arch arm64
           -derivedDataPath $XCODE_DERIVEDDATA_PATH
           CODE_SIGNING_ALLOWED=NO
+          ONLY_ACTIVE_ARCH=NO
           build
       - name: Package archive
         run: >
