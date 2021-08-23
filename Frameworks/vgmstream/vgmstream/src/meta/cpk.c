@@ -3,7 +3,7 @@
 #include "cri_utf.h"
 
 
-typedef enum { HCA, CWAV, } cpk_type_t;
+typedef enum { HCA, CWAV, ADX } cpk_type_t;
 
 static void load_cpk_name(STREAMFILE* sf, STREAMFILE* sf_acb, VGMSTREAM* vgmstream, int waveid);
 
@@ -28,9 +28,9 @@ VGMSTREAM* init_vgmstream_cpk_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
     /* checks */
     if (!check_extensions(sf, "awb"))
         goto fail;
-    if (read_u32be(0x00,sf) != 0x43504B20) /* "CPK " */
+    if (!is_id32be(0x00,sf, "CPK "))
         goto fail;
-    if (read_u32be(0x10,sf) != 0x40555446) /* "@UTF" */
+    if (!is_id32be(0x10,sf, "@UTF"))
         goto fail;
     /* 04: 0xFF? */
     /* 08: 0x02A0? */
@@ -176,13 +176,17 @@ VGMSTREAM* init_vgmstream_cpk_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
     //;VGM_LOG("CPK: subfile offset=%lx + %x, id=%i\n", subfile_offset, subfile_size, subfile_id);
 
 
-    if ((read_u32be(subfile_offset,sf) & 0x7f7f7f7f) == 0x48434100) { /* "HCA\0" */
+    if ((read_u32be(subfile_offset,sf) & 0x7f7f7f7f) == get_id32be("HCA\0")) {
         type = HCA;
         extension = "hca";
     }
-    else if (read_u32be(subfile_offset,sf) == 0x43574156) { /* "CWAV" */
+    else if (is_id32be(subfile_offset,sf, "CWAV")) {
         type = CWAV;
         extension = "bcwav";
+    }
+    else if (read_u16be(subfile_offset, sf) == 0x8000) {
+        type = ADX;
+        extension = "adx";
     }
     else {
         goto fail;
@@ -198,6 +202,10 @@ VGMSTREAM* init_vgmstream_cpk_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
             break;
         case CWAV: /* Metal Gear Solid: Snake Eater 3D (3DS) */
             vgmstream = init_vgmstream_rwsd(temp_sf);
+            if (!vgmstream) goto fail;
+            break;
+        case ADX: /* Sonic Generations (3DS) */
+            vgmstream = init_vgmstream_adx(temp_sf);
             if (!vgmstream) goto fail;
             break;
         default:
@@ -238,7 +246,7 @@ static void load_cpk_name(STREAMFILE* sf, STREAMFILE* sf_acb, VGMSTREAM* vgmstre
         if (!sf_acb)
             return;
 
-		/* companion .acb probably loaded */
+        /* companion .acb probably loaded */
         load_acb_wave_name(sf_acb, vgmstream, waveid, port, is_memory);
 
         close_streamfile(sf_acb);

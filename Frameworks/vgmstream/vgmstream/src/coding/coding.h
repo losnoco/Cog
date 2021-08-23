@@ -2,6 +2,8 @@
 #define _CODING_H
 
 #include "../vgmstream.h"
+//todo remove
+#include "hca_decoder_clhca.h"
 
 /* adx_decoder */
 void decode_adx(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes, coding_t coding_type);
@@ -442,8 +444,10 @@ typedef struct {
     int channels; /* max channels */
     int fsb_padding; /* fsb padding mode */
     int chunk_size; /* size of a data portion */
+    int max_chunks;
     int data_size; /* playable size */
     int interleave; /* size of stream interleave */
+    int interleave_last;
     int encryption; /* encryption mode */
     int big_endian;
     int skip_samples;

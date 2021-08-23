@@ -42,8 +42,6 @@ enum {
 #include <aacdecoder_lib.h>
 #endif
 
-#include "clHCA.h"
-
 #ifdef BUILD_VGMSTREAM
 #include "coding/g72x_state.h"
 #else
@@ -749,6 +747,8 @@ typedef enum {
     meta_PIFF_TPCM,
     meta_WXD_WXH,
     meta_BNK_RELIC,
+    meta_XSH_XSD_XSS,
+
 } meta_t;
 
 /* standard WAVEFORMATEXTENSIBLE speaker positions */
