@@ -115,4 +115,8 @@ if 1 #appcast_revision < latest_revision
 
   #Upload to S3
   %x[s3cmd put -P -m application/xml '#{site_dir}/#{feed}_builds/#{feed}.xml' s3://balde-losno-co/cog/]
+
+  #Send web hook to update site
+  update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl]
+  %x[curl -X POST #{update_uri}]
 end
