@@ -61,15 +61,7 @@ static SInt64 getSizeProc(void* clientData) {
     NSObject* _handle = (__bridge NSObject *)(clientData);
     CoreAudioDecoder * __unsafe_unretained pSelf = (id) _handle;
 
-    id<CogSource> source = pSelf->_audioSource;
-    
-    SInt64 size;
-    
-    [source seek:0 whence:SEEK_END];
-    size = [source tell];
-    [source seek:pSelf->_lastPosition whence:SEEK_SET];
-    
-    return size;
+    return pSelf->_fileSize;
 }
 
 @implementation CoreAudioDecoder
@@ -114,6 +106,9 @@ static SInt64 getSizeProc(void* clientData) {
     
     _audioSource = source;
     _lastPosition = [source tell];
+    [source seek:0 whence:SEEK_END];
+    _fileSize = [source tell];
+    [source seek:_lastPosition whence:SEEK_SET];
     
     err = AudioFileOpenWithCallbacks((__bridge void *)self, readProc, 0, getSizeProc, 0, 0, &_audioFile);
     if(noErr != err) {
