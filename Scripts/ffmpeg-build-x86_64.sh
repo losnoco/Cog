@@ -26,3 +26,5 @@ set -e
     --disable-version3
 
 make -j$(sysctl -n hw.logicalcpu) install
+
+make clean
