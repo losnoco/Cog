@@ -2,6 +2,10 @@
 
 set -e
 
+export CPATH=/opt/homebrew/include
+export LIBRARY_PATH=/opt/homebrew/lib
+export PATH=/opt/homebrew/bin:$PATH
+
 # This is the commands used to build the ffmpeg libs provided here
 ./configure\
     --enable-cross-compile\

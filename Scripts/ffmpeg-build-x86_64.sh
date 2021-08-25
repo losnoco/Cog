@@ -2,6 +2,10 @@
 
 set -e
 
+export CPATH=/usr/local/include
+export LIBRARY_PATH=/usr/local/lib
+export PATH=/usr/local/bin:$PATH
+
 # This is the commands used to build the ffmpeg libs provided here
 ./configure\
     --arch=x86_64\
