@@ -9,6 +9,10 @@ info() {
 
 info "Installing build dependencies of FFmpeg with Homebrew"
 brew install --only-dependencies ffmpeg
+brew install yasm
+
+info "Installing build dependencies for cross build with Homebrew"
+arch -x86_64 /usr/local/bin/brew install --only-dependencies ffmpeg
 
 ARCHS="arm64 x86_64"
 LIBS="libavcodec libavformat libavutil libswresample"
