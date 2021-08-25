@@ -164,8 +164,13 @@ static SInt64 getSizeProc(void* clientData) {
     size    = sizeof(formatBitsPerSample);
     err     = AudioFileGetProperty(afi, kAudioFilePropertySourceBitDepth, &size, &formatBitsPerSample);
     if(err != noErr) {
-        err = ExtAudioFileDispose(_in);
-        return NO;
+        if (err == kAudioFileUnsupportedPropertyError) {
+            formatBitsPerSample = 0; // floating point formats apparently don't return this any more
+        }
+        else {
+            err = ExtAudioFileDispose(_in);
+            return NO;
+        }
     }
     
     UInt32    _bitrate;
