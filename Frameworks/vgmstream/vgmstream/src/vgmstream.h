@@ -18,6 +18,12 @@ enum {
 
 #include "streamfile.h"
 
+#ifdef BUILD_VGMSTREAM
+#include "util/log.h"
+#else
+#include <libvgmstream/log.h>
+#endif
+
 /* Due mostly to licensing issues, Vorbis, MPEG, G.722.1, etc decoding is done by external libraries.
  * Libs are disabled by default, defined on compile-time for builds that support it */
 //#define VGM_USE_VORBIS

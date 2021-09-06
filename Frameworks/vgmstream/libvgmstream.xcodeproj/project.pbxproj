@@ -335,7 +335,6 @@
 		836F6FBD18BDC2190095E648 /* nwa.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8118BDC2180095E648 /* nwa.c */; };
 		836F6FBF18BDC2190095E648 /* otm.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8318BDC2180095E648 /* otm.c */; };
 		836F6FC018BDC2190095E648 /* p3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8418BDC2180095E648 /* p3d.c */; };
-		836F6FC118BDC2190095E648 /* pc_adp.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8518BDC2180095E648 /* pc_adp.c */; };
 		836F6FC218BDC2190095E648 /* pc_mxst.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8618BDC2180095E648 /* pc_mxst.c */; };
 		836F6FC718BDC2190095E648 /* pona.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8B18BDC2180095E648 /* pona.c */; };
 		836F6FC818BDC2190095E648 /* pos.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E8C18BDC2180095E648 /* pos.c */; };
@@ -621,6 +620,11 @@
 		83D2007F248DDB770048BD24 /* mups.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20077248DDB770048BD24 /* mups.c */; };
 		83D20080248DDB770048BD24 /* sadf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20078248DDB770048BD24 /* sadf.c */; };
 		83D20081248DDB770048BD24 /* sadl.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D20079248DDB770048BD24 /* sadl.c */; };
+		83D26A7A26E66D98001A9475 /* adp_bos.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D26A7626E66D98001A9475 /* adp_bos.c */; };
+		83D26A8126E66DC2001A9475 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D26A7D26E66DC2001A9475 /* log.c */; };
+		83D26A8226E66DC2001A9475 /* chunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D26A7E26E66DC2001A9475 /* chunks.h */; };
+		83D26A8326E66DC2001A9475 /* log.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D26A7F26E66DC2001A9475 /* log.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83D26A8426E66DC2001A9475 /* chunks.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D26A8026E66DC2001A9475 /* chunks.c */; };
 		83D6772D2653A30B00252130 /* libcelt_0061.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D6763026539A7200252130 /* libcelt_0061.framework */; };
 		83D6772E2653A31400252130 /* libcelt_0110.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D676BE26539F4F00252130 /* libcelt_0110.framework */; };
 		83D6772F2653A32B00252130 /* libcelt_0061.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D6763026539A7200252130 /* libcelt_0061.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1136,7 +1140,6 @@
 		836F6E8118BDC2180095E648 /* nwa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nwa.c; sourceTree = "<group>"; };
 		836F6E8318BDC2180095E648 /* otm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = otm.c; sourceTree = "<group>"; };
 		836F6E8418BDC2180095E648 /* p3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = p3d.c; sourceTree = "<group>"; };
-		836F6E8518BDC2180095E648 /* pc_adp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pc_adp.c; sourceTree = "<group>"; };
 		836F6E8618BDC2180095E648 /* pc_mxst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pc_mxst.c; sourceTree = "<group>"; };
 		836F6E8B18BDC2180095E648 /* pona.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pona.c; sourceTree = "<group>"; };
 		836F6E8C18BDC2180095E648 /* pos.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pos.c; sourceTree = "<group>"; };
@@ -1421,6 +1424,11 @@
 		83D20077248DDB770048BD24 /* mups.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mups.c; sourceTree = "<group>"; };
 		83D20078248DDB770048BD24 /* sadf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sadf.c; sourceTree = "<group>"; };
 		83D20079248DDB770048BD24 /* sadl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sadl.c; sourceTree = "<group>"; };
+		83D26A7626E66D98001A9475 /* adp_bos.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adp_bos.c; sourceTree = "<group>"; };
+		83D26A7D26E66DC2001A9475 /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
+		83D26A7E26E66DC2001A9475 /* chunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chunks.h; sourceTree = "<group>"; };
+		83D26A7F26E66DC2001A9475 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
+		83D26A8026E66DC2001A9475 /* chunks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chunks.c; sourceTree = "<group>"; };
 		83D6762B26539A7100252130 /* libcelt_0061.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libcelt_0061.xcodeproj; path = ../libcelt_0061/libcelt_0061/libcelt_0061.xcodeproj; sourceTree = "<group>"; };
 		83D676B926539F4E00252130 /* libcelt_0110.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libcelt_0110.xcodeproj; path = ../libcelt_0110/libcelt_0110/libcelt_0110.xcodeproj; sourceTree = "<group>"; };
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
@@ -1581,6 +1589,7 @@
 				836F6DDF18BDC2180095E648 /* coding */,
 				836F6DFF18BDC2180095E648 /* layout */,
 				836F6E2718BDC2180095E648 /* meta */,
+				83D26A7C26E66DC2001A9475 /* util */,
 				83AA7F892519C076004C5298 /* decode.c */,
 				83AA7F862519C076004C5298 /* decode.h */,
 				83A3F0711E3AD8B900D6A794 /* formats.c */,
@@ -1779,6 +1788,7 @@
 				837CEAD623487E8300E62A4A /* acb.c */,
 				836F6E2B18BDC2180095E648 /* acm.c */,
 				83F2CCE125A5B41600F46FA8 /* acx.c */,
+				83D26A7626E66D98001A9475 /* adp_bos.c */,
 				83AA7F7A2519C042004C5298 /* adp_konami.c */,
 				834FE0CF215C79E8000A5D3D /* adpcm_capcom.c */,
 				83852B0A2680247900378854 /* ads_midway.c */,
@@ -1997,7 +2007,6 @@
 				836F6E8318BDC2180095E648 /* otm.c */,
 				836F6E8418BDC2180095E648 /* p3d.c */,
 				8349A8FE1FE6257F00E26435 /* pc_adp_otns.c */,
-				836F6E8518BDC2180095E648 /* pc_adp.c */,
 				8349A8F01FE6257C00E26435 /* pc_ast.c */,
 				836F6E8618BDC2180095E648 /* pc_mxst.c */,
 				8306B0D12098458F000302D4 /* pcm_sre.c */,
@@ -2228,6 +2237,17 @@
 			path = meta;
 			sourceTree = "<group>";
 		};
+		83D26A7C26E66DC2001A9475 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				83D26A8026E66DC2001A9475 /* chunks.c */,
+				83D26A7E26E66DC2001A9475 /* chunks.h */,
+				83D26A7D26E66DC2001A9475 /* log.c */,
+				83D26A7F26E66DC2001A9475 /* log.h */,
+			);
+			path = util;
+			sourceTree = "<group>";
+		};
 		83D6762C26539A7200252130 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2270,11 +2290,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83D26A8226E66DC2001A9475 /* chunks.h in Headers */,
 				836F705518BDC2190095E648 /* streamtypes.h in Headers */,
 				836F6F3518BDC2190095E648 /* nwa_decoder.h in Headers */,
 				83031EC9243C50A800C3F3E0 /* circus_decoder_lzxpcm.h in Headers */,
 				8346D97A25BF838C00D1A8B0 /* idtech_streamfile.h in Headers */,
 				8346D98425BF83B300D1A8B0 /* coding_utils_samples.h in Headers */,
+				83D26A8326E66DC2001A9475 /* log.h in Headers */,
 				83C7282222BC893D00678B4A /* mta2_streamfile.h in Headers */,
 				83AA7F802519C042004C5298 /* sab_streamfile.h in Headers */,
 				83A21F87201D8981000F04B9 /* fsb_keys.h in Headers */,
@@ -2576,6 +2598,7 @@
 				8373341723F60C7B00DE14DC /* g7221_decoder_aes.c in Sources */,
 				836F702018BDC2190095E648 /* rkv.c in Sources */,
 				834FE0F4215C79ED000A5D3D /* wsi.c in Sources */,
+				83D26A7A26E66D98001A9475 /* adp_bos.c in Sources */,
 				836F703218BDC2190095E648 /* str_asr.c in Sources */,
 				837CEB0223487F2C00E62A4A /* raw_int.c in Sources */,
 				836F702818BDC2190095E648 /* sat_dvi.c in Sources */,
@@ -2601,6 +2624,7 @@
 				836F6FB618BDC2190095E648 /* ngc_sck_dsp.c in Sources */,
 				836F6F2818BDC2190095E648 /* ima_decoder.c in Sources */,
 				837CEB072348809400E62A4A /* seb.c in Sources */,
+				83D26A8126E66DC2001A9475 /* log.c in Sources */,
 				8306B0DD20984590000302D4 /* waf.c in Sources */,
 				8306B0B320984552000302D4 /* blocked_thp.c in Sources */,
 				832BF80921E05135006F50F1 /* fag.c in Sources */,
@@ -2760,7 +2784,6 @@
 				836F6FF318BDC2190095E648 /* ps2_rstm.c in Sources */,
 				8373342923F60CDC00DE14DC /* deblock_streamfile.c in Sources */,
 				836F6F7918BDC2190095E648 /* dc_asd.c in Sources */,
-				836F6FC118BDC2190095E648 /* pc_adp.c in Sources */,
 				836F703B18BDC2190095E648 /* vsf.c in Sources */,
 				836F6F8218BDC2190095E648 /* ea_schl.c in Sources */,
 				834FBCE826BBC7D00095647F /* tantalus_decoder.c in Sources */,
@@ -2912,6 +2935,7 @@
 				836F6FA418BDC2190095E648 /* nds_hwas.c in Sources */,
 				83A21F8A201D8982000F04B9 /* fsb_encrypted.c in Sources */,
 				8306B0B120984552000302D4 /* blocked_halpst.c in Sources */,
+				83D26A8426E66DC2001A9475 /* chunks.c in Sources */,
 				836F6FD018BDC2190095E648 /* ps2_b1s.c in Sources */,
 				83AA5D181F6E2F600020821C /* mpeg_custom_utils_awc.c in Sources */,
 				83031ED1243C50DF00C3F3E0 /* encrypted.c in Sources */,

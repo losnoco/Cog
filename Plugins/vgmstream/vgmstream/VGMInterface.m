@@ -10,7 +10,17 @@
 
 #import "Plugin.h"
 
-static void cogsf_seek(COGSTREAMFILE *this, off_t offset) {
+#import "Logging.h"
+
+static void log_callback(int level, const char *str) {
+    ALog(@"%@", str);
+}
+
+void register_log_callback() {
+    vgmstream_set_log_callback(VGM_LOG_LEVEL_ALL, &log_callback);
+}
+
+static void cogsf_seek(COGSTREAMFILE *this, offv_t offset) {
     if (!this) return;
     NSObject* _file = (__bridge NSObject *)(this->file);
     id<CogSource> __unsafe_unretained file = (id) _file;
@@ -20,18 +30,18 @@ static void cogsf_seek(COGSTREAMFILE *this, off_t offset) {
         this->offset = [file tell];
 }
 
-static off_t cogsf_get_size(COGSTREAMFILE *this) {
+static offv_t cogsf_get_size(COGSTREAMFILE *this) {
     if (!this) return 0;
     NSObject* _file = (__bridge NSObject *)(this->file);
     id<CogSource> __unsafe_unretained file = (id) _file;
-    off_t offset = [file tell];
+    offv_t offset = [file tell];
     [file seek:0 whence:SEEK_END];
-    off_t size = [file tell];
+    offv_t size = [file tell];
     [file seek:offset whence:SEEK_SET];
     return size;
 }
 
-static off_t cogsf_get_offset(COGSTREAMFILE *this) {
+static offv_t cogsf_get_offset(COGSTREAMFILE *this) {
     if (!this) return 0;
     return this->offset;
 }
@@ -47,7 +57,7 @@ static void cogsf_get_name(COGSTREAMFILE *this, char *buffer, size_t length) {
     buffer[length-1]='\0';
 }
 
-static size_t cogsf_read(COGSTREAMFILE *this, uint8_t *dest, off_t offset, size_t length) {
+static size_t cogsf_read(COGSTREAMFILE *this, uint8_t *dest, offv_t offset, size_t length) {
     if (!this) return 0;
     NSObject* _file = (__bridge NSObject *)(this->file);
     id<CogSource> __unsafe_unretained file = (id) _file;

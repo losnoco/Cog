@@ -12,10 +12,12 @@
 typedef struct _COGSTREAMFILE {
     STREAMFILE sf;
     void *file;
-    off_t offset;
+    offv_t offset;
     char name[PATH_LIMIT];
 } COGSTREAMFILE;
 
 STREAMFILE *cogsf_create_from_url(NSURL * url);
 
 VGMSTREAM *init_vgmstream_from_cogfile(const char *path, int subsong);
+
+void register_log_callback();

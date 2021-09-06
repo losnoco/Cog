@@ -510,7 +510,7 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
             if (ww.bits_per_sample != 16) goto fail;
 
             /* original data_size doesn't look related to samples or anything */
-			ww.data_size = ww.file_size - ww.data_offset;
+            ww.data_size = ww.file_size - ww.data_offset;
 
             vgmstream->codec_data = init_ffmpeg_offset(sf, ww.data_offset, ww.data_size);
             if (!vgmstream->codec_data) goto fail;
@@ -592,8 +592,8 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
             vgmstream->layout_type = layout_none;
             break;
         }
-
 #endif
+
         case HEVAG: /* PSV */
             /* changed values, another bizarre Wwise quirk */
             //ww.block_align /* unknown (1ch=2, 2ch=4) */
@@ -644,6 +644,7 @@ VGMSTREAM* init_vgmstream_wwise(STREAMFILE* sf) {
             break;
         }
 #endif
+
         case PTADPCM: /* newer ADPCM [Bayonetta 2 (Switch), Genshin Impact (PC)]  */
             if (ww.bits_per_sample != 4) goto fail;
             if (ww.block_align != 0x24 * ww.channels && ww.block_align != 0x104 * ww.channels) goto fail;
@@ -681,7 +682,7 @@ static int is_dsp_full_interleave(STREAMFILE* sf, wwise_header* ww, off_t coef_o
      * - .bnk would be memory banks = full
      * - otherwise small-ish sizes, stereo, with initial predictors for the
      *   second channel matching half size = full
-     * some files aren't detectable like this though, when predictors are 0 
+     * some files aren't detectable like this though, when predictors are 0
      * (but since memory wem aren't that used this shouldn't be too common) */
 
     if (ww->truncated)
@@ -885,6 +886,7 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
         case 0x3041: ww->codec = OPUSWW; break; /* "OPUS_WEM", added on Wwise 2019.2.3, replaces OPUS */
         case 0x8311: ww->codec = PTADPCM; break; /* added on Wwise 2019.1, replaces IMA */
         default:
+            vgm_logi("WWISE: unknown codec 0x%04x (report)\n", ww->format);
             goto fail;
     }
 
@@ -893,11 +895,14 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
         if (ww->extra_size == 0x0c + ww->channels * 0x2e) {
             /* newer Wwise DSP with coefs [Epic Mickey 2 (Wii), Batman Arkham Origins Blackgate (3DS)] */
             ww->codec = DSP;
-        } else if (ww->extra_size == 0x0a && ww->wiih_offset) { /* WiiH */
+        }
+        else if (ww->extra_size == 0x0a && ww->wiih_offset) { /* WiiH */
             /* few older Wwise DSP with num_samples in extra_size [Tony Hawk: Shred (Wii)] */
             ww->codec = DSP;
-        } else if (ww->block_align == 0x104 * ww->channels) {
-            ww->codec = PTADPCM; /* Bayonetta 2 (Switch) */
+        }
+        else if (ww->block_align == 0x104 * ww->channels) {
+            /* Bayonetta 2 (Switch) */
+            ww->codec = PTADPCM;
         }
     }
 
@@ -911,7 +916,7 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
         /* catch wrong rips as truncated tracks' file_size should be much smaller than data_size,
          * but it's possible to pre-fetch small files too [Punch Out!! (Wii)] */
         if (ww->data_offset + ww->data_size - ww->file_size < 0x5000 && ww->file_size > 0x10000) {
-            VGM_LOG("WWISE: wrong expected data_size\n");
+            vgm_logi("WWISE: wrong expected size (re-rip?)\n");
             goto fail;
         }
 
@@ -919,7 +924,7 @@ static int parse_wwise(STREAMFILE* sf, wwise_header* ww) {
             ww->codec == OPUSNX || ww->codec == OPUS || ww->codec == OPUSWW || ww->codec == PTADPCM) {
             ww->truncated = 1; /* only seen those, probably all exist (XWMA, AAC, HEVAG, ATRAC9?) */
         } else {
-            VGM_LOG("WWISE: wrong size, maybe truncated\n");
+            vgm_logi("WWISE: wrong expected size, maybe truncated (report)\n");
             goto fail;
         }
     }
@@ -955,7 +960,7 @@ fail:
 0x14 (4): LoopInfo.dwLoopEndPacketOffset?
 0x18 (4): dwSeekTableSize (0 = no seek table)
 0x1c (4): dwVorbisDataOffset (offset within data)
-0x20 (2): uMaxPacketSize (not including header) 
+0x20 (2): uMaxPacketSize (not including header)
 0x22 (2): uLastGranuleExtra (0..~0x100)
 0x24 (4): dwDecodeAllocSize (0~0x5000)
 0x28 (4): dwDecodeX64AllocSize (mid, 0~0x5000)
@@ -971,7 +976,7 @@ fail:
 0x0c (2): ? (small, 0..~0x400) [(4) when size is 0x2C]
 0x10 (4): dwSeekTableSize (0 = no seek table)
 0x14 (4): dwVorbisDataOffset (offset within data)
-0x18 (2): uMaxPacketSize (not including header) 
+0x18 (2): uMaxPacketSize (not including header)
 0x1a (2): uLastGranuleExtra (0..~0x100) [(4) when size is 0x2C]
 0x1c (4): dwDecodeAllocSize (0~0x5000)
 0x20 (4): dwDecodeX64AllocSize (0~0x5000)
@@ -988,7 +993,7 @@ fail:
 0x26 (2): LoopInfo.uLoopEndExtra (extra samples after seek?)
 0x28 (4): dwSeekTableSize (0 = no seek table)
 0x2c (4): dwVorbisDataOffset (offset within data)
-0x30 (2): uMaxPacketSize (not including header) 
+0x30 (2): uMaxPacketSize (not including header)
 0x32 (2): uLastGranuleExtra (small, 0..~0x100)
 0x34 (4): dwDecodeAllocSize (mid, 0~0x5000)
 0x38 (4): dwDecodeX64AllocSize (mid, 0~0x5000)

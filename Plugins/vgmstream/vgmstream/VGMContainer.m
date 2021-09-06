@@ -14,6 +14,11 @@
 
 @implementation VGMContainer
 
++ (void)initialize
+{
+    register_log_callback();
+}
+
 + (NSArray *)fileTypes
 {
     return [VGMDecoder fileTypes];

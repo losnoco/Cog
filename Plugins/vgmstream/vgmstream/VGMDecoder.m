@@ -205,6 +205,11 @@
 
 @implementation VGMDecoder
 
++ (void)initialize
+{
+    register_log_callback();
+}
+
 - (BOOL)open:(id<CogSource>)s
 {
     int track_num = [[[s url] fragment] intValue];

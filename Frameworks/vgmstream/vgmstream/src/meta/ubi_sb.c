@@ -644,7 +644,7 @@ static VGMSTREAM *init_vgmstream_ubi_dat_main(ubi_sb_header *sb, STREAMFILE *sf_
         sf_data = open_streamfile_by_filename(sf, sb->resource_name);
         if (!sf_data) {
             /* play silence if external file is not found since Rayman 2 seems to rely on this behavior */
-            VGM_LOG("UBI DAT: external stream '%s' not found\n", sb->resource_name);
+            vgm_logi("UBI DAT: external file '%s' not found (put together)\n", sb->resource_name);
             strncat(sb->readable_name, " (missing)", sizeof(sb->readable_name));
             sb->duration = (float)pcm_bytes_to_samples(sb->stream_size, sb->channels, 16) / (float)sb->sample_rate;
             return init_vgmstream_ubi_sb_silence(sb);
@@ -1301,10 +1301,11 @@ static VGMSTREAM* init_vgmstream_ubi_sb_audio(ubi_sb_header* sb, STREAMFILE* sf_
     if (sb->is_external) {
         sf_data = open_streamfile_by_filename(sf, sb->resource_name);
         if (sf_data == NULL) {
-            VGM_LOG("UBI SB: external stream '%s' not found\n", sb->resource_name);
+            vgm_logi("UBI SB: external file '%s' not found (put together)\n", sb->resource_name);
             goto fail;
         }
-    } else {
+    }
+    else {
         sf_data = sf;
     }
 
@@ -1341,7 +1342,7 @@ static VGMSTREAM* init_vgmstream_ubi_sb_layer(ubi_sb_header* sb, STREAMFILE* sf_
     if (sb->is_external) {
         sf_data = open_streamfile_by_filename(sf,sb->resource_name);
         if (sf_data == NULL) {
-            VGM_LOG("UBI SB: external stream '%s' not found\n", sb->resource_name);
+            vgm_logi("UBI SB: external file '%s' not found (put together)\n", sb->resource_name);
             goto fail;
         }
     }
@@ -1563,7 +1564,7 @@ static VGMSTREAM* init_vgmstream_ubi_sb_header(ubi_sb_header* sb, STREAMFILE* sf
     VGMSTREAM* vgmstream = NULL;
 
     if (sb->total_subsongs == 0) {
-        VGM_LOG("UBI SB: no subsongs\n");
+        vgm_logi("UBI SB: bank has no subsongs (ignore)\n");
         goto fail;
     }
 
@@ -1862,8 +1863,8 @@ static int parse_type_audio(ubi_sb_header* sb, off_t offset, STREAMFILE* sf) {
         /* PC can have subblock 2 based on two fields near the end but it wasn't seen so far */
 
         /* stream_type field is not used if the flag is not set (it even contains garbage in some versions)
-         * except for PS3 which has two hardware codecs (PSX and AT3) */
-        if (!software_flag && sb->platform != UBI_PS3)
+         * except for PS3 and new PSP which have two hardware codecs (PSX and AT3) */
+        if (!software_flag && sb->platform != UBI_PS3 && !(sb->platform == UBI_PSP && !sb->is_psp_old))
             sb->stream_type = 0x00;
     } else {
         sb->subblock_id = (sb->stream_type == 0x01) ? 0 : 1;
@@ -4042,6 +4043,6 @@ static int config_sb_version(ubi_sb_header* sb, STREAMFILE* sf) {
         return 1;
     }
 
-    VGM_LOG("UBI SB: unknown SB/SM version+platform %08x\n", sb->version);
+    vgm_logi("UBI SB: unknown SB/SM version+platform %08x (report)\n", sb->version);
     return 0;
 }
