@@ -34,6 +34,13 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	void *readPointer = ioData->mBuffers[0].mData;
 	
 	int amountToRead, amountRead;
+    
+    if (output->stopping == YES)
+    {
+        // *shrug* At least this will stop it from trying to emit data post-shutdown
+        ioData->mBuffers[0].mDataByteSize = 0;
+        return eofErr;
+    }
 
 	if ([output->outputController shouldContinue] == NO)
 	{
@@ -384,6 +391,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
                                size);
 	
 	//setup render callbacks
+    stopping = NO;
 	renderCallback.inputProc = Sound_Renderer;
 	renderCallback.inputProcRefCon = (__bridge void * _Nullable)(self);
 	
@@ -413,6 +421,7 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 {
 	if (outputUnit)
 	{
+        stopping = YES;
         AudioOutputUnitStop(outputUnit);
 		AudioUnitUninitialize (outputUnit);
 		AudioComponentInstanceDispose(outputUnit);

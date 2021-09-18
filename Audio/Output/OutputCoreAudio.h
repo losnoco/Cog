@@ -17,6 +17,8 @@
 
 @interface OutputCoreAudio : NSObject {
 	OutputNode * outputController;
+    
+    BOOL stopping;
 	
     AudioDeviceID outputDeviceID;
 	AudioUnit outputUnit;
