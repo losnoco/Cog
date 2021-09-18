@@ -3226,7 +3226,7 @@
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -3298,7 +3298,7 @@
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};

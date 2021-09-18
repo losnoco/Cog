@@ -321,7 +321,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/ffmpeg/include;
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/ffmpeg/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -362,7 +362,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/ffmpeg/include;
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/ffmpeg/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};

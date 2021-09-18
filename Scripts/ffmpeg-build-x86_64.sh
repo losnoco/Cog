@@ -9,8 +9,8 @@ export PATH=/usr/local/bin:$PATH
 # This is the commands used to build the ffmpeg libs provided here
 ./configure\
     --arch=x86_64\
-    --extra-cflags="-arch x86_64 -fPIC -isysroot $(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=10.13"\
-    --extra-ldflags="-arch x86_64 -mmacosx-version-min=10.13"\
+    --extra-cflags="-arch x86_64 -fPIC -isysroot $(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=10.12"\
+    --extra-ldflags="-arch x86_64 -mmacosx-version-min=10.12"\
     --enable-static --disable-shared\
     --prefix="$1/x86_64"\
     --incdir="$1/include"\
