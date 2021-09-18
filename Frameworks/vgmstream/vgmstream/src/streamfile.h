@@ -20,10 +20,6 @@
 /* MSVC fixes (though mingw uses MSVCRT but not MSC_VER, maybe use AND?) */
 #if defined(__MSVCRT__) || defined(_MSC_VER)
     #include <io.h>
-
-    #ifndef off64_t
-        #define off_t __int64
-    #endif
 #endif
 
 #ifndef DIR_SEPARATOR
@@ -66,16 +62,16 @@ typedef struct _STREAMFILE {
     size_t (*get_size)(struct _STREAMFILE* sf);
 
     //todo: DO NOT USE, NOT RESET PROPERLY (remove?)
-    offv_t (*get_offset)(struct _STREAMFILE*);
+    offv_t (*get_offset)(struct _STREAMFILE* sf);
 
     /* copy current filename to name buf */
     void (*get_name)(struct _STREAMFILE* sf, char* name, size_t name_size);
 
     /* open another streamfile from filename */
-    struct _STREAMFILE* (*open)(struct _STREAMFILE* sf, const char* const filename, size_t buffer_size);
+    struct _STREAMFILE* (*open)(struct _STREAMFILE* sf, const char* const filename, size_t buf_size);
 
     /* free current STREAMFILE */
-    void (*close)(struct _STREAMFILE*);
+    void (*close)(struct _STREAMFILE* sf);
 
     /* Substream selection for formats with subsongs.
      * Not ideal here, but it was the simplest way to pass to all init_vgmstream_x functions. */
@@ -231,41 +227,22 @@ static inline uint64_t read_u64be(off_t offset, STREAMFILE* sf) { return (uint64
 static inline int64_t  read_s64le(off_t offset, STREAMFILE* sf) { return           read_64bitLE(offset, sf); }
 static inline uint64_t read_u64le(off_t offset, STREAMFILE* sf) { return (uint64_t)read_64bitLE(offset, sf); }
 
-/* The recommended int-to-float type punning in C is through union, but pointer casting
- * works too (though less portable due to aliasing rules?). For C++ memcpy seems
- * recommended. Both work in GCC and VS2015+ (not sure about older, ifdef as needed). */
-static inline float    read_f32be(off_t offset, STREAMFILE* sf) {
-    union {
-        uint32_t u32;
-        float f32;
-    } temp;
-    temp.u32 = read_u32be(offset, sf);
-    return temp.f32;
+static inline float read_f32be(off_t offset, STREAMFILE* sf) {
+    uint8_t buf[4];
+
+    if (read_streamfile(buf, offset, sizeof(buf), sf) != sizeof(buf))
+        return -1;
+    return get_f32be(buf);
 }
 static inline float    read_f32le(off_t offset, STREAMFILE* sf) {
-    union {
-        uint32_t u32;
-        float f32;
-    } temp;
-    temp.u32 = read_u32le(offset, sf);
-    return temp.f32;
+    uint8_t buf[4];
+
+    if (read_streamfile(buf, offset, sizeof(buf), sf) != sizeof(buf))
+        return -1;
+    return get_f32le(buf);
 }
-#if 0
-static inline float    read_f32be_p(off_t offset, STREAMFILE* sf) {
-    uint32_t sample_int = read_u32be(offset, sf);
-    float* sample_float = (float*)&sample_int;
-    return *sample_float;
-}
-static inline float    read_f32be_m(off_t offset, STREAMFILE* sf) {
-    uint32_t sample_int = read_u32be(offset, sf);
-    float sample_float;
-    memcpy(&sample_float, &sample_int, sizeof(uint32_t));
-    return sample_float;
-}
-#endif
 
 #if 0
-
 // on GCC, this reader will be correctly optimized out (as long as it's static/inline), would be same as declaring:
 // uintXX_t (*read_uXX)(off_t,uint8_t*) = be ? get_uXXbe : get_uXXle;
 // only for the functions actually used in code, and inlined if possible (like big_endian param being a constant).

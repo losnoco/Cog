@@ -84,6 +84,9 @@
 		830EBE142004656E0023AA10 /* ktss.c in Sources */ = {isa = PBXBuildFile; fileRef = 830EBE122004656E0023AA10 /* ktss.c */; };
 		8313E3E61902020400B4B6F1 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; };
 		8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8313E3431901FBDD00B4B6F1 /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8315868726F586E200803A3A /* psb.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315868326F586E200803A3A /* psb.c */; };
+		8315868A26F586F900803A3A /* m2_psb.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315868826F586F900803A3A /* m2_psb.c */; };
+		8315868B26F586F900803A3A /* m2_psb.h in Headers */ = {isa = PBXBuildFile; fileRef = 8315868926F586F900803A3A /* m2_psb.h */; };
 		8315958720FEC832007002F0 /* asf_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315958320FEC831007002F0 /* asf_decoder.c */; };
 		8315958920FEC83F007002F0 /* asf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315958820FEC83F007002F0 /* asf.c */; };
 		8317C24C26982CC1007DD0B8 /* sspr.c in Sources */ = {isa = PBXBuildFile; fileRef = 8317C24826982CC1007DD0B8 /* sspr.c */; };
@@ -889,6 +892,9 @@
 		830EBE112004656E0023AA10 /* xnb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xnb.c; sourceTree = "<group>"; };
 		830EBE122004656E0023AA10 /* ktss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ktss.c; sourceTree = "<group>"; };
 		8313E33D1901FBDC00B4B6F1 /* mpg123.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mpg123.xcodeproj; path = ../mpg123/mpg123.xcodeproj; sourceTree = "<group>"; };
+		8315868326F586E200803A3A /* psb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psb.c; sourceTree = "<group>"; };
+		8315868826F586F900803A3A /* m2_psb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = m2_psb.c; sourceTree = "<group>"; };
+		8315868926F586F900803A3A /* m2_psb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m2_psb.h; sourceTree = "<group>"; };
 		8315958320FEC831007002F0 /* asf_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = asf_decoder.c; sourceTree = "<group>"; };
 		8315958820FEC83F007002F0 /* asf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = asf.c; sourceTree = "<group>"; };
 		8317C24826982CC1007DD0B8 /* sspr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sspr.c; sourceTree = "<group>"; };
@@ -2071,6 +2077,7 @@
 				836F6ED318BDC2190095E648 /* ps2_xa30.c */,
 				836F6ED518BDC2190095E648 /* ps3_cps.c */,
 				836F6ED918BDC2190095E648 /* ps3_past.c */,
+				8315868326F586E200803A3A /* psb.c */,
 				837CEAE823487F2B00E62A4A /* psf.c */,
 				83997F5722D9569E00633184 /* rad.c */,
 				8322ECE6240268BA009E9429 /* raw_al.c */,
@@ -2244,6 +2251,8 @@
 				83D26A7E26E66DC2001A9475 /* chunks.h */,
 				83D26A7D26E66DC2001A9475 /* log.c */,
 				83D26A7F26E66DC2001A9475 /* log.h */,
+				8315868826F586F900803A3A /* m2_psb.c */,
+				8315868926F586F900803A3A /* m2_psb.h */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -2331,6 +2340,7 @@
 				8373342723F60CDC00DE14DC /* lrmd_streamfile.h in Headers */,
 				83C7281122BC893D00678B4A /* 9tav_streamfile.h in Headers */,
 				83C7280F22BC893D00678B4A /* xwb_xsb.h in Headers */,
+				8315868B26F586F900803A3A /* m2_psb.h in Headers */,
 				83AA7F732519BFEA004C5298 /* mpeg_bitreader.h in Headers */,
 				83C7281622BC893D00678B4A /* xwma_konami_streamfile.h in Headers */,
 				839E21E81F2EDAF100EE54D7 /* mpeg_decoder.h in Headers */,
@@ -2616,6 +2626,7 @@
 				8349A9121FE6258200E26435 /* vsf_tta.c in Sources */,
 				836F6FCA18BDC2190095E648 /* ps2_adm.c in Sources */,
 				836F6FA118BDC2190095E648 /* myspd.c in Sources */,
+				8315868726F586E200803A3A /* psb.c in Sources */,
 				837CEB0123487F2C00E62A4A /* xmu.c in Sources */,
 				836F6FD718BDC2190095E648 /* ps2_filp.c in Sources */,
 				8346D97925BF838C00D1A8B0 /* idtech.c in Sources */,
@@ -2943,6 +2954,7 @@
 				83AF2CCB26226BA500538240 /* ogv_3rdeye.c in Sources */,
 				8306B0BB20984552000302D4 /* blocked_gsb.c in Sources */,
 				83031ECC243C50CC00C3F3E0 /* blocked_ubi_sce.c in Sources */,
+				8315868A26F586F900803A3A /* m2_psb.c in Sources */,
 				836F6F7718BDC2190095E648 /* capdsp.c in Sources */,
 				836F6FB018BDC2190095E648 /* ngc_dsp_ygo.c in Sources */,
 				836F703318BDC2190095E648 /* str_snds.c in Sources */,

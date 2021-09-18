@@ -51,14 +51,60 @@ static inline uint64_t get_u64le(const uint8_t* p) { return (uint64_t)get_64bitL
 static inline  int64_t get_s64be(const uint8_t* p) { return ( int64_t)get_64bitBE(p); }
 static inline uint64_t get_u64be(const uint8_t* p) { return (uint64_t)get_64bitBE(p); }
 
+/* The recommended int-to-float type punning in C is through union, but pointer casting
+ * works too (though less portable due to aliasing rules?). For C++ memcpy seems
+ * recommended. Both work in GCC and VS2015+ (not sure about older, ifdef as needed). */
+static inline float get_f32be(const uint8_t* p) {
+    union {
+        uint32_t u32;
+        float f32;
+    } temp;
+    temp.u32 = get_u32be(p);
+    return temp.f32;
+}
+static inline float get_f32le(const uint8_t* p) {
+    union {
+        uint32_t u32;
+        float f32;
+    } temp;
+    temp.u32 = get_u32le(p);
+    return temp.f32;
+}
+static inline double get_d64be(const uint8_t* p) {
+    union {
+        uint64_t u64;
+        double d64;
+    } temp;
+    temp.u64 = get_u64be(p);
+    return temp.d64;
+}
+static inline double get_d64le(const uint8_t* p) {
+    union {
+        uint64_t u64;
+        double d64;
+    } temp;
+    temp.u64 = get_u64le(p);
+    return temp.d64;
+}
+#if 0
+static inline float    get_f32be_cast(const uint8_t* p) {
+    uint32_t sample_int = get_u32be(p);
+    float* sample_float = (float*)&sample_int;
+    return *sample_float;
+}
+static inline float    get_f32be_mcpy(const uint8_t* p) {
+    uint32_t sample_int = get_u32be(p);
+    float sample_float;
+    memcpy(&sample_float, &sample_int, sizeof(uint32_t));
+    return sample_float;
+}
+#endif
+
+
 void put_8bit(uint8_t* buf, int8_t i);
-
 void put_16bitLE(uint8_t* buf, int16_t i);
-
 void put_32bitLE(uint8_t* buf, int32_t i);
-
 void put_16bitBE(uint8_t* buf, int16_t i);
-
 void put_32bitBE(uint8_t* buf, int32_t i);
 
 /* alias of the above */ //TODO: improve
@@ -102,7 +148,7 @@ static inline int clamp16(int32_t val) {
 /* transforms a string to uint32 (for comparison), but if this is static + all goes well
  * compiler should pre-calculate and use uint32 directly */
 static inline /*const*/ uint32_t get_id32be(const char* s) {
-    return (uint32_t)(s[0] << 24) | (s[1] << 16) | (s[2] << 8) | (s[3] << 0);
+    return (uint32_t)((uint8_t)s[0] << 24) | ((uint8_t)s[1] << 16) | ((uint8_t)s[2] << 8) | ((uint8_t)s[3] << 0);
 }
 
 //static inline /*const*/ uint32_t get_id32le(const char* s) {
