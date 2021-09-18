@@ -14,7 +14,7 @@
 		</data>
 		<key>Resources/SUStatus.nib</key>
 		<data>
-		Bx0YakvA4WeK5k1HcKtBIne5e6Y=
+		6I4uX0FrluZpgUjoCaB46P/0lY0=
 		</data>
 		<key>Resources/ar.lproj/Sparkle.strings</key>
 		<dict>
@@ -38,7 +38,7 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			bY3rkqi/NJtXtjpK3FbV2o0gxbQ=
+			Gyp0nPqNvS5KdfMw+6ieF0yUTnI=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -56,7 +56,7 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			fsC7FJvExHE/2681tuUrjkSF2+A=
+			fXH7MjrA6hDT/k/8B6Vwgntt2lw=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -218,7 +218,7 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			VpSLGNvZ6sbRYsF23L8m6TG+P6E=
+			x6JdY7WL2dHnGXX6PHJl5da7WKE=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -302,10 +302,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			EJVD3Q07b4zM+8aXuUG1+YdNTLE=
+			3t2O1Li8HPJNk3Eo6D8qW1oP+jI=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"5f40963d1979f0c4de2c15d06a4df42bda7633ab" or cdhash H"109543dd0d3b6f8cccfbc697b941b5f9874d4cb1" or cdhash H"80942224ac3fc049ff264ffb3a905c0b842bb265" or cdhash H"f6c27dbf72ff5cda695155eb54b23c1cf7e58118"</string>
+			<string>cdhash H"5277ce2c56b8ebe2e122350f8de5c442d9ab3f11" or cdhash H"dedd8ed4b8bc1cf24d937128e83f2a5b5a0ffa32" or cdhash H"91d174275e1e6fef1c0bd7626af1571f0df219f0" or cdhash H"adc291671c19af670aaec29a2de4d2e33a114478"</string>
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
@@ -333,11 +333,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			Bx0YakvA4WeK5k1HcKtBIne5e6Y=
+			6I4uX0FrluZpgUjoCaB46P/0lY0=
 			</data>
 			<key>hash2</key>
 			<data>
-			NEfylSxvNQ30sf/Pib58/qhniAlBE4B1BOGL0Lmh53g=
+			8bmm56+lUnfMv3UQ4n/BaEp7hU1N1Wbur9BWMReUdso=
 			</data>
 		</dict>
 		<key>Resources/ar.lproj/Sparkle.strings</key>
@@ -370,11 +370,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			bY3rkqi/NJtXtjpK3FbV2o0gxbQ=
+			Gyp0nPqNvS5KdfMw+6ieF0yUTnI=
 			</data>
 			<key>hash2</key>
 			<data>
-			RfJgT2b3STcLu71+1iU9ZcSXbfwMWG1EE1C7Wrf3xBk=
+			8q22yKUhfKJVOOXteUQZAVVkhfzPQKzoSJdnVNkDPo8=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -396,11 +396,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			fsC7FJvExHE/2681tuUrjkSF2+A=
+			fXH7MjrA6hDT/k/8B6Vwgntt2lw=
 			</data>
 			<key>hash2</key>
 			<data>
-			XUpgsFH8KmcbgggpdYbJScCg0tBic9tNLdFh+8cbPyw=
+			bA5bxESyZuC/dG2VKfN+eQ7CVb2qAWrwfu94IpJ4Xi0=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -630,11 +630,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			VpSLGNvZ6sbRYsF23L8m6TG+P6E=
+			x6JdY7WL2dHnGXX6PHJl5da7WKE=
 			</data>
 			<key>hash2</key>
 			<data>
-			wJZ5NG+mvj4anRFPUFyvSD0kGrg+ZAqklsPfHuCxLQY=
+			+vCWSRbECqQcsR6Nd8erQda/7x+ku/kQSUvZtTvemyQ=
 			</data>
 			<key>optional</key>
 			<true/>
