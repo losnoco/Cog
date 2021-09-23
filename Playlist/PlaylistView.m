@@ -225,9 +225,16 @@
     }
 
     NSError *error;
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:selectedURLs
-                                         requiringSecureCoding:YES
-                                                         error:&error];
+    NSData *data;
+    if (@available(macOS 10.13, *)) {
+        data = [NSKeyedArchiver archivedDataWithRootObject:selectedURLs
+                                     requiringSecureCoding:YES
+                                                     error:&error];
+    }
+    else {
+        data = [NSArchiver archivedDataWithRootObject:selectedURLs];
+    }
+    
     if (!data) {
         DLog(@"Error: %@", error);
     }
@@ -267,7 +274,14 @@
 
 - (IBAction)paste:(id)sender {
     // Determine the type of object that was dropped
-    NSArray *supportedTypes = @[CogUrlsPboardType, NSPasteboardTypeFileURL, iTunesDropType];
+    NSPasteboardType fileType;
+    if (@available(macOS 10.13, *)) {
+        fileType = NSPasteboardTypeFileURL;
+    }
+    else {
+        fileType = NSFilenamesPboardType;
+    }
+    NSArray *supportedTypes = @[CogUrlsPboardType, fileType, iTunesDropType];
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
     NSPasteboardType bestType = [pboard availableTypeFromArray:supportedTypes];
 #ifdef _DEBUG
@@ -294,8 +308,15 @@
                                                              fromData:data
                                                                 error:&error];
         } else {
-            NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
-            urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed fromData:data error:&error];
+            if (@available(macOS 10.13, *)) {
+                NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
+                urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
+                                                           fromData:data
+                                                              error:&error];
+            }
+            else {
+                urls = [NSUnarchiver unarchiveObjectWithData:data];
+            }
         }
         if (!urls) {
             DLog(@"%@", error);
@@ -307,10 +328,10 @@
     }
 
     // Get files from a normal file drop (such as from Finder)
-    if ([bestType isEqualToString:NSPasteboardTypeFileURL]) {
+    if ([bestType isEqualToString:fileType]) {
         NSMutableArray *urls = [[NSMutableArray alloc] init];
 
-        for (NSString *file in [pboard propertyListForType:NSPasteboardTypeFileURL]) {
+        for (NSString *file in [pboard propertyListForType:fileType]) {
             [urls addObject:[NSURL fileURLWithPath:file]];
         }
 
@@ -364,8 +385,16 @@
     }
     if (action == @selector(paste:)) {
         NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+        
+        NSPasteboardType fileType;
+        if (@available(macOS 10.13, *)) {
+            fileType = NSPasteboardTypeFileURL;
+        }
+        else {
+            fileType = NSFilenamesPboardType;
+        }
 
-        NSArray *supportedTypes = @[CogUrlsPboardType, NSPasteboardTypeFileURL, iTunesDropType];
+        NSArray *supportedTypes = @[CogUrlsPboardType, fileType, iTunesDropType];
 
         NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
 

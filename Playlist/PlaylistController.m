@@ -184,7 +184,12 @@
     PlaylistEntry *song = [[self arrangedObjects] objectAtIndex:row];
     [filenames addObject:[[song path] stringByExpandingTildeInPath]];
 
-    [item setData:[song.URL dataRepresentation] forType:NSPasteboardTypeFileURL];
+    if (@available(macOS 10.13, *)) {
+        [item setData:[song.URL dataRepresentation] forType:NSPasteboardTypeFileURL];
+    }
+    else {
+        [item setPropertyList:@[song.URL] forType:NSFilenamesPboardType];
+    }
 
     return item;
 }
@@ -199,8 +204,15 @@
     if (row < 0) row = 0;
 
     // Determine the type of object that was dropped
+    NSPasteboardType fileType;
+    if (@available(macOS 10.13, *)) {
+        fileType = NSPasteboardTypeFileURL;
+    }
+    else {
+        fileType = NSFilenamesPboardType;
+    }
     NSArray *supportedTypes =
-            @[CogUrlsPboardType, NSPasteboardTypeFileURL, iTunesDropType];
+            @[CogUrlsPboardType, fileType, iTunesDropType];
     NSPasteboard *pboard = [info draggingPasteboard];
     NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
 
@@ -216,8 +228,15 @@
                                                              fromData:data
                                                                 error:&error];
         } else {
-            NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
-            urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed fromData:data error:&error];
+            if (@available(macOS 10.13, *)) {
+                NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
+                urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
+                                                           fromData:data
+                                                              error:&error];
+            }
+            else {
+                urls = [NSUnarchiver unarchiveObjectWithData:data];
+            }
         }
         if (!urls) {
             DLog(@"%@", error);
@@ -229,7 +248,7 @@
     }
 
     // Get files from a normal file drop (such as from Finder)
-    if ([bestType isEqualToString:NSPasteboardTypeFileURL]) {
+    if ([bestType isEqualToString:fileType]) {
         NSArray<Class> *classes = @[[NSURL class]];
         NSDictionary *options = @{};
         NSArray<NSURL*> *files = [pboard readObjectsForClasses:classes options:options];
