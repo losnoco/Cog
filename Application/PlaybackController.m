@@ -616,6 +616,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     }
 	
 	[self setPlaybackStatus:status];
+    // If we don't send it here, if we've stopped, then the NPIC will be stuck at the last file we played.
+    [self sendMetaData];
 }
 
 - (void)playlistDidChange:(PlaylistController *)p
