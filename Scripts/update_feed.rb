@@ -8,8 +8,6 @@ require 'time'
 
 feed = ARGV[0] || 'mercury'
 
-signature_file = "#{Dir.home}/.ssh/dsa_priv.pem"
-
 site_dir = "#{Dir.home}/Source/Repos/kode54-net/cog"
 
 appcast = open("#{site_dir}/#{feed}_builds/#{feed}.xml")
@@ -99,7 +97,7 @@ if 1 #appcast_revision < latest_revision
   %x[rm '#{descriptiondoc.path}']
 
   #Update appcast
-  %x[generate_appcast '#{signature_file}' '#{site_dir}/#{feed}_builds']
+  %x[generate_appcast '#{site_dir}/#{feed}_builds']
 
   #List out the deltas
   deltas = Dir.entries("#{site_dir}/#{feed}_builds").select { |f| f =~ /\A#{Regexp.escape(deltamask)}.+\.delta\z/ }.map { |f| File.join("#{site_dir}/#{feed}_builds", f) }
