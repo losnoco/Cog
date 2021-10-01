@@ -132,7 +132,7 @@ m64p_error main_start(usf_state_t * state)
 
     memcpy(&RDRAMSize, state->save_state + 4, 4);
     to_little_endian_buffer(&RDRAMSize, 4, 1);
-    
+
     /* take the r4300 emulator mode from the config file at this point and cache it in a global variable */
 #ifdef DEBUG_INFO
     state->r4300emu = 0;
@@ -169,14 +169,14 @@ m64p_error main_start(usf_state_t * state)
 
     if (!savestates_load(state, state->save_state, state->save_state_size, 0))
         return M64ERR_INVALID_STATE;
-    
+
     if (state->enableFIFOfull)
     {
         state->g_delay_ai = 1;
         ai_fifo_queue_int(&state->g_ai);
         state->g_ai.regs[AI_STATUS_REG] |= 0x40000000;
     }
-    
+
     // We want to leave in all the necessary code so that these can one day be enabled for the trimmed sets
     if (state->enable_trimming_mode)
     {
@@ -186,7 +186,7 @@ m64p_error main_start(usf_state_t * state)
         state->g_delay_dp = 1;
         state->enable_hle_audio = 0;
     }
-    
+
     return M64ERR_SUCCESS;
 }
 

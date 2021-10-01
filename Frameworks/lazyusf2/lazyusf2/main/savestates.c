@@ -58,7 +58,7 @@
 #include "vi/vi_controller.h"
 
 static const char* savestate_magic = "M64+SAVE";
-/*static const int savestate_latest_version = 0x00010000; */ /* 1.0 */
+static const int savestate_latest_version = 0x00010000;  /* 1.0 */
 static const unsigned char pj64_magic[4] = { 0xC8, 0xA6, 0xD8, 0x23 };
 
 #define GETARRAY(buff, type, count) \
@@ -355,6 +355,7 @@ static int savestates_load_pj64(usf_state_t * state, unsigned char * ptr, unsign
 
     unsigned char * state_ptr = ptr;
     unsigned int state_size = size;
+    unsigned int count_per_scanline;
     
     size_t savestateSize;
     unsigned char *savestateData = 0, *curr;
@@ -490,9 +491,6 @@ static int savestates_load_pj64(usf_state_t * state, unsigned char * ptr, unsign
     state->g_vi.regs[VI_V_BURST_REG] = GETDATA(curr, uint32_t);
     state->g_vi.regs[VI_X_SCALE_REG] = GETDATA(curr, uint32_t);
     state->g_vi.regs[VI_Y_SCALE_REG] = GETDATA(curr, uint32_t);
-    state->g_vi.delay = (state->g_vi.regs[VI_V_SYNC_REG] == 0)
-                      ? 500000
-                      : (state->g_vi.regs[VI_V_SYNC_REG] + 1)*1500;
 
     // ai_register
     state->g_ai.regs[AI_DRAM_ADDR_REG] = GETDATA(curr, uint32_t);
@@ -599,7 +597,11 @@ static int savestates_load_pj64(usf_state_t * state, unsigned char * ptr, unsign
     //init_flashram(&state->g_pi.flashram);
 
     open_rom_header(state, savestateData, sizeof(m64p_rom_header));
-    
+
+    // Needs the rom header parsed first before the delay can be calculated
+    count_per_scanline = (unsigned int)((float)state->ROM_PARAMS.aidacrate / (float)state->ROM_PARAMS.vilimit) / (state->g_vi.regs[VI_V_SYNC_REG] + 1);
+    state->g_vi.delay = (state->g_vi.regs[VI_V_SYNC_REG] + 1) * count_per_scanline;
+
 #ifdef NEW_DYNAREC
     if (state->r4300emu == CORE_DYNAREC) {
         state->pcaddr = state->last_addr;

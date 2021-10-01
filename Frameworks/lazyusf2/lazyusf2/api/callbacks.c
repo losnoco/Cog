@@ -47,11 +47,14 @@ void DebugMessage(usf_state_t * state, int level, const char *message, ...)
       level > 1 )
   {
 #ifdef DEBUG_INFO
-      char buffer[1024];
-      va_start(args, message);
-      vsprintf(buffer, message, args);
-      va_end(args);
-      fprintf(state->debug_log, "%s\n", buffer);
+      if (state->debug_log)
+      {
+        char buffer[1024];
+        va_start(args, message);
+        vsprintf(buffer, message, args);
+        va_end(args);
+        fprintf(state->debug_log, "%s\n", buffer);
+      }
       if ( level > 1 )
 #endif
     return;
@@ -69,9 +72,7 @@ void DebugMessage(usf_state_t * state, int level, const char *message, ...)
   vsprintf(state->error_message + len, message, args);
 #endif
   va_end(args);
-    
+
   state->last_error = state->error_message;
   state->stop = 1;
 }
-
-

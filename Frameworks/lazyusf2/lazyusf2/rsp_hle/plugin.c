@@ -77,17 +77,17 @@ void HleWarnMessage(void* user_defined, const char *message, ...)
     usf_state_t* state;
     va_list ap;
     size_t len;
-    
+
     state = (usf_state_t*)user_defined;
     len = strlen( state->error_message );
-    
+
     if ( len )
         state->error_message[ len++ ] = '\n';
-    
+
     va_start( ap, message );
     vsprintf( state->error_message + len, message, ap );
     va_end( ap );
-    
+
     state->last_error = state->error_message;
     state->stop = 1;
 }
@@ -99,7 +99,8 @@ void HleCheckInterrupts(void* user_defined)
 
 void HleProcessDlistList(void* user_defined)
 {
-    /* disabled */
+    usf_state_t * state = (usf_state_t *) user_defined;
+    state->g_r4300.mi.regs[MI_INTR_REG] |= MI_INTR_DP;
 }
 
 void HleProcessAlistList(void* user_defined)

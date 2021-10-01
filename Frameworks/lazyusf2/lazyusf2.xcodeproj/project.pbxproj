@@ -324,7 +324,6 @@
 		83CA15101A988138005E7ED4 /* memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
 		83CA15111A988138005E7ED4 /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		83CA15121A988138005E7ED4 /* mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3.c; sourceTree = "<group>"; };
-		83CA15141A988138005E7ED4 /* stdbool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdbool.h; sourceTree = "<group>"; };
 		83CA15151A988138005E7ED4 /* musyx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = musyx.c; sourceTree = "<group>"; };
 		83CA15161A988138005E7ED4 /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
 		83CA15171A988138005E7ED4 /* ucodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ucodes.h; sourceTree = "<group>"; };
@@ -680,20 +679,11 @@
 				83CA15101A988138005E7ED4 /* memory.c */,
 				83CA15111A988138005E7ED4 /* memory.h */,
 				83CA15121A988138005E7ED4 /* mp3.c */,
-				83CA15131A988138005E7ED4 /* msvc-compat */,
 				83CA15151A988138005E7ED4 /* musyx.c */,
 				83CA15161A988138005E7ED4 /* plugin.c */,
 				83CA15171A988138005E7ED4 /* ucodes.h */,
 			);
 			path = rsp_hle;
-			sourceTree = "<group>";
-		};
-		83CA15131A988138005E7ED4 /* msvc-compat */ = {
-			isa = PBXGroup;
-			children = (
-				83CA15141A988138005E7ED4 /* stdbool.h */,
-			);
-			path = "msvc-compat";
 			sourceTree = "<group>";
 		};
 		83CA15181A988138005E7ED4 /* rsp_lle */ = {

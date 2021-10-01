@@ -309,9 +309,6 @@ struct usf_state
     
     int g_gs_vi_counter/* = 0*/;
     
-    unsigned int g_timer_checkpoint;
-    size_t last_sample_buffer_count;
-
     // memory/memory.c
     unsigned int address, cpu_word;
     unsigned char cpu_byte;

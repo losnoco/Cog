@@ -101,8 +101,8 @@ unsigned int virtual_to_physical_address(usf_state_t * state, unsigned int addre
     //printf("tlb exception !!! @ %x, %x, add:%x\n", addresse, w, PC->addr);
     //getchar();
 #ifdef DEBUG_INFO
-    fprintf(state->debug_log, "TLB exception @ %x, %x, add:%x\n", addresse, w, state->PC->addr);
-    fflush(state->debug_log);
+    if (state->debug_log)
+      fprintf(state->debug_log, "TLB exception @ %x, %x, add:%x\n", addresse, w, state->PC->addr);
 #endif
     TLB_refill_exception(state,addresse,w);
     //return 0x80000000;

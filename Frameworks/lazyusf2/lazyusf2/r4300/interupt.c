@@ -345,20 +345,21 @@ void check_interupt(usf_state_t * state)
     state->g_r4300.mi.regs[MI_INTR_REG] |= state->g_r4300.mi.AudioIntrReg & MI_INTR_AI;
     
 #ifdef DEBUG_INFO
-    if (state->g_r4300.mi.regs[MI_INTR_REG])
+    if (state->g_r4300.mi.regs[MI_INTR_REG] && state->debug_log)
         fprintf(state->debug_log, "Interrupt %d - ", state->g_r4300.mi.regs[MI_INTR_REG]);
 #endif
     if (state->g_r4300.mi.regs[MI_INTR_REG] & state->g_r4300.mi.regs[MI_INTR_MASK_REG])
     {
 #ifdef DEBUG_INFO
-        fprintf(state->debug_log, "triggered\n");
+        if (state->debug_log)
+          fprintf(state->debug_log, "triggered\n");
 #endif
         state->g_cp0_regs[CP0_CAUSE_REG] = (state->g_cp0_regs[CP0_CAUSE_REG] | 0x400) & 0xFFFFFF83;
     }
     else
     {
 #ifdef DEBUG_INFO
-        if (state->g_r4300.mi.regs[MI_INTR_REG])
+        if (state->g_r4300.mi.regs[MI_INTR_REG] && state->debug_log)
             fprintf(state->debug_log, "masked\n");
 #endif
         state->g_cp0_regs[CP0_CAUSE_REG] &= ~0x400;
@@ -509,7 +510,7 @@ void osal_fastcall gen_interupt(usf_state_t * state)
             return;
         }
     }
-   
+
     if (state->skip_jump)
     {
         unsigned int dest = state->skip_jump;
@@ -526,7 +527,7 @@ void osal_fastcall gen_interupt(usf_state_t * state)
         state->last_addr = dest;
         generic_jump_to(state, dest);
         return;
-    } 
+    }
 
     switch(state->q.first->data.type)
     {
@@ -538,26 +539,26 @@ void osal_fastcall gen_interupt(usf_state_t * state)
             remove_interupt_event(state);
             vi_vertical_interrupt_event(&state->g_vi);
             break;
-    
+
         case COMPARE_INT:
             compare_int_handler(state);
             break;
-    
+
         case CHECK_INT:
             remove_interupt_event(state);
             wrapped_exception_general(state);
             break;
-    
+
         case SI_INT:
             remove_interupt_event(state);
             si_end_of_dma_event(&state->g_si);
             break;
-    
+
         case PI_INT:
             remove_interupt_event(state);
             pi_end_of_dma_event(&state->g_pi);
             break;
-    
+
         case AI_INT:
             remove_interupt_event(state);
             ai_end_of_dma_event(&state->g_ai);
@@ -567,7 +568,7 @@ void osal_fastcall gen_interupt(usf_state_t * state)
             remove_interupt_event(state);
             rsp_interrupt_event(&state->g_sp);
             break;
-    
+
         case DP_INT:
             remove_interupt_event(state);
             rdp_interrupt_event(&state->g_dp);
@@ -588,4 +589,3 @@ void osal_fastcall gen_interupt(usf_state_t * state)
             break;
     }
 }
-

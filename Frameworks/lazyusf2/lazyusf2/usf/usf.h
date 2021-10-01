@@ -29,7 +29,7 @@ void usf_clear(void * state);
    _enablecompare or _enablefifofull tags are present in the file. */
 void usf_set_compare(void * state, int enable);
 void usf_set_fifo_full(void * state, int enable);
-    
+
 /* This mode will slow the emulator down to cached interpreter mode,
    and will keep track of all ROM 32 bit words which are read, and
    all RAM words which are read before they are written to. */
@@ -45,7 +45,7 @@ void usf_set_trimming_mode(void * state, int enable);
    system RDRAM, either 4MB or 8MB depending on the save state. */
 void * usf_get_rom_coverage_barray(void * state);
 void * usf_get_ram_coverage_barray(void * state);
-    
+
 /* This option should speed up decoding significantly, at the expense
    of accuracy, and potentially emulation bugs. */
 void usf_set_hle_audio(void * state, int enable);
@@ -87,6 +87,11 @@ void usf_restart(void * state);
 /* Frees all allocated memory associated with the emulator state. Necessary
    after at least one call to usf_render, or else the memory will be leaked. */
 void usf_shutdown(void * state);
+
+#ifdef DEBUG_INFO
+void usf_log_start(void * state);
+void usf_log_stop(void * state);
+#endif
 
 #ifdef __cplusplus
 }

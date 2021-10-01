@@ -299,18 +299,21 @@ int write_rsp_regs2(void* opaque, uint32_t address, uint32_t value, uint32_t mas
 void do_SP_Task(struct rsp_core* sp)
 {
 #ifdef DEBUG_INFO
-    fprintf(sp->r4300->state->debug_log, "RSP Task");
+    if (sp->r4300->state->debug_log)
+      fprintf(sp->r4300->state->debug_log, "RSP Task");
 #endif
     uint32_t save_pc = sp->regs2[SP_PC_REG] & ~0xfff;
     if (sp->mem[0xfc0/4] == 1)
     {
 #ifdef DEBUG_INFO
-        fprintf(sp->r4300->state->debug_log, " - DList");
+        if (sp->r4300->state->debug_log)
+          fprintf(sp->r4300->state->debug_log, " - DList");
 #endif
         if (sp->dp->dpc_regs[DPC_STATUS_REG] & 0x2) // DP frozen (DK64, BC)
         {
 #ifdef DEBUG_INFO
-            fprintf(sp->r4300->state->debug_log, " - frozen!\n");
+            if (sp->r4300->state->debug_log)
+              fprintf(sp->r4300->state->debug_log, " - frozen!\n");
 #endif
             // don't do the task now
             // the task will be done when DP is unfreezed (see update_dpc_status)
@@ -328,7 +331,7 @@ void do_SP_Task(struct rsp_core* sp)
         if (sp->r4300->mi.regs[MI_INTR_REG] & MI_INTR_DP)
             add_interupt_event(sp->r4300->state, DP_INT, sp->r4300->state->g_delay_dp ? 1000 : 0);
 #ifdef DEBUG_INFO
-        if (sp->r4300->mi.regs[MI_INTR_REG])
+        if (sp->r4300->mi.regs[MI_INTR_REG] && sp->r4300->state->debug_log)
             fprintf(sp->r4300->state->debug_log, " - interrupts fired %d", sp->r4300->mi.regs[MI_INTR_REG]);
 #endif
         sp->r4300->mi.regs[MI_INTR_REG] &= ~(MI_INTR_SP | MI_INTR_DP);
@@ -337,7 +340,8 @@ void do_SP_Task(struct rsp_core* sp)
     else if (sp->mem[0xfc0/4] == 2)
     {
 #ifdef DEBUG_INFO
-        fprintf(sp->r4300->state->debug_log, " - AList");
+        if (sp->r4300->state->debug_log)
+          fprintf(sp->r4300->state->debug_log, " - AList");
 #endif
         //audio.processAList();
         sp->regs2[SP_PC_REG] &= 0xfff;
@@ -348,7 +352,7 @@ void do_SP_Task(struct rsp_core* sp)
         if (sp->r4300->mi.regs[MI_INTR_REG] & MI_INTR_SP)
             add_interupt_event(sp->r4300->state, SP_INT, sp->r4300->state->g_delay_sp ? 4000/*500*/: 0);
 #ifdef DEBUG_INFO
-        if (sp->r4300->mi.regs[MI_INTR_REG])
+        if (sp->r4300->mi.regs[MI_INTR_REG] && sp->r4300->state->debug_log)
             fprintf(sp->r4300->state->debug_log, " - interrupt fired %d", sp->r4300->mi.regs[MI_INTR_REG]);
 #endif
         sp->r4300->mi.regs[MI_INTR_REG] &= ~MI_INTR_SP;
@@ -358,7 +362,8 @@ void do_SP_Task(struct rsp_core* sp)
     else
     {
 #ifdef DEBUG_INFO
-        fprintf(sp->r4300->state->debug_log, " - Unknown task");
+        if (sp->r4300->state->debug_log)
+          fprintf(sp->r4300->state->debug_log, " - Unknown task");
 #endif
         sp->regs2[SP_PC_REG] &= 0xfff;
         real_run_rsp(sp->r4300->state, 0xffffffff);
@@ -370,14 +375,15 @@ void do_SP_Task(struct rsp_core* sp)
             add_interupt_event(sp->r4300->state, SP_INT, 0/*100*/);
         }
 #ifdef DEBUG_INFO
-        if (sp->r4300->mi.regs[MI_INTR_REG])
+        if (sp->r4300->mi.regs[MI_INTR_REG] && sp->r4300->state->debug_log)
             fprintf(sp->r4300->state->debug_log, " - interrupt fired %d", sp->r4300->mi.regs[MI_INTR_REG]);
 #endif
         sp->r4300->mi.regs[MI_INTR_REG] &= ~MI_INTR_SP;
         sp->regs[SP_STATUS_REG] &= ~0x203;
     }
 #ifdef DEBUG_INFO
-    fprintf(sp->r4300->state->debug_log, "\n");
+    if (sp->r4300->state->debug_log)
+      fprintf(sp->r4300->state->debug_log, "\n");
 #endif
 }
 

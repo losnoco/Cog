@@ -76,7 +76,8 @@ static unsigned int get_dma_duration(struct ai_controller* ai)
 static void do_dma(struct ai_controller* ai, const struct ai_dma* dma)
 {
 #ifdef DEBUG_INFO
-    fprintf(ai->r4300->state->debug_log, "Audio DMA push: %d %d\n", dma->address, dma->length);
+    if (ai->r4300->state->debug_log)
+      fprintf(ai->r4300->state->debug_log, "Audio DMA push: %d %d\n", dma->address, dma->length);
 #endif
 
     /* lazy initialization of sample format */
@@ -121,7 +122,7 @@ static void fifo_push(struct ai_controller* ai)
         ai->fifo[1].address = ai->regs[AI_DRAM_ADDR_REG];
         ai->fifo[1].length = ai->regs[AI_LEN_REG];
         ai->fifo[1].duration = duration;
-        
+
         if (ai->r4300->state->enableFIFOfull)
             ai->regs[AI_STATUS_REG] |= AI_STATUS_FULL;
         else
@@ -240,4 +241,3 @@ void ai_end_of_dma_event(struct ai_controller* ai)
     ai->r4300->mi.AudioIntrReg |= MI_INTR_AI;
     raise_rcp_interrupt(ai->r4300, MI_INTR_AI);
 }
-
