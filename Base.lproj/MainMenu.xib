@@ -100,7 +100,7 @@
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1914"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="index" editable="NO" width="150" minWidth="96" maxWidth="1024" id="yGV-gP-Wl6">
+                                                <tableColumn identifier="albumartist" editable="NO" width="150" minWidth="96" maxWidth="1024" hidden="YES" id="yGV-gP-Wl6">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Album Artist">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
@@ -112,12 +112,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="dJs-UO-m5r"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.albumartist" id="OFk-g8-Jbd">
                                                             <dictionary key="options">
                                                                 <bool key="NSConditionallySetsEditable" value="YES"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="dJs-UO-m5r"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="artist" editable="NO" width="149.5" minWidth="96" maxWidth="1024" id="391">
@@ -271,8 +271,8 @@
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1925"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="filename" editable="NO" width="64" minWidth="32" maxWidth="1024" hidden="YES" id="3A3-9o-Gh9" userLabel="Codec">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Filename">
+                                                <tableColumn identifier="codec" editable="NO" width="64" minWidth="32" maxWidth="1024" hidden="YES" id="3A3-9o-Gh9" userLabel="Codec">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Codec">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -283,12 +283,12 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="VQf-MC-VR1"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.codec" id="hO0-YW-E7w">
                                                             <dictionary key="options">
                                                                 <bool key="NSConditionallySetsEditable" value="YES"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="VQf-MC-VR1"/>
                                                     </connections>
                                                 </tableColumn>
                                             </tableColumns>
