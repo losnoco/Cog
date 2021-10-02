@@ -290,6 +290,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
         [NSNumber numberWithBool:floatingPoint],@"floatingPoint",
 		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[[wv source] seekable]], @"seekable",
+        @"Wavpack",@"codec",
 		@"little",@"endian",
 		nil];
 }

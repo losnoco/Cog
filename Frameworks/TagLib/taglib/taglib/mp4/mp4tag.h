@@ -54,6 +54,7 @@ namespace TagLib {
         bool save();
 
         virtual String title() const;
+        virtual String albumartist() const;
         virtual String artist() const;
         virtual String album() const;
         virtual String comment() const;
@@ -66,6 +67,7 @@ namespace TagLib {
         float rgTrackPeak() const;
 
         virtual void setTitle(const String &value);
+        virtual void setAlbumArtist(const String &value);
         virtual void setArtist(const String &value);
         virtual void setAlbum(const String &value);
         virtual void setComment(const String &value);

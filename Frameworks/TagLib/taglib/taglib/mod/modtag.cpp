@@ -59,6 +59,11 @@ String Mod::Tag::title() const
   return d->title;
 }
 
+String Mod::Tag::albumartist() const
+{
+  return String();
+}
+
 String Mod::Tag::artist() const
 {
   return String();
@@ -117,6 +122,10 @@ String Mod::Tag::trackerName() const
 void Mod::Tag::setTitle(const String &title)
 {
   d->title = title;
+}
+
+void Mod::Tag::setAlbumArtist(const String &)
+{
 }
 
 void Mod::Tag::setArtist(const String &)

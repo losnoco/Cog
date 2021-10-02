@@ -47,6 +47,7 @@ Tag::~Tag()
 bool Tag::isEmpty() const
 {
   return (title().isEmpty() &&
+          albumartist().isEmpty() &&
           artist().isEmpty() &&
           album().isEmpty() &&
           comment().isEmpty() &&
@@ -60,6 +61,8 @@ PropertyMap Tag::properties() const
   PropertyMap map;
   if(!(title().isEmpty()))
     map["TITLE"].append(title());
+  if(!(albumartist().isEmpty()))
+    map["ALBUMARTIST"].append(albumartist());
   if(!(artist().isEmpty()))
     map["ARTIST"].append(artist());
   if(!(album().isEmpty()))
@@ -90,6 +93,16 @@ PropertyMap Tag::setProperties(const PropertyMap &origProps)
     oneValueSet.append("TITLE");
   } else
     setTitle(String());
+
+  if(properties.contains("ALBUMARTIST") ||
+     properties.contains("ALBUM ARTIST")) {
+    if (properties.contains("ALBUMARTIST"))
+      setAlbumArtist(properties["ALBUMARTIST"].front());
+    else
+      setAlbumArtist(properties["ALBUM ARTIST"].front());
+    oneValueSet.append("ALBUMARTIST");
+  } else
+    setAlbumArtist(String());
 
   if(properties.contains("ARTIST")) {
     setArtist(properties["ARTIST"].front());
@@ -154,6 +167,7 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
 {
   if(overwrite) {
     target->setTitle(source->title());
+    target->setAlbumArtist(source->albumartist());
     target->setArtist(source->artist());
     target->setAlbum(source->album());
     target->setComment(source->comment());
@@ -164,6 +178,8 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
   else {
     if(target->title().isEmpty())
       target->setTitle(source->title());
+    if(target->albumartist().isEmpty())
+      target->setAlbumArtist(source->albumartist());
     if(target->artist().isEmpty())
       target->setArtist(source->artist());
     if(target->album().isEmpty())

@@ -138,6 +138,7 @@ long sourceTell(void *datasource)
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 		[NSNumber numberWithInt:bitrate], @"bitrate",
 		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
+        @"Vorbis", @"codec",
         @"host", @"endian",
 		nil];
 }

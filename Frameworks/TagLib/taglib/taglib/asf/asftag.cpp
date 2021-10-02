@@ -55,6 +55,11 @@ String ASF::Tag::title() const
   return d->title;
 }
 
+String ASF::Tag::albumartist() const
+{
+  return String();
+}
+
 String ASF::Tag::artist() const
 {
   return d->artist;
@@ -133,6 +138,10 @@ float ASF::Tag::rgTrackPeak() const
 void ASF::Tag::setTitle(const String &value)
 {
   d->title = value;
+}
+
+void ASF::Tag::setAlbumArtist(const String &)
+{
 }
 
 void ASF::Tag::setArtist(const String &value)

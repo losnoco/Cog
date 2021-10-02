@@ -33,6 +33,7 @@
 	
 	IBOutlet NSMenuItem *showIndexColumn;
 	IBOutlet NSMenuItem *showTitleColumn;
+    IBOutlet NSMenuItem *showAlbumArtistColumn;
 	IBOutlet NSMenuItem *showArtistColumn;
 	IBOutlet NSMenuItem *showAlbumColumn;
 	IBOutlet NSMenuItem *showGenreColumn;

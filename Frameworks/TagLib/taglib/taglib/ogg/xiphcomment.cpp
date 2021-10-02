@@ -85,6 +85,15 @@ String Ogg::XiphComment::title() const
   return d->fieldListMap["TITLE"].toString();
 }
 
+String Ogg::XiphComment::albumartist() const
+{
+  if(!d->fieldListMap["ALBUMARTIST"].isEmpty())
+    return d->fieldListMap["ALBUMARTIST"].toString();
+  if(!d->fieldListMap["ALBUM ARTIST"].isEmpty())
+    return d->fieldListMap["ALBUM ARTIST"].toString();
+  return String();
+}
+
 String Ogg::XiphComment::artist() const
 {
   if(d->fieldListMap["ARTIST"].isEmpty())
@@ -170,6 +179,11 @@ float Ogg::XiphComment::rgTrackPeak() const
 void Ogg::XiphComment::setTitle(const String &s)
 {
   addField("TITLE", s);
+}
+
+void Ogg::XiphComment::setAlbumArtist(const String &s)
+{
+  addField("ALBUMARTIST", s);
 }
 
 void Ogg::XiphComment::setArtist(const String &s)

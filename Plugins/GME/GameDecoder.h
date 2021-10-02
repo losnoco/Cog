@@ -19,6 +19,7 @@ extern gme_err_t readCallback( void* data, void* out, long count );
 	id<CogSource> source;
 	long length;
 	long fade;
+    NSString* codec;
 }
 
 - (void)setSource:(id<CogSource>)s;

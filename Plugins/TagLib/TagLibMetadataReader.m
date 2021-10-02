@@ -71,11 +71,12 @@
 		
 		if (tag)
 		{
-			TagLib::String artist, title, album, genre, comment;
+			TagLib::String artist, albumartist, title, album, genre, comment;
 			int year, track;
             float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
 			
 			artist = tag->artist();
+            albumartist = tag->albumartist();
 			title = tag->title();;
 			album = tag->album();
 			genre = tag->genre();
@@ -98,6 +99,9 @@
 			
 			if (!artist.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
+            
+            if (!albumartist.isEmpty())
+                [dict setObject:[NSString stringWithUTF8String:albumartist.toCString(true)] forKey:@"albumartist"];
 
 			if (!album.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];

@@ -93,6 +93,7 @@
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:seekable ],@"seekable",
+        @"Shorten",@"codec",
 		@"little",@"endian",
 		nil];
 }

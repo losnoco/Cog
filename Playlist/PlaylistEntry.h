@@ -26,6 +26,7 @@
 	NSURL *URL;
 	
 	NSString *artist;
+    NSString *albumartist;
 	NSString *album;
 	NSString *title;
 	NSString *genre;
@@ -50,6 +51,8 @@
     BOOL Unsigned;
 	float sampleRate;
 	
+    NSString *codec;
+    
 	NSString *endian;
 	
 	BOOL seekable;
@@ -97,6 +100,7 @@
 @property(retain) NSURL *URL;
 
 @property(retain) NSString *artist;
+@property(retain) NSString *albumartist;
 @property(retain) NSString *album;
 @property(nonatomic, retain) NSString *title;
 @property(retain) NSString *genre;
@@ -113,6 +117,8 @@
 @property BOOL floatingPoint;
 @property BOOL Unsigned;
 @property float sampleRate;
+
+@property(retain) NSString *codec;
 
 @property float replayGainAlbumGain;
 @property float replayGainAlbumPeak;

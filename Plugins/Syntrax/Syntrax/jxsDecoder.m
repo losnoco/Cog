@@ -137,6 +137,7 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
         [NSNumber numberWithBool:NO], @"floatingPoint",
 		[NSNumber numberWithInt:2], @"channels",
 		[NSNumber numberWithBool:YES], @"seekable",
+        @"Syntrax", @"codec",
 		@"host", @"endian",
 		nil];
 }

@@ -59,6 +59,12 @@ namespace TagLib {
       /*!
        * Not supported by module files.  Therefore always returns String::null.
        */
+      virtual String albumartist() const;
+
+        
+      /*!
+       * Not supported by module files.  Therefore always returns String::null.
+       */
       virtual String artist() const;
 
       /*!
@@ -126,6 +132,11 @@ namespace TagLib {
        * characters.
        */
       virtual void setTitle(const String &title);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setAlbumArtist(const String &albumartist);
 
       /*!
        * Not supported by module files and therefore ignored.

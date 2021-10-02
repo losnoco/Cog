@@ -93,6 +93,11 @@ String RIFF::Info::Tag::title() const
   return fieldText("INAM");
 }
 
+String RIFF::Info::Tag::albumartist() const
+{
+  return String();
+}
+
 String RIFF::Info::Tag::artist() const
 {
   return fieldText("IART");
@@ -146,6 +151,10 @@ float RIFF::Info::Tag::rgTrackPeak() const
 void RIFF::Info::Tag::setTitle(const String &s)
 {
   setFieldText("INAM", s);
+}
+
+void RIFF::Info::Tag::setAlbumArtist(const String &)
+{
 }
 
 void RIFF::Info::Tag::setArtist(const String &s)

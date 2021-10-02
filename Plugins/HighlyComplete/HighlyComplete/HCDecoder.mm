@@ -261,6 +261,10 @@ static int psf_info_meta(void * context, const char * name, const char * value)
 	{
 		taglc = @"year";
 	}
+    else if ([taglc isEqualToString:@"album artist"])
+    {
+        taglc = @"albumartist";
+    }
     
 	if ([taglc hasPrefix:@"replaygain_"])
 	{
@@ -296,6 +300,7 @@ static int psf_info_meta(void * context, const char * name, const char * value)
 		state->utf8 = true;
 	}
 	else if ([taglc isEqualToString:@"title"] ||
+             [taglc isEqualToString:@"albumartist"] ||
              [taglc isEqualToString:@"artist"] ||
              [taglc isEqualToString:@"album"] ||
              [taglc isEqualToString:@"year"] ||
@@ -1686,6 +1691,19 @@ static int usf_info(void * context, const char * name, const char * value)
 
 - (NSDictionary *)properties
 {
+    NSString* codec = nil;
+    switch (type) {
+        case 1: codec = @"PSF"; break;
+        case 2: codec = @"PSF2"; break;
+        case 0x11: codec = @"SSF"; break;
+        case 0x12: codec = @"DSF"; break;
+        case 0x21: codec = @"USF"; break;
+        case 0x22: codec = @"GSF"; break;
+        case 0x24: codec = @"2SF"; break;
+        case 0x25: codec = @"NCSF"; break;
+        case 0x41: codec = @"QSF"; break;
+    }
+    
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 			[NSNumber numberWithInt:2], @"channels",
 			[NSNumber numberWithInt:16], @"bitsPerSample",
@@ -1698,6 +1716,7 @@ static int usf_info(void * context, const char * name, const char * value)
             [NSNumber numberWithFloat:replayGainTrackGain], @"replayGainTrackGain",
             [NSNumber numberWithFloat:replayGainTrackPeak], @"replayGainTrackPeak",
             [NSNumber numberWithFloat:volume], @"volume",
+            codec, @"codec",
 			@"host", @"endian",
 			nil];
 }

@@ -211,6 +211,7 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
         [NSNumber numberWithBool:YES], @"floatingPoint",
 		[NSNumber numberWithInt:2], @"channels",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
+        @"Musepack", @"codec",
 		@"host",@"endian",
 		nil];
 }

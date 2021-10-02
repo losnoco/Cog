@@ -60,6 +60,7 @@ namespace TagLib {
     void removeUnsupportedProperties(const StringList &unsupported);
 
     virtual String title() const;
+    virtual String albumartist() const;
     virtual String artist() const;
     virtual String album() const;
     virtual String comment() const;
@@ -72,6 +73,7 @@ namespace TagLib {
     virtual float rgTrackPeak() const;
 
     virtual void setTitle(const String &s);
+    virtual void setAlbumArtist(const String &s);
     virtual void setArtist(const String &s);
     virtual void setAlbum(const String &s);
     virtual void setComment(const String &s);

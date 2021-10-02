@@ -479,6 +479,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 			[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 			[NSNumber numberWithInt:bitrate], @"bitrate",
 			[NSNumber numberWithBool:seekable], @"seekable",
+            [NSString stringWithUTF8String:avcodec_get_name(codecCtx->codec_id)], @"codec",
             @"host", @"endian",
 			nil];
 }

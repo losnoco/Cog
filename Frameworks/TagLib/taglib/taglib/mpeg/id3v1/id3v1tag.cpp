@@ -132,6 +132,11 @@ String ID3v1::Tag::title() const
   return d->title;
 }
 
+String ID3v1::Tag::albumartist() const
+{
+  return String();
+}
+
 String ID3v1::Tag::artist() const
 {
   return d->artist;
@@ -185,6 +190,10 @@ float ID3v1::Tag::rgTrackPeak() const
 void ID3v1::Tag::setTitle(const String &s)
 {
   d->title = s;
+}
+
+void ID3v1::Tag::setAlbumArtist(const String &)
+{
 }
 
 void ID3v1::Tag::setArtist(const String &s)

@@ -144,6 +144,7 @@ opus_int64 sourceTell(void *_stream)
 		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
 		[NSNumber numberWithInt:bitrate], @"bitrate",
 		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
+        @"Opus", @"codec",
         @"host", @"endian",
 		nil];
 }

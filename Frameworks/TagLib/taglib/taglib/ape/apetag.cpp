@@ -123,6 +123,15 @@ String APE::Tag::title() const
   return d->itemListMap["TITLE"].values().toString();
 }
 
+String APE::Tag::albumartist() const
+{
+  if(!d->itemListMap["ALBUMARTIST"].isEmpty())
+    return d->itemListMap["ALBUMARTIST"].values().toString();
+  if(!d->itemListMap["ALBUM ARTIST"].isEmpty())
+    return d->itemListMap["ALBUM ARTIST"].values().toString();
+  return String();
+}
+
 String APE::Tag::artist() const
 {
   if(d->itemListMap["ARTIST"].isEmpty())
@@ -196,6 +205,11 @@ float APE::Tag::rgTrackPeak() const
 void APE::Tag::setTitle(const String &s)
 {
   addValue("TITLE", s, true);
+}
+
+void APE::Tag::setAlbumArtist(const String &s)
+{
+  addValue("ALBUMARTIST", s, true);
 }
 
 void APE::Tag::setArtist(const String &s)

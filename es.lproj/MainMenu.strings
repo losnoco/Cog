@@ -622,3 +622,9 @@
 
 /* Class = "NSMenuItem"; title = "Properties"; ObjectID = "Eds-my-DQr"; */
 "Eds-my-DQr.title" = "Properties";
+
+/* Class = "NSTableColumn"; title = "Album Artist"; ObjectID = "yGV-gP-Wl6"; */
+"yGV-gP-Wl6.title" = "Album Artist";
+
+/* Class = "NSTableColumn"; title = "Codec"; ObjectID = "3A3-9o-Gh9"; */
+"3A3-9o-Gh9.title" = "Codec";

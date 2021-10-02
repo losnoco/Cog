@@ -178,6 +178,11 @@ String TagUnion::title() const
   stringUnion(title);
 }
 
+String TagUnion::albumartist() const
+{
+  stringUnion(albumartist);
+}
+
 String TagUnion::artist() const
 {
   stringUnion(artist);
@@ -231,6 +236,11 @@ float TagUnion::rgTrackPeak() const
 void TagUnion::setTitle(const String &s)
 {
   setUnion(Title, s);
+}
+
+void TagUnion::setAlbumArtist(const String &s)
+{
+  setUnion(AlbumArtist, s);
 }
 
 void TagUnion::setArtist(const String &s)

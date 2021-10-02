@@ -114,6 +114,7 @@ static OSType getOSType(const char * in_)
         [NSNumber numberWithBool:YES], @"floatingPoint",
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:YES], @"seekable",
+        @"MIDI", @"codec",
 		@"host", @"endian",
 		nil];
 }

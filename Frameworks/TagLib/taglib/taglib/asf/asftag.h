@@ -55,6 +55,11 @@ namespace TagLib {
       virtual String title() const;
 
       /*!
+       * Returns the album artist name.
+       */
+      virtual String albumartist() const;
+
+      /*!
        * Returns the artist name.
        */
       virtual String artist() const;
@@ -107,6 +112,11 @@ namespace TagLib {
        * Sets the title to \a s.
        */
       virtual void setTitle(const String &s);
+
+      /*!
+       * Sets the artist to \a s.
+       */
+      virtual void setAlbumArtist(const String &s);
 
       /*!
        * Sets the artist to \a s.

@@ -73,3 +73,9 @@
 
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "87"; */
 "87.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "Album Artist:"; ObjectID = "vB6-9J-5qg"; */
+"vB6-9J-5qg.title" = "Album Artist:";
+
+/* Class = "NSTextFieldCell"; title = "Codec:"; ObjectID = "QPg-Mb-Urn"; */
+"QPg-Mb-Urn.title" = "Codec:";

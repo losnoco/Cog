@@ -28,6 +28,7 @@
 @synthesize URL;
 
 @synthesize artist;
+@synthesize albumartist;
 @synthesize album;
 @synthesize genre;
 @synthesize year;
@@ -40,6 +41,8 @@
 @synthesize floatingPoint;
 @synthesize Unsigned;
 @synthesize sampleRate;
+
+@synthesize codec;
 
 @synthesize replayGainAlbumGain;
 @synthesize replayGainAlbumPeak;
@@ -89,7 +92,7 @@
 
 + (NSSet *)keyPathsForValuesAffectingSpam
 {
-    return [NSSet setWithObjects:@"artist", @"title", @"album", @"track", @"totalFrames", @"currentPosition", @"bitrate", nil];
+    return [NSSet setWithObjects:@"albumartist", @"artist", @"title", @"album", @"track", @"totalFrames", @"currentPosition", @"bitrate", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingPositionText
@@ -131,6 +134,7 @@
 	self.URL = nil;
 	
 	self.artist = nil;
+    self.albumartist = nil;
 	self.album = nil;
 	self.title = nil;
 	self.genre = nil;
@@ -139,6 +143,7 @@
 	self.albumArtInternal = nil;
 	
 	self.endian = nil;
+    self.codec = nil;
 }
 
 // Get the URL if the title is blank
@@ -167,12 +172,14 @@
 {
     BOOL hasBitrate = (self.bitrate != 0);
     BOOL hasArtist = (self.artist != nil) && (![self.artist isEqualToString:@""]);
+    BOOL hasAlbumArtist = (self.albumartist != nil) && (![self.albumartist isEqualToString:@""]);
     BOOL hasAlbum = (self.album != nil) && (![self.album isEqualToString:@""]);
     BOOL hasTrack = (self.track != 0);
     BOOL hasLength = (self.totalFrames != 0);
     BOOL hasCurrentPosition = (self.currentPosition != 0) && (self.current);
     BOOL hasExtension = NO;
     BOOL hasTitle = (title != nil) && (![title isEqualToString:@""]);
+    BOOL hasCodec = (self.codec != nil) && (![self.codec isEqualToString:@""]);
     
     NSMutableString * filename = [NSMutableString stringWithString:[self filename]];
     NSRange dotPosition = [filename rangeOfString:@"." options:NSBackwardsSearch];
@@ -192,7 +199,12 @@
 
     if (hasExtension) {
         [elements addObject:@"["];
-        [elements addObject:[extension uppercaseString]];
+        if (hasCodec) {
+            [elements addObject:self.codec];
+        }
+        else {
+            [elements addObject:[extension uppercaseString]];
+        }
         if (hasBitrate) {
             [elements addObject:@"@"];
             [elements addObject:[NSString stringWithFormat:@"%u", self.bitrate]];
@@ -202,7 +214,12 @@
     }
     
     if (hasArtist) {
-        [elements addObject:self.artist];
+        if (hasAlbumArtist) {
+            [elements addObject:self.albumartist];
+        }
+        else {
+            [elements addObject:self.artist];
+        }
         [elements addObject:@" - "];
     }
     
@@ -221,6 +238,11 @@
     }
     else {
         [elements addObject:filename];
+    }
+    
+    if (hasAlbumArtist && hasArtist) {
+        [elements addObject:@" // "];
+        [elements addObject:self.artist];
     }
     
     if (hasCurrentPosition || hasLength) {

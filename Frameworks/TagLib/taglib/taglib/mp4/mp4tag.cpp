@@ -733,6 +733,14 @@ MP4::Tag::artist() const
 }
 
 String
+MP4::Tag::albumartist() const
+{
+  if(d->items.contains("aART"))
+    return d->items["aART"].toStringList().toString(", ");
+  return String();
+}
+
+String
 MP4::Tag::album() const
 {
   if(d->items.contains("\251alb"))
@@ -800,6 +808,12 @@ void
 MP4::Tag::setTitle(const String &value)
 {
   setTextItem("\251nam", value);
+}
+
+void
+MP4::Tag::setAlbumArtist(const String &value)
+{
+  setTextItem("aART", value);
 }
 
 void

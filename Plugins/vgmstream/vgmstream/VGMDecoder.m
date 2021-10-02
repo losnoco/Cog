@@ -11,6 +11,21 @@
 
 #import "PlaylistController.h"
 
+static NSString* get_description_tag(const char* description, const char *tag, char delimiter) {
+    // extract a "tag" from the description string
+    const char* pos = strstr(description, tag);
+    const char* eos = NULL;
+    if (pos != NULL) {
+        pos += strlen(tag);
+        eos = strchr(pos, delimiter);
+        if (eos == NULL) eos = pos + strlen(pos);
+        NSMutableData* data = [NSData dataWithBytes:pos length:(eos - pos + 1)];
+        ((char *)[data mutableBytes])[eos - pos] = '\0';
+        return [NSString stringWithUTF8String:[data bytes]];
+    }
+    return nil;
+}
+
 @implementation VGMInfoCache
 
 +(id)sharedCache {
@@ -48,6 +63,9 @@
     long totalFrames = vgmstream_get_samples(stream);
     
     int bitrate = get_vgmstream_average_bitrate(stream);
+    
+    char description[1024];
+    describe_vgmstream(stream, description, 1024);
 
     NSString * path = [url absoluteString];
     NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
@@ -67,11 +85,15 @@
     NSNumber *year = [NSNumber numberWithInt:0];
     NSNumber *track = [NSNumber numberWithInt:0];
     NSString *title = @"";
+    
+    NSString *codec;
 
     NSNumber *rgTrackGain = [NSNumber numberWithInt:0];
     NSNumber *rgTrackPeak = [NSNumber numberWithInt:0];
     NSNumber *rgAlbumGain = [NSNumber numberWithInt:0];
     NSNumber *rgAlbumPeak = [NSNumber numberWithInt:0];
+    
+    codec = get_description_tag(description, "encoding: ", 0);
     
     STREAMFILE *tagFile = cogsf_create_from_url(tagurl);
     if (tagFile) {
@@ -134,6 +156,7 @@
             rgAlbumPeak, @"replayGainAlbumPeak",
             rgTrackGain, @"replayGainTrackGain",
             rgTrackPeak, @"replayGainTrackPeak",
+            codec, @"codec",
             @"host", @"endian",
             nil];
 
