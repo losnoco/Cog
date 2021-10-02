@@ -586,6 +586,8 @@
 		83AFABBC23795202002F3947 /* xssb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AFABB923795201002F3947 /* xssb.c */; };
 		83AFABBD23795202002F3947 /* ea_eaac_opus_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AFABBA23795202002F3947 /* ea_eaac_opus_streamfile.h */; };
 		83AFABBE23795202002F3947 /* isb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AFABBB23795202002F3947 /* isb.c */; };
+		83B46FD12707FB2100847FC9 /* at3plus_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B46FCD2707FB2100847FC9 /* at3plus_decoder.h */; };
+		83B46FD52707FB9A00847FC9 /* endianness.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B46FD42707FB9A00847FC9 /* endianness.h */; };
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
 		83C7280F22BC893D00678B4A /* xwb_xsb.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C727FB22BC893800678B4A /* xwb_xsb.h */; };
 		83C7281022BC893D00678B4A /* nps.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C727FC22BC893900678B4A /* nps.c */; };
@@ -1394,6 +1396,8 @@
 		83AFABB923795201002F3947 /* xssb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xssb.c; sourceTree = "<group>"; };
 		83AFABBA23795202002F3947 /* ea_eaac_opus_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ea_eaac_opus_streamfile.h; sourceTree = "<group>"; };
 		83AFABBB23795202002F3947 /* isb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = isb.c; sourceTree = "<group>"; };
+		83B46FCD2707FB2100847FC9 /* at3plus_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = at3plus_decoder.h; sourceTree = "<group>"; };
+		83B46FD42707FB9A00847FC9 /* endianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endianness.h; sourceTree = "<group>"; };
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
 		83C727FB22BC893800678B4A /* xwb_xsb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xwb_xsb.h; sourceTree = "<group>"; };
 		83C727FC22BC893900678B4A /* nps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nps.c; sourceTree = "<group>"; };
@@ -1631,6 +1635,7 @@
 				836F6DE218BDC2180095E648 /* adx_decoder.c */,
 				8315958320FEC831007002F0 /* asf_decoder.c */,
 				8306B08120984517000302D4 /* at3plus_decoder.c */,
+				83B46FCD2707FB2100847FC9 /* at3plus_decoder.h */,
 				830EBE0F2004655D0023AA10 /* atrac9_decoder.c */,
 				834FE0B2215C798C000A5D3D /* celt_fsb_decoder.c */,
 				83031EBF243C50A800C3F3E0 /* circus_decoder_lib_data.h */,
@@ -2253,6 +2258,7 @@
 			children = (
 				83D26A8026E66DC2001A9475 /* chunks.c */,
 				83D26A7E26E66DC2001A9475 /* chunks.h */,
+				83B46FD42707FB9A00847FC9 /* endianness.h */,
 				83D26A7D26E66DC2001A9475 /* log.c */,
 				83D26A7F26E66DC2001A9475 /* log.h */,
 				8315868826F586F900803A3A /* m2_psb.c */,
@@ -2319,6 +2325,7 @@
 				83E7FD6225EF2B0C00683FD2 /* tac_decoder_lib_ops.h in Headers */,
 				83AF2CCC26226BA500538240 /* encrypted_bgm_streamfile.h in Headers */,
 				8349A90F1FE6258200E26435 /* aix_streamfile.h in Headers */,
+				83B46FD52707FB9A00847FC9 /* endianness.h in Headers */,
 				836F705718BDC2190095E648 /* util.h in Headers */,
 				83C7282722BC8C1500678B4A /* plugins.h in Headers */,
 				834FE0ED215C79ED000A5D3D /* fsb_interleave_streamfile.h in Headers */,
@@ -2333,6 +2340,7 @@
 				8306B0E020984590000302D4 /* ppst_streamfile.h in Headers */,
 				83AA7F722519BFEA004C5298 /* vorbis_bitreader.h in Headers */,
 				834FE0BA215C798C000A5D3D /* ea_mt_decoder_utk.h in Headers */,
+				83B46FD12707FB2100847FC9 /* at3plus_decoder.h in Headers */,
 				835C883722CC17BE001B4B3F /* ogg_vorbis_streamfile.h in Headers */,
 				837CEAFE23487F2C00E62A4A /* jstm_streamfile.h in Headers */,
 				832BF82021E0514B006F50F1 /* zsnd_streamfile.h in Headers */,

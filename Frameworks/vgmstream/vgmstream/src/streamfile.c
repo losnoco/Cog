@@ -16,11 +16,11 @@
  * - Clang: seems only defined on Linux/GNU environments, somehow emscripten is out
  *   (unsure about Clang Win since apparently they define _MSC_VER)
  * - Android: API +24 if not using __USE_FILE_OFFSET64
- * Not sure if fopen64 is needed in some cases. May be worth adding some compiler flag to enable 64 versions manually.
+ * Not sure if fopen64 is needed in some cases.
  */
 
-/* MSVC fixes (though mingw uses MSVCRT but not MSC_VER, maybe use AND?) */
-#if defined(__MSVCRT__) || defined(_MSC_VER)
+#if defined(_MSC_VER) //&& defined(__MSVCRT__)
+    /* MSVC fixes (MinG64 seems to set MSVCRT too, but we want it below) */
     #include <io.h>
 
     #define fopen_v fopen
@@ -43,14 +43,22 @@
     //    #define off_t/off64_t __int64
     //#endif
 
+#elif defined(VGMSTREAM_USE_IO64) || defined(__MINGW32__) || defined(__MINGW64__)
+    /* force, or known to work */
+    #define fopen_v fopen
+    #define fseek_v fseeko64  //fseeko
+    #define ftell_v ftello64  //ftello
+
 #elif defined(XBMC) || defined(__EMSCRIPTEN__) || defined (__ANDROID__) || defined(__APPLE__)
+    /* may depend on version */
     #define fopen_v fopen
     #define fseek_v fseek
     #define ftell_v ftell
 #else
+    /* other Linux systems may already use off64_t in fseeko/ftello? */
     #define fopen_v fopen
-    #define fseek_v fseeko64  //fseeko
-    #define ftell_v ftello64  //ftello
+    #define fseek_v fseeko
+    #define ftell_v ftello
 #endif
 
 
@@ -952,22 +960,12 @@ STREAMFILE* open_streamfile(STREAMFILE* sf, const char* pathname) {
 
 STREAMFILE* open_streamfile_by_ext(STREAMFILE* sf, const char* ext) {
     char filename[PATH_LIMIT];
-    int filename_len, fileext_len;
 
-    sf->get_name(sf, filename, sizeof(filename));
+    get_streamfile_name(sf, filename, sizeof(filename));
 
-    filename_len = strlen(filename);
-    fileext_len = strlen(filename_extension(filename));
+    swap_extension(filename, sizeof(filename), ext);
 
-    if (fileext_len == 0) {/* extensionless */
-        strcat(filename,".");
-        strcat(filename,ext);
-    }
-    else {
-        strcpy(filename + filename_len - fileext_len, ext);
-    }
-
-    return sf->open(sf, filename, STREAMFILE_DEFAULT_BUFFER_SIZE);
+    return open_streamfile(sf, filename);
 }
 
 STREAMFILE* open_streamfile_by_filename(STREAMFILE* sf, const char* filename) {
@@ -977,7 +975,7 @@ STREAMFILE* open_streamfile_by_filename(STREAMFILE* sf, const char* filename) {
 
     if (!sf || !filename || !filename[0]) return NULL;
 
-    sf->get_name(sf, fullname, sizeof(fullname));
+    get_streamfile_name(sf, fullname, sizeof(fullname));
 
     //todo normalize separators in a better way, safeops, improve copying
 
@@ -1026,7 +1024,7 @@ STREAMFILE* open_streamfile_by_filename(STREAMFILE* sf, const char* filename) {
         strcpy(fullname, filename);
     }
 
-    return sf->open(sf, fullname, STREAMFILE_DEFAULT_BUFFER_SIZE);
+    return open_streamfile(sf, fullname);
 }
 
 STREAMFILE* reopen_streamfile(STREAMFILE* sf, size_t buffer_size) {
@@ -1036,7 +1034,7 @@ STREAMFILE* reopen_streamfile(STREAMFILE* sf, size_t buffer_size) {
 
     if (buffer_size == 0)
         buffer_size = STREAMFILE_DEFAULT_BUFFER_SIZE;
-    sf->get_name(sf, pathname,sizeof(pathname));
+    get_streamfile_name(sf, pathname, sizeof(pathname));
     return sf->open(sf, pathname, buffer_size);
 }
 
@@ -1262,6 +1260,11 @@ STREAMFILE* read_filemap_file_pos(STREAMFILE* sf, int file_num, int* p_pos) {
         /* get key/val (ignores lead/trailing spaces, stops at comment/separator) */
         ok = sscanf(line, " %[^\t#:] : %[^\t#\r\n] ", key, val);
         if (ok != 2) { /* ignore line if no key=val (comment or garbage) */
+            /* better way? */
+            if (strcmp(line, "#@reset-pos") == 0) {
+                file_pos = 0;
+                VGM_LOG("pos =%i\n", file_pos);
+            }
             continue;
         }
 

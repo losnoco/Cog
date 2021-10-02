@@ -11,17 +11,21 @@
 
 #import "PlaylistController.h"
 
+#include <stdlib.h>
+
 static NSString* get_description_tag(const char* description, const char *tag, char delimiter) {
     // extract a "tag" from the description string
+    if (!delimiter) delimiter = '\n';
     const char* pos = strstr(description, tag);
     const char* eos = NULL;
     if (pos != NULL) {
         pos += strlen(tag);
         eos = strchr(pos, delimiter);
         if (eos == NULL) eos = pos + strlen(pos);
-        NSMutableData* data = [NSData dataWithBytes:pos length:(eos - pos + 1)];
-        ((char *)[data mutableBytes])[eos - pos] = '\0';
-        return [NSString stringWithUTF8String:[data bytes]];
+        char temp[eos - pos + 1];
+        memcpy(temp, pos, eos - pos);
+        temp[eos - pos] = '\0';
+        return [NSString stringWithUTF8String:temp];
     }
     return nil;
 }
