@@ -21,6 +21,7 @@
 #import <Cocoa/Cocoa.h>
 
 #include <AudioToolbox/AudioFile.h>
+#include <AudioToolbox/AudioFormat.h>
 #include <AudioToolbox/ExtendedAudioFile.h>
 
 #import "Plugin.h"
@@ -43,6 +44,8 @@
 	int channels;
 	float frequency;
 	long totalFrames;
+    
+    NSString* codec;
 }
 
 @end

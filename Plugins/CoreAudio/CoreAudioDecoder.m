@@ -133,12 +133,13 @@ static SInt64 getSizeProc(void* clientData) {
 {
 	OSStatus						err;
 	UInt32							size;
+    UInt32                          asbdSize;
 	AudioStreamBasicDescription		asbd;
     AudioFileID                     afi;
 	
 	// Get input file information
-	size	= sizeof(asbd);
-	err		= ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileDataFormat, &size, &asbd);
+	asbdSize = sizeof(asbd);
+	err		 = ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileDataFormat, &asbdSize, &asbd);
 	if(err != noErr) {
 		err = ExtAudioFileDispose(_in);
 		return NO;
@@ -182,6 +183,23 @@ static SInt64 getSizeProc(void* clientData) {
     }
 	
     bitrate                = (_bitrate + 500) / 1000;
+    
+    CFStringRef formatName;
+    size    = sizeof(formatName);
+    err     = AudioFormatGetProperty(kAudioFormatProperty_FormatName, asbdSize, &asbd, &size, &formatName);
+    if(err != noErr) {
+        err = ExtAudioFileDispose(_in);
+        return NO;
+    }
+    
+    codec = (__bridge NSString *)formatName;
+    
+    CFRelease(formatName);
+    
+    NSRange range = [codec rangeOfString:@","];
+    if (range.location != NSNotFound) {
+        codec = [codec substringToIndex:range.location];
+    }
     
 	// Set our properties
 	bitsPerSample		= formatBitsPerSample;
@@ -307,6 +325,7 @@ static SInt64 getSizeProc(void* clientData) {
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithLong:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:YES], @"seekable",
+        codec, @"codec",
         floatingPoint ? @"host" : @"big", @"endian",
 		nil];
 }
