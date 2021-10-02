@@ -28,8 +28,21 @@
     NSControlSize s = NSControlSizeSmall;
     NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
     // NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
+    
+    NSArray<NSTableColumn *> *columns = [[NSSet setWithArray:[self tableColumns]] allObjects];
+    
+    if ([columns count] < [[self tableColumns] count]) {
+        // borkage in saved state
+        NSArray<NSTableColumn *> *borkCols = [[self tableColumns] copy];
+        for (NSTableColumn *col in borkCols) {
+            [self removeTableColumn:col];
+        }
+        for (NSTableColumn *col in columns) {
+            [self addTableColumn:col];
+        }
+    }
 
-    for (NSTableColumn *col in [self tableColumns]) {
+    for (NSTableColumn *col in columns) {
         [[col dataCell] setControlSize:s];
         [[col dataCell] setFont:f];
     }
@@ -57,7 +70,7 @@
 
     int visibleTableColumns = 0;
     int menuIndex = 0;
-    for (NSTableColumn *col in [[self tableColumns] sortedArrayUsingDescriptors:sortDescriptors]) {
+    for (NSTableColumn *col in [columns sortedArrayUsingDescriptors:sortDescriptors]) {
         NSString *title;
         if ([[col identifier] isEqualToString:@"status"]) {
             title = @"Status";
@@ -82,7 +95,7 @@
     }
 
     if (visibleTableColumns == 0) {
-        for (NSTableColumn *col in [self tableColumns]) {
+        for (NSTableColumn *col in columns) {
             [col setHidden:NO];
         }
     }
