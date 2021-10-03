@@ -338,7 +338,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
         if (frames_to_do > MAX_BUFFER_SAMPLES)
             frames_to_do = MAX_BUFFER_SAMPLES;
         
-        memset(sample_buffer, 0, frames_to_do * channels * sizeof(sbuf[0]));
+        memset(sample_buffer, 0, frames_to_do * channels * sizeof(sample_buffer[0]));
         
         render_vgmstream( sample_buffer, frames_to_do, stream );
         
