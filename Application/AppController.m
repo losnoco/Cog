@@ -417,16 +417,6 @@ void* kAppControllerContext = &kAppControllerContext;
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.com/paypalme/kode54"]];
 }
 
-- (IBAction)openBitcoinPage:(id)sender
-{
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://kode54.net/donateBitcoin"]];
-}
-
-- (IBAction)openPatreonPage:(id)sender
-{
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://patreon.com/kode54"]];
-}
-
 - (IBAction)openKofiPage:(id)sender
 {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://ko-fi.com/kode54"]];
