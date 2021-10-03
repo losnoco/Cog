@@ -13,6 +13,8 @@
 
 #include <stdlib.h>
 
+#define MAX_BUFFER_SAMPLES ((int)2048)
+
 static NSString* get_description_tag(const char* description, const char *tag, char delimiter) {
     // extract a "tag" from the description string
     if (!delimiter) delimiter = '\n';
@@ -59,11 +61,16 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     vcfg.ignore_loop = 0;
     
     vgmstream_apply_config(stream, &vcfg);
+    
+    int output_channels = stream->channels;
+    
+    vgmstream_mixing_autodownmix(stream, 6);
+    vgmstream_mixing_enable(stream, MAX_BUFFER_SAMPLES, NULL, &output_channels);
 
     int track_num = [[url fragment] intValue];
     
     int sampleRate = stream->sample_rate;
-    int channels = stream->channels;
+    int channels = output_channels;
     long totalFrames = vgmstream_get_samples(stream);
     
     int bitrate = get_vgmstream_average_bitrate(stream);
@@ -253,7 +260,10 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     if ( !stream )
         return NO;
     
+    int output_channels = stream->channels;
+    
     vgmstream_mixing_autodownmix(stream, 6);
+    vgmstream_mixing_enable(stream, MAX_BUFFER_SAMPLES, NULL, &output_channels);
     
     canPlayForever = stream->loop_flag;
     if (canPlayForever) {
@@ -275,7 +285,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     vgmstream_apply_config(stream, &vcfg);
     
     sampleRate = stream->sample_rate;
-    channels = stream->channels;
+    channels = output_channels;
     totalFrames = vgmstream_get_samples(stream);
     
     framesRead = 0;
@@ -305,6 +315,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
     UInt32 framesMax = frames;
+    UInt32 framesDone = 0;
 
     if (canPlayForever) {
         BOOL repeatone = IsRepeatOneSet();
@@ -320,15 +331,30 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     if (frames > framesMax)
         frames = 0; // integer overflow?
     
-    if (frames) {
+    while (frames) {
+        sample sample_buffer[MAX_BUFFER_SAMPLES * VGMSTREAM_MAX_CHANNELS];
+        
+        UInt32 frames_to_do = frames;
+        if (frames_to_do > MAX_BUFFER_SAMPLES)
+            frames_to_do = MAX_BUFFER_SAMPLES;
+        
+        render_vgmstream( sample_buffer, frames_to_do, stream );
+        
+        framesRead += frames_to_do;
+        framesDone += frames_to_do;
+        
         sample * sbuf = (sample *) buf;
     
-        render_vgmstream( sbuf, frames, stream );
+        memcpy(sbuf, sample_buffer, frames_to_do * channels * sizeof(sbuf[0]));
         
-        framesRead += frames;
+        sbuf += frames_to_do * channels;
+        
+        buf = (void *)sbuf;
+        
+        frames -= frames_to_do;
     }
     
-    return frames;
+    return framesDone;
 }
 
 - (long)seek:(long)frame
