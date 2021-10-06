@@ -679,7 +679,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			for(CHANNELINDEX chn = 0; chn < numChans; chn++)
 			{
-				if(chunk.ReadUint16LE() > 0 && chn >= m_nChannels)
+				if(chunk.ReadUint16LE() > 0 && chn >= m_nChannels && chn < 32)
 					m_nChannels = chn + 1;
 			}
 		}

@@ -374,13 +374,13 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 
 			patternLength = file.ReadUint16BE();
 			channels = file.ReadUint16BE();
+			if(channels > MAX_BASECHANNELS)
+				return false;
 			m_nChannels = std::max(m_nChannels, channels);
 
 			file.Skip(channels * patternLength * 4u);
 		}
 		file.Seek(patOffset);
-		if(m_nChannels > MAX_BASECHANNELS)
-			return false;
 	}
 
 	struct ChannelMemory
@@ -405,6 +405,9 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 			patternLength = file.ReadUint16BE();
 			channels = file.ReadUint16BE();
 		}
+
+		if(!file.CanRead(channels * patternLength * 4u))
+			break;
 
 		if(!(loadFlags & loadPatternData) || !Patterns.Insert(actualPat, patternLength))
 		{

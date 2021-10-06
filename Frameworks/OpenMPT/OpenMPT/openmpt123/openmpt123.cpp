@@ -504,7 +504,7 @@ static void show_info( std::ostream & log, bool verbose ) {
 	SDL_version sdlver;
 	std::memset( &sdlver, 0, sizeof( SDL_version ) );
 	SDL_GetVersion( &sdlver );
-	log << static_cast<int>( sdlver.major ) << "." << static_cast<int>( sdlver.minor ) << "." << static_cast<int>( sdlver.patch ) << "." << SDL_GetRevisionNumber();
+	log << static_cast<int>( sdlver.major ) << "." << static_cast<int>( sdlver.minor ) << "." << static_cast<int>( sdlver.patch );
 	const char * revision = SDL_GetRevision();
 	if ( revision ) {
 		log << " (" << revision << ")";

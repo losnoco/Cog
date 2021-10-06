@@ -500,13 +500,14 @@ void ReadModPattern(std::istream& iStrm, CPattern& pat, const size_t)
 		return;
 	ssb.ReadItem(pat, "data", &ReadData);
 	// pattern time signature
-	uint32 nRPB = 0, nRPM = 0;
-	ssb.ReadItem<uint32>(nRPB, "RPB.");
-	ssb.ReadItem<uint32>(nRPM, "RPM.");
-	pat.SetSignature(nRPB, nRPM);
+	uint32 rpb = 0, rpm = 0;
+	ssb.ReadItem<uint32>(rpb, "RPB.");
+	ssb.ReadItem<uint32>(rpm, "RPM.");
+	pat.SetSignature(rpb, rpm);
 	TempoSwing swing;
 	ssb.ReadItem<TempoSwing>(swing, "SWNG", TempoSwing::Deserialize);
-	if(!swing.empty()) swing.resize(nRPB);
+	if(!swing.empty())
+		swing.resize(pat.GetRowsPerBeat());
 	pat.SetTempoSwing(swing);
 }
 

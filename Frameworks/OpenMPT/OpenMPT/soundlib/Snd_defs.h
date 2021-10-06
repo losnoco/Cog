@@ -43,6 +43,7 @@ using SmpLength = uint32;
 inline constexpr SmpLength MAX_SAMPLE_LENGTH = 0x10000000; // Sample length in frames. Sample size in bytes can be more than this (= 256 MB).
 
 inline constexpr ROWINDEX MAX_PATTERN_ROWS       = 1024;
+inline constexpr ROWINDEX MAX_ROWS_PER_BEAT      = 65536;
 inline constexpr ORDERINDEX MAX_ORDERS           = ORDERINDEX_MAX + 1;
 inline constexpr PATTERNINDEX MAX_PATTERNS       = 4000;
 inline constexpr SAMPLEINDEX MAX_SAMPLES         = 4000;

@@ -106,7 +106,7 @@ int32 InstrumentEnvelope::GetValueFromPosition(int position, int32 rangeOut, int
 		{
 			// Linear approximation between the points;
 			// f(x + d) ~ f(x) + f'(x) * d, where f'(x) = (y2 - y1) / (x2 - x1)
-			value += ((position - x1) * (at(pt).value * ENV_PRECISION / rangeIn - value)) / (x2 - x1);
+			value += Util::muldiv(position - x1, (at(pt).value * ENV_PRECISION / rangeIn - value), x2 - x1);
 		}
 	}
 
@@ -299,6 +299,9 @@ void ModInstrument::Sanitize(MODTYPE modType)
 
 	if(!Resampling::IsKnownMode(resampling))
 		resampling = SRCMODE_DEFAULT;
+
+	if(nMixPlug > MAX_MIXPLUGINS)
+		nMixPlug = 0;
 }
 
 

@@ -30,6 +30,12 @@ static bool SFZStartsWith(const std::string_view &l, const char(&r)[N])
 	return l.substr(0, N - 1) == r;
 }
 
+template <size_t N>
+static bool SFZEndsWith(const std::string_view &l, const char (&r)[N])
+{
+	return l.size() >= (N - 1) && l.substr(l.size() - (N - 1), N - 1) == r;
+}
+
 static bool SFZIsNumeric(const std::string_view &str)
 {
 	return std::find_if(str.begin(), str.end(), [](char c) { return c < '0' || c > '9'; }) == str.end();
@@ -243,7 +249,7 @@ struct SFZEnvelope
 		auto &env = eg.points;
 		if(attack > 0 || delay > 0)
 		{
-			env.push_back({0, startLevel});
+			env.push_back({0.0, startLevel});
 			if(delay > 0)
 				env.push_back({delay, env.back().second});
 			env.push_back({attack, 100.0});
@@ -255,7 +261,7 @@ struct SFZEnvelope
 			env.push_back({hold, env.back().second});
 		}
 		if(env.empty())
-			env.push_back({0, 100.0});
+			env.push_back({0.0, 100.0});
 		if(env.back().second != sustainLevel)
 			env.push_back({decay, sustainLevel});
 		if(sustainLevel != 0)
@@ -685,7 +691,8 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 					break;
 				}
 				const std::string key = mpt::ToLowerCaseAscii(s.substr(0, keyEnd));
-				if(key == "sample" || key == "default_path" || SFZStartsWith(key, "label_cc") || SFZStartsWith(key, "label_key") || SFZStartsWith(key, "region_label"))
+				// Currently defined *_label opcodes are global_label, group_label, master_label, region_label, sw_label
+				if(key == "sample" || key == "default_path" || SFZStartsWith(key, "label_cc") || SFZStartsWith(key, "label_key") || SFZEndsWith(key, "_label"))
 				{
 					// Sample / CC name may contain spaces...
 					charsRead = s.find_first_of("=\t<", valueStart);

@@ -342,7 +342,7 @@ static int infobox( const in_char * fn, HWND hWndParent ) {
 	} else {
 		libopenmpt::plugin::gui_show_file_info( hWndParent, TEXT(SHORT_TITLE), StringReplace( self->cached_infotext, L"\n", L"\r\n" ) );
 	}
-	return 0;
+	return INFOBOX_UNCHANGED;
 }
 
 static void getfileinfo( const in_char * filename, in_char * title, int * length_in_ms ) {

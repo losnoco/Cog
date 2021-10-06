@@ -484,6 +484,8 @@ bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags)
 		LimitMax(ChnSettings[chn].nVolume, uint16(64));
 		if(ChnSettings[chn].nPan > 256)
 			ChnSettings[chn].nPan = 128;
+		if(ChnSettings[chn].nMixPlugin > MAX_MIXPLUGINS)
+			ChnSettings[chn].nMixPlugin = 0;
 		m_PlayState.Chn[chn].Reset(ModChannel::resetTotal, *this, chn, muteFlag);
 	}
 
@@ -550,8 +552,15 @@ bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags)
 		LimitMax(m_nDefaultTempo, TEMPO(uint16_max, 0));
 	if(!m_nDefaultSpeed)
 		m_nDefaultSpeed = 6;
+
 	if(m_nDefaultRowsPerMeasure < m_nDefaultRowsPerBeat)
 		m_nDefaultRowsPerMeasure = m_nDefaultRowsPerBeat;
+	LimitMax(m_nDefaultRowsPerBeat, MAX_ROWS_PER_BEAT);
+	LimitMax(m_nDefaultRowsPerMeasure, MAX_ROWS_PER_BEAT);
+	LimitMax(m_nDefaultGlobalVolume, MAX_GLOBAL_VOLUME);
+	if(!m_tempoSwing.empty())
+		m_tempoSwing.resize(m_nDefaultRowsPerBeat);
+
 	m_PlayState.m_nMusicSpeed = m_nDefaultSpeed;
 	m_PlayState.m_nMusicTempo = m_nDefaultTempo;
 	m_PlayState.m_nCurrentRowsPerBeat = m_nDefaultRowsPerBeat;

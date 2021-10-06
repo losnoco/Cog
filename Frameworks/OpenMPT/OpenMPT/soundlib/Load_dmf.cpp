@@ -1126,6 +1126,8 @@ uintptr_t DMFUnpack(FileReader &file, uint8 *psample, uint32 maxlen)
 	try
 	{
 		tree.DMFNewNode();
+		if(tree.nodes[0].left < 0 || tree.nodes[0].right < 0)
+			return tree.file.GetPosition();
 		for(uint32 i = 0; i < maxlen; i++)
 		{
 			int actnode = 0;

@@ -1139,7 +1139,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 					}
 				}
 				if(playSeq.name[0])
-					order.SetName(mpt::ToUnicode(mpt::Charset::ISO8859_1, playSeq.name));
+					order.SetName(mpt::ToUnicode(mpt::Charset::ISO8859_1, mpt::String::ReadAutoBuf(playSeq.name)));
 
 				// Play commands (jump / stop)
 				if(playSeq.commandTableOffset > 0 && file.Seek(playSeq.commandTableOffset))

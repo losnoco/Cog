@@ -112,6 +112,12 @@ struct UpgradePatternData
 					m.vol = 0;
 				}
 			}
+
+			// Command I11 accidentally behaved the same as command I00 with compatible IT tremor and old effects disabled
+			if(m.command == CMD_TREMOR && m.param == 0x11 && version < MPT_V("1.29.12.02") && sndFile.m_playBehaviour[kITTremor] && !sndFile.m_SongFlags[SONG_ITOLDEFFECTS])
+			{
+				m.param = 0;
+			}
 		}
 
 		else if(modType == MOD_TYPE_XM)
@@ -250,7 +256,7 @@ void CSoundFile::UpgradeModule()
 
 			if(!compatModeIT || m_dwLastSavedWithVersion < MPT_V("1.18.00.00"))
 			{
-				// Previously, Pitch/Pan Separation was only half depth.
+				// Previously, Pitch/Pan Separation was only half depth (plot twist: it was actually only quarter depth).
 				// This was corrected in compatible mode in OpenMPT 1.18, and in OpenMPT 1.20 it is corrected in normal mode as well.
 				ins->nPPS = (ins->nPPS + (ins->nPPS >= 0 ? 1 : -1)) / 2;
 			}

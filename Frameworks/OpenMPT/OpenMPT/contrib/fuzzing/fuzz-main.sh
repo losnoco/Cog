@@ -10,4 +10,4 @@ mkdir $FUZZING_TEMPDIR/bin
 cp -d ../../bin/* $FUZZING_TEMPDIR/bin/
 
 #export AFL_PRELOAD=$AFL_DIR/libdislocator.so
-LD_LIBRARY_PATH=$FUZZING_TEMPDIR/bin $AFL_DIR/afl-fuzz -p exploit -f $FUZZING_TEMPDIR/infile01 -x all_formats.dict -t $FUZZING_TIMEOUT $FUZZING_INPUT -o $FUZZING_FINDINGS_DIR -M fuzzer01 $FUZZING_TEMPDIR/bin/fuzz $FUZZING_TEMPDIR/infile01
+LD_LIBRARY_PATH=$FUZZING_TEMPDIR/bin $AFL_DIR/afl-fuzz -p exploit -f $FUZZING_TEMPDIR/infile01 -x all_formats.dict -t $FUZZING_TIMEOUT $FUZZING_INPUT -o $FUZZING_FINDINGS_DIR -D -M fuzzer01 $FUZZING_TEMPDIR/bin/fuzz $FUZZING_TEMPDIR/infile01

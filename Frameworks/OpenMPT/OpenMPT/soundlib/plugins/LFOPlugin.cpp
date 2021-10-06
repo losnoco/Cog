@@ -165,8 +165,6 @@ void LFOPlugin::SetParameter(PlugParamIndex index, PlugParamValue value)
 		break;
 	case kWaveform:
 		m_waveForm = ParamToWaveform(value);
-		if(m_waveForm >= kNumWaveforms)
-			m_waveForm = static_cast<LFOWaveform>(kNumWaveforms - 1);
 		break;
 	case kPolarity: m_polarity = (value >= 0.5f); break;
 	case kBypassed: m_bypassed = (value >= 0.5f); break;

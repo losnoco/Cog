@@ -2112,7 +2112,9 @@ void CSoundFile::ReadMixPluginChunk(FileReader &file, SNDMIXPLUGIN &plugin)
 
 			if(!memcmp(code, "DWRT", 4))
 			{
-				plugin.fDryRatio = dataChunk.ReadFloatLE();
+				plugin.fDryRatio = std::clamp(dataChunk.ReadFloatLE(), 0.0f, 1.0f);
+				if(!std::isnormal(plugin.fDryRatio))
+					plugin.fDryRatio = 0.0f;
 			} else if(!memcmp(code, "PROG", 4))
 			{
 				plugin.defaultProgram = dataChunk.ReadUint32LE();
@@ -2448,8 +2450,10 @@ void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannel
 
 	// Validate read values.
 	Limit(m_nDefaultTempo, GetModSpecifications().GetTempoMin(), GetModSpecifications().GetTempoMax());
-	if(m_nTempoMode >= tempoModeMax) m_nTempoMode = tempoModeClassic;
-	if(m_nMixLevels >= mixLevelsMax) m_nMixLevels = mixLevelsOriginal;
+	if(m_nTempoMode >= tempoModeMax)
+		m_nTempoMode = tempoModeClassic;
+	if(m_nMixLevels >= mixLevelsMax)
+		m_nMixLevels = mixLevelsOriginal;
 	//m_dwCreatedWithVersion
 	//m_dwLastSavedWithVersion
 	//m_nSamplePreAmp
@@ -2458,7 +2462,8 @@ void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannel
 	LimitMax(m_nDefaultGlobalVolume, MAX_GLOBAL_VOLUME);
 	//m_nRestartPos
 	//m_ModFlags
-	if(!m_tempoSwing.empty()) m_tempoSwing.resize(m_nDefaultRowsPerBeat);
+	LimitMax(m_nDefaultRowsPerBeat, MAX_ROWS_PER_BEAT);
+	LimitMax(m_nDefaultRowsPerMeasure, MAX_ROWS_PER_BEAT);
 }
 
 

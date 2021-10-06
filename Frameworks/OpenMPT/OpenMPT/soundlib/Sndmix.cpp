@@ -125,10 +125,10 @@ bool CSoundFile::FadeSong(uint32 msec)
 	{
 		ModChannel &pramp = m_PlayState.Chn[m_PlayState.ChnMix[noff]];
 		pramp.newRightVol = pramp.newLeftVol = 0;
-		pramp.leftRamp = (-pramp.leftVol << VOLUMERAMPPRECISION) / nRampLength;
-		pramp.rightRamp = (-pramp.rightVol << VOLUMERAMPPRECISION) / nRampLength;
-		pramp.rampLeftVol = pramp.leftVol << VOLUMERAMPPRECISION;
-		pramp.rampRightVol = pramp.rightVol << VOLUMERAMPPRECISION;
+		pramp.leftRamp = -pramp.leftVol * (1 << VOLUMERAMPPRECISION) / nRampLength;
+		pramp.rightRamp = -pramp.rightVol * (1 << VOLUMERAMPPRECISION) / nRampLength;
+		pramp.rampLeftVol = pramp.leftVol * (1 << VOLUMERAMPPRECISION);
+		pramp.rampRightVol = pramp.rightVol * (1 << VOLUMERAMPPRECISION);
 		pramp.nRampLength = nRampLength;
 		pramp.dwFlags.set(CHN_VOLUMERAMP);
 	}

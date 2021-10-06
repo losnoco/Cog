@@ -267,13 +267,9 @@ bool CSoundFile::ReadPTM(FileReader &file, ModLoadingFlags loadFlags)
 				switch(m.command)
 				{
 				case CMD_PANNING8:
-					// My observations of this weird command...
-					// 800...887 pan from hard left to hard right (whereas the low nibble seems to be ignored)
-					// 888...8FF do the same (so 888...88F is hard left, and 890 is identical to 810)
-					if(m.param >= 0x88) m.param &= 0x7F;
-					else if(m.param > 0x80) m.param = 0x80;
-					m.param &= 0x7F;
-					m.param = (m.param * 0xFF) / 0x7F;
+					// Don't be surprised about the strange formula, this is directly translated from original disassembly...
+					m.command = CMD_S3MCMDEX;
+					m.param = 0x80 | ((std::max<uint8>(m.param >> 3, 1u) - 1u) & 0x0F);
 					break;
 				case CMD_GLOBALVOLUME:
 					m.param = std::min(m.param, uint8(0x40)) * 2u;

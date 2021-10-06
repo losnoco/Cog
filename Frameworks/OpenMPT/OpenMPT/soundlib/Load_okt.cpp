@@ -389,6 +389,12 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 				sampleChunks.push_back(chunk);
 			}
 			break;
+
+		default:
+			// Non-ASCII chunk ID?
+			if(iffHead.signature & 0x80808080)
+				return false;
+			break;
 		}
 	}
 

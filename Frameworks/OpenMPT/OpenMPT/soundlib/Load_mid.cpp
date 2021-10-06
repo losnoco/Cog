@@ -697,13 +697,25 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 
 	uint16 finishedTracks = 0;
 	PATTERNINDEX emptyPattern = PATTERNINDEX_INVALID;
-	ORDERINDEX lastOrd = 0;
-	ROWINDEX lastRow = 0;
+	ORDERINDEX lastOrd = 0, loopEndOrd = ORDERINDEX_INVALID;
+	ROWINDEX lastRow = 0, loopEndRow = ROWINDEX_INVALID;
 	ROWINDEX restartRow = ROWINDEX_INVALID;
 	int8 masterTranspose = 0;
 	bool isXG = false;
 	bool isEMIDI = false;
+	bool isEMIDILoop = false;
 	const bool isType2 = (fileHeader.format == 2);
+
+	const auto ModPositionFromTick = [&](const tick_t tick, const tick_t offset = 0)
+	{
+		tick_t modTicks = Util::muldivr_unsigned(tick, quantize * ticksPerRow, ppqn * 4u) - offset;
+
+		ORDERINDEX ord = static_cast<ORDERINDEX>((modTicks / ticksPerRow) / patternLen);
+		ROWINDEX row = (modTicks / ticksPerRow) % patternLen;
+		uint8 delay = static_cast<uint8>(modTicks % ticksPerRow);
+
+		return std::make_tuple(ord, row, delay);
+	};
 
 	while(finishedTracks < numTracks)
 	{
@@ -721,11 +733,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		}
 		FileReader &track = tracks[t].track;
 
-		tick_t modTicks = Util::muldivr_unsigned(tick, quantize * ticksPerRow, ppqn * 4u);
-
-		ORDERINDEX ord = static_cast<ORDERINDEX>((modTicks / ticksPerRow) / patternLen);
-		ROWINDEX row = (modTicks / ticksPerRow) % patternLen;
-		uint8 delay = static_cast<uint8>(modTicks % ticksPerRow);
+		const auto [ord, row, delay] = ModPositionFromTick(tick);
 
 		if(ord >= Order().GetLength())
 		{
@@ -800,6 +808,9 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 					{
 						Order().SetRestartPos(ord);
 						restartRow = row;
+					} else if(!mpt::CompareNoCaseAscii(s, "loopEnd"))
+					{
+						std::tie(loopEndOrd, loopEndRow, std::ignore) = ModPositionFromTick(tick, 1);
 					}
 				}
 				break;
@@ -1003,10 +1014,28 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 
 					case 111:
 						// Non-standard MIDI loop point. May conflict with Apogee EMIDI CCs (110/111), which is why we also check if CC 110 is ever used.
-						if(data2 == 0)
+						if(data2 == 0 && !isEMIDI)
 						{
 							Order().SetRestartPos(ord);
 							restartRow = row;
+						}
+						break;
+
+					case 118:
+						// EMIDI Global Loop Start
+						isEMIDI = true;
+						isEMIDILoop = false;
+						Order().SetRestartPos(ord);
+						restartRow = row;
+						break;
+
+					case 119:
+						// EMIDI Global Loop End
+						if(data2 == 0x7F)
+						{
+							isEMIDILoop = true;
+							isEMIDI = true;
+							std::tie(loopEndOrd, loopEndRow, std::ignore) = ModPositionFromTick(tick, 1);
 						}
 						break;
 
@@ -1210,18 +1239,29 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
+	if(isEMIDILoop)
+		isEMIDI = false;
+
 	if(isEMIDI)
 	{
 		Order().SetRestartPos(0);
 	}
 
-	if(Order().IsValidPat(lastOrd))
+	if(loopEndOrd == ORDERINDEX_INVALID)
+		loopEndOrd = lastOrd;
+	if(loopEndRow == ROWINDEX_INVALID)
+		loopEndRow = lastRow;
+
+	if(Order().IsValidPat(loopEndOrd))
 	{
-		PATTERNINDEX lastPat = Order()[lastOrd];
-		Patterns[lastPat].Resize(lastRow + 1);
+		PATTERNINDEX lastPat = Order()[loopEndOrd];
+		if(loopEndOrd == lastOrd)
+			Patterns[lastPat].Resize(loopEndRow + 1);
 		if(restartRow != ROWINDEX_INVALID && !isEMIDI)
 		{
-			Patterns[lastPat].WriteEffect(EffectWriter(CMD_PATTERNBREAK, mpt::saturate_cast<ModCommand::PARAM>(restartRow)).Row(lastRow));
+			Patterns[lastPat].WriteEffect(EffectWriter(CMD_PATTERNBREAK, mpt::saturate_cast<ModCommand::PARAM>(restartRow)).Row(loopEndRow));
+			if(ORDERINDEX restartPos = Order().GetRestartPos(); loopEndOrd != lastOrd || restartPos <= std::numeric_limits<ModCommand::PARAM>::max())
+				Patterns[lastPat].WriteEffect(EffectWriter(CMD_POSITIONJUMP, mpt::saturate_cast<ModCommand::PARAM>(restartPos)).Row(loopEndRow));
 		}
 	}
 	Order.SetSequence(0);

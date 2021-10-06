@@ -248,7 +248,7 @@ struct MixLoopState
 			{
 				if (nPosDest < nLoopStart)
 				{
-					nSmpCount = DistanceToBufferLength(SamplePosition(chn.nLoopStart, 0), nPos, nInv);
+					nSmpCount = DistanceToBufferLength(SamplePosition(nLoopStart, 0), nPos, nInv);
 				}
 			} else
 			{
@@ -605,7 +605,7 @@ void CSoundFile::ProcessPlugins(uint32 nCount)
 			if (!plugin.IsOutputToMaster())
 			{
 				PLUGINDEX nOutput = plugin.GetOutputPlugin();
-				if(nOutput > plug && nOutput != PLUGINDEX_INVALID
+				if(nOutput > plug && nOutput < MAX_MIXPLUGINS
 					&& m_MixPlugins[nOutput].pMixPlugin != nullptr)
 				{
 					IMixPlugin *outPlugin = m_MixPlugins[nOutput].pMixPlugin;

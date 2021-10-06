@@ -21,7 +21,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 // Read song message from a mapped file.
 // [in]  data: pointer to the data in memory that is going to be read
-// [in]  length: number of characters that should be read, not including a possible trailing null terminator (it is automatically appended).
+// [in]  length: number of characters that should be read. Trailing null characters are automatically removed.
 // [in]  lineEnding: line ending formatting of the text in memory.
 // [out] returns true on success.
 bool SongMessage::Read(const std::byte *data, size_t length, LineEnding lineEnding)
@@ -36,18 +36,19 @@ bool SongMessage::Read(const std::byte *data, size_t length, LineEnding lineEndi
 	// Simple line-ending detection algorithm. VERY simple.
 	if(lineEnding == leAutodetect)
 	{
-		char cprev = 0;
 		size_t nCR = 0, nLF = 0, nCRLF = 0;
 		// find CRs, LFs and CRLFs
 		for(size_t i = 0; i < length; i++)
 		{
 			char c = str[i];
 
-			if(c == '\r') nCR++;
-			else if(c == '\n') nLF++;
+			if(c == '\r')
+				nCR++;
+			else if(c == '\n')
+				nLF++;
 
-			if(i && cprev == '\r' && c == '\n') nCRLF++;
-			cprev = c;
+			if(i && str[i - 1] == '\r' && c == '\n')
+				nCRLF++;
 		}
 		// evaluate findings
 		if(nCR == nLF && nCR == nCRLF)
@@ -64,16 +65,15 @@ bool SongMessage::Read(const std::byte *data, size_t length, LineEnding lineEndi
 	// calculate the final amount of characters to be allocated.
 	for(size_t i = 0; i < length; i++)
 	{
-		char c = str[i];
-
-		if(c != '\n' || lineEnding != leCRLF)
-			finalLength++;
+		finalLength++;
+		if(str[i] == '\r' && lineEnding == leCRLF)
+			i++;  // skip the LF
 	}
 
-	resize(finalLength);
+	clear();
+	reserve(finalLength);
 
-	size_t cpos = 0;
-	for(size_t i = 0; i < length; i++, cpos++)
+	for(size_t i = 0; i < length; i++)
 	{
 		char c = str[i];
 
@@ -81,24 +81,25 @@ bool SongMessage::Read(const std::byte *data, size_t length, LineEnding lineEndi
 		{
 		case '\r':
 			if(lineEnding != leLF)
-				at(cpos) = InternalLineEnding;
+				c = InternalLineEnding;
 			else
-				at(cpos) = ' ';
-			if(lineEnding == leCRLF) i++;	// skip the LF
+				c = ' ';
+			if(lineEnding == leCRLF)
+				i++;  // skip the LF
 			break;
 		case '\n':
 			if(lineEnding != leCR && lineEnding != leCRLF)
-				at(cpos) = InternalLineEnding;
+				c = InternalLineEnding;
 			else
-				at(cpos) = ' ';
+				c = ' ';
 			break;
 		case '\0':
-			at(cpos) = ' ';
+			c = ' ';
 			break;
 		default:
-			at(cpos) = c;
 			break;
 		}
+		push_back(c);
 	}
 
 	return true;

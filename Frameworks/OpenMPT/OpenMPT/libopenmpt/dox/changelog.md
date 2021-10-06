@@ -5,6 +5,46 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.12 (2021-10-04)
+
+ *  [**Sec**] Possible crash when loading malformed MDL files. (r15603)
+
+ *  [**Bug**] Fixed various undefined behaviour found with ubsan.
+
+ *  Seeking with sample sync sometimes didn't compute the correct sample
+    position with pingpong-looped samples.
+ *  IT: Tremor command I11 erroneously behaved like I00 (use previous parameter)
+    unless IT Old Effects were enabled.
+ *  PTM: Panning was translated wrong in some edge cases.
+ *  IMF / PTM: Note Slide commands were sometimes slightly off. 
+ *  OKT: Better support for fine note slides.
+ *  DBM: Echo enable effect parameter range checks were incorrect.
+ *  XM: Sample texts in XMs made with MadTracker are now also decoded using
+    Windows-1252 encoding.
+
+ *  in_openmpt: Song metadata is no longer reverted when viewing file info.
+
+### libopenmpt 0.5.11 (2021-08-22)
+
+ *  [**Sec**] Possible crash with malformed modules when trying to access
+    non-existent plugin slots FX251-FX255. (r15479, r15518)
+ *  [**Sec**] Possible read beyond sample start after swapping to a sample with
+    loop points set but not loop enabled. (r15499)
+ *  [**Sec**] Fixed various possible crashes with malformed MMCMP files.
+    (r15504, 15528)
+ *  [**Sec**] MED: Possible read past end of sequence name (stack-allocated, so
+    relatively unlikely to result in a crash). (r15477)
+
+ *  Fixed excessive memory usage with files claiming to have an extremely high
+    rows per beat count while also using tempo swing. Maximum rows per beat are
+    now limited to 65536.
+ *  STP: Avoid creating thousands of patterns when loading malformed files even
+    though no more pattern data can be read.
+
+ *  mpg123: Update to v1.28.2 (2021-07-12).
+ *  stb_vorbis: Update v1.22 commit 5a0bb8b1c1b1ca3f4e2485f4114c1c8ea021b781
+    (2021-07-12).
+
 ### libopenmpt 0.5.10 (2021-07-04)
 
  *  S3M: Honor the Stereo flag not being set. This improves the sound of some

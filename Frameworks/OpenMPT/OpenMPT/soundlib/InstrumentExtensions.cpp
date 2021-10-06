@@ -596,7 +596,7 @@ bool ReadInstrumentHeaderField(ModInstrument *input, uint32 fcode, uint16 fsize,
 	case MagicBE("R..."):
 	{
 		// Resampling has been written as various sizes including uint16 and uint32 in the past
-		uint32 tmp = file.ReadTruncatedIntLE<uint32>(fsize);
+		uint32 tmp = file.ReadSizedIntLE<uint32>(fsize);
 		if(Resampling::IsKnownMode(tmp))
 			input->resampling = static_cast<ResamplingMode>(tmp);
 		result = true;
@@ -604,27 +604,27 @@ bool ReadInstrumentHeaderField(ModInstrument *input, uint32 fcode, uint16 fsize,
 	case MagicBE("PTTL"):
 	{
 		// Integer part of pitch/tempo lock
-		uint16 tmp = file.ReadTruncatedIntLE<uint16>(fsize);
+		uint16 tmp = file.ReadSizedIntLE<uint16>(fsize);
 		input->pitchToTempoLock.Set(tmp, input->pitchToTempoLock.GetFract());
 		result = true;
 	} break;
 	case MagicLE("PTTF"):
 	{
 		// Fractional part of pitch/tempo lock
-		uint16 tmp = file.ReadTruncatedIntLE<uint16>(fsize);
+		uint16 tmp = file.ReadSizedIntLE<uint16>(fsize);
 		input->pitchToTempoLock.Set(input->pitchToTempoLock.GetInt(), tmp);
 		result = true;
 	} break;
 	case MagicBE("VE.."):
-		input->VolEnv.resize(std::min(uint32(MAX_ENVPOINTS), file.ReadTruncatedIntLE<uint32>(fsize)));
+		input->VolEnv.resize(std::min(uint32(MAX_ENVPOINTS), file.ReadSizedIntLE<uint32>(fsize)));
 		result = true;
 		break;
 	case MagicBE("PE.."):
-		input->PanEnv.resize(std::min(uint32(MAX_ENVPOINTS), file.ReadTruncatedIntLE<uint32>(fsize)));
+		input->PanEnv.resize(std::min(uint32(MAX_ENVPOINTS), file.ReadSizedIntLE<uint32>(fsize)));
 		result = true;
 		break;
 	case MagicBE("PiE."):
-		input->PitchEnv.resize(std::min(uint32(MAX_ENVPOINTS), file.ReadTruncatedIntLE<uint32>(fsize)));
+		input->PitchEnv.resize(std::min(uint32(MAX_ENVPOINTS), file.ReadSizedIntLE<uint32>(fsize)));
 		result = true;
 		break;
 	}

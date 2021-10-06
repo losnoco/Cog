@@ -590,7 +590,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				m_nTempoMode = tempoModeModern;
 				double d = chunk.ReadDoubleLE();
-				if(d != 0.0)
+				if(d > 0.00000001)
 				{
 					m_nDefaultTempo = TEMPO(44100.0 * 60.0 / (m_nDefaultSpeed * m_nDefaultRowsPerBeat * d));
 				}
