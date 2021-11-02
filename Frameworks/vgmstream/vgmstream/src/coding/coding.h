@@ -115,7 +115,7 @@ void decode_hevag(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing
 
 
 /* xa_decoder */
-void decode_xa(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_xa8);
+void decode_xa(VGMSTREAM* v, sample_t* outbuf, int32_t samples_to_do);
 size_t xa_bytes_to_samples(size_t bytes, int channels, int is_blocked, int is_form2, int bps);
 
 
@@ -172,6 +172,7 @@ int msadpcm_check_coefs(STREAMFILE* sf, off_t offset);
 
 /* yamaha_decoder */
 void decode_aica(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo);
+void decode_cp_ym(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo);
 void decode_aska(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, size_t frame_size);
 void decode_nxap(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 size_t yamaha_bytes_to_samples(size_t bytes, int channels);
@@ -324,9 +325,21 @@ void decode_hca(hca_codec_data* data, sample_t* outbuf, int32_t samples_to_do);
 void reset_hca(hca_codec_data* data);
 void loop_hca(hca_codec_data* data, int32_t num_sample);
 void free_hca(hca_codec_data* data);
-int test_hca_key(hca_codec_data* data, unsigned long long keycode);
-void hca_set_encryption_key(hca_codec_data* data, uint64_t keycode);
 clHCA_stInfo* hca_get_info(hca_codec_data* data);
+
+typedef struct {
+    /* config + output */
+    uint64_t key;
+    uint16_t subkey;
+    uint64_t best_key;
+    int best_score;
+    /* internals */
+    uint32_t start_offset;
+} hca_keytest_t;
+
+void test_hca_key(hca_codec_data* data, hca_keytest_t* hk);
+void hca_set_encryption_key(hca_codec_data* data, uint64_t keycode);
+
 STREAMFILE* hca_get_streamfile(hca_codec_data* data);
 
 
@@ -465,7 +478,6 @@ void decode_mpeg(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t samples_to_do, 
 void reset_mpeg(mpeg_codec_data* data);
 void seek_mpeg(VGMSTREAM* vgmstream, int32_t num_sample);
 void free_mpeg(mpeg_codec_data* data);
-void flush_mpeg(mpeg_codec_data* data);
 
 int mpeg_get_sample_rate(mpeg_codec_data* data);
 long mpeg_bytes_to_samples(long bytes, const mpeg_codec_data* data);

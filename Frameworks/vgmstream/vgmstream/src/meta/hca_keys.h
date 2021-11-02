@@ -48,7 +48,7 @@ static const hcakey_info hcakey_list[] = {
         // - Ro-Kyu-Bu! Naisho no Shutter Chance (PSVita)
         {1234253142},               // 0000000049913556
 
-        // Idolm@ster Cinderella Stage (iOS/Android)
+        // THE iDOLM@STER Cinderella Girls: Starlight Stage (iOS/Android)
         // Shadowverse (iOS/Android)
         {59751358413602},           // 00003657F27E3B22
 
@@ -67,16 +67,15 @@ static const hcakey_info hcakey_list[] = {
         // Sonic Runners (iOS/Android)
         {19910623},                 // 00000000012FCFDF
 
-        // Fate/Grand Order (iOS/Android) base assets
-        {12345},                    // 0000000000003039
-
-        // Fate/Grand Order (iOS/Android) download assets *unconfirmed
-        {9117927877783581796},      // 7E89631892EBF464
+        // Fate/Grand Order (iOS/Android)
+        {12345},                    // 0000000000003039 - base assets
+        {9117927877783581796},      // 7E89631892EBF464 - downloaded assets *unconfirmed
 
         // Raramagi (iOS/Android)
         {45719322},                 // 0000000002B99F1A
 
-        // Idolm@ster Million Live (iOS/Android)
+        // THE iDOLM@STER Million Live! (iOS/Android)
+        // THE iDOLM@STER SideM GROWING STARS (Android)
         {765765765765765},          // 0002B875BC731A85
 
         // Kurokishi to Shiro no Maou (iOS/Android)
@@ -775,7 +774,48 @@ static const hcakey_info hcakey_list[] = {
 
         // Nogizaka 46 Fractal (Android)
         {984635491346198130},   // 0DAA20C336EEAE72
-        
+
+        // NEO: The World Ends With You (PC)
+        {53346933792338754},    // 00BD86C0EE8C7342
+
+        // THE iDOLM@STER Starlit Season (PS4/PC)
+        {0x1e03b570b6145d1d},   // BGM
+        {0x1da915aaa181a461},   // SE
+        {0x1c82b6ab7487a5ec},   // Voice
+        {0x6d275d3666c2f9c8},   // Sng001
+        {0x0f53815df3044e6d},   // Sng002
+        {0x158778e2e2fab347},   // Sng003
+        {0x16b75e8b5247d46b},   // Sng004
+        {0x157df8a6047048fc},   // Sng005
+        {0x184d358b50b658d0},   // Sng006
+        {0x157fb75af4ddd983},   // Sng007
+        {0x404ba38c3e470827},   // Sng008
+        {0x01d0b788a3b60d48},   // Sng009
+        {0x021718d55d0960c9},   // Sng010
+        {0x0021c5993d2b901c},   // Sng011
+        {0x08237bcb9b711087},   // Sng012
+        {0x01af60402e1228a5},   // Sng013
+        {0x4eec18ab73a1a634},   // Sng014
+        {0x1855099898b11ad9},   // Sng015
+        {0x57ef8f2ea5d54db5},   // Sng016
+        {0x17cc6975d67e2a1f},   // Sng017
+        {0x0a5d0fc8cc5c4502},   // Sng018
+        {0x198ea1a17416050b},   // Sng019
+        {0x2aa3b8abad207a1e},   // Sng020
+        {0x33d98a3a9f9bfdef},   // Sng026
+        {0x2284fd5ca82c78f4},   // Sng027
+        {0x178a76b6436d20f0},   // Sng028
+        {0x3ff99f2fed65a1ed},   // Sng030
+
+        // Ulala: Idle Adventure (Android)
+        {20191022},             // 000000000134172E
+
+        // Girls' Frontline: Project Neural Cloud (Android)
+        {210222522032314},      // 0000BF323EBFE0BA
+
+        // Super Robot Wars 30 (PC)
+        {6734488621090458},     // 0017ECFB5201069A
+
 };
 
 #endif/*_HCA_KEYS_H_*/

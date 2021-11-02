@@ -6,5 +6,10 @@
 typedef uint32_t (*read_u32_t)(off_t, STREAMFILE*);
 typedef  int32_t (*read_s32_t)(off_t, STREAMFILE*);
 typedef uint16_t (*read_u16_t)(off_t, STREAMFILE*);
+typedef float (*read_f32_t)(off_t, STREAMFILE*);
+
+//todo move here
+#define guess_endian32 guess_endianness32bit
+#define guess_endian16 guess_endianness16bit
 
 #endif

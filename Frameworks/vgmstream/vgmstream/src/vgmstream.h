@@ -96,6 +96,7 @@ typedef enum {
 
     coding_XA,              /* CD-ROM XA 4-bit */
     coding_XA8,             /* CD-ROM XA 8-bit */
+    coding_XA_EA,           /* EA's Saturn XA (not to be confused with EA-XA) */
     coding_PSX,             /* Sony PS ADPCM (VAG) */
     coding_PSX_badflags,    /* Sony PS ADPCM with custom flag byte */
     coding_PSX_cfg,         /* Sony PS ADPCM with configurable frame size (int math) */
@@ -147,6 +148,7 @@ typedef enum {
 
     coding_AICA,            /* Yamaha AICA ADPCM (stereo) */
     coding_AICA_int,        /* Yamaha AICA ADPCM (mono/interleave) */
+    coding_CP_YM,           /* Capcom's Yamaha ADPCM (stereo/mono) */
     coding_ASKA,            /* Aska ADPCM */
     coding_NXAP,            /* NXAP ADPCM */
 
@@ -516,7 +518,8 @@ typedef enum {
     meta_PONA_3DO,          /* Policenauts (3DO) */
     meta_PONA_PSX,          /* Policenauts (PSX) */
     meta_XBOX_HLWAV,        /* Half Life 2 (XBOX) */
-    meta_PS2_AST,           /* Some KOEI game (PS2) */
+    meta_AST_MV,
+    meta_AST_MMV,
     meta_DMSG,              /* Nightcaster II - Equinox (XBOX) */
     meta_NGC_DSP_AAAP,      /* Turok: Evolution (NGC), Vexx (NGC) */
     meta_PS2_STER,          /* Juuni Kokuki: Kakukaku Taru Ou Michi Beni Midori no Uka */
@@ -539,7 +542,7 @@ typedef enum {
     meta_DSP_XIII,          /* XIII, possibly more (Ubisoft header???) */
     meta_DSP_CABELAS,       /* Cabelas games */
     meta_PS2_ADM,           /* Dragon Quest V (PS2) */
-    meta_PS2_LPCM,          /* Ah! My Goddess */
+    meta_LPCM_SHADE,
     meta_DSP_BDSP,          /* Ah! My Goddess */
     meta_PS2_VMS,           /* Autobahn Raser - Police Madness */
     meta_XAU,               /* XPEC Entertainment (Beat Down (PS2 Xbox), Spectral Force Chronicle (PS2)) */

@@ -58,9 +58,7 @@ static const char* extension_list[] = {
     //"aif", //common
     "aif-Loop",
     "aifc", //common?
-    "aifcl", //fake extension for .aif???
     //"aiff", //common
-    "aiffl", //fake extension for .aif???
     "aix",
     "akb",
     "al",
@@ -85,6 +83,7 @@ static const char* extension_list[] = {
     "aud",
     "audio", //txth/reserved [Grimm Echoes (Android)]
     "aus",
+    "awa", //txth/reserved [Missing Parts Side A (PS2)]
     "awb",
     "awc",
 
@@ -256,6 +255,7 @@ static const char* extension_list[] = {
     "kovs", //fake extension/header id for .kvs
     "kno",
     "kns",
+    "koe",
     "kraw",
     "ktac",
     "ktsl2asbin",
@@ -335,6 +335,7 @@ static const char* extension_list[] = {
     "msa",
     "msb",
     "msd",
+    "mse",
     "msf",
     "mss",
     "msv",
@@ -360,6 +361,7 @@ static const char* extension_list[] = {
     "nop",
     "nps",
     "npsf", //fake extension/header id for .nps (in bigfiles)
+    "nsa",
     "nsopus",
     "nub",
     "nub2",
@@ -370,6 +372,7 @@ static const char* extension_list[] = {
     "nxa",
 
     //"ogg", //common
+    "ogg_",
     "ogl",
     "ogv",
     "oma", //FFmpeg/not parsed (ATRAC3/ATRAC3PLUS/MP3/LPCM/WMA)
@@ -431,6 +434,7 @@ static const char* extension_list[] = {
     "sab",
     "sad",
     "saf",
+    "sam", //txth/reserved [Lost Kingdoms 2 (GC)]
     "sap",
     "sb0",
     "sb1",
@@ -532,6 +536,7 @@ static const char* extension_list[] = {
     "txtp",
     "tydsp",
 
+    "u0",
     "ue4opus",
     "ulw",
     "um3",
@@ -551,6 +556,7 @@ static const char* extension_list[] = {
     "vbx", //txth/reserved [THE Taxi 2 (PS2)]
     "vds",
     "vdm",
+    "vgi", //txth/reserved [Time Crisis II (PS2)]
     "vgm", //txth/reserved [Maximo (PS2)]
     "vgs",
     "vgv",
@@ -567,6 +573,7 @@ static const char* extension_list[] = {
     "vsv",
     "vxn",
 
+    "w",
     "waa",
     "wac",
     "wad",
@@ -586,6 +593,7 @@ static const char* extension_list[] = {
     "wd",
     "wem",
     "wii",
+    "wic", //txth/reserved [Road Rash (SAT)-videos]
     "wip", //txth/reserved [Colin McRae DiRT (PC)]
     "wlv", //txth/reserved [ToeJam & Earl III: Mission to Earth (DC)]
     "wmus",
@@ -593,6 +601,7 @@ static const char* extension_list[] = {
     "wpd",
     "wsd",
     "wsi",
+    "wst", //txth/reserved [3jigen Shoujo o Hogo Shimashita (PC)]
     "wua",
     "wv2",
     "wv6",
@@ -735,6 +744,7 @@ static const coding_info coding_info_list[] = {
 
         {coding_XA,                 "CD-ROM XA 4-bit ADPCM"},
         {coding_XA8,                "CD-ROM XA 8-bit ADPCM"},
+        {coding_XA_EA,              "Electronic Arts XA 4-bit ADPCM"},
         {coding_PSX,                "Playstation 4-bit ADPCM"},
         {coding_PSX_badflags,       "Playstation 4-bit ADPCM (bad flags)"},
         {coding_PSX_cfg,            "Playstation 4-bit ADPCM (configurable)"},
@@ -785,6 +795,7 @@ static const coding_info coding_info_list[] = {
         {coding_WS,                 "Westwood Studios VBR ADPCM"},
         {coding_AICA,               "Yamaha AICA 4-bit ADPCM"},
         {coding_AICA_int,           "Yamaha AICA 4-bit ADPCM (mono/interleave)"},
+        {coding_CP_YM,              "Capcom Yamaha 4-bit ADPCM"},
         {coding_ASKA,               "tri-Ace Aska 4-bit ADPCM"},
         {coding_NXAP,               "Nex NXAP 4-bit ADPCM"},
         {coding_TGC,                "Tiger Game.com 4-bit ADPCM"},
@@ -1118,7 +1129,8 @@ static const meta_info meta_info_list[] = {
         {meta_XBOX_HLWAV,           "Half-Life 2 .WAV header"},
         {meta_MYSPD,                "U-Sing .MYSPD header"},
         {meta_HIS,                  "Her Interactive HIS header"},
-        {meta_PS2_AST,              "KOEI AST header"},
+        {meta_AST_MV,               "MicroVision AST header"},
+        {meta_AST_MMV,              "Marvelous AST header"},
         {meta_CAPDSP,               "Capcom DSP header"},
         {meta_DMSG,                 "Microsoft RIFF DMSG header"},
         {meta_PONA_3DO,             "Policenauts BGM header"},
@@ -1146,7 +1158,7 @@ static const meta_info meta_info_list[] = {
         {meta_DSP_XIII,             "XIII dsp header"},
         {meta_DSP_CABELAS,          "Cabelas games .DSP header"},
         {meta_PS2_ADM,              "Dragon Quest V .ADM raw header"},
-        {meta_PS2_LPCM,             "LPCM header"},
+        {meta_LPCM_SHADE,           "Shade LPCM header"},
         {meta_PS2_VMS,              "VMS Header"},
         {meta_XAU,                  "XPEC XAU header"},
         {meta_GH3_BAR,              "Guitar Hero III Mobile .bar"},

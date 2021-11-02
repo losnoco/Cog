@@ -1,10 +1,20 @@
 #include "streamfile.h"
 #include "util.h"
 #include "vgmstream.h"
+#include <string.h>
 
 /* for dup/fdopen in some systems */
 #ifndef _MSC_VER
     #include <unistd.h>
+#endif
+
+//TODO: move
+#ifndef DIR_SEPARATOR
+    #if defined (_WIN32) || defined (WIN32)
+        #define DIR_SEPARATOR '\\'
+    #else
+        #define DIR_SEPARATOR '/'
+    #endif
 #endif
 
 /* For (rarely needed) +2GB file support we use fseek64/ftell64. Those are usually available
@@ -108,7 +118,7 @@ static size_t stdio_read(STDIO_STREAMFILE* sf, uint8_t* dst, offv_t offset, size
 
 #ifdef VGM_DEBUG_OUTPUT
     if (offset < sf->buf_offset && length > 0) {
-        VGM_LOG("stdio: rebuffer, requested %x vs %x (sf %x)\n", (uint32_t)offset, (uint32_t)sf->buf_offset, (uint32_t)sf);
+        //VGM_LOG("stdio: rebuffer, requested %x vs %x (sf %x)\n", (uint32_t)offset, (uint32_t)sf->buf_offset, (uint32_t)sf);
         //sf->rebuffer++;
         //if (rebuffer > N) ...
     }
@@ -341,7 +351,7 @@ static size_t buffer_read(BUFFER_STREAMFILE* sf, uint8_t* dst, offv_t offset, si
 
 #ifdef VGM_DEBUG_OUTPUT
     if (offset < sf->buf_offset) {
-        VGM_LOG("buffer: rebuffer, requested %x vs %x (sf %x)\n", (uint32_t)offset, (uint32_t)sf->buf_offset, (uint32_t)sf);
+        //VGM_LOG("buffer: rebuffer, requested %x vs %x (sf %x)\n", (uint32_t)offset, (uint32_t)sf->buf_offset, (uint32_t)sf);
     }
 #endif
 
@@ -1263,7 +1273,6 @@ STREAMFILE* read_filemap_file_pos(STREAMFILE* sf, int file_num, int* p_pos) {
             /* better way? */
             if (strcmp(line, "#@reset-pos") == 0) {
                 file_pos = 0;
-                VGM_LOG("pos =%i\n", file_pos);
             }
             continue;
         }

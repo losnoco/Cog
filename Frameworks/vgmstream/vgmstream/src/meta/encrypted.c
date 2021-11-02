@@ -36,7 +36,7 @@ VGMSTREAM* init_vgmstream_encrypted(STREAMFILE* sf) {
             goto fail;
         }
 
-        temp_sf = setup_ogg_vorbis_streamfile(sf, cfg);
+        temp_sf = setup_ogg_vorbis_streamfile(sf, &cfg);
         if (!temp_sf) goto fail;
 
         vgmstream = init_vgmstream_ogg_vorbis(temp_sf);
@@ -53,7 +53,7 @@ VGMSTREAM* init_vgmstream_encrypted(STREAMFILE* sf) {
             goto fail;
         }
 
-        temp_sf = setup_ogg_vorbis_streamfile(sf, cfg);
+        temp_sf = setup_ogg_vorbis_streamfile(sf, &cfg);
         if (!temp_sf) goto fail;
 
 #ifdef VGM_USE_FFMPEG //TODO: allow MP3 without FFmpeg
@@ -72,7 +72,7 @@ VGMSTREAM* init_vgmstream_encrypted(STREAMFILE* sf) {
             goto fail;
         }
 
-        temp_sf = setup_ogg_vorbis_streamfile(sf, cfg);
+        temp_sf = setup_ogg_vorbis_streamfile(sf, &cfg);
         if (!temp_sf) goto fail;
 
         vgmstream = init_vgmstream_riff(temp_sf);
@@ -80,12 +80,13 @@ VGMSTREAM* init_vgmstream_encrypted(STREAMFILE* sf) {
         return vgmstream;
     }
 
-    if (check_extensions(sf,"bgm")) {
+    if (check_extensions(sf,"bgm,mse,koe")) {
+        /* Studio Ring games [Nanami to Konomi no Oshiete ABC (PC), Oyatsu no Jikan (PC)]
+         * .bgm: BGM, .mse: SE, .koe: Voice */
         uint8_t keybuf[0x100];
         size_t key_size;
         off_t start;
 
-        /* Studio Ring games [Nanami to Konomi no Oshiete ABC (PC), Oyatsu no Jikan (PC)] */
         if (id != get_id32be("RIFF"))
             goto fail;
 
