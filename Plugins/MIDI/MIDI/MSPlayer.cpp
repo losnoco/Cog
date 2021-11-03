@@ -33,10 +33,11 @@ void MSPlayer::set_extp(unsigned int extp)
 
 void MSPlayer::send_event(uint32_t b)
 {
-	if (!(b & 0x80000000))
-	{
-        synth->midi_write(b);
-	}
+    synth->midi_write(b);
+}
+
+void MSPlayer::send_sysex(const uint8_t * data, size_t size, size_t port)
+{
 }
 
 void MSPlayer::render(float * out, unsigned long count)
@@ -60,6 +61,7 @@ void MSPlayer::shutdown()
 {
     delete synth;
     synth = 0;
+    initialized = false;
 }
 
 bool MSPlayer::startup()
@@ -82,6 +84,10 @@ bool MSPlayer::startup()
     
     if (!synth->midi_init((unsigned int)uSampleRate, bank_id, extp))
         return false;
+    
+    initialized = true;
+    
+    setFilterMode(mode);
     
 	return true;
 }

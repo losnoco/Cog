@@ -43,9 +43,6 @@
 
 - (IBAction)setMidiPlugin:(id)sender
 {
-    NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
-    BOOL enabled = [plugin isEqualToString:@"Sc55rolD"] || [plugin isEqualToString:@"Sc55RoCl"];
-    [midiFlavorControl setEnabled:enabled];
 }
 
 @end

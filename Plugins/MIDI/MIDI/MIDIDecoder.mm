@@ -10,7 +10,6 @@
 
 #import "AUPlayer.h"
 #import "SFPlayer.h"
-#import "SCPlayer.h"
 #import "MSPlayer.h"
 
 #import "Logging.h"
@@ -155,6 +154,26 @@ static OSType getOSType(const char * in_)
     
     DLog(@"Track num: %i", track_num);
     
+    MIDIPlayer::filter_mode mode = MIDIPlayer::filter_sc55;
+
+    NSString * flavor = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.flavor"];
+    if ([flavor isEqualToString:@"default"])
+        mode = MIDIPlayer::filter_default;
+    else if ([flavor isEqualToString:@"gm"])
+        mode = MIDIPlayer::filter_gm;
+    else if ([flavor isEqualToString:@"gm2"])
+        mode = MIDIPlayer::filter_gm2;
+    else if ([flavor isEqualToString:@"sc55"])
+        mode = MIDIPlayer::filter_sc55;
+    else if ([flavor isEqualToString:@"sc88"])
+        mode = MIDIPlayer::filter_sc88;
+    else if ([flavor isEqualToString:@"sc88pro"])
+        mode = MIDIPlayer::filter_sc88pro;
+    else if ([flavor isEqualToString:@"sc8850"])
+        mode = MIDIPlayer::filter_sc8850;
+    else if ([flavor isEqualToString:@"xg"])
+        mode = MIDIPlayer::filter_xg;
+
     NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
     if (!plugin || [plugin isEqualToString:@"FluidSynth"])
     {
@@ -212,41 +231,6 @@ static OSType getOSType(const char * in_)
         componentSubType = getOSType(cplugin);
         componentManufacturer = getOSType(cplugin + 4);
         
-        if ((componentManufacturer == 'rolD' || componentManufacturer == 'RoCl') && componentSubType == 'Sc55')
-        {
-            const char * plugin_path = "/Library/Audio/Plug-Ins/Components/SOUND Canvas VA.component/Contents/Resources/SCCore00.dylib";
-            
-            if (!dlopen_preflight(plugin_path))
-                return NO;
-            
-            SCPlayer * scplayer = new SCPlayer;
-            
-            SCPlayer::sc_mode mode = SCPlayer::sc_sc55;
-            NSString * flavor = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.flavor"];
-            if ([flavor isEqualToString:@"default"])
-                mode = SCPlayer::sc_default;
-            else if ([flavor isEqualToString:@"gm"])
-                mode = SCPlayer::sc_gm;
-            else if ([flavor isEqualToString:@"gm2"])
-                mode = SCPlayer::sc_gm2;
-            else if ([flavor isEqualToString:@"sc55"])
-                mode = SCPlayer::sc_sc55;
-            else if ([flavor isEqualToString:@"sc88"])
-                mode = SCPlayer::sc_sc88;
-            else if ([flavor isEqualToString:@"sc88pro"])
-                mode = SCPlayer::sc_sc88pro;
-            else if ([flavor isEqualToString:@"sc8850"])
-                mode = SCPlayer::sc_sc8850;
-            else if ([flavor isEqualToString:@"xg"])
-                mode = SCPlayer::sc_xg;
-            
-            scplayer->set_sccore_path(plugin_path);
-            scplayer->set_mode( mode );
-            scplayer->setSampleRate( 44100 );
-            
-            player = scplayer;
-        }
-        else
         {
             auplayer = new AUPlayer;
             
@@ -262,6 +246,8 @@ static OSType getOSType(const char * in_)
             player = auplayer;
         }
     }
+    
+    player->setFilterMode( mode );
     
     unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
     unsigned int clean_flags = midi_container::clean_flag_emidi;
@@ -284,7 +270,7 @@ static OSType getOSType(const char * in_)
             return -1;
     }
     
-    player->SetLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
+    player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
     
     if ( !repeatone && framesRead >= localTotalFrames )
         return 0;
@@ -302,8 +288,12 @@ static OSType getOSType(const char * in_)
         soundFontsAssigned = YES;
     }
     
-    if ( player->Play( (float *) buf, frames ) < frames )
-        return -1;
+    UInt32 frames_done = player->Play( (float *) buf, frames );
+    
+    if ( !frames_done )
+        return 0;
+    
+    frames = frames_done;
     
     if ( !repeatone && framesRead + frames > localFramesLength ) {
         if ( framesFade ) {

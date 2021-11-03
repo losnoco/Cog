@@ -32,12 +32,13 @@ public:
 
 private:
     virtual void send_event(uint32_t b);
+    virtual void send_sysex(const uint8_t * data, size_t size, size_t port);
     virtual void render(float * out, unsigned long count);
 
     virtual void shutdown();
     virtual bool startup();
 
-    std::string       _last_error;
+    std::string        _last_error;
 
     fluid_settings_t * _settings[3];
     fluid_synth_t    * _synth[3];

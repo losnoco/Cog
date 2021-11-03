@@ -12,6 +12,8 @@
 
 #define _countof(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+#define BLOCK_SIZE (512)
+
 AUPlayer::AUPlayer() : MIDIPlayer()
 {
     samplerUnit[0] = NULL;
@@ -39,39 +41,52 @@ AUPlayer::~AUPlayer()
 
 void AUPlayer::send_event(uint32_t b)
 {
+    send_event_time(b, 0);
+}
+
+void AUPlayer::send_sysex(const uint8_t * data, size_t size, size_t port)
+{
+    send_sysex_time(data, size, port, 0);
+}
+
+void AUPlayer::send_event_time(uint32_t b, unsigned int time)
+{
 #ifdef AUPLAYERVIEW
     int _port = -1;
 #endif
-    if (!(b & 0x80000000))
-	{
-		unsigned char event[ 3 ];
-		event[ 0 ] = (unsigned char)b;
-		event[ 1 ] = (unsigned char)( b >> 8 );
-		event[ 2 ] = (unsigned char)( b >> 16 );
-		unsigned port = (b >> 24) & 0x7F;
-        if ( port > 2 ) port = 2;
+    unsigned char event[ 3 ];
+	event[ 0 ] = (unsigned char)b;
+	event[ 1 ] = (unsigned char)( b >> 8 );
+	event[ 2 ] = (unsigned char)( b >> 16 );
+	unsigned port = (b >> 24) & 0x7F;
+    if ( port > 2 ) port = 2;
 #ifdef AUPLAYERVIEW
-        _port = (int)port;
+    _port = (int)port;
 #endif
-        MusicDeviceMIDIEvent(samplerUnit[port], event[0], event[1], event[2], 0);
+    MusicDeviceMIDIEvent(samplerUnit[port], event[0], event[1], event[2], time);
+#ifdef AUPLAYERVIEW
+    if (_port >= 0 && !samplerUIinitialized[_port])
+    {
+        samplerUIinitialized[_port] = true;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            samplerUI[_port] = new AUPluginUI(samplerUnit[_port]);
+        });
     }
-    else
-	{
-		uint32_t n = b & 0xffffff;
-		const uint8_t * data;
-        std::size_t size, port;
-		mSysexMap.get_entry( n, data, size, port );
-		if ( port > 2 ) port = 2;
-#ifdef AUPLAYERVIEW
-        _port = (int)port;
 #endif
-        MusicDeviceSysEx(samplerUnit[port], data, (UInt32) size);
-        if ( port == 0 )
-        {
-            MusicDeviceSysEx(samplerUnit[1], data, (UInt32) size);
-            MusicDeviceSysEx(samplerUnit[2], data, (UInt32) size);
-        }
-	}
+}
+
+void AUPlayer::send_sysex_time(const uint8_t * data, size_t size, size_t port, unsigned int time)
+{
+	if ( port > 2 ) port = 0;
+#ifdef AUPLAYERVIEW
+    _port = (int)port;
+#endif
+    MusicDeviceSysEx(samplerUnit[port], data, (UInt32) size);
+    if ( port == 0 )
+    {
+        MusicDeviceSysEx(samplerUnit[1], data, (UInt32) size);
+        MusicDeviceSysEx(samplerUnit[2], data, (UInt32) size);
+    }
 #ifdef AUPLAYERVIEW
     if (_port >= 0 && !samplerUIinitialized[_port])
     {
@@ -89,7 +104,7 @@ void AUPlayer::render(float * out, unsigned long count)
     memset(out, 0, count * sizeof(float) * 2);
     while (count)
     {
-        UInt32 numberFrames = count > 512 ? 512 : (UInt32) count;
+        UInt32 numberFrames = count > BLOCK_SIZE ? BLOCK_SIZE : (UInt32) count;
         
         for (unsigned long i = 0; i < 3; ++i)
         {
@@ -99,7 +114,7 @@ void AUPlayer::render(float * out, unsigned long count)
             {
                 bufferList->mBuffers[j].mNumberChannels = 1;
                 bufferList->mBuffers[j].mDataByteSize = (UInt32) (numberFrames * sizeof(float));
-                bufferList->mBuffers[j].mData = audioBuffer + j * 512;
+                bufferList->mBuffers[j].mData = audioBuffer + j * BLOCK_SIZE;
                 memset(bufferList->mBuffers[j].mData, 0, numberFrames * sizeof(float));
             }
             
@@ -175,6 +190,7 @@ void AUPlayer::shutdown()
         free(bufferList);
         bufferList = NULL;
     }
+    initialized = false;
 }
 
 void AUPlayer::enumComponents(callback cbEnum)
@@ -291,7 +307,7 @@ bool AUPlayer::startup()
                                   kAudioUnitScope_Output, 0, &stream, sizeof (stream));
         }
         
-        value = 512;
+        value = BLOCK_SIZE;
         AudioUnitSetProperty (samplerUnit[i], kAudioUnitProperty_MaximumFramesPerSlice,
                               kAudioUnitScope_Global, 0, &value, size);
                               
@@ -348,7 +364,7 @@ bool AUPlayer::startup()
     if (!bufferList)
         return false;
     
-    audioBuffer = (float *) malloc(1024 * sizeof(float));
+    audioBuffer = (float *) malloc(BLOCK_SIZE * 2 * sizeof(float));
     if (!audioBuffer)
         return false;
     
@@ -356,6 +372,10 @@ bool AUPlayer::startup()
     
     memset(&mTimeStamp, 0, sizeof(mTimeStamp));
     mTimeStamp.mFlags = kAudioTimeStampSampleTimeValid;
+    
+    initialized = true;
+    
+    setFilterMode(mode);
     
 	return true;
 }
@@ -376,4 +396,9 @@ void AUPlayer::loadSoundFont(const char *name)
         
         CFRelease(url);
     }
+}
+
+unsigned int AUPlayer::send_event_needs_time()
+{
+    return BLOCK_SIZE;
 }

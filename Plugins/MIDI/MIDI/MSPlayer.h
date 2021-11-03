@@ -26,6 +26,7 @@ public:
     
 protected:
 	virtual void send_event(uint32_t b);
+    virtual void send_sysex(const uint8_t * data, size_t size, size_t port);
 	virtual void render(float * out, unsigned long count);
 
 	virtual void shutdown();

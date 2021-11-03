@@ -8,7 +8,6 @@
 
 #import "GeneralPreferencesPlugin.h"
 #import "PathToFileTransformer.h"
-#import "MIDIPluginFlavorTransformer.h"
 
 @implementation GeneralPreferencesPlugin
 
@@ -17,9 +16,6 @@
 	NSValueTransformer *pathToFileTransformer = [[PathToFileTransformer alloc] init];
     [NSValueTransformer setValueTransformer:pathToFileTransformer
                                     forName:@"PathToFileTransformer"];
-    NSValueTransformer *midiPluginFlavorTransformer = [[MIDIPluginFlavorTransformer alloc] init];
-    [NSValueTransformer setValueTransformer:midiPluginFlavorTransformer
-                                    forName:@"MIDIPluginFlavorTransformer"];
 }
 
 + (NSArray *)preferencePanes

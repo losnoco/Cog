@@ -31,12 +31,17 @@ public:
     void setComponent(OSType uSubType, OSType uManufacturer);
 
 protected:
+    virtual unsigned int send_event_needs_time();
 	virtual void send_event(uint32_t b);
+    virtual void send_sysex(const uint8_t * data, size_t size, size_t port);
 	virtual void render(float * out, unsigned long count);
 
 	virtual void shutdown();
 	virtual bool startup();
     
+    virtual void send_event_time(uint32_t b, unsigned int time);
+    virtual void send_sysex_time(const uint8_t * data, size_t size, size_t port, unsigned int time);
+
 private:
     void loadSoundFont(const char * name);
     

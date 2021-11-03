@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -326,6 +327,7 @@
                 <string>name</string>
                 <string>url</string>
             </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="246" userLabel="PlaylistBehavior" customClass="PlaylistBehaviorArrayController">
             <declaredKeys>
@@ -333,6 +335,7 @@
                 <string>slug</string>
                 <string>preference</string>
             </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="SuD-jI-ifw" userLabel="VolumeBehavior" customClass="VolumeBehaviorArrayController">
             <declaredKeys>
@@ -340,6 +343,7 @@
                 <string>slug</string>
                 <string>preference</string>
             </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <customView id="0nK-XQ-5MY" userLabel="ScrobblerView">
             <rect key="frame" x="0.0" y="0.0" width="530" height="94"/>
@@ -531,7 +535,7 @@
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1Yw-25-Gbs">
                     <rect key="frame" x="173" y="17" width="164" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" altersStateOfSelectedItem="NO" selectedItem="XzK-h2-vIT" id="qzt-Ox-taI">
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" altersStateOfSelectedItem="NO" selectedItem="XzK-h2-vIT" id="qzt-Ox-taI">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" autoenablesItems="NO" id="q1g-E5-NwQ">
@@ -547,11 +551,6 @@
                         <binding destination="KAn-H1-QH6" name="contentValues" keyPath="arrangedObjects.name" previousBinding="WGj-w1-erz" id="Rvq-46-YeR"/>
                         <binding destination="KAn-H1-QH6" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Zvj-Wf-Bum" id="WGj-w1-erz"/>
                         <binding destination="52" name="selectedObject" keyPath="values.midi.flavor" previousBinding="Rvq-46-YeR" id="zC1-3J-frL"/>
-                        <binding destination="52" name="enabled" keyPath="values.midi.plugin" id="GlZ-Ch-oua">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">MIDIPluginFlavorTransformer</string>
-                            </dictionary>
-                        </binding>
                     </connections>
                 </popUpButton>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E1D-Bo-ZVf">
@@ -584,6 +583,7 @@
                 <string>slug</string>
                 <string>preference</string>
             </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <arrayController objectClassName="NSDictionary" editable="NO" id="czk-eG-6QG" userLabel="MIDIPluginBehavior" customClass="MIDIPluginBehaviorArrayController">
             <declaredKeys>
@@ -591,6 +591,7 @@
                 <string>slug</string>
                 <string>preference</string>
             </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <arrayController objectClassName="NSDictionary" editable="NO" id="KAn-H1-QH6" userLabel="MIDIFlavorBehavior" customClass="MIDIFlavorBehaviorArrayController">
             <declaredKeys>
@@ -598,6 +599,7 @@
                 <string>slug</string>
                 <string>preference</string>
             </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
     </objects>
 </document>

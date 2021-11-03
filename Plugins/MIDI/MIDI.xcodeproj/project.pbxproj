@@ -33,8 +33,6 @@
 		83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06721180D70FE008E3612 /* MIDIDecoder.mm */; };
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
-		83DFEA071CBC87BB00BCC565 /* SCCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83DFEA031CBC87BB00BCC565 /* SCCore.cpp */; };
-		83DFEA081CBC87BB00BCC565 /* SCPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83DFEA051CBC87BB00BCC565 /* SCPlayer.cpp */; };
 		83E973471C4378880007F413 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E973451C4378880007F413 /* AUPlayer.mm */; };
 /* End PBXBuildFile section */
 
@@ -140,10 +138,6 @@
 		83C35701180EDB74007E9DF0 /* MIDIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIContainer.h; sourceTree = "<group>"; };
 		83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIMetadataReader.mm; sourceTree = "<group>"; };
 		83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIMetadataReader.h; sourceTree = "<group>"; };
-		83DFEA031CBC87BB00BCC565 /* SCCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCCore.cpp; sourceTree = "<group>"; };
-		83DFEA041CBC87BB00BCC565 /* SCCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCCore.h; sourceTree = "<group>"; };
-		83DFEA051CBC87BB00BCC565 /* SCPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCPlayer.cpp; sourceTree = "<group>"; };
-		83DFEA061CBC87BB00BCC565 /* SCPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPlayer.h; sourceTree = "<group>"; };
 		83E973451C4378880007F413 /* AUPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayer.mm; sourceTree = "<group>"; };
 		83E973461C4378880007F413 /* AUPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayer.h; sourceTree = "<group>"; };
 		83FAF8A618ADD60100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
@@ -270,10 +264,6 @@
 				83A09F5D1CFA83F2001E7D2D /* fmopl3lib */,
 				834BE9191DE407CB00A07DCD /* resampler.c */,
 				834BE91A1DE407CB00A07DCD /* resampler.h */,
-				83DFEA031CBC87BB00BCC565 /* SCCore.cpp */,
-				83DFEA041CBC87BB00BCC565 /* SCCore.h */,
-				83DFEA051CBC87BB00BCC565 /* SCPlayer.cpp */,
-				83DFEA061CBC87BB00BCC565 /* SCPlayer.h */,
 				83686AAD1C5C6A2700671C7A /* AUPlayerView.h */,
 				83686AAB1C5C69D400671C7A /* AUPlayerView.mm */,
 				83E973451C4378880007F413 /* AUPlayer.mm */,
@@ -403,10 +393,8 @@
 			files = (
 				83E973471C4378880007F413 /* AUPlayer.mm in Sources */,
 				83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */,
-				83DFEA071CBC87BB00BCC565 /* SCCore.cpp in Sources */,
 				83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */,
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
-				83DFEA081CBC87BB00BCC565 /* SCPlayer.cpp in Sources */,
 				83A09F631CFA83F2001E7D2D /* opl3midi.cpp in Sources */,
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
 				83A09F6F1CFA8D6B001E7D2D /* MSPlayer.cpp in Sources */,
