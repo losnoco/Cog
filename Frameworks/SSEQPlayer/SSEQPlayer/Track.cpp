@@ -683,11 +683,13 @@ void Track::Run()
 
 				case SSEQ_CMD_PORTATIME:
 					this->portaTime = this->overriding.val(pData, read8);
+					this->state.set(TS_PORTABIT);
 					// Update here?
 					break;
 
 				case SSEQ_CMD_SWEEPPITCH:
 					this->sweepPitch = this->overriding.val(pData, read16);
+					this->state.set(TS_PORTABIT);
 					// Update here?
 					break;
 
