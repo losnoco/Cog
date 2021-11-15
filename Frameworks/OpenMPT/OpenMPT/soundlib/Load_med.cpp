@@ -1011,10 +1011,8 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			if(size > offsetof(MMDInstrExt, instrFlags))
 			{
-				if(instrExt.instrFlags & MMDInstrExt::SSFLG_LOOP)
-					sample.uFlags.set(CHN_LOOP);
-				if(instrExt.instrFlags & MMDInstrExt::SSFLG_PINGPONG)
-					sample.uFlags.set(CHN_LOOP | CHN_PINGPONGLOOP);
+				sample.uFlags.set(CHN_LOOP, (instrExt.instrFlags & MMDInstrExt::SSFLG_LOOP) != 0);
+				sample.uFlags.set(CHN_PINGPONGLOOP, (instrExt.instrFlags & MMDInstrExt::SSFLG_PINGPONG) != 0);
 				if(instrExt.instrFlags & MMDInstrExt::SSFLG_DISABLED)
 					sample.nGlobalVol = 0;
 			}

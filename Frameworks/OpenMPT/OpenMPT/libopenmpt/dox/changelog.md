@@ -5,6 +5,22 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.13 (2021-11-14)
+
+ *  [**Bug**] Fixed various undefined behaviour found with ubsan.
+
+ *  IMF: Change envelope interpretation to be more like in XM instead of IT and
+    tighten header validation.
+ *  MED: Some samples had a ping-pong loop when there should be no loop at all.
+ *  MT2: Ignore incorrect drums chunk size in early MT2 files
+    (fixes e.g. "A little Rock" by Csumi).
+ *  MT2: Work around initial master volume of 0 used in some files that apply a
+    fade-in a the song start using track automation that would stay silent
+    forever otherwise (track automation is currently not supported).
+ *  OKT: Apply portamento on every tick.
+
+ *  mpg123: Update to v1.29.2 (2021-10-23).
+
 ### libopenmpt 0.5.12 (2021-10-04)
 
  *  [**Sec**] Possible crash when loading malformed MDL files. (r15603)
@@ -23,6 +39,8 @@ is just a high-level summary.
     Windows-1252 encoding.
 
  *  in_openmpt: Song metadata is no longer reverted when viewing file info.
+
+ *  mpg123: Update to v1.29.0 (2021-09-06).
 
 ### libopenmpt 0.5.11 (2021-08-22)
 

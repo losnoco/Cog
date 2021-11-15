@@ -42,7 +42,6 @@ enum RegionFlags
 	DLSREGION_SAMPLELOOP       = 0x40,
 	DLSREGION_SELFNONEXCLUSIVE = 0x80,
 	DLSREGION_SUSTAINLOOP      = 0x100,
-	DLSREGION_ISGLOBAL         = 0x200,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -376,7 +375,7 @@ enum SF2Generators : uint16
 /////////////////////////////////////////////////////////////////////
 // SF2 Structures Definitions
 
-struct SFPRESETHEADER
+struct SFPresetHeader
 {
 	char     achPresetName[20];
 	uint16le wPreset;
@@ -387,49 +386,49 @@ struct SFPRESETHEADER
 	uint32le dwMorphology;
 };
 
-MPT_BINARY_STRUCT(SFPRESETHEADER, 38)
+MPT_BINARY_STRUCT(SFPresetHeader, 38)
 
-struct SFPRESETBAG
+struct SFPresetBag
 {
 	uint16le wGenNdx;
 	uint16le wModNdx;
 };
 
-MPT_BINARY_STRUCT(SFPRESETBAG, 4)
+MPT_BINARY_STRUCT(SFPresetBag, 4)
 
-struct SFGENLIST
+struct SFGenList
 {
 	uint16le sfGenOper;
 	uint16le genAmount;
 };
 
-MPT_BINARY_STRUCT(SFGENLIST, 4)
+MPT_BINARY_STRUCT(SFGenList, 4)
 
-struct SFINST
+struct SFInst
 {
 	char     achInstName[20];
 	uint16le wInstBagNdx;
 };
 
-MPT_BINARY_STRUCT(SFINST, 22)
+MPT_BINARY_STRUCT(SFInst, 22)
 
-struct SFINSTBAG
+struct SFInstBag
 {
 	uint16le wGenNdx;
 	uint16le wModNdx;
 };
 
-MPT_BINARY_STRUCT(SFINSTBAG, 4)
+MPT_BINARY_STRUCT(SFInstBag, 4)
 
-struct SFINSTGENLIST
+struct SFInstGenList
 {
 	uint16le sfGenOper;
 	uint16le genAmount;
 };
 
-MPT_BINARY_STRUCT(SFINSTGENLIST, 4)
+MPT_BINARY_STRUCT(SFInstGenList, 4)
 
-struct SFSAMPLE
+struct SFSample
 {
 	char     achSampleName[20];
 	uint32le dwStart;
@@ -443,7 +442,7 @@ struct SFSAMPLE
 	uint16le sfSampleType;
 };
 
-MPT_BINARY_STRUCT(SFSAMPLE, 46)
+MPT_BINARY_STRUCT(SFSample, 46)
 
 // End of structures definitions
 /////////////////////////////////////////////////////////////////////
@@ -581,11 +580,17 @@ bool CDLSBank::IsDLSBank(const mpt::PathString &filename)
 
 const DLSINSTRUMENT *CDLSBank::FindInstrument(bool isDrum, uint32 bank, uint32 program, uint32 key, uint32 *pInsNo) const
 {
-	if(m_Instruments.empty())
-		return nullptr;
-	for (uint32 iIns = 0; iIns < m_Instruments.size(); iIns++)
+	// This helps finding the "more correct" instrument if we search for an instrument in any bank, and the higher-bank instruments appear first in the file
+	// Fixes issues when loading GeneralUser GS into OpenMPT's MIDI library.
+	std::vector<std::reference_wrapper<const DLSINSTRUMENT>> sortedInstr{m_Instruments.begin(), m_Instruments.end()};
+	if(bank >= 0x4000 || program >= 0x80)
 	{
-		const DLSINSTRUMENT &dlsIns = m_Instruments[iIns];
+		std::sort(sortedInstr.begin(), sortedInstr.end(), [](const DLSINSTRUMENT &l, const DLSINSTRUMENT &r)
+				{ return std::tie(l.ulBank, l.ulInstrument) < std::tie(r.ulBank, r.ulInstrument); });
+	}
+
+	for(const DLSINSTRUMENT &dlsIns : sortedInstr)
+	{
 		uint32 insbank = ((dlsIns.ulBank & 0x7F00) >> 1) | (dlsIns.ulBank & 0x7F);
 		if((bank >= 0x4000) || (insbank == bank))
 		{
@@ -595,16 +600,16 @@ const DLSINSTRUMENT *CDLSBank::FindInstrument(bool isDrum, uint32 bank, uint32 p
 				{
 					for(const auto &region : dlsIns.Regions)
 					{
-						if(region.nWaveLink == Util::MaxValueOfType(region.nWaveLink))
-							continue;
-						if(region.fuOptions & DLSREGION_ISGLOBAL)
+						if(region.IsDummy())
 							continue;
 
 						if((!key || key >= 0x80)
 						   || (key >= region.uKeyMin && key <= region.uKeyMax))
 						{
 							if(pInsNo)
-								*pInsNo = iIns;
+								*pInsNo = static_cast<uint32>(std::distance(m_Instruments.data(), &dlsIns));
+							// cppcheck false-positive
+							// cppcheck-suppress returnDanglingLifetime
 							return &dlsIns;
 						}
 					}
@@ -614,7 +619,9 @@ const DLSINSTRUMENT *CDLSBank::FindInstrument(bool isDrum, uint32 bank, uint32 p
 				if((program >= 0x80) || (program == (dlsIns.ulInstrument & 0x7F)))
 				{
 					if(pInsNo)
-						*pInsNo = iIns;
+						*pInsNo = static_cast<uint32>(std::distance(m_Instruments.data(), &dlsIns));
+					// cppcheck false-positive
+					// cppcheck-suppress returnDanglingLifetime
 					return &dlsIns;
 				}
 			}
@@ -877,7 +884,7 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 	case IFFID_phdr:
 		if(m_Instruments.empty())
 		{
-			uint32 numIns = static_cast<uint32>(chunk.GetLength() / sizeof(SFPRESETHEADER));
+			uint32 numIns = static_cast<uint32>(chunk.GetLength() / sizeof(SFPresetHeader));
 			if(numIns <= 1)
 				break;
 			// The terminal sfPresetHeader record should never be accessed, and exists only to provide a terminal wPresetBagNdx with which to determine the number of zones in the last preset.
@@ -887,9 +894,9 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 		#ifdef DLSBANK_LOG
 			MPT_LOG(LogDebug, "DLSBank", mpt::format(U_("phdr: %1 instruments"))(m_Instruments.size()));
 		#endif
-			SFPRESETHEADER psfh;
+			SFPresetHeader psfh;
 			chunk.ReadStruct(psfh);
-			for (auto &dlsIns : m_Instruments)
+			for(auto &dlsIns : m_Instruments)
 			{
 				mpt::String::WriteAutoBuf(dlsIns.szName) = mpt::String::ReadAutoBuf(psfh.achPresetName);
 				dlsIns.ulInstrument = psfh.wPreset & 0x7F;
@@ -903,7 +910,7 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 		break;
 
 	case IFFID_pbag:
-		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFPRESETBAG)))
+		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFPresetBag)))
 		{
 			sf2info.presetBags = chunk.GetChunk(chunk.BytesLeft());
 		}
@@ -913,7 +920,7 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 		break;
 
 	case IFFID_pgen:
-		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFGENLIST)))
+		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFGenList)))
 		{
 			sf2info.presetGens = chunk.GetChunk(chunk.BytesLeft());
 		}
@@ -923,21 +930,21 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 		break;
 
 	case IFFID_inst:
-		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFINST)))
+		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFInst)))
 		{
 			sf2info.insts = chunk.GetChunk(chunk.BytesLeft());
 		}
 		break;
 
 	case IFFID_ibag:
-		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFINSTBAG)))
+		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFInstBag)))
 		{
 			sf2info.instBags = chunk.GetChunk(chunk.BytesLeft());
 		}
 		break;
 
 	case IFFID_igen:
-		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFINSTGENLIST)))
+		if(!m_Instruments.empty() && chunk.CanRead(sizeof(SFInstGenList)))
 		{
 			sf2info.instGens = chunk.GetChunk(chunk.BytesLeft());
 		}
@@ -946,7 +953,7 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 	case IFFID_shdr:
 		if (m_SamplesEx.empty())
 		{
-			uint32 numSmp = static_cast<uint32>(chunk.GetLength() / sizeof(SFSAMPLE));
+			uint32 numSmp = static_cast<uint32>(chunk.GetLength() / sizeof(SFSample));
 			if (numSmp < 1) break;
 			m_SamplesEx.resize(numSmp);
 			m_WaveForms.resize(numSmp);
@@ -956,7 +963,7 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 
 			for (uint32 i = 0; i < numSmp; i++)
 			{
-				SFSAMPLE p;
+				SFSample p;
 				chunk.ReadStruct(p);
 				DLSSAMPLEEX &dlsSmp = m_SamplesEx[i];
 				mpt::String::WriteAutoBuf(dlsSmp.szName) = mpt::String::ReadAutoBuf(p.achSampleName);
@@ -1006,16 +1013,16 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 	if (m_Instruments.empty() || m_SamplesEx.empty())
 		return false;
 
-	const uint32 numPresetBags = static_cast<uint32>(sf2info.presetBags.GetLength() / sizeof(SFPRESETBAG));
-	const uint32 numPresetGens = static_cast<uint32>(sf2info.presetGens.GetLength() / sizeof(SFGENLIST));
-	const uint32 numInsts = static_cast<uint32>(sf2info.insts.GetLength() / sizeof(SFINST));
-	const uint32 numInstBags = static_cast<uint32>(sf2info.instBags.GetLength() / sizeof(SFINSTBAG));
-	const uint32 numInstGens = static_cast<uint32>(sf2info.instGens.GetLength() / sizeof(SFINSTGENLIST));
+	const uint32 numInsts = static_cast<uint32>(sf2info.insts.GetLength() / sizeof(SFInst));
+	const uint32 numInstBags = static_cast<uint32>(sf2info.instBags.GetLength() / sizeof(SFInstBag));
 
-	for (auto &dlsIns : m_Instruments)
+	std::vector<std::pair<uint16, uint16>> instruments;  // instrument, key range
+	std::vector<SFGenList> generators;
+	std::vector<SFInstGenList> instrGenerators;
+	for(auto &dlsIns : m_Instruments)
 	{
+		instruments.clear();
 		DLSENVELOPE dlsEnv;
-		std::vector<uint32> instruments;
 		int32 instrAttenuation = 0;
 		// Default Envelope Values
 		dlsEnv.wVolAttack = 0;
@@ -1024,21 +1031,21 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 		dlsEnv.nVolSustainLevel = 128;
 		dlsEnv.nDefPan = 128;
 		// Load Preset Bags
-		sf2info.presetBags.Seek(dlsIns.wPresetBagNdx * sizeof(SFPRESETBAG));
-		for (uint32 ipbagcnt=0; ipbagcnt<(uint32)dlsIns.wPresetBagNum; ipbagcnt++)
+		sf2info.presetBags.Seek(dlsIns.wPresetBagNdx * sizeof(SFPresetBag));
+		for(uint32 ipbagcnt = 0; ipbagcnt < dlsIns.wPresetBagNum; ipbagcnt++)
 		{
 			// Load generators for each preset bag
-			SFPRESETBAG bag[2];
+			SFPresetBag bag[2];
 			if(!sf2info.presetBags.ReadArray(bag))
 				break;
-			sf2info.presetBags.SkipBack(sizeof(SFPRESETBAG));
+			sf2info.presetBags.SkipBack(sizeof(SFPresetBag));
 
-			sf2info.presetGens.Seek(bag[0].wGenNdx * sizeof(SFGENLIST));
-			for (uint32 ipgenndx = bag[0].wGenNdx; ipgenndx < bag[1].wGenNdx; ipgenndx++)
+			sf2info.presetGens.Seek(bag[0].wGenNdx * sizeof(SFGenList));
+			uint16 keyRange = 0xFFFF;
+			if(!sf2info.presetGens.ReadVector(generators, bag[1].wGenNdx - bag[0].wGenNdx))
+				continue;
+			for(const auto &gen : generators)
 			{
-				SFGENLIST gen;
-				if(!sf2info.presetGens.ReadStruct(gen))
-					break;
 				switch(gen.sfGenOper)
 				{
 				case SF2_GEN_ATTACKVOLENV:
@@ -1058,8 +1065,12 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 					dlsEnv.wVolRelease = SF2TimeToDLS(gen.genAmount);
 					break;
 				case SF2_GEN_INSTRUMENT:
-					if(std::find(instruments.begin(), instruments.end(), gen.genAmount) == instruments.end())
-						instruments.push_back(gen.genAmount);
+					if(const auto instr = std::make_pair(gen.genAmount.get(), keyRange); std::find(instruments.begin(), instruments.end(), instr) == instruments.end())
+						instruments.push_back(instr);
+					keyRange = 0xFFFF;
+					break;
+				case SF2_GEN_KEYRANGE:
+					keyRange = gen.genAmount;
 					break;
 				case SF2_GEN_ATTENUATION:
 					instrAttenuation = -static_cast<int16>(gen.genAmount);
@@ -1081,22 +1092,35 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 		}
 		// Load Instrument Bags
 		dlsIns.Regions.clear();
-		for(const auto nInstrNdx : instruments)
+		for(const auto [nInstrNdx, keyRange] : instruments)
 		{
 			if(nInstrNdx >= numInsts)
 				continue;
-			sf2info.insts.Seek(nInstrNdx * sizeof(SFINST));
-			SFINST insts[2];
+			sf2info.insts.Seek(nInstrNdx * sizeof(SFInst));
+			SFInst insts[2];
 			sf2info.insts.ReadArray(insts);
-			const auto startRegion = static_cast<uint32>(dlsIns.Regions.size());
-			const auto endRegion = startRegion + insts[1].wInstBagNdx - insts[0].wInstBagNdx;
-			dlsIns.Regions.resize(endRegion);
+			const uint32 numRegions = insts[1].wInstBagNdx - insts[0].wInstBagNdx;
+			dlsIns.Regions.reserve(dlsIns.Regions.size() + numRegions);
 			//Log("\nIns %3d, %2d regions:\n", nIns, pSmp->nRegions);
-			DLSREGION *pRgn = &dlsIns.Regions[startRegion];
-			bool hasGlobalZone = false;
-			for(uint32 nRgn = startRegion; nRgn < endRegion; nRgn++, pRgn++)
+			DLSREGION globalZone{};
+			globalZone.uUnityNote = 0xFF;  // 0xFF means undefined -> use sample root note
+			globalZone.tuning = 100;
+			globalZone.sFineTune = 0;
+			globalZone.nWaveLink = Util::MaxValueOfType(globalZone.nWaveLink);
+			if(keyRange != 0xFFFF)
 			{
-				uint32 ibagcnt = insts[0].wInstBagNdx + nRgn - startRegion;
+				globalZone.uKeyMin = static_cast<uint8>(keyRange & 0xFF);
+				globalZone.uKeyMax = static_cast<uint8>(keyRange >> 8);
+				if(globalZone.uKeyMin > globalZone.uKeyMax)
+					std::swap(globalZone.uKeyMin, globalZone.uKeyMax);
+			} else
+			{
+				globalZone.uKeyMin = 0;
+				globalZone.uKeyMax = 127;
+			}
+			for(uint32 nRgn = 0; nRgn < numRegions; nRgn++)
+			{
+				uint32 ibagcnt = insts[0].wInstBagNdx + nRgn;
 				if(ibagcnt >= numInstBags)
 					break;
 				// Create a new envelope for drums
@@ -1105,42 +1129,42 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 				{
 					pDlsEnv = &m_Envelopes[dlsIns.nMelodicEnv - 1];
 				}
+
+				DLSREGION rgn = globalZone;
+
 				// Region Default Values
 				int32 regionAttn = 0;
-				pRgn->uKeyMin = 0;
-				pRgn->uKeyMax = 127;
-				pRgn->uUnityNote = 0xFF;  // 0xFF means undefined -> use sample root note
-				pRgn->tuning = 100;
-				pRgn->sFineTune = 0;
-				pRgn->nWaveLink = Util::MaxValueOfType(pRgn->nWaveLink);
-				if(hasGlobalZone)
-					*pRgn = dlsIns.Regions[startRegion];
 				// Load Generators
-				sf2info.instBags.Seek(ibagcnt * sizeof(SFINSTBAG));
-				SFINSTBAG bags[2];
+				sf2info.instBags.Seek(ibagcnt * sizeof(SFInstBag));
+				SFInstBag bags[2];
 				sf2info.instBags.ReadArray(bags);
-				sf2info.instGens.Seek(bags[0].wGenNdx * sizeof(SFINSTGENLIST));
+				sf2info.instGens.Seek(bags[0].wGenNdx * sizeof(SFInstGenList));
 				uint16 lastOp = SF2_GEN_SAMPLEID;
 				int32 loopStart = 0, loopEnd = 0;
-				for(uint32 igenndx = bags[0].wGenNdx; igenndx < bags[1].wGenNdx; igenndx++)
+				if(!sf2info.instGens.ReadVector(instrGenerators, bags[1].wGenNdx - bags[0].wGenNdx))
+					break;
+				for(const auto &gen : instrGenerators)
 				{
-					if(igenndx >= numInstGens)
-						break;
-					SFINSTGENLIST gen;
-					sf2info.instGens.ReadStruct(gen);
 					uint16 value = gen.genAmount;
 					lastOp = gen.sfGenOper;
 
 					switch(gen.sfGenOper)
 					{
 					case SF2_GEN_KEYRANGE:
-						pRgn->uKeyMin = (uint8)(value & 0xFF);
-						pRgn->uKeyMax = (uint8)(value >> 8);
-						if(pRgn->uKeyMin > pRgn->uKeyMax)
-							std::swap(pRgn->uKeyMin, pRgn->uKeyMax);
+						{
+							uint8 keyMin = static_cast<uint8>(value & 0xFF);
+							uint8 keyMax = static_cast<uint8>(value >> 8);
+							if(keyMin > keyMax)
+								std::swap(keyMin, keyMax);
+							rgn.uKeyMin = std::max(rgn.uKeyMin, keyMin);
+							rgn.uKeyMax = std::min(rgn.uKeyMax, keyMax);
+							// There was no overlap between instrument region and preset region - skip it
+							if(rgn.uKeyMin > rgn.uKeyMax)
+								rgn.uKeyMin = rgn.uKeyMax = 0xFF;
+						}
 						break;
 					case SF2_GEN_UNITYNOTE:
-						if (value < 128) pRgn->uUnityNote = (uint8)value;
+						if (value < 128) rgn.uUnityNote = (uint8)value;
 						break;
 					case SF2_GEN_ATTACKVOLENV:
 						pDlsEnv->wVolAttack = SF2TimeToDLS(gen.genAmount);
@@ -1162,7 +1186,7 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 						{
 							int32 pan = static_cast<int16>(value);
 							pan = std::clamp(Util::muldivr(pan + 500, 256, 1000), 0, 256);
-							pRgn->panning = static_cast<int16>(pan);
+							rgn.panning = static_cast<int16>(pan);
 							pDlsEnv->nDefPan = mpt::saturate_cast<uint8>(pan);
 						}
 						break;
@@ -1172,33 +1196,33 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 					case SF2_GEN_SAMPLEID:
 						if (value < m_SamplesEx.size())
 						{
-							pRgn->nWaveLink = value;
-							pRgn->ulLoopStart = mpt::saturate_cast<uint32>(m_SamplesEx[value].dwStartloop + loopStart);
-							pRgn->ulLoopEnd = mpt::saturate_cast<uint32>(m_SamplesEx[value].dwEndloop + loopEnd);
+							rgn.nWaveLink = value;
+							rgn.ulLoopStart = mpt::saturate_cast<uint32>(m_SamplesEx[value].dwStartloop + loopStart);
+							rgn.ulLoopEnd = mpt::saturate_cast<uint32>(m_SamplesEx[value].dwEndloop + loopEnd);
 						}
 						break;
 					case SF2_GEN_SAMPLEMODES:
 						value &= 3;
-						pRgn->fuOptions &= uint16(~(DLSREGION_SAMPLELOOP|DLSREGION_PINGPONGLOOP|DLSREGION_SUSTAINLOOP));
+						rgn.fuOptions &= uint16(~(DLSREGION_SAMPLELOOP|DLSREGION_PINGPONGLOOP|DLSREGION_SUSTAINLOOP));
 						if(value == 1)
-							pRgn->fuOptions |= DLSREGION_SAMPLELOOP;
+							rgn.fuOptions |= DLSREGION_SAMPLELOOP;
 						else if(value == 2)
-							pRgn->fuOptions |= DLSREGION_SAMPLELOOP | DLSREGION_PINGPONGLOOP;
+							rgn.fuOptions |= DLSREGION_SAMPLELOOP | DLSREGION_PINGPONGLOOP;
 						else if(value == 3)
-							pRgn->fuOptions |= DLSREGION_SAMPLELOOP | DLSREGION_SUSTAINLOOP;
-						pRgn->fuOptions |= DLSREGION_OVERRIDEWSMP;
+							rgn.fuOptions |= DLSREGION_SAMPLELOOP | DLSREGION_SUSTAINLOOP;
+						rgn.fuOptions |= DLSREGION_OVERRIDEWSMP;
 						break;
 					case SF2_GEN_KEYGROUP:
-						pRgn->fuOptions |= (value & DLSREGION_KEYGROUPMASK);
+						rgn.fuOptions |= (value & DLSREGION_KEYGROUPMASK);
 						break;
 					case SF2_GEN_COARSETUNE:
-						pRgn->sFineTune += static_cast<int16>(value) * 128;
+						rgn.sFineTune += static_cast<int16>(value) * 128;
 						break;
 					case SF2_GEN_FINETUNE:
-						pRgn->sFineTune += static_cast<int16>(Util::muldiv(static_cast<int8>(value), 128, 100));
+						rgn.sFineTune += static_cast<int16>(Util::muldiv(static_cast<int8>(value), 128, 100));
 						break;
 					case SF2_GEN_SCALE_TUNING:
-						pRgn->tuning = mpt::saturate_cast<uint8>(value);
+						rgn.tuning = mpt::saturate_cast<uint8>(value);
 						break;
 					case SF2_GEN_START_LOOP_FINE:
 						loopStart += static_cast<int16>(value);
@@ -1216,14 +1240,14 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 					//	Log("    gen=%d value=%04X\n", pgen->sfGenOper, pgen->genAmount);
 					}
 				}
-				if(lastOp != SF2_GEN_SAMPLEID && nRgn == startRegion)
-				{
-					hasGlobalZone = true;
-					pRgn->fuOptions |= DLSREGION_ISGLOBAL;
-				}
 				int32 linearVol = DLS32BitRelativeGainToLinear(((instrAttenuation + regionAttn) * 65536) / 10) / 256;
 				Limit(linearVol, 16, 256);
-				pRgn->usVolume = static_cast<uint16>(linearVol);
+				rgn.usVolume = static_cast<uint16>(linearVol);
+
+				if(lastOp != SF2_GEN_SAMPLEID && nRgn == 0)
+					globalZone = rgn;
+				else if(!rgn.IsDummy())
+					dlsIns.Regions.push_back(rgn);
 				//Log("\n");
 			}
 		}
@@ -1399,10 +1423,10 @@ bool CDLSBank::Open(FileReader file)
 						uint32 subID = listChunk.ReadUint32LE();
 						if ((subID == IFFID_ins) && (nInsDef < m_Instruments.size()))
 						{
-							DLSINSTRUMENT *pDlsIns = &m_Instruments[nInsDef];
+							DLSINSTRUMENT &dlsIns = m_Instruments[nInsDef];
 							//Log("Instrument %d:\n", nInsDef);
-							pDlsIns->Regions.push_back({});
-							UpdateInstrumentDefinition(pDlsIns, subData);
+							dlsIns.Regions.push_back({});
+							UpdateInstrumentDefinition(&dlsIns, subData);
 							nInsDef++;
 						}
 					} else
@@ -1483,7 +1507,7 @@ bool CDLSBank::Open(FileReader file)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-// Extracts the WaveForms from a DLS bank
+// Extracts the Waveforms from a DLS/SF2 bank
 
 uint32 CDLSBank::GetRegionFromKey(uint32 nIns, uint32 nKey) const
 {
@@ -1492,9 +1516,10 @@ uint32 CDLSBank::GetRegionFromKey(uint32 nIns, uint32 nKey) const
 	const DLSINSTRUMENT &dlsIns = m_Instruments[nIns];
 	for(uint32 rgn = 0; rgn < static_cast<uint32>(dlsIns.Regions.size()); rgn++)
 	{
-		if(nKey < dlsIns.Regions[rgn].uKeyMin || nKey > dlsIns.Regions[rgn].uKeyMax)
+		const auto &region = dlsIns.Regions[rgn];
+		if(nKey < region.uKeyMin || nKey > region.uKeyMax)
 			continue;
-		if(dlsIns.Regions[rgn].fuOptions & DLSREGION_ISGLOBAL)
+		if(region.nWaveLink == Util::MaxValueOfType(region.nWaveLink))
 			continue;
 		return rgn;
 	}
@@ -1590,8 +1615,8 @@ bool CDLSBank::ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nI
 
 	if(nIns >= m_Instruments.size())
 		return false;
-	const DLSINSTRUMENT *pDlsIns = &m_Instruments[nIns];
-	if(nRgn >= pDlsIns->Regions.size())
+	const DLSINSTRUMENT &dlsIns = m_Instruments[nIns];
+	if(nRgn >= dlsIns.Regions.size())
 		return false;
 	if(!ExtractWaveForm(nIns, nRgn, pWaveForm, dwLen))
 		return false;
@@ -1603,7 +1628,7 @@ bool CDLSBank::ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nI
 	if (m_nType & SOUNDBANK_TYPE_SF2)
 	{
 		sndFile.DestroySample(nSample);
-		uint32 nWaveLink = pDlsIns->Regions[nRgn].nWaveLink;
+		uint32 nWaveLink = dlsIns.Regions[nRgn].nWaveLink;
 		ModSample &sample = sndFile.GetSample(nSample);
 		if (sndFile.m_nSamples < nSample) sndFile.m_nSamples = nSample;
 		if (nWaveLink < m_SamplesEx.size())
@@ -1614,15 +1639,15 @@ bool CDLSBank::ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nI
 		#endif
 			sample.Initialize();
 			sample.nLength = dwLen / 2;
-			sample.nLoopStart = pDlsIns->Regions[nRgn].ulLoopStart;
-			sample.nLoopEnd = pDlsIns->Regions[nRgn].ulLoopEnd;
+			sample.nLoopStart = dlsIns.Regions[nRgn].ulLoopStart;
+			sample.nLoopEnd = dlsIns.Regions[nRgn].ulLoopEnd;
 			sample.nC5Speed = p.dwSampleRate;
 			sample.RelativeTone = p.byOriginalPitch;
 			sample.nFineTune = p.chPitchCorrection;
 			if (p.szName[0])
 				sndFile.m_szNames[nSample] = mpt::String::ReadAutoBuf(p.szName);
-			else if(pDlsIns->szName[0])
-				sndFile.m_szNames[nSample] = mpt::String::ReadAutoBuf(pDlsIns->szName);
+			else if(dlsIns.szName[0])
+				sndFile.m_szNames[nSample] = mpt::String::ReadAutoBuf(dlsIns.szName);
 
 			FileReader chunk(mpt::as_span(pWaveForm.data(), dwLen));
 			SampleIO(
@@ -1637,13 +1662,13 @@ bool CDLSBank::ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nI
 	{
 		FileReader file(mpt::as_span(pWaveForm.data(), dwLen));
 		hasWaveform = sndFile.ReadWAVSample(nSample, file, false, &wsmpChunk);
-		if(pDlsIns->szName[0])
-			sndFile.m_szNames[nSample] = mpt::String::ReadAutoBuf(pDlsIns->szName);
+		if(dlsIns.szName[0])
+			sndFile.m_szNames[nSample] = mpt::String::ReadAutoBuf(dlsIns.szName);
 	}
 	if (hasWaveform)
 	{
 		ModSample &sample = sndFile.GetSample(nSample);
-		const DLSREGION &rgn = pDlsIns->Regions[nRgn];
+		const DLSREGION &rgn = dlsIns.Regions[nRgn];
 		sample.uFlags.reset(CHN_LOOP | CHN_PINGPONGLOOP | CHN_SUSTAINLOOP | CHN_PINGPONGSUSTAIN);
 		if (rgn.fuOptions & DLSREGION_SAMPLELOOP) sample.uFlags.set(CHN_LOOP);
 		if (rgn.fuOptions & DLSREGION_SUSTAINLOOP) sample.uFlags.set(CHN_SUSTAINLOOP);
@@ -1725,35 +1750,34 @@ static uint16 ScaleEnvelope(uint32 time, float tempoScale)
 
 bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, uint32 nIns, uint32 nDrumRgn) const
 {
-	uint32 nRgnMin, nRgnMax, nEnv;
+	uint32 minRegion, maxRegion, nEnv;
 
-	if (nIns >= m_Instruments.size()) return false;
-	const DLSINSTRUMENT *pDlsIns = &m_Instruments[nIns];
-	std::vector<SAMPLEINDEX> RgnToSmp(pDlsIns->Regions.size());
-	if (pDlsIns->ulBank & F_INSTRUMENT_DRUMS)
+	if (nIns >= m_Instruments.size())
+		return false;
+	const DLSINSTRUMENT &dlsIns = m_Instruments[nIns];
+	const bool isDrum = (dlsIns.ulBank & F_INSTRUMENT_DRUMS);
+	if(isDrum)
 	{
-		if(nDrumRgn >= pDlsIns->Regions.size())
+		if(nDrumRgn >= dlsIns.Regions.size())
 			return false;
-		nRgnMin = nDrumRgn;
-		nRgnMax = nDrumRgn+1;
-		nEnv = pDlsIns->Regions[nDrumRgn].uPercEnv;
+		minRegion = nDrumRgn;
+		maxRegion = nDrumRgn + 1;
+		nEnv = dlsIns.Regions[nDrumRgn].uPercEnv;
 	} else
 	{
-		if(pDlsIns->Regions.empty())
+		if(dlsIns.Regions.empty())
 			return false;
-		nRgnMin = 0;
-		nRgnMax = static_cast<uint32>(pDlsIns->Regions.size());
-		nEnv = pDlsIns->nMelodicEnv;
+		minRegion = 0;
+		maxRegion = static_cast<uint32>(dlsIns.Regions.size());
+		nEnv = dlsIns.nMelodicEnv;
 	}
-	if(nRgnMin == 0 && (pDlsIns->Regions[0].fuOptions & DLSREGION_ISGLOBAL))
-		nRgnMin++;
 #ifdef DLSINSTR_LOG
-	MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("DLS Instrument #%1: %2"))(nIns, mpt::ToUnicode(mpt::Charset::ASCII, mpt::String::ReadAutoBuf(pDlsIns->szName))));
-	MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("  Bank=0x%1 Instrument=0x%2"))(mpt::ufmt::HEX0<4>(pDlsIns->ulBank), mpt::ufmt::HEX0<4>(pDlsIns->ulInstrument)));
-	MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("  %1 regions, nMelodicEnv=%2"))(pDlsIns->Regions.size(), pDlsIns->nMelodicEnv));
-	for (uint32 iDbg=0; iDbg<pDlsIns->Regions.size(); iDbg++)
+	MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("DLS Instrument #%1: %2"))(nIns, mpt::ToUnicode(mpt::Charset::ASCII, mpt::String::ReadAutoBuf(dlsIns.szName))));
+	MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("  Bank=0x%1 Instrument=0x%2"))(mpt::ufmt::HEX0<4>(dlsIns.ulBank), mpt::ufmt::HEX0<4>(dlsIns.ulInstrument)));
+	MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("  %1 regions, nMelodicEnv=%2"))(dlsIns.Regions.size(), dlsIns.nMelodicEnv));
+	for (uint32 iDbg=0; iDbg<dlsIns.Regions.size(); iDbg++)
 	{
-		const DLSREGION *prgn = &pDlsIns->Regions[iDbg];
+		const DLSREGION *prgn = &dlsIns.Regions[iDbg];
 		MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_(" Region %1:"))(iDbg));
 		MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("  WaveLink = %1 (loop [%2, %3])"))(prgn->nWaveLink, prgn->ulLoopStart, prgn->ulLoopEnd));
 		MPT_LOG(LogDebug, "DLSINSTR", mpt::format(U_("  Key Range: [%1, %2]"))(prgn->uKeyMin, prgn->uKeyMax));
@@ -1768,57 +1792,57 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 		return false;
 	}
 
-	if (sndFile.Instruments[nInstr])
+	if(sndFile.Instruments[nInstr])
 	{
 		sndFile.DestroyInstrument(nInstr, deleteAssociatedSamples);
 	}
 	// Initializes Instrument
-	if (pDlsIns->ulBank & F_INSTRUMENT_DRUMS)
+	if(isDrum)
 	{
-		uint32 key = pDlsIns->Regions[nDrumRgn].uKeyMin;
+		uint32 key = dlsIns.Regions[nDrumRgn].uKeyMin;
 		if((key >= 24) && (key <= 84))
 		{
 			std::string s = szMidiPercussionNames[key-24];
-			if(!mpt::String::ReadAutoBuf(pDlsIns->szName).empty())
+			if(!mpt::String::ReadAutoBuf(dlsIns.szName).empty())
 			{
-				s += mpt::format(" (%1)")(mpt::String::RTrim<std::string>(mpt::String::ReadAutoBuf(pDlsIns->szName)));
+				s += mpt::format(" (%1)")(mpt::String::RTrim<std::string>(mpt::String::ReadAutoBuf(dlsIns.szName)));
 			}
 			pIns->name = s;
 		} else
 		{
-			pIns->name = mpt::String::ReadAutoBuf(pDlsIns->szName);
+			pIns->name = mpt::String::ReadAutoBuf(dlsIns.szName);
 		}
 	} else
 	{
-		pIns->name = mpt::String::ReadAutoBuf(pDlsIns->szName);
+		pIns->name = mpt::String::ReadAutoBuf(dlsIns.szName);
 	}
-	int nTranspose = 0;
-	if(pDlsIns->ulBank & F_INSTRUMENT_DRUMS)
+	int transpose = 0;
+	if(isDrum)
 	{
 		for(uint32 iNoteMap = 0; iNoteMap < NOTE_MAX; iNoteMap++)
 		{
 			if(sndFile.GetType() & (MOD_TYPE_IT | MOD_TYPE_MID | MOD_TYPE_MPT))
 			{
 				// Format has instrument note mapping
-				if(pDlsIns->Regions[nDrumRgn].tuning == 0)
+				if(dlsIns.Regions[nDrumRgn].tuning == 0)
 					pIns->NoteMap[iNoteMap] = NOTE_MIDDLEC;
-				else if(iNoteMap < pDlsIns->Regions[nDrumRgn].uKeyMin)
-					pIns->NoteMap[iNoteMap] = (uint8)(pDlsIns->Regions[nDrumRgn].uKeyMin + NOTE_MIN);
-				else if(iNoteMap > pDlsIns->Regions[nDrumRgn].uKeyMax)
-					pIns->NoteMap[iNoteMap] = (uint8)(pDlsIns->Regions[nDrumRgn].uKeyMax + NOTE_MIN);
+				else if (iNoteMap < dlsIns.Regions[nDrumRgn].uKeyMin)
+					pIns->NoteMap[iNoteMap] = (uint8)(dlsIns.Regions[nDrumRgn].uKeyMin + NOTE_MIN);
+				else if(iNoteMap > dlsIns.Regions[nDrumRgn].uKeyMax)
+					pIns->NoteMap[iNoteMap] = (uint8)(dlsIns.Regions[nDrumRgn].uKeyMax + NOTE_MIN);
 			} else
 			{
-				if(iNoteMap == pDlsIns->Regions[nDrumRgn].uKeyMin)
+				if(iNoteMap == dlsIns.Regions[nDrumRgn].uKeyMin)
 				{
-					nTranspose = (pDlsIns->Regions[nDrumRgn].uKeyMin + (pDlsIns->Regions[nDrumRgn].uKeyMax - pDlsIns->Regions[nDrumRgn].uKeyMin) / 2) - 60;
+					transpose = (dlsIns.Regions[nDrumRgn].uKeyMin + (dlsIns.Regions[nDrumRgn].uKeyMax - dlsIns.Regions[nDrumRgn].uKeyMin) / 2) - 60;
 				}
 			}
 		}
 	}
 	pIns->nFadeOut = 1024;
-	pIns->nMidiProgram = (uint8)(pDlsIns->ulInstrument & 0x7F) + 1;
-	pIns->nMidiChannel = (uint8)((pDlsIns->ulBank & F_INSTRUMENT_DRUMS) ? 10 : 0);
-	pIns->wMidiBank = (uint16)(((pDlsIns->ulBank & 0x7F00) >> 1) | (pDlsIns->ulBank & 0x7F));
+	pIns->nMidiProgram = (uint8)(dlsIns.ulInstrument & 0x7F) + 1;
+	pIns->nMidiChannel = (uint8)(isDrum ? 10 : 0);
+	pIns->wMidiBank = (uint16)(((dlsIns.ulBank & 0x7F00) >> 1) | (dlsIns.ulBank & 0x7F));
 	pIns->nNNA = NNA_NOTEOFF;
 	pIns->nDCT = DCT_NOTE;
 	pIns->nDNA = DNA_NOTEFADE;
@@ -1826,31 +1850,38 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 	uint32 nLoadedSmp = 0;
 	SAMPLEINDEX nextSample = 0;
 	// Extract Samples
-	for (uint32 nRgn=nRgnMin; nRgn<nRgnMax; nRgn++)
+	std::vector<SAMPLEINDEX> RgnToSmp(dlsIns.Regions.size());
+	std::set<uint16> extractedSamples;
+	for(uint32 nRgn = minRegion; nRgn < maxRegion; nRgn++)
 	{
 		bool duplicateRegion = false;
 		SAMPLEINDEX nSmp = 0;
-		const DLSREGION *pRgn = &pDlsIns->Regions[nRgn];
+		const DLSREGION &rgn = dlsIns.Regions[nRgn];
+		if(rgn.IsDummy())
+			continue;
 		// Elimitate Duplicate Regions
-		uint32 iDup;
-		for (iDup=nRgnMin; iDup<nRgn; iDup++)
+		uint32 dupRegion;
+		for(dupRegion = minRegion; dupRegion < nRgn; dupRegion++)
 		{
-			const DLSREGION *pRgn2 = &pDlsIns->Regions[iDup];
-			if (((pRgn2->nWaveLink == pRgn->nWaveLink)
-			  && (pRgn2->ulLoopEnd == pRgn->ulLoopEnd)
-			  && (pRgn2->ulLoopStart == pRgn->ulLoopStart))
-			 || ((pRgn2->uKeyMin == pRgn->uKeyMin)
-			  && (pRgn2->uKeyMax == pRgn->uKeyMax)))
+			const DLSREGION &rgn2 = dlsIns.Regions[dupRegion];
+			if(RgnToSmp[dupRegion] == 0 || rgn2.IsDummy())
+				continue;
+			// No need to extract the same sample data twice
+			const bool sameSample = (rgn2.nWaveLink == rgn.nWaveLink) && (rgn2.ulLoopEnd == rgn.ulLoopEnd) && (rgn2.ulLoopStart == rgn.ulLoopStart) && extractedSamples.count(rgn.nWaveLink);
+			// Candidate for stereo sample creation
+			const bool sameKeyRange = (rgn2.uKeyMin == rgn.uKeyMin) && (rgn2.uKeyMax == rgn.uKeyMax);
+			if(sameSample || sameKeyRange)
 			{
 				duplicateRegion = true;
-				nSmp = RgnToSmp[iDup];
+				if(!sameKeyRange)
+					nSmp = RgnToSmp[dupRegion];
 				break;
 			}
 		}
 		// Create a new sample
 		if (!duplicateRegion)
 		{
-			uint32 nmaxsmp = (m_nType & MOD_TYPE_XM) ? 16 : 32;
+			uint32 nmaxsmp = (m_nType & MOD_TYPE_XM) ? 16 : (NOTE_MAX - NOTE_MIN + 1);
 			if (nLoadedSmp >= nmaxsmp)
 			{
 				nSmp = RgnToSmp[nRgn - 1];
@@ -1866,40 +1897,41 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 
 		RgnToSmp[nRgn] = nSmp;
 		// Map all notes to the right sample
-		if (nSmp)
+		if(nSmp)
 		{
-			for (uint32 iKey=0; iKey<NOTE_MAX; iKey++)
+			for(uint8 key = 0; key < NOTE_MAX; key++)
 			{
-				if ((nRgn == nRgnMin) || ((iKey >= pRgn->uKeyMin) && (iKey <= pRgn->uKeyMax)))
+				if(isDrum || (key >= rgn.uKeyMin && key <= rgn.uKeyMax))
 				{
-					pIns->Keyboard[iKey] = nSmp;
+					pIns->Keyboard[key] = nSmp;
 				}
 			}
 			// Load the sample
 			if(!duplicateRegion || !sndFile.GetSample(nSmp).HasSampleData())
 			{
-				ExtractSample(sndFile, nSmp, nIns, nRgn, nTranspose);
-			} else if(sndFile.GetSample(nSmp).GetNumChannels() == 1)
+				ExtractSample(sndFile, nSmp, nIns, nRgn, transpose);
+				extractedSamples.insert(rgn.nWaveLink);
+			}
+		} else if(duplicateRegion && sndFile.GetSample(nSmp).GetNumChannels() == 1)
+		{
+			// Try to combine stereo samples
+			const uint16 pan1 = GetPanning(nIns, nRgn), pan2 = GetPanning(nIns, dupRegion);
+			if((pan1 < 16 && pan2 >= 240) || (pan2 < 16 && pan1 >= 240))
 			{
-				// Try to combine stereo samples
-				const uint16 pan1 = GetPanning(nIns, nRgn), pan2 = GetPanning(nIns, iDup);
-				if((pan1 < 16 && pan2 >= 240) || (pan2 < 16 && pan1 >= 240))
+				ModSample &sample = sndFile.GetSample(nSmp);
+				ctrlSmp::ConvertToStereo(sample, sndFile);
+				std::vector<uint8> pWaveForm;
+				uint32 dwLen = 0;
+				if(ExtractWaveForm(nIns, nRgn, pWaveForm, dwLen) && dwLen >= sample.GetSampleSizeInBytes() / 2)
 				{
-					ModSample &sample = sndFile.GetSample(nSmp);
-					ctrlSmp::ConvertToStereo(sample, sndFile);
-					std::vector<uint8> pWaveForm;
-					uint32 dwLen = 0;
-					if(ExtractWaveForm(nIns, nRgn, pWaveForm, dwLen) && dwLen >= sample.GetSampleSizeInBytes() / 2)
+					SmpLength len = sample.nLength;
+					const int16 *src = reinterpret_cast<int16 *>(pWaveForm.data());
+					int16 *dst = sample.sample16() + ((pan1 == 0) ? 0 : 1);
+					while(len--)
 					{
-						SmpLength len = sample.nLength;
-						const int16 *src = reinterpret_cast<int16 *>(pWaveForm.data());
-						int16 *dst = sample.sample16() + ((pan1 == 0) ? 0 : 1);
-						while(len--)
-						{
-							*dst = *src;
-							src++;
-							dst += 2;
-						}
+						*dst = *src;
+						src++;
+						dst += 2;
 					}
 				}
 			}
@@ -1910,27 +1942,26 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 	if(sndFile.m_nTempoMode == tempoModeModern)
 	{
 		uint32 ticksPerBeat = sndFile.m_nDefaultRowsPerBeat * sndFile.m_nDefaultSpeed;
-		if(ticksPerBeat == 0)
-			ticksPerBeat = 24;
-		tempoScale = ticksPerBeat / 24.0f;
+		if(ticksPerBeat != 0)
+			tempoScale = ticksPerBeat / 24.0f;
 	}
 
 	// Initializes Envelope
 	if ((nEnv) && (nEnv <= m_Envelopes.size()))
 	{
-		const DLSENVELOPE *part = &m_Envelopes[nEnv-1];
+		const DLSENVELOPE &part = m_Envelopes[nEnv - 1];
 		// Volume Envelope
-		if ((part->wVolAttack) || (part->wVolDecay < 20*50) || (part->nVolSustainLevel) || (part->wVolRelease < 20*50))
+		if ((part.wVolAttack) || (part.wVolDecay < 20*50) || (part.nVolSustainLevel) || (part.wVolRelease < 20*50))
 		{
 			pIns->VolEnv.dwFlags.set(ENV_ENABLED);
 			// Delay section
 			// -> DLS level 2
 			// Attack section
 			pIns->VolEnv.clear();
-			if (part->wVolAttack)
+			if (part.wVolAttack)
 			{
-				pIns->VolEnv.push_back(0, (uint8)(ENVELOPE_MAX / (part->wVolAttack / 2 + 2) + 8)); // /-----
-				pIns->VolEnv.push_back(ScaleEnvelope(part->wVolAttack, tempoScale), ENVELOPE_MAX); // |
+				pIns->VolEnv.push_back(0, (uint8)(ENVELOPE_MAX / (part.wVolAttack / 2 + 2) + 8)); // /-----
+				pIns->VolEnv.push_back(ScaleEnvelope(part.wVolAttack, tempoScale), ENVELOPE_MAX); // |
 			} else
 			{
 				pIns->VolEnv.push_back(0, ENVELOPE_MAX);
@@ -1938,24 +1969,24 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 			// Hold section
 			// -> DLS Level 2
 			// Sustain Level
-			if (part->nVolSustainLevel > 0)
+			if (part.nVolSustainLevel > 0)
 			{
-				if (part->nVolSustainLevel < 128)
+				if (part.nVolSustainLevel < 128)
 				{
 					uint16 lStartTime = pIns->VolEnv.back().tick;
-					int32 lSusLevel = - DLS32BitRelativeLinearToGain(part->nVolSustainLevel << 9) / 65536;
+					int32 lSusLevel = - DLS32BitRelativeLinearToGain(part.nVolSustainLevel << 9) / 65536;
 					int32 lDecayTime = 1;
 					if (lSusLevel > 0)
 					{
-						lDecayTime = (lSusLevel * (int32)part->wVolDecay) / 960;
+						lDecayTime = (lSusLevel * (int32)part.wVolDecay) / 960;
 						for (uint32 i=0; i<7; i++)
 						{
 							int32 lFactor = 128 - (1 << i);
-							if (lFactor <= part->nVolSustainLevel) break;
+							if (lFactor <= part.nVolSustainLevel) break;
 							int32 lev = - DLS32BitRelativeLinearToGain(lFactor << 9) / 65536;
 							if (lev > 0)
 							{
-								int32 ltime = (lev * (int32)part->wVolDecay) / 960;
+								int32 ltime = (lev * (int32)part.wVolDecay) / 960;
 								if ((ltime > 1) && (ltime < lDecayTime))
 								{
 									uint16 tick = lStartTime + ScaleEnvelope(ltime, tempoScale);
@@ -1971,7 +2002,7 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 					uint16 decayEnd = lStartTime + ScaleEnvelope(lDecayTime, tempoScale);
 					if (decayEnd > pIns->VolEnv.back().tick)
 					{
-						pIns->VolEnv.push_back(decayEnd, (uint8)((part->nVolSustainLevel+1) / 2));
+						pIns->VolEnv.push_back(decayEnd, (uint8)((part.nVolSustainLevel+1) / 2));
 					}
 				}
 				pIns->VolEnv.dwFlags.set(ENV_SUSTAIN);
@@ -1982,9 +2013,9 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 			}
 			pIns->VolEnv.nSustainStart = pIns->VolEnv.nSustainEnd = (uint8)(pIns->VolEnv.size() - 1);
 			// Release section
-			if ((part->wVolRelease) && (pIns->VolEnv.back().value > 1))
+			if ((part.wVolRelease) && (pIns->VolEnv.back().value > 1))
 			{
-				int32 lReleaseTime = part->wVolRelease;
+				int32 lReleaseTime = part.wVolRelease;
 				uint16 lStartTime = pIns->VolEnv.back().tick;
 				int32 lStartFactor = pIns->VolEnv.back().value;
 				int32 lSusLevel = - DLS32BitRelativeLinearToGain(lStartFactor << 10) / 65536;
@@ -1999,7 +2030,7 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 					int32 lev = - DLS32BitRelativeLinearToGain(lFactor << 10) / 65536;
 					if (lev > 0)
 					{
-						int32 ltime = (((int32)part->wVolRelease * lev) / 960) - lDecayEndTime;
+						int32 ltime = (((int32)part.wVolRelease * lev) / 960) - lDecayEndTime;
 						if ((ltime > 1) && (ltime < lReleaseTime))
 						{
 							uint16 tick = lStartTime + ScaleEnvelope(ltime, tempoScale);
@@ -2023,7 +2054,7 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 			}
 		}
 	}
-	if (pDlsIns->ulBank & F_INSTRUMENT_DRUMS)
+	if(isDrum)
 	{
 		// Create a default envelope for drums
 		pIns->VolEnv.dwFlags.reset(ENV_SUSTAIN);

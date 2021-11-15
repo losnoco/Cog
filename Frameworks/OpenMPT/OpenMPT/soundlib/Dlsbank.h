@@ -37,6 +37,8 @@ struct DLSREGION
 	uint8  uKeyMax;
 	uint8  uUnityNote;
 	uint8  tuning = 100;
+
+	constexpr bool IsDummy() const noexcept { return uKeyMin == 0xFF || nWaveLink == Util::MaxValueOfType(nWaveLink); }
 };
 
 struct DLSENVELOPE

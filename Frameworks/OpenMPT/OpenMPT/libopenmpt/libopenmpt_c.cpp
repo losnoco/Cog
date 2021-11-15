@@ -88,6 +88,8 @@ public:
 static std::string format_exception( const char * const function ) {
 	std::string err;
 	try {
+		// cppcheck false-positive
+		// cppcheck-suppress rethrowNoCurrentException
 		throw;
 	} catch ( const openmpt::exception & e ) {
 		err += function;
@@ -131,6 +133,8 @@ static int error_from_exception( const char * * error_message ) {
 		}
 	}
 	try {
+		// cppcheck false-positive
+		// cppcheck-suppress rethrowNoCurrentException
 		throw;
 
 	} catch ( const std::bad_alloc & e ) {

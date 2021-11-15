@@ -1806,7 +1806,7 @@ double module_impl::ctl_get_floatingpoint( std::string_view ctl, bool throw_if_u
 		}
 		return m_sndFile->m_nFreqFactor / 65536.0;
 	} else if ( ctl == "render.opl.volume_factor" ) {
-		return static_cast<double>( m_sndFile->m_OPLVolumeFactor ) / static_cast<double>( m_sndFile->m_OPLVolumeFactorScale );
+		return static_cast<double>( m_sndFile->m_OPLVolumeFactor ) / static_cast<double>( CSoundFile::m_OPLVolumeFactorScale );
 	} else {
 		MPT_ASSERT_NOTREACHED();
 		return 0.0;
@@ -2045,7 +2045,7 @@ void module_impl::ctl_set_floatingpoint( std::string_view ctl, double value, boo
 		m_sndFile->m_nFreqFactor = mpt::saturate_round<uint32_t>( 65536.0 * factor );
 		m_sndFile->RecalculateSamplesPerTick();
 	} else if ( ctl == "render.opl.volume_factor" ) {
-		m_sndFile->m_OPLVolumeFactor = mpt::saturate_round<int32>( value * static_cast<double>( m_sndFile->m_OPLVolumeFactorScale ) );
+		m_sndFile->m_OPLVolumeFactor = mpt::saturate_round<int32>( value * static_cast<double>( CSoundFile::m_OPLVolumeFactorScale ) );
 	} else {
 		MPT_ASSERT_NOTREACHED();
 	}

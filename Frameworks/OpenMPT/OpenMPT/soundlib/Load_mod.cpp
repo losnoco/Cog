@@ -449,6 +449,8 @@ struct AMInstrument
 			pitchEnv.dwFlags.set(ENV_ENABLED);
 			pitchEnv.reserve(2);
 			pitchEnv.push_back(0, ENVELOPE_MID);
+			// cppcheck false-positive
+			// cppcheck-suppress zerodiv
 			pitchEnv.push_back(static_cast<EnvelopeNode::tick_t>(1024 / abs(pitchFall)), pitchFall > 0 ? ENVELOPE_MIN : ENVELOPE_MAX);
 		}
 	}

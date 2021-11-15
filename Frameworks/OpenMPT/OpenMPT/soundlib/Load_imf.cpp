@@ -16,11 +16,11 @@ OPENMPT_NAMESPACE_BEGIN
 
 struct IMFChannel
 {
-	char  name[12];	// Channel name (ASCIIZ-String, max 11 chars)
-	uint8 chorus;	// Default chorus
-	uint8 reverb;	// Default reverb
-	uint8 panning;	// Pan positions 00-FF
-	uint8 status;	// Channel status: 0 = enabled, 1 = mute, 2 = disabled (ignore effects!)
+	char  name[12];  // Channel name (ASCIIZ-String, max 11 chars)
+	uint8 chorus;    // Default chorus
+	uint8 reverb;    // Default reverb
+	uint8 panning;   // Pan positions 00-FF
+	uint8 status;    // Channel status: 0 = enabled, 1 = mute, 2 = disabled (ignore effects!)
 };
 
 MPT_BINARY_STRUCT(IMFChannel, 16)
@@ -32,19 +32,19 @@ struct IMFFileHeader
 		linearSlides = 0x01,
 	};
 
-	char     title[32];			// Songname (ASCIIZ-String, max. 31 chars)
-	uint16le ordNum;			// Number of orders saved
-	uint16le patNum;			// Number of patterns saved
-	uint16le insNum;			// Number of instruments saved
-	uint16le flags;				// See SongFlags
+	char     title[32];  // Songname (ASCIIZ-String, max. 31 chars)
+	uint16le ordNum;     // Number of orders saved
+	uint16le patNum;     // Number of patterns saved
+	uint16le insNum;     // Number of instruments saved
+	uint16le flags;      // See SongFlags
 	uint8le  unused1[8];
-	uint8le  tempo;				// Default tempo (Axx, 1...255)
-	uint8le  bpm;				// Default beats per minute (BPM) (Txx, 32...255)
-	uint8le  master;			// Default master volume (Vxx, 0...64)
-	uint8le  amp;				// Amplification factor (mixing volume, 4...127)
+	uint8le  tempo;   // Default tempo (Axx, 1...255)
+	uint8le  bpm;     // Default beats per minute (BPM) (Txx, 32...255)
+	uint8le  master;  // Default master volume (Vxx, 0...64)
+	uint8le  amp;     // Amplification factor (mixing volume, 4...127)
 	uint8le  unused2[8];
-	char     im10[4];			// 'IM10'
-	IMFChannel channels[32];	// Channel settings
+	char     im10[4];         // 'IM10'
+	IMFChannel channels[32];  // Channel settings
 };
 
 MPT_BINARY_STRUCT(IMFFileHeader, 576)
@@ -53,16 +53,16 @@ struct IMFEnvelope
 {
 	enum EnvFlags
 	{
-		envEnabled	= 0x01,
-		envSustain	= 0x02,
-		envLoop		= 0x04,
+		envEnabled = 0x01,
+		envSustain = 0x02,
+		envLoop    = 0x04,
 	};
 
-	uint8 points;		// Number of envelope points
-	uint8 sustain;		// Envelope sustain point
-	uint8 loopStart;	// Envelope loop start point
-	uint8 loopEnd;		// Envelope loop end point
-	uint8 flags;		// See EnvFlags
+	uint8 points;     // Number of envelope points
+	uint8 sustain;    // Envelope sustain point
+	uint8 loopStart;  // Envelope loop start point
+	uint8 loopEnd;    // Envelope loop end point
+	uint8 flags;      // See EnvFlags
 	uint8 unused[3];
 };
 
@@ -80,19 +80,19 @@ struct IMFInstrument
 {
 	enum EnvTypes
 	{
-		volEnv = 0,
-		panEnv = 1,
+		volEnv    = 0,
+		panEnv    = 1,
 		filterEnv = 2,
 	};
 
-	char        name[32];	// Inst. name (ASCIIZ-String, max. 31 chars)
-	uint8le     map[120];	// Multisample settings
+	char        name[32];  // Inst. name (ASCIIZ-String, max. 31 chars)
+	uint8le     map[120];  // Multisample settings
 	uint8le     unused[8];
 	IMFEnvNode  nodes[3][16];
 	IMFEnvelope env[3];
-	uint16le    fadeout;	// Fadeout rate (0...0FFFH)
-	uint16le    smpNum;		// Number of samples in instrument
-	char        ii10[4];	// 'II10'
+	uint16le    fadeout;  // Fadeout rate (0...0FFFH)
+	uint16le    smpNum;   // Number of samples in instrument
+	char        ii10[4];  // 'II10' (not verified by Orpheus)
 
 	void ConvertEnvelope(InstrumentEnvelope &mptEnv, EnvTypes e) const
 	{
@@ -114,6 +114,7 @@ struct IMFInstrument
 			minTick++;
 			mptEnv[n].value = static_cast<uint8>(std::min(nodes[e][n].value >> shift, ENVELOPE_MAX));
 		}
+		mptEnv.Convert(MOD_TYPE_XM, MOD_TYPE_IT);
 	}
 
 	// Convert an IMFInstrument to OpenMPT's internal instrument representation.
@@ -155,20 +156,20 @@ struct IMFSample
 		smpPanning		= 0x08,
 	};
 
-	char     filename[13];	// Sample filename (12345678.ABC) */
+	char     filename[13];  // Sample filename (12345678.ABC) */
 	uint8le  unused1[3];
-	uint32le length;		// Length (in bytes)
-	uint32le loopStart;		// Loop start (in bytes)
-	uint32le loopEnd;		// Loop end (in bytes)
-	uint32le c5Speed;		// Samplerate
-	uint8le  volume;		// Default volume (0...64)
-	uint8le  panning;		// Default pan (0...255)
+	uint32le length;        // Length (in bytes)
+	uint32le loopStart;     // Loop start (in bytes)
+	uint32le loopEnd;       // Loop end (in bytes)
+	uint32le c5Speed;       // Samplerate
+	uint8le  volume;        // Default volume (0...64)
+	uint8le  panning;       // Default pan (0...255)
 	uint8le  unused2[14];
-	uint8le  flags;			// Sample flags
+	uint8le  flags;  // Sample flags
 	uint8le  unused3[5];
-	uint16le ems;			// Reserved for internal usage
-	uint32le dram;			// Reserved for internal usage
-	char     is10[4];		// 'IS10'
+	uint16le ems;      // Reserved for internal usage
+	uint32le dram;     // Reserved for internal usage
+	char     is10[4];  // 'IS10'
 
 	// Convert an IMFSample to OpenMPT's internal sample representation.
 	void ConvertToMPT(ModSample &mptSmp) const
@@ -255,7 +256,7 @@ static void ImportIMFEffect(ModCommand &m)
 {
 	uint8 n;
 	// fix some of them
-	switch (m.command)
+	switch(m.command)
 	{
 	case 0xE: // fine volslide
 		// hackaround to get almost-right behavior for fine slides (i think!)
@@ -278,7 +279,7 @@ static void ImportIMFEffect(ModCommand &m)
 	case 0x15: // fine slide down
 		// this is about as close as we can do...
 		if(m.param >> 4)
-			m.param = 0xF0 | std::min(static_cast<uint8>(m.param >> 4), uint8(0x0F));
+			m.param = 0xF0 | (m.param >> 4);
 		else
 			m.param |= 0xE0;
 		break;
@@ -353,8 +354,12 @@ static void ImportIMFEffect(ModCommand &m)
 static bool ValidateHeader(const IMFFileHeader &fileHeader)
 {
 	if(std::memcmp(fileHeader.im10, "IM10", 4)
-		|| fileHeader.ordNum > 256
-		|| fileHeader.insNum >= MAX_INSTRUMENTS)
+	   || fileHeader.ordNum > 256
+	   || fileHeader.insNum >= MAX_INSTRUMENTS
+	   || fileHeader.bpm < 32
+	   || fileHeader.master > 64
+	   || fileHeader.amp < 4
+	   || fileHeader.amp > 127)
 	{
 		return false;
 	}
@@ -480,8 +485,8 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 	m_SongFlags.set(SONG_LINEARSLIDES, fileHeader.flags & IMFFileHeader::linearSlides);
 	m_nDefaultSpeed = fileHeader.tempo;
 	m_nDefaultTempo.Set(fileHeader.bpm);
-	m_nDefaultGlobalVolume = Clamp<uint8, uint8>(fileHeader.master, 0, 64) * 4;
-	m_nSamplePreAmp = Clamp<uint8, uint8>(fileHeader.amp, 4, 127);
+	m_nDefaultGlobalVolume = fileHeader.master * 4u;
+	m_nSamplePreAmp = fileHeader.amp;
 
 	m_nInstruments = fileHeader.insNum;
 	m_nSamples = 0; // Will be incremented later
