@@ -359,15 +359,16 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	
 	DLog(@"VOLUME IS %lf", volume);
 	
-	if (volume < originalVolume) 
+	if (originalVolume - volume > 0.0001)
 	{
 		if ((volume + up) > originalVolume)
 			[audioPlayer volumeUp:(originalVolume - volume)];
 		else
 			[audioPlayer volumeUp:up];
 	}
-	else  // volume is at 0 or below, we are ready to release the timer and move on
+	else  // volume is at or near original level, we are ready to release the timer and move on
 	{
+        [audioPlayer setVolume:originalVolume];
 		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
 		[audioTimer invalidate];
 		
