@@ -1,9 +1,10 @@
 #!/bin/sh
 
-ERRORS=$(grep -nR --include project.pbxproj -E "(DevelopmentTeam|DEVELOPMENT_TEAM) =" . | grep -v -E '= ""')
-COUNT=$(echo -n "$ERRORS\c" | wc -l | awk '{print $1}')
+MATCHES=$(grep -nR --include project.pbxproj -E "(DevelopmentTeam|DEVELOPMENT_TEAM) =" .)
+COUNT=$(echo -n "$MATCHES\c" | grep -cvE '= ""')
 
 if [ $COUNT -ne 0 ]; then
+	ERRORS=$(echo -n "$MATCHES\c" | grep -vE '= ""')
 	echo $COUNT
 	echo "Remove Development Team specifications from project files:"
 	echo "$ERRORS";
