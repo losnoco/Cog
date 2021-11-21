@@ -12,6 +12,9 @@
 #import "CueSheet.h"
 #import "CueSheetTrack.h"
 
+#import "AudioMetadataReader.h"
+#import "NSDictionary+Merge.h"
+
 @implementation CueSheetMetadataReader
 
 + (NSArray *)fileTypes
@@ -42,7 +45,9 @@
 	{
 		if ([[url fragment] isEqualToString:[track track]])
 		{
-			return [NSDictionary dictionaryWithObjectsAndKeys:
+            // Class supplied by CogAudio, which is guaranteed to be present
+            NSDictionary * fileMetadata = [NSClassFromString(@"AudioMetadataReader") metadataForURL:[track url]];
+			NSDictionary * cuesheetMetadata = [NSDictionary dictionaryWithObjectsAndKeys:
 				[track artist], @"artist",
 				[track album], @"album",
 				[track title], @"title",
@@ -51,6 +56,7 @@
 				[NSNumber numberWithInt:[[track year] intValue]], @"year",
 				nil];
 		
+            return [fileMetadata dictionaryByMergingWith:cuesheetMetadata];
 		}
 	}
 

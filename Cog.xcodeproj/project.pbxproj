@@ -142,6 +142,7 @@
 		838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; };
 		838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
+		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5AB020E4C87100631CD4 /* DualWindow.m */; };
@@ -875,6 +876,8 @@
 		838F851D256B4E5E00C3E614 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
+		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
+		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		83AB9031237CEFD300A433D5 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
 		83BC5AB020E4C87100631CD4 /* DualWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DualWindow.m; path = Window/DualWindow.m; sourceTree = "<group>"; };
@@ -1058,24 +1061,26 @@
 			isa = PBXGroup;
 			children = (
 				8384912518080F2D00E7332D /* Logging.h */,
-				177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */,
-				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
-				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
-				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
-				178456100F631E31007E8021 /* SideViewController.h */,
-				178456110F631E31007E8021 /* SideViewController.m */,
+				07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */,
+				07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */,
+				8355D6B4180612F300D05687 /* NSData+MD5.h */,
+				8355D6B5180612F300D05687 /* NSData+MD5.m */,
+				839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */,
+				839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */,
+				8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */,
+				8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */,
 				172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */,
 				172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */,
 				F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */,
 				F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */,
-				8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */,
-				8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */,
-				07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */,
-				07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */,
+				178456100F631E31007E8021 /* SideViewController.h */,
+				178456110F631E31007E8021 /* SideViewController.m */,
 				17FAEBAA0F662985007C8707 /* ToolTipTextField.h */,
 				17FAEBAB0F662985007C8707 /* ToolTipTextField.m */,
-				8355D6B4180612F300D05687 /* NSData+MD5.h */,
-				8355D6B5180612F300D05687 /* NSData+MD5.m */,
+				177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */,
+				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
+				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
+				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2225,6 +2230,7 @@
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
 				179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */,
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
+				839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */,
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
