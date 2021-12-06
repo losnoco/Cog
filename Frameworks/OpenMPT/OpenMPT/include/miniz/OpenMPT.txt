@@ -1,6 +1,6 @@
 ﻿miniz DEFLATE implementation.
 https://github.com/richgel999/miniz
-2.1.0
+2.2.0
 Modifications for OpenMPT:
  *  #define MINIZ_NO_STDIO has been set because OpenMPT does not need stdio
     functionality and miniz relies on secure-CRT file i/o functions in windows

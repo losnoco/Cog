@@ -174,7 +174,8 @@ bool CSoundFile::ReadMTM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		if(!(loadFlags & loadPatternData) || !Patterns.Insert(pat, rowsPerPat))
 		{
-			break;
+			file.Skip(64);
+			continue;
 		}
 
 		for(CHANNELINDEX chn = 0; chn < 32; chn++)

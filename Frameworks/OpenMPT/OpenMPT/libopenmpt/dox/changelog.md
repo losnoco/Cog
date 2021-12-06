@@ -5,6 +5,37 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.14 (2021-12-05)
+
+ *  [**Sec**] Possible out-of-bounds read in Chorus plugin with NaN plugin
+    parameters. Most implementations of the "fast math" compiler optimizations
+    will prevent this crash but it is not guaranteed. (r16096)
+
+ *  [**Bug**] Fixed undefined behaviour with custom tunings found with ubsan.
+
+ *  OPL: Improved channel allocation strategy when there are lots of faded-out
+    notes.
+ *  MOD: Digital Tracker MODs have four unknown bytes right after the magic
+    bytes which seem to be ignored even by Digital Tracker itself. Just skip
+    over them.
+ *  The logic when to turn off the resonant filter was broken in some edge cases
+    since libopenmpt 0.5.1.
+ *  IMF: Implemented XE1-XE3 commands, which disable individual envelopes.
+    Command Nxy (cutoff slide + resonance) is now also partially supported
+    (only resonance for now).
+ *  IMF: Filter envelopes were upside down.
+ *  MTM: Omitting pattern loading through the load.skip_patterns ctl caused
+    sample data to be corrupted.
+ *  S3M: Ignore O00 commands in files created with Scream Tracker 3.00 and 3.01,
+    as this command only gained effect memory in version 3.03.
+ *  STM: Use S3M-like sample swap behaviour.
+ *  XM: Disable arpeggio quirk for XMs made with Skale Tracker.
+    Fixes KAPTENFL.XM.
+
+ *  miniz: Update to v2.2.0 (2021-06-27).
+ *  minimp3: Update to commit 50d2aaf360a53653b718fead8e258d654c3a7e41
+    (2021-11-27).
+
 ### libopenmpt 0.5.13 (2021-11-14)
 
  *  [**Bug**] Fixed various undefined behaviour found with ubsan.

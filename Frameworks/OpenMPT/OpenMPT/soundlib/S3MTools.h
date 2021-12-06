@@ -45,6 +45,7 @@ struct S3MFileHeader
 
 		trkST3_00         = 0x1300,
 		trkST3_20         = 0x1320,
+		trkST3_01         = 0x1301,
 		trkIT2_07         = 0x3207,
 		trkIT2_14         = 0x3214,
 		trkBeRoTrackerOld = 0x4100,  // Used from 2004 to 2012

@@ -19,7 +19,7 @@
 /*! \brief libopenmpt minor version number */
 #define OPENMPT_API_VERSION_MINOR 5
 /*! \brief libopenmpt patch version number */
-#define OPENMPT_API_VERSION_PATCH 13
+#define OPENMPT_API_VERSION_PATCH 14
 /*! \brief libopenmpt pre-release tag */
 #define OPENMPT_API_VERSION_PREREL ""
 /*! \brief libopenmpt pre-release flag */

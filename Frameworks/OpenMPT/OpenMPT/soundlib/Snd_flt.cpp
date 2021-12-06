@@ -1,5 +1,5 @@
 /*
- * snd_flt.cpp
+ * Snd_flt.cpp
  * -----------
  * Purpose: Calculation of resonant filter coefficients.
  * Notes  : Extended filter range was introduced in MPT 1.12 and went up to 8652 Hz.
@@ -81,11 +81,10 @@ int CSoundFile::SetupChannelFilter(ModChannel &chn, bool bReset, int envModifier
 	// Filtering is only ever done in IT if either cutoff is not full or if resonance is set.
 	if(m_playBehaviour[kITFilterBehaviour] && resonance == 0 && computedCutoff >= 254)
 	{
-		if(chn.rowCommand.IsNote() && !chn.rowCommand.IsPortamento() && !chn.nMasterChn
-		   && chn.position.IsZero() && !chn.dwFlags[CHN_WRAPPED_LOOP])
+		if(chn.rowCommand.IsNote() && !chn.rowCommand.IsPortamento() && !chn.nMasterChn && chn.isFirstTick)
 		{
 			// Z7F next to a note disables the filter, however in other cases this should not happen.
-			// Test cases: filter-reset.it, filter-reset-carry.it, filter-nna.it
+			// Test cases: filter-reset.it, filter-reset-carry.it, filter-reset-envelope.it, filter-nna.it
 			chn.dwFlags.reset(CHN_FILTER);
 		}
 		return -1;
@@ -118,17 +117,17 @@ int CSoundFile::SetupChannelFilter(ModChannel &chn, bool bReset, int envModifier
 	float fb1 = -e / (1.0f + d + e);
 
 #if defined(MPT_INTMIXER)
-#define FILTER_CONVERT(x) mpt::saturate_round<mixsample_t>((x) * (1 << MIXING_FILTER_PRECISION))
+#define MPT_FILTER_CONVERT(x) mpt::saturate_round<mixsample_t>((x) * (1 << MIXING_FILTER_PRECISION))
 #else
-#define FILTER_CONVERT(x) (x)
+#define MPT_FILTER_CONVERT(x) (x)
 #endif
 
 	switch(chn.nFilterMode)
 	{
 	case FilterMode::HighPass:
-		chn.nFilter_A0 = FILTER_CONVERT(1.0f - fg);
-		chn.nFilter_B0 = FILTER_CONVERT(fb0);
-		chn.nFilter_B1 = FILTER_CONVERT(fb1);
+		chn.nFilter_A0 = MPT_FILTER_CONVERT(1.0f - fg);
+		chn.nFilter_B0 = MPT_FILTER_CONVERT(fb0);
+		chn.nFilter_B1 = MPT_FILTER_CONVERT(fb1);
 #ifdef MPT_INTMIXER
 		chn.nFilter_HP = -1;
 #else
@@ -137,9 +136,9 @@ int CSoundFile::SetupChannelFilter(ModChannel &chn, bool bReset, int envModifier
 		break;
 
 	default:
-		chn.nFilter_A0 = FILTER_CONVERT(fg);
-		chn.nFilter_B0 = FILTER_CONVERT(fb0);
-		chn.nFilter_B1 = FILTER_CONVERT(fb1);
+		chn.nFilter_A0 = MPT_FILTER_CONVERT(fg);
+		chn.nFilter_B0 = MPT_FILTER_CONVERT(fb0);
+		chn.nFilter_B1 = MPT_FILTER_CONVERT(fb1);
 #ifdef MPT_INTMIXER
 		if(chn.nFilter_A0 == 0)
 			chn.nFilter_A0 = 1;	// Prevent silence at low filter cutoff and very high sampling rate

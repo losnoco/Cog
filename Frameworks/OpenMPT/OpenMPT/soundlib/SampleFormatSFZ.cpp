@@ -257,7 +257,7 @@ struct SFZEnvelope
 		if(hold > 0)
 		{
 			if(env.empty())
-				env.push_back({0, 100.0});
+				env.push_back({0.0, 100.0});
 			env.push_back({hold, env.back().second});
 		}
 		if(env.empty())
@@ -815,6 +815,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 			{
 				filename = file.GetFileName().GetPath() + filename;
 			}
+			filename = filename.Simplify();
 			SetSamplePath(smp, filename);
 			InputFile f(filename, SettingCacheCompleteFileBeforeLoading());
 			FileReader smpFile = GetFileReader(f);

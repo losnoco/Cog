@@ -157,7 +157,10 @@ void OPL::NoteCut(CHANNELINDEX c, bool unassign)
 	NoteOff(c);
 	Volume(c, 0, false);  // Note that a volume of 0 is not complete silence; the release portion of the sound will still be heard at -48dB
 	if(unassign)
+	{
+		m_OPLtoChan[oplCh] = CHANNELINDEX_INVALID;
 		m_ChanToOPL[c] |= OPL_CHANNEL_CUT;
+	}
 }
 
 

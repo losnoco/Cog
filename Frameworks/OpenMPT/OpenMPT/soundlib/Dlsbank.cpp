@@ -1912,19 +1912,19 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 				ExtractSample(sndFile, nSmp, nIns, nRgn, transpose);
 				extractedSamples.insert(rgn.nWaveLink);
 			}
-		} else if(duplicateRegion && sndFile.GetSample(nSmp).GetNumChannels() == 1)
+		} else if(duplicateRegion && sndFile.GetSample(RgnToSmp[dupRegion]).GetNumChannels() == 1)
 		{
 			// Try to combine stereo samples
 			const uint16 pan1 = GetPanning(nIns, nRgn), pan2 = GetPanning(nIns, dupRegion);
 			if((pan1 < 16 && pan2 >= 240) || (pan2 < 16 && pan1 >= 240))
 			{
-				ModSample &sample = sndFile.GetSample(nSmp);
+				ModSample &sample = sndFile.GetSample(RgnToSmp[dupRegion]);
 				ctrlSmp::ConvertToStereo(sample, sndFile);
 				std::vector<uint8> pWaveForm;
 				uint32 dwLen = 0;
-				if(ExtractWaveForm(nIns, nRgn, pWaveForm, dwLen) && dwLen >= sample.GetSampleSizeInBytes() / 2)
+				if(ExtractWaveForm(nIns, nRgn, pWaveForm, dwLen))
 				{
-					SmpLength len = sample.nLength;
+					SmpLength len = std::min(dwLen / 2u, sample.nLength);
 					const int16 *src = reinterpret_cast<int16 *>(pWaveForm.data());
 					int16 *dst = sample.sample16() + ((pan1 == 0) ? 0 : 1);
 					while(len--)

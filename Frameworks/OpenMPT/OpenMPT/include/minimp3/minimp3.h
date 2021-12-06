@@ -86,7 +86,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
 
 #if !defined(MINIMP3_NO_SIMD)
 
-#if !defined(MINIMP3_ONLY_SIMD) && (defined(_M_X64) || defined(_M_ARM64) || defined(__x86_64__) || defined(__aarch64__))
+#if !defined(MINIMP3_ONLY_SIMD) && (defined(_M_X64) || defined(__x86_64__) || defined(__aarch64__) || defined(_M_ARM64))
 /* x64 always have SSE2, arm64 always have neon, no need for generic code */
 #define MINIMP3_ONLY_SIMD
 #endif /* SIMD checks... */
@@ -136,7 +136,7 @@ static __inline__ __attribute__((always_inline)) void minimp3_cpuid(int CPUInfo[
 #endif /* defined(__PIC__)*/
 }
 #endif /* defined(_MSC_VER) || defined(MINIMP3_ONLY_SIMD) */
-static int have_simd()
+static int have_simd(void)
 {
 #ifdef MINIMP3_ONLY_SIMD
     return 1;
@@ -161,7 +161,7 @@ end:
     return g_have_simd - 1;
 #endif /* MINIMP3_ONLY_SIMD */
 }
-#elif defined(__ARM_NEON) || defined(__aarch64__)
+#elif defined(__ARM_NEON) || defined(__aarch64__) || defined(_M_ARM64)
 #include <arm_neon.h>
 #define HAVE_SSE 0
 #define HAVE_SIMD 1
@@ -190,6 +190,18 @@ static int have_simd()
 #else /* !defined(MINIMP3_NO_SIMD) */
 #define HAVE_SIMD 0
 #endif /* !defined(MINIMP3_NO_SIMD) */
+
+#if defined(__ARM_ARCH) && (__ARM_ARCH >= 6) && !defined(__aarch64__) && !defined(_M_ARM64)
+#define HAVE_ARMV6 1
+static __inline__ __attribute__((always_inline)) int32_t minimp3_clip_int16_arm(int32_t a)
+{
+    int32_t x = 0;
+    __asm__ ("ssat %0, #16, %1" : "=r"(x) : "r"(a));
+    return x;
+}
+#else
+#define HAVE_ARMV6 0
+#endif
 
 typedef struct
 {
@@ -869,12 +881,22 @@ static void L3_midside_stereo(float *left, int n)
     int i = 0;
     float *right = left + 576;
 #if HAVE_SIMD
-    if (have_simd()) for (; i < n - 3; i += 4)
+    if (have_simd())
     {
-        f4 vl = VLD(left + i);
-        f4 vr = VLD(right + i);
-        VSTORE(left + i, VADD(vl, vr));
-        VSTORE(right + i, VSUB(vl, vr));
+        for (; i < n - 3; i += 4)
+        {
+            f4 vl = VLD(left + i);
+            f4 vr = VLD(right + i);
+            VSTORE(left + i, VADD(vl, vr));
+            VSTORE(right + i, VSUB(vl, vr));
+        }
+#ifdef __GNUC__
+        /* Workaround for spurious -Waggressive-loop-optimizations warning from gcc.
+         * For more info see: https://github.com/lieff/minimp3/issues/88
+         */
+        if (__builtin_constant_p(n % 4 == 0) && n % 4 == 0)
+            return;
+#endif
     }
 #endif /* HAVE_SIMD */
     for (; i < n; i++)
@@ -1341,7 +1363,7 @@ static void mp3d_DCT_II(float *grbuf, int n)
     } else
 #endif /* HAVE_SIMD */
 #ifdef MINIMP3_ONLY_SIMD
-    {}
+    {} /* for HAVE_SIMD=1, MINIMP3_ONLY_SIMD=1 case we do not need non-intrinsic "else" branch */
 #else /* MINIMP3_ONLY_SIMD */
     for (; k < n; k++)
     {
@@ -1407,10 +1429,16 @@ static void mp3d_DCT_II(float *grbuf, int n)
 #ifndef MINIMP3_FLOAT_OUTPUT
 static int16_t mp3d_scale_pcm(float sample)
 {
+#if HAVE_ARMV6
+    int32_t s32 = (int32_t)(sample + .5f);
+    s32 -= (s32 < 0);
+    int16_t s = (int16_t)minimp3_clip_int16_arm(s32);
+#else
     if (sample >=  32766.5) return (int16_t) 32767;
     if (sample <= -32767.5) return (int16_t)-32768;
     int16_t s = (int16_t)(sample + .5f);
     s -= (s < 0);   /* away from zero, to be compliant */
+#endif
     return s;
 }
 #else /* MINIMP3_FLOAT_OUTPUT */
@@ -1565,7 +1593,7 @@ static void mp3d_synth(float *xl, mp3d_sample_t *dstl, int nch, float *lins)
     } else
 #endif /* HAVE_SIMD */
 #ifdef MINIMP3_ONLY_SIMD
-    {}
+    {} /* for HAVE_SIMD=1, MINIMP3_ONLY_SIMD=1 case we do not need non-intrinsic "else" branch */
 #else /* MINIMP3_ONLY_SIMD */
     for (i = 14; i >= 0; i--)
     {

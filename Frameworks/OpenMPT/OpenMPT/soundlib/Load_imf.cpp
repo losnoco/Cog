@@ -96,7 +96,8 @@ struct IMFInstrument
 
 	void ConvertEnvelope(InstrumentEnvelope &mptEnv, EnvTypes e) const
 	{
-		const int shift = (e == volEnv) ? 0 : 2;
+		const uint8 shift = (e == volEnv) ? 0 : 2;
+		const uint8 mirror = (e == filterEnv) ? 0xFF : 0x00;
 
 		mptEnv.dwFlags.set(ENV_ENABLED, (env[e].flags & 1) != 0);
 		mptEnv.dwFlags.set(ENV_SUSTAIN, (env[e].flags & 2) != 0);
@@ -112,7 +113,8 @@ struct IMFInstrument
 		{
 			mptEnv[n].tick = minTick = std::max(minTick, nodes[e][n].tick.get());
 			minTick++;
-			mptEnv[n].value = static_cast<uint8>(std::min(nodes[e][n].value >> shift, ENVELOPE_MAX));
+			uint8 value = static_cast<uint8>(nodes[e][n].value ^ mirror) >> shift;
+			mptEnv[n].value = std::min(value, uint8(ENVELOPE_MAX));
 		}
 		mptEnv.Convert(MOD_TYPE_XM, MOD_TYPE_IT);
 	}
@@ -205,51 +207,51 @@ MPT_BINARY_STRUCT(IMFSample, 64)
 static constexpr EffectCommand imfEffects[] =
 {
 	CMD_NONE,
-	CMD_SPEED,			// 0x01 1xx Set Tempo
-	CMD_TEMPO,			// 0x02 2xx Set BPM
-	CMD_TONEPORTAMENTO, // 0x03 3xx Tone Portamento
-	CMD_TONEPORTAVOL,	// 0x04 4xy Tone Portamento + Volume Slide
-	CMD_VIBRATO,		// 0x05 5xy Vibrato
-	CMD_VIBRATOVOL,		// 0x06 6xy Vibrato + Volume Slide
-	CMD_FINEVIBRATO,	// 0x07 7xy Fine Vibrato
-	CMD_TREMOLO,		// 0x08 8xy Tremolo
-	CMD_ARPEGGIO,		// 0x09 9xy Arpeggio
-	CMD_PANNING8,		// 0x0A Axx Set Pan Position
-	CMD_PANNINGSLIDE,	// 0x0B Bxy Pan Slide
-	CMD_VOLUME,			// 0x0C Cxx Set Volume
-	CMD_VOLUMESLIDE,	// 0x0D Dxy Volume Slide
-	CMD_VOLUMESLIDE,	// 0x0E Exy Fine Volume Slide
-	CMD_S3MCMDEX,		// 0x0F Fxx Set Finetune
-	CMD_NOTESLIDEUP,	// 0x10 Gxy Note Slide Up
-	CMD_NOTESLIDEDOWN,	// 0x11 Hxy Note Slide Down
-	CMD_PORTAMENTOUP,	// 0x12 Ixx Slide Up
-	CMD_PORTAMENTODOWN,	// 0x13 Jxx Slide Down
-	CMD_PORTAMENTOUP,	// 0x14 Kxx Fine Slide Up
-	CMD_PORTAMENTODOWN,	// 0x15 Lxx Fine Slide Down
-	CMD_MIDI,			// 0x16 Mxx Set Filter Cutoff - XXX
-	CMD_NONE,			// 0x17 Nxy Filter Slide + Resonance - XXX
-	CMD_OFFSET,			// 0x18 Oxx Set Sample Offset
-	CMD_NONE,			// 0x19 Pxx Set Fine Sample Offset - XXX
-	CMD_KEYOFF,			// 0x1A Qxx Key Off
-	CMD_RETRIG,			// 0x1B Rxy Retrig
-	CMD_TREMOR,			// 0x1C Sxy Tremor
-	CMD_POSITIONJUMP,	// 0x1D Txx Position Jump
-	CMD_PATTERNBREAK,	// 0x1E Uxx Pattern Break
-	CMD_GLOBALVOLUME,	// 0x1F Vxx Set Mastervolume
-	CMD_GLOBALVOLSLIDE,	// 0x20 Wxy Mastervolume Slide
-	CMD_S3MCMDEX,		// 0x21 Xxx Extended Effect
-							// X1x Set Filter
-							// X3x Glissando
-							// X5x Vibrato Waveform
-							// X8x Tremolo Waveform
-							// XAx Pattern Loop
-							// XBx Pattern Delay
-							// XCx Note Cut
-							// XDx Note Delay
-							// XEx Ignore Envelope
-							// XFx Invert Loop
-	CMD_NONE,			// 0x22 Yxx Chorus - XXX
-	CMD_NONE,			// 0x23 Zxx Reverb - XXX
+	CMD_SPEED,           // 0x01 1xx Set Tempo
+	CMD_TEMPO,           // 0x02 2xx Set BPM
+	CMD_TONEPORTAMENTO,  // 0x03 3xx Tone Portamento
+	CMD_TONEPORTAVOL,    // 0x04 4xy Tone Portamento + Volume Slide
+	CMD_VIBRATO,         // 0x05 5xy Vibrato
+	CMD_VIBRATOVOL,      // 0x06 6xy Vibrato + Volume Slide
+	CMD_FINEVIBRATO,     // 0x07 7xy Fine Vibrato
+	CMD_TREMOLO,         // 0x08 8xy Tremolo
+	CMD_ARPEGGIO,        // 0x09 9xy Arpeggio
+	CMD_PANNING8,        // 0x0A Axx Set Pan Position
+	CMD_PANNINGSLIDE,    // 0x0B Bxy Pan Slide
+	CMD_VOLUME,          // 0x0C Cxx Set Volume
+	CMD_VOLUMESLIDE,     // 0x0D Dxy Volume Slide
+	CMD_VOLUMESLIDE,     // 0x0E Exy Fine Volume Slide
+	CMD_S3MCMDEX,        // 0x0F Fxx Set Finetune
+	CMD_NOTESLIDEUP,     // 0x10 Gxy Note Slide Up
+	CMD_NOTESLIDEDOWN,   // 0x11 Hxy Note Slide Down
+	CMD_PORTAMENTOUP,    // 0x12 Ixx Slide Up
+	CMD_PORTAMENTODOWN,  // 0x13 Jxx Slide Down
+	CMD_PORTAMENTOUP,    // 0x14 Kxx Fine Slide Up
+	CMD_PORTAMENTODOWN,  // 0x15 Lxx Fine Slide Down
+	CMD_MIDI,            // 0x16 Mxx Set Filter Cutoff
+	CMD_MIDI,            // 0x17 Nxy Filter Slide + Resonance
+	CMD_OFFSET,          // 0x18 Oxx Set Sample Offset
+	CMD_NONE,            // 0x19 Pxx Set Fine Sample Offset - XXX
+	CMD_KEYOFF,          // 0x1A Qxx Key Off
+	CMD_RETRIG,          // 0x1B Rxy Retrig
+	CMD_TREMOR,          // 0x1C Sxy Tremor
+	CMD_POSITIONJUMP,    // 0x1D Txx Position Jump
+	CMD_PATTERNBREAK,    // 0x1E Uxx Pattern Break
+	CMD_GLOBALVOLUME,    // 0x1F Vxx Set Mastervolume
+	CMD_GLOBALVOLSLIDE,  // 0x20 Wxy Mastervolume Slide
+	CMD_S3MCMDEX,        // 0x21 Xxx Extended Effect
+	                     //      X1x Set Filter
+	                     //      X3x Glissando
+	                     //      X5x Vibrato Waveform
+	                     //      X8x Tremolo Waveform
+	                     //      XAx Pattern Loop
+	                     //      XBx Pattern Delay
+	                     //      XCx Note Cut
+	                     //      XDx Note Delay
+	                     //      XEx Ignore Envelope
+	                     //      XFx Invert Loop
+	CMD_NONE,            // 0x22 Yxx Chorus - XXX
+	CMD_NONE,            // 0x23 Zxx Reverb - XXX
 };
 
 static void ImportIMFEffect(ModCommand &m)
@@ -285,6 +287,9 @@ static void ImportIMFEffect(ModCommand &m)
 		break;
 	case 0x16: // cutoff
 		m.param = (0xFF - m.param) / 2u;
+		break;
+	case 0x17: // cutoff slide + resonance (TODO: cutoff slide is currently not handled)
+		m.param = 0x80 | (m.param & 0x0F);
 		break;
 	case 0x1F: // set global volume
 		m.param = mpt::saturate_cast<uint8>(m.param * 2);
@@ -325,10 +330,18 @@ static void ImportIMFEffect(ModCommand &m)
 				m.command = CMD_NONE;
 			break;
 		case 0xE: // ignore envelope
-			/* predicament: we can only disable one envelope at a time.
-			volume is probably most noticeable, so let's go with that.
-			(... actually, orpheus doesn't even seem to implement this at all) */
-			m.param = 0x77;
+			switch(m.param & 0x0F)
+			{
+			// All envelopes
+			// Predicament: we can only disable one envelope at a time. Volume is probably most noticeable, so let's go with that.
+			case 0: m.param = 0x77; break;
+			// Volume
+			case 1: m.param = 0x77; break;
+			// Panning
+			case 2: m.param = 0x79; break;
+			// Filter
+			case 3: m.param = 0x7B; break;
+			}
 			break;
 		case 0x18: // sample offset
 			// O00 doesn't pick up the previous value

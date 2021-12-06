@@ -561,7 +561,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				const auto [note, instr] = file.ReadArray<uint8, 2>();
 				if(note < 0xF0)
-					m.note = (note & 0x0F) + 12 * (note >> 4) + 12 + NOTE_MIN;
+					m.note = static_cast<ModCommand::NOTE>(Clamp((note & 0x0F) + 12 * (note >> 4) + 12 + NOTE_MIN, NOTE_MIN, NOTE_MAX));
 				else if(note == s3mNoteOff)
 					m.note = NOTE_NOTECUT;
 				else if(note == s3mNoteNone)
@@ -608,6 +608,10 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 						else if(m.param > 0x08)
 							zxxCountRight++;
 					}
+				} else if(m.command == CMD_OFFSET && m.param == 0 && fileHeader.cwtv <= S3MFileHeader::trkST3_01)
+				{
+					// Offset command didn't have effect memory in ST3.01; fixed in ST3.03
+					m.command = CMD_DUMMY;
 				}
 			}
 		}
