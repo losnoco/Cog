@@ -9,6 +9,12 @@
 	[self removeObjects:[self arrangedObjects]];
 	
 	[self setSelectsInsertedObjects:NO];
+    
+    NSDictionary *defaultDeviceInfo = @{
+        @"name": @"System Default Device",
+        @"deviceID": @(-1),
+    };
+    [self addObject:defaultDeviceInfo];
 	
 	NSDictionary *defaultDevice = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
     NSString *defaultDeviceName = defaultDevice[@"name"];
@@ -23,7 +29,7 @@
 		};
 		[self addObject:deviceInfo];
         		
-		if (defaultDevice) {
+		if (defaultDevice && defaultDeviceID != -1) {
 			if ((deviceID == defaultDeviceID) ||
 				([deviceName isEqualToString:defaultDeviceName])) {
 				[self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
@@ -31,14 +37,9 @@
 				[[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
 			}
 		}
-        else {
-            if (deviceID == systemDefaultID) {
-                [self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
-            }
-        }
 	}];
 		
-	if (!defaultDevice) {
+	if (!defaultDevice || defaultDeviceID == -1) {
 		[self setSelectionIndex:0];
 	}
 }

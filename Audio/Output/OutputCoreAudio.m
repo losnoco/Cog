@@ -83,7 +83,6 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	OSStatus err;
 	
 	if (deviceID == -1) {
-		DLog(@"DEVICE IS -1");
 		UInt32 size = sizeof(AudioDeviceID);
         AudioObjectPropertyAddress theAddress = {
             .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
