@@ -133,6 +133,7 @@
 		832BF82D21E0514B006F50F1 /* nus3audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 832BF81B21E0514B006F50F1 /* nus3audio.c */; };
 		832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F4128F1E932F9A002E37D0 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83345A521F8AEB2800B2EAA4 /* xvag.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A4E1F8AEB2800B2EAA4 /* xvag.c */; };
+		83349719275DD2AC00302E21 /* wbk.c in Sources */ = {isa = PBXBuildFile; fileRef = 83349715275DD2AC00302E21 /* wbk.c */; };
 		833A7A2E1ED11961003EC53E /* xau.c in Sources */ = {isa = PBXBuildFile; fileRef = 833A7A2D1ED11961003EC53E /* xau.c */; };
 		8342469420C4D23000926E48 /* h4m.c in Sources */ = {isa = PBXBuildFile; fileRef = 8342469020C4D22F00926E48 /* h4m.c */; };
 		8342469620C4D23D00926E48 /* blocked_h4m.c in Sources */ = {isa = PBXBuildFile; fileRef = 8342469520C4D23D00926E48 /* blocked_h4m.c */; };
@@ -948,6 +949,7 @@
 		832BF81A21E0514A006F50F1 /* hca_keys_awb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hca_keys_awb.h; sourceTree = "<group>"; };
 		832BF81B21E0514B006F50F1 /* nus3audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nus3audio.c; sourceTree = "<group>"; };
 		83345A4E1F8AEB2800B2EAA4 /* xvag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xvag.c; sourceTree = "<group>"; };
+		83349715275DD2AC00302E21 /* wbk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wbk.c; sourceTree = "<group>"; };
 		833A7A2D1ED11961003EC53E /* xau.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xau.c; sourceTree = "<group>"; };
 		8342469020C4D22F00926E48 /* h4m.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = h4m.c; sourceTree = "<group>"; };
 		8342469520C4D23D00926E48 /* blocked_h4m.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_h4m.c; sourceTree = "<group>"; };
@@ -2205,6 +2207,7 @@
 				8306B0D02098458F000302D4 /* wave_segmented.c */,
 				8306B0C92098458E000302D4 /* wave.c */,
 				834FE0D0215C79E8000A5D3D /* wavebatch.c */,
+				83349715275DD2AC00302E21 /* wbk.c */,
 				836F6F0018BDC2190095E648 /* wii_bns.c */,
 				836F6F0118BDC2190095E648 /* wii_mus.c */,
 				836F6F0218BDC2190095E648 /* wii_ras.c */,
@@ -2671,6 +2674,7 @@
 				8346D97C25BF838C00D1A8B0 /* mjb_mjh.c in Sources */,
 				839C3D27270D49FF00E13653 /* lpcm_fb.c in Sources */,
 				8373341823F60C7B00DE14DC /* tgcadpcm_decoder.c in Sources */,
+				83349719275DD2AC00302E21 /* wbk.c in Sources */,
 				83FC417326D3304D009A2022 /* xsh_xsd_xss.c in Sources */,
 				836F6F3318BDC2190095E648 /* ngc_dtk_decoder.c in Sources */,
 				83E7FD6525EF2B2400683FD2 /* tac.c in Sources */,

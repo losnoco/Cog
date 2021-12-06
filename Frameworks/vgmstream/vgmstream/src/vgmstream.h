@@ -761,6 +761,8 @@ typedef enum {
     meta_PSB,
     meta_LOPU_FB,
     meta_LPCM_FB,
+    meta_WBK,
+    meta_DSP_APEX,
 
 } meta_t;
 
