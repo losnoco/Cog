@@ -236,6 +236,8 @@
 
 - (BOOL)endOfInputReached:(BufferChain *)sender //Sender is a BufferChain
 {
+    unsigned long queueCount = 0;
+    
 	@synchronized (chainQueue) {
         // No point in constructing new chain for the next playlist entry
         // if there's already one at the head of chainQueue... r-r-right?
@@ -247,11 +249,24 @@
             }
         }
         
-        if ([chainQueue count] >= 5)
-        {
-            return YES;
-        }
+        // We don't want to do this, it may happen with a lot of short files
+        //if ([chainQueue count] >= 5)
+        //{
+        //    return YES;
+        //}
 
+        queueCount = [chainQueue count];
+    }
+    
+    while (queueCount >= 5)
+    {
+        usleep(2000);
+        @synchronized (chainQueue) {
+            queueCount = [chainQueue count];
+        }
+    }
+     
+    @synchronized (chainQueue) {
 		BufferChain *newChain = nil;
 		
 		nextStreamUserInfo = [sender userInfo];
