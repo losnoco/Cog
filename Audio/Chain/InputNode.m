@@ -49,7 +49,7 @@
 	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 	int channels = [[properties objectForKey:@"channels"] intValue];
 	
-	bytesPerFrame = (bitsPerSample / 8) * channels;
+	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
     
 	shouldContinue = YES;
 	shouldSeek = NO;
@@ -66,7 +66,7 @@
 	int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 	int channels = [[properties objectForKey:@"channels"] intValue];
 	
-	bytesPerFrame = (bitsPerSample / 8) * channels;
+	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
     
 	[self registerObservers];
 

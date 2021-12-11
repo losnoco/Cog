@@ -10,7 +10,7 @@
 #import "FLAC/all.h"
 
 #define SAMPLES_PER_WRITE 512
-#define FLAC__MAX_SUPPORTED_CHANNELS 2
+#define FLAC__MAX_SUPPORTED_CHANNELS 8
 #define SAMPLE_blockBuffer_SIZE ((FLAC__MAX_BLOCK_SIZE + SAMPLES_PER_WRITE) * FLAC__MAX_SUPPORTED_CHANNELS * (24/8))
 
 #import "Plugin.h"
@@ -30,6 +30,8 @@
 	float frequency;
 	long totalFrames;
     
+    long fileSize;
+    
     BOOL hasStreamInfo;
 }
 
@@ -38,6 +40,8 @@
 
 - (void)setEndOfStream:(BOOL)eos;
 - (BOOL)endOfStream;
+
+- (void)setSize:(long)size;
 
 - (FLAC__StreamDecoder *)decoder;
 - (char *)blockBuffer;

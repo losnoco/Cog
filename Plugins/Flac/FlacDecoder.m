@@ -140,7 +140,22 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
                 }
             }
 		default:
-			ALog(@"Error, unsupported sample size.");
+            // Time for some nearest byte padding up to 32
+            alias8 = blockBuffer;
+            int sampleSize = frame->header.bits_per_sample;
+            int sampleBit;
+            for(sample = 0; sample < frame->header.blocksize; ++sample) {
+                for(channel = 0; channel < frame->header.channels; ++channel) {
+                    int32_t sampleExtended = sampleblockBuffer[channel][sample];
+                    for(sampleBit = sampleSize - 8; sampleBit >= -8; sampleBit -= 8) {
+                        if (sampleBit >= 0)
+                            *alias8++ = (uint8_t)((sampleExtended >> sampleBit) & 0xFF);
+                        else
+                            *alias8++ = (uint8_t)((sampleExtended << -sampleBit) & 0xFF);
+                    }
+                }
+            }
+            break;
 	}
 
 	[flacDecoder setBlockBufferFrames:frame->header.blocksize];
@@ -178,6 +193,14 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 - (BOOL)open:(id<CogSource>)s
 {
 	[self setSource:s];
+    [self setSize:0];
+    
+    if ([s seekable])
+    {
+        [s seek:0 whence:SEEK_END];
+        [self setSize:[s tell]];
+        [s seek:0 whence:SEEK_SET];
+    }
 	
 	decoder = FLAC__stream_decoder_new();
 	if (decoder == NULL)
@@ -208,7 +231,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 - (int)readAudio:(void *)buffer frames:(UInt32)frames
 {
 	int framesRead = 0;
-	int bytesPerFrame = (bitsPerSample/8) * channels;
+	int bytesPerFrame = ((bitsPerSample+7)/8) * channels;
 	while (framesRead < frames)
 	{	
 		if (blockBufferFrames == 0)
@@ -309,6 +332,11 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	return endOfStream;
 }
 
+- (void)setSize:(long)size
+{
+    fileSize = size;
+}
+
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -317,6 +345,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		[NSNumber numberWithFloat:frequency],@"sampleRate",
 		[NSNumber numberWithDouble:totalFrames],@"totalFrames",
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
+        [NSNumber numberWithInt:fileSize ? (fileSize * 8 / ((totalFrames + (frequency / 2)) / frequency)) / 1000 : 0], @"bitrate",
         @"FLAC",@"codec",
 		@"big",@"endian",
 		nil];
@@ -334,7 +363,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 + (float)priority
 {
-    return 1.0;
+    return 2.0;
 }
 
 @end

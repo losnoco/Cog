@@ -42,7 +42,7 @@ AudioStreamBasicDescription propertiesToASBD(NSDictionary *properties)
 	asbd.mBitsPerChannel = [[properties objectForKey:@"bitsPerSample"] intValue];
 
 	asbd.mChannelsPerFrame = [[properties objectForKey:@"channels"] intValue];;
-	asbd.mBytesPerFrame = (asbd.mBitsPerChannel/8)*asbd.mChannelsPerFrame;
+	asbd.mBytesPerFrame = ((asbd.mBitsPerChannel+7)/8)*asbd.mChannelsPerFrame;
 	
 	asbd.mFramesPerPacket = 1;
 	asbd.mBytesPerPacket = asbd.mBytesPerFrame * asbd.mFramesPerPacket;
