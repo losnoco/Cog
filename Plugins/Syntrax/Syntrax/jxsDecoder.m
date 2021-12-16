@@ -14,50 +14,6 @@
 
 @implementation jxsDecoder
 
-BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long * loop_length, unsigned int subsong )
-{
-    Player * synPlayer = playerCreate(44100);
-    
-    if (loadSong(synPlayer, synSong) < 0)
-        return NO;
-    
-    initSubsong(synPlayer, subsong);
-    
-    unsigned long length_total = 0;
-    unsigned long length_saved;
-    
-    const long length_safety = 44100 * 60 * 30;
-    
-    while ( !playerGetSongEnded(synPlayer) && playerGetLoopCount(synPlayer) < 1 && length_total < length_safety )
-    {
-        mixChunk(synPlayer, NULL, 512);
-        length_total += 512;
-    }
-    
-    if ( !playerGetSongEnded(synPlayer) && playerGetLoopCount(synPlayer) < 1 )
-    {
-        *loop_length = 0;
-        *intro_length = 44100 * 60 * 3;
-        playerDestroy(synPlayer);
-        return YES;
-    }
-    
-    length_saved = length_total;
-    
-    while ( !playerGetSongEnded(synPlayer) && playerGetLoopCount(synPlayer) < 2 )
-    {
-        mixChunk(synPlayer, NULL, 512);
-        length_total += 512;
-    }
-    
-    playerDestroy(synPlayer);
-    
-    *loop_length = length_total - length_saved;
-    *intro_length = length_saved - *loop_length;
-    
-    return YES;
-}
-
 - (id)init
 {
     self = [super init];
@@ -81,20 +37,23 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
 		track_num = 0;
 	else
 		track_num = [[[s url] fragment] intValue];
-    
-    synSong = File_loadSongMem(data, size);
-    if (!synSong)
+
+    if (jxsfile_readSongMem(data, size, &synSong))
         return NO;
     
     free(data);
-    
-    unsigned long intro_length, loop_length;
-    
-    if ( !probe_length(synSong, &intro_length, &loop_length, track_num) )
+
+    synPlayer = jaytrax_init();
+    if (!synPlayer)
         return NO;
 
-    framesLength = intro_length + loop_length * 2;
-    totalFrames = framesLength + 44100 * 8;
+    if (!jaytrax_loadSong(synPlayer, synSong))
+        return NO;
+    
+    framesLength = jaytrax_getLength(synPlayer, track_num, 2, 44100);
+    totalFrames = framesLength + ((synPlayer->playFlg) ? 44100 * 8 : 0);
+    
+    framesRead = 0;
 
     [self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -104,14 +63,24 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
 
 - (BOOL)decoderInitialize
 {
-    synPlayer = playerCreate(44100);
-    if (!synPlayer)
-        return NO;
+    jaytrax_changeSubsong(synPlayer, track_num);
+
+    uint8_t interp = ITP_CUBIC;
+    NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+    if ([resampling isEqualToString:@"zoh"])
+        interp = ITP_NEAREST;
+    else if ([resampling isEqualToString:@"blep"])
+        interp = ITP_NEAREST;
+    else if ([resampling isEqualToString:@"linear"])
+        interp = ITP_LINEAR;
+    else if ([resampling isEqualToString:@"blam"])
+        interp = ITP_LINEAR;
+    else if ([resampling isEqualToString:@"cubic"])
+        interp = ITP_CUBIC;
+    else if ([resampling isEqualToString:@"sinc"])
+        interp = ITP_CUBIC;
     
-    if (loadSong(synPlayer, synSong) < 0)
-        return NO;
-    
-    initSubsong(synPlayer, track_num);
+    jaytrax_setInterpolation(synPlayer, interp);
 
     framesRead = 0;
     
@@ -120,11 +89,12 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
 
 - (void)decoderShutdown
 {
-    if ( synPlayer )
+    if (synPlayer)
     {
-        playerDestroy(synPlayer);
-        synPlayer = NULL;
+        jaytrax_stopSong(synPlayer);
     }
+    
+    framesRead = 0;
 }
 
 - (NSDictionary *)properties
@@ -146,17 +116,17 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
 {
     BOOL repeat_one = IsRepeatOneSet();
     
-    if ( synPlayer && playerGetSongEnded(synPlayer) )
-        return 0;
-    
     if ( !repeat_one && framesRead >= totalFrames )
         return 0;
     
-    if ( !synPlayer )
+    if ( !framesRead )
     {
         if ( ![self decoderInitialize] )
             return 0;
     }
+    
+    if ( synPlayer && !synPlayer->playFlg )
+        return 0;
     
     int total = 0;
     while ( total < frames ) {
@@ -168,7 +138,7 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
 
         int16_t * sampleBuf = ( int16_t * ) buf + total * 2;
         
-        mixChunk(synPlayer, sampleBuf, framesToRender);
+        jaytrax_renderChunk(synPlayer, sampleBuf, framesToRender, 44100);
     
         if ( !repeat_one && framesRead + framesToRender > framesLength ) {
             long fadeStart = ( framesLength > framesRead ) ? framesLength : framesRead;
@@ -190,8 +160,8 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
         
         total += framesToRender;
         framesRead += framesToRender;
-        
-        if ( playerGetSongEnded(synPlayer) )
+
+        if ( !synPlayer->playFlg )
             break;
     }
     
@@ -212,7 +182,7 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
         int frames_todo = INT_MAX;
         if ( frames_todo > frame - framesRead )
             frames_todo = (int)( frame - framesRead );
-        mixChunk(synPlayer, NULL, frames_todo);
+        jaytrax_renderChunk(synPlayer, NULL, frames_todo, 44100);
         framesRead += frames_todo;
     }
     
@@ -224,10 +194,16 @@ BOOL probe_length( Song * synSong, unsigned long * intro_length, unsigned long *
 - (void)close
 {
     [self decoderShutdown];
+    
+    if (synPlayer)
+    {
+        jaytrax_free(synPlayer);
+        synPlayer = NULL;
+    }
 	
     if (synSong)
     {
-        File_freeSong(synSong);
+        jxsfile_freeSong(synSong);
         synSong = NULL;
     }
 }

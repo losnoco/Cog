@@ -8,14 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <Syntrax_c/file.h>
-#import <Syntrax_c/syntrax.h>
+#import <Syntrax_c/jxs.h>
+#import <Syntrax_c/jaytrax.h>
 
 #import "Plugin.h"
 
 @interface jxsDecoder : NSObject <CogDecoder> {
-	Song *synSong;
-    Player *synPlayer;
+	JT1Song *synSong;
+    JT1Player *synPlayer;
     int track_num;
     
 	long framesLength;

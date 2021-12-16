@@ -6,8 +6,8 @@
 //  Copyright 2016 __NoWork, Inc__. All rights reserved.
 //
 
-#import <Syntrax_c/syntrax.h>
-#import <Syntrax_c/file.h>
+#import <Syntrax_c/jxs.h>
+#import <Syntrax_c/jaytrax.h>
 
 #import "jxsContainer.h"
 #import "jxsDecoder.h"
@@ -54,8 +54,8 @@
     void * data = malloc(size);
     [source read:data amount:size];
 
-    Song * synSong = File_loadSongMem(data, size);
-    if (!synSong)
+    JT1Song * synSong;
+    if (jxsfile_readSongMem(data, size, &synSong))
     {
         ALog(@"Open failed for file: %@", [url absoluteString]);
         free(data);
@@ -64,33 +64,13 @@
     
     free(data);
     
-    Player * synPlayer = playerCreate(44100);
-    if (!synPlayer)
-    {
-        ALog(@"Failed to create Syntrax-c player for file: %@", [url absoluteString]);
-        File_freeSong(synSong);
-        return nil;
-    }
+    int i;
+    int subsongs = synSong->nrofsongs;
     
-    if (loadSong(synPlayer, synSong) < 0)
-    {
-        ALog(@"Load failed for file: %@", [url absoluteString]);
-        playerDestroy(synPlayer);
-        File_freeSong(synSong);
-        return nil;
-    }
-    
+    jxsfile_freeSong(synSong);
+
     NSMutableArray *tracks = [NSMutableArray array];
     
-    syntrax_info info;
-    
-    playerGetInfo(synPlayer, &info);
-    
-    playerDestroy(synPlayer);
-    File_freeSong(synSong);
-    
-	int i;
-    int subsongs = info.totalSubs;
     if ( subsongs ) {
         for (i = 0; i < subsongs; i++)
         {

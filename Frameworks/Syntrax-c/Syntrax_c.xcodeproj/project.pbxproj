@@ -7,23 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83EEAB071C965247002761C5 /* file.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB011C965247002761C5 /* file.c */; };
-		83EEAB081C965247002761C5 /* file.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EEAB021C965247002761C5 /* file.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		83EEAB091C965247002761C5 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB031C965247002761C5 /* resampler.c */; };
-		83EEAB0A1C965247002761C5 /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EEAB041C965247002761C5 /* resampler.h */; };
-		83EEAB0B1C965247002761C5 /* syntrax.c in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB051C965247002761C5 /* syntrax.c */; };
-		83EEAB0C1C965247002761C5 /* syntrax.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EEAB061C965247002761C5 /* syntrax.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8398BF3D2769D28A0048F38A /* jaytrax.c in Sources */ = {isa = PBXBuildFile; fileRef = 8398BF3C2769D26D0048F38A /* jaytrax.c */; };
+		8398BF3E2769D28D0048F38A /* jxs.c in Sources */ = {isa = PBXBuildFile; fileRef = 8398BF372769D26D0048F38A /* jxs.c */; };
+		8398BF3F2769D2950048F38A /* mixcore.c in Sources */ = {isa = PBXBuildFile; fileRef = 8398BF392769D26D0048F38A /* mixcore.c */; };
+		8398BF402769D2EE0048F38A /* mixcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF362769D26D0048F38A /* mixcore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8398BF412769D2F50048F38A /* ioutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF3A2769D26D0048F38A /* ioutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8398BF422769D2F80048F38A /* jaytrax.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF382769D26D0048F38A /* jaytrax.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8398BF432769D2FD0048F38A /* jxs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF3B2769D26D0048F38A /* jxs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		832FF31B1C96511E0076D662 /* Syntrax_c.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Syntrax_c.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		832FF3201C96511E0076D662 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		83EEAB011C965247002761C5 /* file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
-		83EEAB021C965247002761C5 /* file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
-		83EEAB031C965247002761C5 /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
-		83EEAB041C965247002761C5 /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
-		83EEAB051C965247002761C5 /* syntrax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = syntrax.c; sourceTree = "<group>"; };
-		83EEAB061C965247002761C5 /* syntrax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syntrax.h; sourceTree = "<group>"; };
+		8398BF362769D26D0048F38A /* mixcore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mixcore.h; sourceTree = "<group>"; };
+		8398BF372769D26D0048F38A /* jxs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jxs.c; sourceTree = "<group>"; };
+		8398BF382769D26D0048F38A /* jaytrax.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jaytrax.h; sourceTree = "<group>"; };
+		8398BF392769D26D0048F38A /* mixcore.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mixcore.c; sourceTree = "<group>"; };
+		8398BF3A2769D26D0048F38A /* ioutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioutil.h; sourceTree = "<group>"; };
+		8398BF3B2769D26D0048F38A /* jxs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jxs.h; sourceTree = "<group>"; };
+		8398BF3C2769D26D0048F38A /* jaytrax.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jaytrax.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,12 +58,13 @@
 		832FF31D1C96511E0076D662 /* Syntrax-c */ = {
 			isa = PBXGroup;
 			children = (
-				83EEAB011C965247002761C5 /* file.c */,
-				83EEAB021C965247002761C5 /* file.h */,
-				83EEAB031C965247002761C5 /* resampler.c */,
-				83EEAB041C965247002761C5 /* resampler.h */,
-				83EEAB051C965247002761C5 /* syntrax.c */,
-				83EEAB061C965247002761C5 /* syntrax.h */,
+				8398BF3A2769D26D0048F38A /* ioutil.h */,
+				8398BF3C2769D26D0048F38A /* jaytrax.c */,
+				8398BF382769D26D0048F38A /* jaytrax.h */,
+				8398BF372769D26D0048F38A /* jxs.c */,
+				8398BF3B2769D26D0048F38A /* jxs.h */,
+				8398BF392769D26D0048F38A /* mixcore.c */,
+				8398BF362769D26D0048F38A /* mixcore.h */,
 				832FF3201C96511E0076D662 /* Info.plist */,
 			);
 			path = "Syntrax-c";
@@ -74,9 +77,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83EEAB0C1C965247002761C5 /* syntrax.h in Headers */,
-				83EEAB081C965247002761C5 /* file.h in Headers */,
-				83EEAB0A1C965247002761C5 /* resampler.h in Headers */,
+				8398BF412769D2F50048F38A /* ioutil.h in Headers */,
+				8398BF422769D2F80048F38A /* jaytrax.h in Headers */,
+				8398BF432769D2FD0048F38A /* jxs.h in Headers */,
+				8398BF402769D2EE0048F38A /* mixcore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,9 +153,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83EEAB071C965247002761C5 /* file.c in Sources */,
-				83EEAB0B1C965247002761C5 /* syntrax.c in Sources */,
-				83EEAB091C965247002761C5 /* resampler.c in Sources */,
+				8398BF3D2769D28A0048F38A /* jaytrax.c in Sources */,
+				8398BF3E2769D28D0048F38A /* jxs.c in Sources */,
+				8398BF3F2769D2950048F38A /* mixcore.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

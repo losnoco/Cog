@@ -9,8 +9,8 @@
 #import "jxsMetadataReader.h"
 #import "jxsDecoder.h"
 
-#import <Syntrax_c/syntrax.h>
-#import <Syntrax_c/file.h>
+#import <Syntrax_c/jxs.h>
+#import <Syntrax_c/jaytrax.h>
 
 #import "Logging.h"
 
@@ -49,8 +49,8 @@
     void * data = malloc(size);
     [source read:data amount:size];
 	
-    Song * synSong = File_loadSongMem(data, size);
-    if (!synSong)
+    JT1Song* synSong;
+    if (jxsfile_readSongMem(data, size, &synSong))
     {
         ALog(@"Open failed for file: %@", [url absoluteString]);
         free(data);
@@ -59,19 +59,19 @@
     
     free(data);
     
-    Player * synPlayer = playerCreate(44100);
+    JT1Player * synPlayer = jaytrax_init();
     if (!synPlayer)
     {
         ALog(@"Failed to create player for file: %@", [url absoluteString]);
-        File_freeSong(synSong);
+        jxsfile_freeSong(synSong);
         return nil;
     }
     
-    if (loadSong(synPlayer, synSong) < 0)
+    if (!jaytrax_loadSong(synPlayer, synSong))
     {
         ALog(@"Load failed for file: %@", [url absoluteString]);
-        playerDestroy(synPlayer);
-        File_freeSong(synSong);
+        jaytrax_free(synPlayer);
+        jxsfile_freeSong(synSong);
         return nil;
     }
     
@@ -81,16 +81,13 @@
     else
         track_num = [[url fragment] intValue];
     
-    initSubsong(synPlayer, track_num);
-    
-    syntrax_info info;
-    playerGetInfo(synPlayer, &info);
-    
-    playerDestroy(synPlayer);
-    File_freeSong(synSong);
+    jaytrax_changeSubsong(synPlayer, track_num);
     
 	//Some titles are all spaces?!
-	NSString *title = [[NSString stringWithUTF8String: info.subsongName] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	NSString *title = [[NSString stringWithUTF8String: synPlayer->subsong->name] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    jaytrax_free(synPlayer);
+    jxsfile_freeSong(synSong);
 
 	if (title == nil) {
 		title = @"";
