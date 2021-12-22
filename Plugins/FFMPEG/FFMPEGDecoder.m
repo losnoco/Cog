@@ -487,17 +487,17 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"wma", @"asf", @"tak", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", nil];
+	return [NSArray arrayWithObjects:@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", nil];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"audio/mpeg", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", nil];
+	return [NSArray arrayWithObjects:@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", nil];
 }
 
 + (float)priority
 {
-    return 1.0;
+    return 1.5;
 }
 
 

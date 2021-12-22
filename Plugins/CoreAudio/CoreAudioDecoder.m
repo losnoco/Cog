@@ -312,7 +312,7 @@ static SInt64 getSizeProc(void* clientData) {
 
 + (float)priority
 {
-    return 1.5;
+    return 1.0;
 }
 
 - (NSDictionary *)properties
