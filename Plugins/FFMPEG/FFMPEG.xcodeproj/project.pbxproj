@@ -20,6 +20,8 @@
 		83D11A09256CE04400565AD3 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D11A06256CE04400565AD3 /* libavutil.a */; };
 		83D11A0A256CE04400565AD3 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D11A07256CE04400565AD3 /* libavcodec.a */; };
 		83D11A0B256CE04400565AD3 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D11A08256CE04400565AD3 /* libswresample.a */; };
+		83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC52772FD32000015EE /* libbz2.tbd */; };
+		83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC72772FD3A000015EE /* AudioToolbox.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		B09E942F0D747F410064F138 /* FFMPEGDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = B09E942E0D747F410064F138 /* FFMPEGDecoder.m */; };
 /* End PBXBuildFile section */
@@ -54,6 +56,8 @@
 		83D11A06256CE04400565AD3 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ../../ThirdParty/ffmpeg/lib/libavutil.a; sourceTree = "<group>"; };
 		83D11A07256CE04400565AD3 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ../../ThirdParty/ffmpeg/lib/libavcodec.a; sourceTree = "<group>"; };
 		83D11A08256CE04400565AD3 /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = ../../ThirdParty/ffmpeg/lib/libswresample.a; sourceTree = "<group>"; };
+		83E22FC52772FD32000015EE /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		83E22FC72772FD3A000015EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8D5B49B6048680CD000E48DA /* FFMPEG.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFMPEG.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B09E942D0D747F410064F138 /* FFMPEGDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FFMPEGDecoder.h; sourceTree = "<group>"; };
@@ -67,6 +71,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */,
+				83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */,
 				8352D4991CDDB06A009D16AA /* libz.tbd in Frameworks */,
 				8352D4971CDDB05E009D16AA /* Security.framework in Frameworks */,
 				83D11A05256CE02200565AD3 /* libavformat.a in Frameworks */,
@@ -94,6 +100,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				83E22FC42772FD32000015EE /* Frameworks */,
 			);
 			name = FFMPEG;
 			sourceTree = "<group>";
@@ -163,6 +170,15 @@
 				8D5B49B6048680CD000E48DA /* FFMPEG.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		83E22FC42772FD32000015EE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83E22FC72772FD3A000015EE /* AudioToolbox.framework */,
+				83E22FC52772FD32000015EE /* libbz2.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

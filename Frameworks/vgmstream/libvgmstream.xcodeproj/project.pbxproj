@@ -643,6 +643,8 @@
 		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
 		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D7318C1A749EEE00CA1366 /* g719_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D7318B1A749EEE00CA1366 /* g719_decoder.c */; };
+		83E22FC12772FD06000015EE /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FBD2772FD06000015EE /* libbz2.tbd */; };
+		83E22FC32772FD16000015EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC22772FD16000015EE /* AudioToolbox.framework */; };
 		83E56BA51F2EE3520026BC60 /* vorbis_custom_utils_ogl.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E56BA01F2EE3500026BC60 /* vorbis_custom_utils_ogl.c */; };
 		83E7FD5F25EF2B0C00683FD2 /* tac_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E7FD5725EF2B0C00683FD2 /* tac_decoder.c */; };
 		83E7FD6025EF2B0C00683FD2 /* tac_decoder_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 83E7FD5B25EF2B0C00683FD2 /* tac_decoder_lib.c */; };
@@ -1455,6 +1457,8 @@
 		83D676B926539F4E00252130 /* libcelt_0110.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libcelt_0110.xcodeproj; path = ../libcelt_0110/libcelt_0110/libcelt_0110.xcodeproj; sourceTree = "<group>"; };
 		83D731381A74968900CA1366 /* g719.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = g719.xcodeproj; path = ../g719/g719.xcodeproj; sourceTree = "<group>"; };
 		83D7318B1A749EEE00CA1366 /* g719_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = g719_decoder.c; sourceTree = "<group>"; };
+		83E22FBD2772FD06000015EE /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		83E22FC22772FD16000015EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		83E56BA01F2EE3500026BC60 /* vorbis_custom_utils_ogl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_ogl.c; sourceTree = "<group>"; };
 		83E7FD5725EF2B0C00683FD2 /* tac_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tac_decoder.c; sourceTree = "<group>"; };
 		83E7FD5B25EF2B0C00683FD2 /* tac_decoder_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tac_decoder_lib.c; sourceTree = "<group>"; };
@@ -1492,6 +1496,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83E22FC32772FD16000015EE /* AudioToolbox.framework in Frameworks */,
+				83E22FC12772FD06000015EE /* libbz2.tbd in Frameworks */,
 				838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */,
 				838BDB7D1D3B1FCC0022CA6F /* CoreVideo.framework in Frameworks */,
 				838BDB7B1D3B1FC20022CA6F /* CoreMedia.framework in Frameworks */,
@@ -1556,6 +1562,8 @@
 		836F6B3B18BDB8880095E648 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83E22FC22772FD16000015EE /* AudioToolbox.framework */,
+				83E22FBD2772FD06000015EE /* libbz2.tbd */,
 				838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */,
 				838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */,
 				838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */,
