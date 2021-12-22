@@ -110,14 +110,14 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 	// register all available codecs
     
-    buffer = av_malloc(128 * 1024);
+    buffer = av_malloc(32 * 1024);
     if (!buffer)
     {
         ALog(@"Out of memory!");
         return NO;
     }
     
-    ioCtx = avio_alloc_context(buffer, 128 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
+    ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
     if (!ioCtx)
     {
         ALog(@"Unable to create AVIO context");
@@ -454,8 +454,9 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         endOfAudio = YES;
         return -1;
     }
-    int64_t ts = frame * (formatCtx->duration) / totalFrames;
-    avformat_seek_file(formatCtx, -1, ts - 1000, ts, ts, AVSEEK_FLAG_ANY);
+    AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
+    int64_t ts = av_rescale_q(frame, tb, formatCtx->streams[streamIndex]->time_base);
+    avformat_seek_file(formatCtx, streamIndex, ts - 1000, ts, ts, AVSEEK_FLAG_ANY);
     avcodec_flush_buffers(codecCtx);
     readNextPacket = YES; // so we immediately read next packet
     bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
@@ -487,12 +488,12 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", nil];
+	return [NSArray arrayWithObjects:@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"weba", nil];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", nil];
+	return [NSArray arrayWithObjects:@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", nil];
 }
 
 + (float)priority
