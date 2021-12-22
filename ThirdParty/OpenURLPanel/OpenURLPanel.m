@@ -166,7 +166,6 @@ typedef id (*myIMP)(id, SEL, ...);
     NSString    *urlString;
     NSURL       *url;
     BOOL        informDelegate = YES;
-    myIMP       callback;
     
     if ([sender tag] == NSModalResponseOK)
     {
@@ -218,8 +217,18 @@ typedef id (*myIMP)(id, SEL, ...);
     // inform the delegate
     if (informDelegate && mDelegate && mDidEndSelector)
     {
-        callback = (myIMP) [mDelegate methodForSelector:mDidEndSelector];
-        callback(mDelegate, mDidEndSelector, self, [sender tag], mContextInfo);
+        NSInvocation *inv = [NSInvocation invocationWithMethodSignature:[mDelegate methodSignatureForSelector:mDidEndSelector]];
+        [inv setSelector:mDidEndSelector];
+        [inv setTarget:mDelegate];
+        
+        OpenURLPanel *pself = self;
+        int tag = (int)([sender tag]);
+        
+        [inv setArgument:&(pself) atIndex:2];
+        [inv setArgument:&(tag) atIndex:3];
+        [inv setArgument:&(mContextInfo) atIndex:4];
+        
+        [inv invoke];
         
         [self close];
     }
