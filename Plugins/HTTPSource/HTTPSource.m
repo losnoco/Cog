@@ -104,6 +104,7 @@
     }
     if (bytesBuffered >= BUFFER_SIZE) {
         [task suspend];
+        taskSuspended = YES;
     }
 }
 
@@ -182,6 +183,7 @@ didCompleteWithError:(NSError *)error{
     didReceiveResponse = NO;
     didReceiveRandomData = NO;
     redirected = NO;
+    taskSuspended = NO;
     
     redirectURLs = [[NSMutableArray alloc] init];
     bufferedData = [[NSMutableData alloc] init];
@@ -262,8 +264,9 @@ didCompleteWithError:(NSError *)error{
             bytesBuffered = _bytesBuffered;
         }
         
-        if (!didComplete && bytesBuffered <= (BUFFER_SIZE * 3 / 4)) {
+        if (!didComplete && taskSuspended && bytesBuffered <= (BUFFER_SIZE * 3 / 4)) {
             [task resume];
+            taskSuspended = NO;
         }
 
 		totalRead += amountReceived;

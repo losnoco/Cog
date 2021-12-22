@@ -31,6 +31,7 @@
 	
     long _bytesBuffered;
 	long _byteCount;
+    BOOL taskSuspended;
 	
 	NSString *_mimeType;
 }
