@@ -183,12 +183,12 @@
 //#define MPT_WITH_MEDIAFOUNDATION
 //#define MPT_WITH_MINIMP3
 //#define MPT_WITH_MINIZ
-#define MPT_WITH_MPG123
-#define MPT_WITH_OGG
+//#define MPT_WITH_MPG123
+//#define MPT_WITH_OGG
 //#define MPT_WITH_STBVORBIS
-#define MPT_WITH_VORBIS
-#define MPT_WITH_VORBISFILE
-#define MPT_WITH_ZLIB
+//#define MPT_WITH_VORBIS
+//#define MPT_WITH_VORBISFILE
+//#define MPT_WITH_ZLIB
 
 #endif // LIBOPENMPT_BUILD
 
@@ -405,10 +405,6 @@
 #endif
 #endif
 
-#if !MPT_COMPILER_MSVC && defined(ENABLE_ASM)
-#undef ENABLE_ASM // inline assembly requires MSVC compiler
-#endif
-
 #if defined(ENABLE_ASM)
 #if MPT_COMPILER_MSVC && defined(_M_IX86)
 
@@ -447,6 +443,24 @@
 #define ENABLE_AVX
 // Generate AVX2 instructions (only used when the CPU supports it).
 #define ENABLE_AVX2
+
+#elif MPT_BUILD_XCODE && defined(__x86_64__)
+
+// No CPUID enabled, only one code path supported anyway
+// #define ENABLE_CPUID
+// Enable the SSE2 intrinsic functions unconditionally
+#define ENABLE_SSE2
+
+#elif MPT_BUILD_XCODE && defined(__arm64__)
+
+// No CPUID, it's kind of a pain on ARM anyway
+// #define ENABLE_CPUID
+// Enable the NEON intrinsic functions unconditionally
+#define ENABLE_NEON
+
+#else
+
+#undef ENABLE_ASM
 
 #endif // arch
 #endif // ENABLE_ASM

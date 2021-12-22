@@ -87,7 +87,6 @@
 		83E5FC951FFEFA0D00659F0F /* mptOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC5C1FFEFA0D00659F0F /* mptOS.h */; };
 		83E5FC961FFEFA0D00659F0F /* mptIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC5D1FFEFA0D00659F0F /* mptIO.cpp */; };
 		83E5FC971FFEFA0D00659F0F /* mptCPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC5E1FFEFA0D00659F0F /* mptCPU.h */; };
-		83E5FC981FFEFA0D00659F0F /* mptBufferIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC5F1FFEFA0D00659F0F /* mptBufferIO.h */; };
 		83E5FC991FFEFA0D00659F0F /* versionNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC601FFEFA0D00659F0F /* versionNumber.h */; };
 		83E5FC9A1FFEFA0D00659F0F /* misc_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FC611FFEFA0D00659F0F /* misc_util.cpp */; };
 		83E5FCCB1FFEFA1A00659F0F /* libopenmpt_impl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC9C1FFEFA1A00659F0F /* libopenmpt_impl.hpp */; };
@@ -370,7 +369,6 @@
 		83E5FC5C1FFEFA0D00659F0F /* mptOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptOS.h; sourceTree = "<group>"; };
 		83E5FC5D1FFEFA0D00659F0F /* mptIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mptIO.cpp; sourceTree = "<group>"; };
 		83E5FC5E1FFEFA0D00659F0F /* mptCPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptCPU.h; sourceTree = "<group>"; };
-		83E5FC5F1FFEFA0D00659F0F /* mptBufferIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptBufferIO.h; sourceTree = "<group>"; };
 		83E5FC601FFEFA0D00659F0F /* versionNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = versionNumber.h; sourceTree = "<group>"; };
 		83E5FC611FFEFA0D00659F0F /* misc_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = misc_util.cpp; sourceTree = "<group>"; };
 		83E5FC9C1FFEFA1A00659F0F /* libopenmpt_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libopenmpt_impl.hpp; sourceTree = "<group>"; };
@@ -665,7 +663,6 @@
 				831132CB21F955B0001F678F /* mptBaseMacros.h */,
 				831132CE21F955B1001F678F /* mptBaseTypes.h */,
 				831132D121F955B1001F678F /* mptBaseUtils.h */,
-				83E5FC5F1FFEFA0D00659F0F /* mptBufferIO.h */,
 				83E5FC3D1FFEFA0D00659F0F /* mptCPU.cpp */,
 				83E5FC5E1FFEFA0D00659F0F /* mptCPU.h */,
 				83E5FC2A1FFEFA0D00659F0F /* mptCRC.h */,
@@ -1050,7 +1047,6 @@
 				83E5FE121FFEFA8500659F0F /* XMTools.h in Headers */,
 				83E5FCCB1FFEFA1A00659F0F /* libopenmpt_impl.hpp in Headers */,
 				831132E821F9565F001F678F /* BitReader.h in Headers */,
-				83E5FC981FFEFA0D00659F0F /* mptBufferIO.h in Headers */,
 				83E5FC741FFEFA0D00659F0F /* BuildSettings.h in Headers */,
 				831132D521F955B2001F678F /* mptMemory.h in Headers */,
 				831132DE21F955B2001F678F /* mptException.h in Headers */,

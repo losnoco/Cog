@@ -15,8 +15,7 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-
-#ifdef MODPLUG_TRACKER
+#ifdef ENABLE_ASM
 
 #define PROCSUPPORT_ASM_INTRIN   0x00001 // assembly and intrinsics are enabled at runtime
 #define PROCSUPPORT_CPUID        0x00002 // Processor supports modern cpuid
@@ -31,15 +30,16 @@ OPENMPT_NAMESPACE_BEGIN
 #define PROCSUPPORT_AVX          0x10000 // Processor supports AVX instructions
 #define PROCSUPPORT_AVX2         0x20000 // Processor supports AVX2 instructions
 
+#define PROCSUPPORT_NEON         0x40000 // Processor supports NEON instructions
+
 static constexpr uint32 PROCSUPPORT_i586     = 0u                                                      ;
 static constexpr uint32 PROCSUPPORT_x86_SSE  = 0u | PROCSUPPORT_SSE                                    ;
 static constexpr uint32 PROCSUPPORT_x86_SSE2 = 0u | PROCSUPPORT_SSE | PROCSUPPORT_SSE2                 ;
 static constexpr uint32 PROCSUPPORT_AMD64    = 0u | PROCSUPPORT_SSE | PROCSUPPORT_SSE2 | PROCSUPPORT_LM;
 
-#endif
+static constexpr uint32 PROCSUPPORT_ARM64    = 0u | PROCSUPPORT_NEON                                   ;
 
 
-#ifdef ENABLE_ASM
 
 extern uint32 RealProcSupport;
 extern uint32 ProcSupport;

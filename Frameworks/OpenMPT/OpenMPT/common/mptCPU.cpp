@@ -218,6 +218,54 @@ void InitProcSupport()
 }
 
 
+#elif MPT_BUILD_XCODE && defined(__x86_64__)
+
+
+void InitProcSupport()
+{
+
+	RealProcSupport = 0;
+	ProcSupport = 0;
+	mpt::String::WriteAutoBuf(ProcVendorID) = "";
+	mpt::String::WriteAutoBuf(ProcBrandID) = "";
+	ProcRawCPUID = 0;
+	ProcFamily = 0;
+	ProcModel = 0;
+	ProcStepping = 0;
+
+	ProcSupport |= PROCSUPPORT_ASM_INTRIN;
+
+	ProcSupport |= PROCSUPPORT_SSE2;
+
+	RealProcSupport = ProcSupport;
+
+}
+
+
+#elif MPT_BUILD_XCODE && defined(__arm64__)
+
+
+void InitProcSupport()
+{
+
+	RealProcSupport = 0;
+	ProcSupport = 0;
+	mpt::String::WriteAutoBuf(ProcVendorID) = "";
+	mpt::String::WriteAutoBuf(ProcBrandID) = "";
+	ProcRawCPUID = 0;
+	ProcFamily = 0;
+	ProcModel = 0;
+	ProcStepping = 0;
+
+	ProcSupport |= PROCSUPPORT_ASM_INTRIN;
+
+	ProcSupport |= PROCSUPPORT_NEON;
+
+	RealProcSupport = ProcSupport;
+
+}
+
+
 #else // !( MPT_COMPILER_MSVC && ENABLE_X86 )
 
 
@@ -228,6 +276,16 @@ void InitProcSupport()
 
 
 #endif // MPT_COMPILER_MSVC && ENABLE_X86
+
+#ifndef MODPLUG_TRACKER
+static struct initProcSupport
+{
+	initProcSupport()
+	{
+		InitProcSupport();
+	}
+} doInitProcSupport;
+#endif
 
 #endif // ENABLE_ASM
 

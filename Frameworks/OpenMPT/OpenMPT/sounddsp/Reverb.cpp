@@ -19,6 +19,10 @@
 #include <emmintrin.h>
 #endif
 
+#ifdef ENABLE_NEON
+#include "../common/sse2neon.h"
+#endif
+
 #endif // NO_REVERB
 
 
@@ -28,7 +32,7 @@ OPENMPT_NAMESPACE_BEGIN
 #ifndef NO_REVERB
 
 
-#ifdef ENABLE_SSE2
+#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 // Load two 32-bit values
 static MPT_FORCEINLINE __m128i Load64SSE(const int32 *x) { return _mm_loadl_epi64(reinterpret_cast<const __m128i *>(x)); }
 // Load four 16-bit values
@@ -594,6 +598,11 @@ void CReverb::ReverbProcessPostFiltering1x(const int32 * MPT_RESTRICT pRvb, int3
 {
 #ifdef ENABLE_SSE2
 	if(GetProcSupport() & PROCSUPPORT_SSE2)
+#endif
+#ifdef ENABLE_NEON
+    if(GetProcSupport() & PROCSUPPORT_NEON)
+#endif
+#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 	{
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
@@ -656,6 +665,11 @@ void CReverb::ReverbDCRemoval(int32 * MPT_RESTRICT pBuffer, uint32 nSamples)
 {
 #ifdef ENABLE_SSE2
 	if(GetProcSupport() & PROCSUPPORT_SSE2)
+#endif
+#ifdef ENABLE_NEON
+    if(GetProcSupport() & PROCSUPPORT_NEON)
+#endif
+#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 	{
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
@@ -721,6 +735,11 @@ void CReverb::ProcessPreDelay(SWRvbRefDelay * MPT_RESTRICT pPreDelay, const int3
 	uint32 delayPos = pPreDelay->nDelayPos - 1;
 #ifdef ENABLE_SSE2
 	if(GetProcSupport() & PROCSUPPORT_SSE2)
+#endif
+#ifdef ENABLE_NEON
+    if(GetProcSupport() & PROCSUPPORT_NEON)
+#endif
+#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 	{
 		__m128i coeffs = _mm_cvtsi32_si128(pPreDelay->nCoeffs.lr);
 		__m128i history = _mm_cvtsi32_si128(pPreDelay->History.lr);
@@ -793,6 +812,11 @@ void CReverb::ProcessReflections(SWRvbRefDelay * MPT_RESTRICT pPreDelay, LR16 * 
 {
 #ifdef ENABLE_SSE2
 	if(GetProcSupport() & PROCSUPPORT_SSE2)
+#endif
+#ifdef ENABLE_NEON
+    if(GetProcSupport() & PROCSUPPORT_NEON)
+#endif
+#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 	{
 		union
 		{
@@ -888,6 +912,11 @@ void CReverb::ProcessLateReverb(SWLateReverb * MPT_RESTRICT pReverb, LR16 * MPT_
 
 #ifdef ENABLE_SSE2
 	if(GetProcSupport() & PROCSUPPORT_SSE2)
+#endif
+#ifdef ENABLE_NEON
+    if(GetProcSupport() & PROCSUPPORT_NEON)
+#endif
+#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 	{
 		int delayPos = pReverb->nDelayPos & RVBDLY_MASK;
 		__m128i rvbOutGains = Load64SSE(pReverb->RvbOutGains);
