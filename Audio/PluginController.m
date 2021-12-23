@@ -155,7 +155,16 @@ static PluginController *sharedPluginController = nil;
 	if (decoder && [decoder respondsToSelector:@selector(mimeTypes)]) {
 		for (id mimeType in [decoder mimeTypes]) 
 		{
-			[decodersByMimeType setObject:className forKey:[mimeType lowercaseString]];
+            NSString *mimetype = [mimeType lowercaseString];
+            NSMutableArray *decoders;
+            if (![decodersByMimeType objectForKey:mimetype])
+            {
+                decoders = [[NSMutableArray alloc] init];
+                [decodersByMimeType setObject:decoders forKey:mimetype];
+            }
+            else
+                decoders = [decodersByMimeType objectForKey:mimetype];
+            [decoders addObject:className];
 		}
 	}
 }
@@ -202,7 +211,16 @@ static PluginController *sharedPluginController = nil;
 	if (propertiesReader && [propertiesReader respondsToSelector:@selector(mimeTypes)]) {
 		for (id mimeType in [propertiesReader mimeTypes])
 		{
-            [propertiesReadersByMimeType setObject:className forKey:[mimeType lowercaseString]];
+            NSString *mimetype = [mimeType lowercaseString];
+            NSMutableArray *readers;
+            if (![propertiesReadersByMimeType objectForKey:mimetype])
+            {
+                readers = [[NSMutableArray alloc] init];
+                [propertiesReadersByMimeType setObject:readers forKey:mimetype];
+            }
+            else
+                readers = [propertiesReadersByMimeType objectForKey:mimetype];
+            [readers addObject:className];
 		}
 	}
 }
@@ -277,7 +295,18 @@ static PluginController *sharedPluginController = nil;
         }
     }
 	else {
-		classString = [decodersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+        decoders = [decodersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+        if (decoders) {
+            if ( [decoders count] > 1 ) {
+                return [[CogDecoderMulti alloc] initWithDecoders:decoders];
+            }
+            else {
+                classString = [decoders objectAtIndex:0];
+            }
+        }
+        else {
+            classString = @"SilenceDecoder";
+        }
 	}
 
 	Class decoder = NSClassFromString(classString);
@@ -342,7 +371,18 @@ static PluginController *sharedPluginController = nil;
         }
     }
     else {
-        classString = [propertiesReadersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+        readers = [propertiesReadersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+        if (readers)
+        {
+            if ( [readers count] > 1 ) {
+                properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
+                if (properties != nil && [properties count])
+                    return properties;
+            }
+            else {
+                classString = [readers objectAtIndex:0];
+            }
+        }
     }
 
 	if (classString)
