@@ -139,7 +139,7 @@ willPerformHTTPRedirection:(NSHTTPURLResponse *)response
  completionHandler:(void (^)(NSURLRequest *))completionHandler {
     NSURL * url = [request URL];
     if ([redirectURLs containsObject:url]) {
-        completionHandler(NULL);
+        completionHandler(nil);
         @synchronized(self->task) {
             self->task = nil;
         }
@@ -168,6 +168,7 @@ didBecomeInvalidWithError:(NSError *)error {
  willCacheResponse:(NSCachedURLResponse *)proposedResponse
  completionHandler:(void (^)(NSCachedURLResponse *cachedResponse))completionHandler{
     didComplete = YES;
+    completionHandler(nil);
 }
 
 - (void)URLSession:(NSURLSession *)session
