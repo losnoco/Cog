@@ -127,10 +127,6 @@
 		17B5E1880CC074D3004E2AF4 /* memory.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
 		17B5E1890CC074D3004E2AF4 /* metadata_iterators.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = metadata_iterators.c; sourceTree = "<group>"; };
 		17B5E18A0CC074D3004E2AF4 /* metadata_object.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = metadata_object.c; sourceTree = "<group>"; };
-		17B5E18B0CC074D3004E2AF4 /* ogg_decoder_aspect.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ogg_decoder_aspect.c; sourceTree = "<group>"; };
-		17B5E18C0CC074D3004E2AF4 /* ogg_encoder_aspect.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ogg_encoder_aspect.c; sourceTree = "<group>"; };
-		17B5E18D0CC074D3004E2AF4 /* ogg_helper.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ogg_helper.c; sourceTree = "<group>"; };
-		17B5E18E0CC074D3004E2AF4 /* ogg_mapping.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ogg_mapping.c; sourceTree = "<group>"; };
 		17B5E1940CC074D3004E2AF4 /* stream_decoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = stream_decoder.c; sourceTree = "<group>"; };
 		17B5E1950CC074D3004E2AF4 /* stream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = stream_encoder.c; sourceTree = "<group>"; };
 		17B5E1960CC074D3004E2AF4 /* stream_encoder_framing.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = stream_encoder_framing.c; sourceTree = "<group>"; };
@@ -284,10 +280,6 @@
 				17B5E1880CC074D3004E2AF4 /* memory.c */,
 				17B5E1890CC074D3004E2AF4 /* metadata_iterators.c */,
 				17B5E18A0CC074D3004E2AF4 /* metadata_object.c */,
-				17B5E18B0CC074D3004E2AF4 /* ogg_decoder_aspect.c */,
-				17B5E18C0CC074D3004E2AF4 /* ogg_encoder_aspect.c */,
-				17B5E18D0CC074D3004E2AF4 /* ogg_helper.c */,
-				17B5E18E0CC074D3004E2AF4 /* ogg_mapping.c */,
 				17B5E1940CC074D3004E2AF4 /* stream_decoder.c */,
 				17B5E1950CC074D3004E2AF4 /* stream_encoder.c */,
 				17B5E1960CC074D3004E2AF4 /* stream_encoder_framing.c */,
