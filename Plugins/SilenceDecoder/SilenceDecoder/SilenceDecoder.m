@@ -23,7 +23,10 @@ enum { channels = 2 };
     
     NSString * path = [[[s url] relativeString] substringFromIndex:10];
     
-    length = [path intValue] * sample_rate;
+    int seconds = [path intValue];
+    if (!seconds) seconds = 10;
+    
+    length = seconds * sample_rate;
     remain = length;
     
     [self willChangeValueForKey:@"properties"];

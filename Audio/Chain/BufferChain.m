@@ -51,10 +51,10 @@
 	
 	id<CogSource> source = [AudioSource audioSourceForURL:url];
 	DLog(@"Opening: %@", url);
-	if (![source open:url])
+	if (!source || ![source open:url])
 	{
 		DLog(@"Couldn't open source...");
-        url = [NSURL URLWithString:@"silence://1"];
+        url = [NSURL URLWithString:@"silence://10"];
         source = [AudioSource audioSourceForURL:url];
         if (![source open:url])
             return NO;
