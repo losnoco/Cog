@@ -28,6 +28,8 @@
 
 #import "NSString+FinderCompare.h"
 
+#import "SQLiteStore.h"
+
 #import "Logging.h"
 
 @implementation PlaylistLoader
@@ -438,7 +440,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
             ++i;
         }
     }
-	
+    
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 	
 	[playlistController insertObjects:entries atArrangedObjectIndexes:is];
@@ -488,6 +490,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
     long i, j;
     NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
+    
+    SQLiteStore *store = [SQLiteStore sharedStore];
 
     i = 0;
     j = 0;
@@ -549,6 +553,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         __block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
         dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
             [weakPe setMetadata:entryInfo];
+            [store trackUpdate:weakPe];
         });
     }
 
@@ -559,7 +564,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         __block NSIndexSet *weakIndexSet = update_indexes;
         dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
             unsigned long columns = [[[weakPlaylistView documentView] tableColumns] count];
-            [weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns-1)]];
+            [weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns)]];
         });
     }
 }
@@ -569,6 +574,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
     long i, j;
     NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
+    
+    SQLiteStore *store = [SQLiteStore sharedStore];
     
     i = 0;
     j = 0;
@@ -591,20 +598,21 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     }
     
     [load_info_indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop)
-        {
-            PlaylistEntry *pe = [entries objectAtIndex:idx];
-            
-            NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
-        
-            NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
-            if (entryProperties == nil)
-                return;
-        
-            [entryInfo addEntriesFromDictionary:entryProperties];
-            [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
-            
-            [pe setMetadata:entryInfo];
-        }];
+     {
+         PlaylistEntry *pe = [entries objectAtIndex:idx];
+         
+         NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
+     
+         NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
+         if (entryProperties == nil)
+             return;
+     
+         [entryInfo addEntriesFromDictionary:entryProperties];
+         [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
+         
+         [pe setMetadata:entryInfo];
+         [store trackUpdate:pe];
+     }];
 
     [self->playlistController updateTotalTime];
     
@@ -627,6 +635,58 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (NSArray*)addURL:(NSURL *)url
 {
 	return [self insertURLs:[NSArray arrayWithObject:url] atIndex:(int)[[playlistController content] count] sort:NO];
+}
+
+- (NSArray*)addDatabase
+{
+    SQLiteStore *store = [SQLiteStore sharedStore];
+    
+    int64_t count = [store playlistGetCount];
+    
+    NSInteger i = 0;
+    NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
+
+    for (i = 0; i < count; ++i)
+    {
+        PlaylistEntry *pe = [store playlistGetItem:i];
+
+        pe.queuePosition = -1;
+
+        [entries addObject:pe];
+    }
+
+    NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [entries count])];
+    
+    [playlistController insertObjectsUnsynced:entries atArrangedObjectIndexes:is];
+    
+    count = [store queueGetCount];
+
+    if (count)
+    {
+        [playlistController emptyQueueListUnsynced];
+        
+        for (i = 0; i < count; ++i)
+        {
+            NSInteger indexVal = [store queueGetEntry:i];
+            PlaylistEntry *pe = [entries objectAtIndex:indexVal];
+            pe.queuePosition = i;
+            pe.queued = YES;
+            
+            [[playlistController queueList] addObject:pe];
+        }
+    }
+    
+    //Clear the selection
+    [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
+    
+    NSArray* arrayFirst = [NSArray arrayWithObject:[entries objectAtIndex:0]];
+    NSMutableArray* arrayRest = [entries mutableCopy];
+    [arrayRest removeObjectAtIndex:0];
+    
+    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
+    if ([arrayRest count])
+        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
+    return entries;
 }
 
 - (NSArray *)acceptableFileTypes

@@ -13,6 +13,7 @@
 
 @synthesize index;
 @synthesize shuffleIndex;
+@synthesize dbIndex;
 
 @synthesize current;
 @synthesize removed;

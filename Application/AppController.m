@@ -150,11 +150,19 @@ void* kAppControllerContext = &kAppControllerContext;
     (void) [spotlightWindowController init];
 	
 	[[playlistController undoManager] disableUndoRegistration];
-	NSString *basePath = [@"~/Library/Application Support/Cog/" stringByExpandingTildeInPath];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+    
+    NSString *dbFilename = @"Default.sqlite";
+    
     NSString *oldFilename = @"Default.m3u";
     NSString *newFilename = @"Default.xml";
     
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]])
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:dbFilename]])
+    {
+        [playlistLoader addDatabase];
+    }
+    else if ([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]])
     {
         [playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:newFilename]]];
     }
@@ -346,10 +354,9 @@ void* kAppControllerContext = &kAppControllerContext;
 	[playbackController stop:self];
 	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	NSString *folder = @"~/Library/Application Support/Cog/";
-	
-	folder = [folder stringByExpandingTildeInPath];
-	
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    NSString *folder = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+
 	if ([fileManager fileExistsAtPath: folder] == NO)
 	{
 		[fileManager createDirectoryAtPath: folder withIntermediateDirectories:NO attributes:nil error:nil];
@@ -359,11 +366,11 @@ void* kAppControllerContext = &kAppControllerContext;
 	
     NSString * fileName = @"Default.xml";
     
-    [playlistLoader saveXml:[folder stringByAppendingPathComponent: fileName]];
-    
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+
     fileName = @"Default.m3u";
     
-    NSError *error;
     [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
 
     DLog(@"Saving expanded nodes: %@", [expandedNodes description]);

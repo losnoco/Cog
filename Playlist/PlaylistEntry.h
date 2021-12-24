@@ -11,6 +11,7 @@
 @interface PlaylistEntry : NSObject {
 	NSInteger index;
 	NSInteger shuffleIndex;
+    NSInteger dbIndex;
 	
 	BOOL current;
 	BOOL removed;
@@ -82,6 +83,7 @@
 
 @property NSInteger index;
 @property NSInteger shuffleIndex;
+@property NSInteger dbIndex;
 
 @property(readonly) NSString *status;
 @property(readonly) NSString *statusMessage;

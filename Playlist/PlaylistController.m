@@ -16,6 +16,7 @@
 #import "SpotlightWindowController.h"
 #import "StatusImageTransformer.h"
 #import "ToggleQueueTitleTransformer.h"
+#import "SQLiteStore.h"
 
 #import "Logging.h"
 
@@ -119,10 +120,16 @@
 - (void)updatePlaylistIndexes {
     NSArray *arranged = [self arrangedObjects];
     NSUInteger n = [arranged count];
+    BOOL updated = NO;
     for (NSUInteger i = 0; i < n; i++) {
         PlaylistEntry *pe = arranged[i];
-        if (pe.index != i)  // Make sure we don't get into some kind of crazy observing loop...
-            pe.index = (int) i;
+        if (pe.index != i) {  // Make sure we don't get into some kind of crazy observing loop...
+            pe.index = i;
+            updated = YES;
+        }
+    }
+    if (updated) {
+        [[SQLiteStore sharedStore] syncPlaylistEntries:arranged];
     }
 }
 
@@ -130,6 +137,7 @@
     double tt = 0;
     ldiv_t hoursAndMinutes;
     ldiv_t daysAndHours;
+    ldiv_t weeksAndDays;
 
     for (PlaylistEntry *pe in [self arrangedObjects]) {
         if (!isnan([pe.length doubleValue])) tt += [pe.length doubleValue];
@@ -140,13 +148,52 @@
 
     if (hoursAndMinutes.quot >= 24) {
         daysAndHours = ldiv(hoursAndMinutes.quot, 24);
-        [self setTotalTime:[NSString stringWithFormat:@"%ld days %ld hours %ld minutes %ld seconds",
-                                                      daysAndHours.quot, daysAndHours.rem,
-                                                      hoursAndMinutes.rem, sec % 60]];
+        if (daysAndHours.quot >= 7) {
+            weeksAndDays = ldiv(daysAndHours.quot, 7);
+            [self setTotalTime:[NSString stringWithFormat:@"%ld week%@ %ld day%@ %ld hour%@ %ld minute%@ %ld second%@",
+                                weeksAndDays.quot,
+                                weeksAndDays.quot != 1 ? @"s" : @"",
+                                weeksAndDays.rem,
+                                weeksAndDays.rem != 1 ? @"s" : @"",
+                                daysAndHours.rem,
+                                daysAndHours.rem != 1 ? @"s" : @"",
+                                hoursAndMinutes.rem,
+                                hoursAndMinutes.rem != 1 ? @"s" : @"",
+                                sec % 60,
+                                (sec % 60) != 1 ? @"s" : @""]];
+        } else {
+            [self setTotalTime:[NSString stringWithFormat:@"%ld day%@ %ld hour%@ %ld minute%@ %ld second%@",
+                                daysAndHours.quot,
+                                daysAndHours.quot != 1 ? @"s" : @"",
+                                daysAndHours.rem,
+                                daysAndHours.rem != 1 ? @"s" : @"",
+                                hoursAndMinutes.rem,
+                                hoursAndMinutes.rem != 1 ? @"s" : @"",
+                                sec % 60,
+                                (sec % 60) != 1 ? @"s" : @""]];
+        }
     } else {
-        [self setTotalTime:[NSString stringWithFormat:@"%ld hours %ld minutes %ld seconds",
-                                                      hoursAndMinutes.quot, hoursAndMinutes.rem,
-                                                      sec % 60]];
+        if (hoursAndMinutes.quot > 0) {
+            [self setTotalTime:[NSString stringWithFormat:@"%ld hour%@ %ld minute%@ %ld second%@",
+                                hoursAndMinutes.quot,
+                                hoursAndMinutes.quot != 1 ? @"s" : @"",
+                                hoursAndMinutes.rem,
+                                hoursAndMinutes.rem != 1 ? @"s" : @"",
+                                sec % 60,
+                                (sec % 60) != 1 ? @"s" : @""]];
+        } else {
+            if (hoursAndMinutes.rem > 0) {
+                [self setTotalTime:[NSString stringWithFormat:@"%ld minute%@ %ld second%@",
+                                    hoursAndMinutes.rem,
+                                    hoursAndMinutes.rem != 1 ? @"s" : @"",
+                                    sec % 60,
+                                    (sec % 60) != 1 ? @"s" : @""]];
+            } else {
+                [self setTotalTime:[NSString stringWithFormat:@"%ld second%@",
+                                    sec,
+                                    sec != 1 ? @"s" : @""]];
+            }
+        }
     }
 }
 
@@ -169,6 +216,10 @@
                                         toIndex:(NSUInteger)insertIndex {
     [super moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
 
+#if 0 // syncPlaylistEntries is already called for rearrangement
+    [[SQLiteStore sharedStore] playlistMoveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
+#endif
+    
     [playbackController playlistDidChange:self];
 }
 
@@ -298,12 +349,9 @@
 
     NSMutableIndexSet *disarrangedIndexes = [[NSMutableIndexSet alloc] init];
 
-    NSUInteger index = [indexes firstIndex];
-    while (index != NSNotFound) {
-        [disarrangedIndexes
-                addIndex:[[self content] indexOfObject:[[self arrangedObjects] objectAtIndex:index]]];
-        index = [indexes indexGreaterThanIndex:index];
-    }
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+        [disarrangedIndexes addIndex:[[self content] indexOfObject:[[self arrangedObjects] objectAtIndex:idx]]];
+    }];
 
     return disarrangedIndexes;
 }
@@ -323,12 +371,9 @@
 
     NSMutableIndexSet *rearrangedIndexes = [[NSMutableIndexSet alloc] init];
 
-    NSUInteger index = [indexes firstIndex];
-    while (index != NSNotFound) {
-        [rearrangedIndexes
-                addIndex:[[self arrangedObjects] indexOfObject:[[self content] objectAtIndex:index]]];
-        index = [indexes indexGreaterThanIndex:index];
-    }
+    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+        [rearrangedIndexes addIndex:[[self arrangedObjects] indexOfObject:[[self content] objectAtIndex:idx]]];
+    }];
 
     return rearrangedIndexes;
 }
@@ -338,15 +383,23 @@
     [self rearrangeObjects];
 }
 
+- (void)insertObjectsUnsynced:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
+    [super insertObjects:objects atArrangedObjectIndexes:indexes];
+    
+    if ([self shuffle] != ShuffleOff) [self resetShuffleList];
+}
+
 - (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
     [[[self undoManager] prepareWithInvocationTarget:self]
             removeObjectsAtIndexes:[self disarrangeIndexes:indexes]];
     NSString *actionName =
             [NSString stringWithFormat:@"Adding %lu entries", (unsigned long) [objects count]];
     [[self undoManager] setActionName:actionName];
+    
+    [[SQLiteStore sharedStore] playlistInsertTracks:objects atObjectIndexes:indexes];
 
     [super insertObjects:objects atArrangedObjectIndexes:indexes];
-
+    
     if ([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
 
@@ -389,6 +442,8 @@
         }
         currentEntry.index = -i - 1;
     }
+    
+    [[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes];
 
     [super removeObjectsAtArrangedObjectIndexes:indexes];
 
@@ -563,6 +618,7 @@
     if ([queueList count] > 0) {
         pe = queueList[0];
         [queueList removeObjectAtIndex:0];
+        [[SQLiteStore sharedStore] queueRemoveItem:0];
         pe.queued = NO;
         [pe setQueuePosition:-1];
 
@@ -863,6 +919,11 @@
 }
 
 - (IBAction)emptyQueueList:(id)sender {
+    [self emptyQueueListUnsynced];
+    [[SQLiteStore sharedStore] queueEmpty];
+}
+
+- (void)emptyQueueListUnsynced {
     for (PlaylistEntry *queueItem in queueList) {
         queueItem.queued = NO;
         [queueItem setQueuePosition:-1];
@@ -872,17 +933,23 @@
 }
 
 - (IBAction)toggleQueued:(id)sender {
+    SQLiteStore *store = [SQLiteStore sharedStore];
+    
     for (PlaylistEntry *queueItem in [self selectedObjects]) {
         if (queueItem.queued) {
             queueItem.queued = NO;
             queueItem.queuePosition = -1;
 
             [queueList removeObject:queueItem];
+            
+            [store queueRemovePlaylistItems:[NSArray arrayWithObject:queueItem]];
         } else {
             queueItem.queued = YES;
             queueItem.queuePosition = (int) [queueList count];
 
             [queueList addObject:queueItem];
+            
+            [store queueAddItem:[queueItem index]];
         }
 
         DLog(@"TOGGLE QUEUED: %i", queueItem.queued);
@@ -895,11 +962,14 @@
 }
 
 - (IBAction)removeFromQueue:(id)sender {
+    SQLiteStore *store = [SQLiteStore sharedStore];
+    
     for (PlaylistEntry *queueItem in [self selectedObjects]) {
         queueItem.queued = NO;
         queueItem.queuePosition = -1;
 
         [queueList removeObject:queueItem];
+        [store queueRemovePlaylistItems:[NSArray arrayWithObject:queueItem]];
     }
 
     int i = 0;
@@ -909,11 +979,14 @@
 }
 
 - (IBAction)addToQueue:(id)sender {
+    SQLiteStore *store = [SQLiteStore sharedStore];
+    
     for (PlaylistEntry *queueItem in [self selectedObjects]) {
         queueItem.queued = YES;
         queueItem.queuePosition = (int) [queueList count];
 
         [queueList addObject:queueItem];
+        [store queueAddItem:[queueItem index]];
     }
 
     int i = 0;

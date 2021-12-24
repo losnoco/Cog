@@ -106,6 +106,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 // queue methods
 - (IBAction)toggleQueued:(id)sender;
 - (IBAction)emptyQueueList:(id)sender;
+- (void)emptyQueueListUnsynced;
 - (NSMutableArray *)queueList;
 
 // reload metadata of selection
@@ -113,5 +114,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
                                         toIndex:(NSUInteger)insertIndex;
+
+- (void)insertObjectsUnsynced:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes;
 
 @end
