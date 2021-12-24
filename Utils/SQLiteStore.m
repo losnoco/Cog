@@ -661,10 +661,13 @@ static SQLiteStore *g_sharedStore = NULL;
         return -1;
     }
     
+    const char * str = [string UTF8String];
+    uint64_t len = strlen(str); // SQLite expects number of bytes, not characters
+    
     sqlite3_stmt *st = stmt[stmt_select_string];
     
     if (sqlite3_reset(st) ||
-        sqlite3_bind_text64(st, select_string_in_id, [string UTF8String], [string length], SQLITE_STATIC, SQLITE_UTF8))
+        sqlite3_bind_text64(st, select_string_in_id, str, len, SQLITE_STATIC, SQLITE_UTF8))
     {
         return -1;
     }
@@ -691,7 +694,7 @@ static SQLiteStore *g_sharedStore = NULL;
         st = stmt[stmt_add_string];
         
         if (sqlite3_reset(st) ||
-            sqlite3_bind_text64(st, add_string_in_value, [string UTF8String], [string length], SQLITE_STATIC, SQLITE_UTF8) ||
+            sqlite3_bind_text64(st, add_string_in_value, str, len, SQLITE_STATIC, SQLITE_UTF8) ||
             sqlite3_step(st) != SQLITE_DONE ||
             sqlite3_reset(st))
         {
