@@ -20,14 +20,19 @@
 	AudioConverterRef converter;
     AudioConverterRef converterFloat;
 	void *callbackBuffer;
+    size_t callbackBufferSize;
+    
+    float sampleRatio;
     
     float volumeScale;
     
     void *floatBuffer;
+    size_t floatBufferSize;
     int floatSize, floatOffset;
 	
 	AudioStreamBasicDescription inputFormat;
     AudioStreamBasicDescription floatFormat;
+    AudioStreamBasicDescription dmFloatFormat; // downmixed float format
 	AudioStreamBasicDescription outputFormat;
 }
 

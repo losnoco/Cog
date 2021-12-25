@@ -361,6 +361,14 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
 	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
+    // Bluetooth devices in communications mode tend to have reduced settings,
+    // so let's work around that.
+    // For some reason, mono output just doesn't work, so bleh.
+    if (deviceFormat.mChannelsPerFrame < 2)
+        deviceFormat.mChannelsPerFrame = 2;
+    // And sample rate will be cruddy for the duration of playback, so fix it.
+    if (deviceFormat.mSampleRate < 32000)
+        deviceFormat.mSampleRate = 48000;
 //	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
 //	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
 	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
