@@ -7,6 +7,7 @@
 // ITP_[number of taps]_[input sample width]_[fractional precision]_[readable name]
 #define ITP_T02_S16_I08_LINEAR(P, F) (P[0]+(((P[1]-P[0])*F) >> 8))
 #define ITP_T03_S16_I15_QUADRA(P, F) (((((((((P[0] + P[2]) >> 1) - P[1]) * F) >> 16) + P[1]) - ((P[2] + P[0] + (P[0] << 1)) >> 2)) * F) >> 14) + P[0]
+#define ITP_T04_S16_I08_CUBIC(P, F)  (P[1] + ((F*(P[2] - P[0] + ((F*(2 * P[0] - 5 * P[1] + 4 * P[2] - P[3] + ((F*(3 * (P[1] - P[2]) + P[3] - P[0]) + 0x80) >> 8)) + 0x80) >> 8)) + 0x100) >> 9))
 #define ITP_T04_SXX_F01_CUBIC(P, F)  (P[1] + 0.5 * F*(P[2] - P[0] + F*(2.0 * P[0] - 5.0 * P[1] + 4.0 * P[2] - P[3] + F * (3.0 * (P[1] - P[2]) + P[3] - P[0]))))
 
 
@@ -44,14 +45,14 @@ static int32_t itpQuad(int16_t* buf, int32_t pos, int32_t sizeMask) {
 
 static int32_t itpCubic(int16_t* buf, int32_t pos, int32_t sizeMask) {
     int32_t p[4];
-    float frac = (float)(pos & 0xFF)/256;
+    int32_t frac = pos & 0xFF;
     
     p[0] = GET_PT(0);
     p[1] = GET_PT(1);
     p[2] = GET_PT(2);
     p[3] = GET_PT(3);
     
-    return ITP_T04_SXX_F01_CUBIC(p, frac);
+    return ITP_T04_S16_I08_CUBIC(p, frac);
 }
 
 Interpolator interps[INTERP_COUNT] = {
