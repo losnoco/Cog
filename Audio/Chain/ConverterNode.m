@@ -43,6 +43,11 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         floatBufferSize = 0;
         callbackBuffer = NULL;
         callbackBufferSize = 0;
+        
+        stopping = NO;
+        convertEntered = NO;
+        ACInputEntered = NO;
+        ACFloatEntered = NO;
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
     }
@@ -169,14 +174,16 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter,
 	OSStatus err = noErr;
 	int amountToWrite;
 	int amountRead;
-	
-	if ([converter shouldContinue] == NO || [converter endOfStream] == YES)
+    
+	if (converter->stopping || [converter shouldContinue] == NO || [converter endOfStream] == YES)
 	{
 		ioData->mBuffers[0].mDataByteSize = 0; 
 		*ioNumberDataPackets = 0;
 
 		return noErr;
 	}
+    
+    converter->ACInputEntered = YES;
 	
 	amountToWrite = (*ioNumberDataPackets)*(converter->inputFormat.mBytesPerPacket);
 
@@ -188,6 +195,8 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter,
 	{
 		ioData->mBuffers[0].mDataByteSize = 0; 
 		*ioNumberDataPackets = 0;
+        
+        converter->ACInputEntered = NO;
 		
 		return 100; //Keep asking for data
 	}
@@ -196,7 +205,9 @@ static OSStatus ACInputProc(AudioConverterRef inAudioConverter,
 	ioData->mBuffers[0].mDataByteSize = amountRead;
 	ioData->mBuffers[0].mNumberChannels = (converter->inputFormat.mChannelsPerFrame);
 	ioData->mNumberBuffers = 1;
-	
+
+    converter->ACInputEntered = NO;
+    
 	return err;
 }
 
@@ -210,13 +221,15 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
 	OSStatus err = noErr;
 	int amountToWrite;
 	
-	if ([converter shouldContinue] == NO)
+	if (converter->stopping || [converter shouldContinue] == NO)
 	{
 		ioData->mBuffers[0].mDataByteSize = 0;
 		*ioNumberDataPackets = 0;
         
 		return noErr;
 	}
+    
+    converter->ACFloatEntered = YES;
 	
     amountToWrite = (*ioNumberDataPackets) * (converter->dmFloatFormat.mBytesPerPacket);
 
@@ -232,9 +245,14 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
 	ioData->mNumberBuffers = 1;
     
     if (amountToWrite == 0)
+    {
+        converter->ACFloatEntered = NO;
         return 100;
+    }
 	
     converter->floatOffset += amountToWrite;
+    
+    converter->ACFloatEntered = NO;
     
 	return err;
 }
@@ -258,9 +276,15 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
     int amountReadFromFC;
     int amountRead = 0;
     
+    if (stopping)
+        return 0;
+    
+    convertEntered = YES;
+    
 tryagain2:
-    if ([self shouldContinue] == NO || [self endOfStream] == YES)
+    if (stopping || [self shouldContinue] == NO || [self endOfStream] == YES)
     {
+        convertEntered = NO;
         return amountRead;
     }
     
@@ -287,6 +311,12 @@ tryagain2:
         ioData.mNumberBuffers = 1;
             
     tryagain:
+        if (stopping)
+        {
+            convertEntered = NO;
+            return 0;
+        }
+        
         err = AudioConverterFillComplexBuffer(converterFloat, ACInputProc, (__bridge void * _Nullable)(self), &ioNumberPackets, &ioData, NULL);
         amountReadFromFC += ioNumberPackets * floatFormat.mBytesPerPacket;
         if (err == 100)
@@ -301,6 +331,7 @@ tryagain2:
         else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
         {
             DLog(@"Error: %i", err);
+            convertEntered = NO;
             return amountRead;
         }
         
@@ -335,6 +366,12 @@ tryagain2:
     ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
     ioData.mNumberBuffers = 1;
 
+    if (stopping)
+    {
+        convertEntered = NO;
+        return 0;
+    }
+    
     err = AudioConverterFillComplexBuffer(converter, ACFloatProc, (__bridge void *)(self), &ioNumberPackets, &ioData, NULL);
     amountRead += ioNumberPackets * outputFormat.mBytesPerPacket;
     if (err == 100)
@@ -345,7 +382,8 @@ tryagain2:
     {
         DLog(@"Error: %i", err);
     }
-	
+
+    convertEntered = NO;
 	return amountRead;
 }
 
@@ -414,6 +452,11 @@ static float db_to_scale(float db)
 {
 	//Make the converter
 	OSStatus stat = noErr;
+    
+    stopping = NO;
+    convertEntered = NO;
+    ACInputEntered = NO;
+    ACFloatEntered = NO;
 	
 	inputFormat = inf;
 	outputFormat = outf;
@@ -514,6 +557,11 @@ static float db_to_scale(float db)
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format
 {
 	DLog(@"FORMAT CHANGED");
+    stopping = YES;
+    while (convertEntered || ACInputEntered || ACFloatEntered)
+    {
+        usleep(500);
+    }
 	[self cleanUp];
 	[self setupWithInputFormat:format outputFormat:outputFormat];
 }

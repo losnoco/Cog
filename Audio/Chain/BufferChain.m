@@ -63,7 +63,7 @@
 	if (![inputNode openWithSource:source])
 		return NO;
 
-	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
+	if (![converterNode setupWithInputFormat:(_inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -82,7 +82,7 @@
 		return NO;
 	
 	DLog(@"Input Properties: %@", [inputNode properties]);
-	if (![converterNode setupWithInputFormat:propertiesToASBD([inputNode properties]) outputFormat:outputFormat])
+	if (![converterNode setupWithInputFormat:(_inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -197,6 +197,16 @@
 - (id)controller
 {
     return controller;
+}
+
+- (ConverterNode *)converter
+{
+    return converterNode;
+}
+
+- (AudioStreamBasicDescription)inputFormat
+{
+    return _inputFormat;
 }
 
 @end

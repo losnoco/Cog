@@ -44,10 +44,6 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     
     if (output->stopping == YES)
     {
-        // *shrug* At least this will stop it from trying to emit data post-shutdown
-        memset(readPointer, 0, amountToRead);
-        buffer->mAudioDataByteSize = amountToRead;
-        AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
         return;
     }
 
@@ -260,6 +256,8 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 {
 	if (outputUnit || audioQueue)
 		[self stop];
+    
+    stopping = NO;
 	
     AudioComponentDescription desc;
 	OSStatus err;
@@ -375,6 +373,8 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 
 - (void)start
 {
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
     AudioQueueStart(audioQueue, NULL);
 }
 
@@ -389,6 +389,9 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 	}
     if (audioQueue && buffers)
     {
+        AudioQueuePause(audioQueue);
+        AudioQueueStop(audioQueue, true);
+
         for (UInt32 i = 0; i < numberOfBuffers; ++i)
         {
             if (buffers[i])
@@ -414,23 +417,12 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 
 - (void)pause
 {
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, 0);
     AudioQueuePause(audioQueue);
 }
 
 - (void)resume
 {
     AudioQueueStart(audioQueue, NULL);
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
-}
-
-- (void)resumeWithFade
-{
-    AudioQueueStart(audioQueue, NULL);
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0.4);
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
 }
 
 @end

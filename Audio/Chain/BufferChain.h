@@ -15,6 +15,8 @@
 @interface BufferChain : NSObject {
 	InputNode *inputNode;
 	ConverterNode *converterNode;
+    
+    AudioStreamBasicDescription _inputFormat;
 	
 	NSURL *streamURL;
 	id userInfo;
@@ -62,5 +64,8 @@
 - (BOOL)isRunning;
 
 - (id)controller;
+
+- (ConverterNode *)converter;
+- (AudioStreamBasicDescription)inputFormat;
 
 @end

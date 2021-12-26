@@ -51,10 +51,11 @@
 	[output resume];
 }
 
-- (void)resumeWithFade
+- (void)reset
 {
-    paused = NO;
-    [output resumeWithFade];
+    [output setup];
+    if (!paused)
+        [output start];
 }
 
 - (int)readData:(void *)ptr amount:(int)amount

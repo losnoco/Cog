@@ -30,6 +30,7 @@
 - (void)process;
 - (void)close;
 - (void)seek:(double)time;
+- (void)reset;
 
 - (int)readData:(void *)ptr amount:(int)amount;
 
@@ -42,7 +43,6 @@
 
 - (void)pause;
 - (void)resume;
-- (void)resumeWithFade;
 
 - (BOOL)isPaused;
 

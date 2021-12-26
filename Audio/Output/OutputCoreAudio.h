@@ -43,7 +43,6 @@
 - (void)pause;
 - (void)resume;
 - (void)stop;
-- (void)resumeWithFade;
 
 - (void)setVolume:(double) v;
 

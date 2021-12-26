@@ -122,17 +122,21 @@
 		if (shouldSeek == YES)
 		{
             OutputNode *output = [[controller controller] output];
-            BOOL isPaused = [output isPaused];
-            if ( !isPaused ) [output pause];
-			DLog(@"SEEKING!");
-			seekError = [decoder seek:seekFrame] < 0;
-            if ( !isPaused ) [output resumeWithFade];
+            ConverterNode *converter = [[[controller controller] bufferChain] converter];
+			DLog(@"SEEKING! Resetting Buffer");
+            
+            [self resetBuffer];
+            [output reset];
+            [converter resetBuffer];
+            [converter inputFormatDidChange:[[[controller controller] bufferChain] inputFormat]];
+
+            DLog(@"Reset buffer!");
+
+            DLog(@"SEEKING!");
+            seekError = [decoder seek:seekFrame] < 0;
+            
 			shouldSeek = NO;
 			DLog(@"Seeked! Resetting Buffer");
-			
-			[self resetBuffer];
-			
-			DLog(@"Reset buffer!");
 			initialBufferFilled = NO;
 		}
 

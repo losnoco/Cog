@@ -22,6 +22,11 @@
 	void *callbackBuffer;
     size_t callbackBufferSize;
     
+    BOOL stopping;
+    BOOL convertEntered;
+    BOOL ACInputEntered;
+    BOOL ACFloatEntered;
+    
     float sampleRatio;
     
     float volumeScale;
