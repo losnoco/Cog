@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "../soundlib/ModInstrument.h"
 #include "../soundlib/ModSample.h"
@@ -307,15 +307,15 @@ enum IT_ReaderBitMasks
 template<int32 y, int32 m, int32 d>
 struct SchismVersionFromDate
 {
+private:
 	static constexpr int32 mm = (m + 9) % 12;
 	static constexpr int32 yy = y - mm / 10;
-	static constexpr int32 date = yy * 365 + yy / 4 - yy / 100 + yy / 400 + (mm * 306 + 5) / 10 + (d - 1);
 
-	static constexpr int32 Version(const int32 trackerID = 0x1000)
-	{
-		return trackerID + 0x0050 + date - SchismVersionFromDate<2009, 10, 31>::date;
-	}
+public:
+	static constexpr int32 date = yy * 365 + yy / 4 - yy / 100 + yy / 400 + (mm * 306 + 5) / 10 + (d - 1);
 };
+
+inline constexpr int32 SchismTrackerEpoch = SchismVersionFromDate<2009, 10, 31>::date;
 
 
 uint32 DecodeITEditTimer(uint16 cwtv, uint32 editTime);

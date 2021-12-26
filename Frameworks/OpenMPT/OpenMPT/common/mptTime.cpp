@@ -143,8 +143,7 @@ tm Unix::AsUTC() const
 	int64 hours   = tmp % 24; tmp /= 24;
 	int32 year = 0, month = 0, day = 0;
 	FromDaynum(static_cast<int32>(tmp) + ToDaynum(1970,1,1), year, month, day);
-	tm result;
-	MemsetZero(result);
+	tm result = {};
 	result.tm_year = year - 1900;
 	result.tm_mon = month - 1;
 	result.tm_mday = day;
@@ -223,8 +222,7 @@ void MultimediaClock::Init()
 
 void MultimediaClock::SetPeriod(uint32 ms)
 {
-	TIMECAPS caps;
-	MemsetZero(caps);
+	TIMECAPS caps = {};
 	if(timeGetDevCaps(&caps, sizeof(caps)) != MMSYSERR_NOERROR)
 	{
 		return;

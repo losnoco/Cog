@@ -121,7 +121,7 @@ void Gargle::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kEqNumParameters)
 	{
-		Limit(value, 0.0f, 1.0f);
+		value = mpt::safe_clamp(value, 0.0f, 1.0f);
 		if(index == kGargleWaveShape)
 			value = mpt::round(value);
 		m_param[index] = value;

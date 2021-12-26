@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #ifndef NO_PLUGINS
 
@@ -43,16 +43,19 @@ protected:
 	float m_depthDelay;
 	float m_frequency;
 	int32 m_delayOffset;
+	const bool m_isFlanger = false;
 
 	// State
-	std::vector<float> m_buffer;
-	int32 m_bufPos, m_bufSize;
+	std::vector<float> m_bufferL, m_bufferR;  // Only m_bufferL is used in case of !m_isFlanger
+	std::array<float, 3> m_DryBufferL, m_DryBufferR;
+	int32 m_bufPos = 0, m_bufSize = 0;
 
-	int32 m_delayL1, m_delayL2, m_delayR1, m_delayR2;
+	int32 m_delayL = 0, m_delayR = 0;
+	int32 m_dryWritePos = 0;
 
 public:
 	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
-	Chorus(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
+	Chorus(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct, bool stereoBuffers = false);
 
 	void Release() override { delete this; }
 	int32 GetUID() const override { return 0xEFE6629C; }

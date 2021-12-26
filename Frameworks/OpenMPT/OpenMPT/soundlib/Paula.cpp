@@ -11,14 +11,13 @@
 #include "stdafx.h"
 #include "Paula.h"
 #include "TinyFFT.h"
+#include "Tables.h"
+#include "mpt/base/numbers.hpp"
 
 #include <complex>
 #include <numeric>
 
 OPENMPT_NAMESPACE_BEGIN
-
-// Compute Bessel function Izero(y) using a series approximation
-double Izero(double y);
 
 namespace Paula
 {
@@ -127,7 +126,7 @@ public:
 BiquadFilter ZTransform(double a0, double a1, double a2, double b0, double b1, double b2, double fc, double fs)
 {
 	// Prewarp s - domain coefficients
-	const double wp = 2.0 * fs * std::tan(M_PI * fc / fs);
+	const double wp = 2.0 * fs * std::tan(mpt::numbers::pi * fc / fs);
 	a2 /= wp * wp;
 	a1 /= wp;
 	b2 /= wp * wp;
@@ -146,7 +145,7 @@ BiquadFilter ZTransform(double a0, double a1, double a2, double b0, double b1, d
 
 BiquadFilter MakeRCLowpass(double sampleRate, double freq)
 {
-	const double omega = 2 * M_PI * freq / sampleRate;
+	const double omega = (2.0 * mpt::numbers::pi) * freq / sampleRate;
 	const double term = 1 + 1 / omega;
 	return BiquadFilter(1 / term, 0.0, 0.0, -1.0 + 1.0 / term, 0.0);
 }

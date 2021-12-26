@@ -1,8 +1,8 @@
 
-CC  = gcc$(TOOLCHAIN_SUFFIX) 
-CXX = g++$(TOOLCHAIN_SUFFIX) 
-LD  = g++($TOOLCHAIN_SUFFIX) 
-AR  = ar$(TOOLCHAIN_SUFFIX) 
+CC  = $(TOOLCHAIN_PREFIX)gcc$(TOOLCHAIN_SUFFIX) 
+CXX = $(TOOLCHAIN_PREFIX)g++$(TOOLCHAIN_SUFFIX) 
+LD  = $(TOOLCHAIN_PREFIX)g++($TOOLCHAIN_SUFFIX) 
+AR  = $(TOOLCHAIN_PREFIX)ar$(TOOLCHAIN_SUFFIX) 
 
 ifneq ($(STDCXX),)
 CXXFLAGS_STDCXX = -std=$(STDCXX)
@@ -22,6 +22,11 @@ LDFLAGS  +=
 LDLIBS   += -lm
 ARFLAGS  := rcs
 
+ifeq ($(OPTIMIZE_LTO),1)
+CXXFLAGS += -flto
+CFLAGS   += -flto
+endif
+
 ifeq ($(CHECKED_ADDRESS),1)
 CXXFLAGS += -fsanitize=address
 CFLAGS   += -fsanitize=address
@@ -32,27 +37,7 @@ CXXFLAGS += -fsanitize=undefined
 CFLAGS   += -fsanitize=undefined
 endif
 
-CXXFLAGS_WARNINGS += -Wsuggest-override -Wno-psabi
-
-ifeq ($(MODERN),1)
-LDFLAGS  += -fuse-ld=gold
-CXXFLAGS_WARNINGS += -Wpedantic -Wlogical-op -Wframe-larger-than=16000
-CFLAGS_WARNINGS   += -Wpedantic -Wlogical-op -Wframe-larger-than=4000
-LDFLAGS_WARNINGS  += -Wl,-no-undefined -Wl,--detect-odr-violations
-# re-renable after 1.29 branch
-#CXXFLAGS_WARNINGS += -Wdouble-promotion
-#CFLAGS_WARNINGS   += -Wdouble-promotion
-endif
-
-CFLAGS_SILENT += -Wno-cast-qual
-CFLAGS_SILENT += -Wno-empty-body
-CFLAGS_SILENT += -Wno-implicit-fallthrough
-CFLAGS_SILENT += -Wno-old-style-declaration
-CFLAGS_SILENT += -Wno-sign-compare
-CFLAGS_SILENT += -Wno-type-limits
-CFLAGS_SILENT += -Wno-unused-but-set-variable
-CFLAGS_SILENT += -Wno-unused-function
-CFLAGS_SILENT += -Wno-unused-parameter
+include build/make/warnings-gcc.mk
 
 EXESUFFIX=
 

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #ifndef NO_REVERB
 
@@ -136,16 +136,10 @@ class CReverb
 public:
 	CReverbSettings m_Settings;
 
-	// Shared reverb state
-private:
-	MixSampleInt MixReverbBuffer[MIXBUFFERSIZE * 2];
-public:
-	MixSampleInt gnRvbROfsVol = 0, gnRvbLOfsVol = 0;
-
 private:
 	const SNDMIX_REVERB_PROPERTIES *m_currentPreset = nullptr;
 
-	uint32 gnReverbSend = 0;
+	bool gnReverbSend = false;
 
 	uint32 gnReverbSamples = 0;
 	uint32 gnReverbDecaySamples = 0;
@@ -169,16 +163,16 @@ private:
 public:
 	CReverb();
 public:
-	void Initialize(bool bReset, uint32 MixingFreq);
+	void Initialize(bool bReset, MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol, uint32 MixingFreq);
 
 	// can be called multiple times or never (if no data is sent to reverb)
-	MixSampleInt *GetReverbSendBuffer(uint32 nSamples);
+	void TouchReverbSendBuffer(MixSampleInt *MixReverbBuffer, MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol, uint32 nSamples);
 
 	// call once after all data has been sent.
-	void Process(MixSampleInt *MixSoundBuffer, uint32 nSamples);
+	void Process(MixSampleInt *MixSoundBuffer, MixSampleInt *MixReverbBuffer, MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol, uint32 nSamples);
 
 private:
-	void Shutdown();
+	void Shutdown(MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol);
 	// Pre/Post resampling and filtering
 	uint32 ReverbProcessPreFiltering1x(int32 *pWet, uint32 nSamples);
 	uint32 ReverbProcessPreFiltering2x(int32 *pWet, uint32 nSamples);

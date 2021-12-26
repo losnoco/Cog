@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "Snd_defs.h"
 #include "ModChannel.h"
@@ -31,7 +31,7 @@ struct MixerTraits
 	typedef in input_t;								// Input buffer sample type
 	typedef out outbuf_t[channelsOut];				// Output buffer sampling point type
 	// To perform sample conversion, add a function with the following signature to your derived classes:
-	// static MPT_CONSTEXPR11_FUN output_t Convert(const input_t x)
+	// static MPT_CONSTEXPRINLINE output_t Convert(const input_t x)
 };
 
 

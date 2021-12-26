@@ -17,20 +17,6 @@
 
 namespace openmpt123 {
 
-#define CHECKED(x) do { \
-	HRESULT err = x; \
-	if ( err != 0 ) { \
-		throw exception( "error writing wave file" ); \
-	} \
-} while(0)
-
-#define UNCHECKED(x) do { \
-	HRESULT err = x; \
-	if ( err != 0 ) { \
-		log << "error writing wave file" << std::endl; \
-	} \
-} while(0)
-
 class mmio_stream_raii : public file_audio_stream_base {
 private:
 	std::ostream & log;
@@ -41,6 +27,17 @@ private:
 	MMCKINFO fmt__chunk;
 	MMCKINFO data_chunk;
 	MMIOINFO data_info;
+private:
+	void CHECKED( HRESULT err ) {
+		if ( err != 0 ) {
+			throw exception( "error writing wave file" );
+		}
+	}
+	void UNCHECKED( HRESULT err ) {
+		if ( err != 0 ) {
+			log << "error writing wave file" << std::endl;
+		}
+	}
 public:
 	mmio_stream_raii( const std::string & filename, const commandlineflags & flags_, std::ostream & log_ ) : log(log_), flags(flags_), mmio(NULL) {
 
@@ -54,7 +51,7 @@ public:
 		waveformatex.nAvgBytesPerSec = waveformatex.nSamplesPerSec * waveformatex.nBlockAlign;
 
 		#if defined(WIN32) && defined(UNICODE)
-			wchar_t * tmp = _wcsdup( utf8_to_wstring( filename ).c_str() );
+			wchar_t * tmp = _wcsdup( mpt::transcode<std::wstring>( mpt::common_encoding::utf8, filename ).c_str() );
 			mmio = mmioOpen( tmp, NULL, MMIO_ALLOCBUF | MMIO_READWRITE | MMIO_CREATE );
 			free( tmp );
 			tmp = 0;
@@ -128,8 +125,6 @@ public:
 
 	}
 };
-
-#undef CHECKED
 
 } // namespace openmpt123
 

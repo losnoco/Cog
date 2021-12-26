@@ -10,40 +10,35 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
 
-enum
+enum class TempoMode : uint8
 {
-	NO_ATTENUATION = 1,
+	Classic     = 0,
+	Alternative = 1,
+	Modern      = 2,
+	NumModes
 };
 
-enum TempoMode
+enum class MixLevels : uint8
 {
-	tempoModeClassic		= 0,
-	tempoModeAlternative	= 1,
-	tempoModeModern			= 2,
-	tempoModeMax
+	Original      = 0,
+	v1_17RC1      = 1,
+	v1_17RC2      = 2,
+	v1_17RC3      = 3,
+	Compatible    = 4,
+	CompatibleFT2 = 5,
+	NumMixLevels
 };
 
-enum MixLevels
+enum class PanningMode : uint8
 {
-	mixLevelsOriginal		= 0,
-	mixLevels1_17RC1		= 1,
-	mixLevels1_17RC2		= 2,
-	mixLevels1_17RC3		= 3,
-	mixLevelsCompatible		= 4,
-	mixLevelsCompatibleFT2	= 5,
-	mixLevelsMax
-};
-
-enum ForcePanningMode
-{
-	dontForcePanningMode,
-	forceSoftPanning,
-	forceNoSoftPanning,
-	forceFT2Panning,
+	Undetermined,
+	SoftPanning,
+	NoSoftPanning,
+	FT2Panning,
 };
 
 // Class used to store settings for a song file.
@@ -75,8 +70,8 @@ public:
 	bool getUseGlobalPreAmp() const { return m_ignorePreAmp; }
 	void setUseGlobalPreAmp(bool inUseGlobalPreAmp) { m_ignorePreAmp = inUseGlobalPreAmp; }
 
-	ForcePanningMode getForcePanningMode() const { return m_forceSoftPanning; }
-	void setForcePanningMode(ForcePanningMode inForceSoftPanning) { m_forceSoftPanning = inForceSoftPanning; }
+	PanningMode getPanningMode() const { return m_forceSoftPanning; }
+	void setPanningMode(PanningMode inForceSoftPanning) { m_forceSoftPanning = inForceSoftPanning; }
 
 	bool getDisplayDBValues() const { return m_displayDBValues; }
 	void setDisplayDBValues(bool in) { m_displayDBValues = in; }
@@ -105,7 +100,7 @@ protected:
 	float m_normalGlobalVol;
 
 	int m_extraAttenuation;
-	ForcePanningMode m_forceSoftPanning;
+	PanningMode m_forceSoftPanning;
 	bool m_globalVolumeAppliesToMaster;
 	bool m_ignorePreAmp;
 	bool m_displayDBValues;

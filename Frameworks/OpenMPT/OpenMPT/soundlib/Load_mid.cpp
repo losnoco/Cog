@@ -305,9 +305,9 @@ uint32 CSoundFile::MapMidiInstrument(uint8 program, uint16 bank, uint8 midiChann
 	pIns->wMidiBank = bank + 1;
 	pIns->nMidiProgram = program + 1;
 	pIns->nFadeOut = 1024;
-	pIns->nNNA = NNA_NOTEOFF;
-	pIns->nDCT = isDrum ? DCT_SAMPLE : DCT_NOTE;
-	pIns->nDNA = DNA_NOTEFADE;
+	pIns->nNNA = NewNoteAction::NoteOff;
+	pIns->nDCT = isDrum ? DuplicateCheckType::Sample : DuplicateCheckType::Note;
+	pIns->nDNA = DuplicateNoteAction::NoteFade;
 	if(isDrum)
 	{
 		pIns->nMidiChannel = MIDI_DRUMCHANNEL;
@@ -460,10 +460,10 @@ static CHANNELINDEX FindUnusedChannel(uint8 midiCh, ModCommand::NOTE note, const
 	CHANNELINDEX anyFreeChannel = CHANNELINDEX_INVALID;
 
 	CHANNELINDEX oldsetMidiCh = CHANNELINDEX_INVALID;
-	tick_t oldestMidiChAge = Util::MaxValueOfType(oldestMidiChAge);
+	tick_t oldestMidiChAge = std::numeric_limits<decltype(oldestMidiChAge)>::max();
 
 	CHANNELINDEX oldestAnyCh = 0;
-	tick_t oldestAnyChAge = Util::MaxValueOfType(oldestAnyChAge);
+	tick_t oldestAnyChAge = std::numeric_limits<decltype(oldestAnyChAge)>::max();
 
 	for(size_t i = 0; i < channels.size(); i++)
 	{
@@ -642,8 +642,8 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.madeWithTracker = U_("Standard MIDI File");
 	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
-	SetMixLevels(mixLevels1_17RC3);
-	m_nTempoMode = tempoModeModern;
+	SetMixLevels(MixLevels::v1_17RC3);
+	m_nTempoMode = TempoMode::Modern;
 	m_SongFlags = SONG_LINEARSLIDES;
 	m_nDefaultTempo.Set(120);
 	m_nDefaultSpeed = ticksPerRow;
@@ -720,7 +720,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	while(finishedTracks < numTracks)
 	{
 		uint16 t = 0;
-		tick_t tick = Util::MaxValueOfType(tick);
+		tick_t tick = std::numeric_limits<decltype(tick)>::max();
 		for(uint16 track = 0; track < numTracks; track++)
 		{
 			if(!tracks[track].finished && tracks[track].nextEvent < tick)
@@ -822,9 +822,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 				break;
 			case 0x51: // Tempo
 				{
-					uint8 tempoRaw[3];
-					chunk.ReadArray(tempoRaw);
-					uint32 tempoInt = (tempoRaw[0] << 16) | (tempoRaw[1] << 8) | tempoRaw[2];
+					uint32 tempoInt = chunk.ReadUint24BE();
 					if(tempoInt == 0)
 						break;
 					TEMPO newTempo(60000000.0 / tempoInt);
@@ -1217,7 +1215,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 				m.param = static_cast<uint8>(absDiff);
 				realDiff = absDiff * 4 * (ticksPerRow - 1);
 			}
-			chnState.porta += realDiff * sgn(diff);
+			chnState.porta += realDiff * mpt::signum(diff);
 		}
 
 		tick_t delta = 0;
@@ -1278,7 +1276,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			channels.push_back(i);
 			if(modChnStatus[i].midiCh != ModChannelState::NOMIDI)
-				ChnSettings[i].szName = mpt::format("MIDI Ch %1")(1 + modChnStatus[i].midiCh);
+				ChnSettings[i].szName = MPT_AFORMAT("MIDI Ch {}")(1 + modChnStatus[i].midiCh);
 			else if(i == tempoChannel)
 				ChnSettings[i].szName = "Tempo";
 			else if(i == globalVolChannel)
@@ -1304,17 +1302,17 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 
 	std::unique_ptr<CDLSBank> cachedBank, embeddedBank;
 
-	if(CDLSBank::IsDLSBank(file.GetFileName()))
+	if(CDLSBank::IsDLSBank(file.GetOptionalFileName().value_or(P_(""))))
 	{
 		// Soundfont embedded in MIDI file
 		embeddedBank = std::make_unique<CDLSBank>();
-		embeddedBank->Open(file.GetFileName());
+		embeddedBank->Open(file.GetOptionalFileName().value_or(P_("")));
 	} else
 	{
 		// Soundfont with same name as MIDI file
-		for(const auto &ext : { P_(".sf2"), P_(".sbk"), P_(".dls") })
+		for(const auto &ext : { P_(".sf2"), P_(".sf3"), P_(".sf4"), P_(".sbk"), P_(".dls") })
 		{
-			mpt::PathString filename = file.GetFileName().ReplaceExt(ext);
+			mpt::PathString filename = file.GetOptionalFileName().value_or(P_("")).ReplaceExt(ext);
 			if(filename.IsFile())
 			{
 				embeddedBank = std::make_unique<CDLSBank>();
@@ -1364,8 +1362,8 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			} else
 			{
 				// Load from Instrument or Sample file
-				InputFile f;
-				if(f.Open(midiMapName, SettingCacheCompleteFileBeforeLoading()))
+				InputFile f(midiMapName, SettingCacheCompleteFileBeforeLoading());
+				if(f.IsValid())
 				{
 					FileReader insFile = GetFileReader(f);
 					if(ReadInstrumentFromFile(ins, insFile, false))

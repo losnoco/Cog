@@ -28,12 +28,101 @@ OPENMPT_NAMESPACE_BEGIN
 namespace Test {
 
 
+
+void mpt_test_reporter::case_run(const mpt::source_location& loc)
+{
+	#if !MPT_OS_DJGPP
+		std::cout << "TEST..: " << MPT_AFORMAT("{}({}):")(loc.file_name() ? loc.file_name() : "", loc.line()) << ": " << std::endl;
+	#else
+		MPT_UNUSED(loc);
+	#endif
+}
+
+void mpt_test_reporter::case_run(const mpt::source_location& loc, const char* text_e)
+{
+	#if !MPT_OS_DJGPP
+		std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e) << ": " << std::endl;
+	#else
+		MPT_UNUSED(loc);
+		MPT_UNUSED(text_e);
+	#endif
+}
+
+void mpt_test_reporter::case_run(const mpt::source_location& loc, const char* text_ex, const char* text_e)
+{
+	if(text_ex)
+	{
+		#if !MPT_OS_DJGPP
+			std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} throws {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e, text_ex) << ": " << std::endl;
+		#else
+			MPT_UNUSED(loc);
+			MPT_UNUSED(text_ex);
+			MPT_UNUSED(text_e);
+		#endif
+	} else
+	{
+		#if !MPT_OS_DJGPP
+			std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} throws")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e) << ": " << std::endl;
+		#else
+			MPT_UNUSED(loc);
+			MPT_UNUSED(text_ex);
+			MPT_UNUSED(text_e);
+		#endif
+	}
+}
+
+void mpt_test_reporter::case_run(const mpt::source_location& loc, const char* text_a, const char* text_cmp, const char* text_b)
+{
+	#if !MPT_OS_DJGPP
+		std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} {} {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_a, text_cmp, text_b) << ": " << std::endl;
+	#else
+		MPT_UNUSED(loc);
+		MPT_UNUSED(text_a);
+		MPT_UNUSED(text_cmp);
+		MPT_UNUSED(text_b);
+	#endif
+}
+
+void mpt_test_reporter::case_result(const mpt::source_location& loc, const mpt::test::result& result)
+{
+	MPT_UNUSED(loc);
+	if(std::holds_alternative<mpt::test::result_success>(result.info))
+	{
+		#if !MPT_OS_DJGPP
+			std::cout << "RESULT: PASS" << std::endl;
+		#endif
+	} else if(std::holds_alternative<mpt::test::result_failure>(result.info))
+	{
+		fail_count++;
+		std::cout << "RESULT: FAIL" << std::endl;
+		std::cout.flush();
+		std::cerr << "FAIL: " << "FAILURE: " << std::get<mpt::test::result_failure>(result.info).text << std::endl;
+		std::cerr.flush();
+	} else if(std::holds_alternative<mpt::test::result_unexpected_exception>(result.info))
+	{
+		fail_count++;
+		std::cout << "RESULT: FAIL" << std::endl;
+		std::cout.flush();
+		std::cerr << "FAIL: " << "UNEXPECTED EXCEPTION: " << std::get<mpt::test::result_unexpected_exception>(result.info).text << std::endl;
+		std::cerr.flush();
+	} else
+	{
+		fail_count++;
+		std::cout << "RESULT: FAIL" << std::endl;
+		std::cout.flush();
+		std::cerr << "FAIL: " << "UNKOWN" << std::endl;
+		std::cerr.flush();
+	}
+}
+
+
+
 int fail_count = 0;
 
 
 static std::string remove_newlines(std::string str)
 {
-	return mpt::String::Replace(mpt::String::Replace(str, "\n", " "), "\r", " ");
+	return mpt::replace(mpt::replace(str, std::string("\n"), std::string(" ")), std::string("\r"), std::string(" "));
 }
 
 
@@ -49,7 +138,7 @@ Testcase::Testcase(Fatality fatality, Verbosity verbosity, const char * const de
 
 std::string Testcase::AsString() const
 {
-	return mpt::format(std::string("%1(%2): %3"))(loc.file_name() ? loc.file_name() : "", loc.line(), remove_newlines(desc));
+	return MPT_AFORMAT("{}({}): {}")(loc.file_name() ? loc.file_name() : "", loc.line(), remove_newlines(desc));
 }
 
 
@@ -196,12 +285,12 @@ MPT_NOINLINE void AssertHandler(const mpt::source_location &loc, const char *exp
 	Test::fail_count++;
 	if(msg)
 	{
-		mpt::log::Logger().SendLogMessage(loc, LogError, "ASSERT",
+		mpt::log::GlobalLogger().SendLogMessage(loc, LogError, "ASSERT",
 			U_("ASSERTION FAILED: ") + mpt::ToUnicode(mpt::Charset::ASCII, msg) + U_(" (") + mpt::ToUnicode(mpt::Charset::ASCII, expr) + U_(")")
 			);
 	} else
 	{
-		mpt::log::Logger().SendLogMessage(loc, LogError, "ASSERT",
+		mpt::log::GlobalLogger().SendLogMessage(loc, LogError, "ASSERT",
 			U_("ASSERTION FAILED: ") + mpt::ToUnicode(mpt::Charset::ASCII, expr)
 			);
 	}

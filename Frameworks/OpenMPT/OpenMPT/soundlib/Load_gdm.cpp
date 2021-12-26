@@ -24,38 +24,38 @@ OPENMPT_NAMESPACE_BEGIN
 // GDM File Header
 struct GDMFileHeader
 {
-	char     magic[4];				// ID: 'GDM\xFE'
-	char     songTitle[32];			// Music's title
-	char     songMusician[32];		// Name of music's composer
-	char     dosEOF[3];				// 13, 10, 26
-	char     magic2[4];				// ID: 'GMFS'
-	uint8le  formatMajorVer;		// Format major version
-	uint8le  formatMinorVer;		// Format minor version
-	uint16le trackerID;				// Composing Tracker ID code (00 = 2GDM)
-	uint8le  trackerMajorVer;		// Tracker's major version
-	uint8le  trackerMinorVer;		// Tracker's minor version
-	uint8le  panMap[32];			// 0-Left to 15-Right, 255-N/U
-	uint8le  masterVol;				// Range: 0...64
-	uint8le  tempo;					// Initial music tempo (6)
-	uint8le  bpm;					// Initial music BPM (125)
-	uint16le originalFormat;		// Original format ID:
+	char     magic[4];          // ID: 'GDM\xFE'
+	char     songTitle[32];     // Music's title
+	char     songMusician[32];  // Name of music's composer
+	char     dosEOF[3];         // 13, 10, 26
+	char     magic2[4];         // ID: 'GMFS'
+	uint8le  formatMajorVer;    // Format major version
+	uint8le  formatMinorVer;    // Format minor version
+	uint16le trackerID;         // Composing Tracker ID code (00 = 2GDM)
+	uint8le  trackerMajorVer;   // Tracker's major version
+	uint8le  trackerMinorVer;   // Tracker's minor version
+	uint8le  panMap[32];        // 0-Left to 15-Right, 255-N/U
+	uint8le  masterVol;         // Range: 0...64
+	uint8le  tempo;             // Initial music tempo (6)
+	uint8le  bpm;               // Initial music BPM (125)
+	uint16le originalFormat;    // Original format ID:
 		// 1-MOD, 2-MTM, 3-S3M, 4-669, 5-FAR, 6-ULT, 7-STM, 8-MED, 9-PSM
 		// (versions of 2GDM prior to v1.15 won't set this correctly)
 		// 2GDM v1.17 will only spit out 0-byte files when trying to convert a PSM16 file,
 		// and fail outright when trying to convert a new PSM file.
 
 	uint32le orderOffset;
-	uint8le  lastOrder;				// Number of orders in module - 1
+	uint8le  lastOrder;            // Number of orders in module - 1
 	uint32le patternOffset;
-	uint8le  lastPattern;			// Number of patterns in module - 1
+	uint8le  lastPattern;          // Number of patterns in module - 1
 	uint32le sampleHeaderOffset;
 	uint32le sampleDataOffset;
-	uint8le  lastSample;			// Number of samples in module - 1
-	uint32le messageTextOffset;		// Offset of song message
+	uint8le  lastSample;           // Number of samples in module - 1
+	uint32le messageTextOffset;    // Offset of song message
 	uint32le messageTextLength;
-	uint32le scrollyScriptOffset;		// Offset of scrolly script (huh?)
+	uint32le scrollyScriptOffset;  // Offset of scrolly script (huh?)
 	uint16le scrollyScriptLength;
-	uint32le textGraphicOffset;		// Offset of text graphic (huh?)
+	uint32le textGraphicOffset;    // Offset of text graphic (huh?)
 	uint16le textGraphicLength;
 };
 
@@ -67,24 +67,24 @@ struct GDMSampleHeader
 {
 	enum SampleFlags
 	{
-		smpLoop		= 0x01,
-		smp16Bit	= 0x02,	// 16-Bit samples are not handled correctly by 2GDM (not implemented)
-		smpVolume	= 0x04,
-		smpPanning	= 0x08,
-		smpLZW		= 0x10,	// LZW-compressed samples are not implemented in 2GDM
-		smpStereo	= 0x20,	// Stereo samples are not handled correctly by 2GDM (not implemented)
+		smpLoop    = 0x01,
+		smp16Bit   = 0x02,  // 16-Bit samples are not handled correctly by 2GDM (not implemented)
+		smpVolume  = 0x04,  // Use default volume
+		smpPanning = 0x08,
+		smpLZW     = 0x10,  // LZW-compressed samples are not implemented in 2GDM
+		smpStereo  = 0x20,  // Stereo samples are not handled correctly by 2GDM (not implemented)
 	};
 
-	char     name[32];		// sample's name
-	char     fileName[12];	// sample's filename
-	uint8le  emsHandle;		// useless
-	uint32le length;		// length in bytes
-	uint32le loopBegin;		// loop start in samples
-	uint32le loopEnd;		// loop end in samples
-	uint8le  flags;			// misc. flags
-	uint16le c4Hertz;		// frequency
-	uint8le  volume;		// default volume
-	uint8le  panning;		// default pan
+	char     name[32];      // sample's name
+	char     fileName[12];  // sample's filename
+	uint8le  emsHandle;     // useless
+	uint32le length;        // length in bytes
+	uint32le loopBegin;     // loop start in samples
+	uint32le loopEnd;       // loop end in samples
+	uint8le  flags;         // see SampleFlags
+	uint16le c4Hertz;       // frequency
+	uint8le  volume;        // default volume
+	uint8le  panning;       // default pan
 };
 
 MPT_BINARY_STRUCT(GDMSampleHeader, 62)
@@ -103,11 +103,11 @@ static constexpr const mpt::uchar * gdmFormatOriginFormat[] =
 	UL_(""),
 	UL_("Generic MOD"),
 	UL_("MultiTracker"),
-	UL_("ScreamTracker 3"),
+	UL_("Scream Tracker 3"),
 	UL_("Composer 669 / UNIS 669"),
 	UL_("Farandole Composer"),
 	UL_("UltraTracker"),
-	UL_("ScreamTracker 2"),
+	UL_("Scream Tracker 2"),
 	UL_("OctaMED"),
 	UL_("Epic Megagames MASI")
 };
@@ -167,7 +167,7 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("General Digital Music");
 	m_modFormat.type = U_("gdm");
-	m_modFormat.madeWithTracker = mpt::format(U_("BWSB 2GDM %1.%2"))(fileHeader.trackerMajorVer, fileHeader.formatMinorVer);
+	m_modFormat.madeWithTracker = MPT_UFORMAT("BWSB 2GDM {}.{}")(fileHeader.trackerMajorVer, fileHeader.formatMinorVer);
 	m_modFormat.originalType = gdmFormatOriginType[fileHeader.originalFormat];
 	m_modFormat.originalFormatName = gdmFormatOriginFormat[fileHeader.originalFormat];
 	m_modFormat.charset = mpt::Charset::CP437;
@@ -255,9 +255,9 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 			}
 		}
 
-		sample.nGlobalVol = 64;	// Not supported in this format
-
-		sample.nLength = gdmSample.length; // in bytes
+		sample.nGlobalVol = 64;  // Not supported in this format
+		
+		sample.nLength = gdmSample.length;  // in bytes
 
 		// Sample format
 		if(gdmSample.flags & GDMSampleHeader::smp16Bit)
@@ -269,16 +269,13 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 		sample.nLoopStart = gdmSample.loopBegin;
 		sample.nLoopEnd = gdmSample.loopEnd - 1;
 
-		if(gdmSample.flags & GDMSampleHeader::smpLoop) sample.uFlags.set(CHN_LOOP); // Loop sample
+		if(gdmSample.flags & GDMSampleHeader::smpLoop)
+			sample.uFlags.set(CHN_LOOP);
 
-		if(gdmSample.flags & GDMSampleHeader::smpVolume)
-		{
-			// Default volume is used... 0...64, 255 = no default volume
+		if((gdmSample.flags & GDMSampleHeader::smpVolume) && gdmSample.volume != 0xFF)
 			sample.nVolume = std::min(static_cast<uint8>(gdmSample.volume), uint8(64)) * 4;
-		} else
-		{
+		else
 			sample.uFlags.set(SMP_NODEFAULTVOLUME);
-		}
 
 		if(gdmSample.flags & GDMSampleHeader::smpPanning)
 		{
@@ -334,12 +331,12 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 
 		enum
 		{
-			rowDone		= 0,		// Advance to next row
-			channelMask	= 0x1F,		// Mask for retrieving channel information
-			noteFlag	= 0x20,		// Note / instrument information present
-			effectFlag	= 0x40,		// Effect information present
-			effectMask	= 0x1F,		// Mask for retrieving effect command
-			effectDone	= 0x20,		// Last effect in this channel
+			rowDone     = 0x00,  // Advance to next row
+			channelMask = 0x1F,  // Mask for retrieving channel information
+			noteFlag    = 0x20,  // Note / instrument information present
+			effectFlag  = 0x40,  // Effect information present
+			effectMask  = 0x1F,  // Mask for retrieving effect command
+			effectMore  = 0x20,  // Another effect follows
 		};
 
 		for(ROWINDEX row = 0; row < 64; row++)
@@ -401,7 +398,7 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 
 						// Translate effect
 						uint8 command = effByte & effectMask;
-						if(command < CountOf(gdmEffTrans))
+						if(command < std::size(gdmEffTrans))
 							m.command = gdmEffTrans[command];
 						else
 							m.command = CMD_NONE;
@@ -410,20 +407,12 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 						switch(m.command)
 						{
 						case CMD_PORTAMENTOUP:
-							if(m.param >= 0xE0)
-								m.param = 0xDF;
-							break;
-
 						case CMD_PORTAMENTODOWN:
-							if(m.param >= 0xE0)
-								m.param = 0xDF;
+							if(m.param >= 0xE0 && m_nType != MOD_TYPE_MOD)
+								m.param = 0xDF;  // Don't spill into fine slide territory
 							break;
 
 						case CMD_TONEPORTAVOL:
-							if(m.param & 0xF0)
-								m.param &= 0xF0;
-							break;
-
 						case CMD_VIBRATOVOL:
 							if(m.param & 0xF0)
 								m.param &= 0xF0;
@@ -496,7 +485,8 @@ bool CSoundFile::ReadGDM(FileReader &file, ModLoadingFlags loadFlags)
 							m.param = oldCmd.param;
 						}
 
-						if(!(effByte & effectDone)) break; // no other effect follows
+						if(!(effByte & effectMore))
+							break;
 					}
 				}
 			}

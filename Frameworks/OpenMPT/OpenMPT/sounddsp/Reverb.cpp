@@ -14,13 +14,10 @@
 #ifndef NO_REVERB
 #include "Reverb.h"
 #include "../soundlib/MixerLoops.h"
+#include "mpt/base/numbers.hpp"
 
-#ifdef ENABLE_SSE2
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
 #include <emmintrin.h>
-#endif
-
-#ifdef ENABLE_NEON
-#include "../common/sse2neon.h"
 #endif
 
 #endif // NO_REVERB
@@ -32,7 +29,7 @@ OPENMPT_NAMESPACE_BEGIN
 #ifndef NO_REVERB
 
 
-#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
 // Load two 32-bit values
 static MPT_FORCEINLINE __m128i Load64SSE(const int32 *x) { return _mm_loadl_epi64(reinterpret_cast<const __m128i *>(x)); }
 // Load four 16-bit values
@@ -45,13 +42,9 @@ static MPT_FORCEINLINE void Store64SSE(LR16 (&dst)[2], __m128i src) { return _mm
 
 CReverb::CReverb()
 {
-	// Shared reverb state
-	InitMixBuffer(MixReverbBuffer, static_cast<uint32>(std::size(MixReverbBuffer)));
-
 	// Reverb mix buffers
 	MemsetZero(g_RefDelay);
 	MemsetZero(g_LateReverb);
-
 }
 
 
@@ -61,7 +54,7 @@ static int32 OnePoleLowPassCoef(int32 scale, float g, float F_c, float F_s)
 
 	g *= g;
 	double scale_over_1mg = scale / (1.0 - g);
-	double cosw = std::cos(2.0 * M_PI * F_c / F_s);
+	double cosw = std::cos((2.0 * mpt::numbers::pi) * F_c / F_s);
 	return mpt::saturate_round<int32>((1.0 - (std::sqrt((g + g) * (1.0 - cosw) - g * g * (1.0 - cosw * cosw)) + g * cosw)) * scale_over_1mg);
 }
 
@@ -250,9 +243,9 @@ static void I3dl2_to_Generic(
 }
 
 
-void CReverb::Shutdown()
+void CReverb::Shutdown(MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol)
 {
-	gnReverbSend = 0;
+	gnReverbSend = false;
 
 	gnRvbLOfsVol = 0;
 	gnRvbROfsVol = 0;
@@ -277,7 +270,7 @@ void CReverb::Shutdown()
 }
 
 
-void CReverb::Initialize(bool bReset, uint32 MixingFreq)
+void CReverb::Initialize(bool bReset, MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol, uint32 MixingFreq)
 {
 	if (m_Settings.m_nReverbType >= NUM_REVERBTYPES) m_Settings.m_nReverbType = 0;
 	const SNDMIX_REVERB_PROPERTIES *rvbPreset = &ReverbPresets[m_Settings.m_nReverbType].first;
@@ -375,7 +368,7 @@ void CReverb::Initialize(bool bReset, uint32 MixingFreq)
 	if (bReset)
 	{
 		gnReverbSamples = 0;
-		Shutdown();
+		Shutdown(gnRvbROfsVol, gnRvbLOfsVol);
 	}
 	// Wait at least 5 seconds before shutting down the reverb
 	if (gnReverbDecaySamples < MixingFreq*5)
@@ -385,26 +378,25 @@ void CReverb::Initialize(bool bReset, uint32 MixingFreq)
 }
 
 
-mixsample_t *CReverb::GetReverbSendBuffer(uint32 nSamples)
+void CReverb::TouchReverbSendBuffer(MixSampleInt *MixReverbBuffer, MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol, uint32 nSamples)
 {
 	if(!gnReverbSend)
 	{ // and we did not clear the buffer yet, do it now because we will get new data
 		StereoFill(MixReverbBuffer, nSamples, gnRvbROfsVol, gnRvbLOfsVol);
 	}
-	gnReverbSend = 1; // we will have to process reverb
-	return MixReverbBuffer;
+	gnReverbSend = true; // we will have to process reverb
 }
 
 
 // Reverb
-void CReverb::Process(MixSampleInt *MixSoundBuffer, uint32 nSamples)
+void CReverb::Process(MixSampleInt *MixSoundBuffer, MixSampleInt *MixReverbBuffer, MixSampleInt &gnRvbROfsVol, MixSampleInt &gnRvbLOfsVol, uint32 nSamples)
 {
 	if((!gnReverbSend) && (!gnReverbSamples))
 	{ // no data is sent to reverb and reverb decayed completely
 		return;
 	}
 	if(!gnReverbSend)
-	{ // no input data in MixReverbBuffer, so the buffer got not cleared in GetReverbSendBuffer(), do it now for decay
+	{ // no input data in MixReverbBuffer, so the buffer got not cleared in TouchReverbSendBuffer(), do it now for decay
 		StereoFill(MixReverbBuffer, nSamples, gnRvbROfsVol, gnRvbLOfsVol);
 	}
 
@@ -467,10 +459,10 @@ void CReverb::Process(MixSampleInt *MixSoundBuffer, uint32 nSamples)
 	else if(gnReverbSamples > nSamples) gnReverbSamples -= nSamples; // decay
 	else // decayed
 	{
-		Shutdown();
+		Shutdown(gnRvbROfsVol, gnRvbLOfsVol);
 		gnReverbSamples = 0;
 	}
-	gnReverbSend = 0; // no input data in MixReverbBuffer
+	gnReverbSend = false; // no input data in MixReverbBuffer
 }
 
 
@@ -596,13 +588,8 @@ void CReverb::ReverbProcessPostFiltering2x(const int32 * MPT_RESTRICT pRvb, int3
 // Stereo Add + DC removal
 void CReverb::ReverbProcessPostFiltering1x(const int32 * MPT_RESTRICT pRvb, int32 * MPT_RESTRICT pDry, uint32 nSamples)
 {
-#ifdef ENABLE_SSE2
-	if(GetProcSupport() & PROCSUPPORT_SSE2)
-#endif
-#ifdef ENABLE_NEON
-    if(GetProcSupport() & PROCSUPPORT_NEON)
-#endif
-#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
+	if(CPU::HasFeatureSet(CPU::feature::sse2))
 	{
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
@@ -663,13 +650,8 @@ void CReverb::ReverbProcessPostFiltering1x(const int32 * MPT_RESTRICT pRvb, int3
 
 void CReverb::ReverbDCRemoval(int32 * MPT_RESTRICT pBuffer, uint32 nSamples)
 {
-#ifdef ENABLE_SSE2
-	if(GetProcSupport() & PROCSUPPORT_SSE2)
-#endif
-#ifdef ENABLE_NEON
-    if(GetProcSupport() & PROCSUPPORT_NEON)
-#endif
-#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
+	if(CPU::HasFeatureSet(CPU::feature::sse2))
 	{
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
@@ -727,19 +709,14 @@ void CReverb::ReverbDCRemoval(int32 * MPT_RESTRICT pBuffer, uint32 nSamples)
 //
 
 // Save some typing
-static MPT_FORCEINLINE int32 Clamp16(int32 x) { return Clamp(x, int16_min, int16_max); }
+static MPT_FORCEINLINE int32 Clamp16(int32 x) { return Clamp(x, std::numeric_limits<int16>::min(), std::numeric_limits<int16>::max()); }
 
 void CReverb::ProcessPreDelay(SWRvbRefDelay * MPT_RESTRICT pPreDelay, const int32 * MPT_RESTRICT pIn, uint32 nSamples)
 {
 	uint32 preDifPos = pPreDelay->nPreDifPos;
 	uint32 delayPos = pPreDelay->nDelayPos - 1;
-#ifdef ENABLE_SSE2
-	if(GetProcSupport() & PROCSUPPORT_SSE2)
-#endif
-#ifdef ENABLE_NEON
-    if(GetProcSupport() & PROCSUPPORT_NEON)
-#endif
-#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
+	if(CPU::HasFeatureSet(CPU::feature::sse2))
 	{
 		__m128i coeffs = _mm_cvtsi32_si128(pPreDelay->nCoeffs.lr);
 		__m128i history = _mm_cvtsi32_si128(pPreDelay->History.lr);
@@ -810,13 +787,8 @@ void CReverb::ProcessPreDelay(SWRvbRefDelay * MPT_RESTRICT pPreDelay, const int3
 
 void CReverb::ProcessReflections(SWRvbRefDelay * MPT_RESTRICT pPreDelay, LR16 * MPT_RESTRICT pRefOut, int32 * MPT_RESTRICT pOut, uint32 nSamples)
 {
-#ifdef ENABLE_SSE2
-	if(GetProcSupport() & PROCSUPPORT_SSE2)
-#endif
-#ifdef ENABLE_NEON
-    if(GetProcSupport() & PROCSUPPORT_NEON)
-#endif
-#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
+	if(CPU::HasFeatureSet(CPU::feature::sse2))
 	{
 		union
 		{
@@ -910,13 +882,8 @@ void CReverb::ProcessLateReverb(SWLateReverb * MPT_RESTRICT pReverb, LR16 * MPT_
 	// Calculate delay line offset from current delay position
 	#define DELAY_OFFSET(x) ((delayPos - (x)) & RVBDLY_MASK)
 
-#ifdef ENABLE_SSE2
-	if(GetProcSupport() & PROCSUPPORT_SSE2)
-#endif
-#ifdef ENABLE_NEON
-    if(GetProcSupport() & PROCSUPPORT_NEON)
-#endif
-#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
+	if(CPU::HasFeatureSet(CPU::feature::sse2))
 	{
 		int delayPos = pReverb->nDelayPos & RVBDLY_MASK;
 		__m128i rvbOutGains = Load64SSE(pReverb->RvbOutGains);

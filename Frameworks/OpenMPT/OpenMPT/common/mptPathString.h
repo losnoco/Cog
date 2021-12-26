@@ -10,20 +10,20 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
+
+#include "mptString.h"
+
+#include "mpt/base/namespace.hpp"
 
 #include <vector>
 
-#include "FlagSet.h"
-
-OPENMPT_NAMESPACE_BEGIN
-
-
+#include "openmpt/base/FlagSet.hpp"
 
 #define MPT_DEPRECATED_PATH
 //#define MPT_DEPRECATED_PATH [[deprecated]]
 
-
+OPENMPT_NAMESPACE_BEGIN
 
 namespace mpt
 {
@@ -45,8 +45,8 @@ private:
 
 private:
 
-	explicit PathString(const RawPathString & path)
-		: path(path)
+	explicit PathString(const RawPathString & path_)
+		: path(path_)
 	{
 		return;
 	}
@@ -62,14 +62,28 @@ public:
 	{
 		return;
 	}
+	PathString(PathString && other) noexcept
+		: path(std::move(other.path))
+	{
+		return;
+	}
 	PathString & assign(const PathString & other)
 	{
 		path = other.path;
 		return *this;
 	}
+	PathString & assign(PathString && other) noexcept
+	{
+		path = std::move(other.path);
+		return *this;
+	}
 	PathString & operator = (const PathString & other)
 	{
 		return assign(other);
+	}
+	PathString &operator = (PathString && other) noexcept
+	{
+		return assign(std::move(other));
 	}
 	PathString & append(const PathString & other)
 	{
@@ -113,7 +127,7 @@ public:
 #endif // !MPT_OS_WINDOWS_WINRT
 #endif
 
-#if MPT_OS_WINDOWS && (defined(MPT_ENABLE_DYNBIND) || defined(MPT_ENABLE_TEMPFILE))
+#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
 
 	void SplitPath(PathString *drive, PathString *dir, PathString *fname, PathString *ext) const;
 	// \\?\ prefixes will be removed and \\?\\UNC prefixes converted to canonical \\ form.
@@ -128,10 +142,6 @@ public:
 	bool IsDirectory() const;
 	// Verify if this path exists and is a file on the file system.
 	bool IsFile() const;
-
-#endif // MPT_OS_WINDOWS && (MPT_ENABLE_DYNBIND || MPT_ENABLE_TEMPFILE)
-
-#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
 
 	bool FileOrDirectoryExists() const;
 
@@ -277,12 +287,12 @@ public:
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
 #if MPT_OS_WINDOWS
 #ifdef UNICODE
-[[deprecated]] inline std::string ToString(const mpt::PathString & x) { return mpt::ToCharset(mpt::Charset::Locale, x.ToUnicode()); }
+[[deprecated]] inline std::string ToAString(const mpt::PathString & x) { return mpt::ToCharset(mpt::Charset::Locale, x.ToUnicode()); }
 #else
-MPT_DEPRECATED_PATH inline std::string ToString(const mpt::PathString & x) { return mpt::ToCharset(mpt::Charset::Locale, x.AsNative()); }
+MPT_DEPRECATED_PATH inline std::string ToAString(const mpt::PathString & x) { return mpt::ToCharset(mpt::Charset::Locale, x.AsNative()); }
 #endif
 #else
-MPT_DEPRECATED_PATH inline std::string ToString(const mpt::PathString & x) { return mpt::ToCharset(mpt::Charset::Locale, x.ToUnicode()); }
+MPT_DEPRECATED_PATH inline std::string ToAString(const mpt::PathString & x) { return mpt::ToCharset(mpt::Charset::Locale, x.ToUnicode()); }
 #endif
 #endif
 inline mpt::ustring ToUString(const mpt::PathString & x) { return x.ToUnicode(); }
@@ -339,28 +349,19 @@ bool DeleteWholeDirectoryTree(mpt::PathString path);
 
 #endif // MPT_OS_WINDOWS
 
-#if MPT_OS_WINDOWS
-
-#if defined(MPT_ENABLE_DYNBIND) || defined(MPT_ENABLE_TEMPFILE)
+#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
 
 // Returns the application executable path or an empty string (if unknown), e.g. "C:\mptrack\"
 mpt::PathString GetExecutablePath();
-
-#endif // MPT_ENABLE_DYNBIND || MPT_ENABLE_TEMPFILE
-
-#if defined(MPT_ENABLE_DYNBIND)
 
 #if !MPT_OS_WINDOWS_WINRT
 // Returns the system directory path, e.g. "C:\Windows\System32\"
 mpt::PathString GetSystemPath();
 #endif // !MPT_OS_WINDOWS_WINRT
 
-#endif // MPT_ENABLE_DYNBIND
+#endif // MODPLUG_TRACKER && MPT_OS_WINDOWS
 
-#endif // MPT_OS_WINDOWS
-
-#if defined(MPT_ENABLE_TEMPFILE)
-#if MPT_OS_WINDOWS
+#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
 
 // Returns temporary directory (with trailing backslash added) (e.g. "C:\TEMP\")
 mpt::PathString GetTempDirectory();
@@ -382,7 +383,6 @@ public:
 	~TempFileGuard();
 };
 
-#ifdef MODPLUG_TRACKER
 
 // Scoped temporary directory guard. Deletes the directory when going out of scope.
 // The directory itself is created automatically.
@@ -396,10 +396,7 @@ public:
 	~TempDirGuard();
 };
 
-#endif // MODPLUG_TRACKER
-
-#endif // MPT_OS_WINDOWS
-#endif // MPT_ENABLE_TEMPFILE
+#endif // MODPLUG_TRACKER && MPT_OS_WINDOWS
 
 } // namespace mpt
 
@@ -463,9 +460,9 @@ public:
 	{
 		for(const auto &type : group)
 		{
-			m_MimeTypes.insert(m_MimeTypes.end(), type.m_MimeTypes.begin(), type.m_MimeTypes.end());
-			m_Extensions.insert(m_Extensions.end(), type.m_Extensions.begin(), type.m_Extensions.end());
-			m_Prefixes.insert(m_Prefixes.end(), type.m_Prefixes.begin(), type.m_Prefixes.end());
+			mpt::append(m_MimeTypes, type.m_MimeTypes);
+			mpt::append(m_Extensions, type.m_Extensions);
+			mpt::append(m_Prefixes, type.m_Prefixes);
 		}
 	}
 	static FileType Any()

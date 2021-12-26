@@ -16,12 +16,12 @@
 #include "../common/misc_util.h"
 #include "Tagging.h"
 #include "Loaders.h"
-#include "ChunkReader.h"
+#include "../common/FileReader.h"
 #include "modsmp_ctrl.h"
-#include "../soundbase/SampleFormatConverters.h"
-#include "../soundbase/SampleFormatCopy.h"
+#include "openmpt/soundbase/Copy.hpp"
+#include "mpt/audio/span.hpp"
 #include "../soundlib/ModSampleCopy.h"
-//#include "../common/mptCRC.h"
+//#include "mpt/crc/crc.hpp"
 #include "OggStream.h"
 #ifdef MPT_WITH_OGG
 #if MPT_COMPILER_CLANG
@@ -68,18 +68,18 @@ OPENMPT_NAMESPACE_BEGIN
 
 static size_t VorbisfileFilereaderRead(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
-	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
-	return file.ReadRaw(mpt::void_cast<std::byte*>(ptr), size * nmemb) / size;
+	FileReader &file = *static_cast<FileReader*>(datasource);
+	return file.ReadRaw(mpt::span(mpt::void_cast<std::byte*>(ptr), size * nmemb)).size() / size;
 }
 
 static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int whence)
 {
-	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
+	FileReader &file = *static_cast<FileReader*>(datasource);
 	switch(whence)
 	{
 	case SEEK_SET:
 		{
-			if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::off_t>(offset))
 			{
 				return -1;
 			}
@@ -94,14 +94,14 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 				{
 					return -1;
 				}
-				if(!Util::TypeCanHoldValue<FileReader::off_t>(0-offset))
+				if(!mpt::in_range<FileReader::off_t>(0-offset))
 				{
 					return -1;
 				}
 				return file.SkipBack(mpt::saturate_cast<FileReader::off_t>(0 - offset)) ? 0 : -1;
 			} else
 			{
-				if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+				if(!mpt::in_range<FileReader::off_t>(offset))
 				{
 					return -1;
 				}
@@ -111,11 +111,11 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 		break;
 	case SEEK_END:
 		{
-			if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::off_t>(offset))
 			{
 				return -1;
 			}
-			if(!Util::TypeCanHoldValue<FileReader::off_t>(file.GetLength() + offset))
+			if(!mpt::in_range<FileReader::off_t>(file.GetLength() + offset))
 			{
 				return -1;
 			}
@@ -129,8 +129,8 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 
 static long VorbisfileFilereaderTell(void *datasource)
 {
-	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
-	MPT_MAYBE_CONSTANT_IF(!Util::TypeCanHoldValue<long>(file.GetPosition()))
+	FileReader &file = *static_cast<FileReader*>(datasource);
+	MPT_MAYBE_CONSTANT_IF(!mpt::in_range<long>(file.GetPosition()))
 	{
 		return -1;
 	}
@@ -212,6 +212,10 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 				int current_section = 0;
 				long decodedSamples = 0;
 				bool eof = false;
+
+				if(auto length = ov_pcm_total(&vf, 0); length != OV_EINVAL)
+					raw_sample_data.reserve(std::min(MAX_SAMPLE_LENGTH, mpt::saturate_cast<SmpLength>(length)) * std::clamp(channels, 1, 2));
+
 				while(!eof)
 				{
 					float **output = nullptr;
@@ -228,10 +232,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 						if(decodedSamples > 0 && (channels == 1 || channels == 2))
 						{
 							raw_sample_data.resize(raw_sample_data.size() + (channels * decodedSamples));
-							for(int chn = 0; chn < channels; chn++)
-							{
-								CopyChannelToInterleaved<SC::Convert<int16, float> >(&(raw_sample_data[0]) + offset * channels, output[chn], channels, decodedSamples, chn);
-							}
+							CopyAudio(mpt::audio_span_interleaved(raw_sample_data.data() + (offset * channels), channels, decodedSamples), mpt::audio_span_planar(output, channels, decodedSamples));
 							offset += decodedSamples;
 							if((raw_sample_data.size() / channels) > MAX_SAMPLE_LENGTH)
 							{
@@ -267,7 +268,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 	// means that, for remuxed and re-aligned/cutted (at stream start) Vorbis
 	// files, stb_vorbis will include superfluous samples at the beginning.
 
-	FileReader::PinnedRawDataView fileView = file.GetPinnedRawDataView();
+	FileReader::PinnedView fileView = file.GetPinnedView();
 	const std::byte* data = fileView.data();
 	std::size_t dataLeft = fileView.size();
 
@@ -301,10 +302,7 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 		if(decodedSamples > 0 && (frame_channels == 1 || frame_channels == 2))
 		{
 			raw_sample_data.resize(raw_sample_data.size() + (channels * decodedSamples));
-			for(int chn = 0; chn < frame_channels; chn++)
-			{
-				CopyChannelToInterleaved<SC::Convert<int16, float> >(&(raw_sample_data[0]) + offset * channels, output[chn], channels, decodedSamples, chn);
-			}
+			CopyAudio(mpt::audio_span_interleaved(raw_sample_data.data() + (offset * channels), channels, decodedSamples), mpt::audio_span_planar(output, channels, decodedSamples));
 			offset += decodedSamples;
 			if((raw_sample_data.size() / channels) > MAX_SAMPLE_LENGTH)
 			{
@@ -324,29 +322,30 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 		return false;
 	}
 
-	if((raw_sample_data.size() / channels) > MAX_SAMPLE_LENGTH)
-	{
-		return false;
-	}
-
 	DestroySampleThreadsafe(sample);
-	m_szNames[sample] = sampleName;
-	Samples[sample].Initialize();
-	Samples[sample].nC5Speed = rate;
-	Samples[sample].nLength = mpt::saturate_cast<SmpLength>(raw_sample_data.size() / channels);
+	ModSample &mptSample = Samples[sample];
+	mptSample.Initialize();
+	mptSample.nC5Speed = rate;
+	mptSample.nLength = std::min(MAX_SAMPLE_LENGTH, mpt::saturate_cast<SmpLength>(raw_sample_data.size() / channels));
 
-	Samples[sample].uFlags.set(CHN_16BIT);
-	Samples[sample].uFlags.set(CHN_STEREO, channels == 2);
+	mptSample.uFlags.set(CHN_16BIT);
+	mptSample.uFlags.set(CHN_STEREO, channels == 2);
 
-	if(!Samples[sample].AllocateSample())
+	if(!mptSample.AllocateSample())
 	{
 		return false;
 	}
 
-	std::copy(raw_sample_data.begin(), raw_sample_data.end(), Samples[sample].sample16());
+	if(raw_sample_data.size() / channels > MAX_SAMPLE_LENGTH)
+	{
+		AddToLog(LogWarning, U_("Sample has been truncated!"));
+	}
 
-	Samples[sample].Convert(MOD_TYPE_IT, GetType());
-	Samples[sample].PrecomputeLoops(*this, false);
+	std::copy(raw_sample_data.begin(), raw_sample_data.begin() + mptSample.nLength * channels, mptSample.sample16());
+
+	mptSample.Convert(MOD_TYPE_IT, GetType());
+	mptSample.PrecomputeLoops(*this, false);
+	m_szNames[sample] = sampleName;
 
 	return true;
 
@@ -359,25 +358,6 @@ bool CSoundFile::ReadVorbisSample(SAMPLEINDEX sample, FileReader &file)
 
 #endif // VORBIS
 
-}
-
-
-bool CSoundFile::CanReadVorbis()
-{
-	bool result = false;
-	#if defined(MPT_WITH_OGG) && defined(MPT_WITH_VORBIS) && defined(MPT_WITH_VORBISFILE)
-		if(!result)
-		{
-			result = true;
-		}
-	#endif
-	#if defined(MPT_WITH_STBVORBIS)
-		if(!result)
-		{
-			result = true;
-		}
-	#endif
-	return result;
 }
 
 

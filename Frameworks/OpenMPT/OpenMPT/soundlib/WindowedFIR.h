@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "Mixer.h"
 
@@ -35,20 +35,20 @@ OPENMPT_NAMESPACE_BEGIN
 
 #ifdef MPT_INTMIXER
 // quantizer scale of window coefs - only required for integer mixing
-#define WFIR_QUANTBITS		15
-#define WFIR_QUANTSCALE		double(1L<<WFIR_QUANTBITS)
-#define WFIR_8SHIFT			(WFIR_QUANTBITS-8)
-#define WFIR_16BITSHIFT		(WFIR_QUANTBITS)
-typedef int16 WFIR_TYPE;
+inline constexpr int WFIR_QUANTBITS = 15;
+inline constexpr double WFIR_QUANTSCALE = 1 << WFIR_QUANTBITS;
+inline constexpr int WFIR_8SHIFT = (WFIR_QUANTBITS - 8);
+inline constexpr int WFIR_16BITSHIFT = (WFIR_QUANTBITS);
+using WFIR_TYPE = int16;
 #else
-typedef mixsample_t WFIR_TYPE;
+using WFIR_TYPE = mixsample_t;
 #endif // INTMIXER
 // log2(number)-1 of precalculated taps range is [4..12]
-#define WFIR_FRACBITS		12 //10
-#define WFIR_LUTLEN			((1L<<(WFIR_FRACBITS+1))+1)
+inline constexpr int WFIR_FRACBITS = 12;  //10
+inline constexpr int WFIR_LUTLEN = ((1 << (WFIR_FRACBITS + 1)) + 1);
 // number of samples in window
-#define WFIR_LOG2WIDTH		3
-#define WFIR_WIDTH			(1L<<WFIR_LOG2WIDTH)
+inline constexpr int WFIR_LOG2WIDTH = 3;
+inline constexpr int WFIR_WIDTH = (1 << WFIR_LOG2WIDTH);
 // cutoff (1.0 == pi/2)
 // wfir type
 enum WFIRType
@@ -62,23 +62,21 @@ enum WFIRType
 	WFIR_BLACKMAN4T74  = 6,  // Blackman 4-Tap 74
 	WFIR_KAISER4T      = 7,  // Kaiser a=7.5
 };
-// wfir help
-#define M_zPI				3.1415926535897932384626433832795
-#define M_zEPS				1e-8
 
 
 // fir interpolation
-#define WFIR_FRACSHIFT	(16-(WFIR_FRACBITS+1+WFIR_LOG2WIDTH))
-#define WFIR_FRACMASK	((((1L<<(17-WFIR_FRACSHIFT))-1)&~((1L<<WFIR_LOG2WIDTH)-1)))
-#define WFIR_FRACHALVE	(1L<<(16-(WFIR_FRACBITS+2)))
+inline constexpr int WFIR_FRACSHIFT = (16 - (WFIR_FRACBITS + 1 + WFIR_LOG2WIDTH));
+inline constexpr int WFIR_FRACMASK = ((((1 << (17 - WFIR_FRACSHIFT)) - 1) & ~(WFIR_WIDTH - 1)));
+inline constexpr int WFIR_FRACHALVE = (1 << (16 - (WFIR_FRACBITS + 2)));
 
 class CWindowedFIR
 {
-private:	
+private:
 	double coef(int,double,double,int,int);
+
 public:
 	void InitTable(double WFIRCutoff, uint8 WFIRType);
-	WFIR_TYPE lut[WFIR_LUTLEN*WFIR_WIDTH];
+	WFIR_TYPE lut[WFIR_LUTLEN * WFIR_WIDTH];
 };
 
 OPENMPT_NAMESPACE_END

@@ -15,4 +15,5 @@ Modifications for OpenMPT:
  *  Definitions of `tdefl_compressor_alloc` and `tinfl_decompressor_alloc`
     have beeen fixed
  *  Missing #ifndef MINIZ_NO_STDIO has been added to miniz.h.
+ *  #define MINIZ_EXPORT needs to be guarded by #fndef MINIZ_EXPORT.
 No further changes have been made.

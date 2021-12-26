@@ -1,6 +1,6 @@
 
-Coding conventions
-------------------
+libopenmpt Style Guide
+======================
 
 
 ### libopenmpt

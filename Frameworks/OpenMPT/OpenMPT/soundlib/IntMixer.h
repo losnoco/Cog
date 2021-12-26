@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "Resampler.h"
 #include "MixerInterface.h"
@@ -26,7 +26,7 @@ struct IntToIntTraits : public MixerTraits<channelsOut, channelsIn, out, in>
 	typedef typename base_t::input_t input_t;
 	typedef typename base_t::output_t output_t;
 
-	static MPT_CONSTEXPR11_FUN output_t Convert(const input_t x)
+	static MPT_CONSTEXPRINLINE output_t Convert(const input_t x)
 	{
 		static_assert(std::numeric_limits<input_t>::is_integer, "Input must be integer");
 		static_assert(std::numeric_limits<output_t>::is_integer, "Output must be integer");

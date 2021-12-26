@@ -23,17 +23,28 @@
 #endif
 
 // forward declarations
+namespace mpt {
+inline namespace mpt_libopenmpt {
+namespace IO {
+class FileCursorTraitsFileData;
+template <typename Tpath>
+class FileCursorFilenameTraits;
+template <typename Ttraits, typename Tfilenametraits>
+class FileCursor;
+} // namespace IO
+} // namespace mpt_libopenmpt
+} // namespace mpt
 namespace OpenMPT {
-class FileReaderTraitsStdStream;
-typedef FileReaderTraitsStdStream FileReaderTraitsDefault;
 namespace detail {
-template <typename Tbase>
-class FileReader;
+template <typename Ttraits, typename Tfilenametraits>
+using FileCursor = mpt::IO::FileCursor<Ttraits, Tfilenametraits>;
 } // namespace detail
-typedef detail::FileReader<FileReaderTraitsDefault> FileReader;
+namespace mpt {
+class PathString;
+} // namespace mpt
+using FileCursor = detail::FileCursor<mpt::IO::FileCursorTraitsFileData, mpt::IO::FileCursorFilenameTraits<mpt::PathString>>;
 class CSoundFile;
-template <std::size_t channels> class DitherChannels;
-using Dither = DitherChannels<4>;
+struct DithersWrapperOpenMPT;
 } // namespace OpenMPT
 
 namespace openmpt {
@@ -118,7 +129,7 @@ protected:
 	std::unique_ptr<OpenMPT::CSoundFile> m_sndFile;
 	bool m_loaded;
 	bool m_mixer_initialized;
-	std::unique_ptr<OpenMPT::Dither> m_Dither;
+	std::unique_ptr<OpenMPT::DithersWrapperOpenMPT> m_Dithers;
 	subsongs_type m_subsongs;
 	float m_Gain;
 	song_end_action m_ctl_play_at_end;
@@ -140,7 +151,7 @@ protected:
 	void init_subsongs( subsongs_type & subsongs ) const;
 	bool has_subsongs_inited() const;
 	void ctor( const std::map< std::string, std::string > & ctls );
-	void load( const OpenMPT::FileReader & file, const std::map< std::string, std::string > & ctls );
+	void load( const OpenMPT::FileCursor & file, const std::map< std::string, std::string > & ctls );
 	bool is_loaded() const;
 	std::size_t read_wrapper( std::size_t count, std::int16_t * left, std::int16_t * right, std::int16_t * rear_left, std::int16_t * rear_right );
 	std::size_t read_wrapper( std::size_t count, float * left, float * right, float * rear_left, float * rear_right );
@@ -150,7 +161,7 @@ protected:
 	std::string get_message_samples() const;
 	std::pair< std::string, std::string > format_and_highlight_pattern_row_channel_command( std::int32_t p, std::int32_t r, std::int32_t c, int command ) const;
 	std::pair< std::string, std::string > format_and_highlight_pattern_row_channel( std::int32_t p, std::int32_t r, std::int32_t c, std::size_t width, bool pad ) const;
-	static double could_open_probability( const OpenMPT::FileReader & file, double effort, std::unique_ptr<log_interface> log );
+	static double could_open_probability( const OpenMPT::FileCursor & file, double effort, std::unique_ptr<log_interface> log );
 public:
 	static std::vector<std::string> get_supported_extensions();
 	static bool is_extension_supported( std::string_view extension );

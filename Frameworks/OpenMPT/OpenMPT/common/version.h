@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "mptString.h"
-#include "FlagSet.h"
+#include "openmpt/base/FlagSet.hpp"
 
 #include <stdexcept>
 
@@ -44,15 +44,15 @@ public:
 
 public:
 
-	MPT_CONSTEXPR11_FUN Version() noexcept
+	MPT_CONSTEXPRINLINE Version() noexcept
 		: m_Version(0)
 	{}
 
-	explicit MPT_CONSTEXPR11_FUN Version(uint32 version) noexcept
+	explicit MPT_CONSTEXPRINLINE Version(uint32 version) noexcept
 		: m_Version(version)
 	{}
 
-	explicit MPT_CONSTEXPR11_FUN Version(uint8 v1, uint8 v2, uint8 v3, uint8 v4) noexcept
+	explicit MPT_CONSTEXPRINLINE Version(uint8 v1, uint8 v2, uint8 v3, uint8 v4) noexcept
 		: m_Version((static_cast<uint32>(v1) << 24) | (static_cast<uint32>(v2) << 16) | (static_cast<uint32>(v3) << 8) | (static_cast<uint32>(v4) << 0))
 	{}
 
@@ -65,16 +65,16 @@ public:
 
 public:
 
-	explicit MPT_CONSTEXPR11_FUN operator bool () const noexcept
+	explicit MPT_CONSTEXPRINLINE operator bool () const noexcept
 	{
 		return m_Version != 0;
 	}
-	MPT_CONSTEXPR11_FUN bool operator ! () const noexcept
+	MPT_CONSTEXPRINLINE bool operator ! () const noexcept
 	{
 		return m_Version == 0;
 	}
 
-	MPT_CONSTEXPR11_FUN uint32 GetRawVersion() const noexcept
+	MPT_CONSTEXPRINLINE uint32 GetRawVersion() const noexcept
 	{
 		return m_Version;
 	}
@@ -84,7 +84,7 @@ public:
 		return Version(m_Version & mask);
 	}
 
-	MPT_CONSTEXPR11_FUN uint8 GetField(Field field) const noexcept
+	MPT_CONSTEXPRINLINE uint8 GetField(Field field) const noexcept
 	{
 		return
 			(field == Field::Major) ? static_cast<uint8>((m_Version >> 24) & 0xffu) :
@@ -121,7 +121,7 @@ public:
 
 	private:
 
-		static MPT_CONSTEXPR11_FUN uint8 NibbleFromChar(char x)
+		static MPT_CONSTEXPRINLINE uint8 NibbleFromChar(char x)
 		{
 			return
 				('0' <= x && x <= '9') ? static_cast<uint8>(x - '0' +  0) :
@@ -132,7 +132,7 @@ public:
 
 	public:
 
-		static MPT_CONSTEXPR14_FUN Version Parse(const char * str, std::size_t len)
+		static MPT_CONSTEXPRINLINE Version Parse(const char * str, std::size_t len)
 		{
 			// 0123456789
 			// 1.23.45.67
@@ -179,33 +179,33 @@ public:
 
 };
 
-MPT_CONSTEXPR11_FUN bool operator == (const Version &a, const Version &b) noexcept
+MPT_CONSTEXPRINLINE bool operator == (const Version &a, const Version &b) noexcept
 {
 	return a.GetRawVersion() == b.GetRawVersion();
 }
-MPT_CONSTEXPR11_FUN bool operator != (const Version &a, const Version &b) noexcept
+MPT_CONSTEXPRINLINE bool operator != (const Version &a, const Version &b) noexcept
 {
 	return a.GetRawVersion() != b.GetRawVersion();
 }
-MPT_CONSTEXPR11_FUN bool operator <= (const Version &a, const Version &b) noexcept
+MPT_CONSTEXPRINLINE bool operator <= (const Version &a, const Version &b) noexcept
 {
 	return a.GetRawVersion() <= b.GetRawVersion();
 }
-MPT_CONSTEXPR11_FUN bool operator >= (const Version &a, const Version &b) noexcept
+MPT_CONSTEXPRINLINE bool operator >= (const Version &a, const Version &b) noexcept
 {
 	return a.GetRawVersion() >= b.GetRawVersion();
 }
-MPT_CONSTEXPR11_FUN bool operator < (const Version &a, const Version &b) noexcept
+MPT_CONSTEXPRINLINE bool operator < (const Version &a, const Version &b) noexcept
 {
 	return a.GetRawVersion() < b.GetRawVersion();
 }
-MPT_CONSTEXPR11_FUN bool operator > (const Version &a, const Version &b) noexcept
+MPT_CONSTEXPRINLINE bool operator > (const Version &a, const Version &b) noexcept
 {
 	return a.GetRawVersion() > b.GetRawVersion();
 }
 
 
-MPT_CONSTEXPR14_FUN Version operator "" _LiteralVersionImpl (const char * str, std::size_t len)
+MPT_CONSTEXPRINLINE Version operator "" _LiteralVersionImpl (const char * str, std::size_t len)
 {
 	return Version::LiteralParser::Parse(str, len);
 }
@@ -213,7 +213,7 @@ MPT_CONSTEXPR14_FUN Version operator "" _LiteralVersionImpl (const char * str, s
 // Create Version object from version string and check syntax, all at compile time.
 // cppcheck false-positive
 // cppcheck-suppress preprocessorErrorDirective
-#define MPT_V(strver) Version{MPT_FORCE_CONSTEXPR(( strver ## _LiteralVersionImpl ).GetRawVersion())}
+#define MPT_V(strver) MPT_FORCE_CONSTEXPR(Version{( strver ## _LiteralVersionImpl ).GetRawVersion()})
 
 
 
@@ -244,6 +244,93 @@ public:
 
 
 
+struct VersionWithRevision
+{
+	Version version;
+	uint64 revision;
+	static VersionWithRevision Current();
+	static VersionWithRevision Parse(const mpt::ustring &s);
+	mpt::ustring ToUString() const;
+	constexpr bool HasRevision() const noexcept
+	{
+		return revision != 0;
+	}
+	constexpr bool IsEqualTo(VersionWithRevision other) const noexcept
+	{
+		return version == other.version && revision == other.revision;
+	}
+	constexpr bool IsEquivalentTo(VersionWithRevision other) const noexcept
+	{
+		if(version == other.version && revision == other.revision)
+		{
+			return true;
+		}
+		if(HasRevision() && other.HasRevision())
+		{
+			return false;
+		}
+		return version == other.version;
+	}
+	constexpr bool IsNewerThan(VersionWithRevision other) const noexcept
+	{
+		if(version < other.version)
+		{
+			return false;
+		}
+		if(version > other.version)
+		{
+			return true;
+		}
+		if(!HasRevision() && !other.HasRevision())
+		{
+			return false;
+		}
+		if(HasRevision() && other.HasRevision())
+		{
+			if(revision < other.revision)
+			{
+				return false;
+			}
+			if(revision > other.revision)
+			{
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+	constexpr bool IsOlderThan(VersionWithRevision other) const noexcept
+	{
+		if(version < other.version)
+		{
+			return true;
+		}
+		if(version > other.version)
+		{
+			return false;
+		}
+		if(!HasRevision() && !other.HasRevision())
+		{
+			return false;
+		}
+		if(HasRevision() && other.HasRevision())
+		{
+			if(revision < other.revision)
+			{
+				return true;
+			}
+			if(revision > other.revision)
+			{
+				return false;
+			}
+			return false;
+		}
+		return false;
+	}
+};
+
+
+
 namespace Build
 {
 
@@ -267,10 +354,9 @@ namespace Build
 		StringsNone         = 0,
 		StringVersion       = 1<<0, // "1.23.35.45"
 		StringRevision      = 1<<2, // "-r1234+"
-		StringBitness       = 1<<3, // "32 bit"
-		StringSourceInfo    = 1<<4, // "https://source.openmpt.org/svn/openmpt/trunk/OpenMPT@1234 (2016-01-02) +dirty"
-		StringBuildFlags    = 1<<5, // "TEST DEBUG"
-		StringBuildFeatures = 1<<6, // "NO_VST NO_DSOUND"
+		StringSourceInfo    = 1<<5, // "https://source.openmpt.org/svn/openmpt/trunk/OpenMPT@1234 (2016-01-02) +dirty"
+		StringBuildFlags    = 1<<6, // "TEST DEBUG"
+		StringBuildFeatures = 1<<7, // "NO_VST NO_DSOUND"
 	};
 	MPT_DECLARE_ENUM(Strings)
 
@@ -278,13 +364,13 @@ namespace Build
 	mpt::ustring GetVersionString(FlagSet<Build::Strings> strings);
 
 	// Returns a pure version string
-	mpt::ustring GetVersionStringPure(); // e.g. "1.17.02.08-r1234+ 32 bit"
+	mpt::ustring GetVersionStringPure(); // e.g. "1.17.02.08-r1234+"
 
 	// Returns a simple version string
 	mpt::ustring GetVersionStringSimple(); // e.g. "1.17.02.08-r1234+ TEST"
 
 	// Returns Version::CurrentAsString() if the build is a clean release build straight from the repository or an extended string otherwise (if built from a svn working copy and tsvn was available during build)
-	mpt::ustring GetVersionStringExtended(); // e.g. "1.17.02.08-r1234+ 32 bit DEBUG"
+	mpt::ustring GetVersionStringExtended(); // e.g. "1.17.02.08-r1234+ DEBUG"
 
 	enum class Url
 	{

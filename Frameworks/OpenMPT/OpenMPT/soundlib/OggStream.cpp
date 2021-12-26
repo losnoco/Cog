@@ -9,9 +9,8 @@
 
 #include "stdafx.h"
 #include "OggStream.h"
+#include "mpt/crc/crc.hpp"
 #include "../common/FileReader.h"
-#include "../common/mptCRC.h"
-#include "../common/mptIO.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -134,7 +133,7 @@ bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> *pageData
 		} else
 		{
 			FileReader pageDataReader = filePageReader.ReadChunk(pageDataSize);
-			auto pageDataView = pageDataReader.GetPinnedRawDataView();
+			auto pageDataView = pageDataReader.GetPinnedView();
 			calculatedCRC.process(pageDataView.GetSpan());
 		}
 		if(calculatedCRC != pageInfo.header.CRC_checksum)

@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "Loaders.h"
-#include "ChunkReader.h"
 
 #ifdef LIBOPENMPT_BUILD
 #define MPT_PSM_USE_REAL_SUBSONGS
@@ -343,7 +342,7 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 
 		// Read "Sub chunks"
 		auto subChunks = chunk.ReadChunks<PSMChunk>(1);
-		for(const auto &subChunkIter : subChunks)
+		for(const auto &subChunkIter : subChunks.chunks)
 		{
 			FileReader subChunk(subChunkIter.GetData());
 			PSMChunk subChunkHead = subChunkIter.GetHeader();

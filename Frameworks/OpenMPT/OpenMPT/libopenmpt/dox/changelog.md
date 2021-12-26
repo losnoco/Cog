@@ -5,292 +5,111 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
-### libopenmpt 0.5.14 (2021-12-05)
+### libopenmpt 0.6.0 (2021-12-23)
 
- *  [**Sec**] Possible out-of-bounds read in Chorus plugin with NaN plugin
-    parameters. Most implementations of the "fast math" compiler optimizations
-    will prevent this crash but it is not guaranteed. (r16096)
-
- *  [**Bug**] Fixed undefined behaviour with custom tunings found with ubsan.
-
- *  OPL: Improved channel allocation strategy when there are lots of faded-out
-    notes.
- *  MOD: Digital Tracker MODs have four unknown bytes right after the magic
-    bytes which seem to be ignored even by Digital Tracker itself. Just skip
-    over them.
- *  The logic when to turn off the resonant filter was broken in some edge cases
-    since libopenmpt 0.5.1.
- *  IMF: Implemented XE1-XE3 commands, which disable individual envelopes.
-    Command Nxy (cutoff slide + resonance) is now also partially supported
-    (only resonance for now).
- *  IMF: Filter envelopes were upside down.
- *  MTM: Omitting pattern loading through the load.skip_patterns ctl caused
-    sample data to be corrupted.
- *  S3M: Ignore O00 commands in files created with Scream Tracker 3.00 and 3.01,
-    as this command only gained effect memory in version 3.03.
- *  STM: Use S3M-like sample swap behaviour.
- *  XM: Disable arpeggio quirk for XMs made with Skale Tracker.
-    Fixes KAPTENFL.XM.
-
- *  miniz: Update to v2.2.0 (2021-06-27).
- *  minimp3: Update to commit 50d2aaf360a53653b718fead8e258d654c3a7e41
-    (2021-11-27).
-
-### libopenmpt 0.5.13 (2021-11-14)
-
- *  [**Bug**] Fixed various undefined behaviour found with ubsan.
-
- *  IMF: Change envelope interpretation to be more like in XM instead of IT and
-    tighten header validation.
- *  MED: Some samples had a ping-pong loop when there should be no loop at all.
- *  MT2: Ignore incorrect drums chunk size in early MT2 files
-    (fixes e.g. "A little Rock" by Csumi).
- *  MT2: Work around initial master volume of 0 used in some files that apply a
-    fade-in a the song start using track automation that would stay silent
-    forever otherwise (track automation is currently not supported).
- *  OKT: Apply portamento on every tick.
-
- *  mpg123: Update to v1.29.2 (2021-10-23).
-
-### libopenmpt 0.5.12 (2021-10-04)
-
- *  [**Sec**] Possible crash when loading malformed MDL files. (r15603)
-
- *  [**Bug**] Fixed various undefined behaviour found with ubsan.
-
- *  Seeking with sample sync sometimes didn't compute the correct sample
-    position with pingpong-looped samples.
- *  IT: Tremor command I11 erroneously behaved like I00 (use previous parameter)
-    unless IT Old Effects were enabled.
- *  PTM: Panning was translated wrong in some edge cases.
- *  IMF / PTM: Note Slide commands were sometimes slightly off. 
- *  OKT: Better support for fine note slides.
- *  DBM: Echo enable effect parameter range checks were incorrect.
- *  XM: Sample texts in XMs made with MadTracker are now also decoded using
-    Windows-1252 encoding.
-
- *  in_openmpt: Song metadata is no longer reverted when viewing file info.
-
- *  mpg123: Update to v1.29.0 (2021-09-06).
-
-### libopenmpt 0.5.11 (2021-08-22)
-
- *  [**Sec**] Possible crash with malformed modules when trying to access
-    non-existent plugin slots FX251-FX255. (r15479, r15518)
- *  [**Sec**] Possible read beyond sample start after swapping to a sample with
-    loop points set but not loop enabled. (r15499)
- *  [**Sec**] Fixed various possible crashes with malformed MMCMP files.
-    (r15504, 15528)
- *  [**Sec**] MED: Possible read past end of sequence name (stack-allocated, so
-    relatively unlikely to result in a crash). (r15477)
-
- *  Fixed excessive memory usage with files claiming to have an extremely high
-    rows per beat count while also using tempo swing. Maximum rows per beat are
-    now limited to 65536.
- *  STP: Avoid creating thousands of patterns when loading malformed files even
-    though no more pattern data can be read.
-
- *  mpg123: Update to v1.28.2 (2021-07-12).
- *  stb_vorbis: Update v1.22 commit 5a0bb8b1c1b1ca3f4e2485f4114c1c8ea021b781
-    (2021-07-12).
-
-### libopenmpt 0.5.10 (2021-07-04)
-
- *  S3M: Honor the Stereo flag not being set. This improves the sound of some
-    tunes like Turbulence by Purple Motion.
- *  S3M: Detect MPT 1.0 alpha versions which didn't set the Stereo flag. In this
-    case, the unset Stereo flag is also ignored because MPT 1.0 alpha used the
-    default S3M channel panning anyway.
- *  S3M: Only for OPL instruments the high sample rate bits should be ignored;
-    for PCM instruments they are clamped to 65535 Hz.
- *  MOD: Do not apply ProTracker loop length quirk to MODs that could have been
-    made with Scream Tracker (fixes Soul-O-Matic by Purple Motion).
- *  AMF (DSMI): Format revisions 1 and 9, as well as early (technically
-    malformed) revision 10 files, are now supported. Surround panning commands
-    and instrument number without note are now converted correctly.
- *  AMF (DSMI): Patterns and samples were not read correctly in some files
-    (e.g. AVOID.AMF).
- *  GDM: Correctly import extra-fine portamentos.
-
- *  mpg123: Update to v1.28.0 (2021-06-05).
- *  ogg: Update to v1.3.5 (2021-06-04).
- *  stb_vorbis: Update v1.21 commit 8e51be04dc7dcee462e1f09e410faceab52cc6d2
-    (2021-07-02).
-
-### libopenmpt 0.5.9 (2021-05-16)
-
- *  `Makefile` `CONFIG=emscripten` does not pass linker options to the compiler
-    any more, which caused latest Emscripten to issue warnings.
-
- *  The retrigger effect didn't work correctly for OPL instruments in some cases
-    depending on the chosen output sample rate.
- *  S3M: Emulate IT short sample retrigger quirk in S3M files saved with
-    Impulse Tracker and Schism Tracker.
- *  ProTracker 3.6 doesn't support sample swapping. It is now disabled when
-    loading a ProTracker 3.6 IFF module.
- *  Some files with "hidden" garbage patterns were not played correctly since
-    libopenmpt 0.5.3.
- *  MOD: E9x retrigger now works the same way as in ProTracker 2.
- *  MDL: Improve auto-vibrato accuracy.
- *  669: Reject files that contain any pattern tempo higher than 15. 
- *  Reduce memory consumption of malformed XPK-compressed files.
-
- *  mpg123: Update to v1.27.2 (2021-05-08).
-
-### libopenmpt 0.5.8 (2021-04-11)
-
- *  [**Sec**] Possible null-pointer dereference read caused by a sequence of
-    `openmpt::module::read`, `openmpt::module::set_position_order_row` pointing
-    to an invalid pattern, and another `openmpt::module::read` call. To trigger
-    the crash, pattern 0 must not exist in the file and the tick speed before
-    the position jump must be lower than the initial speed of the module.
-    (r14530)
-
- *  [**Bug**] `libopenmpt.pc` did not list required system libraries `ole32.lib`
-    and `rpcrt4.lib` on Windows in `Libs.Private` field for static builds.
- *  [**Bug**] libopenmpt 0.5.7 broke seeking in some subsongs.
-
- *  The built-in LFO plugin did not load the correct initial LFO frequency.
- *  IT command S7x (instrument control) is now supported when seeking with
-    sample sync enabled.
- *  libopenmpt_ext `play_note` was cutting of channels even when there were
-    plenty of free channels to use.
-
- *  mpg123: Update to v1.26.5 (2021-03-22).
-
-### libopenmpt 0.5.7 (2021-03-20)
-
- *  [**Sec**] Possible null-pointer dereference read caused by a sequence of
-    `openmpt::module::read`, `openmpt::module::set_position_seconds` with a
-    position past the song end, and another `openmpt::module::read` call.
-    (r14363)
-
- *  IT: Instrument / sample panning was reset on note-off / fade commands.
- *  IMF: Set Finetune is now implemented correctly.
- *  Fixed excessive memory consumption with malformed files in various formats.
-
-### libopenmpt 0.5.6 (2021-03-14)
-
- *  AMS: Avoid allocating excessive amount of memory for compressed song message
-    in malformed files.
- *  S3M: Some samples or OPL patches were imported with a too high sample rate
-    if module was saved with Scream Tracker 3.
-
- *  vorbis: Update to v1.3.7 (2020-07-04).
-
-### libopenmpt 0.5.5 (2021-01-31)
-
+ *  [**New**] `MUS` files from Psycho Pinball and Micro Machines 2 are now
+    supported.
+ *  [**New**] `SymMOD` files created with Symphonie / Symphonie Pro are now
+    supported.
+ *  [**New**] `FMT` files created with Davey W Taylor's FM Tracker are now
+    supported.
+ *  [**New**] `DSYM` files created with Digital Symphony are now supported.
+ *  [**New**] TakeTracker MODs with `TDZ1` to `TDZ3` magic bytes are now
+    supported.
+ *  [**New**] openmpt123: openmpt123 will now expand file wildcards passed on
+    the command line in Windows when built with MSVC.
+ *  [**New**] libopenmpt_ext: New interface `interactive2` adding
+    `openmpt::ext::interactive2::note_off()`,
+    `openmpt::ext::interactive2::note_fade()`,
+    `openmpt::ext::interactive2::set_channel_panning()`,
+    `openmpt::ext::interactive2::get_channel_panning()`,
+    `openmpt::ext::interactive2::set_note_finetune()`, and
+    `openmpt::ext::interactive2::get_note_finetune()` (C++) and
+    `openmpt_module_ext_interface_interactive2.note_off()`,
+    `openmpt_module_ext_interface_interactive2.note_fade()`,
+    `openmpt_module_ext_interface_interactive2.set_channel_panning()`,
+    `openmpt_module_ext_interface_interactive2.get_channel_panning()`,
+    `openmpt_module_ext_interface_interactive2.set_note_finetune()`, and
+    `openmpt_module_ext_interface_interactive2.get_note_finetune()` (C). 
  *  [**New**] `Makefile` `CONFIG=emscripten` now supports
     `EMSCRIPTEN_TARGET=audioworkletprocessor` which builds an ES6 module in
     a single file with reduced dependencies suitable to be used in an
     AudioWorkletProcessor.
-
- *  [**Bug**] stb_vorbis: Fix decoding of Vorbis streams without comments which
-    affected most Vorbis samples since stb_vorbis v1.20.
-
- *  `openmpt::ext::interactive::set_pitch_factor` wasn't applied to OPL voices.
- *  OPL channel state (in particular current patch) is now updated when seeking.
- *  The FT2 tremolo quirk is now also applied to MOD files. FT2 just copied the
-    quirky code from ProTracker!
- *  DMF: Preserve effects better in some situations where there is more than one
-    effect in a pattern cell.
- *  DMF: Improve import of finetune effect with parameters larger than +/-15.
-
- *  mpg123: Update to v1.26.4 (2020-12-24).
- *  pugixml: Update to v1.11.4 (2020-12-22).
-
-### libopenmpt 0.5.4 (2020-11-29)
-
- *  AMS: An upper bound for uncompressed sample size is now established to
-    avoid memory exhaustion from malformed files.
- *  DMF: Support early format beta versions (in particular versions 1-4).
- *  MED: Also use octave wrapping in 8-channel mode for MMD0/MMD1 modules.
- *  MED: If 8-channel mode is activated, ignore BPM mode.
- *  MED: Emulate tempo commands F01 and F02 quirk.
- *  MED: Tempo commands below 32 BPM were interpreted as tempo slides.
- *  IMF: Instrument sample mapping was off by one octave, notable in the guitar
-    part of Astaris by Karsten Koch.
-
- *  pugixml: Update to v1.11 (2020-11-26).
-
-### libopenmpt 0.5.3 (2020-10-25)
-
- *  [**Sec**] Possible hang if a MED file claimed to contain 256 songs. (r13704)
-
- *  [**Bug**] libopenmpt: `openmpt::is_extension_supported2()` exported symbol
-    was missing (C++).
- *  [**Bug**] `openmpt::module::set_position_seconds` sometimes behaved as if
-    the song end was reached when seeking into a pattern loop and in some other
-    corner cases.
-
- *  Increase threshold for ignoring panning commands from 820 to 830.
- *  Subsong names now fall back to the first pattern's name if empty.
- *  MO3: Avoid certain ModPlug hacks from being fixed up twice, which could lead
-    to e.g. very narrow pan swing range for old OpenMPT IT files saved with a
-    recent MO3 encoder version. 
- *  MO3: Some files with corrupted envelope data could be rejected completely
-    (normally libopenmpt should fix up the envelope data).
- *  MO3: Song metadata didn't correctly identify MPTM as source format (it
-    appeared as IT instead).
- *  STM: Change tempo computation to behave like Scream Tracker 2.3 instead of
-    Scream Tracker 2.2, as the playback frequencies we use for sample playback
-    are closer to those of Scream Tracker 2.3.
- *  PLM: Percentage offset (Mxx) was slightly off.
- *  WOW: Fix loading of several files and harden WOW detection.
-
-### libopenmpt 0.5.2 (2020-08-30)
+ *  [**New**] `Makefile` `CONFIG=emscripten` now supports `EMSCRIPTEN_PORTS=1`
+    which uses dependencies (zlib, mp123, ogg, and vorbis) from Emscripten Ports
+    instead of using miniz, minimp3, and stb_vorbis locally or building zlib,
+    mp123, ogg, and vorbis locally.
+ *  [**New**] `Makefile` `CONFIG=emscripten` and `CONFIG=djgpp` can now build
+    zlib, mpg123, and vorbis locally instead of only supporting miniz, minimp3,
+    and stb_vorbis via `ALLOW_LGPL=1`.
 
  *  [**Change**] `Makefile` `CONFIG=emscripten` now supports
     `EMSCRIPTEN_TARGET=all` which provides WebAssembly as well as fallback to
     JavaScript in a single build.
+ *  [**Change**] openmpt123: DOS builds now use the Mercury fork of
+    `liballegro 4.2` for improved hardware compatibility.
+ *  [**Change**] libopenmpt no longer generates internal interpolation tables on
+    library load time, but instead only on first module load time.
 
  *  [**Regression**] `Makefile` `CONFIG=emscripten` does not support
     `EMSCRIPTEN_TARGET=asmjs` or `EMSCRIPTEN_TARGET=asmjs128m` any more because
     support has been removed from current Emscripten versions.
+ *  [**Regression**] Support for GCC 7 has been removed.
+ *  [**Regression**] Support for Clang 5, 6 has been removed.
  *  [**Regression**] Support for Emscripten versions older than 1.39.7 has been
     removed.
+ *  [**Regression**] Building with Android NDK older than NDK r19c is not
+    supported any more.
 
- *  PP20: The first few bytes of some files were not decompressed properly,
-    making some files unplayable (depending on the original format).
+ *  libopenmpt can now detect infinite pattern loops and treats them as the song
+    end. This means that setting a repeat count other than -1 now always
+    guarantees that playback will eventually end. The song loop counter is
+    decremented each time it ends up at the start of the infinite loop, so the
+    song does not restart from the beginning even if the repeat count is not 0.
+ *  `openmpt::module::set_position_seconds()` accuracy has been improved for
+    modules with pattern loops.
+ *  IT: Portamentos in files with Linear Slides disabled are now more accurate.
+ *  IT: Pitch/Pan Separation was affected by note-off commands, and wasn't reset
+    by panning commands like in Impulse Tracker.
+ *  IT: Even after libopenmpt 0.5.14 the filter reset logic was still not 100%
+    identical to Impulse Tracker: A note triggered on tick 0 of a row with a
+    Pattern Delay effect still caused the filter to be reset on repetitions of
+    that row even though the note wasn't retriggered.
+ *  IT: Added read-only support for BeRoTracker commands 1 and 2 (equivalent to
+    XM commands K and L).
+ *  XM: BeRoTracker saves smooth MIDI macros in a different way from OpenMPT.
+    This command is now imported correctly.
+ *  XM: Emulate FT2 Tone Portamento quirk that inverts portamento direction
+    after the target was reached (if target note was higher than previous note).
+ *  S3M files saved with Impulse Tracker and latest Schism Tracker now also
+    compute sample playback speed in Hertz.
+ *  Depending on whether an S3M file was last saved in Scream Tracker with the
+    Sound Blaster or Gravis Ultrasound drivers loaded, different compatibility
+    flags are now applied. For files saved with the GUS, the sample volume
+    factor is now also ignored (fixes volume levels in S3Ms made on the GUS, in
+    particular if they use both samples and OPL instruments).
+ *  S3M: Enforce the lower frequency bound.
+ *  MOD: Loosened VBlank timing heuristics so that the original copy of
+    Guitar Slinger from Dizzy Tunes II plays correctly.
+ *  FAR: Correct portamento depth is now used.
+ *  DMF / IMF: Improved accuracy of finetune commands.
+ *  MDL: Implemented finetune command.
+ *  OKT: Various accuracy improvements such as: Sharing volume between mixed
+    channels, volume commands on mixed channels are permanent (not reset with
+    new notes), mixed channels do not support default sample volume, 7-bit
+    samples are actually supposed to be played as-is (not amplified to full
+    8-bit range), reject speed command parameters >= 20.
 
-### libopenmpt 0.5.1 (2020-07-26)
-
- *  [**Bug**] `libopenmpt/libopenmpt.h` failed to compile with
-    `LIBOPENMPT_NO_DEPRECATE` defined.
-
- *  MPTM: Qxy now retriggers OPL notes if new compatibility flag is set in file.
- *  MPTM: Bring back old OPL note end-of-envelope behaviour for files made with
-    OpenMPT 1.28.
- *  IT: Global volume slides with both nibbles set preferred the "slide up"
-    nibble over the "slide down" nibble in old OpenMPT versions, unlike other
-    slides. Such old files are now imported correctly again.
- *  IT: Fixed an edge case where, if the filter hit full cutoff / no resonance
-    on the first tick of a row where a new delayed note would be triggered, the
-    filter would be disabled even though it should stay active. Fixes trace.it
-    by maddie.
- *  OXM: Some sample loops were not imported correctly.
- *  XM: Out-of-range arpeggio clamping behaviour broke in OpenMPT 1.23.05.00.
-    The arpeggios in Binary World by Dakota now play correctly again.
- *  S3M: Support old-style sample pre-amp value in very early S3M files.
- *  S3M: Only force-enable fast slides for files ST 3.00. Previously, any S3M
-    file made with an ST3 version older than 3.20 enabled them.
- *  S3M: Only apply volume and middle-C speed on instrument change if the new
-    sample slot has sample data.
- *  MOD: Fix an infinite loop in GamerMan by MrGamer by playing non-ProTracker
-    MODs more like FT2 would.
- *  M15: Improve tracker detection heuristics to never assume SoundTracker 2.0
-    if there is a huge number of Dxx commands, as that is a definite hint that
-    they should be treated as volume slides. Fixes Monty On The Run by
-    Master Blaster.
- *  MO3: Support OPL patches in MO3 files created from MPTM and S3M.
- *  DBM: If a global pattern command would be lost because both effect commands
-    in a cell would have to go into the regular effect column (e.g. a speed and
-    a tempo command), the lost command is now attempted to be written into a
-    different cell on the same row. Fixes "Party-Question V" by grogon.
-
- *  mpg123: Update to v1.26.3 (2020-07-16).
- *  stb_vorbis: Update v1.20 commit b42009b3b9d4ca35bc703f5310eedc74f584be58
-    (2020-07-13).
+ *  zlib: v1.2.11 (2017-01-15).
+ *  mpg123: v1.29.3 (2021-12-11).
+ *  ogg: v1.3.5 (2021-06-04).
+ *  vorbis: v1.3.7 (2020-07-04).
+ *  miniz: v2.2.0 (2021-06-27).
+ *  minimp3: commit 50d2aaf360a53653b718fead8e258d654c3a7e41 (2021-11-27).
+ *  stb_vorbis: v1.22 commit 5a0bb8b1c1b1ca3f4e2485f4114c1c8ea021b781
+    (2021-07-12).
+ *  FLAC: v1.3.3 (2019-08-04).
+ *  PortAudio: v19.7.0 (2021-04-06).
 
 ### libopenmpt 0.5.0 (2020-05-24)
 

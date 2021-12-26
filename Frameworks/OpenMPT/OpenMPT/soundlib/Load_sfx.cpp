@@ -81,8 +81,8 @@ static uint8 ClampSlideParam(uint8 value, uint8 lowNote, uint8 highNote)
 	if(lowNote  < highNote &&
 	   lowNote  >= 24 + NOTE_MIN &&
 	   highNote >= 24 + NOTE_MIN &&
-	   lowNote  < CountOf(ProTrackerPeriodTable) + 24 + NOTE_MIN &&
-	   highNote < CountOf(ProTrackerPeriodTable) + 24 + NOTE_MIN)
+	   lowNote  < std::size(ProTrackerPeriodTable) + 24 + NOTE_MIN &&
+	   highNote < std::size(ProTrackerPeriodTable) + 24 + NOTE_MIN)
 	{
 		lowPeriod  = ProTrackerPeriodTable[lowNote - 24 - NOTE_MIN];
 		highPeriod = ProTrackerPeriodTable[highNote - 24 - NOTE_MIN];
@@ -473,7 +473,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
-	m_modFormat.formatName = m_nSamples == 15 ? mpt::format(U_("SoundFX 1.%1"))(version) : U_("SoundFX 2.0 / MultiMedia Sound");
+	m_modFormat.formatName = m_nSamples == 15 ? MPT_UFORMAT("SoundFX 1.{}")(version) : U_("SoundFX 2.0 / MultiMedia Sound");
 	m_modFormat.type = m_nSamples == 15 ? UL_("sfx") : UL_("sfx2");
 	m_modFormat.charset = mpt::Charset::ISO8859_1;
 

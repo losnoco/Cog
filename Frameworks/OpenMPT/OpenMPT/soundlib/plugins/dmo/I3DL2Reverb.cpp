@@ -16,6 +16,7 @@
 #ifdef MODPLUG_TRACKER
 #include "../../../sounddsp/Reverb.h"
 #endif // MODPLUG_TRACKER
+#include "mpt/base/numbers.hpp"
 #endif // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
@@ -346,7 +347,7 @@ void I3DL2Reverb::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kI3DL2ReverbNumParameters)
 	{
-		Limit(value, 0.0f, 1.0f);
+		value = mpt::safe_clamp(value, 0.0f, 1.0f);
 		if(index == kI3DL2ReverbQuality)
 			value = mpt::round(value * 3.0f) / 3.0f;
 		m_param[index] = value;
@@ -393,10 +394,10 @@ void I3DL2Reverb::PositionChanged()
 		m_delayLines[17].Init(10, 0, sampleRate, -1);
 		m_delayLines[18].Init(10, 0, sampleRate, -1);
 		m_ok = true;
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
 		m_ok = false;
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 	}
 }
 
@@ -505,7 +506,7 @@ void I3DL2Reverb::RecalculateI3DL2ReverbParams()
 		m_roomFilter = 0.0f;
 	} else
 	{
-		float freq = std::cos(HFReference() * static_cast<float>(2.0 * M_PI) / m_effectiveSampleRate);
+		float freq = std::cos(HFReference() * (2.0f * mpt::numbers::pi_v<float>) / m_effectiveSampleRate);
 		float roomFilter = (freq * (roomHF + roomHF) - 2.0f + std::sqrt(freq * (roomHF * roomHF * freq * 4.0f) + roomHF * 8.0f - roomHF * roomHF * 4.0f - roomHF * freq * 8.0f)) / (roomHF + roomHF - 2.0f);
 		m_roomFilter = Clamp(roomFilter, 0.0f, 1.0f);
 	}
@@ -607,19 +608,20 @@ void I3DL2Reverb::SetDecayCoeffs()
 
 float I3DL2Reverb::CalcDecayCoeffs(int32 index)
 {
-	float hfRef = static_cast<float>(2.0 * M_PI) / m_effectiveSampleRate * HFReference();
+	float hfRef = (2.0f * mpt::numbers::pi_v<float>) / m_effectiveSampleRate * HFReference();
 	float decayHFRatio = DecayHFRatio();
 	if(decayHFRatio > 1.0f)
-		hfRef = static_cast<float>(M_PI);
+		hfRef = mpt::numbers::pi_v<float>;
 
 	float c1 = std::pow(10.0f, ((m_delayTaps[index] / m_effectiveSampleRate) * -60.0f / DecayTime()) / 20.0f);
 	float c2 = 0.0f;
 
 	float c21 = (std::pow(c1, 2.0f - 2.0f / decayHFRatio) - 1.0f) / (1.0f - std::cos(hfRef));
-	if(c21 != 0)
+	if(c21 != 0 && std::isfinite(c21))
 	{
 		float c22 = -2.0f * c21 - 2.0f;
-		float c23 = std::sqrt(c22 * c22 - c21 * c21 * 4.0f);
+		float c23sq = c22 * c22 - c21 * c21 * 4.0f;
+		float c23 = c23sq > 0.0f ? std::sqrt(c23sq) : 0.0f;
 		c2 = (c23 - c22) / (c21 + c21);
 		if(std::abs(c2) > 1.0f)
 			c2 = (-c22 - c23) / (c21 + c21);

@@ -337,7 +337,7 @@ static void AMFReadPattern(CPattern &pattern, CHANNELINDEX chn, FileReader &file
 			uint8 cmd = (command & 0x7F);
 			uint8 param = value;
 
-			if(cmd < CountOf(effTrans))
+			if(cmd < std::size(effTrans))
 				cmd = effTrans[cmd];
 			else
 				cmd = CMD_NONE;
@@ -502,7 +502,7 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 	InitializeGlobals(MOD_TYPE_AMF);
 	InitializeChannels();
 
-	m_modFormat.formatName = mpt::format(U_("DSMI v%1"))(fileHeader.version);
+	m_modFormat.formatName = MPT_UFORMAT("DSMI v{}")(fileHeader.version);
 	m_modFormat.type = U_("amf");
 	m_modFormat.charset = mpt::Charset::CP437;
 
@@ -623,7 +623,7 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 	if(!trackMap.empty())
 		trackCount = *std::max_element(trackMap.cbegin(), trackMap.cend());
 
-	// Store Tracks Positions
+	// Read pattern tracks
 	std::vector<FileReader> trackData(trackCount);
 	for(uint16 i = 0; i < trackCount; i++)
 	{

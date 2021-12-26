@@ -10,7 +10,8 @@
 
 #include "stdafx.h"
 #include "tuningcollection.h"
-#include "../common/mptIO.h"
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
 #include "../common/serialization_utils.h"
 #include <algorithm>
 #include "../common/mptFileIO.h"
@@ -283,7 +284,7 @@ bool UnpackTuningCollection(const CTuningCollection &tc, const mpt::PathString &
 	auto numberFmt = mpt::FormatSpec().Dec().FillNul().Width(1 + static_cast<int>(std::log10(tc.GetNumTunings())));
 	for(std::size_t i = 0; i < tc.GetNumTunings(); ++i)
 	{
-		const CTuning & tuning = tc.GetTuning(i);
+		const CTuning & tuning = *(tc.GetTuning(i));
 		mpt::PathString fn;
 		fn += prefix;
 		mpt::ustring tuningName = tuning.GetName();
@@ -292,7 +293,7 @@ bool UnpackTuningCollection(const CTuningCollection &tc, const mpt::PathString &
 			tuningName = U_("untitled");
 		}
 		SanitizeFilename(tuningName);
-		fn += mpt::PathString::FromUnicode(mpt::format(U_("%1 - %2"))(mpt::ufmt::fmt(i + 1, numberFmt), tuningName));
+		fn += mpt::PathString::FromUnicode(MPT_UFORMAT("{} - {}")(mpt::ufmt::fmt(i + 1, numberFmt), tuningName));
 		fn += mpt::PathString::FromUTF8(CTuning::s_FileExtension);
 		if(fn.FileOrDirectoryExists())
 		{

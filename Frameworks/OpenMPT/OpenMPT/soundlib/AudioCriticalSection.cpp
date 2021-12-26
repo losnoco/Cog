@@ -12,13 +12,16 @@
 #include "AudioCriticalSection.h"
 
 #if defined(MODPLUG_TRACKER)
-#include "../common/mptMutex.h"
+#include "../misc/mptMutex.h"
 #endif
 
 OPENMPT_NAMESPACE_BEGIN
 
 #if defined(MODPLUG_TRACKER)
 
+#if MPT_COMPILER_MSVC
+_Acquires_lock_(m_refGlobalMutex.mutex)
+#endif // MPT_COMPILER_MSVC
 CriticalSection::CriticalSection()
 	: m_refGlobalMutex(Tracker::GetGlobalMutexRef())
 	, inSection(false)
@@ -37,12 +40,15 @@ CriticalSection::CriticalSection(InitialState state)
 	: m_refGlobalMutex(Tracker::GetGlobalMutexRef())
 	, inSection(false)
 {
-	if(state == InitialLocked)
+	if(state == InitialState::Locked)
 	{
 		Enter();
 	}
 }
 
+#if MPT_COMPILER_MSVC
+_Acquires_lock_(m_refGlobalMutex.mutex)
+#endif // MPT_COMPILER_MSVC
 void CriticalSection::Enter()
 {
 	if(!inSection)
@@ -52,6 +58,9 @@ void CriticalSection::Enter()
 	}
 }
 
+#if MPT_COMPILER_MSVC
+_Requires_lock_held_(m_refGlobalMutex.mutex) _Releases_lock_(m_refGlobalMutex.mutex)
+#endif // MPT_COMPILER_MSVC
 void CriticalSection::Leave()
 {
 	if(inSection)

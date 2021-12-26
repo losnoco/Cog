@@ -1,7 +1,7 @@
 /*
  * Load_stm.cpp
  * ------------
- * Purpose: STM (ScreamTracker 2) module loader
+ * Purpose: STM (Scream Tracker 2) and STX (Scream Tracker Music Interface Kit - a mixture of STM and S3M) module loaders
  * Notes  : (currently none)
  * Authors: Olivier Lapicque
  *          OpenMPT Devs
@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "Loaders.h"
+#include "S3MTools.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -60,7 +61,7 @@ MPT_BINARY_STRUCT(STMSampleHeader, 32)
 struct STMFileHeader
 {
 	char  songname[20];
-	char  trackername[8];  // !Scream! for ST 2.xx
+	char  trackerName[8];  // !Scream! for ST 2.xx
 	uint8 dosEof;          // 0x1A
 	uint8 filetype;        // 1=song, 2=module (only 2 is supported, of course) :)
 	uint8 verMajor;
@@ -69,39 +70,137 @@ struct STMFileHeader
 	uint8 numPatterns;
 	uint8 globalVolume;
 	uint8 reserved[13];
+
+	bool Validate() const
+	{
+		if(filetype != 2
+		   || (dosEof != 0x1A && dosEof != 2)  // ST2 ignores this, ST3 doesn't. Broken versions of putup10.stm / putup11.stm have dosEof = 2.
+		   || verMajor != 2
+		   || (verMinor != 0 && verMinor != 10 && verMinor != 20 && verMinor != 21)
+		   || numPatterns > 64
+		   || (globalVolume > 64 && globalVolume != 0x58))  // 0x58 may be a placeholder value in earlier ST2 versions.
+		{
+			return false;
+		}
+		return ValidateTrackerName(trackerName);
+	}
+
+	static bool ValidateTrackerName(const char (&trackerName)[8])
+	{
+		// Tracker string can be anything really (ST2 and ST3 won't check it),
+		// but we do not want to generate too many false positives here, as
+		// STM already has very few magic bytes anyway.
+		// Magic bytes that have been found in the wild are !Scream!, BMOD2STM, WUZAMOD! and SWavePro.
+		for(uint8 c : trackerName)
+		{
+			if(c < 0x20 || c >= 0x7F)
+				return false;
+		}
+		return true;
+	}
+
+	uint64 GetHeaderMinimumAdditionalSize() const
+	{
+		return 31 * sizeof(STMSampleHeader) + (verMinor == 0 ? 64 : 128) + numPatterns * 64 * 4;
+	}
 };
 
 MPT_BINARY_STRUCT(STMFileHeader, 48)
 
 
-static bool ValidateHeader(const STMFileHeader &fileHeader)
+static bool ValidateSTMOrderList(ModSequence &order)
 {
-	if(fileHeader.filetype != 2
-		|| (fileHeader.dosEof != 0x1A && fileHeader.dosEof != 2)	// ST2 ignores this, ST3 doesn't. Broken versions of putup10.stm / putup11.stm have dosEof = 2.
-		|| fileHeader.verMajor != 2
-		|| (fileHeader.verMinor != 0 && fileHeader.verMinor != 10 && fileHeader.verMinor != 20 && fileHeader.verMinor != 21)
-		|| fileHeader.numPatterns > 64
-		|| (fileHeader.globalVolume > 64 && fileHeader.globalVolume != 0x58))	// 0x58 may be a placeholder value in earlier ST2 versions.
+	for(auto &pat : order)
 	{
-		return false;
-	}
-	// Tracker string can be anything really (ST2 and ST3 won't check it),
-	// but we do not want to generate too many false positives here, as
-	// STM already has very few magic bytes anyway.
-	// Magic bytes that have been found in the wild are !Scream!, BMOD2STM, WUZAMOD! and SWavePro.
-	for(uint8 c : fileHeader.trackername)
-	{
-		if(c < 0x20 || c >= 0x7F)
+		if(pat == 99 || pat == 255)  // 99 is regular, sometimes a single 255 entry can be found too
+			pat = order.GetInvalidPatIndex();
+		else if(pat > 63)
 			return false;
 	}
-
 	return true;
 }
 
 
-static uint64 GetHeaderMinimumAdditionalSize(const STMFileHeader &fileHeader)
+static void ConvertSTMCommand(ModCommand &m, const ROWINDEX row, const uint8 fileVerMinor, uint8 &newTempo, ORDERINDEX &breakPos, ROWINDEX &breakRow)
 {
-	return 31 * sizeof(STMSampleHeader) + (fileHeader.verMinor == 0 ? 64 : 128) + fileHeader.numPatterns * 64 * 4;
+	static constexpr EffectCommand stmEffects[] =
+	{
+		CMD_NONE,        CMD_SPEED,          CMD_POSITIONJUMP, CMD_PATTERNBREAK,   // .ABC
+		CMD_VOLUMESLIDE, CMD_PORTAMENTODOWN, CMD_PORTAMENTOUP, CMD_TONEPORTAMENTO, // DEFG
+		CMD_VIBRATO,     CMD_TREMOR,         CMD_ARPEGGIO,     CMD_NONE,           // HIJK
+		CMD_NONE,        CMD_NONE,           CMD_NONE,         CMD_NONE,           // LMNO
+		// KLMNO can be entered in the editor but don't do anything
+	};
+
+	m.command = stmEffects[m.command & 0x0F];
+
+	switch(m.command)
+	{
+	case CMD_VOLUMESLIDE:
+		// Lower nibble always has precedence, and there are no fine slides.
+		if(m.param & 0x0F)
+			m.param &= 0x0F;
+		else
+			m.param &= 0xF0;
+		break;
+
+	case CMD_PATTERNBREAK:
+		m.param = (m.param & 0xF0) * 10 + (m.param & 0x0F);
+		if(breakPos != ORDERINDEX_INVALID && m.param == 0)
+		{
+			// Merge Bxx + C00 into just Bxx
+			m.command = CMD_POSITIONJUMP;
+			m.param = static_cast<ModCommand::PARAM>(breakPos);
+			breakPos = ORDERINDEX_INVALID;
+		}
+		LimitMax(breakRow, row);
+		break;
+
+	case CMD_POSITIONJUMP:
+		// This effect is also very weird.
+		// Bxx doesn't appear to cause an immediate break -- it merely
+		// sets the next order for when the pattern ends (either by
+		// playing it all the way through, or via Cxx effect)
+		breakPos = m.param;
+		breakRow = 63;
+		m.command = CMD_NONE;
+		break;
+
+	case CMD_TREMOR:
+		// this actually does something with zero values, and has no
+		// effect memory. which makes SENSE for old-effects tremor,
+		// but ST3 went and screwed it all up by adding an effect
+		// memory and IT followed that, and those are much more popular
+		// than STM so we kind of have to live with this effect being
+		// broken... oh well. not a big loss.
+		break;
+
+	case CMD_SPEED:
+		if(fileVerMinor < 21)
+			m.param = ((m.param / 10u) << 4u) + m.param % 10u;
+
+		if(!m.param)
+		{
+			m.command = CMD_NONE;
+			break;
+		}
+
+#ifdef MODPLUG_TRACKER
+		// ST2 has a very weird tempo mode where the length of a tick depends both
+		// on the ticks per row and a scaling factor. Try to write the tempo into a separate command.
+		newTempo = m.param;
+		m.param >>= 4;
+#else
+		MPT_UNUSED_VARIABLE(newTempo);
+#endif // MODPLUG_TRACKER
+		break;
+
+	default:
+		// Anything not listed above is a no-op if there's no value, as ST2 doesn't have effect memory.
+		if(!m.param)
+			m.command = CMD_NONE;
+		break;
+	}
 }
 
 
@@ -109,14 +208,10 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderSTM(MemoryFileReader file, co
 {
 	STMFileHeader fileHeader;
 	if(!file.ReadStruct(fileHeader))
-	{
 		return ProbeWantMoreData;
-	}
-	if(!ValidateHeader(fileHeader))
-	{
+	if(!fileHeader.Validate())
 		return ProbeFailure;
-	}
-	return ProbeAdditionalSize(file, pfilesize, GetHeaderMinimumAdditionalSize(fileHeader));
+	return ProbeAdditionalSize(file, pfilesize, fileHeader.GetHeaderMinimumAdditionalSize());
 }
 
 
@@ -126,21 +221,13 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 
 	STMFileHeader fileHeader;
 	if(!file.ReadStruct(fileHeader))
-	{
 		return false;
-	}
-	if(!ValidateHeader(fileHeader))
-	{
+	if(!fileHeader.Validate())
 		return false;
-	}
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
-	{
+	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(fileHeader.GetHeaderMinimumAdditionalSize())))
 		return false;
-	}
 	if(loadFlags == onlyVerifyHeader)
-	{
 		return true;
-	}
 
 	InitializeGlobals(MOD_TYPE_STM);
 
@@ -148,7 +235,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("Scream Tracker 2");
 	m_modFormat.type = U_("stm");
-	m_modFormat.madeWithTracker = mpt::format(U_("Scream Tracker %1.%2"))(fileHeader.verMajor, mpt::ufmt::dec0<2>(fileHeader.verMinor));
+	m_modFormat.madeWithTracker = MPT_UFORMAT("Scream Tracker {}.{}")(fileHeader.verMajor, mpt::ufmt::dec0<2>(fileHeader.verMinor));
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_playBehaviour.set(kST3SampleSwap);
@@ -157,6 +244,8 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 	m_nChannels = 4;
 	m_nMinPeriod = 64;
 	m_nMaxPeriod = 0x7FFF;
+	
+	m_playBehaviour.set(kST3SampleSwap);
 	
 	uint8 initTempo = fileHeader.initTempo;
 	if(fileHeader.verMinor < 21)
@@ -182,7 +271,7 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		STMSampleHeader sampleHeader;
 		file.ReadStruct(sampleHeader);
-		if(sampleHeader.zero != 0 && sampleHeader.zero != 46)	// putup10.stm has zero = 46
+		if(sampleHeader.zero != 0 && sampleHeader.zero != 46)  // putup10.stm has zero = 46
 			return false;
 		sampleHeader.ConvertToMPT(Samples[smp]);
 		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.filename);
@@ -191,13 +280,8 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Read order list
 	ReadOrderFromFile<uint8>(Order(), file, fileHeader.verMinor == 0 ? 64 : 128);
-	for(auto &pat : Order())
-	{
-		if(pat == 99 || pat == 255)	// 99 is regular, sometimes a single 255 entry can be found too
-			pat = Order.GetInvalidPatIndex();
-		else if(pat > 63)
-			return false;
-	}
+	if(!ValidateSTMOrderList(Order()))
+		return false;
 
 	if(loadFlags & loadPatternData)
 		Patterns.ResizeArray(fileHeader.numPatterns);
@@ -262,87 +346,9 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 					m->vol = vol;
 				}
 
-				static constexpr EffectCommand stmEffects[] =
-				{
-					CMD_NONE,        CMD_SPEED,          CMD_POSITIONJUMP, CMD_PATTERNBREAK,   // .ABC
-					CMD_VOLUMESLIDE, CMD_PORTAMENTODOWN, CMD_PORTAMENTOUP, CMD_TONEPORTAMENTO, // DEFG
-					CMD_VIBRATO,     CMD_TREMOR,         CMD_ARPEGGIO,     CMD_NONE,           // HIJK
-					CMD_NONE,        CMD_NONE,           CMD_NONE,         CMD_NONE,           // LMNO
-					// KLMNO can be entered in the editor but don't do anything
-				};
-
-				m->command = stmEffects[volCmd & 0x0F];
+				m->command = volCmd & 0x0F;
 				m->param = cmdInf;
-
-				switch(m->command)
-				{
-				case CMD_VOLUMESLIDE:
-					// Lower nibble always has precedence, and there are no fine slides.
-					if(m->param & 0x0F)
-						m->param &= 0x0F;
-					else
-						m->param &= 0xF0;
-					break;
-
-				case CMD_PATTERNBREAK:
-					m->param = (m->param & 0xF0) * 10 + (m->param & 0x0F);
-					if(breakPos != ORDERINDEX_INVALID && m->param == 0)
-					{
-						// Merge Bxx + C00 into just Bxx
-						m->command = CMD_POSITIONJUMP;
-						m->param = static_cast<ModCommand::PARAM>(breakPos);
-						breakPos = ORDERINDEX_INVALID;
-					}
-					LimitMax(breakRow, row);
-					break;
-
-				case CMD_POSITIONJUMP:
-					// This effect is also very weird.
-					// Bxx doesn't appear to cause an immediate break -- it merely
-					// sets the next order for when the pattern ends (either by
-					// playing it all the way through, or via Cxx effect)
-					breakPos = m->param;
-					breakRow = 63;
-					m->command = CMD_NONE;
-					break;
-
-				case CMD_TREMOR:
-					// this actually does something with zero values, and has no
-					// effect memory. which makes SENSE for old-effects tremor,
-					// but ST3 went and screwed it all up by adding an effect
-					// memory and IT followed that, and those are much more popular
-					// than STM so we kind of have to live with this effect being
-					// broken... oh well. not a big loss.
-					break;
-
-				case CMD_SPEED:
-					if(fileHeader.verMinor < 21)
-					{
-						m->param = ((m->param / 10u) << 4u) + m->param % 10u;
-					}
-
-					if(!m->param)
-					{
-						m->command = CMD_NONE;
-						break;
-					}
-
-#ifdef MODPLUG_TRACKER
-					// ST2 has a very weird tempo mode where the length of a tick depends both
-					// on the ticks per row and a scaling factor. Try to write the tempo into a separate command.
-					newTempo = m->param;
-					m->param >>= 4;
-#endif // MODPLUG_TRACKER
-					break;
-
-				default:
-					// Anything not listed above is a no-op if there's no value, as ST2 doesn't have effect memory.
-					if(!m->param)
-					{
-						m->command = CMD_NONE;
-					}
-					break;
-				}
+				ConvertSTMCommand(*m, row, fileHeader.verMinor, newTempo, breakPos, breakRow);
 			}
 			if(newTempo != 0)
 			{
@@ -380,6 +386,230 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 			}
 		}
 	}
+
+	return true;
+}
+
+
+// STX file header
+struct STXFileHeader
+{
+	char     songName[20];
+	char     trackerName[8];  // Typically !Scream! but mustn't be relied upon, like for STM
+	uint16le patternSize;     // or EOF in newer file version (except for future brain.stx?!)
+	uint16le unknown1;
+	uint16le patTableOffset;
+	uint16le smpTableOffset;
+	uint16le chnTableOffset;
+	uint32le unknown2;
+	uint8    globalVolume;
+	uint8    initTempo;
+	uint32le unknown3;
+	uint16le numPatterns;
+	uint16le numSamples;
+	uint16le numOrders;
+	char     unknown4[6];
+	char     magic[4];
+
+	bool Validate() const
+	{
+		if(std::memcmp(magic, "SCRM", 4)
+		   || (patternSize < 64 && patternSize != 0x1A)
+		   || patternSize > 0x840
+		   || (globalVolume > 64 && globalVolume != 0x58)  // 0x58 may be a placeholder value in earlier ST2 versions.
+		   || numPatterns > 64
+		   || numSamples > 96  // Some STX files have more sample slots than their STM counterpart for mysterious reasons
+		   || (numOrders > 0x81 && numOrders != 0x101)
+		   || unknown1 != 0 || unknown2 != 0 || unknown3 != 1)
+		{
+			return false;
+		}
+		return STMFileHeader::ValidateTrackerName(trackerName);
+	}
+
+	uint64 GetHeaderMinimumAdditionalSize() const
+	{
+		return std::max({(patTableOffset << 4) + numPatterns * 2, (smpTableOffset << 4) + numSamples * 2, (chnTableOffset << 4) + 32 + numOrders * 5 });
+	}
+};
+
+MPT_BINARY_STRUCT(STXFileHeader, 64)
+
+
+CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderSTX(MemoryFileReader file, const uint64 *pfilesize)
+{
+	STXFileHeader fileHeader;
+	if(!file.ReadStruct(fileHeader))
+		return ProbeWantMoreData;
+	if(!fileHeader.Validate())
+		return ProbeFailure;
+	return ProbeAdditionalSize(file, pfilesize, fileHeader.GetHeaderMinimumAdditionalSize());
+}
+
+
+bool CSoundFile::ReadSTX(FileReader &file, ModLoadingFlags loadFlags)
+{
+	file.Rewind();
+
+	STXFileHeader fileHeader;
+	if(!file.ReadStruct(fileHeader))
+		return false;
+	if(!fileHeader.Validate())
+		return false;
+	if (!file.CanRead(mpt::saturate_cast<FileReader::off_t>(fileHeader.GetHeaderMinimumAdditionalSize())))
+		return false;
+	if(loadFlags == onlyVerifyHeader)
+		return true;
+
+	InitializeGlobals(MOD_TYPE_STM);
+
+	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songName);
+
+	m_nSamples = fileHeader.numSamples;
+	m_nChannels = 4;
+	m_nMinPeriod = 64;
+	m_nMaxPeriod = 0x7FFF;
+
+	m_playBehaviour.set(kST3SampleSwap);
+
+	uint8 initTempo = fileHeader.initTempo;
+	if(initTempo == 0)
+		initTempo = 0x60;
+
+	m_nDefaultTempo = ConvertST2Tempo(initTempo);
+	m_nDefaultSpeed = initTempo >> 4;
+	m_nDefaultGlobalVolume = std::min(fileHeader.globalVolume, uint8(64)) * 4u;
+
+	// Setting up channels
+	for(CHANNELINDEX chn = 0; chn < 4; chn++)
+	{
+		ChnSettings[chn].Reset();
+		ChnSettings[chn].nPan = (chn & 1) ? 0x40 : 0xC0;
+	}
+
+	std::vector<uint16le> patternOffsets, sampleOffsets;
+	file.Seek(fileHeader.patTableOffset << 4);
+	file.ReadVector(patternOffsets, fileHeader.numPatterns);
+	file.Seek(fileHeader.smpTableOffset << 4);
+	file.ReadVector(sampleOffsets, fileHeader.numSamples);
+
+	// Read order list
+	file.Seek((fileHeader.chnTableOffset << 4) + 32);
+	Order().resize(fileHeader.numOrders);
+	for(auto &pat : Order())
+	{
+		pat = file.ReadUint8();
+		file.Skip(4);
+	}
+	if(!ValidateSTMOrderList(Order()))
+		return false;
+
+	// Read samples
+	for(SAMPLEINDEX smp = 1; smp <= fileHeader.numSamples; smp++)
+	{
+		if(!file.Seek(sampleOffsets[smp - 1] << 4))
+			return false;
+		S3MSampleHeader sampleHeader;
+		file.ReadStruct(sampleHeader);
+		sampleHeader.ConvertToMPT(Samples[smp]);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.filename);
+		const uint32 sampleOffset = sampleHeader.GetSampleOffset();
+		if((loadFlags & loadSampleData) && sampleHeader.length != 0 && file.Seek(sampleOffset))
+		{
+			sampleHeader.GetSampleFormat(true).ReadSample(Samples[smp], file);
+		}
+	}
+
+	// Read patterns
+	uint8 formatVersion = 1;
+	if(!patternOffsets.empty() && fileHeader.patternSize != 0x1A)
+	{
+		if(!file.Seek(patternOffsets.front() << 4))
+			return false;
+		// First two bytes describe pattern size, like in S3M
+		if(file.ReadUint16LE() == fileHeader.patternSize)
+			formatVersion = 0;
+	}
+
+	if(loadFlags & loadPatternData)
+		Patterns.ResizeArray(fileHeader.numPatterns);
+	for(PATTERNINDEX pat = 0; pat < fileHeader.numPatterns; pat++)
+	{
+		if(!(loadFlags & loadPatternData) || !Patterns.Insert(pat, 64))
+			break;
+		if(!file.Seek(patternOffsets[pat] << 4))
+			return false;
+		if(formatVersion == 0 && file.ReadUint16LE() > 0x840)
+			return false;
+
+		ORDERINDEX breakPos = ORDERINDEX_INVALID;
+		ROWINDEX breakRow = 63;  // Candidate row for inserting pattern break
+
+		auto rowBase = Patterns[pat].GetRow(0);
+		ROWINDEX row = 0;
+		uint8 newTempo = 0;
+		while(row < 64)
+		{
+			uint8 info = file.ReadUint8();
+
+			if(info == s3mEndOfRow)
+			{
+				// End of row
+				if(newTempo != 0)
+				{
+					Patterns[pat].WriteEffect(EffectWriter(CMD_TEMPO, mpt::saturate_round<ModCommand::PARAM>(ConvertST2Tempo(newTempo).ToDouble())).Row(row).RetryPreviousRow());
+					newTempo = 0;
+				}
+
+				if(++row < 64)
+				{
+					rowBase = Patterns[pat].GetRow(row);
+				}
+				continue;
+			}
+
+			CHANNELINDEX channel = (info & s3mChannelMask);
+			ModCommand dummy;
+			ModCommand &m = (channel < GetNumChannels()) ? rowBase[channel] : dummy;
+
+			if(info & s3mNotePresent)
+			{
+				const auto [note, instr] = file.ReadArray<uint8, 2>();
+				if(note < 0xF0)
+					m.note = static_cast<ModCommand::NOTE>(Clamp((note & 0x0F) + 12 * (note >> 4) + 36 + NOTE_MIN, NOTE_MIN, NOTE_MAX));
+				else if(note == s3mNoteOff)
+					m.note = NOTE_NOTECUT;
+				else if(note == s3mNoteNone)
+					m.note = NOTE_NONE;
+				m.instr = instr;
+			}
+
+			if(info & s3mVolumePresent)
+			{
+				uint8 volume = file.ReadUint8();
+				m.volcmd = VOLCMD_VOLUME;
+				m.vol = std::min(volume, uint8(64));
+			}
+
+			if(info & s3mEffectPresent)
+			{
+				const auto [command, param] = file.ReadArray<uint8, 2>();
+				m.command = command;
+				m.param = param;
+				ConvertSTMCommand(m, row, 0xFF, newTempo, breakPos, breakRow);
+			}
+		}
+
+		if(breakPos != ORDERINDEX_INVALID)
+		{
+			Patterns[pat].WriteEffect(EffectWriter(CMD_POSITIONJUMP, static_cast<ModCommand::PARAM>(breakPos)).Row(breakRow).RetryPreviousRow());
+		}
+	}
+
+	m_modFormat.formatName = U_("Scream Tracker Music Interface Kit");
+	m_modFormat.type = U_("stx");
+	m_modFormat.charset = mpt::Charset::CP437;
+	m_modFormat.madeWithTracker = MPT_UFORMAT("STM2STX 1.{}")(formatVersion);
 
 	return true;
 }

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 
 #include "WindowedFIR.h"
@@ -33,7 +33,7 @@ OPENMPT_NAMESPACE_BEGIN
 // Caching gets triggered via a global object that primes the cache during
 //  construction.
 // This is only really useful with MPT_RESAMPLER_TABLES_CACHED.
-#define MPT_RESAMPLER_TABLES_CACHED_ONSTARTUP
+//#define MPT_RESAMPLER_TABLES_CACHED_ONSTARTUP
 
 #endif // LIBOPENMPT_BUILD
 
@@ -65,7 +65,14 @@ public:
 	constexpr CResamplerSettings() = default;
 	bool operator == (const CResamplerSettings &cmp) const
 	{
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wfloat-equal"
+#endif // MPT_COMPILER_CLANG
 		return SrcMode == cmp.SrcMode && gdWFIRCutoff == cmp.gdWFIRCutoff && gbWFIRType == cmp.gbWFIRType && emulateAmiga == cmp.emulateAmiga;
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
 	}
 	bool operator != (const CResamplerSettings &cmp) const { return !(*this == cmp); }
 };

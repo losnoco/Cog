@@ -15,6 +15,8 @@
 #ifndef NO_PLUGINS
 #include "../../Sndfile.h"
 #include "Compressor.h"
+#include "DMOUtils.h"
+#include "mpt/base/numbers.hpp"
 #endif // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
@@ -24,8 +26,6 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-// See Distortion.cpp
-float logGain(float x, int32 shiftL, int32 shiftR);
 
 IMixPlugin* Compressor::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 {
@@ -119,7 +119,7 @@ void Compressor::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kCompNumParameters)
 	{
-		Limit(value, 0.0f, 1.0f);
+		value = mpt::safe_clamp(value, 0.0f, 1.0f);
 		m_param[index] = value;
 		RecalculateCompressorParams();
 	}
@@ -140,9 +140,9 @@ void Compressor::PositionChanged()
 	try
 	{
 		m_buffer.assign(m_bufSize * 2, 0.0f);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 		m_bufSize = 0;
 	}
 	m_bufPos = 0;
@@ -223,7 +223,7 @@ void Compressor::RecalculateCompressorParams()
 	m_release = std::pow(10.0f, -1.0f / (ReleaseTime() * sampleRate));
 	const float _2e31 = float(1u << 31);
 	const float _2e26 = float(1u << 26);
-	m_threshold = std::min((_2e31 - 1.0f), (std::log(std::pow(10.0f, ThresholdInDecibel() / 20.0f) * _2e31) * _2e26) / static_cast<float>(M_LN2) + _2e26) * (1.0f / _2e31);
+	m_threshold = std::min((_2e31 - 1.0f), (std::log(std::pow(10.0f, ThresholdInDecibel() / 20.0f) * _2e31) * _2e26) / mpt::numbers::ln2_v<float> + _2e26) * (1.0f / _2e31);
 	m_ratio = 1.0f - (1.0f / CompressorRatio());
 	m_predelay = static_cast<int32>((PreDelay() * sampleRate) + 2.0f);
 }

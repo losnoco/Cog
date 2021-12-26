@@ -185,7 +185,7 @@ static std::string show_waveout_devices( std::ostream & /*log*/ ) {
 		WAVEOUTCAPSW caps;
 		ZeroMemory( &caps, sizeof( caps ) );
 		waveOutGetDevCapsW( i, &caps, sizeof( caps ) );
-		devices << wstring_to_utf8( caps.szPname );
+		devices << mpt::transcode<std::string>( mpt::common_encoding::utf8, caps.szPname );
 		devices << std::endl;
 	}
 	return devices.str();

@@ -81,9 +81,9 @@ bool CPatternContainer::Insert(const PATTERNINDEX index, const ROWINDEX rows)
 		m_Patterns[index].AllocatePattern(rows);
 		m_Patterns[index].RemoveSignature();
 		m_Patterns[index].SetName("");
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 		return false;
 	}
 	return m_Patterns[index].IsValid();

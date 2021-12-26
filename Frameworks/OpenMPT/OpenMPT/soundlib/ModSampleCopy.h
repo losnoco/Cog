@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 
-#include "../soundbase/SampleFormatCopy.h"
+#include "openmpt/soundbase/SampleDecode.hpp"
 
 
 OPENMPT_NAMESPACE_BEGIN

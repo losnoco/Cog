@@ -67,7 +67,7 @@ uint16 XMInstrument::ConvertToXM(const ModInstrument &mptIns, bool compatibility
 
 	// Create sample assignment table
 	auto sampleList = GetSampleList(mptIns, compatibilityExport);
-	for(size_t i = 0; i < CountOf(sampleMap); i++)
+	for(std::size_t i = 0; i < std::size(sampleMap); i++)
 	{
 		if(mptIns.Keyboard[i + 12] > 0)
 		{
@@ -99,7 +99,7 @@ std::vector<SAMPLEINDEX> XMInstrument::GetSampleList(const ModInstrument &mptIns
 	std::vector<bool> addedToList;			// Which samples did we already add to the sample list?
 
 	uint8 numSamples = 0;
-	for(size_t i = 0; i < CountOf(sampleMap); i++)
+	for(std::size_t i = 0; i < std::size(sampleMap); i++)
 	{
 		const SAMPLEINDEX smp = mptIns.Keyboard[i + 12];
 		if(smp > 0)
@@ -184,7 +184,7 @@ void XMInstrument::ConvertToMPT(ModInstrument &mptIns) const
 	ConvertEnvelopeToMPT(mptIns.PanEnv, panPoints, panFlags, panSustain, panLoopStart, panLoopEnd, EnvTypePan);
 
 	// Create sample assignment table
-	for(size_t i = 0; i < CountOf(sampleMap); i++)
+	for(std::size_t i = 0; i < std::size(sampleMap); i++)
 	{
 		mptIns.Keyboard[i + 12] = sampleMap[i];
 	}
@@ -259,7 +259,7 @@ void XMInstrumentHeader::ConvertToMPT(ModInstrument &mptIns) const
 	instrument.ConvertToMPT(mptIns);
 
 	// Create sample assignment table
-	for(size_t i = 0; i < CountOf(instrument.sampleMap); i++)
+	for(std::size_t i = 0; i < std::size(instrument.sampleMap); i++)
 	{
 		if(instrument.sampleMap[i] < numSamples)
 		{
@@ -302,7 +302,7 @@ void XIInstrumentHeader::ConvertToMPT(ModInstrument &mptIns) const
 	instrument.ConvertToMPT(mptIns);
 
 	// Fix sample assignment table
-	for(size_t i = 12; i < CountOf(instrument.sampleMap) + 12; i++)
+	for(std::size_t i = 12; i < std::size(instrument.sampleMap) + 12; i++)
 	{
 		if(mptIns.Keyboard[i] >= numSamples)
 		{

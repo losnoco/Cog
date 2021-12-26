@@ -13,13 +13,32 @@
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+#if !defined(WINVER) && !defined(_WIN32_WINDOWS)
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501 // _WIN32_WINNT_WINXP
 #endif
+#endif
+#if !defined(MPT_BUILD_RETRO)
+#if defined(_MSC_VER)
+#define MPT_WITH_MFC
+#endif
+#else
+#if defined(_WIN32_WINNT)
+#if (_WIN32_WINNT >= 0x0501)
+#if defined(_MSC_VER)
+#define MPT_WITH_MFC
+#endif
+#endif
+#endif
+#endif
+#if defined(MPT_WITH_MFC)
 #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS // Avoid binary bloat from linking unused MFC controls
+#endif // MPT_WITH_MFC
 #define NOMINMAX
+#if defined(MPT_WITH_MFC)
 #include <afxwin.h>
 #include <afxcmn.h>
+#endif // MPT_WITH_MFC
 #include <windows.h>
 #endif // _MFC_VER
 
@@ -54,7 +73,12 @@ static const char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING
 #endif
 #include <windows.h>
 
+#ifdef UNICODE
 #define UNICODE_INPUT_PLUGIN
+#endif
+#ifndef _MSC_VER
+#define _MSC_VER 1300
+#endif
 #include "winamp/Winamp/IN2.H"
 #include "winamp/Winamp/wa_ipc.h"
 
@@ -65,6 +89,8 @@ static const char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING
 #include <sstream>
 
 #include <cstring>
+
+#include <tchar.h>
 
 #define BPS 16
 
@@ -101,6 +127,22 @@ static std::wstring StringDecode( const std::string & src, UINT codepage )
 	return &decoded_string[0];
 }
 
+#if defined(UNICODE)
+
+static std::wstring StringToWINAPI( const std::wstring & src )
+{
+	return src;
+}
+
+#else
+
+static std::string StringToWINAPI( const std::wstring & src )
+{
+	return StringEncode( src, CP_ACP );
+}
+
+#endif
+
 template <typename Tstring, typename Tstring2, typename Tstring3>
 static inline Tstring StringReplace( Tstring str, const Tstring2 & oldStr_, const Tstring3 & newStr_ ) {
 	std::size_t pos = 0;
@@ -118,10 +160,10 @@ struct self_winamp_t {
 	libopenmpt::plugin::settings settings;
 	int samplerate;
 	int channels;
-	std::wstring cached_filename;
-	std::wstring cached_title;
+	std::basic_string<TCHAR> cached_filename;
+	std::basic_string<TCHAR> cached_title;
 	int cached_length;
-	std::wstring cached_infotext;
+	std::basic_string<TCHAR> cached_infotext;
 	std::int64_t decode_position_frames;
 	openmpt::module * mod;
 	HANDLE PlayThread;
@@ -143,10 +185,10 @@ struct self_winamp_t {
 		filetypes_string.push_back('\0');
 		samplerate = settings.samplerate;
 		channels = settings.channels;
-		cached_filename = std::wstring();
-		cached_title = std::wstring();
+		cached_filename = std::basic_string<TCHAR>();
+		cached_title = std::basic_string<TCHAR>();
 		cached_length = 0;
-		cached_infotext = std::wstring();
+		cached_infotext = std::basic_string<TCHAR>();
 		decode_position_frames = 0;
 		mod = 0;
 		PlayThread = 0;
@@ -192,40 +234,48 @@ extern In_Module inmod;
 
 static DWORD WINAPI DecodeThread( LPVOID );
 
-static std::wstring generate_infotext( const std::wstring & filename, const openmpt::module & mod ) {
-	std::wostringstream str;
-	str << L"filename: " << filename << std::endl;
-	str << L"duration: " << mod.get_duration_seconds() << L"seconds" << std::endl;
+static std::basic_string<TCHAR> generate_infotext( const std::basic_string<TCHAR> & filename, const openmpt::module & mod ) {
+	std::basic_ostringstream<TCHAR> str;
+	str << TEXT("filename: ") << filename << std::endl;
+	str << TEXT("duration: ") << mod.get_duration_seconds() << TEXT("seconds") << std::endl;
 	std::vector<std::string> metadatakeys = mod.get_metadata_keys();
 	for ( std::vector<std::string>::iterator key = metadatakeys.begin(); key != metadatakeys.end(); ++key ) {
 		if ( *key == "message_raw" ) {
 			continue;
 		}
-		str << StringDecode( *key, CP_UTF8 ) << L": " << StringDecode( mod.get_metadata(*key), CP_UTF8 ) << std::endl;
+		str << StringToWINAPI( StringDecode( *key, CP_UTF8 ) ) << TEXT(": ") << StringToWINAPI( StringDecode( mod.get_metadata(*key), CP_UTF8 ) ) << std::endl;
 	}
 	return str.str();
 }
 
 static void config( HWND hwndParent ) {
+#if 1
 	libopenmpt::plugin::gui_edit_settings( &self->settings, hwndParent, TEXT(SHORT_TITLE) );
+#else
+	static_cast<void>(hwndParent);
+#endif
 	apply_options();
 }
 
 static void about( HWND hwndParent ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2021 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2021 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
 	about << std::endl;
 	about << "Show full credits?" << std::endl;
-	if ( MessageBox( hwndParent, StringDecode( about.str(), CP_UTF8 ).c_str(), TEXT(SHORT_TITLE), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
+	if ( MessageBox( hwndParent, StringToWINAPI( StringDecode( about.str(), CP_UTF8 ) ).c_str(), TEXT(SHORT_TITLE), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
 		return;
 	}
 	std::ostringstream credits;
 	credits << openmpt::string::get( "credits" );
-	libopenmpt::plugin::gui_show_file_info( hwndParent, TEXT(SHORT_TITLE), StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) );
+#if 1
+	libopenmpt::plugin::gui_show_file_info( hwndParent, TEXT(SHORT_TITLE), StringToWINAPI( StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ) );
+#else
+	MessageBox( hwndParent, StringToWINAPI( StringReplace(StringDecode(credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ).c_str(), TEXT(SHORT_TITLE), MB_OK );
+#endif
 }
 
 static void init() {
@@ -257,7 +307,7 @@ static int play( const in_char * fn ) {
 		ctls["seek.sync_samples"] = "1";
 		self->mod = new openmpt::module( s, std::clog, ctls );
 		self->cached_filename = fn;
-		self->cached_title = StringDecode( self->mod->get_metadata( "title" ), CP_UTF8 );
+		self->cached_title = StringToWINAPI( StringDecode( self->mod->get_metadata( "title" ), CP_UTF8 ) );
 		self->cached_length = static_cast<int>( self->mod->get_duration_seconds() * 1000.0 );
 		self->cached_infotext = generate_infotext( self->cached_filename, *self->mod );
 		apply_options();
@@ -332,18 +382,27 @@ static void setpan( int pan ) {
 }
 
 static int infobox( const in_char * fn, HWND hWndParent ) {
-	if ( fn && fn[0] != '\0' && self->cached_filename != std::wstring(fn) ) {
+	if ( fn && fn[0] != '\0' && self->cached_filename != std::basic_string<TCHAR>(fn) ) {
 		try {
 			std::ifstream s( fn, std::ios::binary );
 			openmpt::module mod( s );
-			libopenmpt::plugin::gui_show_file_info( hWndParent, TEXT(SHORT_TITLE), StringReplace( generate_infotext( fn, mod ), L"\n", L"\r\n" ) );
+#if 1
+			libopenmpt::plugin::gui_show_file_info( hWndParent, TEXT(SHORT_TITLE), StringReplace( generate_infotext( fn, mod ), TEXT("\n"), TEXT("\r\n") ) );
+#else
+			MessageBox( hWndParent, StringReplace( generate_infotext( fn, mod ), TEXT("\n"), TEXT("\r\n") ).c_str(), TEXT(SHORT_TITLE), MB_OK );
+#endif
 		} catch ( ... ) {
 		}
 	} else {
-		libopenmpt::plugin::gui_show_file_info( hWndParent, TEXT(SHORT_TITLE), StringReplace( self->cached_infotext, L"\n", L"\r\n" ) );
+#if 1
+		libopenmpt::plugin::gui_show_file_info( hWndParent, TEXT(SHORT_TITLE), StringReplace( self->cached_infotext, TEXT("\n"), TEXT("\r\n") ) );
+#else
+		MessageBox( hWndParent, StringReplace( self->cached_infotext, TEXT("\n"), TEXT("\r\n") ).c_str(), TEXT(SHORT_TITLE), MB_OK );
+#endif
 	}
 	return INFOBOX_UNCHANGED;
 }
+
 
 static void getfileinfo( const in_char * filename, in_char * title, int * length_in_ms ) {
 	if ( !filename || *filename == '\0' ) {
@@ -351,11 +410,11 @@ static void getfileinfo( const in_char * filename, in_char * title, int * length
 			*length_in_ms = self->cached_length;
 		}
 		if ( title ) {
-			std::wstring truncated_title = self->cached_title;
+			std::basic_string<TCHAR> truncated_title = self->cached_title;
 			if ( truncated_title.length() >= GETFILEINFO_TITLE_LENGTH ) {
 				truncated_title.resize( GETFILEINFO_TITLE_LENGTH - 1 );
 			}
-			wcscpy( title, truncated_title.c_str() );
+			_tcscpy( title, truncated_title.c_str() );
 		}
 	} else {
 		try {
@@ -365,11 +424,11 @@ static void getfileinfo( const in_char * filename, in_char * title, int * length
 				*length_in_ms = static_cast<int>( mod.get_duration_seconds() * 1000.0 );
 			}
 			if ( title ) {
-				std::wstring truncated_title = StringDecode( mod.get_metadata("title"), CP_UTF8 );
+				std::basic_string<TCHAR> truncated_title = StringToWINAPI( StringDecode( mod.get_metadata("title"), CP_UTF8 ) );
 				if ( truncated_title.length() >= GETFILEINFO_TITLE_LENGTH ) {
 					truncated_title.resize( GETFILEINFO_TITLE_LENGTH - 1 );
 				}
-				wcscpy( title, truncated_title.c_str() );
+				_tcscpy( title, truncated_title.c_str() );
 			}
 		} catch ( ... ) {
 		}
@@ -455,6 +514,9 @@ static DWORD WINAPI DecodeThread( LPVOID ) {
 	return 0;
 }
 
+#if defined(__GNUC__)
+extern In_Module inmod;
+#endif
 In_Module inmod = {
 	IN_VER,
 	const_cast< char * >( in_openmpt_string ), // SHORT_TITLE,
@@ -487,10 +549,13 @@ In_Module inmod = {
 	0 // out_mod
 };
 
+extern "C" __declspec(dllexport) In_Module * winampGetInModule2();
 extern "C" __declspec(dllexport) In_Module * winampGetInModule2() {
 	return &inmod;
 }
 
+
+#if defined(MPT_WITH_MFC)
 
 #ifdef _MFC_VER
 
@@ -513,6 +578,8 @@ void DllMainDetach() {
 // nothing
 
 #endif
+
+#endif // MPT_WITH_MFC
 
 
 #endif // NO_WINAMP

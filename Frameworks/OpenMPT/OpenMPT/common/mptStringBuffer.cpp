@@ -58,7 +58,7 @@ std::string ReadStringBuffer(String::ReadWriteMode mode, const char *srcBuffer, 
 		std::transform(dest.begin(), dest.end(), dest.begin(), [] (char c) -> char { return (c != '\0') ? c : ' '; });
 
 		// Trim trailing spaces.
-		dest = mpt::String::RTrim(dest, std::string(" "));
+		dest = mpt::trim_right(dest, std::string(" "));
 
 	}
 

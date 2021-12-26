@@ -157,7 +157,7 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 							}
 							break;
 						}
-					} else if(effect < 0x10 + CountOf(effTrans))
+					} else if(effect < 0x10 + mpt::array_size<decltype(effTrans)>::size)
 					{
 						// Extended commands
 						m.command = effTrans[effect - 0x10];
@@ -408,7 +408,7 @@ bool CSoundFile::ReadAMS(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("Extreme's Tracker");
 	m_modFormat.type = U_("ams");
-	m_modFormat.madeWithTracker = mpt::format(U_("Extreme's Tracker %1.%2"))(fileHeader.versionHigh, fileHeader.versionLow);
+	m_modFormat.madeWithTracker = MPT_UFORMAT("Extreme's Tracker {}.{}")(fileHeader.versionHigh, fileHeader.versionLow);
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	std::vector<bool> packSample(fileHeader.numSamps);
@@ -438,14 +438,14 @@ bool CSoundFile::ReadAMS(FileReader &file, ModLoadingFlags loadFlags)
 		file.ReadSizedString<uint8le, mpt::String::spacePadded>(ChnSettings[chn].szName);
 	}
 
-	// Read pattern names
+	// Read pattern names and create patterns
 	Patterns.ResizeArray(fileHeader.numPats);
 	for(PATTERNINDEX pat = 0; pat < fileHeader.numPats; pat++)
 	{
 		char name[11];
-		file.ReadSizedString<uint8le, mpt::String::spacePadded>(name);
+		const bool ok = file.ReadSizedString<uint8le, mpt::String::spacePadded>(name);
 		// Create pattern now, so name won't be reset later.
-		if(Patterns.Insert(pat, 64))
+		if(Patterns.Insert(pat, 64) && ok)
 		{
 			Patterns[pat].SetName(name);
 		}
@@ -556,8 +556,8 @@ struct AMS2Envelope
 			return;
 		}
 
-		static_assert(MAX_ENVPOINTS >= CountOf(data));
-		mptEnv.resize(std::min(numPoints, uint8(CountOf(data))));
+		static_assert(MAX_ENVPOINTS >= std::size(data));
+		mptEnv.resize(std::min(numPoints, mpt::saturate_cast<uint8>(std::size(data))));
 		mptEnv.nLoopStart = loopStart;
 		mptEnv.nLoopEnd = loopEnd;
 		mptEnv.nSustainStart = mptEnv.nSustainEnd = sustainPoint;
@@ -783,7 +783,7 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("Velvet Studio");
 	m_modFormat.type = U_("ams");
-	m_modFormat.madeWithTracker = mpt::format(U_("Velvet Studio %1.%2"))(fileHeader.versionHigh.get(), mpt::ufmt::dec0<2>(fileHeader.versionLow.get()));
+	m_modFormat.madeWithTracker = MPT_UFORMAT("Velvet Studio {}.{}")(fileHeader.versionHigh.get(), mpt::ufmt::dec0<2>(fileHeader.versionLow.get()));
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	uint16 headerFlags;
@@ -830,7 +830,7 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 
 		if(numSamples == 0
 			|| (fileHeader.versionLow > 0 && !file.ReadArray(sampleAssignment))	// v2.01+: 120 Notes
-			|| (fileHeader.versionLow == 0 && !file.ReadRaw(sampleAssignment + 12, 96)))	// v2.0: 96 Notes
+			|| (fileHeader.versionLow == 0 && !file.ReadRaw(mpt::span(sampleAssignment + 12, 96)).size()))	// v2.0: 96 Notes
 		{
 			continue;
 		}
@@ -973,8 +973,8 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			char patternName[11];
-			patternChunk.ReadSizedString<uint8le, mpt::String::spacePadded>(patternName);
-			Patterns[pat].SetName(patternName);
+			if(patternChunk.ReadSizedString<uint8le, mpt::String::spacePadded>(patternName))
+				Patterns[pat].SetName(patternName);
 
 			ReadAMSPattern(Patterns[pat], true, patternChunk);
 		}

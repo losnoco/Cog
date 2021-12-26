@@ -20,15 +20,15 @@
 
 #include <libopenmpt/libopenmpt.hpp>
 
-#if defined(__clang__)
-#if ((__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) >= 40000)
+#if defined( __clang__ )
+#if ( ( __clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__ ) >= 40000 )
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
 #endif
 #endif
 #include <portaudiocpp/PortAudioCpp.hxx>
-#if defined(__clang__)
-#if ((__clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__) >= 40000)
+#if defined( __clang__ )
+#if ( ( __clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__ ) >= 40000 )
 #pragma clang diagnostic pop
 #endif
 #endif
@@ -57,7 +57,7 @@ int main( int argc, char * argv[] ) {
 		std::vector<float> right( buffersize );
 		std::vector<float> interleaved_buffer( buffersize * 2 );
 		bool is_interleaved = false;
-#if defined(_MSC_VER) && defined(_PREFAST_)
+#if defined( _MSC_VER ) && defined( _PREFAST_ )
 		// work-around bug in VS2019 MSVC 16.5.5 static analyzer
 		is_interleaved = false;
 		portaudio::DirectionSpecificStreamParameters outputstream_parameters( portaudio.defaultOutputDevice(), 2, portaudio::FLOAT32, false, portaudio.defaultOutputDevice().defaultHighOutputLatency(), 0 );

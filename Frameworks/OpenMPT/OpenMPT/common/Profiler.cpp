@@ -112,7 +112,7 @@ std::string Profiler::DumpProfiles()
 			case Profiler::Audio: cat = "Audio"; break;
 			case Profiler::Notify: cat = "Notify"; break;
 			}
-			ret += cat + " " + std::string(stats.profile.Name) + ": " + mpt::fmt::right(6, mpt::fmt::fix(stats.usage * 100.0, 3)) + "%\r\n";
+			ret += cat + " " + std::string(stats.profile.Name) + ": " + mpt::afmt::right(6, mpt::afmt::fix(stats.usage * 100.0, 3)) + "%\r\n";
 		}
 	}
 	ret += "\r\n";

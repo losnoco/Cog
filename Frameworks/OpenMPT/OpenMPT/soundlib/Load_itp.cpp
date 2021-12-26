@@ -32,7 +32,7 @@ OPENMPT_NAMESPACE_BEGIN
 //        - Per-path variable string length
 //        - Embedded samples are IT-compressed
 //        (rev. 3249)
-// v1.02: Explicitely updated format to use new instrument flags representation (rev. 483)
+// v1.02: Explicitly updated format to use new instrument flags representation (rev. 483)
 // v1.01: Added option to embed instrument headers
 
 
@@ -75,7 +75,7 @@ static bool ValidateHeader(const ITPHeader &hdr)
 	{
 		return false;
 	}
-	if(hdr.version > 0x00000103 || hdr.version < 0x00000100)
+	if(hdr.version < 0x00000100 || hdr.version > 0x00000103)
 	{
 		return false;
 	}
@@ -85,8 +85,7 @@ static bool ValidateHeader(const ITPHeader &hdr)
 
 static uint64 GetHeaderMinimumAdditionalSize(const ITPHeader &hdr)
 {
-	MPT_UNREFERENCED_PARAMETER(hdr);
-	return 12 + 4 + 24 + 4 - sizeof(ITPHeader);
+	return 76 + (hdr.version <= 0x102 ? 4 : 0);
 }
 
 
@@ -216,7 +215,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 	// Instruments' paths
 	if(version <= 0x102)
 	{
-		size = file.ReadUint32LE();	// path string length
+		size = file.ReadUint32LE();  // path string length
 	}
 
 	std::vector<mpt::PathString> instrPaths(GetNumInstruments());
@@ -224,7 +223,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		if(version > 0x102)
 		{
-			size = file.ReadUint32LE();	// path string length
+			size = file.ReadUint32LE();  // path string length
 		}
 		std::string path;
 		file.ReadString<mpt::String::maybeNullTerminated>(path, size);
@@ -238,9 +237,9 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 			instrPaths[ins] = mpt::PathString::FromUTF8(path);
 		}
 #ifdef MODPLUG_TRACKER
-		if(const auto fileName = file.GetFileName(); !fileName.empty())
+		if(const auto fileName = file.GetOptionalFileName(); fileName.has_value())
 		{
-			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(fileName.GetPath());
+			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(fileName->GetPath());
 		} else if(GetpModDoc() != nullptr)
 		{
 			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(GetpModDoc()->GetPathNameMpt().GetPath());
@@ -255,7 +254,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 	// Song Patterns
 	const PATTERNINDEX numPats = static_cast<PATTERNINDEX>(file.ReadUint32LE());
 	const PATTERNINDEX numNamedPats = static_cast<PATTERNINDEX>(file.ReadUint32LE());
-	size_t patNameLen = file.ReadUint32LE();	// Size of each pattern name
+	size_t patNameLen = file.ReadUint32LE();  // Size of each pattern name
 	FileReader pattNames = file.ReadChunk(numNamedPats * patNameLen);
 
 	// modcommand data length
@@ -349,7 +348,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 			AddToLog(LogWarning, U_("Unable to open instrument: ") + instrPaths[ins].ToUnicode());
 		}
 #else
-		AddToLog(LogWarning, mpt::format(U_("Loading external instrument %1 ('%2') failed: External instruments are not supported."))(ins + 1, instrPaths[ins].ToUnicode()));
+		AddToLog(LogWarning, MPT_UFORMAT("Loading external instrument {} ('{}') failed: External instruments are not supported.")(ins + 1, instrPaths[ins].ToUnicode()));
 #endif // MPT_EXTERNAL_SAMPLES
 	}
 

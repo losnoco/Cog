@@ -1,6 +1,10 @@
+# clang-format 10
+Language:        Cpp
+Standard:        c++17
 AccessModifierOffset: -2
 AlignAfterOpenBracket: true
 AlignConsecutiveAssignments: false
+AlignConsecutiveMacros: true
 AlignEscapedNewlinesLeft: true
 AlignOperands:   true
 AlignTrailingComments: false
@@ -29,11 +33,10 @@ DerivePointerAlignment: false
 DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
-IndentCaseLabels: false
+IndentCaseLabels: true
 IndentWidth:     2
 IndentWrappedFunctionNames: false
 KeepEmptyLinesAtTheStartOfBlocks: true
-Language:        Cpp
 MacroBlockBegin: ''
 MacroBlockEnd:   ''
 MaxEmptyLinesToKeep: 3
@@ -58,6 +61,5 @@ SpacesInContainerLiterals: true
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: true
 SpacesInSquareBrackets: false
-Standard:        Cpp03
 TabWidth:        2
 UseTab:          ForIndentation

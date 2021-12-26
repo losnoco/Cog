@@ -17,6 +17,7 @@
 #include "../common/mptFileIO.h"
 #endif // !MODPLUG_NO_FILESAVE
 #include "modsmp_ctrl.h"
+#include "mpt/base/numbers.hpp"
 
 #include <functional>
 
@@ -646,10 +647,10 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 				if(!filename.empty())
 				{
 					if(filenameU8.find(':') == std::string::npos)
-						filename = file.GetFileName().GetPath() + filename;
+						filename = file.GetOptionalFileName().value_or(P_("")).GetPath() + filename;
 					filename = filename.Simplify();
 					// Avoid recursive #include
-					if(std::find_if(files.begin(), files.end(), [&filename](const SFZInputFile &f) { return f.file.GetFileName() == filename; }) == files.end())
+					if(std::find_if(files.begin(), files.end(), [&filename](const SFZInputFile &f) { return f.file.GetOptionalFileName().value_or(P_("")) == filename; }) == files.end())
 					{
 						auto f = std::make_unique<InputFile>(filename);
 						if(f->IsValid())
@@ -775,7 +776,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 			sample.uFlags.set(CHN_16BIT);
 			std::function<uint16(int32)> generator;
 			if(synthSample == "*sine")
-				generator = [](int32 i) { return mpt::saturate_round<int16>(std::sin(i * 2.0 * M_PI / 256.0) * int16_max); };
+				generator = [](int32 i) { return mpt::saturate_round<int16>(std::sin(i * ((2.0 * mpt::numbers::pi) / 256.0)) * int16_max); };
 			else if(synthSample == "*square")
 				generator = [](int32 i) { return i < 128 ? int16_max : int16_min; };
 			else if(synthSample == "*triangle" || synthSample == "*tri")
@@ -813,7 +814,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 		{
 			if(region.filename.find(':') == std::string::npos)
 			{
-				filename = file.GetFileName().GetPath() + filename;
+				filename = file.GetOptionalFileName().value_or(P_("")).GetPath() + filename;
 			}
 			filename = filename.Simplify();
 			SetSamplePath(smp, filename);
@@ -864,11 +865,11 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 		pIns->nCutSwing = mpt::saturate_round<uint8>(region.filterRandom * (m_SongFlags[SONG_EXFILTERRANGE] ? 20 : 24) / 1200.0);
 		pIns->midiPWD = mpt::saturate_round<int8>(region.pitchBend / 100.0);
 
-		pIns->nNNA = NNA_NOTEOFF;
+		pIns->nNNA = NewNoteAction::NoteOff;
 		if(region.polyphony == 1)
 		{
-			pIns->nDNA = DNA_NOTECUT;
-			pIns->nDCT = DCT_SAMPLE;
+			pIns->nDNA = DuplicateNoteAction::NoteCut;
+			pIns->nDCT = DuplicateCheckType::Sample;
 		}
 		region.ampEnv.ConvertToMPT(pIns, *this, ENV_VOLUME);
 		if(region.pitchEnv.depth)
@@ -1031,7 +1032,7 @@ static void WriteSFZEnvelope(std::ostream &f, double tickDuration, int index, co
 
 	const bool sustainAtEnd = (!env.dwFlags[ENV_SUSTAIN] || env.nSustainStart == (env.size() - 1)) && convFunc(env.back().value) != 0.0;
 
-	const auto prefix = mpt::format("\neg%1_")(mpt::fmt::dec0<2>(index));
+	const auto prefix = MPT_AFORMAT("\neg{}_")(mpt::afmt::dec0<2>(index));
 	f << "\n" << prefix << type << "=" << scale;
 	f << prefix << "points=" << (env.size() + (sustainAtEnd ? 1 : 0));
 	EnvelopeNode::tick_t lastTick = 0;
@@ -1074,7 +1075,7 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 
 	// Creating directory names with trailing spaces or dots is a bad idea, as they are difficult to remove in Windows.
 	const mpt::RawPathString whitespaceDirName = PL_(" \n\r\t.");
-	const mpt::PathString sampleBaseName = mpt::PathString::FromNative(mpt::String::Trim(filename.GetFileName().AsNative(), whitespaceDirName));
+	const mpt::PathString sampleBaseName = mpt::PathString::FromNative(mpt::trim(filename.GetFileName().AsNative(), whitespaceDirName));
 	const mpt::PathString sampleDirName = (sampleBaseName.empty() ? P_("Samples") : sampleBaseName)  + P_("/");
 	const mpt::PathString sampleBasePath = filename.GetPath() + sampleDirName;
 	if(!sampleBasePath.IsDirectory() && !::CreateDirectory(sampleBasePath.AsNative().c_str(), nullptr))
@@ -1091,13 +1092,13 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 	f << "// Envelope tempo base: tempo " << m_PlayState.m_nMusicTempo.ToDouble();
 	switch(m_nTempoMode)
 	{
-	case tempoModeClassic:
+	case TempoMode::Classic:
 		f << " (classic tempo mode)";
 		break;
-	case tempoModeAlternative:
+	case TempoMode::Alternative:
 		f << " (alternative tempo mode)";
 		break;
-	case tempoModeModern:
+	case TempoMode::Modern:
 		f << ", " << m_PlayState.m_nMusicSpeed << " ticks per row, " << m_PlayState.m_nCurrentRowsPerBeat << " rows per beat (modern tempo mode)";
 		break;
 	default:
@@ -1127,19 +1128,19 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 		f << "\nampeg_release_shape=0";
 	}
 
-	if(ins->nDNA == DNA_NOTECUT && ins->nDCT != DCT_NONE)
+	if(ins->nDNA == DuplicateNoteAction::NoteCut && ins->nDCT != DuplicateCheckType::None)
 		f << "\npolyphony=1";
 
 	WriteSFZEnvelope(f, tickDuration, 1, ins->VolEnv, "amplitude", 100.0, [](int32 val) { return val / static_cast<double>(ENVELOPE_MAX); });
 	WriteSFZEnvelope(f, tickDuration, 2, ins->PanEnv, "pan", 100.0, [](int32 val) { return 2.0 * (val - ENVELOPE_MID) / (ENVELOPE_MAX - ENVELOPE_MIN); });
 	if(ins->PitchEnv.dwFlags[ENV_FILTER])
 	{
-		const auto envScale = 1200.0 * std::log(CutOffToFrequency(127, 256) / static_cast<double>(CutOffToFrequency(0, -256))) / M_LN2;
+		const auto envScale = 1200.0 * std::log(CutOffToFrequency(127, 256) / static_cast<double>(CutOffToFrequency(0, -256))) / mpt::numbers::ln2;
 		const auto cutoffNormal = CutOffToFrequency(cutoff);
 		WriteSFZEnvelope(f, tickDuration, 3, ins->PitchEnv, "cutoff", envScale, [this, cutoff, cutoffNormal, envScale](int32 val) {
 			// Convert interval between center frequency and envelope into cents
 			const auto freq = CutOffToFrequency(cutoff, (val - ENVELOPE_MID) * 256 / (ENVELOPE_MAX - ENVELOPE_MID));
-			return 1200.0 * std::log(freq / static_cast<double>(cutoffNormal)) / M_LN2 / envScale;
+			return 1200.0 * std::log(freq / static_cast<double>(cutoffNormal)) / mpt::numbers::ln2 / envScale;
 		});
 	} else
 	{
@@ -1179,24 +1180,31 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 		else
 			sampleName += P_(".wav");
 
+		bool success = false;
 		try
 		{
-			mpt::SafeOutputFile fSmp(sampleName, std::ios::binary, flushMode);
-			if(fSmp)
+			mpt::SafeOutputFile sfSmp(sampleName, std::ios::binary, flushMode);
+			if(sfSmp)
 			{
-				//fSmp.exceptions(fSmp.exceptions() | std::ios::badbit | std::ios::failbit);
+				mpt::ofstream &fSmp = sfSmp;
+				fSmp.exceptions(fSmp.exceptions() | std::ios::badbit | std::ios::failbit);
 
 				if(isAdlib)
-					SaveS3ISample(ins->Keyboard[i], fSmp);
+					success = SaveS3ISample(ins->Keyboard[i], fSmp);
 				else if(useFLACsamples)
-					SaveFLACSample(ins->Keyboard[i], fSmp);
+					success = SaveFLACSample(ins->Keyboard[i], fSmp);
 				else
-					SaveWAVSample(ins->Keyboard[i], fSmp);
+					success = SaveWAVSample(ins->Keyboard[i], fSmp);
 			}
 		} catch(const std::exception &)
 		{
+			success = false;
+		}
+		if(!success)
+		{
 			AddToLog(LogError, MPT_USTRING("Unable to save sample: ") + sampleName.ToUnicode());
 		}
+
 
 		f << "\n\n<region>";
 		if(!m_szNames[ins->Keyboard[i]].empty())

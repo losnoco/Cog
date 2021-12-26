@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -135,7 +135,7 @@ namespace MIDIEvents
 	};
 
 	// MIDI CC Names
-	extern const char* const MidiCCNames[MIDICC_end + 1];
+	extern const char* const MidiCCNames[MIDICC_end + 1];  // Charset::UTF8
 
 	// Build a generic MIDI event
 	uint32 Event(EventType eventType, uint8 midiChannel, uint8 dataByte1, uint8 dataByte2);

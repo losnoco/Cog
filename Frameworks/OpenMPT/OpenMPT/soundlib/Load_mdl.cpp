@@ -10,7 +10,6 @@
 
 #include "stdafx.h"
 #include "Loaders.h"
-#include "ChunkReader.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -189,7 +188,7 @@ static constexpr ModCommand::COMMAND MDLEffTrans[] =
 // receive an MDL effect, give back a 'normal' one.
 static void ConvertMDLCommand(uint8 &cmd, uint8 &param)
 {
-	if(cmd >= CountOf(MDLEffTrans))
+	if(cmd >= std::size(MDLEffTrans))
 		return;
 
 	uint8 origCmd = cmd;
@@ -218,7 +217,6 @@ static void ConvertMDLCommand(uint8 &cmd, uint8 &param)
 		{
 		case 0x0: // unused
 		case 0x3: // unused
-		case 0x5: // Set Finetune
 		case 0x8: // Set Samplestatus (loop type)
 			cmd = CMD_NONE;
 			break;
@@ -232,6 +230,10 @@ static void ConvertMDLCommand(uint8 &cmd, uint8 &param)
 			break;
 		case 0x4: // Vibrato Waveform
 			param = 0x30 | (param & 0x0F);
+			break;
+		case 0x5:  // Set Finetune
+			cmd = CMD_FINETUNE;
+			param = (param << 4) ^ 0x80;
 			break;
 		case 0x6: // Pattern Loop
 			param = 0xB0 | (param & 0x0F);
@@ -322,16 +324,32 @@ static bool ImportMDLCommands(ModCommand &m, uint8 vol, uint8 e1, uint8 e2, uint
 
 	What's more is, if there's another effect in the second column, it's ALSO processed in addition to the
 	offset, and the second data byte is shared between the two effects. */
+	uint32 offset = uint32_max;
+	uint8 otherCmd = CMD_NONE;
 	if(e1 == CMD_OFFSET)
 	{
 		// EFy -xx => offset yxx00
+		offset = ((p1 & 0x0F) << 8) | p2;
 		p1 = (p1 & 0x0F) ? 0xFF : p2;
 		if(e2 == CMD_OFFSET)
 			e2 = CMD_NONE;
+		else
+			otherCmd = e2;
 	} else if (e2 == CMD_OFFSET)
 	{
-		// --- EFy => offset y0000 (best we can do without doing a ton of extra work is 0xff00)
+		// --- EFy => offset y0000
+		offset = (p2 & 0x0F) << 8;
 		p2 = (p2 & 0x0F) ? 0xFF : 0;
+		otherCmd = e1;
+	}
+
+	if(offset != uint32_max && offset > 0xFF && ModCommand::GetEffectWeight(otherCmd) < ModCommand::GetEffectWeight(CMD_OFFSET))
+	{
+		m.command = CMD_OFFSET;
+		m.param = static_cast<ModCommand::PARAM>(offset & 0xFF);
+		m.volcmd = VOLCMD_OFFSET;
+		m.vol = static_cast<ModCommand::VOL>(offset >> 8);
+		return otherCmd != CMD_NONE || vol != 0;
 	}
 
 	if(vol)
@@ -463,6 +481,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 	InitializeGlobals(MOD_TYPE_MDL);
 	m_SongFlags = SONG_ITCOMPATGXX;
 	m_playBehaviour.set(kPerChannelGlobalVolSlide);
+	m_playBehaviour.set(kApplyOffsetWithoutNote);
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	m_playBehaviour.reset(kITSCxStopsSample);	// Gate effect in underbeat.mdl
 
@@ -521,6 +540,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 
 			ModSample &sample = Samples[sampleIndex];
 			sample.Initialize();
+			sample.Set16BitCuePoints();
 
 			chunk.ReadString<mpt::String::spacePadded>(m_szNames[sampleIndex], 32);
 			chunk.ReadString<mpt::String::spacePadded>(sample.filename, 8);

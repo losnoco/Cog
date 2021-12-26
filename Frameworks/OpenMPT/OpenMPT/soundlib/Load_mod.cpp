@@ -14,6 +14,9 @@
 #include "Loaders.h"
 #include "Tables.h"
 #ifndef MODPLUG_NO_FILESAVE
+#include "mpt/io/base.hpp"
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
 #include "../common/mptFileIO.h"
 #endif
 #ifdef MPT_EXTERNAL_SAMPLES
@@ -54,7 +57,7 @@ void CSoundFile::ConvertModCommand(ModCommand &m)
 		break;
 
 	// Extension for XM extended effects
-	case 'G' - 55:	m.command = CMD_GLOBALVOLUME; break;		//16
+	case 'G' - 55:	m.command = CMD_GLOBALVOLUME; break;  //16
 	case 'H' - 55:	m.command = CMD_GLOBALVOLSLIDE; break;
 	case 'K' - 55:	m.command = CMD_KEYOFF; break;
 	case 'L' - 55:	m.command = CMD_SETENVPOSITION; break;
@@ -63,11 +66,11 @@ void CSoundFile::ConvertModCommand(ModCommand &m)
 	case 'T' - 55:	m.command = CMD_TREMOR; break;
 	case 'W' - 55:	m.command = CMD_DUMMY; break;
 	case 'X' - 55:	m.command = CMD_XFINEPORTAUPDOWN;	break;
-	case 'Y' - 55:	m.command = CMD_PANBRELLO; break;			//34
-	case 'Z' - 55:	m.command = CMD_MIDI;	break;				//35
-	case '\\' - 56:	m.command = CMD_SMOOTHMIDI;	break;		//rewbs.smoothVST: 36 - note: this is actually displayed as "-" in FT2, but seems to be doing nothing.
-	//case ':' - 21:	m.command = CMD_DELAYCUT;	break;		//37
-	case '#' + 3:	m.command = CMD_XPARAM;	break;			//rewbs.XMfixes - Xm.param is 38
+	case 'Y' - 55:	m.command = CMD_PANBRELLO; break;   // 34
+	case 'Z' - 55:	m.command = CMD_MIDI; break;        // 35
+	case '\\' - 56:	m.command = CMD_SMOOTHMIDI; break;  // 36 - note: this is actually displayed as "-" in FT2, but seems to be doing nothing.
+	case 37:		m.command = CMD_SMOOTHMIDI; break;  // BeRoTracker uses this for smooth MIDI macros for some reason; in old OpenMPT versions this was reserved for the unimplemented "velocity" command
+	case '#' + 3:	m.command = CMD_XPARAM; break;      // 38
 	default:		m.command = CMD_NONE;
 	}
 }
@@ -405,7 +408,7 @@ struct AMInstrument
 			uint16 level, speed;
 		} points[] = {{startLevel, 0}, {attack1Level, attack1Speed}, {attack2Level, attack2Speed}, {sustainLevel, decaySpeed}, {sustainLevel, sustainTime}, {0, releaseSpeed}};
 
-		for(uint8 i = 1; i < CountOf(points); i++)
+		for(uint8 i = 1; i < std::size(points); i++)
 		{
 			int duration = std::min(points[i].speed, uint16(256));
 			// Sustain time is already in ticks, no need to compute the segment duration.
@@ -761,9 +764,9 @@ static bool CheckMODMagic(const char magic[4], MODMagicResult &result)
 		result.madeWithTracker = UL_("Generic MOD-compatible Tracker");
 		result.isGenericMultiChannel = true;
 		result.numChannels = (magic[0] - '0') * 10 + magic[1] - '0';
-	} else if(!memcmp(magic, "TDZ", 3) && magic[3] >= '4' && magic[3] <= '9')
+	} else if(!memcmp(magic, "TDZ", 3) && magic[3] >= '1' && magic[3] <= '9')
 	{
-		// TDZx - TakeTracker
+		// TDZx - TakeTracker (only TDZ1-TDZ3 should exist, but historically this code only supported 4-9 channels, so we keep those for the unlikely case that they were actually used for something)
 		result.madeWithTracker = UL_("TakeTracker");
 		result.numChannels = magic[3] - '0';
 	} else
@@ -1163,7 +1166,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	} else if(!onlyAmigaNotes && fileHeader.restartPos == 0x7F && isMdKd && fileHeader.restartPos + 1u >= realOrders)
 	{
-		modMagicResult.madeWithTracker = UL_("ScreamTracker");
+		modMagicResult.madeWithTracker = UL_("Scream Tracker");
 	}
 
 	if(onlyAmigaNotes && !isGenericMultiChannel && filterTransitions < 7)
@@ -1223,33 +1226,37 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	if((loadFlags & loadSampleData) && isStartrekker)
 	{
 #ifdef MPT_EXTERNAL_SAMPLES
-		InputFile amFile;
+		std::optional<InputFile> amFile;
 		FileReader amData;
-		mpt::PathString filename = file.GetFileName();
-		if(!filename.empty())
+		if(file.GetOptionalFileName())
 		{
+			mpt::PathString filename = file.GetOptionalFileName().value();
 			// Find instrument definition file
 			const mpt::PathString exts[] = {P_(".nt"), P_(".NT"), P_(".as"), P_(".AS")};
 			for(const auto &ext : exts)
 			{
 				mpt::PathString infoName = filename + ext;
 				char stMagic[16];
-				if(infoName.IsFile() && amFile.Open(infoName, SettingCacheCompleteFileBeforeLoading()) && (amData = GetFileReader(amFile)).IsValid() && amData.ReadArray(stMagic))
+				if(infoName.IsFile())
 				{
-					if(!memcmp(stMagic, "ST1.2 ModuleINFO", 16))
-						modMagicResult.madeWithTracker = UL_("Startrekker 1.2");
-					else if(!memcmp(stMagic, "ST1.3 ModuleINFO", 16))
-						modMagicResult.madeWithTracker = UL_("Startrekker 1.3");
-					else if(!memcmp(stMagic, "AudioSculpture10", 16))
-						modMagicResult.madeWithTracker = UL_("AudioSculpture 1.0");
-					else
-						continue;
-
-					if(amData.Seek(144))
+					amFile.emplace(infoName, SettingCacheCompleteFileBeforeLoading());
+					if(amFile->IsValid() && (amData = GetFileReader(*amFile)).IsValid() && amData.ReadArray(stMagic))
 					{
-						// Looks like a valid instrument definition file!
-						m_nInstruments = 31;
-						break;
+						if(!memcmp(stMagic, "ST1.2 ModuleINFO", 16))
+							modMagicResult.madeWithTracker = UL_("Startrekker 1.2");
+						else if(!memcmp(stMagic, "ST1.3 ModuleINFO", 16))
+							modMagicResult.madeWithTracker = UL_("Startrekker 1.3");
+						else if(!memcmp(stMagic, "AudioSculpture10", 16))
+							modMagicResult.madeWithTracker = UL_("AudioSculpture 1.0");
+						else
+							continue;
+
+						if(amData.Seek(144))
+						{
+							// Looks like a valid instrument definition file!
+							m_nInstruments = 31;
+							break;
+						}
 					}
 				}
 			}
@@ -1283,7 +1290,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	}
 #endif  // MPT_EXTERNAL_SAMPLES || MPT_BUILD_FUZZER
 
-	// Fix VBlank MODs. Arbitrary threshold: 10 minutes.
+	// Fix VBlank MODs. Arbitrary threshold: 9 minutes (enough for Guitar Slinger...).
 	// Basically, this just converts all tempo commands into speed commands
 	// for MODs which are supposed to have VBlank timing (instead of CIA timing).
 	// There is no perfect way to do this, since both MOD types look the same,
@@ -1296,7 +1303,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	if(isMdKd && hasTempoCommands && !definitelyCIA)
 	{
 		const double songTime = GetLength(eNoAdjust).front().duration;
-		if(songTime >= 600.0)
+		if(songTime >= 540.0)
 		{
 			m_playBehaviour.set(kMODVBlankTiming);
 			if(GetLength(eNoAdjust, GetLengthTarget(songTime)).front().targetReached)
@@ -1312,7 +1319,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	std::transform(std::begin(magic), std::end(magic), std::begin(magic), [](unsigned char c) -> unsigned char { return (c < ' ') ? ' ' : c; });
-	m_modFormat.formatName = mpt::format(U_("ProTracker MOD (%1)"))(mpt::ToUnicode(mpt::Charset::ASCII, std::string(std::begin(magic), std::end(magic))));
+	m_modFormat.formatName = MPT_UFORMAT("ProTracker MOD ({})")(mpt::ToUnicode(mpt::Charset::ASCII, std::string(std::begin(magic), std::end(magic))));
 	m_modFormat.type = U_("mod");
 	if(modMagicResult.madeWithTracker)
 		m_modFormat.madeWithTracker = modMagicResult.madeWithTracker;
@@ -1577,7 +1584,7 @@ bool CSoundFile::ReadM15(FileReader &file, ModLoadingFlags loadFlags)
 	uint32 illegalBytes = 0, totalNumDxx = 0;
 	for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
 	{
-		bool patternInUse = std::find(Order().cbegin(), Order().cend(), pat) != Order().cend();
+		const bool patternInUse = mpt::contains(Order(), pat);
 		uint8 numDxx = 0;
 		uint8 emptyCmds = 0;
 		MODPatternData patternData;
@@ -2182,8 +2189,8 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 		if(info.name[0])
 			m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, info.name);
 
-		if(IsInRange(info.dateMonth, 1, 12) && IsInRange(info.dateDay, 1, 31) && IsInRange(info.dateHour, 0, 23)
-		   && IsInRange(info.dateMinute, 0, 59) && IsInRange(info.dateSecond, 0, 59))
+		if(mpt::is_in_range(info.dateMonth, 1, 12) && mpt::is_in_range(info.dateDay, 1, 31) && mpt::is_in_range(info.dateHour, 0, 23)
+		   && mpt::is_in_range(info.dateMinute, 0, 59) && mpt::is_in_range(info.dateSecond, 0, 59))
 		{
 			FileHistory mptHistory;
 			mptHistory.loadDate.tm_year = info.dateYear;
@@ -2379,7 +2386,7 @@ bool CSoundFile::SaveMod(std::ostream &f) const
 
 	if(invalidInstruments)
 	{
-		AddToLog("Warning: This track references sample slots higher than 31. Such samples cannot be saved in the MOD format, and thus the notes will not sound correct. Use the Cleanup tool to rearrange and remove unused samples.");
+		AddToLog(LogWarning, U_("Warning: This track references sample slots higher than 31. Such samples cannot be saved in the MOD format, and thus the notes will not sound correct. Use the Cleanup tool to rearrange and remove unused samples."));
 	}
 
 	//Check for unsaved patterns
@@ -2387,7 +2394,7 @@ bool CSoundFile::SaveMod(std::ostream &f) const
 	{
 		if(Patterns.IsValidPat(pat))
 		{
-			AddToLog("Warning: This track contains at least one pattern after the highest pattern number referred to in the sequence. Such patterns are not saved in the MOD format.");
+			AddToLog(LogWarning, U_("Warning: This track contains at least one pattern after the highest pattern number referred to in the sequence. Such patterns are not saved in the MOD format."));
 			break;
 		}
 	}

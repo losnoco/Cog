@@ -10,12 +10,14 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include <algorithm>
 #include <array>
 
-#include "../../common/mptAlloc.h"
+#if defined(MPT_ENABLE_ARCH_INTRINSICS) || defined(MPT_WITH_VST)
+#include "mpt/base/aligned_array.hpp"
+#endif // MPT_ENABLE_ARCH_INTRINSICS || MPT_WITH_VST
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -30,21 +32,21 @@ class PluginMixBuffer
 
 private:
 
-#if defined(MPT_ENABLE_ALIGNED_ALLOC)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS) || defined(MPT_WITH_VST)
 	static constexpr std::align_val_t alignment = std::align_val_t{16};
 	static_assert(sizeof(mpt::aligned_array<buffer_t, bufferSize, alignment>) == sizeof(std::array<buffer_t, bufferSize>));
 	static_assert(alignof(mpt::aligned_array<buffer_t, bufferSize, alignment>) == static_cast<std::size_t>(alignment));
-#endif
+#endif // MPT_ENABLE_ARCH_INTRINSICS || MPT_WITH_VST
 
 protected:
 
-#if defined(MPT_ENABLE_ALIGNED_ALLOC)
+#if defined(MPT_ENABLE_ARCH_INTRINSICS) || defined(MPT_WITH_VST)
 	std::vector<mpt::aligned_array<buffer_t, bufferSize, alignment>> inputs;
 	std::vector<mpt::aligned_array<buffer_t, bufferSize, alignment>> outputs;
-#else
+#else // !(MPT_ENABLE_ARCH_INTRINSICS || MPT_WITH_VST)
 	std::vector<std::array<buffer_t, bufferSize>> inputs;
 	std::vector<std::array<buffer_t, bufferSize>> outputs;
-#endif
+#endif // MPT_ENABLE_ARCH_INTRINSICS || MPT_WITH_VST
 	std::vector<buffer_t*> inputsarray;
 	std::vector<buffer_t*> outputsarray;
 
@@ -65,9 +67,9 @@ public:
 			outputs.resize(numOutputs);
 			inputsarray.resize(numInputs);
 			outputsarray.resize(numOutputs);
-		} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+		} catch(mpt::out_of_memory e)
 		{
-			MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+			mpt::delete_out_of_memory(e);
 			inputs.clear();
 			inputs.shrink_to_fit();
 			outputs.clear();

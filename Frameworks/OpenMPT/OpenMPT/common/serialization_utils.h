@@ -10,11 +10,13 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
+
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
+#include "openmpt/base/Endian.hpp"
 
 #include "../common/mptBaseTypes.h"
-#include "../common/mptIO.h"
-#include "../common/Endianness.h"
 
 #include <algorithm>
 #include <bitset>
@@ -78,8 +80,8 @@ enum
 
 enum
 {
-	IdSizeVariable = uint16_max,
-	IdSizeMaxFixedSize = (uint8_max >> 1)
+	IdSizeVariable = std::numeric_limits<uint16>::max(),
+	IdSizeMaxFixedSize = (std::numeric_limits<uint8>::max() >> 1)
 };
 
 typedef int32 SsbStatus;

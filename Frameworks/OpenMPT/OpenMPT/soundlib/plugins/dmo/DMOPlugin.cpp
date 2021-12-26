@@ -12,9 +12,10 @@
 
 #include "stdafx.h"
 
+#include "mpt/base/aligned_array.hpp"
 #if defined(MPT_WITH_DMO)
+#include "mpt/uuid/guid.hpp"
 #include "../../Sndfile.h"
-#include "../../../common/mptUUID.h"
 #include "DMOPlugin.h"
 #include "../PluginManager.h"
 #include <uuids.h>
@@ -38,7 +39,7 @@ OPENMPT_NAMESPACE_BEGIN
 IMixPlugin* DMOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 {
 	CLSID clsid;
-	if(Util::VerifyStringToCLSID(factory.dllPath.AsNative(), clsid))
+	if(mpt::VerifyStringToCLSID(factory.dllPath.AsNative(), clsid))
 	{
 		IMediaObject *pMO = nullptr;
 		IMediaObjectInPlace *pMOIP = nullptr;
@@ -56,11 +57,11 @@ IMixPlugin* DMOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIX
 				return p;
 			}
 #ifdef DMO_LOG
-			MPT_LOG(LogDebug, "DMO", factory.libraryName.ToUnicode() + U_(": Unable to use this DMO"));
+			MPT_LOG_GLOBAL(LogDebug, "DMO", factory.libraryName.ToUnicode() + U_(": Unable to use this DMO"));
 #endif
 		}
 #ifdef DMO_LOG
-		else MPT_LOG(LogDebug, "DMO", factory.libraryName.ToUnicode() + U_(": Failed to get IMediaObject & IMediaObjectInPlace interfaces"));
+		else MPT_LOG_GLOBAL(LogDebug, "DMO", factory.libraryName.ToUnicode() + U_(": Failed to get IMediaObject & IMediaObjectInPlace interfaces"));
 #endif
 		if (pMO) pMO->Release();
 		if (pMOIP) pMOIP->Release();
@@ -82,11 +83,9 @@ DMOPlugin::DMOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *m
 		m_pParamInfo = nullptr;
 	if (FAILED(m_pMediaObject->QueryInterface(IID_IMediaParams, (void **)&m_pMediaParams)))
 		m_pMediaParams = nullptr;
-	m_alignedBuffer.f32 = (float *)((((intptr_t)m_interleavedBuffer.f32) + 15) & ~15);
-
+	m_alignedBuffer.f32 = mpt::align_bytes<16, MIXBUFFERSIZE * 2>(m_interleavedBuffer.f32);
 	m_mixBuffer.Initialize(2, 2);
 	InsertIntoFactoryList();
-
 }
 
 
@@ -132,30 +131,6 @@ static constexpr float _si2f = 1.0f / 32768.0f;
 
 static void InterleaveStereo(const float * MPT_RESTRICT inputL, const float * MPT_RESTRICT inputR, float * MPT_RESTRICT output, uint32 numFrames)
 {
-#if defined(ENABLE_SSE)
-	if(GetProcSupport() & PROCSUPPORT_SSE)
-	{
-		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		static_assert((MIXBUFFERSIZE & 7) == 0);
-		__m128 factor = _mm_set_ps1(_f2si);
-		numFrames = (numFrames + 3) / 4;
-		do
-		{
-			__m128 fl = _mm_loadu_ps(inputL);		// Load four float values, LLLL
-			__m128 fr = _mm_loadu_ps(inputR);		// Load four float values, RRRR
-			fl = _mm_mul_ps(fl, factor);			// Scale them
-			fr = _mm_mul_ps(fr, factor);			// Scale them
-			inputL += 4;
-			inputR += 4;
-			__m128 f1 = _mm_unpacklo_ps(fl, fr);	// LL__+RR__ => LRLR
-			__m128 f2 = _mm_unpackhi_ps(fl, fr);	// __LL+__RR => LRLR
-			_mm_store_ps(output, f1);				// Store four int values, LRLR
-			_mm_store_ps(output + 4, f2);			// Store four int values, LRLR
-			output += 8;
-		} while(--numFrames);
-		return;
-	}
-#endif
 	while(numFrames--)
 	{
 		*(output++) = *(inputL++) * _f2si;
@@ -166,30 +141,6 @@ static void InterleaveStereo(const float * MPT_RESTRICT inputL, const float * MP
 
 static void DeinterleaveStereo(const float * MPT_RESTRICT input, float * MPT_RESTRICT outputL, float * MPT_RESTRICT outputR, uint32 numFrames)
 {
-#if defined(ENABLE_SSE)
-	if(GetProcSupport() & PROCSUPPORT_SSE)
-	{
-		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		static_assert((MIXBUFFERSIZE & 7) == 0);
-		__m128 factor = _mm_set_ps1(_si2f);
-		numFrames = (numFrames + 3) / 4;
-		do
-		{
-			__m128 f1 = _mm_load_ps(input);		// Load four float values, LRLR
-			__m128 f2 = _mm_load_ps(input + 4);	// Load four float values, LRLR
-			f1 = _mm_mul_ps(f1, factor);		// Scale them
-			f2 = _mm_mul_ps(f2, factor);		// Scale them
-			input += 8;
-			__m128 fl = _mm_shuffle_ps(f1, f2, _MM_SHUFFLE(2, 0, 2, 0));	// LRLR+LRLR => LLLL
-			__m128 fr = _mm_shuffle_ps(f1, f2, _MM_SHUFFLE(3, 1, 3, 1));	// LRLR+LRLR => RRRR
-			_mm_storeu_ps(outputL, fl);				// Store four float values, LLLL
-			_mm_storeu_ps(outputR, fr);				// Store four float values, RRRR
-			outputL += 4;
-			outputR += 4;
-		} while(--numFrames);
-		return;
-	}
-#endif
 	while(numFrames--)
 	{
 		*(outputL++) = *(input++) * _si2f;
@@ -201,47 +152,6 @@ static void DeinterleaveStereo(const float * MPT_RESTRICT input, float * MPT_RES
 // Interleave two float streams into one int16 stereo stream.
 static void InterleaveFloatToInt16(const float * MPT_RESTRICT inputL, const float * MPT_RESTRICT inputR, int16 * MPT_RESTRICT output, uint32 numFrames)
 {
-#if defined(ENABLE_MMX) && defined(ENABLE_SSE)
-	// This uses __m64, so it's not available on the MSVC 64-bit compiler.
-	// But if the user runs a 64-bit operating system, they will go the floating-point path anyway.
-	if((GetProcSupport() & (PROCSUPPORT_MMX | PROCSUPPORT_SSE)) == (PROCSUPPORT_MMX | PROCSUPPORT_SSE))
-	{
-		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		static_assert((MIXBUFFERSIZE & 7) == 0);
-		__m64 *out = reinterpret_cast<__m64 *>(output);
-		__m128 factor = _mm_set_ps1(_f2si);
-		numFrames = (numFrames + 3) / 4;
-		do
-		{
-			__m128 fl = _mm_loadu_ps(inputL);		// Load four float values, L1L2L3L4
-			__m128 fr = _mm_loadu_ps(inputR);		// Load four float values, R1R2R3R4
-			fl = _mm_mul_ps(fl, factor);			// Scale them
-			fr = _mm_mul_ps(fr, factor);			// Scale them
-			inputL += 4;
-			inputR += 4;
-
-			// First two stereo pairs
-			__m128 f12 = _mm_shuffle_ps(fl, fr, _MM_SHUFFLE(1, 0, 1, 0));	// L1 L2 R1 R2
-			f12 = _mm_shuffle_ps(f12 , f12, _MM_SHUFFLE(3, 1, 2, 0));		// L1 R1 L2 R2
-			__m64 i1 = _mm_cvtps_pi32(f12);									// Convert to two ints, L1R1
-			f12 = _mm_shuffle_ps(f12 , f12, _MM_SHUFFLE(1, 0, 3, 2));		// L2 R2 L1 R1
-			__m64 i2 = _mm_cvtps_pi32(f12);									// Convert to two ints, L2R2
-			__m64 sat12 = _mm_packs_pi32(i1, i2);							// Pack and saturate them to 16-bit
-			*(out++) = sat12;												// Store L1R1L2R2
-
-			// Second two stereo pairs
-			__m128 f34 = _mm_shuffle_ps(fl, fr, _MM_SHUFFLE(3, 1, 3, 1));	// L3 L4 R3 R4
-			f34 = _mm_shuffle_ps(f34 , f34, _MM_SHUFFLE(3, 1, 2, 0));		// L3 R3 L4 R4
-			__m64 i3 = _mm_cvtps_pi32(f34);									// Convert to two ints, L3R3
-			f34 = _mm_shuffle_ps(f34 , f34, _MM_SHUFFLE(1, 0, 3, 2));		// L4 R4 L3 R3
-			__m64 i4 = _mm_cvtps_pi32(f34);									// Convert to two ints, L4R4
-			__m64 sat34 = _mm_packs_pi32(i3, i4);							// Pack and saturate them to 16-bit
-			*(out++) = sat34;												// Store L3R3L4R4
-		} while(--numFrames);
-		_mm_empty();
-		return;
-	}
-#endif
 	while(numFrames--)
 	{
 		*(output++) = static_cast<int16>(Clamp(*(inputL++) * _f2si, static_cast<float>(int16_min), static_cast<float>(int16_max)));
@@ -253,52 +163,6 @@ static void InterleaveFloatToInt16(const float * MPT_RESTRICT inputL, const floa
 // Deinterleave an int16 stereo stream into two float streams.
 static void DeinterleaveInt16ToFloat(const int16 * MPT_RESTRICT input, float * MPT_RESTRICT outputL, float * MPT_RESTRICT outputR, uint32 numFrames)
 {
-#if defined(ENABLE_MMX) && defined(ENABLE_SSE)
-	// This uses __m64, so it's not available on the MSVC 64-bit compiler.
-	// But if the user runs a 64-bit operating system, they will go the floating-point path anyway.
-	if((GetProcSupport() & (PROCSUPPORT_MMX | PROCSUPPORT_SSE)) == (PROCSUPPORT_MMX | PROCSUPPORT_SSE))
-	{
-		// We may read beyond the wanted length... this works because we know that we will always work on our buffers of size MIXBUFFERSIZE
-		static_assert((MIXBUFFERSIZE & 7) == 0);
-		const __m128i *in = reinterpret_cast<const __m128i *>(input);
-		__m128 factor = _mm_set_ps1(_si2f);
-		numFrames = (numFrames + 3) / 4;
-		do
-		{
-			__m128i in16 = _mm_load_si128(in);		// Load eight int16 values, LRLRLRLR
-			in++;
-			__m128i lo = _mm_unpacklo_epi16(_mm_setzero_si128(), in16);	// 0L0R0L0R (1)
-			__m128i hi = _mm_unpackhi_epi16(_mm_setzero_si128(), in16);	// 0L0R0L0R (2)
-			lo = _mm_srai_epi32(lo, 16);			// LsRsLsRs, s = sign (1)
-			hi = _mm_srai_epi32(hi, 16);			// LsRsLsRs, s = sign (2)
-
-			__m64 lo1, lo2, hi1, hi2;
-			_mm_storel_pi(&lo1, _mm_castsi128_ps(lo));				// L1R1
-			_mm_storeh_pi(&lo2, _mm_castsi128_ps(lo));				// L2R2
-			_mm_storel_pi(&hi1, _mm_castsi128_ps(hi));				// L3R3
-			_mm_storeh_pi(&hi2, _mm_castsi128_ps(hi));				// L4R4
-			__m128 f1 = _mm_cvt_pi2ps(_mm_setzero_ps(), lo1);		// Convert to two floats, L1R1
-			__m128 f2 = _mm_cvt_pi2ps(_mm_setzero_ps(), lo2);		// Convert to two floats, L2R2
-			f1 = _mm_shuffle_ps(f1, f1, _MM_SHUFFLE(1, 0, 1, 0));	// Move to upper
-			f2 = _mm_shuffle_ps(f2, f2, _MM_SHUFFLE(1, 0, 1, 0));	// Move to upper
-			f1 = _mm_cvt_pi2ps(f1, hi1);							// Convert to two floats, L3R3 | L1R1
-			f2 = _mm_cvt_pi2ps(f2, hi2);							// Convert to two floats, L4R4 | L2R2
-
-			__m128 fl = _mm_shuffle_ps(f1, f2, _MM_SHUFFLE(0, 2, 0, 2));	// => L1L3L2L4
-			__m128 fr = _mm_shuffle_ps(f1, f2, _MM_SHUFFLE(1, 3, 1, 3));	// => R1R3R2R4
-			fl = _mm_shuffle_ps(fl, fl, _MM_SHUFFLE(3, 1, 2, 0));			// => L1L2L3L4
-			fr = _mm_shuffle_ps(fr, fr, _MM_SHUFFLE(3, 1, 2, 0));			// => R1R2R3R4
-			fl = _mm_mul_ps(fl, factor);			// Scale them
-			fr = _mm_mul_ps(fr, factor);			// Scale them
-			_mm_storeu_ps(outputL, fl);				// Store four float values, LLLL
-			_mm_storeu_ps(outputR, fr);				// Store four float values, RRRR
-			outputL += 4;
-			outputR += 4;
-		} while(--numFrames);
-		_mm_empty();
-		return;
-	}
-#endif
 	while(numFrames--)
 	{
 		*outputL++ += _si2f * static_cast<float>(*input++);
@@ -389,7 +253,7 @@ void DMOPlugin::SetParameter(PlugParamIndex index, PlugParamValue value)
 			}
 			if (fMax > fMin) value *= (fMax - fMin);
 			value += fMin;
-			Limit(value, fMin, fMax);
+			value = mpt::safe_clamp(value, fMin, fMax);
 			if (mpi.mpType != MPT_FLOAT) value = mpt::round(value);
 			m_pMediaParams->SetParam(index, value);
 		}
@@ -438,7 +302,7 @@ void DMOPlugin::Resume()
 			|| FAILED(m_pMediaObject->SetOutputType(0, &mt, 0)))
 		{
 #ifdef DMO_LOG
-			MPT_LOG(LogDebug, "DMO", U_("DMO: Failed to set I/O media type"));
+			MPT_LOG_GLOBAL(LogDebug, "DMO", U_("DMO: Failed to set I/O media type"));
 #endif
 		}
 	}
@@ -473,7 +337,7 @@ CString DMOPlugin::GetParamName(PlugParamIndex param)
 		mpi.szLabel[0] = 0;
 		if(m_pParamInfo->GetParamInfo(param, &mpi) == S_OK)
 		{
-			return mpi.szLabel;
+			return mpt::ToCString(mpi.szLabel);
 		}
 	}
 	return CString();
@@ -491,7 +355,7 @@ CString DMOPlugin::GetParamLabel(PlugParamIndex param)
 		mpi.szLabel[0] = 0;
 		if(m_pParamInfo->GetParamInfo(param, &mpi) == S_OK)
 		{
-			return mpi.szUnitText;
+			return mpt::ToCString(mpi.szUnitText);
 		}
 	}
 	return CString();
@@ -536,7 +400,7 @@ CString DMOPlugin::GetParamDisplay(PlugParamIndex param)
 						{
 							text += wcslen(text) + 1;
 						}
-						return CString(text);
+						return mpt::ToCString(text);
 					}
 					break;
 

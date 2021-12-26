@@ -171,9 +171,9 @@ void ModInstrument::Convert(MODTYPE fromType, MODTYPE toType)
 		nPPC = NOTE_MIDDLEC - 1;
 		nPPS = 0;
 
-		nNNA = NNA_NOTECUT;
-		nDCT = DCT_NONE;
-		nDNA = DNA_NOTECUT;
+		nNNA = NewNoteAction::NoteCut;
+		nDCT = DuplicateCheckType::None;
+		nDNA = DuplicateNoteAction::NoteCut;
 
 		if(nMidiChannel == MidiMappedChannel)
 		{
@@ -269,9 +269,9 @@ void ModInstrument::Sanitize(MODTYPE modType)
 	LimitMax(nMidiProgram, uint8(128));
 	LimitMax(nMidiChannel, uint8(17));
 
-	if(nNNA > NNA_NOTEFADE) nNNA = NNA_NOTECUT;
-	if(nDCT > DCT_PLUGIN) nDCT = DCT_NONE;
-	if(nDNA > DNA_NOTEFADE) nDNA = DNA_NOTECUT;
+	if(nNNA > NewNoteAction::NoteFade) nNNA = NewNoteAction::NoteCut;
+	if(nDCT > DuplicateCheckType::Plugin) nDCT = DuplicateCheckType::None;
+	if(nDNA > DuplicateNoteAction::NoteFade) nDNA = DuplicateNoteAction::NoteCut;
 
 	LimitMax(nPanSwing, uint8(64));
 	LimitMax(nVolSwing, uint8(100));

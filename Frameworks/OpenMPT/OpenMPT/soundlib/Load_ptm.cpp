@@ -172,7 +172,7 @@ bool CSoundFile::ReadPTM(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("PolyTracker");
 	m_modFormat.type = U_("ptm");
-	m_modFormat.madeWithTracker = mpt::format(U_("PolyTracker %1.%2"))(fileHeader.versionHi.get(), mpt::ufmt::hex0<2>(fileHeader.versionLo.get()));
+	m_modFormat.madeWithTracker = MPT_UFORMAT("PolyTracker {}.{}")(fileHeader.versionHi.get(), mpt::ufmt::hex0<2>(fileHeader.versionLo.get()));
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_SongFlags = SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS;
@@ -257,7 +257,7 @@ bool CSoundFile::ReadPTM(FileReader &file, ModLoadingFlags loadFlags)
 				{
 					// Beware: Effect letters are as in MOD, but portamento and volume slides behave like in S3M (i.e. fine slides share the same effect letters)
 					ConvertModCommand(m);
-				} else if(m.command < 0x10 + CountOf(effTrans))
+				} else if(m.command < 0x10 + std::size(effTrans))
 				{
 					m.command = effTrans[m.command - 0x10];
 				} else

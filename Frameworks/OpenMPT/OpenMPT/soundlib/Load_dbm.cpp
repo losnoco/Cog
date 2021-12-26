@@ -10,7 +10,6 @@
 
 #include "stdafx.h"
 #include "Loaders.h"
-#include "ChunkReader.h"
 #include "../common/mptStringBuffer.h"
 #ifndef NO_PLUGINS
 #include "plugins/DigiBoosterEcho.h"
@@ -150,7 +149,7 @@ static constexpr ModCommand::COMMAND dbmEffects[] =
 static void ConvertDBMEffect(uint8 &command, uint8 &param)
 {
 	uint8 oldCmd = command;
-	if(command < CountOf(dbmEffects))
+	if(command < std::size(dbmEffects))
 		command = dbmEffects[command];
 	else
 		command = CMD_NONE;
@@ -353,7 +352,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 
 	m_modFormat.formatName = U_("DigiBooster Pro");
 	m_modFormat.type = U_("dbm");
-	m_modFormat.madeWithTracker = mpt::format(U_("DigiBooster Pro %1.%2"))(mpt::ufmt::hex(fileHeader.trkVerHi), mpt::ufmt::hex(fileHeader.trkVerLo));
+	m_modFormat.madeWithTracker = MPT_UFORMAT("DigiBooster Pro {}.{}")(mpt::ufmt::hex(fileHeader.trkVerHi), mpt::ufmt::hex(fileHeader.trkVerLo));
 	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
 	// Name chunk
@@ -625,10 +624,10 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 		for(uint32 i = 0; i < 32; i++)
 		{
 			uint32 param = (i * 127u) / 32u;
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i     ]) = mpt::format("F0F080%1")(mpt::fmt::HEX0<2>(param));
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 32]) = mpt::format("F0F081%1")(mpt::fmt::HEX0<2>(param));
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 64]) = mpt::format("F0F082%1")(mpt::fmt::HEX0<2>(param));
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 96]) = mpt::format("F0F083%1")(mpt::fmt::HEX0<2>(param));
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i     ]) = MPT_AFORMAT("F0F080{}")(mpt::afmt::HEX0<2>(param));
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 32]) = MPT_AFORMAT("F0F081{}")(mpt::afmt::HEX0<2>(param));
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 64]) = MPT_AFORMAT("F0F082{}")(mpt::afmt::HEX0<2>(param));
+			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 96]) = MPT_AFORMAT("F0F083{}")(mpt::afmt::HEX0<2>(param));
 		}
 	}
 #endif // NO_PLUGINS

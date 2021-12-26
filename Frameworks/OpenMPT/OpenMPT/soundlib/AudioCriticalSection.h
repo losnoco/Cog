@@ -9,7 +9,11 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
+
+#if defined(MODPLUG_TRACKER)
+#include "../misc/mptMutex.h"
+#endif
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -30,23 +34,46 @@ mpt::recursive_mutex_with_lock_count & GetGlobalMutexRef();
 // Enter() and Leave() can also be called manually if needed.
 class CriticalSection
 {
+
 private:
+	
 	mpt::recursive_mutex_with_lock_count & m_refGlobalMutex;
+
 protected:
+
 	bool inSection;
+
 public:
-	enum InitialState
+
+	enum class InitialState
 	{
-		InitialLocked = 0,
-		InitialUnlocked = 1
+		Locked = 0,
+		Unlocked = 1,
 	};
+
 public:
+
+#if MPT_COMPILER_MSVC
+	_Acquires_lock_(m_refGlobalMutex.mutex)
+#endif // MPT_COMPILER_MSVC
 	CriticalSection();
+
 	CriticalSection(CriticalSection &&other) noexcept;
+
 	explicit CriticalSection(InitialState state);
+
+#if MPT_COMPILER_MSVC
+	_Acquires_lock_(m_refGlobalMutex.mutex)
+#endif // MPT_COMPILER_MSVC
 	void Enter();
+
+#if MPT_COMPILER_MSVC
+	_Requires_lock_held_(m_refGlobalMutex.mutex) _Releases_lock_(m_refGlobalMutex.mutex)
+#endif // MPT_COMPILER_MSVC
 	void Leave();
+
 	~CriticalSection();
+
 };
 
 #else // !MODPLUG_TRACKER
@@ -54,10 +81,10 @@ public:
 class CriticalSection
 {
 public:
-	enum InitialState
+	enum class InitialState
 	{
-		InitialLocked = 0,
-		InitialUnlocked = 1
+		Locked = 0,
+		Unlocked = 1,
 	};
 public:
 	CriticalSection() {}

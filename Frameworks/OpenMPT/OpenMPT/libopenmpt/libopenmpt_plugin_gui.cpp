@@ -7,25 +7,63 @@
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
-#ifdef _MSC_VER
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
-#endif // _MSC_VER
-
+#if !defined(WINVER) && !defined(_WIN32_WINDOWS)
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501 // _WIN32_WINNT_WINXP
+#endif
+#endif
+#if !defined(MPT_BUILD_RETRO)
+#if defined(_MSC_VER)
+#define MPT_WITH_MFC
+#endif
+#else
+#if defined(_WIN32_WINNT)
+#if (_WIN32_WINNT >= 0x0501)
+#if defined(_MSC_VER)
+#define MPT_WITH_MFC
+#endif
+#endif
+#endif
+#endif
+#if defined(MPT_WITH_MFC)
 #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS // Avoid binary bloat from linking unused MFC controls
+#endif // MPT_WITH_MFC
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 
+#if !defined(MPT_WITH_MFC)
+#include <fstream>
+#include <locale>
+#include <sstream>
+#include <string>
+#include <vector>
+#endif
+
+#if !defined(MPT_WITH_MFC)
+#include <windows.h>
+#endif
+
+#if defined(MPT_WITH_MFC)
 #include <afxwin.h>
 #include <afxcmn.h>
+#endif // MPT_WITH_MFC
 
+#if defined(MPT_WITH_MFC)
 #include "resource.h"
+#endif // MPT_WITH_MFC
 
 #include "libopenmpt_plugin_gui.hpp"
 
 
 namespace libopenmpt {
 namespace plugin {
+
+
+#if defined(MPT_WITH_MFC)
 
 
 class CSettingsApp : public CWinApp {
@@ -342,6 +380,11 @@ protected:
 };
 
 
+#endif // MPT_WITH_MFC
+
+
+#if defined(MPT_WITH_MFC)
+
 void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::wstring title ) {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 	CSettingsDialog dlg( s, title.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr );
@@ -354,6 +397,99 @@ void gui_show_file_info( HWND parent, std::wstring title, std::wstring info ) {
 	CInfoDialog dlg( title.c_str(), info.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr);
 	dlg.DoModal();
 }
+
+
+#else // !MPT_WITH_MFC
+
+
+static std::basic_string<TCHAR> GetTempDirectory() {
+	DWORD size = GetTempPath(0, nullptr);
+	if (size) {
+		std::vector<TCHAR> tempPath(size + 1);
+		if (GetTempPath(size + 1, tempPath.data())) {
+			return tempPath.data();
+		}
+	}
+	return {};
+}
+
+static std::basic_string<TCHAR> GetTempFilename( std::basic_string<TCHAR> prefix ) {
+	std::vector<TCHAR> buf(MAX_PATH);
+	if (GetTempFileName(GetTempDirectory().c_str(), prefix.c_str(), 0, buf.data()) == 0) {
+		return {};
+	}
+	return buf.data();
+}
+
+template <typename T>
+static std::basic_string<TCHAR> as_string( T x ) {
+	std::basic_ostringstream<TCHAR> s;
+	s.imbue(std::locale::classic());
+	s << x;
+	return s.str();
+}
+
+
+void gui_edit_settings( libopenmpt_settings * s, HWND /* parent */ , std::basic_string<TCHAR> title ) {
+	std::basic_string<TCHAR> filename = GetTempFilename( title );
+	WritePrivateProfileString( title.c_str(), TEXT("Samplerate_Hz"), as_string( s->samplerate ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("Channels"), as_string( s->channels ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("MasterGain_milliBel"), as_string( s->mastergain_millibel ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("StereoSeparation_Percent"), as_string( s->stereoseparation ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("RepeatCount"), as_string( s->repeatcount ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("InterpolationFilterLength"), as_string( s->interpolationfilterlength ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("UseAmigaResampler"), as_string( s->use_amiga_resampler ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("AmigaFilterType"), as_string( s->amiga_filter_type ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("VolumeRampingStrength"), as_string( s->ramping ).c_str(), filename.c_str() );
+	WritePrivateProfileString( title.c_str(), TEXT("VisAllowScroll"), as_string( s->vis_allow_scroll ).c_str(), filename.c_str() );
+	STARTUPINFO startupInfo = {};
+	startupInfo.cb = sizeof(startupInfo);
+	PROCESS_INFORMATION processInformation = {};
+	std::basic_string<TCHAR> command = std::basic_string<TCHAR>(TEXT("notepad.exe")) + TEXT(" ") + filename;
+	std::vector<TCHAR> commandBuf{ command.c_str(), command.c_str() + command.length() + 1 };
+	if ( CreateProcess( NULL, commandBuf.data(), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInformation ) == FALSE ) {
+		MessageBox(NULL, as_string(GetLastError()).c_str(), TEXT("fail"), 0);
+		return;
+	}
+	CloseHandle( processInformation.hThread );
+	WaitForSingleObject( processInformation.hProcess, INFINITE );
+	CloseHandle( processInformation.hProcess );
+	s->samplerate = GetPrivateProfileInt( title.c_str(), TEXT("Samplerate_Hz"), libopenmpt_settings{}.samplerate, filename.c_str() );
+	s->channels = GetPrivateProfileInt( title.c_str(), TEXT("Channels"), libopenmpt_settings{}.channels, filename.c_str() );
+	s->mastergain_millibel = GetPrivateProfileInt( title.c_str(), TEXT("MasterGain_milliBel"), libopenmpt_settings{}.mastergain_millibel, filename.c_str() );
+	s->stereoseparation = GetPrivateProfileInt( title.c_str(), TEXT("StereoSeparation_Percent"), libopenmpt_settings{}.stereoseparation, filename.c_str() );
+	s->repeatcount = GetPrivateProfileInt( title.c_str(), TEXT("RepeatCount"), libopenmpt_settings{}.repeatcount, filename.c_str() );
+	s->interpolationfilterlength = GetPrivateProfileInt( title.c_str(), TEXT("InterpolationFilterLength"), libopenmpt_settings{}.interpolationfilterlength, filename.c_str() );
+	s->use_amiga_resampler = GetPrivateProfileInt( title.c_str(), TEXT("UseAmigaResampler"), libopenmpt_settings{}.use_amiga_resampler, filename.c_str() );
+	s->amiga_filter_type = GetPrivateProfileInt( title.c_str(), TEXT("AmigaFilterType"), libopenmpt_settings{}.amiga_filter_type, filename.c_str() );
+	s->ramping = GetPrivateProfileInt( title.c_str(), TEXT("VolumeRampingStrength"), libopenmpt_settings{}.ramping, filename.c_str() );
+	s->vis_allow_scroll = GetPrivateProfileInt( title.c_str(), TEXT("VisAllowScroll"), libopenmpt_settings{}.vis_allow_scroll, filename.c_str() );
+	DeleteFile( filename.c_str() );
+}
+
+
+void gui_show_file_info( HWND /* parent */ , std::basic_string<TCHAR> title, std::basic_string<TCHAR> info ) {
+	std::basic_string<TCHAR> filename = GetTempFilename( title );
+	{
+		std::basic_ofstream<TCHAR> f( filename.c_str(), std::ios::out );
+		f << info;
+	}
+	STARTUPINFO startupInfo = {};
+	startupInfo.cb = sizeof(startupInfo);
+	PROCESS_INFORMATION processInformation = {};
+	std::basic_string<TCHAR> command = std::basic_string<TCHAR>(TEXT("notepad.exe")) + TEXT(" ") + filename;
+	std::vector<TCHAR> commandBuf{ command.c_str(), command.c_str() + command.length() + 1 };
+	if ( CreateProcess( NULL, commandBuf.data(), NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInformation ) == FALSE ) {
+		return;
+	}
+	CloseHandle( processInformation.hThread );
+	WaitForSingleObject( processInformation.hProcess, INFINITE );
+	CloseHandle( processInformation.hProcess );
+	DeleteFile( filename.c_str() );
+}
+
+
+#endif // MPT_WITH_MFC
 
 
 } // namespace plugin

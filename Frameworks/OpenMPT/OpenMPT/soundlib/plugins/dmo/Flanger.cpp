@@ -24,12 +24,17 @@ namespace DMO
 
 IMixPlugin* Flanger::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 {
-	return new (std::nothrow) Flanger(factory, sndFile, mixStruct);
+	return new (std::nothrow) Flanger(factory, sndFile, mixStruct, false);
+}
+
+IMixPlugin* Flanger::CreateLegacy(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+{
+	return new(std::nothrow) Flanger(factory, sndFile, mixStruct, true);
 }
 
 
-Flanger::Flanger(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
-	: Chorus(factory, sndFile, mixStruct)
+Flanger::Flanger(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct, const bool legacy)
+	: Chorus(factory, sndFile, mixStruct, !legacy)
 {
 	m_param[kFlangerWetDryMix] = 0.5f;
 	m_param[kFlangerWaveShape] = 1.0f;
@@ -49,11 +54,19 @@ void Flanger::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kFlangerNumParameters)
 	{
-		Limit(value, 0.0f, 1.0f);
-		if(index == kFlangerWaveShape && value < 1.0f)
-			value = 0.0f;
-		else if(index == kFlangerPhase)
+		value = mpt::safe_clamp(value, 0.0f, 1.0f);
+		if(index == kFlangerWaveShape)
+		{
+			value = mpt::round(value);
+			if(m_param[index] != value)
+			{
+				m_waveShapeMin = 0.0f;
+				m_waveShapeMax = 0.5f + value * 0.5f;
+			}
+		} else if(index == kFlangerPhase)
+		{
 			value = mpt::round(value * 4.0f) / 4.0f;
+		}
 		m_param[index] = value;
 		RecalculateChorusParams();
 	}

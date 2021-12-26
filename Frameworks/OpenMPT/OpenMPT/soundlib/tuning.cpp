@@ -11,7 +11,8 @@
 #include "stdafx.h"
 
 #include "tuning.h"
-#include "../common/mptIO.h"
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
 #include "../common/serialization_utils.h"
 #include "../common/misc_util.h"
 #include <string>
@@ -790,7 +791,7 @@ Tuning::SerializationResult CTuning::Serialize(std::ostream& outStrm) const
 		ssb.WriteItem(m_TuningName, "0", WriteStr);
 	uint16 dummyEditMask = 0xffff;
 	ssb.WriteItem(dummyEditMask, "1");
-	ssb.WriteItem(static_cast<std::underlying_type<Type>::type>(m_TuningType), "2");
+	ssb.WriteItem(mpt::to_underlying(m_TuningType), "2");
 	if (m_NoteNameMap.size() > 0)
 		ssb.WriteItem(m_NoteNameMap, "3", WriteNoteMap);
 	if (GetFineStepCount() > 0)
@@ -825,7 +826,7 @@ Tuning::SerializationResult CTuning::Serialize(std::ostream& outStrm) const
 
 bool CTuning::WriteSCL(std::ostream &f, const mpt::PathString &filename) const
 {
-	mpt::IO::WriteTextCRLF(f, mpt::format("! %1")(mpt::ToCharset(mpt::Charset::ISO8859_1, (filename.GetFileName() + filename.GetFileExt()).ToUnicode())));
+	mpt::IO::WriteTextCRLF(f, MPT_AFORMAT("! {}")(mpt::ToCharset(mpt::Charset::ISO8859_1, (filename.GetFileName() + filename.GetFileExt()).ToUnicode())));
 	mpt::IO::WriteTextCRLF(f, "!");
 	std::string name = mpt::ToCharset(mpt::Charset::ISO8859_1, GetName());
 	for(auto & c : name) { if(static_cast<uint8>(c) < 32) c = ' '; } // remove control characters
@@ -833,20 +834,20 @@ bool CTuning::WriteSCL(std::ostream &f, const mpt::PathString &filename) const
 	mpt::IO::WriteTextCRLF(f, name);
 	if(GetType() == Type::GEOMETRIC)
 	{
-		mpt::IO::WriteTextCRLF(f, mpt::format(" %1")(m_GroupSize));
+		mpt::IO::WriteTextCRLF(f, MPT_AFORMAT(" {}")(m_GroupSize));
 		mpt::IO::WriteTextCRLF(f, "!");
 		for(NOTEINDEXTYPE n = 0; n < m_GroupSize; ++n)
 		{
 			double ratio = std::pow(static_cast<double>(m_GroupRatio), static_cast<double>(n + 1) / static_cast<double>(m_GroupSize));
 			double cents = std::log2(ratio) * 1200.0;
-			mpt::IO::WriteTextCRLF(f, mpt::format(" %1 ! %2")(
-				mpt::fmt::fix(cents),
+			mpt::IO::WriteTextCRLF(f, MPT_AFORMAT(" {} ! {}")(
+				mpt::afmt::fix(cents),
 				mpt::ToCharset(mpt::Charset::ISO8859_1, GetNoteName((n + 1) % m_GroupSize, false))
 				));
 		}
 	} else if(GetType() == Type::GROUPGEOMETRIC)
 	{
-		mpt::IO::WriteTextCRLF(f, mpt::format(" %1")(m_GroupSize));
+		mpt::IO::WriteTextCRLF(f, MPT_AFORMAT(" {}")(m_GroupSize));
 		mpt::IO::WriteTextCRLF(f, "!");
 		for(NOTEINDEXTYPE n = 0; n < m_GroupSize; ++n)
 		{
@@ -854,14 +855,14 @@ bool CTuning::WriteSCL(std::ostream &f, const mpt::PathString &filename) const
 			double baseratio = static_cast<double>(GetRatio(0));
 			double ratio = static_cast<double>(last ? m_GroupRatio : GetRatio(n + 1)) / baseratio;
 			double cents = std::log2(ratio) * 1200.0;
-			mpt::IO::WriteTextCRLF(f, mpt::format(" %1 ! %2")(
-				mpt::fmt::fix(cents),
+			mpt::IO::WriteTextCRLF(f, MPT_AFORMAT(" {} ! {}")(
+				mpt::afmt::fix(cents),
 				mpt::ToCharset(mpt::Charset::ISO8859_1, GetNoteName((n + 1) % m_GroupSize, false))
 				));
 		}
 	} else if(GetType() == Type::GENERAL)
 	{
-		mpt::IO::WriteTextCRLF(f, mpt::format(" %1")(m_RatioTable.size() + 1));
+		mpt::IO::WriteTextCRLF(f, MPT_AFORMAT(" {}")(m_RatioTable.size() + 1));
 		mpt::IO::WriteTextCRLF(f, "!");
 		double baseratio = 1.0;
 		for(NOTEINDEXTYPE n = 0; n < mpt::saturate_cast<NOTEINDEXTYPE>(m_RatioTable.size()); ++n)
@@ -872,13 +873,13 @@ bool CTuning::WriteSCL(std::ostream &f, const mpt::PathString &filename) const
 		{
 			double ratio = static_cast<double>(m_RatioTable[n]) / baseratio;
 			double cents = std::log2(ratio) * 1200.0;
-			mpt::IO::WriteTextCRLF(f, mpt::format(" %1 ! %2")(
-				mpt::fmt::fix(cents),
+			mpt::IO::WriteTextCRLF(f, MPT_AFORMAT(" {} ! {}")(
+				mpt::afmt::fix(cents),
 				mpt::ToCharset(mpt::Charset::ISO8859_1, GetNoteName(n + m_NoteMin, false))
 				));
 		}
-		mpt::IO::WriteTextCRLF(f, mpt::format(" %1 ! %2")(
-			mpt::fmt::val(1),
+		mpt::IO::WriteTextCRLF(f, MPT_AFORMAT(" {} ! {}")(
+			mpt::afmt::val(1),
 			std::string()
 			));
 	} else

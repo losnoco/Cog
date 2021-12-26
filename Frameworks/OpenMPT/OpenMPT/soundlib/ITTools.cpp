@@ -181,9 +181,9 @@ uint32 ITInstrument::ConvertToIT(const ModInstrument &mptIns, bool compatExport,
 	rp = std::min(mptIns.nPanSwing, uint8(64));
 
 	// NNA Stuff
-	nna = mptIns.nNNA;
-	dct = (mptIns.nDCT < DCT_PLUGIN || !compatExport) ? mptIns.nDCT : DCT_NONE;
-	dca = mptIns.nDNA;
+	nna = static_cast<uint8>(mptIns.nNNA);
+	dct = static_cast<uint8>((mptIns.nDCT < DuplicateCheckType::Plugin || !compatExport) ? mptIns.nDCT : DuplicateCheckType::None);
+	dca = static_cast<uint8>(mptIns.nDNA);
 
 	// Pitch / Pan Separation
 	pps = mptIns.nPPS;

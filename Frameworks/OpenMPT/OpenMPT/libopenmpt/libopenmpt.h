@@ -901,6 +901,7 @@ LIBOPENMPT_API int32_t openmpt_module_get_repeat_count( openmpt_module * mod );
  *
  * \param mod The module handle to work on.
  * \return Approximate duration of current sub-song in seconds.
+ * \remarks The function may return infinity if the pattern data is too complex to evaluate.
  */
 LIBOPENMPT_API double openmpt_module_get_duration_seconds( openmpt_module * mod );
 
@@ -1122,7 +1123,7 @@ LIBOPENMPT_API const char * openmpt_module_get_metadata_keys( openmpt_module * m
  * \param mod The module handle to work on.
  * \param key Metadata item key to query. Use openmpt_module_get_metadata_keys to check for available keys.
  *          Possible keys are:
- *          - type: Module format extension (e.g. it)
+ *          - type: Module format extension (e.g. it) or another similar identifier for modules formats that typically do not use a file extension
  *          - type_long: Format name associated with the module format (e.g. Impulse Tracker)
  *          - originaltype: Module format extension (e.g. it) of the original module in case the actual type is a converted format (e.g. mo3 or gdm)
  *          - originaltype_long: Format name associated with the module format (e.g. Impulse Tracker) of the original module in case the actual type is a converted format (e.g. mo3 or gdm)

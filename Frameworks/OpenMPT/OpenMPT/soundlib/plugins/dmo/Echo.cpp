@@ -101,7 +101,7 @@ void Echo::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kEchoNumParameters)
 	{
-		Limit(value, 0.0f, 1.0f);
+		value = mpt::safe_clamp(value, 0.0f, 1.0f);
 		if(index == kEchoPanDelay)
 			value = mpt::round(value);
 		m_param[index] = value;
@@ -125,9 +125,9 @@ void Echo::PositionChanged()
 	try
 	{
 		m_delayLine.assign(m_bufferSize * 2, 0);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 		m_bufferSize = 0;
 	}
 	m_writePos = 0;

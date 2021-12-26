@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "ModSample.h"
 #include "ModInstrument.h"
@@ -28,9 +28,9 @@ struct ModChannel
 	// Envelope playback info
 	struct EnvInfo
 	{
-		FlagSet<EnvelopeFlags> flags;
 		uint32 nEnvPosition = 0;
-		int32 nEnvValueAtReleaseJump = NOT_YET_RELEASED;
+		int16 nEnvValueAtReleaseJump = NOT_YET_RELEASED;
+		FlagSet<EnvelopeFlags> flags;
 
 		void Reset()
 		{
@@ -60,43 +60,46 @@ struct ModChannel
 	mixsample_t nROfs, nLOfs;
 	uint32 nRampLength;
 
-	const ModSample *pModSample;         // Currently assigned sample slot (may already be stopped)
+	const ModSample *pModSample;  // Currently assigned sample slot (may already be stopped)
 	Paula::State paulaState;
 
 	// Information not used in the mixer
-	const ModInstrument *pModInstrument; // Currently assigned instrument slot
-	SmpLength prevNoteOffset;            // Offset for instrument-less notes for ProTracker/ScreamTracker
-	SmpLength oldOffset;
-	FlagSet<ChannelFlags> dwOldFlags;    // Flags from previous tick
+	const ModInstrument *pModInstrument;  // Currently assigned instrument slot
+	SmpLength prevNoteOffset;             // Offset for instrument-less notes for ProTracker/ScreamTracker
+	SmpLength oldOffset;                  // Offset command memory
+	FlagSet<ChannelFlags> dwOldFlags;     // Flags from previous tick
 	int32 newLeftVol, newRightVol;
 	int32 nRealVolume, nRealPan;
 	int32 nVolume, nPan, nFadeOutVol;
-	int32 nPeriod;                    // Frequency in Hz if !CSoundFile::PeriodsAreFrequencies() or using custom tuning, 4x Amiga periods otherwise
+	int32 nPeriod;  // Frequency in Hz if CSoundFile::PeriodsAreFrequencies() or using custom tuning, 4x Amiga periods otherwise
 	int32 nC5Speed, nPortamentoDest;
 	int32 cachedPeriod, glissandoPeriod;
-	int32 nCalcVolume;                // Calculated channel volume, 14-Bit (without global volume, pre-amp etc applied) - for MIDI macros
-	EnvInfo VolEnv, PanEnv, PitchEnv; // Envelope playback info
-	int32 nGlobalVol;                 // Channel volume (CV in ITTECH.TXT) 0...64
-	int32 nInsVol;                    // Sample / Instrument volume (SV * IV in ITTECH.TXT) 0...64
-	int32 nFineTune, nTranspose;
-	int32 nPortamentoSlide, nAutoVibDepth;
-	uint32 nEFxOffset;                // Offset memory for Invert Loop (EFx, .MOD only)
+	int32 nCalcVolume;                 // Calculated channel volume, 14-Bit (without global volume, pre-amp etc applied) - for MIDI macros
+	EnvInfo VolEnv, PanEnv, PitchEnv;  // Envelope playback info
+	int32 nGlobalVol;                  // Channel volume (CV in ITTECH.TXT) 0...64
+	int32 nInsVol;                     // Sample / Instrument volume (SV * IV in ITTECH.TXT) 0...64
+	int32 nAutoVibDepth;
+	uint32 nEFxOffset;  // Offset memory for Invert Loop (EFx, .MOD only)
+	ROWINDEX nPatternLoop;
+	uint16 portamentoSlide;
+	int16 nTranspose;
+	int16 nFineTune;
+	int16 microTuning;  // Micro-tuning / MIDI pitch wheel command
 	int16 nVolSwing, nPanSwing;
 	int16 nCutSwing, nResSwing;
-	uint16 nRestorePanOnNewNote;      //If > 0, nPan should be set to nRestorePanOnNewNote - 1 on new note. Used to recover from pan swing and IT sample / instrument panning. High bit set = surround
-	int16 nRetrigCount, nRetrigParam;
-	ROWINDEX nPatternLoop;
+	uint16 nRestorePanOnNewNote;  // If > 0, nPan should be set to nRestorePanOnNewNote - 1 on new note. Used to recover from pan swing and IT sample / instrument panning. High bit set = surround
 	CHANNELINDEX nMasterChn;
 	ModCommand rowCommand;
 	// 8-bit members
 	ResamplingMode resamplingMode;
-	uint8 nRestoreResonanceOnNewNote; // See nRestorePanOnNewNote
-	uint8 nRestoreCutoffOnNewNote;    // ditto
+	uint8 nRestoreResonanceOnNewNote;  // See nRestorePanOnNewNote
+	uint8 nRestoreCutoffOnNewNote;     // ditto
 	uint8 nNote;
 	NewNoteAction nNNA;
-	uint8 nLastNote;                  // Last note, ignoring note offs and cuts - for MIDI macros
-	uint8 nArpeggioLastNote, nArpeggioBaseNote; // For plugin arpeggio
+	uint8 nLastNote;  // Last note, ignoring note offs and cuts - for MIDI macros
+	uint8 nArpeggioLastNote, nArpeggioBaseNote;  // For plugin arpeggio
 	uint8 nNewNote, nNewIns, nOldIns, nCommand, nArpeggio;
+	uint8 nRetrigParam, nRetrigCount;
 	uint8 nOldVolumeSlide, nOldFineVolUpDown;
 	uint8 nOldPortaUp, nOldPortaDown, nOldFinePortaUpDown, nOldExtraFinePortaUpDown;
 	uint8 nOldPanSlide, nOldChnVolSlide;
@@ -114,11 +117,14 @@ struct ModChannel
 	uint8 nLeftVU, nRightVU;
 	uint8 nActiveMacro;
 	FilterMode nFilterMode;
-	uint8 nEFxSpeed, nEFxDelay; // memory for Invert Loop (EFx, .MOD only)
-	uint8 nNoteSlideCounter, nNoteSlideSpeed, nNoteSlideStep; // IMF / PTM Note Slide
-	uint8 lastZxxParam; // Memory for \xx slides
-	bool isFirstTick : 1;
-	bool isPreviewNote : 1;
+	uint8 nEFxSpeed, nEFxDelay;              // memory for Invert Loop (EFx, .MOD only)
+	uint8 noteSlideParam, noteSlideCounter;  // IMF / PTM Note Slide
+	uint8 lastZxxParam;                      // Memory for \xx slides
+	bool isFirstTick : 1;                    // Execute tick-0 effects on this channel? (condition differs between formats due to Pattern Delay commands)
+	bool triggerNote : 1;                    // Trigger note on this tick on this channel if there is one?
+	bool isPreviewNote : 1;                  // Notes preview in editor
+	bool isPaused : 1;                       // Don't mix or increment channel position, but keep the note alive
+	bool portaTargetReached : 1;             // Tone portamento is finished
 
 	//-->Variables used to make user-definable tuning modes work with pattern effects.
 	//If true, freq should be recalculated in ReadNote() on first tick.
@@ -199,30 +205,28 @@ struct ModChannel
 
 	// IT command S73-S7E
 	void InstrumentControl(uint8 param, const CSoundFile &sndFile);
+
+	int32 GetMIDIPitchBend() const noexcept { return (static_cast<int32>(microTuning) + 0x8000) / 4; }
 };
 
 
 // Default pattern channel settings
 struct ModChannelSettings
 {
+#ifdef MODPLUG_TRACKER
+	static constexpr uint32 INVALID_COLOR = 0xFFFFFFFF;
+	uint32 color = INVALID_COLOR;   // For pattern editor
+#endif                              // MODPLUG_TRACKER
 	FlagSet<ChannelFlags> dwFlags;  // Channel flags
-	uint16 nPan;                    // Initial pan (0...256)
-	uint16 nVolume;                 // Initial channel volume (0...64)
-	PLUGINDEX nMixPlugin;           // Assigned plugin
-	mpt::charbuf<MAX_CHANNELNAME> szName; // Channel name
+	uint16 nPan = 128;              // Initial pan (0...256)
+	uint16 nVolume = 64;            // Initial channel volume (0...64)
+	PLUGINDEX nMixPlugin = 0;       // Assigned plugin
 
-	ModChannelSettings()
-	{
-		Reset();
-	}
+	mpt::charbuf<MAX_CHANNELNAME> szName;  // Channel name
 
 	void Reset()
 	{
-		dwFlags.reset();
-		nPan = 128;
-		nVolume = 64;
-		nMixPlugin = 0;
-		szName = "";
+		*this = {};
 	}
 };
 

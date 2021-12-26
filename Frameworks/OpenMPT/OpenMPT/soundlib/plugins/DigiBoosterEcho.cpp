@@ -24,8 +24,6 @@ IMixPlugin* DigiBoosterEcho::Create(VSTPluginLib &factory, CSoundFile &sndFile, 
 
 DigiBoosterEcho::DigiBoosterEcho(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
-	, m_bufferSize(0)
-	, m_writePos(0)
 	, m_sampleRate(sndFile.GetSampleRate())
 	, m_chunk(PluginChunk::Default())
 {
@@ -89,9 +87,9 @@ void DigiBoosterEcho::SaveAllParameters()
 	{
 		m_pMixStruct->pluginData.resize(sizeof(m_chunk));
 		memcpy(m_pMixStruct->pluginData.data(), &m_chunk, sizeof(m_chunk));
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 		m_pMixStruct->pluginData.clear();
 	}
 }
@@ -124,7 +122,7 @@ void DigiBoosterEcho::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kEchoNumParameters)
 	{
-		m_chunk.param[index] = mpt::saturate_round<uint8>(value * 255.0f);
+		m_chunk.param[index] = mpt::saturate_round<uint8>(mpt::safe_clamp(value, 0.0f, 1.0f) * 255.0f);
 		RecalculateEchoParams();
 	}
 }
@@ -145,9 +143,9 @@ void DigiBoosterEcho::PositionChanged()
 	try
 	{
 		m_delayLine.assign(m_bufferSize * 2, 0);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 		m_bufferSize = 0;
 	}
 	m_writePos = 0;

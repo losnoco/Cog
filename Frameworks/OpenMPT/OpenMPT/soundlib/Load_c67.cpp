@@ -1,11 +1,11 @@
 /*
-* Load_c67.cpp
-* ------------
-* Purpose: C67 (CDFM Composer) module loader
-* Notes  : C67 is the composer format; 670 files can be converted back to C67 using the converter that comes with CDFM.
-* Authors: OpenMPT Devs
-* The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
-*/
+ * Load_c67.cpp
+ * ------------
+ * Purpose: C67 (CDFM Composer) module loader
+ * Notes  : C67 is the composer format; 670 files can be converted back to C67 using the converter that comes with CDFM.
+ * Authors: OpenMPT Devs
+ * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
+ */
 
 
 #include "stdafx.h"

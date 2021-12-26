@@ -13,6 +13,9 @@
 #include "S3MTools.h"
 #include "ITTools.h"
 #ifndef MODPLUG_NO_FILESAVE
+#include "mpt/io/base.hpp"
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
 #include "../common/mptFileIO.h"
 #ifdef MODPLUG_TRACKER
 #include "../mptrack/TrackerSettings.h"
@@ -55,10 +58,15 @@ void CSoundFile::S3MConvert(ModCommand &m, bool fromIT)
 	case 'X': m.command = CMD_PANNING8; break;
 	case 'Y': m.command = CMD_PANBRELLO; break;
 	case 'Z': m.command = CMD_MIDI; break;
-	case '\\': m.command = static_cast<ModCommand::COMMAND>(fromIT ? CMD_SMOOTHMIDI : CMD_MIDI); break;
-	// Chars under 0x40 don't save properly, so map : to ] and # to [.
-	case ']': m.command = CMD_DELAYCUT; break;
-	case '[': m.command = CMD_XPARAM; break;
+	case '\\': m.command = fromIT ? CMD_SMOOTHMIDI : CMD_MIDI; break;
+	// Chars under 0x40 don't save properly, so the following commands don't map to their pattern editor representations
+	case ']': m.command = fromIT ? CMD_DELAYCUT : CMD_NONE; break;
+	case '[': m.command = fromIT ? CMD_XPARAM : CMD_NONE; break;
+	case '^': m.command = fromIT ? CMD_FINETUNE : CMD_NONE; break;
+	case '_': m.command = fromIT ? CMD_FINETUNE_SMOOTH : CMD_NONE; break;
+	// BeRoTracker extensions
+	case '1' + 0x41: m.command = fromIT ? CMD_KEYOFF : CMD_NONE; break;
+	case '2' + 0x41: m.command = fromIT ? CMD_SETENVPOSITION : CMD_NONE; break;
 	default: m.command = CMD_NONE;
 	}
 }
@@ -67,6 +75,7 @@ void CSoundFile::S3MConvert(ModCommand &m, bool fromIT)
 
 void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool compatibilityExport) const
 {
+	const bool extendedIT = !compatibilityExport && toIT;
 	switch(command)
 	{
 	case CMD_DUMMY:           command = (param ? '@' : 0); break;
@@ -110,10 +119,10 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 	case CMD_PANBRELLO: command = 'Y'; break;
 	case CMD_MIDI:      command = 'Z'; break;
 	case CMD_SMOOTHMIDI:
-		if(compatibilityExport || !toIT)
-			command = 'Z';
-		else
+		if(extendedIT)
 			command = '\\';
+		else
+			command = 'Z';
 		break;
 	case CMD_XFINEPORTAUPDOWN:
 		switch(param & 0xF0)
@@ -137,10 +146,16 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 		return;
 	// Chars under 0x40 don't save properly, so map : to ] and # to [.
 	case CMD_DELAYCUT:
-		command = (compatibilityExport || !toIT) ? 0 : ']';
+		command = extendedIT ? ']' : 0;
 		break;
 	case CMD_XPARAM:
-		command = (compatibilityExport || !toIT) ? 0 : '[';
+		command = extendedIT ? '[' : 0;
+		break;
+	case CMD_FINETUNE:
+		command = extendedIT ? '^' : 0;
+		break;
+	case CMD_FINETUNE_SMOOTH:
+		command = extendedIT ? '_' : 0;
 		break;
 	default:
 		command = 0;
@@ -154,21 +169,6 @@ void CSoundFile::S3MSaveConvert(uint8 &command, uint8 &param, bool toIT, bool co
 }
 
 #endif // MODPLUG_NO_FILESAVE
-
-// Pattern decoding flags
-enum S3MPattern
-{
-	s3mEndOfRow			= 0x00,
-	s3mChannelMask		= 0x1F,
-	s3mNotePresent		= 0x20,
-	s3mVolumePresent	= 0x40,
-	s3mEffectPresent	= 0x80,
-	s3mAnyPresent		= 0xE0,
-
-	s3mNoteOff			= 0xFE,
-	s3mNoteNone			= 0xFF,
-};
-
 
 static bool ValidateHeader(const S3MFileHeader &fileHeader)
 {
@@ -239,8 +239,13 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	bool nonCompatTracker = false;
 	bool isST3 = false;
 	bool isSchism = false;
+	const int32 schismDateVersion = SchismTrackerEpoch + ((fileHeader.cwtv == 0x4FFF) ? fileHeader.reserved2 : (fileHeader.cwtv - 0x4050));
 	switch(fileHeader.cwtv & S3MFileHeader::trackerMask)
 	{
+	case S3MFileHeader::trkAkord & S3MFileHeader::trackerMask:
+		if(fileHeader.cwtv == S3MFileHeader::trkAkord)
+			madeWithTracker = U_("Akord");
+		break;
 	case S3MFileHeader::trkScreamTracker:
 		if(fileHeader.cwtv == S3MFileHeader::trkST3_20 && fileHeader.special == 0 && (fileHeader.ordNum & 0x0F) == 0 && fileHeader.ultraClicks == 0 && (fileHeader.flags & ~0x50) == 0)
 		{
@@ -263,7 +268,8 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			madeWithTracker = U_("Velvet Studio");
 		} else
 		{
-			// ST3.20 should only ever write ultra-click values 16, 24 and 32 (corresponding to 8, 12 and 16 in the GUI), ST3.01/3.03 should only write 0.
+			// ST3.20 should only ever write ultra-click values 16, 24 and 32 (corresponding to 8, 12 and 16 in the GUI), ST3.01/3.03 should only write 0,
+			// though several ST3.01/3.03 files with ultra-click values of 16 have been found as well.
 			// However, we won't fingerprint these values here as it's unlikely that there is any other tracker out there disguising as ST3 and using a strange ultra-click value.
 			// Also, re-saving a file with a strange ultra-click value in ST3 doesn't fix this value unless the user manually changes it, or if it's below 16.
 			madeWithTracker = U_("Scream Tracker");
@@ -283,7 +289,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			formatTrackerStr = true;
 		} else
 		{
-			madeWithTracker = mpt::format(U_("Impulse Tracker 2.14p%1"))(fileHeader.cwtv - S3MFileHeader::trkIT2_14);
+			madeWithTracker = MPT_UFORMAT("Impulse Tracker 2.14p{}")(fileHeader.cwtv - S3MFileHeader::trkIT2_14);
 		}
 		if(fileHeader.cwtv >= S3MFileHeader::trkIT2_07 && fileHeader.reserved3 != 0)
 		{
@@ -295,6 +301,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			m_FileHistory.push_back(hist);
 		}
 		nonCompatTracker = true;
+		m_playBehaviour.set(kPeriodsAreHertz);
 		m_playBehaviour.set(kITRetrigger);
 		m_playBehaviour.set(kITShortSampleRetrig);
 		m_playBehaviour.set(kST3SampleSwap);  // Not exactly like ST3, but close enough
@@ -310,7 +317,9 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			madeWithTracker = GetSchismTrackerVersion(fileHeader.cwtv, fileHeader.reserved2);
 			m_nMinPeriod = 1;
 			isSchism = true;
-			if(fileHeader.cwtv >= SchismVersionFromDate<2016, 05, 13>::Version(S3MFileHeader::trkSchismTracker))
+			if(schismDateVersion >= SchismVersionFromDate<2021, 05, 02>::date)
+				m_playBehaviour.set(kPeriodsAreHertz);
+			if(schismDateVersion >= SchismVersionFromDate<2016, 05, 13>::date)
 				m_playBehaviour.set(kITShortSampleRetrig);
 		}
 		nonCompatTracker = true;
@@ -338,10 +347,10 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	}
 	if(formatTrackerStr)
 	{
-		madeWithTracker = mpt::format(U_("%1 %2.%3"))(madeWithTracker, (fileHeader.cwtv & 0xF00) >> 8, mpt::ufmt::hex0<2>(fileHeader.cwtv & 0xFF));
+		madeWithTracker = MPT_UFORMAT("{} {}.{}")(madeWithTracker, (fileHeader.cwtv & 0xF00) >> 8, mpt::ufmt::hex0<2>(fileHeader.cwtv & 0xFF));
 	}
 
-	m_modFormat.formatName = U_("ScreamTracker 3");
+	m_modFormat.formatName = U_("Scream Tracker 3");
 	m_modFormat.type = U_("s3m");
 	m_modFormat.madeWithTracker = std::move(madeWithTracker);
 	m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::Charset::Windows1252 : mpt::Charset::CP437;
@@ -354,6 +363,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		m_playBehaviour.reset(kST3VibratoMemory);
 		m_playBehaviour.reset(KST3PortaAfterArpeggio);
 		m_playBehaviour.reset(kST3OffsetWithoutInstrument);
+		m_playBehaviour.reset(kApplyUpperPeriodLimit);
 	}
 
 	if((fileHeader.cwtv & S3MFileHeader::trackerMask) > S3MFileHeader::trkScreamTracker)
@@ -424,7 +434,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Approximately as loud as in DOSBox and a real SoundBlaster 16
 	m_nVSTiVolume = 36;
-	if(isSchism && fileHeader.cwtv < SchismVersionFromDate<2018, 11, 12>::Version(S3MFileHeader::trkSchismTracker))
+	if(isSchism && schismDateVersion < SchismVersionFromDate<2018, 11, 12>::date)
 		m_nVSTiVolume = 64;
 
 	// Channel setup
@@ -483,6 +493,8 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Reading sample headers
 	m_nSamples = std::min(static_cast<SAMPLEINDEX>(fileHeader.smpNum), static_cast<SAMPLEINDEX>(MAX_SAMPLES - 1));
+	bool anySamples = false;
+	uint16 gusAddresses = 0;
 	for(SAMPLEINDEX smp = 0; smp < m_nSamples; smp++)
 	{
 		S3MSampleHeader sampleHeader;
@@ -497,12 +509,35 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 		if(sampleHeader.sampleType < S3MSampleHeader::typeAdMel)
 		{
-			const uint32 sampleOffset = (sampleHeader.dataPointer[1] << 4) | (sampleHeader.dataPointer[2] << 12) | (sampleHeader.dataPointer[0] << 20);
+			const uint32 sampleOffset = sampleHeader.GetSampleOffset();
 			if((loadFlags & loadSampleData) && sampleHeader.length != 0 && file.Seek(sampleOffset))
 			{
 				sampleHeader.GetSampleFormat((fileHeader.formatVersion == S3MFileHeader::oldVersion)).ReadSample(Samples[smp + 1], file);
+				anySamples = true;
 			}
+			gusAddresses |= sampleHeader.gusAddress;
 		}
+	}
+
+	if(isST3 && anySamples && !gusAddresses && fileHeader.cwtv != S3MFileHeader::trkST3_00)
+	{
+		// All Scream Tracker versions except for some probably early revisions of Scream Tracker 3.00 write GUS addresses. GUS support might not have existed at that point (1992).
+		// Hence if a file claims to be written with ST3 (but not ST3.00), but has no GUS addresses, we deduce that it must be written by some other software (e.g. some PSM -> S3M conversions)
+		isST3 = false;
+		m_modFormat.madeWithTracker = U_("Unknown");
+	} else if(isST3)
+	{
+		// Saving an S3M file in ST3 with the Gravis Ultrasound driver loaded will write a unique GUS memory address for each non-empty sample slot (and 0 for unused slots).
+		// Re-saving that file in ST3 with the SoundBlaster driver loaded will reset the GUS address for all samples to 0 (unused) or 1 (used).
+		// The first used sample will also have an address of 1 with the GUS driver.
+		// So this is a safe way of telling if the file was last saved with the GUS driver loaded or not if there's more than one sample.
+		const bool useGUS = gusAddresses > 1;
+		m_playBehaviour.set(kST3PortaSampleChange, useGUS);
+		m_playBehaviour.set(kST3SampleSwap, !useGUS);
+		m_modFormat.madeWithTracker += useGUS ? UL_(" (GUS)") : UL_(" (SB)");
+		// ST3's GUS driver doesn't use this value. Ignoring it fixes the balance between FM and PCM samples (e.g. in Rotagilla by Manwe)
+		if(useGUS)
+			m_nSamplePreAmp = 48;
 	}
 
 	// Try to find out if Zxx commands are supposed to be panning commands (PixPlay).
@@ -532,7 +567,9 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 
 		// Skip pattern length indication.
 		// Some modules, for example http://aminet.net/mods/8voic/s3m_hunt.lha seem to have a wrong pattern length -
-		// If you strictly adhere the pattern length, you won't read the patterns correctly in that module.
+		// If you strictly adhere the pattern length, you won't read some patterns (e.g. 17) correctly in that module.
+		// It's most likely a broken copy because there are other versions of the track which don't have this issue.
+		// Still, we don't really need this information, so we just ignore it.
 		file.Skip(2);
 
 		// Read pattern data
@@ -788,7 +825,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 		mpt::IO::Offset patOffset = mpt::IO::TellWrite(f);
 		if(patOffset > 0xFFFF0)
 		{
-			AddToLog(LogError, mpt::format(U_("Too much pattern data! Writing patterns failed starting from pattern %1."))(pat));
+			AddToLog(LogError, MPT_UFORMAT("Too much pattern data! Writing patterns failed starting from pattern {}.")(pat));
 			break;
 		}
 		MPT_ASSERT((patOffset % 16) == 0);
@@ -830,7 +867,6 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 
 						if(note == NOTE_NONE)
 						{
-							// No Note, or note is too low
 							note = s3mNoteNone;
 						} else if(ModCommand::IsSpecialNote(note))
 						{
@@ -964,7 +1000,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 			// Write sample data
 			if(sampleDataOffset > 0xFFFFFF0)
 			{
-				AddToLog(LogError, mpt::format(U_("Too much sample data! Writing samples failed starting from sample %1."))(realSmp));
+				AddToLog(LogError, MPT_UFORMAT("Too much sample data! Writing samples failed starting from sample {}.")(realSmp));
 				break;
 			}
 
@@ -991,7 +1027,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 		{
 			if(channelType[chn][S3MChannelType::kPCM] && channelType[chn][S3MChannelType::kAdlib])
 			{
-				AddToLog(LogWarning, mpt::format(U_("Pattern channel %1 constains both samples and OPL instruments, which is not supported by Scream Tracker 3."))(chn + 1));
+				AddToLog(LogWarning, MPT_UFORMAT("Pattern channel {} constains both samples and OPL instruments, which is not supported by Scream Tracker 3.")(chn + 1));
 			}
 			// ST3 only supports 16 PCM channels, so if channels 17-32 are used,
 			// they must be mapped to the same "internal channels" as channels 1-16.
@@ -1019,11 +1055,11 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 	}
 	if(sampleCh > 16)
 	{
-		AddToLog(LogWarning, mpt::format(U_("This module has more than 16 (%1) sample channels, which is not supported by Scream Tracker 3."))(sampleCh));
+		AddToLog(LogWarning, MPT_UFORMAT("This module has more than 16 ({}) sample channels, which is not supported by Scream Tracker 3.")(sampleCh));
 	}
 	if(adlibCh > 9)
 	{
-		AddToLog(LogWarning, mpt::format(U_("This module has more than 9 (%1) OPL channels, which is not supported by Scream Tracker 3."))(adlibCh));
+		AddToLog(LogWarning, MPT_UFORMAT("This module has more than 9 ({}) OPL channels, which is not supported by Scream Tracker 3.")(adlibCh));
 	}
 
 	mpt::IO::SeekAbsolute(f, 0);

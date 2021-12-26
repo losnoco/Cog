@@ -82,8 +82,8 @@ void MIDIMacroConfig::CreateParameteredMacro(Macro &parameteredMacro, Parametere
 	case kSFxReso:       mpt::String::WriteAutoBuf(parameteredMacro) = "F0F001z"; break;
 	case kSFxFltMode:    mpt::String::WriteAutoBuf(parameteredMacro) = "F0F002z"; break;
 	case kSFxDryWet:     mpt::String::WriteAutoBuf(parameteredMacro) = "F0F003z"; break;
-	case kSFxCC:         mpt::String::WriteAutoBuf(parameteredMacro) = mpt::format("Bc%1z")(mpt::fmt::HEX0<2>(subType & 0x7F)); break;
-	case kSFxPlugParam:  mpt::String::WriteAutoBuf(parameteredMacro) = mpt::format("F0F%1z")(mpt::fmt::HEX0<3>(std::min(subType, 0x17F) + 0x80)); break;
+	case kSFxCC:         mpt::String::WriteAutoBuf(parameteredMacro) = MPT_AFORMAT("Bc{}z")(mpt::afmt::HEX0<2>(subType & 0x7F)); break;
+	case kSFxPlugParam:  mpt::String::WriteAutoBuf(parameteredMacro) = MPT_AFORMAT("F0F{}z")(mpt::afmt::HEX0<3>(std::min(subType, 0x17F) + 0x80)); break;
 	case kSFxChannelAT:  mpt::String::WriteAutoBuf(parameteredMacro) = "Dcz"; break;
 	case kSFxPolyAT:     mpt::String::WriteAutoBuf(parameteredMacro) = "Acnz"; break;
 	case kSFxPitch:      mpt::String::WriteAutoBuf(parameteredMacro) = "Ec00z"; break;
@@ -109,42 +109,54 @@ void MIDIMacroConfig::CreateFixedMacro(Macro (&fixedMacros)[128], FixedMacro mac
 {
 	for(uint32 i = 0; i < 128; i++)
 	{
-		const char *str = "";
 		uint32 param = i;
 		switch(macroType)
 		{
-		case kZxxUnused: str = ""; break;
+		case kZxxUnused:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = "";
+			break;
 		case kZxxReso4Bit:
 			param = i * 8;
 			if(i < 16)
-				str = "F0F001%1";
+				mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("F0F001{}")(mpt::afmt::HEX0<2>(param));
 			else
-				str = "";
+				mpt::String::WriteAutoBuf(fixedMacros[i]) = "";
 			break;
-		case kZxxReso7Bit: str = "F0F001%1"; break;
-		case kZxxCutoff:   str = "F0F000%1"; break;
-		case kZxxFltMode:  str = "F0F002%1"; break;
+		case kZxxReso7Bit:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("F0F001{}")(mpt::afmt::HEX0<2>(param));
+			break;
+		case kZxxCutoff:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("F0F000{}")(mpt::afmt::HEX0<2>(param));
+			break;
+		case kZxxFltMode:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("F0F002{}")(mpt::afmt::HEX0<2>(param));
+			break;
 		case kZxxResoFltMode:
 			param = (i & 0x0F) * 8;
 			if(i < 16)
-				str = "F0F001%1";
+				mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("F0F001{}")(mpt::afmt::HEX0<2>(param));
 			else if(i < 32)
-				str = "F0F002%1";
+				mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("F0F002{}")(mpt::afmt::HEX0<2>(param));
 			else
-				str = "";
+				mpt::String::WriteAutoBuf(fixedMacros[i]) = "";
 			break;
-		case kZxxChannelAT:  str = "Dc%1"; break;
-		case kZxxPolyAT:     str = "Acn%1"; break;
-		case kZxxPitch:      str = "Ec00%1"; break;
-		case kZxxProgChange: str = "Cc%1"; break;
-
+		case kZxxChannelAT:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("Dc{}")(mpt::afmt::HEX0<2>(param));
+			break;
+		case kZxxPolyAT:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("Acn{}")(mpt::afmt::HEX0<2>(param));
+			break;
+		case kZxxPitch:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("Ec00{}")(mpt::afmt::HEX0<2>(param));
+			break;
+		case kZxxProgChange:
+			mpt::String::WriteAutoBuf(fixedMacros[i]) = MPT_AFORMAT("Cc{}")(mpt::afmt::HEX0<2>(param));
+			break;
 		case kZxxCustom:
 		default:
 			MPT_ASSERT_NOTREACHED();
 			continue;
 		}
-
-		mpt::String::WriteAutoBuf(fixedMacros[i]) = mpt::format(str)(mpt::fmt::HEX0<2>(param));
 	}
 }
 
@@ -260,7 +272,7 @@ int MIDIMacroConfig::MacroToPlugParam(uint32 macroIndex) const
 	if ((param[1] >= '0') && (param[1] <= '9')) code += (param[1] - '0'); else
 		if ((param[1] >= 'A') && (param[1] <= 'F')) code += (param[1] - 'A' + 0x0A);
 
-	if (macro.size() >= 4 && macro.at(3) == '0')
+	if (macro.size() >= 4 && macro[3] == '0')
 		return (code - 128);
 	else
 		return (code + 128);
@@ -357,7 +369,8 @@ void MIDIMacroConfig::Sanitize()
 {
 	for(auto &macro : *this)
 	{
-		mpt::String::FixNullString(macro);
+		macro[MACRO_LENGTH - 1] = '\0';
+		std::fill(std::find(std::begin(macro), std::end(macro), '\0'), std::end(macro), '\0');
 	}
 }
 

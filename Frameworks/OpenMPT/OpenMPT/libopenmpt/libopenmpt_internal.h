@@ -12,16 +12,6 @@
 
 #include "libopenmpt_config.h"
 
-#if defined(NO_LIBOPENMPT_C)
-#undef LIBOPENMPT_API
-#define LIBOPENMPT_API     LIBOPENMPT_API_HELPER_LOCAL
-#endif
-
-#if defined(NO_LIBOPENMPT_CXX)
-#undef LIBOPENMPT_CXX_API
-#define LIBOPENMPT_CXX_API LIBOPENMPT_API_HELPER_LOCAL
-#endif
-
 #ifdef __cplusplus
 #if defined(LIBOPENMPT_BUILD_DLL) || defined(LIBOPENMPT_USE_DLL)
 #if defined(_MSC_VER) && !defined(_DLL)
@@ -31,6 +21,5 @@
 #endif
 #endif
 #endif
-
 
 #endif /* LIBOPENMPT_INTERNAL_H */

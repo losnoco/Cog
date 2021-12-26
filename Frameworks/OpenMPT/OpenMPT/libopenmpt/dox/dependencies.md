@@ -9,15 +9,15 @@ Dependencies
 ### libopenmpt
 
  *  Supported compilers for building libopenmpt:
-     *  **Microsoft Visual Studio 2017** or higher, running on a x86-64 build
+     *  **Microsoft Visual Studio 2017** or higher, running on a amd64 build
         system (other target systems are supported)
-     *  **GCC 7.1** or higher
-     *  **Clang 5** or higher
-     *  **MinGW-W64 7.1** or higher (it is recommended to preferably use
+     *  **GCC 8.1** or higher
+     *  **Clang 7** or higher
+     *  **MinGW-W64 8.1** or higher (it is recommended to preferably use
         posix threading model as opposed to win32 threading model, or at least
         have mingw-std-threads available otherwise)
      *  **emscripten 1.39.1** or higher
-     *  **DJGPP GCC 7.2** or higher
+     *  **DJGPP GCC 8.1** or higher
      *  any other **C++17 compliant** compiler
         
         libopenmpt makes the following assumptions about the C++ implementation
@@ -41,7 +41,7 @@ Dependencies
          *  `signed` integer overflow is undefined
          *  `float` and `double` can be non-IEEE754
         
-        libopenmpt can optionally support for certain incomplete C++
+        libopenmpt can optionally support certain incomplete C++
         implementations:
          *  platforms without `wchar_t` support (like DJGPP)
          *  platforms without working `std::random_device` (like Emscripten when
@@ -70,14 +70,6 @@ Dependencies
 
 ### openmpt123
 
- *  Supported compilers for building openmpt123:
-     *  **Microsoft Visual Studio 2017** or higher, running on a x86-64 build
-        system (other target systems are supported)
-     *  **GCC 7.1** or higher
-     *  **Clang 5** or higher
-     *  **MinGW-W64 7.1** or higher
-     *  **DJGPP GCC 7.2** or higher
-     *  any **C++17 compliant** compiler
  *  Live sound output requires one of:
      *  **PulseAudio**
      *  **SDL 2**

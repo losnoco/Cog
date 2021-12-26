@@ -12,8 +12,9 @@
 #include "stdafx.h"
 #include "Loaders.h"
 #include "WAVTools.h"
-#include "../soundbase/SampleFormatConverters.h"
-#include "../soundbase/SampleFormatCopy.h"
+#include "openmpt/soundbase/SampleConvert.hpp"
+#include "openmpt/soundbase/SampleDecode.hpp"
+#include "SampleCopy.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -36,7 +37,7 @@ static bool CopyWavChannel(ModSample &sample, const FileReader &file, size_t cha
 		return false;
 	}
 
-	const std::byte *inBuf = file.GetRawData<std::byte>();
+	const std::byte *inBuf = file.GetRawData<std::byte>().data();
 	CopySample<SampleConversion>(reinterpret_cast<typename SampleConversion::output_t*>(sample.samplev()), sample.nLength, 1, inBuf + offset, file.BytesLeft() - offset, numChannels, conv);
 	return true;
 }

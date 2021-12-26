@@ -135,7 +135,7 @@
 	#define VER_PRIVATEBUILD_STR "unknwon"
 #endif
 
-#if defined(MPT_BUILD_TARGET_XP) || defined(MPT_BUILD_VER_SPECIAL_PREFIX) || defined(MPT_BUILD_VER_SPECIAL_SUFFIX)
+#if defined(MPT_BUILD_RETRO) || defined(MPT_BUILD_VER_SPECIAL_PREFIX) || defined(MPT_BUILD_VER_SPECIAL_SUFFIX)
 	#ifndef MPT_BUILD_VER_SPECIAL_PREFIX
 	#define MPT_BUILD_VER_SPECIAL_PREFIX ""
 	#endif
@@ -143,8 +143,8 @@
 	#define MPT_BUILD_VER_SPECIAL_SUFFIX ""
 	#endif
 	#define VER_SPECIALBUILD VS_FF_SPECIALBUILD
-	#if defined(MPT_BUILD_TARGET_XP)
-		#define VER_SPECIALBUILD_STR MPT_BUILD_VER_SPECIAL_PREFIX "+winxp" MPT_BUILD_VER_SPECIAL_SUFFIX
+	#if defined(MPT_BUILD_RETRO)
+		#define VER_SPECIALBUILD_STR MPT_BUILD_VER_SPECIAL_PREFIX "+retro" MPT_BUILD_VER_SPECIAL_SUFFIX
 	#else
 		#define VER_SPECIALBUILD_STR MPT_BUILD_VER_SPECIAL_PREFIX MPT_BUILD_VER_SPECIAL_SUFFIX
 	#endif
@@ -188,11 +188,11 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName",      "openmpt.org"
+            VALUE "CompanyName",      "OpenMPT (https://openmpt.org)"
             VALUE "FileDescription",  VER_FILEDESC_STR
             VALUE "FileVersion",      VER_FILEVERSION_STR
             VALUE "InternalName",     VER_FILENAME_STR
-            VALUE "LegalCopyright",   "Copyright © 2004-2020 OpenMPT contributors, Copyright © 1997-2003 Olivier Lapicque"
+            VALUE "LegalCopyright",   "Copyright © 2004-2020 OpenMPT Project Developers and Contributors, Copyright © 1997-2003 Olivier Lapicque"
             VALUE "OriginalFilename", VER_FILENAME_STR
             VALUE "ProductName",      "libopenmpt"
             VALUE "ProductVersion",   VER_FILEVERSION_STR

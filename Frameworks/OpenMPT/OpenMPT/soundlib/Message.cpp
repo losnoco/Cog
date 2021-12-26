@@ -109,7 +109,7 @@ bool SongMessage::Read(const std::byte *data, size_t length, LineEnding lineEndi
 bool SongMessage::Read(FileReader &file, const size_t length, LineEnding lineEnding)
 {
 	FileReader::off_t readLength = std::min(static_cast<FileReader::off_t>(length), file.BytesLeft());
-	FileReader::PinnedRawDataView fileView = file.ReadPinnedRawDataView(readLength);
+	FileReader::PinnedView fileView = file.ReadPinnedView(readLength);
 	bool success = Read(fileView.data(), fileView.size(), lineEnding);
 	return success;
 }
@@ -138,12 +138,12 @@ bool SongMessage::ReadFixedLineLength(const std::byte *data, const size_t length
 		// Fix weird chars
 		for(size_t pos = writePos; pos < writePos + thisLineLength; pos++)
 		{
-			switch(at(pos))
+			switch(operator[](pos))
 			{
 			case '\0':
 			case '\n':
 			case '\r':
-				at(pos) = ' ';
+				operator[](pos) = ' ';
 				break;
 			}
 
@@ -159,7 +159,7 @@ bool SongMessage::ReadFixedLineLength(const std::byte *data, const size_t length
 bool SongMessage::ReadFixedLineLength(FileReader &file, const size_t length, const size_t lineLength, const size_t lineEndingLength)
 {
 	FileReader::off_t readLength = std::min(static_cast<FileReader::off_t>(length), file.BytesLeft());
-	FileReader::PinnedRawDataView fileView = file.ReadPinnedRawDataView(readLength);
+	FileReader::PinnedView fileView = file.ReadPinnedView(readLength);
 	bool success = ReadFixedLineLength(fileView.data(), fileView.size(), lineLength, lineEndingLength);
 	return success;
 }
@@ -207,13 +207,13 @@ bool SongMessage::SetFormatted(std::string message, LineEnding lineEnding)
 	switch(lineEnding)
 	{
 	case leLF:
-		message = mpt::String::Replace(message, "\n", std::string(1, InternalLineEnding));
+		message = mpt::replace(message, std::string("\n"), std::string(1, InternalLineEnding));
 		break;
 	case leCR:
-		message = mpt::String::Replace(message, "\r", std::string(1, InternalLineEnding));
+		message = mpt::replace(message, std::string("\r"), std::string(1, InternalLineEnding));
 		break;
 	case leCRLF:
-		message = mpt::String::Replace(message, "\r\n", std::string(1, InternalLineEnding));
+		message = mpt::replace(message, std::string("\r\n"), std::string(1, InternalLineEnding));
 		break;
 	default:
 		MPT_ASSERT_NOTREACHED();

@@ -97,6 +97,7 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
+		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8301F94520E4EEF70017B2DC /* VorbisPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -351,6 +352,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8314D6311A354DFE00EEE8E6;
 			remoteInfo = sidplay;
+		};
+		8329306C277885790010C07E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83293065277885790010C07E /* OpenMPTOld.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83E5EFA31FFEF78100659F0F;
+			remoteInfo = OpenMPTOld;
+		};
+		8329306E2778860C0010C07E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83293065277885790010C07E /* OpenMPTOld.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83E5EFA21FFEF78100659F0F;
+			remoteInfo = OpenMPTOld;
 		};
 		834068BC20E4E40200A01561 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -623,6 +638,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */,
 				834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */,
 				834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */,
 				83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */,
@@ -829,6 +845,7 @@
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
+		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
 		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681F1CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1155,6 +1172,7 @@
 				83B0669C180D5668008E3612 /* MIDI.xcodeproj */,
 				17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */,
 				83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */,
+				83293065277885790010C07E /* OpenMPTOld.xcodeproj */,
 				8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */,
 				8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */,
 				17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */,
@@ -1492,6 +1510,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83293066277885790010C07E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8329306D277885790010C07E /* OpenMPTOld.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		834068A720E4E40200A01561 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1701,6 +1727,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8329306F2778860C0010C07E /* PBXTargetDependency */,
 				ED69CBC625BE32B40090B90D /* PBXTargetDependency */,
 				834D793E20E4EFD200C4A5CC /* PBXTargetDependency */,
 				834D793020E4EFCC00C4A5CC /* PBXTargetDependency */,
@@ -1842,6 +1869,10 @@
 				{
 					ProductGroup = 83CA5AF820E4E394003E463A /* Products */;
 					ProjectRef = 83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */;
+				},
+				{
+					ProductGroup = 83293066277885790010C07E /* Products */;
+					ProjectRef = 83293065277885790010C07E /* OpenMPTOld.xcodeproj */;
 				},
 				{
 					ProductGroup = 830B62AF20E4EF89004A74B2 /* Products */;
@@ -1999,6 +2030,13 @@
 			fileType = wrapper.cfbundle;
 			path = sidplay.bundle;
 			remoteRef = 8314D6401A354DFF00EEE8E6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8329306D277885790010C07E /* OpenMPTOld.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OpenMPTOld.bundle;
+			remoteRef = 8329306C277885790010C07E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		834068BD20E4E40200A01561 /* WavPack.bundle */ = {
@@ -2329,6 +2367,11 @@
 			isa = PBXTargetDependency;
 			name = Preferences;
 			targetProxy = 17F5623A0C3BD9280019975C /* PBXContainerItemProxy */;
+		};
+		8329306F2778860C0010C07E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OpenMPTOld;
+			targetProxy = 8329306E2778860C0010C07E /* PBXContainerItemProxy */;
 		};
 		834D793020E4EFCC00C4A5CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

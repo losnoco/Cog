@@ -1,7 +1,7 @@
 /*
  * RowVisitor.h
  * ------------
- * Purpose: Class for managing which rows of a song has already been visited. Useful for detecting backwards jumps, loops, etc.
+ * Purpose: Class for recording which rows of a song has already been visited, used for detecting when a module starts to loop.
  * Notes  : See implementation file.
  * Authors: OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
@@ -10,80 +10,103 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
-#include <vector>
+#include "mpt/base/span.hpp"
 #include "Snd_defs.h"
+
+#include <map>
 
 OPENMPT_NAMESPACE_BEGIN
 
+#if defined(MPT_BUILD_DEBUG) || defined(MPT_BUILD_FUZZER)
+#define MPT_VERIFY_ROWVISITOR_LOOPSTATE
+#endif  // MPT_BUILD_DEBUG || MPT_BUILD_FUZZER
+
 class CSoundFile;
 class ModSequence;
+struct ModChannel;
 
 class RowVisitor
 {
 protected:
-	// Memory for every row in the module if it has been visited or not.
+	using ChannelStates = mpt::span<const ModChannel>;
+
+	class LoopState
+	{
+		static constexpr uint64 FNV1a_BASIS = 14695981039346656037ull;
+		static constexpr uint64 FNV1a_PRIME = 1099511628211ull;
+		uint64 m_hash = FNV1a_BASIS;
+#ifdef MPT_VERIFY_ROWVISITOR_LOOPSTATE
+		std::vector<std::pair<uint8, uint8>> m_counts;  // Actual loop counts to verify equality of hash-based implementation
+#endif
+
+	public:
+		LoopState() = default;
+		LoopState(const ChannelStates &chnState, const bool ignoreRow);
+		LoopState(const LoopState &) = default;
+		LoopState(LoopState&&) = default;
+		LoopState &operator=(const LoopState &) = default;
+		LoopState &operator=(LoopState&&) = default;
+
+		[[nodiscard]] bool operator==(const LoopState &other) const noexcept
+		{
+#ifdef MPT_VERIFY_ROWVISITOR_LOOPSTATE
+			if((m_counts == other.m_counts) != (m_hash == other.m_hash))
+				std::abort();
+#endif
+			return m_hash == other.m_hash;
+		}
+		
+		[[nodiscard]] bool HasLoops() const noexcept
+		{
+#ifdef MPT_VERIFY_ROWVISITOR_LOOPSTATE
+			if(m_counts.empty() != (m_hash == FNV1a_BASIS))
+				std::abort();
+#endif
+			return m_hash != FNV1a_BASIS;
+		}
+	};
+
+	using LoopStateSet = std::vector<LoopState>;
+
+	// Stores for every (order, row) combination in the sequence if it has been visited or not.
 	std::vector<std::vector<bool>> m_visitedRows;
-	// Memory of visited rows (including their order) to reset pattern loops.
-	std::vector<ROWINDEX> m_visitOrder;
+	// Map for each row that's part of a pattern loop which loop states have been visited. Held in a separate data structure because it is sparse data in typical modules.
+	std::map<std::pair<ORDERINDEX, ROWINDEX>, LoopStateSet> m_visitedLoopStates;
 
 	const CSoundFile &m_sndFile;
-	ORDERINDEX m_currentOrder;
-	SEQUENCEINDEX m_sequence;
+	ROWINDEX m_rowsSpentInLoops = 0;
+	const SEQUENCEINDEX m_sequence;
 
 public:
-	RowVisitor(const CSoundFile &sf, SEQUENCEINDEX sequence = SEQUENCEINDEX_INVALID);
+	RowVisitor(const CSoundFile &sndFile, SEQUENCEINDEX sequence = SEQUENCEINDEX_INVALID);
 	
-	void MoveVisitedRowsFrom(RowVisitor &other);
+	void MoveVisitedRowsFrom(RowVisitor &other) noexcept;
 
 	// Resize / Clear the row vector.
 	// If reset is true, the vector is not only resized to the required dimensions, but also completely cleared (i.e. all visited rows are unset).
 	void Initialize(bool reset);
 
-	// Mark a row as visited.
-	void Visit(ORDERINDEX ord, ROWINDEX row)
-	{
-		SetVisited(ord, row, true);
-	}
-
-	// Mark a row as not visited.
-	void Unvisit(ORDERINDEX ord, ROWINDEX row)
-	{
-		SetVisited(ord, row, false);
-	}
-
-	// Returns whether a given row has been visited yet.
-	// If autoSet is true, the queried row will automatically be marked as visited.
-	// Use this parameter instead of consecutive IsRowVisited / SetRowVisited calls.
-	bool IsVisited(ORDERINDEX ord, ROWINDEX row, bool autoSet);
-
-	// Get the needed vector size for a given pattern.
-	size_t GetVisitedRowsVectorSize(PATTERNINDEX pattern) const;
+	// Mark an order/row combination as visited and returns true if it was visited before.
+	bool Visit(ORDERINDEX ord, ROWINDEX row, const ChannelStates &chnState, bool ignoreRow);
 
 	// Find the first row that has not been played yet.
 	// The order and row is stored in the order and row variables on success, on failure they contain invalid values.
 	// If onlyUnplayedPatterns is true (default), only completely unplayed patterns are considered, otherwise a song can start anywhere.
 	// Function returns true on success.
-	bool GetFirstUnvisitedRow(ORDERINDEX &order, ROWINDEX &row, bool onlyUnplayedPatterns) const;
+	[[nodiscard]] bool GetFirstUnvisitedRow(ORDERINDEX &order, ROWINDEX &row, bool onlyUnplayedPatterns) const;
 
-	// Set all rows of a previous pattern loop as unvisited.
-	void ResetPatternLoop(ORDERINDEX ord, ROWINDEX startRow);
-
-	// Returns the last visited row index of the current pattern, or ROWINDEX_INVALID if there is none.
-	ROWINDEX GetLastVisitedRow() const;
+	// Pattern loops can stack up exponentially, which can cause an effectively infinite amount of time to be spent on evaluating them.
+	// If this function returns true, module evaluation should be aborted because the pattern loops appear to be too complex.
+	[[nodiscard]] bool ModuleTooComplex(ROWINDEX threshold) const noexcept { return m_rowsSpentInLoops >= threshold; }
+	void ResetComplexity() { m_rowsSpentInLoops = 0; }
 
 protected:
+	// Get the needed vector size for a given pattern.
+	[[nodiscard]] ROWINDEX VisitedRowsVectorSize(PATTERNINDEX pattern) const noexcept;
 
-	// (Un)sets a given row as visited.
-	// order, row - which row should be (un)set
-	// If visited is true, the row will be set as visited.
-	void SetVisited(ORDERINDEX ord, ROWINDEX row, bool visited);
-
-	// Add a row to the visited row memory for this pattern.
-	void AddVisitedRow(ORDERINDEX ord, ROWINDEX row);
-
-	const ModSequence &Order() const;
+	[[nodiscard]] const ModSequence &Order() const;
 };
 
 OPENMPT_NAMESPACE_END

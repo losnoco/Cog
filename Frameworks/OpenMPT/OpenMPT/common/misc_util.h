@@ -10,7 +10,10 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
+
+#include "mpt/base/span.hpp"
+#include "mpt/exception_text/exception_text.hpp"
 
 #include "mptAssert.h"
 #include "mptBaseMacros.h"
@@ -20,17 +23,12 @@
 
 // old
 #include "mptBaseUtils.h"
-#include "mptSpan.h"
-#include "mptMemory.h"
-#include "mptExceptionText.h"
 #include "mptStringFormat.h"
 #include "mptStringParse.h"
-#include "mptCPU.h"
-#include "mptOS.h"
 #include "mptTime.h"
-#include "mptLibrary.h"
 
 #include <stdexcept>
+#include <optional>
 #include <vector>
 
 #include <cstdlib>
@@ -38,11 +36,15 @@
 #include <stdlib.h>
 
 
+
 OPENMPT_NAMESPACE_BEGIN
+
 
 
 namespace Util
 {
+
+
 
 	// Insert a range of items [insStart,  insEnd], and possibly shift item fix to the left.
 	template<typename T>
@@ -109,12 +111,7 @@ namespace Util
 		}
 	}
 
-} // namespace Util
 
-
-
-namespace Util
-{
 
 	template<typename T, std::size_t n>
 	class fixed_size_queue
@@ -202,33 +199,10 @@ namespace Util
 		}
 	};
 
-} // namespace Util
 
-
-namespace Util
-{
-
-std::vector<std::byte> HexToBin(const mpt::ustring &src);
-mpt::ustring BinToHex(mpt::const_byte_span src);
-
-template <typename T> inline mpt::ustring BinToHex(mpt::span<T> src) { return Util::BinToHex(mpt::byte_cast<mpt::const_byte_span>(src)); }
 
 } // namespace Util
 
-
-#if defined(MODPLUG_TRACKER) || (defined(LIBOPENMPT_BUILD) && defined(LIBOPENMPT_BUILD_TEST))
-
-namespace mpt
-{
-
-// Wrapper around std::getenv.
-// Instead of returning null pointer if the environment variable is not set,
-// this wrapper returns the provided default value.
-std::string getenv(const std::string &env_var, const std::string &def = std::string());
-
-} // namespace mpt
-
-#endif // MODPLUG_TRACKER || (LIBOPENMPT_BUILD && LIBOPENMPT_BUILD_TEST)
 
 
 #if MPT_OS_WINDOWS

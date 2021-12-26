@@ -10,11 +10,17 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
-#include "ChunkReader.h"
+#include "mpt/uuid/uuid.hpp"
+
+#include "../common/FileReader.h"
 #include "Loaders.h"
-#include "../common/mptUUID.h"
+
+#ifndef MODPLUG_NO_FILESAVE
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_virtual_wrapper.hpp"
+#endif
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -122,10 +128,10 @@ MPT_BINARY_STRUCT(WAVFormatChunk, 16)
 // Extension of the WAVFormatChunk structure, used if format == formatExtensible
 struct WAVFormatChunkExtension
 {
-	uint16le size;
-	uint16le validBitsPerSample;
-	uint32le channelMask;
-	GUIDms   subFormat;
+	uint16le    size;
+	uint16le    validBitsPerSample;
+	uint32le    channelMask;
+	mpt::GUIDms subFormat;
 };
 
 MPT_BINARY_STRUCT(WAVFormatChunkExtension, 24)
@@ -284,9 +290,9 @@ MPT_BINARY_STRUCT(WAVCuePoint, 24)
 class WAVReader
 {
 protected:
-	ChunkReader file;
+	FileReader file;
 	FileReader sampleData, smplChunk, instChunk, xtraChunk, wsmpChunk, cueChunk;
-	ChunkReader::ChunkList<RIFFChunk> infoChunk;
+	FileReader::ChunkList<RIFFChunk> infoChunk;
 
 	FileReader::off_t sampleLength;
 	WAVFormatChunk formatInfo;
@@ -295,14 +301,14 @@ protected:
 	bool isDLS;
 	bool mayBeCoolEdit16_8;
 
-	uint16 GetFileCodePage(ChunkReader::ChunkList<RIFFChunk> &chunks);
+	uint16 GetFileCodePage(FileReader::ChunkList<RIFFChunk> &chunks);
 
 public:
 	WAVReader(FileReader &inputFile);
 
 	bool IsValid() const { return sampleData.IsValid(); }
 
-	void FindMetadataChunks(ChunkReader::ChunkList<RIFFChunk> &chunks);
+	void FindMetadataChunks(FileReader::ChunkList<RIFFChunk> &chunks);
 
 	// Self-explanatory getters.
 	WAVFormatChunk::SampleFormats GetSampleFormat() const { return IsExtensibleFormat() ? static_cast<WAVFormatChunk::SampleFormats>(subFormat) : static_cast<WAVFormatChunk::SampleFormats>(formatInfo.format.get()); }
@@ -316,7 +322,7 @@ public:
 	bool MayBeCoolEdit16_8() const { return mayBeCoolEdit16_8; }
 
 	// Get size of a single sample point, in bytes.
-	uint16 GetSampleSize() const { return ((GetNumChannels() * GetBitsPerSample()) + 7) / 8; }
+	uint16 GetSampleSize() const { return static_cast<uint16>(((static_cast<uint32>(GetNumChannels()) * static_cast<uint32>(GetBitsPerSample())) + 7) / 8); }
 
 	// Get sample length (in samples)
 	SmpLength GetSampleLength() const { return mpt::saturate_cast<SmpLength>(sampleLength); }
@@ -331,64 +337,48 @@ public:
 class WAVWriter
 {
 protected:
-	// When writing to a stream: Stream pointer
-	std::ostream *s = nullptr;
-	// When writing to memory: Memory address + length
-	mpt::byte_span memory;
+	// Output stream
+	mpt::IO::OFileBase &s;
 
 	// Cursor position
-	size_t position = 0;
+	std::size_t position = 0;
 	// Total number of bytes written to file / memory
-	size_t totalSize = 0;
+	std::size_t totalSize = 0;
 
 	// Currently written chunk
-	size_t chunkStartPos = 0;
+	std::size_t chunkStartPos = 0;
 	RIFFChunk chunkHeader;
+	bool finalized = false;
 
 public:
-	// Output to stream: Initialize with std::ostream*.
-	WAVWriter(std::ostream *stream);
-	// Output to clipboard: Initialize with pointer to memory and size of reserved memory.
-	WAVWriter(mpt::byte_span data);
-
-	~WAVWriter() noexcept(false);
-
-	// Check if anything can be written to the file.
-	bool IsValid() const { return s != nullptr || !memory.empty(); }
+	// Output to stream
+	WAVWriter(mpt::IO::OFileBase &stream);
+	~WAVWriter();
 
 	// Finalize the file by closing the last open chunk and updating the file header. Returns total size of file.
-	size_t Finalize();
+	std::size_t Finalize();
 	// Begin writing a new chunk to the file.
 	void StartChunk(RIFFChunk::ChunkIdentifiers id);
 
 	// Skip some bytes... For example after writing sample data.
 	void Skip(size_t numBytes) { Seek(position + numBytes); }
 	// Get position in file (not counting any changes done to the file from outside this class, i.e. through GetFile())
-	size_t GetPosition() const { return position; }
-
-	// Shrink file size to current position.
-	void Truncate() { totalSize = position; }
+	std::size_t GetPosition() const { return position; }
 
 	// Write some data to the file.
 	template<typename T>
 	void Write(const T &data)
 	{
-		static_assert((mpt::is_binary_safe<T>::value));
-		Write(&data, sizeof(T));
+		Write(mpt::as_raw_memory(data));
 	}
 
 	// Write a buffer to the file.
-	void WriteBuffer(const std::byte *data, size_t size)
-	{
-		Write(data, size);
-	}
+	void Write(mpt::const_byte_span data);
 
-	// Write an array to the file.
-	template<typename T, size_t size>
-	void WriteArray(const T (&data)[size])
-	{
-		Write(data, sizeof(T) * size);
-	}
+	// Use before writing raw data directly to the underlying stream s
+	void WriteBeforeDirect();
+	// Use after writing raw data directly to the underlying stream s
+	void WriteAfterDirect(bool success, std::size_t count);
 
 	// Write the WAV format to the file.
 	void WriteFormat(uint32 sampleRate, uint16 bitDepth, uint16 numChannels, WAVFormatChunk::SampleFormats encoding);
@@ -403,12 +393,9 @@ public:
 
 protected:
 	// Seek to a position in file.
-	void Seek(size_t pos);
+	void Seek(std::size_t pos);
 	// End current chunk by updating the chunk header and writing a padding byte if necessary.
 	void FinalizeChunk();
-
-	// Write some data to the file.
-	void Write(const void *data, size_t numBytes);
 
 	// Write a single tag into a open idLIST chunk
 	void WriteTag(RIFFChunk::ChunkIdentifiers id, const mpt::ustring &utext);

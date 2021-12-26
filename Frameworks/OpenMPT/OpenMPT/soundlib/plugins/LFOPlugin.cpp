@@ -1,11 +1,11 @@
 /*
-* LFOPlugin.cpp
-* -------------
-* Purpose: Plugin for automating other plugins' parameters
-* Notes  : (currently none)
-* Authors: OpenMPT Devs
-* The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
-*/
+ * LFOPlugin.cpp
+ * -------------
+ * Purpose: Plugin for automating other plugins' parameters
+ * Notes  : (currently none)
+ * Authors: OpenMPT Devs
+ * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
+ */
 
 
 #include "stdafx.h"
@@ -17,6 +17,7 @@
 #ifdef MODPLUG_TRACKER
 #include "../../mptrack/plugins/LFOPluginEditor.h"
 #endif // MODPLUG_TRACKER
+#include "mpt/base/numbers.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -28,20 +29,8 @@ IMixPlugin* LFOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIX
 
 LFOPlugin::LFOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
-	, m_nextRandom(0)
-	, m_tempo(0)
 	, m_PRNG(mpt::make_prng<mpt::fast_prng>(mpt::global_prng()))
 {
-	m_amplitude = 0.5f;
-	m_offset = 0.5f;
-	m_frequency = 0.290241f;
-	m_tempoSync = false;
-	m_waveForm = kSine;
-	m_polarity = false;
-	m_bypassed = false;
-	m_outputToCC = false;
-	m_outputParam = int32_max;
-	m_oneshot = false;
 	RecalculateFrequency();
 	RecalculateIncrement();
 
@@ -84,7 +73,7 @@ void LFOPlugin::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		switch(m_waveForm)
 		{
 		case kSine:
-			value = std::sin(m_phase * 2.0 * M_PI);
+			value = std::sin(m_phase * (2.0 * mpt::numbers::pi));
 			break;
 		case kTriangle:
 			value = 1.0 - 4.0 * std::abs(m_phase - 0.5);
@@ -99,7 +88,7 @@ void LFOPlugin::Process(float *pOutL, float *pOutR, uint32 numFrames)
 			value = m_random;
 			break;
 		case kSmoothNoise:
-			value = m_phase * m_phase * m_phase * (m_phase * (m_phase * 6 - 15) + 10);	// Smootherstep
+			value = m_phase * m_phase * m_phase * (m_phase * (m_phase * 6 - 15) + 10);  // Smootherstep
 			value = m_nextRandom * value + m_random * (1.0 - value);
 			break;
 		default:
@@ -150,7 +139,7 @@ PlugParamValue LFOPlugin::GetParameter(PlugParamIndex index)
 void LFOPlugin::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	ResetSilence();
-	Limit(value, 0.0f, 1.0f);
+	value = mpt::safe_clamp(value, 0.0f, 1.0f);
 	switch(index)
 	{
 	case kAmplitude: m_amplitude = value; break;
@@ -304,9 +293,9 @@ struct PluginData
 {
 	char     magic[4];
 	uint32le version;
-	uint32le amplitude;	// float
-	uint32le offset;	// float
-	uint32le frequency;	// float
+	uint32le amplitude;  // float
+	uint32le offset;     // float
+	uint32le frequency;  // float
 	uint32le waveForm;
 	uint32le outputParam;
 	uint8le  tempoSync;
@@ -350,11 +339,11 @@ void LFOPlugin::SetChunk(const ChunkData &chunk, bool)
 		&& data.version == 0)
 	{
 		const float amplitude = IEEE754binary32LE().SetInt32(data.amplitude);
-		m_amplitude = std::isfinite(amplitude) ? std::clamp(amplitude, 0.0f, 1.0f) : 0.5f;
+		m_amplitude = mpt::safe_clamp(amplitude, 0.0f, 1.0f);
 		const float offset = IEEE754binary32LE().SetInt32(data.offset);
-		m_offset = std::isfinite(offset) ? std::clamp(offset, 0.0f, 1.0f) : 0.5f;
+		m_offset = mpt::safe_clamp(offset, 0.0f, 1.0f);
 		const float frequency = IEEE754binary32LE().SetInt32(data.frequency);
-		m_frequency = std::isfinite(frequency) ? std::clamp(frequency, 0.0f, 1.0f) : 0.290241f;
+		m_frequency = mpt::safe_clamp(frequency, 0.0f, 1.0f);
 		if(data.waveForm < kNumWaveforms)
 			m_waveForm = static_cast<LFOWaveform>(data.waveForm.get());
 		m_outputParam = data.outputParam;
@@ -369,6 +358,14 @@ void LFOPlugin::SetChunk(const ChunkData &chunk, bool)
 
 
 #ifdef MODPLUG_TRACKER
+
+std::pair<PlugParamValue, PlugParamValue> LFOPlugin::GetParamUIRange(PlugParamIndex param)
+{
+	if(param == kWaveform)
+		return {0.0f, WaveformToParam(static_cast<LFOWaveform>(kNumWaveforms - 1))};
+	else
+		return {0.0f, 1.0f};
+}
 
 CString LFOPlugin::GetParamName(PlugParamIndex param)
 {
@@ -418,7 +415,7 @@ CString LFOPlugin::GetParamDisplay(PlugParamIndex param)
 	} else if(param == kWaveform)
 	{
 		static constexpr const TCHAR * const waveforms[] = { _T("Sine"), _T("Triangle"), _T("Saw"), _T("Square"), _T("Noise"), _T("Smoothed Noise") };
-		if(m_waveForm < MPT_ARRAY_COUNT(waveforms))
+		if(m_waveForm < static_cast<int>(std::size(waveforms)))
 			return waveforms[m_waveForm];
 	} else if(param == kLoopMode)
 	{
@@ -448,9 +445,9 @@ CAbstractVstEditor *LFOPlugin::OpenEditor()
 	try
 	{
 		return new LFOPluginEditor(*this);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 		return nullptr;
 	}
 }
@@ -472,7 +469,7 @@ void LFOPlugin::RecalculateFrequency()
 	{
 		if(m_computedFrequency > 0.00045)
 		{
-			double freqLog = std::log(m_computedFrequency) / M_LN2;
+			double freqLog = std::log(m_computedFrequency) / mpt::numbers::ln2;
 			double freqFrac = freqLog - std::floor(freqLog);
 			freqLog -= freqFrac;
 

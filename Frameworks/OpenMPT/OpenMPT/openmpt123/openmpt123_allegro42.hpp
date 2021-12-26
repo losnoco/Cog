@@ -15,7 +15,15 @@
 
 #if defined(MPT_WITH_ALLEGRO42)
 
+#if defined(__GNUC__) && !defined(__clang__) && !defined(_MSC_VER)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
+#endif
 #include <allegro.h>
+#if defined(__GNUC__) && !defined(__clang__) && !defined(_MSC_VER)
+#pragma GCC diagnostic pop
+#endif
 
 namespace openmpt123 {
 
@@ -107,6 +115,7 @@ public:
 		set_queue_size_frames( period_frames );
 		if ( flags.verbose ) {
 			log << "Allegro-4.2:" << std::endl;
+			log << " allegro samplerate: " << get_mixer_frequency() << std::endl;
 			log << " latency: " << flags.buffer << std::endl;
 			log << " period: " << flags.period << std::endl;
 			log << " frames per buffer: " << period_frames << std::endl;

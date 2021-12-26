@@ -11,8 +11,18 @@
 #include "stdafx.h"
 #include "mptFileIO.h"
 
+#if defined(MPT_ENABLE_FILEIO)
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
+#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
+#include "mpt/system_error/system_error.hpp"
+#include "FileReader.h"
+#endif // MODPLUG_TRACKER && MPT_OS_WINDOWS
+#endif // MPT_ENABLE_FILEIO
+
 #ifdef MODPLUG_TRACKER
 #if MPT_OS_WINDOWS
+#include <windows.h>
 #include <WinIoCtl.h>
 #include <io.h>
 #endif // MPT_OS_WINDOWS
@@ -20,15 +30,29 @@
 
 #if defined(MPT_ENABLE_FILEIO)
 #if MPT_COMPILER_MSVC
+#include <stdio.h>
 #include <tchar.h>
 #endif // MPT_COMPILER_MSVC
 #endif // MPT_ENABLE_FILEIO
+
 
 
 OPENMPT_NAMESPACE_BEGIN
 
 
 #if defined(MPT_ENABLE_FILEIO)
+
+
+
+#if !defined(MPT_BUILD_SILENCE_LIBOPENMPT_CONFIGURATION_WARNINGS)
+
+#if defined(MPT_COMPILER_QUIRK_WINDOWS_FSTREAM_NO_WCHAR)
+#if MPT_GCC_BEFORE(9,1,0)
+MPT_WARNING("Warning: MinGW with GCC earlier than 9.1 detected. Standard library does neither provide std::fstream wchar_t overloads nor std::filesystem with wchar_t support. Unicode filename support is thus unavailable.")
+#endif // MPT_GCC_AT_LEAST(9,1,0)
+#endif // MPT_COMPILER_QUIRK_WINDOWS_FSTREAM_NO_WCHAR
+
+#endif // !MPT_BUILD_SILENCE_LIBOPENMPT_CONFIGURATION_WARNINGS
 
 
 
@@ -135,19 +159,20 @@ mpt::tstring SafeOutputFile::convert_mode(std::ios_base::openmode mode, FlushMod
 	return fopen_mode;
 }
 
-FILE * SafeOutputFile::internal_fopen(const mpt::PathString &filename, std::ios_base::openmode mode, FlushMode flushMode)
+std::FILE * SafeOutputFile::internal_fopen(const mpt::PathString &filename, std::ios_base::openmode mode, FlushMode flushMode)
 {
+	m_f = nullptr;
 	mpt::tstring fopen_mode = convert_mode(mode, flushMode);
 	if(fopen_mode.empty())
 	{
 		return nullptr;
 	}
-	FILE *f =
-#ifdef UNICODE
-		_wfopen(filename.AsNativePrefixed().c_str(), fopen_mode.c_str())
-#else
-		fopen(filename.AsNativePrefixed().c_str(), fopen_mode.c_str())
-#endif
+	std::FILE *f =
+		#ifdef UNICODE
+			_wfopen(filename.AsNativePrefixed().c_str(), fopen_mode.c_str())
+		#else
+			std::fopen(filename.AsNativePrefixed().c_str(), fopen_mode.c_str())
+		#endif
 		;
 	if(!f)
 	{
@@ -155,9 +180,9 @@ FILE * SafeOutputFile::internal_fopen(const mpt::PathString &filename, std::ios_
 	}
 	if(mode & std::ios_base::ate)
 	{
-		if(fseek(f, 0, SEEK_END) != 0)
+		if(std::fseek(f, 0, SEEK_END) != 0)
 		{
-			fclose(f);
+			std::fclose(f);
 			f = nullptr;
 			return nullptr;
 		}
@@ -177,9 +202,14 @@ SafeOutputFile::~SafeOutputFile() noexcept(false)
 		#if MPT_COMPILER_MSVC
 			if(m_f)
 			{
-				fclose(m_f);
+				std::fclose(m_f);
 			}
 		#endif // MPT_COMPILER_MSVC
+		if(mayThrow && (stream().exceptions() & (std::ios::badbit | std::ios::failbit)))
+		{
+			// cppcheck-suppress exceptThrowInDestructor
+			throw std::ios_base::failure(std::string("Error before flushing file buffers."));
+		}
 		return;
 	}
 	if(!stream().rdbuf())
@@ -187,9 +217,14 @@ SafeOutputFile::~SafeOutputFile() noexcept(false)
 		#if MPT_COMPILER_MSVC
 			if(m_f)
 			{
-				fclose(m_f);
+				std::fclose(m_f);
 			}
 		#endif // MPT_COMPILER_MSVC
+		if(mayThrow && (stream().exceptions() & (std::ios::badbit | std::ios::failbit)))
+		{
+			// cppcheck-suppress exceptThrowInDestructor
+			throw std::ios_base::failure(std::string("Error before flushing file buffers."));
+		}
 		return;
 	}
 #if MPT_COMPILER_MSVC
@@ -213,12 +248,12 @@ SafeOutputFile::~SafeOutputFile() noexcept(false)
 #if MPT_COMPILER_MSVC
 			if(m_FlushMode != FlushMode::None)
 			{
-				if(fflush(m_f) != 0)
+				if(std::fflush(m_f) != 0)
 				{
 					errorOnFlush = true;
 				}
 			}
-			if(fclose(m_f) != 0)
+			if(std::fclose(m_f) != 0)
 			{
 				errorOnFlush = true;
 			}
@@ -234,12 +269,12 @@ SafeOutputFile::~SafeOutputFile() noexcept(false)
 #if MPT_COMPILER_MSVC
 	if(m_FlushMode != FlushMode::None)
 	{
-		if(fflush(m_f) != 0)
+		if(std::fflush(m_f) != 0)
 		{
 			errorOnFlush = true;
 		}
 	}
-	if(fclose(m_f) != 0)
+	if(std::fclose(m_f) != 0)
 	{
 		errorOnFlush = true;
 	}
@@ -330,7 +365,7 @@ LazyFileRef::operator std::string () const
 	std::vector<char> buf(mpt::saturate_cast<std::size_t>(mpt::IO::TellRead(file)));
 	mpt::IO::SeekBegin(file);
 	mpt::IO::ReadRaw(file, mpt::as_span(buf));
-	return std::string(buf.begin(), buf.end());
+	return mpt::buffer_cast<std::string>(buf);
 }
 
 } // namespace mpt
@@ -338,21 +373,11 @@ LazyFileRef::operator std::string () const
 #endif // MODPLUG_TRACKER
 
 
-bool InputFile::DefaultToLargeAddressSpaceUsage()
-{
-	return false;
-}
-
-
-InputFile::InputFile()
-	: m_IsCached(false)
-{
-	return;
-}
-
 InputFile::InputFile(const mpt::PathString &filename, bool allowWholeFileCaching)
-	: m_IsCached(false)
+	: m_IsValid(false)
+	, m_IsCached(false)
 {
+	MPT_ASSERT(!filename.empty());
 	Open(filename, allowWholeFileCaching);
 }
 
@@ -384,11 +409,11 @@ bool InputFile::Open(const mpt::PathString &filename, bool allowWholeFileCaching
 				m_File.close();
 				return false;
 			}
-			if(Util::TypeCanHoldValue<std::size_t>(filesize))
+			if(mpt::in_range<std::size_t>(filesize))
 			{
 				std::size_t buffersize = mpt::saturate_cast<std::size_t>(filesize);
 				m_Cache.resize(buffersize);
-				if(mpt::IO::ReadRaw(m_File, mpt::as_span(m_Cache)) != filesize)
+				if(mpt::IO::ReadRaw(m_File, mpt::as_span(m_Cache)).size() != mpt::saturate_cast<std::size_t>(filesize))
 				{
 					m_File.close();
 					return false;
@@ -399,17 +424,19 @@ bool InputFile::Open(const mpt::PathString &filename, bool allowWholeFileCaching
 					return false;
 				}
 				m_IsCached = true;
+				m_IsValid = true;
 				return true;
 			}
 		}
 	}
+	m_IsValid = true;
 	return m_File.good();
 }
 
 
 bool InputFile::IsValid() const
 {
-	return m_File.good();
+	return m_IsValid && m_File.good();
 }
 
 
@@ -419,16 +446,16 @@ bool InputFile::IsCached() const
 }
 
 
-const mpt::PathString& InputFile::GetFilenameRef() const
+mpt::PathString InputFile::GetFilename() const
 {
 	return m_Filename;
 }
 
 
-std::istream* InputFile::GetStream()
+std::istream& InputFile::GetStream()
 {
 	MPT_ASSERT(!m_IsCached);
-	return &m_File;
+	return m_File;
 }
 
 
@@ -437,6 +464,134 @@ mpt::const_byte_span InputFile::GetCache()
 	MPT_ASSERT(m_IsCached);
 	return mpt::as_span(m_Cache);
 }
+
+
+
+#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
+
+
+OnDiskFileWrapper::OnDiskFileWrapper(FileCursor &file, const mpt::PathString &fileNameExtension)
+	: m_IsTempFile(false)
+{
+	try
+	{
+		file.Rewind();
+		if(!file.GetOptionalFileName())
+		{
+			const mpt::PathString tempName = mpt::CreateTempFileName(P_("OpenMPT"), fileNameExtension);
+
+#if MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
+#if (_WIN32_WINNT < 0x0602)
+#define MPT_ONDISKFILEWRAPPER_NO_CREATEFILE
+#endif
+#endif
+
+#ifdef MPT_ONDISKFILEWRAPPER_NO_CREATEFILE
+
+			mpt::ofstream f(tempName, std::ios::binary);
+			if(!f)
+			{
+				throw std::runtime_error("Error creating temporary file.");
+			}
+			while(!file.EndOfFile())
+			{
+				FileCursor::PinnedView view = file.ReadPinnedView(mpt::IO::BUFFERSIZE_NORMAL);
+				std::size_t towrite = view.size();
+				std::size_t written = 0;
+				do
+				{
+					std::size_t chunkSize = mpt::saturate_cast<std::size_t>(towrite);
+					bool chunkOk = false;
+					chunkOk = mpt::IO::WriteRaw(f, mpt::const_byte_span(view.data() + written, chunkSize));
+					if(!chunkOk)
+					{
+						throw std::runtime_error("Incomplete Write.");
+					}
+					towrite -= chunkSize;
+					written += chunkSize;
+				} while(towrite > 0);
+			}
+			f.close();
+
+#else // !MPT_ONDISKFILEWRAPPER_NO_CREATEFILE
+
+			HANDLE hFile = NULL;
+			#if MPT_OS_WINDOWS_WINRT
+				hFile = mpt::windows::CheckFileHANDLE(CreateFile2(tempName.AsNative().c_str(), GENERIC_WRITE, FILE_SHARE_READ, CREATE_ALWAYS, NULL));
+			#else
+				hFile = mpt::windows::CheckFileHANDLE(CreateFile(tempName.AsNative().c_str(), GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY, NULL));
+			#endif
+			while(!file.EndOfFile())
+			{
+				FileCursor::PinnedView view = file.ReadPinnedView(mpt::IO::BUFFERSIZE_NORMAL);
+				std::size_t towrite = view.size();
+				std::size_t written = 0;
+				do
+				{
+					DWORD chunkSize = mpt::saturate_cast<DWORD>(towrite);
+					DWORD chunkDone = 0;
+					try
+					{
+						mpt::windows::CheckBOOL(WriteFile(hFile, view.data() + written, chunkSize, &chunkDone, NULL));
+					} catch(...)
+					{
+						CloseHandle(hFile);
+						hFile = NULL;
+						throw;
+					}
+					if(chunkDone != chunkSize)
+					{
+						CloseHandle(hFile);
+						hFile = NULL;
+						throw std::runtime_error("Incomplete WriteFile().");
+					}
+					towrite -= chunkDone;
+					written += chunkDone;
+				} while(towrite > 0);
+			}
+			CloseHandle(hFile);
+			hFile = NULL;
+
+#endif // MPT_ONDISKFILEWRAPPER_NO_CREATEFILE
+
+			m_Filename = tempName;
+			m_IsTempFile = true;
+		} else
+		{
+			m_Filename = file.GetOptionalFileName().value();
+		}
+	} catch (const std::runtime_error &)
+	{
+		m_IsTempFile = false;
+		m_Filename = mpt::PathString();
+	}
+}
+
+
+OnDiskFileWrapper::~OnDiskFileWrapper()
+{
+	if(m_IsTempFile)
+	{
+		DeleteFile(m_Filename.AsNative().c_str());
+		m_IsTempFile = false;
+	}
+	m_Filename = mpt::PathString();
+}
+
+
+bool OnDiskFileWrapper::IsValid() const
+{
+	return !m_Filename.empty();
+}
+
+
+mpt::PathString OnDiskFileWrapper::GetFilename() const
+{
+	return m_Filename;
+}
+
+
+#endif // MODPLUG_TRACKER && MPT_OS_WINDOWS
 
 
 #else // !MPT_ENABLE_FILEIO

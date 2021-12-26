@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "Snd_defs.h"
 #include "../common/misc_util.h"
@@ -53,7 +53,7 @@ enum VolumeCommand : uint8
 	VOLCMD_TONEPORTAMENTO = 11,
 	VOLCMD_PORTAUP        = 12,
 	VOLCMD_PORTADOWN      = 13,
-	VOLCMD_DELAYCUT       = 14, //currently unused
+	VOLCMD_PLAYCONTROL    = 14,
 	VOLCMD_OFFSET         = 15,
 	MAX_VOLCMDS
 };
@@ -97,14 +97,16 @@ enum EffectCommand : uint8
 	CMD_SMOOTHMIDI          = 32,
 	CMD_DELAYCUT            = 33,
 	CMD_XPARAM              = 34,
-	CMD_NOTESLIDEUP         = 35, // IMF Gxy / PTM Jxy (Slide y notes up every x ticks)
-	CMD_NOTESLIDEDOWN       = 36, // IMF Hxy / PTM Kxy (Slide y notes down every x ticks)
-	CMD_NOTESLIDEUPRETRIG   = 37, // PTM Lxy (Slide y notes up every x ticks + retrigger note)
-	CMD_NOTESLIDEDOWNRETRIG = 38, // PTM Mxy (Slide y notes down every x ticks + retrigger note)
-	CMD_REVERSEOFFSET       = 39, // PTM Nxx Revert sample + offset
-	CMD_DBMECHO             = 40, // DBM enable/disable echo
-	CMD_OFFSETPERCENTAGE    = 41, // PLM Percentage Offset
-	CMD_DUMMY               = 42,
+	CMD_FINETUNE            = 35,
+	CMD_FINETUNE_SMOOTH     = 36,
+	CMD_DUMMY               = 37,
+	CMD_NOTESLIDEUP         = 38, // IMF Gxy / PTM Jxy (Slide y notes up every x ticks)
+	CMD_NOTESLIDEDOWN       = 39, // IMF Hxy / PTM Kxy (Slide y notes down every x ticks)
+	CMD_NOTESLIDEUPRETRIG   = 40, // PTM Lxy (Slide y notes up every x ticks + retrigger note)
+	CMD_NOTESLIDEDOWNRETRIG = 41, // PTM Mxy (Slide y notes down every x ticks + retrigger note)
+	CMD_REVERSEOFFSET       = 42, // PTM Nxx Revert sample + offset
+	CMD_DBMECHO             = 43, // DBM enable/disable echo
+	CMD_OFFSETPERCENTAGE    = 44, // PLM Percentage Offset
 	MAX_EFFECTS
 };
 
@@ -123,12 +125,12 @@ enum EffectType : uint8
 class ModCommand
 {
 public:
-	typedef uint8 NOTE;
-	typedef uint8 INSTR;
-	typedef uint8 VOL;
-	typedef uint8 VOLCMD;
-	typedef uint8 COMMAND;
-	typedef uint8 PARAM;
+	using NOTE = uint8;
+	using INSTR = uint8;
+	using VOL = uint8;
+	using VOLCMD = uint8;
+	using COMMAND = uint8;
+	using PARAM = uint8;
 
 	// Defines the maximum value for column data when interpreted as 2-byte value
 	// (for example volcmd and vol). The valid value range is [0, maxColumnValue].
@@ -137,7 +139,7 @@ public:
 	// Returns empty modcommand.
 	static ModCommand Empty() { return ModCommand(); }
 
-	bool operator==(const ModCommand& mc) const
+	bool operator==(const ModCommand &mc) const
 	{
 		return (note == mc.note)
 			&& (instr == mc.instr)
@@ -175,16 +177,21 @@ public:
 	static bool IsPcNote(NOTE note) { return note == NOTE_PC || note == NOTE_PCS; }
 
 	// Returns true if and only if note is a valid musical note.
-	bool IsNote() const { return IsInRange(note, NOTE_MIN, NOTE_MAX); }
-	static bool IsNote(NOTE note) { return IsInRange(note, NOTE_MIN, NOTE_MAX); }
+	bool IsNote() const { return mpt::is_in_range(note, NOTE_MIN, NOTE_MAX); }
+	static bool IsNote(NOTE note) { return mpt::is_in_range(note, NOTE_MIN, NOTE_MAX); }
 	// Returns true if and only if note is a valid special note.
-	bool IsSpecialNote() const { return IsInRange(note, NOTE_MIN_SPECIAL, NOTE_MAX_SPECIAL); }
-	static bool IsSpecialNote(NOTE note) { return IsInRange(note, NOTE_MIN_SPECIAL, NOTE_MAX_SPECIAL); }
+	bool IsSpecialNote() const { return mpt::is_in_range(note, NOTE_MIN_SPECIAL, NOTE_MAX_SPECIAL); }
+	static bool IsSpecialNote(NOTE note) { return mpt::is_in_range(note, NOTE_MIN_SPECIAL, NOTE_MAX_SPECIAL); }
 	// Returns true if and only if note is a valid musical note or the note entry is empty.
 	bool IsNoteOrEmpty() const { return note == NOTE_NONE || IsNote(); }
 	static bool IsNoteOrEmpty(NOTE note) { return note == NOTE_NONE || IsNote(note); }
 	// Returns true if any of the commands in this cell trigger a tone portamento.
 	bool IsPortamento() const { return command == CMD_TONEPORTAMENTO || command == CMD_TONEPORTAVOL || volcmd == VOLCMD_TONEPORTAMENTO; }
+	// Returns true if the cell contains a sliding or otherwise continuous effect command.
+	bool IsContinousCommand(const CSoundFile &sndFile) const;
+	bool IsContinousVolColCommand() const;
+	// Returns true if the cell contains a sliding command with separate up/down nibbles.
+	bool IsSlideUpDownCommand() const;
 	// Returns true if the cell contains an effect command that may affect the global state of the module.
 	bool IsGlobalCommand() const { return IsGlobalCommand(command, param); }
 	static bool IsGlobalCommand(COMMAND command, PARAM param);

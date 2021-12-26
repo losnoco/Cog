@@ -21,6 +21,9 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
+#if !defined(MPT_WITH_ANCIENT)
+
+
 struct PPBITBUFFER
 {
 	uint32 bitcount = 0;
@@ -179,27 +182,25 @@ bool UnpackPP20(std::vector<ContainerItem> &containerItems, FileReader &file, Co
 	std::vector<char> & unpackedData = *(containerItems.back().data_cache);
 
 	FileReader::off_t length = file.GetLength();
-	if(!Util::TypeCanHoldValue<uint32>(length)) return false;
+	if(!mpt::in_range<uint32>(length)) return false;
 	// Length word must be aligned
 	if((length % 2u) != 0)
 		return false;
 
 	file.Seek(length - 4);
-	uint32 dstLen = 0;
-	dstLen |= file.ReadUint8() << 16;
-	dstLen |= file.ReadUint8() << 8;
-	dstLen |= file.ReadUint8() << 0;
-	if(dstLen == 0) return false;
+	uint32 dstLen = file.ReadUint24BE();
+	if(dstLen == 0)
+		return false;
 	try
 	{
 		unpackedData.resize(dstLen);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
+	} catch(mpt::out_of_memory e)
 	{
-		MPT_EXCEPTION_DELETE_OUT_OF_MEMORY(e);
+		mpt::delete_out_of_memory(e);
 		return false;
 	}
 	file.Seek(4);
-	bool result = PP20_DoUnpack(file.GetRawData<uint8>(), static_cast<uint32>(length - 4), mpt::byte_cast<uint8 *>(unpackedData.data()), dstLen);
+	bool result = PP20_DoUnpack(file.GetRawData<uint8>().data(), static_cast<uint32>(length - 4), mpt::byte_cast<uint8 *>(unpackedData.data()), dstLen);
 
 	if(result)
 	{
@@ -208,6 +209,9 @@ bool UnpackPP20(std::vector<ContainerItem> &containerItems, FileReader &file, Co
 
 	return result;
 }
+
+
+#endif // !MPT_WITH_ANCIENT
 
 
 OPENMPT_NAMESPACE_END

@@ -12,9 +12,12 @@
 #include "stdafx.h"
 #include <ostream>
 #include "ITCompression.h"
+#include "mpt/io/base.hpp"
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
 #include "../common/misc_util.h"
-#include "../common/mptIO.h"
 #include "ModSample.h"
+#include "SampleCopy.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -183,7 +186,7 @@ void ITCompression::CompressBlock(const typename Properties::sample_t *data, Smp
 
 int8 ITCompression::GetWidthChangeSize(int8 w, bool is16)
 {
-	MPT_ASSERT(w > 0 && static_cast<unsigned int>(w) <= CountOf(ITWidthChangeSize));
+	MPT_ASSERT(w > 0 && static_cast<unsigned int>(w) <= std::size(ITWidthChangeSize));
 	int8 wcs = ITWidthChangeSize[w - 1];
 	if(w <= 6 && is16)
 		wcs++;
@@ -201,7 +204,7 @@ void ITCompression::SquishRecurse(int8 sWidth, int8 lWidth, int8 rWidth, int8 wi
 		return;
 	}
 
-	MPT_ASSERT(width >= 0 && static_cast<unsigned int>(width) < CountOf(Properties::lowerTab));
+	MPT_ASSERT(width >= 0 && static_cast<unsigned int>(width) < std::size(Properties::lowerTab));
 
 	SmpLength i = offset;
 	SmpLength end = offset + length;

@@ -39,6 +39,8 @@ CXXFLAGS += -fsanitize=undefined
 CFLAGS   += -fsanitize=undefined
 endif
 
+include build/make/warnings-clang.mk
+
 EXESUFFIX=
 
 FUZZ=1

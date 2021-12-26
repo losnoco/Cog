@@ -1,16 +1,16 @@
 /*
-* LFOPlugin.h
-* -----------
-* Purpose: Plugin for automating other plugins' parameters
-* Notes  : (currently none)
-* Authors: OpenMPT Devs
-* The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
-*/
+ * LFOPlugin.h
+ * -----------
+ * Purpose: Plugin for automating other plugins' parameters
+ * Notes  : (currently none)
+ * Authors: OpenMPT Devs
+ * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
+ */
 
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #ifndef NO_PLUGINS
 
@@ -52,21 +52,21 @@ protected:
 	std::vector<std::byte> m_chunkData;
 
 	// LFO parameters
-	float m_amplitude, m_offset, m_frequency;
-	LFOWaveform m_waveForm;
-	PlugParamIndex m_outputParam;
-	bool m_tempoSync, m_polarity, m_bypassed, m_outputToCC, m_oneshot;
+	float m_amplitude = 0.5f, m_offset = 0.5f, m_frequency = 0.290241f;
+	LFOWaveform m_waveForm = kSine;
+	PlugParamIndex m_outputParam = int32_max;
+	bool m_tempoSync = false, m_polarity = false, m_bypassed = false, m_outputToCC = false, m_oneshot = false;
 
 	// LFO state
-	double m_computedFrequency;
-	double m_phase, m_increment;
-	double m_random, m_nextRandom;
-	double m_tempo;
+	double m_computedFrequency = 0.0;
+	double m_phase = 0.0, m_increment = 0.0;
+	double m_random = 0.0, m_nextRandom = 0.0;
+	double m_tempo = 0.0;
 
 	mpt::fast_prng m_PRNG;
 
 #ifdef MODPLUG_TRACKER
-	enum : int { WM_PARAM_UDPATE = WM_USER + 500 };
+	static constexpr int WM_PARAM_UDPATE = WM_USER + 500;
 #endif
 
 public:
@@ -112,6 +112,7 @@ public:
 #ifdef MODPLUG_TRACKER
 	CString GetDefaultEffectName() override { return _T("LFO"); }
 
+	std::pair<PlugParamValue, PlugParamValue> GetParamUIRange(PlugParamIndex param) override;
 	CString GetParamName(PlugParamIndex param) override;
 	CString GetParamLabel(PlugParamIndex) override;
 	CString GetParamDisplay(PlugParamIndex param) override;

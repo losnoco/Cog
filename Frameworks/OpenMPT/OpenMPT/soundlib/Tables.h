@@ -11,9 +11,12 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
+
+// Compute Bessel function Izero(y) using a series approximation
+double Izero(double y);
 
 extern const mpt::uchar NoteNamesSharp[12][4];
 extern const mpt::uchar NoteNamesFlat[12][4];

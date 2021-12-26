@@ -103,7 +103,7 @@ int main( int argc, char * argv[] ) {
 		goto fail;
 	}
 
-	mod = openmpt_module_create2( openmpt_stream_get_fd_callbacks(), (void*)(uintptr_t)STDIN_FILENO, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
+	mod = openmpt_module_create2( openmpt_stream_get_fd_callbacks(), (void *)(uintptr_t)STDIN_FILENO, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
 	if ( !mod ) {
 		libopenmpt_example_print_error( "openmpt_module_create2()", mod_err, mod_err_str );
 		openmpt_free_string( mod_err_str );

@@ -134,7 +134,7 @@ void WavesReverb::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kDistNumParameters)
 	{
-		Limit(value, 0.0f, 1.0f);
+		value = mpt::safe_clamp(value, 0.0f, 1.0f);
 		m_param[index] = value;
 		RecalculateWavesReverbParams();
 	}

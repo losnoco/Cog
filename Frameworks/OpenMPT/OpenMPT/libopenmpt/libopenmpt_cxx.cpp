@@ -7,7 +7,7 @@
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "libopenmpt_internal.h"
 #include "libopenmpt.hpp"
@@ -114,8 +114,6 @@ std::string get( const std::string & key ) {
 } // namespace string
 
 } // namespace openmpt
-
-#ifndef NO_LIBOPENMPT_CXX
 
 namespace openmpt {
 
@@ -500,5 +498,3 @@ void * module_ext::get_interface( const std::string & interface_id ) {
 }
 
 } // namespace openmpt
-
-#endif // NO_LIBOPENMPT_CXX

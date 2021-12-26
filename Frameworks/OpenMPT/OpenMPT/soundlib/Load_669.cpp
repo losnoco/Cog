@@ -71,7 +71,7 @@ static bool ValidateHeader(const _669FileHeader &fileHeader)
 	{
 		return false;
 	}
-	for(std::size_t i = 0; i < CountOf(fileHeader.breaks); i++)
+	for(std::size_t i = 0; i < std::size(fileHeader.breaks); i++)
 	{
 		if(fileHeader.orders[i] >= 128 && fileHeader.orders[i] < 0xFE)
 			return false;
@@ -136,9 +136,10 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultTempo.Set(78);
 	m_nDefaultSpeed = 4;
 	m_nChannels = 8;
-#ifdef MODPLUG_TRACEKR
+	m_playBehaviour.set(kPeriodsAreHertz);
+#ifdef MODPLUG_TRACKER
 	// 669 uses frequencies rather than periods, so linear slides mode will sound better in the higher octaves.
-	m_SongFlags.set(SONG_LINEARSLIDES);
+	//m_SongFlags.set(SONG_LINEARSLIDES);
 #endif // MODPLUG_TRACKER
 
 	m_modFormat.formatName = U_("Composer 669");
@@ -165,7 +166,7 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 	m_songMessage.ReadFixedLineLength(mpt::byte_cast<const std::byte*>(fileHeader.songMessage), 108, 36, 0);
 
 	// Reading Orders
-	ReadOrderFromArray(Order(), fileHeader.orders, MPT_ARRAY_COUNT(fileHeader.orders), 0xFF, 0xFE);
+	ReadOrderFromArray(Order(), fileHeader.orders, std::size(fileHeader.orders), 0xFF, 0xFE);
 	if(Order()[fileHeader.restartPos] < fileHeader.patterns)
 		Order().SetRestartPos(fileHeader.restartPos);
 
@@ -240,7 +241,7 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 
 				// Weird stuff happening in corehop.669 with effects > 8... they seem to do the same thing as if the high bit wasn't set, but the sample also behaves strangely.
 				uint8 command = effect[chn] >> 4;
-				if(command < static_cast<uint8>(CountOf(effTrans)))
+				if(command < static_cast<uint8>(std::size(effTrans)))
 				{
 					m->command = effTrans[command];
 				} else

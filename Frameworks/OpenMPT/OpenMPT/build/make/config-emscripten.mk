@@ -6,6 +6,8 @@ AR  = emar
 LINK.cc = em++ $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 EMSCRIPTEN_TARGET?=default
+EMSCRIPTEN_THREADS?=0
+EMSCRIPTEN_PORTS?=0
 
 ifneq ($(STDCXX),)
 CXXFLAGS_STDCXX = -std=$(STDCXX)
@@ -25,9 +27,34 @@ LDFLAGS  +=
 LDLIBS   +=
 ARFLAGS  := rcs
 
-CXXFLAGS += -Os
-CFLAGS   += -Os
-LDFLAGS  += -Os
+ifeq ($(EMSCRIPTEN_THREADS),1)
+CXXFLAGS += -pthread
+CFLAGS   += -pthread
+LDFLAGS  += -pthread
+endif
+
+ifeq ($(EMSCRIPTEN_PORTS),1)
+CXXFLAGS += -s USE_ZLIB=1 -sUSE_MPG123=1 -sUSE_OGG=1 -sUSE_VORBIS=1 -DMPT_WITH_ZLIB -DMPT_WITH_MPG123 -DMPT_WITH_VORBIS -DMPT_WITH_VORBISFI
+CFLAGS   += -s USE_ZLIB=1 -sUSE_MPG123=1 -sUSE_OGG=1 -sUSE_VORBIS=1 -DMPT_WITH_ZLIB -DMPT_WITH_MPG123 -DMPT_WITH_VORBIS -DMPT_WITH_VORBISFI
+LDFLAGS  += -s USE_ZLIB=1 -sUSE_MPG123=1 -sUSE_OGG=1 -sUSE_VORBIS=1
+NO_MINIZ=1
+NO_MINIMP3=1
+NO_STBVORBIS=1
+endif
+
+CXXFLAGS += -Oz
+CFLAGS   += -Oz
+LDFLAGS  += -Oz
+
+# Enable LTO as recommended by Emscripten
+#CXXFLAGS += -flto=thin
+#CFLAGS   += -flto=thin
+#LDFLAGS  += -flto=thin -Wl,--thinlto-jobs=all
+# As per recommendation in <https://github.com/emscripten-core/emscripten/issues/15638#issuecomment-982772770>,
+# thinLTO is not as well tested as full LTO. Stick to full LTO for now.
+CXXFLAGS += -flto
+CFLAGS   += -flto
+LDFLAGS  += -flto
 
 ifeq ($(EMSCRIPTEN_TARGET),default)
 # emits whatever is emscripten's default, currently (1.38.8) this is the same as "wasm" below.
@@ -40,11 +67,10 @@ LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
 else ifeq ($(EMSCRIPTEN_TARGET),all)
 # emits native wasm AND javascript with full wasm optimizations.
-# as of emscripten 1.38, this is equivalent to default.
 CPPFLAGS += -DMPT_BUILD_WASM
 CXXFLAGS += 
 CFLAGS   += 
-LDFLAGS  += -s WASM=2 -s LEGACY_VM_SUPPORT=1
+LDFLAGS  += -s WASM=2 -s LEGACY_VM_SUPPORT=1 -Wno-transpile
 
 LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
@@ -71,28 +97,17 @@ else ifeq ($(EMSCRIPTEN_TARGET),js)
 CPPFLAGS += -DMPT_BUILD_ASMJS
 CXXFLAGS += 
 CFLAGS   += 
-LDFLAGS  += -s WASM=0 -s LEGACY_VM_SUPPORT=1
+LDFLAGS  += -s WASM=0 -s LEGACY_VM_SUPPORT=1 -Wno-transpile
 
 LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
 endif
 
-CXXFLAGS += -s DISABLE_EXCEPTION_CATCHING=0 -ffast-math
-CFLAGS   += -s DISABLE_EXCEPTION_CATCHING=0 -ffast-math -fno-strict-aliasing
+CXXFLAGS += -s DISABLE_EXCEPTION_CATCHING=0
+CFLAGS   += -s DISABLE_EXCEPTION_CATCHING=0 -fno-strict-aliasing
 LDFLAGS  += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s ERROR_ON_MISSING_LIBRARIES=1 -s EXPORT_NAME="'libopenmpt'"
 
-CFLAGS_SILENT += -Wno-\#warnings
-CFLAGS_SILENT += -Wno-cast-align
-CFLAGS_SILENT += -Wno-cast-qual
-CFLAGS_SILENT += -Wno-format
-CFLAGS_SILENT += -Wno-missing-prototypes
-CFLAGS_SILENT += -Wno-sign-compare
-CFLAGS_SILENT += -Wno-unused-function
-CFLAGS_SILENT += -Wno-unused-parameter
-CFLAGS_SILENT += -Wno-unused-variable
-
-CXXFLAGS_WARNINGS += -Wmissing-declarations
-CFLAGS_WARNINGS   += -Wmissing-prototypes
+include build/make/warnings-clang.mk
 
 REQUIRES_RUNPREFIX=1
 
@@ -100,6 +115,10 @@ EXESUFFIX=.js
 SOSUFFIX=.js
 RUNPREFIX=node 
 TEST_LDFLAGS= --pre-js build/make/test-pre.js -lnodefs.js 
+
+ifeq ($(EMSCRIPTEN_THREADS),1)
+RUNPREFIX+=--experimental-wasm-threads --experimental-wasm-bulk-memory 
+endif
 
 DYNLINK=0
 SHARED_LIB=1
@@ -117,13 +136,20 @@ OPTIMIZE_SIZE=0
 
 IS_CROSS=1
 
+ifeq ($(ALLOW_LGPL),1)
+LOCAL_ZLIB=1
+LOCAL_MPG123=1
+LOCAL_OGG=1
+LOCAL_VORBIS=1
+else
 NO_ZLIB=1
-NO_LTDL=1
-NO_DL=1
 NO_MPG123=1
 NO_OGG=1
 NO_VORBIS=1
 NO_VORBISFILE=1
+endif
+NO_LTDL=1
+NO_DL=1
 NO_PORTAUDIO=1
 NO_PORTAUDIOCPP=1
 NO_PULSEAUDIO=1

@@ -10,11 +10,11 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "../Snd_defs.h"
 #ifndef NO_PLUGINS
-#include "../../common/Endianness.h"
+#include "openmpt/base/Endian.hpp"
 #endif // NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
@@ -52,8 +52,8 @@ struct SNDMIXPLUGININFO
 	uint8le reserved;
 	uint32le dwOutputRouting;		// 0 = send to master 0x80 + x = send to plugin x
 	uint32le dwReserved[4];			// Reserved for routing info
-	mpt::charbuf<32, mpt::String::nullTerminated> szName;         // User-chosen plugin display name - this is locale ANSI!
-	mpt::charbuf<64, mpt::String::nullTerminated> szLibraryName;  // original DLL name - this is UTF-8!
+	mpt::modecharbuf<32, mpt::String::nullTerminated> szName;         // User-chosen plugin display name - this is locale ANSI!
+	mpt::modecharbuf<64, mpt::String::nullTerminated> szLibraryName;  // original DLL name - this is UTF-8!
 
 	// Should only be called from SNDMIXPLUGIN::SetBypass() and IMixPlugin::Bypass()
 	void SetBypass(bool bypass = true) { if(bypass) routingFlags |= irBypass; else routingFlags &= uint8(~irBypass); }
@@ -64,26 +64,27 @@ MPT_BINARY_STRUCT(SNDMIXPLUGININFO, 128)	// this is directly written to files, s
 
 struct SNDMIXPLUGIN
 {
-	IMixPlugin *pMixPlugin;
+	IMixPlugin *pMixPlugin = nullptr;
 	std::vector<std::byte> pluginData;
-	SNDMIXPLUGININFO Info;
-	float fDryRatio;
-	int32 defaultProgram;
-	int32 editorX, editorY;
+	SNDMIXPLUGININFO Info = {};
+	float fDryRatio = 0;
+	int32 defaultProgram = 0;
+	int32 editorX = 0, editorY = 0;
 
-	SNDMIXPLUGIN()
-		: pMixPlugin(nullptr)
-		, fDryRatio(0.0f)
-		, defaultProgram(0)
-		, editorX(0), editorY(0)
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+	const char * GetNameLocale() const
 	{
-		MemsetZero(Info);
+		return Info.szName.buf;
 	}
-
-	const char *GetName() const
-		{ return Info.szName.buf; }
-	const char *GetLibraryName() const
-		{ return Info.szLibraryName.buf; }
+	mpt::ustring GetName() const
+	{
+		return mpt::ToUnicode(mpt::Charset::Locale, Info.szName);
+	}
+#endif // MPT_ENABLE_CHARSET_LOCALE
+	mpt::ustring GetLibraryName() const
+	{
+		return mpt::ToUnicode(mpt::Charset::UTF8, Info.szLibraryName);
+	}
 
 	// Check if a plugin is loaded into this slot (also returns true if the plugin in this slot has not been found)
 	bool IsValidPlugin() const { return (Info.dwPluginId1 | Info.dwPluginId2) != 0; }

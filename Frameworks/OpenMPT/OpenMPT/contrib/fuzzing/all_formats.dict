@@ -34,6 +34,8 @@ dmf="SMPD"
 dsm="RIFF"
 dsm="DSMF"
 
+dsym="\x02\x01\x13\x13\x14\x12\x01\x0B\x01"
+
 dtm="D.T."
 dtm="S.Q."
 #dtm="PATT"
@@ -43,6 +45,8 @@ dtm="DAIT"
 
 far="FAR\xFE"
 far="\x0D\x0A\x1A"
+
+fmt="FMTracker\x01\x01"
 
 gdm="GDM\xFE"
 gdm="GMFS"
@@ -208,6 +212,8 @@ stm="\x1A\x02\x15"
 
 stp="STP3\x02"
 
+symmod="SymM\x00\x00\x00\x01\xFF\xFF\xFF\xFF\x00\x00\x00"
+
 ult="MAS_UTrack_V004"
 
 umx="\xC1\x83\x2A\x9E"
@@ -297,8 +303,23 @@ plugin_parameq="OMXD\x89\xED\x0C\x12"
 plugin_wavesreverb="OMDX\x68\x02\xFC\x87"
 plugin_lfo="OMPTLFO "
 plugin_dbproecho="DBM0Echo"
+plugin_symmodecho="SymMEcho"
 
 midi="MThd\x00\x00\x00\x06\x00\x01\x00\x01\x01\xE0MTrk"
 
 wave="WAVEfmt "
 wave="data"
+
+# IFF / AIFF (for SymMOD loader)
+iff="FORM"
+iff="AIFF"
+iff="AIFC"
+iff="8SVX"
+iff="16SV"
+iff="MAUD"
+iff="VHDR"
+iff="BODY"
+iff="CHAN"
+iff="MHDR"
+iff="MDAT"
+iff="NAME"

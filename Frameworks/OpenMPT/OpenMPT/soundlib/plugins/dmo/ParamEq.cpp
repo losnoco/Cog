@@ -13,6 +13,7 @@
 #ifndef NO_PLUGINS
 #include "../../Sndfile.h"
 #include "ParamEq.h"
+#include "mpt/base/numbers.hpp"
 #endif // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
@@ -90,7 +91,7 @@ void ParamEq::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
 	if(index < kEqNumParameters)
 	{
-		Limit(value, 0.0f, 1.0f);
+		value = mpt::safe_clamp(value, 0.0f, 1.0f);
 		m_param[index] = value;
 		RecalculateEqParams();
 	}
@@ -171,10 +172,10 @@ void ParamEq::RecalculateEqParams()
 	LimitMax(m_param[kEqCenter], m_maxFreqParam);
 	const float freq = FreqInHertz() / m_SndFile.GetSampleRate();
 	const float a = std::pow(10.0f, GainInDecibel() / 40.0f);
-	const float w0 = 2.0f * float(M_PI) * freq;
+	const float w0 = 2.0f * mpt::numbers::pi_v<float> * freq;
 	const float sinW0 = std::sin(w0);
 	const float cosW0 = std::cos(w0);
-	const float alpha = sinW0 * std::sinh((BandwidthInSemitones() * (float(M_LN2) / 24.0f)) * w0 / sinW0);
+	const float alpha = sinW0 * std::sinh((BandwidthInSemitones() * (mpt::numbers::ln2_v<float> / 24.0f)) * w0 / sinW0);
 
 	const float b0 = 1.0f + alpha * a;
 	const float b1 = -2.0f * cosW0;

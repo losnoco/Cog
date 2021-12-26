@@ -11,14 +11,11 @@
 #include "stdafx.h"
 #include "ComponentManager.h"
 
+#include "mpt/mutex/mutex.hpp"
+
 #include "Logging.h"
 
-#include "mptMutex.h"
-
 OPENMPT_NAMESPACE_BEGIN
-
-
-#if defined(MPT_ENABLE_COMPONENTS)
 
 
 ComponentBase::ComponentBase(ComponentType type)
@@ -86,7 +83,7 @@ void ComponentBase::Initialize()
 }
 
 
-#if defined(MPT_ENABLE_DYNBIND)
+#if defined(MODPLUG_TRACKER)
 
 
 ComponentLibrary::ComponentLibrary(ComponentType type)
@@ -155,7 +152,7 @@ mpt::Library ComponentLibrary::GetLibrary(const std::string &libName) const
 }
 
 
-#endif // MPT_ENABLE_DYNBIND
+#endif // MODPLUG_TRACKER
 
 
 #if MPT_COMPONENT_MANAGER
@@ -189,8 +186,8 @@ std::string ComponentFactoryBase::GetSettingsKey() const
 
 void ComponentFactoryBase::PreConstruct() const
 {
-	MPT_LOG(LogInformation, "Components", 
-		mpt::format(U_("Constructing Component %1"))
+	MPT_LOG_GLOBAL(LogInformation, "Components", 
+		MPT_UFORMAT("Constructing Component {}")
 			( mpt::ToUnicode(mpt::Charset::ASCII, m_ID)
 			)
 		);
@@ -227,13 +224,22 @@ static mpt::mutex & ComponentListMutex()
 
 static ComponentListEntry * & ComponentListHead()
 {
-	static ComponentListEntry *g_ComponentListHead = nullptr;
+	static ComponentListEntry g_ComponentListHeadEmpty = {nullptr, nullptr};
+	static ComponentListEntry *g_ComponentListHead = &g_ComponentListHeadEmpty;
 	return g_ComponentListHead;
 }
 
 bool ComponentListPush(ComponentListEntry *entry)
 {
 	mpt::lock_guard<mpt::mutex> guard(ComponentListMutex());
+#if MPT_MSVC_BEFORE(2019,0)
+	// Guard against VS2017 compiler bug causing repeated initialization of inline variables.
+	// See <https://developercommunity.visualstudio.com/t/static-inline-variable-gets-destroyed-multiple-tim/297876>.
+	if(entry->next)
+	{
+		return false;
+	}
+#endif
 	entry->next = ComponentListHead();
 	ComponentListHead() = entry;
 	return true;
@@ -245,7 +251,7 @@ static std::shared_ptr<ComponentManager> g_ComponentManager;
 
 void ComponentManager::Init(const IComponentManagerSettings &settings)
 {
-	MPT_LOG(LogInformation, "Components", U_("Init"));
+	MPT_LOG_GLOBAL(LogInformation, "Components", U_("Init"));
 	// cannot use make_shared because the constructor is private
 	g_ComponentManager = std::shared_ptr<ComponentManager>(new ComponentManager(settings));
 }
@@ -253,7 +259,7 @@ void ComponentManager::Init(const IComponentManagerSettings &settings)
 
 void ComponentManager::Release()
 {
-	MPT_LOG(LogInformation, "Components", U_("Release"));
+	MPT_LOG_GLOBAL(LogInformation, "Components", U_("Release"));
 	g_ComponentManager = nullptr;
 }
 
@@ -270,7 +276,10 @@ ComponentManager::ComponentManager(const IComponentManagerSettings &settings)
 	mpt::lock_guard<mpt::mutex> guard(ComponentListMutex());
 	for(ComponentListEntry *entry = ComponentListHead(); entry; entry = entry->next)
 	{
-		entry->reg(*this);
+		if(entry->reg)
+		{
+			entry->reg(*this);
+		}
 	}
 }
 
@@ -292,7 +301,7 @@ void ComponentManager::Register(const IComponentFactory &componentFactory)
 
 void ComponentManager::Startup()
 {
-	MPT_LOG(LogDebug, "Components", U_("Startup"));
+	MPT_LOG_GLOBAL(LogDebug, "Components", U_("Startup"));
 	if(m_Settings.LoadOnStartup())
 	{
 		for(auto &it : m_Components)
@@ -461,9 +470,6 @@ mpt::PathString ComponentManager::GetComponentPath() const
 
 
 #endif // MPT_COMPONENT_MANAGER
-
-
-#endif // MPT_ENABLE_COMPONENTS
 
 
 OPENMPT_NAMESPACE_END

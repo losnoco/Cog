@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
-#include "../common/Endianness.h"
-#include "../common/mptIO.h"
+#include "openmpt/base/Endian.hpp"
+#include "mpt/io/io.hpp"
 
 #include "../common/FileReaderFwd.h"
 
@@ -36,9 +36,7 @@ struct PageHeader
 	uint8le  page_segments;
 };
 
-} // namespace Ogg
-MPT_BINARY_STRUCT(Ogg::PageHeader, 27)
-namespace Ogg {
+MPT_BINARY_STRUCT(PageHeader, 27)
 
 
 struct PageInfo

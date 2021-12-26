@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 
 #include "../common/FileReaderFwd.h"
@@ -65,7 +65,6 @@ public:
 		DMF,                // DMF Huffman compression
 		MDL,                // MDL Huffman compression
 		PTM8Dto16,          // PTM 8-Bit delta value -> 16-Bit sample
-		PCM7to8,            // 8-Bit sample data with unused high bit
 		ADPCM,              // 4-Bit ADPCM-packed
 		MT2,                // MadTracker 2 stereo delta encoding
 		floatPCM15,         // Floating point PCM with 2^15 full scale
@@ -132,7 +131,7 @@ public:
 	}
 
 	// Return 0 in case of variable-length encoded samples.
-	MPT_CONSTEXPR14_FUN uint8 GetEncodedBitsPerSample() const
+	MPT_CONSTEXPRINLINE uint8 GetEncodedBitsPerSample() const
 	{
 		switch(GetEncoding())
 		{
@@ -156,8 +155,6 @@ public:
 
 			case PTM8Dto16: // PTM 8-Bit delta value -> 16-Bit sample
 				return 16;
-			case PCM7to8:   // 8-Bit sample data with unused high bit
-				return 8;
 			case ADPCM:     // 4-Bit ADPCM-packed
 				return 4;
 			case uLaw:      // G.711 u-law
@@ -171,7 +168,7 @@ public:
 	}
 
 	// Return the static header size additional to the raw encoded sample data.
-	MPT_CONSTEXPR14_FUN std::size_t GetEncodedHeaderSize() const
+	MPT_CONSTEXPRINLINE std::size_t GetEncodedHeaderSize() const
 	{
 		switch(GetEncoding())
 		{
@@ -183,13 +180,13 @@ public:
 	}
 
 	// Returns true if the encoded size cannot be calculated apriori from the encoding format and the sample length.
-	MPT_CONSTEXPR14_FUN bool IsVariableLengthEncoded() const
+	MPT_CONSTEXPRINLINE bool IsVariableLengthEncoded() const
 	{
 		return GetEncodedBitsPerSample() == 0;
 	}
 
-	// Returns true if the decoder for a given format uses FileReader interface and thus do not need to call GetPinnedRawDataView()
-	MPT_CONSTEXPR14_FUN bool UsesFileReaderForDecoding() const
+	// Returns true if the decoder for a given format uses FileReader interface and thus do not need to call GetPinnedView()
+	MPT_CONSTEXPRINLINE bool UsesFileReaderForDecoding() const
 	{
 		switch(GetEncoding())
 		{

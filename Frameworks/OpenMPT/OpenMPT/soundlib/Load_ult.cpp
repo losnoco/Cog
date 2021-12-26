@@ -49,6 +49,7 @@ struct UltSample
 	void ConvertToMPT(ModSample &mptSmp) const
 	{
 		mptSmp.Initialize();
+		mptSmp.Set16BitCuePoints();
 
 		mptSmp.filename = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, filename);
 
@@ -225,17 +226,39 @@ static int ReadULTEvent(ModCommand &m, FileReader &file, uint8 version)
 	// sample offset -- this is even more special than digitrakker's
 	if(cmd1 == CMD_OFFSET && cmd2 == CMD_OFFSET)
 	{
-		uint32 off = ((param1 << 8) | param2) >> 6;
-		cmd1 = CMD_NONE;
-		param1 = mpt::saturate_cast<uint8>(off);
+		uint32 offset = ((param2 << 8) | param1) >> 6;
+		m.command = CMD_OFFSET;
+		m.param = static_cast<ModCommand::PARAM>(offset);
+		if(offset > 0xFF)
+		{
+			m.volcmd = VOLCMD_OFFSET;
+			m.vol = static_cast<ModCommand::VOL>(offset >> 8);
+		}
+		return repeat;
 	} else if(cmd1 == CMD_OFFSET)
 	{
-		uint32 off = param1 * 4;
-		param1 = mpt::saturate_cast<uint8>(off);
+		uint32 offset = param1 * 4;
+		param1 = mpt::saturate_cast<uint8>(offset);
+		if(offset > 0xFF && ModCommand::GetEffectWeight(cmd2) < ModCommand::GetEffectType(CMD_OFFSET))
+		{
+			m.command = CMD_OFFSET;
+			m.param = static_cast<ModCommand::PARAM>(offset);
+			m.volcmd = VOLCMD_OFFSET;
+			m.vol = static_cast<ModCommand::VOL>(offset >> 8);
+			return repeat;
+		}
 	} else if(cmd2 == CMD_OFFSET)
 	{
-		uint32 off = param2 * 4;
-		param2 = mpt::saturate_cast<uint8>(off);
+		uint32 offset = param2 * 4;
+		param2 = mpt::saturate_cast<uint8>(offset);
+		if(offset > 0xFF && ModCommand::GetEffectWeight(cmd1) < ModCommand::GetEffectType(CMD_OFFSET))
+		{
+			m.command = CMD_OFFSET;
+			m.param = static_cast<ModCommand::PARAM>(offset);
+			m.volcmd = VOLCMD_OFFSET;
+			m.vol = static_cast<ModCommand::VOL>(offset >> 8);
+			return repeat;
+		}
 	} else if(cmd1 == cmd2)
 	{
 		// don't try to figure out how ultratracker does this, it's quite random

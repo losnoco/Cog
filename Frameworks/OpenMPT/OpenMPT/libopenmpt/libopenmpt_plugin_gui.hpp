@@ -12,26 +12,25 @@
 
 #include "libopenmpt_plugin_settings.hpp"
 
-#define NOMINMAX
 #include <windows.h>
 
 #include <string>
 
-
 namespace libopenmpt {
 namespace plugin {
 
+#if defined(MPT_WITH_MFC)
 
 void DllMainAttach();
 void DllMainDetach();
 
-void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::wstring title );
+#endif // MPT_WITH_MFC
 
-void gui_show_file_info( HWND parent, std::wstring title, std::wstring info );
+void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::basic_string<TCHAR> title );
 
+void gui_show_file_info( HWND parent, std::basic_string<TCHAR> title, std::basic_string<TCHAR> info );
 
 } // namespace plugin
 } // namespace libopenmpt
-
 
 #endif // LIBOPENMPT_PLUGIN_GUI_HPP

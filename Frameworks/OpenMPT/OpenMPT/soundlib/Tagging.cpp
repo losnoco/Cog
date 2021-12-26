@@ -29,7 +29,7 @@ mpt::ustring GetSampleNameFromTags(const FileTags &tags)
 		result = tags.title;
 	} else
 	{
-		result = mpt::format(U_("%1 (by %2)"))(tags.title, tags.artist);
+		result = MPT_UFORMAT("{} (by {})")(tags.title, tags.artist);
 	}
 	return result;
 }

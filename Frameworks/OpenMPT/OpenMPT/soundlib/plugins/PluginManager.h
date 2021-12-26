@@ -10,15 +10,17 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
 
-#define PLUGMAGIC(a, b, c, d) \
-	((((int32)a) << 24) | (((int32)b) << 16) | (((int32)c) << 8) | (((int32)d) << 0))
+constexpr int32 PLUGMAGIC(char a, char b, char c, char d) noexcept
+{
+	return static_cast<int32>((static_cast<uint32>(a) << 24) | (static_cast<uint32>(b) << 16) | (static_cast<uint32>(c) << 8) | (static_cast<uint32>(d) << 0));
+}
 
 //#define kBuzzMagic	PLUGMAGIC('B', 'u', 'z', 'z')
-#define kDmoMagic	PLUGMAGIC('D', 'X', 'M', 'O')
+inline constexpr int32 kDmoMagic = PLUGMAGIC('D', 'X', 'M', 'O');
 
 class CSoundFile;
 class IMixPlugin;
@@ -32,25 +34,26 @@ public:
 	{
 		// Same plugin categories as defined in VST SDK
 		catUnknown = 0,
-		catEffect,         // Simple Effect
-		catSynth,          // VST Instrument (Synths, samplers,...)
-		catAnalysis,       // Scope, Tuner, ...
-		catMastering,      // Dynamics, ...
-		catSpacializer,    // Panners, ...
-		catRoomFx,         // Delays and Reverbs
-		catSurroundFx,     // Dedicated surround processor
-		catRestoration,    // Denoiser, ...
-		catOfflineProcess, // Offline Process
-		catShell,          // Plug-in is container of other plug-ins
-		catGenerator,      // Tone Generator, ...
+		catEffect,          // Simple Effect
+		catSynth,           // VST Instrument (Synths, samplers,...)
+		catAnalysis,        // Scope, Tuner, ...
+		catMastering,       // Dynamics, ...
+		catSpacializer,     // Panners, ...
+		catRoomFx,          // Delays and Reverbs
+		catSurroundFx,      // Dedicated surround processor
+		catRestoration,     // Denoiser, ...
+		catOfflineProcess,  // Offline Process
+		catShell,           // Plug-in is container of other plug-ins
+		catGenerator,       // Tone Generator, ...
 		// Custom categories
-		catDMO,            // DirectX media object plugin
+		catDMO,     // DirectX media object plugin
+		catHidden,  // For internal plugins that should not be visible to the user (e.g. because they only exist for legacy reasons)
 
-		numCategories,
+		numCategories
 	};
 
 public:
-	typedef IMixPlugin* (*CreateProc)(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
+	using CreateProc = IMixPlugin *(*)(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
 
 	IMixPlugin *pPluginsList = nullptr; // Pointer to first plugin instance (this instance carries pointers to other instances)
 	CreateProc Create;                  // Factory to call for this plugin
@@ -65,7 +68,7 @@ public:
 	PluginCategory category = catUnknown;
 	const bool isBuiltIn : 1;
 	bool isInstrument : 1;
-	bool useBridge : 1, shareBridgeInstance : 1;
+	bool useBridge : 1, shareBridgeInstance : 1, modernBridge : 1;
 protected:
 	mutable uint8 dllArch = 0;
 
@@ -83,11 +86,11 @@ public:
 #endif // MODPLUG_TRACKER
 		, category(catUnknown)
 		, isBuiltIn(isBuiltIn), isInstrument(false)
-		, useBridge(false), shareBridgeInstance(true)
+		, useBridge(false), shareBridgeInstance(true), modernBridge(true)
 	{
 	}
 
-#ifndef NO_VST
+#ifdef MPT_WITH_VST
 
 	// Get native phost process arch encoded as plugin arch
 	static uint8 GetNativePluginArch();
@@ -103,18 +106,20 @@ public:
 	// (e.g. if tons of unscanned plugins would slow down generation of the plugin selection dialog)
 	bool IsNativeFromCache() const;
 
-#endif // !NO_VST
+#endif // MPT_WITH_VST
 
 	void WriteToCache() const;
 
 	uint32 EncodeCacheFlags() const
 	{
-		// Format: 00000000.00000000.AAAAAASB.CCCCCCCI
+		// Format: 00000000.0000000M.AAAAAASB.CCCCCCCI
 		return (isInstrument ? 1 : 0)
 			| (category << 1)
 			| (useBridge ? 0x100 : 0)
 			| (shareBridgeInstance ? 0x200 : 0)
-			| ((dllArch / 8) << 10);
+			| ((dllArch / 8) << 10)
+			| (modernBridge ? 0x10000 : 0)
+			;
 	}
 
 	void DecodeCacheFlags(uint32 flags)
@@ -132,6 +137,7 @@ public:
 		useBridge = (flags & 0x100) != 0;
 		shareBridgeInstance = (flags & 0x200) != 0;
 		dllArch = ((flags >> 10) & 0x3F) * 8;
+		modernBridge = (flags & 0x10000) != 0;
 	}
 };
 
@@ -160,7 +166,7 @@ public:
 	size_t size() const { return pluginList.size(); }
 
 	bool IsValidPlugin(const VSTPluginLib *pLib) const;
-	VSTPluginLib *AddPlugin(const mpt::PathString &dllPath, const mpt::ustring &tags = mpt::ustring(), bool fromCache = true, bool *fileFound = nullptr);
+	VSTPluginLib *AddPlugin(const mpt::PathString &dllPath, bool maskCrashes, const mpt::ustring &tags = mpt::ustring(), bool fromCache = true, bool *fileFound = nullptr);
 	bool RemovePlugin(VSTPluginLib *);
 	bool CreateMixPlugin(SNDMIXPLUGIN &, CSoundFile &);
 	void OnIdle();

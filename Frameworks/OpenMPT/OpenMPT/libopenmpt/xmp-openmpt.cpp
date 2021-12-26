@@ -12,15 +12,34 @@
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+#if !defined(WINVER) && !defined(_WIN32_WINDOWS)
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501 // _WIN32_WINNT_WINXP
 #endif
+#endif
+#if !defined(MPT_BUILD_RETRO)
+#if defined(_MSC_VER)
+#define MPT_WITH_MFC
+#endif
+#else
+#if defined(_WIN32_WINNT)
+#if (_WIN32_WINNT >= 0x0501)
+#if defined(_MSC_VER)
+#define MPT_WITH_MFC
+#endif
+#endif
+#endif
+#endif
+#if defined(MPT_WITH_MFC)
 #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS // Avoid binary bloat from linking unused MFC controls
+#endif // MPT_WITH_MFC
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
+#if defined(MPT_WITH_MFC)
 #include <afxwin.h>
 #include <afxcmn.h>
+#endif // MPT_WITH_MFC
 #include <windows.h>
 #include <WindowsX.h>
 
@@ -39,6 +58,8 @@
 
 #include <cctype>
 #include <cstring>
+
+#include <tchar.h>
 
 #include "libopenmpt.hpp"
 #include "libopenmpt_ext.hpp"
@@ -116,18 +137,31 @@ static void save_options();
 
 static void apply_and_save_options();
 
+
+static std::string convert_to_native( const std::string & str );
+
+static std::string StringEncode( const std::wstring &src, UINT codepage );
+
+static std::wstring StringDecode( const std::string & src, UINT codepage );
+
+#if defined(UNICODE)
+static std::wstring StringToWINAPI( const std::wstring & src );
+#else
+static std::string StringToWINAPI( const std::wstring & src );
+#endif
+
 class xmp_openmpt_settings
  : public libopenmpt::plugin::settings
 {
 protected:
-	void read_setting( const std::string & key, const std::wstring & keyW, int & val ) override {
+	void read_setting( const std::string & key, const std::basic_string<TCHAR> & keyW, int & val ) override {
 		libopenmpt::plugin::settings::read_setting( key, keyW, val );
 		int storedVal = 0;
 		if ( xmpfregistry->GetInt( "OpenMPT", key.c_str(), &storedVal ) ) {
 			val = storedVal;
 		}
 	}
-	void write_setting( const std::string & key, const std::wstring & /* keyW */ , int val ) override {
+	void write_setting( const std::string & key, const std::basic_string<TCHAR> & /* keyW */ , int val ) override {
 		if ( !xmpfregistry->SetInt( "OpenMPT", key.c_str(), &val ) ) {
 			// error
 		}
@@ -147,6 +181,7 @@ public:
 
 struct self_xmplay_t {
 	std::vector<float> subsong_lengths;
+	std::vector<std::string> subsong_names;
 	std::size_t samplerate = 48000;
 	std::size_t num_channels = 2;
 	xmp_openmpt_settings settings;
@@ -208,6 +243,22 @@ static std::wstring StringDecode( const std::string & src, UINT codepage )
 	MultiByteToWideChar( codepage, 0, src.c_str(), -1, &decoded_string[0], decoded_string.size() );
 	return &decoded_string[0];
 }
+
+#if defined(UNICODE)
+
+static std::wstring StringToWINAPI( const std::wstring & src )
+{
+	return src;
+}
+
+#else
+
+static std::string StringToWINAPI( const std::wstring & src )
+{
+	return StringEncode( src, CP_ACP );
+}
+
+#endif
 
 template <typename Tstring, typename Tstring2, typename Tstring3>
 static inline Tstring StringReplace( Tstring str, const Tstring2 & oldStr_, const Tstring3 & newStr_ ) {
@@ -468,13 +519,13 @@ static void clear_current_timeinfo() {
 static void WINAPI openmpt_About( HWND win ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2021 OpenMPT developers (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2021 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
 	about << std::endl;
 	about << "Show full credits?" << std::endl;
-	if ( MessageBox( win, StringDecode( about.str(), CP_UTF8 ).c_str(), TEXT(SHORT_TITLE), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
+	if ( MessageBox( win, StringToWINAPI( StringDecode( about.str(), CP_UTF8 ) ).c_str(), TEXT(SHORT_TITLE), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
 		return;
 	}
 	std::ostringstream credits;
@@ -483,11 +534,19 @@ static void WINAPI openmpt_About( HWND win ) {
 	credits << std::endl;
 	credits << "Arseny Kapoulkine for pugixml" << std::endl;
 	credits << "https://pugixml.org/" << std::endl;
-	libopenmpt::plugin::gui_show_file_info( win, TEXT(SHORT_TITLE), StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) );
+#if 1
+	libopenmpt::plugin::gui_show_file_info( win, TEXT(SHORT_TITLE), StringToWINAPI( StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ) );
+#else
+	MessageBox( win, StringToWINAPI( StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ).c_str(), TEXT(SHORT_TITLE), MB_OK );
+#endif
 }
 
 static void WINAPI openmpt_Config( HWND win ) {
+#if 1
 	libopenmpt::plugin::gui_edit_settings( &self->settings, win, TEXT(SHORT_TITLE) );
+#else
+	static_cast<void>(win);
+#endif
 	apply_and_save_options();
 }
 
@@ -499,7 +558,7 @@ class xmplay_streambuf : public std::streambuf {
 public:
 	explicit xmplay_streambuf( XMPFILE & file );
 private:
-	int_type underflow();
+	int_type underflow() override;
 	xmplay_streambuf( const xmplay_streambuf & );
 	xmplay_streambuf & operator = ( const xmplay_streambuf & );
 private:
@@ -673,17 +732,31 @@ static void append_xmplay_tag( std::string & tags, const std::string & tag, cons
 	tags.append( 1, '\0' );
 }
 
-static char * build_xmplay_tags( const openmpt::module & mod ) {
+static char * build_xmplay_tags( const openmpt::module & mod, int32_t subsong = -1 ) {
 	std::string tags;
-	append_xmplay_tag( tags, "filetype", convert_to_native( StringUpperCase( mod.get_metadata("type") ) ) );
-	append_xmplay_tag( tags, "title", convert_to_native( mod.get_metadata("title") ) );
-	append_xmplay_tag( tags, "artist", convert_to_native( mod.get_metadata("artist") ) );
-	append_xmplay_tag( tags, "album", convert_to_native( mod.get_metadata("xmplay-album") ) ); // todo, libopenmpt does not support that
-	append_xmplay_tag( tags, "date", convert_to_native( extract_date( mod ) ) );
-	append_xmplay_tag( tags, "track", convert_to_native( mod.get_metadata("xmplay-tracknumber") ) ); // todo, libopenmpt does not support that
-	append_xmplay_tag( tags, "genre", convert_to_native( mod.get_metadata("xmplay-genre") ) ); // todo, libopenmpt does not support that
-	append_xmplay_tag( tags, "comment", convert_to_native( mod.get_metadata("message") ) );
-	tags.append( 1, '\0' );
+	const std::string title = mod.get_metadata("title");
+
+	const auto subsong_names = mod.get_subsong_names();
+	auto first_subsong = subsong_names.cbegin(), last_subsong = subsong_names.cend();
+	if ( subsong >= 0 && static_cast<size_t>( subsong ) < subsong_names.size() ) {
+		first_subsong += subsong;
+		last_subsong = first_subsong + 1;
+	} else
+	{
+		last_subsong = first_subsong + 1;
+	}
+
+	for ( auto subsong_name = first_subsong; subsong_name != last_subsong; subsong_name++ ) {
+		append_xmplay_tag( tags, "filetype", convert_to_native( StringUpperCase( mod.get_metadata( "type" ) ) ) );
+		append_xmplay_tag( tags, "title", convert_to_native( ( subsong_name->empty() || subsong == -1 ) ? title : *subsong_name ) );
+		append_xmplay_tag( tags, "artist", convert_to_native( mod.get_metadata( "artist" ) ) );
+		append_xmplay_tag( tags, "album", convert_to_native( mod.get_metadata( "xmplay-album" ) ) );  // todo, libopenmpt does not support that
+		append_xmplay_tag( tags, "date", convert_to_native( extract_date( mod ) ) );
+		append_xmplay_tag( tags, "track", convert_to_native( mod.get_metadata( "xmplay-tracknumber" ) ) );  // todo, libopenmpt does not support that
+		append_xmplay_tag( tags, "genre", convert_to_native( mod.get_metadata( "xmplay-genre" ) ) );        // todo, libopenmpt does not support that
+		append_xmplay_tag( tags, "comment", convert_to_native( mod.get_metadata( "message" ) ) );
+		tags.append( 1, '\0' );
+	}
 	char * result = static_cast<char*>( xmpfmisc->Alloc( tags.size() ) );
 	if ( !result ) {
 		return nullptr;
@@ -776,7 +849,7 @@ static BOOL WINAPI openmpt_CheckFile( const char * filename, XMPFILE file ) {
 					case XMPFILE_TYPE_MEMORY:
 						{
 							xmplay_imemstream s( reinterpret_cast<const char *>( xmpffile->GetMemory( file ) ), xmpffile->GetSize( file ) );
-							return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+							return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
 						}
 						break;
 					case XMPFILE_TYPE_FILE:
@@ -785,7 +858,7 @@ static BOOL WINAPI openmpt_CheckFile( const char * filename, XMPFILE file ) {
 					default:
 						{
 							xmplay_istream s( file );
-							return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+							return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
 						}
 						break;
 				}
@@ -793,16 +866,16 @@ static BOOL WINAPI openmpt_CheckFile( const char * filename, XMPFILE file ) {
 				if ( xmpffile->GetType( file ) == XMPFILE_TYPE_MEMORY ) {
 					std::string data( reinterpret_cast<const char*>( xmpffile->GetMemory( file ) ), xmpffile->GetSize( file ) );
 					std::istringstream s( data );
-					return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+					return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
 				} else {
 					std::string data = read_XMPFILE_string( file );
 					std::istringstream s(data);
-					return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+					return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
 				}
 			#endif
 		#else
 			std::ifstream s( filename, std::ios_base::binary );
-			return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+			return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
 		#endif
 	} catch ( ... ) {
 		return FALSE;
@@ -935,6 +1008,7 @@ static DWORD WINAPI openmpt_Open( const char * filename, XMPFILE file ) {
 			self->mod->select_subsong( i );
 			self->subsong_lengths[i] = static_cast<float>( self->mod->get_duration_seconds() );
 		}
+		self->subsong_names = self->mod->get_subsong_names();
 		self->mod->select_subsong( 0 );
 		self->tempo_factor = 0;
 		self->pitch_factor = 0;
@@ -971,7 +1045,7 @@ static void WINAPI openmpt_SetFormat( XMPFORMAT * form ) {
 	if ( self->settings.samplerate != 0 ) {
 		form->rate = self->samplerate;
 	} else {
-		if ( form->rate && form->rate > 0 ) {
+		if ( form->rate > 0 ) {
 			self->samplerate = form->rate;
 		} else {
 			form->rate = 48000;
@@ -981,7 +1055,7 @@ static void WINAPI openmpt_SetFormat( XMPFORMAT * form ) {
 	if ( self->settings.channels != 0 ) {
 		form->chan = self->num_channels;
 	} else {
-		if ( form->chan && form->chan > 0 ) {
+		if ( form->chan > 0 ) {
 			if ( form->chan > 2 ) {
 				form->chan = 4;
 				self->num_channels = 4;
@@ -1003,7 +1077,7 @@ static char * WINAPI openmpt_GetTags() {
 		tags[0] = '\0';
 		return tags;
 	}
-	return build_xmplay_tags( *self->mod );
+	return build_xmplay_tags( *self->mod, std::max( 0, self->mod->get_selected_subsong() ) );
 }
 
 // get the main panel info text
@@ -1074,10 +1148,8 @@ static void WINAPI openmpt_GetGeneralInfo( char * buf ) {
 	str << "Samples" << "\t" << self->mod->get_num_samples() << "\r";
 
 	if( !self->single_subsong_mode && self->subsong_lengths.size() > 1 ) {
-		std::vector<std::string> names = self->mod->get_subsong_names();
-
 		for ( std::size_t i = 0; i < self->subsong_lengths.size(); ++i ) {
-			str << ( i == 0 ? "Subsongs\t" : "\t" ) << (i + 1) << ". " << seconds_to_string( self->subsong_lengths[i]) << " " << names[i] << "\r";
+			str << ( i == 0 ? "Subsongs\t" : "\t" ) << (i + 1) << ". " << seconds_to_string( self->subsong_lengths[i]) << " " << self->subsong_names[i] << "\r";
 		}
 	}
 
@@ -1110,11 +1182,11 @@ static double WINAPI openmpt_SetPosition( DWORD pos ) {
 	if ( !self->mod ) {
 		return -1.0;
 	}
-	if ( pos == XMPIN_POS_LOOP ) {
+	if ( pos == static_cast<DWORD>(static_cast<LONG>(XMPIN_POS_LOOP)) ) {
 		// If the time of the loop start position is known, that should be returned, otherwise -2 can be returned to let the time run on.
 		// There is currently no way to easily figure out at which time the loop restarts.
 		return -2;
-	} else if ( pos == XMPIN_POS_AUTOLOOP ) {
+	} else if ( pos == static_cast<DWORD>(static_cast<LONG>(XMPIN_POS_AUTOLOOP)) ) {
 		// In the auto-looping case, the function should only loop when a loop has been detected, and otherwise return -1
 		// If the time of the loop start position is known, that should be returned, otherwise -2 can be returned to let the time run on.
 		// There is currently no way to easily figure out at which time the loop restarts.
@@ -1122,13 +1194,15 @@ static double WINAPI openmpt_SetPosition( DWORD pos ) {
 	}
 	if ( pos & XMPIN_POS_SUBSONG ) {
 		self->single_subsong_mode = ( pos & XMPIN_POS_SUBSONG1 ) != 0;
+		const int32_t subsong = pos & 0xffff;
 		try {
-			self->mod->select_subsong( pos & 0xffff );
+			self->mod->select_subsong( subsong );
 		} catch ( ... ) {
 			return 0.0;
 		}
 		openmpt::ext::interactive *interactive = static_cast<openmpt::ext::interactive *>( self->mod->get_interface( openmpt::ext::interactive_id ) );
-		xmpfin->SetLength( static_cast<float> ( self->subsong_lengths[pos & 0xffff] / interactive->get_tempo_factor() ), TRUE );
+		xmpfin->SetLength( static_cast<float>( self->subsong_lengths[ subsong ] / interactive->get_tempo_factor() ), TRUE );
+		xmpfin->UpdateTitle( nullptr );
 		reset_timeinfos( 0 );
 		return 0.0;
 	}
@@ -1279,11 +1353,18 @@ static void assure_width( std::string & str, std::size_t width ) {
 	}
 }
 
+struct ColorRGBA
+{
+	uint8_t r, g, b, a;
+};
+
 union Color
 {
-	struct { uint8_t r, g, b, a; };
+	ColorRGBA rgba;
 	COLORREF dw;
 };
+
+static_assert(sizeof(Color) == 4);
 
 HDC visDC;
 HGDIOBJ visbitmap;
@@ -1296,10 +1377,10 @@ static int last_pattern = -1;
 
 static Color invert_color( Color c ) {
 	Color res;
-	res.a = c.a;
-	res.r = 255 - c.r;
-	res.g = 255 - c.g;
-	res.b = 255 - c.b;
+	res.rgba.a = c.rgba.a;
+	res.rgba.r = 255 - c.rgba.r;
+	res.rgba.g = 255 - c.rgba.g;
+	res.rgba.b = 255 - c.rgba.b;
 	return res;
 }
 
@@ -1315,20 +1396,20 @@ static BOOL WINAPI VisOpen(DWORD colors[3]) {
 
 	viscolors[col_global] = invert_color( viscolors[col_background] );
 
-	const int r = viscolors[col_text].r, g = viscolors[col_text].g, b = viscolors[col_text].b;
-	viscolors[col_empty].r = static_cast<std::uint8_t>( (r + viscolors[col_background].r) / 2 );
-	viscolors[col_empty].g = static_cast<std::uint8_t>( (g + viscolors[col_background].g) / 2 );
-	viscolors[col_empty].b = static_cast<std::uint8_t>( (b + viscolors[col_background].b) / 2 );
-	viscolors[col_empty].a = 0;
+	const int r = viscolors[col_text].rgba.r, g = viscolors[col_text].rgba.g, b = viscolors[col_text].rgba.b;
+	viscolors[col_empty].rgba.r = static_cast<std::uint8_t>( (r + viscolors[col_background].rgba.r) / 2 );
+	viscolors[col_empty].rgba.g = static_cast<std::uint8_t>( (g + viscolors[col_background].rgba.g) / 2 );
+	viscolors[col_empty].rgba.b = static_cast<std::uint8_t>( (b + viscolors[col_background].rgba.b) / 2 );
+	viscolors[col_empty].rgba.a = 0;
 
 #define MIXCOLOR(col, c1, c2, c3) { \
 	viscolors[col] = viscolors[col_text]; \
-	int mix = viscolors[col].c1 + 0xA0; \
-	viscolors[col].c1 = static_cast<std::uint8_t>( mix ); \
+	int mix = viscolors[col].rgba.c1 + 0xA0; \
+	viscolors[col].rgba.c1 = static_cast<std::uint8_t>( mix ); \
 	if ( mix > 0xFF ) { \
-		viscolors[col].c2 = std::max( static_cast<std::uint8_t>( c2 - viscolors[col].c1 / 2 ), std::uint8_t(0) ); \
-		viscolors[col].c3 = std::max( static_cast<std::uint8_t>( c3 - viscolors[col].c1 / 2 ), std::uint8_t(0) ); \
-		viscolors[col].c1 = 0xFF; \
+		viscolors[col].rgba.c2 = std::max( static_cast<std::uint8_t>( c2 - viscolors[col].rgba.c1 / 2 ), std::uint8_t(0) ); \
+		viscolors[col].rgba.c3 = std::max( static_cast<std::uint8_t>( c3 - viscolors[col].rgba.c1 / 2 ), std::uint8_t(0) ); \
+		viscolors[col].rgba.c1 = 0xFF; \
 	} }
 
 	MIXCOLOR(col_instr, g, r, b);
@@ -1366,10 +1447,13 @@ static void WINAPI VisSize( HDC /* dc */ , SIZE * /* size */ ) {
 	xmpopenmpt_lock guard;
 	last_pattern = -1;	// Force redraw
 }
+
+#if 0
 static BOOL WINAPI VisRender( DWORD * /* buf */ , SIZE /* size */ , DWORD /* flags */ ) {
 	xmpopenmpt_lock guard;
 	return FALSE;
 }
+#endif
 
 static int get_pattern_width( int chars_per_channel, int spaces_per_channel, int num_cols, int text_size, int channels )
 {
@@ -1385,7 +1469,7 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 		// Force usage of a nice monospace font
 		LOGFONT logfont;
 		GetObject ( GetCurrentObject( dc, OBJ_FONT ), sizeof(logfont), &logfont );
-		wcscpy( logfont.lfFaceName, L"Lucida Console" );
+		_tcscpy( logfont.lfFaceName, TEXT("Lucida Console") );
 		visfont = CreateFontIndirect( &logfont );
 	}
 	SIZE text_size;
@@ -1417,7 +1501,7 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 	const std::size_t rows = self->mod->get_pattern_num_rows( pattern );
 
 	const std::size_t num_half_chars = std::max( static_cast<std::size_t>( 2 * size.cx / text_size.cx ), std::size_t(8) ) - 8;
-	const std::size_t num_rows = size.cy / text_size.cy;
+	//const std::size_t num_rows = size.cy / text_size.cy;
 
 	// Spaces between pattern components are half width, full space at channel end
 	const std::size_t half_chars_per_channel = num_half_chars / channels;
@@ -1532,10 +1616,14 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 					}
 					switch ( cols[col].text[0] ) {
 						case ' ':
+							[[fallthrough]];
 						case '.':
 							cols[col].is_empty = true;
+							[[fallthrough]];
 						case '^':
+							[[fallthrough]];
 						case '=':
+							[[fallthrough]];
 						case '~':
 							color = col_empty;
 							break;
@@ -1615,9 +1703,11 @@ static BOOL WINAPI VisRenderDC( HDC dc, SIZE size, DWORD flags ) {
 	return TRUE;
 }
 
+#if 0
 static void WINAPI VisButton( DWORD /* x */ , DWORD /* y */ ) {
 	//xmpopenmpt_lock guard;
 }
+#endif
 
 static XMPIN xmpin = {
 #ifdef USE_XMPLAY_FILE_IO
@@ -1704,7 +1794,7 @@ static void xmp_openmpt_on_dll_unload() {
 	delete self;
 	self = nullptr;
 	if ( xmpin.exts != xmp_openmpt_default_exts ) {
-		HeapFree(GetProcessHeap(), 0, (LPVOID)xmpin.exts);
+		HeapFree(GetProcessHeap(), 0, (LPVOID)const_cast<char*>(xmpin.exts));
 	}
 	xmpin.exts = nullptr;
 	DeleteCriticalSection( &xmpopenmpt_mutex );
@@ -1743,15 +1833,28 @@ static XMPIN * XMPIN_GetInterface_cxx( DWORD face, InterfaceProc faceproc ) {
 extern "C" {
 
 // XMPLAY expects a WINAPI (which is __stdcall) function using an undecorated symbol name.
+#if defined(__GNUC__)
+XMPIN * WINAPI XMPIN_GetInterface_( DWORD face, InterfaceProc faceproc );
+XMPIN * WINAPI XMPIN_GetInterface_( DWORD face, InterfaceProc faceproc ) {
+	return XMPIN_GetInterface_cxx( face, faceproc );
+}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattribute-alias"
+// clang-format off
+__declspec(dllexport) void XMPIN_GetInterface() __attribute__((alias("XMPIN_GetInterface_@8")));
+// clang-format on
+#pragma GCC diagnostic pop
+#else
 XMPIN * WINAPI XMPIN_GetInterface( DWORD face, InterfaceProc faceproc ) {
 	return XMPIN_GetInterface_cxx( face, faceproc );
 }
 #pragma comment(linker, "/EXPORT:XMPIN_GetInterface=_XMPIN_GetInterface@8")
+#endif
 
 } // extern "C"
 
 
-#ifdef _MFC_VER
+#if defined(MPT_WITH_MFC) && defined(_MFC_VER)
 
 namespace libopenmpt {
 namespace plugin {
@@ -1769,7 +1872,10 @@ void DllMainDetach() {
 
 #else
 
+BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved );
 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
+	static_cast<void>(hinstDLL);
+	static_cast<void>(lpvReserved);
 	switch ( fdwReason ) {
 	case DLL_PROCESS_ATTACH:
 		xmp_openmpt_on_dll_load();

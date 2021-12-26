@@ -10,6 +10,8 @@
 #ifndef LIBOPENMPT_CONFIG_H
 #define LIBOPENMPT_CONFIG_H
 
+/* clang-format off */
+
 /*! \defgroup libopenmpt libopenmpt */
 
 /*! \addtogroup libopenmpt
@@ -177,6 +179,8 @@ LIBOPENMPT_DEPRECATED static const int LIBOPENMPT_DEPRECATED_STRING_CONSTANT = 0
 
 #endif
 
+
+/* clang-format on */
 
 #include <libOpenMPT/libopenmpt_version.h>
 

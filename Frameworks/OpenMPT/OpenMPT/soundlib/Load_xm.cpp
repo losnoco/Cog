@@ -15,6 +15,9 @@
 #include "XMTools.h"
 #include "mod_specifications.h"
 #ifndef MODPLUG_NO_FILESAVE
+#include "mpt/io/base.hpp"
+#include "mpt/io/io.hpp"
+#include "mpt/io/io_stdstream.hpp"
 #include "../common/mptFileIO.h"
 #endif
 #include "OggStream.h"
@@ -22,6 +25,7 @@
 #ifdef MODPLUG_TRACKER
 #include "../mptrack/TrackerSettings.h"	// For super smooth ramping option
 #endif // MODPLUG_TRACKER
+#include "mpt/audio/span.hpp"
 
 #if defined(MPT_WITH_VORBIS) && defined(MPT_WITH_VORBISFILE)
 #include <sstream>
@@ -47,14 +51,12 @@
 #if MPT_COMPILER_CLANG
 #pragma clang diagnostic pop
 #endif // MPT_COMPILER_CLANG
-#include "../soundbase/SampleFormatConverters.h"
-#include "../soundbase/SampleFormatCopy.h"
+#include "openmpt/soundbase/Copy.hpp"
 #endif
 
 #ifdef MPT_WITH_STBVORBIS
 #include <stb_vorbis/stb_vorbis.c>
-#include "../soundbase/SampleFormatConverters.h"
-#include "../soundbase/SampleFormatCopy.h"
+#include "openmpt/soundbase/Copy.hpp"
 #endif // MPT_WITH_STBVORBIS
 
 
@@ -67,7 +69,7 @@ OPENMPT_NAMESPACE_BEGIN
 static size_t VorbisfileFilereaderRead(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
 	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
-	return file.ReadRaw(mpt::void_cast<std::byte*>(ptr), size * nmemb) / size;
+	return file.ReadRaw(mpt::span(mpt::void_cast<std::byte*>(ptr), size * nmemb)).size() / size;
 }
 
 static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int whence)
@@ -77,7 +79,7 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 	{
 	case SEEK_SET:
 		{
-			if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::off_t>(offset))
 			{
 				return -1;
 			}
@@ -92,14 +94,14 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 				{
 					return -1;
 				}
-				if(!Util::TypeCanHoldValue<FileReader::off_t>(0-offset))
+				if(!mpt::in_range<FileReader::off_t>(0-offset))
 				{
 					return -1;
 				}
 				return file.SkipBack(mpt::saturate_cast<FileReader::off_t>(0 - offset)) ? 0 : -1;
 			} else
 			{
-				if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+				if(!mpt::in_range<FileReader::off_t>(offset))
 				{
 					return -1;
 				}
@@ -109,11 +111,11 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 		break;
 	case SEEK_END:
 		{
-			if(!Util::TypeCanHoldValue<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::off_t>(offset))
 			{
 				return -1;
 			}
-			if(!Util::TypeCanHoldValue<FileReader::off_t>(file.GetLength() + offset))
+			if(!mpt::in_range<FileReader::off_t>(file.GetLength() + offset))
 			{
 				return -1;
 			}
@@ -129,7 +131,7 @@ static long VorbisfileFilereaderTell(void *datasource)
 {
 	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
 	FileReader::off_t result = file.GetPosition();
-	if(!Util::TypeCanHoldValue<long>(result))
+	if(!mpt::in_range<long>(result))
 	{
 		return -1;
 	}
@@ -161,7 +163,7 @@ static std::vector<SAMPLEINDEX> AllocateXMSamples(CSoundFile &sndFile, SAMPLEIND
 					continue;
 				}
 
-				if(std::find(foundSlots.begin(), foundSlots.end(), j) == foundSlots.end())
+				if(!mpt::contains(foundSlots, j))
 				{
 					// Empty sample slot that is not occupied by the current instrument. Yay!
 					candidateSlot = j;
@@ -480,15 +482,12 @@ static bool ReadSampleData(ModSample &sample, SampleIO sampleFlags, FileReader &
 							LimitMax(decodedSamples, mpt::saturate_cast<long>(sample.nLength - offset));
 							if(decodedSamples > 0 && channels == sample.GetNumChannels())
 							{
-								for(int chn = 0; chn < channels; chn++)
+								if(sample.uFlags[CHN_16BIT])
 								{
-									if(sample.uFlags[CHN_16BIT])
-									{
-										CopyChannelToInterleaved<SC::Convert<int16, float> >(sample.sample16() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
-									} else
-									{
-										CopyChannelToInterleaved<SC::Convert<int8, float> >(sample.sample8() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
-									}
+									CopyAudio(mpt::audio_span_interleaved(sample.sample16() + (offset * sample.GetNumChannels()), sample.GetNumChannels(), decodedSamples), mpt::audio_span_planar(output, channels, decodedSamples));
+								} else
+								{
+									CopyAudio(mpt::audio_span_interleaved(sample.sample8() + (offset * sample.GetNumChannels()), sample.GetNumChannels(), decodedSamples), mpt::audio_span_planar(output, channels, decodedSamples));
 								}
 							}
 							offset += decodedSamples;
@@ -520,7 +519,7 @@ static bool ReadSampleData(ModSample &sample, SampleIO sampleFlags, FileReader &
 
 		int consumed = 0, error = 0;
 		stb_vorbis *vorb = nullptr;
-		FileReader::PinnedRawDataView sampleDataView = sampleData.GetPinnedRawDataView();
+		FileReader::PinnedView sampleDataView = sampleData.GetPinnedView();
 		const std::byte* data = sampleDataView.data();
 		std::size_t dataLeft = sampleDataView.size();
 		vorb = stb_vorbis_open_pushdata(mpt::byte_cast<const unsigned char*>(data), mpt::saturate_cast<int>(dataLeft), &consumed, &error, nullptr);
@@ -544,12 +543,12 @@ static bool ReadSampleData(ModSample &sample, SampleIO sampleFlags, FileReader &
 				LimitMax(decodedSamples, mpt::saturate_cast<int>(sample.nLength - offset));
 				if(decodedSamples > 0 && channels == sample.GetNumChannels())
 				{
-					for(int chn = 0; chn < channels; chn++)
+					if(sample.uFlags[CHN_16BIT])
 					{
-						if(sample.uFlags[CHN_16BIT])
-							CopyChannelToInterleaved<SC::Convert<int16, float> >(sample.sample16() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
-						else
-							CopyChannelToInterleaved<SC::Convert<int8, float> >(sample.sample8() + offset * sample.GetNumChannels(), output[chn], channels, decodedSamples, chn);
+						CopyAudio(mpt::audio_span_interleaved(sample.sample16() + (offset * sample.GetNumChannels()), sample.GetNumChannels(), decodedSamples), mpt::audio_span_planar(output, channels, decodedSamples));
+					} else
+					{
+						CopyAudio(mpt::audio_span_interleaved(sample.sample8() + (offset * sample.GetNumChannels()), sample.GetNumChannels(), decodedSamples), mpt::audio_span_planar(output, channels, decodedSamples));
 					}
 				}
 				offset += decodedSamples;
@@ -599,7 +598,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 
 	InitializeGlobals(MOD_TYPE_XM);
 	InitializeChannels();
-	m_nMixLevels = mixLevelsCompatible;
+	m_nMixLevels = MixLevels::Compatible;
 
 	FlagSet<TrackerVersions> madeWith(verUnknown);
 	mpt::ustring madeWithTracker;
@@ -634,7 +633,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			// Luckily, starting with v0.90.87, MilkyTracker also implements the FT2 panning scheme.
 			if(memcmp(fileHeader.trackerName + 12, "        ", 8))
 			{
-				m_nMixLevels = mixLevelsCompatibleFT2;
+				m_nMixLevels = MixLevels::CompatibleFT2;
 			}
 		} else if(!memcmp(fileHeader.trackerName, "Fasttracker II clone", 20))
 		{
@@ -949,20 +948,20 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 		madeWith = verOpenMPT | verConfirmed;
 
 		if(m_dwLastSavedWithVersion < MPT_V("1.22.07.19"))
-			m_nMixLevels = mixLevelsCompatible;
+			m_nMixLevels = MixLevels::Compatible;
 		else
-			m_nMixLevels = mixLevelsCompatibleFT2;
+			m_nMixLevels = MixLevels::CompatibleFT2;
 	}
 
 	if(m_dwLastSavedWithVersion && !madeWith[verOpenMPT])
 	{
-		m_nMixLevels = mixLevelsOriginal;
+		m_nMixLevels = MixLevels::Original;
 		m_playBehaviour.reset();
 	}
 
 	if(madeWith[verFT2Generic])
 	{
-		m_nMixLevels = mixLevelsCompatibleFT2;
+		m_nMixLevels = MixLevels::CompatibleFT2;
 
 		if(!hasMidiConfig)
 		{
@@ -1025,7 +1024,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			Order().Replace(0xFF, Order.GetInvalidPatIndex());
 	}
 
-	m_modFormat.formatName = mpt::format(U_("FastTracker 2 v%1.%2"))(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
+	m_modFormat.formatName = MPT_UFORMAT("FastTracker 2 v{}.{}")(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
 	m_modFormat.madeWithTracker = std::move(madeWithTracker);
 	m_modFormat.charset = (m_dwLastSavedWithVersion || isMadTracker) ? mpt::Charset::Windows1252 : mpt::Charset::CP437;
 	if(isOXM)
@@ -1044,9 +1043,6 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 
 
 #ifndef MODPLUG_NO_FILESAVE
-
-#define str_tooMuchPatternData	("Warning: File format limit was reached. Some pattern data may not get written to file.")
-#define str_pattern				("pattern")
 
 
 bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
@@ -1103,7 +1099,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 	}
 	if(changeOrderList)
 	{
-		AddToLog("Skip and stop order list items (+++ and ---) are not saved in XM files.");
+		AddToLog(LogWarning, U_("Skip and stop order list items (+++ and ---) are not saved in XM files."));
 	}
 	orderList.resize(compatibilityExport ? 256 : numOrders);
 
@@ -1259,7 +1255,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 		// Reaching the limits of file format?
 		if(len > uint16_max)
 		{
-			AddToLog(mpt::format("%1 (%2 %3)")(str_tooMuchPatternData, str_pattern, pat));
+			AddToLog(LogWarning, MPT_UFORMAT("Warning: File format limit was reached. Some pattern data may not get written to file. (pattern {})")(pat));
 			len = uint16_max;
 		}
 

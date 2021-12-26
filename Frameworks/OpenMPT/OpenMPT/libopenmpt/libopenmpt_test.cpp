@@ -7,7 +7,7 @@
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "libopenmpt_internal.h"
 
@@ -26,6 +26,7 @@ using namespace OpenMPT;
 #if (defined(_WIN32) || defined(WIN32)) && (defined(_UNICODE) || defined(UNICODE))
 #if defined(__GNUC__)
 // mingw-w64 g++ does only default to special C linkage for "main", but not for "wmain" (see <https://sourceforge.net/p/mingw-w64/wiki2/Unicode%20apps/>).
+extern "C" int wmain( int /*argc*/ , wchar_t * /*argv*/ [] );
 extern "C"
 #endif
 int wmain( int /*argc*/ , wchar_t * /*argv*/ [] ) {

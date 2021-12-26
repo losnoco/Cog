@@ -9,7 +9,12 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
+
+#include "openmpt/logging/Logger.hpp"
+
+#include "mptPathString.h"
+#include "mptString.h"
 
 #if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
 #include <atomic>
@@ -21,12 +26,7 @@ OPENMPT_NAMESPACE_BEGIN
 /*
 
 
-Build time logging configuration (in BuildSettings.h):
-
- *  #define NO_LOGGING
-    Disables all logging completely.
-    MPT_LOG calls are not even compiled but instead completely removed via the
-    preprocessor.
+Build time logging configuration:
 
  *  #define MPT_LOG_GLOBAL_LEVEL_STATIC
     #define MPT_LOG_GLOBAL_LEVEL #
@@ -46,31 +46,21 @@ If the context is related to a particular CSoundfile instance, use
 CSoundfile::AddToLog.
 
 Logging a simple message:
-MPT_LOG(LogWarning, "sounddev", "some message");
-MPT_LOG(LogWarning, "sounddev", U_("some message"));
+MPT_LOG_GLOBAL(LogWarning, "sounddev", "some message");
+MPT_LOG_GLOBAL(LogWarning, "sounddev", U_("some message"));
 Facility is some course grained code section identifier (more coarse grained
 than the current file name probably), useful to do some selective logging.
 
 Logging a more complex message:
-MPT_LOG(LogWarning, "sounddev", mpt::format(U_("Some message: foo=%1, bar=0x%2"))(foo, mpt::ufmt::hex0<8>(bar)));
+MPT_LOG_GLOBAL(LogWarning, "sounddev", MPT_UFORMAT("Some message: foo={}, bar=0x{}")(foo, mpt::ufmt::hex0<8>(bar)));
 
 Note that even with full enabled logging and a runtime configurable logging
-level, the runtime overhead of a MPT_LOG(level, facility, text) call is just a
+level, the runtime overhead of a MPT_LOG_GLOBAL(level, facility, text) call is just a
 single conditional in case the verbosity does not require logging the respective
 message. Even the expression "text" is not evaluated.
 
 
 */
-
-
-enum LogLevel
-{
-	LogDebug        = 5,
-	LogInformation  = 4,
-	LogNotification = 3,
-	LogWarning      = 2,
-	LogError        = 1
-};
 
 
 inline mpt::ustring LogLevelToString(LogLevel level)
@@ -104,16 +94,13 @@ namespace log
 
 
 
-#ifndef NO_LOGGING
-
-
 #if defined(MPT_LOG_GLOBAL_LEVEL_STATIC)
 #if (MPT_LOG_GLOBAL_LEVEL <= 0)
-// Logging framework is enabled (!NO_LOGGING) but all logging has beeen statically disabled.
+// All logging has beeen statically disabled.
 // All logging code gets compiled and immediately dead-code eliminated.
 #define MPT_LOG_IS_DISABLED
 #endif
-static constexpr int GlobalLogLevel = MPT_LOG_GLOBAL_LEVEL ;
+inline constexpr int GlobalLogLevel = MPT_LOG_GLOBAL_LEVEL ;
 #else
 extern int GlobalLogLevel;
 #endif
@@ -124,47 +111,34 @@ extern bool FileEnabled;
 extern bool DebuggerEnabled;
 extern bool ConsoleEnabled;
 void SetFacilities(const std::string &solo, const std::string &blocked);
-bool IsFacilityActive(const char *facility);
+bool IsFacilityActive(const char *facility) noexcept;
 #else
-MPT_FORCEINLINE bool IsFacilityActive(const char * /*facility*/ ) { return true; }
+MPT_FORCEINLINE bool IsFacilityActive(const char * /*facility*/ ) noexcept { return true; }
 #endif
 
 
-#endif // !NO_LOGGING
 
-
-
-#ifndef NO_LOGGING
-
-
-class Logger
+class GlobalLogger final
+	: public ILogger
 {
 public:
-	// facility:ASCII
-	void SendLogMessage(const mpt::source_location &loc, LogLevel level, const char *facility, const mpt::ustring &text);
+	GlobalLogger() = default;
+	~GlobalLogger() final = default;
+public:
+	bool IsLevelActive(LogLevel level) const noexcept override
+	{
+		return (mpt::log::GlobalLogLevel >= level);
+	}
+	bool IsFacilityActive(const char *facility) const noexcept override
+	{
+		return mpt::log::IsFacilityActive(facility);
+	}
+	void SendLogMessage(const mpt::source_location &loc, LogLevel level, const char *facility, const mpt::ustring &message) const override;
 };
 
-#define MPT_LOG(level, facility, text) \
-	MPT_DO \
-	{ \
-		MPT_MAYBE_CONSTANT_IF(mpt::log::GlobalLogLevel >= ( level )) \
-		{ \
-			MPT_MAYBE_CONSTANT_IF(mpt::log::IsFacilityActive(( facility ))) \
-			{ \
-				mpt::log::Logger().SendLogMessage( MPT_SOURCE_LOCATION_CURRENT() , ( level ), ( facility ), ( text )); \
-			} \
-		} \
-	} MPT_WHILE_0 \
-/**/
 
+#define MPT_LOG_GLOBAL(level, facility, text) MPT_LOG(mpt::log::GlobalLogger{}, (level), (facility), (text))
 
-#else // !NO_LOGGING
-
-
-#define MPT_LOG(level, facility, text) MPT_DO { } MPT_WHILE_0
-
-
-#endif // NO_LOGGING
 
 
 #if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
@@ -233,15 +207,15 @@ public:
 
 #define MPT_TRACE_SCOPE() mpt::log::Trace::Scope MPT_TRACE_CONCAT(MPT_TRACE_VAR, __LINE__)(MPT_SOURCE_LOCATION_CURRENT())
 
-#define MPT_TRACE() MPT_DO { if(mpt::log::Trace::g_Enabled) { mpt::log::Trace::Trace(MPT_SOURCE_LOCATION_CURRENT()); } } MPT_WHILE_0
+#define MPT_TRACE() do { if(mpt::log::Trace::g_Enabled) { mpt::log::Trace::Trace(MPT_SOURCE_LOCATION_CURRENT()); } } while(0)
 
 } // namespace Trace
 
 #else // !MODPLUG_TRACKER
 
-#define MPT_TRACE_SCOPE() MPT_DO { } MPT_WHILE_0
+#define MPT_TRACE_SCOPE() do { } while(0)
 
-#define MPT_TRACE() MPT_DO { } MPT_WHILE_0
+#define MPT_TRACE() do { } while(0)
 
 #endif // MODPLUG_TRACKER
 

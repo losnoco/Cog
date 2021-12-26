@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "Snd_defs.h"
 
@@ -67,7 +67,15 @@ public:
 		STEREO_BITS      = VOICE_TO_LEFT | VOICE_TO_RIGHT,
 	};
 
+	class IRegisterLogger
+	{
+	public:
+		virtual void Port(CHANNELINDEX c, uint16 reg, uint8 value) = 0;
+		virtual ~IRegisterLogger() {}
+	};
+
 	OPL(uint32 samplerate);
+	OPL(IRegisterLogger &logger);
 	~OPL();
 
 	void Initialize(uint32 samplerate);
@@ -83,12 +91,16 @@ public:
 	void MoveChannel(CHANNELINDEX from, CHANNELINDEX to);
 	void Reset();
 
+	// A list of all registers for channels and operators
+	static std::vector<uint16> AllVoiceRegisters();
+
 protected:
 	static uint16 ChannelToRegister(uint8 oplCh);
 	static uint16 OperatorToRegister(uint8 oplCh);
 	static uint8 CalcVolume(uint8 trackerVol, uint8 kslVolume);
 	uint8 GetVoice(CHANNELINDEX c) const;
 	uint8 AllocateVoice(CHANNELINDEX c);
+	void Port(CHANNELINDEX c, uint16 reg, uint8 value);
 
 	enum
 	{
@@ -100,6 +112,7 @@ protected:
 	};
 
 	std::unique_ptr<Opal> m_opl;
+	IRegisterLogger *m_logger = nullptr;
 
 	std::array<uint8, OPL_CHANNELS> m_KeyOnBlock;
 	std::array<CHANNELINDEX, OPL_CHANNELS> m_OPLtoChan;

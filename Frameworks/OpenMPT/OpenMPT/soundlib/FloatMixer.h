@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 #include "MixerInterface.h"
 #include "Resampler.h"
@@ -23,7 +23,7 @@ struct IntToFloatTraits : public MixerTraits<channelsOut, channelsIn, out, in>
 	static_assert(std::numeric_limits<input_t>::is_integer, "Input must be integer");
 	static_assert(!std::numeric_limits<output_t>::is_integer, "Output must be floating point");
 
-	static MPT_CONSTEXPR11_FUN output_t Convert(const input_t x)
+	static MPT_CONSTEXPRINLINE output_t Convert(const input_t x)
 	{
 		return static_cast<output_t>(x) * (static_cast<output_t>(1) / static_cast<output_t>(int2float));
 	}

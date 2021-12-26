@@ -30,7 +30,7 @@ protected:
 	IMediaParams *m_pMediaParams;
 
 	uint32 m_nSamplesPerSec;
-	uint32 m_uid;
+	const uint32 m_uid;
 	union
 	{
 		int16 *i16;

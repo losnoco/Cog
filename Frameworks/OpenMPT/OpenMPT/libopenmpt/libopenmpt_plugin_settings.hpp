@@ -25,32 +25,32 @@ namespace plugin {
 typedef void (*changed_func)();
 
 struct libopenmpt_settings {
-	bool no_default_format;
-	int samplerate;
-	int channels;
-	int mastergain_millibel;
-	int stereoseparation;
-	int use_amiga_resampler;
-	int amiga_filter_type;
-	int repeatcount;
-	int interpolationfilterlength;
-	int ramping;
-	int vis_allow_scroll;
-	changed_func changed;
+	bool no_default_format = true;
+	int samplerate = 48000;
+	int channels = 2;
+	int mastergain_millibel = 0;
+	int stereoseparation = 100;
+	int use_amiga_resampler = 0;
+	int amiga_filter_type = 0;
+	int repeatcount = 0;
+	int interpolationfilterlength = 8;
+	int ramping = -1;
+	int vis_allow_scroll = 1;
+	changed_func changed = nullptr;
 };
 
 
 class settings : public libopenmpt_settings {
 private:
-	std::wstring subkey;
+	std::basic_string<TCHAR> subkey;
 protected:
-	virtual void read_setting( const std::string & /* key */ , const std::wstring & keyW, int & val ) {
+	virtual void read_setting( const std::string & /* key */ , const std::basic_string<TCHAR> & key, int & val ) {
 		HKEY regkey = HKEY();
-		if ( RegOpenKeyEx( HKEY_CURRENT_USER, ( L"Software\\libopenmpt\\" + subkey ).c_str(), 0, KEY_READ, &regkey ) == ERROR_SUCCESS ) {
+		if ( RegOpenKeyEx( HKEY_CURRENT_USER, ( TEXT("Software\\libopenmpt\\") + subkey ).c_str(), 0, KEY_READ, &regkey ) == ERROR_SUCCESS ) {
 			DWORD v = val;
 			DWORD type = REG_DWORD;
 			DWORD typesize = sizeof(v);
-			if ( RegQueryValueEx( regkey, keyW.c_str(), NULL, &type, (BYTE *)&v, &typesize ) == ERROR_SUCCESS )
+			if ( RegQueryValueEx( regkey, key.c_str(), NULL, &type, (BYTE *)&v, &typesize ) == ERROR_SUCCESS )
 			{
 				val = v;
 			}
@@ -58,13 +58,13 @@ protected:
 			regkey = HKEY();
 		}
 	}
-	virtual void write_setting( const std::string & /* key */, const std::wstring & keyW, int val ) {
+	virtual void write_setting( const std::string & /* key */, const std::basic_string<TCHAR> & key, int val ) {
 		HKEY regkey = HKEY();
-		if ( RegCreateKeyEx( HKEY_CURRENT_USER, ( L"Software\\libopenmpt\\" + subkey ).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &regkey, NULL ) == ERROR_SUCCESS ) {
+		if ( RegCreateKeyEx( HKEY_CURRENT_USER, ( TEXT("Software\\libopenmpt\\") + subkey ).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &regkey, NULL ) == ERROR_SUCCESS ) {
 			DWORD v = val;
 			DWORD type = REG_DWORD;
 			DWORD typesize = sizeof(v);
-			if ( RegSetValueEx( regkey, keyW.c_str(), NULL, type, (const BYTE *)&v, typesize ) == ERROR_SUCCESS )
+			if ( RegSetValueEx( regkey, key.c_str(), 0, type, (const BYTE *)&v, typesize ) == ERROR_SUCCESS )
 			{
 				// ok
 			}
@@ -73,25 +73,18 @@ protected:
 		}
 	}
 public:
-	settings( const std::wstring & subkey, bool no_default_format )
+	settings( const std::basic_string<TCHAR> & subkey, bool no_default_format_ )
 		: subkey(subkey)
 	{
-		libopenmpt_settings::no_default_format = no_default_format;
-		samplerate = 48000;
-		channels = 2;
-		mastergain_millibel = 0;
-		stereoseparation = 100;
-		repeatcount = 0;
-		interpolationfilterlength = 8;
-		use_amiga_resampler = 0;
-		amiga_filter_type = 0;
-		ramping = -1;
-		vis_allow_scroll = 1;
-		changed = 0;
+		no_default_format = no_default_format_;
 	}
 	void load()
 	{
+		#ifdef UNICODE
 		#define read_setting(a,b,c) read_setting( b , L ## b , c)
+		#else
+		#define read_setting(a,b,c) read_setting( b , b , c)
+		#endif
 			read_setting( subkey, "Samplerate_Hz", samplerate );
 			read_setting( subkey, "Channels", channels );
 			read_setting( subkey, "MasterGain_milliBel", mastergain_millibel );
@@ -106,7 +99,11 @@ public:
 	}
 	void save()
 	{
+		#ifdef UNICODE
 		#define write_setting(a,b,c) write_setting( b , L ## b , c)
+		#else
+		#define write_setting(a,b,c) write_setting( b , b , c)
+		#endif
 			write_setting( subkey, "Samplerate_Hz", samplerate );
 			write_setting( subkey, "Channels", channels );
 			write_setting( subkey, "MasterGain_milliBel", mastergain_millibel );

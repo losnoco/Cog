@@ -123,7 +123,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param speed The new tick count in range [1, 65535].
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the speed is outside the specified range.
 	  \return 1 on success, 0 on failure.
-	  \sa openmpt_module_get_current_speed
+	  \sa openmpt_module_ext_interface_interactive.openmpt_module_get_current_speed
 	'/
 	set_current_speed As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal speed As Long) As Long
 
@@ -133,7 +133,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param tempo The new tempo in range [32, 512]. The exact meaning of the value depends on the tempo mode used by the module.
 	  \return 1 on success, 0 on failure.
 	  \remarks The tempo may be reset by pattern commands at any time. Use set_tempo_factor to apply a tempo factor that is independent of pattern commands.
-	  \sa openmpt_module_get_current_tempo
+	  \sa openmpt_module_ext_interface_interactive.openmpt_module_get_current_tempo
 	'/
 	set_current_tempo As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal tempo As Long) As Long
 
@@ -143,7 +143,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param factor The new tempo factor in range ]0.0, 4.0] - 1.0 means unmodified tempo.
 	  \return 1 on success, 0 on failure.
 	  \remarks Modifying the tempo without applying the same pitch factor using set_pitch_factor may cause rhythmic samples (e.g. drum loops) to go out of sync.
-	  \sa get_tempo_factor
+	  \sa openmpt_module_ext_interface_interactive.get_tempo_factor
 	'/
 	set_tempo_factor As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal factor As Double) As Long
 
@@ -151,7 +151,7 @@ Type openmpt_module_ext_interface_interactive
 
 	  \param mod_ext The module handle to work on.
 	  \return The current tempo factor.
-	  \sa set_tempo_factor
+	  \sa openmpt_module_ext_interface_interactive.set_tempo_factor
 	'/
 	get_tempo_factor As Function(ByVal mod_ext As openmpt_module_ext Ptr) As Double
 
@@ -162,7 +162,7 @@ Type openmpt_module_ext_interface_interactive
 	  \return 1 on success, 0 on failure.
 	  \remarks Modifying the pitch without applying the the same tempo factor using set_tempo_factor may cause rhythmic samples (e.g. drum loops) to go out of sync.
 	  \remarks To shift the pich by `n` semitones, the parameter can be calculated as follows: `2.0 ^ ( n / 12.0 )`
-	  \sa get_pitch_factor
+	  \sa openmpt_module_ext_interface_interactive.get_pitch_factor
 	'/
 	set_pitch_factor As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal factor As Double) As Long
 
@@ -170,7 +170,7 @@ Type openmpt_module_ext_interface_interactive
 
 	  \param mod_ext The module handle to work on.
 	  \return The current pitch factor.
-	  \sa set_pitch_factor
+	  \sa openmpt_module_ext_interface_interactive.set_pitch_factor
 	'/
 	get_pitch_factor As Function(ByVal mod_ext As openmpt_module_ext Ptr) As Double
 
@@ -180,7 +180,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param volume The new global volume in range [0.0, 1.0]
 	  \return 1 on success, 0 on failure.
 	  \remarks The global volume may be reset by pattern commands at any time. Use openmpt_module_set_render_param to apply a global overall volume factor that is independent of pattern commands.
-	  \sa get_global_volume
+	  \sa openmpt_module_ext_interface_interactive.get_global_volume
 	'/
 	set_global_volume As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal volume As Double) As Long
 
@@ -188,7 +188,7 @@ Type openmpt_module_ext_interface_interactive
 
 	  \param mod_ext The module handle to work on.
 	  \return The current global volume in range [0.0, 1.0]
-	  \sa set_global_volume
+	  \sa openmpt_module_ext_interface_interactive.set_global_volume
 	'/
 	get_global_volume As Function(ByVal mod_ext As openmpt_module_ext Ptr) As Double
 
@@ -199,7 +199,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param volume The new channel volume in range [0.0, 1.0]
 	  \return 1 on success, 0 on failure (channel out of range).
 	  \remarks The channel volume may be reset by pattern commands at any time.
-	  \sa get_channel_volume
+	  \sa openmpt_module_ext_interface_interactive.get_channel_volume
 	'/
 	set_channel_volume As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long, ByVal volume As Double) As Long
 
@@ -208,7 +208,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param mod_ext The module handle to work on.
 	  \param channel The channel whose volume should be retrieved, in range [0, openmpt_module_get_num_channels()[
 	  \return The current channel volume in range [0.0, 1.0]
-	  \sa set_channel_volume
+	  \sa openmpt_module_ext_interface_interactive.set_channel_volume
 	'/
 	get_channel_volume As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Double
 
@@ -218,7 +218,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param channel The channel whose mute status should be set, in range [0, openmpt_module_get_num_channels()[
 	  \param mute The new mute status. true is muted, false is unmuted.
 	  \return 1 on success, 0 on failure (channel out of range).
-	  \sa get_channel_mute_status
+	  \sa openmpt_module_ext_interface_interactive.get_channel_mute_status
 	'/
 	set_channel_mute_status As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long, ByVal mute As Long) As Long
 
@@ -227,7 +227,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param mod_ext The module handle to work on.
 	  \param channel The channel whose mute status should be retrieved, in range [0, openmpt_module_get_num_channels()[
 	  \return The current channel mute status. true is muted, false is unmuted.
-	  \sa set_channel_mute_status
+	  \sa openmpt_module_ext_interface_interactive.set_channel_mute_status
 	'/
 	get_channel_mute_status As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Long
 
@@ -237,7 +237,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param instrument The instrument whose mute status should be set, in range [0, openmpt_module_get_num_instruments()[ if openmpt_module_get_num_instruments is not 0, otherwise in [0, openmpt_module_get_num_samples()[
 	  \param mute The new mute status. true is muted, false is unmuted.
 	  \return 1 on success, 0 on failure (instrument out of range).
-	  \sa get_instrument_mute_status
+	  \sa openmpt_module_ext_interface_interactive.get_instrument_mute_status
 	'/
 	set_instrument_mute_status As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal instrument As Long, ByVal mute As Long) As Long
 
@@ -246,7 +246,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param mod_ext The module handle to work on.
 	  \param instrument The instrument whose mute status should be retrieved, in range [0, openmpt_module_get_num_instruments()[ if openmpt_module_get_num_instruments is not 0, otherwise in [0, openmpt_module_get_num_samples()[
 	  \return The current instrument mute status. 1 is muted, 0 is unmuted, -1 means the instrument was out of range.
-	  \sa set_instrument_mute_status
+	  \sa openmpt_module_ext_interface_interactive.set_instrument_mute_status
 	'/
 	get_instrument_mute_status As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal instrument As Long) As Long
 
@@ -258,18 +258,94 @@ Type openmpt_module_ext_interface_interactive
 	  \param volume The volume at which the note should be triggered, in range [0.0, 1.0]
 	  \param panning The panning position at which the note should be triggered, in range [-1.0, 1.0], 0.0 is center.
 	  \return The channel on which the note is played. This can pe be passed to stop_note to stop the note. -1 means that no channel could be allocated and the note is not played.
-	  \sa stop_note
+	  \sa openmpt_module_ext_interface_interactive.stop_note
+	  \sa openmpt_module_ext_interface_interactive2.note_off
+	  \sa openmpt_module_ext_interface_interactive2.note_fade
 	'/
 	play_note As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal instrument As Long, ByVal note As Long, ByVal volume As Double, ByVal panning As Double) As Long
 
 	/'* Stop the note playing on the specified channel
 
 	  \param mod_ext The module handle to work on.
-	  \param channel The channel on which the note should be stopped.
+	  \param channel The channel on which the note should be stopped. This is the value returned by a previous play_note call.
 	  \return 1 on success, 0 on failure (channel out of range).
-	  \sa play_note
+	  \sa openmpt_module_ext_interface_interactive.play_note
+	  \sa openmpt_module_ext_interface_interactive.note_off
+	  \sa openmpt_module_ext_interface_interactive2.note_fade
 	'/
 	stop_note As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Long
+End Type
+
+#define LIBOPENMPT_EXT_C_INTERFACE_INTERACTIVE2 "interactive2"
+
+Type openmpt_module_ext_interface_interactive2
+
+	/'* Sends a key-off command for the note playing on the specified channel
+
+	  \param mod_ext The module handle to work on.
+	  \param channel The channel on which the key-off event should be triggered. This is the value returned by a previous play_note call.
+	  \return 1 on success, 0 on failure (channel out of range).
+	  \remarks This method releases envelopes and sample sustain loops. If the sample has no sustain loop, or if the module does not use instruments, it does nothing.
+	  \sa openmpt_module_ext_interface_interactive.play_note
+	  \sa openmpt_module_ext_interface_interactive.stop_note
+	  \sa note_fade
+	 '/
+	note_off As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Long
+
+	/'* Sends a note fade command for the note playing on the specified channel
+
+	  \param mod_ext The module handle to work on.
+	  \param channel The channel on which the note should be faded. This is the value returned by a previous play_note call.
+	  \return 1 on success, 0 on failure (channel out of range).
+	  \remarks This method uses the instrument's fade-out value. If the module does not use instruments, or the instrument's fade-out value is 0, it does nothing.
+	  \sa openmpt_module_ext_interface_interactive.play_note
+	  \sa openmpt_module_ext_interface_interactive.stop_note
+	  \sa note_fade
+	 '/
+	note_fade As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Long
+
+	/'* Set the current panning for a channel
+
+	  \param mod_ext The module handle to work on.
+	  \param channel The channel that should be panned. This is the value returned by a previous play_note call.
+	  \param panning The panning position to set on the channel, in range [-1.0, 1.0], 0.0 is center.
+	  \return 1 on success, 0 on failure (channel out of range).
+	  \remarks This command affects subsequent notes played on the same channel, and may itself be overridden by subsequent panning commands encountered in the module itself.
+	  \sa openmpt_module_ext_interface_interactive2.get_channel_panning
+	 '/
+	set_channel_panning As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long, ByVal panning As Double) As Long
+
+	/'* Get the current panning position for a channel
+
+	  \param mod_ext The module handle to work on.
+	  \param channel The channel whose panning should be retrieved. This is the value returned by a previous play_note call.
+	  \return The current channel panning, in range [-1.0, 1.0], 0.0 is center.
+	  \sa openmpt_module_ext_interface_interactive2.set_channel_panning
+	 '/
+	get_channel_panning As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Double
+
+	/'* Set the finetune for the currently playing note on a channel
+
+	  \param mod_ext The module handle to work on.
+	  \param channel The channel whose finetune will be changed, in range [0, openmpt::module::get_num_channels()[
+	  \param finetune The finetune to set on the channel, in range [-1.0, 1.0], 0.0 is center.
+	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the channel index is invalid.
+	  \remarks The finetune range depends on the pitch wheel depth of the instrument playing on the current channel; for sample-based modules, the depth of this command is fixed to +/-1 semitone.
+	  \remarks This command does not affect subsequent notes played on the same channel, but may itself be overridden by subsequent finetune commands encountered in the module itself.
+	  \sa openmpt_module_ext_interface_interactive2.get_note_finetune
+	 '/
+	set_note_finetune As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long, ByVal finetune As Double) As Long
+
+	/'* Get the finetune for the currently playing note on a channel
+
+	  \param mod_ext The module handle to work on.
+	  \param channel The channel whose finetune should be retrieved, in range [0, openmpt::module::get_num_channels()[
+	  \return The current channel finetune, in range [-1.0, 1.0], 0.0 is center.
+	  \remarks The finetune range depends on the pitch wheel depth of the instrument playing on the current channel; for sample-based modules, the depth of this command is fixed to +/-1 semitone.
+	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the channel is outside the specified range.
+	  \sa openmpt_module_ext_interface_interactive2.set_note_finetune
+	 '/
+	get_note_finetune As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Double
 End Type
 
 End Extern

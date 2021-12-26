@@ -30,7 +30,7 @@ static void ProcessBRRSample(int32 sample, int16 *output, uint8 range, uint8 fil
 	// Note 1: It is okay that we may access data before the first sample point because this memory is reserved for interpolation
 	// Note 2: The use of signed shift arithmetic is crucial for some samples (e.g. killer lead.brr, Mac2.brr)
 	// Note 3: Divisors are twice of what is written in the respective comments, as all sample data is divided by 2 (again crucial for accuracy)
-	static_assert(InterpolationMaxLookahead >= 2);
+	static_assert(InterpolationLookaheadBufferSize >= 2);
 	switch(filter)
 	{
 	case 1:  // y(n) = x(n) + x(n-1) * 15/16

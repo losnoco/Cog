@@ -12,19 +12,13 @@ CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)
 
 CPPFLAGS += 
-CXXFLAGS += -march=i386 -m80387 -mtune=pentium
-CFLAGS   += -march=i386 -m80387 -mtune=pentium
+CXXFLAGS += -march=i386 -m80387 -mtune=pentium -ffast-math
+CFLAGS   += -march=i386 -m80387 -mtune=pentium -ffast-math
 LDFLAGS  +=
 LDLIBS   += -lm
 ARFLAGS  := rcs
 
-ifeq ($(BUNDLED_ALLEGRO42),1)
-CPPFLAGS_ALLEGRO42 := -Iinclude/allegro42/include -DALLEGRO_HAVE_STDINT_H -DLONG_LONG="long long"
-LDFLAGS_ALLEGRO42 := 
-LDLIBS_ALLEGRO42 := include/allegro42/lib/liballeg.a
-endif
-
-CFLAGS_SILENT += -Wno-unused-parameter -Wno-unused-function -Wno-cast-qual -Wno-old-style-declaration -Wno-type-limits -Wno-unused-but-set-variable
+include build/make/warnings-gcc.mk
 
 EXESUFFIX=.exe
 
@@ -42,16 +36,25 @@ IS_CROSS=1
 # generates warnings
 MPT_COMPILER_NOVISIBILITY=1
 
-# causes crashes on process shutdown
+# causes crashes on process shutdown,
+# makes memory locking difficult
 MPT_COMPILER_NOGCSECTIONS=1
 
+ifeq ($(ALLOW_LGPL),1)
+LOCAL_ZLIB=1
+LOCAL_MPG123=1
+LOCAL_OGG=1
+LOCAL_VORBIS=1
+else
 NO_ZLIB=1
-NO_LTDL=1
-NO_DL=1
 NO_MPG123=1
 NO_OGG=1
 NO_VORBIS=1
 NO_VORBISFILE=1
+endif
+
+NO_LTDL=1
+NO_DL=1
 NO_PORTAUDIO=1
 NO_PORTAUDIOCPP=1
 NO_PULSEAUDIO=1
@@ -60,3 +63,18 @@ NO_SDL2=1
 NO_SNDFILE=1
 NO_FLAC=1
 
+ifeq ($(BUNDLED_ALLEGRO42),1)
+
+CPPFLAGS_ALLEGRO42 := -Iinclude/allegro42/include -DALLEGRO_HAVE_STDINT_H -DLONG_LONG="long long"
+LDFLAGS_ALLEGRO42 := 
+LDLIBS_ALLEGRO42 := include/allegro42/lib/djgpp/liballeg.a
+
+include/allegro42/lib/djgpp/liballeg.a:
+	+cd include/allegro42 && ./xmake.sh clean
+	+cd include/allegro42 && ./xmake.sh lib
+
+bin/openmpt123$(EXESUFFIX): include/allegro42/lib/djgpp/liballeg.a
+
+MISC_OUTPUTS += include/allegro42/lib/djgpp/liballeg.a
+
+endif

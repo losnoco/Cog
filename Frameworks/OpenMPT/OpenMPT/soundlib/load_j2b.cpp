@@ -6,14 +6,15 @@
  *          It seems like no other game used the AM(FF) format.
  *          RIFF AM is the newer version of the format, generally following the RIFF "standard" closely.
  * Authors: Johannes Schultz (OpenMPT port, reverse engineering + loader implementation of the instrument format)
- *          Chris Moeller (foo_dumb - this is almost a complete port of his code, thanks)
+ *          kode54 (foo_dumb - this is almost a complete port of his code, thanks)
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
 
 #include "stdafx.h"
 #include "Loaders.h"
-#include "ChunkReader.h"
+
+#include "mpt/io/base.hpp"
 
 #if defined(MPT_WITH_ZLIB)
 #include <zlib.h>
@@ -437,7 +438,7 @@ struct AMSampleHeader
 		mptSmp.nLoopEnd = loopEnd;
 		mptSmp.nC5Speed = sampleRate;
 
-		if(instrHeader.vibratoType < CountOf(j2bAutoVibratoTrans))
+		if(instrHeader.vibratoType < std::size(j2bAutoVibratoTrans))
 			mptSmp.nVibType = j2bAutoVibratoTrans[instrHeader.vibratoType];
 		mptSmp.nVibSweep = static_cast<uint8>(instrHeader.vibratoSweep);
 		mptSmp.nVibRate = static_cast<uint8>(instrHeader.vibratoRate / 16);
@@ -532,14 +533,14 @@ static bool ConvertAMPattern(FileReader chunk, PATTERNINDEX pat, bool isAM, CSou
 				m.param = chunk.ReadUint8();
 				uint8 command = chunk.ReadUint8();
 
-				if(command < CountOf(amEffTrans))
+				if(command < std::size(amEffTrans))
 				{
 					// command translation
 					m.command = amEffTrans[command];
 				} else
 				{
 #ifdef J2B_LOG
-					MPT_LOG(LogDebug, "J2B", mpt::uformat(U_("J2B: Unknown command: 0x%1, param 0x%2"))(mpt::ufmt::HEX0<2>(command), mpt::ufmt::HEX0<2>(m.param)));
+					MPT_LOG_GLOBAL(LogDebug, "J2B", MPT_UFORMAT("J2B: Unknown command: 0x{}, param 0x{}")(mpt::ufmt::HEX0<2>(command), mpt::ufmt::HEX0<2>(m.param)));
 #endif
 					m.command = CMD_NONE;
 				}
@@ -1037,7 +1038,7 @@ bool CSoundFile::ReadJ2B(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		Bytef buffer[mpt::IO::BUFFERSIZE_TINY];
 		uint32 readSize = std::min(static_cast<uint32>(sizeof(buffer)), remainRead);
-		file.ReadRaw(buffer, readSize);
+		file.ReadRaw(mpt::span(buffer, readSize));
 		crc = crc32(crc, buffer, readSize);
 
 		strm.avail_in = readSize;

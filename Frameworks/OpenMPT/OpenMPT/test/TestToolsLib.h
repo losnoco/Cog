@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "BuildSettings.h"
+#include "openmpt/all/BuildSettings.hpp"
 
 
 #ifdef ENABLE_TESTS
@@ -21,10 +21,12 @@
 //#define MPT_TEST_CXX11
 
 
+#include "mpt/test/test.hpp"
+
 #include <type_traits>
 
-#include "../common/Endianness.h"
-#include "../common/FlagSet.h"
+#include "mpt/base/bit.hpp"
+#include "openmpt/base/FlagSet.hpp"
 #include "../soundlib/Snd_defs.h"
 
 
@@ -32,6 +34,23 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 namespace Test {
+
+
+
+class mpt_test_reporter
+	: public mpt::test::silent_reporter
+{
+public:
+	mpt_test_reporter() = default;
+	~mpt_test_reporter() override = default;
+public:
+	void case_run(const mpt::source_location & loc) override;
+	void case_run(const mpt::source_location & loc, const char * text_e) override;
+	void case_run(const mpt::source_location & loc, const char * text_ex, const char * text_e) override;
+	void case_run(const mpt::source_location & loc, const char * text_a, const char * text_cmp, const char * text_b) override;
+	void case_result(const mpt::source_location & loc, const mpt::test::result & result) override;
+};
+
 
 
 extern int fail_count;
@@ -65,7 +84,7 @@ struct ToStringHelper
 {
 	std::string operator () (const T &x)
 	{
-		return mpt::fmt::val(x);
+		return mpt::afmt::val(x);
 	}
 };
 
@@ -87,7 +106,7 @@ struct ToStringHelper<FlagSet<enum_t, store_t> >
 {
 	std::string operator () (const FlagSet<enum_t, store_t> &x)
 	{
-		return mpt::fmt::val(x.GetRaw());
+		return mpt::afmt::val(x.GetRaw());
 	}
 };
 
@@ -96,7 +115,7 @@ struct ToStringHelper<enum_value_type<enum_t> >
 {
 	std::string operator () (const enum_value_type<enum_t> &x)
 	{
-		return mpt::fmt::val(x.as_bits());
+		return mpt::afmt::val(x.as_bits());
 	}
 };
 
@@ -105,7 +124,7 @@ struct ToStringHelper<std::pair<Ta, Tb> >
 {
 	std::string operator () (const std::pair<Ta, Tb> &x)
 	{
-		return std::string("{") + mpt::fmt::val(x.first) + std::string(",") + mpt::fmt::val(x.second) + std::string("}");
+		return std::string("{") + mpt::afmt::val(x.first) + std::string(",") + mpt::afmt::val(x.second) + std::string("}");
 	}
 };
 
@@ -114,7 +133,7 @@ struct ToStringHelper<FPInt<FRACT, T> >
 {
 	std::string operator () (const FPInt<FRACT, T> &x)
 	{
-		return std::string("FPInt<") + mpt::fmt::val(FRACT) + std::string(",") + mpt::fmt::val(typeid(T).name()) + std::string(">{") + mpt::fmt::val(x.GetInt()) + std::string(".") + mpt::fmt::val(x.GetFract()) + std::string("}");
+		return std::string("FPInt<") + mpt::afmt::val(FRACT) + std::string(",") + mpt::afmt::val(typeid(T).name()) + std::string(">{") + mpt::afmt::val(x.GetInt()) + std::string(".") + mpt::afmt::val(x.GetFract()) + std::string("}");
 	}
 };
 
@@ -123,7 +142,7 @@ struct ToStringHelper<SamplePosition>
 {
 	std::string operator () (const SamplePosition &x)
 	{
-		return mpt::fmt::val(x.GetInt()) + std::string(".") + std::string("0x") + mpt::fmt::hex0<8>(x.GetFract());
+		return mpt::afmt::val(x.GetInt()) + std::string(".") + std::string("0x") + mpt::afmt::hex0<8>(x.GetFract());
 	}
 };
 
@@ -204,7 +223,7 @@ private:
 	{
 		if(!IsEqual(x, y, std::is_integral<Tx>(), std::is_integral<Ty>()))
 		{
-			throw TestFailed(mpt::format(std::string("%1 != %2"))(ToStringHelper<Tx>()(x), ToStringHelper<Ty>()(y)));
+			throw TestFailed(MPT_AFORMAT("{} != {}")(ToStringHelper<Tx>()(x), ToStringHelper<Ty>()(y)));
 			//throw TestFailed();
 		}
 	}
@@ -214,7 +233,7 @@ private:
 	{
 		if(!IsEqualEpsilon(x, y, eps))
 		{
-			throw TestFailed(mpt::format(std::string("%1 != %2"))(ToStringHelper<Tx>()(x), ToStringHelper<Ty>()(y)));
+			throw TestFailed(MPT_AFORMAT("{} != {}")(ToStringHelper<Tx>()(x), ToStringHelper<Ty>()(y)));
 			//throw TestFailed();
 		}
 	}
@@ -277,7 +296,7 @@ public:
 		{
 			if(!IsEqual(x, y, std::is_integral<Tx>(), std::is_integral<Ty>()))
 			{
-				//throw TestFailed(mpt::format(std::string("%1 != %2"))(x, y));
+				//throw TestFailed(MPT_AFORMAT("{} != {}")(x, y));
 				throw TestFailed();
 			}
 			ReportPassed();
@@ -295,7 +314,7 @@ public:
 		{
 			if(!IsEqualEpsilon(x, y, eps))
 			{
-				//throw TestFailed(mpt::format(std::string("%1 != %2"))(x, y));
+				//throw TestFailed(MPT_AFORMAT("{} != {}")(x, y));
 				throw TestFailed();
 			}
 			ReportPassed();
@@ -317,7 +336,7 @@ public:
 
 
 #define DO_TEST(func) \
-MPT_DO { \
+do { \
 	Test::Testcase test(Test::FatalityStop, Test::VerbosityVerbose, #func , MPT_SOURCE_LOCATION_CURRENT() ); \
 	try { \
 		test.ShowStart(); \
@@ -330,7 +349,7 @@ MPT_DO { \
 	} catch(...) { \
 		test.ReportException(); \
 	} \
-} MPT_WHILE_0
+} while(0)
 
 
 } // namespace Test

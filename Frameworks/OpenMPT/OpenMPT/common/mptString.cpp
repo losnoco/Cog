@@ -10,11 +10,12 @@
 #include "stdafx.h"
 #include "mptString.h"
 
-#include "Endianness.h"
+#include "mpt/string/types.hpp"
+#include "mpt/string/utility.hpp"
+#include "mpt/string_transcode/transcode.hpp"
 
 #include <locale>
 #include <string>
-#include <stdexcept>
 #include <vector>
 
 #include <cstdlib>
@@ -29,7 +30,7 @@
 
 #if MPT_OS_WINDOWS
 #include <windows.h>
-#endif
+#endif // MPT_OS_WINDOWS
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -301,87 +302,7 @@ namespace mpt { namespace String {
 
 
 
-/*
-default 1:1 mapping
-static constexpr char32_t CharsetTableISO8859_1[256] = {
-	0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,0x0008,0x0009,0x000a,0x000b,0x000c,0x000d,0x000e,0x000f,
-	0x0010,0x0011,0x0012,0x0013,0x0014,0x0015,0x0016,0x0017,0x0018,0x0019,0x001a,0x001b,0x001c,0x001d,0x001e,0x001f,
-	0x0020,0x0021,0x0022,0x0023,0x0024,0x0025,0x0026,0x0027,0x0028,0x0029,0x002a,0x002b,0x002c,0x002d,0x002e,0x002f,
-	0x0030,0x0031,0x0032,0x0033,0x0034,0x0035,0x0036,0x0037,0x0038,0x0039,0x003a,0x003b,0x003c,0x003d,0x003e,0x003f,
-	0x0040,0x0041,0x0042,0x0043,0x0044,0x0045,0x0046,0x0047,0x0048,0x0049,0x004a,0x004b,0x004c,0x004d,0x004e,0x004f,
-	0x0050,0x0051,0x0052,0x0053,0x0054,0x0055,0x0056,0x0057,0x0058,0x0059,0x005a,0x005b,0x005c,0x005d,0x005e,0x005f,
-	0x0060,0x0061,0x0062,0x0063,0x0064,0x0065,0x0066,0x0067,0x0068,0x0069,0x006a,0x006b,0x006c,0x006d,0x006e,0x006f,
-	0x0070,0x0071,0x0072,0x0073,0x0074,0x0075,0x0076,0x0077,0x0078,0x0079,0x007a,0x007b,0x007c,0x007d,0x007e,0x007f,
-	0x0080,0x0081,0x0082,0x0083,0x0084,0x0085,0x0086,0x0087,0x0088,0x0089,0x008a,0x008b,0x008c,0x008d,0x008e,0x008f,
-	0x0090,0x0091,0x0092,0x0093,0x0094,0x0095,0x0096,0x0097,0x0098,0x0099,0x009a,0x009b,0x009c,0x009d,0x009e,0x009f,
-	0x00a0,0x00a1,0x00a2,0x00a3,0x00a4,0x00a5,0x00a6,0x00a7,0x00a8,0x00a9,0x00aa,0x00ab,0x00ac,0x00ad,0x00ae,0x00af,
-	0x00b0,0x00b1,0x00b2,0x00b3,0x00b4,0x00b5,0x00b6,0x00b7,0x00b8,0x00b9,0x00ba,0x00bb,0x00bc,0x00bd,0x00be,0x00bf,
-	0x00c0,0x00c1,0x00c2,0x00c3,0x00c4,0x00c5,0x00c6,0x00c7,0x00c8,0x00c9,0x00ca,0x00cb,0x00cc,0x00cd,0x00ce,0x00cf,
-	0x00d0,0x00d1,0x00d2,0x00d3,0x00d4,0x00d5,0x00d6,0x00d7,0x00d8,0x00d9,0x00da,0x00db,0x00dc,0x00dd,0x00de,0x00df,
-	0x00e0,0x00e1,0x00e2,0x00e3,0x00e4,0x00e5,0x00e6,0x00e7,0x00e8,0x00e9,0x00ea,0x00eb,0x00ec,0x00ed,0x00ee,0x00ef,
-	0x00f0,0x00f1,0x00f2,0x00f3,0x00f4,0x00f5,0x00f6,0x00f7,0x00f8,0x00f9,0x00fa,0x00fb,0x00fc,0x00fd,0x00fe,0x00ff
-};
-*/
-
-static constexpr char32_t CharsetTableISO8859_15[256] = {
-	0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,0x0008,0x0009,0x000a,0x000b,0x000c,0x000d,0x000e,0x000f,
-	0x0010,0x0011,0x0012,0x0013,0x0014,0x0015,0x0016,0x0017,0x0018,0x0019,0x001a,0x001b,0x001c,0x001d,0x001e,0x001f,
-	0x0020,0x0021,0x0022,0x0023,0x0024,0x0025,0x0026,0x0027,0x0028,0x0029,0x002a,0x002b,0x002c,0x002d,0x002e,0x002f,
-	0x0030,0x0031,0x0032,0x0033,0x0034,0x0035,0x0036,0x0037,0x0038,0x0039,0x003a,0x003b,0x003c,0x003d,0x003e,0x003f,
-	0x0040,0x0041,0x0042,0x0043,0x0044,0x0045,0x0046,0x0047,0x0048,0x0049,0x004a,0x004b,0x004c,0x004d,0x004e,0x004f,
-	0x0050,0x0051,0x0052,0x0053,0x0054,0x0055,0x0056,0x0057,0x0058,0x0059,0x005a,0x005b,0x005c,0x005d,0x005e,0x005f,
-	0x0060,0x0061,0x0062,0x0063,0x0064,0x0065,0x0066,0x0067,0x0068,0x0069,0x006a,0x006b,0x006c,0x006d,0x006e,0x006f,
-	0x0070,0x0071,0x0072,0x0073,0x0074,0x0075,0x0076,0x0077,0x0078,0x0079,0x007a,0x007b,0x007c,0x007d,0x007e,0x007f,
-	0x0080,0x0081,0x0082,0x0083,0x0084,0x0085,0x0086,0x0087,0x0088,0x0089,0x008a,0x008b,0x008c,0x008d,0x008e,0x008f,
-	0x0090,0x0091,0x0092,0x0093,0x0094,0x0095,0x0096,0x0097,0x0098,0x0099,0x009a,0x009b,0x009c,0x009d,0x009e,0x009f,
-	0x00a0,0x00a1,0x00a2,0x00a3,0x20ac,0x00a5,0x0160,0x00a7,0x0161,0x00a9,0x00aa,0x00ab,0x00ac,0x00ad,0x00ae,0x00af,
-	0x00b0,0x00b1,0x00b2,0x00b3,0x017d,0x00b5,0x00b6,0x00b7,0x017e,0x00b9,0x00ba,0x00bb,0x0152,0x0153,0x0178,0x00bf,
-	0x00c0,0x00c1,0x00c2,0x00c3,0x00c4,0x00c5,0x00c6,0x00c7,0x00c8,0x00c9,0x00ca,0x00cb,0x00cc,0x00cd,0x00ce,0x00cf,
-	0x00d0,0x00d1,0x00d2,0x00d3,0x00d4,0x00d5,0x00d6,0x00d7,0x00d8,0x00d9,0x00da,0x00db,0x00dc,0x00dd,0x00de,0x00df,
-	0x00e0,0x00e1,0x00e2,0x00e3,0x00e4,0x00e5,0x00e6,0x00e7,0x00e8,0x00e9,0x00ea,0x00eb,0x00ec,0x00ed,0x00ee,0x00ef,
-	0x00f0,0x00f1,0x00f2,0x00f3,0x00f4,0x00f5,0x00f6,0x00f7,0x00f8,0x00f9,0x00fa,0x00fb,0x00fc,0x00fd,0x00fe,0x00ff
-};
-
-static constexpr char32_t CharsetTableWindows1252[256] = {
-	0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,0x0008,0x0009,0x000a,0x000b,0x000c,0x000d,0x000e,0x000f,
-	0x0010,0x0011,0x0012,0x0013,0x0014,0x0015,0x0016,0x0017,0x0018,0x0019,0x001a,0x001b,0x001c,0x001d,0x001e,0x001f,
-	0x0020,0x0021,0x0022,0x0023,0x0024,0x0025,0x0026,0x0027,0x0028,0x0029,0x002a,0x002b,0x002c,0x002d,0x002e,0x002f,
-	0x0030,0x0031,0x0032,0x0033,0x0034,0x0035,0x0036,0x0037,0x0038,0x0039,0x003a,0x003b,0x003c,0x003d,0x003e,0x003f,
-	0x0040,0x0041,0x0042,0x0043,0x0044,0x0045,0x0046,0x0047,0x0048,0x0049,0x004a,0x004b,0x004c,0x004d,0x004e,0x004f,
-	0x0050,0x0051,0x0052,0x0053,0x0054,0x0055,0x0056,0x0057,0x0058,0x0059,0x005a,0x005b,0x005c,0x005d,0x005e,0x005f,
-	0x0060,0x0061,0x0062,0x0063,0x0064,0x0065,0x0066,0x0067,0x0068,0x0069,0x006a,0x006b,0x006c,0x006d,0x006e,0x006f,
-	0x0070,0x0071,0x0072,0x0073,0x0074,0x0075,0x0076,0x0077,0x0078,0x0079,0x007a,0x007b,0x007c,0x007d,0x007e,0x007f,
-	0x20ac,0x0081,0x201a,0x0192,0x201e,0x2026,0x2020,0x2021,0x02c6,0x2030,0x0160,0x2039,0x0152,0x008d,0x017d,0x008f,
-	0x0090,0x2018,0x2019,0x201c,0x201d,0x2022,0x2013,0x2014,0x02dc,0x2122,0x0161,0x203a,0x0153,0x009d,0x017e,0x0178,
-	0x00a0,0x00a1,0x00a2,0x00a3,0x00a4,0x00a5,0x00a6,0x00a7,0x00a8,0x00a9,0x00aa,0x00ab,0x00ac,0x00ad,0x00ae,0x00af,
-	0x00b0,0x00b1,0x00b2,0x00b3,0x00b4,0x00b5,0x00b6,0x00b7,0x00b8,0x00b9,0x00ba,0x00bb,0x00bc,0x00bd,0x00be,0x00bf,
-	0x00c0,0x00c1,0x00c2,0x00c3,0x00c4,0x00c5,0x00c6,0x00c7,0x00c8,0x00c9,0x00ca,0x00cb,0x00cc,0x00cd,0x00ce,0x00cf,
-	0x00d0,0x00d1,0x00d2,0x00d3,0x00d4,0x00d5,0x00d6,0x00d7,0x00d8,0x00d9,0x00da,0x00db,0x00dc,0x00dd,0x00de,0x00df,
-	0x00e0,0x00e1,0x00e2,0x00e3,0x00e4,0x00e5,0x00e6,0x00e7,0x00e8,0x00e9,0x00ea,0x00eb,0x00ec,0x00ed,0x00ee,0x00ef,
-	0x00f0,0x00f1,0x00f2,0x00f3,0x00f4,0x00f5,0x00f6,0x00f7,0x00f8,0x00f9,0x00fa,0x00fb,0x00fc,0x00fd,0x00fe,0x00ff
-};
-
-static constexpr char32_t CharsetTableCP437[256] = {
-	0x0000,0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,0x0008,0x0009,0x000a,0x000b,0x000c,0x000d,0x000e,0x000f,
-	0x0010,0x0011,0x0012,0x0013,0x0014,0x0015,0x0016,0x0017,0x0018,0x0019,0x001a,0x001b,0x001c,0x001d,0x001e,0x001f,
-	0x0020,0x0021,0x0022,0x0023,0x0024,0x0025,0x0026,0x0027,0x0028,0x0029,0x002a,0x002b,0x002c,0x002d,0x002e,0x002f,
-	0x0030,0x0031,0x0032,0x0033,0x0034,0x0035,0x0036,0x0037,0x0038,0x0039,0x003a,0x003b,0x003c,0x003d,0x003e,0x003f,
-	0x0040,0x0041,0x0042,0x0043,0x0044,0x0045,0x0046,0x0047,0x0048,0x0049,0x004a,0x004b,0x004c,0x004d,0x004e,0x004f,
-	0x0050,0x0051,0x0052,0x0053,0x0054,0x0055,0x0056,0x0057,0x0058,0x0059,0x005a,0x005b,0x005c,0x005d,0x005e,0x005f,
-	0x0060,0x0061,0x0062,0x0063,0x0064,0x0065,0x0066,0x0067,0x0068,0x0069,0x006a,0x006b,0x006c,0x006d,0x006e,0x006f,
-	0x0070,0x0071,0x0072,0x0073,0x0074,0x0075,0x0076,0x0077,0x0078,0x0079,0x007a,0x007b,0x007c,0x007d,0x007e,0x2302,
-	0x00c7,0x00fc,0x00e9,0x00e2,0x00e4,0x00e0,0x00e5,0x00e7,0x00ea,0x00eb,0x00e8,0x00ef,0x00ee,0x00ec,0x00c4,0x00c5,
-	0x00c9,0x00e6,0x00c6,0x00f4,0x00f6,0x00f2,0x00fb,0x00f9,0x00ff,0x00d6,0x00dc,0x00a2,0x00a3,0x00a5,0x20a7,0x0192,
-	0x00e1,0x00ed,0x00f3,0x00fa,0x00f1,0x00d1,0x00aa,0x00ba,0x00bf,0x2310,0x00ac,0x00bd,0x00bc,0x00a1,0x00ab,0x00bb,
-	0x2591,0x2592,0x2593,0x2502,0x2524,0x2561,0x2562,0x2556,0x2555,0x2563,0x2551,0x2557,0x255d,0x255c,0x255b,0x2510,
-	0x2514,0x2534,0x252c,0x251c,0x2500,0x253c,0x255e,0x255f,0x255a,0x2554,0x2569,0x2566,0x2560,0x2550,0x256c,0x2567,
-	0x2568,0x2564,0x2565,0x2559,0x2558,0x2552,0x2553,0x256b,0x256a,0x2518,0x250c,0x2588,0x2584,0x258c,0x2590,0x2580,
-	0x03b1,0x00df,0x0393,0x03c0,0x03a3,0x03c3,0x00b5,0x03c4,0x03a6,0x0398,0x03a9,0x03b4,0x221e,0x03c6,0x03b5,0x2229,
-	0x2261,0x00b1,0x2265,0x2264,0x2320,0x2321,0x00f7,0x2248,0x00b0,0x2219,0x00b7,0x221a,0x207f,0x00b2,0x25a0,0x00a0
-};
-
-
-#define C(x) (static_cast<uint8>((x)))
+#define C(x) (mpt::char_value((x)))
 
 // AMS1 actually only supports ASCII plus the modified control characters and no high chars at all.
 // Just default to CP437 for those to keep things simple.
@@ -427,719 +348,26 @@ static constexpr char32_t CharsetTableCP437AMS2[256] = {
 #undef C
 
 
-#if defined(MPT_COMPILER_QUIRK_NO_WCHAR)
-using widechar = char32_t;
-using widestring = std::u32string;
-static constexpr widechar wide_default_replacement = 0xFFFD;
-#else // !MPT_COMPILER_QUIRK_NO_WCHAR
-using widechar = wchar_t;
-using widestring = std::wstring;
-static constexpr widechar wide_default_replacement = L'\uFFFD';
-#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
-
-
-#if MPT_OS_WINDOWS
-
-static bool TestCodePage(UINT cp)
-{
-	return IsValidCodePage(cp) ? true : false;
-}
-
-static bool HasCharset(Charset charset)
-{
-	bool result = false;
-	switch(charset)
-	{
-#if defined(MPT_ENABLE_CHARSET_LOCALE)
-		case Charset::Locale:      result = true; break;
-#endif
-		case Charset::UTF8:        result = TestCodePage(CP_UTF8); break;
-		case Charset::ASCII:       result = TestCodePage(20127);   break;
-		case Charset::ISO8859_1:   result = TestCodePage(28591);   break;
-		case Charset::ISO8859_15:  result = TestCodePage(28605);   break;
-		case Charset::CP437:       result = TestCodePage(437);     break;
-		case Charset::Windows1252: result = TestCodePage(1252);    break;
-		case Charset::CP437AMS:    result = false; break;
-		case Charset::CP437AMS2:   result = false; break;
-	}
-	return result;
-}
-
-static UINT CharsetToCodepage(Charset charset)
-{
-	switch(charset)
-	{
-#if defined(MPT_ENABLE_CHARSET_LOCALE)
-		case Charset::Locale:      return CP_ACP;  break;
-#endif
-		case Charset::UTF8:        return CP_UTF8; break;
-		case Charset::ASCII:       return 20127;   break;
-		case Charset::ISO8859_1:   return 28591;   break;
-		case Charset::ISO8859_15:  return 28605;   break;
-		case Charset::CP437:       return 437;     break;
-		case Charset::CP437AMS:    return 437;     break; // fallback, should not happen
-		case Charset::CP437AMS2:   return 437;     break; // fallback, should not happen
-		case Charset::Windows1252: return 1252;    break;
-	}
-	return 0;
-}
-
-template<typename Tdststring>
-static Tdststring EncodeCodepage(UINT codepage, const widestring &src)
-{
-	static_assert(sizeof(typename Tdststring::value_type) == sizeof(char));
-	static_assert((std::is_same<typename Tdststring::value_type, char>::value));
-	Tdststring encoded_string;
-	int required_size = WideCharToMultiByte(codepage, 0, src.data(), mpt::saturate_cast<int>(src.size()), nullptr, 0, nullptr, nullptr);
-	if(required_size > 0)
-	{
-		encoded_string.resize(required_size);
-		WideCharToMultiByte(codepage, 0, src.data(), mpt::saturate_cast<int>(src.size()), reinterpret_cast<CHAR*>(encoded_string.data()), required_size, nullptr, nullptr);
-	}
-	return encoded_string;
-}
-
-template<typename Tsrcstring>
-static widestring DecodeCodepage(UINT codepage, const Tsrcstring &src)
-{
-	static_assert(sizeof(typename Tsrcstring::value_type) == sizeof(char));
-	static_assert((std::is_same<typename Tsrcstring::value_type, char>::value));
-	widestring decoded_string;
-	int required_size = MultiByteToWideChar(codepage, 0, reinterpret_cast<const CHAR*>(src.data()), mpt::saturate_cast<int>(src.size()), nullptr, 0);
-	if(required_size > 0)
-	{
-		decoded_string.resize(required_size);
-		MultiByteToWideChar(codepage, 0, reinterpret_cast<const CHAR*>(src.data()), mpt::saturate_cast<int>(src.size()), decoded_string.data(), required_size);
-	}
-	return decoded_string;
-}
-
-#endif // MPT_OS_WINDOWS
-
-
-template<typename Tsrcstring>
-static widestring From8bit(const Tsrcstring &str, const char32_t (&table)[256], widechar replacement = wide_default_replacement)
-{
-	widestring res;
-	res.reserve(str.length());
-	for(std::size_t i = 0; i < str.length(); ++i)
-	{
-		std::size_t c = static_cast<std::size_t>(static_cast<uint8>(str[i]));
-		if(c < std::size(table))
-		{
-			res.push_back(static_cast<widechar>(table[c]));
-		} else
-		{
-			res.push_back(replacement);
-		}
-	}
-	return res;
-}
-
-template<typename Tdststring>
-static Tdststring To8bit(const widestring &str, const char32_t (&table)[256], char replacement = '?')
-{
-	Tdststring res;
-	res.reserve(str.length());
-	for(std::size_t i = 0; i < str.length(); ++i)
-	{
-		char32_t c = static_cast<char32_t>(str[i]);
-		bool found = false;
-		// Try non-control characters first.
-		// In cases where there are actual characters mirrored in this range (like in AMS/AMS2 character sets),
-		// characters in the common range are preferred this way.
-		for(std::size_t x = 0x20; x < std::size(table); ++x)
-		{
-			if(c == table[x])
-			{
-				res.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint8>(x)));
-				found = true;
-				break;
-			}
-		}
-		if(!found)
-		{
-			// try control characters
-			for(std::size_t x = 0x00; x < std::size(table) && x < 0x20; ++x)
-			{
-				if(c == table[x])
-				{
-					res.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint8>(x)));
-					found = true;
-					break;
-				}
-			}
-		}
-		if(!found)
-		{
-			res.push_back(replacement);
-		}
-	}
-	return res;
-}
-
-template<typename Tsrcstring>
-static widestring FromAscii(const Tsrcstring &str, widechar replacement = wide_default_replacement)
-{
-	widestring res;
-	res.reserve(str.length());
-	for(std::size_t i = 0; i < str.length(); ++i)
-	{
-		uint8 c = str[i];
-		if(c <= 0x7f)
-		{
-			res.push_back(static_cast<widechar>(static_cast<uint32>(c)));
-		} else
-		{
-			res.push_back(replacement);
-		}
-	}
-	return res;
-}
-
-template<typename Tdststring>
-static Tdststring ToAscii(const widestring &str, char replacement = '?')
-{
-	Tdststring res;
-	res.reserve(str.length());
-	for(std::size_t i = 0; i < str.length(); ++i)
-	{
-		char32_t c = static_cast<char32_t>(str[i]);
-		if(c <= 0x7f)
-		{
-			res.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint8>(c)));
-		} else
-		{
-			res.push_back(replacement);
-		}
-	}
-	return res;
-}
-
-template<typename Tsrcstring>
-static widestring FromISO_8859_1(const Tsrcstring &str, widechar replacement = wide_default_replacement)
-{
-	MPT_UNREFERENCED_PARAMETER(replacement);
-	widestring res;
-	res.reserve(str.length());
-	for(std::size_t i = 0; i < str.length(); ++i)
-	{
-		uint8 c = str[i];
-		res.push_back(static_cast<widechar>(static_cast<uint32>(c)));
-	}
-	return res;
-}
-
-template<typename Tdststring>
-static Tdststring ToISO_8859_1(const widestring &str, char replacement = '?')
-{
-	Tdststring res;
-	res.reserve(str.length());
-	for(std::size_t i = 0; i < str.length(); ++i)
-	{
-		char32_t c = static_cast<char32_t>(str[i]);
-		if(c <= 0xff)
-		{
-			res.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint8>(c)));
-		} else
-		{
-			res.push_back(replacement);
-		}
-	}
-	return res;
-}
-
-
-#if defined(MPT_ENABLE_CHARSET_LOCALE) && !defined(MPT_LOCALE_ASSUME_CHARSET)
-
-// Note:
-//
-//  std::codecvt::out in LLVM libc++ does not advance in and out pointers when
-// running into a non-convertible character. This can happen when no locale is
-// set on FreeBSD or MacOSX. This behaviour violates the C++ standard.
-//
-//  We apply the following (albeit costly, even on other platforms) work-around:
-//  If the conversion errors out and does not advance the pointers at all, we
-// retry the conversion with a space character prepended to the string. If it
-// still does error out, we retry the whole conversion character by character.
-//  This is costly even on other platforms in one single case: The first
-// character is an invalid Unicode code point or otherwise not convertible. Any
-// following non-convertible characters are not a problem.
-
-static std::wstring LocaleDecode(const std::string &str, const std::locale & locale, wchar_t replacement = L'\uFFFD', int retry = 0, bool * progress = nullptr)
-{
-	if(str.empty())
-	{
-		return std::wstring();
-	}
-	std::vector<wchar_t> out;
-	using codecvt_type = std::codecvt<wchar_t, char, std::mbstate_t>;
-	std::mbstate_t state = std::mbstate_t();
-	const codecvt_type & facet = std::use_facet<codecvt_type>(locale);
-	codecvt_type::result result = codecvt_type::partial;
-	const char * in_begin = str.data();
-	const char * in_end = in_begin + str.size();
-	out.resize((in_end - in_begin) * (facet.max_length() + 1));
-	wchar_t * out_begin = &(out[0]);
-	wchar_t * out_end = &(out[0]) + out.size();
-	const char * in_next = nullptr;
-	wchar_t * out_next = nullptr;
-	do
-	{
-		if(retry == 2)
-		{
-			for(;;)
-			{
-				in_next = nullptr;
-				out_next = nullptr;
-				result = facet.in(state, in_begin, in_begin + 1, in_next, out_begin, out_end, out_next);
-				if(result == codecvt_type::partial && in_next == in_begin + 1)
-				{
-					in_begin = in_next;
-					out_begin = out_next;
-					continue;
-				} else
-				{
-					break;
-				}
-			}
-		} else
-		{
-			in_next = nullptr;
-			out_next = nullptr;
-			result = facet.in(state, in_begin, in_end, in_next, out_begin, out_end, out_next);
-		}
-		if(result == codecvt_type::partial || (result == codecvt_type::error && out_next == out_end))
-		{
-			out.resize(out.size() * 2);
-			in_begin = in_next;
-			out_begin = &(out[0]) + (out_next - out_begin);
-			out_end = &(out[0]) + out.size();
-			continue;
-		}
-		if(retry == 0)
-		{
-			if(result == codecvt_type::error && in_next == in_begin && out_next == out_begin)
-			{
-				bool made_progress = true;
-				LocaleDecode(std::string(" ") + str, locale, replacement, 1, &made_progress);
-				if(!made_progress)
-				{
-					return LocaleDecode(str, locale, replacement, 2);
-				}
-			}
-		} else if(retry == 1)
-		{
-			if(result == codecvt_type::error && in_next == in_begin && out_next == out_begin)
-			{
-				*progress = false;
-			} else
-			{
-				*progress = true;
-			}
-			return std::wstring();
-		}
-		if(result == codecvt_type::error)
-		{
-			++in_next;
-			*out_next = replacement;
-			++out_next;
-		}
-		in_begin = in_next;
-		out_begin = out_next;
-	} while((result == codecvt_type::error && in_next < in_end && out_next < out_end) || (retry == 2 && in_next < in_end));
-	return std::wstring(&(out[0]), out_next);
-}
-
-static std::string LocaleEncode(const std::wstring &str, const std::locale & locale, char replacement = '?', int retry = 0, bool * progress = nullptr)
-{
-	if(str.empty())
-	{
-		return std::string();
-	}
-	std::vector<char> out;
-	using codecvt_type = std::codecvt<wchar_t, char, std::mbstate_t>;
-	std::mbstate_t state = std::mbstate_t();
-	const codecvt_type & facet = std::use_facet<codecvt_type>(locale);
-	codecvt_type::result result = codecvt_type::partial;
-	const wchar_t * in_begin = str.data();
-	const wchar_t * in_end = in_begin + str.size();
-	out.resize((in_end - in_begin) * (facet.max_length() + 1));
-	char * out_begin = &(out[0]);
-	char * out_end = &(out[0]) + out.size();
-	const wchar_t * in_next = nullptr;
-	char * out_next = nullptr;
-	do
-	{
-		if(retry == 2)
-		{
-			for(;;)
-			{
-				in_next = nullptr;
-				out_next = nullptr;
-				result = facet.out(state, in_begin, in_begin + 1, in_next, out_begin, out_end, out_next);
-				if(result == codecvt_type::partial && in_next == in_begin + 1)
-				{
-					in_begin = in_next;
-					out_begin = out_next;
-					continue;
-				} else
-				{
-					break;
-				}
-			}
-		} else
-		{
-			in_next = nullptr;
-			out_next = nullptr;
-			result = facet.out(state, in_begin, in_end, in_next, out_begin, out_end, out_next);
-		}
-		if(result == codecvt_type::partial || (result == codecvt_type::error && out_next == out_end))
-		{
-			out.resize(out.size() * 2);
-			in_begin = in_next;
-			out_begin = &(out[0]) + (out_next - out_begin);
-			out_end = &(out[0]) + out.size();
-			continue;
-		}
-		if(retry == 0)
-		{
-			if(result == codecvt_type::error && in_next == in_begin && out_next == out_begin)
-			{
-				bool made_progress = true;
-				LocaleEncode(std::wstring(L" ") + str, locale, replacement, 1, &made_progress);
-				if(!made_progress)
-				{
-					return LocaleEncode(str, locale, replacement, 2);
-				}
-			}
-		} else if(retry == 1)
-		{
-			if(result == codecvt_type::error && in_next == in_begin && out_next == out_begin)
-			{
-				*progress = false;
-			} else
-			{
-				*progress = true;
-			}
-			return std::string();
-		}
-		if(result == codecvt_type::error)
-		{
-			++in_next;
-			*out_next = replacement;
-			++out_next;
-		}
-		in_begin = in_next;
-		out_begin = out_next;
-	} while((result == codecvt_type::error && in_next < in_end && out_next < out_end) || (retry == 2 && in_next < in_end));
-	return std::string(&(out[0]), out_next);
-}
-
-static std::wstring FromLocaleCpp(const std::string &str, wchar_t replacement)
-{
-	try
-	{
-		std::locale locale(""); // user locale
-		return String::LocaleDecode(str, locale, replacement);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-	{
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
-	} catch(...)
-	{
-		// nothing
-	}
-	try
-	{
-		std::locale locale; // current c++ locale
-		return String::LocaleDecode(str, locale, replacement);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-	{
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
-	} catch(...)
-	{
-		// nothing
-	}
-	try
-	{
-		std::locale locale = std::locale::classic(); // "C" locale
-		return String::LocaleDecode(str, locale, replacement);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-	{
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
-	} catch(...)
-	{
-		// nothing
-	}
-	MPT_ASSERT_NOTREACHED();
-	return String::FromAscii<std::string>(str, replacement); // fallback
-}
-
-static std::string ToLocaleCpp(const std::wstring &str, char replacement)
-{
-	try
-	{
-		std::locale locale(""); // user locale
-		return String::LocaleEncode(str, locale, replacement);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-	{
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
-	} catch(...)
-	{
-		// nothing
-	}
-	try
-	{
-		std::locale locale; // current c++ locale
-		return String::LocaleEncode(str, locale, replacement);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-	{
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
-	} catch(...)
-	{
-		// nothing
-	}
-	try
-	{
-		std::locale locale = std::locale::classic(); // "C" locale
-		return String::LocaleEncode(str, locale, replacement);
-	} MPT_EXCEPTION_CATCH_OUT_OF_MEMORY(e)
-	{
-		MPT_EXCEPTION_RETHROW_OUT_OF_MEMORY(e);
-	} catch(...)
-	{
-		// nothing
-	}
-	MPT_ASSERT_NOTREACHED();
-	return String::ToAscii<std::string>(str, replacement); // fallback
-}
-
-
-template <typename Tsrcstring>
-static std::wstring FromLocale(const Tsrcstring &str, wchar_t replacement = L'\uFFFD')
-{
-	std::string tmp(str.begin(), str.end());
-	return FromLocaleCpp(tmp, replacement);
-}
-template <>
-std::wstring FromLocale<std::string>(const std::string &str, wchar_t replacement)
-{
-	return FromLocaleCpp(str, replacement);
-}
-
-template <typename Tdststring>
-static Tdststring ToLocale(const std::wstring &str, char replacement = '?')
-{
-	std::string tmp = ToLocaleCpp(str, replacement);
-	return Tdststring(tmp.begin(), tmp.end());
-}
-template <>
-std::string ToLocale(const std::wstring &str, char replacement)
-{
-	return ToLocaleCpp(str, replacement);
-}
-
-
-#endif // MPT_ENABLE_CHARSET_LOCALE && !MPT_LOCALE_ASSUME_CHARSET
-
-template <typename Tsrcstring>
-static widestring FromUTF8(const Tsrcstring &str, widechar replacement = wide_default_replacement)
-{
-	const Tsrcstring &in = str;
-
-	widestring out;
-
-	// state:
-	std::size_t charsleft = 0;
-	char32_t ucs4 = 0;
-
-	for ( uint8 c : in ) {
-
-		if ( charsleft == 0 ) {
-
-			if ( ( c & 0x80 ) == 0x00 ) {
-				out.push_back( (widechar)c );
-			} else if ( ( c & 0xE0 ) == 0xC0 ) {
-				ucs4 = c & 0x1F;
-				charsleft = 1;
-			} else if ( ( c & 0xF0 ) == 0xE0 ) {
-				ucs4 = c & 0x0F;
-				charsleft = 2;
-			} else if ( ( c & 0xF8 ) == 0xF0 ) {
-				ucs4 = c & 0x07;
-				charsleft = 3;
-			} else {
-				out.push_back( replacement );
-				ucs4 = 0;
-				charsleft = 0;
-			}
-
-		} else {
-
-			if ( ( c & 0xC0 ) != 0x80 ) {
-				out.push_back( replacement );
-				ucs4 = 0;
-				charsleft = 0;
-			}
-			ucs4 <<= 6;
-			ucs4 |= c & 0x3F;
-			charsleft--;
-
-			if ( charsleft == 0 ) {
-				if constexpr ( sizeof( widechar ) == 2 ) {
-					if ( ucs4 > 0x1fffff ) {
-						out.push_back( replacement );
-						ucs4 = 0;
-						charsleft = 0;
-					}
-					if ( ucs4 <= 0xffff ) {
-						out.push_back( static_cast<widechar>(ucs4) );
-					} else {
-						uint32 surrogate = static_cast<uint32>(ucs4) - 0x10000;
-						uint16 hi_sur = static_cast<uint16>( ( 0x36 << 10 ) | ( (surrogate>>10) & ((1<<10)-1) ) );
-						uint16 lo_sur = static_cast<uint16>( ( 0x37 << 10 ) | ( (surrogate>> 0) & ((1<<10)-1) ) );
-						out.push_back( hi_sur );
-						out.push_back( lo_sur );
-					}
-				} else {
-					out.push_back( static_cast<widechar>( ucs4 ) );
-				}
-				ucs4 = 0;
-			}
-
-		}
-
-	}
-
-	if ( charsleft != 0 ) {
-		out.push_back( replacement );
-		ucs4 = 0;
-		charsleft = 0;
-	}
-
-	return out;
-
-}
-
-template <typename Tdststring>
-static Tdststring ToUTF8(const widestring &str, char replacement = '?')
-{
-	const widestring &in = str;
-
-	Tdststring out;
-
-	for ( std::size_t i=0; i<in.length(); i++ ) {
-
-		widechar wc = in[i];
-
-		char32_t ucs4 = 0;
-		if constexpr ( sizeof( widechar ) == 2 ) {
-			uint16 c = static_cast<uint16>( wc );
-			if ( i + 1 < in.length() ) {
-				// check for surrogate pair
-				uint16 hi_sur = in[i+0];
-				uint16 lo_sur = in[i+1];
-				if ( hi_sur >> 10 == 0x36 && lo_sur >> 10 == 0x37 ) {
-					// surrogate pair
-					++i;
-					hi_sur &= (1<<10)-1;
-					lo_sur &= (1<<10)-1;
-					ucs4 = ( static_cast<uint32>(hi_sur) << 10 ) | ( static_cast<uint32>(lo_sur) << 0 );
-				} else {
-					// no surrogate pair
-					ucs4 = static_cast<char32_t>( c );
-				}
-			} else {
-				// no surrogate possible
-				ucs4 = static_cast<char32_t>( c );
-			}
-		} else {
-			ucs4 = static_cast<char32_t>( wc );
-		}
-		
-		if ( ucs4 > 0x1fffff ) {
-			out.push_back( replacement );
-			continue;
-		}
-
-		uint8 utf8[6];
-		std::size_t numchars = 0;
-		for ( numchars = 0; numchars < 6; numchars++ ) {
-			utf8[numchars] = ucs4 & 0x3F;
-			ucs4 >>= 6;
-			if ( ucs4 == 0 ) {
-				break;
-			}
-		}
-		numchars++;
-
-		if ( numchars == 1 ) {
-			out.push_back( utf8[0] );
-			continue;
-		}
-
-		if ( numchars == 2 && utf8[numchars-1] == 0x01 ) {
-			// generate shortest form
-			out.push_back( utf8[0] | 0x40 );
-			continue;
-		}
-
-		std::size_t charsleft = numchars;
-		while ( charsleft > 0 ) {
-			if ( charsleft == numchars ) {
-				out.push_back( utf8[ charsleft - 1 ] | ( ((1<<numchars)-1) << (8-numchars) ) );
-			} else {
-				// cppcheck false-positive
-				// cppcheck-suppress arrayIndexOutOfBounds
-				out.push_back( utf8[ charsleft - 1 ] | 0x80 );
-			}
-			charsleft--;
-		}
-
-	}
-
-	return out;
-
-}
-
-
 // templated on 8bit strings because of type-safe variants
 template<typename Tdststring>
-static Tdststring EncodeImpl(Charset charset, const widestring &src)
+static Tdststring EncodeImpl(Charset charset, const mpt::widestring &src)
 {
 	static_assert(sizeof(typename Tdststring::value_type) == sizeof(char));
-	static_assert((std::is_same<typename Tdststring::value_type, char>::value));
-	#if defined(MPT_ENABLE_CHARSET_LOCALE)
-		#if defined(MPT_LOCALE_ASSUME_CHARSET)
-			if(charset == Charset::Locale)
-			{
-				charset = MPT_LOCALE_ASSUME_CHARSET;
-			}
-		#endif
-	#endif
-	#if MPT_OS_WINDOWS
-		if(HasCharset(charset))
-		{
-			return EncodeCodepage<Tdststring>(CharsetToCodepage(charset), src);
-		}
-	#endif
+	static_assert(mpt::is_character<typename Tdststring::value_type>::value);
 	switch(charset)
 	{
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
-	#if defined(MPT_LOCALE_ASSUME_CHARSET)
-		case Charset::Locale:      MPT_ASSERT_NOTREACHED(); break;
-	#else
-		case Charset::Locale:      return String::ToLocale<Tdststring>(src); break;
-	#endif
+		case Charset::Locale:      return mpt::encode<Tdststring>(mpt::logical_encoding::locale, src); break;
 #endif
-		case Charset::UTF8:        return String::ToUTF8<Tdststring>(src); break;
-		case Charset::ASCII:       return String::ToAscii<Tdststring>(src); break;
-		case Charset::ISO8859_1:   return String::ToISO_8859_1<Tdststring>(src); break;
-		case Charset::ISO8859_15:  return String::To8bit<Tdststring>(src, CharsetTableISO8859_15); break;
-		case Charset::CP437:       return String::To8bit<Tdststring>(src, CharsetTableCP437); break;
-		case Charset::CP437AMS:    return String::To8bit<Tdststring>(src, CharsetTableCP437AMS); break;
-		case Charset::CP437AMS2:   return String::To8bit<Tdststring>(src, CharsetTableCP437AMS2); break;
-		case Charset::Windows1252: return String::To8bit<Tdststring>(src, CharsetTableWindows1252); break;
+		case Charset::UTF8:        return mpt::encode<Tdststring>(mpt::common_encoding::utf8, src); break;
+		case Charset::ASCII:       return mpt::encode<Tdststring>(mpt::common_encoding::ascii, src); break;
+		case Charset::ISO8859_1:   return mpt::encode<Tdststring>(mpt::common_encoding::iso8859_1, src); break;
+		case Charset::ISO8859_15:  return mpt::encode<Tdststring>(mpt::common_encoding::iso8859_15, src); break;
+		case Charset::CP850:       return mpt::encode<Tdststring>(mpt::common_encoding::cp850, src); break;
+		case Charset::CP437:       return mpt::encode<Tdststring>(mpt::common_encoding::cp437, src); break;
+		case Charset::CP437AMS:    return mpt::encode<Tdststring>(CharsetTableCP437AMS, src); break;
+		case Charset::CP437AMS2:   return mpt::encode<Tdststring>(CharsetTableCP437AMS2, src); break;
+		case Charset::Windows1252: return mpt::encode<Tdststring>(mpt::common_encoding::windows1252, src); break;
 	}
 	return Tdststring();
 }
@@ -1147,43 +375,26 @@ static Tdststring EncodeImpl(Charset charset, const widestring &src)
 
 // templated on 8bit strings because of type-safe variants
 template<typename Tsrcstring>
-static widestring DecodeImpl(Charset charset, const Tsrcstring &src)
+static mpt::widestring DecodeImpl(Charset charset, const Tsrcstring &src)
 {
 	static_assert(sizeof(typename Tsrcstring::value_type) == sizeof(char));
-	static_assert((std::is_same<typename Tsrcstring::value_type, char>::value));
-	#if defined(MPT_ENABLE_CHARSET_LOCALE)
-		#if defined(MPT_LOCALE_ASSUME_CHARSET)
-			if(charset == Charset::Locale)
-			{
-				charset = MPT_LOCALE_ASSUME_CHARSET;
-			}
-		#endif
-	#endif
-	#if MPT_OS_WINDOWS
-		if(HasCharset(charset))
-		{
-			return DecodeCodepage<Tsrcstring>(CharsetToCodepage(charset), src);
-		}
-	#endif
+	static_assert(mpt::is_character<typename Tsrcstring::value_type>::value);
 	switch(charset)
 	{
 #if defined(MPT_ENABLE_CHARSET_LOCALE)
-	#if defined(MPT_LOCALE_ASSUME_CHARSET)
-		case Charset::Locale:      MPT_ASSERT_NOTREACHED(); break;
-	#else
-		case Charset::Locale:      return String::FromLocale<Tsrcstring>(src); break;
-	#endif
+		case Charset::Locale:      return mpt::decode<Tsrcstring>(mpt::logical_encoding::locale, src); break;
 #endif
-		case Charset::UTF8:        return String::FromUTF8<Tsrcstring>(src); break;
-		case Charset::ASCII:       return String::FromAscii<Tsrcstring>(src); break;
-		case Charset::ISO8859_1:   return String::FromISO_8859_1<Tsrcstring>(src); break;
-		case Charset::ISO8859_15:  return String::From8bit<Tsrcstring>(src, CharsetTableISO8859_15); break;
-		case Charset::CP437:       return String::From8bit<Tsrcstring>(src, CharsetTableCP437); break;
-		case Charset::CP437AMS:    return String::From8bit<Tsrcstring>(src, CharsetTableCP437AMS); break;
-		case Charset::CP437AMS2:   return String::From8bit<Tsrcstring>(src, CharsetTableCP437AMS2); break;
-		case Charset::Windows1252: return String::From8bit<Tsrcstring>(src, CharsetTableWindows1252); break;
+		case Charset::UTF8:        return mpt::decode<Tsrcstring>(mpt::common_encoding::utf8, src); break;
+		case Charset::ASCII:       return mpt::decode<Tsrcstring>(mpt::common_encoding::ascii, src); break;
+		case Charset::ISO8859_1:   return mpt::decode<Tsrcstring>(mpt::common_encoding::iso8859_1, src); break;
+		case Charset::ISO8859_15:  return mpt::decode<Tsrcstring>(mpt::common_encoding::iso8859_15, src); break;
+		case Charset::CP850:       return mpt::decode<Tsrcstring>(mpt::common_encoding::cp850, src); break;
+		case Charset::CP437:       return mpt::decode<Tsrcstring>(mpt::common_encoding::cp437, src); break;
+		case Charset::CP437AMS:    return mpt::decode<Tsrcstring>(CharsetTableCP437AMS, src); break;
+		case Charset::CP437AMS2:   return mpt::decode<Tsrcstring>(CharsetTableCP437AMS2, src); break;
+		case Charset::Windows1252: return mpt::decode<Tsrcstring>(mpt::common_encoding::windows1252, src); break;
 	}
-	return widestring();
+	return mpt::widestring();
 }
 
 
@@ -1209,7 +420,7 @@ static Tdststring ConvertImpl(Charset to, Charset from, const Tsrcstring &src)
 
 bool IsUTF8(const std::string &str)
 {
-	return (str == String::EncodeImpl<std::string>(mpt::Charset::UTF8, String::DecodeImpl<std::string>(mpt::Charset::UTF8, str)));
+	return mpt::is_utf8(str);
 }
 
 
@@ -1469,9 +680,9 @@ mpt::ustring ToUnicode(uint16 codepage, mpt::Charset fallback, const std::string
 		mpt::ustring result;
 		bool noCharsetMatch = true;
 		mpt::Charset charset = mpt::CharsetFromCodePage(codepage, fallback, &noCharsetMatch);
-		if(noCharsetMatch && mpt::String::TestCodePage(codepage))
+		if(noCharsetMatch && mpt::has_codepage(codepage))
 		{
-			result = mpt::ToUnicode(mpt::String::DecodeCodepage<std::string>(codepage, str));
+			result = mpt::ToUnicode(mpt::decode<std::string>(codepage, str));
 		} else
 		{
 			result = mpt::ToUnicode(charset, str);
@@ -1488,20 +699,12 @@ mpt::ustring ToUnicode(uint16 codepage, mpt::Charset fallback, const std::string
 
 char ToLowerCaseAscii(char c)
 {
-	if('A' <= c && c <= 'Z')
-	{
-		c += 'a' - 'A';
-	}
-	return c;
+	return mpt::to_lower_ascii(c);
 }
 
 char ToUpperCaseAscii(char c)
 {
-	if('a' <= c && c <= 'z')
-	{
-		c -= 'a' - 'A';
-	}
-	return c;
+	return mpt::to_upper_ascii(c);
 }
 
 std::string ToLowerCaseAscii(std::string s)
@@ -1520,8 +723,8 @@ int CompareNoCaseAscii(const char *a, const char *b, std::size_t n)
 {
 	while(n--)
 	{
-		unsigned char ac = static_cast<unsigned char>(mpt::ToLowerCaseAscii(*a));
-		unsigned char bc = static_cast<unsigned char>(mpt::ToLowerCaseAscii(*b));
+		unsigned char ac = mpt::char_value(mpt::ToLowerCaseAscii(*a));
+		unsigned char bc = mpt::char_value(mpt::ToLowerCaseAscii(*b));
 		if(ac != bc)
 		{
 			return ac < bc ? -1 : 1;
@@ -1539,8 +742,8 @@ int CompareNoCaseAscii(std::string_view a, std::string_view b)
 {
 	for(std::size_t i = 0; i < std::min(a.length(), b.length()); ++i)
 	{
-		unsigned char ac = static_cast<unsigned char>(mpt::ToLowerCaseAscii(a[i]));
-		unsigned char bc = static_cast<unsigned char>(mpt::ToLowerCaseAscii(b[i]));
+		unsigned char ac = mpt::char_value(mpt::ToLowerCaseAscii(a[i]));
+		unsigned char bc = mpt::char_value(mpt::ToLowerCaseAscii(b[i]));
 		if(ac != bc)
 		{
 			return ac < bc ? -1 : 1;

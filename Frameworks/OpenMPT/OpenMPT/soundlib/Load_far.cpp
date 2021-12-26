@@ -168,6 +168,8 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultSpeed = fileHeader.defaultSpeed;
 	m_nDefaultTempo.Set(80);
 	m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
+	m_SongFlags = SONG_LINEARSLIDES;
+	m_playBehaviour.set(kPeriodsAreHertz);
 
 	m_modFormat.formatName = U_("Farandole Composer");
 	m_modFormat.type = U_("far");
@@ -265,17 +267,21 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 					m.instr = instr + 1;
 				}
 
-				if(m.note != NOTE_NONE || volume > 0)
+				if(volume > 0 && volume <= 16)
 				{
 					m.volcmd = VOLCMD_VOLUME;
-					m.vol = (Clamp(volume, uint8(1), uint8(16)) - 1u) * 4u;
+					m.vol = (volume - 1u) * 64u / 15u;
 				}
 				
 				m.param = effect & 0x0F;
 
 				switch(effect >> 4)
 				{
-				case 0x03:	// Porta to note
+				case 0x01:
+				case 0x02:
+					m.param |= 0xF0;
+					break;
+				case 0x03:	// Porta to note (TODO: Parameter is number of rows the portamento should take)
 					m.param <<= 2;
 					break;
 				case 0x04:	// Retrig

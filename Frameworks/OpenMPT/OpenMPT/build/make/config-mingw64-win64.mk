@@ -18,7 +18,7 @@ ARFLAGS  := rcs
 
 PC_LIBS_PRIVATE += -lole32 -lrpcrt4
 
-CFLAGS_SILENT += -Wno-unused-parameter -Wno-unused-function -Wno-cast-qual -Wno-old-style-declaration -Wno-type-limits -Wno-unused-but-set-variable
+include build/make/warnings-gcc.mk
 
 EXESUFFIX=.exe
 SOSUFFIX=.dll

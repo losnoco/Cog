@@ -15,7 +15,6 @@
 
 #include "stdafx.h"
 #include "Loaders.h"
-#include "ChunkReader.h"
 #include "BitReader.h"
 
 OPENMPT_NAMESPACE_BEGIN
@@ -631,18 +630,13 @@ static PATTERNINDEX ConvertDMFPattern(FileReader &file, const uint8 fileVersion,
 					switch(effect2)
 					{
 					case 1:  // Note Finetune (1/16th of a semitone signed 8-bit value, not 1/128th as the interface claims)
-						effect2 = (effectParam2 < 128) ? CMD_PORTAMENTOUP : CMD_PORTAMENTODOWN;
-						if(effectParam2 >= 128)
-							effectParam2 = ~effectParam2 + 1;
-						if(effectParam2 >= 16 && m->IsNote())
 						{
-							if(effect2 == CMD_PORTAMENTOUP)
-								m->note = static_cast<ModCommand::NOTE>(std::min(m->note + effectParam2 / 16, static_cast<int>(NOTE_MAX)));
-							else
-								m->note = static_cast<ModCommand::NOTE>(std::max(m->note - effectParam2 / 16, static_cast<int>(NOTE_MIN)));
-							effectParam2 %= 16u;
+							const auto fine = std::div(static_cast<int8>(effectParam2) * 8, 128);
+							if(m->IsNote())
+								m->note = static_cast<ModCommand::NOTE>(Clamp(m->note + fine.quot, NOTE_MIN, NOTE_MAX));
+							effect2 = CMD_FINETUNE;
+							effectParam2 = static_cast<uint8>(fine.rem) ^ 0x80;
 						}
-						effectParam2 = 0xF0 | std::min(uint8(0x0F), effectParam2);
 						break;
 					case 2:  // Note Delay (wtf is the difference to Sample Delay?)
 						effectParam2 = DMFdelay2MPT(effectParam2, settings.internalTicks);
@@ -912,7 +906,7 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 
 	InitializeGlobals(MOD_TYPE_DMF);
 
-	m_modFormat.formatName = mpt::format(U_("X-Tracker v%1"))(fileHeader.version);
+	m_modFormat.formatName = MPT_UFORMAT("X-Tracker v{}")(fileHeader.version);
 	m_modFormat.type = U_("dmf");
 	m_modFormat.charset = mpt::Charset::CP437;
 
@@ -944,7 +938,7 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 		// Since this is practically always the last chunk in the file, the following code is safe for those versions, though.
 		else if(fileHeader.version < 8 && chunkHeader.GetID() == DMFChunk::idSMPD)
 			chunkLength = uint32_max;
-		chunks.emplace_back(chunkHeader, file.ReadChunk(chunkLength));
+		chunks.chunks.push_back(ChunkReader::Item<DMFChunk>{chunkHeader, file.ReadChunk(chunkLength)});
 		file.Skip(chunkSkip);
 	}
 	FileReader chunk;
@@ -1054,6 +1048,7 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultTempo.Set(120);
 	m_nDefaultGlobalVolume = 256;
 	m_nSamplePreAmp = m_nVSTiVolume = 48;
+	m_playBehaviour.set(kApplyOffsetWithoutNote);
 
 	return true;
 }
@@ -1071,15 +1066,12 @@ struct DMFHNode
 struct DMFHTree
 {
 	BitReader file;
-	int lastnode, nodecount;
-	DMFHNode nodes[256];
+	int lastnode = 0, nodecount = 0;
+	DMFHNode nodes[256]{};
 
 	DMFHTree(FileReader &file)
 	    : file(file)
-		, lastnode(0)
-		, nodecount(0)
 	{
-		MemsetZero(nodes);
 	}
 	
 	//
