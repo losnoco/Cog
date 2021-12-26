@@ -42,6 +42,7 @@
 
 - (void)pause;
 - (void)resume;
+- (void)resumeWithFade;
 
 - (BOOL)isPaused;
 

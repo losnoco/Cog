@@ -20,6 +20,10 @@
 	{
 		outputController = c;
 		outputUnit = NULL;
+        audioQueue = NULL;
+        buffers = NULL;
+        numberOfBuffers = 0;
+        volume = 1.0;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	}
@@ -27,30 +31,35 @@
 	return self;
 }
 
-static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp  *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList  *ioData)
+static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBufferRef buffer)
 {
-	OutputCoreAudio *output = (__bridge OutputCoreAudio *)inRefCon;
-	OSStatus err = noErr;
-	void *readPointer = ioData->mBuffers[0].mData;
+	OutputCoreAudio *output = (__bridge OutputCoreAudio *)userData;
+	void *readPointer = buffer->mAudioData;
 	
 	int amountToRead, amountRead;
+
+    int framesToRead = buffer->mAudioDataByteSize / (output->deviceFormat.mBytesPerPacket);
+    
+    amountToRead = framesToRead * (output->deviceFormat.mBytesPerPacket);
     
     if (output->stopping == YES)
     {
         // *shrug* At least this will stop it from trying to emit data post-shutdown
-        ioData->mBuffers[0].mDataByteSize = 0;
-        return eofErr;
+        memset(readPointer, 0, amountToRead);
+        buffer->mAudioDataByteSize = amountToRead;
+        AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
+        return;
     }
 
 	if ([output->outputController shouldContinue] == NO)
 	{
-        AudioOutputUnitStop(output->outputUnit);
 //		[output stop];
-		
-		return err;
+        memset(readPointer, 0, amountToRead);
+        buffer->mAudioDataByteSize = amountToRead;
+        AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
+        return;
 	}
 	
-	amountToRead = inNumberFrames*(output->deviceFormat.mBytesPerPacket);
 	amountRead = [output->outputController readData:(readPointer) amount:amountToRead];
 
 	if ((amountRead < amountToRead) && [output->outputController endOfStream] == NO) //Try one more time! for track changes!
@@ -69,11 +78,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
         amountRead = amountToRead;
     }
 	
-	//ioData->mBuffers[0].mDataByteSize = amountRead;
-	ioData->mBuffers[0].mNumberChannels = output->deviceFormat.mChannelsPerFrame;
-	ioData->mNumberBuffers = 1;
-	
-	return err;
+    buffer->mAudioDataByteSize = amountRead;
+    AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -90,14 +96,15 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 - (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID
 {
 	OSStatus err;
-	
+    UInt32 thePropSize;
+    AudioObjectPropertyAddress theAddress = {
+        .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
+        .mScope = kAudioObjectPropertyScopeGlobal,
+        .mElement = kAudioObjectPropertyElementMaster
+    };
+
 	if (deviceID == -1) {
 		UInt32 size = sizeof(AudioDeviceID);
-        AudioObjectPropertyAddress theAddress = {
-            .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
-            .mScope = kAudioObjectPropertyScopeGlobal,
-            .mElement = kAudioObjectPropertyElementMaster
-        };
         err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &size, &deviceID);
 								
 		if (err != noErr) {
@@ -112,13 +119,32 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 	printf("DEVICE: %i\n", deviceID);
     outputDeviceID = deviceID;
+
+    if (audioQueue) {
+        CFStringRef theDeviceUID;
+        theAddress.mSelector = kAudioDevicePropertyDeviceUID;
+        thePropSize = sizeof(theDeviceUID);
+        err = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &thePropSize, &theDeviceUID);
 	
-	err = AudioUnitSetProperty(outputUnit,
-							  kAudioOutputUnitProperty_CurrentDevice,
-							  kAudioUnitScope_Output,
-							  0,
-							  &deviceID,
-							  sizeof(AudioDeviceID));
+        if (err) {
+            DLog(@"Error getting device UID as string");
+            return err;
+        }
+    
+        err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_CurrentDevice, &theDeviceUID, sizeof(theDeviceUID));
+    }
+    else if (outputUnit) {
+        err = AudioUnitSetProperty(outputUnit,
+                                  kAudioOutputUnitProperty_CurrentDevice,
+                                  kAudioUnitScope_Output,
+                                  0,
+                                  &deviceID,
+                                  sizeof(AudioDeviceID));
+
+    }
+    else {
+        err = noErr;
+    }
 	
 	if (err != noErr) {
 		DLog(@"No output device with ID %d could be found.", deviceID);
@@ -232,13 +258,8 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (BOOL)setup
 {
-	if (outputUnit)
+	if (outputUnit || audioQueue)
 		[self stop];
-	
-	AudioObjectPropertyAddress propertyAddress = {
-		.mElement	= kAudioObjectPropertyElementMaster
-	};
-    UInt32 dataSize;
 	
     AudioComponentDescription desc;
 	OSStatus err;
@@ -296,123 +317,50 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 	
 	if (err != noErr)
 		return NO;
-	
-	// change output format...
-	
-	// The default channel map is silence
-	SInt32 deviceChannelMap [deviceFormat.mChannelsPerFrame];
-	for(UInt32 i = 0; i < deviceFormat.mChannelsPerFrame; ++i)
-		deviceChannelMap[i] = -1;
     
-	// Determine the device's preferred stereo channels for output mapping
-	if(1 == deviceFormat.mChannelsPerFrame || 2 == deviceFormat.mChannelsPerFrame) {
-		propertyAddress.mSelector = kAudioDevicePropertyPreferredChannelsForStereo;
-		propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
-        
-		UInt32 preferredStereoChannels [2] = { 1, 2 };
-		if(AudioObjectHasProperty(outputDeviceID, &propertyAddress)) {
-			dataSize = sizeof(preferredStereoChannels);
-            
-			err = AudioObjectGetPropertyData(outputDeviceID, &propertyAddress, 0, nil, &dataSize, &preferredStereoChannels);
-		}
-        
-		AudioChannelLayout stereoLayout;
-		stereoLayout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
-        
-		const AudioChannelLayout *specifier [1] = { &stereoLayout };
-        
-		SInt32 stereoChannelMap [2] = { 1, 2 };
-		dataSize = sizeof(stereoChannelMap);
-		err = AudioFormatGetProperty(kAudioFormatProperty_ChannelMap, sizeof(specifier), specifier, &dataSize, stereoChannelMap);
-        
-		if(noErr == err) {
-			deviceChannelMap[preferredStereoChannels[0] - 1] = stereoChannelMap[0];
-			deviceChannelMap[preferredStereoChannels[1] - 1] = stereoChannelMap[1];
-		}
-		else {
-			// Just use a channel map that makes sense
-			deviceChannelMap[preferredStereoChannels[0] - 1] = 0;
-			deviceChannelMap[preferredStereoChannels[1] - 1] = 1;
-		}
-	}
-	// Determine the device's preferred multichannel layout
-	else {
-		propertyAddress.mSelector = kAudioDevicePropertyPreferredChannelLayout;
-		propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
-        
-		if(AudioObjectHasProperty(outputDeviceID, &propertyAddress)) {
-			err = AudioObjectGetPropertyDataSize(outputDeviceID, &propertyAddress, 0, nil, &dataSize);
-            
-			AudioChannelLayout *preferredChannelLayout = (AudioChannelLayout *)(malloc(dataSize));
-            
-			err = AudioObjectGetPropertyData(outputDeviceID, &propertyAddress, 0, nil, &dataSize, preferredChannelLayout);
-            
-			const AudioChannelLayout *specifier [1] = { preferredChannelLayout };
-            
-			// Not all channel layouts can be mapped, so handle failure with a generic mapping
-			dataSize = (UInt32)sizeof(deviceChannelMap);
-			err = AudioFormatGetProperty(kAudioFormatProperty_ChannelMap, sizeof(specifier), specifier, &dataSize, deviceChannelMap);
-            
-			if(noErr != err) {
-				// Just use a channel map that makes sense
-				for(UInt32 i = 0; i < deviceFormat.mChannelsPerFrame; ++i)
-					deviceChannelMap[i] = i;
-			}
-            
-            free(preferredChannelLayout); preferredChannelLayout = nil;
-		}
-		else {
-			// Just use a channel map that makes sense
-			for(UInt32 i = 0; i < deviceFormat.mChannelsPerFrame; ++i)
-				deviceChannelMap[i] = i;
-		}
-	}
-
+    AudioUnitUninitialize (outputUnit);
+    AudioComponentInstanceDispose(outputUnit);
+    outputUnit = NULL;
+	
 	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
 	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
-    // Bluetooth devices in communications mode tend to have reduced settings,
-    // so let's work around that.
-    // For some reason, mono output just doesn't work, so bleh.
-    if (deviceFormat.mChannelsPerFrame < 2)
-        deviceFormat.mChannelsPerFrame = 2;
-    // And sample rate will be cruddy for the duration of playback, so fix it.
-    if (deviceFormat.mSampleRate < 32000)
-        deviceFormat.mSampleRate = 48000;
 //	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
 //	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
 	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
 	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
-	
-	err = AudioUnitSetProperty (outputUnit,
-								kAudioUnitProperty_StreamFormat,
-								kAudioUnitScope_Output,
-								0,
-								&deviceFormat,
-								size);
-	
-	//Set the stream format of the output to match the input
-	err = AudioUnitSetProperty (outputUnit,
-								kAudioUnitProperty_StreamFormat,
-								kAudioUnitScope_Input,
-								0,
-								&deviceFormat,
-								size);
+
+    err = AudioQueueNewOutput(&deviceFormat, Sound_Renderer, (__bridge void * _Nullable)(self), NULL, NULL, 0, &audioQueue);
     
-    size = (unsigned int) sizeof(deviceChannelMap);
-    err = AudioUnitSetProperty(outputUnit,
-                               kAudioOutputUnitProperty_ChannelMap,
-                               kAudioUnitScope_Output,
-                               0,
-                               deviceChannelMap,
-                               size);
-	
-	//setup render callbacks
-    stopping = NO;
-	renderCallback.inputProc = Sound_Renderer;
-	renderCallback.inputProcRefCon = (__bridge void * _Nullable)(self);
-	
-	AudioUnitSetProperty(outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &renderCallback, sizeof(AURenderCallbackStruct));	
-	
+    if (err != noErr)
+        return NO;
+    
+    numberOfBuffers = 4;
+    bufferByteSize = deviceFormat.mBytesPerPacket * 512;
+    
+    buffers = calloc(sizeof(buffers[0]), numberOfBuffers);
+    
+    if (!buffers)
+    {
+        AudioQueueDispose(audioQueue, true);
+        audioQueue = NULL;
+        return NO;
+    }
+    
+    for (UInt32 i = 0; i < numberOfBuffers; ++i)
+    {
+        err = AudioQueueAllocateBuffer(audioQueue, bufferByteSize, buffers + i);
+        if (err != noErr || buffers[i] == NULL)
+        {
+            err = AudioQueueDispose(audioQueue, true);
+            audioQueue = NULL;
+            return NO;
+        }
+        
+        buffers[i]->mAudioDataByteSize = bufferByteSize;
+        
+        Sound_Renderer((__bridge void * _Nullable)(self), audioQueue, buffers[i]);
+    }
+    
 	[outputController setFormat:&deviceFormat];
 	
 	return (err == noErr);	
@@ -420,29 +368,41 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)setVolume:(double)v
 {
-	AudioUnitSetParameter (outputUnit,
-							kHALOutputParam_Volume,
-							kAudioUnitScope_Global,
-							0,
-							v * 0.01f,
-							0);
-}	
+    volume = v * 0.01f;
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
+}
 
 - (void)start
 {
-	AudioOutputUnitStart(outputUnit);
+    AudioQueueStart(audioQueue, NULL);
 }
 
 - (void)stop
 {
+    stopping = YES;
 	if (outputUnit)
 	{
-        stopping = YES;
-        AudioOutputUnitStop(outputUnit);
 		AudioUnitUninitialize (outputUnit);
 		AudioComponentInstanceDispose(outputUnit);
 		outputUnit = NULL;
 	}
+    if (audioQueue && buffers)
+    {
+        for (UInt32 i = 0; i < numberOfBuffers; ++i)
+        {
+            if (buffers[i])
+                AudioQueueFreeBuffer(audioQueue, buffers[i]);
+            buffers[i] = NULL;
+        }
+        free(buffers);
+        buffers = NULL;
+    }
+    if (audioQueue)
+    {
+        AudioQueueDispose(audioQueue, true);
+        audioQueue = NULL;
+    }
 }
 
 - (void)dealloc
@@ -454,12 +414,23 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 
 - (void)pause
 {
-	AudioOutputUnitStop(outputUnit);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, 0);
+    AudioQueuePause(audioQueue);
 }
 
 - (void)resume
 {
-	AudioOutputUnitStart(outputUnit);
+    AudioQueueStart(audioQueue, NULL);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
+}
+
+- (void)resumeWithFade
+{
+    AudioQueueStart(audioQueue, NULL);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0.4);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
 }
 
 @end

@@ -126,7 +126,7 @@
             if ( !isPaused ) [output pause];
 			DLog(@"SEEKING!");
 			seekError = [decoder seek:seekFrame] < 0;
-            if ( !isPaused ) [output resume];
+            if ( !isPaused ) [output resumeWithFade];
 			shouldSeek = NO;
 			DLog(@"Seeked! Resetting Buffer");
 			

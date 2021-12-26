@@ -97,6 +97,60 @@ static void downmix_to_stereo(float * buffer, int channels, int count)
     }
 }
 
+static void downmix_to_mono(float * buffer, int channels, int count)
+{
+    if (channels >= 3 && channels <= 8)
+    {
+        downmix_to_stereo(buffer, channels, count);
+        channels = 2;
+    }
+    float invchannels = 1.0 / (float)channels;
+    for (int i = 0; i < count; ++i)
+    {
+        float sample = 0;
+        for (int j = 0; j < channels; ++j)
+        {
+            sample += buffer[i * channels + j];
+        }
+        buffer[i] = sample * invchannels;
+    }
+}
+
+static void upmix(float * buffer, int inchannels, int outchannels, int count)
+{
+    for (int i = count - 1; i >= 0; --i)
+    {
+        if (inchannels == 1)
+        {
+            float sample = buffer[i];
+            for (int j = 0; j < 2; ++j)
+            {
+                buffer[i * outchannels + j] = sample;
+            }
+            for (int j = 2; j < outchannels; ++j)
+            {
+                buffer[i * outchannels + j] = 0;
+            }
+        }
+        else
+        {
+            float samples[inchannels];
+            for (int j = 0; j < inchannels; ++j)
+            {
+                samples[j] = buffer[i * inchannels + j];
+            }
+            for (int j = 0; j < inchannels; ++j)
+            {
+                buffer[i * outchannels + j] = samples[j];
+            }
+            for (int j = inchannels; j < outchannels; ++j)
+            {
+                buffer[i * outchannels + j] = 0;
+            }
+        }
+    }
+}
+
 static void scale_by_volume(float * buffer, int count, float volume)
 {
     if ( volume != 1.0 )
@@ -218,6 +272,8 @@ tryagain2:
         ioWantedNumberPackets = ioNumberPackets;
         
         size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
+        if (newSize < (ioNumberPackets * dmFloatFormat.mBytesPerPacket))
+            newSize = ioNumberPackets * dmFloatFormat.mBytesPerPacket;
         if (!floatBuffer || floatBufferSize < newSize)
             floatBuffer = realloc( floatBuffer, floatBufferSize = newSize + 1024 );
         ioData.mBuffers[0].mData = floatBuffer;
@@ -248,6 +304,18 @@ tryagain2:
             int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
             downmix_to_stereo( (float*) floatBuffer, inputFormat.mChannelsPerFrame, samples );
             amountReadFromFC = samples * sizeof(float) * 2;
+        }
+        else if ( inputFormat.mChannelsPerFrame > 1 && outputFormat.mChannelsPerFrame == 1 )
+        {
+            int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
+            downmix_to_mono( (float*) floatBuffer, inputFormat.mChannelsPerFrame, samples );
+            amountReadFromFC = samples * sizeof(float);
+        }
+        else if ( inputFormat.mChannelsPerFrame < outputFormat.mChannelsPerFrame )
+        {
+            int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
+            upmix( (float*) floatBuffer, inputFormat.mChannelsPerFrame, outputFormat.mChannelsPerFrame, samples );
+            amountReadFromFC = samples * sizeof(float) * outputFormat.mChannelsPerFrame;
         }
         
         scale_by_volume( (float*) floatBuffer, amountReadFromFC / sizeof(float), volumeScale);
@@ -362,11 +430,11 @@ static float db_to_scale(float db)
     }
     
     dmFloatFormat = floatFormat;
-    floatFormat.mChannelsPerFrame = outputFormat.mChannelsPerFrame;
-    floatFormat.mBytesPerFrame = (32/8)*floatFormat.mChannelsPerFrame;
-    floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
+    dmFloatFormat.mChannelsPerFrame = outputFormat.mChannelsPerFrame;
+    dmFloatFormat.mBytesPerFrame = (32/8)*dmFloatFormat.mChannelsPerFrame;
+    dmFloatFormat.mBytesPerPacket = dmFloatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
     
-    stat = AudioConverterNew ( &floatFormat, &outputFormat, &converter );
+    stat = AudioConverterNew ( &dmFloatFormat, &outputFormat, &converter );
     if (stat != noErr)
     {
         ALog(@"Error creating converter %i", stat);
@@ -397,9 +465,7 @@ static float db_to_scale(float db)
             return NO;
         }
     }
-	else
-#endif
-    if (inputFormat.mChannelsPerFrame == 1 && outputFormat.mChannelsPerFrame > 1)
+	else if (inputFormat.mChannelsPerFrame == 1 && outputFormat.mChannelsPerFrame > 1)
 	{
 		SInt32 channelMap[outputFormat.mChannelsPerFrame];
         
@@ -412,7 +478,8 @@ static float db_to_scale(float db)
             return NO;
 		}	
 	}
-	
+#endif
+
 	PrintStreamDesc(&inf);
 	PrintStreamDesc(&outf);
 

@@ -51,6 +51,12 @@
 	[output resume];
 }
 
+- (void)resumeWithFade
+{
+    paused = NO;
+    [output resumeWithFade];
+}
+
 - (int)readData:(void *)ptr amount:(int)amount
 {
     @autoreleasepool {

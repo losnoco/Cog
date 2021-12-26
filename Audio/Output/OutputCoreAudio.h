@@ -19,11 +19,19 @@
 	OutputNode * outputController;
     
     BOOL stopping;
-	
+    
+    float volume;
+
     AudioDeviceID outputDeviceID;
+    AudioStreamBasicDescription deviceFormat;    // info about the default device
+
+    AudioQueueRef audioQueue;
+    AudioQueueBufferRef *buffers;
+    UInt32 numberOfBuffers;
+    UInt32 bufferByteSize;
+    
 	AudioUnit outputUnit;
 	AURenderCallbackStruct renderCallback;	
-	AudioStreamBasicDescription deviceFormat;	// info about the default device
 }
 
 - (id)initWithController:(OutputNode *)c;
@@ -35,6 +43,7 @@
 - (void)pause;
 - (void)resume;
 - (void)stop;
+- (void)resumeWithFade;
 
 - (void)setVolume:(double) v;
 
