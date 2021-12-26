@@ -126,17 +126,22 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
     } else {
         [cachedObservers addObject:[NSDictionary dictionaryWithObjectsAndKeys:observer, @"observer", keyPath, @"keyPath", @(options), @"options", nil]];
     }
+    if (theDecoder) {
+        [theDecoder addObserver:observer forKeyPath:keyPath options:options context:context];
+    }
 }
 
 /* And this is currently called after the decoder is closed */
 - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath
 {
-    for (NSDictionary *obsItem in cachedObservers)
-    {
+    for (NSDictionary *obsItem in cachedObservers) {
         if ([obsItem objectForKey:@"observer"] == observer && [keyPath isEqualToString:[obsItem objectForKey:@"keyPath"]]) {
             [cachedObservers removeObject:obsItem];
             break;
         }
+    }
+    if (theDecoder) {
+        [theDecoder removeObserver:observer forKeyPath:keyPath];
     }
 }
 
