@@ -557,11 +557,6 @@ static float db_to_scale(float db)
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format
 {
 	DLog(@"FORMAT CHANGED");
-    stopping = YES;
-    while (convertEntered || ACInputEntered || ACFloatEntered)
-    {
-        usleep(500);
-    }
 	[self cleanUp];
 	[self setupWithInputFormat:format outputFormat:outputFormat];
 }
@@ -575,6 +570,11 @@ static float db_to_scale(float db)
 
 - (void)cleanUp
 {
+    stopping = YES;
+    while (convertEntered || ACInputEntered || ACFloatEntered)
+    {
+        usleep(500);
+    }
     rgInfo = nil;
     if (converterFloat)
     {
