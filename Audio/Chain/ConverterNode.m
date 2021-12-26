@@ -259,6 +259,11 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
     int amountRead = 0;
     
 tryagain2:
+    if ([self shouldContinue] == NO || [self endOfStream] == YES)
+    {
+        return amountRead;
+    }
+    
     amountReadFromFC = 0;
 	
     if (floatOffset == floatSize) {
