@@ -10,6 +10,7 @@
 
 @class BufferChain;
 @class OutputNode;
+@protocol CogDecoder;
 
 @interface AudioPlayer : NSObject
 {	
@@ -19,6 +20,10 @@
 	double volume;
 
 	NSMutableArray *chainQueue;
+    
+    NSURL *currentStream;
+    id currentUserInfo;
+    NSDictionary *currentRGInfo;
 	
 	NSURL *nextStream;
 	id nextStreamUserInfo;
@@ -30,6 +35,7 @@
 	BOOL endOfInputReached;
     BOOL startedPaused;
     BOOL initialBufferFilled;
+    BOOL paused;
 }
 
 - (id)init;
@@ -40,6 +46,7 @@
 - (void)play:(NSURL *)url;
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi;
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi startPaused:(BOOL)paused;
+- (void)play:(id<CogDecoder>)decoder startPaused:(BOOL)paused;
 
 - (void)stop;
 - (void)pause;

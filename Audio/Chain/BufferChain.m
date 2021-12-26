@@ -63,7 +63,7 @@
 	if (![inputNode openWithSource:source])
 		return NO;
 
-	if (![converterNode setupWithInputFormat:(_inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
+	if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -82,12 +82,31 @@
 		return NO;
 	
 	DLog(@"Input Properties: %@", [inputNode properties]);
-	if (![converterNode setupWithInputFormat:(_inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
+	if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
 		return NO;
 
     [self setRGInfo:rgi];
     
 	return YES;
+}
+
+- (BOOL)openWithDecoder:(id<CogDecoder>)decoder
+    withOutputFormat:(AudioStreamBasicDescription)outputFormat
+    withRGInfo:(NSDictionary*)rgi;
+{
+    DLog(@"New buffer chain!");
+    [self buildChain];
+    
+    if (![inputNode openWithDecoder:decoder])
+        return NO;
+    
+    DLog(@"Input Properties: %@", [inputNode properties]);
+    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
+        return NO;
+    
+    [self setRGInfo:rgi];
+    
+    return YES;
 }
 
 - (void)launchThreads
@@ -206,7 +225,7 @@
 
 - (AudioStreamBasicDescription)inputFormat
 {
-    return _inputFormat;
+    return inputFormat;
 }
 
 @end

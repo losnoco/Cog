@@ -215,11 +215,16 @@
 	return NO;
 }
 
+- (void)removeObservers
+{
+    [decoder removeObserver:self forKeyPath:@"properties"];
+    [decoder removeObserver:self forKeyPath:@"metadata"];
+}
+
 - (void)dealloc
 {
 	DLog(@"Input Node dealloc");
-	[decoder removeObserver:self forKeyPath:@"properties"];
-	[decoder removeObserver:self forKeyPath:@"metadata"];
+    [self removeObservers];
 }
 
 - (NSDictionary *) properties
@@ -230,6 +235,15 @@
 - (id<CogDecoder>) decoder
 {
 	return decoder;
+}
+
+- (id<CogDecoder>) stealDecoder
+{
+    [self removeObservers];
+    id<CogDecoder> decoder = self->decoder;
+    self->decoder = [[NSClassFromString(@"SilenceDecoder") alloc] init];
+    [self registerObservers];
+    return decoder;
 }
 
 @end

@@ -16,7 +16,7 @@
 	InputNode *inputNode;
 	ConverterNode *converterNode;
     
-    AudioStreamBasicDescription _inputFormat;
+    AudioStreamBasicDescription inputFormat;
 	
 	NSURL *streamURL;
 	id userInfo;
@@ -35,11 +35,17 @@
 //Used when changing tracks to reuse the same decoder
 - (BOOL)openWithInput:(InputNode *)i  withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary*)rgi;
 
+//Used when resetting the decoder on seek
+- (BOOL)openWithDecoder:(id<CogDecoder>)decoder
+    withOutputFormat:(AudioStreamBasicDescription)outputFormat
+    withRGInfo:(NSDictionary*)rgi;
+
 - (void)seek:(double)time;
 
 - (void)launchThreads;
 
 - (InputNode *)inputNode;
+- (InputNode *)stealInputNode;
 
 - (id)finalNode;
 
