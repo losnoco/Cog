@@ -2241,6 +2241,7 @@
 					OpenMPT/include/modplug/include,
 					OpenMPT/include,
 					OpenMPT/src,
+					OpenMPT/build/svn_version,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -2308,6 +2309,7 @@
 					OpenMPT/include/modplug/include,
 					OpenMPT/include,
 					OpenMPT/src,
+					OpenMPT/build/svn_version,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;

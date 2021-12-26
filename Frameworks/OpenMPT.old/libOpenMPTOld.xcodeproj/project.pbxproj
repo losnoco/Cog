@@ -1128,7 +1128,7 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		83E5EFBC1FFEF7CC00659F0F /* libOpenMPT */ = {
+		83E5EFBC1FFEF7CC00659F0F /* libOpenMPTOld */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 83E5EFC51FFEF7CC00659F0F /* Build configuration list for PBXNativeTarget "libOpenMPTOld" */;
 			buildPhases = (
@@ -1396,6 +1396,7 @@
 					OpenMPT,
 					OpenMPT/include/modplug/include,
 					OpenMPT/include,
+					OpenMPT/build/svn_version,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1462,6 +1463,7 @@
 					OpenMPT,
 					OpenMPT/include/modplug/include,
 					OpenMPT/include,
+					OpenMPT/build/svn_version,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
