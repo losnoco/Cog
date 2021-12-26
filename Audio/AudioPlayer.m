@@ -45,15 +45,20 @@
 
 - (void)play:(NSURL *)url
 {
-	[self play:url withUserInfo:nil withRGInfo:nil startPaused:NO];
+	[self play:url withUserInfo:nil withRGInfo:nil startPaused:NO andSeekTo:0.0];
 }
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi
 {
-    [self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:NO];
+    [self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:NO andSeekTo:0.0];
 }
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused
+{
+    [self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:paused andSeekTo:0.0];
+}
+
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time
 {
     if (output) {
         [output close];
@@ -109,6 +114,12 @@
 
 	[bufferChain setUserInfo:userInfo];
 
+    if (time > 0.0)
+    {
+        [output seek:time];
+        [bufferChain seek:time];
+    }
+    
 	[self setShouldContinue:YES];
 	
 	outputLaunched = NO;

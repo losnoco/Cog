@@ -180,8 +180,7 @@ void* kAppControllerContext = &kAppControllerContext;
     
         if (lastStatus != CogStatusStopped && lastIndex >= 0)
         {
-            [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused)];
-            [playbackController seek:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
+            [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused) andSeekTo:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
         }
     }
 

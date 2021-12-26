@@ -117,14 +117,21 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 //called by double-clicking on table
 - (void)playEntryAtIndex:(NSInteger)i
 {
-    [self playEntryAtIndex:i startPaused:NO];
+    [self playEntryAtIndex:i startPaused:NO andSeekTo:[NSNumber numberWithDouble:0.0]];
 }
 
 - (void)playEntryAtIndex:(NSInteger)i startPaused:(BOOL)paused
 {
+    PlaylistEntry *pe = [playlistController entryAtIndex:i];
+
+    [self playEntry:pe startPaused:paused andSeekTo:[NSNumber numberWithDouble:0.0]];
+}
+
+- (void)playEntryAtIndex:(NSInteger)i startPaused:(BOOL)paused andSeekTo:(id)offset
+{
 	PlaylistEntry *pe = [playlistController entryAtIndex:i];
 
-	[self playEntry:pe startPaused:paused];
+    [self playEntry:pe startPaused:paused andSeekTo:offset];
 }
 
 
@@ -155,10 +162,15 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (void)playEntry:(PlaylistEntry *)pe
 {
-    [self playEntry:pe startPaused:NO];
+    [self playEntry:pe startPaused:NO andSeekTo:[NSNumber numberWithDouble:0.0]];
 }
 
 - (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused
+{
+    [self playEntry:pe startPaused:paused andSeekTo:[NSNumber numberWithDouble:0.0]];
+}
+
+- (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused andSeekTo:(id)offset
 {
 	if (playbackStatus != CogStatusStopped && playbackStatus != CogStatusStopping)
 		[self stop:self];
@@ -166,7 +178,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
 	
-	[self setPosition:0.0];
+	[self setPosition:[offset doubleValue]];
 
 	if (pe == nil)
 		return;
@@ -198,7 +210,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     
     [self sendMetaData];
 	
-	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused];
+    [audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:[offset doubleValue]];
 }
 
 - (IBAction)next:(id)sender

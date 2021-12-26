@@ -46,6 +46,7 @@
 - (void)play:(NSURL *)url;
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi;
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi startPaused:(BOOL)paused;
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi startPaused:(BOOL)paused andSeekTo:(double)time;
 - (void)play:(id<CogDecoder>)decoder startPaused:(BOOL)paused;
 
 - (void)stop;
