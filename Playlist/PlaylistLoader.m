@@ -679,13 +679,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     //Clear the selection
     [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
     
-    NSArray* arrayFirst = [NSArray arrayWithObject:[entries objectAtIndex:0]];
-    NSMutableArray* arrayRest = [entries mutableCopy];
-    [arrayRest removeObjectAtIndex:0];
+    if ([entries count])
+    {
+        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
+    }
     
-    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
-    if ([arrayRest count])
-        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
     return entries;
 }
 
