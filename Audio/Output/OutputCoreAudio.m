@@ -59,8 +59,17 @@ static OSStatus Sound_Renderer(void *inRefCon,  AudioUnitRenderActionFlags *ioAc
 		amountRead2 = [output->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
 		amountRead += amountRead2;
 	}
+    
+    if (amountRead < amountToRead)
+    {
+        // Either underrun, or no data at all. Caller output tends to just
+        // buffer loop if it doesn't get anything, so always produce a full
+        // buffer, and silence anything we couldn't supply.
+        memset(readPointer + amountRead, 0, amountToRead - amountRead);
+        amountRead = amountToRead;
+    }
 	
-	ioData->mBuffers[0].mDataByteSize = amountRead;
+	//ioData->mBuffers[0].mDataByteSize = amountRead;
 	ioData->mBuffers[0].mNumberChannels = output->deviceFormat.mChannelsPerFrame;
 	ioData->mNumberBuffers = 1;
 	
