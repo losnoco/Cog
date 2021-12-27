@@ -11,6 +11,10 @@
 
 #import "Logging.h"
 
+@interface OutputCoreAudio (Private)
+- (void)prime;
+@end
+
 @implementation OutputCoreAudio
 
 - (id)initWithController:(OutputNode *)c
@@ -44,6 +48,7 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     
     if (output->stopping == YES)
     {
+        output->stopped = YES;
         return;
     }
 
@@ -127,7 +132,15 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
             return err;
         }
     
+        err = AudioQueueStop(audioQueue, true);
+        if (err) {
+            DLog(@"Error stopping stream to set device");
+            return err;
+        }
+        primed = NO;
         err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_CurrentDevice, &theDeviceUID, sizeof(theDeviceUID));
+        if (running)
+            [self start];
     }
     else if (outputUnit) {
         err = AudioUnitSetProperty(outputUnit,
@@ -258,6 +271,7 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 		[self stop];
     
     stopping = NO;
+    stopped = NO;
 	
     AudioComponentDescription desc;
 	OSStatus err;
@@ -332,6 +346,19 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     if (err != noErr)
         return NO;
     
+    if (device) {
+        BOOL ok = [self setOutputDeviceWithDeviceDict:device];
+        if (!ok) {
+            //Ruh roh.
+            [self setOutputDeviceWithDeviceDict:nil];
+            
+            [[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
+        }
+    }
+    else {
+        [self setOutputDeviceWithDeviceDict:nil];
+    }
+
     numberOfBuffers = 4;
     bufferByteSize = deviceFormat.mBytesPerPacket * 512;
     
@@ -355,13 +382,20 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
         }
         
         buffers[i]->mAudioDataByteSize = bufferByteSize;
-        
-        Sound_Renderer((__bridge void * _Nullable)(self), audioQueue, buffers[i]);
     }
+    
+    [self prime];
     
 	[outputController setFormat:&deviceFormat];
 	
 	return (err == noErr);	
+}
+
+- (void)prime
+{
+    for (UInt32 i = 0; i < numberOfBuffers; ++i)
+        Sound_Renderer((__bridge void * _Nullable)(self), audioQueue, buffers[i]);
+    primed = YES;
 }
 
 - (void)setVolume:(double)v
@@ -376,6 +410,9 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
     AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
     AudioQueueStart(audioQueue, NULL);
+    running = YES;
+    if (!primed)
+        [self prime];
 }
 
 - (void)stop
@@ -391,6 +428,7 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     {
         AudioQueuePause(audioQueue);
         AudioQueueStop(audioQueue, true);
+        running = NO;
 
         for (UInt32 i = 0; i < numberOfBuffers; ++i)
         {
@@ -418,11 +456,15 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 - (void)pause
 {
     AudioQueuePause(audioQueue);
+    running = NO;
 }
 
 - (void)resume
 {
     AudioQueueStart(audioQueue, NULL);
+    running = YES;
+    if (!primed)
+        [self prime];
 }
 
 @end
