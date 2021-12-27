@@ -28,6 +28,8 @@
         buffers = NULL;
         numberOfBuffers = 0;
         volume = 1.0;
+        outputDeviceID = -1;
+        listenerapplied = NO;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	}
@@ -83,6 +85,13 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
 }
 
+static OSStatus
+default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress *inAddresses, void *inUserData)
+{
+    OutputCoreAudio *this = (__bridge OutputCoreAudio *) inUserData;
+    return [this setOutputDeviceByID:-1];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([keyPath isEqualToString:@"values.outputDevice"]) {
@@ -97,6 +106,7 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 - (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID
 {
 	OSStatus err;
+    BOOL defaultDevice = NO;
     UInt32 thePropSize;
     AudioObjectPropertyAddress theAddress = {
         .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
@@ -105,6 +115,7 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     };
 
 	if (deviceID == -1) {
+        defaultDevice = YES;
 		UInt32 size = sizeof(AudioDeviceID);
         err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &size, &deviceID);
 								
@@ -113,17 +124,25 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 			
 			return err;
 		}
-		else {
-			outputDeviceID = deviceID;
-		}
 	}
 
-	printf("DEVICE: %i\n", deviceID);
-    outputDeviceID = deviceID;
-
     if (audioQueue) {
+        if (outputDeviceID == deviceID)
+            return noErr;
+
+        AudioObjectPropertyAddress defaultDeviceAddress = theAddress;
+
+        if (listenerapplied && !defaultDevice) {
+            AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &defaultDeviceAddress, default_device_changed, (__bridge void * _Nullable)(self));
+            listenerapplied = NO;
+        }
+
+        printf("DEVICE: %i\n", deviceID);
+        outputDeviceID = deviceID;
+
         CFStringRef theDeviceUID;
         theAddress.mSelector = kAudioDevicePropertyDeviceUID;
+        theAddress.mScope = kAudioDevicePropertyScopeOutput;
         thePropSize = sizeof(theDeviceUID);
         err = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &thePropSize, &theDeviceUID);
 	
@@ -143,6 +162,11 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
         CFRelease(theDeviceUID);
         if (running)
             [self start];
+        
+        if (!listenerapplied && defaultDevice) {
+            AudioObjectAddPropertyListener(kAudioObjectSystemObject, &defaultDeviceAddress, default_device_changed, (__bridge void * _Nullable)(self));
+            listenerapplied = YES;
+        }
     }
     else if (outputUnit) {
         err = AudioUnitSetProperty(outputUnit,
@@ -280,6 +304,7 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
     
     stopping = NO;
     stopped = NO;
+    outputDeviceID = -1;
 	
     AudioComponentDescription desc;
 	OSStatus err;
@@ -367,6 +392,41 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
         [self setOutputDeviceWithDeviceDict:nil];
     }
 
+    /* Set the channel layout for the audio queue */
+    AudioChannelLayout layout = {0};
+    switch (deviceFormat.mChannelsPerFrame) {
+    case 1:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
+        break;
+    case 2:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
+        break;
+    case 3:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_DVD_4;
+        break;
+    case 4:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_Quadraphonic;
+        break;
+    case 5:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_5_0_A;
+        break;
+    case 6:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_5_1_A;
+        break;
+    case 7:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_6_1_A;
+        break;
+    case 8:
+        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_7_1_A;
+        break;
+    }
+    if (layout.mChannelLayoutTag != 0) {
+        err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_ChannelLayout, &layout, sizeof(layout));
+        if (err != noErr) {
+            return NO;
+        }
+    }
+
     numberOfBuffers = 4;
     bufferByteSize = deviceFormat.mBytesPerPacket * 512;
     
@@ -426,20 +486,26 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 - (void)stop
 {
     stopping = YES;
-	if (outputUnit)
-	{
+    if (listenerapplied) {
+        AudioObjectPropertyAddress theAddress = {
+            .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
+            .mScope = kAudioObjectPropertyScopeGlobal,
+            .mElement = kAudioObjectPropertyElementMaster
+        };
+        AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void * _Nullable)(self));
+        listenerapplied = NO;
+    }
+	if (outputUnit) {
 		AudioUnitUninitialize (outputUnit);
 		AudioComponentInstanceDispose(outputUnit);
 		outputUnit = NULL;
 	}
-    if (audioQueue && buffers)
-    {
+    if (audioQueue && buffers) {
         AudioQueuePause(audioQueue);
         AudioQueueStop(audioQueue, true);
         running = NO;
 
-        for (UInt32 i = 0; i < numberOfBuffers; ++i)
-        {
+        for (UInt32 i = 0; i < numberOfBuffers; ++i) {
             if (buffers[i])
                 AudioQueueFreeBuffer(audioQueue, buffers[i]);
             buffers[i] = NULL;
@@ -447,8 +513,7 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
         free(buffers);
         buffers = NULL;
     }
-    if (audioQueue)
-    {
+    if (audioQueue) {
         AudioQueueDispose(audioQueue, true);
         audioQueue = NULL;
     }

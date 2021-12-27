@@ -23,6 +23,8 @@
     BOOL stopping;
     BOOL stopped;
     
+    BOOL listenerapplied;
+    
     float volume;
 
     AudioDeviceID outputDeviceID;

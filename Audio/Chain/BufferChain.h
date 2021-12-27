@@ -45,7 +45,6 @@
 - (void)launchThreads;
 
 - (InputNode *)inputNode;
-- (InputNode *)stealInputNode;
 
 - (id)finalNode;
 
