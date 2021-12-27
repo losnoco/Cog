@@ -75,14 +75,20 @@
 		theAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
 		__Verify_noErr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
 		
-		if (propsize < sizeof(UInt32)) continue;
+        if (propsize < sizeof(UInt32)) {
+            CFRelease(name);
+            continue;
+        }
 		
 		AudioBufferList * bufferList = (AudioBufferList *) malloc(propsize);
 		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList));
 		UInt32 bufferCount = bufferList->mNumberBuffers;
 		free(bufferList);
 		
-		if (!bufferCount) continue;
+        if (!bufferCount) {
+            CFRelease(name);
+            continue;
+        }
 		
 		BOOL stop = NO;
 		block([NSString stringWithString:(__bridge NSString *)name],

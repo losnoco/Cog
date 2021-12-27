@@ -135,10 +135,12 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
         err = AudioQueueStop(audioQueue, true);
         if (err) {
             DLog(@"Error stopping stream to set device");
+            CFRelease(theDeviceUID);
             return err;
         }
         primed = NO;
         err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_CurrentDevice, &theDeviceUID, sizeof(theDeviceUID));
+        CFRelease(theDeviceUID);
         if (running)
             [self start];
     }
@@ -240,15 +242,21 @@ static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBuffer
 		theAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
 		__Verify_noErr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
 		
-		if (propsize < sizeof(UInt32)) continue;
+        if (propsize < sizeof(UInt32)) {
+            CFRelease(name);
+            continue;
+        }
 		
 		AudioBufferList * bufferList = (AudioBufferList *) malloc(propsize);
 		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList));
 		UInt32 bufferCount = bufferList->mNumberBuffers;
 		free(bufferList);
 		
-		if (!bufferCount) continue;
-		
+        if (!bufferCount) {
+            CFRelease(name);
+            continue;
+        }
+            
 		BOOL stop = NO;
 		block([NSString stringWithString:(__bridge NSString *)name],
 			  devids[i],
