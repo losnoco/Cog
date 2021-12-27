@@ -127,9 +127,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	}
 
     if (audioQueue) {
-        if (outputDeviceID == deviceID)
-            return noErr;
-
         AudioObjectPropertyAddress defaultDeviceAddress = theAddress;
 
         if (listenerapplied && !defaultDevice) {
@@ -137,31 +134,33 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             listenerapplied = NO;
         }
 
-        printf("DEVICE: %i\n", deviceID);
-        outputDeviceID = deviceID;
+        if (outputDeviceID != deviceID) {
+            printf("DEVICE: %i\n", deviceID);
+            outputDeviceID = deviceID;
 
-        CFStringRef theDeviceUID;
-        theAddress.mSelector = kAudioDevicePropertyDeviceUID;
-        theAddress.mScope = kAudioDevicePropertyScopeOutput;
-        thePropSize = sizeof(theDeviceUID);
-        err = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &thePropSize, &theDeviceUID);
+            CFStringRef theDeviceUID;
+            theAddress.mSelector = kAudioDevicePropertyDeviceUID;
+            theAddress.mScope = kAudioDevicePropertyScopeOutput;
+            thePropSize = sizeof(theDeviceUID);
+            err = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &thePropSize, &theDeviceUID);
 	
-        if (err) {
-            DLog(@"Error getting device UID as string");
-            return err;
-        }
+            if (err) {
+                DLog(@"Error getting device UID as string");
+                return err;
+            }
     
-        err = AudioQueueStop(audioQueue, true);
-        if (err) {
-            DLog(@"Error stopping stream to set device");
+            err = AudioQueueStop(audioQueue, true);
+            if (err) {
+                DLog(@"Error stopping stream to set device");
+                CFRelease(theDeviceUID);
+                return err;
+            }
+            primed = NO;
+            err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_CurrentDevice, &theDeviceUID, sizeof(theDeviceUID));
             CFRelease(theDeviceUID);
-            return err;
+            if (running)
+                [self start];
         }
-        primed = NO;
-        err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_CurrentDevice, &theDeviceUID, sizeof(theDeviceUID));
-        CFRelease(theDeviceUID);
-        if (running)
-            [self start];
         
         if (!listenerapplied && defaultDevice) {
             AudioObjectAddPropertyListener(kAudioObjectSystemObject, &defaultDeviceAddress, default_device_changed, (__bridge void * _Nullable)(self));
