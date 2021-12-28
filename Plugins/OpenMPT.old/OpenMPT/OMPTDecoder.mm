@@ -190,7 +190,7 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
 
 + (float)priority
 {
-    return 0.75;
+    return 1.0;
 }
 
 @end
