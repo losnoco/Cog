@@ -17,9 +17,6 @@
 	BufferChain *bufferChain;
 	OutputNode *output;
     
-    BOOL stoppingReQueue;
-    NSOperationQueue *reQueue;
-
 	double volume;
 
 	NSMutableArray *chainQueue;

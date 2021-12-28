@@ -28,20 +28,10 @@
 		outputLaunched = NO;
 		endOfInputReached = NO;
 
-        stoppingReQueue = NO;
-        reQueue = [[NSOperationQueue alloc] init];
-        [reQueue setMaxConcurrentOperationCount:1];
-
         chainQueue = [[NSMutableArray alloc] init];
 	}
 	
 	return self;
-}
-
-- (void)dealloc
-{
-    stoppingReQueue = YES;
-    [reQueue waitUntilAllOperationsAreFinished];
 }
 
 - (void)setDelegate:(id)d
@@ -217,8 +207,6 @@
 - (void)stop
 {
 	//Set shouldoContinue to NO on all things
-    stoppingReQueue = YES;
-    [reQueue waitUntilAllOperationsAreFinished];
 	[self setShouldContinue:NO];
 	[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
 }
@@ -294,8 +282,6 @@
 			[anObject setShouldContinue:NO];
 		}
 		[chainQueue removeAllObjects];
-        stoppingReQueue = YES;
-        [reQueue waitUntilAllOperationsAreFinished];
 
 		if (endOfInputReached) {
 			[self endOfInputReached:bufferChain];
@@ -344,49 +330,34 @@
 	[newChain setShouldContinue:YES];
 	[newChain launchThreads];
 
-    stoppingReQueue = NO;
-
-    if (([chainQueue count] + [reQueue operationCount]) >= 5) {
-        NSBlockOperation *op = [[NSBlockOperation alloc] init];
-
-        [op addExecutionBlock:^{
-            unsigned long queueCount;
-            
-            if (self->stoppingReQueue) {
-                return;
-            }
-            
-            for (;;)
-            {
-                @synchronized (self->chainQueue) {
-                    queueCount = [self->chainQueue count];
-                }
-                
-                if (queueCount < 5) {
-                    @synchronized (self->chainQueue) {
-                        [self->chainQueue insertObject:newChain atIndex:[self->chainQueue count]];
-                    }
-                    break;
-                }
-                
-                if (self->stoppingReQueue) {
-                    break;
-                }
-                
-                usleep(5000);
-            }
-        }];
-
-        [reQueue addOperation:op];
-    }
-    else {
-        [chainQueue insertObject:newChain atIndex:[chainQueue count]];
-    }
+    [chainQueue insertObject:newChain atIndex:[chainQueue count]];
 }
 
 - (BOOL)endOfInputReached:(BufferChain *)sender //Sender is a BufferChain
 {
-    unsigned long queueCount = 0;
+    // Stop single or series of short tracks from queueing forever
+    {
+        unsigned long queueCount;
+
+        @synchronized (chainQueue) {
+            queueCount = [chainQueue count];
+        }
+
+        while (queueCount >= 5)
+        {
+            usleep(10000);
+            @synchronized (chainQueue) {
+                queueCount = [chainQueue count];
+            }
+        }
+    }
+
+    return [self endOfInputReachedInternal:sender];
+}
+
+- (BOOL)endOfInputReachedInternal:(BufferChain *)sender //Sender is a BufferChain
+{
+    BufferChain *newChain = nil;
     
 	@synchronized (chainQueue) {
         // No point in constructing new chain for the next playlist entry
@@ -398,33 +369,25 @@
                 return YES;
             }
         }
-        
-        queueCount = [chainQueue count] + [reQueue operationCount];
-    }
 
-    if (queueCount >= 5)
-    {
-        [reQueue waitUntilAllOperationsAreFinished];
-    }
-        
-    @synchronized (chainQueue) {
         // We don't want to do this, it may happen with a lot of short files
         //if ([chainQueue count] >= 5)
         //{
         //    return YES;
         //}
 
-		BufferChain *newChain = nil;
-		
 		nextStreamUserInfo = [sender userInfo];
 		
         nextStreamRGInfo = [sender rgInfo];
-        
-		[self requestNextStream: nextStreamUserInfo];
-        
-        if (!nextStream)
-            return YES;
-        
+    }
+
+    // This call can sometimes lead to invoking a chainQueue block on another thread
+	[self requestNextStream: nextStreamUserInfo];
+    
+    if (!nextStream)
+        return YES;
+
+    @synchronized (chainQueue) {
 		newChain = [[BufferChain alloc] initWithController:self];
 	
 		endOfInputReached = YES;
@@ -433,9 +396,11 @@
 		if (lastChain == nil) {
 			lastChain = bufferChain;
 		}
-		
+        
 		if ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]]
-			&& [[nextStream host] isEqualToString:[[lastChain streamURL] host]]
+			&& (([nextStream host] == nil &&
+                 [[lastChain streamURL] host] == nil)
+                || [[nextStream host] isEqualToString:[[lastChain streamURL] host]])
 			&& [[nextStream path] isEqualToString:[[lastChain streamURL] path]])
 		{
 			if ([lastChain setTrack:nextStream] 
