@@ -12,6 +12,18 @@
 
 @implementation VorbisDecoder
 
+static const int MAXCHANNELS = 8;
+static const int chmap[MAXCHANNELS][MAXCHANNELS] = {
+    { 0, },                    // mono
+    { 0, 1, },                 // l, r
+    { 0, 2, 1, },              // l, c, r -> l, r, c
+    { 0, 1, 2, 3, },           // l, r, bl, br
+    { 0, 2, 1, 3, 4, },        // l, c, r, bl, br -> l, r, c, bl, br
+    { 0, 2, 1, 5, 3, 4 },      // l, c, r, bl, br, lfe -> l, r, c, lfe, bl, br
+    { 0, 2, 1, 6, 5, 3, 4 },   // l, c, r, sl, sr, bc, lfe -> l, r, c, lfe, bc, sl, sr
+    { 0, 2, 1, 7, 5, 6, 3, 4 } // l, c, r, sl, sr, bl, br, lfe -> l, r, c, lfe, bl, br, sl, sr
+};
+
 size_t sourceRead(void *buf, size_t size, size_t nmemb, void *datasource)
 {
 	id source = (__bridge id)datasource;
@@ -94,9 +106,18 @@ long sourceTell(void *datasource)
         float ** pcm;
         numread = (int)ov_read_float(&vorbisRef, &pcm, frames - total, &currentSection);
 		if (numread > 0) {
-            for (int i = 0; i < channels; i++) {
-                for (int j = 0; j < numread; j++) {
-                    ((float *)buf)[(total + j) * channels + i] = pcm[i][j];
+            if (channels < MAXCHANNELS) {
+                for (int i = 0; i < channels; i++) {
+                    for (int j = 0; j < numread; j++) {
+                        ((float *)buf)[(total + j) * channels + i] = pcm[chmap[channels-1][i]][j];
+                    }
+                }
+            }
+            else {
+                for (int i = 0; i < channels; i++) {
+                    for (int j = 0; j < numread; j++) {
+                        ((float *)buf)[(total + j) * channels + i] = pcm[i][j];
+                    }
                 }
             }
 			total += numread;

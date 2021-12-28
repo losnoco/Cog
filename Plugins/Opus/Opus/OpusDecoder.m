@@ -14,6 +14,18 @@
 
 @implementation OpusFile
 
+static const int MAXCHANNELS = 8;
+static const int chmap[MAXCHANNELS][MAXCHANNELS] = {
+    { 0, },                    // mono
+    { 0, 1, },                 // l, r
+    { 0, 2, 1, },              // l, c, r -> l, r, c
+    { 0, 1, 2, 3, },           // l, r, bl, br
+    { 0, 2, 1, 3, 4, },        // l, c, r, bl, br -> l, r, c, bl, br
+    { 0, 2, 1, 5, 3, 4 },      // l, c, r, bl, br, lfe -> l, r, c, lfe, bl, br
+    { 0, 2, 1, 6, 5, 3, 4 },   // l, c, r, sl, sr, bc, lfe -> l, r, c, lfe, bc, sl, sr
+    { 0, 2, 1, 7, 5, 6, 3, 4 } // l, c, r, sl, sr, bl, br, lfe -> l, r, c, lfe, bl, br, sl, sr
+};
+
 int sourceRead(void *_stream, unsigned char *_ptr, int _nbytes)
 {
 	id source = (__bridge id)_stream;
@@ -100,8 +112,19 @@ opus_int64 sourceTell(void *_stream)
     int size = frames * channels;
     
     do {
+        float *out = ((float*)buf) + total;
+        float tempbuf[512 * channels];
 		lastSection = currentSection;
-        numread = op_read_float( opusRef, &((float *)buf)[total], size - total, NULL );
+        int toread = size - total;
+        if (toread > 512) toread = 512;
+        numread = op_read_float( opusRef, (channels < MAXCHANNELS) ? tempbuf : out, toread, NULL );
+        if (numread > 0 && channels < MAXCHANNELS) {
+            for (int i = 0; i < numread; ++i) {
+                for (int j = 0; j < channels; ++j) {
+                    out[i * channels + j] = tempbuf[i * channels + chmap[channels - 1][j]];
+                }
+            }
+        }
         currentSection = op_current_link( opusRef );
 		if (numread > 0) {
 			total += numread * channels;
@@ -111,7 +134,7 @@ opus_int64 sourceTell(void *_stream)
 			break;
 		}
 		
-    } while (total != frames && numread != 0);
+    } while (total != size && numread != 0);
 
     return total/channels;
 }
