@@ -282,7 +282,7 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
     convertEntered = YES;
     
 tryagain2:
-    if (stopping || [self shouldContinue] == NO || [self endOfStream] == YES)
+    if (stopping || [self shouldContinue] == NO)
     {
         convertEntered = NO;
         return amountRead;
@@ -376,6 +376,12 @@ tryagain2:
     amountRead += ioNumberPackets * outputFormat.mBytesPerPacket;
     if (err == 100)
     {
+        if ([self endOfStream] == YES)
+        {
+            convertEntered = NO;
+            return amountRead;
+        }
+        
         goto tryagain2;
     }
     else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
