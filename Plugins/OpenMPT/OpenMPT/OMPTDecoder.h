@@ -16,8 +16,6 @@
 
 @interface OMPTDecoder : NSObject <CogDecoder> {
     openmpt::module *mod;
-    std::vector<float> left;
-    std::vector<float> right;
     
 	id<CogSource> source;
     long length;

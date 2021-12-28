@@ -82,9 +82,6 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
         mod->set_render_param( openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH, interp );
         mod->set_render_param( openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, -1 );
         mod->ctl_set_boolean("render.resampler.emulate_amiga", true);
-        
-        left.resize( 1024 );
-        right.resize( 1024 );
     } catch (std::exception & /*e*/) {
         return NO;
     }
@@ -119,14 +116,9 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
         if ( framesToRender > frames )
             framesToRender = frames;
         
-        std::size_t count = mod->read(44100, framesToRender, left.data(), right.data());
+        std::size_t count = mod->read_interleaved_stereo(44100, framesToRender, ((float *)buf) + total * 2);
         if ( count == 0 )
             break;
-        
-        for ( std::size_t frame = 0; frame < count; frame++ ) {
-            ((float *)buf)[(total + frame) * 2 + 0] = left[frame];
-            ((float *)buf)[(total + frame) * 2 + 1] = right[frame];
-        }
         
         total += count;
         
