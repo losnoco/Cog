@@ -370,6 +370,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
 //	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
 //	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+    if (@available(macOS 12.0, *)) {
+        // Let's enable surround upmixing, for surround and spatial output
+        deviceFormat.mChannelsPerFrame = 8;
+    }
+    // And force a default rate for crappy devices
+    if (deviceFormat.mSampleRate < 32000)
+        deviceFormat.mSampleRate = 48000;
 	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
 	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
 
