@@ -182,7 +182,6 @@
 
 	if (shouldClose)
 		[decoder close];
-	
 
     free(inputBuffer);
 
