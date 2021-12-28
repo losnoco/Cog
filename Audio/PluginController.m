@@ -67,6 +67,18 @@ static PluginController *sharedPluginController = nil;
 - (void)bundleDidLoad:(NSNotification *)notification
 {
 	NSArray *classNames = [[notification userInfo] objectForKey:@"NSLoadedClasses"];
+    for (NSString *className in classNames)
+    {
+        Class bundleClass = NSClassFromString(className);
+        if ([bundleClass conformsToProtocol:@protocol(CogVersionCheck)]) {
+            DLog(@"Component has version check: %@", className);
+            if (![bundleClass shouldLoadForOSVersion:[[NSProcessInfo processInfo] operatingSystemVersion]])
+            {
+                DLog(@"Plugin fails OS version check, ignoring");
+                return;
+            }
+        }
+    }
 	for (NSString *className in classNames)
 	{
 		DLog(@"Class loaded: %@", className);

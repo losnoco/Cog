@@ -15,6 +15,10 @@
 - (void)dealloc;
 @end
 
+@protocol CogVersionCheck <NSObject>
++ (BOOL)shouldLoadForOSVersion:(NSOperatingSystemVersion)version;
+@end
+
 @protocol CogContainer <NSObject> 
 + (NSArray *)fileTypes; //mp3, ogg, etc
 + (NSArray *)mimeTypes;
