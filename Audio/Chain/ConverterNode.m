@@ -125,20 +125,39 @@ static void upmix(float * buffer, int inchannels, int outchannels, int count)
 {
     for (int i = count - 1; i >= 0; --i)
     {
-        if (inchannels == 1)
+        if (inchannels == 1 && outchannels == 2)
         {
+            // upmix mono to stereo
             float sample = buffer[i];
+            buffer[i * 2 + 0] = sample;
+            buffer[i * 2 + 1] = sample;
+        }
+        else if (inchannels == 1 && outchannels == 4)
+        {
+            // upmix mono to quad
+            float sample = buffer[i];
+            buffer[i * 4 + 0] = sample;
+            buffer[i * 4 + 1] = sample;
+            buffer[i * 4 + 2] = 0;
+            buffer[i * 4 + 3] = 0;
+        }
+        else if (inchannels == 1 && (outchannels == 3 || outchannels >= 5))
+        {
+            // upmix mono to center channel
+            float sample = buffer[i];
+            buffer[i * outchannels + 2] = sample;
             for (int j = 0; j < 2; ++j)
             {
-                buffer[i * outchannels + j] = sample;
+                buffer[i * outchannels + j] = 0;
             }
-            for (int j = 2; j < outchannels; ++j)
+            for (int j = 3; j < outchannels; ++j)
             {
                 buffer[i * outchannels + j] = 0;
             }
         }
         else
         {
+            // upmix N channels to N channels plus silence the empty channels
             float samples[inchannels];
             for (int j = 0; j < inchannels; ++j)
             {
