@@ -155,6 +155,62 @@ static void upmix(float * buffer, int inchannels, int outchannels, int count)
                 buffer[i * outchannels + j] = 0;
             }
         }
+        else if (inchannels == 4 && outchannels >= 5)
+        {
+            float fl = buffer[i * 4 + 0];
+            float fr = buffer[i * 4 + 1];
+            float bl = buffer[i * 4 + 2];
+            float br = buffer[i * 4 + 3];
+            const int skipclfe = (outchannels == 5) ? 1 : 2;
+            buffer[i * outchannels + 0] = fl;
+            buffer[i * outchannels + 1] = fr;
+            buffer[i * outchannels + skipclfe + 2] = bl;
+            buffer[i * outchannels + skipclfe + 3] = br;
+            for (int j = 0; j < skipclfe; ++j)
+            {
+                buffer[i * outchannels + 2 + j] = 0;
+            }
+            for (int j = 4 + skipclfe; j < outchannels; ++j)
+            {
+                buffer[i * outchannels + j] = 0;
+            }
+        }
+        else if (inchannels == 5 && outchannels >= 6)
+        {
+            float fl = buffer[i * 5 + 0];
+            float fr = buffer[i * 5 + 1];
+            float c = buffer[i * 5 + 2];
+            float bl = buffer[i * 5 + 3];
+            float br = buffer[i * 5 + 4];
+            buffer[i * outchannels + 0] = fl;
+            buffer[i * outchannels + 1] = fr;
+            buffer[i * outchannels + 2] = c;
+            buffer[i * outchannels + 3] = 0;
+            buffer[i * outchannels + 4] = bl;
+            buffer[i * outchannels + 5] = br;
+            for (int j = 6; j < outchannels; ++j)
+            {
+                buffer[i * outchannels + j] = 0;
+            }
+        }
+        else if (inchannels == 7 && outchannels == 8)
+        {
+            float fl = buffer[i * 7 + 0];
+            float fr = buffer[i * 7 + 1];
+            float c = buffer[i * 7 + 2];
+            float lfe = buffer[i * 7 + 3];
+            float sl = buffer[i * 7 + 4];
+            float sr = buffer[i * 7 + 5];
+            float bc = buffer[i * 7 + 6];
+            buffer[i * 8 + 0] = fl;
+            buffer[i * 8 + 1] = fr;
+            buffer[i * 8 + 2] = c;
+            buffer[i * 8 + 3] = lfe;
+            buffer[i * 8 + 4] = bc;
+            buffer[i * 8 + 5] = bc;
+            buffer[i * 8 + 6] = sl;
+            buffer[i * 8 + 7] = sr;
+        }
         else
         {
             // upmix N channels to N channels plus silence the empty channels
