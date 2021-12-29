@@ -121,12 +121,11 @@
 	{
 		if (shouldSeek == YES)
 		{
-            OutputNode *output = [[controller controller] output];
             ConverterNode *converter = [[[controller controller] bufferChain] converter];
 			DLog(@"SEEKING! Resetting Buffer");
             
+            amountInBuffer = 0;
             [self resetBuffer];
-            [output reset];
             [converter resetBuffer];
             [converter inputFormatDidChange:[[[controller controller] bufferChain] inputFormat]];
 

@@ -51,13 +51,6 @@
 	[output resume];
 }
 
-- (void)reset
-{
-    [output setup];
-    if (!paused)
-        [output start];
-}
-
 - (int)readData:(void *)ptr amount:(int)amount
 {
     @autoreleasepool {
