@@ -164,7 +164,7 @@
     id userInfo = currentUserInfo;
     NSDictionary *rgi = currentRGInfo;
     
-    while (![bufferChain openWithDecoder:decoder withOutputFormat:[output format] withRGInfo:currentRGInfo])
+    while (![bufferChain openWithDecoder:decoder withOutputFormat:[output format] withRGInfo:rgi])
     {
         bufferChain = nil;
         
