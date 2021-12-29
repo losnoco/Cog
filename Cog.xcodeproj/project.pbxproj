@@ -159,7 +159,6 @@
 		83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D0380E24A40DF2004CF90F /* CogAssets.xcassets */; };
 		83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */; };
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
-		83EEAB241C965C56002761C5 /* Syntrax.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EEAAFA1C9651D8002761C5 /* Syntrax.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -528,20 +527,6 @@
 			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = "Shorten Plugin";
 		};
-		83EEAAF91C9651D8002761C5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 832FF2F81C96508E0076D662;
-			remoteInfo = Syntrax;
-		};
-		83EEAB251C965C61002761C5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 832FF2F71C96508E0076D662;
-			remoteInfo = Syntrax;
-		};
 		83F9D7F51A884B46007ABEC2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */;
@@ -649,7 +634,6 @@
 				834F7F4520E4E51F00228DAB /* WavPack.bundle in CopyFiles */,
 				834F7F4420E4E4FA00228DAB /* OpenMPT.bundle in CopyFiles */,
 				834F7F4320E4E4ED00228DAB /* AdPlug.bundle in CopyFiles */,
-				83EEAB241C965C56002761C5 /* Syntrax.bundle in CopyFiles */,
 				83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */,
 				836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */,
 				836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */,
@@ -927,7 +911,6 @@
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
-		83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax.xcodeproj; path = Plugins/Syntrax/Syntrax.xcodeproj; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1178,7 +1161,6 @@
 				17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */,
 				8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */,
 				83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */,
-				83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */,
 				17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */,
 				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
 				17C808B70C3BD1D2005707C4 /* VorbisPlugin.xcodeproj */,
@@ -1582,14 +1564,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		83EEAAF61C9651D8002761C5 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83EEAAFA1C9651D8002761C5 /* Syntrax.bundle */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		83F9D7F21A884B44007ABEC2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1738,7 +1712,6 @@
 				834F7F3620E4E4B400228DAB /* PBXTargetDependency */,
 				834F7F3420E4E4B000228DAB /* PBXTargetDependency */,
 				834F7F1F20E4E4AA00228DAB /* PBXTargetDependency */,
-				83EEAB261C965C61002761C5 /* PBXTargetDependency */,
 				83F9D8061A884C33007ABEC2 /* PBXTargetDependency */,
 				836F5BEE1A3579F5002730CC /* PBXTargetDependency */,
 				836FB5A618206F1500B3AD2D /* PBXTargetDependency */,
@@ -1897,10 +1870,6 @@
 				{
 					ProductGroup = 83F9D7F21A884B44007ABEC2 /* Products */;
 					ProjectRef = 83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */;
-				},
-				{
-					ProductGroup = 83EEAAF61C9651D8002761C5 /* Products */;
-					ProjectRef = 83EEAAF51C9651D8002761C5 /* Syntrax.xcodeproj */;
 				},
 				{
 					ProductGroup = 8303A30520E4E3D000951EF8 /* Products */;
@@ -2093,13 +2062,6 @@
 			fileType = wrapper.cfbundle;
 			path = Shorten.bundle;
 			remoteRef = 83CA5B0220E4E395003E463A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		83EEAAFA1C9651D8002761C5 /* Syntrax.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = Syntrax.bundle;
-			remoteRef = 83EEAAF91C9651D8002761C5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */ = {
@@ -2447,11 +2409,6 @@
 			isa = PBXTargetDependency;
 			name = "FFMPEG Plugin";
 			targetProxy = 83BCB8DC17FC96FC00760340 /* PBXContainerItemProxy */;
-		};
-		83EEAB261C965C61002761C5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Syntrax;
-			targetProxy = 83EEAB251C965C61002761C5 /* PBXContainerItemProxy */;
 		};
 		83F9D8061A884C33007ABEC2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
