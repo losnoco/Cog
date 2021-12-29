@@ -656,7 +656,6 @@ static float db_to_scale(float db)
     {
         usleep(500);
     }
-    rgInfo = nil;
     if (converterFloat)
     {
         AudioConverterDispose(converterFloat);
