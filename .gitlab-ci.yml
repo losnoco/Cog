@@ -1,3 +1,8 @@
+.macos_saas_runners:
+  tags:
+    - shared-macos-amd64
+  image: macos-11-xcode-13
+
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
@@ -5,6 +10,8 @@ stages:
   - build
 
 build_project:
+  extends:
+    - .macos_saas_runners
   stage: build
   script:
     - cp "$DEV_TEAM_FILE" Xcode-config/DEVELOPMENT_TEAM.xcconfig
