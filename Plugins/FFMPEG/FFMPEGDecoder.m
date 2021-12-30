@@ -368,7 +368,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 else if (errcode == AVERROR(EAGAIN))
                 {
                    // Read another packet
-                    DLog(@"Decoded samples: %d", lastDecodedFrame->nb_samples);
                     readNextPacket = YES;
                     continue;
                 }
