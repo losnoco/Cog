@@ -251,6 +251,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     totalFrames = av_rescale_q(stream->duration, stream->time_base, tb);
     bitrate = (int)((codecCtx->bit_rate) / 1000);
     framesRead = 0;
+    seekFrame = 0; // Skip preroll if necessary
     endOfStream = NO;
     endOfAudio = NO;
     
@@ -348,24 +349,6 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             }
             
             readNextPacket = NO;     // we probably won't need to consume another chunk
-
-            // FFmpeg seeking by packet is usually inexact, so skip up to
-            // target sample using packet timestamp
-            if (seekFrame >= 0 && errcode >= 0) {
-                DLog(@"Seeking to frame %lld", seekFrame);
-                AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
-                int64_t packetBeginFrame = av_rescale_q(
-                        lastReadPacket->dts,
-                        formatCtx->streams[streamIndex]->time_base,
-                        tb
-                );
-
-                if (packetBeginFrame < seekFrame) {
-                    seekBytesSkip += (int)((seekFrame - packetBeginFrame) * frameSize);
-                }
-
-                seekFrame = -1;
-            }
         }
 
         if (dataSize <= bytesConsumedFromDecodedFrame)
@@ -385,6 +368,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 else if (errcode == AVERROR(EAGAIN))
                 {
                    // Read another packet
+                    DLog(@"Decoded samples: %d", lastDecodedFrame->nb_samples);
                     readNextPacket = YES;
                     continue;
                 }
@@ -404,6 +388,27 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 
             if ( dataSize < 0 )
                 dataSize = 0;
+
+            // FFmpeg seeking by packet is usually inexact, so skip up to
+            // target sample using packet timestamp
+            // New: Moved here, because sometimes preroll packets also
+            // trigger EAGAIN above, so ask for the next packet's timestamp
+            // instead
+            if (seekFrame >= 0 && errcode >= 0) {
+                DLog(@"Seeking to frame %lld", seekFrame);
+                AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
+                int64_t packetBeginFrame = av_rescale_q(
+                        lastReadPacket->dts,
+                        formatCtx->streams[streamIndex]->time_base,
+                        tb
+                );
+
+                if (packetBeginFrame < seekFrame) {
+                    seekBytesSkip += (int)((seekFrame - packetBeginFrame) * frameSize);
+                }
+
+                seekFrame = -1;
+            }
 
             int minSkipped = FFMIN(dataSize, seekBytesSkip);
             bytesConsumedFromDecodedFrame += minSkipped;
@@ -456,7 +461,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
     AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
     int64_t ts = av_rescale_q(frame, tb, formatCtx->streams[streamIndex]->time_base);
-    avformat_seek_file(formatCtx, streamIndex, ts - 1000, ts, ts, AVSEEK_FLAG_ANY);
+    avformat_seek_file(formatCtx, streamIndex, ts - 1000, ts, ts, 0);
     avcodec_flush_buffers(codecCtx);
     readNextPacket = YES; // so we immediately read next packet
     bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
