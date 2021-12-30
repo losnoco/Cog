@@ -63,6 +63,7 @@
         NSString * artist = nil;
         //NSString * comment = nil;
         NSString * date = nil;
+        NSString * type = nil;
         
         std::vector<std::string> keys = mod->get_metadata_keys();
         
@@ -75,6 +76,8 @@
                 comment = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];*/
             else if ( *key == "date" )
                 date = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];
+            else if ( *key == "type_long" )
+                type = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];
         }
         
         delete mod;
@@ -87,8 +90,10 @@
             comment = @"";*/
         if (date == nil)
             date = @"";
+        if (type == nil)
+            type = @"";
         
-        return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", /*comment, @"comment",*/ date, @"year", nil];
+        return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", /*comment, @"comment",*/ date, @"year", type, @"codec", nil];
     } catch (std::exception & /*e*/) {
         return 0;
     }
