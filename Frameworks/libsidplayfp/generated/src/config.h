@@ -91,6 +91,9 @@
 /* define if the compiler supports basic C++11 syntax */
 #define HAVE_CXX11 1
 
+/* define if the compiler supports basic C++14 syntax */
+#define HAVE_CXX14 1
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
 
@@ -176,7 +179,7 @@
 #define PACKAGE_NAME "libsidplayfp"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libsidplayfp 2.2.0"
+#define PACKAGE_STRING "libsidplayfp 2.3.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libsidplayfp"
@@ -185,7 +188,7 @@
 #define PACKAGE_URL "https://github.com/libsidplayfp/libsidplayfp/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.2.0"
+#define PACKAGE_VERSION "2.3.1"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
@@ -206,7 +209,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.2.0"
+#define VERSION "2.3.1"
 
 /* Path to VICE testsuite. */
 /* #undef VICE_TESTSUITE */
