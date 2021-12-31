@@ -127,7 +127,6 @@
 		83D3C64F201C6D38005564CB /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C64D201C6D38005564CB /* debug.h */; };
 		83D3C662201C6EC4005564CB /* opl.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C661201C6EC3005564CB /* opl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83D3C670201D2C2C005564CB /* silentopl.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C66F201D2C2C005564CB /* silentopl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		83D3C6A2201D38DF005564CB /* libbinio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D3C691201D3864005564CB /* libbinio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D3C6A5201D3939005564CB /* libbinio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D3C691201D3864005564CB /* libbinio.framework */; };
 /* End PBXBuildFile section */
 
@@ -147,19 +146,6 @@
 			remoteInfo = libbinio;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		83D3C65F201C6E56005564CB /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				83D3C6A2201D38DF005564CB /* libbinio.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		830E1D9F263B90CB005B01D2 /* rad2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rad2.h; path = adplug/src/rad2.h; sourceTree = "<group>"; };
@@ -543,7 +529,6 @@
 				83D3C4D0201C654F005564CB /* Frameworks */,
 				83D3C4D1201C654F005564CB /* Headers */,
 				83D3C4D2201C654F005564CB /* Resources */,
-				83D3C65F201C6E56005564CB /* CopyFiles */,
 			);
 			buildRules = (
 			);
