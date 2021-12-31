@@ -102,6 +102,7 @@
 		830595F1277EFEFA00EBFAAE /* libavutil.56.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830595ED277EFED900EBFAAE /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		830595F2277EFEFA00EBFAAE /* libswresample.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830595EE277EFED900EBFAAE /* libswresample.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8305968D277F049600EBFAAE /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -349,6 +350,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8359FF3C17FEF39F0060F3ED;
 			remoteInfo = File_Extractor;
+		};
+		8305968C277F049600EBFAAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83059684277F049600EBFAAE /* Ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
+			remoteInfo = Ogg;
+		};
+		8305968E277F049600EBFAAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83059684277F049600EBFAAE /* Ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 734FB2E50B18B33E00D561D7;
+			remoteInfo = "libogg (static)";
 		};
 		830B62B220E4EF89004A74B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -670,6 +685,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */,
 				830595EF277EFEFA00EBFAAE /* libavcodec.58.dylib in CopyFiles */,
 				830595F0277EFEFA00EBFAAE /* libavformat.58.dylib in CopyFiles */,
@@ -850,6 +866,7 @@
 		830595ED277EFED900EBFAAE /* libavutil.56.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.dylib; path = ThirdParty/ffmpeg/lib/libavutil.56.dylib; sourceTree = "<group>"; };
 		830595EE277EFED900EBFAAE /* libswresample.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.3.dylib; path = ThirdParty/ffmpeg/lib/libswresample.3.dylib; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
+		83059684277F049600EBFAAE /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = Frameworks/Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
@@ -1028,6 +1045,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83059684277F049600EBFAAE /* Ogg.xcodeproj */,
 				83059634277F011100EBFAAE /* File_Extractor.xcodeproj */,
 				830595E9277EFEA400EBFAAE /* libavcodec.58.dylib */,
 				830595EC277EFED900EBFAAE /* libavformat.58.dylib */,
@@ -1511,6 +1529,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83059685277F049600EBFAAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8305968D277F049600EBFAAE /* Ogg.framework */,
+				8305968F277F049600EBFAAE /* libogg.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		830B62AF20E4EF89004A74B2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1879,6 +1906,10 @@
 					ProjectRef = 17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */;
 				},
 				{
+					ProductGroup = 83059685277F049600EBFAAE /* Products */;
+					ProjectRef = 83059684277F049600EBFAAE /* Ogg.xcodeproj */;
+				},
+				{
 					ProductGroup = 83CA5AF820E4E394003E463A /* Products */;
 					ProjectRef = 83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */;
 				},
@@ -2031,6 +2062,20 @@
 			fileType = wrapper.framework;
 			path = File_Extractor.framework;
 			remoteRef = 83059638277F011100EBFAAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8305968D277F049600EBFAAE /* Ogg.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Ogg.framework;
+			remoteRef = 8305968C277F049600EBFAAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8305968F277F049600EBFAAE /* libogg.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libogg.a;
+			remoteRef = 8305968E277F049600EBFAAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */ = {

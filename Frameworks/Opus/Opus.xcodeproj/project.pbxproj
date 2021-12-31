@@ -244,7 +244,6 @@
 		837928E61C2940C0005DBCEA /* mlp_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 837928E31C2940C0005DBCEA /* mlp_data.c */; };
 		837928E71C2940C0005DBCEA /* mlp.c in Sources */ = {isa = PBXBuildFile; fileRef = 837928E41C2940C0005DBCEA /* mlp.c */; };
 		EDA38966261B839B003FC82B /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDA38962261B8387003FC82B /* Ogg.framework */; };
-		EDA38967261B839B003FC82B /* Ogg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EDA38962261B8387003FC82B /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -263,20 +262,6 @@
 			remoteInfo = "libogg (static)";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		EDA38968261B839C003FC82B /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EDA38967261B839B003FC82B /* Ogg.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		830F884119C9105E00420FB0 /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = ../Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
@@ -1034,7 +1019,6 @@
 				8375B05D17FFEABB0092A79F /* Sources */,
 				8375B05F17FFEABB0092A79F /* Headers */,
 				EDA38965261B8392003FC82B /* Frameworks */,
-				EDA38968261B839C003FC82B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

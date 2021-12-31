@@ -94,7 +94,6 @@
 		738836090B19000B005C7A69 /* bitrate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F60D03389C830112CE8F /* bitrate.c */; };
 		738836140B1904A5005C7A69 /* vorbisenc.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65E03389C830112CE8F /* vorbisenc.c */; };
 		738836230B190601005C7A69 /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F65F03389C830112CE8F /* vorbisfile.c */; };
-		830F885919C910CF00420FB0 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830F885319C910B400420FB0 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		830F885A19C9121800420FB0 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830F885319C910B400420FB0 /* Ogg.framework */; };
 /* End PBXBuildFile section */
 
@@ -121,19 +120,6 @@
 			remoteInfo = Ogg;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		830F885819C910C400420FB0 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				830F885919C910CF00420FB0 /* Ogg.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		730F23F0091827B100AB638C /* Info.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = Info.plist; sourceTree = "<group>"; };
@@ -505,7 +491,6 @@
 				730F23D2091827B100AB638C /* Sources */,
 				730F23E9091827B100AB638C /* Frameworks */,
 				730F23EB091827B100AB638C /* Rez */,
-				830F885819C910C400420FB0 /* CopyFiles */,
 			);
 			buildRules = (
 			);
