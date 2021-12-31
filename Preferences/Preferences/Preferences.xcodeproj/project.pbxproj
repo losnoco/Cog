@@ -19,7 +19,6 @@
 		17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 17E78A7D0D68BE3C005C5A59 /* file_tree.png */; };
 		17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E78B680D68C1E3005C5A59 /* Preferences.xib */; };
 		83651DA527322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83651DA327322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m */; };
-		836C314125EC8A7000692622 /* MASShortcut.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = ED69CBAE25BE32500090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8372053718E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */; };
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
@@ -74,19 +73,6 @@
 			remoteInfo = MASShortcut;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		8384918B1808595500E7332D /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				836C314125EC8A7000692622 /* MASShortcut.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -349,7 +335,6 @@
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
-				8384918B1808595500E7332D /* CopyFiles */,
 			);
 			buildRules = (
 			);
