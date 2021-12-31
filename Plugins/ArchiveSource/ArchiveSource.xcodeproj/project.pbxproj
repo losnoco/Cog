@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8359009417FEF5A60060F3ED /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359FF7017FEF3A00060F3ED /* File_Extractor.framework */; };
-		8359009617FEF5FC0060F3ED /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF7017FEF3A00060F3ED /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8359009917FEF6490060F3ED /* ArchiveSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 8359009817FEF6490060F3ED /* ArchiveSource.m */; };
 		8359009C17FEFDA80060F3ED /* ArchiveContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8359009B17FEFDA80060F3ED /* ArchiveContainer.m */; };
 		8359FF1B17FEF35C0060F3ED /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359FF1A17FEF35C0060F3ED /* Cocoa.framework */; };
@@ -31,19 +30,6 @@
 			remoteInfo = File_Extractor;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		8359009517FEF5F00060F3ED /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				8359009617FEF5FC0060F3ED /* File_Extractor.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		8359009717FEF6490060F3ED /* ArchiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveSource.h; sourceTree = "<group>"; };
@@ -156,7 +142,6 @@
 				8359FF1317FEF35C0060F3ED /* Sources */,
 				8359FF1417FEF35C0060F3ED /* Frameworks */,
 				8359FF1517FEF35C0060F3ED /* Resources */,
-				8359009517FEF5F00060F3ED /* CopyFiles */,
 			);
 			buildRules = (
 			);
