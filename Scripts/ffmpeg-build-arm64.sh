@@ -13,7 +13,7 @@ export PATH=/opt/homebrew/bin:$PATH
     --enable-neon\
     --extra-cflags="-arch arm64 -fPIC -isysroot $(xcode-select -p)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=11.0"\
     --extra-ldflags="-arch arm64 -mmacosx-version-min=11.0"\
-    --enable-static --disable-shared\
+    --disable-static --enable-shared\
     --prefix="$1/arm64"\
     --incdir="$1/include"\
     --datadir="$1/share"\
