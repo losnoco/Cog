@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
 		833765A320E4EF1F007287F6 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83172ABB20E4EF0100751437 /* Vorbis.framework */; };
-		833765A420E4EF29007287F6 /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83172ABB20E4EF0100751437 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,19 +49,6 @@
 			remoteInfo = Vorbis;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		17C93D770B8FDCA5008627D6 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				833765A420E4EF29007287F6 /* Vorbis.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -196,7 +182,6 @@
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
-				17C93D770B8FDCA5008627D6 /* CopyFiles */,
 				83F4129B1E93305F002E37D0 /* ShellScript */,
 			);
 			buildRules = (

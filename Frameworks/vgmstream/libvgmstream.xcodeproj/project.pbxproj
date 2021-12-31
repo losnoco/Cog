@@ -136,7 +136,6 @@
 		832BF82B21E0514B006F50F1 /* xopus.c in Sources */ = {isa = PBXBuildFile; fileRef = 832BF81921E0514A006F50F1 /* xopus.c */; };
 		832BF82C21E0514B006F50F1 /* hca_keys_awb.h in Headers */ = {isa = PBXBuildFile; fileRef = 832BF81A21E0514A006F50F1 /* hca_keys_awb.h */; };
 		832BF82D21E0514B006F50F1 /* nus3audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 832BF81B21E0514B006F50F1 /* nus3audio.c */; };
-		832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F4128F1E932F9A002E37D0 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83345A521F8AEB2800B2EAA4 /* xvag.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A4E1F8AEB2800B2EAA4 /* xvag.c */; };
 		83349719275DD2AC00302E21 /* wbk.c in Sources */ = {isa = PBXBuildFile; fileRef = 83349715275DD2AC00302E21 /* wbk.c */; };
 		833A7A2E1ED11961003EC53E /* xau.c in Sources */ = {isa = PBXBuildFile; fileRef = 833A7A2D1ED11961003EC53E /* xau.c */; };
@@ -806,7 +805,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				836C052C23F62F3100FA07C7 /* libatrac9.framework in CopyFiles */,
-				832C70BF1E9335E400BD7B4E /* Vorbis.framework in CopyFiles */,
 				83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */,
 				8313E3E71902021800B4B6F1 /* mpg123.framework in CopyFiles */,
 				83D6772F2653A32B00252130 /* libcelt_0061.framework in CopyFiles */,

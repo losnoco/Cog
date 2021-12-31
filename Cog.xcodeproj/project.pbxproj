@@ -103,6 +103,7 @@
 		830595F2277EFEFA00EBFAAE /* libswresample.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830595EE277EFED900EBFAAE /* libswresample.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8305968D277F049600EBFAAE /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830596E7277F05E200EBFAAE /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -364,6 +365,34 @@
 			proxyType = 2;
 			remoteGlobalIDString = 734FB2E50B18B33E00D561D7;
 			remoteInfo = "libogg (static)";
+		};
+		830596E6277F05E200EBFAAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 730F23F1091827B100AB638C;
+			remoteInfo = Vorbis;
+		};
+		830596E8277F05E200EBFAAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 738835E40B18F870005C7A69;
+			remoteInfo = "libvorbis (static)";
+		};
+		830596EA277F05E200EBFAAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 738836130B190488005C7A69;
+			remoteInfo = "libvorbisenc (static)";
+		};
+		830596EC277F05E200EBFAAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 738836220B1905E5005C7A69;
+			remoteInfo = "libvorbisfile (static)";
 		};
 		830B62B220E4EF89004A74B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -685,6 +714,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */,
 				83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */,
 				830595EF277EFEFA00EBFAAE /* libavcodec.58.dylib in CopyFiles */,
@@ -867,6 +897,7 @@
 		830595EE277EFED900EBFAAE /* libswresample.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.3.dylib; path = ThirdParty/ffmpeg/lib/libswresample.3.dylib; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		83059684277F049600EBFAAE /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = Frameworks/Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
+		830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = Frameworks/Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
@@ -1045,6 +1076,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */,
 				83059684277F049600EBFAAE /* Ogg.xcodeproj */,
 				83059634277F011100EBFAAE /* File_Extractor.xcodeproj */,
 				830595E9277EFEA400EBFAAE /* libavcodec.58.dylib */,
@@ -1538,6 +1570,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		830596DB277F05E200EBFAAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				830596E7277F05E200EBFAAE /* Vorbis.framework */,
+				830596E9277F05E200EBFAAE /* libvorbis.a */,
+				830596EB277F05E200EBFAAE /* libvorbisenc.a */,
+				830596ED277F05E200EBFAAE /* libvorbisfile.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		830B62AF20E4EF89004A74B2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1950,6 +1993,10 @@
 					ProjectRef = 836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */;
 				},
 				{
+					ProductGroup = 830596DB277F05E200EBFAAE /* Products */;
+					ProjectRef = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
+				},
+				{
 					ProductGroup = 8301F93720E4EEF70017B2DC /* Products */;
 					ProjectRef = 17C808B70C3BD1D2005707C4 /* VorbisPlugin.xcodeproj */;
 				},
@@ -2076,6 +2123,34 @@
 			fileType = archive.ar;
 			path = libogg.a;
 			remoteRef = 8305968E277F049600EBFAAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		830596E7277F05E200EBFAAE /* Vorbis.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Vorbis.framework;
+			remoteRef = 830596E6277F05E200EBFAAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		830596E9277F05E200EBFAAE /* libvorbis.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvorbis.a;
+			remoteRef = 830596E8277F05E200EBFAAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		830596EB277F05E200EBFAAE /* libvorbisenc.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvorbisenc.a;
+			remoteRef = 830596EA277F05E200EBFAAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		830596ED277F05E200EBFAAE /* libvorbisfile.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvorbisfile.a;
+			remoteRef = 830596EC277F05E200EBFAAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */ = {
