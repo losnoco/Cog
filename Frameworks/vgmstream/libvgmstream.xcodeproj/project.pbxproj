@@ -27,6 +27,7 @@
 		83031EDB243C510500C3F3E0 /* xnb_lz4mg.h in Headers */ = {isa = PBXBuildFile; fileRef = 83031ED6243C510400C3F3E0 /* xnb_lz4mg.h */; };
 		83031EDC243C510500C3F3E0 /* vid1.c in Sources */ = {isa = PBXBuildFile; fileRef = 83031ED7243C510400C3F3E0 /* vid1.c */; };
 		83031EDD243C510500C3F3E0 /* xnb_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83031ED8243C510500C3F3E0 /* xnb_streamfile.h */; };
+		830595D8277EEAA500EBFAAE /* ffmpeg_decoder_custom_mp4.c in Sources */ = {isa = PBXBuildFile; fileRef = 830595D7277EEAA500EBFAAE /* ffmpeg_decoder_custom_mp4.c */; };
 		8306B08420984518000302D4 /* at3plus_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8306B08120984517000302D4 /* at3plus_decoder.c */; };
 		8306B08520984518000302D4 /* yamaha_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8306B08220984517000302D4 /* yamaha_decoder.c */; };
 		8306B08620984518000302D4 /* fadpcm_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8306B08320984517000302D4 /* fadpcm_decoder.c */; };
@@ -377,13 +378,12 @@
 		836F6FF218BDC2190095E648 /* ps2_rnd.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EB618BDC2180095E648 /* ps2_rnd.c */; };
 		836F6FF318BDC2190095E648 /* ps2_rstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EB718BDC2180095E648 /* ps2_rstm.c */; };
 		836F6FF418BDC2190095E648 /* rws.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EB818BDC2180095E648 /* rws.c */; };
-		836F6FF618BDC2190095E648 /* ps2_sfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EBA18BDC2180095E648 /* ps2_sfs.c */; };
+		836F6FF618BDC2190095E648 /* ster.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EBA18BDC2180095E648 /* ster.c */; };
 		836F6FF718BDC2190095E648 /* ps2_sl3.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EBB18BDC2180095E648 /* ps2_sl3.c */; };
 		836F6FF818BDC2190095E648 /* ps2_smpl.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EBC18BDC2180095E648 /* ps2_smpl.c */; };
 		836F6FF918BDC2190095E648 /* ps2_snd.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EBD18BDC2180095E648 /* ps2_snd.c */; };
 		836F6FFA18BDC2190095E648 /* spm.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EBE18BDC2190095E648 /* spm.c */; };
 		836F6FFB18BDC2190095E648 /* ps2_sps.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EBF18BDC2190095E648 /* ps2_sps.c */; };
-		836F6FFC18BDC2190095E648 /* ps2_ster.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EC018BDC2190095E648 /* ps2_ster.c */; };
 		836F700118BDC2190095E648 /* ps2_tec.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EC518BDC2190095E648 /* ps2_tec.c */; };
 		836F700218BDC2190095E648 /* ps2_tk5.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EC618BDC2190095E648 /* ps2_tk5.c */; };
 		836F700418BDC2190095E648 /* ps2_vas.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EC818BDC2190095E648 /* ps2_vas.c */; };
@@ -846,6 +846,7 @@
 		83031ED6243C510400C3F3E0 /* xnb_lz4mg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xnb_lz4mg.h; sourceTree = "<group>"; };
 		83031ED7243C510400C3F3E0 /* vid1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vid1.c; sourceTree = "<group>"; };
 		83031ED8243C510500C3F3E0 /* xnb_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xnb_streamfile.h; sourceTree = "<group>"; };
+		830595D7277EEAA500EBFAAE /* ffmpeg_decoder_custom_mp4.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg_decoder_custom_mp4.c; sourceTree = "<group>"; };
 		8306B08120984517000302D4 /* at3plus_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = at3plus_decoder.c; sourceTree = "<group>"; };
 		8306B08220984517000302D4 /* yamaha_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yamaha_decoder.c; sourceTree = "<group>"; };
 		8306B08320984517000302D4 /* fadpcm_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fadpcm_decoder.c; sourceTree = "<group>"; };
@@ -1195,13 +1196,12 @@
 		836F6EB618BDC2180095E648 /* ps2_rnd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_rnd.c; sourceTree = "<group>"; };
 		836F6EB718BDC2180095E648 /* ps2_rstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_rstm.c; sourceTree = "<group>"; };
 		836F6EB818BDC2180095E648 /* rws.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rws.c; sourceTree = "<group>"; };
-		836F6EBA18BDC2180095E648 /* ps2_sfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_sfs.c; sourceTree = "<group>"; };
+		836F6EBA18BDC2180095E648 /* ster.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ster.c; sourceTree = "<group>"; };
 		836F6EBB18BDC2180095E648 /* ps2_sl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_sl3.c; sourceTree = "<group>"; };
 		836F6EBC18BDC2180095E648 /* ps2_smpl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_smpl.c; sourceTree = "<group>"; };
 		836F6EBD18BDC2180095E648 /* ps2_snd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_snd.c; sourceTree = "<group>"; };
 		836F6EBE18BDC2190095E648 /* spm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spm.c; sourceTree = "<group>"; };
 		836F6EBF18BDC2190095E648 /* ps2_sps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_sps.c; sourceTree = "<group>"; };
-		836F6EC018BDC2190095E648 /* ps2_ster.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_ster.c; sourceTree = "<group>"; };
 		836F6EC518BDC2190095E648 /* ps2_tec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_tec.c; sourceTree = "<group>"; };
 		836F6EC618BDC2190095E648 /* ps2_tk5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_tk5.c; sourceTree = "<group>"; };
 		836F6EC818BDC2190095E648 /* ps2_vas.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps2_vas.c; sourceTree = "<group>"; };
@@ -1676,6 +1676,7 @@
 				83AA5D0E1F6E2F5F0020821C /* ea_xa_decoder.c */,
 				83AA5D151F6E2F600020821C /* ea_xas_decoder.c */,
 				8306B08320984517000302D4 /* fadpcm_decoder.c */,
+				830595D7277EEAA500EBFAAE /* ffmpeg_decoder_custom_mp4.c */,
 				834FE0AB215C798A000A5D3D /* ffmpeg_decoder_custom_opus.c */,
 				837CEA7723487E2400E62A4A /* ffmpeg_decoder_utils.c */,
 				838BDB6B1D3AFAB10022CA6F /* ffmpeg_decoder.c */,
@@ -2086,12 +2087,10 @@
 				836F6EB318BDC2180095E648 /* ps2_pnb.c */,
 				836F6EB618BDC2180095E648 /* ps2_rnd.c */,
 				836F6EB718BDC2180095E648 /* ps2_rstm.c */,
-				836F6EBA18BDC2180095E648 /* ps2_sfs.c */,
 				836F6EBB18BDC2180095E648 /* ps2_sl3.c */,
 				836F6EBC18BDC2180095E648 /* ps2_smpl.c */,
 				836F6EBD18BDC2180095E648 /* ps2_snd.c */,
 				836F6EBF18BDC2190095E648 /* ps2_sps.c */,
-				836F6EC018BDC2190095E648 /* ps2_ster.c */,
 				836F6EC518BDC2190095E648 /* ps2_tec.c */,
 				836F6EC618BDC2190095E648 /* ps2_tk5.c */,
 				832BF80D21E05148006F50F1 /* ps2_va3.c */,
@@ -2163,6 +2162,7 @@
 				837CEAF023487F2C00E62A4A /* sqex_sead_streamfile.h */,
 				83A21F84201D8981000F04B9 /* sqex_sead.c */,
 				8317C24826982CC1007DD0B8 /* sspr.c */,
+				836F6EBA18BDC2180095E648 /* ster.c */,
 				8306B0C12098458C000302D4 /* sthd.c */,
 				83AA5D231F6E2F9C0020821C /* stm.c */,
 				836F6EF718BDC2190095E648 /* str_snds.c */,
@@ -2700,7 +2700,6 @@
 				8322ECE7240268BB009E9429 /* raw_al.c in Sources */,
 				83EDE5D91A70951A005F5D84 /* btsnd.c in Sources */,
 				8306B0E420984590000302D4 /* wave.c in Sources */,
-				836F6FFC18BDC2190095E648 /* ps2_ster.c in Sources */,
 				8349A9171FE6258200E26435 /* pc_adp_otns.c in Sources */,
 				836F701E18BDC2190095E648 /* redspark.c in Sources */,
 				8306B0ED20984590000302D4 /* txtp.c in Sources */,
@@ -2795,6 +2794,7 @@
 				835B9B912730BF2D00F87EE3 /* lopu_fb.c in Sources */,
 				8346D97B25BF838C00D1A8B0 /* ktac.c in Sources */,
 				8349A8ED1FE6253900E26435 /* blocked_ea_sns.c in Sources */,
+				830595D8277EEAA500EBFAAE /* ffmpeg_decoder_custom_mp4.c in Sources */,
 				836F6F6F18BDC2190095E648 /* akb.c in Sources */,
 				83EED5D6203A8BD7008BEB45 /* blocked_ea_swvr.c in Sources */,
 				8349A9181FE6258200E26435 /* ea_1snh.c in Sources */,
@@ -3007,7 +3007,7 @@
 				836F702A18BDC2190095E648 /* sd9.c in Sources */,
 				836F6FB418BDC2190095E648 /* ngc_nst_dsp.c in Sources */,
 				836F6FDB18BDC2190095E648 /* ps2_hsf.c in Sources */,
-				836F6FF618BDC2190095E648 /* ps2_sfs.c in Sources */,
+				836F6FF618BDC2190095E648 /* ster.c in Sources */,
 				834FE10E215C79ED000A5D3D /* ahv.c in Sources */,
 				8306B08420984518000302D4 /* at3plus_decoder.c in Sources */,
 				8349A90E1FE6258200E26435 /* scd_pcm.c in Sources */,

@@ -138,7 +138,7 @@ static const char* extension_list[] = {
     "cps",
     "csa", //txth/reserved [LEGO Racers 2 (PS2)]
     "csmp",
-    "cvs",
+    "cvs", //txth/reserved [Aladdin in Nasira's Revenge (PS1)]
     "cwav",
     "cxs",
 
@@ -401,7 +401,6 @@ static const char* extension_list[] = {
     "psf",
     "psh", //fake extension for .vsv (to be removed)
     "psnd",
-    "psw", //fake extension for .wam (renamed, to be removed)
 
     "r",
     "rac", //txth/reserved [Manhunt (Xbox)]
@@ -599,7 +598,7 @@ static const char* extension_list[] = {
     "wic", //txth/reserved [Road Rash (SAT)-videos]
     "wip", //txth/reserved [Colin McRae DiRT (PC)]
     "wlv", //txth/reserved [ToeJam & Earl III: Mission to Earth (DC)]
-    "wmus",
+    "wmus", //fake extension (to be removed)
     "wp2",
     "wpd",
     "wsd",
@@ -618,7 +617,7 @@ static const char* extension_list[] = {
     "xa",
     "xa2",
     "xa30",
-    "xag",
+    "xag", //txth/reserved [Tamsoft's PS2 games]
     "xau",
     "xav",
     "xb", //txth/reserved [Scooby-Doo! Unmasked (Xbox)]
@@ -937,7 +936,7 @@ static const meta_info meta_info_list[] = {
         {meta_AGSC,                 "Retro Studios AGSC header"},
         {meta_CSMP,                 "Retro Studios CSMP header"},
         {meta_RFRM,                 "Retro Studios RFRM header"},
-        {meta_NGC_ADPDTK,           "Nintendo ADP raw header"},
+        {meta_DTK,                  "Nintendo DTK raw header"},
         {meta_RSF,                  "Retro Studios RSF raw header"},
         {meta_AFC,                  "Nintendo .AFC header"},
         {meta_AST,                  "Nintendo AST header"},
@@ -976,7 +975,7 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_VAGp_AAAP,        "Acclaim Austin AAAp VAG header"},
         {meta_SEB,                  "Game Arts .SEB header"},
         {meta_STR_WAV,              "Blitz Games .STR+WAV header"},
-        {meta_PS2_ILD,              "ILD header"},
+        {meta_ILD,                  "Tose ILD header"},
         {meta_PS2_PNB,              "assumed PNB (PsychoNauts Bgm File) by .pnb extension"},
         {meta_RAW_WAVM,             "Xbox .wavm raw header"},
         {meta_DSP_STR,              "assumed Conan Gamecube STR File by .str extension"},
@@ -1021,7 +1020,7 @@ static const meta_info meta_info_list[] = {
         {meta_LEG,                  "Legaia 2 - Duel Saga LEG Header"},
         {meta_FILP,                 "Bio Hazard - Gun Survivor FILp Header"},
         {meta_IKM,                  "MiCROViSiON IKM header"},
-        {meta_SFS,                  "String .SFS header"},
+        {meta_STER,                  "ALCHEMY STER header"},
         {meta_SAT_DVI,              "Konami KCEN DVI. header"},
         {meta_DC_KCEY,              "Konami KCEY KCEYCOMP header"},
         {meta_BG00,                 "Falcom BG00 Header"},
@@ -1140,7 +1139,6 @@ static const meta_info meta_info_list[] = {
         {meta_PONA_PSX,             "Policenauts BGM header"},
         {meta_NGC_DSP_AAAP,         "Acclaim Austin AAAp DSP header"},
         {meta_NGC_DSP_KONAMI,       "Konami DSP header"},
-        {meta_PS2_STER,             "STER Header"},
         {meta_BNSF,                 "Namco Bandai BNSF header"},
         {meta_PS2_WB,               "Shooting Love. ~TRIZEAL~ WB header"},
         {meta_S14,                  "Namco .S14 raw header"},
@@ -1383,6 +1381,7 @@ static const meta_info meta_info_list[] = {
         {meta_LOPU_FB,              "French-Bread LOPU header"},
         {meta_LPCM_FB,              "French-Bread LPCM header"},
         {meta_WBK,                  "Treyarch WBK header"},
+        {meta_WBK_NSLB,             "Treyarch NSLB header"},
         {meta_DSP_APEX,             "Koei Tecmo APEX header"},
 };
 

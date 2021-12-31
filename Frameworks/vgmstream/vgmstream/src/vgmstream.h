@@ -342,8 +342,8 @@ typedef enum {
     meta_AAX,               /* CRI AAX */
     meta_UTF_DSP,           /* CRI ADPCM_WII, like AAX with DSP */
 
-    meta_NGC_ADPDTK,        /* NGC DTK/ADP (.adp/dkt DTK) [no header_id] */
-    meta_RSF,               /* Retro Studios RSF (Metroid Prime .rsf) [no header_id] */
+    meta_DTK,
+    meta_RSF,
     meta_HALPST,            /* HAL Labs HALPST */
     meta_GCSW,              /* GCSW (PCM) */
     meta_CAF,               /* tri-Crescendo CAF */
@@ -367,7 +367,7 @@ typedef enum {
     meta_PS2_VAGp_AAAP,     /* Acclaim Austin Audio VAG header */
     meta_SEB,
     meta_STR_WAV,           /* Blitz Games STR+WAV files */
-    meta_PS2_ILD,           /* ILD File */
+    meta_ILD,
     meta_PS2_PNB,           /* PsychoNauts Bgm File */
     meta_VPK,               /* VPK Audio File */
     meta_PS2_BMDX,          /* Beatmania thing */
@@ -392,7 +392,7 @@ typedef enum {
     meta_LEG,               /* Legaia 2 [no header_id] */
     meta_FILP,              /* Resident Evil - Dead Aim */
     meta_IKM,
-    meta_SFS,               /* Baroque */
+    meta_STER,
     meta_BG00,              /* Ibara, Mushihimesama */
     meta_PS2_RSTM,          /* Midnight Club 3 */
     meta_PS2_KCES,          /* Dance Dance Revolution */
@@ -522,7 +522,6 @@ typedef enum {
     meta_AST_MMV,
     meta_DMSG,              /* Nightcaster II - Equinox (XBOX) */
     meta_NGC_DSP_AAAP,      /* Turok: Evolution (NGC), Vexx (NGC) */
-    meta_PS2_STER,          /* Juuni Kokuki: Kakukaku Taru Ou Michi Beni Midori no Uka */
     meta_PS2_WB,            /* Shooting Love. ~TRIZEAL~ */
     meta_S14,               /* raw Siren 14, 24kbit mono */
     meta_SSS,               /* raw Siren 14, 48kbit stereo */
@@ -762,6 +761,7 @@ typedef enum {
     meta_LOPU_FB,
     meta_LPCM_FB,
     meta_WBK,
+    meta_WBK_NSLB,
     meta_DSP_APEX,
 
 } meta_t;

@@ -28,7 +28,7 @@ VGMSTREAM * init_vgmstream_halpst(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_nds_strm(STREAMFILE *streamFile);
 
-VGMSTREAM * init_vgmstream_ngc_adpdtk(STREAMFILE *streamFile);
+VGMSTREAM* init_vgmstream_dtk(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_ngc_dsp_std(STREAMFILE* sf);
 VGMSTREAM* init_vgmstream_ngc_mdsp_std(STREAMFILE* sf);
@@ -77,7 +77,7 @@ VGMSTREAM * init_vgmstream_nps(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_rs03(STREAMFILE *streamFile);
 
-VGMSTREAM * init_vgmstream_rsf(STREAMFILE *streamFile);
+VGMSTREAM* init_vgmstream_rsf(STREAMFILE* sf);
 
 VGMSTREAM * init_vgmstream_rwsd(STREAMFILE *streamFile);
 
@@ -94,9 +94,9 @@ VGMSTREAM * init_vgmstream_svag_kcet(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ps_headerless(STREAMFILE *streamFile);
 
-VGMSTREAM * init_vgmstream_mib_mih(STREAMFILE *streamFile);
+VGMSTREAM* init_vgmstream_mib_mih(STREAMFILE* sf);
 
-VGMSTREAM * init_vgmstream_ps2_mic(STREAMFILE *streamFile);
+VGMSTREAM* init_vgmstream_mic_koei(STREAMFILE* sf);
 
 VGMSTREAM * init_vgmstream_raw_pcm(STREAMFILE *streamFile);
 
@@ -105,7 +105,7 @@ VGMSTREAM * init_vgmstream_vag_aaap(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_seb(STREAMFILE *streamFile);
 
-VGMSTREAM * init_vgmstream_ps2_ild(STREAMFILE *streamFile);
+VGMSTREAM * init_vgmstream_ild(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ps2_pnb(STREAMFILE *streamFile);
 
@@ -225,7 +225,7 @@ VGMSTREAM * init_vgmstream_filp(STREAMFILE * streamFile);
 
 VGMSTREAM* init_vgmstream_ikm(STREAMFILE* sf);
 
-VGMSTREAM * init_vgmstream_sfs(STREAMFILE * streamFile);
+VGMSTREAM* init_vgmstream_ster(STREAMFILE* sf);
 
 VGMSTREAM * init_vgmstream_sat_dvi(STREAMFILE * streamFile);
 
@@ -450,8 +450,6 @@ VGMSTREAM* init_vgmstream_ast_mmv(STREAMFILE* sf);
 VGMSTREAM * init_vgmstream_dmsg(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_ngc_dsp_konami(STREAMFILE* streamFile);
-
-VGMSTREAM * init_vgmstream_ps2_ster(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_bnsf(STREAMFILE* streamFile);
 
@@ -971,5 +969,6 @@ VGMSTREAM* init_vgmstream_lopu_fb(STREAMFILE* sf);
 VGMSTREAM* init_vgmstream_lpcm_fb(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_wbk(STREAMFILE* sf);
+VGMSTREAM* init_vgmstream_wbk_nslb(STREAMFILE* sf);
 
 #endif /*_META_H*/

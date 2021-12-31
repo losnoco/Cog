@@ -23,9 +23,6 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_brstm,
     init_vgmstream_bfwav,
     init_vgmstream_nds_strm,
-    init_vgmstream_agsc,
-    init_vgmstream_ngc_adpdtk,
-    init_vgmstream_rsf,
     init_vgmstream_afc,
     init_vgmstream_ast,
     init_vgmstream_halpst,
@@ -45,15 +42,11 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_ngc_dsp_stm,
     init_vgmstream_exst,
     init_vgmstream_svag_kcet,
-    init_vgmstream_mib_mih,
     init_vgmstream_ngc_mpdsp,
-    init_vgmstream_ps2_mic,
     init_vgmstream_ngc_dsp_std_int,
     init_vgmstream_vag,
     init_vgmstream_vag_aaap,
-    init_vgmstream_seb,
-    init_vgmstream_ps2_ild,
-    init_vgmstream_ps2_pnb,
+    init_vgmstream_ild,
     init_vgmstream_ngc_str,
     init_vgmstream_ea_schl,
     init_vgmstream_caf,
@@ -93,7 +86,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_leg,
     init_vgmstream_filp,
     init_vgmstream_ikm,
-    init_vgmstream_sfs,
+    init_vgmstream_ster,
     init_vgmstream_bg00,
     init_vgmstream_sat_dvi,
     init_vgmstream_dc_kcey,
@@ -216,7 +209,6 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_dmsg,
     init_vgmstream_ngc_dsp_aaap,
     init_vgmstream_ngc_dsp_konami,
-    init_vgmstream_ps2_ster,
     init_vgmstream_ps2_wb,
     init_vgmstream_bnsf,
     init_vgmstream_ps2_gcm,
@@ -258,7 +250,6 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_lsf_n1nj4n,
     init_vgmstream_xwav_new,
     init_vgmstream_xwav_old,
-    init_vgmstream_ps2_wmus,
     init_vgmstream_hyperscan_kvag,
     init_vgmstream_ios_psnd,
     init_vgmstream_adp_bos,
@@ -526,7 +517,18 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_lopu_fb,
     init_vgmstream_lpcm_fb,
     init_vgmstream_wbk,
+    init_vgmstream_wbk_nslb,
     init_vgmstream_dsp_apex,
+
+    /* lower priority metas (no clean header identity, somewhat ambiguous, or need extension/companion file to identify) */
+    init_vgmstream_agsc,
+    init_vgmstream_dtk,
+    init_vgmstream_rsf,
+    init_vgmstream_ps2_wmus,
+    init_vgmstream_mib_mih,
+    init_vgmstream_mic_koei,
+    init_vgmstream_seb,
+    init_vgmstream_ps2_pnb,
 
     /* lowest priority metas (should go after all metas, and TXTH should go before raw formats) */
     init_vgmstream_txth,            /* proper parsers should supersede TXTH, once added */
@@ -534,7 +536,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_btsnd,           /* semi-headerless */
     init_vgmstream_raw_int,         /* .int raw PCM */
     init_vgmstream_ps_headerless,   /* tries to detect a bunch of PS-ADPCM formats */
-    init_vgmstream_raw_snds,        /* .snds raw SNDS IMA (*after* ps_headerless) */
+    init_vgmstream_raw_snds,        /* .snds raw SNDS IMA */
     init_vgmstream_raw_wavm,        /* .wavm raw xbox */
     init_vgmstream_raw_pcm,         /* .raw raw PCM */
     init_vgmstream_s14_sss,         /* .s14/sss raw siren14 */
