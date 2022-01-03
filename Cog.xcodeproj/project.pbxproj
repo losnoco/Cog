@@ -106,6 +106,7 @@
 		830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830596E7277F05E200EBFAAE /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
+		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8301F94520E4EEF70017B2DC /* VorbisPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834F7F4320E4E4ED00228DAB /* AdPlug.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30920E4E3D000951EF8 /* AdPlug.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -429,6 +430,20 @@
 			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = "WavPackPlugin Plugin";
 		};
+		83489C532782F2DF00BDCEA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
+			remoteInfo = "libvgmPlayer Plugin";
+		};
+		83489C692782F76900BDCEA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
+			remoteInfo = "libvgmPlayer Plugin";
+		};
 		834D792F20E4EFCC00C4A5CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C808B70C3BD1D2005707C4 /* VorbisPlugin.xcodeproj */;
@@ -679,6 +694,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */,
 				83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */,
 				834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */,
 				834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */,
@@ -904,6 +920,7 @@
 		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681F1CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		833F68251CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = es; path = es.lproj/Credits.html; sourceTree = "<group>"; };
+		83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmPlayer.xcodeproj; path = Plugins/libvgmPlayer/libvgmPlayer.xcodeproj; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -1228,6 +1245,7 @@
 				8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */,
 				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
 				17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */,
+				83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */,
 				8E8D40820CBB036600135C1B /* M3u.xcodeproj */,
 				83B0669C180D5668008E3612 /* MIDI.xcodeproj */,
 				17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */,
@@ -1613,6 +1631,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83489C4F2782F2DF00BDCEA2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8359FF2D17FEF35C0060F3ED /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1806,6 +1832,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				83489C6A2782F76900BDCEA2 /* PBXTargetDependency */,
 				8329306F2778860C0010C07E /* PBXTargetDependency */,
 				ED69CBC625BE32B40090B90D /* PBXTargetDependency */,
 				834D793E20E4EFD200C4A5CC /* PBXTargetDependency */,
@@ -1931,6 +1958,10 @@
 				{
 					ProductGroup = 17C808840C3BD181005707C4 /* Products */;
 					ProjectRef = 17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */;
+				},
+				{
+					ProductGroup = 83489C4F2782F2DF00BDCEA2 /* Products */;
+					ProjectRef = 83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */;
 				},
 				{
 					ProductGroup = 8E8D40830CBB036600135C1B /* Products */;
@@ -2179,6 +2210,13 @@
 			fileType = wrapper.cfbundle;
 			path = WavPack.bundle;
 			remoteRef = 834068BC20E4E40200A01561 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = libvgmPlayer.bundle;
+			remoteRef = 83489C532782F2DF00BDCEA2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */ = {
@@ -2500,6 +2538,11 @@
 			isa = PBXTargetDependency;
 			name = OpenMPTOld;
 			targetProxy = 8329306E2778860C0010C07E /* PBXContainerItemProxy */;
+		};
+		83489C6A2782F76900BDCEA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libvgmPlayer Plugin";
+			targetProxy = 83489C692782F76900BDCEA2 /* PBXContainerItemProxy */;
 		};
 		834D793020E4EFCC00C4A5CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
