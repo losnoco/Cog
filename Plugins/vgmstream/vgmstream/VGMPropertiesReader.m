@@ -3,7 +3,7 @@
 //  VGMStream
 //
 //  Created by Christopher Snowhill on 10/18/19.
-//  Copyright 2019 __LoSnoCo__. All rights reserved.
+//  Copyright 2019-2022 __LoSnoCo__. All rights reserved.
 //
 
 #import "VGMPropertiesReader.h"

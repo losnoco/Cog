@@ -3,7 +3,7 @@
 //  OpenMPT
 //
 //  Created by Christopher Snowhill on 12/27/21.
-//  Copyright © 2021 Christopher Snowhill. All rights reserved.
+//  Copyright © 2021-2022 Christopher Snowhill. All rights reserved.
 //
 
 #ifndef OMPTVersionCheck_h

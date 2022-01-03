@@ -4,7 +4,7 @@
 //
 //  Created by Vincent Spader on 3/1/07.
 //  Replaced by Christopher Snowhill on 3/7/20.
-//  Copyright 2020 __LoSnoCo__. All rights reserved.
+//  Copyright 2020-2022 __LoSnoCo__. All rights reserved.
 //
 
 #import "HTTPSource.h"

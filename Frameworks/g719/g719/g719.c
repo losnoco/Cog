@@ -3,7 +3,7 @@
 //  g719
 //
 //  Created by Christopher Snowhill on 1/24/15.
-//  Copyright (c) 2021 Christopher Snowhill. All rights reserved.
+//  Copyright (c) 2021-2022 Christopher Snowhill. All rights reserved.
 //
 
 #include <stdlib.h>

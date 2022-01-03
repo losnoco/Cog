@@ -3,7 +3,7 @@
 //  MIDI
 //
 //  Created by Christopher Snowhill on 1/29/16.
-//  Copyright © 2021 Christopher Snowhill. All rights reserved.
+//  Copyright © 2016-2022 Christopher Snowhill. All rights reserved.
 //
 
 #import <AudioUnit/AUCocoaUIView.h>
