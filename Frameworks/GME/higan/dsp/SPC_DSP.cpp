@@ -2,7 +2,7 @@
 
 #include "SPC_DSP.h"
 
-#include "blargg_endian.h"
+#include "../../gme/blargg_endian.h"
 #include <string.h>
 
 /* Copyright (C) 2007 Shay Green. This module is free software; you
@@ -16,7 +16,7 @@ details. You should have received a copy of the GNU Lesser General Public
 License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
-#include "blargg_source.h"
+#include "../../gme/blargg_source.h"
 
 namespace SuperFamicom {
 
@@ -992,7 +992,7 @@ VOICE_CLOCK(V9_V6_V3) { voice_V9(v); voice_V6(v+1); voice_V3(v+2); }
 //// Echo
 
 // Current echo buffer pointer for left/right channel
-#define ECHO_PTR( ch )      (&m.ram [m.t_echo_ptr + ch * 2])
+#define ECHO_PTR( ch )      (&m.echo_ram [m.t_echo_ptr + ch * 2])
 
 // Sample in echo history buffer, where 0 is the oldest
 #define ECHO_FIR( i )       (m.echo_hist_pos [i])

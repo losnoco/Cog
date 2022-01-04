@@ -33,28 +33,28 @@ struct track_info_t
 	long intro_length;
 	long loop_length;
 	long fade_length;
-    long repeat_count;
-    
-    /* Length if available, otherwise intro_length+loop_length*2 if available,
-     * otherwise a default of 150000 (2.5 minutes) */
-    long play_length;
+	long repeat_count;
+	
+	/* Length if available, otherwise intro_length+loop_length*2 if available,
+	 * otherwise a default of 150000 (2.5 minutes) */
+	long play_length;
 	
 	/* empty string if not available */
 	char system    [256];
 	char game      [256];
 	char song      [256];
 	char author    [256];
-    char composer  [256];
-    char engineer  [256];
-    char sequencer [256];
-    char tagger    [256];
+	char composer  [256];
+	char engineer  [256];
+	char sequencer [256];
+	char tagger    [256];
 	char copyright [256];
-    char date      [256];
+	char date      [256];
 	char comment   [256];
 	char dumper    [256];
-    char disc      [256];
-    char track     [256];
-    char ost       [256];
+	char disc      [256];
+	char track     [256];
+	char ost       [256];
 };
 enum { gme_max_field = 255 };
 

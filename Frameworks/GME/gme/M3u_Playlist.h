@@ -21,14 +21,14 @@ public:
 	struct info_t
 	{
 		const char* title;
-        const char* artist;
-        const char* date;
+		const char* artist;
+		const char* date;
 		const char* composer;
-        const char* sequencer;
+		const char* sequencer;
 		const char* engineer;
 		const char* ripping;
 		const char* tagging;
-        const char* copyright;
+		const char* copyright;
 	};
 	info_t const& info() const { return info_; }
 	

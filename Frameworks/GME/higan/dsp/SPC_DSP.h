@@ -4,7 +4,7 @@
 #ifndef SPC_DSP_H
 #define SPC_DSP_H
 
-#include "blargg_common.h"
+#include "../../gme/blargg_common.h"
 
 extern "C" { typedef void (*dsp_copy_func_t)( unsigned char** io, void* state, size_t ); }
 
@@ -128,6 +128,9 @@ public:
 	{
 		uint8_t regs [register_count];
 		
+		// Echo buffer, for dodgy SPC rips that were only made to work in dodgy emulators
+		uint8_t echo_ram[64 * 1024];
+
 		// Echo history keeps most recent 8 samples (twice the size to simplify wrap handling)
 		int echo_hist [echo_hist_size * 2] [2];
 		int (*echo_hist_pos) [2]; // &echo_hist [0 to 7]

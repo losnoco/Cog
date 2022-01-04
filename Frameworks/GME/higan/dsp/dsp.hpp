@@ -3,7 +3,7 @@
 
 #include "SPC_DSP.h"
 
-#include "blargg_common.h"
+#include "../../gme/blargg_common.h"
 
 namespace SuperFamicom {
 

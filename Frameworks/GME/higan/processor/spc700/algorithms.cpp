@@ -53,6 +53,7 @@ uint8_t SPC700::op_inc(uint8_t x) {
 }
 
 uint8_t SPC700::op_ld(uint8_t x, uint8_t y) {
+  (void)x;
   regs.p.n = y & 0x80;
   regs.p.z = y == 0;
   return y;
@@ -96,6 +97,7 @@ uint8_t SPC700::op_sbc(uint8_t x, uint8_t y) {
 }
 
 uint8_t SPC700::op_st(uint8_t x, uint8_t y) {
+  (void)x;
   return y;
 }
 
@@ -119,6 +121,7 @@ uint16_t SPC700::op_cpw(uint16_t x, uint16_t y) {
 }
 
 uint16_t SPC700::op_ldw(uint16_t x, uint16_t y) {
+  (void)x;
   regs.p.n = y & 0x8000;
   regs.p.z = y == 0;
   return y;

@@ -82,6 +82,7 @@
 		17C8F2470CBED286008D969D /* Sms_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1DE0CBED286008D969D /* Sms_Apu.h */; };
 		17C8F24F0CBED286008D969D /* Spc_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1E60CBED286008D969D /* Spc_Emu.cpp */; };
 		17C8F2500CBED286008D969D /* Spc_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1E70CBED286008D969D /* Spc_Emu.h */; };
+		8302AF4F2784668C0066143E /* vrc7tone.h in Headers */ = {isa = PBXBuildFile; fileRef = 8302AF4E2784668C0066143E /* vrc7tone.h */; };
 		83489CBB2783015300BDCEA2 /* gme_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CB12783015200BDCEA2 /* gme_types.h */; };
 		83489CBC2783015300BDCEA2 /* nes_cpu_io.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CB22783015300BDCEA2 /* nes_cpu_io.h */; };
 		83489CBD2783015300BDCEA2 /* hes_cpu_io.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CB32783015300BDCEA2 /* hes_cpu_io.h */; };
@@ -103,7 +104,6 @@
 		83489CE22783CAC100BDCEA2 /* emu2413_NESpatches.txt in Resources */ = {isa = PBXBuildFile; fileRef = 83489CDC2783CAC100BDCEA2 /* emu2413_NESpatches.txt */; };
 		83489CE32783CAC100BDCEA2 /* emu2413.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CDD2783CAC100BDCEA2 /* emu2413.h */; };
 		83489CE52783CAC100BDCEA2 /* emu2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 83489CDF2783CAC100BDCEA2 /* emu2413.c */; };
-		83489CE92783CADC00BDCEA2 /* vrc7tone.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CE62783CADC00BDCEA2 /* vrc7tone.h */; };
 		83489CEA2783CADC00BDCEA2 /* panning.c in Sources */ = {isa = PBXBuildFile; fileRef = 83489CE72783CADC00BDCEA2 /* panning.c */; };
 		83489CEB2783CADC00BDCEA2 /* panning.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CE82783CADC00BDCEA2 /* panning.h */; };
 		83489CED2783D86700BDCEA2 /* mamedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CEC2783D86700BDCEA2 /* mamedef.h */; };
@@ -204,6 +204,7 @@
 		17C8F1DE0CBED286008D969D /* Sms_Apu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sms_Apu.h; path = gme/Sms_Apu.h; sourceTree = "<group>"; };
 		17C8F1E60CBED286008D969D /* Spc_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Emu.cpp; path = gme/Spc_Emu.cpp; sourceTree = "<group>"; };
 		17C8F1E70CBED286008D969D /* Spc_Emu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Spc_Emu.h; path = gme/Spc_Emu.h; sourceTree = "<group>"; };
+		8302AF4E2784668C0066143E /* vrc7tone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vrc7tone.h; sourceTree = "<group>"; };
 		833F68361CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83489CB12783015200BDCEA2 /* gme_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gme_types.h; path = gme/gme_types.h; sourceTree = "<group>"; };
 		83489CB22783015300BDCEA2 /* nes_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nes_cpu_io.h; path = gme/nes_cpu_io.h; sourceTree = "<group>"; };
@@ -226,7 +227,6 @@
 		83489CDC2783CAC100BDCEA2 /* emu2413_NESpatches.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu2413_NESpatches.txt; sourceTree = "<group>"; };
 		83489CDD2783CAC100BDCEA2 /* emu2413.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emu2413.h; sourceTree = "<group>"; };
 		83489CDF2783CAC100BDCEA2 /* emu2413.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = emu2413.c; sourceTree = "<group>"; };
-		83489CE62783CADC00BDCEA2 /* vrc7tone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vrc7tone.h; sourceTree = "<group>"; };
 		83489CE72783CADC00BDCEA2 /* panning.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = panning.c; sourceTree = "<group>"; };
 		83489CE82783CADC00BDCEA2 /* panning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = panning.h; sourceTree = "<group>"; };
 		83489CEC2783D86700BDCEA2 /* mamedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mamedef.h; sourceTree = "<group>"; };
@@ -432,7 +432,6 @@
 				8370B70B17F615FE001A4D7A /* Spc_Filter.h */,
 				8370B70C17F615FE001A4D7A /* Spc_Sfm.cpp */,
 				8370B70D17F615FE001A4D7A /* Spc_Sfm.h */,
-				83489CE62783CADC00BDCEA2 /* vrc7tone.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -456,6 +455,7 @@
 				83489CEC2783D86700BDCEA2 /* mamedef.h */,
 				83489CE72783CADC00BDCEA2 /* panning.c */,
 				83489CE82783CADC00BDCEA2 /* panning.h */,
+				8302AF4E2784668C0066143E /* vrc7tone.h */,
 			);
 			path = ext;
 			sourceTree = "<group>";
@@ -467,8 +467,7 @@
 				83FC5D36181B47FB00B917E5 /* dsp */,
 				83FC5D40181B47FB00B917E5 /* smp */,
 			);
-			name = higan;
-			path = gme/higan;
+			path = higan;
 			sourceTree = "<group>";
 		};
 		83FC5D36181B47FB00B917E5 /* dsp */ = {
@@ -545,6 +544,7 @@
 				83FC5DAB181B8B1900B917E5 /* registers.hpp in Headers */,
 				17C8F20E0CBED286008D969D /* Gb_Cpu.h in Headers */,
 				83489CC22783015300BDCEA2 /* sap_cpu_io.h in Headers */,
+				8302AF4F2784668C0066143E /* vrc7tone.h in Headers */,
 				83489CBD2783015300BDCEA2 /* hes_cpu_io.h in Headers */,
 				17C8F2100CBED286008D969D /* Gb_Oscs.h in Headers */,
 				17C8F2120CBED286008D969D /* Gbs_Emu.h in Headers */,
@@ -565,7 +565,6 @@
 				17C8F2260CBED286008D969D /* Kss_Scc_Apu.h in Headers */,
 				17C8F2290CBED286008D969D /* M3u_Playlist.h in Headers */,
 				17C8F22B0CBED286008D969D /* Multi_Buffer.h in Headers */,
-				83489CE92783CADC00BDCEA2 /* vrc7tone.h in Headers */,
 				17C8F22D0CBED286008D969D /* Music_Emu.h in Headers */,
 				83489CED2783D86700BDCEA2 /* mamedef.h in Headers */,
 				17C8F22F0CBED286008D969D /* Nes_Apu.h in Headers */,

@@ -89,16 +89,16 @@ public: private: friend class Nes_Cpu;
 	enum { badop_addr = bank_select_addr };
 	
 private:
-    byte mmc5_mul [2];
+	byte mmc5_mul [2];
     
 	class Nes_Namco_Apu* namco;
 	class Nes_Vrc6_Apu*  vrc6;
 	class Nes_Fme7_Apu*  fme7;
-    class Nes_Fds_Apu*   fds;
-    class Nes_Mmc5_Apu*  mmc5;
-    class Nes_Vrc7_Apu*  vrc7;
+	class Nes_Fds_Apu*   fds;
+	class Nes_Mmc5_Apu*  mmc5;
+	class Nes_Vrc7_Apu*  vrc7;
 	Nes_Apu apu;
-    char** apu_names;
+	blargg_vector<const char*> apu_names;
 	static int pcm_read( void*, nes_addr_t );
 	blargg_err_t init_sound();
 	

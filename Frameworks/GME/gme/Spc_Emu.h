@@ -1,20 +1,13 @@
 // Super Nintendo SPC music file emulator
 
-// Game_Music_Emu $vers
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 #ifndef SPC_EMU_H
 #define SPC_EMU_H
 
+#include "Fir_Resampler.h"
 #include "Music_Emu.h"
-#include "higan/smp/smp.hpp"
+#include "../higan/smp/smp.hpp"
 #include "Spc_Filter.h"
-
-#if GME_SPC_FAST_RESAMPLER
-	#include "Upsampler.h"
-	typedef Upsampler Spc_Emu_Resampler;
-#else
-	#include "Fir_Resampler.h"
-	typedef Fir_Resampler<24> Spc_Emu_Resampler;
-#endif
 
 class Spc_Emu : public Music_Emu {
 public:
@@ -22,64 +15,60 @@ public:
 	// handled by resampling the 32kHz output; emulation accuracy is not affected.
 	enum { native_sample_rate = 32000 };
 	
-	// Disables annoying pseudo-surround effect some music uses
-	void disable_surround( bool disable = true )    { smp.dsp.disable_surround( disable ); }
-
-	// Enables gaussian, cubic or sinc interpolation
-	void interpolation_level( int level = 0 )   { smp.dsp.spc_dsp.interpolation_level( level ); }
-
-	// Enables an analog signal simulation filter
-	void enable_filter( bool enable = true ) { _enable_filter = enable; if (enable) filter.clear(); }
-
-	// Enables native echo
-	void enable_echo( bool enable = true ) { smp.dsp.spc_dsp.enable_echo( enable ); }
-	virtual void mute_effects( bool mute ) { enable_echo(!mute); }
-
-    SuperFamicom::SMP const* get_smp() const;
-    SuperFamicom::SMP * get_smp();
-	
 	// SPC file header
-    enum { header_size = 0x100 };
+	enum { header_size = 0x100 };
 	struct header_t
 	{
-		char tag       [35];
+		char tag [35];
 		byte format;
 		byte version;
-		byte pc        [ 2];
+		byte pc [2];
 		byte a, x, y, psw, sp;
-		byte unused    [ 2];
-		char song      [32];
-		char game      [32];
-		char dumper    [16];
-		char comment   [32];
-		byte date      [11];
-		byte len_secs  [ 3];
-		byte fade_msec [ 4];
-		char author    [32]; // sometimes first char should be skipped (see official SPC spec)
+		byte unused [2];
+		char song [32];
+		char game [32];
+		char dumper [16];
+		char comment [32];
+		byte date [11];
+		byte len_secs [3];
+		byte fade_msec [4];
+		char author [32]; // sometimes first char should be skipped (see official SPC spec)
 		byte mute_mask;
 		byte emulator;
-		byte unused2   [46];
+		byte unused2 [46];
 	};
 	
-    // Header for currently loaded file
-    header_t const& header() const { return *(header_t const*) file_data; }
-
+	// Header for currently loaded file
+	header_t const& header() const { return *(header_t const*) file_data; }
+	
+	// Prevents channels and global volumes from being phase-negated
+	void disable_surround( bool disable = true );
+	
+	// Enables gaussian=0, cubic=1 or sinc=2 interpolation
+	// Or negative levels for worse quality, linear=-1 or nearest=-2
+	void interpolation_level( int level = 0 );
+	
+	// Enables native echo
+	void enable_echo( bool enable = true );
+	void mute_effects( bool mute );
+	
+	SuperFamicom::SMP const* get_smp() const;
+	SuperFamicom::SMP * get_smp();
+	
 	static gme_type_t static_type()                 { return gme_spc_type; }
+	
+public:
+	// deprecated
+	using Music_Emu::load;
+	blargg_err_t load( header_t const& h, Data_Reader& in ) // use Remaining_Reader
+			{ return load_remaining_( &h, sizeof h, in ); }
+	byte const* trailer() const; // use track_info()
+	long trailer_size() const;
 
 public:
-    // deprecated
-    using Music_Emu::load;
-    blargg_err_t load( header_t const& h, Data_Reader& in ) // use Remaining_Reader
-            { return load_remaining_( &h, sizeof h, in ); }
-    byte const* trailer() const; // use track_info()
-    long trailer_size() const;
-
-// Implementation
-public:
-    Spc_Emu( gme_type_t );
-    Spc_Emu() : Spc_Emu( gme_spc_type ) {}
+	Spc_Emu( gme_type_t );
+	Spc_Emu() : Spc_Emu( gme_spc_type ) {}
 	~Spc_Emu();
-
 protected:
 	blargg_err_t load_mem_( byte const*, long );
 	blargg_err_t track_info_( track_info_t*, int track ) const;
@@ -89,21 +78,38 @@ protected:
 	blargg_err_t skip_( long );
 	void mute_voices_( int );
 	void set_tempo_( double );
-    void enable_accuracy_( bool );
-    byte const* file_data;
-    long        file_size;
-
+	void enable_accuracy_( bool );
+	byte const* file_data;
+	long        file_size;
 private:
-	Spc_Emu_Resampler resampler;
+	Fir_Resampler<24> resampler;
 	SPC_Filter filter;
-    SuperFamicom::SMP smp;
-
-	bool _enable_filter;
+	SuperFamicom::SMP smp;
 	
 	blargg_err_t play_and_filter( long count, sample_t out [] );
 };
 
+inline void Spc_Emu::disable_surround( bool disable ) { smp.dsp.disable_surround( disable ); }
+inline void Spc_Emu::interpolation_level( int level ) { smp.dsp.spc_dsp.interpolation_level( level ); }
+inline void Spc_Emu::enable_echo( bool enable ) { smp.dsp.spc_dsp.enable_echo( enable ); }
+inline void Spc_Emu::mute_effects( bool mute ) { enable_echo(!mute); }
 inline SuperFamicom::SMP const* Spc_Emu::get_smp() const { return &smp; }
 inline SuperFamicom::SMP * Spc_Emu::get_smp() { return &smp; }
+
+class Rsn_Emu : public Spc_Emu {
+public:
+	Rsn_Emu() : Spc_Emu( gme_rsn_type ) { is_archive = true; }
+	~Rsn_Emu();
+	blargg_err_t load_archive( const char* );
+	header_t const& header( int track ) const { return *(header_t const*) spc[track]; }
+	byte const* trailer( int ) const; // use track_info()
+	long trailer_size( int ) const;
+protected:
+	blargg_err_t track_info_( track_info_t*, int ) const;
+	blargg_err_t start_track_( int );
+private:
+	blargg_vector<byte> rsn;
+	blargg_vector<byte*> spc;
+};
 
 #endif

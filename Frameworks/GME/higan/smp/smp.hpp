@@ -1,7 +1,7 @@
 #ifndef _higan_smp_h_
 #define _higan_smp_h_
 
-#include "blargg_common.h"
+#include "../../gme/blargg_common.h"
 
 #include "../processor/spc700/spc700.hpp"
 

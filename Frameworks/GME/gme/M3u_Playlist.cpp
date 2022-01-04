@@ -334,9 +334,9 @@ static void parse_comment( char* in, M3u_Playlist::info_t& info, char *& last_co
 {
 	in = skip_white( in + 1 );
 	const char* field = in;
-    if ( *field != '@' )
-        while ( *in && *in != ':' )
-            in++;
+	if ( *field != '@' )
+		while ( *in && *in != ':' )
+			in++;
 	
 	if ( *in == ':' )
 	{
@@ -348,9 +348,9 @@ static void parse_comment( char* in, M3u_Playlist::info_t& info, char *& last_co
 			else if ( !strcmp( "Engineer" , field ) ) info.engineer  = text;
 			else if ( !strcmp( "Ripping"  , field ) ) info.ripping   = text;
 			else if ( !strcmp( "Tagging"  , field ) ) info.tagging   = text;
-            else if ( !strcmp( "Game"     , field ) ) info.title     = text;
-            else if ( !strcmp( "Artist"   , field ) ) info.artist    = text;
-            else if ( !strcmp( "Copyright", field ) ) info.copyright = text;
+			else if ( !strcmp( "Game"     , field ) ) info.title     = text;
+			else if ( !strcmp( "Artist"   , field ) ) info.artist    = text;
+			else if ( !strcmp( "Copyright", field ) ) info.copyright = text;
 			else
 				text = 0;
 			if ( text )
@@ -358,44 +358,43 @@ static void parse_comment( char* in, M3u_Playlist::info_t& info, char *& last_co
 			*in = ':';
 		}
 	}
-    else if ( *field == '@' )
-    {
-        ++field;
-        in = (char*)field;
-        while ( *in && *in > ' ' )
-            in++;
-        const char* text = skip_white( in );
-        if ( *text )
-        {
-            char saved = *in;
-            *in = 0;
-                 if ( !strcmp( "TITLE"    , field ) ) info.title     = text;
-            else if ( !strcmp( "ARTIST"   , field ) ) info.artist    = text;
-            else if ( !strcmp( "DATE"     , field ) ) info.date      = text;
-            else if ( !strcmp( "COMPOSER" , field ) ) info.composer  = text;
-            else if ( !strcmp( "SEQUENCER", field ) ) info.sequencer = text;
-            else if ( !strcmp( "ENGINEER" , field ) ) info.engineer  = text;
-            else if ( !strcmp( "RIPPER"   , field ) ) info.ripping   = text;
-            else if ( !strcmp( "TAGGER"   , field ) ) info.tagging   = text;
-            else
-                text = 0;
-            if ( text )
-            {
-                last_comment_value = (char*)text;
-                return;
-            }
-        }
-    }
-    else if ( last_comment_value )
-    {
-        size_t len = strlen( last_comment_value );
-        last_comment_value[ len ] = ',';
-        last_comment_value[ len + 1 ] = ' ';
-        size_t field_len = strlen( field );
-        memmove( last_comment_value + len + 2, field, field_len );
-        last_comment_value[ len + 2 + field_len ] = 0;
-        return;
-    }
+	else if ( *field == '@' )
+	{
+		++field;
+		in = (char*)field;
+		while ( *in && *in > ' ' )
+			in++;
+		const char* text = skip_white( in );
+		if ( *text )
+		{
+			*in = 0;
+			     if ( !strcmp( "TITLE"    , field ) ) info.title     = text;
+			else if ( !strcmp( "ARTIST"   , field ) ) info.artist    = text;
+			else if ( !strcmp( "DATE"     , field ) ) info.date      = text;
+			else if ( !strcmp( "COMPOSER" , field ) ) info.composer  = text;
+			else if ( !strcmp( "SEQUENCER", field ) ) info.sequencer = text;
+			else if ( !strcmp( "ENGINEER" , field ) ) info.engineer  = text;
+			else if ( !strcmp( "RIPPER"   , field ) ) info.ripping   = text;
+			else if ( !strcmp( "TAGGER"   , field ) ) info.tagging   = text;
+			else
+				text = 0;
+			if ( text )
+			{
+				last_comment_value = (char*)text;
+				return;
+			}
+		}
+	}
+	else if ( last_comment_value )
+	{
+		size_t len = strlen( last_comment_value );
+		last_comment_value[ len ] = ',';
+		last_comment_value[ len + 1 ] = ' ';
+		size_t field_len = strlen( field );
+		memmove( last_comment_value + len + 2, field, field_len );
+		last_comment_value[ len + 2 + field_len ] = 0;
+		return;
+	}
 	
 	if ( first )
 		info.title = field;
@@ -404,14 +403,14 @@ static void parse_comment( char* in, M3u_Playlist::info_t& info, char *& last_co
 blargg_err_t M3u_Playlist::parse_()
 {
 	info_.title     = "";
-    info_.artist    = "";
-    info_.date      = "";
+	info_.artist    = "";
+	info_.date      = "";
 	info_.composer  = "";
-    info_.sequencer = "";
+	info_.sequencer = "";
 	info_.engineer  = "";
 	info_.ripping   = "";
 	info_.tagging   = "";
-    info_.copyright = "";
+	info_.copyright = "";
 	
 	int const CR = 13;
 	int const LF = 10;
@@ -423,7 +422,7 @@ blargg_err_t M3u_Playlist::parse_()
 	int line  = 0;
 	int count = 0;
 	char* in  = data.begin();
-    char* last_comment_value = 0;
+	char* last_comment_value = 0;
 	while ( in < data.end() )
 	{
 		// find end of line and terminate it
@@ -456,7 +455,7 @@ blargg_err_t M3u_Playlist::parse_()
 				first_error_ = line;
 			first_comment = false;
 		}
-        else last_comment_value = 0;
+		else last_comment_value = 0;
 	}
 	if ( count <= 0 )
 		return "Not an m3u playlist";

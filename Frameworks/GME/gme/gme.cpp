@@ -55,7 +55,8 @@ gme_type_t const* gme_type_list()
 	#endif
 	#ifdef USE_GME_SPC
 	            gme_spc_type,
-                gme_sfm_type,
+				gme_rsn_type,
+	            gme_sfm_type,
 	#endif
 	#ifdef USE_GME_VGM
 	            gme_vgm_type,
@@ -82,6 +83,8 @@ const char* gme_identify_header( void const* header )
 		case BLARGG_4CHAR('N','S','F','E'):  return "NSFE";
 		case BLARGG_4CHAR('S','A','P',0x0D): return "SAP";
 		case BLARGG_4CHAR('S','N','E','S'):  return "SPC";
+		case BLARGG_4CHAR('R','a','r','!'):  return "RSN";
+		case BLARGG_4CHAR('V','g','m',' '):  return "VGM";
 	}
 	if (get_be16(header) == BLARGG_2CHAR(0x1F, 0x8B))
 		return "VGZ";

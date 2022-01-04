@@ -183,24 +183,24 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 	out->loop_length   = -1;
 	out->intro_length  = -1;
 	out->fade_length   = -1;
-    out->play_length   = -1;
-    out->repeat_count  = -1;
+	out->play_length   = -1;
+	out->repeat_count  = -1;
 	out->song [0]      = 0;
 	
 	out->game [0]      = 0;
 	out->author [0]    = 0;
-    out->composer [0]  = 0;
-    out->engineer [0]  = 0;
-    out->sequencer [0] = 0;
-    out->tagger [0]    = 0;
+	out->composer [0]  = 0;
+	out->engineer [0]  = 0;
+	out->sequencer [0] = 0;
+	out->tagger [0]    = 0;
 	out->copyright [0] = 0;
-    out->date [0]      = 0;
+	out->date [0]      = 0;
 	out->comment [0]   = 0;
 	out->dumper [0]    = 0;
 	out->system [0]    = 0;
-    out->disc [0]      = 0;
-    out->track [0]     = 0;
-    out->ost [0]       = 0;
+	out->disc [0]      = 0;
+	out->track [0]     = 0;
+	out->ost [0]       = 0;
 	
 	copy_field_( out->system, type()->system );
 	
@@ -214,13 +214,13 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 		M3u_Playlist::info_t const& i = playlist.info();
 		copy_field_( out->game  , i.title );
 		copy_field_( out->author, i.artist );
-        copy_field_( out->engineer, i.engineer );
-        copy_field_( out->composer, i.composer );
-        copy_field_( out->sequencer, i.sequencer );
-        copy_field_( out->copyright, i.copyright );
-        copy_field_( out->dumper, i.ripping );
-        copy_field_( out->tagger, i.tagging );
-        copy_field_( out->date, i.date );
+		copy_field_( out->engineer, i.engineer );
+		copy_field_( out->composer, i.composer );
+		copy_field_( out->sequencer, i.sequencer );
+		copy_field_( out->copyright, i.copyright );
+		copy_field_( out->dumper, i.ripping );
+		copy_field_( out->tagger, i.tagging );
+		copy_field_( out->date, i.date );
 		
 		M3u_Playlist::entry_t const& e = playlist [track];
 		copy_field_( out->song, e.name );
@@ -228,7 +228,7 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 		if ( e.intro  >= 0 ) out->intro_length = e.intro;
 		if ( e.loop   >= 0 ) out->loop_length  = e.loop;
 		if ( e.fade   >= 0 ) out->fade_length  = e.fade;
-        if ( e.repeat >= 0 ) out->repeat_count = e.repeat;
+		if ( e.repeat >= 0 ) out->repeat_count = e.repeat;
 	}
 	return 0;
 }

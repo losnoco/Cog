@@ -1,4 +1,4 @@
-// Game_Music_Emu $vers. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Nes_Fds_Apu.h"
 

@@ -104,6 +104,10 @@ if (USE_GME_NSF OR USE_GME_NSFE)
                 Nes_Namco_Apu.cpp
                 Nes_Oscs.cpp
                 Nes_Vrc6_Apu.cpp
+                Nes_Fds_Apu.cpp
+                Nes_Vrc7_Apu.cpp
+                ../ext/emu2413.c
+                ../ext/panning.c
                 Nsf_Emu.cpp
         )
 endif()
@@ -124,11 +128,19 @@ endif()
 
 if (USE_GME_SPC)
     set(libgme_SRCS ${libgme_SRCS}
+                ../higan/processor/spc700/spc700.cpp
+                ../higan/smp/memory.cpp
+                ../higan/smp/timing.cpp
+                ../higan/smp/smp.cpp
+                ../higan/dsp/dsp.cpp
+                ../higan/dsp/SPC_DSP.cpp
                 Snes_Spc.cpp
                 Spc_Cpu.cpp
                 Spc_Dsp.cpp
                 Spc_Emu.cpp
                 Spc_Filter.cpp
+                Bml_Parser.cpp
+                Spc_Sfm.cpp
         )
     if (GME_SPC_ISOLATED_ECHO_BUFFER)
         add_definitions(-DSPC_ISOLATED_ECHO_BUFFER)

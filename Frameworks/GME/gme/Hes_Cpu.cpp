@@ -875,7 +875,7 @@ possibly_out_of_time:
 	case 0xD6: // DEC zp,x
 		data = uint8_t (data + x);/*FALLTHRU*/
 	case 0xC6: // DEC zp
-		nz = (unsigned) -1;
+		nz = (uint_fast16_t)-1;
 	add_nz_zp:
 		nz += READ_LOW( data );
 	write_nz_zp:
@@ -900,7 +900,7 @@ possibly_out_of_time:
 	case 0xCE: // DEC abs
 		data = GET_ADDR();
 	dec_ptr:
-		nz = (unsigned) -1;
+		nz = (uint_fast16_t) -1;
 	inc_common:
 		FLUSH_TIME();
 		nz += READ( data );
@@ -1037,7 +1037,7 @@ possibly_out_of_time:
 // Flags
 
 	case 0x38: // SEC
-		c = (unsigned) ~0;
+		c = (uint_fast16_t) ~0;
 		goto loop;
 
 	case 0x18: // CLC

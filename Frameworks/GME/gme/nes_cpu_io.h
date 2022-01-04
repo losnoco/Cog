@@ -3,8 +3,8 @@
 
 #if !NSF_EMU_APU_ONLY
 	#include "Nes_Namco_Apu.h"
-    #include "Nes_Fds_Apu.h"
-    #include "Nes_Mmc5_Apu.h"
+	#include "Nes_Fds_Apu.h"
+	#include "Nes_Mmc5_Apu.h"
 #endif
 
 #include "blargg_source.h"
@@ -31,17 +31,17 @@ int Nsf_Emu::cpu_read( nes_addr_t addr )
 	#if !NSF_EMU_APU_ONLY
 		if ( addr == Nes_Namco_Apu::data_reg_addr && namco )
 			return namco->read_data();
-    
-        if ( (unsigned) (addr - Nes_Fds_Apu::io_addr) < Nes_Fds_Apu::io_size && fds )
-            return fds->read( time(), addr );
-    
-        i = addr - 0x5C00;
-        if ( (unsigned) i < mmc5->exram_size && mmc5 )
-            return mmc5->exram [i];
-    
-        i = addr - 0x5205;
-        if ( (unsigned) i < 2 && mmc5 )
-            return ((mmc5_mul [0] * mmc5_mul [1]) >> (i * 8)) & 0xFF;
+		
+		if ( (unsigned) (addr - Nes_Fds_Apu::io_addr) < Nes_Fds_Apu::io_size && fds )
+			return fds->read( time(), addr );
+		
+		i = addr - 0x5C00;
+		if ( (unsigned) i < mmc5->exram_size && mmc5 )
+			return mmc5->exram [i];
+		
+		i = addr - 0x5205;
+		if ( (unsigned) i < 2 && mmc5 )
+			return ((mmc5_mul [0] * mmc5_mul [1]) >> (i * 8)) & 0xFF;
 	#endif
 	
 	result = addr >> 8; // simulate open bus

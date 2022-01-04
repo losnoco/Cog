@@ -1,6 +1,7 @@
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
+
 // NES FDS sound chip emulator
 
-// $package
 #ifndef NES_FDS_APU_H
 #define NES_FDS_APU_H
 
@@ -60,7 +61,7 @@ private:
 	// synthesis
 	blip_time_t last_time;
 	Blip_Buffer* output_;
-    Blip_Synth<blip_med_quality,1> synth;
+	Blip_Synth<blip_med_quality,1> synth;
 	
 	// allow access to registers by absolute address (i.e. 0x4080)
 	unsigned char& regs( unsigned addr ) { return regs_ [addr - io_addr]; }
