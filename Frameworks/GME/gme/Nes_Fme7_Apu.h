@@ -1,6 +1,6 @@
 // Sunsoft FME-7 sound emulator
 
-// $package
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 #ifndef NES_FME7_APU_H
 #define NES_FME7_APU_H
 
@@ -10,10 +10,10 @@
 struct fme7_apu_state_t
 {
 	enum { reg_count = 14 };
-	BOOST::uint8_t regs [reg_count];
-	BOOST::uint8_t phases [3]; // 0 or 1
-	BOOST::uint8_t latch;
-	BOOST::uint16_t delays [3]; // a, b, c
+	uint8_t regs [reg_count];
+	uint8_t phases [3]; // 0 or 1
+	uint8_t latch;
+	uint16_t delays [3]; // a, b, c
 };
 
 class Nes_Fme7_Apu : private fme7_apu_state_t {
@@ -22,9 +22,9 @@ public:
 	void reset();
 	void volume( double );
 	void treble_eq( blip_eq_t const& );
-	void set_output( Blip_Buffer* );
+	void output( Blip_Buffer* );
 	enum { osc_count = 3 };
-	void set_output( int index, Blip_Buffer* );
+	void osc_output( int index, Blip_Buffer* );
 	void end_frame( blip_time_t );
 	void save_state( fme7_apu_state_t* ) const;
 	void load_state( fme7_apu_state_t const& );
@@ -57,7 +57,7 @@ private:
 	blip_time_t last_time;
 	
 	enum { amp_range = 192 }; // can be any value; this gives best error/quality tradeoff
-	Blip_Synth_Norm synth;
+	Blip_Synth<blip_good_quality,1> synth;
 	
 	void run_until( blip_time_t );
 };
@@ -72,21 +72,21 @@ inline void Nes_Fme7_Apu::treble_eq( blip_eq_t const& eq )
 	synth.treble_eq( eq );
 }
 
-inline void Nes_Fme7_Apu::set_output( int i, Blip_Buffer* buf )
+inline void Nes_Fme7_Apu::osc_output( int i, Blip_Buffer* buf )
 {
 	assert( (unsigned) i < osc_count );
 	oscs [i].output = buf;
 }
 
-inline void Nes_Fme7_Apu::set_output( Blip_Buffer* buf )
+inline void Nes_Fme7_Apu::output( Blip_Buffer* buf )
 {
-	for ( int i = 0; i < osc_count; ++i )
-		set_output( i, buf );
+	for ( int i = 0; i < osc_count; i++ )
+		osc_output( i, buf );
 }
 
 inline Nes_Fme7_Apu::Nes_Fme7_Apu()
 {
-	set_output( NULL );
+	output( NULL );
 	volume( 1.0 );
 	reset();
 }
@@ -97,8 +97,8 @@ inline void Nes_Fme7_Apu::write_data( blip_time_t time, int data )
 {
 	if ( (unsigned) latch >= reg_count )
 	{
-		#ifdef dprintf
-			dprintf( "FME7 write to %02X (past end of sound registers)\n", (int) latch );
+		#ifdef debug_printf
+			debug_printf( "FME7 write to %02X (past end of sound registers)\n", (int) latch );
 		#endif
 		return;
 	}

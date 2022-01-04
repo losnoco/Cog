@@ -1,8 +1,10 @@
-// Game_Music_Emu $vers. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Sap_Apu.h"
 
-/* Copyright (C) 2006-2008 Shay Green. This module is free software; you
+#include <string.h>
+
+/* Copyright (C) 2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
 General Public License as published by the Free Software Foundation; either
 version 2.1 of the License, or (at your option) any later version. This
@@ -17,9 +19,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 int const max_frequency = 12000; // pure waves above this frequency are silenced
 
-static void gen_poly( unsigned mask, int count, byte out [] )
+static void gen_poly( blargg_ulong mask, int count, byte* out )
 {
-	unsigned n = 1;
+	blargg_ulong n = 1;
 	do
 	{
 		int bits = 0;
@@ -28,7 +30,7 @@ static void gen_poly( unsigned mask, int count, byte out [] )
 		{
 			// implemented using "Galios configuration"
 			bits |= (n & 1) << b;
-			n = (n >> 1) ^ (mask * (n & 1));
+			n = (n >> 1) ^ (mask & -(n & 1));
 		}
 		while ( b++ < 7 );
 		*out++ = bits;
@@ -38,16 +40,16 @@ static void gen_poly( unsigned mask, int count, byte out [] )
 
 // poly5
 int const poly5_len = (1 <<  5) - 1;
-unsigned const poly5_mask = (1U << poly5_len) - 1;
-unsigned const poly5 = 0x167C6EA1;
+blargg_ulong const poly5_mask = (1UL << poly5_len) - 1;
+blargg_ulong const poly5 = 0x167C6EA1;
 
-inline unsigned run_poly5( unsigned in, int shift )
+inline blargg_ulong run_poly5( blargg_ulong in, int shift )
 {
 	return (in << shift & poly5_mask) | (in >> (poly5_len - shift));
 }
 
 #define POLY_MASK( width, tap1, tap2 ) \
-	((1U << (width - 1 - tap1)) | (1U << (width - 1 - tap2)))
+	((1UL << (width - 1 - tap1)) | (1UL << (width - 1 - tap2)))
 
 Sap_Apu_Impl::Sap_Apu_Impl()
 {
@@ -59,25 +61,20 @@ Sap_Apu_Impl::Sap_Apu_Impl()
 	{
 		byte poly5 [4];
 		gen_poly( POLY_MASK(  5, 2, 0 ), sizeof poly5,  poly5  );
-		unsigned n = poly5 [3] * 0x1000000 + poly5 [2] * 0x10000 + 
-				poly5 [1] * 0x100 + poly5 [0];
-		unsigned rev = n & 1;
+		blargg_ulong n = poly5 [3] * 0x1000000L + poly5 [2] * 0x10000L + 
+				poly5 [1] * 0x100L + poly5 [0];
+		blargg_ulong rev = n & 1;
 		for ( int i = 1; i < poly5_len; i++ )
 			rev |= (n >> i & 1) << (poly5_len - i);
-		dprintf( "poly5: 0x%08lX\n", rev );
+		debug_printf( "poly5: 0x%08lX\n", rev );
 	}
-}
-
-void Sap_Apu::set_output( Blip_Buffer* b )
-{
-	for ( int i = 0; i < osc_count; ++i )
-		set_output( i, b );
 }
 
 Sap_Apu::Sap_Apu()
 {
-	impl = NULL;
-	set_output( NULL );
+	impl = 0;
+	for ( int i = 0; i < osc_count; i++ )
+		osc_output( i, 0 );
 }
 
 void Sap_Apu::reset( Sap_Apu_Impl* new_impl )
@@ -105,19 +102,19 @@ inline void Sap_Apu::calc_periods()
 		osc_t* const osc = &oscs [i];
 		
 		int const osc_reload = osc->regs [0]; // cache
-		int period = (osc_reload + 1) * divider;
+		blargg_long period = (osc_reload + 1) * divider;
 		static byte const fast_bits [osc_count] = { 1 << 6, 1 << 4, 1 << 5, 1 << 3 };
 		if ( this->control & fast_bits [i] )
 		{
 			period = osc_reload + 4;
 			if ( i & 1 )
 			{
-				period = osc_reload * 0x100 + osc [-1].regs [0] + 7;
+				period = osc_reload * 0x100L + osc [-1].regs [0] + 7;
 				if ( !(this->control & fast_bits [i - 1]) )
 					period = (period - 6) * divider;
 				
 				if ( (osc [-1].regs [1] & 0x1F) > 0x10 )
-					dprintf( "Use of slave channel in 16-bit mode not supported\n" );
+					debug_printf( "Use of slave channel in 16-bit mode not supported\n" );
 			}
 		}
 		osc->period = period;
@@ -149,6 +146,8 @@ void Sap_Apu::run_until( blip_time_t end_time )
 		Blip_Buffer* output = osc->output;
 		if ( output )
 		{
+			output->set_modified();
+			
 			int const osc_control = osc->regs [1]; // cache
 			int volume = (osc_control & 0x0F) * 2;
 			if ( !volume || osc_control & 0x10 || // silent, DAC mode, or inaudible frequency
@@ -161,7 +160,6 @@ void Sap_Apu::run_until( blip_time_t end_time )
 				if ( delta )
 				{
 					osc->last_amp = volume;
-					output->set_modified();
 					impl->synth.offset( last_time, delta, output );
 				}
 				
@@ -210,7 +208,7 @@ void Sap_Apu::run_until( blip_time_t end_time )
 					poly_inc -= poly_len; // allows more optimized inner loop below
 					
 					// square/poly5 wave
-					unsigned wave = poly5;
+					blargg_ulong wave = poly5;
 					check( poly5 & 1 ); // low bit is set for pure wave
 					int poly5_inc = 0;
 					if ( !(osc_control & 0x80) )
@@ -218,8 +216,6 @@ void Sap_Apu::run_until( blip_time_t end_time )
 						wave = run_poly5( wave, (osc->delay + poly5_pos) % poly5_len );
 						poly5_inc = period % poly5_len;
 					}
-					
-					output->set_modified();
 					
 					// Run wave and high pass interleved with each catching up to the other.
 					// Disabled high pass has no performance effect since inner wave loop
@@ -251,7 +247,7 @@ void Sap_Apu::run_until( blip_time_t end_time )
 						{
 							if ( wave & 1 )
 							{
-								int amp = volume * (poly [poly_pos >> 3] >> (poly_pos & 7) & 1);
+								int amp = volume & -(poly [poly_pos >> 3] >> (poly_pos & 7) & 1);
 								if ( (poly_pos += poly_inc) < 0 )
 									poly_pos += poly_len;
 								int delta = amp - osc_last_amp;
@@ -285,7 +281,7 @@ void Sap_Apu::run_until( blip_time_t end_time )
 		blip_time_t remain = end_time - time;
 		if ( remain > 0 )
 		{
-			int count = (remain + period - 1) / period;
+			blargg_long count = (remain + period - 1) / period;
 			osc->phase ^= count;
 			time += count * period;
 		}
@@ -300,11 +296,11 @@ void Sap_Apu::run_until( blip_time_t end_time )
 	polym_pos += duration; // will get %'d on next call
 }
 
-void Sap_Apu::write_data( blip_time_t time, int addr, int data )
+void Sap_Apu::write_data( blip_time_t time, unsigned addr, int data )
 {
 	run_until( time );
-	int i = (addr - 0xD200) >> 1;
-	if ( (unsigned) i < osc_count )
+	int i = (addr ^ 0xD200) >> 1;
+	if ( i < osc_count )
 	{
 		oscs [i].regs [addr & 1] = data;
 	}
@@ -335,5 +331,4 @@ void Sap_Apu::end_frame( blip_time_t end_time )
 		run_until( end_time );
 	
 	last_time -= end_time;
-	assert( last_time >= 0 );
 }

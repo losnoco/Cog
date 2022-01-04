@@ -17,27 +17,39 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
+using std::min;
+using std::max;
+
 // TODO: support Spc_Filter's bass
 
-Spc_Emu::Spc_Emu()
+Spc_Emu::Spc_Emu( gme_type_t type )
 {
-	set_type( gme_spc_type );
-	set_gain( 1.4 );
-	enable_filter( false );
-	enable_echo( true );
+    set_type( type );
+    
+    set_voice_count( SuperFamicom::SPC_DSP::voice_count );
+    static const char* const names [SuperFamicom::SPC_DSP::voice_count] = {
+        "DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
+    };
+    set_voice_names( names );
+    
+    set_gain( 1.4 );
+
+    enable_filter( false );
+    enable_echo( true );
 }
 
 Spc_Emu::~Spc_Emu() { }
 
 // Track info
 
-int const trailer_offset = 0x10200;
+long const spc_size = 0x10200;
+long const head_size = Spc_Emu::header_size;
 
-inline byte const* Spc_Emu::trailer_() const { return &file_begin() [min( file_size(), trailer_offset )]; }
+byte const* Spc_Emu::trailer() const { return &file_data [min( file_size, spc_size )]; }
 
-inline int Spc_Emu::trailer_size_() const { return max( 0, file_size() - trailer_offset ); }
+long Spc_Emu::trailer_size() const { return max( 0L, file_size - spc_size ); }
 
-static void get_spc_xid6( byte const begin [], int size, track_info_t* out )
+static void get_spc_xid6( byte const begin [], long size, track_info_t* out )
 {
 	// header
 	byte const* end = begin + size;
@@ -46,17 +58,17 @@ static void get_spc_xid6( byte const begin [], int size, track_info_t* out )
 		check( false );
 		return;
 	}
-	int info_size = get_le32( begin + 4 );
+	long info_size = get_le32( begin + 4 );
 	byte const* in = begin + 8; 
 	if ( end - in > info_size )
 	{
-		dprintf( "SPC: Extra data after xid6\n" );
+		debug_printf( "SPC: Extra data after xid6\n" );
 		end = in + info_size;
 	}
 	
 	int year = 0;
 	char copyright [256 + 5];
-	int copyright_len = 0;
+	long copyright_len = 0;
 	int const year_len = 5;
 	int disc = 0, track = 0;
 	
@@ -70,7 +82,7 @@ static void get_spc_xid6( byte const begin [], int size, track_info_t* out )
 		in += 4;
 		if ( len > end - in )
 		{
-			dprintf( "SPC: xid6 goes past end" );
+			debug_printf( "SPC: xid6 goes past end" );
 			break; // block goes past end of data
 		}
 		
@@ -122,7 +134,7 @@ static void get_spc_xid6( byte const begin [], int size, track_info_t* out )
 			default:
 				if ( id < 0x01 || (id > 0x07 && id < 0x10) ||
 						(id > 0x14 && id < 0x30) || id > 0x36 )
-					dprintf( "SPC: Unknown xid6 block: %X\n", (int) id );
+					debug_printf( "SPC: Unknown xid6 block: %X\n", (int) id );
 				break;
 		}
 		if ( field )
@@ -186,7 +198,7 @@ static void get_spc_xid6( byte const begin [], int size, track_info_t* out )
 	check( in == end );
 }
 
-static void get_spc_info( Spc_Emu::header_t const& h, byte const xid6 [], int xid6_size,
+static void get_spc_info( Spc_Emu::header_t const& h, byte const xid6 [], long xid6_size,
 		track_info_t* out )
 {
 	// decode length (can be in text or binary format, sometimes ambiguous ugh)
@@ -243,33 +255,22 @@ static void get_spc_info( Spc_Emu::header_t const& h, byte const xid6 [], int xi
 		get_spc_xid6( xid6, xid6_size, out );
 }
 
-static void hash_spc_file( Spc_Emu::header_t const& h, byte const* data, int data_size, Music_Emu::Hash_Function& out )
-{
-	out.hash_( &h.format, sizeof(h.format) );
-	out.hash_( &h.version, sizeof(h.version) );
-	out.hash_( &h.pc[0], sizeof(h.pc) );
-	out.hash_( &h.a, sizeof(h.a) );
-	out.hash_( &h.x, sizeof(h.x) );
-	out.hash_( &h.y, sizeof(h.y) );
-	out.hash_( &h.psw, sizeof(h.psw) );
-	out.hash_( &h.sp, sizeof(h.sp) );
-	out.hash_( &h.unused[0], sizeof(h.unused) );
-	out.hash_( &h.emulator, sizeof(h.emulator) );
-	out.hash_( &h.unused2[0], sizeof(h.unused2) );
-	out.hash_( data, data_size );
-}
-
 blargg_err_t Spc_Emu::track_info_( track_info_t* out, int ) const
 {
-	get_spc_info( header(), trailer_(), trailer_size_(), out );
-	return blargg_ok;
+	get_spc_info( header(), trailer(), trailer_size(), out );
+	return 0;
+}
+
+void Spc_Emu::enable_accuracy_(bool enable)
+{
+    (void)enable;
 }
 
 static blargg_err_t check_spc_header( void const* header )
 {
 	if ( memcmp( header, "SNES-SPC700 Sound File Data", 27 ) )
-		return blargg_err_file_type;
-	return blargg_ok;
+		return gme_wrong_file_type;
+	return 0;
 }
 
 struct Spc_File : Gme_Info_
@@ -282,13 +283,13 @@ struct Spc_File : Gme_Info_
 	
 	blargg_err_t load_( Data_Reader& in )
 	{
-		int file_size = in.remain();
+		long file_size = in.remain();
 		if ( file_size < 0x10180 )
-			return blargg_err_file_type;
-		RETURN_ERR( in.read( &header, header.size ) );
+			return gme_wrong_file_type;
+		RETURN_ERR( in.read( &header, Spc_Emu::header_size ) );
 		RETURN_ERR( check_spc_header( header.tag ) );
-		int const xid6_offset = 0x10200;
-		RETURN_ERR( data.resize( blargg_min( xid6_offset - header.size, file_size - header.size ) ) );
+		long const xid6_offset = 0x10200;
+		RETURN_ERR( data.resize( min( xid6_offset - Spc_Emu::header_size, file_size - Spc_Emu::header_size ) ) );
 		RETURN_ERR( in.read( data.begin(), data.end() - data.begin() ) );
 		int xid6_size = file_size - xid6_offset;
 		if ( xid6_size > 0 )
@@ -296,38 +297,33 @@ struct Spc_File : Gme_Info_
 			RETURN_ERR( xid6.resize( xid6_size ) );
 			RETURN_ERR( in.read( xid6.begin(), xid6.size() ) );
 		}
-		return blargg_ok;
+		return 0;
 	}
 	
 	blargg_err_t track_info_( track_info_t* out, int ) const
 	{
 		get_spc_info( header, xid6.begin(), xid6.size(), out );
-		return blargg_ok;
-	}
-
-	blargg_err_t hash_( Hash_Function& out ) const
-	{
-		hash_spc_file( header, data.begin(), data.end() - data.begin(), out );
-		return blargg_ok;
+		return 0;
 	}
 };
 
 static Music_Emu* new_spc_emu () { return BLARGG_NEW Spc_Emu ; }
 static Music_Emu* new_spc_file() { return BLARGG_NEW Spc_File; }
 
-gme_type_t_ const gme_spc_type [1] = {{ "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 }};
+static gme_type_t_ const gme_spc_type_ = { "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 };
+extern gme_type_t const gme_spc_type = &gme_spc_type_;
 
 // Setup
 
-blargg_err_t Spc_Emu::set_sample_rate_( int sample_rate )
+blargg_err_t Spc_Emu::set_sample_rate_( long sample_rate )
 {
 	smp.power();
 	if ( sample_rate != native_sample_rate )
 	{
-		RETURN_ERR( resampler.resize_buffer( native_sample_rate / 20 * 2 ) );
-		RETURN_ERR( resampler.set_rate( (double) native_sample_rate / sample_rate ) ); // 0.9965 rolloff
+		RETURN_ERR( resampler.buffer_size( native_sample_rate / 20 * 2 ) );
+        resampler.time_ratio( (double) native_sample_rate / sample_rate, 0.9965 );
 	}
-	return blargg_ok;
+	return 0;
 }
 
 void Spc_Emu::mute_voices_( int m )
@@ -337,18 +333,15 @@ void Spc_Emu::mute_voices_( int m )
         smp.dsp.channel_enable( i, !( m & j ) );
 }
 
-blargg_err_t Spc_Emu::load_mem_( byte const in [], int size )
+blargg_err_t Spc_Emu::load_mem_( byte const* in, long size )
 {
-	assert( offsetof (header_t,unused2 [46]) == header_t::size );
-	set_voice_count( SuperFamicom::SPC_DSP::voice_count );
+	assert( offsetof (header_t,unused2 [46]) == header_size );
 	if ( size < 0x10180 )
-		return blargg_err_file_type;
-	
-	static const char* const names [ SuperFamicom::SPC_DSP::voice_count ] = {
-		"DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
-	};
-	set_voice_names( names );
-	
+		return gme_wrong_file_type;
+
+    file_data = in;
+    file_size = size;
+
 	return check_spc_header( in );
 }
 
@@ -365,7 +358,7 @@ blargg_err_t Spc_Emu::start_track_( int track )
 	resampler.clear();
 	filter.clear();
     smp.reset();
-    const byte * ptr = file_begin();
+    const byte * ptr = file_data;
     
     Spc_Emu::header_t & header = *(Spc_Emu::header_t*)ptr;
     ptr += sizeof(header);
@@ -399,22 +392,22 @@ blargg_err_t Spc_Emu::start_track_( int track )
         memset( &smp.apuram [addr], 0xFF, end - addr );
     }
 
-	filter.set_gain( (int) (gain() * Spc_Filter::gain_unit) );
-	return blargg_ok;
+	filter.set_gain( (int) (gain() * SPC_Filter::gain_unit) );
+	return 0;
 }
 
-blargg_err_t Spc_Emu::play_and_filter( int count, sample_t out [] )
+blargg_err_t Spc_Emu::play_and_filter( long count, sample_t out [] )
 {
 	smp.render( out, count );
 	filter.run( out, count );
-	return blargg_ok;
+	return 0;
 }
 
-blargg_err_t Spc_Emu::skip_( int count )
+blargg_err_t Spc_Emu::skip_( long count )
 {
 	if ( sample_rate() != native_sample_rate )
 	{
-		count = (int) (count * resampler.rate()) & ~1;
+		count = (long) (count * resampler.ratio()) & ~1;
 		count -= resampler.skip_input( count );
 	}
 	
@@ -429,36 +422,30 @@ blargg_err_t Spc_Emu::skip_( int count )
 	// eliminate pop due to resampler
 	if ( sample_rate() != native_sample_rate )
 	{
-		const int resampler_latency = 64;
+		const long resampler_latency = 64;
 		sample_t buf [resampler_latency];
 		return play_( resampler_latency, buf );
 	}
 
-	return blargg_ok;
+	return 0;
 }
 
-blargg_err_t Spc_Emu::play_( int count, sample_t out [] )
+blargg_err_t Spc_Emu::play_( long count, sample_t out [] )
 {
 	if ( sample_rate() == native_sample_rate )
 		return play_and_filter( count, out );
 	
-	int remain = count;
+	long remain = count;
 	while ( remain > 0 )
 	{
 		remain -= resampler.read( &out [count - remain], remain );
 		if ( remain > 0 )
 		{
-			int n = resampler.buffer_free();
+			long n = resampler.max_write();
 			RETURN_ERR( play_and_filter( n, resampler.buffer() ) );
 			resampler.write( n );
 		}
 	}
 	check( remain == 0 );
-	return blargg_ok;
-}
-
-blargg_err_t Spc_Emu::hash_( Hash_Function& out ) const
-{
-    hash_spc_file( header(), file_begin() + header_t::size, blargg_min( (size_t) ( 0x10200 - header_t::size ), (size_t) ( file_end() - file_begin() - header_t::size ) ), out );
-	return blargg_ok;
+	return 0;
 }

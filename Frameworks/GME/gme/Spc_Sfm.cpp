@@ -19,11 +19,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
+#ifndef _countof
+#define _countof(x) (sizeof((x))/sizeof((x)[0]))
+#endif
+
 // TODO: support Spc_Filter's bass
 
 Sfm_Emu::Sfm_Emu()
 {
     set_type( gme_sfm_type );
+    set_voice_count( SuperFamicom::SPC_DSP::voice_count );
+    static const char* const names [SuperFamicom::SPC_DSP::voice_count] = {
+        "DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
+    };
+    set_voice_names( names );
     set_gain( 1.4 );
     set_max_initial_silence( 30 );
 	set_silence_lookahead( 30 ); // Some SFMs may have a lot of initialization code
@@ -34,11 +43,6 @@ Sfm_Emu::Sfm_Emu()
 Sfm_Emu::~Sfm_Emu() { }
 
 // Track info
-
-static void hash_sfm_file( byte const* data, int data_size, Music_Emu::Hash_Function& out )
-{
-    out.hash_( data, data_size );
-}
 
 static void copy_field( char* out, size_t size, const Bml_Parser& in, char const* in_path )
 {
@@ -76,7 +80,7 @@ static void copy_info( track_info_t* out, const Bml_Parser& in )
 blargg_err_t Sfm_Emu::track_info_( track_info_t* out, int ) const
 {
     copy_info( out, metadata );
-    return blargg_ok;
+    return 0;
 }
 
 static void set_track_info( const track_info_t* in, Bml_Parser& out )
@@ -99,14 +103,14 @@ blargg_err_t Sfm_Emu::set_track_info_( const track_info_t* in, int )
 {
     ::set_track_info(in, metadata);
     
-    return blargg_ok;
+    return 0;
 }
 
 static blargg_err_t check_sfm_header( void const* header )
 {
     if ( memcmp( header, "SFM1", 4 ) )
-        return blargg_err_file_type;
-    return blargg_ok;
+        return gme_wrong_file_type;
+    return 0;
 }
 
 struct Sfm_File : Gme_Info_
@@ -121,7 +125,7 @@ struct Sfm_File : Gme_Info_
     {
         int file_size = in.remain();
         if ( file_size < Sfm_Emu::sfm_min_file_size )
-            return blargg_err_file_type;
+            return gme_wrong_file_type;
         RETURN_ERR( data.resize( file_size ) );
         RETURN_ERR( in.read( data.begin(), data.end() - data.begin() ) );
         RETURN_ERR( check_sfm_header( data.begin() ) );
@@ -130,57 +134,39 @@ struct Sfm_File : Gme_Info_
         int metadata_size = get_le32( data.begin() + 4 );
         metadata.parseDocument( (const char *)data.begin() + 8, metadata_size );
 		original_metadata_size = metadata_size;
-        return blargg_ok;
+        return 0;
     }
 
     blargg_err_t track_info_( track_info_t* out, int ) const
     {
         copy_info( out, metadata );
-        return blargg_ok;
+        return 0;
     }
     
     blargg_err_t set_track_info_( const track_info_t* in, int )
     {
         ::set_track_info( in, metadata );
-        return blargg_ok;
-    }
-
-    blargg_err_t hash_( Hash_Function& out ) const
-    {
-        hash_sfm_file( data.begin(), data.end() - data.begin(), out );
-        return blargg_ok;
-    }
-    
-    blargg_err_t save_( gme_writer_t writer, void* your_data ) const
-    {
-		std::string metadata_serialized;
-		metadata.serialize( metadata_serialized );
-		uint8_t meta_length[4];
-		set_le32( meta_length, (unsigned int) metadata_serialized.length() );
-        writer( your_data, "SFM1", 4 );
-		writer( your_data, meta_length, 4 );
-		writer( your_data, metadata_serialized.c_str(), metadata_serialized.length() );
-		writer( your_data, data.begin() + 4 + 4 + original_metadata_size, data.size() - (4 + 4 + original_metadata_size) );
-		return blargg_ok;
+        return 0;
     }
 };
 
 static Music_Emu* new_sfm_emu () { return BLARGG_NEW Sfm_Emu ; }
 static Music_Emu* new_sfm_file() { return BLARGG_NEW Sfm_File; }
 
-gme_type_t_ const gme_sfm_type [1] = {{ "Super Nintendo with log", 1, &new_sfm_emu, &new_sfm_file, "SFM", 0 }};
+static gme_type_t_ const gme_sfm_type_ = { "Super Nintendo with log", 1, &new_sfm_emu, &new_sfm_file, "SFM", 0 };
+extern gme_type_t const gme_sfm_type = &gme_sfm_type_;
 
 // Setup
 
-blargg_err_t Sfm_Emu::set_sample_rate_( int sample_rate )
+blargg_err_t Sfm_Emu::set_sample_rate_( long sample_rate )
 {
     smp.power();
     if ( sample_rate != native_sample_rate )
     {
-        RETURN_ERR( resampler.resize_buffer( native_sample_rate / 20 * 2 ) );
-        RETURN_ERR( resampler.set_rate( (double) native_sample_rate / sample_rate ) ); // 0.9965 rolloff
+        RETURN_ERR( resampler.buffer_size( native_sample_rate / 20 * 2 ) );
+        resampler.time_ratio( (double) native_sample_rate / sample_rate, 0.9965 );
     }
-    return blargg_ok;
+    return 0;
 }
 
 void Sfm_Emu::mute_voices_( int m )
@@ -190,26 +176,23 @@ void Sfm_Emu::mute_voices_( int m )
         smp.dsp.channel_enable( i, !( m & j ) );
 }
 
-blargg_err_t Sfm_Emu::load_mem_( byte const in [], int size )
+blargg_err_t Sfm_Emu::load_mem_( byte const in [], long size )
 {
-    set_voice_count( 8 );
     if ( size < Sfm_Emu::sfm_min_file_size )
-        return blargg_err_file_type;
-
-    static const char* const names [ 8 ] = {
-        "DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
-    };
-    set_voice_names( names );
+        return gme_wrong_file_type;
+    
+    file_data = in;
+    file_size = size;
 
     RETURN_ERR( check_sfm_header( in ) );
 
-    const byte * ptr = file_begin();
+    const byte * ptr = file_data;
     int metadata_size = get_le32(ptr + 4);
-    if ( file_size() < metadata_size + Sfm_Emu::sfm_min_file_size )
+    if ( file_size < metadata_size + Sfm_Emu::sfm_min_file_size )
         return "SFM file too small";
     metadata.parseDocument((const char *) ptr + 8, metadata_size);
     
-    return blargg_ok;
+    return 0;
 }
 
 // Emulation
@@ -241,7 +224,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     RETURN_ERR( Music_Emu::start_track_( track ) );
     resampler.clear();
     filter.clear();
-    const byte * ptr = file_begin();
+    const byte * ptr = file_data;
     int metadata_size = get_le32(ptr + 4);
 
     memcpy( smp.iplrom, ipl_rom, 64 );
@@ -253,7 +236,7 @@ blargg_err_t Sfm_Emu::start_track_( int track )
     memcpy( smp.dsp.spc_dsp.m.regs, ptr + 8 + metadata_size + 65536, 128 );
     
     const uint8_t* log_begin = ptr + 8 + metadata_size + 65536 + 128;
-    const uint8_t* log_end = ptr + file_size();
+    const uint8_t* log_end = ptr + file_size;
     size_t loop_begin = log_end - log_begin;
     
     char * end;
@@ -448,190 +431,24 @@ blargg_err_t Sfm_Emu::start_track_( int track )
         voice.hidden_env = META_ENUM_INT(name + "envcache", 0);
     }
 
-    filter.set_gain( (int) (gain() * Spc_Filter::gain_unit) );
-    return blargg_ok;
+    filter.set_gain( (int) (gain() * SPC_Filter::gain_unit) );
+    return 0;
 }
 
 #undef META_ENUM_INT
 
-void Sfm_Emu::create_updated_metadata( Bml_Parser &out ) const
-{
-    bool first;
-    std::string name;
-    std::ostringstream oss;
-    
-    metadata.serialize(name);
-    
-    out.parseDocument(name.c_str());
-    
-    out.setValue( "smp:test", (smp.status.clock_speed << 6) | (smp.status.timer_speed << 4) | (smp.status.timers_enable << 3) | (smp.status.ram_disable << 2) | (smp.status.ram_writable << 1) | (smp.status.timers_disable << 0) );
-    out.setValue( "smp:iplrom", smp.status.iplrom_enable );
-    out.setValue( "smp:dspaddr", smp.status.dsp_addr );
-    
-    oss.str("");
-    oss.clear();
-    oss << (unsigned long)smp.status.ram00f8 << "," << (unsigned long)smp.status.ram00f9;
-    out.setValue( "smp:ram", oss.str().c_str() );
-    
-    name = "smp:regs:";
-    out.setValue( name + "pc", smp.regs.pc );
-    out.setValue( name + "a", smp.regs.a );
-    out.setValue( name + "x", smp.regs.x );
-    out.setValue( name + "y", smp.regs.y );
-    out.setValue( name + "s", smp.regs.s );
-    out.setValue( name + "psw", smp.regs.p );
-    
-    oss.str("");
-    oss.clear();
-    first = true;
-    for (int i = 0; i < _countof(smp.sfm_last); i++)
-    {
-        if (!first) oss << ",";
-        oss << (unsigned long)smp.sfm_last[i];
-        first = false;
-    }
-    out.setValue("smp:ports", oss.str().c_str());
-    
-    for (int i = 0; i < 3; ++i)
-    {
-        SuperFamicom::SMP::Timer<192> const& t = (i == 0 ? smp.timer0 : (i == 1 ? smp.timer1 : *(SuperFamicom::SMP::Timer<192>*)&smp.timer2));
-        oss.str("");
-        oss.clear();
-        oss << "smp:timer[" << i << "]:";
-        name = oss.str();
-        out.setValue( name + "enable", t.enable );
-        out.setValue( name + "target", t.target );
-        oss.str("");
-        oss.clear();
-        oss << (unsigned long)t.stage0_ticks << "," << (unsigned long)t.stage1_ticks << ","
-        << (unsigned long)t.stage2_ticks << "," << (unsigned long)t.stage3_ticks;
-        out.setValue( name + "stage", oss.str().c_str() );
-        out.setValue( name + "line", t.current_line );
-    }
-    
-    out.setValue( "dsp:clock", smp.dsp.clock / 4096 );
-    
-    out.setValue( "dsp:echohistaddr", smp.dsp.spc_dsp.m.echo_hist_pos - smp.dsp.spc_dsp.m.echo_hist );
-    
-    oss.str("");
-    oss.clear();
-    for (int i = 0; i < 8; ++i)
-    {
-        oss << smp.dsp.spc_dsp.m.echo_hist[i][0] << ","
-        << smp.dsp.spc_dsp.m.echo_hist[i][1];
-        if ( i != 7 ) oss << ",";
-    }
-    out.setValue( "dsp:echohistdata", oss.str().c_str() );
-    
-    out.setValue( "dsp:sample", smp.dsp.spc_dsp.m.phase );
-    out.setValue( "dsp:kon", smp.dsp.spc_dsp.m.kon );
-    out.setValue( "dsp:noise", smp.dsp.spc_dsp.m.noise );
-    out.setValue( "dsp:counter", smp.dsp.spc_dsp.m.counter );
-    out.setValue( "dsp:echooffset", smp.dsp.spc_dsp.m.echo_offset );
-    out.setValue( "dsp:echolength", smp.dsp.spc_dsp.m.echo_length );
-    out.setValue( "dsp:koncache", smp.dsp.spc_dsp.m.new_kon );
-    out.setValue( "dsp:endx", smp.dsp.spc_dsp.m.endx_buf );
-    out.setValue( "dsp:envx", smp.dsp.spc_dsp.m.envx_buf );
-    out.setValue( "dsp:outx", smp.dsp.spc_dsp.m.outx_buf );
-    out.setValue( "dsp:pmon", smp.dsp.spc_dsp.m.t_pmon );
-    out.setValue( "dsp:non", smp.dsp.spc_dsp.m.t_non );
-    out.setValue( "dsp:eon", smp.dsp.spc_dsp.m.t_eon );
-    out.setValue( "dsp:dir", smp.dsp.spc_dsp.m.t_dir );
-    out.setValue( "dsp:koff", smp.dsp.spc_dsp.m.t_koff );
-    out.setValue( "dsp:brrnext", smp.dsp.spc_dsp.m.t_brr_next_addr );
-    out.setValue( "dsp:adsr0", smp.dsp.spc_dsp.m.t_adsr0 );
-    out.setValue( "dsp:brrheader", smp.dsp.spc_dsp.m.t_brr_header );
-    out.setValue( "dsp:brrdata", smp.dsp.spc_dsp.m.t_brr_byte );
-    out.setValue( "dsp:srcn", smp.dsp.spc_dsp.m.t_srcn );
-    out.setValue( "dsp:esa", smp.dsp.spc_dsp.m.t_esa );
-    out.setValue( "dsp:echodisable", !smp.dsp.spc_dsp.m.t_echo_enabled );
-    out.setValue( "dsp:diraddr", smp.dsp.spc_dsp.m.t_dir_addr );
-    out.setValue( "dsp:pitch", smp.dsp.spc_dsp.m.t_pitch );
-    out.setValue( "dsp:output", smp.dsp.spc_dsp.m.t_output );
-    out.setValue( "dsp:looped", smp.dsp.spc_dsp.m.t_looped );
-    out.setValue( "dsp:echoaddr", smp.dsp.spc_dsp.m.t_echo_ptr );
-    
-#define META_WRITE_LEVELS(n, o) \
-    oss.str(""); \
-    oss.clear(); \
-    oss << (o)[0] << "," << (o)[1]; \
-    out.setValue((n), oss.str().c_str());
-    
-    META_WRITE_LEVELS("dsp:mainout", smp.dsp.spc_dsp.m.t_main_out);
-    META_WRITE_LEVELS("dsp:echoout", smp.dsp.spc_dsp.m.t_echo_out);
-    META_WRITE_LEVELS("dsp:echoin", smp.dsp.spc_dsp.m.t_echo_in);
-    
-#undef META_WRITE_LEVELS
-    
-    for (int i = 0; i < 8; ++i)
-    {
-        oss.str("");
-        oss.clear();
-        oss << "dsp:voice[" << i << "]:";
-        name = oss.str();
-        SuperFamicom::SPC_DSP::voice_t const& voice = smp.dsp.spc_dsp.m.voices[i];
-        out.setValue( name + "brrhistaddr", voice.buf_pos );
-        oss.str("");
-        oss.clear();
-        for (int j = 0; j < SuperFamicom::SPC_DSP::brr_buf_size; ++j)
-        {
-            oss << voice.buf[j];
-            if ( j != SuperFamicom::SPC_DSP::brr_buf_size - 1 )
-                oss << ",";
-        }
-        out.setValue( name + "brrhistdata", oss.str().c_str() );
-        out.setValue( name + "interpaddr", voice.interp_pos );
-        out.setValue( name + "brraddr", voice.brr_addr );
-        out.setValue( name + "brroffset", voice.brr_offset );
-        out.setValue( name + "vbit", voice.vbit );
-        out.setValue( name + "vidx", voice.regs - smp.dsp.spc_dsp.m.regs);
-        out.setValue( name + "kondelay", voice.kon_delay );
-        out.setValue( name + "envmode", voice.env_mode );
-        out.setValue( name + "env", voice.env );
-        out.setValue( name + "envxout", voice.t_envx_out );
-        out.setValue( name + "envcache", voice.hidden_env );
-    }
-}
-
-blargg_err_t Sfm_Emu::save_( gme_writer_t writer, void* your_data ) const
-{
-    std::string meta_serialized;
-    
-    Bml_Parser metadata;
-    create_updated_metadata( metadata );
-    metadata.serialize( meta_serialized );
-
-    RETURN_ERR( writer( your_data, "SFM1", 4 ) );
-
-    uint8_t temp[4];
-    uint32_t meta_length = (uint32_t) meta_serialized.length();
-    set_le32( temp, meta_length );
-    RETURN_ERR( writer( your_data, temp, 4 ) );
-    
-    RETURN_ERR( writer( your_data, meta_serialized.c_str(), meta_length ) );
-
-    RETURN_ERR( writer( your_data, smp.apuram, 65536 ) );
-
-    RETURN_ERR( writer( your_data, smp.dsp.spc_dsp.m.regs, 128 ) );
-    
-    if ( smp.get_sfm_queue_remain() )
-        RETURN_ERR( writer( your_data, smp.get_sfm_queue(), smp.get_sfm_queue_remain() ) );
-    
-    return blargg_ok;
-}
-
-blargg_err_t Sfm_Emu::play_and_filter( int count, sample_t out [] )
+blargg_err_t Sfm_Emu::play_and_filter( long count, sample_t out [] )
 {
     smp.render( out, count );
     if ( _enable_filter ) filter.run( out, count );
-    return blargg_ok;
+    return 0;
 }
 
-blargg_err_t Sfm_Emu::skip_( int count )
+blargg_err_t Sfm_Emu::skip_( long count )
 {
     if ( sample_rate() != native_sample_rate )
     {
-        count = (int) (count * resampler.rate()) & ~1;
+        count = (long) (count * resampler.ratio()) & ~1;
         count -= resampler.skip_input( count );
     }
 
@@ -646,37 +463,30 @@ blargg_err_t Sfm_Emu::skip_( int count )
 	if ( sample_rate() != native_sample_rate )
 	{
 		// eliminate pop due to resampler
-		const int resampler_latency = 64;
+		const long resampler_latency = 64;
 		sample_t buf [resampler_latency];
 		return play_( resampler_latency, buf );
 	}
 
-	return blargg_ok;
+	return 0;
 }
 
-blargg_err_t Sfm_Emu::play_( int count, sample_t out [] )
+blargg_err_t Sfm_Emu::play_( long count, sample_t out [] )
 {
     if ( sample_rate() == native_sample_rate )
         return play_and_filter( count, out );
 
-    int remain = count;
+    long remain = count;
     while ( remain > 0 )
     {
         remain -= resampler.read( &out [count - remain], remain );
         if ( remain > 0 )
         {
-            int n = resampler.buffer_free();
+            int n = resampler.max_write();
             RETURN_ERR( play_and_filter( n, resampler.buffer() ) );
             resampler.write( n );
         }
     }
     check( remain == 0 );
-    return blargg_ok;
+    return 0;
 }
-
-blargg_err_t Sfm_Emu::hash_( Hash_Function& out ) const
-{
-    hash_sfm_file( file_begin(), file_size(), out );
-    return blargg_ok;
-}
-

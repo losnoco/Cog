@@ -1,7 +1,7 @@
 #include "Nes_Vrc7_Apu.h"
 
 extern "C" {
-#include "../vgmplay/chips/emu2413.h"
+#include "../ext/emu2413.h"
 }
 
 #include <string.h>
@@ -10,7 +10,7 @@ extern "C" {
 
 static unsigned char vrc7_inst[(16 + 3) * 8] =
 {
-#include "../vgmplay/chips/vrc7tone.h"
+#include "../ext/vrc7tone.h"
 };
 
 int const period = 36; // NES CPU clocks per FM clock

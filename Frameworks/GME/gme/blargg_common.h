@@ -1,243 +1,152 @@
 // Sets up common environment for Shay Green's libraries.
 // To change configuration options, modify blargg_config.h, not this file.
 
-// $package
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <limits.h>
 
-typedef const char* blargg_err_t; // 0 on success, otherwise error string
+#undef BLARGG_COMMON_H
+// allow blargg_config.h to #include blargg_common.h
+#include "blargg_config.h"
+#ifndef BLARGG_COMMON_H
+#define BLARGG_COMMON_H
 
-// Success; no error
-blargg_err_t const blargg_ok = 0;
-
-// BLARGG_RESTRICT: equivalent to C99's restrict, where supported
+// BLARGG_RESTRICT: equivalent to restrict, where supported
 #if __GNUC__ >= 3 || _MSC_VER >= 1100
 	#define BLARGG_RESTRICT __restrict
 #else
 	#define BLARGG_RESTRICT
 #endif
 
-#if __cplusplus >= 199711
-	#define BLARGG_MUTABLE mutable
-#else
-	#define BLARGG_MUTABLE
+// STATIC_CAST(T,expr): Used in place of static_cast<T> (expr)
+#ifndef STATIC_CAST
+	#define STATIC_CAST(T,expr) ((T) (expr))
 #endif
 
-/* BLARGG_4CHAR('a','b','c','d') = 'abcd' (four character integer constant).
-I don't just use 'abcd' because that's implementation-dependent. */
-#define BLARGG_4CHAR( a, b, c, d ) \
-	((a&0xFF)*0x1000000 + (b&0xFF)*0x10000 + (c&0xFF)*0x100 + (d&0xFF))
-
-/* BLARGG_STATIC_ASSERT( expr ): Generates compile error if expr is 0.
-Can be used at file, function, or class scope. */
-#ifdef _MSC_VER
-	// MSVC6 (_MSC_VER < 1300) __LINE__ fails when /Zl is specified
-	#define BLARGG_STATIC_ASSERT( expr )    \
-		void blargg_failed_( int (*arg) [2 / (int) !!(expr) - 1] )
-#else
-	// Others fail when declaring same function multiple times in class,
-	// so differentiate them by line
-	#define BLARGG_STATIC_ASSERT( expr )    \
-		void blargg_failed_( int (*arg) [2 / !!(expr) - 1] [__LINE__] )
+// blargg_err_t (0 on success, otherwise error string)
+#ifndef blargg_err_t
+	typedef const char* blargg_err_t;
 #endif
 
-/* Pure virtual functions cause a vtable entry to a "called pure virtual"
-error handler, requiring linkage to the C++ runtime library. This macro is
-used in place of the "= 0", and simply expands to its argument. During
-development, it expands to "= 0", allowing detection of missing overrides. */
-#define BLARGG_PURE( def ) def
-
-/* My code depends on ASCII anywhere a character or string constant is
-compared with data read from a file, and anywhere file data is read and
-treated as a string. */
-#if '\n'!=0x0A || ' '!=0x20 || '0'!=0x30 || 'A'!=0x41 || 'a'!=0x61
-	#error "ASCII character set required"
-#endif
-
-/* My code depends on int being at least 32 bits. Almost everything these days
-uses at least 32-bit ints, so it's hard to even find a system with 16-bit ints
-to test with. The issue can't be gotten around by using a suitable blargg_int
-everywhere either, because int is often converted to implicitly when doing
-arithmetic on smaller types. */
-#if UINT_MAX < 0xFFFFFFFF
-	#error "int must be at least 32 bits"
-#endif
-
-// In case compiler doesn't support these properly. Used rarely.
-#define STATIC_CAST(T,expr) static_cast<T> (expr)
-#define CONST_CAST( T,expr) const_cast<T> (expr)
-
-// User configuration can override the above macros if necessary
-#include "blargg_config.h"
-
-#ifdef BLARGG_NAMESPACE
-	#define BLARGG_NAMESPACE_BEGIN namespace BLARGG_NAMESPACE {
-	#define BLARGG_NAMESPACE_END }
-
-	BLARGG_NAMESPACE_BEGIN
-	BLARGG_NAMESPACE_END
-	using namespace BLARGG_NAMESPACE;
-#else
-	#define BLARGG_NAMESPACE_BEGIN
-	#define BLARGG_NAMESPACE_END
-#endif
-
-BLARGG_NAMESPACE_BEGIN
-
-/* BLARGG_DEPRECATED [_TEXT] for any declarations/text to be removed in a
-future version. In GCC, we can let the compiler warn. In other compilers,
-we strip it out unless BLARGG_LEGACY is true. */
-#if BLARGG_LEGACY
-	// Allow old client code to work without warnings
-	#define BLARGG_DEPRECATED_TEXT( text ) text
-	#define BLARGG_DEPRECATED(      text ) text
-#elif __GNUC__ >= 4
-	// In GCC, we can mark declarations and let the compiler warn
-	#define BLARGG_DEPRECATED_TEXT( text ) text
-	#define BLARGG_DEPRECATED(      text ) __attribute__ ((deprecated)) text
-#else
-	// By default, deprecated items are removed, to avoid use in new code
-	#define BLARGG_DEPRECATED_TEXT( text )
-	#define BLARGG_DEPRECATED(      text )
-#endif
-
-/* BOOST::int8_t, BOOST::int32_t, etc.
-I used BOOST since I originally was going to allow use of the boost library
-for prividing the definitions. If I'm defining them, they must be scoped or
-else they could conflict with the standard ones at global scope. Even if
-HAVE_STDINT_H isn't defined, I can't assume the typedefs won't exist at
-global scope already. */
-#if defined (HAVE_STDINT_H) || \
-		UCHAR_MAX != 0xFF || USHRT_MAX != 0xFFFF || UINT_MAX != 0xFFFFFFFF
-	#include <stdint.h>
-	#define BOOST
-#else
-	struct BOOST
-	{
-		typedef signed char        int8_t;
-		typedef unsigned char     uint8_t;
-		typedef short             int16_t;
-		typedef unsigned short   uint16_t;
-		typedef int               int32_t;
-		typedef unsigned int     uint32_t;
-		typedef __int64           int64_t;
-		typedef unsigned __int64 uint64_t;
-	};
-#endif
-
-/* My code is not written with exceptions in mind, so either uses new (nothrow)
-OR overrides operator new in my classes. The former is best since clients
-creating objects will get standard exceptions on failure, but that causes it
-to require the standard C++ library. So, when the client is using the C
-interface, I override operator new to use malloc. */
-
-// BLARGG_DISABLE_NOTHROW is put inside classes
-#ifndef BLARGG_DISABLE_NOTHROW
-	// throw spec mandatory in ISO C++ if NULL can be returned
-	#if __cplusplus >= 199711 || __GNUC__ >= 3 || _MSC_VER >= 1300
-		#define BLARGG_THROWS_NOTHING throw ()
-	#else
-		#define BLARGG_THROWS_NOTHING
-	#endif
-
-	#define BLARGG_DISABLE_NOTHROW \
-		void* operator new ( size_t s ) BLARGG_THROWS_NOTHING { return malloc( s ); }\
-		void operator delete( void* p ) BLARGG_THROWS_NOTHING { free( p ); }
-
-	#define BLARGG_NEW new
-#else
-	// BLARGG_NEW is used in place of new in library code
-	#include <new>
-	#define BLARGG_NEW new (std::nothrow)
-#endif
-
-	class blargg_vector_ {
-	protected:
-		void* begin_;
-		size_t size_;
-		void init();
-		blargg_err_t resize_( size_t n, size_t elem_size );
-	public:
-		size_t size() const { return size_; }
-		void clear();
-	};
-
-// Very lightweight vector for POD types (no constructor/destructor)
+// blargg_vector - very lightweight vector of POD types (no constructor/destructor)
 template<class T>
-class blargg_vector : public blargg_vector_ {
-	union T_must_be_pod { T t; }; // fails if T is not POD
+class blargg_vector {
+	T* begin_;
+	size_t size_;
 public:
-	blargg_vector()         { init(); }
-	~blargg_vector()        { clear(); }
-
-	blargg_err_t resize( size_t n ) { return resize_( n, sizeof (T) ); }
-
-	      T* begin()       { return static_cast<T*> (begin_); }
-	const T* begin() const { return static_cast<T*> (begin_); }
-
-	      T* end()         { return static_cast<T*> (begin_) + size_; }
-	const T* end()   const { return static_cast<T*> (begin_) + size_; }
-
-	T& operator [] ( size_t n )
+	blargg_vector() : begin_( 0 ), size_( 0 ) { }
+	~blargg_vector() { free( begin_ ); }
+	size_t size() const { return size_; }
+	T* begin() const { return begin_; }
+	T* end() const { return begin_ + size_; }
+	blargg_err_t resize( size_t n )
 	{
-		assert( n < size_ );
-		return static_cast<T*> (begin_) [n];
+		void* p = realloc( begin_, n * sizeof (T) );
+		if ( !p && n )
+			return "Out of memory";
+		begin_ = (T*) p;
+		size_ = n;
+		return 0;
 	}
-
-	const T& operator [] ( size_t n ) const
+	void clear() { free( begin_ ); begin_ = nullptr; size_ = 0; }
+	T& operator [] ( size_t n ) const
 	{
-		assert( n < size_ );
-		return static_cast<T*> (begin_) [n];
+		assert( n <= size_ ); // <= to allow past-the-end value
+		return begin_ [n];
 	}
 };
 
-// Callback function with user data.
-// blargg_callback<T> set_callback; // for user, this acts like...
-// void set_callback( T func, void* user_data = NULL ); // ...this
-// To call function, do set_callback.f( .. set_callback.data ... );
-template<class T>
-struct blargg_callback
-{
-	T f;
-	void* data;
-	blargg_callback() { f = NULL; }
-	void operator () ( T callback, void* user_data = NULL ) { f = callback; data = user_data; }
-};
-
-#ifndef _WIN32
-	// Not supported on any other platforms
-	#undef BLARGG_UTF8_PATHS
+// Use to force disable exceptions for allocations of a class
+#include <new>
+#ifndef BLARGG_DISABLE_NOTHROW
+	#define BLARGG_DISABLE_NOTHROW \
+		void* operator new ( size_t s ) noexcept { return malloc( s ); }\
+		void* operator new ( size_t s, const std::nothrow_t& ) noexcept { return malloc( s ); }\
+		void operator delete ( void* p ) noexcept { free( p ); }
 #endif
 
-BLARGG_DEPRECATED( typedef signed   int blargg_long; )
-BLARGG_DEPRECATED( typedef unsigned int blargg_ulong; )
-#if BLARGG_LEGACY
-	#define BOOST_STATIC_ASSERT BLARGG_STATIC_ASSERT
+// Use to force disable exceptions for a specific allocation no matter what class
+#define BLARGG_NEW new (std::nothrow)
+
+// BLARGG_4CHAR('a','b','c','d') = 'abcd' (four character integer constant)
+#define BLARGG_4CHAR( a, b, c, d ) \
+	((a&0xFF)*0x1000000L + (b&0xFF)*0x10000L + (c&0xFF)*0x100L + (d&0xFF))
+
+#define BLARGG_2CHAR( a, b ) \
+	((a&0xFF)*0x100L + (b&0xFF))
+
+// BLARGG_COMPILER_HAS_BOOL: If 0, provides bool support for old compiler. If 1,
+// compiler is assumed to support bool. If undefined, availability is determined.
+#ifndef BLARGG_COMPILER_HAS_BOOL
+	#if defined (__MWERKS__)
+		#if !__option(bool)
+			#define BLARGG_COMPILER_HAS_BOOL 0
+		#endif
+	#elif defined (_MSC_VER)
+		#if _MSC_VER < 1100
+			#define BLARGG_COMPILER_HAS_BOOL 0
+		#endif
+	#elif defined (__GNUC__)
+		// supports bool
+	#elif __cplusplus < 199711
+		#define BLARGG_COMPILER_HAS_BOOL 0
+	#endif
+#endif
+#if defined (BLARGG_COMPILER_HAS_BOOL) && !BLARGG_COMPILER_HAS_BOOL
+	// If you get errors here, modify your blargg_config.h file
+	typedef int bool;
+	const bool true  = 1;
+	const bool false = 0;
 #endif
 
-#ifdef _WIN32
-typedef wchar_t blargg_wchar_t;
-#elif defined(HAVE_STDINT_H)
-#include <stdint.h>
-typedef uint16_t blargg_wchar_t;
+#if defined(__has_cpp_attribute)
+# if __has_cpp_attribute(maybe_unused)
+#  define BLARGG_MAYBE_UNUSED [[maybe_unused]]
+# endif
+#endif
+
+#ifndef BLARGG_MAYBE_UNUSED
+# define BLARGG_MAYBE_UNUSED
+#endif
+
+// blargg_long/blargg_ulong = at least 32 bits, int if it's big enough
+
+#if INT_MAX < 0x7FFFFFFF || LONG_MAX == 0x7FFFFFFF
+	typedef long blargg_long;
 #else
-typedef unsigned short blargg_wchar_t;
+	typedef int blargg_long;
 #endif
 
-inline size_t blargg_wcslen( const blargg_wchar_t* str )
-{
-    size_t length = 0;
-    while ( *str++ ) length++;
-    return length;
-}
+#if UINT_MAX < 0xFFFFFFFF || ULONG_MAX == 0xFFFFFFFF
+	typedef unsigned long blargg_ulong;
+#else
+	typedef unsigned blargg_ulong;
+#endif
 
-char* blargg_to_utf8( const blargg_wchar_t* );
-blargg_wchar_t* blargg_to_wide( const char* );
+// int8_t etc.
 
-BLARGG_NAMESPACE_END
+// TODO: Add CMake check for this, although I'd likely just point affected
+// persons to a real compiler...
+#if 1 || defined (HAVE_STDINT_H)
+	#include <stdint.h>
+#endif
 
+#if __GNUC__ >= 3
+	#define BLARGG_DEPRECATED __attribute__ ((deprecated))
+#else
+	#define BLARGG_DEPRECATED
+#endif
+
+// Use in place of "= 0;" for a pure virtual, since these cause calls to std C++ lib.
+// During development, BLARGG_PURE( x ) expands to = 0;
+// virtual int func() BLARGG_PURE( { return 0; } )
+#ifndef BLARGG_PURE
+	#define BLARGG_PURE( def ) def
+#endif
+
+#endif
 #endif

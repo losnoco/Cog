@@ -46,8 +46,6 @@ public:
 	SuperFamicom::SMP const* get_smp() const;
     SuperFamicom::SMP * get_smp();
 
-    blargg_err_t hash_( Hash_Function& ) const;
-
     static gme_type_t static_type()                 { return gme_sfm_type; }
     
 // Implementation
@@ -56,31 +54,34 @@ public:
     ~Sfm_Emu();
 
 protected:
-    virtual blargg_err_t load_mem_( byte const [], int );
-    virtual blargg_err_t track_info_( track_info_t*, int track ) const;
-    virtual blargg_err_t set_track_info_( const track_info_t*, int track );
-    virtual blargg_err_t set_sample_rate_( int );
-    virtual blargg_err_t start_track_( int );
-    virtual blargg_err_t play_( int, sample_t [] );
-    virtual blargg_err_t skip_( int );
-    virtual void mute_voices_( int );
-    virtual void set_tempo_( double );
-    virtual blargg_err_t save_( gme_writer_t, void* ) const;
+    blargg_err_t load_mem_( byte const [], long );
+    blargg_err_t track_info_( track_info_t*, int track ) const;
+    blargg_err_t set_track_info_( const track_info_t*, int track );
+    blargg_err_t set_sample_rate_( long );
+    blargg_err_t start_track_( int );
+    blargg_err_t play_( long, sample_t [] );
+    blargg_err_t skip_( long );
+    void mute_voices_( int );
+    void set_tempo_( double );
+    void enable_accuracy_( bool );
+    byte const* file_data;
+    long        file_size;
 
 private:
     Spc_Emu_Resampler resampler;
-    Spc_Filter filter;
+    SPC_Filter filter;
     SuperFamicom::SMP smp;
 
 	bool _enable_filter;
 
     Bml_Parser metadata;
-    void create_updated_metadata(Bml_Parser &out) const;
 
-    blargg_err_t play_and_filter( int count, sample_t out [] );
+    blargg_err_t play_and_filter( long count, sample_t out [] );
 };
 
 inline SuperFamicom::SMP const* Sfm_Emu::get_smp() const { return &smp; }
 inline SuperFamicom::SMP * Sfm_Emu::get_smp() { return &smp; }
+
+inline void Sfm_Emu::enable_accuracy_(bool enable) { (void)enable; }
 
 #endif // SPC_SFM_H

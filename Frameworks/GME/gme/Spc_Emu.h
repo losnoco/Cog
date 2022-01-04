@@ -39,10 +39,9 @@ public:
     SuperFamicom::SMP * get_smp();
 	
 	// SPC file header
+    enum { header_size = 0x100 };
 	struct header_t
 	{
-		enum { size = 0x100 };
-		
 		char tag       [35];
 		byte format;
 		byte version;
@@ -62,38 +61,46 @@ public:
 		byte unused2   [46];
 	};
 	
-	// Header for currently loaded file
-	header_t const& header() const                  { return *(header_t const*) file_begin(); }
+    // Header for currently loaded file
+    header_t const& header() const { return *(header_t const*) file_data; }
 
-	blargg_err_t hash_( Hash_Function& ) const;
-	
 	static gme_type_t static_type()                 { return gme_spc_type; }
-	
+
+public:
+    // deprecated
+    using Music_Emu::load;
+    blargg_err_t load( header_t const& h, Data_Reader& in ) // use Remaining_Reader
+            { return load_remaining_( &h, sizeof h, in ); }
+    byte const* trailer() const; // use track_info()
+    long trailer_size() const;
+
 // Implementation
 public:
-	Spc_Emu();
+    Spc_Emu( gme_type_t );
+    Spc_Emu() : Spc_Emu( gme_spc_type ) {}
 	~Spc_Emu();
 
 protected:
-	virtual blargg_err_t load_mem_( byte const [], int );
-	virtual blargg_err_t track_info_( track_info_t*, int track ) const;
-	virtual blargg_err_t set_sample_rate_( int );
-	virtual blargg_err_t start_track_( int );
-	virtual blargg_err_t play_( int, sample_t [] );
-	virtual blargg_err_t skip_( int );
-	virtual void mute_voices_( int );
-	virtual void set_tempo_( double );
+	blargg_err_t load_mem_( byte const*, long );
+	blargg_err_t track_info_( track_info_t*, int track ) const;
+	blargg_err_t set_sample_rate_( long );
+	blargg_err_t start_track_( int );
+	blargg_err_t play_( long, sample_t* );
+	blargg_err_t skip_( long );
+	void mute_voices_( int );
+	void set_tempo_( double );
+    void enable_accuracy_( bool );
+    byte const* file_data;
+    long        file_size;
 
 private:
 	Spc_Emu_Resampler resampler;
-	Spc_Filter filter;
+	SPC_Filter filter;
     SuperFamicom::SMP smp;
 
 	bool _enable_filter;
 	
-	byte const* trailer_() const;
-	int trailer_size_() const;
-	blargg_err_t play_and_filter( int count, sample_t out [] );
+	blargg_err_t play_and_filter( long count, sample_t out [] );
 };
 
 inline SuperFamicom::SMP const* Spc_Emu::get_smp() const { return &smp; }

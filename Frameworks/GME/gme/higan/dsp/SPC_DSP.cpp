@@ -29,11 +29,11 @@ namespace SuperFamicom {
 #endif
 
 // TODO: add to blargg_endian.h
-#define GET_LE16SA( addr )      ((BOOST::int16_t) GET_LE16( addr ))
+#define GET_LE16SA( addr )      ((int16_t) GET_LE16( addr ))
 #define GET_LE16A( addr )       GET_LE16( addr )
 #define SET_LE16A( addr, data ) SET_LE16( addr, data )
 
-static BOOST::uint8_t const initial_regs [SPC_DSP::register_count] =
+static uint8_t const initial_regs [SPC_DSP::register_count] =
 {
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -1299,7 +1299,7 @@ void SPC_State_Copier::copy( void* state, size_t size )
 
 int SPC_State_Copier::copy_int( int state, int size )
 {
-	BOOST::uint8_t s [2];
+	uint8_t s [2];
 	SET_LE16( s, state );
 	func( buf, &s, size );
 	return GET_LE16( s );
