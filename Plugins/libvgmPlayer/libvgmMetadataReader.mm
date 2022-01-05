@@ -172,7 +172,7 @@ static std::string FCC2Str(UINT32 fcc)
 	PLR_SONG_INFO sInf;
 	player->GetSongInfo(sInf);
 
-	system = [NSString stringWithFormat:@"%s v%X.%X", FCC2Str(sInf.format).c_str(), sInf.fileVerMaj, sInf.fileVerMin];
+	system = [NSString stringWithFormat:@"%s v%X.%02X", FCC2Str(sInf.format).c_str(), sInf.fileVerMaj, sInf.fileVerMin];
 
 	mainPlr.UnloadFile();
 	DataLoader_Deinit(dLoad);
