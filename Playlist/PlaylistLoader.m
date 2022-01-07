@@ -32,6 +32,22 @@
 
 #import "Logging.h"
 
+#import <TargetConditionals.h>
+
+#if TARGET_CPU_X86
+static int processIsTranslated() {
+   int ret = 0;
+   size_t size = sizeof(ret);
+   if (sysctlbyname("sysctl.proc_translated", &ret, &size, NULL, 0) == -1)
+   {
+      if (errno == ENOENT)
+         return 0;
+      return -1;
+   }
+   return ret;
+}
+#endif
+
 @implementation PlaylistLoader
 
 - (id)init
@@ -466,14 +482,25 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	//Clear the selection
     [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
     
-    NSArray* arrayFirst = [NSArray arrayWithObject:[entries objectAtIndex:0]];
-    NSMutableArray* arrayRest = [entries mutableCopy];
-    [arrayRest removeObjectAtIndex:0];
+#if TARGET_CPU_X86
+    if (processIsTranslated())
+#endif
+    {
+        NSArray* arrayFirst = [NSArray arrayWithObject:[entries objectAtIndex:0]];
+        NSMutableArray* arrayRest = [entries mutableCopy];
+        [arrayRest removeObjectAtIndex:0];
     
-    [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
-    if ([arrayRest count])
-        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
-	return entries;
+        [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
+        if ([arrayRest count])
+            [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
+        return entries;
+    }
+#if TARGET_CPU_X86
+    else
+    {
+        [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:entries waitUntilDone:YES];
+    }
+#endif
 }
 
 static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
@@ -681,7 +708,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     
     if ([entries count])
     {
-        [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
+#if TARGET_CPU_X86
+        if (processIsTranslated())
+#endif
+        {
+            [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
+        }
+#if TARGET_CPU_X86
+        else
+        {
+            [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:entries waitUntilDone:YES];
+        }
+#endif
     }
     
     return entries;
