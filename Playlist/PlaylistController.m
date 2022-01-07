@@ -1095,7 +1095,7 @@
             pe.metadataLoaded = NO;
         }
         
-        [playlistLoader loadInfoForEntries:selectedobjects];
+        [playlistLoader performSelectorInBackground:@selector(loadInfoForEntries:) withObject:selectedobjects];
     }
 }
 
