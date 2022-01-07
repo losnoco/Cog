@@ -106,7 +106,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     
     codec = get_description_tag(description, "encoding: ", 0);
     
-    STREAMFILE *tagFile = cogsf_create_from_url(tagurl);
+    STREAMFILE *tagFile = open_cog_streamfile_from_url(tagurl);
     if (tagFile) {
         VGMSTREAM_TAGS *tags;
         const char *tag_key, *tag_val;

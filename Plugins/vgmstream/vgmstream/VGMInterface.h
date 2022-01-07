@@ -9,14 +9,23 @@
 #import <libvgmstream/vgmstream.h>
 #import <libvgmstream/plugins.h>
 
+/* a STREAMFILE that operates via standard IO using a buffer */
 typedef struct _COGSTREAMFILE {
-    STREAMFILE sf;
-    void *file;
-    offv_t offset;
-    char name[PATH_LIMIT];
+    STREAMFILE vt;          /* callbacks */
+
+    void* infile;           /* CogSource, retained */
+    char name[PATH_LIMIT];  /* FILE filename */
+    int name_len;           /* cache */
+    offv_t offset;          /* last read offset (info) */
+    offv_t buf_offset;      /* current buffer data start */
+    uint8_t* buf;           /* data buffer */
+    size_t buf_size;        /* max buffer size */
+    size_t valid_size;      /* current buffer size */
+    size_t file_size;       /* buffered file size */
 } COGSTREAMFILE;
 
-STREAMFILE *cogsf_create_from_url(NSURL * url);
+STREAMFILE* open_cog_streamfile_from_url(NSURL* url);
+STREAMFILE* open_cog_streamfile(const char* filename);
 
 VGMSTREAM *init_vgmstream_from_cogfile(const char *path, int subsong);
 
