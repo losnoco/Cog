@@ -11,6 +11,7 @@
 
 #pragma once
 
+#ifdef __cplusplus
 
 // has to be first
 #include "openmpt/all/BuildSettings.hpp"
@@ -139,3 +140,5 @@
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
+
+#endif
