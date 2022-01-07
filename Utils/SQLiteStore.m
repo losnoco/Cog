@@ -1923,6 +1923,18 @@ static SQLiteStore *g_sharedStore = NULL;
     return ret;
 }
 
+- (void)queueEmpty
+{
+    sqlite3_stmt *st = stmt[stmt_remove_queue_all];
+
+    if (sqlite3_reset(st) ||
+        sqlite3_step(st) != SQLITE_DONE ||
+        sqlite3_reset(st))
+    {
+        return;
+    }
+}
+
 - (int64_t)queueGetCount
 {
     sqlite3_stmt *st = stmt[stmt_count_queue];
