@@ -178,6 +178,6 @@ LIBOPENMPT_DEPRECATED static const int LIBOPENMPT_DEPRECATED_STRING_CONSTANT = 0
 #endif
 
 
-#include <libOpenMPT/libopenmpt_version.h>
+#include <libOpenMPTOld/libopenmpt_version.h>
 
 #endif /* LIBOPENMPT_CONFIG_H */
