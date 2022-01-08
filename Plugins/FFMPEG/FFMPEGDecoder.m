@@ -189,12 +189,92 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
         return NO;
     }
 
-    AVCodec * codec = avcodec_find_decoder(codecCtx->codec_id);
+    enum AVCodecID codec_id = codecCtx->codec_id;
+    AVCodec * codec = NULL;
+
+    if (@available(macOS 10.15, *))
+    {
+        switch (codec_id)
+        {
+            case AV_CODEC_ID_MP3:
+                codec = avcodec_find_decoder_by_name("mp3_at");
+                break;
+            case AV_CODEC_ID_MP2:
+                codec = avcodec_find_decoder_by_name("mp2_at");
+                break;
+            case AV_CODEC_ID_MP1:
+                codec = avcodec_find_decoder_by_name("mp1_at");
+                break;
+            case AV_CODEC_ID_AAC:
+                codec = avcodec_find_decoder_by_name("aac_at");
+                break;
+            case AV_CODEC_ID_ALAC:
+                codec = avcodec_find_decoder_by_name("alac_at");
+                break;
+            case AV_CODEC_ID_AC3:
+                codec = avcodec_find_decoder_by_name("ac3_at");
+                break;
+            case AV_CODEC_ID_EAC3:
+                codec = avcodec_find_decoder_by_name("eac3_at");
+                break;
+            default: break;
+        }
+    }
+    else
+    {
+        switch (codec_id)
+        {
+            case AV_CODEC_ID_MP3:
+                codec = avcodec_find_decoder_by_name("mp3float");
+                break;
+            case AV_CODEC_ID_MP2:
+                codec = avcodec_find_decoder_by_name("mp2float");
+                break;
+            case AV_CODEC_ID_MP1:
+                codec = avcodec_find_decoder_by_name("mp1float");
+                break;
+            case AV_CODEC_ID_AAC:
+                codec = avcodec_find_decoder_by_name("aac");
+                break;
+            case AV_CODEC_ID_ALAC:
+                codec = avcodec_find_decoder_by_name("alac");
+                break;
+            case AV_CODEC_ID_AC3:
+                codec = avcodec_find_decoder_by_name("ac3");
+                break;
+            case AV_CODEC_ID_EAC3:
+                codec = avcodec_find_decoder_by_name("eac3");
+                break;
+            default: break;
+        }
+    }
+
+    if (!codec)
+        codec = avcodec_find_decoder(codec_id);
+
+    if (@available(macOS 10.15, *)) {
+    }
+    else {
+        if (codec && codec->name) {
+            const char * name = codec->name;
+            size_t name_len = strlen(name);
+            if (name_len > 3)
+            {
+                name += name_len - 3;
+                if (!strcmp(name, "_at"))
+                {
+                    ALog(@"AudioToolbox decoder picked on old macOS, disabling: %s", codec->name);
+                    codec = NULL; // Disable AudioToolbox codecs on Mojave and older
+                }
+            }
+        }
+    }
+
     if (!codec) {
         ALog(@"codec not found");
 		return NO;
     }
-    
+
     if ( (errcode = avcodec_open2(codecCtx, codec, NULL)) < 0) {
         char errDescr[4096];
         av_strerror(errcode, errDescr, 4096);
