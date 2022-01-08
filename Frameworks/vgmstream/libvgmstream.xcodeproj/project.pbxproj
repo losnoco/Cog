@@ -3382,6 +3382,7 @@
 					../mpg123,
 				);
 				FRAMEWORK_VERSION = A;
+				"GCC_OPTIMIZATION_LEVEL[arch=x86_64]" = 1;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
