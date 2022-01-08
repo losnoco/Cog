@@ -92,11 +92,11 @@ static void PlayerLogCallback(void* userParam, PlayerBase* player, UINT8 level, 
 		return;	// don't print messages with higher verbosity than current log level
 	if (srcType == PLRLOGSRC_PLR)
     {
-		ALog("[%s] %s: %s", LogLevel2Str(level), player->GetPlayerName(), message);
+		ALog(@"[%s] %s: %s", LogLevel2Str(level), player->GetPlayerName(), message);
     }
 	else
     {
-		ALog("[%s] %s %s: %s", LogLevel2Str(level), player->GetPlayerName(), srcTag, message);
+		ALog(@"[%s] %s %s: %s", LogLevel2Str(level), player->GetPlayerName(), srcTag, message);
     }
 	return;
 }
