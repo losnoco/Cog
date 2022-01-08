@@ -252,7 +252,13 @@ float ID3v2::Tag::rg(const String &type) const
     for (FrameList::ConstIterator it = list.begin(); it != list.end(); ++it) {
       UserTextIdentificationFrame const* frame = static_cast<UserTextIdentificationFrame *>(*it);
       if (!frame->description().isNull() && frame->description() == type) {
-        return frame->toString().toFloat();
+        // Remove description
+        StringList l = frame->fieldList();
+        for(StringList::Iterator it = l.begin(); it != l.end(); ++it) {
+          l.erase(it);
+          break;
+        }
+        return l.toString().toFloat();
       }
     }
   }
