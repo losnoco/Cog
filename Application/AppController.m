@@ -338,8 +338,6 @@ void* kAppControllerContext = &kAppControllerContext;
     if (currentStatus == CogStatusStopping)
         currentStatus = CogStatusStopped;
     
-    [[NSUserDefaults standardUserDefaults] setInteger:currentStatus forKey:@"lastPlaybackStatus"];
-    
     if (currentStatus != CogStatusStopped)
     {
         PlaylistEntry * pe = [playlistController currentEntry];
@@ -352,6 +350,8 @@ void* kAppControllerContext = &kAppControllerContext;
     
 	[playbackController stop:self];
 	
+    [[NSUserDefaults standardUserDefaults] setInteger:currentStatus forKey:@"lastPlaybackStatus"];
+    
 	NSFileManager *fileManager = [NSFileManager defaultManager];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *folder = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];

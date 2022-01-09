@@ -1768,9 +1768,9 @@ Gw
         <customObject id="1303" userLabel="SUUpdater" customClass="SUUpdater"/>
         <customObject id="1319" userLabel="PlaylistLoader" customClass="PlaylistLoader">
             <connections>
+                <outlet property="playbackController" destination="705" id="EBV-A8-3bM"/>
                 <outlet property="playlistController" destination="218" id="1320"/>
                 <outlet property="playlistView" destination="206" id="6MS-vO-DQp"/>
-                <outlet property="playbackController" destination="705" id="EBV-A8-3bM"/>
             </connections>
         </customObject>
         <menu title="Menu" id="1324" userLabel="TableMenu">
