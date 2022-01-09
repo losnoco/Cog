@@ -540,8 +540,15 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
     AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
     int64_t ts = av_rescale_q(frame, tb, formatCtx->streams[streamIndex]->time_base);
-    avformat_seek_file(formatCtx, streamIndex, ts - 1000, ts, ts, 0);
+    int ret = avformat_seek_file(formatCtx, streamIndex, ts - 1000, ts, ts, 0);
     avcodec_flush_buffers(codecCtx);
+    if (ret < 0)
+    {
+        framesRead = totalFrames;
+        endOfStream = YES;
+        endOfAudio = YES;
+        return -1;
+    }
     readNextPacket = YES; // so we immediately read next packet
     bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
     framesRead = frame;
