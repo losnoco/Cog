@@ -37,6 +37,7 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 	
 	CogStatus playbackStatus;
 	double position;
+    double lastPosition;
 	BOOL seekable;
 	BOOL fading;
     

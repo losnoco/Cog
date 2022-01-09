@@ -99,7 +99,9 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 - (IBAction)pause:(id)sender
 {
-	[audioPlayer pause];
+    [[NSUserDefaults standardUserDefaults] setInteger:CogStatusPaused forKey:@"lastPlaybackStatus"];
+
+    [audioPlayer pause];
 	[self setPlaybackStatus: CogStatusPaused];
     
     [self sendMetaData];
@@ -107,13 +109,17 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 - (IBAction)resume:(id)sender
 {
-	[audioPlayer resume];
+    [[NSUserDefaults standardUserDefaults] setInteger:CogStatusPlaying forKey:@"lastPlaybackStatus"];
+
+    [audioPlayer resume];
 
 }
 
 - (IBAction)stop:(id)sender
 {
-	[audioPlayer stop];
+    [[NSUserDefaults standardUserDefaults] setInteger:CogStatusStopped forKey:@"lastPlaybackStatus"];
+
+    [audioPlayer stop];
 
     [self sendMetaData];
 }
@@ -181,6 +187,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
+    
+    lastPosition = -1;
 	
 	[self setPosition:[offset doubleValue]];
 
@@ -236,7 +244,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 - (void)updatePosition:(id)sender
 {
 	double pos = [audioPlayer amountPlayed];
-	
+    
 	[self setPosition:pos];
     
     [[playlistController currentEntry] setCurrentPosition:pos];
@@ -644,6 +652,18 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (void)setPosition:(double)p
 {
+    if (p == 0 || p < lastPosition || (p > lastPosition && (p - lastPosition) >= 10.0))
+    {
+        PlaylistEntry * pe = [playlistController currentEntry];
+        NSInteger lastTrackPlaying = [pe index];
+
+        [[NSUserDefaults standardUserDefaults] setInteger:CogStatusPlaying forKey:@"lastPlaybackStatus"];
+        [[NSUserDefaults standardUserDefaults] setInteger:lastTrackPlaying forKey:@"lastTrackPlaying"];
+        [[NSUserDefaults standardUserDefaults] setDouble:p forKey:@"lastTrackPosition"];
+
+        lastPosition = p;
+    }
+    
 	position = p;
 
 	[[playlistController currentEntry] setCurrentPosition:p];
