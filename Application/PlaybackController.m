@@ -188,7 +188,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
     
-    lastPosition = -1;
+    lastPosition = -10;
 	
 	[self setPosition:[offset doubleValue]];
 
@@ -258,6 +258,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
     [audioPlayer seekToTime:time];
     
+    lastPosition = -10;
+    
     [self setPosition:time];
 
 	[[playlistController currentEntry] setCurrentPosition:time];
@@ -268,6 +270,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 - (IBAction)seek:(id)sender toTime:(NSTimeInterval)position
 {
     double time = (double)(position);
+    
+    lastPosition = -10;
     
     [audioPlayer seekToTime:time];
     
@@ -573,6 +577,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	
 	[playlistController setCurrentEntry:pe];
+    
+    lastPosition = -10;
 	
 	[self setPosition:0];
 	
@@ -652,7 +658,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (void)setPosition:(double)p
 {
-    if (p == 0 || p < lastPosition || (p > lastPosition && (p - lastPosition) >= 10.0))
+    if (p > lastPosition && (p - lastPosition) >= 10.0)
     {
         PlaylistEntry * pe = [playlistController currentEntry];
         NSInteger lastTrackPlaying = [pe index];
