@@ -1466,9 +1466,15 @@ static SQLiteStore *g_sharedStore = NULL;
     }
 }
 
-- (void)playlistInsertTracks:(NSArray *)tracks atIndex:(int64_t)index
+- (void)playlistInsertTracks:(NSArray *)tracks atIndex:(int64_t)index progressCall:(void (^)(double))callback
 {
-    if (!tracks) return;
+    if (!tracks)
+    {
+        callback(-1);
+        return;
+    }
+    
+    callback(0);
     
     sqlite3_stmt *st = stmt[stmt_increment_playlist_for_insert];
     
@@ -1478,8 +1484,14 @@ static SQLiteStore *g_sharedStore = NULL;
         sqlite3_step(st) != SQLITE_DONE ||
         sqlite3_reset(st))
     {
+        callback(-1);
         return;
     }
+    
+    callback(25);
+    
+    double progress = 25.0;
+    double progressstep = [tracks count] ? 75.0 / (double)([tracks count]) : 0;
     
     st = stmt[stmt_add_playlist];
     
@@ -1492,32 +1504,61 @@ static SQLiteStore *g_sharedStore = NULL;
             sqlite3_bind_int64(st, add_playlist_in_track_id, trackId) ||
             sqlite3_step(st) != SQLITE_DONE)
         {
+            callback(-1);
             return;
         }
         
         ++index;
+        
+        progress += progressstep;
+        callback(progress);
     }
     
     sqlite3_reset(st);
+    
+    callback(-1);
 }
 
-- (void)playlistInsertTracks:(NSArray *)tracks atObjectIndexes:(NSIndexSet *)indexes
+- (void)playlistInsertTracks:(NSArray *)tracks atObjectIndexes:(NSIndexSet *)indexes progressCall:(void (^)(double))callback
 {
-    if (!tracks || !indexes) return;
+    if (!tracks || !indexes)
+    {
+        callback(-1);
+        return;
+    }
+    
+    __block int64_t total_count = 0;
+    [indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        total_count += range.length;
+    }];
     
     __block int64_t i = 0;
     
+    __block double progress = 0;
+    
     [indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        double progresschunk = (double)range.length / (double)total_count;
+        double progressbase = progress;
         NSRange trackRange = NSMakeRange(i, range.length);
         NSArray *trackSet = (i == 0 && range.length == [tracks count]) ? tracks : [tracks subarrayWithRange:trackRange];
-        [self playlistInsertTracks:trackSet atIndex:range.location];
+        [self playlistInsertTracks:trackSet atIndex:range.location progressCall:^(double _progress){
+            if (_progress < 0) return;
+            callback(progressbase + progresschunk * _progress);
+        }];
         i += range.length;
+        progress += 100.0 * progresschunk;
+        callback(progress);
     }];
+    callback(-1);
 }
 
-- (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count
+- (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count progressCall:(void (^)(double))callback
 {
-    if (!count) return;
+    if (!count)
+    {
+        callback(-1);
+        return;
+    }
     
     sqlite3_stmt *st = stmt[stmt_select_playlist_range];
 
@@ -1525,8 +1566,14 @@ static SQLiteStore *g_sharedStore = NULL;
         sqlite3_bind_int64(st, select_playlist_range_in_id_low, index) ||
         sqlite3_bind_int64(st, select_playlist_range_in_id_high, index + count - 1))
     {
+        callback(-1);
         return;
     }
+    
+    callback(0);
+    
+    double progress = 0;
+    double progressstep = 100.0 / ((double)count);
     
     int rc = sqlite3_step(st);
     
@@ -1535,7 +1582,11 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t trackId = sqlite3_column_int64(st, select_playlist_range_out_track_id);
         [self removeTrack:trackId];
         rc = sqlite3_step(st);
+        progress += progressstep;
+        callback(progress);
     }
+    
+    callback(100);
     
     sqlite3_reset(st);
     
@@ -1552,6 +1603,7 @@ static SQLiteStore *g_sharedStore = NULL;
         sqlite3_step(st) != SQLITE_DONE ||
         sqlite3_reset(st))
     {
+        callback(-1);
         return;
     }
     
@@ -1563,6 +1615,7 @@ static SQLiteStore *g_sharedStore = NULL;
         sqlite3_step(st) != SQLITE_DONE ||
         sqlite3_reset(st))
     {
+        callback(-1);
         return;
     }
 
@@ -1574,18 +1627,42 @@ static SQLiteStore *g_sharedStore = NULL;
     }
     
     [self queueRemovePlaylistItems:items];
+    
+    callback(-1);
 }
 
-- (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes
+- (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes progressCall:(void (^)(double))callback
 {
-    if (!indexes) return;
+    if (!indexes)
+    {
+        callback(-1);
+        return;
+    }
+    
+    __block int64_t total_count = 0;
+    
+    [indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        total_count += range.length;
+    }];
     
     __block int64_t i = 0;
     
+    __block double progress = 0;
+    
+    callback(progress);
+    
     [indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        [self playlistRemoveTracks:(range.location - i) forCount:range.length];
+        double progresschunk = (double)range.length / (double)total_count;
+        double progressbase = progress;
+        [self playlistRemoveTracks:(range.location - i) forCount:range.length progressCall:^(double _progress) {
+            if (_progress < 0) return;
+            callback(progressbase + progresschunk * _progress);
+        }];
         i += range.length;
+        progress += 100.0 * progresschunk;
+        callback(progress);
     }];
+    callback(-1);
 }
 
 - (PlaylistEntry *)playlistGetItem:(int64_t)index
@@ -1740,17 +1817,26 @@ static SQLiteStore *g_sharedStore = NULL;
 }
 #endif
 
-- (void)syncPlaylistEntries:(NSArray *)entries
+- (void)syncPlaylistEntries:(NSArray *)entries progressCall:(void (^)(double))callback
 {
     if (!entries || ![entries count])
+    {
+        callback(-1);
         return;
+    }
     
     int64_t count = [self playlistGetCount];
     
     if (count != [entries count])
     {
+        callback(-1);
         return;
     }
+    
+    callback(0);
+    
+    double progress = 0;
+    double progressstep = 50.0 / (double)(count);
     
     NSMutableArray * entryIds = [[NSMutableArray alloc] init];
     NSMutableArray * entryIndexes = [[NSMutableArray alloc] init];
@@ -1763,6 +1849,7 @@ static SQLiteStore *g_sharedStore = NULL;
     if (sqlite3_reset(st) ||
         (rc = sqlite3_step(st)) != SQLITE_ROW)
     {
+        callback(-1);
         return;
     }
     
@@ -1777,10 +1864,16 @@ static SQLiteStore *g_sharedStore = NULL;
         [trackIds addObject:[NSNumber numberWithInteger:trackId]];
         
         rc = sqlite3_step(st);
+        
+        progress += progressstep;
+        callback(progress);
     }
     while (rc == SQLITE_ROW);
     
     sqlite3_reset(st);
+    
+    progress = 50;
+    callback(progress);
     
     st = stmt[stmt_update_playlist];
     
@@ -1793,6 +1886,7 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t trackId = [[trackIds objectAtIndex:i] integerValue];
         
         ++i;
+        progress += progressstep;
 
         if ([entry index] == entryIndex &&
             [entry dbIndex] == trackId)
@@ -1804,11 +1898,16 @@ static SQLiteStore *g_sharedStore = NULL;
             sqlite3_bind_int64(st, update_playlist_in_id, entryId) ||
             sqlite3_step(st) != SQLITE_DONE)
         {
+            callback(-1);
             return;
         }
+        
+        callback(progress);
     }
     
     sqlite3_reset(st);
+    
+    callback(-1);
 }
 
 - (void)queueAddItem:(int64_t)playlistIndex

@@ -27,17 +27,17 @@
 
 - (void) trackUpdate:(PlaylistEntry *)track;
 
-- (void)playlistInsertTracks:(NSArray *)tracks atIndex:(int64_t)index;
-- (void)playlistInsertTracks:(NSArray *)tracks atObjectIndexes:(NSIndexSet *)indexes;
-- (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count;
-- (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes;
+- (void)playlistInsertTracks:(NSArray *)tracks atIndex:(int64_t)index progressCall:(void(^)(double progress))callback;
+- (void)playlistInsertTracks:(NSArray *)tracks atObjectIndexes:(NSIndexSet *)indexes progressCall:(void(^)(double progress))callback;
+- (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count progressCall:(void(^)(double progress))callback;
+- (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes progressCall:(void(^)(double progress))callback;
 - (PlaylistEntry *)playlistGetItem:(int64_t)index;
 - (int64_t)playlistGetCount;
 #if 0
 - (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex;
 #endif
 
-- (void)syncPlaylistEntries:(NSArray *)entries;
+- (void)syncPlaylistEntries:(NSArray *)entries progressCall:(void(^)(double progress))callback;
 
 - (void)queueAddItem:(int64_t)playlistIndex;
 - (void)queueAddItems:(NSArray *)playlistIndexes;

@@ -39,9 +39,14 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 	double position;
 	BOOL seekable;
 	BOOL fading;
+    
+    // progress bar display
+    double progressBarStatus;
  }
 
 @property CogStatus playbackStatus;
+
+@property double progressBarStatus;
 
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;

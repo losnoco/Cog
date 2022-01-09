@@ -117,6 +117,22 @@
     }
 }
 
+static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+    if (dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
+        block();
+    }
+    else {
+        dispatch_sync(queue, block);
+    }
+}
+
+- (void)setProgressBarStatus:(double)status {
+    dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+        [self->playbackController setProgressBarStatus:status];
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+    });
+}
+
 - (void)updatePlaylistIndexes {
     NSArray *arranged = [self arrangedObjects];
     NSUInteger n = [arranged count];
@@ -129,7 +145,9 @@
         }
     }
     if (updated) {
-        [[SQLiteStore sharedStore] syncPlaylistEntries:arranged];
+        [[SQLiteStore sharedStore] syncPlaylistEntries:arranged progressCall:^(double progress) {
+            [self setProgressBarStatus:progress];
+        }];
     }
 }
 
@@ -396,7 +414,9 @@
             [NSString stringWithFormat:@"Adding %lu entries", (unsigned long) [objects count]];
     [[self undoManager] setActionName:actionName];
     
-    [[SQLiteStore sharedStore] playlistInsertTracks:objects atObjectIndexes:indexes];
+    [[SQLiteStore sharedStore] playlistInsertTracks:objects atObjectIndexes:indexes progressCall:^(double progress) {
+        [self setProgressBarStatus:progress];
+    }];
 
     [super insertObjects:objects atArrangedObjectIndexes:indexes];
     
@@ -443,7 +463,9 @@
         currentEntry.index = -i - 1;
     }
     
-    [[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes];
+    [[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes progressCall:^(double progress) {
+        [self setProgressBarStatus:progress];
+    }];
 
     [super removeObjectsAtArrangedObjectIndexes:indexes];
 

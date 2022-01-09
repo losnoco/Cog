@@ -27,6 +27,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 @synthesize playbackStatus;
 
+@synthesize progressBarStatus;
+
 + (NSSet *)keyPathsForValuesAffectingSeekable
 {
     return [NSSet setWithObjects:@"playlistController.currentEntry",@"playlistController.currentEntry.seekable",nil];
@@ -41,6 +43,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 		
 		seekable = NO;
 		fading = NO;
+        
+        progressBarStatus = -1;
 	
 		audioPlayer = [[AudioPlayer alloc] init];
 		[audioPlayer setDelegate:self];

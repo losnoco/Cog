@@ -16,6 +16,11 @@
 	IBOutlet PlaybackController *playbackController;
     
     NSInteger lastPlaybackStatus;
+    NSInteger lastColorfulStatus;
+    NSNumber *lastProgressStatus;
+    
+    NSImageView *imageView;
+    NSProgressIndicator *progressIndicator;
 }
 
 @end

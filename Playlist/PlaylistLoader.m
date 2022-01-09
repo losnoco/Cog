@@ -119,6 +119,7 @@
 		return NO;
 	}
 	[fileHandle truncateFileAtOffset:0];
+    [fileHandle writeData:[@"#\n" dataUsingEncoding:NSUTF8StringEncoding]];
 	
 	for (PlaylistEntry *pe in [playlistController arrangedObjects])
 	{
@@ -281,6 +282,21 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	return urls;
 }
 
+static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+    if (dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
+        block();
+    }
+    else {
+        dispatch_sync(queue, block);
+    }
+}
+
+- (void)setProgressBarStatus:(double)status {
+    dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+        [self->playbackController setProgressBarStatus:status];
+    });
+}
+
 - (NSArray*)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort
 {
 	NSMutableSet *uniqueURLs = [NSMutableSet set];
@@ -290,12 +306,21 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	NSMutableArray *fileURLs = [NSMutableArray array];
 	NSMutableArray *validURLs = [NSMutableArray array];
     NSDictionary *xmlData = nil;
+    
+    double progress = 0.0;
 	
 	if (!urls)
+    {
+        [self setProgressBarStatus:-1];
 		return [NSArray array];
+    }
 	
 	if (index < 0)
 		index = 0;
+    
+    [self setProgressBarStatus:progress];
+    
+    double progressstep = [urls count] ? 20.0 / (double)([urls count]) : 0;
 
 	NSURL *url;
 	for (url in urls)
@@ -320,7 +345,15 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 			//Non-file URL..
 			[expandedURLs addObject:url];
 		}
+        
+        progress += progressstep;
+        
+        [self setProgressBarStatus:progress];
 	}
+    
+    progress = 20.0;
+    
+    [self setProgressBarStatus:progress];
 	
 	DLog(@"Expanded urls: %@", expandedURLs);
 
@@ -334,6 +367,8 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	{
 		sortedURLs = expandedURLs;
 	}
+    
+    progressstep = [sortedURLs count] ? 20.0 / (double)([sortedURLs count]) : 0;
 
 	for (url in sortedURLs)
 	{
@@ -360,14 +395,24 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		{
 			[fileURLs addObject:url];
 		}
+        
+        progress += progressstep;
+        [self setProgressBarStatus:progress];
 	}
+    
+    progress = 40.0;
+    [self setProgressBarStatus:progress];
 
 	DLog(@"File urls: %@", fileURLs);
 
 	DLog(@"Contained urls: %@", containedURLs);
+    
+    progressstep = [fileURLs count] ? 20.0 / (double)([fileURLs count]) : 0;
 
 	for (url in fileURLs)
 	{
+        progress += progressstep;
+        
 		if (![[AudioPlayer schemes] containsObject:[url scheme]])
 			continue;
         
@@ -383,12 +428,22 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 			
 			[uniqueURLs addObject:url];
 		}
+        
+        [self setProgressBarStatus:progress];
 	}
+    
+    progress = 60.0;
+    
+    [self setProgressBarStatus:progress];
 	
 	DLog(@"Valid urls: %@", validURLs);
+    
+    progressstep = [containedURLs count] ? 20.0 / (double)([containedURLs count]) : 0;
 
 	for (url in containedURLs)
 	{
+        progress += progressstep;
+        
 		if (![[AudioPlayer schemes] containsObject:[url scheme]])
 			continue;
 
@@ -397,7 +452,13 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 			continue;
 
 		[validURLs addObject:url];
+        
+        [self setProgressBarStatus:progress];
 	}
+    
+    progress = 80.0;
+
+    [self setProgressBarStatus:progress];
 	
 	//Create actual entries
     int count = (int) [validURLs count];
@@ -405,7 +466,12 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
     
     // no valid URLs, or they use an unsupported URL scheme
     if (!count)
+    {
+        [self setProgressBarStatus:-1];
         return [NSArray array];
+    }
+    
+    progressstep = 20.0 / (double)(count);
     
 	NSInteger i = 0;
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
@@ -421,6 +487,9 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 		[entries addObject:pe];
 
         ++i;
+        
+        progress += progressstep;
+        [self setProgressBarStatus:progress];
 	}
 
     NSInteger j = index + i;
@@ -440,6 +509,9 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
             ++i;
         }
     }
+    
+    progress = 100.0;
+    [self setProgressBarStatus:progress];
     
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 	
@@ -470,20 +542,21 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
         NSArray* arrayFirst = [NSArray arrayWithObject:[entries objectAtIndex:0]];
         NSMutableArray* arrayRest = [entries mutableCopy];
         [arrayRest removeObjectAtIndex:0];
+        
+        progress = 0.0;
+        [self setProgressBarStatus:progress];
     
         [self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
+        
+        progressstep = 100.0 / (double)([entries count]);
+        progress += progressstep;
+        [self setProgressBarStatus:progress];
+        
         if ([arrayRest count])
             [self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
+        else
+            [self setProgressBarStatus:-1];
         return entries;
-    }
-}
-
-static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
-    if (dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
-        block();
-    }
-    else {
-        dispatch_sync(queue, block);
     }
 }
 
@@ -494,6 +567,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
     
     SQLiteStore *store = [SQLiteStore sharedStore];
+    
+    __block double progress = [playbackController progressBarStatus];
+    
+    if (progress < 0 || progress >= 100)
+        progress = 0;
+
+    double progressRemaining = 100.0 - progress;
+
+    // 50% for properties reading, 50% for applying them to the main thread
+    const double progressstep = [entries count] ? (progressRemaining / 2.0) / [entries count] : 0;
+    
+    progressRemaining = progress + (progressRemaining / 2.0);
 
     i = 0;
     j = 0;
@@ -529,6 +614,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             NSBlockOperation *op = [[NSBlockOperation alloc] init];
 
             [op addExecutionBlock:^{
+                [weakLock lock];
+                progress += progressstep;
+                [weakLock unlock];
+                
                 NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
 
                 NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
@@ -541,6 +630,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
                 [weakLock lock];
                 [weakArray addObject:weakPe];
                 [weakArray addObject:entryInfo];
+                [self setProgressBarStatus:progress];
                 [weakLock unlock];
             }];
 
@@ -549,6 +639,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     }
 
     [queue waitUntilAllOperationsAreFinished];
+    
+    progress = progressRemaining;
+    [self setProgressBarStatus:progress];
 
     for (i = 0, j = [outArray count]; i < j; i += 2) {
         __block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
@@ -556,6 +649,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
             [weakPe setMetadata:entryInfo];
             [store trackUpdate:weakPe];
+            progress += progressstep;
+            [self setProgressBarStatus:progress];
         });
     }
 
@@ -569,6 +664,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             [weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns)]];
         });
     }
+    
+    [self setProgressBarStatus:-1];
 }
 // To be called on main thread only
 - (void)syncLoadInfoForEntries:(NSArray *)entries

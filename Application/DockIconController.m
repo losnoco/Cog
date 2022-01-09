@@ -17,12 +17,14 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 - (void)startObserving
 {
 	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void * _Nullable)(DockIconPlaybackStatusObservationContext)];
+    [playbackController addObserver:self forKeyPath:@"progressBarStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void * _Nullable)(DockIconPlaybackStatusObservationContext)];
     [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.colorfulDockIcons"		options:0 context:(__bridge void * _Nullable)(DockIconPlaybackStatusObservationContext)];
 }
 
 - (void)stopObserving
 {
 	[playbackController removeObserver:self forKeyPath:@"playbackStatus"];
+    [playbackController removeObserver:self forKeyPath:@"progressBarStatus"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.colorfulDockIcons"];
 }
 
@@ -38,41 +40,123 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
     }
 }
 
-- (void)refreshDockIcon:(NSInteger)playbackStatus
+- (void)refreshDockIcon:(NSInteger)playbackStatus withProgress:(double)progressStatus
 {
+    BOOL displayChanged = NO;
+    BOOL drawIcon = NO;
+    BOOL removeProgress = NO;
+    
     if ( playbackStatus < 0 )
         playbackStatus = lastPlaybackStatus;
     else
+    {
         lastPlaybackStatus = playbackStatus;
+        drawIcon = YES;
+    }
+    
+    if ( progressStatus < -2 )
+        progressStatus = [lastProgressStatus doubleValue];
+    else
+    {
+        if (progressStatus < 0 && [lastProgressStatus doubleValue] >= 0)
+            removeProgress = YES;
+        lastProgressStatus = [NSNumber numberWithDouble:progressStatus];
+    }
+
+    BOOL displayProgress = (progressStatus >= 0.0);
     
     NSImage *badgeImage = nil;
     
     BOOL colorfulIcons = [[NSUserDefaults standardUserDefaults] boolForKey:@"colorfulDockIcons"];
     
-    switch (playbackStatus) {
-        case CogStatusPlaying:
-            badgeImage = [NSImage imageNamed:getBadgeName(@"playDockBadge", colorfulIcons)];
-            break;
-        case CogStatusPaused:
-            badgeImage = [NSImage imageNamed:getBadgeName(@"pauseDockBadge", colorfulIcons)];
-            break;
-
-        default:
-            badgeImage = [NSImage imageNamed:getBadgeName(@"stopDockBadge", colorfulIcons)];
-            break;
+    if ((colorfulIcons && lastColorfulStatus < 1) ||
+        (!colorfulIcons && lastColorfulStatus != 0))
+    {
+        lastColorfulStatus = colorfulIcons ? 1 : 0;
+        drawIcon = YES;
     }
     
-    NSSize badgeSize = [badgeImage size];
+    NSDockTile *dockTile = [NSApp dockTile];
+
+    if (drawIcon)
+    {
+        switch (playbackStatus) {
+            case CogStatusPlaying:
+                badgeImage = [NSImage imageNamed:getBadgeName(@"playDockBadge", colorfulIcons)];
+                break;
+            case CogStatusPaused:
+                badgeImage = [NSImage imageNamed:getBadgeName(@"pauseDockBadge", colorfulIcons)];
+                break;
+
+            default:
+                badgeImage = [NSImage imageNamed:getBadgeName(@"stopDockBadge", colorfulIcons)];
+                break;
+        }
     
-    NSImage *newDockImage = [dockImage copy];
-    [newDockImage lockFocus];
+        NSSize badgeSize = [badgeImage size];
     
-    [badgeImage drawInRect:NSMakeRect(0, 0, 128, 128)
-                  fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
-                 operation:NSCompositingOperationSourceOver fraction:1.0];
+        NSImage *newDockImage = [dockImage copy];
+        [newDockImage lockFocus];
     
-    [newDockImage unlockFocus];
-    [NSApp setApplicationIconImage:newDockImage];
+        [badgeImage drawInRect:NSMakeRect(0, 0, 128, 128)
+                      fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
+                     operation:NSCompositingOperationSourceOver fraction:1.0];
+    
+        [newDockImage unlockFocus];
+        
+        imageView = [[NSImageView alloc] init];
+        [imageView setImage:newDockImage];
+        [dockTile setContentView:imageView];
+        
+        progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0.0, 0.0, dockTile.size.width, 10.0)];
+        [progressIndicator setStyle:NSProgressIndicatorBarStyle];
+        [progressIndicator setIndeterminate:NO];
+        [progressIndicator setBezeled:YES];
+        [progressIndicator setMinValue:0];
+        [progressIndicator setMaxValue:100];
+        [progressIndicator setHidden:YES];
+
+        [imageView addSubview:progressIndicator];
+        
+        displayChanged = YES;
+    }
+    
+    if (displayProgress)
+    {
+        if (!imageView)
+        {
+            imageView = [[NSImageView alloc] init];
+            [imageView setImage:[NSApp applicationIconImage]];
+            [dockTile setContentView:imageView];
+        }
+        
+        if (!progressIndicator)
+        {
+            progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0.0, 0.0, dockTile.size.width, 10.0)];
+            [progressIndicator setIndeterminate:NO];
+            [progressIndicator setBezeled:YES];
+            [progressIndicator setMinValue:0];
+            [progressIndicator setMaxValue:100];
+
+            [imageView addSubview:progressIndicator];
+        }
+        
+        [progressIndicator setDoubleValue:progressStatus];
+        [progressIndicator setHidden:NO];
+        
+        displayChanged = YES;
+    }
+    
+    if (removeProgress)
+    {
+        if (progressIndicator)
+            [progressIndicator setHidden:YES];
+        
+        displayChanged = YES;
+    }
+    
+    if (displayChanged)
+        [dockTile display];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -83,11 +167,17 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
         {
             NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
 
-            [self refreshDockIcon:playbackStatus];
+            [self refreshDockIcon:playbackStatus withProgress:-10];
+        }
+        else if ([keyPath isEqualToString:@"progressBarStatus"])
+        {
+            double progressStatus = [[change objectForKey:NSKeyValueChangeNewKey] doubleValue];
+            
+            [self refreshDockIcon:-1 withProgress:progressStatus];
         }
         else if ([keyPath isEqualToString:@"values.colorfulDockIcons"])
         {
-            [self refreshDockIcon:-1];
+            [self refreshDockIcon:-1 withProgress:-10];
         }
 	}
 	else
@@ -99,6 +189,10 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons)
 - (void)awakeFromNib
 {
 	dockImage = [[NSImage imageNamed:@"icon_blank"] copy];
+    lastColorfulStatus = -1;
+    lastProgressStatus = [NSNumber numberWithDouble:-1];
+    imageView = nil;
+    progressIndicator = nil;
 	[self startObserving];
 }
 

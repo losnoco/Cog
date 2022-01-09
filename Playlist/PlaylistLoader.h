@@ -23,6 +23,7 @@ typedef enum {
 @interface PlaylistLoader : NSObject {
 	IBOutlet PlaylistController *playlistController;
     IBOutlet NSScrollView *playlistView;
+    IBOutlet PlaybackController *playbackController;
     
 	NSOperationQueue *queue;
 }
