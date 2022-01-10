@@ -589,7 +589,10 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
 + (float)priority
 {
-    return 1.5;
+    if (@available(macOS 10.15, *))
+        return 1.5;
+    else
+        return 1.0;
 }
 
 

@@ -312,7 +312,10 @@ static SInt64 getSizeProc(void* clientData) {
 
 + (float)priority
 {
-    return 1.0;
+    if (@available(macOS 10.15, *))
+        return 1.0;
+    else
+        return 1.5;
 }
 
 - (NSDictionary *)properties
