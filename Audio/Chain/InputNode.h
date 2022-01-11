@@ -36,8 +36,6 @@
 - (BOOL)openWithSource:(id<CogSource>)source;
 - (BOOL)openWithDecoder:(id<CogDecoder>) d;
 
-- (id<CogDecoder>)stealDecoder;
-
 - (void)process;
 - (NSDictionary *) properties;
 - (void)seek:(long)frame;

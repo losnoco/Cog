@@ -12,32 +12,41 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 
+#import <audio/audio_resampler.h>
+
 #import "Node.h"
 
 @interface ConverterNode : Node {
     NSDictionary * rgInfo;
+    
+    void *resampler_data;
+    const retro_resampler_t *resampler;
 
-	AudioConverterRef converter;
-    AudioConverterRef converterFloat;
-	void *callbackBuffer;
-    size_t callbackBufferSize;
+    void *inputBuffer;
+    size_t inputBufferSize;
+    size_t inpSize, inpOffset;
     
     BOOL stopping;
     BOOL convertEntered;
-    BOOL ACInputEntered;
-    BOOL ACFloatEntered;
+    BOOL emittingSilence;
     
-    float sampleRatio;
+    BOOL skipResampler;
+    
+    ssize_t latencyStarted;
+    size_t latencyEaten;
+    BOOL latencyPostfill;
+    
+    double sampleRatio;
     
     float volumeScale;
     
     void *floatBuffer;
     size_t floatBufferSize;
-    int floatSize, floatOffset;
+    size_t floatSize, floatOffset;
 	
 	AudioStreamBasicDescription inputFormat;
     AudioStreamBasicDescription floatFormat;
-    AudioStreamBasicDescription dmFloatFormat; // downmixed float format
+    AudioStreamBasicDescription dmFloatFormat; // downmixed/upmixed float format
 	AudioStreamBasicDescription outputFormat;
 }
 

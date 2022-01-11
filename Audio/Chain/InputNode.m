@@ -235,13 +235,4 @@
 	return decoder;
 }
 
-- (id<CogDecoder>) stealDecoder
-{
-    [self removeObservers];
-    id<CogDecoder> decoder = self->decoder;
-    self->decoder = [[NSClassFromString(@"SilenceDecoder") alloc] init];
-    [self registerObservers];
-    return decoder;
-}
-
 @end

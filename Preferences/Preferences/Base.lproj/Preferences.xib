@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -245,11 +245,11 @@
             </connections>
         </customObject>
         <customView id="58" userLabel="OutputView">
-            <rect key="frame" x="0.0" y="0.0" width="530" height="103"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="139"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="65">
-                    <rect key="frame" x="17" y="66" width="103" height="17"/>
+                    <rect key="frame" x="17" y="100" width="123" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Output Device: " id="211">
                         <font key="font" metaFont="system"/>
@@ -257,8 +257,17 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8GG-SU-ZrX">
+                    <rect key="frame" x="5" y="26" width="135" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Resampling Quality: " id="tgE-40-uus">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="60">
-                    <rect key="frame" x="122" y="60" width="252" height="26"/>
+                    <rect key="frame" x="143" y="94" width="252" height="26"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Item1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="62" id="210">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -279,7 +288,7 @@
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zkP-2E-1Kc">
-                    <rect key="frame" x="17" y="29" width="103" height="17"/>
+                    <rect key="frame" x="17" y="63" width="123" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Volume Level:" id="wK4-EF-8Wa">
                         <font key="font" metaFont="system"/>
@@ -288,7 +297,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2v7-Ef-ekr">
-                    <rect key="frame" x="123" y="24" width="251" height="26"/>
+                    <rect key="frame" x="144" y="58" width="251" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="vmS-eb-zen">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -308,8 +317,29 @@
                         <binding destination="52" name="selectedObject" keyPath="values.volumeScaling" previousBinding="6uG-yb-1C2" id="mQV-hu-vZC"/>
                     </connections>
                 </popUpButton>
+                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tW9-9e-FZx">
+                    <rect key="frame" x="144" y="20" width="251" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Ara-An-Gkf" id="zFu-hG-VFE">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" title="OtherViews" id="Fqi-au-3Rx">
+                            <items>
+                                <menuItem title="Item 1" state="on" id="Ara-An-Gkf"/>
+                                <menuItem title="Item 2" id="Yet-s2-7o3"/>
+                                <menuItem title="Item 3" id="MOu-Oy-HWV"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="Yrc-8b-9dF" name="content" keyPath="arrangedObjects" id="AUP-bM-LUj"/>
+                        <binding destination="Yrc-8b-9dF" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="AUP-bM-LUj" id="JGE-12-MXt"/>
+                        <binding destination="Yrc-8b-9dF" name="contentValues" keyPath="arrangedObjects.name" previousBinding="JGE-12-MXt" id="lIz-gH-9kJ"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.outputResampling" previousBinding="lIz-gH-9kJ" id="wcT-TT-yKh"/>
+                    </connections>
+                </popUpButton>
             </subviews>
-            <point key="canvasLocation" x="-151" y="322"/>
+            <point key="canvasLocation" x="-151" y="337.5"/>
         </customView>
         <customObject id="i5B-ga-Atm" userLabel="MIDIPane" customClass="MIDIPane">
             <connections>
@@ -594,6 +624,14 @@
             <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <arrayController objectClassName="NSDictionary" editable="NO" id="KAn-H1-QH6" userLabel="MIDIFlavorBehavior" customClass="MIDIFlavorBehaviorArrayController">
+            <declaredKeys>
+                <string>name</string>
+                <string>slug</string>
+                <string>preference</string>
+            </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
+        </arrayController>
+        <arrayController objectClassName="NSDictionary" editable="NO" id="Yrc-8b-9dF" customClass="OutputResamplerBehaviorArrayController">
             <declaredKeys>
                 <string>name</string>
                 <string>slug</string>

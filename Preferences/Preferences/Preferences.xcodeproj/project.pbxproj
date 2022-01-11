@@ -18,6 +18,7 @@
 		17E41DB80C130AA500AC744D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 17E41DB70C130AA500AC744D /* Localizable.strings */; };
 		17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 17E78A7D0D68BE3C005C5A59 /* file_tree.png */; };
 		17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17E78B680D68C1E3005C5A59 /* Preferences.xib */; };
+		832BEF00278D989E005E1BC4 /* OutputResamplerBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 832BEEFC278D989E005E1BC4 /* OutputResamplerBehaviorArrayController.m */; };
 		83651DA527322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83651DA327322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m */; };
 		8372053718E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */; };
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
@@ -93,6 +94,8 @@
 		32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences_Prefix.pch; sourceTree = "<group>"; };
 		3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		3DFAC48F235B6B8100A29416 /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		832BEEFC278D989E005E1BC4 /* OutputResamplerBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OutputResamplerBehaviorArrayController.m; sourceTree = "<group>"; };
+		832BEEFF278D989E005E1BC4 /* OutputResamplerBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputResamplerBehaviorArrayController.h; sourceTree = "<group>"; };
 		833F681B1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681C1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8347435D20E6D58800063D45 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Preferences.strings; sourceTree = "<group>"; };
@@ -245,6 +248,8 @@
 				83651DA327322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m */,
 				837C0D3E1C50954000CAE18F /* MIDIPluginBehaviorArrayController.h */,
 				837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */,
+				832BEEFF278D989E005E1BC4 /* OutputResamplerBehaviorArrayController.h */,
+				832BEEFC278D989E005E1BC4 /* OutputResamplerBehaviorArrayController.m */,
 				17C643370B8A77CC00C53518 /* OutputsArrayController.h */,
 				17C643360B8A77CC00C53518 /* OutputsArrayController.m */,
 				99F1813D0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.h */,
@@ -457,6 +462,7 @@
 				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,
 				83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */,
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
+				832BEF00278D989E005E1BC4 /* OutputResamplerBehaviorArrayController.m in Sources */,
 				837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */,
 				17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */,
 				170744AD0BFF3938002475C9 /* AppcastArrayController.m in Sources */,

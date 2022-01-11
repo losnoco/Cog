@@ -10,6 +10,9 @@
 
 #import "Logging.h"
 
+#import <audio/conversion/s16_to_float.h>
+#import <audio/conversion/s32_to_float.h>
+
 void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 {
 	if (!inDesc) {
@@ -37,19 +40,25 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
     {
         rgInfo = nil;
         
-        converterFloat = NULL;
-        converter = NULL;
+        resampler = NULL;
+        resampler_data = NULL;
+        inputBuffer = NULL;
+        inputBufferSize = 0;
         floatBuffer = NULL;
         floatBufferSize = 0;
-        callbackBuffer = NULL;
-        callbackBufferSize = 0;
         
         stopping = NO;
         convertEntered = NO;
-        ACInputEntered = NO;
-        ACFloatEntered = NO;
+        emittingSilence = NO;
+        
+        skipResampler = NO;
+        
+        latencyStarted = -1;
+        latencyEaten = 0;
+        latencyPostfill = NO;
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
     }
     
     return self;
@@ -86,10 +95,10 @@ static const float STEREO_DOWNMIX[8-2][8][2]={
     }
 };
 
-static void downmix_to_stereo(float * buffer, int channels, int count)
+static void downmix_to_stereo(float * buffer, int channels, size_t count)
 {
     if (channels >= 3 && channels <= 8)
-    for (int i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
         float left = 0, right = 0;
         for (int j = 0; j < channels; ++j)
@@ -102,7 +111,7 @@ static void downmix_to_stereo(float * buffer, int channels, int count)
     }
 }
 
-static void downmix_to_mono(float * buffer, int channels, int count)
+static void downmix_to_mono(float * buffer, int channels, size_t count)
 {
     if (channels >= 3 && channels <= 8)
     {
@@ -110,7 +119,7 @@ static void downmix_to_mono(float * buffer, int channels, int count)
         channels = 2;
     }
     float invchannels = 1.0 / (float)channels;
-    for (int i = 0; i < count; ++i)
+    for (size_t i = 0; i < count; ++i)
     {
         float sample = 0;
         for (int j = 0; j < channels; ++j)
@@ -121,9 +130,9 @@ static void downmix_to_mono(float * buffer, int channels, int count)
     }
 }
 
-static void upmix(float * buffer, int inchannels, int outchannels, int count)
+static void upmix(float * buffer, int inchannels, int outchannels, size_t count)
 {
-    for (int i = count - 1; i >= 0; --i)
+    for (ssize_t i = count - 1; i >= 0; --i)
     {
         if (inchannels == 1 && outchannels == 2)
         {
@@ -231,105 +240,105 @@ static void upmix(float * buffer, int inchannels, int outchannels, int count)
     }
 }
 
-static void scale_by_volume(float * buffer, int count, float volume)
+static void scale_by_volume(float * buffer, size_t count, float volume)
 {
     if ( volume != 1.0 )
-        for (int i = 0; i < count; ++i )
+        for (size_t i = 0; i < count; ++i )
             buffer[i] *= volume;
 }
 
-//called from the complexfill when the audio is converted...good clean fun
-static OSStatus ACInputProc(AudioConverterRef inAudioConverter,
-                            UInt32* ioNumberDataPackets,
-                            AudioBufferList* ioData,
-                            AudioStreamPacketDescription** outDataPacketDescription,
-                            void* inUserData)
+static void convert_u8_to_s16(int16_t *output, uint8_t *input, size_t count)
 {
-	ConverterNode *converter = (__bridge ConverterNode *)inUserData;
-	OSStatus err = noErr;
-	int amountToWrite;
-	int amountRead;
-    
-	if (converter->stopping || [converter shouldContinue] == NO || [converter endOfStream] == YES)
-	{
-		ioData->mBuffers[0].mDataByteSize = 0; 
-		*ioNumberDataPackets = 0;
-
-		return noErr;
-	}
-    
-    converter->ACInputEntered = YES;
-	
-	amountToWrite = (*ioNumberDataPackets)*(converter->inputFormat.mBytesPerPacket);
-
-    if (!converter->callbackBuffer || converter->callbackBufferSize < amountToWrite)
-        converter->callbackBuffer = realloc(converter->callbackBuffer, converter->callbackBufferSize = amountToWrite + 1024);
-
-	amountRead = [converter readData:converter->callbackBuffer amount:amountToWrite];
-	if (amountRead == 0 && [converter endOfStream] == NO)
-	{
-		ioData->mBuffers[0].mDataByteSize = 0; 
-		*ioNumberDataPackets = 0;
-        
-        converter->ACInputEntered = NO;
-		
-		return 100; //Keep asking for data
-	}
-    
-	ioData->mBuffers[0].mData = converter->callbackBuffer;
-	ioData->mBuffers[0].mDataByteSize = amountRead;
-	ioData->mBuffers[0].mNumberChannels = (converter->inputFormat.mChannelsPerFrame);
-	ioData->mNumberBuffers = 1;
-
-    converter->ACInputEntered = NO;
-    
-	return err;
+    for (size_t i = 0; i < count; ++i )
+    {
+        uint16_t sample = (input[i] << 8) | input[i];
+        sample ^= 0x8080;
+        output[i] = (int16_t)(sample);
+    }
 }
 
-static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
-                            UInt32* ioNumberDataPackets,
-                            AudioBufferList* ioData,
-                            AudioStreamPacketDescription** outDataPacketDescription,
-                            void* inUserData)
+static void convert_s8_to_s16(int16_t *output, uint8_t *input, size_t count)
 {
-	ConverterNode *converter = (__bridge ConverterNode *)inUserData;
-	OSStatus err = noErr;
-	int amountToWrite;
-	
-	if (converter->stopping || [converter shouldContinue] == NO)
-	{
-		ioData->mBuffers[0].mDataByteSize = 0;
-		*ioNumberDataPackets = 0;
-        
-		return noErr;
-	}
-    
-    converter->ACFloatEntered = YES;
-	
-    amountToWrite = (*ioNumberDataPackets) * (converter->dmFloatFormat.mBytesPerPacket);
+    for (size_t i = 0; i < count; ++i )
+    {
+        uint16_t sample = (input[i] << 8) | input[i];
+        output[i] = (int16_t)(sample);
+    }
+}
 
-    if ( amountToWrite + converter->floatOffset > converter->floatSize )
+static void convert_u16_to_s16(int16_t *buffer, size_t count)
+{
+    for (size_t i = 0; i < count; ++i )
     {
-        amountToWrite = converter->floatSize - converter->floatOffset;
-        *ioNumberDataPackets = amountToWrite / (converter->dmFloatFormat.mBytesPerPacket);
+        buffer[i] ^= 0x8000;
     }
-    
-	ioData->mBuffers[0].mData = converter->floatBuffer + converter->floatOffset;
-	ioData->mBuffers[0].mDataByteSize = amountToWrite;
-	ioData->mBuffers[0].mNumberChannels = (converter->dmFloatFormat.mChannelsPerFrame);
-	ioData->mNumberBuffers = 1;
-    
-    if (amountToWrite == 0)
+}
+
+static void convert_s24_to_s32(int32_t *output, uint8_t *input, size_t count)
+{
+    for (size_t i = 0; i < count; ++i )
     {
-        converter->ACFloatEntered = NO;
-        return 100;
+        int32_t sample = (input[i * 3] << 8) | (input[i * 3 + 1] << 16) | (input[i * 3 + 2] << 24);
+        output[i] = sample;
     }
-	
-    converter->floatOffset += amountToWrite;
-    
-    converter->ACFloatEntered = NO;
-    
-	return err;
+}
+
+static void convert_u24_to_s32(int32_t *output, uint8_t *input, size_t count)
+{
+    for (size_t i = 0; i < count; ++i )
+    {
+        int32_t sample = (input[i * 3] << 8) | (input[i * 3 + 1] << 16) | (input[i * 3 + 2] << 24);
+        output[i] = sample ^ 0x80000000;
+    }
+}
+
+static void convert_u32_to_s32(int32_t *buffer, size_t count)
+{
+    for (size_t i = 0; i < count; ++i )
+    {
+        buffer[i] ^= 0x80000000;
+    }
+}
+
+static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes)
+{
+    size_t i;
+    uint8_t temp;
+    bitsPerSample = (bitsPerSample + 7) / 8;
+    switch (bitsPerSample) {
+        case 2:
+            for (i = 0; i < bytes; i += 2)
+            {
+                temp = buffer[1];
+                buffer[1] = buffer[0];
+                buffer[0] = temp;
+                buffer += 2;
+            }
+            break;
+            
+        case 3:
+            for (i = 0; i < bytes; i += 3)
+            {
+                temp = buffer[2];
+                buffer[2] = buffer[0];
+                buffer[0] = temp;
+                buffer += 3;
+            }
+            break;
+            
+        case 4:
+            for (i = 0; i < bytes; i += 4)
+            {
+                temp = buffer[3];
+                buffer[3] = buffer[0];
+                buffer[0] = temp;
+                temp = buffer[2];
+                buffer[2] = buffer[1];
+                buffer[1] = temp;
+                buffer += 4;
+            }
+            break;
+    }
 }
 
 -(void)process
@@ -345,18 +354,22 @@ static OSStatus ACFloatProc(AudioConverterRef inAudioConverter,
 
 - (int)convert:(void *)dest amount:(int)amount
 {	
-	AudioBufferList ioData;
 	UInt32 ioNumberPackets;
-	OSStatus err;
     int amountReadFromFC;
     int amountRead = 0;
+    
+    if (emittingSilence)
+    {
+        memset(dest, 0, amount);
+        return amount;
+    }
     
     if (stopping)
         return 0;
     
     convertEntered = YES;
     
-tryagain2:
+tryagain:
     if (stopping || [self shouldContinue] == NO)
     {
         convertEntered = NO;
@@ -364,51 +377,195 @@ tryagain2:
     }
     
     amountReadFromFC = 0;
-	
-    if (floatOffset == floatSize) {
-        UInt32 ioWantedNumberPackets;
+    
+    while (inpOffset == inpSize) {
+        size_t samplesRead = 0;
         
-        ioNumberPackets = amount / outputFormat.mBytesPerPacket;
+        // Approximately the most we want on input
+        ioNumberPackets = (amount - amountRead) / outputFormat.mBytesPerPacket;
+        
+        size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
+        if (!inputBuffer || inputBufferSize < newSize)
+            inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 3 );
+        
+        if (stopping || [self shouldContinue] == NO || [self endOfStream] == YES)
+        {
+            if (!skipResampler && !latencyPostfill)
+            {
+                ioNumberPackets = (int)resampler->latency(resampler_data);
+                newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
+                if (!inputBuffer || inputBufferSize < newSize)
+                    inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 64);
+                
+                inpSize = newSize;
+                inpOffset = 0;
+                latencyPostfill = YES;
+                break;
+            }
+            else
+            {
+                convertEntered = NO;
+                return amountRead;
+            }
+        }
+
+        size_t amountToWrite = ioNumberPackets * inputFormat.mBytesPerPacket;
+        size_t amountToSkip = 0;
+        
+        if (!skipResampler)
+        {
+            if (latencyStarted < 0)
+            {
+                latencyStarted = resampler->latency(resampler_data);
+            }
+
+            if (latencyStarted)
+            {
+                size_t latencyToWrite = latencyStarted * inputFormat.mBytesPerPacket;
+                if (latencyToWrite > amountToWrite)
+                    latencyToWrite = amountToWrite;
+            
+                if (inputFormat.mBitsPerChannel <= 8)
+                    memset(inputBuffer, 0x80, latencyToWrite);
+                else
+                    memset(inputBuffer, 0, latencyToWrite);
+
+                amountToSkip = latencyToWrite;
+                amountToWrite -= amountToSkip;
+
+                latencyEaten = latencyStarted * sampleRatio;
+
+                latencyStarted -= latencyToWrite / inputFormat.mBytesPerPacket;
+            }
+        }
+                
+        size_t bytesReadFromInput = [self readData:inputBuffer + amountToSkip amount:(int)amountToWrite] + amountToSkip;
+        
+        if (bytesReadFromInput &&
+            (inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian))
+        {
+            // Time for endian swap!
+            convert_be_to_le(inputBuffer, inputFormat.mBitsPerChannel, bytesReadFromInput);
+        }
+        
+        if (bytesReadFromInput &&
+            !(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat))
+        {
+            size_t bitsPerSample = inputFormat.mBitsPerChannel;
+            BOOL isUnsigned = !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
+            BOOL isFloat = NO;
+            if (bitsPerSample <= 8) {
+                samplesRead = bytesReadFromInput;
+                if (isUnsigned)
+                    convert_s8_to_s16(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+                else
+                    convert_u8_to_s16(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+                memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * 2);
+                bitsPerSample = 16;
+                bytesReadFromInput = samplesRead * 2;
+                isUnsigned = NO;
+            }
+            if (bitsPerSample <= 16) {
+                samplesRead = bytesReadFromInput / 2;
+                if (isUnsigned)
+                    convert_u16_to_s16(inputBuffer, samplesRead);
+                convert_s16_to_float(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, 1.0);
+                memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
+                bitsPerSample = 32;
+                bytesReadFromInput = samplesRead * sizeof(float);
+                isUnsigned = NO;
+                isFloat = YES;
+            }
+            else if (bitsPerSample <= 24) {
+                samplesRead = bytesReadFromInput / 3;
+                if (isUnsigned)
+                    convert_u24_to_s32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+                else
+                    convert_s24_to_s32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+                memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * 4);
+                bitsPerSample = 32;
+                bytesReadFromInput = samplesRead * 4;
+                isUnsigned = NO;
+            }
+            if (!isFloat && bitsPerSample <= 32) {
+                samplesRead = bytesReadFromInput / 4;
+                if (isUnsigned)
+                    convert_u32_to_s32(inputBuffer, samplesRead);
+                convert_s32_to_float(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, 1.0);
+                memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
+                bitsPerSample = 32;
+                bytesReadFromInput = samplesRead * sizeof(float);
+                isUnsigned = NO;
+                isFloat = YES;
+            }
+        }
+        
+        // Input now contains bytesReadFromInput worth of floats, in the input sample rate
+        inpSize = bytesReadFromInput;
+        inpOffset = 0;
+    }
+    
+    if (floatOffset == floatSize)
+    {
+        struct resampler_data src_data;
+        
+        size_t inputSamples = (inpSize - inpOffset) / floatFormat.mBytesPerPacket;
+        
+        ioNumberPackets = (UInt32)inputSamples;
         
         ioNumberPackets = (UInt32)((float)ioNumberPackets * sampleRatio);
         ioNumberPackets = (ioNumberPackets + 255) & ~255;
-        
-        ioWantedNumberPackets = ioNumberPackets;
         
         size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
         if (newSize < (ioNumberPackets * dmFloatFormat.mBytesPerPacket))
             newSize = ioNumberPackets * dmFloatFormat.mBytesPerPacket;
         if (!floatBuffer || floatBufferSize < newSize)
-            floatBuffer = realloc( floatBuffer, floatBufferSize = newSize + 1024 );
-        ioData.mBuffers[0].mData = floatBuffer;
-        ioData.mBuffers[0].mDataByteSize = ioNumberPackets * floatFormat.mBytesPerPacket;
-        ioData.mBuffers[0].mNumberChannels = floatFormat.mChannelsPerFrame;
-        ioData.mNumberBuffers = 1;
-            
-    tryagain:
+            floatBuffer = realloc( floatBuffer, floatBufferSize = newSize * 3 );
+        
         if (stopping)
         {
             convertEntered = NO;
             return 0;
         }
+
+        src_data.data_out      = floatBuffer;
+        src_data.output_frames = 0;
         
-        err = AudioConverterFillComplexBuffer(converterFloat, ACInputProc, (__bridge void * _Nullable)(self), &ioNumberPackets, &ioData, NULL);
-        amountReadFromFC += ioNumberPackets * floatFormat.mBytesPerPacket;
-        if (err == 100)
+        src_data.data_in       = (float*)(((uint8_t*)inputBuffer) + inpOffset);
+        src_data.input_frames  = inputSamples;
+        
+        src_data.ratio         = sampleRatio;
+        
+        if (!skipResampler)
         {
-            ioData.mBuffers[0].mData = (void *)(((uint8_t*)floatBuffer) + amountReadFromFC);
-            ioNumberPackets = ioWantedNumberPackets - ioNumberPackets;
-            ioWantedNumberPackets = ioNumberPackets;
-            ioData.mBuffers[0].mDataByteSize = ioNumberPackets * floatFormat.mBytesPerPacket;
-            usleep(10000);
-            goto tryagain;
+            resampler->process(resampler_data, &src_data);
         }
-        else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
+        else
         {
-            DLog(@"Error: %i", err);
-            convertEntered = NO;
-            return amountRead;
+            memcpy(src_data.data_out, src_data.data_in, inputSamples * floatFormat.mBytesPerPacket);
+            src_data.output_frames = inputSamples;
         }
+        
+        inpOffset += inputSamples * floatFormat.mBytesPerPacket;
+        
+        if (!skipResampler && latencyEaten)
+        {
+            if (src_data.output_frames > latencyEaten)
+            {
+                src_data.output_frames -= latencyEaten;
+                memmove(src_data.data_out, src_data.data_out + latencyEaten * inputFormat.mChannelsPerFrame, src_data.output_frames * floatFormat.mBytesPerPacket);
+                latencyEaten = 0;
+            }
+            else
+            {
+                latencyEaten -= src_data.output_frames;
+                src_data.output_frames = 0;
+            }
+        }
+        
+        amountReadFromFC = (int)(src_data.output_frames * floatFormat.mBytesPerPacket);
+        
+        scale_by_volume( (float*) floatBuffer, amountReadFromFC / sizeof(float), volumeScale);
         
         if ( inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2 )
         {
@@ -429,41 +586,22 @@ tryagain2:
             amountReadFromFC = samples * sizeof(float) * outputFormat.mChannelsPerFrame;
         }
         
-        scale_by_volume( (float*) floatBuffer, amountReadFromFC / sizeof(float), volumeScale);
-        
         floatSize = amountReadFromFC;
         floatOffset = 0;
     }
-
-    ioNumberPackets = amount / outputFormat.mBytesPerPacket;
-    ioData.mBuffers[0].mData = dest + amountRead;
-    ioData.mBuffers[0].mDataByteSize = amount - amountRead;
-    ioData.mBuffers[0].mNumberChannels = outputFormat.mChannelsPerFrame;
-    ioData.mNumberBuffers = 1;
-
-    if (stopping)
-    {
-        convertEntered = NO;
-        return 0;
-    }
     
-    err = AudioConverterFillComplexBuffer(converter, ACFloatProc, (__bridge void *)(self), &ioNumberPackets, &ioData, NULL);
-    amountRead += ioNumberPackets * outputFormat.mBytesPerPacket;
-    if (err == 100)
-    {
-        if ([self endOfStream] == YES)
-        {
-            convertEntered = NO;
-            return amountRead;
-        }
-        
-        goto tryagain2;
-    }
-    else if (err != noErr && err != kAudioConverterErr_InvalidInputSize)
-    {
-        DLog(@"Error: %i", err);
-    }
+    if (floatOffset == floatSize)
+        goto tryagain;
 
+    ioNumberPackets = (amount - amountRead);
+    if (ioNumberPackets > (floatSize - floatOffset))
+        ioNumberPackets = (UInt32)(floatSize - floatOffset);
+    
+    memcpy(dest + amountRead, floatBuffer + floatOffset, ioNumberPackets);
+    
+    floatOffset += ioNumberPackets;
+    amountRead += ioNumberPackets;
+    
     convertEntered = NO;
 	return amountRead;
 }
@@ -477,6 +615,11 @@ tryagain2:
     if ([keyPath isEqual:@"values.volumeScaling"]) {
         //User reset the volume scaling option
         [self refreshVolumeScaling];
+    }
+    else if ([keyPath isEqual:@"values.outputResampling"]) {
+        // Reset resampler
+        if (resampler && resampler_data)
+            [self inputFormatDidChange:inputFormat];
     }
 }
 
@@ -532,15 +675,10 @@ static float db_to_scale(float db)
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf
 {
 	//Make the converter
-	OSStatus stat = noErr;
-    
-    stopping = NO;
-    convertEntered = NO;
-    ACInputEntered = NO;
-    ACFloatEntered = NO;
-	
 	inputFormat = inf;
 	outputFormat = outf;
+    
+    // These are really placeholders, as we're doing everything internally now
     
     floatFormat = inputFormat;
     floatFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
@@ -548,73 +686,62 @@ static float db_to_scale(float db)
     floatFormat.mBytesPerFrame = (32/8)*floatFormat.mChannelsPerFrame;
     floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
     
+    inpOffset = 0;
+    inpSize = 0;
+    
     floatOffset = 0;
     floatSize = 0;
     
-    stat = AudioConverterNew( &inputFormat, &floatFormat, &converterFloat );
-    if (stat != noErr)
-    {
-        ALog(@"Error creating converter %i", stat);
-        return NO;
-    }
+    // This is a post resampler, post-down/upmix format
     
     dmFloatFormat = floatFormat;
+    dmFloatFormat.mSampleRate = outputFormat.mSampleRate;
     dmFloatFormat.mChannelsPerFrame = outputFormat.mChannelsPerFrame;
     dmFloatFormat.mBytesPerFrame = (32/8)*dmFloatFormat.mChannelsPerFrame;
     dmFloatFormat.mBytesPerPacket = dmFloatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
-    
-    stat = AudioConverterNew ( &dmFloatFormat, &outputFormat, &converter );
-    if (stat != noErr)
-    {
-        ALog(@"Error creating converter %i", stat);
-        return NO;
-    }
 
-#if 0
-    // These mappings don't do what I want, so avoid them.
-    if (inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2)
+    convert_s16_to_float_init_simd();
+    convert_s32_to_float_init_simd();
+    
+    skipResampler = outputFormat.mSampleRate == inputFormat.mSampleRate;
+    
+    sampleRatio = (double)outputFormat.mSampleRate / (double)inputFormat.mSampleRate;
+    
+    if (!skipResampler)
     {
-        SInt32 channelMap[2] = { 0, 1 };
+        enum resampler_quality quality = RESAMPLER_QUALITY_DONTCARE;
         
-		stat = AudioConverterSetProperty(converter,kAudioConverterChannelMap,sizeof(channelMap),channelMap);
-		if (stat != noErr)
-		{
-			ALog(@"Error mapping channels %i", stat);
-            return NO;
-		}
-    }
-    else if (inputFormat.mChannelsPerFrame > 1 && outputFormat.mChannelsPerFrame == 1)
-    {
-        SInt32 channelMap[1] = { 0 };
+        NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"outputResampling"];
+        if ([resampling isEqualToString:@"lowest"])
+            quality = RESAMPLER_QUALITY_LOWEST;
+        else if ([resampling isEqualToString:@"lower"])
+            quality = RESAMPLER_QUALITY_LOWER;
+        else if ([resampling isEqualToString:@"normal"])
+            quality = RESAMPLER_QUALITY_NORMAL;
+        else if ([resampling isEqualToString:@"higher"])
+            quality = RESAMPLER_QUALITY_HIGHER;
+        else if ([resampling isEqualToString:@"highest"])
+            quality = RESAMPLER_QUALITY_HIGHEST;
         
-        stat = AudioConverterSetProperty(converter,kAudioConverterChannelMap,(int)sizeof(channelMap),channelMap);
-        if (stat != noErr)
+        if (!retro_resampler_realloc(&resampler_data, &resampler, "sinc", quality, inputFormat.mChannelsPerFrame, sampleRatio))
         {
-            ALog(@"Error mapping channels %i", stat);
             return NO;
         }
+    
+        latencyStarted = -1;
+        latencyEaten = 0;
+        latencyPostfill = NO;
     }
-	else if (inputFormat.mChannelsPerFrame == 1 && outputFormat.mChannelsPerFrame > 1)
-	{
-		SInt32 channelMap[outputFormat.mChannelsPerFrame];
-        
-        memset(channelMap, 0, sizeof(channelMap));
-		
-		stat = AudioConverterSetProperty(converter,kAudioConverterChannelMap,(int)sizeof(channelMap),channelMap);
-		if (stat != noErr)
-		{
-			ALog(@"Error mapping channels %i", stat);
-            return NO;
-		}	
-	}
-#endif
 
 	PrintStreamDesc(&inf);
 	PrintStreamDesc(&outf);
 
     [self refreshVolumeScaling];
     
-    sampleRatio = (float)inputFormat.mSampleRate / (float)outputFormat.mSampleRate;
+    // Move this here so process call isn't running the resampler until it's allocated
+    stopping = NO;
+    convertEntered = NO;
+    emittingSilence = NO;
     
 	return YES;
 }
@@ -624,6 +751,7 @@ static float db_to_scale(float db)
 	DLog(@"Decoder dealloc");
 
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputResampling"];
     
 	[self cleanUp];
 }
@@ -638,6 +766,7 @@ static float db_to_scale(float db)
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format
 {
 	DLog(@"FORMAT CHANGED");
+    emittingSilence = YES;
 	[self cleanUp];
 	[self setupWithInputFormat:format outputFormat:outputFormat];
 }
@@ -652,30 +781,26 @@ static float db_to_scale(float db)
 - (void)cleanUp
 {
     stopping = YES;
-    while (convertEntered || ACInputEntered || ACFloatEntered)
+    while (convertEntered)
     {
         usleep(500);
     }
-    if (converterFloat)
+    if (resampler && resampler_data)
     {
-        AudioConverterDispose(converterFloat);
-        converterFloat = NULL;
+        resampler->free(resampler_data);
+        resampler = NULL;
+        resampler_data = NULL;
     }
-	if (converter)
-	{
-		AudioConverterDispose(converter);
-		converter = NULL;
-	}
     if (floatBuffer)
     {
         free(floatBuffer);
         floatBuffer = NULL;
         floatBufferSize = 0;
     }
-	if (callbackBuffer) {
-		free(callbackBuffer);
-		callbackBuffer = NULL;
-        callbackBufferSize = 0;
+	if (inputBuffer) {
+		free(inputBuffer);
+		inputBuffer = NULL;
+        inputBufferSize = 0;
 	}
     floatOffset = 0;
     floatSize = 0;

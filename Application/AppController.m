@@ -466,6 +466,8 @@ void* kAppControllerContext = &kAppControllerContext;
 
     [userDefaultsValuesDict setObject:@"cubic" forKey:@"resampling"];
     
+    [userDefaultsValuesDict setObject:@"normal" forKey:@"outputResampling"];
+    
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:CogStatusStopped] forKey:@"lastPlaybackStatus"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];

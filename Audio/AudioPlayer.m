@@ -60,9 +60,6 @@
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time
 {
-    if (output) {
-        [output close];
-    }
 	@synchronized(chainQueue) {
         for (id anObject in chainQueue)
 		{
@@ -240,7 +237,6 @@
 {
 	//Need to reset everything's buffers, and then seek?
 	/*HACK TO TEST HOW WELL THIS WOULD WORK*/
-    [self play:[[bufferChain inputNode] stealDecoder] startPaused:paused];
 	[output seek:time];
 	[bufferChain seek:time];
 	/*END HACK*/
