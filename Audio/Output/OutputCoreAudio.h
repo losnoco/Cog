@@ -23,6 +23,8 @@
     BOOL stopping;
     BOOL stopped;
     
+    size_t outputSilenceBlocks;
+    
     BOOL listenerapplied;
     
     float volume;

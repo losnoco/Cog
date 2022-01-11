@@ -26,6 +26,7 @@ extern void scale_by_volume(float * buffer, size_t count, float volume);
         volume = 1.0;
         outputDeviceID = -1;
         listenerapplied = NO;
+        outputSilenceBlocks = 0;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	}
@@ -225,6 +226,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     stopping = NO;
     stopped = NO;
     outputDeviceID = -1;
+    outputSilenceBlocks = 0;
 	
     AVAudioFormat *format, *renderFormat;
     AudioComponentDescription desc;
@@ -307,7 +309,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     if (err != nil)
         return NO;
     
-    float * volume = &self->volume;
+    __unsafe_unretained typeof(self) weakSelf = self;
     
     _au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags * actionFlags, const AudioTimeStamp * timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList * inputData)
     {
@@ -319,11 +321,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         amountToRead = framesToRead * (self->deviceFormat.mBytesPerPacket);
         
-        if (self->stopping == YES)
+        if (self->outputSilenceBlocks || self->stopping == YES)
         {
-            self->stopped = YES;
             memset(readPointer, 0, amountToRead);
             inputData->mBuffers[0].mDataByteSize = amountToRead;
+            if (self->outputSilenceBlocks &&
+                --self->outputSilenceBlocks == 0)
+                [weakSelf stop];
             return 0;
         }
 
@@ -331,6 +335,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         {
             memset(readPointer, 0, amountToRead);
             inputData->mBuffers[0].mDataByteSize = amountToRead;
+            self->outputSilenceBlocks = 48;
             return 0;
         }
         
@@ -344,7 +349,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         }
 
         int framesRead = amountRead / sizeof(float);
-        scale_by_volume((float*)readPointer, framesRead, *volume);
+        scale_by_volume((float*)readPointer, framesRead, weakSelf->volume);
 
         if (amountRead < amountToRead)
         {
