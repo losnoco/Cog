@@ -12,13 +12,13 @@
 #import <CoreAudio/AudioHardware.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
+#import <AVFoundation/AVFoundation.h>
 
 @class OutputNode;
 
 @interface OutputCoreAudio : NSObject {
 	OutputNode * outputController;
     
-    BOOL primed;
     BOOL running;
     BOOL stopping;
     BOOL stopped;
@@ -30,13 +30,8 @@
     AudioDeviceID outputDeviceID;
     AudioStreamBasicDescription deviceFormat;    // info about the default device
 
-    AudioQueueRef audioQueue;
-    AudioQueueBufferRef *buffers;
-    UInt32 numberOfBuffers;
-    UInt32 bufferByteSize;
-    
-	AudioUnit outputUnit;
-	AURenderCallbackStruct renderCallback;	
+    AUAudioUnit *_au;
+    size_t _bufferSize;
 }
 
 - (id)initWithController:(OutputNode *)c;

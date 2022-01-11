@@ -240,7 +240,7 @@ static void upmix(float * buffer, int inchannels, int outchannels, size_t count)
     }
 }
 
-static void scale_by_volume(float * buffer, size_t count, float volume)
+void scale_by_volume(float * buffer, size_t count, float volume)
 {
     if ( volume != 1.0 )
         for (size_t i = 0; i < count; ++i )
@@ -378,6 +378,7 @@ tryagain:
     
     amountReadFromFC = 0;
     
+    if (floatOffset == floatSize) // skip this step if there's still float buffered
     while (inpOffset == inpSize) {
         size_t samplesRead = 0;
         

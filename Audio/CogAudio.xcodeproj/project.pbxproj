@@ -91,6 +91,7 @@
 		832BEEF9278D4A32005E1BC4 /* retro_assert.h in Headers */ = {isa = PBXBuildFile; fileRef = 832BEED9278D4A32005E1BC4 /* retro_assert.h */; };
 		832BEEFA278D4A32005E1BC4 /* stdstring.h in Headers */ = {isa = PBXBuildFile; fileRef = 832BEEDB278D4A32005E1BC4 /* stdstring.h */; };
 		832BEEFB278D4A32005E1BC4 /* filters.h in Headers */ = {isa = PBXBuildFile; fileRef = 832BEEDC278D4A32005E1BC4 /* filters.h */; };
+		832BEF04278DD06D005E1BC4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832BEF03278DD06D005E1BC4 /* AVFoundation.framework */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		839366671815923C006DD712 /* CogPluginMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 839366651815923C006DD712 /* CogPluginMulti.h */; };
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
@@ -204,6 +205,7 @@
 		832BEED9278D4A32005E1BC4 /* retro_assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = retro_assert.h; sourceTree = "<group>"; };
 		832BEEDB278D4A32005E1BC4 /* stdstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdstring.h; sourceTree = "<group>"; };
 		832BEEDC278D4A32005E1BC4 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filters.h; sourceTree = "<group>"; };
+		832BEF03278DD06D005E1BC4 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		839366651815923C006DD712 /* CogPluginMulti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogPluginMulti.h; sourceTree = "<group>"; };
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				832BEF04278DD06D005E1BC4 /* AVFoundation.framework in Frameworks */,
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
 				17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */,
 				17D21DAE0B8BE76800D1EBDE /* AudioUnit.framework in Frameworks */,
@@ -251,6 +254,7 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				832BEF02278DD06D005E1BC4 /* Frameworks */,
 			);
 			name = CogAudio;
 			sourceTree = "<group>";
@@ -556,6 +560,14 @@
 				832BEEDB278D4A32005E1BC4 /* stdstring.h */,
 			);
 			path = string;
+			sourceTree = "<group>";
+		};
+		832BEF02278DD06D005E1BC4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				832BEF03278DD06D005E1BC4 /* AVFoundation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

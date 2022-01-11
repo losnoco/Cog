@@ -11,9 +11,7 @@
 
 #import "Logging.h"
 
-@interface OutputCoreAudio (Private)
-- (void)prime;
-@end
+extern void scale_by_volume(float * buffer, size_t count, float volume);
 
 @implementation OutputCoreAudio
 
@@ -23,10 +21,8 @@
 	if (self)
 	{
 		outputController = c;
-		outputUnit = NULL;
-        audioQueue = NULL;
-        buffers = NULL;
-        numberOfBuffers = 0;
+        _au = nil;
+        _bufferSize = 0;
         volume = 1.0;
         outputDeviceID = -1;
         listenerapplied = NO;
@@ -35,54 +31,6 @@
 	}
 	
 	return self;
-}
-
-static void Sound_Renderer(void *userData, AudioQueueRef queue, AudioQueueBufferRef buffer)
-{
-	OutputCoreAudio *output = (__bridge OutputCoreAudio *)userData;
-	void *readPointer = buffer->mAudioData;
-	
-	int amountToRead, amountRead;
-
-    int framesToRead = buffer->mAudioDataByteSize / (output->deviceFormat.mBytesPerPacket);
-    
-    amountToRead = framesToRead * (output->deviceFormat.mBytesPerPacket);
-    
-    if (output->stopping == YES)
-    {
-        output->stopped = YES;
-        return;
-    }
-
-	if ([output->outputController shouldContinue] == NO)
-	{
-//		[output stop];
-        memset(readPointer, 0, amountToRead);
-        buffer->mAudioDataByteSize = amountToRead;
-        AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
-        return;
-	}
-	
-	amountRead = [output->outputController readData:(readPointer) amount:amountToRead];
-
-	if ((amountRead < amountToRead) && [output->outputController endOfStream] == NO) //Try one more time! for track changes!
-	{
-		int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
-		amountRead2 = [output->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
-		amountRead += amountRead2;
-	}
-    
-    if (amountRead < amountToRead)
-    {
-        // Either underrun, or no data at all. Caller output tends to just
-        // buffer loop if it doesn't get anything, so always produce a full
-        // buffer, and silence anything we couldn't supply.
-        memset(readPointer + amountRead, 0, amountToRead - amountRead);
-        amountRead = amountToRead;
-    }
-	
-    buffer->mAudioDataByteSize = amountRead;
-    AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
 }
 
 static OSStatus
@@ -107,7 +55,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 {
 	OSStatus err;
     BOOL defaultDevice = NO;
-    UInt32 thePropSize;
     AudioObjectPropertyAddress theAddress = {
         .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
         .mScope = kAudioObjectPropertyScopeGlobal,
@@ -126,7 +73,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		}
 	}
 
-    if (audioQueue) {
+    if (_au) {
         AudioObjectPropertyAddress defaultDeviceAddress = theAddress;
 
         if (listenerapplied && !defaultDevice) {
@@ -135,46 +82,20 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         }
 
         if (outputDeviceID != deviceID) {
-            printf("DEVICE: %i\n", deviceID);
+            DLog(@"Device: %i\n", deviceID);
             outputDeviceID = deviceID;
-
-            CFStringRef theDeviceUID;
-            theAddress.mSelector = kAudioDevicePropertyDeviceUID;
-            theAddress.mScope = kAudioDevicePropertyScopeOutput;
-            thePropSize = sizeof(theDeviceUID);
-            err = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &thePropSize, &theDeviceUID);
-	
-            if (err) {
-                DLog(@"Error getting device UID as string");
-                return err;
+            
+            NSError *nserr;
+            [_au setDeviceID:outputDeviceID error:&nserr];
+            if (nserr != nil) {
+                return (OSErr)[nserr code];
             }
-    
-            err = AudioQueueStop(audioQueue, true);
-            if (err) {
-                DLog(@"Error stopping stream to set device");
-                CFRelease(theDeviceUID);
-                return err;
-            }
-            primed = NO;
-            err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_CurrentDevice, &theDeviceUID, sizeof(theDeviceUID));
-            CFRelease(theDeviceUID);
-            if (running)
-                [self start];
         }
         
         if (!listenerapplied && defaultDevice) {
             AudioObjectAddPropertyListener(kAudioObjectSystemObject, &defaultDeviceAddress, default_device_changed, (__bridge void * _Nullable)(self));
             listenerapplied = YES;
         }
-    }
-    else if (outputUnit) {
-        err = AudioUnitSetProperty(outputUnit,
-                                  kAudioOutputUnitProperty_CurrentDevice,
-                                  kAudioUnitScope_Output,
-                                  0,
-                                  &deviceID,
-                                  sizeof(AudioDeviceID));
-
     }
     else {
         err = noErr;
@@ -298,93 +219,29 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (BOOL)setup
 {
-	if (outputUnit || audioQueue)
+	if (_au)
 		[self stop];
     
     stopping = NO;
     stopped = NO;
     outputDeviceID = -1;
 	
+    AVAudioFormat *format, *renderFormat;
     AudioComponentDescription desc;
-	OSStatus err;
+    NSError *err;
 	
 	desc.componentType = kAudioUnitType_Output;
-	desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+	desc.componentSubType = kAudioUnitSubType_HALOutput;
 	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
 	
-	AudioComponent comp = AudioComponentFindNext(NULL, &desc);  //Finds an component that meets the desc spec's
-	if (comp == NULL)
-		return NO;
-	
-	err = AudioComponentInstanceNew(comp, &outputUnit);  //gains access to the services provided by the component
-	if (err)
-		return NO;
-	
-	// Initialize AudioUnit 
-	err = AudioUnitInitialize(outputUnit);
-	if (err != noErr)
-		return NO;
-
-	// Setup the output device before mucking with settings
-	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
-	if (device) {
-		BOOL ok = [self setOutputDeviceWithDeviceDict:device];
-		if (!ok) {
-			//Ruh roh.
-			[self setOutputDeviceWithDeviceDict:nil];
-			
-			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
-		}
-	}
-	else {
-		[self setOutputDeviceWithDeviceDict:nil];
-	}
-	
-	UInt32 size = sizeof (AudioStreamBasicDescription);
-	Boolean outWritable;
-	//Gets the size of the Stream Format Property and if it is writable
-	AudioUnitGetPropertyInfo(outputUnit,  
-							 kAudioUnitProperty_StreamFormat,
-							 kAudioUnitScope_Output, 
-							 0, 
-							 &size, 
-							 &outWritable);
-	//Get the current stream format of the output
-	err = AudioUnitGetProperty (outputUnit,
-								kAudioUnitProperty_StreamFormat,
-								kAudioUnitScope_Output,
-								0,
-								&deviceFormat,
-								&size);
-	
-	if (err != noErr)
-		return NO;
-    
-    AudioUnitUninitialize (outputUnit);
-    AudioComponentInstanceDispose(outputUnit);
-    outputUnit = NULL;
-	
-	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
-	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
-//	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
-//	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    if (@available(macOS 12.0, *)) {
-        // Let's enable surround upmixing, for surround and spatial output
-        deviceFormat.mChannelsPerFrame = 8;
-    }
-    // And force a default rate for crappy devices
-    if (deviceFormat.mSampleRate < 32000)
-        deviceFormat.mSampleRate = 48000;
-	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
-	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
-
-    err = AudioQueueNewOutput(&deviceFormat, Sound_Renderer, (__bridge void * _Nullable)(self), NULL, NULL, 0, &audioQueue);
-    
-    if (err != noErr)
+    _au = [[AUAudioUnit alloc] initWithComponentDescription:desc error:&err];
+    if (err != nil)
         return NO;
-    
+
+    // Setup the output device before mucking with settings
+    NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
     if (device) {
         BOOL ok = [self setOutputDeviceWithDeviceDict:device];
         if (!ok) {
@@ -398,95 +255,128 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         [self setOutputDeviceWithDeviceDict:nil];
     }
 
+    format = _au.outputBusses[0].format;
+    
+    deviceFormat = *(format.streamDescription);
+    
+	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
+	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
+//	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
+//	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+    if (@available(macOS 12.0, *)) {
+        // Let's enable surround upmixing, for surround and spatial output
+        deviceFormat.mChannelsPerFrame = 8;
+    }
+    // And force a default rate for crappy devices
+    if (deviceFormat.mSampleRate < 32000)
+        deviceFormat.mSampleRate = 48000;
+	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
+	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
+    
     /* Set the channel layout for the audio queue */
-    AudioChannelLayout layout = {0};
+    AudioChannelLayoutTag tag = 0;
     switch (deviceFormat.mChannelsPerFrame) {
     case 1:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
+        tag = kAudioChannelLayoutTag_Mono;
         break;
     case 2:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo;
+        tag = kAudioChannelLayoutTag_Stereo;
         break;
     case 3:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_DVD_4;
+        tag = kAudioChannelLayoutTag_DVD_4;
         break;
     case 4:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_Quadraphonic;
+        tag = kAudioChannelLayoutTag_Quadraphonic;
         break;
     case 5:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_5_0_A;
+        tag = kAudioChannelLayoutTag_MPEG_5_0_A;
         break;
     case 6:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_5_1_A;
+        tag = kAudioChannelLayoutTag_MPEG_5_1_A;
         break;
     case 7:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_6_1_A;
+        tag = kAudioChannelLayoutTag_MPEG_6_1_A;
         break;
     case 8:
-        layout.mChannelLayoutTag = kAudioChannelLayoutTag_MPEG_7_1_A;
+        tag = kAudioChannelLayoutTag_MPEG_7_1_A;
         break;
     }
-    if (layout.mChannelLayoutTag != 0) {
-        err = AudioQueueSetProperty(audioQueue, kAudioQueueProperty_ChannelLayout, &layout, sizeof(layout));
-        if (err != noErr) {
-            return NO;
-        }
-    }
-
-    numberOfBuffers = 4;
-    bufferByteSize = deviceFormat.mBytesPerPacket * 512;
     
-    buffers = calloc(sizeof(buffers[0]), numberOfBuffers);
-    
-    if (!buffers)
-    {
-        AudioQueueDispose(audioQueue, true);
-        audioQueue = NULL;
+    renderFormat = [[AVAudioFormat alloc] initWithStreamDescription:&deviceFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
+    [_au.inputBusses[0] setFormat:renderFormat error:&err];
+    if (err != nil)
         return NO;
-    }
     
-    for (UInt32 i = 0; i < numberOfBuffers; ++i)
+    float * volume = &self->volume;
+    
+    _au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags * actionFlags, const AudioTimeStamp * timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList * inputData)
     {
-        err = AudioQueueAllocateBuffer(audioQueue, bufferByteSize, buffers + i);
-        if (err != noErr || buffers[i] == NULL)
+        void *readPointer = inputData->mBuffers[0].mData;
+        
+        int amountToRead, amountRead;
+
+        int framesToRead = inputData->mBuffers[0].mDataByteSize / (self->deviceFormat.mBytesPerPacket);
+        
+        amountToRead = framesToRead * (self->deviceFormat.mBytesPerPacket);
+        
+        if (self->stopping == YES)
         {
-            err = AudioQueueDispose(audioQueue, true);
-            audioQueue = NULL;
-            return NO;
+            self->stopped = YES;
+            memset(readPointer, 0, amountToRead);
+            inputData->mBuffers[0].mDataByteSize = amountToRead;
+            return 0;
+        }
+
+        if ([self->outputController shouldContinue] == NO)
+        {
+            memset(readPointer, 0, amountToRead);
+            inputData->mBuffers[0].mDataByteSize = amountToRead;
+            return 0;
         }
         
-        buffers[i]->mAudioDataByteSize = bufferByteSize;
-    }
-    
-    [self prime];
-    
-	[outputController setFormat:&deviceFormat];
-	
-	return (err == noErr);	
-}
+        amountRead = [self->outputController readData:(readPointer) amount:amountToRead];
 
-- (void)prime
-{
-    for (UInt32 i = 0; i < numberOfBuffers; ++i)
-        Sound_Renderer((__bridge void * _Nullable)(self), audioQueue, buffers[i]);
-    primed = YES;
+        if ((amountRead < amountToRead) && [self->outputController endOfStream] == NO) //Try one more time! for track changes!
+        {
+            int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
+            amountRead2 = [self->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
+            amountRead += amountRead2;
+        }
+
+        int framesRead = amountRead / sizeof(float);
+        scale_by_volume((float*)readPointer, framesRead, *volume);
+
+        if (amountRead < amountToRead)
+        {
+            // Either underrun, or no data at all. Caller output tends to just
+            // buffer loop if it doesn't get anything, so always produce a full
+            // buffer, and silence anything we couldn't supply.
+            memset(readPointer + amountRead, 0, amountToRead - amountRead);
+            amountRead = amountToRead;
+        }
+        
+        inputData->mBuffers[0].mDataByteSize = amountRead;
+        
+        return 0;
+    };
+    
+    [_au allocateRenderResourcesAndReturnError:&err];
+    
+    [outputController setFormat:&deviceFormat];
+
+	return (err == nil);
 }
 
 - (void)setVolume:(double)v
 {
     volume = v * 0.01f;
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
 }
 
 - (void)start
 {
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_VolumeRampTime, 0);
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
-    AudioQueueStart(audioQueue, NULL);
+    NSError *err;
+    [_au startHardwareAndReturnError:&err];
     running = YES;
-    if (!primed)
-        [self prime];
 }
 
 - (void)stop
@@ -501,27 +391,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void * _Nullable)(self));
         listenerapplied = NO;
     }
-	if (outputUnit) {
-		AudioUnitUninitialize (outputUnit);
-		AudioComponentInstanceDispose(outputUnit);
-		outputUnit = NULL;
-	}
-    if (audioQueue && buffers) {
-        AudioQueuePause(audioQueue);
-        AudioQueueStop(audioQueue, true);
+    if (_au) {
+        [_au stopHardware];
         running = NO;
-
-        for (UInt32 i = 0; i < numberOfBuffers; ++i) {
-            if (buffers[i])
-                AudioQueueFreeBuffer(audioQueue, buffers[i]);
-            buffers[i] = NULL;
-        }
-        free(buffers);
-        buffers = NULL;
-    }
-    if (audioQueue) {
-        AudioQueueDispose(audioQueue, true);
-        audioQueue = NULL;
+        _au = nil;
     }
 }
 
@@ -534,16 +407,15 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (void)pause
 {
-    AudioQueuePause(audioQueue);
+    [_au stopHardware];
     running = NO;
 }
 
 - (void)resume
 {
-    AudioQueueStart(audioQueue, NULL);
+    NSError *err;
+    [_au startHardwareAndReturnError:&err];
     running = YES;
-    if (!primed)
-        [self prime];
 }
 
 @end
