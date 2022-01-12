@@ -8,6 +8,7 @@
 
 #import <AssertMacros.h>
 #import <Cocoa/Cocoa.h>
+#import <dispatch/dispatch.h>
 
 #import <CoreAudio/AudioHardware.h>
 #import <AudioToolbox/AudioToolbox.h>
@@ -19,11 +20,8 @@
 @interface OutputCoreAudio : NSObject {
 	OutputNode * outputController;
     
-    BOOL running;
     BOOL stopping;
     BOOL stopped;
-    
-    size_t outputSilenceBlocks;
     
     BOOL listenerapplied;
     
@@ -34,6 +32,8 @@
 
     AUAudioUnit *_au;
     size_t _bufferSize;
+    
+    dispatch_semaphore_t sem;
 }
 
 - (id)initWithController:(OutputNode *)c;

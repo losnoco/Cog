@@ -60,7 +60,7 @@
         n = [super readData:ptr amount:amount];
         amountPlayed += n;
     
-        if (endOfStream == YES)
+        if (endOfStream == YES && !n)
         {
             amountPlayed = 0;
             [controller endOfInputPlayed]; //Updates shouldContinue appropriately?

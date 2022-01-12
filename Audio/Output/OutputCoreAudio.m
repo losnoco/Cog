@@ -26,8 +26,7 @@ extern void scale_by_volume(float * buffer, size_t count, float volume);
         volume = 1.0;
         outputDeviceID = -1;
         listenerapplied = NO;
-        outputSilenceBlocks = 0;
-
+        
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	}
 	
@@ -51,6 +50,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	}
 }
 
+- (void)threadEntry:(id)arg
+{
+    while (!stopping) {
+        dispatch_semaphore_wait(sem, 500 * USEC_PER_SEC);
+    }
+    [self stop];
+}
 
 - (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID
 {
@@ -224,9 +230,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		[self stop];
     
     stopping = NO;
-    stopped = NO;
     outputDeviceID = -1;
-    outputSilenceBlocks = 0;
 	
     AVAudioFormat *format, *renderFormat;
     AudioComponentDescription desc;
@@ -320,21 +324,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         amountToRead = framesToRead * (self->deviceFormat.mBytesPerPacket);
         
-        if (self->outputSilenceBlocks || self->stopping == YES)
+        if (self->stopping == YES || [self->outputController shouldContinue] == NO)
         {
             memset(readPointer, 0, amountToRead);
             inputData->mBuffers[0].mDataByteSize = amountToRead;
-            if (self->outputSilenceBlocks &&
-                --self->outputSilenceBlocks == 0)
-                [weakSelf stop];
-            return 0;
-        }
-
-        if ([self->outputController shouldContinue] == NO)
-        {
-            memset(readPointer, 0, amountToRead);
-            inputData->mBuffers[0].mDataByteSize = amountToRead;
-            self->outputSilenceBlocks = 48;
+            self->stopping = YES;
+            dispatch_semaphore_signal(weakSelf->sem);
             return 0;
         }
         
@@ -366,6 +361,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     
     [_au allocateRenderResourcesAndReturnError:&err];
     
+    sem = dispatch_semaphore_create(0);
+    [NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
+    
     [outputController setFormat:&deviceFormat];
 
 	return (err == nil);
@@ -380,12 +378,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 {
     NSError *err;
     [_au startHardwareAndReturnError:&err];
-    running = YES;
 }
 
 - (void)stop
 {
-    stopping = YES;
     if (listenerapplied) {
         AudioObjectPropertyAddress theAddress = {
             .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
@@ -397,8 +393,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     }
     if (_au) {
         [_au stopHardware];
-        running = NO;
         _au = nil;
+        stopping = YES;
+        dispatch_semaphore_signal(sem);
     }
 }
 
@@ -412,14 +409,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 - (void)pause
 {
     [_au stopHardware];
-    running = NO;
 }
 
 - (void)resume
 {
     NSError *err;
     [_au startHardwareAndReturnError:&err];
-    running = YES;
 }
 
 @end
