@@ -208,23 +208,26 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStoppe
                             CGImageRef cgRef = [image CGImageForProposedRect:NULL
                                                                      context:nil
                                                                        hints:nil];
-                            NSBitmapImageRep *newRep =
-                                [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
-                            NSData *jpgData = [newRep
-                                representationUsingType:NSBitmapImageFileTypeJPEG
-                                             properties:@{NSImageCompressionFactor : @0.5f}];
-                            [jpgData writeToURL:fileURL atomically:YES];
+                            
+                            if (cgRef) {
+                                NSBitmapImageRep *newRep =
+                                    [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+                                NSData *jpgData = [newRep
+                                 representationUsingType:NSBitmapImageFileTypeJPEG
+                                              properties:@{NSImageCompressionFactor : @0.5f}];
+                                [jpgData writeToURL:fileURL atomically:YES];
 
-                            UNNotificationAttachment *icon =
-                                [UNNotificationAttachment attachmentWithIdentifier:@"art"
-                                                                               URL:fileURL
-                                                                           options:nil
-                                                                             error:&error];
-                            if (error) {
+                                UNNotificationAttachment *icon =
+                                    [UNNotificationAttachment attachmentWithIdentifier:@"art"
+                                                             URL:fileURL
+                                                         options:nil
+                                                           error:&error];
+                                if (error) {
                                 // We have size limit of 10MB per image attachment.
-                                NSLog(@"%@", error.localizedDescription);
-                            } else {
-                                content.attachments = @[ icon ];
+                                    NSLog(@"%@", error.localizedDescription);
+                                } else {
+                                    content.attachments = @[ icon ];
+                                }
                             }
                         }
                     }
