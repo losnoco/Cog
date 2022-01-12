@@ -436,17 +436,17 @@
 		8389F226278E64590074164C /* libretro-common */ = {
 			isa = PBXGroup;
 			children = (
-				8389F227278E64590074164C /* encodings */,
-				8389F229278E64590074164C /* vfs */,
-				8389F22B278E64590074164C /* lists */,
-				8389F22D278E64590074164C /* file */,
-				8389F232278E64590074164C /* streams */,
-				8389F234278E64590074164C /* include */,
-				8389F260278E64590074164C /* features */,
-				8389F262278E64590074164C /* memmap */,
-				8389F264278E64590074164C /* time */,
 				8389F266278E64590074164C /* audio */,
+				8389F227278E64590074164C /* encodings */,
+				8389F260278E64590074164C /* features */,
+				8389F22D278E64590074164C /* file */,
+				8389F234278E64590074164C /* include */,
+				8389F22B278E64590074164C /* lists */,
+				8389F262278E64590074164C /* memmap */,
+				8389F232278E64590074164C /* streams */,
 				8389F26E278E64590074164C /* string */,
+				8389F264278E64590074164C /* time */,
+				8389F229278E64590074164C /* vfs */,
 			);
 			path = "libretro-common";
 			sourceTree = "<group>";
@@ -478,10 +478,10 @@
 		8389F22D278E64590074164C /* file */ = {
 			isa = PBXGroup;
 			children = (
-				8389F22E278E64590074164C /* file_path_io.c */,
-				8389F22F278E64590074164C /* file_path.c */,
 				8389F230278E64590074164C /* config_file_userdata.c */,
 				8389F231278E64590074164C /* config_file.c */,
+				8389F22E278E64590074164C /* file_path_io.c */,
+				8389F22F278E64590074164C /* file_path.c */,
 			);
 			path = file;
 			sourceTree = "<group>";
@@ -497,28 +497,28 @@
 		8389F234278E64590074164C /* include */ = {
 			isa = PBXGroup;
 			children = (
-				8389F235278E64590074164C /* encodings */,
-				8389F237278E64590074164C /* memalign.h */,
-				8389F238278E64590074164C /* vfs */,
-				8389F23B278E64590074164C /* compat */,
-				8389F241278E64590074164C /* retro_common_api.h */,
-				8389F242278E64590074164C /* retro_timers.h */,
-				8389F243278E64590074164C /* lists */,
-				8389F245278E64590074164C /* file */,
-				8389F249278E64590074164C /* retro_environment.h */,
 				8389F24A278E64590074164C /* array */,
+				8389F256278E64590074164C /* audio */,
+				8389F255278E64590074164C /* boolean.h */,
+				8389F23B278E64590074164C /* compat */,
+				8389F235278E64590074164C /* encodings */,
+				8389F250278E64590074164C /* features */,
+				8389F245278E64590074164C /* file */,
+				8389F25F278E64590074164C /* filters.h */,
+				8389F25B278E64590074164C /* libretro.h */,
+				8389F243278E64590074164C /* lists */,
+				8389F237278E64590074164C /* memalign.h */,
+				8389F25C278E64590074164C /* retro_assert.h */,
+				8389F241278E64590074164C /* retro_common_api.h */,
+				8389F249278E64590074164C /* retro_environment.h */,
 				8389F24C278E64590074164C /* retro_inline.h */,
 				8389F24D278E64590074164C /* retro_math.h */,
-				8389F24E278E64590074164C /* streams */,
-				8389F250278E64590074164C /* features */,
 				8389F252278E64590074164C /* retro_miscellaneous.h */,
-				8389F253278E64590074164C /* time */,
-				8389F255278E64590074164C /* boolean.h */,
-				8389F256278E64590074164C /* audio */,
-				8389F25B278E64590074164C /* libretro.h */,
-				8389F25C278E64590074164C /* retro_assert.h */,
+				8389F242278E64590074164C /* retro_timers.h */,
+				8389F24E278E64590074164C /* streams */,
 				8389F25D278E64590074164C /* string */,
-				8389F25F278E64590074164C /* filters.h */,
+				8389F253278E64590074164C /* time */,
+				8389F238278E64590074164C /* vfs */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -534,8 +534,8 @@
 		8389F238278E64590074164C /* vfs */ = {
 			isa = PBXGroup;
 			children = (
-				8389F239278E64590074164C /* vfs.h */,
 				8389F23A278E64590074164C /* vfs_implementation.h */,
+				8389F239278E64590074164C /* vfs.h */,
 			);
 			path = vfs;
 			sourceTree = "<group>";
@@ -543,11 +543,11 @@
 		8389F23B278E64590074164C /* compat */ = {
 			isa = PBXGroup;
 			children = (
-				8389F23C278E64590074164C /* strl.h */,
-				8389F23D278E64590074164C /* strcasestr.h */,
 				8389F23E278E64590074164C /* fopen_utf8.h */,
-				8389F23F278E64590074164C /* posix_string.h */,
 				8389F240278E64590074164C /* msvc.h */,
+				8389F23F278E64590074164C /* posix_string.h */,
+				8389F23D278E64590074164C /* strcasestr.h */,
+				8389F23C278E64590074164C /* strl.h */,
 			);
 			path = compat;
 			sourceTree = "<group>";
@@ -563,8 +563,8 @@
 		8389F245278E64590074164C /* file */ = {
 			isa = PBXGroup;
 			children = (
-				8389F246278E64590074164C /* config_file.h */,
 				8389F247278E64590074164C /* config_file_userdata.h */,
+				8389F246278E64590074164C /* config_file.h */,
 				8389F248278E64590074164C /* file_path.h */,
 			);
 			path = file;
@@ -655,8 +655,8 @@
 		8389F266278E64590074164C /* audio */ = {
 			isa = PBXGroup;
 			children = (
-				8389F267278E64590074164C /* resampler */,
 				8389F26B278E64590074164C /* conversion */,
+				8389F267278E64590074164C /* resampler */,
 			);
 			path = audio;
 			sourceTree = "<group>";
