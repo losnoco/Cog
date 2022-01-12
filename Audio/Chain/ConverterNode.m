@@ -547,7 +547,7 @@ tryagain:
             size_t bitsPerSample = inputFormat.mBitsPerChannel;
             if (bitsPerSample <= 8) {
                 samplesRead = bytesReadFromInput;
-                if (isUnsigned)
+                if (!isUnsigned)
                     convert_s8_to_s16(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
                 else
                     convert_u8_to_s16(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
