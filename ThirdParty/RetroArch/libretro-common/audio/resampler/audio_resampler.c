@@ -60,6 +60,7 @@ static const retro_resampler_t *resampler_drivers[] = {
    NULL,
 };
 
+#if 0
 static const struct resampler_config resampler_config = {
    config_userdata_get_float,
    config_userdata_get_int,
@@ -68,6 +69,68 @@ static const struct resampler_config resampler_config = {
    config_userdata_get_string,
    config_userdata_free,
 };
+#else
+// sinc doesn't use this anyway
+static int stub_get_float(void *userdata,
+      const char *key, float *value, float default_value)
+{
+   *value = default_value;
+   return 0;
+}
+
+static int stub_get_int(void *userdata,
+      const char *key, int *value, int default_value)
+{
+   *value = default_value;
+   return 0;
+}
+
+static int stub_get_float_array(void *userdata,
+      const char *key, float **values, unsigned *out_num_values,
+      const float *default_values, unsigned num_default_values)
+{
+   *values = malloc(sizeof(float) * num_default_values);
+   if (*values)
+      memcpy(*values, default_values, sizeof(float) * num_default_values);
+   *out_num_values = num_default_values;
+   return 0;
+}
+
+static int stub_get_int_array(void *userdata,
+      const char *key, int **values, unsigned *out_num_values,
+      const int *default_values, unsigned num_default_values)
+{
+   *values = malloc(sizeof(int) * num_default_values);
+   if (*values)
+      memcpy(*values, default_values, sizeof(int) * num_default_values);
+   *out_num_values = num_default_values;
+   return 0;
+}
+
+static int stub_get_string(void *userdata,
+      const char *key, char **output, const char *default_output)
+{
+   size_t len = strlen(default_output) + 1;
+   *output = malloc(len);
+   if (*output)
+      memcpy(*output, default_output, len);
+   return 0;
+}
+
+static void stub_free(void *ptr)
+{
+   free(ptr);
+}
+
+static const struct resampler_config resampler_config = {
+   stub_get_float,
+   stub_get_int,
+   stub_get_float_array,
+   stub_get_int_array,
+   stub_get_string,
+   stub_free,
+};
+#endif
 
 /**
  * find_resampler_driver_index:

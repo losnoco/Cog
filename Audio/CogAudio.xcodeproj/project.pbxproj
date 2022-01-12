@@ -46,14 +46,6 @@
 		832BEF04278DD06D005E1BC4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832BEF03278DD06D005E1BC4 /* AVFoundation.framework */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		8389F270278E64590074164C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F225278E64590074164C /* config.h */; };
-		8389F271278E64590074164C /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F228278E64590074164C /* encoding_utf.c */; };
-		8389F272278E64590074164C /* vfs_implementation.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F22A278E64590074164C /* vfs_implementation.c */; };
-		8389F273278E64590074164C /* string_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F22C278E64590074164C /* string_list.c */; };
-		8389F274278E64590074164C /* file_path_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F22E278E64590074164C /* file_path_io.c */; };
-		8389F275278E64590074164C /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F22F278E64590074164C /* file_path.c */; };
-		8389F276278E64590074164C /* config_file_userdata.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F230278E64590074164C /* config_file_userdata.c */; };
-		8389F277278E64590074164C /* config_file.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F231278E64590074164C /* config_file.c */; };
-		8389F278278E64590074164C /* file_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F233278E64590074164C /* file_stream.c */; };
 		8389F279278E64590074164C /* utf.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F236278E64590074164C /* utf.h */; };
 		8389F27A278E64590074164C /* memalign.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F237278E64590074164C /* memalign.h */; };
 		8389F27B278E64590074164C /* vfs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F239278E64590074164C /* vfs.h */; };
@@ -87,12 +79,10 @@
 		8389F297278E64590074164C /* filters.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F25F278E64590074164C /* filters.h */; };
 		8389F298278E64590074164C /* features_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F261278E64590074164C /* features_cpu.c */; };
 		8389F299278E64590074164C /* memalign.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F263278E64590074164C /* memalign.c */; };
-		8389F29A278E64590074164C /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F265278E64590074164C /* rtime.c */; };
 		8389F29B278E64590074164C /* sinc_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F269278E64590074164C /* sinc_resampler.c */; };
 		8389F29C278E64590074164C /* audio_resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F26A278E64590074164C /* audio_resampler.c */; };
 		8389F29D278E64590074164C /* s16_to_float.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F26C278E64590074164C /* s16_to_float.c */; };
 		8389F29E278E64590074164C /* s32_to_float.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F26D278E64590074164C /* s32_to_float.c */; };
-		8389F29F278E64590074164C /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F26F278E64590074164C /* stdstring.c */; };
 		8389F2A3278E646E0074164C /* lpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F2A1278E646E0074164C /* lpc.h */; };
 		8389F2A4278E646E0074164C /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F2A2278E646E0074164C /* lpc.c */; };
 		839366671815923C006DD712 /* CogPluginMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 839366651815923C006DD712 /* CogPluginMulti.h */; };
@@ -840,7 +830,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8389F275278E64590074164C /* file_path.c in Sources */,
 				17D21CA20B8BE4BA00D1EBDE /* BufferChain.m in Sources */,
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
@@ -850,27 +839,18 @@
 				17D21CC60B8BE4BA00D1EBDE /* OutputCoreAudio.m in Sources */,
 				17D21CE00B8BE5B400D1EBDE /* VirtualRingBuffer.m in Sources */,
 				8389F29D278E64590074164C /* s16_to_float.c in Sources */,
-				8389F277278E64590074164C /* config_file.c in Sources */,
-				8389F276278E64590074164C /* config_file_userdata.c in Sources */,
 				8389F29B278E64590074164C /* sinc_resampler.c in Sources */,
-				8389F273278E64590074164C /* string_list.c in Sources */,
 				8389F299278E64590074164C /* memalign.c in Sources */,
-				8389F278278E64590074164C /* file_stream.c in Sources */,
-				8389F272278E64590074164C /* vfs_implementation.c in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
-				8389F29A278E64590074164C /* rtime.c in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
-				8389F274278E64590074164C /* file_path_io.c in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.m in Sources */,
 				17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */,
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
-				8389F29F278E64590074164C /* stdstring.c in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
-				8389F271278E64590074164C /* encoding_utf.c in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
 				8389F2A4278E646E0074164C /* lpc.c in Sources */,
