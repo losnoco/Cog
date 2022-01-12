@@ -400,9 +400,10 @@ static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t
 {
 	char writeBuf[CHUNK_SIZE];	
 	
-	while ([self shouldContinue] == YES && [self endOfStream] == NO) //Need to watch EOS somehow....
+	while ([self shouldContinue] == YES) //Need to watch EOS somehow....
 	{
 		int amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
+        if (!amountConverted) break;
 		[self writeData:writeBuf amount:amountConverted];
 	}
 }
@@ -457,17 +458,20 @@ tryagain:
             {
                 ioNumberPackets = (int)resampler->latency(resampler_data);
                 newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
+                newSize += inpSize;
                 if (!inputBuffer || inputBufferSize < newSize)
-                    inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 64);
+                    inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 3);
                 
                 extrapolateEnd = ioNumberPackets;
                 
                 // Extrapolate end samples
                 if (inpSize)
+                {
                     extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, inpSize / floatFormat.mBytesPerPacket, extrapolateEnd, NO);
                 
-                inpSize = newSize;
-                inpOffset = 0;
+                    inpOffset = inpSize;
+                    inpSize += extrapolateEnd * floatFormat.mBytesPerPacket;
+                }
                 latencyPostfill = YES;
                 break;
             }
