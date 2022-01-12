@@ -13,6 +13,8 @@
 #import <audio/conversion/s16_to_float.h>
 #import <audio/conversion/s32_to_float.h>
 
+#import "lpc.h"
+
 void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 {
 	if (!inDesc) {
@@ -368,6 +370,32 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
     }
 }
 
+static const int extrapolate_order = 16;
+
+static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t size, BOOL backward)
+{
+    const size_t delta = (backward ? -1 : 1) * channels;
+    
+    float lpc[extrapolate_order];
+    float work[frameSize];
+    
+    for (size_t ch = 0; ch < channels; ch++)
+    {
+        if (frameSize - size > extrapolate_order * 2)
+        {
+            float *chPcmBuf = buffer + ch + (backward ? frameSize : -1) * channels;
+            for (size_t i = 0; i < frameSize; i++) work[i] = *(chPcmBuf += delta);
+            
+            vorbis_lpc_from_data(work, lpc, (int)(frameSize - size), extrapolate_order);
+            
+            vorbis_lpc_predict(lpc, work + frameSize - size - extrapolate_order, extrapolate_order, work + frameSize - size, size);
+            
+            chPcmBuf = buffer + ch + (backward ? frameSize : -1) * channels;
+            for (size_t i = 0; i < frameSize; i++) *(chPcmBuf += delta) = work[i];
+        }
+    }
+}
+
 -(void)process
 {
 	char writeBuf[CHUNK_SIZE];	
@@ -384,7 +412,11 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	UInt32 ioNumberPackets;
     int amountReadFromFC;
     int amountRead = 0;
-    
+    int extrapolateStart = 0;
+    int extrapolateEnd = 0;
+    size_t amountToSkip = 0;
+    BOOL inputRetry = NO;
+
     if (emittingSilence)
     {
         memset(dest, 0, amount);
@@ -416,6 +448,9 @@ tryagain:
         if (!inputBuffer || inputBufferSize < newSize)
             inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 3 );
         
+        // Pad end of track with floats. For simplicity, pad start in track
+        // native format.
+        
         if (stopping || [self shouldContinue] == NO || [self endOfStream] == YES)
         {
             if (!skipResampler && !latencyPostfill)
@@ -424,6 +459,12 @@ tryagain:
                 newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
                 if (!inputBuffer || inputBufferSize < newSize)
                     inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 64);
+                
+                extrapolateEnd = ioNumberPackets;
+                
+                // Extrapolate end samples
+                if (inpSize)
+                    extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, inpSize / floatFormat.mBytesPerPacket, extrapolateEnd, NO);
                 
                 inpSize = newSize;
                 inpOffset = 0;
@@ -438,13 +479,17 @@ tryagain:
         }
 
         size_t amountToWrite = ioNumberPackets * inputFormat.mBytesPerPacket;
-        size_t amountToSkip = 0;
+        if (!inputRetry) amountToSkip = 0;
         
+        BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
+        BOOL isUnsigned = !isFloat && !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
+
         if (!skipResampler)
         {
             if (latencyStarted < 0)
             {
                 latencyStarted = resampler->latency(resampler_data);
+                extrapolateStart = (int)latencyStarted;
             }
 
             if (latencyStarted)
@@ -452,8 +497,8 @@ tryagain:
                 size_t latencyToWrite = latencyStarted * inputFormat.mBytesPerPacket;
                 if (latencyToWrite > amountToWrite)
                     latencyToWrite = amountToWrite;
-            
-                if (inputFormat.mBitsPerChannel <= 8)
+                
+                if (isUnsigned)
                     memset(inputBuffer, 0x80, latencyToWrite);
                 else
                     memset(inputBuffer, 0, latencyToWrite);
@@ -467,9 +512,15 @@ tryagain:
             }
         }
                 
-        size_t bytesReadFromInput = [self readData:inputBuffer + amountToSkip amount:(int)amountToWrite] + amountToSkip;
+        size_t bytesReadFromInput = [self readData:inputBuffer + amountToSkip amount:(int)amountToWrite];
         
-        BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
+        if (!bytesReadFromInput)
+        {
+            inputRetry = YES;
+            continue;
+        }
+        
+        bytesReadFromInput += amountToSkip;
         
         if (bytesReadFromInput &&
             (inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian))
@@ -490,7 +541,6 @@ tryagain:
         if (bytesReadFromInput && !isFloat)
         {
             size_t bitsPerSample = inputFormat.mBitsPerChannel;
-            BOOL isUnsigned = !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
             if (bitsPerSample <= 8) {
                 samplesRead = bytesReadFromInput;
                 if (isUnsigned)
@@ -535,6 +585,13 @@ tryagain:
                 isUnsigned = NO;
                 isFloat = YES;
             }
+        }
+        
+        // Extrapolate start
+        if (extrapolateStart)
+         {
+            extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateStart, YES);
+            extrapolateStart = 0;
         }
         
         // Input now contains bytesReadFromInput worth of floats, in the input sample rate
