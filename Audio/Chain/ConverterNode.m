@@ -403,7 +403,15 @@ static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t
 	while ([self shouldContinue] == YES) //Need to watch EOS somehow....
 	{
 		int amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
-        if (!amountConverted) break;
+        if (!amountConverted)
+        {
+            if (emittingSilence)
+            {
+                memset(writeBuf, 0, sizeof(writeBuf));
+                amountConverted = CHUNK_SIZE;
+            }
+            else break;
+        }
 		[self writeData:writeBuf amount:amountConverted];
 	}
 }
