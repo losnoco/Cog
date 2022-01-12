@@ -265,8 +265,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
 //	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
 //	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    if (@available(macOS 12.0, *)) {
-        // Let's enable surround upmixing, for surround and spatial output
+    if (deviceFormat.mChannelsPerFrame > 8) {
         deviceFormat.mChannelsPerFrame = 8;
     }
     // And force a default rate for crappy devices
