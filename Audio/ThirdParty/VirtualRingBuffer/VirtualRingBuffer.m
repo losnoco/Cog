@@ -44,8 +44,9 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
         return nil;
     }
 
-    readPointer = NULL;
-    writePointer = NULL;
+    atomic_init(&readPointer, 0);
+    atomic_init(&writePointer, 0);
+    atomic_init(&bufferFilled, 0);
 
     return self;
 }
@@ -61,13 +62,14 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     // Assumption:
     // No one is reading or writing from the buffer, in any thread, when this method is called.
 
-    readPointer = NULL;
-    writePointer = NULL;
+    atomic_init(&readPointer, 0);
+    atomic_init(&writePointer, 0);
+    atomic_init(&bufferFilled, 0);
 }
 
 - (BOOL)isEmpty
 {
-    return (readPointer == NULL && writePointer == NULL);
+    return (atomic_load_explicit(&bufferFilled, memory_order_relaxed) == 0);
 }
 
 
@@ -98,21 +100,23 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 
     UInt32 length;
     // Read this pointer exactly once, so we're safe in case it is changed in another thread
-    void *localWritePointer = writePointer;
+    int localWritePointer = atomic_load_explicit(&writePointer, memory_order_relaxed);
+    int localReadPointer = atomic_load_explicit(&readPointer, memory_order_relaxed);
+    int localBufferFilled = atomic_load_explicit(&bufferFilled, memory_order_relaxed);
 
     // Depending on out-of-order execution and memory storage, either one of these may be NULL when the buffer is empty. So we must check both.
-    if (!readPointer || !localWritePointer) {
+    if (localReadPointer == localWritePointer && !localBufferFilled) {
         // The buffer is empty
         length = 0;
-    } else if (localWritePointer > readPointer) {
+    } else if (localWritePointer > localReadPointer) {
         // Write is ahead of read in the buffer
-        length = (UInt32)(localWritePointer - readPointer);
+        length = (UInt32)(localWritePointer - localReadPointer);
     } else {
         // Write has wrapped around past read, OR write == read (the buffer is full)
-        length = (UInt32)(bufferLength - (readPointer - localWritePointer));
+        length = (UInt32)(bufferLength - localReadPointer);
     }
 
-    *returnedReadPointer = readPointer;
+    *returnedReadPointer = buffer + localReadPointer;
     return length;
 }
 
@@ -121,26 +125,11 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     // Assumptions:
     // [self lengthAvailableToReadReturningPointer:] currently returns a value >= length
     // length > 0
-
-    void *newReadPointer;
-
-    newReadPointer = readPointer + length;
     
-    if (newReadPointer == (void *)(intptr_t) length) {
-        // Someone somehow read from us before another thread emptied the buffer
-        newReadPointer = NULL;
-    }
-    
-    if (newReadPointer >= bufferEnd)
-        newReadPointer -= bufferLength;
+    if (atomic_fetch_add(&readPointer, length) + length >= bufferLength)
+        atomic_fetch_sub(&readPointer, bufferLength);
 
-    if (newReadPointer == writePointer) {
-        // We just read the last data out of the buffer, so it is now empty.
-        newReadPointer = NULL;
-    }
-
-    // Store the new read pointer. This is the only place this happens in the read thread.
-    readPointer = newReadPointer;    
+    atomic_fetch_sub(&bufferFilled, length);
 }
 
 
@@ -155,23 +144,27 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     
     UInt32 length;
     // Read this pointer exactly once, so we're safe in case it is changed in another thread
-    void *localReadPointer = readPointer;
+    int localReadPointer = atomic_load_explicit(&readPointer, memory_order_relaxed);
+    int localWritePointer = atomic_load_explicit(&writePointer, memory_order_relaxed);
+    int localBufferFilled = atomic_load_explicit(&bufferFilled, memory_order_relaxed);
     
     // Either one of these may be NULL when the buffer is empty. So we must check both.
-    if (!localReadPointer || !writePointer) {
+    if (!localReadPointer && !localWritePointer && !localBufferFilled) {
         // The buffer is empty. Set it up to be written into.
         // This is one of the two places the write pointer can change; both are in the write thread.
-        writePointer = buffer;
         length = bufferLength;
-    } else if (writePointer <= localReadPointer) {
+    } else if (localWritePointer <= localReadPointer) {
         // Write is before read in the buffer, OR write == read (meaning that the buffer is full).
-        length = (UInt32)(localReadPointer - writePointer);
+        length = (UInt32)(localReadPointer - localWritePointer);
+        if (!length && !localBufferFilled) {
+            length = (UInt32)(bufferLength - localWritePointer);
+        }
     } else {
         // Write is behind read in the buffer. The available space wraps around.
-        length = (UInt32)((bufferEnd - writePointer) + (localReadPointer - buffer));
+        length = (UInt32)(bufferLength - localWritePointer);
     }
 
-    *returnedWritePointer = writePointer;
+    *returnedWritePointer = buffer + localWritePointer;
     return length;
 }
 
@@ -180,23 +173,11 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     // Assumptions:
     // [self lengthAvailableToWriteReturningPointer:] currently returns a value >= length
     // length > 0
-
-    void *oldWritePointer = writePointer;
-    void *newWritePointer;
-
-    // Advance the write pointer, wrapping around if necessary.
-    newWritePointer = writePointer + length;
-    if (newWritePointer >= bufferEnd)
-        newWritePointer -= bufferLength;
-
-    // This is one of the two places the write pointer can change; both are in the write thread.
-    writePointer = newWritePointer;
-
-    // Also, if the read pointer is NULL, then we just wrote into a previously empty buffer, so set the read pointer.
-    // This is the only place the read pointer is changed in the write thread.
-    // The read thread should never change the read pointer when it is NULL, so this is safe.
-    if (!readPointer)
-        readPointer = oldWritePointer;
+    
+    if (atomic_fetch_add(&writePointer, length) + length >= bufferLength)
+        atomic_fetch_sub(&writePointer, bufferLength);
+    
+    atomic_fetch_add(&bufferFilled, length);
 }
 
 @end

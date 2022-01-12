@@ -44,7 +44,7 @@
 // However, if you have multiple reader or writer threads, all bets are off!
 
 #import <Foundation/Foundation.h>
-
+#include <stdatomic.h>
 
 @interface VirtualRingBuffer : NSObject
 {
@@ -55,8 +55,9 @@
         // bufferEnd is the end of the "real" buffer (always buffer + bufferLength).
         // Note that the "virtual" portion of the buffer extends from bufferEnd to bufferEnd+bufferLength.
     
-    void *readPointer;
-    void *writePointer;
+    atomic_int readPointer;
+    atomic_int writePointer;
+    atomic_int bufferFilled;
 }
 
 - (id)initWithLength:(UInt32)length;
