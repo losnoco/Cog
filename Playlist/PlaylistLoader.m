@@ -618,7 +618,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
                 progress += progressstep;
                 [weakLock unlock];
                 
-                NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
+                NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
 
                 NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
                 if (entryProperties == nil)
@@ -700,7 +700,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
      {
          PlaylistEntry *pe = [entries objectAtIndex:idx];
          
-         NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:20];
+         NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
      
          NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
          if (entryProperties == nil)
