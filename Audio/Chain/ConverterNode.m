@@ -243,13 +243,13 @@ static void upmix(float * buffer, int inchannels, int outchannels, size_t count)
 void scale_by_volume(float * buffer, size_t count, float volume)
 {
     if ( volume != 1.0 )
-        for (size_t i = 0; i < count; ++i )
+        for (size_t i = 0; i < count; ++i)
             buffer[i] *= volume;
 }
 
 static void convert_u8_to_s16(int16_t *output, uint8_t *input, size_t count)
 {
-    for (size_t i = 0; i < count; ++i )
+    for (size_t i = 0; i < count; ++i)
     {
         uint16_t sample = (input[i] << 8) | input[i];
         sample ^= 0x8080;
@@ -259,7 +259,7 @@ static void convert_u8_to_s16(int16_t *output, uint8_t *input, size_t count)
 
 static void convert_s8_to_s16(int16_t *output, uint8_t *input, size_t count)
 {
-    for (size_t i = 0; i < count; ++i )
+    for (size_t i = 0; i < count; ++i)
     {
         uint16_t sample = (input[i] << 8) | input[i];
         output[i] = (int16_t)(sample);
@@ -268,7 +268,7 @@ static void convert_s8_to_s16(int16_t *output, uint8_t *input, size_t count)
 
 static void convert_u16_to_s16(int16_t *buffer, size_t count)
 {
-    for (size_t i = 0; i < count; ++i )
+    for (size_t i = 0; i < count; ++i)
     {
         buffer[i] ^= 0x8000;
     }
@@ -276,7 +276,7 @@ static void convert_u16_to_s16(int16_t *buffer, size_t count)
 
 static void convert_s24_to_s32(int32_t *output, uint8_t *input, size_t count)
 {
-    for (size_t i = 0; i < count; ++i )
+    for (size_t i = 0; i < count; ++i)
     {
         int32_t sample = (input[i * 3] << 8) | (input[i * 3 + 1] << 16) | (input[i * 3 + 2] << 24);
         output[i] = sample;
@@ -285,7 +285,7 @@ static void convert_s24_to_s32(int32_t *output, uint8_t *input, size_t count)
 
 static void convert_u24_to_s32(int32_t *output, uint8_t *input, size_t count)
 {
-    for (size_t i = 0; i < count; ++i )
+    for (size_t i = 0; i < count; ++i)
     {
         int32_t sample = (input[i * 3] << 8) | (input[i * 3 + 1] << 16) | (input[i * 3 + 2] << 24);
         output[i] = sample ^ 0x80000000;
@@ -294,9 +294,17 @@ static void convert_u24_to_s32(int32_t *output, uint8_t *input, size_t count)
 
 static void convert_u32_to_s32(int32_t *buffer, size_t count)
 {
-    for (size_t i = 0; i < count; ++i )
+    for (size_t i = 0; i < count; ++i)
     {
         buffer[i] ^= 0x80000000;
+    }
+}
+
+static void convert_f64_to_f32(float *output, double *input, size_t count)
+{
+    for (size_t i = 0; i < count; ++i)
+    {
+        output[i] = (float)(input[i]);
     }
 }
 
@@ -336,6 +344,25 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
                 buffer[2] = buffer[1];
                 buffer[1] = temp;
                 buffer += 4;
+            }
+            break;
+            
+        case 8:
+            for (i = 0; i < bytes; i += 8)
+            {
+                temp = buffer[7];
+                buffer[7] = buffer[0];
+                buffer[0] = temp;
+                temp = buffer[6];
+                buffer[6] = buffer[1];
+                buffer[1] = temp;
+                temp = buffer[5];
+                buffer[5] = buffer[2];
+                buffer[2] = temp;
+                temp = buffer[4];
+                buffer[4] = buffer[3];
+                buffer[3] = temp;
+                buffer += 8;
             }
             break;
     }
@@ -442,6 +469,8 @@ tryagain:
                 
         size_t bytesReadFromInput = [self readData:inputBuffer + amountToSkip amount:(int)amountToWrite] + amountToSkip;
         
+        BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
+        
         if (bytesReadFromInput &&
             (inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian))
         {
@@ -449,12 +478,19 @@ tryagain:
             convert_be_to_le(inputBuffer, inputFormat.mBitsPerChannel, bytesReadFromInput);
         }
         
-        if (bytesReadFromInput &&
-            !(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat))
+        if (bytesReadFromInput && isFloat && inputFormat.mBitsPerChannel == 64)
+        {
+            // Time for precision loss from weird inputs
+            samplesRead = bytesReadFromInput / sizeof(double);
+            convert_f64_to_f32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+            memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
+            bytesReadFromInput = samplesRead * sizeof(float);
+        }
+        
+        if (bytesReadFromInput && !isFloat)
         {
             size_t bitsPerSample = inputFormat.mBitsPerChannel;
             BOOL isUnsigned = !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
-            BOOL isFloat = NO;
             if (bitsPerSample <= 8) {
                 samplesRead = bytesReadFromInput;
                 if (isUnsigned)
@@ -678,6 +714,12 @@ static float db_to_scale(float db)
 	//Make the converter
 	inputFormat = inf;
 	outputFormat = outf;
+    
+    // These are the only sample formats we support translating
+    BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
+    if ((!isFloat && !(inputFormat.mBitsPerChannel >= 1 && inputFormat.mBitsPerChannel <= 32))
+        || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64)))
+        return NO;
     
     // These are really placeholders, as we're doing everything internally now
     
