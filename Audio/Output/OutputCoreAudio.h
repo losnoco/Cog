@@ -33,7 +33,7 @@
     AUAudioUnit *_au;
     size_t _bufferSize;
     
-    dispatch_semaphore_t sem;
+    dispatch_semaphore_t _sema;
 }
 
 - (id)initWithController:(OutputNode *)c;

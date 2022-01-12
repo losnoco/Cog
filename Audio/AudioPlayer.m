@@ -133,9 +133,6 @@
 
 - (void)play:(id<CogDecoder>)decoder startPaused:(BOOL)paused
 {
-    if (output) {
-        [output close];
-    }
     @synchronized(chainQueue) {
         for (id anObject in chainQueue)
         {

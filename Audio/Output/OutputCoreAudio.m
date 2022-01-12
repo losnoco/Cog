@@ -27,6 +27,8 @@ extern void scale_by_volume(float * buffer, size_t count, float volume);
         outputDeviceID = -1;
         listenerapplied = NO;
         
+        _sema = dispatch_semaphore_create(0);
+        
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	}
 	
@@ -53,7 +55,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 - (void)threadEntry:(id)arg
 {
     while (!stopping) {
-        dispatch_semaphore_wait(sem, 500 * USEC_PER_SEC);
+        dispatch_semaphore_wait(_sema, DISPATCH_TIME_FOREVER);
     }
     [self stop];
 }
@@ -311,8 +313,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     [_au.inputBusses[0] setFormat:renderFormat error:&err];
     if (err != nil)
         return NO;
-    
-    __unsafe_unretained typeof(self) weakSelf = self;
+
+    __block dispatch_semaphore_t sema = _sema;
+    __block OutputNode * outputController = self->outputController;
+    __block float * volume = &self->volume;
     
     _au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags * actionFlags, const AudioTimeStamp * timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList * inputData)
     {
@@ -320,48 +324,43 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         int amountToRead, amountRead;
 
-        int framesToRead = inputData->mBuffers[0].mDataByteSize / (self->deviceFormat.mBytesPerPacket);
+        amountToRead = inputData->mBuffers[0].mDataByteSize;
         
-        amountToRead = framesToRead * (self->deviceFormat.mBytesPerPacket);
-        
-        if (self->stopping == YES || [self->outputController shouldContinue] == NO)
+        if (self->stopping == YES || [outputController endOfStream] == YES)
         {
             memset(readPointer, 0, amountToRead);
-            inputData->mBuffers[0].mDataByteSize = amountToRead;
             self->stopping = YES;
-            dispatch_semaphore_signal(weakSelf->sem);
+            dispatch_semaphore_signal(sema);
             return 0;
         }
-        
-        amountRead = [self->outputController readData:(readPointer) amount:amountToRead];
 
-        if ((amountRead < amountToRead) && [self->outputController endOfStream] == NO) //Try one more time! for track changes!
+        amountRead = [outputController readData:(readPointer) amount:amountToRead];
+
+        if ((amountRead < amountToRead) && [outputController endOfStream] == NO) //Try one more time! for track changes!
         {
             int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
-            amountRead2 = [self->outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
+            amountRead2 = [outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
             amountRead += amountRead2;
         }
 
         int framesRead = amountRead / sizeof(float);
-        scale_by_volume((float*)readPointer, framesRead, weakSelf->volume);
-
+        scale_by_volume((float*)readPointer, framesRead, *volume);
+        
         if (amountRead < amountToRead)
         {
             // Either underrun, or no data at all. Caller output tends to just
             // buffer loop if it doesn't get anything, so always produce a full
             // buffer, and silence anything we couldn't supply.
             memset(readPointer + amountRead, 0, amountToRead - amountRead);
-            amountRead = amountToRead;
         }
         
-        inputData->mBuffers[0].mDataByteSize = amountRead;
-        
+        dispatch_semaphore_signal(sema);
+
         return 0;
     };
     
     [_au allocateRenderResourcesAndReturnError:&err];
     
-    sem = dispatch_semaphore_create(0);
     [NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
     
     [outputController setFormat:&deviceFormat];
@@ -395,7 +394,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         [_au stopHardware];
         _au = nil;
         stopping = YES;
-        dispatch_semaphore_signal(sem);
+        dispatch_semaphore_signal(_sema);
     }
 }
 
