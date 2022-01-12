@@ -22,7 +22,7 @@ add which seem like they would be useful to me or others.
 
 Up to date binaries will be available at the following link:
 
-https://kode54.net/cog/
+https://cog.losno.co/
 
 --Christopher Snowhill (chris@kode54.net)
 
@@ -45,3 +45,11 @@ Setup your `DEVELOPMENT_TEAM` like described in [Xcode-config/Shared.xcconfig](h
 ## Mini window
 
 ![Mini window](https://github.com/losnoco/Cog/blob/main/.github/images/MiniWindow.png)
+
+
+ADDENDUM - 2022-01-12
+
+For some basic eye candy comparisons on the newly included RetroArch sinc
+resampler, please see this test project:
+
+https://github.com/kode54/retroarch_resampler_test
