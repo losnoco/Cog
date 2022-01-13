@@ -345,8 +345,6 @@ VGMSTREAM * init_vgmstream_ydsp(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_gsp_gsb(STREAMFILE * streamFile);
 
-VGMSTREAM * init_vgmstream_msvp(STREAMFILE * streamFile);
-
 VGMSTREAM * init_vgmstream_ngc_ssm(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_ps2_joe(STREAMFILE * streamFile);
@@ -970,5 +968,7 @@ VGMSTREAM* init_vgmstream_lpcm_fb(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_wbk(STREAMFILE* sf);
 VGMSTREAM* init_vgmstream_wbk_nslb(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_ubi_ckd_cwav(STREAMFILE* sf);
 
 #endif /*_META_H*/
