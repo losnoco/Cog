@@ -115,21 +115,31 @@ struct resampler_config
    resampler_config_free_t free;
 };
 
+/* NEW: Init takes a pointer to a pointer to a retro_resampler struct, and
+ * fills it out with an altered version of the static structure. This is so
+ * other threads don't clobber the process pointer in each other's instances
+ * when selecting different resampler modes.
+ *
+ * Only the init function needs it on input, and the free function cleans up
+ * after it. The process and latency functions shouldn't need it. */
+
+typedef struct retro_resampler retro_resampler_t;
+
 /* Bandwidth factor. Will be < 1.0 for downsampling, > 1.0 for upsampling.
  * Corresponds to expected resampling ratio. */
 typedef void *(*resampler_init_t)(const struct resampler_config *config,
-      double bandwidth_mod, enum resampler_quality quality,
-      size_t channels, resampler_simd_mask_t mask);
+      const retro_resampler_t **resampler, double bandwidth_mod,
+      enum resampler_quality quality, size_t channels, resampler_simd_mask_t mask);
 
-/* Frees the handle. */
-typedef void (*resampler_free_t)(void *data);
+/* Frees the handle, and if duped by above, the resampler */
+typedef void (*resampler_free_t)(const retro_resampler_t *resampler, void *data);
 
 /* Processes input data. */
 typedef void (*resampler_process_t)(void *_data, struct resampler_data *data);
 
 typedef size_t (*resampler_latency_t)(void *_data);
 
-typedef struct retro_resampler
+struct retro_resampler
 {
    resampler_init_t     init;
    resampler_process_t  process;
@@ -145,7 +155,7 @@ typedef struct retro_resampler
    /* Computer-friendly short version of ident.
     * Lower case, no spaces and special characters, etc. */
    const char *short_ident;
-} retro_resampler_t;
+};
 
 typedef struct audio_frame_float
 {

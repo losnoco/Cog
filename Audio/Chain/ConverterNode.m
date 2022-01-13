@@ -902,7 +902,7 @@ static float db_to_scale(float db)
     }
     if (resampler && resampler_data)
     {
-        resampler->free(resampler_data);
+        resampler->free(resampler, resampler_data);
         resampler = NULL;
         resampler_data = NULL;
     }

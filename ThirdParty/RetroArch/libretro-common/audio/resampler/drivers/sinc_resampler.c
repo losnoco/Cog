@@ -781,7 +781,7 @@ static size_t resampler_sinc_latency(void *data)
    return resamp->taps / 2;
 }
 
-static void resampler_sinc_free(void *data)
+static void resampler_sinc_free(const retro_resampler_t *resampler, void *data)
 {
    rarch_sinc_resampler_t *resamp = (rarch_sinc_resampler_t*)data;
    if (resamp) {
@@ -789,6 +789,9 @@ static void resampler_sinc_free(void *data)
       free(resamp->buffer);
    }
    free(resamp);
+   if (resampler && resampler != &sinc_resampler) {
+      free((void*)resampler);
+   }
 }
 
 static void sinc_init_table_kaiser(rarch_sinc_resampler_t *resamp,
@@ -908,8 +911,8 @@ static void sinc_init_table_lanczos(
 }
 
 static void *resampler_sinc_new(const struct resampler_config *config,
-      double bandwidth_mod, enum resampler_quality quality,
-      size_t channels, resampler_simd_mask_t mask)
+      const retro_resampler_t **_resampler, double bandwidth_mod,
+      enum resampler_quality quality, size_t channels, resampler_simd_mask_t mask)
 {
    double cutoff                  = 0.0;
    size_t phase_elems             = 0;
@@ -920,9 +923,23 @@ static void *resampler_sinc_new(const struct resampler_config *config,
    enum sinc_window window_type   = SINC_WINDOW_NONE;
    rarch_sinc_resampler_t *re     = (rarch_sinc_resampler_t*)
       calloc(1, sizeof(*re));
+   
+   retro_resampler_t *resampler   = (retro_resampler_t*)*_resampler;
 
    if (!re)
       return NULL;
+
+   if (resampler == &sinc_resampler)
+   {
+      resampler = malloc(sizeof(*resampler));
+      if (!resampler)
+      {
+         free(re);
+         return NULL;
+      }
+      memcpy(resampler, *_resampler, sizeof(*resampler));
+      *_resampler = (const retro_resampler_t*)resampler;
+   }
 
    switch (quality)
    {
@@ -1032,39 +1049,39 @@ static void *resampler_sinc_new(const struct resampler_config *config,
          goto error;
    }
 
-   sinc_resampler.process = resampler_sinc_process_c;
+   resampler->process = resampler_sinc_process_c;
    if (window_type == SINC_WINDOW_KAISER)
-      sinc_resampler.process    = resampler_sinc_process_c_kaiser;
+      resampler->process    = resampler_sinc_process_c_kaiser;
 
    if (mask & RESAMPLER_SIMD_AVX && enable_avx)
    {
 #if defined(__AVX__)
-      sinc_resampler.process    = resampler_sinc_process_avx;
+      resampler->process    = resampler_sinc_process_avx;
       if (window_type == SINC_WINDOW_KAISER)
-         sinc_resampler.process = resampler_sinc_process_avx_kaiser;
+         resampler->process = resampler_sinc_process_avx_kaiser;
 #endif
    }
    else if (mask & RESAMPLER_SIMD_SSE)
    {
 #if defined(__SSE__)
-      sinc_resampler.process = resampler_sinc_process_sse;
+      resampler->process = resampler_sinc_process_sse;
       if (window_type == SINC_WINDOW_KAISER)
-         sinc_resampler.process = resampler_sinc_process_sse_kaiser;
+         resampler->process = resampler_sinc_process_sse_kaiser;
 #endif
    }
    else if (mask & RESAMPLER_SIMD_NEON)
    {
 #if (defined(__ARM_NEON__) || defined(HAVE_NEON))
-      sinc_resampler.process = resampler_sinc_process_neon;
+      resampler->process = resampler_sinc_process_neon;
       if (window_type == SINC_WINDOW_KAISER)
-         sinc_resampler.process = resampler_sinc_process_neon_kaiser;
+         resampler->process = resampler_sinc_process_neon_kaiser;
 #endif
    }
 
    return re;
 
 error:
-   resampler_sinc_free(re);
+   resampler_sinc_free(resampler, re);
    return NULL;
 }
 

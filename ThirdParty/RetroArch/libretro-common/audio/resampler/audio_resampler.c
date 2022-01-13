@@ -34,9 +34,9 @@
 
 static void resampler_null_process(void *a, struct resampler_data *b) { }
 static size_t resampler_null_latency(void *a) { return 0; }
-static void resampler_null_free(void *a) { }
-static void *resampler_null_init(const struct resampler_config *a, double b,
-      enum resampler_quality c, size_t d, resampler_simd_mask_t e) { return (void*)0; }
+static void resampler_null_free(const retro_resampler_t *a, void *b) { }
+static void *resampler_null_init(const struct resampler_config *a, const retro_resampler_t **b,
+      double c, enum resampler_quality d, size_t e, resampler_simd_mask_t f) { return (void*)0; }
 
 retro_resampler_t null_resampler = {
    resampler_null_init,
@@ -189,7 +189,7 @@ static bool resampler_append_plugs(void **re,
    resampler_simd_mask_t mask = (resampler_simd_mask_t)cpu_features_get();
 
    if (*backend)
-      *re = (*backend)->init(&resampler_config, bw_ratio, quality, channels, mask);
+      *re = (*backend)->init(&resampler_config, backend, bw_ratio, quality, channels, mask);
 
    if (!*re)
       return false;
@@ -244,7 +244,7 @@ bool retro_resampler_realloc(void **re, const retro_resampler_t **backend,
       double bw_ratio)
 {
    if (*re && *backend)
-      (*backend)->free(*re);
+      (*backend)->free(*backend, *re);
 
    *re      = NULL;
    *backend = find_resampler_driver(ident);
