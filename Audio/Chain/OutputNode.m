@@ -17,7 +17,8 @@
 
 - (void)setup
 {
-	amountPlayed = 0;
+	amountPlayed = 0.0;
+    sampleRatio = 0.0;
     
     paused = YES;
 
@@ -30,7 +31,7 @@
 {
 //	[output pause];
 
-	amountPlayed = time*format.mBytesPerFrame*(format.mSampleRate);
+	amountPlayed = time;
 }
 
 - (void)process
@@ -58,11 +59,11 @@
         [self setPreviousNode:[[controller bufferChain] finalNode]];
 	
         n = [super readData:ptr amount:amount];
-        amountPlayed += n;
+        amountPlayed += (double)n * sampleRatio;
     
         if (endOfStream == YES && !n)
         {
-            amountPlayed = 0;
+            amountPlayed = 0.0;
             [controller endOfInputPlayed]; //Updates shouldContinue appropriately?
         }
 
@@ -78,7 +79,7 @@
 
 - (double)amountPlayed
 {
-	return (amountPlayed/format.mBytesPerFrame)/(format.mSampleRate);
+    return amountPlayed;
 }
 
 - (AudioStreamBasicDescription) format
@@ -89,16 +90,20 @@
 - (void)setFormat:(AudioStreamBasicDescription *)f
 {
 	format = *f;
+    // Calculate a ratio and add to double(seconds) instead, as format may change
+    double oldSampleRatio = sampleRatio;
+    sampleRatio = 1.0 / (format.mSampleRate * format.mBytesPerPacket);
     BufferChain *bufferChain = [controller bufferChain];
     if (bufferChain)
     {
-        InputNode *input = [bufferChain inputNode];
         ConverterNode *converter = [bufferChain converter];
-        if (input && converter)
+        if (converter)
         {
-            // Need to clear the buffer, as it contains converted output
-            // targeting the previous output format
-            [input resetBuffer];
+            // This clears the resampler buffer, but not the input buffer
+            // We also have to jump the play position ahead accounting for
+            // the data we are flushing
+            if (oldSampleRatio)
+                amountPlayed += oldSampleRatio * [[converter buffer] bufferedLength];
             [converter setOutputFormat:format];
             [converter inputFormatDidChange:[bufferChain inputFormat]];
         }

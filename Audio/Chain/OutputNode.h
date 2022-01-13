@@ -18,7 +18,8 @@
 @interface OutputNode : Node {
 	AudioStreamBasicDescription format;
 	
-	unsigned long long amountPlayed;
+	double amountPlayed;
+    double sampleRatio;
 	OutputCoreAudio *output;
     
     BOOL paused;
