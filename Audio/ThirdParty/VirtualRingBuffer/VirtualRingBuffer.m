@@ -73,9 +73,9 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 }
 
 
-- (UInt32)bufferLength
+- (UInt32)bufferedLength
 {
-	return bufferLength;
+	return atomic_load_explicit(&bufferFilled, memory_order_relaxed);
 }
 
 //

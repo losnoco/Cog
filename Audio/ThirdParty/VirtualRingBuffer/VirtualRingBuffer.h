@@ -68,7 +68,8 @@
 // Checks if the buffer is empty or not. This is safe in any thread.
 - (BOOL)isEmpty;
 
-- (UInt32)bufferLength;
+// Return amount buffered
+- (UInt32)bufferedLength;
 
 // Read operations:
 
