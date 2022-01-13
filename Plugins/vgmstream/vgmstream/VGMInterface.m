@@ -123,6 +123,59 @@ static void cogsf_get_name(COGSTREAMFILE* sf, char* name, size_t name_size) {
 static STREAMFILE* cogsf_open(COGSTREAMFILE* sf, const char* const filename, size_t buf_size) {
     if (!filename)
         return NULL;
+    
+    if (sf->archname) {
+        char finalname[PATH_LIMIT];
+        const char* dirsep = NULL;
+        const char* dirsep2 = NULL;
+
+        // newly open files should be "(current-path)\newfile" or "(current-path)\folder\newfile", so we need to make
+        // (archive-path = current-path)\(rest = newfile plus new folders)
+        int filename_len = strlen(filename);
+
+        if (filename_len > sf->archpath_end) {
+            dirsep = &filename[sf->archpath_end];
+        } else  {
+            dirsep = strrchr(filename, '\\'); // vgmstream shouldn't remove paths though
+            dirsep2 = strrchr(filename, '/');
+            if (dirsep2 > dirsep)
+                dirsep = dirsep2;
+            if (!dirsep)
+                dirsep = filename;
+            else
+                dirsep += 1;
+        }
+
+        //TODO improve strops
+        memcpy(finalname, sf->archname, sf->archfile_end); //copy current path+archive
+        finalname[sf->archfile_end] = '\0';
+        concatn(sizeof(finalname), finalname, dirsep); //paste possible extra dirs and filename
+
+        // subfolders inside archives use "/" (path\archive.ext|subfolder/file.ext)
+        for (int i = sf->archfile_end; i < sizeof(finalname); i++) {
+            if (finalname[i] == '\0')
+                break;
+            if (finalname[i] == '\\')
+                finalname[i] = '/';
+        }
+
+        //console::formatter() << "finalname: " << finalname;
+        return open_cog_streamfile_buffer(finalname, buf_size);
+    }
+    
+    // The file is already open, add a reference to existing file
+    if (sf->infile && !strcmp(sf->name, filename)) {
+        // Already retained by sf, will be retained again if used
+        NSObject* _file = (__bridge NSObject *)(sf->infile);
+        id<CogSource> __unsafe_unretained file = (id) _file;
+        
+        STREAMFILE* new_sf = open_cog_streamfile_buffer_by_file(file, filename, buf_size);
+        
+        if (new_sf) {
+            return new_sf;
+        }
+        // Failure, try default open method
+    }
 
     // a normal open, open a new file
     return open_cog_streamfile_buffer(filename, buf_size);
@@ -131,6 +184,8 @@ static STREAMFILE* cogsf_open(COGSTREAMFILE* sf, const char* const filename, siz
 static void cogsf_close(COGSTREAMFILE* sf) {
     if (sf->infile)
         CFBridgingRelease(sf->infile);
+    free(sf->name);
+    free(sf->archname);
     free(sf->buf);
     free(sf);
 }
@@ -139,7 +194,6 @@ static void cogsf_close(COGSTREAMFILE* sf) {
 static STREAMFILE* open_cog_streamfile_buffer_by_file(id<CogSource> infile, const char* const filename, size_t buf_size) {
     uint8_t* buf = NULL;
     COGSTREAMFILE* this_sf = NULL;
-    int infile_retained = 0;
 
     buf = calloc(buf_size, sizeof(uint8_t));
     if (!buf) goto fail;
@@ -156,17 +210,51 @@ static STREAMFILE* open_cog_streamfile_buffer_by_file(id<CogSource> infile, cons
 
     if (infile) {
         this_sf->infile = (void*)CFBridgingRetain(infile);
-        infile_retained = 1;
     }
     
     this_sf->buf_size = buf_size;
     this_sf->buf = buf;
 
-    this_sf->name_len = strlen(filename);
-    if (this_sf->name_len >= sizeof(this_sf->name))
-        goto fail;
-    memcpy(this_sf->name, filename, this_sf->name_len);
-    this_sf->name[this_sf->name_len] = '\0';
+    this_sf->name = strdup(filename);
+    if (!this_sf->name) goto fail;
+    this_sf->name_len = strlen(this_sf->name);
+    
+    // Cog supports archives in unpack:// paths, similar to foobar2000
+    if (strncmp(filename, "unpack", 6) == 0) {
+        const char* archfile_ptr = strrchr(this_sf->name, '|');
+        char temp_save;
+        char *temp_null = 0;
+        if (archfile_ptr) {
+            this_sf->archfile_end = (intptr_t)archfile_ptr + 1 - (intptr_t)this_sf->name;
+            
+            // So we search for the last slash in the source path
+            temp_null = archfile_ptr;
+            temp_save = *temp_null;
+            *temp_null = '\0';
+        }
+        
+        const char* archpath_ptr = strrchr(this_sf->name, '/');
+        if (archpath_ptr)
+            this_sf->archpath_end = (intptr_t)archpath_ptr + 1 - (intptr_t)this_sf->name;
+        
+        if (temp_null)
+            *temp_null = temp_save;
+        
+        if (this_sf->archpath_end <= 0 || this_sf->archfile_end <= 0 || this_sf->archpath_end > this_sf->name_len || this_sf->archfile_end >= PATH_LIMIT) {
+            // ???
+            this_sf->archpath_end = 0;
+            this_sf->archfile_end = 0;
+        }
+        else {
+            this_sf->archname = strdup(filename);
+            if (!this_sf->archname) goto fail;
+            this_sf->archname_len = this_sf->name_len;
+            
+            // change from "(path)/(archive)|(filename)" to "(path)/(filename)"
+            this_sf->name[this_sf->archpath_end] = '\0';
+            concatn(this_sf->name_len, this_sf->name, &this_sf->archname[this_sf->archfile_end]);
+        }
+    }
 
     /* cache file_size */
     if (infile) {
@@ -188,7 +276,12 @@ static STREAMFILE* open_cog_streamfile_buffer_by_file(id<CogSource> infile, cons
     return &this_sf->vt;
 
 fail:
-    if (infile_retained) CFBridgingRelease(this_sf->infile);
+    if (this_sf) {
+        if (this_sf->infile)
+            CFBridgingRelease(this_sf->infile);
+        free(this_sf->archname);
+        free(this_sf->name);
+    }
     free(buf);
     free(this_sf);
     return NULL;

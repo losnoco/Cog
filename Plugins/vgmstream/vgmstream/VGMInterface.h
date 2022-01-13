@@ -14,8 +14,14 @@ typedef struct _COGSTREAMFILE {
     STREAMFILE vt;          /* callbacks */
 
     void* infile;           /* CogSource, retained */
-    char name[PATH_LIMIT];  /* FILE filename */
+    char* name;             /* FILE filename */
     int name_len;           /* cache */
+
+    char* archname;         /* archive name */
+    int archname_len;       /* cache */
+    int archpath_end;       /* where the last / ends before archive name */
+    int archfile_end;       /* where the last | ends before file name */
+
     offv_t offset;          /* last read offset (info) */
     offv_t buf_offset;      /* current buffer data start */
     uint8_t* buf;           /* data buffer */
