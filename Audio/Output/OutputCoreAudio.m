@@ -26,6 +26,7 @@ extern void scale_by_volume(float * buffer, size_t count, float volume);
         volume = 1.0;
         outputDeviceID = -1;
         listenerapplied = NO;
+        running = NO;
         
         _sema = dispatch_semaphore_create(0);
         
@@ -54,9 +55,11 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (void)threadEntry:(id)arg
 {
+    running = YES;
     while (!stopping) {
         dispatch_semaphore_wait(_sema, DISPATCH_TIME_FOREVER);
     }
+    stopped = YES;
     [self stop];
 }
 
@@ -231,7 +234,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	if (_au)
 		[self stop];
     
+    running = NO;
     stopping = NO;
+    stopped = NO;
     outputDeviceID = -1;
 	
     AVAudioFormat *format, *renderFormat;
@@ -326,7 +331,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
         amountToRead = inputData->mBuffers[0].mDataByteSize;
         
-        if (self->stopping == YES || [outputController endOfStream] == YES)
+        if (self->stopping == YES || [outputController shouldContinue] == NO)
         {
             memset(readPointer, 0, amountToRead);
             self->stopping = YES;
@@ -381,6 +386,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (void)stop
 {
+    stopping = YES;
     if (listenerapplied) {
         AudioObjectPropertyAddress theAddress = {
             .mSelector = kAudioHardwarePropertyDefaultOutputDevice,
@@ -393,15 +399,20 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     if (_au) {
         [_au stopHardware];
         _au = nil;
+    }
+    if (running)
+    while (!stopped)
+    {
         stopping = YES;
         dispatch_semaphore_signal(_sema);
+        usleep(500);
     }
 }
 
 - (void)dealloc
 {
 	[self stop];
-	
+    
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
 }
 

@@ -20,6 +20,7 @@
 @interface OutputCoreAudio : NSObject {
 	OutputNode * outputController;
     
+    BOOL running;
     BOOL stopping;
     BOOL stopped;
     
