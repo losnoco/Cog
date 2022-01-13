@@ -127,6 +127,7 @@
             amountInBuffer = 0;
             // This resets the converter's buffer
             [self resetBuffer];
+            [converter resetBuffer];
             [converter inputFormatDidChange:[[[controller controller] bufferChain] inputFormat]];
 
             DLog(@"Reset buffer!");
