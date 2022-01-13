@@ -96,17 +96,16 @@
 	void *readPtr;
 	int amountToCopy;
 	int availInput;
+    
+    if ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES)
+    {
+        endOfStream = YES;
+        return 0;
+    }
 	
 	[readLock lock];
 	availInput = [[previousNode buffer] lengthAvailableToReadReturningPointer:&readPtr];
 	
-	if (availInput < amount && [previousNode endOfStream] == YES)
-	{
-//		[previousNode release]; 
-		//If it is the outputNode, [soundController newInputChain];
-		//else
-		endOfStream = YES;
-	}
 /*	if (availInput <= 0) {
 		DLog(@"BUFFER RAN DRY!");
 	}
