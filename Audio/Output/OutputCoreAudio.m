@@ -56,8 +56,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 - (void)threadEntry:(id)arg
 {
     running = YES;
+    size_t eventCount = 0;
     while (!stopping) {
         dispatch_semaphore_wait(_sema, DISPATCH_TIME_FOREVER);
+        if (++eventCount == 128) {
+            [self updateDeviceFormat];
+            eventCount = 0;
+        }
     }
     stopped = YES;
     [self stop];
@@ -229,6 +234,69 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	free(devids);
 }
 
+- (BOOL)updateDeviceFormat
+{
+    AVAudioFormat *format = _au.outputBusses[0].format;
+    
+    if (!_deviceFormat || ![_deviceFormat isEqual:format])
+    {
+        NSError *err;
+        AVAudioFormat *renderFormat;
+        
+        _deviceFormat = format;
+        deviceFormat = *(format.streamDescription);
+
+        ///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
+        deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
+    //    deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
+    //    deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+        // We don't want more than 8 channels
+        if (deviceFormat.mChannelsPerFrame > 8) {
+            deviceFormat.mChannelsPerFrame = 8;
+        }
+        deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
+        deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
+
+        /* Set the channel layout for the audio queue */
+        AudioChannelLayoutTag tag = 0;
+        switch (deviceFormat.mChannelsPerFrame) {
+        case 1:
+            tag = kAudioChannelLayoutTag_Mono;
+            break;
+        case 2:
+            tag = kAudioChannelLayoutTag_Stereo;
+            break;
+        case 3:
+            tag = kAudioChannelLayoutTag_DVD_4;
+            break;
+        case 4:
+            tag = kAudioChannelLayoutTag_Quadraphonic;
+            break;
+        case 5:
+            tag = kAudioChannelLayoutTag_MPEG_5_0_A;
+            break;
+        case 6:
+            tag = kAudioChannelLayoutTag_MPEG_5_1_A;
+            break;
+        case 7:
+            tag = kAudioChannelLayoutTag_MPEG_6_1_A;
+            break;
+        case 8:
+            tag = kAudioChannelLayoutTag_MPEG_7_1_A;
+            break;
+        }
+
+        renderFormat = [[AVAudioFormat alloc] initWithStreamDescription:&deviceFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
+        [_au.inputBusses[0] setFormat:renderFormat error:&err];
+        if (err != nil)
+            return NO;
+        
+        [outputController setFormat:&deviceFormat];
+    }
+    
+    return YES;
+}
+
 - (BOOL)setup
 {
 	if (_au)
@@ -239,7 +307,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     stopped = NO;
     outputDeviceID = -1;
 	
-    AVAudioFormat *format, *renderFormat;
     AudioComponentDescription desc;
     NSError *err;
 	
@@ -268,57 +335,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         [self setOutputDeviceWithDeviceDict:nil];
     }
 
-    format = _au.outputBusses[0].format;
+    _deviceFormat = nil;
     
-    deviceFormat = *(format.streamDescription);
+    [self updateDeviceFormat];
     
-	///Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
-	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
-//	deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
-//	deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-    if (deviceFormat.mChannelsPerFrame > 8) {
-        deviceFormat.mChannelsPerFrame = 8;
-    }
-    // And force a default rate for crappy devices
-    if (deviceFormat.mSampleRate < 32000)
-        deviceFormat.mSampleRate = 48000;
-	deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame*(deviceFormat.mBitsPerChannel/8);
-	deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
-    
-    /* Set the channel layout for the audio queue */
-    AudioChannelLayoutTag tag = 0;
-    switch (deviceFormat.mChannelsPerFrame) {
-    case 1:
-        tag = kAudioChannelLayoutTag_Mono;
-        break;
-    case 2:
-        tag = kAudioChannelLayoutTag_Stereo;
-        break;
-    case 3:
-        tag = kAudioChannelLayoutTag_DVD_4;
-        break;
-    case 4:
-        tag = kAudioChannelLayoutTag_Quadraphonic;
-        break;
-    case 5:
-        tag = kAudioChannelLayoutTag_MPEG_5_0_A;
-        break;
-    case 6:
-        tag = kAudioChannelLayoutTag_MPEG_5_1_A;
-        break;
-    case 7:
-        tag = kAudioChannelLayoutTag_MPEG_6_1_A;
-        break;
-    case 8:
-        tag = kAudioChannelLayoutTag_MPEG_7_1_A;
-        break;
-    }
-    
-    renderFormat = [[AVAudioFormat alloc] initWithStreamDescription:&deviceFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
-    [_au.inputBusses[0] setFormat:renderFormat error:&err];
-    if (err != nil)
-        return NO;
-
     __block dispatch_semaphore_t sema = _sema;
     __block OutputNode * outputController = self->outputController;
     __block float * volume = &self->volume;
@@ -368,8 +388,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     
     [NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
     
-    [outputController setFormat:&deviceFormat];
-
 	return (err == nil);
 }
 

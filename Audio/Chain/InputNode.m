@@ -99,10 +99,10 @@
 {
 	DLog(@"SOMETHING CHANGED!");
 	if ([keyPath isEqual:@"properties"]) {
-		//Setup converter!
-		//Inform something of properties change
-		//Disable support until it is properly implemented.
-		//[controller inputFormatDidChange: propertiesToASBD([decoder properties])];
+        DLog(@"Input format changed");
+        // Converter doesn't need resetting for this, as output format hasn't changed
+        ConverterNode *converter = [[[controller controller] bufferChain] converter];
+        [converter inputFormatDidChange:[[[controller controller] bufferChain] inputFormat]];
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
 		//Inform something of metadata change
@@ -125,8 +125,8 @@
 			DLog(@"SEEKING! Resetting Buffer");
             
             amountInBuffer = 0;
+            // This resets the converter's buffer
             [self resetBuffer];
-            [converter resetBuffer];
             [converter inputFormatDidChange:[[[controller controller] bufferChain] inputFormat]];
 
             DLog(@"Reset buffer!");

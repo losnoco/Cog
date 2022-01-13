@@ -27,6 +27,8 @@
     BOOL listenerapplied;
     
     float volume;
+    
+    AVAudioFormat *_deviceFormat;
 
     AudioDeviceID outputDeviceID;
     AudioStreamBasicDescription deviceFormat;    // info about the default device

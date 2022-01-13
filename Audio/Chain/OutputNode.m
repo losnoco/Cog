@@ -89,6 +89,20 @@
 - (void)setFormat:(AudioStreamBasicDescription *)f
 {
 	format = *f;
+    BufferChain *bufferChain = [controller bufferChain];
+    if (bufferChain)
+    {
+        InputNode *input = [bufferChain inputNode];
+        ConverterNode *converter = [bufferChain converter];
+        if (input && converter)
+        {
+            // Need to clear the buffer, as it contains converted output
+            // targeting the previous output format
+            [input resetBuffer];
+            [converter setOutputFormat:format];
+            [converter inputFormatDidChange:[bufferChain inputFormat]];
+        }
+    }
 }
 
 - (void)close
