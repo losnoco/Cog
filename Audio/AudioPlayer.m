@@ -60,7 +60,10 @@
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time
 {
-	@synchronized(chainQueue) {
+    output = [[OutputNode alloc] initWithController:self previous:nil];
+    [output setup];
+    [output setVolume: volume];
+    @synchronized(chainQueue) {
         for (id anObject in chainQueue)
 		{
 			[anObject setShouldContinue:NO];
@@ -74,17 +77,10 @@
             bufferChain = nil;
 		}
 	}
-    output = [[OutputNode alloc] initWithController:self previous:nil];
-    [output setup];
-    [output setVolume: volume];
 
 	bufferChain = [[BufferChain alloc] initWithController:self];
 	[self notifyStreamChanged:userInfo];
     
-    currentStream = url;
-    currentUserInfo = userInfo;
-    currentRGInfo = rgi;
-	
 	while (![bufferChain open:url withOutputFormat:[output format] withRGInfo:rgi])
 	{
 		bufferChain = nil;
@@ -100,10 +96,6 @@
 		userInfo = nextStreamUserInfo;
         rgi = nextStreamRGInfo;
 	
-        currentStream = url;
-        currentUserInfo = userInfo;
-        currentRGInfo = rgi;
-    
 		[self notifyStreamChanged:userInfo];
 		
 		bufferChain = [[BufferChain alloc] initWithController:self];
@@ -127,75 +119,6 @@
     
     if (paused)
         [self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
-    
-    self->paused = paused;
-}
-
-- (void)play:(id<CogDecoder>)decoder startPaused:(BOOL)paused
-{
-    @synchronized(chainQueue) {
-        for (id anObject in chainQueue)
-        {
-            [anObject setShouldContinue:NO];
-        }
-        [chainQueue removeAllObjects];
-        endOfInputReached = NO;
-        if (bufferChain)
-        {
-            [bufferChain setShouldContinue:NO];
-
-            bufferChain = nil;
-        }
-    }
-    output = [[OutputNode alloc] initWithController:self previous:nil];
-    [output setup];
-    [output setVolume: volume];
-
-    bufferChain = [[BufferChain alloc] initWithController:self];
-    [self notifyStreamChanged:currentUserInfo];
-    
-    NSURL *url = currentStream;
-    id userInfo = currentUserInfo;
-    NSDictionary *rgi = currentRGInfo;
-    
-    while (![bufferChain openWithDecoder:decoder withOutputFormat:[output format] withRGInfo:rgi])
-    {
-        bufferChain = nil;
-        
-        [self requestNextStream: userInfo];
-
-        url = nextStream;
-        if (url == nil)
-        {
-            return;
-        }
-        
-        userInfo = nextStreamUserInfo;
-        rgi = nextStreamRGInfo;
-    
-        currentStream = url;
-        currentUserInfo = userInfo;
-        currentRGInfo = rgi;
-    
-        [self notifyStreamChanged:userInfo];
-        
-        bufferChain = [[BufferChain alloc] initWithController:self];
-    }
-
-    [bufferChain setUserInfo:userInfo];
-
-    [self setShouldContinue:YES];
-    
-    outputLaunched = NO;
-    startedPaused = paused;
-    initialBufferFilled = NO;
-
-    [bufferChain launchThreads];
-    
-    if (paused)
-        [self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
-    
-    self->paused = paused;
 }
 
 - (void)stop
@@ -210,8 +133,6 @@
 	[output pause];
 
 	[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
-    
-    paused = YES;
 }
 
 - (void)resume
@@ -226,8 +147,6 @@
 	[output resume];
 
 	[self setPlaybackStatus:CogStatusPlaying waitUntilDone:YES];
-    
-    paused = NO;
 }
 
 - (void)seekToTime:(double)time
