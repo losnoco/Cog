@@ -1,0 +1,33 @@
+diff --git a/libavcodec/libfdk-aacdec.c b/libavcodec/libfdk-aacdec.c
+index 1a86dffe4b..565621b973 100644
+--- a/libavcodec/libfdk-aacdec.c
++++ b/libavcodec/libfdk-aacdec.c
+@@ -335,7 +335,7 @@ static av_cold int fdk_aac_decode_init(AVCodecContext *avctx)
+     }
+ #endif
+ 
+-    avctx->sample_fmt = AV_SAMPLE_FMT_S16;
++    avctx->sample_fmt = AV_SAMPLE_FMT_FLT;
+ 
+     s->decoder_buffer_size = DECODER_BUFFSIZE * DECODER_MAX_CHANNELS;
+     s->decoder_buffer = av_malloc(s->decoder_buffer_size);
+@@ -384,9 +384,19 @@ static int fdk_aac_decode_frame(AVCodecContext *avctx, void *data,
+                                    (AVRational){1, avctx->sample_rate},
+                                    avctx->time_base);
+ 
++#if 0
+     memcpy(frame->extended_data[0], s->decoder_buffer,
+            avctx->channels * avctx->frame_size *
+            av_get_bytes_per_sample(avctx->sample_fmt));
++#else
++    {
++        INT_PCM *in = (INT_PCM *) s->decoder_buffer;
++        float *out = (float *) frame->extended_data[0];
++        const float scale = 1.0f / (float)0x800000;
++        for (int i = 0, j = avctx->channels * avctx->frame_size; i < j; i++)
++            *out++ = (float)(*in++) * scale;
++    }
++#endif
+ 
+     *got_frame_ptr = 1;
+     ret = avpkt->size - valid;

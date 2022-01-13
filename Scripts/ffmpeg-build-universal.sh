@@ -19,6 +19,8 @@ LIBS="libavcodec libavformat libavutil libswresample"
 BASEDIR=$(dirname "$0")
 COG_FFMPEG_PREFIX="$BASEDIR/../ThirdParty/ffmpeg"
 
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:"$BASEDIR/../ThirdParty/fdk-aac/lib/pkgconfig"
+
 for arch in $ARCHS; do
     info "Building FFmpeg for $arch"
     $BASEDIR/ffmpeg-build-$arch.sh $COG_FFMPEG_PREFIX

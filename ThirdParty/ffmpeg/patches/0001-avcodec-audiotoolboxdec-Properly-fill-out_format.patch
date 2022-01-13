@@ -1,0 +1,38 @@
+From 91a7dee45f53d3b7049520363e68573a27c951c6 Mon Sep 17 00:00:00 2001
+From: Christopher Snowhill <kode54@gmail.com>
+Date: Tue, 21 Dec 2021 20:51:44 -0800
+Subject: [PATCH] avcodec/audiotoolboxdec: Properly fill out_format
+X-Unsent: 1
+To: ffmpeg-devel@ffmpeg.org
+
+Monterey needs mBytesPerFrame and mBytesPerPacket to be set, and I'm
+surprised this didn't break any previous system versions.
+
+Fixes bug #9564: Cannot decode xHE-AAC with audiotoolbox (aac_at) on
+Mac OS Monterey. Fixes likely bug that none of the AudioToolbox
+decoders work on Monterey.
+
+Signed-off-by: Christopher Snowhill <kode54@gmail.com>
+---
+ libavcodec/audiotoolboxdec.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/libavcodec/audiotoolboxdec.c b/libavcodec/audiotoolboxdec.c
+index 9939fef218..4abcb63a03 100644
+--- a/libavcodec/audiotoolboxdec.c
++++ b/libavcodec/audiotoolboxdec.c
+@@ -370,6 +370,11 @@ static av_cold int ffat_create_decoder(AVCodecContext *avctx,
+     avctx->sample_rate = out_format.mSampleRate = in_format.mSampleRate;
+     avctx->channels = out_format.mChannelsPerFrame = in_format.mChannelsPerFrame;
+ 
++    out_format.mBytesPerFrame =
++        out_format.mChannelsPerFrame * (out_format.mBitsPerChannel / 8);
++    out_format.mBytesPerPacket =
++        out_format.mBytesPerFrame * out_format.mFramesPerPacket;
++
+     if (avctx->codec_id == AV_CODEC_ID_ADPCM_IMA_QT)
+         in_format.mFramesPerPacket = 64;
+ 
+-- 
+2.32.0 (Apple Git-132)
+

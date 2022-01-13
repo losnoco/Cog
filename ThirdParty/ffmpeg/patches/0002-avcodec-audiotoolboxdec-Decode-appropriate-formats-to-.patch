@@ -1,0 +1,87 @@
+From 251fc6bc3cfa42947a3f72b69f1e517d2716d286 Mon Sep 17 00:00:00 2001
+From: Christopher Snowhill <kode54@gmail.com>
+Date: Tue, 21 Dec 2021 20:54:38 -0800
+Subject: [PATCH] avcodec/audiotoolboxdec: Decode appropriate formats to float
+X-Unsent: 1
+To: ffmpeg-devel@ffmpeg.org
+
+These candidate formats are likely already decoded in floating point
+internally anyway, so request float output so that it's also possible
+to clip or peak level as necessary.
+
+Signed-off-by: Christopher Snowhill <kode54@gmail.com>
+---
+ libavcodec/audiotoolboxdec.c | 36 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
+
+diff --git a/libavcodec/audiotoolboxdec.c b/libavcodec/audiotoolboxdec.c
+index 4abcb63a03..427f143468 100644
+--- a/libavcodec/audiotoolboxdec.c
++++ b/libavcodec/audiotoolboxdec.c
+@@ -297,6 +297,25 @@ static int ffat_set_extradata(AVCodecContext *avctx)
+     return 0;
+ }
+ 
++static bool ffat_get_format_is_float(enum AVCodecID codec)
++{
++    switch (codec) {
++    case AV_CODEC_ID_AAC:
++    case AV_CODEC_ID_AC3:
++    case AV_CODEC_ID_AMR_NB:
++    case AV_CODEC_ID_EAC3:
++    case AV_CODEC_ID_ILBC:
++    case AV_CODEC_ID_MP1:
++    case AV_CODEC_ID_MP2:
++    case AV_CODEC_ID_MP3:
++    case AV_CODEC_ID_QDMC:
++    case AV_CODEC_ID_QDM2:
++        return true;
++    default:
++        return false;
++    }
++}
++
+ static av_cold int ffat_create_decoder(AVCodecContext *avctx,
+                                        const AVPacket *pkt)
+ {
+@@ -304,8 +323,12 @@ static av_cold int ffat_create_decoder(AVCodecContext *avctx,
+     OSStatus status;
+     int i;
+ 
+-    enum AVSampleFormat sample_fmt = (avctx->bits_per_raw_sample == 32) ?
+-                                     AV_SAMPLE_FMT_S32 : AV_SAMPLE_FMT_S16;
++    bool sample_fmt_is_float = ffat_get_format_is_float(avctx->codec_id);
++
++    enum AVSampleFormat sample_fmt = sample_fmt_is_float ?
++                                     AV_SAMPLE_FMT_FLT :
++                                     ((avctx->bits_per_raw_sample == 32) ?
++                                     AV_SAMPLE_FMT_S32 : AV_SAMPLE_FMT_S16);
+ 
+     AudioStreamBasicDescription in_format = {
+         .mFormatID = ffat_get_format_id(avctx->codec_id, avctx->profile),
+@@ -313,7 +336,10 @@ static av_cold int ffat_create_decoder(AVCodecContext *avctx,
+     };
+     AudioStreamBasicDescription out_format = {
+         .mFormatID = kAudioFormatLinearPCM,
+-        .mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked,
++        .mFormatFlags = (sample_fmt_is_float ?
++                        kAudioFormatFlagIsFloat :
++                        kAudioFormatFlagIsSignedInteger) |
++                        kAudioFormatFlagIsPacked,
+         .mFramesPerPacket = 1,
+         .mBitsPerChannel = av_get_bytes_per_sample(sample_fmt) * 8,
+     };
+@@ -471,7 +497,9 @@ static OSStatus ffat_decode_callback(AudioConverterRef converter, UInt32 *nb_pac
+ static void ffat_copy_samples(AVCodecContext *avctx, AVFrame *frame)
+ {
+     ATDecodeContext *at = avctx->priv_data;
+-    if (avctx->sample_fmt == AV_SAMPLE_FMT_S32) {
++    if (avctx->sample_fmt == AV_SAMPLE_FMT_FLT) {
++        COPY_SAMPLES(float);
++    } else if (avctx->sample_fmt == AV_SAMPLE_FMT_S32) {
+         COPY_SAMPLES(int32_t);
+     } else {
+         COPY_SAMPLES(int16_t);
+-- 
+2.32.0 (Apple Git-132)
+

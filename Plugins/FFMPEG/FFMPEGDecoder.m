@@ -191,6 +191,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
     enum AVCodecID codec_id = codecCtx->codec_id;
     AVCodec * codec = NULL;
+    AVDictionary * dict = NULL;
 
     if (@available(macOS 10.15, *))
     {
@@ -234,7 +235,8 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
                 codec = avcodec_find_decoder_by_name("mp1float");
                 break;
             case AV_CODEC_ID_AAC:
-                codec = avcodec_find_decoder_by_name("aac");
+                codec = avcodec_find_decoder_by_name("libfdk_aac");
+                av_dict_set_int(&dict, "drc_level", -2, 0); // disable DRC
                 break;
             case AV_CODEC_ID_ALAC:
                 codec = avcodec_find_decoder_by_name("alac");
@@ -272,16 +274,20 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 
     if (!codec) {
         ALog(@"codec not found");
+        av_dict_free(&dict);
 		return NO;
     }
 
-    if ( (errcode = avcodec_open2(codecCtx, codec, NULL)) < 0) {
+    if ( (errcode = avcodec_open2(codecCtx, codec, &dict)) < 0) {
         char errDescr[4096];
+        av_dict_free(&dict);
         av_strerror(errcode, errDescr, 4096);
         ALog(@"could not open codec, errcode = %d, error = %s", errcode, errDescr);
         return NO;
     }
-
+    
+    av_dict_free(&dict);
+    
     lastDecodedFrame = av_frame_alloc();
     av_frame_unref(lastDecodedFrame);
     lastReadPacket = malloc(sizeof(AVPacket));

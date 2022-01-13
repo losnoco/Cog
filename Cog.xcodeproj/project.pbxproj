@@ -156,6 +156,7 @@
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5AB020E4C87100631CD4 /* DualWindow.m */; };
 		83BC5ABF20E4CE7A00631CD4 /* InfoInspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B0D00F6320EA00694C57 /* InfoInspector.xib */; };
 		83BC5AC020E4CE7D00631CD4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
@@ -730,6 +731,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in CopyFiles */,
 				830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */,
 				83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */,
@@ -973,6 +975,7 @@
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		83AB9031237CEFD300A433D5 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
+		83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83BC5AB020E4C87100631CD4 /* DualWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DualWindow.m; path = Window/DualWindow.m; sourceTree = "<group>"; };
 		83BC5AB120E4C87100631CD4 /* DualWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DualWindow.h; path = Window/DualWindow.h; sourceTree = "<group>"; };
 		83BC5AB420E4C91100631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InfoInspector.xib; sourceTree = "<group>"; };
@@ -1093,6 +1096,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */,
 				830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */,
 				83059684277F049600EBFAAE /* Ogg.xcodeproj */,
 				83059634277F011100EBFAAE /* File_Extractor.xcodeproj */,

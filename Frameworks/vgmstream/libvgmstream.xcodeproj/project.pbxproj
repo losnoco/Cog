@@ -598,6 +598,7 @@
 		83AFABBE23795202002F3947 /* isb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AFABBB23795202002F3947 /* isb.c */; };
 		83B46FD12707FB2100847FC9 /* at3plus_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B46FCD2707FB2100847FC9 /* at3plus_decoder.h */; };
 		83B46FD52707FB9A00847FC9 /* endianness.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B46FD42707FB9A00847FC9 /* endianness.h */; };
+		83B72E3A27904589006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E342790452C006007A3 /* libfdk-aac.2.dylib */; };
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
 		83C7280F22BC893D00678B4A /* xwb_xsb.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C727FB22BC893800678B4A /* xwb_xsb.h */; };
 		83C7281022BC893D00678B4A /* nps.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C727FC22BC893900678B4A /* nps.c */; };
@@ -1416,6 +1417,7 @@
 		83AFABBB23795202002F3947 /* isb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = isb.c; sourceTree = "<group>"; };
 		83B46FCD2707FB2100847FC9 /* at3plus_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = at3plus_decoder.h; sourceTree = "<group>"; };
 		83B46FD42707FB9A00847FC9 /* endianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endianness.h; sourceTree = "<group>"; };
+		83B72E342790452C006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "../../ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
 		83C727FB22BC893800678B4A /* xwb_xsb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xwb_xsb.h; sourceTree = "<group>"; };
 		83C727FC22BC893900678B4A /* nps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nps.c; sourceTree = "<group>"; };
@@ -1498,6 +1500,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83B72E3A27904589006007A3 /* libfdk-aac.2.dylib in Frameworks */,
 				83E22FC32772FD16000015EE /* AudioToolbox.framework in Frameworks */,
 				83E22FC12772FD06000015EE /* libbz2.tbd in Frameworks */,
 				838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */,
@@ -1584,6 +1587,7 @@
 		836F6B3E18BDB8880095E648 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83B72E342790452C006007A3 /* libfdk-aac.2.dylib */,
 				830595E1277EFE4E00EBFAAE /* libavcodec.58.dylib */,
 				830595E3277EFE4E00EBFAAE /* libavformat.58.dylib */,
 				830595E4277EFE4E00EBFAAE /* libavutil.56.dylib */,
@@ -3267,6 +3271,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
+					"../../ThirdParty/fdk-aac/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3339,6 +3344,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
+					"../../ThirdParty/fdk-aac/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;

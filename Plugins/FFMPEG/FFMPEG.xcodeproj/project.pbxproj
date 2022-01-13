@@ -20,6 +20,7 @@
 		8352D49B1CDDB8B2009D16AA /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49A1CDDB8B2009D16AA /* VideoToolbox.framework */; };
 		8352D49D1CDDB8C0009D16AA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49C1CDDB8C0009D16AA /* CoreMedia.framework */; };
 		8352D49F1CDDB8D7009D16AA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49E1CDDB8D7009D16AA /* CoreVideo.framework */; };
+		83B72E3927904557006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E3827904557006007A3 /* libfdk-aac.2.dylib */; };
 		83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC52772FD32000015EE /* libbz2.tbd */; };
 		83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC72772FD3A000015EE /* AudioToolbox.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -56,6 +57,7 @@
 		8352D49C1CDDB8C0009D16AA /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		8352D49E1CDDB8D7009D16AA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		8384913818081F6C00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
+		83B72E3827904557006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "../../ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83E22FC52772FD32000015EE /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		83E22FC72772FD3A000015EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8D5B49B6048680CD000E48DA /* FFMPEG.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFMPEG.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83B72E3927904557006007A3 /* libfdk-aac.2.dylib in Frameworks */,
 				83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */,
 				830595DE277EFDE000EBFAAE /* libavutil.56.dylib in Frameworks */,
 				83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */,
@@ -108,6 +111,7 @@
 		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				83B72E3827904557006007A3 /* libfdk-aac.2.dylib */,
 				830595DB277EFDE000EBFAAE /* libavcodec.58.dylib */,
 				830595DC277EFDE000EBFAAE /* libavformat.58.dylib */,
 				830595DA277EFDE000EBFAAE /* libavutil.56.dylib */,
@@ -336,7 +340,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/ffmpeg/include;
-				LIBRARY_SEARCH_PATHS = ../../ThirdParty/ffmpeg/lib;
+				LIBRARY_SEARCH_PATHS = (
+					../../ThirdParty/ffmpeg/lib,
+					"../../ThirdParty/fdk-aac/lib",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -377,7 +384,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/ffmpeg/include;
-				LIBRARY_SEARCH_PATHS = ../../ThirdParty/ffmpeg/lib;
+				LIBRARY_SEARCH_PATHS = (
+					../../ThirdParty/ffmpeg/lib,
+					"../../ThirdParty/fdk-aac/lib",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;

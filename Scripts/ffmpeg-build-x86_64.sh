@@ -16,6 +16,7 @@ export PATH=/usr/local/bin:$PATH
     --incdir="$1/include"\
     --datadir="$1/share"\
     --pkgconfigdir="$1/pkgconfig"\
+    --enable-nonfree --enable-libfdk-aac\
     --enable-pic --enable-gpl --disable-doc --disable-ffplay\
     --disable-ffprobe --disable-avdevice --disable-ffmpeg\
     --disable-postproc --disable-avfilter\
@@ -24,7 +25,7 @@ export PATH=/usr/local/bin:$PATH
     --enable-swresample\
     --enable-parser=ac3,mpegaudio,xma,vorbis,opus\
     --enable-demuxer=ac3,asf,xwma,mov,oma,ogg,tak,dsf,wav,w64,aac,dts,dtshd,eac3,mp3,bink,flac,msf,xmv,caf,ape,smacker,pcm_s8,spdif,mpc,mpc8,rm,matroska\
-    --enable-decoder=ac3,ac3_t,eac3,eac3_at,wmapro,wmav1,wmav2,wmavoice,wmalossless,xma1,xma2,dca,tak,dsd_lsbf,dsd_lsbf_planar,dsd_mbf,dsd_msbf_planar,aac,aac_at,atrac3,atrac3p,mp3float,mp3_at,mp2float,mp2_at,mp1float,mp1_at,bink,binkaudio_dct,binkaudio_rdft,flac,pcm_s16be,pcm_s16be_planar,pcm_s16le,pcm_s16le_planar,vorbis,ape,adpcm_ima_qt,smackaud,opus,pcm_s8,pcm_s8_planar,mpc7,mpc8,alac,alac_at,adpcm_ima_dk3,adpcm_ima_dk4,cook\
+    --enable-decoder=ac3,ac3_t,eac3,eac3_at,wmapro,wmav1,wmav2,wmavoice,wmalossless,xma1,xma2,dca,tak,dsd_lsbf,dsd_lsbf_planar,dsd_mbf,dsd_msbf_planar,aac,aac_at,libfdk_aac,atrac3,atrac3p,mp3float,mp3_at,mp2float,mp2_at,mp1float,mp1_at,bink,binkaudio_dct,binkaudio_rdft,flac,pcm_s16be,pcm_s16be_planar,pcm_s16le,pcm_s16le_planar,vorbis,ape,adpcm_ima_qt,smackaud,opus,pcm_s8,pcm_s8_planar,mpc7,mpc8,alac,alac_at,adpcm_ima_dk3,adpcm_ima_dk4,cook\
     --disable-parser=mpeg4video,h263\
     --disable-decoder=mpeg2video,h263,h264,mpeg1video,mpeg2video,mpeg4,hevc,vp9\
     --disable-version3
