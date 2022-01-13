@@ -28,7 +28,8 @@
     
     BOOL stopping;
     BOOL convertEntered;
-    BOOL emittingSilence;
+    BOOL paused;
+    BOOL outputFormatChanged;
     
     BOOL skipResampler;
     

@@ -51,7 +51,8 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         
         stopping = NO;
         convertEntered = NO;
-        emittingSilence = NO;
+        paused = NO;
+        outputFormatChanged = NO;
         
         skipResampler = NO;
         
@@ -408,10 +409,11 @@ static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t
 		int amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
         if (!amountConverted)
         {
-            if (emittingSilence)
+            if (paused)
             {
-                memset(writeBuf, 0, sizeof(writeBuf));
-                amountConverted = CHUNK_SIZE;
+                while (paused)
+                    usleep(500);
+                continue;
             }
             else break;
         }
@@ -427,14 +429,8 @@ static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t
     int extrapolateStart = 0;
     int extrapolateEnd = 0;
     size_t amountToSkip = 0;
-    BOOL inputRetry = NO;
+    BOOL endOfInputStream = NO;
 
-    if (emittingSilence)
-    {
-        memset(dest, 0, amount);
-        return amount;
-    }
-    
     if (stopping)
         return 0;
     
@@ -494,7 +490,7 @@ tryagain:
         }
 
         size_t amountToWrite = ioNumberPackets * inputFormat.mBytesPerPacket;
-        if (!inputRetry) amountToSkip = 0;
+        amountToSkip = 0;
         
         BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
         BOOL isUnsigned = !isFloat && !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
@@ -526,13 +522,15 @@ tryagain:
                 latencyStarted -= latencyToWrite / inputFormat.mBytesPerPacket;
             }
         }
-                
-        size_t bytesReadFromInput = [self readData:inputBuffer + amountToSkip amount:(int)amountToWrite];
         
-        if (!bytesReadFromInput)
+        size_t bytesReadFromInput = 0;
+        
+        while (bytesReadFromInput < amountToWrite && !stopping && [self shouldContinue] == YES && [self endOfStream] == NO)
         {
-            inputRetry = YES;
-            continue;
+            size_t bytesRead = [self readData:inputBuffer + amountToSkip + bytesReadFromInput amount:(int)(amountToWrite - bytesReadFromInput)];
+            bytesReadFromInput += bytesRead;
+            if (!bytesRead)
+                usleep(500);
         }
         
         bytesReadFromInput += amountToSkip;
@@ -604,7 +602,7 @@ tryagain:
         
         // Extrapolate start
         if (extrapolateStart)
-         {
+        {
             extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateStart, YES);
             extrapolateStart = 0;
         }
@@ -856,7 +854,8 @@ static float db_to_scale(float db)
     // Move this here so process call isn't running the resampler until it's allocated
     stopping = NO;
     convertEntered = NO;
-    emittingSilence = NO;
+    paused = NO;
+    outputFormatChanged = NO;
     
 	return YES;
 }
@@ -868,6 +867,7 @@ static float db_to_scale(float db)
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputResampling"];
     
+    paused = NO;
 	[self cleanUp];
 }
 
@@ -876,13 +876,20 @@ static float db_to_scale(float db)
 {
 	DLog(@"SETTING OUTPUT FORMAT!");
 	outputFormat = format;
+    outputFormatChanged = YES;
 }
 
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format
 {
 	DLog(@"FORMAT CHANGED");
-    emittingSilence = YES;
+    paused = YES;
 	[self cleanUp];
+    if (outputFormatChanged)
+    {
+        [writeLock lock];
+        [buffer empty];
+        [writeLock unlock];
+    }
 	[self setupWithInputFormat:format outputFormat:outputFormat];
 }
 
