@@ -237,6 +237,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
             case AV_CODEC_ID_AAC:
                 codec = avcodec_find_decoder_by_name("libfdk_aac");
                 av_dict_set_int(&dict, "drc_level", -2, 0); // disable DRC
+                av_dict_set_int(&dict, "level_limit", 0, 0); // disable peak limiting
                 break;
             case AV_CODEC_ID_ALAC:
                 codec = avcodec_find_decoder_by_name("alac");
