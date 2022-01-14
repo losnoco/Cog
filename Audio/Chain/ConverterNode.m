@@ -792,21 +792,21 @@ tryagain:
             if (!skipResampler && !latencyPostfill)
             {
                 ioNumberPackets = (int)resampler->latency(resampler_data);
+                if (dsd2pcm) ioNumberPackets += dsd2pcmLatency;
                 newSize = ioNumberPackets * inputFormat.mBytesPerPacket;
                 newSize += bytesReadFromInput;
                 if (!inputBuffer || inputBufferSize < newSize)
                     inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 3);
+                
+                latencyPostfill = YES;
+                extrapolateEnd = ioNumberPackets;
 
-                latencyPostfill = ioNumberPackets;
-
-                memset(inputBuffer + bytesReadFromInput, fillByte, latencyPostfill * inputFormat.mBytesPerPacket);
+                memset(inputBuffer + bytesReadFromInput, fillByte, extrapolateEnd * inputFormat.mBytesPerPacket);
 
                 bytesReadFromInput = newSize;
 
-                extrapolateEnd = ioNumberPackets;
                 if (dsd2pcm)
                 {
-                    extrapolateEnd += dsd2pcmLatency;
                     eatFromEnd = dsd2pcmLatency * sampleRatio;
                 }
             }
@@ -839,7 +839,7 @@ tryagain:
         {
             size_t bitsPerSample = inputFormat.mBitsPerChannel;
             if (bitsPerSample == 1) {
-                samplesRead = bytesReadFromInput / inputFormat.mChannelsPerFrame;
+                samplesRead = bytesReadFromInput / inputFormat.mBytesPerPacket;
                 convert_dsd_to_f32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, dsd2pcm);
                 memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * inputFormat.mChannelsPerFrame * sizeof(float));
                 bitsPerSample = 32;
@@ -898,25 +898,16 @@ tryagain:
             extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateStart, YES, &extrapolateBuffer, &extrapolateBufferSize);
             extrapolateStart = 0;
         }
-        else if (extrapolateEnd)
+
+        if (extrapolateEnd)
         {
             extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateEnd, NO, &extrapolateBuffer, &extrapolateBufferSize);
             extrapolateEnd = 0;
-            bytesReadFromInput -= eatFromEnd * floatFormat.mBytesPerPacket;
-            if (bytesReadFromInput < 0)
-                bytesReadFromInput = 0;
         }
         
         // Input now contains bytesReadFromInput worth of floats, in the input sample rate
         inpSize = bytesReadFromInput;
         inpOffset = 0;
-        
-        // Preserve last samples, for end extrapolator, if needed
-        size_t preserved = inpSize;
-        if (preserved > sizeof(floatConvertedLast))
-            preserved = sizeof(floatConvertedLast);
-        memcpy(floatConvertedLast, inputBuffer + inpSize - preserved, preserved);
-        floatConvertedSize = preserved;
     }
     
     if (inpOffset != inpSize && floatOffset == floatSize)
@@ -962,18 +953,33 @@ tryagain:
         
         inpOffset += inputSamples * floatFormat.mBytesPerPacket;
         
-        if (!skipResampler && latencyEaten)
+        if (!skipResampler)
         {
-            if (src_data.output_frames > latencyEaten)
+            if (latencyEaten)
             {
-                src_data.output_frames -= latencyEaten;
-                memmove(src_data.data_out, src_data.data_out + latencyEaten * inputFormat.mChannelsPerFrame, src_data.output_frames * floatFormat.mBytesPerPacket);
-                latencyEaten = 0;
+                if (src_data.output_frames > latencyEaten)
+                {
+                    src_data.output_frames -= latencyEaten;
+                    memmove(src_data.data_out, src_data.data_out + latencyEaten * inputFormat.mChannelsPerFrame, src_data.output_frames * floatFormat.mBytesPerPacket);
+                    latencyEaten = 0;
+                }
+                else
+                {
+                    latencyEaten -= src_data.output_frames;
+                    src_data.output_frames = 0;
+                }
             }
-            else
+            else if (eatFromEnd)
             {
-                latencyEaten -= src_data.output_frames;
-                src_data.output_frames = 0;
+                if (src_data.output_frames > eatFromEnd)
+                {
+                    src_data.output_frames -= eatFromEnd;
+                }
+                else
+                {
+                    src_data.output_frames = 0;
+                }
+                eatFromEnd = 0;
             }
         }
         
@@ -1124,8 +1130,6 @@ static float db_to_scale(float db)
     
     floatOffset = 0;
     floatSize = 0;
-    
-    floatConvertedSize = 0;
     
     // This is a post resampler, post-down/upmix format
     
