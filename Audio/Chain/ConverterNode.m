@@ -35,6 +35,8 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 
 @implementation ConverterNode
 
+@synthesize inputFormat;
+
 - (id)initWithController:(id)c previous:(id)p
 {
     self = [super initWithController:c previous:p];
@@ -68,6 +70,8 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         
         dsd2pcm = NULL;
         dsd2pcmCount = 0;
+        
+        outputResampling = @"";
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
@@ -1038,8 +1042,11 @@ tryagain:
     }
     else if ([keyPath isEqual:@"values.outputResampling"]) {
         // Reset resampler
-        if (resampler && resampler_data)
-            [self inputFormatDidChange:inputFormat];
+        if (resampler && resampler_data) {
+            NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"outputResampling"];
+            if (![value isEqualToString:outputResampling])
+                [self inputFormatDidChange:inputFormat];
+        }
     }
 }
 
@@ -1104,10 +1111,18 @@ static float db_to_scale(float db)
         || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64)))
         return NO;
     
+    // These are really placeholders, as we're doing everything internally now
+    
+    floatFormat = inputFormat;
+    floatFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
+    floatFormat.mBitsPerChannel = 32;
+    floatFormat.mBytesPerFrame = (32/8)*floatFormat.mChannelsPerFrame;
+    floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
+    
     if (inputFormat.mBitsPerChannel == 1) {
         // Decimate this for speed
-        inputFormat.mSampleRate *= 1.0 / 8.0;
-        dsd2pcmCount = inputFormat.mChannelsPerFrame;
+        floatFormat.mSampleRate *= 1.0 / 8.0;
+        dsd2pcmCount = floatFormat.mChannelsPerFrame;
         dsd2pcm = calloc(dsd2pcmCount, sizeof(void*));
         dsd2pcm[0] = dsd2pcm_alloc();
         dsd2pcmLatency = dsd2pcm_latency(dsd2pcm[0]);
@@ -1116,14 +1131,6 @@ static float db_to_scale(float db)
             dsd2pcm[i] = dsd2pcm_dup(dsd2pcm[0]);
         }
     }
-    
-    // These are really placeholders, as we're doing everything internally now
-    
-    floatFormat = inputFormat;
-    floatFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
-    floatFormat.mBitsPerChannel = 32;
-    floatFormat.mBytesPerFrame = (32/8)*floatFormat.mChannelsPerFrame;
-    floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
     
     inpOffset = 0;
     inpSize = 0;
@@ -1142,9 +1149,9 @@ static float db_to_scale(float db)
     convert_s16_to_float_init_simd();
     convert_s32_to_float_init_simd();
     
-    skipResampler = outputFormat.mSampleRate == inputFormat.mSampleRate;
+    skipResampler = outputFormat.mSampleRate == floatFormat.mSampleRate;
     
-    sampleRatio = (double)outputFormat.mSampleRate / (double)inputFormat.mSampleRate;
+    sampleRatio = (double)outputFormat.mSampleRate / (double)floatFormat.mSampleRate;
     
     if (!skipResampler)
     {
@@ -1161,6 +1168,8 @@ static float db_to_scale(float db)
             quality = RESAMPLER_QUALITY_HIGHER;
         else if ([resampling isEqualToString:@"highest"])
             quality = RESAMPLER_QUALITY_HIGHEST;
+        
+        outputResampling = resampling;
         
         if (!retro_resampler_realloc(&resampler_data, &resampler, "sinc", quality, inputFormat.mChannelsPerFrame, sampleRatio))
         {
@@ -1211,7 +1220,8 @@ static float db_to_scale(float db)
 	DLog(@"FORMAT CHANGED");
     paused = YES;
 	[self cleanUp];
-    if (outputFormatChanged && ![buffer isEmpty])
+    if (outputFormatChanged && ![buffer isEmpty] &&
+        memcmp(&outputFormat, &previousOutputFormat, sizeof(outputFormat)) != 0)
     {
         // Transfer previously buffered data, remember input format
         rememberedInputFormat = format;

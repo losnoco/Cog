@@ -102,7 +102,10 @@
         DLog(@"Input format changed");
         // Converter doesn't need resetting for this, as output format hasn't changed
         ConverterNode *converter = [[[controller controller] bufferChain] converter];
-        [converter inputFormatDidChange:[[[controller controller] bufferChain] inputFormat]];
+        AudioStreamBasicDescription newInputFormat = [[[controller controller] bufferChain] inputFormat];
+        AudioStreamBasicDescription oldInputFormat = [converter inputFormat];
+        if (memcmp(&oldInputFormat, &newInputFormat, sizeof(oldInputFormat)) != 0)
+            [converter inputFormatDidChange:newInputFormat];
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
 		//Inform something of metadata change

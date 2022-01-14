@@ -62,7 +62,11 @@
     AudioStreamBasicDescription rememberedInputFormat;
     RefillNode *refillNode;
     id __weak originalPreviousNode;
+    
+    NSString *outputResampling;
 }
+
+@property AudioStreamBasicDescription inputFormat;
 
 - (id)initWithController:(id)c previous:(id)p;
 
