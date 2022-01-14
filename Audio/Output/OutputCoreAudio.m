@@ -363,11 +363,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
         // Try repeatedly! Buffer wraps can cause a slight data shortage, as can
         // unexpected track changes.
-        while ((amountRead < amountToRead) && [outputController endOfStream] == NO && [outputController shouldContinue] == YES)
+        while ((amountRead < amountToRead) && [outputController shouldContinue] == YES)
         {
             int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
             amountRead2 = [outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
             amountRead += amountRead2;
+            usleep(500);
         }
 
         int framesRead = amountRead / sizeof(float);
