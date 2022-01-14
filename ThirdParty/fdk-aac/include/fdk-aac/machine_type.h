@@ -117,20 +117,8 @@ typedef unsigned long long uint64_t;
 
 /* Library calling convention spec. __cdecl and friends might be added here as
  * required. */
-
-#if 0
-#ifdef FDKAAC_EXPORTS
-#define LINKSPEC_H __declspec(dllexport)
-#define LINKSPEC_CPP __declspec(dllexport)
-
-#else
-#define LINKSPEC_H __declspec(dllimport)
-#define LINKSPEC_CPP __declspec(dllimport)
-#endif
-#else
 #define LINKSPEC_H
 #define LINKSPEC_CPP
-#endif
 
 /* for doxygen the following docu parts must be separated */
 /** \var  SCHAR
@@ -235,24 +223,11 @@ typedef unsigned long long UINT64;
 #define FDK_ASSERT(ignore)
 #endif
 
-#if 0
-//typedef SHORT INT_PCM;
-typedef LONG INT_PCM;
-#define MAXVAL_PCM MAXVAL_SGL
-#define MINVAL_PCM MINVAL_SGL
-#define WAV_BITS 16
-//#define SAMPLE_BITS 16
-#define SAMPLE_BITS 32
-#define SAMPLE_MAX ((INT_PCM)(((ULONG)1 << (SAMPLE_BITS - 1)) - 1))
-#define SAMPLE_MIN (~SAMPLE_MAX)
-#endif
-
-// foobar_pd:
+/* kode54 - changes to allow decoding fixed point directly */
 typedef LONG INT_PCM;
 #define MAXVAL_PCM MAXVAL_DBL
 #define MINVAL_PCM MINVAL_DBL
 #define WAV_BITS 32
-//#define SAMPLE_BITS 16
 #define SAMPLE_BITS 32
 #define SAMPLE_MAX ((INT_PCM)(((ULONG)1 << (SAMPLE_BITS - 1)) - 1))
 #define SAMPLE_MIN (~SAMPLE_MAX)
