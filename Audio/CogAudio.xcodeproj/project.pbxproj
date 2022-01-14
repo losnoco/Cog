@@ -87,6 +87,8 @@
 		8389F2A4278E646E0074164C /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8389F2A2278E646E0074164C /* lpc.c */; };
 		839366671815923C006DD712 /* CogPluginMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 839366651815923C006DD712 /* CogPluginMulti.h */; };
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
+		83A44A01279119B50049B6E2 /* RefillNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A449FF279119B50049B6E2 /* RefillNode.m */; };
+		83A44A02279119B50049B6E2 /* RefillNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A44A00279119B50049B6E2 /* RefillNode.h */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
@@ -203,6 +205,8 @@
 		8389F2A2278E646E0074164C /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lpc.c; sourceTree = "<group>"; };
 		839366651815923C006DD712 /* CogPluginMulti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogPluginMulti.h; sourceTree = "<group>"; };
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
+		83A449FF279119B50049B6E2 /* RefillNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RefillNode.m; sourceTree = "<group>"; };
+		83A44A00279119B50049B6E2 /* RefillNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefillNode.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
@@ -328,6 +332,8 @@
 		17D21C750B8BE4BA00D1EBDE /* Chain */ = {
 			isa = PBXGroup;
 			children = (
+				83A44A00279119B50049B6E2 /* RefillNode.h */,
+				83A449FF279119B50049B6E2 /* RefillNode.m */,
 				17D21C760B8BE4BA00D1EBDE /* BufferChain.h */,
 				17D21C770B8BE4BA00D1EBDE /* BufferChain.m */,
 				8EC1225D0B993BD500C5B3AD /* ConverterNode.h */,
@@ -748,6 +754,7 @@
 				8389F292278E64590074164C /* s16_to_float.h in Headers */,
 				8389F279278E64590074164C /* utf.h in Headers */,
 				8389F288278E64590074164C /* retro_environment.h in Headers */,
+				83A44A02279119B50049B6E2 /* RefillNode.h in Headers */,
 				8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */,
 				8389F28C278E64590074164C /* file_stream.h in Headers */,
 				8384912718080FF100E7332D /* Logging.h in Headers */,
@@ -850,6 +857,7 @@
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
+				83A44A01279119B50049B6E2 /* RefillNode.m in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
@@ -998,9 +1006,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"HAVE_CONFIG_H=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_CONFIG_H=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

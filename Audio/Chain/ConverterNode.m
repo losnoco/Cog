@@ -59,6 +59,9 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         latencyStarted = -1;
         latencyEaten = 0;
         latencyPostfill = NO;
+        
+        refillNode = nil;
+        originalPreviousNode = nil;
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
@@ -415,6 +418,17 @@ static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t
                     usleep(500);
                 continue;
             }
+            else if (refillNode)
+            {
+                // refill node just ended, file resumes
+                [self setPreviousNode:originalPreviousNode];
+                [self setEndOfStream:NO];
+                [self setShouldContinue:YES];
+                refillNode = nil;
+                [self cleanUp];
+                [self setupWithInputFormat:rememberedInputFormat outputFormat:outputFormat];
+                continue;
+            }
             else break;
         }
 		[self writeData:writeBuf amount:amountConverted];
@@ -429,7 +443,6 @@ static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t
     int extrapolateStart = 0;
     int extrapolateEnd = 0;
     size_t amountToSkip = 0;
-    BOOL endOfInputStream = NO;
 
     if (stopping)
         return 0;
@@ -530,7 +543,12 @@ tryagain:
             size_t bytesRead = [self readData:inputBuffer + amountToSkip + bytesReadFromInput amount:(int)(amountToWrite - bytesReadFromInput)];
             bytesReadFromInput += bytesRead;
             if (!bytesRead)
-                usleep(500);
+            {
+                if (refillNode)
+                    [self setEndOfStream:YES];
+                else
+                    usleep(500);
+            }
         }
         
         bytesReadFromInput += amountToSkip;
@@ -612,7 +630,7 @@ tryagain:
         inpOffset = 0;
     }
     
-    if (floatOffset == floatSize)
+    if (inpOffset != inpSize && floatOffset == floatSize)
     {
         struct resampler_data src_data;
         
@@ -875,6 +893,7 @@ static float db_to_scale(float db)
 - (void)setOutputFormat:(AudioStreamBasicDescription)format
 {
 	DLog(@"SETTING OUTPUT FORMAT!");
+    previousOutputFormat = outputFormat;
 	outputFormat = format;
     outputFormatChanged = YES;
 }
@@ -884,13 +903,34 @@ static float db_to_scale(float db)
 	DLog(@"FORMAT CHANGED");
     paused = YES;
 	[self cleanUp];
-    if (outputFormatChanged)
+    if (outputFormatChanged && ![buffer isEmpty])
     {
-        [writeLock lock];
-        [buffer empty];
-        [writeLock unlock];
+        // Transfer previously buffered data, remember input format
+        rememberedInputFormat = format;
+        originalPreviousNode = previousNode;
+        refillNode = [[RefillNode alloc] initWithController:controller previous:nil];
+        [self setPreviousNode:refillNode];
+
+        int dataRead = 0;
+
+        for (;;)
+        {
+            void * ptr;
+            dataRead = [buffer lengthAvailableToReadReturningPointer:&ptr];
+            if (dataRead) {
+                [refillNode writeData:(float*)ptr floatCount:dataRead / sizeof(float)];
+                [buffer didReadLength:dataRead];
+            }
+            else
+                break;
+        }
+        
+        [self setupWithInputFormat:previousOutputFormat outputFormat:outputFormat];
     }
-	[self setupWithInputFormat:format outputFormat:outputFormat];
+    else
+    {
+        [self setupWithInputFormat:format outputFormat:outputFormat];
+    }
 }
 
 - (void)setRGInfo:(NSDictionary *)rgi

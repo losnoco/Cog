@@ -15,6 +15,7 @@
 #import <audio/audio_resampler.h>
 
 #import "Node.h"
+#import "RefillNode.h"
 
 @interface ConverterNode : Node {
     NSDictionary * rgInfo;
@@ -49,6 +50,11 @@
     AudioStreamBasicDescription floatFormat;
     AudioStreamBasicDescription dmFloatFormat; // downmixed/upmixed float format
 	AudioStreamBasicDescription outputFormat;
+    
+    AudioStreamBasicDescription previousOutputFormat;
+    AudioStreamBasicDescription rememberedInputFormat;
+    RefillNode *refillNode;
+    id __weak originalPreviousNode;
 }
 
 - (id)initWithController:(id)c previous:(id)p;
