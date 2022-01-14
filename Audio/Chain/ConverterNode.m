@@ -628,9 +628,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 static const int extrapolate_order = 16;
 
-static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t size, BOOL backward, void ** extrapolateBuffer, size_t * extrapolateSize)
+static void extrapolate(float *buffer, ssize_t channels, ssize_t frameSize, ssize_t size, BOOL backward, void ** extrapolateBuffer, size_t * extrapolateSize)
 {
-    const size_t delta = (backward ? -1 : 1) * channels;
+    const ssize_t delta = (backward ? -1 : 1) * channels;
 
     size_t lpc_size = sizeof(float) * extrapolate_order;
     size_t my_work_size = sizeof(float) * frameSize;
