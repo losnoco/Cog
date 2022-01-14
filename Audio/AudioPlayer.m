@@ -261,7 +261,7 @@
 
 - (void)notifyStreamChanged:(id)userInfo
 {
-	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:YES];
+	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:NO];
 }
 
 - (void)addChainToQueue:(BufferChain *)newChain
