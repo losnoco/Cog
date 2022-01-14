@@ -361,7 +361,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
         amountRead = [outputController readData:(readPointer) amount:amountToRead];
 
-        if ((amountRead < amountToRead) && [outputController endOfStream] == NO) //Try one more time! for track changes!
+        // Try repeatedly! Buffer wraps can cause a slight data shortage, as can
+        // unexpected track changes.
+        while ((amountRead < amountToRead) && [outputController endOfStream] == NO && [outputController shouldContinue] == YES)
         {
             int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
             amountRead2 = [outputController readData:(readPointer+amountRead) amount:amountToRead-amountRead];
