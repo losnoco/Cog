@@ -1000,4 +1000,9 @@ static float db_to_scale(float db)
     floatSize = 0;
 }
 
+- (double) secondsBuffered
+{
+    return ((double)[buffer bufferedLength] / (outputFormat.mSampleRate * outputFormat.mBytesPerPacket));
+}
+
 @end

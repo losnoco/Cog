@@ -73,4 +73,6 @@
 - (ConverterNode *)converter;
 - (AudioStreamBasicDescription)inputFormat;
 
+- (double)secondsBuffered;
+
 @end

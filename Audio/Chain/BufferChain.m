@@ -228,4 +228,15 @@
     return inputFormat;
 }
 
+- (double)secondsBuffered
+{
+    double duration = 0.0;
+    Node * node = [self finalNode];
+    while (node) {
+        duration += [node secondsBuffered];
+        node = [node previousNode];
+    }
+    return duration;
+}
+
 @end

@@ -29,6 +29,11 @@
 		endOfInputReached = NO;
 
         chainQueue = [[NSMutableArray alloc] init];
+        
+        semaphore = [[Semaphore alloc] init];
+        
+        atomic_init(&resettingNow, false);
+        atomic_init(&refCount, 0);
 	}
 	
 	return self;
@@ -189,6 +194,21 @@
 // Called when the playlist changed before we actually started playing a requested stream. We will re-request.
 - (void)resetNextStreams
 {
+    // This sucks! And since the thread that's inside the function can be calling
+    // event dispatches, we have to pump the message queue if we're on the main
+    // thread. Damn.
+    if (atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
+        BOOL mainThread = (dispatch_queue_get_label(dispatch_get_main_queue()) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL));
+        atomic_store(&resettingNow, true);
+        while (atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
+            [semaphore signal]; // Gotta poke this periodically
+            if (mainThread)
+                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+            else
+                usleep(500);
+        }
+        atomic_store(&resettingNow, false);
+    }
 	@synchronized (chainQueue) {
 		for (id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -247,30 +267,13 @@
 
 - (BOOL)endOfInputReached:(BufferChain *)sender //Sender is a BufferChain
 {
-    // Stop single or series of short tracks from queueing forever
-    {
-        unsigned long queueCount;
-
-        @synchronized (chainQueue) {
-            queueCount = [chainQueue count];
-        }
-
-        while (queueCount >= 5)
-        {
-            usleep(10000);
-            @synchronized (chainQueue) {
-                queueCount = [chainQueue count];
-            }
-        }
-    }
-
-    return [self endOfInputReachedInternal:sender];
-}
-
-- (BOOL)endOfInputReachedInternal:(BufferChain *)sender //Sender is a BufferChain
-{
     BufferChain *newChain = nil;
     
+    if (atomic_load_explicit(&resettingNow, memory_order_relaxed))
+        return YES;
+        
+    atomic_fetch_add(&refCount, 1);
+
 	@synchronized (chainQueue) {
         // No point in constructing new chain for the next playlist entry
         // if there's already one at the head of chainQueue... r-r-right?
@@ -278,6 +281,7 @@
         {
             if ([chain isRunning])
             {
+                atomic_fetch_sub(&refCount, 1);
                 return YES;
             }
         }
@@ -287,17 +291,42 @@
         //{
         //    return YES;
         //}
-
-		nextStreamUserInfo = [sender userInfo];
-		
-        nextStreamRGInfo = [sender rgInfo];
     }
 
+    double duration = 0.0;
+
+    @synchronized (chainQueue) {
+        for (BufferChain *chain in chainQueue) {
+            duration += [chain secondsBuffered];
+        }
+    }
+
+    while (duration >= 30.0)
+    {
+        [semaphore wait];
+        if (atomic_load_explicit(&resettingNow, memory_order_relaxed)) {
+            atomic_fetch_sub(&refCount, 1);
+            return YES;
+        }
+        @synchronized (chainQueue) {
+            duration = 0.0;
+            for (BufferChain *chain in chainQueue) {
+                duration += [chain secondsBuffered];
+            }
+        }
+    }
+    
+    nextStreamUserInfo = [sender userInfo];
+    
+    nextStreamRGInfo = [sender rgInfo];
+    
     // This call can sometimes lead to invoking a chainQueue block on another thread
 	[self requestNextStream: nextStreamUserInfo];
     
-    if (!nextStream)
+    if (!nextStream) {
+        atomic_fetch_sub(&refCount, 1);
         return YES;
+    }
 
     @synchronized (chainQueue) {
 		newChain = [[BufferChain alloc] initWithController:self];
@@ -326,6 +355,7 @@
 				//Keep on-playin
                 newChain = nil;
 				
+                atomic_fetch_sub(&refCount, 1);
 				return NO;
 			}
 		}
@@ -337,6 +367,7 @@
 			if (nextStream == nil)
 			{
                 newChain = nil;
+                atomic_fetch_sub(&refCount, 1);
 				return YES;
 			}
 			
@@ -362,6 +393,7 @@
         // - head of chainQueue is the buffer chain for the next entry (which has launched its threads already)
 	}
 	
+    atomic_fetch_sub(&refCount, 1);
 	return YES;
 }
 
@@ -390,6 +422,8 @@
 
         [chainQueue removeObjectAtIndex:0];
 		DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
+        
+        [semaphore signal];
 	}
 	
 	[self notifyStreamChanged:[bufferChain userInfo]];

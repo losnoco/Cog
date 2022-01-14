@@ -60,4 +60,6 @@
 - (BOOL)endOfStream;
 - (void)setEndOfStream:(BOOL)e;
 
+- (double)secondsBuffered;
+
 @end

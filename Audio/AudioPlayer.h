@@ -8,6 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <CogAudio/Semaphore.h>
+
+#import <stdatomic.h>
+
 @class BufferChain;
 @class OutputNode;
 
@@ -30,6 +34,11 @@
 	BOOL endOfInputReached;
     BOOL startedPaused;
     BOOL initialBufferFilled;
+    
+    Semaphore *semaphore;
+    
+    atomic_bool resettingNow;
+    atomic_int refCount;
 }
 
 - (id)init;

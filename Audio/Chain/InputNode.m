@@ -236,4 +236,10 @@
 	return decoder;
 }
 
+- (double) secondsBuffered
+{
+    AudioStreamBasicDescription inputFormat = [[[controller controller] bufferChain] inputFormat];
+    return ((double)[buffer bufferedLength] / (inputFormat.mSampleRate * inputFormat.mBytesPerPacket));
+}
+
 @end

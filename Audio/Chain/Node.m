@@ -219,5 +219,11 @@
 	return shouldReset;
 }
 
+// Buffering nodes should implement this
+- (double)secondsBuffered
+{
+    return 0.0;
+}
+
 
 @end
