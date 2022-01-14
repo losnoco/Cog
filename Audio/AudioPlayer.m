@@ -65,6 +65,8 @@
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time
 {
+    [self waitUntilCallbacksExit];
+
     output = [[OutputNode alloc] initWithController:self previous:nil];
     [output setup];
     [output setVolume: volume];
@@ -194,21 +196,8 @@
 // Called when the playlist changed before we actually started playing a requested stream. We will re-request.
 - (void)resetNextStreams
 {
-    // This sucks! And since the thread that's inside the function can be calling
-    // event dispatches, we have to pump the message queue if we're on the main
-    // thread. Damn.
-    if (atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
-        BOOL mainThread = (dispatch_queue_get_label(dispatch_get_main_queue()) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL));
-        atomic_store(&resettingNow, true);
-        while (atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
-            [semaphore signal]; // Gotta poke this periodically
-            if (mainThread)
-                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
-            else
-                usleep(500);
-        }
-        atomic_store(&resettingNow, false);
-    }
+    [self waitUntilCallbacksExit];
+
 	@synchronized (chainQueue) {
 		for (id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -530,6 +519,25 @@
 	
 	[self setVolume:newVolume];
 	return newVolume;
+}
+
+- (void)waitUntilCallbacksExit
+{
+    // This sucks! And since the thread that's inside the function can be calling
+    // event dispatches, we have to pump the message queue if we're on the main
+    // thread. Damn.
+    if (atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
+        BOOL mainThread = (dispatch_queue_get_label(dispatch_get_main_queue()) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL));
+        atomic_store(&resettingNow, true);
+        while (atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
+            [semaphore signal]; // Gotta poke this periodically
+            if (mainThread)
+                [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+            else
+                usleep(500);
+        }
+        atomic_store(&resettingNow, false);
+    }
 }
 
 
