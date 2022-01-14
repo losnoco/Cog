@@ -158,11 +158,31 @@
 
 - (void)seekToTime:(double)time
 {
-	//Need to reset everything's buffers, and then seek?
-	/*HACK TO TEST HOW WELL THIS WOULD WORK*/
-	[output seek:time];
-	[bufferChain seek:time];
-	/*END HACK*/
+    if (endOfInputReached)
+    {
+        // This is a dirty hack in case the playback has finished with the track
+        // that the user thinks they're seeking into
+        CogStatus status = (CogStatus) currentPlaybackStatus;
+        NSURL *url;
+        id userInfo;
+        NSDictionary *rgi;
+        
+        @synchronized (chainQueue) {
+            url = [bufferChain streamURL];
+            userInfo = [bufferChain userInfo];
+            rgi = [bufferChain rgInfo];
+        }
+        
+        [self stop];
+        
+        [self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:(status == CogStatusPaused) andSeekTo:time];
+    }
+    else
+    {
+        // Still decoding the current file, safe to seek within it
+        [output seek:time];
+        [bufferChain seek:time];
+    }
 }
 
 - (void)setVolume:(double)v
@@ -446,7 +466,9 @@
 
 
 - (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait
-{	
+{
+    currentPlaybackStatus = status;
+    
 	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:[NSNumber numberWithInt:status] withObject:[bufferChain userInfo] waitUntilDone:wait];
 }
 

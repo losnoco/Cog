@@ -39,6 +39,8 @@
     
     atomic_bool resettingNow;
     atomic_int refCount;
+    
+    int currentPlaybackStatus;
 }
 
 - (id)init;
