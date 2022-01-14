@@ -51,6 +51,10 @@
     
     void *extrapolateBuffer;
     size_t extrapolateBufferSize;
+    
+    void **dsd2pcm;
+    size_t dsd2pcmCount;
+    int dsd2pcmLatency;
 	
 	AudioStreamBasicDescription inputFormat;
     AudioStreamBasicDescription floatFormat;

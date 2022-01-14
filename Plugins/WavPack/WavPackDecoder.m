@@ -225,31 +225,15 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	int16_t				*alias16;
 	int32_t				*alias32;
     
-    UInt32               trueFrames = frames;
-    
-    if (isDSD)           trueFrames = (frames / 8) & ~7;
-    
-    size_t newSize = trueFrames*sizeof(int32_t)*channels;
+    size_t newSize = frames*sizeof(int32_t)*channels;
     if (!inputBuffer || newSize > inputBufferSize) {
         inputBuffer = realloc(inputBuffer, inputBufferSize = newSize);
     }
 	
-	samplesRead	= WavpackUnpackSamples(wpc, inputBuffer, trueFrames);
+	samplesRead	= WavpackUnpackSamples(wpc, inputBuffer, frames);
 	
 	switch(bitsPerSample) {
         case 1:
-            alias8 = buf;
-            for (sample = 0; sample < samplesRead * channels;) {
-                for (int channel = 0; channel < channels; channel++) {
-                    for (int i = 0, mask = 0x80; i < 8; ++i, mask >>= 1) {
-                        alias8[i * channels] = (inputBuffer[sample] & mask) ? 127 : -128;
-                    }
-                    alias8 += 1;
-                    sample++;
-                }
-                alias8 += 7 * channels;
-            }
-            break;
 		case 8:
 			// No need for byte swapping
 			alias8 = buf;
@@ -285,9 +269,6 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 			ALog(@"Unsupported sample size: %d", bitsPerSample);
 	}
     
-    if (isDSD)
-        samplesRead *= 8;
-	
 	return samplesRead;
 }
 
