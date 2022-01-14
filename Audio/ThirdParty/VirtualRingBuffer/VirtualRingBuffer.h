@@ -49,7 +49,6 @@
 @interface VirtualRingBuffer : NSObject
 {
     void *buffer;
-    void *bufferEnd;
     UInt32 bufferLength;
         // buffer is the start of the ring buffer's address space.
         // bufferEnd is the end of the "real" buffer (always buffer + bufferLength).

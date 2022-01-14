@@ -37,9 +37,8 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     bufferLength = (UInt32) round_page(length);
 
     buffer = allocateVirtualBuffer(bufferLength);
-    if (buffer) {
-        bufferEnd = buffer + bufferLength;
-    } else {
+    if (!buffer)
+    {
         self = nil;
         return nil;
     }
@@ -100,21 +99,14 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 
     UInt32 length;
     // Read this pointer exactly once, so we're safe in case it is changed in another thread
-    int localWritePointer = atomic_load_explicit(&writePointer, memory_order_relaxed);
     int localReadPointer = atomic_load_explicit(&readPointer, memory_order_relaxed);
     int localBufferFilled = atomic_load_explicit(&bufferFilled, memory_order_relaxed);
+    
+    length = bufferLength - localReadPointer;
+    if (length > localBufferFilled)
+        length = localBufferFilled;
 
     // Depending on out-of-order execution and memory storage, either one of these may be NULL when the buffer is empty. So we must check both.
-    if (localReadPointer == localWritePointer && !localBufferFilled) {
-        // The buffer is empty
-        length = 0;
-    } else if (localWritePointer > localReadPointer) {
-        // Write is ahead of read in the buffer
-        length = (UInt32)(localWritePointer - localReadPointer);
-    } else {
-        // Write has wrapped around past read, OR write == read (the buffer is full)
-        length = (UInt32)(bufferLength - localReadPointer);
-    }
 
     *returnedReadPointer = buffer + localReadPointer;
     return length;
@@ -144,25 +136,12 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     
     UInt32 length;
     // Read this pointer exactly once, so we're safe in case it is changed in another thread
-    int localReadPointer = atomic_load_explicit(&readPointer, memory_order_relaxed);
     int localWritePointer = atomic_load_explicit(&writePointer, memory_order_relaxed);
     int localBufferFilled = atomic_load_explicit(&bufferFilled, memory_order_relaxed);
-    
-    // Either one of these may be NULL when the buffer is empty. So we must check both.
-    if (!localReadPointer && !localWritePointer && !localBufferFilled) {
-        // The buffer is empty. Set it up to be written into.
-        // This is one of the two places the write pointer can change; both are in the write thread.
-        length = bufferLength;
-    } else if (localWritePointer <= localReadPointer) {
-        // Write is before read in the buffer, OR write == read (meaning that the buffer is full).
-        length = (UInt32)(localReadPointer - localWritePointer);
-        if (!length && !localBufferFilled) {
-            length = (UInt32)(bufferLength - localWritePointer);
-        }
-    } else {
-        // Write is behind read in the buffer. The available space wraps around.
-        length = (UInt32)(bufferLength - localWritePointer);
-    }
+
+    length = bufferLength - localBufferFilled;
+    if (length > bufferLength - localWritePointer)
+        length = bufferLength - localWritePointer;
 
     *returnedWritePointer = buffer + localWritePointer;
     return length;
