@@ -485,12 +485,35 @@ tryagain:
                 extrapolateEnd = ioNumberPackets;
                 
                 // Extrapolate end samples
-                if (inpSize)
+                if ( inpSize < sizeof(floatConvertedLast))
                 {
-                    extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, inpSize / floatFormat.mBytesPerPacket, extrapolateEnd, NO);
+                    size_t inpTotal = newSize + floatConvertedSize;
+                    if (inpTotal > sizeof(floatConvertedLast))
+                        inpTotal = sizeof(floatConvertedLast);
+                    
+                    if (inpTotal - newSize < floatConvertedSize)
+                    {
+                        memmove(floatConvertedLast, ((uint8_t*)floatConvertedLast) + newSize, inpTotal - newSize);
+                        floatConvertedSize = inpTotal - newSize;
+                    }
+                    
+                    memcpy(((uint8_t*)floatConvertedLast) + floatConvertedSize, inputBuffer, inpSize);
+                    
+                    extrapolate( floatConvertedLast, floatFormat.mChannelsPerFrame, inpTotal / floatFormat.mBytesPerPacket, extrapolateEnd, NO );
+                    
+                    newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
+                    
+                    memcpy( inputBuffer, ((uint8_t*)floatConvertedLast) + inpTotal - newSize, newSize );
+                    
+                    inpSize = newSize;
+                    inpOffset = 0;
+                }
+                else
+                {
+                    extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, newSize / floatFormat.mBytesPerPacket, extrapolateEnd, NO );
                 
                     inpOffset = inpSize;
-                    inpSize += extrapolateEnd * floatFormat.mBytesPerPacket;
+                    inpSize = newSize;
                 }
                 latencyPostfill = YES;
                 break;
@@ -628,6 +651,13 @@ tryagain:
         // Input now contains bytesReadFromInput worth of floats, in the input sample rate
         inpSize = bytesReadFromInput;
         inpOffset = 0;
+        
+        // Preserve last samples, for end extrapolator, if needed
+        size_t preserved = inpSize;
+        if (preserved > sizeof(floatConvertedLast))
+            preserved = sizeof(floatConvertedLast);
+        memcpy(floatConvertedLast, inputBuffer + inpSize - preserved, preserved);
+        floatConvertedSize = preserved;
     }
     
     if (inpOffset != inpSize && floatOffset == floatSize)
@@ -822,6 +852,8 @@ static float db_to_scale(float db)
     
     floatOffset = 0;
     floatSize = 0;
+    
+    floatConvertedSize = 0;
     
     // This is a post resampler, post-down/upmix format
     
