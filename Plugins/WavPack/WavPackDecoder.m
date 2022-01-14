@@ -113,6 +113,8 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
     if (self)
     {
         wpc = NULL;
+        inputBuffer = NULL;
+        inputBufferSize = 0;
     }
     return self;
 }
@@ -153,7 +155,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	reader.can_seek = CanSeekProc;
 	reader.write_bytes = WriteBytesProc;
     
-    open_flags |= OPEN_DSD_AS_PCM | OPEN_ALT_TYPES;
+    open_flags |= OPEN_DSD_NATIVE | OPEN_ALT_TYPES;
     
     if (![s seekable])
         open_flags |= OPEN_STREAMING;
@@ -168,8 +170,19 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	bitsPerSample = WavpackGetBitsPerSample(wpc);
 	
 	frequency = WavpackGetSampleRate(wpc);
-
+    
 	totalFrames = WavpackGetNumSamples(wpc);
+    
+    isDSD = NO;
+    
+    float nativeFrequency = WavpackGetNativeSampleRate(wpc);
+    
+    if (nativeFrequency != frequency && bitsPerSample == 8) {
+        isDSD = YES;
+        frequency = nativeFrequency;
+        bitsPerSample = 1;
+        totalFrames *= 8;
+    }
 	
 	bitrate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
     
@@ -211,13 +224,32 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	int8_t				*alias8;
 	int16_t				*alias16;
 	int32_t				*alias32;
-
-	int32_t *inputBuffer = malloc(frames*sizeof(int32_t));
+    
+    UInt32               trueFrames = frames;
+    
+    if (isDSD)           trueFrames = (frames / 8) & ~7;
+    
+    size_t newSize = trueFrames*sizeof(int32_t)*channels;
+    if (!inputBuffer || newSize > inputBufferSize) {
+        inputBuffer = realloc(inputBuffer, inputBufferSize = newSize);
+    }
 	
-	// Wavpack uses "complete" samples (one sample across all channels), i.e. a Core Audio frame
-	samplesRead	= WavpackUnpackSamples(wpc, inputBuffer, frames/channels);
+	samplesRead	= WavpackUnpackSamples(wpc, inputBuffer, trueFrames);
 	
 	switch(bitsPerSample) {
+        case 1:
+            alias8 = buf;
+            for (sample = 0; sample < samplesRead * channels;) {
+                for (int channel = 0; channel < channels; channel++) {
+                    for (int i = 0, mask = 0x80; i < 8; ++i, mask >>= 1) {
+                        alias8[i * channels] = (inputBuffer[sample] & mask) ? 127 : -128;
+                    }
+                    alias8 += 1;
+                    sample++;
+                }
+                alias8 += 7 * channels;
+            }
+            break;
 		case 8:
 			// No need for byte swapping
 			alias8 = buf;
@@ -252,15 +284,18 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 		default:
 			ALog(@"Unsupported sample size: %d", bitsPerSample);
 	}
-	
-	free(inputBuffer);
+    
+    if (isDSD)
+        samplesRead *= 8;
 	
 	return samplesRead;
 }
 
 - (long)seek:(long)frame
 {
-	WavpackSeekSample(wpc, (uint32_t) frame);
+    uint32_t trueFrame = (uint32_t) frame;
+    if (isDSD) { trueFrame /= 8; frame = trueFrame * 8; }
+	WavpackSeekSample(wpc, trueFrame);
 	
 	return frame;
 }
@@ -270,6 +305,11 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
     if (wpc) {
         WavpackCloseFile(wpc);
         wpc = NULL;
+    }
+    if (inputBuffer) {
+        free(inputBuffer);
+        inputBuffer = NULL;
+        inputBufferSize = 0;
     }
     wvc = nil;
     wv = nil;

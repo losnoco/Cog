@@ -32,6 +32,11 @@
 	
     WavPackReader *wv;
     WavPackReader *wvc;
+    
+    int32_t *inputBuffer;
+    size_t inputBufferSize;
+    
+    BOOL isDSD;
 	
 	int bitsPerSample;
 	int channels;
