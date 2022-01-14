@@ -48,6 +48,9 @@
     
     size_t floatConvertedSize;
     float floatConvertedLast[CHUNK_SIZE];
+    
+    void *extrapolateBuffer;
+    size_t extrapolateBufferSize;
 	
 	AudioStreamBasicDescription inputFormat;
     AudioStreamBasicDescription floatFormat;

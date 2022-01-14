@@ -62,6 +62,9 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         
         refillNode = nil;
         originalPreviousNode = nil;
+        
+        extrapolateBuffer = NULL;
+        extrapolateBufferSize = 0;
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
@@ -376,12 +379,24 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 static const int extrapolate_order = 16;
 
-static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t size, BOOL backward)
+static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t size, BOOL backward, void ** extrapolateBuffer, size_t * extrapolateSize)
 {
     const size_t delta = (backward ? -1 : 1) * channels;
+
+    size_t lpc_size = sizeof(float) * extrapolate_order;
+    size_t my_work_size = sizeof(float) * frameSize;
+    size_t their_work_size = sizeof(float) * (extrapolate_order + size);
     
-    float lpc[extrapolate_order];
-    float work[frameSize];
+    size_t newSize = lpc_size + my_work_size + their_work_size;
+    if (!*extrapolateBuffer || *extrapolateSize < newSize)
+    {
+        *extrapolateBuffer = realloc(*extrapolateBuffer, newSize);
+        *extrapolateSize = newSize;
+    }
+
+    float *lpc = (float*)(*extrapolateBuffer);
+    float *work = (float*)(*extrapolateBuffer + lpc_size);
+    float *their_work = (float*)(*extrapolateBuffer + lpc_size + my_work_size);
     
     for (size_t ch = 0; ch < channels; ch++)
     {
@@ -392,7 +407,7 @@ static void extrapolate(float *buffer, size_t channels, size_t frameSize, size_t
             
             vorbis_lpc_from_data(work, lpc, (int)(frameSize - size), extrapolate_order);
             
-            vorbis_lpc_predict(lpc, work + frameSize - size - extrapolate_order, extrapolate_order, work + frameSize - size, size);
+            vorbis_lpc_predict(lpc, work + frameSize - size - extrapolate_order, extrapolate_order, work + frameSize - size, size, their_work);
             
             chPcmBuf = buffer + ch + (backward ? frameSize : -1) * channels;
             for (size_t i = 0; i < frameSize; i++) *(chPcmBuf += delta) = work[i];
@@ -465,6 +480,12 @@ tryagain:
         // Approximately the most we want on input
         ioNumberPackets = (amount - amountRead) / outputFormat.mBytesPerPacket;
         
+        // We want to upscale this count if the ratio is below zero
+        if (sampleRatio < 1.0)
+        {
+            ioNumberPackets = ((uint32_t)(ioNumberPackets / sampleRatio) + 15) & ~15;
+        }
+        
         size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
         if (!inputBuffer || inputBufferSize < newSize)
             inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 3 );
@@ -499,7 +520,7 @@ tryagain:
                     
                     memcpy(((uint8_t*)floatConvertedLast) + floatConvertedSize, inputBuffer, inpSize);
                     
-                    extrapolate( floatConvertedLast, floatFormat.mChannelsPerFrame, inpTotal / floatFormat.mBytesPerPacket, extrapolateEnd, NO );
+                    extrapolate( floatConvertedLast, floatFormat.mChannelsPerFrame, inpTotal / floatFormat.mBytesPerPacket, extrapolateEnd, NO, &extrapolateBuffer, &extrapolateBufferSize );
                     
                     newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
                     
@@ -510,7 +531,7 @@ tryagain:
                 }
                 else
                 {
-                    extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, newSize / floatFormat.mBytesPerPacket, extrapolateEnd, NO );
+                    extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, newSize / floatFormat.mBytesPerPacket, extrapolateEnd, NO, &extrapolateBuffer, &extrapolateBufferSize );
                 
                     inpOffset = inpSize;
                     inpSize = newSize;
@@ -644,7 +665,7 @@ tryagain:
         // Extrapolate start
         if (extrapolateStart)
         {
-            extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateStart, YES);
+            extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateStart, YES, &extrapolateBuffer, &extrapolateBufferSize);
             extrapolateStart = 0;
         }
         
@@ -984,6 +1005,12 @@ static float db_to_scale(float db)
         resampler->free(resampler, resampler_data);
         resampler = NULL;
         resampler_data = NULL;
+    }
+    if (extrapolateBuffer)
+    {
+        free(extrapolateBuffer);
+        extrapolateBuffer = NULL;
+        extrapolateBufferSize = 0;
     }
     if (floatBuffer)
     {
