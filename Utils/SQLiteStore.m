@@ -1293,6 +1293,19 @@ static SQLiteStore *g_sharedStore = NULL;
 
             return;
         }
+        
+        // Now to replace the playlist entries
+        for (size_t i = 0; i < [databaseMirror count]; ++i)
+        {
+            PlaylistEntry *oldpe = [databaseMirror objectAtIndex:i];
+            if ([oldpe dbIndex] == trackId)
+            {
+                PlaylistEntry *newpe = [track mutableCopy];
+                [newpe setIndex:i];
+                [newpe setEntryId:[oldpe entryId]];
+                [databaseMirror replaceObjectAtIndex:i withObject:newpe];
+            }
+        }
     }
 }
 
@@ -1885,6 +1898,9 @@ static SQLiteStore *g_sharedStore = NULL;
                 callback(-1);
                 return;
             }
+            
+            [databaseMirror replaceObjectAtIndex:i withObject:newpe];
+            
             callback(progress);
         }
     }
