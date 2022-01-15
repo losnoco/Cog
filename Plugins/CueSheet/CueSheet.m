@@ -177,17 +177,18 @@
 			
 			NSArray *msf = [time componentsSeparatedByString:@":"];
             size_t count = [msf count];
-			if (count < 1 || count > 3) {
+			if (count != 1 && count != 3) {
 				continue;
 			}
             
-            double seconds = 0;
+            double seconds;
+            BOOL timeInSamples = NO;
             
-            if (count == 1)
-                seconds = [[msf objectAtIndex:0] floatValue] / 75;
-            else if (count == 2)
-                seconds = [[msf objectAtIndex:0] intValue] + ([[msf objectAtIndex:1] floatValue]/75);
-            else if (count == 3)
+            if (count == 1) {
+                seconds = [[msf objectAtIndex:0] floatValue];
+                timeInSamples = YES;
+            }
+            else
                 seconds = (60*[[msf objectAtIndex:0] intValue]) + [[msf objectAtIndex:1] intValue] + ([[msf objectAtIndex:2] floatValue]/75);
 
 			if (track == nil) {
@@ -197,17 +198,18 @@
 			//Need to add basePath, and convert to URL
 			[entries addObject:
 								[CueSheetTrack trackWithURL:[self urlForPath:path relativeTo:filename]
-															track: track
-															time: seconds 
-															artist:artist 
-															album:album 
-															title:title
-															genre:genre
-															year:year
-                                                       albumGain:albumGain
-                                                       albumPeak:albumPeak
-                                                       trackGain:trackGain
-                                                       trackPeak:trackPeak]];
+                                                         track:track
+                                                          time:seconds
+                                                 timeInSamples:timeInSamples
+                                                        artist:artist
+                                                         album:album
+                                                         title:title
+                                                         genre:genre
+                                                          year:year
+                                                     albumGain:albumGain
+                                                     albumPeak:albumPeak
+                                                     trackGain:trackGain
+                                                     trackPeak:trackPeak]];
 			trackAdded = YES;
 		}
 		else if ([command isEqualToString:@"PERFORMER"])

@@ -11,12 +11,12 @@
 
 @implementation CueSheetTrack
 
-+ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y albumGain:(float)albumGain albumPeak:(float)albumPeak trackGain:(float)trackGain trackPeak:(float)trackPeak
++ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s timeInSamples:(BOOL)tis artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y albumGain:(float)albumGain albumPeak:(float)albumPeak trackGain:(float)trackGain trackPeak:(float)trackPeak
 {
-	return [[CueSheetTrack alloc] initWithURL:u track:t time:s artist:a album:b title:l genre:g year:y albumGain:albumGain albumPeak:albumPeak trackGain:trackGain trackPeak:trackPeak];
+    return [[CueSheetTrack alloc] initWithURL:u track:t time:s timeInSamples:tis artist:a album:b title:l genre:g year:y albumGain:albumGain albumPeak:albumPeak trackGain:trackGain trackPeak:trackPeak];
 }
 
-- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y albumGain:(float)albumGain albumPeak:(float)albumPeak trackGain:(float)trackGain trackPeak:(float)trackPeak
+- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s timeInSamples:(BOOL)tis artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y albumGain:(float)albumGain albumPeak:(float)albumPeak trackGain:(float)trackGain trackPeak:(float)trackPeak
 {
 	self = [super init];
 	if (self)
@@ -30,6 +30,7 @@
 		year = [y copy];
 		
 		time = s;
+        timeInSamples = tis;
         
         self->albumGain = albumGain;
         self->albumPeak = albumPeak;
@@ -53,6 +54,11 @@
 - (double)time
 {
 	return time;
+}
+
+- (BOOL)timeInSamples
+{
+    return timeInSamples;
 }
 
 - (NSString *)artist

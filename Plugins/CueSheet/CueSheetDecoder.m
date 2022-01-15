@@ -114,10 +114,14 @@
 
                 bytesPerFrame = (bitsPerSample/8) * channels;
 			
-                trackStart = [track time] * sampleRate;
+                double _trackStart = [track time];
+                if (![track timeInSamples]) _trackStart *= sampleRate;
+                trackStart = _trackStart;
 
                 if (nextTrack && (embedded || ([[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]))) {
-                    trackEnd = [nextTrack time] * sampleRate;
+                    double _trackEnd = [nextTrack time];
+                    if (![nextTrack timeInSamples]) _trackEnd *= sampleRate;
+                    trackEnd = _trackEnd;
                 }
                 else {
                     trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
@@ -201,7 +205,9 @@
 				
 				float sampleRate = [[[decoder properties] objectForKey:@"sampleRate"] floatValue];
 				
-				trackStart = [track time] * sampleRate;
+				double _trackStart = [track time];
+                if (![track timeInSamples]) _trackStart *= sampleRate;
+                trackStart = _trackStart;
 				
 				CueSheetTrack *nextTrack = nil;
 				if (i + 1 < [tracks count]) {
@@ -209,7 +215,9 @@
 				}
 
 				if (nextTrack && (embedded || [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]])) {
-					trackEnd = [nextTrack time] * sampleRate;
+                    double _trackEnd = [nextTrack time];
+                    if (![nextTrack timeInSamples]) _trackEnd *= sampleRate;
+                    trackEnd = _trackEnd;
 				}
 				else {
 					trackEnd = [[[decoder properties] objectForKey:@"totalFrames"] longValue];
