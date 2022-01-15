@@ -8,21 +8,27 @@
 
 #import <AssertMacros.h>
 #import <Cocoa/Cocoa.h>
-#import <dispatch/dispatch.h>
 
 #import <CoreAudio/AudioHardware.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
 
+#import "Semaphore.h"
+
 @class OutputNode;
 
 @interface OutputCoreAudio : NSObject {
 	OutputNode * outputController;
     
+    Semaphore * writeSemaphore;
+    Semaphore * readSemaphore;
+    
     BOOL running;
     BOOL stopping;
     BOOL stopped;
+    BOOL started;
+    BOOL paused;
     
     BOOL listenerapplied;
     
@@ -35,8 +41,6 @@
 
     AUAudioUnit *_au;
     size_t _bufferSize;
-    
-    dispatch_semaphore_t _sema;
 }
 
 - (id)initWithController:(OutputNode *)c;

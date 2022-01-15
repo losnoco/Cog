@@ -353,33 +353,6 @@
         {
             NSMutableString *unixPathNext = [[nextStream path] mutableCopy];
             NSMutableString *unixPathPrev = [[[lastChain streamURL] path] mutableCopy];
-
-            //Get the fragment
-            NSString *fragmentNext = @"";
-            NSScanner *scanner = [NSScanner scannerWithString:unixPathNext];
-            NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"#1234567890"];
-            while (![scanner isAtEnd]) {
-                NSString *possibleFragment;
-                [scanner scanUpToString:@"#" intoString:nil];
-
-                if ([scanner scanCharactersFromSet:characterSet intoString:&possibleFragment] && [scanner isAtEnd]) {
-                    fragmentNext = possibleFragment;
-                    [unixPathNext deleteCharactersInRange:NSMakeRange([scanner scanLocation] - [possibleFragment length], [possibleFragment length])];
-                    break;
-                }
-            }
-            
-            NSString *fragmentPrev = @"";
-            scanner = [NSScanner scannerWithString:unixPathPrev];
-            while (![scanner isAtEnd]) {
-                NSString *possibleFragment;
-                [scanner scanUpToString:@"#" intoString:nil];
-                
-                if ([scanner scanCharactersFromSet:characterSet intoString:&possibleFragment] && [scanner isAtEnd]) {
-                    fragmentPrev = possibleFragment;
-                    [unixPathPrev deleteCharactersInRange:NSMakeRange([scanner scanLocation] - [possibleFragment length], [possibleFragment length])];
-                }
-            }
             
             if ([unixPathNext isEqualToString:unixPathPrev])
                 pathsEqual = YES;
@@ -473,8 +446,12 @@
         [semaphore signal];
 	}
 	
-	[self notifyStreamChanged:[bufferChain userInfo]];
 	[output setEndOfStream:NO];
+}
+
+- (void)endOfInputPlayedOut
+{
+    [self notifyStreamChanged:[bufferChain userInfo]];
 }
 
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait

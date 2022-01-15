@@ -231,6 +231,9 @@
 - (double)secondsBuffered
 {
     double duration = 0.0;
+    OutputNode * outputNode = [controller output];
+    duration += [outputNode secondsBuffered];
+    
     Node * node = [self finalNode];
     while (node) {
         duration += [node secondsBuffered];

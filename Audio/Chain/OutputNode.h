@@ -23,9 +23,18 @@
 	OutputCoreAudio *output;
     
     BOOL paused;
+    BOOL started;
 }
 
 - (double)amountPlayed;
+
+- (void)incrementAmountPlayed:(long)count;
+- (void)resetAmountPlayed;
+
+- (void)endOfInputPlayed;
+- (void)endOfInputPlayedOut;
+
+- (double)secondsBuffered;
 
 - (void)setup;
 - (void)process;

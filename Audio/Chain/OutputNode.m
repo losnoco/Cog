@@ -21,6 +21,7 @@
     sampleRatio = 0.0;
     
     paused = YES;
+    started = NO;
 
 	output = [[OutputCoreAudio alloc] initWithController:self];
 	
@@ -30,6 +31,7 @@
 - (void)seek:(double)time
 {
 //	[output pause];
+    [self resetBuffer];
 
 	amountPlayed = time;
 }
@@ -37,7 +39,7 @@
 - (void)process
 {
     paused = NO;
-	[output start];
+    [output start];
 }
 
 - (void)pause
@@ -52,6 +54,31 @@
 	[output resume];
 }
 
+- (void)incrementAmountPlayed:(long)count
+{
+    amountPlayed += (double)count * sampleRatio;
+}
+
+- (void)resetAmountPlayed
+{
+    amountPlayed = 0;
+}
+
+- (void)endOfInputPlayed
+{
+    [controller endOfInputPlayed];
+}
+
+- (void)endOfInputPlayedOut
+{
+    [controller endOfInputPlayedOut];
+}
+
+- (double)secondsBuffered
+{
+    return (double)([buffer bufferedLength]) / (format.mSampleRate * format.mBytesPerPacket);
+}
+
 - (int)readData:(void *)ptr amount:(int)amount
 {
     @autoreleasepool {
@@ -59,14 +86,7 @@
         [self setPreviousNode:[[controller bufferChain] finalNode]];
 	
         n = [super readData:ptr amount:amount];
-        amountPlayed += (double)n * sampleRatio;
     
-        if (endOfStream == YES && !n)
-        {
-            amountPlayed = 0.0;
-            [controller endOfInputPlayed]; //Updates shouldContinue appropriately?
-        }
-
 /*	if (n == 0) {
 		DLog(@"Output Buffer dry!");
 	}
