@@ -176,11 +176,19 @@
 			}
 			
 			NSArray *msf = [time componentsSeparatedByString:@":"];
-			if ([msf count] != 3) {
+            size_t count = [msf count];
+			if (count < 1 || count > 3) {
 				continue;
 			}
-
-			double seconds = (60*[[msf objectAtIndex:0] intValue]) + [[msf objectAtIndex:1] intValue] + ([[msf objectAtIndex:2] floatValue]/75);
+            
+            double seconds = 0;
+            
+            if (count == 1)
+                seconds = [[msf objectAtIndex:0] floatValue] / 75;
+            else if (count == 2)
+                seconds = [[msf objectAtIndex:0] intValue] + ([[msf objectAtIndex:1] floatValue]/75);
+            else if (count == 3)
+                seconds = (60*[[msf objectAtIndex:0] intValue]) + [[msf objectAtIndex:1] intValue] + ([[msf objectAtIndex:2] floatValue]/75);
 
 			if (track == nil) {
 				track = @"01";
