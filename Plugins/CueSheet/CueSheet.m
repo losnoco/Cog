@@ -105,6 +105,11 @@
 	NSString *title = nil;
 	NSString *genre = nil;
 	NSString *year = nil;
+    
+    float albumGain = 0.0f;
+    float albumPeak = 0.0f;
+    float trackGain = 0.0f;
+    float trackPeak = 0.0f;
 	
 	BOOL trackAdded = NO;
 
@@ -190,7 +195,11 @@
 															album:album 
 															title:title
 															genre:genre
-															year:year]];
+															year:year
+                                                       albumGain:albumGain
+                                                       albumPeak:albumPeak
+                                                       trackGain:trackGain
+                                                       trackPeak:trackPeak]];
 			trackAdded = YES;
 		}
 		else if ([command isEqualToString:@"PERFORMER"])
@@ -253,6 +262,26 @@
 					continue;
 				}
 			}
+            else if ([type hasPrefix:@"REPLAYGAIN_"])
+            {
+                NSString *rgTag = nil;
+                if (![scanner scanUpToCharactersFromSet:whitespace intoString:&rgTag])
+                    continue;
+                if ([type hasPrefix:@"REPLAYGAIN_ALBUM_"])
+                {
+                    if ([type hasSuffix:@"GAIN"])
+                        albumGain = [rgTag floatValue];
+                    else if ([type hasSuffix:@"PEAK"])
+                        albumPeak = [rgTag floatValue];
+                }
+                else if ([type hasPrefix:@"REPLAYGAIN_TRACK_"])
+                {
+                    if ([type hasSuffix:@"GAIN"])
+                        trackGain = [rgTag floatValue];
+                    else if ([type hasSuffix:@"PEAK"])
+                        trackPeak = [rgTag floatValue];
+                }
+            }
 		}
 	}
 	

@@ -77,6 +77,10 @@
 				[NSNumber numberWithInt:[[track track] intValue]], @"track",
 				[track genre], @"genre",
 				[NSNumber numberWithInt:[[track year] intValue]], @"year",
+                [NSNumber numberWithFloat:[track albumGain]], @"replayGainAlbumGain",
+                [NSNumber numberWithFloat:[track albumPeak]], @"replayGainAlbumPeak",
+                [NSNumber numberWithFloat:[track trackGain]], @"replayGainTrackGain",
+                [NSNumber numberWithFloat:[track trackPeak]], @"replayGainTrackPeak",
 				nil];
 		
             return [fileMetadata dictionaryByMergingWith:cuesheetMetadata];

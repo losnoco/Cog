@@ -18,12 +18,17 @@
 	NSString *title;
 	NSString *genre;
 	NSString *year;
+    
+    float albumGain;
+    float albumPeak;
+    float trackGain;
+    float trackPeak;
 
 	double time; //Starting time for the track
 }
 
-+ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y;
-- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y;
++ (id)trackWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y albumGain:(float)albumGain albumPeak:(float)albumPeak trackGain:(float)trackGain trackPeak:(float)trackPeak;
+- (id)initWithURL:(NSURL *)u track:(NSString *)t time:(double)s artist:(NSString *)a album:(NSString *)b title:(NSString *)l genre:(NSString *)g year:(NSString *)y albumGain:(float)albumGain albumPeak:(float)albumPeak trackGain:(float)trackGain trackPeak:(float)trackPeak;
 
 
 - (NSString *)track;
@@ -33,6 +38,11 @@
 - (NSString *)title;
 - (NSString *)genre;
 - (NSString *)year;
+
+- (float)albumGain;
+- (float)albumPeak;
+- (float)trackGain;
+- (float)trackPeak;
 
 - (double)time;
 
