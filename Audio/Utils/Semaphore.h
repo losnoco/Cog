@@ -15,7 +15,7 @@
 
 -(id)init;
 -(void)signal;
--(void)timedWait:(int)seconds;
+-(void)timedWait:(int)microseconds;
 -(void)wait;
 -(void)waitIndefinitely;
 

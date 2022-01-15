@@ -27,9 +27,9 @@
 	semaphore_signal_all(semaphore);
 }
 
--(void)timedWait:(int)seconds
+-(void)timedWait:(int)microseconds
 {
-	mach_timespec_t timeout = {seconds, 0};
+	mach_timespec_t timeout = {0, microseconds * 1000UL};
 	
 	semaphore_timedwait(semaphore, timeout);
 }
