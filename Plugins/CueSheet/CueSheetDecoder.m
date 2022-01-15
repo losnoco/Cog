@@ -28,7 +28,7 @@
 
 + (float)priority
 {
-    return 1.0;
+    return 16.0f;
 }
 
 - (NSDictionary *)properties 
