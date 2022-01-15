@@ -12,6 +12,7 @@
 	NSInteger index;
 	NSInteger shuffleIndex;
     NSInteger dbIndex;
+    NSInteger entryId;
 	
 	BOOL current;
 	BOOL removed;
@@ -86,6 +87,7 @@
 @property NSInteger index;
 @property NSInteger shuffleIndex;
 @property NSInteger dbIndex;
+@property NSInteger entryId;
 
 @property(readonly) NSString *status;
 @property(readonly) NSString *statusMessage;

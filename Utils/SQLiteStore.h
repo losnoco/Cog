@@ -15,6 +15,7 @@
 @private NSString *g_databasePath;
 @private sqlite3 *g_database;
 @private sqlite3_stmt *stmt[38];
+@private NSMutableArray *databaseMirror;
 }
 
 @property (nonatomic, readwrite) NSString *databasePath;
@@ -32,6 +33,7 @@
 - (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count progressCall:(void(^)(double progress))callback;
 - (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes progressCall:(void(^)(double progress))callback;
 - (PlaylistEntry *)playlistGetItem:(int64_t)index;
+- (PlaylistEntry *)playlistGetCachedItem:(int64_t)index;
 - (int64_t)playlistGetCount;
 #if 0
 - (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex;

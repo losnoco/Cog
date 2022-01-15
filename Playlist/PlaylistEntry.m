@@ -14,6 +14,7 @@
 @synthesize index;
 @synthesize shuffleIndex;
 @synthesize dbIndex;
+@synthesize entryId;
 
 @synthesize current;
 @synthesize removed;

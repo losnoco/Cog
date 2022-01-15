@@ -378,7 +378,7 @@ enum
     select_playlist_out_track_id,
 };
 
-const char * query_select_playlist = "SELECT entryid, trackid FROM playlist WHERE (entryindex = ?) LIMIT 1";
+const char * query_select_playlist = "SELECT entryid, trackid FROM playlist WHERE (entryindex = ?)";
 
 enum
 {
@@ -634,6 +634,16 @@ static SQLiteStore *g_sharedStore = NULL;
                 return nil;
             }
 #undef PREPARE
+            
+            size_t count = [self playlistGetCount];
+            
+            databaseMirror = [[NSMutableArray alloc] init];
+            
+            for (size_t i = 0; i < count; ++i)
+            {
+                PlaylistEntry *pe = [self playlistGetItem:i];
+                [databaseMirror addObject:pe];
+            }
             
             return self;
         }
@@ -1527,6 +1537,8 @@ static SQLiteStore *g_sharedStore = NULL;
         return;
     }
     
+    [databaseMirror insertObjects:tracks atIndexes:indexes];
+    
     __block int64_t total_count = 0;
     [indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
         total_count += range.length;
@@ -1639,6 +1651,8 @@ static SQLiteStore *g_sharedStore = NULL;
         return;
     }
     
+    [databaseMirror removeObjectsAtIndexes:indexes];
+    
     __block int64_t total_count = 0;
     
     [indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
@@ -1665,6 +1679,14 @@ static SQLiteStore *g_sharedStore = NULL;
     callback(-1);
 }
 
+- (PlaylistEntry *)playlistGetCachedItem:(int64_t)index
+{
+    if (index >= 0 && index < [databaseMirror count])
+        return [databaseMirror objectAtIndex:index];
+    else
+        return nil;
+}
+
 - (PlaylistEntry *)playlistGetItem:(int64_t)index
 {
     PlaylistEntry *entry = [[PlaylistEntry alloc] init];
@@ -1687,8 +1709,10 @@ static SQLiteStore *g_sharedStore = NULL;
     if (rc == SQLITE_ROW)
     {
         int64_t trackId = sqlite3_column_int64(st, select_playlist_out_track_id);
+        int64_t entryId = sqlite3_column_int64(st, select_playlist_out_entry_id);
         entry = [self getTrack:trackId];
         [entry setIndex:index];
+        [entry setEntryId:entryId];
     }
     
     sqlite3_reset(st);
@@ -1836,73 +1860,33 @@ static SQLiteStore *g_sharedStore = NULL;
     callback(0);
     
     double progress = 0;
-    double progressstep = 50.0 / (double)(count);
+    double progressstep = 100.0 / (double)(count);
     
-    NSMutableArray * entryIds = [[NSMutableArray alloc] init];
-    NSMutableArray * entryIndexes = [[NSMutableArray alloc] init];
-    NSMutableArray * trackIds = [[NSMutableArray alloc] init];
+    sqlite3_stmt *st = stmt[stmt_update_playlist];
     
-    sqlite3_stmt *st = stmt[stmt_select_playlist_all];
-    
-    int rc;
-    
-    if (sqlite3_reset(st) ||
-        (rc = sqlite3_step(st)) != SQLITE_ROW)
+    for (size_t i = 0; i < count; ++i)
     {
-        callback(-1);
-        return;
-    }
-    
-    do
-    {
-        int64_t entryId = sqlite3_column_int64(st, select_playlist_all_out_entry_id);
-        int64_t entryIndex = sqlite3_column_int64(st, select_playlist_all_out_entry_index);
-        int64_t trackId = sqlite3_column_int64(st, select_playlist_all_out_track_id);
-        
-        [entryIds addObject:[NSNumber numberWithInteger:entryId]];
-        [entryIndexes addObject:[NSNumber numberWithInteger:entryIndex]];
-        [trackIds addObject:[NSNumber numberWithInteger:trackId]];
-        
-        rc = sqlite3_step(st);
-        
-        progress += progressstep;
-        callback(progress);
-    }
-    while (rc == SQLITE_ROW);
-    
-    sqlite3_reset(st);
-    
-    progress = 50;
-    callback(progress);
-    
-    st = stmt[stmt_update_playlist];
-    
-    int64_t i = 0;
-    
-    for (PlaylistEntry *entry in entries)
-    {
-        int64_t entryId = [[entryIds objectAtIndex:i] integerValue];
-        int64_t entryIndex = [[entryIndexes objectAtIndex:i] integerValue];
-        int64_t trackId = [[trackIds objectAtIndex:i] integerValue];
-        
-        ++i;
-        progress += progressstep;
+        PlaylistEntry * newpe = [entries objectAtIndex:i];
+        PlaylistEntry * oldpe = [databaseMirror objectAtIndex:i];
 
-        if ([entry index] == entryIndex &&
-            [entry dbIndex] == trackId)
-            continue;
+        progress += progressstep;
         
-        if (sqlite3_reset(st) ||
-            sqlite3_bind_int64(st, update_playlist_in_entry_index, [entry index]) ||
-            sqlite3_bind_int64(st, update_playlist_in_track_id, [entry dbIndex]) ||
-            sqlite3_bind_int64(st, update_playlist_in_id, entryId) ||
-            sqlite3_step(st) != SQLITE_DONE)
-        {
-            callback(-1);
-            return;
+        if (([oldpe index] != i ||
+            [oldpe dbIndex] != [newpe dbIndex]) &&
+            [oldpe entryId] == [newpe entryId]) {
+            
+            if (sqlite3_reset(st) ||
+                sqlite3_bind_int64(st, update_playlist_in_id, [oldpe entryId]) ||
+                sqlite3_bind_int64(st, update_playlist_in_entry_index, i) ||
+                sqlite3_bind_int64(st, update_playlist_in_track_id, [newpe dbIndex]) ||
+                sqlite3_step(st) != SQLITE_ROW ||
+                sqlite3_reset(st))
+            {
+                callback(-1);
+                return;
+            }
+            callback(progress);
         }
-        
-        callback(progress);
     }
     
     sqlite3_reset(st);

@@ -747,7 +747,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
     for (i = 0; i < count; ++i)
     {
-        PlaylistEntry *pe = [store playlistGetItem:i];
+        PlaylistEntry *pe = [store playlistGetCachedItem:i];
 
         pe.queuePosition = -1;
 
