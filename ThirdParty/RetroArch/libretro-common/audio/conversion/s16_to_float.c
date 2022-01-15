@@ -48,12 +48,12 @@ void convert_s16_to_float(float *out,
       while (samples >= 8)
       {
          float32x4x2_t oreg;
-         int16x4x2_t inreg   = vld2_s16(in);
+         int16x4x2_t inreg   = vld1_s16_x2(in); // why were these interleaved before?
          int32x4_t      p1   = vmovl_s16(inreg.val[0]);
          int32x4_t      p2   = vmovl_s16(inreg.val[1]);
          oreg.val[0]         = vmulq_f32(vcvtq_f32_s32(p1), vgf);
          oreg.val[1]         = vmulq_f32(vcvtq_f32_s32(p2), vgf);
-         vst2q_f32(out, oreg);
+         vst1q_f32_x2(out, oreg);
          in                 += 8;
          out                += 8;
          samples            -= 8;
