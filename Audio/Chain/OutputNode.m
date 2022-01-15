@@ -69,9 +69,9 @@
     [controller endOfInputPlayed];
 }
 
-- (void)endOfInputPlayedOut
+- (BOOL)chainQueueHasTracks
 {
-    [controller endOfInputPlayedOut];
+    return [controller chainQueueHasTracks];
 }
 
 - (double)secondsBuffered
@@ -95,7 +95,6 @@
         return n;
     }
 }
-
 
 - (double)amountPlayed
 {

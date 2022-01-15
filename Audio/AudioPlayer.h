@@ -95,9 +95,10 @@
 //- (BufferChain *)bufferChain;
 - (void)launchOutputThread;
 - (void)endOfInputPlayed;
-- (void)endOfInputPlayedOut;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
+
+- (BOOL)chainQueueHasTracks;
 @end
 
 @protocol AudioPlayerDelegate

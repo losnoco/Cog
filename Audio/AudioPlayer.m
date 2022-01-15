@@ -261,7 +261,7 @@
 
 - (void)notifyStreamChanged:(id)userInfo
 {
-	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:NO];
+	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:YES];
 }
 
 - (void)addChainToQueue:(BufferChain *)newChain
@@ -446,12 +446,16 @@
         [semaphore signal];
 	}
 	
+    [self notifyStreamChanged:[bufferChain userInfo]];
 	[output setEndOfStream:NO];
 }
 
-- (void)endOfInputPlayedOut
+- (BOOL)chainQueueHasTracks
 {
-    [self notifyStreamChanged:[bufferChain userInfo]];
+    @synchronized (chainQueue) {
+        return [chainQueue count] > 0;
+    }
+    return NO;
 }
 
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait

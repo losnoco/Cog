@@ -14,6 +14,8 @@
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
 
+#import <stdatomic.h>
+
 #import "Semaphore.h"
 
 @class OutputNode;
@@ -29,6 +31,8 @@
     BOOL stopped;
     BOOL started;
     BOOL paused;
+    
+    atomic_long bytesRendered;
     
     BOOL listenerapplied;
     

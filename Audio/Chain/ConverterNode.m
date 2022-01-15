@@ -8,6 +8,9 @@
 
 #import "ConverterNode.h"
 
+#import "BufferChain.h"
+#import "OutputNode.h"
+
 #import "Logging.h"
 
 #import <audio/conversion/s16_to_float.h>
@@ -1234,6 +1237,21 @@ static float db_to_scale(float db)
         for (;;)
         {
             void * ptr;
+            dataRead = [buffer lengthAvailableToReadReturningPointer:&ptr];
+            if (dataRead) {
+                [refillNode writeData:(float*)ptr floatCount:dataRead / sizeof(float)];
+                [buffer didReadLength:dataRead];
+            }
+            else
+                break;
+        }
+        
+        for (;;)
+        {
+            void * ptr;
+            BufferChain * bufferChain = controller;
+            AudioPlayer * audioPlayer = [bufferChain controller];
+            VirtualRingBuffer * buffer = [[audioPlayer output] buffer];
             dataRead = [buffer lengthAvailableToReadReturningPointer:&ptr];
             if (dataRead) {
                 [refillNode writeData:(float*)ptr floatCount:dataRead / sizeof(float)];

@@ -32,7 +32,8 @@
 - (void)resetAmountPlayed;
 
 - (void)endOfInputPlayed;
-- (void)endOfInputPlayedOut;
+
+- (BOOL)chainQueueHasTracks;
 
 - (double)secondsBuffered;
 

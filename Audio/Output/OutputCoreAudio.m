@@ -29,6 +29,8 @@ extern void scale_by_volume(float * buffer, size_t count, float volume);
         running = NO;
         started = NO;
         
+        atomic_init(&bytesRendered, 0);
+        
         writeSemaphore = [[Semaphore alloc] init];
         readSemaphore = [[Semaphore alloc] init];
         
@@ -57,13 +59,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (void)signalEndOfStream
 {
-    [outputController endOfInputPlayed];
-}
-
-- (void)signalEndOfStreamBuffered
-{
     [outputController resetAmountPlayed];
-    [outputController endOfInputPlayedOut];
+    [outputController endOfInputPlayed];
 }
 
 - (void)threadEntry:(id)arg
@@ -71,7 +68,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     running = YES;
     started = NO;
     size_t eventCount = 0;
-    ssize_t delayedEvent = -1;
+    atomic_store(&bytesRendered, 0);
+    NSMutableArray *delayedEvents = [[NSMutableArray alloc] init];
+    BOOL delayedEventsPopped = YES;
     while (!stopping) {
         if (++eventCount == 128) {
             [self updateDeviceFormat];
@@ -82,6 +81,20 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             [[outputController buffer] empty];
             [outputController setShouldReset:NO];
         }
+
+        while ([delayedEvents count]) {
+            size_t localBytesRendered = atomic_load_explicit(&bytesRendered, memory_order_relaxed);
+            if (localBytesRendered >= [[delayedEvents objectAtIndex:0] longValue]) {
+                if ([outputController chainQueueHasTracks])
+                    delayedEventsPopped = YES;
+                [self signalEndOfStream];
+                [delayedEvents removeObjectAtIndex:0];
+            }
+            else break;
+        }
+        
+        if (stopping)
+            break;
         
         void *writePtr;
         int toWrite = [[outputController buffer] lengthAvailableToWriteReturningPointer:&writePtr];
@@ -93,15 +106,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         if (bytesRead) {
             [[outputController buffer] didWriteLength:bytesRead];
             [readSemaphore signal];
-            if (delayedEvent >= 0) {
-                if (bytesRead >= delayedEvent) {
-                    delayedEvent = -1;
-                    [self signalEndOfStreamBuffered];
-                }
-                else {
-                    delayedEvent -= bytesRead;
-                }
-            }
             continue;
         }
         else if ([outputController shouldContinue] == NO)
@@ -117,15 +121,19 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         }
         else {
             // End of input possibly reached
-            if ([outputController endOfStream] == YES)
+            if (delayedEventsPopped && [outputController endOfStream] == YES)
             {
-                [self signalEndOfStream];
-                if (delayedEvent >= 0) {
-                    [self signalEndOfStreamBuffered];
-                    delayedEvent = -1;
+                long bytesBuffered = [[outputController buffer] bufferedLength];
+                bytesBuffered += atomic_load_explicit(&bytesRendered, memory_order_relaxed);
+                [delayedEvents addObject:[NSNumber numberWithLong:bytesBuffered]];
+                delayedEventsPopped = NO;
+                if (!started) {
+                    started = YES;
+                    if (!paused) {
+                        NSError *err;
+                        [_au startHardwareAndReturnError:&err];
+                    }
                 }
-                else
-                    delayedEvent = [[outputController buffer] bufferedLength];
             }
         }
         [readSemaphore signal];
@@ -411,6 +419,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     __block Semaphore * readSemaphore = self->readSemaphore;
     __block OutputNode * outputController = self->outputController;
     __block float * volume = &self->volume;
+    __block atomic_long * bytesRendered = &self->bytesRendered;
     
     _au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags * actionFlags, const AudioTimeStamp * timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList * inputData)
     {
@@ -420,9 +429,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
         amountToRead = inputData->mBuffers[0].mDataByteSize;
         
-        if (self->stopping == YES || [outputController shouldContinue] == NO)
+        if (self->stopping == YES || [outputController shouldContinue] == NO ||
+            ([[outputController buffer] isEmpty] && ![outputController chainQueueHasTracks]))
         {
+            // Chain is dead, fill out the serial number pointer forever with silence
             memset(readPointer, 0, amountToRead);
+            atomic_fetch_add(bytesRendered, amountToRead);
             self->stopping = YES;
             return 0;
         }
@@ -438,6 +450,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             amountRead = toRead;
             [[outputController buffer] didReadLength:toRead];
             [outputController incrementAmountPlayed:amountRead];
+            atomic_fetch_add(bytesRendered, amountRead);
             [writeSemaphore signal];
         }
 
@@ -450,6 +463,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             if (amountRead2 > (amountToRead - amountRead))
                 amountRead2 = amountToRead - amountRead;
             if (amountRead2) {
+                atomic_fetch_add(bytesRendered, amountRead2);
+
                 memcpy(readPointer + amountRead, readPtr, amountRead2);
                 [[outputController buffer] didReadLength:amountRead2];
 
