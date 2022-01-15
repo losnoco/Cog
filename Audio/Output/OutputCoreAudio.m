@@ -125,6 +125,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             {
                 long bytesBuffered = [[outputController buffer] bufferedLength];
                 bytesBuffered += atomic_load_explicit(&bytesRendered, memory_order_relaxed);
+                if ([outputController chainQueueHasTracks])
+                {
+                    if (bytesBuffered < CHUNK_SIZE)
+                        bytesBuffered = 0;
+                    else
+                        bytesBuffered -= CHUNK_SIZE;
+                }
                 [delayedEvents addObject:[NSNumber numberWithLong:bytesBuffered]];
                 delayedEventsPopped = NO;
                 if (!started) {
@@ -429,13 +436,20 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
         amountToRead = inputData->mBuffers[0].mDataByteSize;
         
-        if (self->stopping == YES || [outputController shouldContinue] == NO ||
-            ([[outputController buffer] isEmpty] && ![outputController chainQueueHasTracks]))
+        if (self->stopping == YES || [outputController shouldContinue] == NO)
         {
             // Chain is dead, fill out the serial number pointer forever with silence
             memset(readPointer, 0, amountToRead);
             atomic_fetch_add(bytesRendered, amountToRead);
             self->stopping = YES;
+            return 0;
+        }
+        
+        if ([[outputController buffer] isEmpty] && ![outputController chainQueueHasTracks])
+        {
+            // Hit end of last track, pad with silence until queue event stops us
+            memset(readPointer, 0, amountToRead);
+            atomic_fetch_add(bytesRendered, amountToRead);
             return 0;
         }
         
