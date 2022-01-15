@@ -43,12 +43,12 @@ void convert_s32_to_float(float *out,
 
    if (s32_to_float_neon_enabled)
    {
-      float        gf        = gain / (1 << 31);
+      float        gf        = gain / UINT32_C(1U << 31);
       float32x4_t vgf        = {gf, gf, gf, gf};
       while (samples >= 8)
       {
          float32x4x2_t oreg;
-         int32x4x2_t inreg   = vld1q_s32_x2(in);
+         int32x4x2_t inreg   = vld2q_s32(in);
          oreg.val[0]         = vmulq_f32(vcvtq_f32_s32(inreg.val[0]), vgf);
          oreg.val[1]         = vmulq_f32(vcvtq_f32_s32(inreg.val[1]), vgf);
          vst2q_f32(out, oreg);
@@ -58,7 +58,7 @@ void convert_s32_to_float(float *out,
       }
    }
 
-   gain /= 0x80000000L;
+   gain /= UINT32_C(0x80000000);
 
    for (; i < samples; i++)
       out[i] = (float)in[i] * gain;
