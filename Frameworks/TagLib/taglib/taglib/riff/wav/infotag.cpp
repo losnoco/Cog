@@ -128,6 +128,11 @@ unsigned int RIFF::Info::Tag::track() const
   return fieldText("IPRT").toInt();
 }
 
+String RIFF::Info::Tag::cuesheet() const
+{
+  return String();
+}
+
 float RIFF::Info::Tag::rgAlbumGain() const
 {
   return 0;
@@ -191,6 +196,10 @@ void RIFF::Info::Tag::setTrack(unsigned int i)
     setFieldText("IPRT", String::number(i));
   else
     d->fieldListMap.erase("IPRT");
+}
+
+void RIFF::Info::Tag::setCuesheet(const String &)
+{
 }
 
 void RIFF::Info::Tag::setRGAlbumGain(float)

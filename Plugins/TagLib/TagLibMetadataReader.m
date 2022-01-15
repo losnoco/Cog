@@ -74,6 +74,7 @@
 			TagLib::String artist, albumartist, title, album, genre, comment;
 			int year, track;
             float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
+            TagLib::String cuesheet;
 			
 			artist = tag->artist();
             albumartist = tag->albumartist();
@@ -81,6 +82,7 @@
 			album = tag->album();
 			genre = tag->genre();
 			comment = tag->comment();
+            cuesheet = tag->cuesheet();
 			
 			year = tag->year();
 			[dict setObject:[NSNumber numberWithInt:year] forKey:@"year"];
@@ -111,6 +113,9 @@
 			
 			if (!genre.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
+            
+            if (!cuesheet.isEmpty())
+                [dict setObject:[NSString stringWithUTF8String:cuesheet.toCString(true)] forKey:@"cuesheet"];
 		}
 
 		// Try to load the image.

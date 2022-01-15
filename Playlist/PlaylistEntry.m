@@ -35,6 +35,8 @@
 @synthesize year;
 @synthesize track;
 
+@synthesize cuesheet;
+
 @synthesize totalFrames;
 @synthesize bitrate;
 @synthesize channels;

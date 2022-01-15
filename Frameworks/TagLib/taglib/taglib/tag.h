@@ -126,6 +126,12 @@ namespace TagLib {
     virtual unsigned int track() const = 0;
 
     /*!
+     * Returns the embedded cuesheet; if there is no cuesheet set, this
+     * will return an empty string.
+     */
+    virtual String cuesheet() const = 0;
+
+    /*!
     * Returns the ReplayGain album gain; if there is no gain level set, this
     * will return 0.
     */
@@ -197,6 +203,12 @@ namespace TagLib {
      * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
      */
     virtual void setTrack(unsigned int i) = 0;
+
+    /*!
+     * Sets the embedded cuesheet to \a s. If \a s is empty then this
+     * value will be cleared.
+     */
+    virtual void setCuesheet(const String &s) = 0;
 
     /*!
     * Sets the ReplayGain album gain to \a f. If \a f is 0 then this value will

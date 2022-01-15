@@ -213,6 +213,11 @@ unsigned int TagUnion::track() const
   numberUnion(track);
 }
 
+String TagUnion::cuesheet() const
+{
+  stringUnion(cuesheet);
+}
+
 float TagUnion::rgAlbumGain() const
 {
   floatUnion(rgAlbumGain);
@@ -271,6 +276,11 @@ void TagUnion::setYear(unsigned int i)
 void TagUnion::setTrack(unsigned int i)
 {
   setUnion(Track, i);
+}
+
+void TagUnion::setCuesheet(const String &s)
+{
+  setUnion(Cuesheet, s);
 }
 
 void TagUnion::setRGAlbumGain(float f)

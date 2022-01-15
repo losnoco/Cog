@@ -174,6 +174,13 @@ unsigned int APE::Tag::track() const
   return d->itemListMap["TRACK"].toString().toInt();
 }
 
+String APE::Tag::cuesheet() const
+{
+  if(d->itemListMap["CUESHEET"].isEmpty())
+    return String();
+  return d->itemListMap["CUESHEET"].toString();
+}
+
 float APE::Tag::rgAlbumGain() const
 {
   if (d->itemListMap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
@@ -246,6 +253,10 @@ void APE::Tag::setTrack(unsigned int i)
     removeItem("TRACK");
   else
     addValue("TRACK", String::number(i), true);
+}
+
+void APE::Tag::setCuesheet(const String &)
+{
 }
 
 void APE::Tag::setRGAlbumGain(float f)

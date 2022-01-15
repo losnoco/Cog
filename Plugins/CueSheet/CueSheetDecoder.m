@@ -49,60 +49,122 @@
 
 	NSURL *url = [s url];
 
-	cuesheet = [CueSheet cueSheetWithFile:[url path]];
+    embedded = NO;
+    cuesheet = nil;
+    NSDictionary * fileMetadata;
+
+    noFragment = NO;
+
+    NSString *ext = [url pathExtension];
+    if ([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame)
+    {
+        // Embedded cuesheet check
+        fileMetadata = [NSClassFromString(@"AudioMetadataReader") metadataForURL:url skipCue:YES];
+        NSString * sheet = [fileMetadata objectForKey:@"cuesheet"];
+        if ([sheet length])
+        {
+            cuesheet = [CueSheet cueSheetWithString:sheet withFilename:[url path]];
+            embedded = YES;
+        }
+        
+        baseURL = url;
+        
+        NSString *fragment = [url fragment];
+        if (!fragment || [fragment isEqualToString:@""])
+            noFragment = YES;
+    }
+    else
+        cuesheet = [CueSheet cueSheetWithFile:[url path]];
 	
-	NSArray *tracks = [cuesheet tracks];
-	int i;
-	for (i = 0; i < [tracks count]; i++) 
-	{
-		if ([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]){
-			track = [tracks objectAtIndex:i];
+    if (!noFragment)
+    {
+        NSArray *tracks = [cuesheet tracks];
+        int i;
+        for (i = 0; i < [tracks count]; i++)
+        {
+            if ([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]){
+                track = [tracks objectAtIndex:i];
 
-			//Kind of a hackish way of accessing outside classes.
-			source = [NSClassFromString(@"AudioSource") audioSourceForURL:[track url]];
+                NSURL *trackUrl = (embedded) ? baseURL : [track url];
 
-			if (![source open:[track url]]) {
-				ALog(@"Could not open cuesheet source");
-				return NO;
-			}
+                //Kind of a hackish way of accessing outside classes.
+                source = [NSClassFromString(@"AudioSource") audioSourceForURL:trackUrl];
 
-			decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source];
+                if (![source open:url]) {
+                    ALog(@"Could not open cuesheet source");
+                    return NO;
+                }
 
-			if (![decoder open:source]) {
-				ALog(@"Could not open cuesheet decoder");
-				return NO;
-			}
+                decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
 
-			CueSheetTrack *nextTrack = nil;
-			if (i + 1 < [tracks count]) {
-				nextTrack = [tracks objectAtIndex:i + 1];
-			}
+                if (![decoder open:source]) {
+                    ALog(@"Could not open cuesheet decoder");
+                    return NO;
+                }
 
-			NSDictionary *properties = [decoder properties];
-			int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
-			int channels = [[properties objectForKey:@"channels"] intValue];
-			float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
+                CueSheetTrack *nextTrack = nil;
+                if (i + 1 < [tracks count]) {
+                    nextTrack = [tracks objectAtIndex:i + 1];
+                }
 
-			bytesPerFrame = (bitsPerSample/8) * channels;
+                NSDictionary *properties = [decoder properties];
+                int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
+                int channels = [[properties objectForKey:@"channels"] intValue];
+                float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
+
+                bytesPerFrame = (bitsPerSample/8) * channels;
 			
-			trackStart = [track time] * sampleRate;
+                trackStart = [track time] * sampleRate;
 
-			if (nextTrack && [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]) {
-				trackEnd = [nextTrack time] * sampleRate;
-			}
-			else {
-				trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
-			}
+                if (nextTrack && (embedded || ([[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]))) {
+                    trackEnd = [nextTrack time] * sampleRate;
+                }
+                else {
+                    trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
+                }
 			
-			[self seek: 0];
+                [self seek: 0];
 
-			//Note: Should register for observations of the decoder
-			[self willChangeValueForKey:@"properties"];
-			[self didChangeValueForKey:@"properties"];
+                //Note: Should register for observations of the decoder
+                [self willChangeValueForKey:@"properties"];
+                [self didChangeValueForKey:@"properties"];
 
-			return YES;
-		}
-	}
+                return YES;
+            }
+        }
+    }
+    else {
+        NSURL *trackUrl = (embedded) ? baseURL : [track url];
+
+        //Kind of a hackish way of accessing outside classes.
+        source = [NSClassFromString(@"AudioSource") audioSourceForURL:trackUrl];
+
+        if (![source open:url]) {
+            ALog(@"Could not open cuesheet source");
+            return NO;
+        }
+
+        decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
+
+        if (![decoder open:source]) {
+            ALog(@"Could not open cuesheet decoder");
+            return NO;
+        }
+
+        NSDictionary *properties = [decoder properties];
+        int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
+        int channels = [[properties objectForKey:@"channels"] intValue];
+
+        bytesPerFrame = (bitsPerSample/8) * channels;
+
+        trackStart = 0;
+
+        trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
+        
+        [self seek: 0];
+        
+        return YES;
+    }
 
 	return NO;
 }
@@ -124,8 +186,12 @@
 
 - (BOOL)setTrack:(NSURL *)url
 {
+    // handling the file directly
+    if (noFragment)
+        return NO;
+    
 	//Same file, just next track...this may be unnecessary since frame-based decoding is done now...
-	if ([[[track url] path] isEqualToString:[url path]] && [[[track url] host] isEqualToString:[url host]] && [[url fragment] intValue] == [[track track] intValue] + 1) {
+	if (embedded || ([[[track url] path] isEqualToString:[url path]] && [[[track url] host] isEqualToString:[url host]] && [[url fragment] intValue] == [[track track] intValue] + 1)) {
 		NSArray *tracks = [cuesheet tracks];
 		
 		int i;
@@ -142,12 +208,15 @@
 					nextTrack = [tracks objectAtIndex:i + 1];
 				}
 
-				if (nextTrack && [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]) {
+				if (nextTrack && (embedded || [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]])) {
 					trackEnd = [nextTrack time] * sampleRate;
 				}
 				else {
 					trackEnd = [[[decoder properties] objectForKey:@"totalFrames"] longValue];
 				}
+                
+                if (embedded)
+                    [self seek:0];
 				
 				DLog(@"CHANGING TRACK!");
 				return YES;

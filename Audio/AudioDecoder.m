@@ -14,7 +14,12 @@
 
 + (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source
 {
-	return [[PluginController sharedPluginController] audioDecoderForSource:source];
+    return [[PluginController sharedPluginController] audioDecoderForSource:source skipCue:NO];
+}
+
++ (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source skipCue:(BOOL)skip
+{
+    return [[PluginController sharedPluginController] audioDecoderForSource:source skipCue:skip];
 }
 
 @end

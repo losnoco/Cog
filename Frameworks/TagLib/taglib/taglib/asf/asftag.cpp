@@ -115,6 +115,11 @@ String ASF::Tag::genre() const
   return String();
 }
 
+String ASF::Tag::cuesheet() const
+{
+  return String();
+}
+
 float ASF::Tag::rgAlbumGain() const
 {
   return 0;
@@ -182,6 +187,10 @@ void ASF::Tag::setYear(unsigned int value)
 void ASF::Tag::setTrack(unsigned int value)
 {
   setAttribute("WM/TrackNumber", String::number(value));
+}
+
+void ASF::Tag::setCuesheet(const String &)
+{
 }
 
 void ASF::Tag::setRGAlbumGain(float)

@@ -148,6 +148,13 @@ unsigned int Ogg::XiphComment::track() const
   return 0;
 }
 
+String Ogg::XiphComment::cuesheet() const
+{
+  if(d->fieldListMap["CUESHEET"].isEmpty())
+    return String();
+  return d->fieldListMap["CUESHEET"].front();
+}
+
 float Ogg::XiphComment::rgAlbumGain() const
 {
   if(d->fieldListMap["REPLAYGAIN_ALBUM_GAIN"].isEmpty())
@@ -229,6 +236,14 @@ void Ogg::XiphComment::setTrack(unsigned int i)
     removeFields("TRACKNUMBER");
   else
     addField("TRACKNUMBER", String::number(i));
+}
+
+void Ogg::XiphComment::setCuesheet(const String &s)
+{
+  if (s.isEmpty())
+    removeField("CUESHEET");
+  else
+    addField("CUESHEET", s);
 }
 
 void Ogg::XiphComment::setRGAlbumGain(float f)

@@ -245,6 +245,26 @@ unsigned int ID3v2::Tag::track() const
   return 0;
 }
 
+String ID3v2::Tag::cuesheet() const
+{
+  const FrameList &list = d->frameListMap["TXXX"];
+  if (!list.isEmpty()) {
+    for (FrameList::ConstIterator it = list.begin(); it != list.end(); ++it) {
+      UserTextIdentificationFrame const* frame = static_cast<UserTextIdentificationFrame *>(*it);
+      if (!frame->description().isNull() && frame->description() == "cuesheet") {
+        // Remove description
+        StringList l = frame->fieldList();
+        for(StringList::Iterator it = l.begin(); it != l.end(); ++it) {
+          l.erase(it);
+          break;
+        }
+        return l.toString();
+      }
+    }
+  }
+  return String();
+}
+
 float ID3v2::Tag::rg(const String &type) const
 {
   const FrameList &list = d->frameListMap["TXXX"];
@@ -374,6 +394,32 @@ void ID3v2::Tag::setTrack(unsigned int i)
     return;
   }
   setTextFrame("TRCK", String::number(i));
+}
+
+void ID3v2::Tag::setCuesheet(const String &s)
+{
+  bool createdFrame = false;
+  UserTextIdentificationFrame * frame = NULL;
+  FrameList &list = d->frameListMap["TXXX"];
+  for (FrameList::Iterator it = list.begin(); it != list.end(); ++it) {
+    if (static_cast<UserTextIdentificationFrame *>(*it)->description() == "cuesheet") {
+      frame = static_cast<UserTextIdentificationFrame*>(*it);
+      break;
+    }
+  }
+  if (s.isEmpty()) {
+    if (frame)
+      removeFrame(frame);
+    return;
+  }
+  if (frame == NULL) {
+    frame = new UserTextIdentificationFrame;
+    frame->setDescription("cuesheet");
+    createdFrame = true;
+  }
+  frame->setText(s);
+  if (createdFrame)
+    addFrame(frame);
 }
 
 void ID3v2::Tag::setRG(const String &type, float f, bool peak)

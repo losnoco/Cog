@@ -296,13 +296,25 @@ static PluginController *sharedPluginController = nil;
 }
 
 //Note: Source is assumed to already be opened.
-- (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source
+- (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source skipCue:(BOOL)skip
 {
 	NSString *ext = [[source url] pathExtension];
 	NSArray *decoders = [decodersByExtension objectForKey:[ext lowercaseString]];
     NSString *classString;
     if (decoders) {
         if ( [decoders count] > 1 ) {
+            if (skip)
+            {
+                NSMutableArray * _decoders = [decoders mutableCopy];
+                for (int i = 0; i < [_decoders count];)
+                {
+                    if ([[_decoders objectAtIndex:i] isEqualToString:@"CueSheetDecoder"])
+                        [_decoders removeObjectAtIndex:i];
+                    else
+                        ++i;
+                }
+                return [[CogDecoderMulti alloc] initWithDecoders:_decoders];
+            }
             return [[CogDecoderMulti alloc] initWithDecoders:decoders];
         }
         else {
@@ -329,7 +341,7 @@ static PluginController *sharedPluginController = nil;
 	return [[decoder alloc] init];
 }
 
-- (NSDictionary *)metadataForURL:(NSURL *)url
+- (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip
 {
     NSString * urlScheme = [url scheme];
     if ([urlScheme isEqualToString:@"http"] ||
@@ -341,6 +353,18 @@ static PluginController *sharedPluginController = nil;
     NSString *classString;
     if (readers) {
         if ( [readers count] > 1 ) {
+            if (skip)
+            {
+                NSMutableArray *_readers = [readers mutableCopy];
+                for (int i = 0; i < [_readers count];)
+                {
+                    if ([[_readers objectAtIndex:i] isEqualToString:@"CueSheetMetadataReader"])
+                        [_readers removeObjectAtIndex:i];
+                    else
+                        ++i;
+                }
+                return [CogMetadataReaderMulti metadataForURL:url readers:_readers];
+            }
             return [CogMetadataReaderMulti metadataForURL:url readers:readers];
         }
         else {
@@ -410,7 +434,7 @@ static PluginController *sharedPluginController = nil;
 	}
 
     {
-		id<CogDecoder> decoder = [self audioDecoderForSource:source];
+        id<CogDecoder> decoder = [self audioDecoderForSource:source skipCue:NO];
 		if (![decoder open:source])
 		{
 			return nil;

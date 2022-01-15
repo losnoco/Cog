@@ -167,6 +167,11 @@ unsigned int ID3v1::Tag::track() const
   return d->track;
 }
 
+String ID3v1::Tag::cuesheet() const
+{
+    return String();
+}
+
 float ID3v1::Tag::rgAlbumGain() const
 {
   return 0;
@@ -224,6 +229,10 @@ void ID3v1::Tag::setYear(unsigned int i)
 void ID3v1::Tag::setTrack(unsigned int i)
 {
   d->track = i < 256 ? i : 0;
+}
+
+void ID3v1::Tag::setCuesheet(const String &)
+{
 }
 
 void ID3v1::Tag::setRGAlbumGain(float)

@@ -14,5 +14,6 @@
 }
 
 + (id<CogDecoder>)audioDecoderForSource:(id <CogSource>)source;
++ (id<CogDecoder>)audioDecoderForSource:(id <CogSource>)source skipCue:(BOOL)skip;
 
 @end

@@ -20,6 +20,11 @@
 	return [[CueSheet alloc] initWithFile:filename];
 }
 
++ (id)cueSheetWithString:(NSString *)cuesheet withFilename:(NSString *)filename
+{
+    return [[CueSheet alloc] initWithString:cuesheet withFilename:filename];
+}
+
 - (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename
 {
 	NSRange protocolRange = [path rangeOfString:@"://"];
@@ -60,35 +65,37 @@
 	return url;
 }
 
-
-
-
 - (void)parseFile:(NSString *)filename
 {
-	NSStringEncoding encoding;
-	NSError *error = nil;
-	NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
+    NSStringEncoding encoding;
+    NSError *error = nil;
+    NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
     if (error) {
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
     }
-	if (error) {
-		error = nil;
-		contents = [NSString stringWithContentsOfFile:filename encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000) error:&error];
-	}
+    if (error) {
+        error = nil;
+        contents = [NSString stringWithContentsOfFile:filename encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000) error:&error];
+    }
     if (error) {
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSWindowsCP1251StringEncoding error:&error];
-	}
+    }
     if (error) {
         error = nil;
         contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
-	}
-	if (error || !contents) {
-		ALog(@"Could not open file...%@ %@ %@", filename, contents, error);
-		return;
-	}
-	
+    }
+    if (error || !contents) {
+        ALog(@"Could not open file...%@ %@ %@", filename, contents, error);
+        return;
+    }
+    
+    [self parseString:contents withFilename:filename];
+}
+
+- (void)parseString:(NSString *)contents withFilename:(NSString *)filename
+{
 	NSMutableArray *entries = [[NSMutableArray alloc] init];
 
 	NSString *track = nil;
@@ -260,6 +267,16 @@
 	}
 	
 	return self;
+}
+
+- (id)initWithString:(NSString *)cuesheet withFilename:(NSString *)filename
+{
+    self = [super init];
+    if (self) {
+        [self parseString:cuesheet withFilename:filename];
+    }
+    
+    return self;
 }
 
 - (NSArray *)tracks

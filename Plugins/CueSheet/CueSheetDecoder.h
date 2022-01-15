@@ -23,6 +23,10 @@
 
 	long trackStart; //Starting frame of track.
 	long trackEnd; //Frames until end of track.
+    
+    BOOL embedded;
+    BOOL noFragment;
+    NSURL *baseURL;
 	
 	CueSheet *cuesheet;
 	CueSheetTrack *track;

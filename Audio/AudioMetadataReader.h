@@ -14,5 +14,6 @@
 }
 
 + (NSDictionary *)metadataForURL:(NSURL *)url;
++ (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip;
 
 @end

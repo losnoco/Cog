@@ -780,6 +780,12 @@ MP4::Tag::track() const
   return 0;
 }
 
+String
+MP4::Tag::cuesheet() const
+{
+  return String();
+}
+
 float
 MP4::Tag::rgAlbumGain() const
 {
@@ -870,6 +876,11 @@ MP4::Tag::setTrack(unsigned int value)
   else {
     d->items["trkn"] = MP4::Item(value, 0);
   }
+}
+
+void
+MP4::Tag::setCuesheet(const String &)
+{
 }
 
 void

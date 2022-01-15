@@ -11,11 +11,13 @@
 #import "CueSheet.h"
 #import "CueSheetTrack.h"
 
+#import "AudioMetadataReader.h"
+
 @implementation CueSheetContainer
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObject:@"cue"];
+	return [NSArray arrayWithObjects:@"cue", @"ogg", @"opus", @"flac", @"wv", @"mp3", nil];
 }
 
 + (NSArray *)mimeTypes
@@ -25,7 +27,7 @@
 
 + (float)priority
 {
-    return 1.0f;
+    return 16.0f;
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url
@@ -40,8 +42,28 @@
     }
     
 	NSMutableArray *tracks = [NSMutableArray array];
-	
-	CueSheet *cuesheet = [CueSheet cueSheetWithFile:[url path]];
+
+    BOOL embedded = NO;
+    CueSheet *cuesheet = nil;
+    NSDictionary * fileMetadata;
+    
+    NSString *ext = [url pathExtension];
+    if ([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame)
+    {
+        // Embedded cuesheet check
+        fileMetadata = [NSClassFromString(@"AudioMetadataReader") metadataForURL:url skipCue:YES];
+        NSString * sheet = [fileMetadata objectForKey:@"cuesheet"];
+        if ([sheet length])
+        {
+            cuesheet = [CueSheet cueSheetWithString:sheet withFilename:[url path]];
+        }
+        embedded = YES;
+    }
+    else
+        cuesheet = [CueSheet cueSheetWithFile:[url path]];
+    
+    if (!cuesheet)
+        return embedded ? [NSMutableArray arrayWithObject:url] : tracks;
 
     for (CueSheetTrack *track in [cuesheet tracks]) {
 		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%@", [track track]]]];

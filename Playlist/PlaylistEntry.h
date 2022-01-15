@@ -34,6 +34,8 @@
 	NSNumber *year;
 	NSNumber *track;
     
+    NSString *cuesheet;
+    
     NSData *albumArtInternal;
     
     float replayGainAlbumGain;
@@ -108,6 +110,8 @@
 @property(retain) NSString *genre;
 @property(retain) NSNumber *year;
 @property(retain) NSNumber *track;
+
+@property(retain) NSString *cuesheet;
 
 @property(retain, readonly) NSImage *albumArt;
 @property(retain) NSData *albumArtInternal;

@@ -94,6 +94,11 @@ unsigned int Mod::Tag::track() const
   return 0;
 }
 
+String Mod::Tag::cuesheet() const
+{
+  return String();
+}
+
 float Mod::Tag::rgAlbumGain() const
 {
   return 0;
@@ -150,6 +155,10 @@ void Mod::Tag::setYear(unsigned int)
 }
 
 void Mod::Tag::setTrack(unsigned int)
+{
+}
+
+void Mod::Tag::setCuesheet(const String &)
 {
 }
 

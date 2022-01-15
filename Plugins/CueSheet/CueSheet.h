@@ -15,10 +15,13 @@
 }
 
 + (id)cueSheetWithFile: (NSString *)filename;
++ (id)cueSheetWithString: (NSString *)cuesheet withFilename:(NSString *)filename;
 
 - (id)initWithFile:(NSString *)filename;
+- (id)initWithString:(NSString *)cuesheet withFilename:(NSString *)filename;
 
 - (void)parseFile:(NSString *)filename;
+- (void)parseString:(NSString *)contents withFilename:(NSString *)filename;
 
 - (NSArray *)tracks;
 

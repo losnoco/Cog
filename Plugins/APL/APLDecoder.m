@@ -42,7 +42,7 @@
 		ALog(@"Could not open source for file '%@' referenced in apl", [apl file]);
 		return NO;
 	}
-	decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source];
+    decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
 	
 	if (![decoder open:source]) {
 		ALog(@"Could not open decoder for source for apl");

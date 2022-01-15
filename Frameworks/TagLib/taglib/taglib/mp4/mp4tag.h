@@ -61,10 +61,11 @@ namespace TagLib {
         virtual String genre() const;
         virtual unsigned int year() const;
         virtual unsigned int track() const;
-        float rgAlbumGain() const;
-        float rgAlbumPeak() const;
-        float rgTrackGain() const;
-        float rgTrackPeak() const;
+        virtual String cuesheet() const;
+        virtual float rgAlbumGain() const;
+        virtual float rgAlbumPeak() const;
+        virtual float rgTrackGain() const;
+        virtual float rgTrackPeak() const;
 
         virtual void setTitle(const String &value);
         virtual void setAlbumArtist(const String &value);
@@ -74,10 +75,11 @@ namespace TagLib {
         virtual void setGenre(const String &value);
         virtual void setYear(unsigned int value);
         virtual void setTrack(unsigned int value);
-        void setRGAlbumGain(float);
-        void setRGAlbumPeak(float);
-        void setRGTrackGain(float);
-        void setRGTrackPeak(float);
+        virtual void setCuesheet(const String &value);
+        virtual void setRGAlbumGain(float);
+        virtual void setRGAlbumPeak(float);
+        virtual void setRGTrackGain(float);
+        virtual void setRGTrackPeak(float);
 
         virtual bool isEmpty() const;
 
