@@ -65,7 +65,13 @@
     // Show tooltip to the left of the Slider Knob
     CGFloat height = self.knobThickness / 2.f + (self.bounds.size.height - self.knobThickness) * progress - 1;
     
-    [popover showRelativeToRect:NSMakeRect(width, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMaxX];
+    NSWindow *window = self.window;
+    NSPoint screenPoint = [window convertPointToScreen:NSMakePoint(width + 1, height + 1)];
+    
+    if (window.screen.frame.size.width < screenPoint.x + textView.bounds.size.width + 24) // wing it
+        [popover showRelativeToRect:NSMakeRect(1, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMinX];
+    else
+        [popover showRelativeToRect:NSMakeRect(width, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMaxX];
     [self.window.parentWindow makeKeyWindow];
 }
 
