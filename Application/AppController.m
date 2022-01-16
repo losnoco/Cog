@@ -203,6 +203,11 @@ void* kAppControllerContext = &kAppControllerContext;
     FileTreeOutlineView* outlineView = [fileTreeViewController outlineView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeExpanded:) name:NSOutlineViewItemDidExpandNotification object:outlineView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeCollapsed:) name:NSOutlineViewItemDidCollapseNotification object:outlineView];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidBeginNotficiation object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidStopNotficiation object:nil];
+    
+    [self updateDockMenu:nil];
     
     NSArray *expandedNodesArray = [[NSUserDefaults standardUserDefaults] valueForKey:@"fileTreeViewExpandedNodes"];
     
@@ -624,6 +629,23 @@ void* kAppControllerContext = &kAppControllerContext;
     [[NSUserDefaults standardUserDefaults] setBool:floatingMiniWindow forKey:@"floatingMiniWindow"];
     NSWindowLevel level = floatingMiniWindow ? NSFloatingWindowLevel : NSNormalWindowLevel;
     [miniWindow setLevel:level];
+}
+
+- (void)updateDockMenu:(NSNotification *)notification
+{
+    PlaylistEntry *pe = [playlistController currentEntry];
+    
+    BOOL hideItem = NO;
+    
+    if ([[notification name] isEqualToString:CogPlaybackDidStopNotficiation] || !pe || ![pe artist] || [[pe artist] isEqualToString:@""])
+        hideItem = YES;
+    
+    if (hideItem && [dockMenu indexOfItem:currentArtistItem] == 0) {
+        [dockMenu removeItem:currentArtistItem];
+    }
+    else if (!hideItem && [dockMenu indexOfItem:currentArtistItem] < 0) {
+        [dockMenu insertItem:currentArtistItem atIndex:0];
+    }
 }
 
 @end

@@ -40,6 +40,9 @@
 	IBOutlet NSMenuItem *showLengthColumn;
 	IBOutlet NSMenuItem *showTrackColumn;
 	IBOutlet NSMenuItem *showYearColumn;
+    
+    IBOutlet NSMenu *dockMenu;
+    IBOutlet NSMenuItem *currentArtistItem;
 	
     IBOutlet NSWindowController *spotlightWindowController;
     
