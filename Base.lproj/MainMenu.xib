@@ -452,7 +452,7 @@
                     <toolbarItem implicitItemIdentifier="B042D8A5-AFF4-43B2-9DFB-E87A09B7F861" label="Current Time" paletteLabel="Current Time" visibilityPriority="5" sizingBehavior="auto" id="1568">
                         <nil key="toolTip"/>
                         <textField key="view" verticalHuggingPriority="750" id="1566" customClass="TimeField">
-                            <rect key="frame" x="14" y="14" width="49" height="19"/>
+                            <rect key="frame" x="15" y="14" width="47" height="19"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="1567">
                                 <font key="font" metaFont="message" size="11"/>
@@ -477,7 +477,7 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" navigational="YES" id="1629">
                         <nil key="toolTip"/>
-                        <size key="minSize" width="32" height="32"/>
+                        <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="1627">
                             <rect key="frame" x="26" y="14" width="28" height="23"/>
@@ -715,6 +715,20 @@
                                         <string key="NSValueTransformerName">RepeatModeImageTransformer</string>
                                     </dictionary>
                                 </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="1CD73ECB-7401-4384-AB5F-4189E4E3ABE9" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" bordered="YES" sizingBehavior="auto" id="kVl-aW-mtT">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="4nl-vF-VBi">
+                            <rect key="frame" x="19" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="mPh-Va-23E">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="randomizeList:" target="218" id="yer-xs-Gx0"/>
                             </connections>
                         </button>
                     </toolbarItem>
