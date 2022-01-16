@@ -456,7 +456,7 @@ void* kAppControllerContext = &kAppControllerContext;
     NSNumber *fontSize = [NSNumber numberWithFloat:fFontSize];
     [userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
 
-    NSString *feedURLdefault = @"https://f.losno.co/cog/mercury.xml";
+    NSString *feedURLdefault = @"https://cogcdn.cog.losno.co/mercury.xml";
     [userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
 
 	[userDefaultsValuesDict setObject:@"clearAndPlay" forKey:@"openingFilesBehavior"];
@@ -487,6 +487,7 @@ void* kAppControllerContext = &kAppControllerContext;
                                           @"https://kode54.net/cog/stable.xml",
                                           @"https://kode54.net/cog/mercury.xml"
                                           @"https://www.kode54.net/cog/mercury.xml",
+                                          @"https://f.losno.co/cog/mercury.xml",
                                          nil];
     NSString *feedURL = [[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"];
     if ([brokenFeedURLs containsObject:feedURL]) {

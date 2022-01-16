@@ -1044,7 +1044,7 @@
 	<key>NSRemindersUsageDescription</key>
 	<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>
 	<key>SUFeedURL</key>
-	<string>https://f.losno.co/cog/mercury.xml</string>
+	<string>https://cogcdn.cog.losno.co/mercury.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>omxG7Rp0XK9/YEvKbVy7cd44eVAh1LJB6CmjQwjOJz4=</string>
 </dict>
