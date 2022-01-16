@@ -41,7 +41,7 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
     else
     {
         long sec = MAX(0, self.duration - self.currentTime);
-        text = formatTimer(sec / 60, sec % 60, 0x2012); // Hyphen
+        text = formatTimer(sec / 60, sec % 60, 0x2212); // Minus
     }
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text
                                                                  attributes:fontAttributes];
