@@ -6,4 +6,11 @@
     <MaxAgeSeconds>3600</MaxAgeSeconds>
     <ExposeHeader>x-server-side-encryption</ExposeHeader>
   </CORSRule>
+  <CORSRule>
+    <AllowedOrigin>http://localhost:3000</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+    <MaxAgeSeconds>300</MaxAgeSeconds>
+    <ExposeHeader>x-server-side-encryption</ExposeHeader>
+  </CORSRule>
 </CORSConfiguration>
