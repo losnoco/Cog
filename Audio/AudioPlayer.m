@@ -66,7 +66,7 @@
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time
 {
     [self waitUntilCallbacksExit];
-
+    output = nil;
     output = [[OutputNode alloc] initWithController:self previous:nil];
     [output setup];
     [output setVolume: volume];
@@ -264,6 +264,16 @@
 	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:YES];
 }
 
+- (void)beginEqualizer:(AudioUnit)eq
+{
+    [self sendDelegateMethod:@selector(audioPlayer:displayEqualizer:) withVoid:eq waitUntilDone:YES];
+}
+
+- (void)endEqualizer:(AudioUnit)eq
+{
+    [self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:YES];
+}
+
 - (void)addChainToQueue:(BufferChain *)newChain
 {	
 	[newChain setUserInfo: nextStreamUserInfo];
@@ -456,6 +466,18 @@
         return [chainQueue count] > 0;
     }
     return NO;
+}
+
+- (void)sendDelegateMethod:(SEL)selector withVoid:(void*)obj waitUntilDone:(BOOL)wait
+{
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:selector]];
+    [invocation setTarget:delegate];
+    [invocation setSelector:selector];
+    [invocation setArgument:(void*)&self atIndex:2];
+    [invocation setArgument:&obj         atIndex:3];
+    [invocation retainArguments];
+    
+    [invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:wait];
 }
 
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait

@@ -26,6 +26,9 @@
     BOOL started;
 }
 
+- (void)beginEqualizer:(AudioUnit)eq;
+- (void)endEqualizer:(AudioUnit)eq;
+
 - (double)amountPlayed;
 
 - (void)incrementAmountPlayed:(long)count;

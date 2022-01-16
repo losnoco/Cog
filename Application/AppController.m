@@ -29,6 +29,9 @@ void* kAppControllerContext = &kAppControllerContext;
     BOOL _isFullToolbarStyle;
 }
 
+@synthesize mainWindow;
+@synthesize miniWindow;
+
 + (void)initialize
 {
     // Register transformers
@@ -552,7 +555,7 @@ void* kAppControllerContext = &kAppControllerContext;
 
 - (void)clickSpam
 {
-    [playbackController spam];
+    [playbackController spam:nil];
 }
 
 - (void)clickSeek:(NSTimeInterval)position

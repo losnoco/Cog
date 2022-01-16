@@ -994,6 +994,12 @@
                                     <action selector="toggleSideView:" target="2172" id="2419"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Show Equalizer" id="nBU-pH-J3I">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showEq:" target="705" id="8VC-ml-1Zz"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1854">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -1653,6 +1659,7 @@ Gw
         </menu>
         <customObject id="705" userLabel="PlaybackController" customClass="PlaybackController">
             <connections>
+                <outlet property="appController" destination="226" id="TnP-DA-nJl"/>
                 <outlet property="playlistController" destination="218" id="706"/>
                 <outlet property="playlistLoader" destination="1319" id="ghZ-65-60L"/>
                 <outlet property="playlistView" destination="207" id="717"/>

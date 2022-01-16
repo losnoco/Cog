@@ -6,6 +6,14 @@
 #import "CogAudio/Status.h"
 #import "TrackingSlider.h"
 #import "AudioScrobbler.h"
+#import "AppController.h"
+
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioUnit/AudioUnit.h>
+#import <AVFoundation/AVFoundation.h>
+#import <CoreAudio/CoreAudioTypes.h>
+
+#import "AUPlayerView.h"
 
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
@@ -23,6 +31,8 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 
 @interface PlaybackController : NSObject
 {
+    IBOutlet AppController *appController;
+    
     IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistView *playlistView;
 	IBOutlet PlaylistLoader *playlistLoader;
@@ -43,6 +53,11 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
     
     // progress bar display
     double progressBarStatus;
+    
+    BOOL _eqWasOpen;
+    BOOL _eqStubbed;
+    AudioUnit _eq;
+    AUPluginUI *_equi;
  }
 
 @property CogStatus playbackStatus;
@@ -73,7 +88,9 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 - (void)seekBackward:(double)amount;
 - (IBAction)fade:(id)sender;
 
-- (IBAction)spam;
+- (IBAction)spam:(id)sender;
+
+- (IBAction)showEq:(id)sender;
 
 - (void)sendMetaData;
 

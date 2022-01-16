@@ -43,6 +43,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 		
 		seekable = NO;
 		fading = NO;
+        _eqWasOpen = NO;
+        _equi = nil;
         
         progressBarStatus = -1;
 	
@@ -280,7 +282,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     [[playlistController currentEntry] setCurrentPosition:time];
 }
 
-- (IBAction)spam
+- (IBAction)spam:(id)sender
 {
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
     
@@ -548,6 +550,162 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
+}
+
+- (void)showStubEq
+{
+    // Show a stopped equalizer as a stub
+    OSStatus err;
+    AudioComponentDescription desc;
+    
+    desc.componentType = kAudioUnitType_Effect;
+    desc.componentSubType = kAudioUnitSubType_GraphicEQ;
+    desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+    desc.componentFlags = 0;
+    desc.componentFlagsMask = 0;
+
+    AudioComponent comp = NULL;
+    
+    desc.componentType = kAudioUnitType_Effect;
+    desc.componentSubType = kAudioUnitSubType_GraphicEQ;
+    
+    comp = AudioComponentFindNext(comp, &desc);
+    if (!comp)
+        return;
+    
+    err = AudioComponentInstanceNew(comp, &_eq);
+    if (err)
+        return;
+    
+    AudioUnitInitialize(_eq);
+    
+    _eqStubbed = YES;
+}
+
+- (void)hideStubEq
+{
+    AudioUnitUninitialize(_eq);
+    AudioComponentInstanceDispose(_eq);
+    _eq = NULL;
+    _eqStubbed = NO;
+}
+
+- (IBAction)showEq:(id)sender
+{
+    if (_eq)
+    {
+        if (_equi && [_equi isOpen])
+            [_equi bringToFront];
+        else
+            _equi = [[AUPluginUI alloc] initWithSampler:_eq bringToFront:YES orWindowNumber:0];
+    }
+    else
+    {
+        [self showStubEq];
+        _eqWasOpen = YES;
+        [self audioPlayer:nil displayEqualizer:_eq];
+        [_equi bringToFront];
+    }
+}
+
+- (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq
+{
+    if (_equi)
+    {
+        _eqWasOpen = [_equi isOpen];
+        _equi = nil;
+    }
+
+    if (_eq && _eq != eq) {
+        OSStatus err;
+        CFPropertyListRef classData;
+        UInt32 size;
+        
+        size = sizeof(classData);
+        err = AudioUnitGetProperty(_eq, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &classData, &size);
+        if (err == noErr)
+        {
+            CFPreferencesSetAppValue(CFSTR("GraphEQ_Preset"), classData, kCFPreferencesCurrentApplication);
+            CFRelease(classData);
+        }
+        
+        CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
+
+        if (_eqStubbed)
+        {
+            [self hideStubEq];
+        }
+    }
+    
+    _eq = eq;
+    
+    {
+        OSStatus                err;
+        ComponentDescription    cd;
+        CFPropertyListRef        classData;
+        CFDictionaryRef         dict;
+        CFNumberRef                cfnum;
+        
+        classData = CFPreferencesCopyAppValue(CFSTR("GraphEQ_Preset"),  kCFPreferencesCurrentApplication);
+        if (classData)
+        {
+            dict = (CFDictionaryRef) classData;
+            
+            cfnum = (CFNumberRef) (CFDictionaryGetValue(dict, CFSTR("type")));
+            CFNumberGetValue(cfnum, kCFNumberSInt32Type, &cd.componentType);
+            cfnum = (CFNumberRef) (CFDictionaryGetValue(dict, CFSTR("subtype")));
+            CFNumberGetValue(cfnum, kCFNumberSInt32Type, &cd.componentSubType);
+            cfnum = (CFNumberRef) (CFDictionaryGetValue(dict, CFSTR("manufacturer")));
+            CFNumberGetValue(cfnum, kCFNumberSInt32Type, &cd.componentManufacturer);
+    
+            if ((cd.componentType         == kAudioUnitType_Effect         ) &&
+                (cd.componentSubType      == kAudioUnitSubType_GraphicEQ) &&
+                (cd.componentManufacturer == kAudioUnitManufacturer_Apple  ))
+                err = AudioUnitSetProperty(eq,  kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &classData, sizeof(classData));
+            
+            CFRelease(classData);
+        }
+    }
+    
+    if (_eqWasOpen)
+    {
+        NSWindow * window = appController.miniMode ? appController.miniWindow : appController.mainWindow;
+        _equi = [[AUPluginUI alloc] initWithSampler:_eq bringToFront:NO orWindowNumber:window.windowNumber];
+        _eqWasOpen = NO;
+    }
+}
+
+- (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq
+{
+    if (eq == _eq)
+    {
+        OSStatus err;
+        CFPropertyListRef classData;
+        UInt32 size;
+        
+        size = sizeof(classData);
+        err = AudioUnitGetProperty(eq, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &classData, &size);
+        if (err == noErr)
+        {
+            CFPreferencesSetAppValue(CFSTR("GraphEQ_Preset"), classData, kCFPreferencesCurrentApplication);
+            CFRelease(classData);
+        }
+        
+        CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
+    
+        if (_equi)
+        {
+            _eqWasOpen = [_equi isOpen];
+        }
+    
+        _equi = nil;
+        _eq = nil;
+        
+        if (_eqWasOpen)
+        {
+            [self showEq:nil];
+        }
+    }
 }
 
 - (void)audioPlayer:(AudioPlayer *)player willEndStream:(id)userInfo

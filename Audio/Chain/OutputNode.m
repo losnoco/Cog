@@ -156,4 +156,14 @@
 {
     return paused;
 }
+
+- (void)beginEqualizer:(AudioUnit)eq
+{
+    [controller beginEqualizer:eq];
+}
+
+- (void)endEqualizer:(AudioUnit)eq
+{
+    [controller endEqualizer:eq];
+}
 @end

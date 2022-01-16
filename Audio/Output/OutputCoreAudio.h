@@ -13,6 +13,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
+#import <CoreAudio/CoreAudioTypes.h>
 
 #import <stdatomic.h>
 
@@ -45,6 +46,8 @@
 
     AUAudioUnit *_au;
     size_t _bufferSize;
+    
+    AudioUnit _eq;
 }
 
 - (id)initWithController:(OutputNode *)c;

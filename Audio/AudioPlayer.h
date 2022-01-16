@@ -10,6 +10,12 @@
 
 #import <CogAudio/Semaphore.h>
 
+#import <CoreAudio/CoreAudio.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioUnit/AudioUnit.h>
+#import <AVFoundation/AVFoundation.h>
+#import <CoreAudio/CoreAudioTypes.h>
+
 #import <stdatomic.h>
 
 @class BufferChain;
@@ -95,6 +101,7 @@
 //- (BufferChain *)bufferChain;
 - (void)launchOutputThread;
 - (void)endOfInputPlayed;
+- (void)sendDelegateMethod:(SEL)selector withVoid:(void*)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
 
@@ -105,5 +112,8 @@
 - (void)audioPlayer:(AudioPlayer *)player willEndStream:(id)userInfo; //You must use setNextStream in this method
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(id)status userInfo:(id)userInfo;
+- (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq;
+- (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq;
+
 @end
 

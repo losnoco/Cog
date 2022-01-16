@@ -168,6 +168,7 @@
 		83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D0380E24A40DF2004CF90F /* CogAssets.xcassets */; };
 		83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */; };
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
+		83E88FD227945204003D6FE5 /* AUPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E88FD027945204003D6FE5 /* AUPlayerView.m */; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -1001,6 +1002,8 @@
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
+		83E88FD027945204003D6FE5 /* AUPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AUPlayerView.m; path = Window/AUPlayerView.m; sourceTree = "<group>"; };
+		83E88FD127945204003D6FE5 /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AUPlayerView.h; path = Window/AUPlayerView.h; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1366,6 +1369,8 @@
 		17E0D5D20F520E75005B6FED /* Window */ = {
 			isa = PBXGroup;
 			children = (
+				83E88FD127945204003D6FE5 /* AUPlayerView.h */,
+				83E88FD027945204003D6FE5 /* AUPlayerView.m */,
 				83BC5AB120E4C87100631CD4 /* DualWindow.h */,
 				83BC5AB020E4C87100631CD4 /* DualWindow.m */,
 				17E0D5E10F520F02005B6FED /* MainWindow.h */,
@@ -2449,6 +2454,7 @@
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
 				839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */,
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
+				83E88FD227945204003D6FE5 /* AUPlayerView.m in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
 				179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */,

@@ -97,6 +97,9 @@
 - (IBAction)toggleMiniMode:(id)sender;
 - (IBAction)toggleToolbarStyle:(id)sender;
 
+@property NSWindow * mainWindow;
+@property NSWindow * miniWindow;
+
 @property BOOL miniMode;
 
 @property (nonatomic) BOOL floatingMiniWindow;

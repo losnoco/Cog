@@ -15,6 +15,123 @@ extern void scale_by_volume(float * buffer, size_t count, float volume);
 
 @implementation OutputCoreAudio
 
+static void fillBuffers(AudioBufferList *ioData, float * inbuffer, size_t count, size_t offset)
+{
+    const size_t channels = ioData->mNumberBuffers;
+    for (int i = 0; i < channels; ++i)
+    {
+        size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
+        float * output = ((float *)ioData->mBuffers[i].mData) + offset;
+        float * input = inbuffer + i;
+        for (size_t j = offset, k = (count > maxCount) ? maxCount : count; j < k; ++j)
+        {
+            *output = *input;
+            output++;
+            input += channels;
+        }
+        ioData->mBuffers[i].mNumberChannels = 1;
+    }
+}
+
+static void clearBuffers(AudioBufferList *ioData, size_t count, size_t offset)
+{
+    for (int i = 0; i < ioData->mNumberBuffers; ++i)
+    {
+        memset(ioData->mBuffers[i].mData + offset * sizeof(float), 0, count * sizeof(float));
+        ioData->mBuffers[i].mNumberChannels = 1;
+    }
+}
+
+static void scaleBuffersByVolume(AudioBufferList *ioData, float volume)
+{
+    if (volume != 1.0)
+    {
+        for (int i = 0; i < ioData->mNumberBuffers; ++i)
+        {
+            scale_by_volume((float*)ioData->mBuffers[i].mData, ioData->mBuffers[i].mDataByteSize / sizeof(float), volume);
+        }
+    }
+}
+
+static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData )
+{
+    OutputCoreAudio * _self = (__bridge OutputCoreAudio *) inRefCon;
+    
+    const int channels = _self->deviceFormat.mChannelsPerFrame;
+    const int bytesPerPacket = channels * sizeof(float);
+    
+    int amountToRead, amountRead = 0;
+
+    amountToRead = inNumberFrames * bytesPerPacket;
+    
+    if (_self->stopping == YES || [_self->outputController shouldContinue] == NO)
+    {
+        // Chain is dead, fill out the serial number pointer forever with silence
+        clearBuffers(ioData, amountToRead / bytesPerPacket, 0);
+        atomic_fetch_add(&_self->bytesRendered, amountToRead);
+        _self->stopping = YES;
+        return 0;
+    }
+    
+    if ([[_self->outputController buffer] isEmpty] && ![_self->outputController chainQueueHasTracks])
+    {
+        // Hit end of last track, pad with silence until queue event stops us
+        clearBuffers(ioData, amountToRead / bytesPerPacket, 0);
+        atomic_fetch_add(&_self->bytesRendered, amountToRead);
+        return 0;
+    }
+    
+    void * readPtr;
+    int toRead = [[_self->outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
+    
+    if (toRead > amountToRead)
+        toRead = amountToRead;
+    
+    if (toRead) {
+        fillBuffers(ioData, (float*)readPtr, toRead / bytesPerPacket, 0);
+        amountRead = toRead;
+        [[_self->outputController buffer] didReadLength:toRead];
+        [_self->outputController incrementAmountPlayed:amountRead];
+        atomic_fetch_add(&_self->bytesRendered, amountRead);
+        [_self->writeSemaphore signal];
+    }
+
+    // Try repeatedly! Buffer wraps can cause a slight data shortage, as can
+    // unexpected track changes.
+    while ((amountRead < amountToRead) && [_self->outputController shouldContinue] == YES)
+    {
+        int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
+        amountRead2 = [[_self->outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
+        if (amountRead2 > (amountToRead - amountRead))
+            amountRead2 = amountToRead - amountRead;
+        if (amountRead2) {
+            atomic_fetch_add(&_self->bytesRendered, amountRead2);
+            fillBuffers(ioData, (float*)readPtr, amountRead2 / bytesPerPacket, amountRead / bytesPerPacket);
+            [[_self->outputController buffer] didReadLength:amountRead2];
+
+            [_self->outputController incrementAmountPlayed:amountRead2];
+            
+            amountRead += amountRead2;
+            [_self->writeSemaphore signal];
+        }
+        else {
+            [_self->readSemaphore timedWait:500];
+        }
+    }
+
+    scaleBuffersByVolume(ioData, _self->volume);
+    
+    if (amountRead < amountToRead)
+    {
+        // Either underrun, or no data at all. Caller output tends to just
+        // buffer loop if it doesn't get anything, so always produce a full
+        // buffer, and silence anything we couldn't supply.
+        clearBuffers(ioData, amountToRead - amountRead, amountRead / bytesPerPacket);
+    }
+    
+    return 0;
+};
+
 - (id)initWithController:(OutputNode *)c
 {
 	self = [super init];
@@ -22,6 +139,7 @@ extern void scale_by_volume(float * buffer, size_t count, float volume);
 	{
 		outputController = c;
         _au = nil;
+        _eq = NULL;
         _bufferSize = 0;
         volume = 1.0;
         outputDeviceID = -1;
@@ -374,6 +492,20 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             return NO;
         
         [outputController setFormat:&deviceFormat];
+        
+        AudioStreamBasicDescription asbd = deviceFormat;
+        
+        asbd.mFormatFlags &= ~kAudioFormatFlagIsPacked;
+        
+        AudioUnitSetProperty (_eq, kAudioUnitProperty_StreamFormat,
+                              kAudioUnitScope_Input, 0, &asbd, sizeof (asbd));
+        
+        AudioUnitSetProperty (_eq, kAudioUnitProperty_StreamFormat,
+                              kAudioUnitScope_Output, 0, &asbd, sizeof (asbd));
+        AudioUnitReset (_eq, kAudioUnitScope_Input, 0);
+        AudioUnitReset (_eq, kAudioUnitScope_Output, 0);
+        
+        AudioUnitReset (_eq, kAudioUnitScope_Global, 0);
     }
     
     return YES;
@@ -419,92 +551,93 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     }
 
     _deviceFormat = nil;
+        
+    AudioComponent comp = NULL;
     
+    desc.componentType = kAudioUnitType_Effect;
+    desc.componentSubType = kAudioUnitSubType_GraphicEQ;
+    
+    comp = AudioComponentFindNext(comp, &desc);
+    if (!comp)
+        return NO;
+    
+    OSStatus _err = AudioComponentInstanceNew(comp, &_eq);
+    if (err)
+        return NO;
+
     [self updateDeviceFormat];
-
-    __block Semaphore * writeSemaphore = self->writeSemaphore;
-    __block Semaphore * readSemaphore = self->readSemaphore;
-    __block OutputNode * outputController = self->outputController;
-    __block float * volume = &self->volume;
-    __block atomic_long * bytesRendered = &self->bytesRendered;
     
-    _au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags * actionFlags, const AudioTimeStamp * timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList * inputData)
+    __block AudioUnit eq = _eq;
+    __block AudioStreamBasicDescription *format = &deviceFormat;
+
+    _au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags * _Nonnull actionFlags, const AudioTimeStamp * _Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList * _Nonnull inputData)
     {
-        void *readPointer = inputData->mBuffers[0].mData;
+        // This expects multiple buffers, so:
+        int i;
+        const int channels = format->mChannelsPerFrame;
+        const int channelsminusone = channels - 1;
+        float buffers[frameCount * format->mChannelsPerFrame];
+        uint8_t bufferlistbuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
+        AudioBufferList * ioData = (AudioBufferList *)(bufferlistbuffer);
         
-        int amountToRead, amountRead = 0;
-
-        amountToRead = inputData->mBuffers[0].mDataByteSize;
+        ioData->mNumberBuffers = channels;
         
-        if (self->stopping == YES || [outputController shouldContinue] == NO)
-        {
-            // Chain is dead, fill out the serial number pointer forever with silence
-            memset(readPointer, 0, amountToRead);
-            atomic_fetch_add(bytesRendered, amountToRead);
-            self->stopping = YES;
-            return 0;
+        memset(buffers, 0, sizeof(buffers));
+        
+        for (i = 0; i < channels; ++i) {
+            ioData->mBuffers[i].mNumberChannels = 1;
+            ioData->mBuffers[i].mData = buffers + frameCount * i;
+            ioData->mBuffers[i].mDataByteSize = frameCount * sizeof(float);
         }
         
-        if ([[outputController buffer] isEmpty] && ![outputController chainQueueHasTracks])
-        {
-            // Hit end of last track, pad with silence until queue event stops us
-            memset(readPointer, 0, amountToRead);
-            atomic_fetch_add(bytesRendered, amountToRead);
-            return 0;
-        }
+        OSStatus ret = AudioUnitRender(eq, actionFlags, timestamp, (UInt32) inputBusNumber, frameCount, ioData);
         
-        void * readPtr;
-        int toRead = [[outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
+        if (ret)
+            return ret;
         
-        if (toRead > amountToRead)
-            toRead = amountToRead;
-        
-        if (toRead) {
-            memcpy(readPointer, readPtr, toRead);
-            amountRead = toRead;
-            [[outputController buffer] didReadLength:toRead];
-            [outputController incrementAmountPlayed:amountRead];
-            atomic_fetch_add(bytesRendered, amountRead);
-            [writeSemaphore signal];
-        }
-
-        // Try repeatedly! Buffer wraps can cause a slight data shortage, as can
-        // unexpected track changes.
-        while ((amountRead < amountToRead) && [outputController shouldContinue] == YES)
-        {
-            int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
-            amountRead2 = [[outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
-            if (amountRead2 > (amountToRead - amountRead))
-                amountRead2 = amountToRead - amountRead;
-            if (amountRead2) {
-                atomic_fetch_add(bytesRendered, amountRead2);
-
-                memcpy(readPointer + amountRead, readPtr, amountRead2);
-                [[outputController buffer] didReadLength:amountRead2];
-
-                [outputController incrementAmountPlayed:amountRead2];
-                
-                amountRead += amountRead2;
-                [writeSemaphore signal];
-            }
-            else {
-                [readSemaphore timedWait:500];
+        for (i = 0; i < channels; ++i) {
+            float * outBuffer = ((float*)inputData->mBuffers[0].mData) + i;
+            float * inBuffer = ((float*)ioData->mBuffers[i].mData);
+            int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
+            for (int j = 0; j < frameCount; ++j) {
+                *outBuffer = *inBuffer;
+                inBuffer++;
+                outBuffer += channels;
             }
         }
-
-        int framesRead = amountRead / sizeof(float);
-        scale_by_volume((float*)readPointer, framesRead, *volume);
         
-        if (amountRead < amountToRead)
-        {
-            // Either underrun, or no data at all. Caller output tends to just
-            // buffer loop if it doesn't get anything, so always produce a full
-            // buffer, and silence anything we couldn't supply.
-            memset(readPointer + amountRead, 0, amountToRead - amountRead);
-        }
+        inputData->mBuffers[0].mNumberChannels = channels;
         
         return 0;
     };
+
+    UInt32 value;
+    UInt32 size = sizeof(value);
+
+    value = CHUNK_SIZE;
+    AudioUnitSetProperty (_eq, kAudioUnitProperty_MaximumFramesPerSlice,
+                          kAudioUnitScope_Global, 0, &value, size);
+                          
+    value = 127;
+    AudioUnitSetProperty (_eq, kAudioUnitProperty_RenderQuality,
+                          kAudioUnitScope_Global, 0, &value, size);
+
+    AURenderCallbackStruct callbackStruct;
+    callbackStruct.inputProcRefCon = (__bridge void *)self;
+    callbackStruct.inputProc = renderCallback;
+    AudioUnitSetProperty (_eq, kAudioUnitProperty_SetRenderCallback,
+                          kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
+
+    AudioUnitReset (_eq, kAudioUnitScope_Input, 0);
+    AudioUnitReset (_eq, kAudioUnitScope_Output, 0);
+    
+    AudioUnitReset (_eq, kAudioUnitScope_Global, 0);
+
+    _err = AudioUnitInitialize(_eq);
+    if (_err)
+        return NO;
+    
+    [outputController beginEqualizer:_eq];
     
     [_au allocateRenderResourcesAndReturnError:&err];
     
@@ -546,6 +679,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         stopping = YES;
         [readSemaphore signal];
         [writeSemaphore timedWait:5000];
+    }
+    if (_eq)
+    {
+        [outputController endEqualizer:_eq];
+        AudioUnitUninitialize(_eq);
+        AudioComponentInstanceDispose(_eq);
+        _eq = NULL;
     }
 }
 

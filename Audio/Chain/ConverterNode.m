@@ -1291,21 +1291,6 @@ static float db_to_scale(float db)
                 break;
         }
         
-        for (;;)
-        {
-            void * ptr;
-            BufferChain * bufferChain = controller;
-            AudioPlayer * audioPlayer = [bufferChain controller];
-            VirtualRingBuffer * buffer = [[audioPlayer output] buffer];
-            dataRead = [buffer lengthAvailableToReadReturningPointer:&ptr];
-            if (dataRead) {
-                [refillNode writeData:(float*)ptr floatCount:dataRead / sizeof(float)];
-                [buffer didReadLength:dataRead];
-            }
-            else
-                break;
-        }
-        
         [self setupWithInputFormat:previousOutputFormat outputFormat:outputFormat];
     }
     else
