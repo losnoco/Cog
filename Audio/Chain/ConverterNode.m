@@ -18,6 +18,14 @@
 
 #import "lpc.h"
 
+#import <TargetConditionals.h>
+
+#if TARGET_CPU_X86 || TARGET_CPU_X86_64
+#include <emmintrin.h>
+#elif TARGET_CPU_ARM || TARGET_CPU_ARM64
+#include <arm_neon.h>
+#endif
+
 void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 {
 	if (!inDesc) {
@@ -262,8 +270,45 @@ static void upmix(float * buffer, int inchannels, int outchannels, size_t count)
 void scale_by_volume(float * buffer, size_t count, float volume)
 {
     if ( volume != 1.0 )
+    {
+#if TARGET_CPU_X86 || TARGET_CPU_X86_64
+        if ( count >= 8 )
+        {
+            __m128 vgf = _mm_set1_ps(volume);
+            while ( count >= 8 )
+            {
+                __m128 input   = _mm_loadu_ps(buffer);
+                __m128 input2  = _mm_loadu_ps(buffer + 4);
+                __m128 output  = _mm_mul_ps(input, vgf);
+                __m128 output2 = _mm_mul_ps(input2, vgf);
+
+                _mm_storeu_ps(buffer + 0, output);
+                _mm_storeu_ps(buffer + 4, output2);
+                
+                buffer        += 8;
+                count         -= 8;
+            }
+        }
+#elif TARGET_CPU_ARM || TARGET_CPU_ARM64
+        if ( count >= 8 )
+        {
+            float32x4_t vgf           = vdupq_n_f32(volume);
+            while ( count >= 8 )
+            {
+                float32x4x2_t oreg;
+                float32x4x2_t inreg   = vld1q_f32_x2(buffer);
+                oreg.val[0]           = vmulq_f32(inreg.val[0], vgf);
+                oreg.val[1]           = vmulq_f32(inreg.val[1], vgf);
+                vst1q_f32_x2(buffer, oreg);
+                buffer               += 8;
+                count                -= 8;
+            }
+        }
+#endif
+        
         for (size_t i = 0; i < count; ++i)
             buffer[i] *= volume;
+    }
 }
 
 /**
