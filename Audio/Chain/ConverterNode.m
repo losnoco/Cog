@@ -771,7 +771,7 @@ tryagain:
                 amountToSkip = latencyToWrite;
                 amountToWrite -= amountToSkip;
 
-                latencyEaten = extrapolateStart * sampleRatio;
+                latencyEaten = (int)ceil(extrapolateStart * sampleRatio);
 
                 latencyStarted -= latencyToWrite / inputFormat.mBytesPerPacket;
             }
@@ -814,7 +814,7 @@ tryagain:
 
                 if (dsd2pcm)
                 {
-                    eatFromEnd = dsd2pcmLatency * sampleRatio;
+                    eatFromEnd = (int)ceil(dsd2pcmLatency * sampleRatio);
                 }
             }
         }
@@ -925,7 +925,7 @@ tryagain:
         
         ioNumberPackets = (UInt32)inputSamples;
         
-        ioNumberPackets = (UInt32)((float)ioNumberPackets * sampleRatio);
+        ioNumberPackets = (UInt32)ceil((float)ioNumberPackets * sampleRatio);
         ioNumberPackets = (ioNumberPackets + 255) & ~255;
         
         size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
