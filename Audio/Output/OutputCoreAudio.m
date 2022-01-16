@@ -23,7 +23,7 @@ static void fillBuffers(AudioBufferList *ioData, float * inbuffer, size_t count,
         size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
         float * output = ((float *)ioData->mBuffers[i].mData) + offset;
         float * input = inbuffer + i;
-        for (size_t j = offset, k = (count > maxCount) ? maxCount : count; j < k; ++j)
+        for (size_t j = 0, k = (count > maxCount) ? maxCount : count; j < k; ++j)
         {
             *output = *input;
             output++;
