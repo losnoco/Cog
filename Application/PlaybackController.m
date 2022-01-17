@@ -61,6 +61,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithDouble:100.0], @"volume",
         [NSNumber numberWithBool:NO], @"GraphicEQenable",
+        [NSNumber numberWithInt:-1], @"GraphicEQpreset",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];

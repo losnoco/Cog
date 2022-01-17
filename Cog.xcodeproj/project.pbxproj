@@ -118,6 +118,8 @@
 		8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8355D6B5180612F300D05687 /* NSData+MD5.m */; };
 		8355D6B8180613FB00D05687 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8355D6B7180613FB00D05687 /* Security.framework */; };
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		835A8FD327957310005B3C39 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 835A8FC627957310005B3C39 /* json.c */; };
+		835A8FD6279575B1005B3C39 /* Winamp.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 835A8FD5279575B1005B3C39 /* Winamp.q1.json */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
 		836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8314D6411A354DFF00EEE8E6 /* sidplay.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -928,6 +930,9 @@
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
+		835A8FC627957310005B3C39 /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = json.c; sourceTree = "<group>"; };
+		835A8FC827957310005B3C39 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
+		835A8FD5279575B1005B3C39 /* Winamp.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Winamp.q1.json; sourceTree = "<group>"; };
 		835C888B22CC1881001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/Credits.html; sourceTree = "<group>"; };
 		835C888C22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C888D22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -1149,6 +1154,7 @@
 		177EBF770B8BC2A70000BC8C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				835A8FC527957310005B3C39 /* json */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
 				179790DD0C087AB7001D6996 /* OpenURLPanel */,
 			);
@@ -1477,6 +1483,7 @@
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
+				835A8FD5279575B1005B3C39 /* Winamp.q1.json */,
 				1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */,
 				1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */,
 				17D1B0D00F6320EA00694C57 /* InfoInspector.xib */,
@@ -1654,6 +1661,15 @@
 				8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		835A8FC527957310005B3C39 /* json */ = {
+			isa = PBXGroup;
+			children = (
+				835A8FC627957310005B3C39 /* json.c */,
+				835A8FC827957310005B3C39 /* json.h */,
+			);
+			path = json;
 			sourceTree = "<group>";
 		};
 		8360EF0117F92B23005208A4 /* Products */ = {
@@ -2333,6 +2349,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				835A8FD6279575B1005B3C39 /* Winamp.q1.json in Resources */,
 				83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */,
 				83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */,
 				83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */,
@@ -2484,6 +2501,7 @@
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
 				178456120F631E31007E8021 /* SideViewController.m in Sources */,
 				17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */,
+				835A8FD327957310005B3C39 /* json.c in Sources */,
 				17D1B1680F632ABB00694C57 /* BlankZeroFormatter.m in Sources */,
 				17D1B1690F632ABB00694C57 /* IndexFormatter.m in Sources */,
 				17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */,

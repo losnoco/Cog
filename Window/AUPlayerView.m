@@ -12,6 +12,127 @@
 
 #import "AUPlayerView.h"
 
+#import "json.h"
+static NSArray * equalizer_presets_processed = nil;
+static json_value * equalizer_presets = NULL;
+
+static const float winamp_equalizer_bands[10] = { 70, 180, 320, 600, 1000, 3000, 6000, 12000, 14000, 16000 };
+static const NSString* winamp_equalizer_items[] = { @"name", @"hz70", @"hz180", @"hz320", @"hz600", @"hz1000", @"hz3000", @"hz6000", @"hz12000", @"hz14000", @"hz16000", @"preamp" };
+
+static const float apple_equalizer_bands_31[31] = { 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1200, 1600, 2000, 2500, 3100, 4000, 5000, 6300, 8000, 10000, 12000, 16000, 20000 };
+static const float apple_equalizer_bands_10[10] = { 32, 64, 128, 256, 512, 1000, 2000, 4000, 8000, 16000 };
+
+static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
+    if (freqTarget <= winamp_equalizer_bands[0]) {
+        return [[preset objectForKey:winamp_equalizer_items[1]] floatValue];
+    }
+    else if (freqTarget >= winamp_equalizer_bands[9]) {
+        return [[preset objectForKey:winamp_equalizer_items[10]] floatValue];
+    }
+    
+    // interpolation time!
+    
+    for (size_t i = 0; i < 9; ++i) {
+        if (freqTarget >= winamp_equalizer_bands[i] &&
+            freqTarget < winamp_equalizer_bands[i + 1]) {
+            float freqLow = winamp_equalizer_bands[i];
+            float freqHigh = winamp_equalizer_bands[i + 1];
+            float valueLow = [[preset objectForKey:winamp_equalizer_items[i + 1]] floatValue];
+            float valueHigh = [[preset objectForKey:winamp_equalizer_items[i + 2]] floatValue];
+            
+            float delta = (freqTarget - freqLow) / (freqHigh - freqLow);
+            
+            return valueLow + (valueHigh - valueLow) * delta;
+        }
+    }
+    
+    return 0.0;
+}
+
+static void interpolateBandsTo10(float * out, NSDictionary * preset) {
+    for (size_t i = 0; i < 10; ++i) {
+        out[i] = interpolatePoint(preset, apple_equalizer_bands_10[i]);
+    }
+}
+
+static void interpolateBandsTo31(float * out, NSDictionary * preset) {
+    for (size_t i = 0; i < 31; ++i) {
+        out[i] = interpolatePoint(preset, apple_equalizer_bands_31[i]);
+    }
+}
+
+static void loadPresets()
+{
+    if ([equalizer_presets_processed count]) return;
+    
+    CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("Winamp.q1"), CFSTR("json"), NULL);
+
+    CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
+    
+    NSFileHandle * fileHandle = [NSFileHandle fileHandleForReadingAtPath:(__bridge NSString *)macPath];
+    if (fileHandle) {
+        NSError *err;
+        NSData *data;
+        if (@available(macOS 10.15, *)) {
+            data = [fileHandle readDataToEndOfFileAndReturnError:&err];
+        }
+        else {
+            data = [fileHandle readDataToEndOfFile];
+            err = nil;
+        }
+        if (!err && data) {
+            equalizer_presets = json_parse(data.bytes, data.length);
+            
+            if (equalizer_presets->type == json_object &&
+                equalizer_presets->u.object.length == 2 &&
+                strncmp(equalizer_presets->u.object.values[0].name, "type", equalizer_presets->u.object.values[0].name_length) == 0 &&
+                equalizer_presets->u.object.values[0].value->type == json_string &&
+                strncmp(equalizer_presets->u.object.values[0].value->u.string.ptr, "Winamp EQ library file v1.1", equalizer_presets->u.object.values[0].value->u.string.length ) == 0 &&
+                strncmp(equalizer_presets->u.object.values[1].name, "presets", equalizer_presets->u.object.values[1].name_length) == 0 &&
+                equalizer_presets->u.object.values[1].value->type == json_array)
+            {
+                // Got the array of presets
+                NSMutableArray * array = [[NSMutableArray alloc] init];
+                
+                size_t count = equalizer_presets->u.object.values[1].value->u.array.length;
+                json_value ** values = equalizer_presets->u.object.values[1].value->u.array.values;
+                
+                for (size_t i = 0; i < count; ++i) {
+                    if (values[i]->type == json_object) {
+                        size_t object_items = values[i]->u.object.length;
+                        json_object_entry * object_entry = values[i]->u.object.values;
+                        if (object_items == (sizeof(winamp_equalizer_items)/sizeof(winamp_equalizer_items[0]))) {
+                            NSMutableDictionary * equalizerItem = [[NSMutableDictionary alloc] init];
+                            for (size_t j = 0; j < object_items; ++j) {
+                                if (strncmp(object_entry[j].name, [winamp_equalizer_items[j] UTF8String], object_entry[j].name_length) == 0) {
+                                    if (j == 0 && object_entry[j].value->type == json_string) {
+                                        NSString * name = [NSString stringWithUTF8String:object_entry[j].value->u.string.ptr];
+                                        [equalizerItem setObject:name forKey:winamp_equalizer_items[j]];
+                                    }
+                                    else if (object_entry[j].value->type == json_integer) {
+                                        int64_t value = object_entry[j].value->u.integer;
+                                        float floatValue = ((value <= 64 && value >= 1) ? ((float)(value - 33) / 32.0 * 12.0) : 0.0);
+                                        [equalizerItem setObject:[NSNumber numberWithFloat:floatValue] forKey:winamp_equalizer_items[j]];
+                                    }
+                                }
+                            }
+                            [array addObject:[NSDictionary dictionaryWithDictionary:equalizerItem]];
+                        }
+                    }
+                }
+                
+                equalizer_presets_processed = [NSArray arrayWithArray:array];
+            }
+        }
+        [fileHandle closeFile];
+        
+        json_value_free(equalizer_presets);
+        equalizer_presets = NULL;
+    }
+    CFRelease(macPath);
+    CFRelease(appUrlRef);
+}
+
 @interface AUPluginUI (Private)
 - (BOOL)test_cocoa_view_support;
 - (int)create_cocoa_view;
@@ -38,7 +159,7 @@
         
         if (au_view)
         {
-            cocoa_window = [[AUPluginWindow alloc] initWithAuView:au_view bringToFront:front relativeToWindow:window];
+            cocoa_window = [[AUPluginWindow alloc] initWithAuView:au_view withAu:au bringToFront:front relativeToWindow:window];
             
             if (cocoa_window) {
                 windowOpen = YES;
@@ -75,7 +196,7 @@
 
 - (void)windowClosed:(NSNotification*)notification
 {
-    [cocoa_window saveFrameUsingName:@"GraphicEQ.position"];
+    [cocoa_window saveFrameUsingName:@"GraphicEQposition"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     windowOpen = NO;
 }
@@ -196,7 +317,7 @@
 @end
 
 @implementation AUPluginWindow
-- (id) initWithAuView:(NSView *)_auView bringToFront:(BOOL)front relativeToWindow:(NSInteger)window
+- (id) initWithAuView:(NSView *)_auView withAu:(AudioUnit)au bringToFront:(BOOL)front relativeToWindow:(NSInteger)window
 {
     NSRect  frame = [_auView frame];
     CGFloat req_width  = frame.size.width;
@@ -210,6 +331,7 @@
                                 defer:NO];
     if (self)
     {
+        self->au = au;
         auView = _auView;
         
         [self setAutodisplay:YES];
@@ -253,14 +375,70 @@
         
         [topView addSubview:button];
         
+        loadPresets();
+        
+        NSRect popupFrame = NSMakeRect(req_width - 320, 0, 308, 26);
+        
+        presetButton = [[NSPopUpButton alloc] initWithFrame:popupFrame];
+        [topView addSubview:presetButton];
+        [presetButton setAction:@selector(changePreset:)];
+        [presetButton setTarget:self];
+
+        NSMutableArray * array = [[NSMutableArray alloc] init];
+        for (NSDictionary * preset in equalizer_presets_processed)
+        {
+            [array addObject:[preset objectForKey:@"name"]];
+        }
+        [array addObject:@"Custom"];
+        [presetButton addItemsWithTitles:array];
+        
+        NSInteger presetSelected = [[NSUserDefaults standardUserDefaults] integerForKey:@"GraphicEQpreset"];
+        if (presetSelected < 0 || presetSelected >= [equalizer_presets_processed count])
+            presetSelected = [equalizer_presets_processed count];
+        
+        [presetButton selectItemAtIndex:presetSelected];
+        
+        NSTextField * presetLabel = [NSTextField labelWithString:@"Preset:"];
+        
+        NSRect labelFrame = [presetLabel frame];
+        labelFrame.origin = NSMakePoint(popupFrame.origin.x - labelFrame.size.width - 2, 6);
+        [presetLabel setFrame:labelFrame];
+        [topView addSubview:presetLabel];
+        
         [splitView adjustSubviews];
         
         [splitView setDelegate:self];
         
-        [self setFrameUsingName:@"GraphicEQ.position"];
+        [self setFrameUsingName:@"GraphicEQposition"];
+
+        AUListenerCreateWithDispatchQueue(&listenerRef, 0.25, dispatch_get_main_queue(), ^void(void *inObject, const AudioUnitParameter *inParameter, AudioUnitParameterValue inValue) {
+            AUPluginWindow * _self = (__bridge AUPluginWindow *) inObject;
+            
+            if (inParameter->mParameterID >= 0 && inParameter->mParameterID <= 31) {
+                [_self->presetButton selectItemAtIndex:[equalizer_presets_processed count]];
+            }
+        });
+
+        AudioUnitParameter param;
+        
+        param.mAudioUnit = au;
+        param.mElement = 0;
+        param.mScope = kAudioUnitScope_Global;
+        
+        for (unsigned int i = 0; i < 31; ++i) {
+            param.mParameterID = i;
+            AUListenerAddParameter(listenerRef, (__bridge void *)self, &param);
+        }
     }
     
     return self;
+}
+
+- (void) dealloc
+{
+    if (listenerRef) {
+        AUListenerDispose(listenerRef);
+    }
 }
 
 - (NSRect)splitView:(NSSplitView *)splitView effectiveRect:(NSRect)proposedEffectiveRect forDrawnRect:(NSRect)drawnRect ofDividerAtIndex:(NSInteger)dividerIndex
@@ -274,5 +452,50 @@
     
     [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:@"GraphicEQenable"];
 }
+
+- (void) changePreset:(id)sender
+{
+    AudioUnitParameterValue paramValue = 0;
+    if (AudioUnitGetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, &paramValue))
+        return;
+    
+    NSInteger index = [sender indexOfSelectedItem];
+    
+    size_t numberOfBands = paramValue ? 31 : 10;
+    
+    if (index < [equalizer_presets_processed count])
+    {
+        NSDictionary * preset = [equalizer_presets_processed objectAtIndex:index];
+    
+        if (numberOfBands == 31) {
+            float presetValues[31];
+            interpolateBandsTo31(presetValues, preset);
+            
+            for (unsigned int i = 0; i < 31; ++i)
+            {
+                AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
+            }
+        }
+        else if (numberOfBands == 10) {
+            float presetValues[10];
+            interpolateBandsTo10(presetValues, preset);
+            
+            for (unsigned int i = 0; i < 10; ++i)
+            {
+                AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
+            }
+        }
+        
+        NSEvent * event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown
+                                             location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0 windowNumber:[self windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1.0];
+        
+        [auView mouseDown:event];
+
+        [[NSUserDefaults standardUserDefaults] setInteger:index forKey:@"GraphicEQpreset"];
+    }
+    else
+        [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:@"GraphicEQpreset"];
+}
+
 @end
 

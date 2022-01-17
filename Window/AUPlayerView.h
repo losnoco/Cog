@@ -12,6 +12,7 @@
 #import <AppKit/AppKit.h>
 #import <AudioUnit/AudioUnitCarbonView.h>
 #import <AudioUnit/AudioUnit.h>
+#import <AudioToolbox/AudioToolbox.h>
 
 @interface AUPluginUI : NSObject
 {
@@ -36,12 +37,16 @@
 @end
 
 @interface AUPluginWindow : NSWindow<NSSplitViewDelegate> {
+    AudioUnit au;
+    AUParameterListenerRef listenerRef;
+    
     NSView *topView;
     NSView *auView;
     NSSplitView *splitView;
+    NSPopUpButton * presetButton;
 }
 
-- (id) initWithAuView:(NSView *)_auView bringToFront:(BOOL)front relativeToWindow:(NSInteger)window;
+- (id) initWithAuView:(NSView *)_auView withAu:(AudioUnit)au bringToFront:(BOOL)front relativeToWindow:(NSInteger)window;
 @end
 
 #endif
