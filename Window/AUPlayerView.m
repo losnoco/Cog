@@ -19,20 +19,12 @@
 @end
 
 @implementation AUPluginUI
-
 - (id) initWithSampler:(AudioUnit)_au bringToFront:(BOOL)front orWindowNumber:(NSInteger)window
 {
     self = [super init];
     if (self)
     {
         au = _au;
-        resizable = NO;
-        min_width = 0;
-        min_height = 0;
-        req_width = 0;
-        req_height = 0;
-        alo_width = 0;
-        alo_height = 0;
         
         windowOpen = NO;
         
@@ -46,31 +38,13 @@
         
         if (au_view)
         {
-            cocoa_window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, req_width, req_height)
-                                                       styleMask:(NSWindowStyleMaskTitled |
-                                                              NSWindowStyleMaskClosable)
-                                                         backing:NSBackingStoreBuffered
-                                                           defer:NO];
-
-            [cocoa_window setAutodisplay:YES];
-            [cocoa_window setOneShot:YES];
-        
-            [cocoa_window setContentView:au_view];
-        
-            if (front)
-            {
-                [cocoa_window orderFront:cocoa_window];
+            cocoa_window = [[AUPluginWindow alloc] initWithAuView:au_view bringToFront:front relativeToWindow:window];
+            
+            if (cocoa_window) {
+                windowOpen = YES;
+                
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowClosed:) name:NSWindowWillCloseNotification object:cocoa_window];
             }
-            else
-                [cocoa_window orderWindow:NSWindowBelow relativeTo:window];
-            
-            [cocoa_window setReleasedWhenClosed:NO];
-            
-            [cocoa_window setFrameUsingName:@"EqualizerWindowPosition"];
-            
-            windowOpen = YES;
-
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowClosed:) name:NSWindowWillCloseNotification object:cocoa_window];
         }
     }
     
@@ -99,14 +73,9 @@
     [cocoa_window orderFront:cocoa_window];
 }
 
-- (NSInteger) windowNumber
-{
-    return cocoa_window.windowNumber;
-}
-
 - (void)windowClosed:(NSNotification*)notification
 {
-    [cocoa_window saveFrameUsingName:@"EqualizerWindowPosition"];
+    [cocoa_window saveFrameUsingName:@"GraphicEQ.position"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     windowOpen = NO;
 }
@@ -221,13 +190,89 @@
         [(AUGenericView *)au_view setShowsExpertParameters:1];
     }
     
-    // Get the initial size of the new AU View's frame
-    NSRect  frame = [au_view frame];
-    min_width  = req_width  = CGRectGetWidth(NSRectToCGRect(frame));
-    min_height = req_height = CGRectGetHeight(NSRectToCGRect(frame));
-    resizable  = [au_view autoresizingMask];
-    
     return 0;
 }
 
 @end
+
+@implementation AUPluginWindow
+- (id) initWithAuView:(NSView *)_auView bringToFront:(BOOL)front relativeToWindow:(NSInteger)window
+{
+    NSRect  frame = [_auView frame];
+    CGFloat req_width  = frame.size.width;
+    CGFloat req_height = frame.size.height;
+    //BOOL resizable  = [_auView autoresizingMask];
+
+    self = [super initWithContentRect:NSMakeRect(0, 0, req_width, req_height + 32)
+                            styleMask:(NSWindowStyleMaskTitled |
+                                       NSWindowStyleMaskClosable)
+                              backing:NSBackingStoreBuffered
+                                defer:NO];
+    if (self)
+    {
+        auView = _auView;
+        
+        [self setAutodisplay:YES];
+        [self setOneShot:YES];
+
+        if (front)
+        {
+            [self orderFront:self];
+        }
+        else
+            [self orderWindow:NSWindowBelow relativeTo:window];
+        
+        [self setReleasedWhenClosed:NO];
+        
+        NSRect topRect = NSMakeRect(0, 0, req_width, 32);
+        
+        topView = [[NSView alloc] initWithFrame:topRect];
+        
+        NSRect topFrame = NSMakeRect(0, req_height, req_width, req_height);
+        NSRect newFrame = NSMakeRect(0, 0, req_width, topRect.size.height);
+        
+        topRect = NSMakeRect(0, 0, req_width, req_height + topRect.size.height);
+        
+        splitView = [[NSSplitView alloc] initWithFrame:topRect];
+        
+        [splitView setSubviews:[NSArray arrayWithObjects:topView, auView, nil]];
+        
+        [self setContentView:splitView];
+        
+        [topView setFrame:topFrame];
+        [auView setFrame:newFrame];
+        
+        BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"GraphicEQenable"];
+        
+        NSButton *button = [NSButton checkboxWithTitle:@"Enabled" target:self action:@selector(toggleEnable:)];
+        [button setState:enabled ? NSControlStateValueOn : NSControlStateValueOff];
+        
+        NSRect buttonFrame = [button frame];
+        buttonFrame.origin = NSMakePoint( 18, 4 );
+        [button setFrame:buttonFrame];
+        
+        [topView addSubview:button];
+        
+        [splitView adjustSubviews];
+        
+        [splitView setDelegate:self];
+        
+        [self setFrameUsingName:@"GraphicEQ.position"];
+    }
+    
+    return self;
+}
+
+- (NSRect)splitView:(NSSplitView *)splitView effectiveRect:(NSRect)proposedEffectiveRect forDrawnRect:(NSRect)drawnRect ofDividerAtIndex:(NSInteger)dividerIndex
+{
+    return NSZeroRect;
+}
+
+- (void) toggleEnable:(id)sender
+{
+    BOOL enabled = [sender state] == NSControlStateValueOn;
+    
+    [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:@"GraphicEQenable"];
+}
+@end
+

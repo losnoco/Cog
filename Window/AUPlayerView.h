@@ -16,18 +16,8 @@
 @interface AUPluginUI : NSObject
 {
     AudioUnit au;
-    int prefheight;
-    int prefwidth;
     
     BOOL windowOpen;
-    
-    BOOL resizable;
-    int  min_width;
-    int  min_height;
-    int  req_width;
-    int  req_height;
-    int  alo_width;
-    int  alo_height;
     
     /* Cocoa */
     
@@ -40,12 +30,18 @@
 - (void) dealloc;
 
 - (BOOL) isOpen;
-- (BOOL) isForeground;
 
 - (void) bringToFront;
 
-- (NSInteger) windowNumber;
+@end
 
+@interface AUPluginWindow : NSWindow<NSSplitViewDelegate> {
+    NSView *topView;
+    NSView *auView;
+    NSSplitView *splitView;
+}
+
+- (id) initWithAuView:(NSView *)_auView bringToFront:(BOOL)front relativeToWindow:(NSInteger)window;
 @end
 
 #endif

@@ -33,6 +33,8 @@
     BOOL started;
     BOOL paused;
     
+    BOOL eqEnabled;
+    
     atomic_long bytesRendered;
     
     BOOL listenerapplied;
@@ -61,5 +63,7 @@
 - (void)stop;
 
 - (void)setVolume:(double) v;
+
+- (void)setEqualizerEnabled:(BOOL)enabled;
 
 @end

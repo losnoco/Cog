@@ -153,6 +153,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         readSemaphore = [[Semaphore alloc] init];
         
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
 	}
 	
 	return self;
@@ -173,6 +174,11 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 		[self setOutputDeviceWithDeviceDict:device];
 	}
+    else if ([keyPath isEqualToString:@"values.GraphicEQenable"]) {
+        BOOL enabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
+        
+        [self setEqualizerEnabled:enabled];
+    }
 }
 
 - (void)signalEndOfStream
@@ -442,7 +448,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     {
         NSError *err;
         AVAudioFormat *renderFormat;
-        
+
+        [outputController incrementAmountPlayed:[[outputController buffer] bufferedLength]];
+        [[outputController buffer] empty];
+
         _deviceFormat = format;
         deviceFormat = *(format.streamDescription);
 
@@ -506,6 +515,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         AudioUnitReset (_eq, kAudioUnitScope_Output, 0);
         
         AudioUnitReset (_eq, kAudioUnitScope_Global, 0);
+        
+        eqEnabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
     }
     
     return YES;
@@ -569,6 +580,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     
     __block AudioUnit eq = _eq;
     __block AudioStreamBasicDescription *format = &deviceFormat;
+    __block BOOL *eqEnabled = &self->eqEnabled;
+    __block void *refCon = (__bridge void *)self;
 
     _au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags * _Nonnull actionFlags, const AudioTimeStamp * _Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList * _Nonnull inputData)
     {
@@ -590,7 +603,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             ioData->mBuffers[i].mDataByteSize = frameCount * sizeof(float);
         }
         
-        OSStatus ret = AudioUnitRender(eq, actionFlags, timestamp, (UInt32) inputBusNumber, frameCount, ioData);
+        OSStatus ret;
+        
+        if (*eqEnabled)
+            ret = AudioUnitRender(eq, actionFlags, timestamp, (UInt32) inputBusNumber, frameCount, ioData);
+        else
+            ret = renderCallback(refCon, actionFlags, timestamp, (UInt32) inputBusNumber, frameCount, ioData);
         
         if (ret)
             return ret;
@@ -649,6 +667,19 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     volume = v * 0.01f;
 }
 
+- (void)setEqualizerEnabled:(BOOL)enabled
+{
+    if (enabled && !eqEnabled) {
+        if (_eq) {
+            AudioUnitReset (_eq, kAudioUnitScope_Input, 0);
+            AudioUnitReset (_eq, kAudioUnitScope_Output, 0);
+            AudioUnitReset (_eq, kAudioUnitScope_Global, 0);
+        }
+    }
+    
+    eqEnabled = enabled;
+}
+
 - (void)start
 {
     [self threadEntry:nil];
@@ -694,6 +725,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	[self stop];
     
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable"];
 }
 
 - (void)pause
