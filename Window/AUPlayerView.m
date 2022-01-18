@@ -13,6 +13,7 @@
 #import "AUPlayerView.h"
 
 #import "json.h"
+
 static NSArray * equalizer_presets_processed = nil;
 static json_value * equalizer_presets = NULL;
 
@@ -22,15 +23,66 @@ static const NSString* winamp_equalizer_items[] = { @"name", @"hz70", @"hz180", 
 static const float apple_equalizer_bands_31[31] = { 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1200, 1600, 2000, 2500, 3100, 4000, 5000, 6300, 8000, 10000, 12000, 16000, 20000 };
 static const float apple_equalizer_bands_10[10] = { 32, 64, 128, 256, 512, 1000, 2000, 4000, 8000, 16000 };
 
+static inline float quadra(float *p, float frac) { return (((((((((p[0] + p[2]) * 0.5) - p[1]) * frac) * 0.5) + p[1]) - ((p[2] + p[0] + (p[0] * 2.0)) / 2.0)) * frac) * 2.0) + p[0]; }
+
 static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
+    // predict extra bands! lpc was too broken, so use quadratic interpolation!
     if (freqTarget <= winamp_equalizer_bands[0]) {
-        return [[preset objectForKey:winamp_equalizer_items[1]] floatValue];
+        float work[14];
+        float work_freq[14];
+        for (unsigned int i = 0; i < 10; ++i) {
+            work[9 - i] = [[preset objectForKey:winamp_equalizer_items[1 + i]] floatValue];
+            work_freq[9 - i] = winamp_equalizer_bands[i];
+        }
+        for (unsigned int i = 10; i < 14; ++i) {
+            work[i] = quadra(work + i - 3, 0.94);
+            work_freq[i] = quadra(work_freq + i - 3, 0.94);
+        }
+        for (unsigned int i = 0; i < 13; ++i) {
+            if (freqTarget >= work_freq[13 - i] &&
+                freqTarget < work_freq[12 - i]) {
+                float freqLow = work_freq[13 - i];
+                float freqHigh = work_freq[12 - i];
+                float valueLow = work[13 - i];
+                float valueHigh = work[12 - i];
+                
+                float delta = (freqTarget - freqLow) / (freqHigh - freqLow);
+                
+                return valueLow + (valueHigh - valueLow) * delta;
+            }
+        }
+        
+        return work[13];
     }
     else if (freqTarget >= winamp_equalizer_bands[9]) {
-        return [[preset objectForKey:winamp_equalizer_items[10]] floatValue];
+        float work[14];
+        float work_freq[14];
+        for (unsigned int i = 0; i < 10; ++i) {
+            work[i] = [[preset objectForKey:winamp_equalizer_items[1 + i]] floatValue];
+            work_freq[i] = winamp_equalizer_bands[i];
+        }
+        for (unsigned int i = 10; i < 14; ++i) {
+            work[i] = quadra(work + i - 3, 0.94);
+            work_freq[i] = quadra(work_freq + i - 3, 0.94);
+        }
+        for (unsigned int i = 0; i < 13; ++i) {
+            if (freqTarget >= work_freq[i] &&
+                freqTarget < work_freq[i + 1]) {
+                float freqLow = work_freq[i];
+                float freqHigh = work_freq[i + 1];
+                float valueLow = work[i];
+                float valueHigh = work[i + 1];
+                
+                float delta = (freqTarget - freqLow) / (freqHigh - freqLow);
+                
+                return valueLow + (valueHigh - valueLow) * delta;
+            }
+        }
+        
+        return work[13];
     }
     
-    // interpolation time!
+    // interpolation time! linear is fine for this
     
     for (size_t i = 0; i < 9; ++i) {
         if (freqTarget >= winamp_equalizer_bands[i] &&
