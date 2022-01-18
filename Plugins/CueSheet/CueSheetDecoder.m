@@ -31,6 +31,13 @@
     return 16.0f;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"Cue Sheet Files", @"cue.icns", @"cue"]
+    ];
+}
+
 - (NSDictionary *)properties 
 {
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];

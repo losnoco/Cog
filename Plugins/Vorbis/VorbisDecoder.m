@@ -180,4 +180,11 @@ long sourceTell(void *datasource)
     return 1.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"Ogg Vorbis Files", @"ogg.icns", @"ogg"]
+    ];
+}
+
 @end

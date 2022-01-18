@@ -44,6 +44,8 @@
 		17F94DD60B8D0F7000A34E87 /* PluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.m */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		832BEF04278DD06D005E1BC4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832BEF03278DD06D005E1BC4 /* AVFoundation.framework */; };
+		8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */; };
+		8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		8389F270278E64590074164C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F225278E64590074164C /* config.h */; };
 		8389F279278E64590074164C /* utf.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F236278E64590074164C /* utf.h */; };
@@ -152,6 +154,8 @@
 		17F94DDC0B8D101100A34E87 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogAudio_Prefix.pch; sourceTree = "<group>"; };
 		832BEF03278DD06D005E1BC4 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileHandle+CreateFile.h"; path = "../../Utils/NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
+		8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+CreateFile.m"; path = "../../Utils/NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8389F225278E64590074164C /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		8389F228278E64590074164C /* encoding_utf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = encoding_utf.c; sourceTree = "<group>"; };
@@ -378,6 +382,8 @@
 		17D21CDC0B8BE5B400D1EBDE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */,
+				8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */,
 				8384912618080FF100E7332D /* Logging.h */,
 				17D21CF10B8BE5EF00D1EBDE /* Semaphore.h */,
 				17D21CF20B8BE5EF00D1EBDE /* Semaphore.m */,
@@ -742,6 +748,7 @@
 				8389F27D278E64590074164C /* strl.h in Headers */,
 				8389F281278E64590074164C /* msvc.h in Headers */,
 				8389F2A3278E646E0074164C /* lpc.h in Headers */,
+				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
 				8389F290278E64590074164C /* boolean.h in Headers */,
 				8389F295278E64590074164C /* retro_assert.h in Headers */,
 				8389F28A278E64590074164C /* retro_inline.h in Headers */,
@@ -849,6 +856,7 @@
 				8389F29B278E64590074164C /* sinc_resampler.c in Sources */,
 				8389F299278E64590074164C /* memalign.c in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
+				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,

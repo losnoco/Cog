@@ -4,6 +4,8 @@
 
 #import "Logging.h"
 
+#import "NSFileHandle+CreateFile.h"
+
 @implementation PluginController
 
 @synthesize sources;
@@ -262,6 +264,146 @@ static PluginController *sharedPluginController = nil;
 
 	ALog(@"Decoders by Extension: %@", self.decodersByExtension);
 	ALog(@"Decoders by Mime Type: %@", self.decodersByMimeType);
+    
+#if 0
+    // XXX Keep in sync with Info.plist on disk!
+    NSString * plistHeader = @"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n\
+<plist version=\"1.0\">\n\
+<dict>\n\
+\t<key>CFBundleDevelopmentRegion</key>\n\
+\t<string>English</string>\n\
+\t<key>CFBundleDocumentTypes</key>\n\
+\t<array>\n\
+\t\t<dict>\n\
+\t\t\t<key>CFBundleTypeExtensions</key>\n\
+\t\t\t<array>\n\
+\t\t\t\t<string>*</string>\n\
+\t\t\t</array>\n\
+\t\t\t<key>CFBundleTypeIconFile</key>\n\
+\t\t\t<string>song.icns</string>\n\
+\t\t\t<key>CFBundleTypeOSTypes</key>\n\
+\t\t\t<array>\n\
+\t\t\t\t<string>****</string>\n\
+\t\t\t\t<string>fold</string>\n\
+\t\t\t\t<string>disk</string>\n\
+\t\t\t</array>\n\
+\t\t\t<key>CFBundleTypeRole</key>\n\
+\t\t\t<string>None</string>\n\
+\t\t</dict>\n";
+    NSString * plistFooter = @"\t</array>\n\
+\t<key>CFBundleExecutable</key>\n\
+\t<string>Cog</string>\n\
+\t<key>CFBundleHelpBookFolder</key>\n\
+\t<string>Cog.help</string>\n\
+\t<key>CFBundleHelpBookName</key>\n\
+\t<string>org.cogx.cog.help</string>\n\
+\t<key>CFBundleIdentifier</key>\n\
+\t<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>\n\
+\t<key>CFBundleInfoDictionaryVersion</key>\n\
+\t<string>6.0</string>\n\
+\t<key>CFBundlePackageType</key>\n\
+\t<string>APPL</string>\n\
+\t<key>CFBundleShortVersionString</key>\n\
+\t<string>0.08</string>\n\
+\t<key>CFBundleSignature</key>\n\
+\t<string>????</string>\n\
+\t<key>CFBundleVersion</key>\n\
+\t<string>r516</string>\n\
+\t<key>LSApplicationCategoryType</key>\n\
+\t<string>public.app-category.music</string>\n\
+\t<key>LSMinimumSystemVersion</key>\n\
+\t<string>$(MACOSX_DEPLOYMENT_TARGET)</string>\n\
+\t<key>NSAppTransportSecurity</key>\n\
+\t<dict>\n\
+\t\t<key>NSAllowsArbitraryLoads</key>\n\
+\t\t<true/>\n\
+\t</dict>\n\
+\t<key>NSAppleScriptEnabled</key>\n\
+\t<string>YES</string>\n\
+\t<key>NSCalendarsUsageDescription</key>\n\
+\t<string>Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?</string>\n\
+\t<key>NSCameraUsageDescription</key>\n\
+\t<string>Cog is an audio player. It will never use your camera. Why is it asking for permission to use your camera?</string>\n\
+\t<key>NSContactsUsageDescription</key>\n\
+\t<string>Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?</string>\n\
+\t<key>NSLocationUsageDescription</key>\n\
+\t<string>Cog has no use for your location information. Something is obviously wrong with the application.</string>\n\
+\t<key>NSMainNibFile</key>\n\
+\t<string>MainMenu</string>\n\
+\t<key>NSMicrophoneUsageDescription</key>\n\
+\t<string>Cog is an audio player. It does not, however, record audio. Why is it asking for permission to use your microphone?</string>\n\
+\t<key>NSPhotoLibraryUsageDescription</key>\n\
+\t<string>Cog is an audio player. Why are you trying to access your Photos Library with an audio player?</string>\n\
+\t<key>NSPrincipalClass</key>\n\
+\t<string>MediaKeysApplication</string>\n\
+\t<key>NSRemindersUsageDescription</key>\n\
+\t<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>\n\
+\t<key>SUFeedURL</key>\n\
+\t<string>https://cogcdn.cog.losno.co/mercury.xml</string>\n\
+\t<key>SUPublicEDKey</key>\n\
+\t<string>omxG7Rp0XK9/YEvKbVy7cd44eVAh1LJB6CmjQwjOJz4=</string>\n\
+</dict>\n\
+</plist>\n";
+    NSMutableArray * decodersRegistered = [[NSMutableArray alloc] init];
+    
+    NSArray * allKeys = [self.decodersByExtension allKeys];
+    for (NSString * ext in allKeys) {
+        NSArray * decoders = [self.decodersByExtension objectForKey:ext];
+        for (NSString * decoder in decoders) {
+            if (![decodersRegistered containsObject:decoder]) {
+                [decodersRegistered addObject:decoder];
+            }
+        }
+    }
+    
+    NSMutableArray * stringList = [[NSMutableArray alloc] init];
+    
+    [stringList addObject:plistHeader];
+    
+    for (NSString * decoderString in decodersRegistered) {
+        Class decoder = NSClassFromString(decoderString);
+        if (decoder && [decoder respondsToSelector:@selector(fileTypeAssociations)]) {
+            NSArray * types = [decoder fileTypeAssociations];
+            for (NSArray * type in types) {
+                [stringList addObject:@"\t\t<dict>\n\
+\t\t\t<key>CFBundleTypeExtensions</key>\n\
+\t\t\t<array>\n\
+"];
+                for (size_t i = 2; i < [type count]; ++i) {
+                    [stringList addObject:@"\t\t\t\t<string>"];
+                    [stringList addObject:[[type objectAtIndex:i] lowercaseString]];
+                    [stringList addObject:@"</string>\n"];
+                }
+                [stringList addObject:@"\t\t\t</array>\n\
+\t\t\t<key>CFBundleTypeIconFile</key>\n\
+\t\t\t<string>"];
+                [stringList addObject:[type objectAtIndex:1]];
+                [stringList addObject:@"</string>\n\
+\t\t\t<key>CFBundleTypeName</key>\n\
+\t\t\t<string>"];
+                [stringList addObject:[type objectAtIndex:0]];
+                [stringList addObject:@"</string>\n\
+\t\t\t<key>CFBundleTypeRole</key>\n\
+\t\t\t<string>Viewer</string>\n\
+\t\t\t<key>LSTypeIsPackage</key>\n\
+\t\t\t<false/>\n\
+\t\t</dict>\n"];
+            }
+        }
+    }
+    
+    [stringList addObject:plistFooter];
+    
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:@"/tmp/Cog_Info.plist" createFile:YES];
+    if (!fileHandle) {
+        DLog(@"Error saving Info.plist!");
+        return;
+    }
+    [fileHandle truncateFileAtOffset:0];
+    [fileHandle writeData:[[stringList componentsJoinedByString:@""] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileHandle closeFile];
+#endif
 }
 
 - (id<CogSource>) audioSourceForURL:(NSURL *)url

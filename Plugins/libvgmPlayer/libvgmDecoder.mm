@@ -291,6 +291,16 @@ const int masterVol = 0x10000; // Fixed point 16.16
     return 1.25;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    NSMutableArray * ret = [[NSMutableArray alloc] init];
+    [ret addObject:@"libvgm Files"];
+    [ret addObject:@"vg.icns"];
+    [ret addObjectsFromArray:[self fileTypes]];
+    
+    return [NSArray arrayWithObject:ret];
+}
+
 - (void)setSource:(id<CogSource>)s
 {
 	source = s;

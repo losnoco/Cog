@@ -1752,5 +1752,15 @@ static int usf_info(void * context, const char * name, const char * value)
     return 1.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    NSMutableArray * ret = [[NSMutableArray alloc] init];
+    [ret addObject:@"PSF Format Files"];
+    [ret addObject:@"vg.icns"];
+    [ret addObjectsFromArray:[self fileTypes]];
+    
+    return [NSArray arrayWithObject:ret];
+}
+
 
 @end

@@ -366,4 +366,11 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
     return 2.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"FLAC Audio Files", @"flac.icns", @"flac"]
+    ];
+}
+
 @end

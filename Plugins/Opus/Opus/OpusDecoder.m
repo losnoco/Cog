@@ -188,4 +188,12 @@ opus_int64 sourceTell(void *_stream)
     return 1.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"Opus Audio Files", @"ogg.icns", @"opus"],
+        @[@"Ogg Audio Files", @"ogg.icns", @"ogg"]
+    ];
+}
+
 @end

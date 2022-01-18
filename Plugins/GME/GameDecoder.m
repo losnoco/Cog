@@ -209,7 +209,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sfm", @"sgc", @"spc", @"vgm", @"vgz", nil];
+	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sfm", @"sgc", @"spc", nil];
 }
 
 + (NSArray *)mimeTypes 
@@ -221,6 +221,17 @@ gme_err_t readCallback( void* data, void* out, long count )
 {
     return 1.0;
 }
+
++ (NSArray *)fileTypeAssociations
+{
+    NSMutableArray * ret = [[NSMutableArray alloc] init];
+    [ret addObject:@"Game Music Emu Files"];
+    [ret addObject:@"vg.icns"];
+    [ret addObjectsFromArray:[self fileTypes]];
+    
+    return [NSArray arrayWithObject:ret];
+}
+
 
 - (void)setSource:(id<CogSource>)s
 {

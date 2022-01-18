@@ -185,4 +185,14 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
     return 1.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    NSMutableArray * ret = [[NSMutableArray alloc] init];
+    [ret addObject:@"libOpenMPT Module Files"];
+    [ret addObject:@"song.icns"];
+    [ret addObjectsFromArray:[self fileTypes]];
+    
+    return [NSArray arrayWithObject:ret];
+}
+
 @end

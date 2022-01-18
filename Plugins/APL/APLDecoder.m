@@ -17,6 +17,13 @@
     return 1.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"APL Link Files", @"song.icns", @"apl"]
+    ];
+}
+
 - (NSDictionary *)properties {
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];
 	
@@ -116,6 +123,7 @@
 	framePosition += n;
 	return n;
 }
+
 
 
 @end

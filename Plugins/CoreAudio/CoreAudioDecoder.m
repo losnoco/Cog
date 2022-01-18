@@ -318,6 +318,25 @@ static SInt64 getSizeProc(void* clientData) {
         return 1.5;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"WAVE Files", @"wav.icns", @"wav", @"w64"],
+        @[@"AIFF Files", @"aiff.icns", @"aif", @"aiff", @"aifc"],
+        @[@"CAF Files", @"song.icns", @"caf"],
+        @[@"AU Files", @"song.icns", @"au"],
+        @[@"MPEG Audio Files", @"mp3.icns", @"mp3", @"mp2", @"mp1", @"m2a", @"mpa"],
+        @[@"MPEG Stream Files", @"song.icns", @"mpeg"],
+        @[@"MPEG-4 Audio Files", @"m4a.icns", @"m4a", @"mp4", @"m4b", @"m4r"],
+        @[@"MPEG-4 AAC Audio Files", @"song.icns", @"aac", @"adts"],
+        @[@"AMR Audio Files", @"song.icns", @"amr"],
+        @[@"USAC Audio Files", @"song.icns", @"xhe"],
+        @[@"AC-3 Audio Files", @"song.icns", @"ac3"],
+        @[@"FLAC Audio Files", @"flac.icns", @"flac"],
+        @[@"SND Audio Files", @"song.icns", @"snd"]
+    ];
+}
+
 - (NSDictionary *)properties
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:

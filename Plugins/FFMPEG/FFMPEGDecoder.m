@@ -594,6 +594,26 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 	return [NSArray arrayWithObjects:@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"application/ogg", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", nil];
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"Windows Media Audio Files", @"song.icns", @"wma", @"asf"],
+        @[@"TAK Audio Files", @"song.icns", @"tak"],
+        @[@"MPEG-4 Audio Files", @"m4a.icns", @"mp4", @"m4a"],
+        @[@"MPEG-4 AAC Audio Files", @"song.icns", @"aac"],
+        @[@"MPEG Audio Files", @"mp3.icns", @"mp3", @"m2a", @"mpa"],
+        @[@"Monkey's Audio Files", @"ape.icns", @"ape"],
+        @[@"AC-3 Audio Files", @"song.icns", @"ac3"],
+        @[@"DTS Audio Files", @"song.icns", @"dts"],
+        @[@"DTS-HD MA Audio Files", @"song.icns", @"dtshd"],
+        @[@"True Audio Files", @"song.icns", @"tta"],
+        @[@"TrueVQ Audio Files", @"song.icns", @"vqf", @"vqe", @"vql"],
+        @[@"Real Audio Files", @"song.icns", @"ra", @"rm", @"rmj"],
+        @[@"Matroska Audio Files", @"song.icns", @"mka"],
+        @[@"WebM Audio Files", @"song.icns", @"weba"]
+    ];
+}
+
 + (float)priority
 {
     if (@available(macOS 10.15, *))

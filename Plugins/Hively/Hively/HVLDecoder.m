@@ -194,6 +194,14 @@ static void oneTimeInit(void)
 	return [NSArray arrayWithObjects:@"hvl", @"ahx", nil];
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"Hively Tracker Files", @"song.icns", @"hvl"],
+        @[@"AHX Tracker Files", @"song.icns", @"ahx"]
+    ];
+}
+
 + (NSArray *)mimeTypes 
 {	
 	return nil;

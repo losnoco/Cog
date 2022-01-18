@@ -233,4 +233,11 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
     return 1.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    return @[
+        @[@"Musepack Audio Files", @"mpc.icns", @"mpc"]
+    ];
+}
+
 @end

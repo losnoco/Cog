@@ -416,4 +416,14 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     return 0.0;
 }
 
++ (NSArray *)fileTypeAssociations
+{
+    NSMutableArray * ret = [[NSMutableArray alloc] init];
+    [ret addObject:@"VGMStream Files"];
+    [ret addObject:@"vg.icns"];
+    [ret addObjectsFromArray:[self fileTypes]];
+    
+    return [NSArray arrayWithObject:ret];
+}
+
 @end
