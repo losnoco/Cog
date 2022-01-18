@@ -550,6 +550,9 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
             if (inParameter->mParameterID >= 0 && inParameter->mParameterID <= 31) {
                 [_self->presetButton selectItemAtIndex:[equalizer_presets_processed count]];
             }
+            else if (inParameter->mParameterID == kGraphicEQParam_NumberOfBands) {
+                [self changePreset:self->presetButton];
+            }
         });
 
         AudioUnitParameter param;
@@ -562,6 +565,9 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
             param.mParameterID = i;
             AUListenerAddParameter(listenerRef, (__bridge void *)self, &param);
         }
+        
+        param.mParameterID = kGraphicEQParam_NumberOfBands;
+        AUListenerAddParameter(listenerRef, (__bridge void *)self, &param);
         
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQpreset" options:0 context:nil];
 
