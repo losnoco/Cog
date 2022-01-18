@@ -566,7 +566,10 @@
 
 - (double)volumeUp:(double)amount
 {
-	double newVolume = linearToLogarithmic(logarithmicToLinear(volume + amount));
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+    
+	double newVolume = linearToLogarithmic(logarithmicToLinear(volume + amount, MAX_VOLUME), MAX_VOLUME);
 	if (newVolume > MAX_VOLUME)
 		newVolume = MAX_VOLUME;
 	
@@ -579,11 +582,14 @@
 
 - (double)volumeDown:(double)amount
 {
-	double newVolume;
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+    double newVolume;
 	if (amount > volume)
 		newVolume = 0.0;
 	else
-		newVolume = linearToLogarithmic(logarithmicToLinear(volume - amount));
+		newVolume = linearToLogarithmic(logarithmicToLinear(volume - amount, MAX_VOLUME), MAX_VOLUME);
 	
 	[self setVolume:newVolume];
 	return newVolume;

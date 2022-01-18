@@ -28,6 +28,9 @@
 }
 
 - (void) awakeFromNib {
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+    
     wasInsideSnapRange = NO;
     textView = [[NSText alloc] init];
     [textView setFrame:NSMakeRect(0, 0, 50, 20)];
@@ -44,12 +47,19 @@
     popover.behavior = NSPopoverBehaviorTransient;
     popover.animates = NO;
     [popover setContentSize:textView.bounds.size];
+    
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeLimit" options:0 context:nil];
+}
+
+- (void)dealloc
+{
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeLimit"];
 }
 
 - (void)updateToolTip
 {
     double value = [self doubleValue];
-    double volume = linearToLogarithmic(value);
+    double volume = linearToLogarithmic(value, MAX_VOLUME);
 
     NSString *text = [NSString stringWithFormat:@"%0.lf%%", volume];
 
@@ -114,10 +124,24 @@
     }
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"values.volumeLimit"]) {
+        BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+        const double new_MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+        if (MAX_VOLUME != new_MAX_VOLUME) {
+            double currentLevel = linearToLogarithmic([self doubleValue], MAX_VOLUME);
+            [self setDoubleValue:logarithmicToLinear(currentLevel, new_MAX_VOLUME)];
+        }
+        MAX_VOLUME = new_MAX_VOLUME;
+    }
+}
+
 - (BOOL)sendAction:(SEL)theAction to:(id)theTarget
 {
     // Snap to 100% if value is close
-    double snapTarget = logarithmicToLinear(100.0);
+    double snapTarget = logarithmicToLinear(100.0, MAX_VOLUME);
     double snapProgress = ([self doubleValue] - snapTarget) / (self.maxValue - self.minValue);
 
     if (fabs(snapProgress) < 0.005)

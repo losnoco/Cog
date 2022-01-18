@@ -63,6 +63,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
         [NSNumber numberWithBool:NO], @"GraphicEQenable",
         [NSNumber numberWithInt:-1], @"GraphicEQpreset",
         [NSNumber numberWithBool:NO], @"GraphicEQtrackgenre",
+        [NSNumber numberWithBool:YES], @"volumeLimit",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
@@ -72,9 +73,12 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 - (void)awakeFromNib
 {
-	double volume = [[NSUserDefaults standardUserDefaults] doubleForKey:@"volume"];
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
-	[volumeSlider setDoubleValue:logarithmicToLinear(volume)];
+    double volume = [[NSUserDefaults standardUserDefaults] doubleForKey:@"volume"];
+
+	[volumeSlider setDoubleValue:logarithmicToLinear(volume, MAX_VOLUME)];
 	[audioPlayer setVolume:volume];
 
 	[self setSeekable:NO];
@@ -350,9 +354,12 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 */
 - (IBAction)changeVolume:(id)sender
 {
-	DLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue]));
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
-	[audioPlayer setVolume:linearToLogarithmic([sender doubleValue])];
+    DLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue], MAX_VOLUME));
+
+	[audioPlayer setVolume:linearToLogarithmic([sender doubleValue], MAX_VOLUME)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
@@ -374,9 +381,12 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	}
 	else  // volume is at 0 or below, we are ready to release the timer and move on
 	{
-		[audioPlayer pause];
+        BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+        const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+        [audioPlayer pause];
 		[audioPlayer setVolume:originalVolume];
-		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
+		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume, MAX_VOLUME)];
 		[audioTimer invalidate];
 		
 		fading = NO;
@@ -401,8 +411,11 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	}
 	else  // volume is at or near original level, we are ready to release the timer and move on
 	{
+        BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+        const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
         [audioPlayer setVolume:originalVolume];
-		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume)];
+		[volumeSlider setDoubleValue: logarithmicToLinear(originalVolume, MAX_VOLUME)];
 		[audioTimer invalidate];
 		
 		fading = NO;
@@ -539,8 +552,11 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (IBAction)volumeDown:(id)sender
 {
-	double newVolume = [audioPlayer volumeDown:DEFAULT_VOLUME_DOWN];
-	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+    double newVolume = [audioPlayer volumeDown:DEFAULT_VOLUME_DOWN];
+	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
 	
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 
@@ -548,9 +564,12 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 
 - (IBAction)volumeUp:(id)sender
 {
-	double newVolume;
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+    double newVolume;
 	newVolume = [audioPlayer volumeUp:DEFAULT_VOLUME_UP];
-	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume)];
+	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }

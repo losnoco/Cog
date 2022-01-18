@@ -11,6 +11,7 @@
 @interface VolumeSlider : NSSlider {
     NSPopover *popover;
     NSText *textView;
+    double MAX_VOLUME;
 }
 
 - (void)showToolTip;

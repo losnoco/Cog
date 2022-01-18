@@ -15,13 +15,13 @@
 //Here's why: http://www.dr-lex.34sp.com/info-stuff/volumecontrols.html
 //We are using the approximation of X^4.
 //Input/Output values are in percents.
-double logarithmicToLinear(double logarithmic)
+double logarithmicToLinear(double logarithmic, double MAX_VOLUME)
 {
-	return pow((logarithmic/MAX_VOLUME), 0.25) * 100.0;
+    return pow((logarithmic/MAX_VOLUME), 0.25) * 100.0;
 }
 
-double linearToLogarithmic(double linear)
+double linearToLogarithmic(double linear, double MAX_VOLUME)
 {
-	return (linear/100.0) * (linear/100.0) * (linear/100.0) * (linear/100.0) * MAX_VOLUME;
+    return (linear/100.0) * (linear/100.0) * (linear/100.0) * (linear/100.0) * MAX_VOLUME;
 }
 //End helper volume function thingies. ONWARDS TO GLORY!
