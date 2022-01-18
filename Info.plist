@@ -25,42 +25,792 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>vqf</string>
-				<string>vqe</string>
-				<string>vql</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>VQF File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mo3</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>MO3 Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
+				<string>04sw</string>
+				<string>208</string>
+				<string>2dx9</string>
+				<string>2pfs</string>
+				<string>3do</string>
+				<string>4</string>
+				<string>8</string>
+				<string>800</string>
+				<string>9tav</string>
+				<string>aa3</string>
+				<string>aax</string>
+				<string>abc</string>
+				<string>abk</string>
+				<string>acb</string>
+				<string>acm</string>
+				<string>acx</string>
+				<string>ad</string>
+				<string>adc</string>
+				<string>adm</string>
+				<string>adp</string>
+				<string>adpcm</string>
+				<string>adpcmx</string>
+				<string>ads</string>
+				<string>adw</string>
+				<string>adx</string>
+				<string>afc</string>
+				<string>afs2</string>
+				<string>agsc</string>
 				<string>ahx</string>
+				<string>ahv</string>
+				<string>ai</string>
+				<string>aif-loop</string>
+				<string>aifc</string>
+				<string>aix</string>
+				<string>akb</string>
+				<string>al</string>
+				<string>al2</string>
+				<string>ams</string>
+				<string>amts</string>
+				<string>an2</string>
+				<string>ao</string>
+				<string>ap</string>
+				<string>apc</string>
+				<string>as4</string>
+				<string>asd</string>
+				<string>asf</string>
+				<string>asr</string>
+				<string>ass</string>
+				<string>ast</string>
+				<string>at3</string>
+				<string>at9</string>
+				<string>atsl</string>
+				<string>atsl3</string>
+				<string>atsl4</string>
+				<string>atx</string>
+				<string>aud</string>
+				<string>audio</string>
+				<string>aus</string>
+				<string>awa</string>
+				<string>awb</string>
+				<string>awc</string>
+				<string>b1s</string>
+				<string>baf</string>
+				<string>baka</string>
+				<string>bank</string>
+				<string>bar</string>
+				<string>bcstm</string>
+				<string>bcwav</string>
+				<string>bd3</string>
+				<string>bdsp</string>
+				<string>bfstm</string>
+				<string>bfwav</string>
+				<string>bg00</string>
+				<string>bgm</string>
+				<string>bgw</string>
+				<string>bh2pcm</string>
+				<string>bik</string>
+				<string>bika</string>
+				<string>bik2</string>
+				<string>bk2</string>
+				<string>blk</string>
+				<string>bmdx</string>
+				<string>bms</string>
+				<string>bnk</string>
+				<string>bnm</string>
+				<string>bns</string>
+				<string>bnsf</string>
+				<string>bo2</string>
+				<string>brstm</string>
+				<string>brstmspm</string>
+				<string>bsnd</string>
+				<string>btsnd</string>
+				<string>bvg</string>
+				<string>bwav</string>
+				<string>caf</string>
+				<string>capdsp</string>
+				<string>cbd2</string>
+				<string>ccc</string>
+				<string>cd</string>
+				<string>cfn</string>
+				<string>chk</string>
+				<string>ckb</string>
+				<string>ckd</string>
+				<string>cks</string>
+				<string>cnk</string>
+				<string>cpk</string>
+				<string>cps</string>
+				<string>csa</string>
+				<string>csmp</string>
+				<string>cvs</string>
+				<string>cwav</string>
+				<string>cxs</string>
+				<string>d2</string>
+				<string>da</string>
+				<string>data</string>
+				<string>dax</string>
+				<string>dbm</string>
+				<string>dct</string>
+				<string>dcs</string>
+				<string>ddsp</string>
+				<string>de2</string>
+				<string>dec</string>
+				<string>diva</string>
+				<string>dmsg</string>
+				<string>ds2</string>
+				<string>dsb</string>
+				<string>dsf</string>
+				<string>dsp</string>
+				<string>dspw</string>
+				<string>dtk</string>
+				<string>dvi</string>
+				<string>dxh</string>
+				<string>dyx</string>
+				<string>e4x</string>
+				<string>eam</string>
+				<string>eas</string>
+				<string>eda</string>
+				<string>emff</string>
+				<string>enm</string>
+				<string>eno</string>
+				<string>ens</string>
+				<string>exa</string>
+				<string>ezw</string>
+				<string>fag</string>
+				<string>fda</string>
+				<string>ffw</string>
+				<string>filp</string>
+				<string>flx</string>
+				<string>fsb</string>
+				<string>fsv</string>
+				<string>fwav</string>
+				<string>fwse</string>
+				<string>g1l</string>
+				<string>gbts</string>
+				<string>gca</string>
+				<string>gcm</string>
+				<string>gcub</string>
+				<string>gcw</string>
+				<string>genh</string>
+				<string>gin</string>
+				<string>gms</string>
+				<string>grn</string>
+				<string>gsb</string>
+				<string>gsf</string>
+				<string>gtd</string>
+				<string>gwm</string>
+				<string>h4m</string>
+				<string>hab</string>
+				<string>hca</string>
+				<string>hdr</string>
+				<string>hgc1</string>
+				<string>his</string>
+				<string>hps</string>
+				<string>hsf</string>
+				<string>hwx</string>
+				<string>hx2</string>
+				<string>hx3</string>
+				<string>hxc</string>
+				<string>hxd</string>
+				<string>hxg</string>
+				<string>hxx</string>
+				<string>hwas</string>
+				<string>iab</string>
+				<string>iadp</string>
+				<string>idmsf</string>
+				<string>idsp</string>
+				<string>idvi</string>
+				<string>idwav</string>
+				<string>idx</string>
+				<string>idxma</string>
+				<string>ifs</string>
+				<string>ikm</string>
+				<string>ild</string>
+				<string>ilv</string>
+				<string>ima</string>
+				<string>imc</string>
+				<string>imx</string>
+				<string>int</string>
+				<string>is14</string>
+				<string>isb</string>
+				<string>isd</string>
+				<string>isws</string>
+				<string>itl</string>
+				<string>ivaud</string>
+				<string>ivag</string>
+				<string>ivb</string>
+				<string>ivs</string>
+				<string>joe</string>
+				<string>jstm</string>
+				<string>kat</string>
+				<string>kces</string>
+				<string>kcey</string>
+				<string>km9</string>
+				<string>kovs</string>
+				<string>kno</string>
+				<string>kns</string>
+				<string>koe</string>
+				<string>kraw</string>
+				<string>ktac</string>
+				<string>ktsl2asbin</string>
+				<string>ktss</string>
+				<string>kvs</string>
+				<string>kwa</string>
+				<string>l</string>
+				<string>l00</string>
+				<string>laac</string>
+				<string>ladpcm</string>
+				<string>laif</string>
+				<string>laiff</string>
+				<string>laifc</string>
+				<string>lac3</string>
+				<string>lasf</string>
+				<string>lbin</string>
+				<string>leg</string>
+				<string>lep</string>
+				<string>lflac</string>
+				<string>lin</string>
+				<string>lm0</string>
+				<string>lm1</string>
+				<string>lm2</string>
+				<string>lm3</string>
+				<string>lm4</string>
+				<string>lm5</string>
+				<string>lm6</string>
+				<string>lm7</string>
+				<string>lmp2</string>
+				<string>lmp3</string>
+				<string>lmp4</string>
+				<string>lmpc</string>
+				<string>logg</string>
+				<string>lopus</string>
+				<string>lp</string>
+				<string>lpcm</string>
+				<string>lpk</string>
+				<string>lps</string>
+				<string>lrmb</string>
+				<string>lse</string>
+				<string>lsf</string>
+				<string>lstm</string>
+				<string>lwav</string>
+				<string>lwma</string>
+				<string>mab</string>
+				<string>mad</string>
+				<string>map</string>
+				<string>matx</string>
+				<string>mc3</string>
+				<string>mca</string>
+				<string>mcadpcm</string>
+				<string>mcg</string>
+				<string>mds</string>
+				<string>mdsp</string>
+				<string>med</string>
+				<string>mjb</string>
+				<string>mi4</string>
+				<string>mib</string>
+				<string>mic</string>
+				<string>mihb</string>
+				<string>mnstr</string>
+				<string>mogg</string>
+				<string>mpdsp</string>
+				<string>mpds</string>
+				<string>mpf</string>
+				<string>mps</string>
+				<string>ms</string>
+				<string>msa</string>
+				<string>msb</string>
+				<string>msd</string>
+				<string>mse</string>
+				<string>msf</string>
+				<string>mss</string>
+				<string>msv</string>
+				<string>msvp</string>
+				<string>mta2</string>
+				<string>mtaf</string>
+				<string>mul</string>
+				<string>mups</string>
+				<string>mus</string>
+				<string>musc</string>
+				<string>musx</string>
+				<string>mvb</string>
+				<string>mwa</string>
+				<string>mwv</string>
+				<string>mxst</string>
+				<string>myspd</string>
+				<string>n64</string>
+				<string>naac</string>
+				<string>nds</string>
+				<string>ndp</string>
+				<string>nlsd</string>
+				<string>nop</string>
+				<string>nps</string>
+				<string>npsf</string>
+				<string>nsa</string>
+				<string>nsopus</string>
+				<string>nub</string>
+				<string>nub2</string>
+				<string>nus3audio</string>
+				<string>nus3bank</string>
+				<string>nwa</string>
+				<string>nwav</string>
+				<string>nxa</string>
+				<string>ogg_</string>
+				<string>ogl</string>
+				<string>ogv</string>
+				<string>oma</string>
+				<string>omu</string>
+				<string>opusx</string>
+				<string>otm</string>
+				<string>oto</string>
+				<string>ovb</string>
+				<string>p04</string>
+				<string>p16</string>
+				<string>p1d</string>
+				<string>p2a</string>
+				<string>p2bt</string>
+				<string>p3d</string>
+				<string>past</string>
+				<string>pcm</string>
+				<string>pdt</string>
+				<string>pk</string>
+				<string>pnb</string>
+				<string>pona</string>
+				<string>pos</string>
+				<string>ps2stm</string>
+				<string>psb</string>
+				<string>psf</string>
+				<string>psh</string>
+				<string>psnd</string>
+				<string>r</string>
+				<string>rac</string>
+				<string>rad</string>
+				<string>rak</string>
+				<string>ras</string>
+				<string>raw</string>
+				<string>rda</string>
+				<string>res</string>
+				<string>rkv</string>
+				<string>rnd</string>
+				<string>rof</string>
+				<string>rpgmvo</string>
+				<string>rrds</string>
+				<string>rsd</string>
+				<string>rsf</string>
+				<string>rsm</string>
+				<string>rsp</string>
+				<string>rstm</string>
+				<string>rvws</string>
+				<string>rwar</string>
+				<string>rwav</string>
+				<string>rws</string>
+				<string>rwsd</string>
+				<string>rwx</string>
+				<string>rxw</string>
+				<string>rxx</string>
+				<string>s14</string>
+				<string>s3v</string>
+				<string>sab</string>
+				<string>sad</string>
+				<string>saf</string>
+				<string>sam</string>
+				<string>sap</string>
+				<string>sb0</string>
+				<string>sb1</string>
+				<string>sb2</string>
+				<string>sb3</string>
+				<string>sb4</string>
+				<string>sb5</string>
+				<string>sb6</string>
+				<string>sb7</string>
+				<string>sbk</string>
+				<string>sbin</string>
+				<string>sbr</string>
+				<string>sbv</string>
+				<string>sm0</string>
+				<string>sm1</string>
+				<string>sm2</string>
+				<string>sm3</string>
+				<string>sm4</string>
+				<string>sm5</string>
+				<string>sm6</string>
+				<string>sm7</string>
+				<string>sc</string>
+				<string>scd</string>
+				<string>sch</string>
+				<string>sd9</string>
+				<string>sdf</string>
+				<string>sdt</string>
+				<string>seb</string>
+				<string>sed</string>
+				<string>seg</string>
+				<string>sem</string>
+				<string>sf0</string>
+				<string>sfl</string>
+				<string>sfs</string>
+				<string>sfx</string>
+				<string>sgb</string>
+				<string>sgd</string>
+				<string>sgt</string>
+				<string>sgx</string>
+				<string>sl3</string>
+				<string>slb</string>
+				<string>sli</string>
+				<string>smc</string>
+				<string>smk</string>
+				<string>smp</string>
+				<string>smpl</string>
+				<string>smv</string>
+				<string>snd</string>
+				<string>snds</string>
+				<string>sng</string>
+				<string>sngw</string>
+				<string>snr</string>
+				<string>sns</string>
+				<string>snu</string>
+				<string>snz</string>
+				<string>sod</string>
+				<string>son</string>
+				<string>spd</string>
+				<string>spm</string>
+				<string>sps</string>
+				<string>spsd</string>
+				<string>spw</string>
+				<string>ss2</string>
+				<string>ssd</string>
+				<string>ssm</string>
+				<string>sspr</string>
+				<string>sss</string>
+				<string>ster</string>
+				<string>sth</string>
+				<string>stm</string>
+				<string>stma</string>
+				<string>str</string>
+				<string>stream</string>
+				<string>strm</string>
+				<string>sts</string>
+				<string>sts_cp3</string>
+				<string>stx</string>
+				<string>svag</string>
+				<string>svs</string>
+				<string>svg</string>
+				<string>swag</string>
+				<string>swav</string>
+				<string>swd</string>
+				<string>switch_audio</string>
+				<string>sx</string>
+				<string>sxd</string>
+				<string>sxd2</string>
+				<string>sxd3</string>
+				<string>tad</string>
+				<string>tec</string>
+				<string>tgq</string>
+				<string>tgv</string>
+				<string>thp</string>
+				<string>tk5</string>
+				<string>tmx</string>
+				<string>tra</string>
+				<string>tun</string>
+				<string>txth</string>
+				<string>txtp</string>
+				<string>tydsp</string>
+				<string>u0</string>
+				<string>ue4opus</string>
+				<string>ulw</string>
+				<string>um3</string>
+				<string>utk</string>
+				<string>uv</string>
+				<string>v0</string>
+				<string>va3</string>
+				<string>vag</string>
+				<string>vai</string>
+				<string>vam</string>
+				<string>vas</string>
+				<string>vawx</string>
+				<string>vb</string>
+				<string>vbk</string>
+				<string>vbx</string>
+				<string>vds</string>
+				<string>vdm</string>
+				<string>vgi</string>
+				<string>vgm</string>
+				<string>vgs</string>
+				<string>vgv</string>
+				<string>vid</string>
+				<string>vig</string>
+				<string>vis</string>
+				<string>vms</string>
+				<string>vmu</string>
+				<string>voi</string>
+				<string>vp6</string>
+				<string>vpk</string>
+				<string>vs</string>
+				<string>vsf</string>
+				<string>vsv</string>
+				<string>vxn</string>
+				<string>w</string>
+				<string>waa</string>
+				<string>wac</string>
+				<string>wad</string>
+				<string>waf</string>
+				<string>wam</string>
+				<string>was</string>
+				<string>wavc</string>
+				<string>wave</string>
+				<string>wavebatch</string>
+				<string>wavm</string>
+				<string>wavx</string>
+				<string>way</string>
+				<string>wb</string>
+				<string>wb2</string>
+				<string>wbd</string>
+				<string>wbk</string>
+				<string>wd</string>
+				<string>wem</string>
+				<string>wii</string>
+				<string>wic</string>
+				<string>wip</string>
+				<string>wlv</string>
+				<string>wmus</string>
+				<string>wp2</string>
+				<string>wpd</string>
+				<string>wsd</string>
+				<string>wsi</string>
+				<string>wst</string>
+				<string>wua</string>
+				<string>wv2</string>
+				<string>wv6</string>
+				<string>wve</string>
+				<string>wvs</string>
+				<string>wvx</string>
+				<string>wxd</string>
+				<string>x</string>
+				<string>x360audio</string>
+				<string>xa</string>
+				<string>xa2</string>
+				<string>xa30</string>
+				<string>xag</string>
+				<string>xau</string>
+				<string>xav</string>
+				<string>xb</string>
+				<string>xen</string>
+				<string>xma</string>
+				<string>xma2</string>
+				<string>xmu</string>
+				<string>xnb</string>
+				<string>xsh</string>
+				<string>xsf</string>
+				<string>xse</string>
+				<string>xsew</string>
+				<string>xss</string>
+				<string>xvag</string>
+				<string>xvas</string>
+				<string>xwav</string>
+				<string>xwb</string>
+				<string>xmd</string>
+				<string>xopus</string>
+				<string>xps</string>
+				<string>xwc</string>
+				<string>xwm</string>
+				<string>xwma</string>
+				<string>xws</string>
+				<string>xwv</string>
+				<string>ydsp</string>
+				<string>ymf</string>
+				<string>zic</string>
+				<string>zsd</string>
+				<string>zsm</string>
+				<string>zss</string>
+				<string>zwdsp</string>
+				<string>zwv</string>
+				<string>vgmstream</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>VGMStream Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>vgm</string>
+				<string>vgz</string>
+				<string>s98</string>
+				<string>dro</string>
+				<string>gym</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>libvgm Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>hsc</string>
+				<string>sng</string>
+				<string>imf</string>
+				<string>wlf</string>
+				<string>adlib</string>
+				<string>a2m</string>
+				<string>sng</string>
+				<string>amd</string>
+				<string>bam</string>
+				<string>cmf</string>
+				<string>d00</string>
+				<string>dfm</string>
+				<string>hsp</string>
+				<string>ksm</string>
+				<string>mad</string>
+				<string>mus</string>
+				<string>ims</string>
+				<string>mdi</string>
+				<string>mid</string>
+				<string>sci</string>
+				<string>laa</string>
+				<string>mkj</string>
+				<string>cff</string>
+				<string>dmo</string>
+				<string>s3m</string>
+				<string>dtm</string>
+				<string>sng</string>
+				<string>mtk</string>
+				<string>rad</string>
+				<string>rac</string>
+				<string>raw</string>
+				<string>sat</string>
+				<string>sa2</string>
+				<string>xad</string>
+				<string>bmf</string>
+				<string>xad</string>
+				<string>xad</string>
+				<string>xad</string>
+				<string>xad</string>
+				<string>xad</string>
+				<string>lds</string>
+				<string>m</string>
+				<string>rol</string>
+				<string>xsm</string>
+				<string>dro</string>
+				<string>dro</string>
+				<string>msc</string>
+				<string>rix</string>
+				<string>adl</string>
+				<string>jbm</string>
+				<string>got</string>
+				<string>cmf</string>
+				<string>vgm</string>
+				<string>vgz</string>
+				<string>sop</string>
+				<string>hsq</string>
+				<string>sqx</string>
+				<string>sdb</string>
+				<string>agd</string>
+				<string>ha2</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>AdPlug Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>psf</string>
+				<string>minipsf</string>
+				<string>psf2</string>
+				<string>minipsf2</string>
+				<string>ssf</string>
+				<string>minissf</string>
+				<string>dsf</string>
+				<string>minidsf</string>
+				<string>qsf</string>
+				<string>miniqsf</string>
+				<string>gsf</string>
+				<string>minigsf</string>
+				<string>ncsf</string>
+				<string>minincsf</string>
+				<string>2sf</string>
+				<string>mini2sf</string>
+				<string>usf</string>
+				<string>miniusf</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>PSF Format Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mptm</string>
+				<string>mod</string>
+				<string>s3m</string>
+				<string>xm</string>
+				<string>it</string>
+				<string>669</string>
+				<string>amf</string>
+				<string>ams</string>
+				<string>c67</string>
+				<string>dbm</string>
+				<string>digi</string>
+				<string>dmf</string>
+				<string>dsm</string>
+				<string>dsym</string>
+				<string>dtm</string>
+				<string>far</string>
+				<string>fmt</string>
+				<string>imf</string>
+				<string>ice</string>
+				<string>j2b</string>
+				<string>m15</string>
+				<string>mdl</string>
+				<string>med</string>
+				<string>mms</string>
+				<string>mt2</string>
+				<string>mtm</string>
+				<string>mus</string>
+				<string>nst</string>
+				<string>okt</string>
+				<string>plm</string>
+				<string>psm</string>
+				<string>pt36</string>
+				<string>ptm</string>
+				<string>sfx</string>
+				<string>sfx2</string>
+				<string>st26</string>
+				<string>stk</string>
+				<string>stm</string>
+				<string>stx</string>
+				<string>stp</string>
+				<string>symmod</string>
+				<string>ult</string>
+				<string>wow</string>
+				<string>gdm</string>
+				<string>mo3</string>
+				<string>oxm</string>
+				<string>umx</string>
+				<string>xpk</string>
+				<string>ppm</string>
+				<string>mmcmp</string>
+				<string>mdz</string>
+				<string>mdr</string>
+				<string>s3z</string>
+				<string>xmz</string>
+				<string>itz</string>
+				<string>mptmz</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Abyss Highest Experience Audio File</string>
+			<string>libOpenMPT Module Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -74,7 +824,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Hively Tracker Audio File</string>
+			<string>Hively Tracker File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -83,36 +833,12 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>sfm</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>SFM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>lds</string>
-				<string>xmi</string>
-				<string>mus</string>
-				<string>hmp</string>
-				<string>hmi</string>
-				<string>mds</string>
-				<string>mids</string>
-				<string>rmi</string>
-				<string>kar</string>
-				<string>midi</string>
-				<string>mid</string>
+				<string>ahx</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>MIDI Audio File</string>
+			<string>Abyss' Highest eXperience File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -121,462 +847,13 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>amr-wb</string>
-				<string>amr</string>
+				<string>wav</string>
+				<string>w64</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
+			<string>wav.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>AMR Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>2sf</string>
-				<string>mini2sf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Nintendo DS Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>at3</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>ATRAC3 Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>dtshd</string>
-				<string>dts</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>DTS Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>ac3</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>AC3 Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>tta</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>TrueAudio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>minincsf</string>
-				<string>ncsf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Nitro Sound Composer Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>vgm7z</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>VGM7Z Archive</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>rsn</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>RSN Archive</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>xwma</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>XWMA Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>tak</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>TAK Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mpa</string>
-				<string>m2a</string>
-				<string>mp2</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>MPEG Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>sgc</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>SGC Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>minigsf</string>
-				<string>gsf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Game Boy Advance Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>ay</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>ZX Spectrum Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>umx</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Unreal Music Archive</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>okta</string>
-				<string>okt</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Oktalyzer Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>amf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>AMF Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>dsm</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>DSM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>j2b</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Jazz Jackrabbit 2 J2B Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>am</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>RIFF AM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>psm</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>PSM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>669</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>669 Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mtm</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>MTM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>ptm</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>PTM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>stz</string>
-				<string>stm</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>STM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>opus</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>ogg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Ogg Opus Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>asf</string>
-				<string>wma</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Microsoft Windows Media Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>miniqsf</string>
-				<string>qsf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>QSound Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>minidsf</string>
-				<string>dsf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Sega Dreamcast Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>minissf</string>
-				<string>ssf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Sega Saturn Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>minipsf2</string>
-				<string>minipsf</string>
-				<string>psf2</string>
-				<string>psf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Sony Playstation Audio File</string>
+			<string>WAVE File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -592,7 +869,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>aiff.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>AIFF Audio File</string>
+			<string>AIFF File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -601,13 +878,26 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>wav</string>
-				<string>wave</string>
+				<string>caf</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>wav.icns</string>
+			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Wave Audio File</string>
+			<string>CAF File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>au</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>AU File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -617,11 +907,103 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>mp3</string>
+				<string>mp2</string>
+				<string>mp1</string>
+				<string>m2a</string>
+				<string>mpa</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>mp3.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>MP3 Audio File</string>
+			<string>MPEG Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mpeg</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MPEG Stream File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>m4a</string>
+				<string>mp4</string>
+				<string>m4b</string>
+				<string>m4r</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>m4a.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MPEG-4 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>aac</string>
+				<string>adts</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MPEG-4 AAC Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>amr</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>AMR Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>xhe</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>USAC Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ac3</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>AC-3 Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -644,12 +1026,12 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>ape</string>
+				<string>snd</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>ape.icns</string>
+			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey&apos;s Audio File</string>
+			<string>SND Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -658,12 +1040,441 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>mpc</string>
+				<string>ay</string>
+				<string>gbs</string>
+				<string>hes</string>
+				<string>kss</string>
+				<string>nsf</string>
+				<string>nsfe</string>
+				<string>sap</string>
+				<string>sfm</string>
+				<string>sgc</string>
+				<string>spc</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>mpc.icns</string>
+			<string>vg.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Musepack Audio File</string>
+			<string>Game Music Emu Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>wma</string>
+				<string>asf</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Windows Media Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>tak</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>TAK Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mp4</string>
+				<string>m4a</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>m4a.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MPEG-4 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>aac</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MPEG-4 AAC Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mp3</string>
+				<string>m2a</string>
+				<string>mpa</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>mp3.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MPEG Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ape</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>ape.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Monkey's Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ac3</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>AC-3 Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dts</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>DTS Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dtshd</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>DTS-HD MA Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>tta</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>True Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>vqf</string>
+				<string>vqe</string>
+				<string>vql</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>TrueVQ Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ra</string>
+				<string>rm</string>
+				<string>rmj</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Real Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mka</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Matroska Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>weba</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>WebM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>wv</string>
+				<string>wvp</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>wv.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Wavpack File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>shn</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>shn.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Shorten File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>cue</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>cue.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>CUE Sheet File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mid</string>
+				<string>midi</string>
+				<string>kar</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>General MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>rmi</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>RIFF MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mids</string>
+				<string>mds</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>MIDS MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>hmi</string>
+				<string>hmp</string>
+				<string>hmq</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>HMI MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mus</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>id Software MUS MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>xmi</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>XMI MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>lds</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Loudness MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sid</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>SID File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mus</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>SID MUS File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>opus</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>ogg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Opus Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ogg</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>ogg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Ogg Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>flac</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>flac.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>FLAC Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -686,298 +1497,16 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>shn</string>
+				<string>mpc</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>shn.icns</string>
+			<string>mpc.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Shorten File</string>
+			<string>Musepack Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>wvp</string>
-				<string>wv</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>wv.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Wavpack File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>m4a</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>m4a.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>M4A File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>gbs</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Game Boy Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>gym</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Sega Genesis Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>hes</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>PC Engine Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>kss</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>MSX Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>nsf</string>
-				<string>nsfe</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>NES Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>sap</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Atari XL Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>spc</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Super Nintendo Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>vgm</string>
-				<string>vgz</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>Sega SMS/Genesis Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mdz</string>
-				<string>mod</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>song.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>MOD Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>xmz</string>
-				<string>xm</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>xm.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>XM Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>s3z</string>
-				<string>s3m</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>s3m.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>S3M Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>itz</string>
-				<string>it</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>it.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>IT Audio File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>pls</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>pls.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>PLS Playlist File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>m3u8</string>
-				<string>m3u</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>m3u.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>M3U Playlist File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>cue</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>cue.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>CUE Sheet File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -985,15 +1514,13 @@
 				<string>apl</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>cue.icns</string>
+			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>APL Link File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
