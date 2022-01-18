@@ -32,7 +32,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
                                     <rect key="frame" x="0.0" y="0.0" width="1000" height="378"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" id="207" customClass="PlaylistView">
                                             <rect key="frame" x="0.0" y="0.0" width="1000" height="361"/>
@@ -837,6 +837,12 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="openKofiPage:" target="226" id="gax-6q-SuW"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Patreon" id="NXj-oA-q3F">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openPatreonPage:" target="226" id="LFz-4J-b6o"/>
                                             </connections>
                                         </menuItem>
                                     </items>

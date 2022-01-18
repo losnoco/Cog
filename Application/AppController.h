@@ -67,6 +67,7 @@
 - (IBAction)openLiberapayPage:(id)sender;
 - (IBAction)openPaypalPage:(id)sender;
 - (IBAction)openKofiPage:(id)sender;
+- (IBAction)openPatreonPage:(id)sender;
 
 - (IBAction)feedback:(id)sender;
 

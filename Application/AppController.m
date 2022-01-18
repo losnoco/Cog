@@ -436,6 +436,11 @@ void* kAppControllerContext = &kAppControllerContext;
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://ko-fi.com/kode54"]];
 }
 
+- (IBAction)openPatreonPage:(id)sender
+{
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
+}
+
 
 - (IBAction)feedback:(id)sender
 {
