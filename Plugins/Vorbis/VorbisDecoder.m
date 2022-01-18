@@ -183,7 +183,7 @@ long sourceTell(void *datasource)
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"Ogg Vorbis Files", @"ogg.icns", @"ogg"]
+        @[@"Ogg Vorbis File", @"ogg.icns", @"ogg"]
     ];
 }
 

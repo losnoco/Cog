@@ -34,7 +34,7 @@
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"Cue Sheet Files", @"cue.icns", @"cue"]
+        @[@"CUE Sheet File", @"cue.icns", @"cue"]
     ];
 }
 

@@ -369,7 +369,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"FLAC Audio Files", @"flac.icns", @"flac"]
+        @[@"FLAC Audio File", @"flac.icns", @"flac"]
     ];
 }
 

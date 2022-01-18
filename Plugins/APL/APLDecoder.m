@@ -20,7 +20,7 @@
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"APL Link Files", @"song.icns", @"apl"]
+        @[@"APL Link File", @"song.icns", @"apl"]
     ];
 }
 

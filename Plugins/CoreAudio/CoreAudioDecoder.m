@@ -321,19 +321,19 @@ static SInt64 getSizeProc(void* clientData) {
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"WAVE Files", @"wav.icns", @"wav", @"w64"],
-        @[@"AIFF Files", @"aiff.icns", @"aif", @"aiff", @"aifc"],
-        @[@"CAF Files", @"song.icns", @"caf"],
-        @[@"AU Files", @"song.icns", @"au"],
-        @[@"MPEG Audio Files", @"mp3.icns", @"mp3", @"mp2", @"mp1", @"m2a", @"mpa"],
-        @[@"MPEG Stream Files", @"song.icns", @"mpeg"],
-        @[@"MPEG-4 Audio Files", @"m4a.icns", @"m4a", @"mp4", @"m4b", @"m4r"],
-        @[@"MPEG-4 AAC Audio Files", @"song.icns", @"aac", @"adts"],
-        @[@"AMR Audio Files", @"song.icns", @"amr"],
-        @[@"USAC Audio Files", @"song.icns", @"xhe"],
-        @[@"AC-3 Audio Files", @"song.icns", @"ac3"],
-        @[@"FLAC Audio Files", @"flac.icns", @"flac"],
-        @[@"SND Audio Files", @"song.icns", @"snd"]
+        @[@"WAVE File", @"wav.icns", @"wav", @"w64"],
+        @[@"AIFF File", @"aiff.icns", @"aif", @"aiff", @"aifc"],
+        @[@"CAF File", @"song.icns", @"caf"],
+        @[@"AU File", @"song.icns", @"au"],
+        @[@"MPEG Audio File", @"mp3.icns", @"mp3", @"mp2", @"mp1", @"m2a", @"mpa"],
+        @[@"MPEG Stream File", @"song.icns", @"mpeg"],
+        @[@"MPEG-4 Audio File", @"m4a.icns", @"m4a", @"mp4", @"m4b", @"m4r"],
+        @[@"MPEG-4 AAC Audio File", @"song.icns", @"aac", @"adts"],
+        @[@"AMR Audio File", @"song.icns", @"amr"],
+        @[@"USAC Audio File", @"song.icns", @"xhe"],
+        @[@"AC-3 Audio File", @"song.icns", @"ac3"],
+        @[@"FLAC Audio File", @"flac.icns", @"flac"],
+        @[@"SND Audio File", @"song.icns", @"snd"]
     ];
 }
 

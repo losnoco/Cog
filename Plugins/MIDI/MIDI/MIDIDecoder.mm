@@ -371,13 +371,13 @@ static OSType getOSType(const char * in_)
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"General MIDI Files", @"song.icns", @"mid", @"midi", @"kar"],
-        @[@"RIFF MIDI Files", @"song.icns", @"rmi"],
-        @[@"MIDS MIDI Files", @"song.icns", @"mids", @"mds"],
-        @[@"HMI MIDI Files", @"song.icns", @"hmi", @"hmp", @"hmq"],
-        @[@"id Software MUS MIDI Files", @"song.icns", @"mus"],
-        @[@"XMI MIDI Files", @"song.icns", @"xmi"],
-        @[@"Loudness MIDI Files", @"song.icns", @"lds"]
+        @[@"General MIDI File", @"song.icns", @"mid", @"midi", @"kar"],
+        @[@"RIFF MIDI File", @"song.icns", @"rmi"],
+        @[@"MIDS MIDI File", @"song.icns", @"mids", @"mds"],
+        @[@"HMI MIDI File", @"song.icns", @"hmi", @"hmp", @"hmq"],
+        @[@"id Software MUS MIDI File", @"song.icns", @"mus"],
+        @[@"XMI MIDI File", @"song.icns", @"xmi"],
+        @[@"Loudness MIDI File", @"song.icns", @"lds"]
     ];
 }
 

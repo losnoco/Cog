@@ -334,7 +334,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"WavPack Audio Files", @"wv.icns", @"wv", @"wvp"]
+        @[@"Wavpack File", @"wv.icns", @"wv", @"wvp"]
     ];
 }
 

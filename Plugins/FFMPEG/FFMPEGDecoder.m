@@ -597,20 +597,20 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"Windows Media Audio Files", @"song.icns", @"wma", @"asf"],
-        @[@"TAK Audio Files", @"song.icns", @"tak"],
-        @[@"MPEG-4 Audio Files", @"m4a.icns", @"mp4", @"m4a"],
-        @[@"MPEG-4 AAC Audio Files", @"song.icns", @"aac"],
-        @[@"MPEG Audio Files", @"mp3.icns", @"mp3", @"m2a", @"mpa"],
-        @[@"Monkey's Audio Files", @"ape.icns", @"ape"],
-        @[@"AC-3 Audio Files", @"song.icns", @"ac3"],
-        @[@"DTS Audio Files", @"song.icns", @"dts"],
-        @[@"DTS-HD MA Audio Files", @"song.icns", @"dtshd"],
-        @[@"True Audio Files", @"song.icns", @"tta"],
-        @[@"TrueVQ Audio Files", @"song.icns", @"vqf", @"vqe", @"vql"],
-        @[@"Real Audio Files", @"song.icns", @"ra", @"rm", @"rmj"],
-        @[@"Matroska Audio Files", @"song.icns", @"mka"],
-        @[@"WebM Audio Files", @"song.icns", @"weba"]
+        @[@"Windows Media Audio File", @"song.icns", @"wma", @"asf"],
+        @[@"TAK Audio File", @"song.icns", @"tak"],
+        @[@"MPEG-4 Audio File", @"m4a.icns", @"mp4", @"m4a"],
+        @[@"MPEG-4 AAC Audio File", @"song.icns", @"aac"],
+        @[@"MPEG Audio File", @"mp3.icns", @"mp3", @"m2a", @"mpa"],
+        @[@"Monkey's Audio File", @"ape.icns", @"ape"],
+        @[@"AC-3 Audio File", @"song.icns", @"ac3"],
+        @[@"DTS Audio File", @"song.icns", @"dts"],
+        @[@"DTS-HD MA Audio File", @"song.icns", @"dtshd"],
+        @[@"True Audio File", @"song.icns", @"tta"],
+        @[@"TrueVQ Audio File", @"song.icns", @"vqf", @"vqe", @"vql"],
+        @[@"Real Audio File", @"song.icns", @"ra", @"rm", @"rmj"],
+        @[@"Matroska Audio File", @"song.icns", @"mka"],
+        @[@"WebM Audio File", @"song.icns", @"weba"]
     ];
 }
 

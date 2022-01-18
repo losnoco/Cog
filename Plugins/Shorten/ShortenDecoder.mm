@@ -116,7 +116,7 @@
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"Shorten Audio Files", @"shn.icns", @"shn"]
+        @[@"Shorten File", @"shn.icns", @"shn"]
     ];
 }
 

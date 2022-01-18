@@ -377,8 +377,8 @@ static void sidTuneLoader(const char* fileName, std::vector<uint8_t>& bufferRef)
 + (NSArray *)fileTypeAssociations
 {
     return @[
-        @[@"SID Files", @"vg.icns", @"sid"],
-        @[@"SID MUS Files", @"song.icns", @"mus"]
+        @[@"SID File", @"vg.icns", @"sid"],
+        @[@"SID MUS File", @"song.icns", @"mus"]
     ];
 }
 
