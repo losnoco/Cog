@@ -18,6 +18,29 @@
 
 @implementation AdPlugDecoder
 
+static CAdPlugDatabase * g_database = NULL;
+
++ (void)initialize
+{
+    if (!g_database) {
+        CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetBundleWithIdentifier(CFSTR("net.kode54.AdPlug")), CFSTR("adplug"), CFSTR("db"), NULL);
+        
+        CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
+        
+        NSString *dbPath = (__bridge NSString *) macPath;
+        
+        if (dbPath) {
+            g_database = new CAdPlugDatabase;
+            g_database->load([dbPath UTF8String]);
+            
+            CAdPlug::set_database( g_database );
+            
+            CFRelease(macPath);
+            CFRelease(appUrlRef);
+        }
+    }
+}
+
 - (id)init
 {
     self = [super init];
