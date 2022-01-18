@@ -14,6 +14,8 @@
 
 #import "json.h"
 
+#import "Logging.h"
+
 static NSString * equalizerGenre = @"";
 static const NSString * equalizerDefaultGenre = @"Flat";
 static NSArray * equalizer_presets_processed = nil;
@@ -572,7 +574,27 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         AUListenerAddParameter(listenerRef, (__bridge void *)self, &param);
         
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQpreset" options:0 context:nil];
-
+        
+        // Time to hack the auView
+        NSButton * flattenButton = nil;
+        NSPopUpButton * bandsButton = nil;
+        NSArray * views = [auView subviews];
+        
+        for (NSView * view in views) {
+            if ([view isKindOfClass:[NSPopUpButton class]]) {
+                NSPopUpButton * popupButton = (NSPopUpButton *) view;
+                bandsButton = popupButton;
+            }
+            else if ([view isKindOfClass:[NSButton class]]) {
+                NSButton * button = (NSButton *) view;
+                flattenButton = button;
+            }
+        }
+        
+        [flattenButton setHidden:YES];
+        
+        // Hacking done, showing window
+        
         if (front)
         {
             [self orderFront:self];
