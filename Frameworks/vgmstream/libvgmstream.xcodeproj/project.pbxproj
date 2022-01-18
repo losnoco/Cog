@@ -154,6 +154,8 @@
 		8346D98525BF83B300D1A8B0 /* compresswave_decoder_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8346D98025BF83B300D1A8B0 /* compresswave_decoder_lib.c */; };
 		8346D98625BF83B300D1A8B0 /* compresswave_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8346D98125BF83B300D1A8B0 /* compresswave_decoder.c */; };
 		8346D98725BF83B300D1A8B0 /* compresswave_decoder_lib.h in Headers */ = {isa = PBXBuildFile; fileRef = 8346D98225BF83B300D1A8B0 /* compresswave_decoder_lib.h */; };
+		8347C7482796D76700FA8A7D /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7432796D76700FA8A7D /* info.c */; };
+		8347C7492796D76700FA8A7D /* seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7472796D76700FA8A7D /* seek.c */; };
 		8349A8DF1FE6251F00E26435 /* vorbis_custom_utils_vid1.c in Sources */ = {isa = PBXBuildFile; fileRef = 8349A8DC1FE6251E00E26435 /* vorbis_custom_utils_vid1.c */; };
 		8349A8E11FE6251F00E26435 /* ea_mt_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8349A8DE1FE6251F00E26435 /* ea_mt_decoder.c */; };
 		8349A8E81FE6253900E26435 /* blocked_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8349A8E21FE6253800E26435 /* blocked_dec.c */; };
@@ -974,6 +976,8 @@
 		8346D98025BF83B300D1A8B0 /* compresswave_decoder_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compresswave_decoder_lib.c; sourceTree = "<group>"; };
 		8346D98125BF83B300D1A8B0 /* compresswave_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compresswave_decoder.c; sourceTree = "<group>"; };
 		8346D98225BF83B300D1A8B0 /* compresswave_decoder_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compresswave_decoder_lib.h; sourceTree = "<group>"; };
+		8347C7432796D76700FA8A7D /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = info.c; sourceTree = "<group>"; };
+		8347C7472796D76700FA8A7D /* seek.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = seek.c; sourceTree = "<group>"; };
 		8349A8DC1FE6251E00E26435 /* vorbis_custom_utils_vid1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_vid1.c; sourceTree = "<group>"; };
 		8349A8DE1FE6251F00E26435 /* ea_mt_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ea_mt_decoder.c; sourceTree = "<group>"; };
 		8349A8E21FE6253800E26435 /* blocked_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_dec.c; sourceTree = "<group>"; };
@@ -1631,12 +1635,14 @@
 				83AA7F892519C076004C5298 /* decode.c */,
 				83AA7F862519C076004C5298 /* decode.h */,
 				83A3F0711E3AD8B900D6A794 /* formats.c */,
+				8347C7432796D76700FA8A7D /* info.c */,
 				83C7282522BC8C1400678B4A /* mixing.c */,
 				83C7282422BC8C1400678B4A /* mixing.h */,
 				83C7282622BC8C1400678B4A /* plugins.c */,
 				83C7282322BC8C1300678B4A /* plugins.h */,
 				83AA7F882519C076004C5298 /* render.c */,
 				83AA7F872519C076004C5298 /* render.h */,
+				8347C7472796D76700FA8A7D /* seek.c */,
 				83A3F0731E3AD8B900D6A794 /* stack_alloc.h */,
 				836F6F1718BDC2190095E648 /* streamfile.c */,
 				836F6F1818BDC2190095E648 /* streamfile.h */,
@@ -2904,6 +2910,7 @@
 				834FE0BB215C798C000A5D3D /* celt_fsb_decoder.c in Sources */,
 				836F702518BDC2190095E648 /* rwx.c in Sources */,
 				836F6F3A18BDC2190095E648 /* sdx2_decoder.c in Sources */,
+				8347C7482796D76700FA8A7D /* info.c in Sources */,
 				836F6FAF18BDC2190095E648 /* ngc_dsp_std.c in Sources */,
 				836F6F7118BDC2190095E648 /* ast.c in Sources */,
 				834FE0BF215C79A9000A5D3D /* flat.c in Sources */,
@@ -3138,6 +3145,7 @@
 				836F6F2A18BDC2190095E648 /* lsf_decoder.c in Sources */,
 				8349A9151FE6258200E26435 /* ps2_xa2_rrp.c in Sources */,
 				836F703518BDC2190095E648 /* svs.c in Sources */,
+				8347C7492796D76700FA8A7D /* seek.c in Sources */,
 				836F6FA318BDC2190095E648 /* naomi_spsd.c in Sources */,
 				8306B0B920984552000302D4 /* blocked_matx.c in Sources */,
 				83A21F7B201D895B000F04B9 /* blocked_xvag.c in Sources */,
