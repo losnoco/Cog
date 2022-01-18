@@ -96,6 +96,10 @@
 - (void)notifyStreamChanged:(id)userInfo;
 - (void)notifyStreamChangedMainThread:(id)userInfo;
 
+- (void)beginEqualizer:(AudioUnit)eq;
+- (void)refreshEqualizer:(AudioUnit)eq;
+- (void)endEqualizer:(AudioUnit)eq;
+
 - (BOOL)endOfInputReached:(BufferChain *)sender;
 - (void)setShouldContinue:(BOOL)s;
 //- (BufferChain *)bufferChain;
@@ -113,6 +117,7 @@
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(id)status userInfo:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq;
+- (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq;
 
 @end

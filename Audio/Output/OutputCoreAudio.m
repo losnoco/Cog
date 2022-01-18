@@ -154,6 +154,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQpreset" options:0 context:NULL];
 	}
 	
 	return self;
@@ -178,6 +179,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         BOOL enabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
         
         [self setEqualizerEnabled:enabled];
+    }
+    else if ([keyPath isEqualToString:@"values.GraphicEQpreset"]) {
+        if (_eq)
+            [outputController refreshEqualizer:_eq];
     }
 }
 
@@ -726,6 +731,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable"];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQpreset"];
 }
 
 - (void)pause

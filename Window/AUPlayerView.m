@@ -14,7 +14,10 @@
 
 #import "json.h"
 
+static NSString * equalizerGenre = @"";
+static const NSString * equalizerDefaultGenre = @"Flat";
 static NSArray * equalizer_presets_processed = nil;
+static NSDictionary * equalizer_presets_by_name = nil;
 static json_value * equalizer_presets = NULL;
 
 static const float winamp_equalizer_bands[10] = { 70, 180, 320, 600, 1000, 3000, 6000, 12000, 14000, 16000 };
@@ -145,6 +148,7 @@ static void loadPresets()
             {
                 // Got the array of presets
                 NSMutableArray * array = [[NSMutableArray alloc] init];
+                NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
                 
                 size_t count = equalizer_presets->u.object.values[1].value->u.array.length;
                 json_value ** values = equalizer_presets->u.object.values[1].value->u.array.values;
@@ -168,12 +172,15 @@ static void loadPresets()
                                     }
                                 }
                             }
-                            [array addObject:[NSDictionary dictionaryWithDictionary:equalizerItem]];
+                            NSDictionary *outItem = [NSDictionary dictionaryWithDictionary:equalizerItem];
+                            [array addObject:outItem];
+                            [dict setObject:outItem forKey:[outItem objectForKey:@"name"]];
                         }
                     }
                 }
                 
                 equalizer_presets_processed = [NSArray arrayWithArray:array];
+                equalizer_presets_by_name = [NSDictionary dictionaryWithDictionary:dict];
             }
         }
         [fileHandle closeFile];
@@ -183,6 +190,76 @@ static void loadPresets()
     }
     CFRelease(macPath);
     CFRelease(appUrlRef);
+}
+
+void equalizerApplyGenre(NSString *genre) {
+    equalizerGenre = genre;
+    if ([[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"GraphicEQtrackgenre"]) {
+        NSDictionary * preset = [equalizer_presets_by_name objectForKey:genre];
+        if (!preset) {
+            // Find a match
+            if (genre && ![genre isEqualToString:@""])
+            {
+                NSUInteger matchLength = 0;
+                NSString *lowerCaseGenre = [genre lowercaseString];
+                for (NSString *key in [equalizer_presets_by_name allKeys]) {
+                    NSString *lowerCaseKey = [key lowercaseString];
+                    if ([lowerCaseGenre containsString:lowerCaseKey]) {
+                        if ([key length] > matchLength)
+                        {
+                            matchLength = [key length];
+                            preset = [equalizer_presets_by_name objectForKey:key];
+                        }
+                    }
+                }
+            }
+            
+            if (!preset) {
+                preset = [equalizer_presets_by_name objectForKey:equalizerDefaultGenre];
+            }
+        }
+        if (preset) {
+            NSInteger index = [equalizer_presets_processed indexOfObject:preset];
+            [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setInteger:index forKey:@"GraphicEQpreset"];
+        }
+    }
+}
+
+void equalizerLoadPreset(AudioUnit au) {
+    NSInteger index = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] integerForKey:@"GraphicEQpreset"];
+    if (index >= 0 && index < [equalizer_presets_processed count]) {
+        NSDictionary * preset = [equalizer_presets_processed objectAtIndex:index];
+        equalizerApplyPreset(au, preset);
+    }
+}
+
+void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
+    if (au && preset) {
+        AudioUnitParameterValue paramValue = 0;
+        if (AudioUnitGetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, &paramValue))
+            return;
+
+        size_t numberOfBands = paramValue ? 31 : 10;
+
+        if (numberOfBands == 31) {
+            float presetValues[31];
+            interpolateBandsTo31(presetValues, preset);
+            
+            for (unsigned int i = 0; i < 31; ++i)
+            {
+                AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
+            }
+        }
+        else if (numberOfBands == 10) {
+            float presetValues[10];
+            interpolateBandsTo10(presetValues, preset);
+            
+            for (unsigned int i = 0; i < 10; ++i)
+            {
+                AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
+            }
+        }
+    }
 }
 
 @interface AUPluginUI (Private)
@@ -389,21 +466,14 @@ static void loadPresets()
         [self setAutodisplay:YES];
         [self setOneShot:YES];
 
-        if (front)
-        {
-            [self orderFront:self];
-        }
-        else
-            [self orderWindow:NSWindowBelow relativeTo:window];
-        
         [self setReleasedWhenClosed:NO];
         
-        NSRect topRect = NSMakeRect(0, 0, req_width, 32);
+        NSRect topRect = NSMakeRect(0, 0, req_width, 40);
         
         topView = [[NSView alloc] initWithFrame:topRect];
         
-        NSRect topFrame = NSMakeRect(0, req_height, req_width, req_height);
-        NSRect newFrame = NSMakeRect(0, 0, req_width, topRect.size.height);
+        NSRect topFrame = NSMakeRect(0, req_height, req_width, topRect.size.height);
+        NSRect newFrame = NSMakeRect(0, 0, req_width, req_height);
         
         topRect = NSMakeRect(0, 0, req_width, req_height + topRect.size.height);
         
@@ -416,16 +486,26 @@ static void loadPresets()
         [topView setFrame:topFrame];
         [auView setFrame:newFrame];
         
-        BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"GraphicEQenable"];
+        BOOL enabled = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"GraphicEQenable"];
         
         NSButton *button = [NSButton checkboxWithTitle:@"Enabled" target:self action:@selector(toggleEnable:)];
         [button setState:enabled ? NSControlStateValueOn : NSControlStateValueOff];
         
         NSRect buttonFrame = [button frame];
-        buttonFrame.origin = NSMakePoint( 18, 4 );
+        buttonFrame.origin = NSMakePoint( 18, 7 );
         [button setFrame:buttonFrame];
         
         [topView addSubview:button];
+
+        enabled = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"GraphicEQtrackgenre"];
+        NSButton *trackButton = [NSButton checkboxWithTitle:@"Tracking genre tags" target:self action:@selector(toggleTracking:)];
+        [trackButton setState:enabled ? NSControlStateValueOn : NSControlStateValueOff];
+        
+        NSRect trackButtonFrame = [trackButton frame];
+        trackButtonFrame.origin = NSMakePoint(buttonFrame.origin.x + buttonFrame.size.width + 4, 7);
+        [trackButton setFrame:trackButtonFrame];
+        
+        [topView addSubview:trackButton];
         
         loadPresets();
         
@@ -444,16 +524,17 @@ static void loadPresets()
         [array addObject:@"Custom"];
         [presetButton addItemsWithTitles:array];
         
-        NSInteger presetSelected = [[NSUserDefaults standardUserDefaults] integerForKey:@"GraphicEQpreset"];
+        NSInteger presetSelected = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] integerForKey:@"GraphicEQpreset"];
         if (presetSelected < 0 || presetSelected >= [equalizer_presets_processed count])
             presetSelected = [equalizer_presets_processed count];
         
         [presetButton selectItemAtIndex:presetSelected];
+        equalizerLoadPreset(au);
         
         NSTextField * presetLabel = [NSTextField labelWithString:@"Preset:"];
         
         NSRect labelFrame = [presetLabel frame];
-        labelFrame.origin = NSMakePoint(popupFrame.origin.x - labelFrame.size.width - 2, 6);
+        labelFrame.origin = NSMakePoint(popupFrame.origin.x - labelFrame.size.width - 2, 7);
         [presetLabel setFrame:labelFrame];
         [topView addSubview:presetLabel];
         
@@ -481,6 +562,15 @@ static void loadPresets()
             param.mParameterID = i;
             AUListenerAddParameter(listenerRef, (__bridge void *)self, &param);
         }
+        
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQpreset" options:0 context:nil];
+
+        if (front)
+        {
+            [self orderFront:self];
+        }
+        else
+            [self orderWindow:NSWindowBelow relativeTo:window];
     }
     
     return self;
@@ -490,6 +580,19 @@ static void loadPresets()
 {
     if (listenerRef) {
         AUListenerDispose(listenerRef);
+    }
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQpreset"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"values.GraphicEQpreset"]) {
+        NSInteger index = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] integerForKey:@"GraphicEQpreset"];
+        
+        if (index < 0 || index > [equalizer_presets_processed count])
+            index = [equalizer_presets_processed count];
+        
+        [presetButton selectItemAtIndex:index];
     }
 }
 
@@ -502,51 +605,41 @@ static void loadPresets()
 {
     BOOL enabled = [sender state] == NSControlStateValueOn;
     
-    [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:@"GraphicEQenable"];
+    [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setBool:enabled forKey:@"GraphicEQenable"];
+}
+
+- (void) toggleTracking:(id)sender
+{
+    BOOL enabled = [sender state] == NSControlStateValueOn;
+    
+    [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setBool:enabled forKey:@"GraphicEQtrackgenre"];
+    
+    equalizerApplyGenre(equalizerGenre);
+    
+    [self changePreset:presetButton];
 }
 
 - (void) changePreset:(id)sender
 {
-    AudioUnitParameterValue paramValue = 0;
-    if (AudioUnitGetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, &paramValue))
-        return;
-    
     NSInteger index = [sender indexOfSelectedItem];
-    
-    size_t numberOfBands = paramValue ? 31 : 10;
     
     if (index < [equalizer_presets_processed count])
     {
         NSDictionary * preset = [equalizer_presets_processed objectAtIndex:index];
-    
-        if (numberOfBands == 31) {
-            float presetValues[31];
-            interpolateBandsTo31(presetValues, preset);
-            
-            for (unsigned int i = 0; i < 31; ++i)
-            {
-                AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
-            }
-        }
-        else if (numberOfBands == 10) {
-            float presetValues[10];
-            interpolateBandsTo10(presetValues, preset);
-            
-            for (unsigned int i = 0; i < 10; ++i)
-            {
-                AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
-            }
-        }
         
-        NSEvent * event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown
-                                             location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0 windowNumber:[self windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1.0];
+        equalizerApplyPreset(au, preset);
         
-        [auView mouseDown:event];
+        NSEvent * event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0 windowNumber:[self windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1.0];
 
-        [[NSUserDefaults standardUserDefaults] setInteger:index forKey:@"GraphicEQpreset"];
+        [auView mouseDown:event];
+        [auView mouseUp:event];
+        
+        [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setInteger:index forKey:@"GraphicEQpreset"];
     }
     else
-        [[NSUserDefaults standardUserDefaults] setInteger:-1 forKey:@"GraphicEQpreset"];
+    {
+        [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setInteger:-1 forKey:@"GraphicEQpreset"];
+    }
 }
 
 @end

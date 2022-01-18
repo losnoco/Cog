@@ -269,6 +269,11 @@
     [self sendDelegateMethod:@selector(audioPlayer:displayEqualizer:) withVoid:eq waitUntilDone:YES];
 }
 
+- (void)refreshEqualizer:(AudioUnit)eq
+{
+    [self sendDelegateMethod:@selector(audioPlayer:refreshEqualizer:) withVoid:eq waitUntilDone:YES];
+}
+
 - (void)endEqualizer:(AudioUnit)eq
 {
     [self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:YES];

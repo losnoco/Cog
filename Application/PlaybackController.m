@@ -62,6 +62,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
         [NSNumber numberWithDouble:100.0], @"volume",
         [NSNumber numberWithBool:NO], @"GraphicEQenable",
         [NSNumber numberWithInt:-1], @"GraphicEQpreset",
+        [NSNumber numberWithBool:NO], @"GraphicEQtrackgenre",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
@@ -667,6 +668,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
             
             CFRelease(classData);
         }
+        
+        equalizerLoadPreset(eq);
     }
     
     if (_eqWasOpen)
@@ -675,6 +678,11 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
         _equi = [[AUPluginUI alloc] initWithSampler:_eq bringToFront:NO orWindowNumber:window.windowNumber];
         _eqWasOpen = NO;
     }
+}
+
+- (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(AudioUnit)eq
+{
+    equalizerLoadPreset(eq);
 }
 
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq
@@ -737,6 +745,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	
 	[playlistController setCurrentEntry:pe];
+    
+    equalizerApplyGenre([pe genre]);
     
     lastPosition = -10;
 	
