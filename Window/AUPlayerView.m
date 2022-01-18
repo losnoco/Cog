@@ -195,6 +195,8 @@ static void loadPresets()
 void equalizerApplyGenre(NSString *genre) {
     equalizerGenre = genre;
     if ([[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"GraphicEQtrackgenre"]) {
+        loadPresets();
+        
         NSDictionary * preset = [equalizer_presets_by_name objectForKey:genre];
         if (!preset) {
             // Find a match
