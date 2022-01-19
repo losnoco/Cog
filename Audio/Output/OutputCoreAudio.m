@@ -221,6 +221,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         }
         
         if ([outputController shouldReset]) {
+            size_t length = [[outputController buffer] bufferedLength];
+            atomic_fetch_add(&bytesRendered, length);
+            [outputController incrementAmountPlayed:length];
             [[outputController buffer] empty];
             [outputController setShouldReset:NO];
         }
