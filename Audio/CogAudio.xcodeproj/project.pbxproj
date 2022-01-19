@@ -51,6 +51,8 @@
 		835C88AA2797D4D400E28EAE /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88A62797D4D400E28EAE /* lpc.c */; };
 		835C88AB2797D4D400E28EAE /* lpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88A72797D4D400E28EAE /* lpc.h */; };
 		835C88AD2797DA5800E28EAE /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88AC2797DA5800E28EAE /* util.h */; };
+		835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88AF279811A500E28EAE /* hdcd_decode2.h */; };
+		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		8389F270278E64590074164C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F225278E64590074164C /* config.h */; };
 		8389F279278E64590074164C /* utf.h in Headers */ = {isa = PBXBuildFile; fileRef = 8389F236278E64590074164C /* utf.h */; };
@@ -164,6 +166,8 @@
 		835C88A62797D4D400E28EAE /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lpc.c; sourceTree = "<group>"; };
 		835C88A72797D4D400E28EAE /* lpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lpc.h; sourceTree = "<group>"; };
 		835C88AC2797DA5800E28EAE /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = util.h; path = ThirdParty/lvqcl/util.h; sourceTree = SOURCE_ROOT; };
+		835C88AF279811A500E28EAE /* hdcd_decode2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdcd_decode2.h; sourceTree = "<group>"; };
+		835C88B0279811A500E28EAE /* hdcd_decode2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdcd_decode2.c; sourceTree = "<group>"; };
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8389F225278E64590074164C /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		8389F228278E64590074164C /* encoding_utf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = encoding_utf.c; sourceTree = "<group>"; };
@@ -369,6 +373,7 @@
 		17D21CD80B8BE5B400D1EBDE /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				835C88AE279811A500E28EAE /* hdcd */,
 				835C88A22797D4D400E28EAE /* lvqcl */,
 				8389F224278E64590074164C /* RetroArch */,
 				17D21DC40B8BE79700D1EBDE /* CoreAudioUtils */,
@@ -441,6 +446,15 @@
 				835C88A52797D4D400E28EAE /* License.txt */,
 			);
 			path = License;
+			sourceTree = "<group>";
+		};
+		835C88AE279811A500E28EAE /* hdcd */ = {
+			isa = PBXGroup;
+			children = (
+				835C88AF279811A500E28EAE /* hdcd_decode2.h */,
+				835C88B0279811A500E28EAE /* hdcd_decode2.c */,
+			);
+			path = hdcd;
 			sourceTree = "<group>";
 		};
 		8389F224278E64590074164C /* RetroArch */ = {
@@ -766,6 +780,7 @@
 				839366671815923C006DD712 /* CogPluginMulti.h in Headers */,
 				17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */,
 				8389F292278E64590074164C /* s16_to_float.h in Headers */,
+				835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */,
 				8389F279278E64590074164C /* utf.h in Headers */,
 				8389F288278E64590074164C /* retro_environment.h in Headers */,
 				83A44A02279119B50049B6E2 /* RefillNode.h in Headers */,
@@ -864,6 +879,7 @@
 				17D21CE00B8BE5B400D1EBDE /* VirtualRingBuffer.m in Sources */,
 				8389F29D278E64590074164C /* s16_to_float.c in Sources */,
 				8389F29B278E64590074164C /* sinc_resampler.c in Sources */,
+				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
 				8389F299278E64590074164C /* memalign.c in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,

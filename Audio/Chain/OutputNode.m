@@ -171,4 +171,9 @@
 {
     [controller endEqualizer:eq];
 }
+
+- (void)sustainHDCD
+{
+    [output sustainHDCD];
+}
 @end

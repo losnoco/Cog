@@ -75,4 +75,6 @@
 
 - (double)secondsBuffered;
 
+- (void)sustainHDCD;
+
 @end

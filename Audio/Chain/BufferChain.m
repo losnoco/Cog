@@ -231,7 +231,7 @@
 - (double)secondsBuffered
 {
     double duration = 0.0;
-    OutputNode * outputNode = [controller output];
+    OutputNode * outputNode = (OutputNode *) [controller output];
     duration += [outputNode secondsBuffered];
     
     Node * node = [self finalNode];
@@ -240,6 +240,12 @@
         node = [node previousNode];
     }
     return duration;
+}
+
+- (void)sustainHDCD
+{
+    OutputNode * outputNode = (OutputNode *) [controller output];
+    [outputNode sustainHDCD];
 }
 
 @end

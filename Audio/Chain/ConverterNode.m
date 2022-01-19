@@ -19,6 +19,8 @@
 #import "lpc.h"
 #import "util.h"
 
+#import "hdcd_decode2.h"
+
 #import <TargetConditionals.h>
 
 #if TARGET_CPU_X86 || TARGET_CPU_X86_64
@@ -80,6 +82,8 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         dsd2pcmCount = 0;
         
         outputResampling = @"";
+        
+        hdcd_decoder = NULL;
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
@@ -542,7 +546,7 @@ static void dsd2pcm_process(void * _state, uint8_t * src, size_t sofs, size_t si
     state->fpos = fpos;
 }
 
-static void convert_dsd_to_f32(float *output, uint8_t *input, size_t count, size_t channels, void ** dsd2pcm)
+static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count, size_t channels, void ** dsd2pcm)
 {
     for (size_t channel = 0; channel < channels; ++channel)
     {
@@ -550,7 +554,7 @@ static void convert_dsd_to_f32(float *output, uint8_t *input, size_t count, size
     }
 }
 
-static void convert_u8_to_s16(int16_t *output, uint8_t *input, size_t count)
+static void convert_u8_to_s16(int16_t *output, const uint8_t *input, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
     {
@@ -560,7 +564,7 @@ static void convert_u8_to_s16(int16_t *output, uint8_t *input, size_t count)
     }
 }
 
-static void convert_s8_to_s16(int16_t *output, uint8_t *input, size_t count)
+static void convert_s8_to_s16(int16_t *output, const uint8_t *input, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
     {
@@ -577,7 +581,15 @@ static void convert_u16_to_s16(int16_t *buffer, size_t count)
     }
 }
 
-static void convert_s24_to_s32(int32_t *output, uint8_t *input, size_t count)
+static void convert_s16_to_hdcd_input(int32_t *output, const int16_t *input, size_t count)
+{
+    for (size_t i = 0; i < count; ++i)
+    {
+        output[i] = input[i];
+    }
+}
+
+static void convert_s24_to_s32(int32_t *output, const uint8_t *input, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
     {
@@ -586,7 +598,7 @@ static void convert_s24_to_s32(int32_t *output, uint8_t *input, size_t count)
     }
 }
 
-static void convert_u24_to_s32(int32_t *output, uint8_t *input, size_t count)
+static void convert_u24_to_s32(int32_t *output, const uint8_t *input, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
     {
@@ -603,7 +615,7 @@ static void convert_u32_to_s32(int32_t *buffer, size_t count)
     }
 }
 
-static void convert_f64_to_f32(float *output, double *input, size_t count)
+static void convert_f64_to_f32(float *output, const double *input, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
     {
@@ -822,6 +834,7 @@ tryagain:
         
         if (bytesReadFromInput && !isFloat)
         {
+            float gain = 1.0;
             size_t bitsPerSample = inputFormat.mBitsPerChannel;
             if (bitsPerSample == 1) {
                 samplesRead = bytesReadFromInput / inputFormat.mBytesPerPacket;
@@ -842,7 +855,23 @@ tryagain:
                 bytesReadFromInput = samplesRead * 2;
                 isUnsigned = NO;
             }
-            if (bitsPerSample <= 16) {
+            if (hdcd_decoder) { // implied bits per sample is 16, produces 32 bit int scale
+                samplesRead = bytesReadFromInput / 2;
+                if (isUnsigned)
+                    convert_u16_to_s16(inputBuffer, samplesRead);
+                convert_s16_to_hdcd_input(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+                memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * 4);
+                hdcd_process_stereo((hdcd_state_stereo_t *)hdcd_decoder, inputBuffer, (int)(samplesRead / 2));
+                if (((hdcd_state_stereo_t*)hdcd_decoder)->channel[0].sustain &&
+                    ((hdcd_state_stereo_t*)hdcd_decoder)->channel[1].sustain) {
+                    [controller sustainHDCD];
+                }
+                gain = 2.0;
+                bitsPerSample = 32;
+                bytesReadFromInput = samplesRead * 4;
+                isUnsigned = NO;
+            }
+            else if (bitsPerSample <= 16) {
                 samplesRead = bytesReadFromInput / 2;
                 if (isUnsigned)
                     convert_u16_to_s16(inputBuffer, samplesRead);
@@ -868,7 +897,7 @@ tryagain:
                 samplesRead = bytesReadFromInput / 4;
                 if (isUnsigned)
                     convert_u32_to_s32(inputBuffer, samplesRead);
-                convert_s32_to_float(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, 1.0);
+                convert_s32_to_float(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, gain);
                 memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
                 bitsPerSample = 32;
                 bytesReadFromInput = samplesRead * sizeof(float);
@@ -1137,6 +1166,13 @@ static float db_to_scale(float db)
         return NO;
     
     // These are really placeholders, as we're doing everything internally now
+    if (inputFormat.mBitsPerChannel == 16 &&
+        inputFormat.mChannelsPerFrame == 2 &&
+        inputFormat.mSampleRate == 44100) {
+        // possibly HDCD, run through decoder
+        hdcd_decoder = calloc(1, sizeof(hdcd_state_stereo_t));
+        hdcd_reset_stereo((hdcd_state_stereo_t *)hdcd_decoder, 44100);
+    }
     
     floatFormat = inputFormat;
     floatFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
@@ -1300,6 +1336,11 @@ static float db_to_scale(float db)
     while (convertEntered)
     {
         usleep(500);
+    }
+    if (hdcd_decoder)
+    {
+        free(hdcd_decoder);
+        hdcd_decoder = NULL;
     }
     if (resampler && resampler_data)
     {

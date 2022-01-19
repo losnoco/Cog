@@ -120,8 +120,20 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
             [_self->readSemaphore timedWait:500];
         }
     }
+    
+    float volumeScale = 1.0;
+    long sustained = atomic_load_explicit(&_self->bytesHdcdSustained, memory_order_relaxed);
+    if (sustained) {
+        if (sustained < amountRead) {
+            atomic_store(&_self->bytesHdcdSustained, 0);
+        }
+        else {
+            atomic_fetch_sub(&_self->bytesHdcdSustained, amountRead);
+        }
+        volumeScale = 0.5;
+    }
 
-    scaleBuffersByVolume(ioData, _self->volume);
+    scaleBuffersByVolume(ioData, _self->volume * volumeScale);
     
     if (amountRead < amountToRead)
     {
@@ -150,6 +162,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         started = NO;
         
         atomic_init(&bytesRendered, 0);
+        atomic_init(&bytesHdcdSustained, 0);
         
         writeSemaphore = [[Semaphore alloc] init];
         readSemaphore = [[Semaphore alloc] init];
@@ -765,6 +778,11 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     NSError *err;
     [_au startHardwareAndReturnError:&err];
     paused = NO;
+}
+
+- (void)sustainHDCD
+{
+    atomic_store(&bytesHdcdSustained, deviceFormat.mSampleRate * 10 * sizeof(float) * 2);
 }
 
 @end

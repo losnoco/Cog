@@ -42,6 +42,7 @@
     BOOL eqEnabled;
     
     atomic_long bytesRendered;
+    atomic_long bytesHdcdSustained;
     
     BOOL listenerapplied;
     
@@ -75,5 +76,7 @@
 - (void)setVolume:(double) v;
 
 - (void)setEqualizerEnabled:(BOOL)enabled;
+
+- (void)sustainHDCD;
 
 @end

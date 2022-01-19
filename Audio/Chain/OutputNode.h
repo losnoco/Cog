@@ -60,4 +60,6 @@
 
 - (BOOL)isPaused;
 
+- (void)sustainHDCD;
+
 @end

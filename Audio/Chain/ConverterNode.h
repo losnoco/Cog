@@ -71,6 +71,8 @@
     id __weak originalPreviousNode;
     
     NSString *outputResampling;
+    
+    void *hdcd_decoder;
 }
 
 @property AudioStreamBasicDescription inputFormat;
