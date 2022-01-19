@@ -257,8 +257,6 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	[self setPosition:pos];
     
     [[playlistController currentEntry] setCurrentPosition:pos];
-    
-    [self sendMetaData];
 }
 
 - (IBAction)seek:(id)sender
@@ -272,8 +270,6 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     [self setPosition:time];
 
 	[[playlistController currentEntry] setCurrentPosition:time];
-    
-    [self sendMetaData];
 }
 
 - (IBAction)seek:(id)sender toTime:(NSTimeInterval)position
@@ -313,11 +309,10 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	}
 	else
 	{
+        lastPosition = -10;
 		[audioPlayer seekToTime:seekTo];
 		[self setPosition:seekTo];
 	}
-    
-    [self sendMetaData];
 }
 
 - (IBAction)eventSeekBackward:(id)sender
@@ -332,10 +327,10 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	if (seekTo < 0) 
 		seekTo = 0;
 
+    lastPosition = -10;
+    
 	[audioPlayer seekToTime:seekTo];
 	[self setPosition:seekTo];
-    
-    [self sendMetaData];
 }
 
 /*
@@ -855,6 +850,9 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
         [[NSUserDefaults standardUserDefaults] setInteger:CogStatusPlaying forKey:@"lastPlaybackStatus"];
         [[NSUserDefaults standardUserDefaults] setInteger:lastTrackPlaying forKey:@"lastTrackPlaying"];
         [[NSUserDefaults standardUserDefaults] setDouble:p forKey:@"lastTrackPosition"];
+        
+        // If we handle this here, then it will send on all seek operations, which also reset lastPosition
+        [self sendMetaData];
 
         lastPosition = p;
     }
