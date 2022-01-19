@@ -17,6 +17,7 @@
 #import <audio/conversion/s32_to_float.h>
 
 #import "lpc.h"
+#import "util.h"
 
 #import <TargetConditionals.h>
 
@@ -67,11 +68,7 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         paused = NO;
         outputFormatChanged = NO;
         
-        skipResampler = NO;
-        
-        latencyStarted = -1;
-        latencyEaten = 0;
-        latencyPostfill = NO;
+        skipResampler = YES;
         
         refillNode = nil;
         originalPreviousNode = nil;
@@ -504,6 +501,13 @@ static void dsd2pcm_reset(void * _state)
     state->fpos = FILT_LOOKUP_PARTS;
 }
 
+static int dsd2pcm_latency(void * _state)
+{
+    struct dsd2pcm_state * state = (struct dsd2pcm_state *) _state;
+    if (state) return state->FIFO_LENGTH;
+    else return 0;
+}
+
 static void dsd2pcm_process(void * _state, uint8_t * src, size_t sofs, size_t sinc, float * dest, size_t dofs, size_t dinc, size_t len)
 {
     struct dsd2pcm_state * state = (struct dsd2pcm_state *) _state;
@@ -536,13 +540,6 @@ static void dsd2pcm_process(void * _state, uint8_t * src, size_t sofs, size_t si
         len--;
     }
     state->fpos = fpos;
-}
-
-static int dsd2pcm_latency(void * _state)
-{
-    struct dsd2pcm_state * state = (struct dsd2pcm_state *) _state;
-    if (state) return state->FIFO_LENGTH;
-    else return 0;
 }
 
 static void convert_dsd_to_f32(float *output, uint8_t *input, size_t count, size_t channels, void ** dsd2pcm)
@@ -674,45 +671,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
     }
 }
 
-static const int extrapolate_order = 16;
-
-static void extrapolate(float *buffer, ssize_t channels, ssize_t frameSize, ssize_t size, BOOL backward, void ** extrapolateBuffer, size_t * extrapolateSize)
-{
-    const ssize_t delta = (backward ? -1 : 1) * channels;
-
-    size_t lpc_size = sizeof(float) * extrapolate_order;
-    size_t my_work_size = sizeof(float) * frameSize;
-    size_t their_work_size = sizeof(float) * (extrapolate_order + size);
-    
-    size_t newSize = lpc_size + my_work_size + their_work_size;
-    if (!*extrapolateBuffer || *extrapolateSize < newSize)
-    {
-        *extrapolateBuffer = realloc(*extrapolateBuffer, newSize);
-        *extrapolateSize = newSize;
-    }
-
-    float *lpc = (float*)(*extrapolateBuffer);
-    float *work = (float*)(*extrapolateBuffer + lpc_size);
-    float *their_work = (float*)(*extrapolateBuffer + lpc_size + my_work_size);
-    
-    for (size_t ch = 0; ch < channels; ch++)
-    {
-        if (frameSize - size > extrapolate_order * 2)
-        {
-            float *chPcmBuf = buffer + ch + (backward ? frameSize : -1) * channels;
-            for (size_t i = 0; i < frameSize; i++) work[i] = *(chPcmBuf += delta);
-            
-            // Limit extrapolation source to two times the order size
-            vorbis_lpc_from_data(work + frameSize - extrapolate_order * 2, lpc, extrapolate_order * 2, extrapolate_order);
-            
-            vorbis_lpc_predict(lpc, work + frameSize - size - extrapolate_order, extrapolate_order, work + frameSize - size, size, their_work);
-            
-            chPcmBuf = buffer + ch + (backward ? frameSize : -1) * channels;
-            for (size_t i = 0; i < frameSize; i++) *(chPcmBuf += delta) = work[i];
-        }
-    }
-}
-
 -(void)process
 {
 	char writeBuf[CHUNK_SIZE];	
@@ -753,10 +711,7 @@ static void extrapolate(float *buffer, ssize_t channels, ssize_t frameSize, ssiz
 	UInt32 ioNumberPackets;
     int amountReadFromFC;
     int amountRead = 0;
-    int extrapolateStart = 0;
-    int extrapolateEnd = 0;
-    int eatFromEnd = 0;
-    size_t amountToSkip = 0;
+    int amountToSkip;
 
     if (stopping)
         return 0;
@@ -779,10 +734,10 @@ tryagain:
         BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
         BOOL isUnsigned = !isFloat && !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
 
-        uint8_t fillByte = (dsd2pcm) ? 0x55 : ((isUnsigned) ? 0x80 : 0x00);
-        
         // Approximately the most we want on input
         ioNumberPackets = (amount - amountRead) / outputFormat.mBytesPerPacket;
+        if (!skipResampler && ioNumberPackets < PRIME_LEN_)
+            ioNumberPackets = PRIME_LEN_;
         
         // We want to upscale this count if the ratio is below zero
         if (sampleRatio < 1.0)
@@ -790,38 +745,18 @@ tryagain:
             ioNumberPackets = ((uint32_t)(ioNumberPackets / sampleRatio) + 15) & ~15;
         }
         
+        amountToSkip = 0;
+        if (dsd2pcm && !is_preextrapolated_) {
+            amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
+            ioNumberPackets += dsd2pcmLatency;
+        }
+
         size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
         if (!inputBuffer || inputBufferSize < newSize)
             inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 3 );
         
         ssize_t amountToWrite = ioNumberPackets * inputFormat.mBytesPerPacket;
-        amountToSkip = 0;
-        
-        if (!skipResampler)
-        {
-            if (latencyStarted < 0)
-            {
-                latencyStarted = resampler->latency(resampler_data);
-                extrapolateStart = (int)latencyStarted;
-                if (dsd2pcm) extrapolateStart += dsd2pcmLatency;
-            }
-
-            if (latencyStarted)
-            {
-                ssize_t latencyToWrite = latencyStarted * inputFormat.mBytesPerPacket;
-                if (latencyToWrite > amountToWrite)
-                    latencyToWrite = amountToWrite;
-                
-                memset(inputBuffer, fillByte, latencyToWrite);
-
-                amountToSkip = latencyToWrite;
-                amountToWrite -= amountToSkip;
-
-                latencyEaten = (int)ceil(extrapolateStart * sampleRatio);
-
-                latencyStarted -= latencyToWrite / inputFormat.mBytesPerPacket;
-            }
-        }
+        amountToWrite -= amountToSkip;
         
         ssize_t bytesReadFromInput = 0;
         
@@ -842,26 +777,18 @@ tryagain:
         
         if (stopping || [self shouldContinue] == NO || [self endOfStream] == YES)
         {
-            if (!skipResampler && !latencyPostfill)
+            if (!skipResampler && !is_postextrapolated_)
             {
-                ioNumberPackets = (int)resampler->latency(resampler_data);
-                if (dsd2pcm) ioNumberPackets += dsd2pcmLatency;
-                newSize = ioNumberPackets * inputFormat.mBytesPerPacket;
-                newSize += bytesReadFromInput;
-                if (!inputBuffer || inputBufferSize < newSize)
-                    inputBuffer = realloc( inputBuffer, inputBufferSize = newSize * 3);
-                
-                latencyPostfill = YES;
-                extrapolateEnd = ioNumberPackets;
-
-                memset(inputBuffer + bytesReadFromInput, fillByte, extrapolateEnd * inputFormat.mBytesPerPacket);
-
-                bytesReadFromInput = newSize;
-
-                if (dsd2pcm)
-                {
-                    eatFromEnd = (int)ceil(dsd2pcmLatency * sampleRatio);
+                if (dsd2pcm) {
+                    amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
+                    memset(inputBuffer + bytesReadFromInput, 0x55, amountToSkip);
+                    bytesReadFromInput += amountToSkip;
+                    amountToSkip = 0;
                 }
+                is_postextrapolated_ = 1;
+            }
+            else if (!is_postextrapolated_ && dsd2pcm) {
+                is_postextrapolated_ = 3;
             }
         }
         
@@ -869,8 +796,13 @@ tryagain:
             convertEntered = NO;
             return amountRead;
         }
-
+        
         bytesReadFromInput += amountToSkip;
+        
+        if (dsd2pcm && amountToSkip) {
+            memset(inputBuffer, 0x55, amountToSkip);
+            dsdLatencyEaten = (int)ceil(dsd2pcmLatency * sampleRatio);
+        }
 
         if (bytesReadFromInput &&
             (inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian))
@@ -946,16 +878,63 @@ tryagain:
         }
         
         // Extrapolate start
-        if (extrapolateStart)
+        if (!skipResampler && !is_preextrapolated_)
         {
-            extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateStart, YES, &extrapolateBuffer, &extrapolateBufferSize);
-            extrapolateStart = 0;
+            size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
+            size_t prime = min(samples_in_buffer, PRIME_LEN_);
+            size_t newSize = N_samples_to_add_ * floatFormat.mBytesPerPacket;
+            newSize += bytesReadFromInput;
+            
+            if (newSize > inputBufferSize) {
+                inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
+            }
+            
+            memmove(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer, bytesReadFromInput);
+            
+            // Great padding! And we want to eat more, based on the resampler filter size
+            int samplesLatency = (int)ceil(resampler->latency(resampler_data) * sampleRatio);
+            
+            // Guess what? This extrapolates into the memory before its input pointer!
+            lpc_extrapolate_bkwd(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+            bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
+            latencyEaten = N_samples_to_drop_ + samplesLatency;
+            if (dsd2pcm) latencyEaten += dsdLatencyEaten;
+            is_preextrapolated_ = 2;
+        }
+        else if (dsd2pcm && !is_preextrapolated_) {
+            latencyEaten = dsd2pcmLatency;
+            is_preextrapolated_ = 3;
         }
 
-        if (extrapolateEnd)
+        if (is_postextrapolated_ == 1)
         {
-            extrapolate( inputBuffer, floatFormat.mChannelsPerFrame, bytesReadFromInput / floatFormat.mBytesPerPacket, extrapolateEnd, NO, &extrapolateBuffer, &extrapolateBufferSize);
-            extrapolateEnd = 0;
+            size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
+            size_t prime = min(samples_in_buffer, PRIME_LEN_);
+
+            size_t newSize = bytesReadFromInput;
+            newSize += N_samples_to_add_ * floatFormat.mBytesPerPacket;
+            if (newSize > inputBufferSize) {
+                inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
+            }
+            
+            // And now that we've reached the end, we eat slightly less, due to the filter size
+            int samplesLatency = (int)resampler->latency(resampler_data);
+            if (dsd2pcm) samplesLatency += dsd2pcmLatency;
+            samplesLatency = (int)ceil(samplesLatency * sampleRatio);
+            
+            lpc_extrapolate_fwd(inputBuffer, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+            bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
+            latencyEatenPost = N_samples_to_drop_;
+            if (latencyEatenPost > samplesLatency) {
+                latencyEatenPost -= samplesLatency;
+            }
+            else {
+                latencyEatenPost = 0;
+            }
+            is_postextrapolated_ = 2;
+        }
+        else if (is_postextrapolated_ == 3) { // skip end of DSD output
+            latencyEatenPost = dsd2pcmLatency;
         }
         
         // Input now contains bytesReadFromInput worth of floats, in the input sample rate
@@ -1006,34 +985,31 @@ tryagain:
         
         inpOffset += inputSamples * floatFormat.mBytesPerPacket;
         
-        if (!skipResampler)
+        if (latencyEaten)
         {
-            if (latencyEaten)
+            if (src_data.output_frames > latencyEaten)
             {
-                if (src_data.output_frames > latencyEaten)
-                {
-                    src_data.output_frames -= latencyEaten;
-                    memmove(src_data.data_out, src_data.data_out + latencyEaten * inputFormat.mChannelsPerFrame, src_data.output_frames * floatFormat.mBytesPerPacket);
-                    latencyEaten = 0;
-                }
-                else
-                {
-                    latencyEaten -= src_data.output_frames;
-                    src_data.output_frames = 0;
-                }
+                src_data.output_frames -= latencyEaten;
+                memmove(src_data.data_out, src_data.data_out + latencyEaten * inputFormat.mChannelsPerFrame, src_data.output_frames * floatFormat.mBytesPerPacket);
+                latencyEaten = 0;
             }
-            else if (eatFromEnd)
+            else
             {
-                if (src_data.output_frames > eatFromEnd)
-                {
-                    src_data.output_frames -= eatFromEnd;
-                }
-                else
-                {
-                    src_data.output_frames = 0;
-                }
-                eatFromEnd = 0;
+                latencyEaten -= src_data.output_frames;
+                src_data.output_frames = 0;
             }
+        }
+        else if (latencyEatenPost)
+        {
+            if (src_data.output_frames > latencyEatenPost)
+            {
+                src_data.output_frames -= latencyEatenPost;
+            }
+            else
+            {
+                src_data.output_frames = 0;
+            }
+            latencyEatenPost = 0;
         }
         
         amountReadFromFC = (int)(src_data.output_frames * floatFormat.mBytesPerPacket);
@@ -1224,11 +1200,22 @@ static float db_to_scale(float db)
         {
             return NO;
         }
-    
-        latencyStarted = -1;
-        latencyEaten = 0;
-        latencyPostfill = NO;
+        
+        PRIME_LEN_ = max(floatFormat.mSampleRate/20, 1024u);
+        PRIME_LEN_ = min(PRIME_LEN_, 16384u);
+        PRIME_LEN_ = max(PRIME_LEN_, 2*LPC_ORDER + 1);
+        
+        N_samples_to_add_ = floatFormat.mSampleRate;
+        N_samples_to_drop_ = outputFormat.mSampleRate;
+        
+        samples_len(&N_samples_to_add_, &N_samples_to_drop_, 20, 8192u);
+        
+        is_preextrapolated_ = 0;
+        is_postextrapolated_ = 0;
     }
+
+    latencyEaten = 0;
+    latencyEatenPost = 0;
 
 	PrintStreamDesc(&inf);
 	PrintStreamDesc(&outf);

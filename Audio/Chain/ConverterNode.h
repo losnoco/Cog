@@ -34,9 +34,15 @@
     
     BOOL skipResampler;
     
-    ssize_t latencyStarted;
-    size_t latencyEaten;
-    BOOL latencyPostfill;
+    unsigned int PRIME_LEN_;
+    unsigned int N_samples_to_add_;
+    unsigned int N_samples_to_drop_;
+    
+    unsigned int is_preextrapolated_;
+    unsigned int is_postextrapolated_;
+
+    int latencyEaten;
+    int latencyEatenPost;
     
     double sampleRatio;
     
@@ -52,6 +58,7 @@
     void **dsd2pcm;
     size_t dsd2pcmCount;
     int dsd2pcmLatency;
+    int dsdLatencyEaten;
 	
 	AudioStreamBasicDescription inputFormat;
     AudioStreamBasicDescription floatFormat;

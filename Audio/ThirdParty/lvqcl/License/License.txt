@@ -1,0 +1,39 @@
+SoX resampler plugin for foobar2000 audio player
+Copyright (C) lvqcl
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+
+
+This software uses code of SoX licensed under the terms of LGPLv2.1
+Copyright (C) robs@users.sourceforge.net
+Copyright (C) Chris Bagwell and SoX contributors
+Copyright (C) Reuben Thomas
+
+
+This software uses code of FFmpeg licensed under the terms of LGPLv2.1
+Copyright (C) Fabrice Bellard
+Copyright (C) Michael Niedermayer <michaelni@gmx.at>
+Copyright (C) Alex Converse <alex dot converse at gmail dot com>
+Copyright (C) Loren Merritt
+Copyright (C) Vitor Sessak
+Copyright (C) x264 project
+
+
+This software uses code of General Purpose FFT Package 
+Copyright (C) Takuya OOURA
+
+
+This software uses code of foobar2000 1.4 SDK
+Copyright (C) 2001-2018, Peter Pawlowski
