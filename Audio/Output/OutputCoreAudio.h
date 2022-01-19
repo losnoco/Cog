@@ -19,6 +19,11 @@
 
 #import "Semaphore.h"
 
+//#define OUTPUT_LOG
+#ifdef OUTPUT_LOG
+#import <stdio.h>
+#endif
+
 @class OutputNode;
 
 @interface OutputCoreAudio : NSObject {
@@ -51,6 +56,10 @@
     size_t _bufferSize;
     
     AudioUnit _eq;
+    
+#ifdef OUTPUT_LOG
+    FILE *_logFile;
+#endif
 }
 
 - (id)initWithController:(OutputNode *)c;
