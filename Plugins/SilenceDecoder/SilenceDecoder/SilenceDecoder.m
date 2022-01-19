@@ -105,4 +105,8 @@ enum { channels = 2 };
     return 1.0;
 }
 
++ (NSArray *)fileTypeAssociations {
+    return @[];
+}
+
 @end
