@@ -222,10 +222,20 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         if ([outputController shouldReset]) {
             size_t length = [[outputController buffer] bufferedLength];
-            atomic_fetch_add(&bytesRendered, length);
-            [outputController incrementAmountPlayed:length];
             [[outputController buffer] empty];
             [outputController setShouldReset:NO];
+            NSArray * delayedCopy = [delayedEvents copy];
+            [delayedEvents removeAllObjects];
+            for (NSNumber * eventOffset in delayedCopy) {
+                long eventTimestamp = [eventOffset longValue];
+                if (eventTimestamp >= length) {
+                    eventTimestamp -= length;
+                }
+                else {
+                    eventTimestamp = 0;
+                }
+                [delayedEvents addObject:[NSNumber numberWithLong:eventTimestamp]];
+            }
         }
 
         while ([delayedEvents count]) {
