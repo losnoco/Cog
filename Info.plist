@@ -25,6 +25,63 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>m3u</string>
+				<string>m3u8</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>m3u.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>M3U Playlist File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>pls</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>pls.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>PLS Playlist File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>rsn</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>RAR Archive of SPC Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>vgm7z</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>7Z Archive of VGM Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>04sw</string>
 				<string>208</string>
 				<string>2dx9</string>
