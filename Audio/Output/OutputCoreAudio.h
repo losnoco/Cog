@@ -27,6 +27,7 @@
     Semaphore * writeSemaphore;
     Semaphore * readSemaphore;
     
+    BOOL stopInvoked;
     BOOL running;
     BOOL stopping;
     BOOL stopped;

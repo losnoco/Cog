@@ -20,9 +20,9 @@ static void fillBuffers(AudioBufferList *ioData, float * inbuffer, size_t count,
     const size_t channels = ioData->mNumberBuffers;
     for (int i = 0; i < channels; ++i)
     {
-        size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
+        const size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
         float * output = ((float *)ioData->mBuffers[i].mData) + offset;
-        float * input = inbuffer + i;
+        const float * input = inbuffer + i;
         for (size_t j = 0, k = (count > maxCount) ? maxCount : count; j < k; ++j)
         {
             *output = *input;
@@ -276,7 +276,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         [writeSemaphore timedWait:5000];
     }
     stopped = YES;
-    [self stop];
+    if (!stopInvoked)
+        [self stop];
 }
 
 - (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID
@@ -532,6 +533,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	if (_au)
 		[self stop];
     
+    stopInvoked = NO;
     running = NO;
     stopping = NO;
     stopped = NO;
@@ -620,8 +622,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         for (i = 0; i < channels; ++i) {
             float * outBuffer = ((float*)inputData->mBuffers[0].mData) + i;
-            float * inBuffer = ((float*)ioData->mBuffers[i].mData);
-            int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
+            const float * inBuffer = ((float*)ioData->mBuffers[i].mData);
+            const int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
             for (int j = 0; j < frameCount; ++j) {
                 *outBuffer = *inBuffer;
                 inBuffer++;
@@ -692,6 +694,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (void)stop
 {
+    stopInvoked = YES;
     stopping = YES;
     paused = NO;
     [writeSemaphore signal];
