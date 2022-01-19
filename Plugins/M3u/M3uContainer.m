@@ -14,12 +14,12 @@
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"m3u", @"m3u8", nil];
+	return @[@"m3u", @"m3u8"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-mpegurl", @"audio/mpegurl", nil];
+	return @[@"audio/x-mpegurl", @"audio/mpegurl"];
 }
 
 + (float)priority
@@ -77,7 +77,7 @@
         id<CogSource> source = [audioSourceClass audioSourceForURL:url];
         
         if (![source open:url])
-            return [NSArray array];
+            return @[];
         
         long size = 0;
         long bytesread = 0;
@@ -121,7 +121,7 @@
     free(filecontents);
 	if (!contents) {
 		ALog(@"Could not open file...%@ %@", url, contents);
-		return [NSArray array];
+		return @[];
 	}
 	
 	NSMutableArray *entries = [NSMutableArray array];

@@ -361,7 +361,7 @@ static void sidTuneLoader(const char* fileName, std::vector<uint8_t>& bufferRef)
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"sid", @"mus", nil];
+	return @[@"sid", @"mus"];
 }
 
 + (NSArray *)mimeTypes 

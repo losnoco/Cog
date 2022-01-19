@@ -37,7 +37,7 @@
 	NSUInteger i;
 	for (i = 0; i < minCount; ++i)
 	{
-		NSArray* p = [NSArray arrayWithObjects:[x objectAtIndex:i], [y objectAtIndex:i], nil];
+		NSArray* p = @[[x objectAtIndex:i], [y objectAtIndex:i]];
 		[pairs addObject:p];
 	}
 	
@@ -55,7 +55,7 @@
 		[second addObject:[pair second]];
 	}
 	
-	return [NSArray arrayWithObjects:first,second,nil];
+	return @[first,second];
 }
 
 

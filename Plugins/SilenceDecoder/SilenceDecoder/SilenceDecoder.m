@@ -92,12 +92,12 @@ enum { channels = 2 };
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray array];
+	return @[];
 }
 
 + (NSArray *)mimeTypes 
 {	
-	return [NSArray arrayWithObject:@"audio/x-silence"];
+	return @[@"audio/x-silence"];
 }
 
 + (float)priority

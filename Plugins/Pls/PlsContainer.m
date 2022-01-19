@@ -14,12 +14,12 @@
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObject:@"pls"];
+	return @[@"pls"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-scpls", @"application/pls", nil];
+	return @[@"audio/x-scpls", @"application/pls"];
 }
 
 + (float)priority
@@ -79,7 +79,7 @@
         id<CogSource> source = [audioSourceClass audioSourceForURL:url];
         
         if (![source open:url])
-            return [NSArray array];
+            return @[];
         
         long size = 0;
         long bytesread = 0;
@@ -123,7 +123,7 @@
     free(filecontents);
 	if (!contents) {
 		ALog(@"Could not open file...%@ %@", url, contents);
-		return [NSArray array];
+		return @[];
 	}
 	
 	NSMutableArray *entries = [NSMutableArray array];

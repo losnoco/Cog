@@ -18,7 +18,7 @@ NSString * getDatabasePath(void)
 
 NSArray * createSchema(void)
 {
-    return [NSArray arrayWithObjects:
+    return @[
 @"CREATE TABLE IF NOT EXISTS stringdictionary ( \
         stringid INTEGER PRIMARY KEY AUTOINCREMENT, \
         referencecount INTEGER, \
@@ -67,7 +67,7 @@ NSArray * createSchema(void)
         queueid INTEGER PRIMARY KEY AUTOINCREMENT, \
         queueindex INTEGER, \
         entryid INTEGER \
-    );", nil
+    );"
     ];
 }
 

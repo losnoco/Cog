@@ -66,7 +66,7 @@
     midi_meta_data_item item;
     bool remap_display_name = !metadata.get_item( "title", item );
     
-    NSArray * allowedKeys = [NSArray arrayWithObjects:@"title", @"artist", @"album", @"year", nil];
+    NSArray * allowedKeys = @[@"title", @"artist", @"album", @"year"];
     
     NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithCapacity:10];
     

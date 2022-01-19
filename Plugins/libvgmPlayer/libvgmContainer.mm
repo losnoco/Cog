@@ -15,9 +15,9 @@
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"s98", @"dro", @"gym",
-        @"vgm",@"vgz", // These are included so they can override AdPlug
-            nil];
+	return @[@"s98", @"dro", @"gym",
+             @"vgm",@"vgz" // These are included so they can override AdPlug and VGMStream
+            ];
 }
 
 + (NSArray *)mimeTypes 
@@ -39,7 +39,7 @@
     }
 
     // None of the covered formats include subsongs, but dodge VGMStream and AdPlug
-    return [NSArray arrayWithObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingString:@"#0"]]];
+    return @[[NSURL URLWithString:[[url absoluteString] stringByAppendingString:@"#0"]]];
 }
 
 @end

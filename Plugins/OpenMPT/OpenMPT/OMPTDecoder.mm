@@ -172,12 +172,12 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
         [array addObject:[NSString stringWithUTF8String:ext->c_str()]];
     }
     
-    return array;
+    return [NSArray arrayWithArray:array];
 }
 
 + (NSArray *)mimeTypes 
 {	
-	return [NSArray arrayWithObjects:@"audio/x-it", @"audio/x-xm", @"audio/x-s3m", @"audio/x-mod", nil];
+	return @[@"audio/x-it", @"audio/x-xm", @"audio/x-s3m", @"audio/x-mod"];
 }
 
 + (float)priority
@@ -192,7 +192,7 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
     [ret addObject:@"song.icns"];
     [ret addObjectsFromArray:[self fileTypes]];
     
-    return [NSArray arrayWithObject:ret];
+    return @[[NSArray arrayWithArray:ret]];
 }
 
 @end

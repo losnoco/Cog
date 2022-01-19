@@ -61,7 +61,7 @@
 
 + (NSArray *)schemes
 {
-	return [NSArray arrayWithObject:@"silence"];
+	return @[@"silence"];
 }
 
 - (void)dealloc {

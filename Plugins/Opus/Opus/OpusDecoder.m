@@ -175,12 +175,12 @@ opus_int64 sourceTell(void *_stream)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"opus",@"ogg",nil];
+	return @[@"opus",@"ogg"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-opus+ogg", @"application/ogg", nil];
+	return @[@"audio/x-opus+ogg", @"application/ogg"];
 }
 
 + (float)priority

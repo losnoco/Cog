@@ -403,7 +403,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
         [array addObject:[NSString stringWithUTF8String:formats[i]]];
     }
     
-    return array;
+    return [NSArray arrayWithArray:array];
 }
 
 + (NSArray *)mimeTypes 
@@ -423,7 +423,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     [ret addObject:@"vg.icns"];
     [ret addObjectsFromArray:[self fileTypes]];
     
-    return [NSArray arrayWithObject:ret];
+    return @[[NSArray arrayWithArray:ret]];
 }
 
 @end

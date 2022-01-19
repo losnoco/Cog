@@ -299,7 +299,7 @@ didCompleteWithError:(NSError *)error{
 
 + (NSArray *)schemes
 {
-	return [NSArray arrayWithObjects:@"http", @"https", nil];
+	return @[@"http", @"https"];
 }
 
 @end

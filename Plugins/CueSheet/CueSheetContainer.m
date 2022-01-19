@@ -17,12 +17,12 @@
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"cue", @"ogg", @"opus", @"flac", @"wv", @"mp3", nil];
+	return @[@"cue", @"ogg", @"opus", @"flac", @"wv", @"mp3"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"application/x-cue", nil]; //This is basically useless
+	return @[@"application/x-cue"]; //This is basically useless
 }
 
 + (float)priority
@@ -33,7 +33,7 @@
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
 	if (![url isFileURL]) {
-		return [NSArray array];
+		return @[];
 	}
 	
     if ([url fragment]) {

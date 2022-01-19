@@ -92,10 +92,10 @@
 - (void)showSideView
 {
 	if ([splitView isVertical]) {
-		[splitView setSubviews:[NSArray arrayWithObjects:[self view], mainView, nil]];
+		[splitView setSubviews:@[[self view], mainView]];
 	}
 	else {
-		[splitView setSubviews:[NSArray arrayWithObjects:mainView, [self view], nil]];
+		[splitView setSubviews:@[mainView, [self view]]];
 	}
 	
 	[self setDividerPosition: [[NSUserDefaults standardUserDefaults] floatForKey:[self sideViewDividerPositionDefaultsKey]]];
@@ -107,7 +107,7 @@
 
 - (void)hideSideView
 {
-	[splitView setSubviews:[NSArray arrayWithObject:mainView]];
+	[splitView setSubviews:@[mainView]];
 	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:[self showSideViewDefaultsKey]];
 	
 	[[mainView window] makeFirstResponder:mainView];

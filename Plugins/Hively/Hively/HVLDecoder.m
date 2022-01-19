@@ -191,7 +191,7 @@ static void oneTimeInit(void)
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"hvl", @"ahx", nil];
+	return @[@"hvl", @"ahx"];
 }
 
 + (NSArray *)fileTypeAssociations

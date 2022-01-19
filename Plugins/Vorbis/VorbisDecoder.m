@@ -167,12 +167,12 @@ long sourceTell(void *datasource)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"ogg",nil];
+	return @[@"ogg"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", nil];
+	return @[@"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg"];
 }
 
 + (float)priority

@@ -228,18 +228,18 @@
 
 + (NSArray *)coverNames
 {
-	return [NSArray arrayWithObjects:@"cover", @"folder", @"album", @"front", nil];
+	return @[@"cover", @"folder", @"album", @"front"];
 }
 
 + (NSArray *)fileTypes
 {
 	//May be a way to get a list of supported formats
-	return [NSArray arrayWithObjects:@"ape", @"asf", @"wma", @"ogg", @"opus", @"mpc", @"flac", @"m4a", @"mp3", @"tak", @"ac3", @"apl", @"dts", @"dtshd", @"tta", @"wav", @"aif", @"aiff", @"wv", @"wvp", nil];
+	return @[@"ape", @"asf", @"wma", @"ogg", @"opus", @"mpc", @"flac", @"m4a", @"mp3", @"tak", @"ac3", @"apl", @"dts", @"dtshd", @"tta", @"wav", @"aif", @"aiff", @"wv", @"wvp"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-ape", @"audio/x-ms-wma", @"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", @"audio/x-musepack", @"audio/x-flac", @"audio/x-m4a", @"audio/mpeg", @"audio/x-mp3", @"audio/x-tak", @"audio/x-ac3", @"audio/x-apl", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-tta", @"audio/wav", @"audio/aiff", @"audio/x-wavpack", nil];
+	return @[@"audio/x-ape", @"audio/x-ms-wma", @"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg", @"audio/x-musepack", @"audio/x-flac", @"audio/x-m4a", @"audio/mpeg", @"audio/x-mp3", @"audio/x-tak", @"audio/x-ac3", @"audio/x-apl", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-tta", @"audio/wav", @"audio/aiff", @"audio/x-wavpack"];
 }
 
 + (float)priority

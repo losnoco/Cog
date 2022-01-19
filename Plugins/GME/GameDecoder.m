@@ -209,7 +209,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sfm", @"sgc", @"spc", nil];
+	return @[@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sfm", @"sgc", @"spc"];
 }
 
 + (NSArray *)mimeTypes 
@@ -229,7 +229,7 @@ gme_err_t readCallback( void* data, void* out, long count )
     [ret addObject:@"vg.icns"];
     [ret addObjectsFromArray:[self fileTypes]];
     
-    return [NSArray arrayWithObject:ret];
+    return @[ret];
 }
 
 

@@ -1739,12 +1739,12 @@ static int usf_info(void * context, const char * name, const char * value)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf", @"usf", @"miniusf", nil];
+	return @[@"psf",@"minipsf",@"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf", @"usf", @"miniusf"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-psf", nil];
+	return @[@"audio/x-psf"];
 }
 
 + (float)priority
@@ -1759,7 +1759,7 @@ static int usf_info(void * context, const char * name, const char * value)
     [ret addObject:@"vg.icns"];
     [ret addObjectsFromArray:[self fileTypes]];
     
-    return [NSArray arrayWithObject:ret];
+    return @[[NSArray arrayWithArray:ret]];
 }
 
 

@@ -193,7 +193,7 @@ static CAdPlugDatabase * g_database = NULL;
         }
     }
     
-    return array;
+    return [NSArray arrayWithArray:array];
 }
 
 + (NSArray *)mimeTypes 
@@ -213,7 +213,7 @@ static CAdPlugDatabase * g_database = NULL;
     [ret addObject:@"vg.icns"];
     [ret addObjectsFromArray:[self fileTypes]];
     
-    return [NSArray arrayWithObject:ret];
+    return @[[NSArray arrayWithArray:ret]];
 }
 
 @end

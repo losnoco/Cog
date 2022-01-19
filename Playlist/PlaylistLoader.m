@@ -202,7 +202,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	}
 	[fileHandle truncateFileAtOffset:0];
     
-    NSArray * filterList = [NSArray arrayWithObjects:@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"lengthText", @"positionText", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", @"albumArt", nil];
+    NSArray * filterList = @[@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"lengthText", @"positionText", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", @"albumArt"];
     
     NSMutableDictionary * albumArtSet = [[NSMutableDictionary alloc] init];
     
@@ -263,7 +263,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 
 	for (NSString *subpath in subpaths)
 	{
-		NSString *absoluteSubpath = [NSString pathWithComponents:[NSArray arrayWithObjects:path,subpath,nil]];
+		NSString *absoluteSubpath = [NSString pathWithComponents:@[path,subpath]];
 		
 		BOOL isDir;
 		if ( [manager fileExistsAtPath:absoluteSubpath isDirectory:&isDir] && isDir == NO)
@@ -277,7 +277,7 @@ NSMutableDictionary * dictionaryWithPropertiesOfObject(id obj, NSArray * filterL
 	}
     
     NSSortDescriptor * sd_path = [[NSSortDescriptor alloc] initWithKey:@"path" ascending:YES];
-    [urls sortUsingDescriptors:[NSArray arrayWithObject:sd_path]];
+    [urls sortUsingDescriptors:@[sd_path]];
 	
 	return urls;
 }
@@ -312,7 +312,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if (!urls)
     {
         [self setProgressBarStatus:-1];
-		return [NSArray array];
+		return @[];
     }
 	
 	if (index < 0)
@@ -468,7 +468,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     if (!count)
     {
         [self setProgressBarStatus:-1];
-        return [NSArray array];
+        return @[];
     }
     
     progressstep = 20.0 / (double)(count);
@@ -539,7 +539,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     [playlistController setSelectionIndexes:[NSIndexSet indexSet]];
     
     {
-        NSArray* arrayFirst = [NSArray arrayWithObject:[entries objectAtIndex:0]];
+        NSArray* arrayFirst = @[[entries objectAtIndex:0]];
         NSMutableArray* arrayRest = [entries mutableCopy];
         [arrayRest removeObjectAtIndex:0];
         
@@ -733,7 +733,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (NSArray*)addURL:(NSURL *)url
 {
-	return [self insertURLs:[NSArray arrayWithObject:url] atIndex:(int)[[playlistController content] count] sort:NO];
+	return [self insertURLs:@[url] atIndex:(int)[[playlistController content] count] sort:NO];
 }
 
 - (NSArray*)addDatabase
@@ -793,7 +793,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (NSArray *)acceptablePlaylistTypes
 {
-	return [NSArray arrayWithObjects:@"m3u", @"pls", nil];
+	return @[@"m3u", @"pls"];
 }
 
 - (NSArray *)acceptableContainerTypes

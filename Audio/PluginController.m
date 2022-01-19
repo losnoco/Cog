@@ -111,7 +111,7 @@ static PluginController *sharedPluginController = nil;
 	for (NSString *pname in dirContents)
 	{
 		NSString *ppath;
-		ppath = [NSString pathWithComponents:[NSArray arrayWithObjects:path,pname,nil]];
+		ppath = [NSString pathWithComponents:@[path,pname]];
 		
 		if ([[pname pathExtension] isEqualToString:@"bundle"])
 		{

@@ -62,7 +62,7 @@ static NSPredicate * musicOnlyPredicate = nil;
 	if (self = [super initWithWindowNibName:@"SpotlightPanel"]) {
         self.query = [[NSMetadataQuery alloc]init];
         [self.query setDelegate:self];
-        self.query.sortDescriptors = [NSArray arrayWithObjects:
+        self.query.sortDescriptors = @[
 									  [[NSSortDescriptor alloc]initWithKey:@"kMDItemAuthors"
 																 ascending:YES
 																   selector:@selector(compareFirstString:)],
@@ -71,8 +71,8 @@ static NSPredicate * musicOnlyPredicate = nil;
 																  selector:@selector(caseInsensitiveCompare:)],
 									  [[NSSortDescriptor alloc]initWithKey:@"kMDItemAudioTrackNumber"
 																 ascending:YES
-																  selector:@selector(compareTrackNumbers:)],
-									  nil];
+																  selector:@selector(compareTrackNumbers:)]
+									  ];
         
         // hook my query transformer up to me
         [PausingQueryTransformer setSearchController:self];
@@ -116,19 +116,18 @@ static NSPredicate * musicOnlyPredicate = nil;
         // musicOnlyPredicate
     
         NSPredicate *spotlightPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:
-                                           [NSArray arrayWithObjects: musicOnlyPredicate,
-                                                                searchPredicate,
-                                                                nil]];
+                                                               @[musicOnlyPredicate,
+                                                                 searchPredicate]];
         // Only preform a new search if the predicate has changed or there is a new path
         if(![self.query.predicate isEqual:spotlightPredicate]
             || ![self.query.searchScopes isEqualToArray:
-                [NSArray arrayWithObjects:pathControl.URL, nil]])
+                @[pathControl.URL]])
         {
             if([self.query isStarted])
                 [self.query stopQuery];
             self.query.predicate = spotlightPredicate;
             // Set scope to contents of pathControl
-            self.query.searchScopes = [NSArray arrayWithObjects:pathControl.URL, nil];
+            self.query.searchScopes = @[pathControl.URL];
             [self.query startQuery];
             DLog(@"Started query: %@", [self.query.predicate description]);
         }

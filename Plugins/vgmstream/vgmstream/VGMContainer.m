@@ -56,7 +56,7 @@
 	if (!stream)
 	{
 		ALog(@"Open failed for file: %@", [url absoluteString]);
-		return [NSArray array];
+		return @[];
 	}
 
     VGMInfoCache * sharedMyCache = [VGMInfoCache sharedCache];
@@ -81,7 +81,7 @@
         stream = init_vgmstream_from_cogfile([path UTF8String], i);
         
         if (!stream)
-            return [NSArray array];
+            return @[];
         
         trackurl = [NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]];
         [sharedMyCache stuffURL:trackurl stream:stream];

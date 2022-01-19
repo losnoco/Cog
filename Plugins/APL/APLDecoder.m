@@ -6,11 +6,11 @@
 @implementation APLDecoder
 
 + (NSArray *)fileTypes {	
-	return [NSArray arrayWithObject:@"apl"];
+    return @[@"apl"];
 }
 
 + (NSArray *)mimeTypes {	
-	return [NSArray arrayWithObjects:@"application/x-apl", nil];
+    return @[@"application/x-apl"];
 }
 
 + (float)priority {

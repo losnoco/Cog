@@ -125,7 +125,7 @@ static OSType getOSType(const char * in_)
     if ( [[source url] isFileURL] )
     {
         // Let's check for a SoundFont
-        NSArray * extensions = [NSArray arrayWithObjects:@"sflist", @"sf2pack", @"sf2", nil];
+        NSArray * extensions = @[@"sflist", @"sf2pack", @"sf2"];
         NSString * filePath = [[source url] path];
         NSString * fileNameBase = [filePath lastPathComponent];
         filePath = [filePath stringByDeletingLastPathComponent];
@@ -355,12 +355,12 @@ static OSType getOSType(const char * in_)
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"mid", @"midi", @"kar", @"rmi", @"mids", @"mds", @"hmi", @"hmp", @"hmq", @"mus", @"xmi", @"lds", nil];
+	return @[@"mid", @"midi", @"kar", @"rmi", @"mids", @"mds", @"hmi", @"hmp", @"hmq", @"mus", @"xmi", @"lds"];
 }
 
 + (NSArray *)mimeTypes 
 {	
-	return [NSArray arrayWithObjects:@"audio/midi", @"audio/x-midi", nil];
+	return @[@"audio/midi", @"audio/x-midi"];
 }
 
 + (float)priority

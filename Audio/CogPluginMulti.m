@@ -47,6 +47,10 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
     return -1.0;
 }
 
++ (NSArray *)fileTypeAssociations {
+    return nil;
+}
+
 - (id)initWithDecoders:(NSArray *)decoders
 {
     self = [super init];
@@ -144,6 +148,7 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
         [theDecoder removeObserver:observer forKeyPath:keyPath];
     }
 }
+
 
 @end
 

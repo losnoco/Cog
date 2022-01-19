@@ -32,7 +32,7 @@
     {
         data = [NSArchiver archivedDataWithRootObject:urls];
     }
-    [pboard declareTypes:[NSArray arrayWithObjects:CogUrlsPboardType,nil] owner:nil];	//add it to pboard
+    [pboard declareTypes:@[CogUrlsPboardType] owner:nil];	//add it to pboard
     [pboard setData:data forType:CogUrlsPboardType];
     
     [spotlightWindowController.query enableUpdates];

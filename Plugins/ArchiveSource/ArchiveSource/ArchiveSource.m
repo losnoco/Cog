@@ -181,7 +181,7 @@ static BOOL g_parse_unpack_path(NSString * src, NSString ** archive, NSString **
 
 + (NSArray *)schemes
 {
-	return [NSArray arrayWithObject:@"unpack"];
+	return @[@"unpack"];
 }
 
 - (void)dealloc {

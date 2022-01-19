@@ -483,7 +483,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         
         splitView = [[NSSplitView alloc] initWithFrame:topRect];
         
-        [splitView setSubviews:[NSArray arrayWithObjects:topView, auView, nil]];
+        [splitView setSubviews:@[topView, auView]];
         
         [self setContentView:splitView];
         

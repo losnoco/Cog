@@ -32,7 +32,7 @@
 		if (defaultDevice && defaultDeviceID != -1) {
 			if ((deviceID == defaultDeviceID) ||
 				([deviceName isEqualToString:defaultDeviceName])) {
-				[self setSelectedObjects:[NSArray arrayWithObject:deviceInfo]];
+				[self setSelectedObjects:@[deviceInfo]];
 				// Update `outputDevice`, in case the ID has changed.
 				[[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
 			}

@@ -19,15 +19,15 @@ static NSDictionary *importKeys;
 {
     // We need to translate the path string to a full URL
     NSArray *URLTransform = 
-        [NSArray arrayWithObjects:@"URL", @"PathToURLTransformer", nil];
+        @[@"URL", @"PathToURLTransformer"];
         
     // Extract the artist name from the authors array
     NSArray *artistTransform = 
-        [NSArray arrayWithObjects:@"artist", @"AuthorToArtistTransformer", nil];
+        @[@"artist", @"AuthorToArtistTransformer"];
         
     // Track numbers must sometimes be converted from NSNumber to NSString
     NSArray *trackTransform = 
-        [NSArray arrayWithObjects:@"spotlightTrack", @"NumberToStringTransformer", nil];
+        @[@"spotlightTrack", @"NumberToStringTransformer"];
     
     importKeys = [NSDictionary dictionaryWithObjectsAndKeys:
         @"title",                   @"kMDItemTitle",

@@ -93,7 +93,7 @@ void* kAppControllerContext = &kAppControllerContext;
     /* Yes, this is deprecated. Yes, this is required to give the dialog
      * a default set of filename extensions to save, including adding an
      * extension if the user does not supply one. */
-    [p setAllowedFileTypes:[NSArray arrayWithObjects:@"m3u", @"pls", nil]];
+    [p setAllowedFileTypes:@[@"m3u", @"pls"]];
 	
 	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
         if ( result == NSModalResponseOK ) {
@@ -117,8 +117,8 @@ void* kAppControllerContext = &kAppControllerContext;
 {
 	if (returnCode == NSModalResponseOK)
 	{
-		[playlistLoader willInsertURLs:[NSArray arrayWithObject:[panel url]] origin:URLOriginInternal];
-		[playlistLoader didInsertURLs:[playlistLoader addURLs:[NSArray arrayWithObject:[panel url]] sort:NO] origin:URLOriginInternal];
+		[playlistLoader willInsertURLs:@[[panel url]] origin:URLOriginInternal];
+		[playlistLoader didInsertURLs:[playlistLoader addURLs:@[[panel url]] sort:NO] origin:URLOriginInternal];
 	}
 }
 
@@ -401,7 +401,7 @@ void* kAppControllerContext = &kAppControllerContext;
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-	NSArray* urls = [NSArray arrayWithObject:[NSURL fileURLWithPath:filename]];
+	NSArray* urls = @[[NSURL fileURLWithPath:filename]];
 	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
 	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:NO] origin:URLOriginExternal];
 	return YES;

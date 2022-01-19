@@ -80,7 +80,7 @@ static SpotlightWindowController * searchController;
     if (value == nil) return nil;
     
     NSURL *scope = [NSURL URLWithString:value];
-    return [NSArray arrayWithObject: scope];
+    return @[scope];
 }
 
 @end

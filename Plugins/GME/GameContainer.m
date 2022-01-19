@@ -18,9 +18,7 @@
 + (NSArray *)fileTypes
 {
 	//There doesn't seem to be a way to get this list. These are the only multitrack types.
-	return [NSArray arrayWithObjects:@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sgc",
-        @"vgm",@"vgz", // These are included so they can override AdPlug
-            nil];
+	return @[@"ay", @"gbs", @"hes", @"kss", @"nsf", @"nsfe", @"sap", @"sgc"];
 }
 
 + (NSArray *)mimeTypes 
@@ -41,14 +39,6 @@
         return [NSMutableArray arrayWithObject:url];
     }
 
-    // Dodge both VGMStream and AdPlug
-    NSString * extension = [url pathExtension];
-    if (extension && ([extension caseInsensitiveCompare:@"vgm"] == NSOrderedSame ||
-                      [extension caseInsensitiveCompare:@"vgz"] == NSOrderedSame))
-    {
-        return [NSMutableArray arrayWithObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingString:@"#0"]]];
-    }
-    
     id audioSourceClass = NSClassFromString(@"AudioSource");
     id<CogSource> source = [audioSourceClass audioSourceForURL:url];
     
@@ -71,7 +61,7 @@
     
 	if (NULL != error) {
 		ALog(@"GME: Error loading file: %@ %s", [url path], error);
-		return [NSArray arrayWithObject:url];
+		return @[url];
 	}
     
     NSURL *m3uurl = [url URLByDeletingPathExtension];

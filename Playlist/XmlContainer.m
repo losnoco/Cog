@@ -89,7 +89,7 @@
     if (isArray) {
         items = (NSArray *) plist;
         albumArt = nil;
-        queueList = [NSArray array];
+        queueList = @[];
     } else {
         NSDictionary *dict = (NSDictionary *) plist;
         items = dict[@"items"];

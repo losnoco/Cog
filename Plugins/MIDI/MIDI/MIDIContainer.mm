@@ -40,10 +40,10 @@
     id<CogSource> source = [audioSourceClass audioSourceForURL:url];
     
     if (![source open:url])
-        return [NSArray array];
+        return @[];
     
     if (![source seekable])
-        return [NSArray array];
+        return @[];
 	
     [source seek:0 whence:SEEK_END];
     long size = [source tell];
@@ -56,7 +56,7 @@
     size_t track_count = 0;
     
     if ( !midi_processor::process_track_count( data, [[url pathExtension] UTF8String], track_count) )
-        return [NSArray array];
+        return @[];
 
 	NSMutableArray *tracks = [NSMutableArray array];
 	

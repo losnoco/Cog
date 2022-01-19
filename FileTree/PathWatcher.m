@@ -48,7 +48,7 @@ static void myFSEventCallback(
 	[self cleanUp];
 	
 	//Create FSEvent stream
-    NSArray *pathsToWatch = [NSArray arrayWithObject:path];
+    NSArray *pathsToWatch = @[path];
 
     context = (FSEventStreamContext*)malloc(sizeof(FSEventStreamContext));
     context->version = 0;

@@ -152,7 +152,7 @@
 
 + (NSArray *)schemes
 {
-	return [NSArray arrayWithObject:@"file"];
+	return @[@"file"];
 }
 
 - (void)dealloc {

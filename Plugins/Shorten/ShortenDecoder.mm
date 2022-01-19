@@ -100,12 +100,12 @@
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObject:@"shn"];
+	return @[@"shn"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"application/x-shorten", nil]; //This is basically useless, since we cant stream shorten yet
+	return @[@"application/x-shorten"]; //This is basically useless, since we cant stream shorten yet
 }
 
 + (float)priority

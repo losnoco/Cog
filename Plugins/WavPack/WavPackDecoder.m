@@ -318,12 +318,12 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"wv", @"wvp", nil];
+	return @[@"wv", @"wvp"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-wavpack", nil];
+	return @[@"audio/x-wavpack"];
 }
 
 + (float)priority

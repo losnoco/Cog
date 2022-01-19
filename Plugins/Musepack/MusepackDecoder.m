@@ -220,12 +220,12 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader)
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObject:@"mpc"];
+	return @[@"mpc"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-musepack", nil];
+	return @[@"audio/x-musepack"];
 }
 
 + (float)priority

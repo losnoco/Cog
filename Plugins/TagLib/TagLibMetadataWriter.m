@@ -42,8 +42,8 @@
 			
 			/*
 			 
-			 NSArray *keys = [NSArray arrayWithObjects:@"key1", @"key2", @"key3", nil];
-			 NSArray *objects = [NSArray arrayWithObjects:@"value1", @"value2", @"value3", nil];
+			 NSArray *keys = @[@"key1", @"key2", @"key3"];
+			 NSArray *objects = @[@"value1", @"value2", @"value3"];
 			 NSDictionary *dictionary = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
 			 
 			 for (id key in dictionary)

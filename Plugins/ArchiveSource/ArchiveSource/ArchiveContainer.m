@@ -26,12 +26,12 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"zip", @"rar", @"7z", @"rsn", @"vgm7z", @"gz", nil];
+	return @[@"zip", @"rar", @"7z", @"rsn", @"vgm7z", @"gz"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"application/zip", @"application/x-gzip", @"application/x-rar-compressed", @"application/x-7z-compressed", nil];
+	return @[@"application/zip", @"application/x-gzip", @"application/x-rar-compressed", @"application/x-7z-compressed"];
 }
 
 + (float)priority
@@ -47,14 +47,14 @@ static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSStri
 + (NSArray *)urlsForContainerURL:(NSURL *)url
 {
 	if (![url isFileURL]) {
-		return [NSArray array];
+		return @[];
 	}
 	
     fex_t * fex;
     fex_err_t error = fex_open( &fex, [[url path] UTF8String] );
     if ( error ) {
         ALog(@"Archive error: %s", error);
-        return [NSArray array];
+        return @[];
     }
     
 	NSMutableArray *files = [NSMutableArray array];

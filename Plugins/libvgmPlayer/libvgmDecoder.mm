@@ -278,7 +278,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
 
 + (NSArray *)fileTypes 
 {	
-	return [NSArray arrayWithObjects:@"vgm", @"vgz", @"s98", @"dro", @"gym", nil];
+	return @[@"vgm", @"vgz", @"s98", @"dro", @"gym"];
 }
 
 + (NSArray *)mimeTypes 
@@ -298,7 +298,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
     [ret addObject:@"vg.icns"];
     [ret addObjectsFromArray:[self fileTypes]];
     
-    return [NSArray arrayWithObject:ret];
+    return @[[NSArray arrayWithArray:ret]];
 }
 
 - (void)setSource:(id<CogSource>)s

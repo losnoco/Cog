@@ -353,12 +353,12 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 + (NSArray *)fileTypes
 {
-	return [NSArray arrayWithObjects:@"flac", nil];
+	return @[@"flac"];
 }
 
 + (NSArray *)mimeTypes
 {
-	return [NSArray arrayWithObjects:@"audio/x-flac", nil];
+	return @[@"audio/x-flac"];
 }
 
 + (float)priority

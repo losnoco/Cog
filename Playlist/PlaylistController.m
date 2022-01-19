@@ -481,7 +481,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     if (([sortDescriptors count] != 0) && [[sortDescriptors[0] key]
             caseInsensitiveCompare:@"index"] == NSOrderedSame) {
         // Remove the sort descriptors
-        [super setSortDescriptors:[NSArray array]];
+        [super setSortDescriptors:@[]];
         [self rearrangeObjects];
 
         return;
@@ -494,7 +494,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (IBAction)randomizeList:(id)sender {
-    [self setSortDescriptors:[NSArray array]];
+    [self setSortDescriptors:@[]];
 
     NSArray *unrandomized = [self content];
     [[[self undoManager] prepareWithInvocationTarget:self] unrandomizeList:unrandomized];
@@ -964,7 +964,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
             [queueList removeObject:queueItem];
             
-            [store queueRemovePlaylistItems:[NSArray arrayWithObject:queueItem]];
+            [store queueRemovePlaylistItems:@[queueItem]];
         } else {
             queueItem.queued = YES;
             queueItem.queuePosition = (int) [queueList count];
@@ -991,7 +991,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         queueItem.queuePosition = -1;
 
         [queueList removeObject:queueItem];
-        [store queueRemovePlaylistItems:[NSArray arrayWithObject:queueItem]];
+        [store queueRemovePlaylistItems:@[queueItem]];
     }
 
     int i = 0;
