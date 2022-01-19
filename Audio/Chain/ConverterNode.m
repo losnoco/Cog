@@ -702,7 +702,8 @@ static void extrapolate(float *buffer, ssize_t channels, ssize_t frameSize, ssiz
             float *chPcmBuf = buffer + ch + (backward ? frameSize : -1) * channels;
             for (size_t i = 0; i < frameSize; i++) work[i] = *(chPcmBuf += delta);
             
-            vorbis_lpc_from_data(work, lpc, (int)(frameSize - size), extrapolate_order);
+            // Limit extrapolation source to two times the order size
+            vorbis_lpc_from_data(work + frameSize - extrapolate_order * 2, lpc, extrapolate_order * 2, extrapolate_order);
             
             vorbis_lpc_predict(lpc, work + frameSize - size - extrapolate_order, extrapolate_order, work + frameSize - size, size, their_work);
             
