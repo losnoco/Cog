@@ -14,7 +14,7 @@
 #import <AudioUnit/AudioUnit.h>
 #import <AudioToolbox/AudioToolbox.h>
 
-void equalizerApplyGenre(NSString *genre);
+void equalizerApplyGenre(AudioUnit au, NSString *genre);
 void equalizerLoadPreset(AudioUnit au);
 void equalizerApplyPreset(AudioUnit au, NSDictionary * preset);
 

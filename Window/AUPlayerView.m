@@ -233,7 +233,7 @@ static void loadPresets()
     CFRelease(appUrlRef);
 }
 
-void equalizerApplyGenre(NSString *genre) {
+void equalizerApplyGenre(AudioUnit au, NSString *genre) {
     equalizerGenre = genre;
     if ([[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"GraphicEQtrackgenre"]) {
         loadPresets();
@@ -264,6 +264,8 @@ void equalizerApplyGenre(NSString *genre) {
         if (preset) {
             NSInteger index = [equalizer_presets_processed indexOfObject:preset];
             [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setInteger:index forKey:@"GraphicEQpreset"];
+            
+            equalizerApplyPreset(au, preset);
         }
     }
 }
@@ -683,7 +685,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
     
     [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setBool:enabled forKey:@"GraphicEQtrackgenre"];
     
-    equalizerApplyGenre(equalizerGenre);
+    equalizerApplyGenre(au, equalizerGenre);
     
     [self changePreset:presetButton];
 }

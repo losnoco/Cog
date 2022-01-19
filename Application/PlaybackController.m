@@ -760,7 +760,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	
 	[playlistController setCurrentEntry:pe];
     
-    equalizerApplyGenre([pe genre]);
+    if (_eq)
+        equalizerApplyGenre(_eq, [pe genre]);
     
     lastPosition = -10;
 	
