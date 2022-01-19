@@ -3,8 +3,7 @@
 
 #define MY_PATRONS \
 "Thanks to my patrons:\n" \
-"Joseph DeVore, Hongfei Gu, Alexander Pecheny, Ceeb, Electric Keet,\n" \
-"Miles Rotaru, Yuri Kunde Schlesner, govt man, Antti Aro,\n" \
-"happyvideogamemusicnerd"
+"Alexander Pecheny, Electric Keet, govt man, Antti Aro,\n"
+"Fjölnir Ásgeirsson"
 
 #endif
