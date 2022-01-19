@@ -22,8 +22,13 @@ static NSArray * equalizer_presets_processed = nil;
 static NSDictionary * equalizer_presets_by_name = nil;
 static json_value * equalizer_presets = NULL;
 
+static NSArray* _winamp_equalizer_items() {
+    return @[@"name", @"hz70", @"hz180", @"hz320", @"hz600", @"hz1000", @"hz3000", @"hz6000", @"hz12000", @"hz14000", @"hz16000", @"preamp"];
+}
+
 static const float winamp_equalizer_bands[10] = { 70, 180, 320, 600, 1000, 3000, 6000, 12000, 14000, 16000 };
-static const NSString* winamp_equalizer_items[] = { @"name", @"hz70", @"hz180", @"hz320", @"hz600", @"hz1000", @"hz3000", @"hz6000", @"hz12000", @"hz14000", @"hz16000", @"preamp" };
+static NSArray* winamp_equalizer_items = nil;
+static NSString* winamp_equalizer_extra_genres = @"altGenres";
 
 static const float apple_equalizer_bands_31[31] = { 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1200, 1600, 2000, 2500, 3100, 4000, 5000, 6300, 8000, 10000, 12000, 16000, 20000 };
 static const float apple_equalizer_bands_10[10] = { 32, 64, 128, 256, 512, 1000, 2000, 4000, 8000, 16000 };
@@ -31,12 +36,15 @@ static const float apple_equalizer_bands_10[10] = { 32, 64, 128, 256, 512, 1000,
 static inline float quadra(float *p, float frac) { return (((((((((p[0] + p[2]) * 0.5) - p[1]) * frac) * 0.5) + p[1]) - ((p[2] + p[0] + (p[0] * 2.0)) / 2.0)) * frac) * 2.0) + p[0]; }
 
 static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
+    if (!winamp_equalizer_items)
+        winamp_equalizer_items = _winamp_equalizer_items();
+
     // predict extra bands! lpc was too broken, so use quadratic interpolation!
     if (freqTarget <= winamp_equalizer_bands[0]) {
         float work[14];
         float work_freq[14];
         for (unsigned int i = 0; i < 10; ++i) {
-            work[9 - i] = [[preset objectForKey:winamp_equalizer_items[1 + i]] floatValue];
+            work[9 - i] = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:1 + i]] floatValue];
             work_freq[9 - i] = winamp_equalizer_bands[i];
         }
         for (unsigned int i = 10; i < 14; ++i) {
@@ -63,7 +71,7 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
         float work[14];
         float work_freq[14];
         for (unsigned int i = 0; i < 10; ++i) {
-            work[i] = [[preset objectForKey:winamp_equalizer_items[1 + i]] floatValue];
+            work[i] = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:1 + i]] floatValue];
             work_freq[i] = winamp_equalizer_bands[i];
         }
         for (unsigned int i = 10; i < 14; ++i) {
@@ -94,8 +102,8 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
             freqTarget < winamp_equalizer_bands[i + 1]) {
             float freqLow = winamp_equalizer_bands[i];
             float freqHigh = winamp_equalizer_bands[i + 1];
-            float valueLow = [[preset objectForKey:winamp_equalizer_items[i + 1]] floatValue];
-            float valueHigh = [[preset objectForKey:winamp_equalizer_items[i + 2]] floatValue];
+            float valueLow = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:i + 1]] floatValue];
+            float valueHigh = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:i + 2]] floatValue];
             
             float delta = (freqTarget - freqLow) / (freqHigh - freqLow);
             
@@ -121,11 +129,11 @@ static void interpolateBandsTo31(float * out, NSDictionary * preset) {
 static void loadPresets()
 {
     if ([equalizer_presets_processed count]) return;
-    
+
     CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("Winamp.q1"), CFSTR("json"), NULL);
 
     CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
-    
+
     NSFileHandle * fileHandle = [NSFileHandle fileHandleForReadingAtPath:(__bridge NSString *)macPath];
     if (fileHandle) {
         NSError *err;
@@ -139,7 +147,7 @@ static void loadPresets()
         }
         if (!err && data) {
             equalizer_presets = json_parse(data.bytes, data.length);
-            
+
             if (equalizer_presets->type == json_object &&
                 equalizer_presets->u.object.length == 2 &&
                 strncmp(equalizer_presets->u.object.values[0].name, "type", equalizer_presets->u.object.values[0].name_length) == 0 &&
@@ -151,32 +159,63 @@ static void loadPresets()
                 // Got the array of presets
                 NSMutableArray * array = [[NSMutableArray alloc] init];
                 NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
-                
+
                 size_t count = equalizer_presets->u.object.values[1].value->u.array.length;
                 json_value ** values = equalizer_presets->u.object.values[1].value->u.array.values;
-                
+
+                winamp_equalizer_items = _winamp_equalizer_items();
+
+                const size_t winamp_object_minimum = [winamp_equalizer_items count];
+
                 for (size_t i = 0; i < count; ++i) {
                     if (values[i]->type == json_object) {
+                        NSMutableArray<NSString *> * extraGenres = [[NSMutableArray alloc] init];
                         size_t object_items = values[i]->u.object.length;
                         json_object_entry * object_entry = values[i]->u.object.values;
-                        if (object_items == (sizeof(winamp_equalizer_items)/sizeof(winamp_equalizer_items[0]))) {
+                        size_t requiredItemsPresent = 0;
+                        if (object_items >= winamp_object_minimum) {
                             NSMutableDictionary * equalizerItem = [[NSMutableDictionary alloc] init];
                             for (size_t j = 0; j < object_items; ++j) {
-                                if (strncmp(object_entry[j].name, [winamp_equalizer_items[j] UTF8String], object_entry[j].name_length) == 0) {
-                                    if (j == 0 && object_entry[j].value->type == json_string) {
+                                NSString * key = [NSString stringWithUTF8String:object_entry[j].name];
+                                NSInteger index = [winamp_equalizer_items indexOfObject:key];
+                                if (index != NSNotFound) {
+                                    if (index == 0 && object_entry[j].value->type == json_string) {
                                         NSString * name = [NSString stringWithUTF8String:object_entry[j].value->u.string.ptr];
-                                        [equalizerItem setObject:name forKey:winamp_equalizer_items[j]];
+                                        [equalizerItem setObject:name forKey:key];
+                                        ++requiredItemsPresent;
                                     }
                                     else if (object_entry[j].value->type == json_integer) {
                                         int64_t value = object_entry[j].value->u.integer;
                                         float floatValue = ((value <= 64 && value >= 1) ? ((float)(value - 33) / 32.0 * 12.0) : 0.0);
-                                        [equalizerItem setObject:[NSNumber numberWithFloat:floatValue] forKey:winamp_equalizer_items[j]];
+                                        [equalizerItem setObject:[NSNumber numberWithFloat:floatValue] forKey:key];
+                                        ++requiredItemsPresent;
+                                    }
+                                }
+                                else if ([key isEqualToString:winamp_equalizer_extra_genres]) {
+                                    // Process alternate genre matches
+                                    if (object_entry[j].value->type == json_array) {
+                                        size_t value_count = object_entry[j].value->u.array.length;
+                                        json_value ** values = object_entry[j].value->u.array.values;
+                                        for (size_t k = 0; k < value_count; ++k) {
+                                            if (values[k]->type == json_string) {
+                                                [extraGenres addObject:[NSString stringWithUTF8String:values[i]->u.string.ptr]];
+                                            }
+                                        }
                                     }
                                 }
                             }
-                            NSDictionary *outItem = [NSDictionary dictionaryWithDictionary:equalizerItem];
-                            [array addObject:outItem];
-                            [dict setObject:outItem forKey:[outItem objectForKey:@"name"]];
+
+                            if (requiredItemsPresent == winamp_object_minimum) {
+                                // Add the base item
+                                NSDictionary *outItem = [NSDictionary dictionaryWithDictionary:equalizerItem];
+                                [array addObject:outItem];
+                                [dict setObject:outItem forKey:[outItem objectForKey:@"name"]];
+
+                                // Add the alternate genres, if any
+                                for (NSString * genre in extraGenres) {
+                                    [dict setObject:outItem forKey:genre];
+                                }
+                            }
                         }
                     }
                 }
