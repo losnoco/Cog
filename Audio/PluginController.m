@@ -356,41 +356,55 @@ static PluginController *sharedPluginController = nil;
             }
         }
     }
-    
+
     NSMutableArray * stringList = [[NSMutableArray alloc] init];
-    
+
     [stringList addObject:plistHeader];
+
+    // These aren't handled by decoders, but as containers
+    NSArray * staticTypes = @[
+        @[@"M3U Playlist File", @"m3u.icns", @"m3u", @"m3u8"],
+        @[@"PLS Playlist File", @"pls.icns", @"pls"],
+        @[@"RAR Archive of SPC Files", @"vg.icns", @"rsn"],
+        @[@"7Z Archive of VGM Files", @"vg.icns", @"vgm7z"]
+    ];
+
+    NSMutableArray * assocTypes = [[NSMutableArray alloc] init];
+
+    [assocTypes addObjectsFromArray:staticTypes];
     
     for (NSString * decoderString in decodersRegistered) {
         Class decoder = NSClassFromString(decoderString);
         if (decoder && [decoder respondsToSelector:@selector(fileTypeAssociations)]) {
             NSArray * types = [decoder fileTypeAssociations];
-            for (NSArray * type in types) {
-                [stringList addObject:@"\t\t<dict>\n\
+            [assocTypes addObjectsFromArray:types];
+        }
+    }
+
+    for (NSArray * type in assocTypes) {
+        [stringList addObject:@"\t\t<dict>\n\
 \t\t\t<key>CFBundleTypeExtensions</key>\n\
 \t\t\t<array>\n\
 "];
-                for (size_t i = 2; i < [type count]; ++i) {
-                    [stringList addObject:@"\t\t\t\t<string>"];
-                    [stringList addObject:[[type objectAtIndex:i] lowercaseString]];
-                    [stringList addObject:@"</string>\n"];
-                }
-                [stringList addObject:@"\t\t\t</array>\n\
+        for (size_t i = 2; i < [type count]; ++i) {
+            [stringList addObject:@"\t\t\t\t<string>"];
+            [stringList addObject:[[type objectAtIndex:i] lowercaseString]];
+            [stringList addObject:@"</string>\n"];
+        }
+        [stringList addObject:@"\t\t\t</array>\n\
 \t\t\t<key>CFBundleTypeIconFile</key>\n\
 \t\t\t<string>"];
-                [stringList addObject:[type objectAtIndex:1]];
-                [stringList addObject:@"</string>\n\
+        [stringList addObject:[type objectAtIndex:1]];
+        [stringList addObject:@"</string>\n\
 \t\t\t<key>CFBundleTypeName</key>\n\
 \t\t\t<string>"];
-                [stringList addObject:[type objectAtIndex:0]];
-                [stringList addObject:@"</string>\n\
+        [stringList addObject:[type objectAtIndex:0]];
+        [stringList addObject:@"</string>\n\
 \t\t\t<key>CFBundleTypeRole</key>\n\
 \t\t\t<string>Viewer</string>\n\
 \t\t\t<key>LSTypeIsPackage</key>\n\
 \t\t\t<false/>\n\
 \t\t</dict>\n"];
-            }
-        }
     }
     
     [stringList addObject:plistFooter];
