@@ -126,7 +126,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         // Either underrun, or no data at all. Caller output tends to just
         // buffer loop if it doesn't get anything, so always produce a full
         // buffer, and silence anything we couldn't supply.
-        clearBuffers(ioData, amountToRead - amountRead, amountRead / bytesPerPacket);
+        clearBuffers(ioData, (amountToRead - amountRead) / bytesPerPacket, amountRead / bytesPerPacket);
     }
     
     return 0;
