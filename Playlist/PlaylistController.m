@@ -27,7 +27,13 @@
 @synthesize currentEntry;
 @synthesize totalTime;
 
+static NSArray * cellIdentifiers = nil;
+
 + (void)initialize {
+    cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
+                        @"album", @"length", @"year", @"genre", @"track", @"path",
+                        @"filename", @"codec"];
+    
     NSValueTransformer *repeatNoneTransformer =
             [[RepeatModeTransformer alloc] initWithMode:RepeatModeNoRepeat];
     [NSValueTransformer setValueTransformer:repeatNoneTransformer forName:@"RepeatNoneTransformer"];
@@ -100,11 +106,14 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-
+    
+    statusImageTransformer = [NSValueTransformer valueTransformerForName:@"StatusImageTransformer"];
+    
     [self addObserver:self
            forKeyPath:@"arrangedObjects"
               options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
               context:nil];
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fontSize" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -114,6 +123,9 @@
     if ([keyPath isEqualToString:@"arrangedObjects"]) {
         [self updatePlaylistIndexes];
         [self updateTotalTime];
+    }
+    else if ([keyPath isEqualToString:@"values.fontSize"]) {
+        [self updateRowSize];
     }
 }
 
@@ -215,19 +227,109 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     }
 }
 
-- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
-    if ([self shuffle] != ShuffleOff) [self resetShuffleList];
+- (NSView * _Nullable)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn * _Nullable)tableColumn row:(NSInteger)row {
+    NSImage * cellImage = nil;
+    NSString * cellText = @"";
+    NSString * cellIdentifier = @"";
+    NSTextAlignment cellTextAlignment = NSTextAlignmentLeft;
+    
+    PlaylistEntry * pe = [[self arrangedObjects] objectAtIndex:row];
+    
+    float fontSize = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"fontSize"];
+    
+    if (pe) {
+        cellIdentifier = [tableColumn identifier];
+        NSUInteger index = [cellIdentifiers indexOfObject:cellIdentifier];
+        
+        switch (index) {
+            case 0:
+                cellText = [NSString stringWithFormat:@"%ld", [pe index] + 1];
+                cellTextAlignment = NSTextAlignmentRight;
+                break;
+                
+            case 1:
+                cellImage = [statusImageTransformer transformedValue:[pe status]];
+                break;
+                
+            case 2:
+                if ([pe title]) cellText = [pe title];
+                break;
+                
+            case 3:
+                if ([pe albumartist]) cellText = [pe albumartist];
+                break;
+                
+            case 4:
+                if ([pe artist]) cellText = [pe artist];
+                break;
+                
+            case 5:
+                if ([pe album]) cellText = [pe album];
+                break;
+                
+            case 6:
+                cellText = [pe lengthText];
+                cellTextAlignment = NSTextAlignmentRight;
+                break;
+                
+            case 7:
+                if ([pe year]) cellText = [NSString stringWithFormat:@"%@", [pe year]];
+                cellTextAlignment = NSTextAlignmentRight;
+                break;
+                
+            case 8:
+                if ([pe genre]) cellText = [pe genre];
+                break;
+                
+            case 9:
+                if ([pe track]) cellText = [NSString stringWithFormat:@"%@", [pe track]];
+                cellTextAlignment = NSTextAlignmentRight;
+                break;
+                
+            case 10:
+                if ([pe path]) cellText = [pe path];
+                break;
+                
+            case 11:
+                if ([pe filename]) cellText = [pe filename];
+                break;
+                
+            case 12:
+                if ([pe codec]) cellText = [pe codec];
+                break;
+        }
+    }
+    
+    NSView * view = [tableView makeViewWithIdentifier:cellIdentifier owner:nil];
+    if (view) {
+        NSTableCellView * cellView = (NSTableCellView *) view;
+        if (cellView.textField) {
+            NSFont * font = [NSFont systemFontOfSize:fontSize];
+
+            cellView.textField.font = font;
+            cellView.textField.stringValue = cellText;
+            cellView.textField.alignment = cellTextAlignment;
+            
+            if (cellView.textField.intrinsicContentSize.width > cellView.textField.frame.size.width - 8)
+                cellView.textField.toolTip = cellText;
+            else
+                cellView.textField.toolTip = [pe status];
+        }
+        if (cellView.imageView) {
+            cellView.imageView.image = cellImage;
+        }
+        cellView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
+    }
+    
+    return view;
 }
 
-- (NSString *)tableView:(NSTableView *)tv
-         toolTipForCell:(NSCell *)cell
-                   rect:(NSRectPointer)rect
-            tableColumn:(NSTableColumn *)tc
-                    row:(NSInteger)row
-          mouseLocation:(NSPoint)mouseLocation {
-    DLog(@"GETTING STATUS FOR ROW: %li: %@!", row,
-            [[[self arrangedObjects] objectAtIndex:row] statusMessage]);
-    return [[[self arrangedObjects] objectAtIndex:row] statusMessage];
+- (void)updateRowSize {
+    [self.tableView reloadData];
+}
+
+- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
+    if ([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
@@ -865,6 +967,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
     pe.current = YES;
 
+    NSMutableIndexSet * refreshSet = [[NSMutableIndexSet alloc] init];
+    
+    if (currentEntry != nil) [refreshSet addIndex:currentEntry.index];
+    if (pe != nil) [refreshSet addIndex:pe.index];
+    
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+    
     if (pe != nil) [self.tableView scrollRowToVisible:pe.index];
 
     currentEntry = pe;
@@ -957,6 +1066,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (IBAction)toggleQueued:(id)sender {
     SQLiteStore *store = [SQLiteStore sharedStore];
     
+    NSMutableIndexSet * refreshSet = [[NSMutableIndexSet alloc] init];
+    
     for (PlaylistEntry *queueItem in [self selectedObjects]) {
         if (queueItem.queued) {
             queueItem.queued = NO;
@@ -964,7 +1075,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
             [queueList removeObject:queueItem];
             
-            [store queueRemovePlaylistItems:@[queueItem]];
+            [store queueRemovePlaylistItems:@[[NSNumber numberWithInteger:[queueItem index]]]];
         } else {
             queueItem.queued = YES;
             queueItem.queuePosition = (int) [queueList count];
@@ -974,8 +1085,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             [store queueAddItem:[queueItem index]];
         }
 
+        [refreshSet addIndex:[queueItem index]];
+        
         DLog(@"TOGGLE QUEUED: %i", queueItem.queued);
     }
+
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
 
     int i = 0;
     for (PlaylistEntry *cur in queueList) {
@@ -986,13 +1101,19 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (IBAction)removeFromQueue:(id)sender {
     SQLiteStore *store = [SQLiteStore sharedStore];
     
+    NSMutableIndexSet * refreshSet = [[NSMutableIndexSet alloc] init];
+    
     for (PlaylistEntry *queueItem in [self selectedObjects]) {
         queueItem.queued = NO;
         queueItem.queuePosition = -1;
 
         [queueList removeObject:queueItem];
         [store queueRemovePlaylistItems:@[queueItem]];
+        
+        [refreshSet addIndex:[queueItem index]];
     }
+
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
 
     int i = 0;
     for (PlaylistEntry *cur in queueList) {
@@ -1002,6 +1123,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (IBAction)addToQueue:(id)sender {
     SQLiteStore *store = [SQLiteStore sharedStore];
+
+    NSMutableIndexSet * refreshSet = [[NSMutableIndexSet alloc] init];
     
     for (PlaylistEntry *queueItem in [self selectedObjects]) {
         queueItem.queued = YES;
@@ -1009,7 +1132,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
         [queueList addObject:queueItem];
         [store queueAddItem:[queueItem index]];
+        
+        [refreshSet addIndex:[queueItem index]];
     }
+
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
 
     int i = 0;
     for (PlaylistEntry *cur in queueList) {
@@ -1019,6 +1146,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (IBAction)stopAfterCurrent:(id)sender {
     currentEntry.stopAfter = !currentEntry.stopAfter;
+
+    NSIndexSet * refreshSet = [NSIndexSet indexSetWithIndex:[currentEntry index]];
+    
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {

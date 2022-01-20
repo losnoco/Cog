@@ -762,6 +762,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
     if (count)
     {
+        NSMutableIndexSet * refreshSet = [[NSMutableIndexSet alloc] init];
+        
         [playlistController emptyQueueListUnsynced];
         
         for (i = 0; i < count; ++i)
@@ -772,7 +774,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             pe.queued = YES;
             
             [[playlistController queueList] addObject:pe];
+            
+            [refreshSet addIndex:[pe index]];
         }
+
+        [playlistView.documentView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
     }
     
     //Clear the selection

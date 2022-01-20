@@ -176,7 +176,6 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
-		8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */; };
 		8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6889230AAA403C00AD3950 /* Carbon.framework */; };
 		8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752C09F31D5A0080F1EE /* DNDArrayController.m */; };
 		8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752E09F31D5A0080F1EE /* PlaylistController.m */; };
@@ -1013,8 +1012,6 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
-		8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
-		8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
 		8E6889230AAA403C00AD3950 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8E75752B09F31D5A0080F1EE /* DNDArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DNDArrayController.h; sourceTree = "<group>"; };
 		8E75752C09F31D5A0080F1EE /* DNDArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DNDArrayController.m; sourceTree = "<group>"; };
@@ -1760,8 +1757,6 @@
 				8E75752E09F31D5A0080F1EE /* PlaylistController.m */,
 				8E75753109F31D5A0080F1EE /* PlaylistView.h */,
 				8E75753209F31D5A0080F1EE /* PlaylistView.m */,
-				8E1296D80A2BA9CE00443124 /* PlaylistHeaderView.h */,
-				8E1296D90A2BA9CE00443124 /* PlaylistHeaderView.m */,
 				1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */,
 				1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */,
 				8E75752B09F31D5A0080F1EE /* DNDArrayController.h */,
@@ -2442,7 +2437,6 @@
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
-				8E1296DB0A2BA9CE00443124 /* PlaylistHeaderView.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
 				177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */,

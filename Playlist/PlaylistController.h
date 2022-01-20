@@ -37,6 +37,8 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
     IBOutlet PlaylistLoader *playlistLoader;
     IBOutlet SpotlightWindowController *spotlightWindowController;
     IBOutlet PlaybackController *playbackController;
+    
+    NSValueTransformer * statusImageTransformer;
 
     NSMutableArray *shuffleList;
     NSMutableArray *queueList;
@@ -48,45 +50,45 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
     NSUndoManager *undoManager;
 }
 
-@property(nonatomic, retain) PlaylistEntry *currentEntry;
-@property(retain) NSString *totalTime;
+@property(nonatomic, retain) PlaylistEntry * _Nullable currentEntry;
+@property(retain) NSString * _Nullable totalTime;
 
 // Private Methods
 - (void)updateTotalTime;
 - (void)updatePlaylistIndexes;
-- (IBAction)stopAfterCurrent:(id)sender;
+- (IBAction)stopAfterCurrent:(id _Nullable )sender;
 
 // PUBLIC METHODS
 - (void)setShuffle:(ShuffleMode)s;
 - (ShuffleMode)shuffle;
 - (void)setRepeat:(RepeatMode)r;
 - (RepeatMode)repeat;
-- (NSArray *)filterPlaylistOnAlbum:(NSString *)album;
+- (NSArray * _Nullable)filterPlaylistOnAlbum:(NSString * _Nullable)album;
 
-- (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe;
-- (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe;
+- (PlaylistEntry * _Nullable)getNextEntry:(PlaylistEntry * _Nullable)pe;
+- (PlaylistEntry * _Nullable)getPrevEntry:(PlaylistEntry * _Nullable)pe;
 
 /* Methods for undoing various actions */
-- (NSUndoManager *)undoManager;
+- (NSUndoManager * _Nullable)undoManager;
 
-- (IBAction)toggleShuffle:(id)sender;
+- (IBAction)toggleShuffle:(id _Nullable)sender;
 
-- (IBAction)toggleRepeat:(id)sender;
+- (IBAction)toggleRepeat:(id _Nullable)sender;
 
-- (IBAction)randomizeList:(id)sender;
+- (IBAction)randomizeList:(id _Nullable)sender;
 
-- (IBAction)removeDuplicates:(id)sender;
-- (IBAction)removeDeadItems:(id)sender;
+- (IBAction)removeDuplicates:(id _Nullable)sender;
+- (IBAction)removeDeadItems:(id _Nullable)sender;
 
-- (IBAction)showEntryInFinder:(id)sender;
-- (IBAction)clearFilterPredicate:(id)sender;
-- (IBAction)clear:(id)sender;
+- (IBAction)showEntryInFinder:(id _Nullable)sender;
+- (IBAction)clearFilterPredicate:(id _Nullable)sender;
+- (IBAction)clear:(id _Nullable)sender;
 
 //- (IBAction)showTagEditor:(id)sender;
 
 // Spotlight
-- (IBAction)searchByArtist:(id)sender;
-- (IBAction)searchByAlbum:(id)sender;
+- (IBAction)searchByArtist:(id _Nullable)sender;
+- (IBAction)searchByAlbum:(id _Nullable)sender;
 
 // FUN PLAYLIST MANAGEMENT STUFF!
 - (BOOL)next;
@@ -96,25 +98,25 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (void)addShuffledListToFront;
 - (void)resetShuffleList;
 
-- (PlaylistEntry *)shuffledEntryAtIndex:(NSInteger)i;
-- (PlaylistEntry *)entryAtIndex:(NSInteger)i;
+- (PlaylistEntry * _Nullable)shuffledEntryAtIndex:(NSInteger)i;
+- (PlaylistEntry * _Nullable)entryAtIndex:(NSInteger)i;
 
 // Event inlets:
-- (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin;
-- (void)didInsertURLs:(NSArray *)urls origin:(URLOrigin)origin;
+- (void)willInsertURLs:(NSArray * _Nullable)urls origin:(URLOrigin)origin;
+- (void)didInsertURLs:(NSArray * _Nullable)urls origin:(URLOrigin)origin;
 
 // queue methods
-- (IBAction)toggleQueued:(id)sender;
-- (IBAction)emptyQueueList:(id)sender;
+- (IBAction)toggleQueued:(id _Nullable)sender;
+- (IBAction)emptyQueueList:(id _Nullable)sender;
 - (void)emptyQueueListUnsynced;
-- (NSMutableArray *)queueList;
+- (NSMutableArray * _Nullable)queueList;
 
 // reload metadata of selection
-- (IBAction)reloadTags:(id)sender;
+- (IBAction)reloadTags:(id _Nullable)sender;
 
-- (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
+- (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet * _Nullable)indexSet
                                         toIndex:(NSUInteger)insertIndex;
 
-- (void)insertObjectsUnsynced:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes;
+- (void)insertObjectsUnsynced:(NSArray * _Nullable)objects atArrangedObjectIndexes:(NSIndexSet * _Nullable)indexes;
 
 @end
