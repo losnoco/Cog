@@ -317,6 +317,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         }
         if (cellView.imageView) {
             cellView.imageView.image = cellImage;
+            cellView.imageView.toolTip = [pe statusMessage];
         }
         cellView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
     }
