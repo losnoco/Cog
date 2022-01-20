@@ -972,7 +972,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     if (currentEntry != nil) [refreshSet addIndex:currentEntry.index];
     if (pe != nil) [refreshSet addIndex:pe.index];
     
-    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+    // Refresh entire row to refresh tooltips
+    unsigned long columns = [[self.tableView tableColumns] count];
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
     
     if (pe != nil) [self.tableView scrollRowToVisible:pe.index];
 
@@ -1090,7 +1092,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         DLog(@"TOGGLE QUEUED: %i", queueItem.queued);
     }
 
-    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+    // Refresh entire row to refresh tooltips
+    unsigned long columns = [[self.tableView tableColumns] count];
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 
     int i = 0;
     for (PlaylistEntry *cur in queueList) {
@@ -1113,7 +1117,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         [refreshSet addIndex:[queueItem index]];
     }
 
-    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+    // Refresh entire row to refresh tooltips
+    unsigned long columns = [[self.tableView tableColumns] count];
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 
     int i = 0;
     for (PlaylistEntry *cur in queueList) {
@@ -1136,7 +1142,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         [refreshSet addIndex:[queueItem index]];
     }
 
-    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+    // Refresh entire row to refresh tooltips
+    unsigned long columns = [[self.tableView tableColumns] count];
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 
     int i = 0;
     for (PlaylistEntry *cur in queueList) {
@@ -1149,7 +1157,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
     NSIndexSet * refreshSet = [NSIndexSet indexSetWithIndex:[currentEntry index]];
     
-    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+    // Refresh entire row to refresh tooltips
+    unsigned long columns = [[self.tableView tableColumns] count];
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {

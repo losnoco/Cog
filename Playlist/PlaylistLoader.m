@@ -717,7 +717,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     
     {
         unsigned long columns = [[[self->playlistView documentView] tableColumns] count];
-        [self->playlistView.documentView reloadDataForRowIndexes:update_indexes columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns-1)]];
+        [self->playlistView.documentView reloadDataForRowIndexes:update_indexes columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,columns)]];
     }
 }
 
@@ -778,7 +778,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             [refreshSet addIndex:[pe index]];
         }
 
-        [playlistView.documentView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndex:1]];
+        // Refresh entire row to refresh tooltips
+        unsigned long columns = [[playlistView.documentView tableColumns] count];
+        [playlistView.documentView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
     }
     
     //Clear the selection
