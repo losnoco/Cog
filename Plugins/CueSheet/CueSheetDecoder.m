@@ -97,7 +97,7 @@
                 //Kind of a hackish way of accessing outside classes.
                 source = [NSClassFromString(@"AudioSource") audioSourceForURL:trackUrl];
 
-                if (![source open:url]) {
+                if (![source open:trackUrl]) {
                     ALog(@"Could not open cuesheet source");
                     return NO;
                 }
@@ -145,10 +145,9 @@
         }
     }
     else {
-        NSURL *trackUrl = (embedded) ? baseURL : [track url];
-
-        //Kind of a hackish way of accessing outside classes.
-        source = [NSClassFromString(@"AudioSource") audioSourceForURL:trackUrl];
+        // Fix for embedded cuesheet handler parsing non-embedded files,
+        // or files that are already in the playlist without a fragment
+        source = [NSClassFromString(@"AudioSource") audioSourceForURL:url];
 
         if (![source open:url]) {
             ALog(@"Could not open cuesheet source");
