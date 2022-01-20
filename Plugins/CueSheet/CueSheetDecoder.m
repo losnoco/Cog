@@ -252,7 +252,7 @@
 	
 	framePosition = [decoder seek:frame];
 
-	return framePosition;
+	return framePosition - trackStart;
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
