@@ -389,4 +389,66 @@
 	metadataLoaded = YES;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    PlaylistEntry *pe = [[[self class] allocWithZone:zone] init];
+    
+    if (pe) {
+        [pe setIndex:[self index]];
+        [pe setShuffleIndex:[self shuffleIndex]];
+        [pe setDbIndex:[self dbIndex]];
+        [pe setEntryId:[self entryId]];
+        
+        [pe setCurrent:[self current]];
+        [pe setRemoved:[self removed]];
+        
+        [pe setStopAfter:[self stopAfter]];
+        
+        [pe setQueued:[self queued]];
+        [pe setQueuePosition:[self queuePosition]];
+        
+        [pe setError:[self error]];
+        [pe setErrorMessage:[self errorMessage]];
+        
+        [pe setURL:[self URL]];
+        
+        [pe setArtist:[self artist]];
+        [pe setAlbumartist:[self albumartist]];
+        [pe setAlbum:[self album]];
+        [pe setTitle:[self title]];
+        [pe setGenre:[self genre]];
+        [pe setYear:[self year]];
+        [pe setTrack:[self track]];
+        
+        [pe setCuesheet:[self cuesheet]];
+
+        [pe setAlbumArtInternal:[self albumArtInternal]];
+        
+        [pe setReplayGainAlbumGain:[self replayGainAlbumGain]];
+        [pe setReplayGainAlbumPeak:[self replayGainAlbumPeak]];
+        [pe setReplayGainTrackGain:[self replayGainTrackGain]];
+        [pe setReplayGainTrackPeak:[self replayGainTrackPeak]];
+        [pe setVolume:[self volume]];
+        
+        [pe setCurrentPosition:[self currentPosition]];
+        
+        [pe setTotalFrames:[self totalFrames]];
+        [pe setBitrate:[self bitrate]];
+        [pe setChannels:[self channels]];
+        [pe setBitsPerSample:[self bitsPerSample]];
+        [pe setFloatingPoint:[self floatingPoint]];
+        [pe setUnsigned:[self Unsigned]];
+        [pe setSampleRate:[self sampleRate]];
+        
+        [pe setCodec:[self codec]];
+        
+        [pe setEndian:[self endian]];
+        
+        [pe setSeekable:[self seekable]];
+        
+        [pe setMetadataLoaded:[self metadataLoaded]];
+    }
+
+    return pe;
+}
+
 @end

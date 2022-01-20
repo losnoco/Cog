@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface PlaylistEntry : NSObject {
+@interface PlaylistEntry : NSObject<NSCopying> {
 	NSInteger index;
 	NSInteger shuffleIndex;
     NSInteger dbIndex;
