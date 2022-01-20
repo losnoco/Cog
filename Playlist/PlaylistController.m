@@ -313,7 +313,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             if (cellView.textField.intrinsicContentSize.width > cellView.textField.frame.size.width - 8)
                 cellView.textField.toolTip = cellText;
             else
-                cellView.textField.toolTip = [pe status];
+                cellView.textField.toolTip = [pe statusMessage];
         }
         if (cellView.imageView) {
             cellView.imageView.image = cellImage;
