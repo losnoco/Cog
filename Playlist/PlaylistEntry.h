@@ -84,6 +84,8 @@
 
 @property(readonly) NSString *lengthText;
 
+@property(readonly) NSString *rawTitle;
+
 @property NSInteger index;
 @property NSInteger shuffleIndex;
 @property NSInteger dbIndex;

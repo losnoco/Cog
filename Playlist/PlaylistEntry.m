@@ -161,6 +161,12 @@
     return title;
 }
 
+@synthesize rawTitle;
+- (NSString *)rawTitle
+{
+    return title;
+}
+
 @dynamic display;
 - (NSString *)display
 {
@@ -393,59 +399,59 @@
     PlaylistEntry *pe = [[[self class] allocWithZone:zone] init];
     
     if (pe) {
-        [pe setIndex:[self index]];
-        [pe setShuffleIndex:[self shuffleIndex]];
-        [pe setDbIndex:[self dbIndex]];
-        [pe setEntryId:[self entryId]];
-        
-        [pe setCurrent:[self current]];
-        [pe setRemoved:[self removed]];
-        
-        [pe setStopAfter:[self stopAfter]];
-        
-        [pe setQueued:[self queued]];
-        [pe setQueuePosition:[self queuePosition]];
-        
-        [pe setError:[self error]];
-        [pe setErrorMessage:[self errorMessage]];
-        
-        [pe setURL:[self URL]];
-        
-        [pe setArtist:[self artist]];
-        [pe setAlbumartist:[self albumartist]];
-        [pe setAlbum:[self album]];
-        [pe setTitle:[self title]];
-        [pe setGenre:[self genre]];
-        [pe setYear:[self year]];
-        [pe setTrack:[self track]];
-        
-        [pe setCuesheet:[self cuesheet]];
+        pe->index = index;
+        pe->shuffleIndex = shuffleIndex;
+        pe->dbIndex = dbIndex;
+        pe->entryId = entryId;
 
-        [pe setAlbumArtInternal:[self albumArtInternal]];
-        
-        [pe setReplayGainAlbumGain:[self replayGainAlbumGain]];
-        [pe setReplayGainAlbumPeak:[self replayGainAlbumPeak]];
-        [pe setReplayGainTrackGain:[self replayGainTrackGain]];
-        [pe setReplayGainTrackPeak:[self replayGainTrackPeak]];
-        [pe setVolume:[self volume]];
-        
-        [pe setCurrentPosition:[self currentPosition]];
-        
-        [pe setTotalFrames:[self totalFrames]];
-        [pe setBitrate:[self bitrate]];
-        [pe setChannels:[self channels]];
-        [pe setBitsPerSample:[self bitsPerSample]];
-        [pe setFloatingPoint:[self floatingPoint]];
-        [pe setUnsigned:[self Unsigned]];
-        [pe setSampleRate:[self sampleRate]];
-        
-        [pe setCodec:[self codec]];
-        
-        [pe setEndian:[self endian]];
-        
-        [pe setSeekable:[self seekable]];
-        
-        [pe setMetadataLoaded:[self metadataLoaded]];
+        pe->current = current;
+        pe->removed = removed;
+
+        pe->stopAfter = stopAfter;
+
+        pe->queued = queued;
+        pe->queuePosition = queuePosition;
+
+        pe->error = error;
+        pe->errorMessage = [errorMessage copyWithZone:zone];
+
+        pe->URL = [URL copyWithZone:zone];
+
+        pe->artist = [artist copyWithZone:zone];
+        pe->albumartist = [albumartist copyWithZone:zone];
+        pe->album = [album copyWithZone:zone];
+        pe->title = [title copyWithZone:zone];
+        pe->genre = [genre copyWithZone:zone];
+        pe->year = [year copyWithZone:zone];
+        pe->track = [track copyWithZone:zone];
+
+        pe->cuesheet = [cuesheet copyWithZone:zone];
+
+        pe->albumArtInternal = [albumArtInternal copyWithZone:zone];
+
+        pe->replayGainAlbumGain = replayGainAlbumGain;
+        pe->replayGainAlbumPeak = replayGainAlbumPeak;
+        pe->replayGainTrackGain = replayGainTrackGain;
+        pe->replayGainTrackPeak = replayGainTrackPeak;
+        pe->volume = volume;
+
+        currentPosition = pe->currentPosition;
+
+        pe->totalFrames = totalFrames;
+        pe->bitrate = bitrate;
+        pe->channels = channels;
+        pe->bitsPerSample = bitsPerSample;
+        pe->floatingPoint = floatingPoint;
+        pe->Unsigned = Unsigned;
+        pe->sampleRate = sampleRate;
+
+        pe->codec = [codec copyWithZone:zone];
+
+        pe->endian = [endian copyWithZone:zone];
+
+        pe->seekable = seekable;
+
+        pe->metadataLoaded = metadataLoaded;
     }
 
     return pe;
