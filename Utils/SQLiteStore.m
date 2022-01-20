@@ -1294,7 +1294,7 @@ static SQLiteStore *g_sharedStore = NULL;
             return;
         }
 
-        [databaseMirror replaceObjectAtIndex:[track index] withObject:track];
+        [databaseMirror replaceObjectAtIndex:[track index] withObject:[track copy]];
     }
 }
 
@@ -1539,7 +1539,13 @@ static SQLiteStore *g_sharedStore = NULL;
         return;
     }
     
-    [databaseMirror insertObjects:tracks atIndexes:indexes];
+    NSMutableArray * tracksCopy = [[NSMutableArray alloc] init];
+    for (PlaylistEntry * pe in tracks)
+    {
+        [tracksCopy addObject:[pe copy]];
+    }
+    
+    [databaseMirror insertObjects:tracksCopy atIndexes:indexes];
     
     __block int64_t total_count = 0;
     [indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
@@ -1554,7 +1560,7 @@ static SQLiteStore *g_sharedStore = NULL;
         double progresschunk = (double)range.length / (double)total_count;
         double progressbase = progress;
         NSRange trackRange = NSMakeRange(i, range.length);
-        NSArray *trackSet = (i == 0 && range.length == [tracks count]) ? tracks : [tracks subarrayWithRange:trackRange];
+        NSArray *trackSet = (i == 0 && range.length == [tracksCopy count]) ? tracksCopy : [tracksCopy subarrayWithRange:trackRange];
         [self playlistInsertTracks:trackSet atIndex:range.location progressCall:^(double _progress){
             if (_progress < 0) return;
             callback(progressbase + progresschunk * _progress);
@@ -1684,7 +1690,7 @@ static SQLiteStore *g_sharedStore = NULL;
 - (PlaylistEntry *)playlistGetCachedItem:(int64_t)index
 {
     if (index >= 0 && index < [databaseMirror count])
-        return [databaseMirror objectAtIndex:index];
+        return [[databaseMirror objectAtIndex:index] copy];
     else
         return nil;
 }
@@ -1888,7 +1894,7 @@ static SQLiteStore *g_sharedStore = NULL;
                 return;
             }
             
-            [databaseMirror replaceObjectAtIndex:i withObject:newpe];
+            [databaseMirror replaceObjectAtIndex:i withObject:[newpe copy]];
             
             callback(progress);
         }
