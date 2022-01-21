@@ -518,6 +518,11 @@
 	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:[NSNumber numberWithInt:status] withObject:[bufferChain userInfo] waitUntilDone:wait];
 }
 
+- (void)sustainHDCD
+{
+    [self sendDelegateMethod:@selector(audioPlayer:sustainHDCD:) withObject:[bufferChain userInfo] waitUntilDone:NO];
+}
+
 - (void)setPlaybackStatus:(int)status
 {	
 	[self setPlaybackStatus:status waitUntilDone:NO];

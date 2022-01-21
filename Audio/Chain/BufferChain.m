@@ -246,6 +246,7 @@
 {
     OutputNode * outputNode = (OutputNode *) [controller output];
     [outputNode sustainHDCD];
+    [controller sustainHDCD];
 }
 
 @end

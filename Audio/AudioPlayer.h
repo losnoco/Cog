@@ -119,6 +119,7 @@
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq;
+- (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo;
 
 @end
 

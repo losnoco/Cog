@@ -826,8 +826,13 @@
                             </connections>
                         </button>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="2DE885D7-56DA-4F25-BD36-0BBA2655C596" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" id="ZH9-ZU-skw">
+                        <size key="minSize" width="70" height="25"/>
+                        <size key="maxSize" width="70" height="25"/>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
+                    <toolbarItem reference="ZH9-ZU-skw"/>
                     <toolbarItem reference="1539"/>
                     <toolbarItem reference="1552"/>
                     <toolbarItem reference="1636"/>
@@ -856,6 +861,7 @@
                 <outlet property="delegate" destination="226" id="481"/>
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
                 <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
+                <outlet property="mainToolbar" destination="1523" id="J2X-YK-xV0"/>
             </connections>
             <point key="canvasLocation" x="130" y="131"/>
         </window>
@@ -1020,8 +1026,13 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="2225"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="2229"/>
+                    <toolbarItem implicitItemIdentifier="F1A8365A-DBF5-4BB9-A2B3-3964BFA1B15D" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" id="qfu-F9-bOZ">
+                        <size key="minSize" width="70" height="25"/>
+                        <size key="maxSize" width="70" height="25"/>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
+                    <toolbarItem reference="qfu-F9-bOZ"/>
                     <toolbarItem reference="2272"/>
                     <toolbarItem reference="2228"/>
                     <toolbarItem reference="2429"/>
@@ -1042,6 +1053,7 @@
                     </dictionary>
                 </binding>
                 <outlet property="playbackController" destination="705" id="vo7-mK-yQe"/>
+                <outlet property="miniToolbar" destination="2222" id="Up2-7z-HqA"/>
             </connections>
             <point key="canvasLocation" x="45" y="444"/>
         </window>
@@ -2135,6 +2147,7 @@ Gw
         </customObject>
     </objects>
     <resources>
+        <image name="hdcdLogoTemplate" width="656" height="225"/>
         <image name="imageCell:1801:image" width="17" height="17">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05T

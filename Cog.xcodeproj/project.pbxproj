@@ -171,6 +171,7 @@
 		83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */; };
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
 		83E88FD227945204003D6FE5 /* AUPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E88FD027945204003D6FE5 /* AUPlayerView.m */; };
+		83ED3AD1279A91C000904199 /* hdcdLogoTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -1008,6 +1009,7 @@
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
 		83E88FD027945204003D6FE5 /* AUPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AUPlayerView.m; path = Window/AUPlayerView.m; sourceTree = "<group>"; };
 		83E88FD127945204003D6FE5 /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AUPlayerView.h; path = Window/AUPlayerView.h; sourceTree = "<group>"; };
+		83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = hdcdLogoTemplate.pdf; path = Images/hdcdLogoTemplate.pdf; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1200,6 +1202,7 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */,
 				83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */,
 				83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */,
 				8384916F180843B200E7332D /* pauseDockBadgeColorful.png */,
@@ -2399,6 +2402,7 @@
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
+				83ED3AD1279A91C000904199 /* hdcdLogoTemplate.pdf in Resources */,
 				83849172180843B200E7332D /* pauseDockBadgeColorful.png in Resources */,
 				8384916318083EAB00E7332D /* repeatModeAlbumTemplate.pdf in Resources */,
 				8384916B18083EAB00E7332D /* stopDockBadge.png in Resources */,

@@ -25,9 +25,16 @@
         [self setContentMinSize:NSMakeSize(325, 1)];
         [self setContentMaxSize:NSMakeSize(CGFLOAT_MAX, 1)];
         [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
+
+        hdcdLogo = [NSImage imageNamed:@"hdcdLogoTemplate"];
     }
 
     return self;
+}
+
+- (void)awakeFromNib
+{
+    [self showHDCDLogo:NO];
 }
 
 - (void)toggleToolbarShown:(id)sender {
@@ -76,5 +83,17 @@
     }
 }
 
+- (void)showHDCDLogo:(BOOL)show
+{
+    for (NSToolbarItem * toolbarItem in [miniToolbar items])
+    {
+        if ([[toolbarItem itemIdentifier] isEqualToString:@"hdcd"]) {
+            if (show)
+                [toolbarItem setImage:hdcdLogo];
+            else
+                [toolbarItem setImage:nil];
+        }
+    }
+}
 
 @end

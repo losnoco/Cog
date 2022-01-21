@@ -27,6 +27,23 @@
     [super awakeFromNib];
 
     [playlistView setNextResponder:self];
+    
+    hdcdLogo = [NSImage imageNamed:@"hdcdLogoTemplate"];
+    
+    [self showHDCDLogo:NO];
+}
+
+- (void)showHDCDLogo:(BOOL)show
+{
+    for (NSToolbarItem * toolbarItem in [mainToolbar items])
+    {
+        if ([[toolbarItem itemIdentifier] isEqualToString:@"hdcd"]) {
+            if (show)
+                [toolbarItem setImage:hdcdLogo];
+            else
+                [toolbarItem setImage:nil];
+        }
+    }
 }
 
 @end

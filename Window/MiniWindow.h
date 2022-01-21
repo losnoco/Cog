@@ -11,6 +11,10 @@
 
 @interface MiniWindow : NSWindow {
     IBOutlet PlaybackController *playbackController;
+    IBOutlet NSToolbar *miniToolbar;
+    NSImage *hdcdLogo;
 }
+
+- (void)showHDCDLogo:(BOOL)show;
 
 @end

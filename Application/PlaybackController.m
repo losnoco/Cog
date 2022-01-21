@@ -8,6 +8,9 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 
+#import "MainWindow.h"
+#import "MiniWindow.h"
+
 #import <MediaPlayer/MPNowPlayingInfoCenter.h>
 #import <MediaPlayer/MPRemoteCommandCenter.h>
 #import <MediaPlayer/MPRemoteCommand.h>
@@ -114,6 +117,12 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	[self setPlaybackStatus: CogStatusPaused];
     
     [self sendMetaData];
+    
+    if (hdcdLogoTimer)
+    {
+        [hdcdLogoTimer invalidate];
+        hdcdLogoTimer = nil;
+    }
 }
 
 - (IBAction)resume:(id)sender
@@ -131,6 +140,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
     [audioPlayer stop];
 
     [self sendMetaData];
+    
+    [self removeHDCD:nil];
 }
 
 //called by double-clicking on table
@@ -766,7 +777,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     lastPosition = -10;
 	
 	[self setPosition:0];
-	
+    
 	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
 
@@ -775,6 +786,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	int status = [s intValue];
 	if (status == CogStatusStopped || status == CogStatusPaused)
 	{
+        [self removeHDCD:nil];
 		if (positionTimer)
 		{
 			[positionTimer invalidate];
@@ -834,6 +846,32 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	[self setPlaybackStatus:status];
     // If we don't send it here, if we've stopped, then the NPIC will be stuck at the last file we played.
     [self sendMetaData];
+}
+
+- (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo
+{
+    MainWindow * mainWindow = (MainWindow *) appController.mainWindow;
+    [mainWindow showHDCDLogo:YES];
+    MiniWindow * miniWindow = (MiniWindow *) appController.miniWindow;
+    [miniWindow showHDCDLogo:YES];
+    
+    if (hdcdLogoTimer)
+    {
+        [hdcdLogoTimer invalidate];
+        hdcdLogoTimer = nil;
+    }
+    
+    hdcdLogoTimer = [NSTimer timerWithTimeInterval:10.0 target:self selector:@selector(removeHDCD:) userInfo:nil repeats:NO];
+}
+
+- (void)removeHDCD:(id)sender
+{
+    MainWindow * mainWindow = (MainWindow *) appController.mainWindow;
+    [mainWindow showHDCDLogo:NO];
+    MiniWindow * miniWindow = (MiniWindow *) appController.miniWindow;
+    [miniWindow showHDCDLogo:NO];
+    [hdcdLogoTimer invalidate];
+    hdcdLogoTimer = nil;
 }
 
 - (void)playlistDidChange:(PlaylistController *)p
