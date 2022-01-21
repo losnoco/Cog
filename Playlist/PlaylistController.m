@@ -328,7 +328,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             cellView.textField.stringValue = cellText;
             cellView.textField.alignment = cellTextAlignment;
             
-            if (cellView.textField.intrinsicContentSize.width > cellView.textField.frame.size.width - 8)
+            if (cellView.textField.intrinsicContentSize.width > cellView.textField.frame.size.width - 4)
                 cellView.textField.toolTip = cellText;
             else
                 cellView.textField.toolTip = [pe statusMessage];
