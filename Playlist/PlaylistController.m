@@ -304,7 +304,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     if (view) {
         NSTableCellView * cellView = (NSTableCellView *) view;
         NSRect frameRect = cellView.frame;
-        frameRect.origin.y = cellView.imageView ? 0 : 1;
+        frameRect.origin.y = 1;
         frameRect.size.height = tableView.rowHeight;
         cellView.frame = frameRect;
 
@@ -343,8 +343,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             cellView.imageView.toolTip = [pe statusMessage];
             
             NSRect cellFrameRect = cellView.imageView.frame;
-            cellFrameRect.size.height = frameRect.size.height;
-            cellFrameRect.origin.y = 0;
+            cellFrameRect.size.height = frameRect.size.height * 14.0 / 18.0;
+            cellFrameRect.origin.y = (frameRect.size.height - cellFrameRect.size.height) * 0.5;
             cellView.imageView.frame = cellFrameRect;
         }
         
