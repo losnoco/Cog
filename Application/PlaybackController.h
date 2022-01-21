@@ -42,7 +42,6 @@ extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
 	IBOutlet NSArrayController *outputDevices;
 	
 	NSTimer *positionTimer;
-    NSTimer *hdcdLogoTimer;
 		
 	AudioPlayer *audioPlayer;
 	

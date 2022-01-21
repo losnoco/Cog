@@ -117,12 +117,6 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 	[self setPlaybackStatus: CogStatusPaused];
     
     [self sendMetaData];
-    
-    if (hdcdLogoTimer)
-    {
-        [hdcdLogoTimer invalidate];
-        hdcdLogoTimer = nil;
-    }
 }
 
 - (IBAction)resume:(id)sender
@@ -778,6 +772,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	
 	[self setPosition:0];
     
+    [self removeHDCD:nil];
+    
 	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
 
@@ -854,14 +850,6 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     [mainWindow showHDCDLogo:YES];
     MiniWindow * miniWindow = (MiniWindow *) appController.miniWindow;
     [miniWindow showHDCDLogo:YES];
-    
-    if (hdcdLogoTimer)
-    {
-        [hdcdLogoTimer invalidate];
-        hdcdLogoTimer = nil;
-    }
-    
-    hdcdLogoTimer = [NSTimer timerWithTimeInterval:10.0 target:self selector:@selector(removeHDCD:) userInfo:nil repeats:NO];
 }
 
 - (void)removeHDCD:(id)sender
@@ -870,8 +858,6 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     [mainWindow showHDCDLogo:NO];
     MiniWindow * miniWindow = (MiniWindow *) appController.miniWindow;
     [miniWindow showHDCDLogo:NO];
-    [hdcdLogoTimer invalidate];
-    hdcdLogoTimer = nil;
 }
 
 - (void)playlistDidChange:(PlaylistController *)p
