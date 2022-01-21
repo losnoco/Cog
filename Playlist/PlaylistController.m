@@ -304,14 +304,26 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     if (view) {
         NSTableCellView * cellView = (NSTableCellView *) view;
         NSRect frameRect = cellView.frame;
-        frameRect.origin.y = 1;
+        frameRect.origin.y = cellView.imageView ? 0 : 1;
         frameRect.size.height = tableView.rowHeight;
         cellView.frame = frameRect;
 
         if (cellView.textField) {
-
-            NSFont * font = [NSFont systemFontOfSize:fontSize];
+            NSFont * sysFont = [NSFont systemFontOfSize:fontSize];
             
+            NSFontDescriptor * fontDesc = [sysFont fontDescriptor];
+            
+            
+            NSDictionary *fontFeatureSettings = @{NSFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
+                                               NSFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector)
+            };
+            
+            NSDictionary *fontFeatureAttributes = @{NSFontFeatureSettingsAttribute: @[ fontFeatureSettings ] };
+            
+            fontDesc = [fontDesc fontDescriptorByAddingAttributes:fontFeatureAttributes];
+            
+            NSFont * font = [NSFont fontWithDescriptor:fontDesc size:fontSize];
+
             cellView.textField.font = font;
             cellView.textField.stringValue = cellText;
             cellView.textField.alignment = cellTextAlignment;
@@ -332,7 +344,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
             
             NSRect cellFrameRect = cellView.imageView.frame;
             cellFrameRect.size.height = frameRect.size.height;
-            cellFrameRect.origin.y = 1;
+            cellFrameRect.origin.y = 0;
             cellView.imageView.frame = cellFrameRect;
         }
         
