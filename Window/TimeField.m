@@ -22,12 +22,21 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
 - (void)awakeFromNib
 {
     showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
-    if (@available(macOS 10.15, *)) {
-        fontAttributes =
-            @{NSFontAttributeName : [NSFont monospacedSystemFontOfSize:13
-                                                                weight:NSFontWeightMedium]};
-        [self update];
-    }
+
+    NSFontDescriptor * fontDesc = [[NSFont systemFontOfSize:13] fontDescriptor];    
+    
+    NSDictionary *fontFeatureSettings = @{NSFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
+                                       NSFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector)
+    };
+    
+    NSDictionary *fontFeatureAttributes = @{NSFontFeatureSettingsAttribute: @[ fontFeatureSettings ] };
+    
+    fontDesc = [fontDesc fontDescriptorByAddingAttributes:fontFeatureAttributes];
+    
+    NSFont * font = [NSFont fontWithDescriptor:fontDesc size:13];
+
+    fontAttributes =
+        @{NSFontAttributeName : font};
 }
 
 - (void)update
