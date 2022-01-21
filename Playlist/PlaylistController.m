@@ -1088,12 +1088,19 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (void)emptyQueueListUnsynced {
+    NSMutableIndexSet * refreshSet = [[NSMutableIndexSet alloc] init];
+    
     for (PlaylistEntry *queueItem in queueList) {
         queueItem.queued = NO;
         [queueItem setQueuePosition:-1];
+        [refreshSet addIndex:[queueItem index]];
     }
 
     [queueList removeAllObjects];
+
+    // Refresh entire row to refresh tooltips
+    unsigned long columns = [[self.tableView tableColumns] count];
+    [self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 }
 
 - (IBAction)toggleQueued:(id)sender {
