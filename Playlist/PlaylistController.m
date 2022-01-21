@@ -363,8 +363,28 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     if ([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
 
+// This action is only needed to revert the one that follows it
+- (void)moveObjectsFromIndex:(NSUInteger)fromIndex
+     toArrangedObjectIndexes:(NSIndexSet *)indexSet {
+    [[[self undoManager] prepareWithInvocationTarget:self]
+     moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:fromIndex];
+    NSString *actionName =
+            [NSString stringWithFormat:@"Reordering %lu entries", (unsigned long) [indexSet count]];
+    [[self undoManager] setActionName:actionName];
+
+    [super moveObjectsFromIndex:fromIndex toArrangedObjectIndexes:indexSet];
+
+    [playbackController playlistDidChange:self];
+}
+
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
                                         toIndex:(NSUInteger)insertIndex {
+    [[[self undoManager] prepareWithInvocationTarget:self]
+        moveObjectsFromIndex:insertIndex toArrangedObjectIndexes:indexSet];
+    NSString *actionName =
+            [NSString stringWithFormat:@"Reordering %lu entries", (unsigned long) [indexSet count]];
+    [[self undoManager] setActionName:actionName];
+
     [super moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
 
 #if 0 // syncPlaylistEntries is already called for rearrangement

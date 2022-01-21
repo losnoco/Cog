@@ -28,5 +28,8 @@ extern NSString *iTunesDropType;
 // utility methods
 -(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
                                        toIndex:(NSUInteger)insertIndex;
+// This is needed to undo the above
+- (void)moveObjectsFromIndex:(NSUInteger)fromIndex
+     toArrangedObjectIndexes:(NSIndexSet *)indexSet;
 
 @end

@@ -119,5 +119,28 @@ NSString *iTunesDropType = @"com.apple.tv.metadata";
     }
 }
 
+- (void)moveObjectsFromIndex:(NSUInteger)fromIndex
+     toArrangedObjectIndexes:(NSIndexSet *)indexSet {
+    NSArray *objects = [self arrangedObjects];
+    NSUInteger index = [indexSet firstIndex];
+
+    NSUInteger itemIndex = 0;
+    id object;
+    
+    NSArray *itemsSet = [objects objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(fromIndex, [indexSet count])]];
+    
+    for (NSUInteger i = 0; i < [itemsSet count]; i++) {
+        [self removeObjectAtArrangedObjectIndex:fromIndex];
+    }
+
+    while (NSNotFound != index) {
+        object = itemsSet[itemIndex++];
+
+        [self insertObject:object atArrangedObjectIndex:index];
+
+        index = [indexSet indexGreaterThanIndex:index];
+    }
+}
+
 
 @end
