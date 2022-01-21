@@ -41,7 +41,7 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix, int padding) 
         @{NSFontAttributeName : font};
 }
 
-static int _exp10(long minutes)
+static int _log10(long minutes)
 {
     int ret = 1;
     while (minutes >= 10) {
@@ -58,8 +58,8 @@ static int _exp10(long minutes)
     {
         long sec = self.currentTime;
         long sectotal = self.duration;
-        int minutedigits = _exp10(sec / 60);
-        int otherminutedigits = _exp10(sectotal / 60) + 1; // Plus hyphen
+        int minutedigits = _log10(sec / 60);
+        int otherminutedigits = _log10(sectotal / 60) + 1; // Plus hyphen
         int padding = MAX(0, otherminutedigits - minutedigits);
         text = formatTimer(sec / 60, sec % 60, 0x200B, padding); // Zero-width space
     }
@@ -67,8 +67,8 @@ static int _exp10(long minutes)
     {
         long sec = MAX(0, self.duration - self.currentTime);
         long sectotal = self.duration;
-        int minutedigits = _exp10(sec / 60) + 1; // Plus hyphen
-        int otherminutedigits = _exp10(sectotal / 60) + 1; // Also plus hyphen
+        int minutedigits = _log10(sec / 60) + 1; // Plus hyphen
+        int otherminutedigits = _log10(sectotal / 60) + 1; // Also plus hyphen
         int padding = MAX(0, otherminutedigits - minutedigits);
         text = formatTimer(sec / 60, sec % 60, 0x2212, padding); // Minus
     }
