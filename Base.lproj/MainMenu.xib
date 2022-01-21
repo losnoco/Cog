@@ -34,7 +34,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="1000" height="378"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" rowSizeStyle="automatic" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
+                                        <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
                                             <rect key="frame" x="0.0" y="0.0" width="1000" height="361"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="6"/>
@@ -210,7 +210,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="gpC-Oe-Rog">
-                                                            <rect key="frame" x="234.5" y="3" width="149" height="18"/>
+                                                            <rect key="frame" x="235" y="3" width="149" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1WK-qN-Mgj">
@@ -289,7 +289,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hhB-nv-e78">
-                                                            <rect key="frame" x="540.5" y="3" width="95" height="18"/>
+                                                            <rect key="frame" x="541" y="3" width="95" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tHy-sM-HDB">
@@ -366,7 +366,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="rRl-p9-Awr">
-                                                            <rect key="frame" x="735.5" y="3" width="144" height="18"/>
+                                                            <rect key="frame" x="736" y="3" width="144" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yW6-2w-6mN">
@@ -402,7 +402,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hgh-VE-5kl">
-                                                            <rect key="frame" x="882.5" y="3" width="38" height="18"/>
+                                                            <rect key="frame" x="883" y="3" width="38" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yEY-MI-d3o">
@@ -547,12 +547,12 @@
                                                 </tableColumn>
                                             </tableColumns>
                                             <connections>
-                                                <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="IWY-vf-qDN"/>
                                                 <binding destination="1689" name="rowHeight" keyPath="values.fontSize" id="1927">
                                                     <dictionary key="options">
                                                         <string key="NSValueTransformerName">FontSizetoLineHeightTransformer</string>
                                                     </dictionary>
                                                 </binding>
+                                                <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="IWY-vf-qDN"/>
                                                 <outlet property="dataSource" destination="218" id="843"/>
                                                 <outlet property="delegate" destination="218" id="845"/>
                                                 <outlet property="menu" destination="1063" id="1065"/>

@@ -18,7 +18,7 @@
 - (id)transformedValue:(id)value {
     NSFont *font = [NSFont systemFontOfSize:[(NSNumber *)value floatValue]];
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-    float fRowSize = [layoutManager defaultLineHeightForFont:font] * 1.2;
+    float fRowSize = [layoutManager defaultLineHeightForFont:font];
     return [NSNumber numberWithFloat: fRowSize];
 }
 

@@ -303,9 +303,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     NSView * view = [tableView makeViewWithIdentifier:cellIdentifier owner:nil];
     if (view) {
         NSTableCellView * cellView = (NSTableCellView *) view;
-        if (cellView.textField) {
-            NSFont * font = [NSFont systemFontOfSize:fontSize];
+        NSRect frameRect = cellView.frame;
+        frameRect.origin.y = 1;
+        frameRect.size.height = tableView.rowHeight;
+        cellView.frame = frameRect;
 
+        if (cellView.textField) {
+
+            NSFont * font = [NSFont systemFontOfSize:fontSize];
+            
             cellView.textField.font = font;
             cellView.textField.stringValue = cellText;
             cellView.textField.alignment = cellTextAlignment;
@@ -314,11 +320,22 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
                 cellView.textField.toolTip = cellText;
             else
                 cellView.textField.toolTip = [pe statusMessage];
+            
+            NSRect cellFrameRect = cellView.textField.frame;
+            cellFrameRect.origin.y = 1;
+            cellFrameRect.size.height = frameRect.size.height;
+            cellView.textField.frame = cellFrameRect;
         }
         if (cellView.imageView) {
             cellView.imageView.image = cellImage;
             cellView.imageView.toolTip = [pe statusMessage];
+            
+            NSRect cellFrameRect = cellView.imageView.frame;
+            cellFrameRect.size.height = frameRect.size.height;
+            cellFrameRect.origin.y = 1;
+            cellView.imageView.frame = cellFrameRect;
         }
+        
         cellView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
     }
     
@@ -327,6 +344,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (void)updateRowSize {
     [self.tableView reloadData];
+    if (currentEntry != nil) [self.tableView scrollRowToVisible:currentEntry.index];
 }
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
