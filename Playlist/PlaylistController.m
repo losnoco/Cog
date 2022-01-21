@@ -109,6 +109,9 @@ static NSArray * cellIdentifiers = nil;
     
     statusImageTransformer = [NSValueTransformer valueTransformerForName:@"StatusImageTransformer"];
     
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"index" ascending:YES];
+    [self.tableView setSortDescriptors:@[sortDescriptor]];
+    
     [self addObserver:self
            forKeyPath:@"arrangedObjects"
               options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
@@ -123,6 +126,7 @@ static NSArray * cellIdentifiers = nil;
     if ([keyPath isEqualToString:@"arrangedObjects"]) {
         [self updatePlaylistIndexes];
         [self updateTotalTime];
+        [self.tableView reloadData];
     }
     else if ([keyPath isEqualToString:@"values.fontSize"]) {
         [self updateRowSize];
