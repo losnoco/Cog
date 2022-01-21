@@ -10,8 +10,10 @@
 
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
 
-NSString * formatTimer(long minutes, long seconds, unichar prefix) {
-    return [NSString localizedStringWithFormat:@"%C%lu:%02lu", prefix, minutes, seconds];;
+NSString * formatTimer(long minutes, long seconds, unichar prefix, int padding) {
+    NSString *paddingChar = [NSString stringWithFormat:@"%C", (unichar)0x2007]; // Digit-width space
+    NSString *paddingString = [@"" stringByPaddingToLength:padding withString:paddingChar startingAtIndex:0];
+    return [NSString localizedStringWithFormat:@"%@%C%lu:%02lu", paddingString, prefix, minutes, seconds];
 }
 
 @implementation TimeField {
@@ -23,7 +25,7 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
 {
     showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
 
-    NSFontDescriptor * fontDesc = [[NSFont systemFontOfSize:13] fontDescriptor];    
+    NSFontDescriptor * fontDesc = [[NSFont systemFontOfSize:13] fontDescriptor];
     
     NSDictionary *fontFeatureSettings = @{NSFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
                                        NSFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector)
@@ -39,18 +41,36 @@ NSString * formatTimer(long minutes, long seconds, unichar prefix) {
         @{NSFontAttributeName : font};
 }
 
+static int _exp10(long minutes)
+{
+    int ret = 1;
+    while (minutes >= 10) {
+        minutes /= 10;
+        ret++;
+    }
+    return ret;
+}
+
 - (void)update
 {
     NSString *text;
     if (showTimeRemaining == NO)
     {
         long sec = self.currentTime;
-        text = formatTimer(sec / 60, sec % 60, 0x2007); // Digit-width space
+        long sectotal = self.duration;
+        int minutedigits = _exp10(sec / 60);
+        int otherminutedigits = _exp10(sectotal / 60) + 1; // Plus hyphen
+        int padding = MAX(0, otherminutedigits - minutedigits);
+        text = formatTimer(sec / 60, sec % 60, 0x200B, padding); // Zero-width space
     }
     else
     {
         long sec = MAX(0, self.duration - self.currentTime);
-        text = formatTimer(sec / 60, sec % 60, 0x2212); // Minus
+        long sectotal = self.duration;
+        int minutedigits = _exp10(sec / 60) + 1; // Plus hyphen
+        int otherminutedigits = _exp10(sectotal / 60) + 1; // Also plus hyphen
+        int padding = MAX(0, otherminutedigits - minutedigits);
+        text = formatTimer(sec / 60, sec % 60, 0x2212, padding); // Minus
     }
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:text
                                                                  attributes:fontAttributes];
