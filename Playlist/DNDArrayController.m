@@ -94,6 +94,18 @@ NSString *iTunesDropType = @"com.apple.tv.metadata";
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
                                         toIndex:(NSUInteger)insertIndex {
+    __block NSUInteger rangeCount = 0;
+    __block NSUInteger firstIndex = 0;
+    [indexSet enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        if (++rangeCount == 1)
+            firstIndex = range.location;
+    }];
+    
+    if (rangeCount == 1 &&
+        (insertIndex >= firstIndex &&
+         insertIndex < firstIndex + [indexSet count])) // Null operation
+        return;
+    
     NSArray *objects = [self arrangedObjects];
     NSUInteger index = [indexSet lastIndex];
 
@@ -121,6 +133,27 @@ NSString *iTunesDropType = @"com.apple.tv.metadata";
 
 - (void)moveObjectsFromIndex:(NSUInteger)fromIndex
      toArrangedObjectIndexes:(NSIndexSet *)indexSet {
+    __block NSUInteger rangeCount = 0;
+    __block NSUInteger firstIndex = 0;
+    __block NSUInteger _fromIndex = fromIndex;
+    [indexSet enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        if (++rangeCount == 1)
+            firstIndex = range.location;
+        if (_fromIndex >= range.location) {
+            if (_fromIndex < range.location + range.length)
+                _fromIndex = range.location;
+            else
+                _fromIndex -= range.length;
+        }
+    }];
+    
+    if (rangeCount == 1 &&
+        (fromIndex >= firstIndex &&
+         fromIndex < firstIndex + [indexSet count])) // Null operation
+        return;
+
+    fromIndex = _fromIndex;
+    
     NSArray *objects = [[self arrangedObjects] subarrayWithRange:NSMakeRange(fromIndex, [indexSet count])];
     NSUInteger index = [indexSet firstIndex];
 
