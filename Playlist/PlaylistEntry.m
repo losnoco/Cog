@@ -107,6 +107,16 @@
     return [NSSet setWithObjects:@"track", @"disc", nil];
 }
 
++ (NSSet *)keyPathsForValuesAffectingYearText
+{
+    return [NSSet setWithObject:@"year"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingCuesheetPresent
+{
+    return [NSSet setWithObject:@"cuesheet"];
+}
+
 + (NSSet *)keyPathsForValuesAffectingPositionText
 {
     return [NSSet setWithObject:@"currentPosition"];
@@ -314,6 +324,19 @@
     else
     {
         return @"";
+    }
+}
+
+@dynamic cuesheetPresent;
+-(NSString *)cuesheetPresent
+{
+    if (cuesheet && [cuesheet length])
+    {
+        return @"yes";
+    }
+    else
+    {
+        return @"no";
     }
 }
 

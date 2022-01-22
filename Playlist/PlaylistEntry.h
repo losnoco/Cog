@@ -78,6 +78,7 @@
 + (NSSet *)keyPathsForValuesAffectingTrackText;
 + (NSSet *)keyPathsForValuesAffectingLengthText;
 + (NSSet *)keyPathsForValuesAffectingYearText;
++ (NSSet *)keyPathsForValuesAffectingCuesheetPresent;
 
 @property(readonly) NSString *display;
 @property(retain, readonly) NSNumber *length;
@@ -127,6 +128,8 @@
 @property(retain) NSNumber *disc;
 
 @property(retain) NSString *cuesheet;
+
+@property(readonly) NSString *cuesheetPresent;
 
 @property(retain, readonly) NSImage *albumArt;
 @property(retain) NSData *albumArtInternal;
