@@ -38,6 +38,7 @@
     BOOL stopped;
     BOOL started;
     BOOL paused;
+    BOOL stopNext;
     
     BOOL eqEnabled;
     

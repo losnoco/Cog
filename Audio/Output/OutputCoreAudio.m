@@ -160,6 +160,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         listenerapplied = NO;
         running = NO;
         started = NO;
+        stopNext = NO;
         
         atomic_init(&bytesRendered, 0);
         atomic_init(&bytesHdcdSustained, 0);
@@ -210,6 +211,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 {
     running = YES;
     started = NO;
+    stopNext = NO;
     size_t eventCount = 0;
     atomic_store(&bytesRendered, 0);
     NSMutableArray *delayedEvents = [[NSMutableArray alloc] init];
@@ -276,6 +278,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
                         bytesBuffered = 0;
                     else
                         bytesBuffered -= CHUNK_SIZE;
+                }
+                else {
+                    stopNext = YES;
+                    break;
                 }
                 [delayedEvents addObject:[NSNumber numberWithLong:bytesBuffered]];
                 delayedEventsPopped = NO;
@@ -554,6 +560,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     stopping = NO;
     stopped = NO;
     paused = NO;
+    stopNext = NO;
     outputDeviceID = -1;
 	
     AudioComponentDescription desc;
@@ -722,6 +729,14 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (void)stop
 {
+    if (stopNext && started && !paused) {
+        while (![[outputController buffer] isEmpty])
+            usleep(500);
+    }
+    if (stopNext) {
+        stopNext = NO;
+        [self signalEndOfStream];
+    }
     stopInvoked = YES;
     stopping = YES;
     paused = NO;
