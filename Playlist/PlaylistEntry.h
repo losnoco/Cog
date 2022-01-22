@@ -79,6 +79,7 @@
 + (NSSet *)keyPathsForValuesAffectingLengthText;
 + (NSSet *)keyPathsForValuesAffectingYearText;
 + (NSSet *)keyPathsForValuesAffectingCuesheetPresent;
++ (NSSet *)keyPathsForValuesAffectingGainCorrection;
 
 @property(readonly) NSString *display;
 @property(retain, readonly) NSNumber *length;
@@ -149,6 +150,8 @@
 @property float replayGainTrackGain;
 @property float replayGainTrackPeak;
 @property float volume;
+
+@property(readonly) NSString *gainCorrection;
 
 @property double currentPosition;
 

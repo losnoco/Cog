@@ -132,6 +132,11 @@
     return [NSSet setWithObject:@"albumArtInternal"];
 }
 
++ (NSSet *)keyPathsForValuesAffectingGainCorrection
+{
+    return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"volume", nil];
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"PlaylistEntry %li:(%@)", self.index, self.URL];
@@ -337,6 +342,33 @@
     else
     {
         return @"no";
+    }
+}
+
+@dynamic gainCorrection;
+- (NSString *)gainCorrection
+{
+    if (replayGainAlbumGain)
+    {
+        if (replayGainAlbumPeak)
+            return @"Album Gain plus Peak";
+        else
+            return @"Album Gain";
+    }
+    else if (replayGainTrackGain)
+    {
+        if (replayGainTrackPeak)
+            return @"Track Gain plus Peak";
+        else
+            return @"Track Gain";
+    }
+    else if (volume)
+    {
+        return @"Volume scale";
+    }
+    else
+    {
+        return @"None";
     }
 }
 
