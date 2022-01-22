@@ -37,6 +37,7 @@
     
     BOOL _audioFile_opened;
     BOOL _in_opened;
+    BOOL _audioFile_is_lossy;
     
 	int bitrate;
 	int bitsPerSample;

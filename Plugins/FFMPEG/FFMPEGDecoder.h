@@ -19,6 +19,7 @@
     int channels;
     int bitsPerSample;
     BOOL floatingPoint;
+    BOOL lossy;
     float frequency;
     long totalFrames;
     long framesRead;

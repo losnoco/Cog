@@ -212,6 +212,11 @@ static SInt64 getSizeProc(void* clientData) {
 		bitsPerSample = 32;
         floatingPoint = YES;
 	}
+    
+    _audioFile_is_lossy = NO;
+    
+    if (floatingPoint || [[codec lowercaseString] containsString:@"adpcm"] || [[codec lowercaseString] containsString:@"gsm"])
+        _audioFile_is_lossy = YES;
 	
 	// Set output format
 	AudioStreamBasicDescription		result;
@@ -349,7 +354,7 @@ static SInt64 getSizeProc(void* clientData) {
 		[NSNumber numberWithBool:YES], @"seekable",
         codec, @"codec",
         floatingPoint ? @"host" : @"big", @"endian",
-        floatingPoint ? @"lossy" : @"lossless", @"encoding",
+        _audioFile_is_lossy ? @"lossy" : @"lossless", @"encoding",
 		nil];
 }
 
