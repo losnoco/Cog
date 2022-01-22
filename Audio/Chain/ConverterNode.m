@@ -709,7 +709,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
                 [self setShouldContinue:YES];
                 refillNode = nil;
                 [self cleanUp];
-                [self setupWithInputFormat:rememberedInputFormat outputFormat:outputFormat];
+                [self setupWithInputFormat:rememberedInputFormat outputFormat:outputFormat isLossless:rememberedLossless];
                 continue;
             }
             else break;
@@ -1153,11 +1153,13 @@ static float db_to_scale(float db)
 }
 
 
-- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf
+- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf isLossless:(BOOL)lossless
 {
 	//Make the converter
 	inputFormat = inf;
 	outputFormat = outf;
+    
+    rememberedLossless = lossless;
     
     // These are the only sample formats we support translating
     BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
@@ -1166,7 +1168,8 @@ static float db_to_scale(float db)
         return NO;
     
     // These are really placeholders, as we're doing everything internally now
-    if (inputFormat.mBitsPerChannel == 16 &&
+    if (lossless &&
+        inputFormat.mBitsPerChannel == 16 &&
         inputFormat.mChannelsPerFrame == 2 &&
         inputFormat.mSampleRate == 44100) {
         // possibly HDCD, run through decoder
@@ -1315,11 +1318,11 @@ static float db_to_scale(float db)
                 break;
         }
         
-        [self setupWithInputFormat:previousOutputFormat outputFormat:outputFormat];
+        [self setupWithInputFormat:previousOutputFormat outputFormat:outputFormat isLossless:rememberedLossless];
     }
     else
     {
-        [self setupWithInputFormat:format outputFormat:outputFormat];
+        [self setupWithInputFormat:format outputFormat:outputFormat isLossless:rememberedLossless];
     }
 }
 

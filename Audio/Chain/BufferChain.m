@@ -62,8 +62,10 @@
 
 	if (![inputNode openWithSource:source])
 		return NO;
+    
+    NSDictionary * properties = [inputNode properties];
 
-	if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
+    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -81,8 +83,10 @@
 	if (![inputNode openWithDecoder:[i decoder]])
 		return NO;
 	
-	DLog(@"Input Properties: %@", [inputNode properties]);
-	if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
+    NSDictionary * properties = [inputNode properties];
+    
+	DLog(@"Input Properties: %@", properties);
+    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -100,8 +104,10 @@
     if (![inputNode openWithDecoder:decoder])
         return NO;
     
-    DLog(@"Input Properties: %@", [inputNode properties]);
-    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD([inputNode properties])) outputFormat:outputFormat])
+    NSDictionary * properties = [inputNode properties];
+    
+    DLog(@"Input Properties: %@", properties);
+    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
         return NO;
     
     [self setRGInfo:rgi];

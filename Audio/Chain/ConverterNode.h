@@ -59,6 +59,8 @@
     size_t dsd2pcmCount;
     int dsd2pcmLatency;
     int dsdLatencyEaten;
+    
+    BOOL rememberedLossless;
 	
 	AudioStreamBasicDescription inputFormat;
     AudioStreamBasicDescription floatFormat;
@@ -79,7 +81,7 @@
 
 - (id)initWithController:(id)c previous:(id)p;
 
-- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat;
+- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat isLossless:(BOOL)lossless;
 - (void)cleanUp;
 
 - (void)process;
