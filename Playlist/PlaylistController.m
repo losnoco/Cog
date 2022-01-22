@@ -313,6 +313,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
         cellView.frame = frameRect;
 
         if (cellView.textField) {
+            cellView.textField.allowsDefaultTighteningForTruncation = YES;
+            
             NSFont * sysFont = [NSFont systemFontOfSize:fontSize];
             
             NSFontDescriptor * fontDesc = [sysFont fontDescriptor];
