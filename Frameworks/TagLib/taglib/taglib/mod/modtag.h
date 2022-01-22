@@ -95,6 +95,11 @@ namespace TagLib {
       virtual unsigned int track() const;
         
       /*!
+       * Not supported by module files.  Therefore always returns 0.
+       */
+      virtual unsigned int disc() const;
+          
+      /*!
        * Not supported by module files. Therefore always returns empty.
        */
       virtual String cuesheet() const;
@@ -186,6 +191,11 @@ namespace TagLib {
        * Not supported by module files and therefore ignored.
        */
       virtual void setTrack(unsigned int track);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setDisc(unsigned int track);
 
       /*!
        * Not supported by module files and therefore ignored.

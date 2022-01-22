@@ -860,8 +860,8 @@
                 </binding>
                 <outlet property="delegate" destination="226" id="481"/>
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
-                <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
                 <outlet property="mainToolbar" destination="1523" id="J2X-YK-xV0"/>
+                <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
             </connections>
             <point key="canvasLocation" x="130" y="131"/>
         </window>
@@ -1052,8 +1052,8 @@
                         <string key="NSNullPlaceholder">Cog</string>
                     </dictionary>
                 </binding>
-                <outlet property="playbackController" destination="705" id="vo7-mK-yQe"/>
                 <outlet property="miniToolbar" destination="2222" id="Up2-7z-HqA"/>
+                <outlet property="playbackController" destination="705" id="vo7-mK-yQe"/>
             </connections>
             <point key="canvasLocation" x="45" y="444"/>
         </window>

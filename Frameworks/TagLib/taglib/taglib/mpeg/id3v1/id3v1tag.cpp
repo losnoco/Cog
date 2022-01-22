@@ -167,6 +167,11 @@ unsigned int ID3v1::Tag::track() const
   return d->track;
 }
 
+unsigned int ID3v1::Tag::disc() const
+{
+  return 0;
+}
+
 String ID3v1::Tag::cuesheet() const
 {
     return String();
@@ -229,6 +234,10 @@ void ID3v1::Tag::setYear(unsigned int i)
 void ID3v1::Tag::setTrack(unsigned int i)
 {
   d->track = i < 256 ? i : 0;
+}
+
+void ID3v1::Tag::setDisc(unsigned int i)
+{
 }
 
 void ID3v1::Tag::setCuesheet(const String &)

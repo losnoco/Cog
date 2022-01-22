@@ -277,7 +277,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
                 break;
                 
             case 7:
-                if ([pe year]) cellText = [NSString stringWithFormat:@"%@", [pe year]];
+                if ([pe year]) cellText = [pe yearText];
                 cellTextAlignment = NSTextAlignmentRight;
                 break;
                 
@@ -286,7 +286,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
                 break;
                 
             case 9:
-                if ([pe track]) cellText = [NSString stringWithFormat:@"%@", [pe track]];
+                if ([pe track]) cellText = [pe trackText];
                 cellTextAlignment = NSTextAlignmentRight;
                 break;
                 

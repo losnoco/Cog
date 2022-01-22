@@ -72,7 +72,7 @@
 		if (tag)
 		{
 			TagLib::String artist, albumartist, title, album, genre, comment;
-			int year, track;
+			int year, track, disc;
             float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
             TagLib::String cuesheet;
 			
@@ -89,6 +89,9 @@
 			
 			track = tag->track();
 			[dict setObject:[NSNumber numberWithInt:track] forKey:@"track"];
+            
+            disc = tag->disc();
+            [dict setObject:[NSNumber numberWithInt:disc] forKey:@"disc"];
 
             rgAlbumGain = tag->rgAlbumGain();
             rgAlbumPeak = tag->rgAlbumPeak();

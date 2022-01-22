@@ -59,6 +59,7 @@
 			
 			lYear = tag->year();
 			lTrack = tag->track();
+            lDisc = tag->disc();
 			
 			if (!pArtist.isNull())
 				lArtist = [NSString stringWithUTF8String:pArtist.toCString(true)];

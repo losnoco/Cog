@@ -145,6 +145,19 @@ unsigned int Ogg::XiphComment::track() const
     return d->fieldListMap["TRACKNUMBER"].front().toInt();
   if(!d->fieldListMap["TRACKNUM"].isEmpty())
     return d->fieldListMap["TRACKNUM"].front().toInt();
+  if(!d->fieldListMap["TRACK"].isEmpty())
+    return d->fieldListMap["TRACK"].front().toInt();
+  return 0;
+}
+
+unsigned int Ogg::XiphComment::disc() const
+{
+  if(!d->fieldListMap["DISCNUMBER"].isEmpty())
+    return d->fieldListMap["DISCNUMBER"].front().toInt();
+  if(!d->fieldListMap["DISCNUM"].isEmpty())
+    return d->fieldListMap["DISCNUM"].front().toInt();
+  if(!d->fieldListMap["DISC"].isEmpty())
+    return d->fieldListMap["DISC"].front().toInt();
   return 0;
 }
 
@@ -231,11 +244,22 @@ void Ogg::XiphComment::setYear(unsigned int i)
 
 void Ogg::XiphComment::setTrack(unsigned int i)
 {
+  removeFields("TRACK");
   removeFields("TRACKNUM");
   if(i == 0)
     removeFields("TRACKNUMBER");
   else
     addField("TRACKNUMBER", String::number(i));
+}
+
+void Ogg::XiphComment::setDisc(unsigned int i)
+{
+  removeFields("DISC");
+  removeFields("DISCNUM");
+  if(i == 0)
+    removeFields("DISCNUMBER");
+  else
+    addField("DISCNUMBER", String::number(i));
 }
 
 void Ogg::XiphComment::setCuesheet(const String &s)

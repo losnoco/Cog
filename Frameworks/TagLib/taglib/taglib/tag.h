@@ -126,6 +126,12 @@ namespace TagLib {
     virtual unsigned int track() const = 0;
 
     /*!
+     * Returns the disc number; if there is no track number set, this will
+     * return 0.
+     */
+    virtual unsigned int disc() const = 0;
+
+    /*!
      * Returns the embedded cuesheet; if there is no cuesheet set, this
      * will return an empty string.
      */
@@ -203,6 +209,11 @@ namespace TagLib {
      * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
      */
     virtual void setTrack(unsigned int i) = 0;
+
+    /*!
+     * Sets the disc to \a i.  If \a s is 0 then this value will be cleared.
+     */
+    virtual void setDisc(unsigned int i) = 0;
 
     /*!
      * Sets the embedded cuesheet to \a s. If \a s is empty then this

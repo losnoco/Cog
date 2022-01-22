@@ -245,6 +245,13 @@ unsigned int ID3v2::Tag::track() const
   return 0;
 }
 
+unsigned int ID3v2::Tag::disc() const
+{
+  if(!d->frameListMap["TPOS"].isEmpty())
+    return d->frameListMap["TPOS"].front()->toString().toInt();
+  return 0;
+}
+
 String ID3v2::Tag::cuesheet() const
 {
   const FrameList &list = d->frameListMap["TXXX"];
@@ -394,6 +401,15 @@ void ID3v2::Tag::setTrack(unsigned int i)
     return;
   }
   setTextFrame("TRCK", String::number(i));
+}
+
+void ID3v2::Tag::setDisc(unsigned int i)
+{
+  if (i == 0) {
+    removeFrames("TPOS");
+    return;
+  }
+  setTextFrame("TPOS", String::number(i));
 }
 
 void ID3v2::Tag::setCuesheet(const String &s)

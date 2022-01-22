@@ -102,6 +102,7 @@ namespace TagLib {
        * return 0.
        */
       virtual unsigned int track() const;
+      virtual unsigned int disc() const;
 
       virtual String cuesheet() const;
 
@@ -160,6 +161,7 @@ namespace TagLib {
        * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
        */
       virtual void setTrack(unsigned int i);
+      virtual void setDisc(unsigned int i);
         
       virtual void setCuesheet(const String &s);
 

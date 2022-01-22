@@ -53,7 +53,8 @@ bool Tag::isEmpty() const
           comment().isEmpty() &&
           genre().isEmpty() &&
           year() == 0 &&
-          track() == 0);
+          track() == 0 &&
+          disc() == 0);
 }
 
 PropertyMap Tag::properties() const
@@ -75,6 +76,8 @@ PropertyMap Tag::properties() const
     map["DATE"].append(String::number(year()));
   if(!(track() == 0))
     map["TRACKNUMBER"].append(String::number(track()));
+  if (!(disc() == 0))
+    map["DISCNUMBER"].append(String::number(disc()));
   return map;
 }
 
@@ -152,6 +155,18 @@ PropertyMap Tag::setProperties(const PropertyMap &origProps)
   else
     setTrack(0);
 
+  if(properties.contains("DISCNUMBER")) {
+    bool ok;
+    int disc = properties["DISCNUMBER"].front().toInt(&ok);
+    if(ok) {
+      setDisc(disc);
+      oneValueSet.append("DISCNUMBER");
+    } else
+      setDisc(0);
+  }
+  else
+    setDisc(0);
+
   // for each tag that has been set above, remove the first entry in the corresponding
   // value list. The others will be returned as unsupported by this format.
   for(StringList::ConstIterator it = oneValueSet.begin(); it != oneValueSet.end(); ++it) {
@@ -174,6 +189,7 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
     target->setGenre(source->genre());
     target->setYear(source->year());
     target->setTrack(source->track());
+    target->setDisc(source->disc());
   }
   else {
     if(target->title().isEmpty())
@@ -192,5 +208,7 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
       target->setYear(source->year());
     if(target->track() <= 0)
       target->setTrack(source->track());
+    if(target->disc() <= 0)
+      target->setDisc(source->disc());
   }
 }

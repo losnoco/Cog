@@ -108,6 +108,20 @@ unsigned int ASF::Tag::track() const
   return 0;
 }
 
+unsigned int ASF::Tag::disc() const
+{
+  if(d->attributeListMap.contains("WM/DiscNumber")) {
+    const ASF::Attribute attr = d->attributeListMap["WM/DiscNumber"][0];
+    if(attr.type() == ASF::Attribute::DWordType)
+      return attr.toUInt();
+    else
+      return attr.toString().toInt();
+  }
+  if(d->attributeListMap.contains("WM/Disc"))
+    return d->attributeListMap["WM/Disc"][0].toUInt();
+  return 0;
+}
+
 String ASF::Tag::genre() const
 {
   if(d->attributeListMap.contains("WM/Genre"))
@@ -187,6 +201,11 @@ void ASF::Tag::setYear(unsigned int value)
 void ASF::Tag::setTrack(unsigned int value)
 {
   setAttribute("WM/TrackNumber", String::number(value));
+}
+
+void ASF::Tag::setDisc(unsigned int value)
+{
+  setAttribute("WM/DiscNumber", String::number(value));
 }
 
 void ASF::Tag::setCuesheet(const String &)

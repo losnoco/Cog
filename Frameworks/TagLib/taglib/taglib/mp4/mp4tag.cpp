@@ -780,6 +780,14 @@ MP4::Tag::track() const
   return 0;
 }
 
+unsigned int
+MP4::Tag::disc() const
+{
+  if(d->items.contains("disk"))
+    return d->items["disk"].toIntPair().first;
+  return 0;
+}
+
 String
 MP4::Tag::cuesheet() const
 {
@@ -875,6 +883,17 @@ MP4::Tag::setTrack(unsigned int value)
   }
   else {
     d->items["trkn"] = MP4::Item(value, 0);
+  }
+}
+
+void
+MP4::Tag::setDisc(unsigned int value)
+{
+  if (value == 0) {
+    d->items.erase("disk");
+  }
+  else {
+    d->items["disk"] = MP4::Item(value, 0);
   }
 }
 

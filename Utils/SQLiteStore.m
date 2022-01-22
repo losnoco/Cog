@@ -1031,7 +1031,7 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t titleId = [self addString:[track rawTitle]];
         int64_t genreId = [self addString:[track genre]];
         int64_t codecId = [self addString:[track codec]];
-        int64_t trackNr = [[track track] intValue];
+        int64_t trackNr = [[track track] intValue] | (((uint64_t)[[track disc] intValue]) << 32);
         int64_t year = [[track year] intValue];
         int64_t unsignedFmt = [track Unsigned];
         int64_t bitrate = [track bitrate];
@@ -1223,7 +1223,7 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t titleId = [self addString:[track rawTitle]];
         int64_t genreId = [self addString:[track genre]];
         int64_t codecId = [self addString:[track codec]];
-        int64_t trackNr = [[track track] intValue];
+        int64_t trackNr = [[track track] intValue] | (((uint64_t)[[track disc] intValue]) << 32);
         int64_t year = [[track year] intValue];
         int64_t unsignedFmt = [track Unsigned];
         int64_t bitrate = [track bitrate];
@@ -1348,6 +1348,9 @@ static SQLiteStore *g_sharedStore = NULL;
         double replaygainalbumpeak = sqlite3_column_double(st, select_track_data_out_replaygainalbumpeak);
         double replaygaintrackgain = sqlite3_column_double(st, select_track_data_out_replaygaintrackgain);
         double replaygaintrackpeak = sqlite3_column_double(st, select_track_data_out_replaygaintrackpeak);
+        
+        uint64_t discNr = ((uint64_t)trackNr) >> 32;
+        trackNr &= (1UL << 32) - 1;
 
         [entry setURL:urlForPath([self getString:urlId])];
         
@@ -1358,6 +1361,7 @@ static SQLiteStore *g_sharedStore = NULL;
         [entry setGenre:[self getString:genreId]];
         [entry setCodec:[self getString:codecId]];
         [entry setTrack:[NSNumber numberWithInteger:trackNr]];
+        [entry setDisc:[NSNumber numberWithInteger:discNr]];
         [entry setYear:[NSNumber numberWithInteger:year]];
         [entry setUnsigned:!!unsignedFmt];
         [entry setBitrate:(int)bitrate];

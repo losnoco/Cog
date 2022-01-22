@@ -34,6 +34,7 @@
 	NSString *genre;
 	NSNumber *year;
 	NSNumber *track;
+    NSNumber *disc;
     
     NSString *cuesheet;
     
@@ -72,6 +73,9 @@
 + (NSSet *)keyPathsForValuesAffectingStatusMessage;
 + (NSSet *)keyPathsForValuesAffectingSpam;
 + (NSSet *)keyPathsForValuesAffectingAlbumArt;
++ (NSSet *)keyPathsForValuesAffectingTrackText;
++ (NSSet *)keyPathsForValuesAffectingLengthText;
++ (NSSet *)keyPathsForValuesAffectingYearText;
 
 @property(readonly) NSString *display;
 @property(retain, readonly) NSNumber *length;
@@ -84,7 +88,11 @@
 
 @property(readonly) NSString *lengthText;
 
+@property(readonly) NSString *yearText;
+
 @property(readonly) NSString *rawTitle;
+
+@property(readonly) NSString *trackText;
 
 @property NSInteger index;
 @property NSInteger shuffleIndex;
@@ -114,6 +122,7 @@
 @property(retain) NSString *genre;
 @property(retain) NSNumber *year;
 @property(retain) NSNumber *track;
+@property(retain) NSNumber *disc;
 
 @property(retain) NSString *cuesheet;
 

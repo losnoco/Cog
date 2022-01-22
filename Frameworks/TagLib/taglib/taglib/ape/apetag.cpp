@@ -174,6 +174,13 @@ unsigned int APE::Tag::track() const
   return d->itemListMap["TRACK"].toString().toInt();
 }
 
+unsigned int APE::Tag::disc() const
+{
+  if(d->itemListMap["DISC"].isEmpty())
+    return 0;
+  return d->itemListMap["DISC"].toString().toInt();
+}
+
 String APE::Tag::cuesheet() const
 {
   if(d->itemListMap["CUESHEET"].isEmpty())
@@ -253,6 +260,14 @@ void APE::Tag::setTrack(unsigned int i)
     removeItem("TRACK");
   else
     addValue("TRACK", String::number(i), true);
+}
+
+void APE::Tag::setDisc(unsigned int i)
+{
+  if(i == 0)
+    removeItem("DISC");
+  else
+    addValue("DISC", String::number(i), true);
 }
 
 void APE::Tag::setCuesheet(const String &)

@@ -213,6 +213,11 @@ unsigned int TagUnion::track() const
   numberUnion(track);
 }
 
+unsigned int TagUnion::disc() const
+{
+  numberUnion(disc);
+}
+
 String TagUnion::cuesheet() const
 {
   stringUnion(cuesheet);
@@ -276,6 +281,11 @@ void TagUnion::setYear(unsigned int i)
 void TagUnion::setTrack(unsigned int i)
 {
   setUnion(Track, i);
+}
+
+void TagUnion::setDisc(unsigned int i)
+{
+  setUnion(Disc, i);
 }
 
 void TagUnion::setCuesheet(const String &s)

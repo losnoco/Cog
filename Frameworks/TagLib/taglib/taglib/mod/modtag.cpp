@@ -94,6 +94,11 @@ unsigned int Mod::Tag::track() const
   return 0;
 }
 
+unsigned int Mod::Tag::disc() const
+{
+  return 0;
+}
+
 String Mod::Tag::cuesheet() const
 {
   return String();
@@ -155,6 +160,10 @@ void Mod::Tag::setYear(unsigned int)
 }
 
 void Mod::Tag::setTrack(unsigned int)
+{
+}
+
+void Mod::Tag::setDisc(unsigned int)
 {
 }
 

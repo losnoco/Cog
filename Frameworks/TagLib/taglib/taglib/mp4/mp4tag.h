@@ -61,6 +61,7 @@ namespace TagLib {
         virtual String genre() const;
         virtual unsigned int year() const;
         virtual unsigned int track() const;
+        virtual unsigned int disc() const;
         virtual String cuesheet() const;
         virtual float rgAlbumGain() const;
         virtual float rgAlbumPeak() const;
@@ -75,6 +76,7 @@ namespace TagLib {
         virtual void setGenre(const String &value);
         virtual void setYear(unsigned int value);
         virtual void setTrack(unsigned int value);
+        virtual void setDisc(unsigned int value);
         virtual void setCuesheet(const String &value);
         virtual void setRGAlbumGain(float);
         virtual void setRGAlbumPeak(float);

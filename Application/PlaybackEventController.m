@@ -118,7 +118,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying, TrackPaused, TrackStoppe
     if ([pe album]) [dict setObject:[pe album] forKey:TrackAlbum];
     if ([pe genre]) [dict setObject:[pe genre] forKey:TrackGenre];
     if ([pe track])
-        [dict setObject:[NSString stringWithFormat:@"%@", [pe track]] forKey:TrackNumber];
+        [dict setObject:[pe trackText] forKey:TrackNumber];
     if ([pe length])
         [dict setObject:[NSNumber numberWithInteger:(NSInteger)([[pe length] doubleValue] * 1000.0)]
                  forKey:TrackLength];

@@ -35,6 +35,7 @@
 @synthesize genre;
 @synthesize year;
 @synthesize track;
+@synthesize disc;
 
 @synthesize cuesheet;
 
@@ -96,7 +97,12 @@
 
 + (NSSet *)keyPathsForValuesAffectingSpam
 {
-    return [NSSet setWithObjects:@"albumartist", @"artist", @"title", @"album", @"track", @"totalFrames", @"currentPosition", @"bitrate", nil];
+    return [NSSet setWithObjects:@"albumartist", @"artist", @"title", @"album", @"track", @"disc", @"totalFrames", @"currentPosition", @"bitrate", nil];
+}
+
++ (NSSet *)keyPathsForValuesAffectingTrackText
+{
+    return [NSSet setWithObjects:@"track", @"disc", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingPositionText
@@ -144,7 +150,10 @@
 	self.genre = nil;
 	self.year = nil;
 	self.track = nil;
+    self.disc = nil;
 	self.albumArtInternal = nil;
+    
+    self.cuesheet = nil;
 	
 	self.endian = nil;
     self.codec = nil;
@@ -238,7 +247,7 @@
         [elements addObject:self.album];
         if (hasTrack) {
             [elements addObject:@" #"];
-            [elements addObject:[NSString stringWithFormat:@"%@", self.track]];
+            [elements addObject:self.trackText];
         }
         [elements addObject:@"] "];
     }
@@ -271,6 +280,39 @@
     }
     
     return [elements componentsJoinedByString:@""];
+}
+
+@dynamic trackText;
+-(NSString *)trackText
+{
+    if ([self.track intValue])
+    {
+        if ([self.disc intValue])
+        {
+            return [NSString stringWithFormat:@"%@.%02u", self.disc, [self.track intValue]];
+        }
+        else
+        {
+            return [NSString stringWithFormat:@"%02u", [self.track intValue]];
+        }
+    }
+    else
+    {
+        return @"";
+    }
+}
+
+@dynamic yearText;
+-(NSString *)yearText
+{
+    if ([self.year intValue])
+    {
+        return [NSString stringWithFormat:@"%@", self.year];
+    }
+    else
+    {
+        return @"";
+    }
 }
 
 @dynamic positionText;
@@ -424,6 +466,7 @@
         pe->genre = [genre copyWithZone:zone];
         pe->year = [year copyWithZone:zone];
         pe->track = [track copyWithZone:zone];
+        pe->disc = [disc copyWithZone:zone];
 
         pe->cuesheet = [cuesheet copyWithZone:zone];
 

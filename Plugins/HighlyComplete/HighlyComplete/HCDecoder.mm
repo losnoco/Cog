@@ -265,6 +265,14 @@ static int psf_info_meta(void * context, const char * name, const char * value)
     {
         taglc = @"albumartist";
     }
+    else if ([taglc isEqualToString:@"tracknumber"])
+    {
+        taglc = @"track";
+    }
+    else if ([taglc isEqualToString:@"discnumber"])
+    {
+        taglc = @"disc";
+    }
     
 	if ([taglc hasPrefix:@"replaygain_"])
 	{
@@ -305,7 +313,8 @@ static int psf_info_meta(void * context, const char * name, const char * value)
              [taglc isEqualToString:@"album"] ||
              [taglc isEqualToString:@"year"] ||
              [taglc isEqualToString:@"genre"] ||
-             [taglc isEqualToString:@"track"])
+             [taglc isEqualToString:@"track"] ||
+             [taglc isEqualToString:@"disc"])
 	{
 		[state->info setObject:svalue forKey:taglc];
 	}

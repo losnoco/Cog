@@ -95,6 +95,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
     NSString *artist = @"";
     NSNumber *year = [NSNumber numberWithInt:0];
     NSNumber *track = [NSNumber numberWithInt:0];
+    NSNumber *disc = [NSNumber numberWithInt:0];
     NSString *title = @"";
     
     NSString *codec;
@@ -146,6 +147,10 @@ static NSString* get_description_tag(const char* description, const char *tag, c
                      !strcasecmp(tag_key, "TRACKNUMBER")) {
                 track = [NSNumber numberWithInt:[value intValue]];
             }
+            else if (!strcasecmp(tag_key, "DISC") ||
+                     !strcasecmp(tag_key, "DISCNUMBER")) {
+                disc = [NSNumber numberWithInt:[value intValue]];
+            }
             else if (!strcasecmp(tag_key, "TITLE")) {
                 title = value;
             }
@@ -186,6 +191,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
         [NSMutableDictionary dictionaryWithObjectsAndKeys:
             title, @"title",
             track, @"track",
+            disc, @"disc",
             nil];
     
     if ( ![album isEqualToString:@""] )

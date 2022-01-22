@@ -66,9 +66,6 @@
 		17C809E60C3BD487005707C4 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C809E30C3BD46D005707C4 /* CoreAudio.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3CD0CBED663008D969D /* GME.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1000F63255200694C57 /* InfoWindowController.m */; };
-		17D1B1680F632ABB00694C57 /* BlankZeroFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1630F632ABB00694C57 /* BlankZeroFormatter.m */; };
-		17D1B1690F632ABB00694C57 /* IndexFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1650F632ABB00694C57 /* IndexFormatter.m */; };
-		17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1670F632ABB00694C57 /* SecondsFormatter.m */; };
 		17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */; };
 		17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2760CF8B2830028F5B5 /* cue.icns */; };
 		17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2770CF8B2830028F5B5 /* it.icns */; };
@@ -120,6 +117,7 @@
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		835A8FD327957310005B3C39 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 835A8FC627957310005B3C39 /* json.c */; };
 		835A8FD6279575B1005B3C39 /* Winamp.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 835A8FD5279575B1005B3C39 /* Winamp.q1.json */; };
+		835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 835F00B8279BD1CD00055FCF /* SecondsFormatter.m */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
 		836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8314D6411A354DFF00EEE8E6 /* sidplay.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -852,12 +850,6 @@
 		17C8F3C80CBED663008D969D /* GME.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GME.xcodeproj; path = Plugins/GME/GME.xcodeproj; sourceTree = "<group>"; };
 		17D1B0FF0F63255200694C57 /* InfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoWindowController.h; path = InfoInspector/InfoWindowController.h; sourceTree = "<group>"; };
 		17D1B1000F63255200694C57 /* InfoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InfoWindowController.m; path = InfoInspector/InfoWindowController.m; sourceTree = "<group>"; };
-		17D1B1620F632ABB00694C57 /* BlankZeroFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlankZeroFormatter.h; path = Formatters/BlankZeroFormatter.h; sourceTree = "<group>"; };
-		17D1B1630F632ABB00694C57 /* BlankZeroFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlankZeroFormatter.m; path = Formatters/BlankZeroFormatter.m; sourceTree = "<group>"; };
-		17D1B1640F632ABB00694C57 /* IndexFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IndexFormatter.h; path = Formatters/IndexFormatter.h; sourceTree = "<group>"; };
-		17D1B1650F632ABB00694C57 /* IndexFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IndexFormatter.m; path = Formatters/IndexFormatter.m; sourceTree = "<group>"; };
-		17D1B1660F632ABB00694C57 /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SecondsFormatter.h; path = Formatters/SecondsFormatter.h; sourceTree = "<group>"; };
-		17D1B1670F632ABB00694C57 /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SecondsFormatter.m; path = Formatters/SecondsFormatter.m; sourceTree = "<group>"; };
 		17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePluginController.h; path = Preferences/PreferencePluginController.h; sourceTree = "<group>"; };
 		17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreferencePluginController.m; path = Preferences/PreferencePluginController.m; sourceTree = "<group>"; };
 		17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = Preferences/PreferencePanePlugin.h; sourceTree = "<group>"; };
@@ -936,6 +928,8 @@
 		835C888B22CC1881001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/Credits.html; sourceTree = "<group>"; };
 		835C888C22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C888D22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		835F00B4279BD1CD00055FCF /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
+		835F00B8279BD1CD00055FCF /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatter.m; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
@@ -1071,7 +1065,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				17D1B1230F632A8B00694C57 /* Formatters */,
+				835F00B3279BD1CD00055FCF /* Formatters */,
 				177042960B8BC53600B86321 /* Application */,
 				17E0D5D20F520E75005B6FED /* Window */,
 				8E75752A09F31D5A0080F1EE /* Playlist */,
@@ -1326,19 +1320,6 @@
 				1778D3C90F645BF00037E7A0 /* MissingAlbumArtTransformer.m */,
 			);
 			name = InfoInspector;
-			sourceTree = "<group>";
-		};
-		17D1B1230F632A8B00694C57 /* Formatters */ = {
-			isa = PBXGroup;
-			children = (
-				17D1B1620F632ABB00694C57 /* BlankZeroFormatter.h */,
-				17D1B1630F632ABB00694C57 /* BlankZeroFormatter.m */,
-				17D1B1640F632ABB00694C57 /* IndexFormatter.h */,
-				17D1B1650F632ABB00694C57 /* IndexFormatter.m */,
-				17D1B1660F632ABB00694C57 /* SecondsFormatter.h */,
-				17D1B1670F632ABB00694C57 /* SecondsFormatter.m */,
-			);
-			name = Formatters;
 			sourceTree = "<group>";
 		};
 		17DDF6400E0CB6F100A2E4AD /* FileTree */ = {
@@ -1670,6 +1651,15 @@
 				835A8FC827957310005B3C39 /* json.h */,
 			);
 			path = json;
+			sourceTree = "<group>";
+		};
+		835F00B3279BD1CD00055FCF /* Formatters */ = {
+			isa = PBXGroup;
+			children = (
+				835F00B4279BD1CD00055FCF /* SecondsFormatter.h */,
+				835F00B8279BD1CD00055FCF /* SecondsFormatter.m */,
+			);
+			path = Formatters;
 			sourceTree = "<group>";
 		};
 		8360EF0117F92B23005208A4 /* Products */ = {
@@ -2496,13 +2486,11 @@
 				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
 				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
 				83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */,
+				835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
 				178456120F631E31007E8021 /* SideViewController.m in Sources */,
 				17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */,
 				835A8FD327957310005B3C39 /* json.c in Sources */,
-				17D1B1680F632ABB00694C57 /* BlankZeroFormatter.m in Sources */,
-				17D1B1690F632ABB00694C57 /* IndexFormatter.m in Sources */,
-				17D1B16A0F632ABB00694C57 /* SecondsFormatter.m in Sources */,
 				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
 				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
 				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,

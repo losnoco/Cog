@@ -167,8 +167,7 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="valueToDisplay.track" id="111"/>
-                            <outlet property="formatter" destination="79" id="82"/>
+                            <binding destination="-2" name="value" keyPath="valueToDisplay.trackText" id="ZO2-Cd-dfh"/>
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="41" customClass="ToolTipTextField">
@@ -180,8 +179,7 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="valueToDisplay.length" id="112"/>
-                            <outlet property="formatter" destination="80" id="81"/>
+                            <binding destination="-2" name="value" keyPath="valueToDisplay.lengthText" id="ji7-tL-8rb"/>
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="43" customClass="ToolTipTextField">
@@ -191,12 +189,9 @@
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            <connections>
-                                <outlet property="formatter" destination="79" id="107"/>
-                            </connections>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="valueToDisplay.year" id="113"/>
+                            <binding destination="-2" name="value" keyPath="valueToDisplay.yearText" id="miZ-gp-CqU"/>
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="45" customClass="ToolTipTextField">
