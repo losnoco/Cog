@@ -688,6 +688,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     if (_err)
         return NO;
     
+    [self setEqualizerEnabled:[[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue]];
+    
     [outputController beginEqualizer:_eq];
     
     [_au allocateRenderResourcesAndReturnError:&err];
