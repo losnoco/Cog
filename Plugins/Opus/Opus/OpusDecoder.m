@@ -169,6 +169,7 @@ opus_int64 sourceTell(void *_stream)
 		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
         @"Opus", @"codec",
         @"host", @"endian",
+        @"lossy", @"encoding",
 		nil];
 }
 

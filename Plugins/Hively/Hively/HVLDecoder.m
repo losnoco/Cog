@@ -96,6 +96,7 @@ static void oneTimeInit(void)
 		[NSNumber numberWithInt:2], @"channels",
 		[NSNumber numberWithBool:YES], @"seekable",
 		@"host", @"endian",
+        @"synthesized", @"encoding",
 		nil];
 }
 

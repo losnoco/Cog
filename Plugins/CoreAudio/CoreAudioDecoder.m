@@ -349,6 +349,7 @@ static SInt64 getSizeProc(void* clientData) {
 		[NSNumber numberWithBool:YES], @"seekable",
         codec, @"codec",
         floatingPoint ? @"host" : @"big", @"endian",
+        floatingPoint ? @"lossy" : @"lossless", @"encoding",
 		nil];
 }
 

@@ -37,6 +37,7 @@
     size_t inputBufferSize;
     
     BOOL isDSD;
+    BOOL isLossy;
 	
 	int bitsPerSample;
 	int channels;

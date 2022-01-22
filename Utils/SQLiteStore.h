@@ -14,7 +14,7 @@
 {
 @private NSString *g_databasePath;
 @private sqlite3 *g_database;
-@private sqlite3_stmt *stmt[38];
+@private sqlite3_stmt *stmt[39];
 @private NSMutableArray *databaseMirror;
 }
 

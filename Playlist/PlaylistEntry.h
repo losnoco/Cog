@@ -59,6 +59,8 @@
     NSString *codec;
     
 	NSString *endian;
+    
+    NSString *encoding;
 	
 	BOOL seekable;
 	
@@ -148,6 +150,8 @@
 @property double currentPosition;
 
 @property(retain) NSString *endian;
+
+@property(retain) NSString *encoding;
 
 @property BOOL seekable;
 

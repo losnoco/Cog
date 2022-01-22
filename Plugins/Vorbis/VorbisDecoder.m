@@ -161,6 +161,7 @@ long sourceTell(void *datasource)
 		[NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
         @"Vorbis", @"codec",
         @"host", @"endian",
+        @"lossy", @"encoding",
 		nil];
 }
 

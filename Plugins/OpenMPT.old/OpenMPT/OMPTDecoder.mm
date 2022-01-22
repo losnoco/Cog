@@ -106,6 +106,7 @@ static void g_push_archive_extensions(std::vector<std::string> & list)
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:YES], @"seekable",
 		@"host", @"endian",
+        @"synthesized", @"encoding",
 		nil];
 }
 

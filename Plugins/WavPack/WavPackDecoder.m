@@ -187,6 +187,8 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 	bitrate = (int)(WavpackGetAverageBitrate(wpc, TRUE)/1000.0);
     
     floatingPoint = MODE_FLOAT & WavpackGetMode(wpc) && 127 == WavpackGetFloatNormExp(wpc);
+    
+    isLossy = !(WavpackGetMode(wpc) & MODE_LOSSLESS);
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -313,6 +315,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount)
 		[NSNumber numberWithBool:[[wv source] seekable]], @"seekable",
         @"Wavpack",@"codec",
 		@"little",@"endian",
+        isLossy ? @"lossy" : @"lossless", @"encoding",
 		nil];
 }
 

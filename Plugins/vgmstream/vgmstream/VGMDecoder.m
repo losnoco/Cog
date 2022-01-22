@@ -174,6 +174,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
             rgTrackPeak, @"replayGainTrackPeak",
             codec, @"codec",
             @"host", @"endian",
+            @"lossy/lossless", @"encoding",
             nil];
 
     if ( [title isEqualToString:@""] ) {
@@ -315,6 +316,7 @@ static NSString* get_description_tag(const char* description, const char *tag, c
         [NSNumber numberWithInt:channels], @"channels",
         [NSNumber numberWithBool:YES], @"seekable",
         @"host", @"endian",
+        @"lossy/lossless", @"encoding",
         nil];
 }
 

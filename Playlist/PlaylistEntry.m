@@ -59,6 +59,8 @@
 
 @synthesize endian;
 
+@synthesize encoding;
+
 @synthesize seekable;
 
 @synthesize metadataLoaded;
@@ -491,6 +493,8 @@
         pe->codec = [codec copyWithZone:zone];
 
         pe->endian = [endian copyWithZone:zone];
+        
+        pe->encoding = [encoding copyWithZone:zone];
 
         pe->seekable = seekable;
 

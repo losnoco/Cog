@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SQLiteStore.h"
+#import "Logging.h"
 
 NSString * getDatabasePath(void)
 {
@@ -15,6 +16,8 @@ NSString * getDatabasePath(void)
     NSString *filename = @"Default.sqlite";
     return [basePath stringByAppendingPathComponent:filename];
 }
+
+static int64_t currentSchemaVersion = 1;
 
 NSArray * createSchema(void)
 {
@@ -40,6 +43,8 @@ NSArray * createSchema(void)
         titleid INTEGER, \
         genreid INTEGER, \
         codecid INTEGER, \
+        encodingid INTEGER, \
+        cuesheetid INTEGER, \
         track INTEGER, \
         year INTEGER, \
         unsigned INTEGER, \
@@ -73,7 +78,9 @@ NSArray * createSchema(void)
 
 enum
 {
-    stmt_select_string = 0,
+    stmt_user_version_get = 0,
+    
+    stmt_select_string,
     stmt_select_string_refcount,
     stmt_select_string_value,
     stmt_bump_string,
@@ -118,6 +125,14 @@ enum
     
     stmt_count,
 };
+
+enum
+{
+    user_version_get_out_version_number = 0,
+};
+
+const char * query_user_version_get = "PRAGMA user_version";
+
 
 enum
 {
@@ -264,6 +279,8 @@ enum
     select_track_data_out_title_id,
     select_track_data_out_genre_id,
     select_track_data_out_codec_id,
+    select_track_data_out_cuesheet_id,
+    select_track_data_out_encoding_id,
     select_track_data_out_track,
     select_track_data_out_year,
     select_track_data_out_unsigned,
@@ -283,7 +300,7 @@ enum
     select_track_data_out_replaygaintrackpeak,
 };
 
-const char * query_select_track_data = "SELECT urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak FROM knowntracks WHERE (trackid = ?) LIMIT 1";
+const char * query_select_track_data = "SELECT urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak FROM knowntracks WHERE (trackid = ?) LIMIT 1";
 
 enum
 {
@@ -309,6 +326,8 @@ enum
     add_track_in_title_id,
     add_track_in_genre_id,
     add_track_in_codec_id,
+    add_track_in_cuesheet_id,
+    add_track_in_encoding_id,
     add_track_in_track,
     add_track_in_year,
     add_track_in_unsigned,
@@ -328,7 +347,7 @@ enum
     add_track_in_replaygaintrackpeak,
 };
 
-const char * query_add_track = "INSERT INTO knowntracks (referencecount, urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+const char * query_add_track = "INSERT INTO knowntracks (referencecount, urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 enum
 {
@@ -347,6 +366,8 @@ enum
     update_track_in_title_id,
     update_track_in_genre_id,
     update_track_in_codec_id,
+    update_track_in_cuesheet_id,
+    update_track_in_encoding_id,
     update_track_in_track,
     update_track_in_year,
     update_track_in_unsigned,
@@ -367,7 +388,7 @@ enum
     update_track_in_id
 };
 
-const char * query_update_track = "UPDATE knowntracks SET urlid = ?, artid = ?, albumid = ?, albumartistid = ?, artistid = ?, titleid = ?, genreid = ?, codecid = ?, track = ?, year = ?, unsigned = ?, bitrate = ?, samplerate = ?, bitspersample = ?, channels = ?, endianid = ?, floatingpoint = ?, totalframes = ?, metadataloaded = ?, seekable = ?, volume = ?, replaygainalbumgain = ?, replaygainalbumpeak = ?, replaygaintrackgain = ?, replaygaintrackpeak = ? WHERE trackid = ?";
+const char * query_update_track = "UPDATE knowntracks SET urlid = ?, artid = ?, albumid = ?, albumartistid = ?, artistid = ?, titleid = ?, genreid = ?, codecid = ?, cuesheetid = ?, encodingid = ?, track = ?, year = ?, unsigned = ?, bitrate = ?, samplerate = ?, bitspersample = ?, channels = ?, endianid = ?, floatingpoint = ?, totalframes = ?, metadataloaded = ?, seekable = ?, volume = ?, replaygainalbumgain = ?, replaygainalbumpeak = ?, replaygaintrackgain = ?, replaygaintrackpeak = ? WHERE trackid = ?";
 
 
 enum
@@ -575,18 +596,62 @@ static SQLiteStore *g_sharedStore = NULL;
         
         if (sqlite3_open([g_databasePath UTF8String], &g_database) == SQLITE_OK)
         {
+            char * error;
             NSArray * schemas = createSchema();
             
             for (NSString *schema in schemas)
             {
-                char * error;
                 if (sqlite3_exec(g_database, [schema UTF8String], NULL, NULL, &error) != SQLITE_OK)
                 {
+                    DLog(@"SQLite error: %s", error);
                     return nil;
                 }
             }
 
-#define PREPARE(name) (sqlite3_prepare(g_database, query_##name, (int)strlen(query_##name), &stmt[stmt_##name], NULL))
+#define PREPARE(name) (sqlite3_prepare_v2(g_database, query_##name, (int)strlen(query_##name), &stmt[stmt_##name], NULL))
+
+            if (PREPARE(user_version_get))
+            {
+                DLog(@"SQlite error: %s", error);
+                return nil;
+            }
+            
+            sqlite3_stmt * st = stmt[stmt_user_version_get];
+            if (sqlite3_reset(st) ||
+                sqlite3_step(st) != SQLITE_ROW)
+            {
+                return nil;
+            }
+            
+            int64_t knownVersion = sqlite3_column_int64(st, user_version_get_out_version_number);
+            
+            sqlite3_reset(st);
+            
+            if (knownVersion < currentSchemaVersion)
+            {
+                switch (knownVersion)
+                {
+                    case 0:
+                        // Schema 0 to 1: Add cuesheet and encoding text fields to the knowntracks table
+                        if (sqlite3_exec(g_database, "ALTER TABLE knowntracks ADD encodingid INTEGER; ALTER TABLE knowntracks ADD cuesheetid INTEGER", NULL, NULL, &error))
+                        {
+                            DLog(@"SQLite error: %s", error);
+                            return nil;
+                        }
+                        break;
+                        
+                    default:
+                        break;
+                }
+
+                NSString * updateVersion = [NSString stringWithFormat:@"PRAGMA user_version = %lld", currentSchemaVersion];
+
+                if (sqlite3_exec(g_database, [updateVersion UTF8String], NULL, NULL, &error))
+                {
+                    DLog(@"SQLite error: %s", error);
+                    return nil;
+                }
+            }
 
             if (PREPARE(select_string) ||
                 PREPARE(select_string_refcount) ||
@@ -1031,6 +1096,8 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t titleId = [self addString:[track rawTitle]];
         int64_t genreId = [self addString:[track genre]];
         int64_t codecId = [self addString:[track codec]];
+        int64_t cuesheetId = [self addString:[track cuesheet]];
+        int64_t encodingId = [self addString:[track encoding]];
         int64_t trackNr = [[track track] intValue] | (((uint64_t)[[track disc] intValue]) << 32);
         int64_t year = [[track year] intValue];
         int64_t unsignedFmt = [track Unsigned];
@@ -1066,6 +1133,8 @@ static SQLiteStore *g_sharedStore = NULL;
             sqlite3_bind_int64(st, add_track_in_title_id, titleId) ||
             sqlite3_bind_int64(st, add_track_in_genre_id, genreId) ||
             sqlite3_bind_int64(st, add_track_in_codec_id, codecId) ||
+            sqlite3_bind_int64(st, add_track_in_cuesheet_id, cuesheetId) ||
+            sqlite3_bind_int64(st, add_track_in_encoding_id, encodingId) ||
             sqlite3_bind_int64(st, add_track_in_track, trackNr) ||
             sqlite3_bind_int64(st, add_track_in_year, year) ||
             sqlite3_bind_int64(st, add_track_in_unsigned, unsignedFmt) ||
@@ -1094,6 +1163,8 @@ static SQLiteStore *g_sharedStore = NULL;
             [self removeString:titleId];
             [self removeString:genreId];
             [self removeString:codecId];
+            [self removeString:cuesheetId];
+            [self removeString:encodingId];
             [self removeString:endianId];
             
             [self removeString:urlId];
@@ -1200,6 +1271,8 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t titleId = sqlite3_column_int64(st, select_track_data_out_title_id);
         int64_t genreId = sqlite3_column_int64(st, select_track_data_out_genre_id);
         int64_t codecId = sqlite3_column_int64(st, select_track_data_out_codec_id);
+        int64_t cuesheetId = sqlite3_column_int64(st, select_track_data_out_cuesheet_id);
+        int64_t encodingId = sqlite3_column_int64(st, select_track_data_out_encoding_id);
         int64_t endianId = sqlite3_column_int64(st, select_track_data_out_endian_id);
         
         [self removeArt:artId];
@@ -1211,6 +1284,8 @@ static SQLiteStore *g_sharedStore = NULL;
         [self removeString:titleId];
         [self removeString:genreId];
         [self removeString:codecId];
+        [self removeString:cuesheetId];
+        [self removeString:encodingId];
         [self removeString:endianId];
     }
     
@@ -1223,6 +1298,8 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t titleId = [self addString:[track rawTitle]];
         int64_t genreId = [self addString:[track genre]];
         int64_t codecId = [self addString:[track codec]];
+        int64_t cuesheetId = [self addString:[track cuesheet]];
+        int64_t encodingId = [self addString:[track encoding]];
         int64_t trackNr = [[track track] intValue] | (((uint64_t)[[track disc] intValue]) << 32);
         int64_t year = [[track year] intValue];
         int64_t unsignedFmt = [track Unsigned];
@@ -1258,6 +1335,8 @@ static SQLiteStore *g_sharedStore = NULL;
             sqlite3_bind_int64(st, update_track_in_title_id, titleId) ||
             sqlite3_bind_int64(st, update_track_in_genre_id, genreId) ||
             sqlite3_bind_int64(st, update_track_in_codec_id, codecId) ||
+            sqlite3_bind_int64(st, update_track_in_cuesheet_id, cuesheetId) ||
+            sqlite3_bind_int64(st, update_track_in_encoding_id, encodingId) ||
             sqlite3_bind_int64(st, update_track_in_track, trackNr) ||
             sqlite3_bind_int64(st, update_track_in_year, year) ||
             sqlite3_bind_int64(st, update_track_in_unsigned, unsignedFmt) ||
@@ -1287,6 +1366,8 @@ static SQLiteStore *g_sharedStore = NULL;
             [self removeString:titleId];
             [self removeString:genreId];
             [self removeString:codecId];
+            [self removeString:cuesheetId];
+            [self removeString:encodingId];
             [self removeString:endianId];
             
             [self removeString:urlId];
@@ -1331,6 +1412,8 @@ static SQLiteStore *g_sharedStore = NULL;
         int64_t titleId = sqlite3_column_int64(st, select_track_data_out_title_id);
         int64_t genreId = sqlite3_column_int64(st, select_track_data_out_genre_id);
         int64_t codecId = sqlite3_column_int64(st, select_track_data_out_codec_id);
+        int64_t cuesheetId = sqlite3_column_int64(st, select_track_data_out_cuesheet_id);
+        int64_t encodingId = sqlite3_column_int64(st, select_track_data_out_encoding_id);
         int64_t trackNr = sqlite3_column_int64(st, select_track_data_out_track);
         int64_t year = sqlite3_column_int64(st, select_track_data_out_year);
         int64_t unsignedFmt = sqlite3_column_int64(st, select_track_data_out_unsigned);
@@ -1360,6 +1443,8 @@ static SQLiteStore *g_sharedStore = NULL;
         [entry setTitle:[self getString:titleId]];
         [entry setGenre:[self getString:genreId]];
         [entry setCodec:[self getString:codecId]];
+        [entry setCuesheet:[self getString:cuesheetId]];
+        [entry setEncoding:[self getString:encodingId]];
         [entry setTrack:[NSNumber numberWithInteger:trackNr]];
         [entry setDisc:[NSNumber numberWithInteger:discNr]];
         [entry setYear:[NSNumber numberWithInteger:year]];
@@ -1442,6 +1527,8 @@ static SQLiteStore *g_sharedStore = NULL;
             int64_t titleId = sqlite3_column_int64(st, select_track_data_out_title_id);
             int64_t genreId = sqlite3_column_int64(st, select_track_data_out_genre_id);
             int64_t codecId = sqlite3_column_int64(st, select_track_data_out_codec_id);
+            int64_t cuesheetId = sqlite3_column_int64(st, select_track_data_out_cuesheet_id);
+            int64_t encodingId = sqlite3_column_int64(st, select_track_data_out_encoding_id);
             int64_t endianId = sqlite3_column_int64(st, select_track_data_out_endian_id);
             
             sqlite3_reset(st);
@@ -1455,6 +1542,8 @@ static SQLiteStore *g_sharedStore = NULL;
             [self removeString:titleId];
             [self removeString:genreId];
             [self removeString:codecId];
+            [self removeString:cuesheetId];
+            [self removeString:encodingId];
             [self removeString:endianId];
         }
         

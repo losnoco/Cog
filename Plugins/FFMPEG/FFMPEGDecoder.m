@@ -580,6 +580,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
 			[NSNumber numberWithBool:seekable], @"seekable",
             [NSString stringWithUTF8String:avcodec_get_name(codecCtx->codec_id)], @"codec",
             @"host", @"endian",
+            floatingPoint ? @"lossy" : @"lossless", @"encoding",
 			nil];
 }
 

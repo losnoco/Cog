@@ -95,6 +95,7 @@
 		[NSNumber numberWithBool:seekable ],@"seekable",
         @"Shorten",@"codec",
 		@"little",@"endian",
+        @"lossless", @"encoding",
 		nil];
 }
 

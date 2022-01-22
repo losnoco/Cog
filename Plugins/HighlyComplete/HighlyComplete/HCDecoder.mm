@@ -1727,6 +1727,7 @@ static int usf_info(void * context, const char * name, const char * value)
             [NSNumber numberWithFloat:volume], @"volume",
             codec, @"codec",
 			@"host", @"endian",
+            @"synthesized", @"encoding",
 			nil];
 }
 

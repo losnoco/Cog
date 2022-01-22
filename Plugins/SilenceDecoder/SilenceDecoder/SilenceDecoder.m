@@ -46,6 +46,7 @@ enum { channels = 2 };
 		[NSNumber numberWithInt:channels], @"channels",
 		[NSNumber numberWithBool:YES], @"seekable",
 		@"host", @"endian",
+        @"synthesized", @"encoding",
 		nil];
 }
 

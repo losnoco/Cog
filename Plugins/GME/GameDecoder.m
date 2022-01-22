@@ -160,6 +160,7 @@ gme_err_t readCallback( void* data, void* out, long count )
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host", @"endian",
+        @"synthesized", @"encoding",
 		nil];
 }
 

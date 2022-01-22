@@ -98,6 +98,7 @@ static CAdPlugDatabase * g_database = NULL;
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:YES], @"seekable",
         [NSString stringWithUTF8String:m_player->gettype().c_str()], @"codec",
+        @"synthesized", @"encoding",
 		@"host", @"endian",
 		nil];
 }

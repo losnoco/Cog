@@ -115,6 +115,7 @@ static OSType getOSType(const char * in_)
 		[NSNumber numberWithBool:YES], @"seekable",
         @"MIDI", @"codec",
 		@"host", @"endian",
+        @"synthesized", @"encoding",
 		nil];
 }
 

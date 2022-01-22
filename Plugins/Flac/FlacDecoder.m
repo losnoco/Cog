@@ -348,6 +348,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
         [NSNumber numberWithInt:fileSize ? (fileSize * 8 / ((totalFrames + (frequency / 2)) / frequency)) / 1000 : 0], @"bitrate",
         @"FLAC",@"codec",
 		@"big",@"endian",
+        @"lossless", @"encoding",
 		nil];
 }
 

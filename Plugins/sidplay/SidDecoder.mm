@@ -209,6 +209,7 @@ static void sidTuneLoader(const char* fileName, std::vector<uint8_t>& bufferRef)
 		[NSNumber numberWithInt:n_channels], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host", @"endian",
+        @"synthesized", @"encoding",
 		nil];
 }
 

@@ -204,6 +204,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		[NSNumber numberWithInt:numChannels], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
 		@"host", @"endian",
+        @"synthesized", @"encoding",
 		nil];
 }
 
