@@ -594,14 +594,31 @@ static SQLiteStore *g_sharedStore = NULL;
         
         memset(stmt, 0, sizeof(stmt));
         
+        BOOL dbExists = NO;
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:g_databasePath])
+            dbExists = YES;
+        
         if (sqlite3_open([g_databasePath UTF8String], &g_database) == SQLITE_OK)
         {
             char * error;
-            NSArray * schemas = createSchema();
             
-            for (NSString *schema in schemas)
+            if (!dbExists)
             {
-                if (sqlite3_exec(g_database, [schema UTF8String], NULL, NULL, &error) != SQLITE_OK)
+                NSArray * schemas = createSchema();
+            
+                for (NSString *schema in schemas)
+                {
+                    if (sqlite3_exec(g_database, [schema UTF8String], NULL, NULL, &error) != SQLITE_OK)
+                    {
+                        DLog(@"SQLite error: %s", error);
+                        return nil;
+                    }
+                }
+
+                NSString * createVersion = [NSString stringWithFormat:@"PRAGMA user_version = %lld", currentSchemaVersion];
+
+                if (sqlite3_exec(g_database, [createVersion UTF8String], NULL, NULL, &error))
                 {
                     DLog(@"SQLite error: %s", error);
                     return nil;
