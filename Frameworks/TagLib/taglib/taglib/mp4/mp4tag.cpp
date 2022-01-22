@@ -797,24 +797,32 @@ MP4::Tag::cuesheet() const
 float
 MP4::Tag::rgAlbumGain() const
 {
+  if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_album_gain"))
+    return d->items["----:org.hydrogenaudio.replaygain:replaygain_album_gain"].toStringList()[0].toFloat();
   return 0;
 }
 
 float
 MP4::Tag::rgAlbumPeak() const
 {
+  if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_album_peak"))
+    return d->items["----:org.hydrogenaudio.replaygain:replaygain_album_peak"].toStringList()[0].toFloat();
   return 0;
 }
 
 float
 MP4::Tag::rgTrackGain() const
 {
+  if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_track_gain"))
+    return d->items["----:org.hydrogenaudio.replaygain:replaygain_track_gain"].toStringList()[0].toFloat();
   return 0;
 }
 
 float
 MP4::Tag::rgTrackPeak() const
 {
+  if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_track_peak"))
+    return d->items["----:org.hydrogenaudio.replaygain:replaygain_track_peak"].toStringList()[0].toFloat();
   return 0;
 }
 
@@ -905,21 +913,25 @@ MP4::Tag::setCuesheet(const String &)
 void
 MP4::Tag::setRGAlbumGain(float f)
 {
+  setTextItem("----:org.hydrogenaudio.replaygain:replaygain_album_gain", String::number(f) + " dB");
 }
 
 void
 MP4::Tag::setRGAlbumPeak(float f)
 {
+  setTextItem("----:org.hydrogenaudio.replaygain:replaygain_album_peak", String::number(f));
 }
 
 void
 MP4::Tag::setRGTrackGain(float f)
 {
+  setTextItem("----:org.hydrogenaudio.replaygain:replaygain_track_gain", String::number(f) + " dB");
 }
 
 void
 MP4::Tag::setRGTrackPeak(float f)
 {
+  setTextItem("----:org.hydrogenaudio.replaygain:replaygain_track_peak", String::number(f));
 }
 
 bool MP4::Tag::isEmpty() const
@@ -998,6 +1010,10 @@ namespace
     { "\251mvn", "MOVEMENTNAME" },
     { "\251mvi", "MOVEMENTNUMBER" },
     { "\251mvc", "MOVEMENTCOUNT" },
+    { "----:org.hydrogenaudio.replaygain:replaygain_track_gain", "REPLAYGAIN_TRACK_GAIN" },
+    { "----:org.hydrogenaudio.replaygain:replaygain_track_peak", "REPLAYGAIN_TRACK_PEAK" },
+    { "----:org.hydrogenaudio.replaygain:replaygain_album_gain", "REPLAYGAIN_ALBUM_GAIN" },
+    { "----:org.hydrogenaudio.replaygain:replaygain_album_peak", "REPLAYGAIN_ALBUM_PEAK" },
     { "----:com.apple.iTunes:MusicBrainz Track Id", "MUSICBRAINZ_TRACKID" },
     { "----:com.apple.iTunes:MusicBrainz Artist Id", "MUSICBRAINZ_ARTISTID" },
     { "----:com.apple.iTunes:MusicBrainz Album Id", "MUSICBRAINZ_ALBUMID" },
