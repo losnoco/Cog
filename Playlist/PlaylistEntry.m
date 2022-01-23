@@ -137,6 +137,11 @@
     return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"volume", nil];
 }
 
++ (NSSet *)keyPathsForValuesAffectingGainInfo
+{
+    return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"volume", nil];
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"PlaylistEntry %li:(%@)", self.index, self.URL];
@@ -362,7 +367,7 @@
         else
             return @"Track Gain";
     }
-    else if (volume)
+    else if (volume && volume != 1)
     {
         return @"Volume scale";
     }
@@ -370,6 +375,33 @@
     {
         return @"None";
     }
+}
+
+@dynamic gainInfo;
+- (NSString *)gainInfo
+{
+    NSMutableArray * gainItems = [[NSMutableArray alloc] init];
+    if (replayGainAlbumGain)
+    {
+        [gainItems addObject:[NSString stringWithFormat:@"Album Gain: %+.2f dB", replayGainAlbumGain]];
+    }
+    if (replayGainAlbumPeak)
+    {
+        [gainItems addObject:[NSString stringWithFormat:@"Album Peak: %.6f", replayGainAlbumPeak]];
+    }
+    if (replayGainTrackGain)
+    {
+        [gainItems addObject:[NSString stringWithFormat:@"Track Gain: %+.2f dB", replayGainTrackGain]];
+    }
+    if (replayGainTrackPeak)
+    {
+        [gainItems addObject:[NSString stringWithFormat:@"Track Peak: %.6f", replayGainTrackPeak]];
+    }
+    if (volume && volume != 1)
+    {
+        [gainItems addObject:[NSString stringWithFormat:@"Volume Scale: %.2f%C", volume, (unichar)0x00D7]];
+    }
+    return [gainItems componentsJoinedByString:@"\n"];
 }
 
 @dynamic positionText;

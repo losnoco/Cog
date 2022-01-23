@@ -153,6 +153,8 @@
 
 @property(readonly) NSString *gainCorrection;
 
+@property(readonly) NSString *gainInfo;
+
 @property double currentPosition;
 
 @property(retain) NSString *endian;

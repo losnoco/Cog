@@ -335,6 +335,7 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
+                            <binding destination="-2" name="toolTip" keyPath="valueToDisplay.gainInfo" id="BUp-Hu-Szq"/>
                             <binding destination="-2" name="value" keyPath="valueToDisplay.gainCorrection" id="JgZ-wN-peX"/>
                         </connections>
                     </textField>
