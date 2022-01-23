@@ -89,6 +89,17 @@ opus_int64 sourceTell(void *_stream)
 	seekable = op_seekable(opusRef);
 	
 	totalFrames = op_pcm_total(opusRef, -1);
+    
+    NSString * gainMode = [[NSUserDefaults standardUserDefaults] stringForKey:@"volumeScaling"];
+    BOOL isAlbum = [gainMode hasPrefix:@"albumGain"];
+    BOOL isTrack = [gainMode hasPrefix:@"trackGain"];
+    
+    if (isAlbum || isTrack) {
+        op_set_gain_offset(opusRef, isAlbum ? OP_HEADER_GAIN : OP_TRACK_GAIN, 0);
+    }
+    else {
+        op_set_gain_offset(opusRef, OP_ABSOLUTE_GAIN, 0);
+    }
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
