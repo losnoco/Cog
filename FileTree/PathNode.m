@@ -57,45 +57,9 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)setURL:(NSURL *)u
 {
-    // BODGE!
     if (![[NSFileManager defaultManager] fileExistsAtPath:[u path]])
     {
-        // Somebody gave us an incompatible file URL on enumeration!
-        DLog(@"Incompatible URL found: %@", [u path]);
-        do
-        {
-            NSString * path = [u path];
-            NSString * bodge = [path precomposedStringWithCanonicalMapping];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:bodge])
-            {
-                DLog(@"It's actually supposed to be NFC!");
-                u = [NSURL fileURLWithPath:bodge];
-                break;
-            }
-            bodge = [path decomposedStringWithCanonicalMapping];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:bodge])
-            {
-                DLog(@"It's actually supposed to be NFD!");
-                u = [NSURL fileURLWithPath:bodge];
-                break;
-            }
-            bodge = [path precomposedStringWithCompatibilityMapping];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:bodge])
-            {
-                DLog(@"It's actually supposed to be NFKC!");
-                u = [NSURL fileURLWithPath:bodge];
-                break;
-            }
-            bodge = [path decomposedStringWithCompatibilityMapping];
-            if ([[NSFileManager defaultManager] fileExistsAtPath:bodge])
-            {
-                DLog(@"It's actually supposed to be NFKD!");
-                u = [NSURL fileURLWithPath:bodge];
-                break;
-            }
-            DLog(@"No idea what's up with this path!");
-        }
-        while (0);
+        ALog(@"File doesn't exist: %@", u);
     }
 
     url = u;
