@@ -243,6 +243,11 @@ float TagUnion::rgTrackPeak() const
   floatUnion(rgTrackPeak);
 }
 
+String TagUnion::soundcheck() const
+{
+  stringUnion(soundcheck);
+}
+
 void TagUnion::setTitle(const String &s)
 {
   setUnion(Title, s);

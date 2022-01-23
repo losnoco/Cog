@@ -834,6 +834,14 @@ MP4::Tag::rgTrackPeak() const
   return 0;
 }
 
+String
+MP4::Tag::soundcheck() const
+{
+  if (d->items.contains("----:com.apple.iTunes:iTunNORM"))
+    return d->items["----:com.apple.iTunes:iTunNORM"].toStringList()[0];
+  return String();
+}
+
 void
 MP4::Tag::setTitle(const String &value)
 {

@@ -197,6 +197,11 @@ float ID3v1::Tag::rgTrackPeak() const
   return 0;
 }
 
+String ID3v1::Tag::soundcheck() const
+{
+  return String();
+}
+
 void ID3v1::Tag::setTitle(const String &s)
 {
   d->title = s;

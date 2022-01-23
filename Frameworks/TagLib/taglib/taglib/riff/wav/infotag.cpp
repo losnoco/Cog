@@ -158,6 +158,11 @@ float RIFF::Info::Tag::rgTrackPeak() const
   return 0;
 }
 
+String RIFF::Info::Tag::soundcheck() const
+{
+  return String();
+}
+
 void RIFF::Info::Tag::setTitle(const String &s)
 {
   setFieldText("INAM", s);

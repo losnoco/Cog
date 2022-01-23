@@ -162,6 +162,12 @@ namespace TagLib {
     virtual float rgTrackPeak() const = 0;
 
     /*!
+     * Returns the Apple SoundCheck tag; if there is tag set, this will
+     * return empty.
+     */
+    virtual String soundcheck() const = 0;
+
+    /*!
      * Sets the title to \a s.  If \a s is String::null then this value will be
      * cleared.
      */

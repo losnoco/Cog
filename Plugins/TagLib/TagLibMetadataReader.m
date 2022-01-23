@@ -75,6 +75,7 @@
 			int year, track, disc;
             float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
             TagLib::String cuesheet;
+            TagLib::String soundcheck;
 			
 			artist = tag->artist();
             albumartist = tag->albumartist();
@@ -101,6 +102,25 @@
             [dict setObject:[NSNumber numberWithFloat:rgAlbumPeak] forKey:@"replayGainAlbumPeak"];
             [dict setObject:[NSNumber numberWithFloat:rgTrackGain] forKey:@"replayGainTrackGain"];
             [dict setObject:[NSNumber numberWithFloat:rgTrackPeak] forKey:@"replayGainTrackPeak"];
+            
+            soundcheck = tag->soundcheck();
+            if (!soundcheck.isEmpty()) {
+                TagLib::StringList tag = soundcheck.split(" ");
+                TagLib::StringList wantedTag;
+                for (int i = 0, count = tag.size(); i < count; i++)
+                {
+                    if (tag[i].length() == 8)
+                        wantedTag.append(tag[i]);
+                }
+                
+                if (wantedTag.size() >= 10) {
+                    float volume1 = - log10( (double)((uint32_t)wantedTag[0].toInt(16)) / 1000 ) * 10;
+                    float volume2 = - log10( (double)((uint32_t)wantedTag[1].toInt(16)) / 1000 ) * 10;
+                    float volumeToUse = MIN(volume1, volume2);
+                    float volumeScale = pow( 10, volumeToUse / 20 );
+                    [dict setObject:[NSNumber numberWithFloat:volumeScale] forKey:@"volume"];
+                }
+            }
 			
 			if (!artist.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];

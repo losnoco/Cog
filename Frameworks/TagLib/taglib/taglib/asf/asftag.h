@@ -110,6 +110,7 @@ namespace TagLib {
       virtual float rgAlbumPeak() const;
       virtual float rgTrackGain() const;
       virtual float rgTrackPeak() const;
+      virtual String soundcheck() const;
 
       /*!
        * Sets the title to \a s.

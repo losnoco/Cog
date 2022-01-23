@@ -125,6 +125,11 @@ namespace TagLib {
       virtual float rgTrackPeak() const;
 
       /*!
+       * Not supported by module files.  Therefore always returns empty.
+       */
+      virtual String soundcheck() const;
+
+      /*!
        * Returns the name of the tracker used to create/edit the module file.
        * Only XM files store this tag to the file as such, for other formats
        * (Mod, S3M, IT) this is derived from the file type or the flavour of

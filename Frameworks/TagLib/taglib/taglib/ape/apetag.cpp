@@ -216,6 +216,11 @@ float APE::Tag::rgTrackPeak() const
   return d->itemListMap["REPLAYGAIN_TRACK_PEAK"].toString().toFloat();
 }
 
+String APE::Tag::soundcheck() const
+{
+  return String();
+}
+
 void APE::Tag::setTitle(const String &s)
 {
   addValue("TITLE", s, true);

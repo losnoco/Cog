@@ -154,6 +154,11 @@ float ASF::Tag::rgTrackPeak() const
   return 0;
 }
 
+String ASF::Tag::soundcheck() const
+{
+  return String();
+}
+
 void ASF::Tag::setTitle(const String &value)
 {
   d->title = value;

@@ -149,6 +149,7 @@ namespace TagLib {
       virtual float rgAlbumPeak() const;
       virtual float rgTrackGain() const;
       virtual float rgTrackPeak() const;
+      virtual String soundcheck() const;
 
       virtual void setTitle(const String &s);
       virtual void setAlbumArtist(const String &s);

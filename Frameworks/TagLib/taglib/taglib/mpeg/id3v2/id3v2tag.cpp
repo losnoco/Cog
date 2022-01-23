@@ -312,6 +312,24 @@ float ID3v2::Tag::rgTrackPeak() const
   return rg("replaygain_track_peak");
 }
 
+String ID3v2::Tag::soundcheck() const
+{
+  const FrameList &comments = d->frameListMap["COMM"];
+
+  if(comments.isEmpty())
+    return String();
+
+  for(FrameList::ConstIterator it = comments.begin(); it != comments.end(); ++it)
+  {
+    CommentsFrame *frame = dynamic_cast<CommentsFrame *>(*it);
+
+    if(frame && frame->description() == "iTunNORM")
+      return (*it)->toString();
+  }
+
+  return String();
+}
+
 void ID3v2::Tag::setTitle(const String &s)
 {
   setTextFrame("TIT2", s);

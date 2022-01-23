@@ -124,6 +124,11 @@ float Mod::Tag::rgTrackPeak() const
   return 0;
 }
 
+String Mod::Tag::soundcheck() const
+{
+  return String();
+}
+
 String Mod::Tag::trackerName() const
 {
   return d->trackerName;

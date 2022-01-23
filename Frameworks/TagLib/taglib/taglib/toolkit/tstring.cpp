@@ -494,17 +494,17 @@ ByteVector String::data(Type t) const
   }
 }
 
-int String::toInt() const
+int String::toInt(unsigned int base) const
 {
-  return toInt(0);
+  return toInt(0, base);
 }
 
-int String::toInt(bool *ok) const
+int String::toInt(bool *ok, unsigned int base) const
 {
   const wchar_t *begin = d->data.c_str();
   wchar_t *end;
   errno = 0;
-  const long value = ::wcstol(begin, &end, 10);
+  const long value = ::wcstol(begin, &end, base);
 
   // Has wcstol() consumed the entire string and not overflowed?
   if(ok) {

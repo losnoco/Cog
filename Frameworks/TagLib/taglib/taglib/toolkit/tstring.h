@@ -361,7 +361,7 @@ namespace TagLib {
      * string does not represent a number.
      */
     // BIC: merge with the method below
-    int toInt() const;
+    int toInt(unsigned int base = 10) const;
 
     /*!
      * Convert the string to an integer.
@@ -370,7 +370,7 @@ namespace TagLib {
      * true and returns the integer. Otherwise it sets \a *ok to false
      * and the result is undefined.
      */
-    int toInt(bool *ok) const;
+    int toInt(bool *ok, unsigned int base = 10) const;
 
     /*!
      * Convert the string to a float.

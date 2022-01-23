@@ -196,6 +196,11 @@ float Ogg::XiphComment::rgTrackPeak() const
   return d->fieldListMap["REPLAYGAIN_TRACK_PEAK"].front().toFloat();
 }
 
+String Ogg::XiphComment::soundcheck() const
+{
+  return String();
+}
+
 void Ogg::XiphComment::setTitle(const String &s)
 {
   addField("TITLE", s);
