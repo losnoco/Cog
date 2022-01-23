@@ -17,6 +17,8 @@
 #import "SmartFolderNode.h"
 #import "ContainerNode.h"
 
+#import "Logging.h"
+
 @implementation PathNode
 
 //From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
