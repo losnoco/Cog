@@ -17,8 +17,6 @@
 #import "SmartFolderNode.h"
 #import "ContainerNode.h"
 
-#import "Logging.h"
-
 @implementation PathNode
 
 //From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
@@ -57,12 +55,7 @@ NSURL *resolveAliases(NSURL *url)
 
 - (void)setURL:(NSURL *)u
 {
-    if (![[NSFileManager defaultManager] fileExistsAtPath:[u path]])
-    {
-        ALog(@"File doesn't exist: %@", u);
-    }
-
-    url = u;
+	url = u;
 
 	display = [[NSFileManager defaultManager] displayNameAtPath:[u path]];
 	
