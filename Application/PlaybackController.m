@@ -130,6 +130,8 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 - (IBAction)stop:(id)sender
 {
     [[NSUserDefaults standardUserDefaults] setInteger:CogStatusStopped forKey:@"lastPlaybackStatus"];
+    
+    [self audioPlayer:audioPlayer removeEqualizer:_eq];
 
     [audioPlayer stop];
 
