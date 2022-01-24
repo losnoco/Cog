@@ -54,9 +54,8 @@
 		{
             if (availOutput)
             {
-                // must unlock buffer before waiting, may as well write silence
-                memset(writePtr, 0, availOutput);
-                [buffer didWriteLength:availOutput];
+                // Unlock the buffer
+                [buffer didWriteLength:0];
             }
 			[semaphore wait];
 		}
