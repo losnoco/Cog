@@ -262,6 +262,9 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
     
     av_dict_free(&dict);
     
+    // Bah, their skipping is broken
+    codecCtx->flags2 |= AV_CODEC_FLAG2_SKIP_MANUAL;
+    
     lastDecodedFrame = av_frame_alloc();
     av_frame_unref(lastDecodedFrame);
     lastReadPacket = malloc(sizeof(AVPacket));
@@ -405,10 +408,16 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
     totalFrames = av_rescale_q(stream->duration, stream->time_base, tb);
     bitrate = (int)((codecCtx->bit_rate) / 1000);
     framesRead = 0;
-    seekFrame = 0; // Skip preroll if necessary
     endOfStream = NO;
     endOfAudio = NO;
     
+    if (stream->start_time && stream->start_time != AV_NOPTS_VALUE)
+        skipSamples = av_rescale_q(stream->start_time, stream->time_base, tb);
+    if (skipSamples < 0)
+        skipSamples = 0;
+
+    seekFrame = skipSamples; // Skip preroll if necessary
+
     if ( totalFrames < 0 )
         totalFrames = 0;
     
@@ -626,7 +635,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
     readNextPacket = YES; // so we immediately read next packet
     bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
     framesRead = frame;
-    seekFrame = frame;
+    seekFrame = frame + skipSamples;
     endOfStream = NO;
     endOfAudio = NO;
 	

@@ -36,6 +36,7 @@
     int bytesConsumedFromDecodedFrame;
     BOOL readNextPacket;
     int64_t seekFrame;
+    int64_t skipSamples;
     BOOL endOfStream;
     BOOL endOfAudio;
 }
