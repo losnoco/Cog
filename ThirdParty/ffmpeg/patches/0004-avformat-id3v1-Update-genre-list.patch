@@ -1,0 +1,54 @@
+From 58a0eebe4f0aa606909ffe7d7b1a2aa5f48b7ee6 Mon Sep 17 00:00:00 2001
+From: Christopher Snowhill <kode54@gmail.com>
+Date: Sat, 8 Jan 2022 16:25:39 -0800
+Subject: [PATCH] avformat/id3v1: Update genre list
+
+Signed-off-by: Christopher Snowhill <kode54@gmail.com>
+---
+ libavformat/id3v1.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/libavformat/id3v1.c b/libavformat/id3v1.c
+index 3189a48b8c..19760595d5 100644
+--- a/libavformat/id3v1.c
++++ b/libavformat/id3v1.c
+@@ -53,7 +53,7 @@ const char * const ff_id3v1_genre_str[ID3v1_GENRE_MAX + 1] = {
+      [26] = "Ambient",
+      [27] = "Trip-Hop",
+      [28] = "Vocal",
+-     [29] = "Jazz+Funk",
++     [29] = "Jazz-Funk",
+      [30] = "Fusion",
+      [31] = "Trance",
+      [32] = "Classical",
+@@ -114,7 +114,7 @@ const char * const ff_id3v1_genre_str[ID3v1_GENRE_MAX + 1] = {
+      [87] = "Revival",
+      [88] = "Celtic",
+      [89] = "Bluegrass",
+-     [90] = "Avantgarde",
++     [90] = "Avant-garde",
+      [91] = "Gothic Rock",
+      [92] = "Progressive Rock",
+      [93] = "Psychedelic Rock",
+@@ -149,15 +149,15 @@ const char * const ff_id3v1_genre_str[ID3v1_GENRE_MAX + 1] = {
+     [122] = "Drum Solo",
+     [123] = "A Cappella",
+     [124] = "Euro-House",
+-    [125] = "Dance Hall",
++    [125] = "Dancehall",
+     [126] = "Goa",
+     [127] = "Drum & Bass",
+     [128] = "Club-House",
+     [129] = "Hardcore Techno",
+     [130] = "Terror",
+     [131] = "Indie",
+-    [132] = "BritPop",
+-    [133] = "Negerpunk",
++    [132] = "Britpop",
++    [133] = "Worldbeat",
+     [134] = "Polsk Punk",
+     [135] = "Beat",
+     [136] = "Christian Gangsta Rap",
+-- 
+2.32.0 (Apple Git-132)
+

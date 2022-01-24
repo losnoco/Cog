@@ -47,33 +47,6 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 
 @implementation FFMPEGDecoder
 
-
-int lockmgr_callback(void ** mutex, enum AVLockOp op)
-{
-    switch (op)
-    {
-        case AV_LOCK_CREATE:
-            *mutex = malloc(sizeof(pthread_mutex_t));
-            pthread_mutex_init(*mutex, NULL);
-            break;
-            
-        case AV_LOCK_DESTROY:
-            pthread_mutex_destroy(*mutex);
-            free(*mutex);
-            *mutex = NULL;
-            break;
-            
-        case AV_LOCK_OBTAIN:
-            pthread_mutex_lock(*mutex);
-            break;
-            
-        case AV_LOCK_RELEASE:
-            pthread_mutex_unlock(*mutex);
-            break;
-    }
-    return 0;
-}
-
 + (void)initialize
 {
     if(self == [FFMPEGDecoder class])
@@ -190,7 +163,7 @@ int lockmgr_callback(void ** mutex, enum AVLockOp op)
     }
 
     enum AVCodecID codec_id = codecCtx->codec_id;
-    AVCodec * codec = NULL;
+    const AVCodec * codec = NULL;
     AVDictionary * dict = NULL;
 
     if (@available(macOS 10.15, *))

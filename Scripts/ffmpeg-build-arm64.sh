@@ -33,7 +33,8 @@ ADPCM_CODECS=adpcm_4xm,adpcm_adx,adpcm_afx,adpcm_agm,adpcm_aica,adpcm_argo,adpcm
     --enable-decoder=ac3,ac3_t,eac3,eac3_at,wmapro,wmav1,wmav2,wmavoice,wmalossless,xma1,xma2,dca,tak,dsd_lsbf,dsd_lsbf_planar,dsd_mbf,dsd_msbf_planar,aac,aac_at,libfdk_aac,atrac3,atrac3p,mp3float,mp3_at,mp2float,mp2_at,mp1float,mp1_at,bink,binkaudio_dct,binkaudio_rdft,flac,vorbis,ape,smackaud,opus,mpc7,mpc8,alac,alac_at,cook,tta,$PCM_CODECS,$ADPCM_CODECS\
     --disable-parser=mpeg4video,h263\
     --disable-decoder=mpeg2video,h263,h264,mpeg1video,mpeg2video,mpeg4,hevc,vp9\
-    --disable-version3
+    --disable-version3\
+    --disable-xlib
 
 make -j$(sysctl -n hw.logicalcpu) install
 

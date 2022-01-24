@@ -94,10 +94,6 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
-		830595EF277EFEFA00EBFAAE /* libavcodec.58.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830595E9277EFEA400EBFAAE /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		830595F0277EFEFA00EBFAAE /* libavformat.58.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830595EC277EFED900EBFAAE /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		830595F1277EFEFA00EBFAAE /* libavutil.56.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830595ED277EFED900EBFAAE /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		830595F2277EFEFA00EBFAAE /* libswresample.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830595EE277EFED900EBFAAE /* libswresample.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8305968D277F049600EBFAAE /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830596E7277F05E200EBFAAE /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -155,6 +151,10 @@
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83AA7D04279EBCA900087AA4 /* libavcodec.59.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA7D05279EBCAB00087AA4 /* libavformat.59.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D03279EBC8300087AA4 /* libavformat.59.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA7D06279EBCAD00087AA4 /* libavutil.57.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D02279EBC8200087AA4 /* libavutil.57.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA7D07279EBCAF00087AA4 /* libswresample.4.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D01279EBC8200087AA4 /* libswresample.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5AB020E4C87100631CD4 /* DualWindow.m */; };
@@ -732,14 +732,14 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				83AA7D07279EBCAF00087AA4 /* libswresample.4.dylib in CopyFiles */,
+				83AA7D06279EBCAD00087AA4 /* libavutil.57.dylib in CopyFiles */,
+				83AA7D05279EBCAB00087AA4 /* libavformat.59.dylib in CopyFiles */,
+				83AA7D04279EBCA900087AA4 /* libavcodec.59.dylib in CopyFiles */,
 				83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in CopyFiles */,
 				830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */,
 				83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */,
-				830595EF277EFEFA00EBFAAE /* libavcodec.58.dylib in CopyFiles */,
-				830595F0277EFEFA00EBFAAE /* libavformat.58.dylib in CopyFiles */,
-				830595F1277EFEFA00EBFAAE /* libavutil.56.dylib in CopyFiles */,
-				830595F2277EFEFA00EBFAAE /* libswresample.3.dylib in CopyFiles */,
 				ED69CBCA25BE32E80090B90D /* MASShortcut.framework in CopyFiles */,
 				838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */,
@@ -904,10 +904,6 @@
 		56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+CogSort.m"; path = "Spotlight/NSNumber+CogSort.m"; sourceTree = "<group>"; };
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
-		830595E9277EFEA400EBFAAE /* libavcodec.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.58.dylib; sourceTree = "<group>"; };
-		830595EC277EFED900EBFAAE /* libavformat.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.dylib; path = ThirdParty/ffmpeg/lib/libavformat.58.dylib; sourceTree = "<group>"; };
-		830595ED277EFED900EBFAAE /* libavutil.56.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.dylib; path = ThirdParty/ffmpeg/lib/libavutil.56.dylib; sourceTree = "<group>"; };
-		830595EE277EFED900EBFAAE /* libswresample.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.3.dylib; path = ThirdParty/ffmpeg/lib/libswresample.3.dylib; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		83059684277F049600EBFAAE /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = Frameworks/Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
 		830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = Frameworks/Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
@@ -973,6 +969,10 @@
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.59.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.59.dylib; sourceTree = "<group>"; };
+		83AA7D01279EBC8200087AA4 /* libswresample.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.4.dylib; path = ThirdParty/ffmpeg/lib/libswresample.4.dylib; sourceTree = "<group>"; };
+		83AA7D02279EBC8200087AA4 /* libavutil.57.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.57.dylib; path = ThirdParty/ffmpeg/lib/libavutil.57.dylib; sourceTree = "<group>"; };
+		83AA7D03279EBC8300087AA4 /* libavformat.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.59.dylib; path = ThirdParty/ffmpeg/lib/libavformat.59.dylib; sourceTree = "<group>"; };
 		83AB9031237CEFD300A433D5 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
 		83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
@@ -1098,13 +1098,13 @@
 			isa = PBXGroup;
 			children = (
 				83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */,
+				83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */,
+				83AA7D03279EBC8300087AA4 /* libavformat.59.dylib */,
+				83AA7D02279EBC8200087AA4 /* libavutil.57.dylib */,
+				83AA7D01279EBC8200087AA4 /* libswresample.4.dylib */,
 				830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */,
 				83059684277F049600EBFAAE /* Ogg.xcodeproj */,
 				83059634277F011100EBFAAE /* File_Extractor.xcodeproj */,
-				830595E9277EFEA400EBFAAE /* libavcodec.58.dylib */,
-				830595EC277EFED900EBFAAE /* libavformat.58.dylib */,
-				830595ED277EFED900EBFAAE /* libavutil.56.dylib */,
-				830595EE277EFED900EBFAAE /* libswresample.3.dylib */,
 				17BB5EA50B8A87850009ACB1 /* IOKit.framework */,
 				17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */,
 				17BB5CF70B8A86350009ACB1 /* CoreAudio.framework */,

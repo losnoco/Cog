@@ -1,0 +1,123 @@
+diff --git a/libavformat/mp3dec.c b/libavformat/mp3dec.c
+index f617348b2e..730ff3e480 100644
+--- a/libavformat/mp3dec.c
++++ b/libavformat/mp3dec.c
+@@ -313,6 +313,76 @@ static void mp3_parse_vbri_tag(AVFormatContext *s, AVStream *st, int64_t base)
+     }
+ }
+ 
++static void mp3_parse_itunes_tag(AVFormatContext *s, AVStream *st, MPADecodeHeader *c, int64_t base, int vbrtag_size, unsigned int *size, uint64_t *duration, uint32_t spf)
++{
++    uint32_t v;
++    AVDictionaryEntry *de;
++    FFStream *const sti = ffstream(st);
++    MP3DecContext *mp3 = s->priv_data;
++    size_t length;
++    uint32_t zero, start_pad, end_pad;
++    uint64_t last_eight_frames_offset;
++    int64_t temp_duration, file_size;
++    int i;
++
++    if (!s->metadata || !(de = av_dict_get(s->metadata, "iTunSMPB", NULL, 0)))
++        return;
++
++    length = strlen(de->value);
++
++    /* Minimum length is one digit per field plus the whitespace, maximum length should depend on field type
++     * There are four fields we need in the first six, the rest are currently zero padding */
++    if (length < (12 + 11) || length > (10 * 8 + 2 * 16 + 11))
++        return;
++
++    file_size = avio_size(s->pb);
++    if (file_size < 0)
++        file_size = 0;
++
++    if (sscanf(de->value, "%"PRIx32" %"PRIx32" %"PRIx32" %"PRIx64" %"PRIx32" %"PRIx64, &zero, &start_pad, &end_pad, &temp_duration, &zero, &last_eight_frames_offset) < 6 ||
++        temp_duration < 0 ||
++        start_pad > (576 * 2 * 32) ||
++        end_pad > (576 * 2 * 64) ||
++        (file_size && (last_eight_frames_offset >= (file_size - base - vbrtag_size)))) {
++        *duration = 0;
++        return;
++    }
++
++    *duration = temp_duration;
++
++    if (end_pad >= 528 + 1) {
++        mp3->start_pad = start_pad + 528 + 1;
++        mp3->end_pad = end_pad - (528 + 1);
++        sti->start_skip_samples = mp3->start_pad;
++        if (mp3->frames) {
++            sti->first_discard_sample = -mp3->end_pad + 528 + 1 + mp3->frames * (int64_t)spf;
++            sti->last_discard_sample = mp3->frames * (int64_t)spf;
++        }
++        if (!st->start_time)
++            st->start_time = av_rescale_q(sti->start_skip_samples,
++                                            (AVRational){1, c->sample_rate},
++                                            st->time_base);
++        av_log(s, AV_LOG_DEBUG, "pad %d %d\n", mp3->start_pad, mp3->  end_pad);
++    }
++    av_log(s, AV_LOG_DEBUG, "pad %d %d\n", mp3->start_pad, mp3->end_pad);
++    if (!s->pb->seekable)
++        return;
++
++    *size = (unsigned int) last_eight_frames_offset;
++    if (avio_seek(s->pb, base + vbrtag_size + last_eight_frames_offset, SEEK_SET) < 0)
++        return;
++
++    for (i = 0; i < 8; i++) {
++        v = avio_rb32(s->pb);
++        if (ff_mpa_check_header(v) < 0)
++            return;
++        if (avpriv_mpegaudio_decode_header(c, v) != 0)
++            break;
++        *size += c->frame_size;
++        avio_skip(s->pb, c->frame_size - 4);
++    }
++}
++
+ /**
+  * Try to find Xing/Info/VBRI tags and compute duration from info therein
+  */
+@@ -321,8 +391,10 @@ static int mp3_parse_vbr_tags(AVFormatContext *s, AVStream *st, int64_t base)
+     uint32_t v, spf;
+     MPADecodeHeader c;
+     int vbrtag_size = 0;
++    unsigned int size = 0;
+     MP3DecContext *mp3 = s->priv_data;
+     int ret;
++    uint64_t duration = 0;
+ 
+     ffio_init_checksum(s->pb, ff_crcA001_update, 0);
+ 
+@@ -345,16 +417,29 @@ static int mp3_parse_vbr_tags(AVFormatContext *s, AVStream *st, int64_t base)
+     mp3_parse_vbri_tag(s, st, base);
+ 
+     if (!mp3->frames && !mp3->header_filesize)
++        vbrtag_size = 0;
++
++    mp3_parse_itunes_tag(s, st, &c, base, vbrtag_size, &size, &duration, spf);
++
++    if (!mp3->frames && !size && !duration)
+         return -1;
+ 
+     /* Skip the vbr tag frame */
+     avio_seek(s->pb, base + vbrtag_size, SEEK_SET);
+ 
+-    if (mp3->frames)
++    if (duration)
++        st->duration = av_rescale_q(duration, (AVRational){1, c.sample_rate}, st->time_base);
++    else if (mp3->frames)
+         st->duration = av_rescale_q(mp3->frames, (AVRational){spf, c.sample_rate},
+                                     st->time_base);
+     if (mp3->header_filesize && mp3->frames && !mp3->is_cbr)
+         st->codecpar->bit_rate = av_rescale(mp3->header_filesize, 8 * c.sample_rate, mp3->frames * (int64_t)spf);
++    if (size) {
++        if (duration)
++            st->codecpar->bit_rate = av_rescale(size, 8 * c.sample_rate, duration);
++        else if (mp3->frames)
++            st->codecpar->bit_rate = av_rescale(size, 8 * c.sample_rate, mp3->frames * (int64_t)spf);
++    }
+ 
+     return 0;
+ }
