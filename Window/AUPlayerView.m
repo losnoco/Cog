@@ -614,7 +614,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         param.mParameterID = kGraphicEQParam_NumberOfBands;
         AUListenerAddParameter(listenerRef, (__bridge void *)self, &param);
         
-        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQpreset" options:0 context:nil];
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQpreset" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
         
         // Time to hack the auView
         NSButton * flattenButton = nil;
@@ -652,7 +652,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
     if (listenerRef) {
         AUListenerDispose(listenerRef);
     }
-    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQpreset"];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQpreset" context:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -663,7 +663,15 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         if (index < 0 || index > [equalizer_presets_processed count])
             index = [equalizer_presets_processed count];
         
-        [presetButton selectItemAtIndex:index];
+        NSInteger selectedIndex = [presetButton indexOfSelectedItem];
+        
+        // Don't want to get into an observe/modify loop here
+        if (selectedIndex != index)
+        {
+            [presetButton selectItemAtIndex:index];
+        
+            [self changePreset:presetButton];
+        }
     }
 }
 
