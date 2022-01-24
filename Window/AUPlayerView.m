@@ -513,7 +513,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
 
         [self setReleasedWhenClosed:NO];
         
-        NSRect topRect = NSMakeRect(0, 0, req_width, 40);
+        NSRect topRect = NSMakeRect(0, 0, req_width, 32);
         
         topView = [[NSView alloc] initWithFrame:topRect];
         
@@ -523,6 +523,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         topRect = NSMakeRect(0, 0, req_width, req_height + topRect.size.height);
         
         splitView = [[NSSplitView alloc] initWithFrame:topRect];
+        [splitView setDividerStyle:NSSplitViewDividerStyleThin];
         
         [splitView setSubviews:@[topView, auView]];
         
@@ -593,10 +594,13 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
             AUPluginWindow * _self = (__bridge AUPluginWindow *) inObject;
             
             if (inParameter->mParameterID >= 0 && inParameter->mParameterID <= 31) {
-                [_self->presetButton selectItemAtIndex:[equalizer_presets_processed count]];
+                if ([_self->presetButton indexOfSelectedItem] != [equalizer_presets_processed count]) {
+                    [_self->presetButton selectItemAtIndex:[equalizer_presets_processed count]];
+                    [_self changePreset:_self->presetButton];
+                }
             }
             else if (inParameter->mParameterID == kGraphicEQParam_NumberOfBands) {
-                [self changePreset:self->presetButton];
+                [_self changePreset:self->presetButton];
             }
         });
 
@@ -616,6 +620,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQpreset" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
         
+#if 0 // I have been told this makes the view look unbalanced, so whatevs
         // Time to hack the auView
         NSButton * flattenButton = nil;
         NSPopUpButton * bandsButton = nil;
@@ -635,6 +640,7 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         [flattenButton setHidden:YES];
         
         // Hacking done, showing window
+#endif
         
         if (front)
         {
