@@ -1855,109 +1855,172 @@ static SQLiteStore *g_sharedStore = NULL;
     return ret;
 }
 
-#if 0 // syncPlaylistEntries is already called where this would be needed
-- (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex
+- (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex progressCall:(void (^)(double))callback
 {
-    __block NSMutableArray *entryIds = [[NSMutableArray alloc] init];
-    __block NSMutableArray *trackIds = [[NSMutableArray alloc] init];
-    
-    NSMutableArray *postEntryIds = [[NSMutableArray alloc] init];
-    NSMutableArray *postTrackIds = [[NSMutableArray alloc] init];
-    
-    sqlite3_stmt *st = stmt[stmt_select_playlist];
-    
-    [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
-        if (sqlite3_reset(st) ||
-            sqlite3_bind_int64(st, select_playlist_in_id, idx) ||
-            sqlite3_step(st) != SQLITE_ROW)
-        {
-            *stop = YES;
-            return;
-        }
-        
-        int64_t entryId = sqlite3_column_int64(st, select_playlist_out_entry_id);
-        int64_t trackId = sqlite3_column_int64(st, select_playlist_out_track_id);
-        
-        [entryIds addObject:[NSNumber numberWithInteger:entryId]];
-        [trackIds addObject:[NSNumber numberWithInteger:trackId]];
+    __block NSUInteger rangeCount = 0;
+    __block NSUInteger firstIndex = 0;
+    [indexSet enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        if (++rangeCount == 1)
+            firstIndex = range.location;
     }];
     
-    int64_t count = [self playlistGetCount];
-    
-    sqlite3_reset(st);
-    
-    st = stmt[stmt_select_playlist_range];
-    
-    int rc;
-    
-    if (sqlite3_reset(st) ||
-        sqlite3_bind_int64(st, select_playlist_range_in_id_low, insertIndex) ||
-        sqlite3_bind_int64(st, select_playlist_range_in_id_high, count - 1) ||
-        (rc = sqlite3_step(st)) != SQLITE_ROW)
-    {
+    if (rangeCount == 1 &&
+        (insertIndex >= firstIndex &&
+         insertIndex < firstIndex + [indexSet count])) // Null operation
         return;
-    }
     
-    do
-    {
-        int64_t entryId = sqlite3_column_int64(st, select_playlist_range_out_entry_id);
-        int64_t trackId = sqlite3_column_int64(st, select_playlist_range_out_track_id);
-        
-        if (![entryIds containsObject:[NSNumber numberWithInteger:entryId]])
-        {
-            [postEntryIds addObject:[NSNumber numberWithInteger:entryId]];
-            [postTrackIds addObject:[NSNumber numberWithInteger:trackId]];
-        }
-        
-        rc = sqlite3_step(st);
-    }
-    while (rc == SQLITE_ROW);
-    
-    if (rc != SQLITE_DONE)
-    {
-        return;
-    }
-    
-    int64_t i;
-    
-    const int64_t entryIndexBase = insertIndex + [entryIds count];
-    
-    st = stmt[stmt_update_playlist];
+    NSArray *objects = databaseMirror;
+    NSUInteger index = [indexSet lastIndex];
 
-    for (i = 0, count = [postEntryIds count]; i < count; ++i)
-    {
-        int64_t entryId = [[postEntryIds objectAtIndex:i] integerValue];
-        int64_t trackId = [[postTrackIds objectAtIndex:i] integerValue];
-        
+    NSUInteger aboveInsertIndexCount = 0;
+    id object;
+    NSUInteger removeIndex;
+
+    callback(0);
+    double progress = 0;
+    double progressstep = 100.0 / [indexSet count];
+    
+    while (NSNotFound != index) {
+        if (index >= insertIndex) {
+            removeIndex = index + aboveInsertIndexCount;
+            aboveInsertIndexCount += 1;
+        } else {
+            removeIndex = index;
+            insertIndex -= 1;
+        }
+
+        object = objects[removeIndex];
+
+        sqlite3_stmt * st = stmt[stmt_remove_playlist_by_range];
         if (sqlite3_reset(st) ||
-            sqlite3_bind_int64(st, update_playlist_in_entry_index, entryIndexBase + i) ||
-            sqlite3_bind_int64(st, update_playlist_in_track_id, trackId) ||
-            sqlite3_bind_int64(st, update_playlist_in_id, entryId) ||
+            sqlite3_bind_int64(st, remove_playlist_by_range_in_low, removeIndex) ||
+            sqlite3_bind_int64(st, remove_playlist_by_range_in_high, removeIndex) ||
             sqlite3_step(st) != SQLITE_DONE)
-        {
-            sqlite3_reset(st);
-            return;
-        }
-    }
-
-    for (i = 0, count = [entryIds count]; i < count; ++i)
-    {
-        int64_t entryId = [[entryIds objectAtIndex:i] integerValue];
-        int64_t trackId = [[trackIds objectAtIndex:i] integerValue];
+            break;
         
+        st = stmt[stmt_decrement_playlist_for_removal];
         if (sqlite3_reset(st) ||
-            sqlite3_bind_int64(st, update_playlist_in_entry_index, insertIndex + i) ||
-            sqlite3_bind_int64(st, update_playlist_in_track_id, trackId) ||
-            sqlite3_bind_int64(st, update_playlist_in_id, entryId) ||
+            sqlite3_bind_int64(st, decrement_playlist_for_removal_in_count, 1) ||
+            sqlite3_bind_int64(st, decrement_playlist_for_removal_in_index, removeIndex + 1) ||
             sqlite3_step(st) != SQLITE_DONE)
-        {
-            return;
-        }
-    }
+            break;
+        
+        [databaseMirror removeObjectAtIndex:removeIndex];
+        
+        st = stmt[stmt_increment_playlist_for_insert];
+        if (sqlite3_reset(st) ||
+            sqlite3_bind_int64(st, increment_playlist_for_insert_in_count, 1) ||
+            sqlite3_bind_int64(st, increment_playlist_for_insert_in_index, insertIndex) ||
+            sqlite3_step(st) != SQLITE_DONE)
+            break;
+        
+        st = stmt[stmt_add_playlist];
+        if (sqlite3_reset(st) ||
+            sqlite3_bind_int64(st, add_playlist_in_entry_index, insertIndex) ||
+            sqlite3_bind_int64(st, add_playlist_in_track_id, [object dbIndex]) ||
+            sqlite3_step(st) != SQLITE_DONE)
+            break;
+        
+        [databaseMirror insertObject:object atIndex:insertIndex];
 
-    sqlite3_reset(st);
+        index = [indexSet indexLessThanIndex:index];
+        
+        progress += progressstep;
+        callback(progress);
+    }
+    
+    callback(-1);
 }
-#endif
+
+- (void)playlistMoveObjectsFromIndex:(NSUInteger)fromIndex
+             toArrangedObjectIndexes:(NSIndexSet *)indexSet
+                        progressCall:(void (^)(double))callback {
+    __block NSUInteger rangeCount = 0;
+    __block NSUInteger firstIndex = 0;
+    __block NSUInteger _fromIndex = fromIndex;
+    [indexSet enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        if (++rangeCount == 1)
+            firstIndex = range.location;
+        if (_fromIndex >= range.location) {
+            if (_fromIndex < range.location + range.length)
+                _fromIndex = range.location;
+            else
+                _fromIndex -= range.length;
+        }
+    }];
+    
+    if (rangeCount == 1 &&
+        (fromIndex >= firstIndex &&
+         fromIndex < firstIndex + [indexSet count])) // Null operation
+        return;
+    
+    callback(0);
+    double progress = 0;
+    double progressstep = 50.0 / [indexSet count];
+
+    fromIndex = _fromIndex;
+    
+    NSArray *objects = [databaseMirror subarrayWithRange:NSMakeRange(fromIndex, [indexSet count])];
+    NSUInteger index = [indexSet firstIndex];
+
+    NSUInteger itemIndex = 0;
+    id object;
+    
+    sqlite3_stmt * st;
+    
+    fromIndex += [objects count];
+    {
+        st = stmt[stmt_remove_playlist_by_range];
+        if (sqlite3_reset(st) ||
+            sqlite3_bind_int64(st, remove_playlist_by_range_in_low, fromIndex) ||
+            sqlite3_bind_int64(st, remove_playlist_by_range_in_high, fromIndex + [indexSet count] - 1) ||
+            sqlite3_step(st) != SQLITE_DONE) {
+            callback(-1);
+            return;
+        }
+        
+        st = stmt[stmt_decrement_playlist_for_removal];
+        if (sqlite3_reset(st) ||
+            sqlite3_bind_int64(st, decrement_playlist_for_removal_in_count, [indexSet count]) ||
+            sqlite3_bind_int64(st, decrement_playlist_for_removal_in_index, fromIndex) ||
+            sqlite3_step(st) != SQLITE_DONE) {
+            callback(-1);
+            return;
+        }
+        
+        [databaseMirror removeObjectsInRange:NSMakeRange(fromIndex, [indexSet count])];
+        
+        progress += progressstep;
+        callback(progress);
+    }
+
+    while (NSNotFound != index) {
+        object = objects[itemIndex++];
+
+        st = stmt[stmt_increment_playlist_for_insert];
+        if (sqlite3_reset(st) ||
+            sqlite3_bind_int64(st, increment_playlist_for_insert_in_count, 1) ||
+            sqlite3_bind_int64(st, increment_playlist_for_insert_in_index, index) ||
+            sqlite3_step(st) != SQLITE_DONE)
+            break;
+        
+        st = stmt[stmt_add_playlist];
+        if (sqlite3_reset(st) ||
+            sqlite3_bind_int64(st, add_playlist_in_entry_index, index) ||
+            sqlite3_bind_int64(st, add_playlist_in_track_id, [object dbIndex]) ||
+            sqlite3_step(st) != SQLITE_DONE)
+            break;
+        
+        [databaseMirror insertObject:object atIndex:index];
+
+        index = [indexSet indexGreaterThanIndex:index];
+        
+        progress += progressstep;
+        callback(progress);
+    }
+    
+    callback(-1);
+}
 
 - (void)syncPlaylistEntries:(NSArray *)entries progressCall:(void (^)(double))callback
 {

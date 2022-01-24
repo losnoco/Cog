@@ -35,9 +35,9 @@
 - (PlaylistEntry *)playlistGetItem:(int64_t)index;
 - (PlaylistEntry *)playlistGetCachedItem:(int64_t)index;
 - (int64_t)playlistGetCount;
-#if 0
-- (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex;
-#endif
+
+- (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex progressCall:(void (^)(double))callback;
+- (void)playlistMoveObjectsFromIndex:(NSUInteger)fromIndex toArrangedObjectIndexes:(NSIndexSet *)indexSet progressCall:(void (^)(double))callback;
 
 - (void)syncPlaylistEntries:(NSArray *)entries progressCall:(void(^)(double progress))callback;
 

@@ -379,6 +379,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     [[self undoManager] setActionName:actionName];
 
     [super moveObjectsFromIndex:fromIndex toArrangedObjectIndexes:indexSet];
+    
+    [[SQLiteStore sharedStore] playlistMoveObjectsFromIndex:fromIndex toArrangedObjectIndexes:indexSet progressCall:^(double progress) {
+        [self setProgressBarStatus:progress];
+    }];
 
     [playbackController playlistDidChange:self];
 }
@@ -393,9 +397,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
     [super moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
 
-#if 0 // syncPlaylistEntries is already called for rearrangement
-    [[SQLiteStore sharedStore] playlistMoveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
-#endif
+    [[SQLiteStore sharedStore] playlistMoveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex progressCall:^(double progress) {
+        [self setProgressBarStatus:progress];
+    }];
     
     [playbackController playlistDidChange:self];
 }
