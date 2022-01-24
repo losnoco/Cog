@@ -97,6 +97,8 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         atomic_fetch_add(&_self->bytesRendered, amountRead);
         [_self->writeSemaphore signal];
     }
+    else
+        [[_self->outputController buffer] didReadLength:0];
 
     // Try repeatedly! Buffer wraps can cause a slight data shortage, as can
     // unexpected track changes.
@@ -117,6 +119,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
             [_self->writeSemaphore signal];
         }
         else {
+            [[_self->outputController buffer] didReadLength:0];
             [_self->readSemaphore timedWait:500];
         }
     }
@@ -250,8 +253,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             toWrite = CHUNK_SIZE;
         if (toWrite)
             bytesRead = [outputController readData:writePtr amount:toWrite];
+        [[outputController buffer] didWriteLength:bytesRead];
         if (bytesRead) {
-            [[outputController buffer] didWriteLength:bytesRead];
             [readSemaphore signal];
             continue;
         }

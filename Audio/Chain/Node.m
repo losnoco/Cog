@@ -20,8 +20,6 @@
 	{
 		buffer = [[VirtualRingBuffer alloc] initWithLength:BUFFER_SIZE];
 		semaphore = [[Semaphore alloc] init];
-		readLock = [[NSLock alloc] init];
-		writeLock = [[NSLock alloc] init];
 		
 		initialBufferFilled = NO;
 		
@@ -41,7 +39,6 @@
 	int amountToCopy, availOutput;
 	int amountLeft = amount;
 	
-	[writeLock lock];
 	while (shouldContinue == YES && amountLeft > 0)
 	{
 		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
@@ -55,9 +52,13 @@
 		
 		if (availOutput == 0 || shouldReset)
 		{
-			[writeLock unlock];
+            if (availOutput)
+            {
+                // must unlock buffer before waiting, may as well write silence
+                memset(writePtr, 0, availOutput);
+                [buffer didWriteLength:availOutput];
+            }
 			[semaphore wait];
-			[writeLock lock];
 		}
 		else
 		{
@@ -66,15 +67,11 @@
 				amountToCopy = amountLeft;
 			
 			memcpy(writePtr, &((char *)ptr)[amount - amountLeft], amountToCopy);
-			if (amountToCopy > 0)
-			{
-				[buffer didWriteLength:amountToCopy];
-			}
+            [buffer didWriteLength:amountToCopy];
 			
 			amountLeft -= amountToCopy;
 		}
 	}
-	[writeLock unlock];
 	
 	return (amount - amountLeft);
 }
@@ -103,7 +100,6 @@
         return 0;
     }
 	
-	[readLock lock];
 	availInput = [[previousNode buffer] lengthAvailableToReadReturningPointer:&readPtr];
 	
 /*	if (availInput <= 0) {
@@ -114,14 +110,11 @@
 	}
 */
 
-	if ([previousNode shouldReset] == YES) {
-		[writeLock lock];
-
+    if ([previousNode shouldReset] == YES) {
 		[buffer empty];
 
 		shouldReset = YES;
 		[previousNode setShouldReset: NO];
-		[writeLock unlock];
 
 		[[previousNode semaphore] signal];
 	}
@@ -134,13 +127,12 @@
 	
 	memcpy(ptr, readPtr, amountToCopy);
 	
+    [[previousNode buffer] didReadLength:amountToCopy];
+    
 	if (amountToCopy > 0)
 	{
-		[[previousNode buffer] didReadLength:amountToCopy];
-		
 		[[previousNode semaphore] signal];
 	}
-	[readLock unlock];
 	
 	return amountToCopy;
 }
@@ -179,20 +171,8 @@
 {
 	shouldReset = YES; //Will reset on next write.
 	if (previousNode == nil) {
-		[readLock lock];
 		[buffer empty];
-		[readLock unlock];
 	}
-}
-
-- (NSLock *)readLock
-{
-	return readLock;
-}
-
-- (NSLock *)writeLock
-{
-	return writeLock;
 }
 
 - (Semaphore *)semaphore

@@ -47,6 +47,8 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     atomic_init(&writePointer, 0);
     atomic_init(&bufferFilled, 0);
 
+    accessLock = [[NSLock alloc] init];
+    
     return self;
 }
 
@@ -60,10 +62,11 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 {
     // Assumption:
     // No one is reading or writing from the buffer, in any thread, when this method is called.
-
+    [accessLock lock];
     atomic_init(&readPointer, 0);
     atomic_init(&writePointer, 0);
     atomic_init(&bufferFilled, 0);
+    [accessLock unlock];
 }
 
 - (BOOL)isEmpty
@@ -96,6 +99,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 {
     // Assumptions:
     // returnedReadPointer != NULL
+    [accessLock lock];
 
     UInt32 length;
     // Read this pointer exactly once, so we're safe in case it is changed in another thread
@@ -109,6 +113,10 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     // Depending on out-of-order execution and memory storage, either one of these may be NULL when the buffer is empty. So we must check both.
 
     *returnedReadPointer = buffer + localReadPointer;
+    
+    if (!length)
+        [accessLock unlock];
+    
     return length;
 }
 
@@ -118,10 +126,13 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     // [self lengthAvailableToReadReturningPointer:] currently returns a value >= length
     // length > 0
     
+
     if (atomic_fetch_add(&readPointer, length) + length >= bufferLength)
         atomic_fetch_sub(&readPointer, bufferLength);
 
     atomic_fetch_sub(&bufferFilled, length);
+    
+    [accessLock unlock];
 }
 
 
@@ -133,6 +144,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 {
     // Assumptions:
     // returnedWritePointer != NULL
+    [accessLock lock];
     
     UInt32 length;
     // Read this pointer exactly once, so we're safe in case it is changed in another thread
@@ -144,6 +156,10 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
         length = bufferLength - localWritePointer;
 
     *returnedWritePointer = buffer + localWritePointer;
+    
+    if (!length)
+        [accessLock unlock];
+    
     return length;
 }
 
@@ -157,6 +173,8 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
         atomic_fetch_sub(&writePointer, bufferLength);
     
     atomic_fetch_add(&bufferFilled, length);
+
+    [accessLock unlock];
 }
 
 @end

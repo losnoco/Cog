@@ -16,8 +16,6 @@
 @interface Node : NSObject {
 	VirtualRingBuffer *buffer;
 	Semaphore *semaphore;
-	NSLock *readLock;
-	NSLock *writeLock;
 	
 	id __weak previousNode;
 	id __weak controller;
@@ -40,9 +38,6 @@
 
 - (void)setShouldReset:(BOOL)s;
 - (BOOL)shouldReset;
-
-- (NSLock *)readLock;
-- (NSLock *)writeLock;
 
 - (void)setPreviousNode:(id)p;
 - (id)previousNode;

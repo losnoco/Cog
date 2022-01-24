@@ -57,6 +57,8 @@
     atomic_int readPointer;
     atomic_int writePointer;
     atomic_int bufferFilled;
+    
+    NSLock *accessLock;
 }
 
 - (id)initWithLength:(UInt32)length;

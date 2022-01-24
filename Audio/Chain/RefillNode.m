@@ -21,8 +21,6 @@
         // This special node should be able to handle up to four buffers
         buffer = [[VirtualRingBuffer alloc] initWithLength:BUFFER_SIZE * 4];
         semaphore = [[Semaphore alloc] init];
-        readLock = [[NSLock alloc] init];
-        writeLock = [[NSLock alloc] init];
         
         initialBufferFilled = NO;
         
