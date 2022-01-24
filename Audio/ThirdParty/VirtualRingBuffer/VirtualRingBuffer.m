@@ -47,7 +47,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     atomic_init(&writePointer, 0);
     atomic_init(&bufferFilled, 0);
 
-    accessLock = [[NSLock alloc] init];
+    accessLock = [[NSRecursiveLock alloc] init];
     
     return self;
 }
