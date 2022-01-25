@@ -716,7 +716,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" sizingBehavior="auto" id="1610">
+                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="10" sizingBehavior="auto" id="1610">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1608" customClass="VolumeButton">
                             <rect key="frame" x="9" y="14" width="29" height="23"/>
@@ -867,13 +867,13 @@
         </window>
         <window title="Cog" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Window" animationBehavior="default" toolbarStyle="unified" id="2234" userLabel="Mini Window (Window)" customClass="MiniWindow">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <rect key="contentRect" x="192" y="547" width="640" height="0.0"/>
+            <rect key="contentRect" x="192" y="547" width="581" height="0.0"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
             <view key="contentView" hidden="YES" wantsLayer="YES" id="2235">
-                <rect key="frame" x="0.0" y="0.0" width="640" height="0.0"/>
+                <rect key="frame" x="0.0" y="0.0" width="581" height="0.0"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="35998ECE-5AD8-429E-8479-657249B22C9C" displayMode="iconOnly" sizeMode="regular" id="2222" userLabel="Mini Toolbar">
+            <toolbar key="toolbar" implicitIdentifier="35998ECE-5AD8-429E-8479-657249B22C9C" displayMode="iconOnly" sizeMode="regular" id="2222" userLabel="Mini Toolbar" customClass="MiniWindowToolbar">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="2227"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="2228"/>
@@ -927,7 +927,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume3Template" sizingBehavior="auto" id="2275">
+                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="15" sizingBehavior="auto" id="2275">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2289" customClass="VolumeButton">
                             <rect key="frame" x="9" y="14" width="29" height="23"/>
@@ -1010,7 +1010,7 @@
                             <action selector="toggleMiniMode:" target="226" id="2531"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" visibilityPriority="15" sizingBehavior="auto" navigational="YES" id="2429">
+                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" visibilityPriority="2" sizingBehavior="auto" navigational="YES" id="2429">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2430">
                             <rect key="frame" x="26" y="14" width="28" height="23"/>
@@ -1026,7 +1026,7 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="2225"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="2229"/>
-                    <toolbarItem implicitItemIdentifier="F1A8365A-DBF5-4BB9-A2B3-3964BFA1B15D" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" id="qfu-F9-bOZ">
+                    <toolbarItem implicitItemIdentifier="F1A8365A-DBF5-4BB9-A2B3-3964BFA1B15D" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" visibilityPriority="-10" id="qfu-F9-bOZ">
                         <size key="minSize" width="70" height="25"/>
                         <size key="maxSize" width="70" height="25"/>
                     </toolbarItem>
@@ -1054,8 +1054,9 @@
                 </binding>
                 <outlet property="miniToolbar" destination="2222" id="Up2-7z-HqA"/>
                 <outlet property="playbackController" destination="705" id="vo7-mK-yQe"/>
+                <outlet property="playlistController" destination="218" id="VA7-3w-AAx"/>
             </connections>
-            <point key="canvasLocation" x="45" y="444"/>
+            <point key="canvasLocation" x="15.5" y="444"/>
         </window>
         <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
             <items>
