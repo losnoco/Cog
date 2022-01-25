@@ -30,29 +30,47 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 - (void)startObserving
 {
 	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void * _Nullable)(PlaybackButtonsPlaybackStatusObservationContext)];
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableStopButton" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void * _Nullable)(PlaybackButtonsPlaybackStatusObservationContext)];
 }
 
 - (void)stopObserving
 {
 	[playbackController removeObserver:self forKeyPath:@"playbackStatus"];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableStopButton"];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if ([PlaybackButtonsPlaybackStatusObservationContext isEqual:(__bridge id)(context)])
 	{
-		NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
+        if ([keyPath isEqualToString:@"playbackStatus"])
+        {
+            NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
 
-		NSImage *image = nil;
+            NSImage *image = nil;
 
-		if (playbackStatus == CogStatusPlaying) {
-            image = [NSImage imageNamed:@"pauseTemplate"];
-		}
-		else {
-            image = [NSImage imageNamed:@"playTemplate"];
-		}
+            if (playbackStatus == CogStatusPlaying) {
+                image = [NSImage imageNamed:@"pauseTemplate"];
+            }
+            else {
+                image = [NSImage imageNamed:@"playTemplate"];
+            }
 		
-		[self setImage:image forSegment:1];
+            [self setImage:image forSegment:1];
+        }
+        else if ([keyPath isEqualToString:@"values.enableStopButton"])
+        {
+            BOOL segmentEnabled = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableStopButton"];
+            if (segmentEnabled) {
+                [self setSegmentCount:4];
+                [self setImage:[NSImage imageNamed:@"stopTemplate"] forSegment:2];
+                [self setImage:[NSImage imageNamed:@"nextTemplate"] forSegment:3];
+            }
+            else {
+                [self setSegmentCount:3];
+                [self setImage:[NSImage imageNamed:@"nextTemplate"] forSegment:2];
+            }
+        }
 	}
 	else
 	{
@@ -63,8 +81,12 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 - (BOOL)sendAction:(SEL)theAction to:(id)theTarget
 {
 	DLog(@"Mouse down!");
+    
+    int clickedSegment = (int) [self selectedSegment];
+    int segmentCount = (int) [self segmentCount];
+    if (segmentCount == 3 && clickedSegment == 2)
+        clickedSegment = 3;
 	
-	int clickedSegment = (int) [self selectedSegment];
 	if (clickedSegment == 0) //Previous
 	{
 		[playbackController prev:self];

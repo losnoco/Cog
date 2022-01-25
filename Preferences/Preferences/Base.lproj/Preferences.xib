@@ -467,11 +467,11 @@
             <point key="canvasLocation" x="450" y="-52"/>
         </customView>
         <customView id="CgN-sy-RmM" userLabel="AppearanceView">
-            <rect key="frame" x="0.0" y="0.0" width="530" height="46"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="74"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="haX-dq-OIe">
-                    <rect key="frame" x="18" y="15" width="329" height="18"/>
+                    <rect key="frame" x="18" y="43" width="329" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <buttonCell key="cell" type="check" title="Colorful dock icons" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="GdX-5e-NeU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -479,6 +479,17 @@
                     </buttonCell>
                     <connections>
                         <binding destination="52" name="value" keyPath="values.colorfulDockIcons" id="NZt-v6-8iW"/>
+                    </connections>
+                </button>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AA7-fr-NOk">
+                    <rect key="frame" x="18" y="15" width="329" height="18"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="Show stop button" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="vMI-lj-Lrz">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.enableStopButton" id="JH0-bm-IC4"/>
                     </connections>
                 </button>
             </subviews>
