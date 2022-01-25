@@ -22,13 +22,15 @@ static NSArray * equalizer_presets_processed = nil;
 static NSDictionary * equalizer_presets_by_name = nil;
 static json_value * equalizer_presets = NULL;
 
-static NSArray* _winamp_equalizer_items() {
-    return @[@"name", @"hz70", @"hz180", @"hz320", @"hz600", @"hz1000", @"hz3000", @"hz6000", @"hz12000", @"hz14000", @"hz16000", @"preamp"];
+static NSString* _cog_equalizer_type = @"Cog EQ library file v1.0";
+
+static NSArray* _cog_equalizer_items() {
+    return @[@"name", @"hz32", @"hz64", @"hz128", @"hz256", @"hz512", @"hz1000", @"hz2000", @"hz4000", @"hz8000", @"hz16000", @"preamp"];
 }
 
-static const float winamp_equalizer_bands[10] = { 70, 180, 320, 600, 1000, 3000, 6000, 12000, 14000, 16000 };
-static NSArray* winamp_equalizer_items = nil;
-static NSString* winamp_equalizer_extra_genres = @"altGenres";
+static const float cog_equalizer_bands[10] = { 32, 64, 128, 256, 512, 1000, 2000, 4000, 8000, 16000 };
+static NSArray* cog_equalizer_items = nil;
+static NSString* cog_equalizer_extra_genres = @"altGenres";
 
 static const float apple_equalizer_bands_31[31] = { 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1200, 1600, 2000, 2500, 3100, 4000, 5000, 6300, 8000, 10000, 12000, 16000, 20000 };
 static const float apple_equalizer_bands_10[10] = { 32, 64, 128, 256, 512, 1000, 2000, 4000, 8000, 16000 };
@@ -36,16 +38,16 @@ static const float apple_equalizer_bands_10[10] = { 32, 64, 128, 256, 512, 1000,
 static inline float quadra(float *p, float frac) { return (((((((((p[0] + p[2]) * 0.5) - p[1]) * frac) * 0.5) + p[1]) - ((p[2] + p[0] + (p[0] * 2.0)) / 2.0)) * frac) * 2.0) + p[0]; }
 
 static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
-    if (!winamp_equalizer_items)
-        winamp_equalizer_items = _winamp_equalizer_items();
+    if (!cog_equalizer_items)
+        cog_equalizer_items = _cog_equalizer_items();
 
     // predict extra bands! lpc was too broken, so use quadratic interpolation!
-    if (freqTarget <= winamp_equalizer_bands[0]) {
+    if (freqTarget <= cog_equalizer_bands[0]) {
         float work[14];
         float work_freq[14];
         for (unsigned int i = 0; i < 10; ++i) {
-            work[9 - i] = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:1 + i]] floatValue];
-            work_freq[9 - i] = winamp_equalizer_bands[i];
+            work[9 - i] = [[preset objectForKey:[cog_equalizer_items objectAtIndex:1 + i]] floatValue];
+            work_freq[9 - i] = cog_equalizer_bands[i];
         }
         for (unsigned int i = 10; i < 14; ++i) {
             work[i] = quadra(work + i - 3, 0.94);
@@ -67,12 +69,12 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
         
         return work[13];
     }
-    else if (freqTarget >= winamp_equalizer_bands[9]) {
+    else if (freqTarget >= cog_equalizer_bands[9]) {
         float work[14];
         float work_freq[14];
         for (unsigned int i = 0; i < 10; ++i) {
-            work[i] = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:1 + i]] floatValue];
-            work_freq[i] = winamp_equalizer_bands[i];
+            work[i] = [[preset objectForKey:[cog_equalizer_items objectAtIndex:1 + i]] floatValue];
+            work_freq[i] = cog_equalizer_bands[i];
         }
         for (unsigned int i = 10; i < 14; ++i) {
             work[i] = quadra(work + i - 3, 0.94);
@@ -98,12 +100,12 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
     // interpolation time! linear is fine for this
     
     for (size_t i = 0; i < 9; ++i) {
-        if (freqTarget >= winamp_equalizer_bands[i] &&
-            freqTarget < winamp_equalizer_bands[i + 1]) {
-            float freqLow = winamp_equalizer_bands[i];
-            float freqHigh = winamp_equalizer_bands[i + 1];
-            float valueLow = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:i + 1]] floatValue];
-            float valueHigh = [[preset objectForKey:[winamp_equalizer_items objectAtIndex:i + 2]] floatValue];
+        if (freqTarget >= cog_equalizer_bands[i] &&
+            freqTarget < cog_equalizer_bands[i + 1]) {
+            float freqLow = cog_equalizer_bands[i];
+            float freqHigh = cog_equalizer_bands[i + 1];
+            float valueLow = [[preset objectForKey:[cog_equalizer_items objectAtIndex:i + 1]] floatValue];
+            float valueHigh = [[preset objectForKey:[cog_equalizer_items objectAtIndex:i + 2]] floatValue];
             
             float delta = (freqTarget - freqLow) / (freqHigh - freqLow);
             
@@ -130,7 +132,7 @@ static void loadPresets()
 {
     if ([equalizer_presets_processed count]) return;
 
-    CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("Winamp.q1"), CFSTR("json"), NULL);
+    CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("Cog.q1"), CFSTR("json"), NULL);
 
     CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
 
@@ -152,7 +154,7 @@ static void loadPresets()
                 equalizer_presets->u.object.length == 2 &&
                 strncmp(equalizer_presets->u.object.values[0].name, "type", equalizer_presets->u.object.values[0].name_length) == 0 &&
                 equalizer_presets->u.object.values[0].value->type == json_string &&
-                strncmp(equalizer_presets->u.object.values[0].value->u.string.ptr, "Winamp EQ library file v1.1", equalizer_presets->u.object.values[0].value->u.string.length ) == 0 &&
+                strncmp(equalizer_presets->u.object.values[0].value->u.string.ptr, [_cog_equalizer_type UTF8String], equalizer_presets->u.object.values[0].value->u.string.length ) == 0 &&
                 strncmp(equalizer_presets->u.object.values[1].name, "presets", equalizer_presets->u.object.values[1].name_length) == 0 &&
                 equalizer_presets->u.object.values[1].value->type == json_array)
             {
@@ -163,9 +165,9 @@ static void loadPresets()
                 size_t count = equalizer_presets->u.object.values[1].value->u.array.length;
                 json_value ** values = equalizer_presets->u.object.values[1].value->u.array.values;
 
-                winamp_equalizer_items = _winamp_equalizer_items();
+                cog_equalizer_items = _cog_equalizer_items();
 
-                const size_t winamp_object_minimum = [winamp_equalizer_items count];
+                const size_t cog_object_minimum = [cog_equalizer_items count];
 
                 for (size_t i = 0; i < count; ++i) {
                     if (values[i]->type == json_object) {
@@ -173,11 +175,11 @@ static void loadPresets()
                         size_t object_items = values[i]->u.object.length;
                         json_object_entry * object_entry = values[i]->u.object.values;
                         size_t requiredItemsPresent = 0;
-                        if (object_items >= winamp_object_minimum) {
+                        if (object_items >= cog_object_minimum) {
                             NSMutableDictionary * equalizerItem = [[NSMutableDictionary alloc] init];
                             for (size_t j = 0; j < object_items; ++j) {
                                 NSString * key = [NSString stringWithUTF8String:object_entry[j].name];
-                                NSInteger index = [winamp_equalizer_items indexOfObject:key];
+                                NSInteger index = [cog_equalizer_items indexOfObject:key];
                                 if (index != NSNotFound) {
                                     if (index == 0 && object_entry[j].value->type == json_string) {
                                         NSString * name = [NSString stringWithUTF8String:object_entry[j].value->u.string.ptr];
@@ -186,12 +188,12 @@ static void loadPresets()
                                     }
                                     else if (object_entry[j].value->type == json_integer) {
                                         int64_t value = object_entry[j].value->u.integer;
-                                        float floatValue = ((value <= 64 && value >= 1) ? ((float)(value - 33) / 32.0 * 12.0) : 0.0);
+                                        float floatValue = ((value <= 401 && value >= 1) ? ((float)(value - 201) / 10.0) : 0.0);
                                         [equalizerItem setObject:[NSNumber numberWithFloat:floatValue] forKey:key];
                                         ++requiredItemsPresent;
                                     }
                                 }
-                                else if ([key isEqualToString:winamp_equalizer_extra_genres]) {
+                                else if ([key isEqualToString:cog_equalizer_extra_genres]) {
                                     // Process alternate genre matches
                                     if (object_entry[j].value->type == json_array) {
                                         size_t value_count = object_entry[j].value->u.array.length;
@@ -205,7 +207,7 @@ static void loadPresets()
                                 }
                             }
 
-                            if (requiredItemsPresent == winamp_object_minimum) {
+                            if (requiredItemsPresent == cog_object_minimum) {
                                 // Add the base item
                                 NSDictionary *outItem = [NSDictionary dictionaryWithDictionary:equalizerItem];
                                 [array addObject:outItem];
