@@ -65,10 +65,19 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
                 [self setSegmentCount:4];
                 [self setImage:[NSImage imageNamed:@"stopTemplate"] forSegment:2];
                 [self setImage:[NSImage imageNamed:@"nextTemplate"] forSegment:3];
+                if (@available(macOS 10.13, *))
+                {
+                    [self setToolTip:NSLocalizedString(@"StopButtonTooltip", @"") forSegment:2];
+                    [self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:3];
+                }
             }
             else {
                 [self setSegmentCount:3];
                 [self setImage:[NSImage imageNamed:@"nextTemplate"] forSegment:2];
+                if (@available(macOS 10.13, *))
+                {
+                    [self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:2];
+                }
             }
         }
 	}
