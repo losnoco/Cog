@@ -8,9 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 #import "PlaybackController.h"
+#import "PlaylistController.h"
 
-@interface MiniWindow : NSWindow {
+@interface MiniWindow : NSWindow<NSDraggingDestination> {
     IBOutlet PlaybackController *playbackController;
+    IBOutlet PlaylistController *playlistController;
     IBOutlet NSToolbar *miniToolbar;
     NSImage *hdcdLogo;
 }
