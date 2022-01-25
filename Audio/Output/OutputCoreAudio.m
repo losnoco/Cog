@@ -767,9 +767,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     }
     if (_eq)
     {
+        // This takes the EQ and frees it after disposing of any present UIs
         [outputController endEqualizer:_eq];
-        AudioUnitUninitialize(_eq);
-        AudioComponentInstanceDispose(_eq);
         _eq = NULL;
     }
 #ifdef OUTPUT_LOG

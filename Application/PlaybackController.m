@@ -576,7 +576,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
-- (void)showStubEq
+- (void)eqAlloc
 {
     // Show a stopped equalizer as a stub
     OSStatus err;
@@ -602,15 +602,13 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
         return;
     
     AudioUnitInitialize(_eq);
-    
-    _eqStubbed = YES;
 }
 
-- (void)hideStubEq
+- (void)eqDealloc
 {
     AudioUnitUninitialize(_eq);
     AudioComponentInstanceDispose(_eq);
-    _eq = NULL;
+    _eq = nil;
     _eqStubbed = NO;
 }
 
@@ -625,7 +623,7 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
     }
     else
     {
-        [self showStubEq];
+        [self eqAlloc];
         _eqWasOpen = YES;
         [self audioPlayer:nil displayEqualizer:_eq];
         [_equi bringToFront];
@@ -655,10 +653,8 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
         
         CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
 
-        if (_eqStubbed)
-        {
-            [self hideStubEq];
-        }
+        // Caller relinquishes EQ to us
+        [self eqDealloc];
     }
     
     _eq = eq;
@@ -728,9 +724,9 @@ NSDictionary * makeRGInfo(PlaylistEntry *pe)
         {
             _eqWasOpen = [_equi isOpen];
         }
-    
+
         _equi = nil;
-        _eq = nil;
+        [self eqDealloc];
         
         if (_eqWasOpen)
         {
