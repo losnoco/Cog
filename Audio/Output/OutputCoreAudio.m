@@ -277,10 +277,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
                 bytesBuffered += atomic_load_explicit(&bytesRendered, memory_order_relaxed);
                 if ([outputController chainQueueHasTracks])
                 {
-                    if (bytesBuffered < CHUNK_SIZE)
+                    if (bytesBuffered < CHUNK_SIZE / 2)
                         bytesBuffered = 0;
                     else
-                        bytesBuffered -= CHUNK_SIZE;
+                        bytesBuffered -= CHUNK_SIZE / 2;
                 }
                 else {
                     stopNext = YES;
