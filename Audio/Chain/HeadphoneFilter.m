@@ -135,12 +135,22 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
             [[properties objectForKey:@"bitsPerSample"] intValue] != 32 ||
             !([[properties objectForKey:@"endian"] isEqualToString:@"native"] ||
               [[properties objectForKey:@"endian"] isEqualToString:@"little"]) ||
-            (impulseChannels != 14 && impulseChannels != 7))
+            (impulseChannels != 14 && impulseChannels != 7)) {
+            [decoder close];
+            decoder = nil;
+            [source close];
+            source = nil;
             return nil;
+        }
 
         float * impulseBuffer = calloc(sizeof(float), (sampleCount + 1024) * sizeof(float) * impulseChannels);
-        if (!impulseBuffer)
+        if (!impulseBuffer) {
+            [decoder close];
+            decoder = nil;
+            [source close];
+            source = nil;
             return nil;
+        }
         
         if ([decoder readAudio:impulseBuffer frames:sampleCount] != sampleCount) {
             [decoder close];
