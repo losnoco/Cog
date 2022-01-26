@@ -41,6 +41,23 @@ void *memalign_alloc(size_t boundary, size_t size)
    return (void*)addr;
 }
 
+void *memalign_calloc(size_t boundary, size_t unit, size_t size)
+{
+   size *= unit;
+
+   void **place   = NULL;
+   uintptr_t addr = 0;
+   void *ptr      = (void*)calloc(1, boundary + size + sizeof(uintptr_t));
+   if (!ptr)
+      return NULL;
+
+   addr           = ((uintptr_t)ptr + sizeof(uintptr_t) + boundary)
+      & ~(boundary - 1);
+   place          = (void**)addr;
+   place[-1]      = ptr;
+
+   return (void*)addr;
+}
 void memalign_free(void *ptr)
 {
    void **p = NULL;

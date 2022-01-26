@@ -17,6 +17,8 @@
 #import "Node.h"
 #import "RefillNode.h"
 
+#import "HeadphoneFilter.h"
+
 @interface ConverterNode : Node {
     NSDictionary * rgInfo;
     
@@ -75,6 +77,8 @@
     NSString *outputResampling;
     
     void *hdcd_decoder;
+    
+    HeadphoneFilter *hFilter;
 }
 
 @property AudioStreamBasicDescription inputFormat;

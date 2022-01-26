@@ -113,6 +113,7 @@
 		8355D6B8180613FB00D05687 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8355D6B7180613FB00D05687 /* Security.framework */; };
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		835A8FD327957310005B3C39 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 835A8FC627957310005B3C39 /* json.c */; };
+		835EDD8A27A000E8001EDCCE /* gsx.wv in Resources */ = {isa = PBXBuildFile; fileRef = 835EDD8027A000E8001EDCCE /* gsx.wv */; };
 		835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 835F00B8279BD1CD00055FCF /* SecondsFormatter.m */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
@@ -924,6 +925,7 @@
 		835C888B22CC1881001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/Credits.html; sourceTree = "<group>"; };
 		835C888C22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C888D22CC1882001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		835EDD8027A000E8001EDCCE /* gsx.wv */ = {isa = PBXFileReference; lastKnownFileType = file; path = gsx.wv; sourceTree = "<group>"; };
 		835F00B4279BD1CD00055FCF /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
 		835F00B8279BD1CD00055FCF /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatter.m; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
@@ -1467,6 +1469,7 @@
 				1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */,
 				1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */,
 				832923AE279FAC400048201E /* Cog.q1.json */,
+				835EDD8027A000E8001EDCCE /* gsx.wv */,
 				17D1B0D00F6320EA00694C57 /* InfoInspector.xib */,
 				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
 				17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */,
@@ -2367,6 +2370,7 @@
 				17818A950C0B27AC001C4916 /* aiff.icns in Resources */,
 				8384915D18083EAB00E7332D /* pauseDockBadge.png in Resources */,
 				8384916818083EAB00E7332D /* shuffleOffTemplate.pdf in Resources */,
+				835EDD8A27A000E8001EDCCE /* gsx.wv in Resources */,
 				8384915F18083EAB00E7332D /* playDockBadge.png in Resources */,
 				17818A960C0B27AC001C4916 /* ape.icns in Resources */,
 				17818A970C0B27AC001C4916 /* m3u.icns in Resources */,

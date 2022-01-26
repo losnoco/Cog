@@ -67,6 +67,7 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
         [NSNumber numberWithInt:-1], @"GraphicEQpreset",
         [NSNumber numberWithBool:NO], @"GraphicEQtrackgenre",
         [NSNumber numberWithBool:YES], @"volumeLimit",
+        [NSNumber numberWithBool:NO], @"headphoneVirtualization",
 		nil];
 		
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];

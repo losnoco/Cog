@@ -87,6 +87,7 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.headphoneVirtualization" options:0 context:nil];
     }
     
     return self;
@@ -1045,7 +1046,13 @@ tryagain:
         
         scale_by_volume( (float*) floatBuffer, amountReadFromFC / sizeof(float), volumeScale);
         
-        if ( inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2 )
+        if ( hFilter ) {
+            int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
+            [hFilter process:floatBuffer sampleCount:samples toBuffer:floatBuffer + amountReadFromFC];
+            memmove(floatBuffer, floatBuffer + amountReadFromFC, samples * sizeof(float) * 2);
+            amountReadFromFC = samples * sizeof(float) * 2;
+        }
+        else if ( inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2 )
         {
             int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
             downmix_to_stereo( (float*) floatBuffer, inputFormat.mChannelsPerFrame, samples );
@@ -1090,16 +1097,24 @@ tryagain:
                        context:(void *)context
 {
 	DLog(@"SOMETHING CHANGED!");
-    if ([keyPath isEqual:@"values.volumeScaling"]) {
+    if ([keyPath isEqualToString:@"values.volumeScaling"]) {
         //User reset the volume scaling option
         [self refreshVolumeScaling];
     }
-    else if ([keyPath isEqual:@"values.outputResampling"]) {
+    else if ([keyPath isEqualToString:@"values.outputResampling"]) {
         // Reset resampler
         if (resampler && resampler_data) {
             NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"outputResampling"];
             if (![value isEqualToString:outputResampling])
                 [self inputFormatDidChange:inputFormat];
+        }
+    }
+    else if ([keyPath isEqualToString:@"values.headphoneVirtualization"]) {
+        // Reset the converter, without rebuffering
+        if (outputFormat.mChannelsPerFrame == 2 &&
+            inputFormat.mChannelsPerFrame >= 1 &&
+            inputFormat.mChannelsPerFrame <= 8) {
+            [self inputFormatDidChange:inputFormat];
         }
     }
 }
@@ -1209,6 +1224,19 @@ static float db_to_scale(float db)
     dmFloatFormat.mChannelsPerFrame = outputFormat.mChannelsPerFrame;
     dmFloatFormat.mBytesPerFrame = (32/8)*dmFloatFormat.mChannelsPerFrame;
     dmFloatFormat.mBytesPerPacket = dmFloatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
+    
+    BOOL hVirt = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"headphoneVirtualization"];
+    
+    if (hVirt &&
+        outputFormat.mChannelsPerFrame == 2 &&
+        inputFormat.mChannelsPerFrame >= 1 &&
+         inputFormat.mChannelsPerFrame <= 8) {
+        CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("gsx"), CFSTR("wv"), NULL);
+
+        if (appUrlRef) {
+            hFilter = [[HeadphoneFilter alloc] initWithImpulseFile:(__bridge NSURL *)appUrlRef forSampleRate:outputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame];
+        }
+    }
 
     convert_s16_to_float_init_simd();
     convert_s32_to_float_init_simd();
@@ -1276,6 +1304,7 @@ static float db_to_scale(float db)
 
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputResampling"];
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.headphoneVirtualization"];
     
     paused = NO;
 	[self cleanUp];
@@ -1339,6 +1368,9 @@ static float db_to_scale(float db)
     while (convertEntered)
     {
         usleep(500);
+    }
+    if (hFilter) {
+        hFilter = nil;
     }
     if (hdcd_decoder)
     {

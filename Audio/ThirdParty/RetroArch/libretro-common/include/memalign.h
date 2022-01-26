@@ -31,6 +31,8 @@ RETRO_BEGIN_DECLS
 
 void *memalign_alloc(size_t boundary, size_t size);
 
+void *memalign_calloc(size_t boundary, size_t unit, size_t size);
+
 void *memalign_alloc_aligned(size_t size);
 
 void memalign_free(void *ptr);

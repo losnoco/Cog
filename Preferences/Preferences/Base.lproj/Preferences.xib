@@ -349,6 +349,17 @@
                         <binding destination="52" name="value" keyPath="values.volumeLimit" id="7Sl-LJ-ljd"/>
                     </connections>
                 </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bQz-MX-59V">
+                    <rect key="frame" x="251" y="121" width="227" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Enable headphone virtualization" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="W0w-wC-1ug">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.headphoneVirtualization" id="wwT-OG-ulF"/>
+                    </connections>
+                </button>
             </subviews>
             <point key="canvasLocation" x="-151" y="318"/>
         </customView>
