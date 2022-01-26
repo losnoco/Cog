@@ -303,6 +303,14 @@ static STREAMFILE* open_cog_streamfile_buffer_from_url(NSURL* url, const char* c
     if (![infile seekable])
         return NULL;
     
+    // XXX Goddammit, FFmpeg
+    uint8_t sig[3];
+    if ([infile read:sig amount:3] == 3) {
+        [infile seek:0 whence:SEEK_SET];
+        if (memcmp(sig, "PSF", 3) == 0)
+            return NULL;
+    }
+    
     return open_cog_streamfile_buffer_by_file(infile, filename, bufsize);
 }
 
