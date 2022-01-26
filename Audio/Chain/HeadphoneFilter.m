@@ -298,9 +298,9 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
         if (!left_result || !right_result)
             return nil;
         
-        prevOverlap[0] = (float *) memalign_calloc(16, sizeof(float), fftSize);
-        prevOverlap[1] = (float *) memalign_calloc(16, sizeof(float), fftSize);
-        if (!prevOverlap[0] || !prevOverlap[1])
+        prevOverlapLeft = (float *) memalign_calloc(16, sizeof(float), fftSize);
+        prevOverlapRight = (float *) memalign_calloc(16, sizeof(float), fftSize);
+        if (!prevOverlapLeft || !prevOverlapRight)
             return nil;
 
         left_mix_result = (float *) memalign_calloc(16, sizeof(float), fftSize);
@@ -315,20 +315,22 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 }
 
 - (void)dealloc {
-    if (paddedSignal) memalign_free(paddedSignal);
+    if (fftSetup) vDSP_destroy_fftsetup(fftSetup);
     
-    if (signal_fft.realp) memalign_free(signal_fft.realp);
-    if (signal_fft.imagp) memalign_free(signal_fft.imagp);
+    memalign_free(paddedSignal);
+    
+    memalign_free(signal_fft.realp);
+    memalign_free(signal_fft.imagp);
 
-    if (input_filtered_signal_per_channel[0].realp) memalign_free(input_filtered_signal_per_channel[0].realp);
-    if (input_filtered_signal_per_channel[0].imagp) memalign_free(input_filtered_signal_per_channel[0].imagp);
-    if (input_filtered_signal_per_channel[1].realp) memalign_free(input_filtered_signal_per_channel[1].realp);
-    if (input_filtered_signal_per_channel[1].imagp) memalign_free(input_filtered_signal_per_channel[1].imagp);
+    memalign_free(input_filtered_signal_per_channel[0].realp);
+    memalign_free(input_filtered_signal_per_channel[0].imagp);
+    memalign_free(input_filtered_signal_per_channel[1].realp);
+    memalign_free(input_filtered_signal_per_channel[1].imagp);
 
     if (impulse_responses) {
         for (size_t i = 0; i < channelCount * 2; ++i) {
-            if (impulse_responses[i].realp) memalign_free(impulse_responses[i].realp);
-            if (impulse_responses[i].imagp) memalign_free(impulse_responses[i].imagp);
+            memalign_free(impulse_responses[i].realp);
+            memalign_free(impulse_responses[i].imagp);
         }
         free(impulse_responses);
     }
@@ -336,81 +338,81 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
     memalign_free(left_result);
     memalign_free(right_result);
     
-    if (prevOverlap[0]) memalign_free(prevOverlap[0]);
-    if (prevOverlap[1]) memalign_free(prevOverlap[1]);
+    memalign_free(prevOverlapLeft);
+    memalign_free(prevOverlapRight);
 
     memalign_free(left_mix_result);
     memalign_free(right_mix_result);
 }
 
 - (void)process:(const float*)inBuffer sampleCount:(size_t)count toBuffer:(float *)outBuffer {
-    float scale = 1.0 / (8.0 * (float)fftSize);
-    
+    const float scale = 1.0 / (8.0 * (float)fftSize);
+
     while (count > 0) {
         size_t countToDo = (count > bufferSize) ? bufferSize : count;
 
         vDSP_vclr(left_mix_result, 1, fftSize);
         vDSP_vclr(right_mix_result, 1, fftSize);
-        
+
         for (size_t i = 0; i < channelCount; ++i) {
             cblas_scopy((int)countToDo, inBuffer + i, (int)channelCount, paddedSignal, 1);
-            
+
             vDSP_vclr(paddedSignal + countToDo, 1, paddedBufferSize - countToDo);
-            
+
             vDSP_ctoz((DSPComplex *)paddedSignal, 2, &signal_fft, 1, fftSizeOver2);
-            
+
             vDSP_fft_zrip(fftSetup, &signal_fft, 1, log2n, FFT_FORWARD);
-            
+
             // One channel forward, then multiply and back twice
-            
+
             float preserveIRNyq = impulse_responses[i * 2 + 0].imagp[0];
             float preserveSigNyq = signal_fft.imagp[0];
             impulse_responses[i * 2 + 0].imagp[0] = 0;
             signal_fft.imagp[0] = 0;
-            
+
             vDSP_zvmul(&signal_fft, 1, &impulse_responses[i * 2 + 0], 1, &input_filtered_signal_per_channel[0], 1, fftSizeOver2, 1);
-            
+
             input_filtered_signal_per_channel[0].imagp[0] = preserveIRNyq * preserveSigNyq;
             impulse_responses[i * 2 + 0].imagp[0] = preserveIRNyq;
-            
+
             preserveIRNyq = impulse_responses[i * 2 + 1].imagp[0];
             impulse_responses[i * 2 + 1].imagp[0] = 0;
-            
+
             vDSP_zvmul(&signal_fft, 1, &impulse_responses[i * 2 + 1], 1, &input_filtered_signal_per_channel[1], 1, fftSizeOver2, 1);
-            
+
             input_filtered_signal_per_channel[1].imagp[0] = preserveIRNyq * preserveSigNyq;
             impulse_responses[i * 2 + 1].imagp[0] = preserveIRNyq;
-            
+
             vDSP_fft_zrip(fftSetup, &input_filtered_signal_per_channel[0], 1, log2n, FFT_INVERSE);
             vDSP_fft_zrip(fftSetup, &input_filtered_signal_per_channel[1], 1, log2n, FFT_INVERSE);
-            
+
             vDSP_ztoc(&input_filtered_signal_per_channel[0], 1, (DSPComplex *)left_result, 2, fftSizeOver2);
             vDSP_ztoc(&input_filtered_signal_per_channel[1], 1, (DSPComplex *)right_result, 2, fftSizeOver2);
 
             vDSP_vadd(left_mix_result, 1, left_result, 1, left_mix_result, 1, fftSize);
             vDSP_vadd(right_mix_result, 1, right_result, 1, right_mix_result, 1, fftSize);
         }
-        
+
         // Integrate previous overlap
         if (prevOverlapLength) {
-            vDSP_vadd(prevOverlap[0], 1, left_mix_result, 1, left_mix_result, 1, prevOverlapLength);
-            vDSP_vadd(prevOverlap[1], 1, right_mix_result, 1, right_mix_result, 1, prevOverlapLength);
+            vDSP_vadd(prevOverlapLeft, 1, left_mix_result, 1, left_mix_result, 1, prevOverlapLength);
+            vDSP_vadd(prevOverlapRight, 1, right_mix_result, 1, right_mix_result, 1, prevOverlapLength);
         }
-        
+
         prevOverlapLength = (int)(fftSize - countToDo);
-        
-        cblas_scopy(prevOverlapLength, left_mix_result + countToDo, 1, prevOverlap[0], 1);
-        cblas_scopy(prevOverlapLength, right_mix_result + countToDo, 1, prevOverlap[1], 1);
-        
+
+        cblas_scopy(prevOverlapLength, left_mix_result + countToDo, 1, prevOverlapLeft, 1);
+        cblas_scopy(prevOverlapLength, right_mix_result + countToDo, 1, prevOverlapRight, 1);
+
         vDSP_vsmul(left_mix_result, 1, &scale, left_mix_result, 1, countToDo);
         vDSP_vsmul(right_mix_result, 1, &scale, right_mix_result, 1, countToDo);
-        
+
         cblas_scopy((int)countToDo, left_mix_result, 1, outBuffer + 0, 2);
         cblas_scopy((int)countToDo, right_mix_result, 1, outBuffer + 1, 2);
-        
+
         inBuffer += countToDo * channelCount;
         outBuffer += countToDo * 2;
-        
+
         count -= countToDo;
     }
 }

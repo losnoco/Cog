@@ -36,7 +36,8 @@
     
     float         * paddedSignal;
     
-    float         * prevOverlap[2];
+    float         * prevOverlapLeft;
+    float         * prevOverlapRight;
     
     int             prevOverlapLength;
 }
