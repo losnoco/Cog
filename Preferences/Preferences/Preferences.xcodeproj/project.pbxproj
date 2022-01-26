@@ -115,6 +115,7 @@
 		83B06728180D85B8008E3612 /* MIDIPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIPane.m; sourceTree = "<group>"; };
 		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
 		83BC5AB320E4C90F00631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
+		83D34B7D27A10FA700784D34 /* HeadphoneFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeadphoneFilter.h; path = ../../Audio/Chain/HeadphoneFilter.h; sourceTree = "<group>"; };
 		83EF495D17FBC96A00642E3C /* VolumeBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeBehaviorArrayController.h; sourceTree = "<group>"; };
 		83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeBehaviorArrayController.m; sourceTree = "<group>"; };
 		83F27E651810DD3A00CEF538 /* appearance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "appearance@2x.png"; path = "Icons/appearance@2x.png"; sourceTree = "<group>"; };
@@ -195,6 +196,7 @@
 			children = (
 				83F27E711810E41A00CEF538 /* Transformers */,
 				8384913618081ECB00E7332D /* Logging.h */,
+				83D34B7D27A10FA700784D34 /* HeadphoneFilter.h */,
 				17D503410ABDB1660022D1E8 /* Custom */,
 				17D5033F0ABDB1570022D1E8 /* Panes */,
 				17D1B3F60F6349CE00694C57 /* PreferencePanePlugin.h */,

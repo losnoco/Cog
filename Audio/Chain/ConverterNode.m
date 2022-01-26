@@ -88,6 +88,7 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.headphoneVirtualization" options:0 context:nil];
+        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hrirPath" options:0 context:nil];
     }
     
     return self;
@@ -1109,7 +1110,8 @@ tryagain:
                 [self inputFormatDidChange:inputFormat];
         }
     }
-    else if ([keyPath isEqualToString:@"values.headphoneVirtualization"]) {
+    else if ([keyPath isEqualToString:@"values.headphoneVirtualization"] ||
+             [keyPath isEqualToString:@"values.hrirPath"]) {
         // Reset the converter, without rebuffering
         if (outputFormat.mChannelsPerFrame == 2 &&
             inputFormat.mChannelsPerFrame >= 1 &&
@@ -1231,10 +1233,27 @@ static float db_to_scale(float db)
         outputFormat.mChannelsPerFrame == 2 &&
         inputFormat.mChannelsPerFrame >= 1 &&
          inputFormat.mChannelsPerFrame <= 8) {
-        CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("gsx"), CFSTR("wv"), NULL);
+        NSString * userPreset = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] stringForKey:@"hrirPath"];
+        
+        NSURL * presetUrl = nil;
+        
+        if (userPreset && ![userPreset isEqualToString:@""]) {
+            presetUrl = [NSURL fileURLWithPath:userPreset];
+            if (![HeadphoneFilter validateImpulseFile:presetUrl])
+                presetUrl = nil;
+        }
+        
+        if (!presetUrl) {
+            CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("gsx"), CFSTR("wv"), NULL);
+            if (appUrlRef)
+                presetUrl = (__bridge NSURL *) appUrlRef;
+            CFRelease(appUrlRef);
+            if (![HeadphoneFilter validateImpulseFile:presetUrl])
+                presetUrl = nil;
+        }
 
-        if (appUrlRef) {
-            hFilter = [[HeadphoneFilter alloc] initWithImpulseFile:(__bridge NSURL *)appUrlRef forSampleRate:outputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame];
+        if (presetUrl) {
+            hFilter = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:outputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame];
         }
     }
 
@@ -1305,7 +1324,8 @@ static float db_to_scale(float db)
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputResampling"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.headphoneVirtualization"];
-    
+    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.hrirPath"];
+
     paused = NO;
 	[self cleanUp];
 }

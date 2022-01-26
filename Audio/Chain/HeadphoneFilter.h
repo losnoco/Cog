@@ -41,6 +41,8 @@
     int             prevOverlapLength;
 }
 
++ (BOOL)validateImpulseFile:(NSURL *)url;
+
 - (id)initWithImpulseFile:(NSURL *)url forSampleRate:(double)sampleRate withInputChannels:(size_t)channels;
 
 - (void)process:(const float*)inBuffer sampleCount:(size_t)count toBuffer:(float *)outBuffer;

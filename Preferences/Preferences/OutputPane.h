@@ -15,5 +15,7 @@
 }
 
 - (IBAction) takeDeviceID:(id)sender;
+- (IBAction) setHrir:(id)sender;
+- (IBAction) clearHrir:(id)sender;
 
 @end
