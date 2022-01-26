@@ -46,7 +46,7 @@
             [[properties objectForKey:@"bitsPerSample"] intValue] != 32 ||
             !([[properties objectForKey:@"endian"] isEqualToString:@"native"] ||
               [[properties objectForKey:@"endian"] isEqualToString:@"little"]) ||
-            impulseChannels != 14)
+            (impulseChannels != 14 && impulseChannels != 7))
             return nil;
         
         float * impulseBuffer = calloc(sizeof(float), (sampleCount + 1024) * sizeof(float) * impulseChannels);
@@ -132,8 +132,21 @@
         input_filtered_signal_per_channel[1].imagp = (float *) memalign_calloc(128, sizeof(float), fftSizeOver2);
 
         impulse_responses = (COMPLEX_SPLIT *) calloc(sizeof(COMPLEX_SPLIT), channels * 2);
-        
-        const int speakers_to_hesuvi[8][2][8] = {
+
+        // Symmetrical / no-echo sets
+        const int8_t speakers_to_hesuvi_7[8][2][8] = {
+            { { 6, }, { 6, } },                 // mono/center
+            { { 0, 1 }, { 1, 0 } },              // left/right
+            { { 0, 1, 6 }, { 1, 0, 6 } },       // left/right/center
+            { { 0, 1, 4, 5 }, { 1, 0, 5, 4 } },// left/right/left back/right back
+            { { 0, 1, 6, 4, 5 }, { 1, 0, 6, 5, 4 } }, // left/right/center/back left/back right
+            { { 0, 1, 6, 6, 4, 5 }, { 1, 0, 6, 6, 5, 4 } }, // left/right/center/lfe(center)/back left/back right
+            { { 0, 1, 6, 6, -1, 2, 3 }, { 1, 0, 6, 6, -1, 3, 2 } }, // left/right/center/lfe(center)/back center(special)/side left/side right
+            { { 0, 1, 6, 6, 4, 5, 2, 3 }, { 1, 0, 6, 6, 5, 4, 3, 2 } } // left/right/center/lfe(center)/back left/back right/side left/side right
+        };
+
+        // Asymmetrical / echo sets
+        const int8_t speakers_to_hesuvi_14[8][2][8] = {
             { { 6, }, { 13, } },                 // mono/center
             { { 0, 8 }, { 1, 7 } },              // left/right
             { { 0, 8, 6 }, { 1, 7, 13 } },       // left/right/center
@@ -144,20 +157,38 @@
             { { 0, 8, 6, 6, 4, 12, 2, 10 }, { 1, 7, 13, 13, 5, 11, 3, 9 } } // left/right/center/lfe(center)/back left/back right/side left/side right
         };
         
+        const int8_t * speakers_to_hesuvi[8][2][8] = (impulseChannels == 7) ? speakers_to_hesuvi_7 : speakers_to_hesuvi_14;
+        
         for (size_t i = 0; i < channels; ++i) {
             impulse_responses[i * 2 + 0].realp = (float *) memalign_calloc(128, sizeof(float), fftSizeOver2);
             impulse_responses[i * 2 + 0].imagp = (float *) memalign_calloc(128, sizeof(float), fftSizeOver2);
             impulse_responses[i * 2 + 1].realp = (float *) memalign_calloc(128, sizeof(float), fftSizeOver2);
             impulse_responses[i * 2 + 1].imagp = (float *) memalign_calloc(128, sizeof(float), fftSizeOver2);
             
-            int leftInChannel = speakers_to_hesuvi[channels-1][0][i];
-            int rightInChannel = speakers_to_hesuvi[channels-1][1][i];
+            int leftInChannel;
+            int rightInChannel;
+            
+            if (impulseChannels == 7) {
+                leftInChannel = speakers_to_hesuvi_7[channels-1][0][i];
+                rightInChannel = speakers_to_hesuvi_7[channels-1][1][i];
+            }
+            else {
+                leftInChannel = speakers_to_hesuvi_14[channels-1][0][i];
+                rightInChannel = speakers_to_hesuvi_14[channels-1][0][i];
+            }
             
             if (leftInChannel == -1 || rightInChannel == -1) {
                 float * temp = calloc(sizeof(float), fftSize * 2);
-                for (size_t i = 0; i < fftSize; i++) {
-                    temp[i] = deinterleavedImpulseBuffer[i + 2 * fftSize] + deinterleavedImpulseBuffer[i + 9 * fftSize];
-                    temp[i + fftSize] = deinterleavedImpulseBuffer[i + 3 * fftSize] + deinterleavedImpulseBuffer[i + 10 * fftSize];
+                if (impulseChannels == 7) {
+                    for (size_t i = 0; i < fftSize; i++) {
+                        temp[i + fftSize] = temp[i] = deinterleavedImpulseBuffer[i + 2 * fftSize] + deinterleavedImpulseBuffer[i + 3 * fftSize];
+                    }
+                }
+                else {
+                    for (size_t i = 0; i < fftSize; i++) {
+                        temp[i] = deinterleavedImpulseBuffer[i + 2 * fftSize] + deinterleavedImpulseBuffer[i + 9 * fftSize];
+                        temp[i + fftSize] = deinterleavedImpulseBuffer[i + 3 * fftSize] + deinterleavedImpulseBuffer[i + 10 * fftSize];
+                    }
                 }
                 
                 vDSP_ctoz((DSPComplex *)temp, 2, &impulse_responses[i * 2 + 0], 1, fftSizeOver2);
