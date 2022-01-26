@@ -755,7 +755,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         listenerapplied = NO;
     }
     if (_au) {
-        [_au stopHardware];
+        if (started)
+            [_au stopHardware];
         _au = nil;
     }
     if (running)
@@ -791,7 +792,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 - (void)pause
 {
     paused = YES;
-    [_au stopHardware];
+    if (started)
+        [_au stopHardware];
 }
 
 - (void)resume
@@ -799,6 +801,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     NSError *err;
     [_au startHardwareAndReturnError:&err];
     paused = NO;
+    started = YES;
 }
 
 - (void)sustainHDCD
