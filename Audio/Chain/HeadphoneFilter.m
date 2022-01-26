@@ -157,8 +157,6 @@
             { { 0, 8, 6, 6, 4, 12, 2, 10 }, { 1, 7, 13, 13, 5, 11, 3, 9 } } // left/right/center/lfe(center)/back left/back right/side left/side right
         };
         
-        const int8_t * speakers_to_hesuvi[8][2][8] = (impulseChannels == 7) ? speakers_to_hesuvi_7 : speakers_to_hesuvi_14;
-        
         for (size_t i = 0; i < channels; ++i) {
             impulse_responses[i * 2 + 0].realp = (float *) memalign_calloc(128, sizeof(float), fftSizeOver2);
             impulse_responses[i * 2 + 0].imagp = (float *) memalign_calloc(128, sizeof(float), fftSizeOver2);
@@ -174,7 +172,7 @@
             }
             else {
                 leftInChannel = speakers_to_hesuvi_14[channels-1][0][i];
-                rightInChannel = speakers_to_hesuvi_14[channels-1][0][i];
+                rightInChannel = speakers_to_hesuvi_14[channels-1][1][i];
             }
             
             if (leftInChannel == -1 || rightInChannel == -1) {
