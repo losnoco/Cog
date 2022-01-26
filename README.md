@@ -53,3 +53,27 @@ For some basic eye candy comparisons on the newly included RetroArch sinc
 resampler, please see this test project:
 
 https://github.com/kode54/retroarch_resampler_test
+
+
+ADDENDUM - 2022-01-25
+
+I've added an HRIR convolver, based on the HeSuVi HRIR format. A preset is
+bundled with the app, but external presets may be selected, in either RIFF
+WAVE, or Wavpack format, 7 or 14 channel, 32 bit floating point. A bad or
+missing preset will fall back on the built-in preset. The settings dialog
+won't let you assign a bad preset, either.
+
+The channel layout of the HeSuVi HRIR is as follows:
+
+![HeSuVi HRIR channel layout](https://github.com/losnoco/Cog/blob/main/.github/images/HeSuVi-channel-map.png)
+
+I altered this image from the original on the HeSuVi HRIR developer readme,
+as their image incorrectly swapped the left/right output order for the right
+input channels, which are actually supposed to be right output first, then
+left output. Otherwise, if observed as the original image, all output comes
+from either the center or the left side.
+
+The layout for 7 channel no-reverb presets is the same, except it only
+includes the first 7 channels of the layout, and the opposite speakers
+simply mirror their respective input channels, and the center input is
+used for both left and right outputs.
