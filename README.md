@@ -77,3 +77,8 @@ The layout for 7 channel no-reverb presets is the same, except it only
 includes the first 7 channels of the layout, and the opposite speakers
 simply mirror their respective input channels, and the center input is
 used for both left and right outputs.
+
+
+[Here are some preset HRIR files](https://cogcdn.cog.losno.co/HeSuVi-hrir-basic.7z).
+
+The original HeSuVi project is located [here](https://sourceforge.net/projects/hesuvi/).
