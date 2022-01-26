@@ -14,28 +14,44 @@
 
 @implementation HeadphoneFilter
 
-// Symmetrical / no-echo sets
+// Symmetrical / no-reverb sets
 static const int8_t speakers_to_hesuvi_7[8][2][8] = {
-    { { 6 }, { 6 } },                 // mono/center
-    { { 0, 1 }, { 1, 0 } },              // left/right
-    { { 0, 1, 6 }, { 1, 0, 6 } },       // left/right/center
-    { { 0, 1, 4, 5 }, { 1, 0, 5, 4 } },// left/right/left back/right back
-    { { 0, 1, 6, 4, 5 }, { 1, 0, 6, 5, 4 } }, // left/right/center/back left/back right
-    { { 0, 1, 6, 6, 4, 5 }, { 1, 0, 6, 6, 5, 4 } }, // left/right/center/lfe(center)/back left/back right
-    { { 0, 1, 6, 6, -1, 2, 3 }, { 1, 0, 6, 6, -1, 3, 2 } }, // left/right/center/lfe(center)/back center(special)/side left/side right
-    { { 0, 1, 6, 6, 4, 5, 2, 3 }, { 1, 0, 6, 6, 5, 4, 3, 2 } } // left/right/center/lfe(center)/back left/back right/side left/side right
+    // mono/center
+    { { 6 }, { 6 } },
+    // left/right
+    { { 0, 1 }, { 1, 0 } },
+    // left/right/center
+    { { 0, 1, 6 }, { 1, 0, 6 } },
+    // left/right/back lef/back right
+    { { 0, 1, 4, 5 }, { 1, 0, 5, 4 } },
+    // left/right/center/back left/back right
+    { { 0, 1, 6, 4, 5 }, { 1, 0, 6, 5, 4 } },
+    // left/right/center/lfe(center)/back left/back right
+    { { 0, 1, 6, 6, 4, 5 }, { 1, 0, 6, 6, 5, 4 } },
+    // left/right/center/lfe(center)/back center(special)/side left/side right
+    { { 0, 1, 6, 6, -1, 2, 3 }, { 1, 0, 6, 6, -1, 3, 2 } },
+    // left/right/center/lfe(center)/back left/back right/side left/side right
+    { { 0, 1, 6, 6, 4, 5, 2, 3 }, { 1, 0, 6, 6, 5, 4, 3, 2 } }
 };
 
-// Asymmetrical / echo sets
+// Asymmetrical / reverb sets
 static const int8_t speakers_to_hesuvi_14[8][2][8] = {
-    { { 6 }, { 13 } },                 // mono/center
-    { { 0, 8 }, { 1, 7 } },              // left/right
-    { { 0, 8, 6 }, { 1, 7, 13 } },       // left/right/center
-    { { 0, 8, 4, 12 }, { 1, 7, 5, 11 } },// left/right/left back/right back
-    { { 0, 8, 6, 4, 12 }, { 1, 7, 13, 5, 11 } }, // left/right/center/back left/back right
-    { { 0, 8, 6, 6, 4, 12 }, { 1, 7, 13, 13, 5, 11 } }, // left/right/center/lfe(center)/back left/back right
-    { { 0, 8, 6, 6, -1, 2, 10 }, { 1, 7, 13, 13, -1, 3, 9 } }, // left/right/center/lfe(center)/back center(special)/side left/side right
-    { { 0, 8, 6, 6, 4, 12, 2, 10 }, { 1, 7, 13, 13, 5, 11, 3, 9 } } // left/right/center/lfe(center)/back left/back right/side left/side right
+    // mono/center
+    { { 6 }, { 13 } },
+    // left/right
+    { { 0, 8 }, { 1, 7 } },
+    // left/right/center
+    { { 0, 8, 6 }, { 1, 7, 13 } },
+    // left/right/back left/back right
+    { { 0, 8, 4, 12 }, { 1, 7, 5, 11 } },
+    // left/right/center/back left/back right
+    { { 0, 8, 6, 4, 12 }, { 1, 7, 13, 5, 11 } },
+    // left/right/center/lfe(center)/back left/back right
+    { { 0, 8, 6, 6, 4, 12 }, { 1, 7, 13, 13, 5, 11 } },
+    // left/right/center/lfe(center)/back center(special)/side left/side right
+    { { 0, 8, 6, 6, -1, 2, 10 }, { 1, 7, 13, 13, -1, 3, 9 } },
+    // left/right/center/lfe(center)/back left/back right/side left/side right
+    { { 0, 8, 6, 6, 4, 12, 2, 10 }, { 1, 7, 13, 13, 5, 11, 3, 9 } }
 };
 
 + (BOOL)validateImpulseFile:(NSURL *)url {
@@ -48,15 +64,26 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
     
     id<CogDecoder> decoder = [AudioDecoder audioDecoderForSource:source];
 
-    if (decoder == nil)
+    if (decoder == nil) {
+        [source close];
+        source = nil;
         return NO;
+    }
 
     if (![decoder open:source])
     {
+        decoder = nil;
+        [source close];
+        source = nil;
         return NO;
     }
     
     NSDictionary *properties = [decoder properties];
+    
+    [decoder close];
+    decoder = nil;
+    [source close];
+    source = nil;
     
     int impulseChannels = [[properties objectForKey:@"channels"] intValue];
     
@@ -83,11 +110,17 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
         
         id<CogDecoder> decoder = [AudioDecoder audioDecoderForSource:source];
 
-        if (decoder == nil)
+        if (decoder == nil) {
+            [source close];
+            source = nil;
             return nil;
+        }
 
         if (![decoder open:source])
         {
+            decoder = nil;
+            [source close];
+            source = nil;
             return nil;
         }
         
@@ -109,11 +142,17 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
         if (!impulseBuffer)
             return nil;
         
-        if ([decoder readAudio:impulseBuffer frames:sampleCount] != sampleCount)
+        if ([decoder readAudio:impulseBuffer frames:sampleCount] != sampleCount) {
+            [decoder close];
+            decoder = nil;
+            [source close];
+            source = nil;
             return nil;
+        }
 
         [decoder close];
         decoder = nil;
+        [source close];
         source = nil;
 
         if (sampleRateOfSource != sampleRate) {
@@ -132,6 +171,10 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
             int resamplerLatencyOut = (int)ceil(resamplerLatencyIn * sampleRatio);
 
             float * resampledImpulse = calloc(sizeof(float), (resampledCount + resamplerLatencyOut * 2 + 128) * sizeof(float) * impulseChannels);
+            if (!resampledImpulse) {
+                free(impulseBuffer);
+                return nil;
+            }
 
             memmove(impulseBuffer + resamplerLatencyIn * impulseChannels, impulseBuffer, sampleCount * sizeof(float) * impulseChannels);
             memset(impulseBuffer, 0, resamplerLatencyIn * sizeof(float) * impulseChannels);
@@ -175,20 +218,20 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
         for (size_t i = 0; i < impulseChannels; ++i) {
             cblas_scopy(sampleCount, impulseBuffer + i, impulseChannels, deinterleavedImpulseBuffer + i * fftSize, 1);
         }
-        
+
         free(impulseBuffer);
-        
+
         paddedBufferSize = fftSize;
         fftSizeOver2 = (fftSize + 1) / 2;
         log2n = log2f(fftSize);
         log2nhalf = log2n / 2;
-        
+
         fftSetup = vDSP_create_fftsetup(log2n, FFT_RADIX2);
         if (!fftSetup) {
             memalign_free(deinterleavedImpulseBuffer);
             return nil;
         }
-        
+
         paddedSignal = (float *) memalign_calloc(16, sizeof(float), paddedBufferSize);
         if (!paddedSignal) {
             memalign_free(deinterleavedImpulseBuffer);
