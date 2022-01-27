@@ -24,6 +24,7 @@ class SFPlayer;
 	MIDIPlayer* player;
     midi_container midi_file;
     
+    NSString * globalSoundFontPath;
     BOOL soundFontsAssigned;
     BOOL isLooped;
     

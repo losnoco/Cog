@@ -174,8 +174,25 @@ static OSType getOSType(const char * in_)
         mode = MIDIPlayer::filter_sc8850;
     else if ([flavor isEqualToString:@"xg"])
         mode = MIDIPlayer::filter_xg;
+    
+    globalSoundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
+    
+    // First detect if soundfont has gone AWOL
+    if (![[NSFileManager defaultManager] fileExistsAtPath:globalSoundFontPath]) {
+        globalSoundFontPath = nil;
+        [[NSUserDefaults standardUserDefaults] setValue:globalSoundFontPath forKey:@"soundFontPath"];
+    }
 
     NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
+    
+    // Then detect if we should force the DLSMusicSynth, which has its own bank
+    if (!plugin || [plugin isEqualToString:@"FluidSynth"]) {
+        if (!globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
+            plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
+            [[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midi.plugin"];
+        }
+    }
+    
     if (!plugin || [plugin isEqualToString:@"FluidSynth"])
     {
         sfplayer = new SFPlayer;
@@ -277,14 +294,13 @@ static OSType getOSType(const char * in_)
         return 0;
     
     if ( (sfplayer||auplayer) && !soundFontsAssigned ) {
-        NSString * soundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
-        if (soundFontPath == nil)
-            return 0;
         
-        if (sfplayer)
-            sfplayer->setSoundFont( [soundFontPath UTF8String] );
-        else if (auplayer)
-            auplayer->setSoundFont( [soundFontPath UTF8String] );
+        if (globalSoundFontPath != nil) {
+            if (sfplayer)
+                sfplayer->setSoundFont( [globalSoundFontPath UTF8String] );
+            else if (auplayer)
+                auplayer->setSoundFont( [globalSoundFontPath UTF8String] );
+        }
         
         soundFontsAssigned = YES;
     }
