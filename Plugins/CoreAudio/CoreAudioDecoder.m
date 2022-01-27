@@ -317,10 +317,7 @@ static SInt64 getSizeProc(void* clientData) {
 
 + (float)priority
 {
-    if (@available(macOS 10.15, *))
-        return 1.0;
-    else
-        return 1.5;
+    return 1.0;
 }
 
 + (NSArray *)fileTypeAssociations

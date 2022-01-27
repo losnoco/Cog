@@ -80,39 +80,67 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 	formatCtx = NULL;
 	totalFrames = 0;
 	framesRead = 0;
+    
+    BOOL isStream = NO;
 
 	// register all available codecs
     
-    buffer = av_malloc(32 * 1024);
-    if (!buffer)
-    {
-        ALog(@"Out of memory!");
-        return NO;
+    NSURL * url = [s url];
+    if ([[url scheme] isEqualToString:@"http"] ||
+        [[url scheme] isEqualToString:@"https"]) {
+        source = nil;
+        [s close];
+        
+        isStream = YES;
+        
+        formatCtx = avformat_alloc_context();
+        if (!formatCtx)
+        {
+            ALog(@"Unable to allocate AVFormat context");
+            return NO;
+        }
+        
+        NSString * urlString = [url absoluteString];
+        if ( (errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0 )
+        {
+            char errDescr[4096];
+            av_strerror(errcode, errDescr, 4096);
+            ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
+            return NO;
+        }
     }
-    
-    ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
-    if (!ioCtx)
-    {
-        ALog(@"Unable to create AVIO context");
-        return NO;
+    else {
+        buffer = av_malloc(32 * 1024);
+        if (!buffer)
+        {
+            ALog(@"Out of memory!");
+            return NO;
+        }
+        
+        ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
+        if (!ioCtx)
+        {
+            ALog(@"Unable to create AVIO context");
+            return NO;
+        }
+        
+        formatCtx = avformat_alloc_context();
+        if (!formatCtx)
+        {
+            ALog(@"Unable to allocate AVFormat context");
+            return NO;
+        }
+        
+        formatCtx->pb = ioCtx;
+        
+        if ((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0)
+        {
+            char errDescr[4096];
+            av_strerror(errcode, errDescr, 4096);
+            ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
+            return NO;
+        }
     }
-    
-    formatCtx = avformat_alloc_context();
-    if (!formatCtx)
-    {
-        ALog(@"Unable to allocate AVFormat context");
-        return NO;
-    }
-    
-    formatCtx->pb = ioCtx;
-	
-	if ((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0)
-	{
-        char errDescr[4096];
-        av_strerror(errcode, errDescr, 4096);
-        ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
-		return NO;
-	}
 	
     if((errcode = avformat_find_stream_info(formatCtx, NULL)) < 0)
     {
@@ -166,63 +194,32 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
     const AVCodec * codec = NULL;
     AVDictionary * dict = NULL;
 
-    if (@available(macOS 10.15, *))
+    switch (codec_id)
     {
-        switch (codec_id)
-        {
-            case AV_CODEC_ID_MP3:
-                codec = avcodec_find_decoder_by_name("mp3_at");
-                break;
-            case AV_CODEC_ID_MP2:
-                codec = avcodec_find_decoder_by_name("mp2_at");
-                break;
-            case AV_CODEC_ID_MP1:
-                codec = avcodec_find_decoder_by_name("mp1_at");
-                break;
-            case AV_CODEC_ID_AAC:
-                codec = avcodec_find_decoder_by_name("aac_at");
-                break;
-            case AV_CODEC_ID_ALAC:
-                codec = avcodec_find_decoder_by_name("alac_at");
-                break;
-            case AV_CODEC_ID_AC3:
-                codec = avcodec_find_decoder_by_name("ac3_at");
-                break;
-            case AV_CODEC_ID_EAC3:
-                codec = avcodec_find_decoder_by_name("eac3_at");
-                break;
-            default: break;
-        }
-    }
-    else
-    {
-        switch (codec_id)
-        {
-            case AV_CODEC_ID_MP3:
-                codec = avcodec_find_decoder_by_name("mp3float");
-                break;
-            case AV_CODEC_ID_MP2:
-                codec = avcodec_find_decoder_by_name("mp2float");
-                break;
-            case AV_CODEC_ID_MP1:
-                codec = avcodec_find_decoder_by_name("mp1float");
-                break;
-            case AV_CODEC_ID_AAC:
-                codec = avcodec_find_decoder_by_name("libfdk_aac");
-                av_dict_set_int(&dict, "drc_level", -2, 0); // disable DRC
-                av_dict_set_int(&dict, "level_limit", 0, 0); // disable peak limiting
-                break;
-            case AV_CODEC_ID_ALAC:
-                codec = avcodec_find_decoder_by_name("alac");
-                break;
-            case AV_CODEC_ID_AC3:
-                codec = avcodec_find_decoder_by_name("ac3");
-                break;
-            case AV_CODEC_ID_EAC3:
-                codec = avcodec_find_decoder_by_name("eac3");
-                break;
-            default: break;
-        }
+        case AV_CODEC_ID_MP3:
+            codec = avcodec_find_decoder_by_name("mp3float");
+            break;
+        case AV_CODEC_ID_MP2:
+            codec = avcodec_find_decoder_by_name("mp2float");
+            break;
+        case AV_CODEC_ID_MP1:
+            codec = avcodec_find_decoder_by_name("mp1float");
+            break;
+        case AV_CODEC_ID_AAC:
+            codec = avcodec_find_decoder_by_name("libfdk_aac");
+            av_dict_set_int(&dict, "drc_level", -2, 0); // disable DRC
+            av_dict_set_int(&dict, "level_limit", 0, 0); // disable peak limiting
+            break;
+        case AV_CODEC_ID_ALAC:
+            codec = avcodec_find_decoder_by_name("alac");
+            break;
+        case AV_CODEC_ID_AC3:
+            codec = avcodec_find_decoder_by_name("ac3");
+            break;
+        case AV_CODEC_ID_EAC3:
+            codec = avcodec_find_decoder_by_name("eac3");
+            break;
+        default: break;
     }
 
     if (!codec)
@@ -405,16 +402,21 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
     
 	//totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
     AVRational tb = {.num = 1, .den = codecCtx->sample_rate};
-    totalFrames = av_rescale_q(stream->duration, stream->time_base, tb);
+    totalFrames = isStream ? 0 : av_rescale_q(stream->duration, stream->time_base, tb);
     bitrate = (int)((codecCtx->bit_rate) / 1000);
     framesRead = 0;
     endOfStream = NO;
     endOfAudio = NO;
     
-    if (stream->start_time && stream->start_time != AV_NOPTS_VALUE)
-        skipSamples = av_rescale_q(stream->start_time, stream->time_base, tb);
-    if (skipSamples < 0)
+    if (!isStream) {
+        if (stream->start_time && stream->start_time != AV_NOPTS_VALUE)
+            skipSamples = av_rescale_q(stream->start_time, stream->time_base, tb);
+        if (skipSamples < 0)
+            skipSamples = 0;
+    }
+    else {
         skipSamples = 0;
+    }
 
     seekFrame = skipSamples; // Skip preroll if necessary
 
@@ -668,7 +670,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 
 + (NSArray *)mimeTypes
 {
-	return @[@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"application/ogg", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq"];
+	return @[@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"application/ogg", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", @"application/vnd.apple.mpegurl"];
 }
 
 + (NSArray *)fileTypeAssociations
@@ -693,13 +695,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence)
 
 + (float)priority
 {
-    if (@available(macOS 10.15, *))
-        return 1.5;
-    else
-        return 1.0;
+    return 1.5;
 }
-
-
-
 
 @end
