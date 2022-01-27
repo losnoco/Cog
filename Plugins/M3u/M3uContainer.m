@@ -129,6 +129,9 @@
     for (NSString *entry in [contents componentsSeparatedByString:@"\n"])
     {
         NSString *_entry = [entry stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        
+        if ([_entry hasPrefix:@"#EXT-X-MEDIA-SEQUENCE"]) // Let FFmpeg handle HLS
+            return @[];
 
 		if ([_entry hasPrefix:@"#"] || [_entry isEqualToString:@""]) //Ignore extra info
 			continue;
