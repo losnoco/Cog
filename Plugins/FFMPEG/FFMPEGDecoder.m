@@ -18,7 +18,9 @@
 int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size)
 {
     id source = (__bridge id) opaque;
-    return (int) [source read:buf amount:buf_size];
+    long sizeRead = [source read:buf amount:buf_size];
+    if (sizeRead == 0) return AVERROR_EOF;
+    return (int)sizeRead;
 }
 
 int ffmpeg_write(void *opaque, uint8_t *buf, int buf_size)
