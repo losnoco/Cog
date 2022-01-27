@@ -456,7 +456,10 @@
 @dynamic path;
 - (NSString *)path
 {
-	return [[self.URL path] stringByAbbreviatingWithTildeInPath];
+    if ([self.URL isFileURL])
+        return [[self.URL path] stringByAbbreviatingWithTildeInPath];
+    else
+        return [self.URL absoluteString];
 }
 
 @dynamic filename;
