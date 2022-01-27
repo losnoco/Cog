@@ -1254,10 +1254,15 @@ static SQLiteStore *g_sharedStore = NULL;
         return;
     }
     
-    if (trackId != [track dbIndex])
+    if (trackId != [track dbIndex] && [track dbIndex] != 0)
     {
         [self removeString:urlId];
         return;
+    }
+    
+    if ([track dbIndex] == 0)
+    {
+        [track setDbIndex:trackId];
     }
 
     st = stmt[stmt_select_track_data];
