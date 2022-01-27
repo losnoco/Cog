@@ -210,7 +210,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="gpC-Oe-Rog">
-                                                            <rect key="frame" x="235" y="3" width="149" height="18"/>
+                                                            <rect key="frame" x="234.5" y="3" width="149" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1WK-qN-Mgj">
@@ -289,7 +289,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hhB-nv-e78">
-                                                            <rect key="frame" x="541" y="3" width="95" height="18"/>
+                                                            <rect key="frame" x="540.5" y="3" width="95" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tHy-sM-HDB">
@@ -366,7 +366,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="rRl-p9-Awr">
-                                                            <rect key="frame" x="736" y="3" width="144" height="18"/>
+                                                            <rect key="frame" x="735.5" y="3" width="144" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yW6-2w-6mN">
@@ -402,7 +402,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hgh-VE-5kl">
-                                                            <rect key="frame" x="883" y="3" width="38" height="18"/>
+                                                            <rect key="frame" x="882.5" y="3" width="38" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yEY-MI-d3o">
@@ -760,10 +760,10 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" sizingBehavior="auto" id="2466">
+                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" bordered="YES" sizingBehavior="auto" id="2466">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2467">
-                            <rect key="frame" x="19" y="14" width="28" height="23"/>
+                            <rect key="frame" x="17" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2468">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -823,6 +823,20 @@
                             </buttonCell>
                             <connections>
                                 <action selector="toggleMiniMode:" target="226" id="2536"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="59219EB6-8475-4EE4-97FE-6CA445CFF11E" label="Show Equalizer" paletteLabel="Show Equalizer" image="equalizerTemplate" bordered="YES" sizingBehavior="auto" id="vzT-Gb-aGW">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="pqI-qS-H6p">
+                            <rect key="frame" x="31" y="14" width="26" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="equalizerTemplate" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="pyB-k5-6Ls">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="smallSystem"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="showEq:" target="705" id="2LD-Rh-0rq"/>
                             </connections>
                         </button>
                     </toolbarItem>
@@ -982,7 +996,7 @@
                     <toolbarItem implicitItemIdentifier="1CD73ECB-7401-4384-AB5F-4189E4E3ABE9" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" bordered="YES" sizingBehavior="auto" id="kVl-aW-mtT">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="4nl-vF-VBi">
-                            <rect key="frame" x="19" y="14" width="28" height="23"/>
+                            <rect key="frame" x="17" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="mPh-Va-23E">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1026,6 +1040,20 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="2225"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="2229"/>
+                    <toolbarItem implicitItemIdentifier="1A6385ED-7F2D-4752-8113-C8693E5DDC1C" label="Show Equalizer" paletteLabel="Show Equalizer" image="equalizerTemplate" bordered="YES" sizingBehavior="auto" id="ZOn-sB-FR3">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="pbi-yj-rqU">
+                            <rect key="frame" x="31" y="14" width="26" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="equalizerTemplate" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="SX9-eB-f6f">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="smallSystem"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="showEq:" target="705" id="0gX-vd-Rlu"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="F1A8365A-DBF5-4BB9-A2B3-3964BFA1B15D" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" visibilityPriority="-10" id="qfu-F9-bOZ">
                         <size key="minSize" width="70" height="25"/>
                         <size key="maxSize" width="70" height="25"/>
@@ -1268,8 +1296,8 @@
                                     <action selector="toggleSideView:" target="2172" id="2419"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Equalizer" id="nBU-pH-J3I">
-                                <modifierMask key="keyEquivalentModifierMask"/>
+                            <menuItem title="Show Equalizer" keyEquivalent="e" id="nBU-pH-J3I">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="showEq:" target="705" id="8VC-ml-1Zz"/>
                                 </connections>
@@ -2148,6 +2176,7 @@ Gw
         </customObject>
     </objects>
     <resources>
+        <image name="equalizerTemplate" width="20" height="20"/>
         <image name="hdcdLogoTemplate" width="656" height="225"/>
         <image name="imageCell:1801:image" width="17" height="17">
             <mutableData key="keyedArchiveRepresentation">
@@ -2307,7 +2336,7 @@ oCGoIashsCG4AAAAAAAAAgEAAAAAAAAAQwAAAAAAAAAAAAAAAAAAIbs
         <image name="nextTemplate" width="20" height="19"/>
         <image name="playTemplate" width="16" height="16"/>
         <image name="previousTemplate" width="20" height="19"/>
-        <image name="randomizeTemplate" width="16" height="17"/>
+        <image name="randomizeTemplate" width="20" height="20"/>
         <image name="repeatModeOffTemplate" width="20" height="19"/>
         <image name="shuffleOffTemplate" width="20" height="19"/>
         <image name="stopTemplate" width="16" height="16"/>
