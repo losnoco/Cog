@@ -35,14 +35,12 @@ static NSString* cog_equalizer_extra_genres = @"altGenres";
 static const float apple_equalizer_bands_31[31] = { 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1200, 1600, 2000, 2500, 3100, 4000, 5000, 6300, 8000, 10000, 12000, 16000, 20000 };
 static const float apple_equalizer_bands_10[10] = { 32, 64, 128, 256, 512, 1000, 2000, 4000, 8000, 16000 };
 
-static inline float quadra(float *p, float frac) { return (((((((((p[0] + p[2]) * 0.5) - p[1]) * frac) * 0.5) + p[1]) - ((p[2] + p[0] + (p[0] * 2.0)) / 2.0)) * frac) * 2.0) + p[0]; }
-
 static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
     if (!cog_equalizer_items)
         cog_equalizer_items = _cog_equalizer_items();
 
-    // predict extra bands! lpc was too broken, so use quadratic interpolation!
-    if (freqTarget <= cog_equalizer_bands[0]) {
+    // predict extra bands! lpc was too broken, quadra was broken, let's try simple linear steps
+    if (freqTarget < cog_equalizer_bands[0]) {
         float work[14];
         float work_freq[14];
         for (unsigned int i = 0; i < 10; ++i) {
@@ -50,8 +48,8 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
             work_freq[9 - i] = cog_equalizer_bands[i];
         }
         for (unsigned int i = 10; i < 14; ++i) {
-            work[i] = quadra(work + i - 3, 0.94);
-            work_freq[i] = quadra(work_freq + i - 3, 0.94);
+            work[i] = work[i - 1] + (work[i - 1] - work[i - 2]) * 1.05;
+            work_freq[i] = work_freq[i - 1] + (work_freq[i - 1] - work_freq[i - 2]) * 1.05;
         }
         for (unsigned int i = 0; i < 13; ++i) {
             if (freqTarget >= work_freq[13 - i] &&
@@ -69,7 +67,7 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
         
         return work[13];
     }
-    else if (freqTarget >= cog_equalizer_bands[9]) {
+    else if (freqTarget > cog_equalizer_bands[9]) {
         float work[14];
         float work_freq[14];
         for (unsigned int i = 0; i < 10; ++i) {
@@ -77,8 +75,8 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
             work_freq[i] = cog_equalizer_bands[i];
         }
         for (unsigned int i = 10; i < 14; ++i) {
-            work[i] = quadra(work + i - 3, 0.94);
-            work_freq[i] = quadra(work_freq + i - 3, 0.94);
+            work[i] = work[i - 1] + (work[i - 1] - work[i - 2]) * 1.05;
+            work_freq[i] = work_freq[i - 1] + (work_freq[i - 1] - work_freq[i - 2]) * 1.05;
         }
         for (unsigned int i = 0; i < 13; ++i) {
             if (freqTarget >= work_freq[i] &&
@@ -96,6 +94,12 @@ static inline float interpolatePoint(NSDictionary * preset, float freqTarget) {
         
         return work[13];
     }
+    
+    // Pick the extremes
+    if (freqTarget == cog_equalizer_bands[0])
+        return [[preset objectForKey:[cog_equalizer_items objectAtIndex:1]] floatValue];
+    else if (freqTarget == cog_equalizer_bands[9])
+        return [[preset objectForKey:[cog_equalizer_items objectAtIndex:10]] floatValue];
     
     // interpolation time! linear is fine for this
     
