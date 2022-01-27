@@ -733,8 +733,11 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 - (void)stop
 {
     if (stopNext && started && !paused) {
-        while (![[outputController buffer] isEmpty])
+        while (![[outputController buffer] isEmpty]) {
+            [writeSemaphore signal];
+            [readSemaphore signal];
             usleep(500);
+        }
     }
     if (stopNext) {
         stopNext = NO;
