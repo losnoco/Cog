@@ -1,8 +1,26 @@
+From 70c12a33220903962c3d4acdcfc37f6984eadb7d Mon Sep 17 00:00:00 2001
+From: Christopher Snowhill <kode54@gmail.com>
+Date: Thu, 27 Jan 2022 18:16:08 -0800
+Subject: [PATCH] avformat/mp3dec: Parse iTunes gapless info
+X-Unsent: 1
+To: ffmpeg-devel@ffmpeg.org
+
+Parse the ID3v2 iTunSMPB comment tag containing gapless decoding info,
+and also add the expected test results for the implementation.
+
+Signed-off-by: Christopher Snowhill <kode54@gmail.com>
+---
+ libavformat/mp3dec.c              | 86 ++++++++++++++++++++++++++++++-
+ tests/fate/gapless.mak            |  3 ++
+ tests/ref/fate/gapless-mp3-itunes |  5 ++
+ 3 files changed, 93 insertions(+), 1 deletion(-)
+ create mode 100644 tests/ref/fate/gapless-mp3-itunes
+
 diff --git a/libavformat/mp3dec.c b/libavformat/mp3dec.c
-index f617348b2e..730ff3e480 100644
+index f617348b2e..d03174db03 100644
 --- a/libavformat/mp3dec.c
 +++ b/libavformat/mp3dec.c
-@@ -313,6 +313,76 @@ static void mp3_parse_vbri_tag(AVFormatContext *s, AVStream *st, int64_t base)
+@@ -313,6 +313,75 @@ static void mp3_parse_vbri_tag(AVFormatContext *s, AVStream *st, int64_t base)
      }
  }
  
@@ -44,9 +62,9 @@ index f617348b2e..730ff3e480 100644
 +    *duration = temp_duration;
 +
 +    if (end_pad >= 528 + 1) {
-+        mp3->start_pad = start_pad + 528 + 1;
++        mp3->start_pad = start_pad;
 +        mp3->end_pad = end_pad - (528 + 1);
-+        sti->start_skip_samples = mp3->start_pad;
++        sti->start_skip_samples = mp3->start_pad + 528 + 1;
 +        if (mp3->frames) {
 +            sti->first_discard_sample = -mp3->end_pad + 528 + 1 + mp3->frames * (int64_t)spf;
 +            sti->last_discard_sample = mp3->frames * (int64_t)spf;
@@ -57,7 +75,6 @@ index f617348b2e..730ff3e480 100644
 +                                            st->time_base);
 +        av_log(s, AV_LOG_DEBUG, "pad %d %d\n", mp3->start_pad, mp3->  end_pad);
 +    }
-+    av_log(s, AV_LOG_DEBUG, "pad %d %d\n", mp3->start_pad, mp3->end_pad);
 +    if (!s->pb->seekable)
 +        return;
 +
@@ -79,7 +96,7 @@ index f617348b2e..730ff3e480 100644
  /**
   * Try to find Xing/Info/VBRI tags and compute duration from info therein
   */
-@@ -321,8 +391,10 @@ static int mp3_parse_vbr_tags(AVFormatContext *s, AVStream *st, int64_t base)
+@@ -321,8 +390,10 @@ static int mp3_parse_vbr_tags(AVFormatContext *s, AVStream *st, int64_t base)
      uint32_t v, spf;
      MPADecodeHeader c;
      int vbrtag_size = 0;
@@ -90,7 +107,7 @@ index f617348b2e..730ff3e480 100644
  
      ffio_init_checksum(s->pb, ff_crcA001_update, 0);
  
-@@ -345,16 +417,29 @@ static int mp3_parse_vbr_tags(AVFormatContext *s, AVStream *st, int64_t base)
+@@ -345,16 +416,29 @@ static int mp3_parse_vbr_tags(AVFormatContext *s, AVStream *st, int64_t base)
      mp3_parse_vbri_tag(s, st, base);
  
      if (!mp3->frames && !mp3->header_filesize)
@@ -121,3 +138,31 @@ index f617348b2e..730ff3e480 100644
  
      return 0;
  }
+diff --git a/tests/fate/gapless.mak b/tests/fate/gapless.mak
+index 68a396e187..b8c93b984c 100644
+--- a/tests/fate/gapless.mak
++++ b/tests/fate/gapless.mak
+@@ -1,6 +1,9 @@
+ FATE_GAPLESS-$(CONFIG_MP3_DEMUXER) += fate-gapless-mp3
+ fate-gapless-mp3: CMD = gapless $(TARGET_SAMPLES)/gapless/gapless.mp3 "-c:a mp3"
+ 
++FATE_GAPLESS-$(CONFIG_MP3_DEMUXER) += fate-gapless-mp3-itunes
++fate-gapless-mp3-itunes: CMD = gapless $(TARGET_SAMPLES)/gapless/gapless-itunes.mp3 "-c:a mp3"
++
+ FATE_GAPLESSINFO_PROBE-$(CONFIG_MP3_DEMUXER) += fate-gapless-mp3-side-data
+ fate-gapless-mp3-side-data: CMD = ffprobe_demux $(TARGET_SAMPLES)/gapless/gapless.mp3
+ 
+diff --git a/tests/ref/fate/gapless-mp3-itunes b/tests/ref/fate/gapless-mp3-itunes
+new file mode 100644
+index 0000000000..f3295e2652
+--- /dev/null
++++ b/tests/ref/fate/gapless-mp3-itunes
+@@ -0,0 +1,5 @@
++1e285368a8a176bc729712b06f724f21 *tests/data/fate/gapless-mp3-itunes.out-1
++cde648358dcd59911c4990ed59bf7d40
++4a39c54de9687ea8f66ea8204133c5c0 *tests/data/fate/gapless-mp3-itunes.out-2
++cde648358dcd59911c4990ed59bf7d40
++c8cd71407ac5bbfadf5ccf7b5a64430c *tests/data/fate/gapless-mp3-itunes.out-3
+-- 
+2.34.1
+
