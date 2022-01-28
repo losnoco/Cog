@@ -106,7 +106,7 @@ long sourceTell(void *datasource)
         float ** pcm;
         numread = (int)ov_read_float(&vorbisRef, &pcm, frames - total, &currentSection);
 		if (numread > 0) {
-            if (channels < MAXCHANNELS) {
+            if (channels <= MAXCHANNELS) {
                 for (int i = 0; i < channels; i++) {
                     for (int j = 0; j < numread; j++) {
                         ((float *)buf)[(total + j) * channels + i] = pcm[chmap[channels-1][i]][j];

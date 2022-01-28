@@ -129,7 +129,7 @@ opus_int64 sourceTell(void *_stream)
         int toread = size - total;
         if (toread > 512) toread = 512;
         numread = op_read_float( opusRef, (channels < MAXCHANNELS) ? tempbuf : out, toread, NULL );
-        if (numread > 0 && channels < MAXCHANNELS) {
+        if (numread > 0 && channels <= MAXCHANNELS) {
             for (int i = 0; i < numread; ++i) {
                 for (int j = 0; j < channels; ++j) {
                     out[i * channels + j] = tempbuf[i * channels + chmap[channels - 1][j]];
