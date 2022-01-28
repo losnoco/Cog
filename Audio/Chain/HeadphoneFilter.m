@@ -89,7 +89,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
     
     if ([[properties objectForKey:@"floatingPoint"] boolValue] != YES ||
         [[properties objectForKey:@"bitsPerSample"] intValue] != 32 ||
-        !([[properties objectForKey:@"endian"] isEqualToString:@"native"] ||
+        !([[properties objectForKey:@"endian"] isEqualToString:@"host"] ||
           [[properties objectForKey:@"endian"] isEqualToString:@"little"]) ||
         (impulseChannels != 14 && impulseChannels != 7))
         return NO;
@@ -133,7 +133,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
         
         if ([[properties objectForKey:@"floatingPoint"] boolValue] != YES ||
             [[properties objectForKey:@"bitsPerSample"] intValue] != 32 ||
-            !([[properties objectForKey:@"endian"] isEqualToString:@"native"] ||
+            !([[properties objectForKey:@"endian"] isEqualToString:@"host"] ||
               [[properties objectForKey:@"endian"] isEqualToString:@"little"]) ||
             (impulseChannels != 14 && impulseChannels != 7)) {
             [decoder close];
@@ -304,29 +304,29 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
             if (leftInChannel == -1 || rightInChannel == -1) {
                 float * temp;
                 if (impulseChannels == 7) {
-                    temp = calloc(sizeof(float), fftSize);
+                    temp = (float *) calloc(sizeof(float), fftSize);
                     if (!temp) {
                         memalign_free(deinterleavedImpulseBuffer);
                         return nil;
                     }
 
-                    cblas_scopy((int)fftSize, temp, 1, deinterleavedImpulseBuffer + 4 * fftSize, 1);
+                    cblas_scopy((int)fftSize, deinterleavedImpulseBuffer + 4 * fftSize, 1, temp, 1);
                     vDSP_vadd(temp, 1, deinterleavedImpulseBuffer + 5 * fftSize, 1, temp, 1, fftSize);
                     
                     vDSP_ctoz((DSPComplex *)temp, 2, &impulse_responses[i * 2 + 0], 1, fftSizeOver2);
                     vDSP_ctoz((DSPComplex *)temp, 2, &impulse_responses[i * 2 + 1], 1, fftSizeOver2);
                 }
                 else {
-                    temp = calloc(sizeof(float), fftSize * 2);
+                    temp = (float *) calloc(sizeof(float), fftSize * 2);
                     if (!temp) {
                         memalign_free(deinterleavedImpulseBuffer);
                         return nil;
                     }
 
-                    cblas_scopy((int)fftSize, temp, 1, deinterleavedImpulseBuffer + 4 * fftSize, 1);
+                    cblas_scopy((int)fftSize, deinterleavedImpulseBuffer + 4 * fftSize, 1, temp, 1);
                     vDSP_vadd(temp, 1, deinterleavedImpulseBuffer + 12 * fftSize, 1, temp, 1, fftSize);
 
-                    cblas_scopy((int)fftSize, temp + fftSize, 1, deinterleavedImpulseBuffer + 5 * fftSize, 1);
+                    cblas_scopy((int)fftSize, deinterleavedImpulseBuffer + 5 * fftSize, 1, temp + fftSize, 1);
                     vDSP_vadd(temp + fftSize, 1, deinterleavedImpulseBuffer + 11 * fftSize, 1, temp + fftSize, 1, fftSize);
 
                     vDSP_ctoz((DSPComplex *)temp, 2, &impulse_responses[i * 2 + 0], 1, fftSizeOver2);
