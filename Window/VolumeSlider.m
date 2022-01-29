@@ -59,7 +59,13 @@
 - (void)updateToolTip
 {
     double value = [self doubleValue];
-    double volume = linearToLogarithmic(value, MAX_VOLUME);
+    BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+    double volume;
+    if (volumeLimit) {
+        volume = (value - self.minValue) * (MAX_VOLUME / (self.maxValue - self.minValue));
+    } else {
+        volume = linearToLogarithmic(value, MAX_VOLUME);
+    }
 
     NSString *text = [NSString stringWithFormat:@"%0.lf%%", volume];
 
