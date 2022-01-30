@@ -2119,7 +2119,7 @@ Gw
                 <slider horizontalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1612" customClass="VolumeSlider">
                     <rect key="frame" x="6" y="2" width="20" height="164"/>
                     <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="10" maxValue="100" doubleValue="55" tickMarkPosition="left" sliderType="linear" id="1613"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="55" tickMarkPosition="left" sliderType="linear" id="1613"/>
                     <connections>
                         <action selector="changeVolume:" target="705" id="1614"/>
                     </connections>

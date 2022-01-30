@@ -17,11 +17,11 @@
 //Input/Output values are in percents.
 double logarithmicToLinear(double logarithmic, double MAX_VOLUME)
 {
-    return pow((logarithmic/MAX_VOLUME), 0.25) * 100.0;
+    return (MAX_VOLUME == 100.0) ? logarithmic : pow((logarithmic/MAX_VOLUME), 0.25) * 100.0;
 }
 
 double linearToLogarithmic(double linear, double MAX_VOLUME)
 {
-    return (linear/100.0) * (linear/100.0) * (linear/100.0) * (linear/100.0) * MAX_VOLUME;
+    return (MAX_VOLUME == 100.0) ? linear : (linear/100.0) * (linear/100.0) * (linear/100.0) * (linear/100.0) * MAX_VOLUME;
 }
 //End helper volume function thingies. ONWARDS TO GLORY!
