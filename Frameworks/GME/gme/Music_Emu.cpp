@@ -311,6 +311,12 @@ static int int_log( blargg_long x, int step, int unit )
 
 void Music_Emu::handle_fade( long out_count, sample_t* out )
 {
+	if (!fade_step)
+	{
+		track_ended_ = emu_track_ended_ = true;
+		return;
+	}
+
 	for ( int i = 0; i < out_count; i += fade_block_size )
 	{
 		int const shift = 14;
