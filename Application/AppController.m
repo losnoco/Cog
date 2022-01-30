@@ -22,6 +22,8 @@
 #import <MASShortcut/Shortcut.h>
 #import "Shortcuts.h"
 
+#import <Sparkle/Sparkle.h>
+
 void* kAppControllerContext = &kAppControllerContext;
 
 
@@ -139,6 +141,11 @@ void* kAppControllerContext = &kAppControllerContext;
 
 - (void)awakeFromNib
 {
+#ifdef DEBUG
+    // Prevent updates automatically in debug builds
+    [updater setAutomaticallyChecksForUpdates:NO];
+#endif
+    
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 
     [self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];

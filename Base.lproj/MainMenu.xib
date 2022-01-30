@@ -1853,6 +1853,7 @@ Gw
                 <outlet property="shuffleButton" destination="1637" id="Nzr-Mw-z9P"/>
                 <outlet property="spotlightWindowController" destination="1675" id="1677"/>
                 <outlet property="totalTimeField" destination="778" id="1659"/>
+                <outlet property="updater" destination="1303" id="gDn-jb-V0R"/>
             </connections>
         </customObject>
         <menu title="Menu" autoenablesItems="NO" id="513" userLabel="DockMenu">
