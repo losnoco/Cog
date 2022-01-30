@@ -715,6 +715,10 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
 {
     NSInteger index = [sender indexOfSelectedItem];
     
+    // Prevent circular application
+    if (index == [[[NSUserDefaultsController sharedUserDefaultsController] defaults] integerForKey:@"GraphicEQpreset"])
+        return;
+    
     if (index < [equalizer_presets_processed count])
     {
         NSDictionary * preset = [equalizer_presets_processed objectAtIndex:index];
