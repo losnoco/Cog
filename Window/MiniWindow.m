@@ -29,6 +29,8 @@ extern NSString *iTunesDropType;
         [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
 
         hdcdLogo = [NSImage imageNamed:@"hdcdLogoTemplate"];
+        
+        [self setFrameUsingName:@"Mini Window"];
     }
 
     return self;

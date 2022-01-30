@@ -392,6 +392,7 @@ void* kAppControllerContext = &kAppControllerContext;
     [[NSUserDefaults standardUserDefaults] setValue:[expandedNodes allObjects] forKey:@"fileTreeViewExpandedNodes"];
     // Workaround window not restoring it's size and position.
     [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 1)];
+    [miniWindow saveFrameUsingName:@"Mini Window"];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
