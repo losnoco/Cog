@@ -485,7 +485,7 @@ void* kAppControllerContext = &kAppControllerContext;
     [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
     [userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
     
-    [userDefaultsValuesDict setObject:@"dls appl" forKey:@"midi.plugin"];
+    [userDefaultsValuesDict setObject:@"dls appl" forKey:@"midiPlugin"];
     
     [userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
     
@@ -507,8 +507,14 @@ void* kAppControllerContext = &kAppControllerContext;
         [[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
     }
     
-    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"] isEqualToString:@"BASSMIDI"]) {
-        [[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midi.plugin"];
+    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"BASSMIDI"]) {
+        [[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midiPlugin"];
+    }
+    
+    NSString * oldMidiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
+    if (oldMidiPlugin) {
+        [[NSUserDefaults standardUserDefaults] setValue:oldMidiPlugin forKey:@"midiPlugin"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"midi.plugin"];
     }
 }
 

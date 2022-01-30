@@ -183,13 +183,13 @@ static OSType getOSType(const char * in_)
         [[NSUserDefaults standardUserDefaults] setValue:globalSoundFontPath forKey:@"soundFontPath"];
     }
 
-    NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
+    NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
     
     // Then detect if we should force the DLSMusicSynth, which has its own bank
     if (!plugin || [plugin isEqualToString:@"FluidSynth"]) {
         if (!globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
             plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
-            [[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midi.plugin"];
+            [[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
         }
     }
     
