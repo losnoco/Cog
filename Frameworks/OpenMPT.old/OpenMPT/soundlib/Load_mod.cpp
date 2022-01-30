@@ -54,7 +54,7 @@ void CSoundFile::ConvertModCommand(ModCommand &m)
 		break;
 
 	// Extension for XM extended effects
-	case 'G' - 55:	m.command = CMD_GLOBALVOLUME; break;		//16
+	case 'G' - 55:	m.command = CMD_GLOBALVOLUME; break;  //16
 	case 'H' - 55:	m.command = CMD_GLOBALVOLSLIDE; break;
 	case 'K' - 55:	m.command = CMD_KEYOFF; break;
 	case 'L' - 55:	m.command = CMD_SETENVPOSITION; break;
@@ -63,11 +63,11 @@ void CSoundFile::ConvertModCommand(ModCommand &m)
 	case 'T' - 55:	m.command = CMD_TREMOR; break;
 	case 'W' - 55:	m.command = CMD_DUMMY; break;
 	case 'X' - 55:	m.command = CMD_XFINEPORTAUPDOWN;	break;
-	case 'Y' - 55:	m.command = CMD_PANBRELLO; break;			//34
-	case 'Z' - 55:	m.command = CMD_MIDI;	break;				//35
-	case '\\' - 56:	m.command = CMD_SMOOTHMIDI;	break;		//rewbs.smoothVST: 36 - note: this is actually displayed as "-" in FT2, but seems to be doing nothing.
-	//case ':' - 21:	m.command = CMD_DELAYCUT;	break;		//37
-	case '#' + 3:	m.command = CMD_XPARAM;	break;			//rewbs.XMfixes - Xm.param is 38
+	case 'Y' - 55:	m.command = CMD_PANBRELLO; break;   // 34
+	case 'Z' - 55:	m.command = CMD_MIDI; break;        // 35
+	case '\\' - 56:	m.command = CMD_SMOOTHMIDI; break;  // 36 - note: this is actually displayed as "-" in FT2, but seems to be doing nothing.
+	case 37:		m.command = CMD_SMOOTHMIDI; break;  // BeRoTracker uses this for smooth MIDI macros for some reason; in old OpenMPT versions this was reserved for the unimplemented "velocity" command
+	case '#' + 3:	m.command = CMD_XPARAM; break;      // 38
 	default:		m.command = CMD_NONE;
 	}
 }
@@ -206,7 +206,7 @@ void CSoundFile::ModSaveCommand(uint8 &command, uint8 &param, bool toXM, bool co
 struct MODFileHeader
 {
 	uint8be numOrders;
-	uint8be restartPos;
+	uint8be restartPos;  // Tempo (early SoundTracker) or restart position (only PC trackers?)
 	uint8be orderList[128];
 };
 
@@ -582,6 +582,7 @@ static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERIN
 
 	const size_t patternStartOffset = file.GetPosition();
 	const size_t sizeWithoutPatterns = totalSampleLen + patternStartOffset;
+	const size_t sizeWithOfficialPatterns = sizeWithoutPatterns + officialPatterns * numChannels * 256;
 
 	if(wowSampleLen && (wowSampleLen + patternStartOffset) + numPatterns * 8 * 256 == (file.GetLength() & ~1))
 	{
@@ -592,8 +593,9 @@ static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERIN
 		if(ValidateMODPatternData(file, 16, true))
 			numChannels = 8;
 		file.Seek(patternStartOffset);
-	} else if(numPatterns != officialPatterns && validateHiddenPatterns)
+	} else if(numPatterns != officialPatterns && (validateHiddenPatterns || sizeWithOfficialPatterns == file.GetLength()))
 	{
+		// 15-sample SoundTracker specifics:
 		// Fix SoundTracker modules where "hidden" patterns should be ignored.
 		// razor-1911.mod (MD5 b75f0f471b0ae400185585ca05bf7fe8, SHA1 4de31af234229faec00f1e85e1e8f78f405d454b)
 		// and captain_fizz.mod (MD5 55bd89fe5a8e345df65438dbfc2df94e, SHA1 9e0e8b7dc67939885435ea8d3ff4be7704207a43)
@@ -606,28 +608,21 @@ static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERIN
 		// only play correctly if we ignore the hidden patterns.
 		// Hence, we have a peek at the first hidden pattern and check if it contains a lot of illegal data.
 		// If that is the case, we assume it's part of the sample data and only consider the "official" patterns.
-		file.Seek(patternStartOffset + officialPatterns * 1024);
+
+		// 31-sample NoiseTracker / ProTracker specifics:
+		// Interestingly, (broken) variants of the ProTracker modules
+		// "killing butterfly" (MD5 bd676358b1dbb40d40f25435e845cf6b, SHA1 9df4ae21214ff753802756b616a0cafaeced8021),
+		// "quartex" by Reflex (MD5 35526bef0fb21cb96394838d94c14bab, SHA1 116756c68c7b6598dcfbad75a043477fcc54c96c),
+		// seem to have the "correct" file size when only taking the "official" patterns into account, but they only play
+		// correctly when also loading the inofficial patterns.
+		// On the other hand, "Shofixti Ditty.mod" from Star Control 2 (MD5 62b7b0819123400e4d5a7813eef7fc7d, SHA1 8330cd595c61f51c37a3b6f2a8559cf3fcaaa6e8)
+		// doesn't sound correct when taking the second "inofficial" pattern into account.
+		file.Seek(patternStartOffset + officialPatterns * numChannels * 256);
 		if(!ValidateMODPatternData(file, 64, true))
 			numPatterns = officialPatterns;
 		file.Seek(patternStartOffset);
 	}
 
-#ifdef MPT_BUILD_DEBUG
-	// Check if the "hidden" patterns in the order list are actually real, i.e. if they are saved in the file.
-	// OpenMPT did this check in the past, but no other tracker appears to do this.
-	// Interestingly, (broken) variants of the ProTracker modules
-	// "killing butterfly" (MD5 bd676358b1dbb40d40f25435e845cf6b, SHA1 9df4ae21214ff753802756b616a0cafaeced8021),
-	// "quartex" by Reflex (MD5 35526bef0fb21cb96394838d94c14bab, SHA1 116756c68c7b6598dcfbad75a043477fcc54c96c),
-	// seem to have the "correct" file size when only taking the "official" patterns into account, but they only play
-	// correctly when also loading the inofficial patterns.
-	// See also the above check for ambiguities with SoundTracker modules.
-	// Keep this assertion in the code to find potential other broken MODs.
-	if(numPatterns != officialPatterns && sizeWithoutPatterns + officialPatterns * numChannels * 256 == file.GetLength())
-	{
-		MPT_ASSERT(false);
-		//numPatterns = officialPatterns;
-	} else
-#endif
 	if(numPatternsIllegal > numPatterns && sizeWithoutPatterns + numPatternsIllegal * numChannels * 256 == file.GetLength())
 	{
 		// Even those illegal pattern indexes (> 128) appear to be valid... What a weird file!
@@ -776,7 +771,7 @@ static bool CheckMODMagic(const char magic[4], MODMagicResult &result)
 
 CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderMOD(MemoryFileReader file, const uint64 *pfilesize)
 {
-	if(!file.CanRead(1080 + 4))
+	if(!file.LengthIsAtLeast(1080 + 4))
 	{
 		return ProbeWantMoreData;
 	}
@@ -1283,7 +1278,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	}
 #endif  // MPT_EXTERNAL_SAMPLES || MPT_BUILD_FUZZER
 
-	// Fix VBlank MODs. Arbitrary threshold: 10 minutes.
+	// Fix VBlank MODs. Arbitrary threshold: 8 minutes (enough for "frame of mind" by Dascon...).
 	// Basically, this just converts all tempo commands into speed commands
 	// for MODs which are supposed to have VBlank timing (instead of CIA timing).
 	// There is no perfect way to do this, since both MOD types look the same,
@@ -1296,12 +1291,12 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	if(isMdKd && hasTempoCommands && !definitelyCIA)
 	{
 		const double songTime = GetLength(eNoAdjust).front().duration;
-		if(songTime >= 600.0)
+		if(songTime >= 480.0)
 		{
 			m_playBehaviour.set(kMODVBlankTiming);
 			if(GetLength(eNoAdjust, GetLengthTarget(songTime)).front().targetReached)
 			{
-				// This just makes things worse, song is at least as long as in CIA mode (e.g. in "Stary Hallway" by Neurodancer)
+				// This just makes things worse, song is at least as long as in CIA mode
 				// Obviously we should keep using CIA timing then...
 				m_playBehaviour.reset(kMODVBlankTiming);
 			} else

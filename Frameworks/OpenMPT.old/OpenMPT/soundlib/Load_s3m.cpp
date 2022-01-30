@@ -59,6 +59,9 @@ void CSoundFile::S3MConvert(ModCommand &m, bool fromIT)
 	// Chars under 0x40 don't save properly, so map : to ] and # to [.
 	case ']': m.command = CMD_DELAYCUT; break;
 	case '[': m.command = CMD_XPARAM; break;
+	// BeRoTracker extensions
+	case '1' + 0x41: m.command = fromIT ? CMD_KEYOFF : CMD_NONE; break;
+	case '2' + 0x41: m.command = fromIT ? CMD_SETENVPOSITION : CMD_NONE; break;
 	default: m.command = CMD_NONE;
 	}
 }

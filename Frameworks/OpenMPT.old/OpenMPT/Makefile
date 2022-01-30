@@ -74,6 +74,7 @@
 #  LOCAL_OGG=1         Build local copy of libogg, even if found
 #  LOCAL_VORBIS=1      Build local copy of libvorbis, even if found
 #
+#  NO_MINIZ=1       Do not fallback to miniz
 #  NO_MINIMP3=1     Do not fallback to minimp3
 #  NO_STBVORBIS=1   Do not fallback to stb_vorbis
 #
@@ -867,9 +868,12 @@ LIBOPENMPT_C_SOURCES += $(LOCAL_ZLIB_SOURCES)
 LIBOPENMPTTEST_C_SOURCES += $(LOCAL_ZLIB_SOURCES)
 else
 ifeq ($(NO_ZLIB),1)
+ifeq ($(NO_MINIZ),1)
+else
 LIBOPENMPT_C_SOURCES += include/miniz/miniz.c
 LIBOPENMPTTEST_C_SOURCES += include/miniz/miniz.c
 CPPFLAGS += -DMPT_WITH_MINIZ
+endif
 endif
 endif
 

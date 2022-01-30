@@ -213,7 +213,19 @@ struct DecodeFloat32
 	static constexpr std::size_t input_inc = 4;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
+		float32 val = IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
+		val = mpt::sanitize_nan(val);
+		if(std::isinf(val))
+		{
+			if(val >= 0.0f)
+			{
+				val = 1.0f;
+			} else
+			{
+				val = -1.0f;
+			}
+		}
+		return val;
 	}
 };
 
@@ -226,7 +238,20 @@ struct DecodeScaledFloat32
 	float factor;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return factor * IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
+		float32 val = IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
+		val = mpt::sanitize_nan(val);
+		if(std::isinf(val))
+		{
+			if(val >= 0.0f)
+			{
+				val = 1.0f;
+			} else
+			{
+				val = -1.0f;
+			}
+		}
+		return factor * val;
+
 	}
 	MPT_FORCEINLINE DecodeScaledFloat32(float scaleFactor)
 		: factor(scaleFactor)
@@ -243,7 +268,19 @@ struct DecodeFloat64
 	static constexpr std::size_t input_inc = 8;
 	MPT_FORCEINLINE output_t operator() (const input_t *inBuf)
 	{
-		return IEEE754binary64LE(inBuf[b0], inBuf[b1], inBuf[b2], inBuf[b3], inBuf[b4], inBuf[b5], inBuf[b6], inBuf[b7]);
+		float64 val = IEEE754binary64LE(inBuf[b0], inBuf[b1], inBuf[b2], inBuf[b3], inBuf[b4], inBuf[b5], inBuf[b6], inBuf[b7]);
+		val = mpt::sanitize_nan(val);
+		if(std::isinf(val))
+		{
+			if(val >= 0.0)
+			{
+				val = 1.0;
+			} else
+			{
+				val = -1.0;
+			}
+		}
+		return val;
 	}
 };
 
@@ -371,7 +408,7 @@ struct Convert<uint8, float32>
 	typedef uint8 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0f, 1.0f);
+		val = mpt::safe_clamp(val, -1.0f, 1.0f);
 		val *= 128.0f;
 		return static_cast<uint8>(mpt::saturate_cast<int8>(static_cast<int>(MPT_SC_FASTROUND(val)))+0x80);
 	}
@@ -384,7 +421,7 @@ struct Convert<uint8, double>
 	typedef uint8 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 128.0;
 		return static_cast<uint8>(mpt::saturate_cast<int8>(static_cast<int>(MPT_SC_FASTROUND(val)))+0x80);
 	}
@@ -452,7 +489,7 @@ struct Convert<int8, float32>
 	typedef int8 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0f, 1.0f);
+		val = mpt::safe_clamp(val, -1.0f, 1.0f);
 		val *= 128.0f;
 		return mpt::saturate_cast<int8>(static_cast<int>(MPT_SC_FASTROUND(val)));
 	}
@@ -465,7 +502,7 @@ struct Convert<int8, double>
 	typedef int8 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 128.0;
 		return mpt::saturate_cast<int8>(static_cast<int>(MPT_SC_FASTROUND(val)));
 	}
@@ -533,7 +570,7 @@ struct Convert<int16, float32>
 	typedef int16 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0f, 1.0f);
+		val = mpt::safe_clamp(val, -1.0f, 1.0f);
 		val *= 32768.0f;
 		return mpt::saturate_cast<int16>(static_cast<int>(MPT_SC_FASTROUND(val)));
 	}
@@ -546,7 +583,7 @@ struct Convert<int16, double>
 	typedef int16 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 32768.0;
 		return mpt::saturate_cast<int16>(static_cast<int>(MPT_SC_FASTROUND(val)));
 	}
@@ -614,7 +651,7 @@ struct Convert<int24, float32>
 	typedef int24 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0f, 1.0f);
+		val = mpt::safe_clamp(val, -1.0f, 1.0f);
 		val *= 2147483648.0f;
 		return static_cast<int24>(MPT_SC_RSHIFT_SIGNED(mpt::saturate_cast<int32>(static_cast<int64>(MPT_SC_FASTROUND(val))), 8));
 	}
@@ -627,7 +664,7 @@ struct Convert<int24, double>
 	typedef int24 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 2147483648.0;
 		return static_cast<int24>(MPT_SC_RSHIFT_SIGNED(mpt::saturate_cast<int32>(static_cast<int64>(MPT_SC_FASTROUND(val))), 8));
 	}
@@ -695,7 +732,7 @@ struct Convert<int32, float32>
 	typedef int32 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0f, 1.0f);
+		val = mpt::safe_clamp(val, -1.0f, 1.0f);
 		val *= 2147483648.0f;
 		return mpt::saturate_cast<int32>(static_cast<int64>(MPT_SC_FASTROUND(val)));
 	}
@@ -708,7 +745,7 @@ struct Convert<int32, double>
 	typedef int32 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 2147483648.0;
 		return mpt::saturate_cast<int32>(static_cast<int64>(MPT_SC_FASTROUND(val)));
 	}
@@ -776,7 +813,7 @@ struct Convert<int64, float32>
 	typedef int64 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0f, 1.0f);
+		val = mpt::safe_clamp(val, -1.0f, 1.0f);
 		val *= static_cast<float>(uint64(1)<<63);
 		return mpt::saturate_cast<int64>(MPT_SC_FASTROUND(val));
 	}
@@ -789,7 +826,7 @@ struct Convert<int64, double>
 	typedef int64 output_t;
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
-		Limit(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= static_cast<double>(uint64(1)<<63);
 		return mpt::saturate_cast<int64>(MPT_SC_FASTROUND(val));
 	}
@@ -1155,6 +1192,7 @@ struct ConvertToFixedPoint<int32, float32, fractionalBits>
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
 		static_assert(fractionalBits >= 0 && fractionalBits <= sizeof(input_t)*8-1);
+		val = mpt::sanitize_nan(val);
 		return mpt::saturate_cast<output_t>(MPT_SC_FASTROUND(val * factor));
 	}
 };
@@ -1173,6 +1211,7 @@ struct ConvertToFixedPoint<int32, float64, fractionalBits>
 	MPT_FORCEINLINE output_t operator() (input_t val)
 	{
 		static_assert(fractionalBits >= 0 && fractionalBits <= sizeof(input_t)*8-1);
+		val = mpt::sanitize_nan(val);
 		return mpt::saturate_cast<output_t>(MPT_SC_FASTROUND(val * factor));
 	}
 };

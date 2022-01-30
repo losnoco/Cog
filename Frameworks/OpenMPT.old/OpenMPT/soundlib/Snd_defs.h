@@ -649,8 +649,8 @@ public:
 
 	MPT_CONSTEXPR11_FUN FPInt() : v(0) { }
 	MPT_CONSTEXPR11_FUN FPInt(T intPart, T fractPart) : v((intPart * fractFact) + (fractPart % fractFact)) { }
-	explicit MPT_CONSTEXPR11_FUN FPInt(float f) : v(static_cast<T>(f * float(fractFact))) { }
-	explicit MPT_CONSTEXPR11_FUN FPInt(double f) : v(static_cast<T>(f * double(fractFact))) { }
+	explicit MPT_CONSTEXPR11_FUN FPInt(float f) : v(mpt::saturate_round<T>(f * float(fractFact))) { }
+	explicit MPT_CONSTEXPR11_FUN FPInt(double f) : v(mpt::saturate_round<T>(f * double(fractFact))) { }
 
 	// Set integer and fractional part
 	MPT_CONSTEXPR14_FUN FPInt<fractFact, T> &Set(T intPart, T fractPart = 0) { v = (intPart * fractFact) + (fractPart % fractFact); return *this; }

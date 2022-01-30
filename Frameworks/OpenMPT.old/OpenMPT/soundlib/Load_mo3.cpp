@@ -279,7 +279,7 @@ struct MO3Sample
 		smpCompressionMask  = 0x1000 | 0x2000 | 0x4000 | 0x8000
 	};
 
-	int32le  freqFinetune;	// Frequency in S3M and IT, finetune (0...255) in MOD, MTM, XM
+	uint32le freqFinetune;	// Frequency in S3M and IT, finetune (0...255) in MOD, MTM, XM
 	int8le   transpose;
 	uint8le  defaultVolume;	// 0...64
 	uint16le panning;		// 0...256 if enabled, 0xFFFF otherwise
@@ -304,9 +304,9 @@ struct MO3Sample
 		if(type & (MOD_TYPE_IT | MOD_TYPE_S3M))
 		{
 			if(frequencyIsHertz)
-				mptSmp.nC5Speed = static_cast<uint32>(freqFinetune);
+				mptSmp.nC5Speed = freqFinetune;
 			else
-				mptSmp.nC5Speed = mpt::saturate_round<uint32>(8363.0 * std::pow(2.0, (freqFinetune + 1408) / 1536.0));
+				mptSmp.nC5Speed = mpt::saturate_round<uint32>(8363.0 * std::pow(2.0, static_cast<int32>(freqFinetune + 1408) / 1536.0));
 		} else
 		{
 			mptSmp.nFineTune = static_cast<int8>(freqFinetune);
@@ -394,7 +394,7 @@ struct MO3SampleChunk
 		do \
 		{ \
 			READ_CTRL_BIT; \
-			strLen = (strLen << 1) + carry; \
+			strLen = mpt::lshift_signed(strLen, 1) + carry; \
 			READ_CTRL_BIT; \
 		} while(carry); \
 	}
@@ -441,7 +441,7 @@ static bool UnpackMO3Data(FileReader &file, std::vector<uint8> &uncompressed, co
 			{
 				// LZ ptr in ctrl stream
 				if(uint8 b; file.Read(b))
-					strOffset = (strLen << 8) | b;  // read less significant offset byte from stream
+					strOffset = mpt::lshift_signed(strLen, 8) | b;  // read less significant offset byte from stream
 				else
 					break;
 				strLen = 0;
@@ -456,9 +456,9 @@ static bool UnpackMO3Data(FileReader &file, std::vector<uint8> &uncompressed, co
 
 			// read the next 2 bits as part of strLen
 			READ_CTRL_BIT;
-			strLen = (strLen << 1) + carry;
+			strLen = mpt::lshift_signed(strLen, 1) + carry;
 			READ_CTRL_BIT;
-			strLen = (strLen << 1) + carry;
+			strLen = mpt::lshift_signed(strLen, 1) + carry;
 			if(strLen == 0)
 			{
 				// length does not fit in 2 bits

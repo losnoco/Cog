@@ -616,10 +616,11 @@ float I3DL2Reverb::CalcDecayCoeffs(int32 index)
 	float c2 = 0.0f;
 
 	float c21 = (std::pow(c1, 2.0f - 2.0f / decayHFRatio) - 1.0f) / (1.0f - std::cos(hfRef));
-	if(c21 != 0)
+	if(c21 != 0 && std::isfinite(c21))
 	{
 		float c22 = -2.0f * c21 - 2.0f;
-		float c23 = std::sqrt(c22 * c22 - c21 * c21 * 4.0f);
+		float c23sq = c22 * c22 - c21 * c21 * 4.0f;
+		float c23 = c23sq > 0.0f ? std::sqrt(c23sq) : 0.0f;
 		c2 = (c23 - c22) / (c21 + c21);
 		if(std::abs(c2) > 1.0f)
 			c2 = (-c22 - c23) / (c21 + c21);

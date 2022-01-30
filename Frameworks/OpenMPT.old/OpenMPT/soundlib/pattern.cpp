@@ -262,7 +262,8 @@ bool CPattern::SetName(const char *newName, size_t maxChars)
 	{
 		return false;
 	}
-	m_PatternName = mpt::truncate(newName, maxChars);
+	const auto nameEnd = std::find(newName, newName + maxChars, '\0');
+	m_PatternName.assign(newName, nameEnd);
 	return true;
 }
 

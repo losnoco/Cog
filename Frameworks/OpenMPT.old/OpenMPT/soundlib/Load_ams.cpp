@@ -438,14 +438,14 @@ bool CSoundFile::ReadAMS(FileReader &file, ModLoadingFlags loadFlags)
 		file.ReadSizedString<uint8le, mpt::String::spacePadded>(ChnSettings[chn].szName);
 	}
 
-	// Read pattern names
+	// Read pattern names and create patterns
 	Patterns.ResizeArray(fileHeader.numPats);
 	for(PATTERNINDEX pat = 0; pat < fileHeader.numPats; pat++)
 	{
 		char name[11];
-		file.ReadSizedString<uint8le, mpt::String::spacePadded>(name);
+		const bool ok = file.ReadSizedString<uint8le, mpt::String::spacePadded>(name);
 		// Create pattern now, so name won't be reset later.
-		if(Patterns.Insert(pat, 64))
+		if(Patterns.Insert(pat, 64) && ok)
 		{
 			Patterns[pat].SetName(name);
 		}
@@ -973,8 +973,8 @@ bool CSoundFile::ReadAMS2(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			char patternName[11];
-			patternChunk.ReadSizedString<uint8le, mpt::String::spacePadded>(patternName);
-			Patterns[pat].SetName(patternName);
+			if(patternChunk.ReadSizedString<uint8le, mpt::String::spacePadded>(patternName))
+				Patterns[pat].SetName(patternName);
 
 			ReadAMSPattern(Patterns[pat], true, patternChunk);
 		}

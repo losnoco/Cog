@@ -1908,6 +1908,8 @@ void CSoundFile::ProcessSampleAutoVibrato(ModChannel &chn, int &period, Tuning::
 void CSoundFile::ProcessRamping(ModChannel &chn) const
 {
 	chn.leftRamp = chn.rightRamp = 0;
+	LimitMax(chn.newLeftVol, int32_max >> VOLUMERAMPPRECISION);
+	LimitMax(chn.newRightVol, int32_max >> VOLUMERAMPPRECISION);
 	if(chn.dwFlags[CHN_VOLUMERAMP] && (chn.leftVol != chn.newLeftVol || chn.rightVol != chn.newRightVol))
 	{
 		const bool rampUp = (chn.newLeftVol > chn.leftVol) || (chn.newRightVol > chn.rightVol);
@@ -2509,7 +2511,7 @@ void CSoundFile::ProcessMacroOnChannel(CHANNELINDEX nChn)
 			if(chn.rowCommand.param < 0x80)
 				ProcessMIDIMacro(nChn, (chn.rowCommand.command == CMD_SMOOTHMIDI), m_MidiCfg.szMidiSFXExt[chn.nActiveMacro], chn.rowCommand.param);
 			else
-				ProcessMIDIMacro(nChn, (chn.rowCommand.command == CMD_SMOOTHMIDI), m_MidiCfg.szMidiZXXExt[(chn.rowCommand.param & 0x7F)], 0);
+				ProcessMIDIMacro(nChn, (chn.rowCommand.command == CMD_SMOOTHMIDI), m_MidiCfg.szMidiZXXExt[(chn.rowCommand.param & 0x7F)], chn.rowCommand.param);
 		}
 	}
 }
