@@ -46,6 +46,7 @@
     atomic_long bytesHdcdSustained;
     
     BOOL listenerapplied;
+    BOOL observersapplied;
     
     float volume;
     

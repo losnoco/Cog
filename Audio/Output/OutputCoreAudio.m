@@ -174,10 +174,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
 #ifdef OUTPUT_LOG
         _logFile = fopen("/tmp/CogAudioLog.raw", "wb");
 #endif
-        
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
-        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
-	}
+    }
 	
 	return self;
 }
@@ -704,6 +701,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     
     [_au allocateRenderResourcesAndReturnError:&err];
     
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
+    [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
+    observersapplied = YES;
+    
 	return (err == nil);
 }
 
@@ -732,6 +733,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 - (void)stop
 {
+    stopInvoked = YES;
+    if (observersapplied) {
+        observersapplied = NO;
+        [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
+        [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable"];
+    }
     if (stopNext && started && !paused) {
         while (![[outputController buffer] isEmpty]) {
             [writeSemaphore signal];
@@ -743,7 +750,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         stopNext = NO;
         [self signalEndOfStream];
     }
-    stopInvoked = YES;
     stopping = YES;
     paused = NO;
     [writeSemaphore signal];
@@ -782,14 +788,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         _logFile = NULL;
     }
 #endif
+    outputController = nil;
 }
 
 - (void)dealloc
 {
-    [self stop];
-    
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
-    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable"];
+    if (!stopInvoked)
+        [self stop];
 }
 
 - (void)pause

@@ -28,6 +28,8 @@
 	
 	BOOL shouldSeek;
 	long seekFrame;
+    
+    BOOL observersAdded;
 
     Semaphore *exitAtTheEndOfTheStream;
 }

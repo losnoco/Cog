@@ -137,6 +137,7 @@
 - (void)close
 {
 	[output stop];
+    output = nil;
 }
 
 - (void)setVolume:(double) v

@@ -108,10 +108,11 @@ NSArray * sortClassesByPriority(NSArray * theClasses)
 - (void)close
 {
     if ( theDecoder != nil ) {
-        [theDecoder close];
         for (NSDictionary *obsItem in cachedObservers) {
             [theDecoder removeObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"]];
         }
+        [cachedObservers removeAllObjects];
+        [theDecoder close];
         theDecoder = nil;
     }
 }

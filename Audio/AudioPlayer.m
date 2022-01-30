@@ -68,7 +68,10 @@
     ALog(@"Opening file for playback: %@ at seek offset %f%@", url, time, (paused) ? @", starting paused" : @"");
     
     [self waitUntilCallbacksExit];
-    output = nil;
+    if (output) {
+        [output setShouldContinue:NO];
+        output = nil;
+    }
     output = [[OutputNode alloc] initWithController:self previous:nil];
     [output setup];
     [output setVolume: volume];
@@ -135,6 +138,20 @@
 	//Set shouldoContinue to NO on all things
 	[self setShouldContinue:NO];
 	[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
+
+    @synchronized(chainQueue) {
+        for (id anObject in chainQueue)
+        {
+            [anObject setShouldContinue:NO];
+        }
+        [chainQueue removeAllObjects];
+        endOfInputReached = NO;
+        if (bufferChain)
+        {
+            bufferChain = nil;
+        }
+    }
+    output = nil;
 }
 
 - (void)pause

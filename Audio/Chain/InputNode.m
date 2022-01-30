@@ -90,6 +90,8 @@
 			  forKeyPath:@"metadata" 
 				 options:(NSKeyValueObservingOptionNew)
 				 context:NULL];
+    
+    observersAdded = YES;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -219,8 +221,19 @@
 
 - (void)removeObservers
 {
-    [decoder removeObserver:self forKeyPath:@"properties"];
-    [decoder removeObserver:self forKeyPath:@"metadata"];
+    if (observersAdded)
+    {
+        [decoder removeObserver:self forKeyPath:@"properties"];
+        [decoder removeObserver:self forKeyPath:@"metadata"];
+        observersAdded = NO;
+    }
+}
+
+- (void)setShouldContinue:(BOOL)s
+{
+    [super setShouldContinue:s];
+    if (!s)
+        [self removeObservers];
 }
 
 - (void)dealloc
