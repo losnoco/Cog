@@ -17,15 +17,43 @@
 
 #import "VirtualRingBuffer.h"
 
-#include <mach/mach.h>
-#include <mach/mach_error.h>
+#import <Foundation/Foundation.h>
+#import <stdlib.h>
+#import <mm_malloc.h>
 
 #import "Logging.h"
 
-@implementation VirtualRingBuffer
+@interface block_chunk : NSObject {
+    void * blockPointer;
+    void * theBlock;
+    size_t blockSize;
+}
 
-static void *allocateVirtualBuffer(UInt32 bufferLength);
-static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
+@property void * blockPointer;
+@property void * theBlock;
+@property size_t blockSize;
+@end
+
+@implementation block_chunk
+@synthesize blockPointer;
+@synthesize theBlock;
+@synthesize blockSize;
+@end
+
+@interface VirtualBufferHolder : NSObject {
+    NSMutableArray * blocks;
+    NSMutableArray * blocksUsed;
+    NSMutableDictionary * blockRefCounts;
+}
+
++ (VirtualBufferHolder *) sharedInstance;
+
+- (void *) allocateBlock:(size_t)size;
+- (void) freeBlock:(void *)block;
+@end
+
+
+@implementation VirtualRingBuffer
 
 
 - (id)initWithLength:(UInt32)length
@@ -36,7 +64,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     // We need to allocate entire VM pages, so round the specified length up to the next page if necessary.
     bufferLength = (UInt32) round_page(length);
 
-    buffer = allocateVirtualBuffer(bufferLength);
+    buffer = [[VirtualBufferHolder sharedInstance] allocateBlock:bufferLength];
     if (!buffer)
     {
         self = nil;
@@ -55,7 +83,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 - (void)dealloc
 {
     if (buffer)
-        deallocateVirtualBuffer(buffer, bufferLength);
+        [[VirtualBufferHolder sharedInstance] freeBlock:buffer];
 }
 
 - (void)empty
@@ -179,106 +207,106 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 
 @end
 
+@implementation VirtualBufferHolder
 
-void *allocateVirtualBuffer(UInt32 bufferLength)
+static VirtualBufferHolder * g_instance = nil;
+
++ (VirtualBufferHolder *) sharedInstance
 {
-    kern_return_t error;
-    vm_address_t originalAddress = (vm_address_t)NULL;
-    vm_address_t realAddress = (vm_address_t)NULL;
-    mach_port_t memoryEntry;
-    vm_size_t memoryEntryLength;
-    vm_address_t virtualAddress = (vm_address_t)NULL;
+    @synchronized (g_instance) {
+        if (!g_instance) {
+            g_instance = [[VirtualBufferHolder alloc] init];
+        }
+        return g_instance;
+    }
+}
 
-    // We want to find where we can get 2 * bufferLength bytes of contiguous address space.
-    // So let's just allocate that space, remember its address, and deallocate it.
-    // (This doesn't actually have to touch all of that memory so it's not terribly expensive.)
-    error = vm_allocate(mach_task_self(), &originalAddress, 2 * bufferLength, TRUE);
-    if (error) {
-#if DEBUG
-        mach_error("vm_allocate initial chunk", error);
-#endif
-        return NULL;
-    }
-
-    error = vm_deallocate(mach_task_self(), originalAddress, 2 * bufferLength);
-    if (error) {
-#if DEBUG
-        mach_error("vm_deallocate initial chunk", error);
-#endif
-        return NULL;
-    }
-
-    // Then allocate a "real" block of memory at the same address, but with the normal bufferLength.
-    realAddress = originalAddress;
-    error = vm_allocate(mach_task_self(), &realAddress, bufferLength, FALSE);
-    if (error) {
-#if DEBUG
-        mach_error("vm_allocate real chunk", error);
-#endif
-        return NULL;
-    }
-    if (realAddress != originalAddress) {
-        DLog(@"allocateVirtualBuffer: vm_allocate 2nd time didn't return same address (%p vs %p)", (void *) originalAddress, (void *) realAddress);
-        goto errorReturn;
-    }
-
-    // Then make a memory entry for the area we just allocated.
-    memoryEntryLength = bufferLength;
-    error = mach_make_memory_entry(mach_task_self(), &memoryEntryLength, realAddress, VM_PROT_READ | VM_PROT_WRITE, &memoryEntry, (vm_address_t)NULL);
-    if (error) {
-#if DEBUG
-        mach_error("mach_make_memory_entry", error);
-#endif
-        goto errorReturn;
-    }
-    if (!memoryEntry) {
-        DLog(@"mach_make_memory_entry: returned memoryEntry of NULL");
-        goto errorReturn;
-    }
-    if (memoryEntryLength != bufferLength) {
-        DLog(@"mach_make_memory_entry: size changed (from %0x to %0lx)", bufferLength, memoryEntryLength);
-        goto errorReturn;
-    }
-
-    // And map the area immediately after the first block, with length bufferLength, to that memory entry.
-    virtualAddress = realAddress + bufferLength;
-    error = vm_map(mach_task_self(), &virtualAddress, bufferLength, 0, FALSE, memoryEntry, 0, FALSE, VM_PROT_READ | VM_PROT_WRITE, VM_PROT_READ | VM_PROT_WRITE, VM_INHERIT_DEFAULT);
-    if (error) {
-#if DEBUG
-        mach_error("vm_map", error);
-#endif
-        // TODO Retry from the beginning, instead of failing completely. There is a tiny (but > 0) probability that someone
-        // will allocate this space out from under us.
-        virtualAddress = (vm_address_t)NULL;
-        goto errorReturn;
-    }
-    if (virtualAddress != realAddress + bufferLength) {
-        DLog(@"vm_map: didn't return correct address (%p vs %p)", (void *) realAddress + bufferLength, (void *) virtualAddress);
-        goto errorReturn;
+- (id) init {
+    self = [super init];
+    
+    if (self) {
+        blocks = [[NSMutableArray alloc] init];
+        blocksUsed = [[NSMutableArray alloc] init];
+        blockRefCounts = [[NSMutableDictionary alloc] init];
     }
     
-    // Success!
-    return (void *)realAddress;
+    return self;
+}
 
-errorReturn:
-    if (realAddress)
-        vm_deallocate(mach_task_self(), realAddress, bufferLength);
-    if (virtualAddress)
-        vm_deallocate(mach_task_self(), virtualAddress, bufferLength);
-
+- (void *)allocateBlock:(size_t)size {
+    @synchronized(blocks) {
+    tryagain:
+        for (block_chunk * chunk in blocks) {
+            if (chunk.blockSize == size) {
+                [blocksUsed addObject:chunk];
+                [blocks removeObject:chunk];
+                NSInteger refCount = [[blockRefCounts objectForKey:[NSNumber numberWithLongLong:(uintptr_t)chunk.theBlock]] integerValue];
+                [blockRefCounts setObject:[NSNumber numberWithInteger:refCount + 1] forKey:[NSNumber numberWithLongLong:(uintptr_t)chunk.theBlock]];
+                return chunk.blockPointer;
+            }
+        }
+        if (![blocks count]) {
+            void * theBlock = _mm_malloc(32 * 1024 * 1024, 1024);
+            if (!theBlock) return NULL;
+            
+            @synchronized (blocks) {
+                block_chunk * chunk = [[block_chunk alloc] init];
+                
+                chunk.theBlock = theBlock;
+                chunk.blockPointer = theBlock;
+                chunk.blockSize = 4 * 1024 * 1024;
+                
+                [blocks addObject:chunk];
+                
+                chunk = [[block_chunk alloc] init];
+                
+                chunk.theBlock = theBlock;
+                chunk.blockPointer = theBlock + 4 * 1024 * 1024;
+                chunk.blockSize = 4 * 1024 * 1024;
+                
+                [blocks addObject:chunk];
+                
+                for (size_t i = 8 * 1024 * 1024; i < 32 * 1024 * 1024; i += 1024 * 1024) {
+                    chunk = [[block_chunk alloc] init];
+                    
+                    chunk.theBlock = theBlock;
+                    chunk.blockPointer = theBlock + i;
+                    chunk.blockSize = 1024 * 1024;
+                    
+                    [blocks addObject:chunk];
+                }
+            }
+            goto tryagain;
+        }
+    }
+    
     return NULL;
 }
 
-void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength)
-{
-    kern_return_t error;
-
-    // We can conveniently deallocate both the vm_allocated memory and
-    // the vm_mapped region at the same time.
-    error = vm_deallocate(mach_task_self(), (vm_address_t)buffer, bufferLength * 2);
-    if (error) {
-#if DEBUG
-        mach_error("vm_deallocate in dealloc", error);
-#endif
+- (void) freeBlock:(void *)block {
+    @synchronized(blocks) {
+        for (block_chunk * chunk in blocksUsed) {
+            if (chunk.blockPointer == block) {
+                [blocks addObject:chunk];
+                [blocksUsed removeObject:chunk];
+                NSInteger refCount = [[blockRefCounts objectForKey:[NSNumber numberWithLongLong:(uintptr_t)chunk.theBlock]] integerValue];
+                if (refCount <= 1) {
+                    [blockRefCounts removeObjectForKey:[NSNumber numberWithLongLong:(uintptr_t)chunk.theBlock]];
+                    NSArray * blocksCopy = [blocks copy];
+                    for (block_chunk * removeChunk in blocksCopy) {
+                        if (removeChunk.theBlock == chunk.theBlock) {
+                            [blocks removeObject:removeChunk];
+                        }
+                    }
+                    _mm_free(chunk.theBlock);
+                }
+                else {
+                    [blockRefCounts setObject:[NSNumber numberWithInteger:refCount - 1] forKey:[NSNumber numberWithLongLong:(uintptr_t)chunk.theBlock]];
+                }
+                return;
+            }
+        }
     }
 }
+
+@end
