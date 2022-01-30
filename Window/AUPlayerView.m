@@ -596,10 +596,11 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
         
         [self setFrameUsingName:@"GraphicEQposition"];
 
-        AUListenerCreateWithDispatchQueue(&listenerRef, 0.25, dispatch_get_main_queue(), ^void(void *inObject, const AudioUnitParameter *inParameter, AudioUnitParameterValue inValue) {
+        AUListenerCreateWithDispatchQueue(&listenerRef, 0.5, dispatch_get_main_queue(), ^void(void *inObject, const AudioUnitParameter *inParameter, AudioUnitParameterValue inValue) {
             AUPluginWindow * _self = (__bridge AUPluginWindow *) inObject;
             
             if (inParameter->mParameterID >= 0 && inParameter->mParameterID <= 31) {
+                [_self savePresetToDefaults];
                 if ([_self->presetButton indexOfSelectedItem] != [equalizer_presets_processed count]) {
                     [_self->presetButton selectItemAtIndex:[equalizer_presets_processed count]];
                     [_self changePreset:_self->presetButton];
@@ -731,6 +732,23 @@ void equalizerApplyPreset(AudioUnit au, NSDictionary * preset) {
     {
         [[[NSUserDefaultsController sharedUserDefaultsController] defaults] setInteger:-1 forKey:@"GraphicEQpreset"];
     }
+}
+
+- (void)savePresetToDefaults
+{
+    OSStatus err;
+    CFPropertyListRef classData;
+    UInt32 size;
+    
+    size = sizeof(classData);
+    err = AudioUnitGetProperty(au, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &classData, &size);
+    if (err == noErr)
+    {
+        CFPreferencesSetAppValue(CFSTR("GraphEQ_Preset"), classData, kCFPreferencesCurrentApplication);
+        CFRelease(classData);
+    }
+    
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
 }
 
 @end
