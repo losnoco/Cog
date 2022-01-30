@@ -618,6 +618,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
                 progress += progressstep;
                 [weakLock unlock];
                 
+                DLog(@"Loading metadata for %@", weakPe.URL);
+                
                 NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
 
                 NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
@@ -697,20 +699,22 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     }
     
     [load_info_indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop)
-     {
-         PlaylistEntry *pe = [entries objectAtIndex:idx];
-         
-         NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
-     
-         NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
-         if (entryProperties == nil)
-             return;
-     
-         [entryInfo addEntriesFromDictionary:entryProperties];
-         [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
-         
-         [pe setMetadata:entryInfo];
-         [store trackUpdate:pe];
+    {
+        PlaylistEntry *pe = [entries objectAtIndex:idx];
+
+        DLog(@"Loading metadata for %@", pe.URL);
+
+        NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
+
+        NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
+        if (entryProperties == nil)
+            return;
+
+        [entryInfo addEntriesFromDictionary:entryProperties];
+        [entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
+
+        [pe setMetadata:entryInfo];
+        [store trackUpdate:pe];
      }];
 
     [self->playlistController updateTotalTime];

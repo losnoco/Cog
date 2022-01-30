@@ -65,6 +65,8 @@
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time
 {
+    ALog(@"Opening file for playback: %@ at seek offset %f%@", url, time, (paused) ? @", starting paused" : @"");
+    
     [self waitUntilCallbacksExit];
     output = nil;
     output = [[OutputNode alloc] initWithController:self previous:nil];
