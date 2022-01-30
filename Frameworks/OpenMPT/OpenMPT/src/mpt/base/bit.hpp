@@ -30,9 +30,9 @@ inline namespace MPT_INLINE_NS {
 
 
 
-#if MPT_CXX_AT_LEAST(20)
+#if MPT_CXX_AT_LEAST(20) && !MPT_CLANG_BEFORE(14, 0, 0)
 using std::bit_cast;
-#else
+#else  // !C++20
 // C++2a compatible bit_cast.
 // Not implementing constexpr because this is not easily possible pre C++20.
 template <typename Tdst, typename Tsrc>
@@ -41,7 +41,7 @@ MPT_FORCEINLINE typename std::enable_if<(sizeof(Tdst) == sizeof(Tsrc)) && std::i
 	std::memcpy(&dst, &src, sizeof(Tdst));
 	return dst;
 }
-#endif
+#endif // C++20
 
 
 
@@ -79,11 +79,18 @@ constexpr bool endian_is_weird() noexcept {
 #elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define MPT_PLATFORM_LITTLE_ENDIAN
 #endif
+#elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && defined(__ORDER_LITTLE_ENDIAN__)
+#if __ORDER_BIG_ENDIAN__ != __ORDER_LITTLE_ENDIAN__
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#define MPT_PLATFORM_BIG_ENDIAN
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define MPT_PLATFORM_LITTLE_ENDIAN
+#endif
+#endif
 #endif
 
 // fallback:
 #if !defined(MPT_PLATFORM_BIG_ENDIAN) && !defined(MPT_PLATFORM_LITTLE_ENDIAN)
-// taken from boost/detail/endian.hpp
 #if (defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)) \
 	|| (defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)) \
 	|| (defined(_STLP_BIG_ENDIAN) && !defined(_STLP_LITTLE_ENDIAN))
@@ -92,19 +99,13 @@ constexpr bool endian_is_weird() noexcept {
 	|| (defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) \
 	|| (defined(_STLP_LITTLE_ENDIAN) && !defined(_STLP_BIG_ENDIAN))
 #define MPT_PLATFORM_LITTLE_ENDIAN
-#elif defined(__sparc) || defined(__sparc__) \
-	|| defined(_POWER) || defined(__powerpc__) \
-	|| defined(__ppc__) || defined(__hpux) || defined(__hppa) \
-	|| defined(_MIPSEB) || defined(_POWER) \
+#elif defined(__hpux) || defined(__hppa) \
+	|| defined(_MIPSEB) \
 	|| defined(__s390__)
 #define MPT_PLATFORM_BIG_ENDIAN
-#elif defined(__i386__) || defined(__alpha__) \
-	|| defined(__ia64) || defined(__ia64__) \
-	|| defined(_M_IX86) || defined(_M_IA64) \
-	|| defined(_M_ALPHA) || defined(__amd64) \
-	|| defined(__amd64__) || defined(_M_AMD64) \
-	|| defined(__x86_64) || defined(__x86_64__) \
-	|| defined(_M_X64) || defined(__bfin__)
+#elif defined(__i386__) || defined(_M_IX86) \
+	|| defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) \
+	|| defined(__bfin__)
 #define MPT_PLATFORM_LITTLE_ENDIAN
 #endif
 #endif
@@ -182,7 +183,7 @@ MPT_FORCEINLINE bool endian_is_weird() noexcept {
 
 
 
-#if MPT_CXX_AT_LEAST(20) && !MPT_COMPILER_MSVC
+#if MPT_CXX_AT_LEAST(20) && !MPT_COMPILER_MSVC && !MPT_CLANG_BEFORE(12, 0, 0)
 
 // Disabled for VS2022 for now because of
 // <https://developercommunity.visualstudio.com/t/vs2022-cl-193030705-generates-non-universally-avai/1578571>

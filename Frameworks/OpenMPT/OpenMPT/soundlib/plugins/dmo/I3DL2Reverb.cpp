@@ -625,6 +625,7 @@ float I3DL2Reverb::CalcDecayCoeffs(int32 index)
 		c2 = (c23 - c22) / (c21 + c21);
 		if(std::abs(c2) > 1.0f)
 			c2 = (-c22 - c23) / (c21 + c21);
+		c2 = mpt::sanitize_nan(c2);
 	}
 	m_delayCoeffs[index][0] = c1;
 	m_delayCoeffs[index][1] = c2;

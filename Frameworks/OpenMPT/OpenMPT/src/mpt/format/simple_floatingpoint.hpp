@@ -5,32 +5,41 @@
 
 
 
-#if MPT_FORMAT_CXX17_FLOAT
+#include "mpt/base/detect.hpp"
+
+#if MPT_MSVC_AT_LEAST(2019, 4) || MPT_GCC_AT_LEAST(11, 1, 0)
+#define MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17 1
+#else
+#define MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17 0
+#endif
+
+#if MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 #include "mpt/base/algorithm.hpp"
 #endif
 #include "mpt/base/namespace.hpp"
 #include "mpt/format/default_floatingpoint.hpp"
 #include "mpt/format/helpers.hpp"
 #include "mpt/format/simple_spec.hpp"
+#include "mpt/string/types.hpp"
 #include "mpt/string_transcode/transcode.hpp"
 
-#if MPT_FORMAT_CXX17_FLOAT
+#if MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 #include <charconv>
 #endif
-#if !MPT_FORMAT_CXX17_FLOAT
+#if !MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 #include <iomanip>
 #include <ios>
 #endif
-#if MPT_FORMAT_CXX17_FLOAT
+#if MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 #include <iterator>
 #endif
-#if !MPT_FORMAT_CXX17_FLOAT
+#if !MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 #include <limits>
 #include <locale>
 #include <sstream>
 #endif
 #include <string>
-#if MPT_FORMAT_CXX17_FLOAT
+#if MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 #include <system_error>
 #endif
 #include <type_traits>
@@ -42,7 +51,7 @@ inline namespace MPT_INLINE_NS {
 
 
 
-#if MPT_FORMAT_CXX17_FLOAT
+#if MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 
 
 template <typename Tstring, typename T>
@@ -128,7 +137,7 @@ inline Tstring format_simple(const T & x, const format_simple_spec & f) {
 }
 
 
-#else // !MPT_FORMAT_CXX17_FLOAT
+#else // !MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 
 
 template <typename Tchar>
@@ -229,7 +238,7 @@ inline Tstring format_simple(const T & x, const format_simple_spec & format) {
 
 
 
-#endif // MPT_FORMAT_CXX17_FLOAT
+#endif // MPT_FORMAT_FORMAT_SIMPLE_FLOAT_CXX17
 
 
 

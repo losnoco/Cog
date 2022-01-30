@@ -5,6 +5,7 @@
 
 
 
+#include "mpt/base/detect.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/detect/mfc.hpp"
 

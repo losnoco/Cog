@@ -10,8 +10,8 @@ CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)
 
 CPPFLAGS += -DWIN32 -D_WIN32 -DWIN64 -D_WIN64 -DWINAPI_FAMILY=0x2 -D_WIN32_WINNT=0x0602
-CXXFLAGS += -municode -mconsole 
-CFLAGS   += -municode -mconsole 
+CXXFLAGS += -municode -mconsole -mthreads
+CFLAGS   += -municode -mconsole -mthreads
 LDFLAGS  +=
 LDLIBS   += -lm -lole32 -lwinmm
 ARFLAGS  := rcs

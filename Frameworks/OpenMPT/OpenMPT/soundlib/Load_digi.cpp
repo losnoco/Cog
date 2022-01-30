@@ -44,12 +44,11 @@ static void ReadDIGIPatternEntry(FileReader &file, ModCommand &m)
 		switch(m.param & 0xF0)
 		{
 		case 0x30:
-			// E30 / E31: Play sample backwards (with some weird parameters that we won't support for now)
-			if(m.param <= 0x31)
-			{
-				m.command = CMD_S3MCMDEX;
-				m.param = 0x9F;
-			}
+			// E3x: Play sample backwards (E30 stops sample when it reaches the beginning, any other value plays it from the beginning including regular loop)
+			// The play direction is also reset if a new note is played on the other channel linked to this channel.
+			// The behaviour is rather broken when there is no note next to the ommand.
+			m.command = CMD_DIGIREVERSESAMPLE;
+			m.param &= 0x0F;
 			break;
 		case 0x40:
 			// E40: Stop playing sample

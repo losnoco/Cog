@@ -9,6 +9,7 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/format/helpers.hpp"
 #include "mpt/format/simple_spec.hpp"
+#include "mpt/string/types.hpp"
 
 #include <charconv>
 #include <string>

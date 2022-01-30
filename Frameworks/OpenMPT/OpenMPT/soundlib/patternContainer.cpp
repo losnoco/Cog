@@ -28,10 +28,7 @@ void CPatternContainer::ClearPatterns()
 
 void CPatternContainer::DestroyPatterns()
 {
-	for(PATTERNINDEX i = 0; i < m_Patterns.size(); i++)
-	{
-		Remove(i);
-	}
+	m_Patterns.clear();
 }
 
 
@@ -67,7 +64,7 @@ PATTERNINDEX CPatternContainer::InsertAny(const ROWINDEX rows, bool respectQtyLi
 
 bool CPatternContainer::Insert(const PATTERNINDEX index, const ROWINDEX rows)
 {
-	if(rows > MAX_PATTERN_ROWS || rows == 0)
+	if(rows > MAX_PATTERN_ROWS || rows == 0 || index >= PATTERNINDEX_INVALID)
 		return false;
 	if(IsValidPat(index))
 		return false;

@@ -624,10 +624,10 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 		for(uint32 i = 0; i < 32; i++)
 		{
 			uint32 param = (i * 127u) / 32u;
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i     ]) = MPT_AFORMAT("F0F080{}")(mpt::afmt::HEX0<2>(param));
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 32]) = MPT_AFORMAT("F0F081{}")(mpt::afmt::HEX0<2>(param));
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 64]) = MPT_AFORMAT("F0F082{}")(mpt::afmt::HEX0<2>(param));
-			mpt::String::WriteAutoBuf(m_MidiCfg.szMidiZXXExt[i + 96]) = MPT_AFORMAT("F0F083{}")(mpt::afmt::HEX0<2>(param));
+			m_MidiCfg.Zxx[i     ] = MPT_AFORMAT("F0F080{}")(mpt::afmt::HEX0<2>(param));
+			m_MidiCfg.Zxx[i + 32] = MPT_AFORMAT("F0F081{}")(mpt::afmt::HEX0<2>(param));
+			m_MidiCfg.Zxx[i + 64] = MPT_AFORMAT("F0F082{}")(mpt::afmt::HEX0<2>(param));
+			m_MidiCfg.Zxx[i + 96] = MPT_AFORMAT("F0F083{}")(mpt::afmt::HEX0<2>(param));
 		}
 	}
 #endif // NO_PLUGINS

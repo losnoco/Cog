@@ -8,7 +8,7 @@
  */
 
 static const char * const license =
-"Copyright (c) 2004-2021, OpenMPT Project Developers and Contributors" "\n"
+"Copyright (c) 2004-2022, OpenMPT Project Developers and Contributors" "\n"
 "Copyright (c) 1997-2003, Olivier Lapicque" "\n"
 "All rights reserved." "\n"
 "" "\n"
@@ -464,7 +464,7 @@ static std::string seconds_to_string( double time ) {
 
 static void show_info( std::ostream & log, bool verbose ) {
 	log << "openmpt123" << " v" << OPENMPT123_VERSION_STRING << ", libopenmpt " << openmpt::string::get( "library_version" ) << " (" << "OpenMPT " << openmpt::string::get( "core_version" ) << ")" << std::endl;
-	log << "Copyright (c) 2013-2021 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>" << std::endl;
+	log << "Copyright (c) 2013-2022 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>" << std::endl;
 	if ( !verbose ) {
 		log << std::endl;
 		return;
@@ -541,7 +541,7 @@ static void show_info( std::ostream & log, bool verbose ) {
 static void show_man_version( textout & log ) {
 	log << "openmpt123" << " v" << OPENMPT123_VERSION_STRING << std::endl;
 	log << std::endl;
-	log << "Copyright (c) 2013-2021 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>" << std::endl;
+	log << "Copyright (c) 2013-2022 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>" << std::endl;
 }
 
 static void show_short_version( textout & log ) {

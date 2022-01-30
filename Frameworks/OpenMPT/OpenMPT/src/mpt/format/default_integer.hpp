@@ -7,31 +7,31 @@
 #include "mpt/base/detect.hpp"
 
 #if 1
-#define MPT_FORMAT_CXX17_INT 1
+#define MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17 1
 #else
-#define MPT_FORMAT_CXX17_INT 0
+#define MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17 0
 #endif
 
-#if MPT_FORMAT_CXX17_INT
+#if MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 #include "mpt/base/algorithm.hpp"
-#endif // MPT_FORMAT_CXX17_INT
+#endif // MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 #include "mpt/base/namespace.hpp"
 #include "mpt/base/utility.hpp"
 #include "mpt/format/helpers.hpp"
 #include "mpt/string_transcode/transcode.hpp"
 
-#if MPT_FORMAT_CXX17_INT
+#if MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 #include <charconv>
-#endif // MPT_FORMAT_CXX17_INT
-#if !MPT_FORMAT_CXX17_INT
+#endif // MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
+#if !MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 #include <ios>
 #include <locale>
 #include <sstream>
-#endif // !MPT_FORMAT_CXX17_INT
+#endif // !MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 #include <string>
-#if MPT_FORMAT_CXX17_INT
+#if MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 #include <system_error>
-#endif // MPT_FORMAT_CXX17_INT
+#endif // MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 #include <type_traits>
 
 
@@ -40,7 +40,7 @@ namespace mpt {
 inline namespace MPT_INLINE_NS {
 
 
-#if MPT_FORMAT_CXX17_INT
+#if MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 
 template <typename Tstring, typename T, std::enable_if_t<std::is_integral<T>::value, bool> = true>
 inline Tstring to_chars_string(const T & x) {
@@ -73,10 +73,10 @@ inline Tstring format_value_default(const T & x) {
 	return mpt::transcode<Tstring>(mpt::to_chars_string<typename mpt::select_format_string_type<Tstring>::type>(x));
 }
 
-#endif // MPT_FORMAT_CXX17_INT
+#endif // MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 
 
-#if !MPT_FORMAT_CXX17_INT
+#if !MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 
 template <typename Tstring, typename T, std::enable_if_t<std::is_integral<T>::value, bool> = true>
 inline Tstring to_stream_string(const T & x) {
@@ -98,7 +98,7 @@ inline Tstring format_value_default(const T & x) {
 	return mpt::transcode<Tstring>(mpt::to_stream_string<typename mpt::select_format_string_type<Tstring>::type>(x));
 }
 
-#endif // !MPT_FORMAT_CXX17_INT
+#endif // !MPT_FORMAT_FORMAT_DEFAULT_INT_CXX17
 
 
 template <typename Tstring, typename T, std::enable_if_t<std::is_enum<T>::value, bool> = true>

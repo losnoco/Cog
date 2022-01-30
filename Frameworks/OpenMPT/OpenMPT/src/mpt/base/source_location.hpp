@@ -9,7 +9,7 @@
 #include "mpt/base/integer.hpp"
 #include "mpt/base/namespace.hpp"
 
-#if MPT_CXX_AT_LEAST(20)
+#if MPT_CXX_AT_LEAST(20) && !MPT_MSVC_BEFORE(2022, 0) && !MPT_COMPILER_CLANG
 #include <source_location>
 #endif // C++20
 
@@ -19,7 +19,7 @@ namespace mpt {
 inline namespace MPT_INLINE_NS {
 
 
-#if MPT_CXX_AT_LEAST(20) && !MPT_MSVC_BEFORE(2022, 0)
+#if MPT_CXX_AT_LEAST(20) && !MPT_MSVC_BEFORE(2022, 0) && !MPT_COMPILER_CLANG
 
 using std::source_location;
 

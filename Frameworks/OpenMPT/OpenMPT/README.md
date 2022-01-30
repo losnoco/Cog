@@ -47,6 +47,14 @@ How to compile
         OpenMPT for, as Visual Studio only builds one architecture configuration
         at a time.
 
+        Please note that we do not support building with a later Visual Studio
+        installation with an earlier compiler version. This is because, while
+        later Visual Studio versions allow installing earlier compilers to be
+        available via the later version's environment, in this configuration,
+        the earlier compiler will still use the later C and C++ runtime's
+        headers and implementation, which significantly increases the matrix of
+        possible configurations to test.
+
  -  OpenMPT requires the compile host system to be Windows 8.1 (or later) amd64,
     or Windows 11 (or later) ARM64.
 

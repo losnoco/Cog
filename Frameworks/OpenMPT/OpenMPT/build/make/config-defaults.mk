@@ -18,6 +18,12 @@ include build/make/config-clang.mk
 NO_LTDL?=1
 NO_PORTAUDIOCPP?=1
 
+else ifeq ($(HOST_FLAVOUR),OPENBSD)
+
+NO_PORTAUDIOCPP?=1
+NO_PULSEAUDIO?=1
+include build/make/config-clang.mk
+
 else ifeq ($(HOST_FLAVOUR),HAIKU)
 
 # In Haiku x86 32bit (but not 64bit),

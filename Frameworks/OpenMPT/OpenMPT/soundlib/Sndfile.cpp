@@ -70,6 +70,13 @@ mpt::ustring FileHistory::AsISO8601() const
 }
 
 
+CSoundFile::PlayState::PlayState()
+{
+	std::fill(std::begin(Chn), std::end(Chn), ModChannel{});
+	m_midiMacroScratchSpace.reserve(kMacroLength);  // Note: If macros ever become variable-length, the scratch space needs to be at least one byte longer than the longest macro in the file for end-of-SysEx insertion to stay allocation-free in the mixer!
+}
+
+
 //////////////////////////////////////////////////////////
 // CSoundFile
 
@@ -367,108 +374,107 @@ CSoundFile::ProbeResult CSoundFile::Probe(ProbeFlags flags, mpt::span<const std:
 }
 
 
-#ifdef MODPLUG_TRACKER
 bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags, CModDoc *pModDoc)
 {
+	m_nMixChannels = 0;
+#ifdef MODPLUG_TRACKER
 	m_pModDoc = pModDoc;
 #else
-bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags)
-{
-#endif // MODPLUG_TRACKER
-
-	m_nMixChannels = 0;
-#ifndef MODPLUG_TRACKER
+	MPT_UNUSED(pModDoc);
 	m_nFreqFactor = m_nTempoFactor = 65536;
-#endif
+#endif  // MODPLUG_TRACKER
 
-	MemsetZero(Instruments);
 	Clear(m_szNames);
 #ifndef NO_PLUGINS
 	std::fill(std::begin(m_MixPlugins), std::end(m_MixPlugins), SNDMIXPLUGIN());
-#endif // NO_PLUGINS
+#endif  // NO_PLUGINS
 
+	if(CreateInternal(file, loadFlags))
+		return true;
+
+#ifndef NO_ARCHIVE_SUPPORT
+	if(!(loadFlags & skipContainer) && file.IsValid())
+	{
+		CUnarchiver unarchiver(file);
+		if(unarchiver.ExtractBestFile(GetSupportedExtensions(true)))
+		{
+			if(CreateInternal(unarchiver.GetOutputFile(), loadFlags))
+			{
+				// Read archive comment if there is no song comment
+				if(m_songMessage.empty())
+				{
+					m_songMessage.assign(mpt::ToCharset(mpt::Charset::Locale, unarchiver.GetComment()));
+				}
+				return true;
+			}
+		}
+	}
+#endif
+
+	return false;
+}
+
+
+bool CSoundFile::CreateInternal(FileReader file, ModLoadingFlags loadFlags)
+{
 	if(file.IsValid())
 	{
-
+		std::vector<ContainerItem> containerItems;
+		MODCONTAINERTYPE packedContainerType = MOD_CONTAINERTYPE_NONE;
+		if(!(loadFlags & skipContainer))
 		{
-
-#ifndef NO_ARCHIVE_SUPPORT
-			CUnarchiver unarchiver(file);
-			if(!(loadFlags & skipContainer))
-			{
-				if (unarchiver.ExtractBestFile(GetSupportedExtensions(true)))
-				{
-					file = unarchiver.GetOutputFile();
-				}
-			}
-#endif
-
-			std::vector<ContainerItem> containerItems;
-			MODCONTAINERTYPE packedContainerType = MOD_CONTAINERTYPE_NONE;
-			if(!(loadFlags & skipContainer))
-			{
-				ContainerLoadingFlags containerLoadFlags = (loadFlags == onlyVerifyHeader) ? ContainerOnlyVerifyHeader : ContainerUnwrapData;
+			ContainerLoadingFlags containerLoadFlags = (loadFlags == onlyVerifyHeader) ? ContainerOnlyVerifyHeader : ContainerUnwrapData;
 #if !defined(MPT_WITH_ANCIENT)
-				if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackXPK(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_XPK;
-				if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackPP20(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_PP20;
-				if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackMMCMP(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_MMCMP;
+			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackXPK(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_XPK;
+			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackPP20(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_PP20;
+			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackMMCMP(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_MMCMP;
 #endif // !MPT_WITH_ANCIENT
-				if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackUMX(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_UMX;
-				if(packedContainerType != MOD_CONTAINERTYPE_NONE)
+			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackUMX(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_UMX;
+			if(packedContainerType != MOD_CONTAINERTYPE_NONE)
+			{
+				if(loadFlags == onlyVerifyHeader)
 				{
-					if(loadFlags == onlyVerifyHeader)
-					{
-						return true;
-					}
-					if(!containerItems.empty())
-					{
-						// cppcheck false-positive
-						// cppcheck-suppress containerOutOfBounds
-						file = containerItems[0].file;
-					}
+					return true;
+				}
+				if(!containerItems.empty())
+				{
+					// cppcheck false-positive
+					// cppcheck-suppress containerOutOfBounds
+					file = containerItems[0].file;
 				}
 			}
-
-			if(loadFlags & skipModules)
-			{
-				return false;
-			}
-
-			// Try all module format loaders
-			bool loaderSuccess = false;
-			for(const auto &format : ModuleFormatLoaders)
-			{
-				loaderSuccess = (this->*(format.loader))(file, loadFlags);
-				if(loaderSuccess)
-					break;
-			}
-
-			if(!loaderSuccess)
-			{
-				m_nType = MOD_TYPE_NONE;
-				m_ContainerType = MOD_CONTAINERTYPE_NONE;
-			}
-			if(loadFlags == onlyVerifyHeader)
-			{
-				return loaderSuccess;
-			}
-
-			if(packedContainerType != MOD_CONTAINERTYPE_NONE && m_ContainerType == MOD_CONTAINERTYPE_NONE)
-			{
-				m_ContainerType = packedContainerType;
-			}
-
-#ifndef NO_ARCHIVE_SUPPORT
-			// Read archive comment if there is no song comment
-			if(m_songMessage.empty())
-			{
-				m_songMessage.assign(mpt::ToCharset(mpt::Charset::Locale, unarchiver.GetComment()));
-			}
-#endif
-
-			m_visitedRows.Initialize(true);
-
 		}
+
+		if(loadFlags & skipModules)
+		{
+			return false;
+		}
+
+		// Try all module format loaders
+		bool loaderSuccess = false;
+		for(const auto &format : ModuleFormatLoaders)
+		{
+			loaderSuccess = (this->*(format.loader))(file, loadFlags);
+			if(loaderSuccess)
+				break;
+		}
+
+		if(!loaderSuccess)
+		{
+			m_nType = MOD_TYPE_NONE;
+			m_ContainerType = MOD_CONTAINERTYPE_NONE;
+		}
+		if(loadFlags == onlyVerifyHeader)
+		{
+			return loaderSuccess;
+		}
+
+		if(packedContainerType != MOD_CONTAINERTYPE_NONE && m_ContainerType == MOD_CONTAINERTYPE_NONE)
+		{
+			m_ContainerType = packedContainerType;
+		}
+
+		m_visitedRows.Initialize(true);
 	} else
 	{
 		// New song

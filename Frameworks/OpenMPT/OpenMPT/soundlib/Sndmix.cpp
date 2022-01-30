@@ -1704,7 +1704,7 @@ void CSoundFile::ProcessVibrato(CHANNELINDEX nChn, int32 &period, Tuning::RATIOT
 
 			// Process MIDI vibrato for plugins:
 #ifndef NO_PLUGINS
-			IMixPlugin *plugin = GetChannelInstrumentPlugin(nChn);
+			IMixPlugin *plugin = GetChannelInstrumentPlugin(m_PlayState.Chn[nChn]);
 			if(plugin != nullptr)
 			{
 				// If the Pitch Wheel Depth is configured correctly (so it's the same as the plugin's PWD),
@@ -1727,7 +1727,7 @@ void CSoundFile::ProcessVibrato(CHANNELINDEX nChn, int32 &period, Tuning::RATIOT
 	{
 		// Stop MIDI vibrato for plugins:
 #ifndef NO_PLUGINS
-		IMixPlugin *plugin = GetChannelInstrumentPlugin(nChn);
+		IMixPlugin *plugin = GetChannelInstrumentPlugin(m_PlayState.Chn[nChn]);
 		if(plugin != nullptr)
 		{
 			plugin->MidiVibrato(0, 0, nChn);
@@ -2527,15 +2527,15 @@ void CSoundFile::ProcessMacroOnChannel(CHANNELINDEX nChn)
 	if(nChn < GetNumChannels())
 	{
 		// TODO evaluate per-plugin macros here
-		//ProcessMIDIMacro(nChn, false, m_MidiCfg.szMidiGlb[MIDIOUT_PAN]);
-		//ProcessMIDIMacro(nChn, false, m_MidiCfg.szMidiGlb[MIDIOUT_VOLUME]);
+		//ProcessMIDIMacro(m_PlayState, nChn, false, m_MidiCfg.Global[MIDIOUT_PAN]);
+		//ProcessMIDIMacro(m_PlayState, nChn, false, m_MidiCfg.Global[MIDIOUT_VOLUME]);
 
 		if((chn.rowCommand.command == CMD_MIDI && m_SongFlags[SONG_FIRSTTICK]) || chn.rowCommand.command == CMD_SMOOTHMIDI)
 		{
 			if(chn.rowCommand.param < 0x80)
-				ProcessMIDIMacro(nChn, (chn.rowCommand.command == CMD_SMOOTHMIDI), m_MidiCfg.szMidiSFXExt[chn.nActiveMacro], chn.rowCommand.param);
+				ProcessMIDIMacro(m_PlayState, nChn, (chn.rowCommand.command == CMD_SMOOTHMIDI), m_MidiCfg.SFx[chn.nActiveMacro], chn.rowCommand.param);
 			else
-				ProcessMIDIMacro(nChn, (chn.rowCommand.command == CMD_SMOOTHMIDI), m_MidiCfg.szMidiZXXExt[(chn.rowCommand.param & 0x7F)], 0);
+				ProcessMIDIMacro(m_PlayState, nChn, (chn.rowCommand.command == CMD_SMOOTHMIDI), m_MidiCfg.Zxx[chn.rowCommand.param & 0x7F], chn.rowCommand.param);
 		}
 	}
 }
@@ -2561,7 +2561,7 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 	}
 
 	// Check instrument plugins
-	const PLUGINDEX nPlugin = GetBestPlugin(nChn, PrioritiseInstrument, RespectMutes);
+	const PLUGINDEX nPlugin = GetBestPlugin(m_PlayState, nChn, PrioritiseInstrument, RespectMutes);
 	IMixPlugin *pPlugin = nullptr;
 	if(nPlugin > 0 && nPlugin <= MAX_MIXPLUGINS)
 	{
@@ -2622,7 +2622,7 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 		if(ModCommand::IsNote(note))
 			realNote = pIns->NoteMap[note - NOTE_MIN];
 		// Experimental VST panning
-		//ProcessMIDIMacro(nChn, false, m_MidiCfg.szMidiGlb[MIDIOUT_PAN], 0, nPlugin);
+		//ProcessMIDIMacro(nChn, false, m_MidiCfg.Global[MIDIOUT_PAN], 0, nPlugin);
 		SendMIDINote(nChn, realNote, static_cast<uint16>(velocity));
 	}
 

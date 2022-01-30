@@ -111,6 +111,9 @@ protected:
 
 public:
 	CDLSBank();
+
+	bool operator==(const CDLSBank &other) const noexcept { return !mpt::PathString::CompareNoCase(m_szFileName, other.m_szFileName); }
+
 	static bool IsDLSBank(const mpt::PathString &filename);
 	static uint32 MakeMelodicCode(uint32 bank, uint32 instr) { return ((bank << 16) | (instr));}
 	static uint32 MakeDrumCode(uint32 rgn, uint32 instr) { return (0x80000000 | (rgn << 16) | (instr));}

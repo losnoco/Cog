@@ -1027,6 +1027,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			ModSample &mptSmp = Samples[i + 1];
 			mptSmp.Initialize(MOD_TYPE_IT);
+			mptSmp.SetDefaultCuePoints();
 			MT2Sample sampleHeader;
 			sampleChunk.ReadStruct(sampleHeader);
 

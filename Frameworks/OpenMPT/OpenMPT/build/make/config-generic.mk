@@ -1,4 +1,6 @@
 
+$(warning warning: CONFIG=generic is deprecated. Use CONFIG=standard instead.)
+
 CC  ?= cc 
 CXX ?= c++
 LD  ?= c++

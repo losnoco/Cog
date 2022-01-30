@@ -161,6 +161,8 @@ LIBOPENMPT_DEPRECATED static const int LIBOPENMPT_DEPRECATED_STRING_CONSTANT = 0
 #else
 #define LIBOPENMPT_DEPRECATED_STRING( str ) str
 #endif
+#else
+#define LIBOPENMPT_DEPRECATED_STRING( str ) str
 #endif
 
 

@@ -775,13 +775,19 @@ void IMidiPlugin::ApplyPitchWheelDepth(int32 &value, int8 pwd)
 
 
 // Get the MIDI channel currently associated with a given tracker channel
+uint8 IMidiPlugin::GetMidiChannel(const ModChannel &chn, CHANNELINDEX trackChannel) const
+{
+	if(auto ins = chn.pModInstrument; ins != nullptr)
+		return ins->GetMIDIChannel(chn, trackChannel);
+	else
+		return 0;
+}
+
+
 uint8 IMidiPlugin::GetMidiChannel(CHANNELINDEX trackChannel) const
 {
-	if(trackChannel >= std::size(m_SndFile.m_PlayState.Chn))
-		return 0;
-
-	if(auto ins = m_SndFile.m_PlayState.Chn[trackChannel].pModInstrument; ins != nullptr)
-		return ins->GetMIDIChannel(m_SndFile, trackChannel);
+	if(trackChannel < std::size(m_SndFile.m_PlayState.Chn))
+		return GetMidiChannel(m_SndFile.m_PlayState.Chn[trackChannel], trackChannel);
 	else
 		return 0;
 }
@@ -884,7 +890,7 @@ void IMidiPlugin::MidiCommand(const ModInstrument &instr, uint16 note, uint16 vo
 		uint8 high = static_cast<uint8>(midiBank >> 7);
 		uint8 low = static_cast<uint8>(midiBank & 0x7F);
 
-		//m_SndFile.ProcessMIDIMacro(trackChannel, false, m_SndFile.m_MidiCfg.szMidiGlb[MIDIOUT_BANKSEL], 0, m_nSlot + 1);
+		//m_SndFile.ProcessMIDIMacro(trackChannel, false, m_SndFile.m_MidiCfg.Global[MIDIOUT_BANKSEL], 0, m_nSlot + 1);
 		MidiSend(MIDIEvents::CC(MIDIEvents::MIDICC_BankSelect_Coarse, midiCh, high));
 		MidiSend(MIDIEvents::CC(MIDIEvents::MIDICC_BankSelect_Fine, midiCh, low));
 
@@ -897,7 +903,7 @@ void IMidiPlugin::MidiCommand(const ModInstrument &instr, uint16 note, uint16 vo
 	if(progChanged || (midiProg < 0x80 && bankChanged))
 	{
 		channel.currentProgram = midiProg;
-		//m_SndFile.ProcessMIDIMacro(trackChannel, false, m_SndFile.m_MidiCfg.szMidiGlb[MIDIOUT_PROGRAM], 0, m_nSlot + 1);
+		//m_SndFile.ProcessMIDIMacro(trackChannel, false, m_SndFile.m_MidiCfg.Global[MIDIOUT_PROGRAM], 0, m_nSlot + 1);
 		MidiSend(MIDIEvents::ProgramChange(midiCh, midiProg));
 	}
 

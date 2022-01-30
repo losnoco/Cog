@@ -25,6 +25,7 @@ OPENMPT_NAMESPACE_BEGIN
 struct VSTPluginLib;
 struct SNDMIXPLUGIN;
 struct ModInstrument;
+struct ModChannel;
 class CSoundFile;
 class CModDoc;
 class CAbstractVstEditor;
@@ -275,9 +276,11 @@ public:
 	bool IsNotePlaying(uint8 note, CHANNELINDEX trackerChn) override;
 
 	// Get the MIDI channel currently associated with a given tracker channel
-	virtual uint8 GetMidiChannel(CHANNELINDEX trackChannel) const;
+	virtual uint8 GetMidiChannel(const ModChannel &chn, CHANNELINDEX trackChannel) const;
 
 protected:
+	uint8 GetMidiChannel(CHANNELINDEX trackChannel) const;
+
 	// Plugin wants to send MIDI to OpenMPT
 	virtual void ReceiveMidi(uint32 midiCode);
 	virtual void ReceiveSysex(mpt::const_byte_span sysex);

@@ -1,4 +1,4 @@
-Copyright (c) 2004-2021, OpenMPT Project Developers and Contributors
+Copyright (c) 2004-2022, OpenMPT Project Developers and Contributors
 Copyright (c) 1997-2003, Olivier Lapicque
 All rights reserved.
 

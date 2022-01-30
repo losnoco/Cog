@@ -23,7 +23,7 @@ namespace mpt {
 inline namespace MPT_INLINE_NS {
 
 
-#if MPT_CXX_AT_LEAST(20)
+#if MPT_CXX_AT_LEAST(20) && !MPT_CLANG_BEFORE(13, 0, 0)
 
 using std::in_range;
 
@@ -78,7 +78,7 @@ inline void reset(T & x) {
 
 
 
-#if MPT_CXX_AT_LEAST(20)
+#if MPT_CXX_AT_LEAST(20) && !MPT_CLANG_BEFORE(13, 0, 0)
 
 using std::cmp_equal;
 using std::cmp_greater;

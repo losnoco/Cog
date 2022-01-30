@@ -414,6 +414,9 @@ bool CSoundFile::ReadDSym(FileReader &file, ModLoadingFlags loadFlags)
 						{
 							m->command = CMD_TEMPO;
 							m->param = mpt::saturate_cast<ModCommand::PARAM>(std::max(8, param + 4) / 8);
+#ifdef MODPLUG_TRACKER
+							m->param = std::max(m->param, ModCommand::PARAM(0x20));
+#endif
 						} else
 						{
 							m->command = CMD_NONE;

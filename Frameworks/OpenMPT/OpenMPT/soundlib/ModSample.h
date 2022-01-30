@@ -160,11 +160,14 @@ struct ModSample
 	// Transpose the sample by amount specified in octaves (i.e. amount=1 transposes one octave up)
 	void Transpose(double amount);
 
+	// Check if the sample has any valid cue points
+	bool HasAnyCuePoints() const;
 	// Check if the sample's cue points are the default cue point set.
 	bool HasCustomCuePoints() const;
 	void SetDefaultCuePoints();
 	// Set cue points so that they are suitable for regular offset command extension
 	void Set16BitCuePoints();
+	void RemoveAllCuePoints();
 
 	void SetAdlib(bool enable, OPLPatch patch = OPLPatch{{}});
 };

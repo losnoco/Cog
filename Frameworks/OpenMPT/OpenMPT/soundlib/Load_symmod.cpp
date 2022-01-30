@@ -621,8 +621,10 @@ struct SymInstrument
 		}
 
 		// This must be applied last because some sample processors are time-dependent and Symphonie would be doing this during playback instead
+		mptSmp.RemoveAllCuePoints();
 		if(type == Sustain && numRepetitions > 0 && loopLen > 0)
 		{
+			mptSmp.cues[0] = loopStart + loopLen * (numRepetitions + 1u);
 			mptSmp.nSustainStart = loopStart;  // This is of purely informative value and not used for playback
 			mptSmp.nSustainEnd   = loopStart + loopLen;
 
@@ -955,18 +957,18 @@ static bool ConvertDSP(const SymEvent event, MIDIMacroConfigData::Macro &macro, 
 		const uint8 reso = static_cast<uint8>(std::min(127, event.inst * 127 / 185));
 
 		if(type == 1)  // lowpass filter
-			mpt::String::WriteAutoBuf(macro) = MPT_AFORMAT("F0F000{} F0F001{} F0F00200")(mpt::afmt::HEX0<2>(cutoff), mpt::afmt::HEX0<2>(reso));
+			macro = MPT_AFORMAT("F0F000{} F0F001{} F0F00200")(mpt::afmt::HEX0<2>(cutoff), mpt::afmt::HEX0<2>(reso));
 		else if(type == 2)  // highpass filter
-			mpt::String::WriteAutoBuf(macro) = MPT_AFORMAT("F0F000{} F0F001{} F0F00210")(mpt::afmt::HEX0<2>(cutoff), mpt::afmt::HEX0<2>(reso));
+			macro = MPT_AFORMAT("F0F000{} F0F001{} F0F00210")(mpt::afmt::HEX0<2>(cutoff), mpt::afmt::HEX0<2>(reso));
 		else  // no filter or unsupported filter type
-			mpt::String::WriteAutoBuf(macro) = "F0F0007F F0F00100";
+			macro = "F0F0007F F0F00100";
 		return true;
 	} else if(event.command == SymEvent::DSPEcho)
 	{
 		const uint8 type = (event.note < 5) ? event.note : 0;
 		const uint8 length = (event.param < 128) ? event.param : 127;
 		const uint8 feedback = (event.inst < 128) ? event.inst : 127;
-		mpt::String::WriteAutoBuf(macro) = MPT_AFORMAT("F0F080{} F0F081{} F0F082{}")(mpt::afmt::HEX0<2>(type), mpt::afmt::HEX0<2>(length), mpt::afmt::HEX0<2>(feedback));
+		macro = MPT_AFORMAT("F0F080{} F0F081{} F0F082{}")(mpt::afmt::HEX0<2>(type), mpt::afmt::HEX0<2>(length), mpt::afmt::HEX0<2>(feedback));
 		return true;
 	} else if(event.command == SymEvent::DSPDelay)
 	{
@@ -1218,7 +1220,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 	static_assert(MAX_SAMPLES >= MAX_INSTRUMENTS);
 	m_nSamples = std::max(m_nSamples, m_nInstruments);
 
-	// Supporting this is probably rather useless, as the paths will always be Amiga paths. We just take the filename without path for now.
+	// Supporting this is probably rather useless, as the paths will always be full Amiga paths. We just take the filename without path for now.
 	if(externalSamples)
 	{
 #ifdef MPT_EXTERNAL_SAMPLES
@@ -1452,7 +1454,8 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 									break;
 
 								case SymEvent::KeyOff:
-									// TODO needs note
+									if(m.note == NOTE_NONE)
+										m.note = chnState.lastNote;
 									m.volcmd = VOLCMD_OFFSET;
 									m.vol = 1;
 									break;
@@ -1642,10 +1645,10 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 							{
 								m.command = CMD_MIDI;
 								m.param = macroMap[event];
-							} else if(macroMap.size() < std::size(m_MidiCfg.szMidiZXXExt))
+							} else if(macroMap.size() < m_MidiCfg.Zxx.size())
 							{
 								uint8 param = static_cast<uint8>(macroMap.size());
-								if(ConvertDSP(event, m_MidiCfg.szMidiZXXExt[param], *this))
+								if(ConvertDSP(event, m_MidiCfg.Zxx[param], *this))
 								{
 									m.command = CMD_MIDI;
 									m.param = macroMap[event] = 0x80 | param;
@@ -1925,8 +1928,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		InitChannel(chn);
 		ChnSettings[chn].nPan = (chn & 1) ? 256 : 0;
-		if(useDSP)
-			ChnSettings[chn].nMixPlugin = 1;  // For MIDI macros controlling the echo DSP
+		ChnSettings[chn].nMixPlugin = useDSP ? 1 : 0;  // For MIDI macros controlling the echo DSP
 	}
 
 	m_modFormat.formatName = U_("Symphonie");

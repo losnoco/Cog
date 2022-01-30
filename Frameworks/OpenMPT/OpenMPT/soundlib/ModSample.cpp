@@ -148,7 +148,7 @@ void ModSample::Initialize(MODTYPE type)
 	rootNote = 0;
 	filename = "";
 
-	SetDefaultCuePoints();
+	RemoveAllCuePoints();
 }
 
 
@@ -504,16 +504,29 @@ void ModSample::Transpose(double amount)
 }
 
 
+// Check if the sample has any valid cue points
+bool ModSample::HasAnyCuePoints() const
+{
+	if(uFlags[CHN_ADLIB])
+		return false;
+	for(auto pt : cues)
+	{
+		if(pt < nLength)
+			return true;
+	}
+	return false;
+}
+
+
 // Check if the sample's cue points are the default cue point set.
 bool ModSample::HasCustomCuePoints() const
 {
-	if(!uFlags[CHN_ADLIB])
+	if(uFlags[CHN_ADLIB])
+		return false;
+	for(SmpLength i = 0; i < std::size(cues); i++)
 	{
-		for(SmpLength i = 0; i < std::size(cues); i++)
-		{
-			if(cues[i] != (i + 1) << 11)
-				return true;
-		}
+		if(cues[i] != (i + 1) << 11)
+			return true;
 	}
 	return false;
 }
@@ -536,6 +549,13 @@ void ModSample::Set16BitCuePoints()
 	{
 		cues[i] = (i + 1) << 16;
 	}
+}
+
+
+void ModSample::RemoveAllCuePoints()
+{
+	if(!uFlags[CHN_ADLIB])
+		cues.fill(MAX_SAMPLE_LENGTH);
 }
 
 

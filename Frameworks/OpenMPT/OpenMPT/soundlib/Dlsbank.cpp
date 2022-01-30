@@ -1047,6 +1047,7 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 		instruments.clear();
 		DLSENVELOPE dlsEnv;
 		int32 instrAttenuation = 0;
+		int16 instrFinetune = 0;
 		// Default Envelope Values
 		dlsEnv.wVolAttack = 0;
 		dlsEnv.wVolDecay = 0;
@@ -1069,6 +1070,7 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 				continue;
 			for(const auto &gen : generators)
 			{
+				const int16 value = static_cast<int16>(gen.genAmount);
 				switch(gen.sfGenOper)
 				{
 				case SF2_GEN_ATTACKVOLENV:
@@ -1096,7 +1098,13 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 					keyRange = gen.genAmount;
 					break;
 				case SF2_GEN_ATTENUATION:
-					instrAttenuation = -static_cast<int16>(gen.genAmount);
+					instrAttenuation = -value;
+					break;
+				case SF2_GEN_COARSETUNE:
+					instrFinetune += value * 128;
+					break;
+				case SF2_GEN_FINETUNE:
+					instrFinetune += static_cast<int16>(Util::muldiv(static_cast<int8>(value), 128, 100));
 					break;
 #if 0
 				default:
@@ -1128,7 +1136,7 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 			DLSREGION globalZone{};
 			globalZone.uUnityNote = 0xFF;  // 0xFF means undefined -> use sample root note
 			globalZone.tuning = 100;
-			globalZone.sFineTune = 0;
+			globalZone.sFineTune = instrFinetune;
 			globalZone.nWaveLink = Util::MaxValueOfType(globalZone.nWaveLink);
 			if(keyRange != 0xFFFF)
 			{
@@ -1187,7 +1195,7 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 						}
 						break;
 					case SF2_GEN_UNITYNOTE:
-						if (value < 128) rgn.uUnityNote = (uint8)value;
+						if (value < 128) rgn.uUnityNote = static_cast<uint8>(value);
 						break;
 					case SF2_GEN_ATTACKVOLENV:
 						pDlsEnv->wVolAttack = SF2TimeToDLS(gen.genAmount);
@@ -1583,7 +1591,7 @@ bool CDLSBank::ExtractWaveForm(uint32 nIns, uint32 nRgn, std::vector<uint8> &wav
 	if(nRgn >= dlsIns.Regions.size())
 	{
 	#ifdef DLSBANK_LOG
-		MPT_LOG_GLOBAL(LogDebug, "DLSBANK", MPT_UFORMAT("invalid waveform region: nIns={} nRgn={} pSmp->nRegions={}")(nIns, nRgn, dlsIns.nRegions));
+		MPT_LOG_GLOBAL(LogDebug, "DLSBANK", MPT_UFORMAT("invalid waveform region: nIns={} nRgn={} pSmp->nRegions={}")(nIns, nRgn, dlsIns.Regions.size()));
 	#endif
 		return false;
 	}

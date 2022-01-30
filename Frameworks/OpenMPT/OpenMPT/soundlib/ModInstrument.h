@@ -21,7 +21,7 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-class CSoundFile;
+struct ModChannel;
 
 // Instrument Nodes
 struct EnvelopeNode
@@ -150,7 +150,7 @@ struct ModInstrument
 	void SetResonance(uint8 resonance, bool enable) { nIFR = std::min(resonance, uint8(0x7F)) | (enable ? 0x80 : 0x00); }
 
 	bool HasValidMIDIChannel() const { return (nMidiChannel >= 1 && nMidiChannel <= 17); }
-	uint8 GetMIDIChannel(const CSoundFile &sndFile, CHANNELINDEX chn) const;
+	uint8 GetMIDIChannel(const ModChannel &channel, CHANNELINDEX chn) const;
 
 	void SetTuning(CTuning *pT)
 	{

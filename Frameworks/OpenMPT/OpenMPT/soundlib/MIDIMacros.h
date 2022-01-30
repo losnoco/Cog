@@ -18,8 +18,10 @@ OPENMPT_NAMESPACE_BEGIN
 
 enum
 {
-	NUM_MACROS = 16,	// number of parametered macros
-	MACRO_LENGTH = 32,	// max number of chars per macro
+	kGlobalMacros = 9,    // Number of global macros
+	kSFxMacros    = 16,   // Number of parametered macros
+	kZxxMacros    = 128,  // Number of fixed macros
+	kMacroLength  = 32,   // Max number of chars per macro
 };
 
 OPENMPT_NAMESPACE_END
@@ -70,7 +72,7 @@ enum FixedMacro
 
 
 // Global macro types
-enum
+enum GlobalMacro
 {
 	MIDIOUT_START = 0,
 	MIDIOUT_STOP,
@@ -86,19 +88,74 @@ enum
 
 struct MIDIMacroConfigData
 {
-	typedef char Macro[MACRO_LENGTH];
-	// encoding is ASCII
-	Macro szMidiGlb[9];      // Global MIDI macros
-	Macro szMidiSFXExt[16];  // Parametric MIDI macros
-	Macro szMidiZXXExt[128]; // Fixed MIDI macros
+	struct Macro
+	{
+	public:
+		Macro &operator=(const Macro &other) = default;
+		Macro &operator=(const std::string_view other) noexcept
+		{
+			const size_t copyLength = std::min({m_data.size() - 1u, other.size(), other.find('\0')});
+			std::copy(other.begin(), other.begin() + copyLength, m_data.begin());
+			m_data[copyLength] = '\0';
+			Sanitize();
+			return *this;
+		}
 
-	Macro *begin() { return std::begin(szMidiGlb); }
-	const Macro *begin() const { return std::begin(szMidiGlb); }
-	Macro *end() { return std::end(szMidiZXXExt); }
-	const Macro *end() const { return std::end(szMidiZXXExt); }
+		bool operator==(const Macro &other) const noexcept
+		{
+			return m_data == other.m_data;  // Don't care about data past null-terminator as operator= and Sanitize() ensure there is no data behind it.
+		}
+		bool operator!=(const Macro &other) const noexcept
+		{
+			return !(*this == other);
+		}
+
+		operator mpt::span<const char>() const noexcept
+		{
+			return {m_data.data(), Length()};
+		}
+		operator std::string_view() const noexcept
+		{
+			return {m_data.data(), Length()};
+		}
+		operator std::string() const
+		{
+			return {m_data.data(), Length()};
+		}
+
+		MPT_CONSTEXPR20_FUN size_t Length() const noexcept
+		{
+			return static_cast<size_t>(std::distance(m_data.begin(), std::find(m_data.begin(), m_data.end(), '\0')));
+		}
+
+		MPT_CONSTEXPR20_FUN void Clear() noexcept
+		{
+			m_data.fill('\0');
+		}
+
+		// Remove blanks and other unwanted characters from macro strings for internal usage.
+		std::string NormalizedString() const;
+
+		void Sanitize() noexcept;
+		void UpgradeLegacyMacro() noexcept;
+
+	private:
+		std::array<char, kMacroLength> m_data;
+	};
+
+	std::array<Macro, kGlobalMacros> Global;
+	std::array<Macro, kSFxMacros> SFx;  // Parametered macros for Z00...Z7F
+	std::array<Macro, kZxxMacros> Zxx;  // Fixed macros Z80...ZFF
+
+	constexpr Macro *begin() noexcept {return Global.data(); }
+	constexpr const Macro *begin() const noexcept { return Global.data(); }
+	constexpr Macro *end() noexcept { return Zxx.data() + Zxx.size(); }
+	constexpr const Macro *end() const noexcept { return Zxx.data() + Zxx.size(); }
 };
 
-MPT_BINARY_STRUCT(MIDIMacroConfigData, 4896) // this is directly written to files, so the size must be correct!
+// This is directly written to files, so the size must be correct!
+MPT_BINARY_STRUCT(MIDIMacroConfigData::Macro, 32)
+MPT_BINARY_STRUCT(MIDIMacroConfigData, 4896)
 
 class MIDIMacroConfig : public MIDIMacroConfigData
 {
@@ -117,22 +174,23 @@ protected:
 public:
 	void CreateParameteredMacro(uint32 macroIndex, ParameteredMacro macroType, int subType = 0)
 	{
-		CreateParameteredMacro(szMidiSFXExt[macroIndex], macroType, subType);
+		if(macroIndex < std::size(SFx))
+			CreateParameteredMacro(SFx[macroIndex], macroType, subType);
 	}
 	std::string CreateParameteredMacro(ParameteredMacro macroType, int subType = 0) const;
 
 protected:
-	void CreateFixedMacro(Macro (&fixedMacros)[128], FixedMacro macroType) const;
+	void CreateFixedMacro(std::array<Macro, kZxxMacros> &fixedMacros, FixedMacro macroType) const;
 public:
 	void CreateFixedMacro(FixedMacro macroType)
 	{
-		CreateFixedMacro(szMidiZXXExt, macroType);
+		CreateFixedMacro(Zxx, macroType);
 	}
 
-#ifdef MODPLUG_TRACKER
+	bool operator==(const MIDIMacroConfig &other) const;
+	bool operator!=(const MIDIMacroConfig &other) const { return !(*this == other); }
 
-	bool operator== (const MIDIMacroConfig &other) const;
-	bool operator!= (const MIDIMacroConfig &other) const { return !(*this == other); }
+#ifdef MODPLUG_TRACKER
 
 	// Translate macro type or macro string to macro name
 	CString GetParameteredMacroName(uint32 macroIndex, IMixPlugin *plugin = nullptr) const;
@@ -162,15 +220,6 @@ public:
 
 	// Fix old-format (not conforming to IT's MIDI macro definitions) MIDI config strings.
 	void UpgradeMacros();
-
-protected:
-
-	// Helper function for FixMacroFormat()
-	void UpgradeMacroString(Macro &macro) const;
-
-	// Remove blanks and other unwanted characters from macro strings for internal usage.
-	std::string GetSafeMacro(const Macro &macro) const;
-
 };
 
 static_assert(sizeof(MIDIMacroConfig) == sizeof(MIDIMacroConfigData)); // this is directly written to files, so the size must be correct!

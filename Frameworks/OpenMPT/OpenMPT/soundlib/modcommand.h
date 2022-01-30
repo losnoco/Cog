@@ -107,6 +107,7 @@ enum EffectCommand : uint8
 	CMD_REVERSEOFFSET       = 42, // PTM Nxx Revert sample + offset
 	CMD_DBMECHO             = 43, // DBM enable/disable echo
 	CMD_OFFSETPERCENTAGE    = 44, // PLM Percentage Offset
+	CMD_DIGIREVERSESAMPLE   = 45, // DIGI reverse sample
 	MAX_EFFECTS
 };
 

@@ -30,7 +30,7 @@ MPT_WARNING("C stdlib does not provide math constants. Please #define _USE_MATH_
 #endif
 #endif
 
-#if !MPT_LIBC_MS
+#if MPT_LIBC_GLIBC
 #if !defined(_FILE_OFFSET_BITS)
 #ifndef MPT_CHECK_LIBC_IGNORE_WARNING_NO_FILE_OFFSET_BITS
 MPT_WARNING("C stdlib may not provide 64bit std::FILE access. Please #define _FILE_OFFSET_BITS=64.")

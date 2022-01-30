@@ -1393,8 +1393,8 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 	memcpy(itHeader.id, "IMPM", 4);
 	mpt::String::WriteBuf(mpt::String::nullTerminated, itHeader.songname) = m_songName;
 
-	itHeader.highlight_minor = (uint8)std::min(m_nDefaultRowsPerBeat, ROWINDEX(uint8_max));
-	itHeader.highlight_major = (uint8)std::min(m_nDefaultRowsPerMeasure, ROWINDEX(uint8_max));
+	itHeader.highlight_minor = mpt::saturate_cast<uint8>(m_nDefaultRowsPerBeat);
+	itHeader.highlight_major = mpt::saturate_cast<uint8>(m_nDefaultRowsPerMeasure);
 
 	if(GetType() == MOD_TYPE_MPT)
 	{
@@ -2470,7 +2470,10 @@ void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannel
 						ModSample &sample = Samples[smp];
 						for(auto &cue : sample.cues)
 						{
-							cue = chunk.ReadUint32LE();
+							if(chunk.CanRead(4))
+								cue = chunk.ReadUint32LE();
+							else
+								cue = MAX_SAMPLE_LENGTH;
 						}
 					}
 				}

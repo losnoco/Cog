@@ -10,8 +10,8 @@ CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)
 
 CPPFLAGS += -DWIN32 -D_WIN32 -DWINVER=0x0410 -D_WIN32_WINDOWS=0x0410 -DMPT_BUILD_RETRO
-CXXFLAGS += -mconsole
-CFLAGS   += -mconsole
+CXXFLAGS += -mconsole -mthreads
+CFLAGS   += -mconsole -mthreads
 LDFLAGS  += 
 LDLIBS   += -lm -lole32 -lrpcrt4 -lwinmm
 ARFLAGS  := rcs

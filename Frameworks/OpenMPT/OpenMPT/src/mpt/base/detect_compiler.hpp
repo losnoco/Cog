@@ -146,7 +146,9 @@
 #if MPT_COMPILER_GENERIC || MPT_COMPILER_GCC || MPT_COMPILER_CLANG
 
 #if (__cplusplus >= 202002)
-#define MPT_CXX 20
+// Support for C++20 is lacking across all compilers.
+// Only assume C++17 for non-MSVC, even when in C++20 mode.
+#define MPT_CXX 17
 #elif (__cplusplus >= 201703)
 #define MPT_CXX 17
 #else

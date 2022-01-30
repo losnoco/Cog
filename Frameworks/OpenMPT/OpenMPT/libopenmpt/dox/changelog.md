@@ -5,6 +5,35 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.6.1 (2022-01-30)
+
+ *  [**Bug**] Linking libmpg123 no longer fails on OpenBSD.
+ *  [**Bug**] Possible hang with malformed DMF, DSM, MED, MUS, OKT and SymMOD
+    files containing 65536 or more patterns when destroying the module.
+ *  [**Bug**] Avoid NaNs and infinite values with custom tunings and in the
+    I3DL2Reverb plugin.
+
+ *  The letter "z" is now evaluated in fixed MIDI macros (Z80...ZFF) the same
+    way as in Impulse Tracker.
+ *  MOD: Loosened VBlank timing heuristics so that "frame of mind" by Dascon
+    plays correctly.
+ *  MOD: Validate the contents of "hidden" patterns beyond the end of the order
+    list when the file size matches the expected size when only taken "official"
+    patterns into account. This fixes Shofixti Ditty.mod from Star Control 2
+    while keeping other (partly broken) modules working.
+ *  MED: Command 20 (reverse sample) is now only applied when it's next to a
+    note.
+ *  S3M: Introducing the "Send OPL key-off when triggering notes" compatibility
+    setting broke retrigger for OPL notes again (they retriggered rather than
+    not retriggering).
+ *  S3M: Retriggering a note no longer resets its pitch after a portamento.
+ *  S3M: Partially implement retrigger behaviour for stopped notes in
+    SoundBlaster mode: Like in IT, it is not possible to retrigger a sample that
+    has already stopped playing.
+ *  DIGI: Improve compatibility with E3x reverse sample command.
+ *  DSym: Tempos < 32 were treated as tempo slides.
+ *  SymMOD: Key-off command was not implemented properly.
+
 ### libopenmpt 0.6.0 (2021-12-23)
 
  *  [**New**] `MUS` files from Psycho Pinball and Micro Machines 2 are now
@@ -14,6 +43,8 @@ is just a high-level summary.
  *  [**New**] `FMT` files created with Davey W Taylor's FM Tracker are now
     supported.
  *  [**New**] `DSYM` files created with Digital Symphony are now supported.
+ *  [**New**] `STX` files (transitional format between Scream Tracker 2 and 3)
+    are now supported.
  *  [**New**] TakeTracker MODs with `TDZ1` to `TDZ3` magic bytes are now
     supported.
  *  [**New**] openmpt123: openmpt123 will now expand file wildcards passed on
@@ -68,6 +99,7 @@ is just a high-level summary.
     song does not restart from the beginning even if the repeat count is not 0.
  *  `openmpt::module::set_position_seconds()` accuracy has been improved for
     modules with pattern loops.
+ *  Samples played at the wrong volume when rendering modules in mono.
  *  IT: Portamentos in files with Linear Slides disabled are now more accurate.
  *  IT: Pitch/Pan Separation was affected by note-off commands, and wasn't reset
     by panning commands like in Impulse Tracker.

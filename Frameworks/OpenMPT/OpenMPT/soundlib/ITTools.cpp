@@ -535,6 +535,7 @@ uint32 ITSample::ConvertToMPT(ModSample &mptSmp) const
 	}
 
 	mptSmp.Initialize(MOD_TYPE_IT);
+	mptSmp.SetDefaultCuePoints();  // For old IT/MPTM files
 	mptSmp.filename = mpt::String::ReadBuf(mpt::String::nullTerminated, filename);
 
 	// Volume / Panning

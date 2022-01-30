@@ -38,6 +38,7 @@
 #include "openmpt/soundbase/SampleConvert.hpp"
 #include "openmpt/soundbase/SampleDecode.hpp"
 #include "openmpt/soundbase/SampleEncode.hpp"
+#include "openmpt/soundbase/SampleFormat.hpp"
 #include "../soundlib/SampleCopy.h"
 #include "../soundlib/SampleNormalize.h"
 #include "../soundlib/ModSampleCopy.h"
@@ -840,6 +841,101 @@ static MPT_NOINLINE void TestMisc1()
 	VERIFY_EQUAL(CModSpecifications::ExtensionToType("ita"), MOD_TYPE_NONE);
 	VERIFY_EQUAL(CModSpecifications::ExtensionToType("s2m"), MOD_TYPE_NONE);
 	VERIFY_EQUAL(CModSpecifications::ExtensionToType(""), MOD_TYPE_NONE);
+
+	// invalid
+	VERIFY_EQUAL(SampleFormat::FromInt(0), SampleFormat::Invalid);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0000'11'0), SampleFormat::Invalid);
+
+	// correct
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0001'00'1), SampleFormat::Unsigned8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0001'00'0), SampleFormat::Int8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0010'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0011'00'0), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0100'00'0), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0100'00'0), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1000'00'0), SampleFormat::Float64);
+
+	// no size
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0000'00'0), SampleFormat::Invalid);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0000'00'1), SampleFormat::Unsigned8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0000'00'0), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0000'00'1), SampleFormat::Invalid);
+
+	// invalid unsigned
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0010'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0011'00'1), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0100'00'1), SampleFormat::Int32);
+
+	// invalid float
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0001'00'0), SampleFormat::Int8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0010'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0011'00'0), SampleFormat::Int24);
+
+	// bogus size
+
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0001'00'0), SampleFormat::Int8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0010'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0011'00'0), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0100'00'0), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0101'00'0), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0110'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0111'00'0), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1000'00'0), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1001'00'0), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1010'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1011'00'0), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1100'00'0), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1101'00'0), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1110'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1111'00'0), SampleFormat::Int24);
+
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0001'00'1), SampleFormat::Unsigned8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0010'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0011'00'1), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0100'00'1), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0101'00'1), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0110'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'0111'00'1), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1000'00'1), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1001'00'1), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1010'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1011'00'1), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1100'00'1), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1101'00'1), SampleFormat::Int32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1110'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b0'1111'00'1), SampleFormat::Int24);
+
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0001'00'0), SampleFormat::Int8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0010'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0011'00'0), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0100'00'0), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0101'00'0), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0110'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0111'00'0), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1000'00'0), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1001'00'0), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1010'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1011'00'0), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1100'00'0), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1101'00'0), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1110'00'0), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1111'00'0), SampleFormat::Int24);
+
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0001'00'1), SampleFormat::Unsigned8);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0010'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0011'00'1), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0100'00'1), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0101'00'1), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0110'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'0111'00'1), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1000'00'1), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1001'00'1), SampleFormat::Float64);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1010'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1011'00'1), SampleFormat::Int24);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1100'00'1), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1101'00'1), SampleFormat::Float32);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1110'00'1), SampleFormat::Int16);
+	VERIFY_EQUAL(SampleFormat::FromInt(0b1'1111'00'1), SampleFormat::Int24);
 
 }
 

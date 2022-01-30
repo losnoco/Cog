@@ -548,8 +548,11 @@ static void ConvertMEDEffect(ModCommand &m, bool is8ch, bool bpmMode, uint8 rows
 	case 0x20:  // Reverse sample + skip samples
 		if(m.param == 0 && m.vol == 0)
 		{
-			m.command = CMD_S3MCMDEX;
-			m.param = 0x9F;
+			if(m.IsNote())
+			{
+				m.command = CMD_S3MCMDEX;
+				m.param = 0x9F;
+			}
 		} else
 		{
 			// Skip given number of samples
@@ -1041,7 +1044,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Setup a program change macro for command 1C (even if MIDI plugin is disabled, as otherwise these commands may act as filter commands)
 	m_MidiCfg.ClearZxxMacros();
-	strcpy(m_MidiCfg.szMidiSFXExt[0], "Cc z");
+	m_MidiCfg.SFx[0] = "Cc z";
 
 	file.Rewind();
 	PATTERNINDEX basePattern = 0;
@@ -1201,7 +1204,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 		// Read MIDI messages
 		if(expData.midiDumpOffset && file.Seek(expData.midiDumpOffset) && file.CanRead(8))
 		{
-			uint16 numDumps = std::min(file.ReadUint16BE(), static_cast<uint16>(std::size(m_MidiCfg.szMidiZXXExt)));
+			uint16 numDumps = std::min(file.ReadUint16BE(), static_cast<uint16>(m_MidiCfg.Zxx.size()));
 			file.Skip(6);
 			if(file.CanRead(numDumps * 4))
 			{
@@ -1215,14 +1218,15 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 					file.ReadStruct(dumpHeader);
 					if(!file.Seek(dumpHeader.dataPointer) || !file.CanRead(dumpHeader.length))
 						continue;
-					auto &macro = m_MidiCfg.szMidiZXXExt[dump];
-					auto length = std::min(static_cast<size_t>(dumpHeader.length), std::size(macro) / 2u);
+					std::array<char, kMacroLength> macro{};
+					auto length = std::min(static_cast<size_t>(dumpHeader.length), macro.size() / 2u);
 					for(size_t i = 0; i < length; i++)
 					{
 						const uint8 byte = file.ReadUint8(), high = byte >> 4, low = byte & 0x0F;
 						macro[i * 2] = high + (high < 0x0A ? '0' : 'A' - 0x0A);
 						macro[i * 2 + 1] = low + (low < 0x0A ? '0' : 'A' - 0x0A);
 					}
+					m_MidiCfg.Zxx[dump] = std::string_view{macro.data(), length * 2};
 				}
 			}
 		}

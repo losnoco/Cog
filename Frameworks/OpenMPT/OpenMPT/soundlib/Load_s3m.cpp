@@ -534,6 +534,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		const bool useGUS = gusAddresses > 1;
 		m_playBehaviour.set(kST3PortaSampleChange, useGUS);
 		m_playBehaviour.set(kST3SampleSwap, !useGUS);
+		m_playBehaviour.set(kITShortSampleRetrig, !useGUS);  // Only half the truth but close enough for now
 		m_modFormat.madeWithTracker += useGUS ? UL_(" (GUS)") : UL_(" (SB)");
 		// ST3's GUS driver doesn't use this value. Ignoring it fixes the balance between FM and PCM samples (e.g. in Rotagilla by Manwe)
 		if(useGUS)

@@ -35,6 +35,20 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
+#if MPT_OS_OPENBSD
+// This is kind-of a hack.
+// See <https://sourceforge.net/p/mpg123/bugs/330/>.
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
+#ifdef _FILE_OFFSET_BITS
+#undef _FILE_OFFSET_BITS
+#endif
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif
+#endif
 #include <mpg123.h>
 
 #endif
