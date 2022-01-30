@@ -97,8 +97,6 @@
 {
     [self updateToolTip];
 
-    [popover showRelativeToRect:view.bounds ofView:view preferredEdge:NSRectEdgeMaxY];
-
     [self hideToolTipAfterDelay:duration];
 }
 
