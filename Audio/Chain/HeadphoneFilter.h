@@ -22,8 +22,6 @@
     size_t          paddedBufferSize;
     size_t          channelCount;
     
-    double          sampleRate;
-    
     COMPLEX_SPLIT   signal_fft;
     COMPLEX_SPLIT   input_filtered_signal_per_channel[2];
     COMPLEX_SPLIT * impulse_responses;
@@ -47,6 +45,8 @@
 - (id)initWithImpulseFile:(NSURL *)url forSampleRate:(double)sampleRate withInputChannels:(size_t)channels;
 
 - (void)process:(const float*)inBuffer sampleCount:(size_t)count toBuffer:(float *)outBuffer;
+
+- (void)reset;
 
 @end
 
