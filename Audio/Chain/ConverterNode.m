@@ -1244,10 +1244,7 @@ static float db_to_scale(float db)
         }
         
         if (!presetUrl) {
-            CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("gsx"), CFSTR("wv"), NULL);
-            if (appUrlRef)
-                presetUrl = (__bridge NSURL *) appUrlRef;
-            CFRelease(appUrlRef);
+            presetUrl = [[NSBundle mainBundle] URLForResource:@"gsx" withExtension:@"wv"];
             if (![HeadphoneFilter validateImpulseFile:presetUrl])
                 presetUrl = nil;
         }

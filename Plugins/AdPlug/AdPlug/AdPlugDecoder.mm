@@ -23,20 +23,15 @@ static CAdPlugDatabase * g_database = NULL;
 + (void)initialize
 {
     if (!g_database) {
-        CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetBundleWithIdentifier(CFSTR("net.kode54.AdPlug")), CFSTR("adplug"), CFSTR("db"), NULL);
+        NSURL * dbUrl = [[NSBundle bundleWithIdentifier:@"net.kode54.AdPlug"] URLForResource:@"adplug" withExtension:@"db"];
         
-        CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
-        
-        NSString *dbPath = (__bridge NSString *) macPath;
+        NSString *dbPath = [dbUrl path];
         
         if (dbPath) {
             g_database = new CAdPlugDatabase;
             g_database->load([dbPath UTF8String]);
             
             CAdPlug::set_database( g_database );
-            
-            CFRelease(macPath);
-            CFRelease(appUrlRef);
         }
     }
 }

@@ -136,11 +136,9 @@ static void loadPresets()
 {
     if ([equalizer_presets_processed count]) return;
 
-    CFURLRef appUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("Cog.q1"), CFSTR("json"), NULL);
+    NSURL * url = [[NSBundle mainBundle] URLForResource:@"Cog.q1" withExtension:@"json"];
 
-    CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
-
-    NSFileHandle * fileHandle = [NSFileHandle fileHandleForReadingAtPath:(__bridge NSString *)macPath];
+    NSFileHandle * fileHandle = [NSFileHandle fileHandleForReadingAtPath:[url path]];
     if (fileHandle) {
         NSError *err;
         NSData *data;
@@ -235,8 +233,6 @@ static void loadPresets()
         json_value_free(equalizer_presets);
         equalizer_presets = NULL;
     }
-    CFRelease(macPath);
-    CFRelease(appUrlRef);
 }
 
 void equalizerApplyGenre(AudioUnit au, NSString *genre) {
