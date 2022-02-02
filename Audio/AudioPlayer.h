@@ -47,6 +47,8 @@
     atomic_int refCount;
     
     int currentPlaybackStatus;
+    
+    BOOL shouldContinue;
 }
 
 - (id)init;

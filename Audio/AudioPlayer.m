@@ -251,6 +251,8 @@
 
 - (void)setShouldContinue:(BOOL)s
 {
+    shouldContinue = s;
+    
 	if (bufferChain)
 		[bufferChain setShouldContinue:s];
 		
@@ -344,7 +346,7 @@
         }
     }
 
-    while (duration >= 30.0)
+    while (duration >= 30.0 && shouldContinue)
     {
         [semaphore wait];
         if (atomic_load_explicit(&resettingNow, memory_order_relaxed)) {
@@ -416,7 +418,7 @@
         
         lastChain = nil;
 		
-		while (![newChain open:nextStream withOutputFormat:[output format] withRGInfo:nextStreamRGInfo])
+		while (shouldContinue && ![newChain open:nextStream withOutputFormat:[output format] withRGInfo:nextStreamRGInfo])
 		{
 			if (nextStream == nil)
 			{
