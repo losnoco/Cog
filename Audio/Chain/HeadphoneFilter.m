@@ -9,8 +9,11 @@
 #import "AudioSource.h"
 #import "AudioDecoder.h"
 
-#import <audio/audio_resampler.h>
-#import <memalign.h>
+#import <soxr.h>
+#import <mm_malloc.h>
+
+#import "lpc.h"
+#import "util.h"
 
 @implementation HeadphoneFilter
 
@@ -169,16 +172,30 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
             double sampleRatio = sampleRate / sampleRateOfSource;
             int resampledCount = (int)ceil((double)sampleCount * sampleRatio);
 
-            void *resampler_data = NULL;
-            const retro_resampler_t *resampler = NULL;
-
-            if (!retro_resampler_realloc(&resampler_data, &resampler, "sinc", RESAMPLER_QUALITY_NORMAL, impulseChannels, sampleRatio)) {
+            soxr_quality_spec_t       q_spec = soxr_quality_spec(SOXR_HQ, 0);
+            soxr_io_spec_t           io_spec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
+            soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(0);
+            
+            soxr_error_t error;
+            
+            soxr_t soxr = soxr_create(sampleRateOfSource, sampleRate, impulseChannels, &error, &io_spec, &q_spec, &runtime_spec);
+            
+            if (error) {
                 free(impulseBuffer);
                 return nil;
             }
 
-            int resamplerLatencyIn = (int) resampler->latency(resampler_data);
-            int resamplerLatencyOut = (int)ceil(resamplerLatencyIn * sampleRatio);
+            unsigned long PRIME_LEN_ = MAX(sampleRateOfSource/20, 1024u);
+                          PRIME_LEN_ = MIN(PRIME_LEN_, 16384u);
+                          PRIME_LEN_ = MAX(PRIME_LEN_, 2*LPC_ORDER + 1);
+            
+            unsigned int N_samples_to_add_ = sampleRateOfSource;
+            unsigned int N_samples_to_drop_ = sampleRate;
+            
+            samples_len(&N_samples_to_add_, &N_samples_to_drop_, 20, 8192u);
+
+            int resamplerLatencyIn = (int) N_samples_to_add_;
+            int resamplerLatencyOut = (int) N_samples_to_drop_;
             
             float * tempImpulse = (float *) realloc(impulseBuffer, (sampleCount + resamplerLatencyIn * 2 + 1024) * sizeof(float) * impulseChannels);
             if (!tempImpulse) {
@@ -195,29 +212,31 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
                 free(impulseBuffer);
                 return nil;
             }
+            
+            size_t prime = MIN(sampleCount, PRIME_LEN_);
+            
+            void * extrapolate_buffer = NULL;
+            size_t extrapolate_buffer_size = 0;
 
             memmove(impulseBuffer + resamplerLatencyIn * impulseChannels, impulseBuffer, sampleCount * sizeof(float) * impulseChannels);
-            memset(impulseBuffer, 0, resamplerLatencyIn * sizeof(float) * impulseChannels);
-            memset(impulseBuffer + (resamplerLatencyIn + sampleCount) * impulseChannels, 0, resamplerLatencyIn * sizeof(float) * impulseChannels);
+            lpc_extrapolate_bkwd(impulseBuffer + N_samples_to_add_ * impulseChannels, sampleCount, prime, impulseChannels, LPC_ORDER, N_samples_to_add_, &extrapolate_buffer, &extrapolate_buffer_size);
+            lpc_extrapolate_fwd(impulseBuffer + N_samples_to_add_ * impulseChannels, sampleCount, prime, impulseChannels, LPC_ORDER, N_samples_to_add_, &extrapolate_buffer, &extrapolate_buffer_size);
+            free(extrapolate_buffer);
 
-            struct resampler_data src_data;
-            src_data.data_in = impulseBuffer;
-            src_data.input_frames = sampleCount + resamplerLatencyIn * 2;
-            src_data.data_out = resampledImpulse;
-            src_data.output_frames = 0;
-            src_data.ratio = sampleRatio;
+            size_t inputDone = 0;
+            size_t outputDone = 0;
+
+            soxr_process(soxr, impulseBuffer, sampleCount + N_samples_to_add_ * 2, &inputDone, resampledImpulse, resampledCount, &outputDone);
             
-            resampler->process(resampler_data, &src_data);
+            soxr_delete(soxr);
 
-            resampler->free(resampler, resampler_data);
+            outputDone -= N_samples_to_drop_ * 2;
 
-            src_data.output_frames -= resamplerLatencyOut * 2;
-
-            memmove(resampledImpulse, resampledImpulse + resamplerLatencyOut * impulseChannels, src_data.output_frames * sizeof(float) * impulseChannels);
+            memmove(resampledImpulse, resampledImpulse + N_samples_to_drop_ * impulseChannels, outputDone * sizeof(float) * impulseChannels);
 
             free(impulseBuffer);
             impulseBuffer = resampledImpulse;
-            sampleCount = (int) src_data.output_frames;
+            sampleCount = (int) outputDone;
         }
 
         channelCount = channels;
@@ -229,7 +248,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
         while (fftSize > 2) { pow++; fftSize /= 2; }
         fftSize = 2 << pow;
 
-        float * deinterleavedImpulseBuffer = (float *) memalign_alloc(16, fftSize * sizeof(float) * impulseChannels);
+        float * deinterleavedImpulseBuffer = (float *) _mm_malloc(fftSize * sizeof(float) * impulseChannels, 16);
         if (!deinterleavedImpulseBuffer) {
             free(impulseBuffer);
             return nil;
@@ -249,54 +268,54 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 
         fftSetup = vDSP_create_fftsetup(log2n, FFT_RADIX2);
         if (!fftSetup) {
-            memalign_free(deinterleavedImpulseBuffer);
+            _mm_free(deinterleavedImpulseBuffer);
             return nil;
         }
 
-        paddedSignal = (float *) memalign_alloc(16, sizeof(float) * paddedBufferSize);
+        paddedSignal = (float *) _mm_malloc(sizeof(float) * paddedBufferSize, 16);
         if (!paddedSignal) {
-            memalign_free(deinterleavedImpulseBuffer);
+            _mm_free(deinterleavedImpulseBuffer);
             return nil;
         }
         
-        signal_fft.realp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
-        signal_fft.imagp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
+        signal_fft.realp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
+        signal_fft.imagp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
         if (!signal_fft.realp || !signal_fft.imagp) {
-            memalign_free(deinterleavedImpulseBuffer);
+            _mm_free(deinterleavedImpulseBuffer);
             return nil;
         }
         
-        input_filtered_signal_per_channel[0].realp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
-        input_filtered_signal_per_channel[0].imagp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
+        input_filtered_signal_per_channel[0].realp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
+        input_filtered_signal_per_channel[0].imagp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
         if (!input_filtered_signal_per_channel[0].realp ||
             !input_filtered_signal_per_channel[0].imagp) {
-            memalign_free(deinterleavedImpulseBuffer);
+            _mm_free(deinterleavedImpulseBuffer);
             return nil;
         }
         
-        input_filtered_signal_per_channel[1].realp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
-        input_filtered_signal_per_channel[1].imagp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
+        input_filtered_signal_per_channel[1].realp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
+        input_filtered_signal_per_channel[1].imagp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
         if (!input_filtered_signal_per_channel[1].realp ||
             !input_filtered_signal_per_channel[1].imagp) {
-            memalign_free(deinterleavedImpulseBuffer);
+            _mm_free(deinterleavedImpulseBuffer);
             return nil;
         }
 
         impulse_responses = (COMPLEX_SPLIT *) calloc(sizeof(COMPLEX_SPLIT), channels * 2);
         if (!impulse_responses) {
-            memalign_free(deinterleavedImpulseBuffer);
+            _mm_free(deinterleavedImpulseBuffer);
             return nil;
         }
 
         for (size_t i = 0; i < channels; ++i) {
-            impulse_responses[i * 2 + 0].realp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
-            impulse_responses[i * 2 + 0].imagp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
-            impulse_responses[i * 2 + 1].realp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
-            impulse_responses[i * 2 + 1].imagp = (float *) memalign_alloc(16, sizeof(float) * fftSizeOver2);
+            impulse_responses[i * 2 + 0].realp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
+            impulse_responses[i * 2 + 0].imagp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
+            impulse_responses[i * 2 + 1].realp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
+            impulse_responses[i * 2 + 1].imagp = (float *) _mm_malloc(sizeof(float) * fftSizeOver2, 16);
             
             if (!impulse_responses[i * 2 + 0].realp || !impulse_responses[i * 2 + 0].imagp ||
                 !impulse_responses[i * 2 + 1].realp || !impulse_responses[i * 2 + 1].imagp) {
-                memalign_free(deinterleavedImpulseBuffer);
+                _mm_free(deinterleavedImpulseBuffer);
                 return nil;
             }
             
@@ -317,7 +336,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
                 if (impulseChannels == 7) {
                     temp = (float *) malloc(sizeof(float) * fftSize);
                     if (!temp) {
-                        memalign_free(deinterleavedImpulseBuffer);
+                        _mm_free(deinterleavedImpulseBuffer);
                         return nil;
                     }
 
@@ -330,7 +349,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
                 else {
                     temp = (float *) malloc(sizeof(float) * fftSize * 2);
                     if (!temp) {
-                        memalign_free(deinterleavedImpulseBuffer);
+                        _mm_free(deinterleavedImpulseBuffer);
                         return nil;
                     }
 
@@ -355,20 +374,20 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
             vDSP_fft_zrip(fftSetup, &impulse_responses[i * 2 + 1], 1, log2n, FFT_FORWARD);
         }
         
-        memalign_free(deinterleavedImpulseBuffer);
+        _mm_free(deinterleavedImpulseBuffer);
         
-        left_result = (float *) memalign_alloc(16, sizeof(float) * fftSize);
-        right_result = (float *) memalign_alloc(16, sizeof(float) * fftSize);
+        left_result = (float *) _mm_malloc(sizeof(float) * fftSize, 16);
+        right_result = (float *) _mm_malloc(sizeof(float) * fftSize, 16);
         if (!left_result || !right_result)
             return nil;
         
-        prevOverlapLeft = (float *) memalign_alloc(16, sizeof(float) * fftSize);
-        prevOverlapRight = (float *) memalign_alloc(16, sizeof(float) * fftSize);
+        prevOverlapLeft = (float *) _mm_malloc(sizeof(float) * fftSize, 16);
+        prevOverlapRight = (float *) _mm_malloc(sizeof(float) * fftSize, 16);
         if (!prevOverlapLeft || !prevOverlapRight)
             return nil;
 
-        left_mix_result = (float *) memalign_alloc(16, sizeof(float) * fftSize);
-        right_mix_result = (float *) memalign_alloc(16, sizeof(float) * fftSize);
+        left_mix_result = (float *) _mm_malloc(sizeof(float) * fftSize, 16);
+        right_mix_result = (float *) _mm_malloc(sizeof(float) * fftSize, 16);
         if (!left_mix_result || !right_mix_result)
             return nil;
         
@@ -381,32 +400,32 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 - (void)dealloc {
     if (fftSetup) vDSP_destroy_fftsetup(fftSetup);
     
-    memalign_free(paddedSignal);
+    _mm_free(paddedSignal);
     
-    memalign_free(signal_fft.realp);
-    memalign_free(signal_fft.imagp);
+    _mm_free(signal_fft.realp);
+    _mm_free(signal_fft.imagp);
 
-    memalign_free(input_filtered_signal_per_channel[0].realp);
-    memalign_free(input_filtered_signal_per_channel[0].imagp);
-    memalign_free(input_filtered_signal_per_channel[1].realp);
-    memalign_free(input_filtered_signal_per_channel[1].imagp);
+    _mm_free(input_filtered_signal_per_channel[0].realp);
+    _mm_free(input_filtered_signal_per_channel[0].imagp);
+    _mm_free(input_filtered_signal_per_channel[1].realp);
+    _mm_free(input_filtered_signal_per_channel[1].imagp);
 
     if (impulse_responses) {
         for (size_t i = 0; i < channelCount * 2; ++i) {
-            memalign_free(impulse_responses[i].realp);
-            memalign_free(impulse_responses[i].imagp);
+            _mm_free(impulse_responses[i].realp);
+            _mm_free(impulse_responses[i].imagp);
         }
         free(impulse_responses);
     }
 
-    memalign_free(left_result);
-    memalign_free(right_result);
+    _mm_free(left_result);
+    _mm_free(right_result);
     
-    memalign_free(prevOverlapLeft);
-    memalign_free(prevOverlapRight);
+    _mm_free(prevOverlapLeft);
+    _mm_free(prevOverlapRight);
 
-    memalign_free(left_mix_result);
-    memalign_free(right_mix_result);
+    _mm_free(left_mix_result);
+    _mm_free(right_mix_result);
 }
 
 - (void)process:(const float*)inBuffer sampleCount:(size_t)count toBuffer:(float *)outBuffer {

@@ -13,9 +13,6 @@
 
 #import "Logging.h"
 
-#import <audio/conversion/s16_to_float.h>
-#import <audio/conversion/s32_to_float.h>
-
 #import "lpc.h"
 #import "util.h"
 
@@ -57,9 +54,8 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
     if (self)
     {
         rgInfo = nil;
-        
-        resampler = NULL;
-        resampler_data = NULL;
+
+        soxr = 0;
         inputBuffer = NULL;
         inputBufferSize = 0;
         floatBuffer = NULL;
@@ -81,12 +77,9 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         dsd2pcm = NULL;
         dsd2pcmCount = 0;
         
-        outputResampling = @"";
-        
         hdcd_decoder = NULL;
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
-        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputResampling" options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.headphoneVirtualization" options:0 context:nil];
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hrirPath" options:0 context:nil];
     }
@@ -274,43 +267,7 @@ void scale_by_volume(float * buffer, size_t count, float volume)
 {
     if ( volume != 1.0 )
     {
-#if TARGET_CPU_X86 || TARGET_CPU_X86_64
-        if ( count >= 8 )
-        {
-            __m128 vgf = _mm_set1_ps(volume);
-            while ( count >= 8 )
-            {
-                __m128 input   = _mm_loadu_ps(buffer);
-                __m128 input2  = _mm_loadu_ps(buffer + 4);
-                __m128 output  = _mm_mul_ps(input, vgf);
-                __m128 output2 = _mm_mul_ps(input2, vgf);
-
-                _mm_storeu_ps(buffer + 0, output);
-                _mm_storeu_ps(buffer + 4, output2);
-                
-                buffer        += 8;
-                count         -= 8;
-            }
-        }
-#elif TARGET_CPU_ARM || TARGET_CPU_ARM64
-        if ( count >= 8 )
-        {
-            float32x4_t vgf           = vdupq_n_f32(volume);
-            while ( count >= 8 )
-            {
-                float32x4x2_t oreg;
-                float32x4x2_t inreg   = vld1q_f32_x2(buffer);
-                oreg.val[0]           = vmulq_f32(inreg.val[0], vgf);
-                oreg.val[1]           = vmulq_f32(inreg.val[1], vgf);
-                vst1q_f32_x2(buffer, oreg);
-                buffer               += 8;
-                count                -= 8;
-            }
-        }
-#endif
-        
-        for (size_t i = 0; i < count; ++i)
-            buffer[i] *= volume;
+        vDSP_vsmul(buffer, 1, &volume, buffer, 1, count);
     }
 }
 
@@ -514,7 +471,7 @@ static int dsd2pcm_latency(void * _state)
     else return 0;
 }
 
-static void dsd2pcm_process(void * _state, uint8_t * src, size_t sofs, size_t sinc, float * dest, size_t dofs, size_t dinc, size_t len)
+static void dsd2pcm_process(void * _state, const uint8_t * src, size_t sofs, size_t sinc, float * dest, size_t dofs, size_t dinc, size_t len)
 {
     struct dsd2pcm_state * state = (struct dsd2pcm_state *) _state;
     int bite1, bite2, temp;
@@ -877,7 +834,8 @@ tryagain:
                 samplesRead = bytesReadFromInput / 2;
                 if (isUnsigned)
                     convert_u16_to_s16(inputBuffer, samplesRead);
-                convert_s16_to_float(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, 1.0);
+                vDSP_vflt16((const short *)inputBuffer, 1, (float *)(inputBuffer + bytesReadFromInput), 1, samplesRead);
+                scale_by_volume((float *)(inputBuffer + bytesReadFromInput), samplesRead, (float)(1.0 / (1ULL << 15)));
                 memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
                 bitsPerSample = 32;
                 bytesReadFromInput = samplesRead * sizeof(float);
@@ -899,7 +857,8 @@ tryagain:
                 samplesRead = bytesReadFromInput / 4;
                 if (isUnsigned)
                     convert_u32_to_s32(inputBuffer, samplesRead);
-                convert_s32_to_float(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, gain);
+                vDSP_vflt32((const int *)inputBuffer, 1, (float *)(inputBuffer + bytesReadFromInput), 1, samplesRead);
+                scale_by_volume((float *)(inputBuffer + bytesReadFromInput), samplesRead, gain * (1.0 / (1ULL << 31)));
                 memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
                 bitsPerSample = 32;
                 bytesReadFromInput = samplesRead * sizeof(float);
@@ -922,13 +881,9 @@ tryagain:
             
             memmove(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer, bytesReadFromInput);
             
-            // Great padding! And we want to eat more, based on the resampler filter size
-            int samplesLatency = (int)ceil(resampler->latency(resampler_data) * sampleRatio);
-            
-            // Guess what? This extrapolates into the memory before its input pointer!
             lpc_extrapolate_bkwd(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
             bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
-            latencyEaten = N_samples_to_drop_ + samplesLatency;
+            latencyEaten = N_samples_to_drop_;
             if (dsd2pcm) latencyEaten += dsdLatencyEaten;
             is_preextrapolated_ = 2;
         }
@@ -949,7 +904,7 @@ tryagain:
             }
             
             // And now that we've reached the end, we eat slightly less, due to the filter size
-            int samplesLatency = (int)resampler->latency(resampler_data);
+            int samplesLatency = 0;
             if (dsd2pcm) samplesLatency += dsd2pcmLatency;
             samplesLatency = (int)ceil(samplesLatency * sampleRatio);
             
@@ -975,8 +930,6 @@ tryagain:
     
     if (inpOffset != inpSize && floatOffset == floatSize)
     {
-        struct resampler_data src_data;
-        
         size_t inputSamples = (inpSize - inpOffset) / floatFormat.mBytesPerPacket;
         
         ioNumberPackets = (UInt32)inputSamples;
@@ -996,54 +949,50 @@ tryagain:
             return 0;
         }
 
-        src_data.data_out      = floatBuffer;
-        src_data.output_frames = 0;
-        
-        src_data.data_in       = (float*)(((uint8_t*)inputBuffer) + inpOffset);
-        src_data.input_frames  = inputSamples;
-        
-        src_data.ratio         = sampleRatio;
+        size_t inputDone = 0;
+        size_t outputDone = 0;
         
         if (!skipResampler)
         {
-            resampler->process(resampler_data, &src_data);
+            soxr_process(soxr, (float *)(((uint8_t*)inputBuffer) + inpOffset), inputSamples, &inputDone, floatBuffer, ioNumberPackets, &outputDone);
         }
         else
         {
-            memcpy(src_data.data_out, src_data.data_in, inputSamples * floatFormat.mBytesPerPacket);
-            src_data.output_frames = inputSamples;
+            memcpy(floatBuffer, (((uint8_t*)inputBuffer) + inpOffset), inputSamples * floatFormat.mBytesPerPacket);
+            inputDone = inputSamples;
+            outputDone = inputSamples;
         }
         
-        inpOffset += inputSamples * floatFormat.mBytesPerPacket;
+        inpOffset += inputDone * floatFormat.mBytesPerPacket;
         
         if (latencyEaten)
         {
-            if (src_data.output_frames > latencyEaten)
+            if (outputDone > latencyEaten)
             {
-                src_data.output_frames -= latencyEaten;
-                memmove(src_data.data_out, src_data.data_out + latencyEaten * inputFormat.mChannelsPerFrame, src_data.output_frames * floatFormat.mBytesPerPacket);
+                outputDone -= latencyEaten;
+                memmove(floatBuffer, floatBuffer + latencyEaten * floatFormat.mBytesPerPacket, outputDone * floatFormat.mBytesPerPacket);
                 latencyEaten = 0;
             }
             else
             {
-                latencyEaten -= src_data.output_frames;
-                src_data.output_frames = 0;
+                latencyEaten -= outputDone;
+                outputDone = 0;
             }
         }
         else if (latencyEatenPost)
         {
-            if (src_data.output_frames > latencyEatenPost)
+            if (outputDone > latencyEatenPost)
             {
-                src_data.output_frames -= latencyEatenPost;
+                outputDone -= latencyEatenPost;
             }
             else
             {
-                src_data.output_frames = 0;
+                outputDone = 0;
             }
             latencyEatenPost = 0;
         }
         
-        amountReadFromFC = (int)(src_data.output_frames * floatFormat.mBytesPerPacket);
+        amountReadFromFC = (int)(outputDone * floatFormat.mBytesPerPacket);
         
         scale_by_volume( (float*) floatBuffer, amountReadFromFC / sizeof(float), volumeScale);
         
@@ -1101,14 +1050,6 @@ tryagain:
     if ([keyPath isEqualToString:@"values.volumeScaling"]) {
         //User reset the volume scaling option
         [self refreshVolumeScaling];
-    }
-    else if ([keyPath isEqualToString:@"values.outputResampling"]) {
-        // Reset resampler
-        if (resampler && resampler_data) {
-            NSString *value = [[NSUserDefaults standardUserDefaults] stringForKey:@"outputResampling"];
-            if (![value isEqualToString:outputResampling])
-                [self inputFormatDidChange:inputFormat];
-        }
     }
     else if ([keyPath isEqualToString:@"values.headphoneVirtualization"] ||
              [keyPath isEqualToString:@"values.hrirPath"]) {
@@ -1254,35 +1195,22 @@ static float db_to_scale(float db)
         }
     }
 
-    convert_s16_to_float_init_simd();
-    convert_s32_to_float_init_simd();
-    
     skipResampler = outputFormat.mSampleRate == floatFormat.mSampleRate;
     
     sampleRatio = (double)outputFormat.mSampleRate / (double)floatFormat.mSampleRate;
     
     if (!skipResampler)
     {
-        enum resampler_quality quality = RESAMPLER_QUALITY_DONTCARE;
+        soxr_quality_spec_t       q_spec = soxr_quality_spec(SOXR_HQ, 0);
+        soxr_io_spec_t           io_spec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
+        soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(0);
         
-        NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"outputResampling"];
-        if ([resampling isEqualToString:@"lowest"])
-            quality = RESAMPLER_QUALITY_LOWEST;
-        else if ([resampling isEqualToString:@"lower"])
-            quality = RESAMPLER_QUALITY_LOWER;
-        else if ([resampling isEqualToString:@"normal"])
-            quality = RESAMPLER_QUALITY_NORMAL;
-        else if ([resampling isEqualToString:@"higher"])
-            quality = RESAMPLER_QUALITY_HIGHER;
-        else if ([resampling isEqualToString:@"highest"])
-            quality = RESAMPLER_QUALITY_HIGHEST;
+        soxr_error_t error;
         
-        outputResampling = resampling;
+        soxr = soxr_create(floatFormat.mSampleRate, outputFormat.mSampleRate, floatFormat.mChannelsPerFrame, &error, &io_spec, &q_spec, &runtime_spec);
         
-        if (!retro_resampler_realloc(&resampler_data, &resampler, "sinc", quality, inputFormat.mChannelsPerFrame, sampleRatio))
-        {
+        if (error)
             return NO;
-        }
         
         PRIME_LEN_ = max(floatFormat.mSampleRate/20, 1024u);
         PRIME_LEN_ = min(PRIME_LEN_, 16384u);
@@ -1319,7 +1247,6 @@ static float db_to_scale(float db)
 	DLog(@"Decoder dealloc");
 
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
-    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputResampling"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.headphoneVirtualization"];
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.hrirPath"];
 
@@ -1394,11 +1321,10 @@ static float db_to_scale(float db)
         free(hdcd_decoder);
         hdcd_decoder = NULL;
     }
-    if (resampler && resampler_data)
+    if (soxr)
     {
-        resampler->free(resampler, resampler_data);
-        resampler = NULL;
-        resampler_data = NULL;
+        soxr_delete(soxr);
+        soxr = NULL;
     }
     if (dsd2pcm && dsd2pcmCount)
     {

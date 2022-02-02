@@ -12,7 +12,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 
-#import <audio/audio_resampler.h>
+#import <soxr.h>
 
 #import "Node.h"
 #import "RefillNode.h"
@@ -22,8 +22,7 @@
 @interface ConverterNode : Node {
     NSDictionary * rgInfo;
     
-    void *resampler_data;
-    const retro_resampler_t *resampler;
+    soxr_t soxr;
 
     void *inputBuffer;
     size_t inputBufferSize;
@@ -73,8 +72,6 @@
     AudioStreamBasicDescription rememberedInputFormat;
     RefillNode *refillNode;
     id __weak originalPreviousNode;
-    
-    NSString *outputResampling;
     
     void *hdcd_decoder;
     

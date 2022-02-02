@@ -47,14 +47,6 @@ Setup your `DEVELOPMENT_TEAM` like described in [Xcode-config/Shared.xcconfig](h
 ![Mini window](https://github.com/losnoco/Cog/blob/main/.github/images/MiniWindow.png)
 
 
-ADDENDUM - 2022-01-12
-
-For some basic eye candy comparisons on the newly included RetroArch sinc
-resampler, please see this test project:
-
-https://github.com/kode54/retroarch_resampler_test
-
-
 ADDENDUM - 2022-01-25
 
 I've added an HRIR convolver, based on the HeSuVi HRIR format. A preset is
@@ -82,3 +74,7 @@ used for both left and right outputs.
 [Here are some preset HRIR files](https://cogcdn.cog.losno.co/HeSuVi-hrir-basic.7z).
 
 The original HeSuVi project is located [here](https://sourceforge.net/projects/hesuvi/).
+
+ADDENDUM - 2022-02-01
+
+I've replaced the resampler with libsoxr, with no quality control settings exposed.

@@ -177,7 +177,6 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
-		8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6889230AAA403C00AD3950 /* Carbon.framework */; };
 		8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752C09F31D5A0080F1EE /* DNDArrayController.m */; };
 		8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752E09F31D5A0080F1EE /* PlaylistController.m */; };
 		8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75753009F31D5A0080F1EE /* PlaylistEntry.m */; };
@@ -1012,7 +1011,6 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
-		8E6889230AAA403C00AD3950 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8E75752B09F31D5A0080F1EE /* DNDArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DNDArrayController.h; sourceTree = "<group>"; };
 		8E75752C09F31D5A0080F1EE /* DNDArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = DNDArrayController.m; sourceTree = "<group>"; };
 		8E75752D09F31D5A0080F1EE /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistController.h; sourceTree = "<group>"; };
@@ -1044,7 +1042,6 @@
 				ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */,
 				8355D6B8180613FB00D05687 /* Security.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
-				8E6889240AAA403C00AD3950 /* Carbon.framework in Frameworks */,
 				17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
@@ -1092,7 +1089,6 @@
 				ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */,
 				838F851D256B4E5E00C3E614 /* Sparkle.framework */,
 				17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */,
-				8E6889230AAA403C00AD3950 /* Carbon.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
