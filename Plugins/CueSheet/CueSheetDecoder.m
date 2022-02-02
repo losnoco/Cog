@@ -243,7 +243,7 @@
 
 - (long)seek:(long)frame
 {
-	if (frame > trackEnd - trackStart) {
+	if (!noFragment && frame > trackEnd - trackStart) {
 		//need a better way of returning fail.
 		return -1;
 	}
@@ -257,7 +257,7 @@
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames
 {
-	if (framePosition + frames > trackEnd) {
+	if (!noFragment && framePosition + frames > trackEnd) {
 		frames = (UInt32)(trackEnd - framePosition);
 	}
 
