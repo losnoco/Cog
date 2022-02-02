@@ -954,7 +954,22 @@ tryagain:
         
         if (!skipResampler)
         {
+            ioNumberPackets += soxr_delay(soxr);
+            
             soxr_process(soxr, (float *)(((uint8_t*)inputBuffer) + inpOffset), inputSamples, &inputDone, floatBuffer, ioNumberPackets, &outputDone);
+            
+            if (latencyEatenPost)
+            {
+                // Post file flush
+                size_t idone = 0, odone = 0;
+                
+                do
+                {
+                    soxr_process(soxr, NULL, 0, &idone, floatBuffer + outputDone * floatFormat.mBytesPerPacket, ioNumberPackets - outputDone, &odone);
+                    outputDone += odone;
+                }
+                while (odone > 0);
+            }
         }
         else
         {
