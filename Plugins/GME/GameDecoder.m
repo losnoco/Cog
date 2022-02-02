@@ -14,10 +14,10 @@
 
 @implementation GameDecoder
 
-gme_err_t readCallback( void* data, void* out, long count )
+gme_err_t readCallback( void* data, void* out, int count )
 {
     id source = (__bridge id)data;
-	DLog(@"Amount: %li", count);
+	DLog(@"Amount: %i", count);
 	int n = (int) [source read:out amount:count];
 	DLog(@"Read: %i", n);
 	if (n <= 0) {
@@ -57,8 +57,13 @@ gme_err_t readCallback( void* data, void* out, long count )
 		ALog(@"GME: No type!");
 		return NO;
 	}
+    
+    sampleRate = 44100;
+    
+    if (type == gme_spc_type || type == gme_sfm_type)
+        sampleRate = 32000;
 	
-	emu = gme_new_emu(type, 44100);
+	emu = gme_new_emu(type, sampleRate);
 	if (!emu)
 	{
 		ALog(@"GME: No new emu!");
@@ -154,8 +159,8 @@ gme_err_t readCallback( void* data, void* out, long count )
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithInt:0], @"bitrate",
-		[NSNumber numberWithFloat:44100], @"sampleRate",
-		[NSNumber numberWithLong:length*44.1], @"totalFrames",
+        [NSNumber numberWithFloat:(float)sampleRate], @"sampleRate",
+		[NSNumber numberWithLong:length*((float)sampleRate * 0.001)], @"totalFrames",
 		[NSNumber numberWithInt:sizeof(short)*8], @"bitsPerSample", //Samples are short
 		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
 		[NSNumber numberWithBool:[source seekable]], @"seekable",
