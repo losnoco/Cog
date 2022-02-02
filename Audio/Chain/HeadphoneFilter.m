@@ -178,13 +178,6 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
             
             soxr_error_t error;
             
-            soxr_t soxr = soxr_create(sampleRateOfSource, sampleRate, impulseChannels, &error, &io_spec, &q_spec, &runtime_spec);
-            
-            if (error) {
-                free(impulseBuffer);
-                return nil;
-            }
-
             unsigned long PRIME_LEN_ = MAX(sampleRateOfSource/20, 1024u);
                           PRIME_LEN_ = MIN(PRIME_LEN_, 16384u);
                           PRIME_LEN_ = MAX(PRIME_LEN_, 2*LPC_ORDER + 1);
@@ -226,9 +219,13 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
             size_t inputDone = 0;
             size_t outputDone = 0;
 
-            soxr_process(soxr, impulseBuffer, sampleCount + N_samples_to_add_ * 2, &inputDone, resampledImpulse, resampledCount, &outputDone);
+            error = soxr_oneshot(sampleRateOfSource, sampleRate, impulseChannels, impulseBuffer, sampleCount + N_samples_to_add_ * 2, &inputDone, resampledImpulse, resampledCount, &outputDone, &io_spec, &q_spec, &runtime_spec);
             
-            soxr_delete(soxr);
+            if (error) {
+                free(resampledImpulse);
+                free(impulseBuffer);
+                return nil;
+            }
 
             outputDone -= N_samples_to_drop_ * 2;
 
