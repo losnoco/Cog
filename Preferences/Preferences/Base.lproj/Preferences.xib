@@ -601,7 +601,7 @@
                         <binding destination="czk-eG-6QG" name="content" keyPath="arrangedObjects" id="Mzg-yr-6mv"/>
                         <binding destination="czk-eG-6QG" name="contentValues" keyPath="arrangedObjects.name" previousBinding="NFp-di-hMf" id="6JE-ba-47Z"/>
                         <binding destination="czk-eG-6QG" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Mzg-yr-6mv" id="NFp-di-hMf"/>
-                        <binding destination="52" name="selectedObject" keyPath="values.midi.plugin" previousBinding="6JE-ba-47Z" id="n1u-ie-870"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.midiPlugin" previousBinding="6JE-ba-47Z" id="ePY-TV-ngD"/>
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="K5c-km-7Qa">
