@@ -4,6 +4,6 @@
 #define MY_PATRONS \
 "Thanks to my patrons:\n" \
 "Alexander Pecheny, Electric Keet, govt man, Antti Aro,\n"
-"Fjölnir Ásgeirsson, Giampaolo Bellavite"
+"Fj\xc3\xb6lnir \xc3\x81sgeirsson, Giampaolo Bellavite"
 
 #endif
