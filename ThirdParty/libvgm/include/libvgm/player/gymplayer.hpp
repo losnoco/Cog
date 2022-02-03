@@ -37,6 +37,12 @@ struct GYM_HEADER
 	UINT32 realFileSize;	// internal file size after possible decompression
 };
 
+struct GYM_PLAY_OPTIONS
+{
+	UINT32 playbackSpeedScale; // Set to 0x10000 for 1.0 speed, or 16.16 fixed point
+};
+
+
 class GYMPlayer : public PlayerBase
 {
 private:
@@ -78,10 +84,12 @@ public:
 	UINT8 GetDeviceOptions(UINT32 id, PLR_DEV_OPTS& devOpts) const;
 	UINT8 SetDeviceMuting(UINT32 id, const PLR_MUTE_OPTS& muteOpts);
 	UINT8 GetDeviceMuting(UINT32 id, PLR_MUTE_OPTS& muteOpts) const;
+	UINT8 SetPlayerOptions(const GYM_PLAY_OPTIONS& playOpts);
+	UINT8 GetPlayerOptions(GYM_PLAY_OPTIONS& playOpts) const;
 	
 	//UINT32 GetSampleRate(void) const;
 	UINT8 SetSampleRate(UINT32 sampleRate);
-	//UINT8 SetPlaybackSpeed(double speed);
+	UINT8 SetPlaybackSpeed(double speed);
 	//void SetEventCallback(PLAYER_EVENT_CB cbFunc, void* cbParam);
 	UINT32 Tick2Sample(UINT32 ticks) const;
 	UINT32 Sample2Tick(UINT32 samples) const;
@@ -111,6 +119,8 @@ private:
 	UINT8 LoadTags(void);
 	void LoadTag(const char* tagName, const void* data, size_t maxlen);
 	std::string GetUTF8String(const char* startPtr, const char* endPtr);
+
+	void RefreshTSRates(void);
 	
 	static void PlayerLogCB(void* userParam, void* source, UINT8 level, const char* message);
 	static void SndEmuLogCB(void* userParam, void* source, UINT8 level, const char* message);
@@ -150,6 +160,7 @@ private:
 	UINT64 _tsMult;
 	UINT64 _tsDiv;
 	
+	GYM_PLAY_OPTIONS _playOpts;
 	PLR_DEV_OPTS _devOpts[2];	// 0 = YM2612, 1 = SEGA PSG
 	std::vector<GYM_CHIPDEV> _devices;
 	std::vector<std::string> _devNames;

@@ -69,6 +69,7 @@ struct DRO_HEADER
 struct DRO_PLAY_OPTIONS
 {
 	UINT8 v2opl3Mode;	// DRO v2 DualOPL2 -> OPL3 fixes
+	UINT32 playbackSpeedScale; // Set to 0x10000 for 1.0 speed, or 16.16 fixed point
 };
 
 
@@ -112,7 +113,7 @@ public:
 	
 	//UINT32 GetSampleRate(void) const;
 	UINT8 SetSampleRate(UINT32 sampleRate);
-	//UINT8 SetPlaybackSpeed(double speed);
+	UINT8 SetPlaybackSpeed(double speed);
 	//void SetEventCallback(PLAYER_EVENT_CB cbFunc, void* cbParam);
 	UINT32 Tick2Sample(UINT32 ticks) const;
 	UINT32 Sample2Tick(UINT32 samples) const;
@@ -138,6 +139,8 @@ private:
 	void RefreshPanning(DRO_CHIPDEV& chipDev, const PLR_PAN_OPTS& panOpts);
 	
 	void ScanInitBlock(void);
+
+	void RefreshTSRates(void);
 	
 	static void PlayerLogCB(void* userParam, void* source, UINT8 level, const char* message);
 	static void SndEmuLogCB(void* userParam, void* source, UINT8 level, const char* message);

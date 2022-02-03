@@ -33,6 +33,11 @@ struct S98_DEVICE
 	UINT32 pan;			// [v2: reserved] [v3: pan setting]
 	UINT32 app_spec;	// [v2: application-specific] [v3: reserved]
 };
+struct S98_PLAY_OPTIONS
+{
+	UINT32 playbackSpeedScale; // Set to 0x10000 for 1.0 speed, or 16.16 fixed point
+};
+
 
 class S98Player : public PlayerBase
 {
@@ -79,10 +84,12 @@ public:
 	UINT8 GetDeviceOptions(UINT32 id, PLR_DEV_OPTS& devOpts) const;
 	UINT8 SetDeviceMuting(UINT32 id, const PLR_MUTE_OPTS& muteOpts);
 	UINT8 GetDeviceMuting(UINT32 id, PLR_MUTE_OPTS& muteOpts) const;
+	UINT8 SetPlayerOptions(const S98_PLAY_OPTIONS& playOpts);
+	UINT8 GetPlayerOptions(S98_PLAY_OPTIONS& playOpts) const;
 	
 	//UINT32 GetSampleRate(void) const;
 	UINT8 SetSampleRate(UINT32 sampleRate);
-	//UINT8 SetPlaybackSpeed(double speed);
+	UINT8 SetPlaybackSpeed(double speed);
 	//void SetEventCallback(PLAYER_EVENT_CB cbFunc, void* cbParam);
 	UINT32 Tick2Sample(UINT32 ticks) const;
 	UINT32 Sample2Tick(UINT32 samples) const;
@@ -154,6 +161,7 @@ private:
 	
 	static const UINT8 _OPT_DEV_LIST[_OPT_DEV_COUNT];	// list of configurable libvgm devices
 	
+	S98_PLAY_OPTIONS _playOpts;
 	PLR_DEV_OPTS _devOpts[_OPT_DEV_COUNT * 2];	// space for 2 instances per chip
 	size_t _devOptMap[0x100][2];	// maps libvgm device ID to _devOpts vector
 	std::vector<S98_CHIPDEV> _devices;
