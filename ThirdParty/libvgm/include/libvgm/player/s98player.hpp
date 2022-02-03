@@ -158,6 +158,9 @@ private:
 	// tick/sample conversion rates
 	UINT64 _tsMult;
 	UINT64 _tsDiv;
+
+	UINT64 _lastTsMult;
+	UINT64 _lastTsDiv;
 	
 	static const UINT8 _OPT_DEV_LIST[_OPT_DEV_COUNT];	// list of configurable libvgm devices
 	

@@ -178,6 +178,9 @@ private:
 	// tick/sample conversion rates
 	UINT64 _tsMult;
 	UINT64 _tsDiv;
+
+	UINT64 _lastTsMult;
+	UINT64 _lastTsDiv;
 	
 	DRO_PLAY_OPTIONS _playOpts;
 	PLR_DEV_OPTS _devOpts[3];	// 0 = 1st OPL2, 1 = 2nd OPL2, 2 = 1st OPL3

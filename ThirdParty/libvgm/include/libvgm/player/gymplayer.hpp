@@ -160,6 +160,9 @@ private:
 	UINT64 _tsMult;
 	UINT64 _tsDiv;
 	
+	UINT64 _lastTsMult;
+	UINT64 _lastTsDiv;
+	
 	GYM_PLAY_OPTIONS _playOpts;
 	PLR_DEV_OPTS _devOpts[2];	// 0 = YM2612, 1 = SEGA PSG
 	std::vector<GYM_CHIPDEV> _devices;
