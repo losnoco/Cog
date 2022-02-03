@@ -265,7 +265,7 @@ static OSType getOSType(const char * in_)
         }
     }
     
-    player->setFilterMode( mode );
+    player->setFilterMode( mode, false );
     
     unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
     unsigned int clean_flags = midi_container::clean_flag_emidi;

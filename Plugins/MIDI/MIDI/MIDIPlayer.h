@@ -34,11 +34,13 @@ public:
 	// setup
 	void setSampleRate(unsigned long rate);
     void setLoopMode(unsigned int mode);
-    void setFilterMode(filter_mode m);
+    void setFilterMode(filter_mode m, bool disable_reverb_chorus);
 
 	bool Load(const midi_container & midi_file, unsigned subsong, unsigned loop_mode, unsigned clean_flags);
 	unsigned long Play(float * out, unsigned long count);
 	void Seek(unsigned long sample);
+
+    bool GetLastError(std::string& p_out);
 
 protected:
     // this should return the block size that the renderer expects, otherwise 0
@@ -49,6 +51,8 @@ protected:
 
 	virtual void shutdown() {};
 	virtual bool startup() {return false;}
+
+    virtual bool get_last_error(std::string& p_out) { return false; }
     
     // time should only be block level offset
     virtual void send_event_time(uint32_t b, unsigned int time) {};
@@ -58,6 +62,9 @@ protected:
 	system_exclusive_table mSysexMap;
     bool               initialized;
     filter_mode        mode;
+    bool               reverb_chorus_disabled;
+
+    void               sysex_reset(size_t port, unsigned int time);
 
 private:
     void               send_event_filtered(uint32_t b);
@@ -65,7 +72,6 @@ private:
     void               send_event_time_filtered(uint32_t b, unsigned int time);
     void               send_sysex_time_filtered(const uint8_t * event, size_t size, size_t port, unsigned int time);
     
-    void               sysex_reset(size_t port, unsigned int time);
     void               sysex_send_gs(size_t port, uint8_t * data, size_t size, unsigned int time);
     void               sysex_reset_sc(uint32_t port, unsigned int time);
     

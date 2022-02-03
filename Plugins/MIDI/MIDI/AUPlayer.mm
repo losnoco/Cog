@@ -375,7 +375,7 @@ bool AUPlayer::startup()
     
     initialized = true;
     
-    setFilterMode(mode);
+    setFilterMode(mode, reverb_chorus_disabled);
     
 	return true;
 }
