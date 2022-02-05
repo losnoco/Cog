@@ -606,6 +606,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
     for (PlaylistEntry *pe in objects) {
         [unarrangedIndexes addIndex:[pe index]];
     }
+    
+    if ([indexes containsIndex:currentEntry.index]) {
+        // Safety check. The player doesn't like committing actions on a removed track
+        [playbackController stop:nil];
+    }
 
     if (currentEntry.index >= 0 && [unarrangedIndexes containsIndex:currentEntry.index]) {
         currentEntry.index = -currentEntry.index - 1;
