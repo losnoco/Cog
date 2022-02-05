@@ -200,7 +200,7 @@ didCompleteWithError:(NSError *)error{
     while (task && !didReceiveResponse)
         usleep(1000);
 
-    if (!task) return NO;
+    if (!task && !didReceiveResponse) return NO;
     
 	return YES;
 }
@@ -228,8 +228,10 @@ didCompleteWithError:(NSError *)error{
 
 - (long)read:(void *)buffer amount:(long)amount
 {
-    if (didComplete)
-        return 0;
+    @synchronized (bufferedData) {
+        if (didComplete && ![bufferedData length])
+            return 0;
+    }
     
 	long totalRead = 0;
     long bytesBuffered = 0;
