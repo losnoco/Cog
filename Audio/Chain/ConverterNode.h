@@ -74,6 +74,8 @@
     id __weak originalPreviousNode;
     
     void *hdcd_decoder;
+    
+    HeadphoneFilter *hFilter;
 }
 
 @property AudioStreamBasicDescription inputFormat;

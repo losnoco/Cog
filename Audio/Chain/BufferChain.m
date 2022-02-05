@@ -43,7 +43,7 @@
 	finalNode = converterNode;
 }
 
-- (BOOL)open:(NSURL *)url withOutputFormatHint:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
 {	
 	[self setStreamURL:url];
 
@@ -64,14 +64,8 @@
 		return NO;
     
     NSDictionary * properties = [inputNode properties];
-    
-    inputFormat = [inputNode nodeFormat];
-    
-    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
 
-    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
+    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -81,7 +75,7 @@
 	return YES;
 }
 
-- (BOOL)openWithInput:(InputNode *)i withOutputFormatHint:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
 {
 	DLog(@"New buffer chain!");
 	[self buildChain];
@@ -92,14 +86,7 @@
     NSDictionary * properties = [inputNode properties];
     
 	DLog(@"Input Properties: %@", properties);
-
-    inputFormat = [inputNode nodeFormat];
-    
-    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -108,7 +95,7 @@
 }
 
 - (BOOL)openWithDecoder:(id<CogDecoder>)decoder
-    withOutputFormatHint:(AudioStreamBasicDescription)outputFormat
+    withOutputFormat:(AudioStreamBasicDescription)outputFormat
     withRGInfo:(NSDictionary*)rgi;
 {
     DLog(@"New buffer chain!");
@@ -120,14 +107,7 @@
     NSDictionary * properties = [inputNode properties];
     
     DLog(@"Input Properties: %@", properties);
-
-    inputFormat = [inputNode nodeFormat];
-    
-    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
         return NO;
     
     [self setRGInfo:rgi];

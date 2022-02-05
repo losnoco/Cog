@@ -51,8 +51,6 @@
 	
 	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
     
-    nodeFormat = propertiesToASBD(properties);
-    
 	shouldContinue = YES;
 	shouldSeek = NO;
 
@@ -69,8 +67,6 @@
 	int channels = [[properties objectForKey:@"channels"] intValue];
 	
 	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
-    
-    nodeFormat = propertiesToASBD(properties);
     
 	[self registerObservers];
 

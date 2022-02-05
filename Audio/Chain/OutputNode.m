@@ -22,9 +22,6 @@
     
     paused = YES;
     started = NO;
-    
-    formatSetup = NO;
-    formatChanged = NO;
 
 	output = [[OutputCoreAudio alloc] initWithController:self];
 	
@@ -87,7 +84,7 @@
     @autoreleasepool {
         int n;
         [self setPreviousNode:[[controller bufferChain] finalNode]];
-        
+	
         n = [super readData:ptr amount:amount];
     
 /*	if (n == 0) {
@@ -131,14 +128,6 @@
             if (oldSampleRatio)
                 amountPlayed += oldSampleRatio * [[converter buffer] bufferedLength];
 #endif
-            AudioStreamBasicDescription inf = [bufferChain inputFormat];
-            
-            format.mChannelsPerFrame = inf.mChannelsPerFrame;
-            format.mBytesPerFrame = ((format.mBitsPerChannel + 7) / 8) * format.mChannelsPerFrame;
-            format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
-            
-            sampleRatio = 1.0 / (format.mSampleRate * format.mBytesPerPacket);
-
             [converter setOutputFormat:format];
             [converter inputFormatDidChange:[bufferChain inputFormat]];
         }
@@ -187,23 +176,6 @@
 - (void)sustainHDCD
 {
     [output sustainHDCD];
-}
-
-- (BOOL)formatChanged
-{
-    [self setPreviousNode:[[controller bufferChain] finalNode]];
-    
-    AudioStreamBasicDescription inf = [[self previousNode] nodeFormat];
-    
-    if (!formatSetup || memcmp(&nodeFormat, &inf, sizeof(nodeFormat)) != 0) {
-        nodeFormat = inf;
-        formatSetup = YES;
-        formatChanged = YES;
-    }
-
-    BOOL copyFormatChanged = formatChanged;
-    formatChanged = NO;
-    return copyFormatChanged;
 }
 
 @end

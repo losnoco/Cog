@@ -83,7 +83,7 @@
 // Write operations:
 
 // The writing thread must call this method first.
-- (UInt32)lengthAvailableToWriteReturningPointer:(void **)returnedWritePointer bufferWrapped:(BOOL*)wrapped;
+- (UInt32)lengthAvailableToWriteReturningPointer:(void **)returnedWritePointer;
 // Iff a value > 0 is returned, the writing thread may then write that much data into the returned pointer.
 // Afterwards, the writing thread must call didWriteLength:.
 - (void)didWriteLength:(UInt32)length;

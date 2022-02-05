@@ -59,8 +59,6 @@
 		83725A8E27AA0DE60003F694 /* libsoxr.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7B27AA0D8A0003F694 /* Accelerate.framework */; };
 		83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7C27AA0D8E0003F694 /* AVFoundation.framework */; };
-		8380F2D927AE6053009183C1 /* Downmix.m in Sources */ = {isa = PBXBuildFile; fileRef = 8380F2D727AE6053009183C1 /* Downmix.m */; };
-		8380F2DA27AE6053009183C1 /* Downmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 8380F2D827AE6053009183C1 /* Downmix.h */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		839366671815923C006DD712 /* CogPluginMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 839366651815923C006DD712 /* CogPluginMulti.h */; };
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
@@ -153,8 +151,6 @@
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		83725A8827AA0DBF0003F694 /* soxr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soxr.h; sourceTree = "<group>"; };
 		83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libsoxr.0.dylib; sourceTree = "<group>"; };
-		8380F2D727AE6053009183C1 /* Downmix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downmix.m; sourceTree = "<group>"; };
-		8380F2D827AE6053009183C1 /* Downmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downmix.h; sourceTree = "<group>"; };
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		839366651815923C006DD712 /* CogPluginMulti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogPluginMulti.h; sourceTree = "<group>"; };
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
@@ -288,8 +284,6 @@
 		17D21C750B8BE4BA00D1EBDE /* Chain */ = {
 			isa = PBXGroup;
 			children = (
-				8380F2D827AE6053009183C1 /* Downmix.h */,
-				8380F2D727AE6053009183C1 /* Downmix.m */,
 				83A44A00279119B50049B6E2 /* RefillNode.h */,
 				83A449FF279119B50049B6E2 /* RefillNode.m */,
 				17D21C760B8BE4BA00D1EBDE /* BufferChain.h */,
@@ -452,7 +446,6 @@
 				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
 				83725A8B27AA0DBF0003F694 /* soxr.h in Headers */,
-				8380F2DA27AE6053009183C1 /* Downmix.h in Headers */,
 				17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */,
 				835EDD7D279FE307001EDCCE /* HeadphoneFilter.h in Headers */,
 				839366671815923C006DD712 /* CogPluginMulti.h in Headers */,
@@ -553,7 +546,6 @@
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
-				8380F2D927AE6053009183C1 /* Downmix.m in Sources */,
 				835C88AA2797D4D400E28EAE /* lpc.c in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.m in Sources */,

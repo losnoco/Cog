@@ -83,132 +83,45 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         return 0;
     }
     
-    if (_self->savedSize) {
-        int readBytes = (int) _self->savedSize;
-
-        const int streamchannels = _self->streamFormat.mChannelsPerFrame;
-        const int streamBytesPerPacket = streamchannels * sizeof(float);
-
-        int samplesToRead = readBytes / streamBytesPerPacket;
-        
-        if (samplesToRead > (amountToRead / bytesPerPacket))
-            samplesToRead = amountToRead / bytesPerPacket;
-        
-        readBytes = samplesToRead * streamBytesPerPacket;
-        
-        atomic_fetch_sub(&_self->bytesBuffered, readBytes);
-        
-        float downmixBuffer[samplesToRead * channels];
-        [_self->downmixer process:_self->savedBuffer frameCount:samplesToRead output:downmixBuffer];
-        fillBuffers(ioData, downmixBuffer, samplesToRead, 0);
-        amountRead += samplesToRead * bytesPerPacket;
-        [_self->outputController incrementAmountPlayed:samplesToRead * bytesPerPacket];
-        atomic_fetch_add(&_self->bytesRendered, samplesToRead * bytesPerPacket);
-        [_self->writeSemaphore signal];
-
-        if (_self->savedSize > readBytes) {
-            _self->savedSize -= readBytes;
-            memmove(_self->savedBuffer, _self->savedBuffer + readBytes, _self->savedSize);
-        }
-        else {
-            _self->savedSize = 0;
-        }
-    }
+    void * readPtr;
+    int toRead = [[_self->outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
     
-    while (amountRead < amountToRead && [_self->outputController shouldContinue])
+    if (toRead > amountToRead)
+        toRead = amountToRead;
+    
+    if (toRead) {
+        fillBuffers(ioData, (float*)readPtr, toRead / bytesPerPacket, 0);
+        amountRead = toRead;
+        [[_self->outputController buffer] didReadLength:toRead];
+        [_self->outputController incrementAmountPlayed:amountRead];
+        atomic_fetch_add(&_self->bytesRendered, amountRead);
+        [_self->writeSemaphore signal];
+    }
+    else
+        [[_self->outputController buffer] didReadLength:0];
+
+    // Try repeatedly! Buffer wraps can cause a slight data shortage, as can
+    // unexpected track changes.
+    while ((amountRead < amountToRead) && [_self->outputController shouldContinue] == YES)
     {
-        void * readPtr;
-        int toRead = 0;
-        do {
-            toRead = [[_self->outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
-            if (toRead && *((uint8_t*)readPtr) == 0xFF) {
-                size_t toSkip = 0;
-                while (toRead && *((uint8_t*)readPtr) == 0xFF) {
-                    toSkip++;
-                    readPtr++;
-                    toRead--;
-                }
-                [[_self->outputController buffer] didReadLength:(int)toSkip];
-                toRead = 0;
-            }
-        }
-        while (!toRead);
+        int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
+        amountRead2 = [[_self->outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
+        if (amountRead2 > (amountToRead - amountRead))
+            amountRead2 = amountToRead - amountRead;
+        if (amountRead2) {
+            atomic_fetch_add(&_self->bytesRendered, amountRead2);
+            fillBuffers(ioData, (float*)readPtr, amountRead2 / bytesPerPacket, amountRead / bytesPerPacket);
+            [[_self->outputController buffer] didReadLength:amountRead2];
 
-        int bytesRead = 0;
-
-        int32_t chunkId = -1;
-
-        if (toRead >= 4) {
-            memcpy(&chunkId, readPtr, 4);
-            readPtr += 4;
-            toRead -= 4;
-            bytesRead += 4;
-        }
-
-        if (chunkId == 1 && toRead >= sizeof(AudioStreamBasicDescription)) {
-            AudioStreamBasicDescription inf;
-            memcpy(&inf, readPtr, sizeof(inf));
-            readPtr += sizeof(inf);
-            toRead -= sizeof(inf);
-            bytesRead += sizeof(inf);
+            [_self->outputController incrementAmountPlayed:amountRead2];
             
-            if (!_self->streamFormatSetup || memcmp(&inf, &_self->streamFormat, sizeof(inf)) != 0) {
-                _self->streamFormatSetup = YES;
-                _self->streamFormat = inf;
-                _self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:inf andOutputFormat:_self->deviceFormat];
-            }
-            
-            if (toRead >= 4) {
-                memcpy(&chunkId, readPtr, 4);
-                readPtr += 4;
-                toRead -= 4;
-                bytesRead += 4;
-            }
-            else chunkId = -1;
-        }
-
-        const int streamchannels = _self->streamFormat.mChannelsPerFrame;
-        const int streamBytesPerPacket = streamchannels * sizeof(float);
-
-        if (chunkId == 0 && toRead >= 4) {
-            memcpy(&chunkId, readPtr, 4);
-            readPtr += 4;
-            bytesRead += 4;
-            toRead = chunkId;
-        }
-
-        if (toRead) {
-            size_t samplesToRead = toRead / streamBytesPerPacket;
-            size_t saveBytes = 0;
-            
-            if (samplesToRead * bytesPerPacket > (amountToRead - amountRead)) {
-                size_t shortToRead = (amountToRead - amountRead) / bytesPerPacket;
-                saveBytes = (samplesToRead - shortToRead) * streamBytesPerPacket;
-                samplesToRead = shortToRead;
-            }
-            float downmixBuffer[samplesToRead * channels];
-            [_self->downmixer process:readPtr frameCount:samplesToRead output:downmixBuffer];
-            fillBuffers(ioData, downmixBuffer, samplesToRead, amountRead / bytesPerPacket);
-            amountRead += samplesToRead * bytesPerPacket;
-            bytesRead += toRead;
-            
-            if (saveBytes) {
-                if (!_self->savedBuffer || _self->savedMaxSize < saveBytes) {
-                    _self->savedBuffer = realloc(_self->savedBuffer, _self->savedMaxSize = saveBytes * 3);
-                }
-                _self->savedSize = saveBytes;
-                memcpy(_self->savedBuffer, readPtr + toRead - saveBytes, saveBytes);
-            }
-            
-            atomic_fetch_sub(&_self->bytesBuffered, toRead - saveBytes);
-            
-            [[_self->outputController buffer] didReadLength:bytesRead];
-            [_self->outputController incrementAmountPlayed:samplesToRead * bytesPerPacket];
-            atomic_fetch_add(&_self->bytesRendered, samplesToRead * bytesPerPacket);
+            amountRead += amountRead2;
             [_self->writeSemaphore signal];
         }
-        else
-            [[_self->outputController buffer] didReadLength:bytesRead];
+        else {
+            [[_self->outputController buffer] didReadLength:0];
+            [_self->readSemaphore timedWait:500];
+        }
     }
     
     float volumeScale = 1.0;
@@ -224,6 +137,14 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
     }
 
     scaleBuffersByVolume(ioData, _self->volume * volumeScale);
+    
+    if (amountRead < amountToRead)
+    {
+        // Either underrun, or no data at all. Caller output tends to just
+        // buffer loop if it doesn't get anything, so always produce a full
+        // buffer, and silence anything we couldn't supply.
+        clearBuffers(ioData, (amountToRead - amountRead) / bytesPerPacket, amountRead / bytesPerPacket);
+    }
     
     return 0;
 };
@@ -244,15 +165,6 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         started = NO;
         stopNext = NO;
         
-        streamFormatSetup = NO;
-
-        downmixer = nil;
-        
-        savedBuffer = NULL;
-        savedSize = 0;
-        savedMaxSize = 0;
-        
-        atomic_init(&bytesBuffered, 0);
         atomic_init(&bytesRendered, 0);
         atomic_init(&bytesHdcdSustained, 0);
         
@@ -312,7 +224,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         if ([outputController shouldReset]) {
             [[outputController buffer] empty];
-            atomic_store(&bytesBuffered, 0);
             [outputController setShouldReset:NO];
             [delayedEvents removeAllObjects];
             delayedEventsPopped = YES;
@@ -333,73 +244,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             break;
         
         void *writePtr;
-        BOOL wrapped = NO;
-        int toWrite = [[outputController buffer] lengthAvailableToWriteReturningPointer:&writePtr bufferWrapped:&wrapped];
-        int bytesWritten = 0;
-        if (toWrite >= 4 + sizeof(AudioStreamBasicDescription)) {
-            if ([outputController formatChanged]) {
-                int32_t chunkId = 1; // ASBD
-                memcpy(writePtr, &chunkId, 4);
-
-                writePtr += 4;
-                toWrite -= 4;
-                bytesWritten += 4;
-                
-                AudioStreamBasicDescription inf = [outputController nodeFormat];
-                
-                outerStreamFormat = inf;
-
-                memcpy(writePtr, &inf, sizeof(inf));
-                
-                writePtr += sizeof(inf);
-                toWrite -= sizeof(inf);
-                bytesWritten += sizeof(inf);
-            }
-        }
-        [[outputController buffer] didWriteLength:bytesWritten];
-        
-        toWrite = [[outputController buffer] lengthAvailableToWriteReturningPointer:&writePtr bufferWrapped:&wrapped];
+        int toWrite = [[outputController buffer] lengthAvailableToWriteReturningPointer:&writePtr];
         int bytesRead = 0;
-        bytesWritten = 0;
-        if (toWrite >= 4 + 4 + 512 * outerStreamFormat.mBytesPerPacket) {
-            uint8_t buffer[512 * outerStreamFormat.mBytesPerPacket];
-
-            bytesRead = [outputController readData:buffer amount:(int)sizeof(buffer)];
-            
-            while (bytesRead < sizeof(buffer) && ![outputController endOfStream]) {
-                int bytesRead2 = [outputController readData:buffer + bytesRead amount:(int)(sizeof(buffer) - bytesRead)];
-                bytesRead += bytesRead2;
-            }
-           
-            int32_t chunkId = 0; // audio data
-            memcpy(writePtr, &chunkId, 4);
-            writePtr += 4;
-            toWrite -= 4;
-            bytesWritten += 4;
-            
-            chunkId = bytesRead;
-            memcpy(writePtr, &chunkId, 4);
-            writePtr += 4;
-            toWrite -= 4;
-            bytesWritten += 4;
-            
-            memcpy(writePtr, buffer, bytesRead);
-            writePtr += bytesRead;
-            toWrite -= bytesRead;
-            bytesWritten += bytesRead;
-            
-            atomic_fetch_add(&bytesBuffered, bytesRead);
-            
-            [[outputController buffer] didWriteLength:bytesWritten];
-        }
-        else if (wrapped && toWrite > 0) {
-            memset(writePtr, 0xFF, toWrite);
-            [[outputController buffer] didWriteLength:toWrite];
-        }
-        else if (toWrite) {
-            [[outputController buffer] didWriteLength:0];
-            toWrite = 0;
-        }
+        if (toWrite > CHUNK_SIZE)
+            toWrite = CHUNK_SIZE;
+        if (toWrite)
+            bytesRead = [outputController readData:writePtr amount:toWrite];
+        [[outputController buffer] didWriteLength:bytesRead];
         if (bytesRead) {
             [readSemaphore signal];
             continue;
@@ -419,20 +270,20 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             // End of input possibly reached
             if (delayedEventsPopped && [outputController endOfStream] == YES)
             {
-                long _bytesBuffered = atomic_load_explicit(&bytesBuffered, memory_order_relaxed) * deviceFormat.mBytesPerPacket / outerStreamFormat.mBytesPerPacket;
-                _bytesBuffered += atomic_load_explicit(&bytesRendered, memory_order_relaxed);
+                long bytesBuffered = [[outputController buffer] bufferedLength];
+                bytesBuffered += atomic_load_explicit(&bytesRendered, memory_order_relaxed);
                 if ([outputController chainQueueHasTracks])
                 {
-                    if (_bytesBuffered < CHUNK_SIZE / 2)
-                        _bytesBuffered = 0;
+                    if (bytesBuffered < CHUNK_SIZE / 2)
+                        bytesBuffered = 0;
                     else
-                        _bytesBuffered -= CHUNK_SIZE / 2;
+                        bytesBuffered -= CHUNK_SIZE / 2;
                 }
                 else {
                     stopNext = YES;
                     break;
                 }
-                [delayedEvents addObject:[NSNumber numberWithLong:_bytesBuffered]];
+                [delayedEvents addObject:[NSNumber numberWithLong:bytesBuffered]];
                 delayedEventsPopped = NO;
                 if (!started) {
                     started = YES;
@@ -626,9 +477,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         NSError *err;
         AVAudioFormat *renderFormat;
 
-        [outputController incrementAmountPlayed:atomic_load_explicit(&bytesBuffered, memory_order_relaxed)];
+        [outputController incrementAmountPlayed:[[outputController buffer] bufferedLength]];
         [[outputController buffer] empty];
-        atomic_store(&bytesBuffered, 0);
 
         _deviceFormat = format;
         deviceFormat = *(format.streamDescription);
@@ -712,12 +562,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     paused = NO;
     stopNext = NO;
     outputDeviceID = -1;
-
-    streamFormatSetup = NO;
-    
-    savedBuffer = NULL;
-    savedSize = 0;
-    savedMaxSize = 0;
 	
     AudioComponentDescription desc;
     NSError *err;
@@ -824,8 +668,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         return 0;
     };
-    
-    [_au setMaximumFramesToRender:512];
 
     UInt32 value;
     UInt32 size = sizeof(value);
@@ -946,14 +788,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         _logFile = NULL;
     }
 #endif
-    if (savedBuffer)
-    {
-        free(savedBuffer);
-        savedBuffer = NULL;
-        savedSize = 0;
-        savedMaxSize = 0;
-    }
-    
     outputController = nil;
 }
 
