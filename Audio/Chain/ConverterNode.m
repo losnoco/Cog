@@ -18,14 +18,6 @@
 
 #import "hdcd_decode2.h"
 
-#import <TargetConditionals.h>
-
-#if TARGET_CPU_X86 || TARGET_CPU_X86_64
-#include <emmintrin.h>
-#elif TARGET_CPU_ARM || TARGET_CPU_ARM64
-#include <arm_neon.h>
-#endif
-
 void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
 {
 	if (!inDesc) {
