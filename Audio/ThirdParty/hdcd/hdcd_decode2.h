@@ -65,7 +65,7 @@ typedef struct {
     unsigned char arg, control;
     unsigned sustain, sustain_reset; /* code detect timer */
 
-    int running_gain; /* 11-bit (3.8) fixed point, extended from target_gain */
+    int running_gain; /* 23-bit (1.22) fixed point gain level */
 
     /* counters */
     int code_counterA;            /* 8-bit format packet */
