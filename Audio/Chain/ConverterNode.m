@@ -693,7 +693,18 @@ tryagain:
                 inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
             }
             
-            memmove(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer, bytesReadFromInput);
+            size_t bytesToSkip = 0;
+            if (dsd2pcm) {
+                bytesToSkip = dsd2pcmLatency * floatFormat.mBytesPerPacket;
+                if (bytesReadFromInput >= bytesToSkip) {
+                    bytesReadFromInput -= bytesToSkip;
+                }
+                else {
+                    bytesToSkip = 0;
+                }
+            }
+            
+            memmove(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer + bytesToSkip, bytesReadFromInput);
             
             lpc_extrapolate_bkwd(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
             bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
@@ -709,6 +720,12 @@ tryagain:
         if (is_postextrapolated_ == 1)
         {
             size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
+            
+            if (dsd2pcm) {
+                if (samples_in_buffer >= dsd2pcmLatency)
+                    samples_in_buffer -= dsd2pcmLatency;
+            }
+            
             size_t prime = min(samples_in_buffer, PRIME_LEN_);
 
             size_t newSize = bytesReadFromInput;
