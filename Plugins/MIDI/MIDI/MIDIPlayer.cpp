@@ -347,13 +347,22 @@ void MIDIPlayer::Seek(unsigned long sample)
             temp = (float *) malloc(needs_time * 2 * sizeof(float));
             if (temp)
             {
+                render(temp, needs_time); // flush events
                 unsigned int render_junk = 0;
+                bool timestamp_set = false;
+                unsigned last_timestamp = 0;
                 for (i = 0; i < stream_start; i++)
                 {
                     if (me[i].m_event)
                     {
                         send_event_time_filtered(me[i].m_event, render_junk);
-                        render_junk += 16;
+                        if (timestamp_set) {
+                            if (me[i].m_timestamp != last_timestamp) {
+                                render_junk += 16;
+                            }
+                        }
+                        last_timestamp = me[i].m_timestamp;
+                        timestamp_set = true;
                         if (render_junk >= needs_time)
                         {
                             render(temp, needs_time);
@@ -361,7 +370,7 @@ void MIDIPlayer::Seek(unsigned long sample)
                         }
                     }
                 }
-                uSamplesRemaining = render_junk;
+                render(temp, needs_time);
                 free(temp);
             }
         }
@@ -370,13 +379,24 @@ void MIDIPlayer::Seek(unsigned long sample)
             temp = (float *) malloc(16 * 2 * sizeof(float));
             if (temp)
             {
+                render(temp, 16);
+                bool timestamp_set = false;
+                unsigned last_timestamp = 0;
                 for (i = 0; i < stream_start; i++)
                 {
                     if (me[i].m_event)
                     {
+                        if (timestamp_set) {
+                            if (me[i].m_timestamp != last_timestamp) {
+                                render(temp, 16);
+                            }
+                        }
+                        last_timestamp = me[i].m_timestamp;
+                        timestamp_set = true;
                         send_event_filtered(me[i].m_event);
                     }
                 }
+                render(temp, 16);
                 free(temp);
             }
         }
