@@ -140,7 +140,7 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
 // Write operations
 //
 
-- (UInt32)lengthAvailableToWriteReturningPointer:(void **)returnedWritePointer
+- (UInt32)lengthAvailableToWriteReturningPointer:(void **)returnedWritePointer bufferWrapped:(BOOL *)wrapped
 {
     // Assumptions:
     // returnedWritePointer != NULL
@@ -152,8 +152,10 @@ static void deallocateVirtualBuffer(void *buffer, UInt32 bufferLength);
     int localBufferFilled = atomic_load_explicit(&bufferFilled, memory_order_relaxed);
 
     length = bufferLength - localBufferFilled;
-    if (length > bufferLength - localWritePointer)
+    if (length >= bufferLength - localWritePointer) {
+        *wrapped = YES;
         length = bufferLength - localWritePointer;
+    }
 
     *returnedWritePointer = buffer + localWritePointer;
     

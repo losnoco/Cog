@@ -72,187 +72,9 @@ void PrintStreamDesc (AudioStreamBasicDescription *inDesc)
         hdcd_decoder = NULL;
 
         [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling"		options:0 context:nil];
-        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.headphoneVirtualization" options:0 context:nil];
-        [[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hrirPath" options:0 context:nil];
     }
     
     return self;
-}
-
-static const float STEREO_DOWNMIX[8-2][8][2]={
-    /*3.0*/
-    {
-        {0.5858F,0.0F},{0.0F,0.5858F},{0.4142F,0.4142F}
-    },
-    /*quadrophonic*/
-    {
-        {0.4226F,0.0F},{0.0F,0.4226F},{0.366F,0.2114F},{0.2114F,0.336F}
-    },
-    /*5.0*/
-    {
-        {0.651F,0.0F},{0.0F,0.651F},{0.46F,0.46F},{0.5636F,0.3254F},
-        {0.3254F,0.5636F}
-    },
-    /*5.1*/
-    {
-        {0.529F,0.0F},{0.0F,0.529F},{0.3741F,0.3741F},{0.3741F,0.3741F},{0.4582F,0.2645F},
-        {0.2645F,0.4582F}
-    },
-    /*6.1*/
-    {
-        {0.4553F,0.0F},{0.0F,0.4553F},{0.322F,0.322F},{0.322F,0.322F},{0.2788F,0.2788F},
-        {0.3943F,0.2277F},{0.2277F,0.3943F}
-    },
-    /*7.1*/
-    {
-        {0.3886F,0.0F},{0.0F,0.3886F},{0.2748F,0.2748F},{0.2748F,0.2748F},{0.3366F,0.1943F},
-        {0.1943F,0.3366F},{0.3366F,0.1943F},{0.1943F,0.3366F}
-    }
-};
-
-static void downmix_to_stereo(float * buffer, int channels, size_t count)
-{
-    if (channels >= 3 && channels <= 8)
-    for (size_t i = 0; i < count; ++i)
-    {
-        float left = 0, right = 0;
-        for (int j = 0; j < channels; ++j)
-        {
-            left += buffer[i * channels + j] * STEREO_DOWNMIX[channels - 3][j][0];
-            right += buffer[i * channels + j] * STEREO_DOWNMIX[channels - 3][j][1];
-        }
-        buffer[i * 2 + 0] = left;
-        buffer[i * 2 + 1] = right;
-    }
-}
-
-static void downmix_to_mono(float * buffer, int channels, size_t count)
-{
-    if (channels >= 3 && channels <= 8)
-    {
-        downmix_to_stereo(buffer, channels, count);
-        channels = 2;
-    }
-    float invchannels = 1.0 / (float)channels;
-    for (size_t i = 0; i < count; ++i)
-    {
-        float sample = 0;
-        for (int j = 0; j < channels; ++j)
-        {
-            sample += buffer[i * channels + j];
-        }
-        buffer[i] = sample * invchannels;
-    }
-}
-
-static void upmix(float * buffer, int inchannels, int outchannels, size_t count)
-{
-    for (ssize_t i = count - 1; i >= 0; --i)
-    {
-        if (inchannels == 1 && outchannels == 2)
-        {
-            // upmix mono to stereo
-            float sample = buffer[i];
-            buffer[i * 2 + 0] = sample;
-            buffer[i * 2 + 1] = sample;
-        }
-        else if (inchannels == 1 && outchannels == 4)
-        {
-            // upmix mono to quad
-            float sample = buffer[i];
-            buffer[i * 4 + 0] = sample;
-            buffer[i * 4 + 1] = sample;
-            buffer[i * 4 + 2] = 0;
-            buffer[i * 4 + 3] = 0;
-        }
-        else if (inchannels == 1 && (outchannels == 3 || outchannels >= 5))
-        {
-            // upmix mono to center channel
-            float sample = buffer[i];
-            buffer[i * outchannels + 2] = sample;
-            for (int j = 0; j < 2; ++j)
-            {
-                buffer[i * outchannels + j] = 0;
-            }
-            for (int j = 3; j < outchannels; ++j)
-            {
-                buffer[i * outchannels + j] = 0;
-            }
-        }
-        else if (inchannels == 4 && outchannels >= 5)
-        {
-            float fl = buffer[i * 4 + 0];
-            float fr = buffer[i * 4 + 1];
-            float bl = buffer[i * 4 + 2];
-            float br = buffer[i * 4 + 3];
-            const int skipclfe = (outchannels == 5) ? 1 : 2;
-            buffer[i * outchannels + 0] = fl;
-            buffer[i * outchannels + 1] = fr;
-            buffer[i * outchannels + skipclfe + 2] = bl;
-            buffer[i * outchannels + skipclfe + 3] = br;
-            for (int j = 0; j < skipclfe; ++j)
-            {
-                buffer[i * outchannels + 2 + j] = 0;
-            }
-            for (int j = 4 + skipclfe; j < outchannels; ++j)
-            {
-                buffer[i * outchannels + j] = 0;
-            }
-        }
-        else if (inchannels == 5 && outchannels >= 6)
-        {
-            float fl = buffer[i * 5 + 0];
-            float fr = buffer[i * 5 + 1];
-            float c = buffer[i * 5 + 2];
-            float bl = buffer[i * 5 + 3];
-            float br = buffer[i * 5 + 4];
-            buffer[i * outchannels + 0] = fl;
-            buffer[i * outchannels + 1] = fr;
-            buffer[i * outchannels + 2] = c;
-            buffer[i * outchannels + 3] = 0;
-            buffer[i * outchannels + 4] = bl;
-            buffer[i * outchannels + 5] = br;
-            for (int j = 6; j < outchannels; ++j)
-            {
-                buffer[i * outchannels + j] = 0;
-            }
-        }
-        else if (inchannels == 7 && outchannels == 8)
-        {
-            float fl = buffer[i * 7 + 0];
-            float fr = buffer[i * 7 + 1];
-            float c = buffer[i * 7 + 2];
-            float lfe = buffer[i * 7 + 3];
-            float sl = buffer[i * 7 + 4];
-            float sr = buffer[i * 7 + 5];
-            float bc = buffer[i * 7 + 6];
-            buffer[i * 8 + 0] = fl;
-            buffer[i * 8 + 1] = fr;
-            buffer[i * 8 + 2] = c;
-            buffer[i * 8 + 3] = lfe;
-            buffer[i * 8 + 4] = bc;
-            buffer[i * 8 + 5] = bc;
-            buffer[i * 8 + 6] = sl;
-            buffer[i * 8 + 7] = sr;
-        }
-        else
-        {
-            // upmix N channels to N channels plus silence the empty channels
-            float samples[inchannels];
-            for (int j = 0; j < inchannels; ++j)
-            {
-                samples[j] = buffer[i * inchannels + j];
-            }
-            for (int j = 0; j < inchannels; ++j)
-            {
-                buffer[i * outchannels + j] = samples[j];
-            }
-            for (int j = inchannels; j < outchannels; ++j)
-            {
-                buffer[i * outchannels + j] = 0;
-            }
-        }
-    }
 }
 
 void scale_by_volume(float * buffer, size_t count, float volume)
@@ -1003,31 +825,6 @@ tryagain:
         
         scale_by_volume( (float*) floatBuffer, amountReadFromFC / sizeof(float), volumeScale);
         
-        if ( hFilter ) {
-            int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
-            [hFilter process:floatBuffer sampleCount:samples toBuffer:floatBuffer + amountReadFromFC];
-            memmove(floatBuffer, floatBuffer + amountReadFromFC, samples * sizeof(float) * 2);
-            amountReadFromFC = samples * sizeof(float) * 2;
-        }
-        else if ( inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2 )
-        {
-            int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
-            downmix_to_stereo( (float*) floatBuffer, inputFormat.mChannelsPerFrame, samples );
-            amountReadFromFC = samples * sizeof(float) * 2;
-        }
-        else if ( inputFormat.mChannelsPerFrame > 1 && outputFormat.mChannelsPerFrame == 1 )
-        {
-            int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
-            downmix_to_mono( (float*) floatBuffer, inputFormat.mChannelsPerFrame, samples );
-            amountReadFromFC = samples * sizeof(float);
-        }
-        else if ( inputFormat.mChannelsPerFrame < outputFormat.mChannelsPerFrame )
-        {
-            int samples = amountReadFromFC / floatFormat.mBytesPerFrame;
-            upmix( (float*) floatBuffer, inputFormat.mChannelsPerFrame, outputFormat.mChannelsPerFrame, samples );
-            amountReadFromFC = samples * sizeof(float) * outputFormat.mChannelsPerFrame;
-        }
-        
         floatSize = amountReadFromFC;
         floatOffset = 0;
     }
@@ -1057,15 +854,6 @@ tryagain:
     if ([keyPath isEqualToString:@"values.volumeScaling"]) {
         //User reset the volume scaling option
         [self refreshVolumeScaling];
-    }
-    else if ([keyPath isEqualToString:@"values.headphoneVirtualization"] ||
-             [keyPath isEqualToString:@"values.hrirPath"]) {
-        // Reset the converter, without rebuffering
-        if (outputFormat.mChannelsPerFrame == 2 &&
-            inputFormat.mChannelsPerFrame >= 1 &&
-            inputFormat.mChannelsPerFrame <= 8) {
-            [self inputFormatDidChange:inputFormat];
-        }
     }
 }
 
@@ -1124,6 +912,8 @@ static float db_to_scale(float db)
 	inputFormat = inf;
 	outputFormat = outf;
     
+    nodeFormat = outputFormat;
+    
     rememberedLossless = lossless;
     
     // These are the only sample formats we support translating
@@ -1175,33 +965,6 @@ static float db_to_scale(float db)
     dmFloatFormat.mBytesPerFrame = (32/8)*dmFloatFormat.mChannelsPerFrame;
     dmFloatFormat.mBytesPerPacket = dmFloatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
     
-    BOOL hVirt = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"headphoneVirtualization"];
-    
-    if (hVirt &&
-        outputFormat.mChannelsPerFrame == 2 &&
-        inputFormat.mChannelsPerFrame >= 1 &&
-         inputFormat.mChannelsPerFrame <= 8) {
-        NSString * userPreset = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] stringForKey:@"hrirPath"];
-        
-        NSURL * presetUrl = nil;
-        
-        if (userPreset && ![userPreset isEqualToString:@""]) {
-            presetUrl = [NSURL fileURLWithPath:userPreset];
-            if (![HeadphoneFilter validateImpulseFile:presetUrl])
-                presetUrl = nil;
-        }
-        
-        if (!presetUrl) {
-            presetUrl = [[NSBundle mainBundle] URLForResource:@"gsx" withExtension:@"wv"];
-            if (![HeadphoneFilter validateImpulseFile:presetUrl])
-                presetUrl = nil;
-        }
-
-        if (presetUrl) {
-            hFilter = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:outputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame];
-        }
-    }
-
     skipResampler = outputFormat.mSampleRate == floatFormat.mSampleRate;
     
     sampleRatio = (double)outputFormat.mSampleRate / (double)floatFormat.mSampleRate;
@@ -1254,8 +1017,6 @@ static float db_to_scale(float db)
 	DLog(@"Decoder dealloc");
 
     [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
-    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.headphoneVirtualization"];
-    [[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.hrirPath"];
 
     paused = NO;
 	[self cleanUp];
@@ -1319,9 +1080,6 @@ static float db_to_scale(float db)
     while (convertEntered)
     {
         usleep(500);
-    }
-    if (hFilter) {
-        hFilter = nil;
     }
     if (hdcd_decoder)
     {

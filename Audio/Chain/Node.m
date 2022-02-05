@@ -13,6 +13,8 @@
 
 @implementation Node
 
+@synthesize nodeFormat;
+
 - (id)initWithController:(id)c previous:(id)p
 {
 	self = [super init];
@@ -41,7 +43,8 @@
 	
 	while (shouldContinue == YES && amountLeft > 0)
 	{
-		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
+        BOOL wrapped;
+		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr bufferWrapped:&wrapped];
 		if (availOutput == 0) {
 			if (initialBufferFilled == NO) {
 				initialBufferFilled = YES;

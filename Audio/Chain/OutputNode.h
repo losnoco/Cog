@@ -24,6 +24,9 @@
     
     BOOL paused;
     BOOL started;
+    
+    BOOL formatSetup;
+    BOOL formatChanged;
 }
 
 - (void)beginEqualizer:(AudioUnit)eq;
@@ -61,5 +64,7 @@
 - (BOOL)isPaused;
 
 - (void)sustainHDCD;
+
+- (BOOL)formatChanged;
 
 @end

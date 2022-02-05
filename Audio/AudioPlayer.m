@@ -93,7 +93,7 @@
 	bufferChain = [[BufferChain alloc] initWithController:self];
 	[self notifyStreamChanged:userInfo];
     
-	while (![bufferChain open:url withOutputFormat:[output format] withRGInfo:rgi])
+	while (![bufferChain open:url withOutputFormatHint:[output format] withRGInfo:rgi])
 	{
 		bufferChain = nil;
 		
@@ -401,7 +401,7 @@
 			&& [[nextStream path] isEqualToString:[[lastChain streamURL] path]]))
 		{
 			if ([lastChain setTrack:nextStream] 
-				&& [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withRGInfo:nextStreamRGInfo])
+				&& [newChain openWithInput:[lastChain inputNode] withOutputFormatHint:[output format] withRGInfo:nextStreamRGInfo])
 			{
 				[newChain setStreamURL:nextStream];
 				[newChain setUserInfo:nextStreamUserInfo];
@@ -418,7 +418,7 @@
         
         lastChain = nil;
 		
-		while (shouldContinue && ![newChain open:nextStream withOutputFormat:[output format] withRGInfo:nextStreamRGInfo])
+		while (shouldContinue && ![newChain open:nextStream withOutputFormatHint:[output format] withRGInfo:nextStreamRGInfo])
 		{
 			if (nextStream == nil)
 			{

@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <CoreAudio/CoreAudio.h>
 #import "VirtualRingBuffer.h"
 #import "Semaphore.h"
 
@@ -25,7 +26,12 @@
 	BOOL shouldContinue;	
 	BOOL endOfStream; //All data is now in buffer
 	BOOL initialBufferFilled;
+    
+    AudioStreamBasicDescription nodeFormat;
 }
+
+@property (readonly) AudioStreamBasicDescription nodeFormat;
+
 - (id)initWithController:(id)c previous:(id)p;
 
 - (int)writeData:(void *)ptr amount:(int)a;
