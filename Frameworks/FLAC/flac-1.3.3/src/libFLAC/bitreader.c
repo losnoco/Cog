@@ -990,18 +990,21 @@ extern FLAC__bool FLAC__bitreader_read_uint32_little_endian(FLAC__BitReader *br,
 * === LZCNT ===
 */
 
+#define __LZCNT__
+#include <x86intrin.h>
+
 #undef COUNT_ZERO_MSBS
 #undef COUNT_ZERO_MSBS2
 
 #if (ENABLE_64_BIT_WORDS == 0)
-#define COUNT_ZERO_MSBS(word) __lzcnt(word)
-#define COUNT_ZERO_MSBS2(word) __lzcnt(word)
+#define COUNT_ZERO_MSBS(word) __lzcnt32(word)
+#define COUNT_ZERO_MSBS2(word) __lzcnt32(word)
 #else
 #define COUNT_ZERO_MSBS(word) __lzcnt64(word)
 #define COUNT_ZERO_MSBS2(word) __lzcnt64(word)
 #endif
 
-
+#pragma clang attribute push (__attribute__((target("lzcnt"))), apply_to=function)
 FLAC__bool FLAC__bitreader_read_unary_unsigned__LZCNT(FLAC__BitReader* br, uint32_t* val)
 {
 	uint32_t i;
@@ -1061,7 +1064,6 @@ FLAC__bool FLAC__bitreader_read_unary_unsigned__LZCNT(FLAC__BitReader* br, uint3
 
 
 /* this is by far the most heavily used reader call.  it ain't pretty but it's fast */
-#pragma clang attribute push (__attribute__((target("lzcnt"))), apply_to=function)
 FLAC__bool FLAC__bitreader_read_rice_signed_block__LZCNT(FLAC__BitReader* br, int vals[], uint32_t nvals, uint32_t parameter)
 {
 	/* try and get br->consumed_words and br->consumed_bits into register;
