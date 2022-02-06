@@ -1002,7 +1002,6 @@ extern FLAC__bool FLAC__bitreader_read_uint32_little_endian(FLAC__BitReader *br,
 #endif
 
 
-#pragma clang attribute push (__attribute__((target("lzcnt"))), apply_to=function)
 FLAC__bool FLAC__bitreader_read_unary_unsigned__LZCNT(FLAC__BitReader* br, uint32_t* val)
 {
 	uint32_t i;
@@ -1201,5 +1200,6 @@ FLAC__bool FLAC__bitreader_read_rice_signed_block__LZCNT(FLAC__BitReader* br, in
 
 	return true;
 }
+#pragma clang attribute pop
 
 #endif // FLAC__SUPPORT_LZCNT
