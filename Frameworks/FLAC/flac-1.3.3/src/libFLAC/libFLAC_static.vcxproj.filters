@@ -12,6 +12,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="IA32">
+      <UniqueIdentifier>{d7c71f4e-21f2-43c8-a41d-499e50026da5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\protected\all.h">
@@ -231,8 +234,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="ia32\cpu_asm.nasm" />
-    <CustomBuild Include="ia32\fixed_asm.nasm" />
-    <CustomBuild Include="ia32\lpc_asm.nasm" />
+    <CustomBuild Include="ia32\lpc_asm.nasm">
+      <Filter>IA32</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ia32\fixed_asm.nasm">
+      <Filter>IA32</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ia32\cpu_asm.nasm">
+      <Filter>IA32</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
