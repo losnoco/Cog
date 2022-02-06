@@ -713,32 +713,6 @@ FLAC__bool FLAC__bitreader_read_unary_unsigned(FLAC__BitReader *br, uint32_t *va
 }
 #endif
 
-FLAC__bool FLAC__bitreader_read_rice_signed(FLAC__BitReader *br, int *val, uint32_t parameter)
-{
-	FLAC__uint32 lsbs = 0, msbs = 0;
-	uint32_t uval;
-
-	FLAC__ASSERT(0 != br);
-	FLAC__ASSERT(0 != br->buffer);
-	FLAC__ASSERT(parameter <= 31);
-
-	/* read the unary MSBs and end bit */
-	if(!FLAC__bitreader_read_unary_unsigned(br, &msbs))
-		return false;
-
-	/* read the binary LSBs */
-	if(!FLAC__bitreader_read_raw_uint32(br, &lsbs, parameter))
-		return false;
-
-	/* compose the value */
-	uval = (msbs << parameter) | lsbs;
-	if(uval & 1)
-		*val = -((int)(uval >> 1)) - 1;
-	else
-		*val = (int)(uval >> 1);
-
-	return true;
-}
 
 /* this is by far the most heavily used reader call.  it ain't pretty but it's fast */
 FLAC__bool FLAC__bitreader_read_rice_signed_block(FLAC__BitReader *br, int vals[], uint32_t nvals, uint32_t parameter)
@@ -880,89 +854,6 @@ incomplete_lsbs:
 	return true;
 }
 
-#if 0 /* UNUSED */
-FLAC__bool FLAC__bitreader_read_golomb_signed(FLAC__BitReader *br, int *val, uint32_t parameter)
-{
-	FLAC__uint32 lsbs = 0, msbs = 0;
-	uint32_t bit, uval, k;
-
-	FLAC__ASSERT(0 != br);
-	FLAC__ASSERT(0 != br->buffer);
-
-	k = FLAC__bitmath_ilog2(parameter);
-
-	/* read the unary MSBs and end bit */
-	if(!FLAC__bitreader_read_unary_unsigned(br, &msbs))
-		return false;
-
-	/* read the binary LSBs */
-	if(!FLAC__bitreader_read_raw_uint32(br, &lsbs, k))
-		return false;
-
-	if(parameter == 1u<<k) {
-		/* compose the value */
-		uval = (msbs << k) | lsbs;
-	}
-	else {
-		uint32_t d = (1 << (k+1)) - parameter;
-		if(lsbs >= d) {
-			if(!FLAC__bitreader_read_bit(br, &bit))
-				return false;
-			lsbs <<= 1;
-			lsbs |= bit;
-			lsbs -= d;
-		}
-		/* compose the value */
-		uval = msbs * parameter + lsbs;
-	}
-
-	/* unfold uint32_t to signed */
-	if(uval & 1)
-		*val = -((int)(uval >> 1)) - 1;
-	else
-		*val = (int)(uval >> 1);
-
-	return true;
-}
-
-FLAC__bool FLAC__bitreader_read_golomb_unsigned(FLAC__BitReader *br, uint32_t *val, uint32_t parameter)
-{
-	FLAC__uint32 lsbs, msbs = 0;
-	uint32_t bit, k;
-
-	FLAC__ASSERT(0 != br);
-	FLAC__ASSERT(0 != br->buffer);
-
-	k = FLAC__bitmath_ilog2(parameter);
-
-	/* read the unary MSBs and end bit */
-	if(!FLAC__bitreader_read_unary_unsigned(br, &msbs))
-		return false;
-
-	/* read the binary LSBs */
-	if(!FLAC__bitreader_read_raw_uint32(br, &lsbs, k))
-		return false;
-
-	if(parameter == 1u<<k) {
-		/* compose the value */
-		*val = (msbs << k) | lsbs;
-	}
-	else {
-		uint32_t d = (1 << (k+1)) - parameter;
-		if(lsbs >= d) {
-			if(!FLAC__bitreader_read_bit(br, &bit))
-				return false;
-			lsbs <<= 1;
-			lsbs |= bit;
-			lsbs -= d;
-		}
-		/* compose the value */
-		*val = msbs * parameter + lsbs;
-	}
-
-	return true;
-}
-#endif /* UNUSED */
 
 /* on return, if *val == 0xffffffff then the utf-8 sequence was invalid, but the return value will be true */
 FLAC__bool FLAC__bitreader_read_utf8_uint32(FLAC__BitReader *br, FLAC__uint32 *val, FLAC__byte *raw, uint32_t *rawlen)
@@ -1090,3 +981,225 @@ extern FLAC__bool FLAC__bitreader_is_consumed_byte_aligned(const FLAC__BitReader
 extern uint32_t FLAC__bitreader_bits_left_for_byte_alignment(const FLAC__BitReader *br);
 extern uint32_t FLAC__bitreader_get_input_bits_unconsumed(const FLAC__BitReader *br);
 extern FLAC__bool FLAC__bitreader_read_uint32_little_endian(FLAC__BitReader *br, FLAC__uint32 *val);
+
+
+
+#ifdef FLAC__SUPPORT_LZCNT
+
+/*
+* === LZCNT ===
+*/
+
+#undef COUNT_ZERO_MSBS
+#undef COUNT_ZERO_MSBS2
+
+#if (ENABLE_64_BIT_WORDS == 0)
+#define COUNT_ZERO_MSBS(word) __lzcnt(word)
+#define COUNT_ZERO_MSBS2(word) __lzcnt(word)
+#else
+#define COUNT_ZERO_MSBS(word) __lzcnt64(word)
+#define COUNT_ZERO_MSBS2(word) __lzcnt64(word)
+#endif
+
+
+#pragma clang attribute push (__attribute__((target("lzcnt"))), apply_to=function)
+FLAC__bool FLAC__bitreader_read_unary_unsigned__LZCNT(FLAC__BitReader* br, uint32_t* val)
+{
+	uint32_t i;
+
+	FLAC__ASSERT(0 != br);
+	FLAC__ASSERT(0 != br->buffer);
+
+	*val = 0;
+	while (1) {
+		while (br->consumed_words < br->words) { /* if we've not consumed up to a partial tail word... */
+			brword b = br->buffer[br->consumed_words] << br->consumed_bits;
+			if (b) {
+				i = COUNT_ZERO_MSBS(b);
+				*val += i;
+				i++;
+				br->consumed_bits += i;
+				if (br->consumed_bits >= FLAC__BITS_PER_WORD) { /* faster way of testing if(br->consumed_bits == FLAC__BITS_PER_WORD) */
+					br->consumed_words++;
+					br->consumed_bits = 0;
+				}
+				return true;
+			} else {
+				*val += FLAC__BITS_PER_WORD - br->consumed_bits;
+				br->consumed_words++;
+				br->consumed_bits = 0;
+				/* didn't find stop bit yet, have to keep going... */
+			}
+		}
+		/* at this point we've eaten up all the whole words; have to try
+		 * reading through any tail bytes before calling the read callback.
+		 * this is a repeat of the above logic adjusted for the fact we
+		 * don't have a whole word.  note though if the client is feeding
+		 * us data a byte at a time (unlikely), br->consumed_bits may not
+		 * be zero.
+		 */
+		if (br->bytes * 8 > br->consumed_bits) {
+			const uint32_t end = br->bytes * 8;
+			brword b = (br->buffer[br->consumed_words] & (FLAC__WORD_ALL_ONES << (FLAC__BITS_PER_WORD - end))) << br->consumed_bits;
+			if (b) {
+				i = COUNT_ZERO_MSBS(b);
+				*val += i;
+				i++;
+				br->consumed_bits += i;
+				FLAC__ASSERT(br->consumed_bits < FLAC__BITS_PER_WORD);
+				return true;
+			} else {
+				*val += end - br->consumed_bits;
+				br->consumed_bits = end;
+				FLAC__ASSERT(br->consumed_bits < FLAC__BITS_PER_WORD);
+				/* didn't find stop bit yet, have to keep going... */
+			}
+		}
+		if (!bitreader_read_from_client_(br))
+			return false;
+	}
+}
+
+
+/* this is by far the most heavily used reader call.  it ain't pretty but it's fast */
+#pragma clang attribute push (__attribute__((target("lzcnt"))), apply_to=function)
+FLAC__bool FLAC__bitreader_read_rice_signed_block__LZCNT(FLAC__BitReader* br, int vals[], uint32_t nvals, uint32_t parameter)
+{
+	/* try and get br->consumed_words and br->consumed_bits into register;
+	 * must remember to flush them back to *br before calling other
+	 * bitreader functions that use them, and before returning */
+	uint32_t cwords, words, lsbs, msbs, x, y;
+	uint32_t ucbits; /* keep track of the number of unconsumed bits in word */
+	brword b;
+	int* val, * end;
+
+	FLAC__ASSERT(0 != br);
+	FLAC__ASSERT(0 != br->buffer);
+	/* WATCHOUT: code does not work with <32bit words; we can make things much faster with this assertion */
+	FLAC__ASSERT(FLAC__BITS_PER_WORD >= 32);
+	FLAC__ASSERT(parameter < 32);
+	/* the above two asserts also guarantee that the binary part never straddles more than 2 words, so we don't have to loop to read it */
+
+	val = vals;
+	end = vals + nvals;
+
+	if (parameter == 0) {
+		while (val < end) {
+			/* read the unary MSBs and end bit */
+			if (!FLAC__bitreader_read_unary_unsigned__LZCNT(br, &msbs))
+				return false;
+
+			*val++ = (int)(msbs >> 1) ^ -(int)(msbs & 1);
+		}
+
+		return true;
+	}
+
+	FLAC__ASSERT(parameter > 0);
+
+	cwords = br->consumed_words;
+	words = br->words;
+
+	/* if we've not consumed up to a partial tail word... */
+	if (cwords >= words) {
+		x = 0;
+		goto process_tail;
+	}
+
+	ucbits = FLAC__BITS_PER_WORD - br->consumed_bits;
+	b = br->buffer[cwords] << br->consumed_bits;  /* keep unconsumed bits aligned to left */
+
+	while (val < end) {
+		/* read the unary MSBs and end bit */
+		x = y = COUNT_ZERO_MSBS2(b);
+		if (x == FLAC__BITS_PER_WORD) {
+			x = ucbits;
+			do {
+				/* didn't find stop bit yet, have to keep going... */
+				cwords++;
+				if (cwords >= words)
+					goto incomplete_msbs;
+				b = br->buffer[cwords];
+				y = COUNT_ZERO_MSBS2(b);
+				x += y;
+			} while (y == FLAC__BITS_PER_WORD);
+		}
+		b <<= y;
+		b <<= 1; /* account for stop bit */
+		ucbits = (ucbits - x - 1) % FLAC__BITS_PER_WORD;
+		msbs = x;
+
+		/* read the binary LSBs */
+		x = (FLAC__uint32)(b >> (FLAC__BITS_PER_WORD - parameter)); /* parameter < 32, so we can cast to 32-bit uint32_t */
+		if (parameter <= ucbits) {
+			ucbits -= parameter;
+			b <<= parameter;
+		} else {
+			/* there are still bits left to read, they will all be in the next word */
+			cwords++;
+			if (cwords >= words)
+				goto incomplete_lsbs;
+			b = br->buffer[cwords];
+			ucbits += FLAC__BITS_PER_WORD - parameter;
+			x |= (FLAC__uint32)(b >> ucbits);
+			b <<= FLAC__BITS_PER_WORD - ucbits;
+		}
+		lsbs = x;
+
+		/* compose the value */
+		x = (msbs << parameter) | lsbs;
+		*val++ = (int)(x >> 1) ^ -(int)(x & 1);
+
+		continue;
+
+		/* at this point we've eaten up all the whole words */
+	process_tail:
+		do {
+			if (0) {
+			incomplete_msbs:
+				br->consumed_bits = 0;
+				br->consumed_words = cwords;
+			}
+
+			/* read the unary MSBs and end bit */
+			if (!FLAC__bitreader_read_unary_unsigned__LZCNT(br, &msbs))
+				return false;
+			msbs += x;
+			x = ucbits = 0;
+
+			if (0) {
+			incomplete_lsbs:
+				br->consumed_bits = 0;
+				br->consumed_words = cwords;
+			}
+
+			/* read the binary LSBs */
+			if (!FLAC__bitreader_read_raw_uint32(br, &lsbs, parameter - ucbits))
+				return false;
+			lsbs = x | lsbs;
+
+			/* compose the value */
+			x = (msbs << parameter) | lsbs;
+			*val++ = (int)(x >> 1) ^ -(int)(x & 1);
+			x = 0;
+
+			cwords = br->consumed_words;
+			words = br->words;
+			ucbits = FLAC__BITS_PER_WORD - br->consumed_bits;
+			b = br->buffer[cwords] << br->consumed_bits;
+		} while (cwords >= words && val < end);
+	}
+
+	if (ucbits == 0 && cwords < words) {
+		/* don't leave the head word with no unconsumed bits */
+		cwords++;
+		ucbits = FLAC__BITS_PER_WORD;
+	}
+
+	br->consumed_bits = FLAC__BITS_PER_WORD - ucbits;
+	br->consumed_words = cwords;
+
+	return true;
+}
+
+#endif // FLAC__SUPPORT_LZCNT

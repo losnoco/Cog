@@ -80,7 +80,6 @@ FLAC__bool FLAC__bitreader_skip_bits_no_crc(FLAC__BitReader *br, uint32_t bits);
 FLAC__bool FLAC__bitreader_skip_byte_block_aligned_no_crc(FLAC__BitReader *br, uint32_t nvals); /* WATCHOUT: does not CRC the read data! */
 FLAC__bool FLAC__bitreader_read_byte_block_aligned_no_crc(FLAC__BitReader *br, FLAC__byte *val, uint32_t nvals); /* WATCHOUT: does not CRC the read data! */
 FLAC__bool FLAC__bitreader_read_unary_unsigned(FLAC__BitReader *br, uint32_t *val);
-FLAC__bool FLAC__bitreader_read_rice_signed(FLAC__BitReader *br, int *val, uint32_t parameter);
 FLAC__bool FLAC__bitreader_read_rice_signed_block(FLAC__BitReader *br, int vals[], uint32_t nvals, uint32_t parameter);
 #if 0 /* UNUSED */
 FLAC__bool FLAC__bitreader_read_golomb_signed(FLAC__BitReader *br, int *val, uint32_t parameter);
@@ -88,4 +87,10 @@ FLAC__bool FLAC__bitreader_read_golomb_unsigned(FLAC__BitReader *br, uint32_t *v
 #endif
 FLAC__bool FLAC__bitreader_read_utf8_uint32(FLAC__BitReader *br, FLAC__uint32 *val, FLAC__byte *raw, uint32_t *rawlen);
 FLAC__bool FLAC__bitreader_read_utf8_uint64(FLAC__BitReader *br, FLAC__uint64 *val, FLAC__byte *raw, uint32_t *rawlen);
+#endif
+
+#if defined(FLAC__CPU_IA32) || defined(FLAC__CPU_X86_64)
+#define FLAC__SUPPORT_LZCNT
+FLAC__bool FLAC__bitreader_read_unary_unsigned__LZCNT(FLAC__BitReader* br, uint32_t* val);
+FLAC__bool FLAC__bitreader_read_rice_signed_block__LZCNT(FLAC__BitReader* br, int vals[], uint32_t nvals, uint32_t parameter);
 #endif

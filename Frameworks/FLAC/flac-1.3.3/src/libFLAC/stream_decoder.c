@@ -134,6 +134,9 @@ typedef struct FLAC__StreamDecoderPrivate {
 	void (*local_lpc_restore_signal_64bit)(const FLAC__int32 residual[], uint32_t data_len, const FLAC__int32 qlp_coeff[], uint32_t order, int lp_quantization, FLAC__int32 data[]);
 	/* for use when the signal is <= 16 bits-per-sample, or <= 15 bits-per-sample on a side channel (which requires 1 extra bit): */
 	void (*local_lpc_restore_signal_16bit)(const FLAC__int32 residual[], uint32_t data_len, const FLAC__int32 qlp_coeff[], uint32_t order, int lp_quantization, FLAC__int32 data[]);
+
+	FLAC__bool (*local_bitreader_read_rice_signed_block)(FLAC__BitReader* br, int vals[], uint32_t nvals, uint32_t parameter);
+
 	void *client_data;
 	FILE *file; /* only used if FLAC__stream_decoder_init_file()/FLAC__stream_decoder_init_file() called, else NULL */
 	FLAC__BitReader *input;
@@ -377,9 +380,18 @@ static FLAC__StreamDecoderInitStatus init_stream_internal_(
 	decoder->private_->local_lpc_restore_signal = FLAC__lpc_restore_signal;
 	decoder->private_->local_lpc_restore_signal_64bit = FLAC__lpc_restore_signal_wide;
 	decoder->private_->local_lpc_restore_signal_16bit = FLAC__lpc_restore_signal;
+	decoder->private_->local_bitreader_read_rice_signed_block = FLAC__bitreader_read_rice_signed_block;
+
 	/* now override with asm where appropriate */
 #ifndef FLAC__NO_ASM
 	if(decoder->private_->cpuinfo.use_asm) {
+
+#ifdef FLAC__SUPPORT_LZCNT
+		if (decoder->private_->cpuinfo.x86.lzcnt) {
+			decoder->private_->local_bitreader_read_rice_signed_block = FLAC__bitreader_read_rice_signed_block__LZCNT;
+		}
+#endif
+
 #ifdef FLAC__CPU_IA32
 		FLAC__ASSERT(decoder->private_->cpuinfo.type == FLAC__CPUINFO_TYPE_IA32);
 #ifdef FLAC__HAS_NASM
@@ -2770,7 +2782,7 @@ FLAC__bool read_residual_partitioned_rice_(FLAC__StreamDecoder *decoder, uint32_
 		if(rice_parameter < pesc) {
 			partitioned_rice_contents->raw_bits[partition] = 0;
 			u = (partition_order == 0 || partition > 0)? partition_samples : partition_samples - predictor_order;
-			if(!FLAC__bitreader_read_rice_signed_block(decoder->private_->input, residual + sample, u, rice_parameter))
+			if(!decoder->private_->local_bitreader_read_rice_signed_block(decoder->private_->input, residual + sample, u, rice_parameter))
 				return false; /* read_callback_ sets the state for us */
 			sample += u;
 		}

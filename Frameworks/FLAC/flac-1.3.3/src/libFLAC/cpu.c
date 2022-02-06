@@ -193,6 +193,9 @@ x86_cpu_info (FLAC__CPUInfo *info)
 		info->x86.avx2  = (flags_ebx & FLAC__CPUINFO_X86_CPUID_AVX2   ) ? true : false;
 	}
 
+	cpuinfo_x86(0x80000001, &flags_eax, &flags_ebx, &flags_ecx, &flags_edx);
+	info->x86.lzcnt = (flags_ecx & (1 << 5)) ? true : false;
+
 #if defined FLAC__CPU_IA32
 	dfprintf(stderr, "CPU info (IA-32):\n");
 #else

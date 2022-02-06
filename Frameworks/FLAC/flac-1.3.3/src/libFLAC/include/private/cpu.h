@@ -172,6 +172,7 @@ typedef struct {
 	FLAC__bool avx;
 	FLAC__bool avx2;
 	FLAC__bool fma;
+	FLAC__bool lzcnt;
 } FLAC__CPUInfo_x86;
 
 typedef struct {
