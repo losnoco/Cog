@@ -7,15 +7,17 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "VirtualRingBuffer.h"
+#import "ChunkList.h"
 #import "Semaphore.h"
 
 #define BUFFER_SIZE 1024 * 1024
 #define CHUNK_SIZE 16 * 1024
 
 @interface Node : NSObject {
-	VirtualRingBuffer *buffer;
-	Semaphore *semaphore;
+	ChunkList *buffer;
+    Semaphore *semaphore;
+    
+    NSRecursiveLock *accessLock;
 	
 	id __weak previousNode;
 	id __weak controller;
@@ -25,11 +27,14 @@
 	BOOL shouldContinue;	
 	BOOL endOfStream; //All data is now in buffer
 	BOOL initialBufferFilled;
+    
+    AudioStreamBasicDescription nodeFormat;
+    BOOL nodeLossless;
 }
 - (id)initWithController:(id)c previous:(id)p;
 
-- (int)writeData:(void *)ptr amount:(int)a;
-- (int)readData:(void *)ptr amount:(int)a;
+- (void)writeData:(const void *)ptr amount:(size_t)a;
+- (AudioChunk *)readChunk:(size_t)maxFrames;
 
 - (void)process; //Should be overwriten by subclass
 - (void)threadEntry:(id)arg;
@@ -45,8 +50,11 @@
 - (BOOL)shouldContinue;
 - (void)setShouldContinue:(BOOL)s;
 
-- (VirtualRingBuffer *)buffer;
+- (ChunkList *)buffer;
 - (void)resetBuffer; //WARNING! DANGER WILL ROBINSON!
+
+- (AudioStreamBasicDescription)nodeFormat;
+- (BOOL)nodeLossless;
 
 - (Semaphore *)semaphore;
 

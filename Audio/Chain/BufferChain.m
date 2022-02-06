@@ -64,8 +64,14 @@
 		return NO;
     
     NSDictionary * properties = [inputNode properties];
+    
+    inputFormat = [inputNode nodeFormat];
+    
+    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
+    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
+    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
 
-    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
+    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -85,8 +91,14 @@
 	
     NSDictionary * properties = [inputNode properties];
     
-	DLog(@"Input Properties: %@", properties);
-    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+    inputFormat = [inputNode nodeFormat];
+    
+    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
+    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
+    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
+
+    DLog(@"Input Properties: %@", properties);
+    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
     [self setRGInfo:rgi];
@@ -107,7 +119,14 @@
     NSDictionary * properties = [inputNode properties];
     
     DLog(@"Input Properties: %@", properties);
-    if (![converterNode setupWithInputFormat:(inputFormat = propertiesToASBD(properties)) outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+    
+    inputFormat = [inputNode nodeFormat];
+
+    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
+    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
+    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
+
+    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
         return NO;
     
     [self setRGInfo:rgi];

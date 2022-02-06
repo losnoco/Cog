@@ -51,6 +51,9 @@
 	
 	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
     
+    nodeFormat = propertiesToASBD(properties);
+    nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
+    
 	shouldContinue = YES;
 	shouldSeek = NO;
 
@@ -68,6 +71,9 @@
 	
 	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
     
+    nodeFormat = propertiesToASBD(properties);
+    nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
+
 	[self registerObservers];
 
 	shouldContinue = YES;
@@ -102,12 +108,10 @@
 	DLog(@"SOMETHING CHANGED!");
 	if ([keyPath isEqual:@"properties"]) {
         DLog(@"Input format changed");
-        // Converter doesn't need resetting for this, as output format hasn't changed
-        ConverterNode *converter = [[[controller controller] bufferChain] converter];
-        AudioStreamBasicDescription newInputFormat = [[[controller controller] bufferChain] inputFormat];
-        AudioStreamBasicDescription oldInputFormat = [converter inputFormat];
-        if (memcmp(&oldInputFormat, &newInputFormat, sizeof(oldInputFormat)) != 0)
-            [converter inputFormatDidChange:newInputFormat];
+        // Converter may need resetting, it'll do that when it reaches the new chunks
+        NSDictionary * properties = [decoder properties];
+        nodeFormat = propertiesToASBD(properties);
+        nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 	}
 	else if ([keyPath isEqual:@"metadata"]) {
 		//Inform something of metadata change
@@ -254,8 +258,7 @@
 
 - (double) secondsBuffered
 {
-    AudioStreamBasicDescription inputFormat = [[[controller controller] bufferChain] inputFormat];
-    return ((double)[buffer bufferedLength] / (inputFormat.mSampleRate * inputFormat.mBytesPerPacket));
+    return [buffer listDuration];
 }
 
 @end

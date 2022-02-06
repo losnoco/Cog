@@ -21,6 +21,6 @@
     // This node just slaps pre-converted data into its buffer for re-buffering
 }
 
-- (void)writeData:(float *)data floatCount:(size_t)count;
+- (void) setFormat:(AudioStreamBasicDescription)format;
 
 @end

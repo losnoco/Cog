@@ -17,6 +17,8 @@
 
 #import <stdatomic.h>
 
+#import "Downmix.h"
+
 #import "Semaphore.h"
 
 //#define OUTPUT_LOG
@@ -42,6 +44,8 @@
     
     BOOL eqEnabled;
     
+    BOOL streamFormatStarted;
+    
     atomic_long bytesRendered;
     atomic_long bytesHdcdSustained;
     
@@ -54,11 +58,14 @@
 
     AudioDeviceID outputDeviceID;
     AudioStreamBasicDescription deviceFormat;    // info about the default device
+    AudioStreamBasicDescription streamFormat;    // stream format last seen in render callback
 
     AUAudioUnit *_au;
     size_t _bufferSize;
     
     AudioUnit _eq;
+    
+    DownmixProcessor * downmixer;
     
 #ifdef OUTPUT_LOG
     FILE *_logFile;

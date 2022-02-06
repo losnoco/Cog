@@ -54,9 +54,9 @@
 	[output resume];
 }
 
-- (void)incrementAmountPlayed:(long)count
+- (void)incrementAmountPlayed:(double)seconds
 {
-    amountPlayed += (double)count * sampleRatio;
+    amountPlayed += seconds;
 }
 
 - (void)resetAmountPlayed
@@ -76,23 +76,21 @@
 
 - (double)secondsBuffered
 {
-    return (double)([buffer bufferedLength]) / (format.mSampleRate * format.mBytesPerPacket);
+    return [buffer listDuration];
 }
 
-- (int)readData:(void *)ptr amount:(int)amount
+- (AudioChunk *)readChunk:(size_t)amount
 {
     @autoreleasepool {
-        int n;
         [self setPreviousNode:[[controller bufferChain] finalNode]];
 	
-        n = [super readData:ptr amount:amount];
+        AudioChunk * ret = [super readChunk:amount];
     
 /*	if (n == 0) {
 		DLog(@"Output Buffer dry!");
 	}
 */	
-	
-        return n;
+        return ret;
     }
 }
 

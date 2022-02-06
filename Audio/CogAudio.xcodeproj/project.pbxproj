@@ -45,6 +45,12 @@
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */; };
 		8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */; };
+		834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EA27AF8F380063BC83 /* AudioChunk.h */; };
+		834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EC27AF91220063BC83 /* AudioChunk.m */; };
+		834FD4F027AF93680063BC83 /* ChunkList.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EE27AF93680063BC83 /* ChunkList.h */; };
+		834FD4F127AF93680063BC83 /* ChunkList.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EF27AF93680063BC83 /* ChunkList.m */; };
+		834FD4F427AFA2150063BC83 /* Downmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4F227AFA2150063BC83 /* Downmix.h */; };
+		834FD4F527AFA2150063BC83 /* Downmix.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4F327AFA2150063BC83 /* Downmix.m */; };
 		835C88A82797D4D400E28EAE /* LICENSE.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 835C88A42797D4D400E28EAE /* LICENSE.LGPL */; };
 		835C88A92797D4D400E28EAE /* License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 835C88A52797D4D400E28EAE /* License.txt */; };
 		835C88AA2797D4D400E28EAE /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88A62797D4D400E28EAE /* lpc.c */; };
@@ -138,6 +144,12 @@
 		32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogAudio_Prefix.pch; sourceTree = "<group>"; };
 		8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileHandle+CreateFile.h"; path = "../../Utils/NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+CreateFile.m"; path = "../../Utils/NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
+		834FD4EA27AF8F380063BC83 /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioChunk.h; sourceTree = "<group>"; };
+		834FD4EC27AF91220063BC83 /* AudioChunk.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioChunk.m; sourceTree = "<group>"; };
+		834FD4EE27AF93680063BC83 /* ChunkList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChunkList.h; sourceTree = "<group>"; };
+		834FD4EF27AF93680063BC83 /* ChunkList.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChunkList.m; sourceTree = "<group>"; };
+		834FD4F227AFA2150063BC83 /* Downmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downmix.h; sourceTree = "<group>"; };
+		834FD4F327AFA2150063BC83 /* Downmix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downmix.m; sourceTree = "<group>"; };
 		835C88A42797D4D400E28EAE /* LICENSE.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.LGPL; sourceTree = "<group>"; };
 		835C88A52797D4D400E28EAE /* License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
 		835C88A62797D4D400E28EAE /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lpc.c; sourceTree = "<group>"; };
@@ -284,6 +296,12 @@
 		17D21C750B8BE4BA00D1EBDE /* Chain */ = {
 			isa = PBXGroup;
 			children = (
+				834FD4EA27AF8F380063BC83 /* AudioChunk.h */,
+				834FD4EC27AF91220063BC83 /* AudioChunk.m */,
+				834FD4EE27AF93680063BC83 /* ChunkList.h */,
+				834FD4EF27AF93680063BC83 /* ChunkList.m */,
+				834FD4F227AFA2150063BC83 /* Downmix.h */,
+				834FD4F327AFA2150063BC83 /* Downmix.m */,
 				83A44A00279119B50049B6E2 /* RefillNode.h */,
 				83A449FF279119B50049B6E2 /* RefillNode.m */,
 				17D21C760B8BE4BA00D1EBDE /* BufferChain.h */,
@@ -434,14 +452,17 @@
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
 				17D21CC50B8BE4BA00D1EBDE /* OutputCoreAudio.h in Headers */,
+				834FD4F427AFA2150063BC83 /* Downmix.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CDF0B8BE5B400D1EBDE /* VirtualRingBuffer.h in Headers */,
 				835C88AB2797D4D400E28EAE /* lpc.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* Semaphore.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
+				834FD4F027AF93680063BC83 /* ChunkList.h in Headers */,
 				17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */,
 				17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */,
+				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
 				17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */,
 				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
@@ -539,9 +560,11 @@
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
+				834FD4F527AFA2150063BC83 /* Downmix.m in Sources */,
 				17D21CC60B8BE4BA00D1EBDE /* OutputCoreAudio.m in Sources */,
 				17D21CE00B8BE5B400D1EBDE /* VirtualRingBuffer.m in Sources */,
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
+				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
@@ -554,6 +577,7 @@
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				83A44A01279119B50049B6E2 /* RefillNode.m in Sources */,
+				834FD4F127AF93680063BC83 /* ChunkList.m in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,

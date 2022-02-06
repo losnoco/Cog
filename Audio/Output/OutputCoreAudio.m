@@ -62,7 +62,7 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
     const int channels = _self->deviceFormat.mChannelsPerFrame;
     const int bytesPerPacket = channels * sizeof(float);
     
-    int amountToRead, amountRead = 0;
+    size_t amountToRead, amountRead = 0;
 
     amountToRead = inNumberFrames * bytesPerPacket;
     
@@ -82,44 +82,59 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         atomic_fetch_add(&_self->bytesRendered, amountToRead);
         return 0;
     }
+
+    AudioChunk * chunk = [[_self->outputController buffer] removeSamples:(amountToRead / bytesPerPacket)];
     
-    void * readPtr;
-    int toRead = [[_self->outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
+    size_t frameCount = [chunk frameCount];
+    AudioStreamBasicDescription format = [chunk format];
     
-    if (toRead > amountToRead)
-        toRead = amountToRead;
-    
-    if (toRead) {
-        fillBuffers(ioData, (float*)readPtr, toRead / bytesPerPacket, 0);
-        amountRead = toRead;
-        [[_self->outputController buffer] didReadLength:toRead];
-        [_self->outputController incrementAmountPlayed:amountRead];
+    if (frameCount) {
+        if (!_self->streamFormatStarted || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
+            _self->streamFormat = format;
+            _self->streamFormatStarted = YES;
+            _self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format andOutputFormat:_self->deviceFormat];
+        }
+        
+        double chunkDuration = [chunk duration];
+        
+        NSData * samples = [chunk removeSamples:frameCount];
+        
+        float downmixedData[frameCount * channels];
+        [_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
+        
+        fillBuffers(ioData, downmixedData, frameCount, 0);
+        amountRead = frameCount * bytesPerPacket;
+        [_self->outputController incrementAmountPlayed:chunkDuration];
         atomic_fetch_add(&_self->bytesRendered, amountRead);
         [_self->writeSemaphore signal];
     }
-    else
-        [[_self->outputController buffer] didReadLength:0];
 
     // Try repeatedly! Buffer wraps can cause a slight data shortage, as can
     // unexpected track changes.
     while ((amountRead < amountToRead) && [_self->outputController shouldContinue] == YES)
     {
-        int amountRead2; //Use this since return type of readdata isnt known...may want to fix then can do a simple += to readdata
-        amountRead2 = [[_self->outputController buffer] lengthAvailableToReadReturningPointer:&readPtr];
-        if (amountRead2 > (amountToRead - amountRead))
-            amountRead2 = amountToRead - amountRead;
-        if (amountRead2) {
-            atomic_fetch_add(&_self->bytesRendered, amountRead2);
-            fillBuffers(ioData, (float*)readPtr, amountRead2 / bytesPerPacket, amountRead / bytesPerPacket);
-            [[_self->outputController buffer] didReadLength:amountRead2];
+        chunk = [[_self->outputController buffer] removeSamples:((amountToRead - amountRead) / bytesPerPacket)];
+        frameCount = [chunk frameCount];
+        format = [chunk format];
+        if (frameCount) {
+            if (!_self->streamFormatStarted || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
+                _self->streamFormat = format;
+                _self->streamFormatStarted = YES;
+                _self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format andOutputFormat:_self->deviceFormat];
+            }
+            atomic_fetch_add(&_self->bytesRendered, frameCount * bytesPerPacket);
+            double chunkDuration = [chunk duration];
+            NSData * samples = [chunk removeSamples:frameCount];
+            float downmixedData[frameCount * channels];
+            [_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
+            fillBuffers(ioData, downmixedData, frameCount, amountRead / bytesPerPacket);
 
-            [_self->outputController incrementAmountPlayed:amountRead2];
+            [_self->outputController incrementAmountPlayed:chunkDuration];
             
-            amountRead += amountRead2;
+            amountRead += frameCount * bytesPerPacket;
             [_self->writeSemaphore signal];
         }
         else {
-            [[_self->outputController buffer] didReadLength:0];
             [_self->readSemaphore timedWait:500];
         }
     }
@@ -164,6 +179,8 @@ static OSStatus renderCallback( void *inRefCon, AudioUnitRenderActionFlags *ioAc
         running = NO;
         started = NO;
         stopNext = NO;
+        
+        streamFormatStarted = NO;
         
         atomic_init(&bytesRendered, 0);
         atomic_init(&bytesHdcdSustained, 0);
@@ -223,7 +240,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         }
         
         if ([outputController shouldReset]) {
-            [[outputController buffer] empty];
+            [[outputController buffer] reset];
             [outputController setShouldReset:NO];
             [delayedEvents removeAllObjects];
             delayedEventsPopped = YES;
@@ -231,7 +248,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
         while ([delayedEvents count]) {
             size_t localBytesRendered = atomic_load_explicit(&bytesRendered, memory_order_relaxed);
-            if (localBytesRendered >= [[delayedEvents objectAtIndex:0] longValue]) {
+            double secondsRendered = (double)localBytesRendered / (double)(deviceFormat.mBytesPerPacket * deviceFormat.mSampleRate);
+            if (secondsRendered >= [[delayedEvents objectAtIndex:0] doubleValue]) {
                 if ([outputController chainQueueHasTracks])
                     delayedEventsPopped = YES;
                 [self signalEndOfStream];
@@ -242,22 +260,24 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         if (stopping)
             break;
+
+        size_t frameCount = 0;
         
-        void *writePtr;
-        int toWrite = [[outputController buffer] lengthAvailableToWriteReturningPointer:&writePtr];
-        int bytesRead = 0;
-        if (toWrite > CHUNK_SIZE)
-            toWrite = CHUNK_SIZE;
-        if (toWrite)
-            bytesRead = [outputController readData:writePtr amount:toWrite];
-        [[outputController buffer] didWriteLength:bytesRead];
-        if (bytesRead) {
+        if (![[outputController buffer] isFull]) {
+            AudioChunk * chunk = [outputController readChunk:512];
+            frameCount = [chunk frameCount];
+            if (frameCount) {
+                [[outputController buffer] addChunk:chunk];
+            }
+        }
+
+        if (frameCount) {
             [readSemaphore signal];
             continue;
         }
         else if ([outputController shouldContinue] == NO)
             break;
-        else if (!toWrite) {
+        else if ([[outputController buffer] isFull]) {
             if (!started) {
                 started = YES;
                 if (!paused) {
@@ -270,20 +290,21 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
             // End of input possibly reached
             if (delayedEventsPopped && [outputController endOfStream] == YES)
             {
-                long bytesBuffered = [[outputController buffer] bufferedLength];
-                bytesBuffered += atomic_load_explicit(&bytesRendered, memory_order_relaxed);
+                double secondsBuffered = [[outputController buffer] listDuration];
+                size_t _bytesRendered = atomic_load_explicit(&bytesRendered, memory_order_relaxed);
+                secondsBuffered += (double)_bytesRendered / (double)(deviceFormat.mBytesPerPacket * deviceFormat.mSampleRate);
                 if ([outputController chainQueueHasTracks])
                 {
-                    if (bytesBuffered < CHUNK_SIZE / 2)
-                        bytesBuffered = 0;
+                    if (secondsBuffered <= 0.005)
+                        secondsBuffered = 0.0;
                     else
-                        bytesBuffered -= CHUNK_SIZE / 2;
+                        secondsBuffered -= 0.005;
                 }
                 else {
                     stopNext = YES;
                     break;
                 }
-                [delayedEvents addObject:[NSNumber numberWithLong:bytesBuffered]];
+                [delayedEvents addObject:[NSNumber numberWithDouble:secondsBuffered]];
                 delayedEventsPopped = NO;
                 if (!started) {
                     started = YES;
@@ -477,8 +498,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         NSError *err;
         AVAudioFormat *renderFormat;
 
-        [outputController incrementAmountPlayed:[[outputController buffer] bufferedLength]];
-        [[outputController buffer] empty];
+        [outputController incrementAmountPlayed:[[outputController buffer] listDuration]];
+        [[outputController buffer] reset];
 
         _deviceFormat = format;
         deviceFormat = *(format.streamDescription);
@@ -562,6 +583,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
     paused = NO;
     stopNext = NO;
     outputDeviceID = -1;
+    
+    downmixer = nil;
 	
     AudioComponentDescription desc;
     NSError *err;
@@ -668,6 +691,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         
         return 0;
     };
+    
+    [_au setMaximumFramesToRender:512];
 
     UInt32 value;
     UInt32 size = sizeof(value);
@@ -780,6 +805,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
         // This takes the EQ and frees it after disposing of any present UIs
         [outputController endEqualizer:_eq];
         _eq = NULL;
+    }
+    if (downmixer)
+    {
+        downmixer = nil;
     }
 #ifdef OUTPUT_LOG
     if (_logFile)

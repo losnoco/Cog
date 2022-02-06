@@ -19,7 +19,7 @@
     if (self)
     {
         // This special node should be able to handle up to four buffers
-        buffer = [[VirtualRingBuffer alloc] initWithLength:BUFFER_SIZE * 4];
+        buffer = [[ChunkList alloc] initWithMaximumDuration:12.0];
         semaphore = [[Semaphore alloc] init];
         
         initialBufferFilled = NO;
@@ -27,6 +27,8 @@
         controller = c;
         endOfStream = NO;
         shouldContinue = YES;
+        
+        nodeLossless = NO;
 
         [self setPreviousNode:p];
     }
@@ -34,15 +36,14 @@
     return self;
 }
 
-- (void)writeData:(float *)data floatCount:(size_t)count
-{
-    [self writeData:data amount:(int)(count * sizeof(float))];
-}
-
-
 - (void)dealloc
 {
 	DLog(@"Refill Node dealloc");
+}
+
+- (void)setFormat:(AudioStreamBasicDescription)format
+{
+    nodeFormat = format;
 }
 
 @end

@@ -32,7 +32,7 @@
 
 - (double)amountPlayed;
 
-- (void)incrementAmountPlayed:(long)count;
+- (void)incrementAmountPlayed:(double)seconds;
 - (void)resetAmountPlayed;
 
 - (void)endOfInputPlayed;
@@ -46,7 +46,7 @@
 - (void)close;
 - (void)seek:(double)time;
 
-- (int)readData:(void *)ptr amount:(int)amount;
+- (AudioChunk *)readChunk:(size_t)amount;
 
 - (void)setFormat:(AudioStreamBasicDescription *)f;
 - (AudioStreamBasicDescription) format;

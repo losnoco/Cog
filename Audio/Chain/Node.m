@@ -18,14 +18,18 @@
 	self = [super init];
 	if (self)
 	{
-		buffer = [[VirtualRingBuffer alloc] initWithLength:BUFFER_SIZE];
-		semaphore = [[Semaphore alloc] init];
+        buffer = [[ChunkList alloc] initWithMaximumDuration:3.0];
+        semaphore = [[Semaphore alloc] init];
+        
+        accessLock = [[NSRecursiveLock alloc] init];
 		
 		initialBufferFilled = NO;
 		
 		controller = c;
 		endOfStream = NO;
 		shouldContinue = YES;
+        
+        nodeLossless = NO;
 
 		[self setPreviousNode:p];
 	}
@@ -33,46 +37,50 @@
 	return self;
 }
 
-- (int)writeData:(void *)ptr amount:(int)amount
+- (AudioStreamBasicDescription)nodeFormat
 {
-	void *writePtr;
-	int amountToCopy, availOutput;
-	int amountLeft = amount;
-	
-	while (shouldContinue == YES && amountLeft > 0)
-	{
-		availOutput = [buffer lengthAvailableToWriteReturningPointer:&writePtr];
-		if (availOutput == 0) {
-			if (initialBufferFilled == NO) {
-				initialBufferFilled = YES;
-				if ([controller respondsToSelector:@selector(initialBufferFilled:)])
-					[controller performSelector:@selector(initialBufferFilled:) withObject:self];
-			}
-		}
-		
-		if (availOutput == 0 || shouldReset)
-		{
-            if (availOutput)
-            {
-                // Unlock the buffer
-                [buffer didWriteLength:0];
+    return nodeFormat;
+}
+
+- (BOOL)nodeLossless
+{
+    return nodeLossless;
+}
+
+- (void)writeData:(const void *)ptr amount:(size_t)amount
+{
+    [accessLock lock];
+    
+    AudioChunk * chunk = [[AudioChunk alloc] init];
+    [chunk setFormat:nodeFormat];
+    [chunk setLossless:nodeLossless];
+    [chunk assignSamples:ptr frameCount:amount / nodeFormat.mBytesPerPacket];
+    
+    const double chunkDuration = [chunk duration];
+    double durationLeft = [buffer maxDuration] - [buffer listDuration];
+    
+    while (shouldContinue == YES && chunkDuration > durationLeft)
+    {
+        if (durationLeft < chunkDuration) {
+            if (initialBufferFilled == NO) {
+                initialBufferFilled = YES;
+                if ([controller respondsToSelector:@selector(initialBufferFilled:)])
+                    [controller performSelector:@selector(initialBufferFilled:) withObject:self];
             }
-			[semaphore wait];
-		}
-		else
-		{
-			amountToCopy = availOutput;
-			if (amountToCopy > amountLeft)
-				amountToCopy = amountLeft;
-			
-			memcpy(writePtr, &((char *)ptr)[amount - amountLeft], amountToCopy);
-            [buffer didWriteLength:amountToCopy];
-			
-			amountLeft -= amountToCopy;
-		}
-	}
-	
-	return (amount - amountLeft);
+        }
+        
+        if (durationLeft < chunkDuration || shouldReset) {
+            [accessLock unlock];
+            [semaphore wait];
+            [accessLock lock];
+        }
+        
+        durationLeft = [buffer maxDuration] - [buffer listDuration];
+    }
+    
+    [buffer addChunk:chunk];
+    
+    [accessLock unlock];
 }
 
 //Should be overwriten by subclass.
@@ -87,53 +95,36 @@
     }
 }
 
-- (int)readData:(void *)ptr amount:(int)amount
+- (AudioChunk *)readChunk:(size_t)maxFrames
 {
-	void *readPtr;
-	int amountToCopy;
-	int availInput;
+    [accessLock lock];
     
     if ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES)
     {
         endOfStream = YES;
-        return 0;
+        [accessLock unlock];
+        return [[AudioChunk alloc] init];
     }
-	
-	availInput = [[previousNode buffer] lengthAvailableToReadReturningPointer:&readPtr];
-	
-/*	if (availInput <= 0) {
-		DLog(@"BUFFER RAN DRY!");
-	}
-	else if (availInput < amount) {
-		DLog(@"BUFFER IN DANGER");
-	}
-*/
-
+    
     if ([previousNode shouldReset] == YES) {
-		[buffer empty];
+		[buffer reset];
 
 		shouldReset = YES;
 		[previousNode setShouldReset: NO];
-
-		[[previousNode semaphore] signal];
+        
+        [[previousNode semaphore] signal];
 	}
 
-	amountToCopy = availInput;
-	if (amountToCopy > amount)
-	{
-		amountToCopy = amount;
-	}
-	
-	memcpy(ptr, readPtr, amountToCopy);
-	
-    [[previousNode buffer] didReadLength:amountToCopy];
+    AudioChunk * ret = [[previousNode buffer] removeSamples:maxFrames];
+
+    [accessLock unlock];
     
-	if (amountToCopy > 0)
-	{
-		[[previousNode semaphore] signal];
-	}
-	
-	return amountToCopy;
+    if ([ret frameCount])
+    {
+        [[previousNode semaphore] signal];
+    }
+
+    return ret;
 }
 
 - (void)launchThread
@@ -161,7 +152,7 @@
 	shouldContinue = s;
 }
 
-- (VirtualRingBuffer *)buffer
+- (ChunkList *)buffer
 {
 	return buffer;
 }
@@ -170,7 +161,9 @@
 {
 	shouldReset = YES; //Will reset on next write.
 	if (previousNode == nil) {
-		[buffer empty];
+        [accessLock lock];
+		[buffer reset];
+        [accessLock unlock];
 	}
 }
 
