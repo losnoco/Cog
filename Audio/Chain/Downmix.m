@@ -135,10 +135,9 @@ static void downmix_to_stereo(const float *inBuffer, int channels, uint32_t conf
 				default:
 					break;
 			}
-
-			outBuffer[i * 2 + 0] = left;
-			outBuffer[i * 2 + 1] = right;
 		}
+		outBuffer[i * 2 + 0] = left;
+		outBuffer[i * 2 + 1] = right;
 	}
 }
 
