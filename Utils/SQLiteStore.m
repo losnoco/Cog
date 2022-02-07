@@ -16,7 +16,7 @@ NSString *getDatabasePath(void) {
 	return [basePath stringByAppendingPathComponent:filename];
 }
 
-static int64_t currentSchemaVersion = 1;
+static int64_t currentSchemaVersion = 2;
 
 NSArray *createSchema(void) {
 	return @[
@@ -50,6 +50,7 @@ NSArray *createSchema(void) {
         samplerate REAL, \
         bitspersample INTEGER, \
         channels INTEGER, \
+        channelconfig INTEGER, \
         endianid INTEGER, \
         floatingpoint INTEGER, \
         totalframes INTEGER, \
@@ -264,6 +265,7 @@ enum {
 	select_track_data_out_samplerate,
 	select_track_data_out_bitspersample,
 	select_track_data_out_channels,
+	select_track_data_out_channelconfig,
 	select_track_data_out_endian_id,
 	select_track_data_out_floatingpoint,
 	select_track_data_out_totalframes,
@@ -276,7 +278,7 @@ enum {
 	select_track_data_out_replaygaintrackpeak,
 };
 
-const char *query_select_track_data = "SELECT urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak FROM knowntracks WHERE (trackid = ?) LIMIT 1";
+const char *query_select_track_data = "SELECT urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, channelconfig, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak FROM knowntracks WHERE (trackid = ?) LIMIT 1";
 
 enum {
 	bump_track_in_id = 1,
@@ -308,6 +310,7 @@ enum {
 	add_track_in_samplerate,
 	add_track_in_bitspersample,
 	add_track_in_channels,
+	add_track_in_channelconfig,
 	add_track_in_endian_id,
 	add_track_in_floatingpoint,
 	add_track_in_totalframes,
@@ -320,7 +323,7 @@ enum {
 	add_track_in_replaygaintrackpeak,
 };
 
-const char *query_add_track = "INSERT INTO knowntracks (referencecount, urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+const char *query_add_track = "INSERT INTO knowntracks (referencecount, urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, channelconfig, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 enum {
 	remove_track_in_id = 1,
@@ -346,6 +349,7 @@ enum {
 	update_track_in_samplerate,
 	update_track_in_bitspersample,
 	update_track_in_channels,
+	update_track_in_channelconfig,
 	update_track_in_endian_id,
 	update_track_in_floatingpoint,
 	update_track_in_totalframes,
@@ -359,7 +363,7 @@ enum {
 	update_track_in_id
 };
 
-const char *query_update_track = "UPDATE knowntracks SET urlid = ?, artid = ?, albumid = ?, albumartistid = ?, artistid = ?, titleid = ?, genreid = ?, codecid = ?, cuesheetid = ?, encodingid = ?, track = ?, year = ?, unsigned = ?, bitrate = ?, samplerate = ?, bitspersample = ?, channels = ?, endianid = ?, floatingpoint = ?, totalframes = ?, metadataloaded = ?, seekable = ?, volume = ?, replaygainalbumgain = ?, replaygainalbumpeak = ?, replaygaintrackgain = ?, replaygaintrackpeak = ? WHERE trackid = ?";
+const char *query_update_track = "UPDATE knowntracks SET urlid = ?, artid = ?, albumid = ?, albumartistid = ?, artistid = ?, titleid = ?, genreid = ?, codecid = ?, cuesheetid = ?, encodingid = ?, track = ?, year = ?, unsigned = ?, bitrate = ?, samplerate = ?, bitspersample = ?, channels = ?, channelconfig = ?, endianid = ?, floatingpoint = ?, totalframes = ?, metadataloaded = ?, seekable = ?, volume = ?, replaygainalbumgain = ?, replaygainalbumpeak = ?, replaygaintrackgain = ?, replaygaintrackpeak = ? WHERE trackid = ?";
 
 enum {
 	select_playlist_in_id = 1,
@@ -590,6 +594,14 @@ static SQLiteStore *g_sharedStore = NULL;
 					case 0:
 						// Schema 0 to 1: Add cuesheet and encoding text fields to the knowntracks table
 						if(sqlite3_exec(g_database, "ALTER TABLE knowntracks ADD encodingid INTEGER; ALTER TABLE knowntracks ADD cuesheetid INTEGER", NULL, NULL, &error)) {
+							DLog(@"SQLite error: %s", error);
+							return nil;
+						}
+						break;
+
+					case 1:
+						// Schema 1 to 2: Add channelconfig integer field to the knowntracks table
+						if(sqlite3_exec(g_database, "ALTER TABLE knowntracks ADD channelconfig INTEGER", NULL, NULL, &error)) {
 							DLog(@"SQLite error: %s", error);
 							return nil;
 						}
@@ -999,6 +1011,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		double samplerate = [track sampleRate];
 		int64_t bitspersample = [track bitsPerSample];
 		int64_t channels = [track channels];
+		int64_t channelConfig = [track channelConfig];
 		int64_t endianId = [self addString:[track endian]];
 		int64_t floatingpoint = [track floatingPoint];
 		int64_t totalframes = [track totalFrames];
@@ -1036,6 +1049,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		   sqlite3_bind_double(st, add_track_in_samplerate, samplerate) ||
 		   sqlite3_bind_int64(st, add_track_in_bitspersample, bitspersample) ||
 		   sqlite3_bind_int64(st, add_track_in_channels, channels) ||
+		   sqlite3_bind_int64(st, add_track_in_channelconfig, channelConfig) ||
 		   sqlite3_bind_int64(st, add_track_in_endian_id, endianId) ||
 		   sqlite3_bind_int64(st, add_track_in_floatingpoint, floatingpoint) ||
 		   sqlite3_bind_int64(st, add_track_in_totalframes, totalframes) ||
@@ -1192,6 +1206,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		double samplerate = [track sampleRate];
 		int64_t bitspersample = [track bitsPerSample];
 		int64_t channels = [track channels];
+		int64_t channelConfig = [track channelConfig];
 		int64_t endianId = [self addString:[track endian]];
 		int64_t floatingpoint = [track floatingPoint];
 		int64_t totalframes = [track totalFrames];
@@ -1229,6 +1244,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		   sqlite3_bind_double(st, update_track_in_samplerate, samplerate) ||
 		   sqlite3_bind_int64(st, update_track_in_bitspersample, bitspersample) ||
 		   sqlite3_bind_int64(st, update_track_in_channels, channels) ||
+		   sqlite3_bind_int64(st, update_track_in_channelconfig, channelConfig) ||
 		   sqlite3_bind_int64(st, update_track_in_endian_id, endianId) ||
 		   sqlite3_bind_int64(st, update_track_in_floatingpoint, floatingpoint) ||
 		   sqlite3_bind_int64(st, update_track_in_totalframes, totalframes) ||
@@ -1301,6 +1317,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		double samplerate = sqlite3_column_double(st, select_track_data_out_samplerate);
 		int64_t bitspersample = sqlite3_column_int64(st, select_track_data_out_bitspersample);
 		int64_t channels = sqlite3_column_int64(st, select_track_data_out_channels);
+		int64_t channelConfig = sqlite3_column_int64(st, select_track_data_out_channelconfig);
 		int64_t endianId = sqlite3_column_int64(st, select_track_data_out_endian_id);
 		int64_t floatingpoint = sqlite3_column_int64(st, select_track_data_out_floatingpoint);
 		int64_t totalframes = sqlite3_column_int64(st, select_track_data_out_totalframes);
@@ -1333,6 +1350,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		[entry setSampleRate:samplerate];
 		[entry setBitsPerSample:(int)bitspersample];
 		[entry setChannels:(int)channels];
+		[entry setChannelConfig:(uint32_t)channelConfig];
 		[entry setEndian:[self getString:endianId]];
 		[entry setFloatingPoint:!!floatingpoint];
 		[entry setTotalFrames:totalframes];

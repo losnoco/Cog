@@ -42,6 +42,7 @@
 @synthesize totalFrames;
 @synthesize bitrate;
 @synthesize channels;
+@synthesize channelConfig;
 @synthesize bitsPerSample;
 @synthesize floatingPoint;
 @synthesize Unsigned;
@@ -491,6 +492,7 @@
 		pe->totalFrames = totalFrames;
 		pe->bitrate = bitrate;
 		pe->channels = channels;
+		pe->channelConfig = channelConfig;
 		pe->bitsPerSample = bitsPerSample;
 		pe->floatingPoint = floatingPoint;
 		pe->Unsigned = Unsigned;

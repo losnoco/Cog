@@ -51,6 +51,7 @@
 	long long totalFrames;
 	int bitrate;
 	int channels;
+	uint32_t channelConfig;
 	int bitsPerSample;
 	BOOL floatingPoint;
 	BOOL Unsigned;
@@ -138,6 +139,7 @@
 @property long long totalFrames;
 @property int bitrate;
 @property int channels;
+@property uint32_t channelConfig;
 @property int bitsPerSample;
 @property BOOL floatingPoint;
 @property BOOL Unsigned;
