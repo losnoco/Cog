@@ -12,6 +12,28 @@
 
 @implementation FlacDecoder
 
+static const char *CHANNEL_MASK_TAG = "WAVEFORMATEXTENSIBLE_CHANNEL_MASK";
+
+static FLAC__bool flac__utils_get_channel_mask_tag(const FLAC__StreamMetadata *object, FLAC__uint32 *channel_mask) {
+	int offset;
+	uint32_t val;
+	char *p;
+	FLAC__ASSERT(object);
+	FLAC__ASSERT(object->type == FLAC__METADATA_TYPE_VORBIS_COMMENT);
+	if(0 > (offset = FLAC__metadata_object_vorbiscomment_find_entry_from(object, /*offset=*/0, CHANNEL_MASK_TAG)))
+		return false;
+	if(object->data.vorbis_comment.comments[offset].length < strlen(CHANNEL_MASK_TAG) + 4)
+		return false;
+	if(0 == (p = strchr((const char *)object->data.vorbis_comment.comments[offset].entry, '='))) /* should never happen, but just in case */
+		return false;
+	if(strncasecmp(p, "=0x", 3))
+		return false;
+	if(sscanf(p + 3, "%x", &val) != 1)
+		return false;
+	*channel_mask = val;
+	return true;
+}
+
 FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte blockBuffer[], size_t *bytes, void *client_data) {
 	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 	long bytesRead = [[flacDecoder source] read:blockBuffer amount:*bytes];
@@ -168,10 +190,11 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 
 		flacDecoder->totalFrames = metadata->data.stream_info.total_samples;
 
-		[flacDecoder willChangeValueForKey:@"properties"];
-		[flacDecoder didChangeValueForKey:@"properties"];
-
 		flacDecoder->hasStreamInfo = YES;
+	}
+
+	if(metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
+		(void)flac__utils_get_channel_mask_tag(metadata, &flacDecoder->channelConfig);
 	}
 }
 
@@ -207,6 +230,11 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	}
 
 	FLAC__stream_decoder_process_until_end_of_metadata(decoder);
+
+	if(hasStreamInfo) {
+		[self willChangeValueForKey:@"properties"];
+		[self didChangeValueForKey:@"properties"];
+	}
 
 	blockBuffer = malloc(SAMPLE_blockBuffer_SIZE);
 
@@ -305,6 +333,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 - (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 	                     [NSNumber numberWithInt:channels], @"channels",
+	                     [NSNumber numberWithInt:channelConfig], @"channelConfig",
 	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 	                     [NSNumber numberWithFloat:frequency], @"sampleRate",
 	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",

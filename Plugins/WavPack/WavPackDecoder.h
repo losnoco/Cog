@@ -39,6 +39,7 @@
 
 	int bitsPerSample;
 	int channels;
+	uint32_t channelConfig;
 	BOOL floatingPoint;
 	int bitrate;
 	float frequency;

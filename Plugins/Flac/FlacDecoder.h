@@ -26,6 +26,7 @@
 
 	int bitsPerSample;
 	int channels;
+	uint32_t channelConfig;
 	float frequency;
 	long totalFrames;
 

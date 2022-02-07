@@ -28,6 +28,33 @@
 - (BOOL)readInfoFromExtAudioFileRef;
 @end
 
+static int ffat_get_channel_id(AudioChannelLabel label) {
+	if(label == 0)
+		return -1;
+	else if(label <= kAudioChannelLabel_LFEScreen)
+		return label - 1;
+	else if(label <= kAudioChannelLabel_RightSurround)
+		return label + 4;
+	else if(label <= kAudioChannelLabel_CenterSurround)
+		return label + 1;
+	else if(label <= kAudioChannelLabel_RightSurroundDirect)
+		return label + 23;
+	else if(label <= kAudioChannelLabel_TopBackRight)
+		return label - 1;
+	else if(label < kAudioChannelLabel_RearSurroundLeft)
+		return -1;
+	else if(label <= kAudioChannelLabel_RearSurroundRight)
+		return label - 29;
+	else if(label <= kAudioChannelLabel_RightWide)
+		return label - 4;
+	else if(label == kAudioChannelLabel_LFE2)
+		return -1;
+	else if(label == kAudioChannelLabel_Mono)
+		return 2; // Front center
+	else
+		return -1;
+}
+
 static OSStatus readProc(void *clientData,
                          SInt64 position,
                          UInt32 requestCount,
@@ -176,6 +203,28 @@ static SInt64 getSizeProc(void *clientData) {
 		err = ExtAudioFileDispose(_in);
 		return NO;
 	}
+
+	err = AudioFileGetPropertyInfo(afi, kAudioFilePropertyChannelLayout, &size, NULL);
+	if(err != noErr || size == 0) {
+		err = ExtAudioFileDispose(_in);
+		return NO;
+	}
+	AudioChannelLayout *acl = malloc(size);
+	err = AudioFileGetProperty(afi, kAudioFilePropertyChannelLayout, &size, acl);
+	if(err != noErr) {
+		free(acl);
+		err = ExtAudioFileDispose(_in);
+		return NO;
+	}
+
+	uint32_t config = 0;
+	for(uint32_t i = 0; i < acl->mNumberChannelDescriptions; ++i) {
+		int channelNumber = ffat_get_channel_id(acl->mChannelDescriptions[i].mChannelLabel);
+		if(channelNumber >= 0)
+			config |= 1 << channelNumber;
+	}
+
+	channelConfig = config;
 
 	bitrate = (_bitrate + 500) / 1000;
 
@@ -330,6 +379,7 @@ static SInt64 getSizeProc(void *clientData) {
 - (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 	                     [NSNumber numberWithInt:channels], @"channels",
+	                     [NSNumber numberWithInt:channelConfig], @"channelConfig",
 	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 	                     [NSNumber numberWithBool:floatingPoint], @"floatingPoint",
 	                     [NSNumber numberWithInt:bitrate], @"bitrate",

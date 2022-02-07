@@ -249,6 +249,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 	frequency = codecCtx->sample_rate;
 	channels = codecCtx->channels;
+	channelConfig = (uint32_t)codecCtx->channel_layout;
 	floatingPoint = NO;
 
 	switch(codecCtx->sample_fmt) {
@@ -616,6 +617,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 - (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 	                     [NSNumber numberWithInt:channels], @"channels",
+	                     [NSNumber numberWithInt:channelConfig], @"channelConfig",
 	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 	                     [NSNumber numberWithBool:(bitsPerSample == 8)], @"Unsigned",
 	                     [NSNumber numberWithFloat:frequency], @"sampleRate",

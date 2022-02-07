@@ -17,6 +17,7 @@
 	id<CogSource> source;
 	BOOL seekable;
 	int channels;
+	uint32_t channelConfig;
 	int bitsPerSample;
 	BOOL floatingPoint;
 	BOOL lossy;
