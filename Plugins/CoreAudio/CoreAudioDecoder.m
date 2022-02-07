@@ -220,11 +220,23 @@ static SInt64 getSizeProc(void *clientData) {
 	uint32_t config = 0;
 	for(uint32_t i = 0; i < acl->mNumberChannelDescriptions; ++i) {
 		int channelNumber = ffat_get_channel_id(acl->mChannelDescriptions[i].mChannelLabel);
-		if(channelNumber >= 0)
+		if(channelNumber >= 0) {
+			if(config & (1 << channelNumber)) {
+				free(acl);
+				err = ExtAudioFileDispose(_in);
+				return NO;
+			}
 			config |= 1 << channelNumber;
+		} else {
+			free(acl);
+			err = ExtAudioFileDispose(_in);
+			return NO;
+		}
 	}
 
 	channelConfig = config;
+
+	free(acl);
 
 	bitrate = (_bitrate + 500) / 1000;
 
