@@ -17,6 +17,7 @@
 
 @interface OutputNode : Node {
 	AudioStreamBasicDescription format;
+	uint32_t config;
 
 	double amountPlayed;
 	double sampleRatio;
@@ -48,8 +49,9 @@
 
 - (AudioChunk *)readChunk:(size_t)amount;
 
-- (void)setFormat:(AudioStreamBasicDescription *)f;
+- (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig;
 - (AudioStreamBasicDescription)format;
+- (uint32_t)config;
 
 - (void)setVolume:(double)v;
 

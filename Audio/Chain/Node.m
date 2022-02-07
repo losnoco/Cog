@@ -27,6 +27,7 @@
 		endOfStream = NO;
 		shouldContinue = YES;
 
+		nodeChannelConfig = 0;
 		nodeLossless = NO;
 
 		[self setPreviousNode:p];
@@ -39,6 +40,10 @@
 	return nodeFormat;
 }
 
+- (uint32_t)nodeChannelConfig {
+	return nodeChannelConfig;
+}
+
 - (BOOL)nodeLossless {
 	return nodeLossless;
 }
@@ -48,6 +53,9 @@
 
 	AudioChunk *chunk = [[AudioChunk alloc] init];
 	[chunk setFormat:nodeFormat];
+	if(nodeChannelConfig) {
+		[chunk setChannelConfig:nodeChannelConfig];
+	}
 	[chunk setLossless:nodeLossless];
 	[chunk assignSamples:ptr frameCount:amount / nodeFormat.mBytesPerPacket];
 

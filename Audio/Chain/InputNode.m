@@ -47,6 +47,8 @@
 	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 	nodeFormat = propertiesToASBD(properties);
+	if([properties valueForKey:@"channelConfig"])
+		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] intValue];
 	nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 
 	shouldContinue = YES;
@@ -66,6 +68,8 @@
 	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 	nodeFormat = propertiesToASBD(properties);
+	if([properties valueForKey:@"channelConfig"])
+		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] intValue];
 	nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 
 	[self registerObservers];
@@ -117,14 +121,15 @@
 
 	while([self shouldContinue] == YES && [self endOfStream] == NO) {
 		if(shouldSeek == YES) {
-			ConverterNode *converter = [[[controller controller] bufferChain] converter];
+			BufferChain *bufferChain = [[controller controller] bufferChain];
+			ConverterNode *converter = [bufferChain converter];
 			DLog(@"SEEKING! Resetting Buffer");
 
 			amountInBuffer = 0;
 			// This resets the converter's buffer
 			[self resetBuffer];
 			[converter resetBuffer];
-			[converter inputFormatDidChange:[[[controller controller] bufferChain] inputFormat]];
+			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
 
 			DLog(@"Reset buffer!");
 

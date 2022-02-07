@@ -86,6 +86,7 @@
 		NSData *removedData = [chunk removeSamples:maxFrameCount];
 		AudioChunk *ret = [[AudioChunk alloc] init];
 		[ret setFormat:[chunk format]];
+		[ret setChannelConfig:[chunk channelConfig]];
 		[ret assignSamples:[removedData bytes] frameCount:maxFrameCount];
 		listDuration -= [ret duration];
 		inRemover = NO;

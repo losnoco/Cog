@@ -22,5 +22,6 @@
 }
 
 - (void)setFormat:(AudioStreamBasicDescription)format;
+- (void)setChannelConfig:(uint32_t)config;
 
 @end

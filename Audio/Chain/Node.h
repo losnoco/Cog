@@ -29,6 +29,7 @@
 	BOOL initialBufferFilled;
 
 	AudioStreamBasicDescription nodeFormat;
+	uint32_t nodeChannelConfig;
 	BOOL nodeLossless;
 }
 - (id)initWithController:(id)c previous:(id)p;
@@ -54,6 +55,7 @@
 - (void)resetBuffer; // WARNING! DANGER WILL ROBINSON!
 
 - (AudioStreamBasicDescription)nodeFormat;
+- (uint32_t)nodeChannelConfig;
 - (BOOL)nodeLossless;
 
 - (Semaphore *)semaphore;

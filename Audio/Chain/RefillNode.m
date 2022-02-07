@@ -42,4 +42,8 @@
 	nodeFormat = format;
 }
 
+- (void)setChannelConfig:(uint32_t)config {
+	nodeChannelConfig = config;
+}
+
 @end

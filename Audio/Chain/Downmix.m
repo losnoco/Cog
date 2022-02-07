@@ -10,74 +10,144 @@
 
 #import "Logging.h"
 
-static const float STEREO_DOWNMIX[8 - 2][8][2] = {
-	/*3.0*/
-	{
-	{ 0.5858F, 0.0F },
-	{ 0.0F, 0.5858F },
-	{ 0.4142F, 0.4142F } },
-	/*quadrophonic*/
-	{
-	{ 0.4226F, 0.0F },
-	{ 0.0F, 0.4226F },
-	{ 0.366F, 0.2114F },
-	{ 0.2114F, 0.336F } },
-	/*5.0*/
-	{
-	{ 0.651F, 0.0F },
-	{ 0.0F, 0.651F },
-	{ 0.46F, 0.46F },
-	{ 0.5636F, 0.3254F },
-	{ 0.3254F, 0.5636F } },
-	/*5.1*/
-	{
-	{ 0.529F, 0.0F },
-	{ 0.0F, 0.529F },
-	{ 0.3741F, 0.3741F },
-	{ 0.3741F, 0.3741F },
-	{ 0.4582F, 0.2645F },
-	{ 0.2645F, 0.4582F } },
-	/*6.1*/
-	{
-	{ 0.4553F, 0.0F },
-	{ 0.0F, 0.4553F },
-	{ 0.322F, 0.322F },
-	{ 0.322F, 0.322F },
-	{ 0.2788F, 0.2788F },
-	{ 0.3943F, 0.2277F },
-	{ 0.2277F, 0.3943F } },
-	/*7.1*/
-	{
-	{ 0.3886F, 0.0F },
-	{ 0.0F, 0.3886F },
-	{ 0.2748F, 0.2748F },
-	{ 0.2748F, 0.2748F },
-	{ 0.3366F, 0.1943F },
-	{ 0.1943F, 0.3366F },
-	{ 0.3366F, 0.1943F },
-	{ 0.1943F, 0.3366F } }
-};
+#import "AudioChunk.h"
 
-static void downmix_to_stereo(const float *inBuffer, int channels, float *outBuffer, size_t count) {
-	if(channels >= 3 && channels <= 8)
-		for(size_t i = 0; i < count; ++i) {
-			float left = 0, right = 0;
-			for(int j = 0; j < channels; ++j) {
-				left += inBuffer[i * channels + j] * STEREO_DOWNMIX[channels - 3][j][0];
-				right += inBuffer[i * channels + j] * STEREO_DOWNMIX[channels - 3][j][1];
+static void downmix_to_stereo(const float *inBuffer, int channels, uint32_t config, float *outBuffer, size_t count) {
+	float FrontRatios[2] = { 0.0F, 0.0F };
+	float FrontCenterRatio = 0.0F;
+	float LFERatio = 0.0F;
+	float BackRatios[2] = { 0.0F, 0.0F };
+	float BackCenterRatio = 0.0F;
+	float SideRatios[2] = { 0.0F, 0.0F };
+	if(config & (AudioChannelFrontLeft | AudioChannelFrontRight)) {
+		FrontRatios[0] = 1.0F;
+	}
+	if(config & AudioChannelFrontCenter) {
+		FrontRatios[0] = 0.5858F;
+		FrontCenterRatio = 0.4142F;
+	}
+	if(config & (AudioChannelBackLeft | AudioChannelBackRight)) {
+		if(config & AudioChannelFrontCenter) {
+			FrontRatios[0] = 0.651F;
+			FrontCenterRatio = 0.46F;
+			BackRatios[0] = 0.5636F;
+			BackRatios[1] = 0.3254F;
+		} else {
+			FrontRatios[0] = 0.4226F;
+			BackRatios[0] = 0.366F;
+			BackRatios[1] = 0.2114F;
+		}
+	}
+	if(config & AudioChannelLFE) {
+		FrontRatios[0] *= 0.8F;
+		FrontCenterRatio *= 0.8F;
+		LFERatio = FrontCenterRatio;
+		BackRatios[0] *= 0.8F;
+		BackRatios[1] *= 0.8F;
+	}
+	if(config & AudioChannelBackCenter) {
+		FrontRatios[0] *= 0.86F;
+		FrontCenterRatio *= 0.86F;
+		LFERatio *= 0.86F;
+		BackRatios[0] *= 0.86F;
+		BackRatios[1] *= 0.86F;
+		BackCenterRatio = FrontCenterRatio * 0.86F;
+	}
+	if(config & (AudioChannelSideLeft | AudioChannelSideRight)) {
+		float ratio = 0.73F;
+		if(config & AudioChannelBackCenter) ratio = 0.85F;
+		FrontRatios[0] *= ratio;
+		FrontCenterRatio *= ratio;
+		LFERatio *= ratio;
+		BackRatios[0] *= ratio;
+		BackRatios[1] *= ratio;
+		BackCenterRatio *= ratio;
+		SideRatios[0] = 0.463882352941176 * ratio;
+		SideRatios[1] = 0.267882352941176 * ratio;
+	}
+
+	int32_t channelIndexes[channels];
+	for(int i = 0; i < channels; ++i) {
+		channelIndexes[i] = [AudioChunk findChannelIndex:[AudioChunk extractChannelFlag:i fromConfig:config]];
+	}
+
+	for(size_t i = 0; i < count; ++i) {
+		float left = 0.0F, right = 0.0F;
+		for(uint32_t j = 0; j < channels; ++j) {
+			float inSample = inBuffer[i * channels + j];
+			switch(channelIndexes[j]) {
+				case 0:
+					left += inSample * FrontRatios[0];
+					right += inSample * FrontRatios[1];
+					break;
+
+				case 1:
+					left += inSample * FrontRatios[1];
+					right += inSample * FrontRatios[0];
+					break;
+
+				case 2:
+					left += inSample * FrontCenterRatio;
+					right += inSample * FrontCenterRatio;
+					break;
+
+				case 3:
+					left += inSample * LFERatio;
+					right += inSample * LFERatio;
+					break;
+
+				case 4:
+					left += inSample * BackRatios[0];
+					right += inSample * BackRatios[1];
+					break;
+
+				case 5:
+					left += inSample * BackRatios[1];
+					right += inSample * BackRatios[0];
+					break;
+
+				case 6:
+				case 7:
+					break;
+
+				case 8:
+					left += inSample * BackCenterRatio;
+					right += inSample * BackCenterRatio;
+					break;
+
+				case 9:
+					left += inSample * SideRatios[0];
+					right += inSample * SideRatios[1];
+					break;
+
+				case 10:
+					left += inSample * SideRatios[1];
+					right += inSample * SideRatios[0];
+					break;
+
+				case 11:
+				case 12:
+				case 13:
+				case 14:
+				case 15:
+				case 16:
+				case 17:
+				default:
+					break;
 			}
+
 			outBuffer[i * 2 + 0] = left;
 			outBuffer[i * 2 + 1] = right;
 		}
+	}
 }
 
-static void downmix_to_mono(const float *inBuffer, int channels, float *outBuffer, size_t count) {
+static void downmix_to_mono(const float *inBuffer, int channels, uint32_t config, float *outBuffer, size_t count) {
 	float tempBuffer[count * 2];
-	if(channels >= 3 && channels <= 8) {
-		downmix_to_stereo(inBuffer, channels, tempBuffer, count);
-		inBuffer = tempBuffer;
-		channels = 2;
-	}
+	downmix_to_stereo(inBuffer, channels, config, tempBuffer, count);
+	inBuffer = tempBuffer;
+	channels = 2;
+	config = AudioConfigStereo;
 	float invchannels = 1.0 / (float)channels;
 	for(size_t i = 0; i < count; ++i) {
 		float sample = 0;
@@ -88,62 +158,100 @@ static void downmix_to_mono(const float *inBuffer, int channels, float *outBuffe
 	}
 }
 
-static void upmix(const float *inBuffer, int inchannels, float *outBuffer, int outchannels, size_t count) {
-	for(ssize_t i = 0; i < count; ++i) {
-		if(inchannels == 1 && outchannels == 2) {
+static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, float *outBuffer, int outchannels, uint32_t outconfig, size_t count) {
+	if(inconfig == AudioConfigMono && outconfig == AudioConfigStereo) {
+		for(size_t i = 0; i < count; ++i) {
 			// upmix mono to stereo
 			float sample = inBuffer[i];
 			outBuffer[i * 2 + 0] = sample;
 			outBuffer[i * 2 + 1] = sample;
-		} else if(inchannels == 1 && outchannels == 4) {
+		}
+	} else if(inconfig == AudioConfigMono && outconfig == AudioConfig4Point0) {
+		for(size_t i = 0; i < count; ++i) {
 			// upmix mono to quad
 			float sample = inBuffer[i];
 			outBuffer[i * 4 + 0] = sample;
 			outBuffer[i * 4 + 1] = sample;
 			outBuffer[i * 4 + 2] = 0;
 			outBuffer[i * 4 + 3] = 0;
-		} else if(inchannels == 1 && (outchannels == 3 || outchannels >= 5)) {
+		}
+	} else if(inconfig == AudioConfigMono && (outconfig & AudioChannelFrontCenter)) {
+		uint32_t cIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontCenter];
+		for(size_t i = 0; i < count; ++i) {
 			// upmix mono to center channel
 			float sample = inBuffer[i];
-			outBuffer[i * outchannels + 2] = sample;
-			for(int j = 0; j < 2; ++j) {
+			outBuffer[i * outchannels + cIndex] = sample;
+			for(int j = 0; j < cIndex; ++j) {
 				outBuffer[i * outchannels + j] = 0;
 			}
-			for(int j = 3; j < outchannels; ++j) {
+			for(int j = cIndex + 1; j < outchannels; ++j) {
 				outBuffer[i * outchannels + j] = 0;
 			}
-		} else if(inchannels == 4 && outchannels >= 5) {
+		}
+	} else if(inconfig == AudioConfig4Point0 && outchannels >= 5) {
+		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
+		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
+		uint32_t blIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackLeft];
+		uint32_t brIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackRight];
+		for(size_t i = 0; i < count; ++i) {
 			float fl = inBuffer[i * 4 + 0];
 			float fr = inBuffer[i * 4 + 1];
 			float bl = inBuffer[i * 4 + 2];
 			float br = inBuffer[i * 4 + 3];
-			const int skipclfe = (outchannels == 5) ? 1 : 2;
-			outBuffer[i * outchannels + 0] = fl;
-			outBuffer[i * outchannels + 1] = fr;
-			outBuffer[i * outchannels + skipclfe + 2] = bl;
-			outBuffer[i * outchannels + skipclfe + 3] = br;
-			for(int j = 0; j < skipclfe; ++j) {
-				outBuffer[i * outchannels + 2 + j] = 0;
+			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
+			if(flIndex != ~0) {
+				outBuffer[i * outchannels + flIndex] = fl;
 			}
-			for(int j = 4 + skipclfe; j < outchannels; ++j) {
-				outBuffer[i * outchannels + j] = 0;
+			if(frIndex != ~0) {
+				outBuffer[i * outchannels + frIndex] = fr;
 			}
-		} else if(inchannels == 5 && outchannels >= 6) {
+			if(blIndex != ~0) {
+				outBuffer[i * outchannels + blIndex] = bl;
+			}
+			if(brIndex != ~0) {
+				outBuffer[i * outchannels + brIndex] = br;
+			}
+		}
+	} else if(inconfig == AudioConfig5Point0 && outchannels >= 6) {
+		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
+		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
+		uint32_t cIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontCenter];
+		uint32_t blIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackLeft];
+		uint32_t brIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackRight];
+		for(size_t i = 0; i < count; ++i) {
 			float fl = inBuffer[i * 5 + 0];
 			float fr = inBuffer[i * 5 + 1];
 			float c = inBuffer[i * 5 + 2];
 			float bl = inBuffer[i * 5 + 3];
 			float br = inBuffer[i * 5 + 4];
-			outBuffer[i * outchannels + 0] = fl;
-			outBuffer[i * outchannels + 1] = fr;
-			outBuffer[i * outchannels + 2] = c;
-			outBuffer[i * outchannels + 3] = 0;
-			outBuffer[i * outchannels + 4] = bl;
-			outBuffer[i * outchannels + 5] = br;
-			for(int j = 6; j < outchannels; ++j) {
-				outBuffer[i * outchannels + j] = 0;
+			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
+			if(flIndex != ~0) {
+				outBuffer[i * outchannels + flIndex] = fl;
 			}
-		} else if(inchannels == 7 && outchannels == 8) {
+			if(frIndex != ~0) {
+				outBuffer[i * outchannels + frIndex] = fr;
+			}
+			if(cIndex != ~0) {
+				outBuffer[i * outchannels + cIndex] = c;
+			}
+			if(blIndex != ~0) {
+				outBuffer[i * outchannels + blIndex] = bl;
+			}
+			if(brIndex != ~0) {
+				outBuffer[i * outchannels + brIndex] = br;
+			}
+		}
+	} else if(inconfig == AudioConfig6Point1 && outchannels >= 8) {
+		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
+		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
+		uint32_t cIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontCenter];
+		uint32_t lfeIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelLFE];
+		uint32_t blIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackLeft];
+		uint32_t brIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackRight];
+		uint32_t bcIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackCenter];
+		uint32_t slIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelSideLeft];
+		uint32_t srIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelSideRight];
+		for(size_t i = 0; i < count; ++i) {
 			float fl = inBuffer[i * 7 + 0];
 			float fr = inBuffer[i * 7 + 1];
 			float c = inBuffer[i * 7 + 2];
@@ -151,25 +259,48 @@ static void upmix(const float *inBuffer, int inchannels, float *outBuffer, int o
 			float sl = inBuffer[i * 7 + 4];
 			float sr = inBuffer[i * 7 + 5];
 			float bc = inBuffer[i * 7 + 6];
-			outBuffer[i * 8 + 0] = fl;
-			outBuffer[i * 8 + 1] = fr;
-			outBuffer[i * 8 + 2] = c;
-			outBuffer[i * 8 + 3] = lfe;
-			outBuffer[i * 8 + 4] = bc;
-			outBuffer[i * 8 + 5] = bc;
-			outBuffer[i * 8 + 6] = sl;
-			outBuffer[i * 8 + 7] = sr;
-		} else {
+			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
+			if(flIndex != ~0) {
+				outBuffer[i * outchannels + flIndex] = fl;
+			}
+			if(frIndex != ~0) {
+				outBuffer[i * outchannels + frIndex] = fr;
+			}
+			if(cIndex != ~0) {
+				outBuffer[i * outchannels + cIndex] = c;
+			}
+			if(lfeIndex != ~0) {
+				outBuffer[i * outchannels + lfeIndex] = lfe;
+			}
+			if(slIndex != ~0) {
+				outBuffer[i * outchannels + slIndex] = sl;
+			}
+			if(srIndex != ~0) {
+				outBuffer[i * outchannels + srIndex] = sr;
+			}
+			if(bcIndex != ~0) {
+				outBuffer[i * outchannels + bcIndex] = bc;
+			} else {
+				if(blIndex != ~0) {
+					outBuffer[i * outchannels + blIndex] = bc;
+				}
+				if(brIndex != ~0) {
+					outBuffer[i * outchannels + brIndex] = bc;
+				}
+			}
+		}
+	} else {
+		uint32_t outIndexes[inchannels];
+		for(int i = 0; i < inchannels; ++i) {
+			uint32_t channelFlag = [AudioChunk extractChannelFlag:i fromConfig:inconfig];
+			outIndexes[i] = [AudioChunk channelIndexFromConfig:outconfig forFlag:channelFlag];
+		}
+		for(size_t i = 0; i < count; ++i) {
 			// upmix N channels to N channels plus silence the empty channels
-			float samples[inchannels];
 			for(int j = 0; j < inchannels; ++j) {
-				samples[j] = inBuffer[i * inchannels + j];
-			}
-			for(int j = 0; j < inchannels; ++j) {
-				outBuffer[i * outchannels + j] = samples[j];
-			}
-			for(int j = inchannels; j < outchannels; ++j) {
-				outBuffer[i * outchannels + j] = 0;
+				if(outIndexes[j] != ~0) {
+					outBuffer[i * outchannels + outIndexes[j]] = inBuffer[i * inchannels + j];
+				}
 			}
 		}
 	}
@@ -177,7 +308,7 @@ static void upmix(const float *inBuffer, int inchannels, float *outBuffer, int o
 
 @implementation DownmixProcessor
 
-- (id)initWithInputFormat:(AudioStreamBasicDescription)inf andOutputFormat:(AudioStreamBasicDescription)outf {
+- (id)initWithInputFormat:(AudioStreamBasicDescription)inf inputConfig:(uint32_t)iConfig andOutputFormat:(AudioStreamBasicDescription)outf outputConfig:(uint32_t)oConfig {
 	self = [super init];
 
 	if(self) {
@@ -197,6 +328,9 @@ static void upmix(const float *inBuffer, int inchannels, float *outBuffer, int o
 
 		inputFormat = inf;
 		outputFormat = outf;
+
+		inConfig = iConfig;
+		outConfig = oConfig;
 
 		[self setupVirt];
 
@@ -221,8 +355,9 @@ static void upmix(const float *inBuffer, int inchannels, float *outBuffer, int o
 
 	if(hVirt &&
 	   outputFormat.mChannelsPerFrame == 2 &&
+	   outConfig == AudioConfigStereo &&
 	   inputFormat.mChannelsPerFrame >= 1 &&
-	   inputFormat.mChannelsPerFrame <= 8) {
+	   (inConfig & (AudioConfig7Point1 | AudioChannelBackCenter)) != 0) {
 		NSString *userPreset = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] stringForKey:@"hrirPath"];
 
 		NSURL *presetUrl = nil;
@@ -241,7 +376,7 @@ static void upmix(const float *inBuffer, int inchannels, float *outBuffer, int o
 
 		if(presetUrl) {
 			@synchronized(hFilter) {
-				hFilter = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:outputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame];
+				hFilter = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:outputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame withConfig:inConfig];
 			}
 		}
 	}
@@ -267,13 +402,13 @@ static void upmix(const float *inBuffer, int inchannels, float *outBuffer, int o
 		}
 	}
 
-	if(inputFormat.mChannelsPerFrame > 2 && outputFormat.mChannelsPerFrame == 2) {
-		downmix_to_stereo((const float *)inBuffer, inputFormat.mChannelsPerFrame, (float *)outBuffer, frames);
-	} else if(inputFormat.mChannelsPerFrame > 1 && outputFormat.mChannelsPerFrame == 1) {
-		downmix_to_mono((const float *)inBuffer, inputFormat.mChannelsPerFrame, (float *)outBuffer, frames);
+	if(inputFormat.mChannelsPerFrame > 2 && outConfig == AudioConfigStereo) {
+		downmix_to_stereo((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, frames);
+	} else if(inputFormat.mChannelsPerFrame > 1 && outConfig == AudioConfigMono) {
+		downmix_to_mono((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, frames);
 	} else if(inputFormat.mChannelsPerFrame < outputFormat.mChannelsPerFrame) {
-		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, (float *)outBuffer, outputFormat.mChannelsPerFrame, frames);
-	} else if(inputFormat.mChannelsPerFrame == outputFormat.mChannelsPerFrame) {
+		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
+	} else if(inConfig == outConfig) {
 		memcpy(outBuffer, inBuffer, frames * outputFormat.mBytesPerPacket);
 	}
 }

@@ -435,7 +435,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				[self setShouldContinue:YES];
 				refillNode = nil;
 				[self cleanUp];
-				[self setupWithInputFormat:rememberedInputFormat outputFormat:outputFormat isLossless:rememberedLossless];
+				[self setupWithInputFormat:rememberedInputFormat withInputConfig:rememberedInputConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
 				continue;
 			} else
 				break;
@@ -843,12 +843,16 @@ static float db_to_scale(float db) {
 	volumeScale = scale;
 }
 
-- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf outputFormat:(AudioStreamBasicDescription)outf isLossless:(BOOL)lossless {
+- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf withInputConfig:(uint32_t)inputConfig outputFormat:(AudioStreamBasicDescription)outf outputConfig:(uint32_t)outputConfig isLossless:(BOOL)lossless {
 	// Make the converter
 	inputFormat = inf;
 	outputFormat = outf;
 
+	inputChannelConfig = inputConfig;
+	outputChannelConfig = outputConfig;
+
 	nodeFormat = outputFormat;
+	nodeChannelConfig = outputChannelConfig;
 
 	rememberedLossless = lossless;
 
@@ -954,26 +958,31 @@ static float db_to_scale(float db) {
 	[self cleanUp];
 }
 
-- (void)setOutputFormat:(AudioStreamBasicDescription)format {
+- (void)setOutputFormat:(AudioStreamBasicDescription)format outputConfig:(uint32_t)outputConfig {
 	DLog(@"SETTING OUTPUT FORMAT!");
 	previousOutputFormat = outputFormat;
+	previousOutputConfig = outputChannelConfig;
 	outputFormat = format;
+	outputChannelConfig = outputConfig;
 	outputFormatChanged = YES;
 }
 
-- (void)inputFormatDidChange:(AudioStreamBasicDescription)format {
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig {
 	DLog(@"FORMAT CHANGED");
 	paused = YES;
 	[self cleanUp];
 	if(outputFormatChanged && ![buffer isEmpty] &&
-	   memcmp(&outputFormat, &previousOutputFormat, sizeof(outputFormat)) != 0) {
+	   (outputChannelConfig != previousOutputConfig ||
+	    memcmp(&outputFormat, &previousOutputFormat, sizeof(outputFormat)) != 0)) {
 		// Transfer previously buffered data, remember input format
 		rememberedInputFormat = format;
+		rememberedInputConfig = inputChannelConfig;
 		originalPreviousNode = previousNode;
 		refillNode = [[RefillNode alloc] initWithController:controller previous:nil];
 		[self setPreviousNode:refillNode];
 
 		[refillNode setFormat:previousOutputFormat];
+		[refillNode setChannelConfig:previousOutputConfig];
 
 		for(;;) {
 			AudioChunk *chunk = [buffer removeSamples:16384];
@@ -985,9 +994,9 @@ static float db_to_scale(float db) {
 				break;
 		}
 
-		[self setupWithInputFormat:previousOutputFormat outputFormat:outputFormat isLossless:rememberedLossless];
+		[self setupWithInputFormat:previousOutputFormat withInputConfig:[AudioChunk guessChannelConfig:previousOutputFormat.mChannelsPerFrame] outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
 	} else {
-		[self setupWithInputFormat:format outputFormat:outputFormat isLossless:rememberedLossless];
+		[self setupWithInputFormat:format withInputConfig:inputConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
 	}
 }
 

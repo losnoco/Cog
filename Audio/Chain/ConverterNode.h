@@ -68,8 +68,13 @@
 	AudioStreamBasicDescription dmFloatFormat; // downmixed/upmixed float format
 	AudioStreamBasicDescription outputFormat;
 
+	uint32_t inputChannelConfig;
+	uint32_t outputChannelConfig;
+
 	AudioStreamBasicDescription previousOutputFormat;
+	uint32_t previousOutputConfig;
 	AudioStreamBasicDescription rememberedInputFormat;
+	uint32_t rememberedInputConfig;
 	RefillNode *refillNode;
 	id __weak originalPreviousNode;
 
@@ -82,7 +87,7 @@
 
 - (id)initWithController:(id)c previous:(id)p;
 
-- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat outputFormat:(AudioStreamBasicDescription)outputFormat isLossless:(BOOL)lossless;
+- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat withInputConfig:(uint32_t)inputConfig outputFormat:(AudioStreamBasicDescription)outputFormat outputConfig:(uint32_t)outputConfig isLossless:(BOOL)lossless;
 - (void)cleanUp;
 
 - (void)process;
@@ -90,9 +95,9 @@
 
 - (void)setRGInfo:(NSDictionary *)rgi;
 
-- (void)setOutputFormat:(AudioStreamBasicDescription)format;
+- (void)setOutputFormat:(AudioStreamBasicDescription)format outputConfig:(uint32_t)outputConfig;
 
-- (void)inputFormatDidChange:(AudioStreamBasicDescription)format;
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig;
 
 - (void)refreshVolumeScaling;
 

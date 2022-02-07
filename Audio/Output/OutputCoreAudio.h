@@ -60,6 +60,9 @@
 	AudioStreamBasicDescription deviceFormat; // info about the default device
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
 
+	uint32_t deviceChannelConfig;
+	uint32_t streamChannelConfig;
+
 	AUAudioUnit *_au;
 	size_t _bufferSize;
 

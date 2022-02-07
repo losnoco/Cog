@@ -76,12 +76,14 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 
 	size_t frameCount = [chunk frameCount];
 	AudioStreamBasicDescription format = [chunk format];
+	uint32_t config = [chunk channelConfig];
 
 	if(frameCount) {
-		if(!_self->streamFormatStarted || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
+		if(!_self->streamFormatStarted || config != _self->streamChannelConfig || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
 			_self->streamFormat = format;
+			_self->streamChannelConfig = config;
 			_self->streamFormatStarted = YES;
-			_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format andOutputFormat:_self->deviceFormat];
+			_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->deviceFormat outputConfig:_self->deviceChannelConfig];
 		}
 
 		double chunkDuration = [chunk duration];
@@ -104,11 +106,12 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 		chunk = [[_self->outputController buffer] removeSamples:((amountToRead - amountRead) / bytesPerPacket)];
 		frameCount = [chunk frameCount];
 		format = [chunk format];
+		config = [chunk channelConfig];
 		if(frameCount) {
-			if(!_self->streamFormatStarted || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
+			if(!_self->streamFormatStarted || config != _self->streamChannelConfig || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
 				_self->streamFormat = format;
 				_self->streamFormatStarted = YES;
-				_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format andOutputFormat:_self->deviceFormat];
+				_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->deviceFormat outputConfig:_self->deviceChannelConfig];
 			}
 			atomic_fetch_add(&_self->bytesRendered, frameCount * bytesPerPacket);
 			double chunkDuration = [chunk duration];
@@ -485,27 +488,35 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		switch(deviceFormat.mChannelsPerFrame) {
 			case 1:
 				tag = kAudioChannelLayoutTag_Mono;
+				deviceChannelConfig = AudioConfigMono;
 				break;
 			case 2:
 				tag = kAudioChannelLayoutTag_Stereo;
+				deviceChannelConfig = AudioConfigStereo;
 				break;
 			case 3:
 				tag = kAudioChannelLayoutTag_DVD_4;
+				deviceChannelConfig = AudioConfig3Point0;
 				break;
 			case 4:
 				tag = kAudioChannelLayoutTag_Quadraphonic;
+				deviceChannelConfig = AudioConfig4Point0;
 				break;
 			case 5:
 				tag = kAudioChannelLayoutTag_MPEG_5_0_A;
+				deviceChannelConfig = AudioConfig5Point0;
 				break;
 			case 6:
 				tag = kAudioChannelLayoutTag_MPEG_5_1_A;
+				deviceChannelConfig = AudioConfig5Point1;
 				break;
 			case 7:
 				tag = kAudioChannelLayoutTag_MPEG_6_1_A;
+				deviceChannelConfig = AudioConfig6Point1;
 				break;
 			case 8:
 				tag = kAudioChannelLayoutTag_MPEG_7_1_A;
+				deviceChannelConfig = AudioConfig7Point1;
 				break;
 		}
 
@@ -514,7 +525,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		if(err != nil)
 			return NO;
 
-		[outputController setFormat:&deviceFormat];
+		[outputController setFormat:&deviceFormat channelConfig:deviceChannelConfig];
 
 		AudioStreamBasicDescription asbd = deviceFormat;
 

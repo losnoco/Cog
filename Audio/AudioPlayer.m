@@ -83,7 +83,7 @@
 	bufferChain = [[BufferChain alloc] initWithController:self];
 	[self notifyStreamChanged:userInfo];
 
-	while(![bufferChain open:url withOutputFormat:[output format] withRGInfo:rgi]) {
+	while(![bufferChain open:url withOutputFormat:[output format] withOutputConfig:[output config] withRGInfo:rgi]) {
 		bufferChain = nil;
 
 		[self requestNextStream:userInfo];
@@ -353,7 +353,7 @@
 		}
 
 		if(pathsEqual || ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]] && (([nextStream host] == nil && [[lastChain streamURL] host] == nil) || [[nextStream host] isEqualToString:[[lastChain streamURL] host]]) && [[nextStream path] isEqualToString:[[lastChain streamURL] path]])) {
-			if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withRGInfo:nextStreamRGInfo]) {
+			if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withOutputConfig:[output config] withRGInfo:nextStreamRGInfo]) {
 				[newChain setStreamURL:nextStream];
 				[newChain setUserInfo:nextStreamUserInfo];
 
@@ -369,7 +369,7 @@
 
 		lastChain = nil;
 
-		while(shouldContinue && ![newChain open:nextStream withOutputFormat:[output format] withRGInfo:nextStreamRGInfo]) {
+		while(shouldContinue && ![newChain open:nextStream withOutputFormat:[output format] withOutputConfig:[output config] withRGInfo:nextStreamRGInfo]) {
 			if(nextStream == nil) {
 				newChain = nil;
 				atomic_fetch_sub(&refCount, 1);

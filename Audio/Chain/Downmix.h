@@ -16,9 +16,12 @@
 
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription outputFormat;
+
+	uint32_t inConfig;
+	uint32_t outConfig;
 }
 
-- (id)initWithInputFormat:(AudioStreamBasicDescription)inf andOutputFormat:(AudioStreamBasicDescription)outf;
+- (id)initWithInputFormat:(AudioStreamBasicDescription)inf inputConfig:(uint32_t)iConfig andOutputFormat:(AudioStreamBasicDescription)outf outputConfig:(uint32_t)oConfig;
 
 - (void)process:(const void *)inBuffer frameCount:(size_t)frames output:(void *)outBuffer;
 

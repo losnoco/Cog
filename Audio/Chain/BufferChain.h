@@ -17,6 +17,7 @@
 	ConverterNode *converterNode;
 
 	AudioStreamBasicDescription inputFormat;
+	uint32_t inputChannelConfig;
 
 	NSURL *streamURL;
 	id userInfo;
@@ -30,14 +31,15 @@
 - (id)initWithController:(id)c;
 - (void)buildChain;
 
-- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi;
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withRGInfo:(NSDictionary *)rgi;
 
 // Used when changing tracks to reuse the same decoder
-- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi;
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withRGInfo:(NSDictionary *)rgi;
 
 // Used when resetting the decoder on seek
 - (BOOL)openWithDecoder:(id<CogDecoder>)decoder
        withOutputFormat:(AudioStreamBasicDescription)outputFormat
+       withOutputConfig:(uint32_t)outputConfig
              withRGInfo:(NSDictionary *)rgi;
 
 - (void)seek:(double)time;
@@ -64,7 +66,7 @@
 - (BOOL)endOfInputReached;
 - (BOOL)setTrack:(NSURL *)track;
 
-- (void)inputFormatDidChange:(AudioStreamBasicDescription)format;
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig;
 
 - (BOOL)isRunning;
 
@@ -72,6 +74,7 @@
 
 - (ConverterNode *)converter;
 - (AudioStreamBasicDescription)inputFormat;
+- (uint32_t)inputConfig;
 
 - (double)secondsBuffered;
 

@@ -6,6 +6,7 @@
 //
 
 #import "HeadphoneFilter.h"
+#import "AudioChunk.h"
 #import "AudioDecoder.h"
 #import "AudioSource.h"
 
@@ -17,44 +18,61 @@
 
 @implementation HeadphoneFilter
 
-// Symmetrical / no-reverb sets
-static const int8_t speakers_to_hesuvi_7[8][2][8] = {
-	// mono/center
-	{ { 6 }, { 6 } },
-	// left/right
-	{ { 0, 1 }, { 1, 0 } },
-	// left/right/center
-	{ { 0, 1, 6 }, { 1, 0, 6 } },
-	// left/right/back lef/back right
-	{ { 0, 1, 4, 5 }, { 1, 0, 5, 4 } },
-	// left/right/center/back left/back right
-	{ { 0, 1, 6, 4, 5 }, { 1, 0, 6, 5, 4 } },
-	// left/right/center/lfe(center)/back left/back right
-	{ { 0, 1, 6, 6, 4, 5 }, { 1, 0, 6, 6, 5, 4 } },
-	// left/right/center/lfe(center)/back center(special)/side left/side right
-	{ { 0, 1, 6, 6, -1, 2, 3 }, { 1, 0, 6, 6, -1, 3, 2 } },
-	// left/right/center/lfe(center)/back left/back right/side left/side right
-	{ { 0, 1, 6, 6, 4, 5, 2, 3 }, { 1, 0, 6, 6, 5, 4, 3, 2 } }
+enum {
+	speaker_is_back_center = -1,
+	speaker_not_present = -2,
 };
 
-// Asymmetrical / reverb sets
-static const int8_t speakers_to_hesuvi_14[8][2][8] = {
-	// mono/center
-	{ { 6 }, { 13 } },
-	// left/right
-	{ { 0, 8 }, { 1, 7 } },
-	// left/right/center
-	{ { 0, 8, 6 }, { 1, 7, 13 } },
-	// left/right/back left/back right
-	{ { 0, 8, 4, 12 }, { 1, 7, 5, 11 } },
-	// left/right/center/back left/back right
-	{ { 0, 8, 6, 4, 12 }, { 1, 7, 13, 5, 11 } },
-	// left/right/center/lfe(center)/back left/back right
-	{ { 0, 8, 6, 6, 4, 12 }, { 1, 7, 13, 13, 5, 11 } },
-	// left/right/center/lfe(center)/back center(special)/side left/side right
-	{ { 0, 8, 6, 6, -1, 2, 10 }, { 1, 7, 13, 13, -1, 3, 9 } },
-	// left/right/center/lfe(center)/back left/back right/side left/side right
-	{ { 0, 8, 6, 6, 4, 12, 2, 10 }, { 1, 7, 13, 13, 5, 11, 3, 9 } }
+static const uint32_t max_speaker_index = 10;
+
+static const int8_t speakers_to_hesuvi_7[11][2] = {
+	// front left
+	{ 0, 1 },
+	// front right
+	{ 1, 0 },
+	// front center
+	{ 6, 6 },
+	// lfe
+	{ 6, 6 },
+	// back left
+	{ 4, 5 },
+	// back right
+	{ 5, 4 },
+	// front center left
+	{ speaker_not_present, speaker_not_present },
+	// front center right
+	{ speaker_not_present, speaker_not_present },
+	// back center
+	{ speaker_is_back_center, speaker_is_back_center },
+	// side left
+	{ 2, 3 },
+	// side right
+	{ 3, 2 }
+};
+
+static const int8_t speakers_to_hesuvi_14[11][2] = {
+	// front left
+	{ 0, 1 },
+	// front right
+	{ 8, 7 },
+	// front center
+	{ 6, 13 },
+	// lfe
+	{ 6, 13 },
+	// back left
+	{ 4, 5 },
+	// back right
+	{ 12, 11 },
+	// front center left
+	{ speaker_not_present, speaker_not_present },
+	// front center right
+	{ speaker_not_present, speaker_not_present },
+	// back center
+	{ speaker_is_back_center, speaker_is_back_center },
+	// side left
+	{ 2, 3 },
+	// side right
+	{ 10, 9 }
 };
 
 + (BOOL)validateImpulseFile:(NSURL *)url {
@@ -99,7 +117,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 	return YES;
 }
 
-- (id)initWithImpulseFile:(NSURL *)url forSampleRate:(double)sampleRate withInputChannels:(size_t)channels {
+- (id)initWithImpulseFile:(NSURL *)url forSampleRate:(double)sampleRate withInputChannels:(size_t)channels withConfig:(uint32_t)config {
 	self = [super init];
 
 	if(self) {
@@ -246,7 +264,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 		}
 		fftSize = 2 << pow;
 
-		float *deinterleavedImpulseBuffer = (float *)_mm_malloc(fftSize * sizeof(float) * impulseChannels, 16);
+		float *deinterleavedImpulseBuffer = (float *)_mm_malloc(fftSize * sizeof(float) * (impulseChannels + 1), 16);
 		if(!deinterleavedImpulseBuffer) {
 			free(impulseBuffer);
 			return nil;
@@ -258,6 +276,9 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 		}
 
 		free(impulseBuffer);
+
+		// Null impulse
+		vDSP_vclr(deinterleavedImpulseBuffer + impulseChannels * fftSize, 1, fftSize);
 
 		paddedBufferSize = fftSize;
 		fftSizeOver2 = (fftSize + 1) / 2;
@@ -317,18 +338,25 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 				return nil;
 			}
 
-			int leftInChannel;
-			int rightInChannel;
+			uint32_t channelFlag = [AudioChunk extractChannelFlag:(uint32_t)i fromConfig:config];
+			uint32_t channelIndex = [AudioChunk findChannelIndex:channelFlag];
+
+			int leftInChannel = speaker_not_present;
+			int rightInChannel = speaker_not_present;
 
 			if(impulseChannels == 7) {
-				leftInChannel = speakers_to_hesuvi_7[channels - 1][0][i];
-				rightInChannel = speakers_to_hesuvi_7[channels - 1][1][i];
+				if(channelIndex <= max_speaker_index) {
+					leftInChannel = speakers_to_hesuvi_7[channelIndex][0];
+					rightInChannel = speakers_to_hesuvi_7[channelIndex][1];
+				}
 			} else {
-				leftInChannel = speakers_to_hesuvi_14[channels - 1][0][i];
-				rightInChannel = speakers_to_hesuvi_14[channels - 1][1][i];
+				if(channelIndex <= max_speaker_index) {
+					leftInChannel = speakers_to_hesuvi_14[channelIndex][0];
+					rightInChannel = speakers_to_hesuvi_14[channelIndex][1];
+				}
 			}
 
-			if(leftInChannel == -1 || rightInChannel == -1) {
+			if(leftInChannel == speaker_is_back_center || rightInChannel == speaker_is_back_center) {
 				float *temp;
 				if(impulseChannels == 7) {
 					temp = (float *)malloc(sizeof(float) * fftSize);
@@ -360,6 +388,9 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 				}
 
 				free(temp);
+			} else if(leftInChannel == speaker_not_present || rightInChannel == speaker_not_present) {
+				vDSP_ctoz((DSPComplex *)(deinterleavedImpulseBuffer + impulseChannels * fftSize), 2, &impulse_responses[i * 2 + 0], 1, fftSizeOver2);
+				vDSP_ctoz((DSPComplex *)(deinterleavedImpulseBuffer + impulseChannels * fftSize), 2, &impulse_responses[i * 2 + 1], 1, fftSizeOver2);
 			} else {
 				vDSP_ctoz((DSPComplex *)(deinterleavedImpulseBuffer + leftInChannel * fftSize), 2, &impulse_responses[i * 2 + 0], 1, fftSizeOver2);
 				vDSP_ctoz((DSPComplex *)(deinterleavedImpulseBuffer + rightInChannel * fftSize), 2, &impulse_responses[i * 2 + 1], 1, fftSizeOver2);

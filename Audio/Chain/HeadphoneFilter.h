@@ -42,7 +42,7 @@
 
 + (BOOL)validateImpulseFile:(NSURL *)url;
 
-- (id)initWithImpulseFile:(NSURL *)url forSampleRate:(double)sampleRate withInputChannels:(size_t)channels;
+- (id)initWithImpulseFile:(NSURL *)url forSampleRate:(double)sampleRate withInputChannels:(size_t)channels withConfig:(uint32_t)config;
 
 - (void)process:(const float *)inBuffer sampleCount:(size_t)count toBuffer:(float *)outBuffer;
 

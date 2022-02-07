@@ -91,8 +91,13 @@
 	return format;
 }
 
-- (void)setFormat:(AudioStreamBasicDescription *)f {
+- (uint32_t)config {
+	return config;
+}
+
+- (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig {
 	format = *f;
+	config = channelConfig;
 	// Calculate a ratio and add to double(seconds) instead, as format may change
 	// double oldSampleRatio = sampleRatio;
 	sampleRatio = 1.0 / (format.mSampleRate * format.mBytesPerPacket);
@@ -110,8 +115,9 @@
             if (oldSampleRatio)
                 amountPlayed += oldSampleRatio * [[converter buffer] bufferedLength];
 #endif
-			[converter setOutputFormat:format];
-			[converter inputFormatDidChange:[bufferChain inputFormat]];
+			[converter setOutputFormat:format
+			              outputConfig:channelConfig];
+			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
 		}
 	}
 }
