@@ -669,6 +669,7 @@
 		83F1EE30245D4FC10076E182 /* imuse.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F1EE2F245D4FC10076E182 /* imuse.c */; };
 		83F2CCE525A5B41600F46FA8 /* acx.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F2CCE125A5B41600F46FA8 /* acx.c */; };
 		83F5F8831908D0A400C8E65F /* fsb5.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F5F8821908D0A400C8E65F /* fsb5.c */; };
+		83FB239127B14696003F3062 /* mpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FB238D27B14696003F3062 /* mpeg.c */; };
 		83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */; };
 		83FC176D23AC58D100E1025F /* xma_ue3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FC176A23AC58D100E1025F /* xma_ue3.c */; };
 		83FC176E23AC58D100E1025F /* csb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FC176B23AC58D100E1025F /* csb.c */; };
@@ -1488,6 +1489,7 @@
 		83F2CCE125A5B41600F46FA8 /* acx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = acx.c; sourceTree = "<group>"; };
 		83F412871E932F9A002E37D0 /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = ../Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
+		83FB238D27B14696003F3062 /* mpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpeg.c; sourceTree = "<group>"; };
 		83FBD502235D31F700D35BCD /* riff_ogg_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riff_ogg_streamfile.h; sourceTree = "<group>"; };
 		83FC176A23AC58D100E1025F /* xma_ue3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xma_ue3.c; sourceTree = "<group>"; };
 		83FC176B23AC58D100E1025F /* csb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = csb.c; sourceTree = "<group>"; };
@@ -1998,6 +2000,7 @@
 				8349A9031FE6258100E26435 /* mogg.c */,
 				839FBFF926C354E70016A78A /* mp4_faac.c */,
 				836F6E6018BDC2180095E648 /* mp4.c */,
+				83FB238D27B14696003F3062 /* mpeg.c */,
 				8306B0CB2098458E000302D4 /* msb_msh.c */,
 				832BF81721E0514A006F50F1 /* msf_banpresto.c */,
 				83C7280D22BC893D00678B4A /* msf_konami.c */,
@@ -3135,6 +3138,7 @@
 				83AA7F7F2519C042004C5298 /* bsf.c in Sources */,
 				836F6F4118BDC2190095E648 /* blocked.c in Sources */,
 				836F6F3B18BDC2190095E648 /* ws_decoder.c in Sources */,
+				83FB239127B14696003F3062 /* mpeg.c in Sources */,
 				839933612591E8C1001855AF /* sbk.c in Sources */,
 				835B9B932730BF2D00F87EE3 /* lpcm_shade.c in Sources */,
 				838BDB6E1D3B043C0022CA6F /* ffmpeg.c in Sources */,

@@ -1062,6 +1062,7 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
         /* apply */
         if (!txth->data_size_set) {
 
+            //TODO: this doesn't work when using name_table + subsongs, since values are pre-read
             /* with subsongs we want to clamp data_size from this subsong start to next subsong start */
             txth->next_offset = txth->data_size;
             if (txth->subsong_count > 1 && txth->target_subsong < txth->subsong_count) {
@@ -1205,12 +1206,9 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
     else if (is_string(key,"coef_offset")) {
         if (!parse_num(txth->sf_head,txth,val, &txth->coef_offset)) goto fail;
         /* special adjustments */
-        VGM_LOG("coef norm=%x\n",txth->coef_offset );
         txth->coef_offset += txth->base_offset;
-        VGM_LOG("coef+base=%x\n",txth->coef_offset );
         if (txth->subsong_spacing && !txth->is_offset_absolute)
             txth->coef_offset += txth->subsong_spacing * (txth->target_subsong - 1);
-        VGM_LOG("coef+spac=%x\n",txth->coef_offset );
     }
     else if (is_string(key,"coef_spacing")) {
         if (!parse_num(txth->sf_head,txth,val, &txth->coef_spacing)) goto fail;
@@ -1922,6 +1920,7 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             else if ((n = is_string_field(val,"sample_rate")))          value = txth->sample_rate;
             else if ((n = is_string_field(val,"start_offset")))         value = txth->start_offset;
             else if ((n = is_string_field(val,"data_size")))            value = txth->data_size;
+            else if ((n = is_string_field(val,"padding_size")))         value = txth->padding_size;
             else if ((n = is_string_field(val,"num_samples")))          value = txth->num_samples;
             else if ((n = is_string_field(val,"loop_start_sample")))    value = txth->loop_start_sample;
             else if ((n = is_string_field(val,"loop_start")))           value = txth->loop_start_sample;
@@ -1935,7 +1934,16 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             else if ((n = is_string_field(val,"subfile_size")))         value = txth->subfile_size;
             else if ((n = is_string_field(val,"base_offset")))          value = txth->base_offset;
             else if ((n = is_string_field(val,"coef_offset")))          value = txth->coef_offset;
+            else if ((n = is_string_field(val,"coef_spacing")))         value = txth->coef_spacing;
             else if ((n = is_string_field(val,"hist_offset")))          value = txth->hist_offset;
+            else if ((n = is_string_field(val,"hist_spacing")))         value = txth->hist_spacing;
+            else if ((n = is_string_field(val,"chunk_count")))          value = txth->chunk_count;
+            else if ((n = is_string_field(val,"chunk_start")))          value = txth->chunk_start;
+            else if ((n = is_string_field(val,"chunk_size")))           value = txth->chunk_size;
+            else if ((n = is_string_field(val,"chunk_size_offset")))    value = txth->chunk_size_offset;
+            else if ((n = is_string_field(val,"chunk_number")))         value = txth->chunk_number;
+            else if ((n = is_string_field(val,"chunk_data_size")))      value = txth->chunk_data_size;
+            else if ((n = is_string_field(val,"chunk_header_size")))    value = txth->chunk_header_size;
             //todo whatever, improve
             else if ((n = is_string_field(val,"name_value")))           value = txth->name_values[0];
             else if ((n = is_string_field(val,"name_value1")))          value = txth->name_values[0];

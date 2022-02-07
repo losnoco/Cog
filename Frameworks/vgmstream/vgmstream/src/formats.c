@@ -21,7 +21,6 @@
 static const char* extension_list[] = {
     //"", /* vgmstream can play extensionless files too, but plugins must accept them manually */
 
-    "04sw",
     "208",
     "2dx9",
     "2pfs",
@@ -625,6 +624,7 @@ static const char* extension_list[] = {
     "xma",
     "xma2",
     "xmu",
+    "xmv",
     "xnb",
     "xsh",
     "xsf",
@@ -1382,6 +1382,7 @@ static const meta_info meta_info_list[] = {
         {meta_WBK,                  "Treyarch WBK header"},
         {meta_WBK_NSLB,             "Treyarch NSLB header"},
         {meta_DSP_APEX,             "Koei Tecmo APEX header"},
+        {meta_MPEG,                 "MPEG header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {

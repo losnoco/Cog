@@ -82,7 +82,6 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>04sw</string>
 				<string>208</string>
 				<string>2dx9</string>
 				<string>2pfs</string>
@@ -645,6 +644,7 @@
 				<string>xma</string>
 				<string>xma2</string>
 				<string>xmu</string>
+				<string>xmv</string>
 				<string>xnb</string>
 				<string>xsh</string>
 				<string>xsf</string>
