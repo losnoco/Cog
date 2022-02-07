@@ -105,7 +105,9 @@
 	}
 
 	if([previousNode shouldReset] == YES) {
-		[buffer reset];
+		@autoreleasepool {
+			[buffer reset];
+		}
 
 		shouldReset = YES;
 		[previousNode setShouldReset:NO];
@@ -113,7 +115,11 @@
 		[[previousNode semaphore] signal];
 	}
 
-	AudioChunk *ret = [[previousNode buffer] removeSamples:maxFrames];
+	AudioChunk *ret;
+
+	@autoreleasepool {
+		ret = [[previousNode buffer] removeSamples:maxFrames];
+	}
 
 	[accessLock unlock];
 
@@ -151,9 +157,11 @@
 - (void)resetBuffer {
 	shouldReset = YES; // Will reset on next write.
 	if(previousNode == nil) {
-		[accessLock lock];
-		[buffer reset];
-		[accessLock unlock];
+		@autoreleasepool {
+			[accessLock lock];
+			[buffer reset];
+			[accessLock unlock];
+		}
 	}
 }
 

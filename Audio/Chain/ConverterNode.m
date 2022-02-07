@@ -422,7 +422,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	// when the end of stream is reached. Convert function instead processes what it can,
 	// and returns 0 samples when it has nothing more to process at the end of stream.
 	while([self shouldContinue] == YES) {
-		int amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
+		int amountConverted;
+		@autoreleasepool {
+			amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
+		}
 		if(!amountConverted) {
 			if(paused) {
 				while(paused)
@@ -985,13 +988,15 @@ static float db_to_scale(float db) {
 		[refillNode setChannelConfig:previousOutputConfig];
 
 		for(;;) {
-			AudioChunk *chunk = [buffer removeSamples:16384];
-			size_t frameCount = [chunk frameCount];
-			if(frameCount) {
-				NSData *samples = [chunk removeSamples:frameCount];
-				[refillNode writeData:[samples bytes] amount:frameCount];
-			} else
-				break;
+			@autoreleasepool {
+				AudioChunk *chunk = [buffer removeSamples:16384];
+				size_t frameCount = [chunk frameCount];
+				if(frameCount) {
+					NSData *samples = [chunk removeSamples:frameCount];
+					[refillNode writeData:[samples bytes] amount:frameCount];
+				} else
+					break;
+			}
 		}
 
 		[self setupWithInputFormat:previousOutputFormat withInputConfig:[AudioChunk guessChannelConfig:previousOutputFormat.mChannelsPerFrame] outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];

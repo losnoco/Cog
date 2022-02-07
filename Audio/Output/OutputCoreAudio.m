@@ -48,108 +48,110 @@ static void scaleBuffersByVolume(AudioBufferList *ioData, float volume) {
 }
 
 static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
-	OutputCoreAudio *_self = (__bridge OutputCoreAudio *)inRefCon;
+	@autoreleasepool {
+		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)inRefCon;
 
-	const int channels = _self->deviceFormat.mChannelsPerFrame;
-	const int bytesPerPacket = channels * sizeof(float);
+		const int channels = _self->deviceFormat.mChannelsPerFrame;
+		const int bytesPerPacket = channels * sizeof(float);
 
-	size_t amountToRead, amountRead = 0;
+		size_t amountToRead, amountRead = 0;
 
-	amountToRead = inNumberFrames * bytesPerPacket;
+		amountToRead = inNumberFrames * bytesPerPacket;
 
-	if(_self->stopping == YES || [_self->outputController shouldContinue] == NO) {
-		// Chain is dead, fill out the serial number pointer forever with silence
-		clearBuffers(ioData, amountToRead / bytesPerPacket, 0);
-		atomic_fetch_add(&_self->bytesRendered, amountToRead);
-		_self->stopping = YES;
-		return 0;
-	}
-
-	if([[_self->outputController buffer] isEmpty] && ![_self->outputController chainQueueHasTracks]) {
-		// Hit end of last track, pad with silence until queue event stops us
-		clearBuffers(ioData, amountToRead / bytesPerPacket, 0);
-		atomic_fetch_add(&_self->bytesRendered, amountToRead);
-		return 0;
-	}
-
-	AudioChunk *chunk = [[_self->outputController buffer] removeSamples:(amountToRead / bytesPerPacket)];
-
-	size_t frameCount = [chunk frameCount];
-	AudioStreamBasicDescription format = [chunk format];
-	uint32_t config = [chunk channelConfig];
-
-	if(frameCount) {
-		if(!_self->streamFormatStarted || config != _self->streamChannelConfig || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
-			_self->streamFormat = format;
-			_self->streamChannelConfig = config;
-			_self->streamFormatStarted = YES;
-			_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->deviceFormat outputConfig:_self->deviceChannelConfig];
+		if(_self->stopping == YES || [_self->outputController shouldContinue] == NO) {
+			// Chain is dead, fill out the serial number pointer forever with silence
+			clearBuffers(ioData, amountToRead / bytesPerPacket, 0);
+			atomic_fetch_add(&_self->bytesRendered, amountToRead);
+			_self->stopping = YES;
+			return 0;
 		}
 
-		double chunkDuration = [chunk duration];
+		if([[_self->outputController buffer] isEmpty] && ![_self->outputController chainQueueHasTracks]) {
+			// Hit end of last track, pad with silence until queue event stops us
+			clearBuffers(ioData, amountToRead / bytesPerPacket, 0);
+			atomic_fetch_add(&_self->bytesRendered, amountToRead);
+			return 0;
+		}
 
-		NSData *samples = [chunk removeSamples:frameCount];
+		AudioChunk *chunk = [[_self->outputController buffer] removeSamples:(amountToRead / bytesPerPacket)];
 
-		float downmixedData[frameCount * channels];
-		[_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
+		size_t frameCount = [chunk frameCount];
+		AudioStreamBasicDescription format = [chunk format];
+		uint32_t config = [chunk channelConfig];
 
-		fillBuffers(ioData, downmixedData, frameCount, 0);
-		amountRead = frameCount * bytesPerPacket;
-		[_self->outputController incrementAmountPlayed:chunkDuration];
-		atomic_fetch_add(&_self->bytesRendered, amountRead);
-		[_self->writeSemaphore signal];
-	}
-
-	// Try repeatedly! Buffer wraps can cause a slight data shortage, as can
-	// unexpected track changes.
-	while((amountRead < amountToRead) && [_self->outputController shouldContinue] == YES) {
-		chunk = [[_self->outputController buffer] removeSamples:((amountToRead - amountRead) / bytesPerPacket)];
-		frameCount = [chunk frameCount];
-		format = [chunk format];
-		config = [chunk channelConfig];
 		if(frameCount) {
 			if(!_self->streamFormatStarted || config != _self->streamChannelConfig || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
 				_self->streamFormat = format;
+				_self->streamChannelConfig = config;
 				_self->streamFormatStarted = YES;
 				_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->deviceFormat outputConfig:_self->deviceChannelConfig];
 			}
-			atomic_fetch_add(&_self->bytesRendered, frameCount * bytesPerPacket);
+
 			double chunkDuration = [chunk duration];
+
 			NSData *samples = [chunk removeSamples:frameCount];
+
 			float downmixedData[frameCount * channels];
 			[_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
-			fillBuffers(ioData, downmixedData, frameCount, amountRead / bytesPerPacket);
 
+			fillBuffers(ioData, downmixedData, frameCount, 0);
+			amountRead = frameCount * bytesPerPacket;
 			[_self->outputController incrementAmountPlayed:chunkDuration];
-
-			amountRead += frameCount * bytesPerPacket;
+			atomic_fetch_add(&_self->bytesRendered, amountRead);
 			[_self->writeSemaphore signal];
-		} else {
-			[_self->readSemaphore timedWait:500];
 		}
-	}
 
-	float volumeScale = 1.0;
-	long sustained = atomic_load_explicit(&_self->bytesHdcdSustained, memory_order_relaxed);
-	if(sustained) {
-		if(sustained < amountRead) {
-			atomic_store(&_self->bytesHdcdSustained, 0);
-		} else {
-			atomic_fetch_sub(&_self->bytesHdcdSustained, amountRead);
+		// Try repeatedly! Buffer wraps can cause a slight data shortage, as can
+		// unexpected track changes.
+		while((amountRead < amountToRead) && [_self->outputController shouldContinue] == YES) {
+			chunk = [[_self->outputController buffer] removeSamples:((amountToRead - amountRead) / bytesPerPacket)];
+			frameCount = [chunk frameCount];
+			format = [chunk format];
+			config = [chunk channelConfig];
+			if(frameCount) {
+				if(!_self->streamFormatStarted || config != _self->streamChannelConfig || memcmp(&_self->streamFormat, &format, sizeof(format)) != 0) {
+					_self->streamFormat = format;
+					_self->streamFormatStarted = YES;
+					_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->deviceFormat outputConfig:_self->deviceChannelConfig];
+				}
+				atomic_fetch_add(&_self->bytesRendered, frameCount * bytesPerPacket);
+				double chunkDuration = [chunk duration];
+				NSData *samples = [chunk removeSamples:frameCount];
+				float downmixedData[frameCount * channels];
+				[_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
+				fillBuffers(ioData, downmixedData, frameCount, amountRead / bytesPerPacket);
+
+				[_self->outputController incrementAmountPlayed:chunkDuration];
+
+				amountRead += frameCount * bytesPerPacket;
+				[_self->writeSemaphore signal];
+			} else {
+				[_self->readSemaphore timedWait:500];
+			}
 		}
-		volumeScale = 0.5;
+
+		float volumeScale = 1.0;
+		long sustained = atomic_load_explicit(&_self->bytesHdcdSustained, memory_order_relaxed);
+		if(sustained) {
+			if(sustained < amountRead) {
+				atomic_store(&_self->bytesHdcdSustained, 0);
+			} else {
+				atomic_fetch_sub(&_self->bytesHdcdSustained, amountRead);
+			}
+			volumeScale = 0.5;
+		}
+
+		scaleBuffersByVolume(ioData, _self->volume * volumeScale);
+
+		if(amountRead < amountToRead) {
+			// Either underrun, or no data at all. Caller output tends to just
+			// buffer loop if it doesn't get anything, so always produce a full
+			// buffer, and silence anything we couldn't supply.
+			clearBuffers(ioData, (amountToRead - amountRead) / bytesPerPacket, amountRead / bytesPerPacket);
+		}
+
+		return 0;
 	}
-
-	scaleBuffersByVolume(ioData, _self->volume * volumeScale);
-
-	if(amountRead < amountToRead) {
-		// Either underrun, or no data at all. Caller output tends to just
-		// buffer loop if it doesn't get anything, so always produce a full
-		// buffer, and silence anything we couldn't supply.
-		clearBuffers(ioData, (amountToRead - amountRead) / bytesPerPacket, amountRead / bytesPerPacket);
-	}
-
-	return 0;
 };
 
 - (id)initWithController:(OutputNode *)c {
@@ -220,7 +222,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		}
 
 		if([outputController shouldReset]) {
-			[[outputController buffer] reset];
+			@autoreleasepool {
+				[[outputController buffer] reset];
+			}
 			[outputController setShouldReset:NO];
 			[delayedEvents removeAllObjects];
 			delayedEventsPopped = YES;
@@ -244,10 +248,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		size_t frameCount = 0;
 
 		if(![[outputController buffer] isFull]) {
-			AudioChunk *chunk = [outputController readChunk:512];
-			frameCount = [chunk frameCount];
-			if(frameCount) {
-				[[outputController buffer] addChunk:chunk];
+			@autoreleasepool {
+				AudioChunk *chunk = [outputController readChunk:512];
+				frameCount = [chunk frameCount];
+				if(frameCount) {
+					[[outputController buffer] addChunk:chunk];
+				}
 			}
 		}
 
@@ -467,7 +473,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		AVAudioFormat *renderFormat;
 
 		[outputController incrementAmountPlayed:[[outputController buffer] listDuration]];
-		[[outputController buffer] reset];
+		@autoreleasepool {
+			[[outputController buffer] reset];
+		}
 
 		_deviceFormat = format;
 		deviceFormat = *(format.streamDescription);
