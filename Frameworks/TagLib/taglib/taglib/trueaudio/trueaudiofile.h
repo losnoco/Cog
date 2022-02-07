@@ -39,13 +39,14 @@ namespace TagLib {
 
   namespace ID3v2 { class Tag; class FrameFactory; }
   namespace ID3v1 { class Tag; }
+  namespace APE { class Tag; }
 
   //! An implementation of TrueAudio metadata
 
   /*!
    * This is implementation of TrueAudio metadata.
    *
-   * This supports ID3v1 and ID3v2 tags as well as reading stream
+   * This supports ID3v1, ID3v2, and APE tags as well as reading stream
    * properties from the file.
    */
 
@@ -74,6 +75,8 @@ namespace TagLib {
         ID3v1   = 0x0001,
         //! Matches ID3v2 tags.
         ID3v2   = 0x0002,
+        //! Matches APE tags.
+        APE     = 0x0004,
         //! Matches all tag types.
         AllTags = 0xffff
       };
@@ -141,13 +144,14 @@ namespace TagLib {
       /*!
        * Implements the unified property interface -- export function.
        * If the file contains both ID3v1 and v2 tags, only ID3v2 will be
-       * converted to the PropertyMap.
+       * converted to the PropertyMap. If the file contains APE tags,
+       * only they will be converted to the PropertyMap.
        */
       PropertyMap properties() const;
 
       /*!
        * Implements the unified property interface -- import function.
-       * Creates in ID3v2 tag if necessary. If an ID3v1 tag exists, it will
+       * Creates an APE tag if necessary. If an ID3v1 tag exists, it will
        * be updated as well, within the limitations of ID3v1.
        */
       PropertyMap setProperties(const PropertyMap &);
@@ -212,6 +216,25 @@ namespace TagLib {
       ID3v2::Tag *ID3v2Tag(bool create = false);
 
       /*!
+       * Returns a pointer to the APE tag of the file.
+       *
+       * If \a create is false (the default) this may return a null pointer
+       * if there is no valid APE tag.  If \a create is true it will create
+       * an APE tag if one does not exist and returns a valid pointer.
+       *
+       * \note This may return a valid pointer regardless of whether or not the
+       * file on disk has an APE tag.  Use hasAPETag() to check if the file
+       * on disk actually has an APE tag.
+       *
+       * \note The Tag <b>is still</b> owned by the TTA::File and should not be
+       * deleted by the user.  It will be deleted when the file (object) is
+       * destroyed.
+       *
+       * \see hasAPETag()
+       */
+      APE::Tag *APETag(bool create = false);
+
+      /*!
        * This will remove the tags that match the OR-ed together TagTypes from the
        * file.  By default it removes all tags.
        *
@@ -234,6 +257,13 @@ namespace TagLib {
        * \see ID3v2Tag()
        */
       bool hasID3v2Tag() const;
+
+      /*!
+       * Returns whether or not the file on disk actually has an APE tag.
+       *
+       * \see APETag()
+       */
+      bool hasAPETag() const;
 
       /*!
        * Returns whether or not the given \a stream can be opened as a TrueAudio

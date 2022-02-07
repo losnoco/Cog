@@ -39,12 +39,14 @@
 #include "id3v1tag.h"
 #include "id3v2tag.h"
 #include "id3v2header.h"
+#include "apefooter.h"
+#include "apetag.h"
 
 using namespace TagLib;
 
 namespace
 {
-  enum { TrueAudioID3v2Index = 0, TrueAudioID3v1Index = 1 };
+  enum { TrueAudioID3v2Index = 0, TrueAudioAPEIndex = 1, TrueAudioID3v1Index = 2 };
 }
 
 class TrueAudio::File::FilePrivate
@@ -55,6 +57,8 @@ public:
     ID3v2Location(-1),
     ID3v2OriginalSize(0),
     ID3v1Location(-1),
+    APELocation(-1),
+    APEOriginalSize(0),
     properties(0) {}
 
   ~FilePrivate()
@@ -65,6 +69,9 @@ public:
   const ID3v2::FrameFactory *ID3v2FrameFactory;
   long ID3v2Location;
   long ID3v2OriginalSize;
+
+  long APELocation;
+  long APEOriginalSize;
 
   long ID3v1Location;
 
@@ -148,7 +155,10 @@ PropertyMap TrueAudio::File::setProperties(const PropertyMap &properties)
   if(ID3v1Tag())
     ID3v1Tag()->setProperties(properties);
 
-  return ID3v2Tag(true)->setProperties(properties);
+  if(ID3v2Tag())
+    ID3v2Tag()->setProperties(properties);
+
+  return APETag(true)->setProperties(properties);
 }
 
 TrueAudio::Properties *TrueAudio::File::audioProperties() const
@@ -180,6 +190,9 @@ bool TrueAudio::File::save()
     const ByteVector data = ID3v2Tag()->render();
     insert(data, d->ID3v2Location, d->ID3v2OriginalSize);
 
+    if(d->APELocation >= 0)
+      d->APELocation += (static_cast<long>(data.size()) - d->ID3v2OriginalSize);
+
     if(d->ID3v1Location >= 0)
       d->ID3v1Location += (static_cast<long>(data.size()) - d->ID3v2OriginalSize);
 
@@ -191,6 +204,9 @@ bool TrueAudio::File::save()
 
     if(d->ID3v2Location >= 0) {
       removeBlock(d->ID3v2Location, d->ID3v2OriginalSize);
+
+      if(d->APELocation >= 0)
+        d->APELocation -= d->ID3v2OriginalSize;
 
       if(d->ID3v1Location >= 0)
         d->ID3v1Location -= d->ID3v2OriginalSize;
@@ -226,6 +242,35 @@ bool TrueAudio::File::save()
     }
   }
 
+  if(APETag() && !APETag()->isEmpty()) {
+    // APE tag is not empty. Update the old one or create a new one.
+    if(d->APELocation < 0) {
+      if(d->ID3v1Location >= 0)
+        d->APELocation = d->ID3v1Location;
+      else
+        d->APELocation = length();
+    }
+
+    const ByteVector data = APETag()->render();
+    insert(data, d->APELocation, d->APEOriginalSize);
+
+    if(d->ID3v1Location >= 0)
+        d->ID3v1Location += (static_cast<long>(data.size()) - d->APEOriginalSize);
+
+    d->APEOriginalSize = data.size();
+  }
+  else {
+    // APE tag is empty. Remove the old one.
+
+    if(d->APELocation >= 0) {
+      removeBlock(d->APELocation, d->APEOriginalSize);
+
+      if (d->ID3v1Location >= 0) {
+        d->ID3v1Location -= d->APEOriginalSize;
+      }
+    }
+  }
+
   return true;
 }
 
@@ -239,6 +284,11 @@ ID3v2::Tag *TrueAudio::File::ID3v2Tag(bool create)
   return d->tag.access<ID3v2::Tag>(TrueAudioID3v2Index, create);
 }
 
+APE::Tag *TrueAudio::File::APETag(bool create)
+{
+  return d->tag.access<APE::Tag>(TrueAudioAPEIndex, create);
+}
+
 void TrueAudio::File::strip(int tags)
 {
   if(tags & ID3v1)
@@ -247,8 +297,11 @@ void TrueAudio::File::strip(int tags)
   if(tags & ID3v2)
     d->tag.set(TrueAudioID3v2Index, 0);
 
+  if(tags & APE)
+    d->tag.set(TrueAudioAPEIndex, 0);
+
   if(!ID3v1Tag())
-    ID3v2Tag(true);
+    APETag(true);
 }
 
 bool TrueAudio::File::hasID3v1Tag() const
@@ -259,6 +312,11 @@ bool TrueAudio::File::hasID3v1Tag() const
 bool TrueAudio::File::hasID3v2Tag() const
 {
   return (d->ID3v2Location >= 0);
+}
+
+bool TrueAudio::File::hasAPETag() const
+{
+  return (d->APELocation >= 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +342,17 @@ void TrueAudio::File::read(bool readProperties)
     d->tag.set(TrueAudioID3v1Index, new ID3v1::Tag(this, d->ID3v1Location));
 
   if(d->ID3v1Location < 0)
-    ID3v2Tag(true);
+    APETag(true);
+	
+  // Look for an APE tag
+
+  d->APELocation = Utils::findAPE(this, d->ID3v1Location);
+
+  if(d->APELocation >= 0) {
+    d->tag.set(TrueAudioAPEIndex, new APE::Tag(this, d->APELocation));
+    d->APEOriginalSize = APETag()->footer()->completeTagSize();
+    d->APELocation = d->APELocation + APE::Footer::size() - d->APEOriginalSize;
+  }
 
   // Look for TrueAudio metadata
 
