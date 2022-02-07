@@ -424,7 +424,7 @@ static const int8_t speakers_to_hesuvi_14[8][2][8] = {
 }
 
 - (void)process:(const float *)inBuffer sampleCount:(size_t)count toBuffer:(float *)outBuffer {
-	const float scale = 1.0 / (8.0 * (float)fftSize);
+	const float scale = 1.0 / (4.0 * (float)fftSize);
 
 	while(count > 0) {
 		size_t countToDo = (count > bufferSize) ? bufferSize : count;
