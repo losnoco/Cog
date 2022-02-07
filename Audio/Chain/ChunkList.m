@@ -74,8 +74,10 @@
 
 	@synchronized(chunkList) {
 		inRemover = YES;
-		if(![chunkList count])
+		if(![chunkList count]) {
+			inRemover = NO;
 			return [[AudioChunk alloc] init];
+		}
 		AudioChunk *chunk = [chunkList objectAtIndex:0];
 		if([chunk frameCount] <= maxFrameCount) {
 			[chunkList removeObjectAtIndex:0];
