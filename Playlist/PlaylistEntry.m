@@ -73,7 +73,7 @@
 }
 
 + (NSSet *)keyPathsForValuesAffectingLength {
-	return [NSSet setWithObject:@"totalFrames"];
+	return [NSSet setWithObjects:@"metadataLoaded", @"totalFrames", @"sampleRate", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingPath {
@@ -443,7 +443,7 @@
 		[self setValuesForKeysWithDictionary:metadata];
 	}
 
-	metadataLoaded = YES;
+	[self setMetadataLoaded:YES];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
