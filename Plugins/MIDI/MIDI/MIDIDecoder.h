@@ -16,22 +16,22 @@ class AUPlayer;
 class SFPlayer;
 
 @interface MIDIDecoder : NSObject <CogDecoder> {
-    id<CogSource> source;
-    int track_num;
+	id<CogSource> source;
+	int track_num;
 
-    SFPlayer* sfplayer;
-    AUPlayer* auplayer;
+	SFPlayer* sfplayer;
+	AUPlayer* auplayer;
 	MIDIPlayer* player;
-    midi_container midi_file;
-    
-    NSString * globalSoundFontPath;
-    BOOL soundFontsAssigned;
-    BOOL isLooped;
-    
-    long totalFrames;
-    long framesLength;
-    long framesFade;
-    long framesRead;
+	midi_container midi_file;
+
+	NSString* globalSoundFontPath;
+	BOOL soundFontsAssigned;
+	BOOL isLooped;
+
+	long totalFrames;
+	long framesLength;
+	long framesFade;
+	long framesRead;
 }
 
 @end

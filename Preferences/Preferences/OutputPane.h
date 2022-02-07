@@ -6,16 +6,16 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "GeneralPreferencePane.h"
 #import "OutputsArrayController.h"
+#import <Cocoa/Cocoa.h>
 
 @interface OutputPane : GeneralPreferencePane {
 	IBOutlet OutputsArrayController *outputDevices;
 }
 
-- (IBAction) takeDeviceID:(id)sender;
-- (IBAction) setHrir:(id)sender;
-- (IBAction) clearHrir:(id)sender;
+- (IBAction)takeDeviceID:(id)sender;
+- (IBAction)setHrir:(id)sender;
+- (IBAction)clearHrir:(id)sender;
 
 @end

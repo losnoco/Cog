@@ -20,8 +20,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface SecondsFormatter : NSFormatter
-{
+@interface SecondsFormatter : NSFormatter {
 }
 
 @end

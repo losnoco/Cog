@@ -6,32 +6,35 @@
 //
 
 #ifndef NSTableViewDataSource_sqlite_h
+#import "PlaylistEntry.h"
 #import <Cocoa/Cocoa.h>
 #import <sqlite3.h>
-#import "PlaylistEntry.h"
 
-@interface SQLiteStore : NSObject
-{
-@private NSString *g_databasePath;
-@private sqlite3 *g_database;
-@private sqlite3_stmt *stmt[39];
-@private NSMutableArray *databaseMirror;
+@interface SQLiteStore : NSObject {
+	@private
+	NSString *g_databasePath;
+	@private
+	sqlite3 *g_database;
+	@private
+	sqlite3_stmt *stmt[39];
+	@private
+	NSMutableArray *databaseMirror;
 }
 
-@property (nonatomic, readwrite) NSString *databasePath;
-@property (nonatomic, assign, readwrite) sqlite3 *database;
+@property(nonatomic, readwrite) NSString *databasePath;
+@property(nonatomic, assign, readwrite) sqlite3 *database;
 
 + (SQLiteStore *)sharedStore;
 
 - (id)init;
 - (void)dealloc;
 
-- (void) trackUpdate:(PlaylistEntry *)track;
+- (void)trackUpdate:(PlaylistEntry *)track;
 
-- (void)playlistInsertTracks:(NSArray *)tracks atIndex:(int64_t)index progressCall:(void(^)(double progress))callback;
-- (void)playlistInsertTracks:(NSArray *)tracks atObjectIndexes:(NSIndexSet *)indexes progressCall:(void(^)(double progress))callback;
-- (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count progressCall:(void(^)(double progress))callback;
-- (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes progressCall:(void(^)(double progress))callback;
+- (void)playlistInsertTracks:(NSArray *)tracks atIndex:(int64_t)index progressCall:(void (^)(double progress))callback;
+- (void)playlistInsertTracks:(NSArray *)tracks atObjectIndexes:(NSIndexSet *)indexes progressCall:(void (^)(double progress))callback;
+- (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count progressCall:(void (^)(double progress))callback;
+- (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes progressCall:(void (^)(double progress))callback;
 - (PlaylistEntry *)playlistGetItem:(int64_t)index;
 - (PlaylistEntry *)playlistGetCachedItem:(int64_t)index;
 - (int64_t)playlistGetCount;
@@ -39,7 +42,7 @@
 - (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex progressCall:(void (^)(double))callback;
 - (void)playlistMoveObjectsFromIndex:(NSUInteger)fromIndex toArrangedObjectIndexes:(NSIndexSet *)indexSet progressCall:(void (^)(double))callback;
 
-- (void)syncPlaylistEntries:(NSArray *)entries progressCall:(void(^)(double progress))callback;
+- (void)syncPlaylistEntries:(NSArray *)entries progressCall:(void (^)(double progress))callback;
 
 - (void)queueAddItem:(int64_t)playlistIndex;
 - (void)queueAddItems:(NSArray *)playlistIndexes;
@@ -52,6 +55,5 @@
 @end
 
 #define NSTableViewDataSource_sqlite_h
-
 
 #endif /* NSTableViewDataSource_sqlite_h */

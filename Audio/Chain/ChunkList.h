@@ -5,8 +5,8 @@
 //  Created by Christopher Snowhill on 2/5/22.
 //
 
-#import <Foundation/Foundation.h>
 #import <CoreAudio/CoreAudio.h>
+#import <Foundation/Foundation.h>
 
 #import "AudioChunk.h"
 
@@ -15,27 +15,27 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ChunkList : NSObject {
-    NSMutableArray<AudioChunk *> * chunkList;
-    double listDuration;
-    double maxDuration;
-    
-    BOOL inAdder;
-    BOOL inRemover;
-    BOOL stopping;
+	NSMutableArray<AudioChunk *> *chunkList;
+	double listDuration;
+	double maxDuration;
+
+	BOOL inAdder;
+	BOOL inRemover;
+	BOOL stopping;
 }
 
-@property (readonly) double listDuration;
-@property (readonly) double maxDuration;
+@property(readonly) double listDuration;
+@property(readonly) double maxDuration;
 
-- (id) initWithMaximumDuration:(double)duration;
+- (id)initWithMaximumDuration:(double)duration;
 
-- (void) reset;
+- (void)reset;
 
-- (BOOL) isEmpty;
-- (BOOL) isFull;
+- (BOOL)isEmpty;
+- (BOOL)isFull;
 
-- (void) addChunk:(AudioChunk *)chunk;
-- (AudioChunk *) removeSamples:(size_t)maxFrameCount;
+- (void)addChunk:(AudioChunk *)chunk;
+- (AudioChunk *)removeSamples:(size_t)maxFrameCount;
 
 @end
 

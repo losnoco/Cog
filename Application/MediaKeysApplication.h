@@ -11,4 +11,3 @@
 @interface MediaKeysApplication : NSApplication
 
 @end
-

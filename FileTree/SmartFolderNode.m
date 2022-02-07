@@ -15,87 +15,76 @@
 
 @implementation SmartFolderNode
 
-- (BOOL)isLeaf
-{
+- (BOOL)isLeaf {
 	return NO;
 }
 
-- (void)updatePath
-{
+- (void)updatePath {
 	NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:[url path]];
 	NSString *rawQuery = [doc objectForKey:@"RawQuery"];
 	NSArray *searchPaths = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"CurrentFolderPath"];
-	
+
 	// Ugh, Carbon from now on...
 	MDQueryRef query = MDQueryCreate(kCFAllocatorDefault, (CFStringRef)rawQuery, NULL, NULL);
-    _query = query;
-	
+	_query = query;
+
 	MDQuerySetSearchScope(query, (CFArrayRef)searchPaths, 0);
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString*)kMDQueryDidFinishNotification object:(__bridge id)query];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString*)kMDQueryDidUpdateNotification object:(__bridge id)query];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryFinished:) name:(NSString *)kMDQueryDidFinishNotification object:(__bridge id)query];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryUpdate:) name:(NSString *)kMDQueryDidUpdateNotification object:(__bridge id)query];
 
 	DLog(@"Making query!");
 	MDQueryExecute(query, kMDQueryWantsUpdates);
-	
-	//Note: This is asynchronous!
+
+	// Note: This is asynchronous!
 }
 
-- (void)setSubpaths:(id)s
-{
+- (void)setSubpaths:(id)s {
 	subpaths = s;
 }
 
-- (unsigned int)countOfSubpaths
-{
-	return (unsigned int) [[self subpaths] count];
+- (unsigned int)countOfSubpaths {
+	return (unsigned int)[[self subpaths] count];
 }
 
-- (PathNode *)objectInSubpathsAtIndex:(unsigned int)index
-{
+- (PathNode *)objectInSubpathsAtIndex:(unsigned int)index {
 	return [[self subpaths] objectAtIndex:index];
 }
 
-- (void)queryFinished:(NSNotification *)notification
-{
+- (void)queryFinished:(NSNotification *)notification {
 	DLog(@"Query finished!");
 	MDQueryRef query = (__bridge MDQueryRef)[notification object];
 
 	NSMutableArray *results = [NSMutableArray array];
 
 	MDQueryDisableUpdates(query);
-	int c = (int) MDQueryGetResultCount(query);
-	
+	int c = (int)MDQueryGetResultCount(query);
+
 	int i;
-	for (i = 0; i < c; i++)
-	{
-		MDItemRef  item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
-		
-		NSString *itemPath = (NSString *) CFBridgingRelease(MDItemCopyAttribute(item, kMDItemPath));
+	for(i = 0; i < c; i++) {
+		MDItemRef item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
+
+		NSString *itemPath = (NSString *)CFBridgingRelease(MDItemCopyAttribute(item, kMDItemPath));
 
 		[results addObject:itemPath];
 	}
 
 	MDQueryEnableUpdates(query);
-	
+
 	DLog(@"Query update!");
-	
+
 	[self processPaths:[results sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-	
+
 	[dataSource reloadPathNode:self];
 }
 
-- (void)queryUpdate:(NSNotification *)notification
-{
+- (void)queryUpdate:(NSNotification *)notification {
 	DLog(@"Query update!");
-	[self queryFinished: notification];
+	[self queryFinished:notification];
 }
 
-- (void)dealloc
-{
-    CFRelease(_query);
+- (void)dealloc {
+	CFRelease(_query);
 }
-
 
 @end
-

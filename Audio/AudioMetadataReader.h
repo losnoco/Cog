@@ -8,9 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface AudioMetadataReader : NSObject {
-
 }
 
 + (NSDictionary *)metadataForURL:(NSURL *)url;

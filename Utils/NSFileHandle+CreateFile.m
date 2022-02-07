@@ -8,16 +8,14 @@
 
 #import "NSFileHandle+CreateFile.h"
 
-
 @implementation NSFileHandle (CreateFile)
 
-+ (id)fileHandleForWritingAtPath:(NSString *)path createFile:(BOOL)create
-{
++ (id)fileHandleForWritingAtPath:(NSString *)path createFile:(BOOL)create {
 	NSFileManager *manager = [NSFileManager defaultManager];
 
-	if (![manager fileExistsAtPath:path])
+	if(![manager fileExistsAtPath:path])
 		[manager createFileAtPath:path contents:nil attributes:nil];
-	
+
 	return [NSFileHandle fileHandleForWritingAtPath:path];
 }
 

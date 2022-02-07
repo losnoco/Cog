@@ -8,28 +8,26 @@
 
 #import "AppcastArrayController.h"
 
-
 @implementation AppcastArrayController
 
-- (void)awakeFromNib
-{
+- (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
 
-    //[self addObject:
-    // [NSDictionary dictionaryWithObjectsAndKeys:
-    //  NSLocalizedStringFromTableInBundle(@"Stable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://mamburu.net/cog/stable.xml", @"url",nil]];
+	//[self addObject:
+	// [NSDictionary dictionaryWithObjectsAndKeys:
+	//  NSLocalizedStringFromTableInBundle(@"Stable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://mamburu.net/cog/stable.xml", @"url",nil]];
 
-    //      [self addObject:
-    //              [NSDictionary dictionaryWithObjectsAndKeys:
-    //                      NSLocalizedStringFromTableInBundle(@"Unstable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://cogx.org/appcast/unstable.xml", @"url",nil]];
-    
-    //[self addObject:
-    // [NSDictionary dictionaryWithObjectsAndKeys:
-    //  NSLocalizedStringFromTableInBundle(@"Nightly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://mamburu.net/cog/nightly.xml", @"url",nil]];
+	//      [self addObject:
+	//              [NSDictionary dictionaryWithObjectsAndKeys:
+	//                      NSLocalizedStringFromTableInBundle(@"Unstable", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://cogx.org/appcast/unstable.xml", @"url",nil]];
 
-    [self addObject:
-     [NSDictionary dictionaryWithObjectsAndKeys:
-      NSLocalizedStringFromTableInBundle(@"cog.losno.co wheneverly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"https://cogcdn.cog.losno.co/mercury.xml", @"url",nil]];
+	//[self addObject:
+	// [NSDictionary dictionaryWithObjectsAndKeys:
+	//  NSLocalizedStringFromTableInBundle(@"Nightly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://mamburu.net/cog/nightly.xml", @"url",nil]];
+
+	[self addObject:
+	      [NSDictionary dictionaryWithObjectsAndKeys:
+	                    NSLocalizedStringFromTableInBundle(@"cog.losno.co wheneverly", nil, [NSBundle bundleForClass:[self class]], @""), @"name", @"https://cogcdn.cog.losno.co/mercury.xml", @"url", nil]];
 }
 
 @end

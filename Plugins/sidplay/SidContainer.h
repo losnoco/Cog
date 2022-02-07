@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface SidContainer : NSObject <CogContainer> {
-
 }
 
 @end

@@ -19,392 +19,390 @@
 @implementation PlaylistView
 
 - (void)awakeFromNib {
-    [[self menu] setAutoenablesItems:NO];
+	[[self menu] setAutoenablesItems:NO];
 
-    // Configure bindings to scale font size and row height
-    NSControlSize s = NSControlSizeSmall;
-    NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
-    // NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
-    
-    NSArray<NSTableColumn *> *columns = [[NSSet setWithArray:[self tableColumns]] allObjects];
-    
-    if ([columns count] < [[self tableColumns] count]) {
-        // borkage in saved state
-        NSArray<NSTableColumn *> *borkCols = [[self tableColumns] copy];
-        for (NSTableColumn *col in borkCols) {
-            [self removeTableColumn:col];
-        }
-        for (NSTableColumn *col in columns) {
-            [self addTableColumn:col];
-        }
-    }
+	// Configure bindings to scale font size and row height
+	NSControlSize s = NSControlSizeSmall;
+	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
+	// NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
 
-    for (NSTableColumn *col in columns) {
-        [[col dataCell] setControlSize:s];
-        [[col dataCell] setFont:f];
-    }
+	NSArray<NSTableColumn *> *columns = [[NSSet setWithArray:[self tableColumns]] allObjects];
 
-    [self setVerticalMotionCanBeginDrag:YES];
+	if([columns count] < [[self tableColumns] count]) {
+		// borkage in saved state
+		NSArray<NSTableColumn *> *borkCols = [[self tableColumns] copy];
+		for(NSTableColumn *col in borkCols) {
+			[self removeTableColumn:col];
+		}
+		for(NSTableColumn *col in columns) {
+			[self addTableColumn:col];
+		}
+	}
 
-    // Set up header context menu
-    headerContextMenu = [[NSMenu alloc] initWithTitle:@"Playlist Header Context Menu"];
+	for(NSTableColumn *col in columns) {
+		[[col dataCell] setControlSize:s];
+		[[col dataCell] setFont:f];
+	}
 
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"identifier"
-                                                                   ascending:YES];
-    NSArray *sortDescriptors = @[sortDescriptor];
+	[self setVerticalMotionCanBeginDrag:YES];
 
-    int visibleTableColumns = 0;
-    int menuIndex = 0;
-    for (NSTableColumn *col in [columns sortedArrayUsingDescriptors:sortDescriptors]) {
-        NSString *title;
-        if ([[col identifier] isEqualToString:@"status"]) {
-            title = @"Status";
-        } else if ([[col identifier] isEqualToString:@"index"]) {
-            title = @"Index";
-        } else {
-            title = [[col headerCell] title];
-        }
+	// Set up header context menu
+	headerContextMenu = [[NSMenu alloc] initWithTitle:@"Playlist Header Context Menu"];
 
-        NSMenuItem *contextMenuItem =
-                [headerContextMenu insertItemWithTitle:title
-                                                action:@selector(toggleColumn:)
-                                         keyEquivalent:@""
-                                               atIndex:menuIndex];
+	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"identifier"
+	                                                               ascending:YES];
+	NSArray *sortDescriptors = @[sortDescriptor];
 
-        [contextMenuItem setTarget:self];
-        [contextMenuItem setRepresentedObject:col];
-        [contextMenuItem setState:([col isHidden] ? NSControlStateValueOff : NSControlStateValueOn)];
+	int visibleTableColumns = 0;
+	int menuIndex = 0;
+	for(NSTableColumn *col in [columns sortedArrayUsingDescriptors:sortDescriptors]) {
+		NSString *title;
+		if([[col identifier] isEqualToString:@"status"]) {
+			title = @"Status";
+		} else if([[col identifier] isEqualToString:@"index"]) {
+			title = @"Index";
+		} else {
+			title = [[col headerCell] title];
+		}
 
-        visibleTableColumns += ![col isHidden];
-        menuIndex++;
-    }
+		NSMenuItem *contextMenuItem =
+		[headerContextMenu insertItemWithTitle:title
+		                                action:@selector(toggleColumn:)
+		                         keyEquivalent:@""
+		                               atIndex:menuIndex];
 
-    if (visibleTableColumns == 0) {
-        for (NSTableColumn *col in columns) {
-            [col setHidden:NO];
-        }
-    }
+		[contextMenuItem setTarget:self];
+		[contextMenuItem setRepresentedObject:col];
+		[contextMenuItem setState:([col isHidden] ? NSControlStateValueOff : NSControlStateValueOn)];
 
-    [[self headerView] setMenu:headerContextMenu];
+		visibleTableColumns += ![col isHidden];
+		menuIndex++;
+	}
+
+	if(visibleTableColumns == 0) {
+		for(NSTableColumn *col in columns) {
+			[col setHidden:NO];
+		}
+	}
+
+	[[self headerView] setMenu:headerContextMenu];
 }
 
 - (IBAction)toggleColumn:(id)sender {
-    id tc = [sender representedObject];
+	id tc = [sender representedObject];
 
-    if ([sender state] == NSControlStateValueOff) {
-        [sender setState:NSControlStateValueOn];
+	if([sender state] == NSControlStateValueOff) {
+		[sender setState:NSControlStateValueOn];
 
-        [tc setHidden:NO];
-    } else {
-        [sender setState:NSControlStateValueOff];
+		[tc setHidden:NO];
+	} else {
+		[sender setState:NSControlStateValueOff];
 
-        [tc setHidden:YES];
-    }
+		[tc setHidden:YES];
+	}
 }
 
 - (BOOL)acceptsFirstResponder {
-    return YES;
+	return YES;
 }
 
 - (BOOL)resignFirstResponder {
-    return YES;
+	return YES;
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)mouseDownEvent {
-    return NO;
+	return NO;
 }
 
 - (void)mouseDown:(NSEvent *)e {
-    [super mouseDown:e];
+	[super mouseDown:e];
 
-    if ([e type] == NSEventTypeLeftMouseDown && [e clickCount] == 2 &&
-            [[self selectedRowIndexes] count] == 1) {
-        [playbackController play:self];
-    }
+	if([e type] == NSEventTypeLeftMouseDown && [e clickCount] == 2 &&
+	   [[self selectedRowIndexes] count] == 1) {
+		[playbackController play:self];
+	}
 }
 
 // enables right-click selection for "Show in Finder" contextual menu
 - (NSMenu *)menuForEvent:(NSEvent *)event {
-    // Find which row is under the cursor
-    [[self window] makeFirstResponder:self];
-    NSPoint menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSInteger iRow = [self rowAtPoint:menuPoint];
-    NSMenu *tableViewMenu = [self menu];
+	// Find which row is under the cursor
+	[[self window] makeFirstResponder:self];
+	NSPoint menuPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+	NSInteger iRow = [self rowAtPoint:menuPoint];
+	NSMenu *tableViewMenu = [self menu];
 
-    /* Update the table selection before showing menu
-     Preserves the selection if the row under the mouse is selected (to allow for
-     multiple items to be selected), otherwise selects the row under the mouse */
-    BOOL currentRowIsSelected = [[self selectedRowIndexes] containsIndex:(NSUInteger) iRow];
-    if (!currentRowIsSelected) {
-        if (iRow == -1) {
-            [self deselectAll:self];
-        } else {
-            [self selectRowIndexes:[NSIndexSet indexSetWithIndex:(NSUInteger) iRow] byExtendingSelection:NO];
-        }
-    }
+	/* Update the table selection before showing menu
+	 Preserves the selection if the row under the mouse is selected (to allow for
+	 multiple items to be selected), otherwise selects the row under the mouse */
+	BOOL currentRowIsSelected = [[self selectedRowIndexes] containsIndex:(NSUInteger)iRow];
+	if(!currentRowIsSelected) {
+		if(iRow == -1) {
+			[self deselectAll:self];
+		} else {
+			[self selectRowIndexes:[NSIndexSet indexSetWithIndex:(NSUInteger)iRow] byExtendingSelection:NO];
+		}
+	}
 
-    if ([self numberOfSelectedRows] <= 0) {
-        // No rows are selected, so the table should be displayed with all items disabled
-        int i;
-        for (i = 0; i < [tableViewMenu numberOfItems]; i++) {
-            [[tableViewMenu itemAtIndex:i] setEnabled:NO];
-        }
-    }
+	if([self numberOfSelectedRows] <= 0) {
+		// No rows are selected, so the table should be displayed with all items disabled
+		int i;
+		for(i = 0; i < [tableViewMenu numberOfItems]; i++) {
+			[[tableViewMenu itemAtIndex:i] setEnabled:NO];
+		}
+	}
 
-    return tableViewMenu;
+	return tableViewMenu;
 }
 
 - (void)keyDown:(NSEvent *)event {
-    BOOL modifiersUsed =([event modifierFlags] & (NSEventModifierFlagShift |
-                                                  NSEventModifierFlagControl |
-                                                  NSEventModifierFlagOption |
-                                                  NSEventModifierFlagCommand)) ? YES : NO;
-    if (modifiersUsed) {
-        [super keyDown:event];
-        return;
-    }
+	BOOL modifiersUsed = ([event modifierFlags] & (NSEventModifierFlagShift |
+	                                               NSEventModifierFlagControl |
+	                                               NSEventModifierFlagOption |
+	                                               NSEventModifierFlagCommand)) ?
+	                     YES :
+                         NO;
+	if(modifiersUsed) {
+		[super keyDown:event];
+		return;
+	}
 
-    switch ([event keyCode]) {
-        case kVK_Space:
-            [playbackController playPauseResume:self];
-            break;
-        case kVK_Escape:
-            [playlistController clearFilterPredicate:self];
-            break;
+	switch([event keyCode]) {
+		case kVK_Space:
+			[playbackController playPauseResume:self];
+			break;
+		case kVK_Escape:
+			[playlistController clearFilterPredicate:self];
+			break;
 
-        case kVK_Delete:
-        case kVK_ForwardDelete:
-            [playlistController remove:self];
-            break;
+		case kVK_Delete:
+		case kVK_ForwardDelete:
+			[playlistController remove:self];
+			break;
 
-        case kVK_LeftArrow:
-            [playbackController eventSeekBackward:self];
-            break;
+		case kVK_LeftArrow:
+			[playbackController eventSeekBackward:self];
+			break;
 
-        case kVK_RightArrow:
-            [playbackController eventSeekForward:self];
-            break;
+		case kVK_RightArrow:
+			[playbackController eventSeekForward:self];
+			break;
 
-        case kVK_Return:
-            [playbackController play:self];
-            break;
+		case kVK_Return:
+			[playbackController play:self];
+			break;
 
-        default:
-            [super keyDown:event];
-            break;
-    }
+		default:
+			[super keyDown:event];
+			break;
+	}
 }
 
 - (IBAction)scrollToCurrentEntry:(id)sender {
-    [self scrollRowToVisible:[[playlistController currentEntry] index]];
-    [self selectRowIndexes:[NSIndexSet indexSetWithIndex:(NSUInteger) [[playlistController currentEntry] index]]
-      byExtendingSelection:NO];
+	[self scrollRowToVisible:[[playlistController currentEntry] index]];
+	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:(NSUInteger)[[playlistController currentEntry] index]]
+	  byExtendingSelection:NO];
 }
 
 - (IBAction)undo:(id)sender {
-    [[playlistController undoManager] undo];
+	[[playlistController undoManager] undo];
 }
 
 - (IBAction)redo:(id)sender {
-    [[playlistController undoManager] redo];
+	[[playlistController undoManager] redo];
 }
 
 - (IBAction)copy:(id)sender {
-    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-    [pboard clearContents];
+	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+	[pboard clearContents];
 
-    NSArray *entries =
-            [[playlistController content] objectsAtIndexes:[playlistController selectionIndexes]];
-    NSUInteger capacity = [entries count];
-    NSMutableArray *selectedURLs = [NSMutableArray arrayWithCapacity:capacity];
+	NSArray *entries =
+	[[playlistController content] objectsAtIndexes:[playlistController selectionIndexes]];
+	NSUInteger capacity = [entries count];
+	NSMutableArray *selectedURLs = [NSMutableArray arrayWithCapacity:capacity];
 
-    for (PlaylistEntry *pe in entries) {
-        [selectedURLs addObject:[pe URL]];
-    }
+	for(PlaylistEntry *pe in entries) {
+		[selectedURLs addObject:[pe URL]];
+	}
 
-    NSError *error;
-    NSData *data;
-    if (@available(macOS 10.13, *)) {
-        data = [NSKeyedArchiver archivedDataWithRootObject:selectedURLs
-                                     requiringSecureCoding:YES
-                                                     error:&error];
-    }
-    else {
-        data = [NSArchiver archivedDataWithRootObject:selectedURLs];
-    }
-    
-    if (!data) {
-        DLog(@"Error: %@", error);
-    }
-    [pboard setData:data forType:CogUrlsPboardType];
+	NSError *error;
+	NSData *data;
+	if(@available(macOS 10.13, *)) {
+		data = [NSKeyedArchiver archivedDataWithRootObject:selectedURLs
+		                             requiringSecureCoding:YES
+		                                             error:&error];
+	} else {
+		data = [NSArchiver archivedDataWithRootObject:selectedURLs];
+	}
 
-    NSMutableDictionary *tracks = [NSMutableDictionary dictionaryWithCapacity:capacity];
+	if(!data) {
+		DLog(@"Error: %@", error);
+	}
+	[pboard setData:data forType:CogUrlsPboardType];
 
-    unsigned long i = 0;
-    for (NSURL *url in selectedURLs) {
-        tracks[[NSString stringWithFormat:@"%lu", i++]] = @{@"Location": [url absoluteString]};
-    }
+	NSMutableDictionary *tracks = [NSMutableDictionary dictionaryWithCapacity:capacity];
 
-    NSDictionary *itunesPlist = @{@"Tracks": tracks};
+	unsigned long i = 0;
+	for(NSURL *url in selectedURLs) {
+		tracks[[NSString stringWithFormat:@"%lu", i++]] = @{ @"Location": [url absoluteString] };
+	}
 
-    [pboard setPropertyList:itunesPlist forType:iTunesDropType];
+	NSDictionary *itunesPlist = @{ @"Tracks": tracks };
 
-    NSMutableArray *filePaths = [NSMutableArray array];
+	[pboard setPropertyList:itunesPlist forType:iTunesDropType];
 
-    for (NSURL *url in selectedURLs) {
-        if ([url isFileURL]) {
-            [filePaths addObject:url];
-        }
-    }
+	NSMutableArray *filePaths = [NSMutableArray array];
 
-    if ([filePaths count]) {
-        [pboard writeObjects:filePaths];
-    }
+	for(NSURL *url in selectedURLs) {
+		if([url isFileURL]) {
+			[filePaths addObject:url];
+		}
+	}
+
+	if([filePaths count]) {
+		[pboard writeObjects:filePaths];
+	}
 }
 
 - (IBAction)cut:(id)sender {
-    [self copy:sender];
+	[self copy:sender];
 
-    [playlistController removeObjectsAtArrangedObjectIndexes:[playlistController selectionIndexes]];
+	[playlistController removeObjectsAtArrangedObjectIndexes:[playlistController selectionIndexes]];
 
-    if ([playlistController shuffle] != ShuffleOff) [playlistController resetShuffleList];
+	if([playlistController shuffle] != ShuffleOff) [playlistController resetShuffleList];
 }
 
 - (IBAction)paste:(id)sender {
-    // Determine the type of object that was dropped
-    NSPasteboardType fileType;
-    if (@available(macOS 10.13, *)) {
-        fileType = NSPasteboardTypeFileURL;
-    }
-    else {
-        fileType = NSFilenamesPboardType;
-    }
-    NSArray *supportedTypes = @[CogUrlsPboardType, fileType, iTunesDropType];
-    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-    NSPasteboardType bestType = [pboard availableTypeFromArray:supportedTypes];
+	// Determine the type of object that was dropped
+	NSPasteboardType fileType;
+	if(@available(macOS 10.13, *)) {
+		fileType = NSPasteboardTypeFileURL;
+	} else {
+		fileType = NSFilenamesPboardType;
+	}
+	NSArray *supportedTypes = @[CogUrlsPboardType, fileType, iTunesDropType];
+	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+	NSPasteboardType bestType = [pboard availableTypeFromArray:supportedTypes];
 #ifdef _DEBUG
-    DLog(@"All types:");
-    for (NSPasteboardType type in [pboard types]) {
-        DLog(@"    Type: %@", type);
-    }
-    DLog(@"Supported types:");
-    for (NSPasteboardType type in supportedTypes) {
-        DLog(@"    Type: %@", type);
-    }
-    DLog(@"Best type: %@", bestType);
+	DLog(@"All types:");
+	for(NSPasteboardType type in [pboard types]) {
+		DLog(@"    Type: %@", type);
+	}
+	DLog(@"Supported types:");
+	for(NSPasteboardType type in supportedTypes) {
+		DLog(@"    Type: %@", type);
+	}
+	DLog(@"Best type: %@", bestType);
 #endif
 
-    NSMutableArray *acceptedURLs = [NSMutableArray array];
+	NSMutableArray *acceptedURLs = [NSMutableArray array];
 
-    // Get files from an file drawer drop
-    if ([bestType isEqualToString:CogUrlsPboardType]) {
-        NSError *error;
-        NSData *data = [pboard dataForType:CogUrlsPboardType];
-        NSArray *urls;
-        if (@available(macOS 11.0, *)) {
-            urls = [NSKeyedUnarchiver unarchivedArrayOfObjectsOfClass:[NSURL class]
-                                                             fromData:data
-                                                                error:&error];
-        } else {
-            if (@available(macOS 10.13, *)) {
-                NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
-                urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
-                                                           fromData:data
-                                                              error:&error];
-            }
-            else {
-                urls = [NSUnarchiver unarchiveObjectWithData:data];
-            }
-        }
-        if (!urls) {
-            DLog(@"%@", error);
-        } else {
-            DLog(@"URLS: %@", urls);
-        }
-        //[playlistLoader insertURLs: urls atIndex:row sort:YES];
-        [acceptedURLs addObjectsFromArray:urls];
-    }
+	// Get files from an file drawer drop
+	if([bestType isEqualToString:CogUrlsPboardType]) {
+		NSError *error;
+		NSData *data = [pboard dataForType:CogUrlsPboardType];
+		NSArray *urls;
+		if(@available(macOS 11.0, *)) {
+			urls = [NSKeyedUnarchiver unarchivedArrayOfObjectsOfClass:[NSURL class]
+			                                                 fromData:data
+			                                                    error:&error];
+		} else {
+			if(@available(macOS 10.13, *)) {
+				NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
+				urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
+				                                           fromData:data
+				                                              error:&error];
+			} else {
+				urls = [NSUnarchiver unarchiveObjectWithData:data];
+			}
+		}
+		if(!urls) {
+			DLog(@"%@", error);
+		} else {
+			DLog(@"URLS: %@", urls);
+		}
+		//[playlistLoader insertURLs: urls atIndex:row sort:YES];
+		[acceptedURLs addObjectsFromArray:urls];
+	}
 
-    // Get files from a normal file drop (such as from Finder)
-    if ([bestType isEqualToString:fileType]) {
-        NSMutableArray *urls = [[NSMutableArray alloc] init];
+	// Get files from a normal file drop (such as from Finder)
+	if([bestType isEqualToString:fileType]) {
+		NSMutableArray *urls = [[NSMutableArray alloc] init];
 
-        for (NSString *file in [pboard propertyListForType:fileType]) {
-            [urls addObject:[NSURL fileURLWithPath:file]];
-        }
+		for(NSString *file in [pboard propertyListForType:fileType]) {
+			[urls addObject:[NSURL fileURLWithPath:file]];
+		}
 
-        //[playlistLoader insertURLs:urls atIndex:row sort:YES];
-        [acceptedURLs addObjectsFromArray:urls];
-    }
+		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		[acceptedURLs addObjectsFromArray:urls];
+	}
 
-    // Get files from an iTunes drop
-    if ([bestType isEqualToString:iTunesDropType]) {
-        NSDictionary *iTunesDict = [pboard propertyListForType:iTunesDropType];
-        NSDictionary *tracks = [iTunesDict valueForKey:@"Tracks"];
+	// Get files from an iTunes drop
+	if([bestType isEqualToString:iTunesDropType]) {
+		NSDictionary *iTunesDict = [pboard propertyListForType:iTunesDropType];
+		NSDictionary *tracks = [iTunesDict valueForKey:@"Tracks"];
 
-        // Convert the iTunes URLs to URLs....MWAHAHAH!
-        NSMutableArray *urls = [[NSMutableArray alloc] init];
+		// Convert the iTunes URLs to URLs....MWAHAHAH!
+		NSMutableArray *urls = [[NSMutableArray alloc] init];
 
-        for (NSDictionary *trackInfo in [tracks allValues]) {
-            [urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];
-        }
+		for(NSDictionary *trackInfo in [tracks allValues]) {
+			[urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];
+		}
 
-        //[playlistLoader insertURLs:urls atIndex:row sort:YES];
-        [acceptedURLs addObjectsFromArray:urls];
-    }
+		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
+		[acceptedURLs addObjectsFromArray:urls];
+	}
 
-    if ([acceptedURLs count]) {
-        NSUInteger row = [[playlistController content] count];
+	if([acceptedURLs count]) {
+		NSUInteger row = [[playlistController content] count];
 
-        [playlistController willInsertURLs:acceptedURLs origin:URLOriginInternal];
+		[playlistController willInsertURLs:acceptedURLs origin:URLOriginInternal];
 
-        NSArray *entries = [playlistLoader insertURLs:acceptedURLs atIndex:(int) row sort:NO];
-        [playlistLoader didInsertURLs:entries origin:URLOriginInternal];
+		NSArray *entries = [playlistLoader insertURLs:acceptedURLs atIndex:(int)row sort:NO];
+		[playlistLoader didInsertURLs:entries origin:URLOriginInternal];
 
-        if ([playlistController shuffle] != ShuffleOff) [playlistController resetShuffleList];
-    }
+		if([playlistController shuffle] != ShuffleOff) [playlistController resetShuffleList];
+	}
 }
 
 - (IBAction)delete:(id)sender {
-    [playlistController removeObjectsAtArrangedObjectIndexes:[playlistController selectionIndexes]];
+	[playlistController removeObjectsAtArrangedObjectIndexes:[playlistController selectionIndexes]];
 }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
-    SEL action = [anItem action];
+- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)anItem {
+	SEL action = [anItem action];
 
-    if (action == @selector(undo:)) {
-        return [[playlistController undoManager] canUndo];
-    }
-    if (action == @selector(redo:)) {
-        return [[playlistController undoManager] canRedo];
-    }
-    if (action == @selector(cut:) || action == @selector(copy:) || action == @selector(delete:)) {
-        return [[playlistController selectionIndexes] count] != 0;
-    }
-    if (action == @selector(paste:)) {
-        NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-        
-        NSPasteboardType fileType;
-        if (@available(macOS 10.13, *)) {
-            fileType = NSPasteboardTypeFileURL;
-        }
-        else {
-            fileType = NSFilenamesPboardType;
-        }
+	if(action == @selector(undo:)) {
+		return [[playlistController undoManager] canUndo];
+	}
+	if(action == @selector(redo:)) {
+		return [[playlistController undoManager] canRedo];
+	}
+	if(action == @selector(cut:) || action == @selector(copy:) || action == @selector(delete:)) {
+		return [[playlistController selectionIndexes] count] != 0;
+	}
+	if(action == @selector(paste:)) {
+		NSPasteboard *pboard = [NSPasteboard generalPasteboard];
 
-        NSArray *supportedTypes = @[CogUrlsPboardType, fileType, iTunesDropType];
+		NSPasteboardType fileType;
+		if(@available(macOS 10.13, *)) {
+			fileType = NSPasteboardTypeFileURL;
+		} else {
+			fileType = NSFilenamesPboardType;
+		}
 
-        NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
+		NSArray *supportedTypes = @[CogUrlsPboardType, fileType, iTunesDropType];
 
-        return bestType != nil;
-    }
+		NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
 
-    if (action == @selector(scrollToCurrentEntry:) &&
-        (([playbackController playbackStatus] == CogStatusStopped) ||
-                    ([playbackController playbackStatus] == CogStatusStopping)))
-        return NO;
+		return bestType != nil;
+	}
 
-    return [super validateUserInterfaceItem:anItem];
+	if(action == @selector(scrollToCurrentEntry:) &&
+	   (([playbackController playbackStatus] == CogStatusStopped) ||
+	    ([playbackController playbackStatus] == CogStatusStopping)))
+		return NO;
+
+	return [super validateUserInterfaceItem:anItem];
 }
 
 #if 0

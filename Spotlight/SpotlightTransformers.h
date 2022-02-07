@@ -9,8 +9,8 @@
 #import <Cocoa/Cocoa.h>
 @class SpotlightWindowController;
 
-@interface PausingQueryTransformer: NSValueTransformer {
-    NSArray *oldResults;
+@interface PausingQueryTransformer : NSValueTransformer {
+	NSArray *oldResults;
 }
 
 + (void)setSearchController:(SpotlightWindowController *)aSearchController;
@@ -18,14 +18,18 @@
 @property(copy) NSArray *oldResults;
 @end
 
-@interface AuthorToArtistTransformer: NSValueTransformer {}
+@interface AuthorToArtistTransformer : NSValueTransformer {
+}
 @end
 
-@interface PathToURLTransformer: NSValueTransformer {}
+@interface PathToURLTransformer : NSValueTransformer {
+}
 @end
 
-@interface StringToSearchScopeTransformer: NSValueTransformer {}
+@interface StringToSearchScopeTransformer : NSValueTransformer {
+}
 @end
 
-@interface NumberToStringTransformer: NSValueTransformer {}
+@interface NumberToStringTransformer : NSValueTransformer {
+}
 @end

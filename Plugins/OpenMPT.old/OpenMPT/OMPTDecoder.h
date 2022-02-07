@@ -15,12 +15,12 @@
 #import "Plugin.h"
 
 @interface OMPTOldDecoder : NSObject <CogDecoder> {
-    openmpt::module *mod;
-    std::vector<float> left;
-    std::vector<float> right;
-    
+	openmpt::module *mod;
+	std::vector<float> left;
+	std::vector<float> right;
+
 	id<CogSource> source;
-    long length;
+	long length;
 }
 
 - (void)setSource:(id<CogSource>)s;

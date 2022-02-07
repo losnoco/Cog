@@ -6,10 +6,11 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "PlaylistController.h"
+#import <Cocoa/Cocoa.h>
 
-@interface ShuffleImageTransformer : NSValueTransformer {}
+@interface ShuffleImageTransformer : NSValueTransformer {
+}
 @end
 
 @interface ShuffleModeTransformer : NSValueTransformer {
@@ -19,7 +20,3 @@
 - (id)initWithMode:(ShuffleMode)s;
 
 @end
-
-
-
-

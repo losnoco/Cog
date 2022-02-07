@@ -16,23 +16,23 @@
 - (id)init
 {
     self = [super init];
-	
+
     if( self )
     {
         // initialize the class
     }
-	
+
     return self;
 }
 
 - (void)showInfoForURL:(NSURL*)url
 {
-	[tageditorWindow showWindow:self];
+    [tageditorWindow showWindow:self];
 }
 
 - (IBAction)cancel:(id)sender
 {
-	[tageditorWindow close];
+    [tageditorWindow close];
 }
 
 @end

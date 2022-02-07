@@ -11,25 +11,22 @@
 
 @implementation PositionSlider
 
-- (void)setDoubleValue:(double)value
-{
-    self.positionTextField.currentTime = (long)value;
+- (void)setDoubleValue:(double)value {
+	self.positionTextField.currentTime = (long)value;
 
-    [super setDoubleValue:value];
+	[super setDoubleValue:value];
 }
 
-- (void)setMaxValue:(double)value
-{
-    self.positionTextField.duration = (long)value;
+- (void)setMaxValue:(double)value {
+	self.positionTextField.duration = (long)value;
 
-    [super setMaxValue:value];
+	[super setMaxValue:value];
 }
 
-- (void)mouseDragged:(NSEvent *)theEvent
-{
-    self.positionTextField.currentTime = (long)[self doubleValue];
+- (void)mouseDragged:(NSEvent *)theEvent {
+	self.positionTextField.currentTime = (long)[self doubleValue];
 
-    [super mouseDragged:theEvent];
+	[super mouseDragged:theEvent];
 }
 
 @end

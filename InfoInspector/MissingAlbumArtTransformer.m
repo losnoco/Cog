@@ -8,18 +8,21 @@
 
 #import "MissingAlbumArtTransformer.h"
 
-
 @implementation MissingAlbumArtTransformer
 
-+ (Class)transformedValueClass { return [NSImage class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (Class)transformedValueClass {
+	return [NSImage class];
+}
++ (BOOL)allowsReverseTransformation {
+	return NO;
+}
 
 // Convert from NSImage to NSImage
 - (id)transformedValue:(id)value {
-    if (value == nil) {
+	if(value == nil) {
 		return [NSImage imageNamed:@"missingArt"];
 	}
-	
+
 	return value;
 }
 

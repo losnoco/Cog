@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface HVLContainer : NSObject <CogContainer> {
-
 }
 
 @end

@@ -6,11 +6,10 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "ImageTextCell.h"
+#import <Cocoa/Cocoa.h>
 
 @interface FileIconCell : ImageTextCell {
-
 }
 
 @end

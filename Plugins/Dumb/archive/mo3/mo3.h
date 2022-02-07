@@ -9,8 +9,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    extern void * unpackMo3( const void * in, long * size );
-    extern void freeMo3( void * in );
+extern void* unpackMo3(const void* in, long* size);
+extern void freeMo3(void* in);
 #ifdef __cplusplus
 };
 #endif

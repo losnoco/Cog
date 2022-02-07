@@ -10,20 +10,24 @@
 
 @implementation StringToURLTransformer
 
-+ (Class)transformedValueClass { return [NSURL class]; }
-+ (BOOL)allowsReverseTransformation { return YES; }
++ (Class)transformedValueClass {
+	return [NSURL class];
+}
++ (BOOL)allowsReverseTransformation {
+	return YES;
+}
 
 // Convert from string to NSURL
 - (id)transformedValue:(id)value {
-    if (value == nil) return nil;
+	if(value == nil) return nil;
 
-    return [NSURL URLWithString:value];
+	return [NSURL URLWithString:value];
 }
 
 // Convert from NSURL to string
 - (id)reverseTransformedValue:(id)value {
-    if (value == nil) return nil;
-    
-    return [value absoluteString];
+	if(value == nil) return nil;
+
+	return [value absoluteString];
 }
 @end

@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface MIDIContainer : NSObject <CogContainer> {
-
 }
 
 @end

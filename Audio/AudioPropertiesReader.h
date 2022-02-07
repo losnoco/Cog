@@ -8,9 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface AudioPropertiesReader : NSObject {
-
 }
 
 + (NSDictionary *)propertiesForURL:(NSURL *)url;

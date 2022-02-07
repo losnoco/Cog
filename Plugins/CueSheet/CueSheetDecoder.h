@@ -17,17 +17,17 @@
 	id<CogSource> source;
 	id<CogDecoder> decoder;
 
-	int bytesPerFrame; //Number of bytes per frame, ie channels * (bitsPerSample/8)
+	int bytesPerFrame; // Number of bytes per frame, ie channels * (bitsPerSample/8)
 
-	long framePosition; //Current position in frames.
+	long framePosition; // Current position in frames.
 
-	long trackStart; //Starting frame of track.
-	long trackEnd; //Frames until end of track.
-    
-    BOOL embedded;
-    BOOL noFragment;
-    NSURL *baseURL;
-	
+	long trackStart; // Starting frame of track.
+	long trackEnd; // Frames until end of track.
+
+	BOOL embedded;
+	BOOL noFragment;
+	NSURL *baseURL;
+
 	CueSheet *cuesheet;
 	CueSheetTrack *track;
 }

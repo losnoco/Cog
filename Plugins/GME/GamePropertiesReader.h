@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface GamePropertiesReader : NSObject <CogPropertiesReader> {
-
 }
 
 @end

@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface PlsContainer : NSObject <CogContainer> {
-
 }
 
 @end

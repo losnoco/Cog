@@ -8,20 +8,18 @@
 
 #import "ToolTipTextField.h"
 
-
 @implementation ToolTipTextField
 
-- (void)setObjectValue:(id)obj
-{
+- (void)setObjectValue:(id)obj {
 	NSString *string = [obj description];
-	
+
 	NSFormatter *formatter = [[self cell] formatter];
-	if (nil != formatter) {
+	if(nil != formatter) {
 		string = [formatter stringForObjectValue:obj];
-	}	
-	
+	}
+
 	[self setToolTip:string];
-	
+
 	[super setObjectValue:obj];
 }
 

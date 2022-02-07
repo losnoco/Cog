@@ -8,9 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <CoreAudio/AudioHardware.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
+#import <CoreAudio/AudioHardware.h>
 
 #import "AudioDecoder.h"
 #import "Node.h"
@@ -20,32 +20,32 @@
 
 @interface InputNode : Node {
 	id<CogDecoder> decoder;
-	
-    int bytesPerSample;
+
+	int bytesPerSample;
 	int bytesPerFrame;
-    BOOL floatingPoint;
-    BOOL swapEndian;
-	
+	BOOL floatingPoint;
+	BOOL swapEndian;
+
 	BOOL shouldSeek;
 	long seekFrame;
-    
-    BOOL observersAdded;
 
-    Semaphore *exitAtTheEndOfTheStream;
+	BOOL observersAdded;
+
+	Semaphore *exitAtTheEndOfTheStream;
 }
 @property(readonly) Semaphore *exitAtTheEndOfTheStream;
 
 - (BOOL)openWithSource:(id<CogSource>)source;
-- (BOOL)openWithDecoder:(id<CogDecoder>) d;
+- (BOOL)openWithDecoder:(id<CogDecoder>)d;
 
 - (void)process;
-- (NSDictionary *) properties;
+- (NSDictionary *)properties;
 - (void)seek:(long)frame;
 
 - (void)registerObservers;
 
 - (BOOL)setTrack:(NSURL *)track;
 
-- (id<CogDecoder>) decoder;
+- (id<CogDecoder>)decoder;
 
 @end

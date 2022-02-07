@@ -9,8 +9,8 @@
 #import "MIDIDecoder.h"
 
 #import "AUPlayer.h"
-#import "SFPlayer.h"
 #import "MSPlayer.h"
+#import "SFPlayer.h"
 
 #import "Logging.h"
 
@@ -20,382 +20,349 @@
 
 #import <dlfcn.h>
 
-static OSType getOSType(const char * in_)
-{
-    const unsigned char * in = (const unsigned char *) in_;
-    OSType v = (in[0] << 24) + (in[1] << 16) + (in[2] << 8) + in[3];
-    return v;
+static OSType getOSType(const char *in_) {
+	const unsigned char *in = (const unsigned char *)in_;
+	OSType v = (in[0] << 24) + (in[1] << 16) + (in[2] << 8) + in[3];
+	return v;
 }
 
 @implementation MIDIDecoder
 
-+ (NSInteger)testExtensions:(NSString *)pathMinusExtension extensions:(NSArray *)extensionsToTest
-{
-    NSInteger i = 0;
-    for (NSString * extension in extensionsToTest)
-    {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:[pathMinusExtension stringByAppendingPathExtension:extension]])
-            return i;
-        ++i;
-    }
-    return -1;
++ (NSInteger)testExtensions:(NSString *)pathMinusExtension extensions:(NSArray *)extensionsToTest {
+	NSInteger i = 0;
+	for(NSString *extension in extensionsToTest) {
+		if([[NSFileManager defaultManager] fileExistsAtPath:[pathMinusExtension stringByAppendingPathExtension:extension]])
+			return i;
+		++i;
+	}
+	return -1;
 }
 
-- (BOOL)open:(id<CogSource>)s
-{
-	//We need file-size to use midi_processing
-	if (![s seekable]) {
+- (BOOL)open:(id<CogSource>)s {
+	// We need file-size to use midi_processing
+	if(![s seekable]) {
 		return NO;
 	}
-    
-    source = s;
-    
-    std::vector<uint8_t> file_data;
-    
-    [s seek:0 whence:SEEK_END];
-    size_t size = [s tell];
-    [s seek:0 whence:SEEK_SET];
-    file_data.resize( size );
-    [s read:&file_data[0] amount:size];
-    
-    if ( !midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file) )
-        return NO;
-    
-    if ( !midi_file.get_timestamp_end( track_num ) )
-        return NO;
-    
-	track_num = [[[s url] fragment] intValue]; //What if theres no fragment? Assuming we get 0.
-    
-    midi_file.scan_for_loops( true, true, true, true );
 
-    framesLength = midi_file.get_timestamp_end( track_num, true );
-    
-    unsigned long loopStart = midi_file.get_timestamp_loop_start( track_num, true );
-    unsigned long loopEnd = midi_file.get_timestamp_loop_end( track_num, true );
-    
-    if ( loopStart == ~0UL ) loopStart = 0;
-    if ( loopEnd == ~0UL ) loopEnd = framesLength;
-    
-    if ( loopStart != 0 || loopEnd != framesLength )
-    {
-        // two loops and a fade
-        framesLength = loopStart + ( loopEnd - loopStart ) * 2;
-        framesFade = 8000;
-        isLooped = YES;
-    }
-    else
-    {
-        framesLength += 1000;
-        framesFade = 0;
-        isLooped = NO;
-    }
-    
-    framesLength = framesLength * 441 / 10;
-    framesFade = framesFade * 441 / 10;
-    
-    totalFrames = framesLength + framesFade;
-    
-    framesRead = 0;
-    
+	source = s;
+
+	std::vector<uint8_t> file_data;
+
+	[s seek:0 whence:SEEK_END];
+	size_t size = [s tell];
+	[s seek:0 whence:SEEK_SET];
+	file_data.resize(size);
+	[s read:&file_data[0] amount:size];
+
+	if(!midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file))
+		return NO;
+
+	if(!midi_file.get_timestamp_end(track_num))
+		return NO;
+
+	track_num = [[[s url] fragment] intValue]; // What if theres no fragment? Assuming we get 0.
+
+	midi_file.scan_for_loops(true, true, true, true);
+
+	framesLength = midi_file.get_timestamp_end(track_num, true);
+
+	unsigned long loopStart = midi_file.get_timestamp_loop_start(track_num, true);
+	unsigned long loopEnd = midi_file.get_timestamp_loop_end(track_num, true);
+
+	if(loopStart == ~0UL) loopStart = 0;
+	if(loopEnd == ~0UL) loopEnd = framesLength;
+
+	if(loopStart != 0 || loopEnd != framesLength) {
+		// two loops and a fade
+		framesLength = loopStart + (loopEnd - loopStart) * 2;
+		framesFade = 8000;
+		isLooped = YES;
+	} else {
+		framesLength += 1000;
+		framesFade = 0;
+		isLooped = NO;
+	}
+
+	framesLength = framesLength * 441 / 10;
+	framesFade = framesFade * 441 / 10;
+
+	totalFrames = framesLength + framesFade;
+
+	framesRead = 0;
+
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
-	
+
 	return YES;
 }
 
-- (NSDictionary *)properties
-{
+- (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSNumber numberWithInt:0], @"bitrate",
-		[NSNumber numberWithFloat:44100], @"sampleRate",
-		[NSNumber numberWithLong:totalFrames], @"totalFrames",
-		[NSNumber numberWithInt:32], @"bitsPerSample",
-        [NSNumber numberWithBool:YES], @"floatingPoint",
-		[NSNumber numberWithInt:2], @"channels", //output from gme_play is in stereo
-		[NSNumber numberWithBool:YES], @"seekable",
-        @"MIDI", @"codec",
-		@"host", @"endian",
-        @"synthesized", @"encoding",
-		nil];
+	                     [NSNumber numberWithInt:0], @"bitrate",
+	                     [NSNumber numberWithFloat:44100], @"sampleRate",
+	                     [NSNumber numberWithLong:totalFrames], @"totalFrames",
+	                     [NSNumber numberWithInt:32], @"bitsPerSample",
+	                     [NSNumber numberWithBool:YES], @"floatingPoint",
+	                     [NSNumber numberWithInt:2], @"channels", // output from gme_play is in stereo
+	                     [NSNumber numberWithBool:YES], @"seekable",
+	                     @"MIDI", @"codec",
+	                     @"host", @"endian",
+	                     @"synthesized", @"encoding",
+	                     nil];
 }
 
-- (BOOL)initDecoder
-{
-    NSString * soundFontPath = @"";
-    
-    if ( [[source url] isFileURL] )
-    {
-        // Let's check for a SoundFont
-        NSArray * extensions = @[@"sflist", @"sf2pack", @"sf2"];
-        NSString * filePath = [[source url] path];
-        NSString * fileNameBase = [filePath lastPathComponent];
-        filePath = [filePath stringByDeletingLastPathComponent];
-        soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
-        NSInteger extFound;
-        if ((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0)
-        {
-            fileNameBase = [fileNameBase stringByDeletingPathExtension];
-            soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
-            if ((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0)
-            {
-                fileNameBase = [filePath lastPathComponent];
-                soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
-                extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions];
-            }
-        }
-        if (extFound >= 0)
-        {
-            soundFontPath = [soundFontPath stringByAppendingPathExtension:[extensions objectAtIndex:extFound]];
-        }
-        else
-            soundFontPath = @"";
-    }
-    
-    DLog(@"Length: %li", totalFrames);
-    
-    DLog(@"Track num: %i", track_num);
-    
-    MIDIPlayer::filter_mode mode = MIDIPlayer::filter_sc55;
+- (BOOL)initDecoder {
+	NSString *soundFontPath = @"";
 
-    NSString * flavor = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.flavor"];
-    if ([flavor isEqualToString:@"default"])
-        mode = MIDIPlayer::filter_default;
-    else if ([flavor isEqualToString:@"gm"])
-        mode = MIDIPlayer::filter_gm;
-    else if ([flavor isEqualToString:@"gm2"])
-        mode = MIDIPlayer::filter_gm2;
-    else if ([flavor isEqualToString:@"sc55"])
-        mode = MIDIPlayer::filter_sc55;
-    else if ([flavor isEqualToString:@"sc88"])
-        mode = MIDIPlayer::filter_sc88;
-    else if ([flavor isEqualToString:@"sc88pro"])
-        mode = MIDIPlayer::filter_sc88pro;
-    else if ([flavor isEqualToString:@"sc8850"])
-        mode = MIDIPlayer::filter_sc8850;
-    else if ([flavor isEqualToString:@"xg"])
-        mode = MIDIPlayer::filter_xg;
-    
-    globalSoundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
-    
-    // First detect if soundfont has gone AWOL
-    if (![[NSFileManager defaultManager] fileExistsAtPath:globalSoundFontPath]) {
-        globalSoundFontPath = nil;
-        [[NSUserDefaults standardUserDefaults] setValue:globalSoundFontPath forKey:@"soundFontPath"];
-    }
+	if([[source url] isFileURL]) {
+		// Let's check for a SoundFont
+		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2"];
+		NSString *filePath = [[source url] path];
+		NSString *fileNameBase = [filePath lastPathComponent];
+		filePath = [filePath stringByDeletingLastPathComponent];
+		soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
+		NSInteger extFound;
+		if((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0) {
+			fileNameBase = [fileNameBase stringByDeletingPathExtension];
+			soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
+			if((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0) {
+				fileNameBase = [filePath lastPathComponent];
+				soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
+				extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions];
+			}
+		}
+		if(extFound >= 0) {
+			soundFontPath = [soundFontPath stringByAppendingPathExtension:[extensions objectAtIndex:extFound]];
+		} else
+			soundFontPath = @"";
+	}
 
-    NSString * plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
-    
-    // Then detect if we should force the DLSMusicSynth, which has its own bank
-    if (!plugin || [plugin isEqualToString:@"FluidSynth"]) {
-        if (!globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
-            plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
-            [[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
-        }
-    }
-    
-    if (!plugin || [plugin isEqualToString:@"FluidSynth"])
-    {
-        sfplayer = new SFPlayer;
-        
-        unsigned int resamplingQuality = 0;
-        NSString * resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
-        if ([resampling isEqualToString:@"linear"])
-            resamplingQuality = 1;
-        else if ([resampling isEqualToString:@"cubic"])
-            resamplingQuality = 4;
-        else if ([resampling isEqualToString:@"sinc"])
-            resamplingQuality = 7;
-        
-        sfplayer->setInterpolationMethod(resamplingQuality);
-        sfplayer->setSampleRate( 44100 );
-        
-        if ( [soundFontPath length] )
-            sfplayer->setFileSoundFont( [soundFontPath UTF8String] );
-        
-        player = sfplayer;
-    }
-    else if ([[plugin substringToIndex:4] isEqualToString:@"DOOM"])
-    {
-        MSPlayer * msplayer = new MSPlayer;
-        player = msplayer;
-        
-        msplayer->set_synth(0);
-        
-        msplayer->set_bank([[plugin substringFromIndex:4] intValue]);
-        
-        msplayer->set_extp(1);
-        
-        msplayer->setSampleRate( 44100 );
-    }
-    else if ([[plugin substringToIndex:5] isEqualToString:@"OPL3W"])
-    {
-        MSPlayer * msplayer = new MSPlayer;
-        player = msplayer;
-        
-        msplayer->set_synth(1);
-        
-        msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
-        
-        msplayer->set_extp(1);
-        
-        msplayer->setSampleRate( 44100 );
-    }
-    else
-    {
-        const char * cplugin = [plugin UTF8String];
-        OSType componentSubType;
-        OSType componentManufacturer;
-        
-        componentSubType = getOSType(cplugin);
-        componentManufacturer = getOSType(cplugin + 4);
-        
-        {
-            auplayer = new AUPlayer;
-            
-            auplayer->setComponent(componentSubType, componentManufacturer);
-            auplayer->setSampleRate( 44100 );
-            
-            if ( [soundFontPath length] )
-            {
-                auplayer->setSoundFont( [soundFontPath UTF8String] );
-                soundFontsAssigned = YES;
-            }
-            
-            player = auplayer;
-        }
-    }
-    
-    player->setFilterMode( mode, false );
-    
-    unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
-    unsigned int clean_flags = midi_container::clean_flag_emidi;
-    
-    if ( !player->Load( midi_file, track_num, loop_mode, clean_flags) )
-        return NO;
-    
-    return YES;
+	DLog(@"Length: %li", totalFrames);
+
+	DLog(@"Track num: %i", track_num);
+
+	MIDIPlayer::filter_mode mode = MIDIPlayer::filter_sc55;
+
+	NSString *flavor = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.flavor"];
+	if([flavor isEqualToString:@"default"])
+		mode = MIDIPlayer::filter_default;
+	else if([flavor isEqualToString:@"gm"])
+		mode = MIDIPlayer::filter_gm;
+	else if([flavor isEqualToString:@"gm2"])
+		mode = MIDIPlayer::filter_gm2;
+	else if([flavor isEqualToString:@"sc55"])
+		mode = MIDIPlayer::filter_sc55;
+	else if([flavor isEqualToString:@"sc88"])
+		mode = MIDIPlayer::filter_sc88;
+	else if([flavor isEqualToString:@"sc88pro"])
+		mode = MIDIPlayer::filter_sc88pro;
+	else if([flavor isEqualToString:@"sc8850"])
+		mode = MIDIPlayer::filter_sc8850;
+	else if([flavor isEqualToString:@"xg"])
+		mode = MIDIPlayer::filter_xg;
+
+	globalSoundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
+
+	// First detect if soundfont has gone AWOL
+	if(![[NSFileManager defaultManager] fileExistsAtPath:globalSoundFontPath]) {
+		globalSoundFontPath = nil;
+		[[NSUserDefaults standardUserDefaults] setValue:globalSoundFontPath forKey:@"soundFontPath"];
+	}
+
+	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
+
+	// Then detect if we should force the DLSMusicSynth, which has its own bank
+	if(!plugin || [plugin isEqualToString:@"FluidSynth"]) {
+		if(!globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
+			plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
+			[[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
+		}
+	}
+
+	if(!plugin || [plugin isEqualToString:@"FluidSynth"]) {
+		sfplayer = new SFPlayer;
+
+		unsigned int resamplingQuality = 0;
+		NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+		if([resampling isEqualToString:@"linear"])
+			resamplingQuality = 1;
+		else if([resampling isEqualToString:@"cubic"])
+			resamplingQuality = 4;
+		else if([resampling isEqualToString:@"sinc"])
+			resamplingQuality = 7;
+
+		sfplayer->setInterpolationMethod(resamplingQuality);
+		sfplayer->setSampleRate(44100);
+
+		if([soundFontPath length])
+			sfplayer->setFileSoundFont([soundFontPath UTF8String]);
+
+		player = sfplayer;
+	} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
+		MSPlayer *msplayer = new MSPlayer;
+		player = msplayer;
+
+		msplayer->set_synth(0);
+
+		msplayer->set_bank([[plugin substringFromIndex:4] intValue]);
+
+		msplayer->set_extp(1);
+
+		msplayer->setSampleRate(44100);
+	} else if([[plugin substringToIndex:5] isEqualToString:@"OPL3W"]) {
+		MSPlayer *msplayer = new MSPlayer;
+		player = msplayer;
+
+		msplayer->set_synth(1);
+
+		msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
+
+		msplayer->set_extp(1);
+
+		msplayer->setSampleRate(44100);
+	} else {
+		const char *cplugin = [plugin UTF8String];
+		OSType componentSubType;
+		OSType componentManufacturer;
+
+		componentSubType = getOSType(cplugin);
+		componentManufacturer = getOSType(cplugin + 4);
+
+		{
+			auplayer = new AUPlayer;
+
+			auplayer->setComponent(componentSubType, componentManufacturer);
+			auplayer->setSampleRate(44100);
+
+			if([soundFontPath length]) {
+				auplayer->setSoundFont([soundFontPath UTF8String]);
+				soundFontsAssigned = YES;
+			}
+
+			player = auplayer;
+		}
+	}
+
+	player->setFilterMode(mode, false);
+
+	unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
+	unsigned int clean_flags = midi_container::clean_flag_emidi;
+
+	if(!player->Load(midi_file, track_num, loop_mode, clean_flags))
+		return NO;
+
+	return YES;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames
-{
-    BOOL repeatone = IsRepeatOneSet();
-    long localFramesLength = framesLength;
-    long localTotalFrames = totalFrames;
-    
-    if (!player)
-    {
-        if (![self initDecoder])
-            return -1;
-    }
-    
-    player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
-    
-    if ( !repeatone && framesRead >= localTotalFrames )
-        return 0;
-    
-    if ( (sfplayer||auplayer) && !soundFontsAssigned ) {
-        
-        if (globalSoundFontPath != nil) {
-            if (sfplayer)
-                sfplayer->setSoundFont( [globalSoundFontPath UTF8String] );
-            else if (auplayer)
-                auplayer->setSoundFont( [globalSoundFontPath UTF8String] );
-        }
-        
-        soundFontsAssigned = YES;
-    }
-    
-    UInt32 frames_done = player->Play( (float *) buf, frames );
-    
-    if ( !frames_done )
-        return 0;
-    
-    frames = frames_done;
-    
-    if ( !repeatone && framesRead + frames > localFramesLength ) {
-        if ( framesFade ) {
-            long fadeStart = (localFramesLength > framesRead) ? localFramesLength : framesRead;
-            long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
-            long fadePos;
-        
-            float * buff = ( float * ) buf;
-        
-            float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
-            float fadeStep = 1.0 / (float)framesFade;
-            for (fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
-                buff[ 0 ] *= fadeScale;
-                buff[ 1 ] *= fadeScale;
-                buff += 2;
-                fadeScale -= fadeStep;
-                if (fadeScale < 0) {
-                    fadeScale = 0;
-                    fadeStep = 0;
-                }
-            }
-            
-            frames = (int)(fadeEnd - framesRead);
-        }
-        else {
-            frames = (int)(localTotalFrames - framesRead);
-        }
-    }
-    
+- (int)readAudio:(void *)buf frames:(UInt32)frames {
+	BOOL repeatone = IsRepeatOneSet();
+	long localFramesLength = framesLength;
+	long localTotalFrames = totalFrames;
+
+	if(!player) {
+		if(![self initDecoder])
+			return -1;
+	}
+
+	player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
+
+	if(!repeatone && framesRead >= localTotalFrames)
+		return 0;
+
+	if((sfplayer || auplayer) && !soundFontsAssigned) {
+		if(globalSoundFontPath != nil) {
+			if(sfplayer)
+				sfplayer->setSoundFont([globalSoundFontPath UTF8String]);
+			else if(auplayer)
+				auplayer->setSoundFont([globalSoundFontPath UTF8String]);
+		}
+
+		soundFontsAssigned = YES;
+	}
+
+	UInt32 frames_done = player->Play((float *)buf, frames);
+
+	if(!frames_done)
+		return 0;
+
+	frames = frames_done;
+
+	if(!repeatone && framesRead + frames > localFramesLength) {
+		if(framesFade) {
+			long fadeStart = (localFramesLength > framesRead) ? localFramesLength : framesRead;
+			long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
+			long fadePos;
+
+			float *buff = (float *)buf;
+
+			float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
+			float fadeStep = 1.0 / (float)framesFade;
+			for(fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
+				buff[0] *= fadeScale;
+				buff[1] *= fadeScale;
+				buff += 2;
+				fadeScale -= fadeStep;
+				if(fadeScale < 0) {
+					fadeScale = 0;
+					fadeStep = 0;
+				}
+			}
+
+			frames = (int)(fadeEnd - framesRead);
+		} else {
+			frames = (int)(localTotalFrames - framesRead);
+		}
+	}
+
 	framesRead += frames;
 	return frames;
 }
 
-- (long)seek:(long)frame
-{
-    if (!player) {
-        float temp[2];
-        if ([self readAudio:temp frames:1] < 1)
-            return -1;
-    }
-    
-    player->Seek( frame );
-	
-    framesRead = frame;
-    
+- (long)seek:(long)frame {
+	if(!player) {
+		float temp[2];
+		if([self readAudio:temp frames:1] < 1)
+			return -1;
+	}
+
+	player->Seek(frame);
+
+	framesRead = frame;
+
 	return frame;
 }
 
-- (void)close
-{
-    delete player;
-    player = NULL;
+- (void)close {
+	delete player;
+	player = NULL;
 }
 
-- (void)dealloc
-{
-    [self close];
+- (void)dealloc {
+	[self close];
 }
 
-+ (NSArray *)fileTypes 
-{	
++ (NSArray *)fileTypes {
 	return @[@"mid", @"midi", @"kar", @"rmi", @"mids", @"mds", @"hmi", @"hmp", @"hmq", @"mus", @"xmi", @"lds"];
 }
 
-+ (NSArray *)mimeTypes 
-{	
++ (NSArray *)mimeTypes {
 	return @[@"audio/midi", @"audio/x-midi"];
 }
 
-+ (float)priority
-{
-    return 1.0;
++ (float)priority {
+	return 1.0;
 }
 
-+ (NSArray *)fileTypeAssociations
-{
-    return @[
-        @[@"General MIDI File", @"song.icns", @"mid", @"midi", @"kar"],
-        @[@"RIFF MIDI File", @"song.icns", @"rmi"],
-        @[@"MIDS MIDI File", @"song.icns", @"mids", @"mds"],
-        @[@"HMI MIDI File", @"song.icns", @"hmi", @"hmp", @"hmq"],
-        @[@"id Software MUS MIDI File", @"song.icns", @"mus"],
-        @[@"XMI MIDI File", @"song.icns", @"xmi"],
-        @[@"Loudness MIDI File", @"song.icns", @"lds"]
-    ];
++ (NSArray *)fileTypeAssociations {
+	return @[
+		@[@"General MIDI File", @"song.icns", @"mid", @"midi", @"kar"],
+		@[@"RIFF MIDI File", @"song.icns", @"rmi"],
+		@[@"MIDS MIDI File", @"song.icns", @"mids", @"mds"],
+		@[@"HMI MIDI File", @"song.icns", @"hmi", @"hmp", @"hmq"],
+		@[@"id Software MUS MIDI File", @"song.icns", @"mus"],
+		@[@"XMI MIDI File", @"song.icns", @"xmi"],
+		@[@"Loudness MIDI File", @"song.icns", @"lds"]
+	];
 }
 
 @end

@@ -6,15 +6,15 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "PlaybackController.h"
 #import "PlaylistController.h"
+#import <Cocoa/Cocoa.h>
 
-@interface MiniWindow : NSWindow<NSDraggingDestination> {
-    IBOutlet PlaybackController *playbackController;
-    IBOutlet PlaylistController *playlistController;
-    IBOutlet NSToolbar *miniToolbar;
-    NSImage *hdcdLogo;
+@interface MiniWindow : NSWindow <NSDraggingDestination> {
+	IBOutlet PlaybackController *playbackController;
+	IBOutlet PlaylistController *playlistController;
+	IBOutlet NSToolbar *miniToolbar;
+	NSImage *hdcdLogo;
 }
 
 - (void)showHDCDLogo:(BOOL)show;

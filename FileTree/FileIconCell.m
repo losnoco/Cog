@@ -11,13 +11,11 @@
 
 @implementation FileIconCell
 
-- (void)setObjectValue:(PathNode *)o
-{
-	if ([o respondsToSelector:@selector(icon)] && [o respondsToSelector:@selector(display)]) {
+- (void)setObjectValue:(PathNode *)o {
+	if([o respondsToSelector:@selector(icon)] && [o respondsToSelector:@selector(display)]) {
 		[super setObjectValue:[o display]];
-		[super setImage: [o icon]];
-	}
-	else {
+		[super setImage:[o icon]];
+	} else {
 		[super setObjectValue:(id)o];
 	}
 }

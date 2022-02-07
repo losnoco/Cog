@@ -1,427 +1,393 @@
 #import "AppController.h"
+#import "Cog-Swift.h"
 #import "FileTreeController.h"
-#import "FileTreeViewController.h"
 #import "FileTreeOutlineView.h"
+#import "FileTreeViewController.h"
+#import "FontSizetoLineHeightTransformer.h"
+#import "OpenURLPanel.h"
+#import "PathNode.h"
 #import "PlaybackController.h"
 #import "PlaylistController.h"
-#import "PlaylistView.h"
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
-#import "OpenURLPanel.h"
+#import "PlaylistView.h"
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
-#import "FontSizetoLineHeightTransformer.h"
-#import "Cog-Swift.h"
-#import "PathNode.h"
 #import <CogAudio/Status.h>
 
+#import "DualWindow.h"
 #import "Logging.h"
 #import "MiniModeMenuTitleTransformer.h"
-#import "DualWindow.h"
 
-#import <MASShortcut/Shortcut.h>
 #import "Shortcuts.h"
+#import <MASShortcut/Shortcut.h>
 
 #import <Sparkle/Sparkle.h>
 
-void* kAppControllerContext = &kAppControllerContext;
-
+void *kAppControllerContext = &kAppControllerContext;
 
 @implementation AppController {
-    BOOL _isFullToolbarStyle;
+	BOOL _isFullToolbarStyle;
 }
 
 @synthesize mainWindow;
 @synthesize miniWindow;
 
-+ (void)initialize
-{
-    // Register transformers
++ (void)initialize {
+	// Register transformers
 	NSValueTransformer *stringToURLTransformer = [[StringToURLTransformer alloc] init];
-    [NSValueTransformer setValueTransformer:stringToURLTransformer
-                                    forName:@"StringToURLTransformer"];
-                                
-    NSValueTransformer *fontSizetoLineHeightTransformer = 
-        [[FontSizetoLineHeightTransformer alloc] init];
-    [NSValueTransformer setValueTransformer:fontSizetoLineHeightTransformer
-                                    forName:@"FontSizetoLineHeightTransformer"];
+	[NSValueTransformer setValueTransformer:stringToURLTransformer
+	                                forName:@"StringToURLTransformer"];
 
-    NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
-    [NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
-                                    forName:@"MiniModeMenuTitleTransformer"];
+	NSValueTransformer *fontSizetoLineHeightTransformer =
+	[[FontSizetoLineHeightTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:fontSizetoLineHeightTransformer
+	                                forName:@"FontSizetoLineHeightTransformer"];
+
+	NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
+	                                forName:@"MiniModeMenuTitleTransformer"];
 }
 
-
-- (id)init
-{
+- (id)init {
 	self = [super init];
-	if (self)
-	{
+	if(self) {
 		[self initDefaults];
-				
-        queue = [[NSOperationQueue alloc]init];
+
+		queue = [[NSOperationQueue alloc] init];
 	}
-	
-	return self; 
+
+	return self;
 }
 
-- (IBAction)openFiles:(id)sender
-{
+- (IBAction)openFiles:(id)sender {
 	NSOpenPanel *p;
-	
+
 	p = [NSOpenPanel openPanel];
-	
-    [p setAllowedFileTypes:[playlistLoader acceptableFileTypes]];
+
+	[p setAllowedFileTypes:[playlistLoader acceptableFileTypes]];
 	[p setCanChooseDirectories:YES];
 	[p setAllowsMultipleSelection:YES];
-    [p setResolvesAliases:YES];
-	
-	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
-        if ( result == NSModalResponseOK ) {
-            [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
-            [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
-        } else {
-            [p close];
-        }
-    }];
+	[p setResolvesAliases:YES];
+
+	[p beginSheetModalForWindow:mainWindow
+	          completionHandler:^(NSInteger result) {
+		          if(result == NSModalResponseOK) {
+			          [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
+			          [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
+		          } else {
+			          [p close];
+		          }
+	          }];
 }
 
-- (IBAction)savePlaylist:(id)sender
-{
+- (IBAction)savePlaylist:(id)sender {
 	NSSavePanel *p;
-	
+
 	p = [NSSavePanel savePanel];
-    
-    /* Yes, this is deprecated. Yes, this is required to give the dialog
-     * a default set of filename extensions to save, including adding an
-     * extension if the user does not supply one. */
-    [p setAllowedFileTypes:@[@"m3u", @"pls"]];
-	
-	[p beginSheetModalForWindow:mainWindow completionHandler:^(NSInteger result) {
-        if ( result == NSModalResponseOK ) {
-            [self->playlistLoader save:[[p URL] path]];
-        } else {
-            [p close];
-        }
-    }];
+
+	/* Yes, this is deprecated. Yes, this is required to give the dialog
+	 * a default set of filename extensions to save, including adding an
+	 * extension if the user does not supply one. */
+	[p setAllowedFileTypes:@[@"m3u", @"pls"]];
+
+	[p beginSheetModalForWindow:mainWindow
+	          completionHandler:^(NSInteger result) {
+		          if(result == NSModalResponseOK) {
+			          [self->playlistLoader save:[[p URL] path]];
+		          } else {
+			          [p close];
+		          }
+	          }];
 }
 
-- (IBAction)openURL:(id)sender
-{
+- (IBAction)openURL:(id)sender {
 	OpenURLPanel *p;
-	
+
 	p = [OpenURLPanel openURLPanel];
 
 	[p beginSheetWithWindow:mainWindow delegate:self didEndSelector:@selector(openURLPanelDidEnd:returnCode:contextInfo:) contextInfo:nil];
 }
 
-- (void)openURLPanelDidEnd:(OpenURLPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo
-{
-	if (returnCode == NSModalResponseOK)
-	{
+- (void)openURLPanelDidEnd:(OpenURLPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo {
+	if(returnCode == NSModalResponseOK) {
 		[playlistLoader willInsertURLs:@[[panel url]] origin:URLOriginInternal];
 		[playlistLoader didInsertURLs:[playlistLoader addURLs:@[[panel url]] sort:NO] origin:URLOriginInternal];
 	}
 }
 
-- (IBAction)delEntries:(id)sender
-{
+- (IBAction)delEntries:(id)sender {
 	[playlistController remove:self];
 }
 
-- (PlaylistEntry *)currentEntry
-{
+- (PlaylistEntry *)currentEntry {
 	return [playlistController currentEntry];
 }
 
-- (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key
-{
-	return [key isEqualToString:@"currentEntry"] ||  [key isEqualToString:@"play"];
+- (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key {
+	return [key isEqualToString:@"currentEntry"] || [key isEqualToString:@"play"];
 }
 
-- (void)awakeFromNib
-{
+- (void)awakeFromNib {
 #ifdef DEBUG
-    // Prevent updates automatically in debug builds
-    [updater setAutomaticallyChecksForUpdates:NO];
+	// Prevent updates automatically in debug builds
+	[updater setAutomaticallyChecksForUpdates:NO];
 #endif
-    
+
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 
-    [self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
-    [self.infoButtonMini setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
+	[self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
+	[self.infoButtonMini setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
 	[shuffleButton setToolTip:NSLocalizedString(@"ShuffleButtonTooltip", @"")];
 	[repeatButton setToolTip:NSLocalizedString(@"RepeatButtonTooltip", @"")];
-    [randomizeButton setToolTip:NSLocalizedString(@"RandomizeButtonTooltip", @"")];
+	[randomizeButton setToolTip:NSLocalizedString(@"RandomizeButtonTooltip", @"")];
 	[fileButton setToolTip:NSLocalizedString(@"FileButtonTooltip", @"")];
-	
+
 	[self registerHotKeys];
-	
-    (void) [spotlightWindowController init];
-	
+
+	(void)[spotlightWindowController init];
+
 	[[playlistController undoManager] disableUndoRegistration];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-    NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
-    
-    NSString *dbFilename = @"Default.sqlite";
-    
-    NSString *oldFilename = @"Default.m3u";
-    NSString *newFilename = @"Default.xml";
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:dbFilename]])
-    {
-        [playlistLoader addDatabase];
-    }
-    else if ([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]])
-    {
-        [playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:newFilename]]];
-    }
-    else
-    {
-        [playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:oldFilename]]];
-    }
-    
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+
+	NSString *dbFilename = @"Default.sqlite";
+
+	NSString *oldFilename = @"Default.m3u";
+	NSString *newFilename = @"Default.xml";
+
+	if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:dbFilename]]) {
+		[playlistLoader addDatabase];
+	} else if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]]) {
+		[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:newFilename]]];
+	} else {
+		[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:oldFilename]]];
+	}
+
 	[[playlistController undoManager] enableUndoRegistration];
-    
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"])
-    {
-        int lastStatus = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
-        int lastIndex = (int) [[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
-    
-        if (lastStatus != CogStatusStopped && lastIndex >= 0)
-        {
-            [playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused) andSeekTo:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
-        }
-    }
 
-    // Restore mini mode
-    [self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"]) {
+		int lastStatus = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
+		int lastIndex = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
 
-    [self setToolbarStyle:[[NSUserDefaults standardUserDefaults] boolForKey:@"toolbarStyleFull"]];
+		if(lastStatus != CogStatusStopped && lastIndex >= 0) {
+			[playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused) andSeekTo:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
+		}
+	}
 
-    [self setFloatingMiniWindow:[[NSUserDefaults standardUserDefaults]
-                                    boolForKey:@"floatingMiniWindow"]];
+	// Restore mini mode
+	[self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
 
-    // We need file tree view to restore its state here
-    // so attempt to access file tree view controller's root view
-    // to force it to read nib and create file tree view for us
-    //
-    // TODO: there probably is a more elegant way to do all this
-    //       but i'm too stupid/tired to figure it out now
-    [fileTreeViewController view];
-    
-    FileTreeOutlineView* outlineView = [fileTreeViewController outlineView];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeExpanded:) name:NSOutlineViewItemDidExpandNotification object:outlineView];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeCollapsed:) name:NSOutlineViewItemDidCollapseNotification object:outlineView];
+	[self setToolbarStyle:[[NSUserDefaults standardUserDefaults] boolForKey:@"toolbarStyleFull"]];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidBeginNotficiation object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidStopNotficiation object:nil];
-    
-    [self updateDockMenu:nil];
-    
-    NSArray *expandedNodesArray = [[NSUserDefaults standardUserDefaults] valueForKey:@"fileTreeViewExpandedNodes"];
-    
-    if (expandedNodesArray)
-    {
-        expandedNodes = [[NSMutableSet alloc] initWithArray:expandedNodesArray];
-    }
-    else
-    {
-        expandedNodes = [[NSMutableSet alloc] init];
-    }
-    
-    DLog(@"Nodes to expand: %@", [expandedNodes description]);
-    
-    DLog(@"Num of rows: %ld", [outlineView numberOfRows]);
-    
-    if (!outlineView)
-    {
-        DLog(@"outlineView is NULL!");
-    }
+	[self setFloatingMiniWindow:[[NSUserDefaults standardUserDefaults]
+	                            boolForKey:@"floatingMiniWindow"]];
 
-    [outlineView reloadData];
+	// We need file tree view to restore its state here
+	// so attempt to access file tree view controller's root view
+	// to force it to read nib and create file tree view for us
+	//
+	// TODO: there probably is a more elegant way to do all this
+	//       but i'm too stupid/tired to figure it out now
+	[fileTreeViewController view];
 
-    for (NSInteger i=0; i<[outlineView numberOfRows]; i++)
-    {
-        PathNode *pn = [outlineView itemAtRow:i];
-        NSString *str = [[pn URL] absoluteString];
-        
-        if ([expandedNodes containsObject:str])
-        {
-            [outlineView expandItem:pn];
-        }
-    }
+	FileTreeOutlineView *outlineView = [fileTreeViewController outlineView];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeExpanded:) name:NSOutlineViewItemDidExpandNotification object:outlineView];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeCollapsed:) name:NSOutlineViewItemDidCollapseNotification object:outlineView];
 
-    [self addObserver:self
-           forKeyPath:@"playlistController.currentEntry"
-              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-              context:kAppControllerContext];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidBeginNotficiation object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidStopNotficiation object:nil];
+
+	[self updateDockMenu:nil];
+
+	NSArray *expandedNodesArray = [[NSUserDefaults standardUserDefaults] valueForKey:@"fileTreeViewExpandedNodes"];
+
+	if(expandedNodesArray) {
+		expandedNodes = [[NSMutableSet alloc] initWithArray:expandedNodesArray];
+	} else {
+		expandedNodes = [[NSMutableSet alloc] init];
+	}
+
+	DLog(@"Nodes to expand: %@", [expandedNodes description]);
+
+	DLog(@"Num of rows: %ld", [outlineView numberOfRows]);
+
+	if(!outlineView) {
+		DLog(@"outlineView is NULL!");
+	}
+
+	[outlineView reloadData];
+
+	for(NSInteger i = 0; i < [outlineView numberOfRows]; i++) {
+		PathNode *pn = [outlineView itemAtRow:i];
+		NSString *str = [[pn URL] absoluteString];
+
+		if([expandedNodes containsObject:str]) {
+			[outlineView expandItem:pn];
+		}
+	}
+
+	[self addObserver:self
+	       forKeyPath:@"playlistController.currentEntry"
+	          options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+	          context:kAppControllerContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
-                        change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context {
-    if (context != kAppControllerContext) {
-        return;
-    }
-
-    if ([keyPath isEqualToString:@"playlistController.currentEntry"]) {
-        PlaylistEntry *entry = playlistController.currentEntry;
-        if (!entry) {
-            miniWindow.title = @"Cog";
-            mainWindow.title = @"Cog";
-            if (@available(macOS 11.0, *)) {
-                miniWindow.subtitle = @"";
-                mainWindow.subtitle = @"";
-            }
-
-            self.infoButton.imageScaling = NSImageScaleNone;
-            self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
-            self.infoButtonMini.imageScaling = NSImageScaleNone;
-            self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
-        }
-
-        if (entry.albumArt) {
-            self.infoButton.imageScaling = NSImageScaleProportionallyUpOrDown;
-            self.infoButton.image = playlistController.currentEntry.albumArt;
-            self.infoButtonMini.imageScaling = NSImageScaleProportionallyUpOrDown;
-            self.infoButtonMini.image = playlistController.currentEntry.albumArt;
-        } else {
-            self.infoButton.imageScaling = NSImageScaleNone;
-            self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
-            self.infoButtonMini.imageScaling = NSImageScaleNone;
-            self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
-        }
-
-        if (@available(macOS 11.0, *)) {
-            NSString *title = @"Cog";
-            if (entry.title) {
-                title = entry.title;
-            }
-            miniWindow.title = title;
-            mainWindow.title = title;
-
-            NSString *subtitle = @"";
-            NSMutableArray<NSString *> *subtitleItems = [NSMutableArray array];
-            if (entry.album && ![entry.album isEqualToString:@""]) {
-                [subtitleItems addObject:entry.album];
-            }
-            if (entry.artist && ![entry.artist isEqualToString:@""]) {
-                [subtitleItems addObject:entry.artist];
-            }
-
-            if ([subtitleItems count]) {
-                subtitle = [subtitleItems componentsJoinedByString:@" - "];
-            }
-
-            miniWindow.subtitle = subtitle;
-            mainWindow.subtitle = subtitle;
-        } else {
-            NSString *title = @"Cog";
-            if (entry.display) {
-                title = entry.display;
-            }
-            miniWindow.title = title;
-            mainWindow.title = title;
-        }
-    }
-}
-
-- (void)nodeExpanded:(NSNotification*)notification
-{
-    PathNode* node = [[notification userInfo] objectForKey:@"NSObject"];
-    NSString* url = [[node URL] absoluteString];
-    
-    [expandedNodes addObject:url];
-}
-
-- (void)nodeCollapsed:(NSNotification*)notification
-{
-    PathNode* node = [[notification userInfo] objectForKey:@"NSObject"];
-    NSString* url = [[node URL] absoluteString];
-    
-    [expandedNodes removeObject:url];
-}
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification
-{
-    CogStatus currentStatus = [playbackController playbackStatus];
-    NSInteger lastTrackPlaying = -1;
-    double lastTrackPosition = 0;
-    
-    if (currentStatus == CogStatusStopping)
-        currentStatus = CogStatusStopped;
-    
-    if (currentStatus != CogStatusStopped)
-    {
-        PlaylistEntry * pe = [playlistController currentEntry];
-        lastTrackPlaying = [pe index];
-        lastTrackPosition = [pe currentPosition];
-    }
-
-    [[NSUserDefaults standardUserDefaults] setInteger:lastTrackPlaying forKey:@"lastTrackPlaying"];
-    [[NSUserDefaults standardUserDefaults] setDouble:lastTrackPosition forKey:@"lastTrackPosition"];
-    
-	[playbackController stop:self];
-	
-    [[NSUserDefaults standardUserDefaults] setInteger:currentStatus forKey:@"lastPlaybackStatus"];
-    
-	NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-    NSString *folder = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
-
-	if ([fileManager fileExistsAtPath: folder] == NO)
-	{
-		[fileManager createDirectoryAtPath: folder withIntermediateDirectories:NO attributes:nil error:nil];
+	if(context != kAppControllerContext) {
+		return;
 	}
-    
-    [playlistController clearFilterPredicate:self];
-	
-    NSString * fileName = @"Default.xml";
-    
-    NSError *error;
-    [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
 
-    fileName = @"Default.m3u";
-    
-    [[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+	if([keyPath isEqualToString:@"playlistController.currentEntry"]) {
+		PlaylistEntry *entry = playlistController.currentEntry;
+		if(!entry) {
+			miniWindow.title = @"Cog";
+			mainWindow.title = @"Cog";
+			if(@available(macOS 11.0, *)) {
+				miniWindow.subtitle = @"";
+				mainWindow.subtitle = @"";
+			}
 
-    DLog(@"Saving expanded nodes: %@", [expandedNodes description]);
+			self.infoButton.imageScaling = NSImageScaleNone;
+			self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
+			self.infoButtonMini.imageScaling = NSImageScaleNone;
+			self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
+		}
 
-    [[NSUserDefaults standardUserDefaults] setValue:[expandedNodes allObjects] forKey:@"fileTreeViewExpandedNodes"];
-    // Workaround window not restoring it's size and position.
-    [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 1)];
-    [miniWindow saveFrameUsingName:@"Mini Window"];
+		if(entry.albumArt) {
+			self.infoButton.imageScaling = NSImageScaleProportionallyUpOrDown;
+			self.infoButton.image = playlistController.currentEntry.albumArt;
+			self.infoButtonMini.imageScaling = NSImageScaleProportionallyUpOrDown;
+			self.infoButtonMini.image = playlistController.currentEntry.albumArt;
+		} else {
+			self.infoButton.imageScaling = NSImageScaleNone;
+			self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
+			self.infoButtonMini.imageScaling = NSImageScaleNone;
+			self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
+		}
+
+		if(@available(macOS 11.0, *)) {
+			NSString *title = @"Cog";
+			if(entry.title) {
+				title = entry.title;
+			}
+			miniWindow.title = title;
+			mainWindow.title = title;
+
+			NSString *subtitle = @"";
+			NSMutableArray<NSString *> *subtitleItems = [NSMutableArray array];
+			if(entry.album && ![entry.album isEqualToString:@""]) {
+				[subtitleItems addObject:entry.album];
+			}
+			if(entry.artist && ![entry.artist isEqualToString:@""]) {
+				[subtitleItems addObject:entry.artist];
+			}
+
+			if([subtitleItems count]) {
+				subtitle = [subtitleItems componentsJoinedByString:@" - "];
+			}
+
+			miniWindow.subtitle = subtitle;
+			mainWindow.subtitle = subtitle;
+		} else {
+			NSString *title = @"Cog";
+			if(entry.display) {
+				title = entry.display;
+			}
+			miniWindow.title = title;
+			mainWindow.title = title;
+		}
+	}
 }
 
-- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag
-{
-	if (flag == NO)
-		[mainWindow makeKeyAndOrderFront:self];	// TODO: do we really need this? We never close the main window.
+- (void)nodeExpanded:(NSNotification *)notification {
+	PathNode *node = [[notification userInfo] objectForKey:@"NSObject"];
+	NSString *url = [[node URL] absoluteString];
 
-	for(NSWindow* win in [NSApp windows])	// Maximizing all windows
+	[expandedNodes addObject:url];
+}
+
+- (void)nodeCollapsed:(NSNotification *)notification {
+	PathNode *node = [[notification userInfo] objectForKey:@"NSObject"];
+	NSString *url = [[node URL] absoluteString];
+
+	[expandedNodes removeObject:url];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification {
+	CogStatus currentStatus = [playbackController playbackStatus];
+	NSInteger lastTrackPlaying = -1;
+	double lastTrackPosition = 0;
+
+	if(currentStatus == CogStatusStopping)
+		currentStatus = CogStatusStopped;
+
+	if(currentStatus != CogStatusStopped) {
+		PlaylistEntry *pe = [playlistController currentEntry];
+		lastTrackPlaying = [pe index];
+		lastTrackPosition = [pe currentPosition];
+	}
+
+	[[NSUserDefaults standardUserDefaults] setInteger:lastTrackPlaying forKey:@"lastTrackPlaying"];
+	[[NSUserDefaults standardUserDefaults] setDouble:lastTrackPosition forKey:@"lastTrackPosition"];
+
+	[playbackController stop:self];
+
+	[[NSUserDefaults standardUserDefaults] setInteger:currentStatus forKey:@"lastPlaybackStatus"];
+
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString *folder = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+
+	if([fileManager fileExistsAtPath:folder] == NO) {
+		[fileManager createDirectoryAtPath:folder withIntermediateDirectories:NO attributes:nil error:nil];
+	}
+
+	[playlistController clearFilterPredicate:self];
+
+	NSString *fileName = @"Default.xml";
+
+	NSError *error;
+	[[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+
+	fileName = @"Default.m3u";
+
+	[[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+
+	DLog(@"Saving expanded nodes: %@", [expandedNodes description]);
+
+	[[NSUserDefaults standardUserDefaults] setValue:[expandedNodes allObjects] forKey:@"fileTreeViewExpandedNodes"];
+	// Workaround window not restoring it's size and position.
+	[miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 1)];
+	[miniWindow saveFrameUsingName:@"Mini Window"];
+}
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag {
+	if(flag == NO)
+		[mainWindow makeKeyAndOrderFront:self]; // TODO: do we really need this? We never close the main window.
+
+	for(NSWindow *win in [NSApp windows]) // Maximizing all windows
 		if([win isMiniaturized])
 			[win deminiaturize:self];
-	
+
 	return NO;
 }
 
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
-{
-	NSArray* urls = @[[NSURL fileURLWithPath:filename]];
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+	NSArray *urls = @[[NSURL fileURLWithPath:filename]];
 	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
 	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:NO] origin:URLOriginExternal];
 	return YES;
 }
 
-- (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames
-{
-	//Need to convert to urls
+- (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames {
+	// Need to convert to urls
 	NSMutableArray *urls = [NSMutableArray array];
-	
-	for (NSString *filename in filenames)
-	{
+
+	for(NSString *filename in filenames) {
 		[urls addObject:[NSURL fileURLWithPath:filename]];
 	}
 	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
@@ -429,243 +395,225 @@ void* kAppControllerContext = &kAppControllerContext;
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
-- (IBAction)openLiberapayPage:(id)sender
-{
+- (IBAction)openLiberapayPage:(id)sender {
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://liberapay.com/kode54"]];
 }
 
-- (IBAction)openPaypalPage:(id)sender
-{
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.com/paypalme/kode54"]];
+- (IBAction)openPaypalPage:(id)sender {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.com/paypalme/kode54"]];
 }
 
-- (IBAction)openKofiPage:(id)sender
-{
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://ko-fi.com/kode54"]];
+- (IBAction)openKofiPage:(id)sender {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://ko-fi.com/kode54"]];
 }
 
-- (IBAction)openPatreonPage:(id)sender
-{
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
+- (IBAction)openPatreonPage:(id)sender {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
 }
 
+- (IBAction)feedback:(id)sender {
+	NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 
-- (IBAction)feedback:(id)sender
-{
-    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+	NSArray<NSURLQueryItem *> *query = @[
+		[NSURLQueryItem queryItemWithName:@"labels"
+		                            value:@"bug"],
+		[NSURLQueryItem queryItemWithName:@"template"
+		                            value:@"bug_report.md"],
+		[NSURLQueryItem queryItemWithName:@"title"
+		                            value:[NSString stringWithFormat:@"[Cog %@] ", version]]
+	];
+	NSURLComponents *components =
+	[NSURLComponents componentsWithString:@"https://github.com/losnoco/Cog/issues/new"];
 
-    NSArray<NSURLQueryItem *> *query = @[
-        [NSURLQueryItem queryItemWithName:@"labels" value:@"bug"],
-        [NSURLQueryItem queryItemWithName:@"template" value:@"bug_report.md"],
-        [NSURLQueryItem queryItemWithName:@"title"
-                                    value:[NSString stringWithFormat:@"[Cog %@] ", version]]
-    ];
-    NSURLComponents *components =
-        [NSURLComponents componentsWithString:@"https://github.com/losnoco/Cog/issues/new"];
+	components.queryItems = query;
 
-    components.queryItems = query;
-
-    [[NSWorkspace sharedWorkspace] openURL:components.URL];
+	[[NSWorkspace sharedWorkspace] openURL:components.URL];
 }
 
-- (void)initDefaults
-{
+- (void)initDefaults {
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
-	
-    // Font defaults
-    float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeSmall];
-    NSNumber *fontSize = [NSNumber numberWithFloat:fFontSize];
-    [userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
 
-    NSString *feedURLdefault = @"https://cogcdn.cog.losno.co/mercury.xml";
-    [userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
+	// Font defaults
+	float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeSmall];
+	NSNumber *fontSize = [NSNumber numberWithFloat:fFontSize];
+	[userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
+
+	NSString *feedURLdefault = @"https://cogcdn.cog.losno.co/mercury.xml";
+	[userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
 
 	[userDefaultsValuesDict setObject:@"clearAndPlay" forKey:@"openingFilesBehavior"];
 	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
-    
-    [userDefaultsValuesDict setObject:@"albumGainWithPeak" forKey:@"volumeScaling"];
 
-    [userDefaultsValuesDict setObject:@"cubic" forKey:@"resampling"];
-    
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:CogStatusStopped] forKey:@"lastPlaybackStatus"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
-    [userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
-    
-    [userDefaultsValuesDict setObject:@"dls appl" forKey:@"midiPlugin"];
-    
-    [userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
-    
-    [userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"resumePlaybackOnStartup"];
-    
-	//Register and sync defaults
+	[userDefaultsValuesDict setObject:@"albumGainWithPeak" forKey:@"volumeScaling"];
+
+	[userDefaultsValuesDict setObject:@"cubic" forKey:@"resampling"];
+
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInteger:CogStatusStopped] forKey:@"lastPlaybackStatus"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
+
+	[userDefaultsValuesDict setObject:@"dls appl" forKey:@"midiPlugin"];
+
+	[userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
+
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"resumePlaybackOnStartup"];
+
+	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 
-    //And if the existing feed URL is broken due to my ineptitude with the above defaults, fix it
-    NSSet<NSString *> *brokenFeedURLs = [NSSet setWithObjects:
-                                          @"https://kode54.net/cog/stable.xml",
-                                          @"https://kode54.net/cog/mercury.xml"
-                                          @"https://www.kode54.net/cog/mercury.xml",
-                                          @"https://f.losno.co/cog/mercury.xml",
-                                         nil];
-    NSString *feedURL = [[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"];
-    if ([brokenFeedURLs containsObject:feedURL]) {
-        [[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
-    }
-    
-    if ([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"BASSMIDI"]) {
-        [[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midiPlugin"];
-    }
-    
-    NSString * oldMidiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
-    if (oldMidiPlugin) {
-        [[NSUserDefaults standardUserDefaults] setValue:oldMidiPlugin forKey:@"midiPlugin"];
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"midi.plugin"];
-    }
+	// And if the existing feed URL is broken due to my ineptitude with the above defaults, fix it
+	NSSet<NSString *> *brokenFeedURLs = [NSSet setWithObjects:
+	                                           @"https://kode54.net/cog/stable.xml",
+	                                           @"https://kode54.net/cog/mercury.xml"
+	                                           @"https://www.kode54.net/cog/mercury.xml",
+	                                           @"https://f.losno.co/cog/mercury.xml",
+	                                           nil];
+	NSString *feedURL = [[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"];
+	if([brokenFeedURLs containsObject:feedURL]) {
+		[[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
+	}
+
+	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"BASSMIDI"]) {
+		[[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midiPlugin"];
+	}
+
+	NSString *oldMidiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
+	if(oldMidiPlugin) {
+		[[NSUserDefaults standardUserDefaults] setValue:oldMidiPlugin forKey:@"midiPlugin"];
+		[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"midi.plugin"];
+	}
 }
 
 /* Unassign previous handler first, so dealloc can unregister it from the global map before the new instances are assigned */
-- (void)registerHotKeys
-{
-    MASShortcutBinder *binder = [MASShortcutBinder sharedBinder];
-    [binder bindShortcutWithDefaultsKey:CogPlayShortcutKey toAction:^{
-        [self clickPlay];
-    }];
+- (void)registerHotKeys {
+	MASShortcutBinder *binder = [MASShortcutBinder sharedBinder];
+	[binder bindShortcutWithDefaultsKey:CogPlayShortcutKey
+	                           toAction:^{
+		                           [self clickPlay];
+	                           }];
 
-    [binder bindShortcutWithDefaultsKey:CogNextShortcutKey toAction:^{
-        [self clickNext];
-    }];
+	[binder bindShortcutWithDefaultsKey:CogNextShortcutKey
+	                           toAction:^{
+		                           [self clickNext];
+	                           }];
 
-    [binder bindShortcutWithDefaultsKey:CogPrevShortcutKey toAction:^{
-        [self clickPrev];
-    }];
+	[binder bindShortcutWithDefaultsKey:CogPrevShortcutKey
+	                           toAction:^{
+		                           [self clickPrev];
+	                           }];
 
-    [binder bindShortcutWithDefaultsKey:CogSpamShortcutKey toAction:^{
-        [self clickSpam];
-    }];
+	[binder bindShortcutWithDefaultsKey:CogSpamShortcutKey
+	                           toAction:^{
+		                           [self clickSpam];
+	                           }];
 }
 
-- (void)clickPlay
-{
+- (void)clickPlay {
 	[playbackController playPauseResume:self];
 }
 
-- (void)clickPause
-{
-    [playbackController pause:self];
+- (void)clickPause {
+	[playbackController pause:self];
 }
 
-- (void)clickStop
-{
-    [playbackController stop:self];
+- (void)clickStop {
+	[playbackController stop:self];
 }
 
-- (void)clickPrev
-{
+- (void)clickPrev {
 	[playbackController prev:nil];
 }
 
-- (void)clickNext
-{
+- (void)clickNext {
 	[playbackController next:nil];
 }
 
-- (void)clickSpam
-{
-    [playbackController spam:nil];
+- (void)clickSpam {
+	[playbackController spam:nil];
 }
 
-- (void)clickSeek:(NSTimeInterval)position
-{
-    [playbackController seek:self toTime:position];
+- (void)clickSeek:(NSTimeInterval)position {
+	[playbackController seek:self toTime:position];
 }
 
-- (void)changeFontSize:(float)size
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    float fCurrentSize = [defaults floatForKey:@"fontSize"];
-    NSNumber *newSize = [NSNumber numberWithFloat:(fCurrentSize + size)];
-    [defaults setObject:newSize forKey:@"fontSize"];
+- (void)changeFontSize:(float)size {
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	float fCurrentSize = [defaults floatForKey:@"fontSize"];
+	NSNumber *newSize = [NSNumber numberWithFloat:(fCurrentSize + size)];
+	[defaults setObject:newSize forKey:@"fontSize"];
 }
 
-- (IBAction)increaseFontSize:(id)sender
-{
+- (IBAction)increaseFontSize:(id)sender {
 	[self changeFontSize:1];
 }
 
-- (IBAction)decreaseFontSize:(id)sender
-{
+- (IBAction)decreaseFontSize:(id)sender {
 	[self changeFontSize:-1];
-	
-} 
-
-- (IBAction)toggleMiniMode:(id)sender
-{
-    [self setMiniMode:(!miniMode)];
 }
 
-- (BOOL)miniMode
-{
-    return miniMode;
+- (IBAction)toggleMiniMode:(id)sender {
+	[self setMiniMode:(!miniMode)];
 }
 
-- (void)setMiniMode:(BOOL)newMiniMode
-{
-    miniMode = newMiniMode;
-    [[NSUserDefaults standardUserDefaults] setBool:miniMode forKey:@"miniMode"];
-    
-    NSWindow *windowToShow = miniMode ? miniWindow : mainWindow;
-    NSWindow *windowToHide = miniMode ? mainWindow : miniWindow;
-    [windowToHide close];
-    [windowToShow makeKeyAndOrderFront:self];
+- (BOOL)miniMode {
+	return miniMode;
+}
+
+- (void)setMiniMode:(BOOL)newMiniMode {
+	miniMode = newMiniMode;
+	[[NSUserDefaults standardUserDefaults] setBool:miniMode forKey:@"miniMode"];
+
+	NSWindow *windowToShow = miniMode ? miniWindow : mainWindow;
+	NSWindow *windowToHide = miniMode ? mainWindow : miniWindow;
+	[windowToHide close];
+	[windowToShow makeKeyAndOrderFront:self];
 }
 
 - (IBAction)toggleToolbarStyle:(id)sender {
-    [self setToolbarStyle:!_isFullToolbarStyle];
+	[self setToolbarStyle:!_isFullToolbarStyle];
 }
 
 - (void)setToolbarStyle:(BOOL)full {
-    _isFullToolbarStyle = full;
-    [[NSUserDefaults standardUserDefaults] setBool:full forKey:@"toolbarStyleFull"];
-    DLog("Changed toolbar style: %@", (full ? @"full" : @"compact"));
+	_isFullToolbarStyle = full;
+	[[NSUserDefaults standardUserDefaults] setBool:full forKey:@"toolbarStyleFull"];
+	DLog("Changed toolbar style: %@", (full ? @"full" : @"compact"));
 
-    if (@available(macOS 11.0, *)) {
-        NSWindowToolbarStyle style =
-            full ? NSWindowToolbarStyleExpanded : NSWindowToolbarStyleUnified;
-        mainWindow.toolbarStyle = style;
-        miniWindow.toolbarStyle = style;
-    } else {
-        NSWindowTitleVisibility titleVisibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
-        mainWindow.titleVisibility = titleVisibility;
-        miniWindow.titleVisibility = titleVisibility;
-    }
+	if(@available(macOS 11.0, *)) {
+		NSWindowToolbarStyle style =
+		full ? NSWindowToolbarStyleExpanded : NSWindowToolbarStyleUnified;
+		mainWindow.toolbarStyle = style;
+		miniWindow.toolbarStyle = style;
+	} else {
+		NSWindowTitleVisibility titleVisibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
+		mainWindow.titleVisibility = titleVisibility;
+		miniWindow.titleVisibility = titleVisibility;
+	}
 
-    // Fix empty area after changing toolbar style in mini window as it has no content view
-    [miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 0)];
+	// Fix empty area after changing toolbar style in mini window as it has no content view
+	[miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 0)];
 }
 
 - (void)setFloatingMiniWindow:(BOOL)floatingMiniWindow {
-    _floatingMiniWindow = floatingMiniWindow;
-    [[NSUserDefaults standardUserDefaults] setBool:floatingMiniWindow forKey:@"floatingMiniWindow"];
-    NSWindowLevel level = floatingMiniWindow ? NSFloatingWindowLevel : NSNormalWindowLevel;
-    [miniWindow setLevel:level];
+	_floatingMiniWindow = floatingMiniWindow;
+	[[NSUserDefaults standardUserDefaults] setBool:floatingMiniWindow forKey:@"floatingMiniWindow"];
+	NSWindowLevel level = floatingMiniWindow ? NSFloatingWindowLevel : NSNormalWindowLevel;
+	[miniWindow setLevel:level];
 }
 
-- (void)updateDockMenu:(NSNotification *)notification
-{
-    PlaylistEntry *pe = [playlistController currentEntry];
-    
-    BOOL hideItem = NO;
-    
-    if ([[notification name] isEqualToString:CogPlaybackDidStopNotficiation] || !pe || ![pe artist] || [[pe artist] isEqualToString:@""])
-        hideItem = YES;
-    
-    if (hideItem && [dockMenu indexOfItem:currentArtistItem] == 0) {
-        [dockMenu removeItem:currentArtistItem];
-    }
-    else if (!hideItem && [dockMenu indexOfItem:currentArtistItem] < 0) {
-        [dockMenu insertItem:currentArtistItem atIndex:0];
-    }
+- (void)updateDockMenu:(NSNotification *)notification {
+	PlaylistEntry *pe = [playlistController currentEntry];
+
+	BOOL hideItem = NO;
+
+	if([[notification name] isEqualToString:CogPlaybackDidStopNotficiation] || !pe || ![pe artist] || [[pe artist] isEqualToString:@""])
+		hideItem = YES;
+
+	if(hideItem && [dockMenu indexOfItem:currentArtistItem] == 0) {
+		[dockMenu removeItem:currentArtistItem];
+	} else if(!hideItem && [dockMenu indexOfItem:currentArtistItem] < 0) {
+		[dockMenu insertItem:currentArtistItem atIndex:0];
+	}
 }
 
 @end

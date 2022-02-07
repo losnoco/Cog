@@ -8,32 +8,32 @@
 #ifndef AudioChunk_h
 #define AudioChunk_h
 
-#import <Foundation/Foundation.h>
 #import <CoreAudio/CoreAudio.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AudioChunk : NSObject {
-    AudioStreamBasicDescription format;
-    NSMutableData * chunkData;
-    BOOL formatAssigned;
-    BOOL lossless;
+	AudioStreamBasicDescription format;
+	NSMutableData *chunkData;
+	BOOL formatAssigned;
+	BOOL lossless;
 }
 
 @property AudioStreamBasicDescription format;
 @property BOOL lossless;
 
-- (id) init;
+- (id)init;
 
-- (void) assignSamples:(const void *)data frameCount:(size_t)count;
+- (void)assignSamples:(const void *)data frameCount:(size_t)count;
 
-- (NSData *) removeSamples:(size_t)frameCount;
+- (NSData *)removeSamples:(size_t)frameCount;
 
-- (BOOL) isEmpty;
+- (BOOL)isEmpty;
 
-- (size_t) frameCount;
+- (size_t)frameCount;
 
-- (double) duration;
+- (double)duration;
 
 @end
 

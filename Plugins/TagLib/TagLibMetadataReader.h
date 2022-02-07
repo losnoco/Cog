@@ -10,9 +10,7 @@
 
 #import "Plugin.h"
 
-@interface TagLibMetadataReader : NSObject <CogMetadataReader>
-{
-
+@interface TagLibMetadataReader : NSObject <CogMetadataReader> {
 }
 
 + (BOOL)isCoverFile:(NSString *)fileName;

@@ -8,9 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <libvgm/utils/DataLoader.h>
-#import <libvgm/player/playerbase.hpp>
 #import <libvgm/player/playera.hpp>
+#import <libvgm/player/playerbase.hpp>
+#import <libvgm/utils/DataLoader.h>
 
 #import "Plugin.h"
 

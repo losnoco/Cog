@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface CueSheetContainer : NSObject <CogContainer> {
-
 }
 
 @end

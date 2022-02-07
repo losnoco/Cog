@@ -24,23 +24,22 @@
 
 @class PlaylistEntry;
 
-@interface AudioScrobbler : NSObject
-{
-	NSString			*_pluginID;
-	NSMutableArray		*_queue;
+@interface AudioScrobbler : NSObject {
+	NSString *_pluginID;
+	NSMutableArray *_queue;
 
-	BOOL				_audioScrobblerThreadCompleted;
-	BOOL				_keepProcessingAudioScrobblerCommands;
-    semaphore_t			_semaphore;
+	BOOL _audioScrobblerThreadCompleted;
+	BOOL _keepProcessingAudioScrobblerCommands;
+	semaphore_t _semaphore;
 }
 
-+ (BOOL)    isRunning;
++ (BOOL)isRunning;
 
-- (void)	start:(PlaylistEntry *)pe;
-- (void)	stop;
-- (void)	pause;
-- (void)	resume;
+- (void)start:(PlaylistEntry *)pe;
+- (void)stop;
+- (void)pause;
+- (void)resume;
 
-- (void)	shutdown;
+- (void)shutdown;
 
 @end

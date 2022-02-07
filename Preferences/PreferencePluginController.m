@@ -11,39 +11,33 @@
 
 @implementation PreferencePluginController
 
-- (id)initWithPlugins:(NSArray *)plugins
-{
+- (id)initWithPlugins:(NSArray *)plugins {
 	self = [super init];
-	if (self)
-	{
+	if(self) {
 		_plugins = plugins;
 		_preferencePanes = [[NSMutableArray alloc] init];
-		
 	}
-	
+
 	return self;
 }
 
-- (void)_searchForPlugins
-{
-	for (NSBundle *plugin in _plugins) {
+- (void)_searchForPlugins {
+	for(NSBundle *plugin in _plugins) {
 		[plugin load];
-		
+
 		Class principalClass = [plugin principalClass];
-		if ([principalClass conformsToProtocol:@protocol(PreferencePanePlugin)]) {
+		if([principalClass conformsToProtocol:@protocol(PreferencePanePlugin)]) {
 			NSArray *panes = [principalClass preferencePanes];
-			
+
 			[_preferencePanes addObjectsFromArray:panes];
 		}
 	}
 }
 
-- (NSArray *)preferencePanes
-{
+- (NSArray *)preferencePanes {
 	[self _searchForPlugins];
 
 	return _preferencePanes;
 }
-
 
 @end

@@ -13,52 +13,48 @@
 
 @implementation SidMetadataReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [SidDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [SidDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return 0.5f;
++ (float)priority {
+	return 0.5f;
 }
 
-+ (NSDictionary *)metadataForURL:(NSURL *)url
-{
-    id audioSourceClass = NSClassFromString(@"AudioSource");
-    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
-    
-    if (![source open:url])
-        return 0;
-    
-    if (![source seekable])
-        return 0;
++ (NSDictionary *)metadataForURL:(NSURL *)url {
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
-    [source seek:0 whence:SEEK_END];
-    long size = [source tell];
-    [source seek:0 whence:SEEK_SET];
-    
-    void * data = malloc(size);
-    [source read:data amount:size];
+	if(![source open:url])
+		return 0;
 
-    SidTune * tune = new SidTune( (const uint_least8_t *)data, (uint_least32_t)size );
+	if(![source seekable])
+		return 0;
 
-    if (!tune->getStatus())
-        return 0;
-    
-    const SidTuneInfo * info = tune->getInfo();
+	[source seek:0 whence:SEEK_END];
+	long size = [source tell];
+	[source seek:0 whence:SEEK_SET];
 
-    unsigned int count = info->numberOfInfoStrings();
-    NSString *title = count >= 1 ? [[NSString stringWithUTF8String: info->infoString(0)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
-    NSString *titletag = info->songs() > 1 ? @"album" : @"title";
-    NSString *artist = count >= 2 ? [[NSString stringWithUTF8String: info->infoString(1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+	void *data = malloc(size);
+	[source read:data amount:size];
 
-    return [NSDictionary dictionaryWithObjectsAndKeys:title, titletag, artist, @"artist", nil];
+	SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+
+	if(!tune->getStatus())
+		return 0;
+
+	const SidTuneInfo *info = tune->getInfo();
+
+	unsigned int count = info->numberOfInfoStrings();
+	NSString *title = count >= 1 ? [[NSString stringWithUTF8String:info->infoString(0)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+	NSString *titletag = info->songs() > 1 ? @"album" : @"title";
+	NSString *artist = count >= 2 ? [[NSString stringWithUTF8String:info->infoString(1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+
+	return [NSDictionary dictionaryWithObjectsAndKeys:title, titletag, artist, @"artist", nil];
 }
 
 @end

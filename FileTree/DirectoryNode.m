@@ -15,24 +15,24 @@
 
 @implementation DirectoryNode
 
-- (BOOL)isLeaf
-{
+- (BOOL)isLeaf {
 	return NO;
 }
 
-- (void)updatePath
-{
-    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:url includingPropertiesForKeys:@[NSURLNameKey, NSURLIsDirectoryKey] options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles) errorHandler:^BOOL(NSURL *url, NSError *error) {
-        return NO;
-    }];
+- (void)updatePath {
+	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:url
+	                                                         includingPropertiesForKeys:@[NSURLNameKey, NSURLIsDirectoryKey]
+	                                                                            options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles)
+	                                                                       errorHandler:^BOOL(NSURL *url, NSError *error) {
+		                                                                       return NO;
+	                                                                       }];
 	NSMutableArray *fullPaths = [[NSMutableArray alloc] init];
 
-	for (NSURL * theUrl in enumerator)
-	{
+	for(NSURL *theUrl in enumerator) {
 		[fullPaths addObject:[theUrl path]];
 	}
 
-	[self processPaths: [fullPaths sortedArrayUsingSelector:@selector(finderCompare:)]];
+	[self processPaths:[fullPaths sortedArrayUsingSelector:@selector(finderCompare:)]];
 }
 
 @end

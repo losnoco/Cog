@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #define NSLocalizedPrefString(key) \
-        [[NSBundle bundleWithIdentifier:@"org.cogx.cog.preferences"] localizedStringForKey:(key) value:@"" table:nil]
+	[[NSBundle bundleWithIdentifier:@"org.cogx.cog.preferences"] localizedStringForKey:(key) value:@"" table:nil]
 
 @protocol PreferencePane <NSObject>
 @required
@@ -19,7 +19,7 @@
 
 @end
 
-@protocol PreferencePanePlugin <NSObject> 
+@protocol PreferencePanePlugin <NSObject>
 @required
 
 // An array of PrefPaneController instances that the plugin has available

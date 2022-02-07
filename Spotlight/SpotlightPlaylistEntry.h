@@ -6,13 +6,12 @@
 //  Copyright 2008 Matthew Leon Grinshpun. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "PlaylistEntry.h"
-
+#import <Cocoa/Cocoa.h>
 
 @interface SpotlightPlaylistEntry : PlaylistEntry {
-    NSNumber *length;
-    NSString *spotlightTrack;
+	NSNumber *length;
+	NSString *spotlightTrack;
 }
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem;

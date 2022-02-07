@@ -13,7 +13,7 @@
 @interface AudioDecoder : NSObject {
 }
 
-+ (id<CogDecoder>)audioDecoderForSource:(id <CogSource>)source;
-+ (id<CogDecoder>)audioDecoderForSource:(id <CogSource>)source skipCue:(BOOL)skip;
++ (id<CogDecoder>)audioDecoderForSource:(id<CogSource>)source;
++ (id<CogDecoder>)audioDecoderForSource:(id<CogSource>)source skipCue:(BOOL)skip;
 
 @end

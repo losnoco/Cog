@@ -12,10 +12,10 @@
 
 @interface RepeatModeTransformer : NSValueTransformer
 
-- (id)initWithMode:(RepeatMode) r;
+- (id)initWithMode:(RepeatMode)r;
 
 @end
 
-@interface RepeatModeImageTransformer : NSValueTransformer {}
+@interface RepeatModeImageTransformer : NSValueTransformer {
+}
 @end
-

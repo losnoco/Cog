@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface StatusImageTransformer : NSValueTransformer {
 	NSImage *playImage;
 	NSImage *queueImage;

@@ -8,8 +8,8 @@
 
 #import "ptmodDecoder.h"
 
-#import "umx.h"
 #import "mo3.h"
+#import "umx.h"
 
 #import "Logging.h"
 
@@ -17,274 +17,251 @@
 
 @implementation ptmodDecoder
 
-BOOL probe_length( void * ptmod, unsigned long * intro_length, unsigned long * loop_length, int test_vblank, const void * src, unsigned long size, unsigned int subsong )
-{
-    playptmod_Config( ptmod, PTMOD_OPTION_VSYNC_TIMING, test_vblank );
-    
-    playptmod_Play( ptmod, subsong );
-    
-    unsigned long length_total = 0;
-    unsigned long length_saved;
-    
-    const long length_safety = 44100 * 60 * 30;
-    
-    while ( playptmod_LoopCounter( ptmod ) < 1 && length_total < length_safety )
-    {
-        playptmod_Render( ptmod, NULL, 512 );
-        length_total += 512;
-    }
-    
-    if ( playptmod_LoopCounter( ptmod ) < 1 )
-    {
-        *loop_length = 0;
-        *intro_length = 44100 * 60 * 3;
-        playptmod_Stop(ptmod);
-        return YES;
-    }
-    
-    length_saved = length_total;
-    
-    while ( playptmod_LoopCounter( ptmod ) < 2 )
-    {
-        playptmod_Render( ptmod, NULL, 512 );
-        length_total += 512;
-    }
-    
-    playptmod_Stop(ptmod);
-    
-    *loop_length = length_total - length_saved;
-    *intro_length = length_saved - *loop_length;
-    
-    return YES;
-}
+BOOL probe_length(void *ptmod, unsigned long *intro_length, unsigned long *loop_length, int test_vblank, const void *src, unsigned long size, unsigned int subsong) {
+	playptmod_Config(ptmod, PTMOD_OPTION_VSYNC_TIMING, test_vblank);
 
-- (BOOL)open:(id<CogSource>)s
-{
-    [s seek:0 whence:SEEK_END];
-    size = [s tell];
-    [s seek:0 whence:SEEK_SET];
+	playptmod_Play(ptmod, subsong);
 
-    data = malloc(size);
-    [s read:data amount:size];
+	unsigned long length_total = 0;
+	unsigned long length_saved;
 
-    isMo3 = 0;
-    char * try_data = unpackMo3( data, &size );
-    if ( try_data ) {
-        free( data );
-        data = try_data;
-        isMo3 = 1;
-    }
-    else {
-        try_data = unpackUmx( data, &size );
-        if ( try_data ) {
-            free( data );
-            data = try_data;
-        }
-    }
-    
-	if ([[[s url] fragment] length] == 0)
-		track_num = 0;
-	else
-		track_num = [[[s url] fragment] intValue];
-    
-    void * mod = playptmod_Create( 44100 );
-    if ( !mod ) return NO;
-    
-    if ( !playptmod_LoadMem(mod, data, size) )
-    {
-        playptmod_Free(mod);
-        return NO;
-    }
-    
-    int format = playptmod_GetFormat(mod);
-    BOOL can_be_vblank = (format <= FORMAT_MK2);
-    
-    unsigned long normal_intro_length, normal_loop_length, vblank_intro_length, vblank_loop_length;
-    
-    if ( !probe_length(mod, &normal_intro_length, &normal_loop_length, 0, data, size, track_num) )
-        return NO;
-    if ( can_be_vblank )
-    {
-        if ( !probe_length(mod, &vblank_intro_length, &vblank_loop_length, 1, data, size, track_num) )
-            return NO;
-        if (vblank_loop_length == 0)
-            can_be_vblank = NO;
-    }
-    else
-    {
-        vblank_intro_length = 0;
-        vblank_loop_length = 0;
-    }
-    
-    playptmod_Free(mod);
+	const long length_safety = 44100 * 60 * 30;
 
-    isVblank = can_be_vblank && (( vblank_intro_length + vblank_loop_length ) < ( normal_intro_length + normal_loop_length ));
+	while(playptmod_LoopCounter(ptmod) < 1 && length_total < length_safety) {
+		playptmod_Render(ptmod, NULL, 512);
+		length_total += 512;
+	}
 
-    unsigned long intro_length = isVblank ? vblank_intro_length : normal_intro_length;
-    unsigned long loop_length = isVblank ? vblank_loop_length : normal_loop_length;
+	if(playptmod_LoopCounter(ptmod) < 1) {
+		*loop_length = 0;
+		*intro_length = 44100 * 60 * 3;
+		playptmod_Stop(ptmod);
+		return YES;
+	}
 
-    framesLength = intro_length + loop_length * 2;
-    totalFrames = framesLength + 44100 * 8;
+	length_saved = length_total;
 
-    [self willChangeValueForKey:@"properties"];
-	[self didChangeValueForKey:@"properties"];
-    
+	while(playptmod_LoopCounter(ptmod) < 2) {
+		playptmod_Render(ptmod, NULL, 512);
+		length_total += 512;
+	}
+
+	playptmod_Stop(ptmod);
+
+	*loop_length = length_total - length_saved;
+	*intro_length = length_saved - *loop_length;
+
 	return YES;
 }
 
-- (BOOL)decoderInitialize
-{
-    ptmod = playptmod_Create( 44100 );
-    if ( !ptmod )
-        return NO;
+- (BOOL)open:(id<CogSource>)s {
+	[s seek:0 whence:SEEK_END];
+	size = [s tell];
+	[s seek:0 whence:SEEK_SET];
 
-    playptmod_Config( ptmod, PTMOD_OPTION_CLAMP_PERIODS, 0 );
-    playptmod_Config( ptmod, PTMOD_OPTION_VSYNC_TIMING, isVblank );
+	data = malloc(size);
+	[s read:data amount:size];
 
-    if ( !playptmod_LoadMem( ptmod, data, size ) )
-        return NO;
+	isMo3 = 0;
+	char *try_data = unpackMo3(data, &size);
+	if(try_data) {
+		free(data);
+		data = try_data;
+		isMo3 = 1;
+	} else {
+		try_data = unpackUmx(data, &size);
+		if(try_data) {
+			free(data);
+			data = try_data;
+		}
+	}
 
-    playptmod_Play( ptmod, track_num );
+	if([[[s url] fragment] length] == 0)
+		track_num = 0;
+	else
+		track_num = [[[s url] fragment] intValue];
 
-    framesRead = 0;
-    
-    return YES;
+	void *mod = playptmod_Create(44100);
+	if(!mod) return NO;
+
+	if(!playptmod_LoadMem(mod, data, size)) {
+		playptmod_Free(mod);
+		return NO;
+	}
+
+	int format = playptmod_GetFormat(mod);
+	BOOL can_be_vblank = (format <= FORMAT_MK2);
+
+	unsigned long normal_intro_length, normal_loop_length, vblank_intro_length, vblank_loop_length;
+
+	if(!probe_length(mod, &normal_intro_length, &normal_loop_length, 0, data, size, track_num))
+		return NO;
+	if(can_be_vblank) {
+		if(!probe_length(mod, &vblank_intro_length, &vblank_loop_length, 1, data, size, track_num))
+			return NO;
+		if(vblank_loop_length == 0)
+			can_be_vblank = NO;
+	} else {
+		vblank_intro_length = 0;
+		vblank_loop_length = 0;
+	}
+
+	playptmod_Free(mod);
+
+	isVblank = can_be_vblank && ((vblank_intro_length + vblank_loop_length) < (normal_intro_length + normal_loop_length));
+
+	unsigned long intro_length = isVblank ? vblank_intro_length : normal_intro_length;
+	unsigned long loop_length = isVblank ? vblank_loop_length : normal_loop_length;
+
+	framesLength = intro_length + loop_length * 2;
+	totalFrames = framesLength + 44100 * 8;
+
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+
+	return YES;
 }
 
-- (void)decoderShutdown
-{
-    if ( ptmod )
-    {
-        playptmod_Stop( ptmod );
-        playptmod_Free( ptmod );
-        ptmod = NULL;
-    }
+- (BOOL)decoderInitialize {
+	ptmod = playptmod_Create(44100);
+	if(!ptmod)
+		return NO;
+
+	playptmod_Config(ptmod, PTMOD_OPTION_CLAMP_PERIODS, 0);
+	playptmod_Config(ptmod, PTMOD_OPTION_VSYNC_TIMING, isVblank);
+
+	if(!playptmod_LoadMem(ptmod, data, size))
+		return NO;
+
+	playptmod_Play(ptmod, track_num);
+
+	framesRead = 0;
+
+	return YES;
 }
 
-- (NSDictionary *)properties
-{
+- (void)decoderShutdown {
+	if(ptmod) {
+		playptmod_Stop(ptmod);
+		playptmod_Free(ptmod);
+		ptmod = NULL;
+	}
+}
+
+- (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSNumber numberWithInt:0], @"bitrate",
-		[NSNumber numberWithFloat:44100], @"sampleRate",
-		[NSNumber numberWithDouble:totalFrames], @"totalFrames",
-		[NSNumber numberWithInt:32], @"bitsPerSample",
-        [NSNumber numberWithBool:YES], @"floatingPoint",
-		[NSNumber numberWithInt:2], @"channels",
-		[NSNumber numberWithBool:YES], @"seekable",
-		@"host", @"endian",
-		nil];
+	                     [NSNumber numberWithInt:0], @"bitrate",
+	                     [NSNumber numberWithFloat:44100], @"sampleRate",
+	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",
+	                     [NSNumber numberWithInt:32], @"bitsPerSample",
+	                     [NSNumber numberWithBool:YES], @"floatingPoint",
+	                     [NSNumber numberWithInt:2], @"channels",
+	                     [NSNumber numberWithBool:YES], @"seekable",
+	                     @"host", @"endian",
+	                     nil];
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames
-{
-    BOOL repeat_one = IsRepeatOneSet();
-    
-    if ( !repeat_one && framesRead >= totalFrames )
-        return 0;
-    
-    if ( !ptmod )
-    {
-        if ( ![self decoderInitialize] )
-            return 0;
-    }
-    
-    int total = 0;
-    while ( total < frames ) {
-        int framesToRender = 512;
-        if ( !repeat_one && framesToRender > totalFrames - framesRead )
-            framesToRender = (int)(totalFrames - framesRead);
-        if ( framesToRender > frames - total )
-            framesToRender = frames - total;
+- (int)readAudio:(void *)buf frames:(UInt32)frames {
+	BOOL repeat_one = IsRepeatOneSet();
 
-        int32_t * sampleBuf = ( int32_t * ) buf + total * 2;
-        
-        playptmod_Render( ptmod, sampleBuf, framesToRender );
-    
-        if ( !repeat_one && framesRead + framesToRender > framesLength ) {
-            long fadeStart = ( framesLength > framesRead ) ? framesLength : framesRead;
-            long fadeEnd = ( framesRead + framesToRender < totalFrames ) ? framesRead + framesToRender : totalFrames;
-            const long fadeTotal = totalFrames - framesLength;
-            for ( long fadePos = fadeStart; fadePos < fadeEnd; ++fadePos ) {
-                const long scale = ( fadeTotal - ( fadePos - framesLength ) );
-                const long offset = fadePos - framesRead;
-                int32_t * samples = sampleBuf + offset * 2;
-                samples[ 0 ] = (int32_t)(samples[ 0 ] * scale / fadeTotal);
-                samples[ 1 ] = (int32_t)(samples[ 1 ] * scale / fadeTotal);
-            }
-            
-            framesToRender = (int)(fadeEnd - framesRead);
-        }
+	if(!repeat_one && framesRead >= totalFrames)
+		return 0;
 
-        if ( !framesToRender )
-            break;
-        
-        total += framesToRender;
-        framesRead += framesToRender;
-    }
-    
-    for ( int i = 0; i < total; ++i )
-    {
-        int32_t * sampleIn = ( int32_t * ) buf + i * 2;
-        float * sampleOut = ( float * ) buf + i * 2;
-        sampleOut[ 0 ] = sampleIn[ 0 ] * (1.0f / 16777216.0f);
-        sampleOut[ 1 ] = sampleIn[ 1 ] * (1.0f / 16777216.0f);
-    }
-    
-    return total;
+	if(!ptmod) {
+		if(![self decoderInitialize])
+			return 0;
+	}
+
+	int total = 0;
+	while(total < frames) {
+		int framesToRender = 512;
+		if(!repeat_one && framesToRender > totalFrames - framesRead)
+			framesToRender = (int)(totalFrames - framesRead);
+		if(framesToRender > frames - total)
+			framesToRender = frames - total;
+
+		int32_t *sampleBuf = (int32_t *)buf + total * 2;
+
+		playptmod_Render(ptmod, sampleBuf, framesToRender);
+
+		if(!repeat_one && framesRead + framesToRender > framesLength) {
+			long fadeStart = (framesLength > framesRead) ? framesLength : framesRead;
+			long fadeEnd = (framesRead + framesToRender < totalFrames) ? framesRead + framesToRender : totalFrames;
+			const long fadeTotal = totalFrames - framesLength;
+			for(long fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
+				const long scale = (fadeTotal - (fadePos - framesLength));
+				const long offset = fadePos - framesRead;
+				int32_t *samples = sampleBuf + offset * 2;
+				samples[0] = (int32_t)(samples[0] * scale / fadeTotal);
+				samples[1] = (int32_t)(samples[1] * scale / fadeTotal);
+			}
+
+			framesToRender = (int)(fadeEnd - framesRead);
+		}
+
+		if(!framesToRender)
+			break;
+
+		total += framesToRender;
+		framesRead += framesToRender;
+	}
+
+	for(int i = 0; i < total; ++i) {
+		int32_t *sampleIn = (int32_t *)buf + i * 2;
+		float *sampleOut = (float *)buf + i * 2;
+		sampleOut[0] = sampleIn[0] * (1.0f / 16777216.0f);
+		sampleOut[1] = sampleIn[1] * (1.0f / 16777216.0f);
+	}
+
+	return total;
 }
 
-- (long)seek:(long)frame
-{
-    if ( frame < framesRead || !ptmod )
-    {
-        [self decoderShutdown];
-        if ( ![self decoderInitialize] )
-            return 0;
-    }
+- (long)seek:(long)frame {
+	if(frame < framesRead || !ptmod) {
+		[self decoderShutdown];
+		if(![self decoderInitialize])
+			return 0;
+	}
 
-    while ( framesRead < frame )
-    {
-        int frames_todo = INT_MAX;
-        if ( frames_todo > frame - framesRead )
-            frames_todo = (int)( frame - framesRead );
-        playptmod_Render( ptmod, NULL, frames_todo );
-        framesRead += frames_todo;
-    }
-    
-    framesRead = frame;
-    
-    return frame;
+	while(framesRead < frame) {
+		int frames_todo = INT_MAX;
+		if(frames_todo > frame - framesRead)
+			frames_todo = (int)(frame - framesRead);
+		playptmod_Render(ptmod, NULL, frames_todo);
+		framesRead += frames_todo;
+	}
+
+	framesRead = frame;
+
+	return frame;
 }
 
-- (void)close
-{
-    [self decoderShutdown];
-	
-    if (data) {
-        if (isMo3) freeMo3( data );
-        else free( data );
-        data = NULL;
-    }
+- (void)close {
+	[self decoderShutdown];
+
+	if(data) {
+		if(isMo3)
+			freeMo3(data);
+		else
+			free(data);
+		data = NULL;
+	}
 }
 
-- (void)dealloc
-{
-    [self close];
+- (void)dealloc {
+	[self close];
 }
 
-+ (NSArray *)fileTypes
-{	
++ (NSArray *)fileTypes {
 	return [NSArray arrayWithObjects:@"mod", @"mdz", @"stk", @"m15", @"fst", @"mo3", @"umx", nil];
 }
 
-+ (NSArray *)mimeTypes 
-{	
++ (NSArray *)mimeTypes {
 	return [NSArray arrayWithObjects:@"audio/x-mod", nil];
 }
 
-+ (float)priority
-{
-    return 1.5;
++ (float)priority {
+	return 1.5;
 }
 
 @end

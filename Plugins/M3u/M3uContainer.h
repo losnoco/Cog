@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface M3uContainer : NSObject <CogContainer> {
-
 }
 
 @end

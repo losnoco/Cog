@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface libvgmContainer : NSObject <CogContainer> {
-
 }
 
 @end

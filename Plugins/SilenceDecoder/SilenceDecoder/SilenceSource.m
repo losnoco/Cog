@@ -8,59 +8,47 @@
 
 #import "SilenceSource.h"
 
-
 @implementation SilenceSource
 
-- (BOOL)open:(NSURL *)url
-{
+- (BOOL)open:(NSURL *)url {
 	[self setURL:url];
-    
+
 	return YES;
 }
 
-- (BOOL)seekable
-{
+- (BOOL)seekable {
 	return YES;
 }
 
-- (BOOL)seek:(long)position whence:(int)whence
-{
-    return YES;
+- (BOOL)seek:(long)position whence:(int)whence {
+	return YES;
 }
 
-- (long)tell
-{
-    return 0;
+- (long)tell {
+	return 0;
 }
 
-- (long)read:(void *)buffer amount:(long)amount
-{
-    memset(buffer, 0, amount);
-    return amount;
+- (long)read:(void *)buffer amount:(long)amount {
+	memset(buffer, 0, amount);
+	return amount;
 }
 
-- (void)close
-{
+- (void)close {
 }
 
-- (NSURL *)url
-{
+- (NSURL *)url {
 	return _url;
 }
 
-- (NSString *)mimeType
-{
+- (NSString *)mimeType {
 	return @"audio/x-silence";
 }
 
-- (void)setURL:(NSURL *)url
-{
+- (void)setURL:(NSURL *)url {
 	_url = url;
 }
 
-
-+ (NSArray *)schemes
-{
++ (NSArray *)schemes {
 	return @[@"silence"];
 }
 

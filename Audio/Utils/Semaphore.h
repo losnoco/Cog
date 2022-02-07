@@ -13,10 +13,10 @@
 	semaphore_t semaphore;
 }
 
--(id)init;
--(void)signal;
--(void)timedWait:(int)microseconds;
--(void)wait;
--(void)waitIndefinitely;
+- (id)init;
+- (void)signal;
+- (void)timedWait:(int)microseconds;
+- (void)wait;
+- (void)waitIndefinitely;
 
 @end

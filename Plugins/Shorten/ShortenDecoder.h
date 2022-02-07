@@ -11,13 +11,12 @@
 
 #import "Plugin.h"
 
-@interface ShortenDecoder : NSObject <CogDecoder>
-{
-	//shn_file *handle;
+@interface ShortenDecoder : NSObject <CogDecoder> {
+	// shn_file *handle;
 	shn_reader *decoder;
-	
-	long bufferSize; //total size
-	
+
+	long bufferSize; // total size
+
 	int channels;
 	int bitsPerSample;
 	float frequency;

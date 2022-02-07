@@ -15,88 +15,84 @@
 
 @implementation OMPTMetadataReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [OMPTDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [OMPTDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return 1.0f;
++ (float)priority {
+	return 1.0f;
 }
 
-+ (NSDictionary *)metadataForURL:(NSURL *)url
-{
-    id audioSourceClass = NSClassFromString(@"AudioSource");
-    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
-    
-    if (![source open:url])
-        return 0;
-    
-    if (![source seekable])
-        return 0;
++ (NSDictionary *)metadataForURL:(NSURL *)url {
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
-    [source seek:0 whence:SEEK_END];
-    long size = [source tell];
-    [source seek:0 whence:SEEK_SET];
-    
-    std::vector<char> data( static_cast<std::size_t>( size ) );
+	if(![source open:url])
+		return 0;
 
-    [source read:data.data() amount:size];
+	if(![source seekable])
+		return 0;
 
-    int track_num;
-    if ([[url fragment] length] == 0)
-        track_num = 0;
-    else
-        track_num = [[url fragment] intValue];
+	[source seek:0 whence:SEEK_END];
+	long size = [source tell];
+	[source seek:0 whence:SEEK_SET];
 
-    try {
-        std::map< std::string, std::string > ctls;
-        openmpt::module * mod = new openmpt::module( data, std::clog, ctls );
-    
-        NSString * title = nil;
-        NSString * artist = nil;
-        //NSString * comment = nil;
-        NSString * date = nil;
-        NSString * type = nil;
-        
-        std::vector<std::string> keys = mod->get_metadata_keys();
-        
-        for ( std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key ) {
-            if ( *key == "title" )
-                title = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];
-            else if ( *key == "artist" )
-                artist = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];
-            /*else if ( *key == "message" )
-                comment = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];*/
-            else if ( *key == "date" )
-                date = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];
-            else if ( *key == "type_long" )
-                type = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];
-        }
-        
-        delete mod;
-        
-        if (title == nil)
-            title = @"";
-        if (artist == nil)
-            artist = @"";
-        /*if (comment == nil)
-            comment = @"";*/
-        if (date == nil)
-            date = @"";
-        if (type == nil)
-            type = @"";
-        
-        return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", /*comment, @"comment",*/ date, @"year", type, @"codec", nil];
-    } catch (std::exception & /*e*/) {
-        return 0;
-    }
+	std::vector<char> data(static_cast<std::size_t>(size));
+
+	[source read:data.data() amount:size];
+
+	int track_num;
+	if([[url fragment] length] == 0)
+		track_num = 0;
+	else
+		track_num = [[url fragment] intValue];
+
+	try {
+		std::map<std::string, std::string> ctls;
+		openmpt::module *mod = new openmpt::module(data, std::clog, ctls);
+
+		NSString *title = nil;
+		NSString *artist = nil;
+		// NSString * comment = nil;
+		NSString *date = nil;
+		NSString *type = nil;
+
+		std::vector<std::string> keys = mod->get_metadata_keys();
+
+		for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
+			if(*key == "title")
+				title = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+			else if(*key == "artist")
+				artist = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+			/*else if ( *key == "message" )
+			    comment = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];*/
+			else if(*key == "date")
+				date = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+			else if(*key == "type_long")
+				type = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+		}
+
+		delete mod;
+
+		if(title == nil)
+			title = @"";
+		if(artist == nil)
+			artist = @"";
+		/*if (comment == nil)
+		    comment = @"";*/
+		if(date == nil)
+			date = @"";
+		if(type == nil)
+			type = @"";
+
+		return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", /*comment, @"comment",*/ date, @"year", type, @"codec", nil];
+	} catch(std::exception & /*e*/) {
+		return 0;
+	}
 }
 
 @end

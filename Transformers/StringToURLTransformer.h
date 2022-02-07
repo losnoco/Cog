@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-
-@interface StringToURLTransformer: NSValueTransformer {}
+@interface StringToURLTransformer : NSValueTransformer {
+}
 @end
-

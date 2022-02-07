@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface GameMetadataReader : NSObject <CogMetadataReader> {
-
 }
 
 @end

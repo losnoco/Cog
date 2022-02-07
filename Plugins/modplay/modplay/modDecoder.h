@@ -18,23 +18,22 @@
 
 #import "Plugin.h"
 
-enum
-{
-    TYPE_UNKNOWN = 0,
-    TYPE_S3M = 1,
-    TYPE_XM = 2
+enum {
+	TYPE_UNKNOWN = 0,
+	TYPE_S3M = 1,
+	TYPE_XM = 2
 };
 
 @interface modDecoder : NSObject <CogDecoder> {
-    uint32_t type;
+	uint32_t type;
 	void *player;
-    void *data;
-    long size;
-    int dataWasMo3;
-    int track_num;
-    
+	void *data;
+	long size;
+	int dataWasMo3;
+	int track_num;
+
 	long framesLength;
-    long totalFrames;
-    long framesRead;
+	long totalFrames;
+	long framesRead;
 }
 @end

@@ -9,10 +9,10 @@
 #import <AssertMacros.h>
 #import <Cocoa/Cocoa.h>
 
-#import <CoreAudio/AudioHardware.h>
+#import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
-#import <AVFoundation/AVFoundation.h>
+#import <CoreAudio/AudioHardware.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
 #import <stdatomic.h>
@@ -29,46 +29,46 @@
 @class OutputNode;
 
 @interface OutputCoreAudio : NSObject {
-	OutputNode * outputController;
-    
-    Semaphore * writeSemaphore;
-    Semaphore * readSemaphore;
-    
-    BOOL stopInvoked;
-    BOOL running;
-    BOOL stopping;
-    BOOL stopped;
-    BOOL started;
-    BOOL paused;
-    BOOL stopNext;
-    
-    BOOL eqEnabled;
-    
-    BOOL streamFormatStarted;
-    
-    atomic_long bytesRendered;
-    atomic_long bytesHdcdSustained;
-    
-    BOOL listenerapplied;
-    BOOL observersapplied;
-    
-    float volume;
-    
-    AVAudioFormat *_deviceFormat;
+	OutputNode *outputController;
 
-    AudioDeviceID outputDeviceID;
-    AudioStreamBasicDescription deviceFormat;    // info about the default device
-    AudioStreamBasicDescription streamFormat;    // stream format last seen in render callback
+	Semaphore *writeSemaphore;
+	Semaphore *readSemaphore;
 
-    AUAudioUnit *_au;
-    size_t _bufferSize;
-    
-    AudioUnit _eq;
-    
-    DownmixProcessor * downmixer;
-    
+	BOOL stopInvoked;
+	BOOL running;
+	BOOL stopping;
+	BOOL stopped;
+	BOOL started;
+	BOOL paused;
+	BOOL stopNext;
+
+	BOOL eqEnabled;
+
+	BOOL streamFormatStarted;
+
+	atomic_long bytesRendered;
+	atomic_long bytesHdcdSustained;
+
+	BOOL listenerapplied;
+	BOOL observersapplied;
+
+	float volume;
+
+	AVAudioFormat *_deviceFormat;
+
+	AudioDeviceID outputDeviceID;
+	AudioStreamBasicDescription deviceFormat; // info about the default device
+	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
+
+	AUAudioUnit *_au;
+	size_t _bufferSize;
+
+	AudioUnit _eq;
+
+	DownmixProcessor *downmixer;
+
 #ifdef OUTPUT_LOG
-    FILE *_logFile;
+	FILE *_logFile;
 #endif
 }
 
@@ -82,7 +82,7 @@
 - (void)resume;
 - (void)stop;
 
-- (void)setVolume:(double) v;
+- (void)setVolume:(double)v;
 
 - (void)setEqualizerEnabled:(BOOL)enabled;
 

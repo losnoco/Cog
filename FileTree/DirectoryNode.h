@@ -6,11 +6,10 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "PathNode.h"
+#import <Cocoa/Cocoa.h>
 
-@interface DirectoryNode : PathNode
-{
+@interface DirectoryNode : PathNode {
 }
 
 @end

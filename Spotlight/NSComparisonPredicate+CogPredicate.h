@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface NSComparisonPredicate (CogPredicate)
 
 + (NSPredicate*)predicateForMdKey:(NSString*)key

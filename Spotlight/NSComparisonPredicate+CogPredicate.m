@@ -9,25 +9,24 @@
 #import "NSComparisonPredicate+CogPredicate.h"
 
 // Ignore case and diacritics
-static const unsigned OPTIONS = (NSCaseInsensitivePredicateOption|
+static const unsigned OPTIONS = (NSCaseInsensitivePredicateOption |
                                  NSDiacriticInsensitivePredicateOption);
 
 @implementation NSComparisonPredicate (CogPredicate)
 
-+ (NSPredicate*)predicateForMdKey:(NSString *)key
-                       withString:(NSString *)aString
-                      exactString:(BOOL)exactString
-{
-    // We don't want an exact string, so wrap it in wildcards
-    if(!exactString)
-        aString = [NSString stringWithFormat:@"*%@*", aString];
-        
-    return [NSComparisonPredicate
-        predicateWithLeftExpression:[NSExpression expressionForKeyPath:key]
-                    rightExpression:[NSExpression expressionForConstantValue:aString]
-                           modifier:NSDirectPredicateModifier
-                               type:NSLikePredicateOperatorType
-                            options:OPTIONS];
++ (NSPredicate *)predicateForMdKey:(NSString *)key
+                        withString:(NSString *)aString
+                       exactString:(BOOL)exactString {
+	// We don't want an exact string, so wrap it in wildcards
+	if(!exactString)
+		aString = [NSString stringWithFormat:@"*%@*", aString];
+
+	return [NSComparisonPredicate
+	predicateWithLeftExpression:[NSExpression expressionForKeyPath:key]
+	            rightExpression:[NSExpression expressionForConstantValue:aString]
+	                   modifier:NSDirectPredicateModifier
+	                       type:NSLikePredicateOperatorType
+	                    options:OPTIONS];
 }
 
 @end

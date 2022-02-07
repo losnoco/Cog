@@ -18,61 +18,56 @@
 
 @implementation AdPlugMetadataReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [AdPlugDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [AdPlugDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return [AdPlugDecoder priority];
++ (float)priority {
+	return [AdPlugDecoder priority];
 }
 
-+ (NSDictionary *)metadataForURL:(NSURL *)url
-{
-    id audioSourceClass = NSClassFromString(@"AudioSource");
-    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
-    
-    if (![source open:url])
-        return 0;
-    
-    if (![source seekable])
-        return 0;
++ (NSDictionary *)metadataForURL:(NSURL *)url {
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
-    Copl * p_emu = new CSilentopl;
-    
-    NSString * path = [url absoluteString];
-    NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
-    if (fragmentRange.location != NSNotFound) {
-        path = [path substringToIndex:fragmentRange.location];
-    }
-    
-    std::string _path = [[path stringByRemovingPercentEncoding] UTF8String];
-    CPlayer * p_player = CAdPlug::factory(_path, p_emu, CAdPlug::players, CProvider_cog( _path, source ));
-    
-    if ( !p_player )
-    {
-        delete p_emu;
-        return 0;
-    }
+	if(![source open:url])
+		return 0;
 
-    NSString * title = @"";
-    NSString * artist = @"";
-    
-    if ( !p_player->gettitle().empty() )
-        title = [NSString stringWithUTF8String: p_player->gettitle().c_str()];
-    if ( !p_player->getauthor().empty() )
-        artist = [NSString stringWithUTF8String: p_player->getauthor().c_str()];
+	if(![source seekable])
+		return 0;
 
-    delete p_player;
-    delete p_emu;
+	Copl *p_emu = new CSilentopl;
 
-    return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", nil];
+	NSString *path = [url absoluteString];
+	NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
+	if(fragmentRange.location != NSNotFound) {
+		path = [path substringToIndex:fragmentRange.location];
+	}
+
+	std::string _path = [[path stringByRemovingPercentEncoding] UTF8String];
+	CPlayer *p_player = CAdPlug::factory(_path, p_emu, CAdPlug::players, CProvider_cog(_path, source));
+
+	if(!p_player) {
+		delete p_emu;
+		return 0;
+	}
+
+	NSString *title = @"";
+	NSString *artist = @"";
+
+	if(!p_player->gettitle().empty())
+		title = [NSString stringWithUTF8String:p_player->gettitle().c_str()];
+	if(!p_player->getauthor().empty())
+		artist = [NSString stringWithUTF8String:p_player->getauthor().c_str()];
+
+	delete p_player;
+	delete p_emu;
+
+	return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", nil];
 }
 
 @end

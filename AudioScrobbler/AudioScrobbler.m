@@ -28,128 +28,117 @@
 // ========================================
 // Symbolic Constants
 // ========================================
-NSString * const	AudioScrobblerRunLoopMode			= @"org.cogx.Cog.AudioScrobbler.RunLoopMode";
+NSString *const AudioScrobblerRunLoopMode = @"org.cogx.Cog.AudioScrobbler.RunLoopMode";
 
 // ========================================
 // Helpers
 // ========================================
-static NSString * 
-escapeForLastFM(NSString *string)
-{
+static NSString *
+escapeForLastFM(NSString *string) {
 	NSMutableString *result = [string mutableCopy];
-	
-	[result replaceOccurrencesOfString:@"&" 
-							withString:@"&&" 
-							   options:NSLiteralSearch 
-								 range:NSMakeRange(0, [result length])];
-	
+
+	[result replaceOccurrencesOfString:@"&"
+	                        withString:@"&&"
+	                           options:NSLiteralSearch
+	                             range:NSMakeRange(0, [result length])];
+
 	return (nil == result ? @"" : result);
 }
 
 @interface AudioScrobbler (Private)
 
-- (NSMutableArray *)	queue;
-- (NSString *)			pluginID;
+- (NSMutableArray *)queue;
+- (NSString *)pluginID;
 
-- (void)				sendCommand:(NSString *)command;
+- (void)sendCommand:(NSString *)command;
 
-- (BOOL)				keepProcessingAudioScrobblerCommands;
-- (void)				setKeepProcessingAudioScrobblerCommands:(BOOL)keepProcessingAudioScrobblerCommands;
+- (BOOL)keepProcessingAudioScrobblerCommands;
+- (void)setKeepProcessingAudioScrobblerCommands:(BOOL)keepProcessingAudioScrobblerCommands;
 
-- (BOOL)				audioScrobblerThreadCompleted;
-- (void)				setAudioScrobblerThreadCompleted:(BOOL)audioScrobblerThreadCompleted;
+- (BOOL)audioScrobblerThreadCompleted;
+- (void)setAudioScrobblerThreadCompleted:(BOOL)audioScrobblerThreadCompleted;
 
-- (semaphore_t)			semaphore;
+- (semaphore_t)semaphore;
 
-- (void)				processAudioScrobblerCommands:(id)unused;
+- (void)processAudioScrobblerCommands:(id)unused;
 
 @end
 
 @implementation AudioScrobbler
 
-+ (BOOL) isRunning
-{
-    NSArray *launchedApps = [[NSWorkspace sharedWorkspace] runningApplications];
-    BOOL running = NO;
-    for(NSRunningApplication *app in launchedApps) {
-        if([[app bundleIdentifier] isEqualToString:@"fm.last.Last.fm"] ||
-           [[app bundleIdentifier] isEqualToString:@"fm.last.Scrobbler"]) {
-            running = YES;
-            break;
-        }
-    }
-    return running;
++ (BOOL)isRunning {
+	NSArray *launchedApps = [[NSWorkspace sharedWorkspace] runningApplications];
+	BOOL running = NO;
+	for(NSRunningApplication *app in launchedApps) {
+		if([[app bundleIdentifier] isEqualToString:@"fm.last.Last.fm"] ||
+		   [[app bundleIdentifier] isEqualToString:@"fm.last.Scrobbler"]) {
+			running = YES;
+			break;
+		}
+	}
+	return running;
 }
 
-- (id) init
-{
+- (id)init {
 	if((self = [super init])) {
-
 		_pluginID = @"cog";
-        
+
 		if([[NSUserDefaults standardUserDefaults] boolForKey:@"automaticallyLaunchLastFM"]) {
-                        
-            if(![AudioScrobbler isRunning]) {
-                [[NSWorkspace sharedWorkspace] launchApplication:@"Last.fm.app"];
-            }
-        }
-        
+			if(![AudioScrobbler isRunning]) {
+				[[NSWorkspace sharedWorkspace] launchApplication:@"Last.fm.app"];
+			}
+		}
+
 		_keepProcessingAudioScrobblerCommands = YES;
 
 		kern_return_t result = semaphore_create(mach_task_self(), &_semaphore, SYNC_POLICY_FIFO, 0);
-		
+
 		if(KERN_SUCCESS != result) {
 			ALog(@"Couldn't create semaphore (%s).", mach_error_type(result));
 
-            self = nil;
+			self = nil;
 			return nil;
 		}
-		
+
 		[NSThread detachNewThreadSelector:@selector(processAudioScrobblerCommands:) toTarget:self withObject:nil];
 	}
 	return self;
 }
 
-- (void) dealloc
-{
+- (void)dealloc {
 	if([self keepProcessingAudioScrobblerCommands] || NO == [self audioScrobblerThreadCompleted])
 		[self shutdown];
-	
+
 	_queue = nil;
-	
-    semaphore_destroy(mach_task_self(), _semaphore); _semaphore = 0;
+
+	semaphore_destroy(mach_task_self(), _semaphore);
+	_semaphore = 0;
 }
 
-- (void) start:(PlaylistEntry *)pe
-{
-        [self sendCommand:[NSString stringWithFormat:@"START c=%@&a=%@&t=%@&b=%@&m=%@&l=%i&p=%@\n", 
-                [self pluginID],
-                escapeForLastFM([pe artist]), 
-                escapeForLastFM([pe title]), 
-                escapeForLastFM([pe album]), 
-                @"", // TODO: MusicBrainz support
-                [[pe length] intValue],
-                escapeForLastFM([[pe URL] path])
-                ]];
+- (void)start:(PlaylistEntry *)pe {
+	[self sendCommand:[NSString stringWithFormat:@"START c=%@&a=%@&t=%@&b=%@&m=%@&l=%i&p=%@\n",
+	                                             [self pluginID],
+	                                             escapeForLastFM([pe artist]),
+	                                             escapeForLastFM([pe title]),
+	                                             escapeForLastFM([pe album]),
+	                                             @"", // TODO: MusicBrainz support
+	                                             [[pe length] intValue],
+	                                             escapeForLastFM([[pe URL] path])]];
 }
 
-- (void) stop
-{
+- (void)stop {
 	[self sendCommand:[NSString stringWithFormat:@"STOP c=%@\n", [self pluginID]]];
 }
 
-- (void) pause
-{
+- (void)pause {
 	[self sendCommand:[NSString stringWithFormat:@"PAUSE c=%@\n", [self pluginID]]];
 }
 
-- (void) resume
-{
+- (void)resume {
 	[self sendCommand:[NSString stringWithFormat:@"RESUME c=%@\n", [self pluginID]]];
 }
 
-- (void) shutdown
-{
+- (void)shutdown {
 	[self setKeepProcessingAudioScrobblerCommands:NO];
 	semaphore_signal([self semaphore]);
 
@@ -162,119 +151,109 @@ escapeForLastFM(NSString *string)
 
 @implementation AudioScrobbler (Private)
 
-- (NSMutableArray *) queue
-{
+- (NSMutableArray *)queue {
 	if(nil == _queue)
 		_queue = [[NSMutableArray alloc] init];
-	
+
 	return _queue;
 }
 
-- (NSString *) pluginID
-{
+- (NSString *)pluginID {
 	return _pluginID;
 }
 
-- (void) sendCommand:(NSString *)command
-{
+- (void)sendCommand:(NSString *)command {
 	@synchronized([self queue]) {
 		[[self queue] addObject:command];
 	}
 	semaphore_signal([self semaphore]);
 }
 
-- (BOOL) keepProcessingAudioScrobblerCommands
-{
+- (BOOL)keepProcessingAudioScrobblerCommands {
 	return _keepProcessingAudioScrobblerCommands;
 }
 
-- (void) setKeepProcessingAudioScrobblerCommands:(BOOL)keepProcessingAudioScrobblerCommands
-{
+- (void)setKeepProcessingAudioScrobblerCommands:(BOOL)keepProcessingAudioScrobblerCommands {
 	_keepProcessingAudioScrobblerCommands = keepProcessingAudioScrobblerCommands;
 }
 
-- (BOOL) audioScrobblerThreadCompleted
-{
+- (BOOL)audioScrobblerThreadCompleted {
 	return _audioScrobblerThreadCompleted;
 }
 
-- (void) setAudioScrobblerThreadCompleted:(BOOL)audioScrobblerThreadCompleted
-{
+- (void)setAudioScrobblerThreadCompleted:(BOOL)audioScrobblerThreadCompleted {
 	_audioScrobblerThreadCompleted = audioScrobblerThreadCompleted;
 }
 
-- (semaphore_t) semaphore
-{
+- (semaphore_t)semaphore {
 	return _semaphore;
 }
 
-- (void) processAudioScrobblerCommands:(id)unused
-{
-    @autoreleasepool {
-        AudioScrobblerClient	*client				= [[AudioScrobblerClient alloc] init];
-        mach_timespec_t			timeout				= { 5, 0 };
-        NSString				*command			= nil;
-        NSString				*response			= nil;
-        in_port_t				port				= 33367;
-	
-        while([self keepProcessingAudioScrobblerCommands]) {
-            @autoreleasepool {
+- (void)processAudioScrobblerCommands:(id)unused {
+	@autoreleasepool {
+		AudioScrobblerClient *client = [[AudioScrobblerClient alloc] init];
+		mach_timespec_t timeout = { 5, 0 };
+		NSString *command = nil;
+		NSString *response = nil;
+		in_port_t port = 33367;
 
-                // Get the first command to be sent
-                @synchronized([self queue]) {
-                    if ([[self queue] count]) {
-                        command     = [[self queue] objectAtIndex:0];
-                        [[self queue] removeObjectAtIndex:0];
-                    }
-                }
+		while([self keepProcessingAudioScrobblerCommands]) {
+			@autoreleasepool {
+				// Get the first command to be sent
+				@synchronized([self queue]) {
+					if([[self queue] count]) {
+						command = [[self queue] objectAtIndex:0];
+						[[self queue] removeObjectAtIndex:0];
+					}
+				}
 
-                if(nil != command) { 
-                    @try {
-                        if([client connectToHost:@"localhost" port:port]) {
-                            port = [client connectedPort];
-                            [client send:command];
-                            command = nil;
-					
-                            response = [client receive];
-                            if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
-                                ALog(@"AudioScrobbler error: %@", response);
-					
-                            [client shutdown];
-                        }
-                    }
-			
-                    @catch(NSException *exception) {
-                        command = nil;
-                
-                        [client shutdown];
-//                      ALog(@"Exception: %@",exception);
-                        continue;
-                    }
-                }
-		
-                semaphore_timedwait([self semaphore], timeout);
-            }
-        }
-	
-        // Send a final stop command to cleanup
-        @try {
-            if([client connectToHost:@"localhost" port:port]) {
-                [client send:[NSString stringWithFormat:@"STOP c=%@\n", [self pluginID]]];
-			
-                response = [client receive];
-                if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0,2)])
-                    ALog(@"AudioScrobbler error: %@", response);
-			
-                [client shutdown];
-            }
-        }
-	
-        @catch(NSException *exception) {
-            [client shutdown];
-        }
-	
-        [self setAudioScrobblerThreadCompleted:YES];
-    }
+				if(nil != command) {
+					@try {
+						if([client connectToHost:@"localhost" port:port]) {
+							port = [client connectedPort];
+							[client send:command];
+							command = nil;
+
+							response = [client receive];
+							if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0, 2)])
+								ALog(@"AudioScrobbler error: %@", response);
+
+							[client shutdown];
+						}
+					}
+
+					@catch(NSException *exception) {
+						command = nil;
+
+						[client shutdown];
+						//                      ALog(@"Exception: %@",exception);
+						continue;
+					}
+				}
+
+				semaphore_timedwait([self semaphore], timeout);
+			}
+		}
+
+		// Send a final stop command to cleanup
+		@try {
+			if([client connectToHost:@"localhost" port:port]) {
+				[client send:[NSString stringWithFormat:@"STOP c=%@\n", [self pluginID]]];
+
+				response = [client receive];
+				if(2 > [response length] || NSOrderedSame != [response compare:@"OK" options:NSLiteralSearch range:NSMakeRange(0, 2)])
+					ALog(@"AudioScrobbler error: %@", response);
+
+				[client shutdown];
+			}
+		}
+
+		@catch(NSException *exception) {
+			[client shutdown];
+		}
+
+		[self setAudioScrobblerThreadCompleted:YES];
+	}
 }
 
 @end

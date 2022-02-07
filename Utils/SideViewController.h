@@ -6,8 +6,8 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "PlaylistController.h"
+#import <Cocoa/Cocoa.h>
 
 @interface SideViewController : NSViewController {
 	IBOutlet NSSplitView *splitView;

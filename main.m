@@ -8,9 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	srandom((unsigned int)time(NULL));
-	
-    return NSApplicationMain(argc,  (const char **) argv);
+
+	return NSApplicationMain(argc, (const char **)argv);
 }

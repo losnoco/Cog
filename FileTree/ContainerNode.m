@@ -15,23 +15,20 @@
 
 @implementation ContainerNode
 
-- (BOOL)isLeaf
-{
+- (BOOL)isLeaf {
 	return NO;
 }
 
-- (void)updatePath
-{
+- (void)updatePath {
 	NSArray *urls = [AudioContainer urlsForContainerURL:url];
-	
+
 	NSMutableArray *paths = [[NSMutableArray alloc] init];
-	for (NSURL *u in urls)
-	{
+	for(NSURL *u in urls) {
 		ContainedNode *node = [[ContainedNode alloc] initWithDataSource:dataSource url:u];
 		DLog(@"Node: %@", u);
 		[paths addObject:node];
 	}
-	
+
 	[self setSubpaths:paths];
 }
 

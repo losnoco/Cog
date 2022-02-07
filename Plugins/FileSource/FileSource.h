@@ -12,15 +12,14 @@
 
 #import "Plugin.h"
 
-@interface FileSource : NSObject <CogSource>
-{
-    fex_t *fex;
-    const void *data;
-    NSUInteger offset;
-    NSUInteger size;
-    
+@interface FileSource : NSObject <CogSource> {
+	fex_t *fex;
+	const void *data;
+	NSUInteger offset;
+	NSUInteger size;
+
 	FILE *_fd;
-	
+
 	NSURL *_url;
 }
 

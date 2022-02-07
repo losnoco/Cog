@@ -8,22 +8,22 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <CoreAudio/AudioHardware.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
+#import <CoreAudio/AudioHardware.h>
 
 #import "Node.h"
 #import "OutputCoreAudio.h"
 
 @interface OutputNode : Node {
 	AudioStreamBasicDescription format;
-	
+
 	double amountPlayed;
-    double sampleRatio;
+	double sampleRatio;
 	OutputCoreAudio *output;
-    
-    BOOL paused;
-    BOOL started;
+
+	BOOL paused;
+	BOOL started;
 }
 
 - (void)beginEqualizer:(AudioUnit)eq;
@@ -49,9 +49,9 @@
 - (AudioChunk *)readChunk:(size_t)amount;
 
 - (void)setFormat:(AudioStreamBasicDescription *)f;
-- (AudioStreamBasicDescription) format;
+- (AudioStreamBasicDescription)format;
 
-- (void)setVolume:(double) v;
+- (void)setVolume:(double)v;
 
 - (void)setShouldContinue:(BOOL)s;
 

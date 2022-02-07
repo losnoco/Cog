@@ -11,35 +11,30 @@
 
 @implementation GamePropertiesReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [GameDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [GameDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return [GameDecoder priority];
++ (float)priority {
+	return [GameDecoder priority];
 }
 
-+ (NSDictionary *)propertiesForSource:(id<CogSource>)source
-{
-    GameDecoder * decoder = [[GameDecoder alloc] init];
-    
-    NSDictionary * properties = [NSDictionary dictionary];
-    
-    if ([decoder open:source])
-    {
-        properties = [decoder properties];
-        
-        [decoder close];
-    }
-    
-    return properties;
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source {
+	GameDecoder *decoder = [[GameDecoder alloc] init];
+
+	NSDictionary *properties = [NSDictionary dictionary];
+
+	if([decoder open:source]) {
+		properties = [decoder properties];
+
+		[decoder close];
+	}
+
+	return properties;
 }
 
 @end

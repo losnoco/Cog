@@ -17,97 +17,86 @@
 enum { sample_rate = 44100 };
 enum { channels = 2 };
 
-- (BOOL)open:(id<CogSource>)s
-{
-    [self setSource:s];
-    
-    NSString * path = [[[s url] relativeString] substringFromIndex:10];
-    
-    int seconds = [path intValue];
-    if (!seconds) seconds = 10;
-    
-    length = seconds * sample_rate;
-    remain = length;
-    
-    [self willChangeValueForKey:@"properties"];
+- (BOOL)open:(id<CogSource>)s {
+	[self setSource:s];
+
+	NSString *path = [[[s url] relativeString] substringFromIndex:10];
+
+	int seconds = [path intValue];
+	if(!seconds) seconds = 10;
+
+	length = seconds * sample_rate;
+	remain = length;
+
+	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
 	return YES;
 }
 
-- (NSDictionary *)properties
-{
+- (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSNumber numberWithInt:0], @"bitrate",
-		[NSNumber numberWithFloat:sample_rate], @"sampleRate",
-		[NSNumber numberWithDouble:length], @"totalFrames",
-		[NSNumber numberWithInt:32], @"bitsPerSample",
-        [NSNumber numberWithBool:YES], @"floatingPoint",
-		[NSNumber numberWithInt:channels], @"channels",
-		[NSNumber numberWithBool:YES], @"seekable",
-		@"host", @"endian",
-        @"synthesized", @"encoding",
-		nil];
+	                     [NSNumber numberWithInt:0], @"bitrate",
+	                     [NSNumber numberWithFloat:sample_rate], @"sampleRate",
+	                     [NSNumber numberWithDouble:length], @"totalFrames",
+	                     [NSNumber numberWithInt:32], @"bitsPerSample",
+	                     [NSNumber numberWithBool:YES], @"floatingPoint",
+	                     [NSNumber numberWithInt:channels], @"channels",
+	                     [NSNumber numberWithBool:YES], @"seekable",
+	                     @"host", @"endian",
+	                     @"synthesized", @"encoding",
+	                     nil];
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames
-{
-    int total = frames;
-    
-    if (!IsRepeatOneSet())
-    {
-        if (total > remain)
-            total = (int)remain;
-    
-        remain -= total;
-    }
-    
-    memset(buf, 0, sizeof(float) * total * channels);
-    
-    return total;
+- (int)readAudio:(void *)buf frames:(UInt32)frames {
+	int total = frames;
+
+	if(!IsRepeatOneSet()) {
+		if(total > remain)
+			total = (int)remain;
+
+		remain -= total;
+	}
+
+	memset(buf, 0, sizeof(float) * total * channels);
+
+	return total;
 }
 
-- (long)seek:(long)frame
-{
-    if (frame > length)
-        frame = length;
-    
-    remain = length - frame;
-   
-    return frame;
+- (long)seek:(long)frame {
+	if(frame > length)
+		frame = length;
+
+	remain = length - frame;
+
+	return frame;
 }
 
-- (void)close
-{
+- (void)close {
 }
 
-- (void)setSource:(id<CogSource>)s
-{
+- (void)setSource:(id<CogSource>)s {
 	source = s;
 }
 
-- (id<CogSource>)source
-{
+- (id<CogSource>)source {
 	return source;
 }
 
-+ (NSArray *)fileTypes 
-{	
++ (NSArray *)fileTypes {
 	return @[];
 }
 
-+ (NSArray *)mimeTypes 
-{	
++ (NSArray *)mimeTypes {
 	return @[@"audio/x-silence"];
 }
 
-+ (float)priority
-{
-    return 1.0;
++ (float)priority {
+	return 1.0;
 }
 
 + (NSArray *)fileTypeAssociations {
-    return @[];
+	return @[];
 }
 
 @end

@@ -6,9 +6,9 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
+#import "DNDArrayController.h"
 #import <Cocoa/Cocoa.h>
 #import <Foundation/NSUndoManager.h>
-#import "DNDArrayController.h"
 
 @class PlaylistLoader;
 @class PlaylistEntry;
@@ -16,60 +16,62 @@
 @class PlaybackController;
 
 typedef NS_ENUM(NSInteger, RepeatMode) {
-    RepeatModeNoRepeat = 0,
-    RepeatModeRepeatOne,
-    RepeatModeRepeatAlbum,
-    RepeatModeRepeatAll
+	RepeatModeNoRepeat = 0,
+	RepeatModeRepeatOne,
+	RepeatModeRepeatAlbum,
+	RepeatModeRepeatAll
 };
 
 static inline BOOL IsRepeatOneSet() {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatModeRepeatOne;
+	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatModeRepeatOne;
 }
 
-typedef enum { ShuffleOff = 0, ShuffleAlbums, ShuffleAll } ShuffleMode;
+typedef enum { ShuffleOff = 0,
+	           ShuffleAlbums,
+	           ShuffleAll } ShuffleMode;
 
 typedef NS_ENUM(NSInteger, URLOrigin) {
-    URLOriginInternal = 0,
-    URLOriginExternal
+	URLOriginInternal = 0,
+	URLOriginExternal
 };
 
 @interface PlaylistController : DNDArrayController <NSTableViewDelegate> {
-    IBOutlet PlaylistLoader *playlistLoader;
-    IBOutlet SpotlightWindowController *spotlightWindowController;
-    IBOutlet PlaybackController *playbackController;
-    
-    NSValueTransformer * statusImageTransformer;
+	IBOutlet PlaylistLoader *playlistLoader;
+	IBOutlet SpotlightWindowController *spotlightWindowController;
+	IBOutlet PlaybackController *playbackController;
 
-    NSMutableArray *shuffleList;
-    NSMutableArray *queueList;
+	NSValueTransformer *statusImageTransformer;
 
-    NSString *totalTime;
+	NSMutableArray *shuffleList;
+	NSMutableArray *queueList;
 
-    PlaylistEntry *currentEntry;
+	NSString *totalTime;
 
-    NSUndoManager *undoManager;
+	PlaylistEntry *currentEntry;
+
+	NSUndoManager *undoManager;
 }
 
-@property(nonatomic, retain) PlaylistEntry * _Nullable currentEntry;
-@property(retain) NSString * _Nullable totalTime;
+@property(nonatomic, retain) PlaylistEntry *_Nullable currentEntry;
+@property(retain) NSString *_Nullable totalTime;
 
 // Private Methods
 - (void)updateTotalTime;
 - (void)updatePlaylistIndexes;
-- (IBAction)stopAfterCurrent:(id _Nullable )sender;
+- (IBAction)stopAfterCurrent:(id _Nullable)sender;
 
 // PUBLIC METHODS
 - (void)setShuffle:(ShuffleMode)s;
 - (ShuffleMode)shuffle;
 - (void)setRepeat:(RepeatMode)r;
 - (RepeatMode)repeat;
-- (NSArray * _Nullable)filterPlaylistOnAlbum:(NSString * _Nullable)album;
+- (NSArray *_Nullable)filterPlaylistOnAlbum:(NSString *_Nullable)album;
 
-- (PlaylistEntry * _Nullable)getNextEntry:(PlaylistEntry * _Nullable)pe;
-- (PlaylistEntry * _Nullable)getPrevEntry:(PlaylistEntry * _Nullable)pe;
+- (PlaylistEntry *_Nullable)getNextEntry:(PlaylistEntry *_Nullable)pe;
+- (PlaylistEntry *_Nullable)getPrevEntry:(PlaylistEntry *_Nullable)pe;
 
 /* Methods for undoing various actions */
-- (NSUndoManager * _Nullable)undoManager;
+- (NSUndoManager *_Nullable)undoManager;
 
 - (IBAction)toggleShuffle:(id _Nullable)sender;
 
@@ -98,25 +100,25 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (void)addShuffledListToFront;
 - (void)resetShuffleList;
 
-- (PlaylistEntry * _Nullable)shuffledEntryAtIndex:(NSInteger)i;
-- (PlaylistEntry * _Nullable)entryAtIndex:(NSInteger)i;
+- (PlaylistEntry *_Nullable)shuffledEntryAtIndex:(NSInteger)i;
+- (PlaylistEntry *_Nullable)entryAtIndex:(NSInteger)i;
 
 // Event inlets:
-- (void)willInsertURLs:(NSArray * _Nullable)urls origin:(URLOrigin)origin;
-- (void)didInsertURLs:(NSArray * _Nullable)urls origin:(URLOrigin)origin;
+- (void)willInsertURLs:(NSArray *_Nullable)urls origin:(URLOrigin)origin;
+- (void)didInsertURLs:(NSArray *_Nullable)urls origin:(URLOrigin)origin;
 
 // queue methods
 - (IBAction)toggleQueued:(id _Nullable)sender;
 - (IBAction)emptyQueueList:(id _Nullable)sender;
 - (void)emptyQueueListUnsynced;
-- (NSMutableArray * _Nullable)queueList;
+- (NSMutableArray *_Nullable)queueList;
 
 // reload metadata of selection
 - (IBAction)reloadTags:(id _Nullable)sender;
 
-- (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet * _Nullable)indexSet
+- (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *_Nullable)indexSet
                                         toIndex:(NSUInteger)insertIndex;
 
-- (void)insertObjectsUnsynced:(NSArray * _Nullable)objects atArrangedObjectIndexes:(NSIndexSet * _Nullable)indexes;
+- (void)insertObjectsUnsynced:(NSArray *_Nullable)objects atArrangedObjectIndexes:(NSIndexSet *_Nullable)indexes;
 
 @end

@@ -11,7 +11,7 @@
 /*
 @interface TagEditorController : NSObject {
 
-	IBOutlet NSWindow* tageditorWindow;
+    IBOutlet NSWindow* tageditorWindow;
 }
 - (id)init;
 - (void)showInfoForURL:(NSURL*)url;

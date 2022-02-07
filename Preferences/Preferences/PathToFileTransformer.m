@@ -10,13 +10,17 @@
 
 @implementation PathToFileTransformer
 
-+ (Class)transformedValueClass { return [NSString class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (Class)transformedValueClass {
+	return [NSString class];
+}
++ (BOOL)allowsReverseTransformation {
+	return NO;
+}
 
 // Convert from string to NSURL
 - (id)transformedValue:(id)value {
-    if (value == nil) return nil;
-    
-    return [value lastPathComponent];
+	if(value == nil) return nil;
+
+	return [value lastPathComponent];
 }
 @end

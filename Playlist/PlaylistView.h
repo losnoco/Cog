@@ -13,11 +13,11 @@
 #import "PlaylistLoader.h"
 
 @interface PlaylistView : NSTableView {
-    IBOutlet PlaybackController *playbackController;
-    IBOutlet PlaylistController *playlistController;
-    IBOutlet PlaylistLoader *playlistLoader;
+	IBOutlet PlaybackController *playbackController;
+	IBOutlet PlaylistController *playlistController;
+	IBOutlet PlaylistLoader *playlistLoader;
 
-    NSMenu *headerContextMenu;
+	NSMenu *headerContextMenu;
 }
 
 - (IBAction)toggleColumn:(id)sender;

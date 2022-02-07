@@ -17,73 +17,64 @@
 
 @implementation CueSheetMetadataReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [CueSheetDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [CueSheetDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return 16.0f;
++ (float)priority {
+	return 16.0f;
 }
 
-+ (NSDictionary *)metadataForURL:(NSURL *)url
-{
-	if (![url isFileURL]) {
++ (NSDictionary *)metadataForURL:(NSURL *)url {
+	if(![url isFileURL]) {
 		return nil;
 	}
-    
-    BOOL embedded = NO;
-    CueSheet *cuesheet = nil;
-    NSDictionary * fileMetadata;
-    
-    Class audioMetadataReader = NSClassFromString(@"AudioMetadataReader");
-    
-    NSString *ext = [url pathExtension];
-    if ([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame)
-    {
-        // Embedded cuesheet check
-        fileMetadata = [audioMetadataReader metadataForURL:url skipCue:YES];
-        NSString * sheet = [fileMetadata objectForKey:@"cuesheet"];
-        if ([sheet length])
-        {
-            cuesheet = [CueSheet cueSheetWithString:sheet withFilename:[url path]];
-            embedded = YES;
-        }
-    }
-    else
-        cuesheet = [CueSheet cueSheetWithFile:[url path]];
-    
-    if (!cuesheet)
-        return nil;
+
+	BOOL embedded = NO;
+	CueSheet *cuesheet = nil;
+	NSDictionary *fileMetadata;
+
+	Class audioMetadataReader = NSClassFromString(@"AudioMetadataReader");
+
+	NSString *ext = [url pathExtension];
+	if([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame) {
+		// Embedded cuesheet check
+		fileMetadata = [audioMetadataReader metadataForURL:url skipCue:YES];
+		NSString *sheet = [fileMetadata objectForKey:@"cuesheet"];
+		if([sheet length]) {
+			cuesheet = [CueSheet cueSheetWithString:sheet withFilename:[url path]];
+			embedded = YES;
+		}
+	} else
+		cuesheet = [CueSheet cueSheetWithFile:[url path]];
+
+	if(!cuesheet)
+		return nil;
 
 	NSArray *tracks = [cuesheet tracks];
-    for (CueSheetTrack *track in tracks)
-	{
-		if ([[url fragment] isEqualToString:[track track]])
-		{
-            // Class supplied by CogAudio, which is guaranteed to be present
-            if (!embedded)
-                fileMetadata = [audioMetadataReader metadataForURL:[track url] skipCue:YES];
-			NSDictionary * cuesheetMetadata = [NSDictionary dictionaryWithObjectsAndKeys:
-				[track artist], @"artist",
-				[track album], @"album",
-				[track title], @"title",
-				[NSNumber numberWithInt:[[track track] intValue]], @"track",
-				[track genre], @"genre",
-				[NSNumber numberWithInt:[[track year] intValue]], @"year",
-                [NSNumber numberWithFloat:[track albumGain]], @"replayGainAlbumGain",
-                [NSNumber numberWithFloat:[track albumPeak]], @"replayGainAlbumPeak",
-                [NSNumber numberWithFloat:[track trackGain]], @"replayGainTrackGain",
-                [NSNumber numberWithFloat:[track trackPeak]], @"replayGainTrackPeak",
-				nil];
-		
-            return [fileMetadata dictionaryByMergingWith:cuesheetMetadata];
+	for(CueSheetTrack *track in tracks) {
+		if([[url fragment] isEqualToString:[track track]]) {
+			// Class supplied by CogAudio, which is guaranteed to be present
+			if(!embedded)
+				fileMetadata = [audioMetadataReader metadataForURL:[track url] skipCue:YES];
+			NSDictionary *cuesheetMetadata = [NSDictionary dictionaryWithObjectsAndKeys:
+			                                               [track artist], @"artist",
+			                                               [track album], @"album",
+			                                               [track title], @"title",
+			                                               [NSNumber numberWithInt:[[track track] intValue]], @"track",
+			                                               [track genre], @"genre",
+			                                               [NSNumber numberWithInt:[[track year] intValue]], @"year",
+			                                               [NSNumber numberWithFloat:[track albumGain]], @"replayGainAlbumGain",
+			                                               [NSNumber numberWithFloat:[track albumPeak]], @"replayGainAlbumPeak",
+			                                               [NSNumber numberWithFloat:[track trackGain]], @"replayGainTrackGain",
+			                                               [NSNumber numberWithFloat:[track trackPeak]], @"replayGainTrackPeak",
+			                                               nil];
+
+			return [fileMetadata dictionaryByMergingWith:cuesheetMetadata];
 		}
 	}
 

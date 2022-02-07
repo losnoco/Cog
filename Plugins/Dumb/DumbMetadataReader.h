@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface DumbMetadataReader : NSObject <CogMetadataReader> {
-
 }
 
 @end

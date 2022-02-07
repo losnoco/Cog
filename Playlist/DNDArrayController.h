@@ -10,24 +10,24 @@ extern NSString *iTunesDropType;
 @property IBOutlet NSTableView *tableView;
 
 // table view drag and drop support
-- (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView
-               pasteboardWriterForRow:(NSInteger)row;
+- (id<NSPasteboardWriting>)tableView:(NSTableView *)tableView
+              pasteboardWriterForRow:(NSInteger)row;
 - (void)tableView:(NSTableView *)tableView
   draggingSession:(NSDraggingSession *)session
  willBeginAtPoint:(NSPoint)screenPoint
     forRowIndexes:(NSIndexSet *)rowIndexes;
 - (NSDragOperation)tableView:(NSTableView *)tableView
-                validateDrop:(id <NSDraggingInfo>)info
+                validateDrop:(id<NSDraggingInfo>)info
                  proposedRow:(NSInteger)row
        proposedDropOperation:(NSTableViewDropOperation)dropOperation;
 - (BOOL)tableView:(NSTableView *)tableView
-       acceptDrop:(id <NSDraggingInfo>)info
+       acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)row
     dropOperation:(NSTableViewDropOperation)dropOperation;
 
 // utility methods
--(void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
-                                       toIndex:(NSUInteger)insertIndex;
+- (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet
+                                        toIndex:(NSUInteger)insertIndex;
 // This is needed to undo the above
 - (void)moveObjectsFromIndex:(NSUInteger)fromIndex
      toArrangedObjectIndexes:(NSIndexSet *)indexSet;

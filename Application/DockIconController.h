@@ -12,15 +12,15 @@
 
 @interface DockIconController : NSObject {
 	NSImage *dockImage;
-	
+
 	IBOutlet PlaybackController *playbackController;
-    
-    NSInteger lastPlaybackStatus;
-    NSInteger lastColorfulStatus;
-    NSNumber *lastProgressStatus;
-    
-    NSImageView *imageView;
-    NSProgressIndicator *progressIndicator;
+
+	NSInteger lastPlaybackStatus;
+	NSInteger lastColorfulStatus;
+	NSNumber *lastProgressStatus;
+
+	NSImageView *imageView;
+	NSProgressIndicator *progressIndicator;
 }
 
 @end

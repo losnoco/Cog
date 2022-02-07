@@ -11,7 +11,7 @@
 
 #import "Plugin.h"
 
-@interface OMPTVersionCheck : NSObject<CogVersionCheck>
+@interface OMPTVersionCheck : NSObject <CogVersionCheck>
 + (BOOL)shouldLoadForOSVersion:(NSOperatingSystemVersion)version;
 @end
 

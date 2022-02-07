@@ -10,31 +10,32 @@
 #import "SpotlightWindowController.h"
 
 // This is what we use instead of an outlet for PausingQueryTransformer
-static SpotlightWindowController * searchController;
+static SpotlightWindowController *searchController;
 
 @implementation PausingQueryTransformer
-+ (Class)transformedValueClass { return [NSArray class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (Class)transformedValueClass {
+	return [NSArray class];
+}
++ (BOOL)allowsReverseTransformation {
+	return NO;
+}
 
-+ (void)setSearchController:(SpotlightWindowController *)aSearchController
-{
-    searchController = aSearchController;
++ (void)setSearchController:(SpotlightWindowController *)aSearchController {
+	searchController = aSearchController;
 }
 
 - (id)transformedValue:(id)value {
-    // Rather unintuitively, this piece of code eliminates the "flicker"
-    // when searching for new results, which resulted from a pause when the
-    // search query stops gathering and sends an empty results array through KVO.
-    if(([value count] > 0) || ([searchController.query isGathering]))
-    {
-        self.oldResults = (NSArray *)value;
-    }
-    return self.oldResults;
+	// Rather unintuitively, this piece of code eliminates the "flicker"
+	// when searching for new results, which resulted from a pause when the
+	// search query stops gathering and sends an empty results array through KVO.
+	if(([value count] > 0) || ([searchController.query isGathering])) {
+		self.oldResults = (NSArray *)value;
+	}
+	return self.oldResults;
 }
 
-- (void)dealloc
-{
-    self.oldResults = nil;
+- (void)dealloc {
+	self.oldResults = nil;
 }
 
 @synthesize oldResults;
@@ -42,65 +43,80 @@ static SpotlightWindowController * searchController;
 @end
 
 @implementation AuthorToArtistTransformer
-+ (Class)transformedValueClass { return [NSString class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (Class)transformedValueClass {
+	return [NSString class];
+}
++ (BOOL)allowsReverseTransformation {
+	return NO;
+}
 - (id)transformedValue:(id)value {
-    return [value objectAtIndex:0];
+	return [value objectAtIndex:0];
 }
 @end
 
 @implementation PathToURLTransformer
 
-+ (Class)transformedValueClass { return [NSURL class]; }
-+ (BOOL)allowsReverseTransformation { return YES; }
++ (Class)transformedValueClass {
+	return [NSURL class];
+}
++ (BOOL)allowsReverseTransformation {
+	return YES;
+}
 
 // Convert from path to NSURL
 - (id)transformedValue:(id)value {
-    if (value == nil) return nil;
+	if(value == nil) return nil;
 
-    return [NSURL fileURLWithPath:value];
+	return [NSURL fileURLWithPath:value];
 }
 
 // Convert from NSURL to path
 - (id)reverseTransformedValue:(id)value {
-    if (value == nil) return nil;
-    
-    return [value path];
+	if(value == nil) return nil;
+
+	return [value path];
 }
 
 @end
 
 @implementation StringToSearchScopeTransformer
 
-+ (Class)transformedValueClass { return [NSArray class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (Class)transformedValueClass {
+	return [NSArray class];
+}
++ (BOOL)allowsReverseTransformation {
+	return NO;
+}
 
 // Convert from URL string to Search Scope
 - (id)transformedValue:(id)value {
-    if (value == nil) return nil;
-    
-    NSURL *scope = [NSURL URLWithString:value];
-    return @[scope];
+	if(value == nil) return nil;
+
+	NSURL *scope = [NSURL URLWithString:value];
+	return @[scope];
 }
 
 @end
 
 @implementation NumberToStringTransformer
 
-+ (Class)transformedValueClass { return [NSString class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (Class)transformedValueClass {
+	return [NSString class];
+}
++ (BOOL)allowsReverseTransformation {
+	return NO;
+}
 
 // Convert from NSNumber to NSString
 - (id)transformedValue:(id)value {
-    if (value == nil) return nil;
-    
-    // If there's an NS/CFNumber hiding in here...
-    if([value respondsToSelector:@selector(stringValue)])
-    {
-        return [value stringValue];
-    }
-    
-    return value; 
+	if(value == nil) return nil;
+
+	// If there's an NS/CFNumber hiding in here...
+	if([value respondsToSelector:@selector(stringValue)]) {
+		return [value stringValue];
+	}
+
+	return value;
 }
 
 @end

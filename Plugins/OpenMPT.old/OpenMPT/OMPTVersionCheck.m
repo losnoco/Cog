@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "OMPTVersionCheck.h"
 
 @implementation OMPTOldVersionCheck
 + (BOOL)shouldLoadForOSVersion:(NSOperatingSystemVersion)version {
-    if (version.majorVersion < 10 ||
-        (version.majorVersion == 10 && version.minorVersion < 15))
-        return YES;
-    else
-        return NO;
+	if(version.majorVersion < 10 ||
+	   (version.majorVersion == 10 && version.minorVersion < 15))
+		return YES;
+	else
+		return NO;
 }
 @end

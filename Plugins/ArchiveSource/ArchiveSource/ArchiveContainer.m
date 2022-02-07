@@ -12,62 +12,55 @@
 
 #import "Logging.h"
 
-static NSString * path_pack_string(NSString * src)
-{
-    return [NSString stringWithFormat:@"|%lu|%@|", [src length], src];
+static NSString *path_pack_string(NSString *src) {
+	return [NSString stringWithFormat:@"|%lu|%@|", [src length], src];
 }
 
-static NSString * g_make_unpack_path(NSString * archive, NSString * file, NSString * name)
-{
-    return [NSString stringWithFormat:@"unpack://%@%@%@", name, path_pack_string(archive), file];
+static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString *name) {
+	return [NSString stringWithFormat:@"unpack://%@%@%@", name, path_pack_string(archive), file];
 }
 
 @implementation ArchiveContainer
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return @[@"zip", @"rar", @"7z", @"rsn", @"vgm7z", @"gz"];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return @[@"application/zip", @"application/x-gzip", @"application/x-rar-compressed", @"application/x-7z-compressed"];
 }
 
-+ (float)priority
-{
-    return 1.0f;
++ (float)priority {
+	return 1.0f;
 }
 
-+ (void)initialize
-{
-    fex_init();
++ (void)initialize {
+	fex_init();
 }
 
-+ (NSArray *)urlsForContainerURL:(NSURL *)url
-{
-	if (![url isFileURL]) {
++ (NSArray *)urlsForContainerURL:(NSURL *)url {
+	if(![url isFileURL]) {
 		return @[];
 	}
-	
-    fex_t * fex;
-    fex_err_t error = fex_open( &fex, [[url path] UTF8String] );
-    if ( error ) {
-        ALog(@"Archive error: %s", error);
-        return @[];
-    }
-    
+
+	fex_t *fex;
+	fex_err_t error = fex_open(&fex, [[url path] UTF8String]);
+	if(error) {
+		ALog(@"Archive error: %s", error);
+		return @[];
+	}
+
 	NSMutableArray *files = [NSMutableArray array];
-	
-    while ( !fex_done(fex) ) {
-        NSString *name = [NSString stringWithUTF8String:fex_name(fex)];
-        if ([[NSClassFromString(@"AudioPlayer") fileTypes] containsObject:[[name pathExtension] lowercaseString]])
-            [files addObject:[NSURL URLWithDataRepresentation:[g_make_unpack_path([url path], name, @"fex") dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil]];
-        fex_next(fex);
-    }
-    
-    fex_close( fex );
-	
+
+	while(!fex_done(fex)) {
+		NSString *name = [NSString stringWithUTF8String:fex_name(fex)];
+		if([[NSClassFromString(@"AudioPlayer") fileTypes] containsObject:[[name pathExtension] lowercaseString]])
+			[files addObject:[NSURL URLWithDataRepresentation:[g_make_unpack_path([url path], name, @"fex") dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil]];
+		fex_next(fex);
+	}
+
+	fex_close(fex);
+
 	return files;
 }
 

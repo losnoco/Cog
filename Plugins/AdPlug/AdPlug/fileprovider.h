@@ -13,23 +13,24 @@
 
 #import "Plugin.h"
 
-#include <string>
 #include <binio.h>
 #include <libAdPlug/fprovide.h>
+#include <string>
 
-class CProvider_cog : public CFileProvider
-{
-    id<CogSource> m_file_hint;
-    std::string m_file_path;
-    
-public:
-    virtual binistream *open(std::string filename) const;
-    virtual void close(binistream *f) const;
-    
-    CProvider_cog() { }
+class CProvider_cog : public CFileProvider {
+	id<CogSource> m_file_hint;
+	std::string m_file_path;
 
-    CProvider_cog(std::string filename, id<CogSource> file)
-    : m_file_path( filename ), m_file_hint(file) { }
+	public:
+	virtual binistream *open(std::string filename) const;
+	virtual void close(binistream *f) const;
+
+	CProvider_cog() {
+	}
+
+	CProvider_cog(std::string filename, id<CogSource> file)
+	: m_file_path(filename), m_file_hint(file) {
+	}
 };
 
 #endif /* fileprovider_h */

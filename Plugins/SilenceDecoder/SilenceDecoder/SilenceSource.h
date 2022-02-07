@@ -10,8 +10,7 @@
 
 #import "Plugin.h"
 
-@interface SilenceSource : NSObject <CogSource>
-{
+@interface SilenceSource : NSObject <CogSource> {
 	NSURL *_url;
 }
 

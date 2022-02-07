@@ -5,7 +5,6 @@
 
 #import <Foundation/Foundation.h>
 
-
-@interface MiniModeMenuTitleTransformer : NSValueTransformer {}
+@interface MiniModeMenuTitleTransformer : NSValueTransformer {
+}
 @end
-

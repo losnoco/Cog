@@ -11,35 +11,30 @@
 
 @implementation libvgmPropertiesReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [libvgmDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [libvgmDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return [libvgmDecoder priority];
++ (float)priority {
+	return [libvgmDecoder priority];
 }
 
-+ (NSDictionary *)propertiesForSource:(id<CogSource>)source
-{
-    libvgmDecoder * decoder = [[libvgmDecoder alloc] init];
-    
-    NSDictionary * properties = [NSDictionary dictionary];
-    
-    if ([decoder open:source])
-    {
-        properties = [decoder properties];
-        
-        [decoder close];
-    }
-    
-    return properties;
++ (NSDictionary *)propertiesForSource:(id<CogSource>)source {
+	libvgmDecoder *decoder = [[libvgmDecoder alloc] init];
+
+	NSDictionary *properties = [NSDictionary dictionary];
+
+	if([decoder open:source]) {
+		properties = [decoder properties];
+
+		[decoder close];
+	}
+
+	return properties;
 }
 
 @end

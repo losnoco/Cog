@@ -13,6 +13,6 @@
 @interface AudioSource : NSObject {
 }
 
-+ (id<CogSource>) audioSourceForURL:(NSURL *)url;
++ (id<CogSource>)audioSourceForURL:(NSURL *)url;
 
 @end

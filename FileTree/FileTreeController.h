@@ -6,8 +6,8 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "FileTreeDataSource.h"
+#import <Cocoa/Cocoa.h>
 
 @class SideViewController;
 @interface FileTreeController : NSObject {

@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface AdPlugMetadataReader : NSObject <CogMetadataReader> {
-
 }
 
 @end

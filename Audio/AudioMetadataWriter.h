@@ -8,9 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface AudioMetadataWriter : NSObject {
-
 }
 
 + (int)putMetadataInURL:(NSURL *)url;

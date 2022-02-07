@@ -6,16 +6,15 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "Plugin.h"
+#import <Cocoa/Cocoa.h>
 
 #define ChunkHeader WavPackChunkHeader
 
 #import <WavPack/wavpack.h>
 
-@interface WavPackReader : NSObject
-{
-    id<CogSource> source;
+@interface WavPackReader : NSObject {
+	id<CogSource> source;
 }
 
 - (id)initWithSource:(id<CogSource>)s;
@@ -25,23 +24,22 @@
 
 @end
 
-@interface WavPackDecoder : NSObject <CogDecoder>
-{
+@interface WavPackDecoder : NSObject <CogDecoder> {
 	WavpackContext *wpc;
 	WavpackStreamReader reader;
-	
-    WavPackReader *wv;
-    WavPackReader *wvc;
-    
-    int32_t *inputBuffer;
-    size_t inputBufferSize;
-    
-    BOOL isDSD;
-    BOOL isLossy;
-	
+
+	WavPackReader *wv;
+	WavPackReader *wvc;
+
+	int32_t *inputBuffer;
+	size_t inputBufferSize;
+
+	BOOL isDSD;
+	BOOL isLossy;
+
 	int bitsPerSample;
 	int channels;
-    BOOL floatingPoint;
+	BOOL floatingPoint;
 	int bitrate;
 	float frequency;
 	long totalFrames;

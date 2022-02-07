@@ -2,8 +2,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface TrackingCell : NSSliderCell
-{
+@interface TrackingCell : NSSliderCell {
 	BOOL tracking;
 }
 

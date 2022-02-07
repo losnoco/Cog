@@ -6,16 +6,16 @@
 //
 //
 
-#import <Cocoa/Cocoa.h>
 #import "Plugin.h"
+#import <Cocoa/Cocoa.h>
 
 @interface CogDecoderMulti : NSObject <CogDecoder> {
-    NSArray *theDecoders;
-    id<CogDecoder> theDecoder;
-    NSMutableArray *cachedObservers;
+	NSArray *theDecoders;
+	id<CogDecoder> theDecoder;
+	NSMutableArray *cachedObservers;
 }
 
--(id)initWithDecoders:(NSArray *)decoders;
+- (id)initWithDecoders:(NSArray *)decoders;
 
 @end
 

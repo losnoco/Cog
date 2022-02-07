@@ -7,45 +7,38 @@
 //
 
 #import "FileTreeViewController.h"
-#import "PlaylistLoader.h"
 #import "PlaybackController.h"
+#import "PlaylistLoader.h"
 
 @implementation FileTreeViewController
 
-- (id)init
-{
+- (id)init {
 	return [super initWithNibName:@"FileTree" bundle:[NSBundle mainBundle]];
 }
 
-- (void)addToPlaylistInternal:(NSArray *)urls
-{
+- (void)addToPlaylistInternal:(NSArray *)urls {
 	[self doAddToPlaylist:urls origin:URLOriginInternal];
 }
 
-- (void)addToPlaylistExternal:(NSArray *)urls
-{
-    [self doAddToPlaylist:urls origin:URLOriginExternal];
+- (void)addToPlaylistExternal:(NSArray *)urls {
+	[self doAddToPlaylist:urls origin:URLOriginExternal];
 }
 
-- (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin
-{
-    [playlistLoader willInsertURLs:urls origin:origin];
-    [playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:origin];
+- (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin {
+	[playlistLoader willInsertURLs:urls origin:origin];
+	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:origin];
 }
 
-- (void)clear:(id)sender
-{
+- (void)clear:(id)sender {
 	[playlistLoader clear:sender];
 }
 
-- (void)playPauseResume:(NSObject *)id
-{
+- (void)playPauseResume:(NSObject *)id {
 	[playbackController playPauseResume:id];
 }
 
-- (FileTreeOutlineView*)outlineView
-{
-    return fileTreeOutlineView;
+- (FileTreeOutlineView *)outlineView {
+	return fileTreeOutlineView;
 }
 
 @end

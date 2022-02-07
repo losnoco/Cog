@@ -8,194 +8,169 @@
 
 #import "Node.h"
 
-#import "Logging.h"
 #import "BufferChain.h"
+#import "Logging.h"
 
 @implementation Node
 
-- (id)initWithController:(id)c previous:(id)p
-{
+- (id)initWithController:(id)c previous:(id)p {
 	self = [super init];
-	if (self)
-	{
-        buffer = [[ChunkList alloc] initWithMaximumDuration:3.0];
-        semaphore = [[Semaphore alloc] init];
-        
-        accessLock = [[NSRecursiveLock alloc] init];
-		
+	if(self) {
+		buffer = [[ChunkList alloc] initWithMaximumDuration:3.0];
+		semaphore = [[Semaphore alloc] init];
+
+		accessLock = [[NSRecursiveLock alloc] init];
+
 		initialBufferFilled = NO;
-		
+
 		controller = c;
 		endOfStream = NO;
 		shouldContinue = YES;
-        
-        nodeLossless = NO;
+
+		nodeLossless = NO;
 
 		[self setPreviousNode:p];
 	}
-	
+
 	return self;
 }
 
-- (AudioStreamBasicDescription)nodeFormat
-{
-    return nodeFormat;
+- (AudioStreamBasicDescription)nodeFormat {
+	return nodeFormat;
 }
 
-- (BOOL)nodeLossless
-{
-    return nodeLossless;
+- (BOOL)nodeLossless {
+	return nodeLossless;
 }
 
-- (void)writeData:(const void *)ptr amount:(size_t)amount
-{
-    [accessLock lock];
-    
-    AudioChunk * chunk = [[AudioChunk alloc] init];
-    [chunk setFormat:nodeFormat];
-    [chunk setLossless:nodeLossless];
-    [chunk assignSamples:ptr frameCount:amount / nodeFormat.mBytesPerPacket];
-    
-    const double chunkDuration = [chunk duration];
-    double durationLeft = [buffer maxDuration] - [buffer listDuration];
-    
-    while (shouldContinue == YES && chunkDuration > durationLeft)
-    {
-        if (durationLeft < chunkDuration) {
-            if (initialBufferFilled == NO) {
-                initialBufferFilled = YES;
-                if ([controller respondsToSelector:@selector(initialBufferFilled:)])
-                    [controller performSelector:@selector(initialBufferFilled:) withObject:self];
-            }
-        }
-        
-        if (durationLeft < chunkDuration || shouldReset) {
-            [accessLock unlock];
-            [semaphore wait];
-            [accessLock lock];
-        }
-        
-        durationLeft = [buffer maxDuration] - [buffer listDuration];
-    }
-    
-    [buffer addChunk:chunk];
-    
-    [accessLock unlock];
+- (void)writeData:(const void *)ptr amount:(size_t)amount {
+	[accessLock lock];
+
+	AudioChunk *chunk = [[AudioChunk alloc] init];
+	[chunk setFormat:nodeFormat];
+	[chunk setLossless:nodeLossless];
+	[chunk assignSamples:ptr frameCount:amount / nodeFormat.mBytesPerPacket];
+
+	const double chunkDuration = [chunk duration];
+	double durationLeft = [buffer maxDuration] - [buffer listDuration];
+
+	while(shouldContinue == YES && chunkDuration > durationLeft) {
+		if(durationLeft < chunkDuration) {
+			if(initialBufferFilled == NO) {
+				initialBufferFilled = YES;
+				if([controller respondsToSelector:@selector(initialBufferFilled:)])
+					[controller performSelector:@selector(initialBufferFilled:) withObject:self];
+			}
+		}
+
+		if(durationLeft < chunkDuration || shouldReset) {
+			[accessLock unlock];
+			[semaphore wait];
+			[accessLock lock];
+		}
+
+		durationLeft = [buffer maxDuration] - [buffer listDuration];
+	}
+
+	[buffer addChunk:chunk];
+
+	[accessLock unlock];
 }
 
-//Should be overwriten by subclass.
-- (void)process
-{
+// Should be overwriten by subclass.
+- (void)process {
 }
 
-- (void)threadEntry:(id)arg
-{
-    @autoreleasepool {
-        [self process];
-    }
+- (void)threadEntry:(id)arg {
+	@autoreleasepool {
+		[self process];
+	}
 }
 
-- (AudioChunk *)readChunk:(size_t)maxFrames
-{
-    [accessLock lock];
-    
-    if ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES)
-    {
-        endOfStream = YES;
-        [accessLock unlock];
-        return [[AudioChunk alloc] init];
-    }
-    
-    if ([previousNode shouldReset] == YES) {
+- (AudioChunk *)readChunk:(size_t)maxFrames {
+	[accessLock lock];
+
+	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
+		endOfStream = YES;
+		[accessLock unlock];
+		return [[AudioChunk alloc] init];
+	}
+
+	if([previousNode shouldReset] == YES) {
 		[buffer reset];
 
 		shouldReset = YES;
-		[previousNode setShouldReset: NO];
-        
-        [[previousNode semaphore] signal];
+		[previousNode setShouldReset:NO];
+
+		[[previousNode semaphore] signal];
 	}
 
-    AudioChunk * ret = [[previousNode buffer] removeSamples:maxFrames];
+	AudioChunk *ret = [[previousNode buffer] removeSamples:maxFrames];
 
-    [accessLock unlock];
-    
-    if ([ret frameCount])
-    {
-        [[previousNode semaphore] signal];
-    }
+	[accessLock unlock];
 
-    return ret;
+	if([ret frameCount]) {
+		[[previousNode semaphore] signal];
+	}
+
+	return ret;
 }
 
-- (void)launchThread
-{
+- (void)launchThread {
 	[NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
 }
 
-- (void)setPreviousNode:(id)p
-{
+- (void)setPreviousNode:(id)p {
 	previousNode = p;
 }
 
-- (id)previousNode
-{
+- (id)previousNode {
 	return previousNode;
 }
 
-- (BOOL)shouldContinue
-{
+- (BOOL)shouldContinue {
 	return shouldContinue;
 }
 
-- (void)setShouldContinue:(BOOL)s
-{
+- (void)setShouldContinue:(BOOL)s {
 	shouldContinue = s;
 }
 
-- (ChunkList *)buffer
-{
+- (ChunkList *)buffer {
 	return buffer;
 }
 
-- (void)resetBuffer
-{
-	shouldReset = YES; //Will reset on next write.
-	if (previousNode == nil) {
-        [accessLock lock];
+- (void)resetBuffer {
+	shouldReset = YES; // Will reset on next write.
+	if(previousNode == nil) {
+		[accessLock lock];
 		[buffer reset];
-        [accessLock unlock];
+		[accessLock unlock];
 	}
 }
 
-- (Semaphore *)semaphore
-{
+- (Semaphore *)semaphore {
 	return semaphore;
 }
 
-- (BOOL)endOfStream
-{
+- (BOOL)endOfStream {
 	return endOfStream;
 }
 
-- (void)setEndOfStream:(BOOL)e
-{
+- (void)setEndOfStream:(BOOL)e {
 	endOfStream = e;
 }
 
-- (void)setShouldReset:(BOOL)s
-{
+- (void)setShouldReset:(BOOL)s {
 	shouldReset = s;
 }
-- (BOOL)shouldReset
-{
+- (BOOL)shouldReset {
 	return shouldReset;
 }
 
 // Buffering nodes should implement this
-- (double)secondsBuffered
-{
-    return 0.0;
+- (double)secondsBuffered {
+	return 0.0;
 }
-
 
 @end

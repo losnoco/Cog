@@ -11,92 +11,82 @@
 
 @implementation GeneralPreferencesPlugin
 
-+ (void)initialize
-{
++ (void)initialize {
 	NSValueTransformer *pathToFileTransformer = [[PathToFileTransformer alloc] init];
-    [NSValueTransformer setValueTransformer:pathToFileTransformer
-                                    forName:@"PathToFileTransformer"];
+	[NSValueTransformer setValueTransformer:pathToFileTransformer
+	                                forName:@"PathToFileTransformer"];
 }
 
-+ (NSArray *)preferencePanes
-{
++ (NSArray *)preferencePanes {
 	GeneralPreferencesPlugin *plugin = [[GeneralPreferencesPlugin alloc] init];
 	[[NSBundle bundleWithIdentifier:@"org.cogx.cog.preferences"] loadNibNamed:@"Preferences"
-                                                                        owner:plugin
-                                                              topLevelObjects:nil];
+	                                                                    owner:plugin
+	                                                          topLevelObjects:nil];
 
-    return @[[plugin playlistPane],
-             [plugin hotKeyPane],
-             [plugin updatesPane],
-             [plugin outputPane],
-             [plugin scrobblerPane],
-             [plugin notificationsPane],
-             [plugin appearancePane],
-             [plugin midiPane]];
+	return @[[plugin playlistPane],
+		     [plugin hotKeyPane],
+		     [plugin updatesPane],
+		     [plugin outputPane],
+		     [plugin scrobblerPane],
+		     [plugin notificationsPane],
+		     [plugin appearancePane],
+		     [plugin midiPane]];
 }
 
-- (HotKeyPane *)hotKeyPane
-{
-    return hotKeyPane;
+- (HotKeyPane *)hotKeyPane {
+	return hotKeyPane;
 }
 
-- (OutputPane *)outputPane
-{
-    return outputPane;
+- (OutputPane *)outputPane {
+	return outputPane;
 }
 
-- (MIDIPane *)midiPane
-{
-    return midiPane;
+- (MIDIPane *)midiPane {
+	return midiPane;
 }
 
-- (GeneralPreferencePane *)updatesPane
-{
-    return [GeneralPreferencePane preferencePaneWithView:updatesView
-                                                   title:NSLocalizedPrefString(@"Updates")
-                                          systemIconName:@"arrow.triangle.2.circlepath.circle.fill"
-                                          orOldIconNamed:@"updates"];
+- (GeneralPreferencePane *)updatesPane {
+	return [GeneralPreferencePane preferencePaneWithView:updatesView
+	                                               title:NSLocalizedPrefString(@"Updates")
+	                                      systemIconName:@"arrow.triangle.2.circlepath.circle.fill"
+	                                      orOldIconNamed:@"updates"];
 }
 
-- (GeneralPreferencePane *)scrobblerPane
-{
-    return [GeneralPreferencePane preferencePaneWithView:scrobblerView
-                                                   title:NSLocalizedPrefString(@"Scrobble")
-                                          systemIconName:@"dot.radiowaves.left.and.right"
-                                          orOldIconNamed:@"lastfm"];
+- (GeneralPreferencePane *)scrobblerPane {
+	return [GeneralPreferencePane preferencePaneWithView:scrobblerView
+	                                               title:NSLocalizedPrefString(@"Scrobble")
+	                                      systemIconName:@"dot.radiowaves.left.and.right"
+	                                      orOldIconNamed:@"lastfm"];
 }
 
-- (GeneralPreferencePane *)playlistPane
-{
-    return [GeneralPreferencePane preferencePaneWithView:playlistView
-                                                   title:NSLocalizedPrefString(@"Playlist")
-                                          systemIconName:@"music.note.list"
-                                          orOldIconNamed:@"playlist"];
+- (GeneralPreferencePane *)playlistPane {
+	return [GeneralPreferencePane preferencePaneWithView:playlistView
+	                                               title:NSLocalizedPrefString(@"Playlist")
+	                                      systemIconName:@"music.note.list"
+	                                      orOldIconNamed:@"playlist"];
 }
 
-- (GeneralPreferencePane *)notificationsPane
-{
-    if (@available(macOS 10.14, *)) {
-        if (iTunesStyleCheck) {
-            iTunesStyleCheck.hidden = YES;
-            NSSize size = notificationsView.frame.size;
-            size.height -= 18;
-            [notificationsView setFrameSize:size];
-        }
-    }
+- (GeneralPreferencePane *)notificationsPane {
+	if(@available(macOS 10.14, *)) {
+		if(iTunesStyleCheck) {
+			iTunesStyleCheck.hidden = YES;
+			NSSize size = notificationsView.frame.size;
+			size.height -= 18;
+			[notificationsView setFrameSize:size];
+		}
+	}
 
-    return [GeneralPreferencePane preferencePaneWithView:notificationsView
-                                                   title:NSLocalizedPrefString(@"Notifications")
-                                          systemIconName:@"bell.fill"
-                                          orOldIconNamed:@"growl"];
+	return [GeneralPreferencePane preferencePaneWithView:notificationsView
+	                                               title:NSLocalizedPrefString(@"Notifications")
+	                                      systemIconName:@"bell.fill"
+	                                      orOldIconNamed:@"growl"];
 }
 
-- (GeneralPreferencePane *)appearancePane
-{
-    return [GeneralPreferencePane preferencePaneWithView:appearanceView
-                                                   title:NSLocalizedPrefString(@"Appearance")
-                                          systemIconName:@"paintpalette.fill"
-                                          orOldIconNamed:@"appearance"];
+- (GeneralPreferencePane *)appearancePane {
+	return [GeneralPreferencePane preferencePaneWithView:appearanceView
+	                                               title:NSLocalizedPrefString(@"Appearance")
+	                                      systemIconName:@"paintpalette.fill"
+	                                      orOldIconNamed:@"appearance"];
 }
 
 @end

@@ -10,8 +10,8 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, CogStatus) {
-    CogStatusStopped = 0,
-    CogStatusPaused,
-    CogStatusPlaying,
-    CogStatusStopping,
+	CogStatusStopped = 0,
+	CogStatusPaused,
+	CogStatusPlaying,
+	CogStatusStopping,
 };

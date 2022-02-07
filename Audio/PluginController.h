@@ -4,9 +4,8 @@
 
 #import "Plugin.h"
 
-//Singletonish
-@interface PluginController : NSObject <CogPluginController>
-{
+// Singletonish
+@interface PluginController : NSObject <CogPluginController> {
 	NSMutableDictionary *sources;
 	NSMutableDictionary *containers;
 	NSMutableDictionary *metadataReaders;
@@ -16,7 +15,7 @@
 
 	NSMutableDictionary *decodersByExtension;
 	NSMutableDictionary *decodersByMimeType;
-    
+
 	BOOL configured;
 }
 
@@ -35,7 +34,7 @@
 - (void)setup;
 - (void)printPluginInfo;
 
-- (void)loadPlugins; 
+- (void)loadPlugins;
 - (void)loadPluginsAtPath:(NSString *)path;
 
 - (void)setupSource:(NSString *)className;

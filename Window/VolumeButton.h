@@ -6,11 +6,11 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "VolumeSlider.h"
+#import <Cocoa/Cocoa.h>
 
 @interface VolumeButton : NSButton {
-    IBOutlet VolumeSlider *_popView;
+	IBOutlet VolumeSlider *_popView;
 }
 
 @end

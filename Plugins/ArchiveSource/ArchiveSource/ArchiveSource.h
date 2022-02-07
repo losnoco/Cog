@@ -12,15 +12,14 @@
 
 #import "Plugin.h"
 
-@interface ArchiveSource : NSObject <CogSource>
-{
-    fex_t * fex;
-    
-    const void * data;
-    NSUInteger offset;
-    NSUInteger size;
-    
-    NSURL *_url;
+@interface ArchiveSource : NSObject <CogSource> {
+	fex_t *fex;
+
+	const void *data;
+	NSUInteger offset;
+	NSUInteger size;
+
+	NSURL *_url;
 }
 
 @end

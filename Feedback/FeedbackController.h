@@ -6,16 +6,16 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "FeedbackSocket.h"
+#import <Cocoa/Cocoa.h>
 
-@interface FeedbackController : NSWindowController<FeedbackSocketDelegate> {
+@interface FeedbackController : NSWindowController <FeedbackSocketDelegate> {
 	IBOutlet NSTextField* fromView;
 	IBOutlet NSTextField* subjectView;
 	IBOutlet NSTextView* messageView;
-	IBOutlet NSProgressIndicator *sendingIndicator;
-	
-	FeedbackSocket *feedbackSocket;
+	IBOutlet NSProgressIndicator* sendingIndicator;
+
+	FeedbackSocket* feedbackSocket;
 }
 
 - (IBAction)sendFeedback:(id)sender;

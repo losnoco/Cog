@@ -9,7 +9,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern void * unpackUmx( const void * in, long * size );
+extern void* unpackUmx(const void* in, long* size);
 #ifdef __cplusplus
 };
 #endif

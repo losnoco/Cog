@@ -6,21 +6,20 @@
 //  Copyright 2022 __LoSnoCo__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <CoreAudio/CoreAudio.h>
+#import <Foundation/Foundation.h>
 
 #import "HeadphoneFilter.h"
 
 @interface DownmixProcessor : NSObject {
-    HeadphoneFilter *hFilter;
-    
-    AudioStreamBasicDescription inputFormat;
-    AudioStreamBasicDescription outputFormat;
+	HeadphoneFilter *hFilter;
+
+	AudioStreamBasicDescription inputFormat;
+	AudioStreamBasicDescription outputFormat;
 }
 
-- (id) initWithInputFormat:(AudioStreamBasicDescription)inf andOutputFormat:(AudioStreamBasicDescription)outf;
+- (id)initWithInputFormat:(AudioStreamBasicDescription)inf andOutputFormat:(AudioStreamBasicDescription)outf;
 
-- (void) process:(const void*)inBuffer frameCount:(size_t)frames output:(void *)outBuffer;
+- (void)process:(const void *)inBuffer frameCount:(size_t)frames output:(void *)outBuffer;
 
 @end
-

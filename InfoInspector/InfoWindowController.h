@@ -6,17 +6,15 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "AppController.h"
+#import <Cocoa/Cocoa.h>
 
-
-@interface InfoWindowController : NSWindowController
-{
+@interface InfoWindowController : NSWindowController {
 	IBOutlet id playlistSelectionController;
-    IBOutlet id currentEntryController;
-    IBOutlet AppController *appController;
+	IBOutlet id currentEntryController;
+	IBOutlet AppController *appController;
 
-    id __unsafe_unretained valueToDisplay;
+	id __unsafe_unretained valueToDisplay;
 }
 
 @property(assign) id valueToDisplay;

@@ -7,38 +7,38 @@
 //
 
 #import <Cocoa/Cocoa.h>
+
 #import "Plugin.h"
 
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 
-@interface FFMPEGDecoder : NSObject <CogDecoder>
-{
-    id<CogSource> source;
-    BOOL seekable;
-    int channels;
-    int bitsPerSample;
-    BOOL floatingPoint;
-    BOOL lossy;
-    float frequency;
-    long totalFrames;
-    long framesRead;
-    int bitrate;
-    
-@private
-    unsigned char *buffer;
-    AVIOContext *ioCtx;
-    int streamIndex;
-    AVFormatContext *formatCtx;
-    AVCodecContext *codecCtx;
-    AVFrame *lastDecodedFrame;
-    AVPacket *lastReadPacket;
-    int bytesConsumedFromDecodedFrame;
-    BOOL readNextPacket;
-    int64_t seekFrame;
-    int64_t skipSamples;
-    BOOL endOfStream;
-    BOOL endOfAudio;
+@interface FFMPEGDecoder : NSObject <CogDecoder> {
+	id<CogSource> source;
+	BOOL seekable;
+	int channels;
+	int bitsPerSample;
+	BOOL floatingPoint;
+	BOOL lossy;
+	float frequency;
+	long totalFrames;
+	long framesRead;
+	int bitrate;
+
+	@private
+	unsigned char *buffer;
+	AVIOContext *ioCtx;
+	int streamIndex;
+	AVFormatContext *formatCtx;
+	AVCodecContext *codecCtx;
+	AVFrame *lastDecodedFrame;
+	AVPacket *lastReadPacket;
+	int bytesConsumedFromDecodedFrame;
+	BOOL readNextPacket;
+	int64_t seekFrame;
+	int64_t skipSamples;
+	BOOL endOfStream;
+	BOOL endOfAudio;
 }
 
 @end

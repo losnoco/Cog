@@ -8,10 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface TimeField : NSTextField
 
-@property (nonatomic) NSInteger currentTime;
-@property (nonatomic) NSInteger duration;
+@property(nonatomic) NSInteger currentTime;
+@property(nonatomic) NSInteger duration;
 
 @end

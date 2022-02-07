@@ -8,9 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface Shuffle : NSObject {
-
 }
 
 + (void)initialize;

@@ -13,14 +13,14 @@
 #import "Plugin.h"
 
 @interface HVLDecoder : NSObject <CogDecoder> {
-    struct hvl_tune *tune;
-    int32_t *buffer;
-    int trackNumber;
-    
+	struct hvl_tune *tune;
+	int32_t *buffer;
+	int trackNumber;
+
 	long totalFrames;
-    long framesLength;
-    long framesFade;
-    long framesRead;
-    long framesInBuffer;
+	long framesLength;
+	long framesFade;
+	long framesRead;
+	long framesInBuffer;
 }
 @end

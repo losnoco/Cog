@@ -7,9 +7,8 @@
 
 typedef struct sflist_presets sflist_presets;
 
-class BMPlayer : public MIDIPlayer
-{
-public:
+class BMPlayer : public MIDIPlayer {
+	public:
 	// zero variables
 	BMPlayer();
 
@@ -17,32 +16,32 @@ public:
 	virtual ~BMPlayer();
 
 	// configuration
-	void setSoundFont( const char * in );
-	void setFileSoundFont( const char * in );
+	void setSoundFont(const char* in);
+	void setFileSoundFont(const char* in);
 	void setSincInterpolation(bool enable = true);
 
-private:
+	private:
 	virtual void send_event(uint32_t b);
-    virtual void render(float * out, unsigned long count);
+	virtual void render(float* out, unsigned long count);
 
 	virtual void shutdown();
 	virtual bool startup();
-    
-    void compound_presets( std::vector<BASS_MIDI_FONTEX> & out, std::vector<BASS_MIDI_FONTEX> & in, std::vector<long> & channels );
+
+	void compound_presets(std::vector<BASS_MIDI_FONTEX>& out, std::vector<BASS_MIDI_FONTEX>& in, std::vector<long>& channels);
 
 	void reset_parameters();
 
-    std::vector<HSOUNDFONT> _soundFonts;
-    sflist_presets   * _presetList;
-    std::string        sSoundFontName;
-    std::string        sFileSoundFontName;
-    
-	HSTREAM            _stream[3];
+	std::vector<HSOUNDFONT> _soundFonts;
+	sflist_presets* _presetList;
+	std::string sSoundFontName;
+	std::string sFileSoundFontName;
 
-	bool               bSincInterpolation;
+	HSTREAM _stream[3];
 
-    bool               bank_lsb_overridden;
-    uint8_t            bank_lsb_override[48];
+	bool bSincInterpolation;
+
+	bool bank_lsb_overridden;
+	uint8_t bank_lsb_override[48];
 };
 
 #endif

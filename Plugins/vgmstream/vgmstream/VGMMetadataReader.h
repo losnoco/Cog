@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface VGMMetadataReader : NSObject <CogMetadataReader> {
-
 }
 
 @end

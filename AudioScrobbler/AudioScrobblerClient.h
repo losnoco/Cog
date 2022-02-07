@@ -22,21 +22,20 @@
 
 #include <netdb.h>
 
-@interface AudioScrobblerClient : NSObject
-{
-	int			_socket;
-	BOOL		_doPortStepping;
-	in_port_t	_port;
+@interface AudioScrobblerClient : NSObject {
+	int _socket;
+	BOOL _doPortStepping;
+	in_port_t _port;
 }
 
-- (BOOL)		connectToHost:(NSString *)hostname port:(in_port_t)port;
+- (BOOL)connectToHost:(NSString *)hostname port:(in_port_t)port;
 
-- (BOOL)		isConnected;
-- (in_port_t)	connectedPort;
+- (BOOL)isConnected;
+- (in_port_t)connectedPort;
 
-- (void)		send:(NSString *)data;
-- (NSString *)	receive;
+- (void)send:(NSString *)data;
+- (NSString *)receive;
 
-- (void)		shutdown;
+- (void)shutdown;
 
 @end

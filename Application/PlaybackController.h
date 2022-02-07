@@ -2,15 +2,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "AppController.h"
+#import "AudioScrobbler.h"
 #import "CogAudio/AudioPlayer.h"
 #import "CogAudio/Status.h"
 #import "TrackingSlider.h"
-#import "AudioScrobbler.h"
-#import "AppController.h"
 
+#import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
-#import <AVFoundation/AVFoundation.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
 #import "AUPlayerView.h"
@@ -23,42 +23,41 @@ extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
 extern NSString *CogPlaybackDidStopNotficiation;
 
-extern NSDictionary * makeRGInfo(PlaylistEntry *pe);
+extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 
 @class PlaylistController;
 @class PlaylistView;
 @class PlaylistLoader;
 
-@interface PlaybackController : NSObject
-{
-    IBOutlet AppController *appController;
-    
-    IBOutlet PlaylistController *playlistController;
+@interface PlaybackController : NSObject {
+	IBOutlet AppController *appController;
+
+	IBOutlet PlaylistController *playlistController;
 	IBOutlet PlaylistView *playlistView;
 	IBOutlet PlaylistLoader *playlistLoader;
-	
+
 	IBOutlet NSSlider *volumeSlider;
-	
+
 	IBOutlet NSArrayController *outputDevices;
-	
+
 	NSTimer *positionTimer;
-		
+
 	AudioPlayer *audioPlayer;
-	
+
 	CogStatus playbackStatus;
 	double position;
-    double lastPosition;
+	double lastPosition;
 	BOOL seekable;
 	BOOL fading;
-    
-    // progress bar display
-    double progressBarStatus;
-    
-    BOOL _eqWasOpen;
-    BOOL _eqStubbed;
-    AudioUnit _eq;
-    AUPluginUI *_equi;
- }
+
+	// progress bar display
+	double progressBarStatus;
+
+	BOOL _eqWasOpen;
+	BOOL _eqStubbed;
+	AudioUnit _eq;
+	AUPluginUI *_equi;
+}
 
 @property CogStatus playbackStatus;
 

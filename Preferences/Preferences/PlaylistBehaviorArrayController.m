@@ -8,25 +8,22 @@
 
 #import "PlaylistBehaviorArrayController.h"
 
-
 @implementation PlaylistBehaviorArrayController
-- (void)awakeFromNib
-{
+- (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
 
 	[self addObject:
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedStringFromTableInBundle(@"Clear playlist and play", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", 
-			@"clearAndPlay", @"preference",nil]];
+	      [NSDictionary dictionaryWithObjectsAndKeys:
+	                    NSLocalizedStringFromTableInBundle(@"Clear playlist and play", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
+	                    @"clearAndPlay", @"preference", nil]];
 	[self addObject:
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedStringFromTableInBundle(@"Enqueue", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", 
-			@"enqueue", @"preference",nil]];
+	      [NSDictionary dictionaryWithObjectsAndKeys:
+	                    NSLocalizedStringFromTableInBundle(@"Enqueue", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
+	                    @"enqueue", @"preference", nil]];
 	[self addObject:
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			NSLocalizedStringFromTableInBundle(@"Enqueue and play", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", 
-			@"enqueueAndPlay", @"preference",nil]];
-			
+	      [NSDictionary dictionaryWithObjectsAndKeys:
+	                    NSLocalizedStringFromTableInBundle(@"Enqueue and play", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
+	                    @"enqueueAndPlay", @"preference", nil]];
 }
 
 @end

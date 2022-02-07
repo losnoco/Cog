@@ -9,10 +9,10 @@
 #import <Cocoa/Cocoa.h>
 
 @interface MainWindow : NSWindow {
-    IBOutlet NSView *playlistView;
-    IBOutlet NSToolbar *mainToolbar;
-    
-    NSImage *hdcdLogo;
+	IBOutlet NSView *playlistView;
+	IBOutlet NSToolbar *mainToolbar;
+
+	NSImage *hdcdLogo;
 }
 
 - (void)showHDCDLogo:(BOOL)show;

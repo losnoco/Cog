@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface OMPTOldContainer : NSObject <CogContainer> {
-
 }
 
 @end

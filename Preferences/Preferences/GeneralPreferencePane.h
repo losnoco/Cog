@@ -6,11 +6,11 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "PreferencePanePlugin.h"
+#import <Cocoa/Cocoa.h>
 
 @interface GeneralPreferencePane : NSObject <PreferencePane> {
-    IBOutlet NSView *view;
+	IBOutlet NSView *view;
 }
 
 + (instancetype)preferencePaneWithView:(NSView *)view
@@ -18,9 +18,9 @@
                         systemIconName:(NSString *)systemIconName
                         orOldIconNamed:(NSString *)oldIconName;
 
-- (instancetype) init NS_UNAVAILABLE;
-- (instancetype) initWithView:(NSView *)contentView
-                        title:(NSString *)title
-                         icon:(NSImage *)image NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithView:(NSView *)contentView
+                       title:(NSString *)title
+                        icon:(NSImage *)image NS_DESIGNATED_INITIALIZER;
 
 @end

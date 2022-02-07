@@ -10,9 +10,8 @@
 #import <CogAudio/Plugin.h>
 
 @interface AudioContainer : NSObject {
-
 }
 
-+ (NSArray *) urlsForContainerURL:(NSURL *)url;
++ (NSArray *)urlsForContainerURL:(NSURL *)url;
 
 @end

@@ -2,7 +2,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface OutputsArrayController : NSArrayController
-{
+@interface OutputsArrayController : NSArrayController {
 }
 @end

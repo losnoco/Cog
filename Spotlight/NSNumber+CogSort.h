@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface NSNumber (CogSort)
 
 - (NSComparisonResult)compareTrackNumbers:(NSNumber *)aNumber;

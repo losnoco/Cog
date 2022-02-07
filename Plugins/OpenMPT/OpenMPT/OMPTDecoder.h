@@ -15,10 +15,10 @@
 #import "Plugin.h"
 
 @interface OMPTDecoder : NSObject <CogDecoder> {
-    openmpt::module *mod;
-    
+	openmpt::module *mod;
+
 	id<CogSource> source;
-    long length;
+	long length;
 }
 
 - (void)setSource:(id<CogSource>)s;

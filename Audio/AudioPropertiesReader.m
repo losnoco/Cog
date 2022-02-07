@@ -13,11 +13,10 @@
 
 @implementation AudioPropertiesReader
 
-+ (NSDictionary *)propertiesForURL:(NSURL *)url
-{
-    @autoreleasepool {
-        return [[PluginController sharedPluginController] propertiesForURL:url];
-    }
++ (NSDictionary *)propertiesForURL:(NSURL *)url {
+	@autoreleasepool {
+		return [[PluginController sharedPluginController] propertiesForURL:url];
+	}
 }
 
 @end

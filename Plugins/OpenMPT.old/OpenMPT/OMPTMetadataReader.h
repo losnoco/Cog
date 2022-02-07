@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface OMPTOldMetadataReader : NSObject <CogMetadataReader> {
-
 }
 
 @end

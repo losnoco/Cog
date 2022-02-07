@@ -11,10 +11,10 @@
 #import "Plugin.h"
 
 @interface SilenceDecoder : NSObject <CogDecoder> {
-    id<CogSource> source;
-    
+	id<CogSource> source;
+
 	long length;
-    long remain;
+	long remain;
 }
 
 - (void)setSource:(id<CogSource>)s;

@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface NSFileHandle (CreateFile)
 
 + (id)fileHandleForWritingAtPath:(NSString *)path createFile:(BOOL)create;

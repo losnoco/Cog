@@ -15,66 +15,60 @@
 
 @implementation DumbMetadataReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [DumbDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [DumbDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return 1.0f;
++ (float)priority {
+	return 1.0f;
 }
 
-+ (NSDictionary *)metadataForURL:(NSURL *)url
-{
-    id audioSourceClass = NSClassFromString(@"AudioSource");
-    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
-    
-    if (![source open:url])
-        return 0;
-    
-    if (![source seekable])
-        return 0;
++ (NSDictionary *)metadataForURL:(NSURL *)url {
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
-    [source seek:0 whence:SEEK_END];
-    long size = [source tell];
-    [source seek:0 whence:SEEK_SET];
-    
-    void * data = malloc(size);
-    [source read:data amount:size];
-	
-	DUMBFILE * df = dumbfile_open_memory_and_free( data, size );
-	if (!df)
-	{
+	if(![source open:url])
+		return 0;
+
+	if(![source seekable])
+		return 0;
+
+	[source seek:0 whence:SEEK_END];
+	long size = [source tell];
+	[source seek:0 whence:SEEK_SET];
+
+	void *data = malloc(size);
+	[source read:data amount:size];
+
+	DUMBFILE *df = dumbfile_open_memory_and_free(data, size);
+	if(!df) {
 		ALog(@"Open failed for file: %@", [url absoluteString]);
 		return NO;
 	}
-    
+
 	DUH *duh;
 	NSString *ext = [[url pathExtension] lowercaseString];
-    duh = dumb_read_any_quick(df, [ext isEqualToString:@"mod"] ? 0 : 1, 0);
-    
-    dumbfile_close(df);
-    
-	if (!duh)
-	{
+	duh = dumb_read_any_quick(df, [ext isEqualToString:@"mod"] ? 0 : 1, 0);
+
+	dumbfile_close(df);
+
+	if(!duh) {
 		ALog(@"Failed to create duh");
 		return nil;
 	}
 
-	//Some titles are all spaces?!
-	NSString *title = [[NSString stringWithUTF8String: duh_get_tag(duh, "TITLE")] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	// Some titles are all spaces?!
+	NSString *title = [[NSString stringWithUTF8String:duh_get_tag(duh, "TITLE")] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 	unload_duh(duh);
 
-	if (title == nil) {
+	if(title == nil) {
 		title = @"";
 	}
-	
+
 	return [NSDictionary dictionaryWithObject:title forKey:@"title"];
 }
 

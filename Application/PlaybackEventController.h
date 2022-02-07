@@ -15,11 +15,11 @@
 @class AudioScrobbler;
 
 @interface PlaybackEventController
-    : NSObject <NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate> {
-    IBOutlet PlaybackController *playbackController;
+: NSObject <NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate> {
+	IBOutlet PlaybackController *playbackController;
 
-    IBOutlet NSWindow *mainWindow;
-    IBOutlet NSWindow *miniWindow;
+	IBOutlet NSWindow *mainWindow;
+	IBOutlet NSWindow *miniWindow;
 }
 
 @end

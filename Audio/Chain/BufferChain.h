@@ -8,37 +8,37 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "InputNode.h"
-#import "ConverterNode.h"
 #import "AudioPlayer.h"
+#import "ConverterNode.h"
+#import "InputNode.h"
 
 @interface BufferChain : NSObject {
 	InputNode *inputNode;
 	ConverterNode *converterNode;
-    
-    AudioStreamBasicDescription inputFormat;
-	
+
+	AudioStreamBasicDescription inputFormat;
+
 	NSURL *streamURL;
 	id userInfo;
-    NSDictionary *rgInfo;
-	
-	id finalNode; //Final buffer in the chain.
-	
+	NSDictionary *rgInfo;
+
+	id finalNode; // Final buffer in the chain.
+
 	id controller;
 }
 
 - (id)initWithController:(id)c;
 - (void)buildChain;
 
-- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary*)rgi;
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi;
 
-//Used when changing tracks to reuse the same decoder
-- (BOOL)openWithInput:(InputNode *)i  withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary*)rgi;
+// Used when changing tracks to reuse the same decoder
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi;
 
-//Used when resetting the decoder on seek
+// Used when resetting the decoder on seek
 - (BOOL)openWithDecoder:(id<CogDecoder>)decoder
-    withOutputFormat:(AudioStreamBasicDescription)outputFormat
-    withRGInfo:(NSDictionary*)rgi;
+       withOutputFormat:(AudioStreamBasicDescription)outputFormat
+             withRGInfo:(NSDictionary *)rgi;
 
 - (void)seek:(double)time;
 
@@ -51,7 +51,7 @@
 - (id)userInfo;
 - (void)setUserInfo:(id)i;
 
-- (NSDictionary*)rgInfo;
+- (NSDictionary *)rgInfo;
 - (void)setRGInfo:(NSDictionary *)rgi;
 
 - (NSURL *)streamURL;

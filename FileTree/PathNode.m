@@ -12,166 +12,138 @@
 
 #import "FileTreeDataSource.h"
 
-#import "FileNode.h"
-#import "DirectoryNode.h"
-#import "SmartFolderNode.h"
 #import "ContainerNode.h"
+#import "DirectoryNode.h"
+#import "FileNode.h"
+#import "SmartFolderNode.h"
 
 #import "Logging.h"
 
 @implementation PathNode
 
-//From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
-//Updated 2018-06-28
-NSURL *resolveAliases(NSURL *url)
-{
-    CFErrorRef error;
-    CFDataRef bookmarkRef = CFURLCreateBookmarkDataFromFile(kCFAllocatorDefault, (__bridge CFURLRef)url, &error);
-	if (bookmarkRef)
-	{
-        Boolean isStale;
-        CFURLRef urlRef = CFURLCreateByResolvingBookmarkData(kCFAllocatorDefault, bookmarkRef, kCFURLBookmarkResolutionWithSecurityScope, NULL, NULL, &isStale, &error);
+// From http://developer.apple.com/documentation/Cocoa/Conceptual/LowLevelFileMgmt/Tasks/ResolvingAliases.html
+// Updated 2018-06-28
+NSURL *resolveAliases(NSURL *url) {
+	CFErrorRef error;
+	CFDataRef bookmarkRef = CFURLCreateBookmarkDataFromFile(kCFAllocatorDefault, (__bridge CFURLRef)url, &error);
+	if(bookmarkRef) {
+		Boolean isStale;
+		CFURLRef urlRef = CFURLCreateByResolvingBookmarkData(kCFAllocatorDefault, bookmarkRef, kCFURLBookmarkResolutionWithSecurityScope, NULL, NULL, &isStale, &error);
 
-		if (urlRef && !isStale)
-		{
+		if(urlRef && !isStale) {
 			return (NSURL *)CFBridgingRelease(urlRef);
 		}
 	}
 
-	//DLog(@"Not resolved");
+	// DLog(@"Not resolved");
 	return url;
 }
 
-- (id)initWithDataSource:(FileTreeDataSource *)ds url:(NSURL *)u
-{
+- (id)initWithDataSource:(FileTreeDataSource *)ds url:(NSURL *)u {
 	self = [super init];
 
-	if (self)
-	{
+	if(self) {
 		dataSource = ds;
-		[self setURL: u];
+		[self setURL:u];
 	}
-	
+
 	return self;
 }
 
-- (void)setURL:(NSURL *)u
-{
+- (void)setURL:(NSURL *)u {
 	url = u;
 
 	display = [[NSFileManager defaultManager] displayNameAtPath:[u path]];
-	
+
 	icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
-	
-	[icon setSize: NSMakeSize(16.0, 16.0)];
+
+	[icon setSize:NSMakeSize(16.0, 16.0)];
 }
 
-- (NSURL *)URL
-{
+- (NSURL *)URL {
 	return url;
 }
 
-- (void)updatePath
-{
+- (void)updatePath {
 }
 
-- (void)processPaths: (NSArray *)contents
-{
-    NSMutableArray *newSubpathsDirs = [[NSMutableArray alloc] init];
+- (void)processPaths:(NSArray *)contents {
+	NSMutableArray *newSubpathsDirs = [[NSMutableArray alloc] init];
 	NSMutableArray *newSubpaths = [[NSMutableArray alloc] init];
-	
-    for (NSString *s in contents)
-	{
-		if ([s characterAtIndex:0] == '.')
-		{
+
+	for(NSString *s in contents) {
+		if([s characterAtIndex:0] == '.') {
 			continue;
 		}
-		
+
 		NSURL *u = [NSURL fileURLWithPath:s];
 		NSString *displayName = [[NSFileManager defaultManager] displayNameAtPath:[u path]];
-		
-		PathNode *newNode;
-		
-		//DLog(@"Before: %@", u);
-		u = resolveAliases(u);
-		//DLog(@"After: %@", u);
 
-        BOOL isDir;
-        
-		if ([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame)
-		{
+		PathNode *newNode;
+
+		// DLog(@"Before: %@", u);
+		u = resolveAliases(u);
+		// DLog(@"After: %@", u);
+
+		BOOL isDir;
+
+		if([[s pathExtension] caseInsensitiveCompare:@"savedSearch"] == NSOrderedSame) {
 			DLog(@"Smart folder!");
 			newNode = [[SmartFolderNode alloc] initWithDataSource:dataSource url:u];
-            isDir = NO;
-		}
-		else
-		{
+			isDir = NO;
+		} else {
 			[[NSFileManager defaultManager] fileExistsAtPath:[u path] isDirectory:&isDir];
 
-			if (!isDir && ![[AudioPlayer fileTypes] containsObject:[[u pathExtension] lowercaseString]])
-			{
+			if(!isDir && ![[AudioPlayer fileTypes] containsObject:[[u pathExtension] lowercaseString]]) {
 				continue;
 			}
-			
-			if (isDir)
-			{
+
+			if(isDir) {
 				newNode = [[DirectoryNode alloc] initWithDataSource:dataSource url:u];
-			}
-			else if ([[AudioPlayer containerTypes] containsObject:[[u pathExtension] lowercaseString]])
-			{
+			} else if([[AudioPlayer containerTypes] containsObject:[[u pathExtension] lowercaseString]]) {
 				newNode = [[ContainerNode alloc] initWithDataSource:dataSource url:u];
-			}
-			else
-			{
+			} else {
 				newNode = [[FileNode alloc] initWithDataSource:dataSource url:u];
 			}
 		}
 
 		[newNode setDisplay:displayName];
-        
-        if (isDir)
-            [newSubpathsDirs addObject:newNode];
-        else
-            [newSubpaths addObject:newNode];
+
+		if(isDir)
+			[newSubpathsDirs addObject:newNode];
+		else
+			[newSubpaths addObject:newNode];
 	}
-	
-    [newSubpathsDirs addObjectsFromArray:newSubpaths];
+
+	[newSubpathsDirs addObjectsFromArray:newSubpaths];
 	[self setSubpaths:newSubpathsDirs];
 }
 
-- (NSArray *)subpaths
-{
-	if (subpaths == nil)
-	{
+- (NSArray *)subpaths {
+	if(subpaths == nil) {
 		[self updatePath];
 	}
-	
+
 	return subpaths;
 }
 
-- (void)setSubpaths:(NSArray *)s
-{
+- (void)setSubpaths:(NSArray *)s {
 	subpaths = s;
 }
 
-
-- (BOOL)isLeaf
-{
+- (BOOL)isLeaf {
 	return YES;
 }
 
-- (void)setDisplay:(NSString *)s
-{
+- (void)setDisplay:(NSString *)s {
 	display = s;
 }
 
-- (NSString *)display
-{
+- (NSString *)display {
 	return display;
 }
 
-- (NSImage *)icon
-{
+- (NSImage *)icon {
 	return icon;
 }
 

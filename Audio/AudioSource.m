@@ -8,11 +8,9 @@
 
 #import "AudioSource.h"
 
-
 @implementation AudioSource
 
-+ (id<CogSource>) audioSourceForURL:(NSURL *)url
-{
++ (id<CogSource>)audioSourceForURL:(NSURL *)url {
 	return [[PluginController sharedPluginController] audioSourceForURL:url];
 }
 

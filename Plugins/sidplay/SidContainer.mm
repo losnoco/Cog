@@ -13,64 +13,58 @@
 
 @implementation SidContainer
 
-+ (NSArray *)fileTypes
-{
-    return [SidDecoder fileTypes];
++ (NSArray *)fileTypes {
+	return [SidDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes 
-{
++ (NSArray *)mimeTypes {
 	return nil;
 }
 
-+ (float)priority
-{
-    return 0.5f;
++ (float)priority {
+	return 0.5f;
 }
 
-+ (NSArray *)urlsForContainerURL:(NSURL *)url
-{
-    if ([url fragment]) {
-        // input url already has fragment defined - no need to expand further
-        return [NSMutableArray arrayWithObject:url];
-    }
-    
-    id audioSourceClass = NSClassFromString(@"AudioSource");
-    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
-    
-    if (![source open:url])
-        return 0;
-    
-    if (![source seekable])
-        return 0;
-    
-    [source seek:0 whence:SEEK_END];
-    long size = [source tell];
-    [source seek:0 whence:SEEK_SET];
-    
-    void * data = malloc(size);
-    [source read:data amount:size];
++ (NSArray *)urlsForContainerURL:(NSURL *)url {
+	if([url fragment]) {
+		// input url already has fragment defined - no need to expand further
+		return [NSMutableArray arrayWithObject:url];
+	}
 
-    SidTune * tune = new SidTune( (const uint_least8_t*)data, (uint_least32_t) size );
-    
-    if (!tune->getStatus())
-        return 0;
-    
-    const SidTuneInfo * info = tune->getInfo();
-    
-    unsigned int subsongs = info->songs();
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
-    delete tune;
-    
-    NSMutableArray *tracks = [NSMutableArray array];
+	if(![source open:url])
+		return 0;
 
-    for (unsigned int i = 1; i <= subsongs; ++i)
-    {
-        [tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
-    }
-    
+	if(![source seekable])
+		return 0;
+
+	[source seek:0 whence:SEEK_END];
+	long size = [source tell];
+	[source seek:0 whence:SEEK_SET];
+
+	void *data = malloc(size);
+	[source read:data amount:size];
+
+	SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+
+	if(!tune->getStatus())
+		return 0;
+
+	const SidTuneInfo *info = tune->getInfo();
+
+	unsigned int subsongs = info->songs();
+
+	delete tune;
+
+	NSMutableArray *tracks = [NSMutableArray array];
+
+	for(unsigned int i = 1; i <= subsongs; ++i) {
+		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
+	}
+
 	return tracks;
 }
-
 
 @end

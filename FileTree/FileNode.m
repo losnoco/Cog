@@ -10,8 +10,7 @@
 
 @implementation FileNode
 
-- (BOOL)isLeaf
-{
+- (BOOL)isLeaf {
 	return YES;
 }
 

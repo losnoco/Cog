@@ -6,13 +6,13 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "TrackingSlider.h"
+#import <Cocoa/Cocoa.h>
 
 @class TimeField;
 
 @interface PositionSlider : TrackingSlider
 
-@property (nonatomic) IBOutlet TimeField *positionTextField;
+@property(nonatomic) IBOutlet TimeField *positionTextField;
 
 @end

@@ -8,15 +8,12 @@
 
 #import "NSArray+CogSort.h"
 
-
 @implementation NSArray (CogSort)
 
 // Hack to sort search results by artist
-- (NSComparisonResult)compareFirstString:(NSArray *)anArray
-{
-    return [(NSString *)[self objectAtIndex:0] 
-        caseInsensitiveCompare:(NSString *)[anArray objectAtIndex:0]];
+- (NSComparisonResult)compareFirstString:(NSArray *)anArray {
+	return [(NSString *)[self objectAtIndex:0]
+	caseInsensitiveCompare:(NSString *)[anArray objectAtIndex:0]];
 }
-
 
 @end

@@ -14,14 +14,14 @@
 #import "Plugin.h"
 
 @interface AdPlugDecoder : NSObject <CogDecoder> {
-    CPlayer * m_player;
-    Copl * m_emu;
-    
-    unsigned int subsong, samples_todo;
-    
+	CPlayer* m_player;
+	Copl* m_emu;
+
+	unsigned int subsong, samples_todo;
+
 	id<CogSource> source;
-    unsigned long current_pos;
-    unsigned long length;
+	unsigned long current_pos;
+	unsigned long length;
 }
 
 - (void)setSource:(id<CogSource>)s;

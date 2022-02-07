@@ -11,55 +11,51 @@
 
 @implementation HVLMetadataReader
 
-+ (NSArray *)fileTypes
-{
++ (NSArray *)fileTypes {
 	return [HVLDecoder fileTypes];
 }
 
-+ (NSArray *)mimeTypes
-{
++ (NSArray *)mimeTypes {
 	return [HVLDecoder mimeTypes];
 }
 
-+ (float)priority
-{
-    return 1.0f;
++ (float)priority {
+	return 1.0f;
 }
 
-+ (NSDictionary *)metadataForURL:(NSURL *)url
-{
-    id audioSourceClass = NSClassFromString(@"AudioSource");
-    id<CogSource> source = [audioSourceClass audioSourceForURL:url];
-    
-    if (![source open:url])
-        return 0;
-    
-    if (![source seekable])
-        return 0;
++ (NSDictionary *)metadataForURL:(NSURL *)url {
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
-    [source seek:0 whence:SEEK_END];
-    long size = [source tell];
-    [source seek:0 whence:SEEK_SET];
-    
-    if ( size > UINT_MAX )
-        return nil;
-    
-    void * data = malloc(size);
-    [source read:data amount:size];
-	
-    struct hvl_tune * tune = hvl_LoadTune( data, (uint32_t) size, 44100, 2 );
-    free( data );
-    if ( !tune )
-        return nil;
+	if(![source open:url])
+		return 0;
 
-	NSString *title = [[NSString stringWithUTF8String: tune->ht_Name] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	if(![source seekable])
+		return 0;
 
-    hvl_FreeTune( tune );
+	[source seek:0 whence:SEEK_END];
+	long size = [source tell];
+	[source seek:0 whence:SEEK_SET];
 
-	if (title == nil) {
+	if(size > UINT_MAX)
+		return nil;
+
+	void *data = malloc(size);
+	[source read:data amount:size];
+
+	struct hvl_tune *tune = hvl_LoadTune(data, (uint32_t)size, 44100, 2);
+	free(data);
+	if(!tune)
+		return nil;
+
+	NSString *title = [[NSString stringWithUTF8String:tune->ht_Name] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+	hvl_FreeTune(tune);
+
+	if(title == nil) {
 		title = @"";
 	}
-	
+
 	return [NSDictionary dictionaryWithObject:title forKey:@"title"];
 }
 

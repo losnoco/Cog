@@ -15,12 +15,12 @@
 	NSString *subject;
 	NSString *message;
 	NSString *version;
-	
+
 	id<FeedbackSocketDelegate> delegate;
 }
 
 - (void)setDelegate:(id<FeedbackSocketDelegate>)d;
-- (void)sendFeedback: (NSString *)f subject:(NSString *)s message:(NSString *)m version:(NSString *)v;
+- (void)sendFeedback:(NSString *)f subject:(NSString *)s message:(NSString *)m version:(NSString *)v;
 
 - (void)setFrom:(NSString *)f;
 - (void)setSubject:(NSString *)s;
@@ -29,7 +29,7 @@
 
 @end
 
-@protocol FeedbackSocketDelegate<NSObject>
+@protocol FeedbackSocketDelegate <NSObject>
 
 - (void)feedbackDidSend:(FeedbackSocket *)feedback;
 - (void)feedbackDidNotSend:(FeedbackSocket *)feedback;

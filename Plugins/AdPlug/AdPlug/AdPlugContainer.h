@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface AdPlugContainer : NSObject <CogContainer> {
-
 }
 
 @end

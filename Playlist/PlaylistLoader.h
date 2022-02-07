@@ -6,9 +6,9 @@
 //  Copyright 2007 Vincent Spader All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "PlaylistController.h"
 #import "PlaylistView.h"
+#import <Cocoa/Cocoa.h>
 
 @class PlaylistController;
 @class PlaybackController;
@@ -17,14 +17,14 @@
 typedef enum {
 	kPlaylistM3u,
 	kPlaylistPls,
-    kPlaylistXml,
+	kPlaylistXml,
 } PlaylistType;
 
 @interface PlaylistLoader : NSObject {
 	IBOutlet PlaylistController *playlistController;
-    IBOutlet NSScrollView *playlistView;
-    IBOutlet PlaybackController *playbackController;
-    
+	IBOutlet NSScrollView *playlistView;
+	IBOutlet PlaybackController *playbackController;
+
 	NSOperationQueue *queue;
 }
 
@@ -34,11 +34,11 @@ typedef enum {
 - (void)clear:(id)sender;
 
 // Load arrays of urls...
-- (NSArray*)addURLs:(NSArray *)urls sort:(BOOL)sort;
-- (NSArray*)addURL:(NSURL *)url;
-- (NSArray*)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort;
+- (NSArray *)addURLs:(NSArray *)urls sort:(BOOL)sort;
+- (NSArray *)addURL:(NSURL *)url;
+- (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort;
 
-- (NSArray*)addDatabase;
+- (NSArray *)addDatabase;
 
 // Save playlist, auto-determines type based on extension. Uses m3u if it cannot be determined.
 - (BOOL)save:(NSString *)filename;
@@ -56,11 +56,11 @@ typedef enum {
 - (void)syncLoadInfoForEntries:(NSArray *)entries;
 
 - (NSArray *)acceptableFileTypes;
-- (NSArray *)acceptablePlaylistTypes; //Only m3u and pls saving
+- (NSArray *)acceptablePlaylistTypes; // Only m3u and pls saving
 - (NSArray *)acceptableContainerTypes;
 
 // Events (passed to playlist controler):
-- (void)willInsertURLs:(NSArray*)urls origin:(URLOrigin)origin;
-- (void)didInsertURLs:(NSArray*)entries origin:(URLOrigin)origin;
+- (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin;
+- (void)didInsertURLs:(NSArray *)entries origin:(URLOrigin)origin;
 
 @end

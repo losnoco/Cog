@@ -8,41 +8,34 @@
 
 #import "Semaphore.h"
 
-
 @implementation Semaphore
 
--(id)init
-{
+- (id)init {
 	self = [super init];
-	if (self)
-	{
+	if(self) {
 		semaphore_create(mach_task_self(), &semaphore, SYNC_POLICY_FIFO, 0);
 	}
-	
+
 	return self;
 }
 
--(void)signal
-{
+- (void)signal {
 	semaphore_signal_all(semaphore);
 }
 
--(void)timedWait:(int)microseconds
-{
-	mach_timespec_t timeout = {0, microseconds * 1000UL};
-	
+- (void)timedWait:(int)microseconds {
+	mach_timespec_t timeout = { 0, microseconds * 1000UL };
+
 	semaphore_timedwait(semaphore, timeout);
 }
 
--(void)wait
-{
-	mach_timespec_t t = {2.0, 0.0}; //2 second timeout
+- (void)wait {
+	mach_timespec_t t = { 2.0, 0.0 }; // 2 second timeout
 	semaphore_timedwait(semaphore, t);
 }
 
--(void)waitIndefinitely
-{
-    semaphore_wait(semaphore);
+- (void)waitIndefinitely {
+	semaphore_wait(semaphore);
 }
 
 @end

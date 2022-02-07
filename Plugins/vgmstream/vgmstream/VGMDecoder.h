@@ -8,32 +8,32 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <libvgmstream/vgmstream.h>
 #import <libvgmstream/streamfile.h>
+#import <libvgmstream/vgmstream.h>
 
 #import "Plugin.h"
 
 @interface VGMInfoCache : NSObject {
-    NSMutableDictionary *storage;
+	NSMutableDictionary *storage;
 }
 
-+(id)sharedCache;
++ (id)sharedCache;
 
--(void)stuffURL:(NSURL *)url stream:(VGMSTREAM *)stream;
--(NSDictionary*)getPropertiesForURL:(NSURL *)url;
--(NSDictionary*)getMetadataForURL:(NSURL *)url;
+- (void)stuffURL:(NSURL *)url stream:(VGMSTREAM *)stream;
+- (NSDictionary *)getPropertiesForURL:(NSURL *)url;
+- (NSDictionary *)getMetadataForURL:(NSURL *)url;
 
 @end
 
 @interface VGMDecoder : NSObject <CogDecoder> {
-    VGMSTREAM *stream;
+	VGMSTREAM *stream;
 
-    BOOL playForever;
-    BOOL canPlayForever;
-    int sampleRate;
-    int channels;
-    int bitrate;
+	BOOL playForever;
+	BOOL canPlayForever;
+	int sampleRate;
+	int channels;
+	int bitrate;
 	long totalFrames;
-    long framesRead;
+	long framesRead;
 }
 @end

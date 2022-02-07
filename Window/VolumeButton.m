@@ -10,45 +10,41 @@
 #import "PlaybackController.h"
 
 @implementation VolumeButton {
-    NSPopover *popover;
-    NSViewController *viewController;
+	NSPopover *popover;
+	NSViewController *viewController;
 }
 
-- (void)awakeFromNib
-{
-    popover = [[NSPopover alloc] init];
-    popover.behavior = NSPopoverBehaviorTransient;
-    [popover setContentSize:_popView.bounds.size];
+- (void)awakeFromNib {
+	popover = [[NSPopover alloc] init];
+	popover.behavior = NSPopoverBehaviorTransient;
+	[popover setContentSize:_popView.bounds.size];
 }
 
-- (void)scrollWheel:(NSEvent *)theEvent
-{
-    if ([popover isShown]) {
-        [_popView scrollWheel:theEvent];
-        return;
-    }
+- (void)scrollWheel:(NSEvent *)theEvent {
+	if([popover isShown]) {
+		[_popView scrollWheel:theEvent];
+		return;
+	}
 
-    double change = [theEvent deltaY];
+	double change = [theEvent deltaY];
 
-    [_popView setDoubleValue:[_popView doubleValue] + change];
+	[_popView setDoubleValue:[_popView doubleValue] + change];
 
-    [[_popView target] changeVolume:_popView];
+	[[_popView target] changeVolume:_popView];
 
-    [_popView showToolTipForView:self closeAfter:1.0];
+	[_popView showToolTipForView:self closeAfter:1.0];
 }
 
-- (void)mouseDown:(NSEvent *)theEvent
-{
-    [popover close];
+- (void)mouseDown:(NSEvent *)theEvent {
+	[popover close];
 
-    viewController = [[NSViewController alloc] init];
-    viewController.view = _popView;
-    popover.contentViewController = viewController;
+	viewController = [[NSViewController alloc] init];
+	viewController.view = _popView;
+	popover.contentViewController = viewController;
 
-    [popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMaxY];
+	[popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMaxY];
 
-    [super mouseDown:theEvent];
+	[super mouseDown:theEvent];
 }
-
 
 @end

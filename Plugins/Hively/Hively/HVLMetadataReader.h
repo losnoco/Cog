@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface HVLMetadataReader : NSObject <CogMetadataReader> {
-
 }
 
 @end

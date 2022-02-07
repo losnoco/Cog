@@ -12,11 +12,10 @@
 
 @implementation AudioContainer
 
-+ (NSArray *) urlsForContainerURL:(NSURL *)url
-{
-    @autoreleasepool {
-        return [[PluginController sharedPluginController] urlsForContainerURL:url];
-    }
++ (NSArray *)urlsForContainerURL:(NSURL *)url {
+	@autoreleasepool {
+		return [[PluginController sharedPluginController] urlsForContainerURL:url];
+	}
 }
 
 @end

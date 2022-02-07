@@ -9,9 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 @interface VolumeSlider : NSSlider {
-    NSPopover *popover;
-    NSText *textView;
-    double MAX_VOLUME;
+	NSPopover *popover;
+	NSText *textView;
+	double MAX_VOLUME;
 }
 
 - (void)showToolTip;

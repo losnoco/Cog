@@ -13,33 +13,30 @@
 
 @implementation libvgmContainer
 
-+ (NSArray *)fileTypes
-{
-	return @[@"s98", @"dro", @"gym",
-             @"vgm",@"vgz" // These are included so they can override AdPlug and VGMStream
-            ];
++ (NSArray *)fileTypes {
+	return @[
+		@"s98", @"dro", @"gym",
+		@"vgm", @"vgz" // These are included so they can override AdPlug and VGMStream
+	];
 }
 
-+ (NSArray *)mimeTypes 
-{
++ (NSArray *)mimeTypes {
 	return nil;
 }
 
-+ (float)priority
-{
-    return [libvgmDecoder priority];
++ (float)priority {
+	return [libvgmDecoder priority];
 }
 
-//This really should be source...
-+ (NSArray *)urlsForContainerURL:(NSURL *)url
-{
-    if ([url fragment]) {
-        // input url already has fragment defined - no need to expand further
-        return [NSMutableArray arrayWithObject:url];
-    }
+// This really should be source...
++ (NSArray *)urlsForContainerURL:(NSURL *)url {
+	if([url fragment]) {
+		// input url already has fragment defined - no need to expand further
+		return [NSMutableArray arrayWithObject:url];
+	}
 
-    // None of the covered formats include subsongs, but dodge VGMStream and AdPlug
-    return @[[NSURL URLWithString:[[url absoluteString] stringByAppendingString:@"#0"]]];
+	// None of the covered formats include subsongs, but dodge VGMStream and AdPlug
+	return @[[NSURL URLWithString:[[url absoluteString] stringByAppendingString:@"#0"]]];
 }
 
 @end

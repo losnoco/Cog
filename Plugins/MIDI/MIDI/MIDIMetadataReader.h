@@ -11,7 +11,6 @@
 #import "Plugin.h"
 
 @interface MIDIMetadataReader : NSObject <CogMetadataReader> {
-
 }
 
 @end

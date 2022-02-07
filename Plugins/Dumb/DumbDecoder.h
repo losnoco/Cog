@@ -19,13 +19,13 @@ extern DUMBFILE *dumbfile_open_memory_and_free(char *data, long size);
 	DUH *duh;
 	DUH_SIGRENDERER *dsr;
 	sample_t **sampptr;
-    
+
 	id<CogSource> source;
 	long length;
-    
-    long loops;
-    long fadeTotal;
-    long fadeRemain;
+
+	long loops;
+	long fadeTotal;
+	long fadeRemain;
 }
 
 - (void)setSource:(id<CogSource>)s;

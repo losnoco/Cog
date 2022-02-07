@@ -1,6 +1,6 @@
 #import "PluginController.h"
-#import "Plugin.h"
 #import "CogPluginMulti.h"
+#import "Plugin.h"
 
 #import "Logging.h"
 
@@ -22,239 +22,202 @@
 
 static PluginController *sharedPluginController = nil;
 
-+ (id<CogPluginController>)sharedPluginController
-{
++ (id<CogPluginController>)sharedPluginController {
 	@synchronized(self) {
-		if (sharedPluginController == nil) {
+		if(sharedPluginController == nil) {
 			sharedPluginController = [[self alloc] init];
 		}
 	}
-	
+
 	return sharedPluginController;
 }
 
-
 - (id)init {
 	self = [super init];
-	if (self) {
-        self.sources = [[NSMutableDictionary alloc] init];
-        self.containers = [[NSMutableDictionary alloc] init];
- 
-        self.metadataReaders = [[NSMutableDictionary alloc] init];
- 
-        self.propertiesReadersByExtension = [[NSMutableDictionary alloc] init];
-        self.propertiesReadersByMimeType = [[NSMutableDictionary alloc] init];
- 
-        self.decodersByExtension = [[NSMutableDictionary alloc] init];
-        self.decodersByMimeType = [[NSMutableDictionary alloc] init];
-        
-        [self setup];
+	if(self) {
+		self.sources = [[NSMutableDictionary alloc] init];
+		self.containers = [[NSMutableDictionary alloc] init];
+
+		self.metadataReaders = [[NSMutableDictionary alloc] init];
+
+		self.propertiesReadersByExtension = [[NSMutableDictionary alloc] init];
+		self.propertiesReadersByMimeType = [[NSMutableDictionary alloc] init];
+
+		self.decodersByExtension = [[NSMutableDictionary alloc] init];
+		self.decodersByMimeType = [[NSMutableDictionary alloc] init];
+
+		[self setup];
 	}
-	
+
 	return self;
 }
 
-- (void)setup
-{
-	if (self.configured == NO) {
+- (void)setup {
+	if(self.configured == NO) {
 		self.configured = YES;
-		
+
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bundleDidLoad:) name:NSBundleDidLoadNotification object:nil];
 
 		[self loadPlugins];
 		[self printPluginInfo];
-	}	
+	}
 }
 
-- (void)bundleDidLoad:(NSNotification *)notification
-{
+- (void)bundleDidLoad:(NSNotification *)notification {
 	NSArray *classNames = [[notification userInfo] objectForKey:@"NSLoadedClasses"];
-    for (NSString *className in classNames)
-    {
-        Class bundleClass = NSClassFromString(className);
-        if ([bundleClass conformsToProtocol:@protocol(CogVersionCheck)]) {
-            DLog(@"Component has version check: %@", className);
-            if (![bundleClass shouldLoadForOSVersion:[[NSProcessInfo processInfo] operatingSystemVersion]])
-            {
-                DLog(@"Plugin fails OS version check, ignoring");
-                return;
-            }
-        }
-    }
-	for (NSString *className in classNames)
-	{
+	for(NSString *className in classNames) {
+		Class bundleClass = NSClassFromString(className);
+		if([bundleClass conformsToProtocol:@protocol(CogVersionCheck)]) {
+			DLog(@"Component has version check: %@", className);
+			if(![bundleClass shouldLoadForOSVersion:[[NSProcessInfo processInfo] operatingSystemVersion]]) {
+				DLog(@"Plugin fails OS version check, ignoring");
+				return;
+			}
+		}
+	}
+	for(NSString *className in classNames) {
 		DLog(@"Class loaded: %@", className);
 		Class bundleClass = NSClassFromString(className);
-		if ([bundleClass conformsToProtocol:@protocol(CogContainer)]) {
+		if([bundleClass conformsToProtocol:@protocol(CogContainer)]) {
 			[self setupContainer:className];
 		}
-		if ([bundleClass conformsToProtocol:@protocol(CogDecoder)]) {
+		if([bundleClass conformsToProtocol:@protocol(CogDecoder)]) {
 			[self setupDecoder:className];
 		}
-		if ([bundleClass conformsToProtocol:@protocol(CogMetadataReader)]) {
+		if([bundleClass conformsToProtocol:@protocol(CogMetadataReader)]) {
 			[self setupMetadataReader:className];
 		}
-		if ([bundleClass conformsToProtocol:@protocol(CogPropertiesReader)]) {
+		if([bundleClass conformsToProtocol:@protocol(CogPropertiesReader)]) {
 			[self setupPropertiesReader:className];
 		}
-		if ([bundleClass conformsToProtocol:@protocol(CogSource)]) {
+		if([bundleClass conformsToProtocol:@protocol(CogSource)]) {
 			[self setupSource:className];
 		}
 	}
 }
 
-- (void)loadPluginsAtPath:(NSString *)path
-{
-
+- (void)loadPluginsAtPath:(NSString *)path {
 	NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
 
-	for (NSString *pname in dirContents)
-	{
+	for(NSString *pname in dirContents) {
 		NSString *ppath;
-		ppath = [NSString pathWithComponents:@[path,pname]];
-		
-		if ([[pname pathExtension] isEqualToString:@"bundle"])
-		{
+		ppath = [NSString pathWithComponents:@[path, pname]];
+
+		if([[pname pathExtension] isEqualToString:@"bundle"]) {
 			NSBundle *b = [NSBundle bundleWithPath:ppath];
 			[b load];
 		}
 	}
 }
 
-- (void)loadPlugins
-{
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
-    NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+- (void)loadPlugins {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
 
-    [self loadPluginsAtPath:[[NSBundle mainBundle] builtInPlugInsPath]];
+	[self loadPluginsAtPath:[[NSBundle mainBundle] builtInPlugInsPath]];
 	[self loadPluginsAtPath:[basePath stringByAppendingPathComponent:@"Plugins"]];
 }
 
-- (void)setupContainer:(NSString *)className
-{
+- (void)setupContainer:(NSString *)className {
 	Class container = NSClassFromString(className);
-	if (container && [container respondsToSelector:@selector(fileTypes)]) {
-		for (id fileType in [container fileTypes])
-		{
-            NSString *ext = [fileType lowercaseString];
-            NSMutableArray *containerSet;
-            if (![containers objectForKey:ext])
-            {
-                containerSet = [[NSMutableArray alloc] init];
-                [containers setObject:containerSet forKey:ext];
-            }
-            else
-                containerSet = [containers objectForKey:ext];
-            [containerSet addObject:className];
+	if(container && [container respondsToSelector:@selector(fileTypes)]) {
+		for(id fileType in [container fileTypes]) {
+			NSString *ext = [fileType lowercaseString];
+			NSMutableArray *containerSet;
+			if(![containers objectForKey:ext]) {
+				containerSet = [[NSMutableArray alloc] init];
+				[containers setObject:containerSet forKey:ext];
+			} else
+				containerSet = [containers objectForKey:ext];
+			[containerSet addObject:className];
 		}
 	}
 }
 
-- (void)setupDecoder:(NSString *)className
-{
+- (void)setupDecoder:(NSString *)className {
 	Class decoder = NSClassFromString(className);
-	if (decoder && [decoder respondsToSelector:@selector(fileTypes)]) {
-		for (id fileType in [decoder fileTypes])
-		{
-            NSString *ext = [fileType lowercaseString];
-            NSMutableArray *decoders;
-            if (![decodersByExtension objectForKey:ext])
-            {
-                decoders = [[NSMutableArray alloc] init];
-                [decodersByExtension setObject:decoders forKey:ext];
-            }
-            else
-                decoders = [decodersByExtension objectForKey:ext];
+	if(decoder && [decoder respondsToSelector:@selector(fileTypes)]) {
+		for(id fileType in [decoder fileTypes]) {
+			NSString *ext = [fileType lowercaseString];
+			NSMutableArray *decoders;
+			if(![decodersByExtension objectForKey:ext]) {
+				decoders = [[NSMutableArray alloc] init];
+				[decodersByExtension setObject:decoders forKey:ext];
+			} else
+				decoders = [decodersByExtension objectForKey:ext];
 			[decoders addObject:className];
 		}
 	}
-	
-	if (decoder && [decoder respondsToSelector:@selector(mimeTypes)]) {
-		for (id mimeType in [decoder mimeTypes]) 
-		{
-            NSString *mimetype = [mimeType lowercaseString];
-            NSMutableArray *decoders;
-            if (![decodersByMimeType objectForKey:mimetype])
-            {
-                decoders = [[NSMutableArray alloc] init];
-                [decodersByMimeType setObject:decoders forKey:mimetype];
-            }
-            else
-                decoders = [decodersByMimeType objectForKey:mimetype];
-            [decoders addObject:className];
+
+	if(decoder && [decoder respondsToSelector:@selector(mimeTypes)]) {
+		for(id mimeType in [decoder mimeTypes]) {
+			NSString *mimetype = [mimeType lowercaseString];
+			NSMutableArray *decoders;
+			if(![decodersByMimeType objectForKey:mimetype]) {
+				decoders = [[NSMutableArray alloc] init];
+				[decodersByMimeType setObject:decoders forKey:mimetype];
+			} else
+				decoders = [decodersByMimeType objectForKey:mimetype];
+			[decoders addObject:className];
 		}
 	}
 }
 
-- (void)setupMetadataReader:(NSString *)className
-{
+- (void)setupMetadataReader:(NSString *)className {
 	Class metadataReader = NSClassFromString(className);
-	if (metadataReader && [metadataReader respondsToSelector:@selector(fileTypes)]) {
-		for (id fileType in [metadataReader fileTypes])
-		{
-            NSString *ext = [fileType lowercaseString];
-            NSMutableArray *readers;
-            if (![metadataReaders objectForKey:ext])
-            {
-                readers = [[NSMutableArray alloc] init];
-                [metadataReaders setObject:readers forKey:ext];
-            }
-            else
-                readers = [metadataReaders objectForKey:ext];
-            [readers addObject:className];
+	if(metadataReader && [metadataReader respondsToSelector:@selector(fileTypes)]) {
+		for(id fileType in [metadataReader fileTypes]) {
+			NSString *ext = [fileType lowercaseString];
+			NSMutableArray *readers;
+			if(![metadataReaders objectForKey:ext]) {
+				readers = [[NSMutableArray alloc] init];
+				[metadataReaders setObject:readers forKey:ext];
+			} else
+				readers = [metadataReaders objectForKey:ext];
+			[readers addObject:className];
 		}
 	}
 }
 
-- (void)setupPropertiesReader:(NSString *)className
-{
+- (void)setupPropertiesReader:(NSString *)className {
 	Class propertiesReader = NSClassFromString(className);
-	if (propertiesReader && [propertiesReader respondsToSelector:@selector(fileTypes)]) {
-		for (id fileType in [propertiesReader fileTypes])
-		{
-            NSString *ext = [fileType lowercaseString];
-            NSMutableArray *readers;
-            if (![propertiesReadersByExtension objectForKey:ext])
-            {
-                readers = [[NSMutableArray alloc] init];
-                [propertiesReadersByExtension setObject:readers forKey:ext];
-            }
-            else
-                readers = [propertiesReadersByExtension objectForKey:ext];
-            [readers addObject:className];
+	if(propertiesReader && [propertiesReader respondsToSelector:@selector(fileTypes)]) {
+		for(id fileType in [propertiesReader fileTypes]) {
+			NSString *ext = [fileType lowercaseString];
+			NSMutableArray *readers;
+			if(![propertiesReadersByExtension objectForKey:ext]) {
+				readers = [[NSMutableArray alloc] init];
+				[propertiesReadersByExtension setObject:readers forKey:ext];
+			} else
+				readers = [propertiesReadersByExtension objectForKey:ext];
+			[readers addObject:className];
 		}
 	}
 
-	if (propertiesReader && [propertiesReader respondsToSelector:@selector(mimeTypes)]) {
-		for (id mimeType in [propertiesReader mimeTypes])
-		{
-            NSString *mimetype = [mimeType lowercaseString];
-            NSMutableArray *readers;
-            if (![propertiesReadersByMimeType objectForKey:mimetype])
-            {
-                readers = [[NSMutableArray alloc] init];
-                [propertiesReadersByMimeType setObject:readers forKey:mimetype];
-            }
-            else
-                readers = [propertiesReadersByMimeType objectForKey:mimetype];
-            [readers addObject:className];
+	if(propertiesReader && [propertiesReader respondsToSelector:@selector(mimeTypes)]) {
+		for(id mimeType in [propertiesReader mimeTypes]) {
+			NSString *mimetype = [mimeType lowercaseString];
+			NSMutableArray *readers;
+			if(![propertiesReadersByMimeType objectForKey:mimetype]) {
+				readers = [[NSMutableArray alloc] init];
+				[propertiesReadersByMimeType setObject:readers forKey:mimetype];
+			} else
+				readers = [propertiesReadersByMimeType objectForKey:mimetype];
+			[readers addObject:className];
 		}
 	}
 }
 
-- (void)setupSource:(NSString *)className
-{
+- (void)setupSource:(NSString *)className {
 	Class source = NSClassFromString(className);
-	if (source && [source respondsToSelector:@selector(schemes)]) {
-		for (id scheme in [source schemes])
-		{
+	if(source && [source respondsToSelector:@selector(schemes)]) {
+		for(id scheme in [source schemes]) {
 			[sources setObject:className forKey:scheme];
 		}
 	}
 }
 
-- (void)printPluginInfo
-{
+- (void)printPluginInfo {
 	ALog(@"Sources: %@", self.sources);
 	ALog(@"Containers: %@", self.containers);
 	ALog(@"Metadata Readers: %@", self.metadataReaders);
@@ -264,7 +227,7 @@ static PluginController *sharedPluginController = nil;
 
 	ALog(@"Decoders by Extension: %@", self.decodersByExtension);
 	ALog(@"Decoders by Mime Type: %@", self.decodersByMimeType);
-    
+
 #if 0
     // XXX Keep in sync with Info.plist on disk!
     NSString * plistHeader = @"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
@@ -420,194 +383,167 @@ static PluginController *sharedPluginController = nil;
 #endif
 }
 
-- (id<CogSource>) audioSourceForURL:(NSURL *)url
-{
+- (id<CogSource>)audioSourceForURL:(NSURL *)url {
 	NSString *scheme = [url scheme];
-	
+
 	Class source = NSClassFromString([sources objectForKey:scheme]);
-	
+
 	return [[source alloc] init];
 }
 
-- (NSArray *) urlsForContainerURL:(NSURL *)url
-{
+- (NSArray *)urlsForContainerURL:(NSURL *)url {
 	NSString *ext = [url pathExtension];
-    NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
-    NSString *classString;
-    if (containerSet) {
-        if ( [containerSet count] > 1 ) {
-            return [CogContainerMulti urlsForContainerURL:url containers:containerSet];
-        }
-        else {
-            classString = [containerSet objectAtIndex:0];
-        }
-    }
-    else {
-        return nil;
-    }
-	
+	NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
+	NSString *classString;
+	if(containerSet) {
+		if([containerSet count] > 1) {
+			return [CogContainerMulti urlsForContainerURL:url containers:containerSet];
+		} else {
+			classString = [containerSet objectAtIndex:0];
+		}
+	} else {
+		return nil;
+	}
+
 	Class container = NSClassFromString(classString);
-	
+
 	return [container urlsForContainerURL:url];
 }
 
-//Note: Source is assumed to already be opened.
-- (id<CogDecoder>) audioDecoderForSource:(id <CogSource>)source skipCue:(BOOL)skip
-{
+// Note: Source is assumed to already be opened.
+- (id<CogDecoder>)audioDecoderForSource:(id<CogSource>)source skipCue:(BOOL)skip {
 	NSString *ext = [[source url] pathExtension];
 	NSArray *decoders = [decodersByExtension objectForKey:[ext lowercaseString]];
-    NSString *classString;
-    if (decoders) {
-        if ( [decoders count] > 1 ) {
-            if (skip)
-            {
-                NSMutableArray * _decoders = [decoders mutableCopy];
-                for (int i = 0; i < [_decoders count];)
-                {
-                    if ([[_decoders objectAtIndex:i] isEqualToString:@"CueSheetDecoder"])
-                        [_decoders removeObjectAtIndex:i];
-                    else
-                        ++i;
-                }
-                return [[CogDecoderMulti alloc] initWithDecoders:_decoders];
-            }
-            return [[CogDecoderMulti alloc] initWithDecoders:decoders];
-        }
-        else {
-            classString = [decoders objectAtIndex:0];
-        }
-    }
-	else {
-        decoders = [decodersByMimeType objectForKey:[[source mimeType] lowercaseString]];
-        if (decoders) {
-            if ( [decoders count] > 1 ) {
-                return [[CogDecoderMulti alloc] initWithDecoders:decoders];
-            }
-            else {
-                classString = [decoders objectAtIndex:0];
-            }
-        }
-        else {
-            classString = @"SilenceDecoder";
-        }
+	NSString *classString;
+	if(decoders) {
+		if([decoders count] > 1) {
+			if(skip) {
+				NSMutableArray *_decoders = [decoders mutableCopy];
+				for(int i = 0; i < [_decoders count];) {
+					if([[_decoders objectAtIndex:i] isEqualToString:@"CueSheetDecoder"])
+						[_decoders removeObjectAtIndex:i];
+					else
+						++i;
+				}
+				return [[CogDecoderMulti alloc] initWithDecoders:_decoders];
+			}
+			return [[CogDecoderMulti alloc] initWithDecoders:decoders];
+		} else {
+			classString = [decoders objectAtIndex:0];
+		}
+	} else {
+		decoders = [decodersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+		if(decoders) {
+			if([decoders count] > 1) {
+				return [[CogDecoderMulti alloc] initWithDecoders:decoders];
+			} else {
+				classString = [decoders objectAtIndex:0];
+			}
+		} else {
+			classString = @"SilenceDecoder";
+		}
 	}
 
 	Class decoder = NSClassFromString(classString);
-	
+
 	return [[decoder alloc] init];
 }
 
-- (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip
-{
-    NSString * urlScheme = [url scheme];
-    if ([urlScheme isEqualToString:@"http"] ||
-        [urlScheme isEqualToString:@"https"])
-        return nil;
-    
+- (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip {
+	NSString *urlScheme = [url scheme];
+	if([urlScheme isEqualToString:@"http"] ||
+	   [urlScheme isEqualToString:@"https"])
+		return nil;
+
 	NSString *ext = [url pathExtension];
-    NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
-    NSString *classString;
-    if (readers) {
-        if ( [readers count] > 1 ) {
-            if (skip)
-            {
-                NSMutableArray *_readers = [readers mutableCopy];
-                for (int i = 0; i < [_readers count];)
-                {
-                    if ([[_readers objectAtIndex:i] isEqualToString:@"CueSheetMetadataReader"])
-                        [_readers removeObjectAtIndex:i];
-                    else
-                        ++i;
-                }
-                return [CogMetadataReaderMulti metadataForURL:url readers:_readers];
-            }
-            return [CogMetadataReaderMulti metadataForURL:url readers:readers];
-        }
-        else {
-            classString = [readers objectAtIndex:0];
-        }
-    }
-    else {
-        return nil;
-    }
-	
+	NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
+	NSString *classString;
+	if(readers) {
+		if([readers count] > 1) {
+			if(skip) {
+				NSMutableArray *_readers = [readers mutableCopy];
+				for(int i = 0; i < [_readers count];) {
+					if([[_readers objectAtIndex:i] isEqualToString:@"CueSheetMetadataReader"])
+						[_readers removeObjectAtIndex:i];
+					else
+						++i;
+				}
+				return [CogMetadataReaderMulti metadataForURL:url readers:_readers];
+			}
+			return [CogMetadataReaderMulti metadataForURL:url readers:readers];
+		} else {
+			classString = [readers objectAtIndex:0];
+		}
+	} else {
+		return nil;
+	}
+
 	Class metadataReader = NSClassFromString(classString);
-	
+
 	return [metadataReader metadataForURL:url];
 }
 
-
-//If no properties reader is defined, use the decoder's properties.
-- (NSDictionary *)propertiesForURL:(NSURL *)url
-{
-    NSString * urlScheme = [url scheme];
-    if ([urlScheme isEqualToString:@"http"] ||
-        [urlScheme isEqualToString:@"https"])
-        return nil;
-    
-    NSDictionary *properties = nil;
-	NSString *ext = [url pathExtension];
-	
-	id<CogSource> source = [self audioSourceForURL:url];
-	if (![source open:url])
+// If no properties reader is defined, use the decoder's properties.
+- (NSDictionary *)propertiesForURL:(NSURL *)url {
+	NSString *urlScheme = [url scheme];
+	if([urlScheme isEqualToString:@"http"] ||
+	   [urlScheme isEqualToString:@"https"])
 		return nil;
-    
-    NSArray *readers = [propertiesReadersByExtension objectForKey:[ext lowercaseString]];
-    NSString *classString = nil;
-    if (readers)
-    {
-        if ( [readers count] > 1 ) {
-            properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
-            if (properties != nil && [properties count])
-                return properties;
-        }
-        else {
-            classString = [readers objectAtIndex:0];
-        }
-    }
-    else {
-        readers = [propertiesReadersByMimeType objectForKey:[[source mimeType] lowercaseString]];
-        if (readers)
-        {
-            if ( [readers count] > 1 ) {
-                properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
-                if (properties != nil && [properties count])
-                    return properties;
-            }
-            else {
-                classString = [readers objectAtIndex:0];
-            }
-        }
-    }
 
-	if (classString)
-	{
+	NSDictionary *properties = nil;
+	NSString *ext = [url pathExtension];
+
+	id<CogSource> source = [self audioSourceForURL:url];
+	if(![source open:url])
+		return nil;
+
+	NSArray *readers = [propertiesReadersByExtension objectForKey:[ext lowercaseString]];
+	NSString *classString = nil;
+	if(readers) {
+		if([readers count] > 1) {
+			properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
+			if(properties != nil && [properties count])
+				return properties;
+		} else {
+			classString = [readers objectAtIndex:0];
+		}
+	} else {
+		readers = [propertiesReadersByMimeType objectForKey:[[source mimeType] lowercaseString]];
+		if(readers) {
+			if([readers count] > 1) {
+				properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
+				if(properties != nil && [properties count])
+					return properties;
+			} else {
+				classString = [readers objectAtIndex:0];
+			}
+		}
+	}
+
+	if(classString) {
 		Class propertiesReader = NSClassFromString(classString);
 
 		properties = [propertiesReader propertiesForSource:source];
-        if (properties != nil && [properties count])
-            return properties;
+		if(properties != nil && [properties count])
+			return properties;
 	}
 
-    {
-        id<CogDecoder> decoder = [self audioDecoderForSource:source skipCue:NO];
-		if (![decoder open:source])
-		{
+	{
+		id<CogDecoder> decoder = [self audioDecoderForSource:source skipCue:NO];
+		if(![decoder open:source]) {
 			return nil;
 		}
-		
+
 		NSDictionary *properties = [decoder properties];
-		
+
 		[decoder close];
-		
+
 		return properties;
 	}
 }
 
-- (int)putMetadataInURL:(NSURL *)url
-{
-    return 0;
+- (int)putMetadataInURL:(NSURL *)url {
+	return 0;
 }
 
 @end
-

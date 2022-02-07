@@ -6,33 +6,32 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "FLAC/all.h"
+#import <Cocoa/Cocoa.h>
 
 #define SAMPLES_PER_WRITE 512
 #define FLAC__MAX_SUPPORTED_CHANNELS 8
-#define SAMPLE_blockBuffer_SIZE ((FLAC__MAX_BLOCK_SIZE + SAMPLES_PER_WRITE) * FLAC__MAX_SUPPORTED_CHANNELS * (24/8))
+#define SAMPLE_blockBuffer_SIZE ((FLAC__MAX_BLOCK_SIZE + SAMPLES_PER_WRITE) * FLAC__MAX_SUPPORTED_CHANNELS * (24 / 8))
 
 #import "Plugin.h"
 
-@interface FlacDecoder : NSObject <CogDecoder>
-{
+@interface FlacDecoder : NSObject <CogDecoder> {
 	FLAC__StreamDecoder *decoder;
 	void *blockBuffer;
 	int blockBufferFrames;
-	
+
 	id<CogSource> source;
-	
+
 	BOOL endOfStream;
-	
+
 	int bitsPerSample;
 	int channels;
 	float frequency;
 	long totalFrames;
-    
-    long fileSize;
-    
-    BOOL hasStreamInfo;
+
+	long fileSize;
+
+	BOOL hasStreamInfo;
 }
 
 - (void)setSource:(id<CogSource>)s;

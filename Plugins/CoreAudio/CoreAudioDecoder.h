@@ -26,27 +26,27 @@
 
 #import "Plugin.h"
 
+@interface CoreAudioDecoder : NSObject <CogDecoder> {
+	@public
+	long _lastPosition;
+	@public
+	long _fileSize;
+	id<CogSource> _audioSource;
+	AudioFileID _audioFile;
+	ExtAudioFileRef _in;
 
-@interface CoreAudioDecoder : NSObject <CogDecoder>
-{
-    @public long            _lastPosition;
-    @public long            _fileSize;
-    id<CogSource>           _audioSource;
-    AudioFileID             _audioFile;
-	ExtAudioFileRef			_in;
-    
-    BOOL _audioFile_opened;
-    BOOL _in_opened;
-    BOOL _audioFile_is_lossy;
-    
+	BOOL _audioFile_opened;
+	BOOL _in_opened;
+	BOOL _audioFile_is_lossy;
+
 	int bitrate;
 	int bitsPerSample;
-    BOOL floatingPoint;
+	BOOL floatingPoint;
 	int channels;
 	float frequency;
 	long totalFrames;
-    
-    NSString* codec;
+
+	NSString* codec;
 }
 
 @end

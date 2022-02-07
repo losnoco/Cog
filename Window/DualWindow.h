@@ -8,7 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface DualWindow : NSWindow {
 	IBOutlet DualWindow *otherWindow;
 }

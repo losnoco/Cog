@@ -6,8 +6,8 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import "GeneralPreferencePane.h"
+#import <Cocoa/Cocoa.h>
 #import <MASShortcut/Shortcut.h>
 
 @interface HotKeyPane : GeneralPreferencePane

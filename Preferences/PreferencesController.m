@@ -12,20 +12,19 @@
 
 @implementation PreferencesController
 
-- (IBAction)showPreferences:(id)sender
-{
-    if (nil == window) {
-        // Determine path to the sample preference panes
-        NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"Preferences" ofType:@"preferencePane"];
-        NSBundle *bundle = [NSBundle bundleWithPath:pluginPath];
+- (IBAction)showPreferences:(id)sender {
+	if(nil == window) {
+		// Determine path to the sample preference panes
+		NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"Preferences" ofType:@"preferencePane"];
+		NSBundle *bundle = [NSBundle bundleWithPath:pluginPath];
 
-        PreferencePluginController *pluginController = [[PreferencePluginController alloc] initWithPlugins:@[bundle]];
+		PreferencePluginController *pluginController = [[PreferencePluginController alloc] initWithPlugins:@[bundle]];
 
-        window = [[PreferencesWindow alloc] initWithPreferencePanes:[pluginController preferencePanes]];
-    }
+		window = [[PreferencesWindow alloc] initWithPreferencePanes:[pluginController preferencePanes]];
+	}
 
-    // Show the preferences window.
-    [window show];
+	// Show the preferences window.
+	[window show];
 }
 
 @end

@@ -11,8 +11,6 @@
 #import "PathNode.h"
 
 @interface ContainedNode : PathNode {
-
-
 }
 
 @end

@@ -14,15 +14,15 @@
 
 @interface ptmodDecoder : NSObject <CogDecoder> {
 	void *ptmod;
-    void *data;
-    long size;
-    int track_num;
-    
-    int isMo3;
-    int isVblank;
-    
+	void *data;
+	long size;
+	int track_num;
+
+	int isMo3;
+	int isVblank;
+
 	long framesLength;
-    long totalFrames;
-    long framesRead;
+	long totalFrames;
+	long framesRead;
 }
 @end

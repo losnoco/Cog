@@ -8,18 +8,21 @@
 
 #import "FontSizetoLineHeightTransformer.h"
 
-
 @implementation FontSizetoLineHeightTransformer
 
-+ (Class)transformedValueClass { return [NSNumber class]; }
-+ (BOOL)allowsReverseTransformation { return NO; }
++ (Class)transformedValueClass {
+	return [NSNumber class];
+}
++ (BOOL)allowsReverseTransformation {
+	return NO;
+}
 
 // Convert from font size to height in playlist view
 - (id)transformedValue:(id)value {
-    NSFont *font = [NSFont systemFontOfSize:[(NSNumber *)value floatValue]];
-    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-    float fRowSize = [layoutManager defaultLineHeightForFont:font];
-    return [NSNumber numberWithFloat: fRowSize];
+	NSFont *font = [NSFont systemFontOfSize:[(NSNumber *)value floatValue]];
+	NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+	float fRowSize = [layoutManager defaultLineHeightForFont:font];
+	return [NSNumber numberWithFloat:fRowSize];
 }
 
 @end

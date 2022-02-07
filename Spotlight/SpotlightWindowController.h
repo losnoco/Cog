@@ -11,13 +11,13 @@
 @class PlaylistLoader;
 @protocol NSMetadataQueryDelegate;
 
-@interface SpotlightWindowController : NSWindowController<NSMetadataQueryDelegate> {
-    IBOutlet PlaylistLoader *playlistLoader;
-    IBOutlet NSArrayController *playlistController;
-    IBOutlet NSPathControl *pathControl;
-    IBOutlet NSSearchField *searchField;
-    NSMetadataQuery *query;
-    NSString *searchString;
+@interface SpotlightWindowController : NSWindowController <NSMetadataQueryDelegate> {
+	IBOutlet PlaylistLoader *playlistLoader;
+	IBOutlet NSArrayController *playlistController;
+	IBOutlet NSPathControl *pathControl;
+	IBOutlet NSSearchField *searchField;
+	NSMetadataQuery *query;
+	NSString *searchString;
 }
 
 - (IBAction)addToPlaylist:(id)sender;

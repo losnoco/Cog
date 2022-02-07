@@ -9,10 +9,9 @@
 #import <Cocoa/Cocoa.h>
 #include <CoreServices/CoreServices.h>
 
-
 @interface PathWatcher : NSObject {
 	FSEventStreamRef stream;
-    FSEventStreamContext *context;
+	FSEventStreamContext *context;
 
 	IBOutlet id delegate;
 }
@@ -20,7 +19,7 @@
 - (void)setDelegate:(id)d;
 - (id)delegate;
 
-- (void)setPath:(NSString *)path; //Set the path to watch
+- (void)setPath:(NSString *)path; // Set the path to watch
 - (void)cleanUp;
 @end
 

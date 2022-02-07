@@ -8,62 +8,62 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface PlaylistEntry : NSObject<NSCopying> {
+@interface PlaylistEntry : NSObject <NSCopying> {
 	NSInteger index;
 	NSInteger shuffleIndex;
-    NSInteger dbIndex;
-    NSInteger entryId;
-	
+	NSInteger dbIndex;
+	NSInteger entryId;
+
 	BOOL current;
 	BOOL removed;
-	
+
 	BOOL stopAfter;
-	
+
 	BOOL queued;
 	NSInteger queuePosition;
-	
+
 	BOOL error;
 	NSString *errorMessage;
-	
+
 	NSURL *URL;
-	
+
 	NSString *artist;
-    NSString *albumartist;
+	NSString *albumartist;
 	NSString *album;
 	NSString *title;
 	NSString *genre;
 	NSNumber *year;
 	NSNumber *track;
-    NSNumber *disc;
-    
-    NSString *cuesheet;
-    
-    NSData *albumArtInternal;
-    
-    float replayGainAlbumGain;
-    float replayGainAlbumPeak;
-    float replayGainTrackGain;
-    float replayGainTrackPeak;
-    float volume;
-    
-    double currentPosition;
-	
+	NSNumber *disc;
+
+	NSString *cuesheet;
+
+	NSData *albumArtInternal;
+
+	float replayGainAlbumGain;
+	float replayGainAlbumPeak;
+	float replayGainTrackGain;
+	float replayGainTrackPeak;
+	float volume;
+
+	double currentPosition;
+
 	long long totalFrames;
 	int bitrate;
 	int channels;
 	int bitsPerSample;
-    BOOL floatingPoint;
-    BOOL Unsigned;
+	BOOL floatingPoint;
+	BOOL Unsigned;
 	float sampleRate;
-	
-    NSString *codec;
-    
+
+	NSString *codec;
+
 	NSString *endian;
-    
-    NSString *encoding;
-	
+
+	NSString *encoding;
+
 	BOOL seekable;
-	
+
 	BOOL metadataLoaded;
 }
 

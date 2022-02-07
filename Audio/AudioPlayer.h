@@ -10,10 +10,10 @@
 
 #import <CogAudio/Semaphore.h>
 
-#import <CoreAudio/CoreAudio.h>
+#import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
-#import <AVFoundation/AVFoundation.h>
+#import <CoreAudio/CoreAudio.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
 #import <stdatomic.h>
@@ -21,34 +21,33 @@
 @class BufferChain;
 @class OutputNode;
 
-@interface AudioPlayer : NSObject
-{	
+@interface AudioPlayer : NSObject {
 	BufferChain *bufferChain;
 	OutputNode *output;
-    
+
 	double volume;
 
 	NSMutableArray *chainQueue;
-    
+
 	NSURL *nextStream;
 	id nextStreamUserInfo;
-    NSDictionary *nextStreamRGInfo;
-	
+	NSDictionary *nextStreamRGInfo;
+
 	id delegate;
-	
+
 	BOOL outputLaunched;
 	BOOL endOfInputReached;
-    BOOL startedPaused;
-    BOOL initialBufferFilled;
-    
-    Semaphore *semaphore;
-    
-    atomic_bool resettingNow;
-    atomic_int refCount;
-    
-    int currentPlaybackStatus;
-    
-    BOOL shouldContinue;
+	BOOL startedPaused;
+	BOOL initialBufferFilled;
+
+	Semaphore *semaphore;
+
+	atomic_bool resettingNow;
+	atomic_int refCount;
+
+	int currentPlaybackStatus;
+
+	BOOL shouldContinue;
 }
 
 - (id)init;
@@ -57,9 +56,9 @@
 - (id)delegate;
 
 - (void)play:(NSURL *)url;
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi;
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi startPaused:(BOOL)paused;
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi startPaused:(BOOL)paused andSeekTo:(double)time;
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused;
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time;
 
 - (void)stop;
 - (void)pause;
@@ -74,7 +73,7 @@
 - (double)amountPlayed;
 
 - (void)setNextStream:(NSURL *)url;
-- (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary*)rgi;
+- (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
 - (void)resetNextStreams;
 
 + (NSArray *)fileTypes;
@@ -83,10 +82,10 @@
 
 @end
 
-@interface AudioPlayer (Private) //Dont use this stuff!
+@interface AudioPlayer (Private) // Dont use this stuff!
 
-- (OutputNode *) output;
-- (BufferChain *) bufferChain;
+- (OutputNode *)output;
+- (BufferChain *)bufferChain;
 - (id)initWithDelegate:(id)d;
 
 - (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait;
@@ -107,7 +106,7 @@
 //- (BufferChain *)bufferChain;
 - (void)launchOutputThread;
 - (void)endOfInputPlayed;
-- (void)sendDelegateMethod:(SEL)selector withVoid:(void*)obj waitUntilDone:(BOOL)wait;
+- (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
 
@@ -115,7 +114,7 @@
 @end
 
 @protocol AudioPlayerDelegate
-- (void)audioPlayer:(AudioPlayer *)player willEndStream:(id)userInfo; //You must use setNextStream in this method
+- (void)audioPlayer:(AudioPlayer *)player willEndStream:(id)userInfo; // You must use setNextStream in this method
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(id)status userInfo:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq;
@@ -124,4 +123,3 @@
 - (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo;
 
 @end
-

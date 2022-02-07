@@ -7,271 +7,241 @@
 //
 
 #import "BufferChain.h"
-#import "OutputNode.h"
 #import "AudioSource.h"
 #import "CoreAudioUtils.h"
+#import "OutputNode.h"
 
 #import "Logging.h"
 
 @implementation BufferChain
 
-- (id)initWithController:(id)c
-{
+- (id)initWithController:(id)c {
 	self = [super init];
-	if (self)
-	{
+	if(self) {
 		controller = c;
 		streamURL = nil;
 		userInfo = nil;
-        rgInfo = nil;
+		rgInfo = nil;
 
 		inputNode = nil;
 		converterNode = nil;
 	}
-	
+
 	return self;
 }
 
-- (void)buildChain
-{
-    inputNode = nil;
-    converterNode = nil;
-    
+- (void)buildChain {
+	inputNode = nil;
+	converterNode = nil;
+
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
-	
+
 	finalNode = converterNode;
 }
 
-- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
-{	
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi {
 	[self setStreamURL:url];
 
 	[self buildChain];
-	
+
 	id<CogSource> source = [AudioSource audioSourceForURL:url];
 	DLog(@"Opening: %@", url);
-	if (!source || ![source open:url])
-	{
+	if(!source || ![source open:url]) {
 		DLog(@"Couldn't open source...");
-        url = [NSURL URLWithString:@"silence://10"];
-        source = [AudioSource audioSourceForURL:url];
-        if (![source open:url])
-            return NO;
+		url = [NSURL URLWithString:@"silence://10"];
+		source = [AudioSource audioSourceForURL:url];
+		if(![source open:url])
+			return NO;
 	}
 
-	if (![inputNode openWithSource:source])
-		return NO;
-    
-    NSDictionary * properties = [inputNode properties];
-    
-    inputFormat = [inputNode nodeFormat];
-    
-    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![inputNode openWithSource:source])
 		return NO;
 
-    [self setRGInfo:rgi];
+	NSDictionary *properties = [inputNode properties];
 
-//		return NO;
+	inputFormat = [inputNode nodeFormat];
+
+	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
+	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
+	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
+
+	if(![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
+		return NO;
+
+	[self setRGInfo:rgi];
+
+	//		return NO;
 
 	return YES;
 }
 
-- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi
-{
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withRGInfo:(NSDictionary *)rgi {
 	DLog(@"New buffer chain!");
 	[self buildChain];
 
-	if (![inputNode openWithDecoder:[i decoder]])
-		return NO;
-	
-    NSDictionary * properties = [inputNode properties];
-    
-    inputFormat = [inputNode nodeFormat];
-    
-    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-    DLog(@"Input Properties: %@", properties);
-    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![inputNode openWithDecoder:[i decoder]])
 		return NO;
 
-    [self setRGInfo:rgi];
-    
+	NSDictionary *properties = [inputNode properties];
+
+	inputFormat = [inputNode nodeFormat];
+
+	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
+	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
+	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
+
+	DLog(@"Input Properties: %@", properties);
+	if(![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+		return NO;
+
+	[self setRGInfo:rgi];
+
 	return YES;
 }
 
 - (BOOL)openWithDecoder:(id<CogDecoder>)decoder
-    withOutputFormat:(AudioStreamBasicDescription)outputFormat
-    withRGInfo:(NSDictionary*)rgi;
+       withOutputFormat:(AudioStreamBasicDescription)outputFormat
+             withRGInfo:(NSDictionary *)rgi;
 {
-    DLog(@"New buffer chain!");
-    [self buildChain];
-    
-    if (![inputNode openWithDecoder:decoder])
-        return NO;
-    
-    NSDictionary * properties = [inputNode properties];
-    
-    DLog(@"Input Properties: %@", properties);
-    
-    inputFormat = [inputNode nodeFormat];
+	DLog(@"New buffer chain!");
+	[self buildChain];
 
-    outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-    outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
+	if(![inputNode openWithDecoder:decoder])
+		return NO;
 
-    if (![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
-        return NO;
-    
-    [self setRGInfo:rgi];
-    
-    return YES;
+	NSDictionary *properties = [inputNode properties];
+
+	DLog(@"Input Properties: %@", properties);
+
+	inputFormat = [inputNode nodeFormat];
+
+	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
+	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
+	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
+
+	if(![converterNode setupWithInputFormat:inputFormat outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+		return NO;
+
+	[self setRGInfo:rgi];
+
+	return YES;
 }
 
-- (void)launchThreads
-{
+- (void)launchThreads {
 	DLog(@"Properties: %@", [inputNode properties]);
 
 	[inputNode launchThread];
 	[converterNode launchThread];
 }
 
-- (void)setUserInfo:(id)i
-{
+- (void)setUserInfo:(id)i {
 	userInfo = i;
 }
 
-- (id)userInfo
-{
+- (id)userInfo {
 	return userInfo;
 }
 
-- (void)setRGInfo:(NSDictionary *)rgi
-{
-    rgInfo = rgi;
-    [converterNode setRGInfo:rgi];
+- (void)setRGInfo:(NSDictionary *)rgi {
+	rgInfo = rgi;
+	[converterNode setRGInfo:rgi];
 }
 
-- (NSDictionary *)rgInfo
-{
-    return rgInfo;
+- (NSDictionary *)rgInfo {
+	return rgInfo;
 }
 
-- (void)dealloc
-{
-    [inputNode setShouldContinue:NO];
-    [[inputNode exitAtTheEndOfTheStream] signal];
-    [[inputNode semaphore] signal];
-    [[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
+- (void)dealloc {
+	[inputNode setShouldContinue:NO];
+	[[inputNode exitAtTheEndOfTheStream] signal];
+	[[inputNode semaphore] signal];
+	[[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
 
 	DLog(@"Bufferchain dealloc");
 }
 
-- (void)seek:(double)time
-{
-	long frame = (long) round(time * [[[inputNode properties] objectForKey:@"sampleRate"] floatValue]);
+- (void)seek:(double)time {
+	long frame = (long)round(time * [[[inputNode properties] objectForKey:@"sampleRate"] floatValue]);
 
 	[inputNode seek:frame];
 }
 
-- (BOOL)endOfInputReached
-{
+- (BOOL)endOfInputReached {
 	return [controller endOfInputReached:self];
 }
 
-- (BOOL)setTrack: (NSURL *)track
-{
+- (BOOL)setTrack:(NSURL *)track {
 	return [inputNode setTrack:track];
 }
 
-- (void)initialBufferFilled:(id)sender
-{
+- (void)initialBufferFilled:(id)sender {
 	DLog(@"INITIAL BUFFER FILLED");
 	[controller launchOutputThread];
 }
 
-- (void)inputFormatDidChange:(AudioStreamBasicDescription)format
-{
+- (void)inputFormatDidChange:(AudioStreamBasicDescription)format {
 	DLog(@"FORMAT DID CHANGE!");
 }
 
-
-- (InputNode *)inputNode
-{
+- (InputNode *)inputNode {
 	return inputNode;
 }
 
-- (id)finalNode
-{
+- (id)finalNode {
 	return finalNode;
 }
 
-- (NSURL *)streamURL
-{
+- (NSURL *)streamURL {
 	return streamURL;
 }
 
-- (void)setStreamURL:(NSURL *)url
-{
+- (void)setStreamURL:(NSURL *)url {
 	streamURL = url;
 }
 
-- (void)setShouldContinue:(BOOL)s
-{
+- (void)setShouldContinue:(BOOL)s {
 	[inputNode setShouldContinue:s];
 	[converterNode setShouldContinue:s];
 }
 
-- (BOOL)isRunning
-{
-    InputNode *node = [self inputNode];
-    if (nil != node && [node shouldContinue] && ![node endOfStream])
-    {
-        return YES;
-    }
-    return NO;
+- (BOOL)isRunning {
+	InputNode *node = [self inputNode];
+	if(nil != node && [node shouldContinue] && ![node endOfStream]) {
+		return YES;
+	}
+	return NO;
 }
 
-- (id)controller
-{
-    return controller;
+- (id)controller {
+	return controller;
 }
 
-- (ConverterNode *)converter
-{
-    return converterNode;
+- (ConverterNode *)converter {
+	return converterNode;
 }
 
-- (AudioStreamBasicDescription)inputFormat
-{
-    return inputFormat;
+- (AudioStreamBasicDescription)inputFormat {
+	return inputFormat;
 }
 
-- (double)secondsBuffered
-{
-    double duration = 0.0;
-    OutputNode * outputNode = (OutputNode *) [controller output];
-    duration += [outputNode secondsBuffered];
-    
-    Node * node = [self finalNode];
-    while (node) {
-        duration += [node secondsBuffered];
-        node = [node previousNode];
-    }
-    return duration;
+- (double)secondsBuffered {
+	double duration = 0.0;
+	OutputNode *outputNode = (OutputNode *)[controller output];
+	duration += [outputNode secondsBuffered];
+
+	Node *node = [self finalNode];
+	while(node) {
+		duration += [node secondsBuffered];
+		node = [node previousNode];
+	}
+	return duration;
 }
 
-- (void)sustainHDCD
-{
-    OutputNode * outputNode = (OutputNode *) [controller output];
-    [outputNode sustainHDCD];
-    [controller sustainHDCD];
+- (void)sustainHDCD {
+	OutputNode *outputNode = (OutputNode *)[controller output];
+	[outputNode sustainHDCD];
+	[controller sustainHDCD];
 }
 
 @end

@@ -10,13 +10,12 @@
 
 @class FileTreeDataSource;
 
-@interface PathNode : NSObject
-{
+@interface PathNode : NSObject {
 	FileTreeDataSource *dataSource;
-	
+
 	NSURL *url;
-	NSString *display; //The pretty path to display.
-	
+	NSString *display; // The pretty path to display.
+
 	NSImage *icon;
 
 	NSArray *subpaths;
@@ -27,7 +26,7 @@
 - (NSURL *)URL;
 - (void)setURL:(NSURL *)url;
 
-- (void)processPaths: (NSArray *)contents;
+- (void)processPaths:(NSArray *)contents;
 
 - (NSArray *)subpaths;
 - (void)setSubpaths:(NSArray *)s;
@@ -40,6 +39,5 @@
 - (BOOL)isLeaf;
 
 - (void)updatePath;
-
 
 @end

@@ -8,10 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-
 @interface PreferencePluginController : NSObject {
 	NSArray *_plugins;
-	
+
 	NSMutableArray *_preferencePanes;
 }
 
