@@ -553,6 +553,24 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 			seekBytesSkip -= minSkipped;
 		}
 
+		int _channels = codecCtx->channels;
+		uint32_t _channelConfig = (uint32_t)codecCtx->channel_layout;
+		float _frequency = codecCtx->sample_rate;
+
+		if(_channels != channels ||
+		   _channelConfig != channelConfig ||
+		   _frequency != frequency) {
+			if(bytesRead > 0) {
+				break;
+			} else {
+				channels = _channels;
+				channelConfig = _channelConfig;
+				frequency = _frequency;
+				[self willChangeValueForKey:@"properties"];
+				[self didChangeValueForKey:@"properties"];
+			}
+		}
+
 		int toConsume = FFMIN((dataSize - bytesConsumedFromDecodedFrame), (bytesToRead - bytesRead));
 
 		// copy decoded samples to Cog's buffer
@@ -573,20 +591,6 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 		bytesConsumedFromDecodedFrame += toConsume;
 		bytesRead += toConsume;
-	}
-
-	int _channels = codecCtx->channels;
-	uint32_t _channelConfig = (uint32_t)codecCtx->channel_layout;
-	float _frequency = codecCtx->sample_rate;
-
-	if(_channels != channels ||
-	   _channelConfig != channelConfig ||
-	   _frequency != frequency) {
-		channels = _channels;
-		channelConfig = _channelConfig;
-		frequency = _frequency;
-		[self willChangeValueForKey:@"properties"];
-		[self didChangeValueForKey:@"properties"];
 	}
 
 	int framesReadNow = bytesRead / frameSize;
