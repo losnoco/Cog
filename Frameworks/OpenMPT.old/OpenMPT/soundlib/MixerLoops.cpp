@@ -18,9 +18,6 @@
 #ifdef ENABLE_SSE2
 #include <emmintrin.h>
 #endif
-#ifdef ENABLE_NEON
-#include "../common/sse2neon.h"
-#endif
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -28,7 +25,7 @@ OPENMPT_NAMESPACE_BEGIN
 ///////////////////////////////////////////////////////////////////////////////////////
 // SSE Optimizations
 
-#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
+#ifdef ENABLE_SSE2
 
 static void SSE2_StereoMixToFloat(const int32 *pSrc, float *pOut1, float *pOut2, uint32 nCount, const float _i2fc)
 {
@@ -185,17 +182,12 @@ void StereoMixToFloat(const int32 *pSrc, float *pOut1, float *pOut2, uint32 nCou
 
 	#ifdef ENABLE_SSE2
 	if(GetProcSupport() & PROCSUPPORT_SSE2)
-	#endif
-    #ifdef ENABLE_NEON
-    if(GetProcSupport() & PROCSUPPORT_NEON)
-	#endif
-	#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 	{
 		SSE2_StereoMixToFloat(pSrc, pOut1, pOut2, nCount, _i2fc);
 		return;
 	}
-	#endif // ENABLE_SSE2 || ENABLE_NEON
-    
+	#endif // ENABLE_SSE2
+
 	{
 		C_StereoMixToFloat(pSrc, pOut1, pOut2, nCount, _i2fc);
 	}
@@ -207,17 +199,12 @@ void FloatToStereoMix(const float *pIn1, const float *pIn2, int32 *pOut, uint32 
 {
 	#ifdef ENABLE_SSE2
 	if(GetProcSupport() & PROCSUPPORT_SSE2)
-	#endif
-    #ifdef ENABLE_NEON
-    if(GetProcSupport() & PROCSUPPORT_NEON)
-	#endif
-	#if defined(ENABLE_SSE2) || defined(ENABLE_NEON)
 	{
 		SSE2_FloatToStereoMix(pIn1, pIn2, pOut, nCount, _f2ic);
 		return;
 	}
-	#endif // ENABLE_SSE2 || ENABLE_NEON
-    
+	#endif // ENABLE_SSE2
+
 	{
 		C_FloatToStereoMix(pIn1, pIn2, pOut, nCount, _f2ic);
 	}

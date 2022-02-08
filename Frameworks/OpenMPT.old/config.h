@@ -13,8 +13,5 @@
 
 #define MPT_WITH_ZLIB 1
 
-#define MPT_BUILD_XCODE 1
-#define ENABLE_ASM 1
-
 #endif
 
