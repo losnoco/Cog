@@ -15,7 +15,6 @@
 #import <soxr.h>
 
 #import "Node.h"
-#import "RefillNode.h"
 
 #import "HeadphoneFilter.h"
 
@@ -31,7 +30,6 @@
 	BOOL stopping;
 	BOOL convertEntered;
 	BOOL paused;
-	BOOL outputFormatChanged;
 
 	BOOL skipResampler;
 
@@ -76,13 +74,6 @@
 	uint32_t newInputChannelConfig;
 
 	AudioChunk *lastChunkIn;
-
-	AudioStreamBasicDescription previousOutputFormat;
-	uint32_t previousOutputConfig;
-	AudioStreamBasicDescription rememberedInputFormat;
-	uint32_t rememberedInputConfig;
-	RefillNode *refillNode;
-	id __weak originalPreviousNode;
 
 	void *hdcd_decoder;
 

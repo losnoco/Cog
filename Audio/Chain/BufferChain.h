@@ -16,9 +16,6 @@
 	InputNode *inputNode;
 	ConverterNode *converterNode;
 
-	AudioStreamBasicDescription inputFormat;
-	uint32_t inputChannelConfig;
-
 	NSURL *streamURL;
 	id userInfo;
 	NSDictionary *rgInfo;

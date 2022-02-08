@@ -17,7 +17,6 @@
 
 - (void)setup {
 	amountPlayed = 0.0;
-	sampleRatio = 0.0;
 
 	paused = YES;
 	started = NO;
@@ -100,7 +99,6 @@
 	config = channelConfig;
 	// Calculate a ratio and add to double(seconds) instead, as format may change
 	// double oldSampleRatio = sampleRatio;
-	sampleRatio = 1.0 / (format.mSampleRate * format.mBytesPerPacket);
 	BufferChain *bufferChain = [controller bufferChain];
 	if(bufferChain) {
 		ConverterNode *converter = [bufferChain converter];
@@ -108,13 +106,16 @@
 			// This clears the resampler buffer, but not the input buffer
 			// We also have to jump the play position ahead accounting for
 			// the data we are flushing
-#if 0
-            // We no longer need to do this, because outputchanged converter
-            // now uses the RefillNode to slap the previous samples into
-            // itself
-            if (oldSampleRatio)
-                amountPlayed += oldSampleRatio * [[converter buffer] bufferedLength];
-#endif
+			amountPlayed += [[converter buffer] listDuration];
+
+			AudioStreamBasicDescription inf = [bufferChain inputFormat];
+			uint32_t config = [bufferChain inputConfig];
+
+			format.mChannelsPerFrame = inf.mChannelsPerFrame;
+			format.mBytesPerFrame = ((inf.mBitsPerChannel + 7) / 8) * format.mChannelsPerFrame;
+			format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
+			channelConfig = config;
+
 			[converter setOutputFormat:format
 			              outputConfig:channelConfig];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];

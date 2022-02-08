@@ -53,12 +53,8 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 		stopping = NO;
 		convertEntered = NO;
 		paused = NO;
-		outputFormatChanged = NO;
 
 		skipResampler = YES;
-
-		refillNode = nil;
-		originalPreviousNode = nil;
 
 		extrapolateBuffer = NULL;
 		extrapolateBufferSize = 0;
@@ -67,6 +63,8 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 		dsd2pcmCount = 0;
 
 		hdcd_decoder = NULL;
+
+		lastChunkIn = nil;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling" options:0 context:nil];
 	}
@@ -423,22 +421,14 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	// and returns 0 samples when it has nothing more to process at the end of stream.
 	while([self shouldContinue] == YES) {
 		int amountConverted;
+		while(paused) {
+			usleep(500);
+		}
 		@autoreleasepool {
 			amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
 		}
 		if(!amountConverted) {
 			if(paused) {
-				while(paused)
-					usleep(500);
-				continue;
-			} else if(refillNode) {
-				// refill node just ended, file resumes
-				[self setPreviousNode:originalPreviousNode];
-				[self setEndOfStream:NO];
-				[self setShouldContinue:YES];
-				refillNode = nil;
-				[self cleanUp];
-				[self setupWithInputFormat:rememberedInputFormat withInputConfig:rememberedInputConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
 				continue;
 			} else if(streamFormatChanged) {
 				[self cleanUp];
@@ -503,7 +493,7 @@ tryagain:
 
 			ssize_t bytesReadFromInput = 0;
 
-			while(bytesReadFromInput < amountToWrite && !stopping && !streamFormatChanged && [self shouldContinue] == YES && [self endOfStream] == NO) {
+			while(bytesReadFromInput < amountToWrite && !stopping && !paused && !streamFormatChanged && [self shouldContinue] == YES && [self endOfStream] == NO) {
 				AudioStreamBasicDescription inf;
 				uint32_t config;
 				if([self peekFormat:&inf channelConfig:&config]) {
@@ -536,16 +526,13 @@ tryagain:
 				}
 				bytesReadFromInput += bytesRead;
 				if(!frameCount) {
-					if(refillNode)
-						[self setEndOfStream:YES];
-					else
-						usleep(500);
+					usleep(500);
 				}
 			}
 
 			// Pad end of track with input format silence
 
-			if(stopping || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
+			if(stopping || paused || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
 				if(!skipResampler && !is_postextrapolated_) {
 					if(dsd2pcm) {
 						amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
@@ -989,9 +976,8 @@ static float db_to_scale(float db) {
 	// Move this here so process call isn't running the resampler until it's allocated
 	stopping = NO;
 	convertEntered = NO;
-	paused = NO;
-	outputFormatChanged = NO;
 	streamFormatChanged = NO;
+	paused = NO;
 
 	return YES;
 }
@@ -1007,46 +993,18 @@ static float db_to_scale(float db) {
 
 - (void)setOutputFormat:(AudioStreamBasicDescription)format outputConfig:(uint32_t)outputConfig {
 	DLog(@"SETTING OUTPUT FORMAT!");
-	previousOutputFormat = outputFormat;
-	previousOutputConfig = outputChannelConfig;
 	outputFormat = format;
 	outputChannelConfig = outputConfig;
-	outputFormatChanged = YES;
 }
 
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig {
 	DLog(@"FORMAT CHANGED");
 	paused = YES;
-	[self cleanUp];
-	if(outputFormatChanged && ![buffer isEmpty] &&
-	   (outputChannelConfig != previousOutputConfig ||
-	    memcmp(&outputFormat, &previousOutputFormat, sizeof(outputFormat)) != 0)) {
-		// Transfer previously buffered data, remember input format
-		rememberedInputFormat = format;
-		rememberedInputConfig = inputChannelConfig;
-		originalPreviousNode = previousNode;
-		refillNode = [[RefillNode alloc] initWithController:controller previous:nil];
-		[self setPreviousNode:refillNode];
-
-		[refillNode setFormat:previousOutputFormat];
-		[refillNode setChannelConfig:previousOutputConfig];
-
-		for(;;) {
-			@autoreleasepool {
-				AudioChunk *chunk = [buffer removeSamples:16384];
-				size_t frameCount = [chunk frameCount];
-				if(frameCount) {
-					NSData *samples = [chunk removeSamples:frameCount];
-					[refillNode writeData:[samples bytes] amount:frameCount];
-				} else
-					break;
-			}
-		}
-
-		[self setupWithInputFormat:previousOutputFormat withInputConfig:[AudioChunk guessChannelConfig:previousOutputFormat.mChannelsPerFrame] outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
-	} else {
-		[self setupWithInputFormat:format withInputConfig:inputConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
+	while(convertEntered) {
+		usleep(500);
 	}
+	[self cleanUp];
+	[self setupWithInputFormat:format withInputConfig:inputConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
 }
 
 - (void)setRGInfo:(NSDictionary *)rgi {

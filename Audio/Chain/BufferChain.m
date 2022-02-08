@@ -60,7 +60,8 @@
 
 	NSDictionary *properties = [inputNode properties];
 
-	inputFormat = [inputNode nodeFormat];
+	AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
+	uint32_t inputChannelConfig = 0;
 	if([properties valueForKey:@"channelConfig"])
 		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
@@ -89,7 +90,8 @@
 
 	NSDictionary *properties = [inputNode properties];
 
-	inputFormat = [inputNode nodeFormat];
+	AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
+	uint32_t inputChannelConfig = 0;
 	if([properties valueForKey:@"channelConfig"])
 		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
@@ -123,7 +125,8 @@
 
 	DLog(@"Input Properties: %@", properties);
 
-	inputFormat = [inputNode nodeFormat];
+	AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
+	uint32_t inputChannelConfig = 0;
 	if([properties valueForKey:@"channelConfig"])
 		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
@@ -231,11 +234,11 @@
 }
 
 - (AudioStreamBasicDescription)inputFormat {
-	return inputFormat;
+	return [inputNode nodeFormat];
 }
 
 - (uint32_t)inputConfig {
-	return inputChannelConfig;
+	return [inputNode nodeChannelConfig];
 }
 
 - (double)secondsBuffered {

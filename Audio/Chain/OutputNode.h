@@ -20,7 +20,6 @@
 	uint32_t config;
 
 	double amountPlayed;
-	double sampleRatio;
 	OutputCoreAudio *output;
 
 	BOOL paused;

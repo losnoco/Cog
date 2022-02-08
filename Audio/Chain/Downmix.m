@@ -147,13 +147,12 @@ static void downmix_to_mono(const float *inBuffer, int channels, uint32_t config
 	inBuffer = tempBuffer;
 	channels = 2;
 	config = AudioConfigStereo;
-	float invchannels = 1.0 / (float)channels;
 	for(size_t i = 0; i < count; ++i) {
 		float sample = 0;
 		for(int j = 0; j < channels; ++j) {
 			sample += inBuffer[i * channels + j];
 		}
-		outBuffer[i] = sample * invchannels;
+		outBuffer[i] = sample;
 	}
 }
 

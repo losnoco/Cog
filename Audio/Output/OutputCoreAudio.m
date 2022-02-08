@@ -211,16 +211,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	running = YES;
 	started = NO;
 	stopNext = NO;
-	size_t eventCount = 0;
 	atomic_store(&bytesRendered, 0);
 	NSMutableArray *delayedEvents = [[NSMutableArray alloc] init];
 	BOOL delayedEventsPopped = YES;
 	while(!stopping) {
-		if(++eventCount == 128) {
-			[self updateDeviceFormat];
-			eventCount = 0;
-		}
-
 		if([outputController shouldReset]) {
 			@autoreleasepool {
 				[[outputController buffer] reset];
@@ -671,7 +665,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 #endif
 
 		inputData->mBuffers[0].mNumberChannels = channels;
-
+		
 		return 0;
 	};
 

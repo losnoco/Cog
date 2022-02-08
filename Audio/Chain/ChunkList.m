@@ -50,7 +50,7 @@
 }
 
 - (BOOL)isFull {
-	return (maxDuration - listDuration) < 0.01;
+	return (maxDuration - listDuration) < 0.05;
 }
 
 - (void)addChunk:(AudioChunk *)chunk {
