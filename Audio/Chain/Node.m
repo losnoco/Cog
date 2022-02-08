@@ -95,6 +95,16 @@
 	}
 }
 
+- (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config {
+	[accessLock lock];
+
+	BOOL ret = [[previousNode buffer] peekFormat:format channelConfig:config];
+
+	[accessLock unlock];
+
+	return ret;
+}
+
 - (AudioChunk *)readChunk:(size_t)maxFrames {
 	[accessLock lock];
 

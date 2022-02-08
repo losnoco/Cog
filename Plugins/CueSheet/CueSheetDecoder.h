@@ -26,6 +26,7 @@
 
 	BOOL embedded;
 	BOOL noFragment;
+	BOOL observersAdded;
 	NSURL *baseURL;
 
 	CueSheet *cuesheet;

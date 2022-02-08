@@ -55,6 +55,7 @@
 	NSDictionary *fileMetadata;
 
 	noFragment = NO;
+	observersAdded = NO;
 
 	NSString *ext = [url pathExtension];
 	if([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame) {
@@ -143,6 +144,8 @@
 
 		decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
 
+		[self registerObservers];
+
 		if(![decoder open:source]) {
 			ALog(@"Could not open cuesheet decoder");
 			return NO;
@@ -166,8 +169,40 @@
 	return NO;
 }
 
+- (void)registerObservers {
+	DLog(@"REGISTERING OBSERVERS");
+	[decoder addObserver:self
+	          forKeyPath:@"properties"
+	             options:(NSKeyValueObservingOptionNew)
+	             context:NULL];
+
+	[decoder addObserver:self
+	          forKeyPath:@"metadata"
+	             options:(NSKeyValueObservingOptionNew)
+	             context:NULL];
+
+	observersAdded = YES;
+}
+
+- (void)removeObservers {
+	if(observersAdded) {
+		[decoder removeObserver:self forKeyPath:@"properties"];
+		[decoder removeObserver:self forKeyPath:@"metadata"];
+		observersAdded = NO;
+	}
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+	[self willChangeValueForKey:keyPath];
+	[self didChangeValueForKey:keyPath];
+}
+
 - (void)close {
 	if(decoder) {
+		[self removeObservers];
 		[decoder close];
 		decoder = nil;
 	}

@@ -33,6 +33,7 @@
 	long fileSize;
 
 	BOOL hasStreamInfo;
+	BOOL streamOpened;
 }
 
 - (void)setSource:(id<CogSource>)s;

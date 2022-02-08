@@ -440,6 +440,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				[self cleanUp];
 				[self setupWithInputFormat:rememberedInputFormat withInputConfig:rememberedInputConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
 				continue;
+			} else if(streamFormatChanged) {
+				[self cleanUp];
+				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
+				continue;
 			} else
 				break;
 		}
@@ -452,6 +456,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	int amountReadFromFC;
 	int amountRead = 0;
 	int amountToSkip;
+	int amountToIgnorePostExtrapolated = 0;
 
 	if(stopping)
 		return 0;
@@ -498,14 +503,36 @@ tryagain:
 
 			ssize_t bytesReadFromInput = 0;
 
-			while(bytesReadFromInput < amountToWrite && !stopping && [self shouldContinue] == YES && [self endOfStream] == NO) {
+			while(bytesReadFromInput < amountToWrite && !stopping && !streamFormatChanged && [self shouldContinue] == YES && [self endOfStream] == NO) {
+				AudioStreamBasicDescription inf;
+				uint32_t config;
+				if([self peekFormat:&inf channelConfig:&config]) {
+					if(config != inputChannelConfig || memcmp(&inf, &inputFormat, sizeof(inf)) != 0) {
+						if(inputChannelConfig == 0 && memcmp(&inf, &inputFormat, sizeof(inf)) == 0) {
+							inputChannelConfig = config;
+							continue;
+						} else {
+							newInputFormat = inf;
+							newInputChannelConfig = config;
+							streamFormatChanged = YES;
+							break;
+						}
+					}
+				}
+
 				AudioChunk *chunk = [self readChunk:((amountToWrite - bytesReadFromInput) / inputFormat.mBytesPerPacket)];
-				AudioStreamBasicDescription inf = [chunk format];
+				inf = [chunk format];
 				size_t frameCount = [chunk frameCount];
+				config = [chunk channelConfig];
 				size_t bytesRead = frameCount * inf.mBytesPerPacket;
 				if(frameCount) {
 					NSData *samples = [chunk removeSamples:frameCount];
 					memcpy(inputBuffer + bytesReadFromInput + amountToSkip, [samples bytes], bytesRead);
+					lastChunkIn = [[AudioChunk alloc] init];
+					[lastChunkIn setFormat:inf];
+					[lastChunkIn setChannelConfig:config];
+					[lastChunkIn setLossless:[chunk lossless]];
+					[lastChunkIn assignSamples:[samples bytes] frameCount:frameCount];
 				}
 				bytesReadFromInput += bytesRead;
 				if(!frameCount) {
@@ -518,7 +545,7 @@ tryagain:
 
 			// Pad end of track with input format silence
 
-			if(stopping || [self shouldContinue] == NO || [self endOfStream] == YES) {
+			if(stopping || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
 				if(!skipResampler && !is_postextrapolated_) {
 					if(dsd2pcm) {
 						amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
@@ -530,6 +557,24 @@ tryagain:
 				} else if(!is_postextrapolated_ && dsd2pcm) {
 					is_postextrapolated_ = 3;
 				}
+			}
+
+			size_t bitsPerSample = inputFormat.mBitsPerChannel;
+			BOOL isBigEndian = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian);
+
+			if(!bytesReadFromInput && streamFormatChanged && !skipResampler && is_postextrapolated_ < 2) {
+				AudioChunk *chunk = lastChunkIn;
+				lastChunkIn = nil;
+				AudioStreamBasicDescription inf = [chunk format];
+				size_t frameCount = [chunk frameCount];
+				size_t bytesRead = frameCount * inf.mBytesPerPacket;
+				if(frameCount) {
+					amountToIgnorePostExtrapolated = (int)frameCount;
+					NSData *samples = [chunk removeSamples:frameCount];
+					memcpy(inputBuffer, [samples bytes], bytesRead);
+				}
+				bytesReadFromInput += bytesRead;
+				amountToSkip = 0;
 			}
 
 			if(!bytesReadFromInput) {
@@ -544,8 +589,7 @@ tryagain:
 				dsdLatencyEaten = (int)ceil(dsd2pcmLatency * sampleRatio);
 			}
 
-			if(bytesReadFromInput &&
-			   (inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian)) {
+			if(bytesReadFromInput && isBigEndian) {
 				// Time for endian swap!
 				convert_be_to_le(inputBuffer, inputFormat.mBitsPerChannel, bytesReadFromInput);
 			}
@@ -560,7 +604,6 @@ tryagain:
 
 			if(bytesReadFromInput && !isFloat) {
 				float gain = 1.0;
-				size_t bitsPerSample = inputFormat.mBitsPerChannel;
 				if(bitsPerSample == 1) {
 					samplesRead = bytesReadFromInput / inputFormat.mBytesPerPacket;
 					convert_dsd_to_f32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, dsd2pcm);
@@ -699,7 +742,7 @@ tryagain:
 
 			// Input now contains bytesReadFromInput worth of floats, in the input sample rate
 			inpSize = bytesReadFromInput;
-			inpOffset = 0;
+			inpOffset = amountToIgnorePostExtrapolated * floatFormat.mBytesPerPacket;
 		}
 
 	if(inpOffset != inpSize && floatOffset == floatSize) {
@@ -948,6 +991,7 @@ static float db_to_scale(float db) {
 	convertEntered = NO;
 	paused = NO;
 	outputFormatChanged = NO;
+	streamFormatChanged = NO;
 
 	return YES;
 }

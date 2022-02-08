@@ -71,6 +71,12 @@
 	uint32_t inputChannelConfig;
 	uint32_t outputChannelConfig;
 
+	BOOL streamFormatChanged;
+	AudioStreamBasicDescription newInputFormat;
+	uint32_t newInputChannelConfig;
+
+	AudioChunk *lastChunkIn;
+
 	AudioStreamBasicDescription previousOutputFormat;
 	uint32_t previousOutputConfig;
 	AudioStreamBasicDescription rememberedInputFormat;

@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 	BOOL inAdder;
 	BOOL inRemover;
+	BOOL inPeeker;
 	BOOL stopping;
 }
 
@@ -36,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addChunk:(AudioChunk *)chunk;
 - (AudioChunk *)removeSamples:(size_t)maxFrameCount;
+
+- (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config;
 
 @end
 

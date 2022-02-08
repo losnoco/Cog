@@ -48,7 +48,7 @@
 
 	nodeFormat = propertiesToASBD(properties);
 	if([properties valueForKey:@"channelConfig"])
-		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] intValue];
+		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 	nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 
 	shouldContinue = YES;
@@ -69,7 +69,7 @@
 
 	nodeFormat = propertiesToASBD(properties);
 	if([properties valueForKey:@"channelConfig"])
-		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] intValue];
+		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 	nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 
 	[self registerObservers];
@@ -105,7 +105,14 @@
 		DLog(@"Input format changed");
 		// Converter may need resetting, it'll do that when it reaches the new chunks
 		NSDictionary *properties = [decoder properties];
+
+		int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
+		int channels = [[properties objectForKey:@"channels"] intValue];
+
+		bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
+
 		nodeFormat = propertiesToASBD(properties);
+		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 		nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 	} else if([keyPath isEqual:@"metadata"]) {
 		// Inform something of metadata change
@@ -114,7 +121,8 @@
 
 - (void)process {
 	int amountInBuffer = 0;
-	void *inputBuffer = malloc(CHUNK_SIZE);
+	int bytesInBuffer = 0;
+	void *inputBuffer = malloc(CHUNK_SIZE * 18); // Maximum 18 channels, dunno what we'll receive
 
 	BOOL shouldClose = YES;
 	BOOL seekError = NO;
@@ -142,13 +150,15 @@
 		}
 
 		if(amountInBuffer < CHUNK_SIZE) {
-			int framesToRead = (CHUNK_SIZE - amountInBuffer) / bytesPerFrame;
-			int framesRead = [decoder readAudio:((char *)inputBuffer) + amountInBuffer frames:framesToRead];
+			int framesToRead = CHUNK_SIZE - amountInBuffer;
+			int framesRead = [decoder readAudio:((char *)inputBuffer) + bytesInBuffer frames:framesToRead];
 
 			if(framesRead > 0 && !seekError) {
-				amountInBuffer += (framesRead * bytesPerFrame);
-				[self writeData:inputBuffer amount:amountInBuffer];
+				amountInBuffer += framesRead;
+				bytesInBuffer += framesRead * bytesPerFrame;
+				[self writeData:inputBuffer amount:bytesInBuffer];
 				amountInBuffer = 0;
+				bytesInBuffer = 0;
 			} else {
 				if(initialBufferFilled == NO) {
 					[controller initialBufferFilled:self];

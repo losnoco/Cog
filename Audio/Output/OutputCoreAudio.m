@@ -666,6 +666,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		if(logFile) {
 			fwrite(inputData->mBuffers[0].mData, 1, inputData->mBuffers[0].mDataByteSize, logFile);
 		}
+
+		// memset(inputData->mBuffers[0].mData, 0, inputData->mBuffers[0].mDataByteSize);
 #endif
 
 		inputData->mBuffers[0].mNumberChannels = channels;

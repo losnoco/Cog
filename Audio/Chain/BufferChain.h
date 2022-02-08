@@ -66,8 +66,6 @@
 - (BOOL)endOfInputReached;
 - (BOOL)setTrack:(NSURL *)track;
 
-- (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig;
-
 - (BOOL)isRunning;
 
 - (id)controller;

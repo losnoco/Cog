@@ -12,7 +12,6 @@
 @interface CogDecoderMulti : NSObject <CogDecoder> {
 	NSArray *theDecoders;
 	id<CogDecoder> theDecoder;
-	NSMutableArray *cachedObservers;
 }
 
 - (id)initWithDecoders:(NSArray *)decoders;

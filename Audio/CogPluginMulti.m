@@ -31,6 +31,15 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 	return sortedClasses;
 }
 
+@interface CogDecoderMulti (Private)
+- (void)registerObservers;
+- (void)removeObservers;
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context;
+@end
+
 @implementation CogDecoderMulti
 
 + (NSArray *)mimeTypes {
@@ -54,7 +63,6 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 	if(self) {
 		theDecoders = sortClassesByPriority(decoders);
 		theDecoder = nil;
-		cachedObservers = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
@@ -73,17 +81,10 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 	for(NSString *classString in theDecoders) {
 		Class decoder = NSClassFromString(classString);
 		theDecoder = [[decoder alloc] init];
-		for(NSDictionary *obsItem in cachedObservers) {
-			[theDecoder addObserver:[obsItem objectForKey:@"observer"]
-			             forKeyPath:[obsItem objectForKey:@"keyPath"]
-			                options:[[obsItem objectForKey:@"options"] unsignedIntegerValue]
-			                context:(__bridge void *)([obsItem objectForKey:@"context"])];
-		}
+		[self registerObservers];
 		if([theDecoder open:source])
 			return YES;
-		for(NSDictionary *obsItem in cachedObservers) {
-			[theDecoder removeObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"]];
-		}
+		[self removeObservers];
 		if([source seekable])
 			[source seek:0 whence:SEEK_SET];
 	}
@@ -98,13 +99,27 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 
 - (void)close {
 	if(theDecoder != nil) {
-		for(NSDictionary *obsItem in cachedObservers) {
-			[theDecoder removeObserver:[obsItem objectForKey:@"observer"] forKeyPath:[obsItem objectForKey:@"keyPath"]];
-		}
-		[cachedObservers removeAllObjects];
+		[self removeObservers];
 		[theDecoder close];
 		theDecoder = nil;
 	}
+}
+
+- (void)registerObservers {
+	[theDecoder addObserver:self
+	             forKeyPath:@"properties"
+	                options:(NSKeyValueObservingOptionNew)
+	                context:NULL];
+
+	[theDecoder addObserver:self
+	             forKeyPath:@"metadata"
+	                options:(NSKeyValueObservingOptionNew)
+	                context:NULL];
+}
+
+- (void)removeObservers {
+	[theDecoder removeObserver:self forKeyPath:@"properties"];
+	[theDecoder removeObserver:self forKeyPath:@"metadata"];
 }
 
 - (BOOL)setTrack:(NSURL *)track {
@@ -112,29 +127,12 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 	return NO;
 }
 
-/* By the current design, the core adds its observers to decoders before they are opened */
-- (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context {
-	if(context != nil) {
-		[cachedObservers addObject:[NSDictionary dictionaryWithObjectsAndKeys:observer, @"observer", keyPath, @"keyPath", @(options), @"options", context, @"context", nil]];
-	} else {
-		[cachedObservers addObject:[NSDictionary dictionaryWithObjectsAndKeys:observer, @"observer", keyPath, @"keyPath", @(options), @"options", nil]];
-	}
-	if(theDecoder) {
-		[theDecoder addObserver:observer forKeyPath:keyPath options:options context:context];
-	}
-}
-
-/* And this is currently called after the decoder is closed */
-- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath {
-	for(NSDictionary *obsItem in cachedObservers) {
-		if([obsItem objectForKey:@"observer"] == observer && [keyPath isEqualToString:[obsItem objectForKey:@"keyPath"]]) {
-			[cachedObservers removeObject:obsItem];
-			break;
-		}
-	}
-	if(theDecoder) {
-		[theDecoder removeObserver:observer forKeyPath:keyPath];
-	}
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+	[self willChangeValueForKey:keyPath];
+	[self didChangeValueForKey:keyPath];
 }
 
 @end

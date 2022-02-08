@@ -99,6 +99,23 @@ FLAC__StreamDecoderLengthStatus LengthCallback(const FLAC__StreamDecoder *decode
 FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 *const sampleblockBuffer[], void *client_data) {
 	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 
+	uint32_t channels = frame->header.channels;
+	uint32_t bitsPerSample = frame->header.bits_per_sample;
+	uint32_t frequency = frame->header.sample_rate;
+
+	if(channels != flacDecoder->channels ||
+	   bitsPerSample != flacDecoder->bitsPerSample ||
+	   frequency != flacDecoder->frequency) {
+		if(channels != flacDecoder->channels) {
+			flacDecoder->channelConfig = 0;
+		}
+		flacDecoder->channels = channels;
+		flacDecoder->bitsPerSample = bitsPerSample;
+		flacDecoder->frequency = frequency;
+		[flacDecoder willChangeValueForKey:@"properties"];
+		[flacDecoder didChangeValueForKey:@"properties"];
+	}
+
 	void *blockBuffer = [flacDecoder blockBuffer];
 
 	int8_t *alias8;
@@ -185,6 +202,7 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 
 	if(!flacDecoder->hasStreamInfo) {
 		flacDecoder->channels = metadata->data.stream_info.channels;
+		flacDecoder->channelConfig = 0;
 		flacDecoder->frequency = metadata->data.stream_info.sample_rate;
 		flacDecoder->bitsPerSample = metadata->data.stream_info.bits_per_sample;
 
@@ -243,15 +261,20 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 - (int)readAudio:(void *)buffer frames:(UInt32)frames {
 	int framesRead = 0;
-	int bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 	while(framesRead < frames) {
 		if(blockBufferFrames == 0) {
+			if(framesRead) {
+				break;
+			}
+
 			if(FLAC__stream_decoder_get_state(decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
 				break;
 			}
 
 			FLAC__stream_decoder_process_single(decoder);
 		}
+
+		int bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 		int framesToRead = blockBufferFrames;
 		if(blockBufferFrames > frames) {
@@ -333,7 +356,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 - (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithInt:channelConfig], @"channelConfig",
+	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
 	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 	                     [NSNumber numberWithFloat:frequency], @"sampleRate",
 	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",

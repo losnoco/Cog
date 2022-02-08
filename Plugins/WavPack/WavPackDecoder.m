@@ -283,7 +283,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 - (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithInt:channelConfig], @"channelConfig",
+	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
 	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 	                     [NSNumber numberWithInt:bitrate], @"bitrate",
 	                     [NSNumber numberWithFloat:frequency], @"sampleRate",

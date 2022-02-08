@@ -32,33 +32,35 @@
 	uint32_t nodeChannelConfig;
 	BOOL nodeLossless;
 }
-- (id)initWithController:(id)c previous:(id)p;
+- (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
 
-- (void)writeData:(const void *)ptr amount:(size_t)a;
-- (AudioChunk *)readChunk:(size_t)maxFrames;
+- (void)writeData:(const void *_Nonnull)ptr amount:(size_t)a;
+- (AudioChunk *_Nonnull)readChunk:(size_t)maxFrames;
+
+- (BOOL)peekFormat:(AudioStreamBasicDescription *_Nonnull)format channelConfig:(uint32_t *_Nonnull)config;
 
 - (void)process; // Should be overwriten by subclass
-- (void)threadEntry:(id)arg;
+- (void)threadEntry:(id _Nullable)arg;
 
 - (void)launchThread;
 
 - (void)setShouldReset:(BOOL)s;
 - (BOOL)shouldReset;
 
-- (void)setPreviousNode:(id)p;
-- (id)previousNode;
+- (void)setPreviousNode:(id _Nullable)p;
+- (id _Nullable)previousNode;
 
 - (BOOL)shouldContinue;
 - (void)setShouldContinue:(BOOL)s;
 
-- (ChunkList *)buffer;
+- (ChunkList *_Nonnull)buffer;
 - (void)resetBuffer; // WARNING! DANGER WILL ROBINSON!
 
 - (AudioStreamBasicDescription)nodeFormat;
 - (uint32_t)nodeChannelConfig;
 - (BOOL)nodeLossless;
 
-- (Semaphore *)semaphore;
+- (Semaphore *_Nonnull)semaphore;
 
 //-(void)resetBuffer;
 

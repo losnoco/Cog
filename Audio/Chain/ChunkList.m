@@ -22,6 +22,7 @@
 
 		inAdder = NO;
 		inRemover = NO;
+		inPeeker = NO;
 		stopping = NO;
 	}
 
@@ -30,7 +31,7 @@
 
 - (void)dealloc {
 	stopping = YES;
-	while(inAdder || inRemover) {
+	while(inAdder || inRemover || inPeeker) {
 		usleep(500);
 	}
 }
@@ -94,6 +95,19 @@
 		inRemover = NO;
 		return ret;
 	}
+}
+
+- (BOOL)peekFormat:(AudioStreamBasicDescription *)format channelConfig:(uint32_t *)config {
+	if(stopping) return NO;
+	@synchronized(chunkList) {
+		if([chunkList count]) {
+			AudioChunk *chunk = [chunkList objectAtIndex:0];
+			*format = [chunk format];
+			*config = [chunk channelConfig];
+			return YES;
+		}
+	}
+	return NO;
 }
 
 @end

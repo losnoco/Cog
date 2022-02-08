@@ -62,7 +62,7 @@
 
 	inputFormat = [inputNode nodeFormat];
 	if([properties valueForKey:@"channelConfig"])
-		inputChannelConfig = [[properties valueForKey:@"channelConfig"] intValue];
+		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
 	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
 	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
@@ -91,7 +91,7 @@
 
 	inputFormat = [inputNode nodeFormat];
 	if([properties valueForKey:@"channelConfig"])
-		inputChannelConfig = [[properties valueForKey:@"channelConfig"] intValue];
+		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
 	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
 	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
@@ -125,7 +125,7 @@
 
 	inputFormat = [inputNode nodeFormat];
 	if([properties valueForKey:@"channelConfig"])
-		inputChannelConfig = [[properties valueForKey:@"channelConfig"] intValue];
+		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
 	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
 	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
@@ -191,10 +191,6 @@
 - (void)initialBufferFilled:(id)sender {
 	DLog(@"INITIAL BUFFER FILLED");
 	[controller launchOutputThread];
-}
-
-- (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig {
-	DLog(@"FORMAT DID CHANGE!");
 }
 
 - (InputNode *)inputNode {

@@ -575,6 +575,20 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 		bytesRead += toConsume;
 	}
 
+	int _channels = codecCtx->channels;
+	uint32_t _channelConfig = (uint32_t)codecCtx->channel_layout;
+	float _frequency = codecCtx->sample_rate;
+
+	if(_channels != channels ||
+	   _channelConfig != channelConfig ||
+	   _frequency != frequency) {
+		channels = _channels;
+		channelConfig = _channelConfig;
+		frequency = _frequency;
+		[self willChangeValueForKey:@"properties"];
+		[self didChangeValueForKey:@"properties"];
+	}
+
 	int framesReadNow = bytesRead / frameSize;
 	if(totalFrames && (framesRead + framesReadNow > totalFrames))
 		framesReadNow = (int)(totalFrames - framesRead);
@@ -617,7 +631,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 - (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithInt:channelConfig], @"channelConfig",
+	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
 	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 	                     [NSNumber numberWithBool:(bitsPerSample == 8)], @"Unsigned",
 	                     [NSNumber numberWithFloat:frequency], @"sampleRate",

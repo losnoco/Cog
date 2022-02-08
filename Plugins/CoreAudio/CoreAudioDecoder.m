@@ -391,7 +391,7 @@ static SInt64 getSizeProc(void *clientData) {
 - (NSDictionary *)properties {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
 	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithInt:channelConfig], @"channelConfig",
+	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
 	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
 	                     [NSNumber numberWithBool:floatingPoint], @"floatingPoint",
 	                     [NSNumber numberWithInt:bitrate], @"bitrate",
