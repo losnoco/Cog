@@ -756,6 +756,12 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[miniWindow showHDCDLogo:YES];
 }
 
+- (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo {
+	PlaylistEntry *pe = [playlistController currentEntry];
+	BOOL paused = playbackStatus == CogStatusPaused;
+	[player play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:[pe currentPosition]];
+}
+
 - (void)removeHDCD:(id)sender {
 	MainWindow *mainWindow = (MainWindow *)appController.mainWindow;
 	[mainWindow showHDCDLogo:NO];

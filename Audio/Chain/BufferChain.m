@@ -260,4 +260,8 @@
 	[controller sustainHDCD];
 }
 
+- (void)restartPlaybackAtCurrentPosition {
+	[controller restartPlaybackAtCurrentPosition];
+}
+
 @end

@@ -167,6 +167,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 		running = NO;
 		started = NO;
 		stopNext = NO;
+		restarted = NO;
 
 		streamFormatStarted = NO;
 
@@ -211,10 +212,16 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	running = YES;
 	started = NO;
 	stopNext = NO;
+	size_t eventCount = 0;
 	atomic_store(&bytesRendered, 0);
 	NSMutableArray *delayedEvents = [[NSMutableArray alloc] init];
 	BOOL delayedEventsPopped = YES;
 	while(!stopping) {
+		if(++eventCount == 48) {
+			[self resetIfOutputChanged];
+			if(restarted) break;
+			eventCount = 0;
+		}
 		if([outputController shouldReset]) {
 			@autoreleasepool {
 				[[outputController buffer] reset];
@@ -459,6 +466,15 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	free(devids);
 }
 
+- (void)resetIfOutputChanged {
+	AVAudioFormat *format = _au.outputBusses[0].format;
+
+	if(!restarted && !_deviceFormat || ![_deviceFormat isEqual:format]) {
+		[outputController restartPlaybackAtCurrentPosition];
+		restarted = YES;
+	}
+}
+
 - (BOOL)updateDeviceFormat {
 	AVAudioFormat *format = _au.outputBusses[0].format;
 
@@ -560,6 +576,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	paused = NO;
 	stopNext = NO;
 	outputDeviceID = -1;
+	restarted = NO;
 
 	downmixer = nil;
 

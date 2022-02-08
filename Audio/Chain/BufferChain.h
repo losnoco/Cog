@@ -75,4 +75,6 @@
 
 - (void)sustainHDCD;
 
+- (void)restartPlaybackAtCurrentPosition;
+
 @end

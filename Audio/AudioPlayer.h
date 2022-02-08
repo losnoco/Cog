@@ -76,6 +76,8 @@
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
 - (void)resetNextStreams;
 
+- (void)restartPlaybackAtCurrentPosition;
+
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
 + (NSArray *)containerTypes;
@@ -121,5 +123,5 @@
 - (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo;
-
+- (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo;
 @end

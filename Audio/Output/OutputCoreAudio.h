@@ -41,6 +41,7 @@
 	BOOL started;
 	BOOL paused;
 	BOOL stopNext;
+	BOOL restarted;
 
 	BOOL eqEnabled;
 
