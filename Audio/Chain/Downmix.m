@@ -295,6 +295,7 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
 		}
 		for(size_t i = 0; i < count; ++i) {
 			// upmix N channels to N channels plus silence the empty channels
+			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
 			for(int j = 0; j < inchannels; ++j) {
 				if(outIndexes[j] != ~0) {
 					outBuffer[i * outchannels + outIndexes[j]] = inBuffer[i * inchannels + j];
