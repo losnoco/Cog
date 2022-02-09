@@ -474,14 +474,17 @@ void *kAppControllerContext = &kAppControllerContext;
 		[[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
 	}
 
-	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"BASSMIDI"]) {
-		[[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midiPlugin"];
-	}
-
 	NSString *oldMidiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
 	if(oldMidiPlugin) {
 		[[NSUserDefaults standardUserDefaults] setValue:oldMidiPlugin forKey:@"midiPlugin"];
 		[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"midi.plugin"];
+	}
+
+	// if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"BASSMIDI"]) {
+	//	[[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midiPlugin"];
+	// }
+	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"FluidSynth"]) {
+		[[NSUserDefaults standardUserDefaults] setValue:@"BASSMIDI" forKey:@"midiPlugin"];
 	}
 }
 

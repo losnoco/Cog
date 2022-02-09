@@ -13,13 +13,13 @@
 #import "Plugin.h"
 
 class AUPlayer;
-class SFPlayer;
+class BMPlayer;
 
 @interface MIDIDecoder : NSObject <CogDecoder> {
 	id<CogSource> source;
 	int track_num;
 
-	SFPlayer* sfplayer;
+	BMPlayer* bmplayer;
 	AUPlayer* auplayer;
 	MIDIPlayer* player;
 	midi_container midi_file;

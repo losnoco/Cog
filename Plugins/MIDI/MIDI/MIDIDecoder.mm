@@ -9,8 +9,8 @@
 #import "MIDIDecoder.h"
 
 #import "AUPlayer.h"
+#import "BMPlayer.h"
 #import "MSPlayer.h"
-#import "SFPlayer.h"
 
 #import "Logging.h"
 
@@ -172,32 +172,28 @@ static OSType getOSType(const char *in_) {
 	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 
 	// Then detect if we should force the DLSMusicSynth, which has its own bank
-	if(!plugin || [plugin isEqualToString:@"FluidSynth"]) {
+	if(!plugin || [plugin isEqualToString:@"BASSMIDI"]) {
 		if(!globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
 			plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
 			[[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
 		}
 	}
 
-	if(!plugin || [plugin isEqualToString:@"FluidSynth"]) {
-		sfplayer = new SFPlayer;
+	if(!plugin || [plugin isEqualToString:@"BASSMIDI"]) {
+		bmplayer = new BMPlayer;
 
-		unsigned int resamplingQuality = 0;
+		bool resamplingSinc = false;
 		NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
-		if([resampling isEqualToString:@"linear"])
-			resamplingQuality = 1;
-		else if([resampling isEqualToString:@"cubic"])
-			resamplingQuality = 4;
-		else if([resampling isEqualToString:@"sinc"])
-			resamplingQuality = 7;
+		if([resampling isEqualToString:@"sinc"])
+			resamplingSinc = true;
 
-		sfplayer->setInterpolationMethod(resamplingQuality);
-		sfplayer->setSampleRate(44100);
+		bmplayer->setSincInterpolation(resamplingSinc);
+		bmplayer->setSampleRate(44100);
 
 		if([soundFontPath length])
-			sfplayer->setFileSoundFont([soundFontPath UTF8String]);
+			bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
-		player = sfplayer;
+		player = bmplayer;
 	} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
 		MSPlayer *msplayer = new MSPlayer;
 		player = msplayer;
@@ -269,10 +265,10 @@ static OSType getOSType(const char *in_) {
 	if(!repeatone && framesRead >= localTotalFrames)
 		return 0;
 
-	if((sfplayer || auplayer) && !soundFontsAssigned) {
+	if((bmplayer || auplayer) && !soundFontsAssigned) {
 		if(globalSoundFontPath != nil) {
-			if(sfplayer)
-				sfplayer->setSoundFont([globalSoundFontPath UTF8String]);
+			if(bmplayer)
+				bmplayer->setSoundFont([globalSoundFontPath UTF8String]);
 			else if(auplayer)
 				auplayer->setSoundFont([globalSoundFontPath UTF8String]);
 		}

@@ -68,7 +68,7 @@ static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, c
 
 	[self addObject:
 	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"FluidSynth", @"name", @"FluidSynth", @"preference", nil]];
+	                    @"BASSMIDI", @"name", @"BASSMIDI", @"preference", nil]];
 
 	[self addObject:
 	      [NSDictionary dictionaryWithObjectsAndKeys:
