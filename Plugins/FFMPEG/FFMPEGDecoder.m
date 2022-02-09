@@ -9,6 +9,9 @@
 // test
 #import "FFMPEGDecoder.h"
 
+#import "NSDictionary+Merge.h"
+#import "TagLibID3v2Reader.h"
+
 #include <pthread.h>
 
 #import "Logging.h"
@@ -92,13 +95,20 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 			return NO;
 		}
 
+		AVDictionary *dict = NULL;
+
+		av_dict_set_int(&dict, "icy", 1, 0); // Enable Icy interval metadata, if supported
+
 		NSString *urlString = [url absoluteString];
-		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
+		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, &dict)) < 0) {
+			av_dict_free(&dict);
 			char errDescr[4096];
 			av_strerror(errcode, errDescr, 4096);
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			return NO;
 		}
+
+		av_dict_free(&dict);
 	} else {
 		buffer = av_malloc(32 * 1024);
 		if(!buffer) {
@@ -136,6 +146,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	}
 
 	streamIndex = -1;
+	metadataIndex = -1;
 	AVCodecParameters *codecPar;
 
 	for(i = 0; i < formatCtx->nb_streams; i++) {
@@ -144,6 +155,8 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 		if(streamIndex < 0 && codecPar->codec_type == AVMEDIA_TYPE_AUDIO) {
 			DLog(@"audio codec found");
 			streamIndex = i;
+		} else if(codecPar->codec_id == AV_CODEC_ID_TIMED_ID3) {
+			metadataIndex = i;
 		} else {
 			stream->discard = AVDISCARD_ALL;
 		}
@@ -402,6 +415,12 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 	seekable = [s seekable];
 
+	album = @"";
+	artist = @"";
+	title = @"";
+	id3Metadata = @{};
+	[self updateMetadata];
+
 	return YES;
 }
 
@@ -444,6 +463,56 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	[self close];
 }
 
+- (void)updateMetadata {
+	const AVDictionaryEntry *tag = NULL;
+	NSString *_album = album;
+	NSString *_artist = artist;
+	NSString *_title = title;
+	if(formatCtx->metadata) {
+		while((tag = av_dict_get(formatCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+			if(!strcasecmp(tag->key, "streamtitle")) {
+				NSString *artistTitle = [NSString stringWithUTF8String:tag->value];
+				NSArray *splitValues = [artistTitle componentsSeparatedByString:@" - "];
+				_artist = @"";
+				_title = [splitValues objectAtIndex:0];
+				if([splitValues count] > 1) {
+					_artist = _title;
+					_title = [splitValues objectAtIndex:1];
+				}
+			} else if(!strcasecmp(tag->key, "icy-url")) {
+				_album = [NSString stringWithUTF8String:tag->value];
+			} else if(!strcasecmp(tag->key, "artist")) {
+				_artist = [NSString stringWithUTF8String:tag->value];
+			} else if(!strcasecmp(tag->key, "title")) {
+				_title = [NSString stringWithUTF8String:tag->value];
+			}
+		}
+	}
+
+	if(![_album isEqual:album] ||
+	   ![_artist isEqual:artist] ||
+	   ![_title isEqual:title]) {
+		album = _album;
+		artist = _artist;
+		title = _title;
+		[self willChangeValueForKey:@"metadata"];
+		[self didChangeValueForKey:@"metadata"];
+	}
+}
+
+- (void)updateID3Metadata {
+	NSData *tag = [NSData dataWithBytes:lastReadPacket->data length:lastReadPacket->size];
+	Class tagReader = NSClassFromString(@"TagLibID3v2Reader");
+	if(tagReader && [tagReader respondsToSelector:@selector(metadataForTag:)]) {
+		NSDictionary *_id3Metadata = [tagReader metadataForTag:tag];
+		if(![_id3Metadata isEqualTo:id3Metadata]) {
+			id3Metadata = _id3Metadata;
+			[self willChangeValueForKey:@"metadata"];
+			[self didChangeValueForKey:@"metadata"];
+		}
+	}
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	if(totalFrames && framesRead >= totalFrames)
 		return 0;
@@ -482,6 +551,12 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 					}
 					if(formatCtx->pb && formatCtx->pb->error) break;
 				}
+
+				if(lastReadPacket->stream_index == metadataIndex) {
+					[self updateID3Metadata];
+					continue;
+				}
+
 				if(lastReadPacket->stream_index != streamIndex)
 					continue;
 			}
@@ -593,6 +668,8 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 		bytesRead += toConsume;
 	}
 
+	[self updateMetadata];
+
 	int framesReadNow = bytesRead / frameSize;
 	if(totalFrames && (framesRead + framesReadNow > totalFrames))
 		framesReadNow = (int)(totalFrames - framesRead);
@@ -648,7 +725,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 }
 
 - (NSDictionary *)metadata {
-	return @{};
+	return [NSDictionary dictionaryByMerging:@{ @"album": album, @"artist": artist, @"title": title } with:id3Metadata];
 }
 
 + (NSArray *)fileTypes {

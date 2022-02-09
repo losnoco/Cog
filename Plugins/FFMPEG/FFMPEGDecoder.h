@@ -40,6 +40,12 @@
 	int64_t skipSamples;
 	BOOL endOfStream;
 	BOOL endOfAudio;
+
+	int metadataIndex;
+	NSString *artist;
+	NSString *title;
+	NSString *album;
+	NSDictionary *id3Metadata;
 }
 
 @end

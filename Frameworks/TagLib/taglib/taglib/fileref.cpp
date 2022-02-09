@@ -100,8 +100,10 @@ namespace
     // updated.  However at some point that list should be created at the same time
     // that a default file type resolver is created.
 
-    if(ext.isEmpty())
-      return 0;
+    if(ext.isEmpty()) {
+      // HACK
+      return new MPEG::File(stream, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
+    }
 
     // .oga can be any audio in the Ogg container. So leave it to content-based detection.
 
