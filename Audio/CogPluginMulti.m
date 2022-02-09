@@ -72,6 +72,11 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 	return nil;
 }
 
+- (NSDictionary *)metadata {
+	if(theDecoder != nil) return [theDecoder metadata];
+	return @{};
+}
+
 - (int)readAudio:(void *)buffer frames:(UInt32)frames {
 	if(theDecoder != nil) return [theDecoder readAudio:buffer frames:frames];
 	return 0;

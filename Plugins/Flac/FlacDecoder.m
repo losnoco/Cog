@@ -366,6 +366,10 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 			 @"encoding": @"lossless"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 + (NSArray *)fileTypes {
 	return @[@"flac"];
 }

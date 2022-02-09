@@ -264,4 +264,8 @@
 	[controller restartPlaybackAtCurrentPosition];
 }
 
+- (void)pushInfo:(NSDictionary *)info {
+	[controller pushInfo:info];
+}
+
 @end

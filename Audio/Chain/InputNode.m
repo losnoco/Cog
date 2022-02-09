@@ -116,6 +116,18 @@
 		nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 	} else if([keyPath isEqual:@"metadata"]) {
 		// Inform something of metadata change
+		NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
+
+		NSDictionary *entryProperties = [decoder properties];
+		if(entryProperties == nil)
+			return;
+
+		[entryInfo addEntriesFromDictionary:entryProperties];
+		[entryInfo addEntriesFromDictionary:[decoder metadata]];
+
+		NSDictionary * info = [NSDictionary dictionaryWithDictionary:entryInfo];
+		
+		[controller pushInfo:info];
 	}
 }
 

@@ -760,6 +760,14 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[player play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:[pe currentPosition]];
 }
 
+- (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
+	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
+	[pe setMetadata:info];
+	[playlistView refreshCurrentTrack:self];
+	[self sendMetaData];
+	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
+}
+
 - (void)removeHDCD:(id)sender {
 	MainWindow *mainWindow = (MainWindow *)appController.mainWindow;
 	[mainWindow showHDCDLogo:NO];

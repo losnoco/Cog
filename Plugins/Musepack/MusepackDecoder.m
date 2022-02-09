@@ -191,6 +191,10 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 			 @"encoding": @"lossy"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 + (NSArray *)fileTypes {
 	return @[@"mpc"];
 }

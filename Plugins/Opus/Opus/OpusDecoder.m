@@ -188,6 +188,10 @@ opus_int64 sourceTell(void *_stream) {
 			 @"encoding": @"lossy"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 + (NSArray *)fileTypes {
 	return @[@"opus", @"ogg"];
 }

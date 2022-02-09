@@ -189,6 +189,10 @@ const int masterVol = 0x10000; // Fixed point 16.16
 			 @"encoding": @"synthesized"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void*)buf frames:(UInt32)frames {
 	if([self trackEnded])
 		return 0;

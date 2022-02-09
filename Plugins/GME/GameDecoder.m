@@ -151,6 +151,10 @@ gme_err_t readCallback(void *data, void *out, int count) {
 			 @"encoding": @"synthesized"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	int numSamples = frames * 2; // channels = 2
 

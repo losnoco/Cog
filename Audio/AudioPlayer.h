@@ -78,6 +78,8 @@
 
 - (void)restartPlaybackAtCurrentPosition;
 
+- (void)pushInfo:(NSDictionary *)info;
+
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
 + (NSArray *)containerTypes;
@@ -124,4 +126,5 @@
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo;
+- (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
 @end

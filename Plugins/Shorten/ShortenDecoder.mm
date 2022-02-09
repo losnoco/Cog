@@ -87,6 +87,10 @@
 			 @"encoding": @"lossless"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 + (NSArray *)fileTypes {
 	return @[@"shn"];
 }

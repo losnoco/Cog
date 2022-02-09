@@ -171,6 +171,10 @@ long sourceTell(void *datasource) {
 			 @"encoding": @"lossy"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 + (NSArray *)fileTypes {
 	return @[@"ogg"];
 }

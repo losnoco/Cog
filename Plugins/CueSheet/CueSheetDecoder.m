@@ -40,7 +40,11 @@
 	// Need to alter length
 	[properties setObject:[NSNumber numberWithLong:(trackEnd - trackStart)] forKey:@"totalFrames"];
 
-	return properties;
+	return [NSDictionary dictionaryWithDictionary:properties];
+}
+
+- (NSDictionary *)metadata {
+	return @{};
 }
 
 - (BOOL)open:(id<CogSource>)s {

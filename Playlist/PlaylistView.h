@@ -24,4 +24,6 @@
 
 - (IBAction)scrollToCurrentEntry:(id)sender;
 
+- (IBAction)refreshCurrentTrack:(id)sender;
+
 @end

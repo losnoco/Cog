@@ -77,4 +77,6 @@
 
 - (void)restartPlaybackAtCurrentPosition;
 
+- (void)pushInfo:(NSDictionary *)info;
+
 @end

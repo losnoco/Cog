@@ -199,6 +199,10 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 			 @"encoding": @"synthesized"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	int total = 0;
 	int16_t *sampleBuffer = (int16_t *)buf;

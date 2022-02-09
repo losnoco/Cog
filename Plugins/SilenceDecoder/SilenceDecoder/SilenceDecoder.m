@@ -46,6 +46,10 @@ enum { channels = 2 };
 			 @"encoding": @"synthesized"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	int total = frames;
 

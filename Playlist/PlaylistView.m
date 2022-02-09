@@ -405,6 +405,11 @@
 	return [super validateUserInterfaceItem:anItem];
 }
 
+- (IBAction)refreshCurrentTrack:(id)sender {
+	unsigned long columns = [[self tableColumns] count];
+	[self reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:[[playlistController currentEntry] index]] columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
+}
+
 #if 0
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {

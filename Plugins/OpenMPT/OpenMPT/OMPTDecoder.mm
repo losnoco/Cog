@@ -101,6 +101,10 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 			 @"encoding": @"synthesized"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	mod->set_repeat_count(IsRepeatOneSet() ? -1 : 0);
 

@@ -109,6 +109,10 @@ static OSType getOSType(const char *in_) {
 			 @"encoding": @"synthesized"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (BOOL)initDecoder {
 	NSString *soundFontPath = @"";
 

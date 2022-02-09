@@ -92,6 +92,10 @@ static CAdPlugDatabase *g_database = NULL;
 			 @"endian": @"host"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	int total = 0;
 	bool dont_loop = !IsRepeatOneSet();

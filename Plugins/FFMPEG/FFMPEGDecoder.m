@@ -647,6 +647,10 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 			 @"encoding": lossy ? @"lossy" : @"lossless"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 + (NSArray *)fileTypes {
 	return @[@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"weba"];
 }

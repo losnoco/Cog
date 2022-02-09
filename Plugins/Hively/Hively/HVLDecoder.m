@@ -91,6 +91,10 @@ static void oneTimeInit(void) {
 			 @"encoding": @"synthesized"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	BOOL repeatone = IsRepeatOneSet();
 

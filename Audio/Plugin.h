@@ -37,6 +37,7 @@
 // For KVO
 //- (void)setProperties:(NSDictionary *)p;
 - (NSDictionary *)properties;
+- (NSDictionary *)metadata; // Only to be implemented for dynamic metadata, send events on change
 
 - (int)readAudio:(void *)buffer frames:(UInt32)frames;
 

@@ -295,6 +295,10 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 			 @"encoding": @"lossy/lossless"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
 	UInt32 framesMax = frames;
 	UInt32 framesDone = 0;

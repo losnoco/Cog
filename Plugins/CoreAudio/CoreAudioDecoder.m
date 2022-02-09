@@ -402,4 +402,8 @@ static SInt64 getSizeProc(void *clientData) {
 			 @"encoding": _audioFile_is_lossy ? @"lossy" : @"lossless"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 @end

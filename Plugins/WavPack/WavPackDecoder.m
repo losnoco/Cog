@@ -294,6 +294,10 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 			 @"encoding": isLossy ? @"lossy" : @"lossless"};
 }
 
+- (NSDictionary *)metadata {
+	return @{};
+}
+
 + (NSArray *)fileTypes {
 	return @[@"wv", @"wvp"];
 }
