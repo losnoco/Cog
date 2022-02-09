@@ -757,11 +757,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
-	[player play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:[pe currentPosition]];
+	[player play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:[pe seekable] ? [pe currentPosition] : 0.0];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
-	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
+	PlaylistEntry *pe = [playlistController currentEntry];
 	[pe setMetadata:info];
 	[playlistView refreshCurrentTrack:self];
 	[self sendMetaData];
