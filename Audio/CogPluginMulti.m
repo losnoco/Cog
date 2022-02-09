@@ -90,8 +90,8 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 		if([theDecoder open:source])
 			return YES;
 		[self removeObservers];
-		if([source seekable])
-			[source seek:0 whence:SEEK_SET];
+		// HTTP reader supports limited rewinding
+		[source seek:0 whence:SEEK_SET];
 	}
 	theDecoder = nil;
 	return NO;
