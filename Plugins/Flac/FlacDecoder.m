@@ -230,10 +230,11 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 			}
 		}
 
-		if(![_genre isEqual:flacDecoder->genre] ||
-		   ![_album isEqual:flacDecoder->album] ||
-		   ![_artist isEqual:flacDecoder->artist] ||
-		   ![_title isEqual:flacDecoder->title]) {
+		if(![flacDecoder->source seekable] &&
+		   (![_genre isEqual:flacDecoder->genre] ||
+		    ![_album isEqual:flacDecoder->album] ||
+		    ![_artist isEqual:flacDecoder->artist] ||
+		    ![_title isEqual:flacDecoder->title])) {
 			flacDecoder->genre = _genre;
 			flacDecoder->album = _album;
 			flacDecoder->artist = _artist;
@@ -365,25 +366,27 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		}
 	}
 
-	Class sourceClass = [source class];
-	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
-		HTTPSource *httpSource = (HTTPSource *)source;
-		if([httpSource hasMetadata]) {
-			NSDictionary *metadata = [httpSource metadata];
-			NSString *_genre = [metadata valueForKey:@"genre"];
-			NSString *_album = [metadata valueForKey:@"album"];
-			NSString *_artist = [metadata valueForKey:@"artist"];
-			NSString *_title = [metadata valueForKey:@"title"];
-			if(![_genre isEqualToString:genre] ||
-			   ![_album isEqualToString:album] ||
-			   ![_artist isEqualToString:artist] ||
-			   ![_title isEqualToString:title]) {
-				genre = _genre;
-				album = _album;
-				artist = _artist;
-				title = _title;
-				[self willChangeValueForKey:@"metadata"];
-				[self didChangeValueForKey:@"metadata"];
+	if(![source seekable]) {
+		Class sourceClass = [source class];
+		if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
+			HTTPSource *httpSource = (HTTPSource *)source;
+			if([httpSource hasMetadata]) {
+				NSDictionary *metadata = [httpSource metadata];
+				NSString *_genre = [metadata valueForKey:@"genre"];
+				NSString *_album = [metadata valueForKey:@"album"];
+				NSString *_artist = [metadata valueForKey:@"artist"];
+				NSString *_title = [metadata valueForKey:@"title"];
+				if(![_genre isEqualToString:genre] ||
+				   ![_album isEqualToString:album] ||
+				   ![_artist isEqualToString:artist] ||
+				   ![_title isEqualToString:title]) {
+					genre = _genre;
+					album = _album;
+					artist = _artist;
+					title = _title;
+					[self willChangeValueForKey:@"metadata"];
+					[self didChangeValueForKey:@"metadata"];
+				}
 			}
 		}
 	}

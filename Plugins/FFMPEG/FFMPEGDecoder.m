@@ -461,6 +461,8 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 }
 
 - (void)updateMetadata {
+	if([source seekable]) return;
+
 	const AVDictionaryEntry *tag = NULL;
 	NSString *_genre = genre;
 	NSString *_album = album;

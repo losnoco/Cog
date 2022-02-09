@@ -158,10 +158,11 @@ opus_int64 sourceTell(void *_stream) {
 			}
 		}
 
-		if(![_genre isEqual:genre] ||
-		   ![_album isEqual:album] ||
-		   ![_artist isEqual:artist] ||
-		   ![_title isEqual:title]) {
+		if(![source seekable] &&
+		   (![_genre isEqual:genre] ||
+		    ![_album isEqual:album] ||
+		    ![_artist isEqual:artist] ||
+		    ![_title isEqual:title])) {
 			genre = _genre;
 			album = _album;
 			artist = _artist;
@@ -173,6 +174,8 @@ opus_int64 sourceTell(void *_stream) {
 }
 
 - (void)updateIcyMetadata {
+	if([source seekable]) return;
+
 	NSString *_genre = genre;
 	NSString *_album = album;
 	NSString *_artist = artist;

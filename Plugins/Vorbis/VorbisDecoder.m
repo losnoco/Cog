@@ -107,6 +107,8 @@ long sourceTell(void *datasource) {
 }
 
 - (void)updateMetadata {
+	if([source seekable]) return;
+
 	const vorbis_comment *comment = ov_comment(&vorbisRef, -1);
 
 	if(comment) {
@@ -153,6 +155,8 @@ long sourceTell(void *datasource) {
 }
 
 - (void)updateIcyMetadata {
+	if([source seekable]) return;
+
 	NSString *_genre = genre;
 	NSString *_album = album;
 	NSString *_artist = artist;
