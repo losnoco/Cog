@@ -163,7 +163,10 @@
 
 		if(amountInBuffer < CHUNK_SIZE) {
 			int framesToRead = CHUNK_SIZE - amountInBuffer;
-			int framesRead = [decoder readAudio:((char *)inputBuffer) + bytesInBuffer frames:framesToRead];
+			int framesRead;
+			@autoreleasepool {
+				framesRead = [decoder readAudio:((char *)inputBuffer) + bytesInBuffer frames:framesToRead];
+			}
 
 			if(framesRead > 0 && !seekError) {
 				amountInBuffer += framesRead;

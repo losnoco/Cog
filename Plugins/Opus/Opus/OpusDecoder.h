@@ -29,6 +29,11 @@
 	int bitrate;
 	int channels;
 	long totalFrames;
+
+	NSString *genre;
+	NSString *album;
+	NSString *artist;
+	NSString *title;
 }
 
 @end

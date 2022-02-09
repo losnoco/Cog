@@ -42,6 +42,7 @@
 	BOOL endOfAudio;
 
 	int metadataIndex;
+	NSString *genre;
 	NSString *artist;
 	NSString *title;
 	NSString *album;

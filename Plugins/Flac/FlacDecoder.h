@@ -34,6 +34,12 @@
 
 	BOOL hasStreamInfo;
 	BOOL streamOpened;
+	BOOL abortFlag;
+
+	NSString *genre;
+	NSString *album;
+	NSString *artist;
+	NSString *title;
 }
 
 - (void)setSource:(id<CogSource>)s;

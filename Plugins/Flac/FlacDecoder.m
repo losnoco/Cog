@@ -10,29 +10,9 @@
 
 #import "Logging.h"
 
+#import "HTTPSource.h"
+
 @implementation FlacDecoder
-
-static const char *CHANNEL_MASK_TAG = "WAVEFORMATEXTENSIBLE_CHANNEL_MASK";
-
-static FLAC__bool flac__utils_get_channel_mask_tag(const FLAC__StreamMetadata *object, FLAC__uint32 *channel_mask) {
-	int offset;
-	uint32_t val;
-	char *p;
-	FLAC__ASSERT(object);
-	FLAC__ASSERT(object->type == FLAC__METADATA_TYPE_VORBIS_COMMENT);
-	if(0 > (offset = FLAC__metadata_object_vorbiscomment_find_entry_from(object, /*offset=*/0, CHANNEL_MASK_TAG)))
-		return false;
-	if(object->data.vorbis_comment.comments[offset].length < strlen(CHANNEL_MASK_TAG) + 4)
-		return false;
-	if(0 == (p = strchr((const char *)object->data.vorbis_comment.comments[offset].entry, '='))) /* should never happen, but just in case */
-		return false;
-	if(strncasecmp(p, "=0x", 3))
-		return false;
-	if(sscanf(p + 3, "%x", &val) != 1)
-		return false;
-	*channel_mask = val;
-	return true;
-}
 
 FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte blockBuffer[], size_t *bytes, void *client_data) {
 	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
@@ -98,6 +78,9 @@ FLAC__StreamDecoderLengthStatus LengthCallback(const FLAC__StreamDecoder *decode
 
 FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 *const sampleblockBuffer[], void *client_data) {
 	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
+
+	if(flacDecoder->abortFlag)
+		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 
 	uint32_t channels = frame->header.channels;
 	uint32_t bitsPerSample = frame->header.bits_per_sample;
@@ -200,7 +183,7 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 	// to determine stream format (this seems to be consistent with flac spec: http://flac.sourceforge.net/format.html)
 	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
 
-	if(!flacDecoder->hasStreamInfo) {
+	if(!flacDecoder->hasStreamInfo && metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
 		flacDecoder->channels = metadata->data.stream_info.channels;
 		flacDecoder->channelConfig = 0;
 		flacDecoder->frequency = metadata->data.stream_info.sample_rate;
@@ -212,12 +195,59 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 	}
 
 	if(metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
-		(void)flac__utils_get_channel_mask_tag(metadata, &flacDecoder->channelConfig);
+		NSString *_genre = flacDecoder->genre;
+		NSString *_album = flacDecoder->album;
+		NSString *_artist = flacDecoder->artist;
+		NSString *_title = flacDecoder->title;
+		uint8_t nullByte = '\0';
+		const FLAC__StreamMetadata_VorbisComment *vorbis_comment = &metadata->data.vorbis_comment;
+		for(int i = 0; i < vorbis_comment->num_comments; ++i) {
+			NSMutableData *commentField = [NSMutableData dataWithBytes:vorbis_comment->comments[i].entry length:vorbis_comment->comments[i].length];
+			[commentField appendBytes:&nullByte length:1];
+			NSString *commentString = [NSString stringWithUTF8String:[commentField bytes]];
+			NSArray *splitFields = [commentString componentsSeparatedByString:@"="];
+			if([splitFields count] == 2) {
+				NSString *name = [splitFields objectAtIndex:0];
+				NSString *value = [splitFields objectAtIndex:1];
+				name = [name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				name = [name lowercaseString];
+				if([name isEqualToString:@"genre"]) {
+					_genre = value;
+				} else if([name isEqualToString:@"album"]) {
+					_album = value;
+				} else if([name isEqualToString:@"artist"]) {
+					_artist = value;
+				} else if([name isEqualToString:@"title"]) {
+					_title = value;
+				} else if([name isEqualToString:@"waveformatextensible_channel_mask"]) {
+					if([value hasPrefix:@"0x"]) {
+						char *end;
+						const char *_value = [value UTF8String] + 2;
+						flacDecoder->channelConfig = (uint32_t)strtoul(_value, &end, 16);
+					}
+				}
+			}
+		}
+
+		if(![_genre isEqual:flacDecoder->genre] ||
+		   ![_album isEqual:flacDecoder->album] ||
+		   ![_artist isEqual:flacDecoder->artist] ||
+		   ![_title isEqual:flacDecoder->title]) {
+			flacDecoder->genre = _genre;
+			flacDecoder->album = _album;
+			flacDecoder->artist = _artist;
+			flacDecoder->title = _title;
+			[flacDecoder willChangeValueForKey:@"metadata"];
+			[flacDecoder didChangeValueForKey:@"metadata"];
+		}
 	}
 }
 
 void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
-	// Do nothing?
+	FlacDecoder *flacDecoder = (__bridge FlacDecoder *)client_data;
+	if(status != FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC)
+		flacDecoder->abortFlag = YES;
 }
 
 - (BOOL)open:(id<CogSource>)s {
@@ -230,20 +260,61 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		[s seek:0 whence:SEEK_SET];
 	}
 
+	// Must peek at stream! HTTP reader supports seeking within its buffer
+	BOOL isOggFlac = NO;
+	uint8_t buffer[4];
+	[s read:buffer amount:4];
+	[s seek:0 whence:SEEK_SET];
+	if(memcmp(buffer, "OggS", 4) == 0) {
+		isOggFlac = YES;
+	}
+
+	genre = @"";
+	album = @"";
+	artist = @"";
+	title = @"";
+
 	decoder = FLAC__stream_decoder_new();
 	if(decoder == NULL)
 		return NO;
 
-	if(FLAC__stream_decoder_init_stream(decoder,
-	                                    ReadCallback,
-	                                    ([source seekable] ? SeekCallback : NULL),
-	                                    ([source seekable] ? TellCallback : NULL),
-	                                    ([source seekable] ? LengthCallback : NULL),
-	                                    ([source seekable] ? EOFCallback : NULL),
-	                                    WriteCallback,
-	                                    MetadataCallback,
-	                                    ErrorCallback,
-	                                    (__bridge void *)(self)) != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
+	if(![source seekable]) {
+		FLAC__stream_decoder_set_md5_checking(decoder, false);
+	}
+
+	FLAC__stream_decoder_set_metadata_ignore_all(decoder);
+	FLAC__stream_decoder_set_metadata_respond(decoder, FLAC__METADATA_TYPE_STREAMINFO);
+	FLAC__stream_decoder_set_metadata_respond(decoder, FLAC__METADATA_TYPE_VORBIS_COMMENT);
+
+	abortFlag = NO;
+
+	FLAC__StreamDecoderInitStatus ret;
+
+	if(isOggFlac) {
+		ret = FLAC__stream_decoder_init_ogg_stream(decoder,
+		                                           ReadCallback,
+		                                           ([source seekable] ? SeekCallback : NULL),
+		                                           ([source seekable] ? TellCallback : NULL),
+		                                           ([source seekable] ? LengthCallback : NULL),
+		                                           ([source seekable] ? EOFCallback : NULL),
+		                                           WriteCallback,
+		                                           MetadataCallback,
+		                                           ErrorCallback,
+		                                           (__bridge void *)(self));
+	} else {
+		ret = FLAC__stream_decoder_init_stream(decoder,
+		                                       ReadCallback,
+		                                       ([source seekable] ? SeekCallback : NULL),
+		                                       ([source seekable] ? TellCallback : NULL),
+		                                       ([source seekable] ? LengthCallback : NULL),
+		                                       ([source seekable] ? EOFCallback : NULL),
+		                                       WriteCallback,
+		                                       MetadataCallback,
+		                                       ErrorCallback,
+		                                       (__bridge void *)(self));
+	}
+
+	if(ret != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
 		return NO;
 	}
 
@@ -271,7 +342,9 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 				break;
 			}
 
-			FLAC__stream_decoder_process_single(decoder);
+			if(!FLAC__stream_decoder_process_single(decoder)) {
+				break;
+			}
 		}
 
 		int bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
@@ -289,6 +362,29 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 		if(blockBufferFrames > 0) {
 			memmove((uint8_t *)blockBuffer, ((uint8_t *)blockBuffer) + (framesToRead * bytesPerFrame), blockBufferFrames * bytesPerFrame);
+		}
+	}
+
+	Class sourceClass = [source class];
+	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
+		HTTPSource *httpSource = (HTTPSource *)source;
+		if([httpSource hasMetadata]) {
+			NSDictionary *metadata = [httpSource metadata];
+			NSString *_genre = [metadata valueForKey:@"genre"];
+			NSString *_album = [metadata valueForKey:@"album"];
+			NSString *_artist = [metadata valueForKey:@"artist"];
+			NSString *_title = [metadata valueForKey:@"title"];
+			if(![_genre isEqualToString:genre] ||
+			   ![_album isEqualToString:album] ||
+			   ![_artist isEqualToString:artist] ||
+			   ![_title isEqualToString:title]) {
+				genre = _genre;
+				album = _album;
+				artist = _artist;
+				title = _title;
+				[self willChangeValueForKey:@"metadata"];
+				[self didChangeValueForKey:@"metadata"];
+			}
 		}
 	}
 
@@ -367,7 +463,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 }
 
 - (NSDictionary *)metadata {
-	return @{};
+	return @{ @"genre": genre, @"album": album, @"artist": artist, @"title": title };
 }
 
 + (NSArray *)fileTypes {
@@ -375,7 +471,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 }
 
 + (NSArray *)mimeTypes {
-	return @[@"audio/x-flac"];
+	return @[@"audio/x-flac", @"application/ogg", @"audio/ogg"];
 }
 
 + (float)priority {

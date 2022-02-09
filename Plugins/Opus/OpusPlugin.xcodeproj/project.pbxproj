@@ -46,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		833F68411CDBCABC00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8356BD1B27B469B80074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		8375B03C17FFEA400092A79F /* OpusPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpusPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8375B03F17FFEA400092A79F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8375B04217FFEA400092A79F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -122,6 +123,7 @@
 		8375B04517FFEA400092A79F /* Opus */ = {
 			isa = PBXGroup;
 			children = (
+				8356BD1B27B469B80074E50C /* HTTPSource.h */,
 				8384913718081F2700E7332D /* Logging.h */,
 				8375B36D17FFF1FE0092A79F /* Plugin.h */,
 				8375B36A17FFF1CB0092A79F /* OpusDecoder.h */,

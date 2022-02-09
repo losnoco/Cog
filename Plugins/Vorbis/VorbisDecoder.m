@@ -10,6 +10,8 @@
 
 #import "Logging.h"
 
+#import "HTTPSource.h"
+
 @implementation VorbisDecoder
 
 static const int MAXCHANNELS = 8;
@@ -95,7 +97,90 @@ long sourceTell(void *datasource) {
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
+	genre = @"";
+	album = @"";
+	artist = @"";
+	title = @"";
+	[self updateMetadata];
+
 	return YES;
+}
+
+- (void)updateMetadata {
+	const vorbis_comment *comment = ov_comment(&vorbisRef, -1);
+
+	if(comment) {
+		uint8_t nullByte = '\0';
+		NSString *_genre = genre;
+		NSString *_album = album;
+		NSString *_artist = artist;
+		NSString *_title = title;
+		for(int i = 0; i < comment->comments; ++i) {
+			NSMutableData *commentField = [NSMutableData dataWithBytes:comment->user_comments[i] length:comment->comment_lengths[i]];
+			[commentField appendBytes:&nullByte length:1];
+			NSString *commentString = [NSString stringWithUTF8String:[commentField bytes]];
+			NSArray *splitFields = [commentString componentsSeparatedByString:@"="];
+			if([splitFields count] == 2) {
+				NSString *name = [splitFields objectAtIndex:0];
+				NSString *value = [splitFields objectAtIndex:1];
+				name = [name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				name = [name lowercaseString];
+				if([name isEqualToString:@"genre"]) {
+					_genre = value;
+				} else if([name isEqualToString:@"album"]) {
+					_album = value;
+				} else if([name isEqualToString:@"artist"]) {
+					_artist = value;
+				} else if([name isEqualToString:@"title"]) {
+					_title = value;
+				}
+			}
+		}
+
+		if(![_genre isEqual:genre] ||
+		   ![_album isEqual:album] ||
+		   ![_artist isEqual:artist] ||
+		   ![_title isEqual:title]) {
+			genre = _genre;
+			album = _album;
+			artist = _artist;
+			title = _title;
+			[self willChangeValueForKey:@"metadata"];
+			[self didChangeValueForKey:@"metadata"];
+		}
+	}
+}
+
+- (void)updateIcyMetadata {
+	NSString *_genre = genre;
+	NSString *_album = album;
+	NSString *_artist = artist;
+	NSString *_title = title;
+
+	Class sourceClass = [source class];
+	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
+		HTTPSource *httpSource = (HTTPSource *)source;
+		if([httpSource hasMetadata]) {
+			NSDictionary *metadata = [httpSource metadata];
+			_genre = [metadata valueForKey:@"genre"];
+			_album = [metadata valueForKey:@"album"];
+			_artist = [metadata valueForKey:@"artist"];
+			_title = [metadata valueForKey:@"title"];
+		}
+	}
+
+	if(![_genre isEqual:genre] ||
+	   ![_album isEqual:album] ||
+	   ![_artist isEqual:artist] ||
+	   ![_title isEqual:title]) {
+		genre = _genre;
+		album = _album;
+		artist = _artist;
+		title = _title;
+		[self willChangeValueForKey:@"metadata"];
+		[self didChangeValueForKey:@"metadata"];
+	}
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
@@ -112,6 +197,8 @@ long sourceTell(void *datasource) {
 
 		[self willChangeValueForKey:@"properties"];
 		[self didChangeValueForKey:@"properties"];
+
+		[self updateMetadata];
 	}
 
 	do {
@@ -140,6 +227,8 @@ long sourceTell(void *datasource) {
 		}
 
 	} while(total != frames && numread != 0);
+
+	[self updateIcyMetadata];
 
 	return total;
 }
@@ -172,7 +261,7 @@ long sourceTell(void *datasource) {
 }
 
 - (NSDictionary *)metadata {
-	return @{};
+	return @{ @"genre": genre, @"album": album, @"artist": artist, @"title": title };
 }
 
 + (NSArray *)fileTypes {
@@ -180,7 +269,7 @@ long sourceTell(void *datasource) {
 }
 
 + (NSArray *)mimeTypes {
-	return @[@"application/ogg", @"application/x-ogg", @"audio/x-vorbis+ogg"];
+	return @[@"application/ogg", @"application/x-ogg", @"audio/ogg", @"audio/x-vorbis+ogg"];
 }
 
 + (float)priority {

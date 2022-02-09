@@ -66,7 +66,36 @@
 		17B5E1DE0CC074D3004E2AF4 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 17B5E1970CC074D3004E2AF4 /* window.c */; };
 		17B5E2C00CC07904004E2AF4 /* stream_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 17B5E1950CC074D3004E2AF4 /* stream_encoder.c */; };
 		17B5E2C10CC07905004E2AF4 /* stream_encoder_framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 17B5E1960CC074D3004E2AF4 /* stream_encoder_framing.c */; };
+		8356BD0527B3A4C20074E50C /* ogg_mapping.c in Sources */ = {isa = PBXBuildFile; fileRef = 8356BD0127B3A4C20074E50C /* ogg_mapping.c */; };
+		8356BD0627B3A4C20074E50C /* ogg_encoder_aspect.c in Sources */ = {isa = PBXBuildFile; fileRef = 8356BD0227B3A4C20074E50C /* ogg_encoder_aspect.c */; };
+		8356BD0727B3A4C20074E50C /* ogg_decoder_aspect.c in Sources */ = {isa = PBXBuildFile; fileRef = 8356BD0327B3A4C20074E50C /* ogg_decoder_aspect.c */; };
+		8356BD0827B3A4C20074E50C /* ogg_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 8356BD0427B3A4C20074E50C /* ogg_helper.c */; };
+		8356BD1327B3A4E20074E50C /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BD0F27B3A4D90074E50C /* Ogg.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8356BD0E27B3A4D90074E50C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8356BD0927B3A4D90074E50C /* Ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
+			remoteInfo = Ogg;
+		};
+		8356BD1027B3A4D90074E50C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8356BD0927B3A4D90074E50C /* Ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 734FB2E50B18B33E00D561D7;
+			remoteInfo = "libogg (static)";
+		};
+		8356BD1427B3A4E70074E50C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8356BD0927B3A4D90074E50C /* Ogg.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = Ogg;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -131,6 +160,11 @@
 		17B5E1950CC074D3004E2AF4 /* stream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = stream_encoder.c; sourceTree = "<group>"; };
 		17B5E1960CC074D3004E2AF4 /* stream_encoder_framing.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = stream_encoder_framing.c; sourceTree = "<group>"; };
 		17B5E1970CC074D3004E2AF4 /* window.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = window.c; sourceTree = "<group>"; };
+		8356BD0127B3A4C20074E50C /* ogg_mapping.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_mapping.c; sourceTree = "<group>"; };
+		8356BD0227B3A4C20074E50C /* ogg_encoder_aspect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_encoder_aspect.c; sourceTree = "<group>"; };
+		8356BD0327B3A4C20074E50C /* ogg_decoder_aspect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_decoder_aspect.c; sourceTree = "<group>"; };
+		8356BD0427B3A4C20074E50C /* ogg_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ogg_helper.c; sourceTree = "<group>"; };
+		8356BD0927B3A4D90074E50C /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = ../Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* FLAC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FLAC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -141,6 +175,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8356BD1327B3A4E20074E50C /* Ogg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +198,7 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				8356BD1227B3A4E20074E50C /* Frameworks */,
 			);
 			name = flac;
 			sourceTree = "<group>";
@@ -195,6 +231,7 @@
 		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8356BD0927B3A4D90074E50C /* Ogg.xcodeproj */,
 				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
@@ -280,9 +317,13 @@
 				17B5E1880CC074D3004E2AF4 /* memory.c */,
 				17B5E1890CC074D3004E2AF4 /* metadata_iterators.c */,
 				17B5E18A0CC074D3004E2AF4 /* metadata_object.c */,
+				8356BD0327B3A4C20074E50C /* ogg_decoder_aspect.c */,
+				8356BD0227B3A4C20074E50C /* ogg_encoder_aspect.c */,
+				8356BD0427B3A4C20074E50C /* ogg_helper.c */,
+				8356BD0127B3A4C20074E50C /* ogg_mapping.c */,
 				17B5E1940CC074D3004E2AF4 /* stream_decoder.c */,
-				17B5E1950CC074D3004E2AF4 /* stream_encoder.c */,
 				17B5E1960CC074D3004E2AF4 /* stream_encoder_framing.c */,
+				17B5E1950CC074D3004E2AF4 /* stream_encoder.c */,
 				17B5E1970CC074D3004E2AF4 /* window.c */,
 			);
 			path = libFLAC;
@@ -331,6 +372,22 @@
 				17B5E1850CC074D3004E2AF4 /* stream_encoder.h */,
 			);
 			path = protected;
+			sourceTree = "<group>";
+		};
+		8356BD0A27B3A4D90074E50C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8356BD0F27B3A4D90074E50C /* Ogg.framework */,
+				8356BD1127B3A4D90074E50C /* libogg.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8356BD1227B3A4E20074E50C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -400,6 +457,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8356BD1527B3A4E70074E50C /* PBXTargetDependency */,
 			);
 			name = "FLAC Framework";
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -432,12 +490,35 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* flac */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 8356BD0A27B3A4D90074E50C /* Products */;
+					ProjectRef = 8356BD0927B3A4D90074E50C /* Ogg.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* FLAC Framework */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		8356BD0F27B3A4D90074E50C /* Ogg.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Ogg.framework;
+			remoteRef = 8356BD0E27B3A4D90074E50C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8356BD1127B3A4D90074E50C /* libogg.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libogg.a;
+			remoteRef = 8356BD1027B3A4D90074E50C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8DC2EF520486A6940098B216 /* Resources */ = {
@@ -455,6 +536,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				17B5E1AC0CC074D3004E2AF4 /* bitmath.c in Sources */,
+				8356BD0827B3A4C20074E50C /* ogg_helper.c in Sources */,
 				17B5E1AD0CC074D3004E2AF4 /* bitreader.c in Sources */,
 				17B5E1AE0CC074D3004E2AF4 /* bitwriter.c in Sources */,
 				17B5E1AF0CC074D3004E2AF4 /* cpu.c in Sources */,
@@ -464,9 +546,12 @@
 				17B5E1B30CC074D3004E2AF4 /* format.c in Sources */,
 				17B5E1D00CC074D3004E2AF4 /* lpc.c in Sources */,
 				17B5E1D10CC074D3004E2AF4 /* md5.c in Sources */,
+				8356BD0727B3A4C20074E50C /* ogg_decoder_aspect.c in Sources */,
 				17B5E1D20CC074D3004E2AF4 /* memory.c in Sources */,
 				17B5E1D30CC074D3004E2AF4 /* metadata_iterators.c in Sources */,
+				8356BD0527B3A4C20074E50C /* ogg_mapping.c in Sources */,
 				17B5E1D40CC074D3004E2AF4 /* metadata_object.c in Sources */,
+				8356BD0627B3A4C20074E50C /* ogg_encoder_aspect.c in Sources */,
 				17B5E1DB0CC074D3004E2AF4 /* stream_decoder.c in Sources */,
 				17B5E1DE0CC074D3004E2AF4 /* window.c in Sources */,
 				17B5E2C00CC07904004E2AF4 /* stream_encoder.c in Sources */,
@@ -475,6 +560,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8356BD1527B3A4E70074E50C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Ogg;
+			targetProxy = 8356BD1427B3A4E70074E50C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
@@ -488,6 +581,7 @@
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = YES;
@@ -508,7 +602,7 @@
 					"$(OTHER_CFLAGS_QUOTED_1)",
 					"-D__MACOSX__",
 					"-DHAVE_LROUND",
-					"-DFLAC__HAS_OGG=0",
+					"-DFLAC__HAS_OGG=1",
 				);
 				OTHER_CFLAGS_QUOTED_1 = "-DVERSION=\\\"1.3.3\\\" -DPACKAGE_VERSION=\\\"1.3.3\\\"";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
@@ -535,6 +629,7 @@
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_SYMBOL_SEPARATION = YES;
 				GCC_MODEL_TUNING = G5;
@@ -553,7 +648,7 @@
 					"$(OTHER_CFLAGS_QUOTED_1)",
 					"-D__MACOSX__",
 					"-DHAVE_LROUND",
-					"-DFLAC__HAS_OGG=0",
+					"-DFLAC__HAS_OGG=1",
 				);
 				OTHER_CFLAGS_QUOTED_1 = "-DVERSION=\\\"1.3.3\\\" -DPACKAGE_VERSION=\\\"1.3.3\\\"";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;

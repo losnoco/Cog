@@ -16,6 +16,8 @@
 
 #import "Logging.h"
 
+#import "HTTPSource.h"
+
 #define ST_BUFF 2048
 
 int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size) {
@@ -82,8 +84,9 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	// register all available codecs
 
 	NSURL *url = [s url];
-	if([[url scheme] isEqualToString:@"http"] ||
-	   [[url scheme] isEqualToString:@"https"]) {
+	if(([[url scheme] isEqualToString:@"http"] ||
+	    [[url scheme] isEqualToString:@"https"]) &&
+	   [[url pathExtension] isEqualToString:@"m3u8"]) {
 		source = nil;
 		[s close];
 
@@ -95,20 +98,13 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 			return NO;
 		}
 
-		AVDictionary *dict = NULL;
-
-		av_dict_set_int(&dict, "icy", 1, 0); // Enable Icy interval metadata, if supported
-
 		NSString *urlString = [url absoluteString];
-		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, &dict)) < 0) {
-			av_dict_free(&dict);
+		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
 			char errDescr[4096];
 			av_strerror(errcode, errDescr, 4096);
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			return NO;
 		}
-
-		av_dict_free(&dict);
 	} else {
 		buffer = av_malloc(32 * 1024);
 		if(!buffer) {
@@ -415,6 +411,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 	seekable = [s seekable];
 
+	genre = @"";
 	album = @"";
 	artist = @"";
 	title = @"";
@@ -465,6 +462,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 - (void)updateMetadata {
 	const AVDictionaryEntry *tag = NULL;
+	NSString *_genre = genre;
 	NSString *_album = album;
 	NSString *_artist = artist;
 	NSString *_title = title;
@@ -481,6 +479,8 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 				}
 			} else if(!strcasecmp(tag->key, "icy-url")) {
 				_album = [NSString stringWithUTF8String:tag->value];
+			} else if(!strcasecmp(tag->key, "icy-genre")) {
+				_genre = [NSString stringWithUTF8String:tag->value];
 			} else if(!strcasecmp(tag->key, "artist")) {
 				_artist = [NSString stringWithUTF8String:tag->value];
 			} else if(!strcasecmp(tag->key, "title")) {
@@ -489,9 +489,23 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 		}
 	}
 
-	if(![_album isEqual:album] ||
+	Class sourceClass = [source class];
+	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
+		HTTPSource *httpSource = (HTTPSource *)source;
+		if([httpSource hasMetadata]) {
+			NSDictionary *metadata = [httpSource metadata];
+			_genre = [metadata valueForKey:@"genre"];
+			_album = [metadata valueForKey:@"album"];
+			_artist = [metadata valueForKey:@"artist"];
+			_title = [metadata valueForKey:@"title"];
+		}
+	}
+
+	if(![_genre isEqual:genre] ||
+	   ![_album isEqual:album] ||
 	   ![_artist isEqual:artist] ||
 	   ![_title isEqual:title]) {
+		genre = _genre;
 		album = _album;
 		artist = _artist;
 		title = _title;
@@ -725,7 +739,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 }
 
 - (NSDictionary *)metadata {
-	return [NSDictionary dictionaryByMerging:@{ @"album": album, @"artist": artist, @"title": title } with:id3Metadata];
+	return [NSDictionary dictionaryByMerging:@{ @"genre": genre, @"album": album, @"artist": artist, @"title": title } with:id3Metadata];
 }
 
 + (NSArray *)fileTypes {
