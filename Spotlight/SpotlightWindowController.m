@@ -49,9 +49,7 @@ static NSPredicate *musicOnlyPredicate = nil;
 	NSString *homeDir = @"~";
 	homeDir = [homeDir stringByExpandingTildeInPath];
 	homeDir = [[NSURL fileURLWithPath:homeDir isDirectory:YES] absoluteString];
-	NSDictionary *searchDefault =
-	[NSDictionary dictionaryWithObject:homeDir
-	                            forKey:@"spotlightSearchPath"];
+	NSDictionary *searchDefault = @{@"spotlightSearchPath": homeDir};
 	[defaults registerDefaults:searchDefault];
 }
 

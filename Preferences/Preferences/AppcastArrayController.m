@@ -26,8 +26,7 @@
 	//  NSLocalizedStringFromTableInBundle(@"Nightly", nil, [NSBundle bundleForClass:[self class]], @"") , @"name", @"http://mamburu.net/cog/nightly.xml", @"url",nil]];
 
 	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"cog.losno.co wheneverly", nil, [NSBundle bundleForClass:[self class]], @""), @"name", @"https://cogcdn.cog.losno.co/mercury.xml", @"url", nil]];
+	 @{@"name": NSLocalizedStringFromTableInBundle(@"cog.losno.co wheneverly", nil, [NSBundle bundleForClass:[self class]], @""), @"url": @"https://cogcdn.cog.losno.co/mercury.xml"}];
 }
 
 @end

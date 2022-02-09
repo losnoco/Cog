@@ -57,14 +57,12 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 }
 
 - (void)initDefaults {
-	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-	                                                 [NSNumber numberWithDouble:100.0], @"volume",
-	                                                 [NSNumber numberWithBool:NO], @"GraphicEQenable",
-	                                                 [NSNumber numberWithInt:-1], @"GraphicEQpreset",
-	                                                 [NSNumber numberWithBool:NO], @"GraphicEQtrackgenre",
-	                                                 [NSNumber numberWithBool:YES], @"volumeLimit",
-	                                                 [NSNumber numberWithBool:NO], @"headphoneVirtualization",
-	                                                 nil];
+	NSDictionary *defaultsDictionary = @{@"volume": [NSNumber numberWithDouble:100.0],
+										 @"GraphicEQenable": [NSNumber numberWithBool:NO],
+										 @"GraphicEQpreset": [NSNumber numberWithInt:-1],
+										 @"GraphicEQtrackgenre": [NSNumber numberWithBool:NO],
+										 @"volumeLimit": [NSNumber numberWithBool:YES],
+										 @"headphoneVirtualization": [NSNumber numberWithBool:NO]};
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }

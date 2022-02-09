@@ -67,7 +67,7 @@
 	delete p_player;
 	delete p_emu;
 
-	return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", nil];
+	return @{@"title": title, @"artist": artist};
 }
 
 @end

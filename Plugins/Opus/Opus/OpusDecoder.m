@@ -176,18 +176,16 @@ opus_int64 sourceTell(void *_stream) {
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithInt:32], @"bitsPerSample",
-	                     [NSNumber numberWithBool:YES], @"floatingPoint",
-	                     [NSNumber numberWithFloat:48000], @"sampleRate",
-	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithInt:bitrate], @"bitrate",
-	                     [NSNumber numberWithBool:([source seekable] && seekable)], @"seekable",
-	                     @"Opus", @"codec",
-	                     @"host", @"endian",
-	                     @"lossy", @"encoding",
-	                     nil];
+	return @{@"channels": [NSNumber numberWithInt:channels],
+			 @"bitsPerSample": [NSNumber numberWithInt:32],
+			 @"floatingPoint": [NSNumber numberWithBool:YES],
+			 @"sampleRate": [NSNumber numberWithFloat:48000],
+			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+			 @"bitrate": [NSNumber numberWithInt:bitrate],
+			 @"seekable": [NSNumber numberWithBool:([source seekable] && seekable)],
+			 @"codec": @"Opus",
+			 @"endian": @"host",
+			 @"encoding": @"lossy"};
 }
 
 + (NSArray *)fileTypes {

@@ -54,7 +54,7 @@
 	NSString *titletag = info->songs() > 1 ? @"album" : @"title";
 	NSString *artist = count >= 2 ? [[NSString stringWithUTF8String:info->infoString(1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
 
-	return [NSDictionary dictionaryWithObjectsAndKeys:title, titletag, artist, @"artist", nil];
+	return @{titletag: title, @"artist": artist};
 }
 
 @end

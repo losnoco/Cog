@@ -97,18 +97,16 @@ static OSType getOSType(const char *in_) {
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:0], @"bitrate",
-	                     [NSNumber numberWithFloat:44100], @"sampleRate",
-	                     [NSNumber numberWithLong:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithInt:32], @"bitsPerSample",
-	                     [NSNumber numberWithBool:YES], @"floatingPoint",
-	                     [NSNumber numberWithInt:2], @"channels", // output from gme_play is in stereo
-	                     [NSNumber numberWithBool:YES], @"seekable",
-	                     @"MIDI", @"codec",
-	                     @"host", @"endian",
-	                     @"synthesized", @"encoding",
-	                     nil];
+	return @{@"bitrate": [NSNumber numberWithInt:0],
+			 @"sampleRate": [NSNumber numberWithFloat:44100],
+			 @"totalFrames": [NSNumber numberWithLong:totalFrames],
+			 @"bitsPerSample": [NSNumber numberWithInt:32],
+			 @"floatingPoint": [NSNumber numberWithBool:YES],
+			 @"channels": [NSNumber numberWithInt:2],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"codec": @"MIDI",
+			 @"endian": @"host",
+			 @"encoding": @"synthesized"};
 }
 
 - (BOOL)initDecoder {

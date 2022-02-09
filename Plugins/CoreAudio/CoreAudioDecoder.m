@@ -389,19 +389,17 @@ static SInt64 getSizeProc(void *clientData) {
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
-	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
-	                     [NSNumber numberWithBool:floatingPoint], @"floatingPoint",
-	                     [NSNumber numberWithInt:bitrate], @"bitrate",
-	                     [NSNumber numberWithFloat:frequency], @"sampleRate",
-	                     [NSNumber numberWithLong:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithBool:YES], @"seekable",
-	                     codec, @"codec",
-	                     floatingPoint ? @"host" : @"big", @"endian",
-	                     _audioFile_is_lossy ? @"lossy" : @"lossless", @"encoding",
-	                     nil];
+	return @{@"channels": [NSNumber numberWithInt:channels],
+			 @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
+			 @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
+			 @"floatingPoint": [NSNumber numberWithBool:floatingPoint],
+			 @"bitrate": [NSNumber numberWithInt:bitrate],
+			 @"sampleRate": [NSNumber numberWithFloat:frequency],
+			 @"totalFrames": [NSNumber numberWithLong:totalFrames],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"codec": codec,
+			 @"endian": floatingPoint ? @"host" : @"big",
+			 @"encoding": _audioFile_is_lossy ? @"lossy" : @"lossless"};
 }
 
 @end

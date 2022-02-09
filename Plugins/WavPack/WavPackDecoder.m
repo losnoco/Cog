@@ -281,19 +281,17 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
-	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
-	                     [NSNumber numberWithInt:bitrate], @"bitrate",
-	                     [NSNumber numberWithFloat:frequency], @"sampleRate",
-	                     [NSNumber numberWithBool:floatingPoint], @"floatingPoint",
-	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithBool:[[wv source] seekable]], @"seekable",
-	                     @"Wavpack", @"codec",
-	                     @"little", @"endian",
-	                     isLossy ? @"lossy" : @"lossless", @"encoding",
-	                     nil];
+	return @{@"channels": [NSNumber numberWithInt:channels],
+			 @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
+			 @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
+			 @"bitrate": [NSNumber numberWithInt:bitrate],
+			 @"sampleRate": [NSNumber numberWithFloat:frequency],
+			 @"floatingPoint": [NSNumber numberWithBool:floatingPoint],
+			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+			 @"seekable": [NSNumber numberWithBool:[[wv source] seekable]],
+			 @"codec": @"Wavpack",
+			 @"endian": @"little",
+			 @"encoding": isLossy ? @"lossy" : @"lossless"};
 }
 
 + (NSArray *)fileTypes {

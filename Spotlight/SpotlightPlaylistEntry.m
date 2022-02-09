@@ -28,16 +28,14 @@ static NSDictionary *importKeys;
 	NSArray *trackTransform =
 	@[@"spotlightTrack", @"NumberToStringTransformer"];
 
-	importKeys = [NSDictionary dictionaryWithObjectsAndKeys:
-	                           @"title", @"kMDItemTitle",
-	                           @"album", @"kMDItemAlbum",
-	                           trackTransform, @"kMDItemAudioTrackNumber",
-	                           @"year", @"kMDItemRecordingYear",
-	                           @"genre", @"kMDItemMusicalGenre",
-	                           @"length", @"kMDItemDurationSeconds",
-	                           URLTransform, @"kMDItemPath",
-	                           artistTransform, @"kMDItemAuthors",
-	                           nil];
+	importKeys = @{@"kMDItemTitle": @"title",
+				   @"kMDItemAlbum": @"album",
+				   @"kMDItemAudioTrackNumber": trackTransform,
+				   @"kMDItemRecordingYear": @"year",
+				   @"kMDItemMusicalGenre": @"genre",
+				   @"kMDItemDurationSeconds": @"length",
+				   @"kMDItemPath": URLTransform,
+				   @"kMDItemAuthors": artistTransform};
 }
 
 + (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem {

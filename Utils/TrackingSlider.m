@@ -38,10 +38,9 @@ static NSString *TrackingSliderValueObservationContext = @"TrackingSliderValueOb
 	if([binding isEqualToString:@"value"]) {
 		[observableController addObserver:self forKeyPath:keyPath options:(NSKeyValueObservingOptionNew)context:(__bridge void *_Nullable)(TrackingSliderValueObservationContext)];
 
-		NSDictionary *bindingsData = [NSDictionary dictionaryWithObjectsAndKeys:
-		                                           observableController, NSObservedObjectKey,
-		                                           [keyPath copy], NSObservedKeyPathKey,
-		                                           [options copy], NSOptionsKey, nil];
+		NSDictionary *bindingsData = @{NSObservedObjectKey: observableController,
+									   NSObservedKeyPathKey: [keyPath copy],
+									   NSOptionsKey: options ? [options copy] : @{}};
 
 		[bindingInfo setObject:bindingsData forKey:binding];
 	} else {

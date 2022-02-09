@@ -150,23 +150,20 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		close_streamfile(tagFile);
 	}
 
-	NSDictionary *properties =
-	[NSDictionary dictionaryWithObjectsAndKeys:
-	              [NSNumber numberWithInt:bitrate / 1000], @"bitrate",
-	              [NSNumber numberWithInt:sampleRate], @"sampleRate",
-	              [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-	              [NSNumber numberWithInt:16], @"bitsPerSample",
-	              [NSNumber numberWithBool:NO], @"floatingPoint",
-	              [NSNumber numberWithInt:channels], @"channels",
-	              [NSNumber numberWithBool:YES], @"seekable",
-	              rgAlbumGain, @"replayGainAlbumGain",
-	              rgAlbumPeak, @"replayGainAlbumPeak",
-	              rgTrackGain, @"replayGainTrackGain",
-	              rgTrackPeak, @"replayGainTrackPeak",
-	              codec, @"codec",
-	              @"host", @"endian",
-	              @"lossy/lossless", @"encoding",
-	              nil];
+	NSDictionary *properties = @{@"bitrate": [NSNumber numberWithInt:bitrate / 1000],
+								 @"sampleRate": [NSNumber numberWithInt:sampleRate],
+								 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+								 @"bitsPerSample": [NSNumber numberWithInt:16],
+								 @"floatingPoint": [NSNumber numberWithBool:NO],
+								 @"channels": [NSNumber numberWithInt:channels],
+								 @"seekable": [NSNumber numberWithBool:YES],
+								 @"replayGainAlbumGain": rgAlbumGain,
+								 @"replayGainAlbumPeak": rgAlbumPeak,
+								 @"replayGainTrackGain": rgTrackGain,
+								 @"replayGainTrackPeak": rgTrackPeak,
+								 @"codec": codec,
+								 @"endian": @"host",
+								 @"encoding": @"lossy/lossless"};
 
 	if([title isEqualToString:@""]) {
 		if(stream->num_streams > 1) {
@@ -179,12 +176,9 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	if([track isEqualToNumber:[NSNumber numberWithInt:0]])
 		track = [NSNumber numberWithInt:track_num];
 
-	NSMutableDictionary *mutableMetadata =
-	[NSMutableDictionary dictionaryWithObjectsAndKeys:
-	                     title, @"title",
-	                     track, @"track",
-	                     disc, @"disc",
-	                     nil];
+	NSMutableDictionary *mutableMetadata = @{@"title": title,
+											 @"track": track,
+											 @"disc": disc};
 
 	if(![album isEqualToString:@""])
 		[mutableMetadata setValue:album forKey:@"album"];
@@ -195,11 +189,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 
 	NSDictionary *metadata = mutableMetadata;
 
-	NSDictionary *package =
-	[NSDictionary dictionaryWithObjectsAndKeys:
-	              properties, @"properties",
-	              metadata, @"metadata",
-	              nil];
+	NSDictionary *package = @{@"properties": properties,
+							  @"metadata": metadata};
 
 	@synchronized(self) {
 		[storage setValue:package forKey:[url absoluteString]];
@@ -293,17 +284,15 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:bitrate / 1000], @"bitrate",
-	                     [NSNumber numberWithInt:sampleRate], @"sampleRate",
-	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithInt:16], @"bitsPerSample",
-	                     [NSNumber numberWithBool:NO], @"floatingPoint",
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithBool:YES], @"seekable",
-	                     @"host", @"endian",
-	                     @"lossy/lossless", @"encoding",
-	                     nil];
+	return @{@"bitrate": [NSNumber numberWithInt:bitrate / 1000],
+			 @"sampleRate": [NSNumber numberWithInt:sampleRate],
+			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+			 @"bitsPerSample": [NSNumber numberWithInt:16],
+			 @"floatingPoint": [NSNumber numberWithBool:NO],
+			 @"channels": [NSNumber numberWithInt:channels],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"endian": @"host",
+			 @"encoding": @"lossy/lossless"};
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {

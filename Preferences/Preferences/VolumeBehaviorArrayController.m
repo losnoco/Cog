@@ -12,35 +12,17 @@
 - (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"ReplayGain Album Gain with peak", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"albumGainWithPeak", @"preference", nil]];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"ReplayGain Album Gain with peak", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"albumGainWithPeak"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"ReplayGain Album Gain", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"albumGain", @"preference", nil]];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"ReplayGain Album Gain", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"albumGain"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"ReplayGain Track Gain with peak", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"trackGainWithPeak", @"preference", nil]];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"ReplayGain Track Gain with peak", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"trackGainWithPeak"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"ReplayGain Track Gain", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"trackGain", @"preference", nil]];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"ReplayGain Track Gain", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"trackGain"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"Volume scale tag only", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"volumeScale", @"preference", nil]];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"Volume scale tag only", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"volumeScale"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"No volume scaling", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"none", @"preference", nil]];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"No volume scaling", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"none"}];
 }
 
 @end

@@ -102,13 +102,11 @@
 		title = [[url lastPathComponent] stringByAppendingFormat:@" [%d]", track_num];
 	}
 
-	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-	                                   [NSString stringWithUTF8String:info->system], @"genre",
-	                                   [NSString stringWithUTF8String:info->game], @"album",
-	                                   title, @"title",
-	                                   [NSString stringWithUTF8String:info->author], @"artist",
-	                                   [NSNumber numberWithInt:track_num + 1], @"track",
-	                                   nil];
+	NSDictionary *dict = @{@"genre": [NSString stringWithUTF8String:info->system],
+						   @"album": [NSString stringWithUTF8String:info->game],
+						   @"title": title,
+						   @"artist": [NSString stringWithUTF8String:info->author],
+						   @"track": [NSNumber numberWithInt:track_num + 1]};
 
 	gme_free_info(info);
 

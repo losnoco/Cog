@@ -12,18 +12,9 @@
 - (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"Clear playlist and play", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"clearAndPlay", @"preference", nil]];
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"Enqueue", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"enqueue", @"preference", nil]];
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    NSLocalizedStringFromTableInBundle(@"Enqueue and play", nil, [NSBundle bundleForClass:[self class]], @""), @"name",
-	                    @"enqueueAndPlay", @"preference", nil]];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"Clear playlist and play", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"clearAndPlay"}];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"Enqueue", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"enqueue"}];
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"Enqueue and play", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"enqueueAndPlay"}];
 }
 
 @end

@@ -188,17 +188,15 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:0], @"bitrate",
-	                     [NSNumber numberWithFloat:44100], @"sampleRate",
-	                     [NSNumber numberWithDouble:length], @"totalFrames",
-	                     [NSNumber numberWithInt:16], @"bitsPerSample", // Samples are short
-	                     [NSNumber numberWithBool:NO], @"floatingPoint",
-	                     [NSNumber numberWithInt:n_channels], @"channels", // output from gme_play is in stereo
-	                     [NSNumber numberWithBool:[source seekable]], @"seekable",
-	                     @"host", @"endian",
-	                     @"synthesized", @"encoding",
-	                     nil];
+	return @{@"bitrate": [NSNumber numberWithInt:0],
+			 @"sampleRate": [NSNumber numberWithFloat:44100],
+			 @"totalFrames": [NSNumber numberWithDouble:length],
+			 @"bitsPerSample": [NSNumber numberWithInt:16],
+			 @"floatingPoint": [NSNumber numberWithBool:NO],
+			 @"channels": [NSNumber numberWithInt:n_channels],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"endian": @"host",
+			 @"encoding": @"synthesized"};
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {

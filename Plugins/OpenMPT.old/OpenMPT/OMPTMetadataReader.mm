@@ -89,7 +89,7 @@
 		if(type == nil)
 			type = @"";
 
-		return [NSDictionary dictionaryWithObjectsAndKeys:title, @"title", artist, @"artist", /*comment, @"comment",*/ date, @"year", type, @"codec", nil];
+		return @{@"title": title, @"artist": artist,/*@"comment": comment,*/ @"year": [NSNumber numberWithInt:[date intValue]], @"codec": type};
 	} catch(std::exception & /*e*/) {
 		return 0;
 	}

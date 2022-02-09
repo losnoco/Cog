@@ -633,20 +633,18 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
-	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
-	                     [NSNumber numberWithBool:(bitsPerSample == 8)], @"Unsigned",
-	                     [NSNumber numberWithFloat:frequency], @"sampleRate",
-	                     [NSNumber numberWithBool:floatingPoint], @"floatingPoint",
-	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithInt:bitrate], @"bitrate",
-	                     [NSNumber numberWithBool:seekable], @"seekable",
-	                     [NSString stringWithUTF8String:avcodec_get_name(codecCtx->codec_id)], @"codec",
-	                     @"host", @"endian",
-	                     lossy ? @"lossy" : @"lossless", @"encoding",
-	                     nil];
+	return @{@"channels": [NSNumber numberWithInt:channels],
+			 @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
+			 @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
+			 @"Unsigned": [NSNumber numberWithBool:(bitsPerSample == 8)],
+			 @"sampleRate": [NSNumber numberWithFloat:frequency],
+			 @"floatingPoint": [NSNumber numberWithBool:floatingPoint],
+			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+			 @"bitrate": [NSNumber numberWithInt:bitrate],
+			 @"seekable": [NSNumber numberWithBool:seekable],
+			 @"codec": [NSString stringWithUTF8String:avcodec_get_name(codecCtx->codec_id)],
+			 @"endian": @"host",
+			 @"encoding": lossy ? @"lossy" : @"lossless"};
 }
 
 + (NSArray *)fileTypes {

@@ -179,16 +179,14 @@ const int masterVol = 0x10000; // Fixed point 16.16
 }
 
 - (NSDictionary*)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:0], @"bitrate",
-	                     [NSNumber numberWithFloat:sampleRate], @"sampleRate",
-	                     [NSNumber numberWithLong:length], @"totalFrames",
-	                     [NSNumber numberWithInt:numBitsPerSample], @"bitsPerSample", // Samples are short
-	                     [NSNumber numberWithInt:numChannels], @"channels", // output from gme_play is in stereo
-	                     [NSNumber numberWithBool:[source seekable]], @"seekable",
-	                     @"host", @"endian",
-	                     @"synthesized", @"encoding",
-	                     nil];
+	return @{@"bitrate": [NSNumber numberWithInt:0],
+			 @"sampleRate": [NSNumber numberWithFloat:sampleRate],
+			 @"totalFrames": [NSNumber numberWithLong:length],
+			 @"bitsPerSample": [NSNumber numberWithInt:numBitsPerSample],
+			 @"channels": [NSNumber numberWithInt:numChannels],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"endian": @"host",
+			 @"encoding": @"synthesized"};
 }
 
 - (int)readAudio:(void*)buf frames:(UInt32)frames {

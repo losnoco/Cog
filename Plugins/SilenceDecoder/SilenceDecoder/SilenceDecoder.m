@@ -35,17 +35,15 @@ enum { channels = 2 };
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:0], @"bitrate",
-	                     [NSNumber numberWithFloat:sample_rate], @"sampleRate",
-	                     [NSNumber numberWithDouble:length], @"totalFrames",
-	                     [NSNumber numberWithInt:32], @"bitsPerSample",
-	                     [NSNumber numberWithBool:YES], @"floatingPoint",
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithBool:YES], @"seekable",
-	                     @"host", @"endian",
-	                     @"synthesized", @"encoding",
-	                     nil];
+	return @{@"bitrate": [NSNumber numberWithInt:0],
+			 @"sampleRate": [NSNumber numberWithFloat:sample_rate],
+			 @"totalFrames": [NSNumber numberWithDouble:length],
+			 @"bitsPerSample": [NSNumber numberWithInt:32],
+			 @"floatingPoint": [NSNumber numberWithBool:YES],
+			 @"channels": [NSNumber numberWithInt:channels],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"endian": @"host",
+			 @"encoding": @"synthesized"};
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {

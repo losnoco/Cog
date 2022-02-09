@@ -47,9 +47,7 @@
 }
 
 - (void)initDefaults {
-	NSDictionary *defaultsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-	                                                 [NSNumber numberWithBool:YES], @"readCueSheetsInFolders",
-	                                                 nil];
+	NSDictionary *defaultsDictionary = @{@"readCueSheetsInFolders": [NSNumber numberWithBool:YES]};
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
@@ -213,7 +211,7 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 		[queueList addObject:[NSNumber numberWithInteger:pe.index]];
 	}
 
-	NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:albumArtSet, @"albumArt", queueList, @"queue", topLevel, @"items", nil];
+	NSDictionary *dictionary = @{@"albumArt": albumArtSet, @"queue": queueList, @"items": topLevel};
 
 	NSError *err;
 

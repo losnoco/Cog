@@ -90,17 +90,15 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:0], @"bitrate",
-	                     [NSNumber numberWithFloat:44100], @"sampleRate",
-	                     [NSNumber numberWithDouble:length], @"totalFrames",
-	                     [NSNumber numberWithInt:32], @"bitsPerSample", // Samples are short
-	                     [NSNumber numberWithBool:YES], @"floatingPoint",
-	                     [NSNumber numberWithInt:2], @"channels", // output from gme_play is in stereo
-	                     [NSNumber numberWithBool:YES], @"seekable",
-	                     @"host", @"endian",
-	                     @"synthesized", @"encoding",
-	                     nil];
+	return @{@"bitrate": [NSNumber numberWithInt:0],
+			 @"sampleRate": [NSNumber numberWithFloat:44100],
+			 @"totalFrames": [NSNumber numberWithDouble:length],
+			 @"bitsPerSample": [NSNumber numberWithInt:32],
+			 @"floatingPoint": [NSNumber numberWithBool:YES],
+			 @"channels": [NSNumber numberWithInt:2],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"endian": @"host",
+			 @"encoding": @"synthesized"};
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {

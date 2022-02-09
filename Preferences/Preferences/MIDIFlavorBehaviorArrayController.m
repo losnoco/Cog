@@ -12,37 +12,21 @@
 - (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"Default (auto)", @"name", @"default", @"preference", nil]];
+	[self addObject:@{@"name": @"Default (auto)", @"preference": @"default"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"General MIDI", @"name", @"gm", @"preference", nil]];
+	[self addObject:@{@"name": @"General MIDI", @"preference": @"gm"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"General MIDI 2", @"name", @"gm2", @"preference", nil]];
+	[self addObject:@{@"name": @"General MIDI 2", @"preference": @"gm2"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"Roland SC-55", @"name", @"sc55", @"preference", nil]];
+	[self addObject:@{@"name": @"Roland SC-55", @"preference": @"sc55"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"Roland SC-88", @"name", @"sc88", @"preference", nil]];
+	[self addObject:@{@"name": @"Roland SC-88", @"preference": @"sc88"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"Roland SC-88 Pro", @"name", @"sc88pro", @"preference", nil]];
+	[self addObject:@{@"name": @"Roland SC-88 Pro", @"preference": @"sc88pro"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"Roland SC-8850", @"name", @"sc8850", @"preference", nil]];
+	[self addObject:@{@"name": @"Roland SC-8850", @"preference": @"sc8850"}];
 
-	[self addObject:
-	      [NSDictionary dictionaryWithObjectsAndKeys:
-	                    @"Yamaha XG", @"name", @"xg", @"preference", nil]];
+	[self addObject:@{@"name": @"Yamaha XG", @"preference": @"xg"}];
 }
 
 @end

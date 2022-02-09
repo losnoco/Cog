@@ -160,13 +160,11 @@ static std::string FCC2Str(UINT32 fcc) {
 	DataLoader_Deinit(dLoad);
 	free(fileData);
 
-	NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-	                                   system, @"codec",
-	                                   album, @"album",
-	                                   title, @"title",
-	                                   artist, @"artist",
-	                                   year, @"year",
-	                                   nil];
+	NSDictionary* dict = @{@"codec": system,
+						   @"album": album,
+						   @"title": title,
+						   @"artist": artist,
+						   @"year": [NSNumber numberWithInt:[year intValue]]};
 
 	return dict;
 }

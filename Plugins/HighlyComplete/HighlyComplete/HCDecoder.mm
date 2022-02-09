@@ -1539,22 +1539,20 @@ static int usf_info(void *context, const char *name, const char *value) {
 			break;
 	}
 
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:2], @"channels",
-	                     [NSNumber numberWithInt:16], @"bitsPerSample",
-	                     [NSNumber numberWithFloat:sampleRate], @"sampleRate",
-	                     [NSNumber numberWithInteger:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithInt:0], @"bitrate",
-	                     [NSNumber numberWithBool:YES], @"seekable",
-	                     [NSNumber numberWithFloat:replayGainAlbumGain], @"replayGainAlbumGain",
-	                     [NSNumber numberWithFloat:replayGainAlbumPeak], @"replayGainAlbumPeak",
-	                     [NSNumber numberWithFloat:replayGainTrackGain], @"replayGainTrackGain",
-	                     [NSNumber numberWithFloat:replayGainTrackPeak], @"replayGainTrackPeak",
-	                     [NSNumber numberWithFloat:volume], @"volume",
-	                     codec, @"codec",
-	                     @"host", @"endian",
-	                     @"synthesized", @"encoding",
-	                     nil];
+	return @{@"channels": [NSNumber numberWithInt:2],
+			 @"bitsPerSample": [NSNumber numberWithInt:16],
+			 @"sampleRate": [NSNumber numberWithFloat:sampleRate],
+			 @"totalFrames": [NSNumber numberWithInteger:totalFrames],
+			 @"bitrate": [NSNumber numberWithInt:0],
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"replayGainAlbumGain": [NSNumber numberWithFloat:replayGainAlbumGain],
+			 @"replayGainAlbumPeak": [NSNumber numberWithFloat:replayGainAlbumPeak],
+			 @"replayGainTrackGain": [NSNumber numberWithFloat:replayGainTrackGain],
+			 @"replayGainTrackPeak": [NSNumber numberWithFloat:replayGainTrackPeak],
+			 @"volume": [NSNumber numberWithFloat:volume],
+			 @"codec": codec,
+			 @"endian": @"host",
+			 @"encoding": @"synthesized"};
 }
 
 + (NSDictionary *)metadataForURL:(NSURL *)url {
@@ -1569,7 +1567,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 	psf_load([decodedUrl UTF8String], &source_callbacks, 0, 0, 0, psf_info_meta, &info, 0);
 
-	return info.info;
+	return [NSDictionary dictionaryWithDictionary:info.info];
 }
 
 + (NSArray *)fileTypes {

@@ -354,18 +354,16 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithUnsignedInt:channelConfig], @"channelConfig",
-	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
-	                     [NSNumber numberWithFloat:frequency], @"sampleRate",
-	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithBool:[source seekable]], @"seekable",
-	                     [NSNumber numberWithInt:fileSize ? (fileSize * 8 / ((totalFrames + (frequency / 2)) / frequency)) / 1000 : 0], @"bitrate",
-	                     @"FLAC", @"codec",
-	                     @"big", @"endian",
-	                     @"lossless", @"encoding",
-	                     nil];
+	return @{@"channels": [NSNumber numberWithInt:channels],
+			 @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
+			 @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
+			 @"sampleRate": [NSNumber numberWithFloat:frequency],
+			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+			 @"seekable": [NSNumber numberWithBool:[source seekable]],
+			 @"bitrate": [NSNumber numberWithInt:fileSize ? (fileSize * 8 / ((totalFrames + (frequency / 2)) / frequency)) / 1000 : 0],
+			 @"codec": @"FLAC",
+			 @"endian": @"big",
+			 @"encoding": @"lossless"};
 }
 
 + (NSArray *)fileTypes {

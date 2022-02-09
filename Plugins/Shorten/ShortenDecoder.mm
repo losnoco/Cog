@@ -77,16 +77,14 @@
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:channels], @"channels",
-	                     [NSNumber numberWithInt:bitsPerSample], @"bitsPerSample",
-	                     [NSNumber numberWithFloat:frequency], @"sampleRate",
-	                     [NSNumber numberWithDouble:totalFrames], @"totalFrames",
-	                     [NSNumber numberWithBool:seekable], @"seekable",
-	                     @"Shorten", @"codec",
-	                     @"little", @"endian",
-	                     @"lossless", @"encoding",
-	                     nil];
+	return @{@"channels": [NSNumber numberWithInt:channels],
+			 @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
+			 @"sampleRate": [NSNumber numberWithFloat:frequency],
+			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+			 @"seekable": [NSNumber numberWithBool:seekable],
+			 @"codec": @"Shorten",
+			 @"endian": @"little",
+			 @"encoding": @"lossless"};
 }
 
 + (NSArray *)fileTypes {

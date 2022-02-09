@@ -80,18 +80,16 @@ static CAdPlugDatabase *g_database = NULL;
 }
 
 - (NSDictionary *)properties {
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSNumber numberWithInt:0], @"bitrate",
-	                     [NSNumber numberWithFloat:44100], @"sampleRate",
-	                     [NSNumber numberWithDouble:length], @"totalFrames",
-	                     [NSNumber numberWithInt:16], @"bitsPerSample", // Samples are short
-	                     [NSNumber numberWithBool:NO], @"floatingPoint",
-	                     [NSNumber numberWithInt:2], @"channels", // output from gme_play is in stereo
-	                     [NSNumber numberWithBool:YES], @"seekable",
-	                     [NSString stringWithUTF8String:m_player->gettype().c_str()], @"codec",
-	                     @"synthesized", @"encoding",
-	                     @"host", @"endian",
-	                     nil];
+	return @{@"bitrate": [NSNumber numberWithInt:0],
+			 @"sampleRate": [NSNumber numberWithFloat:44100],
+			 @"totalFrames": [NSNumber numberWithDouble:length],
+			 @"bitsPerSample": [NSNumber numberWithInt:16], // Samples are short
+			 @"floatingPoint": [NSNumber numberWithBool:NO],
+			 @"channels": [NSNumber numberWithInt:2], // output from gme_play is in stereo
+			 @"seekable": [NSNumber numberWithBool:YES],
+			 @"codec": [NSString stringWithUTF8String:m_player->gettype().c_str()],
+			 @"encoding": @"synthesized",
+			 @"endian": @"host"};
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {

@@ -56,7 +56,7 @@
 		title = @"";
 	}
 
-	return [NSDictionary dictionaryWithObject:title forKey:@"title"];
+	return @{@"title": title};
 }
 
 @end
