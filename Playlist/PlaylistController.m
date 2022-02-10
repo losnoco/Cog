@@ -117,6 +117,8 @@ static NSArray *cellIdentifiers = nil;
 	          options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
 	          context:nil];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fontSize" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
+
+	[self.tableView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
