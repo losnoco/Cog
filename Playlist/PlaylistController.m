@@ -894,7 +894,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if([album length] > 0)
 		predicate = [NSPredicate predicateWithFormat:@"album like %@", album];
 	else
-		predicate = [NSPredicate predicateWithFormat:@"album == nil"];
+		predicate = [NSPredicate predicateWithFormat:@"album == nil || album like %@", @""];
 	return [[self arrangedObjects] filteredArrayUsingPredicate:predicate];
 }
 
@@ -960,7 +960,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		NSArray *albumContent = [self filterPlaylistOnAlbum:album];
 		NSArray *sortedContent =
 		[albumContent sortedArrayUsingDescriptors:@[sortDescriptor]];
-		[temp addObject:sortedContent[0]];
+		if(sortedContent && [sortedContent count])
+			[temp addObject:sortedContent[0]];
 	}
 	NSArray *tempList = [Shuffle shuffleList:temp];
 	temp = [[NSMutableArray alloc] init];
@@ -970,7 +971,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		NSArray *albumContent = [self filterPlaylistOnAlbum:album];
 		NSArray *sortedContent =
 		[albumContent sortedArrayUsingDescriptors:@[sortDescriptor]];
-		[temp addObjectsFromArray:sortedContent];
+		if(sortedContent && [sortedContent count])
+			[temp addObjectsFromArray:sortedContent];
 	}
 	return temp;
 }
