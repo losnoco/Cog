@@ -289,7 +289,7 @@ void BMPlayer::send_event(uint32_t b) {
 
 void BMPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
 	if(port > 2) port = 0;
-	BASS_MIDI_StreamEvents(_stream[port], BASS_MIDI_EVENTS_RAW, event, static_cast<unsigned int>(size));
+	BASS_MIDI_StreamEvents(_stream[port], BASS_MIDI_EVENTS_RAW, data, static_cast<unsigned int>(size));
 	if(port == 0) {
 		BASS_MIDI_StreamEvents(_stream[1], BASS_MIDI_EVENTS_RAW, data, static_cast<unsigned int>(size));
 		BASS_MIDI_StreamEvents(_stream[2], BASS_MIDI_EVENTS_RAW, data, static_cast<unsigned int>(size));
