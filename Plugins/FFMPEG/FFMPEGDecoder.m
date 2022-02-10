@@ -578,7 +578,10 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 			}
 
 			if((errcode = avcodec_send_packet(codecCtx, endOfStream ? NULL : lastReadPacket)) < 0) {
-				if(errcode != AVERROR(EAGAIN)) {
+				if(errcode == AVERROR_INVALIDDATA) {
+					ALog(@"Sync error sending packet to codec, attempting to skip it");
+					continue;
+				} else if(errcode != AVERROR(EAGAIN)) {
 					char errDescr[4096];
 					av_strerror(errcode, errDescr, 4096);
 					ALog(@"Error sending packet to codec, errcode = %d, error = %s", errcode, errDescr);
