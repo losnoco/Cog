@@ -102,6 +102,8 @@
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8349270C27B4EFFC0009AB2B /* duplicateItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */; };
+		8349270D27B4EFFC0009AB2B /* deadItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */; };
 		834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8301F94520E4EEF70017B2DC /* VorbisPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834F7F4320E4E4ED00228DAB /* AdPlug.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30920E4E3D000951EF8 /* AdPlug.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -917,6 +919,8 @@
 		833F681F1CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		833F68251CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = es; path = es.lproj/Credits.html; sourceTree = "<group>"; };
 		83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmPlayer.xcodeproj; path = Plugins/libvgmPlayer/libvgmPlayer.xcodeproj; sourceTree = "<group>"; };
+		8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = duplicateItemsTemplate.pdf; path = Images/duplicateItemsTemplate.pdf; sourceTree = "<group>"; };
+		8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = deadItemsTemplate.pdf; path = Images/deadItemsTemplate.pdf; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -1196,6 +1200,8 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */,
+				8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */,
 				8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */,
 				83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */,
 				83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */,
@@ -2347,8 +2353,10 @@
 				83BC5ABF20E4CE7A00631CD4 /* InfoInspector.xib in Resources */,
 				8384915B18083EAB00E7332D /* navigatorTemplate.pdf in Resources */,
 				832C1253180BD1E2005507C1 /* Cog.help in Resources */,
+				8349270C27B4EFFC0009AB2B /* duplicateItemsTemplate.pdf in Resources */,
 				8384916218083EAB00E7332D /* randomizeTemplate.pdf in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				8349270D27B4EFFC0009AB2B /* deadItemsTemplate.pdf in Resources */,
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
 				8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */,
 				8384916618083EAB00E7332D /* repeatModeOneTemplate.pdf in Resources */,

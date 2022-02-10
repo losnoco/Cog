@@ -210,7 +210,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="gpC-Oe-Rog">
-                                                            <rect key="frame" x="235" y="3" width="149" height="18"/>
+                                                            <rect key="frame" x="234.5" y="3" width="149" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1WK-qN-Mgj">
@@ -289,7 +289,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hhB-nv-e78">
-                                                            <rect key="frame" x="541" y="3" width="95" height="18"/>
+                                                            <rect key="frame" x="540.5" y="3" width="95" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tHy-sM-HDB">
@@ -366,7 +366,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="rRl-p9-Awr">
-                                                            <rect key="frame" x="736" y="3" width="144" height="18"/>
+                                                            <rect key="frame" x="735.5" y="3" width="144" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yW6-2w-6mN">
@@ -402,7 +402,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hgh-VE-5kl">
-                                                            <rect key="frame" x="883" y="3" width="38" height="18"/>
+                                                            <rect key="frame" x="882.5" y="3" width="38" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yEY-MI-d3o">
@@ -844,6 +844,38 @@
                         <size key="minSize" width="70" height="25"/>
                         <size key="maxSize" width="70" height="25"/>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="9824C59B-F192-42FE-963F-6B8526B82EDB" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="duplicateItemsTemplate" bordered="YES" navigational="YES" id="rEg-qk-MbN">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="23"/>
+                        <size key="maxSize" width="32" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="tZ2-xZ-vNQ">
+                            <rect key="frame" x="53" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="duplicateItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="q9i-5M-4gr">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="removeDuplicates:" target="218" id="Ulv-Kg-y6i"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="7AA82F92-BD5B-4F3B-AD99-806D95A471C3" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="deadItemsTemplate" bordered="YES" navigational="YES" id="knJ-aI-sFa">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="23"/>
+                        <size key="maxSize" width="32" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="sRS-xA-LC2">
+                            <rect key="frame" x="42" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="deadItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="UR2-Bz-PyJ">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="removeDeadItems:" target="218" id="AjJ-ni-aTW"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="ZH9-ZU-skw"/>
@@ -1043,7 +1075,7 @@
                     <toolbarItem implicitItemIdentifier="1A6385ED-7F2D-4752-8113-C8693E5DDC1C" label="Show Equalizer" paletteLabel="Show Equalizer" image="equalizerTemplate" bordered="YES" sizingBehavior="auto" id="ZOn-sB-FR3">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="pbi-yj-rqU">
-                            <rect key="frame" x="31" y="14" width="26" height="26"/>
+                            <rect key="frame" x="32" y="14" width="24" height="19"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="equalizerTemplate" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="SX9-eB-f6f">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1057,6 +1089,38 @@
                     <toolbarItem implicitItemIdentifier="F1A8365A-DBF5-4BB9-A2B3-3964BFA1B15D" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" visibilityPriority="-10" id="qfu-F9-bOZ">
                         <size key="minSize" width="70" height="25"/>
                         <size key="maxSize" width="70" height="25"/>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="E56B804D-0A4D-415C-B34A-56D9102046D1" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="duplicateItemsTemplate" bordered="YES" navigational="YES" id="4pg-Lq-O8K">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="23"/>
+                        <size key="maxSize" width="32" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="0XX-i8-gc0">
+                            <rect key="frame" x="53" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="duplicateItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="6yJ-BU-Bgg">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="removeDuplicates:" target="218" id="wcV-BG-yxf"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="56A027C2-B330-46E5-8C3C-AADF8DF7F2EE" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="deadItemsTemplate" bordered="YES" navigational="YES" id="WKt-lM-Bv1">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="23"/>
+                        <size key="maxSize" width="32" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="SBg-uC-koX">
+                            <rect key="frame" x="42" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="deadItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="CEJ-na-l45">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="removeDeadItems:" target="218" id="D9p-Bs-v9x"/>
+                            </connections>
+                        </button>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
@@ -2177,6 +2241,8 @@ Gw
         </customObject>
     </objects>
     <resources>
+        <image name="deadItemsTemplate" width="20" height="20"/>
+        <image name="duplicateItemsTemplate" width="20" height="20"/>
         <image name="equalizerTemplate" width="20" height="20"/>
         <image name="hdcdLogoTemplate" width="656" height="225"/>
         <image name="imageCell:1801:image" width="17" height="17">
