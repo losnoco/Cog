@@ -561,8 +561,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				if(entryProperties == nil)
 					return;
 
-				[entryInfo addEntriesFromDictionary:entryProperties];
 				[entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:weakPe.URL]];
+				[entryInfo addEntriesFromDictionary:entryProperties];
 
 				[weakLock lock];
 				[weakArray addObject:weakPe];
@@ -641,8 +641,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		if(entryProperties == nil)
 			return;
 
-		[entryInfo addEntriesFromDictionary:entryProperties];
 		[entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
+		[entryInfo addEntriesFromDictionary:entryProperties];
 
 		[pe setMetadata:entryInfo];
 		[store trackUpdate:pe];

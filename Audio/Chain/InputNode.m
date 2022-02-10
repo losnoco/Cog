@@ -122,8 +122,8 @@
 		if(entryProperties == nil)
 			return;
 
-		[entryInfo addEntriesFromDictionary:entryProperties];
 		[entryInfo addEntriesFromDictionary:[decoder metadata]];
+		[entryInfo addEntriesFromDictionary:entryProperties];
 
 		NSDictionary * info = [NSDictionary dictionaryWithDictionary:entryInfo];
 		
