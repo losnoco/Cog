@@ -34,6 +34,11 @@
 	AVCodecContext *codecCtx;
 	AVFrame *lastDecodedFrame;
 	AVPacket *lastReadPacket;
+
+	BOOL rawDSD;
+	BOOL rawDSDReverseBits;
+	BOOL rawDSDPlanar;
+
 	int bytesConsumedFromDecodedFrame;
 	BOOL readNextPacket;
 	int64_t seekFrame;

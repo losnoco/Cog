@@ -49,10 +49,22 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 @implementation FFMPEGDecoder
 
+static uint8_t reverse_bits[0x100];
+
 + (void)initialize {
 	if(self == [FFMPEGDecoder class]) {
 		av_log_set_flags(AV_LOG_SKIP_REPEATED);
 		av_log_set_level(AV_LOG_ERROR);
+
+		for(int i = 0, j = 0; i < 0x100; i++) {
+			reverse_bits[i] = (uint8_t)j;
+			// "reverse-increment" of j
+			for(int bitmask = 0x80;;) {
+				if(((j ^= bitmask) & bitmask) != 0) break;
+				if(bitmask == 1) break;
+				bitmask >>= 1;
+			}
+		}
 	}
 }
 
@@ -78,6 +90,8 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	formatCtx = NULL;
 	totalFrames = 0;
 	framesRead = 0;
+
+	rawDSD = NO;
 
 	BOOL isStream = NO;
 
@@ -184,6 +198,14 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	AVDictionary *dict = NULL;
 
 	switch(codec_id) {
+		case AV_CODEC_ID_DSD_LSBF:
+		case AV_CODEC_ID_DSD_MSBF:
+		case AV_CODEC_ID_DSD_LSBF_PLANAR:
+		case AV_CODEC_ID_DSD_MSBF_PLANAR:
+			rawDSD = YES;
+			rawDSDReverseBits = codec_id == AV_CODEC_ID_DSD_LSBF || codec_id == AV_CODEC_ID_DSD_LSBF_PLANAR;
+			rawDSDPlanar = codec_id == AV_CODEC_ID_DSD_LSBF_PLANAR || codec_id == AV_CODEC_ID_DSD_MSBF_PLANAR;
+			break;
 		case AV_CODEC_ID_MP3:
 			codec = avcodec_find_decoder_by_name("mp3float");
 			break;
@@ -211,7 +233,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 			break;
 	}
 
-	if(!codec)
+	if(!codec && !rawDSD)
 		codec = avcodec_find_decoder(codec_id);
 
 	if(@available(macOS 10.15, *)) {
@@ -229,13 +251,13 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 		}
 	}
 
-	if(!codec) {
+	if(!codec && !rawDSD) {
 		ALog(@"codec not found");
 		av_dict_free(&dict);
 		return NO;
 	}
 
-	if((errcode = avcodec_open2(codecCtx, codec, &dict)) < 0) {
+	if(!rawDSD && (errcode = avcodec_open2(codecCtx, codec, &dict)) < 0) {
 		char errDescr[4096];
 		av_dict_free(&dict);
 		av_strerror(errcode, errDescr, 4096);
@@ -246,7 +268,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	av_dict_free(&dict);
 
 	// Bah, their skipping is broken
-	codecCtx->flags2 |= AV_CODEC_FLAG2_SKIP_MANUAL;
+	if(!rawDSD) codecCtx->flags2 |= AV_CODEC_FLAG2_SKIP_MANUAL;
 
 	lastDecodedFrame = av_frame_alloc();
 	av_frame_unref(lastDecodedFrame);
@@ -256,41 +278,49 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	bytesConsumedFromDecodedFrame = INT_MAX;
 	seekFrame = -1;
 
-	frequency = codecCtx->sample_rate;
-	channels = codecCtx->channels;
-	channelConfig = (uint32_t)codecCtx->channel_layout;
-	floatingPoint = NO;
+	if(!rawDSD) {
+		frequency = codecCtx->sample_rate;
+		channels = codecCtx->channels;
+		channelConfig = (uint32_t)codecCtx->channel_layout;
+		floatingPoint = NO;
 
-	switch(codecCtx->sample_fmt) {
-		case AV_SAMPLE_FMT_U8:
-		case AV_SAMPLE_FMT_U8P:
-			bitsPerSample = 8;
-			break;
+		switch(codecCtx->sample_fmt) {
+			case AV_SAMPLE_FMT_U8:
+			case AV_SAMPLE_FMT_U8P:
+				bitsPerSample = 8;
+				break;
 
-		case AV_SAMPLE_FMT_S16:
-		case AV_SAMPLE_FMT_S16P:
-			bitsPerSample = 16;
-			break;
+			case AV_SAMPLE_FMT_S16:
+			case AV_SAMPLE_FMT_S16P:
+				bitsPerSample = 16;
+				break;
 
-		case AV_SAMPLE_FMT_S32:
-		case AV_SAMPLE_FMT_S32P:
-			bitsPerSample = 32;
-			break;
+			case AV_SAMPLE_FMT_S32:
+			case AV_SAMPLE_FMT_S32P:
+				bitsPerSample = 32;
+				break;
 
-		case AV_SAMPLE_FMT_FLT:
-		case AV_SAMPLE_FMT_FLTP:
-			bitsPerSample = 32;
-			floatingPoint = YES;
-			break;
+			case AV_SAMPLE_FMT_FLT:
+			case AV_SAMPLE_FMT_FLTP:
+				bitsPerSample = 32;
+				floatingPoint = YES;
+				break;
 
-		case AV_SAMPLE_FMT_DBL:
-		case AV_SAMPLE_FMT_DBLP:
-			bitsPerSample = 64;
-			floatingPoint = YES;
-			break;
+			case AV_SAMPLE_FMT_DBL:
+			case AV_SAMPLE_FMT_DBLP:
+				bitsPerSample = 64;
+				floatingPoint = YES;
+				break;
 
-		default:
-			return NO;
+			default:
+				return NO;
+		}
+	} else {
+		frequency = codecPar->sample_rate * 8;
+		channels = codecPar->channels;
+		channelConfig = (uint32_t)codecPar->channel_layout;
+		bitsPerSample = 1;
+		floatingPoint = NO;
 	}
 
 	lossy = NO;
@@ -394,6 +424,10 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	framesRead = 0;
 	endOfStream = NO;
 	endOfAudio = NO;
+
+	if(rawDSD) {
+		totalFrames *= 8;
+	}
 
 	if(!isStream) {
 		if(stream->start_time && stream->start_time != AV_NOPTS_VALUE)
@@ -533,7 +567,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	if(totalFrames && framesRead >= totalFrames)
 		return 0;
 
-	int frameSize = channels * (bitsPerSample / 8);
+	int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
 	int dataSize = 0;
 
 	int bytesToRead = frames * frameSize;
@@ -548,10 +582,16 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	while(bytesRead < bytesToRead) {
 		// buffer size needed to hold decoded samples, in bytes
 		int planeSize;
-		int planar = av_sample_fmt_is_planar(codecCtx->sample_fmt);
-		dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
-		                                      lastDecodedFrame->nb_samples,
-		                                      codecCtx->sample_fmt, 1);
+		int planar;
+		if(!rawDSD) {
+			planar = av_sample_fmt_is_planar(codecCtx->sample_fmt);
+			dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
+			                                      lastDecodedFrame->nb_samples,
+			                                      codecCtx->sample_fmt, 1);
+		} else {
+			planar = 0;
+			dataSize = endOfStream ? 0 : lastReadPacket->size;
+		}
 
 		if(dataSize < 0)
 			dataSize = 0;
@@ -577,15 +617,17 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 					continue;
 			}
 
-			if((errcode = avcodec_send_packet(codecCtx, endOfStream ? NULL : lastReadPacket)) < 0) {
-				if(errcode == AVERROR_INVALIDDATA) {
-					ALog(@"Sync error sending packet to codec, attempting to skip it");
-					continue;
-				} else if(errcode != AVERROR(EAGAIN)) {
-					char errDescr[4096];
-					av_strerror(errcode, errDescr, 4096);
-					ALog(@"Error sending packet to codec, errcode = %d, error = %s", errcode, errDescr);
-					return 0;
+			if(!rawDSD) {
+				if((errcode = avcodec_send_packet(codecCtx, endOfStream ? NULL : lastReadPacket)) < 0) {
+					if(errcode == AVERROR_INVALIDDATA) {
+						ALog(@"Sync error sending packet to codec, attempting to skip it");
+						continue;
+					} else if(errcode != AVERROR(EAGAIN)) {
+						char errDescr[4096];
+						av_strerror(errcode, errDescr, 4096);
+						ALog(@"Error sending packet to codec, errcode = %d, error = %s", errcode, errDescr);
+						return 0;
+					}
 				}
 			}
 
@@ -598,26 +640,56 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 			bytesConsumedFromDecodedFrame = 0;
 
-			if((errcode = avcodec_receive_frame(codecCtx, lastDecodedFrame)) < 0) {
-				if(errcode == AVERROR_EOF) {
+			if(!rawDSD) {
+				if((errcode = avcodec_receive_frame(codecCtx, lastDecodedFrame)) < 0) {
+					if(errcode == AVERROR_EOF) {
+						endOfAudio = YES;
+						break;
+					} else if(errcode == AVERROR(EAGAIN)) {
+						// Read another packet
+						readNextPacket = YES;
+						continue;
+					} else {
+						char errDescr[4096];
+						av_strerror(errcode, errDescr, 4096);
+						ALog(@"Error receiving frame, errcode = %d, error = %s", errcode, errDescr);
+						return 0;
+					}
+				}
+
+				// Something has been successfully decoded
+				dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
+				                                      lastDecodedFrame->nb_samples,
+				                                      codecCtx->sample_fmt, 1);
+			} else {
+				dataSize = lastReadPacket->size;
+				if(endOfStream) {
 					endOfAudio = YES;
 					break;
-				} else if(errcode == AVERROR(EAGAIN)) {
-					// Read another packet
+				} else if(dataSize <= bytesConsumedFromDecodedFrame) {
 					readNextPacket = YES;
 					continue;
-				} else {
-					char errDescr[4096];
-					av_strerror(errcode, errDescr, 4096);
-					ALog(@"Error receiving frame, errcode = %d, error = %s", errcode, errDescr);
-					return 0;
+				}
+
+				if(rawDSDPlanar) {
+					uint8_t tempBuf[dataSize];
+					size_t samples = dataSize / channels;
+					uint8_t *packetData = lastReadPacket->data;
+					for(size_t i = 0; i < samples; ++i) {
+						for(size_t j = 0; j < channels; ++j) {
+							tempBuf[i * channels + j] = packetData[j * samples + i];
+						}
+					}
+					memmove(packetData, tempBuf, sizeof(tempBuf));
+				}
+
+				if(rawDSDReverseBits) {
+					uint8_t *packetData = lastReadPacket->data;
+					for(size_t i = 0; i < dataSize; ++i) {
+						packetData[i] = reverse_bits[packetData[i]];
+					}
 				}
 			}
-
-			// Something has been successfully decoded
-			dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
-			                                      lastDecodedFrame->nb_samples,
-			                                      codecCtx->sample_fmt, 1);
 
 			if(dataSize < 0)
 				dataSize = 0;
@@ -647,28 +719,32 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 			seekBytesSkip -= minSkipped;
 		}
 
-		int _channels = codecCtx->channels;
-		uint32_t _channelConfig = (uint32_t)codecCtx->channel_layout;
-		float _frequency = codecCtx->sample_rate;
+		if(!rawDSD) {
+			int _channels = codecCtx->channels;
+			uint32_t _channelConfig = (uint32_t)codecCtx->channel_layout;
+			float _frequency = codecCtx->sample_rate;
 
-		if(_channels != channels ||
-		   _channelConfig != channelConfig ||
-		   _frequency != frequency) {
-			if(bytesRead > 0) {
-				break;
-			} else {
-				channels = _channels;
-				channelConfig = _channelConfig;
-				frequency = _frequency;
-				[self willChangeValueForKey:@"properties"];
-				[self didChangeValueForKey:@"properties"];
+			if(_channels != channels ||
+			   _channelConfig != channelConfig ||
+			   _frequency != frequency) {
+				if(bytesRead > 0) {
+					break;
+				} else {
+					channels = _channels;
+					channelConfig = _channelConfig;
+					frequency = _frequency;
+					[self willChangeValueForKey:@"properties"];
+					[self didChangeValueForKey:@"properties"];
+				}
 			}
 		}
 
 		int toConsume = FFMIN((dataSize - bytesConsumedFromDecodedFrame), (bytesToRead - bytesRead));
 
 		// copy decoded samples to Cog's buffer
-		if(!planar || channels == 1) {
+		if(rawDSD) {
+			memmove(targetBuf + bytesRead, (lastReadPacket->data + bytesConsumedFromDecodedFrame), toConsume);
+		} else if(!planar || channels == 1) {
 			memmove(targetBuf + bytesRead, (lastDecodedFrame->data[0] + bytesConsumedFromDecodedFrame), toConsume);
 		} else {
 			uint8_t *out = (uint8_t *)targetBuf + bytesRead;
@@ -685,6 +761,10 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 
 		bytesConsumedFromDecodedFrame += toConsume;
 		bytesRead += toConsume;
+
+		if(rawDSD && bytesConsumedFromDecodedFrame == dataSize) {
+			av_packet_unref(lastReadPacket);
+		}
 	}
 
 	[self updateMetadata];
@@ -708,10 +788,14 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 		endOfAudio = YES;
 		return -1;
 	}
+	if(rawDSD) frame /= 8;
 	AVRational tb = { .num = 1, .den = codecCtx->sample_rate };
 	int64_t ts = av_rescale_q(frame, tb, formatCtx->streams[streamIndex]->time_base);
 	int ret = avformat_seek_file(formatCtx, streamIndex, ts - 1000, ts, ts, 0);
-	avcodec_flush_buffers(codecCtx);
+	if(!rawDSD)
+		avcodec_flush_buffers(codecCtx);
+	else
+		av_packet_unref(lastReadPacket);
 	if(ret < 0) {
 		framesRead = totalFrames;
 		endOfStream = YES;
@@ -721,11 +805,15 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	readNextPacket = YES; // so we immediately read next packet
 	bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
 	framesRead = frame;
+	if(rawDSD) framesRead *= 8;
 	seekFrame = frame + skipSamples;
 	endOfStream = NO;
 	endOfAudio = NO;
 
-	return frame;
+	if(rawDSD)
+		return frame * 8;
+	else
+		return frame;
 }
 
 - (NSDictionary *)properties {
@@ -748,7 +836,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 }
 
 + (NSArray *)fileTypes {
-	return @[@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"weba"];
+	return @[@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"weba", @"dff", @"iff", @"dsdiff", @"wsd"];
 }
 
 + (NSArray *)mimeTypes {
@@ -770,7 +858,10 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 		@[@"TrueVQ Audio File", @"song.icns", @"vqf", @"vqe", @"vql"],
 		@[@"Real Audio File", @"song.icns", @"ra", @"rm", @"rmj"],
 		@[@"Matroska Audio File", @"song.icns", @"mka"],
-		@[@"WebM Audio File", @"song.icns", @"weba"]
+		@[@"WebM Audio File", @"song.icns", @"weba"],
+		@[@"DSD Stream File", @"song.icns", @"dsf"],
+		@[@"Interchange File Format", @"song.icns", @"iff", @"dsdiff"],
+		@[@"Wideband Single-bit Data", @"song.icns", @"wsd"]
 	];
 }
 
