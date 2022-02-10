@@ -74,7 +74,7 @@
 	NSWindow *window = self.window;
 	NSPoint screenPoint = [window convertPointToScreen:NSMakePoint(width + 1, height + 1)];
 
-	if(window.screen.frame.size.width < screenPoint.x + textView.bounds.size.width + 24) // wing it
+	if(window.screen.frame.size.width < screenPoint.x + textView.bounds.size.width + 64) // wing it
 		[popover showRelativeToRect:NSMakeRect(1, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMinX];
 	else
 		[popover showRelativeToRect:NSMakeRect(width, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMaxX];
@@ -89,6 +89,8 @@
 
 - (void)showToolTipForView:(NSView *)view closeAfter:(NSTimeInterval)duration {
 	[self updateToolTip];
+
+	[popover showRelativeToRect:view.bounds ofView:view preferredEdge:NSRectEdgeMaxY];
 
 	[self hideToolTipAfterDelay:duration];
 }
