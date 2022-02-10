@@ -30,6 +30,9 @@
 	int channels;
 	long totalFrames;
 
+	double track_gain;
+	double album_gain;
+
 	NSString *genre;
 	NSString *album;
 	NSString *artist;

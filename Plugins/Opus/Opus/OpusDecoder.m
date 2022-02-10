@@ -104,15 +104,17 @@ opus_int64 sourceTell(void *_stream) {
 
 	totalFrames = op_pcm_total(opusRef, -1);
 
-	NSString *gainMode = [[NSUserDefaults standardUserDefaults] stringForKey:@"volumeScaling"];
-	BOOL isAlbum = [gainMode hasPrefix:@"albumGain"];
-	BOOL isTrack = [gainMode hasPrefix:@"trackGain"];
+	const OpusHead *head = op_head(opusRef, -1);
+	const OpusTags *tags = op_tags(opusRef, -1);
 
-	if(isAlbum || isTrack) {
-		op_set_gain_offset(opusRef, isAlbum ? OP_HEADER_GAIN : OP_TRACK_GAIN, 0);
-	} else {
-		op_set_gain_offset(opusRef, OP_ABSOLUTE_GAIN, 0);
-	}
+	int _track_gain = 0;
+
+	opus_tags_get_track_gain(tags, &_track_gain);
+
+	album_gain = ((double)head->output_gain / 256.0) + 5.0;
+	track_gain = ((double)_track_gain / 256.0) + album_gain;
+
+	op_set_gain_offset(opusRef, OP_ABSOLUTE_GAIN, 0);
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -268,16 +270,18 @@ opus_int64 sourceTell(void *_stream) {
 }
 
 - (NSDictionary *)properties {
-	return @{@"channels": [NSNumber numberWithInt:channels],
-			 @"bitsPerSample": [NSNumber numberWithInt:32],
-			 @"floatingPoint": [NSNumber numberWithBool:YES],
-			 @"sampleRate": [NSNumber numberWithFloat:48000],
-			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-			 @"bitrate": [NSNumber numberWithInt:bitrate],
-			 @"seekable": [NSNumber numberWithBool:([source seekable] && seekable)],
-			 @"codec": @"Opus",
-			 @"endian": @"host",
-			 @"encoding": @"lossy"};
+	return @{ @"channels": [NSNumber numberWithInt:channels],
+		      @"bitsPerSample": [NSNumber numberWithInt:32],
+		      @"floatingPoint": [NSNumber numberWithBool:YES],
+		      @"sampleRate": [NSNumber numberWithFloat:48000],
+		      @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+		      @"bitrate": [NSNumber numberWithInt:bitrate],
+		      @"seekable": [NSNumber numberWithBool:([source seekable] && seekable)],
+		      @"replayGainTrackGain": [NSNumber numberWithFloat:track_gain],
+		      @"replayGainAlbumGain": [NSNumber numberWithFloat:album_gain],
+		      @"codec": @"Opus",
+		      @"endian": @"host",
+		      @"encoding": @"lossy" };
 }
 
 - (NSDictionary *)metadata {
