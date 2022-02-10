@@ -23,6 +23,40 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 
 - (void)awakeFromNib {
 	[self startObserving];
+
+	if(@available(macOS 11.0, *)) {
+		playImage = [NSImage imageWithSystemSymbolName:@"play.fill" accessibilityDescription:NSLocalizedString(@"PlayButtonTooltip", @"")];
+		pauseImage = [NSImage imageWithSystemSymbolName:@"pause.fill" accessibilityDescription:NSLocalizedString(@"PauseButtonTooltip", @"")];
+		stopImage = [NSImage imageWithSystemSymbolName:@"stop.fill" accessibilityDescription:NSLocalizedString(@"StopButtonTooltip", @"")];
+		prevImage = [NSImage imageWithSystemSymbolName:@"backward.fill" accessibilityDescription:NSLocalizedString(@"PrevButtonTooltip", @"")];
+		nextImage = [NSImage imageWithSystemSymbolName:@"forward.fill" accessibilityDescription:NSLocalizedString(@"NextButtonTooltip", @"")];
+	} else {
+		playImage = [NSImage imageNamed:@"playTemplate"];
+		pauseImage = [NSImage imageNamed:@"pauseTemplate"];
+		stopImage = [NSImage imageNamed:@"stopTemplate"];
+		prevImage = [NSImage imageNamed:@"previousTemplate"];
+		nextImage = [NSImage imageNamed:@"nextTemplate"];
+	}
+
+	[self setImage:prevImage forSegment:0];
+	[self setImage:playImage forSegment:1];
+
+	BOOL segmentEnabled = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableStopButton"];
+	if(segmentEnabled) {
+		[self setSegmentCount:4];
+		[self setImage:stopImage forSegment:2];
+		[self setImage:nextImage forSegment:3];
+		if(@available(macOS 10.13, *)) {
+			[self setToolTip:NSLocalizedString(@"StopButtonTooltip", @"") forSegment:2];
+			[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:3];
+		}
+	} else {
+		[self setSegmentCount:3];
+		[self setImage:nextImage forSegment:2];
+		if(@available(macOS 10.13, *)) {
+			[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:2];
+		}
+	}
 }
 
 - (void)startObserving {
@@ -43,9 +77,9 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 			NSImage *image = nil;
 
 			if(playbackStatus == CogStatusPlaying) {
-				image = [NSImage imageNamed:@"pauseTemplate"];
+				image = pauseImage;
 			} else {
-				image = [NSImage imageNamed:@"playTemplate"];
+				image = playImage;
 			}
 
 			[self setImage:image forSegment:1];
@@ -53,15 +87,15 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 			BOOL segmentEnabled = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableStopButton"];
 			if(segmentEnabled) {
 				[self setSegmentCount:4];
-				[self setImage:[NSImage imageNamed:@"stopTemplate"] forSegment:2];
-				[self setImage:[NSImage imageNamed:@"nextTemplate"] forSegment:3];
+				[self setImage:stopImage forSegment:2];
+				[self setImage:nextImage forSegment:3];
 				if(@available(macOS 10.13, *)) {
 					[self setToolTip:NSLocalizedString(@"StopButtonTooltip", @"") forSegment:2];
 					[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:3];
 				}
 			} else {
 				[self setSegmentCount:3];
-				[self setImage:[NSImage imageNamed:@"nextTemplate"] forSegment:2];
+				[self setImage:nextImage forSegment:2];
 				if(@available(macOS 10.13, *)) {
 					[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:2];
 				}

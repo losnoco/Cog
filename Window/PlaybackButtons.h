@@ -12,6 +12,12 @@
 
 @interface PlaybackButtons : NSSegmentedControl {
 	IBOutlet PlaybackController *playbackController;
+
+	NSImage *playImage;
+	NSImage *pauseImage;
+	NSImage *stopImage;
+	NSImage *prevImage;
+	NSImage *nextImage;
 }
 
 - (void)startObserving;
