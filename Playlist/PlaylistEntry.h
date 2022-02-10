@@ -66,6 +66,8 @@
 	BOOL seekable;
 
 	BOOL metadataLoaded;
+
+	BOOL deleted;
 }
 
 + (NSSet *)keyPathsForValuesAffectingDisplay;
@@ -166,6 +168,8 @@
 @property BOOL seekable;
 
 @property BOOL metadataLoaded;
+
+@property BOOL deleted;
 
 - (void)setMetadata:(NSDictionary *)metadata;
 

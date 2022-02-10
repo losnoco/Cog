@@ -362,6 +362,31 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if(currentEntry != nil) [self.tableView scrollRowToVisible:currentEntry.index];
 }
 
+- (void)updateNextAfterDeleted:(PlaylistEntry *)lastEntry withDeleteIndexes:(NSIndexSet *)indexes {
+	__block PlaylistEntry *pe = nil;
+	NSArray *allObjects = [self arrangedObjects];
+	[indexes enumerateRangesUsingBlock:^(NSRange range, BOOL *_Nonnull stop) {
+		if(range.location <= lastEntry.index &&
+		   range.location + range.length > lastEntry.index) {
+			NSUInteger index = range.location + range.length;
+			if(index < [allObjects count])
+				pe = [allObjects objectAtIndex:index];
+			else
+				pe = nil;
+		} else if(pe && range.location <= [pe index] &&
+		          range.location + range.length > [pe index]) {
+			NSUInteger index = range.location + range.length;
+			if(index < [allObjects count])
+				pe = [allObjects objectAtIndex:index];
+			else
+				pe = nil;
+		} else if(pe && range.location > [pe index]) {
+			*stop = YES;
+		}
+	}];
+	nextEntryAfterDeleted = pe;
+}
+
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -577,6 +602,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[NSString stringWithFormat:@"Adding %lu entries", (unsigned long)[objects count]];
 	[[self undoManager] setActionName:actionName];
 
+	for(PlaylistEntry *pe in objects) {
+		pe.deleted = NO;
+	}
+
 	[[SQLiteStore sharedStore] playlistInsertTracks:objects
 	                                atObjectIndexes:indexes
 	                                   progressCall:^(double progress) {
@@ -607,11 +636,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
 	for(PlaylistEntry *pe in objects) {
 		[unarrangedIndexes addIndex:[pe index]];
+		pe.deleted = YES;
 	}
 
 	if([indexes containsIndex:currentEntry.index]) {
-		// Safety check. The player doesn't like committing actions on a removed track
-		[playbackController stop:nil];
+		[self updateNextAfterDeleted:currentEntry withDeleteIndexes:indexes];
+	} else if(nextEntryAfterDeleted &&
+	          [indexes containsIndex:nextEntryAfterDeleted.index]) {
+		[self updateNextAfterDeleted:nextEntryAfterDeleted withDeleteIndexes:indexes];
 	}
 
 	if(currentEntry.index >= 0 && [unarrangedIndexes containsIndex:currentEntry.index]) {
@@ -828,9 +860,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		return [self shuffledEntryAtIndex:(pe.shuffleIndex + 1)];
 	} else {
 		NSInteger i;
-		if(pe.index < 0) // Was a current entry, now removed.
+
+		if(pe.deleted) // Was a current entry, now removed.
 		{
-			i = -pe.index - 1;
+			if(nextEntryAfterDeleted)
+				i = nextEntryAfterDeleted.index;
+			else
+				i = 0;
+			nextEntryAfterDeleted = nil;
 		} else {
 			i = pe.index + 1;
 		}
@@ -1038,7 +1075,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
 
-	if(currentEntry != nil) [refreshSet addIndex:currentEntry.index];
+	if(currentEntry != nil && !currentEntry.deleted) [refreshSet addIndex:currentEntry.index];
 	if(pe != nil) [refreshSet addIndex:pe.index];
 
 	// Refresh entire row to refresh tooltips

@@ -49,6 +49,8 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 
 	PlaylistEntry *currentEntry;
 
+	PlaylistEntry *nextEntryAfterDeleted;
+
 	NSUndoManager *undoManager;
 }
 

@@ -66,6 +66,8 @@
 
 @synthesize metadataLoaded;
 
+@synthesize deleted;
+
 // The following read-only keys depend on the values of other properties
 
 + (NSSet *)keyPathsForValuesAffectingDisplay {
@@ -139,6 +141,7 @@
 		self.replayGainTrackGain = 0;
 		self.replayGainTrackPeak = 0;
 		self.volume = 1;
+		self.deleted = NO;
 	}
 	return self;
 }
@@ -507,6 +510,8 @@
 		pe->seekable = seekable;
 
 		pe->metadataLoaded = metadataLoaded;
+
+		pe->deleted = deleted;
 	}
 
 	return pe;
