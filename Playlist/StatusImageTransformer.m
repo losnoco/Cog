@@ -26,10 +26,17 @@
 - (id)init {
 	self = [super init];
 	if(self) {
-		self.playImage = [NSImage imageNamed:@"playTemplate"];
-		self.queueImage = [NSImage imageNamed:@"NSAddTemplate"];
-		self.errorImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
-		self.stopAfterImage = [NSImage imageNamed:@"stopTemplate"];
+		if(@available(macOS 11.0, *)) {
+			self.playImage = [NSImage imageWithSystemSymbolName:@"play.fill" accessibilityDescription:NSLocalizedString(@"PlayingTrackTooltip", "")];
+			self.queueImage = [NSImage imageWithSystemSymbolName:@"plus" accessibilityDescription:NSLocalizedString(@"QueuedTrackTooltip", "")];
+			self.errorImage = [NSImage imageWithSystemSymbolName:@"nosign" accessibilityDescription:NSLocalizedString(@"ErrorTrackTooltip", "")];
+			self.stopAfterImage = [NSImage imageWithSystemSymbolName:@"stop.fill" accessibilityDescription:NSLocalizedString(@"StopAfterTrackTooltip", "")];
+		} else {
+			self.playImage = [NSImage imageNamed:@"playTemplate"];
+			self.queueImage = [NSImage imageNamed:@"NSAddTemplate"];
+			self.errorImage = [NSImage imageNamed:@"NSStopProgressTemplate"];
+			self.stopAfterImage = [NSImage imageNamed:@"stopTemplate"];
+		}
 	}
 
 	return self;

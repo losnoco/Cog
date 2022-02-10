@@ -28,3 +28,7 @@
 "SwitchToMiniPlayer" = "Switch to Mini Player";
 "SwitchFromMiniPlayer" = "Switch from Mini Player";
 
+"PlayingTrackTooltip" = "Playing";
+"QueuedTrackTooltip" = "Queued";
+"ErrorTrackTooltip" = "Error";
+"StopAfterTrackTooltip" = "Stop After Track";
