@@ -371,7 +371,7 @@
 
 @dynamic albumArt;
 - (NSImage *)albumArt {
-	if(!albumArtInternal) return nil;
+	if(!albumArtInternal || ![albumArtInternal length]) return nil;
 
 	NSString *imageCacheTag = [NSString stringWithFormat:@"%@-%@-%@-%@", album, artist, genre, year];
 	NSImage *image = [NSImage imageNamed:imageCacheTag];

@@ -157,6 +157,7 @@ static uint8_t reverse_bits[0x100];
 
 	streamIndex = -1;
 	metadataIndex = -1;
+	attachedPicIndex = -1;
 	AVCodecParameters *codecPar;
 
 	for(i = 0; i < formatCtx->nb_streams; i++) {
@@ -167,6 +168,8 @@ static uint8_t reverse_bits[0x100];
 			streamIndex = i;
 		} else if(codecPar->codec_id == AV_CODEC_ID_TIMED_ID3) {
 			metadataIndex = i;
+		} else if(stream->disposition & AV_DISPOSITION_ATTACHED_PIC) {
+			attachedPicIndex = i;
 		} else {
 			stream->discard = AVDISCARD_ALL;
 		}
@@ -445,10 +448,19 @@ static uint8_t reverse_bits[0x100];
 
 	seekable = [s seekable];
 
-	genre = @"";
-	album = @"";
 	artist = @"";
+	albumartist = @"";
+	album = @"";
 	title = @"";
+	genre = @"";
+	year = @(0);
+	track = @(0);
+	disc = @(0);
+	replayGainAlbumGain = 0.0;
+	replayGainAlbumPeak = 0.0;
+	replayGainTrackGain = 0.0;
+	replayGainTrackPeak = 0.0;
+	albumArt = [NSData data];
 	id3Metadata = @{};
 	[self updateMetadata];
 
@@ -495,13 +507,19 @@ static uint8_t reverse_bits[0x100];
 }
 
 - (void)updateMetadata {
-	if([source seekable]) return;
-
 	const AVDictionaryEntry *tag = NULL;
-	NSString *_genre = genre;
-	NSString *_album = album;
 	NSString *_artist = artist;
+	NSString *_albumartist = albumartist;
+	NSString *_album = album;
 	NSString *_title = title;
+	NSString *_genre = genre;
+	NSNumber *_year = year;
+	NSNumber *_track = track;
+	NSNumber *_disc = disc;
+	float _replayGainAlbumGain = replayGainAlbumGain;
+	float _replayGainAlbumPeak = replayGainAlbumPeak;
+	float _replayGainTrackGain = replayGainTrackGain;
+	float _replayGainTrackPeak = replayGainTrackPeak;
 	if(formatCtx->metadata) {
 		while((tag = av_dict_get(formatCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
 			if(!strcasecmp(tag->key, "streamtitle")) {
@@ -517,10 +535,35 @@ static uint8_t reverse_bits[0x100];
 				_album = [NSString stringWithUTF8String:tag->value];
 			} else if(!strcasecmp(tag->key, "icy-genre")) {
 				_genre = [NSString stringWithUTF8String:tag->value];
+			} else if(!strcasecmp(tag->key, "album")) {
+				_album = [NSString stringWithUTF8String:tag->value];
+			} else if(!strcasecmp(tag->key, "album_artist")) {
+				_albumartist = [NSString stringWithUTF8String:tag->value];
 			} else if(!strcasecmp(tag->key, "artist")) {
 				_artist = [NSString stringWithUTF8String:tag->value];
 			} else if(!strcasecmp(tag->key, "title")) {
 				_title = [NSString stringWithUTF8String:tag->value];
+			} else if(!strcasecmp(tag->key, "date")) {
+				NSString *dateString = [NSString stringWithUTF8String:tag->value];
+				_year = @([dateString intValue]);
+			} else if(!strcasecmp(tag->key, "track")) {
+				NSString *trackString = [NSString stringWithUTF8String:tag->value];
+				_track = @([trackString intValue]);
+			} else if(!strcasecmp(tag->key, "disc")) {
+				NSString *discString = [NSString stringWithUTF8String:tag->value];
+				_disc = @([discString intValue]);
+			} else if(!strcasecmp(tag->key, "replaygain_album_gain")) {
+				NSString *rgValue = [NSString stringWithUTF8String:tag->value];
+				_replayGainAlbumGain = [rgValue floatValue];
+			} else if(!strcasecmp(tag->key, "replaygain_album_peak")) {
+				NSString *rgValue = [NSString stringWithUTF8String:tag->value];
+				_replayGainAlbumPeak = [rgValue floatValue];
+			} else if(!strcasecmp(tag->key, "replaygain_track_gain")) {
+				NSString *rgValue = [NSString stringWithUTF8String:tag->value];
+				_replayGainTrackGain = [rgValue floatValue];
+			} else if(!strcasecmp(tag->key, "replaygain_track_peak")) {
+				NSString *rgValue = [NSString stringWithUTF8String:tag->value];
+				_replayGainTrackPeak = [rgValue floatValue];
 			}
 		}
 	}
@@ -537,16 +580,34 @@ static uint8_t reverse_bits[0x100];
 		}
 	}
 
-	if(![_genre isEqual:genre] ||
+	if(![_artist isEqual:artist] ||
+	   ![_albumartist isEqual:albumartist] ||
 	   ![_album isEqual:album] ||
-	   ![_artist isEqual:artist] ||
-	   ![_title isEqual:title]) {
-		genre = _genre;
-		album = _album;
+	   ![_title isEqual:title] ||
+	   ![_genre isEqual:genre] ||
+	   ![_year isEqual:year] ||
+	   ![_track isEqual:track] ||
+	   ![_disc isEqual:disc] ||
+	   _replayGainAlbumGain != replayGainAlbumGain ||
+	   _replayGainAlbumPeak != replayGainAlbumPeak ||
+	   _replayGainTrackGain != replayGainTrackGain ||
+	   _replayGainTrackPeak != replayGainTrackPeak) {
 		artist = _artist;
+		albumartist = _albumartist;
+		album = _album;
 		title = _title;
-		[self willChangeValueForKey:@"metadata"];
-		[self didChangeValueForKey:@"metadata"];
+		genre = _genre;
+		year = _year;
+		track = _track;
+		disc = _disc;
+		replayGainAlbumGain = _replayGainAlbumGain;
+		replayGainAlbumPeak = _replayGainAlbumPeak;
+		replayGainTrackGain = _replayGainTrackGain;
+		replayGainTrackPeak = _replayGainTrackPeak;
+		if(![source seekable]) {
+			[self willChangeValueForKey:@"metadata"];
+			[self didChangeValueForKey:@"metadata"];
+		}
 	}
 }
 
@@ -557,6 +618,17 @@ static uint8_t reverse_bits[0x100];
 		NSDictionary *_id3Metadata = [tagReader metadataForTag:tag];
 		if(![_id3Metadata isEqualTo:id3Metadata]) {
 			id3Metadata = _id3Metadata;
+			[self willChangeValueForKey:@"metadata"];
+			[self didChangeValueForKey:@"metadata"];
+		}
+	}
+}
+
+- (void)updateArtwork {
+	NSData *_albumArt = [NSData dataWithBytes:lastReadPacket->data length:lastReadPacket->size];
+	if(![_albumArt isEqual:albumArt]) {
+		albumArt = _albumArt;
+		if(![source seekable]) {
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
 		}
@@ -610,6 +682,9 @@ static uint8_t reverse_bits[0x100];
 
 				if(lastReadPacket->stream_index == metadataIndex) {
 					[self updateID3Metadata];
+					continue;
+				} else if(lastReadPacket->stream_index == attachedPicIndex) {
+					[self updateArtwork];
 					continue;
 				}
 
@@ -832,7 +907,7 @@ static uint8_t reverse_bits[0x100];
 }
 
 - (NSDictionary *)metadata {
-	return [NSDictionary dictionaryByMerging:@{ @"genre": genre, @"album": album, @"artist": artist, @"title": title } with:id3Metadata];
+	return [NSDictionary dictionaryByMerging:@{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"replayGainAlbumGain": @(replayGainAlbumGain), @"replayGainAlbumPeak": @(replayGainAlbumPeak), @"replayGainTrackGain": @(replayGainTrackGain), @"replayGainTrackPeak": @(replayGainTrackPeak), @"albumArt": albumArt } with:id3Metadata];
 }
 
 + (NSArray *)fileTypes {

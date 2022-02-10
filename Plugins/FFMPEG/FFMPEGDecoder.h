@@ -47,10 +47,22 @@
 	BOOL endOfAudio;
 
 	int metadataIndex;
-	NSString *genre;
 	NSString *artist;
-	NSString *title;
+	NSString *albumartist;
 	NSString *album;
+	NSString *title;
+	NSString *genre;
+	NSNumber *year;
+	NSNumber *track;
+	NSNumber *disc;
+	float replayGainAlbumGain;
+	float replayGainAlbumPeak;
+	float replayGainTrackGain;
+	float replayGainTrackPeak;
+
+	int attachedPicIndex;
+	NSData *albumArt;
+
 	NSDictionary *id3Metadata;
 }
 

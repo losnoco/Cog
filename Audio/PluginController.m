@@ -6,6 +6,8 @@
 
 #import "NSFileHandle+CreateFile.h"
 
+#import "NSDictionary+Merge.h"
+
 @implementation PluginController
 
 @synthesize sources;
@@ -535,10 +537,11 @@ static PluginController *sharedPluginController = nil;
 		}
 
 		NSDictionary *properties = [decoder properties];
+		NSDictionary *metadata = [decoder metadata];
 
 		[decoder close];
 
-		return properties;
+		return [NSDictionary dictionaryByMerging:properties with:metadata];
 	}
 }
 
