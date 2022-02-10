@@ -85,6 +85,10 @@ enum { channels = 2 };
 	return source;
 }
 
+- (BOOL)isSilence {
+	return YES;
+}
+
 + (NSArray *)fileTypes {
 	return @[];
 }

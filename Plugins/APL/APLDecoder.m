@@ -122,4 +122,10 @@
 	return n;
 }
 
+- (BOOL)isSilence {
+	if([decoder respondsToSelector:@selector(isSilence)])
+		return [decoder isSilence];
+	return NO;
+}
+
 @end

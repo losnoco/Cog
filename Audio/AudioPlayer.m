@@ -492,6 +492,10 @@
 	[self sendDelegateMethod:@selector(audioPlayer:sustainHDCD:) withObject:[bufferChain userInfo] waitUntilDone:NO];
 }
 
+- (void)setError:(BOOL)status {
+	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:[NSNumber numberWithBool:status] withObject:[bufferChain userInfo] waitUntilDone:NO];
+}
+
 - (void)setPlaybackStatus:(int)status {
 	[self setPlaybackStatus:status waitUntilDone:NO];
 }

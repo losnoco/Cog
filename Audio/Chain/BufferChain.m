@@ -268,4 +268,8 @@
 	[controller pushInfo:info];
 }
 
+- (void)setError:(BOOL)status {
+	[controller setError:status];
+}
+
 @end

@@ -768,6 +768,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
 
+- (void)audioPlayer:(AudioPlayer *)player setError:(NSNumber *)status toTrack:(id)userInfo {
+	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
+	[pe setError:[status boolValue]];
+}
+
 - (void)removeHDCD:(id)sender {
 	MainWindow *mainWindow = (MainWindow *)appController.mainWindow;
 	[mainWindow showHDCDLogo:NO];

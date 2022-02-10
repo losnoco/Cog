@@ -79,4 +79,6 @@
 
 - (void)pushInfo:(NSDictionary *)info;
 
+- (void)setError:(BOOL)status;
+
 @end

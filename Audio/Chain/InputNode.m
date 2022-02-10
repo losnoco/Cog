@@ -139,6 +139,16 @@
 	BOOL shouldClose = YES;
 	BOOL seekError = NO;
 
+	BOOL isError = NO;
+
+	if([decoder respondsToSelector:@selector(isSilence)]) {
+		if([decoder isSilence]) {
+			isError = YES;
+		}
+	}
+
+	[controller setError:isError];
+
 	while([self shouldContinue] == YES && [self endOfStream] == NO) {
 		if(shouldSeek == YES) {
 			BufferChain *bufferChain = [[controller controller] bufferChain];
@@ -159,6 +169,10 @@
 			shouldSeek = NO;
 			DLog(@"Seeked! Resetting Buffer");
 			initialBufferFilled = NO;
+
+			if(seekError) {
+				[controller setError:YES];
+			}
 		}
 
 		if(amountInBuffer < CHUNK_SIZE) {
