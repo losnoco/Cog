@@ -1037,6 +1037,7 @@ static SQLiteStore *g_sharedStore = NULL;
 
 		if(albumArt)
 			artId = [self addArt:albumArt];
+		[track setArtId:artId];
 
 		st = stmt[stmt_add_track];
 
@@ -1232,6 +1233,7 @@ static SQLiteStore *g_sharedStore = NULL;
 
 		if(albumArt)
 			artId = [self addArt:albumArt];
+		[track setArtId:artId];
 
 		st = stmt[stmt_update_track];
 

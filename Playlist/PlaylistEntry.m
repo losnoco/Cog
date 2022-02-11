@@ -120,7 +120,7 @@
 }
 
 + (NSSet *)keyPathsForValuesAffectingAlbumArt {
-	return [NSSet setWithObject:@"albumArtInternal"];
+	return [NSSet setWithObjects:@"albumArtInternal", @"artId", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingGainCorrection {
