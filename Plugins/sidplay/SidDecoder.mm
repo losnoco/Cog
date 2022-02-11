@@ -21,6 +21,8 @@
 static const char *extListEmpty[] = { NULL };
 static const char *extListStr[] = { ".str", NULL };
 
+static NSLock *_lock = [[NSLock alloc] init];
+
 @interface sid_file_container : NSObject {
 	NSLock *lock;
 	NSMutableDictionary *list;
@@ -76,6 +78,7 @@ static const char *extListStr[] = { ".str", NULL };
 static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef) {
 	id<CogSource> source;
 	BOOL usedHint = YES;
+	[_lock lock];
 	if(![[sid_file_container instance] try_hint:[NSString stringWithUTF8String:fileName] source:&source]) {
 		usedHint = NO;
 
@@ -85,11 +88,15 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		id audioSourceClass = NSClassFromString(@"AudioSource");
 		source = [audioSourceClass audioSourceForURL:url];
 
-		if(![source open:url])
+		if(![source open:url]) {
+			[_lock unlock];
 			return;
+		}
 
-		if(![source seekable])
+		if(![source seekable]) {
+			[_lock unlock];
 			return;
+		}
 	}
 
 	[source seek:0 whence:SEEK_END];
@@ -102,6 +109,8 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	if(!usedHint)
 		[source close];
+
+	[_lock unlock];
 }
 
 @implementation SidDecoder
