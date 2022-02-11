@@ -23,6 +23,7 @@
 	sidplayfp *engine;
 	sidbuilder *builder;
 
+	id<CogSource> source;
 	long length;
 
 	NSString *currentUrl;
@@ -35,5 +36,7 @@
 	long fadeRemain;
 }
 
+- (void)setSource:(id<CogSource>)s;
+- (id<CogSource>)source;
 - (void)cleanUp;
 @end
