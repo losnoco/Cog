@@ -353,8 +353,8 @@
 		BOOL pathsEqual = NO;
 
 		if([nextStream isFileURL] && [[lastChain streamURL] isFileURL]) {
-			NSMutableString *unixPathNext = [[nextStream path] mutableCopy];
-			NSMutableString *unixPathPrev = [[[lastChain streamURL] path] mutableCopy];
+			NSString *unixPathNext = [nextStream path];
+			NSString *unixPathPrev = [[lastChain streamURL] path];
 
 			if([unixPathNext isEqualToString:unixPathPrev])
 				pathsEqual = YES;
