@@ -44,7 +44,10 @@
 }
 
 - (NSDictionary *)metadata {
-	return @{};
+	if(decoder != nil)
+		return [decoder metadata];
+	else
+		return @{};
 }
 
 - (BOOL)open:(id<CogSource>)s {
@@ -53,6 +56,8 @@
 	}
 
 	NSURL *url = [s url];
+
+	sourceURL = url;
 
 	embedded = NO;
 	cuesheet = nil;
@@ -225,14 +230,25 @@
 	if(noFragment)
 		return NO;
 
+	BOOL pathsAreFiles = NO;
+
+	if([url isFileURL] && [sourceURL isFileURL]) {
+		pathsAreFiles = YES;
+	}
+
 	// Same file, just next track...this may be unnecessary since frame-based decoding is done now...
-	if(embedded || ([[[track url] path] isEqualToString:[url path]] && [[[track url] host] isEqualToString:[url host]] && [[url fragment] intValue] == [[track track] intValue] + 1)) {
+	if(embedded || ([[sourceURL path] isEqualToString:[url path]] && (pathsAreFiles || [[sourceURL host] isEqualToString:[url host]]))) {
 		NSArray *tracks = [cuesheet tracks];
 
 		int i;
 		for(i = 0; i < [tracks count]; i++) {
 			if([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]) {
-				track = [tracks objectAtIndex:i];
+				CueSheetTrack *_track = [tracks objectAtIndex:i];
+
+				if(![[_track url] isEqualTo:[track url]])
+					return NO;
+
+				track = _track;
 
 				float sampleRate = [[[decoder properties] objectForKey:@"sampleRate"] floatValue];
 
@@ -253,8 +269,7 @@
 					trackEnd = [[[decoder properties] objectForKey:@"totalFrames"] longValue];
 				}
 
-				if(embedded)
-					[self seek:0];
+				[self seek:0];
 
 				DLog(@"CHANGING TRACK!");
 				return YES;
