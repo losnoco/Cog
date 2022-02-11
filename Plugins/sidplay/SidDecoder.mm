@@ -21,83 +21,18 @@
 static const char *extListEmpty[] = { NULL };
 static const char *extListStr[] = { ".str", NULL };
 
-static NSLock *_lock = [[NSLock alloc] init];
-
-@interface sid_file_container : NSObject {
-	NSLock *lock;
-	NSMutableDictionary *list;
-}
-+ (sid_file_container *)instance;
-- (void)add_hint:(NSString *)path source:(id)source;
-- (void)remove_hint:(NSString *)path;
-- (BOOL)try_hint:(NSString *)path source:(id *)source;
-@end
-
-@implementation sid_file_container
-+ (sid_file_container *)instance {
-	static sid_file_container *instance;
-
-	@synchronized(self) {
-		if(!instance) {
-			instance = [[self alloc] init];
-		}
-	}
-
-	return instance;
-}
-- (sid_file_container *)init {
-	if((self = [super init])) {
-		lock = [[NSLock alloc] init];
-		list = [[NSMutableDictionary alloc] initWithCapacity:0];
-	}
-	return self;
-}
-- (void)add_hint:(NSString *)path source:(id)source {
-	[lock lock];
-	[list setObject:source forKey:path];
-	[lock unlock];
-}
-- (void)remove_hint:(NSString *)path {
-	[lock lock];
-	[list removeObjectForKey:path];
-	[lock unlock];
-}
-- (BOOL)try_hint:(NSString *)path source:(id *)source {
-	[lock lock];
-	*source = [list objectForKey:path];
-	[lock unlock];
-	if(*source) {
-		[*source seek:0 whence:0];
-		return YES;
-	} else {
-		return NO;
-	}
-}
-@end
-
 static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef) {
-	id<CogSource> source;
-	BOOL usedHint = YES;
-	[_lock lock];
-	if(![[sid_file_container instance] try_hint:[NSString stringWithUTF8String:fileName] source:&source]) {
-		usedHint = NO;
+	NSString *urlString = [NSString stringWithUTF8String:fileName];
+	NSURL *url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
 
-		NSString *urlString = [NSString stringWithUTF8String:fileName];
-		NSURL *url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
-		id audioSourceClass = NSClassFromString(@"AudioSource");
-		source = [audioSourceClass audioSourceForURL:url];
+	if(![source open:url])
+		return;
 
-		if(![source open:url]) {
-			[_lock unlock];
-			return;
-		}
-
-		if(![source seekable]) {
-			[_lock unlock];
-			return;
-		}
-	}
+	if(![source seekable])
+		return;
 
 	[source seek:0 whence:SEEK_END];
 	long size = [source tell];
@@ -107,10 +42,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	[source read:&bufferRef[0] amount:size];
 
-	if(!usedHint)
-		[source close];
-
-	[_lock unlock];
+	[source close];
 }
 
 @implementation SidDecoder
@@ -119,8 +51,6 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	if(![s seekable])
 		return NO;
 
-	[self setSource:s];
-
 	NSString *path = [[s url] absoluteString];
 	NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
 	if(fragmentRange.location != NSNotFound) {
@@ -128,9 +58,6 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	}
 
 	currentUrl = [path stringByRemovingPercentEncoding];
-
-	[[sid_file_container instance] add_hint:currentUrl source:s];
-	hintAdded = YES;
 
 	NSString *extension = [[s url] pathExtension];
 
@@ -326,11 +253,6 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		tune = NULL;
 	}
 
-	source = nil;
-	if(hintAdded) {
-		[[sid_file_container instance] remove_hint:currentUrl];
-		hintAdded = NO;
-	}
 	currentUrl = nil;
 }
 
@@ -340,14 +262,6 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 - (void)dealloc {
 	[self close];
-}
-
-- (void)setSource:(id<CogSource>)s {
-	source = s;
-}
-
-- (id<CogSource>)source {
-	return source;
 }
 
 + (NSArray *)fileTypes {
