@@ -785,7 +785,9 @@ tryagain:
 				latencyEaten -= outputDone;
 				outputDone = 0;
 			}
-		} else if(latencyEatenPost) {
+		}
+
+		if(latencyEatenPost) {
 			if(outputDone > latencyEatenPost) {
 				outputDone -= latencyEatenPost;
 			} else {
