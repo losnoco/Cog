@@ -561,7 +561,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				if(entryProperties == nil)
 					return;
 
-				[entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:weakPe.URL]];
+				NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:weakPe.URL];
+
+				if(entryMetadata)
+					[entryInfo addEntriesFromDictionary:entryMetadata];
+
 				[entryInfo addEntriesFromDictionary:entryProperties];
 
 				[weakLock lock];
