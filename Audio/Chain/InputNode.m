@@ -134,7 +134,7 @@
 - (void)process {
 	int amountInBuffer = 0;
 	int bytesInBuffer = 0;
-	void *inputBuffer = malloc(CHUNK_SIZE * 18); // Maximum 18 channels, dunno what we'll receive
+	void *inputBuffer = malloc(CHUNK_SIZE * 8 * 18); // Maximum 18 channels, dunno what we'll receive
 
 	BOOL shouldClose = YES;
 	BOOL seekError = NO;
