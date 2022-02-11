@@ -735,8 +735,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	if([indexes containsIndex:currentEntry.index]) {
 		[self updateNextAfterDeleted:currentEntry withDeleteIndexes:indexes];
-		[playbackController playEntry:nextEntryAfterDeleted];
-		nextEntryAfterDeleted = nil;
+		if(nextEntryAfterDeleted) {
+			[playbackController playEntry:nextEntryAfterDeleted];
+			nextEntryAfterDeleted = nil;
+		} else {
+			[playbackController stop:nil];
+		}
 	}
 
 	[[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes
