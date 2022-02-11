@@ -931,7 +931,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		usf_clear(state.emu_state);
 
-		usf_set_hle_audio(state.emu_state, 1);
+		usf_set_hle_audio(state.emu_state, 0); // Sometimes buggy
 
 		emulatorCore = (uint8_t *)state.emu_state;
 
