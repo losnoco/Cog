@@ -75,7 +75,10 @@ static const char *extListStr[] = { ".str", NULL };
 
 static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef) {
 	id<CogSource> source;
+	BOOL usedHint = YES;
 	if(![[sid_file_container instance] try_hint:[NSString stringWithUTF8String:fileName] source:&source]) {
+		usedHint = NO;
+
 		NSString *urlString = [NSString stringWithUTF8String:fileName];
 		NSURL *url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
 
@@ -97,7 +100,8 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	[source read:&bufferRef[0] amount:size];
 
-	[source close];
+	if(!usedHint)
+		[source close];
 }
 
 @implementation SidDecoder
