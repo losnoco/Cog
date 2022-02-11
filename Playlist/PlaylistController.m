@@ -751,10 +751,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[playbackController playlistDidChange:self];
 
 	for(PlaylistEntry *pe in objects) {
-		NSURL *removed = nil;
-		NSError *error = nil;
-		[[NSFileManager defaultManager] trashItemAtURL:pe.URL resultingItemURL:&removed error:&error];
-		pe.trashURL = removed;
+		if([pe.URL isFileURL]) {
+			NSURL *removed = nil;
+			NSError *error = nil;
+			[[NSFileManager defaultManager] trashItemAtURL:pe.URL resultingItemURL:&removed error:&error];
+			pe.trashURL = removed;
+		}
 	}
 }
 
