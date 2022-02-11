@@ -44,8 +44,10 @@
 
 	SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
 
-	if(!tune->getStatus())
+	if(!tune->getStatus()) {
+		delete tune;
 		return 0;
+	}
 
 	const SidTuneInfo *info = tune->getInfo();
 
@@ -53,6 +55,8 @@
 	NSString *title = count >= 1 ? [[NSString stringWithUTF8String:info->infoString(0)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
 	NSString *titletag = info->songs() > 1 ? @"album" : @"title";
 	NSString *artist = count >= 2 ? [[NSString stringWithUTF8String:info->infoString(1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+
+	delete tune;
 
 	return @{titletag: title, @"artist": artist};
 }

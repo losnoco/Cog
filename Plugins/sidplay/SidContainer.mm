@@ -49,8 +49,10 @@
 
 	SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
 
-	if(!tune->getStatus())
+	if(!tune->getStatus()) {
+		delete tune;
 		return 0;
+	}
 
 	const SidTuneInfo *info = tune->getInfo();
 
