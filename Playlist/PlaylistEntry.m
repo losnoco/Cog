@@ -15,6 +15,7 @@
 @synthesize shuffleIndex;
 @synthesize dbIndex;
 @synthesize entryId;
+@synthesize artId;
 
 @synthesize current;
 @synthesize removed;
@@ -373,7 +374,7 @@
 - (NSImage *)albumArt {
 	if(!albumArtInternal || ![albumArtInternal length]) return nil;
 
-	NSString *imageCacheTag = [NSString stringWithFormat:@"%@-%@-%@-%@", album, artist, genre, year];
+	NSString *imageCacheTag = [NSString stringWithFormat:@"%ld", artId];
 	NSImage *image = [NSImage imageNamed:imageCacheTag];
 
 	if(image == nil) {
@@ -457,6 +458,7 @@
 		pe->shuffleIndex = shuffleIndex;
 		pe->dbIndex = dbIndex;
 		pe->entryId = entryId;
+		pe->artId = artId;
 
 		pe->current = current;
 		pe->removed = removed;
@@ -482,7 +484,7 @@
 
 		pe->cuesheet = [cuesheet copyWithZone:zone];
 
-		pe->albumArtInternal = [albumArtInternal copyWithZone:zone];
+		pe->albumArtInternal = albumArtInternal; // Only allocated item not duplicated
 
 		pe->replayGainAlbumGain = replayGainAlbumGain;
 		pe->replayGainAlbumPeak = replayGainAlbumPeak;

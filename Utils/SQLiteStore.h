@@ -19,6 +19,7 @@
 	sqlite3_stmt *stmt[39];
 	@private
 	NSMutableArray *databaseMirror;
+	NSMutableDictionary *artTable;
 }
 
 @property(nonatomic, readwrite) NSString *databasePath;

@@ -879,12 +879,17 @@ static SQLiteStore *g_sharedStore = NULL;
 		}
 	}
 
+	[artTable setValue:art forKey:[[NSNumber numberWithInteger:ret] stringValue]];
+
 	return ret;
 }
 
 - (NSData *)getArt:(int64_t)artId {
 	if(artId < 0)
 		return [NSData data];
+
+	NSData *ret = [artTable valueForKey:[[NSNumber numberWithInteger:artId] stringValue]];
+	if(ret) return ret;
 
 	sqlite3_stmt *st = stmt[stmt_select_art_value];
 
@@ -900,7 +905,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		return [NSData data];
 	}
 
-	NSData *ret = [NSData data];
+	ret = [NSData data];
 
 	if(rc == SQLITE_ROW) {
 		const void *blob = sqlite3_column_blob(st, select_art_value_out_value);
@@ -911,6 +916,8 @@ static SQLiteStore *g_sharedStore = NULL;
 	}
 
 	sqlite3_reset(st);
+
+	[artTable setValue:ret forKey:[[NSNumber numberWithInteger:artId] stringValue]];
 
 	return ret;
 }
@@ -945,6 +952,8 @@ static SQLiteStore *g_sharedStore = NULL;
 	}
 
 	if(refcount <= 1) {
+		[artTable removeObjectForKey:[[NSNumber numberWithInteger:artId] stringValue]];
+
 		st = stmt[stmt_remove_art];
 
 		if(sqlite3_reset(st) ||
@@ -1361,6 +1370,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		[entry setReplayGainTrackGain:replaygaintrackgain];
 		[entry setReplayGainTrackPeak:replaygaintrackpeak];
 
+		[entry setArtId:artId];
 		[entry setAlbumArtInternal:[self getArt:artId]];
 
 		[entry setMetadataLoaded:!!metadataloaded];
