@@ -84,6 +84,9 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (IBAction)removeDuplicates:(id _Nullable)sender;
 - (IBAction)removeDeadItems:(id _Nullable)sender;
 
+- (IBAction)remove:(id _Nullable)sender;
+- (IBAction)trash:(id _Nullable)sender;
+
 - (IBAction)showEntryInFinder:(id _Nullable)sender;
 - (IBAction)clearFilterPredicate:(id _Nullable)sender;
 - (IBAction)clear:(id _Nullable)sender;

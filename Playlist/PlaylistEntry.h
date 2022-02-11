@@ -26,6 +26,7 @@
 	NSString *errorMessage;
 
 	NSURL *URL;
+	NSURL *trashURL;
 
 	NSString *artist;
 	NSString *albumartist;
@@ -121,6 +122,7 @@
 @property(retain) NSString *errorMessage;
 
 @property(retain) NSURL *URL;
+@property(retain) NSURL *trashURL;
 
 @property(retain) NSString *artist;
 @property(retain) NSString *albumartist;

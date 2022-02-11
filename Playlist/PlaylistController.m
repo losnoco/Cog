@@ -591,6 +591,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[self rearrangeObjects];
 }
 
+- (void)untrashObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes {
+	[self untrashObjects:objects atArrangedObjectIndexes:indexes];
+	[self rearrangeObjects];
+}
+
 - (void)insertObjectsUnsynced:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 
@@ -619,8 +624,39 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
 
+- (void)untrashObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
+	[[[self undoManager] prepareWithInvocationTarget:self]
+	trashObjectsAtIndexes:[self disarrangeIndexes:indexes]];
+	NSString *actionName =
+	[NSString stringWithFormat:@"Restoring %lu entries from trash", (unsigned long)[objects count]];
+	[[self undoManager] setActionName:actionName];
+
+	for(PlaylistEntry *pe in objects) {
+		if(pe.deleted && pe.trashURL) {
+			NSError *error = nil;
+			[[NSFileManager defaultManager] moveItemAtURL:pe.trashURL toURL:pe.URL error:&error];
+		}
+		pe.deleted = NO;
+		pe.trashURL = nil;
+	}
+
+	[[SQLiteStore sharedStore] playlistInsertTracks:objects
+	                                atObjectIndexes:indexes
+	                                   progressCall:^(double progress) {
+		                                   [self setProgressBarStatus:progress];
+	                                   }];
+
+	[super insertObjects:objects atArrangedObjectIndexes:indexes];
+
+	if([self shuffle] != ShuffleOff) [self resetShuffleList];
+}
+
 - (void)removeObjectsAtIndexes:(NSIndexSet *)indexes {
 	[self removeObjectsAtArrangedObjectIndexes:[self rearrangeIndexes:indexes]];
+}
+
+- (void)trashObjectsAtIndexes:(NSIndexSet *)indexes {
+	[self trashObjectsAtArrangedObjectIndexes:[self rearrangeIndexes:indexes]];
 }
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes {
@@ -677,6 +713,49 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 
 	[playbackController playlistDidChange:self];
+}
+
+- (void)trashObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes {
+	NSArray *objects = [[self arrangedObjects] objectsAtIndexes:indexes];
+	[[[self undoManager] prepareWithInvocationTarget:self]
+	untrashObjects:[self disarrangeObjects:objects]
+	     atIndexes:[self disarrangeIndexes:indexes]];
+	NSString *actionName =
+	[NSString stringWithFormat:@"Trashing %lu entries", (unsigned long)[indexes count]];
+	[[self undoManager] setActionName:actionName];
+
+	DLog(@"Trashing indexes: %@", indexes);
+	DLog(@"Current index: %li", currentEntry.index);
+
+	NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
+	for(PlaylistEntry *pe in objects) {
+		[unarrangedIndexes addIndex:[pe index]];
+		pe.deleted = YES;
+	}
+
+	if([indexes containsIndex:currentEntry.index]) {
+		[self updateNextAfterDeleted:currentEntry withDeleteIndexes:indexes];
+		[playbackController playEntry:nextEntryAfterDeleted];
+		nextEntryAfterDeleted = nil;
+	}
+
+	[[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes
+	                                            progressCall:^(double progress) {
+		                                            [self setProgressBarStatus:progress];
+	                                            }];
+
+	[super removeObjectsAtArrangedObjectIndexes:indexes];
+
+	if([self shuffle] != ShuffleOff) [self resetShuffleList];
+
+	[playbackController playlistDidChange:self];
+
+	for(PlaylistEntry *pe in objects) {
+		NSURL *removed = nil;
+		NSError *error = nil;
+		[[NSFileManager defaultManager] trashItemAtURL:pe.URL resultingItemURL:&removed error:&error];
+		pe.trashURL = removed;
+	}
 }
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors {
@@ -755,7 +834,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	return [[self arrangedObjects] objectAtIndex:i];
 }
 
-- (void)remove:(id)sender {
+- (IBAction)remove:(id)sender {
 	// It's a kind of magic.
 	// Plain old NSArrayController's remove: isn't working properly for some reason.
 	// The method is definitely called but (overridden) removeObjectsAtArrangedObjectIndexes: isn't
@@ -766,6 +845,16 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSIndexSet *selected = [self selectionIndexes];
 	if([selected count] > 0) {
 		[self removeObjectsAtArrangedObjectIndexes:selected];
+	}
+}
+
+- (IBAction)trash:(id)sender {
+	// Someone asked for this, so they're getting it.
+	// Trash the selection, and advance playback to the next untrashed file if necessary.
+
+	NSIndexSet *selected = [self selectionIndexes];
+	if([selected count] > 0) {
+		[self trashObjectsAtArrangedObjectIndexes:selected];
 	}
 }
 

@@ -32,7 +32,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
                                     <rect key="frame" x="0.0" y="0.0" width="1000" height="378"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
                                             <rect key="frame" x="0.0" y="0.0" width="1000" height="361"/>
@@ -130,11 +130,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="ZCP-Dx-UBV">
-                                                            <rect key="frame" x="106" y="3" width="126" height="18"/>
+                                                            <rect key="frame" x="106" y="3" width="125.5" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="exY-Bg-Mjm">
-                                                                    <rect key="frame" x="0.0" y="1" width="126" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="125.5" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="sdo-Sm-KPH">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -169,11 +169,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="x12-5b-Mmv">
-                                                            <rect key="frame" x="1" y="3" width="0.0" height="18"/>
+                                                            <rect key="frame" x="1" y="3" width="-3" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZWb-jm-i9i">
-                                                                    <rect key="frame" x="0.0" y="1" width="4" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="1" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="3QN-Ok-QPu">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -210,11 +210,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="gpC-Oe-Rog">
-                                                            <rect key="frame" x="235" y="3" width="149" height="18"/>
+                                                            <rect key="frame" x="234.5" y="3" width="149.5" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1WK-qN-Mgj">
-                                                                    <rect key="frame" x="0.0" y="1" width="149" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="149.5" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="71l-3L-S3g">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -250,11 +250,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="1ed-gX-bct">
-                                                            <rect key="frame" x="387" y="3" width="151" height="18"/>
+                                                            <rect key="frame" x="387" y="3" width="150.5" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nEt-s5-vRX">
-                                                                    <rect key="frame" x="0.0" y="1" width="151" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="150.5" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="moV-3G-GpB">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -289,11 +289,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hhB-nv-e78">
-                                                            <rect key="frame" x="541" y="3" width="95" height="18"/>
+                                                            <rect key="frame" x="540.5" y="3" width="95.5" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tHy-sM-HDB">
-                                                                    <rect key="frame" x="0.0" y="1" width="95" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="95.5" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Igo-5f-yim">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -329,11 +329,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="q93-oh-i5T">
-                                                            <rect key="frame" x="639" y="3" width="94" height="18"/>
+                                                            <rect key="frame" x="639" y="3" width="93.5" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bOi-LI-TDx">
-                                                                    <rect key="frame" x="0.0" y="1" width="94" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="93.5" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="C2Q-qG-dwX">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -366,7 +366,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="rRl-p9-Awr">
-                                                            <rect key="frame" x="736" y="3" width="144" height="18"/>
+                                                            <rect key="frame" x="735.5" y="3" width="144" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yW6-2w-6mN">
@@ -402,11 +402,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hgh-VE-5kl">
-                                                            <rect key="frame" x="883" y="3" width="38" height="18"/>
+                                                            <rect key="frame" x="882.5" y="3" width="38.5" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yEY-MI-d3o">
-                                                                    <rect key="frame" x="0.0" y="1" width="38" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="38.5" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="tus-lr-RhS">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -438,11 +438,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="d01-Wn-4bd">
-                                                            <rect key="frame" x="1" y="3" width="0.0" height="18"/>
+                                                            <rect key="frame" x="1" y="3" width="-3" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QFJ-4l-2O6">
-                                                                    <rect key="frame" x="0.0" y="1" width="4" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="1" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="gKK-cS-RP5">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -478,11 +478,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="ICT-dh-UfT">
-                                                            <rect key="frame" x="1" y="3" width="0.0" height="18"/>
+                                                            <rect key="frame" x="1" y="3" width="-3" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qvd-sk-vRc">
-                                                                    <rect key="frame" x="0.0" y="1" width="4" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="1" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="YwT-z9-2d2">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -518,11 +518,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="PuO-Ss-1Vs">
-                                                            <rect key="frame" x="1" y="3" width="0.0" height="18"/>
+                                                            <rect key="frame" x="1" y="3" width="-3" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gXW-DX-EsQ">
-                                                                    <rect key="frame" x="0.0" y="1" width="4" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="1" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="vaJ-Bc-ebE">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -1568,14 +1568,26 @@ CA
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="remove:" target="218" id="1409"/>
+                                    <binding destination="2020" name="enabled" keyPath="selection" id="9e7-R7-u5c">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
                                 </connections>
                             </menuItem>
                             <menuItem title="Reload Info" id="kq8-9v-zC0">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="reloadTags:" target="218" id="xRt-Us-Ucg"/>
-                                    <binding destination="2020" name="enabled" keyPath="selection" id="MPs-kU-3LT">
+                                    <binding destination="2020" name="enabled" keyPath="selection" id="Yki-oM-XiU">
                                         <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
                                             <string key="NSValueTransformerName">NSIsNotNil</string>
                                         </dictionary>
                                     </binding>
@@ -1584,9 +1596,24 @@ CA
                             <menuItem title="Show in Finder" keyEquivalent="R" id="1135">
                                 <connections>
                                     <action selector="showEntryInFinder:" target="218" id="1346"/>
-                                    <binding destination="218" name="enabled" keyPath="selection.index" id="1449">
+                                    <binding destination="218" name="enabled" keyPath="selection" id="75f-eT-NIO">
                                         <dictionary key="options">
                                             <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Move to Trash" id="mhx-dQ-Kwx">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="trash:" target="218" id="yed-1d-jqe"/>
+                                    <binding destination="2020" name="enabled" keyPath="selection" id="Cw2-fK-mzE">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                             <integer key="NSNoSelectionPlaceholder" value="0"/>
                                             <integer key="NSNotApplicablePlaceholder" value="0"/>
                                             <integer key="NSNullPlaceholder" value="0"/>
@@ -1611,8 +1638,32 @@ CA
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="dfu-5S-1BE"/>
-                            <menuItem title="Add to Queue" id="1864"/>
-                            <menuItem title="Remove from Queue" id="1865"/>
+                            <menuItem title="Add to Queue" id="1864">
+                                <connections>
+                                    <binding destination="2020" name="enabled" keyPath="selection" id="WVK-qy-AxU">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Remove from Queue" id="1865">
+                                <connections>
+                                    <binding destination="2020" name="enabled" keyPath="selection" id="VWA-yB-LLF">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1866">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -2125,6 +2176,21 @@ Gw
                     <connections>
                         <action selector="remove:" target="218" id="1361"/>
                         <binding destination="2020" name="enabled" keyPath="selection" id="2070">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                <integer key="NSNullPlaceholder" value="0"/>
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem title="Move to Trash" id="qlT-UX-x72">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="trash:" target="218" id="7Vd-Vf-Ym1"/>
+                        <binding destination="2020" name="enabled" keyPath="selection" id="pGj-Wj-1bF">
                             <dictionary key="options">
                                 <integer key="NSMultipleValuesPlaceholder" value="0"/>
                                 <integer key="NSNoSelectionPlaceholder" value="0"/>
