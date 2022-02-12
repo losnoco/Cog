@@ -44,7 +44,12 @@
 	if([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame) {
 		// Embedded cuesheet check
 		fileMetadata = [audioMetadataReader metadataForURL:url skipCue:YES];
+
+		NSDictionary *alsoMetadata = [NSClassFromString(@"AudioPropertiesReader") propertiesForURL:url];
+
 		NSString *sheet = [fileMetadata objectForKey:@"cuesheet"];
+		if(!sheet || ![sheet length]) sheet = [alsoMetadata objectForKey:@"cuesheet"];
+
 		if([sheet length]) {
 			cuesheet = [CueSheet cueSheetWithString:sheet withFilename:[url path]];
 			embedded = YES;

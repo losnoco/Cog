@@ -38,7 +38,8 @@
 	NSMutableDictionary *properties = [[decoder properties] mutableCopy];
 
 	// Need to alter length
-	[properties setObject:[NSNumber numberWithLong:(trackEnd - trackStart)] forKey:@"totalFrames"];
+	if(!noFragment)
+		[properties setObject:[NSNumber numberWithLong:(trackEnd - trackStart)] forKey:@"totalFrames"];
 
 	return [NSDictionary dictionaryWithDictionary:properties];
 }
@@ -70,7 +71,21 @@
 	if([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame) {
 		// Embedded cuesheet check
 		fileMetadata = [NSClassFromString(@"AudioMetadataReader") metadataForURL:url skipCue:YES];
+
+		source = s;
+
+		decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
+
+		if(![decoder open:source]) {
+			ALog(@"Could not open cuesheet decoder");
+			return NO;
+		}
+
+		NSDictionary *alsoMetadata = [decoder metadata];
+
 		NSString *sheet = [fileMetadata objectForKey:@"cuesheet"];
+		if(!sheet || ![sheet length]) sheet = [alsoMetadata objectForKey:@"cuesheet"];
+
 		if([sheet length]) {
 			cuesheet = [CueSheet cueSheetWithString:sheet withFilename:[url path]];
 			embedded = YES;
@@ -91,21 +106,21 @@
 			if([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]) {
 				track = [tracks objectAtIndex:i];
 
-				NSURL *trackUrl = (embedded) ? baseURL : [track url];
-
 				// Kind of a hackish way of accessing outside classes.
-				source = [NSClassFromString(@"AudioSource") audioSourceForURL:trackUrl];
+				if(!embedded) {
+					source = [NSClassFromString(@"AudioSource") audioSourceForURL:[track url]];
 
-				if(![source open:trackUrl]) {
-					ALog(@"Could not open cuesheet source");
-					return NO;
-				}
+					if(![source open:[track url]]) {
+						ALog(@"Could not open cuesheet source");
+						return NO;
+					}
 
-				decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
+					decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
 
-				if(![decoder open:source]) {
-					ALog(@"Could not open cuesheet decoder");
-					return NO;
+					if(![decoder open:source]) {
+						ALog(@"Could not open cuesheet decoder");
+						return NO;
+					}
 				}
 
 				CueSheetTrack *nextTrack = nil;

@@ -12,6 +12,8 @@
 
 #import "HTTPSource.h"
 
+extern void grabbag__cuesheet_emit(NSString **out, const FLAC__StreamMetadata *cuesheet, const char *file_reference);
+
 @implementation FlacDecoder
 
 FLAC__StreamDecoderReadStatus ReadCallback(const FLAC__StreamDecoder *decoder, FLAC__byte blockBuffer[], size_t *bytes, void *client_data) {
@@ -194,32 +196,85 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 		flacDecoder->hasStreamInfo = YES;
 	}
 
+	if(metadata->type == FLAC__METADATA_TYPE_CUESHEET) {
+		NSString *_cuesheet;
+		grabbag__cuesheet_emit(&_cuesheet, metadata, [[NSString stringWithFormat:@"\"%@\"", [[[flacDecoder->source url] path] lastPathComponent]] UTF8String]);
+
+		if(![_cuesheet isEqual:flacDecoder->cuesheet]) {
+			flacDecoder->cuesheet = _cuesheet;
+			if(![flacDecoder->source seekable]) {
+				[flacDecoder willChangeValueForKey:@"metadata"];
+				[flacDecoder didChangeValueForKey:@"metadata"];
+			}
+		}
+	}
+
+	if(metadata->type == FLAC__METADATA_TYPE_PICTURE) {
+		NSData *_albumArt = [NSData dataWithBytes:metadata->data.picture.data length:metadata->data.picture.data_length];
+		if(![_albumArt isEqual:flacDecoder->albumArt]) {
+			flacDecoder->albumArt = _albumArt;
+			if(![flacDecoder->source seekable]) {
+				[flacDecoder willChangeValueForKey:@"metadata"];
+				[flacDecoder didChangeValueForKey:@"metadata"];
+			}
+		}
+	}
+
 	if(metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
-		NSString *_genre = flacDecoder->genre;
-		NSString *_album = flacDecoder->album;
 		NSString *_artist = flacDecoder->artist;
+		NSString *_albumartist = flacDecoder->albumartist;
+		NSString *_album = flacDecoder->album;
 		NSString *_title = flacDecoder->title;
-		uint8_t nullByte = '\0';
+		NSString *_genre = flacDecoder->genre;
+		NSNumber *_year = flacDecoder->year;
+		NSNumber *_track = flacDecoder->track;
+		NSNumber *_disc = flacDecoder->disc;
+		float _replayGainAlbumGain = flacDecoder->replayGainAlbumGain;
+		float _replayGainAlbumPeak = flacDecoder->replayGainAlbumPeak;
+		float _replayGainTrackGain = flacDecoder->replayGainTrackGain;
+		float _replayGainTrackPeak = flacDecoder->replayGainTrackPeak;
+		NSString *_cuesheet = flacDecoder->cuesheet;
 		const FLAC__StreamMetadata_VorbisComment *vorbis_comment = &metadata->data.vorbis_comment;
 		for(int i = 0; i < vorbis_comment->num_comments; ++i) {
-			NSMutableData *commentField = [NSMutableData dataWithBytes:vorbis_comment->comments[i].entry length:vorbis_comment->comments[i].length];
-			[commentField appendBytes:&nullByte length:1];
-			NSString *commentString = [NSString stringWithUTF8String:[commentField bytes]];
-			NSArray *splitFields = [commentString componentsSeparatedByString:@"="];
-			if([splitFields count] == 2) {
-				NSString *name = [splitFields objectAtIndex:0];
-				NSString *value = [splitFields objectAtIndex:1];
-				name = [name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-				value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			char *_name;
+			char *_value;
+			if(FLAC__metadata_object_vorbiscomment_entry_to_name_value_pair(vorbis_comment->comments[i], &_name, &_value)) {
+				NSString *name = [NSString stringWithUTF8String:_name];
+				NSString *value = [NSString stringWithUTF8String:_value];
+				free(_name);
+				free(_value);
 				name = [name lowercaseString];
-				if([name isEqualToString:@"genre"]) {
-					_genre = value;
+				if([name isEqualToString:@"artist"]) {
+					_artist = value;
+				} else if([name isEqualToString:@"albumartist"]) {
+					_albumartist = value;
 				} else if([name isEqualToString:@"album"]) {
 					_album = value;
-				} else if([name isEqualToString:@"artist"]) {
-					_artist = value;
 				} else if([name isEqualToString:@"title"]) {
 					_title = value;
+				} else if([name isEqualToString:@"genre"]) {
+					_genre = value;
+				} else if([name isEqualToString:@"cuesheet"]) {
+					_cuesheet = value;
+				} else if([name isEqualToString:@"date"] ||
+				          [name isEqualToString:@"year"]) {
+					_year = [NSNumber numberWithInt:[value intValue]];
+				} else if([name isEqualToString:@"tracknumber"] ||
+				          [name isEqualToString:@"tracknum"] ||
+				          [name isEqualToString:@"track"]) {
+					_track = [NSNumber numberWithInt:[value intValue]];
+				} else if([name isEqualToString:@"discnumber"] ||
+				          [name isEqualToString:@"discnum"] ||
+				          [name isEqualToString:@"disc"]) {
+					_disc = [NSNumber numberWithInt:[value intValue]];
+				} else if([name isEqualToString:@"replaygain_album_gain"]) {
+					_replayGainAlbumGain = [value floatValue];
+				} else if([name isEqualToString:@"replaygain_album_peak"]) {
+					_replayGainAlbumPeak = [value floatValue];
+				} else if([name isEqualToString:@"replaygain_track_gain"]) {
+					_replayGainTrackGain = [value floatValue];
+				} else if([name isEqualToString:@"replaygain_track_peak"]) {
+					_replayGainTrackPeak = [value floatValue];
 				} else if([name isEqualToString:@"waveformatextensible_channel_mask"]) {
 					if([value hasPrefix:@"0x"]) {
 						char *end;
@@ -230,17 +285,37 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 			}
 		}
 
-		if(![flacDecoder->source seekable] &&
-		   (![_genre isEqual:flacDecoder->genre] ||
-		    ![_album isEqual:flacDecoder->album] ||
-		    ![_artist isEqual:flacDecoder->artist] ||
-		    ![_title isEqual:flacDecoder->title])) {
-			flacDecoder->genre = _genre;
-			flacDecoder->album = _album;
+		if(![_artist isEqual:flacDecoder->artist] ||
+		   ![_albumartist isEqual:flacDecoder->albumartist] ||
+		   ![_album isEqual:flacDecoder->album] ||
+		   ![_title isEqual:flacDecoder->title] ||
+		   ![_genre isEqual:flacDecoder->genre] ||
+		   ![_cuesheet isEqual:flacDecoder->cuesheet] ||
+		   ![_year isEqual:flacDecoder->year] ||
+		   ![_track isEqual:flacDecoder->track] ||
+		   ![_disc isEqual:flacDecoder->disc] ||
+		   _replayGainAlbumGain != flacDecoder->replayGainAlbumGain ||
+		   _replayGainAlbumPeak != flacDecoder->replayGainAlbumPeak ||
+		   _replayGainTrackGain != flacDecoder->replayGainTrackGain ||
+		   _replayGainTrackPeak != flacDecoder->replayGainTrackPeak) {
 			flacDecoder->artist = _artist;
+			flacDecoder->albumartist = _albumartist;
+			flacDecoder->album = _album;
 			flacDecoder->title = _title;
-			[flacDecoder willChangeValueForKey:@"metadata"];
-			[flacDecoder didChangeValueForKey:@"metadata"];
+			flacDecoder->genre = _genre;
+			flacDecoder->cuesheet = _cuesheet;
+			flacDecoder->year = _year;
+			flacDecoder->track = _track;
+			flacDecoder->disc = _disc;
+			flacDecoder->replayGainAlbumGain = _replayGainAlbumGain;
+			flacDecoder->replayGainAlbumPeak = _replayGainAlbumPeak;
+			flacDecoder->replayGainTrackGain = _replayGainTrackGain;
+			flacDecoder->replayGainTrackPeak = _replayGainTrackPeak;
+
+			if(![flacDecoder->source seekable]) {
+				[flacDecoder willChangeValueForKey:@"metadata"];
+				[flacDecoder didChangeValueForKey:@"metadata"];
+			}
 		}
 	}
 }
@@ -270,10 +345,20 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		isOggFlac = YES;
 	}
 
-	genre = @"";
-	album = @"";
 	artist = @"";
+	albumartist = @"";
+	album = @"";
 	title = @"";
+	genre = @"";
+	year = @(0);
+	track = @(0);
+	disc = @(0);
+	replayGainAlbumGain = 0.0;
+	replayGainAlbumPeak = 0.0;
+	replayGainTrackGain = 0.0;
+	replayGainTrackPeak = 0.0;
+	albumArt = [NSData data];
+	cuesheet = @"";
 
 	decoder = FLAC__stream_decoder_new();
 	if(decoder == NULL)
@@ -286,6 +371,8 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	FLAC__stream_decoder_set_metadata_ignore_all(decoder);
 	FLAC__stream_decoder_set_metadata_respond(decoder, FLAC__METADATA_TYPE_STREAMINFO);
 	FLAC__stream_decoder_set_metadata_respond(decoder, FLAC__METADATA_TYPE_VORBIS_COMMENT);
+	FLAC__stream_decoder_set_metadata_respond(decoder, FLAC__METADATA_TYPE_PICTURE);
+	FLAC__stream_decoder_set_metadata_respond(decoder, FLAC__METADATA_TYPE_CUESHEET);
 
 	abortFlag = NO;
 
@@ -466,7 +553,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 }
 
 - (NSDictionary *)metadata {
-	return @{ @"genre": genre, @"album": album, @"artist": artist, @"title": title };
+	return @{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"replayGainAlbumGain": @(replayGainAlbumGain), @"replayGainAlbumPeak": @(replayGainAlbumPeak), @"replayGainTrackGain": @(replayGainTrackGain), @"replayGainTrackPeak": @(replayGainTrackPeak), @"cuesheet": cuesheet, @"albumArt": albumArt };
 }
 
 + (NSArray *)fileTypes {

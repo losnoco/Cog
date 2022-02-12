@@ -36,10 +36,22 @@
 	BOOL streamOpened;
 	BOOL abortFlag;
 
-	NSString *genre;
-	NSString *album;
 	NSString *artist;
+	NSString *albumartist;
+	NSString *album;
 	NSString *title;
+	NSString *genre;
+	NSNumber *year;
+	NSNumber *track;
+	NSNumber *disc;
+	float replayGainAlbumGain;
+	float replayGainAlbumPeak;
+	float replayGainTrackGain;
+	float replayGainTrackPeak;
+
+	NSData *albumArt;
+
+	NSString *cuesheet;
 }
 
 - (void)setSource:(id<CogSource>)s;

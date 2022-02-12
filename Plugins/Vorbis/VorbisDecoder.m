@@ -12,6 +12,8 @@
 
 #import "HTTPSource.h"
 
+#import "picture.h"
+
 @implementation VorbisDecoder
 
 static const int MAXCHANNELS = 8;
@@ -97,57 +99,109 @@ long sourceTell(void *datasource) {
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
-	genre = @"";
-	album = @"";
 	artist = @"";
+	albumartist = @"";
+	album = @"";
 	title = @"";
+	genre = @"";
+	year = @(0);
+	track = @(0);
+	disc = @(0);
+	albumArt = [NSData data];
 	[self updateMetadata];
 
 	return YES;
 }
 
+- (NSString *)parseTag:(NSString *)tag fromTags:(vorbis_comment *)tags {
+	NSMutableArray *tagStrings = [[NSMutableArray alloc] init];
+
+	int tagCount = vorbis_comment_query_count(tags, [tag UTF8String]);
+
+	for(int i = 0; i < tagCount; ++i) {
+		const char *value = vorbis_comment_query(tags, [tag UTF8String], i);
+		[tagStrings addObject:[NSString stringWithUTF8String:value]];
+	}
+
+	return [tagStrings componentsJoinedByString:@", "];
+}
+
 - (void)updateMetadata {
-	if([source seekable]) return;
+	vorbis_comment *tags = ov_comment(&vorbisRef, -1);
 
-	const vorbis_comment *comment = ov_comment(&vorbisRef, -1);
+	if(tags) {
+		NSString *_artist = [self parseTag:@"artist" fromTags:tags];
+		NSString *_albumartist = [self parseTag:@"albumartist" fromTags:tags];
+		NSString *_album = [self parseTag:@"album" fromTags:tags];
+		NSString *_title = [self parseTag:@"title" fromTags:tags];
+		NSString *_genre = [self parseTag:@"genre" fromTags:tags];
 
-	if(comment) {
-		uint8_t nullByte = '\0';
-		NSString *_genre = genre;
-		NSString *_album = album;
-		NSString *_artist = artist;
-		NSString *_title = title;
-		for(int i = 0; i < comment->comments; ++i) {
-			NSMutableData *commentField = [NSMutableData dataWithBytes:comment->user_comments[i] length:comment->comment_lengths[i]];
-			[commentField appendBytes:&nullByte length:1];
-			NSString *commentString = [NSString stringWithUTF8String:[commentField bytes]];
-			NSArray *splitFields = [commentString componentsSeparatedByString:@"="];
-			if([splitFields count] == 2) {
-				NSString *name = [splitFields objectAtIndex:0];
-				NSString *value = [splitFields objectAtIndex:1];
-				name = [name stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-				value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-				name = [name lowercaseString];
-				if([name isEqualToString:@"genre"]) {
-					_genre = value;
-				} else if([name isEqualToString:@"album"]) {
-					_album = value;
-				} else if([name isEqualToString:@"artist"]) {
-					_artist = value;
-				} else if([name isEqualToString:@"title"]) {
-					_title = value;
+		NSString *_yearDate = [self parseTag:@"date" fromTags:tags];
+		NSString *_yearYear = [self parseTag:@"year" fromTags:tags];
+
+		NSNumber *_year = @(0);
+		if([_yearDate length])
+			_year = @([_yearDate intValue]);
+		else if([_yearYear length])
+			_year = @([_yearYear intValue]);
+
+		NSString *_trackNumber = [self parseTag:@"tracknumber" fromTags:tags];
+		NSString *_trackNum = [self parseTag:@"tracknum" fromTags:tags];
+		NSString *_trackTrack = [self parseTag:@"track" fromTags:tags];
+
+		NSNumber *_track = @(0);
+		if([_trackNumber length])
+			_track = @([_trackNumber intValue]);
+		else if([_trackNum length])
+			_track = @([_trackNum intValue]);
+		else if([_trackTrack length])
+			_track = @([_trackTrack intValue]);
+
+		NSString *_discNumber = [self parseTag:@"discnumber" fromTags:tags];
+		NSString *_discNum = [self parseTag:@"discnum" fromTags:tags];
+		NSString *_discDisc = [self parseTag:@"disc" fromTags:tags];
+
+		NSNumber *_disc = @(0);
+		if([_discNumber length])
+			_disc = @([_discNumber intValue]);
+		else if([_discNum length])
+			_disc = @([_discNum intValue]);
+		else if([_discDisc length])
+			_disc = @([_discDisc intValue]);
+
+		NSData *_albumArt = [NSData data];
+
+		size_t count = vorbis_comment_query_count(tags, "METADATA_BLOCK_PICTURE");
+		if(count) {
+			const char *pictureTag = vorbis_comment_query(tags, "METADATA_BLOCK_PICTURE", 0);
+			flac_picture_t *picture = flac_picture_parse_from_base64(pictureTag);
+			if(picture) {
+				if(picture->binary && picture->binary_length) {
+					_albumArt = [NSData dataWithBytes:picture->binary length:picture->binary_length];
 				}
+				flac_picture_free(picture);
 			}
 		}
 
-		if(![_genre isEqual:genre] ||
+		if(![_artist isEqual:artist] ||
+		   ![_albumartist isEqual:albumartist] ||
 		   ![_album isEqual:album] ||
-		   ![_artist isEqual:artist] ||
-		   ![_title isEqual:title]) {
-			genre = _genre;
-			album = _album;
+		   ![_title isEqual:title] ||
+		   ![_genre isEqual:genre] ||
+		   ![_year isEqual:year] ||
+		   ![_track isEqual:year] ||
+		   ![_disc isEqual:disc] ||
+		   ![_albumArt isEqual:albumArt]) {
 			artist = _artist;
+			albumartist = _albumartist;
+			album = _album;
 			title = _title;
+			genre = _genre;
+			year = _year;
+			track = _track;
+			disc = _disc;
+			albumArt = _albumArt;
+
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
 		}
@@ -265,7 +319,7 @@ long sourceTell(void *datasource) {
 }
 
 - (NSDictionary *)metadata {
-	return @{ @"genre": genre, @"album": album, @"artist": artist, @"title": title };
+	return @{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"albumArt": albumArt };
 }
 
 + (NSArray *)fileTypes {

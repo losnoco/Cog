@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
 		833765A320E4EF1F007287F6 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83172ABB20E4EF0100751437 /* Vorbis.framework */; };
+		83AA661627B7FAFC0098D4B8 /* picture.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA661127B7FAFC0098D4B8 /* picture.c */; };
+		83AA661727B7FAFD0098D4B8 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA661227B7FAFC0098D4B8 /* base64.c */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +63,10 @@
 		32DBCF630370AF2F00C91783 /* VorbisPlugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VorbisPlugin_Prefix.pch; sourceTree = "<group>"; };
 		8356BD1C27B46A2D0074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		8384913418081A3900E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
+		83AA660E27B7FAFC0098D4B8 /* picture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picture.h; sourceTree = "<group>"; };
+		83AA660F27B7FAFC0098D4B8 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		83AA661127B7FAFC0098D4B8 /* picture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picture.c; sourceTree = "<group>"; };
+		83AA661227B7FAFC0098D4B8 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* VorbisPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VorbisPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -82,6 +88,7 @@
 		089C166AFE841209C02AAC07 /* Vorbis */ = {
 			isa = PBXGroup;
 			children = (
+				83AA660C27B7FAFC0098D4B8 /* vorbis-tools */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -172,6 +179,33 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83AA660C27B7FAFC0098D4B8 /* vorbis-tools */ = {
+			isa = PBXGroup;
+			children = (
+				83AA660D27B7FAFC0098D4B8 /* include */,
+				83AA661027B7FAFC0098D4B8 /* share */,
+			);
+			path = "vorbis-tools";
+			sourceTree = "<group>";
+		};
+		83AA660D27B7FAFC0098D4B8 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				83AA660E27B7FAFC0098D4B8 /* picture.h */,
+				83AA660F27B7FAFC0098D4B8 /* base64.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		83AA661027B7FAFC0098D4B8 /* share */ = {
+			isa = PBXGroup;
+			children = (
+				83AA661127B7FAFC0098D4B8 /* picture.c */,
+				83AA661227B7FAFC0098D4B8 /* base64.c */,
+			);
+			path = share;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,6 +332,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83AA661627B7FAFC0098D4B8 /* picture.c in Sources */,
+				83AA661727B7FAFD0098D4B8 /* base64.c in Sources */,
 				17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
