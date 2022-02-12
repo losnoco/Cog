@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - jpeg.c                                          *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2012 Bobby Smiles                                       *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
@@ -24,8 +24,6 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
-
-#include "common.h"
 
 #include "arithmetics.h"
 #include "hle_external.h"
@@ -143,6 +141,7 @@ static const float IDCT_K[10] = {
 void jpeg_decode_PS0(struct hle_t* hle)
 {
     jpeg_decode_std(hle, "PS0", RescaleYSubBlock, RescaleUVSubBlock, EmitYUVTileLine);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 /***************************************************************************
@@ -152,6 +151,7 @@ void jpeg_decode_PS0(struct hle_t* hle)
 void jpeg_decode_PS(struct hle_t* hle)
 {
     jpeg_decode_std(hle, "PS", NULL, NULL, EmitRGBATileLine);
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 /***************************************************************************
@@ -192,6 +192,7 @@ void jpeg_decode_OB(struct hle_t* hle)
 
         address += (2 * 6 * SUBBLOCK_SIZE);
     }
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 
@@ -474,7 +475,7 @@ static void ReorderSubBlock(int16_t *dst, const int16_t *src, const unsigned int
     unsigned int i;
 
     /* source and destination sublocks cannot overlap */
-    assert(abs(dst - src) > SUBBLOCK_SIZE);
+    assert(labs(dst - src) > SUBBLOCK_SIZE);
 
     for (i = 0; i < SUBBLOCK_SIZE; ++i)
         dst[i] = src[table[i]];

@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - hle_internal.h                                  *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -57,6 +57,8 @@ struct hle_t
     /* for user convenience, this will be passed to "external" functions */
     void* user_defined;
 
+    int hle_gfx;
+    int hle_aud;
 
     /* alist.c */
     uint8_t alist_buffer[0x1000];
@@ -72,7 +74,20 @@ struct hle_t
 
     /* mp3.c */
     uint8_t  mp3_buffer[0x1000];
+
+    struct cached_ucodes_t cached_ucodes;
 };
+
+/* some mips interface interrupt flags */
+#define MI_INTR_SP                  0x1
+
+/* some rsp status flags */
+#define SP_STATUS_HALT             0x1
+#define SP_STATUS_BROKE            0x2
+#define SP_STATUS_INTR_ON_BREAK    0x40
+#define SP_STATUS_TASKDONE         0x200
+
+void rsp_break(struct hle_t* hle, unsigned int setbits);
 
 #endif
 

@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - musyx.c                                         *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2013 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,14 +20,13 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include <stddef.h>
-
-#include "common.h"
 
 #include "arithmetics.h"
 #include "audio.h"
+#include "common.h"
 #include "hle_external.h"
 #include "hle_internal.h"
 #include "memory.h"
@@ -257,6 +256,8 @@ void musyx_v1_task(struct hle_t* hle)
     dram_store_u16(hle, (uint16_t *)musyx.cc0, state_ptr + STATE_CC0, SUBFRAME_SIZE);
     dram_store_u16(hle, (uint16_t *)musyx.subframe_740_last4, state_ptr + STATE_740_LAST4_V1,
               4);
+
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 /**************************************************************************
@@ -334,6 +335,8 @@ void musyx_v2_task(struct hle_t* hle)
 
         sfd_ptr += SFD2_VOICES + MAX_VOICES * VOICE_SIZE;
     }
+
+    rsp_break(hle, SP_STATUS_TASKDONE);
 }
 
 

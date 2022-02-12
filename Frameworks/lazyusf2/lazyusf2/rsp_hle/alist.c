@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - alist.c                                         *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
@@ -21,6 +21,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -49,17 +50,17 @@ static void swap(int16_t **a, int16_t **b)
 
 static int16_t* sample(struct hle_t* hle, unsigned pos)
 {
-    return (int16_t*)hle->alist_buffer + (pos ^ S);
+    return (int16_t*)hle->alist_buffer + ((pos ^ S) & 0xfff);
 }
 
 static uint8_t* alist_u8(struct hle_t* hle, uint16_t dmem)
 {
-    return u8(hle->alist_buffer, dmem);
+    return (uint8_t*)(hle->alist_buffer + ((dmem ^ S8) & 0xfff));
 }
 
 static int16_t* alist_s16(struct hle_t* hle, uint16_t dmem)
 {
-    return (int16_t*)u16(hle->alist_buffer, dmem);
+    return (int16_t*)(hle->alist_buffer + ((dmem ^ S16) & 0xfff));
 }
 
 
@@ -1025,8 +1026,8 @@ void alist_iirf(
         count -= 0x10;
     } while (count > 0);
 
-    dram_store_u16(hle, (uint16_t*)&frame[6], address + 4, 4);
-    dram_store_u16(hle, (uint16_t*)&ibuf[(index-2)&3], address+8, 2);
-    dram_store_u16(hle, (uint16_t*)&ibuf[(index-1)&3], address+10, 2);
+    dram_store_u16(hle, (uint16_t*)&frame[6], address + 4, 2);
+    dram_store_u16(hle, (uint16_t*)&ibuf[(index-2)&3], address+8, 1);
+    dram_store_u16(hle, (uint16_t*)&ibuf[(index-1)&3], address+10, 1);
 }
 

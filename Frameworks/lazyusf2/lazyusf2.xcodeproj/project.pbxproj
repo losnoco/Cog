@@ -10,6 +10,8 @@
 		8333B6721DCC498B004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B6711DCC498B004C140D /* libz.tbd */; };
 		8379B58A1AA4237E00F28A95 /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 8379B5881AA4237E00F28A95 /* barray.c */; };
 		8379B58B1AA4237E00F28A95 /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8379B5891AA4237E00F28A95 /* barray.h */; };
+		83AA660627B7CB490098D4B8 /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660427B7CB490098D4B8 /* hvqm.c */; };
+		83AA660727B7CB490098D4B8 /* re2.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660527B7CB490098D4B8 /* re2.c */; };
 		83C0787C1A9B544300ABBB67 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C0787A1A9B544300ABBB67 /* resampler.c */; };
 		83C0787D1A9B544300ABBB67 /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C0787B1A9B544300ABBB67 /* resampler.h */; };
 		83CA14741A987E91005E7ED4 /* preproc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA146E1A987E91005E7ED4 /* preproc.h */; };
@@ -205,6 +207,8 @@
 		8333B6711DCC498B004C140D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		8379B5881AA4237E00F28A95 /* barray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = barray.c; sourceTree = "<group>"; };
 		8379B5891AA4237E00F28A95 /* barray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = barray.h; sourceTree = "<group>"; };
+		83AA660427B7CB490098D4B8 /* hvqm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hvqm.c; sourceTree = "<group>"; };
+		83AA660527B7CB490098D4B8 /* re2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = re2.c; sourceTree = "<group>"; };
 		83C0787A1A9B544300ABBB67 /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		83C0787B1A9B544300ABBB67 /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		83C8B62218AF57770071B040 /* lazyusf2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = lazyusf2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -660,20 +664,21 @@
 		83CA14FF1A988138005E7ED4 /* rsp_hle */ = {
 			isa = PBXGroup;
 			children = (
-				83CA15001A988138005E7ED4 /* alist.c */,
-				83CA15011A988138005E7ED4 /* alist.h */,
 				83CA15021A988138005E7ED4 /* alist_audio.c */,
 				83CA15031A988138005E7ED4 /* alist_naudio.c */,
 				83CA15041A988138005E7ED4 /* alist_nead.c */,
+				83CA15001A988138005E7ED4 /* alist.c */,
+				83CA15011A988138005E7ED4 /* alist.h */,
 				83CA15051A988138005E7ED4 /* arithmetics.h */,
 				83CA15061A988138005E7ED4 /* audio.c */,
 				83CA15071A988138005E7ED4 /* audio.h */,
 				83CA15081A988138005E7ED4 /* cicx105.c */,
 				83CA15091A988138005E7ED4 /* common.h */,
-				83CA150A1A988138005E7ED4 /* hle.c */,
-				83CA150B1A988138005E7ED4 /* hle.h */,
 				83CA150C1A988138005E7ED4 /* hle_external.h */,
 				83CA150D1A988138005E7ED4 /* hle_internal.h */,
+				83CA150A1A988138005E7ED4 /* hle.c */,
+				83CA150B1A988138005E7ED4 /* hle.h */,
+				83AA660427B7CB490098D4B8 /* hvqm.c */,
 				83CA150E1A988138005E7ED4 /* jpeg.c */,
 				83CA150F1A988138005E7ED4 /* LICENSES */,
 				83CA15101A988138005E7ED4 /* memory.c */,
@@ -681,6 +686,7 @@
 				83CA15121A988138005E7ED4 /* mp3.c */,
 				83CA15151A988138005E7ED4 /* musyx.c */,
 				83CA15161A988138005E7ED4 /* plugin.c */,
+				83AA660527B7CB490098D4B8 /* re2.c */,
 				83CA15171A988138005E7ED4 /* ucodes.h */,
 			);
 			path = rsp_hle;
@@ -1020,6 +1026,7 @@
 				83CA15DE1A988138005E7ED4 /* alist_audio.c in Sources */,
 				83CA15D81A988138005E7ED4 /* ri_controller.c in Sources */,
 				83CA15861A988138005E7ED4 /* exception.c in Sources */,
+				83AA660627B7CB490098D4B8 /* hvqm.c in Sources */,
 				83CA15C61A988138005E7ED4 /* gcop1_d.c in Sources */,
 				83CA16291A988138005E7ED4 /* cic.c in Sources */,
 				83CA15A11A988138005E7ED4 /* pure_interp.c in Sources */,
@@ -1059,6 +1066,7 @@
 				83CA15EC1A988138005E7ED4 /* memory.c in Sources */,
 				83CA15AC1A988138005E7ED4 /* tlb.c in Sources */,
 				83CA15DC1A988138005E7ED4 /* alist.c in Sources */,
+				83AA660727B7CB490098D4B8 /* re2.c in Sources */,
 				83CA15811A988138005E7ED4 /* cp0.c in Sources */,
 				83CA157A1A988138005E7ED4 /* cart_rom.c in Sources */,
 				83CA16331A988138005E7ED4 /* usf.c in Sources */,

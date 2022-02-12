@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - alist.h                                         *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -23,8 +23,8 @@
 #define ALIST_INTERNAL_H
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 struct hle_t;
 
@@ -114,7 +114,7 @@ void alist_adpcm(
         uint32_t last_frame_address);
 
 void alist_resample(
-        struct hle_t* hle,
+        struct hle_t* hle, 
         bool init,
         bool flag2,
         uint16_t dmemo, uint16_t dmemi, uint16_t count,

@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus-rsp-hle - ucodes.h                                        *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -24,8 +24,23 @@
 
 #include <stdint.h>
 
+#define CACHED_UCODES_MAX_SIZE 16
+
 struct hle_t;
 
+typedef void(*ucode_func_t)(struct hle_t* hle);
+
+struct ucode_info_t {
+    uint32_t     uc_start;
+    uint32_t     uc_dstart;
+    uint16_t     uc_dsize;
+    ucode_func_t uc_pfunc;
+};
+
+struct cached_ucodes_t {
+    struct ucode_info_t infos[CACHED_UCODES_MAX_SIZE];
+    int count;
+};
 
 /* cic_x105 ucode */
 void cicx105_ucode(struct hle_t* hle);
@@ -126,7 +141,8 @@ void alist_process_nead_oot (struct hle_t* hle);
 void alist_process_nead_mm  (struct hle_t* hle);
 void alist_process_nead_mmb (struct hle_t* hle);
 void alist_process_nead_ac  (struct hle_t* hle);
-
+void alist_process_nead_mats(struct hle_t* hle);
+void alist_process_nead_efz (struct hle_t* hle);
 
 /* mp3 ucode */
 void mp3_task(struct hle_t* hle, unsigned int index, uint32_t address);
@@ -141,6 +157,15 @@ void musyx_v2_task(struct hle_t* hle);
 void jpeg_decode_PS0(struct hle_t* hle);
 void jpeg_decode_PS(struct hle_t* hle);
 void jpeg_decode_OB(struct hle_t* hle);
+
+/* Resident evil 2 ucode */
+void resize_bilinear_task(struct hle_t* hle);
+void decode_video_frame_task(struct hle_t* hle);
+void fill_video_double_buffer_task(struct hle_t* hle);
+
+/* hvqm2 ucode */
+void hvqm2_decode_sp1_task(struct hle_t* hle);
+void hvqm2_decode_sp2_task(struct hle_t* hle);
 
 #endif
 

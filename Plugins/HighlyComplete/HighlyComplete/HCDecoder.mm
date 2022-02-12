@@ -8,6 +8,8 @@
 
 #import "HCDecoder.h"
 
+#import "Logging.h"
+
 #import "hebios.h"
 
 #import <psflib/psf2fs.h>
@@ -931,7 +933,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		usf_clear(state.emu_state);
 
-		usf_set_hle_audio(state.emu_state, 0); // Sometimes buggy
+		usf_set_hle_audio(state.emu_state, 1);
 
 		emulatorCore = (uint8_t *)state.emu_state;
 
@@ -1237,7 +1239,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 	} else if(type == 0x21) {
 		const char *err;
 		if((err = usf_render_resampled(emulatorCore, (int16_t *)buf, frames, sampleRate)) != 0) {
-			fprintf(stderr, "%s\n", err);
+			DLog(@"USF Error: %s", err);
 			return 0;
 		}
 	} else if(type == 0x22) {
