@@ -81,7 +81,7 @@
 			if([track trackGain]) [cuesheetMetadata setValue:[NSNumber numberWithFloat:[track trackGain]] forKey:@"replayGainTrackGain"];
 			if([track trackPeak]) [cuesheetMetadata setValue:[NSNumber numberWithFloat:[track trackPeak]] forKey:@"replayGainTrackPeak"];
 
-			return [fileMetadata dictionaryByMergingWith:cuesheetMetadata];
+			return [cuesheetMetadata dictionaryByMergingWith:fileMetadata];
 		}
 	}
 
