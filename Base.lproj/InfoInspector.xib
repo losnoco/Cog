@@ -335,8 +335,8 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="toolTip" keyPath="valueToDisplay.gainInfo" id="BUp-Hu-Szq"/>
                             <binding destination="-2" name="value" keyPath="valueToDisplay.gainCorrection" id="JgZ-wN-peX"/>
+                            <binding destination="-2" name="toolTip" keyPath="valueToDisplay.gainInfo" id="BUp-Hu-Szq"/>
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="84">
@@ -400,7 +400,6 @@
             <point key="canvasLocation" x="136" y="131"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="58"/>
-        <customObject id="79" customClass="BlankZeroFormatter"/>
         <customObject id="80" customClass="SecondsFormatter"/>
     </objects>
 </document>
