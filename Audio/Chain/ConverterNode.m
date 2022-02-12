@@ -353,9 +353,7 @@ static void convert_u32_to_s32(int32_t *buffer, size_t count) {
 }
 
 static void convert_f64_to_f32(float *output, const double *input, size_t count) {
-	for(size_t i = 0; i < count; ++i) {
-		output[i] = (float)(input[i]);
-	}
+	vDSP_vdpsp(input, 1, output, 1, count);
 }
 
 static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes) {
