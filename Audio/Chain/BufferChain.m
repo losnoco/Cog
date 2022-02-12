@@ -262,7 +262,7 @@
 }
 
 - (void)pushInfo:(NSDictionary *)info {
-	[controller pushInfo:info];
+	[controller pushInfo:info toTrack:userInfo];
 }
 
 - (void)setError:(BOOL)status {

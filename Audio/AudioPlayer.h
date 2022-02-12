@@ -78,7 +78,7 @@
 
 - (void)restartPlaybackAtCurrentPosition;
 
-- (void)pushInfo:(NSDictionary *)info;
+- (void)pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
 
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;

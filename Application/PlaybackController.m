@@ -761,7 +761,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
-	PlaylistEntry *pe = [playlistController currentEntry];
+	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	[pe setMetadata:info];
 	[playlistView refreshCurrentTrack:self];
 	[self sendMetaData];
