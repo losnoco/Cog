@@ -358,53 +358,39 @@ static void convert_f64_to_f32(float *output, const double *input, size_t count)
 
 static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes) {
 	size_t i;
-	uint8_t temp;
 	bitsPerSample = (bitsPerSample + 7) / 8;
 	switch(bitsPerSample) {
 		case 2:
 			for(i = 0; i < bytes; i += 2) {
-				temp = buffer[1];
-				buffer[1] = buffer[0];
-				buffer[0] = temp;
+				*(int16_t *)buffer = __builtin_bswap16(*(int16_t *)buffer);
 				buffer += 2;
 			}
 			break;
 
-		case 3:
+		case 3: {
+			union {
+				vDSP_int24 int24;
+				uint32_t int32;
+			} intval;
+			intval.int32 = 0;
 			for(i = 0; i < bytes; i += 3) {
-				temp = buffer[2];
-				buffer[2] = buffer[0];
-				buffer[0] = temp;
+				intval.int24 = *(vDSP_int24 *)buffer;
+				intval.int32 = __builtin_bswap32(intval.int32 << 8);
+				*(vDSP_int24 *)buffer = intval.int24;
 				buffer += 3;
 			}
-			break;
+		} break;
 
 		case 4:
 			for(i = 0; i < bytes; i += 4) {
-				temp = buffer[3];
-				buffer[3] = buffer[0];
-				buffer[0] = temp;
-				temp = buffer[2];
-				buffer[2] = buffer[1];
-				buffer[1] = temp;
+				*(uint32_t *)buffer = __builtin_bswap32(*(uint32_t *)buffer);
 				buffer += 4;
 			}
 			break;
 
 		case 8:
 			for(i = 0; i < bytes; i += 8) {
-				temp = buffer[7];
-				buffer[7] = buffer[0];
-				buffer[0] = temp;
-				temp = buffer[6];
-				buffer[6] = buffer[1];
-				buffer[1] = temp;
-				temp = buffer[5];
-				buffer[5] = buffer[2];
-				buffer[2] = temp;
-				temp = buffer[4];
-				buffer[4] = buffer[3];
-				buffer[3] = temp;
+				*(uint64_t *)buffer = __builtin_bswap64(*(uint64_t *)buffer);
 				buffer += 8;
 			}
 			break;
