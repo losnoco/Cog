@@ -158,87 +158,53 @@ static void downmix_to_mono(const float *inBuffer, int channels, uint32_t config
 
 static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, float *outBuffer, int outchannels, uint32_t outconfig, size_t count) {
 	if(inconfig == AudioConfigMono && outconfig == AudioConfigStereo) {
-		for(size_t i = 0; i < count; ++i) {
-			// upmix mono to stereo
-			float sample = inBuffer[i];
-			outBuffer[i * 2 + 0] = sample;
-			outBuffer[i * 2 + 1] = sample;
-		}
+		cblas_scopy((int)count, inBuffer, 1, outBuffer, 2);
+		cblas_scopy((int)count, inBuffer, 1, outBuffer + 1, 2);
 	} else if(inconfig == AudioConfigMono && outconfig == AudioConfig4Point0) {
-		for(size_t i = 0; i < count; ++i) {
-			// upmix mono to quad
-			float sample = inBuffer[i];
-			outBuffer[i * 4 + 0] = sample;
-			outBuffer[i * 4 + 1] = sample;
-			outBuffer[i * 4 + 2] = 0;
-			outBuffer[i * 4 + 3] = 0;
-		}
+		cblas_scopy((int)count, inBuffer, 1, outBuffer, 4);
+		cblas_scopy((int)count, inBuffer, 1, outBuffer + 1, 4);
+		vDSP_vclr(outBuffer + 2, 4, count);
+		vDSP_vclr(outBuffer + 3, 4, count);
 	} else if(inconfig == AudioConfigMono && (outconfig & AudioChannelFrontCenter)) {
 		uint32_t cIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontCenter];
-		for(size_t i = 0; i < count; ++i) {
-			// upmix mono to center channel
-			float sample = inBuffer[i];
-			outBuffer[i * outchannels + cIndex] = sample;
-			for(int j = 0; j < cIndex; ++j) {
-				outBuffer[i * outchannels + j] = 0;
-			}
-			for(int j = cIndex + 1; j < outchannels; ++j) {
-				outBuffer[i * outchannels + j] = 0;
-			}
+		cblas_scopy((int)count, inBuffer, 1, outBuffer + cIndex, outchannels);
+		for(size_t i = 0; i < cIndex; ++i) {
+			vDSP_vclr(outBuffer + i, outchannels, (int)count);
+		}
+		for(size_t i = cIndex + 1; i < outchannels; ++i) {
+			vDSP_vclr(outBuffer + i, outchannels, (int)count);
 		}
 	} else if(inconfig == AudioConfig4Point0 && outchannels >= 5) {
 		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
 		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
 		uint32_t blIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackLeft];
 		uint32_t brIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackRight];
-		for(size_t i = 0; i < count; ++i) {
-			float fl = inBuffer[i * 4 + 0];
-			float fr = inBuffer[i * 4 + 1];
-			float bl = inBuffer[i * 4 + 2];
-			float br = inBuffer[i * 4 + 3];
-			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
-			if(flIndex != ~0) {
-				outBuffer[i * outchannels + flIndex] = fl;
-			}
-			if(frIndex != ~0) {
-				outBuffer[i * outchannels + frIndex] = fr;
-			}
-			if(blIndex != ~0) {
-				outBuffer[i * outchannels + blIndex] = bl;
-			}
-			if(brIndex != ~0) {
-				outBuffer[i * outchannels + brIndex] = br;
-			}
-		}
+		vDSP_vclr(outBuffer, 1, count * outchannels);
+		if(flIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 0, 4, outBuffer + flIndex, outchannels);
+		if(frIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 1, 4, outBuffer + frIndex, outchannels);
+		if(blIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 2, 4, outBuffer + blIndex, outchannels);
+		if(brIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 3, 4, outBuffer + brIndex, outchannels);
 	} else if(inconfig == AudioConfig5Point0 && outchannels >= 6) {
 		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
 		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
 		uint32_t cIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontCenter];
 		uint32_t blIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackLeft];
 		uint32_t brIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackRight];
-		for(size_t i = 0; i < count; ++i) {
-			float fl = inBuffer[i * 5 + 0];
-			float fr = inBuffer[i * 5 + 1];
-			float c = inBuffer[i * 5 + 2];
-			float bl = inBuffer[i * 5 + 3];
-			float br = inBuffer[i * 5 + 4];
-			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
-			if(flIndex != ~0) {
-				outBuffer[i * outchannels + flIndex] = fl;
-			}
-			if(frIndex != ~0) {
-				outBuffer[i * outchannels + frIndex] = fr;
-			}
-			if(cIndex != ~0) {
-				outBuffer[i * outchannels + cIndex] = c;
-			}
-			if(blIndex != ~0) {
-				outBuffer[i * outchannels + blIndex] = bl;
-			}
-			if(brIndex != ~0) {
-				outBuffer[i * outchannels + brIndex] = br;
-			}
-		}
+		vDSP_vclr(outBuffer, 1, count * outchannels);
+		if(flIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 0, 5, outBuffer + flIndex, outchannels);
+		if(frIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 1, 5, outBuffer + frIndex, outchannels);
+		if(cIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 2, 5, outBuffer + cIndex, outchannels);
+		if(blIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 3, 5, outBuffer + blIndex, outchannels);
+		if(brIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 4, 5, outBuffer + brIndex, outchannels);
 	} else if(inconfig == AudioConfig6Point1 && outchannels >= 8) {
 		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
 		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
@@ -249,58 +215,34 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
 		uint32_t bcIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelBackCenter];
 		uint32_t slIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelSideLeft];
 		uint32_t srIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelSideRight];
-		for(size_t i = 0; i < count; ++i) {
-			float fl = inBuffer[i * 7 + 0];
-			float fr = inBuffer[i * 7 + 1];
-			float c = inBuffer[i * 7 + 2];
-			float lfe = inBuffer[i * 7 + 3];
-			float sl = inBuffer[i * 7 + 4];
-			float sr = inBuffer[i * 7 + 5];
-			float bc = inBuffer[i * 7 + 6];
-			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
-			if(flIndex != ~0) {
-				outBuffer[i * outchannels + flIndex] = fl;
-			}
-			if(frIndex != ~0) {
-				outBuffer[i * outchannels + frIndex] = fr;
-			}
-			if(cIndex != ~0) {
-				outBuffer[i * outchannels + cIndex] = c;
-			}
-			if(lfeIndex != ~0) {
-				outBuffer[i * outchannels + lfeIndex] = lfe;
-			}
-			if(slIndex != ~0) {
-				outBuffer[i * outchannels + slIndex] = sl;
-			}
-			if(srIndex != ~0) {
-				outBuffer[i * outchannels + srIndex] = sr;
-			}
-			if(bcIndex != ~0) {
-				outBuffer[i * outchannels + bcIndex] = bc;
-			} else {
-				if(blIndex != ~0) {
-					outBuffer[i * outchannels + blIndex] = bc;
-				}
-				if(brIndex != ~0) {
-					outBuffer[i * outchannels + brIndex] = bc;
-				}
-			}
+		vDSP_vclr(outBuffer, 1, count * outchannels);
+		if(flIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 0, 7, outBuffer + flIndex, outchannels);
+		if(frIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 1, 7, outBuffer + frIndex, outchannels);
+		if(cIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 2, 7, outBuffer + cIndex, outchannels);
+		if(lfeIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 3, 7, outBuffer + lfeIndex, outchannels);
+		if(slIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 4, 7, outBuffer + slIndex, outchannels);
+		if(srIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 5, 7, outBuffer + srIndex, outchannels);
+		if(bcIndex != ~0)
+			cblas_scopy((int)count, inBuffer + 6, 7, outBuffer + bcIndex, outchannels);
+		else {
+			if(blIndex != ~0)
+				cblas_scopy((int)count, inBuffer + 6, 7, outBuffer + blIndex, outchannels);
+			if(brIndex != ~0)
+				cblas_scopy((int)count, inBuffer + 6, 7, outBuffer + brIndex, outchannels);
 		}
 	} else {
-		uint32_t outIndexes[inchannels];
+		vDSP_vclr(outBuffer, 1, count * outchannels);
 		for(int i = 0; i < inchannels; ++i) {
 			uint32_t channelFlag = [AudioChunk extractChannelFlag:i fromConfig:inconfig];
-			outIndexes[i] = [AudioChunk channelIndexFromConfig:outconfig forFlag:channelFlag];
-		}
-		for(size_t i = 0; i < count; ++i) {
-			// upmix N channels to N channels plus silence the empty channels
-			memset(outBuffer + i * outchannels, 0, sizeof(float) * outchannels);
-			for(int j = 0; j < inchannels; ++j) {
-				if(outIndexes[j] != ~0) {
-					outBuffer[i * outchannels + outIndexes[j]] = inBuffer[i * inchannels + j];
-				}
-			}
+			uint32_t outIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:channelFlag];
+			if(outIndex != ~0)
+				cblas_scopy((int)count, inBuffer + i, inchannels, outBuffer + outIndex, outchannels);
 		}
 	}
 }
@@ -353,8 +295,8 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
 	BOOL hVirt = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"headphoneVirtualization"];
 
 	if(hVirt &&
-	   outputFormat.mChannelsPerFrame == 2 &&
-	   outConfig == AudioConfigStereo &&
+	   outputFormat.mChannelsPerFrame >= 2 &&
+	   (outConfig & AudioConfigStereo) == AudioConfigStereo &&
 	   inputFormat.mChannelsPerFrame >= 1 &&
 	   (inConfig & (AudioConfig7Point1 | AudioChannelBackCenter)) != 0) {
 		NSString *userPreset = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] stringForKey:@"hrirPath"];
@@ -396,7 +338,18 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
 - (void)process:(const void *)inBuffer frameCount:(size_t)frames output:(void *)outBuffer {
 	@synchronized(hFilter) {
 		if(hFilter) {
-			[hFilter process:(const float *)inBuffer sampleCount:frames toBuffer:(float *)outBuffer];
+			uint32_t outChannels = outputFormat.mChannelsPerFrame;
+			if(outChannels > 2) {
+				float tempBuffer[frames * 2];
+				[hFilter process:(const float *)inBuffer sampleCount:frames toBuffer:&tempBuffer[0]];
+				cblas_scopy((int)frames, tempBuffer, 2, (float *)outBuffer, outChannels);
+				cblas_scopy((int)frames, tempBuffer + 1, 2, ((float *)outBuffer) + 1, outChannels);
+				for(size_t i = 2; i < outChannels; ++i) {
+					vDSP_vclr(((float *)outBuffer) + i, outChannels, (int)frames);
+				}
+			} else {
+				[hFilter process:(const float *)inBuffer sampleCount:frames toBuffer:(float *)outBuffer];
+			}
 			return;
 		}
 	}
