@@ -99,6 +99,7 @@
 		830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830596E7277F05E200EBFAAE /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 830C379F27B95E3000E02BB0 /* Equalizer.xib */; };
 		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
+		830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C37F227B9956C00E02BB0 /* analyzer.c */; };
 		8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -916,6 +917,8 @@
 		830C37A027B95E3000E02BB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Equalizer.xib; sourceTree = "<group>"; };
 		830C37A327B95EB300E02BB0 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EqualizerWindowController.h; path = Equalizer/EqualizerWindowController.h; sourceTree = "<group>"; };
 		830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = EqualizerWindowController.m; path = Equalizer/EqualizerWindowController.m; sourceTree = "<group>"; };
+		830C37F127B9956C00E02BB0 /* analyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
+		830C37F227B9956C00E02BB0 /* analyzer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = equalizerTemplate.pdf; path = Images/equalizerTemplate.pdf; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
@@ -1631,6 +1634,24 @@
 			name = Equalizer;
 			sourceTree = "<group>";
 		};
+		830C37EF27B9956C00E02BB0 /* ThirdParty */ = {
+			isa = PBXGroup;
+			children = (
+				830C37F027B9956C00E02BB0 /* deadbeef */,
+			);
+			name = ThirdParty;
+			path = Visualization/ThirdParty;
+			sourceTree = "<group>";
+		};
+		830C37F027B9956C00E02BB0 /* deadbeef */ = {
+			isa = PBXGroup;
+			children = (
+				830C37F127B9956C00E02BB0 /* analyzer.h */,
+				830C37F227B9956C00E02BB0 /* analyzer.c */,
+			);
+			path = deadbeef;
+			sourceTree = "<group>";
+		};
 		8314D63C1A354DFE00EEE8E6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1708,6 +1729,7 @@
 		8377C66027B8CF2300E8BC0F /* Visualization */ = {
 			isa = PBXGroup;
 			children = (
+				830C37EF27B9956C00E02BB0 /* ThirdParty */,
 				8377C66427B8CF7A00E8BC0F /* VisualizationController.h */,
 				8377C66227B8CF6300E8BC0F /* SpectrumView.h */,
 				8377C66127B8CF6300E8BC0F /* SpectrumView.m */,
@@ -2501,6 +2523,7 @@
 				56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */,
 				56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
+				830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */,
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
 				179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */,
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,

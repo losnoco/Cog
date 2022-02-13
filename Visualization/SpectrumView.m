@@ -7,12 +7,30 @@
 
 #import "SpectrumView.h"
 
-#import <Accelerate/Accelerate.h>
+#import "analyzer.h"
+
+#define LOWER_BOUND -80
 
 extern NSString *CogPlaybackDidBeginNotficiation;
 extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
 extern NSString *CogPlaybackDidStopNotficiation;
+
+@interface SpectrumView () {
+	VisualizationController *visController;
+	NSTimer *timer;
+	BOOL paused;
+	BOOL stopped;
+	BOOL isListening;
+
+	NSColor *baseColor;
+	NSColor *peakColor;
+	NSColor *backgroundColor;
+	NSColor *borderColor;
+	ddb_analyzer_t _analyzer;
+	ddb_analyzer_draw_data_t _draw_data;
+}
+@end
 
 @implementation SpectrumView
 
@@ -45,7 +63,14 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 	[self colorsDidChange:nil];
 
-	vDSP_vclr(&FFTMax[0], 1, 256);
+	ddb_analyzer_init(&_analyzer);
+	_analyzer.db_lower_bound = LOWER_BOUND;
+	_analyzer.peak_hold = 10;
+	_analyzer.view_width = 1000;
+	_analyzer.fractional_bars = 1;
+	_analyzer.octave_bars_step = 2;
+	_analyzer.max_of_stereo_data = 1;
+	_analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(colorsDidChange:)
@@ -70,6 +95,9 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)dealloc {
+	ddb_analyzer_dealloc(&_analyzer);
+	ddb_analyzer_draw_data_dealloc(&_draw_data);
+
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 	                                                name:NSSystemColorsDidChangeNotification
 	                                              object:nil];
@@ -112,6 +140,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)colorsDidChange:(NSNotification *)notification {
 	backgroundColor = [NSColor textBackgroundColor];
+	backgroundColor = [backgroundColor colorWithAlphaComponent:0.0];
+	borderColor = [NSColor systemGrayColor];
 
 	if(@available(macOS 10.14, *)) {
 		baseColor = [NSColor textColor];
@@ -147,8 +177,51 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	stopped = YES;
 	paused = NO;
 	[self updateVisListening];
-	vDSP_vclr(&FFTMax[0], 1, 256);
 	[self repaint];
+}
+
+- (void)drawAnalyzerDescreteFrequencies {
+	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+	ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
+	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
+		CGContextMoveToPoint(context, bar->xpos, 0);
+		CGContextAddLineToPoint(context, bar->xpos, bar->bar_height);
+	}
+	CGContextSetStrokeColorWithColor(context, baseColor.CGColor);
+	CGContextStrokePath(context);
+
+	bar = _draw_data.bars;
+	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
+		CGContextMoveToPoint(context, bar->xpos - 0.5, bar->peak_ypos);
+		CGContextAddLineToPoint(context, bar->xpos + 0.5, bar->peak_ypos);
+	}
+	CGContextSetStrokeColorWithColor(context, peakColor.CGColor);
+	CGContextStrokePath(context);
+}
+
+- (void)drawAnalyzerOctaveBands {
+	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+	ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
+	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
+		CGContextAddRect(context, CGRectMake(bar->xpos, 0, _draw_data.bar_width, bar->bar_height));
+	}
+	CGContextSetFillColorWithColor(context, baseColor.CGColor);
+	CGContextFillPath(context);
+
+	bar = _draw_data.bars;
+	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
+		CGContextAddRect(context, CGRectMake(bar->xpos, bar->peak_ypos, _draw_data.bar_width, 1.0));
+	}
+	CGContextSetFillColorWithColor(context, peakColor.CGColor);
+	CGContextFillPath(context);
+}
+
+- (void)drawAnalyzer {
+	if(_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+		[self drawAnalyzerDescreteFrequencies];
+	} else {
+		[self drawAnalyzerOctaveBands];
+	}
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -159,35 +232,26 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	[backgroundColor setFill];
 	NSRectFill(dirtyRect);
 
-	float visAudio[512], visFFT[256];
-
-	if(!self->stopped) {
-		[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0]];
-	} else {
-		memset(visFFT, 0, sizeof(visFFT));
-	}
-
-	float scale = 0.95;
-	vDSP_vsmul(&FFTMax[0], 1, &scale, &FFTMax[0], 1, 256);
-	vDSP_vmax(&visFFT[0], 1, &FFTMax[0], 1, &FFTMax[0], 1, 256);
-
 	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-
-	for(int i = 0; i < 60; ++i) {
-		CGFloat y = MAX(MIN(visFFT[i], 0.25), 0.0) * 4.0 * 22.0;
-		CGContextMoveToPoint(context, 2.0 + i, 2.0);
-		CGContextAddLineToPoint(context, 2.0 + i, 2.0 + y);
-	}
-	CGContextSetStrokeColorWithColor(context, baseColor.CGColor);
+	CGContextMoveToPoint(context, 0.0, 0.0);
+	CGContextAddLineToPoint(context, 63.0, 0.0);
+	CGContextAddLineToPoint(context, 63.0, 25.0);
+	CGContextAddLineToPoint(context, 0.0, 25.0);
+	CGContextAddLineToPoint(context, 0.0, 0.0);
+	CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
 	CGContextStrokePath(context);
 
-	for(int i = 0; i < 60; ++i) {
-		CGFloat y = MAX(MIN(FFTMax[i], 0.25), 0.0) * 4.0 * 22.0;
-		CGContextMoveToPoint(context, 2.0 + i, 1.5 + y);
-		CGContextAddLineToPoint(context, 2.0 + i, 2.5 + y);
-	}
-	CGContextSetStrokeColorWithColor(context, peakColor.CGColor);
-	CGContextStrokePath(context);
+	if(stopped) return;
+
+	float visAudio[8192], visFFT[4096];
+
+	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0]];
+
+	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate], 1, visFFT, 4096);
+	ddb_analyzer_tick(&_analyzer);
+	ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
+
+	[self drawAnalyzer];
 }
 
 @end

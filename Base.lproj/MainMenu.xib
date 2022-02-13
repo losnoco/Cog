@@ -876,7 +876,7 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="80D8CDBD-A6E9-47A6-B9C0-213C450E45FA" label="Spectrum" paletteLabel="Spectrum" tag="-1" id="NtB-XF-g07" customClass="SpectrumItem">
+                    <toolbarItem implicitItemIdentifier="80D8CDBD-A6E9-47A6-B9C0-213C450E45FA" label="Spectrum" paletteLabel="Spectrum" tag="-1" bordered="YES" id="NtB-XF-g07" customClass="SpectrumItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="64" height="26"/>
                         <size key="maxSize" width="64" height="26"/>
@@ -1132,7 +1132,7 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="09140C29-FF34-4BF2-92C8-54C7D9AA4A27" label="Spectrum" paletteLabel="Spectrum" tag="-1" id="sf3-l1-fJw" customClass="SpectrumItem">
+                    <toolbarItem implicitItemIdentifier="09140C29-FF34-4BF2-92C8-54C7D9AA4A27" label="Spectrum" paletteLabel="Spectrum" tag="-1" bordered="YES" id="sf3-l1-fJw" customClass="SpectrumItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="64" height="26"/>
                         <size key="maxSize" width="64" height="26"/>

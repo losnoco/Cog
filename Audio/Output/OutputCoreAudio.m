@@ -163,6 +163,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 			vDSP_vclr(visAudio + visTabulated, 1, 512 - visTabulated);
 		}
 
+		[_self->visController postSampleRate:_self->deviceFormat.mSampleRate];
 		[_self->visController postVisPCM:visAudio];
 
 		return 0;

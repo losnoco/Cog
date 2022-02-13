@@ -10,12 +10,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VisualizationController : NSObject {
-	float visAudio[512];
+	double sampleRate;
+	float visAudio[8192];
 }
 
 + (VisualizationController *)sharedController;
 
+- (void)postSampleRate:(double)sampleRate;
 - (void)postVisPCM:(const float *)inPCM;
+- (double)readSampleRate;
 - (void)copyVisPCM:(float *)outPCM visFFT:(float *)outFFT;
 
 @end
