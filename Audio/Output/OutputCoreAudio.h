@@ -19,6 +19,8 @@
 
 #import "Downmix.h"
 
+#import "VisualizationController.h"
+
 #import "Semaphore.h"
 
 //#define OUTPUT_LOG
@@ -61,6 +63,8 @@
 	AudioStreamBasicDescription deviceFormat; // info about the default device
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
 
+	AudioStreamBasicDescription visFormat; // Mono format for vis
+
 	uint32_t deviceChannelConfig;
 	uint32_t streamChannelConfig;
 
@@ -70,6 +74,9 @@
 	AudioUnit _eq;
 
 	DownmixProcessor *downmixer;
+	DownmixProcessor *downmixerForVis;
+
+	VisualizationController *visController;
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;

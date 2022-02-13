@@ -124,6 +124,7 @@
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8370D73C277419F700245CE0 /* SQLiteStore.m */; };
 		8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8370D73E2775AE1300245CE0 /* libsqlite3.tbd */; };
+		8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumView.m */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
 		8384915918083EAB00E7332D /* infoTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384914318083EAB00E7332D /* infoTemplate.pdf */; };
 		8384915A18083EAB00E7332D /* missingArt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384914418083EAB00E7332D /* missingArt@2x.png */; };
@@ -942,6 +943,9 @@
 		8370D73C277419F700245CE0 /* SQLiteStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQLiteStore.m; sourceTree = "<group>"; };
 		8370D73E2775AE1300245CE0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpusPlugin.xcodeproj; path = Plugins/Opus/OpusPlugin.xcodeproj; sourceTree = "<group>"; };
+		8377C66127B8CF6300E8BC0F /* SpectrumView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpectrumView.m; path = Visualization/SpectrumView.m; sourceTree = "<group>"; };
+		8377C66227B8CF6300E8BC0F /* SpectrumView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumView.h; path = Visualization/SpectrumView.h; sourceTree = "<group>"; };
+		8377C66427B8CF7A00E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisualizationController.h; path = Audio/Visualization/VisualizationController.h; sourceTree = "<group>"; };
 		8384912518080F2D00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		8384913D18083E4E00E7332D /* filetype.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = filetype.icns; sourceTree = "<group>"; };
 		8384914318083EAB00E7332D /* infoTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = infoTemplate.pdf; path = Images/infoTemplate.pdf; sourceTree = "<group>"; };
@@ -1073,6 +1077,7 @@
 				835F00B3279BD1CD00055FCF /* Formatters */,
 				177042960B8BC53600B86321 /* Application */,
 				17E0D5D20F520E75005B6FED /* Window */,
+				8377C66027B8CF2300E8BC0F /* Visualization */,
 				8E75752A09F31D5A0080F1EE /* Playlist */,
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
 				17DDF6400E0CB6F100A2E4AD /* FileTree */,
@@ -1684,6 +1689,16 @@
 				836FB5471820538800B3AD2D /* Hively.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8377C66027B8CF2300E8BC0F /* Visualization */ = {
+			isa = PBXGroup;
+			children = (
+				8377C66427B8CF7A00E8BC0F /* VisualizationController.h */,
+				8377C66227B8CF6300E8BC0F /* SpectrumView.h */,
+				8377C66127B8CF6300E8BC0F /* SpectrumView.m */,
+			);
+			name = Visualization;
 			sourceTree = "<group>";
 		};
 		83B0669D180D5668008E3612 /* Products */ = {
@@ -2451,6 +2466,7 @@
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
 				1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */,
 				8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */,
+				8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */,
 				1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */,
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,

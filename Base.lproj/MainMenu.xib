@@ -32,7 +32,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
                                     <rect key="frame" x="0.0" y="0.0" width="1000" height="378"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
                                             <rect key="frame" x="0.0" y="0.0" width="1000" height="361"/>
@@ -130,11 +130,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="ZCP-Dx-UBV">
-                                                            <rect key="frame" x="106" y="3" width="125.5" height="18"/>
+                                                            <rect key="frame" x="106" y="3" width="126" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="exY-Bg-Mjm">
-                                                                    <rect key="frame" x="0.0" y="1" width="125.5" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="126" height="16"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="sdo-Sm-KPH">
                                                                         <font key="font" usesAppearanceFont="YES"/>
@@ -876,6 +876,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="5E0A643B-09FC-45CF-A562-C56F1E388E62" label="Spectrum" paletteLabel="Spectrum" sizingBehavior="auto" id="gui-fC-qTP">
+                        <nil key="toolTip"/>
+                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Zaq-sS-aTV" customClass="SpectrumView">
+                            <rect key="frame" x="0.0" y="14" width="64" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="VDu-2p-2bJ"/>
+                        </imageView>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="ZH9-ZU-skw"/>
@@ -888,6 +896,7 @@
                     <toolbarItem reference="1630"/>
                     <toolbarItem reference="1629"/>
                     <toolbarItem reference="1529"/>
+                    <toolbarItem reference="gui-fC-qTP"/>
                     <toolbarItem reference="1568"/>
                     <toolbarItem reference="1551"/>
                     <toolbarItem reference="1610"/>
@@ -1121,6 +1130,14 @@
                                 <action selector="removeDeadItems:" target="218" id="D9p-Bs-v9x"/>
                             </connections>
                         </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="1A931C99-28FC-4209-BD5C-38E5CF96F7AF" label="Spectrum" paletteLabel="Spectrum" sizingBehavior="auto" id="K64-ro-2GI">
+                        <nil key="toolTip"/>
+                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="F4M-9A-fZv" customClass="SpectrumView">
+                            <rect key="frame" x="0.0" y="14" width="64" height="26"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="br1-X9-N6H"/>
+                        </imageView>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>

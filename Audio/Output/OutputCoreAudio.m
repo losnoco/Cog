@@ -58,6 +58,9 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 
 		amountToRead = inNumberFrames * bytesPerPacket;
 
+		int visTabulated = 0;
+		float visAudio[512]; // Chunk size
+
 		if(_self->stopping == YES || [_self->outputController shouldContinue] == NO) {
 			// Chain is dead, fill out the serial number pointer forever with silence
 			clearBuffers(ioData, amountToRead / bytesPerPacket, 0);
@@ -85,6 +88,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 				_self->streamChannelConfig = config;
 				_self->streamFormatStarted = YES;
 				_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->deviceFormat outputConfig:_self->deviceChannelConfig];
+				_self->downmixerForVis = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->visFormat outputConfig:AudioConfigMono];
 			}
 
 			double chunkDuration = [chunk duration];
@@ -93,6 +97,9 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 
 			float downmixedData[frameCount * channels];
 			[_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
+
+			[_self->downmixerForVis process:[samples bytes] frameCount:frameCount output:visAudio];
+			visTabulated += frameCount;
 
 			fillBuffers(ioData, downmixedData, frameCount, 0);
 			amountRead = frameCount * bytesPerPacket;
@@ -113,6 +120,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 					_self->streamFormat = format;
 					_self->streamFormatStarted = YES;
 					_self->downmixer = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->deviceFormat outputConfig:_self->deviceChannelConfig];
+					_self->downmixerForVis = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:_self->visFormat outputConfig:AudioConfigMono];
 				}
 				atomic_fetch_add(&_self->bytesRendered, frameCount * bytesPerPacket);
 				double chunkDuration = [chunk duration];
@@ -120,6 +128,9 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 				float downmixedData[frameCount * channels];
 				[_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
 				fillBuffers(ioData, downmixedData, frameCount, amountRead / bytesPerPacket);
+
+				[_self->downmixerForVis process:[samples bytes] frameCount:frameCount output:visAudio + visTabulated];
+				visTabulated += frameCount;
 
 				[_self->outputController incrementAmountPlayed:chunkDuration];
 
@@ -148,7 +159,11 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 			// buffer loop if it doesn't get anything, so always produce a full
 			// buffer, and silence anything we couldn't supply.
 			clearBuffers(ioData, (amountToRead - amountRead) / bytesPerPacket, amountRead / bytesPerPacket);
+
+			vDSP_vclr(visAudio + visTabulated, 1, 512 - visTabulated);
 		}
+
+		[_self->visController postVisPCM:visAudio];
 
 		return 0;
 	}
@@ -469,7 +484,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 - (void)resetIfOutputChanged {
 	AVAudioFormat *format = _au.outputBusses[0].format;
 
-	if(!restarted && !_deviceFormat || ![_deviceFormat isEqual:format]) {
+	if(!restarted && (!_deviceFormat || ![_deviceFormat isEqual:format])) {
 		[outputController restartPlaybackAtCurrentPosition];
 		restarted = YES;
 	}
@@ -500,6 +515,11 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		}
 		deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame * (deviceFormat.mBitsPerChannel / 8);
 		deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
+
+		visFormat = deviceFormat;
+		visFormat.mChannelsPerFrame = 1;
+		visFormat.mBytesPerFrame = visFormat.mChannelsPerFrame * (visFormat.mBitsPerChannel / 8);
+		visFormat.mBytesPerPacket = visFormat.mBytesPerFrame * visFormat.mFramesPerPacket;
 
 		/* Set the channel layout for the audio queue */
 		AudioChannelLayoutTag tag = 0;
@@ -579,6 +599,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	restarted = NO;
 
 	downmixer = nil;
+	downmixerForVis = nil;
 
 	AudioComponentDescription desc;
 	NSError *err;
@@ -720,6 +741,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 	[_au allocateRenderResourcesAndReturnError:&err];
 
+	visController = [VisualizationController sharedController];
+
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
 	observersapplied = YES;
@@ -797,6 +820,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	if(downmixer) {
 		downmixer = nil;
 	}
+	if(downmixerForVis) {
+		downmixerForVis = nil;
+	}
 #ifdef OUTPUT_LOG
 	if(_logFile) {
 		fclose(_logFile);
@@ -804,6 +830,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	}
 #endif
 	outputController = nil;
+	visController = nil;
 }
 
 - (void)dealloc {
