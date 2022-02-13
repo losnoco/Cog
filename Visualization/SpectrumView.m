@@ -147,6 +147,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	stopped = YES;
 	paused = NO;
 	[self updateVisListening];
+	vDSP_vclr(&FFTMax[0], 1, 256);
 	[self repaint];
 }
 
