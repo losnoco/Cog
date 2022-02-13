@@ -13,7 +13,7 @@
 #import <AudioUnit/AudioUnit.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
-#import "AUPlayerView.h"
+#import "EqualizerWindowController.h"
 
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
@@ -36,6 +36,8 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	IBOutlet PlaylistView *playlistView;
 	IBOutlet PlaylistLoader *playlistLoader;
 
+	IBOutlet EqualizerWindowController *equalizerWindowController;
+
 	IBOutlet NSSlider *volumeSlider;
 
 	IBOutlet NSArrayController *outputDevices;
@@ -53,10 +55,7 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	// progress bar display
 	double progressBarStatus;
 
-	BOOL _eqWasOpen;
-	BOOL _eqStubbed;
 	AudioUnit _eq;
-	AUPluginUI *_equi;
 }
 
 @property CogStatus playbackStatus;
@@ -88,8 +87,6 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (IBAction)fade:(id)sender;
 
 - (IBAction)spam:(id)sender;
-
-- (IBAction)showEq:(id)sender;
 
 - (void)sendMetaData;
 

@@ -97,6 +97,8 @@
 		8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8305968D277F049600EBFAAE /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830596E7277F05E200EBFAAE /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 830C379F27B95E3000E02BB0 /* Equalizer.xib */; };
+		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
 		8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -174,7 +176,6 @@
 		83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D0380E24A40DF2004CF90F /* CogAssets.xcassets */; };
 		83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */; };
 		83E5E54D18087CA5001F3284 /* miniModeOnTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */; };
-		83E88FD227945204003D6FE5 /* AUPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 83E88FD027945204003D6FE5 /* AUPlayerView.m */; };
 		83ED3AD1279A91C000904199 /* hdcdLogoTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -912,6 +913,9 @@
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		83059684277F049600EBFAAE /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = Frameworks/Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
 		830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = Frameworks/Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
+		830C37A027B95E3000E02BB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Equalizer.xib; sourceTree = "<group>"; };
+		830C37A327B95EB300E02BB0 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EqualizerWindowController.h; path = Equalizer/EqualizerWindowController.h; sourceTree = "<group>"; };
+		830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = EqualizerWindowController.m; path = Equalizer/EqualizerWindowController.m; sourceTree = "<group>"; };
 		8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = equalizerTemplate.pdf; path = Images/equalizerTemplate.pdf; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
@@ -1015,8 +1019,6 @@
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
-		83E88FD027945204003D6FE5 /* AUPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AUPlayerView.m; path = Window/AUPlayerView.m; sourceTree = "<group>"; };
-		83E88FD127945204003D6FE5 /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AUPlayerView.h; path = Window/AUPlayerView.h; sourceTree = "<group>"; };
 		83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = hdcdLogoTemplate.pdf; path = Images/hdcdLogoTemplate.pdf; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -1084,6 +1086,7 @@
 				8E75752A09F31D5A0080F1EE /* Playlist */,
 				8E07AAEA0AAC90DC00A4B32F /* Preferences */,
 				17DDF6400E0CB6F100A2E4AD /* FileTree */,
+				830C37A227B95E6000E02BB0 /* Equalizer */,
 				17D1B0FE0F63252900694C57 /* InfoInspector */,
 				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
 				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
@@ -1371,8 +1374,6 @@
 		17E0D5D20F520E75005B6FED /* Window */ = {
 			isa = PBXGroup;
 			children = (
-				83E88FD127945204003D6FE5 /* AUPlayerView.h */,
-				83E88FD027945204003D6FE5 /* AUPlayerView.m */,
 				83BC5AB120E4C87100631CD4 /* DualWindow.h */,
 				83BC5AB020E4C87100631CD4 /* DualWindow.m */,
 				17E0D5E10F520F02005B6FED /* MainWindow.h */,
@@ -1483,6 +1484,7 @@
 				1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */,
 				832923AE279FAC400048201E /* Cog.q1.json */,
 				835EDD8027A000E8001EDCCE /* gsx.wv */,
+				830C379F27B95E3000E02BB0 /* Equalizer.xib */,
 				17D1B0D00F6320EA00694C57 /* InfoInspector.xib */,
 				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
 				17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */,
@@ -1618,6 +1620,15 @@
 				830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		830C37A227B95E6000E02BB0 /* Equalizer */ = {
+			isa = PBXGroup;
+			children = (
+				830C37A327B95EB300E02BB0 /* EqualizerWindowController.h */,
+				830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */,
+			);
+			name = Equalizer;
 			sourceTree = "<group>";
 		};
 		8314D63C1A354DFE00EEE8E6 /* Products */ = {
@@ -2393,6 +2404,7 @@
 				171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */,
 				171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */,
 				8384916C18083EAB00E7332D /* stopTemplate.pdf in Resources */,
+				830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */,
 				171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */,
 				171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */,
 				17818A950C0B27AC001C4916 /* aiff.icns in Resources */,
@@ -2482,6 +2494,7 @@
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 				56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */,
+				830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */,
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
@@ -2493,7 +2506,6 @@
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
 				839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */,
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
-				83E88FD227945204003D6FE5 /* AUPlayerView.m in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
 				179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */,
@@ -2766,6 +2778,14 @@
 				835C888B22CC1881001B4B3F /* en */,
 			);
 			name = Credits.html;
+			sourceTree = "<group>";
+		};
+		830C379F27B95E3000E02BB0 /* Equalizer.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				830C37A027B95E3000E02BB0 /* Base */,
+			);
+			name = Equalizer.xib;
 			sourceTree = "<group>";
 		};
 		8E7575D909F31E930080F1EE /* Localizable.strings */ = {

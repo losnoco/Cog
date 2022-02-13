@@ -836,7 +836,7 @@
                                 <font key="font" metaFont="smallSystem"/>
                             </buttonCell>
                             <connections>
-                                <action selector="showEq:" target="705" id="2LD-Rh-0rq"/>
+                                <action selector="toggleWindow:" target="dJ9-b3-BFu" id="Vzd-iT-4dO"/>
                             </connections>
                         </button>
                     </toolbarItem>
@@ -1092,7 +1092,7 @@
                                 <font key="font" metaFont="smallSystem"/>
                             </buttonCell>
                             <connections>
-                                <action selector="showEq:" target="705" id="0gX-vd-Rlu"/>
+                                <action selector="toggleWindow:" target="dJ9-b3-BFu" id="oEn-0F-9dV"/>
                             </connections>
                         </button>
                     </toolbarItem>
@@ -1382,7 +1382,7 @@
                             <menuItem title="Show Equalizer" keyEquivalent="e" id="nBU-pH-J3I">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
-                                    <action selector="showEq:" target="705" id="8VC-ml-1Zz"/>
+                                    <action selector="showWindow:" target="dJ9-b3-BFu" id="l8q-wn-w0b"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="1854">
@@ -2097,6 +2097,7 @@ Gw
         <customObject id="705" userLabel="PlaybackController" customClass="PlaybackController">
             <connections>
                 <outlet property="appController" destination="226" id="TnP-DA-nJl"/>
+                <outlet property="equalizerWindowController" destination="dJ9-b3-BFu" id="gB5-Bu-vqC"/>
                 <outlet property="playlistController" destination="218" id="706"/>
                 <outlet property="playlistLoader" destination="1319" id="ghZ-65-60L"/>
                 <outlet property="playlistView" destination="207" id="717"/>
@@ -2324,6 +2325,7 @@ Gw
                 <outlet property="playlistSelectionController" destination="2020" id="2540"/>
             </connections>
         </customObject>
+        <customObject id="dJ9-b3-BFu" customClass="EqualizerWindowController"/>
     </objects>
     <resources>
         <image name="deadItemsTemplate" width="20" height="20"/>

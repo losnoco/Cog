@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="EqualizerWindowController">
+            <connections>
+                <outlet property="eq100Hz" destination="EGw-lI-PqR" id="FVY-XJ-Yoy"/>
+                <outlet property="eq10kHz" destination="9gv-Wd-2i5" id="PQB-Q6-ycv"/>
+                <outlet property="eq125Hz" destination="X8Q-3I-fRk" id="3rN-Ie-jMH"/>
+                <outlet property="eq12kHz" destination="Rvd-Av-rse" id="aTc-z8-DGt"/>
+                <outlet property="eq160Hz" destination="I4W-MG-Od0" id="tVV-nY-FDi"/>
+                <outlet property="eq16kHz" destination="dvb-hD-7Oi" id="zFL-Fh-Vpl"/>
+                <outlet property="eq1kHz" destination="isJ-yy-cVT" id="zVY-rZ-5Zc"/>
+                <outlet property="eq1p2kHz" destination="Ofb-Ik-Wts" id="sAa-33-Hfy"/>
+                <outlet property="eq1p6kHz" destination="uHS-pU-fuc" id="FcO-gx-5Gi"/>
+                <outlet property="eq200Hz" destination="0B6-CW-taL" id="kfR-Vc-sac"/>
+                <outlet property="eq20Hz" destination="pPz-qk-lF0" id="7jj-lM-FgT"/>
+                <outlet property="eq20kHz" destination="eZl-bk-YsW" id="JLx-pG-K6Z"/>
+                <outlet property="eq250Hz" destination="7mz-zz-KJz" id="OMI-tE-WES"/>
+                <outlet property="eq25Hz" destination="erW-Z5-NX6" id="G1h-Fe-1Hz"/>
+                <outlet property="eq2kHz" destination="rYY-dc-oG4" id="02t-yQ-WZf"/>
+                <outlet property="eq2p5kHz" destination="L98-xd-bPa" id="vbB-CL-Pxn"/>
+                <outlet property="eq315Hz" destination="QfZ-Ds-evI" id="kYV-Bo-otU"/>
+                <outlet property="eq31p5Hz" destination="cxB-Qf-gzG" id="Bml-tV-spm"/>
+                <outlet property="eq3p1kHz" destination="6QJ-lg-2Xy" id="eOn-bP-Q8b"/>
+                <outlet property="eq400Hz" destination="zSu-v6-Cxg" id="XIv-Hs-Uft"/>
+                <outlet property="eq40Hz" destination="pJ2-G6-rbj" id="2QX-GQ-qMp"/>
+                <outlet property="eq4kHz" destination="kUj-cr-bJi" id="9zM-Xv-93t"/>
+                <outlet property="eq500Hz" destination="zmo-mN-TXD" id="Ggn-fR-bJc"/>
+                <outlet property="eq50Hz" destination="b9g-iG-0ew" id="PLP-oR-Ivw"/>
+                <outlet property="eq5kHz" destination="Myp-Hz-rh5" id="nwc-1k-pUu"/>
+                <outlet property="eq630Hz" destination="tLh-1Y-fqH" id="16J-zc-kJn"/>
+                <outlet property="eq63Hz" destination="Vak-Bg-ArA" id="wFU-TY-12V"/>
+                <outlet property="eq6p3kHz" destination="uoj-ua-fqp" id="ibL-h5-ysZ"/>
+                <outlet property="eq800Hz" destination="e0e-rr-aQg" id="RMV-Bf-9xd"/>
+                <outlet property="eq80Hz" destination="NLK-Il-XXU" id="XJY-sG-33A"/>
+                <outlet property="eq8kHz" destination="2aq-E2-UeA" id="Ydx-Bd-y7v"/>
+                <outlet property="eqPreamp" destination="1pv-lR-sLq" id="HBh-J0-ZGh"/>
+                <outlet property="presetSelector" destination="hB0-9d-EW2" id="heP-Dq-v7u"/>
+                <outlet property="window" destination="8K8-Ba-m19" id="bjj-JF-4Ww"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Equalizer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" id="8K8-Ba-m19">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="206" width="705" height="426"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
+            <view key="contentView" id="YYZ-oD-Hbm">
+                <rect key="frame" x="0.0" y="0.0" width="705" height="426"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dvm-2j-T8B">
+                        <rect key="frame" x="18" y="389" width="75" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Enabled" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vvQ-pQ-dxe">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleEnable:" target="-2" id="n9t-dq-N51"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.GraphicEQenable" id="WSA-uI-ytt"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JzM-Lt-El8">
+                        <rect key="frame" x="99" y="389" width="147" height="18"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Tracking genre tags" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="PAb-Y5-dhH">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="toggleTracking:" target="-2" id="T3F-Y9-Rr5"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.GraphicEQtrackgenre" id="hcT-Pq-vNr"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5PZ-fy-yl6">
+                        <rect key="frame" x="254" y="385" width="87" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="bevel" title="Flatten EQ" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f5z-bW-rIg">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="flattenEQ:" target="-2" id="oYI-9F-lFn"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yW1-Co-d7O">
+                        <rect key="frame" x="344" y="385" width="98" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="bevel" title="Level Preamp" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c9p-rw-VrL">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="levelPreamp:" target="-2" id="Ot9-Ih-FbR"/>
+                        </connections>
+                    </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jBv-uq-ZdT">
+                        <rect key="frame" x="446" y="390" width="47" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Preset:" id="eaD-pH-YcM">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <popUpButton fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hB0-9d-EW2">
+                        <rect key="frame" x="494" y="385" width="194" height="25"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <popUpButtonCell key="cell" type="bevel" bezelStyle="regularSquare" alignment="left" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="JA4-b3-w9Z">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="iFk-24-yfc"/>
+                        </popUpButtonCell>
+                        <connections>
+                            <action selector="changePreset:" target="-2" id="RS5-jE-15H"/>
+                            <binding destination="uog-xg-KWw" name="content" keyPath="arrangedObjects" id="2TP-bv-D4r"/>
+                            <binding destination="uog-xg-KWw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="2TP-bv-D4r" id="Vjp-oC-CPG"/>
+                            <binding destination="uog-xg-KWw" name="contentValues" keyPath="arrangedObjects.name" previousBinding="Vjp-oC-CPG" id="29G-lA-2S7"/>
+                            <binding destination="pqA-8k-29n" name="selectedIndex" keyPath="values.GraphicEQpreset" previousBinding="29G-lA-2S7" id="IZo-mP-VOa"/>
+                        </connections>
+                    </popUpButton>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Mi-pL-Tae">
+                        <rect key="frame" x="47" y="364" width="49" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="Preamp" id="urv-wC-ASQ">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vc5-V1-XIx">
+                        <rect key="frame" x="74" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="20Hz" id="YOZ-BW-wQq">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c44-J3-Fxk">
+                        <rect key="frame" x="92" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="25" id="5xs-HW-sZU">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cty-7a-d5I">
+                        <rect key="frame" x="112" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="31.5" id="v50-ZU-hvp">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V5g-Wg-yB4">
+                        <rect key="frame" x="131" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="40" id="yee-yE-UoY">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Uy-CF-Hvq">
+                        <rect key="frame" x="151" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="50" id="WgE-Nf-TO9">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kFj-2k-qot">
+                        <rect key="frame" x="170" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="63" id="arC-W0-Xrq">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dwg-F0-g7D">
+                        <rect key="frame" x="190" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="80" id="0fc-Lj-S47">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FAN-Lu-XfQ">
+                        <rect key="frame" x="209" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="100" id="Hkn-Se-53p">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BQh-C9-GcT">
+                        <rect key="frame" x="229" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="125" id="PcC-V1-7DF">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n3f-Iv-GVK">
+                        <rect key="frame" x="248" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="160" id="0XK-Pc-xvP">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ilf-dH-8YC">
+                        <rect key="frame" x="267" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="200" id="PtG-Li-QZp">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9eH-l2-Hyo">
+                        <rect key="frame" x="287" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="250" id="XBS-Et-cRs">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xpu-T0-G04">
+                        <rect key="frame" x="306" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="315" id="kHq-qU-vhM">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="reP-Iu-TTL">
+                        <rect key="frame" x="326" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="400" id="Qej-u4-5b2">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dwe-BM-5AQ">
+                        <rect key="frame" x="345" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="500" id="nuU-eX-gcU">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xyb-fb-6B6">
+                        <rect key="frame" x="365" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="630" id="LJg-SG-a19">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="olv-6U-M6S">
+                        <rect key="frame" x="384" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="800" id="QOh-n3-Ee9">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bfw-2N-qW1">
+                        <rect key="frame" x="404" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="1k" id="fn6-lu-Aye">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lwl-Bd-vYw">
+                        <rect key="frame" x="423" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="1.2" id="b5Z-53-yzX">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9re-vr-dgc">
+                        <rect key="frame" x="442" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="1.6" id="Qs5-PC-5G5">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EZc-rU-RfA">
+                        <rect key="frame" x="462" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="2" id="cGE-96-1eR">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0vB-af-8db">
+                        <rect key="frame" x="481" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="2.5" id="cEz-0N-Se6">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JED-5u-DXc">
+                        <rect key="frame" x="501" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="3.1" id="7Ib-VD-of6">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hd0-7Q-ADK">
+                        <rect key="frame" x="520" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="4" id="Vjz-pX-vc3">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rgx-oK-lhx">
+                        <rect key="frame" x="540" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="5" id="RJb-UX-Q3a">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UCz-C8-2wq">
+                        <rect key="frame" x="559" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="6.3" id="JsK-Yw-8DC">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Ck-oD-sW8">
+                        <rect key="frame" x="579" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="8" id="2AZ-qX-UBG">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BTz-fa-ExO">
+                        <rect key="frame" x="598" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="10" id="Q94-YA-SeH">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fpD-dz-a1j">
+                        <rect key="frame" x="618" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="12" id="rbr-Hv-AeM">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9av-QY-hrG">
+                        <rect key="frame" x="637" y="364" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="16" id="j2U-Xg-lnG">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iz4-A3-dfN">
+                        <rect key="frame" x="656" y="347" width="37" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="20kHz" id="ZoT-YY-K4R">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kn8-BR-bR6">
+                        <rect key="frame" x="16" y="323" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="20 dB" id="9Uz-CE-x97">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pHj-76-ca0">
+                        <rect key="frame" x="16" y="263" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="12 dB" id="s1h-RU-MJP">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T1H-bX-CdY">
+                        <rect key="frame" x="16" y="217" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="6 dB" id="24d-dI-KaX">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7MJ-ik-v9u">
+                        <rect key="frame" x="16" y="194" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="3 dB" id="YDE-sR-N8w">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tz1-Iy-x5M">
+                        <rect key="frame" x="16" y="173" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="0 dB" id="FJj-mN-le8">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="B7L-6g-dTH">
+                        <rect key="frame" x="16" y="150" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="-3 dB" id="EbA-SI-KTP">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="puc-it-e5q">
+                        <rect key="frame" x="16" y="127" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="-6 dB" id="BkT-Cf-U9W">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jl8-y5-gpV">
+                        <rect key="frame" x="16" y="82" width="39" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="-12 dB" id="8wE-gA-sJk">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AHR-OK-hvT">
+                        <rect key="frame" x="14" y="21" width="41" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="right" title="-20 dB" id="w4Q-0G-uHb">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="K80-dz-6b9">
+                        <rect key="frame" x="62" y="290" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="wSi-KB-GeL">
+                        <rect key="frame" x="62" y="314" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="eY4-WC-caQ">
+                        <rect key="frame" x="62" y="328" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YAu-Fw-s8v">
+                        <rect key="frame" x="62" y="268" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="QsF-eK-6Rs">
+                        <rect key="frame" x="62" y="245" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Boj-8D-0qq">
+                        <rect key="frame" x="62" y="222" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pQa-6m-Cj2">
+                        <rect key="frame" x="62" y="199" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="woM-CK-WUs">
+                        <rect key="frame" x="62" y="177" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4Gc-hi-b0h">
+                        <rect key="frame" x="62" y="154" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Zvd-2C-bmH">
+                        <rect key="frame" x="62" y="131" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ngi-iZ-iy5">
+                        <rect key="frame" x="62" y="109" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="9jB-3w-xCT">
+                        <rect key="frame" x="62" y="86" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="AA9-ce-lOu">
+                        <rect key="frame" x="62" y="63" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gz0-Pi-wtc">
+                        <rect key="frame" x="62" y="40" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="9pz-KJ-Dnx">
+                        <rect key="frame" x="62" y="25" width="623" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1pv-lR-sLq" customClass="EqualizerSlider">
+                        <rect key="frame" x="60" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="BBt-Io-qN6"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="cwH-oW-g7e"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="pPz-qk-lF0" customClass="EqualizerSlider">
+                        <rect key="frame" x="80" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="rV6-Z8-E1C"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="tQ4-0w-zNg"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="erW-Z5-NX6" customClass="EqualizerSlider">
+                        <rect key="frame" x="99" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="3VS-IF-6Gq"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="b6Y-Is-8JI"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="cxB-Qf-gzG" customClass="EqualizerSlider">
+                        <rect key="frame" x="119" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="rFz-I2-WwL"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="uXl-Oc-geJ"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="pJ2-G6-rbj" customClass="EqualizerSlider">
+                        <rect key="frame" x="138" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="9lc-MR-2w6"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="YFe-0w-puF"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="b9g-iG-0ew" customClass="EqualizerSlider">
+                        <rect key="frame" x="158" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Ku5-j3-tEZ"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="r13-02-WNs"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="Vak-Bg-ArA" customClass="EqualizerSlider">
+                        <rect key="frame" x="177" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="RD1-OD-LFs"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="9hs-Iq-mR4"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="7" translatesAutoresizingMaskIntoConstraints="NO" id="NLK-Il-XXU" customClass="EqualizerSlider">
+                        <rect key="frame" x="197" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Ynb-we-L85"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="aMB-FE-WHi"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="EGw-lI-PqR" customClass="EqualizerSlider">
+                        <rect key="frame" x="216" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="kTZ-ZV-44Z"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="sIe-fY-WAt"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="9" translatesAutoresizingMaskIntoConstraints="NO" id="X8Q-3I-fRk" customClass="EqualizerSlider">
+                        <rect key="frame" x="236" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Exz-67-Qm8"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="Nmg-Io-NSr"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="10" translatesAutoresizingMaskIntoConstraints="NO" id="I4W-MG-Od0" customClass="EqualizerSlider">
+                        <rect key="frame" x="255" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="eLk-fm-D6E"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="WLA-Ns-Sn8"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="11" translatesAutoresizingMaskIntoConstraints="NO" id="0B6-CW-taL" customClass="EqualizerSlider">
+                        <rect key="frame" x="274" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="SKT-Dc-cq5"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="KAC-Hf-L4u"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="12" translatesAutoresizingMaskIntoConstraints="NO" id="7mz-zz-KJz" customClass="EqualizerSlider">
+                        <rect key="frame" x="294" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="oyp-pB-2i5"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="f1t-hA-aQP"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="13" translatesAutoresizingMaskIntoConstraints="NO" id="QfZ-Ds-evI" customClass="EqualizerSlider">
+                        <rect key="frame" x="313" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="AMh-UG-aGF"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="hoV-qd-4ZV"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="14" translatesAutoresizingMaskIntoConstraints="NO" id="zSu-v6-Cxg" customClass="EqualizerSlider">
+                        <rect key="frame" x="333" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="PSo-He-COO"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="B3f-ho-VVs"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="15" translatesAutoresizingMaskIntoConstraints="NO" id="zmo-mN-TXD" customClass="EqualizerSlider">
+                        <rect key="frame" x="352" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="xkB-Wr-zeT"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="Zvu-3e-Mcw"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="16" translatesAutoresizingMaskIntoConstraints="NO" id="tLh-1Y-fqH" customClass="EqualizerSlider">
+                        <rect key="frame" x="372" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="lQF-Ys-tHL"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="iW7-IV-ngn"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="17" translatesAutoresizingMaskIntoConstraints="NO" id="e0e-rr-aQg" customClass="EqualizerSlider">
+                        <rect key="frame" x="391" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="qVu-Je-O2M"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="q51-7C-AT0"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="18" translatesAutoresizingMaskIntoConstraints="NO" id="isJ-yy-cVT" customClass="EqualizerSlider">
+                        <rect key="frame" x="411" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Avj-sw-Igv"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="90W-wc-wW8"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="19" translatesAutoresizingMaskIntoConstraints="NO" id="Ofb-Ik-Wts" customClass="EqualizerSlider">
+                        <rect key="frame" x="430" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="pmx-eb-Kfb"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="3ba-ih-SK6"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="20" translatesAutoresizingMaskIntoConstraints="NO" id="uHS-pU-fuc" customClass="EqualizerSlider">
+                        <rect key="frame" x="449" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="iU6-3A-VBd"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="G1r-cA-raU"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="21" translatesAutoresizingMaskIntoConstraints="NO" id="rYY-dc-oG4" customClass="EqualizerSlider">
+                        <rect key="frame" x="469" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Xsy-2o-spf"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="Guj-GJ-0b6"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="22" translatesAutoresizingMaskIntoConstraints="NO" id="L98-xd-bPa" customClass="EqualizerSlider">
+                        <rect key="frame" x="488" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="EhX-oM-x7Z"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="oTn-8d-42e"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="23" translatesAutoresizingMaskIntoConstraints="NO" id="6QJ-lg-2Xy" customClass="EqualizerSlider">
+                        <rect key="frame" x="508" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="M6Y-pj-oe9"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="FK9-UQ-0c9"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="24" translatesAutoresizingMaskIntoConstraints="NO" id="kUj-cr-bJi" customClass="EqualizerSlider">
+                        <rect key="frame" x="527" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="y7V-sl-vdA"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="ptm-FB-oL3"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="25" translatesAutoresizingMaskIntoConstraints="NO" id="Myp-Hz-rh5" customClass="EqualizerSlider">
+                        <rect key="frame" x="547" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="7tQ-K8-Sh7"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="lzX-iG-LtJ"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="26" translatesAutoresizingMaskIntoConstraints="NO" id="uoj-ua-fqp" customClass="EqualizerSlider">
+                        <rect key="frame" x="566" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="1bJ-ur-Oo6"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="0Ed-gR-1cb"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="27" translatesAutoresizingMaskIntoConstraints="NO" id="2aq-E2-UeA" customClass="EqualizerSlider">
+                        <rect key="frame" x="586" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="4AT-bd-L0M"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="Itn-6c-xzS"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="28" translatesAutoresizingMaskIntoConstraints="NO" id="9gv-Wd-2i5" customClass="EqualizerSlider">
+                        <rect key="frame" x="605" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="CQl-uv-0ZH"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="cq8-b9-tua"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="29" translatesAutoresizingMaskIntoConstraints="NO" id="Rvd-Av-rse" customClass="EqualizerSlider">
+                        <rect key="frame" x="625" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="uHg-Ir-fDT"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="Z2D-4e-Vjc"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="30" translatesAutoresizingMaskIntoConstraints="NO" id="dvb-hD-7Oi" customClass="EqualizerSlider">
+                        <rect key="frame" x="644" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="v1e-qx-nA6"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="vi5-Zw-zGt"/>
+                        </connections>
+                    </slider>
+                    <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="31" translatesAutoresizingMaskIntoConstraints="NO" id="eZl-bk-YsW" customClass="EqualizerSlider">
+                        <rect key="frame" x="663" y="18" width="24" height="323"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <sliderCell key="cell" controlSize="small" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Jtl-Sr-6Me"/>
+                        <connections>
+                            <action selector="adjustSlider:" target="-2" id="gvf-vg-IuQ"/>
+                        </connections>
+                    </slider>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="432.5" y="-521"/>
+        </window>
+        <arrayController objectClassName="NSDictionary" id="uog-xg-KWw" userLabel="EqPresetBehavior" customClass="EqPresetBehaviorArrayController">
+            <declaredKeys>
+                <string>name</string>
+                <string>slug</string>
+                <string>preference</string>
+            </declaredKeys>
+            <classReference key="objectClass" className="NSDictionary"/>
+        </arrayController>
+        <userDefaultsController representsSharedInstance="YES" id="pqA-8k-29n"/>
+    </objects>
+</document>

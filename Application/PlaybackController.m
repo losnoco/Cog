@@ -43,8 +43,6 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 		seekable = NO;
 		fading = NO;
-		_eqWasOpen = NO;
-		_equi = nil;
 
 		progressBarStatus = -1;
 
@@ -509,114 +507,17 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
-- (void)eqAlloc {
-	// Show a stopped equalizer as a stub
-	OSStatus err;
-	AudioComponentDescription desc;
-
-	desc.componentType = kAudioUnitType_Effect;
-	desc.componentSubType = kAudioUnitSubType_GraphicEQ;
-	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
-	desc.componentFlags = 0;
-	desc.componentFlagsMask = 0;
-
-	AudioComponent comp = NULL;
-
-	desc.componentType = kAudioUnitType_Effect;
-	desc.componentSubType = kAudioUnitSubType_GraphicEQ;
-
-	comp = AudioComponentFindNext(comp, &desc);
-	if(!comp)
-		return;
-
-	err = AudioComponentInstanceNew(comp, &_eq);
-	if(err)
-		return;
-
-	AudioUnitInitialize(_eq);
-}
-
-- (void)eqDealloc {
-	AudioUnitUninitialize(_eq);
-	AudioComponentInstanceDispose(_eq);
-	_eq = nil;
-	_eqStubbed = NO;
-}
-
-- (IBAction)showEq:(id)sender {
-	if(_eq) {
-		if(_equi && [_equi isOpen])
-			[_equi bringToFront];
-		else
-			_equi = [[AUPluginUI alloc] initWithSampler:_eq bringToFront:YES orWindowNumber:0];
-	} else {
-		[self eqAlloc];
-		_eqWasOpen = YES;
-		[self audioPlayer:nil displayEqualizer:_eq];
-		[_equi bringToFront];
-	}
-}
-
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq {
-	if(_equi) {
-		_eqWasOpen = [_equi isOpen];
-		_equi = nil;
-	}
 
 	if(_eq && _eq != eq) {
-		OSStatus err;
-		CFPropertyListRef classData;
-		UInt32 size;
-
-		size = sizeof(classData);
-		err = AudioUnitGetProperty(_eq, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &classData, &size);
-		if(err == noErr) {
-			CFPreferencesSetAppValue(CFSTR("GraphEQ_Preset"), classData, kCFPreferencesCurrentApplication);
-			CFRelease(classData);
-		}
-
-		CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
-
-		// Caller relinquishes EQ to us
-		[self eqDealloc];
+		[equalizerWindowController setEQ:nil];
 	}
 
 	_eq = eq;
 
-	{
-		OSStatus err;
-		ComponentDescription cd;
-		CFPropertyListRef classData;
-		CFDictionaryRef dict;
-		CFNumberRef cfnum;
+	equalizerLoadPreset(eq);
 
-		classData = CFPreferencesCopyAppValue(CFSTR("GraphEQ_Preset"), kCFPreferencesCurrentApplication);
-		if(classData) {
-			dict = (CFDictionaryRef)classData;
-
-			cfnum = (CFNumberRef)(CFDictionaryGetValue(dict, CFSTR("type")));
-			CFNumberGetValue(cfnum, kCFNumberSInt32Type, &cd.componentType);
-			cfnum = (CFNumberRef)(CFDictionaryGetValue(dict, CFSTR("subtype")));
-			CFNumberGetValue(cfnum, kCFNumberSInt32Type, &cd.componentSubType);
-			cfnum = (CFNumberRef)(CFDictionaryGetValue(dict, CFSTR("manufacturer")));
-			CFNumberGetValue(cfnum, kCFNumberSInt32Type, &cd.componentManufacturer);
-
-			if((cd.componentType == kAudioUnitType_Effect) &&
-			   (cd.componentSubType == kAudioUnitSubType_GraphicEQ) &&
-			   (cd.componentManufacturer == kAudioUnitManufacturer_Apple))
-				err = AudioUnitSetProperty(eq, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &classData, sizeof(classData));
-
-			CFRelease(classData);
-		}
-
-		equalizerLoadPreset(eq);
-	}
-
-	if(_eqWasOpen) {
-		NSWindow *window = appController.miniMode ? appController.miniWindow : appController.mainWindow;
-		_equi = [[AUPluginUI alloc] initWithSampler:_eq bringToFront:NO orWindowNumber:window.windowNumber];
-		_eqWasOpen = NO;
-	}
+	[equalizerWindowController setEQ:eq];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(AudioUnit)eq {
@@ -638,16 +539,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 		CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
 
-		if(_equi) {
-			_eqWasOpen = [_equi isOpen];
-		}
+		[equalizerWindowController setEQ:nil];
 
-		_equi = nil;
-		[self eqDealloc];
-
-		if(_eqWasOpen) {
-			[self showEq:nil];
-		}
+		_eq = nil;
 	}
 }
 
