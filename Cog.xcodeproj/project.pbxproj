@@ -125,6 +125,7 @@
 		8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8370D73C277419F700245CE0 /* SQLiteStore.m */; };
 		8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8370D73E2775AE1300245CE0 /* libsqlite3.tbd */; };
 		8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumView.m */; };
+		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
 		8384915918083EAB00E7332D /* infoTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384914318083EAB00E7332D /* infoTemplate.pdf */; };
 		8384915A18083EAB00E7332D /* missingArt@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384914418083EAB00E7332D /* missingArt@2x.png */; };
@@ -946,6 +947,8 @@
 		8377C66127B8CF6300E8BC0F /* SpectrumView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpectrumView.m; path = Visualization/SpectrumView.m; sourceTree = "<group>"; };
 		8377C66227B8CF6300E8BC0F /* SpectrumView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumView.h; path = Visualization/SpectrumView.h; sourceTree = "<group>"; };
 		8377C66427B8CF7A00E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisualizationController.h; path = Audio/Visualization/VisualizationController.h; sourceTree = "<group>"; };
+		8377C6B727B900F000E8BC0F /* SpectrumItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumItem.h; path = Visualization/SpectrumItem.h; sourceTree = "<group>"; };
+		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
 		8384912518080F2D00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		8384913D18083E4E00E7332D /* filetype.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = filetype.icns; sourceTree = "<group>"; };
 		8384914318083EAB00E7332D /* infoTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = infoTemplate.pdf; path = Images/infoTemplate.pdf; sourceTree = "<group>"; };
@@ -1697,6 +1700,8 @@
 				8377C66427B8CF7A00E8BC0F /* VisualizationController.h */,
 				8377C66227B8CF6300E8BC0F /* SpectrumView.h */,
 				8377C66127B8CF6300E8BC0F /* SpectrumView.m */,
+				8377C6B727B900F000E8BC0F /* SpectrumItem.h */,
+				8377C6B827B900F000E8BC0F /* SpectrumItem.m */,
 			);
 			name = Visualization;
 			sourceTree = "<group>";
@@ -2459,6 +2464,7 @@
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
+				8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */,
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
 				177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */,
 				177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */,

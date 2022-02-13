@@ -11,12 +11,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumView : NSImageView {
+@interface SpectrumView : NSView {
 	VisualizationController *visController;
 	NSTimer *timer;
-	NSImage *theImage;
+	BOOL paused;
 	BOOL stopped;
+	BOOL isListening;
+
+	float FFTMax[256];
+
+	NSColor *baseColor;
+	NSColor *peakColor;
+	NSColor *backgroundColor;
 }
+@property(nonatomic) BOOL isListening;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -210,7 +210,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="gpC-Oe-Rog">
-                                                            <rect key="frame" x="234.5" y="3" width="149" height="18"/>
+                                                            <rect key="frame" x="235" y="3" width="149" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1WK-qN-Mgj">
@@ -289,7 +289,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hhB-nv-e78">
-                                                            <rect key="frame" x="540.5" y="3" width="95" height="18"/>
+                                                            <rect key="frame" x="541" y="3" width="95" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tHy-sM-HDB">
@@ -366,7 +366,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="rRl-p9-Awr">
-                                                            <rect key="frame" x="735.5" y="3" width="144" height="18"/>
+                                                            <rect key="frame" x="736" y="3" width="144" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yW6-2w-6mN">
@@ -402,7 +402,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hgh-VE-5kl">
-                                                            <rect key="frame" x="882.5" y="3" width="38" height="18"/>
+                                                            <rect key="frame" x="883" y="3" width="38" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yEY-MI-d3o">
@@ -876,13 +876,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="5E0A643B-09FC-45CF-A562-C56F1E388E62" label="Spectrum" paletteLabel="Spectrum" sizingBehavior="auto" id="gui-fC-qTP">
+                    <toolbarItem implicitItemIdentifier="80D8CDBD-A6E9-47A6-B9C0-213C450E45FA" label="Spectrum" paletteLabel="Spectrum" tag="-1" sizingBehavior="auto" id="NtB-XF-g07" customClass="SpectrumItem">
                         <nil key="toolTip"/>
-                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="Zaq-sS-aTV" customClass="SpectrumView">
+                        <customView key="view" id="lVy-2P-05b" customClass="SpectrumView">
                             <rect key="frame" x="0.0" y="14" width="64" height="26"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="VDu-2p-2bJ"/>
-                        </imageView>
+                        </customView>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
@@ -896,7 +895,7 @@
                     <toolbarItem reference="1630"/>
                     <toolbarItem reference="1629"/>
                     <toolbarItem reference="1529"/>
-                    <toolbarItem reference="gui-fC-qTP"/>
+                    <toolbarItem reference="NtB-XF-g07"/>
                     <toolbarItem reference="1568"/>
                     <toolbarItem reference="1551"/>
                     <toolbarItem reference="1610"/>
@@ -1131,13 +1130,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="1A931C99-28FC-4209-BD5C-38E5CF96F7AF" label="Spectrum" paletteLabel="Spectrum" sizingBehavior="auto" id="K64-ro-2GI">
+                    <toolbarItem implicitItemIdentifier="09140C29-FF34-4BF2-92C8-54C7D9AA4A27" label="Spectrum" paletteLabel="Spectrum" tag="-1" sizingBehavior="auto" id="sf3-l1-fJw" customClass="SpectrumItem">
                         <nil key="toolTip"/>
-                        <imageView key="view" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="F4M-9A-fZv" customClass="SpectrumView">
+                        <customView key="view" id="gyu-hn-EUs" customClass="SpectrumView">
                             <rect key="frame" x="0.0" y="14" width="64" height="26"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="br1-X9-N6H"/>
-                        </imageView>
+                        </customView>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
