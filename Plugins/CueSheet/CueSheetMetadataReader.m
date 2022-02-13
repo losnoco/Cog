@@ -45,7 +45,7 @@
 		// Embedded cuesheet check
 		fileMetadata = [audioMetadataReader metadataForURL:url skipCue:YES];
 
-		NSDictionary *alsoMetadata = [NSClassFromString(@"AudioPropertiesReader") propertiesForURL:url];
+		NSDictionary *alsoMetadata = [NSClassFromString(@"AudioPropertiesReader") propertiesForURL:url skipCue:YES];
 
 		NSString *sheet = [fileMetadata objectForKey:@"cuesheet"];
 		if(!sheet || ![sheet length]) sheet = [alsoMetadata objectForKey:@"cuesheet"];

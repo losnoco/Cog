@@ -486,7 +486,7 @@ static PluginController *sharedPluginController = nil;
 }
 
 // If no properties reader is defined, use the decoder's properties.
-- (NSDictionary *)propertiesForURL:(NSURL *)url {
+- (NSDictionary *)propertiesForURL:(NSURL *)url skipCue:(BOOL)skip {
 	NSString *urlScheme = [url scheme];
 	if([urlScheme isEqualToString:@"http"] ||
 	   [urlScheme isEqualToString:@"https"])
@@ -531,7 +531,7 @@ static PluginController *sharedPluginController = nil;
 	}
 
 	{
-		id<CogDecoder> decoder = [self audioDecoderForSource:source skipCue:NO];
+		id<CogDecoder> decoder = [self audioDecoderForSource:source skipCue:skip];
 		if(![decoder open:source]) {
 			return nil;
 		}

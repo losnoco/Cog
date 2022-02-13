@@ -93,7 +93,7 @@
 - (id<CogSource>)audioSourceForURL:(NSURL *)url;
 - (NSArray *)urlsForContainerURL:(NSURL *)url;
 - (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip;
-- (NSDictionary *)propertiesForURL:(NSURL *)url;
+- (NSDictionary *)propertiesForURL:(NSURL *)url skipCue:(BOOL)skip;
 - (id<CogDecoder>)audioDecoderForSource:(id<CogSource>)source skipCue:(BOOL)skip;
 
 - (int)putMetadataInURL:(NSURL *)url;

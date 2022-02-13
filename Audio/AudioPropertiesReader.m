@@ -15,7 +15,13 @@
 
 + (NSDictionary *)propertiesForURL:(NSURL *)url {
 	@autoreleasepool {
-		return [[PluginController sharedPluginController] propertiesForURL:url];
+		return [[PluginController sharedPluginController] propertiesForURL:url skipCue:NO];
+	}
+}
+
++ (NSDictionary *)propertiesForURL:(NSURL *)url skipCue:(BOOL)skip {
+	@autoreleasepool {
+		return [[PluginController sharedPluginController] propertiesForURL:url skipCue:skip];
 	}
 }
 
