@@ -152,6 +152,10 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 			volumeScale = 0.5;
 		}
 
+		if(_self->eqEnabled) {
+			volumeScale *= _self->eqPreamp;
+		}
+
 		scaleBuffersByVolume(ioData, _self->volume * volumeScale);
 
 		if(amountRead < amountToRead) {
@@ -216,6 +220,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		BOOL enabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
 
 		[self setEqualizerEnabled:enabled];
+	} else if([keyPath isEqualToString:@"values.eqPreamp"]) {
+		float preamp = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"eqPreamp"];
+		eqPreamp = pow(10.0, preamp / 20.0);
 	}
 }
 
@@ -746,6 +753,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:NULL];
 	observersapplied = YES;
 
 	return (err == nil);
@@ -777,6 +785,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		observersapplied = NO;
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable"];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp"];
 	}
 	if(stopNext && started && !paused) {
 		while(![[outputController buffer] isEmpty]) {

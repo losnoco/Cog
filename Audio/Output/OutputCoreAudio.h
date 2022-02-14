@@ -56,6 +56,7 @@
 	BOOL observersapplied;
 
 	float volume;
+	float eqPreamp;
 
 	AVAudioFormat *_deviceFormat;
 

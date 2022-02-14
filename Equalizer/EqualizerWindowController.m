@@ -339,6 +339,8 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	[super windowDidLoad];
 
 	[self changePreset:presetSelector];
+
+	[self handleMouseEvents];
 }
 
 - (void)setEQ:(AudioUnit)au {
@@ -453,27 +455,25 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 
 		[eqPreamp setFloatValue:-maxValue];
 		[[NSUserDefaults standardUserDefaults] setFloat:-maxValue forKey:[cog_equalizer_band_settings objectAtIndex:0]];
-
-		if(au)
-			equalizerLoadPreset(au);
 	}
 }
 
 - (IBAction)adjustSlider:(id)sender {
 	NSInteger tag = [sender tag];
 
+	NSInteger count = [equalizer_presets_processed count];
+	if([presetSelector indexOfSelectedItem] != count) {
+		[presetSelector selectItemAtIndex:count];
+	}
+
 	if(tag == 0) {
 		float preamp = [eqPreamp floatValue];
 		[[NSUserDefaults standardUserDefaults] setFloat:preamp forKey:[cog_equalizer_band_settings objectAtIndex:0]];
-
-		equalizerLoadPreset(au);
 	} else if(tag < [cog_equalizer_band_settings count]) {
-		float preamp = [eqPreamp floatValue];
-
 		float value = [sender floatValue];
 		[[NSUserDefaults standardUserDefaults] setFloat:value forKey:[cog_equalizer_band_settings objectAtIndex:tag]];
 		if(au)
-			AudioUnitSetParameter(au, (int)(tag - 1), kAudioUnitScope_Global, 0, value + preamp, 0);
+			AudioUnitSetParameter(au, (int)(tag - 1), kAudioUnitScope_Global, 0, value, 0);
 	}
 }
 
@@ -481,6 +481,8 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	NSInteger index = [sender indexOfSelectedItem];
 
 	if(index >= 0 && index < [equalizer_presets_processed count]) {
+		[[NSUserDefaults standardUserDefaults] setInteger:index forKey:@"GraphicEQpreset"];
+
 		NSDictionary *preset = [equalizer_presets_processed objectAtIndex:index];
 
 		equalizerApplyPreset(au, preset);
@@ -500,6 +502,28 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 			}
 		}
 	}
+}
+
+- (void)handleMouseEvents {
+	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskRightMouseDown | NSEventMaskRightMouseDragged
+	                                      handler:^NSEvent *_Nullable(NSEvent *_Nonnull theEvent) {
+		                                      if([theEvent window] == [self window]) {
+			                                      NSPoint event_location = [theEvent locationInWindow];
+			                                      NSPoint local_point = [self.window.contentView convertPoint:event_location fromView:nil];
+
+			                                      for(NSInteger i = 0; i < [cog_equalizer_band_settings count]; ++i) {
+				                                      NSSlider *slider = [self sliderForIndex:i];
+				                                      if(NSPointInRect(local_point, [slider frame])) {
+					                                      float sliderPosition = (MAX(MIN(local_point.y, 344.0), 40.0) - 40.0) / 152.0 - 1.0;
+					                                      [slider setFloatValue:sliderPosition * 20.0];
+					                                      [self adjustSlider:slider];
+					                                      break;
+				                                      }
+			                                      }
+		                                      }
+
+		                                      return theEvent;
+	                                      }];
 }
 
 @end
