@@ -462,8 +462,8 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	NSInteger tag = [sender tag];
 
 	NSInteger count = [equalizer_presets_processed count];
-	if([presetSelector indexOfSelectedItem] != count) {
-		[presetSelector selectItemAtIndex:count];
+	if([[NSUserDefaults standardUserDefaults] integerForKey:@"GraphicEQpreset"] != count) {
+		[[NSUserDefaults standardUserDefaults] setInteger:count forKey:@"GraphicEQpreset"];
 	}
 
 	if(tag == 0) {
@@ -481,8 +481,6 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	NSInteger index = [sender indexOfSelectedItem];
 
 	if(index >= 0 && index < [equalizer_presets_processed count]) {
-		[[NSUserDefaults standardUserDefaults] setInteger:index forKey:@"GraphicEQpreset"];
-
 		NSDictionary *preset = [equalizer_presets_processed objectAtIndex:index];
 
 		equalizerApplyPreset(au, preset);

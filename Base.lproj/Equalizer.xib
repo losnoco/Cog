@@ -55,7 +55,7 @@
             <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <userDefaultsController representsSharedInstance="YES" id="pqA-8k-29n"/>
-        <window title="Equalizer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" id="9Xl-RA-0SW" customClass="NSPanel">
+        <window title="Equalizer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" visibleAtLaunch="NO" appearanceType="darkAqua" frameAutosaveName="" animationBehavior="default" titlebarAppearsTransparent="YES" id="9Xl-RA-0SW" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES" HUD="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="136" y="163" width="699" height="428"/>
@@ -130,8 +130,8 @@
                         <connections>
                             <action selector="changePreset:" target="-2" id="til-bk-KMf"/>
                             <binding destination="uog-xg-KWw" name="content" keyPath="arrangedObjects" id="w9y-6C-C96"/>
-                            <binding destination="uog-xg-KWw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="w9y-6C-C96" id="PuX-Ho-OaR"/>
                             <binding destination="uog-xg-KWw" name="contentValues" keyPath="arrangedObjects.name" previousBinding="PuX-Ho-OaR" id="pqm-lS-bj6"/>
+                            <binding destination="uog-xg-KWw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="w9y-6C-C96" id="PuX-Ho-OaR"/>
                             <binding destination="pqA-8k-29n" name="selectedIndex" keyPath="values.GraphicEQpreset" previousBinding="pqm-lS-bj6" id="MGh-gB-ei5"/>
                         </connections>
                     </popUpButton>
@@ -145,7 +145,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FAC-rf-tWd">
-                        <rect key="frame" x="68" y="360" width="37" height="14"/>
+                        <rect key="frame" x="80" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="20Hz" id="XmE-PI-PFN">
                             <font key="font" metaFont="smallSystem"/>
@@ -154,7 +154,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sw4-4e-aOq">
-                        <rect key="frame" x="86" y="377" width="37" height="14"/>
+                        <rect key="frame" x="99" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="25" id="cO5-1C-qEl">
                             <font key="font" metaFont="smallSystem"/>
@@ -163,7 +163,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NTQ-2g-I1W">
-                        <rect key="frame" x="106" y="360" width="37" height="14"/>
+                        <rect key="frame" x="118" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="31.5" id="1dn-Vq-wWg">
                             <font key="font" metaFont="smallSystem"/>
@@ -172,7 +172,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z6i-Hz-3ht">
-                        <rect key="frame" x="125" y="377" width="37" height="14"/>
+                        <rect key="frame" x="137" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="40" id="ihA-eC-L0F">
                             <font key="font" metaFont="smallSystem"/>
@@ -181,7 +181,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jni-ni-MKl">
-                        <rect key="frame" x="145" y="360" width="37" height="14"/>
+                        <rect key="frame" x="156" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="50" id="UOZ-JN-QIr">
                             <font key="font" metaFont="smallSystem"/>
@@ -190,7 +190,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UBz-f3-ryz">
-                        <rect key="frame" x="164" y="377" width="37" height="14"/>
+                        <rect key="frame" x="175" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="63" id="0aZ-qR-VQB">
                             <font key="font" metaFont="smallSystem"/>
@@ -199,7 +199,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="inT-Ep-ggK">
-                        <rect key="frame" x="184" y="360" width="37" height="14"/>
+                        <rect key="frame" x="194" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="80" id="0yY-ZG-55W">
                             <font key="font" metaFont="smallSystem"/>
@@ -208,7 +208,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p04-0s-eWp">
-                        <rect key="frame" x="203" y="377" width="37" height="14"/>
+                        <rect key="frame" x="213" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="100" id="B9P-B7-9bf">
                             <font key="font" metaFont="smallSystem"/>
@@ -217,7 +217,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rjc-rk-1Cx">
-                        <rect key="frame" x="223" y="360" width="37" height="14"/>
+                        <rect key="frame" x="232" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="125" id="opU-zn-biU">
                             <font key="font" metaFont="smallSystem"/>
@@ -226,7 +226,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pUy-Cr-cyb">
-                        <rect key="frame" x="242" y="377" width="37" height="14"/>
+                        <rect key="frame" x="251" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="160" id="TnM-7Z-BUu">
                             <font key="font" metaFont="smallSystem"/>
@@ -235,7 +235,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="01F-8d-LuC">
-                        <rect key="frame" x="261" y="360" width="37" height="14"/>
+                        <rect key="frame" x="270" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="200" id="Ze7-D0-V5z">
                             <font key="font" metaFont="smallSystem"/>
@@ -244,7 +244,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wta-tQ-Hq9">
-                        <rect key="frame" x="281" y="377" width="37" height="14"/>
+                        <rect key="frame" x="289" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="250" id="efh-nh-mDD">
                             <font key="font" metaFont="smallSystem"/>
@@ -253,7 +253,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Va-TW-Nge">
-                        <rect key="frame" x="300" y="360" width="37" height="14"/>
+                        <rect key="frame" x="308" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="315" id="g10-wn-Agu">
                             <font key="font" metaFont="smallSystem"/>
@@ -262,7 +262,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ToN-4U-rFS">
-                        <rect key="frame" x="320" y="377" width="37" height="14"/>
+                        <rect key="frame" x="327" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="400" id="ERP-9r-xp9">
                             <font key="font" metaFont="smallSystem"/>
@@ -271,7 +271,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ros-c6-gIQ">
-                        <rect key="frame" x="339" y="360" width="37" height="14"/>
+                        <rect key="frame" x="346" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="500" id="JVJ-LV-LDc">
                             <font key="font" metaFont="smallSystem"/>
@@ -280,7 +280,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aID-Jw-gWY">
-                        <rect key="frame" x="359" y="377" width="37" height="14"/>
+                        <rect key="frame" x="365" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="630" id="bqX-Dk-bJ9">
                             <font key="font" metaFont="smallSystem"/>
@@ -289,7 +289,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uZo-Lr-zPf">
-                        <rect key="frame" x="378" y="360" width="37" height="14"/>
+                        <rect key="frame" x="384" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="800" id="eB6-XM-qUy">
                             <font key="font" metaFont="smallSystem"/>
@@ -298,7 +298,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a6q-5v-wHo">
-                        <rect key="frame" x="398" y="377" width="37" height="14"/>
+                        <rect key="frame" x="403" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="1k" id="xM8-HB-8XL">
                             <font key="font" metaFont="smallSystem"/>
@@ -307,7 +307,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E9c-YK-nXs">
-                        <rect key="frame" x="417" y="360" width="37" height="14"/>
+                        <rect key="frame" x="422" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="1.2" id="A7Y-xq-LdW">
                             <font key="font" metaFont="smallSystem"/>
@@ -316,7 +316,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fJv-SF-RUK">
-                        <rect key="frame" x="436" y="377" width="37" height="14"/>
+                        <rect key="frame" x="441" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="1.6" id="qj9-4A-tfF">
                             <font key="font" metaFont="smallSystem"/>
@@ -325,7 +325,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SCe-Vt-KgK">
-                        <rect key="frame" x="456" y="360" width="37" height="14"/>
+                        <rect key="frame" x="460" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="2" id="TYp-Ae-UMg">
                             <font key="font" metaFont="smallSystem"/>
@@ -334,7 +334,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6jv-8k-QaR">
-                        <rect key="frame" x="475" y="377" width="37" height="14"/>
+                        <rect key="frame" x="479" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="2.5" id="Nc6-vb-nIc">
                             <font key="font" metaFont="smallSystem"/>
@@ -343,7 +343,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XKu-pa-fxj">
-                        <rect key="frame" x="495" y="360" width="37" height="14"/>
+                        <rect key="frame" x="498" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="3.1" id="kdf-iA-xrZ">
                             <font key="font" metaFont="smallSystem"/>
@@ -352,7 +352,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2rG-G6-aS3">
-                        <rect key="frame" x="514" y="377" width="37" height="14"/>
+                        <rect key="frame" x="517" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="4" id="e6h-zW-Op6">
                             <font key="font" metaFont="smallSystem"/>
@@ -361,7 +361,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wwj-NI-a0G">
-                        <rect key="frame" x="534" y="360" width="37" height="14"/>
+                        <rect key="frame" x="536" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="5" id="ke7-4o-FJG">
                             <font key="font" metaFont="smallSystem"/>
@@ -370,7 +370,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QXL-FF-Fts">
-                        <rect key="frame" x="553" y="377" width="37" height="14"/>
+                        <rect key="frame" x="555" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="6.3" id="neW-5g-R0i">
                             <font key="font" metaFont="smallSystem"/>
@@ -379,7 +379,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kwe-PS-Vfb">
-                        <rect key="frame" x="573" y="360" width="37" height="14"/>
+                        <rect key="frame" x="574" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="8" id="8bT-Kt-cyl">
                             <font key="font" metaFont="smallSystem"/>
@@ -388,7 +388,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rbb-bm-Rxh">
-                        <rect key="frame" x="592" y="377" width="37" height="14"/>
+                        <rect key="frame" x="593" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="10" id="3uY-U8-fJj">
                             <font key="font" metaFont="smallSystem"/>
@@ -397,7 +397,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TKZ-Dm-JAs">
-                        <rect key="frame" x="612" y="360" width="37" height="14"/>
+                        <rect key="frame" x="613" y="360" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="12" id="UEO-zv-YmO">
                             <font key="font" metaFont="smallSystem"/>
@@ -406,7 +406,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rnf-kZ-jIp">
-                        <rect key="frame" x="631" y="377" width="37" height="14"/>
+                        <rect key="frame" x="632" y="377" width="37" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="16" id="e71-GI-ntH">
                             <font key="font" metaFont="smallSystem"/>
@@ -570,230 +570,259 @@
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="q5Y-YY-f1c"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="Ev2-c8-hOW"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eqPreamp" id="Muj-Mc-ncn"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="lLR-af-hGY" customClass="EqualizerSlider">
-                        <rect key="frame" x="74" y="31" width="24" height="323"/>
+                        <rect key="frame" x="87" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="UyO-pK-LqS"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="aM8-Dm-ePY"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq20Hz" id="pMy-Ww-jZ4"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="sLa-zF-p0k" customClass="EqualizerSlider">
-                        <rect key="frame" x="93" y="31" width="24" height="323"/>
+                        <rect key="frame" x="106" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="7QB-9t-2ej"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="cdk-e3-hwI"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq25Hz" id="Bt6-XK-jm8"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="4CY-XP-DnE" customClass="EqualizerSlider">
-                        <rect key="frame" x="113" y="31" width="24" height="323"/>
+                        <rect key="frame" x="125" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="cZk-wV-Htd"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="bje-5q-95L"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq31p5Hz" id="wiw-Qm-aYp"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="cx4-Kp-xhA" customClass="EqualizerSlider">
-                        <rect key="frame" x="132" y="31" width="24" height="323"/>
+                        <rect key="frame" x="144" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="wuz-Hf-4gw"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="MeR-VO-Eji"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq40Hz" id="54k-40-tgO"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="YkG-vM-iS2" customClass="EqualizerSlider">
-                        <rect key="frame" x="152" y="31" width="24" height="323"/>
+                        <rect key="frame" x="163" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Oso-WI-CZG"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="Mv1-uY-AXo"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq50Hz" id="BlG-mw-TSH"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="6Vl-AP-E02" customClass="EqualizerSlider">
-                        <rect key="frame" x="171" y="31" width="24" height="323"/>
+                        <rect key="frame" x="182" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="jEl-i1-4Mf"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="d4W-8I-f0H"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq63Hz" id="5Dr-Ai-lRM"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="7" translatesAutoresizingMaskIntoConstraints="NO" id="Fkt-vd-ehq" customClass="EqualizerSlider">
-                        <rect key="frame" x="191" y="31" width="24" height="323"/>
+                        <rect key="frame" x="201" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="i5V-Mp-Vg9"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="qkx-kU-ege"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq80Hz" id="BuT-fp-RBS"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="cqj-VM-PHg" customClass="EqualizerSlider">
-                        <rect key="frame" x="210" y="31" width="24" height="323"/>
+                        <rect key="frame" x="220" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="fdz-cf-c5G"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="iQb-aX-9Ms"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq100Hz" id="sNn-OD-WLJ"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="9" translatesAutoresizingMaskIntoConstraints="NO" id="YgG-a7-sIS" customClass="EqualizerSlider">
-                        <rect key="frame" x="230" y="31" width="24" height="323"/>
+                        <rect key="frame" x="239" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="EsZ-ih-JO4"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="99N-lE-ksG"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq125Hz" id="lLY-qU-eAO"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="10" translatesAutoresizingMaskIntoConstraints="NO" id="QF6-zW-f40" customClass="EqualizerSlider">
-                        <rect key="frame" x="249" y="31" width="24" height="323"/>
+                        <rect key="frame" x="258" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="EYz-KW-89c"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="AS8-xR-yTv"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq160Hz" id="cjS-nz-IuJ"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="11" translatesAutoresizingMaskIntoConstraints="NO" id="fot-dO-AJ4" customClass="EqualizerSlider">
-                        <rect key="frame" x="268" y="31" width="24" height="323"/>
+                        <rect key="frame" x="277" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="T98-N2-rfA"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="32F-HV-jzB"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq200Hz" id="dZ0-iB-hSc"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="12" translatesAutoresizingMaskIntoConstraints="NO" id="6mP-oR-YuT" customClass="EqualizerSlider">
-                        <rect key="frame" x="288" y="31" width="24" height="323"/>
+                        <rect key="frame" x="296" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="XJr-7W-cuq"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="GJ1-Qk-oSi"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq250Hz" id="aol-7z-79t"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="13" translatesAutoresizingMaskIntoConstraints="NO" id="eyI-QO-i3c" customClass="EqualizerSlider">
-                        <rect key="frame" x="307" y="31" width="24" height="323"/>
+                        <rect key="frame" x="315" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="F7g-b9-CEc"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="cZB-c4-aC5"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq315Hz" id="Pye-bC-z6w"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="14" translatesAutoresizingMaskIntoConstraints="NO" id="SVQ-fL-RRn" customClass="EqualizerSlider">
-                        <rect key="frame" x="327" y="31" width="24" height="323"/>
+                        <rect key="frame" x="334" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="jdf-Fi-xOf"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="xkr-qj-FtR"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq400Hz" id="Yn7-yI-7Xb"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="15" translatesAutoresizingMaskIntoConstraints="NO" id="Itg-co-fNK" customClass="EqualizerSlider">
-                        <rect key="frame" x="346" y="31" width="24" height="323"/>
+                        <rect key="frame" x="353" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="9vh-yD-NMw"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="hka-Rb-OYc"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq500Hz" id="E6m-KJ-LM8"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="16" translatesAutoresizingMaskIntoConstraints="NO" id="76t-pR-weF" customClass="EqualizerSlider">
-                        <rect key="frame" x="366" y="31" width="24" height="323"/>
+                        <rect key="frame" x="372" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="owl-Fd-Tuf"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="c8t-OA-wsG"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq630Hz" id="iER-yK-x3f"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="17" translatesAutoresizingMaskIntoConstraints="NO" id="T8S-Wk-8NE" customClass="EqualizerSlider">
-                        <rect key="frame" x="385" y="31" width="24" height="323"/>
+                        <rect key="frame" x="391" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="yZc-Ef-Gsd"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="gtw-aF-pBq"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq800Hz" id="Bql-AD-hOR"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="18" translatesAutoresizingMaskIntoConstraints="NO" id="IBS-G8-T6T" customClass="EqualizerSlider">
-                        <rect key="frame" x="405" y="31" width="24" height="323"/>
+                        <rect key="frame" x="410" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="pzb-IZ-ba6"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="OGB-3j-BBv"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq1kHz" id="IEp-Xg-ApV"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="19" translatesAutoresizingMaskIntoConstraints="NO" id="cSD-1T-aLl" customClass="EqualizerSlider">
-                        <rect key="frame" x="424" y="31" width="24" height="323"/>
+                        <rect key="frame" x="429" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="z1f-Xl-Ew6"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="uHy-IL-oFY"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq1p2kHz" id="u8l-rP-9Uh"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="20" translatesAutoresizingMaskIntoConstraints="NO" id="LdD-NE-Cux" customClass="EqualizerSlider">
-                        <rect key="frame" x="443" y="31" width="24" height="323"/>
+                        <rect key="frame" x="448" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="tiP-PS-dj4"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="J94-yN-eIM"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq1p6kHz" id="umZ-aV-8rD"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="21" translatesAutoresizingMaskIntoConstraints="NO" id="h0q-68-n3g" customClass="EqualizerSlider">
-                        <rect key="frame" x="463" y="31" width="24" height="323"/>
+                        <rect key="frame" x="467" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="lUp-Tx-EwS"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="dtY-Ji-dQn"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq2kHz" id="STc-8C-lsj"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="22" translatesAutoresizingMaskIntoConstraints="NO" id="cTK-DZ-pfX" customClass="EqualizerSlider">
-                        <rect key="frame" x="482" y="31" width="24" height="323"/>
+                        <rect key="frame" x="486" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="yfM-fr-JNZ"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="Y58-2y-2Qd"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq2p5kHz" id="uAC-zX-juJ"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="23" translatesAutoresizingMaskIntoConstraints="NO" id="j3y-QN-OgT" customClass="EqualizerSlider">
-                        <rect key="frame" x="502" y="31" width="24" height="323"/>
+                        <rect key="frame" x="505" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="qMO-8a-N9n"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="oBc-K4-KXq"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq3p1kHz" id="9A5-hd-T2f"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="24" translatesAutoresizingMaskIntoConstraints="NO" id="iyT-Qo-8MC" customClass="EqualizerSlider">
-                        <rect key="frame" x="521" y="31" width="24" height="323"/>
+                        <rect key="frame" x="524" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="1JW-Qo-faU"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="ZAt-yQ-xev"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq4kHz" id="leo-GN-9DU"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="25" translatesAutoresizingMaskIntoConstraints="NO" id="bfU-Le-6xf" customClass="EqualizerSlider">
-                        <rect key="frame" x="541" y="31" width="24" height="323"/>
+                        <rect key="frame" x="543" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="vAX-WY-8J0"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="5ip-Ep-RlM"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq5kHz" id="H4W-tK-ele"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="26" translatesAutoresizingMaskIntoConstraints="NO" id="E6p-Oe-EVK" customClass="EqualizerSlider">
-                        <rect key="frame" x="560" y="31" width="24" height="323"/>
+                        <rect key="frame" x="562" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="ta7-ax-aIQ"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="RWb-h0-Gqx"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq6p3kHz" id="R30-Lc-Xe1"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="27" translatesAutoresizingMaskIntoConstraints="NO" id="6H2-f3-QQh" customClass="EqualizerSlider">
-                        <rect key="frame" x="580" y="31" width="24" height="323"/>
+                        <rect key="frame" x="581" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="LlO-h6-EIL"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="UIL-ZS-fU9"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq8kHz" id="rAt-E9-ofG"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="28" translatesAutoresizingMaskIntoConstraints="NO" id="Pxa-uX-L3W" customClass="EqualizerSlider">
-                        <rect key="frame" x="599" y="31" width="24" height="323"/>
+                        <rect key="frame" x="600" y="31" width="24" height="323"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Vqj-bz-EZv"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="x3B-rt-7ul"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq10kHz" id="cXN-fK-Gmb"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="29" translatesAutoresizingMaskIntoConstraints="NO" id="ytP-fB-H9O" customClass="EqualizerSlider">
@@ -802,6 +831,7 @@
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="vBv-Al-VEn"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="U58-Kh-7yU"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq12kHz" id="5S2-q8-0IG"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="30" translatesAutoresizingMaskIntoConstraints="NO" id="faM-PE-KPD" customClass="EqualizerSlider">
@@ -810,6 +840,7 @@
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="Q0h-Tr-1Mz"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="l6w-Pz-gz7"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq16kHz" id="2xF-Bp-EkQ"/>
                         </connections>
                     </slider>
                     <slider horizontalHuggingPriority="750" fixedFrame="YES" tag="31" translatesAutoresizingMaskIntoConstraints="NO" id="7ZV-TF-Sqp" customClass="EqualizerSlider">
@@ -818,6 +849,7 @@
                         <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-20" maxValue="20" tickMarkPosition="right" sliderType="linear" id="YDf-EL-Qvt"/>
                         <connections>
                             <action selector="adjustSlider:" target="-2" id="zqZ-vs-gxd"/>
+                            <binding destination="pqA-8k-29n" name="value" keyPath="values.eq20kHz" id="ujf-GW-iy0"/>
                         </connections>
                     </slider>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sTm-FX-lSj">
