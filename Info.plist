@@ -932,6 +932,21 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>aiff</string>
+				<string>aif</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>aiff.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Audio Interchange File Format</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>vgm</string>
 				<string>vgz</string>
 				<string>s98</string>
