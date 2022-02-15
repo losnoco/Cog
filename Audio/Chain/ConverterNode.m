@@ -631,7 +631,9 @@ tryagain:
 			if(!skipResampler && !is_preextrapolated_) {
 				size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
 				size_t prime = min(samples_in_buffer, PRIME_LEN_);
-				size_t newSize = N_samples_to_add_ * floatFormat.mBytesPerPacket;
+				size_t _N_samples_to_add_ = N_samples_to_add_;
+				if(dsd2pcm) _N_samples_to_add_ += dsd2pcmLatency;
+				size_t newSize = _N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				newSize += bytesReadFromInput;
 
 				if(newSize > inputBufferSize) {
@@ -650,8 +652,8 @@ tryagain:
 
 				memmove(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer + bytesToSkip, bytesReadFromInput);
 
-				lpc_extrapolate_bkwd(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
-				bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
+				lpc_extrapolate_bkwd(inputBuffer + _N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, _N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+				bytesReadFromInput += _N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				latencyEaten = N_samples_to_drop_;
 				if(dsd2pcm) latencyEaten += (int)ceil(dsd2pcmLatency * sampleRatio);
 				is_preextrapolated_ = 2;
@@ -662,11 +664,6 @@ tryagain:
 
 			if(is_postextrapolated_ == 1) {
 				size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
-
-				if(dsd2pcm) {
-					if(samples_in_buffer >= dsd2pcmLatency)
-						samples_in_buffer -= dsd2pcmLatency;
-				}
 
 				size_t prime = min(samples_in_buffer, PRIME_LEN_);
 
