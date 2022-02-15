@@ -429,7 +429,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	UInt32 ioNumberPackets;
 	int amountReadFromFC;
 	int amountRead = 0;
-	int amountToSkip;
 	int amountToIgnorePostExtrapolated = 0;
 
 	if(stopping)
@@ -462,18 +461,11 @@ tryagain:
 				ioNumberPackets = ((uint32_t)(ioNumberPackets / sampleRatio) + 15) & ~15;
 			}
 
-			amountToSkip = 0;
-			if(dsd2pcm && !is_preextrapolated_) {
-				amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
-				ioNumberPackets += dsd2pcmLatency;
-			}
-
 			size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
 			if(!inputBuffer || inputBufferSize < newSize)
 				inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
 
 			ssize_t amountToWrite = ioNumberPackets * inputFormat.mBytesPerPacket;
-			amountToWrite -= amountToSkip;
 
 			ssize_t bytesReadFromInput = 0;
 
@@ -501,7 +493,7 @@ tryagain:
 				size_t bytesRead = frameCount * inf.mBytesPerPacket;
 				if(frameCount) {
 					NSData *samples = [chunk removeSamples:frameCount];
-					memcpy(inputBuffer + bytesReadFromInput + amountToSkip, [samples bytes], bytesRead);
+					memcpy(inputBuffer + bytesReadFromInput, [samples bytes], bytesRead);
 					lastChunkIn = [[AudioChunk alloc] init];
 					[lastChunkIn setFormat:inf];
 					[lastChunkIn setChannelConfig:config];
@@ -519,10 +511,9 @@ tryagain:
 			if(stopping || paused || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
 				if(!skipResampler && !is_postextrapolated_) {
 					if(dsd2pcm) {
-						amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
+						uint32_t amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
 						memset(inputBuffer + bytesReadFromInput, 0x55, amountToSkip);
 						bytesReadFromInput += amountToSkip;
-						amountToSkip = 0;
 					}
 					is_postextrapolated_ = 1;
 				} else if(!is_postextrapolated_ && dsd2pcm) {
@@ -545,19 +536,11 @@ tryagain:
 					memcpy(inputBuffer, [samples bytes], bytesRead);
 				}
 				bytesReadFromInput += bytesRead;
-				amountToSkip = 0;
 			}
 
 			if(!bytesReadFromInput) {
 				convertEntered = NO;
 				return amountRead;
-			}
-
-			bytesReadFromInput += amountToSkip;
-
-			if(dsd2pcm && amountToSkip) {
-				memset(inputBuffer, 0x55, amountToSkip);
-				dsdLatencyEaten = (int)ceil(dsd2pcmLatency * sampleRatio);
 			}
 
 			if(bytesReadFromInput && isBigEndian) {
@@ -670,7 +653,7 @@ tryagain:
 				lpc_extrapolate_bkwd(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
 				bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				latencyEaten = N_samples_to_drop_;
-				if(dsd2pcm) latencyEaten += dsdLatencyEaten;
+				if(dsd2pcm) latencyEaten += (int)ceil(dsd2pcmLatency * sampleRatio);
 				is_preextrapolated_ = 2;
 			} else if(dsd2pcm && !is_preextrapolated_) {
 				latencyEaten = dsd2pcmLatency;
@@ -693,19 +676,9 @@ tryagain:
 					inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
 				}
 
-				// And now that we've reached the end, we eat slightly less, due to the filter size
-				int samplesLatency = 0;
-				if(dsd2pcm) samplesLatency += dsd2pcmLatency;
-				samplesLatency = (int)ceil(samplesLatency * sampleRatio);
-
 				lpc_extrapolate_fwd(inputBuffer, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
 				bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				latencyEatenPost = N_samples_to_drop_;
-				if(latencyEatenPost > samplesLatency) {
-					latencyEatenPost -= samplesLatency;
-				} else {
-					latencyEatenPost = 0;
-				}
 				is_postextrapolated_ = 2;
 			} else if(is_postextrapolated_ == 3) { // skip end of DSD output
 				latencyEatenPost = dsd2pcmLatency;
