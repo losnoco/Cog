@@ -95,8 +95,6 @@
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8305968D277F049600EBFAAE /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830596E7277F05E200EBFAAE /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 830C379F27B95E3000E02BB0 /* Equalizer.xib */; };
 		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
 		830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C37F227B9956C00E02BB0 /* analyzer.c */; };
@@ -123,6 +121,12 @@
 		835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 835F00B8279BD1CD00055FCF /* SecondsFormatter.m */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
+		836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C427BB919300BF35B2 /* libogg.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836EF0CB27BB91EE00BF35B2 /* libFLAC.8.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C727BB91BC00BF35B2 /* libFLAC.8.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836EF0E027BB98A800BF35B2 /* libopus.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0CC27BB94E100BF35B2 /* libopus.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836EF0E127BB98AB00BF35B2 /* libopusfile.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8314D6411A354DFF00EEE8E6 /* sidplay.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8370D73C277419F700245CE0 /* SQLiteStore.m */; };
@@ -361,48 +365,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8359FF3C17FEF39F0060F3ED;
 			remoteInfo = File_Extractor;
-		};
-		8305968C277F049600EBFAAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83059684277F049600EBFAAE /* Ogg.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D07F2C80486CC7A007CD1D0;
-			remoteInfo = Ogg;
-		};
-		8305968E277F049600EBFAAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83059684277F049600EBFAAE /* Ogg.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 734FB2E50B18B33E00D561D7;
-			remoteInfo = "libogg (static)";
-		};
-		830596E6277F05E200EBFAAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 730F23F1091827B100AB638C;
-			remoteInfo = Vorbis;
-		};
-		830596E8277F05E200EBFAAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 738835E40B18F870005C7A69;
-			remoteInfo = "libvorbis (static)";
-		};
-		830596EA277F05E200EBFAAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 738836130B190488005C7A69;
-			remoteInfo = "libvorbisenc (static)";
-		};
-		830596EC277F05E200EBFAAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 738836220B1905E5005C7A69;
-			remoteInfo = "libvorbisfile (static)";
 		};
 		830B62B220E4EF89004A74B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -739,13 +701,17 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				836EF0E127BB98AB00BF35B2 /* libopusfile.0.dylib in CopyFiles */,
+				836EF0E027BB98A800BF35B2 /* libopus.0.dylib in CopyFiles */,
+				836EF0CB27BB91EE00BF35B2 /* libFLAC.8.dylib in CopyFiles */,
+				836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */,
+				836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */,
+				836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */,
 				83AA7D07279EBCAF00087AA4 /* libswresample.4.dylib in CopyFiles */,
 				83AA7D06279EBCAD00087AA4 /* libavutil.57.dylib in CopyFiles */,
 				83AA7D05279EBCAB00087AA4 /* libavformat.59.dylib in CopyFiles */,
 				83AA7D04279EBCA900087AA4 /* libavcodec.59.dylib in CopyFiles */,
 				83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in CopyFiles */,
-				830596EE277F05EE00EBFAAE /* Vorbis.framework in CopyFiles */,
-				83059690277F04AB00EBFAAE /* Ogg.framework in CopyFiles */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */,
 				ED69CBCA25BE32E80090B90D /* MASShortcut.framework in CopyFiles */,
 				838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */,
@@ -912,8 +878,6 @@
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
-		83059684277F049600EBFAAE /* Ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Ogg.xcodeproj; path = Frameworks/Ogg/macosx/Ogg.xcodeproj; sourceTree = "<group>"; };
-		830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Vorbis.xcodeproj; path = Frameworks/Vorbis/macosx/Vorbis.xcodeproj; sourceTree = "<group>"; };
 		830C37A027B95E3000E02BB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Equalizer.xib; sourceTree = "<group>"; };
 		830C37A327B95EB300E02BB0 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EqualizerWindowController.h; path = Equalizer/EqualizerWindowController.h; sourceTree = "<group>"; };
 		830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = EqualizerWindowController.m; path = Equalizer/EqualizerWindowController.m; sourceTree = "<group>"; };
@@ -945,6 +909,12 @@
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
+		836EF0C427BB919300BF35B2 /* libogg.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libogg.0.dylib; path = ThirdParty/ogg/lib/libogg.0.dylib; sourceTree = "<group>"; };
+		836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbis.0.dylib; path = ThirdParty/vorbis/lib/libvorbis.0.dylib; sourceTree = "<group>"; };
+		836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
+		836EF0C727BB91BC00BF35B2 /* libFLAC.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.8.dylib; path = ThirdParty/flac/lib/libFLAC.8.dylib; sourceTree = "<group>"; };
+		836EF0CC27BB94E100BF35B2 /* libopus.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopus.0.dylib; path = ThirdParty/opus/lib/libopus.0.dylib; sourceTree = "<group>"; };
+		836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopusfile.0.dylib; path = ThirdParty/opusfile/lib/libopusfile.0.dylib; sourceTree = "<group>"; };
 		836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vgmstream.xcodeproj; path = Plugins/vgmstream/vgmstream.xcodeproj; sourceTree = "<group>"; };
 		836FB5421820538700B3AD2D /* Hively.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Hively.xcodeproj; path = Plugins/Hively/Hively.xcodeproj; sourceTree = "<group>"; };
 		8370D739277419D200245CE0 /* SQLiteStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLiteStore.h; sourceTree = "<group>"; };
@@ -1115,13 +1085,17 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */,
+				836EF0CC27BB94E100BF35B2 /* libopus.0.dylib */,
+				836EF0C727BB91BC00BF35B2 /* libFLAC.8.dylib */,
+				836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */,
+				836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */,
+				836EF0C427BB919300BF35B2 /* libogg.0.dylib */,
 				83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */,
 				83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */,
 				83AA7D03279EBC8300087AA4 /* libavformat.59.dylib */,
 				83AA7D02279EBC8200087AA4 /* libavutil.57.dylib */,
 				83AA7D01279EBC8200087AA4 /* libswresample.4.dylib */,
-				830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */,
-				83059684277F049600EBFAAE /* Ogg.xcodeproj */,
 				83059634277F011100EBFAAE /* File_Extractor.xcodeproj */,
 				17BB5EA50B8A87850009ACB1 /* IOKit.framework */,
 				17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */,
@@ -1597,26 +1571,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		83059685277F049600EBFAAE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8305968D277F049600EBFAAE /* Ogg.framework */,
-				8305968F277F049600EBFAAE /* libogg.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		830596DB277F05E200EBFAAE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				830596E7277F05E200EBFAAE /* Vorbis.framework */,
-				830596E9277F05E200EBFAAE /* libvorbis.a */,
-				830596EB277F05E200EBFAAE /* libvorbisenc.a */,
-				830596ED277F05E200EBFAAE /* libvorbisfile.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		830B62AF20E4EF89004A74B2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2054,10 +2008,6 @@
 					ProjectRef = 17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */;
 				},
 				{
-					ProductGroup = 83059685277F049600EBFAAE /* Products */;
-					ProjectRef = 83059684277F049600EBFAAE /* Ogg.xcodeproj */;
-				},
-				{
 					ProductGroup = 83CA5AF820E4E394003E463A /* Products */;
 					ProjectRef = 83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */;
 				},
@@ -2096,10 +2046,6 @@
 				{
 					ProductGroup = 83BB13AE20E4E38E00723731 /* Products */;
 					ProjectRef = 836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */;
-				},
-				{
-					ProductGroup = 830596DB277F05E200EBFAAE /* Products */;
-					ProjectRef = 830596DA277F05E200EBFAAE /* Vorbis.xcodeproj */;
 				},
 				{
 					ProductGroup = 8301F93720E4EEF70017B2DC /* Products */;
@@ -2214,48 +2160,6 @@
 			fileType = wrapper.framework;
 			path = File_Extractor.framework;
 			remoteRef = 83059638277F011100EBFAAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8305968D277F049600EBFAAE /* Ogg.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Ogg.framework;
-			remoteRef = 8305968C277F049600EBFAAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8305968F277F049600EBFAAE /* libogg.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libogg.a;
-			remoteRef = 8305968E277F049600EBFAAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		830596E7277F05E200EBFAAE /* Vorbis.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Vorbis.framework;
-			remoteRef = 830596E6277F05E200EBFAAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		830596E9277F05E200EBFAAE /* libvorbis.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libvorbis.a;
-			remoteRef = 830596E8277F05E200EBFAAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		830596EB277F05E200EBFAAE /* libvorbisenc.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libvorbisenc.a;
-			remoteRef = 830596EA277F05E200EBFAAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		830596ED277F05E200EBFAAE /* libvorbisfile.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libvorbisfile.a;
-			remoteRef = 830596EC277F05E200EBFAAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */ = {

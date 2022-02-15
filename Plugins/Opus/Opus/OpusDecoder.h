@@ -9,14 +9,7 @@
 #import "Plugin.h"
 #import <Cocoa/Cocoa.h>
 
-// config.h things
-#define __MACOSX__
-#define HAVE_CONFIG_H
-
-#import <Opus/opusfile.h>
-
-#undef __MACOSX__
-#undef HAVE_CONFIG_H
+#import <opusfile.h>
 
 @interface OpusFile : NSObject <CogDecoder> {
 	id<CogSource> source;

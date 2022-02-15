@@ -1,3 +1,0 @@
-== Opusfile ==
-
-Library for decoding .opus files, including seeking support.

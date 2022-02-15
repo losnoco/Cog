@@ -7,29 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		834D792D20E4EFB200C4A5CC /* Opus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83208A3920E4EF9200F16441 /* Opus.framework */; };
-		834D792E20E4EFB900C4A5CC /* Opus.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83208A3920E4EF9200F16441 /* Opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		836EF0CF27BB952F00BF35B2 /* libopusfile.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */; };
 		8375B04017FFEA400092A79F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8375B03F17FFEA400092A79F /* Cocoa.framework */; };
 		8375B04A17FFEA400092A79F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8375B04817FFEA400092A79F /* InfoPlist.strings */; };
 		8375B36C17FFF1CB0092A79F /* OpusDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8375B36B17FFF1CB0092A79F /* OpusDecoder.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		83208A3820E4EF9200F16441 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8375B09017FFEABB0092A79F /* Opus.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8375B06217FFEABB0092A79F;
-			remoteInfo = Opus;
-		};
-		834D792A20E4EFAD00C4A5CC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8375B09017FFEABB0092A79F /* Opus.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8375B06117FFEABB0092A79F;
-			remoteInfo = Opus;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		8375B37317FFF7850092A79F /* CopyFiles */ = {
@@ -38,7 +20,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				834D792E20E4EFB900C4A5CC /* Opus.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,6 +28,7 @@
 /* Begin PBXFileReference section */
 		833F68411CDBCABC00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8356BD1B27B469B80074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
+		836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopusfile.0.dylib; path = ../../ThirdParty/opusfile/lib/libopusfile.0.dylib; sourceTree = "<group>"; };
 		8375B03C17FFEA400092A79F /* OpusPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpusPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8375B03F17FFEA400092A79F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8375B04217FFEA400092A79F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -55,7 +37,6 @@
 		8375B04717FFEA400092A79F /* OpusPlugin-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OpusPlugin-Info.plist"; sourceTree = "<group>"; };
 		8375B04917FFEA400092A79F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8375B04B17FFEA400092A79F /* OpusPlugin-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpusPlugin-Prefix.pch"; sourceTree = "<group>"; };
-		8375B09017FFEABB0092A79F /* Opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Opus.xcodeproj; path = ../../Frameworks/Opus/Opus.xcodeproj; sourceTree = "<group>"; };
 		8375B36A17FFF1CB0092A79F /* OpusDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpusDecoder.h; sourceTree = "<group>"; };
 		8375B36B17FFF1CB0092A79F /* OpusDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpusDecoder.m; sourceTree = "<group>"; };
 		8375B36D17FFF1FE0092A79F /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
@@ -67,22 +48,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				834D792D20E4EFB200C4A5CC /* Opus.framework in Frameworks */,
 				8375B04017FFEA400092A79F /* Cocoa.framework in Frameworks */,
+				836EF0CF27BB952F00BF35B2 /* libopusfile.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		83208A3520E4EF9200F16441 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83208A3920E4EF9200F16441 /* Opus.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8375B03317FFEA400092A79F = {
 			isa = PBXGroup;
 			children = (
@@ -103,7 +76,7 @@
 		8375B03E17FFEA400092A79F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8375B09017FFEABB0092A79F /* Opus.xcodeproj */,
+				836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */,
 				8375B03F17FFEA400092A79F /* Cocoa.framework */,
 				8375B04117FFEA400092A79F /* Other Frameworks */,
 			);
@@ -158,7 +131,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				834D792B20E4EFAD00C4A5CC /* PBXTargetDependency */,
 			);
 			name = OpusPlugin;
 			productName = Opus;
@@ -192,28 +164,12 @@
 			mainGroup = 8375B03317FFEA400092A79F;
 			productRefGroup = 8375B03D17FFEA400092A79F /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 83208A3520E4EF9200F16441 /* Products */;
-					ProjectRef = 8375B09017FFEABB0092A79F /* Opus.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8375B03B17FFEA400092A79F /* OpusPlugin */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		83208A3920E4EF9200F16441 /* Opus.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Opus.framework;
-			remoteRef = 83208A3820E4EF9200F16441 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8375B03A17FFEA400092A79F /* Resources */ = {
@@ -236,14 +192,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		834D792B20E4EFAD00C4A5CC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Opus;
-			targetProxy = 834D792A20E4EFAD00C4A5CC /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		8375B04817FFEA400092A79F /* InfoPlist.strings */ = {
@@ -370,11 +318,13 @@
 				GCC_PREFIX_HEADER = "Opus/OpusPlugin-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../Frameworks/Ogg/include,
+					../../ThirdParty/opusfile/include,
+					../../ThirdParty/opus/include,
+					../../ThirdParty/ogg/include,
 				);
 				INFOPLIST_FILE = "Opus/OpusPlugin-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LIBRARY_SEARCH_PATHS = ../../ThirdParty/opusfile/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.opus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -395,11 +345,13 @@
 				GCC_PREFIX_HEADER = "Opus/OpusPlugin-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../Frameworks/Ogg/include,
+					../../ThirdParty/opusfile/include,
+					../../ThirdParty/opus/include,
+					../../ThirdParty/ogg/include,
 				);
 				INFOPLIST_FILE = "Opus/OpusPlugin-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LIBRARY_SEARCH_PATHS = ../../ThirdParty/opusfile/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.opus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
