@@ -196,7 +196,9 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 		flacDecoder->hasStreamInfo = YES;
 	}
 
-	if(metadata->type == FLAC__METADATA_TYPE_CUESHEET) {
+	if(metadata->type == FLAC__METADATA_TYPE_CUESHEET && !flacDecoder->cuesheetFound) {
+		flacDecoder->cuesheetFound = YES;
+
 		NSString *_cuesheet;
 		grabbag__cuesheet_emit(&_cuesheet, metadata, [[NSString stringWithFormat:@"\"%@\"", [[[flacDecoder->source url] path] lastPathComponent]] UTF8String]);
 
@@ -256,6 +258,7 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 					_genre = value;
 				} else if([name isEqualToString:@"cuesheet"]) {
 					_cuesheet = value;
+					flacDecoder->cuesheetFound = YES;
 				} else if([name isEqualToString:@"date"] ||
 				          [name isEqualToString:@"year"]) {
 					_year = [NSNumber numberWithInt:[value intValue]];
@@ -358,6 +361,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	replayGainTrackGain = 0.0;
 	replayGainTrackPeak = 0.0;
 	albumArt = [NSData data];
+	cuesheetFound = NO;
 	cuesheet = @"";
 
 	decoder = FLAC__stream_decoder_new();

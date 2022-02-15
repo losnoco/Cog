@@ -51,6 +51,7 @@
 
 	NSData *albumArt;
 
+	BOOL cuesheetFound;
 	NSString *cuesheet;
 }
 
