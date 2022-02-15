@@ -13,3 +13,6 @@ Version v1.3.1-101-g66d060c7 was used from the following repository:
 https://github.com/xiph/flac.git
 
 A single patch was used, and is included. Affects x86_64, but not arm64.
+
+Also, x86_64 had to be built separately to enable the intrinsic
+optimizations. Oops.
