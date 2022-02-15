@@ -677,8 +677,8 @@ tryagain:
 				bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				latencyEatenPost = N_samples_to_drop_;
 				is_postextrapolated_ = 2;
-			} else if(is_postextrapolated_ == 3) { // skip end of DSD output
-				latencyEatenPost = dsd2pcmLatency;
+			} else if(is_postextrapolated_ == 3) { // No need to skip the end
+				latencyEatenPost = 0;
 			}
 
 			// Input now contains bytesReadFromInput worth of floats, in the input sample rate
