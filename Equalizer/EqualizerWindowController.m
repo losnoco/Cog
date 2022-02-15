@@ -364,7 +364,11 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 }
 
 - (IBAction)flattenEQ:(id)sender {
-	[presetSelector selectItemWithTitle:@"Flat"];
+	NSDictionary *preset = [equalizer_presets_by_name objectForKey:equalizerDefaultGenre];
+	NSInteger index = [equalizer_presets_processed indexOfObject:preset];
+
+	[presetSelector selectItemAtIndex:index];
+	[[NSUserDefaults standardUserDefaults] setInteger:index forKey:@"GraphicEQpreset"];
 
 	[self changePreset:presetSelector];
 }
@@ -464,6 +468,7 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	NSInteger count = [equalizer_presets_processed count];
 	if([[NSUserDefaults standardUserDefaults] integerForKey:@"GraphicEQpreset"] != count) {
 		[[NSUserDefaults standardUserDefaults] setInteger:count forKey:@"GraphicEQpreset"];
+		[presetSelector selectItemAtIndex:count];
 	}
 
 	if(tag == 0) {
