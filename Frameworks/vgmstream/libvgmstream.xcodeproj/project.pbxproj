@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 48C2650E1A5D420800A0A3D6 /* vorbisfile.h */; };
 		8301659A1F256BD000CA0941 /* txth.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165971F256BD000CA0941 /* txth.c */; };
 		8301659B1F256BD000CA0941 /* ea_schl_fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165981F256BD000CA0941 /* ea_schl_fixed.c */; };
 		8301659C1F256BD000CA0941 /* nds_strm_ffta2.c in Sources */ = {isa = PBXBuildFile; fileRef = 830165991F256BD000CA0941 /* nds_strm_ffta2.c */; };
@@ -796,7 +795,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		48C2650E1A5D420800A0A3D6 /* vorbisfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = vorbisfile.h; path = ../Vorbis/include/vorbis/vorbisfile.h; sourceTree = "<group>"; };
 		830165971F256BD000CA0941 /* txth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = txth.c; sourceTree = "<group>"; };
 		830165981F256BD000CA0941 /* ea_schl_fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ea_schl_fixed.c; sourceTree = "<group>"; };
 		830165991F256BD000CA0941 /* nds_strm_ffta2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nds_strm_ffta2.c; sourceTree = "<group>"; };
@@ -1523,7 +1521,6 @@
 		836F6B2F18BDB8880095E648 = {
 			isa = PBXGroup;
 			children = (
-				48C2650E1A5D420800A0A3D6 /* vorbisfile.h */,
 				836F6B4218BDB8880095E648 /* vgmstream */,
 				836F6B3B18BDB8880095E648 /* Frameworks */,
 				836F6B3A18BDB8880095E648 /* Products */,
@@ -2373,7 +2370,6 @@
 				834FE103215C79ED000A5D3D /* ea_schl_streamfile.h in Headers */,
 				83F0AA6021E2028C004BBC04 /* vsv_streamfile.h in Headers */,
 				83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */,
-				48C2650F1A5D420800A0A3D6 /* vorbisfile.h in Headers */,
 				836F6F9A18BDC2190095E648 /* meta.h in Headers */,
 				83A8BAE625667AA8000F5F3F /* ps2_enth_streamfile.h in Headers */,
 				8306B0D820984590000302D4 /* ea_eaac_streamfile.h in Headers */,
