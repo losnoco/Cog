@@ -37,18 +37,18 @@
                     </connections>
                 </button>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="261">
-                    <rect key="frame" x="17" y="65" width="138" height="35"/>
+                    <rect key="frame" x="24" y="65" width="131" height="35"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="When opening file with ⇧ or ⌃⌘ held:" id="262">
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="When opening file with ⇧ or ⌃⌘ held:" id="262">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <textField verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="259">
-                    <rect key="frame" x="26" y="106" width="129" height="17"/>
+                    <rect key="frame" x="24" y="106" width="131" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="When opening files:" id="260">
+                    <textFieldCell key="cell" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="When opening files:" id="260">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -108,7 +108,7 @@
                     </connections>
                 </button>
             </subviews>
-            <point key="canvasLocation" x="-151" y="-239"/>
+            <point key="canvasLocation" x="-151" y="-239.5"/>
         </customView>
         <customObject id="6" userLabel="HotKeyPane" customClass="HotKeyPane">
             <connections>
@@ -205,7 +205,7 @@
                     </connections>
                 </button>
             </subviews>
-            <point key="canvasLocation" x="-151" y="153"/>
+            <point key="canvasLocation" x="-151" y="145"/>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="52" userLabel="Shared Defaults"/>
         <customObject id="57" userLabel="OutputPane" customClass="OutputPane">
@@ -279,7 +279,7 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DhK-tx-xFv">
-                    <rect key="frame" x="18" y="127" width="227" height="18"/>
+                    <rect key="frame" x="18" y="119" width="227" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Limit volume control to 100%" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ds2-aw-ebU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
