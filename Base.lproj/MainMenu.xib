@@ -1100,7 +1100,7 @@
                         <size key="minSize" width="70" height="25"/>
                         <size key="maxSize" width="70" height="25"/>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="E56B804D-0A4D-415C-B34A-56D9102046D1" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="duplicateItemsTemplate" bordered="YES" navigational="YES" id="4pg-Lq-O8K">
+                    <toolbarItem implicitItemIdentifier="E56B804D-0A4D-415C-B34A-56D9102046D1" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="duplicateItemsTemplate" bordered="YES" id="4pg-Lq-O8K">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
@@ -1116,7 +1116,7 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="56A027C2-B330-46E5-8C3C-AADF8DF7F2EE" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="deadItemsTemplate" bordered="YES" navigational="YES" id="WKt-lM-Bv1">
+                    <toolbarItem implicitItemIdentifier="56A027C2-B330-46E5-8C3C-AADF8DF7F2EE" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="deadItemsTemplate" bordered="YES" id="WKt-lM-Bv1">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
