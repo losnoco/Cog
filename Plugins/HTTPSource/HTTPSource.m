@@ -85,17 +85,39 @@ static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t si
 				if(tit) {
 					*tit = 0;
 					tit += 3;
+					char *tit2 = strstr(tit, " - ");
+					if(tit2) {
+						*tit2 = 0;
+						tit2 += 3;
 
-					const char *orig_title = [fp->title UTF8String];
-					const char *orig_artist = [fp->artist UTF8String];
+						const char *orig_album = [fp->album UTF8String];
+						const char *orig_artist = [fp->artist UTF8String];
+						const char *orig_title = [fp->title UTF8String];
 
-					if(!orig_title || strcasecmp(orig_title, tit)) {
-						fp->title = [NSString stringWithUTF8String:tit];
-						fp->gotmetadata = 1;
-					}
-					if(!orig_artist || strcasecmp(orig_artist, title)) {
-						fp->artist = [NSString stringWithUTF8String:title];
-						fp->gotmetadata = 1;
+						if(!orig_title || strcasecmp(orig_title, tit2)) {
+							fp->title = [NSString stringWithUTF8String:tit2];
+							fp->gotmetadata = 1;
+						}
+						if(!orig_artist || strcasecmp(orig_artist, tit)) {
+							fp->artist = [NSString stringWithUTF8String:tit];
+							fp->gotmetadata = 1;
+						}
+						if(!orig_album || strcasecmp(orig_album, title)) {
+							fp->album = [NSString stringWithUTF8String:title];
+							fp->gotmetadata = 1;
+						}
+					} else {
+						const char *orig_title = [fp->title UTF8String];
+						const char *orig_artist = [fp->artist UTF8String];
+
+						if(!orig_title || strcasecmp(orig_title, tit)) {
+							fp->title = [NSString stringWithUTF8String:tit];
+							fp->gotmetadata = 1;
+						}
+						if(!orig_artist || strcasecmp(orig_artist, title)) {
+							fp->artist = [NSString stringWithUTF8String:title];
+							fp->gotmetadata = 1;
+						}
 					}
 				} else {
 					const char *orig_title = [fp->title UTF8String];
