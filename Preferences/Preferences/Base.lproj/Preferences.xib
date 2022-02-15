@@ -190,41 +190,11 @@
             <point key="canvasLocation" x="-151" y="-33.5"/>
         </customView>
         <customView id="50" userLabel="UpdatesView">
-            <rect key="frame" x="0.0" y="0.0" width="530" height="71"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="56"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="111">
-                    <rect key="frame" x="17" y="13" width="92" height="17"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Update Feed:" id="209">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="106">
-                    <rect key="frame" x="111" y="7" width="207" height="26"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="208">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" title="OtherViews" id="107">
-                            <items>
-                                <menuItem title="Stable" id="108"/>
-                                <menuItem title="Unstable" id="109"/>
-                                <menuItem title="Nightly" id="110"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                    <connections>
-                        <binding destination="115" name="content" keyPath="arrangedObjects" id="135"/>
-                        <binding destination="115" name="contentValues" keyPath="arrangedObjects.name" previousBinding="144" id="145"/>
-                        <binding destination="115" name="contentObjects" keyPath="arrangedObjects.url" previousBinding="135" id="144"/>
-                        <binding destination="52" name="selectedObject" keyPath="values.SUFeedURL" previousBinding="145" id="147"/>
-                    </connections>
-                </popUpButton>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="51">
-                    <rect key="frame" x="18" y="43" width="299" height="18"/>
+                    <rect key="frame" x="18" y="19" width="299" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <buttonCell key="cell" type="check" title="Automatically check for updates on startup" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="207">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -391,13 +361,6 @@
             <declaredKeys>
                 <string>name</string>
             </declaredKeys>
-        </arrayController>
-        <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="115" userLabel="Appcasts" customClass="AppcastArrayController">
-            <declaredKeys>
-                <string>name</string>
-                <string>url</string>
-            </declaredKeys>
-            <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <arrayController objectClassName="NSDictionary" editable="NO" selectsInsertedObjects="NO" id="246" userLabel="PlaylistBehavior" customClass="PlaylistBehaviorArrayController">
             <declaredKeys>

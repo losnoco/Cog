@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		170744AD0BFF3938002475C9 /* AppcastArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 170744AC0BFF3938002475C9 /* AppcastArrayController.m */; };
 		1766C7A80B912A71004A7AE4 /* lastfm.png in Resources */ = {isa = PBXBuildFile; fileRef = 1766C7A70B912A71004A7AE4 /* lastfm.png */; };
 		178E386E0C3DA64500EE6711 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 178E386D0C3DA64500EE6711 /* InfoPlist.strings */; };
 		17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C643360B8A77CC00C53518 /* OutputsArrayController.m */; };
@@ -78,8 +77,6 @@
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		170744AB0BFF3938002475C9 /* AppcastArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppcastArrayController.h; sourceTree = "<group>"; };
-		170744AC0BFF3938002475C9 /* AppcastArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppcastArrayController.m; sourceTree = "<group>"; };
 		1766C7A70B912A71004A7AE4 /* lastfm.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = lastfm.png; path = Icons/lastfm.png; sourceTree = "<group>"; };
 		17C643360B8A77CC00C53518 /* OutputsArrayController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputsArrayController.m; sourceTree = "<group>"; };
 		17C643370B8A77CC00C53518 /* OutputsArrayController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputsArrayController.h; sourceTree = "<group>"; };
@@ -241,8 +238,6 @@
 		17D503410ABDB1660022D1E8 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
-				170744AB0BFF3938002475C9 /* AppcastArrayController.h */,
-				170744AC0BFF3938002475C9 /* AppcastArrayController.m */,
 				83651DA427322C8700A2C097 /* MIDIFlavorBehaviorArrayController.h */,
 				83651DA327322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m */,
 				837C0D3E1C50954000CAE18F /* MIDIPluginBehaviorArrayController.h */,
@@ -461,7 +456,6 @@
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
 				837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */,
 				17C6433F0B8A783F00C53518 /* OutputPane.m in Sources */,
-				170744AD0BFF3938002475C9 /* AppcastArrayController.m in Sources */,
 				99F1813F0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m in Sources */,
 				8372053718E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m in Sources */,
 			);
