@@ -13,6 +13,8 @@
 #import "OutputNode.h"
 #import "Plugin.h"
 
+#import "NSDictionary+Merge.h"
+
 #import "Logging.h"
 
 @implementation InputNode
@@ -116,18 +118,13 @@
 		nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
 	} else if([keyPath isEqual:@"metadata"]) {
 		// Inform something of metadata change
-		NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
-
 		NSDictionary *entryProperties = [decoder properties];
 		if(entryProperties == nil)
 			return;
 
-		[entryInfo addEntriesFromDictionary:[decoder metadata]];
-		[entryInfo addEntriesFromDictionary:entryProperties];
+		NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[decoder metadata]];
 
-		NSDictionary * info = [NSDictionary dictionaryWithDictionary:entryInfo];
-		
-		[controller pushInfo:info];
+		[controller pushInfo:entryInfo];
 	}
 }
 

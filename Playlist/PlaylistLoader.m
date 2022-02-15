@@ -32,6 +32,8 @@
 
 #import "Logging.h"
 
+#import "NSDictionary+Merge.h"
+
 @implementation PlaylistLoader
 
 - (id)init {
@@ -555,18 +557,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 				DLog(@"Loading metadata for %@", weakPe.URL);
 
-				NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
-
 				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
 				if(entryProperties == nil)
 					return;
 
 				NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:weakPe.URL];
 
-				if(entryMetadata)
-					[entryInfo addEntriesFromDictionary:entryMetadata];
-
-				[entryInfo addEntriesFromDictionary:entryProperties];
+				NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:entryMetadata];
 
 				[weakLock lock];
 				[weakArray addObject:weakPe];
@@ -639,14 +636,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		DLog(@"Loading metadata for %@", pe.URL);
 
-		NSMutableDictionary *entryInfo = [NSMutableDictionary dictionaryWithCapacity:32];
-
 		NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
 		if(entryProperties == nil)
 			return;
 
-		[entryInfo addEntriesFromDictionary:[AudioMetadataReader metadataForURL:pe.URL]];
-		[entryInfo addEntriesFromDictionary:entryProperties];
+		NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[AudioMetadataReader metadataForURL:pe.URL]];
 
 		[pe setMetadata:entryInfo];
 		[store trackUpdate:pe];
