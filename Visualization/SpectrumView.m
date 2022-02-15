@@ -234,9 +234,9 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
 	CGContextMoveToPoint(context, 0.0, 0.0);
-	CGContextAddLineToPoint(context, 63.0, 0.0);
-	CGContextAddLineToPoint(context, 63.0, 25.0);
-	CGContextAddLineToPoint(context, 0.0, 25.0);
+	CGContextAddLineToPoint(context, 64.0, 0.0);
+	CGContextAddLineToPoint(context, 64.0, 26.0);
+	CGContextAddLineToPoint(context, 0.0, 26.0);
 	CGContextAddLineToPoint(context, 0.0, 0.0);
 	CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
 	CGContextStrokePath(context);
