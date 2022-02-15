@@ -279,6 +279,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					../../ThirdParty/vorbis/include,
+					../../ThirdParty/ogg/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
@@ -310,6 +311,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					../../ThirdParty/vorbis/include,
+					../../ThirdParty/ogg/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
