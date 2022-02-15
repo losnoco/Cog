@@ -66,7 +66,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	ddb_analyzer_init(&_analyzer);
 	_analyzer.db_lower_bound = LOWER_BOUND;
 	_analyzer.peak_hold = 10;
-	_analyzer.view_width = 1000;
+	_analyzer.view_width = 64;
 	_analyzer.fractional_bars = 1;
 	_analyzer.octave_bars_step = 2;
 	_analyzer.max_of_stereo_data = 1;
@@ -247,7 +247,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0]];
 
-	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate], 1, visFFT, 4096);
+	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 4096);
 	ddb_analyzer_tick(&_analyzer);
 	ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
 
