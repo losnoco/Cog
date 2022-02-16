@@ -59,6 +59,13 @@ static size_t http_curl_write_wrapper(HTTPSource *fp, void *ptr, size_t size) {
 	return size - avail;
 }
 
+static NSString *guess_encoding_of_string(const char *input) {
+	NSString *ret = @"";
+	NSData *stringData = [NSData dataWithBytes:input length:strlen(input)];
+	[NSString stringEncodingForData:stringData encodingOptions:nil convertedString:&ret usedLossyConversion:nil];
+	return ret;
+}
+
 static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t size) {
 	//    DLog (@"reading %d bytes of metadata\n", size);
 	DLog(@"%s", meta);
@@ -90,18 +97,18 @@ static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t si
 					const char *orig_artist = [fp->artist UTF8String];
 
 					if(!orig_title || strcasecmp(orig_title, tit)) {
-						fp->title = [NSString stringWithUTF8String:tit];
+						fp->title = guess_encoding_of_string(tit);
 						fp->gotmetadata = 1;
 					}
 					if(!orig_artist || strcasecmp(orig_artist, title)) {
-						fp->artist = [NSString stringWithUTF8String:title];
+						fp->artist = guess_encoding_of_string(title);
 						fp->gotmetadata = 1;
 					}
 				} else {
 					const char *orig_title = [fp->title UTF8String];
 					if(!orig_title || strcasecmp(orig_title, title)) {
 						fp->artist = @"";
-						fp->title = [NSString stringWithUTF8String:title];
+						fp->title = guess_encoding_of_string(title);
 						fp->gotmetadata = 1;
 					}
 				}
@@ -199,15 +206,15 @@ static size_t http_content_header_handler_int(void *ptr, size_t size, void *stre
 		p = parse_header(p, end, key, sizeof(key), value, sizeof(value));
 		DLog(@"%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
 		if(!strcasecmp((char *)key, "Content-Type")) {
-			fp->content_type = [NSString stringWithUTF8String:(const char *)value];
+			fp->content_type = guess_encoding_of_string((const char *)value);
 		} else if(!strcasecmp((char *)key, "Content-Length")) {
 			char *end;
 			fp->length = strtol((const char *)value, &end, 10);
 		} else if(!strcasecmp((char *)key, "icy-name")) {
-			fp->title = [NSString stringWithUTF8String:(const char *)value];
+			fp->title = guess_encoding_of_string((const char *)value);
 			fp->gotmetadata = 1;
 		} else if(!strcasecmp((char *)key, "icy-genre")) {
-			fp->genre = [NSString stringWithUTF8String:(const char *)value];
+			fp->genre = guess_encoding_of_string((const char *)value);
 			fp->gotmetadata = 1;
 		} else if(!strcasecmp((char *)key, "icy-metaint")) {
 			// printf ("icy-metaint: %d\n", atoi (value));
@@ -215,7 +222,7 @@ static size_t http_content_header_handler_int(void *ptr, size_t size, void *stre
 			fp->icy_metaint = (int)strtoul((const char *)value, &end, 10);
 			fp->wait_meta = fp->icy_metaint;
 		} else if(!strcasecmp((char *)key, "icy-url")) {
-			fp->album = [NSString stringWithUTF8String:(const char *)value];
+			fp->album = guess_encoding_of_string((const char *)value);
 			fp->gotmetadata = 1;
 		}
 
