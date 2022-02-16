@@ -9,6 +9,10 @@
 #import "OutputCoreAudio.h"
 #import "OutputNode.h"
 
+#ifdef _DEBUG
+#import "BadSampleCleaner.h"
+#endif
+
 #import "Logging.h"
 
 extern void scale_by_volume(float *buffer, size_t count, float volume);
@@ -94,9 +98,19 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 			double chunkDuration = [chunk duration];
 
 			NSData *samples = [chunk removeSamples:frameCount];
+#ifdef _DEBUG
+			[BadSampleCleaner cleanSamples:(float *)[samples bytes]
+			                        amount:frameCount * format.mChannelsPerFrame
+			                      location:@"pre downmix"];
+#endif
 
 			float downmixedData[frameCount * channels];
 			[_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
+#ifdef _DEBUG
+			[BadSampleCleaner cleanSamples:downmixedData
+			                        amount:frameCount * channels
+			                      location:@"post downmix"];
+#endif
 
 			[_self->downmixerForVis process:[samples bytes] frameCount:frameCount output:visAudio];
 			visTabulated += frameCount;
@@ -125,9 +139,20 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 				atomic_fetch_add(&_self->bytesRendered, frameCount * bytesPerPacket);
 				double chunkDuration = [chunk duration];
 				NSData *samples = [chunk removeSamples:frameCount];
+#ifdef _DEBUG
+				[BadSampleCleaner cleanSamples:(float *)[samples bytes]
+				                        amount:frameCount * format.mChannelsPerFrame
+				                      location:@"pre downmix"];
+#endif
+
 				float downmixedData[frameCount * channels];
 				[_self->downmixer process:[samples bytes] frameCount:frameCount output:downmixedData];
 				fillBuffers(ioData, downmixedData, frameCount, amountRead / bytesPerPacket);
+#ifdef _DEBUG
+				[BadSampleCleaner cleanSamples:downmixedData
+				                        amount:frameCount * channels
+				                      location:@"post downmix"];
+#endif
 
 				[_self->downmixerForVis process:[samples bytes] frameCount:frameCount output:visAudio + visTabulated];
 				visTabulated += frameCount;
@@ -711,7 +736,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 #endif
 
 		inputData->mBuffers[0].mNumberChannels = channels;
-		
+
+#ifdef _DEBUG
+		[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData
+		                        amount:inputData->mBuffers[0].mDataByteSize / sizeof(float)
+		                      location:@"final output"];
+#endif
+
 		return 0;
 	};
 

@@ -18,6 +18,10 @@
 
 #import "hdcd_decode2.h"
 
+#ifdef _DEBUG
+#import "BadSampleCleaner.h"
+#endif
+
 void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 	if(!inDesc) {
 		DLog(@"Can't print a NULL desc!\n");
@@ -625,6 +629,12 @@ tryagain:
 					isUnsigned = NO;
 					isFloat = YES;
 				}
+
+#ifdef _DEBUG
+				[BadSampleCleaner cleanSamples:(float *)inputBuffer
+				                        amount:bytesReadFromInput / sizeof(float)
+				                      location:@"post int to float conversion"];
+#endif
 			}
 
 			// Extrapolate start
@@ -653,6 +663,12 @@ tryagain:
 				memmove(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer + bytesToSkip, bytesReadFromInput);
 
 				lpc_extrapolate_bkwd(inputBuffer + _N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, _N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+#ifdef _DEBUG
+				[BadSampleCleaner cleanSamples:(float *)inputBuffer
+				                        amount:_N_samples_to_add_ * floatFormat.mChannelsPerFrame
+				                      location:@"pre-extrapolated data"];
+#endif
+
 				bytesReadFromInput += _N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				latencyEaten = N_samples_to_drop_;
 				if(dsd2pcm) latencyEaten += (int)ceil(dsd2pcmLatency * sampleRatio);
@@ -674,6 +690,11 @@ tryagain:
 				}
 
 				lpc_extrapolate_fwd(inputBuffer, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+#ifdef _DEBUG
+				[BadSampleCleaner cleanSamples:(float *)(inputBuffer) + samples_in_buffer * floatFormat.mChannelsPerFrame
+				                        amount:N_samples_to_add_ * floatFormat.mChannelsPerFrame
+				                      location:@"post-extrapolated data"];
+#endif
 				bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				latencyEatenPost = N_samples_to_drop_;
 				is_postextrapolated_ = 2;
@@ -711,7 +732,17 @@ tryagain:
 		if(!skipResampler) {
 			ioNumberPackets += soxr_delay(soxr);
 
+#ifdef _DEBUG
+			[BadSampleCleaner cleanSamples:(float *)(((uint8_t *)inputBuffer) + inpOffset)
+			                        amount:inputSamples * floatFormat.mChannelsPerFrame
+			                      location:@"resampler input"];
+#endif
 			soxr_process(soxr, (float *)(((uint8_t *)inputBuffer) + inpOffset), inputSamples, &inputDone, floatBuffer, ioNumberPackets, &outputDone);
+#ifdef _DEBUG
+			[BadSampleCleaner cleanSamples:(float *)floatBuffer
+			                        amount:outputDone * floatFormat.mChannelsPerFrame
+			                      location:@"resampler output"];
+#endif
 
 			if(latencyEatenPost) {
 				// Post file flush
@@ -719,6 +750,11 @@ tryagain:
 
 				do {
 					soxr_process(soxr, NULL, 0, &idone, floatBuffer + outputDone * floatFormat.mBytesPerPacket, ioNumberPackets - outputDone, &odone);
+#ifdef _DEBUG
+					[BadSampleCleaner cleanSamples:(float *)(floatBuffer + outputDone * floatFormat.mBytesPerPacket)
+					                        amount:odone * floatFormat.mChannelsPerFrame
+					                      location:@"resampler flushed output"];
+#endif
 					outputDone += odone;
 				} while(odone > 0);
 			}

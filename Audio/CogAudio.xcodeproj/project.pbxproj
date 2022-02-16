@@ -58,6 +58,8 @@
 		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
 		835EDD7B279FE23A001EDCCE /* HeadphoneFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 835EDD7A279FE23A001EDCCE /* HeadphoneFilter.m */; };
 		835EDD7D279FE307001EDCCE /* HeadphoneFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 835EDD7C279FE307001EDCCE /* HeadphoneFilter.h */; };
+		835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */; };
+		835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */; };
 		83725A8B27AA0DBF0003F694 /* soxr.h in Headers */ = {isa = PBXBuildFile; fileRef = 83725A8827AA0DBF0003F694 /* soxr.h */; };
 		83725A8C27AA0DBF0003F694 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */; };
 		83725A8E27AA0DE60003F694 /* libsoxr.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -159,6 +161,8 @@
 		835C88B0279811A500E28EAE /* hdcd_decode2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdcd_decode2.c; sourceTree = "<group>"; };
 		835EDD7A279FE23A001EDCCE /* HeadphoneFilter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeadphoneFilter.m; sourceTree = "<group>"; };
 		835EDD7C279FE307001EDCCE /* HeadphoneFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeadphoneFilter.h; sourceTree = "<group>"; };
+		835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BadSampleCleaner.h; path = Utils/BadSampleCleaner.h; sourceTree = SOURCE_ROOT; };
+		835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BadSampleCleaner.m; path = Utils/BadSampleCleaner.m; sourceTree = SOURCE_ROOT; };
 		83725A7B27AA0D8A0003F694 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		83725A8827AA0DBF0003F694 /* soxr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soxr.h; sourceTree = "<group>"; };
@@ -347,6 +351,8 @@
 		17D21CDC0B8BE5B400D1EBDE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */,
+				835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */,
 				8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */,
 				8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */,
 				8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */,
@@ -490,6 +496,7 @@
 				8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */,
 				8384912718080FF100E7332D /* Logging.h in Headers */,
 				8377C64E27B8C54400E8BC0F /* fft.h in Headers */,
+				835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */,
 				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
 				B0575F2D0D687A0800411D77 /* Helper.h in Headers */,
 				835C88AD2797DA5800E28EAE /* util.h in Headers */,
@@ -580,6 +587,7 @@
 				834FD4F527AFA2150063BC83 /* Downmix.m in Sources */,
 				17D21CC60B8BE4BA00D1EBDE /* OutputCoreAudio.m in Sources */,
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
+				835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */,
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
