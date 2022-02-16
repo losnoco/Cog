@@ -75,6 +75,7 @@ ddb_analyzer_init(ddb_analyzer_t *analyzer) {
 	analyzer->peak_speed_scale = 1000.f;
 	analyzer->db_lower_bound = -80;
 	analyzer->octave_bars_step = 1;
+	analyzer->freq_is_log = 1;
 	analyzer->bar_gap_denominator = 3;
 	return analyzer;
 }
@@ -272,10 +273,18 @@ _generate_frequency_labels(ddb_analyzer_t *analyzer) {
 
 static void
 _generate_frequency_bars(ddb_analyzer_t *analyzer) {
-	float min_freq_log = log10(analyzer->min_freq);
-	float max_freq_log = log10(analyzer->max_freq);
+	float min_freq = analyzer->min_freq;
+	float min_freq_log;
 	float view_width = analyzer->view_width;
-	float width_log = view_width / (max_freq_log - min_freq_log);
+	float width;
+	if(analyzer->freq_is_log) {
+		min_freq_log = log10(analyzer->min_freq);
+		float max_freq_log = log10(analyzer->max_freq);
+		width = view_width / (max_freq_log - min_freq_log);
+	} else {
+		min_freq = analyzer->min_freq;
+		width = view_width / (analyzer->max_freq - min_freq);
+	}
 
 	float minIndex = _bin_for_freq_floor(analyzer, analyzer->min_freq);
 	float maxIndex = _bin_for_freq_round(analyzer, analyzer->max_freq);
@@ -294,7 +303,11 @@ _generate_frequency_bars(ddb_analyzer_t *analyzer) {
 		float freq = _freq_for_bin(analyzer, i);
 
 		// FIXME: only int position!
-		int pos = width_log * (log10(freq) - min_freq_log);
+		int pos;
+		if(analyzer->freq_is_log)
+			pos = width * (log10(freq) - min_freq_log);
+		else
+			pos = width * (freq - min_freq);
 
 		if(pos > prev && pos >= 0) {
 			// start accumulating frequencies for the new band

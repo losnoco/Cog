@@ -63,14 +63,19 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 	[self colorsDidChange:nil];
 
+	BOOL freqMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumFreqMode"];
+
 	ddb_analyzer_init(&_analyzer);
 	_analyzer.db_lower_bound = LOWER_BOUND;
+	_analyzer.min_freq = 10;
+	_analyzer.max_freq = 22000;
 	_analyzer.peak_hold = 10;
 	_analyzer.view_width = 64;
 	_analyzer.fractional_bars = 1;
 	_analyzer.octave_bars_step = 2;
 	_analyzer.max_of_stereo_data = 1;
-	_analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+	_analyzer.freq_is_log = 0;
+	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(colorsDidChange:)
@@ -252,6 +257,16 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
 
 	[self drawAnalyzer];
+}
+
+- (void)mouseDown:(NSEvent *)event {
+	BOOL freqMode = ![[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumFreqMode"];
+	[[NSUserDefaults standardUserDefaults] setBool:freqMode forKey:@"spectrumFreqMode"];
+
+	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+	_analyzer.mode_did_change = 1;
+
+	[self repaint];
 }
 
 @end
