@@ -210,7 +210,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	[self sendMetaData];
 
-	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:[offset doubleValue]];
+	double seekTime = [pe seekable] ? [offset doubleValue] : 0.0;
+
+	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:seekTime];
 }
 
 - (IBAction)next:(id)sender {
