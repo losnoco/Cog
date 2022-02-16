@@ -78,6 +78,16 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 
 void scale_by_volume(float *buffer, size_t count, float volume) {
 	if(volume != 1.0) {
+		size_t unaligned = (uintptr_t)buffer & 15;
+		if(unaligned) {
+			size_t count3 = unaligned >> 2;
+			while(count3 > 0) {
+				*buffer++ *= volume;
+				count3--;
+				count--;
+			}
+		}
+
 		vDSP_vsmul(buffer, 1, &volume, buffer, 1, count);
 	}
 }
@@ -564,18 +574,20 @@ tryagain:
 				float gain = 1.0;
 				if(bitsPerSample == 1) {
 					samplesRead = bytesReadFromInput / inputFormat.mBytesPerPacket;
-					convert_dsd_to_f32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, dsd2pcm);
-					memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * inputFormat.mChannelsPerFrame * sizeof(float));
+					size_t buffer_adder = (bytesReadFromInput + 15) & ~15;
+					convert_dsd_to_f32(inputBuffer + buffer_adder, inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, dsd2pcm);
+					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * inputFormat.mChannelsPerFrame * sizeof(float));
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * inputFormat.mChannelsPerFrame * sizeof(float);
 					isFloat = YES;
 				} else if(bitsPerSample <= 8) {
 					samplesRead = bytesReadFromInput;
+					size_t buffer_adder = (bytesReadFromInput + 1) & ~1;
 					if(!isUnsigned)
-						convert_s8_to_s16(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+						convert_s8_to_s16(inputBuffer + buffer_adder, inputBuffer, samplesRead);
 					else
-						convert_u8_to_s16(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
-					memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * 2);
+						convert_u8_to_s16(inputBuffer + buffer_adder, inputBuffer, samplesRead);
+					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * 2);
 					bitsPerSample = 16;
 					bytesReadFromInput = samplesRead * 2;
 					isUnsigned = NO;
@@ -584,8 +596,9 @@ tryagain:
 					samplesRead = bytesReadFromInput / 2;
 					if(isUnsigned)
 						convert_u16_to_s16(inputBuffer, samplesRead);
-					convert_s16_to_hdcd_input(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
-					memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * 4);
+					size_t buffer_adder = (bytesReadFromInput + 3) & ~3;
+					convert_s16_to_hdcd_input(inputBuffer + buffer_adder, inputBuffer, samplesRead);
+					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * 4);
 					hdcd_process_stereo((hdcd_state_stereo_t *)hdcd_decoder, inputBuffer, (int)(samplesRead / 2));
 					if(((hdcd_state_stereo_t *)hdcd_decoder)->channel[0].sustain &&
 					   ((hdcd_state_stereo_t *)hdcd_decoder)->channel[1].sustain) {
@@ -599,20 +612,23 @@ tryagain:
 					samplesRead = bytesReadFromInput / 2;
 					if(isUnsigned)
 						convert_u16_to_s16(inputBuffer, samplesRead);
-					vDSP_vflt16((const short *)inputBuffer, 1, (float *)(inputBuffer + bytesReadFromInput), 1, samplesRead);
-					scale_by_volume((float *)(inputBuffer + bytesReadFromInput), samplesRead, (float)(1.0 / (1ULL << 15)));
-					memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
+					size_t buffer_adder = (bytesReadFromInput + 15) & ~15; // vDSP functions expect aligned to four elements
+					vDSP_vflt16((const short *)inputBuffer, 1, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
+					float scale = 1ULL << 15;
+					vDSP_vsdiv((const float *)(inputBuffer + buffer_adder), 1, &scale, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
+					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * sizeof(float));
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * sizeof(float);
 					isUnsigned = NO;
 					isFloat = YES;
 				} else if(bitsPerSample <= 24) {
 					samplesRead = bytesReadFromInput / 3;
+					size_t buffer_adder = (bytesReadFromInput + 3) & ~3;
 					if(isUnsigned)
-						convert_u24_to_s32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
+						convert_u24_to_s32(inputBuffer + buffer_adder, inputBuffer, samplesRead);
 					else
-						convert_s24_to_s32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
-					memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * 4);
+						convert_s24_to_s32(inputBuffer + buffer_adder, inputBuffer, samplesRead);
+					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * 4);
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * 4;
 					isUnsigned = NO;
@@ -621,9 +637,11 @@ tryagain:
 					samplesRead = bytesReadFromInput / 4;
 					if(isUnsigned)
 						convert_u32_to_s32(inputBuffer, samplesRead);
-					vDSP_vflt32((const int *)inputBuffer, 1, (float *)(inputBuffer + bytesReadFromInput), 1, samplesRead);
-					scale_by_volume((float *)(inputBuffer + bytesReadFromInput), samplesRead, gain * (1.0 / (1ULL << 31)));
-					memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
+					size_t buffer_adder = (bytesReadFromInput + 31) & ~31; // vDSP functions expect aligned to four elements
+					vDSP_vflt32((const int *)inputBuffer, 1, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
+					float scale = (1ULL << 31) / gain;
+					vDSP_vsdiv((const float *)(inputBuffer + buffer_adder), 1, &scale, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
+					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * sizeof(float));
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * sizeof(float);
 					isUnsigned = NO;
