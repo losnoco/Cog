@@ -32,6 +32,7 @@
 	BOOL canPlayForever;
 	int sampleRate;
 	int channels;
+	uint32_t channelConfig;
 	int bitrate;
 	long totalFrames;
 	long framesRead;

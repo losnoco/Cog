@@ -63,9 +63,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	vgmstream_apply_config(stream, &vcfg);
 
 	int output_channels = stream->channels;
-
-	vgmstream_mixing_autodownmix(stream, 6);
-	vgmstream_mixing_enable(stream, MAX_BUFFER_SAMPLES, NULL, &output_channels);
+	uint32_t channelConfig = stream->channel_layout;
 
 	int track_num = [[url fragment] intValue];
 
@@ -150,20 +148,21 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		close_streamfile(tagFile);
 	}
 
-	NSDictionary *properties = @{@"bitrate": [NSNumber numberWithInt:bitrate / 1000],
-								 @"sampleRate": [NSNumber numberWithInt:sampleRate],
-								 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-								 @"bitsPerSample": [NSNumber numberWithInt:16],
-								 @"floatingPoint": [NSNumber numberWithBool:NO],
-								 @"channels": [NSNumber numberWithInt:channels],
-								 @"seekable": [NSNumber numberWithBool:YES],
-								 @"replayGainAlbumGain": rgAlbumGain,
-								 @"replayGainAlbumPeak": rgAlbumPeak,
-								 @"replayGainTrackGain": rgTrackGain,
-								 @"replayGainTrackPeak": rgTrackPeak,
-								 @"codec": codec,
-								 @"endian": @"host",
-								 @"encoding": @"lossy/lossless"};
+	NSDictionary *properties = @{ @"bitrate": [NSNumber numberWithInt:bitrate / 1000],
+		                          @"sampleRate": [NSNumber numberWithInt:sampleRate],
+		                          @"totalFrames": [NSNumber numberWithDouble:totalFrames],
+		                          @"bitsPerSample": [NSNumber numberWithInt:16],
+		                          @"floatingPoint": [NSNumber numberWithBool:NO],
+		                          @"channels": [NSNumber numberWithInt:channels],
+		                          @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
+		                          @"seekable": [NSNumber numberWithBool:YES],
+		                          @"replayGainAlbumGain": rgAlbumGain,
+		                          @"replayGainAlbumPeak": rgAlbumPeak,
+		                          @"replayGainTrackGain": rgTrackGain,
+		                          @"replayGainTrackPeak": rgTrackPeak,
+		                          @"codec": codec,
+		                          @"endian": @"host",
+		                          @"encoding": @"lossy/lossless" };
 
 	if([title isEqualToString:@""]) {
 		if(stream->num_streams > 1) {
@@ -247,9 +246,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		return NO;
 
 	int output_channels = stream->channels;
-
-	vgmstream_mixing_autodownmix(stream, 6);
-	vgmstream_mixing_enable(stream, MAX_BUFFER_SAMPLES, NULL, &output_channels);
+	channelConfig = stream->channel_layout;
 
 	canPlayForever = stream->loop_flag;
 	if(canPlayForever) {
