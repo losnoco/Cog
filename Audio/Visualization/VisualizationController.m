@@ -26,7 +26,7 @@ static VisualizationController *_sharedController = nil;
 - (id)init {
 	self = [super init];
 	if(self) {
-		vDSP_vclr(visAudio, 1, 8192);
+		vDSP_vclr(visAudio, 1, 4096);
 	}
 	return self;
 }
@@ -43,8 +43,8 @@ static VisualizationController *_sharedController = nil;
 
 - (void)postVisPCM:(const float *)inPCM {
 	@synchronized(self) {
-		cblas_scopy(8192 - 512, visAudio + 512, 1, visAudio, 1);
-		cblas_scopy(512, inPCM, 1, visAudio + 8192 - 512, 1);
+		cblas_scopy(4096 - 512, visAudio + 512, 1, visAudio, 1);
+		cblas_scopy(512, inPCM, 1, visAudio + 4096 - 512, 1);
 	}
 }
 
@@ -56,8 +56,8 @@ static VisualizationController *_sharedController = nil;
 
 - (void)copyVisPCM:(float *)outPCM visFFT:(float *)outFFT {
 	@synchronized(self) {
-		cblas_scopy(8192, visAudio, 1, outPCM, 1);
-		fft_calculate(visAudio, outFFT, 4096);
+		cblas_scopy(4096, visAudio, 1, outPCM, 1);
+		fft_calculate(visAudio, outFFT, 2048);
 	}
 }
 
