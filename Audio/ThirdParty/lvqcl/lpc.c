@@ -19,186 +19,175 @@
 #include <stdbool.h>
 #include "lpc.h"
 
-static void apply_window(float * const data, const size_t data_len);
-static void compute_autocorr(const float * const data, const size_t data_len, double * const autoc, const int m);
-static int compute_lpc(const double * const autoc, double * const lpc, const int lpc_order);
-static void lpc_extrapolate_data(float * const data0, const size_t data_len, const size_t extra, const double * const lpc, const int order, const bool invdir);
-
-void lpc_extrapolate2(float * const data, const size_t data_len, const int nch, const int lpc_order, const size_t extra_bkwd, const size_t extra_fwd, void ** extrapolate_buffer, size_t * extrapolate_buffer_size)
-{
-    const size_t tdata0_size = sizeof(float) * (extra_bkwd + data_len + extra_fwd);
-    const size_t autoc_size = sizeof(double) * (lpc_order + 1);
-    const size_t lpc_size = sizeof(double) * lpc_order;
-    
-    const size_t new_size = tdata0_size + autoc_size + lpc_size;
-    
-    if (new_size > *extrapolate_buffer_size)
-    {
-        *extrapolate_buffer = realloc(*extrapolate_buffer, new_size);
-        *extrapolate_buffer_size = new_size;
-    }
-    
-    float* tdata0 = (float*)(*extrapolate_buffer);                   // for 1 channel only
-    float* const tdata = tdata0 + extra_bkwd;                        // for 1 channel only
-
-    double* autoc = (double*)(*extrapolate_buffer + tdata0_size);
-    double* lpc = (double*)(*extrapolate_buffer + tdata0_size + autoc_size);
-    int max_order;
-
-    for(int c = 0; c < nch; c++)
-    {
-        for (int i = -(int)extra_bkwd; i < (int)(data_len+extra_fwd); i++) { tdata[i] = 0; } // should be removed after debugging etc
-
-        for (int i = 0; i < (int)data_len; i++)
-            tdata[i] = data[i*nch + c];
-
-        apply_window(tdata, data_len);
-        compute_autocorr(tdata, data_len, autoc, lpc_order);
-        max_order = compute_lpc(autoc, lpc, lpc_order);
-
-        // restore after apply_window
-        for (int i = 0; i < (int)data_len; i++)
-            tdata[i] = data[i*nch + c];
-
-        if (extra_fwd)
-        {
-            lpc_extrapolate_data(tdata, data_len, extra_fwd, lpc, max_order, false);
-            for (size_t i = data_len; i < (data_len+extra_fwd); i++)
-                data[i*nch + c] = tdata[i];
-        }
-        if (extra_bkwd)
-        {
-            lpc_extrapolate_data(tdata, data_len, extra_bkwd, lpc, max_order, true);
-            for (int i = -(int)extra_bkwd; i < 0; i++)
-                data[i*nch + c] = tdata[i];
-        }
-    }
-}
-
-static void apply_window(float * const data, const size_t data_len)
-{
+static void apply_window(float *const data, const size_t data_len) {
 #if 0
-    if (0) // subtract the mean
-    {
-        double mean = 0;
-        for(int i = 0; i < (int)data_len; i++)
-            mean += data[i];
-        mean /= data_len;
+	if (0) // subtract the mean
+	{
+		double mean = 0;
+		for(int i = 0; i < (int)data_len; i++)
+			mean += data[i];
+		mean /= data_len;
 
-        for(int i = 0; i < (int)data_len; i++)
-            data[i] -= (float)mean;
-    }
+		for(int i = 0; i < (int)data_len; i++)
+			data[i] -= (float)mean;
+	}
 #endif
 
-    if (1)    // Welch window
-    {
-        const float n2 = (data_len+1)/2.0f;
-        for(int i = 0; i < (int)data_len; i++)
-        {
-            float k = (i+1-n2)/n2;
-            data[i] *= 1.0f - k*k;
-        }
-    }
+	if(1) // Welch window
+	{
+		const float n2 = (data_len + 1) / 2.0f;
+		for(int i = 0; i < (int)data_len; i++) {
+			float k = (i + 1 - n2) / n2;
+			data[data_len - 1 - i] *= 1.0f - k * k;
+		}
+	}
 }
 
-static void compute_autocorr(const float * const data, const size_t data_len, double * const autoc, const int m)
-{
-    int i, j;
+static float vorbis_lpc_from_data(float *data, float *lpci, int n, int m, double *aut, double *lpc) {
+	double error;
+	double epsilon;
+	int i, j;
 
-    j = m + 1;
-    // for(j = 0; j <= m; j++)
-    while(j--)
-    {
-        double d = 0;
-        for(i = j; i < (int)data_len; i++)
-            d += (double)data[i] * data[i-j];
+	/* autocorrelation, p+1 lag coefficients */
+	j = m + 1;
+	while(j--) {
+		double d = 0; /* double needed for accumulator depth */
+		for(i = j; i < n; i++) d += (double)data[i] * data[i - j];
+		aut[j] = d;
+	}
 
-        autoc[j] = d;
-    }
+	/* Generate lpc coefficients from autocorr values */
+
+	/* set our noise floor to about -100dB */
+	error = aut[0] * (1. + 1e-10);
+	epsilon = 1e-9 * aut[0] + 1e-10;
+
+	for(i = 0; i < m; i++) {
+		double r = -aut[i + 1];
+
+		if(error < epsilon) {
+			memset(lpc + i, 0, (m - i) * sizeof(*lpc));
+			goto done;
+		}
+
+		/* Sum up this iteration's reflection coefficient; note that in
+		   Vorbis we don't save it.  If anyone wants to recycle this code
+		   and needs reflection coefficients, save the results of 'r' from
+		   each iteration. */
+
+		for(j = 0; j < i; j++) r -= lpc[j] * aut[i - j];
+		r /= error;
+
+		/* Update LPC coefficients and total error */
+
+		lpc[i] = r;
+		for(j = 0; j < i / 2; j++) {
+			double tmp = lpc[j];
+
+			lpc[j] += r * lpc[i - 1 - j];
+			lpc[i - 1 - j] += r * tmp;
+		}
+		if(i & 1) lpc[j] += lpc[j] * r;
+
+		error *= 1. - r * r;
+	}
+
+done:
+
+	/* slightly damp the filter */
+	{
+		double g = .99;
+		double damp = g;
+		for(j = 0; j < m; j++) {
+			lpc[j] *= damp;
+			damp *= g;
+		}
+	}
+
+	for(j = 0; j < m; j++) lpci[j] = (float)lpc[j];
+
+	/* we need the error value to know how big an impulse to hit the
+	   filter with later */
+
+	return error;
 }
 
-static int compute_lpc(const double * const autoc, double * const lpc, const int lpc_order)
-{
-    int i, j;
-    double error, epsilon;
-    int max_order = lpc_order;
+static void vorbis_lpc_predict(float *coeff, float *prime, int m, float *data, long n, float *work) {
+	/* in: coeff[0...m-1] LPC coefficients
+	       prime[0...m-1] initial values (allocated size of n+m-1)
+	  out: data[0...n-1] data samples */
 
-    error = autoc[0] * (1.+1e-10);
-    epsilon = 1e-9*autoc[0] + 1e-10;
+	long i, j, o, p;
+	float y;
 
-    for(i = 0; i < lpc_order; i++)
-    {
-        if (error < epsilon)
-        {
-            memset(&lpc[i], 0, (lpc_order-i)*sizeof(lpc[0]));
-            max_order = i; break;
-        }
+	if(!prime)
+		for(i = 0; i < m; i++)
+			work[i] = 0.f;
+	else
+		for(i = 0; i < m; i++)
+			work[i] = prime[i];
 
-        double r = -autoc[i+1];
-        for(j = 0; j < i; j++)
-            r -= lpc[j] * autoc[i-j];
-        r /= error;
+	for(i = 0; i < n; i++) {
+		y = 0;
+		o = i;
+		p = m;
+		for(j = 0; j < m; j++)
+			y -= work[o++] * coeff[--p];
 
-        lpc[i] = r;
-        for(j = 0; j < i/2; j++)
-        {
-            double tmp = lpc[j];
-            lpc[j    ] += r * lpc[i-1-j];
-            lpc[i-1-j] += r * tmp;
-        }
-        if (i&1)
-            lpc[j] += lpc[j]*r;
-
-        error *= 1.0 - r*r;
-    }
-
-    if (1) /* slightly damp the filter */
-    {
-        const double g = 0.999;
-        double damp = g;
-        for(j = 0; j < max_order; j++)
-        {
-            lpc[j] *= damp;
-            damp *= g;
-        }
-    }
-
-    if (max_order == 0) /* in case the signal is constant AND we subtract the mean in apply_window() */
-    {
-        max_order = 1;
-        lpc[0] = -1;
-    }
-
-    return max_order;
+		data[i] = work[o] = y;
+	}
 }
 
-static void lpc_extrapolate_data(float * const data0, const size_t data_len, const size_t extra, const double * const lpc, const int order, const bool invdir)
-{
-    int i, j;
-    if (invdir == false)
-    {
-        float* data = data0 + data_len - order;
-        for(i = 0; i < (int)extra; i++)
-        {
-            float sum = 0;
-            for(j = 0; j < order; j++)
-                sum -= data[i+j] * (float)lpc[order-1-j];
+void lpc_extrapolate2(float *const data, const size_t data_len, const int nch, const int lpc_order, const size_t extra_bkwd, const size_t extra_fwd, void **extrapolate_buffer, size_t *extrapolate_buffer_size) {
+	const size_t tdata_size = sizeof(float) * (extra_bkwd + data_len + extra_fwd);
+	const size_t aut_size = sizeof(double) * (lpc_order + 1);
+	const size_t lpc_size = sizeof(double) * lpc_order;
+	const size_t lpci_size = sizeof(float) * lpc_order;
+	const size_t work_size = sizeof(float) * (extra_bkwd + lpc_order + extra_fwd);
 
-            if (sum > 10.f) sum = 10.f; else if (sum < -10.f) sum = -10.f; // should be removed after debugging etc
-            data[order+i] = sum;
-        }
-    }
-    else
-    {
-        float* data = data0 - 1 + order;
-        for(i = 0; i < (int)extra; i++)
-        {
-            float sum = 0;
-            for(j = 0; j < order; j++)
-                sum -= data[-i-j] * (float)lpc[order-1-j];
+	const size_t new_size = tdata_size + aut_size + lpc_size + lpci_size + work_size;
 
-            if (sum > 10.f) sum = 10.f; else if (sum < -10.f) sum = -10.f; // should be removed after debugging etc
-            data[-order-i] = sum;
-        }
-    }
+	if(new_size > *extrapolate_buffer_size) {
+		*extrapolate_buffer = realloc(*extrapolate_buffer, new_size);
+		*extrapolate_buffer_size = new_size;
+	}
+
+	float *tdata = (float *)(*extrapolate_buffer); // for 1 channel only
+
+	double *aut = (double *)(*extrapolate_buffer + tdata_size);
+	double *lpc = (double *)(*extrapolate_buffer + tdata_size + aut_size);
+	float *lpci = (float *)(*extrapolate_buffer + tdata_size + aut_size + lpc_size);
+	float *work = (float *)(*extrapolate_buffer + tdata_size + aut_size + lpc_size + lpci_size);
+
+	for(int c = 0; c < nch; c++) {
+		if(extra_bkwd) {
+			for(int i = 0; i < (int)data_len; i++)
+				tdata[data_len - 1 - i] = data[i * nch + c];
+		} else {
+			for(int i = 0; i < (int)data_len; i++)
+				tdata[i] = data[i * nch + c];
+		}
+
+		apply_window(tdata, data_len);
+		vorbis_lpc_from_data(tdata, lpci, (int)data_len, lpc_order, aut, lpc);
+
+		// restore after apply_window
+		if(extra_bkwd) {
+			for(int i = 0; i < (int)data_len; i++)
+				tdata[data_len - 1 - i] = data[i * nch + c];
+		} else {
+			for(int i = 0; i < (int)data_len; i++)
+				tdata[i] = data[i * nch + c];
+		}
+
+		vorbis_lpc_predict(lpci, tdata + data_len - lpc_order, lpc_order, tdata + data_len, extra_fwd + extra_bkwd, work);
+
+		if(extra_bkwd) {
+			for(int i = 0; i < extra_bkwd; i++)
+				data[(-i - 1) * nch + c] = tdata[data_len + i];
+		} else {
+			for(int i = 0; i < extra_fwd; i++)
+				data[(i + data_len) * nch + c] = tdata[data_len + i];
+		}
+	}
 }
