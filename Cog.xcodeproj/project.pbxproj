@@ -119,6 +119,9 @@
 		835A8FD327957310005B3C39 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 835A8FC627957310005B3C39 /* json.c */; };
 		835EDD8A27A000E8001EDCCE /* gsx.wv in Resources */ = {isa = PBXBuildFile; fileRef = 835EDD8027A000E8001EDCCE /* gsx.wv */; };
 		835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 835F00B8279BD1CD00055FCF /* SecondsFormatter.m */; };
+		835FAC7927BCDF2A00BA8562 /* AVIFDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC7527BCDF2A00BA8562 /* AVIFDecoder.m */; };
+		835FAC7E27BCDF5B00BA8562 /* libaom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 835FAC7C27BCDF5B00BA8562 /* libaom.a */; };
+		835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 835FAC7D27BCDF5B00BA8562 /* libavif.a */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
 		836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C427BB919300BF35B2 /* libogg.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -906,6 +909,21 @@
 		835EDD8027A000E8001EDCCE /* gsx.wv */ = {isa = PBXFileReference; lastKnownFileType = file; path = gsx.wv; sourceTree = "<group>"; };
 		835F00B4279BD1CD00055FCF /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
 		835F00B8279BD1CD00055FCF /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatter.m; sourceTree = "<group>"; };
+		835FAC6727BCDF2A00BA8562 /* aomdx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aomdx.h; sourceTree = "<group>"; };
+		835FAC6827BCDF2A00BA8562 /* aom_frame_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom_frame_buffer.h; sourceTree = "<group>"; };
+		835FAC6927BCDF2A00BA8562 /* aom_encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom_encoder.h; sourceTree = "<group>"; };
+		835FAC6A27BCDF2A00BA8562 /* aom_integer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom_integer.h; sourceTree = "<group>"; };
+		835FAC6B27BCDF2A00BA8562 /* aom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom.h; sourceTree = "<group>"; };
+		835FAC6C27BCDF2A00BA8562 /* aom_external_partition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom_external_partition.h; sourceTree = "<group>"; };
+		835FAC6D27BCDF2A00BA8562 /* aom_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom_image.h; sourceTree = "<group>"; };
+		835FAC6E27BCDF2A00BA8562 /* aom_codec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom_codec.h; sourceTree = "<group>"; };
+		835FAC6F27BCDF2A00BA8562 /* aom_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aom_decoder.h; sourceTree = "<group>"; };
+		835FAC7027BCDF2A00BA8562 /* aomcx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aomcx.h; sourceTree = "<group>"; };
+		835FAC7227BCDF2A00BA8562 /* avif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avif.h; sourceTree = "<group>"; };
+		835FAC7427BCDF2A00BA8562 /* AVIFDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVIFDecoder.h; sourceTree = "<group>"; };
+		835FAC7527BCDF2A00BA8562 /* AVIFDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVIFDecoder.m; sourceTree = "<group>"; };
+		835FAC7C27BCDF5B00BA8562 /* libaom.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libaom.a; path = ThirdParty/avif/lib/libaom.a; sourceTree = "<group>"; };
+		835FAC7D27BCDF5B00BA8562 /* libavif.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavif.a; path = ThirdParty/avif/lib/libavif.a; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
@@ -1029,6 +1047,8 @@
 				8355D6B8180613FB00D05687 /* Security.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */,
+				835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */,
+				835FAC7E27BCDF5B00BA8562 /* libaom.a in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
 				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
@@ -1085,6 +1105,8 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				835FAC7C27BCDF5B00BA8562 /* libaom.a */,
+				835FAC7D27BCDF5B00BA8562 /* libavif.a */,
 				836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */,
 				836EF0CC27BB94E100BF35B2 /* libopus.0.dylib */,
 				836EF0C727BB91BC00BF35B2 /* libFLAC.8.dylib */,
@@ -1139,6 +1161,7 @@
 		177EBF770B8BC2A70000BC8C /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				835FAC6427BCDF2900BA8562 /* avif */,
 				835A8FC527957310005B3C39 /* json */,
 				177EBF850B8BC2A70000BC8C /* ImageTextCell */,
 				179790DD0C087AB7001D6996 /* OpenURLPanel */,
@@ -1662,6 +1685,58 @@
 				835F00B8279BD1CD00055FCF /* SecondsFormatter.m */,
 			);
 			path = Formatters;
+			sourceTree = "<group>";
+		};
+		835FAC6427BCDF2900BA8562 /* avif */ = {
+			isa = PBXGroup;
+			children = (
+				835FAC6527BCDF2900BA8562 /* include */,
+				835FAC7327BCDF2A00BA8562 /* source */,
+			);
+			path = avif;
+			sourceTree = "<group>";
+		};
+		835FAC6527BCDF2900BA8562 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				835FAC6627BCDF2900BA8562 /* aom */,
+				835FAC7127BCDF2A00BA8562 /* avif */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		835FAC6627BCDF2900BA8562 /* aom */ = {
+			isa = PBXGroup;
+			children = (
+				835FAC6727BCDF2A00BA8562 /* aomdx.h */,
+				835FAC6827BCDF2A00BA8562 /* aom_frame_buffer.h */,
+				835FAC6927BCDF2A00BA8562 /* aom_encoder.h */,
+				835FAC6A27BCDF2A00BA8562 /* aom_integer.h */,
+				835FAC6B27BCDF2A00BA8562 /* aom.h */,
+				835FAC6C27BCDF2A00BA8562 /* aom_external_partition.h */,
+				835FAC6D27BCDF2A00BA8562 /* aom_image.h */,
+				835FAC6E27BCDF2A00BA8562 /* aom_codec.h */,
+				835FAC6F27BCDF2A00BA8562 /* aom_decoder.h */,
+				835FAC7027BCDF2A00BA8562 /* aomcx.h */,
+			);
+			path = aom;
+			sourceTree = "<group>";
+		};
+		835FAC7127BCDF2A00BA8562 /* avif */ = {
+			isa = PBXGroup;
+			children = (
+				835FAC7227BCDF2A00BA8562 /* avif.h */,
+			);
+			path = avif;
+			sourceTree = "<group>";
+		};
+		835FAC7327BCDF2A00BA8562 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				835FAC7427BCDF2A00BA8562 /* AVIFDecoder.h */,
+				835FAC7527BCDF2A00BA8562 /* AVIFDecoder.m */,
+			);
+			path = source;
 			sourceTree = "<group>";
 		};
 		8360EF0117F92B23005208A4 /* Products */ = {
@@ -2415,6 +2490,7 @@
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
+				835FAC7927BCDF2A00BA8562 /* AVIFDecoder.m in Sources */,
 				EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
@@ -2743,10 +2819,14 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ThirdParty/avif/lib",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
@@ -2787,10 +2867,14 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ThirdParty/avif/lib",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",

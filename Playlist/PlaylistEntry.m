@@ -7,6 +7,7 @@
 //
 
 #import "PlaylistEntry.h"
+#import "AVIFDecoder.h"
 #import "SecondsFormatter.h"
 
 @implementation PlaylistEntry
@@ -29,6 +30,7 @@
 @synthesize errorMessage;
 
 @synthesize URL;
+@synthesize trashURL;
 
 @synthesize artist;
 @synthesize albumartist;
@@ -378,7 +380,15 @@
 	NSImage *image = [NSImage imageNamed:imageCacheTag];
 
 	if(image == nil) {
-		image = [[NSImage alloc] initWithData:albumArtInternal];
+		if([AVIFDecoder isAVIFFormatForData:albumArtInternal]) {
+			CGImageRef imageRef = [AVIFDecoder createAVIFImageWithData:albumArtInternal];
+			if(imageRef) {
+				image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
+				CFRelease(imageRef);
+			}
+		} else {
+			image = [[NSImage alloc] initWithData:albumArtInternal];
+		}
 		[image setName:imageCacheTag];
 	}
 
