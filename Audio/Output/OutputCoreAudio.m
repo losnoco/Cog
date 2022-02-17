@@ -63,7 +63,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 		amountToRead = inNumberFrames * bytesPerPacket;
 
 		int visTabulated = 0;
-		float visAudio[512]; // Chunk size
+		float visAudio[inNumberFrames]; // Chunk size
 
 		if(_self->stopping == YES || [_self->outputController shouldContinue] == NO) {
 			// Chain is dead, fill out the serial number pointer forever with silence
@@ -188,12 +188,10 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 			// buffer loop if it doesn't get anything, so always produce a full
 			// buffer, and silence anything we couldn't supply.
 			clearBuffers(ioData, (amountToRead - amountRead) / bytesPerPacket, amountRead / bytesPerPacket);
-
-			vDSP_vclr(visAudio + visTabulated, 1, 512 - visTabulated);
 		}
 
 		[_self->visController postSampleRate:_self->deviceFormat.mSampleRate];
-		[_self->visController postVisPCM:visAudio];
+		[_self->visController postVisPCM:visAudio amount:visTabulated];
 
 		return 0;
 	}

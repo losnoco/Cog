@@ -41,10 +41,15 @@ static VisualizationController *_sharedController = nil;
 	}
 }
 
-- (void)postVisPCM:(const float *)inPCM {
+- (void)postVisPCM:(const float *)inPCM amount:(int)amount {
+	int skipAmount = 0;
+	if(amount > 4096) {
+		skipAmount = amount - 4096;
+		amount = 4096;
+	}
 	@synchronized(self) {
-		cblas_scopy(4096 - 512, visAudio + 512, 1, visAudio, 1);
-		cblas_scopy(512, inPCM, 1, visAudio + 4096 - 512, 1);
+		cblas_scopy(4096 - amount, visAudio + amount, 1, visAudio, 1);
+		cblas_scopy(amount, inPCM + skipAmount, 1, visAudio + 4096 - amount, 1);
 	}
 }
 

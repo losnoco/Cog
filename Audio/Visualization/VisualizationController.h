@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (VisualizationController *)sharedController;
 
 - (void)postSampleRate:(double)sampleRate;
-- (void)postVisPCM:(const float *)inPCM;
+- (void)postVisPCM:(const float *)inPCM amount:(int)amount;
 - (double)readSampleRate;
 - (void)copyVisPCM:(float *)outPCM visFFT:(float *)outFFT;
 
