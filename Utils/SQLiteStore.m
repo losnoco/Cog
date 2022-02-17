@@ -511,7 +511,7 @@ NSURL *urlForPath(NSString *path) {
 }
 
 @interface SQLiteStore (Private)
-- (int64_t)addString:(NSString *)string;
+- (int64_t)addString:(NSString **)string;
 - (NSString *)getString:(int64_t)stringId;
 - (void)removeString:(int64_t)stringId;
 - (int64_t)addArt:(NSData *)art;
@@ -668,6 +668,8 @@ static SQLiteStore *g_sharedStore = NULL;
 			size_t count = [self playlistGetCount];
 
 			databaseMirror = [[NSMutableArray alloc] init];
+			artTable = [[NSMutableDictionary alloc] init];
+			stringTable = [[NSMutableDictionary alloc] init];
 
 			for(size_t i = 0; i < count; ++i) {
 				PlaylistEntry *pe = [self playlistGetItem:i];
@@ -690,12 +692,12 @@ static SQLiteStore *g_sharedStore = NULL;
 	}
 }
 
-- (int64_t)addString:(NSString *)string {
-	if(!string || [string length] == 0) {
+- (int64_t)addString:(NSString **)string {
+	if(!*string || [*string length] == 0) {
 		return -1;
 	}
 
-	const char *str = [string UTF8String];
+	const char *str = [*string UTF8String];
 	uint64_t len = strlen(str); // SQLite expects number of bytes, not characters
 
 	sqlite3_stmt *st = stmt[stmt_select_string];
@@ -732,6 +734,8 @@ static SQLiteStore *g_sharedStore = NULL;
 
 		ret = sqlite3_last_insert_rowid(g_database);
 		refcount = 1;
+
+		[stringTable setObject:*string forKey:[[NSNumber numberWithInteger:ret] stringValue]];
 	} else {
 		st = stmt[stmt_bump_string];
 
@@ -741,6 +745,8 @@ static SQLiteStore *g_sharedStore = NULL;
 		   sqlite3_reset(st)) {
 			return -1;
 		}
+
+		*string = [stringTable objectForKey:[[NSNumber numberWithInteger:ret] stringValue]];
 	}
 
 	return ret;
@@ -749,6 +755,9 @@ static SQLiteStore *g_sharedStore = NULL;
 - (NSString *)getString:(int64_t)stringId {
 	if(stringId < 0)
 		return @"";
+
+	NSString *ret = [stringTable objectForKey:[[NSNumber numberWithInteger:stringId] stringValue]];
+	if(ret) return ret;
 
 	sqlite3_stmt *st = stmt[stmt_select_string_value];
 
@@ -764,7 +773,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		return @"";
 	}
 
-	NSString *ret = @"";
+	ret = @"";
 
 	if(rc == SQLITE_ROW) {
 		const unsigned char *str = sqlite3_column_text(st, select_string_value_out_value);
@@ -817,6 +826,8 @@ static SQLiteStore *g_sharedStore = NULL;
 		   sqlite3_reset(st)) {
 			return;
 		}
+
+		[stringTable removeObjectForKey:[[NSNumber numberWithInteger:stringId] stringValue]];
 	} else {
 		st = stmt[stmt_pop_string];
 
@@ -978,7 +989,7 @@ static SQLiteStore *g_sharedStore = NULL;
 	NSURL *url = [track URL];
 	NSString *urlString = [url absoluteString];
 
-	int64_t urlId = [self addString:urlString];
+	int64_t urlId = [self addString:&urlString];
 
 	sqlite3_stmt *st = stmt[stmt_select_track];
 
@@ -1005,14 +1016,31 @@ static SQLiteStore *g_sharedStore = NULL;
 	sqlite3_reset(stmt[stmt_select_string]);
 
 	if(rc != SQLITE_ROW) {
-		int64_t albumId = [self addString:[track album]];
-		int64_t albumartistId = [self addString:[track albumartist]];
-		int64_t artistId = [self addString:[track artist]];
-		int64_t titleId = [self addString:[track rawTitle]];
-		int64_t genreId = [self addString:[track genre]];
-		int64_t codecId = [self addString:[track codec]];
-		int64_t cuesheetId = [self addString:[track cuesheet]];
-		int64_t encodingId = [self addString:[track encoding]];
+		NSString *temp;
+		temp = [track album];
+		int64_t albumId = [self addString:&temp];
+		[track setAlbum:temp];
+		temp = [track albumartist];
+		int64_t albumartistId = [self addString:&temp];
+		[track setAlbumartist:temp];
+		temp = [track artist];
+		int64_t artistId = [self addString:&temp];
+		[track setArtist:temp];
+		temp = [track rawTitle];
+		int64_t titleId = [self addString:&temp];
+		[track setTitle:temp];
+		temp = [track genre];
+		int64_t genreId = [self addString:&temp];
+		[track setGenre:temp];
+		temp = [track codec];
+		int64_t codecId = [self addString:&temp];
+		[track setCodec:temp];
+		temp = [track cuesheet];
+		int64_t cuesheetId = [self addString:&temp];
+		[track setCuesheet:temp];
+		temp = [track encoding];
+		int64_t encodingId = [self addString:&temp];
+		[track setEncoding:temp];
 		int64_t trackNr = [[track track] intValue] | (((uint64_t)[[track disc] intValue]) << 32);
 		int64_t year = [[track year] intValue];
 		int64_t unsignedFmt = [track Unsigned];
@@ -1021,7 +1049,9 @@ static SQLiteStore *g_sharedStore = NULL;
 		int64_t bitspersample = [track bitsPerSample];
 		int64_t channels = [track channels];
 		int64_t channelConfig = [track channelConfig];
-		int64_t endianId = [self addString:[track endian]];
+		temp = [track endian];
+		int64_t endianId = [self addString:&temp];
+		[track setEndian:temp];
 		int64_t floatingpoint = [track floatingPoint];
 		int64_t totalframes = [track totalFrames];
 		int64_t metadataloaded = [track metadataLoaded];
@@ -1113,7 +1143,7 @@ static SQLiteStore *g_sharedStore = NULL;
 	NSURL *url = [track URL];
 	NSString *urlString = [url absoluteString];
 
-	int64_t urlId = [self addString:urlString];
+	int64_t urlId = [self addString:&urlString];
 
 	sqlite3_stmt *st = stmt[stmt_select_track];
 
@@ -1201,14 +1231,31 @@ static SQLiteStore *g_sharedStore = NULL;
 	sqlite3_reset(st);
 
 	{
-		int64_t albumId = [self addString:[track album]];
-		int64_t albumartistId = [self addString:[track albumartist]];
-		int64_t artistId = [self addString:[track artist]];
-		int64_t titleId = [self addString:[track rawTitle]];
-		int64_t genreId = [self addString:[track genre]];
-		int64_t codecId = [self addString:[track codec]];
-		int64_t cuesheetId = [self addString:[track cuesheet]];
-		int64_t encodingId = [self addString:[track encoding]];
+		NSString *temp;
+		temp = [track album];
+		int64_t albumId = [self addString:&temp];
+		[track setAlbum:temp];
+		temp = [track albumartist];
+		int64_t albumartistId = [self addString:&temp];
+		[track setAlbumartist:temp];
+		temp = [track artist];
+		int64_t artistId = [self addString:&temp];
+		[track setArtist:temp];
+		temp = [track rawTitle];
+		int64_t titleId = [self addString:&temp];
+		[track setTitle:temp];
+		temp = [track genre];
+		int64_t genreId = [self addString:&temp];
+		[track setGenre:temp];
+		temp = [track codec];
+		int64_t codecId = [self addString:&temp];
+		[track setCodec:temp];
+		temp = [track cuesheet];
+		int64_t cuesheetId = [self addString:&temp];
+		[track setCuesheet:temp];
+		temp = [track encoding];
+		int64_t encodingId = [self addString:&temp];
+		[track setEncoding:temp];
 		int64_t trackNr = [[track track] intValue] | (((uint64_t)[[track disc] intValue]) << 32);
 		int64_t year = [[track year] intValue];
 		int64_t unsignedFmt = [track Unsigned];
@@ -1217,7 +1264,9 @@ static SQLiteStore *g_sharedStore = NULL;
 		int64_t bitspersample = [track bitsPerSample];
 		int64_t channels = [track channels];
 		int64_t channelConfig = [track channelConfig];
-		int64_t endianId = [self addString:[track endian]];
+		temp = [track endian];
+		int64_t endianId = [self addString:&temp];
+		[track setEndian:temp];
 		int64_t floatingpoint = [track floatingPoint];
 		int64_t totalframes = [track totalFrames];
 		int64_t metadataloaded = [track metadataLoaded];

@@ -460,6 +460,7 @@
 	[self setMetadataLoaded:YES];
 }
 
+// Now we duplicate the object to a new handle, but merely reference the same data
 - (id)copyWithZone:(NSZone *)zone {
 	PlaylistEntry *pe = [[[self class] allocWithZone:zone] init];
 
@@ -479,22 +480,22 @@
 		pe->queuePosition = queuePosition;
 
 		pe->error = error;
-		pe->errorMessage = [errorMessage copyWithZone:zone];
+		pe->errorMessage = errorMessage;
 
-		pe->URL = [URL copyWithZone:zone];
+		pe->URL = URL;
 
-		pe->artist = [artist copyWithZone:zone];
-		pe->albumartist = [albumartist copyWithZone:zone];
-		pe->album = [album copyWithZone:zone];
-		pe->title = [title copyWithZone:zone];
-		pe->genre = [genre copyWithZone:zone];
-		pe->year = [year copyWithZone:zone];
-		pe->track = [track copyWithZone:zone];
-		pe->disc = [disc copyWithZone:zone];
+		pe->artist = artist;
+		pe->albumartist = albumartist;
+		pe->album = album;
+		pe->title = title;
+		pe->genre = genre;
+		pe->year = year;
+		pe->track = track;
+		pe->disc = disc;
 
-		pe->cuesheet = [cuesheet copyWithZone:zone];
+		pe->cuesheet = cuesheet;
 
-		pe->albumArtInternal = albumArtInternal; // Only allocated item not duplicated
+		pe->albumArtInternal = albumArtInternal;
 
 		pe->replayGainAlbumGain = replayGainAlbumGain;
 		pe->replayGainAlbumPeak = replayGainAlbumPeak;
@@ -513,11 +514,11 @@
 		pe->Unsigned = Unsigned;
 		pe->sampleRate = sampleRate;
 
-		pe->codec = [codec copyWithZone:zone];
+		pe->codec = codec;
 
-		pe->endian = [endian copyWithZone:zone];
+		pe->endian = endian;
 
-		pe->encoding = [encoding copyWithZone:zone];
+		pe->encoding = encoding;
 
 		pe->seekable = seekable;
 

@@ -20,6 +20,7 @@
 	@private
 	NSMutableArray *databaseMirror;
 	NSMutableDictionary *artTable;
+	NSMutableDictionary *stringTable;
 }
 
 @property(nonatomic, readwrite) NSString *databasePath;
