@@ -514,7 +514,7 @@ NSURL *urlForPath(NSString *path) {
 - (int64_t)addString:(NSString **)string;
 - (NSString *)getString:(int64_t)stringId;
 - (void)removeString:(int64_t)stringId;
-- (int64_t)addArt:(NSData *)art;
+- (int64_t)addArt:(NSData **)art;
 - (NSData *)getArt:(int64_t)artId;
 - (void)removeArt:(int64_t)artId;
 - (int64_t)addTrack:(PlaylistEntry *)track;
@@ -840,15 +840,15 @@ static SQLiteStore *g_sharedStore = NULL;
 	}
 }
 
-- (int64_t)addArt:(NSData *)art {
-	if(!art || [art length] == 0) {
+- (int64_t)addArt:(NSData **)art {
+	if(!*art || [*art length] == 0) {
 		return -1;
 	}
 
 	sqlite3_stmt *st = stmt[stmt_select_art];
 
 	if(sqlite3_reset(st) ||
-	   sqlite3_bind_blob64(st, select_art_in_value, [art bytes], [art length], SQLITE_STATIC)) {
+	   sqlite3_bind_blob64(st, select_art_in_value, [*art bytes], [*art length], SQLITE_STATIC)) {
 		return -1;
 	}
 
@@ -871,7 +871,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		st = stmt[stmt_add_art];
 
 		if(sqlite3_reset(st) ||
-		   sqlite3_bind_blob64(st, add_art_in_value, [art bytes], [art length], SQLITE_STATIC) ||
+		   sqlite3_bind_blob64(st, add_art_in_value, [*art bytes], [*art length], SQLITE_STATIC) ||
 		   sqlite3_step(st) != SQLITE_DONE ||
 		   sqlite3_reset(st)) {
 			return -1;
@@ -879,6 +879,8 @@ static SQLiteStore *g_sharedStore = NULL;
 
 		ret = sqlite3_last_insert_rowid(g_database);
 		refcount = 1;
+
+		[artTable setObject:*art forKey:[[NSNumber numberWithInteger:ret] stringValue]];
 	} else {
 		st = stmt[stmt_bump_art];
 
@@ -888,9 +890,9 @@ static SQLiteStore *g_sharedStore = NULL;
 		   sqlite3_reset(st)) {
 			return -1;
 		}
-	}
 
-	[artTable setValue:art forKey:[[NSNumber numberWithInteger:ret] stringValue]];
+		*art = [artTable objectForKey:[[NSNumber numberWithInteger:ret] stringValue]];
+	}
 
 	return ret;
 }
@@ -1066,7 +1068,8 @@ static SQLiteStore *g_sharedStore = NULL;
 		int64_t artId = -1;
 
 		if(albumArt)
-			artId = [self addArt:albumArt];
+			artId = [self addArt:&albumArt];
+		[track setAlbumArtInternal:albumArt];
 		[track setArtId:artId];
 
 		st = stmt[stmt_add_track];
@@ -1281,7 +1284,8 @@ static SQLiteStore *g_sharedStore = NULL;
 		int64_t artId = -1;
 
 		if(albumArt)
-			artId = [self addArt:albumArt];
+			artId = [self addArt:&albumArt];
+		[track setAlbumArtInternal:albumArt];
 		[track setArtId:artId];
 
 		st = stmt[stmt_update_track];
