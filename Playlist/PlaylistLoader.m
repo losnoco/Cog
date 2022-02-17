@@ -34,6 +34,8 @@
 
 #import "NSDictionary+Merge.h"
 
+#import "RedundantPlaylistDataStore.h"
+
 @implementation PlaylistLoader
 
 - (id)init {
@@ -540,9 +542,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSLock *outLock = [[NSLock alloc] init];
 	NSMutableArray *outArray = [[NSMutableArray alloc] init];
+	RedundantPlaylistDataStore *dataStore = [[RedundantPlaylistDataStore alloc] init];
 
 	__block NSLock *weakLock = outLock;
 	__block NSMutableArray *weakArray = outArray;
+	__block RedundantPlaylistDataStore *weakDataStore = dataStore;
 
 	{
 		[load_info_indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *_Nonnull stop) {
@@ -566,6 +570,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:entryMetadata];
 
 				[weakLock lock];
+				entryInfo = [weakDataStore coalesceEntryInfo:entryInfo];
 				[weakArray addObject:weakPe];
 				[weakArray addObject:entryInfo];
 				[self setProgressBarStatus:progress];
