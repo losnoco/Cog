@@ -785,6 +785,8 @@ static SQLiteStore *g_sharedStore = NULL;
 
 	sqlite3_reset(st);
 
+	[stringTable setObject:ret forKey:[[NSNumber numberWithInteger:stringId] stringValue]];
+
 	return ret;
 }
 
