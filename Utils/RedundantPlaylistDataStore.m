@@ -51,10 +51,10 @@
 	__block NSMutableDictionary *ret = [[NSMutableDictionary alloc] initWithCapacity:[entryInfo count]];
 
 	[entryInfo enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {
-		if([[obj class] isSubclassOfClass:[NSString class]]) {
+		if([obj isKindOfClass:[NSString class]]) {
 			NSString *stringObj = (NSString *)obj;
 			[ret setObject:[self coalesceString:stringObj] forKey:key];
-		} else if([[obj class] isSubclassOfClass:[NSData class]]) {
+		} else if([obj isKindOfClass:[NSData class]]) {
 			NSData *dataObj = (NSData *)obj;
 			[ret setObject:[self coalesceArt:dataObj] forKey:key];
 		} else {
