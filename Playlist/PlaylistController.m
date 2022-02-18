@@ -447,6 +447,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				[[NSSortDescriptor alloc] initWithKey:@"album"
 				                            ascending:ascending
 				                             selector:@selector(caseInsensitiveCompare:)],
+				[[NSSortDescriptor alloc] initWithKey:@"disc" // Yes, this, even though it's not actually a column
+				                            ascending:ascending
+				                             selector:@selector(compareTrackNumbers:)],
 				[[NSSortDescriptor alloc] initWithKey:@"track"
 				                            ascending:ascending
 				                             selector:@selector(compareTrackNumbers:)]
