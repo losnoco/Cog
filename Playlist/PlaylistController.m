@@ -393,6 +393,68 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
+
+	NSUInteger index = [cellIdentifiers indexOfObject:[tableColumn identifier]];
+
+	NSSortDescriptor *sortDescriptor = [tableColumn sortDescriptorPrototype];
+	NSArray *sortDescriptors = sortDescriptor ? @[sortDescriptor] : @[];
+
+	BOOL ascending;
+
+	NSImage *indicatorImage = [tableView indicatorImageInTableColumn:tableColumn];
+	NSImage *sortAscending = [NSImage imageNamed:@"NSAscendingSortIndicator"];
+	NSImage *sortDescending = [NSImage imageNamed:@"NSDescendingSortIndicator"];
+
+	if(indicatorImage == sortAscending) {
+		[tableView setIndicatorImage:sortDescending inTableColumn:tableColumn];
+		ascending = NO;
+	} else {
+		[tableView setIndicatorImage:sortAscending inTableColumn:tableColumn];
+		ascending = YES;
+	}
+
+	switch(index) {
+		default:
+		case 0:
+			sortDescriptors = @[];
+			break;
+
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 8:
+		case 10:
+		case 11:
+		case 12:
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(caseInsensitiveCompare:)];
+			sortDescriptors = @[sortDescriptor];
+			break;
+
+		case 6:
+		case 7:
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(compareTrackNumbers:)];
+			sortDescriptors = @[sortDescriptor];
+			break;
+
+		case 9: {
+			// Unfortunately, this makes the column header bug out. No way around it.
+			sortDescriptors = @[
+				[[NSSortDescriptor alloc] initWithKey:@"albumartist"
+				                            ascending:ascending
+				                             selector:@selector(caseInsensitiveCompare:)],
+				[[NSSortDescriptor alloc] initWithKey:@"album"
+				                            ascending:ascending
+				                             selector:@selector(caseInsensitiveCompare:)],
+				[[NSSortDescriptor alloc] initWithKey:@"track"
+				                            ascending:ascending
+				                             selector:@selector(compareTrackNumbers:)]
+			];
+		}
+	}
+
+	[self setSortDescriptors:sortDescriptors];
 }
 
 // This action is only needed to revert the one that follows it
@@ -777,18 +839,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			[self rearrangeObjects];
 
 			return;
-		} else if([[sortDescriptors[0] key] caseInsensitiveCompare:@"track"] == NSOrderedSame) {
-			sortDescriptors = @[
-				[[NSSortDescriptor alloc] initWithKey:@"albumartist"
-				                            ascending:YES
-				                             selector:@selector(caseInsensitiveCompare:)],
-				[[NSSortDescriptor alloc] initWithKey:@"album"
-				                            ascending:YES
-				                             selector:@selector(caseInsensitiveCompare:)],
-				[[NSSortDescriptor alloc] initWithKey:@"track"
-				                            ascending:YES
-				                             selector:@selector(compareTrackNumbers:)]
-			];
 		}
 	}
 
