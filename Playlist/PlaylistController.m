@@ -18,6 +18,8 @@
 #import "StatusImageTransformer.h"
 #import "ToggleQueueTitleTransformer.h"
 
+#import "NSString+CogSort.h"
+
 #import "Logging.h"
 
 #define UNDO_STACK_LIMIT 0
@@ -768,13 +770,26 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	DLog(@"Current: %@, setting: %@", [self sortDescriptors], sortDescriptors);
 
 	// Cheap hack so the index column isn't sorted
-	if(([sortDescriptors count] != 0) && [[sortDescriptors[0] key]
-	                                     caseInsensitiveCompare:@"index"] == NSOrderedSame) {
-		// Remove the sort descriptors
-		[super setSortDescriptors:@[]];
-		[self rearrangeObjects];
+	if([sortDescriptors count] != 0) {
+		if([[sortDescriptors[0] key] caseInsensitiveCompare:@"index"] == NSOrderedSame) {
+			// Remove the sort descriptors
+			[super setSortDescriptors:@[]];
+			[self rearrangeObjects];
 
-		return;
+			return;
+		} else if([[sortDescriptors[0] key] caseInsensitiveCompare:@"track"] == NSOrderedSame) {
+			sortDescriptors = @[
+				[[NSSortDescriptor alloc] initWithKey:@"albumartist"
+				                            ascending:YES
+				                             selector:@selector(caseInsensitiveCompare:)],
+				[[NSSortDescriptor alloc] initWithKey:@"album"
+				                            ascending:YES
+				                             selector:@selector(caseInsensitiveCompare:)],
+				[[NSSortDescriptor alloc] initWithKey:@"track"
+				                            ascending:YES
+				                             selector:@selector(compareTrackNumbers:)]
+			];
+		}
 	}
 
 	[super setSortDescriptors:sortDescriptors];
