@@ -41,8 +41,6 @@
 		17818A9B0C0B27AC001C4916 /* wv.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A940C0B27AC001C4916 /* wv.icns */; };
 		1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1784560E0F631E24007E8021 /* FileTreeViewController.m */; };
 		178456120F631E31007E8021 /* SideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 178456110F631E31007E8021 /* SideViewController.m */; };
-		1791005E0CB44D6D0070BC5C /* Cog.scriptSuite in Resources */ = {isa = PBXBuildFile; fileRef = 1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */; };
-		1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */ = {isa = PBXBuildFile; fileRef = 1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */; };
 		1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */; };
 		179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 179790DF0C087AB7001D6996 /* OpenURLPanel.m */; };
 		179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 179D03090E0CB2500064A77A /* ContainedNode.m */; };
@@ -99,6 +97,7 @@
 		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
 		830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C37F227B9956C00E02BB0 /* analyzer.c */; };
 		8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */; };
+		831B99BF27C23E88005A969B /* Cog.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 831B99BE27C23E88005A969B /* Cog.sdef */; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
@@ -784,8 +783,6 @@
 		1784560E0F631E24007E8021 /* FileTreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeViewController.m; path = FileTree/FileTreeViewController.m; sourceTree = "<group>"; };
 		178456100F631E31007E8021 /* SideViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SideViewController.h; sourceTree = "<group>"; };
 		178456110F631E31007E8021 /* SideViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SideViewController.m; sourceTree = "<group>"; };
-		1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptSuite; sourceTree = "<group>"; };
-		1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Cog.scriptTerminology; sourceTree = "<group>"; };
 		1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeysApplication.h; sourceTree = "<group>"; };
 		1791FF8E0CB43A2C0070BC5C /* MediaKeysApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaKeysApplication.m; sourceTree = "<group>"; };
 		179790DE0C087AB7001D6996 /* OpenURLPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OpenURLPanel.h; sourceTree = "<group>"; };
@@ -889,6 +886,7 @@
 		830C37F227B9956C00E02BB0 /* analyzer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = equalizerTemplate.pdf; path = Images/equalizerTemplate.pdf; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
+		831B99BE27C23E88005A969B /* Cog.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cog.sdef; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
@@ -1485,9 +1483,8 @@
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
-				1791005C0CB44D6D0070BC5C /* Cog.scriptSuite */,
-				1791005D0CB44D6D0070BC5C /* Cog.scriptTerminology */,
 				832923AE279FAC400048201E /* Cog.q1.json */,
+				831B99BE27C23E88005A969B /* Cog.sdef */,
 				835EDD8027A000E8001EDCCE /* gsx.wv */,
 				830C379F27B95E3000E02BB0 /* Equalizer.xib */,
 				17D1B0D00F6320EA00694C57 /* InfoInspector.xib */,
@@ -2426,8 +2423,6 @@
 				838F851C256B4AC400C3E614 /* icon_blank.icns in Resources */,
 				17818A9A0C0B27AC001C4916 /* wav.icns in Resources */,
 				17818A9B0C0B27AC001C4916 /* wv.icns in Resources */,
-				1791005E0CB44D6D0070BC5C /* Cog.scriptSuite in Resources */,
-				1791005F0CB44D6D0070BC5C /* Cog.scriptTerminology in Resources */,
 				8384916518083EAB00E7332D /* repeatModeOffTemplate.pdf in Resources */,
 				17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */,
 				8384915A18083EAB00E7332D /* missingArt@2x.png in Resources */,
@@ -2439,6 +2434,7 @@
 				17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */,
 				8384916718083EAB00E7332D /* shuffleAlbumTemplate.pdf in Resources */,
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
+				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
