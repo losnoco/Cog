@@ -764,7 +764,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Monkey's Audio File</string>
+			<string>Monkey&apos;s Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
@@ -1157,7 +1157,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>Abyss' Highest eXperience File</string>
+			<string>Abyss&apos; Highest eXperience File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>

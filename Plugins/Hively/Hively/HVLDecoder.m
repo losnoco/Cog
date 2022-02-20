@@ -185,7 +185,7 @@ static void oneTimeInit(void) {
 + (NSArray *)fileTypeAssociations {
 	return @[
 		@[@"Hively Tracker File", @"song.icns", @"hvl"],
-		@[@"Abyss' Highest eXperience File", @"song.icns", @"ahx"]
+		@[@"Abyss&apos; Highest eXperience File", @"song.icns", @"ahx"]
 	];
 }
 
