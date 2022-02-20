@@ -694,14 +694,8 @@ static uint8_t reverse_bits[0x100];
 
 			if(!rawDSD) {
 				if((errcode = avcodec_send_packet(codecCtx, endOfStream ? NULL : lastReadPacket)) < 0) {
-					if(errcode == AVERROR_INVALIDDATA) {
-						ALog(@"Sync error sending packet to codec, attempting to skip it");
+					if(errcode == AVERROR(EAGAIN)) {
 						continue;
-					} else if(errcode != AVERROR(EAGAIN)) {
-						char errDescr[4096];
-						av_strerror(errcode, errDescr, 4096);
-						ALog(@"Error sending packet to codec, errcode = %d, error = %s", errcode, errDescr);
-						return 0;
 					}
 				}
 			}
