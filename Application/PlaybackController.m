@@ -140,7 +140,12 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 - (IBAction)play:(id)sender {
 	if([playlistController shuffle] != ShuffleOff) {
-		PlaylistEntry *pe = [playlistController shuffledEntryAtIndex:0];
+		PlaylistEntry *pe = nil;
+
+		NSInteger index = [playlistView selectedRow];
+		if(index != -1) pe = [playlistController entryAtIndex:index];
+
+		pe = [playlistController shuffledEntryAtIndex:(pe ? pe.shuffleIndex : 0)];
 		[self playEntryAtIndex:pe.index];
 	} else {
 		if([playlistView selectedRow] == -1)
