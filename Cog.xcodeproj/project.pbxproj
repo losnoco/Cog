@@ -101,6 +101,7 @@
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
+		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8349270C27B4EFFC0009AB2B /* duplicateItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */; };
 		8349270D27B4EFFC0009AB2B /* deadItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */; };
@@ -890,6 +891,8 @@
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
+		833D0C2027C4ABA00060E16A /* ScriptAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptAdditions.h; sourceTree = "<group>"; };
+		833D0C2427C4ABB80060E16A /* ScriptAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptAdditions.m; sourceTree = "<group>"; };
 		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681F1CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		833F68251CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = es; path = es.lproj/Credits.html; sourceTree = "<group>"; };
@@ -1155,6 +1158,8 @@
 				171EFE8B0F59FEAE000ADC42 /* DockIconController.m */,
 				17F6C8050F603701000D9DA9 /* PlaybackEventController.h */,
 				17F6C8060F603701000D9DA9 /* PlaybackEventController.m */,
+				833D0C2027C4ABA00060E16A /* ScriptAdditions.h */,
+				833D0C2427C4ABB80060E16A /* ScriptAdditions.m */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -2523,6 +2528,7 @@
 				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
 				836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */,
+				833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */,
 				17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */,
 				17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */,
 				17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */,

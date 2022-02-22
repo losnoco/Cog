@@ -61,6 +61,21 @@
 			<responds-to command="quit">
 				<cocoa method="handleQuitScriptCommand:"/>
 			</responds-to>
+			<responds-to command="play">
+				<cocoa method="playbackStart:" insert-at-beginning="yes"/>
+			</responds-to>
+			<responds-to command="pause">
+				<cocoa method="playbackPause:" insert-at-beginning="yes"/>
+			</responds-to>
+			<responds-to command="stop">
+				<cocoa method="playbackStop:" insert-at-beginning="yes"/>
+			</responds-to>
+			<responds-to command="previous">
+				<cocoa method="playbackPrevious:" insert-at-beginning="yes"/>
+			</responds-to>
+			<responds-to command="next">
+				<cocoa method="playbackNext:" insert-at-beginning="yes"/>
+			</responds-to>
 		</class>
 		<class name="window" code="cwin" description="A window.">
 			<cocoa class="NSWindow"/>
@@ -153,6 +168,9 @@
 			<property name="bitrate" code="pBit" description="The bitrate of the entry, in kilobits per second." type="integer" access="r">
 				<cocoa key="bitrate" insert-at-beginning="yes"/>
 			</property>
+			<property name="spam" code="pSpm" description="Formatted now playing spam for the entry." type="text" access="r">
+				<cocoa key="spam"/>
+			</property>
 		</class>
 		<!-- The old Standard Suite: run, reopen, open, print, and quit. -->
 		<command name="open" code="aevtodoc" description="Open an object."/>
@@ -236,5 +254,10 @@
 				<cocoa key="ToLocation"/>
 			</parameter>
 		</command>
+		<command name="play" code="coreplay" description="Begin playback."/>
+		<command name="pause" code="corepaus" description="Pause playback."/>
+		<command name="stop" code="corestop" description="Stop playback."/>
+		<command name="previous" code="coreprev" description="Play previous track."/>
+		<command name="next" code="corenext" description="Play next track."/>
 	</suite>
 </dictionary>

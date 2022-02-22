@@ -125,7 +125,7 @@ void *kAppControllerContext = &kAppControllerContext;
 }
 
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key {
-	return [key isEqualToString:@"currentEntry"] || [key isEqualToString:@"play"];
+	return [key isEqualToString:@"currentEntry"];
 }
 
 - (void)awakeFromNib {
