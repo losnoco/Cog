@@ -48,7 +48,7 @@ size_t ms_ima_bytes_to_samples(size_t bytes, int block_align, int channels);
 size_t xbox_ima_bytes_to_samples(size_t bytes, int channels);
 size_t dat4_ima_bytes_to_samples(size_t bytes, int channels);
 size_t apple_ima4_bytes_to_samples(size_t bytes, int channels);
-
+int xbox_check_format(STREAMFILE* sf, uint32_t offset, uint32_t max, int channels);
 
 /* ngc_dsp_decoder */
 void decode_ngc_dsp(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
@@ -430,6 +430,15 @@ void seek_vorbis_custom(VGMSTREAM* vgmstream, int32_t num_sample);
 void free_vorbis_custom(vorbis_custom_codec_data* data);
 #endif
 
+typedef struct {
+    int version;
+    int layer;
+    int bit_rate;
+    int sample_rate;
+    int frame_samples;
+    int frame_size; /* bytes */
+    int channels;
+} mpeg_frame_info;
 
 #ifdef VGM_USE_MPEG
 /* mpeg_decoder */
@@ -481,16 +490,6 @@ void free_mpeg(mpeg_codec_data* data);
 
 int mpeg_get_sample_rate(mpeg_codec_data* data);
 long mpeg_bytes_to_samples(long bytes, const mpeg_codec_data* data);
-
-typedef struct {
-    int version;
-    int layer;
-    int bit_rate;
-    int sample_rate;
-    int frame_samples;
-    int frame_size; /* bytes */
-    int channels;
-} mpeg_frame_info;
 
 int mpeg_get_frame_info(STREAMFILE* sf, off_t offset, mpeg_frame_info* info);
 #endif
