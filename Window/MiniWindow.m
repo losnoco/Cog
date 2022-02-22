@@ -45,7 +45,6 @@ extern NSString *iTunesDropType;
 	} else {
 		fileType = NSFilenamesPboardType;
 	}
-	[self setLevel:kCGDraggingWindowLevel - 1];
 	[self registerForDraggedTypes:@[fileType, iTunesDropType]];
 }
 
