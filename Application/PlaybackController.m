@@ -626,7 +626,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			break;
 
 		default:
-			DLog(@"STOPED!");
+			DLog(@"STOPPED!");
 			break;
 	}
 
@@ -641,6 +641,12 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[self setPlaybackStatus:status];
 	// If we don't send it here, if we've stopped, then the NPIC will be stuck at the last file we played.
 	[self sendMetaData];
+}
+
+- (void)audioPlayer:(AudioPlayer *)player didStopNaturally:(id)userInfo {
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"quitOnNaturalStop"]) {
+		[NSApp terminate:nil];
+	}
 }
 
 - (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo {

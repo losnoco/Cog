@@ -259,6 +259,10 @@
 	[self sendDelegateMethod:@selector(audioPlayer:didBeginStream:) withObject:userInfo waitUntilDone:YES];
 }
 
+- (void)notifyPlaybackStopped:(id)userInfo {
+	[self sendDelegateMethod:@selector(audioPlayer:didStopNaturally:) withObject:userInfo waitUntilDone:NO];
+}
+
 - (void)beginEqualizer:(AudioUnit)eq {
 	[self sendDelegateMethod:@selector(audioPlayer:displayEqualizer:) withVoid:eq waitUntilDone:YES];
 }
@@ -424,6 +428,8 @@
 			[self stop];
 
 			bufferChain = nil;
+
+			[self notifyPlaybackStopped:nil];
 
 			return;
 		}

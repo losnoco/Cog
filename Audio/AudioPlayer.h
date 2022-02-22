@@ -121,6 +121,7 @@
 - (void)audioPlayer:(AudioPlayer *)player willEndStream:(id)userInfo; // You must use setNextStream in this method
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(id)status userInfo:(id)userInfo;
+- (void)audioPlayer:(AudioPlayer *)player didStopNaturally:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq;

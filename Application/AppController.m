@@ -458,6 +458,8 @@ void *kAppControllerContext = &kAppControllerContext;
 
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"resumePlaybackOnStartup"];
 
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"quitOnNaturalStop"];
+
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
