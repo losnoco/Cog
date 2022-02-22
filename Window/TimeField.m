@@ -22,9 +22,14 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 }
 
 - (void)awakeFromNib {
+	CGFloat fontSize = 11.0;
+	if(@available(macOS 10.14, *)) {
+		fontSize = 13.0;
+	}
+
 	showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
 
-	NSFontDescriptor *fontDesc = [[NSFont systemFontOfSize:13] fontDescriptor];
+	NSFontDescriptor *fontDesc = [[NSFont systemFontOfSize:fontSize] fontDescriptor];
 
 	NSDictionary *fontFeatureSettings = @{ NSFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
 		                                   NSFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector) };
@@ -33,10 +38,11 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 
 	fontDesc = [fontDesc fontDescriptorByAddingAttributes:fontFeatureAttributes];
 
-	NSFont *font = [NSFont fontWithDescriptor:fontDesc size:13];
+	NSFont *font = [NSFont fontWithDescriptor:fontDesc size:fontSize];
 
-	fontAttributes =
-	@{ NSFontAttributeName: font };
+	fontAttributes = @{ NSFontAttributeName: font };
+
+	[self update];
 }
 
 static int _log10(long minutes) {
