@@ -139,11 +139,16 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 }
 
 - (IBAction)play:(id)sender {
-	if([playlistView selectedRow] == -1)
-		[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+	if([playlistController shuffle] != ShuffleOff) {
+		PlaylistEntry *pe = [playlistController shuffledEntryAtIndex:0];
+		[self playEntryAtIndex:pe.index];
+	} else {
+		if([playlistView selectedRow] == -1)
+			[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 
-	if([playlistView selectedRow] > -1)
-		[self playEntryAtIndex:(int)[playlistView selectedRow]];
+		if([playlistView selectedRow] > -1)
+			[self playEntryAtIndex:(int)[playlistView selectedRow]];
+	}
 }
 
 NSDictionary *makeRGInfo(PlaylistEntry *pe) {
