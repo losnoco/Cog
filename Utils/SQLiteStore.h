@@ -16,7 +16,7 @@
 	@private
 	sqlite3 *g_database;
 	@private
-	sqlite3_stmt *stmt[39];
+	sqlite3_stmt *stmt[41];
 	@private
 	NSMutableArray *databaseMirror;
 	NSMutableDictionary *artTable;

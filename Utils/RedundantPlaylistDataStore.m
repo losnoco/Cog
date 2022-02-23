@@ -10,6 +10,8 @@
 
 #import "RedundantPlaylistDataStore.h"
 
+#import "SHA256Digest.h"
+
 @implementation RedundantPlaylistDataStore
 
 - (id)init {
@@ -17,7 +19,7 @@
 
 	if(self) {
 		stringStore = [[NSMutableArray alloc] init];
-		artStore = [[NSMutableArray alloc] init];
+		artStore = [[NSMutableDictionary alloc] init];
 	}
 
 	return self;
@@ -38,12 +40,14 @@
 - (NSData *)coalesceArt:(NSData *)in {
 	if(in == nil) return in;
 
-	NSUInteger index = [artStore indexOfObject:in];
-	if(index == NSNotFound) {
-		[artStore addObject:in];
+	NSString *key = [SHA256Digest digestDataAsString:in];
+
+	NSData *ret = [artStore objectForKey:key];
+	if(ret == nil) {
+		[artStore setObject:in forKey:key];
 		return in;
 	} else {
-		return [artStore objectAtIndex:index];
+		return ret;
 	}
 }
 

@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RedundantPlaylistDataStore : NSObject {
 	NSMutableArray *stringStore;
-	NSMutableArray *artStore;
+	NSMutableDictionary *artStore;
 }
 
 - (id)init;

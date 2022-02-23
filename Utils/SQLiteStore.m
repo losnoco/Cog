@@ -5,9 +5,12 @@
 //  Created by Christopher Snowhill on 12/22/21.
 //
 
+#import <Foundation/Foundation.h>
+
 #import "SQLiteStore.h"
 #import "Logging.h"
-#import <Foundation/Foundation.h>
+
+#import "SHA256Digest.h"
 
 NSString *getDatabasePath(void) {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
@@ -16,7 +19,7 @@ NSString *getDatabasePath(void) {
 	return [basePath stringByAppendingPathComponent:filename];
 }
 
-static int64_t currentSchemaVersion = 2;
+static int64_t currentSchemaVersion = 3;
 
 NSArray *createSchema(void) {
 	return @[
@@ -27,9 +30,11 @@ NSArray *createSchema(void) {
     );",
 		@"CREATE TABLE IF NOT EXISTS artdictionary ( \
         artid INTEGER PRIMARY KEY AUTOINCREMENT, \
+		arthash BLOB NOT NULL, \
         referencecount INTEGER, \
         value BLOB NOT NULL \
     );",
+		@"CREATE UNIQUE INDEX idx_art_hash ON artdictionary (arthash);",
 		@"CREATE TABLE IF NOT EXISTS knowntracks ( \
         trackid INTEGER PRIMARY KEY AUTOINCREMENT, \
         referencecount INTEGER, \
@@ -87,12 +92,14 @@ enum {
 	stmt_remove_string,
 
 	stmt_select_art,
+	stmt_select_art_all,
 	stmt_select_art_refcount,
 	stmt_select_art_value,
 	stmt_bump_art,
 	stmt_pop_art,
 	stmt_add_art,
 	stmt_remove_art,
+	stmt_add_art_renamed,
 
 	stmt_select_track,
 	stmt_select_track_refcount,
@@ -180,13 +187,21 @@ enum {
 const char *query_remove_string = "DELETE FROM stringdictionary WHERE (stringid = ?)";
 
 enum {
-	select_art_in_value = 1,
+	select_art_in_arthash = 1,
 
 	select_art_out_art_id = 0,
 	select_art_out_reference_count,
 };
 
-const char *query_select_art = "SELECT artid, referencecount FROM artdictionary WHERE (value = ?) LIMIT 1";
+const char *query_select_art = "SELECT artid, referencecount FROM artdictionary WHERE (arthash = ?) LIMIT 1";
+
+enum {
+	select_art_all_out_id = 0,
+	select_art_all_out_referencecount,
+	select_art_all_out_value,
+};
+
+const char *query_select_art_all = "SELECT artid, referencecount, value FROM artdictionary";
 
 enum {
 	select_art_refcount_in_id = 1,
@@ -217,16 +232,26 @@ enum {
 const char *query_pop_art = "UPDATE artdictionary SET referencecount = referencecount - 1 WHERE (artid = ?) LIMIT 1";
 
 enum {
-	add_art_in_value = 1,
+	add_art_in_hash = 1,
+	add_art_in_value,
 };
 
-const char *query_add_art = "INSERT INTO artdictionary (referencecount, value) VALUES (1, ?)";
+const char *query_add_art = "INSERT INTO artdictionary (referencecount, arthash, value) VALUES (1, ?, ?)";
 
 enum {
 	remove_art_in_id = 1,
 };
 
 const char *query_remove_art = "DELETE FROM artdictionary WHERE (artid = ?)";
+
+enum {
+	add_art_renamed_in_id = 1,
+	add_art_renamed_in_referencecount,
+	add_art_renamed_in_hash,
+	add_art_renamed_in_value,
+};
+
+const char *query_add_art_renamed = "INSERT INTO artdictionary_v2 (artid, referencecount, arthash, value) VALUES (?, ?, ?, ?)";
 
 enum {
 	select_track_in_id = 1,
@@ -607,6 +632,62 @@ static SQLiteStore *g_sharedStore = NULL;
 						}
 						break;
 
+					case 2:
+						// Schema 2 to 3: Add arthash blob field to the artdictionary table, requires transmutation
+						{
+							if(sqlite3_exec(g_database, "CREATE TABLE IF NOT EXISTS artdictionary_v2 ( "
+							                            "  artid INTEGER PRIMARY KEY AUTOINCREMENT, "
+							                            "  arthash BLOB NOT NULL, "
+							                            "  referencecount INTEGER, "
+							                            "  value BLOB NOT NULL); "
+							                            "CREATE UNIQUE INDEX idx_art_hash ON artdictionary_v2 (arthash);",
+							                NULL, NULL, &error)) {
+								DLog(@"SQLite error: %s", error);
+								return nil;
+							}
+
+							if(PREPARE(select_art_all) ||
+							   PREPARE(add_art_renamed))
+								return nil;
+
+							// Add the art hashes to the table
+							st = stmt[stmt_select_art_all];
+							sqlite3_stmt *sta = stmt[stmt_add_art_renamed];
+
+							if(sqlite3_reset(st))
+								return nil;
+
+							while(sqlite3_step(st) == SQLITE_ROW) {
+								int64_t artId = sqlite3_column_int64(st, select_art_all_out_id);
+								int64_t referenceCount = sqlite3_column_int64(st, select_art_all_out_referencecount);
+								const void *artBytes = sqlite3_column_blob(st, select_art_all_out_value);
+								size_t artLength = sqlite3_column_bytes(st, select_art_all_out_value);
+								NSData *hash = [SHA256Digest digestBytes:artBytes length:artLength];
+								if(sqlite3_reset(sta) ||
+								   sqlite3_bind_int64(sta, add_art_renamed_in_id, artId) ||
+								   sqlite3_bind_int64(sta, add_art_renamed_in_referencecount, referenceCount) ||
+								   sqlite3_bind_blob64(sta, add_art_renamed_in_hash, [hash bytes], [hash length], SQLITE_STATIC) ||
+								   sqlite3_bind_blob64(sta, add_art_renamed_in_value, artBytes, artLength, SQLITE_STATIC) ||
+								   sqlite3_step(sta) != SQLITE_DONE)
+									return nil;
+							}
+
+							sqlite3_reset(sta);
+
+							sqlite3_finalize(sta);
+							sqlite3_finalize(st);
+
+							stmt[stmt_select_art_all] = NULL;
+							stmt[stmt_add_art_renamed] = NULL;
+
+							if(sqlite3_exec(g_database, "PRAGMA foreign_keys=off; BEGIN TRANSACTION; DROP TABLE artdictionary; ALTER TABLE artdictionary_v2 RENAME TO artdictionary; COMMIT; PRAGMA foreign_keys=on;", NULL, NULL, &error)) {
+								DLog(@"SQLite error: %s", error);
+								return nil;
+							}
+						}
+
+						break;
+
 					default:
 						break;
 				}
@@ -664,7 +745,6 @@ static SQLiteStore *g_sharedStore = NULL;
 				return nil;
 			}
 #undef PREPARE
-
 			size_t count = [self playlistGetCount];
 
 			databaseMirror = [[NSMutableArray alloc] init];
@@ -847,10 +927,12 @@ static SQLiteStore *g_sharedStore = NULL;
 		return -1;
 	}
 
+	NSData *digest = [SHA256Digest digestData:*art];
+
 	sqlite3_stmt *st = stmt[stmt_select_art];
 
 	if(sqlite3_reset(st) ||
-	   sqlite3_bind_blob64(st, select_art_in_value, [*art bytes], [*art length], SQLITE_STATIC)) {
+	   sqlite3_bind_blob64(st, select_art_in_arthash, [digest bytes], [digest length], SQLITE_STATIC)) {
 		return -1;
 	}
 
@@ -873,6 +955,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		st = stmt[stmt_add_art];
 
 		if(sqlite3_reset(st) ||
+		   sqlite3_bind_blob64(st, add_art_in_hash, [digest bytes], [digest length], SQLITE_STATIC) ||
 		   sqlite3_bind_blob64(st, add_art_in_value, [*art bytes], [*art length], SQLITE_STATIC) ||
 		   sqlite3_step(st) != SQLITE_DONE ||
 		   sqlite3_reset(st)) {
