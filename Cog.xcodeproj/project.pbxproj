@@ -134,6 +134,7 @@
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8370D73C277419F700245CE0 /* SQLiteStore.m */; };
 		8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8370D73E2775AE1300245CE0 /* libsqlite3.tbd */; };
+		8372C93D27C7895300E250C9 /* MAD.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8372C93027C785BE00E250C9 /* MAD.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumView.m */; };
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
 		8381A09227C5F72F00A1C530 /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8381A09127C5F72F00A1C530 /* SHA256Digest.m */; };
@@ -518,6 +519,20 @@
 			remoteGlobalIDString = 836FB52C1820538700B3AD2D;
 			remoteInfo = Hively;
 		};
+		8372C92F27C785BE00E250C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8372C92A27C785BD00E250C9 /* MAD.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8372C92327C785BD00E250C9;
+			remoteInfo = MAD;
+		};
+		8372C93B27C7893100E250C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8372C92A27C785BD00E250C9 /* MAD.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8372C92227C785BD00E250C9;
+			remoteInfo = MAD;
+		};
 		8375B36117FFEF010092A79F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */;
@@ -670,6 +685,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				8372C93D27C7895300E250C9 /* MAD.bundle in CopyFiles */,
 				83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */,
 				83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */,
 				834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */,
@@ -941,6 +957,7 @@
 		8370D739277419D200245CE0 /* SQLiteStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLiteStore.h; sourceTree = "<group>"; };
 		8370D73C277419F700245CE0 /* SQLiteStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQLiteStore.m; sourceTree = "<group>"; };
 		8370D73E2775AE1300245CE0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		8372C92A27C785BD00E250C9 /* MAD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MAD.xcodeproj; path = Plugins/MAD/MAD.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpusPlugin.xcodeproj; path = Plugins/Opus/OpusPlugin.xcodeproj; sourceTree = "<group>"; };
 		8377C66127B8CF6300E8BC0F /* SpectrumView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpectrumView.m; path = Visualization/SpectrumView.m; sourceTree = "<group>"; };
 		8377C66227B8CF6300E8BC0F /* SpectrumView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumView.h; path = Visualization/SpectrumView.h; sourceTree = "<group>"; };
@@ -1285,6 +1302,7 @@
 				17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */,
 				83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */,
 				8E8D40820CBB036600135C1B /* M3u.xcodeproj */,
+				8372C92A27C785BD00E250C9 /* MAD.xcodeproj */,
 				83B0669C180D5668008E3612 /* MIDI.xcodeproj */,
 				17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */,
 				83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */,
@@ -1767,6 +1785,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8372C92B27C785BD00E250C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8372C93027C785BE00E250C9 /* MAD.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8377C66027B8CF2300E8BC0F /* Visualization */ = {
 			isa = PBXGroup;
 			children = (
@@ -1947,6 +1973,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8372C93C27C7893100E250C9 /* PBXTargetDependency */,
 				83489C6A2782F76900BDCEA2 /* PBXTargetDependency */,
 				8329306F2778860C0010C07E /* PBXTargetDependency */,
 				ED69CBC625BE32B40090B90D /* PBXTargetDependency */,
@@ -2081,6 +2108,10 @@
 				{
 					ProductGroup = 8E8D40830CBB036600135C1B /* Products */;
 					ProjectRef = 8E8D40820CBB036600135C1B /* M3u.xcodeproj */;
+				},
+				{
+					ProductGroup = 8372C92B27C785BD00E250C9 /* Products */;
+					ProjectRef = 8372C92A27C785BD00E250C9 /* MAD.xcodeproj */;
 				},
 				{
 					ProductGroup = ED69CBB925BE328C0090B90D /* Products */;
@@ -2303,6 +2334,13 @@
 			fileType = wrapper.cfbundle;
 			path = Hively.bundle;
 			remoteRef = 836FB5461820538800B3AD2D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8372C93027C785BE00E250C9 /* MAD.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MAD.bundle;
+			remoteRef = 8372C92F27C785BE00E250C9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83B066A1180D5669008E3612 /* MIDI.bundle */ = {
@@ -2675,6 +2713,11 @@
 			isa = PBXTargetDependency;
 			name = Hively;
 			targetProxy = 836FB5A518206F1500B3AD2D /* PBXContainerItemProxy */;
+		};
+		8372C93C27C7893100E250C9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MAD;
+			targetProxy = 8372C93B27C7893100E250C9 /* PBXContainerItemProxy */;
 		};
 		8375B36217FFEF010092A79F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
