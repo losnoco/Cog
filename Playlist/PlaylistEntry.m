@@ -198,8 +198,9 @@
 	BOOL hasBitrate = (self.bitrate != 0);
 	BOOL hasArtist = (self.artist != nil) && (![self.artist isEqualToString:@""]);
 	BOOL hasAlbumArtist = (self.albumartist != nil) && (![self.albumartist isEqualToString:@""]);
+	BOOL hasTrackArtist = (hasArtist && hasAlbumArtist) && (![self.albumartist isEqualToString:self.artist]);
 	BOOL hasAlbum = (self.album != nil) && (![self.album isEqualToString:@""]);
-	BOOL hasTrack = (self.track != 0);
+	BOOL hasTrack = (self.track != 0) && ([self.track intValue] != 0);
 	BOOL hasLength = (self.totalFrames != 0);
 	BOOL hasCurrentPosition = (self.currentPosition != 0) && (self.current);
 	BOOL hasExtension = NO;
@@ -262,7 +263,7 @@
 		[elements addObject:filename];
 	}
 
-	if(hasAlbumArtist && hasArtist) {
+	if(hasTrackArtist) {
 		[elements addObject:@" // "];
 		[elements addObject:self.artist];
 	}
