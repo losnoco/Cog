@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <flac/FLAC_assert.h>
-#include <flac/all.h>
+#include <FLAC/FLAC_assert.h>
+#include <FLAC/all.h>
 
 uint32_t grabbag__cuesheet_msf_to_frame(uint32_t minutes, uint32_t seconds, uint32_t frames) {
 	return ((minutes * 60) + seconds) * 75 + frames;
@@ -37,6 +37,7 @@ void grabbag__cuesheet_frame_to_msf(uint32_t frame, uint32_t *minutes, uint32_t 
 	*minutes = frame;
 }
 
+#if 0
 /* since we only care about values >= 0 or error, returns < 0 for any illegal string, else value */
 static int local__parse_int_(const char *s) {
 	int ret = 0;
@@ -225,7 +226,6 @@ static char *local__get_field_(char **s, FLAC__bool allow_quotes) {
 	return p;
 }
 
-#if 0
 static FLAC__bool local__cuesheet_parse_(FILE *file, const char **error_message, uint32_t *last_line_read, FLAC__StreamMetadata *cuesheet, uint32_t sample_rate, FLAC__bool is_cdda, FLAC__uint64 lead_out_offset)
 {
 	char buffer[4096], *line, *field;
