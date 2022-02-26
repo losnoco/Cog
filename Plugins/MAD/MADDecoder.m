@@ -469,11 +469,11 @@
 	int ch;
 
 	// samples [0 ... n]
-	float scale = (float)MAD_F_ONE;
 	for(ch = 0; ch < channels; ch++) {
 		vDSP_vflt32(&_synth.pcm.samples[ch][startingSample], 1, &_outputBuffer[ch], channels, _outputFrames);
-		vDSP_vsdiv(&_outputBuffer[ch], channels, &scale, &_outputBuffer[ch], channels, _outputFrames);
 	}
+	float scale = (float)MAD_F_ONE;
+	vDSP_vsdiv(&_outputBuffer[0], 1, &scale, &_outputBuffer[0], 1, _outputFrames * channels);
 
 	// Output to a file
 	// FILE *f = fopen("data.raw", "a");
