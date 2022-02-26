@@ -584,8 +584,45 @@
 	return 1;
 }
 
+- (BOOL)syncFormat:(BOOL)updateNow {
+	float _sampleRate = _frame.header.samplerate;
+	int _channels = MAD_NCHANNELS(&_frame.header);
+	int _layer = 3;
+
+	switch(_frame.header.layer) {
+		case MAD_LAYER_I:
+			_layer = 1;
+			break;
+		case MAD_LAYER_II:
+			_layer = 2;
+			break;
+		case MAD_LAYER_III:
+			_layer = 3;
+			break;
+		default:
+			break;
+	}
+
+	BOOL changed = (_sampleRate != sampleRate ||
+	                _channels != channels ||
+	                _layer != layer);
+
+	if(changed && updateNow) {
+		sampleRate = _sampleRate;
+		channels = _channels;
+		layer = _layer;
+
+		[self willChangeValueForKey:@"properties"];
+		[self didChangeValueForKey:@"properties"];
+	}
+
+	return changed;
+}
+
 - (int)readAudio:(void *)buffer frames:(UInt32)frames {
 	int framesRead = 0;
+
+	[self syncFormat:YES];
 
 	for(;;) {
 		long framesRemaining = frames - framesRead;
@@ -614,6 +651,13 @@
 
 		[self writeOutput];
 		// DLog(@"Wrote output");
+
+		if([self syncFormat:NO]) {
+			if(framesRead)
+				break;
+			else
+				[self syncFormat:YES];
+		}
 	}
 
 	[self updateMetadata];
