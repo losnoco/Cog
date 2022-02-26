@@ -631,6 +631,7 @@
 	if(_outputBuffer) {
 		free(_outputBuffer);
 		_outputBuffer = NULL;
+		_currentOutputFrames = 0;
 	}
 
 	mad_synth_finish(&_synth);
