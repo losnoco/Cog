@@ -622,7 +622,8 @@
 - (int)readAudio:(void *)buffer frames:(UInt32)frames {
 	int framesRead = 0;
 
-	[self syncFormat:YES];
+	if(!_firstFrame)
+		[self syncFormat:YES];
 
 	for(;;) {
 		long framesRemaining = frames - framesRead;
