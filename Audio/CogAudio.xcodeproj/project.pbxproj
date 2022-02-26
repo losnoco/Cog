@@ -61,8 +61,6 @@
 		835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */; };
 		835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */; };
 		83725A8B27AA0DBF0003F694 /* soxr.h in Headers */ = {isa = PBXBuildFile; fileRef = 83725A8827AA0DBF0003F694 /* soxr.h */; };
-		83725A8C27AA0DBF0003F694 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */; };
-		83725A8E27AA0DE60003F694 /* libsoxr.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7B27AA0D8A0003F694 /* Accelerate.framework */; };
 		83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7C27AA0D8E0003F694 /* AVFoundation.framework */; };
 		8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 8377C64B27B8C51500E8BC0F /* fft_accelerate.c */; };
@@ -74,6 +72,7 @@
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
+		83FA145327CA1FEB00483F3C /* libsoxr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83FA145227CA1FEB00483F3C /* libsoxr.a */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
@@ -99,7 +98,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				83725A8E27AA0DE60003F694 /* libsoxr.0.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,7 +164,6 @@
 		83725A7B27AA0D8A0003F694 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		83725A8827AA0DBF0003F694 /* soxr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soxr.h; sourceTree = "<group>"; };
-		83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libsoxr.0.dylib; sourceTree = "<group>"; };
 		8377C64B27B8C51500E8BC0F /* fft_accelerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft_accelerate.c; sourceTree = "<group>"; };
 		8377C64D27B8C54400E8BC0F /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
 		8377C65027B8CAD100E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationController.h; sourceTree = "<group>"; };
@@ -176,6 +173,7 @@
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		83FA145227CA1FEB00483F3C /* libsoxr.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsoxr.a; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
@@ -195,8 +193,8 @@
 				83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */,
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
 				83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */,
+				83FA145327CA1FEB00483F3C /* libsoxr.a in Frameworks */,
 				17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */,
-				83725A8C27AA0DBF0003F694 /* libsoxr.0.dylib in Frameworks */,
 				17D21DAE0B8BE76800D1EBDE /* AudioUnit.framework in Frameworks */,
 				17D21DAF0B8BE76800D1EBDE /* CoreAudio.framework in Frameworks */,
 				17D21DB00B8BE76800D1EBDE /* CoreAudioKit.framework in Frameworks */,
@@ -430,7 +428,7 @@
 		83725A8927AA0DBF0003F694 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				83725A8A27AA0DBF0003F694 /* libsoxr.0.dylib */,
+				83FA145227CA1FEB00483F3C /* libsoxr.a */,
 			);
 			path = lib;
 			sourceTree = "<group>";
