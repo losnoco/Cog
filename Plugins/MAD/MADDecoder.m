@@ -334,8 +334,8 @@
 
 					/*uint8_t misc =*/mad_bit_read(&stream.anc_ptr, 8);
 
-					uint8_t mp3Gain = mad_bit_read(&stream.anc_ptr, 8);
-					DLog(@"Gain: %i", mp3Gain);
+					/*uint8_t mp3Gain =*/mad_bit_read(&stream.anc_ptr, 8);
+					/*DLog(@"Gain: %i", mp3Gain);*/
 
 					/*uint8_t unused =*/mad_bit_read(&stream.anc_ptr, 2);
 					/*uint8_t surroundInfo =*/mad_bit_read(&stream.anc_ptr, 3);
