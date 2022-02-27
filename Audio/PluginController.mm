@@ -108,7 +108,7 @@ static void cache_run() {
 	while(Cache_Running) {
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 
-		{
+		@autoreleasepool {
 			std::lock_guard<std::mutex> lock(Cache_Lock);
 			for(auto it = Cache_List.begin(); it != Cache_List.end();) {
 				auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - it->second.time_accessed);
