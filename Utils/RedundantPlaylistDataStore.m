@@ -69,4 +69,9 @@
 	return [NSDictionary dictionaryWithDictionary:ret];
 }
 
+- (void)reset {
+	[stringStore removeAllObjects];
+	[artStore removeAllObjects];
+}
+
 @end

@@ -8,6 +8,125 @@
 
 #import "NSDictionary+Merge.h"
 
+#import "RedundantPlaylistDataStore.h"
+
+#import <chrono>
+#import <map>
+#import <mutex>
+#import <thread>
+
+struct Cached_Metadata {
+	std::chrono::steady_clock::time_point time_accessed;
+	NSDictionary *properties;
+	NSDictionary *metadata;
+	Cached_Metadata()
+	: properties(nil), metadata(nil) {
+	}
+};
+
+static std::mutex Cache_Lock;
+
+static std::map<std::string, Cached_Metadata> Cache_List;
+
+static RedundantPlaylistDataStore *Cache_Data_Store = nil;
+
+static bool Cache_Running = false;
+
+static std::thread *Cache_Thread = NULL;
+
+static void cache_run();
+
+static void cache_init() {
+	Cache_Data_Store = [[RedundantPlaylistDataStore alloc] init];
+	Cache_Thread = new std::thread(cache_run);
+}
+
+static void cache_deinit() {
+	Cache_Running = false;
+	Cache_Thread->join();
+	delete Cache_Thread;
+	Cache_Data_Store = nil;
+}
+
+static void cache_insert_properties(NSURL *url, NSDictionary *properties) {
+	std::lock_guard<std::mutex> lock(Cache_Lock);
+
+	std::string path = [[url absoluteString] UTF8String];
+	properties = [Cache_Data_Store coalesceEntryInfo:properties];
+
+	Cached_Metadata &entry = Cache_List[path];
+
+	entry.properties = properties;
+	entry.time_accessed = std::chrono::steady_clock::now();
+}
+
+static void cache_insert_metadata(NSURL *url, NSDictionary *metadata) {
+	std::lock_guard<std::mutex> lock(Cache_Lock);
+
+	std::string path = [[url absoluteString] UTF8String];
+	metadata = [Cache_Data_Store coalesceEntryInfo:metadata];
+
+	Cached_Metadata &entry = Cache_List[path];
+
+	entry.metadata = metadata;
+	entry.time_accessed = std::chrono::steady_clock::now();
+}
+
+static NSDictionary *cache_access_properties(NSURL *url) {
+	std::lock_guard<std::mutex> lock(Cache_Lock);
+
+	std::string path = [[url absoluteString] UTF8String];
+
+	Cached_Metadata &entry = Cache_List[path];
+
+	if(entry.properties) {
+		entry.time_accessed = std::chrono::steady_clock::now();
+		return entry.properties;
+	}
+
+	return nil;
+}
+
+static NSDictionary *cache_access_metadata(NSURL *url) {
+	std::lock_guard<std::mutex> lock(Cache_Lock);
+
+	std::string path = [[url absoluteString] UTF8String];
+
+	Cached_Metadata &entry = Cache_List[path];
+
+	if(entry.metadata) {
+		entry.time_accessed = std::chrono::steady_clock::now();
+		return entry.metadata;
+	}
+
+	return nil;
+}
+
+static void cache_run() {
+	std::chrono::milliseconds dura(250);
+
+	while(Cache_Running) {
+		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+
+		{
+			std::lock_guard<std::mutex> lock(Cache_Lock);
+			for(auto it = Cache_List.begin(); it != Cache_List.end();) {
+				auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - it->second.time_accessed);
+				if(elapsed.count() >= 10) {
+					it = Cache_List.erase(it);
+					continue;
+				}
+				++it;
+			}
+
+			if(Cache_List.size() == 0)
+				[Cache_Data_Store reset];
+		}
+
+		std::this_thread::sleep_for(dura);
+	}
+}
+
 @implementation PluginController
 
 @synthesize sources;
@@ -49,9 +168,15 @@ static PluginController *sharedPluginController = nil;
 		self.decodersByMimeType = [[NSMutableDictionary alloc] init];
 
 		[self setup];
+
+		cache_init();
 	}
 
 	return self;
+}
+
+- (void)dealloc {
+	cache_deinit();
 }
 
 - (void)setup {
@@ -457,6 +582,9 @@ static PluginController *sharedPluginController = nil;
 	   [urlScheme isEqualToString:@"https"])
 		return nil;
 
+	NSDictionary *cacheData = cache_access_metadata(url);
+	if(cacheData) return cacheData;
+
 	NSString *ext = [url pathExtension];
 	NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
 	NSString *classString;
@@ -470,9 +598,13 @@ static PluginController *sharedPluginController = nil;
 					else
 						++i;
 				}
-				return [CogMetadataReaderMulti metadataForURL:url readers:_readers];
+				cacheData = [CogMetadataReaderMulti metadataForURL:url readers:_readers];
+				cache_insert_metadata(url, cacheData);
+				return cacheData;
 			}
-			return [CogMetadataReaderMulti metadataForURL:url readers:readers];
+			cacheData = [CogMetadataReaderMulti metadataForURL:url readers:readers];
+			cache_insert_metadata(url, cacheData);
+			return cacheData;
 		} else {
 			classString = [readers objectAtIndex:0];
 		}
@@ -482,7 +614,9 @@ static PluginController *sharedPluginController = nil;
 
 	Class metadataReader = NSClassFromString(classString);
 
-	return [metadataReader metadataForURL:url];
+	cacheData = [metadataReader metadataForURL:url];
+	cache_insert_metadata(url, cacheData);
+	return cacheData;
 }
 
 // If no properties reader is defined, use the decoder's properties.
@@ -493,6 +627,10 @@ static PluginController *sharedPluginController = nil;
 		return nil;
 
 	NSDictionary *properties = nil;
+
+	properties = cache_access_properties(url);
+	if(properties) return properties;
+
 	NSString *ext = [url pathExtension];
 
 	id<CogSource> source = [self audioSourceForURL:url];
@@ -504,8 +642,10 @@ static PluginController *sharedPluginController = nil;
 	if(readers) {
 		if([readers count] > 1) {
 			properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
-			if(properties != nil && [properties count])
+			if(properties != nil && [properties count]) {
+				cache_insert_properties(url, properties);
 				return properties;
+			}
 		} else {
 			classString = [readers objectAtIndex:0];
 		}
@@ -514,8 +654,10 @@ static PluginController *sharedPluginController = nil;
 		if(readers) {
 			if([readers count] > 1) {
 				properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
-				if(properties != nil && [properties count])
+				if(properties != nil && [properties count]) {
+					cache_insert_properties(url, properties);
 					return properties;
+				}
 			} else {
 				classString = [readers objectAtIndex:0];
 			}
@@ -526,8 +668,10 @@ static PluginController *sharedPluginController = nil;
 		Class propertiesReader = NSClassFromString(classString);
 
 		properties = [propertiesReader propertiesForSource:source];
-		if(properties != nil && [properties count])
+		if(properties != nil && [properties count]) {
+			cache_insert_properties(url, properties);
 			return properties;
+		}
 	}
 
 	{
@@ -541,7 +685,9 @@ static PluginController *sharedPluginController = nil;
 
 		[decoder close];
 
-		return [NSDictionary dictionaryByMerging:properties with:metadata];
+		NSDictionary *cacheData = [NSDictionary dictionaryByMerging:properties with:metadata];
+		cache_insert_properties(url, cacheData);
+		return cacheData;
 	}
 }
 

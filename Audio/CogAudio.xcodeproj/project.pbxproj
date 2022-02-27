@@ -39,8 +39,13 @@
 		17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21EBB0B8BF44000D1EBDE /* AudioPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21EBC0B8BF44000D1EBDE /* AudioPlayer.m */; };
 		17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DD30B8D0F7000A34E87 /* PluginController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17F94DD60B8D0F7000A34E87 /* PluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.m */; };
+		17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.mm */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8328995127CB510F00D7F028 /* RedundantPlaylistDataStore.m */; };
+		8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8328995227CB511000D7F028 /* RedundantPlaylistDataStore.h */; };
+		8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8328995527CB51B700D7F028 /* SHA256Digest.h */; };
+		8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8328995627CB51B700D7F028 /* SHA256Digest.m */; };
+		8328995A27CB51C900D7F028 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8328995927CB51C900D7F028 /* Security.framework */; };
 		8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */; };
 		8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */; };
 		834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EA27AF8F380063BC83 /* AudioChunk.h */; };
@@ -139,9 +144,14 @@
 		17D21EBB0B8BF44000D1EBDE /* AudioPlayer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioPlayer.h; sourceTree = "<group>"; };
 		17D21EBC0B8BF44000D1EBDE /* AudioPlayer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AudioPlayer.m; sourceTree = "<group>"; };
 		17F94DD30B8D0F7000A34E87 /* PluginController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginController.h; sourceTree = "<group>"; };
-		17F94DD40B8D0F7000A34E87 /* PluginController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PluginController.m; sourceTree = "<group>"; };
+		17F94DD40B8D0F7000A34E87 /* PluginController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginController.mm; sourceTree = "<group>"; };
 		17F94DDC0B8D101100A34E87 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogAudio_Prefix.pch; sourceTree = "<group>"; };
+		8328995127CB510F00D7F028 /* RedundantPlaylistDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RedundantPlaylistDataStore.m; path = ../../Utils/RedundantPlaylistDataStore.m; sourceTree = "<group>"; };
+		8328995227CB511000D7F028 /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RedundantPlaylistDataStore.h; path = ../../Utils/RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
+		8328995527CB51B700D7F028 /* SHA256Digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = ../../Utils/SHA256Digest.h; sourceTree = "<group>"; };
+		8328995627CB51B700D7F028 /* SHA256Digest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA256Digest.m; path = ../../Utils/SHA256Digest.m; sourceTree = "<group>"; };
+		8328995927CB51C900D7F028 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileHandle+CreateFile.h"; path = "../../Utils/NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+CreateFile.m"; path = "../../Utils/NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		834FD4EA27AF8F380063BC83 /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioChunk.h; sourceTree = "<group>"; };
@@ -190,6 +200,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8328995A27CB51C900D7F028 /* Security.framework in Frameworks */,
 				83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */,
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
 				83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */,
@@ -264,7 +275,7 @@
 				839366651815923C006DD712 /* CogPluginMulti.h */,
 				839366661815923C006DD712 /* CogPluginMulti.m */,
 				17F94DD30B8D0F7000A34E87 /* PluginController.h */,
-				17F94DD40B8D0F7000A34E87 /* PluginController.m */,
+				17F94DD40B8D0F7000A34E87 /* PluginController.mm */,
 				17D21C750B8BE4BA00D1EBDE /* Chain */,
 				17D21C9B0B8BE4BA00D1EBDE /* Output */,
 				17D21C9E0B8BE4BA00D1EBDE /* Status.h */,
@@ -349,6 +360,10 @@
 		17D21CDC0B8BE5B400D1EBDE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				8328995527CB51B700D7F028 /* SHA256Digest.h */,
+				8328995627CB51B700D7F028 /* SHA256Digest.m */,
+				8328995227CB511000D7F028 /* RedundantPlaylistDataStore.h */,
+				8328995127CB510F00D7F028 /* RedundantPlaylistDataStore.m */,
 				835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */,
 				835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */,
 				8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */,
@@ -436,6 +451,7 @@
 		83725A8F27AA16C90003F694 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8328995927CB51C900D7F028 /* Security.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -470,6 +486,7 @@
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
+				8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */,
 				17D21CC50B8BE4BA00D1EBDE /* OutputCoreAudio.h in Headers */,
 				834FD4F427AFA2150063BC83 /* Downmix.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
@@ -481,6 +498,7 @@
 				834FD4F027AF93680063BC83 /* ChunkList.h in Headers */,
 				17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */,
 				17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */,
+				8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */,
 				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
 				17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */,
 				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
@@ -590,12 +608,14 @@
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
+				8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */,
 				8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */,
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
 				835C88AA2797D4D400E28EAE /* lpc.c in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
-				17F94DD60B8D0F7000A34E87 /* PluginController.m in Sources */,
+				17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */,
 				17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */,
+				8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */,
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,

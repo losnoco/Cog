@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id)init;
 - (NSDictionary *)coalesceEntryInfo:(NSDictionary *)pe;
+- (void)reset;
 
 @end
 
