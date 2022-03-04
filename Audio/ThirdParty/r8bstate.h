@@ -19,12 +19,12 @@ struct r8bstate {
 	uint64_t outProcessed;
 	double sampleRatio;
 	r8b::CFixedBuffer<double> InBuf;
-	r8b::CFixedBuffer<double> *OutBuf;
+	r8b::CFixedBuffer<double> *OutBufs;
 	r8b::CDSPResampler24 **Resamps;
 	r8bstate(int _channelCount, int _bufferCapacity, double srcRate, double dstRate)
 	: channelCount(_channelCount), bufferCapacity(_bufferCapacity), inProcessed(0), outProcessed(0), remainder(0) {
 		InBuf.alloc(bufferCapacity);
-		OutBuf = new r8b::CFixedBuffer<double>[channelCount];
+		OutBufs = new r8b::CFixedBuffer<double>[channelCount];
 		Resamps = new r8b::CDSPResampler24 *[channelCount];
 		for(int i = 0; i < channelCount; ++i) {
 			Resamps[i] = new r8b::CDSPResampler24(srcRate, dstRate, bufferCapacity);
@@ -33,7 +33,7 @@ struct r8bstate {
 	}
 
 	~r8bstate() {
-		delete[] OutBuf;
+		delete[] OutBufs;
 		for(int i = 0; i < channelCount; ++i) {
 			delete Resamps[i];
 		}
@@ -49,7 +49,7 @@ struct r8bstate {
 			if(blockCount > outMax)
 				blockCount = outMax;
 			for(i = 0; i < channelCount; ++i) {
-				vDSP_vdpsp(&OutBuf[i][0], 1, output + i, channelCount, blockCount);
+				vDSP_vdpsp(&OutBufs[i][0], 1, output + i, channelCount, blockCount);
 			}
 			remainder -= blockCount;
 			output += channelCount * blockCount;
@@ -71,8 +71,8 @@ struct r8bstate {
 					if(outputDone > outMax) {
 						vDSP_vdpsp(outputPointer, 1, output + i, channelCount, outMax);
 						remainder = outputDone - outMax;
-						OutBuf[i].alloc((int)remainder);
-						memcpy(&OutBuf[i][0], outputPointer + outMax, remainder);
+						OutBufs[i].alloc((int)remainder);
+						memcpy(&OutBufs[i][0], outputPointer + outMax, remainder);
 					} else {
 						vDSP_vdpsp(outputPointer, 1, output + i, channelCount, outputDone);
 					}
@@ -99,7 +99,7 @@ struct r8bstate {
 			if(blockCount > outMax)
 				blockCount = outMax;
 			for(i = 0; i < channelCount; ++i) {
-				vDSP_vdpsp(&OutBuf[i][0], 1, output + i, channelCount, blockCount);
+				vDSP_vdpsp(&OutBufs[i][0], 1, output + i, channelCount, blockCount);
 			}
 			remainder -= blockCount;
 			output += channelCount * blockCount;
