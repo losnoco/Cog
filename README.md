@@ -75,6 +75,12 @@ used for both left and right outputs.
 
 The original HeSuVi project is located [here](https://sourceforge.net/projects/hesuvi/).
 
+
 ADDENDUM - 2022-02-01
 
 I've replaced the resampler with libsoxr, with no quality control settings exposed.
+
+
+ADDENDUM - 2022-03-03
+
+I've replaced the resampler yet again. This time, with [R8Brain](https://github.com/avaneev/r8brain-free-src), using the 24 bit preset, since the player doesn't go over the depth of 24 bit integer or 32 bit floating point, and outputs 32 bit floating point. It still processes the resampler in 64 bits, though.
