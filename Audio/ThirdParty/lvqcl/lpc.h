@@ -24,7 +24,15 @@
 
 static const size_t LPC_ORDER = 32;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void lpc_extrapolate2(float * const data, const size_t data_len, const int nch, const int lpc_order, const size_t extra_bkwd, const size_t extra_fwd, void ** extrapolate_buffer, size_t * extrapolate_buffer_size);
+
+#ifdef __cplusplus
+}
+#endif
 
 static inline void lpc_extrapolate_bkwd(float * const data, const size_t data_len, const size_t prime_len, const int nch, const int lpc_order, const size_t extra_bkwd, void ** extrapolate_buffer, size_t * extrapolate_buffer_size)
 {

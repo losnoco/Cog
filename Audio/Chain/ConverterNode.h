@@ -12,8 +12,6 @@
 #import <AudioUnit/AudioUnit.h>
 #import <CoreAudio/AudioHardware.h>
 
-#import <soxr.h>
-
 #import "Node.h"
 
 #import "HeadphoneFilter.h"
@@ -21,7 +19,7 @@
 @interface ConverterNode : Node {
 	NSDictionary *rgInfo;
 
-	soxr_t soxr;
+	void *_r8bstate;
 
 	void *inputBuffer;
 	size_t inputBufferSize;

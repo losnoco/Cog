@@ -22,6 +22,8 @@
 #import "BadSampleCleaner.h"
 #endif
 
+#import "r8bstate.h"
+
 void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 	if(!inDesc) {
 		DLog(@"Can't print a NULL desc!\n");
@@ -48,7 +50,7 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 	if(self) {
 		rgInfo = nil;
 
-		soxr = 0;
+		_r8bstate = 0;
 		inputBuffer = NULL;
 		inputBufferSize = 0;
 		floatBuffer = NULL;
@@ -76,7 +78,7 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 	return self;
 }
 
-void scale_by_volume(float *buffer, size_t count, float volume) {
+extern "C" void scale_by_volume(float *buffer, size_t count, float volume) {
 	if(volume != 1.0) {
 		size_t unaligned = (uintptr_t)buffer & 15;
 		if(unaligned) {
@@ -147,6 +149,10 @@ static void dsd2pcm_reset(void *);
 static void *dsd2pcm_alloc() {
 	struct dsd2pcm_state *state = (struct dsd2pcm_state *)calloc(1, sizeof(struct dsd2pcm_state));
 
+	float *FILT_LOOKUP_TABLE;
+	double *temp;
+	uint8_t *REVERSE_BITS;
+
 	if(!state)
 		return NULL;
 
@@ -156,8 +162,8 @@ static void *dsd2pcm_alloc() {
 	state->FILT_LOOKUP_TABLE = (float *)calloc(sizeof(float), FILT_LOOKUP_PARTS << 8);
 	if(!state->FILT_LOOKUP_TABLE)
 		goto fail;
-	float *FILT_LOOKUP_TABLE = state->FILT_LOOKUP_TABLE;
-	double *temp = (double *)calloc(sizeof(double), 0x100);
+	FILT_LOOKUP_TABLE = state->FILT_LOOKUP_TABLE;
+	temp = (double *)calloc(sizeof(double), 0x100);
 	if(!temp)
 		goto fail;
 	for(int part = 0, sofs = 0, dofs = 0; part < FILT_LOOKUP_PARTS;) {
@@ -190,7 +196,7 @@ static void *dsd2pcm_alloc() {
 	state->REVERSE_BITS = (uint8_t *)calloc(1, 0x100);
 	if(!state->REVERSE_BITS)
 		goto fail;
-	uint8_t *REVERSE_BITS = state->REVERSE_BITS;
+	REVERSE_BITS = state->REVERSE_BITS;
 	for(int i = 0, j = 0; i < 0x100; i++) {
 		REVERSE_BITS[i] = (uint8_t)j;
 		// "reverse-increment" of j
@@ -507,7 +513,7 @@ tryagain:
 				size_t bytesRead = frameCount * inf.mBytesPerPacket;
 				if(frameCount) {
 					NSData *samples = [chunk removeSamples:frameCount];
-					memcpy(inputBuffer + bytesReadFromInput, [samples bytes], bytesRead);
+					memcpy(((uint8_t *)inputBuffer) + bytesReadFromInput, [samples bytes], bytesRead);
 					lastChunkIn = [[AudioChunk alloc] init];
 					[lastChunkIn setFormat:inf];
 					[lastChunkIn setChannelConfig:config];
@@ -526,7 +532,7 @@ tryagain:
 				if(!skipResampler && !is_postextrapolated_) {
 					if(dsd2pcm) {
 						uint32_t amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
-						memset(inputBuffer + bytesReadFromInput, 0x55, amountToSkip);
+						memset(((uint8_t *)inputBuffer) + bytesReadFromInput, 0x55, amountToSkip);
 						bytesReadFromInput += amountToSkip;
 					}
 					is_postextrapolated_ = 1;
@@ -559,14 +565,14 @@ tryagain:
 
 			if(bytesReadFromInput && isBigEndian) {
 				// Time for endian swap!
-				convert_be_to_le(inputBuffer, inputFormat.mBitsPerChannel, bytesReadFromInput);
+				convert_be_to_le((uint8_t *)inputBuffer, inputFormat.mBitsPerChannel, bytesReadFromInput);
 			}
 
 			if(bytesReadFromInput && isFloat && inputFormat.mBitsPerChannel == 64) {
 				// Time for precision loss from weird inputs
 				samplesRead = bytesReadFromInput / sizeof(double);
-				convert_f64_to_f32(inputBuffer + bytesReadFromInput, inputBuffer, samplesRead);
-				memmove(inputBuffer, inputBuffer + bytesReadFromInput, samplesRead * sizeof(float));
+				convert_f64_to_f32((float *)(((uint8_t *)inputBuffer) + bytesReadFromInput), (const double *)inputBuffer, samplesRead);
+				memmove(inputBuffer, ((uint8_t *)inputBuffer) + bytesReadFromInput, samplesRead * sizeof(float));
 				bytesReadFromInput = samplesRead * sizeof(float);
 			}
 
@@ -575,8 +581,8 @@ tryagain:
 				if(bitsPerSample == 1) {
 					samplesRead = bytesReadFromInput / inputFormat.mBytesPerPacket;
 					size_t buffer_adder = (bytesReadFromInput + 15) & ~15;
-					convert_dsd_to_f32(inputBuffer + buffer_adder, inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, dsd2pcm);
-					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * inputFormat.mChannelsPerFrame * sizeof(float));
+					convert_dsd_to_f32((float *)(((uint8_t *)inputBuffer) + buffer_adder), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, dsd2pcm);
+					memmove(inputBuffer, ((const uint8_t *)inputBuffer) + buffer_adder, samplesRead * inputFormat.mChannelsPerFrame * sizeof(float));
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * inputFormat.mChannelsPerFrame * sizeof(float);
 					isFloat = YES;
@@ -584,10 +590,10 @@ tryagain:
 					samplesRead = bytesReadFromInput;
 					size_t buffer_adder = (bytesReadFromInput + 1) & ~1;
 					if(!isUnsigned)
-						convert_s8_to_s16(inputBuffer + buffer_adder, inputBuffer, samplesRead);
+						convert_s8_to_s16((int16_t *)(((uint8_t *)inputBuffer) + buffer_adder), (const uint8_t *)inputBuffer, samplesRead);
 					else
-						convert_u8_to_s16(inputBuffer + buffer_adder, inputBuffer, samplesRead);
-					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * 2);
+						convert_u8_to_s16((int16_t *)(((uint8_t *)inputBuffer) + buffer_adder), (const uint8_t *)inputBuffer, samplesRead);
+					memmove(inputBuffer, ((uint8_t *)inputBuffer) + buffer_adder, samplesRead * 2);
 					bitsPerSample = 16;
 					bytesReadFromInput = samplesRead * 2;
 					isUnsigned = NO;
@@ -595,11 +601,11 @@ tryagain:
 				if(hdcd_decoder) { // implied bits per sample is 16, produces 32 bit int scale
 					samplesRead = bytesReadFromInput / 2;
 					if(isUnsigned)
-						convert_u16_to_s16(inputBuffer, samplesRead);
+						convert_u16_to_s16((int16_t *)inputBuffer, samplesRead);
 					size_t buffer_adder = (bytesReadFromInput + 3) & ~3;
-					convert_s16_to_hdcd_input(inputBuffer + buffer_adder, inputBuffer, samplesRead);
-					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * 4);
-					hdcd_process_stereo((hdcd_state_stereo_t *)hdcd_decoder, inputBuffer, (int)(samplesRead / 2));
+					convert_s16_to_hdcd_input((int32_t *)(((uint8_t *)inputBuffer) + buffer_adder), (int16_t *)inputBuffer, samplesRead);
+					memmove(inputBuffer, ((uint8_t *)inputBuffer) + buffer_adder, samplesRead * 4);
+					hdcd_process_stereo((hdcd_state_stereo_t *)hdcd_decoder, (int32_t *)inputBuffer, (int)(samplesRead / 2));
 					if(((hdcd_state_stereo_t *)hdcd_decoder)->channel[0].sustain &&
 					   ((hdcd_state_stereo_t *)hdcd_decoder)->channel[1].sustain) {
 						[controller sustainHDCD];
@@ -611,12 +617,12 @@ tryagain:
 				} else if(bitsPerSample <= 16) {
 					samplesRead = bytesReadFromInput / 2;
 					if(isUnsigned)
-						convert_u16_to_s16(inputBuffer, samplesRead);
+						convert_u16_to_s16((int16_t *)inputBuffer, samplesRead);
 					size_t buffer_adder = (bytesReadFromInput + 15) & ~15; // vDSP functions expect aligned to four elements
-					vDSP_vflt16((const short *)inputBuffer, 1, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
+					vDSP_vflt16((const short *)inputBuffer, 1, (float *)(((uint8_t *)inputBuffer) + buffer_adder), 1, samplesRead);
 					float scale = 1ULL << 15;
-					vDSP_vsdiv((const float *)(inputBuffer + buffer_adder), 1, &scale, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
-					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * sizeof(float));
+					vDSP_vsdiv((const float *)(((uint8_t *)inputBuffer) + buffer_adder), 1, &scale, (float *)(((uint8_t *)inputBuffer) + buffer_adder), 1, samplesRead);
+					memmove(inputBuffer, ((uint8_t *)inputBuffer) + buffer_adder, samplesRead * sizeof(float));
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * sizeof(float);
 					isUnsigned = NO;
@@ -625,10 +631,10 @@ tryagain:
 					samplesRead = bytesReadFromInput / 3;
 					size_t buffer_adder = (bytesReadFromInput + 3) & ~3;
 					if(isUnsigned)
-						convert_u24_to_s32(inputBuffer + buffer_adder, inputBuffer, samplesRead);
+						convert_u24_to_s32((int32_t *)(((uint8_t *)inputBuffer) + buffer_adder), (uint8_t *)inputBuffer, samplesRead);
 					else
-						convert_s24_to_s32(inputBuffer + buffer_adder, inputBuffer, samplesRead);
-					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * 4);
+						convert_s24_to_s32((int32_t *)(((uint8_t *)inputBuffer) + buffer_adder), (uint8_t *)inputBuffer, samplesRead);
+					memmove(inputBuffer, ((uint8_t *)inputBuffer) + buffer_adder, samplesRead * 4);
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * 4;
 					isUnsigned = NO;
@@ -636,12 +642,12 @@ tryagain:
 				if(!isFloat && bitsPerSample <= 32) {
 					samplesRead = bytesReadFromInput / 4;
 					if(isUnsigned)
-						convert_u32_to_s32(inputBuffer, samplesRead);
+						convert_u32_to_s32((int32_t *)inputBuffer, samplesRead);
 					size_t buffer_adder = (bytesReadFromInput + 31) & ~31; // vDSP functions expect aligned to four elements
-					vDSP_vflt32((const int *)inputBuffer, 1, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
+					vDSP_vflt32((const int *)inputBuffer, 1, (float *)(((uint8_t *)inputBuffer) + buffer_adder), 1, samplesRead);
 					float scale = (1ULL << 31) / gain;
-					vDSP_vsdiv((const float *)(inputBuffer + buffer_adder), 1, &scale, (float *)(inputBuffer + buffer_adder), 1, samplesRead);
-					memmove(inputBuffer, inputBuffer + buffer_adder, samplesRead * sizeof(float));
+					vDSP_vsdiv((const float *)(((uint8_t *)inputBuffer) + buffer_adder), 1, &scale, (float *)(((uint8_t *)inputBuffer) + buffer_adder), 1, samplesRead);
+					memmove(inputBuffer, ((uint8_t *)inputBuffer) + buffer_adder, samplesRead * sizeof(float));
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * sizeof(float);
 					isUnsigned = NO;
@@ -678,9 +684,9 @@ tryagain:
 					}
 				}
 
-				memmove(inputBuffer + N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer + bytesToSkip, bytesReadFromInput);
+				memmove(((uint8_t *)inputBuffer) + N_samples_to_add_ * floatFormat.mBytesPerPacket, ((uint8_t *)inputBuffer) + bytesToSkip, bytesReadFromInput);
 
-				lpc_extrapolate_bkwd(inputBuffer + _N_samples_to_add_ * floatFormat.mBytesPerPacket, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, _N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+				lpc_extrapolate_bkwd((float *)(((uint8_t *)inputBuffer) + _N_samples_to_add_ * floatFormat.mBytesPerPacket), samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, _N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
 #ifdef _DEBUG
 				[BadSampleCleaner cleanSamples:(float *)inputBuffer
 				                        amount:_N_samples_to_add_ * floatFormat.mChannelsPerFrame
@@ -707,7 +713,7 @@ tryagain:
 					inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
 				}
 
-				lpc_extrapolate_fwd(inputBuffer, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+				lpc_extrapolate_fwd((float *)inputBuffer, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
 #ifdef _DEBUG
 				[BadSampleCleaner cleanSamples:(float *)(inputBuffer) + samples_in_buffer * floatFormat.mChannelsPerFrame
 				                        amount:N_samples_to_add_ * floatFormat.mChannelsPerFrame
@@ -748,14 +754,12 @@ tryagain:
 		size_t outputDone = 0;
 
 		if(!skipResampler) {
-			ioNumberPackets += soxr_delay(soxr);
-
 #ifdef _DEBUG
 			[BadSampleCleaner cleanSamples:(float *)(((uint8_t *)inputBuffer) + inpOffset)
 			                        amount:inputSamples * floatFormat.mChannelsPerFrame
 			                      location:@"resampler input"];
 #endif
-			soxr_process(soxr, (float *)(((uint8_t *)inputBuffer) + inpOffset), inputSamples, &inputDone, floatBuffer, ioNumberPackets, &outputDone);
+			outputDone = ((r8bstate *)_r8bstate)->resample((float *)(((uint8_t *)inputBuffer) + inpOffset), inputSamples, &inputDone, (float *)floatBuffer, ioNumberPackets);
 #ifdef _DEBUG
 			[BadSampleCleaner cleanSamples:(float *)floatBuffer
 			                        amount:outputDone * floatFormat.mChannelsPerFrame
@@ -764,10 +768,10 @@ tryagain:
 
 			if(latencyEatenPost) {
 				// Post file flush
-				size_t idone = 0, odone = 0;
+				size_t odone = 0;
 
 				do {
-					soxr_process(soxr, NULL, 0, &idone, floatBuffer + outputDone * floatFormat.mBytesPerPacket, ioNumberPackets - outputDone, &odone);
+					odone = ((r8bstate *)_r8bstate)->flush((float *)(((uint8_t *)floatBuffer) + outputDone * floatFormat.mBytesPerPacket), ioNumberPackets - outputDone);
 #ifdef _DEBUG
 					[BadSampleCleaner cleanSamples:(float *)(floatBuffer + outputDone * floatFormat.mBytesPerPacket)
 					                        amount:odone * floatFormat.mChannelsPerFrame
@@ -787,7 +791,7 @@ tryagain:
 		if(latencyEaten) {
 			if(outputDone > latencyEaten) {
 				outputDone -= latencyEaten;
-				memmove(floatBuffer, floatBuffer + latencyEaten * floatFormat.mBytesPerPacket, outputDone * floatFormat.mBytesPerPacket);
+				memmove(floatBuffer, ((uint8_t *)floatBuffer) + latencyEaten * floatFormat.mBytesPerPacket, outputDone * floatFormat.mBytesPerPacket);
 				latencyEaten = 0;
 			} else {
 				latencyEaten -= outputDone;
@@ -821,7 +825,7 @@ tryagain:
 
 	ioNumberPackets -= ioNumberPackets % outputFormat.mBytesPerPacket;
 
-	memcpy(dest + amountRead, floatBuffer + floatOffset, ioNumberPackets);
+	memcpy(((uint8_t *)dest) + amountRead, ((uint8_t *)floatBuffer) + floatOffset, ioNumberPackets);
 
 	floatOffset += ioNumberPackets;
 	amountRead += ioNumberPackets;
@@ -924,7 +928,7 @@ static float db_to_scale(float db) {
 		// Decimate this for speed
 		floatFormat.mSampleRate *= 1.0 / 8.0;
 		dsd2pcmCount = floatFormat.mChannelsPerFrame;
-		dsd2pcm = calloc(dsd2pcmCount, sizeof(void *));
+		dsd2pcm = (void **)calloc(dsd2pcmCount, sizeof(void *));
 		dsd2pcm[0] = dsd2pcm_alloc();
 		dsd2pcmLatency = dsd2pcm_latency(dsd2pcm[0]);
 		for(size_t i = 1; i < dsd2pcmCount; ++i) {
@@ -951,16 +955,9 @@ static float db_to_scale(float db) {
 	sampleRatio = (double)outputFormat.mSampleRate / (double)floatFormat.mSampleRate;
 
 	if(!skipResampler) {
-		soxr_quality_spec_t q_spec = soxr_quality_spec(SOXR_HQ, 0);
-		soxr_io_spec_t io_spec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
-		soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(0);
+		const int channelCount = floatFormat.mChannelsPerFrame;
 
-		soxr_error_t error;
-
-		soxr = soxr_create(floatFormat.mSampleRate, outputFormat.mSampleRate, floatFormat.mChannelsPerFrame, &error, &io_spec, &q_spec, &runtime_spec);
-
-		if(error)
-			return NO;
+		_r8bstate = (void *)(new r8bstate(channelCount, 1024, floatFormat.mSampleRate, outputFormat.mSampleRate));
 
 		PRIME_LEN_ = max(floatFormat.mSampleRate / 20, 1024u);
 		PRIME_LEN_ = min(PRIME_LEN_, 16384u);
@@ -1035,9 +1032,9 @@ static float db_to_scale(float db) {
 		free(hdcd_decoder);
 		hdcd_decoder = NULL;
 	}
-	if(soxr) {
-		soxr_delete(soxr);
-		soxr = NULL;
+	if(_r8bstate) {
+		delete(r8bstate *)_r8bstate;
+		_r8bstate = NULL;
 	}
 	if(dsd2pcm && dsd2pcmCount) {
 		for(size_t i = 0; i < dsd2pcmCount; ++i) {

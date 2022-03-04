@@ -10,8 +10,9 @@
 #import "AudioDecoder.h"
 #import "AudioSource.h"
 
-#import <soxr.h>
 #import <stdlib.h>
+
+#import "r8bstate.h"
 
 #import "lpc.h"
 #import "util.h"
@@ -197,12 +198,8 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 			double sampleRatio = sampleRate / sampleRateOfSource;
 			int resampledCount = (int)ceil((double)sampleCount * sampleRatio);
 
-			soxr_quality_spec_t q_spec = soxr_quality_spec(SOXR_HQ, 0);
-			soxr_io_spec_t io_spec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
-			soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(0);
-
-			soxr_error_t error;
-
+			r8bstate *_r8bstate = new r8bstate(impulseChannels, 1024, sampleRateOfSource, sampleRate);
+			
 			unsigned long PRIME_LEN_ = MAX(sampleRateOfSource / 20, 1024u);
 			PRIME_LEN_ = MIN(PRIME_LEN_, 16384u);
 			PRIME_LEN_ = MAX(PRIME_LEN_, 2 * LPC_ORDER + 1);
@@ -244,13 +241,13 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 			size_t inputDone = 0;
 			size_t outputDone = 0;
 
-			error = soxr_oneshot(sampleRateOfSource, sampleRate, impulseChannels, impulseBuffer, sampleCount + N_samples_to_add_ * 2, &inputDone, resampledImpulse, resampledCount, &outputDone, &io_spec, &q_spec, &runtime_spec);
-
-			if(error) {
-				free(resampledImpulse);
-				free(impulseBuffer);
-				return nil;
+			outputDone = _r8bstate->resample(impulseBuffer, sampleCount + N_samples_to_add_ * 2, &inputDone, resampledImpulse, resampledCount);
+			
+			if (outputDone < resampledCount) {
+				outputDone += _r8bstate->flush(resampledImpulse + outputDone * impulseChannels, resampledCount - outputDone);
 			}
+			
+			delete _r8bstate;
 
 			outputDone -= N_samples_to_drop_ * 2;
 
