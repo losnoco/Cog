@@ -84,3 +84,8 @@ I've replaced the resampler with libsoxr, with no quality control settings expos
 ADDENDUM - 2022-03-03
 
 I've replaced the resampler yet again. This time, with [R8Brain](https://github.com/avaneev/r8brain-free-src), using the 24 bit preset, since the player doesn't go over the depth of 24 bit integer or 32 bit floating point, and outputs 32 bit floating point. It still processes the resampler in 64 bits, though.
+
+
+ADDENDUM - 2022-03-04
+
+It has come to my attention that my recent commits may have assumed that Aleksey Vaneev, and possibly any other Russian or Belarusian people are in support of the war in Ukraine. I did not intend to make that assumption. I know that a lot of people are either against it, have family and/or friends affected by it, or in some unfortunate cases, have the wool pulled over their eyes by the local propaganda machine. The only thing I knew at all, was comments to the effect of him being anti-vaccines, which is a bit of a sore subject with me. I do not know anyone personally who has died from COVID-19, but I do support using the greatest caution to avoid it, including vaccines, and masks, and social distancing. I will maintain my fork of the library in case anything happens to upstream, and keep an open mind for now, I hope. Hope this long winded mess finds my users well, and doesn't further piss off anyone.
