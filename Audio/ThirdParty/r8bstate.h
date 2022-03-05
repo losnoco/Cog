@@ -8,8 +8,11 @@
 #ifndef r8bstate_h
 #define r8bstate_h
 
-#include "CDSPResampler.h"
+#include <Accelerate/Accelerate.h>
+
 #include "r8bbase.h"
+
+#include "CDSPResampler.h"
 
 struct r8bstate {
 	int channelCount;
@@ -53,6 +56,7 @@ struct r8bstate {
 			}
 			remainder -= blockCount;
 			output += channelCount * blockCount;
+			outProcessed += blockCount;
 			outMax -= blockCount;
 			ret += blockCount;
 			if(!outMax)
@@ -78,13 +82,15 @@ struct r8bstate {
 					}
 				}
 			}
+			size_t outputActual = outputDone - remainder;
 			input += channelCount * blockCount;
-			output += channelCount * outputDone;
+			output += channelCount * outputActual;
 			inCount -= blockCount;
 			if(inDone) *inDone += blockCount;
 			inProcessed += blockCount;
-			outProcessed += outputDone;
-			ret += outputDone;
+			outProcessed += outputActual;
+			outMax -= outputActual;
+			ret += outputActual;
 			if(remainder)
 				break;
 		}
@@ -103,6 +109,7 @@ struct r8bstate {
 			}
 			remainder -= blockCount;
 			output += channelCount * blockCount;
+			outProcessed += blockCount;
 			outMax -= blockCount;
 			ret += blockCount;
 			if(!outMax)
@@ -118,12 +125,23 @@ struct r8bstate {
 				if(outputDone) {
 					if(outputDone > (outputWanted - outProcessed))
 						outputDone = (int)(outputWanted - outProcessed);
-					vDSP_vdpsp(outputPointer, 1, output + i, channelCount, outputDone);
+					if(outputDone > outMax) {
+						vDSP_vdpsp(outputPointer, 1, output + i, channelCount, outMax);
+						remainder = outputDone - outMax;
+						OutBufs[i].alloc((int)remainder);
+						memcpy(&OutBufs[i][0], outputPointer + outMax, remainder);
+					} else {
+						vDSP_vdpsp(outputPointer, 1, output + i, channelCount, outputDone);
+					}
 				}
 			}
-			outProcessed += outputDone;
-			output += channelCount * outputDone;
-			ret += outputDone;
+			size_t outputActual = outputDone - remainder;
+			outProcessed += outputActual;
+			output += channelCount * outputActual;
+			outMax -= outputActual;
+			ret += outputActual;
+			if(remainder)
+				break;
 		}
 		return ret;
 	}
