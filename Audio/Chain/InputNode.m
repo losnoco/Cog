@@ -186,15 +186,17 @@
 				amountInBuffer = 0;
 				bytesInBuffer = 0;
 			} else {
-				if(initialBufferFilled == NO) {
-					[controller initialBufferFilled:self];
-				}
-
 				DLog(@"End of stream? %@", [self properties]);
 
 				endOfStream = YES;
 				shouldClose = [controller endOfInputReached]; // Lets us know if we should keep going or not (occassionally, for track changes within a file)
 				DLog(@"closing? is %i", shouldClose);
+
+				// Move this here, so that the above endOfInputReached has a chance to queue another track before starting output
+				// Technically, the output should still play out its buffer first before checking if it should stop
+				if(initialBufferFilled == NO) {
+					[controller initialBufferFilled:self];
+				}
 
 				// wait before exiting, as we might still get seeking request
 				DLog("InputNode: Before wait")

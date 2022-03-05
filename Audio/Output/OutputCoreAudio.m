@@ -816,7 +816,13 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable"];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp"];
 	}
-	if(stopNext && started && !paused) {
+	if(stopNext && !paused) {
+		if(!started) {
+			// This happens if playback is started on a very short file, and the queue is empty or at the end of the playlist
+			started = YES;
+			NSError *err;
+			[_au startHardwareAndReturnError:&err];
+		}
 		while(![[outputController buffer] isEmpty]) {
 			[writeSemaphore signal];
 			[readSemaphore signal];
