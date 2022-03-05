@@ -21,4 +21,4 @@
 	url = https://github.com/kode54/libsidplayfp.git
 [submodule "Audio/ThirdParty/r8brain-free-src"]
 	path = Audio/ThirdParty/r8brain-free-src
-	url = https://github.com/avaneev/r8brain-free-src
+	url = https://github.com/kode54/r8brain-free-src
