@@ -55,6 +55,11 @@ struct r8bstate {
 				vDSP_vdpsp(&OutBufs[i][0], 1, output + i, channelCount, blockCount);
 			}
 			remainder -= blockCount;
+			if(remainder > 0) {
+				for(i = 0; i < channelCount; ++i) {
+					memmove(&OutBufs[i][0], &OutBufs[i][blockCount], remainder * sizeof(double));
+				}
+			}
 			output += channelCount * blockCount;
 			outProcessed += blockCount;
 			outMax -= blockCount;
@@ -108,6 +113,11 @@ struct r8bstate {
 				vDSP_vdpsp(&OutBufs[i][0], 1, output + i, channelCount, blockCount);
 			}
 			remainder -= blockCount;
+			if(remainder > 0) {
+				for(i = 0; i < channelCount; ++i) {
+					memmove(&OutBufs[i][0], &OutBufs[i][blockCount], remainder * sizeof(double));
+				}
+			}
 			output += channelCount * blockCount;
 			outProcessed += blockCount;
 			outMax -= blockCount;
