@@ -754,6 +754,9 @@ tryagain:
 		size_t outputDone = 0;
 
 		if(!skipResampler) {
+			// This is needed at least for the flush, or else there won't be room for it
+			ioNumberPackets += ((r8bstate *)_r8bstate)->latency();
+
 #ifdef _DEBUG
 			[BadSampleCleaner cleanSamples:(float *)(((uint8_t *)inputBuffer) + inpOffset)
 			                        amount:inputSamples * floatFormat.mChannelsPerFrame

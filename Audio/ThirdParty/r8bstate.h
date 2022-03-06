@@ -43,6 +43,10 @@ struct r8bstate {
 		delete[] Resamps;
 	}
 
+	double latency() {
+		return ((double)inProcessed * sampleRatio) - (double)outProcessed;
+	}
+
 	int resample(const float *input, size_t inCount, size_t *inDone, float *output, size_t outMax) {
 		int ret = 0;
 		int i;
