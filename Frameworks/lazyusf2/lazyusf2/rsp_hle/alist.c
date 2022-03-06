@@ -1031,3 +1031,17 @@ void alist_iirf(
     dram_store_u16(hle, (uint16_t*)&ibuf[(index-1)&3], address+10, 1);
 }
 
+/* Perform a clamped gain, then attenuate it back by an amount */
+void alist_overload(struct hle_t* hle, uint16_t dmem, int16_t count, int16_t gain, int16_t attenuation)
+{
+    int16_t accu;
+    int16_t * sample = (int16_t*)(hle->alist_buffer + dmem);
+
+    while (count != 0)
+    {
+        accu = clamp_s16(*sample * gain);
+        *sample = (accu * attenuation) >> 16;
+        sample++;
+        count --;
+    }
+}
