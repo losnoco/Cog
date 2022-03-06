@@ -175,9 +175,9 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	if([track isEqualToNumber:[NSNumber numberWithInt:0]])
 		track = [NSNumber numberWithInt:track_num];
 
-	NSMutableDictionary *mutableMetadata = @{@"title": title,
-											 @"track": track,
-											 @"disc": disc};
+	NSMutableDictionary *mutableMetadata = [@{ @"title": title,
+		                                       @"track": track,
+		                                       @"disc": disc } mutableCopy];
 
 	if(![album isEqualToString:@""])
 		[mutableMetadata setValue:album forKey:@"album"];
