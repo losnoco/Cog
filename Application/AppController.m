@@ -73,8 +73,8 @@ void *kAppControllerContext = &kAppControllerContext;
 	[p beginSheetModalForWindow:mainWindow
 	          completionHandler:^(NSInteger result) {
 		          if(result == NSModalResponseOK) {
-			          [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginInternal];
-			          [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginInternal];
+			          [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginExternal];
+			          [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginExternal];
 		          } else {
 			          [p close];
 		          }
@@ -111,8 +111,8 @@ void *kAppControllerContext = &kAppControllerContext;
 
 - (void)openURLPanelDidEnd:(OpenURLPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo {
 	if(returnCode == NSModalResponseOK) {
-		[playlistLoader willInsertURLs:@[[panel url]] origin:URLOriginInternal];
-		[playlistLoader didInsertURLs:[playlistLoader addURLs:@[[panel url]] sort:NO] origin:URLOriginInternal];
+		[playlistLoader willInsertURLs:@[[panel url]] origin:URLOriginExternal];
+		[playlistLoader didInsertURLs:[playlistLoader addURLs:@[[panel url]] sort:NO] origin:URLOriginExternal];
 	}
 }
 
