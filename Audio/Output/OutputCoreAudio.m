@@ -472,6 +472,12 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	theAddress.mScope = kAudioDevicePropertyScopeOutput;
 
 	for(UInt32 i = 0; i < nDevices; ++i) {
+		UInt32 isAlive = 0;
+		propsize = sizeof(isAlive);
+		theAddress.mSelector = kAudioDevicePropertyDeviceIsAlive;
+		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &isAlive));
+		if(!isAlive) continue;
+
 		CFStringRef name = NULL;
 		propsize = sizeof(name);
 		theAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
@@ -482,7 +488,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		__Verify_noErr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
 
 		if(propsize < sizeof(UInt32)) {
-			CFRelease(name);
+			if(name) CFRelease(name);
 			continue;
 		}
 
@@ -492,7 +498,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		free(bufferList);
 
 		if(!bufferCount) {
-			CFRelease(name);
+			if(name) CFRelease(name);
 			continue;
 		}
 
