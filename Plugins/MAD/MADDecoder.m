@@ -163,7 +163,8 @@
 											if(end_pad >= 528 + 1) {
 												_startPadding = start_pad + 528 + 1;
 												_endPadding = end_pad - (528 + 1);
-												totalFrames = temp_duration;
+												// iTunes encodes the original length of the file here
+												totalFrames = temp_duration + _startPadding + _endPadding;
 												_foundiTunSMPB = YES;
 											}
 										}
