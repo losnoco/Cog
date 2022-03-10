@@ -59,6 +59,11 @@ void real_run_rsp(usf_state_t * state, uint32_t cycles)
     run_task(state);
 }
 
+void rsp_lle_run_task(usf_state_t * state)
+{
+    run_task(state);
+}
+
 int32_t init_rsp_lle(usf_state_t * state)
 {
     state->CR[0x0] = &state->g_sp.regs[SP_MEM_ADDR_REG];
@@ -104,6 +109,8 @@ int32_t init_rsp_lle(usf_state_t * state)
         &state->g_dp.dpc_regs[DPC_PIPEBUSY_REG],
         &state->g_dp.dpc_regs[DPC_TMEM_REG],
         state);
+
+    state->hle.hle_gfx = 1;
 
     return 0;
 }

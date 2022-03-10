@@ -187,6 +187,15 @@ m64p_error main_start(usf_state_t * state)
         state->enable_hle_audio = 0;
     }
 
+    // Assume it's a proper rip
+    if (state->enablecompare && state->enableFIFOfull)
+    {
+        state->g_delay_si = 1;
+        state->g_delay_ai = 1;
+        state->g_delay_pi = 1;
+        state->g_delay_dp = 1;
+    }
+
     return M64ERR_SUCCESS;
 }
 

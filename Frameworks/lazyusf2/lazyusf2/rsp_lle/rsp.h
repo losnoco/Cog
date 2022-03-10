@@ -82,6 +82,8 @@ int32_t init_rsp_lle(usf_state_t * state);
 NOINLINE static void run_task(usf_state_t * state);
 #include "execute.h"
 
+void rsp_lle_run_task(usf_state_t * state);
+
 #ifdef SP_EXECUTE_LOG
 #include "matrix.h"
 
