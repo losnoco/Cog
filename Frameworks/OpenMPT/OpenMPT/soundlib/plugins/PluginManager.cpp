@@ -643,9 +643,6 @@ bool CVstPluginManager::RemovePlugin(VSTPluginLib *pFactory)
 bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &sndFile)
 {
 	VSTPluginLib *pFound = nullptr;
-#ifdef MODPLUG_TRACKER
-	mixPlugin.SetAutoSuspend(TrackerSettings::Instance().enableAutoSuspend);
-#endif // MODPLUG_TRACKER
 
 	// Find plugin in library
 	enum PlugMatchQuality

@@ -245,11 +245,11 @@ CString MIDIMacroConfig::GetFixedMacroName(FixedMacro macroType) const
 }
 
 
-int MIDIMacroConfig::MacroToPlugParam(uint32 macroIndex) const
+PlugParamIndex MIDIMacroConfig::MacroToPlugParam(uint32 macroIndex) const
 {
 	const std::string macro = SFx[macroIndex].NormalizedString();
 
-	int code = 0;
+	PlugParamIndex code = 0;
 	const char *param = macro.c_str();
 	param += 4;
 	if ((param[0] >= '0') && (param[0] <= '9')) code = (param[0] - '0') << 4; else

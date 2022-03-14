@@ -164,10 +164,10 @@ public:
 	}
 	MPT_FORCEINLINE uint32 GetInt32() const {
 		return 0u
-			| (static_cast<uint32>(bytes[hihi]) << 24)
-			| (static_cast<uint32>(bytes[hilo]) << 16)
-			| (static_cast<uint32>(bytes[lohi]) << 8)
-			| (static_cast<uint32>(bytes[lolo]) << 0);
+			 | (static_cast<uint32>(bytes[hihi]) << 24)
+			 | (static_cast<uint32>(bytes[hilo]) << 16)
+			 | (static_cast<uint32>(bytes[lohi]) << 8)
+			 | (static_cast<uint32>(bytes[lolo]) << 0);
 	}
 	MPT_FORCEINLINE bool operator==(const self_t & cmp) const {
 		return true
@@ -220,14 +220,14 @@ public:
 	}
 	MPT_FORCEINLINE uint64 GetInt64() const {
 		return 0u
-			| (static_cast<uint64>(bytes[hihihi]) << 56)
-			| (static_cast<uint64>(bytes[hihilo]) << 48)
-			| (static_cast<uint64>(bytes[hilohi]) << 40)
-			| (static_cast<uint64>(bytes[hilolo]) << 32)
-			| (static_cast<uint64>(bytes[lohihi]) << 24)
-			| (static_cast<uint64>(bytes[lohilo]) << 16)
-			| (static_cast<uint64>(bytes[lolohi]) << 8)
-			| (static_cast<uint64>(bytes[lololo]) << 0);
+			 | (static_cast<uint64>(bytes[hihihi]) << 56)
+			 | (static_cast<uint64>(bytes[hihilo]) << 48)
+			 | (static_cast<uint64>(bytes[hilohi]) << 40)
+			 | (static_cast<uint64>(bytes[hilolo]) << 32)
+			 | (static_cast<uint64>(bytes[lohihi]) << 24)
+			 | (static_cast<uint64>(bytes[lohilo]) << 16)
+			 | (static_cast<uint64>(bytes[lolohi]) << 8)
+			 | (static_cast<uint64>(bytes[lololo]) << 0);
 	}
 	MPT_FORCEINLINE bool operator==(const self_t & cmp) const {
 		return true

@@ -26,7 +26,8 @@ inline constexpr std::array<mpt::uchar, 16> encode_nibble = {
 	{MPT_UCHAR('0'), MPT_UCHAR('1'), MPT_UCHAR('2'), MPT_UCHAR('3'),
 	 MPT_UCHAR('4'), MPT_UCHAR('5'), MPT_UCHAR('6'), MPT_UCHAR('7'),
 	 MPT_UCHAR('8'), MPT_UCHAR('9'), MPT_UCHAR('A'), MPT_UCHAR('B'),
-	 MPT_UCHAR('C'), MPT_UCHAR('D'), MPT_UCHAR('E'), MPT_UCHAR('F')}};
+	 MPT_UCHAR('C'), MPT_UCHAR('D'), MPT_UCHAR('E'), MPT_UCHAR('F')}
+};
 
 
 inline bool decode_byte(uint8 & byte, mpt::uchar c1, mpt::uchar c2) {

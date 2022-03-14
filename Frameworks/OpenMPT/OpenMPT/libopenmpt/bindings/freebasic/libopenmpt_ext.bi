@@ -123,7 +123,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param speed The new tick count in range [1, 65535].
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the speed is outside the specified range.
 	  \return 1 on success, 0 on failure.
-	  \sa openmpt_module_ext_interface_interactive.openmpt_module_get_current_speed
+	  \sa openmpt_module_get_current_speed
 	'/
 	set_current_speed As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal speed As Long) As Long
 
@@ -133,7 +133,7 @@ Type openmpt_module_ext_interface_interactive
 	  \param tempo The new tempo in range [32, 512]. The exact meaning of the value depends on the tempo mode used by the module.
 	  \return 1 on success, 0 on failure.
 	  \remarks The tempo may be reset by pattern commands at any time. Use set_tempo_factor to apply a tempo factor that is independent of pattern commands.
-	  \sa openmpt_module_ext_interface_interactive.openmpt_module_get_current_tempo
+	  \sa openmpt_module_get_current_tempo
 	'/
 	set_current_tempo As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal tempo As Long) As Long
 

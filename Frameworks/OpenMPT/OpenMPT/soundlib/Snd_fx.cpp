@@ -491,6 +491,10 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				break;
 
 			case CMD_S3MCMDEX:
+				if(!chn.rowCommand.param && (GetType() & (MOD_TYPE_S3M | MOD_TYPE_IT | MOD_TYPE_MPT)))
+					chn.rowCommand.param = chn.nOldCmdEx;
+				else
+					chn.nOldCmdEx = static_cast<ModCommand::PARAM>(chn.rowCommand.param);
 				if((p->param & 0xF0) == 0x60)
 				{
 					// Fine Pattern Delay
@@ -884,6 +888,11 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 					ProcessPanbrello(chn);
 				}
 				break;
+			}
+		
+			if(m_playBehaviour[kST3EffectMemory] && param != 0)
+			{
+				UpdateS3MEffectMemory(chn, param);
 			}
 		}
 
@@ -3303,10 +3312,6 @@ bool CSoundFile::ProcessEffects()
 
 		// S3M/IT Sxx Extended Commands
 		case CMD_S3MCMDEX:
-			if(m_playBehaviour[kST3EffectMemory] && param == 0)
-			{
-				param = chn.nArpeggio;	// S00 uses the last non-zero effect parameter as memory, like other effects including Arpeggio, so we "borrow" our memory there.
-			}
 			ExtendedS3MCommands(nChn, static_cast<ModCommand::PARAM>(param));
 			break;
 
@@ -3578,9 +3583,9 @@ void CSoundFile::UpdateS3MEffectMemory(ModChannel &chn, ModCommand::PARAM param)
 	chn.nTremorParam = param;    // Ixy
 	chn.nArpeggio = param;       // Jxy
 	chn.nRetrigParam = param;    // Qxy
-	chn.nTremoloDepth = (param & 0x0F) << 2; // Rxy
-	chn.nTremoloSpeed = (param >> 4) & 0x0F; // Rxy
-	// Sxy is not handled here.
+	chn.nTremoloDepth = (param & 0x0F) << 2;  // Rxy
+	chn.nTremoloSpeed = (param >> 4) & 0x0F;  // Rxy
+	chn.nOldCmdEx = param;                    // Sxy
 }
 
 
@@ -5144,13 +5149,16 @@ void CSoundFile::SendMIDIData(PlayState &playState, CHANNELINDEX nChn, bool isSm
 			if(plug > 0 && plug <= MAX_MIXPLUGINS && param < 0x80)
 			{
 				plug--;
-				const float newRatio = (127 - param) / 127.0f;
-				if(localOnly)
-					playState.m_midiMacroEvaluationResults->pluginDryWetRatio[plug] = newRatio;
-				else if(!isSmooth)
-					m_MixPlugins[plug].fDryRatio = newRatio;
-				else
-					m_MixPlugins[plug].fDryRatio = CalculateSmoothParamChange(playState, m_MixPlugins[plug].fDryRatio, newRatio);
+				if(IMixPlugin* pPlugin = m_MixPlugins[plug].pMixPlugin; pPlugin)
+				{
+					const float newRatio = (127 - param) / 127.0f;
+					if(localOnly)
+						playState.m_midiMacroEvaluationResults->pluginDryWetRatio[plug] = newRatio;
+					else if(!isSmooth)
+						pPlugin->SetDryRatio(newRatio);
+					else
+						pPlugin->SetDryRatio(CalculateSmoothParamChange(playState, m_MixPlugins[plug].fDryRatio, newRatio));
+				}
 			}
 		} else if((macroCode & 0x80) || isExtended)
 		{
@@ -5159,8 +5167,7 @@ void CSoundFile::SendMIDIData(PlayState &playState, CHANNELINDEX nChn, bool isSm
 			if(plug > 0 && plug <= MAX_MIXPLUGINS && param < 0x80)
 			{
 				plug--;
-				IMixPlugin *pPlugin = m_MixPlugins[plug].pMixPlugin;
-				if(pPlugin)
+				if(IMixPlugin *pPlugin = m_MixPlugins[plug].pMixPlugin; pPlugin)
 				{
 					const PlugParamIndex plugParam = isExtended ? (0x80 + macroCode) : (macroCode & 0x7F);
 					const PlugParamValue value = param / 127.0f;
@@ -5189,8 +5196,7 @@ void CSoundFile::SendMIDIData(PlayState &playState, CHANNELINDEX nChn, bool isSm
 
 			if(plug > 0 && plug <= MAX_MIXPLUGINS)
 			{
-				IMixPlugin *pPlugin = m_MixPlugins[plug - 1].pMixPlugin;
-				if (pPlugin != nullptr)
+				if(IMixPlugin *pPlugin = m_MixPlugins[plug - 1].pMixPlugin; pPlugin != nullptr)
 				{
 					if(macro[0] == 0xF0)
 					{
@@ -5236,7 +5242,7 @@ void CSoundFile::SendMIDINote(CHANNELINDEX chn, uint16 note, uint16 volume)
 }
 
 
-void CSoundFile::ProcessSampleOffset(ModChannel& chn, CHANNELINDEX nChn, const PlayState& playState) const
+void CSoundFile::ProcessSampleOffset(ModChannel &chn, CHANNELINDEX nChn, const PlayState &playState) const
 {
 	const ModCommand &m = chn.rowCommand;
 	uint32 extendedRows = 0;

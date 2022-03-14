@@ -35,7 +35,8 @@ inline constexpr std::array<mpt::uchar, 64> base64 = {
 	{MPT_UCHAR('A'), MPT_UCHAR('B'), MPT_UCHAR('C'), MPT_UCHAR('D'), MPT_UCHAR('E'), MPT_UCHAR('F'), MPT_UCHAR('G'), MPT_UCHAR('H'), MPT_UCHAR('I'), MPT_UCHAR('J'), MPT_UCHAR('K'), MPT_UCHAR('L'), MPT_UCHAR('M'), MPT_UCHAR('N'), MPT_UCHAR('O'), MPT_UCHAR('P'),
 	 MPT_UCHAR('Q'), MPT_UCHAR('R'), MPT_UCHAR('S'), MPT_UCHAR('T'), MPT_UCHAR('U'), MPT_UCHAR('V'), MPT_UCHAR('W'), MPT_UCHAR('X'), MPT_UCHAR('Y'), MPT_UCHAR('Z'), MPT_UCHAR('a'), MPT_UCHAR('b'), MPT_UCHAR('c'), MPT_UCHAR('d'), MPT_UCHAR('e'), MPT_UCHAR('f'),
 	 MPT_UCHAR('g'), MPT_UCHAR('h'), MPT_UCHAR('i'), MPT_UCHAR('j'), MPT_UCHAR('k'), MPT_UCHAR('l'), MPT_UCHAR('m'), MPT_UCHAR('n'), MPT_UCHAR('o'), MPT_UCHAR('p'), MPT_UCHAR('q'), MPT_UCHAR('r'), MPT_UCHAR('s'), MPT_UCHAR('t'), MPT_UCHAR('u'), MPT_UCHAR('v'),
-	 MPT_UCHAR('w'), MPT_UCHAR('x'), MPT_UCHAR('y'), MPT_UCHAR('z'), MPT_UCHAR('0'), MPT_UCHAR('1'), MPT_UCHAR('2'), MPT_UCHAR('3'), MPT_UCHAR('4'), MPT_UCHAR('5'), MPT_UCHAR('6'), MPT_UCHAR('7'), MPT_UCHAR('8'), MPT_UCHAR('9'), MPT_UCHAR('+'), MPT_UCHAR('/')}};
+	 MPT_UCHAR('w'), MPT_UCHAR('x'), MPT_UCHAR('y'), MPT_UCHAR('z'), MPT_UCHAR('0'), MPT_UCHAR('1'), MPT_UCHAR('2'), MPT_UCHAR('3'), MPT_UCHAR('4'), MPT_UCHAR('5'), MPT_UCHAR('6'), MPT_UCHAR('7'), MPT_UCHAR('8'), MPT_UCHAR('9'), MPT_UCHAR('+'), MPT_UCHAR('/')}
+};
 
 
 template <typename Tbyte>

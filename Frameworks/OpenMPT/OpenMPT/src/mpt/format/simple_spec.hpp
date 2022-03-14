@@ -18,8 +18,7 @@ inline namespace MPT_INLINE_NS {
 
 struct format_simple_base {
 
-	enum FormatFlagsEnum
-	{
+	enum FormatFlagsEnum {
 		BaseDec = 0x0001, // base 10 (integers only)        // int+float
 		BaseHex = 0x0002, // base 16 (integers only)        // int+float
 		CaseLow = 0x0010, // lower case hex digits          // int+float

@@ -84,7 +84,7 @@ void ModCommand::ExtendedMODtoS3MEffect()
 	case 0x70: param = (param & 0x03) | 0x40; break;
 	case 0x90: command = CMD_RETRIG; param = (param & 0x0F); break;
 	case 0xA0: if(param & 0x0F) { command = CMD_VOLUMESLIDE; param = (param << 4) | 0x0F; } else command = CMD_NONE; break;
-	case 0xB0: if(param & 0x0F) { command = CMD_VOLUMESLIDE; param = 0xF0 | std::min(param, PARAM(0x0E)); } else command = CMD_NONE; break;
+	case 0xB0: if(param & 0x0F) { command = CMD_VOLUMESLIDE; param = 0xF0 | static_cast<PARAM>(std::min(param & 0x0F, 0x0E)); } else command = CMD_NONE; break;
 	case 0xC0: if(param == 0xC0) { command = CMD_NONE; note = NOTE_NOTECUT; } break;  // this does different things in IT and ST3
 	case 0xD0: if(param == 0xD0) { command = CMD_NONE; } break;  // ditto
 	// rest are the same or handled elsewhere

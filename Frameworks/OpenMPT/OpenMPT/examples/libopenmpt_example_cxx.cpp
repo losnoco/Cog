@@ -64,7 +64,8 @@ int main( int argc, char * argv[] ) {
 		portaudio::StreamParameters stream_parameters( portaudio::DirectionSpecificStreamParameters::null(), outputstream_parameters, samplerate, paFramesPerBufferUnspecified, paNoFlag );
 		portaudio::BlockingStream stream( stream_parameters );
 #else
-		portaudio::BlockingStream stream = [&]() {
+		portaudio::BlockingStream stream = [&]()
+		{
 			try {
 				is_interleaved = false;
 				portaudio::DirectionSpecificStreamParameters outputstream_parameters( portaudio.defaultOutputDevice(), 2, portaudio::FLOAT32, false, portaudio.defaultOutputDevice().defaultHighOutputLatency(), 0 );

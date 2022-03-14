@@ -26,8 +26,7 @@ inline namespace MPT_INLINE_NS {
 
 namespace osinfo {
 
-enum class osclass
-{
+enum class osclass {
 	Unknown,
 	Windows,
 	Linux,

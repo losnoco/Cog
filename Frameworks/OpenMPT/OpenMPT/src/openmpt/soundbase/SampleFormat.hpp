@@ -250,27 +250,27 @@ public:
 	}
 	MPT_CONSTEXPRINLINE uint8 GetSampleSize() const noexcept
 	{
-		return !IsValid()                        ? 0
-			: (value == SampleFormat::Unsigned8) ? 1
-			: (value == SampleFormat::Int8)      ? 1
-			: (value == SampleFormat::Int16)     ? 2
-			: (value == SampleFormat::Int24)     ? 3
-			: (value == SampleFormat::Int32)     ? 4
-			: (value == SampleFormat::Float32)   ? 4
-			: (value == SampleFormat::Float64)   ? 8
-												 : 0;
+		return !IsValid()                         ? 0
+			 : (value == SampleFormat::Unsigned8) ? 1
+			 : (value == SampleFormat::Int8)      ? 1
+			 : (value == SampleFormat::Int16)     ? 2
+			 : (value == SampleFormat::Int24)     ? 3
+			 : (value == SampleFormat::Int32)     ? 4
+			 : (value == SampleFormat::Float32)   ? 4
+			 : (value == SampleFormat::Float64)   ? 8
+												  : 0;
 	}
 	MPT_CONSTEXPRINLINE uint8 GetBitsPerSample() const noexcept
 	{
-		return !IsValid()                        ? 0
-			: (value == SampleFormat::Unsigned8) ? 8
-			: (value == SampleFormat::Int8)      ? 8
-			: (value == SampleFormat::Int16)     ? 16
-			: (value == SampleFormat::Int24)     ? 24
-			: (value == SampleFormat::Int32)     ? 32
-			: (value == SampleFormat::Float32)   ? 32
-			: (value == SampleFormat::Float64)   ? 64
-												 : 0;
+		return !IsValid()                         ? 0
+			 : (value == SampleFormat::Unsigned8) ? 8
+			 : (value == SampleFormat::Int8)      ? 8
+			 : (value == SampleFormat::Int16)     ? 16
+			 : (value == SampleFormat::Int24)     ? 24
+			 : (value == SampleFormat::Int32)     ? 32
+			 : (value == SampleFormat::Float32)   ? 32
+			 : (value == SampleFormat::Float64)   ? 64
+												  : 0;
 	}
 
 	MPT_CONSTEXPRINLINE operator SampleFormat::Enum() const noexcept

@@ -26,16 +26,16 @@ protected:
 		kRvbReverbMix,
 		kRvbReverbTime,
 		kRvbHighFreqRTRatio,
-		kDistNumParameters
+		kRvbNumParameters
 	};
 
-	float m_param[kDistNumParameters];
+	std::array<float, kRvbNumParameters> m_param;
 
 	// Parameters and coefficients
 	float m_dryFactor;
 	float m_wetFactor;
-	float m_coeffs[10];
-	uint32 m_delay[6];
+	std::array<float, 10> m_coeffs;
+	std::array<uint32, 6> m_delay;
 
 	// State
 	struct ReverbState
@@ -64,7 +64,7 @@ public:
 	int32 GetCurrentProgram() override { return 0; }
 	void SetCurrentProgram(int32) override { }
 
-	PlugParamIndex GetNumParameters() const override { return kDistNumParameters; }
+	PlugParamIndex GetNumParameters() const override { return kRvbNumParameters; }
 	PlugParamValue GetParameter(PlugParamIndex index) override;
 	void SetParameter(PlugParamIndex index, PlugParamValue value) override;
 

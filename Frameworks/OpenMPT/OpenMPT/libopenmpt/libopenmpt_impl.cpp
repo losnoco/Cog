@@ -51,12 +51,20 @@
 #include "soundlib/mod_specifications.h"
 #include "soundlib/AudioReadTarget.h"
 
+#if MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
+#include <windows.h>
+#endif // MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
+
 OPENMPT_NAMESPACE_BEGIN
 
 #if !defined(MPT_BUILD_SILENCE_LIBOPENMPT_CONFIGURATION_WARNINGS)
 
 #if MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
-#if defined(_WIN32_WINNT)
+#if defined(NTDDI_VERSION)
+#if (NTDDI_VERSION < 0x06020000)
+MPT_WARNING("Warning: libopenmpt for WinRT is built with reduced functionality. Please #define NTDDI_VERSION 0x0602000.")
+#endif
+#elif defined(_WIN32_WINNT)
 #if (_WIN32_WINNT < 0x0602)
 MPT_WARNING("Warning: libopenmpt for WinRT is built with reduced functionality. Please #define _WIN32_WINNT 0x0602.")
 #endif // _WIN32_WINNT

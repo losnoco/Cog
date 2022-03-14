@@ -24,8 +24,7 @@ namespace IO {
 
 template <typename Tstream>
 struct CallbackStreamTemplate {
-	enum : int
-	{
+	enum : int {
 		SeekSet = 0,
 		SeekCur = 1,
 		SeekEnd = 2

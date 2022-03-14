@@ -30,7 +30,7 @@ protected:
 		kDistNumParameters
 	};
 
-	float m_param[kDistNumParameters];
+	std::array<float, kDistNumParameters> m_param;
 
 	// Pre-EQ coefficients
 	float m_preEQz1[2], m_preEQb1, m_preEQa0;

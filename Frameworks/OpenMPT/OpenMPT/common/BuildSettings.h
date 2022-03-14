@@ -210,8 +210,6 @@
 
 #if defined(MODPLUG_TRACKER)
 
-#define MPT_UPDATE_LEGACY 1
-
 // Enable built-in test suite.
 #if defined(MPT_BUILD_DEBUG) || defined(MPT_BUILD_CHECKED)
 #define ENABLE_TESTS

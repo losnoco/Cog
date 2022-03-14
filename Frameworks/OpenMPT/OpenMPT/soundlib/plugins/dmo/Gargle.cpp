@@ -109,7 +109,7 @@ void Gargle::Process(float *pOutL, float *pOutR, uint32 numFrames)
 
 PlugParamValue Gargle::GetParameter(PlugParamIndex index)
 {
-	if(index < kEqNumParameters)
+	if(index < kGargleNumParameters)
 	{
 		return m_param[index];
 	}
@@ -119,7 +119,7 @@ PlugParamValue Gargle::GetParameter(PlugParamIndex index)
 
 void Gargle::SetParameter(PlugParamIndex index, PlugParamValue value)
 {
-	if(index < kEqNumParameters)
+	if(index < kGargleNumParameters)
 	{
 		value = mpt::safe_clamp(value, 0.0f, 1.0f);
 		if(index == kGargleWaveShape)

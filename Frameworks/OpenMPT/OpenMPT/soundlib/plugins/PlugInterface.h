@@ -109,7 +109,7 @@ public:
 	// Returns the next instance of the same plugin
 	inline IMixPlugin *GetNextInstance() const { return m_pNext; }
 
-	void SetDryRatio(uint32 param);
+	void SetDryRatio(float dryRatio);
 	bool IsBypassed() const;
 	void RecalculateGain();
 	// Query output latency from host (in seconds)

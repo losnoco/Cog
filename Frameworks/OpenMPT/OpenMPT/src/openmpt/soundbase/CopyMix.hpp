@@ -35,8 +35,8 @@ void ConvertBufferMixInternalFixedToBuffer(TOutBuf outBuf, TInBuf inBuf, Tdither
 	assert(inBuf.size_frames() >= count);
 	assert(outBuf.size_frames() >= count);
 	constexpr int ditherBits = SampleFormat(SampleFormatTraits<TOutSample>::sampleFormat()).IsInt()
-		? SampleFormat(SampleFormatTraits<TOutSample>::sampleFormat()).GetBitsPerSample()
-		: 0;
+								 ? SampleFormat(SampleFormatTraits<TOutSample>::sampleFormat()).GetBitsPerSample()
+								 : 0;
 	SC::ClipFixed<int32, fractionalBits, clipOutput> clip;
 	SC::ConvertFixedPoint<TOutSample, TInSample, fractionalBits> conv;
 	for(std::size_t i = 0; i < count; ++i)
@@ -79,8 +79,8 @@ void ConvertBufferMixInternalToBuffer(TOutBuf outBuf, TInBuf inBuf, Tdither &dit
 	assert(inBuf.size_frames() >= count);
 	assert(outBuf.size_frames() >= count);
 	constexpr int ditherBits = SampleFormat(SampleFormatTraits<TOutSample>::sampleFormat()).IsInt()
-		? SampleFormat(SampleFormatTraits<TOutSample>::sampleFormat()).GetBitsPerSample()
-		: 0;
+								 ? SampleFormat(SampleFormatTraits<TOutSample>::sampleFormat()).GetBitsPerSample()
+								 : 0;
 	SC::Clip<TInSample, clipOutput> clip;
 	SC::Convert<TOutSample, TInSample> conv;
 	for(std::size_t i = 0; i < count; ++i)

@@ -26,11 +26,11 @@
 
 /*! \defgroup libopenmpt_ext_cpp libopenmpt_ext C++ */
 
+namespace openmpt {
+
 /*! \addtogroup libopenmpt_ext_cpp
   @{
 */
-
-namespace openmpt {
 
 class module_ext_impl;
 
@@ -77,7 +77,15 @@ public:
 
 }; // class module_ext
 
+/*!
+  @}
+*/
+
 namespace ext {
+
+/*! \addtogroup libopenmpt_ext_cpp
+  @{
+*/
 
 #define LIBOPENMPT_DECLARE_EXT_CXX_INTERFACE(name) \
 	static const char name ## _id [] = # name ; \
@@ -385,12 +393,12 @@ class interactive2 {
 #undef LIBOPENMPT_DECLARE_EXT_CXX_INTERFACE
 #undef LIBOPENMPT_EXT_CXX_INTERFACE
 
-} // namespace ext
-
-} // namespace openmpt
-
 /*!
   @}
 */
+
+} // namespace ext
+
+} // namespace openmpt
 
 #endif // LIBOPENMPT_EXT_HPP

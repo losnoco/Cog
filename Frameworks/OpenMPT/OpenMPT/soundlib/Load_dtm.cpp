@@ -599,7 +599,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = U_("Digital Tracker");
 	m_modFormat.type = U_("dtm");
 	m_modFormat.madeWithTracker = std::move(tracker);
-	m_modFormat.charset = mpt::Charset::ISO8859_1;
+	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 
 	return true;
 }

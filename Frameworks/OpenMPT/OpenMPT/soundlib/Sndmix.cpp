@@ -2634,8 +2634,8 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 		switch(pIns->pluginVolumeHandling)
 		{
 			case PLUGIN_VOLUMEHANDLING_DRYWET:
-				if(hasVolCommand) pPlugin->SetDryRatio(2 * vol);
-				else pPlugin->SetDryRatio(2 * defaultVolume);
+				if(hasVolCommand) pPlugin->SetDryRatio(1.0f - (2 * vol) / 127.0f);
+				else pPlugin->SetDryRatio(1.0f - (2 * defaultVolume) / 127.0f);
 				break;
 			case PLUGIN_VOLUMEHANDLING_MIDI:
 				if(hasVolCommand) pPlugin->MidiCC(MIDIEvents::MIDICC_Volume_Coarse, std::min(uint8(127), static_cast<uint8>(2 * vol)), nChn);

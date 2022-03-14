@@ -212,7 +212,7 @@ namespace openmpt {
 		if ( channel < 0 || channel >= get_num_channels() ) {
 			throw openmpt::exception("invalid channel");
 		}
-		return m_sndFile->m_PlayState.Chn[channel].dwFlags[OpenMPT::CHN_MUTE];
+		return m_sndFile->m_PlayState.Chn[channel].dwFlags[OpenMPT::CHN_MUTE | OpenMPT::CHN_SYNCMUTE];
 	}
 	
 	void module_ext_impl::set_instrument_mute_status( std::int32_t instrument, bool mute ) {

@@ -37,8 +37,7 @@ struct engine_traits {
 
 template <>
 struct engine_traits<std::mt19937> {
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		seed_bits = sizeof(std::mt19937::result_type) * 8 * std::mt19937::state_size
 	};
 	typedef std::mt19937 rng_type;
@@ -56,8 +55,7 @@ struct engine_traits<std::mt19937> {
 
 template <>
 struct engine_traits<std::mt19937_64> {
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		seed_bits = sizeof(std::mt19937_64::result_type) * 8 * std::mt19937_64::state_size
 	};
 	typedef std::mt19937_64 rng_type;
@@ -75,8 +73,7 @@ struct engine_traits<std::mt19937_64> {
 
 template <>
 struct engine_traits<std::ranlux24_base> {
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		seed_bits = std::ranlux24_base::word_size
 	};
 	typedef std::ranlux24_base rng_type;
@@ -94,8 +91,7 @@ struct engine_traits<std::ranlux24_base> {
 
 template <>
 struct engine_traits<std::ranlux48_base> {
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		seed_bits = std::ranlux48_base::word_size
 	};
 	typedef std::ranlux48_base rng_type;
@@ -113,8 +109,7 @@ struct engine_traits<std::ranlux48_base> {
 
 template <>
 struct engine_traits<std::ranlux24> {
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		seed_bits = std::ranlux24_base::word_size
 	};
 	typedef std::ranlux24 rng_type;
@@ -132,8 +127,7 @@ struct engine_traits<std::ranlux24> {
 
 template <>
 struct engine_traits<std::ranlux48> {
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		seed_bits = std::ranlux48_base::word_size
 	};
 	typedef std::ranlux48 rng_type;

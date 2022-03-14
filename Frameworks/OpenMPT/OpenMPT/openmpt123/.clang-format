@@ -1,15 +1,17 @@
-# clang-format 11
+# clang-format 13
+
 Language: Cpp
-Standard: c++17
+Standard: c++20
 
 AccessModifierOffset: -2 #?
 AlignAfterOpenBracket: AlwaysBreak
+AlignArrayOfStructures: Left
 AlignConsecutiveAssignments: false
 AlignConsecutiveBitFields: false
 AlignConsecutiveDeclarations: false
 AlignConsecutiveMacros: true
 AlignEscapedNewlines: DontAlign
-AlignOperands: DontAlign
+AlignOperands: AlignAfterOperator
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: true
@@ -24,8 +26,10 @@ AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
+AttributeMacros: []
 BinPackArguments: true
 BinPackParameters: false
+BitFieldColonSpacing: Both
 BraceWrapping:
  AfterCaseLabel: true
  AfterClass: false
@@ -48,6 +52,7 @@ BraceWrapping:
 #BreakAfterJavaFieldAnnotations
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Custom
+BreakBeforeConceptDeclarations: true
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
@@ -61,25 +66,31 @@ ContinuationIndentWidth: 2 #?
 Cpp11BracedListStyle: true
 DeriveLineEnding: true
 DerivePointerAlignment: false
+EmptyLineAfterAccessModifier: Leave
+EmptyLineBeforeAccessModifier: Leave
 FixNamespaceComments: true
 ForEachMacros: []
+IfMacros: ['MPT_MAYBE_CONSTANT_IF']
 IncludeBlocks: Preserve
 IncludeCategories: [] #?
 IncludeIsMainRegex: '' #?
 IncludeIsMainSourceRegex: '' #?
+IndentAccessModifiers: false
 IndentCaseBlocks: true
 IndentCaseLabels: true
 IndentExternBlock: NoIndent
 IndentGotoLabels: false
 IndentPPDirectives: None
+#IndentRequiresClause: true
 #BeforeHash
 IndentWidth: 2
-InsertTrailingCommas: None
 IndentWrappedFunctionNames: true
+InsertTrailingCommas: None
 #JavaImportGroups
 #JavaScriptQuotes
 #JavaScriptWrapImports
 KeepEmptyLinesAtTheStartOfBlocks: true
+LambdaBodyIndentation: OuterScope
 MacroBlockBegin: '' #?
 MacroBlockEnd: '' #?
 MaxEmptyLinesToKeep: 3
@@ -97,16 +108,23 @@ NamespaceMacros: [] #?
 #PenaltyBreakString
 #PenaltyBreakTemplateDeclaration
 #PenaltyExcessCharacter
+#PenaltyIndentedWhitespace
 #PenaltyReturnTypeOnItsOwnLine
 PointerAlignment: Middle
+PPIndentWidth: -1
 #RawStringFormats
+ReferenceAlignment: Pointer
 ReflowComments: false
+ShortNamespaceLines: 1
 SortIncludes: false
+#SortJavaStaticImport
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: true
+SpaceAroundPointerQualifiers: Default
 SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
@@ -120,8 +138,12 @@ SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInConditionalStatement: true
 SpacesInContainerLiterals: true
+SpacesInLineCommentPrefix:
+  Minimum: 1
+  Maximum: -1
 SpacesInParentheses: true
 SpacesInSquareBrackets: false
+StatementAttributeLikeMacros: []
 StatementMacros: [ 'MPT_WARNING', 'MPT_TEST_GROUP_INLINE_IDENTIFIER', 'MPT_TEST_GROUP_INLINE', 'MPT_TEST_GROUP_STATIC' ] #?
 TabWidth: 2
 TypenameMacros: [] #?

@@ -160,7 +160,7 @@ public:
 private:
 	static MPT_CONSTEXPRINLINE uint8 NibbleFromChar(char x) {
 		return ('0' <= x && x <= '9') ? static_cast<uint8>(x - '0' + 0) : ('a' <= x && x <= 'z') ? static_cast<uint8>(x - 'a' + 10)
-			: ('A' <= x && x <= 'Z')                                                             ? static_cast<uint8>(x - 'A' + 10)
+																	: ('A' <= x && x <= 'Z')     ? static_cast<uint8>(x - 'A' + 10)
 																								 : mpt::constexpr_throw<uint8>(std::domain_error(""));
 	}
 	static MPT_CONSTEXPRINLINE uint8 ByteFromHex(char x, char y) {
@@ -351,29 +351,29 @@ public:
 	}
 	std::string ToAString() const {
 		return std::string()
-			+ mpt::format<std::string>::hex0<8>(GetData1())
-			+ std::string("-")
-			+ mpt::format<std::string>::hex0<4>(GetData2())
-			+ std::string("-")
-			+ mpt::format<std::string>::hex0<4>(GetData3())
-			+ std::string("-")
-			+ mpt::format<std::string>::hex0<4>(static_cast<uint16>(GetData4() >> 48))
-			+ std::string("-")
-			+ mpt::format<std::string>::hex0<4>(static_cast<uint16>(GetData4() >> 32))
-			+ mpt::format<std::string>::hex0<8>(static_cast<uint32>(GetData4() >> 0));
+			 + mpt::format<std::string>::hex0<8>(GetData1())
+			 + std::string("-")
+			 + mpt::format<std::string>::hex0<4>(GetData2())
+			 + std::string("-")
+			 + mpt::format<std::string>::hex0<4>(GetData3())
+			 + std::string("-")
+			 + mpt::format<std::string>::hex0<4>(static_cast<uint16>(GetData4() >> 48))
+			 + std::string("-")
+			 + mpt::format<std::string>::hex0<4>(static_cast<uint16>(GetData4() >> 32))
+			 + mpt::format<std::string>::hex0<8>(static_cast<uint32>(GetData4() >> 0));
 	}
 	mpt::ustring ToUString() const {
 		return mpt::ustring()
-			+ mpt::format<mpt::ustring>::hex0<8>(GetData1())
-			+ MPT_USTRING("-")
-			+ mpt::format<mpt::ustring>::hex0<4>(GetData2())
-			+ MPT_USTRING("-")
-			+ mpt::format<mpt::ustring>::hex0<4>(GetData3())
-			+ MPT_USTRING("-")
-			+ mpt::format<mpt::ustring>::hex0<4>(static_cast<uint16>(GetData4() >> 48))
-			+ MPT_USTRING("-")
-			+ mpt::format<mpt::ustring>::hex0<4>(static_cast<uint16>(GetData4() >> 32))
-			+ mpt::format<mpt::ustring>::hex0<8>(static_cast<uint32>(GetData4() >> 0));
+			 + mpt::format<mpt::ustring>::hex0<8>(GetData1())
+			 + MPT_USTRING("-")
+			 + mpt::format<mpt::ustring>::hex0<4>(GetData2())
+			 + MPT_USTRING("-")
+			 + mpt::format<mpt::ustring>::hex0<4>(GetData3())
+			 + MPT_USTRING("-")
+			 + mpt::format<mpt::ustring>::hex0<4>(static_cast<uint16>(GetData4() >> 48))
+			 + MPT_USTRING("-")
+			 + mpt::format<mpt::ustring>::hex0<4>(static_cast<uint16>(GetData4() >> 32))
+			 + mpt::format<mpt::ustring>::hex0<8>(static_cast<uint32>(GetData4() >> 0));
 	}
 };
 

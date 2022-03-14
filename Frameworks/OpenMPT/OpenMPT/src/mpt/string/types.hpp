@@ -27,8 +27,7 @@ inline namespace MPT_INLINE_NS {
 
 
 
-enum class common_encoding
-{
+enum class common_encoding {
 	utf8,
 	ascii, // strictly 7-bit ASCII
 	iso8859_1,
@@ -36,11 +35,15 @@ enum class common_encoding
 	cp850,
 	cp437,
 	windows1252,
+	amiga,
+	riscos,
+	iso8859_1_no_c1,
+	iso8859_15_no_c1,
+	amiga_no_c1,
 };
 
 
-enum class logical_encoding
-{
+enum class logical_encoding {
 	locale,        // CP_ACP on windows, system configured C locale otherwise
 	active_locale, // active C/C++ global locale
 };

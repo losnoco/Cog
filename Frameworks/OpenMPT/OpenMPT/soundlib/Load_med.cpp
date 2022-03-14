@@ -1145,7 +1145,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 					}
 				}
 				if(playSeq.name[0])
-					order.SetName(mpt::ToUnicode(mpt::Charset::ISO8859_1, mpt::String::ReadAutoBuf(playSeq.name)));
+					order.SetName(mpt::ToUnicode(mpt::Charset::Amiga_no_C1, mpt::String::ReadAutoBuf(playSeq.name)));
 
 				// Play commands (jump / stop)
 				if(playSeq.commandTableOffset > 0 && file.Seek(playSeq.commandTableOffset))
@@ -1193,7 +1193,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			file.ReadString<mpt::String::maybeNullTerminated>(m_songName, expData.songNameLength);
 			if(numSongs > 1)
-				order.SetName(mpt::ToUnicode(mpt::Charset::ISO8859_1, m_songName));
+				order.SetName(mpt::ToUnicode(mpt::Charset::Amiga_no_C1, m_songName));
 		}
 		if(expData.annoLength > 1 && file.Seek(expData.annoText))
 		{
@@ -1432,7 +1432,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.formatName = MPT_UFORMAT("OctaMED (MMD{})")(version);
 	m_modFormat.type = MPT_USTRING("med");
 	m_modFormat.madeWithTracker = madeWithTracker;
-	m_modFormat.charset = mpt::Charset::ISO8859_1;
+	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 
 	return true;
 }

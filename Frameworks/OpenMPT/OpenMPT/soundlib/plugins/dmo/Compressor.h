@@ -31,7 +31,7 @@ protected:
 		kCompNumParameters
 	};
 
-	float m_param[kCompNumParameters];
+	std::array<float, kCompNumParameters> m_param;
 
 	// Calculated parameters and coefficients
 	float m_gain;

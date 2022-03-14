@@ -24,6 +24,14 @@
 #define LIBOPENMPT_CXX_API
 #undef LIBOPENMPT_CXX_API
 
+/*!
+  @}
+*/
+
+/*! \addtogroup libopenmpt_c
+  @{
+*/
+
 /*! \brief Defined if libopenmpt/libopenmpt_stream_callbacks_buffer.h exists. */
 #define LIBOPENMPT_STREAM_CALLBACKS_BUFFER
 
@@ -52,6 +60,14 @@
  *   \endcode
  */
 #define LIBOPENMPT_STREAM_CALLBACKS_FILE
+
+/*!
+  @}
+*/
+
+/*! \addtogroup libopenmpt
+  @{
+*/
 
 #if defined(__DOXYGEN__)
 

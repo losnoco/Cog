@@ -198,7 +198,7 @@ public:
 	CString GetFixedMacroName(FixedMacro macroType) const;
 
 	// Extract information from a parametered macro string.
-	int MacroToPlugParam(uint32 macroIndex) const;
+	PlugParamIndex MacroToPlugParam(uint32 macroIndex) const;
 	int MacroToMidiCC(uint32 macroIndex) const;
 
 	// Check if any macro can automate a given plugin parameter

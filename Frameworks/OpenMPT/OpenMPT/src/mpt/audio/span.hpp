@@ -352,14 +352,13 @@ private:
 	std::size_t m_offset;
 
 public:
-	audio_span_with_offset(Taudio_span buffer, std::size_t offsetFrames) noexcept
+	constexpr audio_span_with_offset(Taudio_span buffer, std::size_t offsetFrames) noexcept
 		: m_buffer(buffer)
 		, m_offset(offsetFrames) {
 		return;
 	}
 	sample_type * data() const noexcept {
-		if (!is_contiguous())
-		{
+		if (!is_contiguous()) {
 			return nullptr;
 		}
 		return m_buffer.data() + (size_channels() * m_offset);

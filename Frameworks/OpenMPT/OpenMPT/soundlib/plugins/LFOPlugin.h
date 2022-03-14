@@ -51,10 +51,12 @@ protected:
 
 	std::vector<std::byte> m_chunkData;
 
+	static constexpr PlugParamIndex INVALID_OUTPUT_PARAM = uint32_max;
+
 	// LFO parameters
 	float m_amplitude = 0.5f, m_offset = 0.5f, m_frequency = 0.290241f;
 	LFOWaveform m_waveForm = kSine;
-	PlugParamIndex m_outputParam = int32_max;
+	PlugParamIndex m_outputParam = INVALID_OUTPUT_PARAM;
 	bool m_tempoSync = false, m_polarity = false, m_bypassed = false, m_outputToCC = false, m_oneshot = false;
 
 	// LFO state

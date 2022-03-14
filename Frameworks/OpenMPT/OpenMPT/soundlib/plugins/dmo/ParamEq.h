@@ -28,7 +28,7 @@ protected:
 		kEqNumParameters
 	};
 
-	float m_param[kEqNumParameters];
+	std::array<float, kEqNumParameters> m_param;
 
 	// Equalizer coefficients
 	float b0DIVa0, b1DIVa0, b2DIVa0, a1DIVa0, a2DIVa0;

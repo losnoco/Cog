@@ -1231,7 +1231,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 			if(symInst.IsEmpty() || symInst.IsVirtual())
 				continue;
 			
-			auto filename = mpt::PathString::FromUnicode(mpt::ToUnicode(mpt::Charset::ISO8859_1, symInst.GetName()));
+			auto filename = mpt::PathString::FromUnicode(mpt::ToUnicode(mpt::Charset::Amiga_no_C1, symInst.GetName()));
 			if(file.GetOptionalFileName())
 				filename = file.GetOptionalFileName()->GetPath() + filename.GetFullFileName();
 			
@@ -1939,7 +1939,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 		m_modFormat.madeWithTracker = U_("Symphonie Pro");
 	else
 		m_modFormat.madeWithTracker = U_("Symphonie Pro 256");
-	m_modFormat.charset = mpt::Charset::ISO8859_1;
+	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 
 	return true;
 }

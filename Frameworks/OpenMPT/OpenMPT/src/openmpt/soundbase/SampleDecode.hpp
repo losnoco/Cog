@@ -264,7 +264,7 @@ struct DecodeInt64
 				| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b5])) << 40)
 				| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b6])) << 48)
 				| (static_cast<uint64>(mpt::byte_cast<uint8>(inBuf[b7])) << 56))
-			- offset;
+			 - offset;
 	}
 };
 

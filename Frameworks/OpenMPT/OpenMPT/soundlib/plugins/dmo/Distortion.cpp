@@ -141,9 +141,11 @@ CString Distortion::GetParamLabel(PlugParamIndex param)
 {
 	switch(param)
 	{
-	case kDistGain: return _T("dB");
+	case kDistGain:
+		return _T("dB");
 	case kDistPreLowpassCutoff:
 	case kDistPostEQCenterFrequency:
+	case kDistPostEQBandwidth:
 		return _T("Hz");
 	}
 	return CString();
@@ -183,19 +185,8 @@ void Distortion::RecalculateDistortionParams()
 
 	// Distortion
 	float edge = 2.0f + m_param[kDistEdge] * 29.0f;
-	m_edge = static_cast<uint8>(edge);	// 2...31 shifted bits
-
-	// Work out the magical shift factor (= floor(log2(edge)) + 1 == index of highest bit + 1)
-	uint8 shift;
-	if(m_edge <= 3)
-		shift = 2;
-	else if(m_edge <= 7)
-		shift = 3;
-	else if(m_edge <= 15)
-		shift = 4;
-	else
-		shift = 5;
-	m_shift = shift;
+	m_edge = static_cast<uint8>(edge);  // 2...31 shifted bits
+	m_shift = mpt::bit_width(m_edge);
 
 	static constexpr float LogNorm[32] =
 	{

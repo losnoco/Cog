@@ -24,10 +24,10 @@ protected:
 	{
 		kGargleRate = 0,
 		kGargleWaveShape,
-		kEqNumParameters
+		kGargleNumParameters
 	};
 
-	float m_param[kEqNumParameters];
+	std::array<float, kGargleNumParameters> m_param;
 
 	uint32 m_period, m_periodHalf, m_counter;	// In frames
 
@@ -49,7 +49,7 @@ public:
 	int32 GetCurrentProgram() override { return 0; }
 	void SetCurrentProgram(int32) override { }
 
-	PlugParamIndex GetNumParameters() const override { return kEqNumParameters; }
+	PlugParamIndex GetNumParameters() const override { return kGargleNumParameters; }
 	PlugParamValue GetParameter(PlugParamIndex index) override;
 	void SetParameter(PlugParamIndex index, PlugParamValue value) override;
 

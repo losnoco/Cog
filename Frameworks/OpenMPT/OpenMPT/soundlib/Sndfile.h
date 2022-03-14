@@ -618,9 +618,10 @@ protected:
 public:
 #ifdef MODPLUG_TRACKER
 	std::bitset<MAX_BASECHANNELS> m_bChannelMuteTogglePending;
+	std::bitset<MAX_MIXPLUGINS> m_pluginDryWetRatioChanged;  // Dry/Wet ratio was changed by playback code (e.g. through MIDI macro), need to update UI
 
-	std::vector<PatternCuePoint> *m_PatternCuePoints = nullptr;	// For WAV export (writing pattern positions to file)
-	std::vector<SmpLength> *m_SamplePlayLengths = nullptr;	// For storing the maximum play length of each sample for automatic sample trimming
+	std::vector<PatternCuePoint> *m_PatternCuePoints = nullptr;  // For WAV export (writing pattern positions to file)
+	std::vector<SmpLength> *m_SamplePlayLengths = nullptr;       // For storing the maximum play length of each sample for automatic sample trimming
 #endif // MODPLUG_TRACKER
 
 	std::unique_ptr<OPL> m_opl;

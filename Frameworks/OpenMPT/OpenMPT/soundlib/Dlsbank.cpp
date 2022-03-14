@@ -1123,7 +1123,7 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 		}
 		// Load Instrument Bags
 		dlsIns.Regions.clear();
-		for(const auto [nInstrNdx, keyRange] : instruments)
+		for(const auto & [nInstrNdx, keyRange] : instruments)
 		{
 			if(nInstrNdx >= numInsts)
 				continue;

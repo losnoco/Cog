@@ -35,18 +35,18 @@ MPT_TEST_GROUP_INLINE("mpt/base/bit")
 #if MPT_CXX_BEFORE(20)
 	MPT_TEST_EXPECT_EQUAL(mpt::get_endian(), mpt::endian_probe());
 #endif
-	MPT_MAYBE_CONSTANT_IF(mpt::endian_is_little()) {
+	MPT_MAYBE_CONSTANT_IF (mpt::endian_is_little()) {
 		MPT_TEST_EXPECT_EQUAL(mpt::get_endian(), mpt::endian::little);
-		MPT_MAYBE_CONSTANT_IF((mpt::endian::native == mpt::endian::little) || (mpt::endian::native == mpt::endian::big)) {
+		MPT_MAYBE_CONSTANT_IF ((mpt::endian::native == mpt::endian::little) || (mpt::endian::native == mpt::endian::big)) {
 			MPT_TEST_EXPECT_EQUAL(mpt::endian::native, mpt::endian::little);
 		}
 #if MPT_CXX_BEFORE(20)
 		MPT_TEST_EXPECT_EQUAL(mpt::endian_probe(), mpt::endian::little);
 #endif
 	}
-	MPT_MAYBE_CONSTANT_IF(mpt::endian_is_big()) {
+	MPT_MAYBE_CONSTANT_IF (mpt::endian_is_big()) {
 		MPT_TEST_EXPECT_EQUAL(mpt::get_endian(), mpt::endian::big);
-		MPT_MAYBE_CONSTANT_IF((mpt::endian::native == mpt::endian::little) || (mpt::endian::native == mpt::endian::big)) {
+		MPT_MAYBE_CONSTANT_IF ((mpt::endian::native == mpt::endian::little) || (mpt::endian::native == mpt::endian::big)) {
 			MPT_TEST_EXPECT_EQUAL(mpt::endian::native, mpt::endian::big);
 		}
 #if MPT_CXX_BEFORE(20)

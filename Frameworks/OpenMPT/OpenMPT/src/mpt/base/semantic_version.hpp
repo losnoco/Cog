@@ -83,7 +83,10 @@ constexpr bool operator>=(version_info const a, version_info const b) noexcept {
 	return a.as_tuple() >= b.as_tuple();
 }
 
-constexpr inline version_info Version = {{MPT_VERSION_MAJOR, MPT_VERSION_MINOR, MPT_VERSION_PATCH}, MPT_VERSION_BUILD};
+constexpr inline version_info Version = {
+	{MPT_VERSION_MAJOR, MPT_VERSION_MINOR, MPT_VERSION_PATCH},
+	MPT_VERSION_BUILD
+};
 
 
 } // namespace MPT_INLINE_NS

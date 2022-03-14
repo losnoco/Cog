@@ -36,7 +36,7 @@ protected:
 		kChorusNumParameters
 	};
 
-	float m_param[kChorusNumParameters];
+	std::array<float, kChorusNumParameters> m_param;
 
 	// Calculated parameters
 	float m_waveShapeMin, m_waveShapeMax, m_waveShapeVal;

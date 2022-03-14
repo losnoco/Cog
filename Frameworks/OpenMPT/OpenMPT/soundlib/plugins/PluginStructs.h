@@ -22,7 +22,7 @@ OPENMPT_NAMESPACE_BEGIN
 ////////////////////////////////////////////////////////////////////
 // Mix Plugins
 
-using PlugParamIndex = int32;
+using PlugParamIndex = uint32;
 using PlugParamValue = float;
 
 struct SNDMIXPLUGINSTATE;
@@ -37,21 +37,21 @@ struct SNDMIXPLUGININFO
 	// dwInputRouting flags
 	enum RoutingFlags
 	{
-		irApplyToMaster	= 0x01,	// Apply to master mix
-		irBypass		= 0x02,	// Bypass effect
-		irWetMix		= 0x04,	// Wet Mix (dry added)
-		irExpandMix		= 0x08,	// [0%,100%] -> [-200%,200%]
-		irAutoSuspend	= 0x10,	// Plugin will automatically suspend on silence
+		irApplyToMaster = 0x01,  // Apply to master mix
+		irBypass        = 0x02,  // Bypass effect
+		irWetMix        = 0x04,  // Wet Mix (dry added)
+		irExpandMix     = 0x08,  // [0%,100%] -> [-200%,200%]
+		irAutoSuspend   = 0x10,  // Plugin will automatically suspend on silence
 	};
 
-	int32le dwPluginId1;			// Plugin type (kEffectMagic, kDmoMagic, kBuzzMagic)
-	int32le dwPluginId2;			// Plugin unique ID
-	uint8le routingFlags;			// See RoutingFlags
+	int32le dwPluginId1;   // Plugin type (kEffectMagic, kDmoMagic, kBuzzMagic)
+	int32le dwPluginId2;   // Plugin unique ID
+	uint8le routingFlags;  // See RoutingFlags
 	uint8le mixMode;
-	uint8le gain;					// Divide by 10 to get real gain
+	uint8le gain;  // Divide by 10 to get real gain
 	uint8le reserved;
-	uint32le dwOutputRouting;		// 0 = send to master 0x80 + x = send to plugin x
-	uint32le dwReserved[4];			// Reserved for routing info
+	uint32le dwOutputRouting;                                         // 0 = send to master 0x80 + x = send to plugin x
+	uint32le dwReserved[4];                                           // Reserved for routing info
 	mpt::modecharbuf<32, mpt::String::nullTerminated> szName;         // User-chosen plugin display name - this is locale ANSI!
 	mpt::modecharbuf<64, mpt::String::nullTerminated> szLibraryName;  // original DLL name - this is UTF-8!
 

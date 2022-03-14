@@ -29,22 +29,20 @@ struct uint24 {
 	template <typename T, typename std::enable_if<std::is_integral<T>::value, bool>::type = true>
 	explicit uint24(T other) noexcept {
 		using Tunsigned = typename std::make_unsigned<T>::type;
-		MPT_MAYBE_CONSTANT_IF(mpt::endian_is_big()) {
+		MPT_MAYBE_CONSTANT_IF (mpt::endian_is_big()) {
 			bytes[0] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 16) & 0xff));
 			bytes[1] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 8) & 0xff));
 			bytes[2] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 0) & 0xff));
-		}
-		else {
+		} else {
 			bytes[0] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 0) & 0xff));
 			bytes[1] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 8) & 0xff));
 			bytes[2] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 16) & 0xff));
 		}
 	}
 	operator int() const noexcept {
-		MPT_MAYBE_CONSTANT_IF(mpt::endian_is_big()) {
+		MPT_MAYBE_CONSTANT_IF (mpt::endian_is_big()) {
 			return (mpt::byte_cast<uint8>(bytes[0]) * 65536) + (mpt::byte_cast<uint8>(bytes[1]) * 256) + mpt::byte_cast<uint8>(bytes[2]);
-		}
-		else {
+		} else {
 			return (mpt::byte_cast<uint8>(bytes[2]) * 65536) + (mpt::byte_cast<uint8>(bytes[1]) * 256) + mpt::byte_cast<uint8>(bytes[0]);
 		}
 	}
@@ -59,22 +57,20 @@ struct int24 {
 	template <typename T, typename std::enable_if<std::is_integral<T>::value, bool>::type = true>
 	explicit int24(T other) noexcept {
 		using Tunsigned = typename std::make_unsigned<T>::type;
-		MPT_MAYBE_CONSTANT_IF(mpt::endian_is_big()) {
+		MPT_MAYBE_CONSTANT_IF (mpt::endian_is_big()) {
 			bytes[0] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 16) & 0xff));
 			bytes[1] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 8) & 0xff));
 			bytes[2] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 0) & 0xff));
-		}
-		else {
+		} else {
 			bytes[0] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 0) & 0xff));
 			bytes[1] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 8) & 0xff));
 			bytes[2] = mpt::byte_cast<std::byte>(static_cast<uint8>((static_cast<Tunsigned>(other) >> 16) & 0xff));
 		}
 	}
 	operator int() const noexcept {
-		MPT_MAYBE_CONSTANT_IF(mpt::endian_is_big()) {
+		MPT_MAYBE_CONSTANT_IF (mpt::endian_is_big()) {
 			return (static_cast<int8>(mpt::byte_cast<uint8>(bytes[0])) * 65536) + (mpt::byte_cast<uint8>(bytes[1]) * 256) + mpt::byte_cast<uint8>(bytes[2]);
-		}
-		else {
+		} else {
 			return (static_cast<int8>(mpt::byte_cast<uint8>(bytes[2])) * 65536) + (mpt::byte_cast<uint8>(bytes[1]) * 256) + mpt::byte_cast<uint8>(bytes[0]);
 		}
 	}

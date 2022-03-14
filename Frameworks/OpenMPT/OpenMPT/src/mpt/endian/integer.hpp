@@ -43,28 +43,28 @@ struct LittleEndian_tag {
 
 constexpr inline uint16 constexpr_bswap16(uint16 x) noexcept {
 	return uint16(0)
-		| ((x >> 8) & 0x00FFu)
-		| ((x << 8) & 0xFF00u);
+		 | ((x >> 8) & 0x00FFu)
+		 | ((x << 8) & 0xFF00u);
 }
 
 constexpr inline uint32 constexpr_bswap32(uint32 x) noexcept {
 	return uint32(0)
-		| ((x & 0x000000FFu) << 24)
-		| ((x & 0x0000FF00u) << 8)
-		| ((x & 0x00FF0000u) >> 8)
-		| ((x & 0xFF000000u) >> 24);
+		 | ((x & 0x000000FFu) << 24)
+		 | ((x & 0x0000FF00u) << 8)
+		 | ((x & 0x00FF0000u) >> 8)
+		 | ((x & 0xFF000000u) >> 24);
 }
 
 constexpr inline uint64 constexpr_bswap64(uint64 x) noexcept {
 	return uint64(0)
-		| (((x >> 0) & 0xffull) << 56)
-		| (((x >> 8) & 0xffull) << 48)
-		| (((x >> 16) & 0xffull) << 40)
-		| (((x >> 24) & 0xffull) << 32)
-		| (((x >> 32) & 0xffull) << 24)
-		| (((x >> 40) & 0xffull) << 16)
-		| (((x >> 48) & 0xffull) << 8)
-		| (((x >> 56) & 0xffull) << 0);
+		 | (((x >> 0) & 0xffull) << 56)
+		 | (((x >> 8) & 0xffull) << 48)
+		 | (((x >> 16) & 0xffull) << 40)
+		 | (((x >> 24) & 0xffull) << 32)
+		 | (((x >> 32) & 0xffull) << 24)
+		 | (((x >> 40) & 0xffull) << 16)
+		 | (((x >> 48) & 0xffull) << 8)
+		 | (((x >> 56) & 0xffull) << 0);
 }
 
 #if MPT_COMPILER_GCC
@@ -139,55 +139,49 @@ MPT_CONSTEXPRINLINE T EndianDecode(std::array<std::byte, size> data) noexcept {
 
 
 MPT_CONSTEXPR20_FUN uint64 SwapBytesImpl(uint64 value) noexcept {
-	MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 		return mpt::constexpr_bswap64(value);
-	}
-	else {
+	} else {
 		return MPT_bswap64(value);
 	}
 }
 
 MPT_CONSTEXPR20_FUN uint32 SwapBytesImpl(uint32 value) noexcept {
-	MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 		return mpt::constexpr_bswap32(value);
-	}
-	else {
+	} else {
 		return MPT_bswap32(value);
 	}
 }
 
 MPT_CONSTEXPR20_FUN uint16 SwapBytesImpl(uint16 value) noexcept {
-	MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 		return mpt::constexpr_bswap16(value);
-	}
-	else {
+	} else {
 		return MPT_bswap16(value);
 	}
 }
 
 MPT_CONSTEXPR20_FUN int64 SwapBytesImpl(int64 value) noexcept {
-	MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 		return mpt::constexpr_bswap64(value);
-	}
-	else {
+	} else {
 		return MPT_bswap64(value);
 	}
 }
 
 MPT_CONSTEXPR20_FUN int32 SwapBytesImpl(int32 value) noexcept {
-	MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 		return mpt::constexpr_bswap32(value);
-	}
-	else {
+	} else {
 		return MPT_bswap32(value);
 	}
 }
 
 MPT_CONSTEXPR20_FUN int16 SwapBytesImpl(int16 value) noexcept {
-	MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 		return mpt::constexpr_bswap16(value);
-	}
-	else {
+	} else {
 		return MPT_bswap16(value);
 	}
 }
@@ -232,7 +226,7 @@ public:
 public:
 	MPT_CONSTEXPR20_FUN void set(base_type val) noexcept {
 		static_assert(std::numeric_limits<T>::is_integer);
-		MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+		MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 			if constexpr (endian_type::endian == mpt::endian::big) {
 				typename std::make_unsigned<base_type>::type uval = val;
 				for (std::size_t i = 0; i < sizeof(base_type); ++i) {
@@ -244,8 +238,7 @@ public:
 					data[i] = static_cast<std::byte>((uval >> (8 * i)) & 0xffu);
 				}
 			}
-		}
-		else {
+		} else {
 			if constexpr (mpt::endian::native == mpt::endian::little || mpt::endian::native == mpt::endian::big) {
 				if constexpr (mpt::endian::native != endian_type::endian) {
 					val = mpt::SwapBytesImpl(val);
@@ -259,7 +252,7 @@ public:
 	}
 	MPT_CONSTEXPR20_FUN base_type get() const noexcept {
 		static_assert(std::numeric_limits<T>::is_integer);
-		MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20()) {
+		MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
 			if constexpr (endian_type::endian == mpt::endian::big) {
 				typename std::make_unsigned<base_type>::type uval = 0;
 				for (std::size_t i = 0; i < sizeof(base_type); ++i) {
@@ -273,8 +266,7 @@ public:
 				}
 				return static_cast<base_type>(uval);
 			}
-		}
-		else {
+		} else {
 			if constexpr (mpt::endian::native == mpt::endian::little || mpt::endian::native == mpt::endian::big) {
 				base_type val = base_type();
 				std::memcpy(&val, data.data(), sizeof(val));

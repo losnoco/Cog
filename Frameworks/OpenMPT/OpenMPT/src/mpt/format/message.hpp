@@ -53,8 +53,7 @@ private:
 		std::size_t max_arg = 0;
 		//std::size_t args = 0;
 		bool success = true;
-		enum class state : int
-		{
+		enum class state : int {
 			error = -1,
 			text = 0,
 			open_seen = 1,
@@ -204,8 +203,7 @@ MPT_CONSTEXPRINLINE std::ptrdiff_t parse_format_string_argument_count_impl(const
 	std::size_t max_arg = 0;
 	std::size_t args = 0;
 	bool success = true;
-	enum class state : int
-	{
+	enum class state : int {
 		error = -1,
 		text = 0,
 		open_seen = 1,

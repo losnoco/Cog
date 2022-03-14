@@ -309,7 +309,7 @@ int32 I3DL2Reverb::GetNumPrograms() const
 void I3DL2Reverb::SetCurrentProgram(int32 program)
 {
 #ifdef MODPLUG_TRACKER
-	if(program < NUM_REVERBTYPES)
+	if(program < static_cast<int32>(NUM_REVERBTYPES))
 	{
 		m_program = program;
 		const auto &preset = *GetReverbPreset(m_program);

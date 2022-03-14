@@ -31,13 +31,11 @@ namespace IO {
 class FileDataSeekableBuffered : public FileDataSeekable {
 
 private:
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		CHUNK_SIZE = mpt::IO::BUFFERSIZE_SMALL,
 		BUFFER_SIZE = mpt::IO::BUFFERSIZE_NORMAL
 	};
-	enum : std::size_t
-	{
+	enum : std::size_t {
 		NUM_CHUNKS = BUFFER_SIZE / CHUNK_SIZE
 	};
 	struct chunk_info {
