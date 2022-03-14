@@ -5,6 +5,21 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.17 (2022-03-13)
+
+ *  [**Sec**] Possible out-of-bounds write in malformed IT / XM / MPTM files
+    using the internal LFO plugin. (r17081)
+ *  [**Sec**] Possible out-of-bounds read when using Amiga BLEP interpolation
+    with extremely high-pitched notes. (r17082)
+
+ *  MO3: Pattern indices 254 / 255 were not treated as playable patterns even if
+    the original file was a MOD / XM.
+ *  Correctly apply ST3-style effect memory when seeking in S3M files.
+ *  Command S (S3M / IT style) effect memory was not applied when seeking.
+
+ *  FLAC: Update to v1.3.4 (2022-02-21).
+ *  pugixml: Update to v1.12.1 (2022-02-16).
+
 ### libopenmpt 0.5.16 (2022-01-30)
 
  *  [**Bug**] Possible hang with malformed DMF, DSM, MED and OKT files

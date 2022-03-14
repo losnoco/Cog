@@ -41,9 +41,7 @@ typedef IntToFloatTraits<2, 2, mixsample_t, int16, -int16_min> Int16SToFloatS;
 template<class Traits>
 struct LinearInterpolation
 {
-	MPT_FORCEINLINE void Start(const ModChannel &, const CResampler &) { }
-
-	MPT_FORCEINLINE void End(const ModChannel &) { }
+	MPT_FORCEINLINE LinearInterpolation(const ModChannel &, const CResampler &, unsigned int) { }
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const inBuffer, const uint32 posLo)
 	{
@@ -64,8 +62,7 @@ struct LinearInterpolation
 template<class Traits>
 struct FastSincInterpolation
 {
-	MPT_FORCEINLINE void Start(const ModChannel &, const CResampler &) { }
-	MPT_FORCEINLINE void End(const ModChannel &) { }
+	MPT_FORCEINLINE FastSincInterpolation(const ModChannel &, const CResampler &, unsigned int) { }
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const inBuffer, const uint32 posLo)
 	{
@@ -89,13 +86,11 @@ struct PolyphaseInterpolation
 {
 	const typename Traits::output_t *sinc;
 
-	MPT_FORCEINLINE void Start(const ModChannel &chn, const CResampler &resampler)
+	MPT_FORCEINLINE PolyphaseInterpolation(const ModChannel &chn, const CResampler &resampler, unsigned int)
 	{
 		sinc = (((chn.increment > SamplePosition(0x130000000ll)) || (chn.increment < -SamplePosition(-0x130000000ll))) ?
 			(((chn.increment > SamplePosition(0x180000000ll)) || (chn.increment < SamplePosition(-0x180000000ll))) ? resampler.gDownsample2x : resampler.gDownsample13x) : resampler.gKaiserSinc);
 	}
-
-	MPT_FORCEINLINE void End(const ModChannel &) { }
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const inBuffer, const uint32 posLo)
 	{
@@ -123,12 +118,10 @@ struct FIRFilterInterpolation
 {
 	const typename Traits::output_t *WFIRlut;
 
-	MPT_FORCEINLINE void Start(const ModChannel &, const CResampler &resampler)
+	MPT_FORCEINLINE FIRFilterInterpolation(const ModChannel &, const CResampler &resampler, unsigned int)
 	{
 		WFIRlut = resampler.m_WindowedFIR.lut;
 	}
-
-	MPT_FORCEINLINE void End(const ModChannel &) { }
 
 	MPT_FORCEINLINE void operator() (typename Traits::outbuf_t &outSample, const typename Traits::input_t * const inBuffer, const uint32 posLo)
 	{
@@ -159,30 +152,30 @@ struct NoRamp
 {
 	typename Traits::output_t lVol, rVol;
 
-	MPT_FORCEINLINE void Start(const ModChannel &chn)
+	MPT_FORCEINLINE NoRamp(const ModChannel &chn)
 	{
 		lVol = static_cast<Traits::output_t>(chn.leftVol) * (1.0f / 4096.0f);
 		rVol = static_cast<Traits::output_t>(chn.rightVol) * (1.0f / 4096.0f);
 	}
-
-	MPT_FORCEINLINE void End(const ModChannel &) { }
 };
 
 
 struct Ramp
 {
+	ModChannel &channel;
 	int32 lRamp, rRamp;
 
-	MPT_FORCEINLINE void Start(const ModChannel &chn)
+	MPT_FORCEINLINE Ramp(ModChannel &chn)
+		: channel{chn}
 	{
 		lRamp = chn.rampLeftVol;
 		rRamp = chn.rampRightVol;
 	}
 
-	MPT_FORCEINLINE void End(ModChannel &chn)
+	MPT_FORCEINLINE ~Ramp()
 	{
-		chn.rampLeftVol = lRamp; chn.leftVol = lRamp >> VOLUMERAMPPRECISION;
-		chn.rampRightVol = rRamp; chn.rightVol = rRamp >> VOLUMERAMPPRECISION;
+		channel.rampLeftVol = lRamp; channel.leftVol = lRamp >> VOLUMERAMPPRECISION;
+		channel.rampRightVol = rRamp; channel.rightVol = rRamp >> VOLUMERAMPPRECISION;
 	}
 };
 
@@ -259,8 +252,7 @@ struct MixStereoRamp : public Ramp
 template<class Traits>
 struct NoFilter
 {
-	MPT_FORCEINLINE void Start(const ModChannel &) { }
-	MPT_FORCEINLINE void End(const ModChannel &) { }
+	MPT_FORCEINLINE NoFilter(const ModChannel &) { }
 
 	MPT_FORCEINLINE void operator() (const typename Traits::outbuf_t &, const ModChannel &) { }
 };
@@ -270,10 +262,12 @@ struct NoFilter
 template<class Traits>
 struct ResonantFilter
 {
+	ModChannel &channel;
 	// Filter history
 	typename Traits::output_t fy[Traits::numChannelsIn][2];
 
-	MPT_FORCEINLINE void Start(const ModChannel &chn)
+	MPT_FORCEINLINE ResonantFilter(ModChannel &chn)
+		: channel{chn}
 	{
 		for(int i = 0; i < Traits::numChannelsIn; i++)
 		{
@@ -282,12 +276,12 @@ struct ResonantFilter
 		}
 	}
 
-	MPT_FORCEINLINE void End(ModChannel &chn)
+	MPT_FORCEINLINE ~ResonantFilter(ModChannel &chn)
 	{
 		for(int i = 0; i < Traits::numChannelsIn; i++)
 		{
-			chn.nFilter_Y[i][0] = fy[i][0];
-			chn.nFilter_Y[i][1] = fy[i][1];
+			channel.nFilter_Y[i][0] = fy[i][0];
+			channel.nFilter_Y[i][1] = fy[i][1];
 		}
 	}
 

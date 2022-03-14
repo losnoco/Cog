@@ -117,7 +117,7 @@ void LFOPlugin::Process(float *pOutL, float *pOutR, uint32 numFrames)
 			if(m_outputToCC)
 			{
 				plugin->MidiSend(MIDIEvents::CC(static_cast<MIDIEvents::MidiCC>(m_outputParam & 0x7F), static_cast<uint8>((m_outputParam >> 8) & 0x0F), mpt::saturate_round<uint8>(value * 127.0f)));
-			} else
+			} else if(m_outputParam >= 0)
 			{
 				plugin->SetParameter(m_outputParam, static_cast<PlugParamValue>(value));
 			}
