@@ -691,7 +691,7 @@
 
 	framesToSkip = 0;
 
-	if(frame > _framesDecoded) {
+	if(frame < _framesDecoded) {
 		_framesDecoded = 0;
 		_firstFrame = YES;
 		if(_foundLAMEHeader || _foundiTunSMPB)
