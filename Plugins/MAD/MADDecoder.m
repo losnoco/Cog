@@ -455,7 +455,7 @@
 
 	// DLog(@"Revised: %i, %i", startingSample, sampleCount);
 
-	_framesDecoded += _synth.pcm.length;
+	_framesDecoded += sampleCount;
 
 	if(_outputFrames > 0) {
 		DLog(@"LOSING FRAMES!");
@@ -541,11 +541,13 @@
 		}
 	}
 
-	signed long frameDuration = mad_timer_count(_frame.header.duration, sampleRate);
-	if((framesToSkip - 1152 * 4) >= frameDuration) {
-		framesToSkip -= frameDuration;
-		_framesDecoded += frameDuration;
-		return 0;
+	if(!_firstFrame || !_foundXingHeader) {
+		signed long frameDuration = mad_timer_count(_frame.header.duration, sampleRate);
+		if((framesToSkip - 1152 * 4) >= frameDuration) {
+			framesToSkip -= frameDuration;
+			_framesDecoded += frameDuration;
+			return 0;
+		}
 	}
 
 	// DLog(@"Decoded buffer.");
