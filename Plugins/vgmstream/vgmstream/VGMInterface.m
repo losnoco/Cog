@@ -336,9 +336,6 @@ VGMSTREAM* init_vgmstream_from_cogfile(const char* path, int subsong) {
 	STREAMFILE* sf;
 	VGMSTREAM* vgm = NULL;
 
-	if(!subsong)
-		subsong = 1;
-
 	sf = open_cog_streamfile(path);
 
 	if(sf) {

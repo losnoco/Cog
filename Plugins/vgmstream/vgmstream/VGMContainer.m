@@ -53,6 +53,11 @@
 		return @[];
 	}
 
+	if(stream->stream_index > 0) {
+		close_vgmstream(stream);
+		return @[];
+	}
+
 	VGMInfoCache *sharedMyCache = [VGMInfoCache sharedCache];
 
 	NSMutableArray *tracks = [NSMutableArray array];
