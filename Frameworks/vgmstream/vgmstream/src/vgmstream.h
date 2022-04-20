@@ -763,6 +763,7 @@ typedef enum {
     meta_WBK_NSLB,
     meta_DSP_APEX,
     meta_MPEG,
+    meta_SSPF,
 
 } meta_t;
 

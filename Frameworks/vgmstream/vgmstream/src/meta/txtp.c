@@ -3,11 +3,14 @@
 #include "../layout/layout.h"
 #include "../mixing.h"
 #include "../plugins.h"
+#include "../util/text_reader.h"
 
 #include <math.h>
 
 
-#define TXTP_LINE_MAX 1024
+#define TXT_LINE_MAX 2048 /* some wwise .txtp get wordy */
+#define TXT_LINE_KEY_MAX 128
+#define TXT_LINE_VAL_MAX (TXT_LINE_MAX - TXT_LINE_KEY_MAX)
 #define TXTP_MIXING_MAX 512
 #define TXTP_GROUP_MODE_SEGMENTED 'S'
 #define TXTP_GROUP_MODE_LAYERED 'L'
@@ -68,7 +71,7 @@ typedef struct {
 
 typedef struct {
     /* main entry */
-    char filename[TXTP_LINE_MAX];
+    char filename[TXT_LINE_MAX];
     int silent;
 
     /* TXTP settings (applied at the end) */
@@ -218,15 +221,12 @@ static void clean_txtp(txtp_header* txtp, int fail) {
 
 static int parse_silents(txtp_header* txtp) {
     int i;
-    int channels = 0;
-    int sample_rate = 0;
-    int32_t num_samples = 0;
+    VGMSTREAM* v_base = NULL;
 
     /* silents use same channels as close files */
     for (i = 0; i < txtp->vgmstream_count; i++) {
         if (!txtp->entry[i].silent) {
-            channels = txtp->vgmstream[i]->channels;
-            sample_rate = txtp->vgmstream[i]->sample_rate;
+            v_base = txtp->vgmstream[i];
             break;
         }
     }
@@ -236,7 +236,7 @@ static int parse_silents(txtp_header* txtp) {
         if (!txtp->entry[i].silent)
             continue;
 
-        txtp->vgmstream[i] = init_vgmstream_silence(channels, sample_rate, num_samples);
+        txtp->vgmstream[i] = init_vgmstream_silence_base(v_base);
         if (!txtp->vgmstream[i]) goto fail;
 
         apply_settings(txtp->vgmstream[i], &txtp->entry[i]);
@@ -1274,7 +1274,7 @@ static inline int is_match(const char* str1, const char* str2) {
 static void parse_params(txtp_entry* entry, char* params) {
     /* parse params: #(commands) */
     int n, nc, nm, mc;
-    char command[TXTP_LINE_MAX];
+    char command[TXT_LINE_MAX];
     play_config_t* tcfg = &entry->config;
 
     entry->range_start = 0;
@@ -1805,7 +1805,7 @@ fail:
 
 static int is_substring(const char* val, const char* cmp) {
     int n;
-    char subval[TXTP_LINE_MAX];
+    char subval[TXT_LINE_MAX];
 
     /* read string without trailing spaces or comments/commands */
     if (sscanf(val, " %s%n[^ #\t\r\n]%n", subval, &n, &n) != 1)
@@ -1865,12 +1865,12 @@ static int parse_keyval(txtp_header* txtp, const char* key, const char* val) {
         }
     }
     else if (0==strcmp(key,"commands")) {
-        char val2[TXTP_LINE_MAX];
+        char val2[TXT_LINE_MAX];
         strcpy(val2, val); /* copy since val is modified here but probably not important */
         if (!add_entry(txtp, val2, 1)) goto fail;
     }
     else if (0==strcmp(key,"group")) {
-        char val2[TXTP_LINE_MAX];
+        char val2[TXT_LINE_MAX];
         strcpy(val2, val); /* copy since val is modified here but probably not important */
         if (!add_group(txtp, val2)) goto fail;
 
@@ -1887,7 +1887,7 @@ fail:
 
 static txtp_header* parse_txtp(STREAMFILE* sf) {
     txtp_header* txtp = NULL;
-    off_t txt_offset, file_size;
+    uint32_t txt_offset;
 
 
     txtp = calloc(1,sizeof(txtp_header));
@@ -1897,23 +1897,28 @@ static txtp_header* parse_txtp(STREAMFILE* sf) {
     txtp->is_segmented = 1;
 
     txt_offset = read_bom(sf);
-    file_size = get_streamfile_size(sf);
 
     /* read and parse lines */
     {
-        char line[TXTP_LINE_MAX];
-        char key[TXTP_LINE_MAX];
-        char val[TXTP_LINE_MAX];
-        char filename[TXTP_LINE_MAX];
-        /* at least as big as a line to avoid overflows (I hope) */
+        text_reader_t tr;
+        uint8_t buf[TXT_LINE_MAX + 1];
+        char key[TXT_LINE_KEY_MAX];
+        char val[TXT_LINE_VAL_MAX];
+        int ok, line_len;
+        char* line;
 
-        while (txt_offset < file_size) {
-            int ok, bytes_read, line_ok;
+        if (!text_reader_init(&tr, buf, sizeof(buf), sf, txt_offset, 0))
+            goto fail;
 
-            bytes_read = read_line(line, sizeof(line), txt_offset, sf, &line_ok);
-            if (!line_ok) goto fail;
+        do {
+            line_len = text_reader_get_line(&tr, &line);
+            if (line_len < 0) goto fail; /* too big for buf (maybe not text)) */
 
-            txt_offset += bytes_read;
+            if (line == NULL) /* EOF */
+                break;
+
+            if (line_len == 0) /* empty */
+                continue;
 
             /* try key/val (ignores lead/trail spaces, # may be commands or comments) */
             ok = sscanf(line, " %[^ \t#=] = %[^\t\r\n] ", key,val);
@@ -1924,16 +1929,17 @@ static txtp_header* parse_txtp(STREAMFILE* sf) {
             }
 
             /* must be a filename (only remove spaces from start/end, as filenames con contain mid spaces/#/etc) */
-            ok = sscanf(line, " %[^\t\r\n] ", filename);
+            ok = sscanf(line, " %[^\t\r\n] ", val);
             if (ok != 1) /* not a filename either */
                 continue;
-            if (filename[0] == '#')
+            if (val[0] == '#')
                 continue; /* simple comment */
 
             /* filename with settings */
-            if (!add_entry(txtp, filename, 0))
+            if (!add_entry(txtp, val, 0))
                 goto fail;
-        }
+
+        } while (line_len >= 0);
     }
 
     /* mini-txth: if no entries are set try with filename, ex. from "song.ext#3.txtp" use "song.ext#3"

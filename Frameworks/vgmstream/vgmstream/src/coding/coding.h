@@ -204,7 +204,7 @@ void decode_mtaf(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing,
 
 
 /* mta2_decoder */
-void decode_mta2(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_mta2(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int config);
 
 
 /* mc3_decoder */
@@ -270,7 +270,8 @@ void decode_ubi_adpcm(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t samples_to
 void reset_ubi_adpcm(ubi_adpcm_codec_data* data);
 void seek_ubi_adpcm(ubi_adpcm_codec_data* data, int32_t num_sample);
 void free_ubi_adpcm(ubi_adpcm_codec_data* data);
-int ubi_adpcm_get_samples(ubi_adpcm_codec_data* data);
+int32_t ubi_adpcm_get_samples(ubi_adpcm_codec_data* data);
+int32_t ubi_adpcm_bytes_to_samples(ubi_adpcm_codec_data* data, uint32_t size);
 
 
 /* imuse_decoder */

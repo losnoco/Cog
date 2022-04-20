@@ -229,6 +229,7 @@ static const char* extension_list[] = {
     "ifs",
     "ikm",
     "ild",
+    "ilf", //txth/reserved [Madden NFL 98 (PS1)]
     "ilv", //txth/reserved [Star Wars Episode III (PS2)]
     "ima",
     "imc",
@@ -417,6 +418,7 @@ static const char* extension_list[] = {
     "rsd",
     "rsf",
     "rsm",
+    "rsnd", //txth/reserved [Birushana: Ichijuu no Kaze (Switch)]
     "rsp",
     "rstm", //fake extension/header id for .rstm (in bigfiles)
     "rvws",
@@ -500,6 +502,7 @@ static const char* extension_list[] = {
     "ssd", //txth/reserved [Zack & Wiki (Wii)]
     "ssm",
     "sspr",
+    "ssp",
     "sss",
     "ster",
     "sth",
@@ -563,6 +566,7 @@ static const char* extension_list[] = {
     "vid",
     "vig",
     "vis",
+    "vm4", //txth/reserved [Elder Gate (PS1)]
     "vms",
     "vmu", //txth/reserved [Red Faction (PS2)]
     "voi",
@@ -1383,6 +1387,7 @@ static const meta_info meta_info_list[] = {
         {meta_WBK_NSLB,             "Treyarch NSLB header"},
         {meta_DSP_APEX,             "Koei Tecmo APEX header"},
         {meta_MPEG,                 "MPEG header"},
+        {meta_SSPF,                 "Konami SSPF header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
