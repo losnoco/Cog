@@ -695,6 +695,12 @@
 
 	framesToSkip = 0;
 
+	if(_foundLAMEHeader || _foundiTunSMPB) {
+		if(_framesDecoded < _startPadding) {
+			framesToSkip = _startPadding;
+		}
+	}
+
 	if(frame < _framesDecoded) {
 		_framesDecoded = 0;
 		_firstFrame = YES;
