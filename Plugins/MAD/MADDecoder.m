@@ -686,6 +686,10 @@
 }
 
 - (long)seek:(long)frame {
+	if(frame == _framesDecoded) {
+		return frame;
+	}
+
 	if(frame > totalFrames)
 		frame = totalFrames;
 
