@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>OSAScriptingDefinition</key>
-	<string>Cog.sdef</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -15,6 +13,8 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>****</string>
@@ -23,6 +23,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -32,10 +34,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>m3u.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>M3U Playlist File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -46,10 +52,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>pls.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>PLS Playlist File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -60,10 +70,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>RAR Archive of SPC Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -74,10 +88,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>7Z Archive of VGM Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -276,6 +294,7 @@
 				<string>ifs</string>
 				<string>ikm</string>
 				<string>ild</string>
+				<string>ilf</string>
 				<string>ilv</string>
 				<string>ima</string>
 				<string>imc</string>
@@ -447,6 +466,7 @@
 				<string>rsd</string>
 				<string>rsf</string>
 				<string>rsm</string>
+				<string>rsnd</string>
 				<string>rsp</string>
 				<string>rstm</string>
 				<string>rvws</string>
@@ -529,6 +549,7 @@
 				<string>ssd</string>
 				<string>ssm</string>
 				<string>sspr</string>
+				<string>ssp</string>
 				<string>sss</string>
 				<string>ster</string>
 				<string>sth</string>
@@ -588,6 +609,7 @@
 				<string>vid</string>
 				<string>vig</string>
 				<string>vis</string>
+				<string>vm4</string>
 				<string>vms</string>
 				<string>vmu</string>
 				<string>voi</string>
@@ -677,10 +699,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>VGMStream Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -692,10 +718,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Windows Media Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -706,10 +736,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>TAK Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -721,10 +755,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>m4a.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MPEG-4 Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -735,10 +773,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MPEG-4 AAC Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -751,10 +793,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>mp3.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MPEG Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -765,10 +811,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>ape.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
-			<string>Monkey&apos;s Audio File</string>
+			<string>Monkey's Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -779,10 +829,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>AC-3 Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -793,10 +847,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>DTS Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -807,10 +865,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>DTS-HD MA Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -821,10 +883,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>True Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -837,10 +903,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>TrueVQ Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -853,10 +923,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Real Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -867,10 +941,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Matroska Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -881,10 +959,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>WebM Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -895,10 +977,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>DSD Stream File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -910,10 +996,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Interchange File Format</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -924,10 +1014,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Wideband Single-bit Data</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -939,10 +1033,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>aiff.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Audio Interchange File Format</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -957,10 +1055,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>libvgm Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1030,10 +1132,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>AdPlug Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1061,10 +1167,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>PSF Format Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1130,10 +1240,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>libOpenMPT Module Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1144,10 +1258,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Hively Tracker File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1158,10 +1276,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Abyss&apos; Highest eXperience File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1173,10 +1295,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>wav.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>WAVE File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1189,10 +1315,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>aiff.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>AIFF File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1203,10 +1333,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>CAF File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1217,10 +1351,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>AU File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1235,10 +1373,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>mp3.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MPEG Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1249,10 +1391,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MPEG Stream File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1266,10 +1412,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>m4a.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MPEG-4 Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1281,10 +1431,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MPEG-4 AAC Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1295,10 +1449,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>AMR Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1309,10 +1467,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>USAC Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1323,10 +1485,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>AC-3 Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1337,10 +1503,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>flac.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>FLAC Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1351,10 +1521,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>SND Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1374,10 +1548,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Game Music Emu Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1389,10 +1567,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>wv.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Wavpack File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1403,10 +1585,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>shn.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Shorten File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1417,10 +1603,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>cue.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>CUE Sheet File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1433,10 +1623,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>General MIDI File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1447,10 +1641,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>RIFF MIDI File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1462,10 +1660,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>MIDS MIDI File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1478,10 +1680,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>HMI MIDI File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1492,10 +1698,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>id Software MUS MIDI File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1506,10 +1716,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>XMI MIDI File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1520,10 +1734,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Loudness MIDI File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1534,10 +1752,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>SID File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1548,10 +1770,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>SID MUS File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1562,10 +1788,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>ogg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Opus Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1576,10 +1806,34 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>ogg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Ogg Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mp3</string>
+				<string>m2a</string>
+				<string>mpa</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>mp3.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>MPEG Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1590,10 +1844,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>flac.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>FLAC Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1604,10 +1862,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>ogg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Ogg Vorbis File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1618,10 +1880,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>mpc.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Musepack Audio File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1632,10 +1898,14 @@
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>APL Link File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
 			<key>LSTypeIsPackage</key>
 			<false/>
 		</dict>
@@ -1687,6 +1957,8 @@
 	<string>MediaKeysApplication</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>
+	<key>OSAScriptingDefinition</key>
+	<string>Cog.sdef</string>
 	<key>SUFeedURL</key>
 	<string>https://cogcdn.cog.losno.co/mercury.xml</string>
 	<key>SUPublicEDKey</key>
