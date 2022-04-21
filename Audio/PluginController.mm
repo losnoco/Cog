@@ -372,6 +372,8 @@ static PluginController *sharedPluginController = nil;
 \t\t\t</array>\n\
 \t\t\t<key>CFBundleTypeIconFile</key>\n\
 \t\t\t<string>song.icns</string>\n\
+\t\t\t<key>CFBundleTypeIconSystemGenerated</key>\n\
+\t\t\t<integer>1</integer>\n\
 \t\t\t<key>CFBundleTypeOSTypes</key>\n\
 \t\t\t<array>\n\
 \t\t\t\t<string>****</string>\n\
@@ -380,6 +382,8 @@ static PluginController *sharedPluginController = nil;
 \t\t\t</array>\n\
 \t\t\t<key>CFBundleTypeRole</key>\n\
 \t\t\t<string>None</string>\n\
+\t\t\t<key>LSHandlerRank</key>\n\
+\t\t\t<string>Default</string>\n\
 \t\t</dict>\n";
     NSString * plistFooter = @"\t</array>\n\
 \t<key>CFBundleExecutable</key>\n\
@@ -429,6 +433,8 @@ static PluginController *sharedPluginController = nil;
 \t<string>MediaKeysApplication</string>\n\
 \t<key>NSRemindersUsageDescription</key>\n\
 \t<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>\n\
+\t<key>OSAScriptingDefinition</key>\n\
+\t<string>Cog.sdef</string>\n\
 \t<key>SUFeedURL</key>\n\
 \t<string>https://cogcdn.cog.losno.co/mercury.xml</string>\n\
 \t<key>SUPublicEDKey</key>\n\
@@ -486,12 +492,16 @@ static PluginController *sharedPluginController = nil;
 \t\t\t<string>"];
         [stringList addObject:[type objectAtIndex:1]];
         [stringList addObject:@"</string>\n\
+\t\t\t<key>CFBundleTypeIconSystemGenerated</key>\n\
+\t\t\t<integer>1</integer>\n\
 \t\t\t<key>CFBundleTypeName</key>\n\
 \t\t\t<string>"];
         [stringList addObject:[type objectAtIndex:0]];
         [stringList addObject:@"</string>\n\
 \t\t\t<key>CFBundleTypeRole</key>\n\
 \t\t\t<string>Viewer</string>\n\
+\t\t\t<key>LSHandlerRank</key>\n\
+\t\t\t<string>Default</string>\n\
 \t\t\t<key>LSTypeIsPackage</key>\n\
 \t\t\t<false/>\n\
 \t\t</dict>\n"];
