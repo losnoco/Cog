@@ -919,7 +919,7 @@ static uint8_t reverse_bits[0x100];
 		@[@"MPEG-4 Audio File", @"m4a.icns", @"mp4", @"m4a"],
 		@[@"MPEG-4 AAC Audio File", @"song.icns", @"aac"],
 		@[@"MPEG Audio File", @"mp3.icns", @"mp3", @"m2a", @"mpa"],
-		@[@"Monkey&apos;s Audio File", @"ape.icns", @"ape"],
+		@[@"Monkey's Audio File", @"ape.icns", @"ape"],
 		@[@"AC-3 Audio File", @"song.icns", @"ac3"],
 		@[@"DTS Audio File", @"song.icns", @"dts"],
 		@[@"DTS-HD MA Audio File", @"song.icns", @"dtshd"],
