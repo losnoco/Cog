@@ -507,6 +507,7 @@
 		837CEB0423487F2C00E62A4A /* jstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAEF23487F2C00E62A4A /* jstm.c */; };
 		837CEB0523487F2C00E62A4A /* sqex_sead_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 837CEAF023487F2C00E62A4A /* sqex_sead_streamfile.h */; };
 		837CEB072348809400E62A4A /* seb.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEB062348809400E62A4A /* seb.c */; };
+		8383A62C281203C60062E49E /* s3v.c in Sources */ = {isa = PBXBuildFile; fileRef = 8383A62B281203C50062E49E /* s3v.c */; };
 		83852B0B2680247900378854 /* rxws.c in Sources */ = {isa = PBXBuildFile; fileRef = 83852B092680247900378854 /* rxws.c */; };
 		83852B0C2680247900378854 /* ads_midway.c in Sources */ = {isa = PBXBuildFile; fileRef = 83852B0A2680247900378854 /* ads_midway.c */; };
 		8385D4E6245174C700FF8E67 /* diva.c in Sources */ = {isa = PBXBuildFile; fileRef = 8385D4E2245174C600FF8E67 /* diva.c */; };
@@ -1299,6 +1300,7 @@
 		837CEAEF23487F2C00E62A4A /* jstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jstm.c; sourceTree = "<group>"; };
 		837CEAF023487F2C00E62A4A /* sqex_sead_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqex_sead_streamfile.h; sourceTree = "<group>"; };
 		837CEB062348809400E62A4A /* seb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = seb.c; sourceTree = "<group>"; };
+		8383A62B281203C50062E49E /* s3v.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s3v.c; sourceTree = "<group>"; };
 		83852B092680247900378854 /* rxws.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rxws.c; sourceTree = "<group>"; };
 		83852B0A2680247900378854 /* ads_midway.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ads_midway.c; sourceTree = "<group>"; };
 		8385D4E2245174C600FF8E67 /* diva.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diva.c; sourceTree = "<group>"; };
@@ -2115,6 +2117,7 @@
 				836F6EE818BDC2190095E648 /* rwsd.c */,
 				836F6EE918BDC2190095E648 /* rwx.c */,
 				83852B092680247900378854 /* rxws.c */,
+				8383A62B281203C50062E49E /* s3v.c */,
 				836F6EEA18BDC2190095E648 /* s14_sss.c */,
 				83AA7F772519C042004C5298 /* sab_streamfile.h */,
 				8349A8F11FE6257D00E26435 /* sab.c */,
@@ -2566,6 +2569,7 @@
 				834FE0F1215C79ED000A5D3D /* a2m.c in Sources */,
 				8301659A1F256BD000CA0941 /* txth.c in Sources */,
 				837CEA7823487E2500E62A4A /* ptadpcm_decoder.c in Sources */,
+				8383A62C281203C60062E49E /* s3v.c in Sources */,
 				8301659B1F256BD000CA0941 /* ea_schl_fixed.c in Sources */,
 				8301659C1F256BD000CA0941 /* nds_strm_ffta2.c in Sources */,
 				837CEA7923487E2500E62A4A /* ubi_adpcm_decoder.c in Sources */,
