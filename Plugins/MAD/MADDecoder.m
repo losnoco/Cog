@@ -303,7 +303,7 @@
 
 				ancillaryBitsRemaining -= 32;
 
-				if('LAME' == magic) {
+				if('LAME' == magic || 'Lavf' == magic || 'Lavc' == magic) {
 					if(LAME_HEADER_SIZE > ancillaryBitsRemaining)
 						continue;
 
