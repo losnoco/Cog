@@ -123,6 +123,7 @@ typedef enum {
     coding_BLITZ_IMA,       /* Blitz Games 4-bit IMA ADPCM */
 
     coding_MS_IMA,          /* Microsoft IMA ADPCM */
+    coding_MS_IMA_mono,     /* Microsoft IMA ADPCM (mono/interleave) */
     coding_XBOX_IMA,        /* XBOX IMA ADPCM */
     coding_XBOX_IMA_mch,    /* XBOX IMA ADPCM (multichannel) */
     coding_XBOX_IMA_int,    /* XBOX IMA ADPCM (mono/interleave) */
@@ -286,6 +287,7 @@ typedef enum {
     layout_blocked_vs_square,
     layout_blocked_vid1,
     layout_blocked_ubi_sce,
+    layout_blocked_tt_ad,
 
     /* otherwise odd */
     layout_segmented,       /* song divided in segments (song sections) */
@@ -765,6 +767,9 @@ typedef enum {
     meta_MPEG,
     meta_SSPF,
     meta_S3V,
+    meta_ESF,
+    meta_ADM3,
+    meta_TT_AD,
 
 } meta_t;
 
