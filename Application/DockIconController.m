@@ -30,7 +30,7 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 	if(colorfulIcons) {
 		return [baseName stringByAppendingString:@"Colorful"];
 	} else {
-		return baseName;
+		return [baseName stringByAppendingString:@"Normal"];
 	}
 }
 
@@ -71,14 +71,14 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 	if(drawIcon) {
 		switch(playbackStatus) {
 			case CogStatusPlaying:
-				badgeImage = [NSImage imageNamed:getBadgeName(@"playDockBadge", colorfulIcons)];
+				badgeImage = [NSImage imageNamed:getBadgeName(@"Play", colorfulIcons)];
 				break;
 			case CogStatusPaused:
-				badgeImage = [NSImage imageNamed:getBadgeName(@"pauseDockBadge", colorfulIcons)];
+				badgeImage = [NSImage imageNamed:getBadgeName(@"Pause", colorfulIcons)];
 				break;
 
 			default:
-				badgeImage = [NSImage imageNamed:getBadgeName(@"stopDockBadge", colorfulIcons)];
+				badgeImage = [NSImage imageNamed:getBadgeName(@"Stop", colorfulIcons)];
 				break;
 		}
 
@@ -87,7 +87,7 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 		NSImage *newDockImage = [dockImage copy];
 		[newDockImage lockFocus];
 
-		[badgeImage drawInRect:NSMakeRect(0, 0, 128, 128)
+		[badgeImage drawInRect:NSMakeRect(0, 0, 1024, 1024)
 		              fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
 		             operation:NSCompositingOperationSourceOver
 		              fraction:1.0];
@@ -164,7 +164,7 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 }
 
 - (void)awakeFromNib {
-	dockImage = [[NSImage imageNamed:@"icon_blank"] copy];
+	dockImage = [[NSImage imageNamed:@"Plaque"] copy];
 	lastColorfulStatus = -1;
 	lastProgressStatus = [NSNumber numberWithDouble:-1];
 	imageView = nil;
