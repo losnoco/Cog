@@ -158,6 +158,7 @@
 				<string>atx</string>
 				<string>aud</string>
 				<string>audio</string>
+				<string>audio_data</string>
 				<string>aus</string>
 				<string>awa</string>
 				<string>awb</string>
@@ -242,6 +243,7 @@
 				<string>enm</string>
 				<string>eno</string>
 				<string>ens</string>
+				<string>esf</string>
 				<string>exa</string>
 				<string>ezw</string>
 				<string>fag</string>
@@ -478,6 +480,7 @@
 				<string>rxw</string>
 				<string>rxx</string>
 				<string>s14</string>
+				<string>s3s</string>
 				<string>s3v</string>
 				<string>sab</string>
 				<string>sad</string>
@@ -567,6 +570,7 @@
 				<string>swag</string>
 				<string>swav</string>
 				<string>swd</string>
+				<string>switch</string>
 				<string>switch_audio</string>
 				<string>sx</string>
 				<string>sxd</string>
