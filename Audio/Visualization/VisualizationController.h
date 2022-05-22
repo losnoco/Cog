@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)postSampleRate:(double)sampleRate;
 - (void)postVisPCM:(const float *)inPCM amount:(int)amount;
 - (double)readSampleRate;
-- (void)copyVisPCM:(float *)outPCM visFFT:(float *)outFFT;
+- (void)copyVisPCM:(float *)outPCM visCQT:(float *)outCQT;
 
 @end
 

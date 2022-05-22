@@ -67,8 +67,6 @@
 		835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */; };
 		83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7B27AA0D8A0003F694 /* Accelerate.framework */; };
 		83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7C27AA0D8E0003F694 /* AVFoundation.framework */; };
-		8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 8377C64B27B8C51500E8BC0F /* fft_accelerate.c */; };
-		8377C64E27B8C54400E8BC0F /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 8377C64D27B8C54400E8BC0F /* fft.h */; };
 		8377C65227B8CAD100E8BC0F /* VisualizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8377C65027B8CAD100E8BC0F /* VisualizationController.h */; };
 		8377C65327B8CAD100E8BC0F /* VisualizationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C65127B8CAD100E8BC0F /* VisualizationController.m */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
@@ -76,6 +74,8 @@
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
+		83D44DC02839C60A00D4DD10 /* cqt.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D44DBE2839C60A00D4DD10 /* cqt.h */; };
+		83D44DC12839C60A00D4DD10 /* cqt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D44DBF2839C60A00D4DD10 /* cqt.c */; };
 		83F18B1E27D1E8EF00385946 /* CDSPHBDownsampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18ADF27D1E8EF00385946 /* CDSPHBDownsampler.h */; };
 		83F18B1F27D1E8EF00385946 /* pffft_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18AE127D1E8EF00385946 /* pffft_double.h */; };
 		83F18B2027D1E8EF00385946 /* pf_neon_double_from_avx.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18AE327D1E8EF00385946 /* pf_neon_double_from_avx.h */; };
@@ -199,8 +199,6 @@
 		835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BadSampleCleaner.m; path = Utils/BadSampleCleaner.m; sourceTree = SOURCE_ROOT; };
 		83725A7B27AA0D8A0003F694 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		8377C64B27B8C51500E8BC0F /* fft_accelerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft_accelerate.c; sourceTree = "<group>"; };
-		8377C64D27B8C54400E8BC0F /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
 		8377C65027B8CAD100E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationController.h; sourceTree = "<group>"; };
 		8377C65127B8CAD100E8BC0F /* VisualizationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationController.m; sourceTree = "<group>"; };
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
@@ -208,6 +206,8 @@
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		83D44DBE2839C60A00D4DD10 /* cqt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cqt.h; sourceTree = "<group>"; };
+		83D44DBF2839C60A00D4DD10 /* cqt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cqt.c; sourceTree = "<group>"; };
 		83F18ADF27D1E8EF00385946 /* CDSPHBDownsampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPHBDownsampler.h; sourceTree = "<group>"; };
 		83F18AE127D1E8EF00385946 /* pffft_double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pffft_double.h; sourceTree = "<group>"; };
 		83F18AE327D1E8EF00385946 /* pf_neon_double_from_avx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pf_neon_double_from_avx.h; sourceTree = "<group>"; };
@@ -400,7 +400,6 @@
 			isa = PBXGroup;
 			children = (
 				83F18ADE27D1E8EF00385946 /* r8brain-free-src */,
-				8377C64A27B8C51500E8BC0F /* deadbeef */,
 				835C88AE279811A500E28EAE /* hdcd */,
 				835C88A22797D4D400E28EAE /* lvqcl */,
 				17D21DC40B8BE79700D1EBDE /* CoreAudioUtils */,
@@ -482,20 +481,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8377C64A27B8C51500E8BC0F /* deadbeef */ = {
-			isa = PBXGroup;
-			children = (
-				8377C64D27B8C54400E8BC0F /* fft.h */,
-				8377C64B27B8C51500E8BC0F /* fft_accelerate.c */,
-			);
-			path = deadbeef;
-			sourceTree = "<group>";
-		};
 		8377C64F27B8CAAB00E8BC0F /* Visualization */ = {
 			isa = PBXGroup;
 			children = (
 				8377C65027B8CAD100E8BC0F /* VisualizationController.h */,
 				8377C65127B8CAD100E8BC0F /* VisualizationController.m */,
+				83D44DBE2839C60A00D4DD10 /* cqt.h */,
+				83D44DBF2839C60A00D4DD10 /* cqt.c */,
 			);
 			path = Visualization;
 			sourceTree = "<group>";
@@ -561,6 +553,7 @@
 				17D21CA10B8BE4BA00D1EBDE /* BufferChain.h in Headers */,
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
+				83D44DC02839C60A00D4DD10 /* cqt.h in Headers */,
 				83F18B3427D1E8EF00385946 /* r8butil.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
@@ -607,7 +600,6 @@
 				835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */,
 				8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */,
 				8384912718080FF100E7332D /* Logging.h in Headers */,
-				8377C64E27B8C54400E8BC0F /* fft.h in Headers */,
 				83F18B5027D1E8F000385946 /* r8bconf.h in Headers */,
 				835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */,
 				83F18B2327D1E8EF00385946 /* pf_sse2_double.h in Headers */,
@@ -712,11 +704,11 @@
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				83F18B2727D1E8EF00385946 /* pffft_double.c in Sources */,
 				8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */,
-				8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */,
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
 				835C88AA2797D4D400E28EAE /* lpc.c in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */,
+				83D44DC12839C60A00D4DD10 /* cqt.c in Sources */,
 				17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */,
 				8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */,
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,

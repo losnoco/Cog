@@ -27,19 +27,9 @@
 extern "C" {
 #endif
 
-#define DDB_ANALYZER_MAX_LABEL_FREQS 20
-
-typedef struct {
-	float freq;
-	float ratio;
-	int bin;
-} ddb_analyzer_band_t;
-
 typedef struct {
 	// interpolation data
 	int bin;
-	int last_bin;
-	float ratio;
 
 	// normalized position
 	float xpos;
@@ -58,34 +48,16 @@ typedef struct {
 	int bar_count;
 	ddb_analyzer_draw_bar_t *bars;
 	float bar_width;
-
-	// freq label drawing positions in view space
-	float label_freq_positions[DDB_ANALYZER_MAX_LABEL_FREQS];
-	char label_freq_texts[DDB_ANALYZER_MAX_LABEL_FREQS][4];
-	int label_freq_count;
 } ddb_analyzer_draw_data_t;
-
-typedef enum {
-	DDB_ANALYZER_MODE_FREQUENCIES,
-	DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS,
-} ddb_analyzer_mode_t;
 
 typedef struct ddb_analyzer_s {
 	// Settings
-
-	float min_freq;
-	float max_freq;
-
-	ddb_analyzer_mode_t mode;
 
 	/// Set to 1 after changing the @c mode or @c octave_bars_step at runtime, to refresh the internal state
 	int mode_did_change;
 
 	/// Generate fractional bar positions and width. Default is 0.
 	int fractional_bars;
-
-	/// Process 2 channels, if available, and use the max value. Default is 0.
-	int max_of_stereo_data;
 
 	/// How to calculate the gap between bars. E.g. 10 means bar_width/10. Default is 3.
 	/// If this value is 0, no gap will be created.
@@ -112,15 +84,6 @@ typedef struct ddb_analyzer_s {
 	int channels;
 	int fft_size;
 	float *fft_data;
-
-	/// Calculated label texts and frequencies
-	float label_freq_positions[DDB_ANALYZER_MAX_LABEL_FREQS];
-	char label_freq_texts[DDB_ANALYZER_MAX_LABEL_FREQS][4];
-	int label_freq_count;
-
-	/// Tempered scale data, precalculated from fft pins
-	ddb_analyzer_band_t *tempered_scale_bands;
-
 } ddb_analyzer_t;
 
 ddb_analyzer_t *ddb_analyzer_alloc(void);

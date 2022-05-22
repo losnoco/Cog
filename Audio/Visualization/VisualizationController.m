@@ -8,7 +8,7 @@
 #import "VisualizationController.h"
 #import <Accelerate/Accelerate.h>
 
-#import "fft.h"
+#import "cqt.h"
 
 @implementation VisualizationController
 
@@ -32,7 +32,7 @@ static VisualizationController *_sharedController = nil;
 }
 
 - (void)dealloc {
-	fft_free();
+	cqt_free();
 }
 
 - (void)postSampleRate:(double)sampleRate {
@@ -59,10 +59,10 @@ static VisualizationController *_sharedController = nil;
 	}
 }
 
-- (void)copyVisPCM:(float *)outPCM visFFT:(float *)outFFT {
+- (void)copyVisPCM:(float *)outPCM visCQT:(float *)outCQT {
 	@synchronized(self) {
 		cblas_scopy(4096, visAudio, 1, outPCM, 1);
-		fft_calculate(visAudio, outFFT, 2048);
+		cqt_calculate(visAudio, sampleRate, outCQT, 4096);
 	}
 }
 
