@@ -36,6 +36,12 @@ git submodule update --init --recursive
 
 Setup your `DEVELOPMENT_TEAM` like described in [Xcode-config/Shared.xcconfig](https://github.com/losnoco/Cog/blob/main/Xcode-config/Shared.xcconfig) to build the project.
 
+(Add 2022-05-22) Also, be sure to configure the hooks path, so you won't accidentally commit your team ID to a project file:
+
+```
+git config core.hooksPath .githooks
+```
+
 # Screenshots
 
 ## Main window and Info Inspector
