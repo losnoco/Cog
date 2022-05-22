@@ -7,11 +7,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <SceneKit/SceneKit.h>
+
 #import "VisualizationController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumView : NSView
+@interface SpectrumView : SCNView
 @property(nonatomic) BOOL isListening;
 @end
 

@@ -97,6 +97,7 @@
 		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
 		830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C37F227B9956C00E02BB0 /* analyzer.c */; };
 		8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */; };
+		8316B3932839FFD5004CC392 /* Scenes.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 8316B3922839FFD5004CC392 /* Scenes.scnassets */; };
 		831B99BF27C23E88005A969B /* Cog.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 831B99BE27C23E88005A969B /* Cog.sdef */; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -904,6 +905,7 @@
 		830C37F227B9956C00E02BB0 /* analyzer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = equalizerTemplate.pdf; path = Images/equalizerTemplate.pdf; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
+		8316B3922839FFD5004CC392 /* Scenes.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Scenes.scnassets; sourceTree = "<group>"; };
 		831B99BE27C23E88005A969B /* Cog.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cog.sdef; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
@@ -1505,6 +1507,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8316B3922839FFD5004CC392 /* Scenes.scnassets */,
 				832C1252180BD1E2005507C1 /* Cog.help */,
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
@@ -2443,6 +2446,7 @@
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
 				836F462B28207FA4005B9B87 /* StopColorful.png in Resources */,
 				8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */,
+				8316B3932839FFD5004CC392 /* Scenes.scnassets in Resources */,
 				8384916618083EAB00E7332D /* repeatModeOneTemplate.pdf in Resources */,
 				8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */,
 				83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */,

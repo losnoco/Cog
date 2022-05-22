@@ -22,11 +22,9 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	BOOL paused;
 	BOOL stopped;
 	BOOL isListening;
+	BOOL bandsReset;
 
-	NSColor *baseColor;
-	NSColor *peakColor;
 	NSColor *backgroundColor;
-	NSColor *borderColor;
 	ddb_analyzer_t _analyzer;
 	ddb_analyzer_draw_data_t _draw_data;
 }
@@ -37,7 +35,12 @@ extern NSString *CogPlaybackDidStopNotficiation;
 @synthesize isListening;
 
 - (id)initWithFrame:(NSRect)frame {
-	self = [super initWithFrame:frame];
+	NSDictionary *sceneOptions = @{
+		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
+		SCNPreferLowPowerDeviceKey: @(YES)
+	};
+
+	self = [super initWithFrame:frame options:sceneOptions];
 	if(self) {
 		[self setup];
 	}
@@ -61,7 +64,15 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	paused = NO;
 	isListening = NO;
 
-	[self colorsDidChange:nil];
+	[self setBackgroundColor:[NSColor clearColor]];
+
+	SCNScene *theScene = [SCNScene sceneNamed:@"Scenes.scnassets/Spectrum.scn"];
+	[self setScene:theScene];
+
+	bandsReset = NO;
+	[self drawBaseBands];
+
+	//[self colorsDidChange:nil];
 
 	BOOL freqMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumFreqMode"];
 
@@ -70,17 +81,13 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	_analyzer.min_freq = 10;
 	_analyzer.max_freq = 22000;
 	_analyzer.peak_hold = 10;
-	_analyzer.view_width = 64;
+	_analyzer.view_width = 11;
 	_analyzer.fractional_bars = 1;
 	_analyzer.octave_bars_step = 2;
 	_analyzer.max_of_stereo_data = 1;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
-	[[NSNotificationCenter defaultCenter] addObserver:self
-	                                         selector:@selector(colorsDidChange:)
-	                                             name:NSSystemColorsDidChangeNotification
-	                                           object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(playbackDidBegin:)
 	                                             name:CogPlaybackDidBeginNotficiation
@@ -104,9 +111,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	ddb_analyzer_draw_data_dealloc(&_draw_data);
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self
-	                                                name:NSSystemColorsDidChangeNotification
-	                                              object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self
 	                                                name:CogPlaybackDidBeginNotficiation
 	                                              object:nil];
 	[[NSNotificationCenter defaultCenter] removeObserver:self
@@ -121,7 +125,22 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)repaint {
-	self.needsDisplay = YES;
+	[self updateVisListening];
+
+	if(stopped) {
+		[self drawBaseBands];
+		return;
+	}
+
+	float visAudio[4096], visFFT[2048];
+
+	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0]];
+
+	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
+	ddb_analyzer_tick(&_analyzer);
+	ddb_analyzer_get_draw_data(&_analyzer, 11.0, 1.0, &_draw_data);
+
+	[self drawAnalyzer];
 }
 
 - (void)startTimer {
@@ -140,23 +159,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)timerRun:(NSTimer *)timer {
-	[self repaint];
-}
-
-- (void)colorsDidChange:(NSNotification *)notification {
-	backgroundColor = [NSColor textBackgroundColor];
-	backgroundColor = [backgroundColor colorWithAlphaComponent:0.0];
-	borderColor = [NSColor systemGrayColor];
-
-	if(@available(macOS 10.14, *)) {
-		baseColor = [NSColor textColor];
-		peakColor = [NSColor controlAccentColor];
-		peakColor = [peakColor colorWithAlphaComponent:0.7];
-	} else {
-		peakColor = [NSColor textColor];
-		baseColor = [peakColor colorWithAlphaComponent:0.6];
-	}
-
 	[self repaint];
 }
 
@@ -185,78 +187,71 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	[self repaint];
 }
 
-- (void)drawAnalyzerDescreteFrequencies {
-	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-	ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
-	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
-		CGContextMoveToPoint(context, bar->xpos, 0);
-		CGContextAddLineToPoint(context, bar->xpos, bar->bar_height);
-	}
-	CGContextSetStrokeColorWithColor(context, baseColor.CGColor);
-	CGContextStrokePath(context);
+- (void)drawBaseBands {
+	if(bandsReset) return;
 
-	bar = _draw_data.bars;
-	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
-		CGContextMoveToPoint(context, bar->xpos - 0.5, bar->peak_ypos);
-		CGContextAddLineToPoint(context, bar->xpos + 0.5, bar->peak_ypos);
+	SCNScene *scene = [self scene];
+	SCNNode *rootNode = [scene rootNode];
+	NSArray<SCNNode *> *nodes = [rootNode childNodes];
+
+	for(int i = 0; i < 11; ++i) {
+		SCNNode *node = nodes[i + 1];
+		SCNNode *dotNode = nodes[i + 1 + 11];
+		SCNVector3 position = node.position;
+		position.y = 0.0;
+		node.scale = SCNVector3Make(1.0, 0.0, 1.0);
+		node.position = position;
+
+		position = dotNode.position;
+		position.y = 0;
+		dotNode.position = position;
 	}
-	CGContextSetStrokeColorWithColor(context, peakColor.CGColor);
-	CGContextStrokePath(context);
+
+	bandsReset = YES;
 }
 
 - (void)drawAnalyzerOctaveBands {
-	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-	ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
-	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
-		CGContextAddRect(context, CGRectMake(bar->xpos, 0, _draw_data.bar_width, bar->bar_height));
-	}
-	CGContextSetFillColorWithColor(context, baseColor.CGColor);
-	CGContextFillPath(context);
+	const int maxBars = (int)(ceilf((float)(_draw_data.bar_count) / 11.0));
+	const int barStep = (int)(floorf((float)(_draw_data.bar_count) / 11.0));
 
-	bar = _draw_data.bars;
-	for(int i = 0; i < _draw_data.bar_count; i++, bar++) {
-		CGContextAddRect(context, CGRectMake(bar->xpos, bar->peak_ypos, _draw_data.bar_width, 1.0));
+	ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
+
+	SCNScene *scene = [self scene];
+	SCNNode *rootNode = [scene rootNode];
+	NSArray<SCNNode *> *nodes = [rootNode childNodes];
+
+	for(int i = 0; i < 11; ++i) {
+		float maxValue = 0.0;
+		float maxMax = 0.0;
+		for(int j = 0; j < maxBars; ++j) {
+			const int barBase = i * barStep;
+			const int barIndex = barBase + j;
+			if(barIndex < _draw_data.bar_count) {
+				if(bar[barIndex].bar_height > maxValue) {
+					maxValue = bar[barIndex].bar_height;
+				}
+				if(bar[barIndex].peak_ypos > maxMax) {
+					maxMax = bar[barIndex].peak_ypos;
+				}
+			}
+		}
+		SCNNode *node = nodes[i + 1];
+		SCNNode *dotNode = nodes[i + 1 + 11];
+		SCNVector3 position = node.position;
+		position.y = maxValue * 0.5;
+		node.scale = SCNVector3Make(1.0, maxValue, 1.0);
+		node.position = position;
+
+		position = dotNode.position;
+		position.y = maxMax;
+		dotNode.position = position;
 	}
-	CGContextSetFillColorWithColor(context, peakColor.CGColor);
-	CGContextFillPath(context);
+
+	bandsReset = NO;
 }
 
 - (void)drawAnalyzer {
-	if(_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
-		[self drawAnalyzerDescreteFrequencies];
-	} else {
-		[self drawAnalyzerOctaveBands];
-	}
-}
-
-- (void)drawRect:(NSRect)dirtyRect {
-	[super drawRect:dirtyRect];
-
-	[self updateVisListening];
-
-	[backgroundColor setFill];
-	NSRectFill(dirtyRect);
-
-	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-	CGContextMoveToPoint(context, 0.0, 0.0);
-	CGContextAddLineToPoint(context, 64.0, 0.0);
-	CGContextAddLineToPoint(context, 64.0, 26.0);
-	CGContextAddLineToPoint(context, 0.0, 26.0);
-	CGContextAddLineToPoint(context, 0.0, 0.0);
-	CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
-	CGContextStrokePath(context);
-
-	if(stopped) return;
-
-	float visAudio[4096], visFFT[2048];
-
-	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0]];
-
-	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
-	ddb_analyzer_tick(&_analyzer);
-	ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
-
-	[self drawAnalyzer];
+	[self drawAnalyzerOctaveBands];
 }
 
 - (void)mouseDown:(NSEvent *)event {
