@@ -126,6 +126,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	SCNScene *theScene = [SCNScene sceneNamed:@"Scenes.scnassets/Spectrum.scn"];
 	[self setScene:theScene];
 
+	[self setAntialiasingMode:SCNAntialiasingModeMultisampling8X];
+
 	SCNNode *rootNode = [[self scene] rootNode];
 	SCNNode *cameraNode = [rootNode childNodeWithName:@"camera" recursively:NO];
 	cameraPosition2d = SCNVector3Make(0.0, 0.5, 1.0);
