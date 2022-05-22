@@ -11,6 +11,8 @@
 
 #define LOWER_BOUND -80
 
+void *kSpectrumViewContext = &kSpectrumViewContext;
+
 extern NSString *CogPlaybackDidBeginNotficiation;
 extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
@@ -57,6 +59,46 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	}
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(void *)context {
+	if(context == kSpectrumViewContext) {
+		[self updateControls];
+	}
+}
+
+- (void)updateControls {
+	BOOL projectionMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumProjectionMode"];
+	SCNNode *rootNode = [[self scene] rootNode];
+	SCNNode *cameraNode = [rootNode childNodeWithName:@"camera" recursively:NO];
+	SCNCamera *camera = [cameraNode camera];
+	[camera setUsesOrthographicProjection:projectionMode];
+
+	NSValueTransformer *colorToValueTransformer = [NSValueTransformer valueTransformerForName:@"ColorToValueTransformer"];
+
+	NSColor *barColor = [colorToValueTransformer transformedValue:[[NSUserDefaults standardUserDefaults] dataForKey:@"spectrumBarColor"]];
+	NSColor *dotColor = [colorToValueTransformer transformedValue:[[NSUserDefaults standardUserDefaults] dataForKey:@"spectrumDotColor"]];
+
+	{
+		SCNNode *barNode = [rootNode childNodeWithName:@"cylinder0" recursively:NO];
+		SCNGeometry *geometry = [barNode geometry];
+		NSArray<SCNMaterial *> *materials = [geometry materials];
+		SCNMaterial *material = materials[0];
+		material.diffuse.contents = barColor;
+		material.emission.contents = barColor;
+	}
+
+	{
+		SCNNode *dotNode = [rootNode childNodeWithName:@"sphere0" recursively:NO];
+		SCNGeometry *geometry = [dotNode geometry];
+		NSArray<SCNMaterial *> *materials = [geometry materials];
+		SCNMaterial *material = materials[0];
+		material.diffuse.contents = dotColor;
+		material.emission.contents = dotColor;
+	}
+}
+
 - (void)setup {
 	visController = [NSClassFromString(@"VisualizationController") sharedController];
 	timer = nil;
@@ -68,6 +110,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 	SCNScene *theScene = [SCNScene sceneNamed:@"Scenes.scnassets/Spectrum.scn"];
 	[self setScene:theScene];
+
+	[self updateControls];
 
 	bandsReset = NO;
 	[self drawBaseBands];
@@ -87,6 +131,10 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	_analyzer.max_of_stereo_data = 1;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumProjectionMode" options:0 context:kSpectrumViewContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewContext];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(playbackDidBegin:)
@@ -109,6 +157,10 @@ extern NSString *CogPlaybackDidStopNotficiation;
 - (void)dealloc {
 	ddb_analyzer_dealloc(&_analyzer);
 	ddb_analyzer_draw_data_dealloc(&_draw_data);
+
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumProjectionMode"];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor"];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor"];
 
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 	                                                name:CogPlaybackDidBeginNotficiation

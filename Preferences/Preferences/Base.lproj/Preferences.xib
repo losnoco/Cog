@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -470,11 +470,11 @@
             <point key="canvasLocation" x="450" y="-52"/>
         </customView>
         <customView id="CgN-sy-RmM" userLabel="AppearanceView">
-            <rect key="frame" x="0.0" y="0.0" width="530" height="74"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="162"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="haX-dq-OIe">
-                    <rect key="frame" x="18" y="43" width="329" height="18"/>
+                    <rect key="frame" x="18" y="125" width="329" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <buttonCell key="cell" type="check" title="Colorful dock icons" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="GdX-5e-NeU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -485,7 +485,7 @@
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AA7-fr-NOk">
-                    <rect key="frame" x="18" y="15" width="329" height="18"/>
+                    <rect key="frame" x="18" y="98" width="329" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <buttonCell key="cell" type="check" title="Show stop button" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="vMI-lj-Lrz">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -495,8 +495,61 @@
                         <binding destination="52" name="value" keyPath="values.enableStopButton" id="JH0-bm-IC4"/>
                     </connections>
                 </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4xb-C2-wmz">
+                    <rect key="frame" x="18" y="70" width="146" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Spectrum 2D view" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="gXL-j6-df0">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.spectrumProjectionMode" id="UGh-1j-iFC"/>
+                    </connections>
+                </button>
+                <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7hw-NI-bF1">
+                    <rect key="frame" x="20" y="40" width="44" height="23"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.spectrumBarColor" id="GXa-dK-oTa">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">ColorToValueTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </colorWell>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1Xc-Cr-icC">
+                    <rect key="frame" x="70" y="43" width="105" height="16"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Spectrum bars" id="Bll-IJ-lje">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <colorWell fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WjH-M4-Gqf">
+                    <rect key="frame" x="20" y="12" width="44" height="23"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.spectrumDotColor" id="43q-fa-aDY">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">ColorToValueTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </colorWell>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ahQ-bv-j9g">
+                    <rect key="frame" x="70" y="15" width="117" height="16"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Spectrum peaks" id="CQI-YZ-B3V">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
             </subviews>
-            <point key="canvasLocation" x="450" y="139"/>
+            <point key="canvasLocation" x="450" y="183"/>
         </customView>
         <customView wantsLayer="YES" id="JXu-ar-J3Y" userLabel="MIDIView">
             <rect key="frame" x="0.0" y="0.0" width="530" height="140"/>

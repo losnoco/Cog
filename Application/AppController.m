@@ -19,6 +19,8 @@
 #import "Logging.h"
 #import "MiniModeMenuTitleTransformer.h"
 
+#import "ColorToValueTransformer.h"
+
 #import "Shortcuts.h"
 #import <MASShortcut/Shortcut.h>
 
@@ -47,6 +49,10 @@ void *kAppControllerContext = &kAppControllerContext;
 	NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
 	                                forName:@"MiniModeMenuTitleTransformer"];
+
+	NSValueTransformer *colorToValueTransformer = [[ColorToValueTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:colorToValueTransformer
+	                                forName:@"ColorToValueTransformer"];
 }
 
 - (id)init {
@@ -459,6 +465,17 @@ void *kAppControllerContext = &kAppControllerContext;
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"resumePlaybackOnStartup"];
 
 	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"quitOnNaturalStop"];
+
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"spectrumFreqMode"];
+	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"spectrumProjectionMode"];
+
+	NSValueTransformer *colorToValueTransformer = [NSValueTransformer valueTransformerForName:@"ColorToValueTransformer"];
+
+	NSData *barColor = [colorToValueTransformer reverseTransformedValue:[NSColor colorWithSRGBRed:1.0 green:0.5 blue:0 alpha:1.0]];
+	NSData *dotColor = [colorToValueTransformer reverseTransformedValue:[NSColor systemRedColor]];
+
+	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
+	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];

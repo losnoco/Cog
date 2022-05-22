@@ -7,6 +7,7 @@
 //
 
 #import "GeneralPreferencesPlugin.h"
+#import "ColorToValueTransformer.h"
 #import "PathToFileTransformer.h"
 
 @implementation GeneralPreferencesPlugin
@@ -15,6 +16,10 @@
 	NSValueTransformer *pathToFileTransformer = [[PathToFileTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:pathToFileTransformer
 	                                forName:@"PathToFileTransformer"];
+
+	NSValueTransformer *colorToValueTransformer = [[ColorToValueTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:colorToValueTransformer
+	                                forName:@"ColorToValueTransformer"];
 }
 
 + (NSArray *)preferencePanes {

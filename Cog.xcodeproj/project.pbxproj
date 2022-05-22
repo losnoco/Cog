@@ -171,6 +171,7 @@
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */; };
 		83AA7D04279EBCA900087AA4 /* libavcodec.59.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83AA7D05279EBCAB00087AA4 /* libavformat.59.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D03279EBC8300087AA4 /* libavformat.59.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83AA7D06279EBCAD00087AA4 /* libavutil.57.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D02279EBC8200087AA4 /* libavutil.57.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1004,6 +1005,8 @@
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ColorToValueTransformer.m; path = Preferences/Preferences/ColorToValueTransformer.m; sourceTree = "<group>"; };
+		83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColorToValueTransformer.h; path = Preferences/Preferences/ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.59.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.59.dylib; sourceTree = "<group>"; };
 		83AA7D01279EBC8200087AA4 /* libswresample.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.4.dylib; path = ThirdParty/ffmpeg/lib/libswresample.4.dylib; sourceTree = "<group>"; };
 		83AA7D02279EBC8200087AA4 /* libavutil.57.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.57.dylib; path = ThirdParty/ffmpeg/lib/libavutil.57.dylib; sourceTree = "<group>"; };
@@ -1438,6 +1441,8 @@
 		17E0D5F60F520F42005B6FED /* Transformers */ = {
 			isa = PBXGroup;
 			children = (
+				83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */,
+				83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */,
 				17E0D6120F520F87005B6FED /* FontSizetoLineHeightTransformer.h */,
 				17E0D6130F520F87005B6FED /* FontSizetoLineHeightTransformer.m */,
 				17E0D6140F520F87005B6FED /* StringToURLTransformer.h */,
@@ -2523,6 +2528,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */,
 				8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */,
