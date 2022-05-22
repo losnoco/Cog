@@ -29,6 +29,11 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	NSColor *backgroundColor;
 	ddb_analyzer_t _analyzer;
 	ddb_analyzer_draw_data_t _draw_data;
+
+	SCNVector3 cameraPosition2d;
+	SCNVector3 cameraEulerAngles2d;
+	SCNVector3 cameraPosition3d;
+	SCNVector3 cameraEulerAngles3d;
 }
 @end
 
@@ -73,7 +78,17 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	SCNNode *rootNode = [[self scene] rootNode];
 	SCNNode *cameraNode = [rootNode childNodeWithName:@"camera" recursively:NO];
 	SCNCamera *camera = [cameraNode camera];
-	[camera setUsesOrthographicProjection:projectionMode];
+	if (projectionMode) {
+		cameraNode.eulerAngles = cameraEulerAngles2d;
+		cameraNode.position = cameraPosition2d;
+		camera.usesOrthographicProjection = YES;
+		camera.orthographicScale = 0.6;
+	} else {
+		cameraNode.eulerAngles = cameraEulerAngles3d;
+		cameraNode.position = cameraPosition3d;
+		camera.usesOrthographicProjection = NO;
+		camera.orthographicScale = 1.0;
+	}
 
 	NSValueTransformer *colorToValueTransformer = [NSValueTransformer valueTransformerForName:@"ColorToValueTransformer"];
 
@@ -111,6 +126,13 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	SCNScene *theScene = [SCNScene sceneNamed:@"Scenes.scnassets/Spectrum.scn"];
 	[self setScene:theScene];
 
+	SCNNode *rootNode = [[self scene] rootNode];
+	SCNNode *cameraNode = [rootNode childNodeWithName:@"camera" recursively:NO];
+	cameraPosition2d = SCNVector3Make(0.0, 0.5, 1.0);
+	cameraEulerAngles2d = SCNVector3Zero;
+	// Save initial camera position from SceneKit file.
+	cameraPosition3d = cameraNode.position;
+	cameraEulerAngles3d = cameraNode.eulerAngles;
 	[self updateControls];
 
 	bandsReset = NO;
