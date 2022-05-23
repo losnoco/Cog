@@ -290,7 +290,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		node.position = position;
 
 		position = dotNode.position;
-		position.y = 0;
+		position.y = 0.072;
 		dotNode.position = position;
 	}
 
@@ -330,7 +330,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		node.position = position;
 
 		position = dotNode.position;
-		position.y = maxMax;
+		position.y = maxMax + 0.072;
 		dotNode.position = position;
 	}
 
