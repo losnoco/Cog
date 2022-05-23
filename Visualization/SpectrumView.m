@@ -75,7 +75,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)updateControls {
-	BOOL projectionMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumProjectionMode"];
+	BOOL projectionMode = cameraControlEnabled ? NO : [[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumProjectionMode"];
 	SCNNode *rootNode = [[self scene] rootNode];
 	SCNNode *cameraNode = [rootNode childNodeWithName:@"camera" recursively:NO];
 	SCNCamera *camera = [cameraNode camera];
@@ -118,6 +118,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 - (void)enableCameraControl {
 	[self setAllowsCameraControl:YES];
 	cameraControlEnabled = YES;
+	[self updateControls];
 }
 
 - (void)setup {
