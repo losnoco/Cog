@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumWindowController : NSWindowController {
+@interface SpectrumWindowController : NSWindowController <NSWindowDelegate> {
 	IBOutlet PlaybackController *playbackController;
 }
 

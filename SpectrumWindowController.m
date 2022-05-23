@@ -22,13 +22,31 @@
 - (void)windowDidLoad {
 	[super windowDidLoad];
 
-	self.spectrumView = [[SpectrumView alloc] initWithFrame:[[self window] frame]];
-	[[self window] setContentView:self.spectrumView];
+	[self startRunning];
+}
 
-	[self.spectrumView enableCameraControl];
+- (void)startRunning {
+	if(!self.spectrumView) {
+		self.spectrumView = [[SpectrumView alloc] initWithFrame:[[self window] frame]];
+		[[self window] setContentView:self.spectrumView];
+
+		[self.spectrumView enableCameraControl];
+	}
 
 	if(playbackController.playbackStatus == CogStatusPlaying)
 		[self.spectrumView startPlayback];
+}
+
+- (void)stopRunning {
+	[[self window] setContentView:nil];
+	self.spectrumView = nil;
+}
+
+- (void)windowWillClose:(NSNotification *)notification {
+	NSWindow *currentWindow = notification.object;
+	if([currentWindow isEqualTo:self.window]) {
+		[self stopRunning];
+	}
 }
 
 - (IBAction)toggleWindow:(id)sender {
@@ -39,8 +57,7 @@
 }
 
 - (IBAction)showWindow:(id)sender {
-	if(self.spectrumView && playbackController.playbackStatus == CogStatusPlaying)
-		[self.spectrumView startPlayback];
+	[self startRunning];
 	return [super showWindow:sender];
 }
 
