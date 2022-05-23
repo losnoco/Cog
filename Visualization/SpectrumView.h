@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SpectrumView : SCNView
 @property(nonatomic) BOOL isListening;
+
+- (void)enableCameraControl;
+- (void)startPlayback;
 @end
 
 NS_ASSUME_NONNULL_END

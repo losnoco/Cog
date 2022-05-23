@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -1385,6 +1385,11 @@
                                     <action selector="showWindow:" target="dJ9-b3-BFu" id="l8q-wn-w0b"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Show Spectrum Window" keyEquivalent="V" id="wl2-Vo-pul">
+                                <connections>
+                                    <action selector="showWindow:" target="Ix4-7A-ejK" id="wS9-M9-Dhe"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1854">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -2326,6 +2331,11 @@ Gw
             </connections>
         </customObject>
         <customObject id="dJ9-b3-BFu" customClass="EqualizerWindowController"/>
+        <customObject id="Ix4-7A-ejK" customClass="SpectrumWindowController">
+            <connections>
+                <outlet property="playbackController" destination="705" id="jJw-Zl-5DT"/>
+            </connections>
+        </customObject>
     </objects>
     <resources>
         <image name="deadItemsTemplate" width="20" height="20"/>

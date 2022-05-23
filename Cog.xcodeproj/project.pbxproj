@@ -99,6 +99,8 @@
 		8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */; };
 		8316B3932839FFD5004CC392 /* Scenes.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 8316B3922839FFD5004CC392 /* Scenes.scnassets */; };
 		831B99BF27C23E88005A969B /* Cog.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 831B99BE27C23E88005A969B /* Cog.sdef */; };
+		83229C9F283B0095004626A8 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83229C9D283B0095004626A8 /* SpectrumWindowController.m */; };
+		83229CA0283B0095004626A8 /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83229C9E283B0095004626A8 /* SpectrumWindow.xib */; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
@@ -908,6 +910,9 @@
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
 		8316B3922839FFD5004CC392 /* Scenes.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Scenes.scnassets; sourceTree = "<group>"; };
 		831B99BE27C23E88005A969B /* Cog.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cog.sdef; sourceTree = "<group>"; };
+		83229C9C283B0095004626A8 /* SpectrumWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumWindowController.h; sourceTree = "<group>"; };
+		83229C9D283B0095004626A8 /* SpectrumWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumWindowController.m; sourceTree = "<group>"; };
+		83229C9E283B0095004626A8 /* SpectrumWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumWindow.xib; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
@@ -1811,6 +1816,9 @@
 				8377C66127B8CF6300E8BC0F /* SpectrumView.m */,
 				8377C6B727B900F000E8BC0F /* SpectrumItem.h */,
 				8377C6B827B900F000E8BC0F /* SpectrumItem.m */,
+				83229C9C283B0095004626A8 /* SpectrumWindowController.h */,
+				83229C9D283B0095004626A8 /* SpectrumWindowController.m */,
+				83229C9E283B0095004626A8 /* SpectrumWindow.xib */,
 			);
 			name = Visualization;
 			sourceTree = "<group>";
@@ -2493,6 +2501,7 @@
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
 				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
+				83229CA0283B0095004626A8 /* SpectrumWindow.xib in Resources */,
 				836F462A28207FA4005B9B87 /* PauseColorful.png in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
@@ -2597,6 +2606,7 @@
 				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
 				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
 				83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */,
+				83229C9F283B0095004626A8 /* SpectrumWindowController.m in Sources */,
 				835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
 				178456120F631E31007E8021 /* SideViewController.m in Sources */,

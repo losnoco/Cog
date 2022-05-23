@@ -25,6 +25,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	BOOL stopped;
 	BOOL isListening;
 	BOOL bandsReset;
+	BOOL cameraControlEnabled;
 
 	NSColor *backgroundColor;
 	ddb_analyzer_t _analyzer;
@@ -114,12 +115,18 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	}
 }
 
+- (void)enableCameraControl {
+	[self setAllowsCameraControl:YES];
+	cameraControlEnabled = YES;
+}
+
 - (void)setup {
 	visController = [NSClassFromString(@"VisualizationController") sharedController];
 	timer = nil;
 	stopped = YES;
 	paused = NO;
 	isListening = NO;
+	cameraControlEnabled = NO;
 
 	[self setBackgroundColor:[NSColor clearColor]];
 
@@ -238,6 +245,10 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	[self repaint];
 }
 
+- (void)startPlayback {
+	[self playbackDidBegin:nil];
+}
+
 - (void)playbackDidBegin:(NSNotification *)notification {
 	stopped = NO;
 	paused = NO;
@@ -331,6 +342,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)mouseDown:(NSEvent *)event {
+	if(cameraControlEnabled) return;
+
 	BOOL freqMode = ![[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumFreqMode"];
 	[[NSUserDefaults standardUserDefaults] setBool:freqMode forKey:@"spectrumFreqMode"];
 
