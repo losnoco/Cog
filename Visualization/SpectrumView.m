@@ -7,6 +7,8 @@
 
 #import "SpectrumView.h"
 
+#import <Metal/Metal.h>
+
 #import "analyzer.h"
 
 #define LOWER_BOUND -80
@@ -26,6 +28,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	BOOL isListening;
 	BOOL bandsReset;
 	BOOL cameraControlEnabled;
+	BOOL isOpenGL;
 
 	NSColor *backgroundColor;
 	ddb_analyzer_t _analyzer;
@@ -44,9 +47,20 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (id)initWithFrame:(NSRect)frame {
 	NSDictionary *sceneOptions = @{
-		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
-		SCNPreferLowPowerDeviceKey: @(YES)
+		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIOpenGLCore32)
 	};
+	isOpenGL = YES;
+
+	if(@available(macOS 10.15, *)) {
+		id<MTLDevice> device = MTLCreateSystemDefaultDevice();
+		if([device supportsFamily:MTLGPUFamilyMac2]) {
+			sceneOptions = @{
+				SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
+				SCNPreferredDeviceKey: device
+			};
+			isOpenGL = NO;
+		}
+	}
 
 	self = [super initWithFrame:frame options:sceneOptions];
 	if(self) {
@@ -103,6 +117,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		SCNMaterial *material = materials[0];
 		material.diffuse.contents = barColor;
 		material.emission.contents = barColor;
+		if(isOpenGL)
+			material.emission.intensity = 0;
 	}
 
 	{
@@ -112,6 +128,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		SCNMaterial *material = materials[0];
 		material.diffuse.contents = dotColor;
 		material.emission.contents = dotColor;
+		if(isOpenGL)
+			material.emission.intensity = 0;
 	}
 }
 
