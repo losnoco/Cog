@@ -98,3 +98,10 @@
 
 - (int)putMetadataInURL:(NSURL *)url;
 @end
+
+static NSString *guess_encoding_of_string(const char *input) {
+	NSString *ret = @"";
+	NSData *stringData = [NSData dataWithBytes:input length:strlen(input)];
+	[NSString stringEncodingForData:stringData encodingOptions:nil convertedString:&ret usedLossyConversion:nil];
+	return ret;
+}

@@ -59,13 +59,6 @@ static size_t http_curl_write_wrapper(HTTPSource *fp, void *ptr, size_t size) {
 	return size - avail;
 }
 
-static NSString *guess_encoding_of_string(const char *input) {
-	NSString *ret = @"";
-	NSData *stringData = [NSData dataWithBytes:input length:strlen(input)];
-	[NSString stringEncodingForData:stringData encodingOptions:nil convertedString:&ret usedLossyConversion:nil];
-	return ret;
-}
-
 static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t size) {
 	//    DLog (@"reading %d bytes of metadata\n", size);
 	DLog(@"%s", meta);
