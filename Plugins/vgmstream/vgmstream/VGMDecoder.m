@@ -187,7 +187,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	if(![year isEqualToNumber:[NSNumber numberWithInt:0]])
 		[mutableMetadata setValue:year forKey:@"year"];
 
-	NSDictionary *metadata = mutableMetadata;
+	NSDictionary *metadata = [NSDictionary dictionaryWithDictionary:mutableMetadata];
 
 	NSDictionary *package = @{@"properties": properties,
 							  @"metadata": metadata};
