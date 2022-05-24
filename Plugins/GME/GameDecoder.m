@@ -58,7 +58,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	if(type == gme_spc_type || type == gme_sfm_type)
 		sampleRate = 32000;
 
-	emu = gme_new_emu(type, sampleRate);
+	emu = gme_new_emu(type, (int)sampleRate);
 	if(!emu) {
 		ALog(@"GME: No new emu!");
 		return NO;
