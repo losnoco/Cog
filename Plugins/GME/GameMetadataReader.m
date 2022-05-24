@@ -95,18 +95,18 @@
 
 	gme_delete(emu);
 
-	NSString *title = [NSString stringWithUTF8String:info->song];
+	NSString *title = guess_encoding_of_string(info->song);
 	if(!title || ![title length]) {
 		// this is needed to distinguish between different tracks in NSF, for example
 		// otherwise they will all be displayed as 'blahblah.nsf' in playlist
 		title = [[url lastPathComponent] stringByAppendingFormat:@" [%d]", track_num];
 	}
 
-	NSDictionary *dict = @{@"genre": [NSString stringWithUTF8String:info->system],
-						   @"album": [NSString stringWithUTF8String:info->game],
-						   @"title": title,
-						   @"artist": [NSString stringWithUTF8String:info->author],
-						   @"track": [NSNumber numberWithInt:track_num + 1]};
+	NSDictionary *dict = @{ @"genre": guess_encoding_of_string(info->system),
+		                    @"album": guess_encoding_of_string(info->game),
+		                    @"title": title,
+		                    @"artist": guess_encoding_of_string(info->author),
+		                    @"track": [NSNumber numberWithInt:track_num + 1] };
 
 	gme_free_info(info);
 

@@ -92,7 +92,7 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 	}
 
 	while(!fex_done(fex)) {
-		if([file isEqualToString:[NSString stringWithUTF8String:fex_name(fex)]])
+		if([file isEqualToString:guess_encoding_of_string(fex_name(fex))])
 			break;
 		fex_next(fex);
 	}

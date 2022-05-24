@@ -115,7 +115,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		tags = vgmstream_tags_init(&tag_key, &tag_val);
 		vgmstream_tags_reset(tags, [filename UTF8String]);
 		while(vgmstream_tags_next_tag(tags, tagFile)) {
-			NSString *value = [NSString stringWithUTF8String:tag_val];
+			NSString *value = guess_encoding_of_string(tag_val);
 			if(!strncasecmp(tag_key, "REPLAYGAIN_", strlen("REPLAYGAIN_"))) {
 				if(!strncasecmp(tag_key + strlen("REPLAYGAIN_"), "TRACK_", strlen("TRACK_"))) {
 					if(!strcasecmp(tag_key + strlen("REPLAYGAIN_TRACK_"), "GAIN")) {
@@ -167,7 +167,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 
 	if([title isEqualToString:@""]) {
 		if(stream->num_streams > 1) {
-			title = [NSString stringWithFormat:@"%@ - %s", [[urlTrimmed URLByDeletingPathExtension] lastPathComponent], stream->stream_name];
+			title = [NSString stringWithFormat:@"%@ - %@", [[urlTrimmed URLByDeletingPathExtension] lastPathComponent], guess_encoding_of_string(stream->stream_name)];
 		} else {
 			title = [[urlTrimmed URLByDeletingPathExtension] lastPathComponent];
 		}

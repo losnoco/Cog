@@ -52,9 +52,9 @@
 	const SidTuneInfo *info = tune->getInfo();
 
 	unsigned int count = info->numberOfInfoStrings();
-	NSString *title = count >= 1 ? [[NSString stringWithUTF8String:info->infoString(0)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+	NSString *title = count >= 1 ? [guess_encoding_of_string(info->infoString(0)) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
 	NSString *titletag = info->songs() > 1 ? @"album" : @"title";
-	NSString *artist = count >= 2 ? [[NSString stringWithUTF8String:info->infoString(1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+	NSString *artist = count >= 2 ? [guess_encoding_of_string(info->infoString(1)) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
 
 	delete tune;
 

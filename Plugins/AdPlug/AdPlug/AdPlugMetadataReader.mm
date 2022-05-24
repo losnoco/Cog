@@ -60,9 +60,9 @@
 	NSString *artist = @"";
 
 	if(!p_player->gettitle().empty())
-		title = [NSString stringWithUTF8String:p_player->gettitle().c_str()];
+		title = guess_encoding_of_string(p_player->gettitle().c_str());
 	if(!p_player->getauthor().empty())
-		artist = [NSString stringWithUTF8String:p_player->getauthor().c_str()];
+		artist = guess_encoding_of_string(p_player->getauthor().c_str());
 
 	delete p_player;
 	delete p_emu;

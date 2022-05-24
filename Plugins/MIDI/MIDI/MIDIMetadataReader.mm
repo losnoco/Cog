@@ -62,18 +62,18 @@
 	midi_meta_data_item item;
 	bool remap_display_name = !metadata.get_item("title", item);
 
-	NSArray *allowedKeys = @[@"title", @"artist", @"album", @"year"];
+	NSArray *allowedKeys = @[@"title", @"artist", @"albumartist", @"album", @"year", @"genre"];
 
 	NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:10];
 
 	for(size_t i = 0; i < metadata.get_count(); ++i) {
 		const midi_meta_data_item &item = metadata[i];
-		NSString *name = [[NSString stringWithUTF8String:item.m_name.c_str()] lowercaseString];
+		NSString *name = [guess_encoding_of_string(item.m_name.c_str()) lowercaseString];
 		if(![name isEqualToString:@"type"]) {
 			if(remap_display_name && [name isEqualToString:@"display_name"])
 				name = @"title";
 			if([allowedKeys containsObject:name])
-				[dict setObject:[NSString stringWithUTF8String:item.m_value.c_str()] forKey:name];
+				[dict setObject:guess_encoding_of_string(item.m_value.c_str()) forKey:name];
 		}
 	}
 

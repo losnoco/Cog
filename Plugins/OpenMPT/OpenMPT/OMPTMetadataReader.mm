@@ -65,15 +65,15 @@
 
 		for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
 			if(*key == "title")
-				title = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+				title = guess_encoding_of_string(mod->get_metadata(*key).c_str());
 			else if(*key == "artist")
-				artist = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+				artist = guess_encoding_of_string(mod->get_metadata(*key).c_str());
 			/*else if ( *key == "message" )
-			    comment = [NSString stringWithUTF8String: mod->get_metadata( *key ).c_str()];*/
+			    comment = guess_encoding_of_string(mod->get_metadata( *key ).c_str());*/
 			else if(*key == "date")
-				date = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+				date = guess_encoding_of_string(mod->get_metadata(*key).c_str());
 			else if(*key == "type_long")
-				type = [NSString stringWithUTF8String:mod->get_metadata(*key).c_str()];
+				type = guess_encoding_of_string(mod->get_metadata(*key).c_str());
 		}
 
 		delete mod;

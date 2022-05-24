@@ -48,7 +48,7 @@
 	if(!tune)
 		return nil;
 
-	NSString *title = [[NSString stringWithUTF8String:tune->ht_Name] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	NSString *title = [guess_encoding_of_string(tune->ht_Name) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
 	hvl_FreeTune(tune);
 

@@ -139,11 +139,11 @@ static std::string FCC2Str(UINT32 fcc) {
 	const char* const* tagList = player->GetTags();
 	for(const char* const* t = tagList; *t; t += 2) {
 		if(!strcmp(t[0], "TITLE"))
-			title = [NSString stringWithUTF8String:t[1]];
+			title = guess_encoding_of_string(t[1]);
 		else if(!strcmp(t[0], "ARTIST"))
-			artist = [NSString stringWithUTF8String:t[1]];
+			artist = guess_encoding_of_string(t[1]);
 		else if(!strcmp(t[0], "GAME"))
-			album = [NSString stringWithUTF8String:t[1]];
+			album = guess_encoding_of_string(t[1]);
 		else if(!strcmp(t[0], "DATE")) {
 			char* end;
 			unsigned long theYear = strtoul(t[1], &end, 10);

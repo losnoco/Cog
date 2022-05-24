@@ -223,9 +223,9 @@ static int parse_time_crap(NSString *value) {
 static int psf_info_meta(void *context, const char *name, const char *value) {
 	struct psf_info_meta_state *state = (struct psf_info_meta_state *)context;
 
-	NSString *tag = [NSString stringWithUTF8String:name];
+	NSString *tag = guess_encoding_of_string(name);
 	NSString *taglc = [tag lowercaseString];
-	NSString *svalue = [NSString stringWithUTF8String:value];
+	NSString *svalue = guess_encoding_of_string(value);
 
 	if(svalue == nil)
 		return 0;
@@ -307,8 +307,8 @@ typedef struct {
 static int psf1_info(void *context, const char *name, const char *value) {
 	struct psf1_load_state *state = (struct psf1_load_state *)context;
 
-	NSString *sname = [[NSString stringWithUTF8String:name] lowercaseString];
-	NSString *svalue = [NSString stringWithUTF8String:value];
+	NSString *sname = [guess_encoding_of_string(name) lowercaseString];
+	NSString *svalue = guess_encoding_of_string(value);
 
 	if(!state->refresh && [sname isEqualToString:@"_refresh"]) {
 		state->refresh = [svalue intValue];
@@ -808,8 +808,8 @@ static int twosf_loader(void *context, const uint8_t *exe, size_t exe_size,
 static int twosf_info(void *context, const char *name, const char *value) {
 	struct twosf_loader_state *state = (struct twosf_loader_state *)context;
 
-	NSString *sname = [[NSString stringWithUTF8String:name] lowercaseString];
-	NSString *svalue = [NSString stringWithUTF8String:value];
+	NSString *sname = [guess_encoding_of_string(name) lowercaseString];
+	NSString *svalue = guess_encoding_of_string(value);
 
 	if([sname isEqualToString:@"_frames"]) {
 		state->initial_frames = [svalue intValue];
@@ -844,8 +844,8 @@ static int usf_loader(void *context, const uint8_t *exe, size_t exe_size,
 static int usf_info(void *context, const char *name, const char *value) {
 	struct usf_loader_state *uUsf = (struct usf_loader_state *)context;
 
-	NSString *sname = [[NSString stringWithUTF8String:name] lowercaseString];
-	NSString *svalue = [NSString stringWithUTF8String:value];
+	NSString *sname = [guess_encoding_of_string(name) lowercaseString];
+	NSString *svalue = guess_encoding_of_string(value);
 
 	if([sname isEqualToString:@"_enablecompare"] && [svalue length])
 		uUsf->enablecompare = 1;
