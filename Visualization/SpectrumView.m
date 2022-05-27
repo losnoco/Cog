@@ -345,7 +345,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		SCNNode *dotNode = nodes[i + 1 + 11];
 		SCNVector3 position = node.position;
 		position.y = maxValue * 0.5;
-		node.scale = SCNVector3Make(1.0, maxValue, 1.0);
+		node.scale = SCNVector3Make(1.0, maxValue + 1e-7, 1.0);
 		node.position = position;
 
 		position = dotNode.position;
