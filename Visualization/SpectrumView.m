@@ -47,7 +47,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 - (id)initWithFrame:(NSRect)frame {
 	NSDictionary *sceneOptions = @{
 		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
-		SCNPreferredDeviceKey: MTLCreateSystemDefaultDevice(),
 		SCNPreferLowPowerDeviceKey: @(NO)
 	};
 
