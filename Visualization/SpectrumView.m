@@ -160,7 +160,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	_analyzer.min_freq = 10;
 	_analyzer.max_freq = 22000;
 	_analyzer.peak_hold = 10;
-	_analyzer.view_width = 11;
+	_analyzer.view_width = 1000;
 	_analyzer.fractional_bars = 1;
 	_analyzer.octave_bars_step = 2;
 	_analyzer.max_of_stereo_data = 1;
