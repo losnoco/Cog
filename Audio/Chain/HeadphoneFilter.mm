@@ -256,6 +256,10 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 			free(impulseBuffer);
 			impulseBuffer = resampledImpulse;
 			sampleCount = (int)outputDone;
+
+			// Normalize resampled impulse by sample ratio
+			float fSampleRatio = (float)sampleRatio;
+			vDSP_vsdiv(impulseBuffer, 1, &fSampleRatio, impulseBuffer, 1, sampleCount * impulseChannels);
 		}
 
 		channelCount = channels;
