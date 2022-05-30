@@ -29,6 +29,7 @@
 	if(!self.spectrumView) {
 		self.spectrumView = [[SpectrumView alloc] initWithFrame:[[self window] frame]];
 		[[self window] setContentView:self.spectrumView];
+		if(!self.spectrumView) return;
 
 		[self.spectrumView enableCameraControl];
 	}
