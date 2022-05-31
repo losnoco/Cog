@@ -257,7 +257,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_eb_sfx,
     init_vgmstream_eb_sf0,
     init_vgmstream_mtaf,
-    init_vgmstream_tun,
+    init_vgmstream_alp,
     init_vgmstream_wpd,
     init_vgmstream_mn_str,
     init_vgmstream_mss,
@@ -524,6 +524,8 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_esf,
     init_vgmstream_adm3,
     init_vgmstream_tt_ad,
+    init_vgmstream_bw_mp3_riff,
+    init_vgmstream_bw_riff_mp3,
 
     /* lower priority metas (no clean header identity, somewhat ambiguous, or need extension/companion file to identify) */
     init_vgmstream_mpeg,

@@ -155,6 +155,7 @@
 				<string>atsl</string>
 				<string>atsl3</string>
 				<string>atsl4</string>
+				<string>atslx</string>
 				<string>atx</string>
 				<string>aud</string>
 				<string>audio</string>
@@ -192,6 +193,8 @@
 				<string>bo2</string>
 				<string>brstm</string>
 				<string>brstmspm</string>
+				<string>brwav</string>
+				<string>brwsd</string>
 				<string>bsnd</string>
 				<string>btsnd</string>
 				<string>bvg</string>

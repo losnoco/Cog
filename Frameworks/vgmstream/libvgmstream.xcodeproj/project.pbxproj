@@ -434,7 +434,7 @@
 		836F703318BDC2190095E648 /* str_snds.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EF718BDC2190095E648 /* str_snds.c */; };
 		836F703518BDC2190095E648 /* svs.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EF918BDC2190095E648 /* svs.c */; };
 		836F703618BDC2190095E648 /* thp.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EFA18BDC2190095E648 /* thp.c */; };
-		836F703718BDC2190095E648 /* tun.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EFB18BDC2190095E648 /* tun.c */; };
+		836F703718BDC2190095E648 /* alp.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EFB18BDC2190095E648 /* alp.c */; };
 		836F703818BDC2190095E648 /* ubi_ckd.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EFC18BDC2190095E648 /* ubi_ckd.c */; };
 		836F703918BDC2190095E648 /* vgs.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EFD18BDC2190095E648 /* vgs.c */; };
 		836F703A18BDC2190095E648 /* vs.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6EFE18BDC2190095E648 /* vs.c */; };
@@ -610,6 +610,7 @@
 		83AFABBE23795202002F3947 /* isb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AFABBB23795202002F3947 /* isb.c */; };
 		83B46FD12707FB2100847FC9 /* at3plus_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B46FCD2707FB2100847FC9 /* at3plus_decoder.h */; };
 		83B46FD52707FB9A00847FC9 /* endianness.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B46FD42707FB9A00847FC9 /* endianness.h */; };
+		83B69B222845A26600D2435A /* bw_mp3_riff.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B69B212845A26600D2435A /* bw_mp3_riff.c */; };
 		83B72E3A27904589006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E342790452C006007A3 /* libfdk-aac.2.dylib */; };
 		83BAFB6C19F45EB3005DAB60 /* bfstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BAFB6B19F45EB3005DAB60 /* bfstm.c */; };
 		83C7280F22BC893D00678B4A /* xwb_xsb.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C727FB22BC893800678B4A /* xwb_xsb.h */; };
@@ -1231,7 +1232,7 @@
 		836F6EF718BDC2190095E648 /* str_snds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = str_snds.c; sourceTree = "<group>"; };
 		836F6EF918BDC2190095E648 /* svs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = svs.c; sourceTree = "<group>"; };
 		836F6EFA18BDC2190095E648 /* thp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thp.c; sourceTree = "<group>"; };
-		836F6EFB18BDC2190095E648 /* tun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tun.c; sourceTree = "<group>"; };
+		836F6EFB18BDC2190095E648 /* alp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alp.c; sourceTree = "<group>"; };
 		836F6EFC18BDC2190095E648 /* ubi_ckd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ubi_ckd.c; sourceTree = "<group>"; };
 		836F6EFD18BDC2190095E648 /* vgs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vgs.c; sourceTree = "<group>"; };
 		836F6EFE18BDC2190095E648 /* vs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vs.c; sourceTree = "<group>"; };
@@ -1406,6 +1407,7 @@
 		83AFABBB23795202002F3947 /* isb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = isb.c; sourceTree = "<group>"; };
 		83B46FCD2707FB2100847FC9 /* at3plus_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = at3plus_decoder.h; sourceTree = "<group>"; };
 		83B46FD42707FB9A00847FC9 /* endianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endianness.h; sourceTree = "<group>"; };
+		83B69B212845A26600D2435A /* bw_mp3_riff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bw_mp3_riff.c; sourceTree = "<group>"; };
 		83B72E342790452C006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "../../ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83BAFB6B19F45EB3005DAB60 /* bfstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bfstm.c; sourceTree = "<group>"; };
 		83C727FB22BC893800678B4A /* xwb_xsb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xwb_xsb.h; sourceTree = "<group>"; };
@@ -1836,6 +1838,7 @@
 				8349A8F61FE6257E00E26435 /* aix_streamfile.h */,
 				836F6E3218BDC2180095E648 /* aix.c */,
 				836F6E3318BDC2180095E648 /* akb.c */,
+				836F6EFB18BDC2190095E648 /* alp.c */,
 				834FE0C0215C79E5000A5D3D /* ao.c */,
 				834FE0C7215C79E7000A5D3D /* apc.c */,
 				836F6E3418BDC2180095E648 /* apple_caff.c */,
@@ -1867,6 +1870,7 @@
 				836F6E3A18BDC2180095E648 /* brstm.c */,
 				83AA7F762519C042004C5298 /* bsf.c */,
 				83EDE5D71A70951A005F5D84 /* btsnd.c */,
+				83B69B212845A26600D2435A /* bw_mp3_riff.c */,
 				835C883122CC17BD001B4B3F /* bwav.c */,
 				8306B0CF2098458F000302D4 /* caf.c */,
 				836F6E3B18BDC2180095E648 /* capdsp.c */,
@@ -2179,7 +2183,6 @@
 				8373342E23F60D4100DE14DC /* tgc.c */,
 				836F6EFA18BDC2190095E648 /* thp.c */,
 				836F46AF2820874D005B9B87 /* tt_ad.c */,
-				836F6EFB18BDC2190095E648 /* tun.c */,
 				83C7280122BC893A00678B4A /* txth_streamfile.h */,
 				830165971F256BD000CA0941 /* txth.c */,
 				8306B0D22098458F000302D4 /* txtp.c */,
@@ -2970,7 +2973,7 @@
 				836F703318BDC2190095E648 /* str_snds.c in Sources */,
 				832BF82221E0514B006F50F1 /* vs_str.c in Sources */,
 				8349A9191FE6258200E26435 /* afc.c in Sources */,
-				836F703718BDC2190095E648 /* tun.c in Sources */,
+				836F703718BDC2190095E648 /* alp.c in Sources */,
 				83031ECD243C50CC00C3F3E0 /* blocked_vid1.c in Sources */,
 				836F700B18BDC2190095E648 /* ps2_wad.c in Sources */,
 				8349A9161FE6258200E26435 /* flx.c in Sources */,
@@ -3066,6 +3069,7 @@
 				836F6FA918BDC2190095E648 /* ngc_adpdtk.c in Sources */,
 				836F6FDC18BDC2190095E648 /* ps2_iab.c in Sources */,
 				83C7282122BC893D00678B4A /* msf_konami.c in Sources */,
+				83B69B222845A26600D2435A /* bw_mp3_riff.c in Sources */,
 				8315958920FEC83F007002F0 /* asf.c in Sources */,
 				83C7281222BC893D00678B4A /* 9tav.c in Sources */,
 				836F6F3818BDC2190095E648 /* psx_decoder.c in Sources */,

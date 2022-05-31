@@ -541,7 +541,7 @@ VGMSTREAM * init_vgmstream_eb_sf0(STREAMFILE* streamFile);
 
 VGMSTREAM * init_vgmstream_mtaf(STREAMFILE* streamFile);
 
-VGMSTREAM * init_vgmstream_tun(STREAMFILE* streamFile);
+VGMSTREAM* init_vgmstream_alp(STREAMFILE* sf);
 
 VGMSTREAM * init_vgmstream_wpd(STREAMFILE* streamFile);
 
@@ -987,5 +987,8 @@ VGMSTREAM* init_vgmstream_esf(STREAMFILE* sf);
 VGMSTREAM* init_vgmstream_adm3(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_tt_ad(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_bw_mp3_riff(STREAMFILE* sf);
+VGMSTREAM* init_vgmstream_bw_riff_mp3(STREAMFILE* sf);
 
 #endif /*_META_H*/
