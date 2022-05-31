@@ -76,6 +76,8 @@
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
+		83B69B242845A41200D2435A /* pffft_double in Resources */ = {isa = PBXBuildFile; fileRef = 83B69B232845A41200D2435A /* pffft_double */; };
+		83B69B262845A4B200D2435A /* pffft_double.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B69B252845A4B200D2435A /* pffft_double.c */; };
 		83F18B1E27D1E8EF00385946 /* CDSPHBDownsampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18ADF27D1E8EF00385946 /* CDSPHBDownsampler.h */; };
 		83F18B3327D1E8EF00385946 /* CDSPSincFilterGen.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18AF827D1E8EF00385946 /* CDSPSincFilterGen.h */; };
 		83F18B3427D1E8EF00385946 /* r8butil.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18AF927D1E8EF00385946 /* r8butil.h */; };
@@ -88,7 +90,6 @@
 		83F18B4527D1E8EF00385946 /* CDSPRealFFT.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18B0B27D1E8EF00385946 /* CDSPRealFFT.h */; };
 		83F18B4627D1E8EF00385946 /* CDSPFracInterpolator.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18B0C27D1E8EF00385946 /* CDSPFracInterpolator.h */; };
 		83F18B4E27D1E8F000385946 /* CDSPBlockConvolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18B1727D1E8EF00385946 /* CDSPBlockConvolver.h */; };
-		83F18B4F27D1E8F000385946 /* CDSPHBUpsampler.inc in Sources */ = {isa = PBXBuildFile; fileRef = 83F18B1827D1E8EF00385946 /* CDSPHBUpsampler.inc */; };
 		83F18B5027D1E8F000385946 /* r8bconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18B1927D1E8EF00385946 /* r8bconf.h */; };
 		83F18B5127D1E8F000385946 /* r8bbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F18B1A27D1E8EF00385946 /* r8bbase.cpp */; };
 		83F18B5227D1E8F000385946 /* pffft.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18B1B27D1E8EF00385946 /* pffft.h */; };
@@ -199,6 +200,8 @@
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		83B69B232845A41200D2435A /* pffft_double */ = {isa = PBXFileReference; lastKnownFileType = folder; path = pffft_double; sourceTree = "<group>"; };
+		83B69B252845A4B200D2435A /* pffft_double.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pffft_double.c; path = "ThirdParty/r8brain-free-src/pffft_double/pffft_double.c"; sourceTree = "<group>"; };
 		83F18ADF27D1E8EF00385946 /* CDSPHBDownsampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPHBDownsampler.h; sourceTree = "<group>"; };
 		83F18AF827D1E8EF00385946 /* CDSPSincFilterGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPSincFilterGen.h; sourceTree = "<group>"; };
 		83F18AF927D1E8EF00385946 /* r8butil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = r8butil.h; sourceTree = "<group>"; };
@@ -259,6 +262,7 @@
 		0867D691FE84028FC02AAC07 /* CogAudio */ = {
 			isa = PBXGroup;
 			children = (
+				83B69B252845A4B200D2435A /* pffft_double.c */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -485,6 +489,7 @@
 		83F18ADE27D1E8EF00385946 /* r8brain-free-src */ = {
 			isa = PBXGroup;
 			children = (
+				83B69B232845A41200D2435A /* pffft_double */,
 				83F18ADF27D1E8EF00385946 /* CDSPHBDownsampler.h */,
 				83F18AF827D1E8EF00385946 /* CDSPSincFilterGen.h */,
 				83F18AF927D1E8EF00385946 /* r8butil.h */,
@@ -630,6 +635,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				83F18B3627D1E8EF00385946 /* LICENSE in Resources */,
+				83B69B242845A41200D2435A /* pffft_double in Resources */,
 				835C88A92797D4D400E28EAE /* License.txt in Resources */,
 				835C88A82797D4D400E28EAE /* LICENSE.LGPL in Resources */,
 				83F18B4327D1E8EF00385946 /* README.md in Resources */,
@@ -643,6 +649,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83B69B262845A4B200D2435A /* pffft_double.c in Sources */,
 				835EDD7B279FE23A001EDCCE /* HeadphoneFilter.mm in Sources */,
 				17D21CA20B8BE4BA00D1EBDE /* BufferChain.m in Sources */,
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
@@ -671,7 +678,6 @@
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				834FD4F127AF93680063BC83 /* ChunkList.m in Sources */,
-				83F18B4F27D1E8F000385946 /* CDSPHBUpsampler.inc in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.mm in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
@@ -702,7 +708,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"R8B_EXTFFT=1",
-					"R8B_VECLIB=1",
+					"R8B_PFFFT_DOUBLE=1",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -735,7 +741,7 @@
 				GCC_PREFIX_HEADER = CogAudio_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"R8B_EXTFFT=1",
-					"R8B_VECLIB=1",
+					"R8B_PFFFT_DOUBLE=1",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
