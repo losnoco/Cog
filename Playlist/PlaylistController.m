@@ -1455,6 +1455,19 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 }
 
+- (IBAction)stopAfterSelection:(id)sender {
+	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+
+	for(PlaylistEntry *pe in [self selectedObjects]) {
+		pe.stopAfter = !pe.stopAfter;
+		[refreshSet addIndex:pe.index];
+	}
+
+	// Refresh entire row of all affected items to update tooltips
+	unsigned long columns = [[self.tableView tableColumns] count];
+	[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
 	SEL action = [menuItem action];
 

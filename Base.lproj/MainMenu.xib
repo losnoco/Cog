@@ -2136,6 +2136,12 @@ Gw
                         </binding>
                     </connections>
                 </menuItem>
+                <menuItem title="Stop after Selection" id="omb-wi-loX">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="stopAfterSelection:" target="218" id="ZRy-Mw-4cY"/>
+                    </connections>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="2047"/>
                 <menuItem title="Search for Artist" id="2045">
                     <modifierMask key="keyEquivalentModifierMask"/>
