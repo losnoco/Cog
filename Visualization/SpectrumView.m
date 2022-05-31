@@ -28,6 +28,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	BOOL isListening;
 	BOOL bandsReset;
 	BOOL cameraControlEnabled;
+	BOOL observersRegistered;
 
 	NSColor *backgroundColor;
 	ddb_analyzer_t _analyzer;
@@ -171,48 +172,64 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumProjectionMode" options:0 context:kSpectrumViewContext];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewContext];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewContext];
+	[self registerObservers];
+}
 
-	[[NSNotificationCenter defaultCenter] addObserver:self
-	                                         selector:@selector(playbackDidBegin:)
-	                                             name:CogPlaybackDidBeginNotficiation
-	                                           object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-	                                         selector:@selector(playbackDidPause:)
-	                                             name:CogPlaybackDidPauseNotficiation
-	                                           object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-	                                         selector:@selector(playbackDidResume:)
-	                                             name:CogPlaybackDidResumeNotficiation
-	                                           object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-	                                         selector:@selector(playbackDidStop:)
-	                                             name:CogPlaybackDidStopNotficiation
-	                                           object:nil];
+- (void)registerObservers {
+	if(!observersRegistered) {
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumProjectionMode" options:0 context:kSpectrumViewContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewContext];
+
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		                                         selector:@selector(playbackDidBegin:)
+		                                             name:CogPlaybackDidBeginNotficiation
+		                                           object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		                                         selector:@selector(playbackDidPause:)
+		                                             name:CogPlaybackDidPauseNotficiation
+		                                           object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		                                         selector:@selector(playbackDidResume:)
+		                                             name:CogPlaybackDidResumeNotficiation
+		                                           object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		                                         selector:@selector(playbackDidStop:)
+		                                             name:CogPlaybackDidStopNotficiation
+		                                           object:nil];
+
+		observersRegistered = YES;
+	}
 }
 
 - (void)dealloc {
 	ddb_analyzer_dealloc(&_analyzer);
 	ddb_analyzer_draw_data_dealloc(&_draw_data);
 
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumProjectionMode"];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor"];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor"];
+	[self removeObservers];
+}
 
-	[[NSNotificationCenter defaultCenter] removeObserver:self
-	                                                name:CogPlaybackDidBeginNotficiation
-	                                              object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self
-	                                                name:CogPlaybackDidPauseNotficiation
-	                                              object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self
-	                                                name:CogPlaybackDidResumeNotficiation
-	                                              object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self
-	                                                name:CogPlaybackDidStopNotficiation
-	                                              object:nil];
+- (void)removeObservers {
+	if(observersRegistered) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumProjectionMode"];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor"];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor"];
+
+		[[NSNotificationCenter defaultCenter] removeObserver:self
+		                                                name:CogPlaybackDidBeginNotficiation
+		                                              object:nil];
+		[[NSNotificationCenter defaultCenter] removeObserver:self
+		                                                name:CogPlaybackDidPauseNotficiation
+		                                              object:nil];
+		[[NSNotificationCenter defaultCenter] removeObserver:self
+		                                                name:CogPlaybackDidResumeNotficiation
+		                                              object:nil];
+		[[NSNotificationCenter defaultCenter] removeObserver:self
+		                                                name:CogPlaybackDidStopNotficiation
+		                                              object:nil];
+
+		observersRegistered = NO;
+	}
 }
 
 - (void)repaint {
