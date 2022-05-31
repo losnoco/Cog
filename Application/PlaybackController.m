@@ -580,16 +580,19 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 
-	[playlistController setCurrentEntry:pe];
+	// Delay the action until this function has returned to the audio thread
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+		[self->playlistController setCurrentEntry:pe];
 
-	if(_eq)
-		equalizerApplyGenre(_eq, [pe genre]);
+		if(self->_eq)
+			equalizerApplyGenre(self->_eq, [pe genre]);
 
-	lastPosition = -10;
+		self->lastPosition = -10;
 
-	[self setPosition:0];
+		[self setPosition:0];
 
-	[self removeHDCD:nil];
+		[self removeHDCD:nil];
+	});
 
 	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
@@ -677,7 +680,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if (!pe) pe = [playlistController currentEntry];
 	[pe setMetadata:info];
 	[playlistView refreshCurrentTrack:self];
-	[self sendMetaData];
+	// Delay the action until this function has returned to the audio thread
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+		[self sendMetaData];
+	});
 	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
 
