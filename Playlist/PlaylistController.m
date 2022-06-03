@@ -318,18 +318,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		if(cellView.textField) {
 			cellView.textField.allowsDefaultTighteningForTruncation = YES;
 
-			NSFont *sysFont = [NSFont systemFontOfSize:fontSize];
-
-			NSFontDescriptor *fontDesc = [sysFont fontDescriptor];
-
-			NSDictionary *fontFeatureSettings = @{ NSFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
-				                                   NSFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector) };
-
-			NSDictionary *fontFeatureAttributes = @{ NSFontFeatureSettingsAttribute: @[fontFeatureSettings] };
-
-			fontDesc = [fontDesc fontDescriptorByAddingAttributes:fontFeatureAttributes];
-
-			NSFont *font = [NSFont fontWithDescriptor:fontDesc size:fontSize];
+			NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
 
 			cellView.textField.font = font;
 			cellView.textField.stringValue = cellText;

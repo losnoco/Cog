@@ -29,16 +29,7 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 
 	showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
 
-	NSFontDescriptor *fontDesc = [[NSFont systemFontOfSize:fontSize] fontDescriptor];
-
-	NSDictionary *fontFeatureSettings = @{ NSFontFeatureTypeIdentifierKey: @(kNumberSpacingType),
-		                                   NSFontFeatureSelectorIdentifierKey: @(kMonospacedNumbersSelector) };
-
-	NSDictionary *fontFeatureAttributes = @{ NSFontFeatureSettingsAttribute: @[fontFeatureSettings] };
-
-	fontDesc = [fontDesc fontDescriptorByAddingAttributes:fontFeatureAttributes];
-
-	NSFont *font = [NSFont fontWithDescriptor:fontDesc size:fontSize];
+	NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
 
 	fontAttributes = @{ NSFontAttributeName: font };
 
