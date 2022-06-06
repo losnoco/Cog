@@ -64,10 +64,10 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)updateVisListening {
-	if(self.isListening && (paused || stopped)) {
+	if(self.isListening && (!self.window.isVisible || paused || stopped)) {
 		[self stopTimer];
 		self.isListening = NO;
-	} else if(!self.isListening && (!stopped && !paused)) {
+	} else if(!self.isListening && (self.window.isVisible && !stopped && !paused)) {
 		[self startTimer];
 		self.isListening = YES;
 	}
@@ -79,6 +79,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
                        context:(void *)context {
 	if(context == kSpectrumViewContext) {
 		[self updateControls];
+	} else if([keyPath isEqualToString:@"self.window.visible"]) {
+		[self updateVisListening];
 	}
 }
 
@@ -181,6 +183,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewContext];
 
+		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:nil];
+
 		[[NSNotificationCenter defaultCenter] addObserver:self
 		                                         selector:@selector(playbackDidBegin:)
 		                                             name:CogPlaybackDidBeginNotficiation
@@ -214,6 +218,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumProjectionMode"];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor"];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor"];
+
+		[self removeObserver:self forKeyPath:@"self.window.visible" context:nil];
 
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 		                                                name:CogPlaybackDidBeginNotficiation
