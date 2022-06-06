@@ -15,7 +15,12 @@
 #import <CoreAudio/AudioHardware.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
+#ifdef __cplusplus
+#import <atomic>
+using std::atomic_long;
+#else
 #import <stdatomic.h>
+#endif
 
 #import "Downmix.h"
 

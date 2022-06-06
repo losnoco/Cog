@@ -97,6 +97,7 @@
 		8347435F20E6D5A000063D45 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Preferences.strings; sourceTree = "<group>"; };
 		835C888922CC1880001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C888A22CC1880001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8363BABF284E450E00E5C9DD /* pffft.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pffft.h; path = "../../Audio/ThirdParty/r8brain-free-src/pffft.h"; sourceTree = "<group>"; };
 		83651DA327322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIFlavorBehaviorArrayController.m; sourceTree = "<group>"; };
 		83651DA427322C8700A2C097 /* MIDIFlavorBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIFlavorBehaviorArrayController.h; sourceTree = "<group>"; };
 		8372053518E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResamplerBehaviorArrayController.h; sourceTree = "<group>"; };
@@ -268,6 +269,7 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8363BABF284E450E00E5C9DD /* pffft.h */,
 				ED69CF0B25BE75330090B90D /* Shortcuts.h */,
 				32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */,
 			);

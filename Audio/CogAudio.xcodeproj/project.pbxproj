@@ -65,6 +65,7 @@
 		835EDD7D279FE307001EDCCE /* HeadphoneFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 835EDD7C279FE307001EDCCE /* HeadphoneFilter.h */; };
 		835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */; };
 		835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */; };
+		8363BABE284E428F00E5C9DD /* pffft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8363BABD284E428F00E5C9DD /* pffft.cpp */; };
 		83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7B27AA0D8A0003F694 /* Accelerate.framework */; };
 		83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7C27AA0D8E0003F694 /* AVFoundation.framework */; };
 		8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 8377C64B27B8C51500E8BC0F /* fft_accelerate.c */; };
@@ -197,6 +198,7 @@
 		835EDD7C279FE307001EDCCE /* HeadphoneFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeadphoneFilter.h; sourceTree = "<group>"; };
 		835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BadSampleCleaner.h; path = Utils/BadSampleCleaner.h; sourceTree = SOURCE_ROOT; };
 		835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BadSampleCleaner.m; path = Utils/BadSampleCleaner.m; sourceTree = SOURCE_ROOT; };
+		8363BABD284E428F00E5C9DD /* pffft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pffft.cpp; sourceTree = "<group>"; };
 		83725A7B27AA0D8A0003F694 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8377C64B27B8C51500E8BC0F /* fft_accelerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft_accelerate.c; sourceTree = "<group>"; };
@@ -529,6 +531,7 @@
 		83F18ADE27D1E8EF00385946 /* r8brain-free-src */ = {
 			isa = PBXGroup;
 			children = (
+				8363BABD284E428F00E5C9DD /* pffft.cpp */,
 				83B69B6A2845DF6500D2435A /* pffft_double */,
 				83F18ADF27D1E8EF00385946 /* CDSPHBDownsampler.h */,
 				83F18AF827D1E8EF00385946 /* CDSPSincFilterGen.h */,
@@ -716,6 +719,7 @@
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */,
 				8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */,
+				8363BABE284E428F00E5C9DD /* pffft.cpp in Sources */,
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
 				835C88AA2797D4D400E28EAE /* lpc.c in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
