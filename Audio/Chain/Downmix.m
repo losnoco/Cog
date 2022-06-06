@@ -12,6 +12,8 @@
 
 #import "AudioChunk.h"
 
+#import <Accelerate/Accelerate.h>
+
 static void downmix_to_stereo(const float *inBuffer, int channels, uint32_t config, float *outBuffer, size_t count) {
 	float FrontRatios[2] = { 0.0F, 0.0F };
 	float FrontCenterRatio = 0.0F;
@@ -71,73 +73,77 @@ static void downmix_to_stereo(const float *inBuffer, int channels, uint32_t conf
 		channelIndexes[i] = [AudioChunk findChannelIndex:[AudioChunk extractChannelFlag:i fromConfig:config]];
 	}
 
-	for(size_t i = 0; i < count; ++i) {
-		float left = 0.0F, right = 0.0F;
-		for(uint32_t j = 0; j < channels; ++j) {
-			float inSample = inBuffer[i * channels + j];
-			switch(channelIndexes[j]) {
-				case 0:
-					left += inSample * FrontRatios[0];
-					right += inSample * FrontRatios[1];
-					break;
+	vDSP_vclr(outBuffer, 1, count * 2);
 
-				case 1:
-					left += inSample * FrontRatios[1];
-					right += inSample * FrontRatios[0];
-					break;
+	float tempBuffer[count * 2];
 
-				case 2:
-					left += inSample * FrontCenterRatio;
-					right += inSample * FrontCenterRatio;
-					break;
+	for(uint32_t i = 0; i < channels; ++i) {
+		float leftRatio = 0.0F;
+		float rightRatio = 0.0F;
+		switch(channelIndexes[i]) {
+			case 0:
+				leftRatio = FrontRatios[0];
+				rightRatio = FrontRatios[1];
+				break;
 
-				case 3:
-					left += inSample * LFERatio;
-					right += inSample * LFERatio;
-					break;
+			case 1:
+				leftRatio = FrontRatios[1];
+				rightRatio = FrontRatios[0];
+				break;
 
-				case 4:
-					left += inSample * BackRatios[0];
-					right += inSample * BackRatios[1];
-					break;
+			case 2:
+				leftRatio = FrontCenterRatio;
+				rightRatio = FrontCenterRatio;
+				break;
 
-				case 5:
-					left += inSample * BackRatios[1];
-					right += inSample * BackRatios[0];
-					break;
+			case 3:
+				leftRatio = LFERatio;
+				rightRatio = LFERatio;
+				break;
 
-				case 6:
-				case 7:
-					break;
+			case 4:
+				leftRatio = BackRatios[0];
+				rightRatio = BackRatios[1];
+				break;
 
-				case 8:
-					left += inSample * BackCenterRatio;
-					right += inSample * BackCenterRatio;
-					break;
+			case 5:
+				leftRatio = BackRatios[1];
+				rightRatio = BackRatios[0];
+				break;
 
-				case 9:
-					left += inSample * SideRatios[0];
-					right += inSample * SideRatios[1];
-					break;
+			case 6:
+			case 7:
+				break;
 
-				case 10:
-					left += inSample * SideRatios[1];
-					right += inSample * SideRatios[0];
-					break;
+			case 8:
+				leftRatio = BackCenterRatio;
+				rightRatio = BackCenterRatio;
+				break;
 
-				case 11:
-				case 12:
-				case 13:
-				case 14:
-				case 15:
-				case 16:
-				case 17:
-				default:
-					break;
-			}
+			case 9:
+				leftRatio = SideRatios[0];
+				rightRatio = SideRatios[1];
+				break;
+
+			case 10:
+				leftRatio = SideRatios[1];
+				rightRatio = SideRatios[0];
+				break;
+
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:
+			default:
+				break;
 		}
-		outBuffer[i * 2 + 0] = left;
-		outBuffer[i * 2 + 1] = right;
+		vDSP_vsmul(inBuffer + i, channels, &leftRatio, tempBuffer, 1, count);
+		vDSP_vsmul(inBuffer + i, channels, &rightRatio, tempBuffer + count, 1, count);
+		vDSP_vadd(outBuffer, 2, tempBuffer, 1, outBuffer, 2, count);
+		vDSP_vadd(outBuffer + 1, 2, tempBuffer + count, 1, outBuffer + 1, 2, count);
 	}
 }
 
@@ -147,13 +153,8 @@ static void downmix_to_mono(const float *inBuffer, int channels, uint32_t config
 	inBuffer = tempBuffer;
 	channels = 2;
 	config = AudioConfigStereo;
-	for(size_t i = 0; i < count; ++i) {
-		float sample = 0;
-		for(int j = 0; j < channels; ++j) {
-			sample += inBuffer[i * channels + j];
-		}
-		outBuffer[i] = sample;
-	}
+	cblas_scopy((int)count, inBuffer, 2, outBuffer, 1);
+	vDSP_vadd(outBuffer, 1, inBuffer + 1, 2, outBuffer, 1, count);
 }
 
 static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, float *outBuffer, int outchannels, uint32_t outconfig, size_t count) {

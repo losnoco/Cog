@@ -15,6 +15,8 @@
 
 #import "Logging.h"
 
+#import <Accelerate/Accelerate.h>
+
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotficiation = @"CogPlaybackDidBeginNotficiation";
@@ -27,11 +29,7 @@ static void fillBuffers(AudioBufferList *ioData, float *inbuffer, size_t count, 
 		const size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
 		float *output = ((float *)ioData->mBuffers[i].mData) + offset;
 		const float *input = inbuffer + i;
-		for(size_t j = 0, k = (count > maxCount) ? maxCount : count; j < k; ++j) {
-			*output = *input;
-			output++;
-			input += channels;
-		}
+		cblas_scopy((int)((count > maxCount) ? maxCount : count), input, (int)channels, output, 1);
 		ioData->mBuffers[i].mNumberChannels = 1;
 	}
 }
@@ -724,11 +722,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 			float *outBuffer = ((float *)inputData->mBuffers[0].mData) + i;
 			const float *inBuffer = ((float *)ioData->mBuffers[i].mData);
 			const int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
-			for(int j = 0; j < frameCount; ++j) {
-				*outBuffer = *inBuffer;
-				inBuffer++;
-				outBuffer += channels;
-			}
+			cblas_scopy(frameCount, inBuffer, 1, outBuffer, channels);
 		}
 
 #ifdef OUTPUT_LOG
