@@ -86,7 +86,6 @@
 		83B69B7A2845DF6500D2435A /* pf_avx_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B69B712845DF6500D2435A /* pf_avx_double.h */; };
 		83B69B7B2845DF6500D2435A /* pf_scalar_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B69B722845DF6500D2435A /* pf_scalar_double.h */; };
 		83B69B7C2845DF6500D2435A /* pffft_priv_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B69B732845DF6500D2435A /* pffft_priv_impl.h */; };
-		83B69B7D2845DF6500D2435A /* pffft_double.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B69B742845DF6500D2435A /* pffft_double.c */; };
 		83F18B1E27D1E8EF00385946 /* CDSPHBDownsampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18ADF27D1E8EF00385946 /* CDSPHBDownsampler.h */; };
 		83F18B3327D1E8EF00385946 /* CDSPSincFilterGen.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18AF827D1E8EF00385946 /* CDSPSincFilterGen.h */; };
 		83F18B3427D1E8EF00385946 /* r8butil.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F18AF927D1E8EF00385946 /* r8butil.h */; };
@@ -654,7 +653,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
 						DevelopmentTeam = "";
@@ -706,7 +705,6 @@
 				8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
-				83B69B7D2845DF6500D2435A /* pffft_double.c in Sources */,
 				8377C65327B8CAD100E8BC0F /* VisualizationController.m in Sources */,
 				834FD4F527AFA2150063BC83 /* Downmix.m in Sources */,
 				17D21CC60B8BE4BA00D1EBDE /* OutputCoreAudio.m in Sources */,
@@ -747,6 +745,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -783,6 +782,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -834,6 +834,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -878,6 +879,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
