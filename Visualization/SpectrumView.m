@@ -20,6 +20,29 @@ extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
 extern NSString *CogPlaybackDidStopNotficiation;
 
+@interface NSView (Visibility)
+- (BOOL)visibleInWindow;
+@end
+
+@implementation NSView (Visibility)
+
+- (BOOL)visibleInWindow
+{
+	if(self.window == nil) {
+		return NO;
+	}
+
+	// Might have zero opacity.
+	if(self.alphaValue == 0 || self.hiddenOrHasHiddenAncestor) {
+		return NO;
+	}
+
+	// Might be clipped by an ancestor.
+	return !NSIsEmptyRect(self.visibleRect);
+}
+
+@end
+
 @interface SpectrumView () {
 	VisualizationController *visController;
 	NSTimer *timer;
@@ -64,10 +87,10 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)updateVisListening {
-	if(self.isListening && (!self.window.isVisible || paused || stopped)) {
+	if(self.isListening && (![self visibleInWindow] || paused || stopped)) {
 		[self stopTimer];
 		self.isListening = NO;
-	} else if(!self.isListening && (self.window.isVisible && !stopped && !paused)) {
+	} else if(!self.isListening && ([self visibleInWindow] && !stopped && !paused)) {
 		[self startTimer];
 		self.isListening = YES;
 	}
