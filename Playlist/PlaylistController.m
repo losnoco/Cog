@@ -825,7 +825,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	// Cheap hack so the index column isn't sorted
 	if([sortDescriptors count] != 0) {
-		if([[sortDescriptors[0] key] caseInsensitiveCompare:@"index"] == NSOrderedSame) {
+		if([[((NSSortDescriptor *)(sortDescriptors[0])) key] caseInsensitiveCompare:@"index"] == NSOrderedSame) {
 			// Remove the sort descriptors
 			[super setSortDescriptors:@[]];
 			[self rearrangeObjects];
