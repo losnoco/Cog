@@ -13,8 +13,8 @@
 #define __MACOSX__
 #define HAVE_CONFIG_H
 
-#import <Vorbis/codec.h>
-#import <Vorbis/vorbisfile.h>
+#import <vorbis/codec.h>
+#import <vorbis/vorbisfile.h>
 
 #undef __MACOSX__
 #undef HAVE_CONFIG_H
