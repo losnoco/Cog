@@ -14,6 +14,10 @@
 		return NO;
 	}
 
+	if(![self.window isVisible]) {
+		return NO;
+	}
+
 	// Might have zero opacity.
 	if(self.alphaValue == 0 || self.hiddenOrHasHiddenAncestor) {
 		return NO;
