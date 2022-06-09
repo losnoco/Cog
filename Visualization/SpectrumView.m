@@ -50,7 +50,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 - (id)initWithFrame:(NSRect)frame {
 	id<MTLDevice> device = MTLCreateSystemDefaultDevice();
 
-	if(1 || !device) return nil;
+	if(!device) return nil;
 
 	NSDictionary *sceneOptions = @{
 		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
