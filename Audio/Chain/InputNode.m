@@ -178,9 +178,11 @@
 
 			int framesToRead = CHUNK_SIZE - amountInBuffer;
 			int framesRead;
+			[self startWorkslice];
 			@autoreleasepool {
 				framesRead = [decoder readAudio:((char *)inputBuffer) + bytesInBuffer frames:framesToRead];
 			}
+			[self endWorkslice];
 
 			if(framesRead > 0 && !seekError) {
 				amountInBuffer += framesRead;

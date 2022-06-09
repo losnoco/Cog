@@ -34,7 +34,8 @@
 	uint32_t nodeChannelConfig;
 	BOOL nodeLossless;
 
-	os_workgroup_t wg;
+	int64_t intervalMachLength;
+	os_workgroup_interval_t workgroup, wg;
 	os_workgroup_join_token_s wgToken;
 }
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
@@ -49,6 +50,8 @@
 
 - (void)followWorkgroup;
 - (void)leaveWorkgroup;
+- (void)startWorkslice;
+- (void)endWorkslice;
 
 - (void)launchThread;
 

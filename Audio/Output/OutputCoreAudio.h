@@ -33,10 +33,6 @@ using std::atomic_long;
 #import <stdio.h>
 #endif
 
-#import <os/workgroup.h>
-
-extern volatile os_workgroup_t currentWorkgroup;
-
 @class OutputNode;
 
 @interface OutputCoreAudio : NSObject {

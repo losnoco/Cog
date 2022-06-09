@@ -17,8 +17,6 @@
 
 #import <Accelerate/Accelerate.h>
 
-volatile os_workgroup_t currentWorkgroup;
-
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotficiation = @"CogPlaybackDidBeginNotficiation";
@@ -263,21 +261,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	NSMutableArray *delayedEvents = [[NSMutableArray alloc] init];
 	BOOL delayedEventsPopped = YES;
 
-	if(@available(macOS 11, *)) {
-		if(currentWorkgroup) {
-			wg = currentWorkgroup;
-			int result = os_workgroup_join(wg, &wgToken);
-			if(result != 0) {
-				if(result == EALREADY) {
-					DLog(@"Output thread already in workgroup");
-				} else {
-					DLog(@"Output thread could not be added to workgroup, error = %d", result);
-				}
-				wg = nil;
-			}
-		}
-	}
-
 	while(!stopping) {
 		if(++eventCount == 48) {
 			[self resetIfOutputChanged];
@@ -361,13 +344,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		}
 		[readSemaphore signal];
 		[writeSemaphore timedWait:5000];
-	}
-
-	if(@available(macOS 11, *)) {
-		if(wg) {
-			os_workgroup_leave(wg, &wgToken);
-			wg = nil;
-		}
 	}
 
 	stopped = YES;
@@ -806,10 +782,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 	visController = [VisualizationController sharedController];
 
-	if(@available(macOS 11, *)) {
-		currentWorkgroup = _au.osWorkgroup;
-	}
-
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:NULL];
@@ -839,10 +811,6 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 }
 
 - (void)stop {
-	if(@available(macOS 11, *)) {
-		currentWorkgroup = nil;
-	}
-
 	stopInvoked = YES;
 	if(observersapplied) {
 		observersapplied = NO;

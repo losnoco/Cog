@@ -430,9 +430,11 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		while(paused) {
 			usleep(500);
 		}
+		[self startWorkslice];
 		@autoreleasepool {
 			amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
 		}
+		[self endWorkslice];
 		if(!amountConverted) {
 			if(paused) {
 				continue;

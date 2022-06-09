@@ -13,6 +13,20 @@
 
 #import "OutputCoreAudio.h"
 
+#import <mach/mach_time.h>
+
+// This workgroup attribute isn't currently used. Set it to NULL.
+static os_workgroup_attr_t _Nullable attr = nil;
+
+// One nanosecond in seconds.
+static const double kOneNanosecond = 1.0e9;
+
+// The I/O interval time in seconds.
+static const double kIOIntervalTime = 0.020;
+
+// The clock identifier that specifies interval timestamps.
+static const os_clockid_t clockId = OS_CLOCK_MACH_ABSOLUTE_TIME;
+
 @implementation Node
 
 - (id)initWithController:(id)c previous:(id)p {
@@ -31,6 +45,21 @@
 
 		nodeChannelConfig = 0;
 		nodeLossless = NO;
+
+		if(@available(macOS 11, *)) {
+			workgroup = AudioWorkIntervalCreate("Node Work Interval", clockId, attr);
+
+			// Get the mach time info.
+			struct mach_timebase_info timeBaseInfo;
+			mach_timebase_info(&timeBaseInfo);
+
+			// The frequency of the clock is: (timeBaseInfo.denom / timeBaseInfo.numer) * kOneNanosecond
+			const double nanoSecFrequency = (double)(timeBaseInfo.denom) / (double)(timeBaseInfo.numer);
+			const double frequency = nanoSecFrequency * kOneNanosecond;
+
+			// Convert the interval time in seconds to mach time length.
+			intervalMachLength = (int64_t)(kIOIntervalTime * frequency);
+		}
 
 		[self setPreviousNode:p];
 	}
@@ -101,11 +130,8 @@
 
 - (void)followWorkgroup {
 	if(@available(macOS 11, *)) {
-		if(currentWorkgroup != wg) {
-			if(wg) {
-				os_workgroup_leave(wg, &wgToken);
-			}
-			wg = currentWorkgroup;
+		if(!wg) {
+			wg = workgroup;
 			if(wg) {
 				int result = os_workgroup_join(wg, &wgToken);
 				if(result == 0) return;
@@ -124,6 +150,30 @@
 		if(wg) {
 			os_workgroup_leave(wg, &wgToken);
 			wg = nil;
+		}
+	}
+}
+
+- (void)startWorkslice {
+	if(@available(macOS 11, *)) {
+		if(wg) {
+			const uint64_t currentTime = mach_absolute_time();
+			const uint64_t deadline = currentTime + intervalMachLength;
+			int result = os_workgroup_interval_start(wg, currentTime, deadline, nil);
+			if(result != 0) {
+				DLog(@"Deadline error = %d", result);
+			}
+		}
+	}
+}
+
+- (void)endWorkslice {
+	if(@available(macOS 11, *)) {
+		if(wg) {
+			int result = os_workgroup_interval_finish(wg, nil);
+			if(result != 0) {
+				DLog(@"Deadline end error = %d", result);
+			}
 		}
 	}
 }
