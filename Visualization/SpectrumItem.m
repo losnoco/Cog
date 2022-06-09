@@ -7,10 +7,15 @@
 
 #import "SpectrumItem.h"
 
+#import "SpectrumView.h"
+#import "SpectrumViewLegacy.h"
+
 @implementation SpectrumItem
 
 - (void)awakeFromNib {
-	SpectrumView *view = [[SpectrumView alloc] initWithFrame:NSMakeRect(0, 0, 64, 26)];
+	NSRect frame = NSMakeRect(0, 0, 64, 26);
+	NSView *view = [[SpectrumView alloc] initWithFrame:frame];
+	if(!view) view = [[SpectrumViewLegacy alloc] initWithFrame:frame];
 	[self setView:view];
 }
 

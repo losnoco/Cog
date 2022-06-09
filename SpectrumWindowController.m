@@ -8,9 +8,11 @@
 #import "SpectrumWindowController.h"
 
 #import "SpectrumView.h"
+#import "SpectrumViewLegacy.h"
 
 @interface SpectrumWindowController ()
 @property SpectrumView *spectrumView;
+@property SpectrumViewLegacy *spectrumViewLegacy;
 @end
 
 @implementation SpectrumWindowController
@@ -26,21 +28,31 @@
 }
 
 - (void)startRunning {
-	if(!self.spectrumView) {
-		self.spectrumView = [[SpectrumView alloc] initWithFrame:[[self window] frame]];
-		[[self window] setContentView:self.spectrumView];
-		if(!self.spectrumView) return;
+	if(!self.spectrumView && !self.spectrumViewLegacy) {
+		NSRect frame = [[self window] frame];
+		self.spectrumView = [[SpectrumView alloc] initWithFrame:frame];
+		if(self.spectrumView) {
+			[[self window] setContentView:self.spectrumView];
 
-		[self.spectrumView enableCameraControl];
+			[self.spectrumView enableCameraControl];
+		} else {
+			self.spectrumViewLegacy = [[SpectrumViewLegacy alloc] initWithFrame:frame];
+			[[self window] setContentView:self.spectrumViewLegacy];
+		}
 	}
 
-	if(playbackController.playbackStatus == CogStatusPlaying)
-		[self.spectrumView startPlayback];
+	if(playbackController.playbackStatus == CogStatusPlaying) {
+		if(self.spectrumView)
+			[self.spectrumView startPlayback];
+		else if(self.spectrumViewLegacy)
+			[self.spectrumViewLegacy startPlayback];
+	}
 }
 
 - (void)stopRunning {
 	[[self window] setContentView:nil];
 	self.spectrumView = nil;
+	self.spectrumViewLegacy = nil;
 }
 
 - (void)windowWillClose:(NSNotification *)notification {

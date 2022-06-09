@@ -104,6 +104,8 @@
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
+		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
+		832CFC562851AA8B002AC26F /* SpectrumViewLegacy.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC552851AA8B002AC26F /* SpectrumViewLegacy.m */; };
 		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8349270C27B4EFFC0009AB2B /* duplicateItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */; };
@@ -916,6 +918,10 @@
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
+		832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView+Visibility.m"; sourceTree = "<group>"; };
+		832CFC532851AA37002AC26F /* NSView+Visibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView+Visibility.h"; sourceTree = "<group>"; };
+		832CFC542851AA8B002AC26F /* SpectrumViewLegacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpectrumViewLegacy.h; sourceTree = SOURCE_ROOT; };
+		832CFC552851AA8B002AC26F /* SpectrumViewLegacy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpectrumViewLegacy.m; sourceTree = SOURCE_ROOT; };
 		833D0C2027C4ABA00060E16A /* ScriptAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptAdditions.h; sourceTree = "<group>"; };
 		833D0C2427C4ABB80060E16A /* ScriptAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptAdditions.m; sourceTree = "<group>"; };
 		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1230,20 +1236,22 @@
 				172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */,
 				F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */,
 				F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */,
+				832CFC532851AA37002AC26F /* NSView+Visibility.h */,
+				832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */,
+				83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */,
+				83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */,
+				8381A09027C5F72F00A1C530 /* SHA256Digest.h */,
+				8381A09127C5F72F00A1C530 /* SHA256Digest.m */,
 				178456100F631E31007E8021 /* SideViewController.h */,
 				178456110F631E31007E8021 /* SideViewController.m */,
+				8370D739277419D200245CE0 /* SQLiteStore.h */,
+				8370D73C277419F700245CE0 /* SQLiteStore.m */,
 				17FAEBAA0F662985007C8707 /* ToolTipTextField.h */,
 				17FAEBAB0F662985007C8707 /* ToolTipTextField.m */,
 				177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */,
 				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
 				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
 				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
-				8370D739277419D200245CE0 /* SQLiteStore.h */,
-				8370D73C277419F700245CE0 /* SQLiteStore.m */,
-				83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */,
-				83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */,
-				8381A09027C5F72F00A1C530 /* SHA256Digest.h */,
-				8381A09127C5F72F00A1C530 /* SHA256Digest.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1814,6 +1822,8 @@
 				8377C66427B8CF7A00E8BC0F /* VisualizationController.h */,
 				8377C66227B8CF6300E8BC0F /* SpectrumView.h */,
 				8377C66127B8CF6300E8BC0F /* SpectrumView.m */,
+				832CFC542851AA8B002AC26F /* SpectrumViewLegacy.h */,
+				832CFC552851AA8B002AC26F /* SpectrumViewLegacy.m */,
 				8377C6B727B900F000E8BC0F /* SpectrumItem.h */,
 				8377C6B827B900F000E8BC0F /* SpectrumItem.m */,
 				83229C9C283B0095004626A8 /* SpectrumWindowController.h */,
@@ -2565,6 +2575,7 @@
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 				56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */,
 				830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */,
+				832CFC562851AA8B002AC26F /* SpectrumViewLegacy.m in Sources */,
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
@@ -2614,6 +2625,7 @@
 				835A8FD327957310005B3C39 /* json.c in Sources */,
 				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
 				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
+				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
 				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,
 				8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */,
 				17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */,

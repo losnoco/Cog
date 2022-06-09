@@ -7,6 +7,8 @@
 
 #import "SpectrumView.h"
 
+#import "NSView+Visibility.h"
+
 #import <Metal/Metal.h>
 
 #import "analyzer.h"
@@ -20,29 +22,6 @@ extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
 extern NSString *CogPlaybackDidStopNotficiation;
 
-@interface NSView (Visibility)
-- (BOOL)visibleInWindow;
-@end
-
-@implementation NSView (Visibility)
-
-- (BOOL)visibleInWindow
-{
-	if(self.window == nil) {
-		return NO;
-	}
-
-	// Might have zero opacity.
-	if(self.alphaValue == 0 || self.hiddenOrHasHiddenAncestor) {
-		return NO;
-	}
-
-	// Might be clipped by an ancestor.
-	return !NSIsEmptyRect(self.visibleRect);
-}
-
-@end
-
 @interface SpectrumView () {
 	VisualizationController *visController;
 	NSTimer *timer;
@@ -51,7 +30,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	BOOL isListening;
 	BOOL bandsReset;
 	BOOL cameraControlEnabled;
-	BOOL observersRegistered;
+	BOOL observersAdded;
 
 	NSColor *backgroundColor;
 	ddb_analyzer_t _analyzer;
@@ -71,7 +50,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 - (id)initWithFrame:(NSRect)frame {
 	id<MTLDevice> device = MTLCreateSystemDefaultDevice();
 
-	if(!device) return nil;
+	if(1 || !device) return nil;
 
 	NSDictionary *sceneOptions = @{
 		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
@@ -197,11 +176,11 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
-	[self registerObservers];
+	[self addObservers];
 }
 
-- (void)registerObservers {
-	if(!observersRegistered) {
+- (void)addObservers {
+	if(!observersAdded) {
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumProjectionMode" options:0 context:kSpectrumViewContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewContext];
@@ -225,7 +204,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		                                             name:CogPlaybackDidStopNotficiation
 		                                           object:nil];
 
-		observersRegistered = YES;
+		observersAdded = YES;
 	}
 }
 
@@ -237,7 +216,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)removeObservers {
-	if(observersRegistered) {
+	if(observersAdded) {
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumProjectionMode"];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor"];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor"];
@@ -257,7 +236,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		                                                name:CogPlaybackDidStopNotficiation
 		                                              object:nil];
 
-		observersRegistered = NO;
+		observersAdded = NO;
 	}
 }
 
