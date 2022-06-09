@@ -10,6 +10,8 @@
 #import "Semaphore.h"
 #import <Cocoa/Cocoa.h>
 
+#import <os/workgroup.h>
+
 #define BUFFER_SIZE 1024 * 1024
 #define CHUNK_SIZE 16 * 1024
 
@@ -31,6 +33,9 @@
 	AudioStreamBasicDescription nodeFormat;
 	uint32_t nodeChannelConfig;
 	BOOL nodeLossless;
+
+	os_workgroup_t wg;
+	os_workgroup_join_token_s wgToken;
 }
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
 
@@ -41,6 +46,9 @@
 
 - (void)process; // Should be overwriten by subclass
 - (void)threadEntry:(id _Nullable)arg;
+
+- (void)followWorkgroup;
+- (void)leaveWorkgroup;
 
 - (void)launchThread;
 

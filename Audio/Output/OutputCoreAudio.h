@@ -33,6 +33,10 @@ using std::atomic_long;
 #import <stdio.h>
 #endif
 
+#import <os/workgroup.h>
+
+extern volatile os_workgroup_t currentWorkgroup;
+
 @class OutputNode;
 
 @interface OutputCoreAudio : NSObject {
@@ -83,6 +87,9 @@ using std::atomic_long;
 	DownmixProcessor *downmixerForVis;
 
 	VisualizationController *visController;
+
+	os_workgroup_t wg;
+	os_workgroup_join_token_s wgToken;
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;

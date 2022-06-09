@@ -148,6 +148,7 @@
 
 	while([self shouldContinue] == YES && [self endOfStream] == NO) {
 		if(shouldSeek == YES) {
+			[self leaveWorkgroup];
 			BufferChain *bufferChain = [[controller controller] bufferChain];
 			ConverterNode *converter = [bufferChain converter];
 			DLog(@"SEEKING! Resetting Buffer");
@@ -173,6 +174,8 @@
 		}
 
 		if(amountInBuffer < CHUNK_SIZE) {
+			[self followWorkgroup];
+
 			int framesToRead = CHUNK_SIZE - amountInBuffer;
 			int framesRead;
 			@autoreleasepool {

@@ -11,6 +11,8 @@
 #import "BufferChain.h"
 #import "Logging.h"
 
+#import "OutputCoreAudio.h"
+
 @implementation Node
 
 - (id)initWithController:(id)c previous:(id)p {
@@ -91,7 +93,38 @@
 
 - (void)threadEntry:(id)arg {
 	@autoreleasepool {
+		[self followWorkgroup];
 		[self process];
+		[self leaveWorkgroup];
+	}
+}
+
+- (void)followWorkgroup {
+	if(@available(macOS 11, *)) {
+		if(currentWorkgroup != wg) {
+			if(wg) {
+				os_workgroup_leave(wg, &wgToken);
+			}
+			wg = currentWorkgroup;
+			if(wg) {
+				int result = os_workgroup_join(wg, &wgToken);
+				if(result == 0) return;
+				if(result == EALREADY) {
+					DLog(@"Thread already in workgroup");
+				} else {
+					DLog(@"Cannot join workgroup, error %d", result);
+				}
+			}
+		}
+	}
+}
+
+- (void)leaveWorkgroup {
+	if(@available(macOS 11, *)) {
+		if(wg) {
+			os_workgroup_leave(wg, &wgToken);
+			wg = nil;
+		}
 	}
 }
 
