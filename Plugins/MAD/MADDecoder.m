@@ -436,8 +436,12 @@
 			return;
 		}
 
+		// Clip this for the following calculation, so this doesn't underflow
+		// when seeking and skipping a lot of samples
+		unsigned long startingSampleClipped = MIN(startingSample, sampleCount);
+
 		// We are at the end of the file and need to read the last few frames
-		if(_framesDecoded + (sampleCount - startingSample) > totalFrames - _endPadding) {
+		if(_framesDecoded + (sampleCount - startingSampleClipped) > totalFrames - _endPadding) {
 			// DLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
 			sampleCount = totalFrames - _endPadding - _framesDecoded + startingSample;
 		}
