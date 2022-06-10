@@ -3281,6 +3281,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					BUILD_VGMSTREAM,
 					"VAR_ARRAYS=1",
@@ -3370,7 +3371,6 @@
 					../mpg123,
 				);
 				FRAMEWORK_VERSION = A;
-				"GCC_OPTIMIZATION_LEVEL[arch=x86_64]" = 1;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
