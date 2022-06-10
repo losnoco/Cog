@@ -13,10 +13,12 @@
 
 #import "OutputCoreAudio.h"
 
+#import <pthread.h>
+
 #import <mach/mach_time.h>
 
-// This workgroup attribute isn't currently used. Set it to NULL.
-static os_workgroup_attr_t _Nullable attr = nil;
+// This workgroup attribute needs to be initialized.
+static os_workgroup_attr_s attr = OS_WORKGROUP_ATTR_INITIALIZER_DEFAULT;
 
 // One nanosecond in seconds.
 static const double kOneNanosecond = 1.0e9;
@@ -26,6 +28,86 @@ static const double kIOIntervalTime = 0.020;
 
 // The clock identifier that specifies interval timestamps.
 static const os_clockid_t clockId = OS_CLOCK_MACH_ABSOLUTE_TIME;
+
+// Enables time-contraint policy and priority suitable for low-latency,
+// glitch-resistant audio.
+void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
+	kern_return_t result;
+
+	// Increase thread priority to real-time.
+
+	// Please note that the thread_policy_set() calls may fail in
+	// rare cases if the kernel decides the system is under heavy load
+	// and is unable to handle boosting the thread priority.
+	// In these cases we just return early and go on with life.
+
+	// Make thread fixed priority.
+	thread_extended_policy_data_t policy;
+	policy.timeshare = 0; // Set to 1 for a non-fixed thread.
+	result = thread_policy_set(mach_thread_id,
+	                           THREAD_EXTENDED_POLICY,
+	                           (thread_policy_t)&policy,
+	                           THREAD_EXTENDED_POLICY_COUNT);
+	if(result != KERN_SUCCESS) {
+		DLog(@"thread_policy_set extended policy failure: %d", result);
+		return;
+	}
+
+	// Set to relatively high priority.
+	thread_precedence_policy_data_t precedence;
+	precedence.importance = 63;
+	result = thread_policy_set(mach_thread_id,
+	                           THREAD_PRECEDENCE_POLICY,
+	                           (thread_policy_t)&precedence,
+	                           THREAD_PRECEDENCE_POLICY_COUNT);
+	if(result != KERN_SUCCESS) {
+		DLog(@"thread_policy_set precedence policy failure: %d", result);
+		return;
+	}
+
+	// Most important, set real-time constraints.
+
+	// Define the guaranteed and max fraction of time for the audio thread.
+	// These "duty cycle" values can range from 0 to 1.  A value of 0.5
+	// means the scheduler would give half the time to the thread.
+	// These values have empirically been found to yield good behavior.
+	// Good means that audio performance is high and other threads won't starve.
+	const double kGuaranteedAudioDutyCycle = 0.75;
+	const double kMaxAudioDutyCycle = 0.85;
+
+	// Define constants determining how much time the audio thread can
+	// use in a given time quantum.  All times are in milliseconds.
+
+	// About 128 frames @44.1KHz
+	const double kTimeQuantum = 2.9;
+
+	// Time guaranteed each quantum.
+	const double kAudioTimeNeeded = kGuaranteedAudioDutyCycle * kTimeQuantum;
+
+	// Maximum time each quantum.
+	const double kMaxTimeAllowed = kMaxAudioDutyCycle * kTimeQuantum;
+
+	// Get the conversion factor from milliseconds to absolute time
+	// which is what the time-constraints call needs.
+	mach_timebase_info_data_t tb_info;
+	mach_timebase_info(&tb_info);
+	double ms_to_abs_time =
+	((double)tb_info.denom / (double)tb_info.numer) * 1000000;
+
+	thread_time_constraint_policy_data_t time_constraints;
+	time_constraints.period = kTimeQuantum * ms_to_abs_time;
+	time_constraints.computation = kAudioTimeNeeded * ms_to_abs_time;
+	time_constraints.constraint = kMaxTimeAllowed * ms_to_abs_time;
+	time_constraints.preemptible = 0;
+
+	result = thread_policy_set(mach_thread_id,
+	                           THREAD_TIME_CONSTRAINT_POLICY,
+	                           (thread_policy_t)&time_constraints,
+	                           THREAD_TIME_CONSTRAINT_POLICY_COUNT);
+	if(result != KERN_SUCCESS) {
+		DLog(@"thread_policy_set constraint policy failure: %d", result);
+	}
+}
 
 @implementation Node
 
@@ -47,8 +129,6 @@ static const os_clockid_t clockId = OS_CLOCK_MACH_ABSOLUTE_TIME;
 		nodeLossless = NO;
 
 		if(@available(macOS 11, *)) {
-			workgroup = AudioWorkIntervalCreate("Node Work Interval", clockId, attr);
-
 			// Get the mach time info.
 			struct mach_timebase_info timeBaseInfo;
 			mach_timebase_info(&timeBaseInfo);
@@ -131,6 +211,10 @@ static const os_clockid_t clockId = OS_CLOCK_MACH_ABSOLUTE_TIME;
 - (void)followWorkgroup {
 	if(@available(macOS 11, *)) {
 		if(!wg) {
+			if(!workgroup) {
+				workgroup = AudioWorkIntervalCreate([[NSString stringWithFormat:@"%@ Work Interval", [self className]] UTF8String], clockId, &attr);
+				SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
+			}
 			wg = workgroup;
 			if(wg) {
 				int result = os_workgroup_join(wg, &wgToken);
