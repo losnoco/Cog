@@ -52,6 +52,8 @@
 }
 
 - (NSDictionary *)coalesceEntryInfo:(NSDictionary *)entryInfo {
+	if(entryInfo == nil) return entryInfo;
+
 	__block NSMutableDictionary *ret = [[NSMutableDictionary alloc] initWithCapacity:[entryInfo count]];
 
 	[entryInfo enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL *_Nonnull stop) {

@@ -49,6 +49,8 @@ static void cache_deinit() {
 }
 
 static void cache_insert_properties(NSURL *url, NSDictionary *properties) {
+	if(properties == nil) return;
+
 	std::lock_guard<std::mutex> lock(Cache_Lock);
 
 	std::string path = [[url absoluteString] UTF8String];
@@ -61,6 +63,8 @@ static void cache_insert_properties(NSURL *url, NSDictionary *properties) {
 }
 
 static void cache_insert_metadata(NSURL *url, NSDictionary *metadata) {
+	if(metadata == nil) return;
+
 	std::lock_guard<std::mutex> lock(Cache_Lock);
 
 	std::string path = [[url absoluteString] UTF8String];
