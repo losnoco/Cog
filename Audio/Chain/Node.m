@@ -243,6 +243,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 	if(@available(macOS 11, *)) {
 		if(wg && !isRealtimeError) {
 			os_workgroup_leave(wg, &wgToken);
+			bzero(&wgToken, sizeof(wgToken));
 			wg = nil;
 		}
 	}
