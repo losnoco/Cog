@@ -783,6 +783,10 @@ tryagain:
 		}
 
 	if(inpOffset != inpSize && floatOffset == floatSize) {
+#if DSD_DECIMATE
+		const float scaleModifier = (inputFormat.mBitsPerChannel == 1) ? 0.5f : 1.0f;
+#endif
+
 		size_t inputSamples = (inpSize - inpOffset) / floatFormat.mBytesPerPacket;
 
 		ioNumberPackets = (UInt32)inputSamples;
@@ -864,7 +868,11 @@ tryagain:
 
 		amountReadFromFC = (int)(outputDone * floatFormat.mBytesPerPacket);
 
-		scale_by_volume((float *)floatBuffer, amountReadFromFC / sizeof(float), volumeScale);
+		scale_by_volume((float *)floatBuffer, amountReadFromFC / sizeof(float), volumeScale
+#if DSD_DECIMATE
+		                                                                        * scaleModifier
+#endif
+		);
 
 		floatSize = amountReadFromFC;
 		floatOffset = 0;
