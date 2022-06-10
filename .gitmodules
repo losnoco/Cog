@@ -22,3 +22,6 @@
 [submodule "Audio/ThirdParty/r8brain-free-src"]
 	path = Audio/ThirdParty/r8brain-free-src
 	url = https://github.com/kode54/r8brain-free-src
+[submodule "ThirdParty/bugsnag-cocoa"]
+	path = ThirdParty/bugsnag-cocoa
+	url = https://github.com/bugsnag/bugsnag-cocoa

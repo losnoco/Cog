@@ -16,13 +16,22 @@
 #import <MediaPlayer/MPRemoteCommandCenter.h>
 #import <MediaPlayer/MPRemoteCommandEvent.h>
 
+#import <Bugsnag/Bugsnag.h>
+
 @implementation MediaKeysApplication {
 	AppController *_appController;
+}
+
+- (void)reportException:(NSException *)theException {
+	[Bugsnag notify:theException];
+	[super reportException:theException];
 }
 
 - (void)finishLaunching {
 	[super finishLaunching];
 	_appController = (AppController *)[self delegate];
+
+	[Bugsnag start];
 
 	MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
 

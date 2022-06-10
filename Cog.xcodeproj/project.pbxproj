@@ -149,6 +149,8 @@
 		8372C93D27C7895300E250C9 /* MAD.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8372C93027C785BE00E250C9 /* MAD.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumView.m */; };
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
+		837E5ADF2852D5FD0020D205 /* Bugsnag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837E5ACB2852D5B80020D205 /* Bugsnag.framework */; };
+		837E5AE02852D5FD0020D205 /* Bugsnag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 837E5ACB2852D5B80020D205 /* Bugsnag.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8381A09227C5F72F00A1C530 /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8381A09127C5F72F00A1C530 /* SHA256Digest.m */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
 		8384915918083EAB00E7332D /* infoTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384914318083EAB00E7332D /* infoTemplate.pdf */; };
@@ -546,6 +548,76 @@
 			remoteGlobalIDString = 8359FF1617FEF35C0060F3ED;
 			remoteInfo = ArchiveSource;
 		};
+		837E5AC82852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00AD1C7224869B0E00A27979;
+			remoteInfo = "Bugsnag-iOS";
+		};
+		837E5ACA2852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00AD1CAD24869C1200A27979;
+			remoteInfo = "Bugsnag-macOS";
+		};
+		837E5ACC2852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00AD1CC924869C2400A27979;
+			remoteInfo = "Bugsnag-tvOS";
+		};
+		837E5ACE2852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CBBDE8F8280067AB0070DCD3;
+			remoteInfo = "Bugsnag-watchOS";
+		};
+		837E5AD02852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00AD1CE424869C6C00A27979;
+			remoteInfo = BugsnagStatic;
+		};
+		837E5AD22852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00AD1C7B24869B0E00A27979;
+			remoteInfo = "Bugsnag-iOSTests";
+		};
+		837E5AD42852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00AD1CB524869C1200A27979;
+			remoteInfo = "Bugsnag-macOSTests";
+		};
+		837E5AD62852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 00AD1CD124869C2400A27979;
+			remoteInfo = "Bugsnag-tvOSTests";
+		};
+		837E5AD82852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CBBDE901280067AB0070DCD3;
+			remoteInfo = "Bugsnag-watchOSTests";
+		};
+		837E5ADA2852D5B80020D205 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 01A6176B2733CFEA00024A0B;
+			remoteInfo = "TestHost-iOS";
+		};
 		83B066A0180D5669008E3612 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83B0669C180D5668008E3612 /* MIDI.xcodeproj */;
@@ -732,6 +804,7 @@
 				836EF0E027BB98A800BF35B2 /* libopus.0.dylib in CopyFiles */,
 				836EF0CB27BB91EE00BF35B2 /* libFLAC.8.dylib in CopyFiles */,
 				836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */,
+				837E5AE02852D5FD0020D205 /* Bugsnag.framework in CopyFiles */,
 				836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */,
 				836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */,
 				83AA7D07279EBCAF00087AA4 /* libswresample.4.dylib in CopyFiles */,
@@ -985,6 +1058,7 @@
 		8377C66427B8CF7A00E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisualizationController.h; path = Audio/Visualization/VisualizationController.h; sourceTree = "<group>"; };
 		8377C6B727B900F000E8BC0F /* SpectrumItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumItem.h; path = Visualization/SpectrumItem.h; sourceTree = "<group>"; };
 		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
+		837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Bugsnag.xcodeproj; path = "ThirdParty/bugsnag-cocoa/Bugsnag.xcodeproj"; sourceTree = "<group>"; };
 		8381A09027C5F72F00A1C530 /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA256Digest.h; sourceTree = "<group>"; };
 		8381A09127C5F72F00A1C530 /* SHA256Digest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SHA256Digest.m; sourceTree = "<group>"; };
 		8384912518080F2D00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
@@ -1094,6 +1168,7 @@
 				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
+				837E5ADF2852D5FD0020D205 /* Bugsnag.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1134,6 +1209,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */,
 				ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */,
 				838F851D256B4E5E00C3E614 /* Sparkle.framework */,
 				17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */,
@@ -1833,6 +1909,23 @@
 			name = Visualization;
 			sourceTree = "<group>";
 		};
+		837E5ABC2852D5B80020D205 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				837E5AC92852D5B80020D205 /* Bugsnag.framework */,
+				837E5ACB2852D5B80020D205 /* Bugsnag.framework */,
+				837E5ACD2852D5B80020D205 /* Bugsnag.framework */,
+				837E5ACF2852D5B80020D205 /* Bugsnag.framework */,
+				837E5AD12852D5B80020D205 /* libBugsnagStatic.a */,
+				837E5AD32852D5B80020D205 /* Bugsnag-iOSTests.xctest */,
+				837E5AD52852D5B80020D205 /* Bugsnag-macOSTests.xctest */,
+				837E5AD72852D5B80020D205 /* Bugsnag-tvOSTests.xctest */,
+				837E5AD92852D5B80020D205 /* Bugsnag-watchOSTests.xctest */,
+				837E5ADB2852D5B80020D205 /* TestHost-iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83B0669D180D5668008E3612 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1994,7 +2087,8 @@
 				8E757AEC09F3265E0080F1EE /* CopyFiles */,
 				177FD1000B90CB570011C3B5 /* CopyFiles */,
 				07DFC3930ECDF80100DA400D /* CopyFiles */,
-				8384911C1807E9ED00E7332D /* ShellScript */,
+				8384911C1807E9ED00E7332D /* Run version generator script */,
+				837E5AE12852D9A00020D205 /* Run bugsnag symbol upload */,
 			);
 			buildRules = (
 			);
@@ -2082,6 +2176,10 @@
 				{
 					ProductGroup = 8359FF2D17FEF35C0060F3ED /* Products */;
 					ProjectRef = 8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */;
+				},
+				{
+					ProductGroup = 837E5ABC2852D5B80020D205 /* Products */;
+					ProjectRef = 837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */;
 				},
 				{
 					ProductGroup = 17F5612B0C3BD4DC0019975C /* Products */;
@@ -2369,6 +2467,76 @@
 			remoteRef = 8372C92F27C785BE00E250C9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		837E5AC92852D5B80020D205 /* Bugsnag.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Bugsnag.framework;
+			remoteRef = 837E5AC82852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5ACB2852D5B80020D205 /* Bugsnag.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Bugsnag.framework;
+			remoteRef = 837E5ACA2852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5ACD2852D5B80020D205 /* Bugsnag.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Bugsnag.framework;
+			remoteRef = 837E5ACC2852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5ACF2852D5B80020D205 /* Bugsnag.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Bugsnag.framework;
+			remoteRef = 837E5ACE2852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5AD12852D5B80020D205 /* libBugsnagStatic.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBugsnagStatic.a;
+			remoteRef = 837E5AD02852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5AD32852D5B80020D205 /* Bugsnag-iOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Bugsnag-iOSTests.xctest";
+			remoteRef = 837E5AD22852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5AD52852D5B80020D205 /* Bugsnag-macOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Bugsnag-macOSTests.xctest";
+			remoteRef = 837E5AD42852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5AD72852D5B80020D205 /* Bugsnag-tvOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Bugsnag-tvOSTests.xctest";
+			remoteRef = 837E5AD62852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5AD92852D5B80020D205 /* Bugsnag-watchOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Bugsnag-watchOSTests.xctest";
+			remoteRef = 837E5AD82852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		837E5ADB2852D5B80020D205 /* TestHost-iOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "TestHost-iOS.app";
+			remoteRef = 837E5ADA2852D5B80020D205 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		83B066A1180D5669008E3612 /* MIDI.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -2527,13 +2695,32 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8384911C1807E9ED00E7332D /* ShellScript */ = {
+		837E5AE12852D9A00020D205 /* Run bugsnag symbol upload */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run bugsnag symbol upload";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /usr/bin/ruby;
+			shellScript = "fork do\n  Process.setsid\n  STDIN.reopen(\"/dev/null\")\n  STDOUT.reopen(\"/dev/null\", \"a\")\n  STDERR.reopen(\"/dev/null\", \"a\")\n\n  require 'shellwords'\n\n  Dir[\"#{ENV[\"DWARF_DSYM_FOLDER_PATH\"]}/*/Contents/Resources/DWARF/*\"].each do |dsym|\n    system(\"curl --http1.1 -F apiKey=your-api-key-here -F dsym=@#{Shellwords.escape(dsym)} -F projectRoot=#{Shellwords.escape(ENV[\"PROJECT_DIR\"])} https://upload.bugsnag.com/\")\n  end\nend\n";
+		};
+		8384911C1807E9ED00E7332D /* Run version generator script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run version generator script";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
