@@ -227,6 +227,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 					DLog(@"Thread already in workgroup");
 				} else {
 					DLog(@"Cannot join workgroup, error %d", result);
+					isRealtimeError = YES;
 				}
 			}
 		}
@@ -255,6 +256,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 			int result = os_workgroup_interval_start(wg, currentTime, deadline, nil);
 			if(result != 0) {
 				DLog(@"Deadline error = %d", result);
+				isRealtimeError = YES;
 			}
 		}
 	}
@@ -266,6 +268,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 			int result = os_workgroup_interval_finish(wg, nil);
 			if(result != 0) {
 				DLog(@"Deadline end error = %d", result);
+				isRealtimeError = YES;
 			}
 		}
 	}
