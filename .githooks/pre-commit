@@ -1,7 +1,7 @@
 #!/bin/sh
 
-MATCHES=$(grep -nR --include project.pbxproj -E "(DevelopmentTeam|DEVELOPMENT_TEAM) =" .)
-COUNT=$(echo -n "$MATCHES\c" | grep -cvE '= ""')
+MATCHES=$(git grep -n -E "(DevelopmentTeam|DEVELOPMENT_TEAM) =" .)
+COUNT=$(echo -n "$MATCHES\c" | grep -cvE '(Shared.xcconfig|= "")')
 
 if [ $COUNT -ne 0 ]; then
 	ERRORS=$(echo -n "$MATCHES\c" | grep -vE '= ""')
