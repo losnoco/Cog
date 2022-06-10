@@ -31,7 +31,7 @@ static const os_clockid_t clockId = OS_CLOCK_MACH_ABSOLUTE_TIME;
 
 // Enables time-contraint policy and priority suitable for low-latency,
 // glitch-resistant audio.
-void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
+BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 	kern_return_t result;
 
 	// Increase thread priority to real-time.
@@ -50,7 +50,7 @@ void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 	                           THREAD_EXTENDED_POLICY_COUNT);
 	if(result != KERN_SUCCESS) {
 		DLog(@"thread_policy_set extended policy failure: %d", result);
-		return;
+		return NO;
 	}
 
 	// Set to relatively high priority.
@@ -62,7 +62,7 @@ void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 	                           THREAD_PRECEDENCE_POLICY_COUNT);
 	if(result != KERN_SUCCESS) {
 		DLog(@"thread_policy_set precedence policy failure: %d", result);
-		return;
+		return NO;
 	}
 
 	// Most important, set real-time constraints.
@@ -106,7 +106,10 @@ void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 	                           THREAD_TIME_CONSTRAINT_POLICY_COUNT);
 	if(result != KERN_SUCCESS) {
 		DLog(@"thread_policy_set constraint policy failure: %d", result);
+		return NO;
 	}
+	
+	return YES;
 }
 
 @implementation Node
@@ -213,10 +216,11 @@ void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 		if(!wg) {
 			if(!workgroup) {
 				workgroup = AudioWorkIntervalCreate([[NSString stringWithFormat:@"%@ Work Interval", [self className]] UTF8String], clockId, &attr);
-				SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
+				isRealtimeError = !SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
+				isRealtime = !isRealtimeError;
 			}
 			wg = workgroup;
-			if(wg) {
+			if(wg && !isRealtimeError) {
 				int result = os_workgroup_join(wg, &wgToken);
 				if(result == 0) return;
 				if(result == EALREADY) {
@@ -226,12 +230,17 @@ void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 				}
 			}
 		}
+	} else {
+		if(!isRealtime && !isRealtimeError) {
+			isRealtimeError = SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
+			isRealtime = !isRealtimeError;
+		}
 	}
 }
 
 - (void)leaveWorkgroup {
 	if(@available(macOS 11, *)) {
-		if(wg) {
+		if(wg && !isRealtimeError) {
 			os_workgroup_leave(wg, &wgToken);
 			wg = nil;
 		}
@@ -240,7 +249,7 @@ void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 
 - (void)startWorkslice {
 	if(@available(macOS 11, *)) {
-		if(wg) {
+		if(wg && !isRealtimeError) {
 			const uint64_t currentTime = mach_absolute_time();
 			const uint64_t deadline = currentTime + intervalMachLength;
 			int result = os_workgroup_interval_start(wg, currentTime, deadline, nil);
@@ -253,7 +262,7 @@ void SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 
 - (void)endWorkslice {
 	if(@available(macOS 11, *)) {
-		if(wg) {
+		if(wg && !isRealtimeError) {
 			int result = os_workgroup_interval_finish(wg, nil);
 			if(result != 0) {
 				DLog(@"Deadline end error = %d", result);

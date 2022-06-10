@@ -29,6 +29,7 @@
 	BOOL shouldContinue;
 	BOOL endOfStream; // All data is now in buffer
 	BOOL initialBufferFilled;
+	BOOL isRealtime, isRealtimeError; // If was successfully set realtime, or if error
 
 	AudioStreamBasicDescription nodeFormat;
 	uint32_t nodeChannelConfig;
