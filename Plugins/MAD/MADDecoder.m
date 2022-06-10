@@ -756,6 +756,7 @@
 }
 
 - (NSDictionary *)properties {
+	if(layer < 1 || layer > 3) return nil;
 	const NSString *layers[3] = { @"MP1", @"MP2", @"MP3" };
 	return @{ @"channels": [NSNumber numberWithInt:channels],
 		      @"bitsPerSample": [NSNumber numberWithInt:32],
