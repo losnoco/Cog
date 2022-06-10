@@ -24,6 +24,10 @@
 
 #import "r8bstate.h"
 
+#if !DSD_DECIMATE
+#include "dsd2float.h"
+#endif
+
 void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 	if(!inDesc) {
 		DLog(@"Can't print a NULL desc!\n");
@@ -65,8 +69,10 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 		extrapolateBuffer = NULL;
 		extrapolateBufferSize = 0;
 
+#if DSD_DECIMATE
 		dsd2pcm = NULL;
 		dsd2pcmCount = 0;
+#endif
 
 		hdcd_decoder = NULL;
 
@@ -94,6 +100,7 @@ extern "C" void scale_by_volume(float *buffer, size_t count, float volume) {
 	}
 }
 
+#if DSD_DECIMATE
 /**
  * DSD 2 PCM: Stage 1:
  * Decimate by factor 8
@@ -324,6 +331,19 @@ static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count
 		dsd2pcm_process(dsd2pcm[channel], input, channel, channels, output, channel, channels, count);
 	}
 }
+#else
+static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count, size_t channels) {
+	const uint8_t *iptr = input;
+	float *optr = output;
+	for(size_t index = 0; index < count; ++index) {
+		for(size_t channel = 0; channel < channels; ++channel) {
+			uint8_t sample = *iptr++;
+			cblas_scopy(8, &dsd2float[sample][0], 1, optr++, (int)channels);
+		}
+		optr += channels * 7;
+	}
+}
+#endif
 
 static void convert_u8_to_s16(int16_t *output, const uint8_t *input, size_t count) {
 	for(size_t i = 0; i < count; ++i) {
@@ -475,6 +495,7 @@ tryagain:
 
 			BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
 			BOOL isUnsigned = !isFloat && !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
+			size_t bitsPerSample = inputFormat.mBitsPerChannel;
 
 			// Approximately the most we want on input
 			ioNumberPackets = CHUNK_SIZE;
@@ -486,9 +507,15 @@ tryagain:
 				ioNumberPackets = ((uint32_t)(ioNumberPackets / sampleRatio) + 15) & ~15;
 			}
 
+#if DSD_DECIMATE
+			const size_t sizeScale = 3;
+#else
+			const size_t sizeScale = (bitsPerSample == 1) ? 10 : 3;
+#endif
+
 			size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
 			if(!inputBuffer || inputBufferSize < newSize)
-				inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
+				inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * sizeScale);
 
 			ssize_t amountToWrite = ioNumberPackets * inputFormat.mBytesPerPacket;
 
@@ -535,18 +562,21 @@ tryagain:
 
 			if(stopping || paused || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
 				if(!skipResampler && !is_postextrapolated_) {
+#if DSD_DECIMATE
 					if(dsd2pcm) {
 						uint32_t amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
 						memset(((uint8_t *)inputBuffer) + bytesReadFromInput, 0x55, amountToSkip);
 						bytesReadFromInput += amountToSkip;
 					}
+#endif
 					is_postextrapolated_ = 1;
+#if DSD_DECIMATE
 				} else if(!is_postextrapolated_ && dsd2pcm) {
 					is_postextrapolated_ = 3;
+#endif
 				}
 			}
 
-			size_t bitsPerSample = inputFormat.mBitsPerChannel;
 			BOOL isBigEndian = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian);
 
 			if(!bytesReadFromInput && streamFormatChanged && !skipResampler && is_postextrapolated_ < 2) {
@@ -586,7 +616,15 @@ tryagain:
 				if(bitsPerSample == 1) {
 					samplesRead = bytesReadFromInput / inputFormat.mBytesPerPacket;
 					size_t buffer_adder = (bytesReadFromInput + 15) & ~15;
-					convert_dsd_to_f32((float *)(((uint8_t *)inputBuffer) + buffer_adder), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, dsd2pcm);
+					convert_dsd_to_f32((float *)(((uint8_t *)inputBuffer) + buffer_adder), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame
+#if DSD_DECIMATE
+					                   ,
+					                   dsd2pcm
+#endif
+					);
+#if !DSD_DECIMATE
+					samplesRead *= 8;
+#endif
 					memmove(inputBuffer, ((const uint8_t *)inputBuffer) + buffer_adder, samplesRead * inputFormat.mChannelsPerFrame * sizeof(float));
 					bitsPerSample = 32;
 					bytesReadFromInput = samplesRead * inputFormat.mChannelsPerFrame * sizeof(float);
@@ -671,7 +709,9 @@ tryagain:
 				size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
 				size_t prime = min(samples_in_buffer, PRIME_LEN_);
 				size_t _N_samples_to_add_ = N_samples_to_add_;
+#if DSD_DECIMATE
 				if(dsd2pcm) _N_samples_to_add_ += dsd2pcmLatency;
+#endif
 				size_t newSize = _N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				newSize += bytesReadFromInput;
 
@@ -680,6 +720,7 @@ tryagain:
 				}
 
 				size_t bytesToSkip = 0;
+#if DSD_DECIMATE
 				if(dsd2pcm) {
 					bytesToSkip = dsd2pcmLatency * floatFormat.mBytesPerPacket;
 					if(bytesReadFromInput >= bytesToSkip) {
@@ -688,6 +729,7 @@ tryagain:
 						bytesToSkip = 0;
 					}
 				}
+#endif
 
 				memmove(((uint8_t *)inputBuffer) + N_samples_to_add_ * floatFormat.mBytesPerPacket, ((uint8_t *)inputBuffer) + bytesToSkip, bytesReadFromInput);
 
@@ -700,11 +742,15 @@ tryagain:
 
 				bytesReadFromInput += _N_samples_to_add_ * floatFormat.mBytesPerPacket;
 				latencyEaten = N_samples_to_drop_;
+#if DSD_DECIMATE
 				if(dsd2pcm) latencyEaten += (int)ceil(dsd2pcmLatency * sampleRatio);
+#endif
 				is_preextrapolated_ = 2;
+#if DSD_DECIMATE
 			} else if(dsd2pcm && !is_preextrapolated_) {
 				latencyEaten = dsd2pcmLatency;
 				is_preextrapolated_ = 3;
+#endif
 			}
 
 			if(is_postextrapolated_ == 1) {
@@ -932,6 +978,7 @@ static float db_to_scale(float db) {
 	floatFormat.mBytesPerFrame = (32 / 8) * floatFormat.mChannelsPerFrame;
 	floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
 
+#if DSD_DECIMATE
 	if(inputFormat.mBitsPerChannel == 1) {
 		// Decimate this for speed
 		floatFormat.mSampleRate *= 1.0 / 8.0;
@@ -943,6 +990,7 @@ static float db_to_scale(float db) {
 			dsd2pcm[i] = dsd2pcm_dup(dsd2pcm[0]);
 		}
 	}
+#endif
 
 	inpOffset = 0;
 	inpSize = 0;
@@ -1044,6 +1092,7 @@ static float db_to_scale(float db) {
 		delete(r8bstate *)_r8bstate;
 		_r8bstate = NULL;
 	}
+#if DSD_DECIMATE
 	if(dsd2pcm && dsd2pcmCount) {
 		for(size_t i = 0; i < dsd2pcmCount; ++i) {
 			dsd2pcm_free(dsd2pcm[i]);
@@ -1052,6 +1101,7 @@ static float db_to_scale(float db) {
 		free(dsd2pcm);
 		dsd2pcm = NULL;
 	}
+#endif
 	if(extrapolateBuffer) {
 		free(extrapolateBuffer);
 		extrapolateBuffer = NULL;

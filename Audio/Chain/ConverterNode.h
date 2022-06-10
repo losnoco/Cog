@@ -16,6 +16,8 @@
 
 #import "HeadphoneFilter.h"
 
+#define DSD_DECIMATE 1
+
 @interface ConverterNode : Node {
 	NSDictionary *rgInfo;
 
@@ -52,9 +54,11 @@
 	void *extrapolateBuffer;
 	size_t extrapolateBufferSize;
 
+#if DSD_DECIMATE
 	void **dsd2pcm;
 	size_t dsd2pcmCount;
 	int dsd2pcmLatency;
+#endif
 
 	BOOL rememberedLossless;
 
