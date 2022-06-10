@@ -99,14 +99,14 @@
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ERj-i9-caa">
-                                                                    <rect key="frame" x="0.0" y="3" width="17" height="11"/>
+                                                                    <rect key="frame" x="0.0" y="4" width="17" height="11"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="11" id="hCf-q7-ikN"/>
                                                                     </constraints>
                                                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="8rO-fU-Njw"/>
                                                                 </imageView>
                                                                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5cp-JI-ogI">
-                                                                    <rect key="frame" x="23" y="0.0" width="4" height="17"/>
+                                                                    <rect key="frame" x="23" y="2" width="4" height="15"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="wky-z8-Cj5">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -121,7 +121,7 @@
                                                                 <constraint firstItem="5cp-JI-ogI" firstAttribute="top" secondItem="Vw5-xt-0vG" secondAttribute="top" id="het-sS-7De"/>
                                                                 <constraint firstAttribute="trailing" secondItem="ERj-i9-caa" secondAttribute="trailing" constant="3" id="iN8-aE-Xpq"/>
                                                                 <constraint firstAttribute="trailing" secondItem="5cp-JI-ogI" secondAttribute="trailing" constant="-5" id="rMy-1B-KH4"/>
-                                                                <constraint firstItem="ERj-i9-caa" firstAttribute="top" secondItem="Vw5-xt-0vG" secondAttribute="top" constant="3" id="rpD-06-DRu"/>
+                                                                <constraint firstItem="ERj-i9-caa" firstAttribute="top" secondItem="Vw5-xt-0vG" secondAttribute="top" constant="2" id="rpD-06-DRu"/>
                                                             </constraints>
                                                             <connections>
                                                                 <outlet property="imageView" destination="ERj-i9-caa" id="TmP-fQ-D5k"/>
