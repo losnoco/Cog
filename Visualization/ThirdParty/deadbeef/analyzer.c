@@ -336,7 +336,7 @@ _generate_octave_note_bars(ddb_analyzer_t *analyzer) {
 	}
 
 	int minBand = -1;
-	int maxBand = -1;
+	/*int maxBand = -1;*/
 
 	ddb_analyzer_bar_t *prev_bar = NULL;
 	for(int i = 0; i < OCTAVES * STEPS; i += analyzer->octave_bars_step) {
@@ -350,7 +350,7 @@ _generate_octave_note_bars(ddb_analyzer_t *analyzer) {
 			minBand = i;
 		}
 
-		maxBand = i;
+		/*maxBand = i;*/
 
 		ddb_analyzer_bar_t *bar = analyzer->bars + analyzer->bar_count;
 

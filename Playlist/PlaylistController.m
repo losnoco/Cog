@@ -385,8 +385,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSUInteger index = [cellIdentifiers indexOfObject:[tableColumn identifier]];
 
-	NSSortDescriptor *sortDescriptor = [tableColumn sortDescriptorPrototype];
-	NSArray *sortDescriptors = sortDescriptor ? @[sortDescriptor] : @[];
+	NSSortDescriptor *sortDescriptor;/* = [tableColumn sortDescriptorPrototype];*/
+	NSArray *sortDescriptors;/* = sortDescriptor ? @[sortDescriptor] : @[];*/
 
 	BOOL ascending;
 

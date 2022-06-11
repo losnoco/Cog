@@ -577,7 +577,7 @@ static SQLiteStore *g_sharedStore = NULL;
 			dbExists = YES;
 
 		if(sqlite3_open([g_databasePath UTF8String], &g_database) == SQLITE_OK) {
-			char *error;
+			char *error = "";
 
 			if(!dbExists) {
 				NSArray *schemas = createSchema();
@@ -799,7 +799,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		return string;
 	}
 
-	int64_t returnId, refcount;
+	int64_t returnId; /*, refcount;*/
 
 	int rc = sqlite3_step(st);
 
@@ -809,7 +809,7 @@ static SQLiteStore *g_sharedStore = NULL;
 
 	if(rc == SQLITE_ROW) {
 		returnId = sqlite3_column_int64(st, select_string_out_string_id);
-		refcount = sqlite3_column_int64(st, select_string_out_reference_count);
+		/*refcount = sqlite3_column_int64(st, select_string_out_reference_count);*/
 	}
 
 	sqlite3_reset(st);
@@ -825,7 +825,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		}
 
 		returnId = sqlite3_last_insert_rowid(g_database);
-		refcount = 1;
+		/*refcount = 1;*/
 
 		[stringTable setObject:string forKey:[[NSNumber numberWithInteger:returnId] stringValue]];
 	} else {
@@ -961,7 +961,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		return art;
 	}
 
-	int64_t returnId, refcount;
+	int64_t returnId; /*, refcount;*/
 
 	int rc = sqlite3_step(st);
 
@@ -971,7 +971,7 @@ static SQLiteStore *g_sharedStore = NULL;
 
 	if(rc == SQLITE_ROW) {
 		returnId = sqlite3_column_int64(st, select_art_out_art_id);
-		refcount = sqlite3_column_int64(st, select_art_out_reference_count);
+		/*refcount = sqlite3_column_int64(st, select_art_out_reference_count);*/
 	}
 
 	sqlite3_reset(st);
@@ -988,7 +988,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		}
 
 		returnId = sqlite3_last_insert_rowid(g_database);
-		refcount = 1;
+		/*refcount = 1;*/
 
 		[artTable setObject:art forKey:[[NSNumber numberWithInteger:returnId] stringValue]];
 	} else {
@@ -1103,7 +1103,7 @@ static SQLiteStore *g_sharedStore = NULL;
 	NSString *urlString = [url absoluteString];
 
 	int64_t urlId = -1;
-	urlString = [self addString:urlString returnId:&urlId];
+	[self addString:urlString returnId:&urlId];
 
 	sqlite3_stmt *st = stmt[stmt_select_track];
 
@@ -1113,7 +1113,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		return -1;
 	}
 
-	int64_t ret, refcount;
+	int64_t ret/*, refcount*/;
 
 	int rc = sqlite3_step(st);
 
@@ -1124,7 +1124,7 @@ static SQLiteStore *g_sharedStore = NULL;
 
 	if(rc == SQLITE_ROW) {
 		ret = sqlite3_column_int64(st, select_track_out_track_id);
-		refcount = sqlite3_column_int64(st, select_track_out_reference_count);
+		/*refcount = sqlite3_column_int64(st, select_track_out_reference_count);*/
 	}
 
 	sqlite3_reset(stmt[stmt_select_string]);
@@ -1235,7 +1235,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		}
 
 		ret = sqlite3_last_insert_rowid(g_database);
-		refcount = 1;
+		/*refcount = 1;*/
 	} else {
 		[self removeString:urlId]; // should only be bumped once per instance of track
 
@@ -1259,7 +1259,7 @@ static SQLiteStore *g_sharedStore = NULL;
 	NSString *urlString = [url absoluteString];
 
 	int64_t urlId = -1;
-	urlString = [self addString:urlString returnId:&urlId];
+	[self addString:urlString returnId:&urlId];
 
 	sqlite3_stmt *st = stmt[stmt_select_track];
 
@@ -1269,7 +1269,7 @@ static SQLiteStore *g_sharedStore = NULL;
 		return;
 	}
 
-	int64_t trackId, refcount;
+	int64_t trackId; /*, refcount; */
 
 	int rc = sqlite3_step(st);
 
@@ -1282,7 +1282,7 @@ static SQLiteStore *g_sharedStore = NULL;
 
 	if(rc == SQLITE_ROW) {
 		trackId = sqlite3_column_int64(st, select_track_out_track_id);
-		refcount = sqlite3_column_int64(st, select_track_out_reference_count);
+		/*refcount = sqlite3_column_int64(st, select_track_out_reference_count);*/
 	}
 
 	sqlite3_reset(stmt[stmt_select_string]);

@@ -75,7 +75,7 @@ struct r8bstate {
 			size_t blockCount = inCount;
 			if(blockCount > bufferCapacity)
 				blockCount = bufferCapacity;
-			int outputDone;
+			int outputDone = 0;
 			for(i = 0; i < channelCount; ++i) {
 				double *outputPointer;
 				vDSP_vspdp(input + i, channelCount, &InBuf[0], 1, blockCount);

@@ -650,7 +650,7 @@ json_value * json_parse_ex (json_settings * settings,
                               {
                                  if ( (++ state.ptr) == end)
                                  {
-                                    b = 0;
+                                    /*b = 0;*/
                                     break;
                                  }
 
