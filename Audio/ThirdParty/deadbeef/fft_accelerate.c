@@ -34,17 +34,28 @@ static float *_sq_mags;
 
 static vDSP_DFT_Setup _dft_setup;
 
+// Apparently _mm_malloc is Intel-only on newer macOS targets, so use supported posix_memalign
+static void *_memalign_calloc(size_t count, size_t size, size_t align) {
+	size *= count;
+	void *ret = NULL;
+	if(posix_memalign(&ret, align, size) != 0) {
+		return NULL;
+	}
+	bzero(ret, size);
+	return ret;
+}
+
 static void
 _init_buffers(int fft_size) {
 	if(fft_size != _fft_size) {
 		fft_free();
 
-		_input_real = calloc(fft_size * 2, sizeof(float));
-		_input_imaginary = calloc(fft_size * 2, sizeof(float));
-		_hamming = calloc(fft_size * 2, sizeof(float));
-		_sq_mags = calloc(fft_size, sizeof(float));
-		_output_real = calloc(fft_size * 2, sizeof(float));
-		_output_imaginary = calloc(fft_size * 2, sizeof(float));
+		_input_real = _memalign_calloc(fft_size * 2, sizeof(float), 16);
+		_input_imaginary = _memalign_calloc(fft_size * 2, sizeof(float), 16);
+		_hamming = _memalign_calloc(fft_size * 2, sizeof(float), 16);
+		_sq_mags = _memalign_calloc(fft_size, sizeof(float), 16);
+		_output_real = _memalign_calloc(fft_size * 2 + 1, sizeof(float), 16);
+		_output_imaginary = _memalign_calloc(fft_size * 2 + 1, sizeof(float), 16);
 
 		_dft_setup = vDSP_DFT_zop_CreateSetup(NULL, fft_size * 2, FFT_FORWARD);
 		vDSP_hamm_window(_hamming, fft_size * 2, 0);
