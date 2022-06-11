@@ -42,7 +42,7 @@ static inline unsigned local_gcd(unsigned a, unsigned b)
 */
 static void samples_len(unsigned* r1, unsigned* r2, unsigned N, unsigned M)        // example: r1 = 44100, r2 = 48000, N = 20, M = 8192
 {
-    if (r1 == 0 || r2 == 0) return;
+    if (r1 == 0 || r2 == 0 || *r1 == 0 || *r2 == 0) return;
     unsigned v = local_gcd(*r1, *r2);        // v = 300
     *r1 /= v; *r2 /= v;                        // r1 = 147; r2 = 160  == 1/300th of second
     unsigned n = (v + N-1) / N;                // n = 300/20 = 15 times
