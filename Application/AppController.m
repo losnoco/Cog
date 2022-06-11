@@ -249,9 +249,10 @@ void *kAppControllerContext = &kAppControllerContext;
 
 	if([keyPath isEqualToString:@"playlistController.currentEntry"]) {
 		PlaylistEntry *entry = playlistController.currentEntry;
+		NSString *appTitle = NSLocalizedString(@"CogTitle", @"Cog");
 		if(!entry) {
-			miniWindow.title = @"Cog";
-			mainWindow.title = @"Cog";
+			miniWindow.title = appTitle;
+			mainWindow.title = appTitle;
 			if(@available(macOS 11.0, *)) {
 				miniWindow.subtitle = @"";
 				mainWindow.subtitle = @"";
@@ -276,7 +277,7 @@ void *kAppControllerContext = &kAppControllerContext;
 		}
 
 		if(@available(macOS 11.0, *)) {
-			NSString *title = @"Cog";
+			NSString *title = appTitle;
 			if(entry.title) {
 				title = entry.title;
 			}
@@ -299,7 +300,7 @@ void *kAppControllerContext = &kAppControllerContext;
 			miniWindow.subtitle = subtitle;
 			mainWindow.subtitle = subtitle;
 		} else {
-			NSString *title = @"Cog";
+			NSString *title = appTitle;
 			if(entry.display) {
 				title = entry.display;
 			}

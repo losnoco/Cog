@@ -47,7 +47,7 @@
 	[self setVerticalMotionCanBeginDrag:YES];
 
 	// Set up header context menu
-	headerContextMenu = [[NSMenu alloc] initWithTitle:@"Playlist Header Context Menu"];
+	headerContextMenu = [[NSMenu alloc] initWithTitle:NSLocalizedString(@"PlaylistHeaderContextMenuTitle", @"Playlist Header Context Menu")];
 
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"identifier"
 	                                                               ascending:YES];
@@ -58,9 +58,9 @@
 	for(NSTableColumn *col in [columns sortedArrayUsingDescriptors:sortDescriptors]) {
 		NSString *title;
 		if([[col identifier] isEqualToString:@"status"]) {
-			title = @"Status";
+			title = NSLocalizedString(@"PlaylistStatusColumn", @"Status");
 		} else if([[col identifier] isEqualToString:@"index"]) {
-			title = @"Index";
+			title = NSLocalizedString(@"PlaylistIndexColumn", @"Index");
 		} else {
 			title = [[col headerCell] title];
 		}

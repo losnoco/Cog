@@ -32,3 +32,16 @@
 "QueuedTrackTooltip" = "Queued";
 "ErrorTrackTooltip" = "Error";
 "StopAfterTrackTooltip" = "Stop After Track";
+
+"PlaylistHeaderContextMenuTitle" = "Playlist Header Context Menu";
+
+"PlaylistStatusColumn" = "Status";
+"PlaylistIndexColumn" = "Index";
+
+"PlaylistRandomizationAction" = "Playlist Randomization";
+
+"SkipAction" = "Skip";
+
+"CogTitle" = "Cog";
+
+"PreferencesTitle" = "Preferences";
