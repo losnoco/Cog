@@ -899,7 +899,7 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2DE885D7-56DA-4F25-BD36-0BBA2655C596" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" id="ZH9-ZU-skw">
+                    <toolbarItem implicitItemIdentifier="2DE885D7-56DA-4F25-BD36-0BBA2655C596" explicitItemIdentifier="hdcdMain" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" id="ZH9-ZU-skw">
                         <size key="minSize" width="70" height="25"/>
                         <size key="maxSize" width="70" height="25"/>
                     </toolbarItem>
@@ -1155,7 +1155,7 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F1A8365A-DBF5-4BB9-A2B3-3964BFA1B15D" explicitItemIdentifier="hdcd" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" visibilityPriority="-10" id="qfu-F9-bOZ">
+                    <toolbarItem implicitItemIdentifier="F1A8365A-DBF5-4BB9-A2B3-3964BFA1B15D" explicitItemIdentifier="hdcdMini" label="HDCD Indicator" paletteLabel="HDCD Indicator" tag="-1" image="hdcdLogoTemplate" bordered="YES" visibilityPriority="-10" id="qfu-F9-bOZ">
                         <size key="minSize" width="70" height="25"/>
                         <size key="maxSize" width="70" height="25"/>
                     </toolbarItem>

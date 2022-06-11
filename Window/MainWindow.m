@@ -31,7 +31,7 @@
 
 - (void)showHDCDLogo:(BOOL)show {
 	for(NSToolbarItem* toolbarItem in [mainToolbar items]) {
-		if([[toolbarItem itemIdentifier] isEqualToString:@"hdcd"]) {
+		if([[toolbarItem itemIdentifier] isEqualToString:@"hdcdMain"]) {
 			if(show)
 				[toolbarItem setImage:hdcdLogo];
 			else

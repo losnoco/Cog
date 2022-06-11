@@ -98,7 +98,7 @@ extern NSString *iTunesDropType;
 
 - (void)showHDCDLogo:(BOOL)show {
 	for(NSToolbarItem *toolbarItem in [miniToolbar items]) {
-		if([[toolbarItem itemIdentifier] isEqualToString:@"hdcd"]) {
+		if([[toolbarItem itemIdentifier] isEqualToString:@"hdcdMini"]) {
 			if(show)
 				[toolbarItem setImage:hdcdLogo];
 			else
