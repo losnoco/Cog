@@ -290,6 +290,7 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 
 		paddedBufferSize = fftSize;
 		fftSizeOver2 = (fftSize + 1) / 2;
+		const size_t fftSizeOver2Plus1 = fftSizeOver2 + 1; // DFT float overwrites plus one, double doesn't
 
 		dftSetupF = vDSP_DFT_zrop_CreateSetup(nil, fftSize, vDSP_DFT_FORWARD);
 		dftSetupB = vDSP_DFT_zrop_CreateSetup(nil, fftSize, vDSP_DFT_INVERSE);
@@ -304,39 +305,39 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 			return nil;
 		}
 
-		signal_fft.realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-		signal_fft.imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
+		signal_fft.realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+		signal_fft.imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
 		if(!signal_fft.realp || !signal_fft.imagp) {
 			free(deinterleavedImpulseBuffer);
 			return nil;
 		}
 
-		input_filtered_signal_per_channel[0].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-		input_filtered_signal_per_channel[0].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
+		input_filtered_signal_per_channel[0].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+		input_filtered_signal_per_channel[0].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
 		if(!input_filtered_signal_per_channel[0].realp ||
 		   !input_filtered_signal_per_channel[0].imagp) {
 			free(deinterleavedImpulseBuffer);
 			return nil;
 		}
 
-		input_filtered_signal_per_channel[1].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-		input_filtered_signal_per_channel[1].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
+		input_filtered_signal_per_channel[1].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+		input_filtered_signal_per_channel[1].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
 		if(!input_filtered_signal_per_channel[1].realp ||
 		   !input_filtered_signal_per_channel[1].imagp) {
 			free(deinterleavedImpulseBuffer);
 			return nil;
 		}
 
-		input_filtered_signal_totals[0].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-		input_filtered_signal_totals[0].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
+		input_filtered_signal_totals[0].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+		input_filtered_signal_totals[0].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
 		if(!input_filtered_signal_totals[0].realp ||
 		   !input_filtered_signal_totals[0].imagp) {
 			free(deinterleavedImpulseBuffer);
 			return nil;
 		}
 
-		input_filtered_signal_totals[1].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-		input_filtered_signal_totals[1].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
+		input_filtered_signal_totals[1].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+		input_filtered_signal_totals[1].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
 		if(!input_filtered_signal_totals[1].realp ||
 		   !input_filtered_signal_totals[1].imagp) {
 			free(deinterleavedImpulseBuffer);
@@ -350,10 +351,10 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 		}
 
 		for(size_t i = 0; i < channels; ++i) {
-			impulse_responses[i * 2 + 0].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-			impulse_responses[i * 2 + 0].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-			impulse_responses[i * 2 + 1].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
-			impulse_responses[i * 2 + 1].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2, 16);
+			impulse_responses[i * 2 + 0].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+			impulse_responses[i * 2 + 0].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+			impulse_responses[i * 2 + 1].realp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
+			impulse_responses[i * 2 + 1].imagp = (float *)_memalign_malloc(sizeof(float) * fftSizeOver2Plus1, 16);
 
 			if(!impulse_responses[i * 2 + 0].realp || !impulse_responses[i * 2 + 0].imagp ||
 			   !impulse_responses[i * 2 + 1].realp || !impulse_responses[i * 2 + 1].imagp) {
