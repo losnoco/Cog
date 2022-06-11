@@ -35,6 +35,11 @@
 	AVFrame *lastDecodedFrame;
 	AVPacket *lastReadPacket;
 
+	BOOL metadataUpdated;
+
+	int prebufferedAudio;
+	uint8_t *prebufferedAudioData;
+
 	BOOL rawDSD;
 	BOOL rawDSDReverseBits;
 	BOOL rawDSDPlanar;

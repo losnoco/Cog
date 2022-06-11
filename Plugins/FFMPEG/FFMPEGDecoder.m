@@ -462,7 +462,22 @@ static uint8_t reverse_bits[0x100];
 	replayGainTrackPeak = 0.0;
 	albumArt = [NSData data];
 	id3Metadata = @{};
+	metadataUpdated = NO;
 	[self updateMetadata];
+
+	prebufferedAudio = 0;
+	prebufferedAudioData = NULL;
+
+	if(attachedPicIndex >= 0) {
+		int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
+		prebufferedAudioData = malloc(1024 * frameSize);
+		[self readAudio:prebufferedAudioData frames:1024];
+	}
+
+	if(metadataUpdated) {
+		[self willChangeValueForKey:@"metadata"];
+		[self didChangeValueForKey:@"metadata"];
+	}
 
 	return YES;
 }
@@ -608,6 +623,8 @@ static uint8_t reverse_bits[0x100];
 		if(![source seekable]) {
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
+		} else {
+			metadataUpdated = YES;
 		}
 	}
 }
@@ -632,19 +649,35 @@ static uint8_t reverse_bits[0x100];
 		if(![source seekable]) {
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
+		} else {
+			metadataUpdated = YES;
 		}
 	}
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
+	int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
+	int bytesToRead = frames * frameSize;
+	int bytesRead = 0;
+
+	if(prebufferedAudio) {
+		// A bit of ignored read-ahead to support embedded artwork
+		int bytesBuffered = prebufferedAudio * frameSize;
+		int bytesToCopy = (bytesBuffered > bytesToRead) ? bytesToRead : bytesBuffered;
+		memcpy(buf, prebufferedAudioData, bytesToCopy);
+		memmove(prebufferedAudioData, prebufferedAudioData + bytesToCopy, bytesBuffered - bytesToCopy);
+		prebufferedAudio -= bytesToCopy / frameSize;
+		bytesRead = bytesToCopy;
+
+		int framesReadNow = bytesRead / frameSize;
+		framesRead -= framesReadNow;
+	}
+
 	if(totalFrames && framesRead >= totalFrames)
 		return 0;
 
-	int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
 	int dataSize = 0;
 
-	int bytesToRead = frames * frameSize;
-	int bytesRead = 0;
 	int seekBytesSkip = 0;
 
 	int errcode;
@@ -851,6 +884,8 @@ static uint8_t reverse_bits[0x100];
 - (long)seek:(long)frame {
 	if(!totalFrames)
 		return -1;
+
+	prebufferedAudio = 0;
 
 	if(frame >= totalFrames) {
 		framesRead = totalFrames;
