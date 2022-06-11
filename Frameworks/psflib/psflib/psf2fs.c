@@ -305,11 +305,11 @@ static int addarchive(
   // create a source entry for this psf2
   this_source = ( struct SOURCE_FILE * ) malloc( sizeof( struct SOURCE_FILE ) );
   if(!this_source) goto outofmemory;
+  this_source->next = NULL;
   this_source->reserved_data = ( uint8_t * ) malloc( reserved_size );
   if(!this_source->reserved_data) goto outofmemory;
   memcpy(this_source->reserved_data, reserved_data, reserved_size);
   this_source->reserved_size = reserved_size;
-  this_source->next = NULL;
   this_dir = makearchivedir(fs, 0, this_source);
   if(fs->adderror) goto error;
 
