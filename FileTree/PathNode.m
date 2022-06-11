@@ -29,9 +29,14 @@ NSURL *resolveAliases(NSURL *url) {
 	if(bookmarkRef) {
 		Boolean isStale;
 		CFURLRef urlRef = CFURLCreateByResolvingBookmarkData(kCFAllocatorDefault, bookmarkRef, kCFURLBookmarkResolutionWithSecurityScope, NULL, NULL, &isStale, &error);
+		CFRelease(bookmarkRef);
 
-		if(urlRef && !isStale) {
-			return (NSURL *)CFBridgingRelease(urlRef);
+		if(urlRef) {
+			if(!isStale) {
+				return (NSURL *)CFBridgingRelease(urlRef);
+			} else {
+				CFRelease(urlRef);
+			}
 		}
 	}
 
