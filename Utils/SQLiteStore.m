@@ -536,10 +536,10 @@ NSURL *_Nonnull urlForPath(NSString *_Nullable path) {
 }
 
 @interface SQLiteStore (Private)
-- (NSString *_Nullable)addString:(NSString *_Nullable)string returnId:(int64_t *_Nonnull)stringId;
+- (NSString *_Nullable)addString:(id _Nullable)string returnId:(int64_t *_Nonnull)stringId;
 - (NSString *_Nonnull)getString:(int64_t)stringId;
 - (void)removeString:(int64_t)stringId;
-- (NSData *_Nullable)addArt:(NSData *_Nullable)art returnId:(int64_t *_Nonnull)artId;
+- (NSData *_Nullable)addArt:(id _Nullable)art returnId:(int64_t *_Nonnull)artId;
 - (NSData *_Nonnull)getArt:(int64_t)artId;
 - (void)removeArt:(int64_t)artId;
 - (int64_t)addTrack:(PlaylistEntry *_Nonnull)track;
@@ -772,8 +772,19 @@ static SQLiteStore *g_sharedStore = NULL;
 	}
 }
 
-- (NSString *)addString:(NSString *)string returnId:(int64_t *_Nonnull)stringId {
+- (NSString *)addString:(id _Nullable)inputObj returnId:(int64_t *_Nonnull)stringId {
 	*stringId = -1;
+
+	if(!inputObj) {
+		return nil;
+	}
+
+	NSString *string = nil;
+
+	if([inputObj isKindOfClass:[NSString class]]) {
+		string = (NSString *)inputObj;
+	}
+
 	if(!string || [string length] == 0) {
 		return string;
 	}
@@ -924,8 +935,19 @@ static SQLiteStore *g_sharedStore = NULL;
 	}
 }
 
-- (NSData *_Nullable)addArt:(NSData *_Nullable)art returnId:(int64_t *_Nonnull)artId {
+- (NSData *_Nullable)addArt:(id _Nullable)inputObj returnId:(int64_t *_Nonnull)artId {
 	*artId = -1;
+
+	if(!inputObj) {
+		return nil;
+	}
+
+	NSData *art = nil;
+
+	if([inputObj isKindOfClass:[NSData class]]) {
+		art = (NSData *)inputObj;
+	}
+
 	if(!art || [art length] == 0) {
 		return art;
 	}
