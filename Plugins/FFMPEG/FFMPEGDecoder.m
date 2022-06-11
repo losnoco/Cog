@@ -905,7 +905,7 @@ static uint8_t reverse_bits[0x100];
 }
 
 + (NSArray *)fileTypes {
-	return @[@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"weba", @"dff", @"iff", @"dsdiff", @"wsd", @"aiff", @"aif"];
+	return @[@"wma", @"asf", @"tak", @"mp4", @"m4a", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"weba", @"dsf", @"dff", @"iff", @"dsdiff", @"wsd", @"aiff", @"aif"];
 }
 
 + (NSArray *)mimeTypes {
