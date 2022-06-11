@@ -199,18 +199,8 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 	self = [super init];
 	if(self) {
 		outputController = c;
-		_au = nil;
-		_eq = NULL;
-		_bufferSize = 0;
 		volume = 1.0;
 		outputDeviceID = -1;
-		listenerapplied = NO;
-		running = NO;
-		started = NO;
-		stopNext = NO;
-		restarted = NO;
-
-		streamFormatStarted = NO;
 
 		atomic_init(&bytesRendered, 0);
 		atomic_init(&bytesHdcdSustained, 0);
