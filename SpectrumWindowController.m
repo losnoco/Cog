@@ -37,7 +37,11 @@
 			[self.spectrumView enableCameraControl];
 		} else {
 			self.spectrumViewLegacy = [[SpectrumViewLegacy alloc] initWithFrame:frame];
-			[[self window] setContentView:self.spectrumViewLegacy];
+			if(self.spectrumViewLegacy) {
+				[[self window] setContentView:self.spectrumViewLegacy];
+
+				[self.spectrumViewLegacy enableFullView];
+			}
 		}
 	}
 

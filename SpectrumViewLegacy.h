@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL isListening;
 
 - (void)startPlayback;
+- (void)enableFullView;
 @end
 
 NS_ASSUME_NONNULL_END

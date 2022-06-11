@@ -13,6 +13,8 @@
 
 #define LOWER_BOUND -80
 
+static void *kSpectrumViewLegacyContext = &kSpectrumViewLegacyContext;
+
 extern NSString *CogPlaybackDidBeginNotficiation;
 extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
@@ -21,13 +23,16 @@ extern NSString *CogPlaybackDidStopNotficiation;
 @interface SpectrumViewLegacy () {
 	VisualizationController *visController;
 	NSTimer *timer;
+	float saLowerBound;
 	BOOL paused;
 	BOOL stopped;
 	BOOL isListening;
 	BOOL observersAdded;
+	BOOL isFullView;
 
 	NSRect initFrame;
 
+	NSDictionary *textAttrs;
 	NSColor *baseColor;
 	NSColor *peakColor;
 	NSColor *backgroundColor;
@@ -67,6 +72,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	paused = NO;
 	isListening = NO;
 
+	saLowerBound = LOWER_BOUND;
+
 	[self colorsDidChange:nil];
 
 	BOOL freqMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumFreqMode"];
@@ -86,8 +93,32 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	[self addObservers];
 }
 
+- (void)enableFullView {
+	isFullView = YES;
+	_analyzer.freq_is_log = 1;
+	[self repaint];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+                       context:(void *)context {
+	if(context == kSpectrumViewLegacyContext) {
+		if([keyPath isEqualToString:@"self.window.visible"]) {
+			[self updateVisListening];
+		} else {
+			[self colorsDidChange:nil];
+		}
+	}
+}
+
 - (void)addObservers {
 	if(!observersAdded) {
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewLegacyContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewLegacyContext];
+
+		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewLegacyContext];
+
 		[[NSNotificationCenter defaultCenter] addObserver:self
 		                                         selector:@selector(colorsDidChange:)
 		                                             name:NSSystemColorsDidChangeNotification
@@ -121,6 +152,11 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)removeObservers {
 	if(observersAdded) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewLegacyContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewLegacyContext];
+
+		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewLegacyContext];
+
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 		                                                name:NSSystemColorsDidChangeNotification
 		                                              object:nil];
@@ -168,14 +204,19 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	backgroundColor = [backgroundColor colorWithAlphaComponent:0.0];
 	borderColor = [NSColor systemGrayColor];
 
-	if(@available(macOS 10.14, *)) {
-		baseColor = [NSColor textColor];
-		peakColor = [NSColor controlAccentColor];
-		peakColor = [peakColor colorWithAlphaComponent:0.7];
-	} else {
-		peakColor = [NSColor textColor];
-		baseColor = [peakColor colorWithAlphaComponent:0.6];
-	}
+	NSValueTransformer *colorToValueTransformer = [NSValueTransformer valueTransformerForName:@"ColorToValueTransformer"];
+
+	baseColor = [colorToValueTransformer transformedValue:[[NSUserDefaults standardUserDefaults] dataForKey:@"spectrumBarColor"]];
+	peakColor = [colorToValueTransformer transformedValue:[[NSUserDefaults standardUserDefaults] dataForKey:@"spectrumDotColor"]];
+
+	NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+	paragraphStyle.alignment = NSTextAlignmentLeft;
+
+	textAttrs = @{
+		NSFontAttributeName: [NSFont fontWithName:@"HelveticaNeue" size:10],
+		NSParagraphStyleAttributeName: paragraphStyle,
+		NSForegroundColorAttributeName: borderColor
+	};
 
 	[self repaint];
 }
@@ -207,6 +248,53 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	paused = NO;
 	[self updateVisListening];
 	[self repaint];
+}
+
+- (void)drawSaGrid {
+	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+
+	// horz lines, db scale
+	CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
+	CGFloat lower = -floor(saLowerBound);
+	for(int db = 10; db < lower; db += 10) {
+		CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
+		if(y >= NSHeight(self.bounds)) {
+			break;
+		}
+
+		CGPoint points[] = {
+			CGPointMake(0, y),
+			CGPointMake(NSWidth(self.bounds) - 1, y)
+		};
+		CGContextAddLines(context, points, 2);
+	}
+	CGFloat dash[2] = { 1, 2 };
+	CGContextSetLineDash(context, 0, dash, 2);
+	CGContextStrokePath(context);
+	CGContextSetLineDash(context, 0, NULL, 0);
+
+	// db text
+	for(int db = 10; db < lower; db += 10) {
+		CGFloat y = (CGFloat)(db / lower) * NSHeight(self.bounds);
+		if(y >= NSHeight(self.bounds)) {
+			break;
+		}
+
+		NSString *string = [NSString stringWithFormat:@"%d dB", -db];
+		[string drawAtPoint:NSMakePoint(0, NSHeight(self.bounds) - y - 12) withAttributes:textAttrs];
+	}
+}
+
+- (void)drawFrequencyLabels {
+	// octaves text
+	for(int i = 0; i < _draw_data.label_freq_count; i++) {
+		if(_draw_data.label_freq_positions < 0) {
+			continue;
+		}
+		NSString *string = [NSString stringWithUTF8String:_draw_data.label_freq_texts[i]];
+		CGFloat x = _draw_data.label_freq_positions[i];
+		[string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds) - 12) withAttributes:textAttrs];
+	}
 }
 
 - (void)drawAnalyzerDescreteFrequencies {
@@ -261,16 +349,22 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	[backgroundColor setFill];
 	NSRectFill(dirtyRect);
 
-	CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-	CGContextMoveToPoint(context, 0.0, 0.0);
-	CGContextAddLineToPoint(context, initFrame.size.width, 0.0);
-	CGContextAddLineToPoint(context, initFrame.size.width, initFrame.size.height);
-	CGContextAddLineToPoint(context, 0.0, initFrame.size.height);
-	CGContextAddLineToPoint(context, 0.0, 0.0);
-	CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
-	CGContextStrokePath(context);
+	if(!isFullView) {
+		CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+		CGContextMoveToPoint(context, 0.0, 0.0);
+		CGContextAddLineToPoint(context, initFrame.size.width, 0.0);
+		CGContextAddLineToPoint(context, initFrame.size.width, initFrame.size.height);
+		CGContextAddLineToPoint(context, 0.0, initFrame.size.height);
+		CGContextAddLineToPoint(context, 0.0, 0.0);
+		CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
+		CGContextStrokePath(context);
+	}
 
 	if(stopped) return;
+
+	if(isFullView) {
+		_analyzer.view_width = self.bounds.size.width;
+	}
 
 	float visAudio[4096], visFFT[2048];
 
@@ -279,6 +373,11 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
 	ddb_analyzer_tick(&_analyzer);
 	ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
+
+	if(isFullView) {
+		[self drawSaGrid];
+		[self drawFrequencyLabels];
+	}
 
 	[self drawAnalyzer];
 }
