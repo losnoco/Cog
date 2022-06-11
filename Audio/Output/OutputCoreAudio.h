@@ -51,6 +51,7 @@ using std::atomic_long;
 	BOOL restarted;
 
 	BOOL eqEnabled;
+	BOOL eqInitialized;
 
 	BOOL streamFormatStarted;
 

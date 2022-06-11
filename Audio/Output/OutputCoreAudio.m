@@ -764,6 +764,8 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	if(_err)
 		return NO;
 
+	eqInitialized = YES;
+
 	[self setEqualizerEnabled:[[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue]];
 
 	[outputController beginEqualizer:_eq];
@@ -851,7 +853,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		}
 	if(_eq) {
 		[outputController endEqualizer:_eq];
-		AudioUnitUninitialize(_eq);
+		if(eqInitialized) {
+			AudioUnitUninitialize(_eq);
+			eqInitialized = NO;
+		}
 		AudioComponentInstanceDispose(_eq);
 		_eq = NULL;
 	}
