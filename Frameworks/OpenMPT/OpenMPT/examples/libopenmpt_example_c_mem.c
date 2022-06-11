@@ -121,7 +121,7 @@ static blob_t * load_file( const char * filename ) {
 	if ( tell_result < 0 ) {
 		goto fail;
 	}
-	if ( (unsigned long)tell_result > SIZE_MAX ) {
+	if ( (unsigned long)(size_t)(unsigned long)tell_result != (unsigned long)tell_result ) {
 		goto fail;
 	}
 	blob->size = (size_t)tell_result;
@@ -283,6 +283,7 @@ cleanup:
 	if ( pa_initialized ) {
 		Pa_Terminate();
 		pa_initialized = 0;
+		(void)pa_initialized;
 	}
 
 	if ( mod ) {

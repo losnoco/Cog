@@ -545,7 +545,10 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 					memory.chnSettings[nChn].vol = 0xFF;
 				}
 				if(chn.rowCommand.IsNote())
+				{
 					chn.nLastNote = note;
+					chn.RestorePanAndFilter();
+				}
 
 				// Update channel panning
 				if(chn.rowCommand.IsNote() || chn.rowCommand.instr)
@@ -2806,23 +2809,7 @@ bool CSoundFile::ProcessEffects()
 					CheckNNA(nChn, instr, note, false);
 				}
 
-				if(chn.nRestorePanOnNewNote > 0)
-				{
-					chn.nPan = (chn.nRestorePanOnNewNote & 0x7FFF) - 1;
-					if(chn.nRestorePanOnNewNote & 0x8000)
-						chn.dwFlags.set(CHN_SURROUND);
-					chn.nRestorePanOnNewNote = 0;
-				}
-				if(chn.nRestoreResonanceOnNewNote > 0)
-				{
-					chn.nResonance = chn.nRestoreResonanceOnNewNote - 1;
-					chn.nRestoreResonanceOnNewNote = 0;
-				}
-				if(chn.nRestoreCutoffOnNewNote > 0)
-				{
-					chn.nCutOff = chn.nRestoreCutoffOnNewNote - 1;
-					chn.nRestoreCutoffOnNewNote = 0;
-				}
+				chn.RestorePanAndFilter();
 			}
 
 			// Instrument Change ?

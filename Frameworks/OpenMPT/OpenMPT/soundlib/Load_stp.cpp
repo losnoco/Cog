@@ -792,6 +792,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 						else if(m.param & 0xF0)
 							m.param |= 0x0F;
 						didVolSlide = true;
+						MPT_UNUSED(didVolSlide);
 
 					} else if(chnMem.autoTremolo)
 					{

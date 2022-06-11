@@ -20,7 +20,7 @@ inline namespace MPT_INLINE_NS {
 
 
 namespace tests {
-namespace string_convert {
+namespace string_transcode {
 
 #if MPT_COMPILER_CLANG
 #pragma clang diagnostic push
@@ -233,7 +233,7 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 #endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 }
 
-} // namespace string_convert
+} // namespace string_transcode
 } // namespace tests
 
 

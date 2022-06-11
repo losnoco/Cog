@@ -524,6 +524,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		// All Scream Tracker versions except for some probably early revisions of Scream Tracker 3.00 write GUS addresses. GUS support might not have existed at that point (1992).
 		// Hence if a file claims to be written with ST3 (but not ST3.00), but has no GUS addresses, we deduce that it must be written by some other software (e.g. some PSM -> S3M conversions)
 		isST3 = false;
+		MPT_UNUSED(isST3);		
 		m_modFormat.madeWithTracker = U_("Unknown");
 	} else if(isST3)
 	{

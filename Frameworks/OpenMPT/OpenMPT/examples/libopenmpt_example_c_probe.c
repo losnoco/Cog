@@ -80,7 +80,6 @@ static int probe_file( const char * filename ) {
 #if ( LIBOPENMPT_EXAMPLE_PROBE_RESULT == LIBOPENMPT_EXAMPLE_PROBE_RESULT_BINARY )
 	probe_file_header_result = openmpt_probe_file_header_from_stream( OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT, openmpt_stream_get_file_callbacks(), file, &libopenmpt_example_logfunc, NULL, &openmpt_error_func_default, NULL, &mod_err, NULL );
 	probe_file_header_result_str = NULL;
-	result_binary = 0;
 	switch ( probe_file_header_result ) {
 		case OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS:
 			probe_file_header_result_str = "Success     ";
@@ -96,11 +95,13 @@ static int probe_file( const char * filename ) {
 			break;
 		case OPENMPT_PROBE_FILE_HEADER_RESULT_ERROR:
 			result_binary = 0;
+			(void)result_binary;
 			fprintf( stderr, "Error: %s\n", "openmpt_probe_file_header() failed." );
 			goto fail;
 			break;
 		default:
 			result_binary = 0;
+			(void)result_binary;
 			fprintf( stderr, "Error: %s\n", "openmpt_probe_file_header() failed." );
 			goto fail;
 			break;

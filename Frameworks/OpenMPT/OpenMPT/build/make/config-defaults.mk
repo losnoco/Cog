@@ -3,6 +3,7 @@ ifeq ($(HOST),unix)
 
 ifeq ($(HOST_FLAVOUR),MACOSX)
 
+NO_PULSEAUDIO?=1
 include build/make/config-clang.mk
 # Mac OS X overrides
 DYNLINK=0

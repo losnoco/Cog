@@ -20,6 +20,10 @@
 #endif // MODPLUG_TRACKER && MPT_OS_WINDOWS
 #endif // MPT_ENABLE_FILEIO
 
+#if defined(MPT_ENABLE_FILEIO)
+#include <stdexcept>
+#endif // MPT_ENABLE_FILEIO
+
 #ifdef MODPLUG_TRACKER
 #if MPT_OS_WINDOWS
 #include <windows.h>

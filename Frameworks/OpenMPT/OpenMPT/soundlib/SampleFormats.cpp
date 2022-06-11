@@ -1163,8 +1163,7 @@ bool CSoundFile::ReadS3ISample(SAMPLEINDEX nSample, FileReader &file)
 bool CSoundFile::SaveS3ISample(SAMPLEINDEX smp, std::ostream &f) const
 {
 	const ModSample &sample = Samples[smp];
-	S3MSampleHeader sampleHeader;
-	MemsetZero(sampleHeader);
+	S3MSampleHeader sampleHeader{};
 	SmpLength length = sampleHeader.ConvertToS3M(sample);
 	mpt::String::WriteBuf(mpt::String::nullTerminated, sampleHeader.name) = m_szNames[smp];
 	mpt::String::WriteBuf(mpt::String::maybeNullTerminated, sampleHeader.reserved2) = mpt::ToCharset(mpt::Charset::UTF8, Version::Current().GetOpenMPTVersionString());
@@ -1186,9 +1185,10 @@ bool CSoundFile::SaveS3ISample(SAMPLEINDEX smp, std::ostream &f) const
 bool CSoundFile::ReadSBISample(SAMPLEINDEX sample, FileReader &file)
 {
 	file.Rewind();
-	if(!file.ReadMagic("SBI\x1A")
-		|| !file.CanRead(32 + sizeof(OPLPatch))
-		|| file.CanRead(64))	// Arbitrary threshold to reject files that are unlikely to be SBI files
+	const auto magic = file.ReadArray<char, 4>();
+	if((memcmp(magic.data(), "SBI\x1A", 4) && memcmp(magic.data(), "SBI\x1D", 4))  // 1D =  broken JuceOPLVSTi files
+	   || !file.CanRead(32 + sizeof(OPLPatch))
+	   || file.CanRead(64))  // Arbitrary threshold to reject files that are unlikely to be SBI files
 		return false;
 
 	if(!SupportsOPL())
@@ -1749,7 +1749,6 @@ bool CSoundFile::ReadCAFSample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 	return true;
 
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
