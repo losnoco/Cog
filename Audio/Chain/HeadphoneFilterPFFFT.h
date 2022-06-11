@@ -8,23 +8,21 @@
 #ifndef HeadphoneFilter_h
 #define HeadphoneFilter_h
 
-#import <Accelerate/Accelerate.h>
 #import <Cocoa/Cocoa.h>
 
+#import "pffft.h"
+
 @interface HeadphoneFilter : NSObject {
-	vDSP_DFT_Setup dftSetupF;
-	vDSP_DFT_Setup dftSetupB;
+	PFFFT_Setup *fftSetup;
 
 	size_t fftSize;
-	size_t fftSizeOver2;
 	size_t bufferSize;
 	size_t paddedBufferSize;
 	size_t channelCount;
 
-	DSPSplitComplex signal_fft;
-	DSPSplitComplex input_filtered_signal_per_channel[2];
-	DSPSplitComplex input_filtered_signal_totals[2];
-	DSPSplitComplex *impulse_responses;
+	float *workBuffer;
+
+	float **impulse_responses;
 
 	float **prevInputs;
 
