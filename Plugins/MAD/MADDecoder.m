@@ -387,6 +387,7 @@
 	mad_synth_init(&_synth);
 
 	_firstFrame = YES;
+	_outputFrames = 0;
 	// DLog(@"OPEN: %i", _firstFrame);
 
 	inputEOF = NO;
