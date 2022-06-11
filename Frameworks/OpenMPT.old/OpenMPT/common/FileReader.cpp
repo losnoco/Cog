@@ -14,6 +14,7 @@
 #if defined(MPT_ENABLE_TEMPFILE) && MPT_OS_WINDOWS
 #include <windows.h>
 #include "mptFileIO.h"
+#include <stdexcept>
 #endif // MPT_ENABLE_TEMPFILE && MPT_OS_WINDOWS
 
 

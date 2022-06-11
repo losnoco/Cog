@@ -152,6 +152,28 @@ void ModChannel::SetInstrumentPan(int32 pan, const CSoundFile &sndFile)
 }
 
 
+void ModChannel::RestorePanAndFilter()
+{
+	if(nRestorePanOnNewNote > 0)
+	{
+		nPan = (nRestorePanOnNewNote & 0x7FFF) - 1;
+		if(nRestorePanOnNewNote & 0x8000)
+			dwFlags.set(CHN_SURROUND);
+		nRestorePanOnNewNote = 0;
+	}
+	if(nRestoreResonanceOnNewNote > 0)
+	{
+		nResonance = nRestoreResonanceOnNewNote - 1;
+		nRestoreResonanceOnNewNote = 0;
+	}
+	if(nRestoreCutoffOnNewNote > 0)
+	{
+		nCutOff = nRestoreCutoffOnNewNote - 1;
+		nRestoreCutoffOnNewNote = 0;
+	}
+}
+
+
 void ModChannel::RecalcTuningFreq(Tuning::RATIOTYPE vibratoFactor, Tuning::NOTEINDEXTYPE arpeggioSteps, const CSoundFile &sndFile)
 {
 	if(!HasCustomTuning())

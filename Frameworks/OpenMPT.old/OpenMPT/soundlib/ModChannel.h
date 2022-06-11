@@ -195,6 +195,7 @@ struct ModChannel
 	void UpdateInstrumentVolume(const ModSample *smp, const ModInstrument *ins);
 
 	void SetInstrumentPan(int32 pan, const CSoundFile &sndFile);
+	void RestorePanAndFilter();
 
 	void RecalcTuningFreq(Tuning::RATIOTYPE vibratoFactor, Tuning::NOTEINDEXTYPE arpeggioSteps, const CSoundFile &sndFile);
 

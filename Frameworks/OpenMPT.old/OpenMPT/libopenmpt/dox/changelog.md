@@ -5,6 +5,16 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.5.18 (2022-04-24)
+
+ *  Pitch / Pan Separation and Random Variation instrument properties were not
+    resetting properly when seeking, potentially causing instruments to be
+    played e.g. at a vastly different pan position compared to playing the
+    module continuously.
+ *  MED: Stereo samples were not imported correctly.
+
+ *  zlib: Update to v1.2.12 (2022-03-27).
+
 ### libopenmpt 0.5.17 (2022-03-13)
 
  *  [**Sec**] Possible out-of-bounds write in malformed IT / XM / MPTM files

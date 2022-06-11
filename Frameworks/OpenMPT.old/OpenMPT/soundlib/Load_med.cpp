@@ -759,7 +759,10 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 		if(instrOffsets[ins - 1] != 0 && file.Seek(instrOffsets[ins - 1]))
 		{
 			file.ReadStruct(instrHeader);
-			sampleChunk = file.ReadChunk(instrHeader.length);
+			uint32 chunkLength = instrHeader.length;
+			if(instrHeader.type > 0 && (instrHeader.type & MMDInstrHeader::STEREO))
+				chunkLength *= 2u;
+			sampleChunk = file.ReadChunk(chunkLength);
 		}
 		const bool isSynth = instrHeader.type < 0;
 		const size_t maskedType = static_cast<size_t>(instrHeader.type & MMDInstrHeader::TYPEMASK);
@@ -911,7 +914,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 			sampleIO |= SampleIO::_16bit;
 			length /= 2;
 		}
-		if (instrHeader.type & MMDInstrHeader::STEREO)
+		if(instrHeader.type & MMDInstrHeader::STEREO)
 		{
 			sampleIO |= SampleIO::stereoSplit;
 			length /= 2;
