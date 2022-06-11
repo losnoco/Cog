@@ -533,7 +533,8 @@ static uint8_t reverse_bits[0x100];
 				}
 			} else if(!strcasecmp(tag->key, "icy-url")) {
 				_album = guess_encoding_of_string(tag->value);
-			} else if(!strcasecmp(tag->key, "icy-genre")) {
+			} else if(!strcasecmp(tag->key, "icy-genre") ||
+			          !strcasecmp(tag->key, "genre")) {
 				_genre = guess_encoding_of_string(tag->value);
 			} else if(!strcasecmp(tag->key, "album")) {
 				_album = guess_encoding_of_string(tag->value);
