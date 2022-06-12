@@ -622,7 +622,7 @@ static SQLiteStore *g_sharedStore = NULL;
 							DLog(@"SQLite error: %s", error);
 							return nil;
 						}
-						break;
+						// break;
 
 					case 1:
 						// Schema 1 to 2: Add channelconfig integer field to the knowntracks table
@@ -630,7 +630,7 @@ static SQLiteStore *g_sharedStore = NULL;
 							DLog(@"SQLite error: %s", error);
 							return nil;
 						}
-						break;
+						// break;
 
 					case 2:
 						// Schema 2 to 3: Add arthash blob field to the artdictionary table, requires transmutation
@@ -686,7 +686,7 @@ static SQLiteStore *g_sharedStore = NULL;
 							}
 						}
 
-						break;
+						// break;
 
 					default:
 						break;
