@@ -106,6 +106,7 @@
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
 		832CFC562851AA8B002AC26F /* SpectrumViewLegacy.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC552851AA8B002AC26F /* SpectrumViewLegacy.m */; };
+		833C02672855642F00A7A159 /* Bugsnag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837E5ACB2852D5B80020D205 /* Bugsnag.framework */; };
 		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8349270C27B4EFFC0009AB2B /* duplicateItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */; };
@@ -1166,6 +1167,7 @@
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
 				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
+				833C02672855642F00A7A159 /* Bugsnag.framework in Frameworks */,
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
 				837E5ADF2852D5FD0020D205 /* Bugsnag.framework in Frameworks */,
