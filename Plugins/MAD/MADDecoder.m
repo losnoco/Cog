@@ -87,8 +87,6 @@
 	_fileSize = [_source tell];
 	[_source seek:0 whence:SEEK_SET];
 
-	mad_timer_t duration = { 0, 0 };
-
 	for(;;) {
 		[self bufferRefill:&stream];
 
@@ -354,14 +352,18 @@
 					break;
 				}
 			}
-		} else if(_foundiTunSMPB) {
+		} else if(_foundXingHeader || _foundiTunSMPB) {
+			break;
+		} else if(framesDecoded > 1) {
 			break;
 		}
-
-		mad_timer_add(&duration, frame.header.duration);
 	}
 
-	if(!_foundiTunSMPB && (!_foundXingHeader || !_foundLAMEHeader)) {
+	if(!_foundiTunSMPB && !_foundXingHeader) {
+		// Now do CBR estimation instead of full file scanning
+		size_t frameCount = (_fileSize - id3_length) / (stream.next_frame - stream.this_frame);
+		mad_timer_t duration = frame.header.duration;
+		mad_timer_multiply(&duration, frameCount);
 		totalFrames = mad_timer_count(duration, sampleRate);
 	}
 
@@ -388,6 +390,8 @@
 
 	_firstFrame = YES;
 	_outputFrames = 0;
+	_startPadding = 0;
+	_endPadding = 0;
 	// DLog(@"OPEN: %i", _firstFrame);
 
 	inputEOF = NO;
