@@ -150,7 +150,7 @@
 "702.title" = "Cog";
 
 /* Class = "NSMenuItem"; title = "Support Cog..."; ObjectID = "751"; */
-"751.title" = "Support Cog...";
+"751.title" = "Donate";
 
 /* Class = "NSMenuItem"; title = "Current Song"; ObjectID = "791"; */
 "791.title" = "Current Song";
@@ -281,8 +281,11 @@
 /* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[1] = "Play"; ObjectID = "1538"; */
 "1538.ibShadowedToolTips[1]" = "Play";
 
-/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[2] = "Next"; ObjectID = "1538"; */
-"1538.ibShadowedToolTips[2]" = "Next";
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[2] = "Stop"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[2]" = "Stop";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[3] = "Next"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[3]" = "Next";
 
 /* Class = "NSToolbarItem"; label = "Playback Control"; ObjectID = "1539"; */
 "1539.label" = "Playback Control";
