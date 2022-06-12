@@ -10,7 +10,11 @@
 
 #import "Plugin.h"
 
+#import "CueSheetTrack.h"
+
 @interface CueSheetMetadataReader : NSObject <CogMetadataReader> {
 }
+
++ (NSDictionary *)processDataForTrack:(CueSheetTrack *)track;
 
 @end

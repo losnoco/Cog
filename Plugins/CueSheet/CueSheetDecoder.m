@@ -10,7 +10,9 @@
 
 #import "CueSheet.h"
 #import "CueSheetContainer.h"
-#import "CueSheetTrack.h"
+#import "CueSheetMetadataReader.h"
+
+#import "NSDictionary+Merge.h"
 
 #import "Logging.h"
 
@@ -45,10 +47,13 @@
 }
 
 - (NSDictionary *)metadata {
+	NSDictionary *metadata = @{};
+	if(track != nil)
+		metadata = [CueSheetMetadataReader processDataForTrack:track];
 	if(decoder != nil)
-		return [decoder metadata];
+		return [metadata dictionaryByMergingWith:[decoder metadata]];
 	else
-		return @{};
+		return metadata;
 }
 
 - (BOOL)open:(id<CogSource>)s {
