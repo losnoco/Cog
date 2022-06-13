@@ -18,6 +18,8 @@
 }
 
 - (void)setMaxValue:(double)value {
+	if(isnan(value) || isinf(value)) value = 0.0; // Clip invalid values from bad file playlist entries
+
 	self.positionTextField.duration = (long)value;
 
 	[super setMaxValue:value];
