@@ -17,6 +17,32 @@
 #import "lpc.h"
 #import "util.h"
 
+@interface impulseCacheObject : NSObject {
+}
+@property NSURL *URL;
+@property int sampleCount;
+@property int channelCount;
+@property double sampleRate;
+@property double targetSampleRate;
+@property NSData *data;
+@end
+
+@implementation impulseCacheObject
+@synthesize URL;
+@synthesize sampleCount;
+@synthesize channelCount;
+@synthesize sampleRate;
+@synthesize targetSampleRate;
+@synthesize data;
+@end
+
+@interface impulseCache : NSObject {
+}
+@property NSMutableArray<impulseCacheObject *> *cacheObjects;
++ (impulseCache *)sharedController;
+- (const float *)getImpulse:(NSURL *)url sampleCount:(int *)sampleCount channelCount:(int *)channelCount sampleRate:(double)sampleRate;
+@end
+
 // Apparently _mm_malloc is Intel-only on newer macOS targets, so use supported posix_memalign
 static void *_memalign_malloc(size_t size, size_t align) {
 	void *ret = NULL;
@@ -25,6 +51,227 @@ static void *_memalign_malloc(size_t size, size_t align) {
 	}
 	return ret;
 }
+
+@implementation impulseCache
+
+static impulseCache *_sharedController = nil;
+
++ (impulseCache *)sharedController {
+	@synchronized(self) {
+		if(!_sharedController) {
+			_sharedController = [[impulseCache alloc] init];
+		}
+	}
+	return _sharedController;
+}
+
+- (id)init {
+	self = [super init];
+	if(self) {
+		self.cacheObjects = [[NSMutableArray alloc] init];
+	}
+	return self;
+}
+
+- (impulseCacheObject *)addImpulse:(NSURL *)url sampleCount:(int)sampleCount channelCount:(int)channelCount originalSampleRate:(double)originalSampleRate targetSampleRate:(double)targetSampleRate impulseBuffer:(const float *)impulseBuffer {
+	impulseCacheObject *obj = [[impulseCacheObject alloc] init];
+
+	obj.URL = url;
+	obj.sampleCount = sampleCount;
+	obj.channelCount = channelCount;
+	obj.sampleRate = originalSampleRate;
+	obj.targetSampleRate = targetSampleRate;
+	obj.data = [NSData dataWithBytes:impulseBuffer length:(sampleCount * channelCount * sizeof(float))];
+
+	@synchronized(self.cacheObjects) {
+		[self.cacheObjects addObject:obj];
+	}
+
+	return obj;
+}
+
+- (const float *)getImpulse:(NSURL *)url sampleCount:(int *)retSampleCount channelCount:(int *)retImpulseChannels sampleRate:(double)sampleRate {
+	BOOL impulseFound = NO;
+	const float *impulseData = NULL;
+	double sampleRateOfSource = 0;
+	int sampleCount = 0;
+	int impulseChannels = 0;
+	impulseCacheObject *cacheObject = nil;
+
+	@synchronized(self.cacheObjects) {
+		for(impulseCacheObject *obj in self.cacheObjects) {
+			if([obj.URL isEqualTo:url] &&
+			   obj.targetSampleRate == sampleRate) {
+				*retSampleCount = obj.sampleCount;
+				*retImpulseChannels = obj.channelCount;
+				return (const float *)[obj.data bytes];
+			}
+		}
+		for(impulseCacheObject *obj in self.cacheObjects) {
+			if([obj.URL isEqualTo:url] &&
+			   obj.sampleRate == obj.targetSampleRate) {
+				impulseData = (const float *)[obj.data bytes];
+				sampleCount = obj.sampleCount;
+				impulseChannels = obj.channelCount;
+				sampleRateOfSource = obj.sampleRate;
+				impulseFound = YES;
+				break;
+			}
+		}
+	}
+
+	if(!impulseFound) {
+		id<CogSource> source = [AudioSource audioSourceForURL:url];
+		if(!source)
+			return NULL;
+
+		if(![source open:url])
+			return NULL;
+
+		id<CogDecoder> decoder = [AudioDecoder audioDecoderForSource:source];
+
+		if(decoder == nil) {
+			[source close];
+			source = nil;
+			return NULL;
+		}
+
+		if(![decoder open:source]) {
+			decoder = nil;
+			[source close];
+			source = nil;
+			return NULL;
+		}
+
+		NSDictionary *properties = [decoder properties];
+
+		sampleRateOfSource = [[properties objectForKey:@"sampleRate"] floatValue];
+
+		sampleCount = [[properties objectForKey:@"totalFrames"] intValue];
+		impulseChannels = [[properties objectForKey:@"channels"] intValue];
+
+		if([[properties objectForKey:@"floatingPoint"] boolValue] != YES ||
+		   [[properties objectForKey:@"bitsPerSample"] intValue] != 32 ||
+		   !([[properties objectForKey:@"endian"] isEqualToString:@"host"] ||
+		     [[properties objectForKey:@"endian"] isEqualToString:@"little"]) ||
+		   (impulseChannels != 14 && impulseChannels != 7)) {
+			[decoder close];
+			decoder = nil;
+			[source close];
+			source = nil;
+			return NULL;
+		}
+
+		float *impulseBuffer = (float *)_memalign_malloc(sampleCount * sizeof(float) * impulseChannels, 16);
+		if(!impulseBuffer) {
+			[decoder close];
+			decoder = nil;
+			[source close];
+			source = nil;
+			return NULL;
+		}
+
+		if([decoder readAudio:impulseBuffer frames:sampleCount] != sampleCount) {
+			free(impulseBuffer);
+			[decoder close];
+			decoder = nil;
+			[source close];
+			source = nil;
+			return NULL;
+		}
+
+		[decoder close];
+		decoder = nil;
+		[source close];
+		source = nil;
+
+		cacheObject = [self addImpulse:url sampleCount:sampleCount channelCount:impulseChannels originalSampleRate:sampleRateOfSource targetSampleRate:sampleRateOfSource impulseBuffer:impulseBuffer];
+
+		free(impulseBuffer);
+
+		impulseData = (const float *)[cacheObject.data bytes];
+	}
+
+	if(sampleRateOfSource != sampleRate) {
+		double sampleRatio = sampleRate / sampleRateOfSource;
+		int resampledCount = (int)ceil((double)sampleCount * sampleRatio);
+
+		r8bstate *_r8bstate = new r8bstate(impulseChannels, 1024, sampleRateOfSource, sampleRate);
+
+		unsigned long PRIME_LEN_ = MAX(sampleRateOfSource / 20, 1024u);
+		PRIME_LEN_ = MIN(PRIME_LEN_, 16384u);
+		PRIME_LEN_ = MAX(PRIME_LEN_, 2 * LPC_ORDER + 1);
+
+		unsigned int N_samples_to_add_ = sampleRateOfSource;
+		unsigned int N_samples_to_drop_ = sampleRate;
+
+		samples_len(&N_samples_to_add_, &N_samples_to_drop_, 20, 8192u);
+
+		int resamplerLatencyIn = (int)N_samples_to_add_;
+		int resamplerLatencyOut = (int)N_samples_to_drop_;
+
+		float *tempImpulse = (float *)_memalign_malloc((sampleCount + resamplerLatencyIn * 2 + 1024) * sizeof(float) * impulseChannels, 16);
+		if(!tempImpulse) {
+			return nil;
+		}
+
+		resampledCount += resamplerLatencyOut * 2 + 1024;
+
+		float *resampledImpulse = (float *)_memalign_malloc(resampledCount * sizeof(float) * impulseChannels, 16);
+		if(!resampledImpulse) {
+			free(tempImpulse);
+			return nil;
+		}
+
+		size_t prime = MIN(sampleCount, PRIME_LEN_);
+
+		void *extrapolate_buffer = NULL;
+		size_t extrapolate_buffer_size = 0;
+
+		memcpy(tempImpulse + resamplerLatencyIn * impulseChannels, impulseData, sampleCount * sizeof(float) * impulseChannels);
+		lpc_extrapolate_bkwd(tempImpulse + N_samples_to_add_ * impulseChannels, sampleCount, prime, impulseChannels, LPC_ORDER, N_samples_to_add_, &extrapolate_buffer, &extrapolate_buffer_size);
+		lpc_extrapolate_fwd(tempImpulse + N_samples_to_add_ * impulseChannels, sampleCount, prime, impulseChannels, LPC_ORDER, N_samples_to_add_, &extrapolate_buffer, &extrapolate_buffer_size);
+		free(extrapolate_buffer);
+
+		size_t inputDone = 0;
+		size_t outputDone = 0;
+
+		outputDone = _r8bstate->resample(tempImpulse, sampleCount + N_samples_to_add_ * 2, &inputDone, resampledImpulse, resampledCount);
+
+		free(tempImpulse);
+
+		if(outputDone < resampledCount) {
+			outputDone += _r8bstate->flush(resampledImpulse + outputDone * impulseChannels, resampledCount - outputDone);
+		}
+
+		delete _r8bstate;
+
+		outputDone -= N_samples_to_drop_ * 2;
+
+		// Do this instead of the memmove
+		float *resampledImpulseData = resampledImpulse + N_samples_to_drop_ * impulseChannels;
+
+		/*memmove(resampledImpulse, resampledImpulse + N_samples_to_drop_ * impulseChannels, outputDone * sizeof(float) * impulseChannels);*/
+
+		sampleCount = (int)outputDone;
+
+		// Normalize resampled impulse by sample ratio
+		float fSampleRatio = (float)sampleRatio;
+		vDSP_vsdiv(resampledImpulseData, 1, &fSampleRatio, resampledImpulseData, 1, sampleCount * impulseChannels);
+
+		cacheObject = [self addImpulse:url sampleCount:sampleCount channelCount:impulseChannels originalSampleRate:sampleRateOfSource targetSampleRate:sampleRate impulseBuffer:resampledImpulseData];
+
+		free(resampledImpulse);
+
+		impulseData = (const float *)[cacheObject.data bytes];
+	}
+
+	*retSampleCount = sampleCount;
+	*retImpulseChannels = impulseChannels;
+	return impulseData;
+}
+
+@end
 
 @implementation HeadphoneFilter
 
@@ -131,136 +378,11 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 	self = [super init];
 
 	if(self) {
-		id<CogSource> source = [AudioSource audioSourceForURL:url];
-		if(!source)
-			return nil;
-
-		if(![source open:url])
-			return nil;
-
-		id<CogDecoder> decoder = [AudioDecoder audioDecoderForSource:source];
-
-		if(decoder == nil) {
-			[source close];
-			source = nil;
-			return nil;
-		}
-
-		if(![decoder open:source]) {
-			decoder = nil;
-			[source close];
-			source = nil;
-			return nil;
-		}
-
-		NSDictionary *properties = [decoder properties];
-
-		double sampleRateOfSource = [[properties objectForKey:@"sampleRate"] floatValue];
-
-		int sampleCount = [[properties objectForKey:@"totalFrames"] intValue];
-		int impulseChannels = [[properties objectForKey:@"channels"] intValue];
-
-		if([[properties objectForKey:@"floatingPoint"] boolValue] != YES ||
-		   [[properties objectForKey:@"bitsPerSample"] intValue] != 32 ||
-		   !([[properties objectForKey:@"endian"] isEqualToString:@"host"] ||
-		     [[properties objectForKey:@"endian"] isEqualToString:@"little"]) ||
-		   (impulseChannels != 14 && impulseChannels != 7)) {
-			[decoder close];
-			decoder = nil;
-			[source close];
-			source = nil;
-			return nil;
-		}
-
-		float *impulseBuffer = (float *)_memalign_malloc(sampleCount * sizeof(float) * impulseChannels, 16);
+		int sampleCount = 0;
+		int impulseChannels = 0;
+		const float *impulseBuffer = [[impulseCache sharedController] getImpulse:url sampleCount:&sampleCount channelCount:&impulseChannels sampleRate:sampleRate];
 		if(!impulseBuffer) {
-			[decoder close];
-			decoder = nil;
-			[source close];
-			source = nil;
 			return nil;
-		}
-
-		if([decoder readAudio:impulseBuffer frames:sampleCount] != sampleCount) {
-			[decoder close];
-			decoder = nil;
-			[source close];
-			source = nil;
-			return nil;
-		}
-
-		[decoder close];
-		decoder = nil;
-		[source close];
-		source = nil;
-
-		if(sampleRateOfSource != sampleRate) {
-			double sampleRatio = sampleRate / sampleRateOfSource;
-			int resampledCount = (int)ceil((double)sampleCount * sampleRatio);
-
-			r8bstate *_r8bstate = new r8bstate(impulseChannels, 1024, sampleRateOfSource, sampleRate);
-			
-			unsigned long PRIME_LEN_ = MAX(sampleRateOfSource / 20, 1024u);
-			PRIME_LEN_ = MIN(PRIME_LEN_, 16384u);
-			PRIME_LEN_ = MAX(PRIME_LEN_, 2 * LPC_ORDER + 1);
-
-			unsigned int N_samples_to_add_ = sampleRateOfSource;
-			unsigned int N_samples_to_drop_ = sampleRate;
-
-			samples_len(&N_samples_to_add_, &N_samples_to_drop_, 20, 8192u);
-
-			int resamplerLatencyIn = (int)N_samples_to_add_;
-			int resamplerLatencyOut = (int)N_samples_to_drop_;
-
-			float *tempImpulse = (float *)_memalign_malloc((sampleCount + resamplerLatencyIn * 2 + 1024) * sizeof(float) * impulseChannels, 16);
-			if(!tempImpulse) {
-				free(impulseBuffer);
-				return nil;
-			}
-
-			resampledCount += resamplerLatencyOut * 2 + 1024;
-
-			float *resampledImpulse = (float *)_memalign_malloc(resampledCount * sizeof(float) * impulseChannels, 16);
-			if(!resampledImpulse) {
-				free(tempImpulse);
-				free(impulseBuffer);
-				return nil;
-			}
-
-			size_t prime = MIN(sampleCount, PRIME_LEN_);
-
-			void *extrapolate_buffer = NULL;
-			size_t extrapolate_buffer_size = 0;
-
-			memcpy(tempImpulse + resamplerLatencyIn * impulseChannels, impulseBuffer, sampleCount * sizeof(float) * impulseChannels);
-			free(impulseBuffer);
-			lpc_extrapolate_bkwd(tempImpulse + N_samples_to_add_ * impulseChannels, sampleCount, prime, impulseChannels, LPC_ORDER, N_samples_to_add_, &extrapolate_buffer, &extrapolate_buffer_size);
-			lpc_extrapolate_fwd(tempImpulse + N_samples_to_add_ * impulseChannels, sampleCount, prime, impulseChannels, LPC_ORDER, N_samples_to_add_, &extrapolate_buffer, &extrapolate_buffer_size);
-			free(extrapolate_buffer);
-
-			size_t inputDone = 0;
-			size_t outputDone = 0;
-
-			outputDone = _r8bstate->resample(tempImpulse, sampleCount + N_samples_to_add_ * 2, &inputDone, resampledImpulse, resampledCount);
-
-			free(tempImpulse);
-
-			if (outputDone < resampledCount) {
-				outputDone += _r8bstate->flush(resampledImpulse + outputDone * impulseChannels, resampledCount - outputDone);
-			}
-			
-			delete _r8bstate;
-
-			outputDone -= N_samples_to_drop_ * 2;
-
-			memmove(resampledImpulse, resampledImpulse + N_samples_to_drop_ * impulseChannels, outputDone * sizeof(float) * impulseChannels);
-
-			impulseBuffer = resampledImpulse;
-			sampleCount = (int)outputDone;
-
-			// Normalize resampled impulse by sample ratio
-			float fSampleRatio = (float)sampleRatio;
-			vDSP_vsdiv(impulseBuffer, 1, &fSampleRatio, impulseBuffer, 1, sampleCount * impulseChannels);
 		}
 
 		channelCount = channels;
@@ -277,7 +399,6 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 
 		float *deinterleavedImpulseBuffer = (float *)_memalign_malloc(fftSize * sizeof(float) * impulseChannels, 16);
 		if(!deinterleavedImpulseBuffer) {
-			free(impulseBuffer);
 			return nil;
 		}
 
@@ -285,8 +406,6 @@ static const int8_t speakers_to_hesuvi_14[11][2] = {
 			cblas_scopy(sampleCount, impulseBuffer + i, impulseChannels, deinterleavedImpulseBuffer + i * fftSize, 1);
 			vDSP_vclr(deinterleavedImpulseBuffer + i * fftSize + sampleCount, 1, fftSize - sampleCount);
 		}
-
-		free(impulseBuffer);
 
 		paddedBufferSize = fftSize;
 		fftSizeOver2 = (fftSize + 1) / 2;
