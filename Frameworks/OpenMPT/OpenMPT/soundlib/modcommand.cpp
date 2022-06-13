@@ -557,17 +557,27 @@ void ModCommand::Convert(MODTYPE fromType, MODTYPE toType, const CSoundFile &snd
 	{
 		switch(command)
 		{
-		case CMD_TONEPORTAVOL: // lacks memory -> 500 is the same as 300
-			if(param == 0x00) command = CMD_TONEPORTAMENTO;
+			case CMD_TONEPORTAVOL:  // lacks memory -> 500 is the same as 300
+			if(param == 0x00)
+				command = CMD_TONEPORTAMENTO;
 			break;
 
-		case CMD_VIBRATOVOL: // lacks memory -> 600 is the same as 400
-			if(param == 0x00) command = CMD_VIBRATO;
+		case CMD_VIBRATOVOL:  // lacks memory -> 600 is the same as 400
+			if(param == 0x00)
+				command = CMD_VIBRATO;
 			break;
 
-		case CMD_MODCMDEX: // This would turn into "Set Active Macro", so let's better remove it
+		case CMD_PORTAMENTOUP:  // lacks memory -> remove
+		case CMD_PORTAMENTODOWN:
+		case CMD_VOLUMESLIDE:
+			if(param == 0x00)
+				command = CMD_NONE;
+			break;
+
+		case CMD_MODCMDEX:  // This would turn into "Set Active Macro", so let's better remove it
 		case CMD_S3MCMDEX:
-			if((param & 0xF0) == 0xF0) command = CMD_NONE;
+			if((param & 0xF0) == 0xF0)
+				command = CMD_NONE;
 			break;
 		}
 	} // End if(oldTypeIsMOD && newTypeIsXM)

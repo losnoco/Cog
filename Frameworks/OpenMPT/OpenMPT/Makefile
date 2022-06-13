@@ -218,7 +218,28 @@ LIBOPENMPT_SO_VERSION=$(LIBOPENMPT_LTVER_CURRENT)
 
 # host setup
 
-ifeq ($(OS),Windows_NT)
+ifneq ($(MSYSTEM)x,x)
+
+HOST=unix
+HOST_FLAVOUR=
+
+TOOLCHAIN_SUFFIX=
+
+CPPCHECK = cppcheck
+
+MKDIR_P = mkdir -p
+RM = rm -f
+RMTREE = rm -rf
+INSTALL = install
+INSTALL_MAKE_DIR = install -d
+INSTALL_DIR = cp -r -v
+FIXPATH = $1
+
+HOST_FLAVOUR=MSYS2
+
+NUMTHREADS:=$(shell nproc)
+
+else ifeq ($(OS),Windows_NT)
 
 HOST=windows
 HOST_FLAVOUR=
@@ -1662,7 +1683,7 @@ endif
 	svn export ./libopenmpt/doc/xmp-openmpt.txt  bin/dist-retro-win9x/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/XMPlay/xmp-openmpt.txt --native-eol CRLF
 	cp bin/xmp-openmpt.dll                       bin/dist-retro-win9x/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/XMPlay/xmp-openmpt.dll
 	mkdir -p                                     bin/dist-retro-win9x/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/Winamp
-	svn export ./libopenmpt/doc/xmp-openmpt.txt  bin/dist-retro-win9x/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/Winamp/in_openmpt.txt --native-eol CRLF
+	svn export ./libopenmpt/doc/in_openmpt.txt   bin/dist-retro-win9x/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/Winamp/in_openmpt.txt --native-eol CRLF
 	cp bin/in_openmpt.dll                        bin/dist-retro-win9x/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/Winamp/in_openmpt.dll
 	cd bin/dist-retro-win9x/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/ && ../../../build/tools/7zip/7z a -tzip -mx=9 ../libopenmpt-$(DIST_LIBOPENMPT_VERSION).bin.retro.win9x.zip *
 

@@ -17,6 +17,7 @@
 #include "Snd_defs.h"
 #include "openmpt/base/FlagSet.hpp"
 #include "../common/misc_util.h"
+#include <map>
 #include <set>
 
 OPENMPT_NAMESPACE_BEGIN
@@ -26,7 +27,7 @@ struct ModChannel;
 // Instrument Nodes
 struct EnvelopeNode
 {
-	using tick_t = uint16 ;
+	using tick_t = uint16;
 	using value_t = uint8;
 
 	tick_t tick = 0;   // Envelope node position (x axis)
@@ -133,11 +134,12 @@ struct ModInstrument
 	// Reset note mapping (i.e. every note is mapped to itself)
 	void ResetNoteMap()
 	{
-		for(size_t n = 0; n < std::size(NoteMap); n++)
-		{
-			NoteMap[n] = static_cast<uint8>(n + 1);
-		}
+		std::iota(NoteMap.begin(), NoteMap.end(), static_cast<uint8>(NOTE_MIN));
 	}
+
+	// If the instrument has a non-default note mapping and can be simplified to use the default note mapping by transposing samples,
+	// the list of samples that would need to be transposed and the corresponding transpose values are returned - otherwise an empty map.
+	std::map<SAMPLEINDEX, int8> CanConvertToDefaultNoteMap() const;
 
 	// Transpose entire note mapping by given number of semitones
 	void Transpose(int8 amount);

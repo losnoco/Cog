@@ -34,7 +34,9 @@
 #if defined(MPT_WITH_MFC)
 #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS // Avoid binary bloat from linking unused MFC controls
 #endif // MPT_WITH_MFC
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #if defined(MPT_WITH_MFC)
 #include <afxwin.h>
 #include <afxcmn.h>

@@ -5,9 +5,8 @@
 
 
 
+#include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
-
-#include <type_traits>
 
 #include <cassert>
 #include <cstddef>

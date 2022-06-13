@@ -87,8 +87,12 @@ MPT_WARNING("Warning: libopenmpt for WinRT is built with reduced functionality. 
 MPT_WARNING("Warning: libopenmpt built in non thread-safe mode because mutexes are not supported by the C++ standard library available.")
 #endif // MPT_MUTEX_NONE
 
-#if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS) && !defined(MPT_WITH_MINGWSTDTHREADS)
-MPT_WARNING("Warning: Building libopenmpt with MinGW-w64 without std::thread support is not recommended and is deprecated. Please use MinGW-w64 with posix threading model (as opposed to win32 threading model), or build with mingw-std-threads.")
+#if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS) 
+#if defined(MPT_WITH_MINGWSTDTHREADS)
+MPT_WARNING("Warning: Building with mingw-std-threads is deprecated because this is not supported with GCC 11 or later.")
+#else // !MINGWSTDTHREADS
+MPT_WARNING("Warning: Platform (Windows) supports multi-threading, however the toolchain (MinGW/GCC) does not. The resulting libopenmpt may not be thread-safe. This is a MinGW/GCC issue. You can avoid this warning by using a MinGW toolchain built with posix threading model as opposed to win32 threading model.")
+#endif // MINGWSTDTHREADS
 #endif // MINGW
 
 #if MPT_CLANG_AT_LEAST(5,0,0) && MPT_CLANG_BEFORE(11,0,0) && defined(__powerpc__) && !defined(__powerpc64__)
@@ -99,8 +103,7 @@ MPT_WARNING("Warning: libopenmpt is known to trigger bad code generation with Cl
 
 #if defined(MPT_ASSERT_HANDLER_NEEDED) && !defined(ENABLE_TESTS)
 
-MPT_NOINLINE void AssertHandler(const mpt::source_location &loc, const char *expr, const char *msg)
-{
+MPT_NOINLINE void AssertHandler(const mpt::source_location &loc, const char *expr, const char *msg) {
 	if(msg) {
 		mpt::log::GlobalLogger().SendLogMessage(loc, LogError, "ASSERT",
 			MPT_USTRING("ASSERTION FAILED: ") + mpt::ToUnicode(mpt::CharsetSource, msg) + MPT_USTRING(" (") + mpt::ToUnicode(mpt::CharsetSource, expr) + MPT_USTRING(")")

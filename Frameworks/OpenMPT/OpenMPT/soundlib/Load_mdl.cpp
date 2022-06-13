@@ -371,12 +371,10 @@ static bool ImportMDLCommands(ModCommand &m, uint8 vol, uint8 e1, uint8 e2, uint
 		// Almost as easy
 		e2 = e1;
 		p2 = p1;
-		e1 = CMD_NONE;
 	} else if(e1 == e2 && e1 != CMD_S3MCMDEX)
 	{
 		// Digitrakker processes the effects left-to-right, so if both effects are the same, the
 		// second essentially overrides the first.
-		e1 = CMD_NONE;
 	} else if(!vol)
 	{
 		lostCommand |= (ModCommand::TwoRegularCommandsToMPT(e1, p1, e2, p2).first != CMD_NONE);
@@ -389,6 +387,7 @@ static bool ImportMDLCommands(ModCommand &m, uint8 vol, uint8 e1, uint8 e2, uint
 			std::swap(e1, e2);
 			std::swap(p1, p2);
 		}
+		lostCommand = true;
 	}
 
 	m.command = e2;

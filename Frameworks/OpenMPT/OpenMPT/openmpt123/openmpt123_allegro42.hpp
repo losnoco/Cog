@@ -30,7 +30,7 @@ namespace openmpt123 {
 struct allegro42_exception : public exception {
 	static std::string error_to_string() {
 		try {
-			return allegro_error ? std::string( allegro_error ) : std::string();
+			return std::string( allegro_error );
 		} catch ( const std::bad_alloc & ) {
 			return std::string();
 		}

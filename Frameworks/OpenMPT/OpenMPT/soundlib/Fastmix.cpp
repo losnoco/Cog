@@ -190,12 +190,21 @@ struct MixLoopState
 		// Part 2: Compute how many samples we can render until we reach the end of sample / loop boundary / etc.
 
 		SamplePosition nPos = chn.position;
-		// too big increment, and/or too small loop length
-		if (nPos.GetInt() < nLoopStart)
+		const SmpLength nPosInt = nPos.GetUInt();
+		if(nPos.GetInt() < nLoopStart)
 		{
-			if (nPos.IsNegative() || nInc.IsNegative()) return 0;
+			// too big increment, and/or too small loop length
+			if(nPos.IsNegative() || nInc.IsNegative())
+				return 0;
+		} else
+		{
+			// Not testing for equality since we might be going backwards from the very end of the sample
+			if(nPosInt > chn.nLength)
+				return 0;
+			// If going forwards and we're preceisely at the end, there's no point in going further
+			if(nPosInt == chn.nLength && nInc.IsPositive())
+				return 0;
 		}
-		if (nPos.IsNegative() || nPos.GetUInt() >= chn.nLength) return 0;
 		uint32 nSmpCount = nSamples;
 		SamplePosition nInv = nInc;
 		if (nInc.IsNegative())
@@ -206,7 +215,6 @@ struct MixLoopState
 		SamplePosition incSamples = nInc * (nSamples - 1);
 		int32 nPosDest = (nPos + incSamples).GetInt();
 
-		const SmpLength nPosInt = nPos.GetUInt();
 		const bool isAtLoopStart = (nPosInt >= chn.nLoopStart && nPosInt < chn.nLoopStart + InterpolationLookaheadBufferSize);
 		if(!isAtLoopStart)
 		{
@@ -217,7 +225,7 @@ struct MixLoopState
 		bool checkDest = true;
 		if(lookaheadPointer != nullptr)
 		{
-			if(nPos.GetUInt() >= lookaheadStart)
+			if(nPosInt >= lookaheadStart)
 			{
 #if 0
 				const uint32 oldCount = nSmpCount;

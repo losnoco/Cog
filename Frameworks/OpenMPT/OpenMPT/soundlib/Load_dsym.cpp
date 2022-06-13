@@ -245,7 +245,7 @@ bool CSoundFile::ReadDSym(FileReader &file, ModLoadingFlags loadFlags)
 		ChnSettings[chn].nPan = (((chn & 3) == 1) || ((chn & 3) == 2)) ? 64 : 192;
 	}
 
-	uint8 sampleNameLength[64];
+	uint8 sampleNameLength[64] = {};
 	for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
 	{
 		Samples[smp].Initialize(MOD_TYPE_MOD);

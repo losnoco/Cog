@@ -5,6 +5,21 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.6.4 (2022-06-12)
+
+ *  [**Bug**] openmpt123: Linking failed when using Autotools build system
+    targeting MinGW.
+ *  [**Bug**] tests: Linking failed when using Autotools build system targeting
+    MinGW.
+ *  [**Bug**] examples: Linking failed when using Autotools build system
+    targeting MinGW.
+
+ *  [**Change**] Support for mingw-std-threads when building for MinGW targets
+    is now deprecated because this is not supported for GCC 11 or later (see
+    <https://github.com/meganz/mingw-std-threads/issues/79>).
+
+ *  Ping-pong sample loops sometimes stopped playing at the end of the loop.
+
 ### libopenmpt 0.6.3 (2022-04-24)
 
  *  Pitch / Pan Separation and Random Variation instrument properties were not

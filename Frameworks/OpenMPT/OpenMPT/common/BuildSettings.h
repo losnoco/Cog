@@ -500,7 +500,9 @@
 
 // windows.h excludes
 #define NOMEMMGR          // GMEM_*, LMEM_*, GHND, LHND, associated routines
+#ifndef NOMINMAX
 #define NOMINMAX          // Macros min(a,b) and max(a,b)
+#endif
 #define NOSERVICE         // All Service Controller routines, SERVICE_ equates, etc.
 #define NOCOMM            // COMM driver routines
 #define NOKANJI           // Kanji support stuff.

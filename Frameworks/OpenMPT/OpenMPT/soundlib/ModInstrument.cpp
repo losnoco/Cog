@@ -305,6 +305,25 @@ void ModInstrument::Sanitize(MODTYPE modType)
 }
 
 
+std::map<SAMPLEINDEX, int8> ModInstrument::CanConvertToDefaultNoteMap() const
+{
+	std::map<SAMPLEINDEX, int8> transposeMap;
+	for(size_t i = 0; i < std::size(NoteMap); i++)
+	{
+		if(Keyboard[i] == 0)
+			continue;
+		if(!NoteMap[i] || NoteMap[i] == (i + 1))
+			continue;
+
+		const int8 relativeNote = static_cast<int8>(NoteMap[i] - (i + NOTE_MIN));
+		if(transposeMap.count(Keyboard[i]) && transposeMap[Keyboard[i]] != relativeNote)
+			return {};
+		transposeMap[Keyboard[i]] = relativeNote;
+	}
+	return transposeMap;
+}
+
+
 void ModInstrument::Transpose(int8 amount)
 {
 	for(auto &note : NoteMap)

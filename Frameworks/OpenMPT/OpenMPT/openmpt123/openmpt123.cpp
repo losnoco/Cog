@@ -1057,6 +1057,7 @@ void render_loop( commandlineflags & flags, Tmod & mod, double & duration, texto
 	
 	if ( multiline ) {
 		lines += 1;
+		// cppcheck-suppress identicalInnerCondition
 		if ( flags.show_ui ) {
 			lines += 1;
 		}
@@ -1174,7 +1175,7 @@ void render_loop( commandlineflags & flags, Tmod & mod, double & duration, texto
 				cpu /= ( static_cast<double>( count ) ) / static_cast<double>( flags.samplerate );
 				double mix = ( static_cast<double>( count ) ) / static_cast<double>( flags.samplerate );
 				cpu_smooth = ( 1.0 - mix ) * cpu_smooth + mix * cpu;
-				sprintf( cpu_str, "%.2f%%", cpu_smooth * 100.0 );
+				std::snprintf( cpu_str, 64, "%.2f%%", cpu_smooth * 100.0 );
 			}
 		}
 

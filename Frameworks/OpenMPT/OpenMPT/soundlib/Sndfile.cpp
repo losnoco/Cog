@@ -2045,6 +2045,7 @@ void TempoSwing::Normalize()
 		sum += i;
 	}
 	sum /= size();
+	MPT_ASSERT(sum > 0); // clang-analyzer false-positive 
 	int64 remain = Unity * size();
 	for(auto &i : *this)
 	{
