@@ -1282,6 +1282,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (IBAction)showEntryInFinder:(id)sender {
+	if([[self selectedObjects] count] == 0) return;
+
 	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
 
 	NSURL *url = [[self selectedObjects][0] URL];
