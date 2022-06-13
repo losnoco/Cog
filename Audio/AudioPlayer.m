@@ -83,7 +83,7 @@
 	bufferChain = [[BufferChain alloc] initWithController:self];
 	[self notifyStreamChanged:userInfo];
 
-	while(![bufferChain open:url withOutputFormat:[output format] withOutputConfig:[output config] withRGInfo:rgi]) {
+	while(![bufferChain open:url withOutputFormat:[output format] withOutputConfig:[output config] withUserInfo:userInfo withRGInfo:rgi]) {
 		bufferChain = nil;
 
 		[self requestNextStream:userInfo];
@@ -100,8 +100,6 @@
 
 		bufferChain = [[BufferChain alloc] initWithController:self];
 	}
-
-	[bufferChain setUserInfo:userInfo];
 
 	if(time > 0.0) {
 		[output seek:time];
@@ -276,8 +274,6 @@
 }
 
 - (void)addChainToQueue:(BufferChain *)newChain {
-	[newChain setUserInfo:nextStreamUserInfo];
-
 	[newChain setShouldContinue:YES];
 	[newChain launchThreads];
 
@@ -365,9 +361,8 @@
 		}
 
 		if(pathsEqual || ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]] && (([nextStream host] == nil && [[lastChain streamURL] host] == nil) || [[nextStream host] isEqualToString:[[lastChain streamURL] host]]) && [[nextStream path] isEqualToString:[[lastChain streamURL] path]])) {
-			if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withOutputConfig:[output config] withRGInfo:nextStreamRGInfo]) {
+			if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withOutputConfig:[output config] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 				[newChain setStreamURL:nextStream];
-				[newChain setUserInfo:nextStreamUserInfo];
 
 				[self addChainToQueue:newChain];
 				DLog(@"TRACK SET!!! %@", newChain);
@@ -381,7 +376,7 @@
 
 		lastChain = nil;
 
-		while(shouldContinue && ![newChain open:nextStream withOutputFormat:[output format] withOutputConfig:[output config] withRGInfo:nextStreamRGInfo]) {
+		while(shouldContinue && ![newChain open:nextStream withOutputFormat:[output format] withOutputConfig:[output config] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 			if(nextStream == nil) {
 				newChain = nil;
 				atomic_fetch_sub(&refCount, 1);

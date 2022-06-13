@@ -40,8 +40,9 @@
 	finalNode = converterNode;
 }
 
-- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withRGInfo:(NSDictionary *)rgi {
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
 	[self setStreamURL:url];
+	[self setUserInfo:userInfo];
 
 	[self buildChain];
 
@@ -81,8 +82,9 @@
 	return YES;
 }
 
-- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withRGInfo:(NSDictionary *)rgi {
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
 	DLog(@"New buffer chain!");
+	[self setUserInfo:userInfo];
 	[self buildChain];
 
 	if(![inputNode openWithDecoder:[i decoder]])
@@ -113,9 +115,11 @@
 - (BOOL)openWithDecoder:(id<CogDecoder>)decoder
        withOutputFormat:(AudioStreamBasicDescription)outputFormat
        withOutputConfig:(uint32_t)outputConfig
+           withUserInfo:(id)userInfo
              withRGInfo:(NSDictionary *)rgi;
 {
 	DLog(@"New buffer chain!");
+	[self setUserInfo:userInfo];
 	[self buildChain];
 
 	if(![inputNode openWithDecoder:decoder])
