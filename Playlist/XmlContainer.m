@@ -95,6 +95,7 @@
 		items = dict[@"items"];
 		albumArt = dict[@"albumArt"];
 		queueList = dict[@"queue"];
+		if(!queueList) queueList = @[];
 	}
 
 	NSMutableArray *entries = [NSMutableArray array];
