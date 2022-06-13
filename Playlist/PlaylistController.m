@@ -885,6 +885,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (PlaylistEntry *)entryAtIndex:(NSInteger)i {
+	if([[self arrangedObjects] count] == 0) return nil;
+
 	RepeatMode repeat = [self repeat];
 
 	if(i < 0 || i >= [[self arrangedObjects] count]) {
