@@ -18,6 +18,9 @@
 #import "Logging.h"
 
 @implementation InputNode
+
+static void *kInputNodeContext = &kInputNodeContext;
+
 @synthesize exitAtTheEndOfTheStream;
 
 - (id)initWithController:(id)c previous:(id)p {
@@ -84,47 +87,53 @@
 }
 
 - (void)registerObservers {
-	DLog(@"REGISTERING OBSERVERS");
-	[decoder addObserver:self
-	          forKeyPath:@"properties"
-	             options:(NSKeyValueObservingOptionNew)
-	             context:NULL];
+	if(!observersAdded) {
+		DLog(@"REGISTERING OBSERVERS");
+		[decoder addObserver:self
+		          forKeyPath:@"properties"
+		             options:(NSKeyValueObservingOptionNew)
+		             context:kInputNodeContext];
 
-	[decoder addObserver:self
-	          forKeyPath:@"metadata"
-	             options:(NSKeyValueObservingOptionNew)
-	             context:NULL];
+		[decoder addObserver:self
+		          forKeyPath:@"metadata"
+		             options:(NSKeyValueObservingOptionNew)
+		             context:kInputNodeContext];
 
-	observersAdded = YES;
+		observersAdded = YES;
+	}
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-	DLog(@"SOMETHING CHANGED!");
-	if([keyPath isEqual:@"properties"]) {
-		DLog(@"Input format changed");
-		// Converter may need resetting, it'll do that when it reaches the new chunks
-		NSDictionary *properties = [decoder properties];
+	if(context == kInputNodeContext) {
+		DLog(@"SOMETHING CHANGED!");
+		if([keyPath isEqual:@"properties"]) {
+			DLog(@"Input format changed");
+			// Converter may need resetting, it'll do that when it reaches the new chunks
+			NSDictionary *properties = [decoder properties];
 
-		int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
-		int channels = [[properties objectForKey:@"channels"] intValue];
+			int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
+			int channels = [[properties objectForKey:@"channels"] intValue];
 
-		bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
+			bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
-		nodeFormat = propertiesToASBD(properties);
-		nodeChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
-		nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
-	} else if([keyPath isEqual:@"metadata"]) {
-		// Inform something of metadata change
-		NSDictionary *entryProperties = [decoder properties];
-		if(entryProperties == nil)
-			return;
+			nodeFormat = propertiesToASBD(properties);
+			nodeChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
+			nodeLossless = [[properties valueForKey:@"encoding"] isEqualToString:@"lossless"];
+		} else if([keyPath isEqual:@"metadata"]) {
+			// Inform something of metadata change
+			NSDictionary *entryProperties = [decoder properties];
+			if(entryProperties == nil)
+				return;
 
-		NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[decoder metadata]];
+			NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[decoder metadata]];
 
-		[controller pushInfo:entryInfo];
+			[controller pushInfo:entryInfo];
+		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 
@@ -251,8 +260,8 @@
 
 - (void)removeObservers {
 	if(observersAdded) {
-		[decoder removeObserver:self forKeyPath:@"properties"];
-		[decoder removeObserver:self forKeyPath:@"metadata"];
+		[decoder removeObserver:self forKeyPath:@"properties" context:kInputNodeContext];
+		[decoder removeObserver:self forKeyPath:@"metadata" context:kInputNodeContext];
 		observersAdded = NO;
 	}
 }

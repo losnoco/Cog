@@ -47,6 +47,8 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 
 @implementation ConverterNode
 
+static void *kConverterNodeContext = &kConverterNodeContext;
+
 @synthesize inputFormat;
 
 - (id)initWithController:(id)c previous:(id)p {
@@ -78,7 +80,7 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 
 		lastChunkIn = nil;
 
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling" options:0 context:nil];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling" options:0 context:kConverterNodeContext];
 	}
 
 	return self;
@@ -900,10 +902,14 @@ tryagain:
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-	DLog(@"SOMETHING CHANGED!");
-	if([keyPath isEqualToString:@"values.volumeScaling"]) {
-		// User reset the volume scaling option
-		[self refreshVolumeScaling];
+	if(context == kConverterNodeContext) {
+		DLog(@"SOMETHING CHANGED!");
+		if([keyPath isEqualToString:@"values.volumeScaling"]) {
+			// User reset the volume scaling option
+			[self refreshVolumeScaling];
+		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 
@@ -1056,7 +1062,7 @@ static float db_to_scale(float db) {
 - (void)dealloc {
 	DLog(@"Decoder dealloc");
 
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling"];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling" context:kConverterNodeContext];
 
 	paused = NO;
 	[self cleanUp];

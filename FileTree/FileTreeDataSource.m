@@ -13,6 +13,8 @@
 
 #import "Logging.h"
 
+static void *kFileTreeDataSourceContext = &kFileTreeDataSourceContext;
+
 static NSURL *defaultMusicDirectory(void) {
 	return [[NSFileManager defaultManager] URLForDirectory:NSMusicDirectory
 	                                              inDomain:NSUserDomainMask
@@ -44,18 +46,22 @@ static NSURL *defaultMusicDirectory(void) {
 	                                                          forKeyPath:@"values.fileTreeRootURL"
 	                                                             options:NSKeyValueObservingOptionNew |
 	                                                                     NSKeyValueObservingOptionInitial
-	                                                             context:nil];
+	                                                             context:kFileTreeDataSourceContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-	if([keyPath isEqualToString:@"values.fileTreeRootURL"]) {
-		NSString *url =
-		[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"];
-		DLog(@"File tree root URL: %@\n", url);
-		self.rootURL = [NSURL URLWithString:url];
+	if(context == kFileTreeDataSourceContext) {
+		if([keyPath isEqualToString:@"values.fileTreeRootURL"]) {
+			NSString *url =
+			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"];
+			DLog(@"File tree root URL: %@\n", url);
+			self.rootURL = [NSURL URLWithString:url];
+		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 

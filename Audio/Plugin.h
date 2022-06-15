@@ -53,6 +53,7 @@
 // These are in NSObject, so as long as you are a subclass of that, you are ok.
 - (void)addObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context;
 - (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath;
+- (void)removeObserver:(NSObject *)observer forKeyPath:(NSString *)keyPath context:(void *)context;
 
 - (BOOL)isSilence;
 @end

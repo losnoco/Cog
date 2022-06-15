@@ -85,6 +85,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		} else {
 			[self updateControls];
 		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 

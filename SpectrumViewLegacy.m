@@ -109,6 +109,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		} else {
 			[self colorsDidChange:nil];
 		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 

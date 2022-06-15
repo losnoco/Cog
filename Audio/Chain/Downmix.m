@@ -250,6 +250,8 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
 
 @implementation DownmixProcessor
 
+static void *kDownmixProcessorContext = &kDownmixProcessorContext;
+
 - (id)initWithInputFormat:(AudioStreamBasicDescription)inf inputConfig:(uint32_t)iConfig andOutputFormat:(AudioStreamBasicDescription)outf outputConfig:(uint32_t)oConfig {
 	self = [super init];
 
@@ -276,16 +278,16 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
 
 		[self setupVirt];
 
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.headphoneVirtualization" options:0 context:nil];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hrirPath" options:0 context:nil];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.headphoneVirtualization" options:0 context:kDownmixProcessorContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hrirPath" options:0 context:kDownmixProcessorContext];
 	}
 
 	return self;
 }
 
 - (void)dealloc {
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.headphoneVirtualization"];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.hrirPath"];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.headphoneVirtualization" context:kDownmixProcessorContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.hrirPath" context:kDownmixProcessorContext];
 }
 
 - (void)setupVirt {
@@ -328,11 +330,15 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-	DLog(@"SOMETHING CHANGED!");
-	if([keyPath isEqualToString:@"values.headphoneVirtualization"] ||
-	   [keyPath isEqualToString:@"values.hrirPath"]) {
-		// Reset the converter, without rebuffering
-		[self setupVirt];
+	if(context == kDownmixProcessorContext) {
+		DLog(@"SOMETHING CHANGED!");
+		if([keyPath isEqualToString:@"values.headphoneVirtualization"] ||
+		   [keyPath isEqualToString:@"values.hrirPath"]) {
+			// Reset the converter, without rebuffering
+			[self setupVirt];
+		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 

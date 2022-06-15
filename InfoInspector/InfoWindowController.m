@@ -14,6 +14,8 @@
 
 @implementation InfoWindowController
 
+static void *kInfoWindowControllerContext = &kInfoWindowControllerContext;
+
 @synthesize valueToDisplay;
 
 + (void)initialize {
@@ -27,18 +29,22 @@
 }
 
 - (void)awakeFromNib {
-	[playlistSelectionController addObserver:self forKeyPath:@"selection" options:NSKeyValueObservingOptionNew context:nil];
-	[currentEntryController addObserver:self forKeyPath:@"content" options:NSKeyValueObservingOptionNew context:nil];
-	[appController addObserver:self forKeyPath:@"miniMode" options:NSKeyValueObservingOptionNew context:nil];
+	[playlistSelectionController addObserver:self forKeyPath:@"selection" options:NSKeyValueObservingOptionNew context:kInfoWindowControllerContext];
+	[currentEntryController addObserver:self forKeyPath:@"content" options:NSKeyValueObservingOptionNew context:kInfoWindowControllerContext];
+	[appController addObserver:self forKeyPath:@"miniMode" options:NSKeyValueObservingOptionNew context:kInfoWindowControllerContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-	// Avoid "selection" because it creates a proxy that's hard to reason with when we don't need to write.
-	PlaylistEntry *currentSelection = [[playlistSelectionController selectedObjects] firstObject];
-	if(currentSelection != NULL) {
-		[self setValueToDisplay:currentSelection];
+	if(context == kInfoWindowControllerContext) {
+		// Avoid "selection" because it creates a proxy that's hard to reason with when we don't need to write.
+		PlaylistEntry *currentSelection = [[playlistSelectionController selectedObjects] firstObject];
+		if(currentSelection != NULL) {
+			[self setValueToDisplay:currentSelection];
+		} else {
+			[self setValueToDisplay:[currentEntryController content]];
+		}
 	} else {
-		[self setValueToDisplay:[currentEntryController content]];
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 

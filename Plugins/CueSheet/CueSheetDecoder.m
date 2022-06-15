@@ -18,6 +18,8 @@
 
 @implementation CueSheetDecoder
 
+static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
+
 + (NSArray *)fileTypes {
 	return [CueSheetContainer fileTypes];
 }
@@ -199,24 +201,26 @@
 }
 
 - (void)registerObservers {
-	DLog(@"REGISTERING OBSERVERS");
-	[decoder addObserver:self
-	          forKeyPath:@"properties"
-	             options:(NSKeyValueObservingOptionNew)
-	             context:NULL];
+	if(!observersAdded) {
+		DLog(@"REGISTERING OBSERVERS");
+		[decoder addObserver:self
+		          forKeyPath:@"properties"
+		             options:(NSKeyValueObservingOptionNew)
+		             context:kCueSheetDecoderContext];
 
-	[decoder addObserver:self
-	          forKeyPath:@"metadata"
-	             options:(NSKeyValueObservingOptionNew)
-	             context:NULL];
+		[decoder addObserver:self
+		          forKeyPath:@"metadata"
+		             options:(NSKeyValueObservingOptionNew)
+		             context:kCueSheetDecoderContext];
 
-	observersAdded = YES;
+		observersAdded = YES;
+	}
 }
 
 - (void)removeObservers {
 	if(observersAdded) {
-		[decoder removeObserver:self forKeyPath:@"properties"];
-		[decoder removeObserver:self forKeyPath:@"metadata"];
+		[decoder removeObserver:self forKeyPath:@"properties" context:kCueSheetDecoderContext];
+		[decoder removeObserver:self forKeyPath:@"metadata" context:kCueSheetDecoderContext];
 		observersAdded = NO;
 	}
 }
@@ -225,8 +229,12 @@
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-	[self willChangeValueForKey:keyPath];
-	[self didChangeValueForKey:keyPath];
+	if(context == kCueSheetDecoderContext) {
+		[self willChangeValueForKey:keyPath];
+		[self didChangeValueForKey:keyPath];
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 - (void)close {

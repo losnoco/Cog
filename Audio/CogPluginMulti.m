@@ -42,6 +42,8 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 
 @implementation CogDecoderMulti
 
+static void *kCogDecoderMultiContext = &kCogDecoderMultiContext;
+
 + (NSArray *)mimeTypes {
 	return nil;
 }
@@ -114,17 +116,17 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
 	[theDecoder addObserver:self
 	             forKeyPath:@"properties"
 	                options:(NSKeyValueObservingOptionNew)
-	                context:NULL];
+	                context:kCogDecoderMultiContext];
 
 	[theDecoder addObserver:self
 	             forKeyPath:@"metadata"
 	                options:(NSKeyValueObservingOptionNew)
-	                context:NULL];
+	                context:kCogDecoderMultiContext];
 }
 
 - (void)removeObservers {
-	[theDecoder removeObserver:self forKeyPath:@"properties"];
-	[theDecoder removeObserver:self forKeyPath:@"metadata"];
+	[theDecoder removeObserver:self forKeyPath:@"properties" context:kCogDecoderMultiContext];
+	[theDecoder removeObserver:self forKeyPath:@"metadata" context:kCogDecoderMultiContext];
 }
 
 - (BOOL)setTrack:(NSURL *)track {
@@ -136,8 +138,12 @@ NSArray *sortClassesByPriority(NSArray *theClasses) {
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-	[self willChangeValueForKey:keyPath];
-	[self didChangeValueForKey:keyPath];
+	if(context == kCogDecoderMultiContext) {
+		[self willChangeValueForKey:keyPath];
+		[self didChangeValueForKey:keyPath];
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 @end

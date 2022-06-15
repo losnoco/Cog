@@ -23,6 +23,8 @@ static NSString *CogPlaybackDidBeginNotficiation = @"CogPlaybackDidBeginNotficia
 
 @implementation OutputCoreAudio
 
+static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
+
 static void fillBuffers(AudioBufferList *ioData, float *inbuffer, size_t count, size_t offset) {
 	const size_t channels = ioData->mNumberBuffers;
 	for(int i = 0; i < channels; ++i) {
@@ -223,6 +225,11 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+	if(context != kOutputCoreAudioContext) {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
+
 	if([keyPath isEqualToString:@"values.outputDevice"]) {
 		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 
@@ -774,9 +781,9 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 
 	visController = [VisualizationController sharedController];
 
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:NULL];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:NULL];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:NULL];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kOutputCoreAudioContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 	observersapplied = YES;
 
 	return (err == nil);
@@ -805,10 +812,10 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 - (void)stop {
 	stopInvoked = YES;
 	if(observersapplied) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputCoreAudioContext];
 		observersapplied = NO;
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice"];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable"];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp"];
 	}
 	if(stopNext && !paused) {
 		if(!started) {

@@ -10,9 +10,12 @@
 #import "CogAudio/Helper.h"
 #import "PlaybackController.h"
 
+static void *kVolumeSliderContext = &kVolumeSliderContext;
+
 @implementation VolumeSlider {
 	NSTimer *currentTimer;
 	BOOL wasInsideSnapRange;
+	BOOL observersadded;
 }
 
 - (id)initWithFrame:(NSRect)frame {
@@ -46,11 +49,14 @@
 	popover.animates = NO;
 	[popover setContentSize:textView.bounds.size];
 
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeLimit" options:0 context:nil];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeLimit" options:0 context:kVolumeSliderContext];
+	observersadded = YES;
 }
 
 - (void)dealloc {
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeLimit"];
+	if(observersadded) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeLimit" context:kVolumeSliderContext];
+	}
 }
 
 - (void)updateToolTip {
@@ -116,6 +122,11 @@
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+	if(context != kVolumeSliderContext) {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
+
 	if([keyPath isEqualToString:@"values.volumeLimit"]) {
 		BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
 		const double new_MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
