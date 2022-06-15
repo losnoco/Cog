@@ -111,6 +111,7 @@
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8349270C27B4EFFC0009AB2B /* duplicateItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */; };
 		8349270D27B4EFFC0009AB2B /* deadItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */; };
+		834B05EA2859C006000B7DC0 /* TotalTimeTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 834B05E92859C006000B7DC0 /* TotalTimeTransformer.m */; };
 		834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8301F94520E4EEF70017B2DC /* VorbisPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834F7F4320E4E4ED00228DAB /* AdPlug.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30920E4E3D000951EF8 /* AdPlug.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1004,6 +1005,8 @@
 		83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmPlayer.xcodeproj; path = Plugins/libvgmPlayer/libvgmPlayer.xcodeproj; sourceTree = "<group>"; };
 		8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = duplicateItemsTemplate.pdf; path = Images/duplicateItemsTemplate.pdf; sourceTree = "<group>"; };
 		8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = deadItemsTemplate.pdf; path = Images/deadItemsTemplate.pdf; sourceTree = "<group>"; };
+		834B05E82859C006000B7DC0 /* TotalTimeTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TotalTimeTransformer.h; path = Transformers/TotalTimeTransformer.h; sourceTree = "<group>"; };
+		834B05E92859C006000B7DC0 /* TotalTimeTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TotalTimeTransformer.m; path = Transformers/TotalTimeTransformer.m; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -1539,6 +1542,8 @@
 				17E0D6140F520F87005B6FED /* StringToURLTransformer.h */,
 				17E0D6150F520F87005B6FED /* StringToURLTransformer.m */,
 				838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */,
+				834B05E82859C006000B7DC0 /* TotalTimeTransformer.h */,
+				834B05E92859C006000B7DC0 /* TotalTimeTransformer.m */,
 			);
 			name = Transformers;
 			sourceTree = "<group>";
@@ -2775,6 +2780,7 @@
 				17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */,
 				179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */,
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
+				834B05EA2859C006000B7DC0 /* TotalTimeTransformer.m in Sources */,
 				839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */,
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,

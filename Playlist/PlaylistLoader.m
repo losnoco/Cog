@@ -261,10 +261,60 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
-- (void)setProgressBarStatus:(double)status {
+- (void)beginProgress:(NSString *)localizedDescription {
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self->playbackController setProgressBarStatus:status];
+		self->playbackController.progressOverall = [NSProgress progressWithTotalUnitCount:100000];
+		self->playbackController.progressOverall.localizedDescription = localizedDescription;
 	});
+}
+
+- (void)completeProgress {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		if(self->playbackController.progressJob) {
+			[self->playbackController.progressJob setCompletedUnitCount:100000];
+			self->playbackController.progressJob = nil;
+		}
+		[self->playbackController.progressOverall setCompletedUnitCount:100000];
+		self->playbackController.progressOverall = nil;
+	});
+}
+
+- (void)beginProgressJob:(NSString *)localizedDescription percentOfTotal:(double)percent {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		NSUInteger jobCount = (NSUInteger)ceil(1000.0 * percent);
+		self->playbackController.progressJob = [NSProgress progressWithTotalUnitCount:100000];
+		self->playbackController.progressJob.localizedDescription = localizedDescription;
+		[self->playbackController.progressOverall addChild:self->playbackController.progressJob withPendingUnitCount:jobCount];
+	});
+}
+
+- (void)completeProgressJob {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[self->playbackController.progressJob setCompletedUnitCount:100000];
+		self->playbackController.progressJob = nil;
+	});
+}
+
+- (void)setProgressStatus:(double)status {
+	if(status >= 0) {
+		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+			NSUInteger jobCount = (NSUInteger)ceil(1000.0 * status);
+			[self->playbackController.progressOverall setCompletedUnitCount:jobCount];
+		});
+	} else {
+		[self completeProgress];
+	}
+}
+
+- (void)setProgressJobStatus:(double)status {
+	if(status >= 0) {
+		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+			NSUInteger jobCount = (NSUInteger)ceil(1000.0 * status);
+			[self->playbackController.progressJob setCompletedUnitCount:jobCount];
+		});
+	} else {
+		[self completeProgressJob];
+	}
 }
 
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
@@ -276,19 +326,23 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSMutableArray *validURLs = [NSMutableArray array];
 	NSDictionary *xmlData = nil;
 
-	double progress = 0.0;
+	double progress;
 
 	if(!urls) {
-		[self setProgressBarStatus:-1];
+		[self completeProgress];
 		return @[];
 	}
+
+	[self beginProgress:NSLocalizedString(@"ProgressActionLoader", @"playlist loader inserting files")];
+
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderListingFiles", @"collecting files") percentOfTotal:20.0];
 
 	if(index < 0)
 		index = 0;
 
-	[self setProgressBarStatus:progress];
+	progress = 0.0;
 
-	double progressstep = [urls count] ? 20.0 / (double)([urls count]) : 0;
+	double progressstep = [urls count] ? 100.0 / (double)([urls count]) : 0;
 
 	NSURL *url;
 	for(url in urls) {
@@ -309,12 +363,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		progress += progressstep;
 
-		[self setProgressBarStatus:progress];
+		[self setProgressJobStatus:progress];
 	}
 
-	progress = 20.0;
+	[self completeProgressJob];
 
-	[self setProgressBarStatus:progress];
+	progress = 0.0;
 
 	DLog(@"Expanded urls: %@", expandedURLs);
 
@@ -326,7 +380,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		sortedURLs = expandedURLs;
 	}
 
-	progressstep = [sortedURLs count] ? 20.0 / (double)([sortedURLs count]) : 0;
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainerFiles", @"handling container file types") percentOfTotal:20.0];
+
+	progressstep = [sortedURLs count] ? 100.0 / (double)([sortedURLs count]) : 0;
 
 	for(url in sortedURLs) {
 		// Container vs non-container url
@@ -349,17 +405,23 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 
 		progress += progressstep;
-		[self setProgressBarStatus:progress];
+		[self setProgressJobStatus:progress];
 	}
 
-	progress = 40.0;
-	[self setProgressBarStatus:progress];
+	progress = 0.0;
+	[self completeProgressJob];
+
+	if([fileURLs count] > 0) {
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringFiles", @"eliminating unsupported file types") percentOfTotal:20.0];
+	} else {
+		[self setProgressStatus:60.0];
+	}
 
 	DLog(@"File urls: %@", fileURLs);
 
 	DLog(@"Contained urls: %@", containedURLs);
 
-	progressstep = [fileURLs count] ? 20.0 / (double)([fileURLs count]) : 0;
+	progressstep = [fileURLs count] ? 100.0 / (double)([fileURLs count]) : 0;
 
 	for(url in fileURLs) {
 		progress += progressstep;
@@ -379,16 +441,24 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			[uniqueURLs addObject:url];
 		}
 
-		[self setProgressBarStatus:progress];
+		[self setProgressJobStatus:progress];
 	}
 
-	progress = 60.0;
+	progress = 0.0;
 
-	[self setProgressBarStatus:progress];
+	if([fileURLs count] > 0) {
+		[self completeProgressJob];
+	}
+
+	if([containedURLs count] > 0) {
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainedFiles", @"eliminating unsupported file types from containers") percentOfTotal:20.0];
+	} else {
+		[self setProgressStatus:80.0];
+	}
 
 	DLog(@"Valid urls: %@", validURLs);
 
-	progressstep = [containedURLs count] ? 20.0 / (double)([containedURLs count]) : 0;
+	progressstep = [containedURLs count] ? 100.0 / (double)([containedURLs count]) : 0;
 
 	for(url in containedURLs) {
 		progress += progressstep;
@@ -402,12 +472,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		[validURLs addObject:url];
 
-		[self setProgressBarStatus:progress];
+		[self setProgressJobStatus:progress];
 	}
 
-	progress = 80.0;
-
-	[self setProgressBarStatus:progress];
+	progress = 0.0;
+	if([containedURLs count] > 0) {
+		[self completeProgressJob];
+	}
 
 	// Create actual entries
 	int count = (int)[validURLs count];
@@ -415,11 +486,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	// no valid URLs, or they use an unsupported URL scheme
 	if(!count) {
-		[self setProgressBarStatus:-1];
+		[self completeProgress];
 		return @[];
 	}
 
-	progressstep = 20.0 / (double)(count);
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderAddingEntries", @"creating and adding playlist entries") percentOfTotal:20.0];
+
+	progressstep = 100.0 / (double)(count);
 
 	NSInteger i = 0;
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
@@ -436,7 +509,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		++i;
 
 		progress += progressstep;
-		[self setProgressBarStatus:progress];
+		[self setProgressJobStatus:progress];
 	}
 
 	NSInteger j = index + i;
@@ -455,8 +528,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 	}
 
-	progress = 100.0;
-	[self setProgressBarStatus:progress];
+	[self completeProgress];
 
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 
@@ -486,19 +558,21 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		NSMutableArray *arrayRest = [entries mutableCopy];
 		[arrayRest removeObjectAtIndex:0];
 
-		progress = 0.0;
-		[self setProgressBarStatus:progress];
+		metadataLoadInProgress = YES;
+
+		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"loading metadata for tracks")];
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"processing files") percentOfTotal:50.0];
 
 		[self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
 
 		progressstep = 100.0 / (double)([entries count]);
-		progress += progressstep;
-		[self setProgressBarStatus:progress];
+		progress = progressstep;
+		[self setProgressJobStatus:progress];
 
 		if([arrayRest count])
 			[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
 		else
-			[self setProgressBarStatus:-1];
+			[self completeProgress];
 		return entries;
 	}
 }
@@ -510,17 +584,20 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	SQLiteStore *store = [SQLiteStore sharedStore];
 
-	__block double progress = [playbackController progressBarStatus];
+	__block double progress = 0.0;
 
-	if(progress < 0 || progress >= 100)
-		progress = 0;
+	double progressstep;
 
-	double progressRemaining = 100.0 - progress;
+	if(metadataLoadInProgress && [entries count]) {
+		progressstep = 100.0 / (double)([entries count] + 1);
+		progress = progressstep;
+	} else if([entries count]) {
+		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"loading metadata for tracks")];
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"processing files") percentOfTotal:50.0];
 
-	// 50% for properties reading, 50% for applying them to the main thread
-	const double progressstep = [entries count] ? (progressRemaining / 2.0) / [entries count] : 0;
-
-	progressRemaining = progress + (progressRemaining / 2.0);
+		progressstep = 100.0 / (double)([entries count]);
+		progress = 0.0;
+	}
 
 	i = 0;
 	j = 0;
@@ -537,6 +614,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	if(!i) {
 		[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+		[self completeProgress];
+		metadataLoadInProgress = NO;
 		return;
 	}
 
@@ -555,11 +634,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			NSBlockOperation *op = [[NSBlockOperation alloc] init];
 
 			[op addExecutionBlock:^{
-				[weakLock lock];
-				progress += progressstep;
-				[weakLock unlock];
-
-				if(weakPe.deleted) return;
+				if(weakPe.deleted) {
+					[weakLock lock];
+					progress += progressstep;
+					[self setProgressJobStatus:progress];
+					[weakLock unlock];
+					return;
+				}
 
 				DLog(@"Loading metadata for %@", weakPe.URL);
 
@@ -575,7 +656,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				entryInfo = [weakDataStore coalesceEntryInfo:entryInfo];
 				[weakArray addObject:weakPe];
 				[weakArray addObject:entryInfo];
-				[self setProgressBarStatus:progress];
+				progress += progressstep;
+				[self setProgressJobStatus:progress];
 				[weakLock unlock];
 			}];
 
@@ -585,8 +667,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	[queue waitUntilAllOperationsAreFinished];
 
-	progress = progressRemaining;
-	[self setProgressBarStatus:progress];
+	progress = 0.0;
+	[self completeProgressJob];
+
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionMetadataApply", @"applying info to playlist storage") percentOfTotal:50.0];
+
+	progressstep = 200.0 / (double)([outArray count]);
 
 	for(i = 0, j = [outArray count]; i < j; i += 2) {
 		__block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
@@ -597,7 +683,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				[store trackUpdate:weakPe];
 			}
 			progress += progressstep;
-			[self setProgressBarStatus:progress];
+			[self setProgressJobStatus:progress];
 		});
 	}
 
@@ -612,8 +698,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		});
 	}
 
-	[self setProgressBarStatus:-1];
+	[self completeProgress];
+	metadataLoadInProgress = NO;
 }
+
 // To be called on main thread only
 - (void)syncLoadInfoForEntries:(NSArray *)entries {
 	NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];

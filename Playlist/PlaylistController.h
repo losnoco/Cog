@@ -46,16 +46,20 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 	NSMutableArray *queueList;
 
 	NSString *totalTime;
+	NSString *currentStatus;
 
 	PlaylistEntry *currentEntry;
 
 	PlaylistEntry *nextEntryAfterDeleted;
 
 	NSUndoManager *undoManager;
+
+	BOOL observersRegistered;
 }
 
 @property(nonatomic, retain) PlaylistEntry *_Nullable currentEntry;
 @property(retain) NSString *_Nullable totalTime;
+@property(retain) NSString *_Nullable currentStatus;
 
 // Private Methods
 - (void)updateTotalTime;

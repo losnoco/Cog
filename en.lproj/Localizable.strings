@@ -45,3 +45,21 @@
 "CogTitle" = "Cog";
 
 "PreferencesTitle" = "Preferences";
+
+"ProgressActionUpdatingIndexes" = "updating playlist indexes";
+"ProgressActionMovingEntries" = "moving playlist entries";
+"ProgressActionInsertingEntries" = "inserting playlist entries";
+"ProgressActionUntrashingEntries" = "restoring playlist entries from the trash";
+"ProgressActionRemovingEntries" = "removing playlist entries";
+"ProgressActionTrashingEntries" = "moving playlist entries to the trash";
+
+"ProgressActionLoader" = "playlist loader inserting files";
+"ProgressSubActionLoaderListingFiles" = "collecting files";
+"ProgressSubActionLoaderFilteringContainerFiles" = "handling container file types";
+"ProgressSubActionLoaderFilteringFiles" = "eliminating unsupported file types";
+"ProgressSubActionLoaderFilteringContainedFiles" = "eliminating unsupported file types from containers";
+"ProgressSubActionLoaderAddingEntries" = "creating and adding playlist entries";
+
+"ProgressActionLoadingMetadata" = "loading metadata for tracks";
+"ProgressSubActionLoadingMetadata" = "processing files";
+"ProgressSubActionMetadataApply" = "applying info to playlist storage";

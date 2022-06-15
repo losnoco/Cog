@@ -21,6 +21,8 @@
 
 #import "ColorToValueTransformer.h"
 
+#import "TotalTimeTransformer.h"
+
 #import "Shortcuts.h"
 #import <MASShortcut/Shortcut.h>
 
@@ -53,8 +55,11 @@ void *kAppControllerContext = &kAppControllerContext;
 	NSValueTransformer *colorToValueTransformer = [[ColorToValueTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:colorToValueTransformer
 	                                forName:@"ColorToValueTransformer"];
-}
 
+	NSValueTransformer *totalTimeTransformer = [[TotalTimeTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:totalTimeTransformer
+	                                forName:@"TotalTimeTransformer"];
+}
 - (id)init {
 	self = [super init];
 	if(self) {
@@ -307,6 +312,12 @@ void *kAppControllerContext = &kAppControllerContext;
 			miniWindow.title = title;
 			mainWindow.title = title;
 		}
+	} else if([keyPath isEqualToString:@"finished"]) {
+		NSProgress *progress = (NSProgress *)object;
+		if([progress isFinished]) {
+			playbackController.progressOverall = nil;
+			[NSApp terminate:nil];
+		}
 	}
 }
 
@@ -322,6 +333,15 @@ void *kAppControllerContext = &kAppControllerContext;
 	NSString *url = [[node URL] absoluteString];
 
 	[expandedNodes removeObject:url];
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
+	if(playbackController.progressOverall) {
+		[playbackController.progressOverall addObserver:self forKeyPath:@"finished" options:0 context:kAppControllerContext];
+		return NSTerminateLater;
+	} else {
+		return NSTerminateNow;
+	}
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {

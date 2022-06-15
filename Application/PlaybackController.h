@@ -53,14 +53,16 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	BOOL fading;
 
 	// progress bar display
-	double progressBarStatus;
+	NSProgress *progressOverall;
+	NSProgress *progressJob;
 
 	AudioUnit _eq;
 }
 
 @property CogStatus playbackStatus;
 
-@property double progressBarStatus;
+@property NSProgress *progressOverall;
+@property NSProgress *progressJob;
 
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;

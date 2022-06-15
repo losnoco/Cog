@@ -28,8 +28,11 @@
 
 @synthesize currentEntry;
 @synthesize totalTime;
+@synthesize currentStatus;
 
 static NSArray *cellIdentifiers = nil;
+
+static void *playlistControllerContext = &playlistControllerContext;
 
 + (void)initialize {
 	cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
@@ -117,22 +120,93 @@ static NSArray *cellIdentifiers = nil;
 	[self addObserver:self
 	       forKeyPath:@"arrangedObjects"
 	          options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld)
-	          context:nil];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fontSize" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
+	          context:playlistControllerContext];
+	[playbackController addObserver:self
+	                     forKeyPath:@"progressOverall"
+	                        options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld)
+	                        context:playlistControllerContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fontSize" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:playlistControllerContext];
+
+	observersRegistered = YES;
 
 	[self.tableView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
+}
+
+- (void)deinit {
+	if(observersRegistered) {
+		[self removeObserver:self forKeyPath:@"arrangedObjects" context:playlistControllerContext];
+		[playbackController removeObserver:self forKeyPath:@"progressOverall" context:playlistControllerContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.fontSize" context:playlistControllerContext];
+	}
+}
+
+- (void)startObservingProgress:(NSProgress *)progress {
+	[progress addObserver:self forKeyPath:@"localizedDescription" options:0 context:playlistControllerContext];
+	[progress addObserver:self forKeyPath:@"fractionCompleted" options:0 context:playlistControllerContext];
+}
+
+- (void)stopObservingProgress:(NSProgress *)progress {
+	[progress removeObserver:self forKeyPath:@"localizedDescription" context:playlistControllerContext];
+	[progress removeObserver:self forKeyPath:@"fractionCompleted" context:playlistControllerContext];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-	if([keyPath isEqualToString:@"arrangedObjects"]) {
-		[self updatePlaylistIndexes];
+	if(context == playlistControllerContext) {
+		if([keyPath isEqualToString:@"arrangedObjects"]) {
+			[self updatePlaylistIndexes];
+			[self updateTotalTime];
+			[self.tableView reloadData];
+		} else if([keyPath isEqualToString:@"values.fontSize"]) {
+			[self updateRowSize];
+		} else if([keyPath isEqualToString:@"progressOverall"]) {
+			id objNew = [change objectForKey:NSKeyValueChangeNewKey];
+			id objOld = [change objectForKey:NSKeyValueChangeOldKey];
+
+			NSProgress *progressNew = nil, *progressOld = nil;
+
+			if(objNew && [objNew isKindOfClass:[NSProgress class]])
+				progressNew = (NSProgress *)objNew;
+			if(objOld && [objOld isKindOfClass:[NSProgress class]])
+				progressOld = (NSProgress *)objOld;
+
+			if(progressOld) {
+				[self stopObservingProgress:progressOld];
+			}
+
+			if(progressNew) {
+				[self startObservingProgress:progressNew];
+			}
+
+			[self updateProgressText];
+		} else if([keyPath isEqualToString:@"localizedDescription"] ||
+		          [keyPath isEqualToString:@"fractionCompleted"]) {
+			[self updateProgressText];
+		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
+}
+
+- (void)updateProgressText {
+	NSString *description = nil;
+	if(playbackController.progressOverall) {
+		if(playbackController.progressJob) {
+			description = [NSString stringWithFormat:@"%@ - %@", playbackController.progressOverall.localizedDescription, playbackController.progressJob.localizedDescription];
+		} else {
+			description = playbackController.progressOverall.localizedDescription;
+		}
+	}
+
+	if(description) {
+		[self setTotalTime:nil];
+		description = [description stringByAppendingFormat:@" - %.2f%% complete", playbackController.progressOverall.fractionCompleted * 100.0];
+		[self setCurrentStatus:description];
+	} else {
+		[self setCurrentStatus:nil];
 		[self updateTotalTime];
-		[self.tableView reloadData];
-	} else if([keyPath isEqualToString:@"values.fontSize"]) {
-		[self updateRowSize];
 	}
 }
 
@@ -144,11 +218,29 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
-- (void)setProgressBarStatus:(double)status {
+- (void)beginProgress:(NSString *)localizedDescription {
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self->playbackController setProgressBarStatus:status];
-		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+		self->playbackController.progressOverall = [NSProgress progressWithTotalUnitCount:100000];
+		self->playbackController.progressOverall.localizedDescription = localizedDescription;
 	});
+}
+
+- (void)completeProgress {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[self->playbackController.progressOverall setCompletedUnitCount:100000];
+		self->playbackController.progressOverall = nil;
+	});
+}
+
+- (void)setProgressStatus:(double)status {
+	if(status >= 0) {
+		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+			NSUInteger jobCount = (NSUInteger)ceil(1000.0 * status);
+			[self->playbackController.progressOverall setCompletedUnitCount:jobCount];
+		});
+	} else {
+		[self completeProgress];
+	}
 }
 
 - (void)updatePlaylistIndexes {
@@ -163,10 +255,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 	}
 	if(updated) {
+		[self beginProgress:NSLocalizedString(@"ProgressActionUpdatingIndexes", @"updating playlist indexes")];
 		[[SQLiteStore sharedStore] syncPlaylistEntries:arranged
 		                                  progressCall:^(double progress) {
-			                                  [self setProgressBarStatus:progress];
+			                                  [self setProgressStatus:progress];
 		                                  }];
+		[self completeProgress];
 	}
 }
 
@@ -461,11 +555,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	[super moveObjectsFromIndex:fromIndex toArrangedObjectIndexes:indexSet];
 
+	[self beginProgress:NSLocalizedString(@"ProgressActionMovingEntries", @"moving playlist entries")];
+
 	[[SQLiteStore sharedStore] playlistMoveObjectsFromIndex:fromIndex
 	                                toArrangedObjectIndexes:indexSet
 	                                           progressCall:^(double progress) {
-		                                           [self setProgressBarStatus:progress];
+		                                           [self setProgressStatus:progress];
 	                                           }];
+
+	[self completeProgress];
 
 	[playbackController playlistDidChange:self];
 }
@@ -481,11 +579,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	[super moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
 
+	[self beginProgress:NSLocalizedString(@"ProgressActionMovingEntries", @"moving playlist entries")];
+
 	[[SQLiteStore sharedStore] playlistMoveObjectsInArrangedObjectsFromIndexes:indexSet
 	                                                                   toIndex:insertIndex
 	                                                              progressCall:^(double progress) {
-		                                                              [self setProgressBarStatus:progress];
+		                                                              [self setProgressStatus:progress];
 	                                                              }];
+
+	[self completeProgress];
 
 	[playbackController playlistDidChange:self];
 }
@@ -669,13 +771,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		pe.deleted = NO;
 	}
 
+	[self beginProgress:NSLocalizedString(@"ProgressActionInsertingEntries", @"inserting playlist entries")];
+
 	[[SQLiteStore sharedStore] playlistInsertTracks:objects
 	                                atObjectIndexes:indexes
 	                                   progressCall:^(double progress) {
-		                                   [self setProgressBarStatus:progress];
+		                                   [self setProgressStatus:progress];
 	                                   }];
 
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
+
+	[self completeProgress];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -696,13 +802,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		pe.trashURL = nil;
 	}
 
+	[self beginProgress:NSLocalizedString(@"ProgressActionUntrashingEntries", @"restoring playlist entries from the trash")];
+
 	[[SQLiteStore sharedStore] playlistInsertTracks:objects
 	                                atObjectIndexes:indexes
 	                                   progressCall:^(double progress) {
-		                                   [self setProgressBarStatus:progress];
+		                                   [self setProgressStatus:progress];
 	                                   }];
 
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
+
+	[self completeProgress];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -759,14 +869,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		currentEntry.index = -i - 1;
 	}
 
+	[self beginProgress:NSLocalizedString(@"ProgressActionRemovingEntries", @"removing playlist entries")];
+
 	[[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes
 	                                            progressCall:^(double progress) {
-		                                            [self setProgressBarStatus:progress];
+		                                            [self setProgressStatus:progress];
 	                                            }];
 
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
+
+	[self completeProgress];
 
 	[playbackController playlistDidChange:self];
 }
@@ -799,9 +913,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 	}
 
+	[self beginProgress:NSLocalizedString(@"ProgressActionTrashingEntries", @"moving playlist entries to the trash")];
+
 	[[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes
 	                                            progressCall:^(double progress) {
-		                                            [self setProgressBarStatus:progress];
+		                                            [self setProgressStatus:progress];
 	                                            }];
 
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
@@ -818,6 +934,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			pe.trashURL = removed;
 		}
 	}
+
+	[self completeProgress];
 }
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors {

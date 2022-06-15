@@ -25,17 +25,17 @@
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
-                        <rect key="frame" x="0.0" y="73" width="1000" height="327"/>
+                        <rect key="frame" x="0.0" y="107" width="1000" height="293"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
-                                <rect key="frame" x="0.0" y="0.0" width="1000" height="344"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1000" height="293"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
-                                    <rect key="frame" x="0.0" y="0.0" width="1000" height="344"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1000" height="293"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
-                                            <rect key="frame" x="0.0" y="0.0" width="1000" height="327"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1000" height="276"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="6"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -651,9 +651,15 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="218" name="displayPatternValue1" keyPath="totalTime" id="1891">
+                            <binding destination="218" name="displayPatternValue1" keyPath="totalTime" id="Kih-ky-A1h">
                                 <dictionary key="options">
-                                    <string key="NSDisplayPattern">Total Duration: %{value1}@</string>
+                                    <string key="NSDisplayPattern">%{value1}@%{value2}@</string>
+                                    <string key="NSValueTransformerName">TotalTimeTransformer</string>
+                                </dictionary>
+                            </binding>
+                            <binding destination="218" name="displayPatternValue2" keyPath="currentStatus" previousBinding="Kih-ky-A1h" id="5bQ-Qy-2KR">
+                                <dictionary key="options">
+                                    <string key="NSDisplayPattern">%{value1}@%{value2}@</string>
                                 </dictionary>
                             </binding>
                         </connections>

@@ -26,6 +26,8 @@ typedef enum {
 	IBOutlet PlaybackController *playbackController;
 
 	NSOperationQueue *queue;
+
+	BOOL metadataLoadInProgress;
 }
 
 - (void)initDefaults;

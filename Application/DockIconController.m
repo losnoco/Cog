@@ -16,14 +16,22 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 
 - (void)startObserving {
 	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[playbackController addObserver:self forKeyPath:@"progressBarStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+	[playbackController addObserver:self forKeyPath:@"progressOverall" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld) context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.colorfulDockIcons" options:0 context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
 }
 
 - (void)stopObserving {
-	[playbackController removeObserver:self forKeyPath:@"playbackStatus"];
-	[playbackController removeObserver:self forKeyPath:@"progressBarStatus"];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.colorfulDockIcons"];
+	[playbackController removeObserver:self forKeyPath:@"playbackStatus" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+	[playbackController removeObserver:self forKeyPath:@"progressOverall" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.colorfulDockIcons" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+}
+
+- (void)startObservingProgress:(NSProgress *)progress {
+	[progress addObserver:self forKeyPath:@"fractionCompleted" options:0 context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+}
+
+- (void)stopObservingProgress:(NSProgress *)progress {
+	[progress removeObserver:self forKeyPath:@"fractionCompleted" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
 }
 
 static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
@@ -151,12 +159,35 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 			NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
 
 			[self refreshDockIcon:playbackStatus withProgress:-10];
-		} else if([keyPath isEqualToString:@"progressBarStatus"]) {
-			double progressStatus = [[change objectForKey:NSKeyValueChangeNewKey] doubleValue];
+		} else if([keyPath isEqualToString:@"progressOverall"]) {
+			double progressStatus = [lastProgressStatus doubleValue];
+
+			id objNew = [change objectForKey:NSKeyValueChangeNewKey];
+			id objOld = [change objectForKey:NSKeyValueChangeOldKey];
+
+			NSProgress *progressNew = nil, *progressOld = nil;
+
+			if(objNew && [objNew isKindOfClass:[NSProgress class]])
+				progressNew = (NSProgress *)objNew;
+			if(objOld && [objOld isKindOfClass:[NSProgress class]])
+				progressOld = (NSProgress *)objOld;
+
+			if(progressOld) {
+				[self stopObservingProgress:progressOld];
+				progressStatus = -1;
+			}
+
+			if(progressNew) {
+				[self startObservingProgress:progressNew];
+				progressStatus = progressNew.fractionCompleted * 100.0;
+			}
 
 			[self refreshDockIcon:-1 withProgress:progressStatus];
 		} else if([keyPath isEqualToString:@"values.colorfulDockIcons"]) {
 			[self refreshDockIcon:-1 withProgress:-10];
+		} else if([keyPath isEqualToString:@"fractionCompleted"]) {
+			double progressStatus = [(NSProgress *)object fractionCompleted];
+			[self refreshDockIcon:-1 withProgress:progressStatus * 100.0];
 		}
 	} else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
