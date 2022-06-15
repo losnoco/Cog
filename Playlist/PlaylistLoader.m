@@ -262,6 +262,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (void)beginProgress:(NSString *)localizedDescription {
+	while(playbackController.progressOverall) {
+		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+	}
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		self->playbackController.progressOverall = [NSProgress progressWithTotalUnitCount:100000];
 		self->playbackController.progressOverall.localizedDescription = localizedDescription;
