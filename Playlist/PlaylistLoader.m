@@ -559,6 +559,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				progress += progressstep;
 				[weakLock unlock];
 
+				if(weakPe.deleted) return;
+
 				DLog(@"Loading metadata for %@", weakPe.URL);
 
 				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
@@ -590,8 +592,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		__block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
 		__block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-			[weakPe setMetadata:entryInfo];
-			[store trackUpdate:weakPe];
+			if(!weakPe.deleted) {
+				[weakPe setMetadata:entryInfo];
+				[store trackUpdate:weakPe];
+			}
 			progress += progressstep;
 			[self setProgressBarStatus:progress];
 		});
