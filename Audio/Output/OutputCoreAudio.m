@@ -344,8 +344,7 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	}
 
 	stopped = YES;
-	if(!stopInvoked)
-		[self stop];
+	[self stop];
 }
 
 - (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID {
@@ -623,170 +622,173 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	if(_au)
 		[self stop];
 
-	stopInvoked = NO;
-	running = NO;
-	stopping = NO;
-	stopped = NO;
-	paused = NO;
-	stopNext = NO;
-	outputDeviceID = -1;
-	restarted = NO;
+	@synchronized(self) {
+		stopInvoked = NO;
 
-	downmixer = nil;
-	downmixerForVis = nil;
+		running = NO;
+		stopping = NO;
+		stopped = NO;
+		paused = NO;
+		stopNext = NO;
+		outputDeviceID = -1;
+		restarted = NO;
 
-	AudioComponentDescription desc;
-	NSError *err;
+		downmixer = nil;
+		downmixerForVis = nil;
 
-	desc.componentType = kAudioUnitType_Output;
-	desc.componentSubType = kAudioUnitSubType_HALOutput;
-	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
-	desc.componentFlags = 0;
-	desc.componentFlagsMask = 0;
+		AudioComponentDescription desc;
+		NSError *err;
 
-	_au = [[AUAudioUnit alloc] initWithComponentDescription:desc error:&err];
-	if(err != nil)
-		return NO;
+		desc.componentType = kAudioUnitType_Output;
+		desc.componentSubType = kAudioUnitSubType_HALOutput;
+		desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+		desc.componentFlags = 0;
+		desc.componentFlagsMask = 0;
 
-	// Setup the output device before mucking with settings
-	NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
-	if(device) {
-		BOOL ok = [self setOutputDeviceWithDeviceDict:device];
-		if(!ok) {
-			// Ruh roh.
+		_au = [[AUAudioUnit alloc] initWithComponentDescription:desc error:&err];
+		if(err != nil)
+			return NO;
+
+		// Setup the output device before mucking with settings
+		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
+		if(device) {
+			BOOL ok = [self setOutputDeviceWithDeviceDict:device];
+			if(!ok) {
+				// Ruh roh.
+				[self setOutputDeviceWithDeviceDict:nil];
+
+				[[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
+			}
+		} else {
 			[self setOutputDeviceWithDeviceDict:nil];
-
-			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] removeObjectForKey:@"outputDevice"];
 		}
-	} else {
-		[self setOutputDeviceWithDeviceDict:nil];
-	}
 
-	_deviceFormat = nil;
+		_deviceFormat = nil;
 
-	AudioComponent comp = NULL;
+		AudioComponent comp = NULL;
 
-	desc.componentType = kAudioUnitType_Effect;
-	desc.componentSubType = kAudioUnitSubType_GraphicEQ;
+		desc.componentType = kAudioUnitType_Effect;
+		desc.componentSubType = kAudioUnitSubType_GraphicEQ;
 
-	comp = AudioComponentFindNext(comp, &desc);
-	if(!comp)
-		return NO;
+		comp = AudioComponentFindNext(comp, &desc);
+		if(!comp)
+			return NO;
 
-	OSStatus _err = AudioComponentInstanceNew(comp, &_eq);
-	if(err)
-		return NO;
+		OSStatus _err = AudioComponentInstanceNew(comp, &_eq);
+		if(err)
+			return NO;
 
-	[self updateDeviceFormat];
+		[self updateDeviceFormat];
 
-	__block AudioUnit eq = _eq;
-	__block AudioStreamBasicDescription *format = &deviceFormat;
-	__block BOOL *eqEnabled = &self->eqEnabled;
-	__block void *refCon = (__bridge void *)self;
+		__block AudioUnit eq = _eq;
+		__block AudioStreamBasicDescription *format = &deviceFormat;
+		__block BOOL *eqEnabled = &self->eqEnabled;
+		__block void *refCon = (__bridge void *)self;
 
 #ifdef OUTPUT_LOG
-	__block FILE *logFile = _logFile;
+		__block FILE *logFile = _logFile;
 #endif
 
-	_au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags *_Nonnull actionFlags, const AudioTimeStamp *_Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList *_Nonnull inputData) {
-		// This expects multiple buffers, so:
-		int i;
-		const int channels = format->mChannelsPerFrame;
-		const int channelsminusone = channels - 1;
-		float buffers[frameCount * format->mChannelsPerFrame];
-		uint8_t bufferlistbuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
-		AudioBufferList *ioData = (AudioBufferList *)(bufferlistbuffer);
+		_au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags *_Nonnull actionFlags, const AudioTimeStamp *_Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList *_Nonnull inputData) {
+			// This expects multiple buffers, so:
+			int i;
+			const int channels = format->mChannelsPerFrame;
+			const int channelsminusone = channels - 1;
+			float buffers[frameCount * format->mChannelsPerFrame];
+			uint8_t bufferlistbuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
+			AudioBufferList *ioData = (AudioBufferList *)(bufferlistbuffer);
 
-		ioData->mNumberBuffers = channels;
+			ioData->mNumberBuffers = channels;
 
-		memset(buffers, 0, sizeof(buffers));
+			memset(buffers, 0, sizeof(buffers));
 
-		for(i = 0; i < channels; ++i) {
-			ioData->mBuffers[i].mNumberChannels = 1;
-			ioData->mBuffers[i].mData = buffers + frameCount * i;
-			ioData->mBuffers[i].mDataByteSize = frameCount * sizeof(float);
-		}
+			for(i = 0; i < channels; ++i) {
+				ioData->mBuffers[i].mNumberChannels = 1;
+				ioData->mBuffers[i].mData = buffers + frameCount * i;
+				ioData->mBuffers[i].mDataByteSize = frameCount * sizeof(float);
+			}
 
-		OSStatus ret;
+			OSStatus ret;
 
-		if(*eqEnabled)
-			ret = AudioUnitRender(eq, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
-		else
-			ret = renderCallback(refCon, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
+			if(*eqEnabled)
+				ret = AudioUnitRender(eq, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
+			else
+				ret = renderCallback(refCon, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
 
-		if(ret)
-			return ret;
+			if(ret)
+				return ret;
 
-		for(i = 0; i < channels; ++i) {
-			float *outBuffer = ((float *)inputData->mBuffers[0].mData) + i;
-			const float *inBuffer = ((float *)ioData->mBuffers[i].mData);
-			const int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
-			cblas_scopy(frameCount, inBuffer, 1, outBuffer, channels);
-		}
+			for(i = 0; i < channels; ++i) {
+				float *outBuffer = ((float *)inputData->mBuffers[0].mData) + i;
+				const float *inBuffer = ((float *)ioData->mBuffers[i].mData);
+				const int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
+				cblas_scopy(frameCount, inBuffer, 1, outBuffer, channels);
+			}
 
 #ifdef OUTPUT_LOG
-		if(logFile) {
-			fwrite(inputData->mBuffers[0].mData, 1, inputData->mBuffers[0].mDataByteSize, logFile);
-		}
+			if(logFile) {
+				fwrite(inputData->mBuffers[0].mData, 1, inputData->mBuffers[0].mDataByteSize, logFile);
+			}
 
-		// memset(inputData->mBuffers[0].mData, 0, inputData->mBuffers[0].mDataByteSize);
+			// memset(inputData->mBuffers[0].mData, 0, inputData->mBuffers[0].mDataByteSize);
 #endif
 
-		inputData->mBuffers[0].mNumberChannels = channels;
+			inputData->mBuffers[0].mNumberChannels = channels;
 
 #ifdef _DEBUG
-		[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData
-		                        amount:inputData->mBuffers[0].mDataByteSize / sizeof(float)
-		                      location:@"final output"];
+			[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData
+			                        amount:inputData->mBuffers[0].mDataByteSize / sizeof(float)
+			                      location:@"final output"];
 #endif
 
-		return 0;
-	};
+			return 0;
+		};
 
-	[_au setMaximumFramesToRender:512];
+		[_au setMaximumFramesToRender:512];
 
-	UInt32 value;
-	UInt32 size = sizeof(value);
+		UInt32 value;
+		UInt32 size = sizeof(value);
 
-	value = CHUNK_SIZE;
-	AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice,
-	                     kAudioUnitScope_Global, 0, &value, size);
+		value = CHUNK_SIZE;
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice,
+		                     kAudioUnitScope_Global, 0, &value, size);
 
-	value = 127;
-	AudioUnitSetProperty(_eq, kAudioUnitProperty_RenderQuality,
-	                     kAudioUnitScope_Global, 0, &value, size);
+		value = 127;
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_RenderQuality,
+		                     kAudioUnitScope_Global, 0, &value, size);
 
-	AURenderCallbackStruct callbackStruct;
-	callbackStruct.inputProcRefCon = (__bridge void *)self;
-	callbackStruct.inputProc = renderCallback;
-	AudioUnitSetProperty(_eq, kAudioUnitProperty_SetRenderCallback,
-	                     kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
+		AURenderCallbackStruct callbackStruct;
+		callbackStruct.inputProcRefCon = (__bridge void *)self;
+		callbackStruct.inputProc = renderCallback;
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_SetRenderCallback,
+		                     kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
 
-	AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
-	AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
+		AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
+		AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
 
-	AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
+		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
 
-	_err = AudioUnitInitialize(_eq);
-	if(_err)
-		return NO;
+		_err = AudioUnitInitialize(_eq);
+		if(_err)
+			return NO;
 
-	eqInitialized = YES;
+		eqInitialized = YES;
 
-	[self setEqualizerEnabled:[[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue]];
+		[self setEqualizerEnabled:[[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue]];
 
-	[outputController beginEqualizer:_eq];
+		[outputController beginEqualizer:_eq];
 
-	[_au allocateRenderResourcesAndReturnError:&err];
+		[_au allocateRenderResourcesAndReturnError:&err];
 
-	visController = [VisualizationController sharedController];
+		visController = [VisualizationController sharedController];
 
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kOutputCoreAudioContext];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
-	observersapplied = YES;
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		observersapplied = YES;
 
-	return (err == nil);
+		return (err == nil);
+	}
 }
 
 - (void)setVolume:(double)v {
@@ -810,82 +812,85 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 }
 
 - (void)stop {
-	stopInvoked = YES;
-	if(observersapplied) {
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputCoreAudioContext];
-		observersapplied = NO;
-	}
-	if(stopNext && !paused) {
-		if(!started) {
-			// This happens if playback is started on a very short file, and the queue is empty or at the end of the playlist
-			started = YES;
-			NSError *err;
-			[_au startHardwareAndReturnError:&err];
+	@synchronized(self) {
+		if(stopInvoked) return;
+		stopInvoked = YES;
+		if(observersapplied) {
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputCoreAudioContext];
+			observersapplied = NO;
 		}
-		while(![[outputController buffer] isEmpty]) {
-			[writeSemaphore signal];
-			[readSemaphore signal];
-			usleep(500);
+		if(stopNext && !paused) {
+			if(!started) {
+				// This happens if playback is started on a very short file, and the queue is empty or at the end of the playlist
+				started = YES;
+				NSError *err;
+				[_au startHardwareAndReturnError:&err];
+			}
+			while(![[outputController buffer] isEmpty]) {
+				[writeSemaphore signal];
+				[readSemaphore signal];
+				usleep(500);
+			}
 		}
-	}
-	if(stopNext) {
-		stopNext = NO;
-		[self signalEndOfStream];
-	}
-	stopping = YES;
-	paused = NO;
-	[writeSemaphore signal];
-	[readSemaphore signal];
-	if(listenerapplied) {
-		AudioObjectPropertyAddress theAddress = {
-			.mSelector = kAudioHardwarePropertyDefaultOutputDevice,
-			.mScope = kAudioObjectPropertyScopeGlobal,
-			.mElement = kAudioObjectPropertyElementMaster
-		};
-		AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void *_Nullable)(self));
-		listenerapplied = NO;
-	}
-	if(_au) {
-		if(started)
-			[_au stopHardware];
-		_au = nil;
-	}
-	if(running)
-		while(!stopped) {
-			stopping = YES;
-			[readSemaphore signal];
-			[writeSemaphore timedWait:5000];
+		if(stopNext) {
+			stopNext = NO;
+			[self signalEndOfStream];
 		}
-	if(_eq) {
-		[outputController endEqualizer:_eq];
-		if(eqInitialized) {
-			AudioUnitUninitialize(_eq);
-			eqInitialized = NO;
+		stopping = YES;
+		paused = NO;
+		[writeSemaphore signal];
+		[readSemaphore signal];
+		if(listenerapplied) {
+			AudioObjectPropertyAddress theAddress = {
+				.mSelector = kAudioHardwarePropertyDefaultOutputDevice,
+				.mScope = kAudioObjectPropertyScopeGlobal,
+				.mElement = kAudioObjectPropertyElementMaster
+			};
+			AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void *_Nullable)(self));
+			listenerapplied = NO;
 		}
-		AudioComponentInstanceDispose(_eq);
-		_eq = NULL;
-	}
-	if(downmixer) {
-		downmixer = nil;
-	}
-	if(downmixerForVis) {
-		downmixerForVis = nil;
-	}
+		if(_au) {
+			if(started)
+				[_au stopHardware];
+			_au = nil;
+		}
+		if(running) {
+			while(!stopped) {
+				stopping = YES;
+				[readSemaphore signal];
+				[writeSemaphore timedWait:5000];
+			}
+		}
+		if(_eq) {
+			[outputController endEqualizer:_eq];
+			if(eqInitialized) {
+				AudioUnitUninitialize(_eq);
+				eqInitialized = NO;
+			}
+			AudioComponentInstanceDispose(_eq);
+			_eq = NULL;
+		}
+		if(downmixer) {
+			downmixer = nil;
+		}
+		if(downmixerForVis) {
+			downmixerForVis = nil;
+		}
 #ifdef OUTPUT_LOG
-	if(_logFile) {
-		fclose(_logFile);
-		_logFile = NULL;
-	}
+		if(_logFile) {
+			fclose(_logFile);
+			_logFile = NULL;
+		}
 #endif
-	outputController = nil;
-	visController = nil;
+		outputController = nil;
+		visController = nil;
+	}
 }
 
 - (void)dealloc {
-	if(!stopInvoked)
-		[self stop];
+	[self stop];
 }
 
 - (void)pause {
