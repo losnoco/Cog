@@ -6,9 +6,13 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
-#import "DNDArrayController.h"
 #import <Cocoa/Cocoa.h>
+#import <CoreData/CoreData.h>
 #import <Foundation/NSUndoManager.h>
+
+#import "DNDArrayController.h"
+
+@class AlbumArtwork;
 
 @class PlaylistLoader;
 @class PlaylistEntry;
@@ -61,7 +65,12 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 @property(retain) NSString *_Nullable totalTime;
 @property(retain) NSString *_Nullable currentStatus;
 
+@property(strong, nonatomic, readonly) NSOperationQueue *_Nonnull persistentContainerQueue;
+@property(strong, nonatomic, readonly) NSPersistentContainer *_Nonnull persistentContainer;
+@property(strong, nonatomic, readonly) NSMutableDictionary<NSString *, AlbumArtwork *> *_Nonnull persistentArtStorage;
+
 // Private Methods
+- (void)commitPersistentStore;
 - (void)updateTotalTime;
 - (void)updatePlaylistIndexes;
 - (IBAction)stopAfterCurrent:(id _Nullable)sender;

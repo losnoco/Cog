@@ -27,10 +27,14 @@
 @property(nonatomic, assign, readwrite) sqlite3 *database;
 
 + (SQLiteStore *)sharedStore;
++ (BOOL)databaseStarted;
 
 - (id)init;
 - (void)dealloc;
 
+- (void)shutdown;
+
+#if 0
 - (void)trackUpdate:(PlaylistEntry *)track;
 
 - (void)playlistInsertTracks:(NSArray *)tracks atIndex:(int64_t)index progressCall:(void (^)(double progress))callback;
@@ -38,9 +42,11 @@
 - (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count progressCall:(void (^)(double progress))callback;
 - (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes progressCall:(void (^)(double progress))callback;
 - (PlaylistEntry *)playlistGetItem:(int64_t)index;
+#endif
 - (PlaylistEntry *)playlistGetCachedItem:(int64_t)index;
 - (int64_t)playlistGetCount;
 
+#if 0
 - (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex progressCall:(void (^)(double))callback;
 - (void)playlistMoveObjectsFromIndex:(NSUInteger)fromIndex toArrangedObjectIndexes:(NSIndexSet *)indexSet progressCall:(void (^)(double))callback;
 
@@ -50,9 +56,12 @@
 - (void)queueAddItems:(NSArray *)playlistIndexes;
 - (void)queueRemoveItem:(int64_t)queueIndex;
 - (void)queueRemovePlaylistItems:(NSArray *)playlistIndexes;
+#endif
 - (int64_t)queueGetEntry:(int64_t)queueIndex;
 - (int64_t)queueGetCount;
+#if 0
 - (void)queueEmpty;
+#endif
 
 @end
 

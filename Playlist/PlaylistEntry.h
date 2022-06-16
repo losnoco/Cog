@@ -8,173 +8,58 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface PlaylistEntry : NSObject <NSCopying> {
-	NSInteger index;
-	NSInteger shuffleIndex;
-	NSInteger dbIndex;
-	NSInteger entryId;
-	NSInteger artId;
+#import "Cog-Swift.h"
 
-	BOOL current;
-	BOOL removed;
+@interface PlaylistEntry (Extension)
 
-	BOOL stopAfter;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingTitle;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingDisplay;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingLength;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingPath;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingFilename;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingStatus;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingStatusMessage;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingSpam;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingAlbumArt;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingTrackText;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingLengthText;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingYearText;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingCuesheetPresent;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingGainCorrection;
 
-	BOOL queued;
-	NSInteger queuePosition;
+@property(nonatomic, readonly) NSString *_Nonnull display;
+@property(nonatomic, retain, readonly) NSNumber *_Nonnull length;
+@property(nonatomic, readonly) NSString *_Nonnull path;
+@property(nonatomic, readonly) NSString *_Nonnull filename;
 
-	BOOL error;
-	NSString *errorMessage;
+@property(nonatomic, readonly) NSString *_Nonnull spam;
 
-	NSURL *URL;
-	NSURL *trashURL;
+@property(nonatomic, readonly) NSString *_Nonnull positionText;
 
-	NSString *artist;
-	NSString *albumartist;
-	NSString *album;
-	NSString *title;
-	NSString *genre;
-	NSNumber *year;
-	NSNumber *track;
-	NSNumber *disc;
+@property(nonatomic, readonly) NSString *_Nonnull lengthText;
 
-	NSString *cuesheet;
+@property(nonatomic, readonly) NSString *_Nonnull yearText;
 
-	NSData *albumArtInternal;
+@property(nonatomic, readonly) NSString *_Nonnull title;
 
-	float replayGainAlbumGain;
-	float replayGainAlbumPeak;
-	float replayGainTrackGain;
-	float replayGainTrackPeak;
-	float volume;
+@property(nonatomic, readonly) NSString *_Nonnull trackText;
 
-	double currentPosition;
+@property(nonatomic, readonly) NSString *_Nonnull cuesheetPresent;
 
-	long long totalFrames;
-	int bitrate;
-	int channels;
-	uint32_t channelConfig;
-	int bitsPerSample;
-	BOOL floatingPoint;
-	BOOL Unsigned;
-	float sampleRate;
+@property(nonatomic, retain, readonly) NSImage *_Nullable albumArt;
 
-	NSString *codec;
+@property(nonatomic, readonly) NSString *_Nonnull gainCorrection;
 
-	NSString *endian;
+@property(nonatomic, readonly) NSString *_Nonnull gainInfo;
 
-	NSString *encoding;
+@property(nonatomic, readonly) NSString *_Nullable status;
+@property(nonatomic, readonly) NSString *_Nullable statusMessage;
 
-	BOOL seekable;
+@property(nonatomic) NSURL *_Nullable url;
+@property(nonatomic) NSURL *_Nullable trashUrl;
 
-	BOOL metadataLoaded;
+@property(nonatomic) NSData *_Nullable albumArtInternal;
 
-	BOOL deleted;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingDisplay;
-+ (NSSet *)keyPathsForValuesAffectingLength;
-+ (NSSet *)keyPathsForValuesAffectingPath;
-+ (NSSet *)keyPathsForValuesAffectingFilename;
-+ (NSSet *)keyPathsForValuesAffectingStatus;
-+ (NSSet *)keyPathsForValuesAffectingStatusMessage;
-+ (NSSet *)keyPathsForValuesAffectingSpam;
-+ (NSSet *)keyPathsForValuesAffectingAlbumArt;
-+ (NSSet *)keyPathsForValuesAffectingTrackText;
-+ (NSSet *)keyPathsForValuesAffectingLengthText;
-+ (NSSet *)keyPathsForValuesAffectingYearText;
-+ (NSSet *)keyPathsForValuesAffectingCuesheetPresent;
-+ (NSSet *)keyPathsForValuesAffectingGainCorrection;
-
-@property(readonly) NSString *display;
-@property(retain, readonly) NSNumber *length;
-@property(readonly) NSString *path;
-@property(readonly) NSString *filename;
-
-@property(readonly) NSString *spam;
-
-@property(readonly) NSString *positionText;
-
-@property(readonly) NSString *lengthText;
-
-@property(readonly) NSString *yearText;
-
-@property(readonly) NSString *rawTitle;
-
-@property(readonly) NSString *trackText;
-
-@property NSInteger index;
-@property NSInteger shuffleIndex;
-@property NSInteger dbIndex;
-@property NSInteger entryId;
-@property NSInteger artId;
-
-@property(readonly) NSString *status;
-@property(readonly) NSString *statusMessage;
-
-@property BOOL current;
-@property BOOL removed;
-
-@property BOOL stopAfter;
-
-@property BOOL queued;
-@property NSInteger queuePosition;
-
-@property BOOL error;
-@property(retain) NSString *errorMessage;
-
-@property(retain) NSURL *URL;
-@property(retain) NSURL *trashURL;
-
-@property(retain) NSString *artist;
-@property(retain) NSString *albumartist;
-@property(retain) NSString *album;
-@property(nonatomic, retain) NSString *title;
-@property(retain) NSString *genre;
-@property(retain) NSNumber *year;
-@property(retain) NSNumber *track;
-@property(retain) NSNumber *disc;
-
-@property(retain) NSString *cuesheet;
-
-@property(readonly) NSString *cuesheetPresent;
-
-@property(retain, readonly) NSImage *albumArt;
-@property(retain) NSData *albumArtInternal;
-
-@property long long totalFrames;
-@property int bitrate;
-@property int channels;
-@property uint32_t channelConfig;
-@property int bitsPerSample;
-@property BOOL floatingPoint;
-@property BOOL Unsigned;
-@property float sampleRate;
-
-@property(retain) NSString *codec;
-
-@property float replayGainAlbumGain;
-@property float replayGainAlbumPeak;
-@property float replayGainTrackGain;
-@property float replayGainTrackPeak;
-@property float volume;
-
-@property(readonly) NSString *gainCorrection;
-
-@property(readonly) NSString *gainInfo;
-
-@property double currentPosition;
-
-@property(retain) NSString *endian;
-
-@property(retain) NSString *encoding;
-
-@property BOOL seekable;
-
-@property BOOL metadataLoaded;
-
-@property BOOL deleted;
-
-- (void)setMetadata:(NSDictionary *)metadata;
+- (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
 @end

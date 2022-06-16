@@ -151,6 +151,8 @@
 		8372C93D27C7895300E250C9 /* MAD.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8372C93027C785BE00E250C9 /* MAD.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumView.m */; };
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
+		837DC92B285B05710005C58A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837DC92A285B05710005C58A /* CoreData.framework */; };
+		837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */; };
 		837E5ADF2852D5FD0020D205 /* Bugsnag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837E5ACB2852D5B80020D205 /* Bugsnag.framework */; };
 		837E5AE02852D5FD0020D205 /* Bugsnag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 837E5ACB2852D5B80020D205 /* Bugsnag.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8381A09227C5F72F00A1C530 /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8381A09127C5F72F00A1C530 /* SHA256Digest.m */; };
@@ -1062,6 +1064,8 @@
 		8377C66427B8CF7A00E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisualizationController.h; path = Audio/Visualization/VisualizationController.h; sourceTree = "<group>"; };
 		8377C6B727B900F000E8BC0F /* SpectrumItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumItem.h; path = Visualization/SpectrumItem.h; sourceTree = "<group>"; };
 		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
+		837DC92A285B05710005C58A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		837DC930285B3F790005C58A /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		837E5ABB2852D5B80020D205 /* Bugsnag.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Bugsnag.xcodeproj; path = "ThirdParty/bugsnag-cocoa/Bugsnag.xcodeproj"; sourceTree = "<group>"; };
 		8381A09027C5F72F00A1C530 /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA256Digest.h; sourceTree = "<group>"; };
 		8381A09127C5F72F00A1C530 /* SHA256Digest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SHA256Digest.m; sourceTree = "<group>"; };
@@ -1167,6 +1171,7 @@
 				17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */,
 				835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */,
 				835FAC7E27BCDF5B00BA8562 /* libaom.a in Frameworks */,
+				837DC92B285B05710005C58A /* CoreData.framework in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
 				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
@@ -1608,6 +1613,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
 				8316B3922839FFD5004CC392 /* Scenes.scnassets */,
 				832C1252180BD1E2005507C1 /* Cog.help */,
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
@@ -1634,6 +1640,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				837DC92A285B05710005C58A /* CoreData.framework */,
 				8370D73E2775AE1300245CE0 /* libsqlite3.tbd */,
 				83AB9031237CEFD300A433D5 /* MediaPlayer.framework */,
 				8355D6B7180613FB00D05687 /* Security.framework */,
@@ -2762,6 +2769,7 @@
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
+				837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */,
 				835FAC7927BCDF2A00BA8562 /* AVIFDecoder.m in Sources */,
 				EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
@@ -3293,6 +3301,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				837DC930285B3F790005C58A /* DataModel.xcdatamodel */,
+			);
+			currentVersion = 837DC930285B3F790005C58A /* DataModel.xcdatamodel */;
+			path = DataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
 }

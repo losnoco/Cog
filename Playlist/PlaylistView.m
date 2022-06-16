@@ -221,7 +221,7 @@
 	NSMutableArray *selectedURLs = [NSMutableArray arrayWithCapacity:capacity];
 
 	for(PlaylistEntry *pe in entries) {
-		[selectedURLs addObject:[pe URL]];
+		[selectedURLs addObject:pe.url];
 	}
 
 	NSError *error;

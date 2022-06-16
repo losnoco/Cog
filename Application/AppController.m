@@ -11,6 +11,7 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 #import "PlaylistView.h"
+#import "SQLiteStore.h"
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
 #import <CogAudio/Status.h>
@@ -167,12 +168,16 @@ void *kAppControllerContext = &kAppControllerContext;
 	NSString *oldFilename = @"Default.m3u";
 	NSString *newFilename = @"Default.xml";
 
-	if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:dbFilename]]) {
-		[playlistLoader addDatabase];
-	} else if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]]) {
-		[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:newFilename]]];
-	} else {
-		[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:oldFilename]]];
+	BOOL dataStorePresent = [playlistLoader addDataStore];
+
+	if(!dataStorePresent) {
+		if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:dbFilename]]) {
+			[playlistLoader addDatabase];
+		} else if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]]) {
+			[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:newFilename]]];
+		} else {
+			[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:oldFilename]]];
+		}
 	}
 
 	[[playlistController undoManager] enableUndoRegistration];
@@ -375,9 +380,37 @@ void *kAppControllerContext = &kAppControllerContext;
 
 	[playlistController clearFilterPredicate:self];
 
-	NSString *fileName = @"Default.xml";
+	NSMutableDictionary<NSString *, AlbumArtwork *> *artLeftovers = [playlistController.persistentArtStorage mutableCopy];
+
+	NSManagedObjectContext *moc = playlistController.persistentContainer.viewContext;
+
+	for(PlaylistEntry *pe in playlistController.arrangedObjects) {
+		if(pe.deLeted) {
+			[moc deleteObject:pe];
+			continue;
+		}
+		if([artLeftovers objectForKey:pe.artHash]) {
+			[artLeftovers removeObjectForKey:pe.artHash];
+		}
+	}
+
+	for(NSString *key in artLeftovers) {
+		[moc deleteObject:[artLeftovers objectForKey:key]];
+	}
+
+	[playlistController commitPersistentStore];
+
+	if([SQLiteStore databaseStarted]) {
+		[[SQLiteStore sharedStore] shutdown];
+	}
 
 	NSError *error;
+	NSString *fileName = @"Default.sqlite";
+
+	[[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+
+	fileName = @"Default.xml";
+
 	[[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
 
 	fileName = @"Default.m3u";

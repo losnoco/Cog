@@ -6,72 +6,34 @@
 //  Copyright 2005 Vincent Spader All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
+#import <CoreData/CoreData.h>
+
 #import "PlaylistEntry.h"
+
 #import "AVIFDecoder.h"
+#import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
-@implementation PlaylistEntry
+extern NSPersistentContainer *__persistentContainer;
+extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 
-@synthesize index;
-@synthesize shuffleIndex;
-@synthesize dbIndex;
-@synthesize entryId;
-@synthesize artId;
-
-@synthesize current;
-@synthesize removed;
-
-@synthesize stopAfter;
-
-@synthesize queued;
-@synthesize queuePosition;
-
-@synthesize error;
-@synthesize errorMessage;
-
-@synthesize URL;
-@synthesize trashURL;
-
-@synthesize artist;
-@synthesize albumartist;
-@synthesize album;
-@synthesize genre;
-@synthesize year;
-@synthesize track;
-@synthesize disc;
-
-@synthesize cuesheet;
-
-@synthesize totalFrames;
-@synthesize bitrate;
-@synthesize channels;
-@synthesize channelConfig;
-@synthesize bitsPerSample;
-@synthesize floatingPoint;
-@synthesize Unsigned;
-@synthesize sampleRate;
-
-@synthesize codec;
-
-@synthesize replayGainAlbumGain;
-@synthesize replayGainAlbumPeak;
-@synthesize replayGainTrackGain;
-@synthesize replayGainTrackPeak;
-@synthesize volume;
-
-@synthesize currentPosition;
-
-@synthesize endian;
-
-@synthesize encoding;
-
-@synthesize seekable;
-
-@synthesize metadataLoaded;
-
-@synthesize deleted;
+@implementation PlaylistEntry (Extension)
 
 // The following read-only keys depend on the values of other properties
+
++ (NSSet *)keyPathsForValuesAffectingUrl {
+	return [NSSet setWithObject:@"urlString"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingTrashUrl {
+	return [NSSet setWithObject:@"trashUrlString"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingTitle {
+	return [NSSet setWithObject:@"rawTitle"];
+}
 
 + (NSSet *)keyPathsForValuesAffectingDisplay {
 	return [NSSet setWithObjects:@"artist", @"title", nil];
@@ -82,11 +44,11 @@
 }
 
 + (NSSet *)keyPathsForValuesAffectingPath {
-	return [NSSet setWithObject:@"URL"];
+	return [NSSet setWithObject:@"url"];
 }
 
 + (NSSet *)keyPathsForValuesAffectingFilename {
-	return [NSSet setWithObject:@"URL"];
+	return [NSSet setWithObject:@"url"];
 }
 
 + (NSSet *)keyPathsForValuesAffectingStatus {
@@ -98,7 +60,7 @@
 }
 
 + (NSSet *)keyPathsForValuesAffectingSpam {
-	return [NSSet setWithObjects:@"albumartist", @"artist", @"title", @"album", @"track", @"disc", @"totalFrames", @"currentPosition", @"bitrate", nil];
+	return [NSSet setWithObjects:@"albumartist", @"artist", @"rawTitle", @"album", @"track", @"disc", @"totalFrames", @"currentPosition", @"bitrate", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingTrackText {
@@ -134,54 +96,20 @@
 }
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"PlaylistEntry %li:(%@)", self.index, self.URL];
-}
-
-- (id)init {
-	if(self = [super init]) {
-		self.replayGainAlbumGain = 0;
-		self.replayGainAlbumPeak = 0;
-		self.replayGainTrackGain = 0;
-		self.replayGainTrackPeak = 0;
-		self.volume = 1;
-		self.deleted = NO;
-	}
-	return self;
-}
-
-- (void)dealloc {
-	self.errorMessage = nil;
-
-	self.URL = nil;
-
-	self.artist = nil;
-	self.albumartist = nil;
-	self.album = nil;
-	self.title = nil;
-	self.genre = nil;
-	self.year = nil;
-	self.track = nil;
-	self.disc = nil;
-	self.albumArtInternal = nil;
-
-	self.cuesheet = nil;
-
-	self.endian = nil;
-	self.codec = nil;
+	return [NSString stringWithFormat:@"PlaylistEntry %lli:(%@)", self.index, self.url];
 }
 
 // Get the URL if the title is blank
-@synthesize title;
+@dynamic title;
 - (NSString *)title {
-	if((title == nil || [title isEqualToString:@""]) && self.URL) {
-		return [[self.URL path] lastPathComponent];
+	if((self.rawTitle == nil || [self.rawTitle isEqualToString:@""]) && self.url) {
+		return [[self.url path] lastPathComponent];
 	}
-	return title;
+	return self.rawTitle;
 }
 
-@synthesize rawTitle;
-- (NSString *)rawTitle {
-	return title;
+- (void)setTitle:(NSString *)title {
+	self.rawTitle = title;
 }
 
 @dynamic display;
@@ -200,14 +128,14 @@
 	BOOL hasAlbumArtist = (self.albumartist != nil) && (![self.albumartist isEqualToString:@""]);
 	BOOL hasTrackArtist = (hasArtist && hasAlbumArtist) && (![self.albumartist isEqualToString:self.artist]);
 	BOOL hasAlbum = (self.album != nil) && (![self.album isEqualToString:@""]);
-	BOOL hasTrack = (self.track != 0) && ([self.track intValue] != 0);
+	BOOL hasTrack = (self.track != 0);
 	BOOL hasLength = (self.totalFrames != 0);
 	BOOL hasCurrentPosition = (self.currentPosition != 0) && (self.current);
 	BOOL hasExtension = NO;
-	BOOL hasTitle = (title != nil) && (![title isEqualToString:@""]);
+	BOOL hasTitle = (self.rawTitle != nil) && (![self.rawTitle isEqualToString:@""]);
 	BOOL hasCodec = (self.codec != nil) && (![self.codec isEqualToString:@""]);
 
-	NSMutableString *filename = [NSMutableString stringWithString:[self filename]];
+	NSMutableString *filename = [NSMutableString stringWithString:self.filename];
 	NSRange dotPosition = [filename rangeOfString:@"." options:NSBackwardsSearch];
 	NSString *extension = nil;
 
@@ -258,7 +186,7 @@
 	}
 
 	if(hasTitle) {
-		[elements addObject:title];
+		[elements addObject:self.rawTitle];
 	} else {
 		[elements addObject:filename];
 	}
@@ -272,7 +200,7 @@
 		SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
 		[elements addObject:@" ("];
 		if(hasCurrentPosition) {
-			[elements addObject:[secondsFormatter stringForObjectValue:[NSNumber numberWithFloat:currentPosition]]];
+			[elements addObject:[secondsFormatter stringForObjectValue:[NSNumber numberWithDouble:self.currentPosition]]];
 		}
 		if(hasLength) {
 			if(hasCurrentPosition) {
@@ -288,11 +216,11 @@
 
 @dynamic trackText;
 - (NSString *)trackText {
-	if([self.track intValue]) {
-		if([self.disc intValue]) {
-			return [NSString stringWithFormat:@"%@.%02u", self.disc, [self.track intValue]];
+	if(self.track != 0) {
+		if(self.disc != 0) {
+			return [NSString stringWithFormat:@"%u.%02u", self.disc, self.track];
 		} else {
-			return [NSString stringWithFormat:@"%02u", [self.track intValue]];
+			return [NSString stringWithFormat:@"%02u", self.track];
 		}
 	} else {
 		return @"";
@@ -301,8 +229,8 @@
 
 @dynamic yearText;
 - (NSString *)yearText {
-	if([self.year intValue]) {
-		return [NSString stringWithFormat:@"%@", self.year];
+	if(self.year != 0) {
+		return [NSString stringWithFormat:@"%u", self.year];
 	} else {
 		return @"";
 	}
@@ -310,7 +238,7 @@
 
 @dynamic cuesheetPresent;
 - (NSString *)cuesheetPresent {
-	if(cuesheet && [cuesheet length]) {
+	if(self.cuesheet && [self.cuesheet length]) {
 		return @"yes";
 	} else {
 		return @"no";
@@ -319,17 +247,17 @@
 
 @dynamic gainCorrection;
 - (NSString *)gainCorrection {
-	if(replayGainAlbumGain) {
-		if(replayGainAlbumPeak)
+	if(self.replayGainAlbumGain) {
+		if(self.replayGainAlbumPeak)
 			return @"Album Gain plus Peak";
 		else
 			return @"Album Gain";
-	} else if(replayGainTrackGain) {
-		if(replayGainTrackPeak)
+	} else if(self.replayGainTrackGain) {
+		if(self.replayGainTrackPeak)
 			return @"Track Gain plus Peak";
 		else
 			return @"Track Gain";
-	} else if(volume && volume != 1) {
+	} else if(self.volume && self.volume != 1.0) {
 		return @"Volume scale";
 	} else {
 		return @"None";
@@ -339,20 +267,20 @@
 @dynamic gainInfo;
 - (NSString *)gainInfo {
 	NSMutableArray *gainItems = [[NSMutableArray alloc] init];
-	if(replayGainAlbumGain) {
-		[gainItems addObject:[NSString stringWithFormat:@"Album Gain: %+.2f dB", replayGainAlbumGain]];
+	if(self.replayGainAlbumGain) {
+		[gainItems addObject:[NSString stringWithFormat:@"Album Gain: %+.2f dB", self.replayGainAlbumGain]];
 	}
-	if(replayGainAlbumPeak) {
-		[gainItems addObject:[NSString stringWithFormat:@"Album Peak: %.6f", replayGainAlbumPeak]];
+	if(self.replayGainAlbumPeak) {
+		[gainItems addObject:[NSString stringWithFormat:@"Album Peak: %.6f", self.replayGainAlbumPeak]];
 	}
-	if(replayGainTrackGain) {
-		[gainItems addObject:[NSString stringWithFormat:@"Track Gain: %+.2f dB", replayGainTrackGain]];
+	if(self.replayGainTrackGain) {
+		[gainItems addObject:[NSString stringWithFormat:@"Track Gain: %+.2f dB", self.replayGainTrackGain]];
 	}
-	if(replayGainTrackPeak) {
-		[gainItems addObject:[NSString stringWithFormat:@"Track Peak: %.6f", replayGainTrackPeak]];
+	if(self.replayGainTrackPeak) {
+		[gainItems addObject:[NSString stringWithFormat:@"Track Peak: %.6f", self.replayGainTrackPeak]];
 	}
-	if(volume && volume != 1) {
-		[gainItems addObject:[NSString stringWithFormat:@"Volume Scale: %.2f%C", volume, (unichar)0x00D7]];
+	if(self.volume && self.volume != 1) {
+		[gainItems addObject:[NSString stringWithFormat:@"Volume Scale: %.2f%C", self.volume, (unichar)0x00D7]];
 	}
 	return [gainItems componentsJoinedByString:@"\n"];
 }
@@ -360,35 +288,33 @@
 @dynamic positionText;
 - (NSString *)positionText {
 	SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
-	NSString *time = [secondsFormatter stringForObjectValue:[NSNumber numberWithFloat:currentPosition]];
+	NSString *time = [secondsFormatter stringForObjectValue:[NSNumber numberWithDouble:self.currentPosition]];
 	return time;
 }
 
 @dynamic lengthText;
 - (NSString *)lengthText {
 	SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
-	NSString *time = [secondsFormatter stringForObjectValue:[self length]];
+	NSString *time = [secondsFormatter stringForObjectValue:self.length];
 	return time;
 }
 
-@synthesize albumArtInternal;
-
 @dynamic albumArt;
 - (NSImage *)albumArt {
-	if(!albumArtInternal || ![albumArtInternal length]) return nil;
+	if(!self.albumArtInternal || ![self.albumArtInternal length]) return nil;
 
-	NSString *imageCacheTag = [NSString stringWithFormat:@"%ld", artId];
+	NSString *imageCacheTag = self.artHash;
 	NSImage *image = [NSImage imageNamed:imageCacheTag];
 
 	if(image == nil) {
-		if([AVIFDecoder isAVIFFormatForData:albumArtInternal]) {
-			CGImageRef imageRef = [AVIFDecoder createAVIFImageWithData:albumArtInternal];
+		if([AVIFDecoder isAVIFFormatForData:self.albumArtInternal]) {
+			CGImageRef imageRef = [AVIFDecoder createAVIFImageWithData:self.albumArtInternal];
 			if(imageRef) {
 				image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
 				CFRelease(imageRef);
 			}
 		} else {
-			image = [[NSImage alloc] initWithData:albumArtInternal];
+			image = [[NSImage alloc] initWithData:self.albumArtInternal];
 		}
 		[image setName:imageCacheTag];
 	}
@@ -402,22 +328,94 @@
 	}
 }
 
+@dynamic albumArtInternal;
+- (NSData *)albumArtInternal {
+	NSString *imageCacheTag = self.artHash;
+	return [__artworkDictionary objectForKey:imageCacheTag].artData;
+}
+
+- (void)setAlbumArtInternal:(NSData *)albumArtInternal {
+	if(!albumArtInternal || [albumArtInternal length] == 0) return;
+
+	NSString *imageCacheTag = [SHA256Digest digestDataAsString:albumArtInternal];
+
+	self.artHash = imageCacheTag;
+
+	if(![__artworkDictionary objectForKey:imageCacheTag]) {
+		AlbumArtwork *art = [NSEntityDescription insertNewObjectForEntityForName:@"AlbumArtwork" inManagedObjectContext:__persistentContainer.viewContext];
+		art.artHash = imageCacheTag;
+		art.artData = albumArtInternal;
+
+		[__artworkDictionary setObject:art forKey:imageCacheTag];
+	}
+}
+
 @dynamic length;
 - (NSNumber *)length {
 	return [NSNumber numberWithDouble:(self.metadataLoaded) ? ((double)self.totalFrames / self.sampleRate) : 0.0];
 }
 
+NSURL *_Nullable urlForPath(NSString *_Nullable path) {
+	if(!path || ![path length]) {
+		return nil;
+	}
+
+	NSRange protocolRange = [path rangeOfString:@"://"];
+	if(protocolRange.location != NSNotFound) {
+		return [NSURL URLWithString:path];
+	}
+
+	NSMutableString *unixPath = [path mutableCopy];
+
+	// Get the fragment
+	NSString *fragment = @"";
+	NSScanner *scanner = [NSScanner scannerWithString:unixPath];
+	NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@"#1234567890"];
+	while(![scanner isAtEnd]) {
+		NSString *possibleFragment;
+		[scanner scanUpToString:@"#" intoString:nil];
+
+		if([scanner scanCharactersFromSet:characterSet intoString:&possibleFragment] && [scanner isAtEnd]) {
+			fragment = possibleFragment;
+			[unixPath deleteCharactersInRange:NSMakeRange([scanner scanLocation] - [possibleFragment length], [possibleFragment length])];
+			break;
+		}
+	}
+
+	// Append the fragment
+	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString:fragment]];
+	return url;
+}
+
+@dynamic url;
+- (NSURL *)url {
+	return urlForPath(self.urlString);
+}
+
+- (void)setUrl:(NSURL *)url {
+	self.urlString = url ? [url absoluteString] : nil;
+}
+
+@dynamic trashUrl;
+- (NSURL *)trashUrl {
+	return urlForPath(self.trashUrlString);
+}
+
+- (void)setTrashUrl:(NSURL *)trashUrl {
+	self.trashUrlString = trashUrl ? [trashUrl absoluteString] : nil;
+}
+
 @dynamic path;
 - (NSString *)path {
-	if([self.URL isFileURL])
-		return [[self.URL path] stringByAbbreviatingWithTildeInPath];
+	if([self.url isFileURL])
+		return [[self.url path] stringByAbbreviatingWithTildeInPath];
 	else
-		return [self.URL absoluteString];
+		return [self.url absoluteString];
 }
 
 @dynamic filename;
 - (NSString *)filename {
-	return [[self.URL path] lastPathComponent];
+	return [[self.url path] lastPathComponent];
 }
 
 @dynamic status;
@@ -442,9 +440,9 @@
 	} else if(self.current) {
 		return @"Playing...";
 	} else if(self.queued) {
-		return [NSString stringWithFormat:@"Queued: %li", self.queuePosition + 1];
+		return [NSString stringWithFormat:@"Queued: %lli", self.queuePosition + 1];
 	} else if(self.error) {
-		return errorMessage;
+		return self.errorMessage;
 	}
 
 	return nil;
@@ -459,76 +457,6 @@
 	}
 
 	[self setMetadataLoaded:YES];
-}
-
-// Now we duplicate the object to a new handle, but merely reference the same data
-- (id)copyWithZone:(NSZone *)zone {
-	PlaylistEntry *pe = [[[self class] allocWithZone:zone] init];
-
-	if(pe) {
-		pe->index = index;
-		pe->shuffleIndex = shuffleIndex;
-		pe->dbIndex = dbIndex;
-		pe->entryId = entryId;
-		pe->artId = artId;
-
-		pe->current = current;
-		pe->removed = removed;
-
-		pe->stopAfter = stopAfter;
-
-		pe->queued = queued;
-		pe->queuePosition = queuePosition;
-
-		pe->error = error;
-		pe->errorMessage = errorMessage;
-
-		pe->URL = URL;
-
-		pe->artist = artist;
-		pe->albumartist = albumartist;
-		pe->album = album;
-		pe->title = title;
-		pe->genre = genre;
-		pe->year = year;
-		pe->track = track;
-		pe->disc = disc;
-
-		pe->cuesheet = cuesheet;
-
-		pe->albumArtInternal = albumArtInternal;
-
-		pe->replayGainAlbumGain = replayGainAlbumGain;
-		pe->replayGainAlbumPeak = replayGainAlbumPeak;
-		pe->replayGainTrackGain = replayGainTrackGain;
-		pe->replayGainTrackPeak = replayGainTrackPeak;
-		pe->volume = volume;
-
-		currentPosition = pe->currentPosition;
-
-		pe->totalFrames = totalFrames;
-		pe->bitrate = bitrate;
-		pe->channels = channels;
-		pe->channelConfig = channelConfig;
-		pe->bitsPerSample = bitsPerSample;
-		pe->floatingPoint = floatingPoint;
-		pe->Unsigned = Unsigned;
-		pe->sampleRate = sampleRate;
-
-		pe->codec = codec;
-
-		pe->endian = endian;
-
-		pe->encoding = encoding;
-
-		pe->seekable = seekable;
-
-		pe->metadataLoaded = metadataLoaded;
-
-		pe->deleted = deleted;
-	}
-
-	return pe;
 }
 
 @end

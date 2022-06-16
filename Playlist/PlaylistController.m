@@ -11,7 +11,6 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 #import "RepeatTransformers.h"
-#import "SQLiteStore.h"
 #import "Shuffle.h"
 #import "ShuffleTransformers.h"
 #import "SpotlightWindowController.h"
@@ -31,6 +30,9 @@
 @synthesize currentStatus;
 
 static NSArray *cellIdentifiers = nil;
+
+NSPersistentContainer *__persistentContainer = nil;
+NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary = nil;
 
 static void *playlistControllerContext = &playlistControllerContext;
 
@@ -94,17 +96,31 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 - (id)initWithCoder:(NSCoder *)decoder {
 	self = [super initWithCoder:decoder];
+	if(!self) return nil;
 
-	if(self) {
-		shuffleList = [[NSMutableArray alloc] init];
-		queueList = [[NSMutableArray alloc] init];
+	shuffleList = [[NSMutableArray alloc] init];
+	queueList = [[NSMutableArray alloc] init];
 
-		undoManager = [[NSUndoManager alloc] init];
+	undoManager = [[NSUndoManager alloc] init];
 
-		[undoManager setLevelsOfUndo:UNDO_STACK_LIMIT];
+	[undoManager setLevelsOfUndo:UNDO_STACK_LIMIT];
 
-		[self initDefaults];
-	}
+	[self initDefaults];
+
+	_persistentContainer = [[NSPersistentContainer alloc] initWithName:@"DataModel"];
+	[self.persistentContainer loadPersistentStoresWithCompletionHandler:^(NSPersistentStoreDescription *description, NSError *error) {
+		if(error != nil) {
+			ALog(@"Failed to load Core Data stack: %@", error);
+			abort();
+		}
+	}];
+
+	__persistentContainer = self.persistentContainer;
+
+	self.persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
+
+	_persistentArtStorage = [[NSMutableDictionary alloc] init];
+	__artworkDictionary = self.persistentArtStorage;
 
 	return self;
 }
@@ -218,31 +234,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
-- (void)beginProgress:(NSString *)localizedDescription {
-	while(playbackController.progressOverall) {
-		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-	}
-	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		self->playbackController.progressOverall = [NSProgress progressWithTotalUnitCount:100000];
-		self->playbackController.progressOverall.localizedDescription = localizedDescription;
-	});
-}
-
-- (void)completeProgress {
-	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self->playbackController.progressOverall setCompletedUnitCount:100000];
-		self->playbackController.progressOverall = nil;
-	});
-}
-
-- (void)setProgressStatus:(double)status {
-	if(status >= 0) {
-		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-			NSUInteger jobCount = (NSUInteger)ceil(1000.0 * status);
-			[self->playbackController.progressOverall setCompletedUnitCount:jobCount];
-		});
-	} else {
-		[self completeProgress];
+- (void)commitPersistentStore {
+	NSError *error = nil;
+	[self.persistentContainer.viewContext save:&error];
+	if(error) {
+		ALog(@"Error committing playlist storage: %@", [error localizedDescription]);
 	}
 }
 
@@ -258,12 +254,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 	}
 	if(updated) {
-		[self beginProgress:NSLocalizedString(@"ProgressActionUpdatingIndexes", @"updating playlist indexes")];
-		[[SQLiteStore sharedStore] syncPlaylistEntries:arranged
-		                                  progressCall:^(double progress) {
-			                                  [self setProgressStatus:progress];
-		                                  }];
-		[self completeProgress];
+		[self commitPersistentStore];
 	}
 }
 
@@ -347,59 +338,59 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		switch(index) {
 			case 0:
-				cellText = [NSString stringWithFormat:@"%ld", [pe index] + 1];
+				cellText = [NSString stringWithFormat:@"%lld", pe.index + 1];
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
 
 			case 1:
-				cellImage = [statusImageTransformer transformedValue:[pe status]];
+				cellImage = [statusImageTransformer transformedValue:pe.status];
 				break;
 
 			case 2:
-				if([pe title]) cellText = [pe title];
+				if([pe title]) cellText = pe.title;
 				break;
 
 			case 3:
-				if([pe albumartist]) cellText = [pe albumartist];
+				if([pe albumartist]) cellText = pe.albumartist;
 				break;
 
 			case 4:
-				if([pe artist]) cellText = [pe artist];
+				if([pe artist]) cellText = pe.artist;
 				break;
 
 			case 5:
-				if([pe album]) cellText = [pe album];
+				if([pe album]) cellText = pe.album;
 				break;
 
 			case 6:
-				cellText = [pe lengthText];
+				cellText = pe.lengthText;
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
 
 			case 7:
-				if([pe year]) cellText = [pe yearText];
+				if([pe year]) cellText = pe.yearText;
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
 
 			case 8:
-				if([pe genre]) cellText = [pe genre];
+				if([pe genre]) cellText = pe.genre;
 				break;
 
 			case 9:
-				if([pe track]) cellText = [pe trackText];
+				if([pe track]) cellText = pe.trackText;
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
 
 			case 10:
-				if([pe path]) cellText = [pe path];
+				if([pe path]) cellText = pe.path;
 				break;
 
 			case 11:
-				if([pe filename]) cellText = [pe filename];
+				if([pe filename]) cellText = pe.filename;
 				break;
 
 			case 12:
-				if([pe codec]) cellText = [pe codec];
+				if([pe codec]) cellText = pe.codec;
 				break;
 		}
 	}
@@ -558,16 +549,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	[super moveObjectsFromIndex:fromIndex toArrangedObjectIndexes:indexSet];
 
-	[self beginProgress:NSLocalizedString(@"ProgressActionMovingEntries", @"moving playlist entries")];
-
-	[[SQLiteStore sharedStore] playlistMoveObjectsFromIndex:fromIndex
-	                                toArrangedObjectIndexes:indexSet
-	                                           progressCall:^(double progress) {
-		                                           [self setProgressStatus:progress];
-	                                           }];
-
-	[self completeProgress];
-
 	[playbackController playlistDidChange:self];
 }
 
@@ -581,16 +562,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[[self undoManager] setActionName:actionName];
 
 	[super moveObjectsInArrangedObjectsFromIndexes:indexSet toIndex:insertIndex];
-
-	[self beginProgress:NSLocalizedString(@"ProgressActionMovingEntries", @"moving playlist entries")];
-
-	[[SQLiteStore sharedStore] playlistMoveObjectsInArrangedObjectsFromIndexes:indexSet
-	                                                                   toIndex:insertIndex
-	                                                              progressCall:^(double progress) {
-		                                                              [self setProgressStatus:progress];
-	                                                              }];
-
-	[self completeProgress];
 
 	[playbackController playlistDidChange:self];
 }
@@ -608,9 +579,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[filenames addObject:[[song path] stringByExpandingTildeInPath]];
 
 	if(@available(macOS 10.13, *)) {
-		[item setData:[song.URL dataRepresentation] forType:NSPasteboardTypeFileURL];
+		[item setData:[song.url dataRepresentation] forType:NSPasteboardTypeFileURL];
 	} else {
-		[item setPropertyList:@[song.URL] forType:NSFilenamesPboardType];
+		[item setPropertyList:@[song.url] forType:NSFilenamesPboardType];
 	}
 
 	return item;
@@ -759,6 +730,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (void)insertObjectsUnsynced:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
+	[self rearrangeObjects];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -771,20 +743,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[[self undoManager] setActionName:actionName];
 
 	for(PlaylistEntry *pe in objects) {
-		pe.deleted = NO;
+		pe.deLeted = NO;
 	}
-
-	[self beginProgress:NSLocalizedString(@"ProgressActionInsertingEntries", @"inserting playlist entries")];
-
-	[[SQLiteStore sharedStore] playlistInsertTracks:objects
-	                                atObjectIndexes:indexes
-	                                   progressCall:^(double progress) {
-		                                   [self setProgressStatus:progress];
-	                                   }];
 
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 
-	[self completeProgress];
+	[self commitPersistentStore];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -797,25 +761,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[[self undoManager] setActionName:actionName];
 
 	for(PlaylistEntry *pe in objects) {
-		if(pe.deleted && pe.trashURL) {
+		if(pe.deLeted && pe.trashUrl) {
 			NSError *error = nil;
-			[[NSFileManager defaultManager] moveItemAtURL:pe.trashURL toURL:pe.URL error:&error];
+			[[NSFileManager defaultManager] moveItemAtURL:pe.trashUrl toURL:pe.url error:&error];
 		}
-		pe.deleted = NO;
-		pe.trashURL = nil;
+		pe.deLeted = NO;
+		pe.trashUrl = nil;
 	}
-
-	[self beginProgress:NSLocalizedString(@"ProgressActionUntrashingEntries", @"restoring playlist entries from the trash")];
-
-	[[SQLiteStore sharedStore] playlistInsertTracks:objects
-	                                atObjectIndexes:indexes
-	                                   progressCall:^(double progress) {
-		                                   [self setProgressStatus:progress];
-	                                   }];
 
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 
-	[self completeProgress];
+	[self commitPersistentStore];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -838,12 +794,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[[self undoManager] setActionName:actionName];
 
 	DLog(@"Removing indexes: %@", indexes);
-	DLog(@"Current index: %li", currentEntry.index);
+	DLog(@"Current index: %lli", currentEntry.index);
 
 	NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
 	for(PlaylistEntry *pe in objects) {
 		[unarrangedIndexes addIndex:[pe index]];
-		pe.deleted = YES;
+		pe.deLeted = YES;
 	}
 
 	if([indexes containsIndex:currentEntry.index]) {
@@ -855,7 +811,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	if(currentEntry.index >= 0 && [unarrangedIndexes containsIndex:currentEntry.index]) {
 		currentEntry.index = -currentEntry.index - 1;
-		DLog(@"Current removed: %li", currentEntry.index);
+		DLog(@"Current removed: %lli", currentEntry.index);
 	}
 
 	if(currentEntry.index < 0) // Need to update the negative index
@@ -872,18 +828,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		currentEntry.index = -i - 1;
 	}
 
-	[self beginProgress:NSLocalizedString(@"ProgressActionRemovingEntries", @"removing playlist entries")];
-
-	[[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes
-	                                            progressCall:^(double progress) {
-		                                            [self setProgressStatus:progress];
-	                                            }];
-
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 
-	if([self shuffle] != ShuffleOff) [self resetShuffleList];
+	[self commitPersistentStore];
 
-	[self completeProgress];
+	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 
 	[playbackController playlistDidChange:self];
 }
@@ -898,12 +847,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[[self undoManager] setActionName:actionName];
 
 	DLog(@"Trashing indexes: %@", indexes);
-	DLog(@"Current index: %li", currentEntry.index);
+	DLog(@"Current index: %lli", currentEntry.index);
 
 	NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
 	for(PlaylistEntry *pe in objects) {
 		[unarrangedIndexes addIndex:[pe index]];
-		pe.deleted = YES;
+		pe.deLeted = YES;
 	}
 
 	if([indexes containsIndex:currentEntry.index]) {
@@ -916,29 +865,22 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 	}
 
-	[self beginProgress:NSLocalizedString(@"ProgressActionTrashingEntries", @"moving playlist entries to the trash")];
-
-	[[SQLiteStore sharedStore] playlistRemoveTracksAtIndexes:unarrangedIndexes
-	                                            progressCall:^(double progress) {
-		                                            [self setProgressStatus:progress];
-	                                            }];
-
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
+
+	[self commitPersistentStore];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 
 	[playbackController playlistDidChange:self];
 
 	for(PlaylistEntry *pe in objects) {
-		if([pe.URL isFileURL]) {
+		if([pe.url isFileURL]) {
 			NSURL *removed = nil;
 			NSError *error = nil;
-			[[NSFileManager defaultManager] trashItemAtURL:pe.URL resultingItemURL:&removed error:&error];
-			pe.trashURL = removed;
+			[[NSFileManager defaultManager] trashItemAtURL:pe.url resultingItemURL:&removed error:&error];
+			pe.trashUrl = removed;
 		}
 	}
-
-	[self completeProgress];
 }
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors {
@@ -1049,10 +991,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSMutableArray *duplicates = [[NSMutableArray alloc] init];
 
 	for(PlaylistEntry *pe in [self content]) {
-		if([originals containsObject:[pe URL]])
+		if([originals containsObject:pe.url])
 			[duplicates addObject:pe];
 		else
-			[originals addObject:[pe URL]];
+			[originals addObject:pe.url];
 	}
 
 	if([duplicates count] > 0) {
@@ -1069,7 +1011,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSMutableArray *deadItems = [[NSMutableArray alloc] init];
 
 	for(PlaylistEntry *pe in [self content]) {
-		NSURL *url = [pe URL];
+		NSURL *url = pe.url;
 		if([url isFileURL])
 			if(![[NSFileManager defaultManager] fileExistsAtPath:[url path]])
 				[deadItems addObject:pe];
@@ -1120,7 +1062,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if([queueList count] > 0) {
 		pe = queueList[0];
 		[queueList removeObjectAtIndex:0];
-		[[SQLiteStore sharedStore] queueRemoveItem:0];
 		pe.queued = NO;
 		[pe setQueuePosition:-1];
 
@@ -1442,7 +1383,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (IBAction)emptyQueueList:(id)sender {
 	[self emptyQueueListUnsynced];
-	[[SQLiteStore sharedStore] queueEmpty];
 }
 
 - (void)emptyQueueListUnsynced {
@@ -1462,8 +1402,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (IBAction)toggleQueued:(id)sender {
-	SQLiteStore *store = [SQLiteStore sharedStore];
-
 	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
 
 	for(PlaylistEntry *queueItem in [self selectedObjects]) {
@@ -1472,15 +1410,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 			queueItem.queued = NO;
 			queueItem.queuePosition = -1;
-
-			[store queueRemovePlaylistItems:@[[NSNumber numberWithInteger:[queueItem index]]]];
 		} else {
 			queueItem.queued = YES;
 			queueItem.queuePosition = (int)[queueList count];
 
 			[queueList addObject:queueItem];
-
-			[store queueAddItem:[queueItem index]];
 		}
 
 		[refreshSet addIndex:[queueItem index]];
@@ -1504,8 +1438,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (IBAction)removeFromQueue:(id)sender {
-	SQLiteStore *store = [SQLiteStore sharedStore];
-
 	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
 
 	for(PlaylistEntry *queueItem in [self selectedObjects]) {
@@ -1513,7 +1445,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		queueItem.queuePosition = -1;
 
 		[queueList removeObject:queueItem];
-		[store queueRemovePlaylistItems:@[queueItem]];
 
 		[refreshSet addIndex:[queueItem index]];
 	}
@@ -1533,8 +1464,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (IBAction)addToQueue:(id)sender {
-	SQLiteStore *store = [SQLiteStore sharedStore];
-
 	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
 
 	for(PlaylistEntry *queueItem in [self selectedObjects]) {
@@ -1542,7 +1471,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		queueItem.queuePosition = (int)[queueList count];
 
 		[queueList addObject:queueItem];
-		[store queueAddItem:[queueItem index]];
 	}
 
 	for(PlaylistEntry *queueItem in queueList) {

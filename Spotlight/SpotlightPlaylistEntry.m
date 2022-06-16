@@ -13,33 +13,30 @@
 // with format (entryKey, transformerName)
 static NSDictionary *importKeys;
 
+extern NSPersistentContainer *__persistentContainer;
+
 @implementation SpotlightPlaylistEntry
 
 + (void)initialize {
 	// We need to translate the path string to a full URL
 	NSArray *URLTransform =
-	@[@"URL", @"PathToURLTransformer"];
+	@[@"url", @"PathToURLTransformer"];
 
 	// Extract the artist name from the authors array
 	NSArray *artistTransform =
 	@[@"artist", @"AuthorToArtistTransformer"];
 
-	// Track numbers must sometimes be converted from NSNumber to NSString
-	NSArray *trackTransform =
-	@[@"spotlightTrack", @"NumberToStringTransformer"];
-
-	importKeys = @{@"kMDItemTitle": @"title",
-				   @"kMDItemAlbum": @"album",
-				   @"kMDItemAudioTrackNumber": trackTransform,
-				   @"kMDItemRecordingYear": @"year",
-				   @"kMDItemMusicalGenre": @"genre",
-				   @"kMDItemDurationSeconds": @"length",
-				   @"kMDItemPath": URLTransform,
-				   @"kMDItemAuthors": artistTransform};
+	importKeys = @{ @"kMDItemTitle": @"title",
+		            @"kMDItemAlbum": @"album",
+		            @"kMDItemAudioTrackNumber": @"track",
+		            @"kMDItemRecordingYear": @"year",
+		            @"kMDItemMusicalGenre": @"genre",
+		            @"kMDItemPath": URLTransform,
+		            @"kMDItemAuthors": artistTransform };
 }
 
-+ (SpotlightPlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem {
-	SpotlightPlaylistEntry *entry = [[SpotlightPlaylistEntry alloc] init];
++ (PlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem {
+	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:__persistentContainer.viewContext];
 
 	// loop through the keys we want to extract
 	for(NSString *mdKey in importKeys) {
@@ -67,18 +64,5 @@ static NSDictionary *importKeys;
 	}
 	return entry;
 }
-
-// Length is no longer a dependent key
-+ (NSSet *)keyPathsForValuesAffectingLength {
-	return nil;
-}
-
-- (void)dealloc {
-	self.length = nil;
-	self.spotlightTrack = nil;
-}
-
-@synthesize length;
-@synthesize spotlightTrack;
 
 @end

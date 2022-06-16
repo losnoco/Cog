@@ -10,7 +10,6 @@
 #import <UserNotifications/UserNotifications.h>
 
 #import "PlaybackController.h"
-#import "PlaylistEntry.h"
 
 @class AudioScrobbler;
 

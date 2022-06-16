@@ -42,6 +42,8 @@ typedef enum {
 
 - (NSArray *)addDatabase;
 
+- (BOOL)addDataStore;
+
 // Save playlist, auto-determines type based on extension. Uses m3u if it cannot be determined.
 - (BOOL)save:(NSString *)filename;
 - (BOOL)save:(NSString *)filename asType:(PlaylistType)type;

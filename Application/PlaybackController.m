@@ -160,16 +160,16 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-	if([pe replayGainAlbumGain] != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:[pe replayGainAlbumGain]] forKey:@"replayGainAlbumGain"];
-	if([pe replayGainAlbumPeak] != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:[pe replayGainAlbumPeak]] forKey:@"replayGainAlbumPeak"];
-	if([pe replayGainTrackGain] != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:[pe replayGainTrackGain]] forKey:@"replayGainTrackGain"];
-	if([pe replayGainTrackPeak] != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:[pe replayGainTrackPeak]] forKey:@"replayGainTrackPeak"];
-	if([pe volume] != 1)
-		[dictionary setObject:[NSNumber numberWithFloat:[pe volume]] forKey:@"volume"];
+	if(pe.replayGainAlbumGain != 0)
+		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainAlbumGain] forKey:@"replayGainAlbumGain"];
+	if(pe.replayGainAlbumPeak != 0)
+		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainAlbumPeak] forKey:@"replayGainAlbumPeak"];
+	if(pe.replayGainTrackGain != 0)
+		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainTrackGain] forKey:@"replayGainTrackGain"];
+	if(pe.replayGainTrackPeak != 0)
+		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainTrackPeak] forKey:@"replayGainTrackPeak"];
+	if(pe.volume != 1)
+		[dictionary setObject:[NSNumber numberWithFloat:pe.volume] forKey:@"volume"];
 	return dictionary;
 }
 
@@ -196,7 +196,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		return;
 
 	BOOL loadData = YES;
-	NSString *urlScheme = [[pe URL] scheme];
+	NSString *urlScheme = [pe.url scheme];
 	if([urlScheme isEqualToString:@"http"] ||
 	   [urlScheme isEqualToString:@"https"])
 		loadData = NO;
@@ -222,9 +222,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	[self sendMetaData];
 
-	double seekTime = [pe seekable] ? [offset doubleValue] : 0.0;
+	double seekTime = pe.seekable ? [offset doubleValue] : 0.0;
 
-	[audioPlayer play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:seekTime];
+	[audioPlayer play:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:seekTime];
 }
 
 - (IBAction)next:(id)sender {
@@ -574,7 +574,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 
 	if(pe)
-		[player setNextStream:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe)];
+		[player setNextStream:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe)];
 	else
 		[player setNextStream:nil];
 }
@@ -674,7 +674,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
-	[player play:[pe URL] withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:[pe seekable] ? [pe currentPosition] : 0.0];
+	[player play:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:pe.seekable ? pe.currentPosition : 0.0];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
@@ -768,7 +768,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		if([entry year]) {
 			// If PlaylistEntry can represent a full date like some tag formats can do, change it
 			NSCalendar *calendar = [NSCalendar currentCalendar];
-			NSDate *releaseYear = [calendar dateWithEra:1 year:[[entry year] intValue] month:0 day:0 hour:0 minute:0 second:0 nanosecond:0];
+			NSDate *releaseYear = [calendar dateWithEra:1 year:entry.year month:0 day:0 hour:0 minute:0 second:0 nanosecond:0];
 			[songInfo setObject:releaseYear forKey:MPMediaItemPropertyReleaseDate];
 		}
 		[songInfo setObject:[NSNumber numberWithFloat:[entry currentPosition]] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];

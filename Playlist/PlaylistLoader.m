@@ -10,6 +10,9 @@
 
 #include <mach/semaphore.h>
 
+#import "Cog-Swift.h"
+#import <CoreData/CoreData.h>
+
 #import "AppController.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
@@ -35,6 +38,8 @@
 #import "NSDictionary+Merge.h"
 
 #import "RedundantPlaylistDataStore.h"
+
+extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 
 @implementation PlaylistLoader
 
@@ -107,7 +112,7 @@
 	[fileHandle writeData:[@"#\n" dataUsingEncoding:NSUTF8StringEncoding]];
 
 	for(PlaylistEntry *pe in [playlistController arrangedObjects]) {
-		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
+		NSString *path = [self relativePathFrom:filename toURL:pe.url];
 		[fileHandle writeData:[[path stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
 	}
 
@@ -127,7 +132,7 @@
 
 	int i = 1;
 	for(PlaylistEntry *pe in [playlistController arrangedObjects]) {
-		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
+		NSString *path = [self relativePathFrom:filename toURL:pe.url];
 		NSString *entry = [NSString stringWithFormat:@"File%i=%@\n", i, path];
 
 		[fileHandle writeData:[entry dataUsingEncoding:NSUTF8StringEncoding]];
@@ -191,7 +196,7 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 
 		NSMutableDictionary *dict = dictionaryWithPropertiesOfObject(pe, filterList);
 
-		NSString *path = [self relativePathFrom:filename toURL:[pe URL]];
+		NSString *path = [self relativePathFrom:filename toURL:pe.url];
 
 		[dict setObject:path forKey:@"URL"];
 		NSData *albumArt = [dict objectForKey:@"albumArtInternal"];
@@ -500,12 +505,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSInteger i = 0;
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
 	for(NSURL *url in validURLs) {
-		PlaylistEntry *pe;
-		pe = [[PlaylistEntry alloc] init];
+		PlaylistEntry *pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:playlistController.persistentContainer.viewContext];
 
-		pe.URL = url;
+		pe.url = url;
 		pe.index = index + i;
-		pe.title = [[url path] lastPathComponent];
+		pe.rawTitle = [[url path] lastPathComponent];
 		pe.queuePosition = -1;
 		[entries addObject:pe];
 
@@ -519,8 +523,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	if(xmlData) {
 		for(NSDictionary *entry in [xmlData objectForKey:@"entries"]) {
-			PlaylistEntry *pe;
-			pe = [[PlaylistEntry alloc] init];
+			PlaylistEntry *pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:playlistController.persistentContainer.viewContext];
 
 			[pe setValuesForKeysWithDictionary:entry];
 			pe.index = index + i;
@@ -574,8 +577,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		if([arrayRest count])
 			[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
-		else
+		else {
+			[playlistController commitPersistentStore];
 			[self completeProgress];
+		}
 		return entries;
 	}
 }
@@ -584,8 +589,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
 	long i, j;
 	NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
-
-	SQLiteStore *store = [SQLiteStore sharedStore];
 
 	__block double progress = 0.0;
 
@@ -645,13 +648,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 					return;
 				}
 
-				DLog(@"Loading metadata for %@", weakPe.URL);
+				DLog(@"Loading metadata for %@", weakPe.url);
 
-				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.URL];
+				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.url];
 				if(entryProperties == nil)
 					return;
 
-				NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:weakPe.URL];
+				NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:weakPe.url];
 
 				NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:entryMetadata];
 
@@ -683,12 +686,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 			if(!weakPe.deleted) {
 				[weakPe setMetadata:entryInfo];
-				[store trackUpdate:weakPe];
 			}
 			progress += progressstep;
 			[self setProgressJobStatus:progress];
 		});
 	}
+
+	[playlistController commitPersistentStore];
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 
@@ -711,8 +715,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	long i, j;
 	NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
 
-	SQLiteStore *store = [SQLiteStore sharedStore];
-
 	i = 0;
 	j = 0;
 	for(PlaylistEntry *pe in entries) {
@@ -734,16 +736,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[load_info_indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *_Nonnull stop) {
 		PlaylistEntry *pe = [entries objectAtIndex:idx];
 
-		DLog(@"Loading metadata for %@", pe.URL);
+		DLog(@"Loading metadata for %@", pe.url);
 
-		NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.URL];
+		NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.url];
 		if(entryProperties == nil)
 			return;
 
-		NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[AudioMetadataReader metadataForURL:pe.URL]];
+		NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[AudioMetadataReader metadataForURL:pe.url]];
 
 		[pe setMetadata:entryInfo];
-		[store trackUpdate:pe];
 	}];
 
 	[self->playlistController updateTotalTime];
@@ -764,6 +765,81 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (NSArray *)addURL:(NSURL *)url {
 	return [self insertURLs:@[url] atIndex:(int)[[playlistController content] count] sort:NO];
+}
+
+- (BOOL)addDataStore {
+	NSPersistentContainer *pc = playlistController.persistentContainer;
+	if(pc) {
+		NSManagedObjectContext *moc = pc.viewContext;
+
+		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"AlbumArtwork"];
+		NSError *error = nil;
+		NSArray *results = [moc executeFetchRequest:request error:&error];
+		if(!results) {
+			ALog(@"Error fetching AlbumArtwork objects: %@\n%@", [error localizedDescription], [error userInfo]);
+			abort();
+		}
+
+		for(AlbumArtwork *art in results) {
+			[__artworkDictionary setObject:art forKey:art.artHash];
+		}
+
+		request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+
+		results = [moc executeFetchRequest:request error:&error];
+		if(!results) {
+			ALog(@"Error fetching PlaylistEntry objects: %@\n%@", [error localizedDescription], [error userInfo]);
+			abort();
+		}
+
+		if([results count] == 0) return NO;
+
+		NSMutableArray *resultsCopy = [results mutableCopy];
+		NSMutableIndexSet *pruneSet = [[NSMutableIndexSet alloc] init];
+		NSUInteger index = 0;
+		for(PlaylistEntry *pe in resultsCopy) {
+			if(pe.deLeted) {
+				[pruneSet addIndex:index];
+				[moc deleteObject:pe];
+			}
+			++index;
+		}
+		[resultsCopy removeObjectsAtIndexes:pruneSet];
+		if([pruneSet count]) {
+			[playlistController commitPersistentStore];
+		}
+
+		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"index" ascending:YES];
+		results = [resultsCopy sortedArrayUsingDescriptors:@[sortDescriptor]];
+
+		{
+			NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
+
+			[playlistController insertObjectsUnsynced:results atArrangedObjectIndexes:is];
+		}
+
+		[playlistController emptyQueueListUnsynced];
+
+		NSMutableDictionary *queueList = [[NSMutableDictionary alloc] init];
+
+		for(PlaylistEntry *pe in results) {
+			if(pe.queued && pe.queuePosition >= 0) {
+				NSString *queuePos = [NSString stringWithFormat:@"%llu", pe.queuePosition];
+				[queueList setObject:pe forKey:queuePos];
+			}
+		}
+
+		if([queueList count]) {
+			for(size_t i = 0, j = [queueList count]; i < j; ++i) {
+				NSString *queuePos = [NSString stringWithFormat:@"%zu", i];
+				PlaylistEntry *pe = [queueList objectForKey:queuePos];
+				[[playlistController queueList] addObject:pe];
+			}
+		}
+
+		return YES;
+	}
+	return NO;
 }
 
 - (NSArray *)addDatabase {

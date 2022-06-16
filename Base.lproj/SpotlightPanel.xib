@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -130,9 +130,9 @@ DQ
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <connections>
-                                                <binding destination="16" name="value" keyPath="arrangedObjects.length" id="105">
+                                                <binding destination="16" name="value" keyPath="arrangedObjects.lengthText" id="K4A-L7-jOn">
                                                     <dictionary key="options">
-                                                        <integer key="NSConditionallySetsEditable" value="1"/>
+                                                        <bool key="NSConditionallySetsEditable" value="YES"/>
                                                     </dictionary>
                                                 </binding>
                                                 <binding destination="186" name="fontSize" keyPath="values.fontSize" id="208"/>
@@ -189,23 +189,13 @@ DQ
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <sortDescriptor key="sortDescriptorPrototype" selector="compareTrackNumbers:" sortKey="spotlightTrack"/>
+                                            <sortDescriptor key="sortDescriptorPrototype" selector="compareTrackNumbers:" sortKey="trackText"/>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <connections>
-                                                <binding destination="16" name="value" keyPath="arrangedObjects.spotlightTrack" id="195">
+                                                <binding destination="16" name="value" keyPath="arrangedObjects.trackText" id="VFy-Rw-QP2">
                                                     <dictionary key="options">
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="1"/>
-                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                                        <integer key="NSConditionallySetsEditable" value="1"/>
-                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
-                                                        <integer key="NSContinuouslyUpdatesValue" value="0"/>
-                                                        <integer key="NSCreatesSortDescriptor" value="0"/>
-                                                        <string key="NSMultipleValuesPlaceholder"></string>
-                                                        <string key="NSNoSelectionPlaceholder"></string>
-                                                        <string key="NSNotApplicablePlaceholder"></string>
-                                                        <string key="NSNullPlaceholder"></string>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                                        <integer key="NSValidatesImmediately" value="0"/>
+                                                        <bool key="NSConditionallySetsEditable" value="YES"/>
+                                                        <bool key="NSCreatesSortDescriptor" value="NO"/>
                                                     </dictionary>
                                                 </binding>
                                                 <binding destination="186" name="fontSize" keyPath="values.fontSize" id="203"/>
@@ -288,18 +278,18 @@ DQ
             </connections>
             <point key="canvasLocation" x="17" y="109"/>
         </window>
-        <arrayController objectClassName="SpotlightPlaylistEntry" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" id="16" customClass="SpotlightPlaylistController">
+        <arrayController objectClassName="PlaylistEntry" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" id="16" customClass="SpotlightPlaylistController">
             <declaredKeys>
                 <string>title</string>
                 <string>year</string>
                 <string>artist</string>
                 <string>album</string>
                 <string>genre</string>
-                <string>length</string>
+                <string>lengthText</string>
                 <string>track</string>
-                <string>spotlightTrack</string>
+                <string>trackText</string>
             </declaredKeys>
-            <classReference key="objectClass" className="SpotlightPlaylistEntry"/>
+            <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
                 <binding destination="-2" name="contentArray" keyPath="query.results" id="213"/>
                 <outlet property="spotlightWindowController" destination="-2" id="160"/>

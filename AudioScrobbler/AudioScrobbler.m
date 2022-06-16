@@ -123,7 +123,7 @@ escapeForLastFM(NSString *string) {
 	                                             escapeForLastFM([pe album]),
 	                                             @"", // TODO: MusicBrainz support
 	                                             [[pe length] intValue],
-	                                             escapeForLastFM([[pe URL] path])]];
+	                                             escapeForLastFM([pe.url path])]];
 }
 
 - (void)stop {

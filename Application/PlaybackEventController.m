@@ -9,6 +9,8 @@
 
 #import "AudioScrobbler.h"
 
+#import "PlaylistEntry.h"
+
 NSString *TrackNotification = @"com.apple.iTunes.playerInfo";
 
 NSString *TrackArtist = @"Artist";
@@ -112,17 +114,17 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
 - (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-	if(pe == nil || pe.deleted || [pe URL] == nil) return dict;
+	if(pe == nil || pe.deLeted || pe.url == nil) return dict;
 
-	[dict setObject:[[pe URL] absoluteString] forKey:TrackPath];
-	if([pe title]) [dict setObject:[pe title] forKey:TrackTitle];
-	if([pe artist]) [dict setObject:[pe artist] forKey:TrackArtist];
-	if([pe album]) [dict setObject:[pe album] forKey:TrackAlbum];
-	if([pe genre]) [dict setObject:[pe genre] forKey:TrackGenre];
-	if([pe track])
-		[dict setObject:[pe trackText] forKey:TrackNumber];
-	if([pe length])
-		[dict setObject:[NSNumber numberWithInteger:(NSInteger)([[pe length] doubleValue] * 1000.0)]
+	[dict setObject:[pe.url absoluteString] forKey:TrackPath];
+	if(pe.title) [dict setObject:pe.title forKey:TrackTitle];
+	if(pe.artist) [dict setObject:pe.artist forKey:TrackArtist];
+	if(pe.album) [dict setObject:pe.album forKey:TrackAlbum];
+	if(pe.genre) [dict setObject:pe.genre forKey:TrackGenre];
+	if(pe.track)
+		[dict setObject:pe.trackText forKey:TrackNumber];
+	if(pe.length)
+		[dict setObject:[NSNumber numberWithInteger:(NSInteger)([pe.length doubleValue] * 1000.0)]
 		         forKey:TrackLength];
 
 	NSString *state = nil;

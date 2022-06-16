@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AlbumArtwork" representedClassName="AlbumArtwork" syncable="YES" codeGenerationType="class">
+        <attribute name="artData" optional="YES" attributeType="Binary"/>
+        <attribute name="artHash" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="PlaylistEntry" representedClassName="PlaylistEntry" syncable="YES" codeGenerationType="class">
+        <attribute name="album" optional="YES" attributeType="String"/>
+        <attribute name="albumartist" optional="YES" attributeType="String"/>
+        <attribute name="artHash" optional="YES" attributeType="String"/>
+        <attribute name="artist" optional="YES" attributeType="String"/>
+        <attribute name="bitrate" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bitsPerSample" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="channelConfig" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="channels" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="codec" optional="YES" attributeType="String"/>
+        <attribute name="cuesheet" optional="YES" attributeType="String"/>
+        <attribute name="current" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="currentPosition" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="dbIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="deLeted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="disc" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="encoding" optional="YES" attributeType="String"/>
+        <attribute name="endian" optional="YES" attributeType="String"/>
+        <attribute name="entryId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="error" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="errorMessage" optional="YES" attributeType="String"/>
+        <attribute name="floatingPoint" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="genre" optional="YES" attributeType="String"/>
+        <attribute name="index" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="metadataLoaded" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="queued" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="queuePosition" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="rawTitle" optional="YES" attributeType="String"/>
+        <attribute name="removed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="replayGainAlbumGain" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="replayGainAlbumPeak" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="replayGainTrackGain" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="replayGainTrackPeak" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="sampleRate" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="seekable" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="shuffleIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="stopAfter" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="totalFrames" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="track" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trashUrlString" optional="YES" attributeType="String"/>
+        <attribute name="unSigned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="urlString" optional="YES" attributeType="String"/>
+        <attribute name="volume" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="year" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="PlaylistEntry" positionX="-36" positionY="9" width="128" height="674"/>
+        <element name="AlbumArtwork" positionX="0" positionY="207" width="128" height="59"/>
+    </elements>
+</model>
