@@ -112,7 +112,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
 - (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-	if(pe == nil) return dict;
+	if(pe == nil || pe.deleted || [pe URL] == nil) return dict;
 
 	[dict setObject:[[pe URL] absoluteString] forKey:TrackPath];
 	if([pe title]) [dict setObject:[pe title] forKey:TrackTitle];
