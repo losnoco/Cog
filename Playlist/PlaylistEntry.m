@@ -63,6 +63,10 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 	return [NSSet setWithObjects:@"albumartist", @"artist", @"rawTitle", @"album", @"track", @"disc", @"totalFrames", @"currentPosition", @"bitrate", nil];
 }
 
++ (NSSet *)keyPathsForValuesAffectingIndexedSpam {
+	return [NSSet setWithObjects:@"albumartist", @"artist", @"rawTitle", @"album", @"track", @"disc", @"totalFrames", @"currentPosition", @"bitrate", @"index", nil];
+}
+
 + (NSSet *)keyPathsForValuesAffectingTrackText {
 	return [NSSet setWithObjects:@"track", @"disc", nil];
 }
@@ -119,6 +123,11 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 	else {
 		return [NSString stringWithFormat:@"%@ - %@", self.artist, self.title];
 	}
+}
+
+@dynamic indexedSpam;
+- (NSString *)indexedSpam {
+	return [NSString stringWithFormat:@"%llu. %@", self.index, self.spam];
 }
 
 @dynamic spam;

@@ -20,6 +20,7 @@
 + (NSSet *_Nonnull)keyPathsForValuesAffectingStatus;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingStatusMessage;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingSpam;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingIndexedSpam;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingAlbumArt;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingTrackText;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingLengthText;
@@ -33,6 +34,7 @@
 @property(nonatomic, readonly) NSString *_Nonnull filename;
 
 @property(nonatomic, readonly) NSString *_Nonnull spam;
+@property(nonatomic, readonly) NSString *_Nonnull indexedSpam;
 
 @property(nonatomic, readonly) NSString *_Nonnull positionText;
 

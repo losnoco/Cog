@@ -220,9 +220,14 @@
 	NSUInteger capacity = [entries count];
 	NSMutableArray *selectedURLs = [NSMutableArray arrayWithCapacity:capacity];
 
+	NSMutableArray *fileSpams = [NSMutableArray array];
+
 	for(PlaylistEntry *pe in entries) {
 		[selectedURLs addObject:pe.url];
+		[fileSpams addObject:pe.indexedSpam];
 	}
+
+	[pboard writeObjects:@[[fileSpams componentsJoinedByString:@"\n"]]];
 
 	NSError *error;
 	NSData *data;
