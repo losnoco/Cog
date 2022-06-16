@@ -157,7 +157,6 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 	while([self shouldContinue] == YES && [self endOfStream] == NO) {
 		if(shouldSeek == YES) {
-			[self leaveWorkgroup];
 			BufferChain *bufferChain = [[controller controller] bufferChain];
 			ConverterNode *converter = [bufferChain converter];
 			DLog(@"SEEKING! Resetting Buffer");
@@ -183,15 +182,13 @@ static void *kInputNodeContext = &kInputNodeContext;
 		}
 
 		if(amountInBuffer < CHUNK_SIZE) {
-			[self followWorkgroup];
-
 			int framesToRead = CHUNK_SIZE - amountInBuffer;
 			int framesRead;
-			[self startWorkslice];
 			@autoreleasepool {
+				[self startWorkslice];
 				framesRead = [decoder readAudio:((char *)inputBuffer) + bytesInBuffer frames:framesToRead];
+				[self endWorkslice];
 			}
-			[self endWorkslice];
 
 			if(framesRead > 0 && !seekError) {
 				amountInBuffer += framesRead;

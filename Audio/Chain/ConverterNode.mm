@@ -446,22 +446,19 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	// when the end of stream is reached. Convert function instead processes what it can,
 	// and returns 0 samples when it has nothing more to process at the end of stream.
 	while([self shouldContinue] == YES) {
-		[self followWorkgroup];
-
 		int amountConverted;
 		while(paused) {
 			usleep(500);
 		}
-		[self startWorkslice];
 		@autoreleasepool {
+			[self startWorkslice];
 			amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
+			[self endWorkslice];
 		}
-		[self endWorkslice];
 		if(!amountConverted) {
 			if(paused) {
 				continue;
 			} else if(streamFormatChanged) {
-				[self leaveWorkgroup];
 				[self cleanUp];
 				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
 				continue;

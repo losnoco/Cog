@@ -222,6 +222,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 			wg = workgroup;
 			if(wg && !isRealtimeError) {
 				int result = os_workgroup_join(wg, &wgToken);
+				isDeadlineError = NO;
 				if(result == 0) return;
 				if(result == EALREADY) {
 					DLog(@"Thread already in workgroup");
@@ -251,13 +252,13 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 
 - (void)startWorkslice {
 	if(@available(macOS 11, *)) {
-		if(wg && !isRealtimeError) {
+		if(wg && !isRealtimeError && !isDeadlineError) {
 			const uint64_t currentTime = mach_absolute_time();
 			const uint64_t deadline = currentTime + intervalMachLength;
 			int result = os_workgroup_interval_start(wg, currentTime, deadline, nil);
 			if(result != 0) {
 				DLog(@"Deadline error = %d", result);
-				isRealtimeError = YES;
+				isDeadlineError = YES;
 			}
 		}
 	}
@@ -265,11 +266,11 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 
 - (void)endWorkslice {
 	if(@available(macOS 11, *)) {
-		if(wg && !isRealtimeError) {
+		if(wg && !isRealtimeError && !isDeadlineError) {
 			int result = os_workgroup_interval_finish(wg, nil);
 			if(result != 0) {
 				DLog(@"Deadline end error = %d", result);
-				isRealtimeError = YES;
+				isDeadlineError = YES;
 			}
 		}
 	}
