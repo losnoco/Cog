@@ -1175,6 +1175,22 @@ static int usf_info(void *context, const char *name, const char *value) {
 	if(type <= 0)
 		return NO;
 
+	switch(type) {
+		case 1:
+		case 2:
+		case 0x11:
+		case 0x12:
+		case 0x21:
+		case 0x22:
+		case 0x24:
+		case 0x25:
+		case 0x41:
+			break;
+
+		default:
+			return NO;
+	}
+
 	emulatorCore = nil;
 	emulatorExtra = nil;
 
