@@ -28,7 +28,7 @@
 # include <tstring.h>
 #endif
 
-#include "tiostream.h"
+#include <taglib/toolkit/tiostream.h>
 
 using namespace TagLib;
 

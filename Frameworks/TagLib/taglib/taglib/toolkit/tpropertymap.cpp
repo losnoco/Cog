@@ -24,7 +24,7 @@
  ***************************************************************************/
 
 
-#include "tpropertymap.h"
+#include <taglib/toolkit/tpropertymap.h>
 using namespace TagLib;
 
 

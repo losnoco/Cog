@@ -26,10 +26,10 @@
 #ifndef TAGLIB_MP4COVERART_H
 #define TAGLIB_MP4COVERART_H
 
-#include "tlist.h"
-#include "tbytevector.h"
-#include "taglib_export.h"
-#include "mp4atom.h"
+#include <taglib/toolkit/tlist.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/taglib_export.h>
+#include <taglib/mp4/mp4atom.h>
 
 namespace TagLib {
 

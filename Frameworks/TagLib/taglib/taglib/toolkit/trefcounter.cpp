@@ -24,10 +24,10 @@
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
-#include "trefcounter.h"
+#include <taglib/toolkit/trefcounter.h>
 
 #if defined(HAVE_GCC_ATOMIC)
 # define ATOMIC_INT int

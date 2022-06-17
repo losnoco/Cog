@@ -26,9 +26,9 @@
 #ifndef TAGLIB_MP4ITEM_H
 #define TAGLIB_MP4ITEM_H
 
-#include "tstringlist.h"
-#include "mp4coverart.h"
-#include "taglib_export.h"
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/mp4/mp4coverart.h>
+#include <taglib/taglib_export.h>
 
 namespace TagLib {
 

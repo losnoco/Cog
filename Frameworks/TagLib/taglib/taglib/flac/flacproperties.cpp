@@ -23,11 +23,11 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tstring.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include "flacproperties.h"
-#include "flacfile.h"
+#include <taglib/flac/flacproperties.h>
+#include <taglib/flac/flacfile.h>
 
 using namespace TagLib;
 

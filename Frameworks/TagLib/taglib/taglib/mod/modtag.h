@@ -26,7 +26,7 @@
 #ifndef TAGLIB_MODTAG_H
 #define TAGLIB_MODTAG_H
 
-#include "tag.h"
+#include <taglib/tag.h>
 
 namespace TagLib {
 

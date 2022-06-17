@@ -26,11 +26,11 @@
 #ifndef TAGLIB_OGGFLACFILE_H
 #define TAGLIB_OGGFLACFILE_H
 
-#include "taglib_export.h"
-#include "oggfile.h"
-#include "xiphcomment.h"
+#include <taglib/taglib_export.h>
+#include <taglib/ogg/oggfile.h>
+#include <taglib/ogg/xiphcomment.h>
 
-#include "flacproperties.h"
+#include <taglib/flac/flacproperties.h>
 
 namespace TagLib {
 

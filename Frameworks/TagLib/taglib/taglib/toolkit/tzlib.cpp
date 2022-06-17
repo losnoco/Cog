@@ -33,7 +33,7 @@
 # include <tdebug.h>
 #endif
 
-#include "tzlib.h"
+#include <taglib/toolkit/tzlib.h>
 
 using namespace TagLib;
 

@@ -27,13 +27,13 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tstring.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include <oggpageheader.h>
+#include <taglib/ogg/oggpageheader.h>
 
-#include "speexproperties.h"
-#include "speexfile.h"
+#include <taglib/ogg/speex/speexproperties.h>
+#include <taglib/ogg/speex/speexfile.h>
 
 using namespace TagLib;
 using namespace TagLib::Ogg;

@@ -31,16 +31,16 @@
 #define WANT_CLASS_INSTANTIATION_OF_MAP (1)
 #endif
 
-#include <tfile.h>
-#include <tstring.h>
-#include <tmap.h>
-#include <tpropertymap.h>
-#include <tdebug.h>
-#include <tutils.h>
+#include <taglib/toolkit/tfile.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tmap.h>
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tutils.h>
 
-#include "apetag.h"
-#include "apefooter.h"
-#include "apeitem.h"
+#include <taglib/ape/apetag.h>
+#include <taglib/ape/apefooter.h>
+#include <taglib/ape/apeitem.h>
 
 using namespace TagLib;
 using namespace APE;

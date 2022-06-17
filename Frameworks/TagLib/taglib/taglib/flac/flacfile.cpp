@@ -23,23 +23,23 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevector.h>
-#include <tstring.h>
-#include <tlist.h>
-#include <tdebug.h>
-#include <tagunion.h>
-#include <tpropertymap.h>
-#include <tagutils.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tlist.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/tagunion.h>
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/tagutils.h>
 
-#include <id3v2header.h>
-#include <id3v2tag.h>
-#include <id3v1tag.h>
-#include <xiphcomment.h>
+#include <taglib/mpeg/id3v2/id3v2header.h>
+#include <taglib/mpeg/id3v2/id3v2tag.h>
+#include <taglib/mpeg/id3v1/id3v1tag.h>
+#include <taglib/ogg/xiphcomment.h>
 
-#include "flacpicture.h"
-#include "flacfile.h"
-#include "flacmetadatablock.h"
-#include "flacunknownmetadatablock.h"
+#include <taglib/flac/flacpicture.h>
+#include <taglib/flac/flacfile.h>
+#include <taglib/flac/flacmetadatablock.h>
+#include <taglib/flac/flacunknownmetadatablock.h>
 
 using namespace TagLib;
 

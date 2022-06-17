@@ -23,9 +23,9 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tdebug.h>
-#include "wavfile.h"
-#include "wavproperties.h"
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/riff/wav/wavfile.h>
+#include <taglib/riff/wav/wavproperties.h>
 
 using namespace TagLib;
 

@@ -23,14 +23,14 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tdebug.h>
-#include <tstring.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstring.h>
 
-#include "mpegproperties.h"
-#include "mpegfile.h"
-#include "xingheader.h"
-#include "apetag.h"
-#include "apefooter.h"
+#include <taglib/mpeg/mpegproperties.h>
+#include <taglib/mpeg/mpegfile.h>
+#include <taglib/mpeg/xingheader.h>
+#include <taglib/ape/apetag.h>
+#include <taglib/ape/apefooter.h>
 
 using namespace TagLib;
 

@@ -23,12 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevectorlist.h>
-#include <tpropertymap.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tbytevectorlist.h>
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include "id3v2tag.h"
-#include "uniquefileidentifierframe.h"
+#include <taglib/mpeg/id3v2/id3v2tag.h>
+#include <taglib/mpeg/id3v2/frames/uniquefileidentifierframe.h>
 
 using namespace TagLib;
 using namespace ID3v2;

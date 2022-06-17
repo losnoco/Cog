@@ -28,11 +28,11 @@
  ***************************************************************************/
 
 #include <stdint.h>
-#include <tstring.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include "wavpackproperties.h"
-#include "wavpackfile.h"
+#include <taglib/wavpack/wavpackproperties.h>
+#include <taglib/wavpack/wavpackfile.h>
 
 // Implementation of this class is based on the information at:
 // http://www.wavpack.com/file_format.txt

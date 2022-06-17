@@ -27,18 +27,18 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevector.h>
-#include <tstring.h>
-#include <tdebug.h>
-#include <tagunion.h>
-#include <tpropertymap.h>
-#include <tagutils.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/tagunion.h>
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/tagutils.h>
 
-#include "wavpackfile.h"
-#include "id3v1tag.h"
-#include "id3v2header.h"
-#include "apetag.h"
-#include "apefooter.h"
+#include <taglib/wavpack/wavpackfile.h>
+#include <taglib/mpeg/id3v1/id3v1tag.h>
+#include <taglib/mpeg/id3v2/id3v2header.h>
+#include <taglib/ape/apetag.h>
+#include <taglib/ape/apefooter.h>
 
 using namespace TagLib;
 

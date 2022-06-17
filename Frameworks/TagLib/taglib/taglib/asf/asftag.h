@@ -26,11 +26,11 @@
 #ifndef TAGLIB_ASFTAG_H
 #define TAGLIB_ASFTAG_H
 
-#include "tag.h"
-#include "tlist.h"
-#include "tmap.h"
-#include "taglib_export.h"
-#include "asfattribute.h"
+#include <taglib/tag.h>
+#include <taglib/toolkit/tlist.h>
+#include <taglib/toolkit/tmap.h>
+#include <taglib/taglib_export.h>
+#include <taglib/asf/asfattribute.h>
 
 namespace TagLib {
 

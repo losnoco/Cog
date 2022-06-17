@@ -26,14 +26,14 @@
 #ifndef TAGLIB_MP4TAG_H
 #define TAGLIB_MP4TAG_H
 
-#include "tag.h"
-#include "tbytevectorlist.h"
-#include "tfile.h"
-#include "tmap.h"
-#include "tstringlist.h"
-#include "taglib_export.h"
-#include "mp4atom.h"
-#include "mp4item.h"
+#include <taglib/tag.h>
+#include <taglib/toolkit/tbytevectorlist.h>
+#include <taglib/toolkit/tfile.h>
+#include <taglib/toolkit/tmap.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/taglib_export.h>
+#include <taglib/mp4/mp4atom.h>
+#include <taglib/mp4/mp4item.h>
 
 namespace TagLib {
 

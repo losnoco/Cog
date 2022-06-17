@@ -25,22 +25,22 @@
 
 #include <bitset>
 
-#include <tdebug.h>
-#include <tstringlist.h>
-#include <tzlib.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/toolkit/tzlib.h>
 
-#include "id3v2tag.h"
-#include "id3v2frame.h"
-#include "id3v2synchdata.h"
+#include <taglib/mpeg/id3v2/id3v2tag.h>
+#include <taglib/mpeg/id3v2/id3v2frame.h>
+#include <taglib/mpeg/id3v2/id3v2synchdata.h>
 
-#include "tpropertymap.h"
-#include "frames/textidentificationframe.h"
-#include "frames/urllinkframe.h"
-#include "frames/unsynchronizedlyricsframe.h"
-#include "frames/commentsframe.h"
-#include "frames/uniquefileidentifierframe.h"
-#include "frames/unknownframe.h"
-#include "frames/podcastframe.h"
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/mpeg/id3v2/frames/textidentificationframe.h>
+#include <taglib/mpeg/id3v2/frames/urllinkframe.h>
+#include <taglib/mpeg/id3v2/frames/unsynchronizedlyricsframe.h>
+#include <taglib/mpeg/id3v2/frames/commentsframe.h>
+#include <taglib/mpeg/id3v2/frames/uniquefileidentifierframe.h>
+#include <taglib/mpeg/id3v2/frames/unknownframe.h>
+#include <taglib/mpeg/id3v2/frames/podcastframe.h>
 
 using namespace TagLib;
 using namespace ID3v2;

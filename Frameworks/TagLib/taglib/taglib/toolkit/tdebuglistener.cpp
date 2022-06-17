@@ -23,7 +23,7 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tdebuglistener.h"
+#include <taglib/toolkit/tdebuglistener.h>
 
 #include <iostream>
 #include <bitset>

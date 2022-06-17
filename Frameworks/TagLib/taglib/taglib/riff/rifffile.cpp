@@ -26,12 +26,12 @@
 #include <algorithm>
 #include <vector>
 
-#include <tbytevector.h>
-#include <tdebug.h>
-#include <tstring.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstring.h>
 
-#include "rifffile.h"
-#include "riffutils.h"
+#include <taglib/riff/rifffile.h>
+#include <taglib/riff/riffutils.h>
 
 using namespace TagLib;
 

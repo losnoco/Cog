@@ -26,9 +26,9 @@
 #ifndef TAGLIB_IOSTREAM_H
 #define TAGLIB_IOSTREAM_H
 
-#include "taglib_export.h"
-#include "taglib.h"
-#include "tbytevector.h"
+#include <taglib/taglib_export.h>
+#include <taglib/toolkit/taglib.h>
+#include <taglib/toolkit/tbytevector.h>
 
 namespace TagLib {
 

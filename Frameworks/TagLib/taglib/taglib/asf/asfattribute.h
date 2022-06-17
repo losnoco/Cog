@@ -26,10 +26,10 @@
 #ifndef TAGLIB_ASFATTRIBUTE_H
 #define TAGLIB_ASFATTRIBUTE_H
 
-#include "tstring.h"
-#include "tbytevector.h"
-#include "taglib_export.h"
-#include "asfpicture.h"
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/taglib_export.h>
+#include <taglib/asf/asfpicture.h>
 
 namespace TagLib
 {

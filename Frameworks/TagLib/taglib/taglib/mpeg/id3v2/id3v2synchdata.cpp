@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-#include "id3v2synchdata.h"
+#include <taglib/mpeg/id3v2/id3v2synchdata.h>
 
 using namespace TagLib;
 using namespace ID3v2;

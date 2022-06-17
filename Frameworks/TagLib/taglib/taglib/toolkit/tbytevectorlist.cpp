@@ -23,7 +23,7 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tbytevectorlist.h"
+#include <taglib/toolkit/tbytevectorlist.h>
 
 using namespace TagLib;
 

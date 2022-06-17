@@ -26,12 +26,12 @@
 #ifndef TAGLIB_INFOTAG_H
 #define TAGLIB_INFOTAG_H
 
-#include "tag.h"
-#include "tmap.h"
-#include "tstring.h"
-#include "tstringlist.h"
-#include "tbytevector.h"
-#include "taglib_export.h"
+#include <taglib/tag.h>
+#include <taglib/toolkit/tmap.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/taglib_export.h>
 
 namespace TagLib {
 

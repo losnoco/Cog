@@ -23,9 +23,9 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tbytevectorstream.h"
-#include "tstring.h"
-#include "tdebug.h"
+#include <taglib/toolkit/tbytevectorstream.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
 #include <stdio.h>
 #include <string.h>

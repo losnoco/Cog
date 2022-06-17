@@ -23,23 +23,23 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevector.h>
+#include <taglib/toolkit/tbytevector.h>
 
-#include "aiffproperties.h"
-#include "apeproperties.h"
-#include "asfproperties.h"
-#include "flacproperties.h"
-#include "mp4properties.h"
-#include "mpcproperties.h"
-#include "mpegproperties.h"
-#include "opusproperties.h"
-#include "speexproperties.h"
-#include "trueaudioproperties.h"
-#include "vorbisproperties.h"
-#include "wavproperties.h"
-#include "wavpackproperties.h"
+#include <taglib/riff/aiff/aiffproperties.h>
+#include <taglib/ape/apeproperties.h>
+#include <taglib/asf/asfproperties.h>
+#include <taglib/flac/flacproperties.h>
+#include <taglib/mp4/mp4properties.h>
+#include <taglib/mpc/mpcproperties.h>
+#include <taglib/mpeg/mpegproperties.h>
+#include <taglib/ogg/opus/opusproperties.h>
+#include <taglib/ogg/speex/speexproperties.h>
+#include <taglib/trueaudio/trueaudioproperties.h>
+#include <taglib/ogg/vorbis/vorbisproperties.h>
+#include <taglib/riff/wav/wavproperties.h>
+#include <taglib/wavpack/wavpackproperties.h>
 
-#include "audioproperties.h"
+#include <taglib/audioproperties.h>
 
 using namespace TagLib;
 

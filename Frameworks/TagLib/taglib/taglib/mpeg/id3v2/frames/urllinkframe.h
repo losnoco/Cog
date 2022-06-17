@@ -29,7 +29,7 @@
 #ifndef TAGLIB_URLLINKFRAME_H
 #define TAGLIB_URLLINKFRAME_H
 
-#include "id3v2frame.h"
+#include <taglib/mpeg/id3v2/id3v2frame.h>
 
 namespace TagLib {
 

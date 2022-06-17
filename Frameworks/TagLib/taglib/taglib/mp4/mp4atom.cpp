@@ -25,9 +25,9 @@
 
 #include <climits>
 
-#include <tdebug.h>
-#include <tstring.h>
-#include "mp4atom.h"
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/mp4/mp4atom.h>
 
 using namespace TagLib;
 

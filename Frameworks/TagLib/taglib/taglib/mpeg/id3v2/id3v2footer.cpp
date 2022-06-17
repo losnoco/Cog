@@ -23,8 +23,8 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "id3v2footer.h"
-#include "id3v2header.h"
+#include <taglib/mpeg/id3v2/id3v2footer.h>
+#include <taglib/mpeg/id3v2/id3v2header.h>
 
 using namespace TagLib;
 using namespace ID3v2;

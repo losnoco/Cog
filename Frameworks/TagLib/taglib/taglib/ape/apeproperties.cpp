@@ -27,14 +27,14 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tstring.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 #include <bitset>
-#include "id3v2tag.h"
-#include "apeproperties.h"
-#include "apefile.h"
-#include "apetag.h"
-#include "apefooter.h"
+#include <taglib/mpeg/id3v2/id3v2tag.h>
+#include <taglib/ape/apeproperties.h>
+#include <taglib/ape/apefile.h>
+#include <taglib/ape/apetag.h>
+#include <taglib/ape/apefooter.h>
 
 using namespace TagLib;
 

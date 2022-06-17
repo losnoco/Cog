@@ -23,8 +23,8 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "podcastframe.h"
-#include <tpropertymap.h>
+#include <taglib/mpeg/id3v2/frames/podcastframe.h>
+#include <taglib/toolkit/tpropertymap.h>
 
 using namespace TagLib;
 using namespace ID3v2;

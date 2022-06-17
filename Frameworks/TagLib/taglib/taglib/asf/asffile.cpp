@@ -23,16 +23,16 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tdebug.h>
-#include <tbytevectorlist.h>
-#include <tpropertymap.h>
-#include <tstring.h>
-#include <tagutils.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tbytevectorlist.h>
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/tagutils.h>
 
-#include "asffile.h"
-#include "asftag.h"
-#include "asfproperties.h"
-#include "asfutils.h"
+#include <taglib/asf/asffile.h>
+#include <taglib/asf/asftag.h>
+#include <taglib/asf/asfproperties.h>
+#include <taglib/asf/asfutils.h>
 
 using namespace TagLib;
 

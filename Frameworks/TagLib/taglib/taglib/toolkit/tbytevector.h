@@ -26,8 +26,8 @@
 #ifndef TAGLIB_BYTEVECTOR_H
 #define TAGLIB_BYTEVECTOR_H
 
-#include "taglib.h"
-#include "taglib_export.h"
+#include <taglib/toolkit/taglib.h>
+#include <taglib/taglib_export.h>
 
 #include <vector>
 #include <iostream>

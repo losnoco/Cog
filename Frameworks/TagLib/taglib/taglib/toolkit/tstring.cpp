@@ -29,12 +29,12 @@
 
 #include <utf8-cpp/checked.h>
 
-#include <tdebug.h>
-#include <tstringlist.h>
-#include <trefcounter.h>
-#include <tutils.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/toolkit/trefcounter.h>
+#include <taglib/toolkit/tutils.h>
 
-#include "tstring.h"
+#include <taglib/toolkit/tstring.h>
 
 namespace
 {

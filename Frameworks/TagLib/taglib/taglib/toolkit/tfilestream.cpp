@@ -23,9 +23,9 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tfilestream.h"
-#include "tstring.h"
-#include "tdebug.h"
+#include <taglib/toolkit/tfilestream.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
 #ifdef _WIN32
 # include <windows.h>

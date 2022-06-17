@@ -30,7 +30,7 @@
 #ifndef TAGLIB_OPUSPROPERTIES_H
 #define TAGLIB_OPUSPROPERTIES_H
 
-#include "audioproperties.h"
+#include <taglib/audioproperties.h>
 
 namespace TagLib {
 

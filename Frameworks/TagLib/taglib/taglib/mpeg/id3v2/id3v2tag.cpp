@@ -25,24 +25,24 @@
 
 #include <algorithm>
 
-#include <tfile.h>
-#include <tbytevector.h>
-#include <tpropertymap.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tfile.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include "id3v2tag.h"
-#include "id3v2header.h"
-#include "id3v2extendedheader.h"
-#include "id3v2footer.h"
-#include "id3v2synchdata.h"
-#include "id3v1genres.h"
+#include <taglib/mpeg/id3v2/id3v2tag.h>
+#include <taglib/mpeg/id3v2/id3v2header.h>
+#include <taglib/mpeg/id3v2/id3v2extendedheader.h>
+#include <taglib/mpeg/id3v2/id3v2footer.h>
+#include <taglib/mpeg/id3v2/id3v2synchdata.h>
+#include <taglib/mpeg/id3v1/id3v1genres.h>
 
-#include "frames/textidentificationframe.h"
-#include "frames/commentsframe.h"
-#include "frames/urllinkframe.h"
-#include "frames/uniquefileidentifierframe.h"
-#include "frames/unsynchronizedlyricsframe.h"
-#include "frames/unknownframe.h"
+#include <taglib/mpeg/id3v2/frames/textidentificationframe.h>
+#include <taglib/mpeg/id3v2/frames/commentsframe.h>
+#include <taglib/mpeg/id3v2/frames/urllinkframe.h>
+#include <taglib/mpeg/id3v2/frames/uniquefileidentifierframe.h>
+#include <taglib/mpeg/id3v2/frames/unsynchronizedlyricsframe.h>
+#include <taglib/mpeg/id3v2/frames/unknownframe.h>
 
 using namespace TagLib;
 using namespace ID3v2;

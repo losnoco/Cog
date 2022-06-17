@@ -24,7 +24,7 @@
  ***************************************************************************/
 
 
-#include "s3mproperties.h"
+#include <taglib/s3m/s3mproperties.h>
 
 using namespace TagLib;
 using namespace S3M;

@@ -26,10 +26,10 @@
 #ifndef TAGLIB_BYTEVECTORSTREAM_H
 #define TAGLIB_BYTEVECTORSTREAM_H
 
-#include "taglib_export.h"
-#include "taglib.h"
-#include "tbytevector.h"
-#include "tiostream.h"
+#include <taglib/taglib_export.h>
+#include <taglib/toolkit/taglib.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/toolkit/tiostream.h>
 
 namespace TagLib {
 

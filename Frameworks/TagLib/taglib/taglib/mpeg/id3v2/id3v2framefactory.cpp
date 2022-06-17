@@ -23,30 +23,30 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tdebug.h>
-#include <tzlib.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tzlib.h>
 
-#include "id3v2framefactory.h"
-#include "id3v2synchdata.h"
-#include "id3v1genres.h"
+#include <taglib/mpeg/id3v2/id3v2framefactory.h>
+#include <taglib/mpeg/id3v2/id3v2synchdata.h>
+#include <taglib/mpeg/id3v1/id3v1genres.h>
 
-#include "frames/attachedpictureframe.h"
-#include "frames/commentsframe.h"
-#include "frames/relativevolumeframe.h"
-#include "frames/textidentificationframe.h"
-#include "frames/uniquefileidentifierframe.h"
-#include "frames/unknownframe.h"
-#include "frames/generalencapsulatedobjectframe.h"
-#include "frames/urllinkframe.h"
-#include "frames/unsynchronizedlyricsframe.h"
-#include "frames/popularimeterframe.h"
-#include "frames/privateframe.h"
-#include "frames/ownershipframe.h"
-#include "frames/synchronizedlyricsframe.h"
-#include "frames/eventtimingcodesframe.h"
-#include "frames/chapterframe.h"
-#include "frames/tableofcontentsframe.h"
-#include "frames/podcastframe.h"
+#include <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
+#include <taglib/mpeg/id3v2/frames/commentsframe.h>
+#include <taglib/mpeg/id3v2/frames/relativevolumeframe.h>
+#include <taglib/mpeg/id3v2/frames/textidentificationframe.h>
+#include <taglib/mpeg/id3v2/frames/uniquefileidentifierframe.h>
+#include <taglib/mpeg/id3v2/frames/unknownframe.h>
+#include <taglib/mpeg/id3v2/frames/generalencapsulatedobjectframe.h>
+#include <taglib/mpeg/id3v2/frames/urllinkframe.h>
+#include <taglib/mpeg/id3v2/frames/unsynchronizedlyricsframe.h>
+#include <taglib/mpeg/id3v2/frames/popularimeterframe.h>
+#include <taglib/mpeg/id3v2/frames/privateframe.h>
+#include <taglib/mpeg/id3v2/frames/ownershipframe.h>
+#include <taglib/mpeg/id3v2/frames/synchronizedlyricsframe.h>
+#include <taglib/mpeg/id3v2/frames/eventtimingcodesframe.h>
+#include <taglib/mpeg/id3v2/frames/chapterframe.h>
+#include <taglib/mpeg/id3v2/frames/tableofcontentsframe.h>
+#include <taglib/mpeg/id3v2/frames/podcastframe.h>
 
 using namespace TagLib;
 using namespace ID3v2;

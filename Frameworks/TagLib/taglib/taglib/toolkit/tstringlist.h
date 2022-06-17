@@ -26,10 +26,10 @@
 #ifndef TAGLIB_STRINGLIST_H
 #define TAGLIB_STRINGLIST_H
 
-#include "tstring.h"
-#include "tlist.h"
-#include "tbytevectorlist.h"
-#include "taglib_export.h"
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tlist.h>
+#include <taglib/toolkit/tbytevectorlist.h>
+#include <taglib/taglib_export.h>
 
 #include <iostream>
 

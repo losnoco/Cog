@@ -26,7 +26,7 @@
 #ifndef TAGLIB_LIST_H
 #define TAGLIB_LIST_H
 
-#include "taglib.h"
+#include <taglib/toolkit/taglib.h>
 
 #include <list>
 
@@ -265,6 +265,6 @@ namespace TagLib {
 // Since GCC doesn't support the "export" keyword, we have to include the
 // implementation.
 
-#include "tlist.tcc"
+#include <taglib/toolkit/tlist.tcc>
 
 #endif

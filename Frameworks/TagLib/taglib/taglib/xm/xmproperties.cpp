@@ -24,7 +24,7 @@
  ***************************************************************************/
 
 
-#include "xmproperties.h"
+#include <taglib/xm/xmproperties.h>
 
 using namespace TagLib;
 using namespace XM;

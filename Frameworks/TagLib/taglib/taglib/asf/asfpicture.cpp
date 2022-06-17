@@ -23,14 +23,14 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <taglib.h>
-#include <tdebug.h>
-#include <trefcounter.h>
+#include <taglib/toolkit/taglib.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/trefcounter.h>
 
-#include "asfattribute.h"
-#include "asffile.h"
-#include "asfpicture.h"
-#include "asfutils.h"
+#include <taglib/asf/asfattribute.h>
+#include <taglib/asf/asffile.h>
+#include <taglib/asf/asfpicture.h>
+#include <taglib/asf/asfutils.h>
 
 using namespace TagLib;
 

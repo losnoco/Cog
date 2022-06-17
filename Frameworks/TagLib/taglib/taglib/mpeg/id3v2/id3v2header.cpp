@@ -26,12 +26,12 @@
 #include <iostream>
 #include <bitset>
 
-#include <tstring.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include "id3v2header.h"
-#include "id3v2footer.h"
-#include "id3v2synchdata.h"
+#include <taglib/mpeg/id3v2/id3v2header.h>
+#include <taglib/mpeg/id3v2/id3v2footer.h>
+#include <taglib/mpeg/id3v2/id3v2synchdata.h>
 
 using namespace TagLib;
 using namespace ID3v2;

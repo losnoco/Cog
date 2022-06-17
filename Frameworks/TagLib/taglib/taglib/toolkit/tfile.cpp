@@ -23,11 +23,11 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tfile.h"
-#include "tfilestream.h"
-#include "tstring.h"
-#include "tdebug.h"
-#include "tpropertymap.h"
+#include <taglib/toolkit/tfile.h>
+#include <taglib/toolkit/tfilestream.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tpropertymap.h>
 
 #ifdef _WIN32
 # include <windows.h>
@@ -44,26 +44,25 @@
 # define W_OK 2
 #endif
 
-#include "asffile.h"
-#include "mpegfile.h"
-#include "vorbisfile.h"
-#include "flacfile.h"
-#include "oggflacfile.h"
-#include "mpcfile.h"
-#include "mp4file.h"
-#include "wavpackfile.h"
-#include "speexfile.h"
-#include "opusfile.h"
-#include "trueaudiofile.h"
-#include "aifffile.h"
-#include "wavfile.h"
-#include "apefile.h"
-#include "apegenfile.h"
-#include "modfile.h"
-#include "s3mfile.h"
-#include "itfile.h"
-#include "xmfile.h"
-#include "mp4file.h"
+#include <taglib/asf/asffile.h>
+#include <taglib/mpeg/mpegfile.h>
+#include <taglib/ogg/vorbis/vorbisfile.h>
+#include <taglib/flac/flacfile.h>
+#include <taglib/ogg/flac/oggflacfile.h>
+#include <taglib/mpc/mpcfile.h>
+#include <taglib/mp4/mp4file.h>
+#include <taglib/wavpack/wavpackfile.h>
+#include <taglib/ogg/speex/speexfile.h>
+#include <taglib/ogg/opus/opusfile.h>
+#include <taglib/trueaudio/trueaudiofile.h>
+#include <taglib/riff/aiff/aifffile.h>
+#include <taglib/riff/wav/wavfile.h>
+#include <taglib/ape/apefile.h>
+#include <taglib/ape/apegenfile.h>
+#include <taglib/mod/modfile.h>
+#include <taglib/s3m/s3mfile.h>
+#include <taglib/it/itfile.h>
+#include <taglib/xm/xmfile.h>
 
 using namespace TagLib;
 

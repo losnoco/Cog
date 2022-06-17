@@ -23,8 +23,8 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "id3v2extendedheader.h"
-#include "id3v2synchdata.h"
+#include <taglib/mpeg/id3v2/id3v2extendedheader.h>
+#include <taglib/mpeg/id3v2/id3v2synchdata.h>
 
 using namespace TagLib;
 using namespace ID3v2;

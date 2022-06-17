@@ -27,10 +27,10 @@
 #include <iostream>
 #include <bitset>
 
-#include <tstring.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include "apefooter.h"
+#include <taglib/ape/apefooter.h>
 
 using namespace TagLib;
 using namespace APE;

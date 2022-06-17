@@ -26,11 +26,11 @@
 #ifndef TAGLIB_ASFFILE_H
 #define TAGLIB_ASFFILE_H
 
-#include "tag.h"
-#include "tfile.h"
-#include "taglib_export.h"
-#include "asfproperties.h"
-#include "asftag.h"
+#include <taglib/tag.h>
+#include <taglib/toolkit/tfile.h>
+#include <taglib/taglib_export.h>
+#include <taglib/asf/asfproperties.h>
+#include <taglib/asf/asftag.h>
 
 namespace TagLib {
 

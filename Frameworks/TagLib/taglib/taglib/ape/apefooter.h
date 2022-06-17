@@ -26,8 +26,8 @@
 #ifndef TAGLIB_APEFOOTER_H
 #define TAGLIB_APEFOOTER_H
 
-#include "tbytevector.h"
-#include "taglib_export.h"
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/taglib_export.h>
 
 namespace TagLib {
 

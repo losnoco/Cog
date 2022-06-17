@@ -23,11 +23,11 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tdebug.h>
-#include <tfile.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tfile.h>
 
-#include "infotag.h"
-#include "riffutils.h"
+#include <taglib/riff/wav/infotag.h>
+#include <taglib/riff/riffutils.h>
 
 using namespace TagLib;
 using namespace RIFF::Info;

@@ -26,11 +26,11 @@
 #ifndef TAGLIB_MP4FILE_H
 #define TAGLIB_MP4FILE_H
 
-#include "tag.h"
-#include "tfile.h"
-#include "taglib_export.h"
-#include "mp4properties.h"
-#include "mp4tag.h"
+#include <taglib/tag.h>
+#include <taglib/toolkit/tfile.h>
+#include <taglib/taglib_export.h>
+#include <taglib/mp4/mp4properties.h>
+#include <taglib/mp4/mp4tag.h>
 
 namespace TagLib {
 

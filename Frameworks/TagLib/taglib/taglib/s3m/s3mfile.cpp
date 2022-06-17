@@ -24,11 +24,11 @@
  ***************************************************************************/
 
 
-#include "s3mfile.h"
-#include "tstringlist.h"
-#include "tdebug.h"
-#include "modfileprivate.h"
-#include "tpropertymap.h"
+#include <taglib/s3m/s3mfile.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/mod/modfileprivate.h>
+#include <taglib/toolkit/tpropertymap.h>
 
 #include <iostream>
 

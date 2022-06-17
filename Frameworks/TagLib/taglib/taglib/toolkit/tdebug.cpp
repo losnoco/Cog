@@ -24,15 +24,15 @@
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #if !defined(NDEBUG) || defined(TRACE_IN_RELEASE)
 
-#include "tdebug.h"
-#include "tstring.h"
-#include "tdebuglistener.h"
-#include "tutils.h"
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebuglistener.h>
+#include <taglib/toolkit/tutils.h>
 
 #include <bitset>
 #include <cstdio>

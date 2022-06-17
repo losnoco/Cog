@@ -27,7 +27,7 @@
 #define TAGLIB_REFCOUNTER_H
 
 #include <taglib/taglib_export.h>
-#include <taglib/taglib.h>
+#include <taglib/toolkit/taglib.h>
 
 #ifdef __APPLE__
 #  include <atomic>

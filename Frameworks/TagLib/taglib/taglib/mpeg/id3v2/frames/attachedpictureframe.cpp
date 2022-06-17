@@ -23,10 +23,10 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "attachedpictureframe.h"
+#include <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 
-#include <tstringlist.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/toolkit/tdebug.h>
 
 using namespace TagLib;
 using namespace ID3v2;

@@ -26,8 +26,8 @@
 #ifndef TAGLIB_FLACPROPERTIES_H
 #define TAGLIB_FLACPROPERTIES_H
 
-#include "taglib_export.h"
-#include "audioproperties.h"
+#include <taglib/taglib_export.h>
+#include <taglib/audioproperties.h>
 
 namespace TagLib {
 

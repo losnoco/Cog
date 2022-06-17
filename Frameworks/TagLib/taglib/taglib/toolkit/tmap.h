@@ -28,7 +28,7 @@
 
 #include <map>
 
-#include "taglib.h"
+#include <taglib/toolkit/taglib.h>
 
 namespace TagLib {
 
@@ -199,6 +199,6 @@ namespace TagLib {
 // Since GCC doesn't support the "export" keyword, we have to include the
 // implementation.
 
-#include "tmap.tcc"
+#include <taglib/toolkit/tmap.tcc>
 
 #endif

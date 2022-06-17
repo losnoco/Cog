@@ -23,9 +23,9 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tag.h"
-#include "tstringlist.h"
-#include "tpropertymap.h"
+#include <taglib/tag.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/toolkit/tpropertymap.h>
 
 using namespace TagLib;
 

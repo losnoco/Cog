@@ -26,11 +26,11 @@
 #ifndef TAGLIB_MODFILEBASE_H
 #define TAGLIB_MODFILEBASE_H
 
-#include "taglib.h"
-#include "tfile.h"
-#include "tstring.h"
-#include "tlist.h"
-#include "taglib_export.h"
+#include <taglib/toolkit/taglib.h>
+#include <taglib/toolkit/tfile.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tlist.h>
+#include <taglib/taglib_export.h>
 
 #include <algorithm>
 

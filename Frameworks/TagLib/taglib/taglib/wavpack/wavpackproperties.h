@@ -30,8 +30,8 @@
 #ifndef TAGLIB_WVPROPERTIES_H
 #define TAGLIB_WVPROPERTIES_H
 
-#include "taglib_export.h"
-#include "audioproperties.h"
+#include <taglib/taglib_export.h>
+#include <taglib/audioproperties.h>
 
 namespace TagLib {
 

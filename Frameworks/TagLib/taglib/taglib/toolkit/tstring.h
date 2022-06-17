@@ -26,9 +26,9 @@
 #ifndef TAGLIB_STRING_H
 #define TAGLIB_STRING_H
 
-#include "taglib_export.h"
-#include "taglib.h"
-#include "tbytevector.h"
+#include <taglib/taglib_export.h>
+#include <taglib/toolkit/taglib.h>
+#include <taglib/toolkit/tbytevector.h>
 
 #include <string>
 #include <iostream>

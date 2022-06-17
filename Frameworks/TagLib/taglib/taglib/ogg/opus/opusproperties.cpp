@@ -27,13 +27,13 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tstring.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include <oggpageheader.h>
+#include <taglib/ogg/oggpageheader.h>
 
-#include "opusproperties.h"
-#include "opusfile.h"
+#include <taglib/ogg/opus/opusproperties.h>
+#include <taglib/ogg/opus/opusfile.h>
 
 using namespace TagLib;
 using namespace TagLib::Ogg;

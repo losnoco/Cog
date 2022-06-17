@@ -30,12 +30,12 @@
 #include <cstdio>
 #include <cstring>
 
-#include <tstring.h>
-#include <tdebug.h>
-#include <trefcounter.h>
-#include <tutils.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/trefcounter.h>
+#include <taglib/toolkit/tutils.h>
 
-#include "tbytevector.h"
+#include <taglib/toolkit/tbytevector.h>
 
 // This is a bit ugly to keep writing over and over again.
 

@@ -24,7 +24,7 @@
  ***************************************************************************/
 
 
-#include "itproperties.h"
+#include <taglib/it/itproperties.h>
 
 using namespace TagLib;
 using namespace IT;

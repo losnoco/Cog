@@ -26,13 +26,13 @@
 #ifndef TAGLIB_APETAG_H
 #define TAGLIB_APETAG_H
 
-#include "tag.h"
-#include "tbytevector.h"
-#include "tmap.h"
-#include "tstring.h"
-#include "taglib_export.h"
+#include <taglib/tag.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/toolkit/tmap.h>
+#include <taglib/tstring.h>
+#include <taglib/taglib_export.h>
 
-#include "apeitem.h"
+#include <taglib/ape/apeitem.h>
 
 namespace TagLib {
 

@@ -24,7 +24,7 @@
  ***************************************************************************/
 
 
-#include "modproperties.h"
+#include <taglib/mod/modproperties.h>
 
 using namespace TagLib;
 using namespace Mod;

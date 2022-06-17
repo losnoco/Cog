@@ -24,11 +24,11 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevectorlist.h>
-#include <id3v2tag.h>
-#include <tdebug.h>
+#include <taglib/toolkit/tbytevectorlist.h>
+#include <taglib/mpeg/id3v2/id3v2tag.h>
+#include <taglib/toolkit/tdebug.h>
 
-#include "privateframe.h"
+#include <taglib/mpeg/id3v2/frames/privateframe.h>
 
 using namespace TagLib;
 using namespace ID3v2;

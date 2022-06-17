@@ -26,11 +26,11 @@
 #ifndef TAGLIB_FLACPICTURE_H
 #define TAGLIB_FLACPICTURE_H
 
-#include <TagLib/tlist.h>
-#include <TagLib/tstring.h>
-#include <TagLib/tbytevector.h>
+#include <taglib/toolkit/tlist.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/toolkit/tbytevector.h>
 #include <taglib/taglib_export.h>
-#include <TagLib/flacmetadatablock.h>
+#include <taglib/flac/flacmetadatablock.h>
 
 namespace TagLib {
 

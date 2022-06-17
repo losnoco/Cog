@@ -23,10 +23,10 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <taglib.h>
-#include <tdebug.h>
-#include <tstring.h>
-#include "flacunknownmetadatablock.h"
+#include <taglib/toolkit/taglib.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstring.h>
+#include <taglib/flac/flacunknownmetadatablock.h>
 
 using namespace TagLib;
 

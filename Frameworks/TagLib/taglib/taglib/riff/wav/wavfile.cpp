@@ -23,16 +23,16 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevector.h>
-#include <tdebug.h>
-#include <tstringlist.h>
-#include <tpropertymap.h>
-#include <tagutils.h>
+#include <taglib/toolkit/tbytevector.h>
+#include <taglib/toolkit/tdebug.h>
+#include <taglib/toolkit/tstringlist.h>
+#include <taglib/toolkit/tpropertymap.h>
+#include <taglib/tagutils.h>
 
-#include "wavfile.h"
-#include "id3v2tag.h"
-#include "infotag.h"
-#include "tagunion.h"
+#include <taglib/riff/wav/wavfile.h>
+#include <taglib/mpeg/id3v2/id3v2tag.h>
+#include <taglib/riff/wav/infotag.h>
+#include <taglib/tagunion.h>
 
 using namespace TagLib;
 

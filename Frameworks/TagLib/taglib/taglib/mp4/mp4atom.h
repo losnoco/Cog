@@ -30,8 +30,8 @@
 #ifndef TAGLIB_MP4ATOM_H
 #define TAGLIB_MP4ATOM_H
 
-#include "tfile.h"
-#include "tlist.h"
+#include <taglib/toolkit/tfile.h>
+#include <taglib/toolkit/tlist.h>
 
 namespace TagLib {
 

@@ -23,7 +23,7 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include "tstringlist.h"
+#include <taglib/toolkit/tstringlist.h>
 
 using namespace TagLib;
 
