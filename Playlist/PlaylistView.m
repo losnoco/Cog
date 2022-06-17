@@ -416,8 +416,10 @@
 
 - (IBAction)refreshTrack:(id)sender {
 	PlaylistEntry *pe = (PlaylistEntry *)sender;
-	unsigned long columns = [[self tableColumns] count];
-	[self reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:[pe index]] columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
+	if(pe && !pe.deLeted) {
+		unsigned long columns = [[self tableColumns] count];
+		[self reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
+	}
 }
 
 #if 0
