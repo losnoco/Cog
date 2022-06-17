@@ -26,17 +26,24 @@ extern NSPersistentContainer *__persistentContainer;
 	NSArray *artistTransform =
 	@[@"artist", @"AuthorToArtistTransformer"];
 
+	// Track numbers must sometimes be converted from NSNumber to NSString
+	NSArray *trackTransform =
+	@[@"spotlightTrack", @"NumberToStringTransformer"];
+
 	importKeys = @{ @"kMDItemTitle": @"title",
 		            @"kMDItemAlbum": @"album",
-		            @"kMDItemAudioTrackNumber": @"track",
+		            @"kMDItemAudioTrackNumber": trackTransform,
 		            @"kMDItemRecordingYear": @"year",
 		            @"kMDItemMusicalGenre": @"genre",
+		            @"kMDItemDurationSeconds": @"spotlightLength",
 		            @"kMDItemPath": URLTransform,
 		            @"kMDItemAuthors": artistTransform };
 }
 
 + (PlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem {
 	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:__persistentContainer.viewContext];
+
+	entry.deLeted = YES;
 
 	// loop through the keys we want to extract
 	for(NSString *mdKey in importKeys) {

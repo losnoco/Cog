@@ -130,7 +130,7 @@ DQ
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                             <connections>
-                                                <binding destination="16" name="value" keyPath="arrangedObjects.lengthText" id="K4A-L7-jOn">
+                                                <binding destination="16" name="value" keyPath="arrangedObjects.spotlightLength" id="gWF-nL-fqJ">
                                                     <dictionary key="options">
                                                         <bool key="NSConditionallySetsEditable" value="YES"/>
                                                     </dictionary>
@@ -285,9 +285,8 @@ DQ
                 <string>artist</string>
                 <string>album</string>
                 <string>genre</string>
-                <string>lengthText</string>
-                <string>track</string>
-                <string>trackText</string>
+                <string>spotlightLength</string>
+                <string>spotlightTrack</string>
             </declaredKeys>
             <classReference key="objectClass" className="PlaylistEntry"/>
             <connections>
