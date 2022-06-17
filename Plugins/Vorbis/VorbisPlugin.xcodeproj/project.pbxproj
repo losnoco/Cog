@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
+		83186313285CEBD2001422CC /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 83186312285CEBD2001422CC /* NSDictionary+Merge.m */; };
 		836EF0D627BB969D00BF35B2 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D427BB969D00BF35B2 /* libvorbisfile.3.dylib */; };
 		836EF0DF27BB987000BF35B2 /* libvorbis.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0DE27BB987000BF35B2 /* libvorbis.0.dylib */; };
 		83AA661627B7FAFC0098D4B8 /* picture.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA661127B7FAFC0098D4B8 /* picture.c */; };
@@ -23,6 +24,8 @@
 		17C93D330B8FDA66008627D6 /* VorbisDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VorbisDecoder.h; sourceTree = "<group>"; };
 		17C93D340B8FDA66008627D6 /* VorbisDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisDecoder.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* VorbisPlugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VorbisPlugin_Prefix.pch; sourceTree = "<group>"; };
+		83186311285CEBD2001422CC /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
+		83186312285CEBD2001422CC /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		8356BD1C27B46A2D0074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		836EF0D427BB969D00BF35B2 /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ../../ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
 		836EF0DE27BB987000BF35B2 /* libvorbis.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbis.0.dylib; path = ../../ThirdParty/vorbis/lib/libvorbis.0.dylib; sourceTree = "<group>"; };
@@ -84,6 +87,8 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				83186311285CEBD2001422CC /* NSDictionary+Merge.h */,
+				83186312285CEBD2001422CC /* NSDictionary+Merge.m */,
 				8356BD1C27B46A2D0074E50C /* HTTPSource.h */,
 				8384913418081A3900E7332D /* Logging.h */,
 				177FCF9D0B90C9530011C3B5 /* Plugin.h */,
@@ -250,6 +255,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				83AA661627B7FAFC0098D4B8 /* picture.c in Sources */,
+				83186313285CEBD2001422CC /* NSDictionary+Merge.m in Sources */,
 				83AA661727B7FAFD0098D4B8 /* base64.c in Sources */,
 				17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */,
 			);

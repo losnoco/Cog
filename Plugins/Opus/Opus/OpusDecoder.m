@@ -14,6 +14,8 @@
 
 #import "HTTPSource.h"
 
+#import "NSDictionary+Merge.h"
+
 @implementation OpusFile
 
 static const int MAXCHANNELS = 8;
@@ -124,6 +126,10 @@ opus_int64 sourceTell(void *_stream) {
 	album = @"";
 	title = @"";
 	genre = @"";
+	icygenre = @"";
+	icyalbum = @"";
+	icyartist = @"";
+	icytitle = @"";
 	year = @(0);
 	track = @(0);
 	disc = @(0);
@@ -233,10 +239,10 @@ opus_int64 sourceTell(void *_stream) {
 - (void)updateIcyMetadata {
 	if([source seekable]) return;
 
-	NSString *_genre = genre;
-	NSString *_album = album;
-	NSString *_artist = artist;
-	NSString *_title = title;
+	NSString *_genre = icygenre;
+	NSString *_album = icyalbum;
+	NSString *_artist = icyartist;
+	NSString *_title = icytitle;
 
 	Class sourceClass = [source class];
 	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
@@ -250,14 +256,14 @@ opus_int64 sourceTell(void *_stream) {
 		}
 	}
 
-	if(![_genre isEqual:genre] ||
-	   ![_album isEqual:album] ||
-	   ![_artist isEqual:artist] ||
-	   ![_title isEqual:title]) {
-		genre = _genre;
-		album = _album;
-		artist = _artist;
-		title = _title;
+	if(![_genre isEqual:icygenre] ||
+	   ![_album isEqual:icyalbum] ||
+	   ![_artist isEqual:icyartist] ||
+	   ![_title isEqual:icytitle]) {
+		icygenre = _genre;
+		icyalbum = _album;
+		icyartist = _artist;
+		icytitle = _title;
 		[self willChangeValueForKey:@"metadata"];
 		[self didChangeValueForKey:@"metadata"];
 	}
@@ -340,7 +346,7 @@ opus_int64 sourceTell(void *_stream) {
 }
 
 - (NSDictionary *)metadata {
-	return @{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"albumArt": albumArt };
+	return [@{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"albumArt": albumArt } dictionaryByMergingWith:@{ @"genre": icygenre, @"album": icyalbum, @"artist": icyartist, @"title": icytitle }];
 }
 
 + (NSArray *)fileTypes {

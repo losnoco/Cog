@@ -45,6 +45,11 @@
 	float replayGainTrackGain;
 	float replayGainTrackPeak;
 
+	NSString *icygenre;
+	NSString *icyalbum;
+	NSString *icyartist;
+	NSString *icytitle;
+
 	NSData *albumArt;
 }
 
