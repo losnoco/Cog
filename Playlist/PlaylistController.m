@@ -1348,7 +1348,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
 
-	NSURL *url = [[self selectedObjects][0] URL];
+	NSURL *url = [[self selectedObjects][0] url];
 	if([url isFileURL]) [ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
 }
 

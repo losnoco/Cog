@@ -471,6 +471,16 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	self.unSigned = Unsigned;
 }
 
+// More of the same
+@dynamic URL;
+- (NSURL *)URL {
+	return self.url;
+}
+
+- (void)setURL:(NSURL *)URL {
+	self.url = URL;
+}
+
 - (void)setMetadata:(NSDictionary *)metadata {
 	if(metadata == nil) {
 		self.error = YES;
