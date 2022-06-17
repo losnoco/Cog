@@ -9,15 +9,15 @@
 #import "TagLibMetadataReader.h"
 #import <taglib/audioproperties.h>
 #import <taglib/fileref.h>
-#import <taglib/flacfile.h>
+#import <taglib/flac/flacfile.h>
 #import <taglib/mp4/mp4file.h>
-#import <taglib/mpcproperties.h>
+#import <taglib/mpc/mpcproperties.h>
 #import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 #import <taglib/mpeg/id3v2/id3v2tag.h>
 #import <taglib/mpeg/mpegfile.h>
 #import <taglib/tag.h>
-#import <taglib/vorbisfile.h>
-#import <taglib/xiphcomment.h>
+#import <taglib/ogg/vorbis/vorbisfile.h>
+#import <taglib/ogg/xiphcomment.h>
 
 @implementation TagLibMetadataReader
 
