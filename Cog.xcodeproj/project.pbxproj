@@ -2587,7 +2587,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+			shellScript = "if [[ \"${CONFIGURATION}\" = \"Release\" ]] || [[ \"${CONFIGURATION}\" = \"Adhoc\" ]]; then\n  echo \"Uploading dSYMs...\"\n  find \"${DWARF_DSYM_FOLDER_PATH}\" -name \"*.dSYM\" -print0 | xargs -0 -I \\{\\} \"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols\" -gsp \"${SRCROOT}/GoogleService-Info.plist\" -p mac \\{\\}\nelse\n  echo \"Skip dSYMs upload\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
