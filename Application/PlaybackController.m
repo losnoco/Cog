@@ -681,7 +681,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	if (!pe) pe = [playlistController currentEntry];
 	[pe setMetadata:info];
-	[playlistView refreshCurrentTrack:self];
+	[playlistView refreshTrack:pe];
 	// Delay the action until this function has returned to the audio thread
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
 		[self sendMetaData];
