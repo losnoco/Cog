@@ -12,6 +12,7 @@
 @interface CogDecoderMulti : NSObject <CogDecoder> {
 	NSArray *theDecoders;
 	id<CogDecoder> theDecoder;
+	BOOL observersAdded;
 }
 
 - (id)initWithDecoders:(NSArray *)decoders;

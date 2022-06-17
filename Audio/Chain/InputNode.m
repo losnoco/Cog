@@ -33,6 +33,8 @@ static void *kInputNodeContext = &kInputNodeContext;
 }
 
 - (BOOL)openWithSource:(id<CogSource>)source {
+	[self removeObservers];
+
 	decoder = [AudioDecoder audioDecoderForSource:source];
 
 	if(decoder == nil)
@@ -63,6 +65,8 @@ static void *kInputNodeContext = &kInputNodeContext;
 }
 
 - (BOOL)openWithDecoder:(id<CogDecoder>)d {
+	[self removeObservers];
+
 	DLog(@"Opening with old decoder: %@", d);
 	decoder = d;
 

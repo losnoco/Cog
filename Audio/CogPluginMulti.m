@@ -113,20 +113,26 @@ static void *kCogDecoderMultiContext = &kCogDecoderMultiContext;
 }
 
 - (void)registerObservers {
-	[theDecoder addObserver:self
-	             forKeyPath:@"properties"
-	                options:(NSKeyValueObservingOptionNew)
-	                context:kCogDecoderMultiContext];
+	if(!observersAdded) {
+		[theDecoder addObserver:self
+		             forKeyPath:@"properties"
+		                options:(NSKeyValueObservingOptionNew)
+		                context:kCogDecoderMultiContext];
 
-	[theDecoder addObserver:self
-	             forKeyPath:@"metadata"
-	                options:(NSKeyValueObservingOptionNew)
-	                context:kCogDecoderMultiContext];
+		[theDecoder addObserver:self
+		             forKeyPath:@"metadata"
+		                options:(NSKeyValueObservingOptionNew)
+		                context:kCogDecoderMultiContext];
+		observersAdded = YES;
+	}
 }
 
 - (void)removeObservers {
-	[theDecoder removeObserver:self forKeyPath:@"properties" context:kCogDecoderMultiContext];
-	[theDecoder removeObserver:self forKeyPath:@"metadata" context:kCogDecoderMultiContext];
+	if(observersAdded) {
+		observersAdded = NO;
+		[theDecoder removeObserver:self forKeyPath:@"properties" context:kCogDecoderMultiContext];
+		[theDecoder removeObserver:self forKeyPath:@"metadata" context:kCogDecoderMultiContext];
+	}
 }
 
 - (BOOL)setTrack:(NSURL *)track {
