@@ -64,7 +64,7 @@
 @property(nonatomic) NSData *_Nullable albumArtInternal;
 
 @property(nonatomic) BOOL Unsigned;
-@property(nonatomic) NSURL *URL;
+@property(nonatomic) NSURL *_Nullable URL;
 
 - (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
