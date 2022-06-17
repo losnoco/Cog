@@ -365,11 +365,6 @@ static PluginController *sharedPluginController = nil;
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n\
 <plist version=\"1.0\">\n\
 <dict>\n\
-\t<key>bugsnag</key>\n\
-\t<dict>\n\
-\t\t<key>apiKey</key>\n\
-\t\t<string>fd4d71d1f019581c562edab9ca019e4b</string>\n\
-\t</dict>\n\
 \t<key>CFBundleDevelopmentRegion</key>\n\
 \t<string>English</string>\n\
 \t<key>CFBundleDocumentTypes</key>\n\

@@ -16,22 +16,18 @@
 #import <MediaPlayer/MPRemoteCommandCenter.h>
 #import <MediaPlayer/MPRemoteCommandEvent.h>
 
-#import <Bugsnag/Bugsnag.h>
+@import Firebase;
 
 @implementation MediaKeysApplication {
 	AppController *_appController;
-}
-
-- (void)reportException:(NSException *)theException {
-	[Bugsnag notify:theException];
-	[super reportException:theException];
 }
 
 - (void)finishLaunching {
 	[super finishLaunching];
 	_appController = (AppController *)[self delegate];
 
-	[Bugsnag start];
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{@"NSApplicationCrashOnExceptions" : @(YES)}];
+	[FIRApp configure];
 
 	MPRemoteCommandCenter *remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter];
 
