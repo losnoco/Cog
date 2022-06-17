@@ -546,7 +546,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 
 		BOOL stop = NO;
-		block([NSString stringWithString:(__bridge NSString *)name],
+		NSString *deviceName = name ? [NSString stringWithString:(__bridge NSString *)name] : [NSString stringWithFormat:@"Unknown device %u", (unsigned int)devids[i]];
+
+		block(deviceName,
 		      devids[i],
 		      systemDefault,
 		      &stop);
