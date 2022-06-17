@@ -29,6 +29,8 @@
 
 #import <Sparkle/Sparkle.h>
 
+@import Firebase;
+
 void *kAppControllerContext = &kAppControllerContext;
 
 @implementation AppController {
@@ -141,6 +143,9 @@ void *kAppControllerContext = &kAppControllerContext;
 }
 
 - (void)awakeFromNib {
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(YES) }];
+	[FIRApp configure];
+
 #ifdef DEBUG
 	// Prevent updates automatically in debug builds
 	[updater setAutomaticallyChecksForUpdates:NO];
