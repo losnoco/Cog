@@ -99,6 +99,10 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 	return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"volume", nil];
 }
 
++ (NSSet *)keyPathsForValuesAffectingUnsigned {
+	return [NSSet setWithObject:@"unSigned"];
+}
+
 - (NSString *)description {
 	return [NSString stringWithFormat:@"PlaylistEntry %lli:(%@)", self.index, self.url];
 }
@@ -455,6 +459,16 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	}
 
 	return nil;
+}
+
+// Gotta love that requirement of Core Data that everything starts with a lower case letter
+@dynamic Unsigned;
+- (BOOL)Unsigned {
+	return self.unSigned;
+}
+
+- (void)setUnsigned:(BOOL)Unsigned {
+	self.unSigned = Unsigned;
 }
 
 - (void)setMetadata:(NSDictionary *)metadata {

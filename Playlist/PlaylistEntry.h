@@ -27,6 +27,7 @@
 + (NSSet *_Nonnull)keyPathsForValuesAffectingYearText;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingCuesheetPresent;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingGainCorrection;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingUnsigned;
 
 @property(nonatomic, readonly) NSString *_Nonnull display;
 @property(nonatomic, retain, readonly) NSNumber *_Nonnull length;
@@ -42,7 +43,7 @@
 
 @property(nonatomic, readonly) NSString *_Nonnull yearText;
 
-@property(nonatomic, readonly) NSString *_Nonnull title;
+@property(nonatomic) NSString *_Nonnull title;
 
 @property(nonatomic, readonly) NSString *_Nonnull trackText;
 
@@ -61,6 +62,8 @@
 @property(nonatomic) NSURL *_Nullable trashUrl;
 
 @property(nonatomic) NSData *_Nullable albumArtInternal;
+
+@property(nonatomic) BOOL Unsigned;
 
 - (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
