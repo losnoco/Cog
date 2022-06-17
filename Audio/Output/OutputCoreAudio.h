@@ -58,8 +58,11 @@ using std::atomic_long;
 	atomic_long bytesRendered;
 	atomic_long bytesHdcdSustained;
 
-	BOOL listenerapplied;
+	BOOL defaultdevicelistenerapplied;
+	BOOL currentdevicelistenerapplied;
+	BOOL devicealivelistenerapplied;
 	BOOL observersapplied;
+	BOOL outputdevicechanged;
 
 	float volume;
 	float eqPreamp;

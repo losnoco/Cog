@@ -224,6 +224,23 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	return [this setOutputDeviceByID:-1];
 }
 
+static OSStatus
+current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress *inAddresses, void *inUserData) {
+	OutputCoreAudio *this = (__bridge OutputCoreAudio *)inUserData;
+	for(UInt32 i = 0; i < inNumberAddresses; ++i) {
+		switch(inAddresses[i].mSelector) {
+			case kAudioDevicePropertyDeviceIsAlive:
+				return [this setOutputDeviceByID:-1];
+
+			case kAudioDevicePropertyNominalSampleRate:
+			case kAudioDevicePropertyStreamFormat:
+				this->outputdevicechanged = YES;
+				return noErr;
+		}
+	}
+	return noErr;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
 	if(context != kOutputCoreAudioContext) {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -253,17 +270,16 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	running = YES;
 	started = NO;
 	stopNext = NO;
-	size_t eventCount = 0;
 	atomic_store(&bytesRendered, 0);
 	NSMutableArray *delayedEvents = [[NSMutableArray alloc] init];
 	BOOL delayedEventsPopped = YES;
 
 	while(!stopping) {
-		if(++eventCount == 48) {
+		if(outputdevicechanged) {
 			[self resetIfOutputChanged];
-			if(restarted) break;
-			eventCount = 0;
+			outputdevicechanged = NO;
 		}
+		if(restarted) break;
 		if([outputController shouldReset]) {
 			@autoreleasepool {
 				[[outputController buffer] reset];
@@ -369,14 +385,29 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 	}
 
 	if(_au) {
-		AudioObjectPropertyAddress defaultDeviceAddress = theAddress;
-
-		if(listenerapplied && !defaultDevice) {
-			AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &defaultDeviceAddress, default_device_changed, (__bridge void *_Nullable)(self));
-			listenerapplied = NO;
+		if(defaultdevicelistenerapplied && !defaultDevice) {
+			/* Already set above
+			 * theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice; */
+			AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void *_Nullable)(self));
+			defaultdevicelistenerapplied = NO;
 		}
 
+		outputdevicechanged = NO;
+
 		if(outputDeviceID != deviceID) {
+			if(currentdevicelistenerapplied) {
+				if(devicealivelistenerapplied) {
+					theAddress.mSelector = kAudioDevicePropertyDeviceIsAlive;
+					AudioObjectRemovePropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+					devicealivelistenerapplied = NO;
+				}
+				theAddress.mSelector = kAudioDevicePropertyStreamFormat;
+				AudioObjectRemovePropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+				theAddress.mSelector = kAudioDevicePropertyNominalSampleRate;
+				AudioObjectRemovePropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+				currentdevicelistenerapplied = NO;
+			}
+
 			DLog(@"Device: %i\n", deviceID);
 			outputDeviceID = deviceID;
 
@@ -385,11 +416,27 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 			if(nserr != nil) {
 				return (OSErr)[nserr code];
 			}
+
+			outputdevicechanged = YES;
 		}
 
-		if(!listenerapplied && defaultDevice) {
-			AudioObjectAddPropertyListener(kAudioObjectSystemObject, &defaultDeviceAddress, default_device_changed, (__bridge void *_Nullable)(self));
-			listenerapplied = YES;
+		if(!currentdevicelistenerapplied) {
+			if(!devicealivelistenerapplied && !defaultDevice) {
+				theAddress.mSelector = kAudioDevicePropertyDeviceIsAlive;
+				AudioObjectAddPropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+				devicealivelistenerapplied = YES;
+			}
+			theAddress.mSelector = kAudioDevicePropertyStreamFormat;
+			AudioObjectAddPropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+			theAddress.mSelector = kAudioDevicePropertyNominalSampleRate;
+			AudioObjectAddPropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+			currentdevicelistenerapplied = YES;
+		}
+
+		if(!defaultdevicelistenerapplied && defaultDevice) {
+			theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
+			AudioObjectAddPropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void *_Nullable)(self));
+			defaultdevicelistenerapplied = YES;
 		}
 	} else {
 		err = noErr;
@@ -842,14 +889,28 @@ default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const
 		paused = NO;
 		[writeSemaphore signal];
 		[readSemaphore signal];
-		if(listenerapplied) {
+		if(defaultdevicelistenerapplied || currentdevicelistenerapplied || devicealivelistenerapplied) {
 			AudioObjectPropertyAddress theAddress = {
-				.mSelector = kAudioHardwarePropertyDefaultOutputDevice,
 				.mScope = kAudioObjectPropertyScopeGlobal,
 				.mElement = kAudioObjectPropertyElementMaster
 			};
-			AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void *_Nullable)(self));
-			listenerapplied = NO;
+			if(defaultdevicelistenerapplied) {
+				theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
+				AudioObjectRemovePropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void *_Nullable)(self));
+				defaultdevicelistenerapplied = NO;
+			}
+			if(devicealivelistenerapplied) {
+				theAddress.mSelector = kAudioDevicePropertyDeviceIsAlive;
+				AudioObjectRemovePropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+				devicealivelistenerapplied = NO;
+			}
+			if(currentdevicelistenerapplied) {
+				theAddress.mSelector = kAudioDevicePropertyStreamFormat;
+				AudioObjectRemovePropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+				theAddress.mSelector = kAudioDevicePropertyNominalSampleRate;
+				AudioObjectRemovePropertyListener(outputDeviceID, &theAddress, current_device_listener, (__bridge void *_Nullable)(self));
+				currentdevicelistenerapplied = NO;
+			}
 		}
 		if(_au) {
 			if(started)
