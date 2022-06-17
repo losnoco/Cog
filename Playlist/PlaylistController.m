@@ -1079,7 +1079,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	} else {
 		NSInteger i;
 
-		if(pe.deleted) // Was a current entry, now removed.
+		if(pe.deLeted) // Was a current entry, now removed.
 		{
 			if(nextEntryAfterDeleted)
 				i = nextEntryAfterDeleted.index;
@@ -1295,7 +1295,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
 
-	if(currentEntry != nil && !currentEntry.deleted) [refreshSet addIndex:currentEntry.index];
+	if(currentEntry != nil && !currentEntry.deLeted) [refreshSet addIndex:currentEntry.index];
 	if(pe != nil) [refreshSet addIndex:pe.index];
 
 	// Refresh entire row to refresh tooltips

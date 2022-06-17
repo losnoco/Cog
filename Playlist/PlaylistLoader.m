@@ -640,7 +640,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			NSBlockOperation *op = [[NSBlockOperation alloc] init];
 
 			[op addExecutionBlock:^{
-				if(weakPe.deleted) {
+				if(weakPe.deLeted) {
 					[weakLock lock];
 					progress += progressstep;
 					[self setProgressJobStatus:progress];
@@ -684,7 +684,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		__block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
 		__block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-			if(!weakPe.deleted) {
+			if(!weakPe.deLeted) {
 				[weakPe setMetadata:entryInfo];
 			}
 			progress += progressstep;
