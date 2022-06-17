@@ -57,12 +57,12 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 }
 
 - (void)initDefaults {
-	NSDictionary *defaultsDictionary = @{ @"volume": [NSNumber numberWithDouble:75.0],
-		                                  @"GraphicEQenable": [NSNumber numberWithBool:NO],
-		                                  @"GraphicEQpreset": [NSNumber numberWithInt:-1],
-		                                  @"GraphicEQtrackgenre": [NSNumber numberWithBool:NO],
-		                                  @"volumeLimit": [NSNumber numberWithBool:YES],
-		                                  @"headphoneVirtualization": [NSNumber numberWithBool:NO] };
+	NSDictionary *defaultsDictionary = @{ @"volume": @(75.0),
+		                                  @"GraphicEQenable": @(NO),
+		                                  @"GraphicEQpreset": @(-1),
+		                                  @"GraphicEQtrackgenre": @(NO),
+		                                  @"volumeLimit": @(YES),
+		                                  @"headphoneVirtualization": @(NO) };
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
@@ -125,13 +125,13 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
 // called by double-clicking on table
 - (void)playEntryAtIndex:(NSInteger)i {
-	[self playEntryAtIndex:i startPaused:NO andSeekTo:[NSNumber numberWithDouble:0.0]];
+	[self playEntryAtIndex:i startPaused:NO andSeekTo:@(0.0)];
 }
 
 - (void)playEntryAtIndex:(NSInteger)i startPaused:(BOOL)paused {
 	PlaylistEntry *pe = [playlistController entryAtIndex:i];
 
-	[self playEntry:pe startPaused:paused andSeekTo:[NSNumber numberWithDouble:0.0]];
+	[self playEntry:pe startPaused:paused andSeekTo:@(0.0)];
 }
 
 - (void)playEntryAtIndex:(NSInteger)i startPaused:(BOOL)paused andSeekTo:(id)offset {
@@ -161,24 +161,24 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 	if(pe.replayGainAlbumGain != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainAlbumGain] forKey:@"replayGainAlbumGain"];
+		[dictionary setObject:@(pe.replayGainAlbumGain) forKey:@"replayGainAlbumGain"];
 	if(pe.replayGainAlbumPeak != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainAlbumPeak] forKey:@"replayGainAlbumPeak"];
+		[dictionary setObject:@(pe.replayGainAlbumPeak) forKey:@"replayGainAlbumPeak"];
 	if(pe.replayGainTrackGain != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainTrackGain] forKey:@"replayGainTrackGain"];
+		[dictionary setObject:@(pe.replayGainTrackGain) forKey:@"replayGainTrackGain"];
 	if(pe.replayGainTrackPeak != 0)
-		[dictionary setObject:[NSNumber numberWithFloat:pe.replayGainTrackPeak] forKey:@"replayGainTrackPeak"];
+		[dictionary setObject:@(pe.replayGainTrackPeak) forKey:@"replayGainTrackPeak"];
 	if(pe.volume != 1)
-		[dictionary setObject:[NSNumber numberWithFloat:pe.volume] forKey:@"volume"];
+		[dictionary setObject:@(pe.volume) forKey:@"volume"];
 	return dictionary;
 }
 
 - (void)playEntry:(PlaylistEntry *)pe {
-	[self playEntry:pe startPaused:NO andSeekTo:[NSNumber numberWithDouble:0.0]];
+	[self playEntry:pe startPaused:NO andSeekTo:@(0.0)];
 }
 
 - (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused {
-	[self playEntry:pe startPaused:paused andSeekTo:[NSNumber numberWithDouble:0.0]];
+	[self playEntry:pe startPaused:paused andSeekTo:@(0.0)];
 }
 
 - (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused andSeekTo:(id)offset {
@@ -398,7 +398,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		return;
 	fading = YES;
 
-	NSNumber *originalVolume = [NSNumber numberWithDouble:[audioPlayer volume]];
+	NSNumber *originalVolume = @([audioPlayer volume]);
 	NSTimer *fadeTimer;
 
 	if(playbackStatus == CogStatusPlaying) {
@@ -771,9 +771,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			NSDate *releaseYear = [calendar dateWithEra:1 year:entry.year month:0 day:0 hour:0 minute:0 second:0 nanosecond:0];
 			[songInfo setObject:releaseYear forKey:MPMediaItemPropertyReleaseDate];
 		}
-		[songInfo setObject:[NSNumber numberWithFloat:[entry currentPosition]] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+		[songInfo setObject:@([entry currentPosition]) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
 		[songInfo setObject:[entry length] forKey:MPMediaItemPropertyPlaybackDuration];
-		[songInfo setObject:[NSNumber numberWithFloat:[entry index]] forKey:MPMediaItemPropertyPersistentID];
+		[songInfo setObject:@([entry index]) forKey:MPMediaItemPropertyPersistentID];
 	}
 
 	switch(playbackStatus) {

@@ -56,7 +56,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 }
 
 - (void)initDefaults {
-	NSDictionary *defaultsDictionary = @{@"readCueSheetsInFolders": [NSNumber numberWithBool:YES]};
+	NSDictionary *defaultsDictionary = @{ @"readCueSheetsInFolders": @(YES) };
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
@@ -217,7 +217,7 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 	NSMutableArray *queueList = [[NSMutableArray alloc] init];
 
 	for(PlaylistEntry *pe in [playlistController queueList]) {
-		[queueList addObject:[NSNumber numberWithInteger:pe.index]];
+		[queueList addObject:@(pe.index)];
 	}
 
 	NSDictionary *dictionary = @{@"albumArt": albumArtSet, @"queue": queueList, @"items": topLevel};

@@ -261,15 +261,15 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 					flacDecoder->cuesheetFound = YES;
 				} else if([name isEqualToString:@"date"] ||
 				          [name isEqualToString:@"year"]) {
-					_year = [NSNumber numberWithInt:[value intValue]];
+					_year = @([value intValue]);
 				} else if([name isEqualToString:@"tracknumber"] ||
 				          [name isEqualToString:@"tracknum"] ||
 				          [name isEqualToString:@"track"]) {
-					_track = [NSNumber numberWithInt:[value intValue]];
+					_track = @([value intValue]);
 				} else if([name isEqualToString:@"discnumber"] ||
 				          [name isEqualToString:@"discnum"] ||
 				          [name isEqualToString:@"disc"]) {
-					_disc = [NSNumber numberWithInt:[value intValue]];
+					_disc = @([value intValue]);
 				} else if([name isEqualToString:@"replaygain_album_gain"]) {
 					_replayGainAlbumGain = [value floatValue];
 				} else if([name isEqualToString:@"replaygain_album_peak"]) {
@@ -544,16 +544,16 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 }
 
 - (NSDictionary *)properties {
-	return @{@"channels": [NSNumber numberWithInt:channels],
-			 @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
-			 @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
-			 @"sampleRate": [NSNumber numberWithFloat:frequency],
-			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-			 @"seekable": [NSNumber numberWithBool:[source seekable]],
-			 @"bitrate": [NSNumber numberWithInt:fileSize ? (fileSize * 8 / ((totalFrames + (frequency / 2)) / frequency)) / 1000 : 0],
-			 @"codec": @"FLAC",
-			 @"endian": @"big",
-			 @"encoding": @"lossless"};
+	return @{ @"channels": @(channels),
+		      @"channelConfig": @(channelConfig),
+		      @"bitsPerSample": @(bitsPerSample),
+		      @"sampleRate": @(frequency),
+		      @"totalFrames": @(totalFrames),
+		      @"seekable": @([source seekable]),
+		      @"bitrate": @(fileSize ? (fileSize * 8 / ((totalFrames + (frequency / 2)) / frequency)) / 1000 : 0),
+		      @"codec": @"FLAC",
+		      @"endian": @"big",
+		      @"encoding": @"lossless" };
 }
 
 - (NSDictionary *)metadata {

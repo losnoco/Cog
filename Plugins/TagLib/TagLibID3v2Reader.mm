@@ -75,22 +75,22 @@
 			cuesheet = tag->cuesheet();
 
 			year = tag->year();
-			[dict setObject:[NSNumber numberWithInt:year] forKey:@"year"];
+			[dict setObject:@(year) forKey:@"year"];
 
 			track = tag->track();
-			[dict setObject:[NSNumber numberWithInt:track] forKey:@"track"];
+			[dict setObject:@(track) forKey:@"track"];
 
 			disc = tag->disc();
-			[dict setObject:[NSNumber numberWithInt:disc] forKey:@"disc"];
+			[dict setObject:@(disc) forKey:@"disc"];
 
 			rgAlbumGain = tag->rgAlbumGain();
 			rgAlbumPeak = tag->rgAlbumPeak();
 			rgTrackGain = tag->rgTrackGain();
 			rgTrackPeak = tag->rgTrackPeak();
-			[dict setObject:[NSNumber numberWithFloat:rgAlbumGain] forKey:@"replayGainAlbumGain"];
-			[dict setObject:[NSNumber numberWithFloat:rgAlbumPeak] forKey:@"replayGainAlbumPeak"];
-			[dict setObject:[NSNumber numberWithFloat:rgTrackGain] forKey:@"replayGainTrackGain"];
-			[dict setObject:[NSNumber numberWithFloat:rgTrackPeak] forKey:@"replayGainTrackPeak"];
+			[dict setObject:@(rgAlbumGain) forKey:@"replayGainAlbumGain"];
+			[dict setObject:@(rgAlbumPeak) forKey:@"replayGainAlbumPeak"];
+			[dict setObject:@(rgTrackGain) forKey:@"replayGainTrackGain"];
+			[dict setObject:@(rgTrackPeak) forKey:@"replayGainTrackPeak"];
 
 			soundcheck = tag->soundcheck();
 			if(!soundcheck.isEmpty()) {
@@ -106,7 +106,7 @@
 					float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(16)) / 1000) * 10;
 					float volumeToUse = MIN(volume1, volume2);
 					float volumeScale = pow(10, volumeToUse / 20);
-					[dict setObject:[NSNumber numberWithFloat:volumeScale] forKey:@"volume"];
+					[dict setObject:@(volumeScale) forKey:@"volume"];
 				}
 			}
 

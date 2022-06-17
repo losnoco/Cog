@@ -12,22 +12,22 @@
 @implementation NSApplication (APLApplicationExtensions)
 - (id)playbackStart:(NSScriptCommand *)command {
 	[(AppController *)[NSApp delegate] clickPlay];
-	return [NSNumber numberWithBool:YES];
+	return @(YES);
 }
 - (id)playbackPause:(NSScriptCommand *)command {
 	[(AppController *)[NSApp delegate] clickPause];
-	return [NSNumber numberWithBool:YES];
+	return @(YES);
 }
 - (id)playbackStop:(NSScriptCommand *)command {
 	[(AppController *)[NSApp delegate] clickStop];
-	return [NSNumber numberWithBool:YES];
+	return @(YES);
 }
 - (id)playbackPrevious:(NSScriptCommand *)command {
 	[(AppController *)[NSApp delegate] clickPrev];
-	return [NSNumber numberWithBool:YES];
+	return @(YES);
 }
 - (id)playbackNext:(NSScriptCommand *)command {
 	[(AppController *)[NSApp delegate] clickNext];
-	return [NSNumber numberWithBool:YES];
+	return @(YES);
 }
 @end

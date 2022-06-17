@@ -187,7 +187,7 @@ void *kAppControllerContext = &kAppControllerContext;
 		int lastIndex = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
 
 		if(lastStatus != CogStatusStopped && lastIndex >= 0) {
-			[playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused) andSeekTo:[NSNumber numberWithDouble:[[NSUserDefaults standardUserDefaults] floatForKey:@"lastTrackPosition"]]];
+			[playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused) andSeekTo:@([[NSUserDefaults standardUserDefaults] doubleForKey:@"lastTrackPosition"])];
 		}
 	}
 
@@ -495,7 +495,7 @@ void *kAppControllerContext = &kAppControllerContext;
 
 	// Font defaults
 	float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeSmall];
-	NSNumber *fontSize = [NSNumber numberWithFloat:fFontSize];
+	NSNumber *fontSize = @(fFontSize);
 	[userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
 
 	NSString *feedURLdefault = @"https://cogcdn.cog.losno.co/mercury.xml";
@@ -508,20 +508,20 @@ void *kAppControllerContext = &kAppControllerContext;
 
 	[userDefaultsValuesDict setObject:@"cubic" forKey:@"resampling"];
 
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInteger:CogStatusStopped] forKey:@"lastPlaybackStatus"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithInteger:-1] forKey:@"lastTrackPlaying"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithDouble:0] forKey:@"lastTrackPosition"];
+	[userDefaultsValuesDict setObject:@(CogStatusStopped) forKey:@"lastPlaybackStatus"];
+	[userDefaultsValuesDict setObject:@(-1) forKey:@"lastTrackPlaying"];
+	[userDefaultsValuesDict setObject:@(0.0) forKey:@"lastTrackPosition"];
 
 	[userDefaultsValuesDict setObject:@"dls appl" forKey:@"midiPlugin"];
 
 	[userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
 
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"resumePlaybackOnStartup"];
+	[userDefaultsValuesDict setObject:@(NO) forKey:@"resumePlaybackOnStartup"];
 
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"quitOnNaturalStop"];
+	[userDefaultsValuesDict setObject:@(NO) forKey:@"quitOnNaturalStop"];
 
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:NO] forKey:@"spectrumFreqMode"];
-	[userDefaultsValuesDict setObject:[NSNumber numberWithBool:YES] forKey:@"spectrumProjectionMode"];
+	[userDefaultsValuesDict setObject:@(NO) forKey:@"spectrumFreqMode"];
+	[userDefaultsValuesDict setObject:@(YES) forKey:@"spectrumProjectionMode"];
 
 	NSValueTransformer *colorToValueTransformer = [NSValueTransformer valueTransformerForName:@"ColorToValueTransformer"];
 
@@ -616,7 +616,7 @@ void *kAppControllerContext = &kAppControllerContext;
 - (void)changeFontSize:(float)size {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	float fCurrentSize = [defaults floatForKey:@"fontSize"];
-	NSNumber *newSize = [NSNumber numberWithFloat:(fCurrentSize + size)];
+	NSNumber *newSize = @(fCurrentSize + size);
 	[defaults setObject:newSize forKey:@"fontSize"];
 }
 

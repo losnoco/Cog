@@ -213,7 +213,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 		SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
 		[elements addObject:@" ("];
 		if(hasCurrentPosition) {
-			[elements addObject:[secondsFormatter stringForObjectValue:[NSNumber numberWithDouble:self.currentPosition]]];
+			[elements addObject:[secondsFormatter stringForObjectValue:@(self.currentPosition)]];
 		}
 		if(hasLength) {
 			if(hasCurrentPosition) {
@@ -301,7 +301,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 @dynamic positionText;
 - (NSString *)positionText {
 	SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
-	NSString *time = [secondsFormatter stringForObjectValue:[NSNumber numberWithDouble:self.currentPosition]];
+	NSString *time = [secondsFormatter stringForObjectValue:@(self.currentPosition)];
 	return time;
 }
 
@@ -365,7 +365,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 
 @dynamic length;
 - (NSNumber *)length {
-	return [NSNumber numberWithDouble:(self.metadataLoaded) ? ((double)self.totalFrames / self.sampleRate) : 0.0];
+	return (self.metadataLoaded) ? @(((double)self.totalFrames / self.sampleRate)) : @(0.0);
 }
 
 NSURL *_Nullable urlForPath(NSString *_Nullable path) {

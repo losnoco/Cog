@@ -763,13 +763,13 @@
 - (NSDictionary *)properties {
 	if(layer < 1 || layer > 3) return nil;
 	const NSString *layers[3] = { @"MP1", @"MP2", @"MP3" };
-	return @{ @"channels": [NSNumber numberWithInt:channels],
-		      @"bitsPerSample": [NSNumber numberWithInt:32],
-		      @"sampleRate": [NSNumber numberWithFloat:sampleRate],
-		      @"floatingPoint": [NSNumber numberWithBool:YES],
-		      @"bitrate": [NSNumber numberWithInt:bitrate],
-		      @"totalFrames": [NSNumber numberWithLong:totalFrames - (_startPadding + _endPadding)],
-		      @"seekable": [NSNumber numberWithBool:[_source seekable]],
+	return @{ @"channels": @(channels),
+		      @"bitsPerSample": @(32),
+		      @"sampleRate": @(sampleRate),
+		      @"floatingPoint": @(YES),
+		      @"bitrate": @(bitrate),
+		      @"totalFrames": @(totalFrames - (_startPadding + _endPadding)),
+		      @"seekable": @([_source seekable]),
 		      @"codec": layers[layer - 1],
 		      @"endian": @"host",
 		      @"encoding": @"lossy" };

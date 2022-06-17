@@ -124,7 +124,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 	if(pe.track)
 		[dict setObject:pe.trackText forKey:TrackNumber];
 	if(pe.length)
-		[dict setObject:[NSNumber numberWithInteger:(NSInteger)([pe.length doubleValue] * 1000.0)]
+		[dict setObject:@((NSInteger)([pe.length doubleValue] * 1000.0))
 		         forKey:TrackLength];
 
 	NSString *state = nil;

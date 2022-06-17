@@ -389,17 +389,17 @@ static SInt64 getSizeProc(void *clientData) {
 }
 
 - (NSDictionary *)properties {
-	return @{@"channels": [NSNumber numberWithInt:channels],
-			 @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
-			 @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
-			 @"floatingPoint": [NSNumber numberWithBool:floatingPoint],
-			 @"bitrate": [NSNumber numberWithInt:bitrate],
-			 @"sampleRate": [NSNumber numberWithFloat:frequency],
-			 @"totalFrames": [NSNumber numberWithLong:totalFrames],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"codec": codec,
-			 @"endian": floatingPoint ? @"host" : @"big",
-			 @"encoding": _audioFile_is_lossy ? @"lossy" : @"lossless"};
+	return @{ @"channels": @(channels),
+		      @"channelConfig": @(channelConfig),
+		      @"bitsPerSample": @(bitsPerSample),
+		      @"floatingPoint": @(floatingPoint),
+		      @"bitrate": @(bitrate),
+		      @"sampleRate": @(frequency),
+		      @"totalFrames": @(totalFrames),
+		      @"seekable": @(YES),
+		      @"codec": codec,
+		      @"endian": floatingPoint ? @"host" : @"big",
+		      @"encoding": _audioFile_is_lossy ? @"lossy" : @"lossless" };
 }
 
 - (NSDictionary *)metadata {

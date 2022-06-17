@@ -75,7 +75,7 @@
 			if([allowedKeys containsObject:name]) {
 				[dict setObject:guess_encoding_of_string(item.m_value.c_str()) forKey:name];
 			} else if([name isEqualToString:@"year"]) {
-				[dict setObject:[NSNumber numberWithInt:[guess_encoding_of_string(item.m_value.c_str()) intValue]] forKey:name];
+				[dict setObject:@([guess_encoding_of_string(item.m_value.c_str()) intValue]) forKey:name];
 			}
 		}
 	}

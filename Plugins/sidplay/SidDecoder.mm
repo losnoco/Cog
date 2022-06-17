@@ -246,15 +246,15 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:0],
-			 @"sampleRate": [NSNumber numberWithFloat:44100],
-			 @"totalFrames": [NSNumber numberWithDouble:length],
-			 @"bitsPerSample": [NSNumber numberWithInt:16],
-			 @"floatingPoint": [NSNumber numberWithBool:NO],
-			 @"channels": [NSNumber numberWithInt:n_channels],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"endian": @"host",
-			 @"encoding": @"synthesized"};
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(44100),
+		      @"totalFrames": @(length),
+		      @"bitsPerSample": @(16),
+		      @"floatingPoint": @(NO),
+		      @"channels": @(n_channels),
+		      @"seekable": @(YES),
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
 }
 
 - (NSDictionary *)metadata {

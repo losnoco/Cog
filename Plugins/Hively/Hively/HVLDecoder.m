@@ -80,15 +80,15 @@ static void oneTimeInit(void) {
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:0],
-			 @"sampleRate": [NSNumber numberWithFloat:44100],
-			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-			 @"bitsPerSample": [NSNumber numberWithInt:32],
-			 @"floatingPoint": [NSNumber numberWithBool:YES],
-			 @"channels": [NSNumber numberWithInt:2],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"endian": @"host",
-			 @"encoding": @"synthesized"};
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(44100),
+		      @"totalFrames": @(totalFrames),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @(YES),
+		      @"channels": @(2),
+		      @"seekable": @(YES),
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
 }
 
 - (NSDictionary *)metadata {

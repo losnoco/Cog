@@ -19,7 +19,7 @@
 	NSMutableArray* randomLongs = [NSMutableArray arrayWithCapacity:count];
 	NSUInteger i;
 	for(i = 0; i < count; ++i) {
-		[randomLongs addObject:[NSNumber numberWithLong:random()]];
+		[randomLongs addObject:@(random())];
 	}
 
 	return randomLongs;

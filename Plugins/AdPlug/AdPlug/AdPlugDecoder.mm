@@ -80,16 +80,16 @@ static CAdPlugDatabase *g_database = NULL;
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:0],
-			 @"sampleRate": [NSNumber numberWithFloat:44100],
-			 @"totalFrames": [NSNumber numberWithDouble:length],
-			 @"bitsPerSample": [NSNumber numberWithInt:16], // Samples are short
-			 @"floatingPoint": [NSNumber numberWithBool:NO],
-			 @"channels": [NSNumber numberWithInt:2], // output from gme_play is in stereo
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"codec": [NSString stringWithUTF8String:m_player->gettype().c_str()],
-			 @"encoding": @"synthesized",
-			 @"endian": @"host"};
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(44100.0),
+		      @"totalFrames": @(length),
+		      @"bitsPerSample": @(16), // Samples are short
+		      @"floatingPoint": @(NO),
+		      @"channels": @(2), // output from gme_play is in stereo
+		      @"seekable": @(YES),
+		      @"codec": guess_encoding_of_string(m_player->gettype().c_str()),
+		      @"encoding": @"synthesized",
+		      @"endian": @"host" };
 }
 
 - (NSDictionary *)metadata {

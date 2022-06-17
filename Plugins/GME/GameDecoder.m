@@ -141,14 +141,14 @@ gme_err_t readCallback(void *data, void *out, int count) {
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:0],
-			 @"sampleRate": [NSNumber numberWithFloat:(float)sampleRate],
-			 @"totalFrames": [NSNumber numberWithLong:length * ((float)sampleRate * 0.001)],
-			 @"bitsPerSample": [NSNumber numberWithInt:sizeof(short) * 8], // Samples are short
-			 @"channels": [NSNumber numberWithInt:2], // output from gme_play is in stereo
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"endian": @"host",
-			 @"encoding": @"synthesized"};
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @((long)(length * ((float)sampleRate * 0.001))),
+		      @"bitsPerSample": @(sizeof(short) * 8), // Samples are short
+		      @"channels": @(2), // output from gme_play is in stereo
+		      @"seekable": @(YES),
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
 }
 
 - (NSDictionary *)metadata {

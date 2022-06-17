@@ -325,13 +325,13 @@ opus_int64 sourceTell(void *_stream) {
 }
 
 - (NSDictionary *)properties {
-	return @{ @"channels": [NSNumber numberWithInt:channels],
-		      @"bitsPerSample": [NSNumber numberWithInt:32],
-		      @"floatingPoint": [NSNumber numberWithBool:YES],
-		      @"sampleRate": [NSNumber numberWithFloat:48000],
-		      @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-		      @"bitrate": [NSNumber numberWithInt:bitrate],
-		      @"seekable": [NSNumber numberWithBool:([source seekable] && seekable)],
+	return @{ @"channels": @(channels),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @(YES),
+		      @"sampleRate": @(48000),
+		      @"totalFrames": @(totalFrames),
+		      @"bitrate": @(bitrate),
+		      @"seekable": @([source seekable] && seekable),
 		      @"replayGainAlbumGain": @(replayGainAlbumGain),
 		      @"replayGainTrackGain": @(replayGainTrackGain),
 		      @"codec": @"Opus",

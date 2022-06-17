@@ -106,7 +106,7 @@
 		                    @"album": guess_encoding_of_string(info->game),
 		                    @"title": title,
 		                    @"artist": guess_encoding_of_string(info->author),
-		                    @"track": [NSNumber numberWithInt:track_num + 1] };
+		                    @"track": @(track_num + 1) };
 
 	gme_free_info(info);
 

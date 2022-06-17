@@ -93,15 +93,15 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:0],
-			 @"sampleRate": [NSNumber numberWithFloat:44100],
-			 @"totalFrames": [NSNumber numberWithDouble:length],
-			 @"bitsPerSample": [NSNumber numberWithInt:32],
-			 @"floatingPoint": [NSNumber numberWithBool:YES],
-			 @"channels": [NSNumber numberWithInt:2],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"endian": @"host",
-			 @"encoding": @"synthesized"};
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(44100),
+		      @"totalFrames": @(length),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @(YES),
+		      @"channels": @(2),
+		      @"seekable": @(YES),
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
 }
 
 - (NSDictionary *)metadata {

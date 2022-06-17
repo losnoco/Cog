@@ -67,10 +67,10 @@
 	ShuffleMode mode = (ShuffleMode)[value integerValue];
 
 	if(shuffleMode == mode) {
-		return [NSNumber numberWithBool:YES];
+		return @(YES);
 	}
 
-	return [NSNumber numberWithBool:NO];
+	return @(NO);
 }
 
 - (id)reverseTransformedValue:(id)value {
@@ -78,11 +78,11 @@
 
 	BOOL enabled = [value boolValue];
 	if(enabled) {
-		return [NSNumber numberWithInt:shuffleMode];
+		return @(shuffleMode);
 	} else if(shuffleMode == ShuffleOff) {
-		return [NSNumber numberWithInt:ShuffleAll];
+		return @(ShuffleAll);
 	} else {
-		return [NSNumber numberWithInt:ShuffleOff];
+		return @(ShuffleOff);
 	}
 }
 

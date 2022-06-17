@@ -43,7 +43,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 	// Need to alter length
 	if(!noFragment)
-		[properties setObject:[NSNumber numberWithLong:(trackEnd - trackStart)] forKey:@"totalFrames"];
+		[properties setObject:@(trackEnd - trackStart) forKey:@"totalFrames"];
 
 	return [NSDictionary dictionaryWithDictionary:properties];
 }

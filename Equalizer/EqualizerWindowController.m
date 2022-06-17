@@ -183,7 +183,7 @@ static void loadPresets() {
 									} else if(object_entry[j].value->type == json_integer) {
 										int64_t value = object_entry[j].value->u.integer;
 										float floatValue = ((value <= 401 && value >= 1) ? ((float)(value - 201) / 10.0) : 0.0);
-										[equalizerItem setObject:[NSNumber numberWithFloat:floatValue] forKey:key];
+										[equalizerItem setObject:@(floatValue) forKey:key];
 										++requiredItemsPresent;
 									}
 								} else if([key isEqualToString:cog_equalizer_extra_genres]) {

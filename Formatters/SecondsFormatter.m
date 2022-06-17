@@ -83,7 +83,7 @@
 	}
 
 	if(result && NULL != object) {
-		*object = [NSNumber numberWithUnsignedInt:seconds];
+		*object = @(seconds);
 	} else if(NULL != error) {
 		*error = @"Couldn't convert value to seconds";
 	}

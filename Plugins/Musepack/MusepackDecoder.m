@@ -179,16 +179,16 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:bitrate],
-			 @"sampleRate": [NSNumber numberWithFloat:frequency],
-			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-			 @"bitsPerSample": [NSNumber numberWithInt:32],
-			 @"floatingPoint": [NSNumber numberWithBool:YES],
-			 @"channels": [NSNumber numberWithInt:2],
-			 @"seekable": [NSNumber numberWithBool:[source seekable]],
-			 @"codec": @"Musepack",
-			 @"endian": @"host",
-			 @"encoding": @"lossy"};
+	return @{ @"bitrate": @(bitrate),
+		      @"sampleRate": @(frequency),
+		      @"totalFrames": @(totalFrames),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @(YES),
+		      @"channels": @(2),
+		      @"seekable": @([source seekable]),
+		      @"codec": @"Musepack",
+		      @"endian": @"host",
+		      @"encoding": @"lossy" };
 }
 
 - (NSDictionary *)metadata {

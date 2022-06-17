@@ -179,14 +179,14 @@ const int masterVol = 0x10000; // Fixed point 16.16
 }
 
 - (NSDictionary*)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:0],
-			 @"sampleRate": [NSNumber numberWithFloat:sampleRate],
-			 @"totalFrames": [NSNumber numberWithLong:length],
-			 @"bitsPerSample": [NSNumber numberWithInt:numBitsPerSample],
-			 @"channels": [NSNumber numberWithInt:numChannels],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"endian": @"host",
-			 @"encoding": @"synthesized"};
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @(length),
+		      @"bitsPerSample": @(numBitsPerSample),
+		      @"channels": @(numChannels),
+		      @"seekable": @(YES),
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
 }
 
 - (NSDictionary *)metadata {

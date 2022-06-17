@@ -59,7 +59,7 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 	else {
 		if(progressStatus < 0 && [lastProgressStatus doubleValue] >= 0)
 			removeProgress = YES;
-		lastProgressStatus = [NSNumber numberWithDouble:progressStatus];
+		lastProgressStatus = @(progressStatus);
 	}
 
 	BOOL displayProgress = (progressStatus >= 0.0);
@@ -197,7 +197,7 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 - (void)awakeFromNib {
 	dockImage = [[NSImage imageNamed:@"Plaque"] copy];
 	lastColorfulStatus = -1;
-	lastProgressStatus = [NSNumber numberWithDouble:-1];
+	lastProgressStatus = @(-1.0);
 	imageView = nil;
 	progressIndicator = nil;
 	[self startObserving];

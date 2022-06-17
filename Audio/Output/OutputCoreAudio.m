@@ -344,7 +344,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					stopNext = YES;
 					break;
 				}
-				[delayedEvents addObject:[NSNumber numberWithDouble:secondsBuffered]];
+				[delayedEvents addObject:@(secondsBuffered)];
 				delayedEventsPopped = NO;
 				if(!started) {
 					started = YES;

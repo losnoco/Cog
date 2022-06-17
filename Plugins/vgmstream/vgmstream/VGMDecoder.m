@@ -93,17 +93,17 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 
 	NSString *album = @"";
 	NSString *artist = @"";
-	NSNumber *year = [NSNumber numberWithInt:0];
-	NSNumber *track = [NSNumber numberWithInt:0];
-	NSNumber *disc = [NSNumber numberWithInt:0];
+	NSNumber *year = @(0);
+	NSNumber *track = @(0);
+	NSNumber *disc = @(0);
 	NSString *title = @"";
 
 	NSString *codec;
 
-	NSNumber *rgTrackGain = [NSNumber numberWithInt:0];
-	NSNumber *rgTrackPeak = [NSNumber numberWithInt:0];
-	NSNumber *rgAlbumGain = [NSNumber numberWithInt:0];
-	NSNumber *rgAlbumPeak = [NSNumber numberWithInt:0];
+	NSNumber *rgTrackGain = @(0);
+	NSNumber *rgTrackPeak = @(0);
+	NSNumber *rgAlbumGain = @(0);
+	NSNumber *rgAlbumPeak = @(0);
 
 	codec = get_description_tag(description, "encoding: ", 0);
 
@@ -119,15 +119,15 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 			if(!strncasecmp(tag_key, "REPLAYGAIN_", strlen("REPLAYGAIN_"))) {
 				if(!strncasecmp(tag_key + strlen("REPLAYGAIN_"), "TRACK_", strlen("TRACK_"))) {
 					if(!strcasecmp(tag_key + strlen("REPLAYGAIN_TRACK_"), "GAIN")) {
-						rgTrackGain = [NSNumber numberWithFloat:[value floatValue]];
+						rgTrackGain = @([value floatValue]);
 					} else if(!strcasecmp(tag_key + strlen("REPLAYGAIN_TRACK_"), "PEAK")) {
-						rgTrackPeak = [NSNumber numberWithFloat:[value floatValue]];
+						rgTrackPeak = @([value floatValue]);
 					}
 				} else if(!strncasecmp(tag_key + strlen("REPLAYGAIN_"), "ALBUM_", strlen("ALBUM_"))) {
 					if(!strcasecmp(tag_key + strlen("REPLAYGAIN_ALBUM_"), "GAIN")) {
-						rgAlbumGain = [NSNumber numberWithFloat:[value floatValue]];
+						rgAlbumGain = @([value floatValue]);
 					} else if(!strcasecmp(tag_key + strlen("REPLAYGAIN_ALBUM_"), "PEAK")) {
-						rgAlbumPeak = [NSNumber numberWithFloat:[value floatValue]];
+						rgAlbumPeak = @([value floatValue]);
 					}
 				}
 			} else if(!strcasecmp(tag_key, "ALBUM")) {
@@ -135,13 +135,13 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 			} else if(!strcasecmp(tag_key, "ARTIST")) {
 				artist = value;
 			} else if(!strcasecmp(tag_key, "DATE")) {
-				year = [NSNumber numberWithInt:[value intValue]];
+				year = @([value intValue]);
 			} else if(!strcasecmp(tag_key, "TRACK") ||
 			          !strcasecmp(tag_key, "TRACKNUMBER")) {
-				track = [NSNumber numberWithInt:[value intValue]];
+				track = @([value intValue]);
 			} else if(!strcasecmp(tag_key, "DISC") ||
 			          !strcasecmp(tag_key, "DISCNUMBER")) {
-				disc = [NSNumber numberWithInt:[value intValue]];
+				disc = @([value intValue]);
 			} else if(!strcasecmp(tag_key, "TITLE")) {
 				title = value;
 			}
@@ -150,20 +150,20 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		close_streamfile(tagFile);
 	}
 
-	NSDictionary *properties = @{@"bitrate": [NSNumber numberWithInt:bitrate / 1000],
-								 @"sampleRate": [NSNumber numberWithInt:sampleRate],
-								 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-								 @"bitsPerSample": [NSNumber numberWithInt:16],
-								 @"floatingPoint": [NSNumber numberWithBool:NO],
-								 @"channels": [NSNumber numberWithInt:channels],
-								 @"seekable": [NSNumber numberWithBool:YES],
-								 @"replayGainAlbumGain": rgAlbumGain,
-								 @"replayGainAlbumPeak": rgAlbumPeak,
-								 @"replayGainTrackGain": rgTrackGain,
-								 @"replayGainTrackPeak": rgTrackPeak,
-								 @"codec": codec,
-								 @"endian": @"host",
-								 @"encoding": @"lossy/lossless"};
+	NSDictionary *properties = @{ @"bitrate": @(bitrate / 1000),
+		                          @"sampleRate": @(sampleRate),
+		                          @"totalFrames": @(totalFrames),
+		                          @"bitsPerSample": @(16),
+		                          @"floatingPoint": @(NO),
+		                          @"channels": @(channels),
+		                          @"seekable": @(YES),
+		                          @"replayGainAlbumGain": rgAlbumGain,
+		                          @"replayGainAlbumPeak": rgAlbumPeak,
+		                          @"replayGainTrackGain": rgTrackGain,
+		                          @"replayGainTrackPeak": rgTrackPeak,
+		                          @"codec": codec,
+		                          @"endian": @"host",
+		                          @"encoding": @"lossy/lossless" };
 
 	if([title isEqualToString:@""]) {
 		if(stream->num_streams > 1) {
@@ -173,8 +173,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		}
 	}
 
-	if([track isEqualToNumber:[NSNumber numberWithInt:0]])
-		track = [NSNumber numberWithInt:track_num];
+	if([track isEqualToNumber:@(0)])
+		track = @(track_num);
 
 	NSMutableDictionary *mutableMetadata = [@{ @"title": title,
 		                                       @"track": track,
@@ -184,7 +184,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		[mutableMetadata setValue:album forKey:@"album"];
 	if(![artist isEqualToString:@""])
 		[mutableMetadata setValue:artist forKey:@"artist"];
-	if(![year isEqualToNumber:[NSNumber numberWithInt:0]])
+	if(![year isEqualToNumber:@(0)])
 		[mutableMetadata setValue:year forKey:@"year"];
 
 	NSDictionary *metadata = [NSDictionary dictionaryWithDictionary:mutableMetadata];
@@ -284,15 +284,15 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:bitrate / 1000],
-			 @"sampleRate": [NSNumber numberWithInt:sampleRate],
-			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-			 @"bitsPerSample": [NSNumber numberWithInt:16],
-			 @"floatingPoint": [NSNumber numberWithBool:NO],
-			 @"channels": [NSNumber numberWithInt:channels],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"endian": @"host",
-			 @"encoding": @"lossy/lossless"};
+	return @{ @"bitrate": @(bitrate / 1000),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @(totalFrames),
+		      @"bitsPerSample": @(16),
+		      @"floatingPoint": @(NO),
+		      @"channels": @(channels),
+		      @"seekable": @(YES),
+		      @"endian": @"host",
+		      @"encoding": @"lossy/lossless" };
 }
 
 - (NSDictionary *)metadata {

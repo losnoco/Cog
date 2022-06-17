@@ -89,7 +89,7 @@
 		if(type == nil)
 			type = @"";
 
-		return @{@"title": title, @"artist": artist,/*@"comment": comment,*/ @"year": [NSNumber numberWithInt:[date intValue]], @"codec": type};
+		return @{ @"title": title, @"artist": artist, /*@"comment": comment,*/ @"year": @([date intValue]), @"codec": type };
 	} catch(std::exception & /*e*/) {
 		return 0;
 	}

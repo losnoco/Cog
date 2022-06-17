@@ -813,7 +813,7 @@ static SQLiteStore *g_sharedStore = nil;
 		returnId = sqlite3_last_insert_rowid(g_database);
 		/*refcount = 1;*/
 
-		[stringTable setObject:string forKey:[[NSNumber numberWithInteger:returnId] stringValue]];
+		[stringTable setObject:string forKey:[@(returnId) stringValue]];
 	} else {
 		st = stmt[stmt_bump_string];
 
@@ -824,7 +824,7 @@ static SQLiteStore *g_sharedStore = nil;
 			return string;
 		}
 
-		string = [stringTable objectForKey:[[NSNumber numberWithInteger:returnId] stringValue]];
+		string = [stringTable objectForKey:[@(returnId) stringValue]];
 	}
 
 	*stringId = returnId;
@@ -835,7 +835,7 @@ static SQLiteStore *g_sharedStore = nil;
 	if(stringId < 0)
 		return @"";
 
-	NSString *ret = [stringTable objectForKey:[[NSNumber numberWithInteger:stringId] stringValue]];
+	NSString *ret = [stringTable objectForKey:[@(stringId) stringValue]];
 	if(ret) return ret;
 
 	sqlite3_stmt *st = stmt[stmt_select_string_value];
@@ -864,7 +864,7 @@ static SQLiteStore *g_sharedStore = nil;
 
 	sqlite3_reset(st);
 
-	[stringTable setObject:ret forKey:[[NSNumber numberWithInteger:stringId] stringValue]];
+	[stringTable setObject:ret forKey:[@(stringId) stringValue]];
 
 	return ret;
 }
@@ -908,7 +908,7 @@ static SQLiteStore *g_sharedStore = nil;
 			return;
 		}
 
-		[stringTable removeObjectForKey:[[NSNumber numberWithInteger:stringId] stringValue]];
+		[stringTable removeObjectForKey:[@(stringId) stringValue]];
 	} else {
 		st = stmt[stmt_pop_string];
 
@@ -976,7 +976,7 @@ static SQLiteStore *g_sharedStore = nil;
 		returnId = sqlite3_last_insert_rowid(g_database);
 		/*refcount = 1;*/
 
-		[artTable setObject:art forKey:[[NSNumber numberWithInteger:returnId] stringValue]];
+		[artTable setObject:art forKey:[@(returnId) stringValue]];
 	} else {
 		st = stmt[stmt_bump_art];
 
@@ -987,7 +987,7 @@ static SQLiteStore *g_sharedStore = nil;
 			return art;
 		}
 
-		art = [artTable objectForKey:[[NSNumber numberWithInteger:returnId] stringValue]];
+		art = [artTable objectForKey:[@(returnId) stringValue]];
 	}
 
 	*artId = returnId;
@@ -998,7 +998,7 @@ static SQLiteStore *g_sharedStore = nil;
 	if(artId < 0)
 		return [NSData data];
 
-	NSData *ret = [artTable valueForKey:[[NSNumber numberWithInteger:artId] stringValue]];
+	NSData *ret = [artTable valueForKey:[@(artId) stringValue]];
 	if(ret) return ret;
 
 	sqlite3_stmt *st = stmt[stmt_select_art_value];
@@ -1027,7 +1027,7 @@ static SQLiteStore *g_sharedStore = nil;
 
 	sqlite3_reset(st);
 
-	[artTable setValue:ret forKey:[[NSNumber numberWithInteger:artId] stringValue]];
+	[artTable setValue:ret forKey:[@(artId) stringValue]];
 
 	return ret;
 }
@@ -1062,7 +1062,7 @@ static SQLiteStore *g_sharedStore = nil;
 	}
 
 	if(refcount <= 1) {
-		[artTable removeObjectForKey:[[NSNumber numberWithInteger:artId] stringValue]];
+		[artTable removeObjectForKey:[@(artId) stringValue]];
 
 		st = stmt[stmt_remove_art];
 
@@ -1773,7 +1773,7 @@ static SQLiteStore *g_sharedStore = nil;
 	NSMutableArray *items = [[NSMutableArray alloc] init];
 
 	for(int64_t i = index, j = index + count; i < j; ++i) {
-		[items addObject:[NSNumber numberWithInteger:i]];
+		[items addObject:@(i)];
 	}
 
 	[self queueRemovePlaylistItems:items];

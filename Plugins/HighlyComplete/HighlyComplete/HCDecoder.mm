@@ -271,7 +271,7 @@ static int psf_info_meta(void *context, const char *name, const char *value) {
 	} else if([taglc isEqualToString:@"year"] ||
 	          [taglc isEqualToString:@"track"] ||
 	          [taglc isEqualToString:@"disc"]) {
-		[state->info setObject:[NSNumber numberWithInt:[svalue intValue]] forKey:taglc];
+		[state->info setObject:@([svalue intValue]) forKey:taglc];
 	}
 
 	return 0;
@@ -1511,7 +1511,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 }
 
 - (NSDictionary *)properties {
-	NSString *codec = nil;
+	NSString *codec = @"";
 	switch(type) {
 		case 1:
 			codec = @"PSF";
@@ -1542,20 +1542,20 @@ static int usf_info(void *context, const char *name, const char *value) {
 			break;
 	}
 
-	return @{@"channels": [NSNumber numberWithInt:2],
-			 @"bitsPerSample": [NSNumber numberWithInt:16],
-			 @"sampleRate": [NSNumber numberWithFloat:sampleRate],
-			 @"totalFrames": [NSNumber numberWithInteger:totalFrames],
-			 @"bitrate": [NSNumber numberWithInt:0],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"replayGainAlbumGain": [NSNumber numberWithFloat:replayGainAlbumGain],
-			 @"replayGainAlbumPeak": [NSNumber numberWithFloat:replayGainAlbumPeak],
-			 @"replayGainTrackGain": [NSNumber numberWithFloat:replayGainTrackGain],
-			 @"replayGainTrackPeak": [NSNumber numberWithFloat:replayGainTrackPeak],
-			 @"volume": [NSNumber numberWithFloat:volume],
-			 @"codec": codec,
-			 @"endian": @"host",
-			 @"encoding": @"synthesized"};
+	return @{ @"channels": @(2),
+		      @"bitsPerSample": @(16),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @(totalFrames),
+		      @"bitrate": @(0),
+		      @"seekable": @(YES),
+		      @"replayGainAlbumGain": @(replayGainAlbumGain),
+		      @"replayGainAlbumPeak": @(replayGainAlbumPeak),
+		      @"replayGainTrackGain": @(replayGainTrackGain),
+		      @"replayGainTrackPeak": @(replayGainTrackPeak),
+		      @"volume": @(volume),
+		      @"codec": codec,
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
 }
 
 + (NSDictionary *)metadataForURL:(NSURL *)url {

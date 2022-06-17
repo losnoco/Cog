@@ -306,16 +306,16 @@ long sourceTell(void *datasource) {
 }
 
 - (NSDictionary *)properties {
-	return @{@"channels": [NSNumber numberWithInt:channels],
-			 @"bitsPerSample": [NSNumber numberWithInt:32],
-			 @"floatingPoint": [NSNumber numberWithBool:YES],
-			 @"sampleRate": [NSNumber numberWithFloat:frequency],
-			 @"totalFrames": [NSNumber numberWithDouble:totalFrames],
-			 @"bitrate": [NSNumber numberWithInt:bitrate],
-			 @"seekable": [NSNumber numberWithBool:([source seekable] && seekable)],
-			 @"codec": @"Ogg Vorbis",
-			 @"endian": @"host",
-			 @"encoding": @"lossy"};
+	return @{ @"channels": @(channels),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @(YES),
+		      @"sampleRate": @(frequency),
+		      @"totalFrames": @(totalFrames),
+		      @"bitrate": @(bitrate),
+		      @"seekable": @([source seekable] && seekable),
+		      @"codec": @"Ogg Vorbis",
+		      @"endian": @"host",
+		      @"encoding": @"lossy" };
 }
 
 - (NSDictionary *)metadata {

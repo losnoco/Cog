@@ -35,15 +35,15 @@ enum { channels = 2 };
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": [NSNumber numberWithInt:0],
-			 @"sampleRate": [NSNumber numberWithFloat:sample_rate],
-			 @"totalFrames": [NSNumber numberWithDouble:length],
-			 @"bitsPerSample": [NSNumber numberWithInt:32],
-			 @"floatingPoint": [NSNumber numberWithBool:YES],
-			 @"channels": [NSNumber numberWithInt:channels],
-			 @"seekable": [NSNumber numberWithBool:YES],
-			 @"endian": @"host",
-			 @"encoding": @"synthesized"};
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sample_rate),
+		      @"totalFrames": @(length),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @(YES),
+		      @"channels": @(channels),
+		      @"seekable": @(YES),
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
 }
 
 - (NSDictionary *)metadata {

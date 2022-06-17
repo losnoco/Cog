@@ -486,7 +486,7 @@
 - (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait {
 	currentPlaybackStatus = status;
 
-	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:[NSNumber numberWithInt:status] withObject:[bufferChain userInfo] waitUntilDone:wait];
+	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:@(status) withObject:[bufferChain userInfo] waitUntilDone:wait];
 }
 
 - (void)sustainHDCD {
@@ -494,7 +494,7 @@
 }
 
 - (void)setError:(BOOL)status {
-	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:[NSNumber numberWithBool:status] withObject:[bufferChain userInfo] waitUntilDone:NO];
+	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:@(status) withObject:[bufferChain userInfo] waitUntilDone:NO];
 }
 
 - (void)setPlaybackStatus:(int)status {
