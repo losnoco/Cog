@@ -7,3 +7,5 @@ xcuserdata
 
 # User-specific xcconfig files
 Xcode-config/DEVELOPMENT_TEAM.xcconfig
+
+Cog.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
