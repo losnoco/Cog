@@ -925,7 +925,7 @@ static uint8_t reverse_bits[0x100];
 	return @{ @"channels": [NSNumber numberWithInt:channels],
 		      @"channelConfig": [NSNumber numberWithUnsignedInt:channelConfig],
 		      @"bitsPerSample": [NSNumber numberWithInt:bitsPerSample],
-		      @"Unsigned": [NSNumber numberWithBool:(bitsPerSample == 8)],
+		      @"unSigned": [NSNumber numberWithBool:(bitsPerSample == 8)],
 		      @"sampleRate": [NSNumber numberWithFloat:frequency],
 		      @"floatingPoint": [NSNumber numberWithBool:floatingPoint],
 		      @"totalFrames": [NSNumber numberWithDouble:totalFrames],

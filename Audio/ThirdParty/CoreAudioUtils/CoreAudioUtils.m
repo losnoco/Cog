@@ -55,12 +55,12 @@ AudioStreamBasicDescription propertiesToASBD(NSDictionary *properties)
 		asbd.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
 		asbd.mFormatFlags |= kLinearPCMFormatFlagIsAlignedHigh;
 	}
-	
-	if (isFloat == NO && [[properties objectForKey:@"Unsigned"] boolValue] == NO) {
+
+	if(isFloat == NO && [[properties objectForKey:@"unSigned"] boolValue] == NO) {
 		asbd.mFormatFlags |= kLinearPCMFormatFlagIsSignedInteger;
 	}
-    
-    if (isFloat) {
+
+	if (isFloat) {
         asbd.mFormatFlags |= kLinearPCMFormatFlagIsFloat | kAudioFormatFlagIsPacked;
     }
 	
