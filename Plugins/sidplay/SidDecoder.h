@@ -12,7 +12,7 @@
 #import <sidplayfp/SidInfo.h>
 #import <sidplayfp/SidTune.h>
 #import <sidplayfp/SidTuneInfo.h>
-#import <sidplayfp/event.h>
+#import <sidplayfp/Event.h>
 #import <sidplayfp/sidbuilder.h>
 #import <sidplayfp/sidplayfp.h>
 
