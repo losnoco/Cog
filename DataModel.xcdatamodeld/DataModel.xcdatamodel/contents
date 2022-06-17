@@ -48,7 +48,7 @@
         <attribute name="trashUrlString" optional="YES" attributeType="String"/>
         <attribute name="unSigned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="urlString" optional="YES" attributeType="String"/>
-        <attribute name="volume" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="volume" optional="YES" attributeType="Float" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="year" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <elements>
