@@ -266,11 +266,12 @@ static int psf_info_meta(void *context, const char *name, const char *value) {
 	          [taglc isEqualToString:@"albumartist"] ||
 	          [taglc isEqualToString:@"artist"] ||
 	          [taglc isEqualToString:@"album"] ||
-	          [taglc isEqualToString:@"year"] ||
-	          [taglc isEqualToString:@"genre"] ||
+	          [taglc isEqualToString:@"genre"]) {
+		[state->info setObject:svalue forKey:taglc];
+	} else if([taglc isEqualToString:@"year"] ||
 	          [taglc isEqualToString:@"track"] ||
 	          [taglc isEqualToString:@"disc"]) {
-		[state->info setObject:svalue forKey:taglc];
+		[state->info setObject:[NSNumber numberWithInt:[svalue intValue]] forKey:taglc];
 	}
 
 	return 0;
