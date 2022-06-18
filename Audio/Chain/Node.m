@@ -216,7 +216,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 	if(@available(macOS 11, *)) {
 		if(!wg) {
 			if(!workgroup) {
-				workgroup = AudioWorkIntervalCreate([[NSString stringWithFormat:@"%@ Work Interval", [self className]] UTF8String], clockId, &attr);
+				workgroup = AudioWorkIntervalCreate([[NSString stringWithFormat:@"%@ Work Interval %@", [self className], self] UTF8String], clockId, &attr);
 				isRealtimeError = !SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
 				isRealtime = !isRealtimeError;
 			}
