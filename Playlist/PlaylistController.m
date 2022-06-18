@@ -1108,12 +1108,28 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (NSArray *)filterPlaylistOnAlbum:(NSString *)album {
-	NSPredicate *predicate;
+	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+
+	NSPredicate *searchPredicate;
 	if([album length] > 0)
-		predicate = [NSPredicate predicateWithFormat:@"album like %@", album];
+		searchPredicate = [NSPredicate predicateWithFormat:@"album like %@", album];
 	else
-		predicate = [NSPredicate predicateWithFormat:@"album == nil || album like %@", @""];
-	return [[self arrangedObjects] filteredArrayUsingPredicate:predicate];
+		searchPredicate = [NSPredicate predicateWithFormat:@"album == nil || album like %@", @""];
+
+	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, searchPredicate]];
+
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+	request.predicate = predicate;
+
+	NSError *error = nil;
+	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+
+	if(results && [results count] > 0) {
+		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"index" ascending:YES];
+		results = [results sortedArrayUsingDescriptors:@[sortDescriptor]];
+	}
+
+	return results;
 }
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe {
