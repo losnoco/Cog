@@ -1182,29 +1182,30 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (NSArray *)shuffleAlbums {
 	NSArray *newList = [self arrangedObjects];
 	NSMutableArray *temp = [[NSMutableArray alloc] init];
-	NSMutableArray *albums = [[NSMutableArray alloc] init];
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"track"
-	                                                               ascending:YES];
-	for(unsigned long i = 0, j = [newList count]; i < j; ++i) {
-		PlaylistEntry *pe = newList[i];
-		NSString *album = [pe album];
-		if(!album) album = @"";
-		if([albums containsObject:album]) continue;
-		[albums addObject:album];
-		NSArray *albumContent = [self filterPlaylistOnAlbum:album];
-		NSArray *sortedContent =
-		[albumContent sortedArrayUsingDescriptors:@[sortDescriptor]];
-		if(sortedContent && [sortedContent count])
-			[temp addObject:sortedContent[0]];
-	}
-	NSArray *tempList = [Shuffle shuffleList:temp];
+	NSSortDescriptor *sortDescriptorTrack = [[NSSortDescriptor alloc] initWithKey:@"track"
+	                                                                    ascending:YES];
+	NSSortDescriptor *sortDescriptorDisc = [[NSSortDescriptor alloc] initWithKey:@"disc"
+	                                                                   ascending:YES];
+	NSArray *albums = [newList valueForKey:@"album"];
+	albums = [[NSSet setWithArray:albums] allObjects];
+	NSArray *tempList = [Shuffle shuffleList:albums];
 	temp = [[NSMutableArray alloc] init];
-	for(unsigned long i = 0, j = [tempList count]; i < j; ++i) {
-		PlaylistEntry *pe = tempList[i];
-		NSString *album = [pe album];
-		NSArray *albumContent = [self filterPlaylistOnAlbum:album];
+	BOOL blankAdded = NO;
+	for(NSString *album in tempList) {
+		NSString *theAlbum = album;
+		if((id)album == [NSNull null]) {
+			if(blankAdded)
+				continue;
+			else
+				theAlbum = @"";
+			blankAdded = YES;
+		} else if([album isEqualToString:@""]) {
+			if(blankAdded) continue;
+			blankAdded = YES;
+		}
+		NSArray *albumContent = [self filterPlaylistOnAlbum:theAlbum];
 		NSArray *sortedContent =
-		[albumContent sortedArrayUsingDescriptors:@[sortDescriptor]];
+		[albumContent sortedArrayUsingDescriptors:@[sortDescriptorDisc, sortDescriptorTrack]];
 		if(sortedContent && [sortedContent count])
 			[temp addObjectsFromArray:sortedContent];
 	}
