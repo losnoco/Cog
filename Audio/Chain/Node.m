@@ -131,19 +131,6 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 		nodeChannelConfig = 0;
 		nodeLossless = NO;
 
-		if(@available(macOS 12, *)) {
-			// Get the mach time info.
-			struct mach_timebase_info timeBaseInfo;
-			mach_timebase_info(&timeBaseInfo);
-
-			// The frequency of the clock is: (timeBaseInfo.denom / timeBaseInfo.numer) * kOneNanosecond
-			const double nanoSecFrequency = (double)(timeBaseInfo.denom) / (double)(timeBaseInfo.numer);
-			const double frequency = nanoSecFrequency * kOneNanosecond;
-
-			// Convert the interval time in seconds to mach time length.
-			intervalMachLength = (int64_t)(kIOIntervalTime * frequency);
-		}
-
 		[self setPreviousNode:p];
 	}
 
@@ -205,79 +192,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 
 - (void)threadEntry:(id)arg {
 	@autoreleasepool {
-		if([self followWorkgroup]) {
-			[self process];
-			[self leaveWorkgroup];
-		}
-	}
-}
-
-- (BOOL)followWorkgroup {
-	if(@available(macOS 12, *)) {
-		if(!wg) {
-			if(!workgroup) {
-				workgroup = AudioWorkIntervalCreate([[NSString stringWithFormat:@"%@ Work Interval %@", [self className], self] UTF8String], clockId, &attr);
-				isRealtimeError = !SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
-				isRealtime = !isRealtimeError;
-			}
-			wg = workgroup;
-			if(wg && !isRealtimeError) {
-				int result = os_workgroup_join(wg, &wgToken);
-				isDeadlineError = NO;
-				if(result == 0) return YES;
-				if(result == EALREADY) {
-					DLog(@"Thread already in workgroup");
-					return NO;
-				} else {
-					DLog(@"Cannot join workgroup, error %d", result);
-					isRealtimeError = YES;
-					return NO;
-				}
-			}
-		}
-		return wg != nil && !isRealtimeError;
-	} else {
-		if(!isRealtime && !isRealtimeError) {
-			isRealtimeError = SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
-			isRealtime = !isRealtimeError;
-		}
-		return YES;
-	}
-}
-
-- (void)leaveWorkgroup {
-	if(@available(macOS 12, *)) {
-		if(wg && wgToken.sig && !isRealtimeError) {
-			os_workgroup_leave(wg, &wgToken);
-			bzero(&wgToken, sizeof(wgToken));
-			wg = nil;
-		}
-	}
-}
-
-- (void)startWorkslice {
-	if(@available(macOS 12, *)) {
-		if(wg && !isRealtimeError && !isDeadlineError) {
-			const uint64_t currentTime = mach_absolute_time();
-			const uint64_t deadline = currentTime + intervalMachLength;
-			int result = os_workgroup_interval_start(wg, currentTime, deadline, nil);
-			if(result != 0) {
-				DLog(@"Deadline error = %d", result);
-				isDeadlineError = YES;
-			}
-		}
-	}
-}
-
-- (void)endWorkslice {
-	if(@available(macOS 12, *)) {
-		if(wg && !isRealtimeError && !isDeadlineError) {
-			int result = os_workgroup_interval_finish(wg, nil);
-			if(result != 0) {
-				DLog(@"Deadline end error = %d", result);
-				isDeadlineError = YES;
-			}
-		}
+		[self process];
 	}
 }
 

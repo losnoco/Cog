@@ -29,15 +29,10 @@
 	BOOL shouldContinue;
 	BOOL endOfStream; // All data is now in buffer
 	BOOL initialBufferFilled;
-	BOOL isRealtime, isRealtimeError, isDeadlineError; // If was successfully set realtime, or if error
 
 	AudioStreamBasicDescription nodeFormat;
 	uint32_t nodeChannelConfig;
 	BOOL nodeLossless;
-
-	int64_t intervalMachLength;
-	os_workgroup_interval_t workgroup, wg;
-	os_workgroup_join_token_s wgToken;
 }
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
 
@@ -48,11 +43,6 @@
 
 - (void)process; // Should be overwriten by subclass
 - (void)threadEntry:(id _Nullable)arg;
-
-- (BOOL)followWorkgroup;
-- (void)leaveWorkgroup;
-- (void)startWorkslice;
-- (void)endWorkslice;
 
 - (void)launchThread;
 

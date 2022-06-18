@@ -189,9 +189,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			int framesToRead = CHUNK_SIZE - amountInBuffer;
 			int framesRead;
 			@autoreleasepool {
-				[self startWorkslice];
 				framesRead = [decoder readAudio:((char *)inputBuffer) + bytesInBuffer frames:framesToRead];
-				[self endWorkslice];
 			}
 
 			if(framesRead > 0 && !seekError) {
