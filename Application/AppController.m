@@ -165,6 +165,8 @@ void *kAppControllerContext = &kAppControllerContext;
 	while(!submitCompleted) {
 		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
 	}
+	
+	[FIRAnalytics setAnalyticsCollectionEnabled:YES];
 
 #ifdef DEBUG
 	// Prevent updates automatically in debug builds
