@@ -1112,9 +1112,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSPredicate *searchPredicate;
 	if([album length] > 0)
-		searchPredicate = [NSPredicate predicateWithFormat:@"album like %@", album];
+		searchPredicate = [NSPredicate predicateWithFormat:@"album == %@", album];
 	else
-		searchPredicate = [NSPredicate predicateWithFormat:@"album == nil || album like %@", @""];
+		searchPredicate = [NSPredicate predicateWithFormat:@"album == nil || album == %@", @""];
 
 	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, searchPredicate]];
 
