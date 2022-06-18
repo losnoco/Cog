@@ -913,7 +913,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 
-	[[self undoManager] setActionName:NSLocalizedString(@"PlaylistRandomizationAction", @"Playlist Randomization")];
+	[[self undoManager] setActionName:NSLocalizedString(@"PlaylistRandomizationAction", @"")];
 }
 
 - (void)unrandomizeList:(NSArray *)entries {

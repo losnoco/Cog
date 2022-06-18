@@ -42,7 +42,7 @@
 		}
 
 		[self setReleasedWhenClosed:NO];
-		[self setTitle:NSLocalizedString(@"PreferencesTitle", @"Preferences")];
+		[self setTitle:NSLocalizedString(@"PreferencesTitle", @"")];
 		[self center];
 
 		if(@available(macOS 11, *)) {

@@ -296,7 +296,7 @@ void *kAppControllerContext = &kAppControllerContext;
 
 	if([keyPath isEqualToString:@"playlistController.currentEntry"]) {
 		PlaylistEntry *entry = playlistController.currentEntry;
-		NSString *appTitle = NSLocalizedString(@"CogTitle", @"Cog");
+		NSString *appTitle = NSLocalizedString(@"CogTitle", @"");
 		if(!entry) {
 			miniWindow.title = appTitle;
 			mainWindow.title = appTitle;

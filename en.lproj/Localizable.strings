@@ -46,13 +46,6 @@
 
 "PreferencesTitle" = "Preferences";
 
-"ProgressActionUpdatingIndexes" = "updating playlist indexes";
-"ProgressActionMovingEntries" = "moving playlist entries";
-"ProgressActionInsertingEntries" = "inserting playlist entries";
-"ProgressActionUntrashingEntries" = "restoring playlist entries from the trash";
-"ProgressActionRemovingEntries" = "removing playlist entries";
-"ProgressActionTrashingEntries" = "moving playlist entries to the trash";
-
 "ProgressActionLoader" = "playlist loader inserting files";
 "ProgressSubActionLoaderListingFiles" = "collecting files";
 "ProgressSubActionLoaderFilteringContainerFiles" = "handling container file types";

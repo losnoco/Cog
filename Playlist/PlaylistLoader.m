@@ -343,9 +343,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		return @[];
 	}
 
-	[self beginProgress:NSLocalizedString(@"ProgressActionLoader", @"playlist loader inserting files")];
+	[self beginProgress:NSLocalizedString(@"ProgressActionLoader", @"")];
 
-	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderListingFiles", @"collecting files") percentOfTotal:20.0];
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderListingFiles", @"") percentOfTotal:20.0];
 
 	if(index < 0)
 		index = 0;
@@ -390,7 +390,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		sortedURLs = expandedURLs;
 	}
 
-	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainerFiles", @"handling container file types") percentOfTotal:20.0];
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainerFiles", @"") percentOfTotal:20.0];
 
 	progressstep = [sortedURLs count] ? 100.0 / (double)([sortedURLs count]) : 0;
 
@@ -422,7 +422,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[self completeProgressJob];
 
 	if([fileURLs count] > 0) {
-		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringFiles", @"eliminating unsupported file types") percentOfTotal:20.0];
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringFiles", @"") percentOfTotal:20.0];
 	} else {
 		[self setProgressStatus:60.0];
 	}
@@ -461,7 +461,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 
 	if([containedURLs count] > 0) {
-		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainedFiles", @"eliminating unsupported file types from containers") percentOfTotal:20.0];
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainedFiles", @"") percentOfTotal:20.0];
 	} else {
 		[self setProgressStatus:80.0];
 	}
@@ -500,7 +500,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		return @[];
 	}
 
-	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderAddingEntries", @"creating and adding playlist entries") percentOfTotal:20.0];
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderAddingEntries", @"") percentOfTotal:20.0];
 
 	progressstep = 100.0 / (double)(count);
 
@@ -568,8 +568,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		metadataLoadInProgress = YES;
 
-		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"loading metadata for tracks")];
-		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"processing files") percentOfTotal:50.0];
+		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"")];
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"") percentOfTotal:50.0];
 
 		[self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
 
@@ -600,8 +600,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		progressstep = 100.0 / (double)([entries count] + 1);
 		progress = progressstep;
 	} else if([entries count]) {
-		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"loading metadata for tracks")];
-		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"processing files") percentOfTotal:50.0];
+		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"")];
+		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"") percentOfTotal:50.0];
 
 		progressstep = 100.0 / (double)([entries count]);
 		progress = 0.0;
@@ -683,7 +683,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	progress = 0.0;
 	[self completeProgressJob];
 
-	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionMetadataApply", @"applying info to playlist storage") percentOfTotal:50.0];
+	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionMetadataApply", @"") percentOfTotal:50.0];
 
 	progressstep = 200.0 / (double)([outArray count]);
 

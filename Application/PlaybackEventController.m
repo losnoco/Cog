@@ -281,7 +281,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 					}
 				}
 
-				notif.actionButtonTitle = NSLocalizedString(@"SkipAction", @"Skip");
+				notif.actionButtonTitle = NSLocalizedString(@"SkipAction", @"");
 
 				[[NSUserNotificationCenter defaultUserNotificationCenter]
 				scheduleNotification:notif];
