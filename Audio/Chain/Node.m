@@ -131,7 +131,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 		nodeChannelConfig = 0;
 		nodeLossless = NO;
 
-		if(@available(macOS 11, *)) {
+		if(@available(macOS 12, *)) {
 			// Get the mach time info.
 			struct mach_timebase_info timeBaseInfo;
 			mach_timebase_info(&timeBaseInfo);
@@ -213,7 +213,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 }
 
 - (BOOL)followWorkgroup {
-	if(@available(macOS 11, *)) {
+	if(@available(macOS 12, *)) {
 		if(!wg) {
 			if(!workgroup) {
 				workgroup = AudioWorkIntervalCreate([[NSString stringWithFormat:@"%@ Work Interval %@", [self className], self] UTF8String], clockId, &attr);
@@ -246,7 +246,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 }
 
 - (void)leaveWorkgroup {
-	if(@available(macOS 11, *)) {
+	if(@available(macOS 12, *)) {
 		if(wg && wgToken.sig && !isRealtimeError) {
 			os_workgroup_leave(wg, &wgToken);
 			bzero(&wgToken, sizeof(wgToken));
@@ -256,7 +256,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 }
 
 - (void)startWorkslice {
-	if(@available(macOS 11, *)) {
+	if(@available(macOS 12, *)) {
 		if(wg && !isRealtimeError && !isDeadlineError) {
 			const uint64_t currentTime = mach_absolute_time();
 			const uint64_t deadline = currentTime + intervalMachLength;
@@ -270,7 +270,7 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 }
 
 - (void)endWorkslice {
-	if(@available(macOS 11, *)) {
+	if(@available(macOS 12, *)) {
 		if(wg && !isRealtimeError && !isDeadlineError) {
 			int result = os_workgroup_interval_finish(wg, nil);
 			if(result != 0) {
