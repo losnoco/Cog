@@ -786,6 +786,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
 
+		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"index" ascending:YES];
+
+		request.sortDescriptors = @[sortDescriptor];
+
 		results = [moc executeFetchRequest:request error:&error];
 		if(!results) {
 			ALog(@"Error fetching PlaylistEntry objects: %@\n%@", [error localizedDescription], [error userInfo]);
@@ -808,9 +812,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		if([pruneSet count]) {
 			[playlistController commitPersistentStore];
 		}
-
-		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"index" ascending:YES];
-		results = [resultsCopy sortedArrayUsingDescriptors:@[sortDescriptor]];
 
 		{
 			NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];

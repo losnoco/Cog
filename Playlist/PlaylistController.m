@@ -1118,16 +1118,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, searchPredicate]];
 
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"index" ascending:YES];
+
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
 	request.predicate = predicate;
+	request.sortDescriptors = @[sortDescriptor];
 
 	NSError *error = nil;
 	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
-
-	if(results && [results count] > 0) {
-		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"index" ascending:YES];
-		results = [results sortedArrayUsingDescriptors:@[sortDescriptor]];
-	}
 
 	return results;
 }
