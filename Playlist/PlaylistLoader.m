@@ -39,6 +39,8 @@
 
 #import "RedundantPlaylistDataStore.h"
 
+@import Firebase;
+
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 
 @implementation PlaylistLoader
@@ -649,6 +651,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				}
 
 				DLog(@"Loading metadata for %@", weakPe.url);
+				[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", weakPe.url];
 
 				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.url];
 				if(entryProperties == nil)
@@ -737,6 +740,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		PlaylistEntry *pe = [entries objectAtIndex:idx];
 
 		DLog(@"Loading metadata for %@", pe.url);
+		[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", pe.url];
 
 		NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.url];
 		if(entryProperties == nil)

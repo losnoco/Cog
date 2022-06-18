@@ -19,6 +19,8 @@
 
 #import "Logging.h"
 
+@import Firebase;
+
 @implementation PlaybackController
 
 #define DEFAULT_SEEK 5
@@ -184,6 +186,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused andSeekTo:(id)offset {
 	if(playbackStatus != CogStatusStopped && playbackStatus != CogStatusStopping)
 		[self stop:self];
+
+	[[FIRCrashlytics crashlytics] logWithFormat:@"Playing track: %@", pe.url];
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
@@ -573,10 +577,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		}
 	}
 
-	if(pe)
+	if(pe) {
+		[[FIRCrashlytics crashlytics] logWithFormat:@"Beginning decoding track: %@", pe.url];
 		[player setNextStream:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe)];
-	else
+	} else {
+		[[FIRCrashlytics crashlytics] log:@"End of playlist reached."];
 		[player setNextStream:nil];
+	}
 }
 
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo {
@@ -584,6 +591,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	// Delay the action until this function has returned to the audio thread
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+		[[FIRCrashlytics crashlytics] logWithFormat:@"Updating UI with track: %@", pe.url];
+
 		[self->playlistController setCurrentEntry:pe];
 
 		if(self->_eq)
@@ -609,15 +618,20 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		}
 
 		if(status == CogStatusStopped) {
+			[[FIRCrashlytics crashlytics] log:@"Stopped."];
+
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
 
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotficiation object:nil];
 		} else // paused
 		{
+			[[FIRCrashlytics crashlytics] log:@"Paused."];
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotficiation object:nil];
 		}
 	} else if(status == CogStatusPlaying) {
+		[[FIRCrashlytics crashlytics] log:@"Started playing."];
+
 		if(!positionTimer) {
 			positionTimer = [NSTimer timerWithTimeInterval:0.2 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
 			[[NSRunLoop currentRunLoop] addTimer:positionTimer forMode:NSRunLoopCommonModes];
@@ -660,6 +674,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (void)audioPlayer:(AudioPlayer *)player didStopNaturally:(id)userInfo {
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"quitOnNaturalStop"]) {
+		[[FIRCrashlytics crashlytics] log:@"Terminating due to natural stop."];
 		[NSApp terminate:nil];
 	}
 }
@@ -674,6 +689,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
+	[[FIRCrashlytics crashlytics] logWithFormat:@"Restarting playback of track: %@", pe.url];
 	[player play:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:pe.seekable ? pe.currentPosition : 0.0];
 }
 
