@@ -1,11 +1,11 @@
 //
-//  SpectrumViewLegacy.m
+//  SpectrumViewCG.m
 //  Cog
 //
 //  Created by Christopher Snowhill on 2/12/22.
 //
 
-#import "SpectrumViewLegacy.h"
+#import "SpectrumViewCG.h"
 
 #import "NSView+Visibility.h"
 
@@ -13,14 +13,14 @@
 
 #define LOWER_BOUND -80
 
-static void *kSpectrumViewLegacyContext = &kSpectrumViewLegacyContext;
+static void *kSpectrumViewCGContext = &kSpectrumViewCGContext;
 
 extern NSString *CogPlaybackDidBeginNotficiation;
 extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
 extern NSString *CogPlaybackDidStopNotficiation;
 
-@interface SpectrumViewLegacy () {
+@interface SpectrumViewCG () {
 	VisualizationController *visController;
 	NSTimer *timer;
 	float saLowerBound;
@@ -42,7 +42,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 @end
 
-@implementation SpectrumViewLegacy
+@implementation SpectrumViewCG
 
 @synthesize isListening;
 
@@ -103,7 +103,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context {
-	if(context == kSpectrumViewLegacyContext) {
+	if(context == kSpectrumViewCGContext) {
 		if([keyPath isEqualToString:@"self.window.visible"]) {
 			[self updateVisListening];
 		} else {
@@ -116,10 +116,10 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)addObservers {
 	if(!observersAdded) {
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewLegacyContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewLegacyContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewCGContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewCGContext];
 
-		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewLegacyContext];
+		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewCGContext];
 
 		[[NSNotificationCenter defaultCenter] addObserver:self
 		                                         selector:@selector(colorsDidChange:)
@@ -154,10 +154,10 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)removeObservers {
 	if(observersAdded) {
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewLegacyContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewLegacyContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewCGContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewCGContext];
 
-		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewLegacyContext];
+		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewCGContext];
 
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 		                                                name:NSSystemColorsDidChangeNotification

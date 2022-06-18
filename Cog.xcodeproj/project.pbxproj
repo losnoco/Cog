@@ -105,7 +105,7 @@
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
-		832CFC562851AA8B002AC26F /* SpectrumViewLegacy.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC552851AA8B002AC26F /* SpectrumViewLegacy.m */; };
+		832CFC562851AA8B002AC26F /* SpectrumViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC552851AA8B002AC26F /* SpectrumViewCG.m */; };
 		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8349270C27B4EFFC0009AB2B /* duplicateItemsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */; };
@@ -149,7 +149,7 @@
 		8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8370D73E2775AE1300245CE0 /* libsqlite3.tbd */; };
 		83717825285D685800DE781D /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 83717824285D685800DE781D /* FirebaseAppCheck */; };
 		8372C93D27C7895300E250C9 /* MAD.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8372C93027C785BE00E250C9 /* MAD.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumView.m */; };
+		8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */; };
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
 		837DC92B285B05710005C58A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837DC92A285B05710005C58A /* CoreData.framework */; };
 		837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */; };
@@ -927,8 +927,8 @@
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
 		832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView+Visibility.m"; sourceTree = "<group>"; };
 		832CFC532851AA37002AC26F /* NSView+Visibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView+Visibility.h"; sourceTree = "<group>"; };
-		832CFC542851AA8B002AC26F /* SpectrumViewLegacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpectrumViewLegacy.h; sourceTree = SOURCE_ROOT; };
-		832CFC552851AA8B002AC26F /* SpectrumViewLegacy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpectrumViewLegacy.m; sourceTree = SOURCE_ROOT; };
+		832CFC542851AA8B002AC26F /* SpectrumViewCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpectrumViewCG.h; sourceTree = SOURCE_ROOT; };
+		832CFC552851AA8B002AC26F /* SpectrumViewCG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpectrumViewCG.m; sourceTree = SOURCE_ROOT; };
 		833D0C2027C4ABA00060E16A /* ScriptAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptAdditions.h; sourceTree = "<group>"; };
 		833D0C2427C4ABB80060E16A /* ScriptAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptAdditions.m; sourceTree = "<group>"; };
 		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -989,8 +989,8 @@
 		8370D73E2775AE1300245CE0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		8372C92A27C785BD00E250C9 /* MAD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MAD.xcodeproj; path = Plugins/MAD/MAD.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpusPlugin.xcodeproj; path = Plugins/Opus/OpusPlugin.xcodeproj; sourceTree = "<group>"; };
-		8377C66127B8CF6300E8BC0F /* SpectrumView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpectrumView.m; path = Visualization/SpectrumView.m; sourceTree = "<group>"; };
-		8377C66227B8CF6300E8BC0F /* SpectrumView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumView.h; path = Visualization/SpectrumView.h; sourceTree = "<group>"; };
+		8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpectrumViewSK.m; path = Visualization/SpectrumViewSK.m; sourceTree = "<group>"; };
+		8377C66227B8CF6300E8BC0F /* SpectrumViewSK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumViewSK.h; path = Visualization/SpectrumViewSK.h; sourceTree = "<group>"; };
 		8377C66427B8CF7A00E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisualizationController.h; path = Audio/Visualization/VisualizationController.h; sourceTree = "<group>"; };
 		8377C6B727B900F000E8BC0F /* SpectrumItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumItem.h; path = Visualization/SpectrumItem.h; sourceTree = "<group>"; };
 		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
@@ -1841,10 +1841,10 @@
 			children = (
 				830C37EF27B9956C00E02BB0 /* ThirdParty */,
 				8377C66427B8CF7A00E8BC0F /* VisualizationController.h */,
-				8377C66227B8CF6300E8BC0F /* SpectrumView.h */,
-				8377C66127B8CF6300E8BC0F /* SpectrumView.m */,
-				832CFC542851AA8B002AC26F /* SpectrumViewLegacy.h */,
-				832CFC552851AA8B002AC26F /* SpectrumViewLegacy.m */,
+				8377C66227B8CF6300E8BC0F /* SpectrumViewSK.h */,
+				8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */,
+				832CFC542851AA8B002AC26F /* SpectrumViewCG.h */,
+				832CFC552851AA8B002AC26F /* SpectrumViewCG.m */,
 				8377C6B727B900F000E8BC0F /* SpectrumItem.h */,
 				8377C6B827B900F000E8BC0F /* SpectrumItem.m */,
 				83229C9C283B0095004626A8 /* SpectrumWindowController.h */,
@@ -2615,7 +2615,7 @@
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
 				1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */,
 				8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */,
-				8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */,
+				8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */,
 				1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */,
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
@@ -2628,7 +2628,7 @@
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 				56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */,
 				830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */,
-				832CFC562851AA8B002AC26F /* SpectrumViewLegacy.m in Sources */,
+				832CFC562851AA8B002AC26F /* SpectrumViewCG.m in Sources */,
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,

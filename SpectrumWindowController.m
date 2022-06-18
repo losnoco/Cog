@@ -7,12 +7,12 @@
 
 #import "SpectrumWindowController.h"
 
-#import "SpectrumView.h"
-#import "SpectrumViewLegacy.h"
+#import "SpectrumViewSK.h"
+#import "SpectrumViewCG.h"
 
 @interface SpectrumWindowController ()
-@property SpectrumView *spectrumView;
-@property SpectrumViewLegacy *spectrumViewLegacy;
+@property SpectrumViewSK *spectrumViewSK;
+@property SpectrumViewCG *spectrumViewCG;
 @end
 
 @implementation SpectrumWindowController
@@ -28,35 +28,35 @@
 }
 
 - (void)startRunning {
-	if(!self.spectrumView && !self.spectrumViewLegacy) {
+	if(!self.spectrumViewSK && !self.spectrumViewCG) {
 		NSRect frame = [[self window] frame];
-		self.spectrumView = [[SpectrumView alloc] initWithFrame:frame];
-		if(self.spectrumView) {
-			[[self window] setContentView:self.spectrumView];
+		self.spectrumViewSK = [SpectrumViewSK createGuardWithFrame:frame];
+		if(self.spectrumViewSK) {
+			[[self window] setContentView:self.spectrumViewSK];
 
-			[self.spectrumView enableCameraControl];
+			[self.spectrumViewSK enableCameraControl];
 		} else {
-			self.spectrumViewLegacy = [[SpectrumViewLegacy alloc] initWithFrame:frame];
-			if(self.spectrumViewLegacy) {
-				[[self window] setContentView:self.spectrumViewLegacy];
+			self.spectrumViewCG = [[SpectrumViewCG alloc] initWithFrame:frame];
+			if(self.spectrumViewCG) {
+				[[self window] setContentView:self.spectrumViewCG];
 
-				[self.spectrumViewLegacy enableFullView];
+				[self.spectrumViewCG enableFullView];
 			}
 		}
 	}
 
 	if(playbackController.playbackStatus == CogStatusPlaying) {
-		if(self.spectrumView)
-			[self.spectrumView startPlayback];
-		else if(self.spectrumViewLegacy)
-			[self.spectrumViewLegacy startPlayback];
+		if(self.spectrumViewSK)
+			[self.spectrumViewSK startPlayback];
+		else if(self.spectrumViewCG)
+			[self.spectrumViewCG startPlayback];
 	}
 }
 
 - (void)stopRunning {
 	[[self window] setContentView:nil];
-	self.spectrumView = nil;
-	self.spectrumViewLegacy = nil;
+	self.spectrumViewSK = nil;
+	self.spectrumViewCG = nil;
 }
 
 - (void)windowWillClose:(NSNotification *)notification {

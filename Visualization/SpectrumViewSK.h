@@ -1,5 +1,5 @@
 //
-//  SpectrumView.h
+//  SpectrumViewSK.h
 //  Cog
 //
 //  Created by Christopher Snowhill on 2/12/22.
@@ -13,8 +13,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumView : SCNView
+@interface SpectrumViewSK : SCNView
 @property(nonatomic) BOOL isListening;
+@property(nonatomic) BOOL isWorking;
+
++ (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame;
 
 - (void)enableCameraControl;
 - (void)startPlayback;

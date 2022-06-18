@@ -1,11 +1,11 @@
 //
-//  SpectrumView.m
+//  SpectrumViewSK.m
 //  Cog
 //
 //  Created by Christopher Snowhill on 2/12/22.
 //
 
-#import "SpectrumView.h"
+#import "SpectrumViewSK.h"
 
 #import "NSView+Visibility.h"
 
@@ -15,19 +15,20 @@
 
 #define LOWER_BOUND -80
 
-static void *kSpectrumViewContext = &kSpectrumViewContext;
+static void *kSpectrumViewSKContext = &kSpectrumViewSKContext;
 
 extern NSString *CogPlaybackDidBeginNotficiation;
 extern NSString *CogPlaybackDidPauseNotficiation;
 extern NSString *CogPlaybackDidResumeNotficiation;
 extern NSString *CogPlaybackDidStopNotficiation;
 
-@interface SpectrumView () {
+@interface SpectrumViewSK () {
 	VisualizationController *visController;
 	NSTimer *timer;
 	BOOL paused;
 	BOOL stopped;
 	BOOL isListening;
+	BOOL isWorking;
 	BOOL bandsReset;
 	BOOL cameraControlEnabled;
 	BOOL observersAdded;
@@ -43,9 +44,17 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 @end
 
-@implementation SpectrumView
+@implementation SpectrumViewSK
+
++ (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame {
+	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"sceneKitCrashed"]) {
+		return [[SpectrumViewSK alloc] initWithFrame:frame];
+	}
+	return nil;
+}
 
 @synthesize isListening;
+@synthesize isWorking;
 
 - (id)initWithFrame:(NSRect)frame {
 	id<MTLDevice> device = MTLCreateSystemDefaultDevice();
@@ -79,7 +88,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
                       ofObject:(id)object
                         change:(NSDictionary<NSKeyValueChangeKey, id> *)change
                        context:(void *)context {
-	if(context == kSpectrumViewContext) {
+	if(context == kSpectrumViewSKContext) {
 		if([keyPath isEqualToString:@"self.window.visible"]) {
 			[self updateVisListening];
 		} else {
@@ -144,6 +153,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	paused = NO;
 	isListening = NO;
 	cameraControlEnabled = NO;
+	isWorking = NO;
 
 	[self setBackgroundColor:[NSColor clearColor]];
 
@@ -185,11 +195,11 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)addObservers {
 	if(!observersAdded) {
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumProjectionMode" options:0 context:kSpectrumViewContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumProjectionMode" options:0 context:kSpectrumViewSKContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewSKContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewSKContext];
 
-		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewContext];
+		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewSKContext];
 
 		[[NSNotificationCenter defaultCenter] addObserver:self
 		                                         selector:@selector(playbackDidBegin:)
@@ -221,11 +231,11 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)removeObservers {
 	if(observersAdded) {
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumProjectionMode" context:kSpectrumViewContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumProjectionMode" context:kSpectrumViewSKContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewSKContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewSKContext];
 
-		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewContext];
+		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewSKContext];
 
 		[[NSNotificationCenter defaultCenter] removeObserver:self
 		                                                name:CogPlaybackDidBeginNotficiation
@@ -246,6 +256,11 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)repaint {
 	[self updateVisListening];
+	
+	if(!isWorking) {
+		isWorking = YES;
+		[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"sceneKitCrashed"];
+	}
 
 	if(stopped) {
 		[self drawBaseBands];

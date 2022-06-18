@@ -1,5 +1,5 @@
 //
-//  SpectrumViewLegacy.h
+//  SpectrumViewCG.h
 //  Cog
 //
 //  Created by Christopher Snowhill on 2/12/22.
@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumViewLegacy : NSView
+@interface SpectrumViewCG : NSView
 @property(nonatomic) BOOL isListening;
 
 - (void)startPlayback;
