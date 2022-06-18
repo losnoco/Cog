@@ -63,3 +63,6 @@
 "ProgressActionLoadingMetadata" = "loading metadata for tracks";
 "ProgressSubActionLoadingMetadata" = "processing files";
 "ProgressSubActionMetadataApply" = "applying info to playlist storage";
+
+"ErrorMetadata" = "Unable to retrieve metadata.";
+"ErrorMessageBadFile" = "Unable to parse metadata for bad file.";

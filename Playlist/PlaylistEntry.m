@@ -484,7 +484,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 - (void)setMetadata:(NSDictionary *)metadata {
 	if(metadata == nil) {
 		self.error = YES;
-		self.errorMessage = @"Unable to retrieve metadata.";
+		self.errorMessage = NSLocalizedString(@"ErrorMetadata", @"");
 	} else {
 		self.volume = 1;
 		[self setValuesForKeysWithDictionary:metadata];

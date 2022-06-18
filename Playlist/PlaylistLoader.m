@@ -642,8 +642,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			NSBlockOperation *op = [[NSBlockOperation alloc] init];
 
 			[op addExecutionBlock:^{
-				if(weakPe.deLeted) {
+				if(weakPe.deLeted || !weakPe.url) {
 					[weakLock lock];
+					if(!weakPe.url) {
+						weakPe.error = YES;
+						weakPe.errorMessage = NSLocalizedString(@"ErrorMessageBadFile", @"");
+					}
 					progress += progressstep;
 					[self setProgressJobStatus:progress];
 					[weakLock unlock];

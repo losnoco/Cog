@@ -187,6 +187,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if(playbackStatus != CogStatusStopped && playbackStatus != CogStatusStopping)
 		[self stop:self];
 
+	if(!pe.url) {
+		pe.error = YES;
+		pe.errorMessage = NSLocalizedString(@"ErrorMessageBadFile", @"");
+		[[FIRCrashlytics crashlytics] log:@"Attempting to play bad file."];
+		return;
+	}
+
 	[[FIRCrashlytics crashlytics] logWithFormat:@"Playing track: %@", pe.url];
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
@@ -577,9 +584,14 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		}
 	}
 
-	if(pe) {
+	if(pe && pe.url) {
 		[[FIRCrashlytics crashlytics] logWithFormat:@"Beginning decoding track: %@", pe.url];
 		[player setNextStream:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe)];
+	} else if(pe) {
+		[[FIRCrashlytics crashlytics] log:@"Invalid playlist entry reached."];
+		[player setNextStream:nil];
+		pe.error = YES;
+		pe.errorMessage = NSLocalizedString(@"ErrorMessageBadFile", @"");
 	} else {
 		[[FIRCrashlytics crashlytics] log:@"End of playlist reached."];
 		[player setNextStream:nil];
