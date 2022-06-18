@@ -61,6 +61,21 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 	if(!device) return nil;
 
+	if([device.name containsString:@"AMD"]) {
+		if([device.name containsString:@"FirePro D"] ||
+		   [device.name containsString:@" M2"] ||
+		   [device.name containsString:@" M3"] ||
+		   [device.name containsString:@" 460 "] ||
+		   [device.name containsString:@" 470 "] ||
+		   [device.name containsString:@" 480 "] ||
+		   [device.name containsString:@" 550 "] ||
+		   [device.name containsString:@" 560 "] ||
+		   [device.name containsString:@" 570 "] ||
+		   [device.name containsString:@" 580 "] ||
+		   [device.name containsString:@" 590 "])
+			return nil;
+	}
+
 	NSDictionary *sceneOptions = @{
 		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
 		SCNPreferredDeviceKey: device,
