@@ -49,7 +49,7 @@
 - (void)process; // Should be overwriten by subclass
 - (void)threadEntry:(id _Nullable)arg;
 
-- (void)followWorkgroup;
+- (BOOL)followWorkgroup;
 - (void)leaveWorkgroup;
 - (void)startWorkslice;
 - (void)endWorkslice;

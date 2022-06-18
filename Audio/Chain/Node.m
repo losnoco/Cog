@@ -205,13 +205,14 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 
 - (void)threadEntry:(id)arg {
 	@autoreleasepool {
-		[self followWorkgroup];
-		[self process];
-		[self leaveWorkgroup];
+		if([self followWorkgroup]) {
+			[self process];
+			[self leaveWorkgroup];
+		}
 	}
 }
 
-- (void)followWorkgroup {
+- (BOOL)followWorkgroup {
 	if(@available(macOS 11, *)) {
 		if(!wg) {
 			if(!workgroup) {
@@ -223,20 +224,24 @@ BOOL SetPriorityRealtimeAudio(mach_port_t mach_thread_id) {
 			if(wg && !isRealtimeError) {
 				int result = os_workgroup_join(wg, &wgToken);
 				isDeadlineError = NO;
-				if(result == 0) return;
+				if(result == 0) return YES;
 				if(result == EALREADY) {
 					DLog(@"Thread already in workgroup");
+					return NO;
 				} else {
 					DLog(@"Cannot join workgroup, error %d", result);
 					isRealtimeError = YES;
+					return NO;
 				}
 			}
 		}
+		return wg != nil && !isRealtimeError;
 	} else {
 		if(!isRealtime && !isRealtimeError) {
 			isRealtimeError = SetPriorityRealtimeAudio(pthread_mach_thread_np(pthread_self()));
 			isRealtime = !isRealtimeError;
 		}
+		return YES;
 	}
 }
 
