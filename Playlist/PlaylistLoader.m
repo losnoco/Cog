@@ -646,7 +646,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 					[weakLock lock];
 					if(!weakPe.url) {
 						weakPe.error = YES;
-						weakPe.errorMessage = NSLocalizedString(@"ErrorMessageBadFile", @"");
+						weakPe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
 					}
 					progress += progressstep;
 					[self setProgressJobStatus:progress];

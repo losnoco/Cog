@@ -189,7 +189,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	if(!pe.url) {
 		pe.error = YES;
-		pe.errorMessage = NSLocalizedString(@"ErrorMessageBadFile", @"");
+		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
 		[[FIRCrashlytics crashlytics] log:@"Attempting to play bad file."];
 		return;
 	}
@@ -591,7 +591,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[[FIRCrashlytics crashlytics] log:@"Invalid playlist entry reached."];
 		[player setNextStream:nil];
 		pe.error = YES;
-		pe.errorMessage = NSLocalizedString(@"ErrorMessageBadFile", @"");
+		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else {
 		[[FIRCrashlytics crashlytics] log:@"End of playlist reached."];
 		[player setNextStream:nil];
