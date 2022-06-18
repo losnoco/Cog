@@ -147,6 +147,7 @@
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8370D73C277419F700245CE0 /* SQLiteStore.m */; };
 		8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8370D73E2775AE1300245CE0 /* libsqlite3.tbd */; };
+		83717825285D685800DE781D /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 83717824285D685800DE781D /* FirebaseAppCheck */; };
 		8372C93D27C7895300E250C9 /* MAD.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8372C93027C785BE00E250C9 /* MAD.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8377C66327B8CF6300E8BC0F /* SpectrumView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumView.m */; };
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
@@ -1093,6 +1094,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83717825285D685800DE781D /* FirebaseAppCheck in Frameworks */,
 				8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */,
 				ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */,
 				8355D6B8180613FB00D05687 /* Security.framework in Frameworks */,
@@ -2055,6 +2057,7 @@
 			packageProductDependencies = (
 				83978E15285C58190076ED21 /* FirebaseCrashlytics */,
 				83978E25285C596F0076ED21 /* FirebaseAnalytics */,
+				83717824285D685800DE781D /* FirebaseAppCheck */,
 			);
 			productInstallPath = "$(HOME)/Applications";
 			productName = Cog;
@@ -3170,6 +3173,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		83717824285D685800DE781D /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 83978E14285C58190076ED21 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
 		83978E15285C58190076ED21 /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 83978E14285C58190076ED21 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
