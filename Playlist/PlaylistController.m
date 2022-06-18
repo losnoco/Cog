@@ -1310,8 +1310,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
 
-	if(currentEntry != nil && !currentEntry.deLeted) [refreshSet addIndex:currentEntry.index];
-	if(pe != nil) [refreshSet addIndex:pe.index];
+	if(currentEntry != nil && !currentEntry.deLeted && currentEntry.index < NSNotFound) [refreshSet addIndex:currentEntry.index];
+	if(pe != nil && !pe.deLeted && pe.index < NSNotFound) [refreshSet addIndex:pe.index];
 
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
