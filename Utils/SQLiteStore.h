@@ -42,9 +42,10 @@
 - (void)playlistRemoveTracks:(int64_t)index forCount:(int64_t)count progressCall:(void (^)(double progress))callback;
 - (void)playlistRemoveTracksAtIndexes:(NSIndexSet *)indexes progressCall:(void (^)(double progress))callback;
 - (PlaylistEntry *)playlistGetItem:(int64_t)index;
+- (int64_t)playlistGetCount;
 #endif
 - (PlaylistEntry *)playlistGetCachedItem:(int64_t)index;
-- (int64_t)playlistGetCount;
+- (int64_t)playlistGetCountCached;
 
 #if 0
 - (void)playlistMoveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *)indexSet toIndex:(NSUInteger)insertIndex progressCall:(void (^)(double))callback;

@@ -854,7 +854,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (NSArray *)addDatabase {
 	SQLiteStore *store = [SQLiteStore sharedStore];
 
-	int64_t count = [store playlistGetCount];
+	int64_t count = [store playlistGetCountCached];
 
 	NSInteger i = 0;
 	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];

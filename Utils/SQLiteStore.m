@@ -734,7 +734,7 @@ static SQLiteStore *g_sharedStore = nil;
 
 			for(size_t i = 0; i < count; ++i) {
 				PlaylistEntry *pe = [self playlistGetItem:i];
-				[databaseMirror addObject:pe];
+				if(pe) [databaseMirror addObject:pe];
 			}
 
 			return self;
@@ -1445,13 +1445,20 @@ static SQLiteStore *g_sharedStore = nil;
 - (PlaylistEntry *_Nonnull)getTrack:(int64_t)trackId {
 	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:__persistentContainer.viewContext];
 
-	if(trackId < 0)
+	if(trackId < 0) {
+		entry.error = YES;
+		entry.errorMessage = NSLocalizedString(@"ErrorInvalidTrackId", @"");
+		entry.deLeted = YES;
 		return entry;
+	}
 
 	sqlite3_stmt *st = stmt[stmt_select_track_data];
 
 	if(sqlite3_reset(st) ||
 	   sqlite3_bind_int64(st, select_track_data_in_id, trackId)) {
+		entry.error = YES;
+		entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
+		entry.deLeted = YES;
 		return entry;
 	}
 
@@ -1459,6 +1466,9 @@ static SQLiteStore *g_sharedStore = nil;
 
 	if(rc != SQLITE_ROW && rc != SQLITE_DONE) {
 		sqlite3_reset(st);
+		entry.error = YES;
+		entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
+		entry.deLeted = YES;
 		return entry;
 	}
 
@@ -1529,6 +1539,10 @@ static SQLiteStore *g_sharedStore = nil;
 		entry.metadataLoaded = !!metadataloaded;
 
 		entry.dbIndex = trackId;
+	} else {
+		entry.error = YES;
+		entry.errorMessage = NSLocalizedString(@"ErrorTrackMissing", @"");
+		entry.deLeted = YES;
 	}
 
 	sqlite3_reset(st);
@@ -1845,8 +1859,13 @@ static SQLiteStore *g_sharedStore = nil;
 		int64_t trackId = sqlite3_column_int64(st, select_playlist_out_track_id);
 		int64_t entryId = sqlite3_column_int64(st, select_playlist_out_entry_id);
 		entry = [self getTrack:trackId];
-		entry.index = index;
-		entry.entryId = entryId;
+		if(!entry.deLeted && !entry.error) {
+			entry.index = index;
+			entry.entryId = entryId;
+		} else {
+			[__persistentContainer.viewContext deleteObject:entry];
+			entry = nil;
+		}
 	}
 
 	sqlite3_reset(st);
@@ -1867,6 +1886,10 @@ static SQLiteStore *g_sharedStore = nil;
 	sqlite3_reset(st);
 
 	return ret;
+}
+
+- (int64_t)playlistGetCountCached {
+	return [databaseMirror count];
 }
 
 #if 0
@@ -2042,7 +2065,7 @@ static SQLiteStore *g_sharedStore = nil;
 		return;
 	}
 
-	int64_t count = [self playlistGetCount];
+	int64_t count = [self playlistGetCountCached];
 
 	if(count != [entries count]) {
 		callback(-1);
