@@ -65,7 +65,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 				              if(granted) {
 					              UNNotificationAction *skipAction = [UNNotificationAction
 					              actionWithIdentifier:@"skip"
-					                             title:@"Skip"
+					                             title:NSLocalizedString(@"SkipAction", @"")
 					                           options:UNNotificationActionOptionNone];
 
 					              UNNotificationCategory *playCategory = [UNNotificationCategory
