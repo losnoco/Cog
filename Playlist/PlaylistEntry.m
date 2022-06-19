@@ -262,18 +262,18 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 - (NSString *)gainCorrection {
 	if(self.replayGainAlbumGain) {
 		if(self.replayGainAlbumPeak)
-			return @"Album Gain plus Peak";
+			return NSLocalizedStringFromTableInBundle(@"GainAlbumGainPeak", nil, [NSBundle bundleForClass:[self class]], @"");
 		else
-			return @"Album Gain";
+			return NSLocalizedStringFromTableInBundle(@"GainAlbumGain", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else if(self.replayGainTrackGain) {
 		if(self.replayGainTrackPeak)
-			return @"Track Gain plus Peak";
+			return NSLocalizedStringFromTableInBundle(@"GainTrackGainPeak", nil, [NSBundle bundleForClass:[self class]], @"");
 		else
-			return @"Track Gain";
+			return NSLocalizedStringFromTableInBundle(@"GainTrackGain", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else if(self.volume && self.volume != 1.0) {
-		return @"Volume scale";
+		return NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else {
-		return @"None";
+		return NSLocalizedStringFromTableInBundle(@"GainNone", nil, [NSBundle bundleForClass:[self class]], @"");
 	}
 }
 
@@ -281,19 +281,19 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 - (NSString *)gainInfo {
 	NSMutableArray *gainItems = [[NSMutableArray alloc] init];
 	if(self.replayGainAlbumGain) {
-		[gainItems addObject:[NSString stringWithFormat:@"Album Gain: %+.2f dB", self.replayGainAlbumGain]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %+.2f dB", NSLocalizedStringFromTableInBundle(@"GainAlbumGain", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainAlbumGain]];
 	}
 	if(self.replayGainAlbumPeak) {
-		[gainItems addObject:[NSString stringWithFormat:@"Album Peak: %.6f", self.replayGainAlbumPeak]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %.6f", NSLocalizedStringFromTableInBundle(@"GainAlbumPeak", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainAlbumPeak]];
 	}
 	if(self.replayGainTrackGain) {
-		[gainItems addObject:[NSString stringWithFormat:@"Track Gain: %+.2f dB", self.replayGainTrackGain]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %+.2f dB", NSLocalizedStringFromTableInBundle(@"GainTrackGain", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainTrackGain]];
 	}
 	if(self.replayGainTrackPeak) {
-		[gainItems addObject:[NSString stringWithFormat:@"Track Peak: %.6f", self.replayGainTrackPeak]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %.6f", NSLocalizedStringFromTableInBundle(@"GainTrackPeak", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainTrackPeak]];
 	}
 	if(self.volume && self.volume != 1) {
-		[gainItems addObject:[NSString stringWithFormat:@"Volume Scale: %.2f%C", self.volume, (unichar)0x00D7]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %.2f%C", NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle bundleForClass:[self class]], @""), self.volume, (unichar)0x00D7]];
 	}
 	return [gainItems componentsJoinedByString:@"\n"];
 }

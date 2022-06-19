@@ -65,3 +65,12 @@
 
 "TimeLastPlayed" = "Last played";
 "TimeFirstSeen" = "First seen";
+
+"GainAlbumGain" = "Album Gain";
+"GainAlbumGainPeak" = "Album Gain plus Peak";
+"GainAlbumPeak" = "Album Peak";
+"GainTrackGain" = "Track Gain";
+"GainTrackGainPeak" = "Track Gain plus Peak";
+"GainTrackPeak" = "Track Peak";
+"GainVolumeScale" = "Volume Scale";
+"GainNone" = "None";
