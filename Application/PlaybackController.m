@@ -793,36 +793,36 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
 
 	if(entry) {
-		if([entry title])
-			[songInfo setObject:[entry title] forKey:MPMediaItemPropertyTitle];
-		if([entry artist])
-			[songInfo setObject:[entry artist] forKey:MPMediaItemPropertyArtist];
-		if([entry album])
-			[songInfo setObject:[entry album] forKey:MPMediaItemPropertyAlbumTitle];
-		if([entry albumArt]) {
+		if(entry.title && [entry.title length])
+			[songInfo setObject:entry.title forKey:MPMediaItemPropertyTitle];
+		if(entry.artist && [entry.artist length])
+			[songInfo setObject:entry.artist forKey:MPMediaItemPropertyArtist];
+		if(entry.album && [entry.album length])
+			[songInfo setObject:entry.album forKey:MPMediaItemPropertyAlbumTitle];
+		if(entry.albumArt) {
 			// can't do && with @available
 			if(@available(macOS 10.13.2, *)) {
 				CGSize artworkSize = CGSizeMake(500, 500);
 				MPMediaItemArtwork *mpArtwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:artworkSize
 				                                                                requestHandler:^NSImage *_Nonnull(CGSize size) {
-					                                                                return [entry albumArt];
+					                                                                return entry.albumArt;
 				                                                                }];
 				[songInfo setObject:mpArtwork forKey:MPMediaItemPropertyArtwork];
 			}
 		}
 		// I don't know what NPIC does with these since they aren't exposed in UI, but if we have them, use it.
 		// There's a bunch of other metadata, but PlaylistEntry can't represent a lot of it.
-		if([entry genre])
-			[songInfo setObject:[entry genre] forKey:MPMediaItemPropertyGenre];
-		if([entry year]) {
+		if(entry.genre && [entry.genre length])
+			[songInfo setObject:entry.genre forKey:MPMediaItemPropertyGenre];
+		if(entry.year) {
 			// If PlaylistEntry can represent a full date like some tag formats can do, change it
 			NSCalendar *calendar = [NSCalendar currentCalendar];
 			NSDate *releaseYear = [calendar dateWithEra:1 year:entry.year month:0 day:0 hour:0 minute:0 second:0 nanosecond:0];
 			[songInfo setObject:releaseYear forKey:MPMediaItemPropertyReleaseDate];
 		}
-		[songInfo setObject:@([entry currentPosition]) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
-		[songInfo setObject:[entry length] forKey:MPMediaItemPropertyPlaybackDuration];
-		[songInfo setObject:@([entry index]) forKey:MPMediaItemPropertyPersistentID];
+		[songInfo setObject:@(entry.currentPosition) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+		[songInfo setObject:entry.length forKey:MPMediaItemPropertyPlaybackDuration];
+		[songInfo setObject:@(entry.index) forKey:MPMediaItemPropertyPersistentID];
 	}
 
 	switch(playbackStatus) {
