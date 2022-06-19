@@ -131,6 +131,10 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (void)emptyQueueListUnsynced;
 - (NSMutableArray *_Nullable)queueList;
 
+// internal methods for data store init
+- (void)readQueueFromDataStore;
+- (void)readShuffleListFromDataStore;
+
 // reload metadata of selection
 - (IBAction)reloadTags:(id _Nullable)sender;
 

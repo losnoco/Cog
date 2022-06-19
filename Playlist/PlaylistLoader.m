@@ -827,24 +827,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			[playlistController insertObjectsUnsynced:results atArrangedObjectIndexes:is];
 		}
 
-		[playlistController emptyQueueListUnsynced];
-
-		NSMutableDictionary *queueList = [[NSMutableDictionary alloc] init];
-
-		for(PlaylistEntry *pe in results) {
-			if(pe.queued && pe.queuePosition >= 0) {
-				NSString *queuePos = [NSString stringWithFormat:@"%llu", pe.queuePosition];
-				[queueList setObject:pe forKey:queuePos];
-			}
-		}
-
-		if([queueList count]) {
-			for(size_t i = 0, j = [queueList count]; i < j; ++i) {
-				NSString *queuePos = [NSString stringWithFormat:@"%zu", i];
-				PlaylistEntry *pe = [queueList objectForKey:queuePos];
-				[[playlistController queueList] addObject:pe];
-			}
-		}
+		[playlistController readQueueFromDataStore];
+		[playlistController readShuffleListFromDataStore];
 
 		return YES;
 	}

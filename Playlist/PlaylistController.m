@@ -1242,6 +1242,47 @@ static void *playlistControllerContext = &playlistControllerContext;
 	return temp;
 }
 
+- (void)readQueueFromDataStore {
+	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+	NSPredicate *queuedPredicate = [NSPredicate predicateWithFormat:@"queued == YES"];
+
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"queuePosition" ascending:YES];
+
+	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, queuedPredicate]];
+	
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+	request.predicate = predicate;
+	request.sortDescriptors = @[sortDescriptor];
+
+	NSError *error = nil;
+	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+
+	if(results && [results count] > 0) {
+		[queueList removeAllObjects];
+		NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
+		[queueList insertObjects:results atIndexes:indexSet];
+	}
+}
+
+- (void)readShuffleListFromDataStore {
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"shuffleIndex" ascending:YES];
+
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+	request.predicate = predicate;
+	request.sortDescriptors = @[sortDescriptor];
+
+	NSError *error = nil;
+	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+
+	if(results && [results count] > 0) {
+		[shuffleList removeAllObjects];
+		NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
+		[shuffleList insertObjects:results atIndexes:indexSet];
+	}
+}
+
 - (void)addShuffledListToFront {
 	NSArray *newList;
 	NSIndexSet *indexSet;
