@@ -136,7 +136,7 @@
 		<class name="playlistentry" code="cPlE">
 			<cocoa class="PlaylistEntry" insert-at-beginning="yes"/>
 			<property name="url" code="pURL" description="The URL of the entry." type="file" access="r">
-				<cocoa key="URL" insert-at-beginning="yes"/>
+				<cocoa key="url" insert-at-beginning="yes"/>
 			</property>
 			<property name="album" code="pAlb" description="The album of the entry." type="text" access="r">
 				<cocoa key="album" insert-at-beginning="yes"/>
