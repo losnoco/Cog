@@ -251,12 +251,14 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 				notif.title = [pe title];
 
 				NSString *subtitle;
-				if([pe artist] && [pe album]) {
-					subtitle = [NSString stringWithFormat:@"%@ - %@", [pe artist], [pe album]];
-				} else if([pe artist]) {
-					subtitle = [pe artist];
-				} else if([pe album]) {
-					subtitle = [pe album];
+				NSString *artist = (pe.artist && [pe.artist length]) ? pe.artist : nil;
+				NSString *album = (pe.album && [pe.album length]) ? pe.album : nil;
+				if(artist && album) {
+					subtitle = [NSString stringWithFormat:@"%@ - %@", artist, album];
+				} else if(artist) {
+					subtitle = artist;
+				} else if(album) {
+					subtitle = album;
 				} else {
 					subtitle = @"";
 				}
