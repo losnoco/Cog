@@ -13,6 +13,10 @@
 
 #import "analyzer.h"
 
+#import "Logging.h"
+
+@import Firebase;
+
 #define LOWER_BOUND -80
 
 static void *kSpectrumViewSKContext = &kSpectrumViewSKContext;
@@ -60,6 +64,9 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	id<MTLDevice> device = MTLCreateSystemDefaultDevice();
 
 	if(!device) return nil;
+
+	DLog(@"SceneKit visualizer accessed device named: %@", device.name);
+	[[FIRCrashlytics crashlytics] logWithFormat:@"SceneKit visualizer accessed device named: %@", device.name];
 
 	if([device.name containsString:@"AMD"]) {
 		if([device.name containsString:@"FirePro D"] ||
