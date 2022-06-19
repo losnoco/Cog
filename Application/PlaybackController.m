@@ -717,6 +717,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
 
+- (void)audioPlayer:(AudioPlayer *)player reportPlayCountForTrack:(id)userInfo {
+	if(userInfo) {
+		PlaylistEntry *pe = (PlaylistEntry *)userInfo;
+		[playlistController updatePlayCountForTrack:pe];
+	}
+}
+
 - (void)audioPlayer:(AudioPlayer *)player setError:(NSNumber *)status toTrack:(id)userInfo {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	[pe setError:[status boolValue]];

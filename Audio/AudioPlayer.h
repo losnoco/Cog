@@ -77,6 +77,7 @@ using std::atomic_bool;
 - (double)volumeDown:(double)amount;
 
 - (double)amountPlayed;
+- (double)amountPlayedInterval;
 
 - (void)setNextStream:(NSURL *)url;
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
@@ -116,6 +117,7 @@ using std::atomic_bool;
 //- (BufferChain *)bufferChain;
 - (void)launchOutputThread;
 - (void)endOfInputPlayed;
+- (void)reportPlayCount;
 - (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
@@ -134,5 +136,6 @@ using std::atomic_bool;
 - (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
+- (void)audioPlayer:(AudioPlayer *)player reportPlayCountForTrack:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player setError:(NSNumber *)status toTrack:(id)userInfo;
 @end

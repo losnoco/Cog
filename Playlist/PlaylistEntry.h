@@ -66,6 +66,10 @@
 @property(nonatomic) BOOL Unsigned;
 @property(nonatomic) NSURL *_Nullable URL;
 
+@property(nonatomic) PlayCount *_Nullable playCountItem;
+@property(nonatomic, readonly) NSString *_Nonnull playCount;
+@property(nonatomic, readonly) NSString *_Nonnull playCountInfo;
+
 - (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
 @end

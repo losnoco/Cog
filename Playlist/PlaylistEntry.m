@@ -493,4 +493,58 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	[self setMetadataLoaded:YES];
 }
 
+@dynamic playCountItem;
+- (PlayCount *)playCountItem {
+	NSPredicate *albumPredicate = [NSPredicate predicateWithFormat:@"album == %@", self.album];
+	NSPredicate *artistPredicate = [NSPredicate predicateWithFormat:@"artist == %@", self.artist];
+	NSPredicate *titlePredicate = [NSPredicate predicateWithFormat:@"title == %@", self.title];
+
+	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[albumPredicate, artistPredicate, titlePredicate]];
+
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
+	request.predicate = predicate;
+
+	NSError *error = nil;
+	NSArray *results = [__persistentContainer.viewContext executeFetchRequest:request error:&error];
+
+	if(!results || [results count] < 1) {
+		NSPredicate *filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filename];
+
+		request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
+		request.predicate = filenamePredicate;
+
+		results = [__persistentContainer.viewContext executeFetchRequest:request error:&error];
+	}
+
+	if(!results || [results count] < 1) return nil;
+
+	return results[0];
+}
+
+@dynamic playCount;
+- (NSString *)playCount {
+	PlayCount *pc = self.playCountItem;
+	if(pc)
+		return [NSString stringWithFormat:@"%llu", pc.count];
+	else
+		return @"0";
+}
+
+@dynamic playCountInfo;
+- (NSString *)playCountInfo {
+	PlayCount *pc = self.playCountItem;
+	if(pc) {
+		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		dateFormatter.dateStyle = NSDateFormatterMediumStyle;
+		dateFormatter.timeStyle = NSDateFormatterShortStyle;
+
+		if(pc.count) {
+			return [NSString stringWithFormat:@"%@: %@\n%@: %@", NSLocalizedStringFromTableInBundle(@"TimeFirstSeen", nil, [NSBundle bundleForClass:[self class]], @""), [dateFormatter stringFromDate:pc.firstSeen], NSLocalizedStringFromTableInBundle(@"TimeLastPlayed", nil, [NSBundle bundleForClass:[self class]], @""), [dateFormatter stringFromDate:pc.firstSeen]];
+		} else {
+			return [NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTableInBundle(@"TimeFirstSeen", nil, [NSBundle bundleForClass:[self class]], @""), [dateFormatter stringFromDate:pc.firstSeen]];
+		}
+	}
+	return @"";
+}
+
 @end

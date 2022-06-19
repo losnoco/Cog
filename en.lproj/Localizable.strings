@@ -62,3 +62,6 @@
 "ErrorInvalidTrackId" = "Invalid track ID sent to SQLite request.";
 "ErrorSqliteProblem" = "General problem accessing track from SQLite database.";
 "ErrorTrackMissing" = "Track entry is missing from SQLite database.";
+
+"TimeLastPlayed" = "Last played";
+"TimeFirstSeen" = "First seen";

@@ -226,6 +226,10 @@
 	[self sendDelegateMethod:@selector(audioPlayer:pushInfo:toTrack:) withObject:info withObject:userInfo waitUntilDone:NO];
 }
 
+- (void)reportPlayCountForTrack:(id)userInfo {
+	[self sendDelegateMethod:@selector(audioPlayer:reportPlayCountForTrack:) withObject:userInfo waitUntilDone:NO];
+}
+
 - (void)setShouldContinue:(BOOL)s {
 	shouldContinue = s;
 
@@ -238,6 +242,10 @@
 
 - (double)amountPlayed {
 	return [output amountPlayed];
+}
+
+- (double)amountPlayedInterval {
+	return [output amountPlayedInterval];
 }
 
 - (void)launchOutputThread {
@@ -407,6 +415,12 @@
 
 	atomic_fetch_sub(&refCount, 1);
 	return YES;
+}
+
+- (void)reportPlayCount {
+	if(bufferChain) {
+		[self reportPlayCountForTrack:[bufferChain userInfo]];
+	}
 }
 
 - (void)endOfInputPlayed {

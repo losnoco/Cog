@@ -21,6 +21,8 @@
 
 #import "Logging.h"
 
+#import "Cog-Swift.h"
+
 #define UNDO_STACK_LIMIT 0
 
 @implementation PlaylistController
@@ -239,6 +241,40 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[self.persistentContainer.viewContext save:&error];
 	if(error) {
 		ALog(@"Error committing playlist storage: %@", [error localizedDescription]);
+	}
+}
+
+- (void)updatePlayCountForTrack:(PlaylistEntry *)pe {
+	PlayCount *pc = pe.playCountItem;
+
+	if(pc) {
+		pc.count += 1;
+		pc.lastPlayed = [NSDate date];
+	} else {
+		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+		pc.count = 1;
+		pc.firstSeen = pc.lastPlayed = [NSDate date];
+		pc.album = pe.album;
+		pc.artist = pe.artist;
+		pc.title = pe.title;
+		pc.filename = pe.filename;
+	}
+
+	[self commitEditing];
+}
+
+- (void)firstSawTrack:(PlaylistEntry *)pe {
+	PlayCount *pc = pe.playCountItem;
+
+	if(!pc) {
+		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+		pc.count = 0;
+		pc.firstSeen = [NSDate date];
+		pc.album = pe.album;
+		pc.artist = pe.artist;
+		pc.title = pe.title;
+		pc.filename = pe.filename;
+		[self commitEditing];
 	}
 }
 
@@ -1586,6 +1622,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (void)didInsertURLs:(NSArray *)urls origin:(URLOrigin)origin {
 	if(![urls count]) return;
+
+	for(PlaylistEntry *pe in urls) {
+		[self firstSawTrack:pe];
+	}
 
 	CGEventRef event = CGEventCreate(NULL);
 	CGEventFlags mods = CGEventGetFlags(event);

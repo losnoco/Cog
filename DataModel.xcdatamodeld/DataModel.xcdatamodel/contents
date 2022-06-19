@@ -4,6 +4,15 @@
         <attribute name="artData" optional="YES" attributeType="Binary"/>
         <attribute name="artHash" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="PlayCount" representedClassName="PlayCount" syncable="YES" codeGenerationType="class">
+        <attribute name="album" optional="YES" attributeType="String"/>
+        <attribute name="artist" optional="YES" attributeType="String"/>
+        <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="filename" optional="YES" attributeType="String"/>
+        <attribute name="firstSeen" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastPlayed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="PlaylistEntry" representedClassName="PlaylistEntry" syncable="YES" codeGenerationType="class">
         <attribute name="album" optional="YES" attributeType="String"/>
         <attribute name="albumartist" optional="YES" attributeType="String"/>
@@ -54,5 +63,6 @@
     <elements>
         <element name="AlbumArtwork" positionX="0" positionY="207" width="128" height="59"/>
         <element name="PlaylistEntry" positionX="-36" positionY="9" width="128" height="704"/>
+        <element name="PlayCount" positionX="-18" positionY="171" width="128" height="134"/>
     </elements>
 </model>

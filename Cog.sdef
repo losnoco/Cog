@@ -168,6 +168,12 @@
 			<property name="bitrate" code="pBit" description="The bitrate of the entry, in kilobits per second." type="integer" access="r">
 				<cocoa key="bitrate" insert-at-beginning="yes"/>
 			</property>
+			<property name="playcount" code="pPlc" description="The play count of the entry." type="text" access="r">
+				<cocoa key="playCount" insert-at-beginning="yes"/>
+			</property>
+			<property name="playinfo" code="pPli" description="The play count info of the entry, as either first seen time, or also last played time. May be empty string." type="text" access="r">
+				<cocoa key="playCountInfo" access="r"/>
+			</property>
 			<property name="spam" code="pSpm" description="Formatted now playing spam for the entry." type="text" access="r">
 				<cocoa key="spam"/>
 			</property>

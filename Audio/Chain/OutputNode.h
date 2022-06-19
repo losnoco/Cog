@@ -20,10 +20,12 @@
 	uint32_t config;
 
 	double amountPlayed;
+	double amountPlayedInterval;
 	OutputCoreAudio *output;
 
 	BOOL paused;
 	BOOL started;
+	BOOL intervalReported;
 }
 
 - (void)beginEqualizer:(AudioUnit)eq;
@@ -31,9 +33,11 @@
 - (void)endEqualizer:(AudioUnit)eq;
 
 - (double)amountPlayed;
+- (double)amountPlayedInterval;
 
 - (void)incrementAmountPlayed:(double)seconds;
 - (void)resetAmountPlayed;
+- (void)resetAmountPlayedInterval;
 
 - (void)endOfInputPlayed;
 

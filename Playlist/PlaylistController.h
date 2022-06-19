@@ -134,6 +134,9 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 // reload metadata of selection
 - (IBAction)reloadTags:(id _Nullable)sender;
 
+// Play statistics
+- (void)updatePlayCountForTrack:(PlaylistEntry *)pe;
+
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *_Nullable)indexSet
                                         toIndex:(NSUInteger)insertIndex;
 

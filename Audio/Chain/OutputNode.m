@@ -17,9 +17,11 @@
 
 - (void)setup {
 	amountPlayed = 0.0;
+	amountPlayedInterval = 0.0;
 
 	paused = YES;
 	started = NO;
+	intervalReported = NO;
 
 	output = [[OutputCoreAudio alloc] initWithController:self];
 
@@ -50,14 +52,29 @@
 
 - (void)incrementAmountPlayed:(double)seconds {
 	amountPlayed += seconds;
+	amountPlayedInterval += seconds;
+	if(!intervalReported && amountPlayedInterval >= 60.0) {
+		intervalReported = YES;
+		[controller reportPlayCount];
+	}
 }
 
 - (void)resetAmountPlayed {
 	amountPlayed = 0;
 }
 
+- (void)resetAmountPlayedInterval {
+	amountPlayedInterval = 0;
+	intervalReported = NO;
+}
+
 - (void)endOfInputPlayed {
+	if(!intervalReported) {
+		intervalReported = YES;
+		[controller reportPlayCount];
+	}
 	[controller endOfInputPlayed];
+	[self resetAmountPlayedInterval];
 }
 
 - (BOOL)chainQueueHasTracks {
@@ -84,6 +101,10 @@
 
 - (double)amountPlayed {
 	return amountPlayed;
+}
+
+- (double)amountPlayedInterval {
+	return amountPlayedInterval;
 }
 
 - (AudioStreamBasicDescription)format {
