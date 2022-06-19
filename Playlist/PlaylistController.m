@@ -228,14 +228,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 }
 
-static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
-	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
-		block();
-	} else {
-		dispatch_sync(queue, block);
-	}
-}
-
 - (void)commitPersistentStore {
 	NSError *error = nil;
 	[self.persistentContainer.viewContext save:&error];
