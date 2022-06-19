@@ -285,11 +285,14 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (IBAction)spam:(id)sender {
-	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+	PlaylistEntry *pe = [playlistController currentEntry];
+	if(pe) {
+		NSPasteboard *pboard = [NSPasteboard generalPasteboard];
 
-	[pboard clearContents];
+		[pboard clearContents];
 
-	[pboard writeObjects:@[[[playlistController currentEntry] spam]]];
+		[pboard writeObjects:@[[pe spam]]];
+	}
 }
 
 - (IBAction)eventSeekForward:(id)sender {
