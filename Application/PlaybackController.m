@@ -21,6 +21,8 @@
 
 @import Firebase;
 
+extern BOOL kAppControllerShuttingDown;
+
 @implementation PlaybackController
 
 #define DEFAULT_SEEK 5
@@ -257,7 +259,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	[self setPosition:pos];
 
-	[[playlistController currentEntry] setCurrentPosition:pos];
+	if(!kAppControllerShuttingDown) {
+		PlaylistEntry *pe = [playlistController currentEntry];
+		if(pe) pe.currentPosition = pos;
+	}
 }
 
 - (IBAction)seek:(id)sender {
@@ -269,7 +274,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	[self setPosition:time];
 
-	[[playlistController currentEntry] setCurrentPosition:time];
+	if(!kAppControllerShuttingDown) {
+		PlaylistEntry *pe = [playlistController currentEntry];
+		if(pe) pe.currentPosition = time;
+	}
 }
 
 - (IBAction)seek:(id)sender toTime:(NSTimeInterval)position {
@@ -281,7 +289,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	[self setPosition:time];
 
-	[[playlistController currentEntry] setCurrentPosition:time];
+	if(!kAppControllerShuttingDown) {
+		PlaylistEntry *pe = [playlistController currentEntry];
+		if(pe) pe.currentPosition = time;
+	}
 }
 
 - (IBAction)spam:(id)sender {
@@ -744,23 +755,23 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (void)setPosition:(double)p {
-	if(p > lastPosition && (p - lastPosition) >= 10.0) {
-		PlaylistEntry *pe = [playlistController currentEntry];
-		NSInteger lastTrackPlaying = [pe index];
+	position = p;
 
+	if(kAppControllerShuttingDown) return;
+
+	PlaylistEntry *pe = [playlistController currentEntry];
+	if(pe) pe.currentPosition = p;
+
+	if(p > lastPosition && (p - lastPosition) >= 10.0) {
 		[[NSUserDefaults standardUserDefaults] setInteger:CogStatusPlaying forKey:@"lastPlaybackStatus"];
-		[[NSUserDefaults standardUserDefaults] setInteger:lastTrackPlaying forKey:@"lastTrackPlaying"];
-		[[NSUserDefaults standardUserDefaults] setDouble:p forKey:@"lastTrackPosition"];
 
 		// If we handle this here, then it will send on all seek operations, which also reset lastPosition
 		[self sendMetaData];
 
 		lastPosition = p;
+
+		[playlistController commitPersistentStore];
 	}
-
-	position = p;
-
-	[[playlistController currentEntry] setCurrentPosition:p];
 }
 
 - (double)position {

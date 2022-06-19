@@ -25,6 +25,8 @@
 
 #define UNDO_STACK_LIMIT 0
 
+extern BOOL kAppControllerShuttingDown;
+
 @implementation PlaylistController
 
 @synthesize currentEntry;
@@ -1099,6 +1101,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 			[queueItem setQueuePosition:i];
 		}
 
+		[self commitPersistentStore];
+
 		return pe;
 	}
 
@@ -1256,6 +1260,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	for(i = 0; i < [shuffleList count]; i++) {
 		[shuffleList[i] setShuffleIndex:i];
 	}
+	[self commitPersistentStore];
 }
 
 - (void)addShuffledListToBack {
@@ -1277,6 +1282,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	for(i = ([shuffleList count] - [newList count]); i < [shuffleList count]; i++) {
 		[shuffleList[i] setShuffleIndex:(int)i];
 	}
+	[self commitPersistentStore];
 }
 
 - (void)resetShuffleList {
@@ -1311,6 +1317,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			for(i = 0, j = [shuffleList count]; i < j; ++i) {
 				[shuffleList[i] setShuffleIndex:(int)i];
 			}
+			[self commitPersistentStore];
 		} else {
 			[shuffleList insertObject:currentEntry atIndex:0];
 			[currentEntry setShuffleIndex:0];
@@ -1326,15 +1333,25 @@ static void *playlistControllerContext = &playlistControllerContext;
 					[shuffleList[i] setShuffleIndex:(int)i];
 				}
 			}
+			[self commitPersistentStore];
 		}
 	}
 }
 
 - (void)setCurrentEntry:(PlaylistEntry *)pe {
-	currentEntry.current = NO;
-	currentEntry.stopAfter = NO;
+	if(pe == currentEntry || kAppControllerShuttingDown) return;
 
-	pe.current = YES;
+	if(currentEntry) {
+		currentEntry.current = NO;
+		currentEntry.stopAfter = NO;
+		currentEntry.currentPosition = 0.0;
+	}
+
+	if(pe) {
+		pe.current = YES;
+	}
+
+	[self commitPersistentStore];
 
 	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
 
@@ -1532,6 +1549,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 - (IBAction)stopAfterCurrent:(id)sender {
 	currentEntry.stopAfter = !currentEntry.stopAfter;
+	[self commitPersistentStore];
 
 	NSIndexSet *refreshSet = [NSIndexSet indexSetWithIndex:[currentEntry index]];
 
@@ -1547,6 +1565,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pe.stopAfter = !pe.stopAfter;
 		[refreshSet addIndex:pe.index];
 	}
+
+	[self commitPersistentStore];
 
 	// Refresh entire row of all affected items to update tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];

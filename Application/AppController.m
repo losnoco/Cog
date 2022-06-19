@@ -36,6 +36,8 @@
 
 void *kAppControllerContext = &kAppControllerContext;
 
+BOOL kAppControllerShuttingDown = NO;
+
 @implementation AppController {
 	BOOL _isFullToolbarStyle;
 }
@@ -219,12 +221,29 @@ void *kAppControllerContext = &kAppControllerContext;
 
 	[[playlistController undoManager] enableUndoRegistration];
 
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"]) {
-		int lastStatus = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
-		int lastIndex = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastTrackPlaying"];
+	int lastStatus = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
 
-		if(lastStatus != CogStatusStopped && lastIndex >= 0) {
-			[playbackController playEntryAtIndex:lastIndex startPaused:(lastStatus == CogStatusPaused) andSeekTo:@([[NSUserDefaults standardUserDefaults] doubleForKey:@"lastTrackPosition"])];
+	if(lastStatus != CogStatusStopped) {
+		NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+		NSPredicate *currentPredicate = [NSPredicate predicateWithFormat:@"current == YES"];
+
+		NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, currentPredicate]];
+
+		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+		request.predicate = predicate;
+
+		NSError *error = nil;
+		NSArray *results = [playlistController.persistentContainer.viewContext executeFetchRequest:request error:&error];
+
+		if(results && [results count] == 1) {
+			PlaylistEntry *pe = results[0];
+			if([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"]) {
+				[playbackController playEntryAtIndex:pe.index startPaused:(lastStatus == CogStatusPaused) andSeekTo:@(pe.currentPosition)];
+			} else {
+				pe.current = NO;
+				pe.currentPosition = 0.0;
+				[playlistController commitPersistentStore];
+			}
 		}
 	}
 
@@ -387,21 +406,12 @@ void *kAppControllerContext = &kAppControllerContext;
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
+	kAppControllerShuttingDown = YES;
+
 	CogStatus currentStatus = [playbackController playbackStatus];
-	NSInteger lastTrackPlaying = -1;
-	double lastTrackPosition = 0;
 
 	if(currentStatus == CogStatusStopping)
 		currentStatus = CogStatusStopped;
-
-	if(currentStatus != CogStatusStopped) {
-		PlaylistEntry *pe = [playlistController currentEntry];
-		lastTrackPlaying = [pe index];
-		lastTrackPosition = [pe currentPosition];
-	}
-
-	[[NSUserDefaults standardUserDefaults] setInteger:lastTrackPlaying forKey:@"lastTrackPlaying"];
-	[[NSUserDefaults standardUserDefaults] setDouble:lastTrackPosition forKey:@"lastTrackPosition"];
 
 	[playbackController stop:self];
 
@@ -546,8 +556,6 @@ void *kAppControllerContext = &kAppControllerContext;
 	[userDefaultsValuesDict setObject:@"cubic" forKey:@"resampling"];
 
 	[userDefaultsValuesDict setObject:@(CogStatusStopped) forKey:@"lastPlaybackStatus"];
-	[userDefaultsValuesDict setObject:@(-1) forKey:@"lastTrackPlaying"];
-	[userDefaultsValuesDict setObject:@(0.0) forKey:@"lastTrackPosition"];
 
 	[userDefaultsValuesDict setObject:@"dls appl" forKey:@"midiPlugin"];
 
