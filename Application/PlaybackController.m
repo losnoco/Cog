@@ -832,7 +832,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		case CogStatusPaused:
 			defaultCenter.playbackState = MPNowPlayingPlaybackStatePaused;
 			break;
-
 		default:
 			defaultCenter.playbackState = MPNowPlayingPlaybackStateStopped;
 			break;
