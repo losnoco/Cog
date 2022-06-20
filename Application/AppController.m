@@ -30,9 +30,6 @@
 #import <Sparkle/Sparkle.h>
 
 @import Firebase;
-#ifdef DEBUG
-@import FirebaseAppCheck;
-#endif
 
 void *kAppControllerContext = &kAppControllerContext;
 
@@ -149,13 +146,7 @@ BOOL kAppControllerShuttingDown = NO;
 
 - (void)awakeFromNib {
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(YES) }];
-	
-#ifdef DEBUG
-	FIRAppCheckDebugProviderFactory *providerFactory =
-		  [[FIRAppCheckDebugProviderFactory alloc] init];
-	[FIRAppCheck setAppCheckProviderFactory:providerFactory];
-#endif
-	
+
 	[FIRApp configure];
 
 	/* Evil startup synchronous crash log submitter, because apparently, there
