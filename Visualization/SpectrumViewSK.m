@@ -15,8 +15,6 @@
 
 #import "Logging.h"
 
-@import Firebase;
-
 #define LOWER_BOUND -80
 
 static void *kSpectrumViewSKContext = &kSpectrumViewSKContext;
@@ -32,7 +30,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	BOOL paused;
 	BOOL stopped;
 	BOOL isListening;
-	BOOL isWorking;
 	BOOL bandsReset;
 	BOOL cameraControlEnabled;
 	BOOL observersAdded;
@@ -51,43 +48,28 @@ extern NSString *CogPlaybackDidStopNotficiation;
 @implementation SpectrumViewSK
 
 + (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame {
-	if (![[NSUserDefaults standardUserDefaults] boolForKey:@"sceneKitCrashed"]) {
-		return [[SpectrumViewSK alloc] initWithFrame:frame];
-	}
-	return nil;
+	do {
+		if(@available(macOS 11, *)) {
+			// macOS 11 and newer seems to be safe
+			break;
+		} else if(@available(macOS 10.15, *)) {
+			// macOS 10.15.7 has a SceneKit bug with PBR noise
+			return nil;
+		} else {
+			// macOS 10.12 through 10.14.x seem to be safe too
+			break;
+		}
+	} while(0);
+
+	return [[SpectrumViewSK alloc] initWithFrame:frame];
 }
 
 @synthesize isListening;
-@synthesize isWorking;
 
 - (id)initWithFrame:(NSRect)frame {
 	id<MTLDevice> device = MTLCreateSystemDefaultDevice();
 
 	if(!device) return nil;
-
-	DLog(@"SceneKit visualizer accessed device named: %@", device.name);
-	[[FIRCrashlytics crashlytics] logWithFormat:@"SceneKit visualizer accessed device named: %@", device.name];
-
-	if([device.name containsString:@"AMD"]) {
-		if([device.name containsString:@"FirePro D"] ||
-		   [device.name containsString:@" M2"] ||
-		   [device.name containsString:@" M3"] ||
-		   [device.name containsString:@" 460"] ||
-		   [device.name containsString:@" 470"] ||
-		   [device.name containsString:@" 480"] ||
-		   [device.name containsString:@" 580"] ||
-		   [device.name containsString:@" 590"]) {
-			return nil;
-		} else {
-			if([device.name containsString:@" 550"] ||
-			   [device.name containsString:@" 560"] ||
-			   [device.name containsString:@" 570"]) {
-				if(![device.name containsString:@"00"]) { /* Exclude RDNA2 */
-					return nil;
-				}
-			}
-		}
-	}
 
 	NSDictionary *sceneOptions = @{
 		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
@@ -181,7 +163,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	paused = NO;
 	isListening = NO;
 	cameraControlEnabled = NO;
-	isWorking = NO;
 
 	[self setBackgroundColor:[NSColor clearColor]];
 
@@ -284,11 +265,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)repaint {
 	[self updateVisListening];
-	
-	if(!isWorking) {
-		isWorking = YES;
-		[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"sceneKitCrashed"];
-	}
 
 	if(stopped) {
 		[self drawBaseBands];
