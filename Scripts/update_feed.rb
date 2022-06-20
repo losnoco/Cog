@@ -24,8 +24,11 @@ sortedchannels = channel.search('./item').sort_by{ |i| Time.parse(i.at('pubDate'
 
 #Get the latest revision from the appcast
 appcast_enclosure = sortedchannels[0].search('./enclosure').first
+appcast_revision = sortedchannels[0].xpath('.//sparkle:version').text
 appcast_url = appcast_enclosure.attribute('url');
-appcast_revision = appcast_enclosure.attribute_with_ns('version', sparkle).to_s;
+if !appcast_revision
+  appcast_revision = appcast_enclosure.attribute_with_ns('version', sparkle).to_s
+end
 appcast_revision_split = appcast_revision.split( /-/ )
 appcast_revision_code = appcast_revision_split[1]
 appcast_revision_split = appcast_revision_code.split( /g/ )
