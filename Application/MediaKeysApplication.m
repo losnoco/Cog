@@ -20,11 +20,6 @@
 	AppController *_appController;
 }
 
-- (void)reportException:(NSException *)exception {
-	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"sceneKitCrashed"];
-	[super reportException:exception];
-}
-
 - (void)finishLaunching {
 	[super finishLaunching];
 	_appController = (AppController *)[self delegate];
