@@ -12,6 +12,8 @@
 
 #import "Logging.h"
 
+#import "SandboxBroker.h"
+
 static NSString *path_pack_string(NSString *src) {
 	return [NSString stringWithFormat:@"|%lu|%@|", [src length], src];
 }
@@ -43,6 +45,11 @@ static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString 
 		return @[];
 	}
 
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+	[sandboxBroker beginFolderAccess:url];
+
 	fex_t *fex;
 	fex_err_t error = fex_open(&fex, [[url path] UTF8String]);
 	if(error) {
@@ -60,6 +67,8 @@ static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString 
 	}
 
 	fex_close(fex);
+
+	[sandboxBroker endFolderAccess:url];
 
 	return files;
 }

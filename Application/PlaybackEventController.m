@@ -7,8 +7,6 @@
 
 #import "PlaybackEventController.h"
 
-#import "AudioScrobbler.h"
-
 #import "PlaylistEntry.h"
 
 NSString *TrackNotification = @"com.apple.iTunes.playerInfo";
@@ -27,8 +25,6 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 	                                      TrackStopped };
 
 @implementation PlaybackEventController {
-	AudioScrobbler *scrobbler;
-
 	NSOperationQueue *queue;
 
 	PlaylistEntry *entry;
@@ -38,8 +34,6 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 
 - (void)initDefaults {
 	NSDictionary *defaultsDictionary = @{
-		@"enableAudioScrobbler": @YES,
-		@"automaticallyLaunchLastFM": @NO,
 		@"notifications.enable": @YES,
 		@"notifications.itunes-style": @YES,
 		@"notifications.show-album-art": @YES
@@ -85,7 +79,6 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 		queue = [[NSOperationQueue alloc] init];
 		[queue setMaxConcurrentOperationCount:1];
 
-		scrobbler = [[AudioScrobbler alloc] init];
 		[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
 
 		entry = nil;
@@ -161,11 +154,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
 		if([defaults boolForKey:@"notifications.enable"]) {
-			if([defaults boolForKey:@"enableAudioScrobbler"]) {
-				[scrobbler start:pe];
-				if([AudioScrobbler isRunning]) return;
-			}
-
 			if(@available(macOS 10.14, *)) {
 				if(didGainUN) {
 					UNUserNotificationCenter *center =
@@ -300,9 +288,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 	              object:nil
 	            userInfo:[self fillNotificationDictionary:entry status:TrackPaused]
 	  deliverImmediately:YES];
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler pause];
-	}
 }
 
 - (void)performPlaybackDidResumeActions {
@@ -311,9 +296,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 	              object:nil
 	            userInfo:[self fillNotificationDictionary:entry status:TrackPlaying]
 	  deliverImmediately:YES];
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler resume];
-	}
 }
 
 - (void)performPlaybackDidStopActions {
@@ -323,9 +305,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 	            userInfo:[self fillNotificationDictionary:entry status:TrackStopped]
 	  deliverImmediately:YES];
 	entry = nil;
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAudioScrobbler"]) {
-		[scrobbler stop];
-	}
 }
 
 - (void)awakeFromNib {

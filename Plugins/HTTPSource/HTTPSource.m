@@ -463,6 +463,8 @@ static void http_stream_reset(HTTPSource *fp) {
 			struct curl_slist *headers = NULL;
 			struct curl_slist *ok_aliases = curl_slist_append(NULL, "ICY 200 OK");
 
+			BOOL sslVerify = ![[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"allowInsecureSSL"];
+
 			curl_easy_reset(curl);
 			curl_easy_setopt(curl, CURLOPT_URL, [[URL absoluteString] UTF8String]);
 			NSString *ua = [NSString stringWithFormat:@"Cog/%@", [[[NSBundle mainBundle] infoDictionary] valueForKey:(__bridge NSString *)kCFBundleVersionKey]];
@@ -491,6 +493,7 @@ static void http_stream_reset(HTTPSource *fp) {
 			if(pos > 0 && length >= 0) {
 				curl_easy_setopt(curl, CURLOPT_RESUME_FROM, (long)pos);
 			}
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, (long)sslVerify);
 			//        fp->status = STATUS_INITIAL;
 			DLog(@"curl: calling curl_easy_perform (status=%d)...\n", self->status);
 			gettimeofday(&last_read_time, NULL);

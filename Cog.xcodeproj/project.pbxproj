@@ -23,8 +23,6 @@
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
 		1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752C36B0F59E00100F85F28 /* PlaybackButtons.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
-		1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */; };
-		1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */; };
 		1770429C0B8BC53600B86321 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 177042980B8BC53600B86321 /* AppController.m */; };
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
 		1778D3B00F645A190037E7A0 /* missingArt.png in Resources */ = {isa = PBXBuildFile; fileRef = 1778D3AF0F645A190037E7A0 /* missingArt.png */; };
@@ -93,6 +91,7 @@
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */ = {isa = PBXBuildFile; fileRef = 8307D30D28606148000FF8EB /* SandboxBroker.m */; };
 		830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 830C379F27B95E3000E02BB0 /* Equalizer.xib */; };
 		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
 		830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C37F227B9956C00E02BB0 /* analyzer.c */; };
@@ -784,10 +783,6 @@
 		1752C36B0F59E00100F85F28 /* PlaybackButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlaybackButtons.m; path = Window/PlaybackButtons.m; sourceTree = "<group>"; };
 		1755E1F60BA0D2B600CA3560 /* PlaylistLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistLoader.h; sourceTree = "<group>"; };
 		1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistLoader.m; sourceTree = "<group>"; };
-		1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobbler.h; sourceTree = "<group>"; };
-		1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AudioScrobbler.m; sourceTree = "<group>"; };
-		1766C6900B911DF1004A7AE4 /* AudioScrobblerClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioScrobblerClient.h; sourceTree = "<group>"; };
-		1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AudioScrobblerClient.m; sourceTree = "<group>"; };
 		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		177042970B8BC53600B86321 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
@@ -909,6 +904,8 @@
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
+		8307D30C28606148000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxBroker.h; sourceTree = "<group>"; };
+		8307D30D28606148000FF8EB /* SandboxBroker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SandboxBroker.m; sourceTree = "<group>"; };
 		830C37A027B95E3000E02BB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Equalizer.xib; sourceTree = "<group>"; };
 		830C37A327B95EB300E02BB0 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EqualizerWindowController.h; path = Equalizer/EqualizerWindowController.h; sourceTree = "<group>"; };
 		830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = EqualizerWindowController.m; path = Equalizer/EqualizerWindowController.m; sourceTree = "<group>"; };
@@ -1136,7 +1133,6 @@
 				830C37A227B95E6000E02BB0 /* Equalizer */,
 				17D1B0FE0F63252900694C57 /* InfoInspector */,
 				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
-				1766C68D0B911DF1004A7AE4 /* AudioScrobbler */,
 				17E0D5F60F520F42005B6FED /* Transformers */,
 				177EC0110B8BC2CF0000BC8C /* Utils */,
 				177EBF770B8BC2A70000BC8C /* ThirdParty */,
@@ -1182,17 +1178,6 @@
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		1766C68D0B911DF1004A7AE4 /* AudioScrobbler */ = {
-			isa = PBXGroup;
-			children = (
-				1766C68E0B911DF1004A7AE4 /* AudioScrobbler.h */,
-				1766C68F0B911DF1004A7AE4 /* AudioScrobbler.m */,
-				1766C6900B911DF1004A7AE4 /* AudioScrobblerClient.h */,
-				1766C6910B911DF1004A7AE4 /* AudioScrobblerClient.m */,
-			);
-			path = AudioScrobbler;
 			sourceTree = "<group>";
 		};
 		177042960B8BC53600B86321 /* Application */ = {
@@ -1266,6 +1251,8 @@
 				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
 				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
 				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
+				8307D30C28606148000FF8EB /* SandboxBroker.h */,
+				8307D30D28606148000FF8EB /* SandboxBroker.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2610,10 +2597,8 @@
 				177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */,
 				1770429C0B8BC53600B86321 /* AppController.m in Sources */,
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
-				1766C6930B911DF1004A7AE4 /* AudioScrobbler.m in Sources */,
 				8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */,
 				8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */,
-				1766C6950B911DF1004A7AE4 /* AudioScrobblerClient.m in Sources */,
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
@@ -2668,6 +2653,7 @@
 				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
 				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
 				83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */,
+				8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */,
 				83229C9F283B0095004626A8 /* SpectrumWindowController.m in Sources */,
 				835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,

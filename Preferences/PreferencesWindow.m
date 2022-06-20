@@ -134,8 +134,9 @@
 	if([lastPane isEqualToString:NSLocalizedPrefString(@"Growl")]) {
 		lastPane = NSLocalizedPrefString(@"Notifications");
 	}
-	if([lastPane isEqualToString:NSLocalizedPrefString(@"Last.fm")]) {
-		lastPane = NSLocalizedPrefString(@"Scrobble");
+	if([lastPane isEqualToString:NSLocalizedPrefString(@"Last.fm")] ||
+	   [lastPane isEqualToString:NSLocalizedPrefString(@"Scrobble")]) {
+		lastPane = NSLocalizedPrefString(@"General");
 	}
 	if(nil == lastPane) {
 		if(0 >= [preferencePaneOrder count]) {

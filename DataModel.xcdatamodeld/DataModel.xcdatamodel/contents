@@ -60,9 +60,14 @@
         <attribute name="volume" optional="YES" attributeType="Float" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="year" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
+    <entity name="SandboxToken" representedClassName="SandboxToken" syncable="YES" codeGenerationType="class">
+        <attribute name="bookmark" optional="YES" attributeType="Binary"/>
+        <attribute name="path" optional="YES" attributeType="String"/>
+    </entity>
     <elements>
         <element name="AlbumArtwork" positionX="0" positionY="207" width="128" height="59"/>
-        <element name="PlaylistEntry" positionX="-36" positionY="9" width="128" height="704"/>
         <element name="PlayCount" positionX="-18" positionY="171" width="128" height="134"/>
+        <element name="PlaylistEntry" positionX="-36" positionY="9" width="128" height="704"/>
+        <element name="SandboxToken" positionX="-18" positionY="171" width="128" height="59"/>
     </elements>
 </model>

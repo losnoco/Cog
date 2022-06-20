@@ -10,6 +10,7 @@
 
 #import "PreferencePanePlugin.h"
 
+#import "GeneralPane.h"
 #import "HotKeyPane.h"
 #import "MIDIPane.h"
 #import "OutputPane.h"
@@ -18,9 +19,9 @@
 	IBOutlet HotKeyPane *hotKeyPane;
 	IBOutlet OutputPane *outputPane;
 	IBOutlet MIDIPane *midiPane;
+	IBOutlet GeneralPane *generalPane;
 
 	IBOutlet NSView *playlistView;
-	IBOutlet NSView *scrobblerView;
 	IBOutlet NSView *updatesView;
 	IBOutlet NSView *notificationsView;
 	IBOutlet NSView *appearanceView;
@@ -31,9 +32,9 @@
 - (HotKeyPane *)hotKeyPane;
 - (OutputPane *)outputPane;
 - (MIDIPane *)midiPane;
+- (GeneralPane *)generalPane;
 
 - (GeneralPreferencePane *)updatesPane;
-- (GeneralPreferencePane *)scrobblerPane;
 - (GeneralPreferencePane *)playlistPane;
 - (GeneralPreferencePane *)notificationsPane;
 - (GeneralPreferencePane *)appearancePane;

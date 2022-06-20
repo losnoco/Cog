@@ -88,6 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8307D31E28607377000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		831E2A7F27B4B2B2006F1C86 /* bassmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bassmidi.h; sourceTree = "<group>"; };
 		831E2A8027B4B2B2006F1C86 /* sflist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sflist.c; sourceTree = "<group>"; };
 		831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sflist_rewrite.c; sourceTree = "<group>"; };
@@ -295,6 +296,7 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				8307D31E28607377000FF8EB /* SandboxBroker.h */,
 				831E2A9127B4B2FA006F1C86 /* json */,
 				831E2A7D27B4B2B2006F1C86 /* BASS */,
 				8356BCC427B352620074E50C /* BMPlayer.cpp */,

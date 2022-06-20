@@ -11,8 +11,6 @@
 
 #import "PlaybackController.h"
 
-@class AudioScrobbler;
-
 @interface PlaybackEventController
 : NSObject <NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate> {
 	IBOutlet PlaybackController *playbackController;

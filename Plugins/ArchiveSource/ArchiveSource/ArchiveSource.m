@@ -8,6 +8,8 @@
 
 #import "ArchiveSource.h"
 
+#import "SandboxBroker.h"
+
 #import "Logging.h"
 
 static NSString *path_unpack_string(NSString *src, NSRange *remainder) {
@@ -83,6 +85,13 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 	if(![type isEqualToString:@"fex"])
 		return NO;
 
+	fileURL = [NSURL fileURLWithPath:archive];
+
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+	[sandboxBroker beginFolderAccess:fileURL];
+
 	fex_err_t error;
 
 	error = fex_open(&fex, [archive UTF8String]);
@@ -150,6 +159,13 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 	if(fex) {
 		fex_close(fex);
 		fex = NULL;
+	}
+
+	if(fileURL) {
+		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+		id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+		[sandboxBroker endFolderAccess:fileURL];
 	}
 }
 

@@ -8,6 +8,8 @@
 
 #import "FileSource.h"
 
+#import "SandboxBroker.h"
+
 @implementation FileSource
 
 + (void)initialize {
@@ -25,6 +27,11 @@
 
 - (BOOL)open:(NSURL *)url {
 	[self setURL:url];
+
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+	[sandboxBroker beginFolderAccess:url];
 
 	NSString *path = [url path];
 
@@ -123,6 +130,11 @@
 		fex_close(fex);
 		fex = NULL;
 	}
+
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+	[sandboxBroker endFolderAccess:_url];
 }
 
 - (NSURL *)url {

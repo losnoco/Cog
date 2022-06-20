@@ -18,6 +18,8 @@
 
 #import "PlaylistController.h"
 
+#import "SandboxBroker.h"
+
 #import <dlfcn.h>
 
 static OSType getOSType(const char *in_) {
@@ -164,6 +166,15 @@ static OSType getOSType(const char *in_) {
 		mode = MIDIPlayer::filter_xg;
 
 	globalSoundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
+
+	if(globalSoundFontPath && [globalSoundFontPath length] > 0) {
+		sandboxURL = [NSURL fileURLWithPath:[globalSoundFontPath stringByDeletingLastPathComponent]];
+
+		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+		id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+		[sandboxBroker beginFolderAccess:sandboxURL];
+	}
 
 	// First detect if soundfont has gone AWOL
 	if(![[NSFileManager defaultManager] fileExistsAtPath:globalSoundFontPath]) {
@@ -333,6 +344,15 @@ static OSType getOSType(const char *in_) {
 - (void)close {
 	delete player;
 	player = NULL;
+
+	if(sandboxURL) {
+		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+		id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+		[sandboxBroker endFolderAccess:sandboxURL];
+
+		sandboxURL = nil;
+	}
 }
 
 - (void)dealloc {

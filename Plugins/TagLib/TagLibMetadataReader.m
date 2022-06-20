@@ -19,12 +19,19 @@
 #import <taglib/ogg/vorbis/vorbisfile.h>
 #import <taglib/ogg/xiphcomment.h>
 
+#import "SandboxBroker.h"
+
 @implementation TagLibMetadataReader
 
 + (NSDictionary *)metadataForURL:(NSURL *)url {
 	if(![url isFileURL]) {
 		return [NSDictionary dictionary];
 	}
+
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+	[sandboxBroker beginFolderAccess:url];
 
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
@@ -229,6 +236,8 @@
 			[dict setObject:image forKey:@"albumArt"];
 		}
 	}
+
+	[sandboxBroker endFolderAccess:url];
 
 	return dict;
 }

@@ -8,13 +8,18 @@
 
 "Updates" = "Updates";
 "Last.fm" = "Last.fm";
+"Scrobble" = "Scrobble";
 "Playlist" = "Playlist";
 "Growl" = "Growl";
 "Appearance" = "Appearance";
 "MIDI" = "MIDI";
+"General" = "General";
 
 "Press Key..." = "Press Key...";
 
 "Clear playlist and play" = "Clear playlist and play";
 "Enqueue" = "Enqueue";
 "Enqueue and play" = "Enqueue and play";
+
+"ValidNo" = "No";
+"ValidYes" = "Yes";

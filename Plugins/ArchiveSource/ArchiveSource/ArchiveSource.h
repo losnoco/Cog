@@ -20,6 +20,7 @@
 	NSUInteger size;
 
 	NSURL *_url;
+	NSURL *fileURL;
 }
 
 @end

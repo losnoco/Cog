@@ -27,6 +27,14 @@
 
 extern BOOL kAppControllerShuttingDown;
 
+NSPersistentContainer *__persistentContainer = nil;
+
+@implementation NSApplication (CoreDataStorageExtension)
+- (NSPersistentContainer *_Nonnull)sharedPersistentContainer {
+	return __persistentContainer;
+}
+@end
+
 @implementation PlaylistController
 
 @synthesize currentEntry;
@@ -35,7 +43,6 @@ extern BOOL kAppControllerShuttingDown;
 
 static NSArray *cellIdentifiers = nil;
 
-NSPersistentContainer *__persistentContainer = nil;
 NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary = nil;
 
 static void *playlistControllerContext = &playlistControllerContext;

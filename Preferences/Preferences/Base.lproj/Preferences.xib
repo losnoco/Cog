@@ -9,13 +9,13 @@
         <customObject id="-2" userLabel="File's Owner" customClass="GeneralPreferencesPlugin">
             <connections>
                 <outlet property="appearanceView" destination="CgN-sy-RmM" id="wvB-aW-Gfx"/>
+                <outlet property="generalPane" destination="tm7-TU-wbV" id="jTO-w4-xwD"/>
                 <outlet property="hotKeyPane" destination="6" id="14"/>
                 <outlet property="iTunesStyleCheck" destination="AIz-WH-Wqk" id="2n1-pY-cZR"/>
                 <outlet property="midiPane" destination="i5B-ga-Atm" id="rbe-uK-5n2"/>
                 <outlet property="notificationsView" destination="U4w-jw-ca5" id="wVJ-GH-A21"/>
                 <outlet property="outputPane" destination="57" id="75"/>
                 <outlet property="playlistView" destination="231" id="244"/>
-                <outlet property="scrobblerView" destination="0nK-XQ-5MY" id="dFj-Pk-FCG"/>
                 <outlet property="updatesView" destination="50" id="99"/>
             </connections>
         </customObject>
@@ -368,6 +368,12 @@
                 <outlet property="view" destination="JXu-ar-J3Y" id="uI3-0O-h4x"/>
             </connections>
         </customObject>
+        <customObject id="tm7-TU-wbV" customClass="GeneralPane">
+            <connections>
+                <outlet property="sandboxBehaviorController" destination="9mC-3k-IQG" id="QzA-u4-vH7"/>
+                <outlet property="view" destination="0nK-XQ-5MY" id="TDK-Vn-N5G"/>
+            </connections>
+        </customObject>
         <arrayController id="59" userLabel="OutputDevices" customClass="OutputsArrayController">
             <declaredKeys>
                 <string>name</string>
@@ -389,45 +395,96 @@
             </declaredKeys>
             <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
-        <customView id="0nK-XQ-5MY" userLabel="ScrobblerView">
-            <rect key="frame" x="0.0" y="0.0" width="530" height="99"/>
+        <customView id="0nK-XQ-5MY" userLabel="GeneralView">
+            <rect key="frame" x="0.0" y="0.0" width="530" height="202"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3gi-0d-78Z">
-                    <rect key="frame" x="18" y="41" width="396" height="18"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Automatically launch Last.fm client" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="ze8-9p-SeX">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="52" name="value" keyPath="values.automaticallyLaunchLastFM" id="Ere-1R-mgh"/>
-                    </connections>
-                </button>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ABj-cO-MaV">
-                    <rect key="frame" x="18" y="69" width="396" height="18"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <buttonCell key="cell" type="check" title="Enable Last.fm support (Last.fm client must be installed)" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="2N5-DH-IO6">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                    <connections>
-                        <binding destination="52" name="value" keyPath="values.enableAudioScrobbler" id="R2p-gP-5oR"/>
-                    </connections>
-                </button>
-                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hi4-pa-uDu">
-                    <rect key="frame" x="18" y="13" width="389" height="18"/>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dIu-uT-8YW">
+                    <rect key="frame" x="18" y="165" width="226" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Allow Last.fm client to control media keys" bezelStyle="regularSquare" imagePosition="left" inset="2" id="4Yi-67-ivc">
+                    <buttonCell key="cell" type="check" title="Allow insecure SSL connections" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sva-DV-ina">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="52" name="value" keyPath="values.allowLastfmMediaKeys" id="OZH-0Q-thF"/>
+                        <binding destination="52" name="value" keyPath="values.allowInsecureSSL" id="78K-25-qki"/>
                     </connections>
                 </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="crf-C9-9YF">
+                    <rect key="frame" x="20" y="142" width="170" height="16"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Sandbox allow paths:" id="wWm-AD-cD4">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6b3-9W-Flc">
+                    <rect key="frame" x="20" y="20" width="490" height="115"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <clipView key="contentView" id="gUE-Yu-LLA">
+                        <rect key="frame" x="1" y="1" width="488" height="113"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="9rQ-Rq-K6J" id="gHG-xw-OyR">
+                                <rect key="frame" x="0.0" y="0.0" width="488" height="85"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <size key="intercellSpacing" width="17" height="0.0"/>
+                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                <tableColumns>
+                                    <tableColumn width="388" minWidth="40" maxWidth="1000" id="Yz2-Ee-bZ0" userLabel="path">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Path">
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="Dhd-k8-ZXq">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                        <connections>
+                                            <binding destination="9mC-3k-IQG" name="value" keyPath="arrangedObjects.path" id="eva-uV-ce2"/>
+                                        </connections>
+                                    </tableColumn>
+                                    <tableColumn width="41" minWidth="40" maxWidth="1000" id="lEg-E3-TBs" userLabel="valid">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Valid">
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" title="Text Cell" id="bWQ-dT-X3w">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                        <connections>
+                                            <binding destination="9mC-3k-IQG" name="value" keyPath="arrangedObjects.valid" id="Kg6-FI-Mcl"/>
+                                        </connections>
+                                    </tableColumn>
+                                </tableColumns>
+                            </tableView>
+                        </subviews>
+                    </clipView>
+                    <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="OdN-bV-v6B">
+                        <rect key="frame" x="1" y="99" width="488" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="rJY-00-GfQ">
+                        <rect key="frame" x="224" y="17" width="15" height="102"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <tableHeaderView key="headerView" wantsLayer="YES" id="9rQ-Rq-K6J">
+                        <rect key="frame" x="0.0" y="0.0" width="488" height="28"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </tableHeaderView>
+                    <connections>
+                        <outlet property="menu" destination="ape-AV-kEr" id="hVx-ll-1cd"/>
+                    </connections>
+                </scrollView>
             </subviews>
-            <point key="canvasLocation" x="450" y="-262"/>
+            <point key="canvasLocation" x="450" y="-211"/>
         </customView>
         <customView id="U4w-jw-ca5" userLabel="NotificationsView">
             <rect key="frame" x="0.0" y="0.0" width="530" height="99"/>
@@ -709,5 +766,28 @@
             </declaredKeys>
             <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
+        <arrayController id="9mC-3k-IQG" customClass="SandboxPathBehaviorController">
+            <declaredKeys>
+                <string>path</string>
+                <string>valid</string>
+            </declaredKeys>
+        </arrayController>
+        <menu id="ape-AV-kEr" userLabel="SandboxContextMenu">
+            <items>
+                <menuItem title="Add Path" id="JxP-0t-mTB">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="addPath:" target="tm7-TU-wbV" id="j3o-oG-PA4"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Delete Paths" id="nva-pz-xSS">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="deleteSelectedPaths:" target="tm7-TU-wbV" id="suU-Gb-vMn"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="533" y="-395"/>
+        </menu>
     </objects>
 </document>

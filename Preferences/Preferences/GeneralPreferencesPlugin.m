@@ -32,7 +32,7 @@
 		     [plugin hotKeyPane],
 		     [plugin updatesPane],
 		     [plugin outputPane],
-		     [plugin scrobblerPane],
+		     [plugin generalPane],
 		     [plugin notificationsPane],
 		     [plugin appearancePane],
 		     [plugin midiPane]];
@@ -50,18 +50,15 @@
 	return midiPane;
 }
 
+- (GeneralPane *)generalPane {
+	return generalPane;
+}
+
 - (GeneralPreferencePane *)updatesPane {
 	return [GeneralPreferencePane preferencePaneWithView:updatesView
 	                                               title:NSLocalizedPrefString(@"Updates")
 	                                      systemIconName:@"arrow.triangle.2.circlepath.circle.fill"
 	                                      orOldIconNamed:@"updates"];
-}
-
-- (GeneralPreferencePane *)scrobblerPane {
-	return [GeneralPreferencePane preferencePaneWithView:scrobblerView
-	                                               title:NSLocalizedPrefString(@"Scrobble")
-	                                      systemIconName:@"dot.radiowaves.left.and.right"
-	                                      orOldIconNamed:@"lastfm"];
 }
 
 - (GeneralPreferencePane *)playlistPane {

@@ -12,6 +12,7 @@
 #import "PlaylistLoader.h"
 #import "PlaylistView.h"
 #import "SQLiteStore.h"
+#import "SandboxBroker.h"
 #import "SpotlightWindowController.h"
 #import "StringToURLTransformer.h"
 #import <CogAudio/Status.h>
@@ -187,6 +188,11 @@ BOOL kAppControllerShuttingDown = NO;
 		} else {
 			[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:oldFilename]]];
 		}
+	}
+
+	SandboxBroker *sandboxBroker = [SandboxBroker sharedSandboxBroker];
+	if(!sandboxBroker) {
+		ALog(@"Sandbox broker init failed.");
 	}
 
 	[[playlistController undoManager] enableUndoRegistration];
@@ -433,6 +439,9 @@ BOOL kAppControllerShuttingDown = NO;
 	fileName = @"Default.m3u";
 
 	[[NSFileManager defaultManager] removeItemAtPath:[folder stringByAppendingPathComponent:fileName] error:&error];
+
+	DLog(@"Shutting down sandbox broker");
+	[[SandboxBroker sharedSandboxBroker] shutdown];
 
 	DLog(@"Saving expanded nodes: %@", [expandedNodes description]);
 

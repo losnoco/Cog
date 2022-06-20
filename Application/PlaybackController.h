@@ -3,7 +3,6 @@
 #import <Cocoa/Cocoa.h>
 
 #import "AppController.h"
-#import "AudioScrobbler.h"
 #import "CogAudio/AudioPlayer.h"
 #import "CogAudio/Status.h"
 #import "TrackingSlider.h"
@@ -14,6 +13,8 @@
 #import <CoreAudio/CoreAudioTypes.h>
 
 #import "EqualizerWindowController.h"
+
+#import "PlaylistEntry.h"
 
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN

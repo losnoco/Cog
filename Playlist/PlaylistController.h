@@ -19,6 +19,10 @@
 @class SpotlightWindowController;
 @class PlaybackController;
 
+@interface NSApplication (CoreDataStorageExtension)
+- (NSPersistentContainer *_Nonnull)sharedPersistentContainer;
+@end
+
 typedef NS_ENUM(NSInteger, RepeatMode) {
 	RepeatModeNoRepeat = 0,
 	RepeatModeRepeatOne,
@@ -139,7 +143,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (IBAction)reloadTags:(id _Nullable)sender;
 
 // Play statistics
-- (void)updatePlayCountForTrack:(PlaylistEntry *)pe;
+- (void)updatePlayCountForTrack:(PlaylistEntry *_Nonnull)pe;
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *_Nullable)indexSet
                                         toIndex:(NSUInteger)insertIndex;

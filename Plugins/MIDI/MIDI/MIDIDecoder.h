@@ -24,6 +24,8 @@ class BMPlayer;
 	MIDIPlayer* player;
 	midi_container midi_file;
 
+	NSURL* sandboxURL;
+
 	NSString* globalSoundFontPath;
 	BOOL soundFontsAssigned;
 	BOOL isLooped;
