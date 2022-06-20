@@ -810,7 +810,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		NSMutableIndexSet *pruneSet = [[NSMutableIndexSet alloc] init];
 		NSUInteger index = 0;
 		for(PlaylistEntry *pe in resultsCopy) {
-			if(pe.deLeted) {
+			if(pe.deLeted || !pe.url) {
 				[pruneSet addIndex:index];
 				[moc deleteObject:pe];
 			}

@@ -1140,7 +1140,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (NSArray *)filterPlaylistOnAlbum:(NSString *)album {
-	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil || urlString == nil"];
 
 	NSPredicate *searchPredicate;
 	if([album length] > 0)
@@ -1243,7 +1243,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)readQueueFromDataStore {
-	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil || urlString == nil"];
 	NSPredicate *queuedPredicate = [NSPredicate predicateWithFormat:@"queued == YES"];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"queuePosition" ascending:YES];
@@ -1265,7 +1265,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)readShuffleListFromDataStore {
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil || urlString == nil"];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"shuffleIndex" ascending:YES];
 
