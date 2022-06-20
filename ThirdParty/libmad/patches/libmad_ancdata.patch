@@ -1,0 +1,29 @@
+diff -urN libmad-0.15.1b.orig/frame.c libmad-0.15.1b.patched/frame.c
+--- libmad-0.15.1b.orig/frame.c	2022-06-19 17:20:02.000000000 -0700
++++ libmad-0.15.1b.patched/frame.c	2022-06-19 18:18:39.000000000 -0700
+@@ -473,7 +473,9 @@
+   return 0;
+ 
+  fail:
+-  stream->anc_bitlen = 0;
++  if(stream->error != MAD_ERROR_BADDATAPTR) {
++    stream->anc_bitlen = 0;
++  }
+   return -1;
+ }
+ 
+diff -urN libmad-0.15.1b.orig/layer3.c libmad-0.15.1b.patched/layer3.c
+--- libmad-0.15.1b.orig/layer3.c	2022-06-19 17:20:02.000000000 -0700
++++ libmad-0.15.1b.patched/layer3.c	2022-06-19 18:18:47.000000000 -0700
+@@ -2656,6 +2656,11 @@
+     stream->anc_ptr    = ptr;
+     stream->anc_bitlen = md_len * CHAR_BIT - data_bitlen;
+   }
++  else {
++    /* Give it the rest of the frame */
++    stream->anc_ptr    = stream->ptr;
++    stream->anc_bitlen = frame_free * CHAR_BIT;
++  }
+ 
+ # if 0 && defined(DEBUG)
+   fprintf(stderr,

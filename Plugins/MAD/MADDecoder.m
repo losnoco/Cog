@@ -178,6 +178,8 @@
 					}
 
 					free(tagBuffer);
+				} else if(stream.error == MAD_ERROR_BADDATAPTR) {
+					goto framedecoded;
 				}
 
 				continue;
@@ -190,6 +192,7 @@
 				break;
 			}
 		}
+	framedecoded:
 		framesDecoded++;
 
 		if(framesDecoded == 1) {
