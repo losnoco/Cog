@@ -72,15 +72,21 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		if([device.name containsString:@"FirePro D"] ||
 		   [device.name containsString:@" M2"] ||
 		   [device.name containsString:@" M3"] ||
-		   [device.name containsString:@" 460 "] ||
-		   [device.name containsString:@" 470 "] ||
-		   [device.name containsString:@" 480 "] ||
-		   [device.name containsString:@" 550 "] ||
-		   [device.name containsString:@" 560 "] ||
-		   [device.name containsString:@" 570 "] ||
-		   [device.name containsString:@" 580 "] ||
-		   [device.name containsString:@" 590 "])
+		   [device.name containsString:@" 460"] ||
+		   [device.name containsString:@" 470"] ||
+		   [device.name containsString:@" 480"] ||
+		   [device.name containsString:@" 580"] ||
+		   [device.name containsString:@" 590"]) {
 			return nil;
+		} else {
+			if([device.name containsString:@" 550"] ||
+			   [device.name containsString:@" 560"] ||
+			   [device.name containsString:@" 570"]) {
+				if(![device.name containsString:@"00"]) { /* Exclude RDNA2 */
+					return nil;
+				}
+			}
+		}
 	}
 
 	NSDictionary *sceneOptions = @{
