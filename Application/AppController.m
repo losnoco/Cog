@@ -148,27 +148,6 @@ BOOL kAppControllerShuttingDown = NO;
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(YES) }];
 
 	[FIRApp configure];
-
-	/* Evil startup synchronous crash log submitter, because apparently, there
-	 * are some startup crashes that need diagnosing, and they're not getting
-	 * sent, because the asynchronous defaults are not kicking in before the
-	 * ensuing startup crash that happens somewhere later in this function. */
-	__block BOOL submitCompleted = NO;
-	ALog(@"Checking for unsent reports...");
-	[[FIRCrashlytics crashlytics] checkForUnsentReportsWithCompletion:^(BOOL hasReports) {
-		if(hasReports) {
-			ALog(@"Unsent reports found, sending...");
-			[[FIRCrashlytics crashlytics] sendUnsentReports];
-			ALog(@"Reports sent, continuing...");
-		} else {
-			ALog(@"No reports found, continuing...");
-		}
-		submitCompleted = YES;
-	}];
-	while(!submitCompleted) {
-		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-	}
-	
 	[FIRAnalytics setAnalyticsCollectionEnabled:YES];
 
 #ifdef DEBUG
