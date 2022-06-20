@@ -130,7 +130,7 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:NO];
 
-	for(size_t i = 1; i <= [pathComponents count]; ++i) {
+	for(size_t i = [pathComponents count]; i > 0; --i) {
 		NSArray *partialComponents = [pathComponents subarrayWithRange:NSMakeRange(0, i)];
 		NSURL *partialUrl = [NSURL fileURLWithPathComponents:partialComponents];
 		NSString *matchString = [[partialUrl path] stringByAppendingString:@"*"];
@@ -173,7 +173,7 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 
 	NSPersistentContainer *pc = [NSApp sharedPersistentContainer];
 
-	for(size_t i = 1; i <= [pathComponents count]; ++i) {
+	for(size_t i = [pathComponents count]; i > 0; --i) {
 		NSArray *partialComponents = [pathComponents subarrayWithRange:NSMakeRange(0, i)];
 		NSURL *partialUrl = [NSURL fileURLWithPathComponents:partialComponents];
 		NSString *matchString = [[partialUrl path] stringByAppendingString:@"*"];
