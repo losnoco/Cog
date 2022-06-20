@@ -32,6 +32,7 @@
 	// For gapless playback of mp3s
 	BOOL _foundXingHeader;
 	BOOL _foundLAMEHeader;
+	BOOL _foundVBRIHeader;
 	BOOL _foundID3v2;
 	BOOL _foundiTunSMPB;
 

@@ -16,6 +16,8 @@
 
 #import <Accelerate/Accelerate.h>
 
+#import "CVbriHeader.h"
+
 @implementation MADDecoder
 
 #define LAME_HEADER_SIZE ((8 * 5) + 4 + 4 + 8 + 32 + 16 + 16 + 4 + 4 + 8 + 12 + 12 + 8 + 8 + 2 + 3 + 11 + 32 + 32 + 32)
@@ -354,15 +356,31 @@
 					_foundLAMEHeader = YES;
 					break;
 				}
+			} else if('VBRI' == magic) {
+				struct VbriHeader *vbri_header = 0;
+				if(readVbriHeader(&vbri_header, mad_bit_nextbyte(&stream.anc_ptr), ancillaryBitsRemaining / 8) == 0) {
+					uint32_t frames = VbriTotalFrames(vbri_header);
+					totalFrames = frames * samplesPerMPEGFrame;
+					_startPadding = 0;
+					_endPadding = 0;
+
+					_foundVBRIHeader = YES;
+				}
+
+				if(vbri_header) {
+					freeVbriHeader(vbri_header);
+				}
+
+				break;
 			}
-		} else if(_foundXingHeader || _foundiTunSMPB) {
+		} else if(_foundXingHeader || _foundiTunSMPB || _foundVBRIHeader) {
 			break;
 		} else if(framesDecoded > 1) {
 			break;
 		}
 	}
 
-	if(!_foundiTunSMPB && !_foundXingHeader) {
+	if(!_foundiTunSMPB && !_foundXingHeader && !_foundVBRIHeader) {
 		// Now do CBR estimation instead of full file scanning
 		size_t frameCount = (_fileSize - id3_length) / (stream.next_frame - stream.this_frame);
 		mad_timer_t duration = frame.header.duration;
@@ -590,7 +608,7 @@
 			[self didChangeValueForKey:@"properties"];
 		}
 		// DLog(@"FIRST FRAME!!! %i %i", _foundXingHeader, _foundLAMEHeader);
-		if(_foundXingHeader) {
+		if(_foundXingHeader || _foundVBRIHeader) {
 			// DLog(@"Skipping xing header.");
 			return 0;
 		}
