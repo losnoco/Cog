@@ -515,7 +515,7 @@ static PluginController *sharedPluginController = nil;
     
     [stringList addObject:plistFooter];
     
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:@"/tmp/Cog_Info.plist" createFile:YES];
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"Cog_Info.plist"] createFile:YES];
     if (!fileHandle) {
         DLog(@"Error saving Info.plist!");
         return;
