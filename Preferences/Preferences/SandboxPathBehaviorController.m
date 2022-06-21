@@ -77,6 +77,15 @@
 }
 
 - (void)removePath:(NSString *)path {
+	NSArray *objects = [[self arrangedObjects] copy];
+
+	for(NSDictionary *obj in objects) {
+		if([[obj objectForKey:@"path"] isEqualToString:path]) {
+			[self removeObject:obj];
+			break;
+		}
+	}
+
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"path == %@", path];
@@ -92,14 +101,10 @@
 			[pc.viewContext deleteObject:token];
 		}
 	}
-
-	NSArray *objects = [self arrangedObjects];
-
-	for(NSDictionary *obj in objects) {
-		if([[obj objectForKey:@"path"] isEqualToString:path]) {
-			[self removeObject:obj];
-			break;
-		}
+	
+	[pc.viewContext	save:&error];
+	if(error) {
+		ALog(@"Error deleting bookmark: %@", [error localizedDescription]);
 	}
 }
 
