@@ -232,146 +232,172 @@
 						break;
 				}
 			}
+			
+			if(layer != 3) continue;
 
-			unsigned ancillaryBitsRemaining = stream.anc_bitlen;
+			const size_t ancillaryBitsRemaining = (stream.next_frame - stream.this_frame) * 8;
+			
+			static const int64_t xing_offtbl[2][2] = {{32, 17}, {17,9}};
+			
+			const int64_t xing_offset = xing_offtbl[!!(MAD_FLAG_LSF_EXT & frame.header.flags || MAD_FLAG_MPEG_2_5_EXT & frame.header.flags)][channels == 1] + 4; // Plus MPEG header
+			
+			size_t ancBitsRemainingXing = ancillaryBitsRemaining - xing_offset * 8;
 
-			if(32 > ancillaryBitsRemaining)
-				continue;
+			if(ancBitsRemainingXing >= 32) {
+				const uint8_t *ptr = stream.this_frame + xing_offset;
+				struct mad_bitptr bitptr;
+				
+				mad_bit_init(&bitptr, ptr);
+				uint32_t magic = (uint32_t)mad_bit_read(&bitptr, 32);
+				ancBitsRemainingXing -= 32;
 
-			uint32_t magic = (uint32_t)mad_bit_read(&stream.anc_ptr, 32);
-			ancillaryBitsRemaining -= 32;
+				if('Xing' == magic || 'Info' == magic) {
+					unsigned i;
+					uint32_t flags = 0, frames = 0, bytes = 0, vbrScale = 0;
 
-			if('Xing' == magic || 'Info' == magic) {
-				unsigned i;
-				uint32_t flags = 0, frames = 0, bytes = 0, vbrScale = 0;
-
-				if(32 > ancillaryBitsRemaining)
-					continue;
-
-				flags = (uint32_t)mad_bit_read(&stream.anc_ptr, 32);
-				ancillaryBitsRemaining -= 32;
-
-				// 4 byte value containing total frames
-				if(FRAMES_FLAG & flags) {
-					if(32 > ancillaryBitsRemaining)
+					if(32 > ancBitsRemainingXing)
 						continue;
 
-					frames = (uint32_t)mad_bit_read(&stream.anc_ptr, 32);
-					ancillaryBitsRemaining -= 32;
+					flags = (uint32_t)mad_bit_read(&bitptr, 32);
+					ancBitsRemainingXing -= 32;
 
-					// Determine number of samples, discounting encoder delay and padding
-					// Our concept of a frame is the same as CoreAudio's- one sample across all channels
-					totalFrames = frames * samplesPerMPEGFrame;
-					// DLog(@"TOTAL READ FROM XING");
+					// 4 byte value containing total frames
+					if(FRAMES_FLAG & flags) {
+						if(32 > ancBitsRemainingXing)
+							continue;
+
+						frames = (uint32_t)mad_bit_read(&bitptr, 32);
+						ancBitsRemainingXing -= 32;
+
+						// Determine number of samples, discounting encoder delay and padding
+						// Our concept of a frame is the same as CoreAudio's- one sample across all channels
+						totalFrames = frames * samplesPerMPEGFrame;
+						// DLog(@"TOTAL READ FROM XING");
+					}
+
+					// 4 byte value containing total bytes
+					if(BYTES_FLAG & flags) {
+						if(32 > ancBitsRemainingXing)
+							continue;
+
+						bytes = (uint32_t)mad_bit_read(&bitptr, 32);
+						ancBitsRemainingXing -= 32;
+					}
+
+					// 100 bytes containing TOC information
+					if(TOC_FLAG & flags) {
+						if(8 * 100 > ancBitsRemainingXing)
+							continue;
+
+						for(i = 0; i < 100; ++i)
+							/*_xingTOC[i] = */ mad_bit_read(&bitptr, 8);
+
+						ancBitsRemainingXing -= (8 * 100);
+					}
+
+					// 4 byte value indicating encoded vbr scale
+					if(VBR_SCALE_FLAG & flags) {
+						if(32 > ancBitsRemainingXing)
+							continue;
+
+						vbrScale = (uint32_t)mad_bit_read(&bitptr, 32);
+						ancBitsRemainingXing -= 32;
+					}
+
+					framesDecoded = frames;
+
+					_foundXingHeader = YES;
+
+					// Loook for the LAME header next
+					// http://gabriel.mp3-tech.org/mp3infotag.html
+					if(32 > ancBitsRemainingXing)
+						continue;
+					magic = (uint32_t)mad_bit_read(&bitptr, 32);
+
+					ancBitsRemainingXing -= 32;
+
+					if('LAME' == magic || 'Lavf' == magic || 'Lavc' == magic) {
+						if(LAME_HEADER_SIZE > ancBitsRemainingXing)
+							continue;
+
+						/*unsigned char versionString [5 + 1];
+						 memset(versionString, 0, 6);*/
+
+						for(i = 0; i < 5; ++i)
+							/*versionString[i] =*/mad_bit_read(&bitptr, 8);
+
+						/*uint8_t infoTagRevision =*/mad_bit_read(&bitptr, 4);
+						/*uint8_t vbrMethod =*/mad_bit_read(&bitptr, 4);
+
+						/*uint8_t lowpassFilterValue =*/mad_bit_read(&bitptr, 8);
+
+						/*float peakSignalAmplitude =*/mad_bit_read(&bitptr, 32);
+						/*uint16_t radioReplayGain =*/mad_bit_read(&bitptr, 16);
+						/*uint16_t audiophileReplayGain =*/mad_bit_read(&bitptr, 16);
+
+						/*uint8_t encodingFlags =*/mad_bit_read(&bitptr, 4);
+						/*uint8_t athType =*/mad_bit_read(&bitptr, 4);
+
+						/*uint8_t lameBitrate =*/mad_bit_read(&bitptr, 8);
+
+						_startPadding = mad_bit_read(&bitptr, 12);
+						_endPadding = mad_bit_read(&bitptr, 12);
+
+						_startPadding += 528 + 1; // MDCT/filterbank delay
+						_endPadding -= 528 + 1;
+
+						/*uint8_t misc =*/mad_bit_read(&bitptr, 8);
+
+						/*uint8_t mp3Gain =*/mad_bit_read(&bitptr, 8);
+						/*DLog(@"Gain: %i", mp3Gain);*/
+
+						/*uint8_t unused =*/mad_bit_read(&bitptr, 2);
+						/*uint8_t surroundInfo =*/mad_bit_read(&bitptr, 3);
+						/*uint16_t presetInfo =*/mad_bit_read(&bitptr, 11);
+
+						/*uint32_t musicGain =*/mad_bit_read(&bitptr, 32);
+
+						/*uint32_t musicCRC =*/mad_bit_read(&bitptr, 32);
+
+						/*uint32_t tagCRC =*/mad_bit_read(&bitptr, 32);
+
+						ancBitsRemainingXing -= LAME_HEADER_SIZE;
+
+						_foundLAMEHeader = YES;
+						break;
+					}
 				}
+			}
+			
+			const size_t vbri_offset = 4 + 32;
+			
+			size_t ancBitsRemainingVBRI = ancillaryBitsRemaining - vbri_offset * 8;
+			
+			if(ancBitsRemainingVBRI >= 32) {
+				const uint8_t *ptr = stream.this_frame + vbri_offset;
+				struct mad_bitptr bitptr;
+				mad_bit_init(&bitptr, ptr);
+				
+				uint32_t magic = (uint32_t)mad_bit_read(&bitptr, 32);
+				ancBitsRemainingVBRI -= 32;
+			
+				if('VBRI' == magic) {
+					struct VbriHeader *vbri_header = 0;
+					if(readVbriHeader(&vbri_header, mad_bit_nextbyte(&bitptr), ancBitsRemainingVBRI / 8) == 0) {
+						uint32_t frames = VbriTotalFrames(vbri_header);
+						totalFrames = frames * samplesPerMPEGFrame;
+						_startPadding = 0;
+						_endPadding = 0;
 
-				// 4 byte value containing total bytes
-				if(BYTES_FLAG & flags) {
-					if(32 > ancillaryBitsRemaining)
-						continue;
+						_foundVBRIHeader = YES;
+					}
 
-					bytes = (uint32_t)mad_bit_read(&stream.anc_ptr, 32);
-					ancillaryBitsRemaining -= 32;
-				}
+					if(vbri_header) {
+						freeVbriHeader(vbri_header);
+					}
 
-				// 100 bytes containing TOC information
-				if(TOC_FLAG & flags) {
-					if(8 * 100 > ancillaryBitsRemaining)
-						continue;
-
-					for(i = 0; i < 100; ++i)
-						/*_xingTOC[i] = */ mad_bit_read(&stream.anc_ptr, 8);
-
-					ancillaryBitsRemaining -= (8 * 100);
-				}
-
-				// 4 byte value indicating encoded vbr scale
-				if(VBR_SCALE_FLAG & flags) {
-					if(32 > ancillaryBitsRemaining)
-						continue;
-
-					vbrScale = (uint32_t)mad_bit_read(&stream.anc_ptr, 32);
-					ancillaryBitsRemaining -= 32;
-				}
-
-				framesDecoded = frames;
-
-				_foundXingHeader = YES;
-
-				// Loook for the LAME header next
-				// http://gabriel.mp3-tech.org/mp3infotag.html
-				if(32 > ancillaryBitsRemaining)
-					continue;
-				magic = (uint32_t)mad_bit_read(&stream.anc_ptr, 32);
-
-				ancillaryBitsRemaining -= 32;
-
-				if('LAME' == magic || 'Lavf' == magic || 'Lavc' == magic) {
-					if(LAME_HEADER_SIZE > ancillaryBitsRemaining)
-						continue;
-
-					/*unsigned char versionString [5 + 1];
-					memset(versionString, 0, 6);*/
-
-					for(i = 0; i < 5; ++i)
-						/*versionString[i] =*/mad_bit_read(&stream.anc_ptr, 8);
-
-					/*uint8_t infoTagRevision =*/mad_bit_read(&stream.anc_ptr, 4);
-					/*uint8_t vbrMethod =*/mad_bit_read(&stream.anc_ptr, 4);
-
-					/*uint8_t lowpassFilterValue =*/mad_bit_read(&stream.anc_ptr, 8);
-
-					/*float peakSignalAmplitude =*/mad_bit_read(&stream.anc_ptr, 32);
-					/*uint16_t radioReplayGain =*/mad_bit_read(&stream.anc_ptr, 16);
-					/*uint16_t audiophileReplayGain =*/mad_bit_read(&stream.anc_ptr, 16);
-
-					/*uint8_t encodingFlags =*/mad_bit_read(&stream.anc_ptr, 4);
-					/*uint8_t athType =*/mad_bit_read(&stream.anc_ptr, 4);
-
-					/*uint8_t lameBitrate =*/mad_bit_read(&stream.anc_ptr, 8);
-
-					_startPadding = mad_bit_read(&stream.anc_ptr, 12);
-					_endPadding = mad_bit_read(&stream.anc_ptr, 12);
-
-					_startPadding += 528 + 1; // MDCT/filterbank delay
-					_endPadding -= 528 + 1;
-
-					/*uint8_t misc =*/mad_bit_read(&stream.anc_ptr, 8);
-
-					/*uint8_t mp3Gain =*/mad_bit_read(&stream.anc_ptr, 8);
-					/*DLog(@"Gain: %i", mp3Gain);*/
-
-					/*uint8_t unused =*/mad_bit_read(&stream.anc_ptr, 2);
-					/*uint8_t surroundInfo =*/mad_bit_read(&stream.anc_ptr, 3);
-					/*uint16_t presetInfo =*/mad_bit_read(&stream.anc_ptr, 11);
-
-					/*uint32_t musicGain =*/mad_bit_read(&stream.anc_ptr, 32);
-
-					/*uint32_t musicCRC =*/mad_bit_read(&stream.anc_ptr, 32);
-
-					/*uint32_t tagCRC =*/mad_bit_read(&stream.anc_ptr, 32);
-
-					ancillaryBitsRemaining -= LAME_HEADER_SIZE;
-
-					_foundLAMEHeader = YES;
 					break;
 				}
-			} else if('VBRI' == magic) {
-				struct VbriHeader *vbri_header = 0;
-				if(readVbriHeader(&vbri_header, mad_bit_nextbyte(&stream.anc_ptr), ancillaryBitsRemaining / 8) == 0) {
-					uint32_t frames = VbriTotalFrames(vbri_header);
-					totalFrames = frames * samplesPerMPEGFrame;
-					_startPadding = 0;
-					_endPadding = 0;
-
-					_foundVBRIHeader = YES;
-				}
-
-				if(vbri_header) {
-					freeVbriHeader(vbri_header);
-				}
-
-				break;
 			}
 		} else if(_foundXingHeader || _foundiTunSMPB || _foundVBRIHeader) {
 			break;
