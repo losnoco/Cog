@@ -119,9 +119,14 @@
 - (BOOL)matchesPath:(NSURL *)url {
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	for(NSDictionary *entry in [self arrangedObjects]) {
-		NSURL *testPath = [NSURL fileURLWithPath:[entry objectForKey:@"path"]];
-		if([sandboxBrokerClass isPath:url aSubdirectoryOf:testPath])
-			return YES;
+		if([[entry objectForKey:@"valid"] isEqualToString:NSLocalizedPrefString(@"ValidYes")]) {
+			NSString *path = [entry objectForKey:@"path"];
+			if(path && [path length]) {
+				NSURL *testPath = [NSURL fileURLWithPath:[entry objectForKey:@"path"]];
+				if([sandboxBrokerClass isPath:url aSubdirectoryOf:testPath])
+					return YES;
+			}
+		}
 	}
 	return NO;
 }
