@@ -28,6 +28,8 @@ typedef enum {
 	NSOperationQueue *queue;
 
 	BOOL metadataLoadInProgress;
+
+	NSMutableDictionary *queuedURLs;
 }
 
 - (void)initDefaults;

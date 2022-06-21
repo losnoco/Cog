@@ -52,6 +52,8 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 
 		queue = [[NSOperationQueue alloc] init];
 		[queue setMaxConcurrentOperationCount:8];
+
+		queuedURLs = [[NSMutableDictionary alloc] init];
 	}
 
 	return self;
@@ -587,44 +589,68 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
+NSURL *_Nullable urlForPath(NSString *_Nullable path);
+
 - (void)loadInfoForEntries:(NSArray *)entries {
+	NSMutableDictionary *queueThisJob = [[NSMutableDictionary alloc] init];
+	for(PlaylistEntry *pe in entries) {
+		if(!pe || !pe.urlString || pe.deLeted || pe.metadataLoaded) continue;
+
+		NSString *path = pe.urlString;
+		NSMutableArray *entrySet = [queueThisJob objectForKey:path];
+		if(!entrySet) {
+			entrySet = [[NSMutableArray alloc] init];
+			[entrySet addObject:pe];
+			[queueThisJob setObject:entrySet forKey:path];
+		} else {
+			[entrySet addObject:pe];
+		}
+	}
+
+	@synchronized(queuedURLs) {
+		if([queuedURLs count]) {
+			for(NSString *key in [queueThisJob allKeys]) {
+				if([queuedURLs objectForKey:key]) {
+					[queueThisJob removeObjectForKey:key];
+				}
+			}
+		}
+	}
+
+	if(![queueThisJob count]) {
+		[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+		[self completeProgress];
+		metadataLoadInProgress = NO;
+		return;
+	}
+
+	size_t count = 0;
+	do {
+		@synchronized(queuedURLs) {
+			count = [queuedURLs count];
+		}
+		if(count) usleep(5000);
+	} while(count > 0);
+
+	@synchronized(queuedURLs) {
+		[queuedURLs addEntriesFromDictionary:queueThisJob];
+	}
+
 	NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
-	long i, j;
-	NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
 
 	__block double progress = 0.0;
 
 	double progressstep;
 
-	if(metadataLoadInProgress && [entries count]) {
-		progressstep = 100.0 / (double)([entries count] + 1);
+	if(metadataLoadInProgress && [queueThisJob count]) {
+		progressstep = 100.0 / (double)([queueThisJob count] + 1);
 		progress = progressstep;
-	} else if([entries count]) {
+	} else if([queueThisJob count]) {
 		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"")];
 		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"") percentOfTotal:50.0];
 
 		progressstep = 100.0 / (double)([entries count]);
 		progress = 0.0;
-	}
-
-	i = 0;
-	j = 0;
-	for(PlaylistEntry *pe in entries) {
-		long idx = j++;
-
-		if([pe metadataLoaded]) continue;
-
-		[update_indexes addIndex:pe.index];
-		[load_info_indexes addIndex:idx];
-
-		++i;
-	}
-
-	if(!i) {
-		[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-		[self completeProgress];
-		metadataLoadInProgress = NO;
-		return;
 	}
 
 	NSLock *outLock = [[NSLock alloc] init];
@@ -635,47 +661,37 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	__block NSMutableArray *weakArray = outArray;
 	__block RedundantPlaylistDataStore *weakDataStore = dataStore;
 
-	{
-		[load_info_indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *_Nonnull stop) {
-			__block PlaylistEntry *weakPe = [entries objectAtIndex:idx];
+	__block NSMutableDictionary *uniquePathsEntries = [[NSMutableDictionary alloc] init];
 
+	{
+		for(NSString *key in queueThisJob) {
 			NSBlockOperation *op = [[NSBlockOperation alloc] init];
+			NSURL *url = urlForPath(key);
 
 			[op addExecutionBlock:^{
-				if(weakPe.deLeted || !weakPe.url) {
-					[weakLock lock];
-					if(!weakPe.url) {
-						weakPe.error = YES;
-						weakPe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
-					}
-					progress += progressstep;
-					[self setProgressJobStatus:progress];
-					[weakLock unlock];
-					return;
-				}
+				DLog(@"Loading metadata for %@", url);
+				[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", url];
 
-				DLog(@"Loading metadata for %@", weakPe.url);
-				[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", weakPe.url];
-
-				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:weakPe.url];
+				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:url];
 				if(entryProperties == nil)
 					return;
 
-				NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:weakPe.url];
+				NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:url];
 
 				NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:entryMetadata];
 
 				[weakLock lock];
 				entryInfo = [weakDataStore coalesceEntryInfo:entryInfo];
-				[weakArray addObject:weakPe];
+				[weakArray addObject:key];
 				[weakArray addObject:entryInfo];
+				[uniquePathsEntries setObject:[[NSMutableArray alloc] init] forKey:key];
 				progress += progressstep;
 				[self setProgressJobStatus:progress];
 				[weakLock unlock];
 			}];
 
 			[queue addOperation:op];
-		}];
+		}
 	}
 
 	[queue waitUntilAllOperationsAreFinished];
@@ -687,13 +703,43 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	progressstep = 200.0 / (double)([outArray count]);
 
-	for(i = 0, j = [outArray count]; i < j; i += 2) {
-		__block PlaylistEntry *weakPe = [outArray objectAtIndex:i];
-		__block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
-		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-			if(!weakPe.deLeted) {
-				[weakPe setMetadata:entryInfo];
+	NSManagedObjectContext *moc = playlistController.persistentContainer.viewContext;
+
+	NSPredicate *hasUrlPredicate = [NSPredicate predicateWithFormat:@"urlString != nil && urlString != %@", @""];
+	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+
+	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, hasUrlPredicate]];
+
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+	request.predicate = predicate;
+
+	NSError *error;
+	NSArray *results = [moc executeFetchRequest:request error:&error];
+
+	if(results && [results count] > 0) {
+		for(PlaylistEntry *pe in results) {
+			NSMutableArray *entrySet = [uniquePathsEntries objectForKey:pe.urlString];
+			if(entrySet) {
+				[entrySet addObject:pe];
 			}
+		}
+	}
+
+	for(size_t i = 0, j = [outArray count]; i < j; i += 2) {
+		__block NSString *entryKey = [outArray objectAtIndex:i];
+		__block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
+		__block NSMutableIndexSet *weakUpdateIndexes = update_indexes;
+		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+			NSArray *entrySet = [uniquePathsEntries objectForKey:entryKey];
+			if(entrySet) {
+				for(PlaylistEntry *pe in entrySet) {
+					[pe setMetadata:entryInfo];
+					if(pe.index >= 0 && pe.index < NSNotFound) {
+						[weakUpdateIndexes addIndex:pe.index];
+					}
+				}
+			}
+
 			progress += progressstep;
 			[self setProgressJobStatus:progress];
 		});
@@ -710,6 +756,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			unsigned long columns = [[[weakPlaylistView documentView] tableColumns] count];
 			[weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 		});
+	}
+
+	@synchronized(queuedURLs) {
+		[queuedURLs removeObjectsForKeys:[queueThisJob allKeys]];
 	}
 
 	[self completeProgress];
