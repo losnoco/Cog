@@ -30,6 +30,14 @@ static SandboxBroker *__sharedSandboxBroker = nil;
 @end
 
 static NSURL *urlWithoutFragment(NSURL *u) {
+	if(![u isFileURL]) return u;
+
+	NSNumber *isDirectory;
+
+	BOOL success = [u getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+
+	if(success && [isDirectory boolValue]) return u;
+
 	NSString *s = [u path];
 
 	NSString *lastComponent = [u lastPathComponent];
