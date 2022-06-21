@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
+		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
+		0A9CEA042861501700E47168 /* AboutWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A9CEA022861501700E47168 /* AboutWindowController.xib */; };
+		0A9CEA092861506A00E47168 /* AboutCog.jp2 in Resources */ = {isa = PBXBuildFile; fileRef = 0A9CEA082861506A00E47168 /* AboutCog.jp2 */; };
+		0A9CEA0B286152DF00E47168 /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA0A286152DF00E47168 /* DraggableView.swift */; };
 		170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */; };
 		171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57D90C091F2B00F6AFAF /* flac.icns */; };
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
@@ -758,6 +762,10 @@
 		07D971E50ED1DAA800E7602E /* TagEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagEditorController.m; path = TagEditor/TagEditorController.m; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
+		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
+		0A9CEA022861501700E47168 /* AboutWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = AboutWindowController.xib; path = Window/AboutWindowController.xib; sourceTree = "<group>"; };
+		0A9CEA082861506A00E47168 /* AboutCog.jp2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = AboutCog.jp2; sourceTree = "<group>"; };
+		0A9CEA0A286152DF00E47168 /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DraggableView.swift; path = Window/DraggableView.swift; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusImageTransformer.h; sourceTree = "<group>"; };
 		170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusImageTransformer.m; sourceTree = "<group>"; };
@@ -1260,6 +1268,7 @@
 		177EC02D0B8BC2E60000BC8C /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				0A9CEA082861506A00E47168 /* AboutCog.jp2 */,
 				8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */,
 				8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */,
 				8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */,
@@ -1448,6 +1457,9 @@
 				17E0D6190F520F9F005B6FED /* VolumeButton.m */,
 				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
 				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
+				0A9CEA012861501700E47168 /* AboutWindowController.swift */,
+				0A9CEA022861501700E47168 /* AboutWindowController.xib */,
+				0A9CEA0A286152DF00E47168 /* DraggableView.swift */,
 			);
 			name = Window;
 			sourceTree = "<group>";
@@ -2526,12 +2538,14 @@
 				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
 				83229CA0283B0095004626A8 /* SpectrumWindow.xib in Resources */,
+				0A9CEA042861501700E47168 /* AboutWindowController.xib in Resources */,
 				836F462A28207FA4005B9B87 /* PauseColorful.png in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
 				83ED3AD1279A91C000904199 /* hdcdLogoTemplate.pdf in Resources */,
 				836F462328207F55005B9B87 /* PlayNormal.png in Resources */,
 				8384916318083EAB00E7332D /* repeatModeAlbumTemplate.pdf in Resources */,
+				0A9CEA092861506A00E47168 /* AboutCog.jp2 in Resources */,
 				83978E29285C5C0A0076ED21 /* GoogleService-Info.plist in Resources */,
 				8384916118083EAB00E7332D /* previousTemplate.pdf in Resources */,
 				1778D3B00F645A190037E7A0 /* missingArt.png in Resources */,
@@ -2607,6 +2621,7 @@
 				EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
+				0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */,
 				5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */,
 				56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */,
 				830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */,
@@ -2626,6 +2641,7 @@
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
+				0A9CEA0B286152DF00E47168 /* DraggableView.swift in Sources */,
 				83988F0E27BE0A5900A0E89A /* RedundantPlaylistDataStore.m in Sources */,
 				179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */,
 				179D03240E0CB2500064A77A /* FileTreeController.m in Sources */,
