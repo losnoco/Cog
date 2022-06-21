@@ -23,6 +23,7 @@
         <attribute name="channelConfig" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="channels" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="codec" optional="YES" attributeType="String"/>
+        <attribute name="countAdded" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="cuesheet" optional="YES" attributeType="String"/>
         <attribute name="current" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="currentPosition" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -67,7 +68,7 @@
     <elements>
         <element name="AlbumArtwork" positionX="0" positionY="207" width="128" height="59"/>
         <element name="PlayCount" positionX="-18" positionY="171" width="128" height="134"/>
-        <element name="PlaylistEntry" positionX="-36" positionY="9" width="128" height="704"/>
+        <element name="PlaylistEntry" positionX="-36" positionY="9" width="128" height="719"/>
         <element name="SandboxToken" positionX="-18" positionY="171" width="128" height="59"/>
     </elements>
 </model>

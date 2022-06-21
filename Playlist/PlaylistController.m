@@ -246,6 +246,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)updatePlayCountForTrack:(PlaylistEntry *)pe {
+	if(pe.countAdded) return;
+	pe.countAdded = YES;
+
 	PlayCount *pc = pe.playCountItem;
 
 	if(pc) {
@@ -1393,6 +1396,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		currentEntry.current = NO;
 		currentEntry.stopAfter = NO;
 		currentEntry.currentPosition = 0.0;
+		currentEntry.countAdded = NO;
 	}
 
 	if(pe) {

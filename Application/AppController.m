@@ -217,7 +217,9 @@ BOOL kAppControllerShuttingDown = NO;
 				[playbackController playEntryAtIndex:pe.index startPaused:(lastStatus == CogStatusPaused) andSeekTo:@(pe.currentPosition)];
 			} else {
 				pe.current = NO;
+				pe.stopAfter = NO;
 				pe.currentPosition = 0.0;
+				pe.countAdded = NO;
 				[playlistController commitPersistentStore];
 			}
 		}
