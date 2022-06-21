@@ -38,7 +38,7 @@ class AboutWindowController: NSWindowController {
         appName.stringValue = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
         
         let shortVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-        let fullVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+        let fullVersionString = Bundle.main.object(forInfoDictionaryKey: "GitVersion") as! String
         
         appVersion.stringValue = String.localizedStringWithFormat(            NSLocalizedString("Version %@ (%@)", comment: "Version string"), shortVersionString, fullVersionString);
         
