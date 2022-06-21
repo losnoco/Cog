@@ -144,7 +144,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 
 - (SandboxEntry *)recursivePathTest:(NSURL *)url {
 	for(SandboxEntry *entry in storage) {
-		if([SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
+		if(entry.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
 			entry.refCount += 1;
 			return entry;
 		}
@@ -162,10 +162,8 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 
 	if(results && [results count] > 0) {
 		for(SandboxToken *token in results) {
-			if([SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
+			if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
 				SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
-
-				[storage addObject:entry];
 
 				BOOL isStale;
 				NSError *err = nil;
@@ -176,6 +174,8 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 				}
 
 				entry.secureUrl = secureUrl;
+
+				[storage addObject:entry];
 
 				[secureUrl startAccessingSecurityScopedResource];
 
