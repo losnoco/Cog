@@ -16,8 +16,8 @@
 #import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
-extern NSPersistentContainer *__persistentContainer;
-extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
+extern NSPersistentContainer *kPersistentContainer;
+extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 @implementation PlaylistEntry (Extension)
 
@@ -344,7 +344,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 @dynamic albumArtInternal;
 - (NSData *)albumArtInternal {
 	NSString *imageCacheTag = self.artHash;
-	return [__artworkDictionary objectForKey:imageCacheTag].artData;
+	return [kArtworkDictionary objectForKey:imageCacheTag].artData;
 }
 
 - (void)setAlbumArtInternal:(NSData *)albumArtInternal {
@@ -354,12 +354,12 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
 
 	self.artHash = imageCacheTag;
 
-	if(![__artworkDictionary objectForKey:imageCacheTag]) {
-		AlbumArtwork *art = [NSEntityDescription insertNewObjectForEntityForName:@"AlbumArtwork" inManagedObjectContext:__persistentContainer.viewContext];
+	if(![kArtworkDictionary objectForKey:imageCacheTag]) {
+		AlbumArtwork *art = [NSEntityDescription insertNewObjectForEntityForName:@"AlbumArtwork" inManagedObjectContext:kPersistentContainer.viewContext];
 		art.artHash = imageCacheTag;
 		art.artData = albumArtInternal;
 
-		[__artworkDictionary setObject:art forKey:imageCacheTag];
+		[kArtworkDictionary setObject:art forKey:imageCacheTag];
 	}
 }
 
@@ -505,7 +505,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	request.predicate = predicate;
 
 	NSError *error = nil;
-	NSArray *results = [__persistentContainer.viewContext executeFetchRequest:request error:&error];
+	NSArray *results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
 
 	if(!results || [results count] < 1) {
 		NSPredicate *filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filename];
@@ -513,7 +513,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
 		request.predicate = filenamePredicate;
 
-		results = [__persistentContainer.viewContext executeFetchRequest:request error:&error];
+		results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
 	}
 
 	if(!results || [results count] < 1) return nil;

@@ -41,7 +41,7 @@
 
 @import Firebase;
 
-extern NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary;
+extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 @implementation PlaylistLoader
 
@@ -839,7 +839,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		}
 
 		for(AlbumArtwork *art in results) {
-			[__artworkDictionary setObject:art forKey:art.artHash];
+			[kArtworkDictionary setObject:art forKey:art.artHash];
 		}
 
 		request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];

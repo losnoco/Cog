@@ -17,17 +17,7 @@
 
 #import "PlaylistController.h"
 
-static SandboxBroker *__sharedSandboxBroker = nil;
-
-@interface NSApplication (SandboxBrokerExtension)
-- (SandboxBroker *)sharedSandboxBroker;
-@end
-
-@implementation NSApplication (SandboxBrokerExtension)
-- (SandboxBroker *)sharedSandboxBroker {
-	return __sharedSandboxBroker;
-}
-@end
+static SandboxBroker *kSharedSandboxBroker = nil;
 
 static NSURL *urlWithoutFragment(NSURL *u) {
 	if(![u isFileURL]) return u;
@@ -111,9 +101,13 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 + (id)sharedSandboxBroker {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		__sharedSandboxBroker = [[self alloc] init];
+		kSharedSandboxBroker = [[self alloc] init];
 	});
-	return [NSApp sharedSandboxBroker];
+	return kSharedSandboxBroker;
+}
+
++ (NSPersistentContainer *)sharedPersistentContainer {
+	return [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 }
 
 - (id)init {
@@ -156,7 +150,7 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 		}
 	}
 
-	NSPersistentContainer *pc = [NSApp sharedPersistentContainer];
+	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
 
@@ -196,7 +190,6 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
 	NSURL *folderUrl = [urlWithoutFragment(fileUrl) URLByDeletingLastPathComponent];
 	if(![folderUrl isFileURL]) return NULL;
-	if(![NSApp respondsToSelector:@selector(sharedPersistentContainer)]) return NULL;
 
 	SandboxEntry *entry;
 

@@ -27,13 +27,7 @@
 
 extern BOOL kAppControllerShuttingDown;
 
-NSPersistentContainer *__persistentContainer = nil;
-
-@implementation NSApplication (CoreDataStorageExtension)
-- (NSPersistentContainer *_Nonnull)sharedPersistentContainer {
-	return __persistentContainer;
-}
-@end
+NSPersistentContainer *kPersistentContainer = nil;
 
 @implementation PlaylistController
 
@@ -43,7 +37,7 @@ NSPersistentContainer *__persistentContainer = nil;
 
 static NSArray *cellIdentifiers = nil;
 
-NSMutableDictionary<NSString *, AlbumArtwork *> *__artworkDictionary = nil;
+NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary = nil;
 
 static void *playlistControllerContext = &playlistControllerContext;
 
@@ -126,14 +120,18 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}
 	}];
 
-	__persistentContainer = self.persistentContainer;
+	kPersistentContainer = self.persistentContainer;
 
 	self.persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
 
 	_persistentArtStorage = [[NSMutableDictionary alloc] init];
-	__artworkDictionary = self.persistentArtStorage;
+	kArtworkDictionary = self.persistentArtStorage;
 
 	return self;
+}
+
++ (NSPersistentContainer *)sharedPersistentContainer {
+	return kPersistentContainer;
 }
 
 - (void)awakeFromNib {

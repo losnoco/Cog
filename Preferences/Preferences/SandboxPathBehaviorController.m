@@ -29,25 +29,23 @@
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES];
 	[self setSortDescriptors:@[sortDescriptor]];
 
-	if([NSApp respondsToSelector:@selector(sharedPersistentContainer)]) {
-		NSPersistentContainer *pc = [NSApp sharedPersistentContainer];
+	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
-		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 
-		NSError *error = nil;
-		NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	NSError *error = nil;
+	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
 
-		if(results && [results count] > 0) {
-			for(SandboxToken *token in results) {
-				BOOL isStale = YES;
-				NSError *err = nil;
-				NSURL *bookmarkUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
-				if(!bookmarkUrl) {
-					ALog(@"Stale bookmark for path: %@, with error: %@", token.path, [err localizedDescription]);
-					continue;
-				}
-				[self addObject:@{ @"path": token.path, @"valid": (isStale ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")) }];
+	if(results && [results count] > 0) {
+		for(SandboxToken *token in results) {
+			BOOL isStale = YES;
+			NSError *err = nil;
+			NSURL *bookmarkUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
+			if(!bookmarkUrl) {
+				ALog(@"Stale bookmark for path: %@, with error: %@", token.path, [err localizedDescription]);
+				continue;
 			}
+			[self addObject:@{ @"path": token.path, @"valid": (isStale ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")) }];
 		}
 	}
 }
@@ -60,10 +58,7 @@
 		return;
 	}
 
-	if(![NSApp respondsToSelector:@selector(sharedPersistentContainer)])
-		return;
-
-	NSPersistentContainer *pc = [NSApp sharedPersistentContainer];
+	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
 
@@ -81,10 +76,7 @@
 }
 
 - (void)removePath:(NSString *)path {
-	if(![NSApp respondsToSelector:@selector(sharedPersistentContainer)])
-		return;
-
-	NSPersistentContainer *pc = [NSApp sharedPersistentContainer];
+	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"path == %@", path];
 

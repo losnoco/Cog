@@ -19,10 +19,6 @@
 @class SpotlightWindowController;
 @class PlaybackController;
 
-@interface NSApplication (CoreDataStorageExtension)
-- (NSPersistentContainer *_Nonnull)sharedPersistentContainer;
-@end
-
 typedef NS_ENUM(NSInteger, RepeatMode) {
 	RepeatModeNoRepeat = 0,
 	RepeatModeRepeatOne,
@@ -69,7 +65,6 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 @property(retain) NSString *_Nullable totalTime;
 @property(retain) NSString *_Nullable currentStatus;
 
-@property(strong, nonatomic, readonly) NSOperationQueue *_Nonnull persistentContainerQueue;
 @property(strong, nonatomic, readonly) NSPersistentContainer *_Nonnull persistentContainer;
 @property(strong, nonatomic, readonly) NSMutableDictionary<NSString *, AlbumArtwork *> *_Nonnull persistentArtStorage;
 
@@ -138,6 +133,8 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 // internal methods for data store init
 - (void)readQueueFromDataStore;
 - (void)readShuffleListFromDataStore;
+
++ (NSPersistentContainer *_Nonnull)sharedPersistentContainer;
 
 // reload metadata of selection
 - (IBAction)reloadTags:(id _Nullable)sender;
