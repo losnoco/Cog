@@ -667,6 +667,72 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	return YES;
 }
 
+- (void)audioOutputBlock {
+	__block AudioUnit eq = _eq;
+	__block AudioStreamBasicDescription *format = &deviceFormat;
+	__block BOOL *eqEnabled = &self->eqEnabled;
+	__block void *refCon = (__bridge void *)self;
+
+#ifdef OUTPUT_LOG
+	__block FILE *logFile = _logFile;
+#endif
+
+	_au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags *_Nonnull actionFlags, const AudioTimeStamp *_Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList *_Nonnull inputData) {
+		// This expects multiple buffers, so:
+		int i;
+		const int channels = format->mChannelsPerFrame;
+		const int channelsminusone = channels - 1;
+		float buffers[frameCount * format->mChannelsPerFrame];
+		uint8_t bufferlistbuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
+		AudioBufferList *ioData = (AudioBufferList *)(bufferlistbuffer);
+
+		ioData->mNumberBuffers = channels;
+
+		memset(buffers, 0, sizeof(buffers));
+
+		for(i = 0; i < channels; ++i) {
+			ioData->mBuffers[i].mNumberChannels = 1;
+			ioData->mBuffers[i].mData = buffers + frameCount * i;
+			ioData->mBuffers[i].mDataByteSize = frameCount * sizeof(float);
+		}
+
+		OSStatus ret;
+
+		if(*eqEnabled)
+			ret = AudioUnitRender(eq, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
+		else
+			ret = renderCallback(refCon, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
+
+		if(ret)
+			return ret;
+
+		for(i = 0; i < channels; ++i) {
+			float *outBuffer = ((float *)inputData->mBuffers[0].mData) + i;
+			const float *inBuffer = ((float *)ioData->mBuffers[i].mData);
+			const int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
+			cblas_scopy(frameCount, inBuffer, 1, outBuffer, channels);
+		}
+
+#ifdef OUTPUT_LOG
+		if(logFile) {
+			fwrite(inputData->mBuffers[0].mData, 1, inputData->mBuffers[0].mDataByteSize, logFile);
+		}
+
+		// memset(inputData->mBuffers[0].mData, 0, inputData->mBuffers[0].mDataByteSize);
+#endif
+
+		inputData->mBuffers[0].mNumberChannels = channels;
+
+#ifdef _DEBUG
+		[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData
+								amount:inputData->mBuffers[0].mDataByteSize / sizeof(float)
+							  location:@"final output"];
+#endif
+
+		return 0;
+	};
+}
+
 - (BOOL)setup {
 	if(_au)
 		[self stop];
@@ -729,69 +795,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		[self updateDeviceFormat];
 
-		__block AudioUnit eq = _eq;
-		__block AudioStreamBasicDescription *format = &deviceFormat;
-		__block BOOL *eqEnabled = &self->eqEnabled;
-		__block void *refCon = (__bridge void *)self;
-
-#ifdef OUTPUT_LOG
-		__block FILE *logFile = _logFile;
-#endif
-
-		_au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags *_Nonnull actionFlags, const AudioTimeStamp *_Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList *_Nonnull inputData) {
-			// This expects multiple buffers, so:
-			int i;
-			const int channels = format->mChannelsPerFrame;
-			const int channelsminusone = channels - 1;
-			float buffers[frameCount * format->mChannelsPerFrame];
-			uint8_t bufferlistbuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
-			AudioBufferList *ioData = (AudioBufferList *)(bufferlistbuffer);
-
-			ioData->mNumberBuffers = channels;
-
-			memset(buffers, 0, sizeof(buffers));
-
-			for(i = 0; i < channels; ++i) {
-				ioData->mBuffers[i].mNumberChannels = 1;
-				ioData->mBuffers[i].mData = buffers + frameCount * i;
-				ioData->mBuffers[i].mDataByteSize = frameCount * sizeof(float);
-			}
-
-			OSStatus ret;
-
-			if(*eqEnabled)
-				ret = AudioUnitRender(eq, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
-			else
-				ret = renderCallback(refCon, actionFlags, timestamp, (UInt32)inputBusNumber, frameCount, ioData);
-
-			if(ret)
-				return ret;
-
-			for(i = 0; i < channels; ++i) {
-				float *outBuffer = ((float *)inputData->mBuffers[0].mData) + i;
-				const float *inBuffer = ((float *)ioData->mBuffers[i].mData);
-				const int frameCount = ioData->mBuffers[i].mDataByteSize / sizeof(float);
-				cblas_scopy(frameCount, inBuffer, 1, outBuffer, channels);
-			}
-
-#ifdef OUTPUT_LOG
-			if(logFile) {
-				fwrite(inputData->mBuffers[0].mData, 1, inputData->mBuffers[0].mDataByteSize, logFile);
-			}
-
-			// memset(inputData->mBuffers[0].mData, 0, inputData->mBuffers[0].mDataByteSize);
-#endif
-
-			inputData->mBuffers[0].mNumberChannels = channels;
-
-#ifdef _DEBUG
-			[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData
-			                        amount:inputData->mBuffers[0].mDataByteSize / sizeof(float)
-			                      location:@"final output"];
-#endif
-
-			return 0;
-		};
+		[self audioOutputBlock];
 
 		[_au setMaximumFramesToRender:512];
 
