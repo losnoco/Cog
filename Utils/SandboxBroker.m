@@ -125,112 +125,102 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 	}
 }
 
-- (void)recursivePathTest:(NSURL *)url removing:(BOOL)removing {
-	NSArray *pathComponents = [url pathComponents];
++ (BOOL)isPath:(NSURL *)path aSubdirectoryOf:(NSURL *)directory {
+	NSArray *pathComponents = [path pathComponents];
+	NSArray *directoryComponents = [directory pathComponents];
 
-	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:NO];
+	if([pathComponents count] < [directoryComponents count])
+		return NO;
 
-	for(size_t i = [pathComponents count]; i > 0; --i) {
-		NSArray *partialComponents = [pathComponents subarrayWithRange:NSMakeRange(0, i)];
-		NSURL *partialUrl = [NSURL fileURLWithPathComponents:partialComponents];
-		NSString *matchString = [[partialUrl path] stringByAppendingString:@"*"];
-
-		NSPredicate *predicate = [NSPredicate predicateWithFormat:@"path like %@", matchString];
-
-		NSArray *matchingObjects = [storage filteredArrayUsingPredicate:predicate];
-
-		if(matchingObjects && [matchingObjects count] > 0) {
-			if([matchingObjects count] > 1) {
-				matchingObjects = [matchingObjects sortedArrayUsingDescriptors:@[sortDescriptor]];
-			}
-
-			for(SandboxEntry *entry in matchingObjects) {
-				if([entry.path isEqualToString:[partialUrl path]]) {
-					if(!removing) {
-						entry.refCount += 1;
-						return;
-					} else {
-						if(entry.refCount > 1) {
-							entry.refCount -= 1;
-							return;
-						} else {
-							if(entry.secureUrl) {
-								[entry.secureUrl stopAccessingSecurityScopedResource];
-								entry.secureUrl = nil;
-							}
-							entry.refCount = 0;
-
-							[storage removeObject:entry];
-							return;
-						}
-					}
-				}
-			}
-		}
+	for(size_t i = 0; i < [directoryComponents count]; ++i) {
+		if(![pathComponents[i] isEqualToString:directoryComponents[i]])
+			return NO;
 	}
 
-	if(removing) return;
+	return YES;
+}
+
+- (SandboxEntry *)recursivePathTest:(NSURL *)url {
+	for(SandboxEntry *entry in storage) {
+		if([SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
+			entry.refCount += 1;
+			return entry;
+		}
+	}
 
 	NSPersistentContainer *pc = [NSApp sharedPersistentContainer];
 
-	for(size_t i = [pathComponents count]; i > 0; --i) {
-		NSArray *partialComponents = [pathComponents subarrayWithRange:NSMakeRange(0, i)];
-		NSURL *partialUrl = [NSURL fileURLWithPathComponents:partialComponents];
-		NSString *matchString = [[partialUrl path] stringByAppendingString:@"*"];
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
 
-		NSPredicate *predicate = [NSPredicate predicateWithFormat:@"path like %@", matchString];
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+	request.sortDescriptors = @[sortDescriptor];
 
-		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
-		request.predicate = predicate;
-		request.sortDescriptors = @[sortDescriptor];
+	NSError *error = nil;
+	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
 
-		NSError *error = nil;
-		NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	if(results && [results count] > 0) {
+		for(SandboxToken *token in results) {
+			if([SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
+				SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
 
-		if(results && [results count] > 0) {
-			for(SandboxToken *token in results) {
-				if([token.path isEqualToString:[partialUrl path]]) {
-					SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+				[storage addObject:entry];
 
-					[storage addObject:entry];
-
-					BOOL isStale;
-					NSError *err = nil;
-					NSURL *secureUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
-					if(!secureUrl && err) {
-						ALog(@"Failed to access bookmark for URL: %@, error: %@", token.path, [err localizedDescription]);
-						return;
-					}
-
-					entry.secureUrl = secureUrl;
-
-					[secureUrl startAccessingSecurityScopedResource];
-
-					return;
+				BOOL isStale;
+				NSError *err = nil;
+				NSURL *secureUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
+				if(!secureUrl && err) {
+					ALog(@"Failed to access bookmark for URL: %@, error: %@", token.path, [err localizedDescription]);
+					return nil;
 				}
+
+				entry.secureUrl = secureUrl;
+
+				[secureUrl startAccessingSecurityScopedResource];
+
+				return entry;
 			}
 		}
 	}
 
-	return;
+	return nil;
 }
 
-- (void)beginFolderAccess:(NSURL *)fileUrl {
+- (const void *)beginFolderAccess:(NSURL *)fileUrl {
 	NSURL *folderUrl = [urlWithoutFragment(fileUrl) URLByDeletingLastPathComponent];
-	if(![folderUrl isFileURL]) return;
-	if(![NSApp respondsToSelector:@selector(sharedPersistentContainer)]) return;
+	if(![folderUrl isFileURL]) return NULL;
+	if(![NSApp respondsToSelector:@selector(sharedPersistentContainer)]) return NULL;
+
+	SandboxEntry *entry;
 
 	@synchronized(self) {
-		[self recursivePathTest:folderUrl removing:NO];
+		entry = [self recursivePathTest:folderUrl];
+	}
+
+	if(entry) {
+		return CFBridgingRetain(entry);
+	} else {
+		return NULL;
 	}
 }
 
-- (void)endFolderAccess:(NSURL *)fileUrl {
-	NSURL *folderUrl = [urlWithoutFragment(fileUrl) URLByDeletingLastPathComponent];
-	if(![folderUrl isFileURL]) return;
+- (void)endFolderAccess:(const void *)handle {
+	if(!handle) return;
+	SandboxEntry *entry = CFBridgingRelease(handle);
+	if(!entry) return;
 
 	@synchronized(self) {
-		[self recursivePathTest:folderUrl removing:YES];
+		if(entry.refCount > 1) {
+			entry.refCount -= 1;
+			return;
+		} else {
+			if(entry.secureUrl) {
+				[entry.secureUrl stopAccessingSecurityScopedResource];
+				entry.secureUrl = nil;
+			}
+			entry.refCount = 0;
+
+			[storage removeObject:entry];
+		}
 	}
 }
 

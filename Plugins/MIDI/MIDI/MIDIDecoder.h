@@ -24,7 +24,7 @@ class BMPlayer;
 	MIDIPlayer* player;
 	midi_container midi_file;
 
-	NSURL* sandboxURL;
+	const void* sbHandle;
 
 	NSString* globalSoundFontPath;
 	BOOL soundFontsAssigned;

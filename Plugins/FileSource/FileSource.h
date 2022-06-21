@@ -21,6 +21,8 @@
 	FILE *_fd;
 
 	NSURL *_url;
+
+	const void *sbHandle;
 }
 
 @end

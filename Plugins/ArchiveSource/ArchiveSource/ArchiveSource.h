@@ -20,7 +20,8 @@
 	NSUInteger size;
 
 	NSURL *_url;
-	NSURL *fileURL;
+
+	const void *sbHandle;
 }
 
 @end

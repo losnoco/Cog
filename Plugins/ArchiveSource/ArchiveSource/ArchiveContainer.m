@@ -48,7 +48,7 @@ static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString 
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-	[sandboxBroker beginFolderAccess:url];
+	const void *sbHandle = [sandboxBroker beginFolderAccess:url];
 
 	fex_t *fex;
 	fex_err_t error = fex_open(&fex, [[url path] UTF8String]);
@@ -68,7 +68,7 @@ static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString 
 
 	fex_close(fex);
 
-	[sandboxBroker endFolderAccess:url];
+	[sandboxBroker endFolderAccess:sbHandle];
 
 	return files;
 }

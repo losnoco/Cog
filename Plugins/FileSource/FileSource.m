@@ -31,7 +31,7 @@
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-	[sandboxBroker beginFolderAccess:url];
+	sbHandle = [sandboxBroker beginFolderAccess:url];
 
 	NSString *path = [url path];
 
@@ -131,10 +131,13 @@
 		fex = NULL;
 	}
 
-	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
-	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+	if(sbHandle) {
+		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+		id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-	[sandboxBroker endFolderAccess:_url];
+		[sandboxBroker endFolderAccess:sbHandle];
+		sbHandle = NULL;
+	}
 }
 
 - (NSURL *)url {

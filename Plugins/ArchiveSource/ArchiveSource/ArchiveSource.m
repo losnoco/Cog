@@ -85,12 +85,10 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 	if(![type isEqualToString:@"fex"])
 		return NO;
 
-	fileURL = [NSURL fileURLWithPath:archive];
-
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-	[sandboxBroker beginFolderAccess:fileURL];
+	sbHandle = [sandboxBroker beginFolderAccess:[NSURL fileURLWithPath:archive]];
 
 	fex_err_t error;
 
@@ -161,11 +159,12 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 		fex = NULL;
 	}
 
-	if(fileURL) {
+	if(sbHandle) {
 		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 		id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-		[sandboxBroker endFolderAccess:fileURL];
+		[sandboxBroker endFolderAccess:sbHandle];
+		sbHandle = NULL;
 	}
 }
 

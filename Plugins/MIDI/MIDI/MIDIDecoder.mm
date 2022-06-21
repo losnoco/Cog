@@ -168,12 +168,14 @@ static OSType getOSType(const char *in_) {
 	globalSoundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
 
 	if(globalSoundFontPath && [globalSoundFontPath length] > 0) {
-		sandboxURL = [NSURL fileURLWithPath:[globalSoundFontPath stringByDeletingLastPathComponent]];
+		NSURL *sandboxURL = [NSURL fileURLWithPath:[globalSoundFontPath stringByDeletingLastPathComponent]];
 
 		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 		id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-		[sandboxBroker beginFolderAccess:sandboxURL];
+		sbHandle = [sandboxBroker beginFolderAccess:sandboxURL];
+	} else {
+		sbHandle = NULL;
 	}
 
 	// First detect if soundfont has gone AWOL
@@ -345,13 +347,12 @@ static OSType getOSType(const char *in_) {
 	delete player;
 	player = NULL;
 
-	if(sandboxURL) {
+	if(sbHandle) {
 		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 		id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-		[sandboxBroker endFolderAccess:sandboxURL];
-
-		sandboxURL = nil;
+		[sandboxBroker endFolderAccess:sbHandle];
+		sbHandle = NULL;
 	}
 }
 

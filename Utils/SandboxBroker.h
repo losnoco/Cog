@@ -18,8 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (id)init;
 - (void)shutdown;
 
-- (void)beginFolderAccess:(NSURL *)fileUrl;
-- (void)endFolderAccess:(NSURL *)fileUrl;
+- (const void *)beginFolderAccess:(NSURL *)fileUrl;
+- (void)endFolderAccess:(const void *)handle;
 
 @end
 

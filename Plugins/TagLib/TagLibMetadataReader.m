@@ -31,7 +31,7 @@
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 
-	[sandboxBroker beginFolderAccess:url];
+	const void *sbHandle = [sandboxBroker beginFolderAccess:url];
 
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
@@ -237,7 +237,7 @@
 		}
 	}
 
-	[sandboxBroker endFolderAccess:url];
+	[sandboxBroker endFolderAccess:sbHandle];
 
 	return dict;
 }
