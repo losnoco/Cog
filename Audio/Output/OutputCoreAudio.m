@@ -53,6 +53,8 @@ static void scaleBuffersByVolume(AudioBufferList *ioData, float volume) {
 
 static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
 	@autoreleasepool {
+		if(!inRefCon) return 0;
+
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)inRefCon;
 
 		const int channels = _self->deviceFormat.mChannelsPerFrame;
