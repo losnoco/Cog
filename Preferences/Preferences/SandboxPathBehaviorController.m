@@ -70,7 +70,6 @@
 		[pc.viewContext save:&err];
 		if(err) {
 			ALog(@"Error saving bookmark: %@", [err localizedDescription]);
-			[pc.viewContext deleteObject:token];
 		} else {
 			[self addObject:@{ @"path": [url path], @"valid": NSLocalizedPrefString(@"ValidYes") }];
 		}
