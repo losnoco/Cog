@@ -43,6 +43,9 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 }
 
 - (void)refreshDockIcon:(NSInteger)playbackStatus withProgress:(double)progressStatus {
+	// Really weird crash user experienced because the plaque image didn't load?
+	if(!dockImage || dockImage.size.width == 0 || dockImage.size.height == 0) return;
+
 	BOOL displayChanged = NO;
 	BOOL drawIcon = NO;
 	BOOL removeProgress = NO;
