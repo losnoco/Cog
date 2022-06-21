@@ -1150,15 +1150,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (NSArray *)filterPlaylistOnAlbum:(NSString *)album {
-	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil || urlString == nil"];
-
+	NSPredicate *hasUrlPredicate = [NSPredicate predicateWithFormat:@"urlString != nil && urlString != %@", @""];
+	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
+	
 	NSPredicate *searchPredicate;
 	if([album length] > 0)
 		searchPredicate = [NSPredicate predicateWithFormat:@"album == %@", album];
 	else
 		searchPredicate = [NSPredicate predicateWithFormat:@"album == nil || album == %@", @""];
 
-	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, searchPredicate]];
+	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, hasUrlPredicate, searchPredicate]];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"index" ascending:YES];
 
@@ -1253,12 +1254,13 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)readQueueFromDataStore {
-	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil || urlString == nil"];
+	NSPredicate *hasUrlPredicate = [NSPredicate predicateWithFormat:@"urlString != nil && urlString != %@", @""];
+	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
 	NSPredicate *queuedPredicate = [NSPredicate predicateWithFormat:@"queued == YES"];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"queuePosition" ascending:YES];
 
-	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, queuedPredicate]];
+	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, hasUrlPredicate, queuedPredicate]];
 	
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
 	request.predicate = predicate;

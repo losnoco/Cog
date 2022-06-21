@@ -200,10 +200,11 @@ BOOL kAppControllerShuttingDown = NO;
 	int lastStatus = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
 
 	if(lastStatus != CogStatusStopped) {
-		NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil || urlString == nil"];
+		NSPredicate *hasUrlPredicate = [NSPredicate predicateWithFormat:@"urlString != nil && urlString != %@", @""];
+		NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
 		NSPredicate *currentPredicate = [NSPredicate predicateWithFormat:@"current == YES"];
 
-		NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, currentPredicate]];
+		NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, hasUrlPredicate, currentPredicate]];
 
 		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
 		request.predicate = predicate;
