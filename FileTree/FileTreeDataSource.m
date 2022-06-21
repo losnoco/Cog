@@ -13,6 +13,8 @@
 
 #import "Logging.h"
 
+#import "SandboxBroker.h"
+
 static void *kFileTreeDataSourceContext = &kFileTreeDataSourceContext;
 
 static NSURL *defaultMusicDirectory(void) {
@@ -27,10 +29,13 @@ static NSURL *defaultMusicDirectory(void) {
 
 @property NSURL *rootURL;
 
+@property const void *sbHandle;
+
 @end
 
 @implementation FileTreeDataSource {
 	PathNode *rootNode;
+	const void *_sbHandle;
 }
 
 + (void)initialize {
@@ -40,6 +45,7 @@ static NSURL *defaultMusicDirectory(void) {
 }
 
 - (void)awakeFromNib {
+	_sbHandle = NULL;
 	[self.pathControl setTarget:self];
 	[self.pathControl setAction:@selector(pathControlAction:)];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self
@@ -84,6 +90,10 @@ static NSURL *defaultMusicDirectory(void) {
 }
 
 - (void)setRootURL:(NSURL *)rootURL {
+	SandboxBroker *sharedSandboxBroker = [SandboxBroker sharedSandboxBroker];
+	if(self.sbHandle) [sharedSandboxBroker endFolderAccess:self.sbHandle];
+	self.sbHandle = [sharedSandboxBroker beginFolderAccess:rootURL];
+
 	if(![[NSFileManager defaultManager] fileExistsAtPath:[rootURL path]]) {
 		rootURL = defaultMusicDirectory();
 	}
@@ -93,6 +103,18 @@ static NSURL *defaultMusicDirectory(void) {
 	[self.watcher setPath:[rootURL path]];
 
 	[self reloadPathNode:rootNode];
+}
+
+- (const void *)sbHandle {
+	return _sbHandle;
+}
+
+- (void)setSbHandle:(const void *)sbHandle {
+	_sbHandle = sbHandle;
+}
+
+- (void)dealloc {
+	if(self.sbHandle) [[SandboxBroker sharedSandboxBroker] endFolderAccess:self.sbHandle];
 }
 
 - (PathNode *)nodeForPath:(NSString *)path {
