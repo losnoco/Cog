@@ -566,8 +566,12 @@
 		// DLog(@"Read stream.");
 	}
 
+	BOOL skippingBadFrame = NO;
+
 	if(mad_frame_decode(&_frame, &_stream) == -1) {
-		if(MAD_RECOVERABLE(_stream.error)) {
+		if(_stream.error == MAD_ERROR_BADDATAPTR) {
+			skippingBadFrame = YES;
+		} else if(MAD_RECOVERABLE(_stream.error)) {
 			const uint8_t *buffer = _stream.this_frame;
 			unsigned long buflen = _stream.bufend - _stream.this_frame;
 			uint32_t id3_length = 0;
@@ -597,7 +601,7 @@
 		}
 	}
 
-	if(!_firstFrame || !_foundXingHeader) {
+	if(!_firstFrame || !(_foundXingHeader && _foundVBRIHeader)) {
 		signed long frameDuration = mad_timer_count(_frame.header.duration, sampleRate);
 		if((framesToSkip - 1152 * 4) >= frameDuration) {
 			framesToSkip -= frameDuration;
@@ -607,7 +611,9 @@
 	}
 
 	// DLog(@"Decoded buffer.");
-	mad_synth_frame(&_synth, &_frame);
+	if(!skippingBadFrame) {
+		mad_synth_frame(&_synth, &_frame);
+	}
 	// DLog(@"first frame: %i", _firstFrame);
 	if(_firstFrame) {
 		_firstFrame = NO;
@@ -638,6 +644,8 @@
 			// DLog(@"Skipping xing header.");
 			return 0;
 		}
+	} else if(skippingBadFrame) {
+		return 0;
 	}
 
 	return 1;
