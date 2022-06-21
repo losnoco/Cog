@@ -19,30 +19,6 @@
 
 static SandboxBroker *kSharedSandboxBroker = nil;
 
-static NSURL *urlWithoutFragment(NSURL *u) {
-	if(![u isFileURL]) return u;
-
-	NSNumber *isDirectory;
-
-	BOOL success = [u getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
-
-	if(success && [isDirectory boolValue]) return u;
-
-	NSString *s = [u path];
-
-	NSString *lastComponent = [u lastPathComponent];
-
-	// Find that last component in the string from the end to make sure
-	// to get the last one
-	NSRange fragmentRange = [s rangeOfString:lastComponent
-	                                 options:NSBackwardsSearch];
-
-	// Chop the fragment.
-	NSString *newURLString = [s substringToIndex:fragmentRange.location + fragmentRange.length];
-
-	return [NSURL fileURLWithPath:newURLString];
-}
-
 @interface SandboxEntry : NSObject {
 	SandboxToken *_token;
 	NSInteger _refCount;
@@ -108,6 +84,30 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 
 + (NSPersistentContainer *)sharedPersistentContainer {
 	return [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+}
+
++ (NSURL *)urlWithoutFragment:(NSURL *)url {
+	if(![url isFileURL]) return url;
+
+	NSNumber *isDirectory;
+
+	BOOL success = [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+
+	if(success && [isDirectory boolValue]) return url;
+
+	NSString *s = [url path];
+
+	NSString *lastComponent = [url lastPathComponent];
+
+	// Find that last component in the string from the end to make sure
+	// to get the last one
+	NSRange fragmentRange = [s rangeOfString:lastComponent
+	                                 options:NSBackwardsSearch];
+
+	// Chop the fragment.
+	NSString *newURLString = [s substringToIndex:fragmentRange.location + fragmentRange.length];
+
+	return [NSURL fileURLWithPath:newURLString];
 }
 
 - (id)init {
@@ -188,7 +188,7 @@ static NSURL *urlWithoutFragment(NSURL *u) {
 }
 
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
-	NSURL *folderUrl = [urlWithoutFragment(fileUrl) URLByDeletingLastPathComponent];
+	NSURL *folderUrl = [[SandboxBroker urlWithoutFragment:fileUrl] URLByDeletingLastPathComponent];
 	if(![folderUrl isFileURL]) return NULL;
 
 	SandboxEntry *entry;

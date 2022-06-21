@@ -413,8 +413,8 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="toolTip" keyPath="valueToDisplay.playCountInfo" id="ydF-ec-fBX"/>
                             <binding destination="-2" name="value" keyPath="valueToDisplay.playCount" id="Mpe-FA-gRG"/>
+                            <binding destination="-2" name="toolTip" keyPath="valueToDisplay.playCountInfo" id="ydF-ec-fBX"/>
                         </connections>
                     </textField>
                 </subviews>

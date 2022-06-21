@@ -370,8 +370,14 @@
         </customObject>
         <customObject id="tm7-TU-wbV" customClass="GeneralPane">
             <connections>
-                <outlet property="sandboxBehaviorController" destination="9mC-3k-IQG" id="QzA-u4-vH7"/>
+                <outlet property="pathSuggester" destination="Vx8-Va-nme" id="UWw-bx-h7Z"/>
+                <outlet property="sandboxPathBehaviorController" destination="9mC-3k-IQG" id="xNT-x0-lVA"/>
                 <outlet property="view" destination="0nK-XQ-5MY" id="TDK-Vn-N5G"/>
+            </connections>
+        </customObject>
+        <customObject id="Vx8-Va-nme" customClass="PathSuggester">
+            <connections>
+                <outlet property="sandboxPathBehaviorController" destination="9mC-3k-IQG" id="1Jd-9v-4rm"/>
             </connections>
         </customObject>
         <arrayController id="59" userLabel="OutputDevices" customClass="OutputsArrayController">
@@ -426,14 +432,14 @@
                         <rect key="frame" x="1" y="1" width="488" height="113"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="9rQ-Rq-K6J" id="gHG-xw-OyR">
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" headerView="9rQ-Rq-K6J" viewBased="YES" id="gHG-xw-OyR">
                                 <rect key="frame" x="0.0" y="0.0" width="488" height="85"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="17" height="0.0"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                 <tableColumns>
-                                    <tableColumn width="388" minWidth="40" maxWidth="1000" id="Yz2-Ee-bZ0" userLabel="path">
+                                    <tableColumn identifier="path" width="388" minWidth="40" maxWidth="1000" id="Yz2-Ee-bZ0" userLabel="path">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Path">
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -444,11 +450,31 @@
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                        <prototypeCellViews>
+                                            <tableCellView id="EEt-uJ-j6o">
+                                                <rect key="frame" x="8" y="0.0" width="386" height="24"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7l9-R2-FVF">
+                                                        <rect key="frame" x="0.0" y="4" width="386" height="16"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="7un-em-D8r">
+                                                            <font key="font" usesAppearanceFont="YES"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                                <connections>
+                                                    <outlet property="textField" destination="7l9-R2-FVF" id="Yha-df-BGK"/>
+                                                </connections>
+                                            </tableCellView>
+                                        </prototypeCellViews>
                                         <connections>
                                             <binding destination="9mC-3k-IQG" name="value" keyPath="arrangedObjects.path" id="eva-uV-ce2"/>
                                         </connections>
                                     </tableColumn>
-                                    <tableColumn width="41" minWidth="40" maxWidth="1000" id="lEg-E3-TBs" userLabel="valid">
+                                    <tableColumn identifier="valid" width="41" minWidth="40" maxWidth="1000" id="lEg-E3-TBs" userLabel="valid">
                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Valid">
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -459,11 +485,35 @@
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                        <prototypeCellViews>
+                                            <tableCellView id="EDi-gi-Vg9">
+                                                <rect key="frame" x="411" y="0.0" width="38" height="24"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0TJ-dK-Rfk">
+                                                        <rect key="frame" x="0.0" y="4" width="38" height="16"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="LwT-Qb-47r">
+                                                            <font key="font" usesAppearanceFont="YES"/>
+                                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                                <connections>
+                                                    <outlet property="textField" destination="0TJ-dK-Rfk" id="kDn-6g-04J"/>
+                                                </connections>
+                                            </tableCellView>
+                                        </prototypeCellViews>
                                         <connections>
                                             <binding destination="9mC-3k-IQG" name="value" keyPath="arrangedObjects.valid" id="Kg6-FI-Mcl"/>
                                         </connections>
                                     </tableColumn>
                                 </tableColumns>
+                                <connections>
+                                    <outlet property="dataSource" destination="9mC-3k-IQG" id="2X9-U5-GJP"/>
+                                    <outlet property="delegate" destination="tm7-TU-wbV" id="h2y-Ql-eEn"/>
+                                </connections>
                             </tableView>
                         </subviews>
                     </clipView>
@@ -780,10 +830,23 @@
                         <action selector="addPath:" target="tm7-TU-wbV" id="j3o-oG-PA4"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Delete Paths" id="nva-pz-xSS">
+                <menuItem title="Delete Path" id="nva-pz-xSS">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="deleteSelectedPaths:" target="tm7-TU-wbV" id="suU-Gb-vMn"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Delete Invalid Paths" id="JU5-o7-jid">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeStaleEntries:" target="tm7-TU-wbV" id="j5v-pf-4FC"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="QVM-CG-8Ga"/>
+                <menuItem title="Suggest Paths" id="qjI-dK-nfG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="showPathSuggester:" target="tm7-TU-wbV" id="TnR-Di-6Ys"/>
                     </connections>
                 </menuItem>
             </items>

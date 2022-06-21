@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addUrl:(NSURL *)url;
 - (void)removePath:(NSString *)path;
+- (void)removeStaleEntries;
+
+- (BOOL)matchesPath:(NSURL *)url;
 
 @end
 

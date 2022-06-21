@@ -27,6 +27,8 @@
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
 		83A3B72C283AE04800CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */; };
+		83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AC57382861A54D009D6F50 /* PathSuggester.m */; };
+		83AC573B2861A54D009D6F50 /* PathSuggester.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83AC57392861A54D009D6F50 /* PathSuggester.xib */; };
 		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
 		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
 		83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */; };
@@ -118,6 +120,10 @@
 		8384917518084D9F00E7332D /* appearance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = appearance.png; path = Icons/appearance.png; sourceTree = "<group>"; };
 		83A3B72A283AE04800CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorToValueTransformer.m; sourceTree = "<group>"; };
+		83AC57372861A54D009D6F50 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathSuggester.h; sourceTree = "<group>"; };
+		83AC57382861A54D009D6F50 /* PathSuggester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PathSuggester.m; sourceTree = "<group>"; };
+		83AC57392861A54D009D6F50 /* PathSuggester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PathSuggester.xib; sourceTree = "<group>"; };
+		83AC573E2861B77E009D6F50 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		83B06727180D85B8008E3612 /* MIDIPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPane.h; sourceTree = "<group>"; };
 		83B06728180D85B8008E3612 /* MIDIPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIPane.m; sourceTree = "<group>"; };
 		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
@@ -199,6 +205,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				83AC573E2861B77E009D6F50 /* SandboxBroker.h */,
 				8307D30828604ECF000FF8EB /* PlaylistController.h */,
 				83F27E711810E41A00CEF538 /* Transformers */,
 				8384913618081ECB00E7332D /* Logging.h */,
@@ -266,6 +273,9 @@
 				83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */,
 				8307D30328604D8B000FF8EB /* SandboxPathBehaviorController.h */,
 				8307D30428604D8B000FF8EB /* SandboxPathBehaviorController.m */,
+				83AC57372861A54D009D6F50 /* PathSuggester.h */,
+				83AC57382861A54D009D6F50 /* PathSuggester.m */,
+				83AC57392861A54D009D6F50 /* PathSuggester.xib */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -452,6 +462,7 @@
 				17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */,
 				83F27E701810DD3A00CEF538 /* updates@2x.png in Resources */,
 				17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */,
+				83AC573B2861A54D009D6F50 /* PathSuggester.xib in Resources */,
 				83F27E6B1810DD3A00CEF538 /* appearance@2x.png in Resources */,
 				17C7E5B00DCCC30A003CBCF7 /* playlist.png in Resources */,
 				83F27E6E1810DD3A00CEF538 /* midi@2x.png in Resources */,
@@ -465,6 +476,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */,
 				83651DA527322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m in Sources */,
 				83B06729180D85B8008E3612 /* MIDIPane.m in Sources */,
 				8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */,

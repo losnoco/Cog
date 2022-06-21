@@ -17,6 +17,8 @@
 
 #import "PlaylistController.h"
 
+#import "SandboxBroker.h"
+
 @interface SandboxToken : NSManagedObject
 @property(nonatomic, strong) NSString *path;
 @property(nonatomic, strong) NSData *bookmark;
@@ -100,6 +102,24 @@
 			break;
 		}
 	}
+}
+
+- (void)removeStaleEntries {
+	for(NSDictionary *entry in [[self arrangedObjects] copy]) {
+		if([[entry objectForKey:@"valid"] isEqualToString:NSLocalizedPrefString(@"ValidNo")]) {
+			[self removeObject:entry];
+		}
+	}
+}
+
+- (BOOL)matchesPath:(NSURL *)url {
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	for(NSDictionary *entry in [self arrangedObjects]) {
+		NSURL *testPath = [NSURL fileURLWithPath:[entry objectForKey:@"path"]];
+		if([sandboxBrokerClass isPath:url aSubdirectoryOf:testPath])
+			return YES;
+	}
+	return NO;
 }
 
 @end
