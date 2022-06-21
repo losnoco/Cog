@@ -13,6 +13,18 @@ Share and enjoy.
 --Vincent Spader (vspader@users.sf.net)
 
 
+ADDENDUM - 2022-06-21
+
+Cog now uses App Sandbox. This requires permission paths to be granted in the
+settings, under the General tab. Right clicking the listing allows one to
+manipulate the list, including suggesting additions based on the current
+playlist. The suggestion dialog will pop up every path and permutation that
+isn't covered by an existing valid sandbox token. It is suggested to check
+only the paths that are most appropriate to cover most files you will ever
+play with Cog. It is not necessary to add either your default Music folder,
+your default Downloads folder, or your default Movies folder.
+
+
 ADDENDUM - 2013-09-30
 
 I have forked this player to continue maintaining it for others to use, as its
