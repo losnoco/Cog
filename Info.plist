@@ -17,6 +17,8 @@
 			<string>song.icns</string>
 			<key>CFBundleTypeIconSystemGenerated</key>
 			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>****</string>

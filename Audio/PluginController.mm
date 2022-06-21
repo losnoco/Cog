@@ -380,6 +380,8 @@ static PluginController *sharedPluginController = nil;
 \t\t\t<string>song.icns</string>\n\
 \t\t\t<key>CFBundleTypeIconSystemGenerated</key>\n\
 \t\t\t<integer>1</integer>\n\
+\t\t\t<key>CFBundleTypeName</key>\n\
+\t\t\t<string>Folder</string>\n\
 \t\t\t<key>CFBundleTypeOSTypes</key>\n\
 \t\t\t<array>\n\
 \t\t\t\t<string>****</string>\n\
