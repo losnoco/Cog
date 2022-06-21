@@ -28,8 +28,6 @@
 #import "Shortcuts.h"
 #import <MASShortcut/Shortcut.h>
 
-#import <Sparkle/Sparkle.h>
-
 @import Firebase;
 
 void *kAppControllerContext = &kAppControllerContext;
@@ -150,11 +148,6 @@ BOOL kAppControllerShuttingDown = NO;
 
 	[FIRApp configure];
 	[FIRAnalytics setAnalyticsCollectionEnabled:YES];
-
-#ifdef DEBUG
-	// Prevent updates automatically in debug builds
-	[updater setAutomaticallyChecksForUpdates:NO];
-#endif
 
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 
