@@ -112,6 +112,10 @@ static void *kCogDecoderMultiContext = &kCogDecoderMultiContext;
 	}
 }
 
+- (void)dealloc {
+	[self close];
+}
+
 - (void)registerObservers {
 	if(!observersAdded) {
 		[theDecoder addObserver:self
