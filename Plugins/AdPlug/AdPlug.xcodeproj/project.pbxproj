@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; };
 		83747C6F2862DDDB0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C6D2862DDDB0021245F /* Shared.xcconfig */; };
-		83747C702862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C6E2862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83C2806320E4ECAD00823BF9 /* libAdPlug.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D3C659201C6E24005564CB /* AdPlugContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C654201C6E24005564CB /* AdPlugContainer.mm */; };
 		83D3C65A201C6E24005564CB /* AdPlugMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C656201C6E24005564CB /* AdPlugMetadataReader.mm */; };
@@ -53,7 +52,6 @@
 
 /* Begin PBXFileReference section */
 		83747C6D2862DDDB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C6E2862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83D3C5F3201C674D005564CB /* AdPlug.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdPlug.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C5F6201C674D005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D3C603201C6775005564CB /* libAdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libAdPlug.xcodeproj; path = ../../Frameworks/AdPlug/libAdPlug.xcodeproj; sourceTree = "<group>"; };
@@ -89,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				83747C6D2862DDDB0021245F /* Shared.xcconfig */,
-				83747C6E2862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -225,7 +222,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C702862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83D3C668201C7020005564CB /* adplug.db in Resources */,
 				83747C6F2862DDDB0021245F /* Shared.xcconfig in Resources */,
 			);

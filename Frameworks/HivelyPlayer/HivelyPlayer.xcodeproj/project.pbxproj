@@ -13,7 +13,6 @@
 		836FB593182054B700B3AD2D /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 836FB58F182054B700B3AD2D /* blip_buf.c */; };
 		836FB594182054B700B3AD2D /* blip_buf.h in Headers */ = {isa = PBXBuildFile; fileRef = 836FB590182054B700B3AD2D /* blip_buf.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83747BB32862D55A0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BB12862D55A0021245F /* Shared.xcconfig */; };
-		83747BB42862D55A0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BB22862D55A0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +25,6 @@
 		836FB58F182054B700B3AD2D /* blip_buf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blip_buf.c; sourceTree = "<group>"; };
 		836FB590182054B700B3AD2D /* blip_buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blip_buf.h; sourceTree = "<group>"; };
 		83747BB12862D55A0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BB22862D55A0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,7 +96,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BB12862D55A0021245F /* Shared.xcconfig */,
-				83747BB22862D55A0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -175,7 +172,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BB42862D55A0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				836FB564182053D700B3AD2D /* InfoPlist.strings in Resources */,
 				83747BB32862D55A0021245F /* Shared.xcconfig in Resources */,
 			);

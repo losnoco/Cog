@@ -26,7 +26,6 @@
 		831132EB21F9565F001F678F /* Load_c67.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E621F9565F001F678F /* Load_c67.cpp */; };
 		831132EC21F9565F001F678F /* OPL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E721F9565F001F678F /* OPL.cpp */; };
 		83747BC72862D58D0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BC52862D58D0021245F /* Shared.xcconfig */; };
-		83747BC82862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BC62862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83AA7D1D2519B619004C5298 /* mptOSError.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AA7D1B2519B618004C5298 /* mptOSError.h */; };
 		83AA7D1E2519B619004C5298 /* mptOSException.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AA7D1C2519B618004C5298 /* mptOSException.h */; };
 		83AA7D252519B643004C5298 /* Dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7D212519B643004C5298 /* Dither.cpp */; };
@@ -306,7 +305,6 @@
 		831132E621F9565F001F678F /* Load_c67.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Load_c67.cpp; sourceTree = "<group>"; };
 		831132E721F9565F001F678F /* OPL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OPL.cpp; sourceTree = "<group>"; };
 		83747BC52862D58D0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BC62862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83AA7D1B2519B618004C5298 /* mptOSError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptOSError.h; sourceTree = "<group>"; };
 		83AA7D1C2519B618004C5298 /* mptOSException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptOSException.h; sourceTree = "<group>"; };
 		83AA7D212519B643004C5298 /* Dither.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dither.cpp; sourceTree = "<group>"; };
@@ -587,7 +585,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BC52862D58D0021245F /* Shared.xcconfig */,
-				83747BC62862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -1198,7 +1195,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BC82862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				831132E221F955F4001F678F /* LICENSE in Resources */,
 				83747BC72862D58D0021245F /* Shared.xcconfig in Resources */,
 			);

@@ -13,7 +13,6 @@
 		8359FF1B17FEF35C0060F3ED /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359FF1A17FEF35C0060F3ED /* Cocoa.framework */; };
 		8359FF2517FEF35C0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF2317FEF35C0060F3ED /* InfoPlist.strings */; };
 		83747C652862DDA00021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C632862DDA00021245F /* Shared.xcconfig */; };
-		83747C662862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C642862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +49,6 @@
 		8359FF2617FEF35C0060F3ED /* ArchiveSource-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArchiveSource-Prefix.pch"; sourceTree = "<group>"; };
 		8359FF6A17FEF39F0060F3ED /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		83747C632862DDA00021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C642862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8384913518081BA000E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -143,7 +141,6 @@
 			isa = PBXGroup;
 			children = (
 				83747C632862DDA00021245F /* Shared.xcconfig */,
-				83747C642862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -224,7 +221,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C662862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8359FF2517FEF35C0060F3ED /* InfoPlist.strings in Resources */,
 				83747C652862DDA00021245F /* Shared.xcconfig in Resources */,
 			);

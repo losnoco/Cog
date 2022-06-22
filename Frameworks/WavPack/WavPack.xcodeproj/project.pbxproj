@@ -28,7 +28,6 @@
 		8310BA4E1D7377DC0055CEC5 /* pack_floats.c in Sources */ = {isa = PBXBuildFile; fileRef = 8310BA481D7377DC0055CEC5 /* pack_floats.c */; };
 		8310BA4F1D7377DC0055CEC5 /* pack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 8310BA491D7377DC0055CEC5 /* pack_utils.c */; };
 		83747BDE2862D5C50021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BDC2862D5C50021245F /* Shared.xcconfig */; };
-		83747BDF2862D5C50021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BDD2862D5C50021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83DD1DD017FA038A00249519 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCD17FA038A00249519 /* utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83DD1DD117FA038A00249519 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCE17FA038A00249519 /* wavpack_local.h */; };
 		83DD1DD217FA038A00249519 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCF17FA038A00249519 /* wavpack_version.h */; };
@@ -71,7 +70,6 @@
 		833F683A1CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C889B22CC188A001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747BDC2862D5C50021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BDD2862D5C50021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83DD1DCD17FA038A00249519 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = Files/utils.h; sourceTree = "<group>"; };
 		83DD1DCE17FA038A00249519 /* wavpack_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_local.h; path = Files/wavpack_local.h; sourceTree = "<group>"; };
 		83DD1DCF17FA038A00249519 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_version.h; path = Files/wavpack_version.h; sourceTree = "<group>"; };
@@ -161,7 +159,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BDC2862D5C50021245F /* Shared.xcconfig */,
-				83747BDD2862D5C50021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -291,7 +288,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BDF2862D5C50021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				83747BDE2862D5C50021245F /* Shared.xcconfig in Resources */,
 			);

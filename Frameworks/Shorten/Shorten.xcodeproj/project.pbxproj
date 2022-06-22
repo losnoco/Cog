@@ -20,7 +20,6 @@
 		59FDCD710A2922E1006C1800 /* sulawalaw.c in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD6A0A2922E1006C1800 /* sulawalaw.c */; };
 		59FDCD720A2922E1006C1800 /* vario.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD6B0A2922E1006C1800 /* vario.cpp */; };
 		83747BCC2862D5970021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BCA2862D5970021245F /* Shared.xcconfig */; };
-		83747BCD2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BCB2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +39,6 @@
 		833F683E1CDBCAB300AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C889522CC1888001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747BCA2862D5970021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BCB2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Shorten.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Shorten.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -113,7 +111,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BCA2862D5970021245F /* Shared.xcconfig */,
-				83747BCB2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -219,7 +216,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BCD2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				83747BCC2862D5970021245F /* Shared.xcconfig in Resources */,
 			);

@@ -12,7 +12,6 @@
 		8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8081A35654900EEE8E6 /* SidContainer.mm */; };
 		836F5BEC1A357915002730CC /* roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836F5BEA1A357915002730CC /* roms.cpp */; };
 		83747C012862DA420021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BFF2862DA420021245F /* Shared.xcconfig */; };
-		83747C022862DA420021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C002862DA420021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		EDBE911825E7EA01001EB4A4 /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; };
 		EDBE911925E7EA01001EB4A4 /* sidplayfp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -55,7 +54,6 @@
 		836F5BEA1A357915002730CC /* roms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = roms.cpp; sourceTree = SOURCE_ROOT; };
 		836F5BEB1A357915002730CC /* roms.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = roms.hpp; sourceTree = SOURCE_ROOT; };
 		83747BFF2862DA420021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C002862DA420021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		EDBE8F0A25E7E74D001EB4A4 /* sidplayfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplayfp.xcodeproj; path = ../../Frameworks/libsidplayfp/sidplayfp.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -128,7 +126,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BFF2862DA420021245F /* Shared.xcconfig */,
-				83747C002862DA420021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -217,7 +214,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83747C012862DA420021245F /* Shared.xcconfig in Resources */,
-				83747C022862DA420021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

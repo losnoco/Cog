@@ -14,7 +14,6 @@
 		17DA34BB0CC052030003F6B2 /* GameMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA34B90CC052030003F6B2 /* GameMetadataReader.m */; };
 		8319C750237629D400BFFAE0 /* GamePropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8319C74F237629D400BFFAE0 /* GamePropertiesReader.m */; };
 		83747C472862DCD90021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C452862DCD90021245F /* Shared.xcconfig */; };
-		83747C482862DCD90021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C462862DCD90021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -67,7 +66,6 @@
 		833F68351CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C888F22CC1883001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747C452862DCD90021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C462862DCD90021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8384912E1808175400E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		83FAF8A518ADD4D100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* GME.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GME.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,7 +182,6 @@
 			isa = PBXGroup;
 			children = (
 				83747C452862DCD90021245F /* Shared.xcconfig */,
-				83747C462862DCD90021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -265,7 +262,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C482862DCD90021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
 				83747C472862DCD90021245F /* Shared.xcconfig in Resources */,
 			);

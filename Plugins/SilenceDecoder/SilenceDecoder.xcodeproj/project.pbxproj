@@ -8,14 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		83747BFC2862D95C0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BFA2862D95C0021245F /* Shared.xcconfig */; };
-		83747BFD2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BFB2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83F9D8021A884C0B007ABEC2 /* SilenceDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */; };
 		83F9D8031A884C0B007ABEC2 /* SilenceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D8011A884C0B007ABEC2 /* SilenceSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		83747BFA2862D95C0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BFB2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83F9D7E71A884B44007ABEC2 /* SilenceDecoder.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SilenceDecoder.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F9D7EB1A884B44007ABEC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83F9D7FE1A884C0B007ABEC2 /* SilenceDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SilenceDecoder.h; sourceTree = "<group>"; };
@@ -42,7 +40,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BFA2862D95C0021245F /* Shared.xcconfig */,
-				83747BFB2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -146,7 +143,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83747BFC2862D95C0021245F /* Shared.xcconfig in Resources */,
-				83747BFD2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

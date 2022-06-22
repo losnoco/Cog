@@ -10,7 +10,6 @@
 		830E1DA1263B90CB005B01D2 /* rad2.h in Headers */ = {isa = PBXBuildFile; fileRef = 830E1D9F263B90CB005B01D2 /* rad2.h */; };
 		830E1DA2263B90CB005B01D2 /* rad2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830E1DA0263B90CB005B01D2 /* rad2.cpp */; };
 		83747B7C2862D4B70021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B7A2862D4B70021245F /* Shared.xcconfig */; };
-		83747B7D2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B7B2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83D3C578201C66E3005564CB /* adplug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C505201C66C1005564CB /* adplug.cpp */; };
 		83D3C579201C66E3005564CB /* mtk.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C506201C66C2005564CB /* mtk.h */; };
 		83D3C57A201C66E3005564CB /* psi.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C507201C66C2005564CB /* psi.h */; };
@@ -153,7 +152,6 @@
 		830E1D9F263B90CB005B01D2 /* rad2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rad2.h; path = adplug/src/rad2.h; sourceTree = "<group>"; };
 		830E1DA0263B90CB005B01D2 /* rad2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rad2.cpp; path = adplug/src/rad2.cpp; sourceTree = "<group>"; };
 		83747B7A2862D4B70021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747B7B2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83D3C4D4201C654F005564CB /* libAdPlug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libAdPlug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C4D8201C6550005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D3C505201C66C1005564CB /* adplug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = adplug.cpp; path = adplug/src/adplug.cpp; sourceTree = "<group>"; };
@@ -293,7 +291,6 @@
 			isa = PBXGroup;
 			children = (
 				83747B7A2862D4B70021245F /* Shared.xcconfig */,
-				83747B7B2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -609,7 +606,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83747B7C2862D4B70021245F /* Shared.xcconfig in Resources */,
-				83747B7D2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

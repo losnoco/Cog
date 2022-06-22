@@ -485,7 +485,6 @@
 		8373342D23F60CDC00DE14DC /* bnsf_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373342523F60CDC00DE14DC /* bnsf_keys.h */; };
 		8373342F23F60D4100DE14DC /* tgc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342E23F60D4100DE14DC /* tgc.c */; };
 		83747BD92862D5BC0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BD72862D5BB0021245F /* Shared.xcconfig */; };
-		83747BDA2862D5BC0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BD82862D5BB0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8375737321F9507D00F01AF5 /* oki_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375737221F9507D00F01AF5 /* oki_decoder.c */; };
 		8375737621F950ED00F01AF5 /* gin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375737421F950EC00F01AF5 /* gin.c */; };
 		8375737721F950ED00F01AF5 /* ubi_sb_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375737521F950EC00F01AF5 /* ubi_sb_streamfile.h */; };
@@ -1285,7 +1284,6 @@
 		8373342523F60CDC00DE14DC /* bnsf_keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bnsf_keys.h; sourceTree = "<group>"; };
 		8373342E23F60D4100DE14DC /* tgc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tgc.c; sourceTree = "<group>"; };
 		83747BD72862D5BB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BD82862D5BB0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8375737221F9507D00F01AF5 /* oki_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oki_decoder.c; sourceTree = "<group>"; };
 		8375737421F950EC00F01AF5 /* gin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gin.c; sourceTree = "<group>"; };
 		8375737521F950EC00F01AF5 /* ubi_sb_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ubi_sb_streamfile.h; sourceTree = "<group>"; };
@@ -2291,7 +2289,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BD72862D5BB0021245F /* Shared.xcconfig */,
-				83747BD82862D5BB0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -2569,7 +2566,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BDA2862D5BC0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */,
 				83747BD92862D5BC0021245F /* Shared.xcconfig in Resources */,
 			);

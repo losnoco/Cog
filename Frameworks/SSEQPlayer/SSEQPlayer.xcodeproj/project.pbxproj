@@ -10,7 +10,6 @@
 		830109F91A09BC0A0004F8D8 /* codecvt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F71A09BC0A0004F8D8 /* codecvt.h */; };
 		830109FA1A09BC0A0004F8D8 /* wstring_convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F81A09BC0A0004F8D8 /* wstring_convert.h */; };
 		83747B8B2862D4F90021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B892862D4F90021245F /* Shared.xcconfig */; };
-		83747B8C2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B8A2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83848FBC1807623F00E7332D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FBB1807623F00E7332D /* Cocoa.framework */; };
 		83848FC61807623F00E7332D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83848FC41807623F00E7332D /* InfoPlist.strings */; };
 		838490251807649A00E7332D /* Channel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490011807649A00E7332D /* Channel.cpp */; };
@@ -49,7 +48,6 @@
 		830109F81A09BC0A0004F8D8 /* wstring_convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wstring_convert.h; sourceTree = "<group>"; };
 		833F68301CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747B892862D4F90021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747B8A2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83848FB81807623F00E7332D /* SSEQPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SSEQPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83848FBB1807623F00E7332D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83848FBE1807623F00E7332D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -105,7 +103,6 @@
 			isa = PBXGroup;
 			children = (
 				83747B892862D4F90021245F /* Shared.xcconfig */,
-				83747B8A2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -284,7 +281,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747B8C2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83848FC61807623F00E7332D /* InfoPlist.strings in Resources */,
 				83747B8B2862D4F90021245F /* Shared.xcconfig in Resources */,
 			);

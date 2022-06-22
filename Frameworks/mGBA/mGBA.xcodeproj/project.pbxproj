@@ -121,7 +121,6 @@
 		8333B6631DCC440C004C140D /* sharkport.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6611DCC440C004C140D /* sharkport.c */; };
 		8333B6671DCC4451004C140D /* tile-cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6651DCC4451004C140D /* tile-cache.c */; };
 		83747BA92862D5430021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA72862D5430021245F /* Shared.xcconfig */; };
-		83747BAA2862D5430021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA82862D5430021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		837612EE1DD6AA2B001EED3D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 837612ED1DD6AA2B001EED3D /* LICENSE */; };
 		837CEA73234875D700E62A4A /* audio-mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEA70234875D700E62A4A /* audio-mixer.c */; };
 		83C9A7D02632122C00725A49 /* gpio.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C9A7CC2632122C00725A49 /* gpio.c */; };
@@ -304,7 +303,6 @@
 		8333B6611DCC440C004C140D /* sharkport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sharkport.c; sourceTree = "<group>"; };
 		8333B6651DCC4451004C140D /* tile-cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "tile-cache.c"; sourceTree = "<group>"; };
 		83747BA72862D5430021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BA82862D5430021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		837612ED1DD6AA2B001EED3D /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		837CEA70234875D700E62A4A /* audio-mixer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "audio-mixer.c"; sourceTree = "<group>"; };
 		83C9A7CC2632122C00725A49 /* gpio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpio.c; sourceTree = "<group>"; };
@@ -705,7 +703,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BA72862D5430021245F /* Shared.xcconfig */,
-				83747BA82862D5430021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -1140,7 +1137,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BAA2862D5430021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				837612EE1DD6AA2B001EED3D /* LICENSE in Resources */,
 				83747BA92862D5430021245F /* Shared.xcconfig in Resources */,
 			);

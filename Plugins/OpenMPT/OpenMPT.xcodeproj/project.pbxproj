@@ -11,7 +11,6 @@
 		83187C7220E4EAC400DED293 /* libOpenMPT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8308151E20E4EA96003ACEDA /* libOpenMPT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8372349C277AA23F00CD0A77 /* OMPTVersionCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372349B277AA23F00CD0A77 /* OMPTVersionCheck.m */; };
 		83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C182862DB2F0021245F /* Shared.xcconfig */; };
-		83747C1B2862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C192862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
 		83E5FE751FFF010C00659F0F /* OMPTMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */; };
@@ -51,7 +50,6 @@
 		8372349A277AA1F600CD0A77 /* OMPTVersionCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OMPTVersionCheck.h; path = OpenMPT/OMPTVersionCheck.h; sourceTree = "<group>"; };
 		8372349B277AA23F00CD0A77 /* OMPTVersionCheck.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OMPTVersionCheck.m; path = OpenMPT/OMPTVersionCheck.m; sourceTree = "<group>"; };
 		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C192862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83E5EFC81FFEF7CC00659F0F /* libOpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libOpenMPT.xcodeproj; path = ../../Frameworks/OpenMPT/libOpenMPT.xcodeproj; sourceTree = "<group>"; };
@@ -90,7 +88,6 @@
 			isa = PBXGroup;
 			children = (
 				83747C182862DB2F0021245F /* Shared.xcconfig */,
-				83747C192862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -225,7 +222,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */,
-				83747C1B2862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
