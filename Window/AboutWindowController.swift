@@ -8,7 +8,7 @@
 import Cocoa
 import WebKit
 
-class AboutWindowController: NSWindowController {
+class AboutWindowController: NSWindowController, WKNavigationDelegate {
     
     @IBOutlet weak var appName: NSTextField!
     @IBOutlet weak var appVersion: NSTextField!
@@ -30,6 +30,8 @@ class AboutWindowController: NSWindowController {
         
         creditsView.setValue(false, forKey: "drawsBackground")
 
+        vfxView.wantsLayer = true
+        vfxView.layer?.cornerRadius = 4
 
         // fill up labels
         
@@ -38,7 +40,7 @@ class AboutWindowController: NSWindowController {
         let shortVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
         let fullVersionString = Bundle.main.object(forInfoDictionaryKey: "GitVersion") as! String
         
-        appVersion.stringValue = String.localizedStringWithFormat(            NSLocalizedString("Version %@ (%@)", comment: "Version string"), shortVersionString, fullVersionString);
+        appVersion.stringValue = String.localizedStringWithFormat(NSLocalizedString("Version %@ (%@)", comment: "Version string"), shortVersionString, fullVersionString);
         
         appCopyright.stringValue = Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as! String
         
@@ -48,7 +50,22 @@ class AboutWindowController: NSWindowController {
             creditsView.loadHTMLString(String(data: data, encoding: .utf8) ?? "Could not load credits.", baseURL: nil)
             
         }
+        
+        creditsView.navigationDelegate = self
 
     }
     
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if navigationAction.navigationType == .linkActivated,
+           let url = navigationAction.request.url {
+            NSWorkspace.shared.open(url)
+            decisionHandler(.cancel)
+            return
+        }
+        decisionHandler(.allow)
+    }
+
+    @objc func cancel(_ sender: Any?) {
+        close()
+    }
 }
