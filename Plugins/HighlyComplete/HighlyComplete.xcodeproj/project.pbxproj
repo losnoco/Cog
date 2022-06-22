@@ -422,6 +422,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8360EEE317F92AC8005208A4 = {
+						DevelopmentTeam = "";
 						ProvisioningStyle = Manual;
 					};
 				};
