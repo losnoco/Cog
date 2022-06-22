@@ -175,6 +175,8 @@
 		8384916C18083EAB00E7332D /* stopTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915618083EAB00E7332D /* stopTemplate.pdf */; };
 		8384916D18083EAB00E7332D /* volume1Template.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915718083EAB00E7332D /* volume1Template.pdf */; };
 		8384916E18083EAB00E7332D /* volume3Template.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915818083EAB00E7332D /* volume3Template.pdf */; };
+		838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; };
+		838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83978E16285C58190076ED21 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83978E15285C58190076ED21 /* FirebaseCrashlytics */; };
 		83978E26285C596F0076ED21 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83978E25285C596F0076ED21 /* FirebaseAnalytics */; };
 		83978E29285C5C0A0076ED21 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */; };
@@ -748,6 +750,7 @@
 				83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in CopyFiles */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */,
 				ED69CBCA25BE32E80090B90D /* MASShortcut.framework in CopyFiles */,
+				838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1021,6 +1024,7 @@
 		8384915818083EAB00E7332D /* volume3Template.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = volume3Template.pdf; path = Images/volume3Template.pdf; sourceTree = "<group>"; };
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
+		838F851D256B4E5E00C3E614 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
 		83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RedundantPlaylistDataStore.m; sourceTree = "<group>"; };
@@ -1105,6 +1109,7 @@
 				83978E26285C596F0076ED21 /* FirebaseAnalytics in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
+				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
 				83978E16285C58190076ED21 /* FirebaseCrashlytics in Frameworks */,
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
@@ -1148,6 +1153,7 @@
 			isa = PBXGroup;
 			children = (
 				ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */,
+				838F851D256B4E5E00C3E614 /* Sparkle.framework */,
 				17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);

@@ -7,6 +7,7 @@
 @class PlaylistController;
 @class PlaylistView;
 @class PlaylistLoader;
+@class SUUpdater;
 
 @interface AppController : NSObject {
 	IBOutlet NSObjectController *currentEntryController;
@@ -46,6 +47,8 @@
 	IBOutlet NSWindowController *spotlightWindowController;
 
 	IBOutlet FileTreeViewController *fileTreeViewController;
+
+	IBOutlet SUUpdater *updater;
 
 	NSOperationQueue *queue; // Since we are the app delegate, we take care of the op queue
 
