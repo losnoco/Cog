@@ -1245,6 +1245,13 @@
                             <menuItem isSeparatorItem="YES" id="1100">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
+                            <menuItem title="Privacy Policy..." id="nb7-FW-egH">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="privacyPolicy:" target="226" id="c3c-kH-5sf"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="0ig-xg-gkg"/>
                             <menuItem title="Donate" id="751">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Donate" id="kue-p2-G0Y">

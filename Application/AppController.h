@@ -68,6 +68,8 @@
 - (IBAction)openKofiPage:(id)sender;
 - (IBAction)openPatreonPage:(id)sender;
 
+- (IBAction)privacyPolicy:(id)sender;
+
 - (IBAction)feedback:(id)sender;
 
 - (void)initDefaults;
