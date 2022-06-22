@@ -7,13 +7,12 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="AboutWIndowController" customModule="Cog" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="AboutWindowController" customModule="Cog" customModuleProvider="target">
             <connections>
                 <outlet property="appCopyright" destination="ht5-N1-YXd" id="cUK-kB-F2V"/>
                 <outlet property="appName" destination="Lya-f1-R7S" id="ZVN-sE-MQp"/>
                 <outlet property="appVersion" destination="7dE-CE-MBv" id="qOe-3F-tMG"/>
                 <outlet property="creditsView" destination="LZw-Xy-wYl" id="jyQ-Rg-oqx"/>
-                <outlet property="imageView" destination="aIO-L9-zMj" id="cIl-Ce-onP"/>
                 <outlet property="vfxView" destination="2nK-dq-1h6" id="ToT-af-ycD"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
