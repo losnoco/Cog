@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -11,7 +12,7 @@
                 <outlet property="appCopyright" destination="ht5-N1-YXd" id="cUK-kB-F2V"/>
                 <outlet property="appName" destination="Lya-f1-R7S" id="ZVN-sE-MQp"/>
                 <outlet property="appVersion" destination="7dE-CE-MBv" id="qOe-3F-tMG"/>
-                <outlet property="creditsView" destination="iz8-0U-jtY" id="uMm-WQ-Fui"/>
+                <outlet property="creditsView" destination="LZw-Xy-wYl" id="jyQ-Rg-oqx"/>
                 <outlet property="imageView" destination="aIO-L9-zMj" id="cIl-Ce-onP"/>
                 <outlet property="vfxView" destination="2nK-dq-1h6" id="ToT-af-ycD"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
@@ -39,39 +40,15 @@
                             <visualEffectView blendingMode="withinWindow" material="fullScreenUI" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="2nK-dq-1h6">
                                 <rect key="frame" x="387" y="84" width="262" height="230"/>
                                 <subviews>
-                                    <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HLG-H1-ARK">
+                                    <wkWebView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LZw-Xy-wYl">
                                         <rect key="frame" x="0.0" y="0.0" width="262" height="230"/>
-                                        <clipView key="contentView" drawsBackground="NO" id="VsR-Lq-AhX">
-                                            <rect key="frame" x="0.0" y="0.0" width="247" height="230"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <textView editable="NO" verticallyResizable="YES" findStyle="bar" allowsDocumentBackgroundColorChange="YES" spellingCorrection="YES" smartInsertDelete="YES" id="iz8-0U-jtY">
-                                                    <rect key="frame" x="0.0" y="0.0" width="247" height="230"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <size key="minSize" width="247" height="230"/>
-                                                    <size key="maxSize" width="247" height="10000000"/>
-                                                    <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                </textView>
-                                            </subviews>
-                                        </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Jrl-HU-vmJ">
-                                            <rect key="frame" x="-100" y="-100" width="225" height="15"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="z2b-Sa-SQ9">
-                                            <rect key="frame" x="247" y="0.0" width="15" height="230"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                    </scrollView>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <wkWebViewConfiguration key="configuration" applicationNameForUserAgent="Cog">
+                                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                            <wkPreferences key="preferences"/>
+                                        </wkWebViewConfiguration>
+                                    </wkWebView>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstItem="HLG-H1-ARK" firstAttribute="leading" secondItem="2nK-dq-1h6" secondAttribute="leading" id="RIy-GD-jCE"/>
-                                    <constraint firstItem="HLG-H1-ARK" firstAttribute="top" secondItem="2nK-dq-1h6" secondAttribute="top" id="Ye7-Xs-CXc"/>
-                                    <constraint firstAttribute="trailing" secondItem="HLG-H1-ARK" secondAttribute="trailing" id="tZ8-S3-bky"/>
-                                    <constraint firstAttribute="bottom" secondItem="HLG-H1-ARK" secondAttribute="bottom" id="vNr-Wi-0vq"/>
-                                </constraints>
                             </visualEffectView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lya-f1-R7S">
                                 <rect key="frame" x="385" y="351" width="266" height="31"/>

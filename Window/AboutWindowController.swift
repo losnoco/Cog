@@ -6,6 +6,7 @@
 //
 
 import Cocoa
+import WebKit
 
 class AboutWindowController: NSWindowController {
     
@@ -13,7 +14,7 @@ class AboutWindowController: NSWindowController {
     @IBOutlet weak var appVersion: NSTextField!
     @IBOutlet weak var appCopyright: NSTextField!
     
-    @IBOutlet var creditsView: NSTextView!
+    @IBOutlet weak var creditsView: WKWebView!
     
     override var windowNibName: NSNib.Name? {
         return "AboutWindowController"
@@ -26,12 +27,9 @@ class AboutWindowController: NSWindowController {
         
         self.window?.center()
         self.window?.isMovableByWindowBackground = true
-
-        vfxView.wantsLayer = true
-        vfxView.canDrawSubviewsIntoLayer = true
         
-        vfxView.layer?.cornerRadius = 10.0
-        vfxView.layer?.masksToBounds = true
+        creditsView.setValue(false, forKey: "drawsBackground")
+
 
         // fill up labels
         
@@ -47,9 +45,8 @@ class AboutWindowController: NSWindowController {
         if let creditsFile = Bundle.main.url(forResource: "Credits", withExtension: "html") {
             let data = try! Data(contentsOf: creditsFile)
             
-            if let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
-                creditsView.textStorage?.setAttributedString(attributedString)
-            }
+            creditsView.loadHTMLString(String(data: data, encoding: .utf8) ?? "Could not load credits.", baseURL: nil)
+            
         }
 
     }
