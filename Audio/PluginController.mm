@@ -348,6 +348,16 @@ static PluginController *sharedPluginController = nil;
 	}
 }
 
+static NSString *xmlEscapeString(NSString * string) {
+	CFStringRef textXML = CFXMLCreateStringByEscapingEntities(kCFAllocatorDefault, (CFStringRef)string, nil);
+	if(textXML) {
+		NSString *textString = (__bridge NSString *)textXML;
+		CFRelease(textXML);
+		return textString;
+	}
+	return @"";
+}
+
 - (void)printPluginInfo {
 	ALog(@"Sources: %@", self.sources);
 	ALog(@"Containers: %@", self.containers);
@@ -504,7 +514,7 @@ static PluginController *sharedPluginController = nil;
 \t\t\t<integer>1</integer>\n\
 \t\t\t<key>CFBundleTypeName</key>\n\
 \t\t\t<string>"];
-        [stringList addObject:[type objectAtIndex:0]];
+        [stringList addObject:xmlEscapeString([type objectAtIndex:0])];
         [stringList addObject:@"</string>\n\
 \t\t\t<key>CFBundleTypeRole</key>\n\
 \t\t\t<string>Viewer</string>\n\
