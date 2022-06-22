@@ -12,6 +12,8 @@
 		836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B1318BDB80D0095E648 /* Cocoa.framework */; };
 		836F6B1E18BDB80D0095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B1C18BDB80D0095E648 /* InfoPlist.strings */; };
 		836F705C18BDC40E0095E648 /* VGMDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836F705B18BDC40E0095E648 /* VGMDecoder.m */; };
+		83747BF22862D9260021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BF02862D9260021245F /* Shared.xcconfig */; };
+		83747BF32862D9260021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BF12862D9260021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83AA5D2D1F6E30080020821C /* VGMInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D281F6E30080020821C /* VGMInterface.m */; };
 		83AA5D2E1F6E30080020821C /* VGMContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D2A1F6E30080020821C /* VGMContainer.m */; };
 		83C2806720E4ED3500823BF9 /* libvgmstream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8394628720E4EC8300B45CEA /* libvgmstream.framework */; };
@@ -67,6 +69,8 @@
 		836F705B18BDC40E0095E648 /* VGMDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMDecoder.m; sourceTree = "<group>"; };
 		836F706018BDC84D0095E648 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		836F706118BDC8650095E648 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83747BF02862D9260021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BF12862D9260021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83AA5D281F6E30080020821C /* VGMInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMInterface.m; sourceTree = "<group>"; };
 		83AA5D2A1F6E30080020821C /* VGMContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMContainer.m; sourceTree = "<group>"; };
 		83AA5D2B1F6E30080020821C /* VGMInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMInterface.h; sourceTree = "<group>"; };
@@ -90,6 +94,7 @@
 		836F6B0718BDB80D0095E648 = {
 			isa = PBXGroup;
 			children = (
+				83747BEF2862D9260021245F /* Xcode-config */,
 				836F6B1918BDB80D0095E648 /* vgmstream */,
 				836F6B1218BDB80D0095E648 /* Frameworks */,
 				836F6B1118BDB80D0095E648 /* Products */,
@@ -155,6 +160,16 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		83747BEF2862D9260021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BF02862D9260021245F /* Shared.xcconfig */,
+				83747BF12862D9260021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		8394628320E4EC8300B45CEA /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -195,8 +210,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					836F6B0F18BDB80D0095E648 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -240,7 +254,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BF32862D9260021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				836F6B1E18BDB80D0095E648 /* InfoPlist.strings in Resources */,
+				83747BF22862D9260021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +300,7 @@
 /* Begin XCBuildConfiguration section */
 		836F6B2018BDB80D0095E648 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BF02862D9260021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -352,6 +369,7 @@
 		};
 		836F6B2118BDB80D0095E648 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BF02862D9260021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -416,11 +434,8 @@
 		836F6B2318BDB80D0095E648 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -434,7 +449,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.vgmstream";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -444,11 +458,8 @@
 		836F6B2418BDB80D0095E648 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -462,7 +473,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.vgmstream";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;

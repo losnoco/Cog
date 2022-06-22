@@ -25,6 +25,8 @@
 		8360EF6A17F92DB0005208A4 /* spucore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF5717F92DB0005208A4 /* spucore.h */; };
 		8360EF6B17F92DB0005208A4 /* vfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 8360EF5817F92DB0005208A4 /* vfs.c */; };
 		8360EF6C17F92DB0005208A4 /* vfs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF5917F92DB0005208A4 /* vfs.h */; };
+		83747BA42862D5390021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA22862D5390021245F /* Shared.xcconfig */; };
+		83747BA52862D5390021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA32862D5390021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		8360EF5717F92DB0005208A4 /* spucore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spucore.h; path = Core/spucore.h; sourceTree = "<group>"; };
 		8360EF5817F92DB0005208A4 /* vfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vfs.c; path = Core/vfs.c; sourceTree = "<group>"; };
 		8360EF5917F92DB0005208A4 /* vfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs.h; path = Core/vfs.h; sourceTree = "<group>"; };
+		83747BA22862D5390021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BA32862D5390021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +69,7 @@
 		8360EF0617F92C91005208A4 = {
 			isa = PBXGroup;
 			children = (
+				83747BA12862D5390021245F /* Xcode-config */,
 				8360EF1917F92C91005208A4 /* HighlyExperimental */,
 				8360EF1217F92C91005208A4 /* Frameworks */,
 				8360EF1117F92C91005208A4 /* Products */,
@@ -128,6 +133,16 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		83747BA12862D5390021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BA22862D5390021245F /* Shared.xcconfig */,
+				83747BA32862D5390021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -178,8 +193,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8360EF0F17F92C91005208A4 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -207,7 +221,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BA52862D5390021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8360EF1E17F92C91005208A4 /* InfoPlist.strings in Resources */,
+				83747BA42862D5390021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +262,7 @@
 /* Begin XCBuildConfiguration section */
 		8360EF3617F92C91005208A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BA22862D5390021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -300,6 +317,7 @@
 		};
 		8360EF3717F92C91005208A4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BA22862D5390021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -347,11 +365,8 @@
 		8360EF3917F92C91005208A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -367,7 +382,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlyexperimental;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -376,11 +390,8 @@
 		8360EF3A17F92C91005208A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -395,7 +406,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlyexperimental;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};

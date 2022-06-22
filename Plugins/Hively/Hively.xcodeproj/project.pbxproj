@@ -14,6 +14,8 @@
 		836FB5A01820556F00B3AD2D /* HVLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59B1820556F00B3AD2D /* HVLDecoder.m */; };
 		836FB5A11820556F00B3AD2D /* HVLMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59D1820556F00B3AD2D /* HVLMetadataReader.m */; };
 		836FB5A21820556F00B3AD2D /* HVLContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59F1820556F00B3AD2D /* HVLContainer.m */; };
+		83747C3D2862DC450021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C3B2862DC450021245F /* Shared.xcconfig */; };
+		83747C3E2862DC450021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C3C2862DC450021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +67,8 @@
 		836FB59E1820556F00B3AD2D /* HVLContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HVLContainer.h; sourceTree = "<group>"; };
 		836FB59F1820556F00B3AD2D /* HVLContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HVLContainer.m; sourceTree = "<group>"; };
 		836FB5A31820557E00B3AD2D /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
+		83747C3B2862DC450021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C3C2862DC450021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 		836FB5241820538700B3AD2D = {
 			isa = PBXGroup;
 			children = (
+				83747C3A2862DC450021245F /* Xcode-config */,
 				836FB5361820538700B3AD2D /* Hively */,
 				836FB52F1820538700B3AD2D /* Frameworks */,
 				836FB52E1820538700B3AD2D /* Products */,
@@ -151,6 +156,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83747C3A2862DC450021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C3B2862DC450021245F /* Shared.xcconfig */,
+				83747C3C2862DC450021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -183,8 +198,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					836FB52C1820538700B3AD2D = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -228,7 +242,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C3E2862DC450021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				836FB53B1820538700B3AD2D /* InfoPlist.strings in Resources */,
+				83747C3D2862DC450021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +286,7 @@
 /* Begin XCBuildConfiguration section */
 		836FB53D1820538700B3AD2D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C3B2862DC450021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -325,6 +342,7 @@
 		};
 		836FB53E1820538700B3AD2D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C3B2862DC450021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -374,18 +392,14 @@
 		836FB5401820538700B3AD2D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Hively/Hively-Prefix.pch";
 				INFOPLIST_FILE = "Hively/Hively-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.hively;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -394,18 +408,14 @@
 		836FB5411820538700B3AD2D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Hively/Hively-Prefix.pch";
 				INFOPLIST_FILE = "Hively/Hively-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.hively;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = bundle;
 			};

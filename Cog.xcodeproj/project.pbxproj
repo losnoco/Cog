@@ -2055,7 +2055,7 @@
 				83978E15285C58190076ED21 /* FirebaseCrashlytics */,
 				83978E25285C596F0076ED21 /* FirebaseAnalytics */,
 			);
-			productInstallPath = "/Applications";
+			productInstallPath = /Applications;
 			productName = Cog;
 			productReference = 1770424E0B8BC41800B86321 /* Cog.app */;
 			productType = "com.apple.product-type.application";
@@ -2964,7 +2964,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "/Applications";
+				INSTALL_PATH = /Applications;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -3016,7 +3016,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "/Applications";
+				INSTALL_PATH = /Applications;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

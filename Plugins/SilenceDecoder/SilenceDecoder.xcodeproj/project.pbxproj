@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83747BFC2862D95C0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BFA2862D95C0021245F /* Shared.xcconfig */; };
+		83747BFD2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BFB2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83F9D8021A884C0B007ABEC2 /* SilenceDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */; };
 		83F9D8031A884C0B007ABEC2 /* SilenceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D8011A884C0B007ABEC2 /* SilenceSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		83747BFA2862D95C0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BFB2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83F9D7E71A884B44007ABEC2 /* SilenceDecoder.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SilenceDecoder.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F9D7EB1A884B44007ABEC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83F9D7FE1A884C0B007ABEC2 /* SilenceDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SilenceDecoder.h; sourceTree = "<group>"; };
@@ -34,9 +38,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747BF92862D95C0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BFA2862D95C0021245F /* Shared.xcconfig */,
+				83747BFB2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83F9D7DE1A884B44007ABEC2 = {
 			isa = PBXGroup;
 			children = (
+				83747BF92862D95C0021245F /* Xcode-config */,
 				83F9D7E91A884B44007ABEC2 /* SilenceDecoder */,
 				83F9D7E81A884B44007ABEC2 /* Products */,
 			);
@@ -103,8 +118,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83F9D7E61A884B44007ABEC2 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -131,6 +145,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BFC2862D95C0021245F /* Shared.xcconfig in Resources */,
+				83747BFD2862D95C0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,6 +167,7 @@
 /* Begin XCBuildConfiguration section */
 		83F9D7EC1A884B44007ABEC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BFA2862D95C0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -206,6 +223,7 @@
 		};
 		83F9D7ED1A884B44007ABEC2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BFA2862D95C0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -255,16 +273,12 @@
 		83F9D7EF1A884B44007ABEC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SilenceDecoder/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -274,16 +288,12 @@
 		83F9D7F01A884B44007ABEC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SilenceDecoder/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;

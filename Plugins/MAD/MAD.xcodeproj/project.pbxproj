@@ -11,6 +11,8 @@
 		8372C93727C7863700E250C9 /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C93627C7863700E250C9 /* libmad.a */; };
 		8372C93F27C7904800E250C9 /* libid3tag.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C93E27C7904800E250C9 /* libid3tag.a */; };
 		8372C94227C7959000E250C9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C94127C7959000E250C9 /* libz.tbd */; };
+		83747C292862DB9F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C272862DB9F0021245F /* Shared.xcconfig */; };
+		83747C2A2862DB9F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C282862DB9F0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83F97B6928600F9300A70B97 /* CVbriHeader.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F97B6728600F9300A70B97 /* CVbriHeader.c */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +26,8 @@
 		8372C93A27C786DD00E250C9 /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		8372C93E27C7904800E250C9 /* libid3tag.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libid3tag.a; path = ../../ThirdParty/libid3tag/lib/libid3tag.a; sourceTree = "<group>"; };
 		8372C94127C7959000E250C9 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		83747C272862DB9F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C282862DB9F0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83F97B6728600F9300A70B97 /* CVbriHeader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CVbriHeader.c; sourceTree = "<group>"; };
 		83F97B6828600F9300A70B97 /* CVbriHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVbriHeader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -45,6 +49,7 @@
 		8372C91A27C785BD00E250C9 = {
 			isa = PBXGroup;
 			children = (
+				83747C262862DB9F0021245F /* Xcode-config */,
 				83F97B6628600F9300A70B97 /* ThirdParty */,
 				8372C93A27C786DD00E250C9 /* HTTPSource.h */,
 				8372C93927C7866B00E250C9 /* Logging.h */,
@@ -72,6 +77,16 @@
 				8372C94127C7959000E250C9 /* libz.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83747C262862DB9F0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C272862DB9F0021245F /* Shared.xcconfig */,
+				83747C282862DB9F0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
 			sourceTree = "<group>";
 		};
 		83F97B6628600F9300A70B97 /* ThirdParty */ = {
@@ -140,6 +155,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C292862DB9F0021245F /* Shared.xcconfig in Resources */,
+				83747C2A2862DB9F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +177,7 @@
 /* Begin XCBuildConfiguration section */
 		8372C92527C785BD00E250C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C272862DB9F0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -220,6 +238,7 @@
 		};
 		8372C92627C785BD00E250C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C272862DB9F0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -274,12 +293,9 @@
 		8372C92827C785BD00E250C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					../../ThirdParty/libmad/include,
@@ -305,12 +321,9 @@
 		8372C92927C785BD00E250C9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					../../ThirdParty/libmad/include,

@@ -120,6 +120,8 @@
 		83299FC31E7657ED003A3242 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FC11E7657ED003A3242 /* timing.c */; };
 		8333B6631DCC440C004C140D /* sharkport.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6611DCC440C004C140D /* sharkport.c */; };
 		8333B6671DCC4451004C140D /* tile-cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6651DCC4451004C140D /* tile-cache.c */; };
+		83747BA92862D5430021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA72862D5430021245F /* Shared.xcconfig */; };
+		83747BAA2862D5430021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA82862D5430021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		837612EE1DD6AA2B001EED3D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 837612ED1DD6AA2B001EED3D /* LICENSE */; };
 		837CEA73234875D700E62A4A /* audio-mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEA70234875D700E62A4A /* audio-mixer.c */; };
 		83C9A7D02632122C00725A49 /* gpio.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C9A7CC2632122C00725A49 /* gpio.c */; };
@@ -301,6 +303,8 @@
 		83299FC11E7657ED003A3242 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timing.c; sourceTree = "<group>"; };
 		8333B6611DCC440C004C140D /* sharkport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sharkport.c; sourceTree = "<group>"; };
 		8333B6651DCC4451004C140D /* tile-cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "tile-cache.c"; sourceTree = "<group>"; };
+		83747BA72862D5430021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BA82862D5430021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		837612ED1DD6AA2B001EED3D /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		837CEA70234875D700E62A4A /* audio-mixer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "audio-mixer.c"; sourceTree = "<group>"; };
 		83C9A7CC2632122C00725A49 /* gpio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpio.c; sourceTree = "<group>"; };
@@ -697,6 +701,16 @@
 			path = windows;
 			sourceTree = "<group>";
 		};
+		83747BA62862D5430021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BA72862D5430021245F /* Shared.xcconfig */,
+				83747BA82862D5430021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		837CEA6E234875D700E62A4A /* extra */ = {
 			isa = PBXGroup;
 			children = (
@@ -739,6 +753,7 @@
 		83CA24091D7BC47C00F2EA53 = {
 			isa = PBXGroup;
 			children = (
+				83747BA62862D5430021245F /* Xcode-config */,
 				83CA24151D7BC47C00F2EA53 /* mGBA */,
 				83CA24141D7BC47C00F2EA53 /* Products */,
 			);
@@ -1098,8 +1113,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83CA24121D7BC47C00F2EA53 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -1126,7 +1140,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BAA2862D5430021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				837612EE1DD6AA2B001EED3D /* LICENSE in Resources */,
+				83747BA92862D5430021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1204,6 +1220,7 @@
 /* Begin XCBuildConfiguration section */
 		83CA24191D7BC47C00F2EA53 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BA72862D5430021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1265,6 +1282,7 @@
 		};
 		83CA241A1D7BC47C00F2EA53 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BA72862D5430021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1320,11 +1338,8 @@
 		83CA241C1D7BC47C00F2EA53 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -1349,7 +1364,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.mGBA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1357,11 +1371,8 @@
 		83CA241D1D7BC47C00F2EA53 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -1385,7 +1396,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.mGBA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

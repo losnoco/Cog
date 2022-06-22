@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83747BB82862D56A0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BB62862D56A0021245F /* Shared.xcconfig */; };
+		83747BB92862D56A0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BB72862D56A0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83B066BA180D56B9008E3612 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B066B8180D56B9008E3612 /* InfoPlist.strings */; };
 		83B066F1180D5724008E3612 /* midi_container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B066E3180D5724008E3612 /* midi_container.cpp */; };
 		83B066F2180D5724008E3612 /* midi_container.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B066E4180D5724008E3612 /* midi_container.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -26,6 +28,8 @@
 
 /* Begin PBXFileReference section */
 		833F68441CDBCABF00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83747BB62862D56A0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BB72862D56A0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83B066AC180D56B9008E3612 /* midi_processing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = midi_processing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B066B7180D56B9008E3612 /* midi_processing-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "midi_processing-Info.plist"; sourceTree = "<group>"; };
 		83B066B9180D56B9008E3612 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -56,9 +60,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747BB52862D56A0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BB62862D56A0021245F /* Shared.xcconfig */,
+				83747BB72862D56A0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83B066A2180D56B9008E3612 = {
 			isa = PBXGroup;
 			children = (
+				83747BB52862D56A0021245F /* Xcode-config */,
 				83B066B5180D56B9008E3612 /* midi_processing */,
 				83B066AE180D56B9008E3612 /* Frameworks */,
 				83B066AD180D56B9008E3612 /* Products */,
@@ -162,8 +177,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83B066AB180D56B9008E3612 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -191,7 +205,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BB92862D56A0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83B066BA180D56B9008E3612 /* InfoPlist.strings in Resources */,
+				83747BB82862D56A0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +250,7 @@
 /* Begin XCBuildConfiguration section */
 		83B066D2180D56B9008E3612 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BB62862D56A0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -289,6 +306,7 @@
 		};
 		83B066D3180D56B9008E3612 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BB62862D56A0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -338,11 +356,8 @@
 		83B066D5180D56B9008E3612 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -350,7 +365,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -360,11 +374,8 @@
 		83B066D6180D56B9008E3612 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -372,7 +383,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;

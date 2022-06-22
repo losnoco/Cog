@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		830109F91A09BC0A0004F8D8 /* codecvt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F71A09BC0A0004F8D8 /* codecvt.h */; };
 		830109FA1A09BC0A0004F8D8 /* wstring_convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F81A09BC0A0004F8D8 /* wstring_convert.h */; };
+		83747B8B2862D4F90021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B892862D4F90021245F /* Shared.xcconfig */; };
+		83747B8C2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B8A2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83848FBC1807623F00E7332D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FBB1807623F00E7332D /* Cocoa.framework */; };
 		83848FC61807623F00E7332D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83848FC41807623F00E7332D /* InfoPlist.strings */; };
 		838490251807649A00E7332D /* Channel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490011807649A00E7332D /* Channel.cpp */; };
@@ -46,6 +48,8 @@
 		830109F71A09BC0A0004F8D8 /* codecvt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codecvt.h; sourceTree = "<group>"; };
 		830109F81A09BC0A0004F8D8 /* wstring_convert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wstring_convert.h; sourceTree = "<group>"; };
 		833F68301CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83747B892862D4F90021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747B8A2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83848FB81807623F00E7332D /* SSEQPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SSEQPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83848FBB1807623F00E7332D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83848FBE1807623F00E7332D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -97,9 +101,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747B882862D4F90021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747B892862D4F90021245F /* Shared.xcconfig */,
+				83747B8A2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83848FAE1807623F00E7332D = {
 			isa = PBXGroup;
 			children = (
+				83747B882862D4F90021245F /* Xcode-config */,
 				83848FC11807623F00E7332D /* SSEQPlayer */,
 				83848FBA1807623F00E7332D /* Frameworks */,
 				83848FB91807623F00E7332D /* Products */,
@@ -241,8 +256,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83848FB71807623F00E7332D = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -270,7 +284,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747B8C2862D4F90021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83848FC61807623F00E7332D /* InfoPlist.strings in Resources */,
+				83747B8B2862D4F90021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +330,7 @@
 /* Begin XCBuildConfiguration section */
 		83848FDE1807623F00E7332D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B892862D4F90021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -368,6 +385,7 @@
 		};
 		83848FDF1807623F00E7332D /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B892862D4F90021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -415,11 +433,8 @@
 		83848FE11807623F00E7332D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -427,7 +442,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.sseqplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -437,11 +451,8 @@
 		83848FE21807623F00E7332D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -449,7 +460,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.sseqplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;

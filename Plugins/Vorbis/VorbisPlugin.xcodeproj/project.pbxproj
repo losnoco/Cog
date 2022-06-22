@@ -11,6 +11,8 @@
 		83186313285CEBD2001422CC /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 83186312285CEBD2001422CC /* NSDictionary+Merge.m */; };
 		836EF0D627BB969D00BF35B2 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D427BB969D00BF35B2 /* libvorbisfile.3.dylib */; };
 		836EF0DF27BB987000BF35B2 /* libvorbis.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0DE27BB987000BF35B2 /* libvorbis.0.dylib */; };
+		83747BED2862D9010021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BEB2862D9010021245F /* Shared.xcconfig */; };
+		83747BEE2862D9010021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BEC2862D9010021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83AA661627B7FAFC0098D4B8 /* picture.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA661127B7FAFC0098D4B8 /* picture.c */; };
 		83AA661727B7FAFD0098D4B8 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA661227B7FAFC0098D4B8 /* base64.c */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -29,6 +31,8 @@
 		8356BD1C27B46A2D0074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		836EF0D427BB969D00BF35B2 /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ../../ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
 		836EF0DE27BB987000BF35B2 /* libvorbis.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbis.0.dylib; path = ../../ThirdParty/vorbis/lib/libvorbis.0.dylib; sourceTree = "<group>"; };
+		83747BEB2862D9010021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BEC2862D9010021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8384913418081A3900E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		83AA660E27B7FAFC0098D4B8 /* picture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picture.h; sourceTree = "<group>"; };
 		83AA660F27B7FAFC0098D4B8 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
@@ -56,6 +60,7 @@
 		089C166AFE841209C02AAC07 /* Vorbis */ = {
 			isa = PBXGroup;
 			children = (
+				83747BEA2862D9010021245F /* Xcode-config */,
 				83AA660C27B7FAFC0098D4B8 /* vorbis-tools */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
@@ -141,6 +146,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		83747BEA2862D9010021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BEB2862D9010021245F /* Shared.xcconfig */,
+				83747BEC2862D9010021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83AA660C27B7FAFC0098D4B8 /* vorbis-tools */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,8 +214,7 @@
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -226,6 +240,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BED2862D9010021245F /* Shared.xcconfig in Resources */,
+				83747BEE2862D9010021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,12 +283,9 @@
 		1DEB913B08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -293,7 +306,6 @@
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/vorbis/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.vorbis;
 				PRODUCT_NAME = VorbisPlugin;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -303,11 +315,8 @@
 		1DEB913C08733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -326,7 +335,6 @@
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/vorbis/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.vorbis;
 				PRODUCT_NAME = VorbisPlugin;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -335,6 +343,7 @@
 		};
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BEB2862D9010021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -378,6 +387,7 @@
 		};
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BEB2862D9010021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;

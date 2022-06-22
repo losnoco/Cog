@@ -13,6 +13,8 @@
 		8343785A17F93D8200584396 /* psf2fs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343785617F93D8200584396 /* psf2fs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8343785B17F93D8200584396 /* psflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343785717F93D8200584396 /* psflib.c */; };
 		8343785C17F93D8200584396 /* psflib.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343785817F93D8200584396 /* psflib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83747B9F2862D52E0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B9D2862D52E0021245F /* Shared.xcconfig */; };
+		83747BA02862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B9E2862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		8343785617F93D8200584396 /* psf2fs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = psf2fs.h; sourceTree = "<group>"; };
 		8343785717F93D8200584396 /* psflib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psflib.c; sourceTree = "<group>"; };
 		8343785817F93D8200584396 /* psflib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = psflib.h; sourceTree = "<group>"; };
+		83747B9D2862D52E0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747B9E2862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +46,7 @@
 		8343781217F93CB500584396 = {
 			isa = PBXGroup;
 			children = (
+				83747B9C2862D52E0021245F /* Xcode-config */,
 				8343782517F93CB500584396 /* psflib */,
 				8343781E17F93CB500584396 /* Frameworks */,
 				8343781D17F93CB500584396 /* Products */,
@@ -93,6 +98,16 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		83747B9C2862D52E0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747B9D2862D52E0021245F /* Shared.xcconfig */,
+				83747B9E2862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -136,8 +151,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8343781B17F93CB500584396 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -165,7 +179,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BA02862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8343782A17F93CB500584396 /* InfoPlist.strings in Resources */,
+				83747B9F2862D52E0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +214,7 @@
 /* Begin XCBuildConfiguration section */
 		8343784217F93CB500584396 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B9D2862D52E0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -252,6 +269,7 @@
 		};
 		8343784317F93CB500584396 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B9D2862D52E0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -299,11 +317,8 @@
 		8343784517F93CB500584396 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -313,7 +328,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.psflib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -323,11 +337,8 @@
 		8343784617F93CB500584396 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -337,7 +348,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.psflib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;

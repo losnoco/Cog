@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83747BBD2862D5760021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BBB2862D5760021245F /* Shared.xcconfig */; };
+		83747BBE2862D5760021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BBC2862D5760021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83A16EF019F48A2E00842DBC /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A16EED19F48A2E00842DBC /* huffman.c */; };
 		83A16EF119F48A2E00842DBC /* mpc_bits_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A16EEE19F48A2E00842DBC /* mpc_bits_reader.c */; };
 		83A16EF219F48A2E00842DBC /* mpc_demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A16EEF19F48A2E00842DBC /* mpc_demux.c */; };
@@ -38,6 +40,8 @@
 /* Begin PBXFileReference section */
 		833F683F1CDBCAB300AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C889222CC1885001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83747BBB2862D5760021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BBC2862D5760021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83A16EED19F48A2E00842DBC /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = Files/src/huffman.c; sourceTree = "<group>"; };
 		83A16EEE19F48A2E00842DBC /* mpc_bits_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_bits_reader.c; path = Files/src/mpc_bits_reader.c; sourceTree = "<group>"; };
 		83A16EEF19F48A2E00842DBC /* mpc_demux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_demux.c; path = Files/src/mpc_demux.c; sourceTree = "<group>"; };
@@ -89,6 +93,7 @@
 		0867D691FE84028FC02AAC07 /* MPCDec */ = {
 			isa = PBXGroup;
 			children = (
+				83747BBA2862D5760021245F /* Xcode-config */,
 				8E6096BB09F314B2006D8BD7 /* Headers */,
 				8E6096BA09F314AD006D8BD7 /* Source */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -128,6 +133,16 @@
 			children = (
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		83747BBA2862D5760021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BBB2862D5760021245F /* Shared.xcconfig */,
+				83747BBC2862D5760021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
 			sourceTree = "<group>";
 		};
 		83A16F1619F48FB800842DBC /* mpcdec */ = {
@@ -232,8 +247,7 @@
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -261,7 +275,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BBE2862D5760021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				83747BBD2862D5760021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,12 +322,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -325,7 +338,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.mpcdec;
 				PRODUCT_NAME = mpcdec;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -337,11 +349,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -352,7 +361,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.mpcdec;
 				PRODUCT_NAME = mpcdec;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = Files/include/;
@@ -362,6 +370,7 @@
 		};
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BBB2862D5760021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -405,6 +414,7 @@
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BBB2862D5760021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
