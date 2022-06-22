@@ -505,6 +505,10 @@ BOOL kAppControllerShuttingDown = NO;
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
 }
 
+- (IBAction)privacyPolicy:(id)sender {
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.iubenda.com/privacy-policy/59859310"]];
+}
+
 - (IBAction)feedback:(id)sender {
 	NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
 
