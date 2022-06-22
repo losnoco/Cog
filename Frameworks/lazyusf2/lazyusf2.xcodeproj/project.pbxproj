@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		8333B6721DCC498B004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B6711DCC498B004C140D /* libz.tbd */; };
 		83747BAE2862D54D0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BAC2862D54D0021245F /* Shared.xcconfig */; };
-		83747BAF2862D54D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BAD2862D54D0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8379B58A1AA4237E00F28A95 /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 8379B5881AA4237E00F28A95 /* barray.c */; };
 		8379B58B1AA4237E00F28A95 /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8379B5891AA4237E00F28A95 /* barray.h */; };
 		83AA660627B7CB490098D4B8 /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660427B7CB490098D4B8 /* hvqm.c */; };
@@ -208,7 +207,6 @@
 /* Begin PBXFileReference section */
 		8333B6711DCC498B004C140D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		83747BAC2862D54D0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BAD2862D54D0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8379B5881AA4237E00F28A95 /* barray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = barray.c; sourceTree = "<group>"; };
 		8379B5891AA4237E00F28A95 /* barray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = barray.h; sourceTree = "<group>"; };
 		83AA660427B7CB490098D4B8 /* hvqm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hvqm.c; sourceTree = "<group>"; };
@@ -422,7 +420,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BAC2862D54D0021245F /* Shared.xcconfig */,
-				83747BAD2862D54D0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -1007,7 +1004,6 @@
 				83CA15901A988138005E7ED4 /* interpreter_special.def in Resources */,
 				83CA15641A988138005E7ED4 /* api_export.ver in Resources */,
 				83CA158C1A988138005E7ED4 /* interpreter_cop0.def in Resources */,
-				83747BAF2862D54D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83CA158F1A988138005E7ED4 /* interpreter_regimm.def in Resources */,
 				83CA158D1A988138005E7ED4 /* interpreter_cop1.def in Resources */,
 				83CA158E1A988138005E7ED4 /* interpreter_r4300.def in Resources */,

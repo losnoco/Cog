@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83747B772862D49F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B752862D49F0021245F /* Shared.xcconfig */; };
-		83747B782862D49F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B762862D49F0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
+		83747FEA2862E8FA0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747FE82862E8FA0021245F /* Shared.xcconfig */; };
 		83D3C693201D3870005564CB /* binio.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C692201D3870005564CB /* binio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83D3C69B201D388C005564CB /* binfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C694201D388B005564CB /* binfile.cpp */; };
 		83D3C69C201D388C005564CB /* binwrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C695201D388B005564CB /* binwrap.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -20,8 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		83747B752862D49F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747B762862D49F0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
+		83747FE82862E8FA0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83D3C67B201D37D8005564CB /* libbinio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libbinio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C67F201D37D8005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D3C692201D3870005564CB /* binio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binio.h; sourceTree = "<group>"; };
@@ -45,11 +43,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		83747B742862D49F0021245F /* Xcode-config */ = {
+		83747FE72862E8FA0021245F /* Xcode-config */ = {
 			isa = PBXGroup;
 			children = (
-				83747B752862D49F0021245F /* Shared.xcconfig */,
-				83747B762862D49F0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+				83747FE82862E8FA0021245F /* Shared.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -58,7 +55,7 @@
 		83D3C671201D37D8005564CB = {
 			isa = PBXGroup;
 			children = (
-				83747B742862D49F0021245F /* Xcode-config */,
+				83747FE72862E8FA0021245F /* Xcode-config */,
 				83D3C67D201D37D8005564CB /* libbinio */,
 				83D3C67C201D37D8005564CB /* Products */,
 			);
@@ -160,8 +157,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747B772862D49F0021245F /* Shared.xcconfig in Resources */,
-				83747B782862D49F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
+				83747FEA2862E8FA0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,7 +180,7 @@
 /* Begin XCBuildConfiguration section */
 		83D3C681201D37D8005564CB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83747B752862D49F0021245F /* Shared.xcconfig */;
+			baseConfigurationReference = 83747FE82862E8FA0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -247,7 +243,7 @@
 		};
 		83D3C682201D37D8005564CB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83747B752862D49F0021245F /* Shared.xcconfig */;
+			baseConfigurationReference = 83747FE82862E8FA0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;

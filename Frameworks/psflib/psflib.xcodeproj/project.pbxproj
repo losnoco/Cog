@@ -14,7 +14,6 @@
 		8343785B17F93D8200584396 /* psflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343785717F93D8200584396 /* psflib.c */; };
 		8343785C17F93D8200584396 /* psflib.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343785817F93D8200584396 /* psflib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83747B9F2862D52E0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B9D2862D52E0021245F /* Shared.xcconfig */; };
-		83747BA02862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B9E2862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,7 +27,6 @@
 		8343785717F93D8200584396 /* psflib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psflib.c; sourceTree = "<group>"; };
 		8343785817F93D8200584396 /* psflib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = psflib.h; sourceTree = "<group>"; };
 		83747B9D2862D52E0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747B9E2862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +100,6 @@
 			isa = PBXGroup;
 			children = (
 				83747B9D2862D52E0021245F /* Shared.xcconfig */,
-				83747B9E2862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -179,7 +176,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BA02862D52E0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8343782A17F93CB500584396 /* InfoPlist.strings in Resources */,
 				83747B9F2862D52E0021245F /* Shared.xcconfig in Resources */,
 			);

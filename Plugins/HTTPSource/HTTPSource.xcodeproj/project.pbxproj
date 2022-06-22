@@ -10,7 +10,6 @@
 		1716093A0F627F02008FA424 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 171609390F627F02008FA424 /* HTTPSource.m */; };
 		8356BD1827B3B7340074E50C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BD1727B3B7340074E50C /* libcurl.tbd */; };
 		83747C382862DC0D0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C362862DC0D0021245F /* Shared.xcconfig */; };
-		83747C392862DC0D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C372862DC0D0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,7 +35,6 @@
 		32DBCF630370AF2F00C91783 /* HTTPSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPSource_Prefix.pch; sourceTree = "<group>"; };
 		8356BD1727B3B7340074E50C /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		83747C362862DC0D0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C372862DC0D0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8384912F1808180000E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* HTTPSource.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HTTPSource.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -144,7 +142,6 @@
 			isa = PBXGroup;
 			children = (
 				83747C362862DC0D0021245F /* Shared.xcconfig */,
-				83747C372862DC0D0021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -208,7 +205,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83747C382862DC0D0021245F /* Shared.xcconfig in Resources */,
-				83747C392862DC0D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

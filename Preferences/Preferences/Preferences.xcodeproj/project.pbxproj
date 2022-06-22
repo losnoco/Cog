@@ -92,7 +92,6 @@
 		17D1B3F60F6349CE00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = ../PreferencePanePlugin.h; sourceTree = SOURCE_ROOT; };
 		17E78A7D0D68BE3C005C5A59 /* file_tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_tree.png; path = Icons/file_tree.png; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences_Prefix.pch; sourceTree = "<group>"; };
-		3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		3DFAC48F235B6B8100A29416 /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8307D30328604D8B000FF8EB /* SandboxPathBehaviorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxPathBehaviorController.h; sourceTree = "<group>"; };
 		8307D30428604D8B000FF8EB /* SandboxPathBehaviorController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SandboxPathBehaviorController.m; sourceTree = "<group>"; };
@@ -301,7 +300,6 @@
 		3DFAC48D235B6B8100A29416 /* Xcode-config */ = {
 			isa = PBXGroup;
 			children = (
-				3DFAC48E235B6B8100A29416 /* DEVELOPMENT_TEAM.xcconfig */,
 				3DFAC48F235B6B8100A29416 /* Shared.xcconfig */,
 			);
 			name = "Xcode-config";

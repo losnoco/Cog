@@ -11,7 +11,6 @@
 		17F564EE0C3BDE010019975C /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; };
 		17F564EF0C3BDE030019975C /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83747C062862DA780021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C042862DA780021245F /* Shared.xcconfig */; };
-		83747C072862DA780021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C052862DA780021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -55,7 +54,6 @@
 		17F563DD0C3BDBF10019975C /* Shorten.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Shorten.xcodeproj; path = ../../Frameworks/Shorten/Shorten.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* Shorten_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shorten_Prefix.pch; sourceTree = "<group>"; };
 		83747C042862DA780021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C052862DA780021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Shorten.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Shorten.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -161,7 +159,6 @@
 			isa = PBXGroup;
 			children = (
 				83747C042862DA780021245F /* Shared.xcconfig */,
-				83747C052862DA780021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -242,7 +239,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83747C062862DA780021245F /* Shared.xcconfig in Resources */,
-				83747C072862DA780021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

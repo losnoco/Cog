@@ -27,7 +27,6 @@
 		834378CD17F9666D00584396 /* m68kops.h in Headers */ = {isa = PBXBuildFile; fileRef = 834378C317F9666D00584396 /* m68kops.h */; };
 		834378CE17F9666D00584396 /* macros.h in Headers */ = {isa = PBXBuildFile; fileRef = 834378C417F9666D00584396 /* macros.h */; };
 		83747B9A2862D5230021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B982862D5230021245F /* Shared.xcconfig */; };
-		83747B9B2862D5230021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B992862D5230021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,7 +53,6 @@
 		834378C317F9666D00584396 /* m68kops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m68kops.h; sourceTree = "<group>"; };
 		834378C417F9666D00584396 /* macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macros.h; sourceTree = "<group>"; };
 		83747B982862D5230021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747B992862D5230021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,7 +147,6 @@
 			isa = PBXGroup;
 			children = (
 				83747B982862D5230021245F /* Shared.xcconfig */,
-				83747B992862D5230021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -235,7 +232,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747B9B2862D5230021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8343787C17F9658E00584396 /* InfoPlist.strings in Resources */,
 				83747B9A2862D5230021245F /* Shared.xcconfig in Resources */,
 			);

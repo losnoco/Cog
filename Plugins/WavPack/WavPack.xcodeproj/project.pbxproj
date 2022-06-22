@@ -11,7 +11,6 @@
 		17F562D80C3BDA6C0019975C /* WavPack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; };
 		17F562DB0C3BDA6E0019975C /* WavPack.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83747BE82862D8D60021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BE62862D8D60021245F /* Shared.xcconfig */; };
-		83747BE92862D8D60021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BE72862D8D60021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -55,7 +54,6 @@
 		17F562C20C3BDA5A0019975C /* WavPack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WavPack.xcodeproj; path = ../../Frameworks/WavPack/WavPack.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* WavPack_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WavPack_Prefix.pch; sourceTree = "<group>"; };
 		83747BE62862D8D60021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BE72862D8D60021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83849133180819EB00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* WavPack.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WavPack.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -163,7 +161,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BE62862D8D60021245F /* Shared.xcconfig */,
-				83747BE72862D8D60021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -244,7 +241,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83747BE82862D8D60021245F /* Shared.xcconfig in Resources */,
-				83747BE92862D8D60021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

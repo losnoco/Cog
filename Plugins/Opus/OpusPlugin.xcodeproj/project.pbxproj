@@ -10,7 +10,6 @@
 		83186316285CEC91001422CC /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 83186315285CEC91001422CC /* NSDictionary+Merge.m */; };
 		836EF0CF27BB952F00BF35B2 /* libopusfile.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */; };
 		83747C102862DAC70021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C0E2862DAC70021245F /* Shared.xcconfig */; };
-		83747C112862DAC70021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C0F2862DAC70021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8375B04017FFEA400092A79F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8375B03F17FFEA400092A79F /* Cocoa.framework */; };
 		8375B04A17FFEA400092A79F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8375B04817FFEA400092A79F /* InfoPlist.strings */; };
 		8375B36C17FFF1CB0092A79F /* OpusDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8375B36B17FFF1CB0092A79F /* OpusDecoder.m */; };
@@ -35,7 +34,6 @@
 		8356BD1B27B469B80074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopusfile.0.dylib; path = ../../ThirdParty/opusfile/lib/libopusfile.0.dylib; sourceTree = "<group>"; };
 		83747C0E2862DAC70021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747C0F2862DAC70021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8375B03C17FFEA400092A79F /* OpusPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpusPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8375B03F17FFEA400092A79F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8375B04217FFEA400092A79F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -67,7 +65,6 @@
 			isa = PBXGroup;
 			children = (
 				83747C0E2862DAC70021245F /* Shared.xcconfig */,
-				83747C0F2862DAC70021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -195,7 +192,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C112862DAC70021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8375B04A17FFEA400092A79F /* InfoPlist.strings in Resources */,
 				83747C102862DAC70021245F /* Shared.xcconfig in Resources */,
 			);
