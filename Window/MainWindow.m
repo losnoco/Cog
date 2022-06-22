@@ -8,6 +8,27 @@
 
 #import "MainWindow.h"
 
+void showCrashlyticsConsent(NSWindow *window) {
+	BOOL askedConsent = [[NSUserDefaults standardUserDefaults] boolForKey:@"crashlyticsAskedConsent"];
+	if(!askedConsent) {
+		[window orderFront:window];
+
+		NSAlert *alert = [[NSAlert alloc] init];
+		[alert setMessageText:NSLocalizedString(@"CrashlyticsConsentTitle", @"")];
+		[alert setInformativeText:NSLocalizedString(@"CrashlyticsConsentText", @"")];
+		[alert addButtonWithTitle:NSLocalizedString(@"ConsentYes",@"")];
+		[alert addButtonWithTitle:NSLocalizedString(@"ConsentNo", @"")];
+		
+		[alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
+			if(returnCode == NSAlertFirstButtonReturn) {
+				[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"crashlyticsConsented"];
+			}
+		}];
+		
+		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"crashlyticsAskedConsent"];
+	}
+}
+
 @implementation MainWindow
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation {
@@ -27,6 +48,10 @@
 	hdcdLogo = [NSImage imageNamed:@"hdcdLogoTemplate"];
 
 	[self showHDCDLogo:NO];
+	
+	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
+		showCrashlyticsConsent(self);
+	}
 }
 
 - (void)showHDCDLogo:(BOOL)show {

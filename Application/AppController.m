@@ -147,8 +147,9 @@ BOOL kAppControllerShuttingDown = NO;
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(YES) }];
 
 	[FIRApp configure];
-	[FIRAnalytics setAnalyticsCollectionEnabled:YES];
-
+	
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.crashlyticsConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
+	
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 
 	[self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
@@ -284,8 +285,12 @@ BOOL kAppControllerShuttingDown = NO;
 	if(context != kAppControllerContext) {
 		return;
 	}
-
-	if([keyPath isEqualToString:@"playlistController.currentEntry"]) {
+	
+	if([keyPath isEqualToString:@"values.crashlyticsConsented"]) {
+		BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"crashlyticsConsented"];
+		[[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:enabled];
+		[FIRAnalytics setAnalyticsCollectionEnabled:enabled];
+	} else if([keyPath isEqualToString:@"playlistController.currentEntry"]) {
 		PlaylistEntry *entry = playlistController.currentEntry;
 		NSString *appTitle = NSLocalizedString(@"CogTitle", @"");
 		if(!entry) {

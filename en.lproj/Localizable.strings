@@ -74,3 +74,8 @@
 "GainTrackPeak" = "Track Peak";
 "GainVolumeScale" = "Volume Scale";
 "GainNone" = "None";
+
+"CrashlyticsConsentTitle" = "Crashlytics crash collection";
+"CrashlyticsConsentText" = "Would you like to allow Crashlytics to submit crash reports? You may turn this off again in Preferences. We won't ask you again.";
+"ConsentYes" = "Yes";
+"ConsentNo" = "No";
