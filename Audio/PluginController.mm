@@ -375,6 +375,8 @@ static NSString *xmlEscapeString(NSString * string) {
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n\
 <plist version=\"1.0\">\n\
 <dict>\n\
+\t<key>FirebaseCrashlyticsCollectionEnabled</key>\n\
+\t<false/>\n\
 \t<key>SUEnableInstallerLauncherService</key>\n\
 \t<true/>\n\
 \t<key>CFBundleDevelopmentRegion</key>\n\

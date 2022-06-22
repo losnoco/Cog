@@ -402,11 +402,11 @@
             <classReference key="objectClass" className="NSDictionary"/>
         </arrayController>
         <customView id="0nK-XQ-5MY" userLabel="GeneralView">
-            <rect key="frame" x="0.0" y="0.0" width="530" height="202"/>
+            <rect key="frame" x="0.0" y="0.0" width="530" height="224"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dIu-uT-8YW">
-                    <rect key="frame" x="18" y="165" width="226" height="18"/>
+                    <rect key="frame" x="18" y="187" width="226" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Allow insecure SSL connections" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sva-DV-ina">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -414,6 +414,17 @@
                     </buttonCell>
                     <connections>
                         <binding destination="52" name="value" keyPath="values.allowInsecureSSL" id="78K-25-qki"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eG6-20-AS8">
+                    <rect key="frame" x="18" y="165" width="257" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Send crash reports and usage data" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zQ2-6O-3Og">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.crashlyticsConsented" id="GQu-a0-JJs"/>
                     </connections>
                 </button>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="crf-C9-9YF">
@@ -534,7 +545,7 @@
                     </connections>
                 </scrollView>
             </subviews>
-            <point key="canvasLocation" x="450" y="-211"/>
+            <point key="canvasLocation" x="450" y="-200"/>
         </customView>
         <customView id="U4w-jw-ca5" userLabel="NotificationsView">
             <rect key="frame" x="0.0" y="0.0" width="530" height="99"/>

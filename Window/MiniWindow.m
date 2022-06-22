@@ -12,6 +12,8 @@
 
 extern NSString *iTunesDropType;
 
+extern void showCrashlyticsConsent(NSWindow *window);
+
 @implementation MiniWindow
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation {
@@ -46,6 +48,10 @@ extern NSString *iTunesDropType;
 		fileType = NSFilenamesPboardType;
 	}
 	[self registerForDraggedTypes:@[fileType, iTunesDropType]];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
+		showCrashlyticsConsent(self);
+	}
 }
 
 - (void)toggleToolbarShown:(id)sender {
