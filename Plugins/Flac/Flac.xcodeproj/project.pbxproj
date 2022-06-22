@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
 		836EF0DA27BB970B00BF35B2 /* libFLAC.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D927BB970B00BF35B2 /* libFLAC.8.dylib */; };
+		83747C4C2862DCF40021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C4A2862DCF40021245F /* Shared.xcconfig */; };
+		83747C4D2862DCF40021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C4B2862DCF40021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83AA660B27B7DAE40098D4B8 /* cuesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660A27B7DAE40098D4B8 /* cuesheet.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -35,6 +37,8 @@
 		32DBCF630370AF2F00C91783 /* Flac_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flac_Prefix.pch; sourceTree = "<group>"; };
 		8356BD1927B3CCBB0074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		836EF0D927BB970B00BF35B2 /* libFLAC.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.8.dylib; path = ../../ThirdParty/flac/lib/libFLAC.8.dylib; sourceTree = "<group>"; };
+		83747C4A2862DCF40021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C4B2862DCF40021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8384912D180816C900E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		83AA660A27B7DAE40098D4B8 /* cuesheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cuesheet.m; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Flac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Flac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,6 +62,7 @@
 		089C166AFE841209C02AAC07 /* Flac */ = {
 			isa = PBXGroup;
 			children = (
+				83747C492862DCF40021245F /* Xcode-config */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -132,6 +137,16 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		83747C492862DCF40021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C4A2862DCF40021245F /* Shared.xcconfig */,
+				83747C4B2862DCF40021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -163,8 +178,7 @@
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -190,6 +204,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C4C2862DCF40021245F /* Shared.xcconfig in Resources */,
+				83747C4D2862DCF40021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,12 +227,9 @@
 		1DEB913B08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -233,7 +246,6 @@
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/flac/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.flac;
 				PRODUCT_NAME = Flac;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -244,11 +256,8 @@
 		1DEB913C08733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -263,7 +272,6 @@
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/flac/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.flac;
 				PRODUCT_NAME = Flac;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -272,6 +280,7 @@
 		};
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C4A2862DCF40021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -315,6 +324,7 @@
 		};
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C4A2862DCF40021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;

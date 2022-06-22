@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		830E1DA1263B90CB005B01D2 /* rad2.h in Headers */ = {isa = PBXBuildFile; fileRef = 830E1D9F263B90CB005B01D2 /* rad2.h */; };
 		830E1DA2263B90CB005B01D2 /* rad2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830E1DA0263B90CB005B01D2 /* rad2.cpp */; };
+		83747B7C2862D4B70021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B7A2862D4B70021245F /* Shared.xcconfig */; };
+		83747B7D2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B7B2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83D3C578201C66E3005564CB /* adplug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C505201C66C1005564CB /* adplug.cpp */; };
 		83D3C579201C66E3005564CB /* mtk.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C506201C66C2005564CB /* mtk.h */; };
 		83D3C57A201C66E3005564CB /* psi.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C507201C66C2005564CB /* psi.h */; };
@@ -150,6 +152,8 @@
 /* Begin PBXFileReference section */
 		830E1D9F263B90CB005B01D2 /* rad2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rad2.h; path = adplug/src/rad2.h; sourceTree = "<group>"; };
 		830E1DA0263B90CB005B01D2 /* rad2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rad2.cpp; path = adplug/src/rad2.cpp; sourceTree = "<group>"; };
+		83747B7A2862D4B70021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747B7B2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83D3C4D4201C654F005564CB /* libAdPlug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libAdPlug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C4D8201C6550005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D3C505201C66C1005564CB /* adplug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = adplug.cpp; path = adplug/src/adplug.cpp; sourceTree = "<group>"; };
@@ -285,9 +289,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747B792862D4B70021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747B7A2862D4B70021245F /* Shared.xcconfig */,
+				83747B7B2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83D3C4CA201C654F005564CB = {
 			isa = PBXGroup;
 			children = (
+				83747B792862D4B70021245F /* Xcode-config */,
 				83D3C4D6201C654F005564CB /* AdPlug */,
 				83D3C609201C6788005564CB /* Frameworks */,
 				83D3C4D5201C654F005564CB /* Products */,
@@ -550,8 +565,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83D3C4D3201C654F005564CB = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -594,6 +608,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747B7C2862D4B70021245F /* Shared.xcconfig in Resources */,
+				83747B7D2862D4B70021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -678,6 +694,7 @@
 /* Begin XCBuildConfiguration section */
 		83D3C4DA201C6550005564CB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B7A2862D4B70021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -708,7 +725,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -741,6 +757,7 @@
 		};
 		83D3C4DB201C6550005564CB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B7A2862D4B70021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -771,7 +788,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -798,11 +814,8 @@
 		83D3C4DD201C6550005564CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -820,7 +833,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libAdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -828,11 +840,8 @@
 		83D3C4DE201C6550005564CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -846,7 +855,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libAdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

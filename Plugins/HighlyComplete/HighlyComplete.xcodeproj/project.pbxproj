@@ -17,6 +17,8 @@
 		834379A817F9818400584396 /* HCDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 834379A717F9818400584396 /* HCDecoder.mm */; };
 		8360EEE817F92AC8005208A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EEE717F92AC8005208A4 /* Cocoa.framework */; };
 		8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8360EEF017F92AC8005208A4 /* InfoPlist.strings */; };
+		83747C422862DCB50021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C402862DCB50021245F /* Shared.xcconfig */; };
+		83747C432862DCB50021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C412862DCB50021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
 		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CA24241D7BC47E00F2EA53 /* mGBA.framework */; };
@@ -198,6 +200,8 @@
 		8360EEEF17F92AC8005208A4 /* HighlyComplete-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HighlyComplete-Info.plist"; sourceTree = "<group>"; };
 		8360EEF117F92AC8005208A4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8360EEF317F92AC8005208A4 /* HighlyComplete-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HighlyComplete-Prefix.pch"; sourceTree = "<group>"; };
+		83747C402862DCB50021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C412862DCB50021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SSEQPlayer.xcodeproj; path = ../../Frameworks/SSEQPlayer/SSEQPlayer.xcodeproj; sourceTree = "<group>"; };
 		83AA660827B7CCB00098D4B8 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
 		83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mGBA.xcodeproj; path = ../../Frameworks/mGBA/mGBA.xcodeproj; sourceTree = "<group>"; };
@@ -263,6 +267,7 @@
 		8360EEDB17F92AC8005208A4 = {
 			isa = PBXGroup;
 			children = (
+				83747C3F2862DCB50021245F /* Xcode-config */,
 				8360EEED17F92AC8005208A4 /* HighlyComplete */,
 				8360EEE617F92AC8005208A4 /* Frameworks */,
 				8360EEE517F92AC8005208A4 /* Products */,
@@ -280,18 +285,18 @@
 		8360EEE617F92AC8005208A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				83E2F4C923566B0C006F7A41 /* lazyusf2.xcodeproj */,
+				8360EEE717F92AC8005208A4 /* Cocoa.framework */,
 				8333B6731DCC4999004C140D /* libz.tbd */,
+				83E2F4C923566B0C006F7A41 /* lazyusf2.xcodeproj */,
 				83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */,
 				83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */,
-				8360EEE717F92AC8005208A4 /* Cocoa.framework */,
-				8360EEE917F92AC8005208A4 /* Other Frameworks */,
 				8343784A17F93CB500584396 /* psflib.xcodeproj */,
 				8343789C17F9658E00584396 /* HighlyTheoretical.xcodeproj */,
 				8343790C17F96E2600584396 /* HighlyQuixotic.xcodeproj */,
 				8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */,
 				83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */,
 				83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */,
+				8360EEE917F92AC8005208A4 /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -328,6 +333,16 @@
 				8360EEF317F92AC8005208A4 /* HighlyComplete-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		83747C3F2862DCB50021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C402862DCB50021245F /* Shared.xcconfig */,
+				83747C412862DCB50021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
 			sourceTree = "<group>";
 		};
 		83848FE71807623F00E7332D /* Products */ = {
@@ -410,8 +425,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8360EEE317F92AC8005208A4 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -543,7 +557,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C432862DCB50021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */,
+				83747C422862DCB50021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -617,6 +633,7 @@
 /* Begin XCBuildConfiguration section */
 		8360EEF417F92AC8005208A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C402862DCB50021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -671,6 +688,7 @@
 		};
 		8360EEF517F92AC8005208A4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C402862DCB50021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -718,11 +736,8 @@
 		8360EEF717F92AC8005208A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HighlyComplete/HighlyComplete-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -736,7 +751,6 @@
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlycomplete;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -746,11 +760,8 @@
 		8360EEF817F92AC8005208A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HighlyComplete/HighlyComplete-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -763,7 +774,6 @@
 				INFOPLIST_FILE = "HighlyComplete/HighlyComplete-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlycomplete;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;

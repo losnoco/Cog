@@ -19,6 +19,8 @@
 		59FDCD700A2922E1006C1800 /* shn_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD690A2922E1006C1800 /* shn_reader.cpp */; };
 		59FDCD710A2922E1006C1800 /* sulawalaw.c in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD6A0A2922E1006C1800 /* sulawalaw.c */; };
 		59FDCD720A2922E1006C1800 /* vario.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD6B0A2922E1006C1800 /* vario.cpp */; };
+		83747BCC2862D5970021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BCA2862D5970021245F /* Shared.xcconfig */; };
+		83747BCD2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BCB2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +39,8 @@
 		59FDCD6B0A2922E1006C1800 /* vario.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = vario.cpp; path = Files/shorten/src/vario.cpp; sourceTree = "<group>"; };
 		833F683E1CDBCAB300AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C889522CC1888001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83747BCA2862D5970021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BCB2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Shorten.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Shorten.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -63,6 +67,7 @@
 		0867D691FE84028FC02AAC07 /* Shorten */ = {
 			isa = PBXGroup;
 			children = (
+				83747BC92862D5970021245F /* Xcode-config */,
 				8E756C6B09F3171C0080F1EE /* Headers */,
 				8E756C6A09F317170080F1EE /* Source */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -102,6 +107,16 @@
 			children = (
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		83747BC92862D5970021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BCA2862D5970021245F /* Shared.xcconfig */,
+				83747BCB2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
 			sourceTree = "<group>";
 		};
 		8E756C6A09F317170080F1EE /* Source */ = {
@@ -176,8 +191,7 @@
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -205,7 +219,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BCD2862D5970021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				83747BCC2862D5970021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,12 +261,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -264,7 +277,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -276,11 +288,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -294,7 +303,6 @@
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SHARED_PRECOMPS_DIR = "$(CACHE_ROOT)/SharedPrecompiledHeaders";
 				SKIP_INSTALL = YES;
@@ -305,6 +313,7 @@
 		};
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BCA2862D5970021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -355,6 +364,7 @@
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BCA2862D5970021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;

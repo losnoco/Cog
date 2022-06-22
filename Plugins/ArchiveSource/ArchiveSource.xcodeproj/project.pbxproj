@@ -12,6 +12,8 @@
 		8359009C17FEFDA80060F3ED /* ArchiveContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8359009B17FEFDA80060F3ED /* ArchiveContainer.m */; };
 		8359FF1B17FEF35C0060F3ED /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359FF1A17FEF35C0060F3ED /* Cocoa.framework */; };
 		8359FF2517FEF35C0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF2317FEF35C0060F3ED /* InfoPlist.strings */; };
+		83747C652862DDA00021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C632862DDA00021245F /* Shared.xcconfig */; };
+		83747C662862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C642862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		8359FF2417FEF35C0060F3ED /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8359FF2617FEF35C0060F3ED /* ArchiveSource-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ArchiveSource-Prefix.pch"; sourceTree = "<group>"; };
 		8359FF6A17FEF39F0060F3ED /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
+		83747C632862DDA00021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C642862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8384913518081BA000E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,6 +70,7 @@
 		8359FF0E17FEF35C0060F3ED = {
 			isa = PBXGroup;
 			children = (
+				83747C622862DDA00021245F /* Xcode-config */,
 				8359FF2017FEF35C0060F3ED /* ArchiveSource */,
 				8359FF1817FEF35C0060F3ED /* Products */,
 			);
@@ -134,6 +139,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83747C622862DDA00021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C632862DDA00021245F /* Shared.xcconfig */,
+				83747C642862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -165,8 +180,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8359FF1617FEF35C0060F3ED = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -210,7 +224,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C662862DDA00021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				8359FF2517FEF35C0060F3ED /* InfoPlist.strings in Resources */,
+				83747C652862DDA00021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +266,7 @@
 /* Begin XCBuildConfiguration section */
 		8359FF2717FEF35C0060F3ED /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C632862DDA00021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -304,6 +321,7 @@
 		};
 		8359FF2817FEF35C0060F3ED /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C632862DDA00021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -352,18 +370,14 @@
 		8359FF2A17FEF35C0060F3ED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArchiveSource/ArchiveSource-Prefix.pch";
 				INFOPLIST_FILE = "ArchiveSource/ArchiveSource-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.archivesource;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -373,18 +387,14 @@
 		8359FF2B17FEF35C0060F3ED /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArchiveSource/ArchiveSource-Prefix.pch";
 				INFOPLIST_FILE = "ArchiveSource/ArchiveSource-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.archivesource;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;

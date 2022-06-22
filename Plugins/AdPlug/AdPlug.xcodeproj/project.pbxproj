@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; };
+		83747C6F2862DDDB0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C6D2862DDDB0021245F /* Shared.xcconfig */; };
+		83747C702862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C6E2862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83C2806320E4ECAD00823BF9 /* libAdPlug.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D3C659201C6E24005564CB /* AdPlugContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C654201C6E24005564CB /* AdPlugContainer.mm */; };
 		83D3C65A201C6E24005564CB /* AdPlugMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C656201C6E24005564CB /* AdPlugMetadataReader.mm */; };
@@ -50,6 +52,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		83747C6D2862DDDB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C6E2862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83D3C5F3201C674D005564CB /* AdPlug.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdPlug.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C5F6201C674D005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D3C603201C6775005564CB /* libAdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libAdPlug.xcodeproj; path = ../../Frameworks/AdPlug/libAdPlug.xcodeproj; sourceTree = "<group>"; };
@@ -81,6 +85,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747C6C2862DDDB0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C6D2862DDDB0021245F /* Shared.xcconfig */,
+				83747C6E2862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83AA433C20E4EC8C00E861B2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -92,6 +106,7 @@
 		83D3C5EA201C674D005564CB = {
 			isa = PBXGroup;
 			children = (
+				83747C6C2862DDDB0021245F /* Xcode-config */,
 				83D3C5F5201C674D005564CB /* AdPlug */,
 				83D3C602201C675D005564CB /* Frameworks */,
 				83D3C5F4201C674D005564CB /* Products */,
@@ -167,8 +182,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83D3C5F2201C674D005564CB = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -211,7 +225,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C702862DDDB0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83D3C668201C7020005564CB /* adplug.db in Resources */,
+				83747C6F2862DDDB0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +258,7 @@
 /* Begin XCBuildConfiguration section */
 		83D3C5F7201C674D005564CB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C6D2862DDDB0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -272,7 +289,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -301,6 +317,7 @@
 		};
 		83D3C5F8201C674D005564CB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C6D2862DDDB0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -331,7 +348,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -354,11 +370,8 @@
 		83D3C5FA201C674D005564CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio/libbinio/src",
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio",
@@ -368,7 +381,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.AdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -377,11 +389,8 @@
 		83D3C5FB201C674D005564CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio/libbinio/src",
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio",
@@ -391,7 +400,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.AdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};

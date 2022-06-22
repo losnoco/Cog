@@ -198,6 +198,8 @@
 /* Begin PBXFileReference section */
 		8354900726186D9E004988A7 /* mos652x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mos652x.cpp; sourceTree = "<group>"; };
 		8354900826186D9E004988A7 /* mos652x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mos652x.h; sourceTree = "<group>"; };
+		83747BCF2862D5A30021245F /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BD02862D5A30021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		EDBE8EF925E7E641001EB4A4 /* sidplayfp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = sidplayfp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDBE8F1225E7E79F001EB4A4 /* sidrandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sidrandom.h; path = sidplayfp/src/sidrandom.h; sourceTree = "<group>"; };
 		EDBE8F1325E7E79F001EB4A4 /* reloc65.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reloc65.cpp; path = sidplayfp/src/reloc65.cpp; sourceTree = "<group>"; };
@@ -454,9 +456,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747BCE2862D5A30021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BCF2862D5A30021245F /* Shared.xcconfig */,
+				83747BD02862D5A30021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		EDBE8EEF25E7E641001EB4A4 = {
 			isa = PBXGroup;
 			children = (
+				83747BCE2862D5A30021245F /* Xcode-config */,
 				EDBE911625E7E7F9001EB4A4 /* Info.plist */,
 				EDBE8F1125E7E782001EB4A4 /* generated */,
 				EDBE8F1025E7E76A001EB4A4 /* libsidplay */,
@@ -1248,6 +1261,7 @@
 /* Begin XCBuildConfiguration section */
 		EDBE8EFF25E7E641001EB4A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BCF2862D5A30021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1311,6 +1325,7 @@
 		};
 		EDBE8F0025E7E641001EB4A4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BCF2862D5A30021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1369,7 +1384,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
@@ -1405,7 +1419,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;

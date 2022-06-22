@@ -11,6 +11,8 @@
 		833B1A3F180BAD0200414852 /* isqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B1A3B180BAD0200414852 /* isqrt.h */; };
 		83699ABA1AB3D8EB00F5A6E3 /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 83699AB81AB3D8EB00F5A6E3 /* barray.c */; };
 		83699ABB1AB3D8EB00F5A6E3 /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 83699AB91AB3D8EB00F5A6E3 /* barray.h */; };
+		83747B862862D4EE0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B842862D4EE0021245F /* Shared.xcconfig */; };
+		83747B872862D4EE0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B852862D4EE0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83DD1A0318EA634F00DADA1A /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DD1A0118EA634F00DADA1A /* resampler.c */; };
 		83DD1A0418EA634F00DADA1A /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1A0218EA634F00DADA1A /* resampler.h */; };
 		83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83DE0C12180A9BD400269051 /* InfoPlist.strings */; };
@@ -58,6 +60,8 @@
 		833F68311CDBCAB100AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83699AB81AB3D8EB00F5A6E3 /* barray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = barray.c; sourceTree = "<group>"; };
 		83699AB91AB3D8EB00F5A6E3 /* barray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = barray.h; sourceTree = "<group>"; };
+		83747B842862D4EE0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747B852862D4EE0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83DD1A0118EA634F00DADA1A /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		83DD1A0218EA634F00DADA1A /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		83DE0C06180A9BD400269051 /* vio2sf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vio2sf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -112,9 +116,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747B832862D4EE0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747B842862D4EE0021245F /* Shared.xcconfig */,
+				83747B852862D4EE0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83DE0BFC180A9BD400269051 = {
 			isa = PBXGroup;
 			children = (
+				83747B832862D4EE0021245F /* Xcode-config */,
 				83DE0C0F180A9BD400269051 /* vio2sf */,
 				83DE0C08180A9BD400269051 /* Frameworks */,
 				83DE0C07180A9BD400269051 /* Products */,
@@ -286,8 +301,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83DE0C05180A9BD400269051 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -316,7 +330,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				83DE0C8A180A9CA400269051 /* COPYING in Resources */,
+				83747B872862D4EE0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */,
+				83747B862862D4EE0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +379,7 @@
 /* Begin XCBuildConfiguration section */
 		83DE0C2C180A9BD400269051 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B842862D4EE0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -418,6 +435,7 @@
 		};
 		83DE0C2D180A9BD400269051 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747B842862D4EE0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -466,11 +484,8 @@
 		83DE0C2F180A9BD400269051 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -479,7 +494,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.vio2sf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
@@ -489,11 +503,8 @@
 		83DE0C30180A9BD400269051 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -502,7 +513,6 @@
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.vio2sf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;

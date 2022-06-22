@@ -11,6 +11,8 @@
 		8314D80A1A35654900EEE8E6 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8061A35654900EEE8E6 /* SidMetadataReader.mm */; };
 		8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8081A35654900EEE8E6 /* SidContainer.mm */; };
 		836F5BEC1A357915002730CC /* roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836F5BEA1A357915002730CC /* roms.cpp */; };
+		83747C012862DA420021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BFF2862DA420021245F /* Shared.xcconfig */; };
+		83747C022862DA420021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C002862DA420021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		EDBE911825E7EA01001EB4A4 /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; };
 		EDBE911925E7EA01001EB4A4 /* sidplayfp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -52,6 +54,8 @@
 		8314D80E1A3565AC00EEE8E6 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		836F5BEA1A357915002730CC /* roms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = roms.cpp; sourceTree = SOURCE_ROOT; };
 		836F5BEB1A357915002730CC /* roms.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = roms.hpp; sourceTree = SOURCE_ROOT; };
+		83747BFF2862DA420021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C002862DA420021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		EDBE8F0A25E7E74D001EB4A4 /* sidplayfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplayfp.xcodeproj; path = ../../Frameworks/libsidplayfp/sidplayfp.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,6 +74,7 @@
 		8314D6281A354DFE00EEE8E6 = {
 			isa = PBXGroup;
 			children = (
+				83747BFE2862DA420021245F /* Xcode-config */,
 				8314D6331A354DFE00EEE8E6 /* sidplay */,
 				8314D64A1A354E4400EEE8E6 /* Frameworks */,
 				8314D6321A354DFE00EEE8E6 /* Products */,
@@ -119,6 +124,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		83747BFE2862DA420021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BFF2862DA420021245F /* Shared.xcconfig */,
+				83747C002862DA420021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		EDBE8F0B25E7E74D001EB4A4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,8 +173,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					8314D6301A354DFE00EEE8E6 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -202,6 +216,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C012862DA420021245F /* Shared.xcconfig in Resources */,
+				83747C022862DA420021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +240,7 @@
 /* Begin XCBuildConfiguration section */
 		8314D6361A354DFE00EEE8E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BFF2862DA420021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -279,6 +296,7 @@
 		};
 		8314D6371A354DFE00EEE8E6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BFF2862DA420021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -328,16 +346,12 @@
 		8314D6391A354DFE00EEE8E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = sidplay/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -347,16 +361,12 @@
 		8314D63A1A354DFE00EEE8E6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = sidplay/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;

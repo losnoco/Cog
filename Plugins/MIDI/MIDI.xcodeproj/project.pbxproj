@@ -26,6 +26,8 @@
 		8356BCD527B354050074E50C /* libbasswv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCD27B353E30074E50C /* libbasswv.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
+		83747C242862DB7F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C222862DB7F0021245F /* Shared.xcconfig */; };
+		83747C252862DB7F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C232862DB7F0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
 		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */; };
@@ -114,6 +116,8 @@
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		83686AB01C5C783000671C7A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
+		83747C222862DB7F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C232862DB7F0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i_oplmusic.cpp; sourceTree = "<group>"; };
 		83A09F571CFA83F2001E7D2D /* i_oplmusic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_oplmusic.h; sourceTree = "<group>"; };
@@ -203,6 +207,16 @@
 			path = ../../../ThirdParty/json;
 			sourceTree = "<group>";
 		};
+		83747C212862DB7F0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C222862DB7F0021245F /* Shared.xcconfig */,
+				83747C232862DB7F0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83A09F551CFA83F2001E7D2D /* synthlib_doom */ = {
 			isa = PBXGroup;
 			children = (
@@ -251,6 +265,7 @@
 		83B0667E180D5668008E3612 = {
 			isa = PBXGroup;
 			children = (
+				83747C212862DB7F0021245F /* Xcode-config */,
 				83B06690180D5668008E3612 /* MIDI */,
 				83B06689180D5668008E3612 /* Frameworks */,
 				83B06688180D5668008E3612 /* Products */,
@@ -380,8 +395,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83B06686180D5668008E3612 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -426,7 +440,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				831E2A8D27B4B2B2006F1C86 /* README.md in Resources */,
+				83747C252862DB7F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				83B06695180D5668008E3612 /* InfoPlist.strings in Resources */,
+				83747C242862DB7F0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +498,7 @@
 /* Begin XCBuildConfiguration section */
 		83B06697180D5668008E3612 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C222862DB7F0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -537,6 +554,7 @@
 		};
 		83B06698180D5668008E3612 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C222862DB7F0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -586,11 +604,8 @@
 		83B0669A180D5668008E3612 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIDI/MIDI-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -606,7 +621,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -616,11 +630,8 @@
 		83B0669B180D5668008E3612 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIDI/MIDI-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -636,7 +647,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;

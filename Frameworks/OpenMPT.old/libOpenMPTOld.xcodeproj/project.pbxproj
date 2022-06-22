@@ -25,6 +25,8 @@
 		831132EA21F9565F001F678F /* OPL.h in Headers */ = {isa = PBXBuildFile; fileRef = 831132E521F9565F001F678F /* OPL.h */; };
 		831132EB21F9565F001F678F /* Load_c67.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E621F9565F001F678F /* Load_c67.cpp */; };
 		831132EC21F9565F001F678F /* OPL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E721F9565F001F678F /* OPL.cpp */; };
+		83747BC72862D58D0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BC52862D58D0021245F /* Shared.xcconfig */; };
+		83747BC82862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BC62862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83AA7D1D2519B619004C5298 /* mptOSError.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AA7D1B2519B618004C5298 /* mptOSError.h */; };
 		83AA7D1E2519B619004C5298 /* mptOSException.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AA7D1C2519B618004C5298 /* mptOSException.h */; };
 		83AA7D252519B643004C5298 /* Dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7D212519B643004C5298 /* Dither.cpp */; };
@@ -303,6 +305,8 @@
 		831132E521F9565F001F678F /* OPL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPL.h; sourceTree = "<group>"; };
 		831132E621F9565F001F678F /* Load_c67.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Load_c67.cpp; sourceTree = "<group>"; };
 		831132E721F9565F001F678F /* OPL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OPL.cpp; sourceTree = "<group>"; };
+		83747BC52862D58D0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747BC62862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83AA7D1B2519B618004C5298 /* mptOSError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptOSError.h; sourceTree = "<group>"; };
 		83AA7D1C2519B618004C5298 /* mptOSException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mptOSException.h; sourceTree = "<group>"; };
 		83AA7D212519B643004C5298 /* Dither.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dither.cpp; sourceTree = "<group>"; };
@@ -579,9 +583,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83747BC42862D58D0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BC52862D58D0021245F /* Shared.xcconfig */,
+				83747BC62862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83E5EFB31FFEF7CC00659F0F = {
 			isa = PBXGroup;
 			children = (
+				83747BC42862D58D0021245F /* Xcode-config */,
 				83E5EFBF1FFEF7CC00659F0F /* OpenMPT */,
 				83E5EFBE1FFEF7CC00659F0F /* Products */,
 				83E5FE641FFEFFA400659F0F /* Frameworks */,
@@ -1156,8 +1171,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83E5EFBC1FFEF7CC00659F0F = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -1184,7 +1198,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747BC82862D58D0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				831132E221F955F4001F678F /* LICENSE in Resources */,
+				83747BC72862D58D0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1339,6 +1355,7 @@
 /* Begin XCBuildConfiguration section */
 		83E5EFC31FFEF7CC00659F0F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BC52862D58D0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1369,7 +1386,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -1412,6 +1428,7 @@
 		};
 		83E5EFC41FFEF7CC00659F0F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BC52862D58D0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1442,7 +1459,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -1481,11 +1497,8 @@
 		83E5EFC61FFEF7CC00659F0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -1496,7 +1509,6 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libOpenMPTOld;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1504,11 +1516,8 @@
 		83E5EFC71FFEF7CC00659F0F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -1519,7 +1528,6 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libOpenMPTOld;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

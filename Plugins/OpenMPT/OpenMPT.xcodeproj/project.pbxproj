@@ -10,6 +10,8 @@
 		83187C7120E4EAB700DED293 /* libOpenMPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8308151E20E4EA96003ACEDA /* libOpenMPT.framework */; };
 		83187C7220E4EAC400DED293 /* libOpenMPT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8308151E20E4EA96003ACEDA /* libOpenMPT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8372349C277AA23F00CD0A77 /* OMPTVersionCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372349B277AA23F00CD0A77 /* OMPTVersionCheck.m */; };
+		83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C182862DB2F0021245F /* Shared.xcconfig */; };
+		83747C1B2862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C192862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
 		83E5FE751FFF010C00659F0F /* OMPTMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */; };
@@ -48,6 +50,8 @@
 /* Begin PBXFileReference section */
 		8372349A277AA1F600CD0A77 /* OMPTVersionCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OMPTVersionCheck.h; path = OpenMPT/OMPTVersionCheck.h; sourceTree = "<group>"; };
 		8372349B277AA23F00CD0A77 /* OMPTVersionCheck.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OMPTVersionCheck.m; path = OpenMPT/OMPTVersionCheck.m; sourceTree = "<group>"; };
+		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83747C192862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83E5EFC81FFEF7CC00659F0F /* libOpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libOpenMPT.xcodeproj; path = ../../Frameworks/OpenMPT/libOpenMPT.xcodeproj; sourceTree = "<group>"; };
@@ -82,9 +86,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		83747C172862DB2F0021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747C182862DB2F0021245F /* Shared.xcconfig */,
+				83747C192862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
 		83E5EF9A1FFEF78100659F0F = {
 			isa = PBXGroup;
 			children = (
+				83747C172862DB2F0021245F /* Xcode-config */,
 				83E5FE6A1FFF003900659F0F /* Classes */,
 				83E5EFB21FFEF79000659F0F /* Frameworks */,
 				83E5EFA51FFEF78100659F0F /* OpenMPT */,
@@ -166,8 +181,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83E5EFA21FFEF78100659F0F = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -210,6 +224,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */,
+				83747C1B2862DB2F0021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +256,7 @@
 /* Begin XCBuildConfiguration section */
 		83E5EFA71FFEF78100659F0F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C182862DB2F0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -270,7 +287,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -299,6 +315,7 @@
 		};
 		83E5EFA81FFEF78100659F0F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747C182862DB2F0021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -329,7 +346,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -352,16 +368,12 @@
 		83E5EFAA1FFEF78100659F0F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -370,16 +382,12 @@
 		83E5EFAB1FFEF78100659F0F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
