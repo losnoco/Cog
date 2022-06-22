@@ -22,7 +22,6 @@
 	IBOutlet GeneralPane *generalPane;
 
 	IBOutlet NSView *playlistView;
-	IBOutlet NSView *updatesView;
 	IBOutlet NSView *notificationsView;
 	IBOutlet NSView *appearanceView;
 
@@ -34,7 +33,6 @@
 - (MIDIPane *)midiPane;
 - (GeneralPane *)generalPane;
 
-- (GeneralPreferencePane *)updatesPane;
 - (GeneralPreferencePane *)playlistPane;
 - (GeneralPreferencePane *)notificationsPane;
 - (GeneralPreferencePane *)appearancePane;

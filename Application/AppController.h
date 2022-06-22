@@ -63,11 +63,6 @@
 - (IBAction)delEntries:(id)sender;
 - (IBAction)savePlaylist:(id)sender;
 
-- (IBAction)openLiberapayPage:(id)sender;
-- (IBAction)openPaypalPage:(id)sender;
-- (IBAction)openKofiPage:(id)sender;
-- (IBAction)openPatreonPage:(id)sender;
-
 - (IBAction)privacyPolicy:(id)sender;
 
 - (IBAction)feedback:(id)sender;

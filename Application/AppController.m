@@ -482,22 +482,6 @@ BOOL kAppControllerShuttingDown = NO;
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
-- (IBAction)openLiberapayPage:(id)sender {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://liberapay.com/kode54"]];
-}
-
-- (IBAction)openPaypalPage:(id)sender {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.com/paypalme/kode54"]];
-}
-
-- (IBAction)openKofiPage:(id)sender {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://ko-fi.com/kode54"]];
-}
-
-- (IBAction)openPatreonPage:(id)sender {
-	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
-}
-
 - (IBAction)privacyPolicy:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.iubenda.com/privacy-policy/59859310"]];
 }

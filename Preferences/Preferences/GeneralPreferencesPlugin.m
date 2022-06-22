@@ -30,7 +30,6 @@
 
 	return @[[plugin playlistPane],
 		     [plugin hotKeyPane],
-		     [plugin updatesPane],
 		     [plugin outputPane],
 		     [plugin generalPane],
 		     [plugin notificationsPane],
@@ -52,13 +51,6 @@
 
 - (GeneralPane *)generalPane {
 	return generalPane;
-}
-
-- (GeneralPreferencePane *)updatesPane {
-	return [GeneralPreferencePane preferencePaneWithView:updatesView
-	                                               title:NSLocalizedPrefString(@"Updates")
-	                                      systemIconName:@"arrow.triangle.2.circlepath.circle.fill"
-	                                      orOldIconNamed:@"updates"];
 }
 
 - (GeneralPreferencePane *)playlistPane {
