@@ -2973,7 +2973,6 @@
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
 				);
-				OTHER_CODE_SIGN_FLAGS = "--deep -f";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,
@@ -3026,7 +3025,6 @@
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
 				);
-				OTHER_CODE_SIGN_FLAGS = "--deep -f";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,
