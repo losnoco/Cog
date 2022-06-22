@@ -185,7 +185,6 @@
 		831132EB21F9565F001F678F /* Load_c67.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E621F9565F001F678F /* Load_c67.cpp */; };
 		831132EC21F9565F001F678F /* OPL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831132E721F9565F001F678F /* OPL.cpp */; };
 		83747BC22862D5820021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BC02862D5820021245F /* Shared.xcconfig */; };
-		83747BC32862D5820021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BC12862D5820021245F /* DEVELOPMENT_TEAM.xcconfig */; };
 		83AA7D322519B694004C5298 /* TinyFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7D2E2519B694004C5298 /* TinyFFT.cpp */; };
 		83AA7D332519B694004C5298 /* SampleFormatSFZ.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7D2F2519B694004C5298 /* SampleFormatSFZ.cpp */; };
 		83AA7D342519B694004C5298 /* SampleFormatBRR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7D302519B694004C5298 /* SampleFormatBRR.cpp */; };
@@ -594,7 +593,6 @@
 		831132E621F9565F001F678F /* Load_c67.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Load_c67.cpp; sourceTree = "<group>"; };
 		831132E721F9565F001F678F /* OPL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OPL.cpp; sourceTree = "<group>"; };
 		83747BC02862D5820021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		83747BC12862D5820021245F /* DEVELOPMENT_TEAM.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DEVELOPMENT_TEAM.xcconfig; sourceTree = "<group>"; };
 		83AA7D2E2519B694004C5298 /* TinyFFT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TinyFFT.cpp; sourceTree = "<group>"; };
 		83AA7D2F2519B694004C5298 /* SampleFormatSFZ.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleFormatSFZ.cpp; sourceTree = "<group>"; };
 		83AA7D302519B694004C5298 /* SampleFormatBRR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleFormatBRR.cpp; sourceTree = "<group>"; };
@@ -1334,7 +1332,6 @@
 			isa = PBXGroup;
 			children = (
 				83747BC02862D5820021245F /* Shared.xcconfig */,
-				83747BC12862D5820021245F /* DEVELOPMENT_TEAM.xcconfig */,
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
@@ -2046,7 +2043,6 @@
 				831132E221F955F4001F678F /* LICENSE in Resources */,
 				83747BC22862D5820021245F /* Shared.xcconfig in Resources */,
 				830996BF27787E9A00857684 /* .clang-format in Resources */,
-				83747BC32862D5820021245F /* DEVELOPMENT_TEAM.xcconfig in Resources */,
 				830996CF27787E9A00857684 /* LICENSE.BSD-3-Clause.txt in Resources */,
 				830996AC27787E9A00857684 /* LICENSE.BSL-1.0.txt in Resources */,
 			);
