@@ -24,15 +24,14 @@ sortedchannels = channel.search('./item').sort_by{ |i| Time.parse(i.at('pubDate'
 
 #Get the latest revision from the appcast
 appcast_enclosure = sortedchannels[0].search('./enclosure').first
-appcast_revision = sortedchannels[0].xpath('.//sparkle:version').text
-appcast_url = appcast_enclosure.attribute('url');
-if !appcast_revision
-  appcast_revision = appcast_enclosure.attribute_with_ns('version', sparkle).to_s
-end
-appcast_revision_split = appcast_revision.split( /-/ )
-appcast_revision_code = appcast_revision_split[1]
-appcast_revision_split = appcast_revision_code.split( /g/ )
-appcast_revision_code = appcast_revision_split[1]
+appcast_url = appcast_enclosure.attribute('url').to_s;
+
+appcast_filename = appcast_url.split( '/' )[-1]
+appcast_filename_split = appcast_filename.split( '.' )
+appcast_filename_base = appcast_filename_split[0]
+appcast_filename_split = appcast_filename_base.split( '-' )
+
+appcast_revision_code = appcast_filename_split[1]
 
 #Remove modified files that may cause conflicts.
 #%x[hg revert --all]
@@ -59,6 +58,11 @@ appcast_revision_code = appcast_revision_split[1]
   version_element = plistdoc.xpath('//key[.="CFBundleVersion"]/following-sibling::string[1]')
 
   latest_revision = version_element.inner_text
+
+  if latest_revision.split( /-/ ).count < 2
+    version_element = plistdoc.xpath('//key[.="GitVersion"]/following-sibling::string[1]')
+    latest_revision = version_element.inner_text
+  end
 
 #latest_revision = %x[/usr/local/bin/hg log -r . --template '{latesttag}-{latesttagdistance}-{node|short}']
 revision_split = latest_revision.split( /-/ )
