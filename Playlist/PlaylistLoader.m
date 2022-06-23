@@ -618,9 +618,15 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 	}
 
 	if(![queueThisJob count]) {
-		[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-		[self completeProgress];
-		metadataLoadInProgress = NO;
+		size_t count;
+		@synchronized (queuedURLs) {
+			count = [queuedURLs count];
+		}
+		if(!count) {
+			[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+			[self completeProgress];
+			metadataLoadInProgress = NO;
+		}
 		return;
 	}
 
