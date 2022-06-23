@@ -49,7 +49,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 + (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame {
 	do {
-		if(@available(macOS 11, *)) {
+		if(@available(macOS 11.0, *)) {
 			// macOS 11 and newer seems to be safe
 			break;
 		} else if(@available(macOS 10.15, *)) {

@@ -21,14 +21,9 @@
 	if(value == nil) return nil;
 
 	NSError *error;
-	NSData *data;
-	if(@available(macOS 10.13, *)) {
-		data = [NSKeyedArchiver archivedDataWithRootObject:value
-		                             requiringSecureCoding:YES
-		                                             error:&error];
-	} else {
-		data = [NSArchiver archivedDataWithRootObject:value];
-	}
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:value
+	                                     requiringSecureCoding:YES
+	                                                     error:&error];
 
 	return data;
 }
@@ -44,14 +39,10 @@
 		                                                             fromData:value
 		                                                                error:&error];
 	} else {
-		if(@available(macOS 10.13, *)) {
-			NSSet *allowed = [NSSet setWithArray:@[[NSColor class]]];
-			color = (NSColor *)[NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
-			                                                       fromData:value
-			                                                          error:&error];
-		} else {
-			color = (NSColor *)[NSUnarchiver unarchiveObjectWithData:value];
-		}
+		NSSet *allowed = [NSSet setWithArray:@[[NSColor class]]];
+		color = (NSColor *)[NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
+		                                                       fromData:value
+		                                                          error:&error];
 	}
 
 	return color;

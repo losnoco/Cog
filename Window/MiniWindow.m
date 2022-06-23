@@ -41,13 +41,7 @@ extern void showCrashlyticsConsent(NSWindow *window);
 
 	[self showHDCDLogo:NO];
 
-	NSPasteboardType fileType;
-	if(@available(macOS 10.13, *)) {
-		fileType = NSPasteboardTypeFileURL;
-	} else {
-		fileType = NSFilenamesPboardType;
-	}
-	[self registerForDraggedTypes:@[fileType, iTunesDropType]];
+	[self registerForDraggedTypes:@[NSPasteboardTypeFileURL, iTunesDropType]];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
 		showCrashlyticsConsent(self);
@@ -117,20 +111,13 @@ extern void showCrashlyticsConsent(NSWindow *window);
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
 
-	NSPasteboardType fileType;
-	if(@available(macOS 10.13, *)) {
-		fileType = NSPasteboardTypeFileURL;
-	} else {
-		fileType = NSFilenamesPboardType;
-	}
-
 	if([[pboard types] containsObject:iTunesDropType]) {
 		if(sourceDragMask & NSDragOperationGeneric) {
 			return NSDragOperationGeneric;
 		}
 	}
 
-	if([[pboard types] containsObject:fileType]) {
+	if([[pboard types] containsObject:NSPasteboardTypeFileURL]) {
 		if(sourceDragMask & NSDragOperationGeneric) {
 			return NSDragOperationGeneric;
 		}
@@ -143,20 +130,13 @@ extern void showCrashlyticsConsent(NSWindow *window);
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
 
-	NSPasteboardType fileType;
-	if(@available(macOS 10.13, *)) {
-		fileType = NSPasteboardTypeFileURL;
-	} else {
-		fileType = NSFilenamesPboardType;
-	}
-
 	if([[pboard types] containsObject:iTunesDropType]) {
 		if(sourceDragMask & NSDragOperationGeneric) {
 			return NSDragOperationGeneric;
 		}
 	}
 
-	if([[pboard types] containsObject:fileType]) {
+	if([[pboard types] containsObject:NSPasteboardTypeFileURL]) {
 		if(sourceDragMask & NSDragOperationGeneric) {
 			return NSDragOperationGeneric;
 		}
@@ -169,20 +149,13 @@ extern void showCrashlyticsConsent(NSWindow *window);
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
 
-	NSPasteboardType fileType;
-	if(@available(macOS 10.13, *)) {
-		fileType = NSPasteboardTypeFileURL;
-	} else {
-		fileType = NSFilenamesPboardType;
-	}
-
 	if([[pboard types] containsObject:iTunesDropType]) {
 		if(sourceDragMask & NSDragOperationGeneric) {
 			return YES;
 		}
 	}
 
-	if([[pboard types] containsObject:fileType]) {
+	if([[pboard types] containsObject:NSPasteboardTypeFileURL]) {
 		if(sourceDragMask & NSDragOperationGeneric) {
 			return YES;
 		}
@@ -194,15 +167,8 @@ extern void showCrashlyticsConsent(NSWindow *window);
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender {
 	NSPasteboard *pboard = [sender draggingPasteboard];
 
-	NSPasteboardType fileType;
-	if(@available(macOS 10.13, *)) {
-		fileType = NSPasteboardTypeFileURL;
-	} else {
-		fileType = NSFilenamesPboardType;
-	}
-
 	if([[pboard types] containsObject:iTunesDropType] ||
-	   [[pboard types] containsObject:fileType]) {
+	   [[pboard types] containsObject:NSPasteboardTypeFileURL]) {
 		NSUInteger row = [[playlistController arrangedObjects] count];
 		return [playlistController tableView:[playlistController tableView] acceptDrop:sender row:row dropOperation:NSTableViewDropOn];
 	}

@@ -46,16 +46,12 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 		[self setSegmentCount:4];
 		[self setImage:stopImage forSegment:2];
 		[self setImage:nextImage forSegment:3];
-		if(@available(macOS 10.13, *)) {
-			[self setToolTip:NSLocalizedString(@"StopButtonTooltip", @"") forSegment:2];
-			[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:3];
-		}
+		[self setToolTip:NSLocalizedString(@"StopButtonTooltip", @"") forSegment:2];
+		[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:3];
 	} else {
 		[self setSegmentCount:3];
 		[self setImage:nextImage forSegment:2];
-		if(@available(macOS 10.13, *)) {
-			[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:2];
-		}
+		[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:2];
 	}
 }
 
@@ -89,16 +85,12 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 				[self setSegmentCount:4];
 				[self setImage:stopImage forSegment:2];
 				[self setImage:nextImage forSegment:3];
-				if(@available(macOS 10.13, *)) {
-					[self setToolTip:NSLocalizedString(@"StopButtonTooltip", @"") forSegment:2];
-					[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:3];
-				}
+				[self setToolTip:NSLocalizedString(@"StopButtonTooltip", @"") forSegment:2];
+				[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:3];
 			} else {
 				[self setSegmentCount:3];
 				[self setImage:nextImage forSegment:2];
-				if(@available(macOS 10.13, *)) {
-					[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:2];
-				}
+				[self setToolTip:NSLocalizedString(@"NextButtonTooltip", @"") forSegment:2];
 			}
 		}
 	} else {

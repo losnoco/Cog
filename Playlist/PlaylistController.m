@@ -616,11 +616,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	PlaylistEntry *song = [[self arrangedObjects] objectAtIndex:row];
 	[filenames addObject:[[song path] stringByExpandingTildeInPath]];
 
-	if(@available(macOS 10.13, *)) {
-		[item setData:[song.url dataRepresentation] forType:NSPasteboardTypeFileURL];
-	} else {
-		[item setPropertyList:@[song.url] forType:NSFilenamesPboardType];
-	}
+	[item setData:[song.url dataRepresentation] forType:NSPasteboardTypeFileURL];
 
 	return item;
 }
@@ -635,14 +631,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 	if(row < 0) row = 0;
 
 	// Determine the type of object that was dropped
-	NSPasteboardType fileType;
-	if(@available(macOS 10.13, *)) {
-		fileType = NSPasteboardTypeFileURL;
-	} else {
-		fileType = NSFilenamesPboardType;
-	}
 	NSArray *supportedTypes =
-	@[CogUrlsPboardType, fileType, iTunesDropType];
+	@[CogUrlsPboardType, NSPasteboardTypeFileURL, iTunesDropType];
 	NSPasteboard *pboard = [info draggingPasteboard];
 	NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
 
@@ -658,14 +648,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 			                                                 fromData:data
 			                                                    error:&error];
 		} else {
-			if(@available(macOS 10.13, *)) {
-				NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
-				urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
-				                                           fromData:data
-				                                              error:&error];
-			} else {
-				urls = [NSUnarchiver unarchiveObjectWithData:data];
-			}
+			NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
+			urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
+			                                           fromData:data
+			                                              error:&error];
 		}
 		if(!urls) {
 			DLog(@"%@", error);
@@ -677,7 +663,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 
 	// Get files from a normal file drop (such as from Finder)
-	if([bestType isEqualToString:fileType]) {
+	if([bestType isEqualToString:NSPasteboardTypeFileURL]) {
 		NSArray<Class> *classes = @[[NSURL class]];
 		NSDictionary *options = @{};
 		NSArray<NSURL *> *files = [pboard readObjectsForClasses:classes options:options];

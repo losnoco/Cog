@@ -326,9 +326,7 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 @implementation EqualizerSlider
 
 - (void)awakeFromNib {
-	if(@available(macOS 10.12.2, *)) {
-		[self setTrackFillColor:[NSColor systemGrayColor]];
-	}
+	[self setTrackFillColor:[NSColor systemGrayColor]];
 }
 
 @end

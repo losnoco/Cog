@@ -3252,7 +3252,7 @@
 					../../ThirdParty/speex,
 					"../../ThirdParty/fdk-aac/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -3328,7 +3328,7 @@
 					../../ThirdParty/speex,
 					"../../ThirdParty/fdk-aac/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};

@@ -178,11 +178,7 @@ static NSURL *defaultMusicDirectory(void) {
 
 - (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(id)item {
 	NSPasteboardItem *paste = [[NSPasteboardItem alloc] init];
-	if(@available(macOS 10.13, *)) {
-		[paste setData:[[item URL] dataRepresentation] forType:NSPasteboardTypeFileURL];
-	} else {
-		[paste setPropertyList:@[[item URL]] forType:NSFilenamesPboardType];
-	}
+	[paste setData:[[item URL] dataRepresentation] forType:NSPasteboardTypeFileURL];
 	return paste;
 }
 
