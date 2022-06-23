@@ -45,7 +45,7 @@
 		[self setTitle:NSLocalizedString(@"PreferencesTitle", @"")];
 		[self center];
 
-		if(@available(macOS 11, *)) {
+		if(@available(macOS 11.0, *)) {
 			[self setToolbarStyle:NSWindowToolbarStylePreference];
 		}
 

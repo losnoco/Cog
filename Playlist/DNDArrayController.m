@@ -12,15 +12,9 @@ NSString *iTunesDropType = @"com.apple.tv.metadata";
 - (void)awakeFromNib {
 	[super awakeFromNib];
 	// register for drag and drop
-	NSPasteboardType fileType;
-	if(@available(macOS 10.13, *)) {
-		fileType = NSPasteboardTypeFileURL;
-	} else {
-		fileType = NSFilenamesPboardType;
-	}
 	[self.tableView registerForDraggedTypes:@[CogDNDIndexType,
 		                                      CogUrlsPboardType,
-		                                      fileType,
+		                                      NSPasteboardTypeFileURL,
 		                                      iTunesDropType]];
 }
 

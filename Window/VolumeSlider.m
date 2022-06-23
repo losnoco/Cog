@@ -147,10 +147,7 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	if(fabs(snapProgress) < 0.005) {
 		[self setDoubleValue:snapTarget];
 		if(!wasInsideSnapRange) {
-			if(@available(macOS 10.11, *)) {
-				[[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternGeneric
-				                                                   performanceTime:NSHapticFeedbackPerformanceTimeDefault];
-			}
+			[[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternGeneric performanceTime:NSHapticFeedbackPerformanceTimeDefault];
 		}
 		wasInsideSnapRange = YES;
 	} else {

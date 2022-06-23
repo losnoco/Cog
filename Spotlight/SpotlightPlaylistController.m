@@ -19,15 +19,10 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 	NSArray *urls = [[self selectedObjects] valueForKey:@"URL"];
 	NSError *error = nil;
-	NSData *data;
-	if(@available(macOS 10.13, *)) {
-		data = [NSKeyedArchiver archivedDataWithRootObject:urls
-		                             requiringSecureCoding:YES
-		                                             error:&error];
-		if(error) return NO;
-	} else {
-		data = [NSArchiver archivedDataWithRootObject:urls];
-	}
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:urls
+	                                     requiringSecureCoding:YES
+	                                                     error:&error];
+	if(error) return NO;
 	[pboard declareTypes:@[CogUrlsPboardType] owner:nil]; // add it to pboard
 	[pboard setData:data forType:CogUrlsPboardType];
 

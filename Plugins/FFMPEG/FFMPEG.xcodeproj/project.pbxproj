@@ -364,7 +364,7 @@
 					../../ThirdParty/ffmpeg/lib,
 					"../../ThirdParty/fdk-aac/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -410,7 +410,7 @@
 					../../ThirdParty/ffmpeg/lib,
 					"../../ThirdParty/fdk-aac/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};
