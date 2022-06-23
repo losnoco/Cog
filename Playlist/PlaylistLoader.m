@@ -751,7 +751,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		});
 	}
 
-	[playlistController commitPersistentStore];
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[self->playlistController commitPersistentStore];
+	});
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 
