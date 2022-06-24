@@ -452,10 +452,12 @@
 
 		[self notifyPlaybackStopped:nil];
 
-		return NO;
+		return YES;
 	}
 
-	return YES;
+	[output setEndOfStream:NO];
+
+	return NO;
 }
 
 - (void)endOfInputPlayed {
@@ -465,7 +467,6 @@
 	// - the buffer chain for the next entry is the first item in chainQueue
 
 	[self notifyStreamChanged:[bufferChain userInfo]];
-	[output setEndOfStream:NO];
 }
 
 - (BOOL)chainQueueHasTracks {
