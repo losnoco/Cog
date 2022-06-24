@@ -1029,6 +1029,7 @@
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		839E3B53286595D700880EA2 /* GeneralPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralPane.h; path = Preferences/Preferences/GeneralPane.h; sourceTree = "<group>"; };
 		83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ColorToValueTransformer.m; path = Preferences/Preferences/ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColorToValueTransformer.h; path = Preferences/Preferences/ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.59.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.59.dylib; sourceTree = "<group>"; };
@@ -1889,6 +1890,7 @@
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				839E3B53286595D700880EA2 /* GeneralPane.h */,
 				ED69CF0925BE74BB0090B90D /* Shortcuts.h */,
 				17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */,
 				17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */,

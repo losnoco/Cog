@@ -18,6 +18,7 @@
 @class PlaylistEntry;
 @class SpotlightWindowController;
 @class PlaybackController;
+@class AppController;
 
 typedef NS_ENUM(NSInteger, RepeatMode) {
 	RepeatModeNoRepeat = 0,
@@ -43,6 +44,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 	IBOutlet PlaylistLoader *playlistLoader;
 	IBOutlet SpotlightWindowController *spotlightWindowController;
 	IBOutlet PlaybackController *playbackController;
+	IBOutlet AppController *appController;
 
 	NSValueTransformer *statusImageTransformer;
 

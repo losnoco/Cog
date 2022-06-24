@@ -15,6 +15,8 @@
 
 #import "SandboxBroker.h"
 
+#import "AppController.h"
+
 static void *kFileTreeDataSourceContext = &kFileTreeDataSourceContext;
 
 static NSURL *defaultMusicDirectory(void) {
@@ -75,6 +77,10 @@ static NSURL *defaultMusicDirectory(void) {
 	if(url != nil) {
 		[[[NSUserDefaultsController sharedUserDefaultsController] defaults] setObject:[url absoluteString]
 		                                                                       forKey:@"fileTreeRootURL"];
+
+		if(![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:@[url]]) {
+			[AppController globalShowPathSuggester];
+		}
 	}
 }
 

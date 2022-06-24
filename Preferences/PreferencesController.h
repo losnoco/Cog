@@ -14,5 +14,6 @@
 }
 
 - (IBAction)showPreferences:(id)sender;
+- (IBAction)showPathSuggester:(id)sender;
 
 @end

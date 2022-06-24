@@ -12,7 +12,7 @@
 
 @implementation PreferencesController
 
-- (IBAction)showPreferences:(id)sender {
+- (void)initWindow {
 	if(nil == window) {
 		// Determine path to the sample preference panes
 		NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"Preferences" ofType:@"preferencePane"];
@@ -22,9 +22,20 @@
 
 		window = [[PreferencesWindow alloc] initWithPreferencePanes:[pluginController preferencePanes]];
 	}
+}
+
+- (IBAction)showPreferences:(id)sender {
+	[self initWindow];
 
 	// Show the preferences window.
 	[window show];
+}
+
+- (IBAction)showPathSuggester:(id)sender {
+	[self initWindow];
+
+	// Show the path suggester
+	[window showPathSuggester];
 }
 
 @end

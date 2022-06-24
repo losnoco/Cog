@@ -22,5 +22,6 @@
                               defer:(BOOL)flag NS_UNAVAILABLE;
 
 - (void)show;
+- (void)showPathSuggester;
 
 @end
