@@ -9,3 +9,35 @@ xcuserdata
 Xcode-config/DEVELOPMENT_TEAM.xcconfig
 
 Cog.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+
+# Unpack these before building
+/ThirdParty/BASS/libbass.dylib
+/ThirdParty/BASS/libbassflac.dylib
+/ThirdParty/BASS/libbassmidi.dylib
+/ThirdParty/BASS/libbassopus.dylib
+/ThirdParty/BASS/libbasswv.dylib
+/ThirdParty/avif/lib/libaom.a
+/ThirdParty/avif/lib/libavif.a
+/ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib
+/ThirdParty/fdk-aac/lib/libfdk-aac.a
+/ThirdParty/fdk-aac/lib/libfdk-aac.dylib
+/ThirdParty/fdk-aac/lib/libfdk-aac.la
+/ThirdParty/fdk-aac/lib/pkgconfig/
+/ThirdParty/fdk-aac/lib/pkgconfig/fdk-aac.pc
+/ThirdParty/ffmpeg/lib/libavcodec.59.dylib
+/ThirdParty/ffmpeg/lib/libavformat.59.dylib
+/ThirdParty/ffmpeg/lib/libavutil.57.dylib
+/ThirdParty/ffmpeg/lib/libswresample.4.dylib
+/ThirdParty/flac/lib/libFLAC.8.dylib
+/ThirdParty/libid3tag/lib/libid3tag.a
+/ThirdParty/libmad/lib/libmad.a
+/ThirdParty/libopenmpt/lib/libopenmpt.a
+/ThirdParty/libopenmpt_old/lib/libopenmpt.old.a
+/ThirdParty/libvgm/lib/libvgm-emu.a
+/ThirdParty/libvgm/lib/libvgm-player.a
+/ThirdParty/libvgm/lib/libvgm-utils.a
+/ThirdParty/mpg123/lib/libmpg123.0.dylib
+/ThirdParty/ogg/lib/libogg.0.dylib
+/ThirdParty/opus/lib/libopus.0.dylib
+/ThirdParty/opusfile/lib/libopusfile.0.dylib
+/ThirdParty/speex/libspeex.a

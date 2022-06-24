@@ -65,6 +65,13 @@ Setup your `DEVELOPMENT_TEAM` like described in [Xcode-config/Shared.xcconfig](h
 git config core.hooksPath .githooks
 ```
 
+(Add 2022-06-24) Also, you need to unpack the static and dynamic library dependencies, and update them any time the library path changes:
+
+```
+cd ThirdParty
+tar xvf libraries.tar.xz
+```
+
 # Screenshots
 
 ## Main window and Info Inspector
