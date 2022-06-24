@@ -275,92 +275,12 @@ static void *kDownmixProcessorContext = &kDownmixProcessorContext;
 
 		inConfig = iConfig;
 		outConfig = oConfig;
-
-		[self setupVirt];
-
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.headphoneVirtualization" options:0 context:kDownmixProcessorContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.hrirPath" options:0 context:kDownmixProcessorContext];
 	}
 
 	return self;
 }
 
-- (void)dealloc {
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.headphoneVirtualization" context:kDownmixProcessorContext];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.hrirPath" context:kDownmixProcessorContext];
-}
-
-- (void)setupVirt {
-	@synchronized(hFilter) {
-		hFilter = nil;
-	}
-
-	BOOL hVirt = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"headphoneVirtualization"];
-
-	if(hVirt &&
-	   outputFormat.mChannelsPerFrame >= 2 &&
-	   (outConfig & AudioConfigStereo) == AudioConfigStereo &&
-	   inputFormat.mChannelsPerFrame >= 1 &&
-	   (inConfig & (AudioConfig7Point1 | AudioChannelBackCenter)) != 0) {
-		NSString *userPreset = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] stringForKey:@"hrirPath"];
-
-		NSURL *presetUrl = nil;
-
-		if(userPreset && ![userPreset isEqualToString:@""]) {
-			presetUrl = [NSURL fileURLWithPath:userPreset];
-			if(![HeadphoneFilter validateImpulseFile:presetUrl])
-				presetUrl = nil;
-		}
-
-		if(!presetUrl) {
-			presetUrl = [[NSBundle mainBundle] URLForResource:@"gsx" withExtension:@"wv"];
-			if(![HeadphoneFilter validateImpulseFile:presetUrl])
-				presetUrl = nil;
-		}
-
-		if(presetUrl) {
-			@synchronized(hFilter) {
-				hFilter = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:outputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame withConfig:inConfig];
-			}
-		}
-	}
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context {
-	if(context == kDownmixProcessorContext) {
-		DLog(@"SOMETHING CHANGED!");
-		if([keyPath isEqualToString:@"values.headphoneVirtualization"] ||
-		   [keyPath isEqualToString:@"values.hrirPath"]) {
-			// Reset the converter, without rebuffering
-			[self setupVirt];
-		}
-	} else {
-		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-	}
-}
-
 - (void)process:(const void *)inBuffer frameCount:(size_t)frames output:(void *)outBuffer {
-	@synchronized(hFilter) {
-		if(hFilter) {
-			uint32_t outChannels = outputFormat.mChannelsPerFrame;
-			if(outChannels > 2) {
-				float tempBuffer[frames * 2];
-				[hFilter process:(const float *)inBuffer sampleCount:frames toBuffer:&tempBuffer[0]];
-				cblas_scopy((int)frames, tempBuffer, 2, (float *)outBuffer, outChannels);
-				cblas_scopy((int)frames, tempBuffer + 1, 2, ((float *)outBuffer) + 1, outChannels);
-				for(size_t i = 2; i < outChannels; ++i) {
-					vDSP_vclr(((float *)outBuffer) + i, outChannels, (int)frames);
-				}
-			} else {
-				[hFilter process:(const float *)inBuffer sampleCount:frames toBuffer:(float *)outBuffer];
-			}
-			return;
-		}
-	}
-
 	if(inputFormat.mChannelsPerFrame > 2 && outConfig == AudioConfigStereo) {
 		downmix_to_stereo((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, frames);
 	} else if(inputFormat.mChannelsPerFrame > 1 && outConfig == AudioConfigMono) {

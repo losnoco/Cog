@@ -9,7 +9,7 @@
 #import "OutputNode.h"
 #import "AudioPlayer.h"
 #import "BufferChain.h"
-#import "OutputCoreAudio.h"
+#import "OutputAVFoundation.h"
 
 #import "Logging.h"
 
@@ -23,7 +23,7 @@
 	started = NO;
 	intervalReported = NO;
 
-	output = [[OutputCoreAudio alloc] initWithController:self];
+	output = [[OutputAVFoundation alloc] initWithController:self];
 
 	[output setup];
 }
@@ -66,6 +66,10 @@
 - (void)resetAmountPlayedInterval {
 	amountPlayedInterval = 0;
 	intervalReported = NO;
+}
+
+- (BOOL)selectNextBuffer {
+	return [controller selectNextBuffer];
 }
 
 - (void)endOfInputPlayed {
@@ -137,8 +141,6 @@
 			format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
 			channelConfig = config;
 
-			[converter setOutputFormat:format
-			              outputConfig:channelConfig];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
 		}
 	}

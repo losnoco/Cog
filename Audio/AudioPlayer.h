@@ -116,6 +116,7 @@ using std::atomic_bool;
 - (void)setShouldContinue:(BOOL)s;
 //- (BufferChain *)bufferChain;
 - (void)launchOutputThread;
+- (BOOL)selectNextBuffer;
 - (void)endOfInputPlayed;
 - (void)reportPlayCount;
 - (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait;

@@ -326,6 +326,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 - (void)playbackDidStop:(NSNotification *)notification {
 	stopped = YES;
 	paused = NO;
+	bandsReset = NO;
 	[self updateVisListening];
 	[self repaint];
 }

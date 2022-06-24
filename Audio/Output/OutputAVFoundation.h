@@ -1,9 +1,9 @@
 //
-//  OutputCoreAudio.h
+//  OutputAVFoundation.h
 //  Cog
 //
-//  Created by Vincent Spader on 8/2/05.
-//  Copyright 2005 Vincent Spader. All rights reserved.
+//  Created by Christopher Snowhill on 6/23/22.
+//  Copyright 2022 Christopher Snowhill. All rights reserved.
 //
 
 #import <AssertMacros.h>
@@ -26,8 +26,6 @@ using std::atomic_long;
 
 #import "VisualizationController.h"
 
-#import "Semaphore.h"
-
 //#define OUTPUT_LOG
 #ifdef OUTPUT_LOG
 #import <stdio.h>
@@ -35,11 +33,8 @@ using std::atomic_long;
 
 @class OutputNode;
 
-@interface OutputCoreAudio : NSObject {
+@interface OutputAVFoundation : NSObject {
 	OutputNode *outputController;
-
-	Semaphore *writeSemaphore;
-	Semaphore *readSemaphore;
 
 	BOOL stopInvoked;
 	BOOL running;
@@ -47,16 +42,16 @@ using std::atomic_long;
 	BOOL stopped;
 	BOOL started;
 	BOOL paused;
-	BOOL stopNext;
 	BOOL restarted;
 
 	BOOL eqEnabled;
 	BOOL eqInitialized;
 
+	BOOL dontRemix;
+
 	BOOL streamFormatStarted;
 
-	atomic_long bytesRendered;
-	atomic_long bytesHdcdSustained;
+	double secondsHdcdSustained;
 
 	BOOL defaultdevicelistenerapplied;
 	BOOL currentdevicelistenerapplied;
@@ -67,10 +62,7 @@ using std::atomic_long;
 	float volume;
 	float eqPreamp;
 
-	AVAudioFormat *_deviceFormat;
-
 	AudioDeviceID outputDeviceID;
-	AudioStreamBasicDescription deviceFormat; // info about the default device
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
 
 	AudioStreamBasicDescription visFormat; // Mono format for vis
@@ -78,18 +70,31 @@ using std::atomic_long;
 	uint32_t deviceChannelConfig;
 	uint32_t streamChannelConfig;
 
-	AUAudioUnit *_au;
+	AVSampleBufferAudioRenderer *audioRenderer;
+	AVSampleBufferRenderSynchronizer *renderSynchronizer;
+
+	CMAudioFormatDescriptionRef audioFormatDescription;
+
+	AudioChannelLayoutTag streamTag;
+
+	id currentPtsObserver;
+	NSLock *currentPtsLock;
+	CMTime currentPts, lastPts;
+	double secondsLatency;
+
+	CMTime outputPts, trackPts, lastCheckpointPts;
+	AudioTimeStamp timeStamp;
+
 	size_t _bufferSize;
 
 	AudioUnit _eq;
 
-	DownmixProcessor *downmixer;
 	DownmixProcessor *downmixerForVis;
 
 	VisualizationController *visController;
 
-	os_workgroup_t wg;
-	os_workgroup_join_token_s wgToken;
+	float inputBuffer[2048 * 32]; // 2048 samples times maximum supported channel count
+	float eqBuffer[2048 * 32];
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
