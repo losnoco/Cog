@@ -502,6 +502,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				HEADER_SEARCH_PATHS = ../../ThirdParty/libopenmpt_old/include;
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
@@ -521,6 +522,7 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				HEADER_SEARCH_PATHS = ../../ThirdParty/libopenmpt_old/include;
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
