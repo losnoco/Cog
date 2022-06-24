@@ -868,7 +868,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		NSMutableIndexSet *pruneSet = [[NSMutableIndexSet alloc] init];
 		NSUInteger index = 0;
 		for(PlaylistEntry *pe in resultsCopy) {
-			if(pe.deLeted || !pe.url) {
+			if(pe.deLeted || !pe.urlString || [pe.urlString length] < 1) {
 				[pruneSet addIndex:index];
 				[moc deleteObject:pe];
 			}
@@ -878,6 +878,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		if([pruneSet count]) {
 			[playlistController commitPersistentStore];
 		}
+		
+		results = [NSArray arrayWithArray:resultsCopy];
 
 		{
 			NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
