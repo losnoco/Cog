@@ -163,6 +163,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		NSError *error = nil;
 		NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+		if(results) results = [results copy];
 
 		if(results && [results count] > 0) {
 			for(SandboxToken *token in results) {
