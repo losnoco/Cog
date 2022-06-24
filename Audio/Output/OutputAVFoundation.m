@@ -93,19 +93,19 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			formatClipped = YES;
 		}
 		if(!streamFormatStarted || config != streamChannelConfig || memcmp(&newFormat, &format, sizeof(format)) != 0) {
+			[currentPtsLock lock];
 			if(formatClipped) {
 				ALog(@"Sample rate clipped to no more than %f Hz!", maxSampleRate);
 				if(r8bstate) {
 					r8bold = r8bstate;
 					r8bstate = NULL;
-					r8bFlushing = YES;
 				}
 				r8bstate = r8bstate_new(format.mChannelsPerFrame, 1024, srcRate, dstRate);
 			} else if(r8bstate) {
 				r8bold = r8bstate;
 				r8bstate = NULL;
-				r8bFlushing = YES;
 			}
+			[currentPtsLock unlock];
 			newFormat = format;
 			streamChannelConfig = config;
 			streamFormatStarted = YES;
@@ -135,7 +135,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		const float *outputPtr = (const float *)[samples bytes];
 		if(r8bstate) {
 			size_t inDone = 0;
+			[currentPtsLock lock];
 			size_t framesDone = r8bstate_resample(r8bstate, outputPtr, frameCount, &inDone, &outputBuffer[0], 2048);
+			[currentPtsLock unlock];
 			if(!framesDone) return 0;
 			frameCount = (int)framesDone;
 			outputPtr = &outputBuffer[0];
@@ -245,6 +247,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		outputDeviceID = -1;
 
 		secondsHdcdSustained = 0;
+
+		currentPtsLock = [[NSLock alloc] init];
 
 #ifdef OUTPUT_LOG
 		_logFile = fopen("/tmp/CogAudioLog.raw", "wb");
@@ -696,7 +700,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				++i;
 				continue;
 			}
+			[currentPtsLock lock];
 			samplesRendered = r8bstate_flush(r8bold, &tempBuffer[0], 2048);
+			[currentPtsLock unlock];
 			if(!samplesRendered) {
 				r8bstate_delete(r8bold);
 				r8bold = NULL;
@@ -915,14 +921,16 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)synchronizerBlock {
-	__block NSLock *lock = [[NSLock alloc] init];
-	currentPtsLock = lock;
+	NSLock *lock = currentPtsLock;
 	CMTime interval = CMTimeMakeWithSeconds(1.0 / 60.0, 1000000000);
 	CMTime *lastPts = &self->lastPts;
 	CMTime *outputPts = &self->outputPts;
 	OutputNode *outputController = self->outputController;
 	double *latencySecondsOut = &self->secondsLatency;
 	VisualizationController *visController = self->visController;
+	void **r8bstate = &self->r8bstate;
+	void **r8bold = &self->r8bold;
+	void **r8bvis = &self->r8bvis;
 	currentPtsObserver = [renderSynchronizer addPeriodicTimeObserverForInterval:interval
 	                                                                      queue:NULL
 	                                                                 usingBlock:^(CMTime time) {
@@ -938,10 +946,25 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		                                                                 CMTime latencyTime = CMTimeSubtract(*outputPts, time);
 		                                                                 double latencySeconds = CMTimeGetSeconds(latencyTime);
+		                                                                 double latencyVis = 0.0;
+		                                                                 [lock lock];
+		                                                                 if(*r8bstate) {
+			                                                                 latencySeconds += r8bstate_latency(*r8bstate);
+		                                                                 }
+		                                                                 if(*r8bold) {
+			                                                                 latencySeconds += r8bstate_latency(*r8bold);
+		                                                                 }
+		                                                                 if(*r8bvis) {
+			                                                                 latencyVis = r8bstate_latency(*r8bvis);
+		                                                                 }
+		                                                                 [lock unlock];
 		                                                                 if(latencySeconds < 0)
 			                                                                 latencySeconds = 0;
+		                                                                 latencyVis = latencySeconds - latencyVis;
+		                                                                 if(latencyVis < 0)
+			                                                                 latencyVis = 0;
 		                                                                 *latencySecondsOut = latencySeconds;
-		                                                                 [visController postLatency:latencySeconds];
+		                                                                 [visController postLatency:latencyVis];
 	                                                                 }];
 }
 
