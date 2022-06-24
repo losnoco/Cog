@@ -36,8 +36,11 @@ using std::atomic_long;
 @interface OutputAVFoundation : NSObject {
 	OutputNode *outputController;
 
-	BOOL r8bFlushing, r8bFlushed, r8bDone;
+	BOOL r8bDone;
 	void *r8bstate, *r8bold;
+
+	void *r8bvis;
+	double lastVisRate;
 
 	BOOL stopInvoked;
 	BOOL running;
@@ -46,6 +49,7 @@ using std::atomic_long;
 	BOOL started;
 	BOOL paused;
 	BOOL restarted;
+	BOOL stopFlush;
 
 	BOOL eqEnabled;
 	BOOL eqInitialized;

@@ -21,11 +21,12 @@ struct r8bstate {
 	uint64_t inProcessed;
 	uint64_t outProcessed;
 	double sampleRatio;
+	double dstRate;
 	r8b::CFixedBuffer<double> InBuf;
 	r8b::CFixedBuffer<double> *OutBufs;
 	r8b::CDSPResampler24 **Resamps;
-	r8bstate(int _channelCount, int _bufferCapacity, double srcRate, double dstRate)
-	: channelCount(_channelCount), bufferCapacity(_bufferCapacity), inProcessed(0), outProcessed(0), remainder(0) {
+	r8bstate(int _channelCount, int _bufferCapacity, double srcRate, double _dstRate)
+	: channelCount(_channelCount), bufferCapacity(_bufferCapacity), inProcessed(0), outProcessed(0), remainder(0), dstRate(_dstRate) {
 		InBuf.alloc(bufferCapacity);
 		OutBufs = new r8b::CFixedBuffer<double>[channelCount];
 		Resamps = new r8b::CDSPResampler24 *[channelCount];
@@ -44,7 +45,7 @@ struct r8bstate {
 	}
 
 	double latency() {
-		return ((double)inProcessed * sampleRatio) - (double)outProcessed;
+		return (((double)inProcessed * sampleRatio) - (double)outProcessed) / dstRate;
 	}
 
 	int resample(const float *input, size_t inCount, size_t *inDone, float *output, size_t outMax) {

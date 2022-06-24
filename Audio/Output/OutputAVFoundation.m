@@ -63,7 +63,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 	amountToRead = 1024;
 
-	int visTabulated = 0;
 	float visAudio[amountToRead]; // Chunk size
 
 	if(stopping == YES || [outputController shouldContinue] == NO) {
@@ -145,8 +144,65 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		[downmixerForVis process:outputPtr
 		              frameCount:frameCount
-		                  output:visAudio];
-		visTabulated += frameCount;
+		                  output:&visAudio[0]];
+
+		[visController postSampleRate:44100.0];
+
+		float visTemp[8192];
+		if(newFormat.mSampleRate != 44100.0) {
+			if(newFormat.mSampleRate != lastVisRate) {
+				if(r8bvis) {
+					for(;;) {
+						int samplesFlushed;
+						[currentPtsLock lock];
+						samplesFlushed = (int)r8bstate_flush(r8bvis, &visTemp[0], 8192);
+						[currentPtsLock unlock];
+						if(samplesFlushed) {
+							[visController postVisPCM:visTemp amount:samplesFlushed];
+						} else {
+							break;
+						}
+					}
+					[currentPtsLock lock];
+					r8bstate_delete(r8bvis);
+					r8bvis = NULL;
+					[currentPtsLock unlock];
+				}
+				lastVisRate = newFormat.mSampleRate;
+				[currentPtsLock lock];
+				r8bvis = r8bstate_new(1, 1024, lastVisRate, 44100.0);
+				[currentPtsLock unlock];
+			}
+			if(r8bvis) {
+				size_t inDone = 0;
+				int samplesProcessed;
+				[currentPtsLock lock];
+				samplesProcessed = (int)r8bstate_resample(r8bvis, &visAudio[0], frameCount, &inDone, &visTemp[0], 8192);
+				[currentPtsLock unlock];
+				if(samplesProcessed) {
+					[visController postVisPCM:&visTemp[0] amount:samplesProcessed];
+				}
+			}
+		} else if(r8bvis) {
+			for(;;) {
+				int samplesFlushed;
+				[currentPtsLock lock];
+				samplesFlushed = (int)r8bstate_flush(r8bvis, &visTemp[0], 8192);
+				[currentPtsLock unlock];
+				if(samplesFlushed) {
+					[visController postVisPCM:visTemp amount:samplesFlushed];
+				} else {
+					break;
+				}
+			}
+			[currentPtsLock lock];
+			r8bstate_delete(r8bvis);
+			r8bvis = NULL;
+			[currentPtsLock unlock];
+			[visController postVisPCM:&visAudio[0] amount:frameCount];
+		} else {
+			[visController postVisPCM:&visAudio[0] amount:frameCount];
+		}
 
 		cblas_scopy((int)(frameCount * newFormat.mChannelsPerFrame), outputPtr, 1, &inputBuffer[0], 1);
 		amountRead = frameCount;
@@ -177,9 +233,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	}
 
 	scale_by_volume(&inputBuffer[0], amountRead * newFormat.mChannelsPerFrame, volumeScale);
-
-	[visController postSampleRate:newFormat.mSampleRate];
-	[visController postVisPCM:visAudio amount:visTabulated];
 
 	return amountRead;
 }
@@ -750,11 +803,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		downmixerForVis = nil;
 
-		r8bFlushing = NO;
-		r8bFlushed = NO;
 		r8bDone = NO;
 		r8bstate = NULL;
 		r8bold = NULL;
+
+		r8bvis = NULL;
+		lastVisRate = 44100.0;
 
 		AudioComponentDescription desc;
 		NSError *err;
@@ -998,6 +1052,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		if(r8bold) {
 			r8bstate_delete(r8bold);
 			r8bold = NULL;
+		}
+		if(r8bvis) {
+			r8bstate_delete(r8bvis);
+			r8bvis = NULL;
 		}
 	}
 }
