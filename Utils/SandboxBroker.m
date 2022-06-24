@@ -142,40 +142,30 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	return YES;
 }
 
-static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
-	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
-		block();
-	} else {
-		dispatch_sync(queue, block);
-	}
-}
-
 - (SandboxEntry *)recursivePathTest:(NSURL *)url {
-	__block SandboxEntry *ret = nil;
+	SandboxEntry *ret = nil;
 
-	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
+	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
-		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
 
-		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
-		request.sortDescriptors = @[sortDescriptor];
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+	request.sortDescriptors = @[sortDescriptor];
 
-		NSError *error = nil;
-		NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
-		if(results) results = [results copy];
+	NSError *error = nil;
+	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	if(results) results = [results copy];
 
-		if(results && [results count] > 0) {
-			for(SandboxToken *token in results) {
-				if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
-					SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+	if(results && [results count] > 0) {
+		for(SandboxToken *token in results) {
+			if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
+				SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
 
-					ret = entry;
-					return;
-				}
+				ret = entry;
+				break;
 			}
 		}
-	});
+	}
 
 	if(ret) {
 		BOOL isStale;
