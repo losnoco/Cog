@@ -104,6 +104,8 @@
 		831B99BF27C23E88005A969B /* Cog.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 831B99BE27C23E88005A969B /* Cog.sdef */; };
 		83229C9F283B0095004626A8 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83229C9D283B0095004626A8 /* SpectrumWindowController.m */; };
 		83229CA0283B0095004626A8 /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83229C9E283B0095004626A8 /* SpectrumWindow.xib */; };
+		83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; };
+		83256B69286661FC0036D9C0 /* libmpg123.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		83293070277886250010C07E /* OpenMPTOld.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8329306D277885790010C07E /* OpenMPTOld.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832C1253180BD1E2005507C1 /* Cog.help in Resources */ = {isa = PBXBuildFile; fileRef = 832C1252180BD1E2005507C1 /* Cog.help */; };
@@ -740,6 +742,7 @@
 				836EF0E027BB98A800BF35B2 /* libopus.0.dylib in CopyFiles */,
 				836EF0CB27BB91EE00BF35B2 /* libFLAC.8.dylib in CopyFiles */,
 				836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */,
+				83256B69286661FC0036D9C0 /* libmpg123.0.dylib in CopyFiles */,
 				836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */,
 				836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */,
 				83AA7D07279EBCAF00087AA4 /* libswresample.4.dylib in CopyFiles */,
@@ -924,6 +927,7 @@
 		83229C9C283B0095004626A8 /* SpectrumWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumWindowController.h; sourceTree = "<group>"; };
 		83229C9D283B0095004626A8 /* SpectrumWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumWindowController.m; sourceTree = "<group>"; };
 		83229C9E283B0095004626A8 /* SpectrumWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumWindow.xib; sourceTree = "<group>"; };
+		83256B672866617F0036D9C0 /* libmpg123.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpg123.0.dylib; path = ThirdParty/mpg123/lib/libmpg123.0.dylib; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		83293065277885790010C07E /* OpenMPTOld.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPTOld.xcodeproj; path = Plugins/OpenMPT.old/OpenMPTOld.xcodeproj; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
@@ -1100,6 +1104,7 @@
 				ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */,
 				8355D6B8180613FB00D05687 /* Security.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+				83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */,
 				17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */,
 				835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */,
 				835FAC7E27BCDF5B00BA8562 /* libaom.a in Frameworks */,
@@ -1161,6 +1166,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83256B672866617F0036D9C0 /* libmpg123.0.dylib */,
 				835FAC7C27BCDF5B00BA8562 /* libaom.a */,
 				835FAC7D27BCDF5B00BA8562 /* libavif.a */,
 				836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */,
@@ -2969,6 +2975,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ThirdParty/avif/lib",
+					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
@@ -3021,6 +3028,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ThirdParty/avif/lib",
+					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
