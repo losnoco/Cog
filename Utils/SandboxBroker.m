@@ -142,6 +142,14 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	return YES;
 }
 
+static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
+		block();
+	} else {
+		dispatch_sync(queue, block);
+	}
+}
+
 - (SandboxEntry *)recursivePathTest:(NSURL *)url {
 	for(SandboxEntry *entry in storage) {
 		if(entry.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
@@ -150,38 +158,47 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 		}
 	}
 
-	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
+	__block SandboxEntry *ret = nil;
 
-	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
-	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
-	request.sortDescriptors = @[sortDescriptor];
+		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
 
-	NSError *error = nil;
-	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+		request.sortDescriptors = @[sortDescriptor];
 
-	if(results && [results count] > 0) {
-		for(SandboxToken *token in results) {
-			if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
-				SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+		NSError *error = nil;
+		NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
 
-				BOOL isStale;
-				NSError *err = nil;
-				NSURL *secureUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
-				if(!secureUrl && err) {
-					ALog(@"Failed to access bookmark for URL: %@, error: %@", token.path, [err localizedDescription]);
-					return nil;
+		if(results && [results count] > 0) {
+			for(SandboxToken *token in results) {
+				if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
+					SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+
+					ret = entry;
+					return;
 				}
-
-				entry.secureUrl = secureUrl;
-
-				[storage addObject:entry];
-
-				[secureUrl startAccessingSecurityScopedResource];
-
-				return entry;
 			}
 		}
+	});
+
+	if(ret) {
+		BOOL isStale;
+		NSError *err = nil;
+		NSURL *secureUrl = [NSURL URLByResolvingBookmarkData:ret.token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
+		if(!secureUrl && err) {
+			ALog(@"Failed to access bookmark for URL: %@, error: %@", ret.token.path, [err localizedDescription]);
+			return nil;
+		}
+
+		ret.secureUrl = secureUrl;
+
+		[storage addObject:ret];
+
+		[secureUrl startAccessingSecurityScopedResource];
+
+		return ret;
 	}
 
 	return nil;
