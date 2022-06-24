@@ -36,6 +36,9 @@ using std::atomic_long;
 @interface OutputAVFoundation : NSObject {
 	OutputNode *outputController;
 
+	BOOL r8bFlushing, r8bFlushed, r8bDone;
+	void *r8bstate, *r8bold;
+
 	BOOL stopInvoked;
 	BOOL running;
 	BOOL stopping;
@@ -64,6 +67,7 @@ using std::atomic_long;
 
 	AudioDeviceID outputDeviceID;
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
+	AudioStreamBasicDescription newFormat; // in case of resampler flush
 
 	AudioStreamBasicDescription visFormat; // Mono format for vis
 
