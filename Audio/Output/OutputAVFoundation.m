@@ -317,6 +317,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 - (BOOL)processEndOfStream {
 	if([outputController endOfStream] == YES && [self signalEndOfStream:secondsLatency]) {
 		stopping = YES;
+		stopFlush = YES;
 		return YES;
 	}
 	return NO;
@@ -326,6 +327,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	running = YES;
 	started = NO;
 	secondsLatency = 1.0;
+	stopFlush = NO;
 
 	while(!stopping) {
 		if([outputController shouldReset]) {
@@ -358,8 +360,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 				[audioRenderer enqueueSampleBuffer:bufferRef];
 			} else {
+				stopFlush = YES;
 				break;
-				// r8b will absorb some samples first
 			}
 		}
 
@@ -375,7 +377,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 
 	stopped = YES;
-	[self stop];
+	if(!stopInvoked) {
+		[self stop];
+	}
 }
 
 - (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID {
@@ -1033,7 +1037,17 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 		if(renderSynchronizer || audioRenderer) {
 			if(renderSynchronizer) {
+				if(stopFlush) {
+					int compareVal = 0;
+					do {
+						[currentPtsLock lock];
+						compareVal = CMTimeCompare(outputPts, currentPts);
+						[currentPtsLock unlock];
+						usleep(5000);
+					} while(compareVal > 0);
+				}
 				[self removeSynchronizerBlock];
+				[renderSynchronizer setRate:0];
 			}
 			if(audioRenderer) {
 				[audioRenderer stopRequestingMediaData];
