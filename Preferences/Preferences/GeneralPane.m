@@ -53,7 +53,7 @@
 
 	NSDictionary *item = [[sandboxPathBehaviorController arrangedObjects] objectAtIndex:row];
 
-	float fontSize = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"fontSize"];
+	/*float fontSize = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"fontSize"];*/
 
 	NSString *cellText = @"";
 
@@ -73,9 +73,9 @@
 		if(cellView.textField) {
 			cellView.textField.allowsDefaultTighteningForTruncation = YES;
 
-			NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
+			//NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
 
-			cellView.textField.font = font;
+			//cellView.textField.font = font;
 			cellView.textField.stringValue = cellText;
 			cellView.textField.alignment = cellTextAlignment;
 
