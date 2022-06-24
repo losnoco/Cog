@@ -19,6 +19,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
+      - name: Unpack libraries
+        run: >
+          cd ThirdParty && tar xvf libraries.tar.xz
       - name: Run xcodebuild
         run: >
           xcodebuild
