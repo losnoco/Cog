@@ -14,7 +14,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
+        <window title="Suggest Paths for Sandbox" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -23,26 +23,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uJf-BX-nGb">
-                        <rect key="frame" x="395" y="13" width="69" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jne-2G-yP9">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="applyPaths:" target="-2" id="aP1-hj-jCO"/>
-                        </connections>
-                    </button>
-                    <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qDP-bP-gt0">
-                        <rect key="frame" x="20" y="53" width="440" height="197"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <scrollView autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qDP-bP-gt0">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <clipView key="contentView" id="o8s-wX-Hz7">
-                            <rect key="frame" x="1" y="1" width="438" height="195"/>
+                            <rect key="frame" x="1" y="1" width="478" height="268"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" headerView="0f4-Mi-48L" viewBased="YES" id="12l-iE-HGP">
-                                    <rect key="frame" x="0.0" y="0.0" width="438" height="167"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="478" height="240"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -135,12 +123,41 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <tableHeaderView key="headerView" wantsLayer="YES" id="0f4-Mi-48L">
-                            <rect key="frame" x="0.0" y="0.0" width="438" height="28"/>
+                            <rect key="frame" x="0.0" y="0.0" width="478" height="28"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="qDP-bP-gt0" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="F7Q-Us-qs8"/>
+                    <constraint firstItem="qDP-bP-gt0" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="IhQ-eN-YLs"/>
+                    <constraint firstAttribute="trailing" secondItem="qDP-bP-gt0" secondAttribute="trailing" id="frR-7p-2s1"/>
+                    <constraint firstAttribute="bottom" secondItem="qDP-bP-gt0" secondAttribute="bottom" id="pwc-2L-V1Y"/>
+                </constraints>
             </view>
+            <toolbar key="toolbar" implicitIdentifier="760262BB-BC46-469A-AF4F-7639AE45C1E3" autosavesConfiguration="NO" displayMode="iconOnly" sizeMode="regular" id="6Kb-WZ-fpH">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="1B91073D-B1EB-41CA-9CB3-206FFBE03E80" label="Apply" paletteLabel="Apply" title="Apply" id="cJV-DM-SOV">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="69" height="32"/>
+                        <size key="maxSize" width="69" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="uJf-BX-nGb">
+                            <rect key="frame" x="0.0" y="14" width="69" height="32"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jne-2G-yP9">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="applyPaths:" target="-2" id="aP1-hj-jCO"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="cJV-DM-SOV"/>
+                </defaultToolbarItems>
+            </toolbar>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
