@@ -9,7 +9,7 @@
 #import "OMPTMetadataReader.h"
 #import "OMPTDecoder.h"
 
-#import <libOpenMPTOld/libopenmpt.hpp>
+#import <libopenmpt/libopenmpt.hpp>
 
 #import "Logging.H"
 
