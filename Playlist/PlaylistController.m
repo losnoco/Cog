@@ -279,7 +279,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pc.artist = pe.artist;
 		pc.title = pe.title;
 		pc.filename = pe.filename;
-		[self commitEditing];
 	}
 }
 
@@ -1679,6 +1678,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	for(PlaylistEntry *pe in urls) {
 		[self firstSawTrack:pe];
 	}
+	[self commitPersistentStore];
 
 	NSArray *nsurls = [urls valueForKey:@"url"];
 	if(![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:nsurls]) {
