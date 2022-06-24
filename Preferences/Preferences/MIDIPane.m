@@ -8,6 +8,10 @@
 
 #import "MIDIPane.h"
 
+#import "SandboxBroker.h"
+
+#import "AppController.h"
+
 @implementation MIDIPane
 
 - (NSString *)title {
@@ -34,6 +38,13 @@
 	NSInteger result = [panel runModal];
 	if(result == NSModalResponseOK) {
 		[[NSUserDefaults standardUserDefaults] setValue:[[panel URL] path] forKey:@"soundFontPath"];
+
+		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+		NSURL *pathUrl = [panel URL];
+		if(![[sandboxBrokerClass sharedSandboxBroker] areAllPathsSafe:@[pathUrl]]) {
+			id appControllerClass = NSClassFromString(@"AppController");
+			[appControllerClass globalShowPathSuggester];
+		}
 	}
 }
 

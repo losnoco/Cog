@@ -151,13 +151,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (SandboxEntry *)recursivePathTest:(NSURL *)url {
-	for(SandboxEntry *entry in storage) {
-		if(entry.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
-			entry.refCount += 1;
-			return entry;
-		}
-	}
-
 	__block SandboxEntry *ret = nil;
 
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
@@ -194,10 +187,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		ret.secureUrl = secureUrl;
 
-		[storage addObject:ret];
-
-		[secureUrl startAccessingSecurityScopedResource];
-
 		return ret;
 	}
 
@@ -208,14 +197,28 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSURL *folderUrl = [[SandboxBroker urlWithoutFragment:fileUrl] URLByDeletingLastPathComponent];
 	if(![folderUrl isFileURL]) return NULL;
 
-	SandboxEntry *entry;
+	SandboxEntry *_entry = nil;
 
 	@synchronized(self) {
-		entry = [self recursivePathTest:folderUrl];
+		for(SandboxEntry *entry in storage) {
+			if(entry.path && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
+				entry.refCount += 1;
+				_entry = entry;
+				break;
+			}
+		}
+
+		if(!_entry) {
+			_entry = [self recursivePathTest:folderUrl];
+		}
 	}
 
-	if(entry) {
-		return CFBridgingRetain(entry);
+	if(_entry) {
+		[storage addObject:_entry];
+
+		[_entry.secureUrl startAccessingSecurityScopedResource];
+
+		return CFBridgingRetain(_entry);
 	} else {
 		return NULL;
 	}
@@ -240,6 +243,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			[storage removeObject:entry];
 		}
 	}
+}
+
+- (BOOL)areAllPathsSafe:(NSArray *)urls {
+	for(NSURL *url in urls) {
+		if(![self recursivePathTest:url]) {
+			return NO;
+		}
+	}
+	return YES;
 }
 
 @end

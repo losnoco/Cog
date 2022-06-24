@@ -23,6 +23,9 @@
 
 #import "Cog-Swift.h"
 
+#import "AppController.h"
+#import "SandboxBroker.h"
+
 #define UNDO_STACK_LIMIT 0
 
 extern BOOL kAppControllerShuttingDown;
@@ -1675,6 +1678,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	for(PlaylistEntry *pe in urls) {
 		[self firstSawTrack:pe];
+	}
+
+	NSArray *nsurls = [urls valueForKey:@"url"];
+	if(![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:nsurls]) {
+		[appController showPathSuggester];
 	}
 
 	CGEventRef event = CGEventCreate(NULL);

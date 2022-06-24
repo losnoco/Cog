@@ -7,6 +7,7 @@
 @class PlaylistController;
 @class PlaylistView;
 @class PlaylistLoader;
+@class PreferencesController;
 
 @interface AppController : NSObject {
 	IBOutlet NSObjectController *currentEntryController;
@@ -46,6 +47,8 @@
 	IBOutlet NSWindowController *spotlightWindowController;
 
 	IBOutlet FileTreeViewController *fileTreeViewController;
+
+	IBOutlet PreferencesController *preferencesController;
 
 	NSOperationQueue *queue; // Since we are the app delegate, we take care of the op queue
 
@@ -93,6 +96,9 @@
 
 - (IBAction)toggleMiniMode:(id)sender;
 - (IBAction)toggleToolbarStyle:(id)sender;
+
+- (void)showPathSuggester;
++ (void)globalShowPathSuggester;
 
 @property NSWindow *mainWindow;
 @property NSWindow *miniWindow;

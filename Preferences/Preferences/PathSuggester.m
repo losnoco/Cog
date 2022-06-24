@@ -95,8 +95,21 @@ static NSURL *defaultMoviesDirectory(void) {
 	NSMutableArray *items = [[NSMutableArray alloc] init];
 	NSMutableArray *itemPaths = [[NSMutableArray alloc] init];
 
-	for(PlaylistEntry *pe in results) {
-		NSURL *url = [sandboxBrokerClass urlWithoutFragment:pe.url];
+	NSMutableArray *array = [[results valueForKey:@"url"] mutableCopy];
+
+	// Add other system paths to this setting
+	NSString *fileTreePath = [[NSUserDefaults standardUserDefaults] stringForKey:@"fileTreeRootURL"];
+	if(fileTreePath && [fileTreePath length]) {
+		[array addObject:[NSURL URLWithString:fileTreePath]];
+	}
+
+	NSString *soundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
+	if(soundFontPath && [soundFontPath length]) {
+		[array addObject:[NSURL fileURLWithPath:soundFontPath]];
+	}
+
+	for(NSURL *fileUrl in array) {
+		NSURL *url = [sandboxBrokerClass urlWithoutFragment:fileUrl];
 		if([sandboxBrokerClass isPath:url aSubdirectoryOf:defaultMusic] ||
 		   [sandboxBrokerClass isPath:url
 		              aSubdirectoryOf:defaultDownloads] ||

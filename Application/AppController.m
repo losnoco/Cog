@@ -28,11 +28,15 @@
 #import "Shortcuts.h"
 #import <MASShortcut/Shortcut.h>
 
+#import "PreferencesController.h"
+
 @import Firebase;
 
 void *kAppControllerContext = &kAppControllerContext;
 
 BOOL kAppControllerShuttingDown = NO;
+
+static AppController *kAppController = nil;
 
 @implementation AppController {
 	BOOL _isFullToolbarStyle;
@@ -70,6 +74,8 @@ BOOL kAppControllerShuttingDown = NO;
 		[self initDefaults];
 
 		queue = [[NSOperationQueue alloc] init];
+
+		kAppController = self;
 	}
 
 	return self;
@@ -703,6 +709,14 @@ BOOL kAppControllerShuttingDown = NO;
 	} else if(!hideItem && [dockMenu indexOfItem:currentArtistItem] < 0) {
 		[dockMenu insertItem:currentArtistItem atIndex:0];
 	}
+}
+
+- (void)showPathSuggester {
+	[preferencesController showPathSuggester:self];
+}
+
++ (void)globalShowPathSuggester {
+	[kAppController showPathSuggester];
 }
 
 @end

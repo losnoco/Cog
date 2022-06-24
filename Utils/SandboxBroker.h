@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (const void *)beginFolderAccess:(NSURL *)fileUrl;
 - (void)endFolderAccess:(const void *)handle;
 
+- (BOOL)areAllPathsSafe:(NSArray *)urls;
+
 @end
 
 NS_ASSUME_NONNULL_END

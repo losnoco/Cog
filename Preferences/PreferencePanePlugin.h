@@ -17,6 +17,9 @@
 @property(readonly, copy) NSString *title;
 @property(readonly) NSImage *icon;
 
+@optional
+- (IBAction)showPathSuggester:(id)sender;
+
 @end
 
 @protocol PreferencePanePlugin <NSObject>

@@ -151,6 +151,19 @@
 	[self makeKeyAndOrderFront:self];
 }
 
+- (void)showPathSuggester {
+	NSString *name = NSLocalizedPrefString(@"General");
+
+	[self loadPaneNamed:name display:NO];
+
+	[self makeKeyAndOrderFront:self];
+
+	id<PreferencePane> pane = preferencePanes[name];
+	if(pane && [pane respondsToSelector:@selector(showPathSuggester:)]) {
+		[pane showPathSuggester:self];
+	}
+}
+
 // Close on Esc pressed.
 - (void)cancelOperation:(id)sender {
 	[self close];
