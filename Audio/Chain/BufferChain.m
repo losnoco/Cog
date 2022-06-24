@@ -40,7 +40,7 @@
 	finalNode = converterNode;
 }
 
-- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
+- (BOOL)open:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
 	[self setStreamURL:url];
 	[self setUserInfo:userInfo];
 
@@ -66,13 +66,7 @@
 	if([properties valueForKey:@"channelConfig"])
 		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
-	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-	outputConfig = inputChannelConfig;
-
-	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat outputConfig:outputConfig isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
 	[self setRGInfo:rgi];
@@ -82,7 +76,7 @@
 	return YES;
 }
 
-- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withOutputConfig:(uint32_t)outputConfig withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
+- (BOOL)openWithInput:(InputNode *)i withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
 	DLog(@"New buffer chain!");
 	[self setUserInfo:userInfo];
 	[self buildChain];
@@ -97,14 +91,8 @@
 	if([properties valueForKey:@"channelConfig"])
 		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
-	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-	outputConfig = inputChannelConfig;
-
 	DLog(@"Input Properties: %@", properties);
-	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat outputConfig:outputConfig isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
 	[self setRGInfo:rgi];
@@ -113,8 +101,6 @@
 }
 
 - (BOOL)openWithDecoder:(id<CogDecoder>)decoder
-       withOutputFormat:(AudioStreamBasicDescription)outputFormat
-       withOutputConfig:(uint32_t)outputConfig
            withUserInfo:(id)userInfo
              withRGInfo:(NSDictionary *)rgi;
 {
@@ -134,13 +120,7 @@
 	if([properties valueForKey:@"channelConfig"])
 		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
 
-	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-	outputConfig = inputChannelConfig;
-
-	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat outputConfig:outputConfig isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
 
 	[self setRGInfo:rgi];

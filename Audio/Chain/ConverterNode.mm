@@ -6,6 +6,9 @@
 //  Copyright 2005 __MyCompanyName__. All rights reserved.
 //
 
+#import <Accelerate/Accelerate.h>
+#import <Foundation/Foundation.h>
+
 #import "ConverterNode.h"
 
 #import "BufferChain.h"
@@ -13,16 +16,11 @@
 
 #import "Logging.h"
 
-#import "lpc.h"
-#import "util.h"
-
 #import "hdcd_decode2.h"
 
 #ifdef _DEBUG
 #import "BadSampleCleaner.h"
 #endif
-
-#import "r8bstate.h"
 
 #if !DSD_DECIMATE
 #include "dsd2float.h"
@@ -56,7 +54,6 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 	if(self) {
 		rgInfo = nil;
 
-		_r8bstate = 0;
 		inputBuffer = NULL;
 		inputBufferSize = 0;
 		floatBuffer = NULL;
@@ -65,11 +62,6 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 		stopping = NO;
 		convertEntered = NO;
 		paused = NO;
-
-		skipResampler = YES;
-
-		extrapolateBuffer = NULL;
-		extrapolateBufferSize = 0;
 
 #if DSD_DECIMATE
 		dsd2pcm = NULL;
@@ -458,7 +450,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				continue;
 			} else if(streamFormatChanged) {
 				[self cleanUp];
-				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
+				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig isLossless:rememberedLossless];
 				continue;
 			} else
 				break;
@@ -471,7 +463,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	UInt32 ioNumberPackets;
 	int amountReadFromFC;
 	int amountRead = 0;
-	int amountToIgnorePostExtrapolated = 0;
 
 	if(stopping)
 		return 0;
@@ -496,13 +487,6 @@ tryagain:
 
 			// Approximately the most we want on input
 			ioNumberPackets = CHUNK_SIZE;
-			if(!skipResampler && ioNumberPackets < PRIME_LEN_)
-				ioNumberPackets = PRIME_LEN_;
-
-			// We want to upscale this count if the ratio is below zero
-			if(sampleRatio < 1.0) {
-				ioNumberPackets = ((uint32_t)(ioNumberPackets / sampleRatio) + 15) & ~15;
-			}
 
 #if DSD_DECIMATE
 			const size_t sizeScale = 3;
@@ -555,40 +539,7 @@ tryagain:
 				}
 			}
 
-			// Pad end of track with input format silence
-
-			if(stopping || paused || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
-				if(!skipResampler && !is_postextrapolated_) {
-#if DSD_DECIMATE
-					if(dsd2pcm) {
-						uint32_t amountToSkip = dsd2pcmLatency * inputFormat.mBytesPerPacket;
-						memset(((uint8_t *)inputBuffer) + bytesReadFromInput, 0x55, amountToSkip);
-						bytesReadFromInput += amountToSkip;
-					}
-#endif
-					is_postextrapolated_ = 1;
-#if DSD_DECIMATE
-				} else if(!is_postextrapolated_ && dsd2pcm) {
-					is_postextrapolated_ = 3;
-#endif
-				}
-			}
-
 			BOOL isBigEndian = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian);
-
-			if(!bytesReadFromInput && streamFormatChanged && !skipResampler && is_postextrapolated_ < 2) {
-				AudioChunk *chunk = lastChunkIn;
-				lastChunkIn = nil;
-				AudioStreamBasicDescription inf = [chunk format];
-				size_t frameCount = [chunk frameCount];
-				size_t bytesRead = frameCount * inf.mBytesPerPacket;
-				if(frameCount) {
-					amountToIgnorePostExtrapolated = (int)frameCount;
-					NSData *samples = [chunk removeSamples:frameCount];
-					memcpy(inputBuffer, [samples bytes], bytesRead);
-				}
-				bytesReadFromInput += bytesRead;
-			}
 
 			if(!bytesReadFromInput) {
 				convertEntered = NO;
@@ -701,82 +652,9 @@ tryagain:
 #endif
 			}
 
-			// Extrapolate start
-			if(!skipResampler && !is_preextrapolated_) {
-				size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
-				size_t prime = min(samples_in_buffer, PRIME_LEN_);
-				size_t _N_samples_to_add_ = N_samples_to_add_;
-#if DSD_DECIMATE
-				if(dsd2pcm) _N_samples_to_add_ += dsd2pcmLatency;
-#endif
-				size_t newSize = _N_samples_to_add_ * floatFormat.mBytesPerPacket;
-				newSize += bytesReadFromInput;
-
-				if(newSize > inputBufferSize) {
-					inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
-				}
-
-				size_t bytesToSkip = 0;
-#if DSD_DECIMATE
-				if(dsd2pcm) {
-					bytesToSkip = dsd2pcmLatency * floatFormat.mBytesPerPacket;
-					if(bytesReadFromInput >= bytesToSkip) {
-						bytesReadFromInput -= bytesToSkip;
-					} else {
-						bytesToSkip = 0;
-					}
-				}
-#endif
-
-				memmove(((uint8_t *)inputBuffer) + N_samples_to_add_ * floatFormat.mBytesPerPacket, ((uint8_t *)inputBuffer) + bytesToSkip, bytesReadFromInput);
-
-				lpc_extrapolate_bkwd((float *)(((uint8_t *)inputBuffer) + _N_samples_to_add_ * floatFormat.mBytesPerPacket), samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, _N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
-#ifdef _DEBUG
-				[BadSampleCleaner cleanSamples:(float *)inputBuffer
-				                        amount:_N_samples_to_add_ * floatFormat.mChannelsPerFrame
-				                      location:@"pre-extrapolated data"];
-#endif
-
-				bytesReadFromInput += _N_samples_to_add_ * floatFormat.mBytesPerPacket;
-				latencyEaten = N_samples_to_drop_;
-#if DSD_DECIMATE
-				if(dsd2pcm) latencyEaten += (int)ceil(dsd2pcmLatency * sampleRatio);
-#endif
-				is_preextrapolated_ = 2;
-#if DSD_DECIMATE
-			} else if(dsd2pcm && !is_preextrapolated_) {
-				latencyEaten = dsd2pcmLatency;
-				is_preextrapolated_ = 3;
-#endif
-			}
-
-			if(is_postextrapolated_ == 1) {
-				size_t samples_in_buffer = bytesReadFromInput / floatFormat.mBytesPerPacket;
-
-				size_t prime = min(samples_in_buffer, PRIME_LEN_);
-
-				size_t newSize = bytesReadFromInput;
-				newSize += N_samples_to_add_ * floatFormat.mBytesPerPacket;
-				if(newSize > inputBufferSize) {
-					inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
-				}
-
-				lpc_extrapolate_fwd((float *)inputBuffer, samples_in_buffer, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
-#ifdef _DEBUG
-				[BadSampleCleaner cleanSamples:(float *)(inputBuffer) + samples_in_buffer * floatFormat.mChannelsPerFrame
-				                        amount:N_samples_to_add_ * floatFormat.mChannelsPerFrame
-				                      location:@"post-extrapolated data"];
-#endif
-				bytesReadFromInput += N_samples_to_add_ * floatFormat.mBytesPerPacket;
-				latencyEatenPost = N_samples_to_drop_;
-				is_postextrapolated_ = 2;
-			} else if(is_postextrapolated_ == 3) { // No need to skip the end
-				latencyEatenPost = 0;
-			}
-
 			// Input now contains bytesReadFromInput worth of floats, in the input sample rate
 			inpSize = bytesReadFromInput;
-			inpOffset = amountToIgnorePostExtrapolated * floatFormat.mBytesPerPacket;
+			inpOffset = 0;
 		}
 
 	if(inpOffset != inpSize && floatOffset == floatSize) {
@@ -788,7 +666,6 @@ tryagain:
 
 		ioNumberPackets = (UInt32)inputSamples;
 
-		ioNumberPackets = (UInt32)ceil((float)ioNumberPackets * sampleRatio);
 		ioNumberPackets = (ioNumberPackets + 255) & ~255;
 
 		size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
@@ -805,63 +682,11 @@ tryagain:
 		size_t inputDone = 0;
 		size_t outputDone = 0;
 
-		if(!skipResampler) {
-			// This is needed at least for the flush, or else there won't be room for it
-			ioNumberPackets += ((r8bstate *)_r8bstate)->latency();
-
-#ifdef _DEBUG
-			[BadSampleCleaner cleanSamples:(float *)(((uint8_t *)inputBuffer) + inpOffset)
-			                        amount:inputSamples * floatFormat.mChannelsPerFrame
-			                      location:@"resampler input"];
-#endif
-			outputDone = ((r8bstate *)_r8bstate)->resample((float *)(((uint8_t *)inputBuffer) + inpOffset), inputSamples, &inputDone, (float *)floatBuffer, ioNumberPackets);
-#ifdef _DEBUG
-			[BadSampleCleaner cleanSamples:(float *)floatBuffer
-			                        amount:outputDone * floatFormat.mChannelsPerFrame
-			                      location:@"resampler output"];
-#endif
-
-			if(latencyEatenPost) {
-				// Post file flush
-				size_t odone = 0;
-
-				do {
-					odone = ((r8bstate *)_r8bstate)->flush((float *)(((uint8_t *)floatBuffer) + outputDone * floatFormat.mBytesPerPacket), ioNumberPackets - outputDone);
-#ifdef _DEBUG
-					[BadSampleCleaner cleanSamples:(float *)(floatBuffer + outputDone * floatFormat.mBytesPerPacket)
-					                        amount:odone * floatFormat.mChannelsPerFrame
-					                      location:@"resampler flushed output"];
-#endif
-					outputDone += odone;
-				} while(odone > 0);
-			}
-		} else {
-			memcpy(floatBuffer, (((uint8_t *)inputBuffer) + inpOffset), inputSamples * floatFormat.mBytesPerPacket);
-			inputDone = inputSamples;
-			outputDone = inputSamples;
-		}
+		memcpy(floatBuffer, (((uint8_t *)inputBuffer) + inpOffset), inputSamples * floatFormat.mBytesPerPacket);
+		inputDone = inputSamples;
+		outputDone = inputSamples;
 
 		inpOffset += inputDone * floatFormat.mBytesPerPacket;
-
-		if(latencyEaten) {
-			if(outputDone > latencyEaten) {
-				outputDone -= latencyEaten;
-				memmove(floatBuffer, ((uint8_t *)floatBuffer) + latencyEaten * floatFormat.mBytesPerPacket, outputDone * floatFormat.mBytesPerPacket);
-				latencyEaten = 0;
-			} else {
-				latencyEaten -= outputDone;
-				outputDone = 0;
-			}
-		}
-
-		if(latencyEatenPost) {
-			if(outputDone > latencyEatenPost) {
-				outputDone -= latencyEatenPost;
-			} else {
-				outputDone = 0;
-			}
-			latencyEatenPost = 0;
-		}
 
 		amountReadFromFC = (int)(outputDone * floatFormat.mBytesPerPacket);
 
@@ -882,7 +707,7 @@ tryagain:
 	if(ioNumberPackets > (floatSize - floatOffset))
 		ioNumberPackets = (UInt32)(floatSize - floatOffset);
 
-	ioNumberPackets -= ioNumberPackets % outputFormat.mBytesPerPacket;
+	ioNumberPackets -= ioNumberPackets % dmFloatFormat.mBytesPerPacket;
 
 	memcpy(((uint8_t *)dest) + amountRead, ((uint8_t *)floatBuffer) + floatOffset, ioNumberPackets);
 
@@ -953,16 +778,11 @@ static float db_to_scale(float db) {
 	volumeScale = scale;
 }
 
-- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf withInputConfig:(uint32_t)inputConfig outputFormat:(AudioStreamBasicDescription)outf outputConfig:(uint32_t)outputConfig isLossless:(BOOL)lossless {
+- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf withInputConfig:(uint32_t)inputConfig isLossless:(BOOL)lossless {
 	// Make the converter
 	inputFormat = inf;
-	outputFormat = outf;
 
 	inputChannelConfig = inputConfig;
-	outputChannelConfig = outputConfig;
-
-	nodeFormat = outputFormat;
-	nodeChannelConfig = outputChannelConfig;
 
 	rememberedLossless = lossless;
 
@@ -1010,38 +830,12 @@ static float db_to_scale(float db) {
 	// This is a post resampler, post-down/upmix format
 
 	dmFloatFormat = floatFormat;
-	dmFloatFormat.mSampleRate = outputFormat.mSampleRate;
-	dmFloatFormat.mChannelsPerFrame = outputFormat.mChannelsPerFrame;
-	dmFloatFormat.mBytesPerFrame = (32 / 8) * dmFloatFormat.mChannelsPerFrame;
-	dmFloatFormat.mBytesPerPacket = dmFloatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
 
-	skipResampler = outputFormat.mSampleRate == floatFormat.mSampleRate;
-
-	sampleRatio = (double)outputFormat.mSampleRate / (double)floatFormat.mSampleRate;
-
-	if(!skipResampler) {
-		const int channelCount = floatFormat.mChannelsPerFrame;
-
-		_r8bstate = (void *)(new r8bstate(channelCount, 1024, floatFormat.mSampleRate, outputFormat.mSampleRate));
-
-		PRIME_LEN_ = max(floatFormat.mSampleRate / 20, 1024u);
-		PRIME_LEN_ = min(PRIME_LEN_, 16384u);
-		PRIME_LEN_ = max(PRIME_LEN_, 2 * LPC_ORDER + 1);
-
-		N_samples_to_add_ = floatFormat.mSampleRate;
-		N_samples_to_drop_ = outputFormat.mSampleRate;
-
-		samples_len(&N_samples_to_add_, &N_samples_to_drop_, 20, 8192u);
-
-		is_preextrapolated_ = 0;
-		is_postextrapolated_ = 0;
-	}
-
-	latencyEaten = 0;
-	latencyEatenPost = 0;
+	nodeFormat = dmFloatFormat;
+	nodeChannelConfig = inputChannelConfig;
 
 	PrintStreamDesc(&inf);
-	PrintStreamDesc(&outf);
+	PrintStreamDesc(&nodeFormat);
 
 	[self refreshVolumeScaling];
 
@@ -1063,12 +857,6 @@ static float db_to_scale(float db) {
 	[self cleanUp];
 }
 
-- (void)setOutputFormat:(AudioStreamBasicDescription)format outputConfig:(uint32_t)outputConfig {
-	DLog(@"SETTING OUTPUT FORMAT!");
-	outputFormat = format;
-	outputChannelConfig = outputConfig;
-}
-
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig {
 	DLog(@"FORMAT CHANGED");
 	paused = YES;
@@ -1076,7 +864,7 @@ static float db_to_scale(float db) {
 		usleep(500);
 	}
 	[self cleanUp];
-	[self setupWithInputFormat:format withInputConfig:inputConfig outputFormat:outputFormat outputConfig:outputChannelConfig isLossless:rememberedLossless];
+	[self setupWithInputFormat:format withInputConfig:inputConfig isLossless:rememberedLossless];
 }
 
 - (void)setRGInfo:(NSDictionary *)rgi {
@@ -1090,16 +878,9 @@ static float db_to_scale(float db) {
 	while(convertEntered) {
 		usleep(500);
 	}
-	if(hFilter) {
-		hFilter = nil;
-	}
 	if(hdcd_decoder) {
 		free(hdcd_decoder);
 		hdcd_decoder = NULL;
-	}
-	if(_r8bstate) {
-		delete(r8bstate *)_r8bstate;
-		_r8bstate = NULL;
 	}
 #if DSD_DECIMATE
 	if(dsd2pcm && dsd2pcmCount) {
@@ -1111,11 +892,6 @@ static float db_to_scale(float db) {
 		dsd2pcm = NULL;
 	}
 #endif
-	if(extrapolateBuffer) {
-		free(extrapolateBuffer);
-		extrapolateBuffer = NULL;
-		extrapolateBufferSize = 0;
-	}
 	if(floatBuffer) {
 		free(floatBuffer);
 		floatBuffer = NULL;

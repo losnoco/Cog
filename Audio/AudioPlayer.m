@@ -83,7 +83,7 @@
 	bufferChain = [[BufferChain alloc] initWithController:self];
 	[self notifyStreamChanged:userInfo];
 
-	while(![bufferChain open:url withOutputFormat:[output format] withOutputConfig:[output config] withUserInfo:userInfo withRGInfo:rgi]) {
+	while(![bufferChain open:url withUserInfo:userInfo withRGInfo:rgi]) {
 		bufferChain = nil;
 
 		[self requestNextStream:userInfo];
@@ -369,7 +369,7 @@
 		}
 
 		if(pathsEqual || ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]] && (([nextStream host] == nil && [[lastChain streamURL] host] == nil) || [[nextStream host] isEqualToString:[[lastChain streamURL] host]]) && [[nextStream path] isEqualToString:[[lastChain streamURL] path]])) {
-			if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withOutputConfig:[output config] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+			if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 				[newChain setStreamURL:nextStream];
 
 				[self addChainToQueue:newChain];
@@ -384,7 +384,7 @@
 
 		lastChain = nil;
 
-		while(shouldContinue && ![newChain open:nextStream withOutputFormat:[output format] withOutputConfig:[output config] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+		while(shouldContinue && ![newChain open:nextStream withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 			if(nextStream == nil) {
 				newChain = nil;
 				atomic_fetch_sub(&refCount, 1);
@@ -423,34 +423,46 @@
 	}
 }
 
+- (BOOL)selectNextBuffer {
+	BOOL signalStopped = NO;
+	do {
+		@synchronized(chainQueue) {
+			endOfInputReached = NO;
+
+			if([chainQueue count] <= 0) {
+				// End of playlist
+				signalStopped = YES;
+				break;
+			}
+
+			bufferChain = nil;
+			bufferChain = [chainQueue objectAtIndex:0];
+
+			[chainQueue removeObjectAtIndex:0];
+			DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
+
+			[semaphore signal];
+		}
+	} while(0);
+
+	if(signalStopped) {
+		[self stop];
+
+		bufferChain = nil;
+
+		[self notifyPlaybackStopped:nil];
+
+		return NO;
+	}
+
+	return YES;
+}
+
 - (void)endOfInputPlayed {
 	// Once we get here:
 	// - the buffer chain for the next playlist entry (started in endOfInputReached) have been working for some time
 	//   already, so that there is some decoded and converted data to play
 	// - the buffer chain for the next entry is the first item in chainQueue
-
-	@synchronized(chainQueue) {
-		endOfInputReached = NO;
-
-		if([chainQueue count] <= 0) {
-			// End of playlist
-			[self stop];
-
-			bufferChain = nil;
-
-			[self notifyPlaybackStopped:nil];
-
-			return;
-		}
-
-		bufferChain = nil;
-		bufferChain = [chainQueue objectAtIndex:0];
-
-		[chainQueue removeObjectAtIndex:0];
-		DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
-
-		[semaphore signal];
-	}
 
 	[self notifyStreamChanged:[bufferChain userInfo]];
 	[output setEndOfStream:NO];

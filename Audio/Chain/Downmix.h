@@ -9,11 +9,7 @@
 #import <CoreAudio/CoreAudio.h>
 #import <Foundation/Foundation.h>
 
-#import "HeadphoneFilter.h"
-
 @interface DownmixProcessor : NSObject {
-	HeadphoneFilter *hFilter;
-
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription outputFormat;
 
