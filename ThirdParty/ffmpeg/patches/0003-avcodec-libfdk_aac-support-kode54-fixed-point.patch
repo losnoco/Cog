@@ -1,8 +1,37 @@
+diff --git a/configure b/configure
+index 0de9b2abcb..7e9eb8f3b2 100755
+--- a/configure
++++ b/configure
+@@ -3328,7 +3328,7 @@ libdav1d_decoder_deps="libdav1d"
+ libdav1d_decoder_select="atsc_a53"
+ libdavs2_decoder_deps="libdavs2"
+ libdavs2_decoder_select="avs2_parser"
+-libfdk_aac_decoder_deps="libfdk_aac"
++libfdk_aac_decoder_deps="libfdk_aac fmtconvert"
+ libfdk_aac_encoder_deps="libfdk_aac"
+ libfdk_aac_encoder_select="audio_frame_queue"
+ libgme_demuxer_deps="libgme"
 diff --git a/libavcodec/libfdk-aacdec.c b/libavcodec/libfdk-aacdec.c
-index 1a86dffe4b..565621b973 100644
+index 11eee51a98..9e199eb56f 100644
 --- a/libavcodec/libfdk-aacdec.c
 +++ b/libavcodec/libfdk-aacdec.c
-@@ -335,7 +335,7 @@ static av_cold int fdk_aac_decode_init(AVCodecContext *avctx)
+@@ -25,6 +25,7 @@
+ #include "avcodec.h"
+ #include "codec_internal.h"
+ #include "internal.h"
++#include "fmtconvert.h"
+ 
+ #ifdef AACDECODER_LIB_VL0
+ #define FDKDEC_VER_AT_LEAST(vl0, vl1) \
+@@ -65,6 +66,7 @@ typedef struct FDKAACDecContext {
+     int delay_samples;
+ #endif
+     AVChannelLayout downmix_layout;
++    FmtConvertContext fmt_conv;
+ } FDKAACDecContext;
+ 
+ 
+@@ -367,13 +369,15 @@ FF_ENABLE_DEPRECATION_WARNINGS
      }
  #endif
  
@@ -11,23 +40,26 @@ index 1a86dffe4b..565621b973 100644
  
      s->decoder_buffer_size = DECODER_BUFFSIZE * DECODER_MAX_CHANNELS;
      s->decoder_buffer = av_malloc(s->decoder_buffer_size);
-@@ -384,9 +384,19 @@ static int fdk_aac_decode_frame(AVCodecContext *avctx, void *data,
-                                    (AVRational){1, avctx->sample_rate},
-                                    avctx->time_base);
+     if (!s->decoder_buffer)
+         return AVERROR(ENOMEM);
  
-+#if 0
-     memcpy(frame->extended_data[0], s->decoder_buffer,
-            avctx->channels * avctx->frame_size *
-            av_get_bytes_per_sample(avctx->sample_fmt));
-+#else
-+    {
-+        INT_PCM *in = (INT_PCM *) s->decoder_buffer;
-+        float *out = (float *) frame->extended_data[0];
-+        const float scale = 1.0f / (float)0x800000;
-+        for (int i = 0, j = avctx->channels * avctx->frame_size; i < j; i++)
-+            *out++ = (float)(*in++) * scale;
-+    }
-+#endif
++    ff_fmt_convert_init(&s->fmt_conv, avctx);
++
+     return 0;
+ }
+ 
+@@ -452,9 +456,11 @@ static int fdk_aac_decode_frame(AVCodecContext *avctx, AVFrame *frame,
+     if ((ret = ff_get_buffer(avctx, frame, 0)) < 0)
+         goto end;
+ 
+-    memcpy(frame->extended_data[0], s->decoder_buffer + input_offset,
+-           avctx->ch_layout.nb_channels * frame->nb_samples *
+-           av_get_bytes_per_sample(avctx->sample_fmt));
++    const int count = avctx->channels * avctx->frame_size;
++    const float scale = 1.0f / (float)0x800000;
++    s->fmt_conv.int32_to_float_fmul_scalar((float *) frame->extended_data[0],
++                                           (INT_PCM *) s->decoder_buffer,
++                                           scale, count);
  
      *got_frame_ptr = 1;
      ret = avpkt->size - valid;
