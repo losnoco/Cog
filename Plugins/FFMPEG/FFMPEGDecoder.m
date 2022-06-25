@@ -463,6 +463,8 @@ static uint8_t reverse_bits[0x100];
 
 	seekable = [s seekable];
 
+	seekedToStart = !seekable;
+
 	artist = @"";
 	albumartist = @"";
 	album = @"";
@@ -684,6 +686,10 @@ static uint8_t reverse_bits[0x100];
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
+	if(!seekedToStart) {
+		[self seek:0];
+	}
+
 	int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
 	int bytesToRead = frames * frameSize;
 	int bytesRead = 0;
@@ -913,6 +919,8 @@ static uint8_t reverse_bits[0x100];
 - (long)seek:(long)frame {
 	if(!totalFrames)
 		return -1;
+
+	seekedToStart = YES;
 
 	prebufferedAudio = 0;
 

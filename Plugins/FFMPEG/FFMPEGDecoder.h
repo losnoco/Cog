@@ -32,6 +32,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 	int subsong;
 	int64_t startTime;
 	int64_t endTime;
+	BOOL seekedToStart;
 
 	@private
 	unsigned char *buffer;
