@@ -282,9 +282,10 @@ static uint8_t reverse_bits[0x100];
 	seekFrame = -1;
 
 	if(!rawDSD) {
+		AVChannelLayout *layout = &codecCtx->ch_layout;
 		frequency = codecCtx->sample_rate;
-		channels = codecCtx->channels;
-		channelConfig = (uint32_t)codecCtx->channel_layout;
+		channels = layout->nb_channels;
+		channelConfig = (uint32_t)layout->u.mask;
 		floatingPoint = NO;
 
 		switch(codecCtx->sample_fmt) {
@@ -319,9 +320,10 @@ static uint8_t reverse_bits[0x100];
 				return NO;
 		}
 	} else {
+		AVChannelLayout *layout = &codecCtx->ch_layout;
 		frequency = codecPar->sample_rate * 8;
-		channels = codecPar->channels;
-		channelConfig = (uint32_t)codecPar->channel_layout;
+		channels = layout->nb_channels;
+		channelConfig = (uint32_t)layout->u.mask;
 		bitsPerSample = 1;
 		floatingPoint = NO;
 	}
@@ -691,7 +693,7 @@ static uint8_t reverse_bits[0x100];
 		int planar;
 		if(!rawDSD) {
 			planar = av_sample_fmt_is_planar(codecCtx->sample_fmt);
-			dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
+			dataSize = av_samples_get_buffer_size(&planeSize, channels,
 			                                      lastDecodedFrame->nb_samples,
 			                                      codecCtx->sample_fmt, 1);
 		} else {
@@ -761,7 +763,7 @@ static uint8_t reverse_bits[0x100];
 				}
 
 				// Something has been successfully decoded
-				dataSize = av_samples_get_buffer_size(&planeSize, codecCtx->channels,
+				dataSize = av_samples_get_buffer_size(&planeSize, channels,
 				                                      lastDecodedFrame->nb_samples,
 				                                      codecCtx->sample_fmt, 1);
 			} else {
@@ -823,8 +825,9 @@ static uint8_t reverse_bits[0x100];
 		}
 
 		if(!rawDSD) {
-			int _channels = codecCtx->channels;
-			uint32_t _channelConfig = (uint32_t)codecCtx->channel_layout;
+			AVChannelLayout *layout = &codecCtx->ch_layout;
+			int _channels = layout->nb_channels;
+			uint32_t _channelConfig = (uint32_t)layout->u.mask;
 			float _frequency = codecCtx->sample_rate;
 
 			if(_channels != channels ||

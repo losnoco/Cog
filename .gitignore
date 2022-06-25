@@ -22,7 +22,6 @@ Cog.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 /ThirdParty/fdk-aac/lib/libfdk-aac.a
 /ThirdParty/fdk-aac/lib/libfdk-aac.dylib
 /ThirdParty/fdk-aac/lib/libfdk-aac.la
-/ThirdParty/fdk-aac/lib/pkgconfig/
 /ThirdParty/fdk-aac/lib/pkgconfig/fdk-aac.pc
 /ThirdParty/ffmpeg/lib/libavcodec.59.dylib
 /ThirdParty/ffmpeg/lib/libavformat.59.dylib
