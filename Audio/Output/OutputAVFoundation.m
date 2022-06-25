@@ -347,19 +347,23 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		if(stopping)
 			break;
 
-		while(!stopping && [audioRenderer isReadyForMoreMediaData]) {
-			CMSampleBufferRef bufferRef = [self makeSampleBuffer];
+		@autoreleasepool {
+			while(!stopping && [audioRenderer isReadyForMoreMediaData]) {
+				CMSampleBufferRef bufferRef = [self makeSampleBuffer];
 
-			if(bufferRef) {
-				CMTime chunkDuration = CMSampleBufferGetDuration(bufferRef);
+				if(bufferRef) {
+					CMTime chunkDuration = CMSampleBufferGetDuration(bufferRef);
 
-				outputPts = CMTimeAdd(outputPts, chunkDuration);
-				trackPts = CMTimeAdd(trackPts, chunkDuration);
+					outputPts = CMTimeAdd(outputPts, chunkDuration);
+					trackPts = CMTimeAdd(trackPts, chunkDuration);
 
-				[audioRenderer enqueueSampleBuffer:bufferRef];
-			} else {
-				stopFlush = YES;
-				break;
+					[audioRenderer enqueueSampleBuffer:bufferRef];
+
+					CFRelease(bufferRef);
+				} else {
+					stopFlush = YES;
+					break;
+				}
 			}
 		}
 
@@ -640,6 +644,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		layout.mChannelBitmap = streamChannelConfig;
 	}
 
+	if(audioFormatDescription) {
+		CFRelease(audioFormatDescription);
+		audioFormatDescription = NULL;
+	}
+
 	if(CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &streamFormat, sizeof(layout), &layout, 0, NULL, NULL, &audioFormatDescription) != noErr) {
 		return;
 	}
@@ -674,8 +683,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	OSStatus err = CMAudioSampleBufferCreateReadyWithPacketDescriptions(kCFAllocatorDefault, blockBuffer, audioFormatDescription, samplesRendered, outputPts, nil, &sampleBuffer);
 	if(err != noErr) {
+		CFRelease(blockBuffer);
 		return nil;
 	}
+	CFRelease(blockBuffer);
 
 	return sampleBuffer;
 }
@@ -744,6 +755,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					status = AudioUnitRender(_eq, NULL, &timeStamp, 0, samplesRendered, ioData);
 
 					if(status != noErr) {
+						CFRelease(blockListBuffer);
 						return 0;
 					}
 
@@ -761,20 +773,27 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			status = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nil, dataByteSize, kCFAllocatorDefault, nil, 0, dataByteSize, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
 
 			if(status != noErr || !blockBuffer) {
+				CFRelease(blockListBuffer);
 				return 0;
 			}
 
 			status = CMBlockBufferReplaceDataBytes(samplePtr, blockBuffer, 0, dataByteSize);
 
 			if(status != noErr) {
+				CFRelease(blockBuffer);
+				CFRelease(blockListBuffer);
 				return 0;
 			}
 
 			status = CMBlockBufferAppendBufferReference(blockListBuffer, blockBuffer, 0, CMBlockBufferGetDataLength(blockBuffer), 0);
 
 			if(status != noErr) {
+				CFRelease(blockBuffer);
+				CFRelease(blockListBuffer);
 				return 0;
 			}
+
+			CFRelease(blockBuffer);
 		}
 
 		if(i == 0) {
@@ -808,6 +827,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		stopInvoked = NO;
 		stopCompleted = NO;
 		commandStop = NO;
+
+		audioFormatDescription = NULL;
 
 		running = NO;
 		stopping = NO;
@@ -1077,6 +1098,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				stopping = YES;
 				usleep(5000);
 			}
+		}
+		if(audioFormatDescription) {
+			CFRelease(audioFormatDescription);
+			audioFormatDescription = NULL;
 		}
 		if(_eq) {
 			[outputController endEqualizer:_eq];
