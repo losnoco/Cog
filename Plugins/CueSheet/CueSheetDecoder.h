@@ -19,6 +19,8 @@
 
 	NSURL *sourceURL;
 
+	BOOL seekedToStart;
+
 	int bytesPerFrame; // Number of bytes per frame, ie channels * (bitsPerSample/8)
 
 	long framePosition; // Current position in frames.
