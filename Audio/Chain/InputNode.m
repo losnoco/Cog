@@ -214,7 +214,8 @@ static void *kInputNodeContext = &kInputNodeContext;
 				// wait before exiting, as we might still get seeking request
 				DLog("InputNode: Before wait")
 				[exitAtTheEndOfTheStream waitIndefinitely];
-				DLog("InputNode: After wait, should seek = %d", shouldSeek) if(shouldSeek) {
+				DLog("InputNode: After wait, should seek = %d", shouldSeek);
+				if(shouldSeek) {
 					endOfStream = NO;
 					shouldClose = NO;
 					continue;

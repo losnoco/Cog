@@ -1,0 +1,33 @@
+diff -ur fdk-aac-2.0.2/libAACdec/src/aacdecoder_lib.cpp fdk-aac-2.0.2.patched/libAACdec/src/aacdecoder_lib.cpp
+--- fdk-aac-2.0.2/libAACdec/src/aacdecoder_lib.cpp	2021-04-28 05:45:10
++++ fdk-aac-2.0.2.patched/libAACdec/src/aacdecoder_lib.cpp	2022-06-25 04:27:45
+@@ -1829,7 +1829,7 @@
+           ErrorStatus = AAC_DEC_DECODE_FRAME_ERROR;
+         }
+ 
+-        pcmLimiterScale += PCM_OUT_HEADROOM;
++        /* pcmLimiterScale += PCM_OUT_HEADROOM; */ /* Allow 8.24 output */
+ 
+         if (flags & AACDEC_CLRHIST) {
+           if (!(self->flags[0] & AC_USAC)) {
+diff -ur fdk-aac-2.0.2/libSYS/include/machine_type.h fdk-aac-2.0.2.patched/libSYS/include/machine_type.h
+--- fdk-aac-2.0.2/libSYS/include/machine_type.h	2021-04-28 05:45:11
++++ fdk-aac-2.0.2.patched/libSYS/include/machine_type.h	2022-06-25 04:26:28
+@@ -223,11 +223,12 @@
+ #define FDK_ASSERT(ignore)
+ #endif
+ 
+-typedef SHORT INT_PCM;
+-#define MAXVAL_PCM MAXVAL_SGL
+-#define MINVAL_PCM MINVAL_SGL
+-#define WAV_BITS 16
+-#define SAMPLE_BITS 16
++/* kode54 - changes to allow decoding fixed point directly */
++typedef LONG INT_PCM;
++#define MAXVAL_PCM MAXVAL_DBL
++#define MINVAL_PCM MINVAL_DBL
++#define WAV_BITS 32
++#define SAMPLE_BITS 32
+ #define SAMPLE_MAX ((INT_PCM)(((ULONG)1 << (SAMPLE_BITS - 1)) - 1))
+ #define SAMPLE_MIN (~SAMPLE_MAX)
+ 
