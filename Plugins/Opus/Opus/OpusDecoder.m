@@ -146,7 +146,7 @@ opus_int64 sourceTell(void *_stream) {
 
 	for(int i = 0; i < tagCount; ++i) {
 		const char *value = opus_tags_query(tags, [tag UTF8String], i);
-		[tagStrings addObject:[NSString stringWithUTF8String:value]];
+		[tagStrings addObject:guess_encoding_of_string(value)];
 	}
 
 	return [tagStrings componentsJoinedByString:@", "];
