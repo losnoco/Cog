@@ -588,37 +588,38 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 - (void)updateStreamFormat {
 	/* Set the channel layout for the audio queue */
 	AudioChannelLayoutTag tag = 0;
+
 	AudioChannelLayout layout = { 0 };
-	switch(streamFormat.mChannelsPerFrame) {
-		case 1:
+	switch(streamChannelConfig) {
+		case AudioConfigMono:
 			tag = kAudioChannelLayoutTag_Mono;
 			deviceChannelConfig = AudioConfigMono;
 			break;
-		case 2:
+		case AudioConfigStereo:
 			tag = kAudioChannelLayoutTag_Stereo;
 			deviceChannelConfig = AudioConfigStereo;
 			break;
-		case 3:
+		case AudioConfig3Point0:
 			tag = kAudioChannelLayoutTag_WAVE_3_0;
 			deviceChannelConfig = AudioConfig3Point0;
 			break;
-		case 4:
+		case AudioConfig4Point0:
 			tag = kAudioChannelLayoutTag_WAVE_4_0_A;
 			deviceChannelConfig = AudioConfig4Point0;
 			break;
-		case 5:
+		case AudioConfig5Point0:
 			tag = kAudioChannelLayoutTag_WAVE_5_0_A;
 			deviceChannelConfig = AudioConfig5Point0;
 			break;
-		case 6:
+		case AudioConfig5Point1:
 			tag = kAudioChannelLayoutTag_WAVE_5_1_A;
 			deviceChannelConfig = AudioConfig5Point1;
 			break;
-		case 7:
+		case AudioConfig6Point1:
 			tag = kAudioChannelLayoutTag_WAVE_6_1;
 			deviceChannelConfig = AudioConfig6Point1;
 			break;
-		case 8:
+		case AudioConfig7Point1:
 			tag = kAudioChannelLayoutTag_WAVE_7_1;
 			deviceChannelConfig = AudioConfig7Point1;
 			break;
@@ -632,6 +633,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	if(tag) {
 		layout.mChannelLayoutTag = tag;
+	} else {
+		layout.mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelBitmap;
+		layout.mChannelBitmap = streamChannelConfig;
 	}
 
 	if(CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &streamFormat, sizeof(layout), &layout, 0, NULL, NULL, &audioFormatDescription) != noErr) {
