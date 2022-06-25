@@ -301,7 +301,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (BOOL)signalEndOfStream:(double)latency {
+	stopped = YES;
 	BOOL ret = [outputController selectNextBuffer];
+	stopped = ret;
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(NSEC_PER_SEC * latency)), dispatch_get_main_queue(), ^{
 		[self->outputController endOfInputPlayed];
 		[self->outputController resetAmountPlayed];
@@ -1009,9 +1011,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)doStop {
 	if(stopInvoked) {
-		while(!stopCompleted) {
-			usleep(5000);
-		}
+		stopFlush = NO;
 		return;
 	}
 	@synchronized(self) {
@@ -1060,7 +1060,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 						compareVal = CMTimeCompare(outputPts, currentPts);
 						[currentPtsLock unlock];
 						usleep(5000);
-					} while(compareVal > 0);
+					} while(stopFlush && compareVal > 0);
 				}
 				[self removeSynchronizerBlock];
 				[renderSynchronizer setRate:0];

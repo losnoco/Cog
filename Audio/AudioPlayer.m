@@ -62,6 +62,7 @@
 	[self waitUntilCallbacksExit];
 	if(output) {
 		[output setShouldContinue:NO];
+		[output close];
 	}
 	if(!output) {
 		output = [[OutputNode alloc] initWithController:self previous:nil];
@@ -136,6 +137,7 @@
 	}
 	if(output) {
 		[output setShouldContinue:NO];
+		[output close];
 	}
 	output = nil;
 }

@@ -156,10 +156,6 @@
 }
 
 - (void)setShouldContinue:(BOOL)s {
-	if(output && !s) {
-		[output stop];
-	}
-
 	[super setShouldContinue:s];
 
 	//	if (s == NO)
