@@ -97,6 +97,11 @@ static uint8_t reverse_bits[0x100];
 
 	// register all available codecs
 
+	if([[source.url fragment] length] == 0)
+		subsong = 0;
+	else
+		subsong = [[source.url fragment] intValue];
+
 	NSURL *url = [s url];
 	if(([[url scheme] isEqualToString:@"http"] ||
 	    [[url scheme] isEqualToString:@"https"]) &&
@@ -443,6 +448,14 @@ static uint8_t reverse_bits[0x100];
 		skipSamples = 0;
 	}
 
+	if(subsong < formatCtx->nb_chapters) {
+		AVChapter *chapter = formatCtx->chapters[subsong];
+		startTime = av_rescale_q(chapter->start, chapter->time_base, tb);
+		endTime = av_rescale_q(chapter->end, chapter->time_base, tb);
+		skipSamples = startTime;
+		totalFrames = endTime - startTime;
+	}
+
 	seekFrame = skipSamples; // Skip preroll if necessary
 
 	if(totalFrames < 0)
@@ -537,8 +550,21 @@ static uint8_t reverse_bits[0x100];
 	float _replayGainAlbumPeak = replayGainAlbumPeak;
 	float _replayGainTrackGain = replayGainTrackGain;
 	float _replayGainTrackPeak = replayGainTrackPeak;
-	if(formatCtx->metadata) {
-		while((tag = av_dict_get(formatCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+	for(size_t i = 0; i < 2; ++i) {
+		AVDictionary *metadata;
+		if(i == 0) {
+			metadata = formatCtx->metadata;
+			if(!metadata) continue;
+		} else {
+			if(subsong < formatCtx->nb_chapters) {
+				metadata = formatCtx->chapters[subsong]->metadata;
+				if(!metadata) continue;
+			} else {
+				break;
+			}
+		}
+		tag = NULL;
+		while((tag = av_dict_get(metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
 			if(!strcasecmp(tag->key, "streamtitle")) {
 				NSString *artistTitle = guess_encoding_of_string(tag->value);
 				NSArray *splitValues = [artistTitle componentsSeparatedByString:@" - "];

@@ -23,6 +23,7 @@
 		83AA7D0E279EBCC600087AA4 /* libswresample.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0A279EBCC600087AA4 /* libswresample.4.dylib */; };
 		83AA7D0F279EBCC600087AA4 /* libavformat.59.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0B279EBCC600087AA4 /* libavformat.59.dylib */; };
 		83B72E3927904557006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E3827904557006007A3 /* libfdk-aac.2.dylib */; };
+		83CBC5AA2866F75B00F2753B /* FFMPEGContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */; };
 		83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC52772FD32000015EE /* libbz2.tbd */; };
 		83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC72772FD3A000015EE /* AudioToolbox.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -65,6 +66,8 @@
 		83AA7D0A279EBCC600087AA4 /* libswresample.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.4.dylib; path = ../../ThirdParty/ffmpeg/lib/libswresample.4.dylib; sourceTree = "<group>"; };
 		83AA7D0B279EBCC600087AA4 /* libavformat.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.59.dylib; path = ../../ThirdParty/ffmpeg/lib/libavformat.59.dylib; sourceTree = "<group>"; };
 		83B72E3827904557006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "../../ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
+		83CBC5A82866F75B00F2753B /* FFMPEGContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFMPEGContainer.h; sourceTree = "<group>"; };
+		83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFMPEGContainer.m; sourceTree = "<group>"; };
 		83E22FC52772FD32000015EE /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		83E22FC72772FD3A000015EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8D5B49B6048680CD000E48DA /* FFMPEG.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFMPEG.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,6 +154,8 @@
 				B09E94370D747FAD0064F138 /* Plugin.h */,
 				B09E942D0D747F410064F138 /* FFMPEGDecoder.h */,
 				B09E942E0D747F410064F138 /* FFMPEGDecoder.m */,
+				83CBC5A82866F75B00F2753B /* FFMPEGContainer.h */,
+				83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -276,6 +281,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B09E942F0D747F410064F138 /* FFMPEGDecoder.m in Sources */,
+				83CBC5AA2866F75B00F2753B /* FFMPEGContainer.m in Sources */,
 				8356BCE927B37C6F0074E50C /* NSDictionary+Merge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
