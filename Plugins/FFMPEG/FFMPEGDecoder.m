@@ -924,7 +924,7 @@ static uint8_t reverse_bits[0x100];
 	}
 	if(rawDSD) frame /= 8;
 	AVRational tb = { .num = 1, .den = codecCtx->sample_rate };
-	int64_t ts = av_rescale_q(frame, tb, formatCtx->streams[streamIndex]->time_base);
+	int64_t ts = av_rescale_q(frame + skipSamples, tb, formatCtx->streams[streamIndex]->time_base);
 	int ret = avformat_seek_file(formatCtx, streamIndex, ts - 1000, ts, ts, 0);
 	if(!rawDSD)
 		avcodec_flush_buffers(codecCtx);
