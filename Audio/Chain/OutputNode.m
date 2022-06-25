@@ -186,4 +186,8 @@
 	[controller restartPlaybackAtCurrentPosition];
 }
 
+- (double)latency {
+	return [output latency];
+}
+
 @end

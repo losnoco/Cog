@@ -51,6 +51,8 @@
 - (void)close;
 - (void)seek:(double)time;
 
+- (double)latency;
+
 - (AudioChunk *)readChunk:(size_t)amount;
 
 - (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig;
