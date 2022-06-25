@@ -62,9 +62,10 @@
 	[self waitUntilCallbacksExit];
 	if(output) {
 		[output setShouldContinue:NO];
-		output = nil;
 	}
-	output = [[OutputNode alloc] initWithController:self previous:nil];
+	if(!output) {
+		output = [[OutputNode alloc] initWithController:self previous:nil];
+	}
 	[output setup];
 	[output setVolume:volume];
 	@synchronized(chainQueue) {
@@ -132,6 +133,9 @@
 		if(bufferChain) {
 			bufferChain = nil;
 		}
+	}
+	if(output) {
+		[output setShouldContinue:NO];
 	}
 	output = nil;
 }
@@ -278,7 +282,7 @@
 }
 
 - (void)endEqualizer:(AudioUnit)eq {
-	[self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:YES];
+	[self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:NO];
 }
 
 - (void)addChainToQueue:(BufferChain *)newChain {

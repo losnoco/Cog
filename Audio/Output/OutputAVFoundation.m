@@ -212,20 +212,16 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		return 0;
 	}
 
+	if(stopping) return 0;
+
 	float volumeScale = 1.0;
 	double sustained;
-	@synchronized(self) {
-		sustained = secondsHdcdSustained;
-	}
+	sustained = secondsHdcdSustained;
 	if(sustained > 0) {
 		if(sustained < amountRead) {
-			@synchronized(self) {
-				secondsHdcdSustained = 0;
-			}
+			secondsHdcdSustained = 0;
 		} else {
-			@synchronized(self) {
-				secondsHdcdSustained -= chunkDuration;
-			}
+			secondsHdcdSustained -= chunkDuration;
 			volumeScale = 0.5;
 		}
 	}
@@ -315,9 +311,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (BOOL)processEndOfStream {
-	if([outputController endOfStream] == YES && [self signalEndOfStream:secondsLatency]) {
+	if(stopping || ([outputController endOfStream] == YES && [self signalEndOfStream:secondsLatency])) {
 		stopping = YES;
-		stopFlush = YES;
 		return YES;
 	}
 	return NO;
@@ -378,7 +373,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	stopped = YES;
 	if(!stopInvoked) {
-		[self stop];
+		[self doStop];
 	}
 }
 
@@ -803,6 +798,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	@synchronized(self) {
 		stopInvoked = NO;
+		stopCompleted = NO;
+		commandStop = NO;
 
 		running = NO;
 		stopping = NO;
@@ -1000,8 +997,21 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)stop {
+	commandStop = YES;
+	[self doStop];
+}
+
+- (void)doStop {
+	if(stopInvoked) {
+		while(!stopCompleted) {
+			usleep(5000);
+		}
+		return;
+	}
 	@synchronized(self) {
-		if(stopInvoked) return;
+		if(commandStop) {
+			stopFlush = NO;
+		}
 		stopInvoked = YES;
 		if(observersapplied) {
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputAVFoundationContext];
@@ -1094,6 +1104,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			r8bstate_delete(r8bvis);
 			r8bvis = NULL;
 		}
+		stopCompleted = YES;
 	}
 }
 
@@ -1114,9 +1125,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)sustainHDCD {
-	@synchronized(self) {
-		secondsHdcdSustained = 10.0;
-	}
+	secondsHdcdSustained = 10.0;
 }
 
 @end

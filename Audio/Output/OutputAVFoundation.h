@@ -43,6 +43,7 @@ using std::atomic_long;
 	double lastVisRate;
 
 	BOOL stopInvoked;
+	BOOL stopCompleted;
 	BOOL running;
 	BOOL stopping;
 	BOOL stopped;
@@ -50,6 +51,7 @@ using std::atomic_long;
 	BOOL paused;
 	BOOL restarted;
 	BOOL stopFlush;
+	BOOL commandStop;
 
 	BOOL eqEnabled;
 	BOOL eqInitialized;
