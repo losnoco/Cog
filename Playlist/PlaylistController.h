@@ -143,6 +143,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 
 // Play statistics
 - (void)updatePlayCountForTrack:(PlaylistEntry *_Nonnull)pe;
+- (void)firstSawTrack:(PlaylistEntry *_Nonnull)pe;
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *_Nullable)indexSet
                                         toIndex:(NSUInteger)insertIndex;

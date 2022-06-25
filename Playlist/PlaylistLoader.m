@@ -735,9 +735,13 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		__block NSString *entryKey = [outArray objectAtIndex:i];
 		__block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
 		__block NSMutableIndexSet *weakUpdateIndexes = update_indexes;
+		PlaylistController *playlistController = self->playlistController;
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 			NSArray *entrySet = [uniquePathsEntries objectForKey:entryKey];
 			if(entrySet) {
+				if([entrySet count] > 0) {
+					[playlistController firstSawTrack:entrySet[0]];
+				}
 				for(PlaylistEntry *pe in entrySet) {
 					[pe setMetadata:entryInfo];
 					if(pe.index >= 0 && pe.index < NSNotFound) {
@@ -811,6 +815,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[AudioMetadataReader metadataForURL:pe.url]];
 
 		[pe setMetadata:entryInfo];
+		[playlistController firstSawTrack:pe];
 	}];
 
 	[self->playlistController updateTotalTime];
