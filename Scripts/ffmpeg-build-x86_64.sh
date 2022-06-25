@@ -28,8 +28,8 @@ ADPCM_CODECS=adpcm_4xm,adpcm_adx,adpcm_afx,adpcm_agm,adpcm_aica,adpcm_argo,adpcm
     --enable-swresample\
     --enable-protocol=tcp,tls,http,https,icecast,hls\
     --enable-parser=ac3,mpegaudio,xma,vorbis,opus\
-    --enable-demuxer=hls,mpegts,mpegtsraw,ac3,asf,xwma,mov,oma,ogg,tak,dsf,wav,w64,aac,dts,dtshd,eac3,mp3,bink,flac,msf,xmv,caf,ape,smacker,spdif,mpc,mpc8,rm,matroska,tta,dff,wsd,iff,aiff,$PCM_CODECS,$ADPCM_CODECS\
-    --enable-decoder=ac3,ac3_t,eac3,wmapro,wmav1,wmav2,wmavoice,wmalossless,xma1,xma2,dca,tak,dsd_lsbf,dsd_lsbf_planar,dsd_mbf,dsd_msbf_planar,aac,libfdk_aac,atrac3,atrac3p,mp3float,mp2float,mp1float,bink,binkaudio_dct,binkaudio_rdft,flac,vorbis,ape,smackaud,opus,mpc7,mpc8,alac,cook,tta,$PCM_CODECS,$ADPCM_CODECS\
+    --enable-demuxer=hls,mpegts,mpegtsraw,ac3,asf,xwma,mov,oma,ogg,tak,dsf,wav,w64,aac,dts,dtshd,eac3,mp3,bink,flac,msf,xmv,caf,ape,smacker,spdif,mpc,mpc8,rm,matroska,tta,dff,wsd,iff,aiff,truehd,$PCM_CODECS,$ADPCM_CODECS\
+    --enable-decoder=ac3,ac3_t,eac3,wmapro,wmav1,wmav2,wmavoice,wmalossless,xma1,xma2,dca,tak,dsd_lsbf,dsd_lsbf_planar,dsd_mbf,dsd_msbf_planar,aac,libfdk_aac,atrac3,atrac3p,mp3float,mp2float,mp1float,bink,binkaudio_dct,binkaudio_rdft,flac,vorbis,ape,smackaud,opus,mpc7,mpc8,alac,cook,tta,truehd,$PCM_CODECS,$ADPCM_CODECS\
     --disable-parser=mpeg4video,h263\
     --disable-decoder=mpeg2video,h263,h264,mpeg1video,mpeg2video,mpeg4,hevc,vp9\
     --disable-version3\
