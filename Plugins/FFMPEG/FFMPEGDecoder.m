@@ -491,11 +491,6 @@ static uint8_t reverse_bits[0x100];
 		[self readAudio:prebufferedAudioData frames:1024];
 	}
 
-	if(metadataUpdated) {
-		[self willChangeValueForKey:@"metadata"];
-		[self didChangeValueForKey:@"metadata"];
-	}
-
 	return YES;
 }
 
