@@ -50,7 +50,6 @@ using std::atomic_long;
 	BOOL started;
 	BOOL paused;
 	BOOL restarted;
-	BOOL stopFlush;
 	BOOL commandStop;
 
 	BOOL eqEnabled;
@@ -121,6 +120,8 @@ using std::atomic_long;
 - (void)pause;
 - (void)resume;
 - (void)stop;
+
+- (double)latency;
 
 - (void)setVolume:(double)v;
 

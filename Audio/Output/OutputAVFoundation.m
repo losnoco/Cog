@@ -325,7 +325,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	running = YES;
 	started = NO;
 	secondsLatency = 1.0;
-	stopFlush = NO;
 
 	while(!stopping) {
 		if([outputController shouldReset]) {
@@ -361,7 +360,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 					CFRelease(bufferRef);
 				} else {
-					stopFlush = YES;
 					break;
 				}
 			}
@@ -1021,6 +1019,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	eqEnabled = enabled;
 }
 
+- (double)latency {
+	if(secondsLatency > 0) return secondsLatency;
+	else return 0;
+}
+
 - (void)start {
 	[self threadEntry:nil];
 }
@@ -1032,13 +1035,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)doStop {
 	if(stopInvoked) {
-		stopFlush = NO;
 		return;
 	}
 	@synchronized(self) {
-		if(commandStop) {
-			stopFlush = NO;
-		}
 		stopInvoked = YES;
 		if(observersapplied) {
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputAVFoundationContext];
@@ -1074,14 +1073,16 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 		if(renderSynchronizer || audioRenderer) {
 			if(renderSynchronizer) {
-				if(stopFlush) {
+				if(!commandStop) {
 					int compareVal = 0;
+					double secondsLatency = self->secondsLatency >= 0 ? self->secondsLatency : 0;
+					int compareMax = (((1000000 / 5000) * secondsLatency) + (10000 / 5000)); // latency plus 10ms, divide by sleep intervals
 					do {
 						[currentPtsLock lock];
 						compareVal = CMTimeCompare(outputPts, currentPts);
 						[currentPtsLock unlock];
 						usleep(5000);
-					} while(stopFlush && compareVal > 0);
+					} while(!commandStop && compareVal > 0 && compareMax-- > 0);
 				}
 				[self removeSynchronizerBlock];
 				[renderSynchronizer setRate:0];

@@ -452,11 +452,16 @@
 	} while(0);
 
 	if(signalStopped) {
-		[self stop];
+		double latency = 0;
+		if(output) latency = [output latency];
+		
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, latency * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+			[self stop];
 
-		bufferChain = nil;
+			self->bufferChain = nil;
 
-		[self notifyPlaybackStopped:nil];
+			[self notifyPlaybackStopped:nil];
+		});
 
 		return YES;
 	}
