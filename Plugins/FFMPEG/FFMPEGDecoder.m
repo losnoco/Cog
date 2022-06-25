@@ -424,7 +424,7 @@ static uint8_t reverse_bits[0x100];
 
 	// totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
 	AVRational tb = { .num = 1, .den = codecCtx->sample_rate };
-	totalFrames = isStream ? 0 : av_rescale_q(stream->duration, stream->time_base, tb);
+	totalFrames = isStream ? 0 : av_rescale_q(formatCtx->duration, AV_TIME_BASE_Q, tb);
 	bitrate = (int)((codecCtx->bit_rate) / 1000);
 	framesRead = 0;
 	endOfStream = NO;
