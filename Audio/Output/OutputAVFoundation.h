@@ -79,6 +79,7 @@ using std::atomic_long;
 
 	uint32_t deviceChannelConfig;
 	uint32_t streamChannelConfig;
+	uint32_t newChannelConfig;
 
 	AVSampleBufferAudioRenderer *audioRenderer;
 	AVSampleBufferRenderSynchronizer *renderSynchronizer;

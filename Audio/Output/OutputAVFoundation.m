@@ -107,7 +107,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			}
 			[currentPtsLock unlock];
 			newFormat = format;
-			streamChannelConfig = config;
+			newChannelConfig = config;
 			streamFormatStarted = YES;
 
 			visFormat = format;
@@ -118,6 +118,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			downmixerForVis = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:visFormat outputConfig:AudioConfigMono];
 			if(!r8bold) {
 				streamFormat = format;
+				streamChannelConfig = config;
 				[self updateStreamFormat];
 			}
 		}
@@ -714,6 +715,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			if(r8bDone) {
 				r8bDone = NO;
 				streamFormat = newFormat;
+				streamChannelConfig = newChannelConfig;
 				[self updateStreamFormat];
 			}
 		}
