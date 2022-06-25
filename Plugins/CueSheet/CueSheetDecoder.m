@@ -154,7 +154,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 					trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
 				}
 
-				[self seek:0];
+				seekedToStart = NO;
 
 				// Note: Should register for observations of the decoder
 				[self willChangeValueForKey:@"properties"];
@@ -192,7 +192,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 		trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
 
-		[self seek:0];
+		seekedToStart = NO;
 
 		return YES;
 	}
@@ -297,7 +297,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 					trackEnd = [[[decoder properties] objectForKey:@"totalFrames"] longValue];
 				}
 
-				[self seek:0];
+				seekedToStart = NO;
 
 				DLog(@"CHANGING TRACK!");
 				return YES;
@@ -314,6 +314,8 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 		return -1;
 	}
 
+	seekedToStart = YES;
+
 	frame += trackStart;
 
 	framePosition = [decoder seek:frame];
@@ -322,6 +324,10 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 }
 
 - (int)readAudio:(void *)buf frames:(UInt32)frames {
+	if(!seekedToStart) {
+		[self seek:0];
+	}
+
 	if(!noFragment && framePosition + frames > trackEnd) {
 		frames = (UInt32)(trackEnd - framePosition);
 	}
