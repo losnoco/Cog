@@ -1675,11 +1675,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 - (void)didInsertURLs:(NSArray *)urls origin:(URLOrigin)origin {
 	if(![urls count]) return;
 
-	for(PlaylistEntry *pe in urls) {
-		[self firstSawTrack:pe];
-	}
-	[self commitPersistentStore];
-
 	NSArray *nsurls = [urls valueForKey:@"url"];
 	if(![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:nsurls]) {
 		[appController showPathSuggester];
