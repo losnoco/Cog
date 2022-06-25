@@ -1,10 +1,6 @@
-This was built with my modified FDK-AAC from:
+This package was built with version 2.0.2, with the included patches applied.
 
-https://gitlab.com/kode54/fdk-aac.git
-
-Which was only slightly modified from upstream from here:
-
-https://github.com/mstorsjo/fdk-aac.git
+https://downloads.sourceforge.net/project/opencore-amr/fdk-aac/fdk-aac-2.0.2.tar.gz
 
 Using the following commandline:
 
