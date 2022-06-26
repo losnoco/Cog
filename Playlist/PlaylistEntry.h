@@ -17,6 +17,7 @@
 + (NSSet *_Nonnull)keyPathsForValuesAffectingLength;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingPath;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingFilename;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingFilenameFragment;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingStatus;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingStatusMessage;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingSpam;
@@ -33,6 +34,7 @@
 @property(nonatomic, retain, readonly) NSNumber *_Nonnull length;
 @property(nonatomic, readonly) NSString *_Nonnull path;
 @property(nonatomic, readonly) NSString *_Nonnull filename;
+@property(nonatomic, readonly) NSString *_Nonnull filenameFragment;
 
 @property(nonatomic, readonly) NSString *_Nonnull spam;
 @property(nonatomic, readonly) NSString *_Nonnull indexedSpam;

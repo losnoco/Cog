@@ -51,6 +51,10 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	return [NSSet setWithObject:@"url"];
 }
 
++ (NSSet *)keyPathsForValuesAffectingFilenameFragment {
+	return [NSSet setWithObject:@"url"];
+}
+
 + (NSSet *)keyPathsForValuesAffectingStatus {
 	return [NSSet setWithObjects:@"current", @"queued", @"error", @"stopAfter", nil];
 }
@@ -431,6 +435,15 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	return [[self.url path] lastPathComponent];
 }
 
+@dynamic filenameFragment;
+- (NSString *)filenameFragment {
+	if([self.url fragment]) {
+		return [[[self.url path] lastPathComponent] stringByAppendingFormat:@"#%@", [self.url fragment]];
+	} else {
+		return self.filename;
+	}
+}
+
 @dynamic status;
 - (NSString *)status {
 	if(self.stopAfter) {
@@ -508,7 +521,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	NSArray *results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
 
 	if(!results || [results count] < 1) {
-		NSPredicate *filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filename];
+		NSPredicate *filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filenameFragment];
 
 		request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
 		request.predicate = filenamePredicate;
