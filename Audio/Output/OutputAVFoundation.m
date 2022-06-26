@@ -177,14 +177,19 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 				[currentPtsLock unlock];
 			}
 			if(r8bvis) {
-				size_t inDone = 0;
 				int samplesProcessed;
-				[currentPtsLock lock];
-				samplesProcessed = (int)r8bstate_resample(r8bvis, &visAudio[0], frameCount, &inDone, &visTemp[0], 8192);
-				[currentPtsLock unlock];
-				if(samplesProcessed) {
-					[visController postVisPCM:&visTemp[0] amount:samplesProcessed];
-				}
+				size_t totalDone = 0;
+				size_t inDone = 0;
+				{
+					[currentPtsLock lock];
+					samplesProcessed = (int)r8bstate_resample(r8bvis, &visAudio[totalDone], frameCount, &inDone, &visTemp[0], 8192);
+					[currentPtsLock unlock];
+					if(samplesProcessed) {
+						[visController postVisPCM:&visTemp[0] amount:samplesProcessed];
+					}
+					totalDone += inDone;
+					frameCount -= inDone;
+				} while(samplesProcessed && frameCount);
 			}
 		} else if(r8bvis) {
 			for(;;) {
