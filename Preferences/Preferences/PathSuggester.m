@@ -18,28 +18,28 @@
 @property(nonatomic) NSURL *_Nullable url;
 @end
 
+// XXX this is only for comparison, not "escaping the sandbox"
+static NSURL *pathEscape(NSString *path) {
+	NSString *componentsToRemove = [NSString stringWithFormat:@"Library/Containers/%@/Data/", [[NSBundle mainBundle] bundleIdentifier]];
+	NSRange rangeOfMatch = [path rangeOfString:componentsToRemove];
+	if(rangeOfMatch.location != NSNotFound)
+		path = [path stringByReplacingCharactersInRange:rangeOfMatch withString:@""];
+	return [NSURL fileURLWithPath:path];
+}
+
 static NSURL *defaultMusicDirectory(void) {
-	return [[NSFileManager defaultManager] URLForDirectory:NSMusicDirectory
-	                                              inDomain:NSUserDomainMask
-	                                     appropriateForURL:nil
-	                                                create:NO
-	                                                 error:nil];
+	NSString *path = [NSSearchPathForDirectoriesInDomains(NSMusicDirectory, NSUserDomainMask, YES) lastObject];
+	return pathEscape(path);
 }
 
 static NSURL *defaultDownloadsDirectory(void) {
-	return [[NSFileManager defaultManager] URLForDirectory:NSDownloadsDirectory
-	                                              inDomain:NSUserDomainMask
-	                                     appropriateForURL:nil
-	                                                create:NO
-	                                                 error:nil];
+	NSString *path = [NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES) lastObject];
+	return pathEscape(path);
 }
 
 static NSURL *defaultMoviesDirectory(void) {
-	return [[NSFileManager defaultManager] URLForDirectory:NSMoviesDirectory
-	                                              inDomain:NSUserDomainMask
-	                                     appropriateForURL:nil
-	                                                create:NO
-	                                                 error:nil];
+	NSString *path = [NSSearchPathForDirectoriesInDomains(NSMoviesDirectory, NSUserDomainMask, YES) lastObject];
+	return pathEscape(path);
 }
 
 @interface PathItem : NSObject
