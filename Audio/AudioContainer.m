@@ -18,4 +18,10 @@
 	}
 }
 
++ (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url {
+	@autoreleasepool {
+		return [[PluginController sharedPluginController] dependencyUrlsForContainerURL:url];
+	}
+}
+
 @end

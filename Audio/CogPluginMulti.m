@@ -171,6 +171,19 @@ static void *kCogDecoderMultiContext = &kCogDecoderMultiContext;
 	return nil;
 }
 
++ (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url containers:(NSArray *)containers {
+	NSArray *sortedContainers = sortClassesByPriority(containers);
+	for(NSString *classString in sortedContainers) {
+		Class container = NSClassFromString(classString);
+		if([container respondsToSelector:@selector(dependencyUrlsForContainerURL:)]) {
+			NSArray *urls = [container dependencyUrlsForContainerURL:url];
+			if([urls count])
+				return urls;
+		}
+	}
+	return nil;
+}
+
 @end
 
 @implementation CogMetadataReaderMulti

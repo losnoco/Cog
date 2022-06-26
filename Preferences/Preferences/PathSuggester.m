@@ -11,6 +11,8 @@
 
 #import "SandboxBroker.h"
 
+#import "AudioContainer.h"
+
 // Sync, only declare items we need
 @interface PlaylistEntry
 @property(nonatomic) NSURL *_Nullable url;
@@ -95,7 +97,15 @@ static NSURL *defaultMoviesDirectory(void) {
 	NSMutableArray *items = [[NSMutableArray alloc] init];
 	NSMutableArray *itemPaths = [[NSMutableArray alloc] init];
 
-	NSMutableArray *array = [[results valueForKey:@"url"] mutableCopy];
+	NSArray *originalArray = [results valueForKey:@"url"];
+	NSMutableArray *array = [originalArray mutableCopy];
+
+	for(NSURL *url in originalArray) {
+		NSArray *containedUrls = [AudioContainer dependencyUrlsForContainerURL:url];
+		if(containedUrls && [containedUrls count] > 0) {
+			[array addObjectsFromArray:containedUrls];
+		}
+	}
 
 	// Add other system paths to this setting
 	NSString *fileTreePath = [[NSUserDefaults standardUserDefaults] stringForKey:@"fileTreeRootURL"];

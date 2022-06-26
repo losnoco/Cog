@@ -23,6 +23,7 @@
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url containers:(NSArray *)containers;
++ (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url containers:(NSArray *)containers;
 
 @end
 
