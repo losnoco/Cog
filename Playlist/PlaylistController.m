@@ -262,7 +262,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pc.album = pe.album;
 		pc.artist = pe.artist;
 		pc.title = pe.title;
-		pc.filename = pe.filename;
+		pc.filename = pe.filenameFragment;
 	}
 
 	[self commitEditing];
@@ -278,7 +278,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pc.album = pe.album;
 		pc.artist = pe.artist;
 		pc.title = pe.title;
-		pc.filename = pe.filename;
+		pc.filename = pe.filenameFragment;
 	}
 }
 
