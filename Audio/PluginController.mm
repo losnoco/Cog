@@ -567,6 +567,29 @@ static NSString *xmlEscapeString(NSString * string) {
 	return [container urlsForContainerURL:url];
 }
 
+- (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url {
+	NSString *ext = [url pathExtension];
+	NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
+	NSString *classString;
+	if(containerSet) {
+		if([containerSet count] > 1) {
+			return [CogContainerMulti dependencyUrlsForContainerURL:url containers:containerSet];
+		} else {
+			classString = [containerSet objectAtIndex:0];
+		}
+	} else {
+		return nil;
+	}
+
+	Class container = NSClassFromString(classString);
+
+	if([container respondsToSelector:@selector(dependencyUrlsForContainerURL:)]) {
+		return [container dependencyUrlsForContainerURL:url];
+	} else {
+		return nil;
+	}
+}
+
 // Note: Source is assumed to already be opened.
 - (id<CogDecoder>)audioDecoderForSource:(id<CogSource>)source skipCue:(BOOL)skip {
 	NSString *ext = [[source url] pathExtension];

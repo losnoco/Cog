@@ -70,4 +70,44 @@
 	return tracks;
 }
 
++ (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url {
+	if(![url isFileURL]) {
+		return @[];
+	}
+
+	if([url fragment]) {
+		NSString *pathString = [url path];
+		NSString *lastComponent = [url lastPathComponent];
+
+		// Find that last component in the string from the end to make sure
+		// to get the last one
+		NSRange fragmentRange = [pathString rangeOfString:lastComponent options:NSBackwardsSearch];
+
+		// Chop the fragment.
+		NSString *newPathString = [pathString substringToIndex:fragmentRange.location + fragmentRange.length];
+
+		url = [NSURL fileURLWithPath:newPathString];
+	}
+
+	NSMutableArray *tracks = [NSMutableArray array];
+
+	CueSheet *cuesheet = nil;
+
+	NSString *ext = [url pathExtension];
+	if([ext caseInsensitiveCompare:@"cue"] != NSOrderedSame) {
+		return @[];
+	} else
+		cuesheet = [CueSheet cueSheetWithFile:[url path]];
+
+	if(!cuesheet)
+		return @[];
+
+	for(CueSheetTrack *track in [cuesheet tracks]) {
+		if(![tracks containsObject:track.url])
+			[tracks addObject:track.url];
+	}
+
+	return tracks;
+}
+
 @end

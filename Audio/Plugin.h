@@ -25,6 +25,9 @@
 + (float)priority;
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url;
+
+@optional
++ (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url;
 @end
 
 @protocol CogDecoder <NSObject>
@@ -93,6 +96,7 @@
 
 - (id<CogSource>)audioSourceForURL:(NSURL *)url;
 - (NSArray *)urlsForContainerURL:(NSURL *)url;
+- (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url;
 - (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip;
 - (NSDictionary *)propertiesForURL:(NSURL *)url skipCue:(BOOL)skip;
 - (id<CogDecoder>)audioDecoderForSource:(id<CogSource>)source skipCue:(BOOL)skip;
