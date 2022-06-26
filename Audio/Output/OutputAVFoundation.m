@@ -340,6 +340,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			lastCheckpointPts = kCMTimeZero;
 			secondsLatency = 1.0;
 			started = NO;
+			restarted = NO;
 			[self synchronizerBlock];
 		}
 
@@ -989,8 +990,13 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		                                                                 if(latencySeconds < 0)
 			                                                                 latencySeconds = 0;
 		                                                                 latencyVis = latencySeconds - latencyVis;
-		                                                                 if(latencyVis < 0)
-			                                                                 latencyVis = 0;
+		                                                                 if(latencyVis < 0 || latencyVis > 30.0) {
+			                                                                 if(latencyVis > 30.0 && !self->restarted) {
+																				 self->restarted = YES;
+				                                                                 [outputController setShouldReset:YES];
+			                                                                 }
+			                                                                 latencyVis = 0.0;
+		                                                                 }
 		                                                                 *latencySecondsOut = latencySeconds;
 		                                                                 [visController postLatency:latencyVis];
 	                                                                 }];

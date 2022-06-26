@@ -40,7 +40,7 @@ static VisualizationController *_sharedController = nil;
 	@synchronized(self) {
 		if(self->sampleRate != sampleRate) {
 			self->sampleRate = sampleRate;
-			int visAudioSize = (int)(sampleRate * 30.0);
+			int visAudioSize = (int)(sampleRate * 45.0);
 			void *visAudio = realloc(self->visAudio, visAudioSize * sizeof(float));
 			if(visAudio && visAudioSize) {
 				if(visAudioSize > self->visAudioSize) {
@@ -71,7 +71,7 @@ static VisualizationController *_sharedController = nil;
 
 - (void)postLatency:(double)latency {
 	self->latency = latency;
-	assert(latency < 30.0);
+	assert(latency < 45.0);
 }
 
 - (double)readSampleRate {
