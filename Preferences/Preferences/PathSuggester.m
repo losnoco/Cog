@@ -11,7 +11,13 @@
 
 #import "SandboxBroker.h"
 
-#import "AudioContainer.h"
+@interface AudioContainer : NSObject {
+}
+
++ (NSArray *)urlsForContainerURL:(NSURL *)url;
++ (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url;
+
+@end
 
 // Sync, only declare items we need
 @interface PlaylistEntry
@@ -107,8 +113,10 @@ static NSURL *defaultMoviesDirectory(void) {
 	NSArray *originalArray = [results valueForKey:@"url"];
 	NSMutableArray *array = [originalArray mutableCopy];
 
+	id audioContainerClass = NSClassFromString(@"AudioContainer");
+
 	for(NSURL *url in originalArray) {
-		NSArray *containedUrls = [AudioContainer dependencyUrlsForContainerURL:url];
+		NSArray *containedUrls = [audioContainerClass dependencyUrlsForContainerURL:url];
 		if(containedUrls && [containedUrls count] > 0) {
 			[array addObjectsFromArray:containedUrls];
 		}

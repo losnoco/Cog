@@ -102,7 +102,6 @@
 		8307D31328606EAF000FF8EB /* growl@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "growl@2x.png"; path = "Icons/growl@2x.png"; sourceTree = "<group>"; };
 		8307D31428606EAF000FF8EB /* general.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = general.png; path = Icons/general.png; sourceTree = "<group>"; };
 		8307D31528606EAF000FF8EB /* growl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = growl.png; path = Icons/growl.png; sourceTree = "<group>"; };
-		832FAE812868566F008B48B3 /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioContainer.h; path = ../../Audio/AudioContainer.h; sourceTree = "<group>"; };
 		833F681B1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		833F681C1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8347435D20E6D58800063D45 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Preferences.strings; sourceTree = "<group>"; };
@@ -204,7 +203,6 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				832FAE812868566F008B48B3 /* AudioContainer.h */,
 				839E3B5728659B2700880EA2 /* AppController.h */,
 				83AC573E2861B77E009D6F50 /* SandboxBroker.h */,
 				8307D30828604ECF000FF8EB /* PlaylistController.h */,
