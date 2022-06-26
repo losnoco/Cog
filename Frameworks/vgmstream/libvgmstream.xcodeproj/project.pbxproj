@@ -279,6 +279,7 @@
 		8351F32D2212B57000A606E4 /* 208.c in Sources */ = {isa = PBXBuildFile; fileRef = 8351F32A2212B57000A606E4 /* 208.c */; };
 		8351F32E2212B57000A606E4 /* ubi_bao_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8351F32B2212B57000A606E4 /* ubi_bao_streamfile.h */; };
 		8351F32F2212B57000A606E4 /* dsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8351F32C2212B57000A606E4 /* dsf.c */; };
+		835559FC2869102B005FE93A /* sndz.c in Sources */ = {isa = PBXBuildFile; fileRef = 835559FB2869102B005FE93A /* sndz.c */; };
 		835B9B8F2730BF2D00F87EE3 /* ast_mv.c in Sources */ = {isa = PBXBuildFile; fileRef = 835B9B8A2730BF2C00F87EE3 /* ast_mv.c */; };
 		835B9B902730BF2D00F87EE3 /* ast_mmv.c in Sources */ = {isa = PBXBuildFile; fileRef = 835B9B8B2730BF2C00F87EE3 /* ast_mmv.c */; };
 		835B9B912730BF2D00F87EE3 /* lopu_fb.c in Sources */ = {isa = PBXBuildFile; fileRef = 835B9B8C2730BF2C00F87EE3 /* lopu_fb.c */; };
@@ -1102,6 +1103,7 @@
 		8351F32A2212B57000A606E4 /* 208.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 208.c; sourceTree = "<group>"; };
 		8351F32B2212B57000A606E4 /* ubi_bao_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ubi_bao_streamfile.h; sourceTree = "<group>"; };
 		8351F32C2212B57000A606E4 /* dsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsf.c; sourceTree = "<group>"; };
+		835559FB2869102B005FE93A /* sndz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sndz.c; sourceTree = "<group>"; };
 		835B9B8A2730BF2C00F87EE3 /* ast_mv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ast_mv.c; sourceTree = "<group>"; };
 		835B9B8B2730BF2C00F87EE3 /* ast_mmv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ast_mmv.c; sourceTree = "<group>"; };
 		835B9B8C2730BF2C00F87EE3 /* lopu_fb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lopu_fb.c; sourceTree = "<group>"; };
@@ -2289,6 +2291,7 @@
 				837CEAEB23487F2B00E62A4A /* smk.c */,
 				83F0AA5C21E2028B004BBC04 /* smp.c */,
 				8306B0C72098458D000302D4 /* smv.c */,
+				835559FB2869102B005FE93A /* sndz.c */,
 				836F6EBE18BDC2190095E648 /* spm.c */,
 				83A21F82201D8981000F04B9 /* sps_n1.c */,
 				836F6EF318BDC2190095E648 /* spt_spd.c */,
@@ -2750,6 +2753,7 @@
 				839E21E31F2EDAF100EE54D7 /* mpeg_custom_utils_ahx.c in Sources */,
 				8306B0AF20984552000302D4 /* blocked_rws.c in Sources */,
 				83C7281A22BC893D00678B4A /* mus_vc.c in Sources */,
+				835559FC2869102B005FE93A /* sndz.c in Sources */,
 				839E21EB1F2EDB0600EE54D7 /* sk_aud.c in Sources */,
 				834FE0F1215C79ED000A5D3D /* a2m.c in Sources */,
 				8301659A1F256BD000CA0941 /* txth.c in Sources */,
