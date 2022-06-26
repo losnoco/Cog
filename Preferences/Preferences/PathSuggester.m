@@ -18,6 +18,11 @@
 @property(nonatomic) NSURL *_Nullable url;
 @end
 
+static NSURL *containerDirectory(void) {
+	NSString *path = [@"~" stringByExpandingTildeInPath];
+	return [NSURL fileURLWithPath:path];
+}
+
 // XXX this is only for comparison, not "escaping the sandbox"
 static NSURL *pathEscape(NSString *path) {
 	NSString *componentsToRemove = [NSString stringWithFormat:@"Library/Containers/%@/Data/", [[NSBundle mainBundle] bundleIdentifier]];
@@ -92,6 +97,8 @@ static NSURL *defaultMoviesDirectory(void) {
 	NSURL *defaultDownloads = defaultDownloadsDirectory();
 	NSURL *defaultMovies = defaultMoviesDirectory();
 
+	NSURL *container = containerDirectory();
+
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 
 	NSMutableArray *items = [[NSMutableArray alloc] init];
@@ -125,6 +132,8 @@ static NSURL *defaultMoviesDirectory(void) {
 		              aSubdirectoryOf:defaultDownloads] ||
 		   [sandboxBrokerClass isPath:url
 		              aSubdirectoryOf:defaultMovies] ||
+		   [sandboxBrokerClass isPath:url
+		              aSubdirectoryOf:container] ||
 		   [sandboxPathBehaviorController matchesPath:url])
 			continue;
 
