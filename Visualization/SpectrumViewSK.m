@@ -273,7 +273,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 	float visAudio[4096], visFFT[2048];
 
-	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0]];
+	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:0];
 
 	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
 	ddb_analyzer_tick(&_analyzer);
