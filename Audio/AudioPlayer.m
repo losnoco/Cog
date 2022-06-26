@@ -284,7 +284,7 @@
 }
 
 - (void)endEqualizer:(AudioUnit)eq {
-	[self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:NO];
+	[self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:YES];
 }
 
 - (void)addChainToQueue:(BufferChain *)newChain {
