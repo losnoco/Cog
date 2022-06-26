@@ -19,12 +19,18 @@
 
 static void *kFileTreeDataSourceContext = &kFileTreeDataSourceContext;
 
+// XXX this is only for reference, we have the entitlement for the path anyway
+static NSURL *pathEscape(NSString *path) {
+	NSString *componentsToRemove = [NSString stringWithFormat:@"Library/Containers/%@/Data/", [[NSBundle mainBundle] bundleIdentifier]];
+	NSRange rangeOfMatch = [path rangeOfString:componentsToRemove];
+	if(rangeOfMatch.location != NSNotFound)
+		path = [path stringByReplacingCharactersInRange:rangeOfMatch withString:@""];
+	return [NSURL fileURLWithPath:path];
+}
+
 static NSURL *defaultMusicDirectory(void) {
-	return [[NSFileManager defaultManager] URLForDirectory:NSMusicDirectory
-	                                              inDomain:NSUserDomainMask
-	                                     appropriateForURL:nil
-	                                                create:NO
-	                                                 error:nil];
+	NSString *path = [NSSearchPathForDirectoriesInDomains(NSMusicDirectory, NSUserDomainMask, YES) lastObject];
+	return pathEscape(path);
 }
 
 @interface FileTreeDataSource ()
