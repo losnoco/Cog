@@ -617,12 +617,15 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	// Delay the action until this function has returned to the audio thread
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
-		[[FIRCrashlytics crashlytics] logWithFormat:@"Updating UI with track: %@", pe.url];
+		if(pe) {
+			[[FIRCrashlytics crashlytics] logWithFormat:@"Updating UI with track: %@", pe.url];
+		}
 
 		[self->playlistController setCurrentEntry:pe];
 
-		if(self->_eq)
+		if(pe && self->_eq) {
 			equalizerApplyGenre(self->_eq, [pe genre]);
+		}
 
 		self->lastPosition = -10;
 
@@ -631,7 +634,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[self removeHDCD:nil];
 	});
 
-	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
+	if(pe) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
+	}
 }
 
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(NSNumber *)s userInfo:(id)userInfo {
