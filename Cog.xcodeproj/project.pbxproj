@@ -2003,13 +2003,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Cog" */;
 			buildPhases = (
+				8384911C1807E9ED00E7332D /* Run version generator script */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8E757AEC09F3265E0080F1EE /* CopyFiles */,
 				177FD1000B90CB570011C3B5 /* CopyFiles */,
 				07DFC3930ECDF80100DA400D /* CopyFiles */,
-				8384911C1807E9ED00E7332D /* Run version generator script */,
 				83978E27285C5A4C0076ED21 /* Run Crashlytics symbol upload */,
 			);
 			buildRules = (
@@ -2557,10 +2557,14 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
 			inputPaths = (
+				"$(SRCROOT)/Info.plist.template",
 			);
 			name = "Run version generator script";
 			outputPaths = (
+				"$(SRCROOT)/Info.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
