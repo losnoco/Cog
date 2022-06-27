@@ -104,7 +104,7 @@
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
 		8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC1225D0B993BD500C5B3AD /* ConverterNode.h */; };
-		8EC122600B993BD500C5B3AD /* ConverterNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8EC1225E0B993BD500C5B3AD /* ConverterNode.mm */; };
+		8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC1225E0B993BD500C5B3AD /* ConverterNode.m */; };
 		B0575F2D0D687A0800411D77 /* Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = B0575F2C0D687A0800411D77 /* Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B0575F300D687A4000411D77 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0575F2F0D687A4000411D77 /* Helper.m */; };
 /* End PBXBuildFile section */
@@ -233,7 +233,7 @@
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
 		8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioContainer.m; sourceTree = "<group>"; };
 		8EC1225D0B993BD500C5B3AD /* ConverterNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ConverterNode.h; sourceTree = "<group>"; };
-		8EC1225E0B993BD500C5B3AD /* ConverterNode.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ConverterNode.mm; sourceTree = "<group>"; };
+		8EC1225E0B993BD500C5B3AD /* ConverterNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ConverterNode.m; sourceTree = "<group>"; };
 		B0575F2C0D687A0800411D77 /* Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Helper.h; sourceTree = "<group>"; };
 		B0575F2F0D687A4000411D77 /* Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helper.m; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -365,7 +365,7 @@
 				834FD4EE27AF93680063BC83 /* ChunkList.h */,
 				834FD4EF27AF93680063BC83 /* ChunkList.m */,
 				8EC1225D0B993BD500C5B3AD /* ConverterNode.h */,
-				8EC1225E0B993BD500C5B3AD /* ConverterNode.mm */,
+				8EC1225E0B993BD500C5B3AD /* ConverterNode.m */,
 				83504163286447DA006B32CC /* Downmix.h */,
 				83504164286447DA006B32CC /* Downmix.m */,
 				17D21C7A0B8BE4BA00D1EBDE /* InputNode.h */,
@@ -691,7 +691,7 @@
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				834FD4F127AF93680063BC83 /* ChunkList.m in Sources */,
-				8EC122600B993BD500C5B3AD /* ConverterNode.mm in Sources */,
+				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
 				07DB5F3F0ED353A900C2E3EF /* AudioMetadataWriter.m in Sources */,
