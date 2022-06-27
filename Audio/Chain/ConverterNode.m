@@ -78,7 +78,7 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 	return self;
 }
 
-extern "C" void scale_by_volume(float *buffer, size_t count, float volume) {
+void scale_by_volume(float *buffer, size_t count, float volume) {
 	if(volume != 1.0) {
 		size_t unaligned = (uintptr_t)buffer & 15;
 		if(unaligned) {
