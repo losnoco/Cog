@@ -72,7 +72,11 @@ static NSURL *defaultMusicDirectory(void) {
 			NSString *url =
 			[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"fileTreeRootURL"];
 			DLog(@"File tree root URL: %@\n", url);
-			self.rootURL = [NSURL URLWithString:url];
+			NSURL *newURL = [NSURL URLWithString:url];
+			if((!self.rootURL || ![self.rootURL isEqualTo:newURL]) && ![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:@[newURL]]) {
+				[AppController globalShowPathSuggester];
+			}
+			self.rootURL = newURL;
 		}
 	} else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -83,10 +87,6 @@ static NSURL *defaultMusicDirectory(void) {
 	if(url != nil) {
 		[[[NSUserDefaultsController sharedUserDefaultsController] defaults] setObject:[url absoluteString]
 		                                                                       forKey:@"fileTreeRootURL"];
-
-		if(![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:@[url]]) {
-			[AppController globalShowPathSuggester];
-		}
 	}
 }
 
