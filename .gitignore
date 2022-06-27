@@ -10,7 +10,13 @@ Xcode-config/DEVELOPMENT_TEAM.xcconfig
 
 Cog.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
-# Unpack these before building
+# This indicates the libraries are up to date
+/ThirdParty/libraries.updated
+
+# Temporary file to indicate libraries are being extracted by one process
+/ThirdParty/libraries.extracting
+
+# The project will unpack these before building, if necessary
 /ThirdParty/BASS/libbass.dylib
 /ThirdParty/BASS/libbassflac.dylib
 /ThirdParty/BASS/libbassmidi.dylib

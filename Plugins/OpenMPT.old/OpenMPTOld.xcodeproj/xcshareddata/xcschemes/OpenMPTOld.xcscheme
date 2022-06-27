@@ -14,10 +14,10 @@
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "8D5B49AC048680CD000E48DA"
-                     BuildableName = "FFMPEG.bundle"
-                     BlueprintName = "FFMPEG Plugin"
-                     ReferencedContainer = "container:FFMPEG.xcodeproj">
+                     BlueprintIdentifier = "83E5EFA21FFEF78100659F0F"
+                     BuildableName = "OpenMPTOld.bundle"
+                     BlueprintName = "OpenMPTOld"
+                     ReferencedContainer = "container:OpenMPTOld.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
             </ActionContent>
@@ -32,10 +32,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8D5B49AC048680CD000E48DA"
-               BuildableName = "FFMPEG.bundle"
-               BlueprintName = "FFMPEG Plugin"
-               ReferencedContainer = "container:FFMPEG.xcodeproj">
+               BlueprintIdentifier = "83E5EFA21FFEF78100659F0F"
+               BuildableName = "OpenMPTOld.bundle"
+               BlueprintName = "OpenMPTOld"
+               ReferencedContainer = "container:OpenMPTOld.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -58,15 +58,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D5B49AC048680CD000E48DA"
-            BuildableName = "FFMPEG.bundle"
-            BlueprintName = "FFMPEG Plugin"
-            ReferencedContainer = "container:FFMPEG.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -77,10 +68,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D5B49AC048680CD000E48DA"
-            BuildableName = "FFMPEG.bundle"
-            BlueprintName = "FFMPEG Plugin"
-            ReferencedContainer = "container:FFMPEG.xcodeproj">
+            BlueprintIdentifier = "83E5EFA21FFEF78100659F0F"
+            BuildableName = "OpenMPTOld.bundle"
+            BlueprintName = "OpenMPTOld"
+            ReferencedContainer = "container:OpenMPTOld.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
