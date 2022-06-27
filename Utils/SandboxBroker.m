@@ -266,18 +266,18 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 		if(!_entry) {
 			_entry = [self recursivePathTest:folderUrl];
 		}
-	}
 
-	if(_entry) {
-		[storage addObject:_entry];
+		if(_entry) {
+			[storage addObject:_entry];
 
-		if(_entry.secureUrl) {
-			[_entry.secureUrl startAccessingSecurityScopedResource];
+			if(_entry.secureUrl) {
+				[_entry.secureUrl startAccessingSecurityScopedResource];
+			}
+
+			return CFBridgingRetain(_entry);
+		} else {
+			return NULL;
 		}
-
-		return CFBridgingRetain(_entry);
-	} else {
-		return NULL;
 	}
 }
 
