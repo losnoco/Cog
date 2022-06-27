@@ -109,11 +109,16 @@ static NSDictionary *cache_access_metadata(NSURL *url) {
 static void cache_run() {
 	std::chrono::milliseconds dura(250);
 
+	Cache_Running = true;
+
 	while(Cache_Running) {
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 
 		@autoreleasepool {
 			std::lock_guard<std::mutex> lock(Cache_Lock);
+
+			size_t cacheListOriginalSize = Cache_List.size();
+
 			for(auto it = Cache_List.begin(); it != Cache_List.end();) {
 				auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - it->second.time_accessed);
 				if(elapsed.count() >= 10) {
@@ -123,8 +128,9 @@ static void cache_run() {
 				++it;
 			}
 
-			if(Cache_List.size() == 0)
+			if(cacheListOriginalSize && Cache_List.size() == 0) {
 				[Cache_Data_Store reset];
+			}
 		}
 
 		std::this_thread::sleep_for(dura);
