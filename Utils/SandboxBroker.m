@@ -17,12 +17,47 @@
 
 #import "PlaylistController.h"
 
+static NSURL *_containerDirectory = nil;
+static NSURL *_defaultMusicDirectory = nil;
+static NSURL *_defaultDownloadsDirectory = nil;
+static NSURL *_defaultMoviesDirectory = nil;
+
+static NSURL *containerDirectory(void) {
+	NSString *path = [@"~" stringByExpandingTildeInPath];
+	return [NSURL fileURLWithPath:path];
+}
+
+// XXX this is only for comparison, not "escaping the sandbox"
+static NSURL *pathEscape(NSString *path) {
+	NSString *componentsToRemove = [NSString stringWithFormat:@"Library/Containers/%@/Data/", [[NSBundle mainBundle] bundleIdentifier]];
+	NSRange rangeOfMatch = [path rangeOfString:componentsToRemove];
+	if(rangeOfMatch.location != NSNotFound)
+		path = [path stringByReplacingCharactersInRange:rangeOfMatch withString:@""];
+	return [NSURL fileURLWithPath:path];
+}
+
+static NSURL *defaultMusicDirectory(void) {
+	NSString *path = [NSSearchPathForDirectoriesInDomains(NSMusicDirectory, NSUserDomainMask, YES) lastObject];
+	return pathEscape(path);
+}
+
+static NSURL *defaultDownloadsDirectory(void) {
+	NSString *path = [NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES) lastObject];
+	return pathEscape(path);
+}
+
+static NSURL *defaultMoviesDirectory(void) {
+	NSString *path = [NSSearchPathForDirectoriesInDomains(NSMoviesDirectory, NSUserDomainMask, YES) lastObject];
+	return pathEscape(path);
+}
+
 static SandboxBroker *kSharedSandboxBroker = nil;
 
 @interface SandboxEntry : NSObject {
 	SandboxToken *_token;
 	NSInteger _refCount;
 	NSURL *_secureUrl;
+	NSString *_path;
 };
 
 @property(readonly) SandboxToken *token;
@@ -34,6 +69,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 @property NSInteger refCount;
 
 - (id)initWithToken:(SandboxToken *)token;
+- (id)initWithStaticURL:(NSURL *)url;
 @end
 
 @implementation SandboxEntry
@@ -43,6 +79,18 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 		obj->_refCount = 1;
 		obj->_secureUrl = nil;
 		obj->_token = token;
+		obj->_path = token.path;
+	}
+	return obj;
+}
+
+- (id)initWithStaticURL:(NSURL *)url {
+	SandboxEntry *obj = [super init];
+	if(obj) {
+		obj->_refCount = 1;
+		obj->_secureUrl = nil;
+		obj->_token = nil;
+		obj->_path = [url path];
 	}
 	return obj;
 }
@@ -68,7 +116,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 }
 
 - (NSString *)path {
-	return _token.path;
+	return _path;
 }
 @end
 
@@ -145,6 +193,22 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 - (SandboxEntry *)recursivePathTest:(NSURL *)url {
 	SandboxEntry *ret = nil;
 
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		_containerDirectory = containerDirectory();
+		_defaultMusicDirectory = defaultMusicDirectory();
+		_defaultDownloadsDirectory = defaultDownloadsDirectory();
+		_defaultMoviesDirectory = defaultMoviesDirectory();
+	});
+
+	NSArray *urls = @[_containerDirectory, _defaultMusicDirectory, _defaultDownloadsDirectory, _defaultMoviesDirectory];
+
+	for(NSURL *checkUrl in urls) {
+		if([SandboxBroker isPath:url aSubdirectoryOf:checkUrl]) {
+			return [[SandboxEntry alloc] initWithStaticURL:checkUrl];
+		}
+	}
+
 	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
@@ -207,7 +271,9 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	if(_entry) {
 		[storage addObject:_entry];
 
-		[_entry.secureUrl startAccessingSecurityScopedResource];
+		if(_entry.secureUrl) {
+			[_entry.secureUrl startAccessingSecurityScopedResource];
+		}
 
 		return CFBridgingRetain(_entry);
 	} else {
