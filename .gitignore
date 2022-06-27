@@ -8,6 +8,9 @@ xcuserdata
 # User-specific xcconfig files
 Xcode-config/DEVELOPMENT_TEAM.xcconfig
 
+# Plist derived from template at build time
+/Info.plist
+
 # This indicates the libraries are up to date
 /ThirdParty/libraries.updated
 
