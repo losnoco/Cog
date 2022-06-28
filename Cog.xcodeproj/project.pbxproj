@@ -176,6 +176,7 @@
 		8384916C18083EAB00E7332D /* stopTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915618083EAB00E7332D /* stopTemplate.pdf */; };
 		8384916D18083EAB00E7332D /* volume1Template.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915718083EAB00E7332D /* volume1Template.pdf */; };
 		8384916E18083EAB00E7332D /* volume3Template.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915818083EAB00E7332D /* volume3Template.pdf */; };
+		83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83922FB6286B1AA900A0B039 /* WebKit.framework */; };
 		83978E16285C58190076ED21 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83978E15285C58190076ED21 /* FirebaseCrashlytics */; };
 		83978E26285C596F0076ED21 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83978E25285C596F0076ED21 /* FirebaseAnalytics */; };
 		83978E29285C5C0A0076ED21 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */; };
@@ -1022,6 +1023,7 @@
 		8384915818083EAB00E7332D /* volume3Template.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = volume3Template.pdf; path = Images/volume3Template.pdf; sourceTree = "<group>"; };
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
+		83922FB6286B1AA900A0B039 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
 		83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RedundantPlaylistDataStore.m; sourceTree = "<group>"; };
@@ -1103,6 +1105,7 @@
 				83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */,
 				17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */,
 				835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */,
+				83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */,
 				835FAC7E27BCDF5B00BA8562 /* libaom.a in Frameworks */,
 				837DC92B285B05710005C58A /* CoreData.framework in Frameworks */,
 				83978E26285C596F0076ED21 /* FirebaseAnalytics in Frameworks */,
@@ -1565,6 +1568,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83922FB6286B1AA900A0B039 /* WebKit.framework */,
 				837DC92A285B05710005C58A /* CoreData.framework */,
 				8370D73E2775AE1300245CE0 /* libsqlite3.tbd */,
 				83AB9031237CEFD300A433D5 /* MediaPlayer.framework */,
