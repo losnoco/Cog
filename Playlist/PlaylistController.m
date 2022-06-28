@@ -282,6 +282,14 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 }
 
+- (void)resetPlayCountForTrack:(PlaylistEntry *)pe {
+	PlayCount *pc = pe.playCountItem;
+	
+	if(pc) {
+		pc.count = 0;
+	}
+}
+
 - (void)updatePlaylistIndexes {
 	NSArray *arranged = [self arrangedObjects];
 	NSUInteger n = [arranged count];
@@ -1716,6 +1724,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}
 
 		[playlistLoader performSelectorInBackground:@selector(loadInfoForEntries:) withObject:selectedobjects];
+	}
+}
+
+- (IBAction)resetPlaycounts:(id)sender {
+	NSArray *selectedobjects = [self selectedObjects];
+	if([selectedobjects count]) {
+		for(PlaylistEntry *pe in selectedobjects) {
+			[self resetPlayCountForTrack:pe];
+		}
+		[self commitPersistentStore];
 	}
 }
 
