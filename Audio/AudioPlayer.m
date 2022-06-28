@@ -226,7 +226,7 @@
 }
 
 - (void)restartPlaybackAtCurrentPosition {
-	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:[bufferChain userInfo] waitUntilDone:NO];
+	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:previousUserInfo waitUntilDone:NO];
 }
 
 - (void)pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
