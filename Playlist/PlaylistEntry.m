@@ -560,4 +560,14 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	return @"";
 }
 
+@dynamic rating;
+- (float)rating {
+	PlayCount *pc = self.playCountItem;
+	if(pc) {
+		return pc.rating;
+	} else {
+		return 0;
+	}
+}
+
 @end

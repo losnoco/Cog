@@ -143,6 +143,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 
 // Reset playcount of selection
 - (IBAction)resetPlaycounts:(id _Nullable)sender;
+- (IBAction)removeRatings:(id _Nullable)sender;
 
 // Play statistics
 - (void)updatePlayCountForTrack:(PlaylistEntry *_Nonnull)pe;
@@ -152,5 +153,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
                                         toIndex:(NSUInteger)insertIndex;
 
 - (void)insertObjectsUnsynced:(NSArray *_Nullable)objects atArrangedObjectIndexes:(NSIndexSet *_Nullable)indexes;
+
+- (void)tableView:(NSTableView *)view didClickRow:(NSInteger)clickedRow column:(NSInteger)clickedColumn atPoint:(NSPoint)cellPoint;
 
 @end
