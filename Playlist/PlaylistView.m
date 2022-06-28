@@ -111,15 +111,28 @@
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)mouseDownEvent {
-	return NO;
+	return YES;
 }
 
 - (void)mouseDown:(NSEvent *)e {
 	[super mouseDown:e];
 
-	if([e type] == NSEventTypeLeftMouseDown && [e clickCount] == 2 &&
-	   [[self selectedRowIndexes] count] == 1) {
-		[playbackController play:self];
+	if([e type] == NSEventTypeLeftMouseDown) {
+		if([e clickCount] == 1) {
+			NSPoint globalLocation = [e locationInWindow];
+			NSPoint localLocation = [self convertPoint:globalLocation fromView:nil];
+			NSInteger clickedRow = [self rowAtPoint:localLocation];
+			NSInteger clickedColumn = [self columnAtPoint:localLocation];
+			
+			if(clickedRow != -1 && clickedColumn != -1) {
+				NSView *cellView = [self viewAtColumn:clickedColumn row:clickedRow makeIfNecessary:YES];
+				NSPoint cellPoint = [cellView convertPoint:localLocation fromView:self];
+			
+				[playlistController tableView:self didClickRow:clickedRow column:clickedColumn atPoint:cellPoint];
+			}
+		} else if([e clickCount] == 2 && [[self selectedRowIndexes] count] == 1) {
+			[playbackController play:self];
+		}
 	}
 }
 

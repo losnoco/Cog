@@ -101,8 +101,8 @@
 /* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "197"; */
 "197.title" = "Zoom";
 
-/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "208"; */
-"208.headerCell.title" = "Title";
+/* Class = "NSTableColumn"; headerCell.title = "Rating"; ObjectID = "208"; */
+"208.headerCell.title" = "Rating";
 
 /* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "209"; */
 "209.headerCell.title" = "#";

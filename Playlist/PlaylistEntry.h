@@ -72,6 +72,8 @@
 @property(nonatomic, readonly) NSString *_Nonnull playCount;
 @property(nonatomic, readonly) NSString *_Nonnull playCountInfo;
 
+@property(nonatomic, readonly) float rating;
+
 - (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
 @end

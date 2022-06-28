@@ -47,7 +47,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 + (void)initialize {
 	cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
 		                @"album", @"length", @"year", @"genre", @"track", @"path",
-		                @"filename", @"codec"];
+		                @"filename", @"codec", @"rating"];
 
 	NSValueTransformer *repeatNoneTransformer =
 	[[RepeatModeTransformer alloc] initWithMode:RepeatModeNoRepeat];
@@ -282,11 +282,39 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 }
 
+- (void)ratingUpdatedWithEntry:(PlaylistEntry *)pe rating:(CGFloat)rating {
+	if(pe && !pe.deLeted) {
+		PlayCount *pc = pe.playCountItem;
+
+		if(!pc) {
+			pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+			pc.count = 0;
+			pc.firstSeen = [NSDate date];
+			pc.album = pe.album;
+			pc.artist = pe.artist;
+			pc.title = pe.title;
+			pc.filename = pe.filenameFragment;
+		}
+
+		pc.rating = rating;
+
+		[self commitPersistentStore];
+	}
+}
+
 - (void)resetPlayCountForTrack:(PlaylistEntry *)pe {
 	PlayCount *pc = pe.playCountItem;
 	
 	if(pc) {
 		pc.count = 0;
+	}
+}
+
+- (void)removeRatingForTrack:(PlaylistEntry *)pe {
+	PlayCount *pc = pe.playCountItem;
+
+	if(pc) {
+		pc.rating = 0;
 	}
 }
 
@@ -379,6 +407,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 	PlaylistEntry *pe = [[self arrangedObjects] objectAtIndex:row];
 
 	float fontSize = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"fontSize"];
+	
+	BOOL cellRating = NO;
 
 	if(pe) {
 		cellIdentifier = [tableColumn identifier];
@@ -440,6 +470,21 @@ static void *playlistControllerContext = &playlistControllerContext;
 			case 12:
 				if([pe codec]) cellText = pe.codec;
 				break;
+				
+			case 13:
+			{
+				NSString *filledStar = @"★";
+				NSString *emptyStar = @"☆";
+				NSUInteger rating = (NSUInteger)ceil(pe.rating);
+				if(rating < 0)
+					rating = 0;
+				else if(rating > 5)
+					rating = 5;
+				cellText = [@"" stringByPaddingToLength:rating withString:filledStar startingAtIndex:0];
+				cellText = [cellText stringByPaddingToLength:5 withString:emptyStar startingAtIndex:0];
+				cellRating = YES;
+				break;
+			}
 		}
 	}
 
@@ -484,6 +529,26 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 
 	return view;
+}
+
+- (void)tableView:(NSTableView *)view didClickRow:(NSInteger)clickedRow column:(NSInteger)clickedColumn atPoint:(NSPoint)cellPoint {
+	NSTableColumn *column = [view tableColumns][clickedColumn];
+	NSString *cellIdentifier = [column identifier];
+	NSUInteger index = [cellIdentifiers indexOfObject:cellIdentifier];
+	if(index == 13) {
+		NSInteger rating = ((CGFloat)ceil(cellPoint.x * 5.0 / 64.0));
+		if(rating < 1) rating = 1;
+		else if(rating > 5) rating = 5;
+
+		PlaylistEntry *pe = [[self arrangedObjects] objectAtIndex:clickedRow];
+
+		[self ratingUpdatedWithEntry:pe rating:rating];
+
+		NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:clickedRow];
+		NSIndexSet *refreshColumn = [NSIndexSet indexSetWithIndex:clickedColumn];
+
+		[self.tableView reloadDataForRowIndexes:refreshRow columnIndexes:refreshColumn];
+	}
 }
 
 - (void)updateRowSize {
@@ -1734,6 +1799,28 @@ static void *playlistControllerContext = &playlistControllerContext;
 			[self resetPlayCountForTrack:pe];
 		}
 		[self commitPersistentStore];
+	}
+}
+
+- (IBAction)removeRatings:(id)sender {
+	NSArray *selectedobjects = [self selectedObjects];
+	if([selectedobjects count]) {
+		for(PlaylistEntry *pe in selectedobjects) {
+			[self removeRatingForTrack:pe];
+		}
+		[self commitPersistentStore];
+
+		NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+
+		for(PlaylistEntry *pe in selectedobjects) {
+			if(pe.index >= 0 && pe.index < NSNotFound) {
+				[refreshSet addIndex:pe.index];
+			}
+		}
+
+		// Refresh entire row to refresh tooltips
+		unsigned long columns = [[self.tableView tableColumns] count];
+		[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 	}
 }
 

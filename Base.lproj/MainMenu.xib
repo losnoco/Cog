@@ -25,13 +25,13 @@
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
-                        <rect key="frame" x="0.0" y="360" width="1030" height="40"/>
+                        <rect key="frame" x="0.0" y="361" width="1030" height="39"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
-                                <rect key="frame" x="0.0" y="0.0" width="1030" height="40"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1030" height="39"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
-                                    <rect key="frame" x="0.0" y="0.0" width="1030" height="40"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1030" height="39"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
@@ -127,8 +127,8 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                 </tableColumn>
-                                                <tableColumn identifier="title" editable="NO" width="125.5" minWidth="96" maxWidth="1024" id="208">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
+                                                <tableColumn identifier="rating" editable="NO" width="64" minWidth="64" maxWidth="64" id="208" userLabel="Rating">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Rating">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
                                                     </tableHeaderCell>
@@ -141,11 +141,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="ZCP-Dx-UBV">
-                                                            <rect key="frame" x="106" y="3" width="125" height="18"/>
+                                                            <rect key="frame" x="106" y="3" width="64" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="exY-Bg-Mjm">
-                                                                    <rect key="frame" x="0.0" y="1" width="126" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="64" height="16"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="sdo-Sm-KPH">
                                                                         <font key="font" usesAppearanceFont="YES"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -167,6 +167,50 @@
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.title" id="814">
                                                             <dictionary key="options">
                                                                 <integer key="NSConditionallySetsEditable" value="1"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                    </connections>
+                                                </tableColumn>
+                                                <tableColumn identifier="title" editable="NO" width="125.5" minWidth="96" maxWidth="1024" id="XBr-ec-D81">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="20m-a6-e24">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="title"/>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <prototypeCellViews>
+                                                        <tableCellView id="ZHl-H1-IIC">
+                                                            <rect key="frame" x="173" y="3" width="125" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="dQP-wC-mba">
+                                                                    <rect key="frame" x="0.0" y="1" width="126" height="16"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="VVx-99-roJ">
+                                                                        <font key="font" usesAppearanceFont="YES"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="dQP-wC-mba" firstAttribute="leading" secondItem="ZHl-H1-IIC" secondAttribute="leading" constant="2" id="RRE-MM-Fc6"/>
+                                                                <constraint firstItem="dQP-wC-mba" firstAttribute="centerX" secondItem="ZHl-H1-IIC" secondAttribute="centerX" id="T3S-gq-Mcb"/>
+                                                                <constraint firstItem="dQP-wC-mba" firstAttribute="centerY" secondItem="ZHl-H1-IIC" secondAttribute="centerY" id="auz-Po-AgT"/>
+                                                            </constraints>
+                                                            <connections>
+                                                                <outlet property="textField" destination="dQP-wC-mba" id="slW-Fj-66g"/>
+                                                            </connections>
+                                                        </tableCellView>
+                                                    </prototypeCellViews>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.title" id="Qr8-tD-lGt">
+                                                            <dictionary key="options">
+                                                                <bool key="NSConditionallySetsEditable" value="YES"/>
                                                             </dictionary>
                                                         </binding>
                                                     </connections>
@@ -229,7 +273,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="gpC-Oe-Rog">
-                                                            <rect key="frame" x="234" y="3" width="150" height="18"/>
+                                                            <rect key="frame" x="301.5" y="3" width="150" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="1WK-qN-Mgj">
@@ -273,7 +317,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="1ed-gX-bct">
-                                                            <rect key="frame" x="387" y="3" width="150" height="18"/>
+                                                            <rect key="frame" x="454" y="3" width="150" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="nEt-s5-vRX">
@@ -316,7 +360,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hhB-nv-e78">
-                                                            <rect key="frame" x="540" y="3" width="96" height="18"/>
+                                                            <rect key="frame" x="607.5" y="3" width="96" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tHy-sM-HDB">
@@ -360,7 +404,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="q93-oh-i5T">
-                                                            <rect key="frame" x="639" y="3" width="93" height="18"/>
+                                                            <rect key="frame" x="706" y="3" width="93" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="bOi-LI-TDx">
@@ -387,7 +431,7 @@
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1921"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="genre" editable="NO" width="144" minWidth="96" maxWidth="512" id="849">
+                                                <tableColumn identifier="genre" editable="NO" width="64" minWidth="32" maxWidth="512" id="849">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Genre">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -401,11 +445,11 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="rRl-p9-Awr">
-                                                            <rect key="frame" x="735" y="3" width="144" height="18"/>
+                                                            <rect key="frame" x="802.5" y="3" width="64" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="yW6-2w-6mN">
-                                                                    <rect key="frame" x="0.0" y="1" width="144" height="16"/>
+                                                                    <rect key="frame" x="0.0" y="1" width="64" height="16"/>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="js2-sT-U4M">
                                                                         <font key="font" usesAppearanceFont="YES"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -441,7 +485,7 @@
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
                                                         <tableCellView id="hgh-VE-5kl">
-                                                            <rect key="frame" x="882" y="3" width="39" height="18"/>
+                                                            <rect key="frame" x="869.5" y="3" width="39" height="18"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="yEY-MI-d3o">
@@ -2140,13 +2184,8 @@ Gw
                 <menuItem title="Add to Queue" id="1893">
                     <connections>
                         <action selector="toggleQueued:" target="218" id="1934"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="2068">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="tl0-j5-Pok">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
-                                <integer key="NSRaisesForNotApplicableKeys" value="1"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2166,12 +2205,8 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="stopAfterSelection:" target="218" id="ZRy-Mw-4cY"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="lrh-gy-5Z3">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="ytG-h2-5MA">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2182,12 +2217,8 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="searchByArtist:" target="218" id="2118"/>
-                        <binding destination="2020" name="enabled" keyPath="selection.artist" id="2066">
+                        <binding destination="2020" name="enabled" keyPath="selection.artist" id="gQw-pa-TIE">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2197,12 +2228,8 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="searchByAlbum:" target="218" id="2119"/>
-                        <binding destination="2020" name="enabled" keyPath="selection.album" id="2067">
+                        <binding destination="2020" name="enabled" keyPath="selection.album" id="F1G-2E-nhM">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2216,12 +2243,8 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="reloadTags:" target="218" id="Ghx-F8-uF3"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="s3T-C1-yR0">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="khw-aB-pyx">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2230,13 +2253,19 @@ Gw
                 <menuItem title="Reset Play Count" id="5iV-dM-oX2">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="resetPlaycounts:" target="218" id="M3d-2T-ZRq"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="2FG-Dj-1XM">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="Ixw-08-sA9">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
+                                <string key="NSValueTransformerName">NSIsNotNil</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </menuItem>
+                <menuItem title="Remove Rating" id="PyI-lF-iuz">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeRatings:" target="218" id="f0r-ur-bMZ"/>
+                        <binding destination="2020" name="enabled" keyPath="selection" id="BNy-Ih-BJg">
+                            <dictionary key="options">
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2245,12 +2274,8 @@ Gw
                 <menuItem title="Show in Finder" id="1064">
                     <connections>
                         <action selector="showEntryInFinder:" target="218" id="1345"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="2069">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="sJT-oT-8Cw">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2260,12 +2285,8 @@ Gw
                 <menuItem title="Remove" id="1360">
                     <connections>
                         <action selector="remove:" target="218" id="1361"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="2070">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="Z62-ts-HSG">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2275,12 +2296,8 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="trash:" target="218" id="7Vd-Vf-Ym1"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="pGj-Wj-1bF">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="Knx-iC-hoo">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
@@ -2291,12 +2308,8 @@ Gw
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="showWindow:" target="2422" id="lET-Cq-KED"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="Ff1-eV-AGk">
+                        <binding destination="2020" name="enabled" keyPath="selection" id="pj1-yp-Ojr">
                             <dictionary key="options">
-                                <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                <integer key="NSNullPlaceholder" value="0"/>
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
                             </dictionary>
                         </binding>
