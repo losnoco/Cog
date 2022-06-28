@@ -265,7 +265,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pc.filename = pe.filenameFragment;
 	}
 
-	[self commitEditing];
+	[self commitPersistentStore];
 }
 
 - (void)firstSawTrack:(PlaylistEntry *)pe {
