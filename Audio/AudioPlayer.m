@@ -113,6 +113,7 @@
 	outputLaunched = NO;
 	startedPaused = paused;
 	initialBufferFilled = NO;
+	previousUserInfo = userInfo;
 
 	[bufferChain launchThreads];
 
@@ -296,6 +297,8 @@
 
 - (BOOL)endOfInputReached:(BufferChain *)sender // Sender is a BufferChain
 {
+	previousUserInfo = [sender userInfo];
+
 	BufferChain *newChain = nil;
 
 	if(atomic_load_explicit(&resettingNow, memory_order_relaxed))
@@ -424,9 +427,7 @@
 }
 
 - (void)reportPlayCount {
-	if(bufferChain) {
-		[self reportPlayCountForTrack:[bufferChain userInfo]];
-	}
+	[self reportPlayCountForTrack:previousUserInfo];
 }
 
 - (BOOL)selectNextBuffer {

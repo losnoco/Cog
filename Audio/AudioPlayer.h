@@ -39,6 +39,8 @@ using std::atomic_bool;
 	id nextStreamUserInfo;
 	NSDictionary *nextStreamRGInfo;
 
+	id previousUserInfo; // Track currently last heard track for play counts
+
 	id delegate;
 
 	BOOL outputLaunched;
