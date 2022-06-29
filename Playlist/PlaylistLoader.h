@@ -10,6 +10,8 @@
 #import "PlaylistView.h"
 #import <Cocoa/Cocoa.h>
 
+#import <stdatomic.h>
+
 @class PlaylistController;
 @class PlaybackController;
 @class PlaylistEntry;
@@ -30,6 +32,9 @@ typedef enum {
 	BOOL metadataLoadInProgress;
 
 	NSMutableDictionary *queuedURLs;
+    
+    dispatch_queue_t loaderQueue;
+    atomic_int loaderQueueRefCount;
 }
 
 - (void)initDefaults;
