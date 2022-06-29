@@ -13,7 +13,6 @@
 extern NSString *iTunesDropType;
 
 extern void showCrashlyticsConsent(NSWindow *window);
-extern void showFolderPermissionConsent(NSWindow *window);
 
 @implementation MiniWindow
 
@@ -46,7 +45,6 @@ extern void showFolderPermissionConsent(NSWindow *window);
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
 		showCrashlyticsConsent(self);
-		showFolderPermissionConsent(self);
 	}
 }
 
