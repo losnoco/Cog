@@ -54,6 +54,9 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 		[queue setMaxConcurrentOperationCount:8];
 
 		queuedURLs = [[NSMutableDictionary alloc] init];
+
+		loaderQueue = dispatch_queue_create("Playlist loader queue", DISPATCH_QUEUE_SERIAL);
+		atomic_init(&loaderQueueRefCount, 0);
 	}
 
 	return self;
@@ -330,6 +333,34 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
+	int refCount;
+
+	do {
+		refCount = atomic_load_explicit(&loaderQueueRefCount, memory_order_relaxed);
+		if(refCount > 0) {
+			[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+		}
+	} while(refCount > 0);
+
+	__block NSArray *outurls = nil;
+
+	dispatch_async(loaderQueue, ^{
+		atomic_fetch_add(&self->loaderQueueRefCount, 1);
+		outurls = [self doInsertURLs:urls atIndex:index sort:sort];
+		atomic_fetch_sub(&self->loaderQueueRefCount, 1);
+	});
+
+	do {
+		refCount = atomic_load_explicit(&loaderQueueRefCount, memory_order_relaxed);
+		if(refCount > 0) {
+			[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+		}
+	} while(refCount > 0);
+
+	return outurls;
+}
+
+- (NSArray *)doInsertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
 	NSMutableSet *uniqueURLs = [NSMutableSet set];
 
 	NSMutableArray *expandedURLs = [NSMutableArray array];
@@ -507,14 +538,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	progressstep = 100.0 / (double)(count);
 
 	NSInteger i = 0;
-	NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
+	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
 	for(NSURL *url in validURLs) {
-		PlaylistEntry *pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:playlistController.persistentContainer.viewContext];
+		__block PlaylistEntry *pe;
+		
+		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+			pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:self->playlistController.persistentContainer.viewContext];
+			pe.url = url;
+			pe.index = index + i;
+			pe.rawTitle = [[url path] lastPathComponent];
+			pe.queuePosition = -1;
+		});
 
-		pe.url = url;
-		pe.index = index + i;
-		pe.rawTitle = [[url path] lastPathComponent];
-		pe.queuePosition = -1;
 		[entries addObject:pe];
 
 		++i;
@@ -527,11 +562,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	if(xmlData) {
 		for(NSDictionary *entry in [xmlData objectForKey:@"entries"]) {
-			PlaylistEntry *pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:playlistController.persistentContainer.viewContext];
+			__block PlaylistEntry *pe;
+			
+			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+				pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:self->playlistController.persistentContainer.viewContext];
+				[pe setValuesForKeysWithDictionary:entry];
+				pe.index = index + i;
+				pe.queuePosition = -1;
+			});
 
-			[pe setValuesForKeysWithDictionary:entry];
-			pe.index = index + i;
-			pe.queuePosition = -1;
 			[entries addObject:pe];
 
 			++i;
@@ -542,26 +581,32 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 
-	[playlistController insertObjects:entries atArrangedObjectIndexes:is];
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
+	});
 
 	if(xmlData && [[xmlData objectForKey:@"queue"] count]) {
-		[playlistController emptyQueueList:self];
+		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+			[self->playlistController emptyQueueList:self];
 
-		i = 0;
-		for(NSNumber *index in [xmlData objectForKey:@"queue"]) {
-			NSInteger indexVal = [index intValue] + j;
-			PlaylistEntry *pe = [entries objectAtIndex:indexVal];
-			pe.queuePosition = i;
-			pe.queued = YES;
+			long i = 0;
+			for(NSNumber *index in [xmlData objectForKey:@"queue"]) {
+				NSInteger indexVal = [index intValue] + j;
+				PlaylistEntry *pe = [entries objectAtIndex:indexVal];
+				pe.queuePosition = i;
+				pe.queued = YES;
 
-			[[playlistController queueList] addObject:pe];
+				[[self->playlistController queueList] addObject:pe];
 
-			++i;
-		}
+				++i;
+			}
+		});
 	}
 
 	// Clear the selection
-	[playlistController setSelectionIndexes:[NSIndexSet indexSet]];
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[self->playlistController setSelectionIndexes:[NSIndexSet indexSet]];
+	});
 
 	{
 		NSArray *arrayFirst = @[[entries objectAtIndex:0]];
@@ -582,7 +627,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		if([arrayRest count])
 			[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
 		else {
-			[playlistController commitPersistentStore];
+			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+				[self->playlistController commitPersistentStore];
+			});
 			[self completeProgress];
 		}
 		return entries;
