@@ -24,6 +24,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	NSInteger _refCount;
 	NSURL *_secureUrl;
 	NSString *_path;
+	BOOL _isFolder;
 };
 
 @property(readonly) SandboxToken *token;
@@ -33,6 +34,8 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 @property(readonly) NSString *path;
 
 @property NSInteger refCount;
+
+@property(readonly) BOOL isFolder;
 
 - (id)initWithToken:(SandboxToken *)token;
 @end
@@ -45,6 +48,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 		obj->_secureUrl = nil;
 		obj->_token = token;
 		obj->_path = token.path;
+		obj->_isFolder = token.folder;
 	}
 	return obj;
 }
@@ -71,6 +75,10 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 
 - (NSString *)path {
 	return _path;
+}
+
+- (BOOL)isFolder {
+	return _isFolder;
 }
 @end
 
@@ -99,17 +107,22 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 
 	NSString *s = [url path];
 
-	NSString *lastComponent = [url lastPathComponent];
+	NSString *lastComponent = [url fragment];
 
-	// Find that last component in the string from the end to make sure
-	// to get the last one
-	NSRange fragmentRange = [s rangeOfString:lastComponent
-	                                 options:NSBackwardsSearch];
+	if(lastComponent) {
+		lastComponent = @"#";
+		// Find that last component in the string from the end to make sure
+		// to get the last one
+		NSRange fragmentRange = [s rangeOfString:lastComponent
+										 options:NSBackwardsSearch];
 
-	// Chop the fragment.
-	NSString *newURLString = [s substringToIndex:fragmentRange.location + fragmentRange.length];
+		// Chop the fragment.
+		NSString *newURLString = [s substringToIndex:fragmentRange.location + fragmentRange.length];
 
-	return [NSURL fileURLWithPath:newURLString];
+		return [NSURL fileURLWithPath:newURLString];
+	} else {
+		return url;
+	}
 }
 
 - (id)init {
@@ -148,23 +161,41 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	SandboxEntry *ret = nil;
 
 	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
-
-	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
+	
+	NSPredicate *folderPredicate = [NSPredicate predicateWithFormat:@"folder == NO"];
+	NSPredicate *filePredicate = [NSPredicate predicateWithFormat:@"path == %@", [url path]];
+	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[folderPredicate, filePredicate]];
 
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
-	request.sortDescriptors = @[sortDescriptor];
-
+	request.predicate = predicate;
+	
 	NSError *error = nil;
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
-	if(results) results = [results copy];
-
 	if(results && [results count] > 0) {
-		for(SandboxToken *token in results) {
-			if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
-				SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+		ret = [[SandboxEntry alloc] initWithToken:results[0]];
+	}
 
-				ret = entry;
-				break;
+	if(!ret) {
+		predicate = [NSPredicate predicateWithFormat:@"folder == YES"];
+
+		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
+
+		request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+		request.sortDescriptors = @[sortDescriptor];
+		request.predicate = predicate;
+
+		error = nil;
+		results = [pc.viewContext executeFetchRequest:request error:&error];
+		if(results) results = [results copy];
+
+		if(results && [results count] > 0) {
+			for(SandboxToken *token in results) {
+				if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
+					SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+
+					ret = entry;
+					break;
+				}
 			}
 		}
 	}
@@ -193,7 +224,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 		SandboxEntry *_entry = nil;
 
 		for(SandboxEntry *entry in storage) {
-			if(entry.path && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
+			if(entry.path && entry.isFolder && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
 				_entry = entry;
 				break;
 			}
@@ -227,18 +258,70 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	}
 }
 
+- (void)addFileIfMissing:(NSURL *)fileUrl {
+	if(![fileUrl isFileURL]) return;
+
+	NSURL *url = [SandboxBroker urlWithoutFragment:fileUrl];
+
+	@synchronized (self) {
+		SandboxEntry *_entry = nil;
+
+		for(SandboxEntry *entry in storage) {
+			if(entry.path) {
+				if((entry.isFolder && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) ||
+				   (!entry.isFolder && [url isEqualTo:[NSURL fileURLWithPath:entry.path]])) {
+					_entry = entry;
+					break;
+				}
+			}
+		}
+
+		if(!_entry) {
+			_entry = [self recursivePathTest:url];
+		}
+
+		if(!_entry) {
+			NSError *err = nil;
+			NSData *bookmark = [fileUrl bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:nil relativeToURL:nil error:&err];
+			if(!bookmark && err) {
+				ALog(@"Failed to add bookmark for URL: %@, with error: %@", url, [err localizedDescription]);
+				return;
+			}
+
+			NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+
+			SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+
+			if(token) {
+				token.path = [url path];
+				token.bookmark = bookmark;
+				token.folder = NO;
+				[pc.viewContext save:&err];
+				if(err) {
+					ALog(@"Error saving bookmark: %@", [err localizedDescription]);
+				}
+			}
+		}
+	}
+}
+
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
-	NSURL *folderUrl = [[SandboxBroker urlWithoutFragment:fileUrl] URLByDeletingLastPathComponent];
+	NSURL *folderUrl = [SandboxBroker urlWithoutFragment:fileUrl];
 	if(![folderUrl isFileURL]) return NULL;
 
 	SandboxEntry *_entry = nil;
+	
+	NSString *sandboxPath = [folderUrl path];
 
 	@synchronized(self) {
 		for(SandboxEntry *entry in storage) {
-			if(entry.path && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
-				entry.refCount += 1;
-				_entry = entry;
-				break;
+			if(entry.path) {
+				if((entry.isFolder && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) ||
+				   (!entry.isFolder && [entry.path isEqualToString:sandboxPath])) {
+					entry.refCount += 1;
+					_entry = entry;
+					break;
+				}
 			}
 		}
 

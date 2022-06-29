@@ -399,6 +399,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 					[[SandboxBroker sharedSandboxBroker] addFolderIfMissing:url];
 					[expandedURLs addObjectsFromArray:[self fileURLsAtPath:[url path]]];
 				} else {
+					[[SandboxBroker sharedSandboxBroker] addFileIfMissing:url];
 					[expandedURLs addObject:[NSURL fileURLWithPath:[url path]]];
 				}
 			}
