@@ -22,6 +22,7 @@
 @interface SandboxToken : NSManagedObject
 @property(nonatomic, strong) NSString *path;
 @property(nonatomic, strong) NSData *bookmark;
+@property(nonatomic) BOOL folder;
 @end
 
 @implementation SandboxPathBehaviorController
