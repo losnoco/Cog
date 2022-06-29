@@ -105,6 +105,8 @@
 - (IBAction)toggleMiniMode:(id)sender;
 - (IBAction)toggleToolbarStyle:(id)sender;
 
+- (BOOL)pathSuggesterEmpty;
++ (BOOL)globalPathSuggesterEmpty;
 - (void)showPathSuggester;
 + (void)globalShowPathSuggester;
 
