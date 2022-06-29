@@ -186,6 +186,47 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	return nil;
 }
 
+- (void)addFolderIfMissing:(NSURL *)folderUrl {
+	if(![folderUrl isFileURL]) return;
+
+	@synchronized (self) {
+		SandboxEntry *_entry = nil;
+
+		for(SandboxEntry *entry in storage) {
+			if(entry.path && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
+				_entry = entry;
+				break;
+			}
+		}
+
+		if(!_entry) {
+			_entry = [self recursivePathTest:folderUrl];
+		}
+
+		if(!_entry) {
+			NSError *err = nil;
+			NSData *bookmark = [folderUrl bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:nil relativeToURL:nil error:&err];
+			if(!bookmark && err) {
+				ALog(@"Failed to add bookmark for URL: %@, with error: %@", folderUrl, [err localizedDescription]);
+				return;
+			}
+
+			NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+
+			SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+
+			if(token) {
+				token.path = [folderUrl path];
+				token.bookmark = bookmark;
+				[pc.viewContext save:&err];
+				if(err) {
+					ALog(@"Error saving bookmark: %@", [err localizedDescription]);
+				}
+			}
+		}
+	}
+}
+
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
 	NSURL *folderUrl = [[SandboxBroker urlWithoutFragment:fileUrl] URLByDeletingLastPathComponent];
 	if(![folderUrl isFileURL]) return NULL;

@@ -39,6 +39,8 @@
 
 #import "RedundantPlaylistDataStore.h"
 
+#import "SandboxBroker.h"
+
 @import Firebase;
 
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
@@ -394,6 +396,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			if([[NSFileManager defaultManager] fileExistsAtPath:[url path] isDirectory:&isDir]) {
 				if(isDir == YES) {
 					// Get subpaths
+					[[SandboxBroker sharedSandboxBroker] addFolderIfMissing:url];
 					[expandedURLs addObjectsFromArray:[self fileURLsAtPath:[url path]]];
 				} else {
 					[expandedURLs addObject:[NSURL fileURLWithPath:[url path]]];
