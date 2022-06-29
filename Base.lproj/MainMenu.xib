@@ -2211,6 +2211,7 @@ Gw
                 <menuItem title="Reset Play Count" id="5iV-dM-oX2">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
+                        <action selector="resetPlaycounts:" target="218" id="J9t-hL-TQZ"/>
                         <binding destination="2020" name="enabled" keyPath="selection" id="Ixw-08-sA9">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">NSIsNotNil</string>
