@@ -20,6 +20,8 @@
 }
 
 - (void)updatePath {
+	if(!url) return;
+
 	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtURL:url
 	                                                         includingPropertiesForKeys:@[NSURLNameKey, NSURLIsDirectoryKey]
 	                                                                            options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles)
