@@ -1,11 +1,7 @@
 #import "AppController.h"
 #import "Cog-Swift.h"
-#import "FileTreeController.h"
-#import "FileTreeOutlineView.h"
-#import "FileTreeViewController.h"
 #import "FontSizetoLineHeightTransformer.h"
 #import "OpenURLPanel.h"
-#import "PathNode.h"
 #import "PlaybackController.h"
 #import "PlaylistController.h"
 #import "PlaylistEntry.h"
@@ -238,49 +234,10 @@ static AppController *kAppController = nil;
 	[self setFloatingMiniWindow:[[NSUserDefaults standardUserDefaults]
 	                            boolForKey:@"floatingMiniWindow"]];
 
-	// We need file tree view to restore its state here
-	// so attempt to access file tree view controller's root view
-	// to force it to read nib and create file tree view for us
-	//
-	// TODO: there probably is a more elegant way to do all this
-	//       but i'm too stupid/tired to figure it out now
-	[fileTreeViewController view];
-
-	FileTreeOutlineView *outlineView = [fileTreeViewController outlineView];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeExpanded:) name:NSOutlineViewItemDidExpandNotification object:outlineView];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeCollapsed:) name:NSOutlineViewItemDidCollapseNotification object:outlineView];
-
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidBeginNotficiation object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidStopNotficiation object:nil];
 
 	[self updateDockMenu:nil];
-
-	NSArray *expandedNodesArray = [[NSUserDefaults standardUserDefaults] valueForKey:@"fileTreeViewExpandedNodes"];
-
-	if(expandedNodesArray) {
-		expandedNodes = [[NSMutableSet alloc] initWithArray:expandedNodesArray];
-	} else {
-		expandedNodes = [[NSMutableSet alloc] init];
-	}
-
-	DLog(@"Nodes to expand: %@", [expandedNodes description]);
-
-	DLog(@"Num of rows: %ld", [outlineView numberOfRows]);
-
-	if(!outlineView) {
-		DLog(@"outlineView is NULL!");
-	}
-
-	[outlineView reloadData];
-
-	for(NSInteger i = 0; i < [outlineView numberOfRows]; i++) {
-		PathNode *pn = [outlineView itemAtRow:i];
-		NSString *str = [[pn URL] absoluteString];
-
-		if([expandedNodes containsObject:str]) {
-			[outlineView expandItem:pn];
-		}
-	}
 
 	[self addObserver:self
 	       forKeyPath:@"playlistController.currentEntry"
@@ -369,20 +326,6 @@ static AppController *kAppController = nil;
 	}
 }
 
-- (void)nodeExpanded:(NSNotification *)notification {
-	PathNode *node = [[notification userInfo] objectForKey:@"NSObject"];
-	NSString *url = [[node URL] absoluteString];
-
-	[expandedNodes addObject:url];
-}
-
-- (void)nodeCollapsed:(NSNotification *)notification {
-	PathNode *node = [[notification userInfo] objectForKey:@"NSObject"];
-	NSString *url = [[node URL] absoluteString];
-
-	[expandedNodes removeObject:url];
-}
-
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender {
 	if(playbackController.progressOverall) {
 		[playbackController.progressOverall addObserver:self forKeyPath:@"finished" options:0 context:kAppControllerContext];
@@ -456,7 +399,6 @@ static AppController *kAppController = nil;
 
 	DLog(@"Saving expanded nodes: %@", [expandedNodes description]);
 
-	[[NSUserDefaults standardUserDefaults] setValue:[expandedNodes allObjects] forKey:@"fileTreeViewExpandedNodes"];
 	// Workaround window not restoring it's size and position.
 	[miniWindow setContentSize:NSMakeSize(miniWindow.frame.size.width, 1)];
 	[miniWindow saveFrameUsingName:@"Mini Window"];
