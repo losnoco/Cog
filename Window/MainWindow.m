@@ -31,19 +31,6 @@ void showCrashlyticsConsent(NSWindow *window) {
 	}
 }
 
-void showFolderPermissionConsent(NSWindow *window) {
-	if([AppController globalPathSuggesterEmpty]) {
-		NSAlert *alert = [[NSAlert alloc] init];
-		[alert setMessageText:NSLocalizedString(@"FolderConsentTitle", @"")];
-		[alert setInformativeText:NSLocalizedString(@"FolderConsentText", @"")];
-		[alert addButtonWithTitle:NSLocalizedString(@"ConsentOK", @"")];
-		
-		[alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
-			[AppController globalShowPathSuggester];
-		}];
-	}
-}
-
 @implementation MainWindow
 
 - (id)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation {
@@ -66,7 +53,6 @@ void showFolderPermissionConsent(NSWindow *window) {
 	
 	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
 		showCrashlyticsConsent(self);
-		showFolderPermissionConsent(self);
 	}
 }
 
