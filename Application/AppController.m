@@ -152,7 +152,11 @@ static AppController *kAppController = nil;
 }
 
 - (void)awakeFromNib {
+#if DEBUG
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(NO) }];
+#else
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(YES) }];
+#endif
 
 	[FIRApp configure];
 
