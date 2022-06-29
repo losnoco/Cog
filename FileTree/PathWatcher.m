@@ -44,6 +44,8 @@ const FSEventStreamEventId eventIds[]) {
 - (void)setPath:(NSString *)path {
 	[self cleanUp];
 
+	if(!path) return;
+
 	// Create FSEvent stream
 	NSArray *pathsToWatch = @[path];
 

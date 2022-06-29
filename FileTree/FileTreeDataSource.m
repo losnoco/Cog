@@ -74,7 +74,7 @@ static NSURL *defaultMusicDirectory(void) {
 			DLog(@"File tree root URL: %@\n", url);
 			NSURL *newURL = [NSURL URLWithString:url];
 			if((!self.rootURL || ![self.rootURL isEqualTo:newURL]) && ![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:@[newURL]]) {
-				[AppController globalShowPathSuggester];
+				[[SandboxBroker sharedSandboxBroker] addFolderIfMissing:newURL];
 			}
 			self.rootURL = newURL;
 		}
