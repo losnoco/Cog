@@ -24,35 +24,6 @@
 @property(nonatomic) NSURL *_Nullable url;
 @end
 
-static NSURL *containerDirectory(void) {
-	NSString *path = [@"~" stringByExpandingTildeInPath];
-	return [NSURL fileURLWithPath:path];
-}
-
-// XXX this is only for comparison, not "escaping the sandbox"
-static NSURL *pathEscape(NSString *path) {
-	NSString *componentsToRemove = [NSString stringWithFormat:@"Library/Containers/%@/Data/", [[NSBundle mainBundle] bundleIdentifier]];
-	NSRange rangeOfMatch = [path rangeOfString:componentsToRemove];
-	if(rangeOfMatch.location != NSNotFound)
-		path = [path stringByReplacingCharactersInRange:rangeOfMatch withString:@""];
-	return [NSURL fileURLWithPath:path];
-}
-
-static NSURL *defaultMusicDirectory(void) {
-	NSString *path = [NSSearchPathForDirectoriesInDomains(NSMusicDirectory, NSUserDomainMask, YES) lastObject];
-	return pathEscape(path);
-}
-
-static NSURL *defaultDownloadsDirectory(void) {
-	NSString *path = [NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSUserDomainMask, YES) lastObject];
-	return pathEscape(path);
-}
-
-static NSURL *defaultMoviesDirectory(void) {
-	NSString *path = [NSSearchPathForDirectoriesInDomains(NSMoviesDirectory, NSUserDomainMask, YES) lastObject];
-	return pathEscape(path);
-}
-
 @interface PathItem : NSObject
 @property(nonatomic, strong) NSString *path;
 @property(nonatomic) BOOL enabled;
@@ -99,12 +70,6 @@ static NSURL *defaultMoviesDirectory(void) {
 
 	if(!results || [results count] < 1) return;
 
-	NSURL *defaultMusic = defaultMusicDirectory();
-	NSURL *defaultDownloads = defaultDownloadsDirectory();
-	NSURL *defaultMovies = defaultMoviesDirectory();
-
-	NSURL *container = containerDirectory();
-
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 
 	NSMutableArray *items = [[NSMutableArray alloc] init];
@@ -125,7 +90,8 @@ static NSURL *defaultMoviesDirectory(void) {
 	// Add other system paths to this setting
 	NSString *fileTreePath = [[NSUserDefaults standardUserDefaults] stringForKey:@"fileTreeRootURL"];
 	if(fileTreePath && [fileTreePath length]) {
-		[array addObject:[NSURL URLWithString:fileTreePath]];
+		// Append false name to dodge the directory/fragment trimmer
+		[array addObject:[NSURL URLWithString:[fileTreePath stringByAppendingPathComponent:@"moo.mp3"]]];
 	}
 
 	NSString *soundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
@@ -135,14 +101,7 @@ static NSURL *defaultMoviesDirectory(void) {
 
 	for(NSURL *fileUrl in array) {
 		NSURL *url = [sandboxBrokerClass urlWithoutFragment:fileUrl];
-		if([sandboxBrokerClass isPath:url aSubdirectoryOf:defaultMusic] ||
-		   [sandboxBrokerClass isPath:url
-		              aSubdirectoryOf:defaultDownloads] ||
-		   [sandboxBrokerClass isPath:url
-		              aSubdirectoryOf:defaultMovies] ||
-		   [sandboxBrokerClass isPath:url
-		              aSubdirectoryOf:container] ||
-		   [sandboxPathBehaviorController matchesPath:url])
+		if([sandboxPathBehaviorController matchesPath:url])
 			continue;
 
 		NSArray *pathComponents = [url pathComponents];
