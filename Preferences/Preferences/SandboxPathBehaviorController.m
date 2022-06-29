@@ -48,7 +48,7 @@
 				ALog(@"Stale bookmark for path: %@, with error: %@", token.path, [err localizedDescription]);
 				continue;
 			}
-			[self addObject:@{ @"path": token.path, @"valid": (isStale ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")) }];
+			[self addObject:@{ @"path": token.path, @"valid": (isStale ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")), @"isFolder": @(token.folder) }];
 		}
 	}
 }
@@ -121,11 +121,14 @@
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	for(NSDictionary *entry in [self arrangedObjects]) {
 		if([[entry objectForKey:@"valid"] isEqualToString:NSLocalizedPrefString(@"ValidYes")]) {
+			BOOL isFolder = [[entry objectForKey:@"isFolder"] boolValue];
 			NSString *path = [entry objectForKey:@"path"];
 			if(path && [path length]) {
 				NSURL *testPath = [NSURL fileURLWithPath:[entry objectForKey:@"path"]];
-				if([sandboxBrokerClass isPath:url aSubdirectoryOf:testPath])
+				if((isFolder && [sandboxBrokerClass isPath:url aSubdirectoryOf:testPath]) ||
+				   (!isFolder && [[url path] isEqualToString:path])) {
 					return YES;
+				}
 			}
 		}
 	}
