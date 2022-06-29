@@ -715,6 +715,14 @@ static AppController *kAppController = nil;
 	}
 }
 
+- (BOOL)pathSuggesterEmpty {
+	return [playlistController pathSuggesterEmpty];
+}
+
++ (BOOL)globalPathSuggesterEmpty {
+	return [kAppController pathSuggesterEmpty];
+}
+
 - (void)showPathSuggester {
 	[preferencesController showPathSuggester:self];
 }

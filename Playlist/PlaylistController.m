@@ -1824,4 +1824,14 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 }
 
+- (BOOL)pathSuggesterEmpty {
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+
+	NSError *error = nil;
+	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+
+	if(!results || [results count] < 1) return YES;
+	else return NO;
+}
+
 @end

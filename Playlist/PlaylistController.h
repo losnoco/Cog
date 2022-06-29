@@ -156,4 +156,6 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 
 - (void)tableView:(NSTableView *)view didClickRow:(NSInteger)clickedRow column:(NSInteger)clickedColumn atPoint:(NSPoint)cellPoint;
 
+- (BOOL)pathSuggesterEmpty;
+
 @end

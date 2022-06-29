@@ -8,6 +8,8 @@
 
 #import "MainWindow.h"
 
+#import "AppController.h"
+
 void showCrashlyticsConsent(NSWindow *window) {
 	BOOL askedConsent = [[NSUserDefaults standardUserDefaults] boolForKey:@"crashlyticsAskedConsent"];
 	if(!askedConsent) {
@@ -26,6 +28,19 @@ void showCrashlyticsConsent(NSWindow *window) {
 		}];
 		
 		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"crashlyticsAskedConsent"];
+	}
+}
+
+void showFolderPermissionConsent(NSWindow *window) {
+	if([AppController globalPathSuggesterEmpty]) {
+		NSAlert *alert = [[NSAlert alloc] init];
+		[alert setMessageText:NSLocalizedString(@"FolderConsentTitle", @"")];
+		[alert setInformativeText:NSLocalizedString(@"FolderConsentText", @"")];
+		[alert addButtonWithTitle:NSLocalizedString(@"ConsentOK", @"")];
+		
+		[alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
+			[AppController globalShowPathSuggester];
+		}];
 	}
 }
 
@@ -51,6 +66,7 @@ void showCrashlyticsConsent(NSWindow *window) {
 	
 	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
 		showCrashlyticsConsent(self);
+		showFolderPermissionConsent(self);
 	}
 }
 

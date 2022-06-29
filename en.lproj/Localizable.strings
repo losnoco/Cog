@@ -77,5 +77,8 @@
 
 "CrashlyticsConsentTitle" = "Crashlytics crash collection";
 "CrashlyticsConsentText" = "Would you like to allow Crashlytics to submit crash reports? You may turn this off again in Preferences. We won't ask you again.";
+"FolderConsentTitle" = "Folder permission";
+"FolderConsentText" = "You have not added any folder to the permission dialog. Please add your music folders before adding any documents, then restart the player.";
 "ConsentYes" = "Yes";
 "ConsentNo" = "No";
+"ConsentOK" = "OK";
