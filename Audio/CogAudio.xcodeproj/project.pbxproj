@@ -92,14 +92,13 @@
 		83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7C27AA0D8E0003F694 /* AVFoundation.framework */; };
 		8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 8377C64B27B8C51500E8BC0F /* fft_accelerate.c */; };
 		8377C64E27B8C54400E8BC0F /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 8377C64D27B8C54400E8BC0F /* fft.h */; };
-		8377C65227B8CAD100E8BC0F /* VisualizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 8377C65027B8CAD100E8BC0F /* VisualizationController.h */; };
-		8377C65327B8CAD100E8BC0F /* VisualizationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C65127B8CAD100E8BC0F /* VisualizationController.m */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		839065F32853338700636FBB /* dsd2float.h in Headers */ = {isa = PBXBuildFile; fileRef = 839065F22853338700636FBB /* dsd2float.h */; };
 		839366671815923C006DD712 /* CogPluginMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 839366651815923C006DD712 /* CogPluginMulti.h */; };
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
+		839B83FA286D91ED00F529EE /* VisualizationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B83F9286D91ED00F529EE /* VisualizationController.swift */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
@@ -220,14 +219,13 @@
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8377C64B27B8C51500E8BC0F /* fft_accelerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft_accelerate.c; sourceTree = "<group>"; };
 		8377C64D27B8C54400E8BC0F /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
-		8377C65027B8CAD100E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationController.h; sourceTree = "<group>"; };
-		8377C65127B8CAD100E8BC0F /* VisualizationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationController.m; sourceTree = "<group>"; };
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		839065F22853338700636FBB /* dsd2float.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsd2float.h; sourceTree = "<group>"; };
 		839366651815923C006DD712 /* CogPluginMulti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogPluginMulti.h; sourceTree = "<group>"; };
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		839B83F9286D91ED00F529EE /* VisualizationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationController.swift; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
@@ -518,8 +516,7 @@
 		8377C64F27B8CAAB00E8BC0F /* Visualization */ = {
 			isa = PBXGroup;
 			children = (
-				8377C65027B8CAD100E8BC0F /* VisualizationController.h */,
-				8377C65127B8CAD100E8BC0F /* VisualizationController.m */,
+				839B83F9286D91ED00F529EE /* VisualizationController.swift */,
 			);
 			path = Visualization;
 			sourceTree = "<group>";
@@ -557,7 +554,6 @@
 				831A4FE42865A7DC0049CFE4 /* pf_scalar_double.h in Headers */,
 				831A500D2865A7DC0049CFE4 /* CDSPHBDownsampler.h in Headers */,
 				831A500C2865A7DC0049CFE4 /* fft4g.h in Headers */,
-				8377C65227B8CAD100E8BC0F /* VisualizationController.h in Headers */,
 				834FD4F027AF93680063BC83 /* ChunkList.h in Headers */,
 				17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */,
 				831A50122865A7DC0049CFE4 /* pffft.h in Headers */,
@@ -624,6 +620,7 @@
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
+						LastSwiftMigration = 1330;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -670,12 +667,12 @@
 				831A50162865A8800049CFE4 /* r8bstate.cpp in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
-				8377C65327B8CAD100E8BC0F /* VisualizationController.m in Sources */,
 				17D21CC60B8BE4BA00D1EBDE /* OutputAVFoundation.m in Sources */,
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
 				835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */,
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
+				839B83FA286D91ED00F529EE /* VisualizationController.swift in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */,
@@ -704,15 +701,16 @@
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CogAudio_Prefix.pch;
@@ -724,32 +722,29 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/ThirdParty/r8brain-free-src/DLL/Win64",
-					"$(PROJECT_DIR)/ThirdParty/r8brain-free-src/DLL/Win32",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CogAudio_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -759,16 +754,12 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/ThirdParty/r8brain-free-src/DLL/Win64",
-					"$(PROJECT_DIR)/ThirdParty/r8brain-free-src/DLL/Win32",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
-				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
 			};
