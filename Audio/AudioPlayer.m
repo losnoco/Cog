@@ -477,8 +477,8 @@
 	// - the buffer chain for the next playlist entry (started in endOfInputReached) have been working for some time
 	//   already, so that there is some decoded and converted data to play
 	// - the buffer chain for the next entry is the first item in chainQueue
-
-	[self notifyStreamChanged:[bufferChain userInfo]];
+	previousUserInfo = [bufferChain userInfo];
+	[self notifyStreamChanged:previousUserInfo];
 }
 
 - (BOOL)chainQueueHasTracks {
