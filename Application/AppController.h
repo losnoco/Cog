@@ -2,6 +2,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class FileTreeViewController;
 @class PlaybackController;
 @class PlaylistController;
 @class PlaylistView;
@@ -19,6 +20,7 @@
 
 	IBOutlet NSWindow *mainWindow;
 	IBOutlet NSWindow *miniWindow;
+	IBOutlet NSSplitView *mainView;
 
 	IBOutlet NSSegmentedControl *playbackButtons;
 	IBOutlet NSButton *fileButton;
@@ -46,6 +48,8 @@
 	IBOutlet NSWindowController *spotlightWindowController;
 
 	IBOutlet SUUpdater *updater;
+
+	IBOutlet FileTreeViewController *fileTreeViewController;
 
 	IBOutlet PreferencesController *preferencesController;
 

@@ -88,6 +88,12 @@
 	}
 
 	// Add other system paths to this setting
+	NSString *fileTreePath = [[NSUserDefaults standardUserDefaults] stringForKey:@"fileTreeRootURL"];
+	if(fileTreePath && [fileTreePath length]) {
+		// Append false name to dodge the directory/fragment trimmer
+		[array addObject:[NSURL URLWithString:[fileTreePath stringByAppendingPathComponent:@"moo.mp3"]]];
+	}
+
 	NSString *soundFontPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
 	if(soundFontPath && [soundFontPath length]) {
 		[array addObject:[NSURL fileURLWithPath:soundFontPath]];

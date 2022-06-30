@@ -335,6 +335,12 @@
 /* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "1629"; */
 "1629.paletteLabel" = "Info Inspector";
 
+/* Class = "NSToolbarItem"; label = "File Tree"; ObjectID = "1630"; */
+"1630.label" = "File Tree";
+
+/* Class = "NSToolbarItem"; paletteLabel = "File Tree"; ObjectID = "1630"; */
+"1630.paletteLabel" = "File Tree";
+
 /* Class = "NSToolbarItem"; label = "Shuffle"; ObjectID = "1636"; */
 "1636.label" = "Shuffle";
 
@@ -473,6 +479,9 @@
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Not Playing"; ObjectID = "2085"; */
 "2085.ibShadowedIsNilPlaceholder" = "Not Playing";
 
+/* Class = "NSMenuItem"; title = "Toggle File Tree Orientation"; ObjectID = "2160"; */
+"2160.title" = "Toggle File Tree Orientation";
+
 /* Class = "NSMenuItem"; title = "Information"; ObjectID = "2212"; */
 "2212.title" = "Information";
 
@@ -538,6 +547,9 @@
 
 /* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Cog"; ObjectID = "2374"; */
 "2374.ibShadowedNotApplicablePlaceholder" = "Cog";
+
+/* Class = "NSMenuItem"; title = "Show File Tree"; ObjectID = "2417"; */
+"2417.title" = "Show File Tree";
 
 /* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "2429"; */
 "2429.label" = "Info Inspector";
