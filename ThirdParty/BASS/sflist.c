@@ -457,7 +457,7 @@ static const json_value *json_object_item(const json_value *object, const char *
 	return &json_value_none;
 }
 
-static void sflist_process_patchmappings(BASS_MIDI_FONTEX *out, BASS_MIDI_FONTEX *fontex, const json_value *patchMappings, unsigned int channel) {
+static void sflist_process_patchmappings(BASS_MIDI_FONTEX2 *out, BASS_MIDI_FONTEX2 *fontex, const json_value *patchMappings, unsigned int channel, unsigned int channelCount) {
 	unsigned int i, j;
 	for(i = 0, j = patchMappings->u.array.length; i < j; ++i) {
 		json_value *preset = patchMappings->u.array.values[i];
@@ -471,7 +471,8 @@ static void sflist_process_patchmappings(BASS_MIDI_FONTEX *out, BASS_MIDI_FONTEX
 		fontex->sbank = (source_bank->type == json_none) ? -1 : (int)source_bank->u.integer;
 		fontex->dpreset = (destination_program->type == json_none) ? -1 : (int)destination_program->u.integer;
 		fontex->dbank = (destination_bank->type == json_none) ? 0 : (int)destination_bank->u.integer;
-		fontex->dbanklsb = channel;
+		fontex->minchan = channel;
+		fontex->numchan = channelCount;
 		*out++ = *fontex;
 	}
 }
@@ -487,7 +488,7 @@ static sflist_presets *sflist_process(const json_value *sflist, const char *base
 	json_value *arr;
 	unsigned int i, j, k, l, preset_number;
 	HSOUNDFONT hfont = 0;
-	BASS_MIDI_FONTEX fontex;
+	BASS_MIDI_FONTEX2 fontex;
 
 	if(!rval) {
 		strcpy(error_buf, "Out of memory");
@@ -544,6 +545,8 @@ static sflist_presets *sflist_process(const json_value *sflist, const char *base
 				sprintf(error_buf, "soundFont item #%u 'channels' is not an array", i + 1);
 				goto error;
 			}
+			int prevchannel = -1;
+			int contiguouschannelsets = 0;
 			for(k = 0, l = channels->u.array.length; k < l; ++k) {
 				json_value *channel = channels->u.array.values[k];
 				if(channel->type != json_integer) {
@@ -554,8 +557,12 @@ static sflist_presets *sflist_process(const json_value *sflist, const char *base
 					sprintf(error_buf, "soundFont item #%u 'channels' #%u is out of range (wanted 1-48, got %" PRId64 ")", i + 1, k + 1, channel->u.integer);
 					goto error;
 				}
+				if(prevchannel < 0 || channel->u.integer > (prevchannel + 1)) {
+					++contiguouschannelsets;
+				}
+				prevchannel = (int)channel->u.integer;
 			}
-			patches_needed = l;
+			patches_needed = contiguouschannelsets;
 		}
 		if(patchMappings->type != json_none) {
 			if(patchMappings->type != json_array) {
@@ -647,7 +654,7 @@ static sflist_presets *sflist_process(const json_value *sflist, const char *base
 	}
 
 	rval->count = presets_to_allocate;
-	rval->presets = calloc(sizeof(BASS_MIDI_FONTEX), rval->count);
+	rval->presets = calloc(sizeof(BASS_MIDI_FONTEX2), rval->count);
 
 	if(!rval->presets) {
 		strcpy(error_buf, "Out of memory");
@@ -725,22 +732,51 @@ static sflist_presets *sflist_process(const json_value *sflist, const char *base
 		fontex.dpreset = -1;
 		fontex.dbank = 0;
 		fontex.dbanklsb = 0;
+		fontex.minchan = 0;
+		fontex.numchan = 48;
 		/* Simplest case, whole bank loading */
 		if(channels->type == json_none && patchMappings->type == json_none) {
 			rval->presets[preset_number++] = fontex;
 		} else if(patchMappings->type == json_none) {
+			int prevchannel = -1;
+			int firstchannel = -1;
 			for(k = 0, l = channels->u.array.length; k < l; ++k) {
-				fontex.dbanklsb = (int)channels->u.array.values[k]->u.integer;
-				rval->presets[preset_number++] = fontex;
+				int channel = (int)channels->u.array.values[k]->u.integer;
+				if(firstchannel < 0) {
+					firstchannel = channel;
+					prevchannel = channel;
+				}
+				if(channel > (prevchannel + 1)) {
+					fontex.minchan = firstchannel;
+					fontex.numchan = prevchannel - firstchannel + 1;
+					rval->presets[preset_number++] = fontex;
+					firstchannel = channel;
+				}
+				prevchannel = channel;
 			}
+			fontex.minchan = firstchannel;
+			fontex.numchan = prevchannel - firstchannel + 1;
+			rval->presets[preset_number++] = fontex;
 		} else if(channels->type == json_none) {
-			sflist_process_patchmappings(rval->presets + preset_number, &fontex, patchMappings, 0);
+			sflist_process_patchmappings(rval->presets + preset_number, &fontex, patchMappings, 0, 48);
 			preset_number += patchMappings->u.array.length;
 		} else {
+			int prevchannel = -1;
+			int firstchannel = -1;
 			for(k = 0, l = channels->u.array.length; k < l; ++k) {
-				sflist_process_patchmappings(rval->presets + preset_number, &fontex, patchMappings, (int)channels->u.array.values[k]->u.integer);
-				preset_number += patchMappings->u.array.length;
+				int channel = (int)channels->u.array.values[k]->u.integer;
+				if(firstchannel < 0) {
+					firstchannel = channel;
+					prevchannel = channel;
+				}
+				if(channel > (prevchannel + 1)) {
+					sflist_process_patchmappings(rval->presets + preset_number, &fontex, patchMappings, firstchannel, prevchannel - firstchannel + 1);
+					preset_number += patchMappings->u.array.length;
+				}
+				prevchannel = channel;
 			}
+			sflist_process_patchmappings(rval->presets + preset_number, &fontex, patchMappings, firstchannel, prevchannel - firstchannel + 1);
+			preset_number += patchMappings->u.array.length;
 		}
 	}
 

@@ -42,7 +42,7 @@ extern "C" {
 
 typedef struct sflist_presets {
 	unsigned int count;
-	BASS_MIDI_FONTEX *presets;
+	BASS_MIDI_FONTEX2 *presets;
 } sflist_presets;
 
 #define sflist_max_error 1024
