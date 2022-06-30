@@ -215,7 +215,11 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="valueToDisplay.sampleRate" id="116"/>
+                            <binding destination="-2" name="value" keyPath="valueToDisplay.sampleRate" id="jhK-B4-LCu">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NumberHertzToStringTransformer</string>
+                                </dictionary>
+                            </binding>
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="51" customClass="ToolTipTextField">

@@ -169,6 +169,7 @@
 		83978E29285C5C0A0076ED21 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */; };
 		83988F0E27BE0A5900A0E89A /* RedundantPlaylistDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
+		839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */; };
@@ -989,6 +990,7 @@
 		83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RedundantPlaylistDataStore.m; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
+		839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NumberHertzToStringTransformer.swift; path = Transformers/NumberHertzToStringTransformer.swift; sourceTree = "<group>"; };
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		839E3B53286595D700880EA2 /* GeneralPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralPane.h; path = Preferences/Preferences/GeneralPane.h; sourceTree = "<group>"; };
@@ -1400,6 +1402,7 @@
 				838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */,
 				834B05E82859C006000B7DC0 /* TotalTimeTransformer.h */,
 				834B05E92859C006000B7DC0 /* TotalTimeTransformer.m */,
+				839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */,
 			);
 			name = Transformers;
 			sourceTree = "<group>";
@@ -2574,6 +2577,7 @@
 				17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */,
 				17E0D6160F520F87005B6FED /* FontSizetoLineHeightTransformer.m in Sources */,
 				17E0D6170F520F87005B6FED /* StringToURLTransformer.m in Sources */,
+				839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */,
 				17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */,
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
 				172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */,

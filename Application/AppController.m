@@ -63,6 +63,10 @@ static AppController *kAppController = nil;
 	NSValueTransformer *totalTimeTransformer = [[TotalTimeTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:totalTimeTransformer
 	                                forName:@"TotalTimeTransformer"];
+	
+	NSValueTransformer *numberHertzToStringTransformer = [[NumberHertzToStringTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:numberHertzToStringTransformer
+									forName:@"NumberHertzToStringTransformer"];
 }
 - (id)init {
 	self = [super init];
