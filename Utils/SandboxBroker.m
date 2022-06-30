@@ -212,6 +212,14 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	return nil;
 }
 
+static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
+		block();
+	} else {
+		dispatch_sync(queue, block);
+	}
+}
+
 - (void)addFolderIfMissing:(NSURL *)folderUrl {
 	if(![folderUrl isFileURL]) return;
 
@@ -237,18 +245,16 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 				return;
 			}
 
-			NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+				NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
-			SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
 
-			if(token) {
-				token.path = [folderUrl path];
-				token.bookmark = bookmark;
-				[pc.viewContext save:&err];
-				if(err) {
-					ALog(@"Error saving bookmark: %@", [err localizedDescription]);
+				if(token) {
+					token.path = [folderUrl path];
+					token.bookmark = bookmark;
 				}
-			}
+			});
 		}
 	}
 }
@@ -285,17 +291,15 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 
 			NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
-			SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
 
-			if(token) {
-				token.path = [url path];
-				token.bookmark = bookmark;
-				token.folder = NO;
-				[pc.viewContext save:&err];
-				if(err) {
-					ALog(@"Error saving bookmark: %@", [err localizedDescription]);
+				if(token) {
+					token.path = [url path];
+					token.bookmark = bookmark;
+					token.folder = NO;
 				}
-			}
+			});
 		}
 	}
 }
