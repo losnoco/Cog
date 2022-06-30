@@ -7,7 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "VisualizationController.h"
+#import <CogAudio/CogAudio-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
