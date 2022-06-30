@@ -107,17 +107,12 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 
 	NSString *s = [url path];
 
-	NSString *lastComponent = [url fragment];
+	NSRange fragmentRange = [s rangeOfString:@"#"
+									 options:NSBackwardsSearch];
 
-	if(lastComponent) {
-		lastComponent = @"#";
-		// Find that last component in the string from the end to make sure
-		// to get the last one
-		NSRange fragmentRange = [s rangeOfString:lastComponent
-										 options:NSBackwardsSearch];
-
+	if(fragmentRange.location != NSNotFound) {
 		// Chop the fragment.
-		NSString *newURLString = [s substringToIndex:fragmentRange.location + fragmentRange.length];
+		NSString *newURLString = [s substringToIndex:fragmentRange.location];
 
 		return [NSURL fileURLWithPath:newURLString];
 	} else {
