@@ -16,13 +16,7 @@
 #import <CoreAudio/CoreAudio.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
-#ifdef __cplusplus
-#import <atomic>
-using std::atomic_int;
-using std::atomic_bool;
-#else
 #import <stdatomic.h>
-#endif
 
 @class BufferChain;
 @class OutputNode;
