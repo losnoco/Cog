@@ -10,9 +10,9 @@
 "Last.fm" = "Last.fm";
 "Scrobble" = "Scrobble";
 "Playlist" = "Playlist";
-"Growl" = "Growl";
+"Notifications" = "Notifications";
 "Appearance" = "Appearance";
-"MIDI" = "MIDI";
+"Synthesis" = "Synthesis";
 "General" = "General";
 
 "Press Key..." = "Press Key...";

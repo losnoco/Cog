@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
+		0A1B412C286F6301008A6A44 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 0A1B412E286F6301008A6A44 /* Localizable.stringsdict */; };
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
 		0A9CEA092861506A00E47168 /* AboutCog.jp2 in Resources */ = {isa = PBXBuildFile; fileRef = 0A9CEA082861506A00E47168 /* AboutCog.jp2 */; };
 		0A9CEA0B286152DF00E47168 /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA0A286152DF00E47168 /* DraggableView.swift */; };
@@ -750,6 +751,8 @@
 		07D971E50ED1DAA800E7602E /* TagEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagEditorController.m; path = TagEditor/TagEditorController.m; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
+		0A1B412D286F6301008A6A44 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		0A1B412F286F6307008A6A44 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
 		0A9CEA082861506A00E47168 /* AboutCog.jp2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = AboutCog.jp2; sourceTree = "<group>"; };
 		0A9CEA0A286152DF00E47168 /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DraggableView.swift; path = Window/DraggableView.swift; sourceTree = "<group>"; };
@@ -1512,6 +1515,7 @@
 		29B97314FDCFA39411CA2CEA /* Cog */ = {
 			isa = PBXGroup;
 			children = (
+				0A1B412E286F6301008A6A44 /* Localizable.stringsdict */,
 				83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */,
 				83D0380E24A40DF2004CF90F /* CogAssets.xcassets */,
 				83859520234FEB35004E9946 /* Cog.entitlements */,
@@ -2462,6 +2466,7 @@
 				83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */,
 				83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */,
 				83BC5AC120E4CE8700631CD4 /* OpenURLPanel.xib in Resources */,
+				0A1B412C286F6301008A6A44 /* Localizable.stringsdict in Resources */,
 				83BC5AC020E4CE7D00631CD4 /* MainMenu.xib in Resources */,
 				83BC5ABF20E4CE7A00631CD4 /* InfoInspector.xib in Resources */,
 				8384915B18083EAB00E7332D /* navigatorTemplate.pdf in Resources */,
@@ -2831,6 +2836,15 @@
 				835C888C22CC1882001B4B3F /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		0A1B412E286F6301008A6A44 /* Localizable.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A1B412D286F6301008A6A44 /* es */,
+				0A1B412F286F6307008A6A44 /* en */,
+			);
+			name = Localizable.stringsdict;
 			sourceTree = "<group>";
 		};
 		17211A7C0D68B7C500911CA9 /* FileTree.xib */ = {

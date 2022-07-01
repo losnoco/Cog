@@ -346,53 +346,59 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	long sec = (long)(tt);
 	hoursAndMinutes = ldiv(sec / 60, 60);
+    
+    NSString *week = NSLocalizedString(@"%1d week(s)", @"week for total");
+    NSString *day = NSLocalizedString(@"%1d day(s)", @"day for total");
+    NSString *hour = NSLocalizedString(@"%1d hour(s)", @"hour for total");
+    NSString *min = NSLocalizedString(@"%1d minute(s)", @"minute for total");
+    NSString *second = NSLocalizedString(@"%1d second(s)", @"second for total");
 
 	if(hoursAndMinutes.quot >= 24) {
 		daysAndHours = ldiv(hoursAndMinutes.quot, 24);
 		if(daysAndHours.quot >= 7) {
 			weeksAndDays = ldiv(daysAndHours.quot, 7);
-			[self setTotalTime:[NSString stringWithFormat:@"%ld week%@ %ld day%@ %ld hour%@ %ld minute%@ %ld second%@",
-			                                              weeksAndDays.quot,
-			                                              weeksAndDays.quot != 1 ? @"s" : @"",
-			                                              weeksAndDays.rem,
-			                                              weeksAndDays.rem != 1 ? @"s" : @"",
-			                                              daysAndHours.rem,
-			                                              daysAndHours.rem != 1 ? @"s" : @"",
-			                                              hoursAndMinutes.rem,
-			                                              hoursAndMinutes.rem != 1 ? @"s" : @"",
-			                                              sec % 60,
-			                                              (sec % 60) != 1 ? @"s" : @""]];
+            
+            NSString *weekCount = [NSString localizedStringWithFormat:week, weeksAndDays.quot];
+            NSString *dayCount = [NSString localizedStringWithFormat:day, weeksAndDays.rem];
+            NSString *hourCount = [NSString localizedStringWithFormat:hour, daysAndHours.rem];
+            NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+            NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+            
+			[self setTotalTime:[NSString stringWithFormat:
+                                NSLocalizedString(@"wdhms", "weeks, days, hours, minutes and seconds"),
+			                                              weekCount, dayCount, hourCount, minuteCount, secCount]];
 		} else {
-			[self setTotalTime:[NSString stringWithFormat:@"%ld day%@ %ld hour%@ %ld minute%@ %ld second%@",
-			                                              daysAndHours.quot,
-			                                              daysAndHours.quot != 1 ? @"s" : @"",
-			                                              daysAndHours.rem,
-			                                              daysAndHours.rem != 1 ? @"s" : @"",
-			                                              hoursAndMinutes.rem,
-			                                              hoursAndMinutes.rem != 1 ? @"s" : @"",
-			                                              sec % 60,
-			                                              (sec % 60) != 1 ? @"s" : @""]];
+            
+            NSString *dayCount = [NSString localizedStringWithFormat:day, daysAndHours.quot];
+            NSString *hourCount = [NSString localizedStringWithFormat:hour, daysAndHours.rem];
+            NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+            NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+            
+            [self setTotalTime:[NSString stringWithFormat:
+                                NSLocalizedString(@"dhms", "days, hours, minutes and seconds"),
+                                                          dayCount, hourCount, minuteCount, secCount]];
 		}
 	} else {
 		if(hoursAndMinutes.quot > 0) {
-			[self setTotalTime:[NSString stringWithFormat:@"%ld hour%@ %ld minute%@ %ld second%@",
-			                                              hoursAndMinutes.quot,
-			                                              hoursAndMinutes.quot != 1 ? @"s" : @"",
-			                                              hoursAndMinutes.rem,
-			                                              hoursAndMinutes.rem != 1 ? @"s" : @"",
-			                                              sec % 60,
-			                                              (sec % 60) != 1 ? @"s" : @""]];
+            NSString *hourCount = [NSString localizedStringWithFormat:hour, hoursAndMinutes.quot];
+            NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+            NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+            
+            [self setTotalTime:[NSString stringWithFormat:
+                                NSLocalizedString(@"hms", "hours, minutes and seconds"),
+                                                          hourCount, minuteCount, secCount]];
 		} else {
 			if(hoursAndMinutes.rem > 0) {
-				[self setTotalTime:[NSString stringWithFormat:@"%ld minute%@ %ld second%@",
-				                                              hoursAndMinutes.rem,
-				                                              hoursAndMinutes.rem != 1 ? @"s" : @"",
-				                                              sec % 60,
-				                                              (sec % 60) != 1 ? @"s" : @""]];
+                NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+                NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+                
+                [self setTotalTime:[NSString stringWithFormat:
+                                    NSLocalizedString(@"ms", "minutes and seconds"),
+                                                              minuteCount, secCount]];
 			} else {
-				[self setTotalTime:[NSString stringWithFormat:@"%ld second%@",
-				                                              sec,
-				                                              sec != 1 ? @"s" : @""]];
+                NSString *secCount = [NSString localizedStringWithFormat:second, sec];
+
+				[self setTotalTime:secCount];
 			}
 		}
 	}
