@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <libopenmpt/libopenmpt.hpp>
+#import <libOpenMPT/libopenmpt.hpp>
 
 #include <vector>
 
