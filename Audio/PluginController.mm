@@ -630,6 +630,10 @@ static NSString *xmlEscapeString(NSString * string) {
 		}
 	}
 
+	if(skip && [classString isEqualToString:@"CueSheetDecoder"]) {
+		classString = @"SilenceDecoder";
+	}
+
 	Class decoder = NSClassFromString(classString);
 
 	return [[decoder alloc] init];
@@ -668,6 +672,10 @@ static NSString *xmlEscapeString(NSString * string) {
 			classString = [readers objectAtIndex:0];
 		}
 	} else {
+		return nil;
+	}
+
+	if(skip && [classString isEqualToString:@"CueSheetMetadataReader"]) {
 		return nil;
 	}
 
