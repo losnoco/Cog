@@ -757,7 +757,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					timeStamp.mSampleTime += ((double)samplesRendered) / streamFormat.mSampleRate;
 
 					for(int i = 0; i < channels; ++i) {
-						cblas_scopy(samplesRendered, &eqBuffer[1024 * i], 1, samplePtr, channels);
+						cblas_scopy(samplesRendered, &eqBuffer[1024 * i], 1, samplePtr + i, channels);
 					}
 				}
 			}
