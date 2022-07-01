@@ -12,7 +12,6 @@
 		83256B4E28665B540036D9C0 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B4D28665B540036D9C0 /* libvorbisfile.3.dylib */; };
 		83256B4F28665BAF0036D9C0 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B4C28665B0A0036D9C0 /* libz.tbd */; };
 		83256B99286662360036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B97286662360036D9C0 /* libmpg123.0.dylib */; };
-		8372349C277AA23F00CD0A77 /* OMPTVersionCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372349B277AA23F00CD0A77 /* OMPTVersionCheck.m */; };
 		83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C182862DB2F0021245F /* Shared.xcconfig */; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
@@ -80,8 +79,6 @@
 		83256D0D28666C7F0036D9C0 /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abi_align.h; sourceTree = "<group>"; };
 		83256D0E28666C7F0036D9C0 /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = true.h; sourceTree = "<group>"; };
 		83256D0F28666C7F0036D9C0 /* id3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = id3.h; sourceTree = "<group>"; };
-		8372349A277AA1F600CD0A77 /* OMPTVersionCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OMPTVersionCheck.h; path = OpenMPT/OMPTVersionCheck.h; sourceTree = "<group>"; };
-		8372349B277AA23F00CD0A77 /* OMPTVersionCheck.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = OMPTVersionCheck.m; path = OpenMPT/OMPTVersionCheck.m; sourceTree = "<group>"; };
 		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -292,8 +289,6 @@
 				83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */,
 				83E5FE721FFF010C00659F0F /* OMPTMetadataReader.h */,
 				83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */,
-				8372349A277AA1F600CD0A77 /* OMPTVersionCheck.h */,
-				8372349B277AA23F00CD0A77 /* OMPTVersionCheck.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -368,7 +363,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83E5FE751FFF010C00659F0F /* OMPTMetadataReader.mm in Sources */,
-				8372349C277AA23F00CD0A77 /* OMPTVersionCheck.m in Sources */,
 				83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */,
 				83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */,
 			);
@@ -429,7 +423,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -482,7 +476,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
