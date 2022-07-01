@@ -10,7 +10,6 @@
 		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
-		0A9CEA042861501700E47168 /* AboutWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A9CEA022861501700E47168 /* AboutWindowController.xib */; };
 		0A9CEA092861506A00E47168 /* AboutCog.jp2 in Resources */ = {isa = PBXBuildFile; fileRef = 0A9CEA082861506A00E47168 /* AboutCog.jp2 */; };
 		0A9CEA0B286152DF00E47168 /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA0A286152DF00E47168 /* DraggableView.swift */; };
 		170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */; };
@@ -103,7 +102,6 @@
 		8316B3932839FFD5004CC392 /* Scenes.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 8316B3922839FFD5004CC392 /* Scenes.scnassets */; };
 		831B99BF27C23E88005A969B /* Cog.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 831B99BE27C23E88005A969B /* Cog.sdef */; };
 		83229C9F283B0095004626A8 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83229C9D283B0095004626A8 /* SpectrumWindowController.m */; };
-		83229CA0283B0095004626A8 /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83229C9E283B0095004626A8 /* SpectrumWindow.xib */; };
 		83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; };
 		83256B69286661FC0036D9C0 /* libmpg123.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
@@ -176,6 +174,8 @@
 		8384916D18083EAB00E7332D /* volume1Template.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915718083EAB00E7332D /* volume1Template.pdf */; };
 		8384916E18083EAB00E7332D /* volume3Template.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8384915818083EAB00E7332D /* volume3Template.pdf */; };
 		83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83922FB6286B1AA900A0B039 /* WebKit.framework */; };
+		839614A2286ED97200D3EEDB /* AboutWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614A0286ED97200D3EEDB /* AboutWindowController.xib */; };
+		839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614AB286EDA5C00D3EEDB /* SpectrumWindow.xib */; };
 		83978E16285C58190076ED21 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83978E15285C58190076ED21 /* FirebaseCrashlytics */; };
 		83978E26285C596F0076ED21 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 83978E25285C596F0076ED21 /* FirebaseAnalytics */; };
 		83978E29285C5C0A0076ED21 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */; };
@@ -748,7 +748,6 @@
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
-		0A9CEA022861501700E47168 /* AboutWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = AboutWindowController.xib; path = Window/AboutWindowController.xib; sourceTree = "<group>"; };
 		0A9CEA082861506A00E47168 /* AboutCog.jp2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = AboutCog.jp2; sourceTree = "<group>"; };
 		0A9CEA0A286152DF00E47168 /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DraggableView.swift; path = Window/DraggableView.swift; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -909,7 +908,6 @@
 		831B99BE27C23E88005A969B /* Cog.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cog.sdef; sourceTree = "<group>"; };
 		83229C9C283B0095004626A8 /* SpectrumWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumWindowController.h; sourceTree = "<group>"; };
 		83229C9D283B0095004626A8 /* SpectrumWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumWindowController.m; sourceTree = "<group>"; };
-		83229C9E283B0095004626A8 /* SpectrumWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumWindow.xib; sourceTree = "<group>"; };
 		83256B672866617F0036D9C0 /* libmpg123.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpg123.0.dylib; path = ThirdParty/mpg123/lib/libmpg123.0.dylib; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		832C1252180BD1E2005507C1 /* Cog.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cog.help; sourceTree = "<group>"; };
@@ -1008,6 +1006,14 @@
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
 		83922FB6286B1AA900A0B039 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		839614A1286ED97200D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AboutWindowController.xib; sourceTree = "<group>"; };
+		839614A4286ED98600D3EEDB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AboutWindowController.strings; sourceTree = "<group>"; };
+		839614A6286ED98800D3EEDB /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AboutWindowController.strings; sourceTree = "<group>"; };
+		839614A8286EDA0400D3EEDB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Equalizer.strings; sourceTree = "<group>"; };
+		839614AA286EDA0600D3EEDB /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Equalizer.strings; sourceTree = "<group>"; };
+		839614AC286EDA5C00D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpectrumWindow.xib; sourceTree = "<group>"; };
+		839614AF286EDA6800D3EEDB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SpectrumWindow.strings; sourceTree = "<group>"; };
+		839614B1286EDA6E00D3EEDB /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SpectrumWindow.strings; sourceTree = "<group>"; };
 		83978E28285C5C0A0076ED21 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
 		83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RedundantPlaylistDataStore.m; sourceTree = "<group>"; };
@@ -1443,7 +1449,6 @@
 				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
 				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
 				0A9CEA012861501700E47168 /* AboutWindowController.swift */,
-				0A9CEA022861501700E47168 /* AboutWindowController.xib */,
 				0A9CEA0A286152DF00E47168 /* DraggableView.swift */,
 			);
 			name = Window;
@@ -1538,11 +1543,13 @@
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
 				832923AE279FAC400048201E /* Cog.q1.json */,
 				831B99BE27C23E88005A969B /* Cog.sdef */,
+				839614A0286ED97200D3EEDB /* AboutWindowController.xib */,
 				830C379F27B95E3000E02BB0 /* Equalizer.xib */,
 				17D1B0D00F6320EA00694C57 /* InfoInspector.xib */,
 				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
 				17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */,
 				17211A7C0D68B7C500911CA9 /* FileTree.xib */,
+				839614AB286EDA5C00D3EEDB /* SpectrumWindow.xib */,
 				178456C00F6320B5007E8021 /* SpotlightPanel.xib */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 				17D1B1DA0F6330D400694C57 /* Feedback.xib */,
@@ -1823,7 +1830,6 @@
 				8377C6B827B900F000E8BC0F /* SpectrumItem.m */,
 				83229C9C283B0095004626A8 /* SpectrumWindowController.h */,
 				83229C9D283B0095004626A8 /* SpectrumWindowController.m */,
-				83229C9E283B0095004626A8 /* SpectrumWindow.xib */,
 			);
 			name = Visualization;
 			sourceTree = "<group>";
@@ -1998,7 +2004,6 @@
 			dependencies = (
 				8372C93C27C7893100E250C9 /* PBXTargetDependency */,
 				83489C6A2782F76900BDCEA2 /* PBXTargetDependency */,
-				8329306F2778860C0010C07E /* PBXTargetDependency */,
 				ED69CBC625BE32B40090B90D /* PBXTargetDependency */,
 				834D793E20E4EFD200C4A5CC /* PBXTargetDependency */,
 				834D793020E4EFCC00C4A5CC /* PBXTargetDependency */,
@@ -2469,6 +2474,8 @@
 				8384916418083EAB00E7332D /* repeatModeAllTemplate.pdf in Resources */,
 				8384916E18083EAB00E7332D /* volume3Template.pdf in Resources */,
 				8384915C18083EAB00E7332D /* nextTemplate.pdf in Resources */,
+				839614A2286ED97200D3EEDB /* AboutWindowController.xib in Resources */,
+				839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */,
 				8384916018083EAB00E7332D /* playTemplate.pdf in Resources */,
 				8384915E18083EAB00E7332D /* pauseTemplate.pdf in Resources */,
 				8384916D18083EAB00E7332D /* volume1Template.pdf in Resources */,
@@ -2503,8 +2510,6 @@
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
 				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
-				83229CA0283B0095004626A8 /* SpectrumWindow.xib in Resources */,
-				0A9CEA042861501700E47168 /* AboutWindowController.xib in Resources */,
 				836F462A28207FA4005B9B87 /* PauseColorful.png in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
@@ -2895,8 +2900,30 @@
 			isa = PBXVariantGroup;
 			children = (
 				830C37A027B95E3000E02BB0 /* Base */,
+				839614A8286EDA0400D3EEDB /* en */,
+				839614AA286EDA0600D3EEDB /* es */,
 			);
 			name = Equalizer.xib;
+			sourceTree = "<group>";
+		};
+		839614A0286ED97200D3EEDB /* AboutWindowController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				839614A1286ED97200D3EEDB /* Base */,
+				839614A4286ED98600D3EEDB /* en */,
+				839614A6286ED98800D3EEDB /* es */,
+			);
+			name = AboutWindowController.xib;
+			sourceTree = "<group>";
+		};
+		839614AB286EDA5C00D3EEDB /* SpectrumWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				839614AC286EDA5C00D3EEDB /* Base */,
+				839614AF286EDA6800D3EEDB /* en */,
+				839614B1286EDA6E00D3EEDB /* es */,
+			);
+			name = SpectrumWindow.xib;
 			sourceTree = "<group>";
 		};
 		8E7575D909F31E930080F1EE /* Localizable.strings */ = {

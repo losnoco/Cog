@@ -28,7 +28,6 @@
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
 		83A3B72C283AE04800CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */; };
 		83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AC57382861A54D009D6F50 /* PathSuggester.m */; };
-		83AC573B2861A54D009D6F50 /* PathSuggester.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83AC57392861A54D009D6F50 /* PathSuggester.xib */; };
 		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
 		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
 		83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */; };
@@ -121,12 +120,14 @@
 		83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83AC57372861A54D009D6F50 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathSuggester.h; sourceTree = "<group>"; };
 		83AC57382861A54D009D6F50 /* PathSuggester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PathSuggester.m; sourceTree = "<group>"; };
-		83AC57392861A54D009D6F50 /* PathSuggester.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PathSuggester.xib; sourceTree = "<group>"; };
 		83AC573E2861B77E009D6F50 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		83B06727180D85B8008E3612 /* MIDIPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPane.h; sourceTree = "<group>"; };
 		83B06728180D85B8008E3612 /* MIDIPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIPane.m; sourceTree = "<group>"; };
 		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
 		83BC5AB320E4C90F00631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
+		83DAD9F1286EDBCD000FAA9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PathSuggester.xib; sourceTree = "<group>"; };
+		83DAD9F3286EDBD2000FAA9A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PathSuggester.strings; sourceTree = "<group>"; };
+		83DAD9F5286EDBD6000FAA9A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PathSuggester.strings; sourceTree = "<group>"; };
 		83EF495D17FBC96A00642E3C /* VolumeBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeBehaviorArrayController.h; sourceTree = "<group>"; };
 		83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeBehaviorArrayController.m; sourceTree = "<group>"; };
 		83F27E651810DD3A00CEF538 /* appearance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "appearance@2x.png"; path = "Icons/appearance@2x.png"; sourceTree = "<group>"; };
@@ -191,6 +192,7 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				83DAD9F0286EDBCD000FAA9A /* PathSuggester.xib */,
 				17E78B680D68C1E3005C5A59 /* Preferences.xib */,
 				8E07ABD90AAC95AF00A4B32F /* Icons */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
@@ -273,7 +275,6 @@
 				8307D30428604D8B000FF8EB /* SandboxPathBehaviorController.m */,
 				83AC57372861A54D009D6F50 /* PathSuggester.h */,
 				83AC57382861A54D009D6F50 /* PathSuggester.m */,
-				83AC57392861A54D009D6F50 /* PathSuggester.xib */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -457,7 +458,6 @@
 				17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */,
 				83F27E701810DD3A00CEF538 /* updates@2x.png in Resources */,
 				17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */,
-				83AC573B2861A54D009D6F50 /* PathSuggester.xib in Resources */,
 				83F27E6B1810DD3A00CEF538 /* appearance@2x.png in Resources */,
 				17C7E5B00DCCC30A003CBCF7 /* playlist.png in Resources */,
 				83F27E6E1810DD3A00CEF538 /* midi@2x.png in Resources */,
@@ -527,6 +527,16 @@
 				8347435F20E6D5A000063D45 /* es */,
 			);
 			name = Preferences.xib;
+			sourceTree = "<group>";
+		};
+		83DAD9F0286EDBCD000FAA9A /* PathSuggester.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				83DAD9F1286EDBCD000FAA9A /* Base */,
+				83DAD9F3286EDBD2000FAA9A /* en */,
+				83DAD9F5286EDBD6000FAA9A /* es */,
+			);
+			name = PathSuggester.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
