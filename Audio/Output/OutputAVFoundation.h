@@ -76,7 +76,6 @@ using std::atomic_long;
 
 	AudioStreamBasicDescription visFormat; // Mono format for vis
 
-	uint32_t deviceChannelConfig;
 	uint32_t streamChannelConfig;
 	uint32_t newChannelConfig;
 
@@ -84,8 +83,6 @@ using std::atomic_long;
 	AVSampleBufferRenderSynchronizer *renderSynchronizer;
 
 	CMAudioFormatDescriptionRef audioFormatDescription;
-
-	AudioChannelLayoutTag streamTag;
 
 	id currentPtsObserver;
 	NSLock *currentPtsLock;
