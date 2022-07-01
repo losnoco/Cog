@@ -7,78 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83256B4A28665A5D0036D9C0 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 83256B4728665A5D0036D9C0 /* README.md */; };
-		83256B4B28665A5D0036D9C0 /* libopenmpt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B4928665A5D0036D9C0 /* libopenmpt.a */; };
-		83256B4E28665B540036D9C0 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B4D28665B540036D9C0 /* libvorbisfile.3.dylib */; };
-		83256B4F28665BAF0036D9C0 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B4C28665B0A0036D9C0 /* libz.tbd */; };
-		83256B99286662360036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B97286662360036D9C0 /* libmpg123.0.dylib */; };
 		83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C182862DB2F0021245F /* Shared.xcconfig */; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
 		83E5FE751FFF010C00659F0F /* OMPTMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */; };
+		83F30AE8286EBD2A0005EF06 /* libOpenMPT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F30A86286EBB420005EF06 /* libOpenMPT.framework */; };
+		83F30AE9286EBD2A0005EF06 /* libOpenMPT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 83F30A86286EBB420005EF06 /* libOpenMPT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		83F30A85286EBB420005EF06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83E5EFBD1FFEF7CC00659F0F;
+			remoteInfo = libOpenMPT;
+		};
+		83F30AE6286EBD130005EF06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83E5EFBC1FFEF7CC00659F0F;
+			remoteInfo = libOpenMPT;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		83F30AEA286EBD2A0005EF06 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				83F30AE9286EBD2A0005EF06 /* libOpenMPT.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		83256B3828665A5D0036D9C0 /* libopenmpt_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libopenmpt_impl.hpp; sourceTree = "<group>"; };
-		83256B3928665A5D0036D9C0 /* libopenmpt_stream_callbacks_fd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt_stream_callbacks_fd.h; sourceTree = "<group>"; };
-		83256B3A28665A5D0036D9C0 /* libopenmpt.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libopenmpt.hpp; sourceTree = "<group>"; };
-		83256B3B28665A5D0036D9C0 /* libopenmpt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt.h; sourceTree = "<group>"; };
-		83256B3C28665A5D0036D9C0 /* libopenmpt_plugin_settings.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libopenmpt_plugin_settings.hpp; sourceTree = "<group>"; };
-		83256B3D28665A5D0036D9C0 /* libopenmpt_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt_internal.h; sourceTree = "<group>"; };
-		83256B3E28665A5D0036D9C0 /* libopenmpt_ext_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libopenmpt_ext_impl.hpp; sourceTree = "<group>"; };
-		83256B3F28665A5D0036D9C0 /* libopenmpt_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt_config.h; sourceTree = "<group>"; };
-		83256B4028665A5D0036D9C0 /* libopenmpt_stream_callbacks_file.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt_stream_callbacks_file.h; sourceTree = "<group>"; };
-		83256B4128665A5D0036D9C0 /* libopenmpt_ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt_ext.h; sourceTree = "<group>"; };
-		83256B4228665A5D0036D9C0 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
-		83256B4328665A5D0036D9C0 /* libopenmpt_plugin_gui.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libopenmpt_plugin_gui.hpp; sourceTree = "<group>"; };
-		83256B4428665A5D0036D9C0 /* libopenmpt_ext.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libopenmpt_ext.hpp; sourceTree = "<group>"; };
-		83256B4528665A5D0036D9C0 /* libopenmpt_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt_version.h; sourceTree = "<group>"; };
-		83256B4628665A5D0036D9C0 /* libopenmpt_stream_callbacks_buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libopenmpt_stream_callbacks_buffer.h; sourceTree = "<group>"; };
-		83256B4728665A5D0036D9C0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		83256B4928665A5D0036D9C0 /* libopenmpt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libopenmpt.a; sourceTree = "<group>"; };
-		83256B4C28665B0A0036D9C0 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		83256B4D28665B540036D9C0 /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ../../ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
-		83256B97286662360036D9C0 /* libmpg123.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libmpg123.0.dylib; sourceTree = "<group>"; };
-		83256CE828666C7F0036D9C0 /* l12tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l12tabs.h; sourceTree = "<group>"; };
-		83256CE928666C7F0036D9C0 /* synth_8bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_8bit.h; sourceTree = "<group>"; };
-		83256CEA28666C7F0036D9C0 /* index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index.h; sourceTree = "<group>"; };
-		83256CEB28666C7F0036D9C0 /* synth_ntom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_ntom.h; sourceTree = "<group>"; };
-		83256CEC28666C7F0036D9C0 /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
-		83256CED28666C7F0036D9C0 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
-		83256CEE28666C7F0036D9C0 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpg123.h; sourceTree = "<group>"; };
-		83256CEF28666C7F0036D9C0 /* dither.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dither.h; sourceTree = "<group>"; };
-		83256CF028666C7F0036D9C0 /* optimize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optimize.h; sourceTree = "<group>"; };
-		83256CF128666C7F0036D9C0 /* getbits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = getbits.h; sourceTree = "<group>"; };
-		83256CF228666C7F0036D9C0 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth.h; sourceTree = "<group>"; };
-		83256CF328666C7F0036D9C0 /* synths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synths.h; sourceTree = "<group>"; };
-		83256CF428666C7F0036D9C0 /* mangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mangle.h; sourceTree = "<group>"; };
-		83256CF528666C7F0036D9C0 /* init_layer12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init_layer12.h; sourceTree = "<group>"; };
-		83256CF628666C7F0036D9C0 /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = frame.h; sourceTree = "<group>"; };
-		83256CF728666C7F0036D9C0 /* parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parse.h; sourceTree = "<group>"; };
-		83256CF828666C7F0036D9C0 /* synth_sse3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_sse3d.h; sourceTree = "<group>"; };
-		83256CF928666C7F0036D9C0 /* l3bandgain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l3bandgain.h; sourceTree = "<group>"; };
-		83256CFA28666C7F0036D9C0 /* mpg123lib_intern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpg123lib_intern.h; sourceTree = "<group>"; };
-		83256CFB28666C7F0036D9C0 /* init_layer3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init_layer3.h; sourceTree = "<group>"; };
-		83256CFC28666C7F0036D9C0 /* getcpuflags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = getcpuflags.h; sourceTree = "<group>"; };
-		83256CFD28666C7F0036D9C0 /* icy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icy.h; sourceTree = "<group>"; };
-		83256CFE28666C7F0036D9C0 /* fmt123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmt123.h; sourceTree = "<group>"; };
-		83256CFF28666C7F0036D9C0 /* newhuffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = newhuffman.h; sourceTree = "<group>"; };
-		83256D0028666C7F0036D9C0 /* synth_mono.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_mono.h; sourceTree = "<group>"; };
-		83256D0128666C7F0036D9C0 /* gapless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gapless.h; sourceTree = "<group>"; };
-		83256D0228666C7F0036D9C0 /* costabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = costabs.h; sourceTree = "<group>"; };
-		83256D0328666C7F0036D9C0 /* l2tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l2tables.h; sourceTree = "<group>"; };
-		83256D0428666C7F0036D9C0 /* swap_bytes_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swap_bytes_impl.h; sourceTree = "<group>"; };
-		83256D0528666C7F0036D9C0 /* icy2utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icy2utf8.h; sourceTree = "<group>"; };
-		83256D0628666C7F0036D9C0 /* l3tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l3tabs.h; sourceTree = "<group>"; };
-		83256D0728666C7F0036D9C0 /* dither_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dither_impl.h; sourceTree = "<group>"; };
-		83256D0828666C7F0036D9C0 /* mpeghead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeghead.h; sourceTree = "<group>"; };
-		83256D0928666C7F0036D9C0 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = huffman.h; sourceTree = "<group>"; };
-		83256D0A28666C7F0036D9C0 /* sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample.h; sourceTree = "<group>"; };
-		83256D0B28666C7F0036D9C0 /* init_costabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init_costabs.h; sourceTree = "<group>"; };
-		83256D0C28666C7F0036D9C0 /* decode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decode.h; sourceTree = "<group>"; };
-		83256D0D28666C7F0036D9C0 /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abi_align.h; sourceTree = "<group>"; };
-		83256D0E28666C7F0036D9C0 /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = true.h; sourceTree = "<group>"; };
-		83256D0F28666C7F0036D9C0 /* id3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = id3.h; sourceTree = "<group>"; };
 		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -91,6 +59,7 @@
 		83E5FE711FFF010C00659F0F /* OMPTDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPTDecoder.h; path = OpenMPT/OMPTDecoder.h; sourceTree = "<group>"; };
 		83E5FE721FFF010C00659F0F /* OMPTMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPTMetadataReader.h; path = OpenMPT/OMPTMetadataReader.h; sourceTree = "<group>"; };
 		83E5FE761FFF076F00659F0F /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libOpenMPT.xcodeproj; path = ../../Frameworks/OpenMPT/libOpenMPT.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,138 +67,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83256B4E28665B540036D9C0 /* libvorbisfile.3.dylib in Frameworks */,
-				83256B4F28665BAF0036D9C0 /* libz.tbd in Frameworks */,
-				83256B99286662360036D9C0 /* libmpg123.0.dylib in Frameworks */,
-				83256B4B28665A5D0036D9C0 /* libopenmpt.a in Frameworks */,
+				83F30AE8286EBD2A0005EF06 /* libOpenMPT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		83256B3528665A5D0036D9C0 /* libopenmpt */ = {
-			isa = PBXGroup;
-			children = (
-				83256B3628665A5D0036D9C0 /* include */,
-				83256B4728665A5D0036D9C0 /* README.md */,
-				83256B4828665A5D0036D9C0 /* lib */,
-			);
-			name = libopenmpt;
-			path = ../../ThirdParty/libopenmpt;
-			sourceTree = "<group>";
-		};
-		83256B3628665A5D0036D9C0 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				83256B3728665A5D0036D9C0 /* libopenmpt */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		83256B3728665A5D0036D9C0 /* libopenmpt */ = {
-			isa = PBXGroup;
-			children = (
-				83256B3828665A5D0036D9C0 /* libopenmpt_impl.hpp */,
-				83256B3928665A5D0036D9C0 /* libopenmpt_stream_callbacks_fd.h */,
-				83256B3A28665A5D0036D9C0 /* libopenmpt.hpp */,
-				83256B3B28665A5D0036D9C0 /* libopenmpt.h */,
-				83256B3C28665A5D0036D9C0 /* libopenmpt_plugin_settings.hpp */,
-				83256B3D28665A5D0036D9C0 /* libopenmpt_internal.h */,
-				83256B3E28665A5D0036D9C0 /* libopenmpt_ext_impl.hpp */,
-				83256B3F28665A5D0036D9C0 /* libopenmpt_config.h */,
-				83256B4028665A5D0036D9C0 /* libopenmpt_stream_callbacks_file.h */,
-				83256B4128665A5D0036D9C0 /* libopenmpt_ext.h */,
-				83256B4228665A5D0036D9C0 /* resource.h */,
-				83256B4328665A5D0036D9C0 /* libopenmpt_plugin_gui.hpp */,
-				83256B4428665A5D0036D9C0 /* libopenmpt_ext.hpp */,
-				83256B4528665A5D0036D9C0 /* libopenmpt_version.h */,
-				83256B4628665A5D0036D9C0 /* libopenmpt_stream_callbacks_buffer.h */,
-			);
-			path = libopenmpt;
-			sourceTree = "<group>";
-		};
-		83256B4828665A5D0036D9C0 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				83256B4928665A5D0036D9C0 /* libopenmpt.a */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		83256B6A286662360036D9C0 /* mpg123 */ = {
-			isa = PBXGroup;
-			children = (
-				83256B6B286662360036D9C0 /* include */,
-				83256B96286662360036D9C0 /* lib */,
-			);
-			name = mpg123;
-			path = ../../ThirdParty/mpg123;
-			sourceTree = "<group>";
-		};
-		83256B6B286662360036D9C0 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				83256CE728666C7F0036D9C0 /* mpg123 */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		83256B96286662360036D9C0 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				83256B97286662360036D9C0 /* libmpg123.0.dylib */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
-		83256CE728666C7F0036D9C0 /* mpg123 */ = {
-			isa = PBXGroup;
-			children = (
-				83256CE828666C7F0036D9C0 /* l12tabs.h */,
-				83256CE928666C7F0036D9C0 /* synth_8bit.h */,
-				83256CEA28666C7F0036D9C0 /* index.h */,
-				83256CEB28666C7F0036D9C0 /* synth_ntom.h */,
-				83256CEC28666C7F0036D9C0 /* reader.h */,
-				83256CED28666C7F0036D9C0 /* debug.h */,
-				83256CEE28666C7F0036D9C0 /* mpg123.h */,
-				83256CEF28666C7F0036D9C0 /* dither.h */,
-				83256CF028666C7F0036D9C0 /* optimize.h */,
-				83256CF128666C7F0036D9C0 /* getbits.h */,
-				83256CF228666C7F0036D9C0 /* synth.h */,
-				83256CF328666C7F0036D9C0 /* synths.h */,
-				83256CF428666C7F0036D9C0 /* mangle.h */,
-				83256CF528666C7F0036D9C0 /* init_layer12.h */,
-				83256CF628666C7F0036D9C0 /* frame.h */,
-				83256CF728666C7F0036D9C0 /* parse.h */,
-				83256CF828666C7F0036D9C0 /* synth_sse3d.h */,
-				83256CF928666C7F0036D9C0 /* l3bandgain.h */,
-				83256CFA28666C7F0036D9C0 /* mpg123lib_intern.h */,
-				83256CFB28666C7F0036D9C0 /* init_layer3.h */,
-				83256CFC28666C7F0036D9C0 /* getcpuflags.h */,
-				83256CFD28666C7F0036D9C0 /* icy.h */,
-				83256CFE28666C7F0036D9C0 /* fmt123.h */,
-				83256CFF28666C7F0036D9C0 /* newhuffman.h */,
-				83256D0028666C7F0036D9C0 /* synth_mono.h */,
-				83256D0128666C7F0036D9C0 /* gapless.h */,
-				83256D0228666C7F0036D9C0 /* costabs.h */,
-				83256D0328666C7F0036D9C0 /* l2tables.h */,
-				83256D0428666C7F0036D9C0 /* swap_bytes_impl.h */,
-				83256D0528666C7F0036D9C0 /* icy2utf8.h */,
-				83256D0628666C7F0036D9C0 /* l3tabs.h */,
-				83256D0728666C7F0036D9C0 /* dither_impl.h */,
-				83256D0828666C7F0036D9C0 /* mpeghead.h */,
-				83256D0928666C7F0036D9C0 /* huffman.h */,
-				83256D0A28666C7F0036D9C0 /* sample.h */,
-				83256D0B28666C7F0036D9C0 /* init_costabs.h */,
-				83256D0C28666C7F0036D9C0 /* decode.h */,
-				83256D0D28666C7F0036D9C0 /* abi_align.h */,
-				83256D0E28666C7F0036D9C0 /* true.h */,
-				83256D0F28666C7F0036D9C0 /* id3.h */,
-			);
-			path = mpg123;
-			sourceTree = "<group>";
-		};
 		83747C172862DB2F0021245F /* Xcode-config */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,10 +113,7 @@
 		83E5EFB21FFEF79000659F0F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				83256B3528665A5D0036D9C0 /* libopenmpt */,
-				83256B4D28665B540036D9C0 /* libvorbisfile.3.dylib */,
-				83256B4C28665B0A0036D9C0 /* libz.tbd */,
-				83256B6A286662360036D9C0 /* mpg123 */,
+				83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -293,6 +134,14 @@
 			name = Classes;
 			sourceTree = "<group>";
 		};
+		83F30A82286EBB420005EF06 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83F30A86286EBB420005EF06 /* libOpenMPT.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -303,10 +152,12 @@
 				83E5EF9F1FFEF78100659F0F /* Sources */,
 				83E5EFA01FFEF78100659F0F /* Frameworks */,
 				83E5EFA11FFEF78100659F0F /* Resources */,
+				83F30AEA286EBD2A0005EF06 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				83F30AE7286EBD130005EF06 /* PBXTargetDependency */,
 			);
 			name = OpenMPT;
 			productName = OpenMPT;
@@ -338,6 +189,12 @@
 			mainGroup = 83E5EF9A1FFEF78100659F0F;
 			productRefGroup = 83E5EFA41FFEF78100659F0F /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 83F30A82286EBB420005EF06 /* Products */;
+					ProjectRef = 83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				83E5EFA21FFEF78100659F0F /* OpenMPT */,
@@ -345,12 +202,21 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		83F30A86286EBB420005EF06 /* libOpenMPT.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = libOpenMPT.framework;
+			remoteRef = 83F30A85286EBB420005EF06 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		83E5EFA11FFEF78100659F0F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83256B4A28665A5D0036D9C0 /* README.md in Resources */,
 				83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -369,6 +235,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83F30AE7286EBD130005EF06 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libOpenMPT;
+			targetProxy = 83F30AE6286EBD130005EF06 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		83E5EFA71FFEF78100659F0F /* Debug */ = {
@@ -487,14 +361,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = ../../ThirdParty/libopenmpt/include;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				LIBRARY_SEARCH_PATHS = (
-					../../ThirdParty/libopenmpt/lib,
-					../../ThirdParty/vorbis/lib,
-					../../ThirdParty/mpg123/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -507,14 +377,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				HEADER_SEARCH_PATHS = ../../ThirdParty/libopenmpt/include;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = OpenMPT/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				LIBRARY_SEARCH_PATHS = (
-					../../ThirdParty/libopenmpt/lib,
-					../../ThirdParty/vorbis/lib,
-					../../ThirdParty/mpg123/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
