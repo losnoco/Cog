@@ -1,81 +1,195 @@
-"FeedbackFailedMessageText" = "Failed";
-"FeedbackFailedInformativeText" = "Feedback failed to send.";
-"FeedbackSuccessMessageText" = "Success";
-"FeedbackSuccessInformativeText" = "Feedback successfully sent!";
+/* (No Comment) */
+"AddButtonTooltip" = "Añadir archivos";
 
-"PlayButtonTooltip" = "Play";
-"StopButtonTooltip" = "Stop";
-"PrevButtonTooltip" = "Previous";
-"NextButtonTooltip" = "Next";
-
-"TimeElapsed" = "%i:%02i";
-"TimeRemaining" = "-%i:%02i";
-
-"AddButtonTooltip" = "Add files";
-"RemoveButtonTooltip" = "Remove selected files";
-"InfoButtonTooltip" = "Information on the selected file";
-"ShuffleButtonTooltip" = "Shuffle mode";
-"RepeatButtonTooltip" = "Repeat mode";
-"RandomizeButtonTooltip" = "Randomize playlist";
-"FileButtonTooltip" = "File drawer";
-
-"replayGainAlbumGain" = "The volume level of playback output will be detected through enumeration, \
-                         re";
-
-"InvalidURLShort" = "Invalid URL";
-"InvalidURLLong" = "The URL is not valid.";
-
-"SwitchToMiniPlayer" = "Switch to Mini Player";
-"SwitchFromMiniPlayer" = "Switch from Mini Player";
-
-"PlayingTrackTooltip" = "Playing";
-"QueuedTrackTooltip" = "Queued";
-"ErrorTrackTooltip" = "Error";
-"StopAfterTrackTooltip" = "Stop After Track";
-
-"PlaylistHeaderContextMenuTitle" = "Playlist Header Context Menu";
-
-"PlaylistStatusColumn" = "Status";
-"PlaylistIndexColumn" = "Index";
-
-"PlaylistRandomizationAction" = "Playlist Randomization";
-
-"SkipAction" = "Skip";
-
+/* (No Comment) */
 "CogTitle" = "Cog";
 
-"PreferencesTitle" = "Preferences";
-
-"ProgressActionLoader" = "playlist loader inserting files";
-"ProgressSubActionLoaderListingFiles" = "collecting files";
-"ProgressSubActionLoaderFilteringContainerFiles" = "handling container file types";
-"ProgressSubActionLoaderFilteringFiles" = "eliminating unsupported file types";
-"ProgressSubActionLoaderFilteringContainedFiles" = "eliminating unsupported file types from containers";
-"ProgressSubActionLoaderAddingEntries" = "creating and adding playlist entries";
-
-"ProgressActionLoadingMetadata" = "loading metadata for tracks";
-"ProgressSubActionLoadingMetadata" = "processing files";
-"ProgressSubActionMetadataApply" = "applying info to playlist storage";
-
-"ErrorMetadata" = "Unable to retrieve metadata.";
-"ErrorMessageBadFile" = "Unable to parse metadata for bad file.";
-"ErrorInvalidTrackId" = "Invalid track ID sent to SQLite request.";
-"ErrorSqliteProblem" = "General problem accessing track from SQLite database.";
-"ErrorTrackMissing" = "Track entry is missing from SQLite database.";
-
-"TimeLastPlayed" = "Last played";
-"TimeFirstSeen" = "First seen";
-
-"GainAlbumGain" = "Album Gain";
-"GainAlbumGainPeak" = "Album Gain plus Peak";
-"GainAlbumPeak" = "Album Peak";
-"GainTrackGain" = "Track Gain";
-"GainTrackGainPeak" = "Track Gain plus Peak";
-"GainTrackPeak" = "Track Peak";
-"GainVolumeScale" = "Volume Scale";
-"GainNone" = "None";
-
-"CrashlyticsConsentTitle" = "Crashlytics crash collection";
-"CrashlyticsConsentText" = "Would you like to allow Crashlytics to submit crash reports? You may turn this off again in Preferences. We won't ask you again.";
-"ConsentYes" = "Yes";
+/* (No Comment) */
 "ConsentNo" = "No";
+
+/* (No Comment) */
+"ConsentYes" = "Sí";
+
+/* (No Comment) */
+"CrashlyticsConsentText" = "¿Te gustaría permitir que Crashlytics envíe informes de fallos? Puedes volver a desactivarlo en Preferencias. No te volveremos a preguntar.";
+
+/* (No Comment) */
+"CrashlyticsConsentTitle" = "Colección de fallos de Crashlytics";
+
+/* (No Comment) */
+"ErrorInvalidTrackId" = "ID de pista inválida enviada a la solicitud de SQLite.";
+
+/* (No Comment) */
+"ErrorMessageBadFile" = "No se han podido analizar los metadatos de un archivo defectuoso.";
+
+/* (No Comment) */
+"ErrorMetadata" = "No se pueden recuperar los metadatos.";
+
+/* (No Comment) */
+"ErrorSqliteProblem" = "Problema general de acceso a la pista desde la base de datos SQLite.";
+
+/* (No Comment) */
+"ErrorTrackMissing" = "Falta una entrada de pista en la base de datos SQLite.";
+
+/* (No Comment) */
+"ErrorTrackTooltip" = "Error";
+
+/* (No Comment) */
+"FeedbackFailedInformativeText" = "No se pudieron enviar los comentarios.";
+
+/* (No Comment) */
+"FeedbackFailedMessageText" = "Ha fallado";
+
+/* (No Comment) */
+"FeedbackSuccessInformativeText" = "¡Comentarios enviados con éxito!";
+
+/* (No Comment) */
+"FeedbackSuccessMessageText" = "Éxito";
+
+/* (No Comment) */
+"FileButtonTooltip" = "Bandeja de archivos";
+
+/* (No Comment) */
+"GainAlbumGain" = "Ganancia del álbum";
+
+/* (No Comment) */
+"GainAlbumGainPeak" = "Ganancia del álbum más pico";
+
+/* (No Comment) */
+"GainAlbumPeak" = "Pico del álbum";
+
+/* (No Comment) */
+"GainNone" = "Ninguna";
+
+/* (No Comment) */
+"GainTrackGain" = "Ganancia de pista";
+
+/* (No Comment) */
+"GainTrackGainPeak" = "Ganancia de pista más pico";
+
+/* (No Comment) */
+"GainTrackPeak" = "Pico de pista";
+
+/* (No Comment) */
+"GainVolumeScale" = "Escala de volumen";
+
+/* (No Comment) */
+"InfoButtonTooltip" = "Información sobre el archivo seleccionado";
+
+/* (No Comment) */
+"InvalidURLLong" = "La URL no es válida.";
+
+/* (No Comment) */
+"InvalidURLShort" = "URL no válida";
+
+/* (No Comment) */
+"NextButtonTooltip" = "Siguiente";
+
+/* No comment provided by engineer. */
+"PauseButtonTooltip" = "Pausar";
+
+/* (No Comment) */
+"PlayButtonTooltip" = "Reproducir";
+
+/* (No Comment) */
+"PlayingTrackTooltip" = "Reproduciendo";
+
+/* (No Comment) */
+"PlaylistHeaderContextMenuTitle" = "Menú contextual del encabezado de la lista de reproducción";
+
+/* (No Comment) */
+"PlaylistIndexColumn" = "Índice";
+
+/* (No Comment) */
+"PlaylistRandomizationAction" = "Aleatorización de la lista";
+
+/* (No Comment) */
+"PlaylistStatusColumn" = "Estado";
+
+/* (No Comment) */
+"PreferencesTitle" = "Preferencias";
+
+/* (No Comment) */
+"PrevButtonTooltip" = "Anterior";
+
+/* (No Comment) */
+"ProgressActionLoader" = "cargador de listas de reproducción insertando archivos";
+
+/* (No Comment) */
+"ProgressActionLoadingMetadata" = "cargando metadatos para pistas";
+
+/* (No Comment) */
+"ProgressSubActionLoaderAddingEntries" = "creando y agregando entradas en la lista";
+
+/* (No Comment) */
+"ProgressSubActionLoaderFilteringContainedFiles" = "eliminando los tipos de archivos no admitidos de los contenedores";
+
+/* (No Comment) */
+"ProgressSubActionLoaderFilteringContainerFiles" = "manejando tipos de archivos contenedores";
+
+/* (No Comment) */
+"ProgressSubActionLoaderFilteringFiles" = "eliminando tipos de archivos no compatibles";
+
+/* (No Comment) */
+"ProgressSubActionLoaderListingFiles" = "recopilando archivos";
+
+/* (No Comment) */
+"ProgressSubActionLoadingMetadata" = "procesando archivos";
+
+/* (No Comment) */
+"ProgressSubActionMetadataApply" = "aplicando la información al almacenamiento de la listas";
+
+/* (No Comment) */
+"QueuedTrackTooltip" = "En cola";
+
+/* (No Comment) */
+"RandomizeButtonTooltip" = "Aleatorizar la lista de reproducción";
+
+/* (No Comment) */
+"RemoveButtonTooltip" = "Eliminar archivos seleccionados";
+
+/* (No Comment) */
+"RepeatButtonTooltip" = "Modo de repetición";
+
+/* (No Comment) */
+"replayGainAlbumGain" = "El nivel de volumen de la salida de reproducción se detectará a través de la enumeración, \n                         re";
+
+/* (No Comment) */
+"ShuffleButtonTooltip" = "Modo aleatorio";
+
+/* (No Comment) */
+"SkipAction" = "Saltarse";
+
+/* (No Comment) */
+"StopAfterTrackTooltip" = "Detener después de esta pista";
+
+/* (No Comment) */
+"StopButtonTooltip" = "Detener";
+
+/* (No Comment) */
+"SwitchFromMiniPlayer" = "Volver a reproductor completo";
+
+/* (No Comment) */
+"SwitchToMiniPlayer" = "Cambiar a minirreproductor";
+
+/* (No Comment) */
+"TimeElapsed" = "%i:%02i";
+
+/* (No Comment) */
+"TimeFirstSeen" = "Visto por primera vez";
+
+/* (No Comment) */
+"TimeLastPlayed" = "Reproducido por última vez";
+
+/* (No Comment) */
+"TimeRemaining" = "-%i:%02i";
+
+/* Version string */
+"Version %@ (%@)" = "Versión %1$@ (%2$@)";
+
+"Total duration: %@" = "Duración total: %@";
+
+"wdhms" = "%@, %@, %@, %@ y %@";
+"dhms" = "%@, %@, %@ y %@";
+"hms" = "%@, %@ y %@";
+"ms" = "%@ y %@";

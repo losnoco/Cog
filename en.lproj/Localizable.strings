@@ -79,3 +79,10 @@
 "CrashlyticsConsentText" = "Would you like to allow Crashlytics to submit crash reports? You may turn this off again in Preferences. We won't ask you again.";
 "ConsentYes" = "Yes";
 "ConsentNo" = "No";
+
+"Total duration: %@" = "Total duration: %@";
+
+"wdhms" = "%@, %@, %@, %@ and %@";
+"dhms" = "%@, %@, %@ and %@";
+"hms" = "%@, %@ and %@";
+"ms" = "%@ and %@";

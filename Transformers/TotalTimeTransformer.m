@@ -22,7 +22,8 @@
 	if([value isKindOfClass:[NSString class]]) {
 		NSString *string = (NSString *)value;
 		if([string length] > 0) {
-			return [@"Total Duration: " stringByAppendingString:string];
+			//return [@"Total Duration: " stringByAppendingString:string];
+            return [NSString localizedStringWithFormat:NSLocalizedString(@"Total duration: %@", @"Total duration for status"), string];
 		}
 	}
 
