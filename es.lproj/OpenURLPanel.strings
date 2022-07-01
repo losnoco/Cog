@@ -1,9 +1,9 @@
-
 /* Class = "NSWindow"; title = "Open URL"; ObjectID = "5"; */
-"5.title" = "Open URL";
+"5.title" = "Abrir URL";
 
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "23"; */
-"23.title" = "OK";
+"23.title" = "Aceptar";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "24"; */
-"24.title" = "Cancel";
+"24.title" = "Cancelar";
+

@@ -1,21 +1,24 @@
-
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "71"; */
-"71.title" = "Text Cell";
+"71.title" = "Celda de texto";
 
 /* Class = "NSMenu"; title = "Menu"; ObjectID = "110"; */
-"110.title" = "Menu";
+"110.title" = "Menú";
 
 /* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "112"; */
-"112.title" = "Show in Finder";
+"112.title" = "Mostrar en el Finder";
 
 /* Class = "NSMenuItem"; title = "Add to Playlist"; ObjectID = "119"; */
-"119.title" = "Add to Playlist";
+"119.title" = "Añadir a la lista";
 
 /* Class = "NSMenuItem"; title = "Set as Root"; ObjectID = "124"; */
-"124.title" = "Set as Root";
+"124.title" = "Establecer como raíz";
 
 /* Class = "NSMenuItem"; title = "Set as Playlist"; ObjectID = "129"; */
-"129.title" = "Set as Playlist";
+"129.title" = "Establecer como lista";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "147"; */
-"147.title" = "Box";
+"147.title" = "Caja";
+
+/* Class = "NSButtonCell"; title = "Choose"; ObjectID = "vRe-3U-Nxj"; */
+"vRe-3U-Nxj.title" = "Elegir";
+
