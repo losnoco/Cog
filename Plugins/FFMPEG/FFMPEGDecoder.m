@@ -1009,7 +1009,7 @@ static uint8_t reverse_bits[0x100];
 	return @[
 		@[@"Windows Media Audio File", @"song.icns", @"wma", @"asf"],
 		@[@"TAK Audio File", @"song.icns", @"tak"],
-		@[@"MPEG-4 Audio File", @"m4a.icns", @"mp4", @"m4a"],
+		@[@"MPEG-4 Audio File", @"m4a.icns", @"mp4", @"m4a", @"m4b", @"m4r"],
 		@[@"MPEG-4 AAC Audio File", @"song.icns", @"aac"],
 		@[@"MPEG Audio File", @"mp3.icns", @"mp3", @"m2a", @"mpa"],
 		@[@"Monkey's Audio File", @"ape.icns", @"ape"],

@@ -585,6 +585,8 @@
 				<string>sxd</string>
 				<string>sxd2</string>
 				<string>sxd3</string>
+				<string>szd1</string>
+				<string>szd3</string>
 				<string>tad</string>
 				<string>tec</string>
 				<string>tgq</string>
@@ -765,6 +767,8 @@
 			<array>
 				<string>mp4</string>
 				<string>m4a</string>
+				<string>m4b</string>
+				<string>m4r</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>m4a.icns</string>
