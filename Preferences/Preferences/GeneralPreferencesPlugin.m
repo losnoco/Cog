@@ -9,6 +9,7 @@
 #import "GeneralPreferencesPlugin.h"
 #import "ColorToValueTransformer.h"
 #import "PathToFileTransformer.h"
+#import "TimeIntervalToStringTransformer.h"
 
 @implementation GeneralPreferencesPlugin
 
@@ -20,6 +21,10 @@
 	NSValueTransformer *colorToValueTransformer = [[ColorToValueTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:colorToValueTransformer
 	                                forName:@"ColorToValueTransformer"];
+
+	NSValueTransformer *timeIntervalToStringTransformer = [[TimeIntervalToStringTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:timeIntervalToStringTransformer
+	                                forName:@"TimeIntervalToStringTransformer"];
 }
 
 + (NSArray *)preferencePanes {

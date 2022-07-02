@@ -17,6 +17,8 @@
 	CPlayer* m_player;
 	Copl* m_emu;
 
+	double sampleRate;
+
 	unsigned int subsong, samples_todo;
 
 	id<CogSource> source;

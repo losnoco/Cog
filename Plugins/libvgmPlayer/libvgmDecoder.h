@@ -19,6 +19,9 @@
 	DATA_LOADER* dLoad;
 	PlayerA* mainPlr;
 	id<CogSource> source;
+	double sampleRate;
+	long loopCount;
+	double fadeTime;
 	long length;
 	BOOL trackEnded;
 }

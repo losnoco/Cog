@@ -17,7 +17,7 @@ extern gme_err_t readCallback(void* data, void* out, int count);
 @interface GameDecoder : NSObject <CogDecoder> {
 	Music_Emu* emu;
 	id<CogSource> source;
-	long sampleRate;
+	double sampleRate;
 	long length;
 	long fade;
 	NSString* codec;

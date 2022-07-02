@@ -53,10 +53,15 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		return NO;
 	}
 
-	sampleRate = 44100;
+	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
 
 	if(type == gme_spc_type || type == gme_sfm_type)
-		sampleRate = 32000;
+		sampleRate = 32000.0;
 
 	emu = gme_new_emu(type, (int)sampleRate);
 	if(!emu) {
@@ -109,16 +114,30 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		length = info->length;
 	} else if(info->loop_length > 0) {
 		DLog(@"Using loop length: %i", info->loop_length);
-		length = info->intro_length + 2 * info->loop_length;
+		int loopCount = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultLoopCount"] intValue];
+		if(loopCount < 0) {
+			loopCount = 1;
+		} else if(loopCount > 10) {
+			loopCount = 10;
+		}
+		length = info->intro_length + loopCount * info->loop_length;
 	} else {
-		length = 150000;
+		double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+		if(defaultLength < 0) {
+			defaultLength = 150.0;
+		}
+		length = (int)ceil(defaultLength * 1000.0);
 		DLog(@"Setting default: %li", length);
 	}
 
 	if(info->fade_length >= 0) {
 		fade = info->fade_length;
 	} else {
-		fade = 8000;
+		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		if(defaultFade < 0) {
+			defaultFade = 0;
+		}
+		fade = (int)ceil(defaultFade * 1000.0);
 	}
 
 	gme_free_info(info);
@@ -143,7 +162,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 - (NSDictionary *)properties {
 	return @{ @"bitrate": @(0),
 		      @"sampleRate": @(sampleRate),
-		      @"totalFrames": @((long)(length * ((float)sampleRate * 0.001))),
+		      @"totalFrames": @((long)(length * (sampleRate * 0.001))),
 		      @"bitsPerSample": @(sizeof(short) * 8), // Samples are short
 		      @"channels": @(2), // output from gme_play is in stereo
 		      @"seekable": @(YES),
@@ -176,7 +195,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 
 - (long)seek:(long)frame {
 	gme_err_t error;
-	error = gme_seek(emu, frame / 44.1);
+	error = gme_seek(emu, frame * sampleRate * 0.001);
 	if(error) {
 		return -1;
 	}

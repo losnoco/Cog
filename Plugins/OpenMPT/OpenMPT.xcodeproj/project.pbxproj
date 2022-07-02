@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		833A899C286FF3150022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A899B286FF3150022E036 /* Cocoa.framework */; };
 		83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C182862DB2F0021245F /* Shared.xcconfig */; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
@@ -47,6 +48,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		833A899B286FF3150022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				833A899C286FF3150022E036 /* Cocoa.framework in Frameworks */,
 				83F30AE8286EBD2A0005EF06 /* libOpenMPT.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,6 +116,7 @@
 		83E5EFB21FFEF79000659F0F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				833A899B286FF3150022E036 /* Cocoa.framework */,
 				83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */,
 			);
 			name = Frameworks;

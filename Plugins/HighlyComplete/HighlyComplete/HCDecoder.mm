@@ -1205,8 +1205,17 @@ static int usf_info(void *context, const char *name, const char *value) {
 	tagFadeMs = info.tag_fade_ms;
 
 	if(!tagLengthMs) {
-		tagLengthMs = (2 * 60 + 30) * 1000;
-		tagFadeMs = 8000;
+		double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		if(defaultLength < 0) {
+			defaultLength = 150.0;
+		}
+		if(defaultFade < 0) {
+			defaultFade = 0;
+		}
+
+		tagLengthMs = (int)ceil(defaultLength * 1000.0);
+		tagFadeMs = (int)ceil(defaultFade * 1000.0);
 	}
 
 	replayGainAlbumGain = info.albumGain;
