@@ -196,25 +196,6 @@
 			}
 		}
 
-		if(nil == image) {
-			// Try to load image from external file
-
-			NSString *path = [[url path] stringByDeletingLastPathComponent];
-
-			// Gather list of candidate image files
-
-			NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
-			NSArray *types = @[@"jpg", @"jpeg", @"png", @"gif", @"webp", @"avif"];
-			NSArray *imageFileNames = [fileNames pathsMatchingExtensions:types];
-
-			for(NSString *fileName in imageFileNames) {
-				if([TagLibMetadataReader isCoverFile:fileName]) {
-					image = [NSData dataWithContentsOfFile:[path stringByAppendingPathComponent:fileName]];
-					break;
-				}
-			}
-		}
-
 		if(nil != image) {
 			[dict setObject:image forKey:@"albumArt"];
 		}
@@ -223,19 +204,6 @@
 	[sandboxBroker endFolderAccess:sbHandle];
 
 	return dict;
-}
-
-+ (BOOL)isCoverFile:(NSString *)fileName {
-	for(NSString *coverFileName in [TagLibMetadataReader coverNames]) {
-		if([[[[fileName lastPathComponent] stringByDeletingPathExtension] lowercaseString] hasSuffix:coverFileName]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-+ (NSArray *)coverNames {
-	return @[@"cover", @"folder", @"album", @"front"];
 }
 
 + (NSArray *)fileTypes {

@@ -642,6 +642,19 @@ static NSString *xmlEscapeString(NSString * string) {
 	return [[decoder alloc] init];
 }
 
++ (BOOL)isCoverFile:(NSString *)fileName {
+	for(NSString *coverFileName in [PluginController coverNames]) {
+		if([[[[fileName lastPathComponent] stringByDeletingPathExtension] lowercaseString] hasSuffix:coverFileName]) {
+			return true;
+		}
+	}
+	return false;
+}
+
++ (NSArray *)coverNames {
+	return @[@"cover", @"folder", @"album", @"front"];
+}
+
 - (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip {
 	NSString *urlScheme = [url scheme];
 	if([urlScheme isEqualToString:@"http"] ||
@@ -651,40 +664,76 @@ static NSString *xmlEscapeString(NSString * string) {
 	NSDictionary *cacheData = cache_access_metadata(url);
 	if(cacheData) return cacheData;
 
-	NSString *ext = [url pathExtension];
-	NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
-	NSString *classString;
-	if(readers) {
-		if([readers count] > 1) {
-			if(skip) {
-				NSMutableArray *_readers = [readers mutableCopy];
-				for(int i = 0; i < [_readers count];) {
-					if([[_readers objectAtIndex:i] isEqualToString:@"CueSheetMetadataReader"])
-						[_readers removeObjectAtIndex:i];
-					else
-						++i;
+	do {
+		NSString *ext = [url pathExtension];
+		NSArray *readers = [metadataReaders objectForKey:[ext lowercaseString]];
+		NSString *classString;
+		if(readers) {
+			if([readers count] > 1) {
+				if(skip) {
+					NSMutableArray *_readers = [readers mutableCopy];
+					for(int i = 0; i < [_readers count];) {
+						if([[_readers objectAtIndex:i] isEqualToString:@"CueSheetMetadataReader"])
+							[_readers removeObjectAtIndex:i];
+						else
+							++i;
+					}
+					cacheData = [CogMetadataReaderMulti metadataForURL:url readers:_readers];
+					break;
 				}
-				cacheData = [CogMetadataReaderMulti metadataForURL:url readers:_readers];
-				cache_insert_metadata(url, cacheData);
-				return cacheData;
+				cacheData = [CogMetadataReaderMulti metadataForURL:url readers:readers];
+				break;
+			} else {
+				classString = [readers objectAtIndex:0];
 			}
-			cacheData = [CogMetadataReaderMulti metadataForURL:url readers:readers];
-			cache_insert_metadata(url, cacheData);
-			return cacheData;
 		} else {
-			classString = [readers objectAtIndex:0];
+			cacheData = nil;
+			break;
 		}
-	} else {
-		return nil;
+
+		if(skip && [classString isEqualToString:@"CueSheetMetadataReader"]) {
+			cacheData = nil;
+			break;
+		}
+
+		Class metadataReader = NSClassFromString(classString);
+
+		cacheData = [metadataReader metadataForURL:url];
+	} while(0);
+
+	if(cacheData == nil) {
+		cacheData = [NSDictionary dictionary];
 	}
 
-	if(skip && [classString isEqualToString:@"CueSheetMetadataReader"]) {
-		return nil;
+	if(cacheData) {
+		NSData *image = [cacheData objectForKey:@"albumArt"];
+
+		if(nil == image) {
+			// Try to load image from external file
+
+			NSString *path = [[url path] stringByDeletingLastPathComponent];
+
+			// Gather list of candidate image files
+
+			NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+			NSArray *types = @[@"jpg", @"jpeg", @"png", @"gif", @"webp", @"avif"];
+			NSArray *imageFileNames = [fileNames pathsMatchingExtensions:types];
+
+			for(NSString *fileName in imageFileNames) {
+				if([PluginController isCoverFile:fileName]) {
+					image = [NSData dataWithContentsOfFile:[path stringByAppendingPathComponent:fileName]];
+					break;
+				}
+			}
+
+			if(image) {
+				NSMutableDictionary *data = [cacheData mutableCopy];
+				[data setValue:image forKey:@"albumArt"];
+				cacheData = data;
+			}
+		}
 	}
 
-	Class metadataReader = NSClassFromString(classString);
-
-	cacheData = [metadataReader metadataForURL:url];
 	cache_insert_metadata(url, cacheData);
 	return cacheData;
 }
