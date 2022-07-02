@@ -234,6 +234,18 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 - (BOOL)open:(id<CogSource>)s {
 	int track_num = [[[s url] fragment] intValue];
 
+	loopCount = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultLoopCount"] intValue];
+	if(loopCount < 1) {
+		loopCount = 1;
+	} else if(loopCount > 10) {
+		loopCount = 10;
+	}
+
+	fadeTime = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeTime"] doubleValue];
+	if(fadeTime < 0.0) {
+		fadeTime = 0.0;
+	}
+
 	NSString *path = [[s url] absoluteString];
 	NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
 	if(fragmentRange.location != NSNotFound) {
@@ -262,8 +274,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 
 	vcfg.allow_play_forever = 1;
 	vcfg.play_forever = playForever;
-	vcfg.loop_count = 2;
-	vcfg.fade_time = 10;
+	vcfg.loop_count = loopCount;
+	vcfg.fade_time = fadeTime;
 	vcfg.fade_delay = 0;
 	vcfg.ignore_loop = 0;
 

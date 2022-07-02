@@ -88,7 +88,6 @@ static void PlayerLogCallback(void* userParam, PlayerBase* player, UINT8 level, 
 	return;
 }
 
-const int sampleRate = 44100;
 const int numChannels = 2;
 const int numBitsPerSample = 24;
 const int smplAlloc = 2048;
@@ -112,8 +111,24 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		return NO;
 	}
 
+	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+
+	loopCount = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultLoopCount"] longValue];
+	if(loopCount < 1) {
+		loopCount = 1;
+	} else if(loopCount > 10) {
+		loopCount = 10;
+	}
+
+	fadeTime = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+
 	BOOL repeatOne = IsRepeatOneSet();
-	uint32_t maxLoops = repeatOne ? 0 : 2;
+	uint32_t maxLoops = repeatOne ? 0 : (uint32_t)loopCount;
 
 	mainPlr = new PlayerA;
 	mainPlr->RegisterPlayerEngine(new VGMPlayer);
@@ -127,12 +142,12 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		PlayerA::Config pCfg = mainPlr->GetConfiguration();
 		pCfg.masterVol = masterVol;
 		pCfg.loopCount = maxLoops;
-		pCfg.fadeSmpls = sampleRate * 4; // fade over 4 seconds
+		pCfg.fadeSmpls = (int)ceil(sampleRate * fadeTime); // fade over configured duration
 		pCfg.endSilenceSmpls = sampleRate / 2; // 0.5 seconds of silence at the end
 		pCfg.pbSpeed = 1.0;
 		mainPlr->SetConfiguration(pCfg);
 	}
-	mainPlr->SetOutputSettings(sampleRate, numChannels, numBitsPerSample, smplAlloc);
+	mainPlr->SetOutputSettings((int)ceil(sampleRate), numChannels, numBitsPerSample, smplAlloc);
 
 	[source seek:0 whence:SEEK_END];
 	size_t size = [source tell];
@@ -198,7 +213,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		return 0;
 
 	BOOL repeatOne = IsRepeatOneSet();
-	uint32_t maxLoops = repeatOne ? 0 : 2;
+	uint32_t maxLoops = repeatOne ? 0 : (uint32_t)loopCount;
 
 	PlayerBase* player = mainPlr->GetPlayer();
 	mainPlr->SetLoopCount(maxLoops);

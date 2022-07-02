@@ -17,6 +17,8 @@
 	int32_t *buffer;
 	int trackNumber;
 
+	double sampleRate;
+
 	long totalFrames;
 	long framesLength;
 	long framesFade;

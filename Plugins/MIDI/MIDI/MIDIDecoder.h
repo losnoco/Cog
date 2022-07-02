@@ -30,6 +30,8 @@ class BMPlayer;
 	BOOL soundFontsAssigned;
 	BOOL isLooped;
 
+	double sampleRate;
+
 	long totalFrames;
 	long framesLength;
 	long framesFade;

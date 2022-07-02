@@ -39,6 +39,13 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
+	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+
 	std::vector<char> data(static_cast<std::size_t>(size));
 
 	[source read:data.data() amount:size];
@@ -71,7 +78,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 
 		mod->select_subsong(track_num);
 
-		length = mod->get_duration_seconds() * 44100.0;
+		length = mod->get_duration_seconds() * sampleRate;
 
 		mod->set_repeat_count(IsRepeatOneSet() ? -1 : 0);
 		mod->set_render_param(openmpt::module::RENDER_MASTERGAIN_MILLIBEL, 0);
@@ -91,7 +98,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 
 - (NSDictionary *)properties {
 	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(44100),
+		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(32),
 		      @"floatingPoint": @(YES),
@@ -114,7 +121,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 		if(framesToRender > frames)
 			framesToRender = frames;
 
-		std::size_t count = mod->read_interleaved_stereo(44100, framesToRender, ((float *)buf) + total * 2);
+		std::size_t count = mod->read_interleaved_stereo(sampleRate, framesToRender, ((float *)buf) + total * 2);
 		if(count == 0)
 			break;
 
@@ -128,7 +135,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 }
 
 - (long)seek:(long)frame {
-	mod->set_position_seconds(frame * (1.0 / 44100.0));
+	mod->set_position_seconds(frame / sampleRate);
 
 	return frame;
 }

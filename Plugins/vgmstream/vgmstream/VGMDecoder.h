@@ -30,6 +30,8 @@
 
 	BOOL playForever;
 	BOOL canPlayForever;
+	int loopCount;
+	double fadeTime;
 	int sampleRate;
 	int channels;
 	int bitrate;

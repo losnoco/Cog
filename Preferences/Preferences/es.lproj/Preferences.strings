@@ -199,3 +199,44 @@
 /* Class = "NSButtonCell"; title = "Send crash reports and usage data"; ObjectID = "zQ2-6O-3Og"; */
 "zQ2-6O-3Og.title" = "Enviar informes de fallas y datos de uso";
 
+/* Class = "NSTextFieldCell"; title = "Default loop count:"; ObjectID = "Fgm-Vs-tgU"; */
+"Fgm-Vs-tgU.title" = "Default loop count:";
+
+/* Class = "NSTextFieldCell"; title = "Hz"; ObjectID = "0Am-5Y-EKq"; */
+"0Am-5Y-EKq.title" = "Hz";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1Cb-TU-E0q"; */
+"1Cb-TU-E0q.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1Yq-6f-Uho"; */
+"1Yq-6f-Uho.title" = "Item 2";
+
+/* Class = "NSButtonCell"; title = "Reset to defaults"; ObjectID = "1y7-iZ-BhE"; */
+"1y7-iZ-BhE.title" = "Reset to defaults";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "3Gx-cs-3B0"; */
+"3Gx-cs-3B0.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "7un-em-D8r"; */
+"7un-em-D8r.title" = "Celda de vista de tabla";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "99B-Tx-dPH"; */
+"99B-Tx-dPH.title" = "Item 2";
+
+/* Class = "NSTextFieldCell"; title = "Sample rate:"; ObjectID = "A9I-fr-vHp"; */
+"A9I-fr-vHp.title" = "Sample rate:";
+
+/* Class = "NSTextFieldCell"; title = "Default play time:"; ObjectID = "AQZ-ku-F8u"; */
+"AQZ-ku-F8u.title" = "Default play time:";
+
+/* Class = "NSTextFieldCell"; title = "(will be preferred if possible)"; ObjectID = "POG-ai-6D2"; */
+"POG-ai-6D2.title" = "(will be preferred if possible)";
+
+/* Class = "NSTextFieldCell"; title = "Default fade time:"; ObjectID = "UdW-qd-A0x"; */
+"UdW-qd-A0x.title" = "Default fade time:";
+
+/* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "klv-Wh-0ur"; */
+"klv-Wh-0ur.title" = "hh:mm:ss.ms";
+
+/* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "zaI-0m-tQf"; */
+"zaI-0m-tQf.title" = "hh:mm:ss.ms";

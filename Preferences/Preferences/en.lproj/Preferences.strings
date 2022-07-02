@@ -11,18 +11,6 @@
 /* Class = "NSMenuItem"; title = "Item3"; ObjectID = "64"; */
 "64.title" = "Item3";
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "107"; */
-"107.title" = "OtherViews";
-
-/* Class = "NSMenuItem"; title = "Stable"; ObjectID = "108"; */
-"108.title" = "Stable";
-
-/* Class = "NSMenuItem"; title = "Unstable"; ObjectID = "109"; */
-"109.title" = "Unstable";
-
-/* Class = "NSMenuItem"; title = "Nightly"; ObjectID = "110"; */
-"110.title" = "Nightly";
-
 /* Class = "NSTextFieldCell"; title = "Play:"; ObjectID = "198"; */
 "198.title" = "Play:";
 
@@ -34,9 +22,6 @@
 
 /* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
 "207.title" = "Automatically check for updates on startup";
-
-/* Class = "NSTextFieldCell"; title = "Update Feed:"; ObjectID = "209"; */
-"209.title" = "Update Feed:";
 
 /* Class = "NSTextFieldCell"; title = "Output Device: "; ObjectID = "211"; */
 "211.title" = "Output Device: ";
@@ -80,14 +65,8 @@
 /* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1Yq-6f-Uho"; */
 "1Yq-6f-Uho.title" = "Item 2";
 
-/* Class = "NSButtonCell"; title = "Enable Last.fm support (Last.fm client must be installed)"; ObjectID = "2N5-DH-IO6"; */
-"2N5-DH-IO6.title" = "Enable Last.fm support (Last.fm client must be installed)";
-
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "3Gx-cs-3B0"; */
 "3Gx-cs-3B0.title" = "Item 1";
-
-/* Class = "NSButtonCell"; title = "Allow Last.fm client to control media keys"; ObjectID = "4Yi-67-ivc"; */
-"4Yi-67-ivc.title" = "Allow Last.fm client to control media keys";
 
 /* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "99B-Tx-dPH"; */
 "99B-Tx-dPH.title" = "Item 2";
@@ -164,5 +143,86 @@
 /* Class = "NSButtonCell"; title = "Select a SoundFont"; ObjectID = "yeL-9c-lFq"; */
 "yeL-9c-lFq.title" = "Select a SoundFont";
 
-/* Class = "NSButtonCell"; title = "Automatically launch Last.fm client"; ObjectID = "ze8-9p-SeX"; */
-"ze8-9p-SeX.title" = "Automatically launch Last.fm client";
+/* Class = "NSTextFieldCell"; title = "Hz"; ObjectID = "0Am-5Y-EKq"; */
+"0Am-5Y-EKq.title" = "Hz";
+
+/* Class = "NSButtonCell"; title = "Reset to defaults"; ObjectID = "1y7-iZ-BhE"; */
+"1y7-iZ-BhE.title" = "Reset to defaults";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "7un-em-D8r"; */
+"7un-em-D8r.title" = "Table View Cell";
+
+/* Class = "NSTextFieldCell"; title = "Sample rate:"; ObjectID = "A9I-fr-vHp"; */
+"A9I-fr-vHp.title" = "Sample rate:";
+
+/* Class = "NSTextFieldCell"; title = "Default play time:"; ObjectID = "AQZ-ku-F8u"; */
+"AQZ-ku-F8u.title" = "Default play time:";
+
+/* Class = "NSTextFieldCell"; title = "Spectrum bars"; ObjectID = "Bll-IJ-lje"; */
+"Bll-IJ-lje.title" = "Spectrum bars";
+
+/* Class = "NSTextFieldCell"; title = "Spectrum peaks"; ObjectID = "CQI-YZ-B3V"; */
+"CQI-YZ-B3V.title" = "Spectrum peaks";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Dhd-k8-ZXq"; */
+"Dhd-k8-ZXq.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Default loop count:"; ObjectID = "Fgm-Vs-tgU"; */
+"Fgm-Vs-tgU.title" = "Default loop count:";
+
+/* Class = "NSMenuItem"; title = "Delete Invalid Paths"; ObjectID = "JU5-o7-jid"; */
+"JU5-o7-jid.title" = "Delete Invalid Paths";
+
+/* Class = "NSMenuItem"; title = "Add Path"; ObjectID = "JxP-0t-mTB"; */
+"JxP-0t-mTB.title" = "Add Path";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "LwT-Qb-47r"; */
+"LwT-Qb-47r.title" = "Table View Cell";
+
+/* Class = "NSTextFieldCell"; title = "(will be preferred if possible)"; ObjectID = "POG-ai-6D2"; */
+"POG-ai-6D2.title" = "(will be preferred if possible)";
+
+/* Class = "NSButtonCell"; title = "Quit when playback completes"; ObjectID = "SBA-J5-rEd"; */
+"SBA-J5-rEd.title" = "Quit when playback completes";
+
+/* Class = "NSTextFieldCell"; title = "Default fade time:"; ObjectID = "UdW-qd-A0x"; */
+"UdW-qd-A0x.title" = "Default fade time:";
+
+/* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "Yz2-Ee-bZ0"; */
+"Yz2-Ee-bZ0.headerCell.title" = "Path";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "bWQ-dT-X3w"; */
+"bWQ-dT-X3w.title" = "Text Cell";
+
+/* Class = "NSButtonCell"; title = "Limit volume control to 100%"; ObjectID = "ds2-aw-ebU"; */
+"ds2-aw-ebU.title" = "Limit volume control to 100%";
+
+/* Class = "NSButtonCell"; title = "Spectrum 2D view"; ObjectID = "gXL-j6-df0"; */
+"gXL-j6-df0.title" = "Spectrum 2D view";
+
+/* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "klv-Wh-0ur"; */
+"klv-Wh-0ur.title" = "hh:mm:ss.ms";
+
+/* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "zaI-0m-tQf"; */
+"zaI-0m-tQf.title" = "hh:mm:ss.ms";
+
+/* Class = "NSTableColumn"; headerCell.title = "Valid"; ObjectID = "lEg-E3-TBs"; */
+"lEg-E3-TBs.headerCell.title" = "Valid";
+
+/* Class = "NSMenuItem"; title = "Delete Path"; ObjectID = "nva-pz-xSS"; */
+"nva-pz-xSS.title" = "Delete Path";
+
+/* Class = "NSMenuItem"; title = "Suggest Paths"; ObjectID = "qjI-dK-nfG"; */
+"qjI-dK-nfG.title" = "Suggest Paths";
+
+/* Class = "NSButtonCell"; title = "Allow insecure SSL connections"; ObjectID = "sva-DV-ina"; */
+"sva-DV-ina.title" = "Allow insecure SSL connections";
+
+/* Class = "NSButtonCell"; title = "Show stop button"; ObjectID = "vMI-lj-Lrz"; */
+"vMI-lj-Lrz.title" = "Show stop button";
+
+/* Class = "NSTextFieldCell"; title = "Folder access paths:"; ObjectID = "wWm-AD-cD4"; */
+"wWm-AD-cD4.title" = "Folder access paths:";
+
+/* Class = "NSButtonCell"; title = "Send crash reports and usage data"; ObjectID = "zQ2-6O-3Og"; */
+"zQ2-6O-3Og.title" = "Send crash reports and usage data";

@@ -29,6 +29,8 @@
 	NSString *currentUrl;
 	BOOL hintAdded;
 
+	double sampleRate;
+
 	int n_channels;
 
 	long renderedTotal;

@@ -46,6 +46,13 @@ static OSType getOSType(const char *in_) {
 		return NO;
 	}
 
+	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+
 	source = s;
 
 	std::vector<uint8_t> file_data;
@@ -76,8 +83,12 @@ static OSType getOSType(const char *in_) {
 
 	if(loopStart != 0 || loopEnd != framesLength) {
 		// two loops and a fade
+		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		if(defaultFade < 0.0) {
+			defaultFade = 0.0;
+		}
 		framesLength = loopStart + (loopEnd - loopStart) * 2;
-		framesFade = 8000;
+		framesFade = (int)ceil(defaultFade * 1000.0);
 		isLooped = YES;
 	} else {
 		framesLength += 1000;
@@ -85,8 +96,8 @@ static OSType getOSType(const char *in_) {
 		isLooped = NO;
 	}
 
-	framesLength = framesLength * 441 / 10;
-	framesFade = framesFade * 441 / 10;
+	framesLength = (int)ceil(framesLength * sampleRate * 0.001);
+	framesFade = (int)ceil(framesFade * sampleRate * 0.001);
 
 	totalFrames = framesLength + framesFade;
 
@@ -100,7 +111,7 @@ static OSType getOSType(const char *in_) {
 
 - (NSDictionary *)properties {
 	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(44100),
+		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(totalFrames),
 		      @"bitsPerSample": @(32),
 		      @"floatingPoint": @(YES),
@@ -203,7 +214,7 @@ static OSType getOSType(const char *in_) {
 			resamplingSinc = true;
 
 		bmplayer->setSincInterpolation(resamplingSinc);
-		bmplayer->setSampleRate(44100);
+		bmplayer->setSampleRate(sampleRate);
 
 		if([soundFontPath length])
 			bmplayer->setFileSoundFont([soundFontPath UTF8String]);
@@ -219,7 +230,7 @@ static OSType getOSType(const char *in_) {
 
 		msplayer->set_extp(1);
 
-		msplayer->setSampleRate(44100);
+		msplayer->setSampleRate(sampleRate);
 	} else if([[plugin substringToIndex:5] isEqualToString:@"OPL3W"]) {
 		MSPlayer *msplayer = new MSPlayer;
 		player = msplayer;
@@ -230,7 +241,7 @@ static OSType getOSType(const char *in_) {
 
 		msplayer->set_extp(1);
 
-		msplayer->setSampleRate(44100);
+		msplayer->setSampleRate(sampleRate);
 	} else {
 		const char *cplugin = [plugin UTF8String];
 		OSType componentSubType;
@@ -243,7 +254,7 @@ static OSType getOSType(const char *in_) {
 			auplayer = new AUPlayer;
 
 			auplayer->setComponent(componentSubType, componentManufacturer);
-			auplayer->setSampleRate(44100);
+			auplayer->setSampleRate(sampleRate);
 
 			if([soundFontPath length]) {
 				auplayer->setSoundFont([soundFontPath UTF8String]);
