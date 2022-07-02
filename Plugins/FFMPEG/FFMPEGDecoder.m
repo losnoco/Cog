@@ -477,6 +477,7 @@ static uint8_t reverse_bits[0x100];
 	replayGainAlbumPeak = 0.0;
 	replayGainTrackGain = 0.0;
 	replayGainTrackPeak = 0.0;
+	volumeScale = 1.0;
 	albumArt = [NSData data];
 	id3Metadata = @{};
 	metadataUpdated = NO;
@@ -547,6 +548,7 @@ static uint8_t reverse_bits[0x100];
 	float _replayGainAlbumPeak = replayGainAlbumPeak;
 	float _replayGainTrackGain = replayGainTrackGain;
 	float _replayGainTrackPeak = replayGainTrackPeak;
+	float _volumeScale = volumeScale;
 	for(size_t i = 0; i < 2; ++i) {
 		AVDictionary *metadata;
 		if(i == 0) {
@@ -605,6 +607,27 @@ static uint8_t reverse_bits[0x100];
 			} else if(!strcasecmp(tag->key, "replaygain_track_peak")) {
 				NSString *rgValue = guess_encoding_of_string(tag->value);
 				_replayGainTrackPeak = [rgValue floatValue];
+			} else if(!strcasecmp(tag->key, "iTunNORM")) {
+				NSString *tagString = guess_encoding_of_string(tag->value);
+				NSArray *tag = [tagString componentsSeparatedByString:@" "];
+				NSMutableArray *wantedTag = [[NSMutableArray alloc] init];
+				for(size_t i = 0; i < [tag count]; ++i) {
+					NSString *tagValue = tag[i];
+					if([tagValue length] == 8) {
+						[wantedTag addObject:tagValue];
+					}
+				}
+				if([wantedTag count] >= 10) {
+					NSScanner *scanner1 = [NSScanner scannerWithString:wantedTag[0]];
+					NSScanner *scanner2 = [NSScanner scannerWithString:wantedTag[1]];
+					unsigned int hexvalue1 = 0, hexvalue2 = 0;
+					[scanner1 scanHexInt:&hexvalue1];
+					[scanner2 scanHexInt:&hexvalue2];
+					float volume1 = -log10((double)(hexvalue1) / 1000) * 10;
+					float volume2 = -log10((double)(hexvalue2) / 1000) * 10;
+					float volumeToUse = MIN(volume1, volume2);
+					_volumeScale = pow(10, volumeToUse / 20);
+				}
 			}
 		}
 	}
@@ -632,7 +655,8 @@ static uint8_t reverse_bits[0x100];
 	   _replayGainAlbumGain != replayGainAlbumGain ||
 	   _replayGainAlbumPeak != replayGainAlbumPeak ||
 	   _replayGainTrackGain != replayGainTrackGain ||
-	   _replayGainTrackPeak != replayGainTrackPeak) {
+	   _replayGainTrackPeak != replayGainTrackPeak ||
+	   _volumeScale != volumeScale) {
 		artist = _artist;
 		albumartist = _albumartist;
 		album = _album;
@@ -645,6 +669,7 @@ static uint8_t reverse_bits[0x100];
 		replayGainAlbumPeak = _replayGainAlbumPeak;
 		replayGainTrackGain = _replayGainTrackGain;
 		replayGainTrackPeak = _replayGainTrackPeak;
+		volumeScale = _volumeScale;
 		if(![source seekable]) {
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
@@ -969,7 +994,7 @@ static uint8_t reverse_bits[0x100];
 }
 
 - (NSDictionary *)metadata {
-	return [NSDictionary dictionaryByMerging:@{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"replayGainAlbumGain": @(replayGainAlbumGain), @"replayGainAlbumPeak": @(replayGainAlbumPeak), @"replayGainTrackGain": @(replayGainTrackGain), @"replayGainTrackPeak": @(replayGainTrackPeak), @"albumArt": albumArt } with:id3Metadata];
+	return [NSDictionary dictionaryByMerging:@{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"replayGainAlbumGain": @(replayGainAlbumGain), @"replayGainAlbumPeak": @(replayGainAlbumPeak), @"replayGainTrackGain": @(replayGainTrackGain), @"replayGainTrackPeak": @(replayGainTrackPeak), @"volume": @(volumeScale), @"albumArt": albumArt } with:id3Metadata];
 }
 
 + (NSArray *)fileTypes {

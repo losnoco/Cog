@@ -72,6 +72,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 	float replayGainAlbumPeak;
 	float replayGainTrackGain;
 	float replayGainTrackPeak;
+	float volumeScale;
 
 	int attachedPicIndex;
 	NSData *albumArt;
