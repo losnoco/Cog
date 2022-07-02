@@ -196,6 +196,9 @@ static PluginController *sharedPluginController = nil;
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bundleDidLoad:) name:NSBundleDidLoadNotification object:nil];
 
 		[self loadPlugins];
+
+		[[NSNotificationCenter defaultCenter] removeObserver:self name:NSBundleDidLoadNotification object:nil];
+
 		[self printPluginInfo];
 	}
 }
