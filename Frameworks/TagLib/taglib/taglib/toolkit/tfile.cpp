@@ -144,8 +144,6 @@ PropertyMap File::properties() const
     return dynamic_cast<const WavPack::File* >(this)->properties();
   if(dynamic_cast<const XM::File* >(this))
     return dynamic_cast<const XM::File* >(this)->properties();
-  if(dynamic_cast<const MP4::File* >(this))
-    return dynamic_cast<const MP4::File* >(this)->properties();
   if(dynamic_cast<const ASF::File* >(this))
     return dynamic_cast<const ASF::File* >(this)->properties();
   if(dynamic_cast<const APEGen::File* >(this))
@@ -175,8 +173,6 @@ void File::removeUnsupportedProperties(const StringList &properties)
     dynamic_cast<TrueAudio::File* >(this)->removeUnsupportedProperties(properties);
   else if(dynamic_cast<WavPack::File* >(this))
     dynamic_cast<WavPack::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<MP4::File* >(this))
-    dynamic_cast<MP4::File* >(this)->removeUnsupportedProperties(properties);
   else if(dynamic_cast<ASF::File* >(this))
     dynamic_cast<ASF::File* >(this)->removeUnsupportedProperties(properties);
   else if(dynamic_cast<APEGen::File* >(this))
@@ -219,8 +215,6 @@ PropertyMap File::setProperties(const PropertyMap &properties)
     return dynamic_cast<WavPack::File* >(this)->setProperties(properties);
   else if(dynamic_cast<XM::File* >(this))
     return dynamic_cast<XM::File* >(this)->setProperties(properties);
-  else if(dynamic_cast<MP4::File* >(this))
-    return dynamic_cast<MP4::File* >(this)->setProperties(properties);
   else if(dynamic_cast<ASF::File* >(this))
     return dynamic_cast<ASF::File* >(this)->setProperties(properties);
   else if(dynamic_cast<APEGen::File* >(this))
