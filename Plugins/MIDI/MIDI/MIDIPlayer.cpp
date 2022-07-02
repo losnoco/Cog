@@ -266,7 +266,7 @@ void MIDIPlayer::Seek(unsigned long sample) {
 
 	if(uStreamPosition > stream_start) {
 		filler.resize(uStreamPosition - stream_start);
-		filler.assign(&mStream.at(stream_start), &mStream.at(uStreamPosition));
+		filler.assign(mStream.begin() + stream_start, mStream.begin() + uStreamPosition);
 
 		unsigned long i, j;
 
