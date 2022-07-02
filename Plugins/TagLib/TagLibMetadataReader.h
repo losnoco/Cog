@@ -13,7 +13,4 @@
 @interface TagLibMetadataReader : NSObject <CogMetadataReader> {
 }
 
-+ (BOOL)isCoverFile:(NSString *)fileName;
-+ (NSArray *)coverNames;
-
 @end
