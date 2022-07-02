@@ -10,7 +10,6 @@
 #import <taglib/audioproperties.h>
 #import <taglib/fileref.h>
 #import <taglib/flac/flacfile.h>
-#import <taglib/mp4/mp4file.h>
 #import <taglib/mpc/mpcproperties.h>
 #import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
 #import <taglib/mpeg/id3v2/id3v2tag.h>
@@ -162,22 +161,6 @@
 			}
 		}
 
-		// D-D-D-DOUBLE HACK!
-		TagLib::MP4::File *m4f = dynamic_cast<TagLib::MP4::File *>(f.file());
-		if(m4f) {
-			TagLib::MP4::Tag *tag = m4f->tag();
-			if(tag) {
-				auto covr = tag->item("covr");
-				if(covr.isValid()) {
-					auto coverArtList = covr.toCoverArtList();
-					if(!coverArtList.isEmpty()) {
-						TagLib::MP4::CoverArt coverArt = coverArtList.front();
-						image = [NSData dataWithBytes:coverArt.data().data() length:coverArt.data().size()];
-					}
-				}
-			}
-		}
-
 		TagLib::Ogg::Vorbis::File *vorbis = dynamic_cast<TagLib::Ogg::Vorbis::File *>(f.file());
 		if(vorbis) {
 			TagLib::Ogg::XiphComment *tag = vorbis->tag();
@@ -257,7 +240,7 @@
 
 + (NSArray *)fileTypes {
 	// May be a way to get a list of supported formats
-	return @[@"ape", @"asf", @"wma", @"ogg", @"opus", @"mpc", @"flac", @"m4a", @"mp3", @"tak", @"ac3", @"apl", @"dts", @"dtshd", @"tta", @"wav", @"aif", @"aiff", @"wv", @"wvp"];
+	return @[@"ape", @"asf", @"wma", @"ogg", @"opus", @"mpc", @"flac", @"mp3", @"tak", @"ac3", @"apl", @"dts", @"dtshd", @"tta", @"wav", @"aif", @"aiff", @"wv", @"wvp"];
 }
 
 + (NSArray *)mimeTypes {

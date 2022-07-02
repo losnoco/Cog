@@ -123,8 +123,6 @@ namespace
       return new Ogg::Opus::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "TTA")
       return new TrueAudio::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "M4A" || ext == "M4R" || ext == "M4B" || ext == "M4P" || ext == "MP4" || ext == "3G2" || ext == "M4V")
-      return new MP4::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "WMA" || ext == "ASF")
       return new ASF::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "AIF" || ext == "AIFF" || ext == "AFC" || ext == "AIFC")
@@ -173,8 +171,6 @@ namespace
       file = new Ogg::Opus::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(TrueAudio::File::isSupported(stream))
       file = new TrueAudio::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(MP4::File::isSupported(stream))
-      file = new MP4::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(ASF::File::isSupported(stream))
       file = new ASF::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(RIFF::AIFF::File::isSupported(stream))
@@ -247,8 +243,6 @@ namespace
       return new Ogg::Opus::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "TTA")
       return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "M4A" || ext == "M4R" || ext == "M4B" || ext == "M4P" || ext == "MP4" || ext == "3G2" || ext == "M4V")
-      return new MP4::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "WMA" || ext == "ASF")
       return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "AIF" || ext == "AIFF" || ext == "AFC" || ext == "AIFC")

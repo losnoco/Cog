@@ -53,8 +53,6 @@ using namespace TagLib;
     return dynamic_cast<const ASF::Properties*>(this)->function_name();         \
   else if(dynamic_cast<const FLAC::Properties*>(this))                          \
     return dynamic_cast<const FLAC::Properties*>(this)->function_name();        \
-  else if(dynamic_cast<const MP4::Properties*>(this))                           \
-    return dynamic_cast<const MP4::Properties*>(this)->function_name();         \
   else if(dynamic_cast<const MPC::Properties*>(this))                           \
     return dynamic_cast<const MPC::Properties*>(this)->function_name();         \
   else if(dynamic_cast<const MPEG::Properties*>(this))                          \
