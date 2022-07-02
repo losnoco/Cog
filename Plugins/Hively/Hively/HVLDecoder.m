@@ -33,10 +33,17 @@ static void oneTimeInit(void) {
 	if(size > UINT_MAX)
 		return NO;
 
+	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+
 	void *data = malloc(size);
 	[s read:data amount:size];
 
-	tune = hvl_LoadTune(data, (uint32_t)size, 44100, 2);
+	tune = hvl_LoadTune(data, (uint32_t)size, (int)sampleRate, 2);
 	free(data);
 	if(!tune)
 		return NO;
@@ -62,14 +69,19 @@ static void oneTimeInit(void) {
 		++loops;
 	}
 
-	framesLength = tune->ht_PlayingTime * 44100 / (tune->ht_SpeedMultiplier * 50);
-	framesFade = 44100 * 8;
+	double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	if(defaultFade < 0.0) {
+		defaultFade = 0.0;
+	}
+
+	framesLength = tune->ht_PlayingTime * sampleRate / (tune->ht_SpeedMultiplier * 50);
+	framesFade = (int)ceil(sampleRate * defaultFade);
 	totalFrames = framesLength + framesFade;
 
 	framesRead = 0;
 	framesInBuffer = 0;
 
-	buffer = malloc(sizeof(int32_t) * (44100 / 50) * 2);
+	buffer = malloc(sizeof(int32_t) * ((int)ceil(sampleRate) / 50) * 2);
 
 	hvl_InitSubsong(tune, trackNumber);
 
@@ -81,7 +93,7 @@ static void oneTimeInit(void) {
 
 - (NSDictionary *)properties {
 	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(44100),
+		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(totalFrames),
 		      @"bitsPerSample": @(32),
 		      @"floatingPoint": @(YES),
@@ -121,7 +133,7 @@ static void oneTimeInit(void) {
 			}
 		}
 		hvl_DecodeFrame(tune, (int8_t *)buffer, ((int8_t *)buffer) + 4, 8);
-		framesInBuffer = 44100 / 50;
+		framesInBuffer = (int)ceil(sampleRate / 50);
 	}
 
 	if(!repeatone && framesRead + total > framesLength) {
@@ -156,7 +168,7 @@ static void oneTimeInit(void) {
 
 	while(framesRead < frame) {
 		hvl_play_irq(tune);
-		framesRead += 44100 / 50;
+		framesRead += (int)ceil(sampleRate / 50);
 	}
 
 	return framesRead;

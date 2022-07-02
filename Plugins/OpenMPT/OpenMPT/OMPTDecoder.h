@@ -19,6 +19,8 @@
 
 	id<CogSource> source;
 	long length;
+
+	double sampleRate;
 }
 
 - (void)setSource:(id<CogSource>)s;

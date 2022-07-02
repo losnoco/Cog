@@ -581,6 +581,11 @@ static AppController *kAppController = nil;
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
 	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 
+	[userDefaultsValuesDict setObject:@(150.0) forKey:@"synthDefaultSeconds"];
+	[userDefaultsValuesDict setObject:@(8.0) forKey:@"synthDefaultFadeSeconds"];
+	[userDefaultsValuesDict setObject:@(2) forKey:@"synthDefaultLoopCount"];
+	[userDefaultsValuesDict setObject:@(44100) forKey:@"synthSampleRate"];
+
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];

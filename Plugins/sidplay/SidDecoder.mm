@@ -166,6 +166,13 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	[self setSource:s];
 
+	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+
 	NSString *path = [[s url] absoluteString];
 	NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
 	if(fragmentRange.location != NSNotFound) {
@@ -195,7 +202,9 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	n_channels = 1;
 
-	length = 3 * 60 * 44100;
+	double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+
+	length = (int)ceil(sampleRate * defaultLength);
 
 	tune->selectSong(track_num);
 
@@ -224,7 +233,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	const SidTuneInfo *tuneInfo = tune->getInfo();
 
 	SidConfig conf = engine->config();
-	conf.frequency = 44100;
+	conf.frequency = (int)ceil(sampleRate);
 	conf.sidEmulation = builder;
 	conf.playback = SidConfig::MONO;
 	if(tuneInfo && (tuneInfo->sidChips() > 1))
@@ -236,8 +245,13 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		n_channels = 2;
 	}
 
+	double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	if(defaultFade < 0.0) {
+		defaultFade = 0.0;
+	}
+
 	renderedTotal = 0;
-	fadeTotal = fadeRemain = 44100 * 8;
+	fadeTotal = fadeRemain = (int)ceil(sampleRate * defaultFade);
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -247,7 +261,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 - (NSDictionary *)properties {
 	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(44100),
+		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(16),
 		      @"floatingPoint": @(NO),

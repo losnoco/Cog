@@ -47,7 +47,14 @@ static CAdPlugDatabase *g_database = NULL;
 - (BOOL)open:(id<CogSource>)s {
 	[self setSource:s];
 
-	m_emu = new CNemuopl(44100);
+	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+
+	m_emu = new CNemuopl(sampleRate);
 
 	NSString *path = [[s url] absoluteString];
 	NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
@@ -68,7 +75,7 @@ static CAdPlugDatabase *g_database = NULL;
 
 	samples_todo = 0;
 
-	length = m_player->songlength(subsong) * 441 / 10;
+	length = m_player->songlength(subsong) * sampleRate / 1000.0;
 	current_pos = 0;
 
 	m_player->rewind(subsong);
@@ -81,7 +88,7 @@ static CAdPlugDatabase *g_database = NULL;
 
 - (NSDictionary *)properties {
 	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(44100.0),
+		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(16), // Samples are short
 		      @"floatingPoint": @(NO),
@@ -106,7 +113,7 @@ static CAdPlugDatabase *g_database = NULL;
 		if(!samples_todo) {
 			running = m_player->update() && running;
 			if(!dont_loop || running) {
-				samples_todo = 44100 / m_player->getrefresh();
+				samples_todo = (int)ceil(sampleRate / m_player->getrefresh());
 				current_pos += samples_todo;
 			}
 		}
@@ -132,7 +139,7 @@ static CAdPlugDatabase *g_database = NULL;
 
 	while(current_pos < frame) {
 		m_player->update();
-		current_pos += 44100 / m_player->getrefresh();
+		current_pos += (long)ceil(sampleRate / m_player->getrefresh());
 	}
 
 	samples_todo = (UInt32)(frame - current_pos);

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		833A899A286FF2FD0022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A8999286FF2FD0022E036 /* Cocoa.framework */; };
 		833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; };
 		83747C6F2862DDDB0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C6D2862DDDB0021245F /* Shared.xcconfig */; };
 		83C2806320E4ECAD00823BF9 /* libAdPlug.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -51,6 +52,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		833A8999286FF2FD0022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83747C6D2862DDDB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83D3C5F3201C674D005564CB /* AdPlug.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdPlug.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C5F6201C674D005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			files = (
 				83D3C6A6201D3951005564CB /* libbinio.framework in Frameworks */,
 				833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */,
+				833A899A286FF2FD0022E036 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +144,7 @@
 		83D3C602201C675D005564CB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				833A8999286FF2FD0022E036 /* Cocoa.framework */,
 				83D3C6A7201D3951005564CB /* libbinio.framework */,
 				83D3C603201C6775005564CB /* libAdPlug.xcodeproj */,
 			);
