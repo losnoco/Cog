@@ -122,14 +122,19 @@
 	for(NSString *entry in [contents componentsSeparatedByString:@"\n"]) {
 		NSString *_entry = [entry stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
+		if(_entry == nil || [_entry length] < 1) continue;
+
 		if([_entry hasPrefix:@"#EXT-X-MEDIA-SEQUENCE"]) // Let FFmpeg handle HLS
 			return @[];
 
-		if([_entry hasPrefix:@"#"] || [_entry isEqualToString:@""]) // Ignore extra info
+		if([_entry hasPrefix:@"#"]) // Ignore extra info
 			continue;
 
 		// Need to add basePath, and convert to URL
-		[entries addObject:[self urlForPath:_entry relativeTo:[url path]]];
+		NSURL *fileUrl = [self urlForPath:_entry relativeTo:[url path]];
+
+		if(fileUrl)
+			[entries addObject:fileUrl];
 	}
 
 	return entries;
