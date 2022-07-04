@@ -565,19 +565,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq {
 	if(eq == _eq) {
-		OSStatus err;
-		CFPropertyListRef classData;
-		UInt32 size;
-
-		size = sizeof(classData);
-		err = AudioUnitGetProperty(eq, kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &classData, &size);
-		if(err == noErr) {
-			CFPreferencesSetAppValue(CFSTR("GraphEQ_Preset"), classData, kCFPreferencesCurrentApplication);
-			CFRelease(classData);
-		}
-
-		CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
-
 		[equalizerWindowController setEQ:nil];
 
 		_eq = nil;
