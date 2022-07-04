@@ -272,12 +272,10 @@ void equalizerLoadPreset(AudioUnit au) {
 				cog_equalizer_band_settings = _cog_equalizer_band_settings();
 		}
 
-		float preamp = [[NSUserDefaults standardUserDefaults] floatForKey:[cog_equalizer_band_settings objectAtIndex:0]];
-
 		AudioUnitSetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, 1, 0);
 		for(NSInteger i = 1; i < [cog_equalizer_band_settings count]; ++i) {
 			float value = [[NSUserDefaults standardUserDefaults] floatForKey:[cog_equalizer_band_settings objectAtIndex:i]];
-			AudioUnitSetParameter(au, (int)(i - 1), kAudioUnitScope_Global, 0, value + preamp, 0);
+			AudioUnitSetParameter(au, (int)(i - 1), kAudioUnitScope_Global, 0, value, 0);
 		}
 	}
 }
