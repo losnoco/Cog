@@ -648,9 +648,18 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		return;
 	}
 
+	if(eqInitialized) {
+		AudioUnitUninitialize(_eq);
+		eqInitialized = NO;
+	}
+
 	AudioStreamBasicDescription asbd = streamFormat;
 
-	asbd.mFormatFlags &= ~kAudioFormatFlagIsPacked;
+	// Of course, non-interleaved has only one sample per frame/packet, per buffer
+	asbd.mFormatFlags |= kAudioFormatFlagIsNonInterleaved;
+	asbd.mBytesPerFrame = sizeof(float);
+	asbd.mBytesPerPacket = sizeof(float);
+	asbd.mFramesPerPacket = 1;
 
 	UInt32 maximumFrames = 1024;
 	AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFrames, sizeof(maximumFrames));
@@ -664,6 +673,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
 
 	AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
+
+	if(AudioUnitInitialize(_eq) != noErr) {
+		eqEnabled = NO;
+		return;
+	}
+	eqInitialized = YES;
 
 	eqEnabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
 }
@@ -733,7 +748,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 
 		if(samplesRendered) {
-			if(eqEnabled) {
+			if(eqEnabled && eqInitialized) {
 				const int channels = streamFormat.mChannelsPerFrame;
 				if(channels > 0) {
 					const size_t channelsminusone = channels - 1;
@@ -743,7 +758,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					ioData->mNumberBuffers = channels;
 					for(size_t i = 0; i < channels; ++i) {
 						ioData->mBuffers[i].mData = &eqBuffer[1024 * i];
-						ioData->mBuffers[i].mDataByteSize = 1024 * sizeof(float);
+						ioData->mBuffers[i].mDataByteSize = samplesRendered * sizeof(float);
 						ioData->mBuffers[i].mNumberChannels = 1;
 					}
 
