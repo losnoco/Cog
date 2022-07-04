@@ -304,6 +304,57 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
+- (void)requestFolderForFile:(NSURL *)fileUrl {
+	if(![fileUrl isFileURL]) return;
+	NSURL *folderUrl = [fileUrl URLByDeletingLastPathComponent];
+
+	@synchronized(self) {
+		SandboxEntry *_entry = nil;
+
+		for(SandboxEntry *entry in storage) {
+			if(entry.path && entry.isFolder && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
+				_entry = entry;
+				break;
+			}
+		}
+
+		if(!_entry) {
+			_entry = [self recursivePathTest:folderUrl];
+		}
+
+		if(!_entry) {
+			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+				NSOpenPanel *panel = [NSOpenPanel openPanel];
+				[panel setAllowsMultipleSelection:NO];
+				[panel setCanChooseDirectories:YES];
+				[panel setCanChooseFiles:NO];
+				[panel setFloatingPanel:YES];
+				[panel setDirectoryURL:folderUrl];
+				[panel setTitle:@"Open to grant access to container folder"];
+				NSInteger result = [panel runModal];
+				if(result == NSModalResponseOK) {
+					NSURL *folderUrl = [panel URL];
+					NSError *err = nil;
+					NSData *bookmark = [folderUrl bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:nil relativeToURL:nil error:&err];
+					if(!bookmark && err) {
+						ALog(@"Failed to add bookmark for URL: %@, with error: %@", folderUrl, [err localizedDescription]);
+						return;
+					}
+
+					NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+
+					SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+
+					if(token) {
+						token.path = [folderUrl path];
+						token.bookmark = bookmark;
+					}
+				}
+			});
+		}
+	}
+}
+
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
 	NSURL *folderUrl = [SandboxBroker urlWithoutFragment:fileUrl];
 	if(![folderUrl isFileURL]) return NULL;

@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addFolderIfMissing:(NSURL *)folderUrl;
 - (void)addFileIfMissing:(NSURL *)fileUrl;
 
+- (void)requestFolderForFile:(NSURL *)fileUrl;
+
 - (const void *)beginFolderAccess:(NSURL *)fileUrl;
 - (void)endFolderAccess:(const void *)handle;
 
