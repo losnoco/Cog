@@ -241,8 +241,8 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 			char *_name;
 			char *_value;
 			if(FLAC__metadata_object_vorbiscomment_entry_to_name_value_pair(vorbis_comment->comments[i], &_name, &_value)) {
-				NSString *name = [NSString stringWithUTF8String:_name];
-				NSString *value = [NSString stringWithUTF8String:_value];
+				NSString *name = guess_encoding_of_string(_name);
+				NSString *value = guess_encoding_of_string(_value);
 				free(_name);
 				free(_value);
 				name = [name lowercaseString];
