@@ -32,9 +32,6 @@ typedef enum {
 	BOOL metadataLoadInProgress;
 
 	NSMutableDictionary *queuedURLs;
-    
-    dispatch_queue_t loaderQueue;
-    atomic_int loaderQueueRefCount;
 }
 
 - (void)initDefaults;
