@@ -346,8 +346,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	__block NSArray *outurls = nil;
 
+	atomic_fetch_add(&self->loaderQueueRefCount, 1);
+
 	dispatch_async(loaderQueue, ^{
-		atomic_fetch_add(&self->loaderQueueRefCount, 1);
 		outurls = [self doInsertURLs:urls atIndex:index sort:sort];
 		atomic_fetch_sub(&self->loaderQueueRefCount, 1);
 	});
