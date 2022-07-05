@@ -239,8 +239,8 @@
 "zaI-0m-tQf.title" = "hh:mm:ss.ms";
 
 /* Class = "NSButtonCell"; title = "Spectrum 2D view"; ObjectID = "gXL-j6-df0"; */
-"gXL-j6-df0.title" = "Use flat perspective in toolbar";
+"gXL-j6-df0.title" = "Usar perspectiva plana en el analizador de la barra de herramientas";
 
 /* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
-"NMg-TO-amV.title" = "Use 3D rendered spectrum";
+"NMg-TO-amV.title" = "Usar analizador en tres dimensiones";
 
