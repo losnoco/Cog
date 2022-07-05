@@ -357,70 +357,76 @@
 		return YES;
 	}
 
+	BufferChain *lastChain;
+
 	@synchronized(chainQueue) {
 		newChain = [[BufferChain alloc] initWithController:self];
 
 		endOfInputReached = YES;
 
-		BufferChain *lastChain = [chainQueue lastObject];
+		lastChain = [chainQueue lastObject];
 		if(lastChain == nil) {
 			lastChain = bufferChain;
 		}
+	}
 
-		BOOL pathsEqual = NO;
+	BOOL pathsEqual = NO;
 
-		if([nextStream isFileURL] && [[lastChain streamURL] isFileURL]) {
-			NSString *unixPathNext = [nextStream path];
-			NSString *unixPathPrev = [[lastChain streamURL] path];
+	if([nextStream isFileURL] && [[lastChain streamURL] isFileURL]) {
+		NSString *unixPathNext = [nextStream path];
+		NSString *unixPathPrev = [[lastChain streamURL] path];
 
-			if([unixPathNext isEqualToString:unixPathPrev])
-				pathsEqual = YES;
-		}
+		if([unixPathNext isEqualToString:unixPathPrev])
+			pathsEqual = YES;
+	}
 
-		if(pathsEqual || ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]] && (([nextStream host] == nil && [[lastChain streamURL] host] == nil) || [[nextStream host] isEqualToString:[[lastChain streamURL] host]]) && [[nextStream path] isEqualToString:[[lastChain streamURL] path]])) {
-			if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
-				[newChain setStreamURL:nextStream];
+	if(pathsEqual || ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]] && (([nextStream host] == nil && [[lastChain streamURL] host] == nil) || [[nextStream host] isEqualToString:[[lastChain streamURL] host]]) && [[nextStream path] isEqualToString:[[lastChain streamURL] path]])) {
+		if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+			[newChain setStreamURL:nextStream];
 
+			@synchronized(chainQueue) {
 				[self addChainToQueue:newChain];
-				DLog(@"TRACK SET!!! %@", newChain);
-				// Keep on-playin
-				newChain = nil;
-
-				atomic_fetch_sub(&refCount, 1);
-				return NO;
 			}
-		}
-
-		lastChain = nil;
-
-		while(shouldContinue && ![newChain open:nextStream withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
-			if(nextStream == nil) {
-				newChain = nil;
-				atomic_fetch_sub(&refCount, 1);
-				return YES;
-			}
-
+			DLog(@"TRACK SET!!! %@", newChain);
+			// Keep on-playin
 			newChain = nil;
-			[self requestNextStream:nextStreamUserInfo];
 
-			newChain = [[BufferChain alloc] initWithController:self];
+			atomic_fetch_sub(&refCount, 1);
+			return NO;
 		}
+	}
 
-		[self addChainToQueue:newChain];
+	lastChain = nil;
+
+	while(shouldContinue && ![newChain open:nextStream withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+		if(nextStream == nil) {
+			newChain = nil;
+			atomic_fetch_sub(&refCount, 1);
+			return YES;
+		}
 
 		newChain = nil;
+		[self requestNextStream:nextStreamUserInfo];
 
-		// I'm stupid and can't hold too much stuff in my head all at once, so writing it here.
-		//
-		// Once we get here:
-		// - buffer chain for previous stream finished reading
-		// - there are (probably) some bytes of the previous stream in the output buffer which haven't been played
-		//   (by output node) yet
-		// - self.bufferChain == previous playlist entry's buffer chain
-		// - self.nextStream == next playlist entry's URL
-		// - self.nextStreamUserInfo == next playlist entry
-		// - head of chainQueue is the buffer chain for the next entry (which has launched its threads already)
+		newChain = [[BufferChain alloc] initWithController:self];
 	}
+
+	@synchronized(chainQueue) {
+		[self addChainToQueue:newChain];
+	}
+
+	newChain = nil;
+
+	// I'm stupid and can't hold too much stuff in my head all at once, so writing it here.
+	//
+	// Once we get here:
+	// - buffer chain for previous stream finished reading
+	// - there are (probably) some bytes of the previous stream in the output buffer which haven't been played
+	//   (by output node) yet
+	// - self.bufferChain == previous playlist entry's buffer chain
+	// - self.nextStream == next playlist entry's URL
+	// - self.nextStreamUserInfo == next playlist entry
+	// - head of chainQueue is the buffer chain for the next entry (which has launched its threads already)
 
 	atomic_fetch_sub(&refCount, 1);
 	return YES;
