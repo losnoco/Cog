@@ -998,7 +998,7 @@ static uint8_t reverse_bits[0x100];
 }
 
 + (NSArray *)fileTypes {
-	return @[@"wma", @"asf", @"tak", @"mp4", @"m4a", @"m4b", @"m4r", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"weba", @"dsf", @"dff", @"iff", @"dsdiff", @"wsd", @"aiff", @"aif"];
+	return @[@"wma", @"asf", @"tak", @"mp4", @"m4a", @"m4b", @"m4r", @"aac", @"mp3", @"mp2", @"m2a", @"mpa", @"ape", @"ac3", @"dts", @"dtshd", @"wav", @"tta", @"vqf", @"vqe", @"vql", @"ra", @"rm", @"rmj", @"mka", @"mkv", @"weba", @"webm", @"dsf", @"dff", @"iff", @"dsdiff", @"wsd", @"aiff", @"aif"];
 }
 
 + (NSArray *)mimeTypes {
@@ -1020,7 +1020,9 @@ static uint8_t reverse_bits[0x100];
 		@[@"TrueVQ Audio File", @"song.icns", @"vqf", @"vqe", @"vql"],
 		@[@"Real Audio File", @"song.icns", @"ra", @"rm", @"rmj"],
 		@[@"Matroska Audio File", @"song.icns", @"mka"],
+		@[@"Matroska Video File", @"song.icns", @"mkv"],
 		@[@"WebM Audio File", @"song.icns", @"weba"],
+		@[@"WebM Media File", @"song.icns", @"webm"],
 		@[@"DSD Stream File", @"song.icns", @"dsf"],
 		@[@"Interchange File Format", @"song.icns", @"iff", @"dsdiff"],
 		@[@"Wideband Single-bit Data", @"song.icns", @"wsd"],
