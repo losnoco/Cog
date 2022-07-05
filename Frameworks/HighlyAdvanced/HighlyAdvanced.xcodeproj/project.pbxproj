@@ -34,7 +34,6 @@
 		834379A017F97CF600584396 /* Globals.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343798617F97CF600584396 /* Globals.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		834379A117F97CF600584396 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8343798717F97CF600584396 /* Sound.cpp */; };
 		834379A217F97CF600584396 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343798817F97CF600584396 /* Sound.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		83747B902862D5040021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B8E2862D5040021245F /* Shared.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -281,7 +280,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8343794317F97BDB00584396 /* InfoPlist.strings in Resources */,
-				83747B902862D5040021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

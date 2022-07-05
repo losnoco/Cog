@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
 		836EF0DA27BB970B00BF35B2 /* libFLAC.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D927BB970B00BF35B2 /* libFLAC.8.dylib */; };
-		83747C4C2862DCF40021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C4A2862DCF40021245F /* Shared.xcconfig */; };
 		83AA660B27B7DAE40098D4B8 /* cuesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660A27B7DAE40098D4B8 /* cuesheet.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -202,7 +201,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C4C2862DCF40021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

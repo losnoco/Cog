@@ -10,7 +10,6 @@
 		1703330D0B8FB64500327265 /* MusepackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1703330A0B8FB64500327265 /* MusepackDecoder.m */; };
 		17F564B40C3BDD970019975C /* mpcdec.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* mpcdec.framework */; };
 		17F564B70C3BDD990019975C /* mpcdec.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* mpcdec.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83747C1F2862DB560021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C1D2862DB560021245F /* Shared.xcconfig */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -241,7 +240,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C1F2862DB560021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

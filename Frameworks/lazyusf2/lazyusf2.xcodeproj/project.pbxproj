@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8333B6721DCC498B004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B6711DCC498B004C140D /* libz.tbd */; };
-		83747BAE2862D54D0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BAC2862D54D0021245F /* Shared.xcconfig */; };
 		8379B58A1AA4237E00F28A95 /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 8379B5881AA4237E00F28A95 /* barray.c */; };
 		8379B58B1AA4237E00F28A95 /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 8379B5891AA4237E00F28A95 /* barray.h */; };
 		83AA660627B7CB490098D4B8 /* hvqm.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660427B7CB490098D4B8 /* hvqm.c */; };
@@ -22,7 +21,6 @@
 		83CA14781A987E91005E7ED4 /* dbg_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14731A987E91005E7ED4 /* dbg_types.h */; };
 		83CA15621A988138005E7ED4 /* ai_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA147A1A988137005E7ED4 /* ai_controller.c */; };
 		83CA15631A988138005E7ED4 /* ai_controller.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA147B1A988137005E7ED4 /* ai_controller.h */; };
-		83CA15641A988138005E7ED4 /* api_export.ver in Resources */ = {isa = PBXBuildFile; fileRef = 83CA147D1A988137005E7ED4 /* api_export.ver */; };
 		83CA15651A988138005E7ED4 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA147E1A988137005E7ED4 /* callbacks.c */; };
 		83CA15661A988138005E7ED4 /* callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA147F1A988137005E7ED4 /* callbacks.h */; };
 		83CA15671A988138005E7ED4 /* m64p_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14801A988137005E7ED4 /* m64p_common.h */; };
@@ -58,13 +56,6 @@
 		83CA15871A988138005E7ED4 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14A41A988138005E7ED4 /* exception.h */; };
 		83CA15881A988138005E7ED4 /* fpu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14A51A988138005E7ED4 /* fpu.h */; };
 		83CA158A1A988138005E7ED4 /* instr_counters.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14A71A988138005E7ED4 /* instr_counters.h */; };
-		83CA158B1A988138005E7ED4 /* interpreter.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14A81A988138005E7ED4 /* interpreter.def */; };
-		83CA158C1A988138005E7ED4 /* interpreter_cop0.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14A91A988138005E7ED4 /* interpreter_cop0.def */; };
-		83CA158D1A988138005E7ED4 /* interpreter_cop1.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14AA1A988138005E7ED4 /* interpreter_cop1.def */; };
-		83CA158E1A988138005E7ED4 /* interpreter_r4300.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14AB1A988138005E7ED4 /* interpreter_r4300.def */; };
-		83CA158F1A988138005E7ED4 /* interpreter_regimm.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14AC1A988138005E7ED4 /* interpreter_regimm.def */; };
-		83CA15901A988138005E7ED4 /* interpreter_special.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14AD1A988138005E7ED4 /* interpreter_special.def */; };
-		83CA15911A988138005E7ED4 /* interpreter_tlb.def in Resources */ = {isa = PBXBuildFile; fileRef = 83CA14AE1A988138005E7ED4 /* interpreter_tlb.def */; };
 		83CA15921A988138005E7ED4 /* interupt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA14AF1A988138005E7ED4 /* interupt.c */; };
 		83CA15931A988138005E7ED4 /* interupt.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14B01A988138005E7ED4 /* interupt.h */; };
 		83CA15941A988138005E7ED4 /* macros.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA14B11A988138005E7ED4 /* macros.h */; };
@@ -127,7 +118,6 @@
 		83CA15E81A988138005E7ED4 /* hle_external.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA150C1A988138005E7ED4 /* hle_external.h */; };
 		83CA15E91A988138005E7ED4 /* hle_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA150D1A988138005E7ED4 /* hle_internal.h */; };
 		83CA15EA1A988138005E7ED4 /* jpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA150E1A988138005E7ED4 /* jpeg.c */; };
-		83CA15EB1A988138005E7ED4 /* LICENSES in Resources */ = {isa = PBXBuildFile; fileRef = 83CA150F1A988138005E7ED4 /* LICENSES */; };
 		83CA15EC1A988138005E7ED4 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA15101A988138005E7ED4 /* memory.c */; };
 		83CA15ED1A988138005E7ED4 /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CA15111A988138005E7ED4 /* memory.h */; };
 		83CA15EE1A988138005E7ED4 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 83CA15121A988138005E7ED4 /* mp3.c */; };
@@ -1000,16 +990,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83CA15911A988138005E7ED4 /* interpreter_tlb.def in Resources */,
-				83747BAE2862D54D0021245F /* Shared.xcconfig in Resources */,
-				83CA15901A988138005E7ED4 /* interpreter_special.def in Resources */,
-				83CA15641A988138005E7ED4 /* api_export.ver in Resources */,
-				83CA158C1A988138005E7ED4 /* interpreter_cop0.def in Resources */,
-				83CA158F1A988138005E7ED4 /* interpreter_regimm.def in Resources */,
-				83CA158D1A988138005E7ED4 /* interpreter_cop1.def in Resources */,
-				83CA158E1A988138005E7ED4 /* interpreter_r4300.def in Resources */,
-				83CA15EB1A988138005E7ED4 /* LICENSES in Resources */,
-				83CA158B1A988138005E7ED4 /* interpreter.def in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

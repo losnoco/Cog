@@ -27,7 +27,6 @@
 		8310BA4D1D7377DC0055CEC5 /* pack_dsd.c in Sources */ = {isa = PBXBuildFile; fileRef = 8310BA471D7377DC0055CEC5 /* pack_dsd.c */; };
 		8310BA4E1D7377DC0055CEC5 /* pack_floats.c in Sources */ = {isa = PBXBuildFile; fileRef = 8310BA481D7377DC0055CEC5 /* pack_floats.c */; };
 		8310BA4F1D7377DC0055CEC5 /* pack_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 8310BA491D7377DC0055CEC5 /* pack_utils.c */; };
-		83747BDE2862D5C50021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BDC2862D5C50021245F /* Shared.xcconfig */; };
 		83DD1DD017FA038A00249519 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCD17FA038A00249519 /* utils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83DD1DD117FA038A00249519 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCE17FA038A00249519 /* wavpack_local.h */; };
 		83DD1DD217FA038A00249519 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1DCF17FA038A00249519 /* wavpack_version.h */; };
@@ -290,7 +289,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				83747BDE2862D5C50021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		830E1DA1263B90CB005B01D2 /* rad2.h in Headers */ = {isa = PBXBuildFile; fileRef = 830E1D9F263B90CB005B01D2 /* rad2.h */; };
 		830E1DA2263B90CB005B01D2 /* rad2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830E1DA0263B90CB005B01D2 /* rad2.cpp */; };
-		83747B7C2862D4B70021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B7A2862D4B70021245F /* Shared.xcconfig */; };
 		83D3C578201C66E3005564CB /* adplug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C505201C66C1005564CB /* adplug.cpp */; };
 		83D3C579201C66E3005564CB /* mtk.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C506201C66C2005564CB /* mtk.h */; };
 		83D3C57A201C66E3005564CB /* psi.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3C507201C66C2005564CB /* psi.h */; };
@@ -605,7 +604,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747B7C2862D4B70021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

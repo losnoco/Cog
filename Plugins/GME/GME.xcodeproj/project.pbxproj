@@ -13,7 +13,6 @@
 		17C8F3C30CBED649008D969D /* GME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; };
 		17DA34BB0CC052030003F6B2 /* GameMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA34B90CC052030003F6B2 /* GameMetadataReader.m */; };
 		8319C750237629D400BFFAE0 /* GamePropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8319C74F237629D400BFFAE0 /* GamePropertiesReader.m */; };
-		83747C472862DCD90021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C452862DCD90021245F /* Shared.xcconfig */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -264,7 +263,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
-				83747C472862DCD90021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

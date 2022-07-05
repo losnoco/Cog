@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1716093A0F627F02008FA424 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 171609390F627F02008FA424 /* HTTPSource.m */; };
 		8356BD1827B3B7340074E50C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BD1727B3B7340074E50C /* libcurl.tbd */; };
-		83747C382862DC0D0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C362862DC0D0021245F /* Shared.xcconfig */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -205,7 +204,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C382862DC0D0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

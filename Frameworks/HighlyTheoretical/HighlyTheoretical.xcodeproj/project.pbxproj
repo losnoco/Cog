@@ -26,7 +26,6 @@
 		834378CC17F9666D00584396 /* m68kops.c in Sources */ = {isa = PBXBuildFile; fileRef = 834378C217F9666D00584396 /* m68kops.c */; };
 		834378CD17F9666D00584396 /* m68kops.h in Headers */ = {isa = PBXBuildFile; fileRef = 834378C317F9666D00584396 /* m68kops.h */; };
 		834378CE17F9666D00584396 /* macros.h in Headers */ = {isa = PBXBuildFile; fileRef = 834378C417F9666D00584396 /* macros.h */; };
-		83747B9A2862D5230021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B982862D5230021245F /* Shared.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -234,7 +233,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8343787C17F9658E00584396 /* InfoPlist.strings in Resources */,
-				83747B9A2862D5230021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

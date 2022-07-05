@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		830109F91A09BC0A0004F8D8 /* codecvt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F71A09BC0A0004F8D8 /* codecvt.h */; };
 		830109FA1A09BC0A0004F8D8 /* wstring_convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F81A09BC0A0004F8D8 /* wstring_convert.h */; };
-		83747B8B2862D4F90021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B892862D4F90021245F /* Shared.xcconfig */; };
 		83848FBC1807623F00E7332D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FBB1807623F00E7332D /* Cocoa.framework */; };
 		83848FC61807623F00E7332D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83848FC41807623F00E7332D /* InfoPlist.strings */; };
 		838490251807649A00E7332D /* Channel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490011807649A00E7332D /* Channel.cpp */; };
@@ -283,7 +282,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83848FC61807623F00E7332D /* InfoPlist.strings in Resources */,
-				83747B8B2862D4F90021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

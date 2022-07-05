@@ -524,7 +524,6 @@
 		8373342C23F60CDC00DE14DC /* kwb.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342423F60CDB00DE14DC /* kwb.c */; };
 		8373342D23F60CDC00DE14DC /* bnsf_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 8373342523F60CDC00DE14DC /* bnsf_keys.h */; };
 		8373342F23F60D4100DE14DC /* tgc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8373342E23F60D4100DE14DC /* tgc.c */; };
-		83747BD92862D5BC0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BD72862D5BB0021245F /* Shared.xcconfig */; };
 		8375737321F9507D00F01AF5 /* oki_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375737221F9507D00F01AF5 /* oki_decoder.c */; };
 		8375737621F950ED00F01AF5 /* gin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8375737421F950EC00F01AF5 /* gin.c */; };
 		8375737721F950ED00F01AF5 /* ubi_sb_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8375737521F950EC00F01AF5 /* ubi_sb_streamfile.h */; };
@@ -2728,7 +2727,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				836F6B4718BDB8880095E648 /* InfoPlist.strings in Resources */,
-				83747BD92862D5BC0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

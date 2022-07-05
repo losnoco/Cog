@@ -67,7 +67,6 @@
 		8359004517FEF40E0060F3ED /* Ppmd7.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFB617FEF40E0060F3ED /* Ppmd7.h */; };
 		8359004617FEF40E0060F3ED /* Ppmd7Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFB717FEF40E0060F3ED /* Ppmd7Dec.c */; };
 		8359004717FEF40E0060F3ED /* Ppmd7Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFB817FEF40E0060F3ED /* Ppmd7Enc.c */; };
-		8359004817FEF40E0060F3ED /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8359FFB917FEF40E0060F3ED /* readme.txt */; };
 		8359004917FEF40E0060F3ED /* RotateDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFBA17FEF40E0060F3ED /* RotateDefs.h */; };
 		8359004A17FEF40E0060F3ED /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFBB17FEF40E0060F3ED /* Threads.h */; };
 		8359004B17FEF40E0060F3ED /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFBC17FEF40E0060F3ED /* Types.h */; };
@@ -129,7 +128,6 @@
 		8359008D17FEF40E0060F3ED /* unrar_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359000117FEF40E0060F3ED /* unrar_misc.cpp */; };
 		8359009F17FF073E0060F3ED /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359009E17FF073E0060F3ED /* 7zStream.c */; };
 		8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF4817FEF39F0060F3ED /* InfoPlist.strings */; };
-		83747BE32862D78F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BE12862D78E0021245F /* Shared.xcconfig */; };
 		83756F621D23A95B003A7676 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83756F611D23A95B003A7676 /* CoreServices.framework */; };
 		83C2109719CD81F50093C461 /* headers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2108E19CD81F50093C461 /* headers.cpp */; };
 		83C2109819CD81F50093C461 /* headers5.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C2108F19CD81F50093C461 /* headers5.hpp */; };
@@ -664,9 +662,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8359004817FEF40E0060F3ED /* readme.txt in Resources */,
 				8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */,
-				83747BE32862D78F0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

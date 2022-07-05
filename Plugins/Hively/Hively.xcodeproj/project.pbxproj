@@ -14,7 +14,6 @@
 		836FB5A01820556F00B3AD2D /* HVLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59B1820556F00B3AD2D /* HVLDecoder.m */; };
 		836FB5A11820556F00B3AD2D /* HVLMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59D1820556F00B3AD2D /* HVLMetadataReader.m */; };
 		836FB5A21820556F00B3AD2D /* HVLContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59F1820556F00B3AD2D /* HVLContainer.m */; };
-		83747C3D2862DC450021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C3B2862DC450021245F /* Shared.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -241,7 +240,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				836FB53B1820538700B3AD2D /* InfoPlist.strings in Resources */,
-				83747C3D2862DC450021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

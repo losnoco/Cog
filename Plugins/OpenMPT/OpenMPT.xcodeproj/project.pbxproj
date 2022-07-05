@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		833A899C286FF3150022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A899B286FF3150022E036 /* Cocoa.framework */; };
-		83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C182862DB2F0021245F /* Shared.xcconfig */; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
 		83E5FE751FFF010C00659F0F /* OMPTMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */; };
@@ -221,7 +220,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C1A2862DB2F0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

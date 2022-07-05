@@ -120,8 +120,6 @@
 		83299FC31E7657ED003A3242 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FC11E7657ED003A3242 /* timing.c */; };
 		8333B6631DCC440C004C140D /* sharkport.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6611DCC440C004C140D /* sharkport.c */; };
 		8333B6671DCC4451004C140D /* tile-cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 8333B6651DCC4451004C140D /* tile-cache.c */; };
-		83747BA92862D5430021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA72862D5430021245F /* Shared.xcconfig */; };
-		837612EE1DD6AA2B001EED3D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 837612ED1DD6AA2B001EED3D /* LICENSE */; };
 		837CEA73234875D700E62A4A /* audio-mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEA70234875D700E62A4A /* audio-mixer.c */; };
 		83C9A7D02632122C00725A49 /* gpio.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C9A7CC2632122C00725A49 /* gpio.c */; };
 		83C9A7D12632122C00725A49 /* vfame.c in Sources */ = {isa = PBXBuildFile; fileRef = 83C9A7CD2632122C00725A49 /* vfame.c */; };
@@ -1138,8 +1136,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				837612EE1DD6AA2B001EED3D /* LICENSE in Resources */,
-				83747BA92862D5430021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
