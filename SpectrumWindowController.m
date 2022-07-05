@@ -10,6 +10,8 @@
 #import "SpectrumViewSK.h"
 #import "SpectrumViewCG.h"
 
+static void *kSpectrumWindowContext = &kSpectrumWindowContext;
+
 @interface SpectrumWindowController ()
 @property SpectrumViewSK *spectrumViewSK;
 @property SpectrumViewCG *spectrumViewCG;
@@ -18,13 +20,36 @@
 @implementation SpectrumWindowController
 
 - (id)init {
-	return [super initWithWindowNibName:@"SpectrumWindow"];
+	self = [super initWithWindowNibName:@"SpectrumWindow"];
+	if(self) {
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumSceneKit" options:0 context:kSpectrumWindowContext];
+	}
+	return self;
 }
 
 - (void)windowDidLoad {
 	[super windowDidLoad];
 
 	[self startRunning];
+}
+
+- (void)dealloc {
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumSceneKit" context:kSpectrumWindowContext];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+					  ofObject:(id)object
+						change:(NSDictionary<NSKeyValueChangeKey, id> *)change
+					   context:(void *)context {
+	if(context == kSpectrumWindowContext) {
+		if([keyPath isEqualToString:@"values.spectrumSceneKit"]) {
+			self.spectrumViewSK = nil;
+			self.spectrumViewCG = nil;
+			[self startRunning];
+		}
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 - (void)startRunning {

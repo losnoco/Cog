@@ -990,6 +990,9 @@
                             <rect key="frame" x="0.0" y="14" width="64" height="26"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </customView>
+                        <connections>
+                            <outlet property="playbackController" destination="705" id="FPc-ek-NRd"/>
+                        </connections>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
@@ -1246,6 +1249,9 @@
                             <rect key="frame" x="0.0" y="14" width="64" height="26"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </customView>
+                        <connections>
+                            <outlet property="playbackController" destination="705" id="GWc-77-WHY"/>
+                        </connections>
                     </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>

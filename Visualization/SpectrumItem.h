@@ -7,10 +7,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "PlaybackController.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumItem : NSToolbarItem
-
+@interface SpectrumItem : NSToolbarItem {
+	IBOutlet PlaybackController *playbackController;
+}
 @end
 
 NS_ASSUME_NONNULL_END
