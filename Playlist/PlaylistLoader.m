@@ -56,9 +56,6 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 		[queue setMaxConcurrentOperationCount:8];
 
 		queuedURLs = [[NSMutableDictionary alloc] init];
-
-		loaderQueue = dispatch_queue_create("Playlist loader queue", DISPATCH_QUEUE_SERIAL);
-		atomic_init(&loaderQueueRefCount, 0);
 	}
 
 	return self;
@@ -335,35 +332,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
-	int refCount;
-
-	do {
-		refCount = atomic_load_explicit(&loaderQueueRefCount, memory_order_relaxed);
-		if(refCount > 0) {
-			[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-		}
-	} while(refCount > 0);
-
-	__block NSArray *outurls = nil;
-
-	atomic_fetch_add(&self->loaderQueueRefCount, 1);
-
-	dispatch_async(loaderQueue, ^{
-		outurls = [self doInsertURLs:urls atIndex:index sort:sort];
-		atomic_fetch_sub(&self->loaderQueueRefCount, 1);
-	});
-
-	do {
-		refCount = atomic_load_explicit(&loaderQueueRefCount, memory_order_relaxed);
-		if(refCount > 0) {
-			[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-		}
-	} while(refCount > 0);
-
-	return outurls;
-}
-
-- (NSArray *)doInsertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
 	NSMutableSet *uniqueURLs = [NSMutableSet set];
 
 	NSMutableArray *expandedURLs = [NSMutableArray array];
