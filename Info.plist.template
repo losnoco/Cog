@@ -972,6 +972,24 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>mkv</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>Matroska Video File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>weba</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
@@ -980,6 +998,24 @@
 			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>WebM Audio File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>webm</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>WebM Media File</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSHandlerRank</key>
