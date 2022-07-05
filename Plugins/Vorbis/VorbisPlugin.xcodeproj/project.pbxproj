@@ -11,7 +11,6 @@
 		83186313285CEBD2001422CC /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 83186312285CEBD2001422CC /* NSDictionary+Merge.m */; };
 		836EF0D627BB969D00BF35B2 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D427BB969D00BF35B2 /* libvorbisfile.3.dylib */; };
 		836EF0DF27BB987000BF35B2 /* libvorbis.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0DE27BB987000BF35B2 /* libvorbis.0.dylib */; };
-		83747BED2862D9010021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BEB2862D9010021245F /* Shared.xcconfig */; };
 		83AA661627B7FAFC0098D4B8 /* picture.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA661127B7FAFC0098D4B8 /* picture.c */; };
 		83AA661727B7FAFD0098D4B8 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA661227B7FAFC0098D4B8 /* base64.c */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -238,7 +237,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BED2862D9010021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

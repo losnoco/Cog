@@ -14,7 +14,6 @@
 		8307D31D286072BF000FF8EB /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8307D31C286072BF000FF8EB /* SandboxBroker.h */; };
 		8356BCE527B377C20074E50C /* TagLibID3v2Reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */; };
 		8356BCE627B377C20074E50C /* TagLibID3v2Reader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */; };
-		83747BF72862D9470021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BF52862D9470021245F /* Shared.xcconfig */; };
 		8384913A18081FFC00E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384913918081FFC00E7332D /* Logging.h */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -270,7 +269,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BF72862D9470021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

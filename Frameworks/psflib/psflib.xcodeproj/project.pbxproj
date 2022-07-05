@@ -13,7 +13,6 @@
 		8343785A17F93D8200584396 /* psf2fs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343785617F93D8200584396 /* psf2fs.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8343785B17F93D8200584396 /* psflib.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343785717F93D8200584396 /* psflib.c */; };
 		8343785C17F93D8200584396 /* psflib.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343785817F93D8200584396 /* psflib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		83747B9F2862D52E0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B9D2862D52E0021245F /* Shared.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -178,7 +177,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8343782A17F93CB500584396 /* InfoPlist.strings in Resources */,
-				83747B9F2862D52E0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

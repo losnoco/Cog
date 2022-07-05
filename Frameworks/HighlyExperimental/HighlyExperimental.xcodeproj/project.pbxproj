@@ -25,7 +25,6 @@
 		8360EF6A17F92DB0005208A4 /* spucore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF5717F92DB0005208A4 /* spucore.h */; };
 		8360EF6B17F92DB0005208A4 /* vfs.c in Sources */ = {isa = PBXBuildFile; fileRef = 8360EF5817F92DB0005208A4 /* vfs.c */; };
 		8360EF6C17F92DB0005208A4 /* vfs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360EF5917F92DB0005208A4 /* vfs.h */; };
-		83747BA42862D5390021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BA22862D5390021245F /* Shared.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -220,7 +219,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8360EF1E17F92C91005208A4 /* InfoPlist.strings in Resources */,
-				83747BA42862D5390021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

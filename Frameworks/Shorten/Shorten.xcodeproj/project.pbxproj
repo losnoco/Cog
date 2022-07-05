@@ -19,7 +19,6 @@
 		59FDCD700A2922E1006C1800 /* shn_reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD690A2922E1006C1800 /* shn_reader.cpp */; };
 		59FDCD710A2922E1006C1800 /* sulawalaw.c in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD6A0A2922E1006C1800 /* sulawalaw.c */; };
 		59FDCD720A2922E1006C1800 /* vario.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59FDCD6B0A2922E1006C1800 /* vario.cpp */; };
-		83747BCC2862D5970021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BCA2862D5970021245F /* Shared.xcconfig */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -218,7 +217,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				83747BCC2862D5970021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

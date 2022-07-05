@@ -16,7 +16,6 @@
 		83489C632782F39D00BDCEA2 /* libvgm-player.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83489C602782F39D00BDCEA2 /* libvgm-player.a */; };
 		83489C662782F74800BDCEA2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83489C652782F74800BDCEA2 /* libz.tbd */; };
 		83489C682782F74E00BDCEA2 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83489C672782F74E00BDCEA2 /* libiconv.tbd */; };
-		83747C332862DBE80021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C312862DBE80021245F /* Shared.xcconfig */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -239,7 +238,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
-				83747C332862DBE80021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

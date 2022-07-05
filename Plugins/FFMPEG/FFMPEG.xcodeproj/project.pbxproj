@@ -17,7 +17,6 @@
 		8352D49D1CDDB8C0009D16AA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49C1CDDB8C0009D16AA /* CoreMedia.framework */; };
 		8352D49F1CDDB8D7009D16AA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49E1CDDB8D7009D16AA /* CoreVideo.framework */; };
 		8356BCE927B37C6F0074E50C /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCE727B37C6F0074E50C /* NSDictionary+Merge.m */; };
-		83747C562862DD4D0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C542862DD4D0021245F /* Shared.xcconfig */; };
 		83AA7D0C279EBCC600087AA4 /* libavcodec.59.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D08279EBCC600087AA4 /* libavcodec.59.dylib */; };
 		83AA7D0D279EBCC600087AA4 /* libavutil.57.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D09279EBCC600087AA4 /* libavutil.57.dylib */; };
 		83AA7D0E279EBCC600087AA4 /* libswresample.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0A279EBCC600087AA4 /* libswresample.4.dylib */; };
@@ -269,7 +268,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C562862DD4D0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

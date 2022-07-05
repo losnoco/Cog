@@ -10,7 +10,6 @@
 		17C93E740B8FF192008627D6 /* CoreAudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93E730B8FF192008627D6 /* CoreAudioDecoder.m */; };
 		17C93EAC0B8FF3CE008627D6 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C93EAB0B8FF3CE008627D6 /* CoreAudio.framework */; };
 		17C93EB30B8FF3E1008627D6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C93EB20B8FF3E1008627D6 /* AudioToolbox.framework */; };
-		83747C602862DD880021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C5E2862DD880021245F /* Shared.xcconfig */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -188,7 +187,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C602862DD880021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83747FE52862E8B60021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747FE32862E8B60021245F /* Shared.xcconfig */; };
 		99B98A1F0CC7E1CD00C256E9 /* APLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D42360CBB0F9800135C1B /* APLDecoder.m */; };
 		99B98A200CC7E1CE00C256E9 /* APLFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 99B9863F0CC7A08600C256E9 /* APLFile.m */; };
 		99B98A260CC7E22500C256E9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -184,7 +183,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747FE52862E8B60021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

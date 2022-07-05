@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83747BBD2862D5760021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BBB2862D5760021245F /* Shared.xcconfig */; };
 		83A16EF019F48A2E00842DBC /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A16EED19F48A2E00842DBC /* huffman.c */; };
 		83A16EF119F48A2E00842DBC /* mpc_bits_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A16EEE19F48A2E00842DBC /* mpc_bits_reader.c */; };
 		83A16EF219F48A2E00842DBC /* mpc_demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 83A16EEF19F48A2E00842DBC /* mpc_demux.c */; };
@@ -274,7 +273,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				83747BBD2862D5760021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

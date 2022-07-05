@@ -11,7 +11,6 @@
 		8372C93727C7863700E250C9 /* libmad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C93627C7863700E250C9 /* libmad.a */; };
 		8372C93F27C7904800E250C9 /* libid3tag.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C93E27C7904800E250C9 /* libid3tag.a */; };
 		8372C94227C7959000E250C9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C94127C7959000E250C9 /* libz.tbd */; };
-		83747C292862DB9F0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C272862DB9F0021245F /* Shared.xcconfig */; };
 		83F97B6928600F9300A70B97 /* CVbriHeader.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F97B6728600F9300A70B97 /* CVbriHeader.c */; };
 /* End PBXBuildFile section */
 
@@ -152,7 +151,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C292862DB9F0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

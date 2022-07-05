@@ -10,7 +10,6 @@
 		1745C4DA0B90C42500A6768C /* WavPackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1745C4D60B90C42500A6768C /* WavPackDecoder.m */; };
 		17F562D80C3BDA6C0019975C /* WavPack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; };
 		17F562DB0C3BDA6E0019975C /* WavPack.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83747BE82862D8D60021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BE62862D8D60021245F /* Shared.xcconfig */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -241,7 +240,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747BE82862D8D60021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

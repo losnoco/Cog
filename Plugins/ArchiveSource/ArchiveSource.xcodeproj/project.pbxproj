@@ -12,7 +12,6 @@
 		8359009C17FEFDA80060F3ED /* ArchiveContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8359009B17FEFDA80060F3ED /* ArchiveContainer.m */; };
 		8359FF1B17FEF35C0060F3ED /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359FF1A17FEF35C0060F3ED /* Cocoa.framework */; };
 		8359FF2517FEF35C0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF2317FEF35C0060F3ED /* InfoPlist.strings */; };
-		83747C652862DDA00021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C632862DDA00021245F /* Shared.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,7 +222,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8359FF2517FEF35C0060F3ED /* InfoPlist.strings in Resources */,
-				83747C652862DDA00021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

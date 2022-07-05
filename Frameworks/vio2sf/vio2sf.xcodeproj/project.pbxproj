@@ -11,7 +11,6 @@
 		833B1A3F180BAD0200414852 /* isqrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B1A3B180BAD0200414852 /* isqrt.h */; };
 		83699ABA1AB3D8EB00F5A6E3 /* barray.c in Sources */ = {isa = PBXBuildFile; fileRef = 83699AB81AB3D8EB00F5A6E3 /* barray.c */; };
 		83699ABB1AB3D8EB00F5A6E3 /* barray.h in Headers */ = {isa = PBXBuildFile; fileRef = 83699AB91AB3D8EB00F5A6E3 /* barray.h */; };
-		83747B862862D4EE0021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747B842862D4EE0021245F /* Shared.xcconfig */; };
 		83DD1A0318EA634F00DADA1A /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DD1A0118EA634F00DADA1A /* resampler.c */; };
 		83DD1A0418EA634F00DADA1A /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DD1A0218EA634F00DADA1A /* resampler.h */; };
 		83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83DE0C12180A9BD400269051 /* InfoPlist.strings */; };
@@ -24,7 +23,6 @@
 		83DE0C87180A9CA400269051 /* bios.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C4C180A9CA400269051 /* bios.h */; };
 		83DE0C88180A9CA400269051 /* bits.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C4D180A9CA400269051 /* bits.h */; };
 		83DE0C89180A9CA400269051 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C4E180A9CA400269051 /* config.h */; };
-		83DE0C8A180A9CA400269051 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 83DE0C4F180A9CA400269051 /* COPYING */; };
 		83DE0C8B180A9CA400269051 /* cp15.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DE0C50180A9CA400269051 /* cp15.c */; };
 		83DE0C8C180A9CA400269051 /* cp15.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C51180A9CA400269051 /* cp15.h */; };
 		83DE0C8D180A9CA400269051 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DE0C52180A9CA400269051 /* debug.h */; };
@@ -327,9 +325,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83DE0C8A180A9CA400269051 /* COPYING in Resources */,
 				83DE0C14180A9BD400269051 /* InfoPlist.strings in Resources */,
-				83747B862862D4EE0021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

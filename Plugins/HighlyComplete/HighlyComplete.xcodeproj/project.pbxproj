@@ -17,7 +17,6 @@
 		834379A817F9818400584396 /* HCDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 834379A717F9818400584396 /* HCDecoder.mm */; };
 		8360EEE817F92AC8005208A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EEE717F92AC8005208A4 /* Cocoa.framework */; };
 		8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8360EEF017F92AC8005208A4 /* InfoPlist.strings */; };
-		83747C422862DCB50021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C402862DCB50021245F /* Shared.xcconfig */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
 		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CA24241D7BC47E00F2EA53 /* mGBA.framework */; };
@@ -556,7 +555,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */,
-				83747C422862DCB50021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

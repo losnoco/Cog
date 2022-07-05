@@ -12,7 +12,6 @@
 		8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8081A35654900EEE8E6 /* SidContainer.mm */; };
 		833A8998286FF2E30022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A8996286FF2E30022E036 /* Cocoa.framework */; };
 		836F5BEC1A357915002730CC /* roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836F5BEA1A357915002730CC /* roms.cpp */; };
-		83747C012862DA420021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747BFF2862DA420021245F /* Shared.xcconfig */; };
 		EDBE911825E7EA01001EB4A4 /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; };
 		EDBE911925E7EA01001EB4A4 /* sidplayfp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -218,7 +217,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83747C012862DA420021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

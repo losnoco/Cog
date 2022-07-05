@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		17DA346E0CC04FCD0003F6B2 /* CueSheetMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */; };
-		83747C5B2862DD660021245F /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 83747C592862DD660021245F /* Shared.xcconfig */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E8D42260CBB0F5800135C1B /* CueSheetContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D42250CBB0F5800135C1B /* CueSheetContainer.m */; };
@@ -210,7 +209,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
-				83747C5B2862DD660021245F /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

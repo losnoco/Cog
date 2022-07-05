@@ -52,7 +52,6 @@
 		831A4FE42865A7DC0049CFE4 /* pf_scalar_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA72865A7DC0049CFE4 /* pf_scalar_double.h */; };
 		831A4FE52865A7DC0049CFE4 /* pffft_priv_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA82865A7DC0049CFE4 /* pffft_priv_impl.h */; };
 		831A4FE62865A7DC0049CFE4 /* pffft_double.c in Sources */ = {isa = PBXBuildFile; fileRef = 831A4FA92865A7DC0049CFE4 /* pffft_double.c */; };
-		831A4FF22865A7DC0049CFE4 /* CDSPHBUpsampler.inc in Sources */ = {isa = PBXBuildFile; fileRef = 831A4FB72865A7DC0049CFE4 /* CDSPHBUpsampler.inc */; };
 		831A4FF32865A7DC0049CFE4 /* r8butil.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FB82865A7DC0049CFE4 /* r8butil.h */; };
 		831A4FF52865A7DC0049CFE4 /* r8bbase.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FBA2865A7DC0049CFE4 /* r8bbase.h */; };
 		831A4FFE2865A7DC0049CFE4 /* CDSPSincFilterGen.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FC42865A7DC0049CFE4 /* CDSPSincFilterGen.h */; };
@@ -684,7 +683,6 @@
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */,
 				831A4FE62865A7DC0049CFE4 /* pffft_double.c in Sources */,
-				831A4FF22865A7DC0049CFE4 /* CDSPHBUpsampler.inc in Sources */,
 				17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */,
 				8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */,
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,
