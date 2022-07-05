@@ -35,25 +35,17 @@
 #include <taglib/toolkit/tdebug.h>
 #include <taglib/toolkit/trefcounter.h>
 
-#include <taglib/fileref.h>
 #include <taglib/asf/asffile.h>
-#include <taglib/mpeg/mpegfile.h>
-#include <taglib/ogg/vorbis/vorbisfile.h>
-#include <taglib/flac/flacfile.h>
-#include <taglib/ogg/flac/oggflacfile.h>
-#include <taglib/mpc/mpcfile.h>
+#include <taglib/fileref.h>
+#include <taglib/it/itfile.h>
+#include <taglib/mod/modfile.h>
 #include <taglib/mp4/mp4file.h>
-#include <taglib/wavpack/wavpackfile.h>
-#include <taglib/ogg/speex/speexfile.h>
-#include <taglib/ogg/opus/opusfile.h>
-#include <taglib/trueaudio/trueaudiofile.h>
+#include <taglib/mpc/mpcfile.h>
+#include <taglib/mpeg/mpegfile.h>
 #include <taglib/riff/aiff/aifffile.h>
 #include <taglib/riff/wav/wavfile.h>
-#include <taglib/ape/apefile.h>
-#include <taglib/ape/apegenfile.h>
-#include <taglib/mod/modfile.h>
 #include <taglib/s3m/s3mfile.h>
-#include <taglib/it/itfile.h>
+#include <taglib/wavpack/wavpackfile.h>
 #include <taglib/xm/xmfile.h>
 
 using namespace TagLib;
@@ -108,30 +100,18 @@ namespace
     // .oga can be any audio in the Ogg container. So leave it to content-based detection.
 
     if(ext == "MP3")
-      return new MPEG::File(stream, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
-    if(ext == "OGG")
-      return new Ogg::Vorbis::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "FLAC")
-      return new FLAC::File(stream, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
-    if(ext == "MPC")
+		return new MPEG::File(stream, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
+	if(ext == "MPC")
       return new MPC::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "WV")
-      return new WavPack::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "SPX")
-      return new Ogg::Speex::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "OPUS")
-      return new Ogg::Opus::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "TTA")
-      return new TrueAudio::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "WMA" || ext == "ASF")
+		return new WavPack::File(stream, readAudioProperties, audioPropertiesStyle);
+	if(ext == "WMA" || ext == "ASF")
       return new ASF::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "AIF" || ext == "AIFF" || ext == "AFC" || ext == "AIFC")
       return new RIFF::AIFF::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "WAV")
-      return new RIFF::WAV::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "APE")
-      return new APE::File(stream, readAudioProperties, audioPropertiesStyle);
-    // module, nst and wow are possible but uncommon extensions
+		return new RIFF::WAV::File(stream, readAudioProperties, audioPropertiesStyle);
+	// module, nst and wow are possible but uncommon extensions
     if(ext == "MOD" || ext == "MODULE" || ext == "NST" || ext == "WOW")
       return new Mod::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "S3M")
@@ -139,11 +119,9 @@ namespace
     if(ext == "IT")
       return new IT::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "XM")
-      return new XM::File(stream, readAudioProperties, audioPropertiesStyle);
-    if(ext == "TAK")
-      return new APEGen::File(stream, readAudioProperties, audioPropertiesStyle);
+		return new XM::File(stream, readAudioProperties, audioPropertiesStyle);
 
-    return 0;
+	return 0;
   }
 
   // Detect the file type based on the actual content of the stream.
@@ -154,35 +132,19 @@ namespace
     File *file = 0;
 
     if(MPEG::File::isSupported(stream))
-      file = new MPEG::File(stream, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
-    else if(Ogg::Vorbis::File::isSupported(stream))
-      file = new Ogg::Vorbis::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(Ogg::FLAC::File::isSupported(stream))
-      file = new Ogg::FLAC::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(FLAC::File::isSupported(stream))
-      file = new FLAC::File(stream, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
-    else if(MPC::File::isSupported(stream))
+		file = new MPEG::File(stream, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
+	else if(MPC::File::isSupported(stream))
       file = new MPC::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(WavPack::File::isSupported(stream))
-      file = new WavPack::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(Ogg::Speex::File::isSupported(stream))
-      file = new Ogg::Speex::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(Ogg::Opus::File::isSupported(stream))
-      file = new Ogg::Opus::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(TrueAudio::File::isSupported(stream))
-      file = new TrueAudio::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(ASF::File::isSupported(stream))
+		file = new WavPack::File(stream, readAudioProperties, audioPropertiesStyle);
+	else if(ASF::File::isSupported(stream))
       file = new ASF::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(RIFF::AIFF::File::isSupported(stream))
       file = new RIFF::AIFF::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(RIFF::WAV::File::isSupported(stream))
-      file = new RIFF::WAV::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(APE::File::isSupported(stream))
-      file = new APE::File(stream, readAudioProperties, audioPropertiesStyle);
-    else if(APEGen::File::isSupported(stream))
-      file = new APEGen::File(stream, readAudioProperties, audioPropertiesStyle);
+		file = new RIFF::WAV::File(stream, readAudioProperties, audioPropertiesStyle);
 
-    // isSupported() only does a quick check, so double check the file here.
+	// isSupported() only does a quick check, so double check the file here.
 
     if(file) {
       if(file->isValid())
@@ -220,38 +182,18 @@ namespace
       return 0;
 
     if(ext == "MP3")
-      return new MPEG::File(fileName, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
-    if(ext == "OGG")
-      return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "OGA") {
-      /* .oga can be any audio in the Ogg container. First try FLAC, then Vorbis. */
-      File *file = new Ogg::FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
-      if(file->isValid())
-        return file;
-      delete file;
-      return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
-    }
-    if(ext == "FLAC")
-      return new FLAC::File(fileName, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
-    if(ext == "MPC")
+		return new MPEG::File(fileName, ID3v2::FrameFactory::instance(), readAudioProperties, audioPropertiesStyle);
+	if(ext == "MPC")
       return new MPC::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "WV")
-      return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "SPX")
-      return new Ogg::Speex::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "OPUS")
-      return new Ogg::Opus::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "TTA")
-      return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "WMA" || ext == "ASF")
+		return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
+	if(ext == "WMA" || ext == "ASF")
       return new ASF::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "AIF" || ext == "AIFF" || ext == "AFC" || ext == "AIFC")
       return new RIFF::AIFF::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "WAV")
-      return new RIFF::WAV::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "APE")
-      return new APE::File(fileName, readAudioProperties, audioPropertiesStyle);
-    // module, nst and wow are possible but uncommon extensions
+		return new RIFF::WAV::File(fileName, readAudioProperties, audioPropertiesStyle);
+	// module, nst and wow are possible but uncommon extensions
     if(ext == "MOD" || ext == "MODULE" || ext == "NST" || ext == "WOW")
       return new Mod::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "S3M")
@@ -259,11 +201,9 @@ namespace
     if(ext == "IT")
       return new IT::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "XM")
-      return new XM::File(fileName, readAudioProperties, audioPropertiesStyle);
-    if(ext == "TAK")
-      return new APEGen::File(fileName, readAudioProperties, audioPropertiesStyle);
+		return new XM::File(fileName, readAudioProperties, audioPropertiesStyle);
 
-    return 0;
+	return 0;
   }
 }
 
@@ -366,22 +306,10 @@ StringList FileRef::defaultFileExtensions()
 {
   StringList l;
 
-  l.append("ogg");
-  l.append("flac");
-  l.append("oga");
-  l.append("opus");
   l.append("mp3");
   l.append("mpc");
   l.append("wv");
-  l.append("spx");
-  l.append("tta");
-  l.append("m4a");
-  l.append("m4r");
-  l.append("m4b");
-  l.append("m4p");
   l.append("3g2");
-  l.append("mp4");
-  l.append("m4v");
   l.append("wma");
   l.append("asf");
   l.append("aif");
@@ -389,7 +317,6 @@ StringList FileRef::defaultFileExtensions()
   l.append("afc");
   l.append("aifc");
   l.append("wav");
-  l.append("ape");
   l.append("mod");
   l.append("module"); // alias for "mod"
   l.append("nst"); // alias for "mod"

@@ -25,17 +25,12 @@
 
 #include <taglib/toolkit/tbytevector.h>
 
-#include <taglib/riff/aiff/aiffproperties.h>
 #include <taglib/ape/apeproperties.h>
 #include <taglib/asf/asfproperties.h>
-#include <taglib/flac/flacproperties.h>
 #include <taglib/mp4/mp4properties.h>
 #include <taglib/mpc/mpcproperties.h>
 #include <taglib/mpeg/mpegproperties.h>
-#include <taglib/ogg/opus/opusproperties.h>
-#include <taglib/ogg/speex/speexproperties.h>
-#include <taglib/trueaudio/trueaudioproperties.h>
-#include <taglib/ogg/vorbis/vorbisproperties.h>
+#include <taglib/riff/aiff/aiffproperties.h>
 #include <taglib/riff/wav/wavproperties.h>
 #include <taglib/wavpack/wavpackproperties.h>
 
@@ -46,33 +41,23 @@ using namespace TagLib;
 // This macro is a workaround for the fact that we can't add virtual functions.
 // Should be true virtual functions in taglib2.
 
-#define VIRTUAL_FUNCTION_WORKAROUND(function_name, default_value)               \
-  if(dynamic_cast<const APE::Properties*>(this))                                \
-    return dynamic_cast<const APE::Properties*>(this)->function_name();         \
-  else if(dynamic_cast<const ASF::Properties*>(this))                           \
-    return dynamic_cast<const ASF::Properties*>(this)->function_name();         \
-  else if(dynamic_cast<const FLAC::Properties*>(this))                          \
-    return dynamic_cast<const FLAC::Properties*>(this)->function_name();        \
-  else if(dynamic_cast<const MPC::Properties*>(this))                           \
-    return dynamic_cast<const MPC::Properties*>(this)->function_name();         \
-  else if(dynamic_cast<const MPEG::Properties*>(this))                          \
-    return dynamic_cast<const MPEG::Properties*>(this)->function_name();        \
-  else if(dynamic_cast<const Ogg::Opus::Properties*>(this))                     \
-    return dynamic_cast<const Ogg::Opus::Properties*>(this)->function_name();   \
-  else if(dynamic_cast<const Ogg::Speex::Properties*>(this))                    \
-    return dynamic_cast<const Ogg::Speex::Properties*>(this)->function_name();  \
-  else if(dynamic_cast<const TrueAudio::Properties*>(this))                     \
-    return dynamic_cast<const TrueAudio::Properties*>(this)->function_name();   \
-  else if(dynamic_cast<const RIFF::AIFF::Properties*>(this))                    \
-    return dynamic_cast<const RIFF::AIFF::Properties*>(this)->function_name();  \
-  else if(dynamic_cast<const RIFF::WAV::Properties*>(this))                     \
-    return dynamic_cast<const RIFF::WAV::Properties*>(this)->function_name();   \
-  else if(dynamic_cast<const Vorbis::Properties*>(this))                        \
-    return dynamic_cast<const Vorbis::Properties*>(this)->function_name();      \
-  else if(dynamic_cast<const WavPack::Properties*>(this))                       \
-    return dynamic_cast<const WavPack::Properties*>(this)->function_name();     \
-  else                                                                          \
-    return (default_value);
+#define VIRTUAL_FUNCTION_WORKAROUND(function_name, default_value)                  \
+	if(dynamic_cast<const APE::Properties*>(this))                                 \
+		return dynamic_cast<const APE::Properties*>(this)->function_name();        \
+	else if(dynamic_cast<const ASF::Properties*>(this))                            \
+		return dynamic_cast<const ASF::Properties*>(this)->function_name();        \
+	else if(dynamic_cast<const MPC::Properties*>(this))                            \
+		return dynamic_cast<const MPC::Properties*>(this)->function_name();        \
+	else if(dynamic_cast<const MPEG::Properties*>(this))                           \
+		return dynamic_cast<const MPEG::Properties*>(this)->function_name();       \
+	else if(dynamic_cast<const RIFF::AIFF::Properties*>(this))                     \
+		return dynamic_cast<const RIFF::AIFF::Properties*>(this)->function_name(); \
+	else if(dynamic_cast<const RIFF::WAV::Properties*>(this))                      \
+		return dynamic_cast<const RIFF::WAV::Properties*>(this)->function_name();  \
+	else if(dynamic_cast<const WavPack::Properties*>(this))                        \
+		return dynamic_cast<const WavPack::Properties*>(this)->function_name();    \
+	else                                                                           \
+		return (default_value);
 
 class AudioProperties::AudioPropertiesPrivate
 {
