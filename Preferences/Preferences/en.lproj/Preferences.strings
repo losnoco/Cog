@@ -198,7 +198,7 @@
 "ds2-aw-ebU.title" = "Limit volume control to 100%";
 
 /* Class = "NSButtonCell"; title = "Spectrum 2D view"; ObjectID = "gXL-j6-df0"; */
-"gXL-j6-df0.title" = "Spectrum 2D view";
+"gXL-j6-df0.title" = "Use flat perspective in toolbar";
 
 /* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "klv-Wh-0ur"; */
 "klv-Wh-0ur.title" = "hh:mm:ss.ms";
@@ -226,3 +226,7 @@
 
 /* Class = "NSButtonCell"; title = "Send crash reports and usage data"; ObjectID = "zQ2-6O-3Og"; */
 "zQ2-6O-3Og.title" = "Send crash reports and usage data";
+
+/* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
+"NMg-TO-amV.title" = "Use 3D rendered spectrum";
+

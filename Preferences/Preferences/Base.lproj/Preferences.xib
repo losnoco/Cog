@@ -382,7 +382,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <clipView key="contentView" id="gUE-Yu-LLA">
                         <rect key="frame" x="1" y="1" width="488" height="113"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" headerView="9rQ-Rq-K6J" viewBased="YES" id="gHG-xw-OyR">
                                 <rect key="frame" x="0.0" y="0.0" width="488" height="85"/>
@@ -404,7 +404,7 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="EEt-uJ-j6o">
-                                                <rect key="frame" x="18" y="0.0" width="386" height="24"/>
+                                                <rect key="frame" x="8" y="0.0" width="386" height="24"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7l9-R2-FVF">
@@ -439,7 +439,7 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="EDi-gi-Vg9">
-                                                <rect key="frame" x="421" y="0.0" width="38" height="24"/>
+                                                <rect key="frame" x="411" y="0.0" width="38" height="24"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0TJ-dK-Rfk">
@@ -557,19 +557,19 @@
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4xb-C2-wmz">
                     <rect key="frame" x="40" y="78" width="470" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Spectrum 2D view" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="gXL-j6-df0">
+                    <buttonCell key="cell" type="check" title="Use flat perspective in toolbar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="gXL-j6-df0">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="52" name="enabled" keyPath="values.spectrumSceneKit" id="frQ-l7-tCE"/>
                         <binding destination="52" name="value" keyPath="values.spectrumProjectionMode" id="UGh-1j-iFC"/>
+                        <binding destination="52" name="enabled" keyPath="values.spectrumSceneKit" id="frQ-l7-tCE"/>
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t6C-Va-hmO" userLabel="Use SceneKit">
-                    <rect key="frame" x="18" y="104" width="108" height="18"/>
+                    <rect key="frame" x="18" y="104" width="492" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="check" title="Use SceneKit" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="NMg-TO-amV">
+                    <buttonCell key="cell" type="check" title="Use 3D rendered spectrum" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="NMg-TO-amV">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
