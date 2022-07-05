@@ -555,6 +555,7 @@ static AppController *kAppController = nil;
 	NSData *barColor = [colorToValueTransformer reverseTransformedValue:[NSColor colorWithSRGBRed:1.0 green:0.5 blue:0 alpha:1.0]];
 	NSData *dotColor = [colorToValueTransformer reverseTransformedValue:[NSColor systemRedColor]];
 
+    [userDefaultsValuesDict setObject:@(YES) forKey:@"spectrumSceneKit"];
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
 	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 

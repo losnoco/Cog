@@ -48,6 +48,9 @@ extern NSString *CogPlaybackDidStopNotficiation;
 @implementation SpectrumViewSK
 
 + (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame {
+    if (![NSUserDefaults.standardUserDefaults boolForKey:@"spectrumSceneKit"])
+        return nil;
+
 	do {
 		if(@available(macOS 11.0, *)) {
 			// macOS 11 and newer seems to be safe
