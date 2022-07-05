@@ -27,10 +27,9 @@
 #include <taglib/toolkit/tstringlist.h>
 #include <taglib/toolkit/tpropertymap.h>
 
+#include <taglib/ape/apetag.h>
 #include <taglib/mpeg/id3v1/id3v1tag.h>
 #include <taglib/mpeg/id3v2/id3v2tag.h>
-#include <taglib/ape/apetag.h>
-#include <taglib/ogg/xiphcomment.h>
 #include <taglib/riff/wav/infotag.h>
 
 using namespace TagLib;
@@ -135,10 +134,7 @@ PropertyMap TagUnion::properties() const
       else if(dynamic_cast<const APE::Tag *>(d->tags[i]))
         return dynamic_cast<const APE::Tag *>(d->tags[i])->properties();
 
-      else if(dynamic_cast<const Ogg::XiphComment *>(d->tags[i]))
-        return dynamic_cast<const Ogg::XiphComment *>(d->tags[i])->properties();
-
-      else if(dynamic_cast<const RIFF::Info::Tag *>(d->tags[i]))
+	  else if(dynamic_cast<const RIFF::Info::Tag *>(d->tags[i]))
         return dynamic_cast<const RIFF::Info::Tag *>(d->tags[i])->properties();
     }
   }
@@ -164,10 +160,7 @@ void TagUnion::removeUnsupportedProperties(const StringList &unsupported)
       else if(dynamic_cast<APE::Tag *>(d->tags[i]))
         dynamic_cast<APE::Tag *>(d->tags[i])->removeUnsupportedProperties(unsupported);
 
-      else if(dynamic_cast<Ogg::XiphComment *>(d->tags[i]))
-        dynamic_cast<Ogg::XiphComment *>(d->tags[i])->removeUnsupportedProperties(unsupported);
-
-      else if(dynamic_cast<RIFF::Info::Tag *>(d->tags[i]))
+	  else if(dynamic_cast<RIFF::Info::Tag *>(d->tags[i]))
         dynamic_cast<RIFF::Info::Tag *>(d->tags[i])->removeUnsupportedProperties(unsupported);
     }
   }
