@@ -36,9 +36,9 @@
 - (IBAction)deleteSelectedPaths:(id)sender {
 	NSArray *selectedObjects = [sandboxPathBehaviorController selectedObjects];
 	if(selectedObjects && [selectedObjects count]) {
-		NSArray *paths = [selectedObjects valueForKey:@"path"];
-		for(NSString *path in paths) {
-			[sandboxPathBehaviorController removePath:path];
+		NSArray *tokens = [selectedObjects valueForKey:@"token"];
+		for(id token in tokens) {
+			[sandboxPathBehaviorController removeToken:token];
 		}
 	}
 }
