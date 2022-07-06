@@ -73,35 +73,28 @@
 	}
 }
 
-- (void)removePath:(NSString *)path {
+- (void)removeToken:(id)token {
+	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+
 	NSArray *objects = [[self arrangedObjects] copy];
+	
+	BOOL updated = NO;
 
 	for(NSDictionary *obj in objects) {
-		if([[obj objectForKey:@"path"] isEqualToString:path]) {
+		if([[obj objectForKey:@"token"] isEqualTo:token]) {
 			[self removeObject:obj];
+			[pc.viewContext deleteObject:token];
+			updated = YES;
 			break;
 		}
 	}
 
-	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
-
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"path == %@", path];
-
-	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
-	request.predicate = predicate;
-
-	NSError *error = nil;
-	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
-
-	if(results && [results count] > 0) {
-		for(SandboxToken *token in results) {
-			[pc.viewContext deleteObject:token];
+	if(updated) {
+		NSError *error;
+		[pc.viewContext	save:&error];
+		if(error) {
+			ALog(@"Error deleting bookmark: %@", [error localizedDescription]);
 		}
-	}
-	
-	[pc.viewContext	save:&error];
-	if(error) {
-		ALog(@"Error deleting bookmark: %@", [error localizedDescription]);
 	}
 }
 
