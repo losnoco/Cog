@@ -1744,9 +1744,16 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	BOOL sort = [[input objectForKey:@"sort"] boolValue];
 	URLOrigin origin = (URLOrigin)[[input objectForKey:@"origin"] integerValue];
 
+	NSUInteger countNow = [[self content] count];
+
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		[self willInsertURLs:entries origin:origin];
 	});
+
+	if(countNow && row && ![[self content] count]) {
+		row = 0;
+	}
+
 	NSArray *urlsAccepted = [playlistLoader insertURLs:entries atIndex:row sort:sort];
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		[self didInsertURLs:urlsAccepted origin:origin];
