@@ -591,7 +591,8 @@ static uint8_t reverse_bits[0x100];
 				} else {
 					_title = _tag;
 				}
-			} else if(!strcasecmp(tag->key, "date")) {
+			} else if(!strcasecmp(tag->key, "date") ||
+			          !strcasecmp(tag->key, "date_recorded")) {
 				NSString *dateString = guess_encoding_of_string(tag->value);
 				_year = @([dateString intValue]);
 			} else if(!strcasecmp(tag->key, "track")) {
