@@ -106,9 +106,20 @@
 }
 
 - (void)removeStaleEntries {
+	BOOL updated = NO;
+	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 	for(NSDictionary *entry in [[self arrangedObjects] copy]) {
 		if([[entry objectForKey:@"valid"] isEqualToString:NSLocalizedPrefString(@"ValidNo")]) {
 			[self removeObject:entry];
+			[pc.viewContext deleteObject:[entry objectForKey:@"token"]];
+			updated = YES;
+		}
+	}
+	if(updated) {
+		NSError *error;
+		[pc.viewContext save:&error];
+		if(error) {
+			ALog(@"Error saving after removing stale bookmarks: %@", [error localizedDescription]);
 		}
 	}
 }
