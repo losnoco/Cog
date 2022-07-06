@@ -98,8 +98,10 @@ static AppController *kAppController = nil;
 	[p beginSheetModalForWindow:mainWindow
 	          completionHandler:^(NSInteger result) {
 		          if(result == NSModalResponseOK) {
-			          [self->playlistLoader willInsertURLs:[p URLs] origin:URLOriginExternal];
-			          [self->playlistLoader didInsertURLs:[self->playlistLoader addURLs:[p URLs] sort:YES] origin:URLOriginExternal];
+			          NSDictionary *loadEntryData = @{@"entries": [p URLs],
+				                                      @"sort": @(YES),
+				                                      @"origin": @(URLOriginExternal)};
+			          [self->playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];
 		          } else {
 			          [p close];
 		          }
@@ -136,8 +138,10 @@ static AppController *kAppController = nil;
 
 - (void)openURLPanelDidEnd:(OpenURLPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo {
 	if(returnCode == NSModalResponseOK) {
-		[playlistLoader willInsertURLs:@[[panel url]] origin:URLOriginExternal];
-		[playlistLoader didInsertURLs:[playlistLoader addURLs:@[[panel url]] sort:NO] origin:URLOriginExternal];
+		NSDictionary *loadEntriesData = @{ @"entries": @[[panel url]],
+			                               @"sort": @(NO),
+			                               @"origin": @(URLOriginExternal) };
+		[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
 	}
 }
 
@@ -479,8 +483,10 @@ static AppController *kAppController = nil;
 
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
 	NSArray *urls = @[[NSURL fileURLWithPath:filename]];
-	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
-	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:NO] origin:URLOriginExternal];
+	NSDictionary *loadEntriesData = @{ @"entries": urls,
+		                               @"sort": @(NO),
+		                               @"origin": @(URLOriginInternal) };
+	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
 	return YES;
 }
 
@@ -491,8 +497,13 @@ static AppController *kAppController = nil;
 	for(NSString *filename in filenames) {
 		[urls addObject:[NSURL fileURLWithPath:filename]];
 	}
-	[playlistLoader willInsertURLs:urls origin:URLOriginExternal];
-	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:URLOriginExternal];
+
+	NSDictionary *loadEntriesData = @{ @"entries": urls,
+		                               @"sort": @(YES),
+		                               @"origin": @(URLOriginInternal) };
+
+	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
+
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 

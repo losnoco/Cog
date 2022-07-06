@@ -126,6 +126,10 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (void)willInsertURLs:(NSArray *_Nullable)urls origin:(URLOrigin)origin;
 - (void)didInsertURLs:(NSArray *_Nullable)urls origin:(URLOrigin)origin;
 
+// Asynchronous event handler
+- (void)addURLsInBackground:(NSDictionary *_Nonnull)input;
+- (void)insertURLsInBackground:(NSDictionary *_Nonnull)input;
+
 // queue methods
 - (IBAction)toggleQueued:(id _Nullable)sender;
 - (IBAction)emptyQueueList:(id _Nullable)sender;
@@ -154,7 +158,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 
 - (void)insertObjectsUnsynced:(NSArray *_Nullable)objects atArrangedObjectIndexes:(NSIndexSet *_Nullable)indexes;
 
-- (void)tableView:(NSTableView *)view didClickRow:(NSInteger)clickedRow column:(NSInteger)clickedColumn atPoint:(NSPoint)cellPoint;
+- (void)tableView:(NSTableView *_Nonnull)view didClickRow:(NSInteger)clickedRow column:(NSInteger)clickedColumn atPoint:(NSPoint)cellPoint;
 
 - (BOOL)pathSuggesterEmpty;
 

@@ -994,4 +994,12 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 	[playlistController didInsertURLs:urls origin:origin];
 }
 
+- (void)addURLsInBackground:(NSDictionary *)input {
+	[playlistController addURLsInBackground:input];
+}
+
+- (void)insertURLsInBackground:(NSDictionary *)input {
+	[playlistController insertURLsInBackground:input];
+}
+
 @end

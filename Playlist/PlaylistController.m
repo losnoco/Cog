@@ -770,17 +770,17 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 
 	if([acceptedURLs count]) {
-		[self willInsertURLs:acceptedURLs origin:URLOriginInternal];
-
 		if(![[self content] count]) {
 			row = 0;
 		}
 
-		NSArray *entries = [playlistLoader insertURLs:acceptedURLs atIndex:row sort:YES];
-		[self didInsertURLs:entries origin:URLOriginInternal];
-	}
+		NSDictionary *loadEntriesData = @{ @"entries": acceptedURLs,
+			                               @"index": @(row),
+			                               @"sort": @(YES),
+			                               @"origin": @(URLOriginInternal) };
 
-	if([self shuffle] != ShuffleOff) [self resetShuffleList];
+		[self performSelectorInBackground:@selector(insertURLsInBackground:) withObject:loadEntriesData];
+	}
 
 	return YES;
 }
@@ -1718,6 +1718,43 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 
 	return YES;
+}
+
+// Asynchronous event inlets:
+- (void)addURLsInBackground:(NSDictionary *)input {
+	NSUInteger row = [[self content] count];
+
+	NSMutableDictionary *_input = [input mutableCopy];
+	[_input setObject:@(row) forKey:@"index"];
+
+	[self insertURLsInBackground:_input];
+}
+
+static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
+		block();
+	} else {
+		dispatch_sync(queue, block);
+	}
+}
+
+- (void)insertURLsInBackground:(NSDictionary *)input {
+	NSArray *entries = [input objectForKey:@"entries"];
+	NSUInteger row = [[input objectForKey:@"index"] integerValue];
+	BOOL sort = [[input objectForKey:@"sort"] boolValue];
+	URLOrigin origin = (URLOrigin)[[input objectForKey:@"origin"] integerValue];
+
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[self willInsertURLs:entries origin:origin];
+	});
+	NSArray *urlsAccepted = [playlistLoader insertURLs:entries atIndex:row sort:sort];
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[self didInsertURLs:urlsAccepted origin:origin];
+	});
+
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		if([self shuffle] != ShuffleOff) [self resetShuffleList];
+	});
 }
 
 // Event inlets:

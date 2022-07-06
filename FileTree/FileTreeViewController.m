@@ -26,8 +26,10 @@
 }
 
 - (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin {
-	[playlistLoader willInsertURLs:urls origin:origin];
-	[playlistLoader didInsertURLs:[playlistLoader addURLs:urls sort:YES] origin:origin];
+	NSDictionary *loadEntryData = @{ @"entries": urls,
+		                             @"sort": @(YES),
+		                             @"origin": @(origin) };
+	[playlistLoader performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];
 }
 
 - (void)clear:(id)sender {
