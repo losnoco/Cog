@@ -70,5 +70,7 @@ typedef enum {
 // Events (passed to playlist controler):
 - (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin;
 - (void)didInsertURLs:(NSArray *)entries origin:(URLOrigin)origin;
+- (void)addURLsInBackground:(NSDictionary *)input;
+- (void)insertURLsInBackground:(NSDictionary *)input;
 
 @end

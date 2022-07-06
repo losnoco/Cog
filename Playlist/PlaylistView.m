@@ -358,12 +358,12 @@
 	if([acceptedURLs count]) {
 		NSUInteger row = [[playlistController content] count];
 
-		[playlistController willInsertURLs:acceptedURLs origin:URLOriginInternal];
+		NSDictionary *loadEntriesData = @{ @"entries": acceptedURLs,
+			                               @"index": @(row),
+			                               @"sort": @(NO),
+			                               @"origin": @(URLOriginInternal) };
 
-		NSArray *entries = [playlistLoader insertURLs:acceptedURLs atIndex:(int)row sort:NO];
-		[playlistLoader didInsertURLs:entries origin:URLOriginInternal];
-
-		if([playlistController shuffle] != ShuffleOff) [playlistController resetShuffleList];
+		[playlistController performSelectorInBackground:@selector(insertURLsInBackground:) withObject:loadEntriesData];
 	}
 }
 
