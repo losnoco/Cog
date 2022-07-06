@@ -324,14 +324,18 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	NSImage *image = [NSImage imageNamed:imageCacheTag];
 
 	if(image == nil) {
-		if([AVIFDecoder isAVIFFormatForData:self.albumArtInternal]) {
-			CGImageRef imageRef = [AVIFDecoder createAVIFImageWithData:self.albumArtInternal];
-			if(imageRef) {
-				image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
-				CFRelease(imageRef);
-			}
-		} else {
+		if(@available(macOS 13.0, *)) {
 			image = [[NSImage alloc] initWithData:self.albumArtInternal];
+		} else {
+			if([AVIFDecoder isAVIFFormatForData:self.albumArtInternal]) {
+				CGImageRef imageRef = [AVIFDecoder createAVIFImageWithData:self.albumArtInternal];
+				if(imageRef) {
+					image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
+					CFRelease(imageRef);
+				}
+			} else {
+				image = [[NSImage alloc] initWithData:self.albumArtInternal];
+			}
 		}
 		[image setName:imageCacheTag];
 	}
