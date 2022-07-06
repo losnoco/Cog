@@ -585,7 +585,12 @@ static uint8_t reverse_bits[0x100];
 			} else if(!strcasecmp(tag->key, "artist")) {
 				_artist = guess_encoding_of_string(tag->value);
 			} else if(!strcasecmp(tag->key, "title")) {
-				_title = guess_encoding_of_string(tag->value);
+				NSString *_tag = guess_encoding_of_string(tag->value);
+				if(i == 0 && formatCtx->nb_chapters > 1) {
+					_album = _tag;
+				} else {
+					_title = _tag;
+				}
 			} else if(!strcasecmp(tag->key, "date")) {
 				NSString *dateString = guess_encoding_of_string(tag->value);
 				_year = @([dateString intValue]);
@@ -607,6 +612,16 @@ static uint8_t reverse_bits[0x100];
 			} else if(!strcasecmp(tag->key, "replaygain_track_peak")) {
 				NSString *rgValue = guess_encoding_of_string(tag->value);
 				_replayGainTrackPeak = [rgValue floatValue];
+			} else if(!strcasecmp(tag->key, "replaygain_gain")) {
+				// global or chapter gain
+				NSString *rgValue = guess_encoding_of_string(tag->value);
+				if(i == 0) _replayGainAlbumGain = [rgValue floatValue];
+				else _replayGainTrackGain = [rgValue floatValue];
+			} else if(!strcasecmp(tag->key, "replaygain_peak")) {
+				// global or chapter peak
+				NSString *rgValue = guess_encoding_of_string(tag->value);
+				if(i == 0) _replayGainAlbumPeak = [rgValue floatValue];
+				else _replayGainTrackPeak = [rgValue floatValue];
 			} else if(!strcasecmp(tag->key, "iTunNORM")) {
 				NSString *tagString = guess_encoding_of_string(tag->value);
 				NSArray *tag = [tagString componentsSeparatedByString:@" "];
