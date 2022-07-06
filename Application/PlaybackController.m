@@ -32,6 +32,8 @@ NSString *CogPlaybackDidPauseNotficiation = @"CogPlaybackDidPauseNotficiation";
 NSString *CogPlaybackDidResumeNotficiation = @"CogPlaybackDidResumeNotficiation";
 NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 
+NSString *CogPlaybackDidChangeTrackNotification = @"CogPlaybackDidChangeTrackNotification";
+
 @synthesize playbackStatus;
 
 @synthesize progressOverall;
@@ -620,6 +622,19 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 		[self removeHDCD:nil];
 	});
+
+	if(playlistController.currentEntry) {
+		NSDictionary *info;
+		if(pe) {
+			info = @{ @"previous": playlistController.currentEntry,
+				      @"playPosition": @(playlistController.currentEntry.currentPosition),
+				      @"current": pe };
+		} else {
+			info = @{ @"previous": playlistController.currentEntry,
+				      @"playPosition": @(playlistController.currentEntry.currentPosition) };
+		}
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidChangeTrackNotification object:info];
+	}
 
 	if(pe) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
