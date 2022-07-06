@@ -99,12 +99,6 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 + (NSURL *)urlWithoutFragment:(NSURL *)url {
 	if(![url isFileURL]) return url;
 
-	NSNumber *isDirectory;
-
-	BOOL success = [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
-
-	if(success && [isDirectory boolValue]) return url;
-
 	NSString *s = [url path];
 
 	NSRange fragmentRange = [s rangeOfString:@"#"
