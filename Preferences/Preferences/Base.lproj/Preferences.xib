@@ -384,7 +384,7 @@
                         <rect key="frame" x="1" y="1" width="488" height="113"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" headerView="9rQ-Rq-K6J" viewBased="YES" id="gHG-xw-OyR">
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" headerView="9rQ-Rq-K6J" viewBased="YES" id="gHG-xw-OyR">
                                 <rect key="frame" x="0.0" y="0.0" width="488" height="85"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="17" height="0.0"/>
