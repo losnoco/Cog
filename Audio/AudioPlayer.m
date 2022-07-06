@@ -90,6 +90,10 @@
 
 		[self requestNextStream:userInfo];
 
+		if([nextStream isEqualTo:url]) {
+			return;
+		}
+
 		url = nextStream;
 		if(url == nil) {
 			return;
@@ -398,7 +402,9 @@
 
 	lastChain = nil;
 
-	while(shouldContinue && ![newChain open:nextStream withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+	NSURL *url = nextStream;
+
+	while(shouldContinue && ![newChain open:url withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 		if(nextStream == nil) {
 			newChain = nil;
 			atomic_fetch_sub(&refCount, 1);
@@ -407,6 +413,14 @@
 
 		newChain = nil;
 		[self requestNextStream:nextStreamUserInfo];
+
+		if([nextStream isEqualTo:url]) {
+			newChain = nil;
+			atomic_fetch_sub(&refCount, 1);
+			return YES;
+		}
+
+		url = nextStream;
 
 		newChain = [[BufferChain alloc] initWithController:self];
 	}
