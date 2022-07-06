@@ -44,11 +44,7 @@
 			BOOL isStale = YES;
 			NSError *err = nil;
 			NSURL *bookmarkUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
-			if(!bookmarkUrl) {
-				ALog(@"Stale bookmark for path: %@, with error: %@", token.path, [err localizedDescription]);
-				continue;
-			}
-			[self addObject:@{ @"path": token.path, @"valid": (isStale ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")), @"isFolder": @(token.folder) }];
+			[self addObject:@{ @"path": token.path, @"valid": ((!bookmarkUrl || isStale) ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")), @"isFolder": @(token.folder), @"token": token }];
 		}
 	}
 }
