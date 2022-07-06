@@ -1,8 +1,8 @@
 #!/bin/sh
 
-git=$(which git)
+git=$(command -v git)
 
-sed=$(which sed)
+sed=$(command -v sed)
 
 PlistBuddy="/usr/libexec/PlistBuddy"
 

@@ -2,7 +2,7 @@
 
 BASEDIR=$(dirname "$0")
 
-git=$(which git)
+git=$(command -v git)
 
 REPO_ROOT_PATH=$("$git" rev-parse --show-toplevel)
 
