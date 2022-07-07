@@ -78,6 +78,14 @@
 	NSArray *originalArray = [results valueForKey:@"url"];
 	NSMutableArray *array = [originalArray mutableCopy];
 
+	for(NSURL *url in originalArray) {
+		if(![url isFileURL]) {
+			[array removeObject:url];
+		}
+	}
+
+	originalArray = [array copy];
+
 	id audioContainerClass = NSClassFromString(@"AudioContainer");
 
 	for(NSURL *url in originalArray) {
