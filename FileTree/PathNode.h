@@ -16,9 +16,13 @@
 	NSURL *url;
 	NSString *display; // The pretty path to display.
 
+	NSString *lastPathComponent;
+
 	NSImage *icon;
 
 	NSArray *subpaths;
+
+	NSMutableDictionary *subpathsLookup;
 }
 
 - (id)initWithDataSource:(FileTreeDataSource *)ds url:(NSURL *)u;
@@ -33,6 +37,12 @@
 
 - (NSString *)display;
 - (void)setDisplay:(NSString *)s;
+
+- (NSString *)lastPathComponent;
+- (void)setLastPathComponent:(NSString *)s;
+
+- (NSDictionary *)subpathsLookup;
+- (void)setSubpathsLookup:(NSMutableDictionary *)d;
 
 - (NSImage *)icon;
 

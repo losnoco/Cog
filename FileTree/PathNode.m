@@ -60,6 +60,8 @@ NSURL *resolveAliases(NSURL *url) {
 
 	display = [[NSFileManager defaultManager] displayNameAtPath:[u path]];
 
+	lastPathComponent = [[u path] lastPathComponent];
+
 	icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
 
 	[icon setSize:NSMakeSize(16.0, 16.0)];
@@ -134,6 +136,19 @@ NSURL *resolveAliases(NSURL *url) {
 
 - (void)setSubpaths:(NSArray *)s {
 	subpaths = s;
+
+	subpathsLookup = [[NSMutableDictionary alloc] init];
+	for(PathNode *node in s) {
+		[subpathsLookup setObject:node forKey:node.lastPathComponent];
+	}
+}
+
+- (NSDictionary *)subpathsLookup {
+	return subpathsLookup;
+}
+
+- (void)setSubpathsLookup:(NSMutableDictionary *)d {
+	subpathsLookup = d;
 }
 
 - (BOOL)isLeaf {
@@ -150,6 +165,14 @@ NSURL *resolveAliases(NSURL *url) {
 
 - (NSImage *)icon {
 	return icon;
+}
+
+- (NSString *)lastPathComponent {
+	return lastPathComponent;
+}
+
+- (void)setLastPathComponent:(NSString *)s {
+	lastPathComponent = s;
 }
 
 @end

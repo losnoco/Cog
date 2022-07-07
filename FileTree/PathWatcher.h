@@ -25,6 +25,6 @@
 
 @protocol PathWatcherDelegate
 
-- (void)pathDidChange:(NSString *)path;
+- (void)pathDidChange:(NSString *)path flags:(FSEventStreamEventFlags)flags;
 
 @end
