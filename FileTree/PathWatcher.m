@@ -22,7 +22,7 @@ const FSEventStreamEventId eventIds[]) {
 	printf("Callback called\n");
 	for(i = 0; i < numEvents; i++) {
 		NSString *pathString = [[NSString alloc] initWithUTF8String:paths[i]];
-		[[pathWatcher delegate] pathDidChange:pathString];
+		[[pathWatcher delegate] pathDidChange:pathString flags:eventFlags[i]];
 	}
 }
 
@@ -62,7 +62,7 @@ const FSEventStreamEventId eventIds[]) {
 	                             (__bridge CFArrayRef)pathsToWatch,
 	                             kFSEventStreamEventIdSinceNow, // Or a previous event ID
 	                             1.0, // latency in seconds
-	                             kFSEventStreamCreateFlagNone // Watch this and all its subdirectories
+	                             kFSEventStreamCreateFlagFileEvents // Watch this and all its subdirectories
 	);
 
 	FSEventStreamScheduleWithRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);

@@ -130,34 +130,40 @@ static NSURL *defaultMusicDirectory(void) {
 	                                                          withString:@""
 	                                                             options:NSAnchoredSearch
 	                                                               range:NSMakeRange(0, [path length])] stringByStandardizingPath];
+	if([relativePath isEqualToString:[[self rootURL] path]])
+		relativePath = @"";
 	PathNode *node = rootNode;
 	DLog(@"Root | Relative | Path: %@ | %@ | %@", [[self rootURL] path], relativePath, path);
 	for(NSString *c in [relativePath pathComponents]) {
 		DLog(@"COMPONENT: %@", c);
-		BOOL found = NO;
-		for(PathNode *subnode in [node subpaths]) {
-			if([[[[subnode URL] path] lastPathComponent] isEqualToString:c]) {
-				node = subnode;
-				found = YES;
-			}
-		}
-
-		if(!found) {
-			DLog(@"Not found!");
-			return nil;
-		}
+		PathNode *subnode = [[node subpathsLookup] objectForKey:c];
+		if(!subnode) return nil;
+		node = subnode;
 	}
 
 	return node;
 }
 
-- (void)pathDidChange:(NSString *)path {
+- (void)pathDidChange:(NSString *)path flags:(FSEventStreamEventFlags)flags {
 	DLog(@"PATH DID CHANGE: %@", path);
 	// Need to find the corresponding node...and call [node reloadPath], then [self reloadPathNode:node]
-	PathNode *node = [self nodeForPath:path];
-	DLog(@"NODE IS: %@", node);
-	[node updatePath];
-	[self reloadPathNode:node];
+	PathNode *node;
+	do {
+		node = [self nodeForPath:path];
+		path = [path stringByDeletingLastPathComponent];
+		if(!path || [path length] < 2) return;
+	} while(!node);
+
+	if(flags & kFSEventStreamEventFlagItemRemoved) {
+		DLog(@"Removing node: %@", node);
+		PathNode *parentNode = [self nodeForPath:path];
+		[parentNode updatePath];
+		[self reloadPathNode:parentNode];
+	} else {
+		DLog(@"NODE IS: %@", node);
+		[node updatePath];
+		[self reloadPathNode:node];
+	}
 }
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
