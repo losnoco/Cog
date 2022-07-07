@@ -495,7 +495,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 
 	NSView *view = [tableView makeViewWithIdentifier:cellIdentifier owner:nil];
-	if(view) {
+	if(view && [view isKindOfClass:[NSTableCellView class]]) {
 		NSTableCellView *cellView = (NSTableCellView *)view;
 		NSRect frameRect = cellView.frame;
 		frameRect.origin.y = 1;

@@ -67,7 +67,7 @@
 	}
 
 	NSView *view = [tableView makeViewWithIdentifier:cellIdentifier owner:nil];
-	if(view) {
+	if(view && [view isKindOfClass:[NSTableCellView class]]) {
 		NSTableCellView *cellView = (NSTableCellView *)view;
 
 		if(cellView.textField) {
