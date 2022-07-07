@@ -485,7 +485,7 @@ static AppController *kAppController = nil;
 	NSArray *urls = @[[NSURL fileURLWithPath:filename]];
 	NSDictionary *loadEntriesData = @{ @"entries": urls,
 		                               @"sort": @(NO),
-		                               @"origin": @(URLOriginInternal) };
+		                               @"origin": @(URLOriginExternal) };
 	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
 	return YES;
 }
@@ -500,7 +500,7 @@ static AppController *kAppController = nil;
 
 	NSDictionary *loadEntriesData = @{ @"entries": urls,
 		                               @"sort": @(YES),
-		                               @"origin": @(URLOriginInternal) };
+		                               @"origin": @(URLOriginExternal) };
 
 	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
 
