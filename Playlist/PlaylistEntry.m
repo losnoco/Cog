@@ -16,10 +16,27 @@
 #import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
+#import <compression.h>
+
 extern NSPersistentContainer *kPersistentContainer;
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
+static NSMutableDictionary *kMetadataBlobCache = nil;
+static NSMutableDictionary *kMetadataCache = nil;
+
+static void *kCompressionScratchBuffer = NULL;
+static void *kDecompressionScratchBuffer = NULL;
+
 @implementation PlaylistEntry (Extension)
+
++ (void)initialize {
+	if(!kMetadataBlobCache) {
+		kMetadataBlobCache = [[NSMutableDictionary alloc] init];
+	}
+	if(!kMetadataCache) {
+		kMetadataCache = [[NSMutableDictionary alloc] init];
+	}
+}
 
 // The following read-only keys depend on the values of other properties
 
@@ -503,8 +520,72 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		self.error = YES;
 		self.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMetadata", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else {
+		NSMutableDictionary *metaDict = [[NSMutableDictionary alloc] init];
 		self.volume = 1;
-		[self setValuesForKeysWithDictionary:metadata];
+		for(NSString *key in metadata) {
+			NSString *lowerKey = [key lowercaseString];
+			id valueObj = [metadata objectForKey:key];
+			NSArray *values = nil;
+			NSString *firstValue = nil;
+			NSData *dataValue = nil;
+			if([valueObj isKindOfClass:[NSArray class]]) {
+				values = (NSArray *)valueObj;
+				if([values count]) {
+					firstValue = values[0];
+				}
+			} else if([valueObj isKindOfClass:[NSString class]]) {
+				firstValue = (NSString *)valueObj;
+				values = @[firstValue];
+			} else if([valueObj isKindOfClass:[NSNumber class]]) {
+				NSNumber *numberValue = (NSNumber *)valueObj;
+				firstValue = [numberValue stringValue];
+				values = @[firstValue];
+			} else if([valueObj isKindOfClass:[NSData class]]) {
+				dataValue = (NSData *)valueObj;
+			}
+			if([lowerKey isEqualToString:@"bitrate"]) {
+				self.bitrate = [firstValue intValue];
+			} else if([lowerKey isEqualToString:@"bitspersample"]) {
+				self.bitsPerSample = [firstValue intValue];
+			} else if([lowerKey isEqualToString:@"channelconfig"]) {
+				self.channelConfig = [firstValue intValue];
+			} else if([lowerKey isEqualToString:@"channels"]) {
+				self.channels = [firstValue intValue];
+			} else if([lowerKey isEqualToString:@"codec"]) {
+				self.codec = firstValue;
+			} else if([lowerKey isEqualToString:@"cuesheet"]) {
+				self.cuesheet = firstValue;
+			} else if([lowerKey isEqualToString:@"encoding"]) {
+				self.encoding = firstValue;
+			} else if([lowerKey isEqualToString:@"endian"]) {
+				self.endian = firstValue;
+			} else if([lowerKey isEqualToString:@"floatingpoint"]) {
+				self.floatingPoint = [firstValue boolValue];
+			} else if([lowerKey isEqualToString:@"samplerate"]) {
+				self.sampleRate = [firstValue floatValue];
+			} else if([lowerKey isEqualToString:@"seekable"]) {
+				self.seekable = [firstValue boolValue];
+			} else if([lowerKey isEqualToString:@"totalframes"]) {
+				self.totalFrames = [firstValue integerValue];
+			} else if([lowerKey isEqualToString:@"unsigned"]) {
+				self.unSigned = [firstValue boolValue];
+			} else if([lowerKey isEqualToString:@"replaygain_album_gain"]) {
+				self.replayGainAlbumGain = [firstValue floatValue];
+			} else if([lowerKey isEqualToString:@"replaygain_album_peak"]) {
+				self.replayGainAlbumPeak = [firstValue floatValue];
+			} else if([lowerKey isEqualToString:@"replaygain_track_gain"]) {
+				self.replayGainTrackGain = [firstValue floatValue];
+			} else if([lowerKey isEqualToString:@"replaygain_track_peak"]) {
+				self.replayGainTrackPeak = [firstValue floatValue];
+			} else if([lowerKey isEqualToString:@"volume"]) {
+				self.volume = [firstValue floatValue];
+			} else if([lowerKey isEqualToString:@"albumart"]) {
+				self.albumArt = dataValue;
+			} else {
+				[metaDict setObject:values forKey:lowerKey];
+			}
+		}
+		self.metadataBlob = metaDict;
 	}
 
 	[self setMetadataLoaded:YES];
@@ -572,6 +653,320 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	} else {
 		return 0;
 	}
+}
+
+@dynamic album;
+- (NSString *)album {
+	return [self readAllValuesAsString:@"album"];
+}
+
+- (void)setAlbum:(NSString *)album {
+	[self setValue:@"album" fromString:album];
+}
+
+@dynamic albumartist;
+- (NSString *)albumartist {
+	NSString *value = [self readAllValuesAsString:@"albumartist"];
+	if(!value) {
+		value = [self readAllValuesAsString:@"album artist"];
+	}
+	if(!value) {
+		value = [self readAllValuesAsString:@"album_artist"];
+	}
+	return value;
+}
+
+- (void)setAlbumartist:(NSString *)albumartist {
+	[self setValue:@"albumartist" fromString:albumartist];
+	[self setValue:@"album artist" fromString:nil];
+	[self setValue:@"album_artist" fromString:nil];
+}
+
+@dynamic artist;
+- (NSString *)artist {
+	return [self readAllValuesAsString:@"artist"];
+}
+
+- (void)setArtist:(NSString *)artist {
+	[self setValue:@"artist" fromString:artist];
+}
+
+@dynamic rawTitle;
+- (NSString *)rawTitle {
+	return [self readAllValuesAsString:@"title"];
+}
+
+- (void)setRawTitle:(NSString *)rawTitle {
+	[self setValue:@"title" fromString:rawTitle];
+}
+
+@dynamic genre;
+- (NSString *)genre {
+	return [self readAllValuesAsString:@"genre"];
+}
+
+- (void)setGenre:(NSString *)genre {
+	[self setValue:@"genre" fromString:genre];
+}
+
+@dynamic disc;
+- (int32_t)disc {
+	NSString *value = [self readAllValuesAsString:@"discnumber"];
+	if(!value) {
+		value = [self readAllValuesAsString:@"discnum"];
+	}
+	if(!value) {
+		value = [self readAllValuesAsString:@"disc"];
+	}
+	if(value) {
+		return [value intValue];
+	} else {
+		return 0;
+	}
+}
+
+- (void)setDisc:(int32_t)disc {
+	[self setValue:@"discnumber" fromString:[NSString stringWithFormat:@"%u", disc]];
+	[self setValue:@"discnum" fromString:nil];
+	[self setValue:@"disc" fromString:nil];
+}
+
+@dynamic track;
+- (int32_t)track {
+	NSString *value = [self readAllValuesAsString:@"tracknumber"];
+	if(!value) {
+		value = [self readAllValuesAsString:@"tracknum"];
+	}
+	if(!value) {
+		value = [self readAllValuesAsString:@"track"];
+	}
+	if(value) {
+		return [value intValue];
+	} else {
+		return 0;
+	}
+}
+
+@dynamic year;
+- (int32_t)year {
+	NSString *value = [self readAllValuesAsString:@"date"];
+	if(!value) {
+		value = [self readAllValuesAsString:@"recording_date"];
+	}
+	if(!value) {
+		value = [self readAllValuesAsString:@"year"];
+	}
+	if(value) {
+		return [value intValue];
+	} else {
+		return 0;
+	}
+}
+
+- (void)setYear:(int32_t)year {
+	NSString *svalue = [NSString stringWithFormat:@"%u", year];
+	[self setValue:@"year" fromString:svalue];
+	[self setValue:@"date" fromString:nil];
+	[self setValue:@"recording_date" fromString:nil];
+}
+
+@dynamic date;
+- (NSString *)date {
+	NSString *value = [self readAllValuesAsString:@"date"];
+	if(!value) {
+		value = [self readAllValuesAsString:@"recording_date"];
+	}
+	if(!value) {
+		value = [self readAllValuesAsString:@"year"];
+	}
+	return value;
+}
+
+- (void)setDate:(NSString *)date {
+	[self setValue:@"date" fromString:date];
+	[self setValue:@"recording_date" fromString:nil];
+	[self setValue:@"year" fromString:nil];
+}
+
+@dynamic comment;
+- (NSString *)comment {
+	return [self readAllValuesAsString:@"comment"];
+}
+
+- (void)setComment:(NSString *)comment {
+	[self setValue:@"comment" fromString:comment];
+}
+
+- (NSString *_Nullable)readAllValuesAsString:(NSString *_Nonnull)tagName {
+	NSMutableDictionary *dict = [kMetadataCache objectForKey:self.urlString];
+	if(dict) {
+		NSString *value = [dict objectForKey:tagName];
+		if(value) {
+			return value;
+		}
+	}
+
+	id metaObj = self.metadataBlob;
+
+	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
+		NSDictionary *metaDict = (NSDictionary *)metaObj;
+
+		NSArray *values = [metaDict objectForKey:tagName];
+
+		if(values) {
+			NSString *value = [values componentsJoinedByString:@", "];
+			if(!dict) {
+				dict = [[NSMutableDictionary alloc] init];
+				[kMetadataCache setObject:dict forKey:self.urlString];
+			}
+			[dict setObject:value forKey:tagName];
+			return value;
+		}
+	}
+
+	return nil;
+}
+
+- (void)deleteAllValues {
+	self.metadataBlob = nil;
+	[kMetadataCache removeObjectForKey:self.urlString];
+}
+
+- (void)deleteValue:(NSString *_Nonnull)tagName {
+	id metaObj = self.metadataBlob;
+
+	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
+		NSDictionary *metaDict = (NSDictionary *)metaObj;
+		NSMutableDictionary *metaDictCopy = [metaDict mutableCopy];
+
+		[metaDictCopy removeObjectForKey:tagName];
+
+		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
+	}
+}
+
+- (void)setValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nullable)value {
+	if(!value) {
+		[self deleteValue:tagName];
+		return;
+	}
+
+	NSArray *values = [value componentsSeparatedByString:@", "];
+
+	id metaObj = self.metadataBlob;
+
+	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
+		NSDictionary *metaDict = (NSDictionary *)metaObj;
+		NSMutableDictionary *metaDictCopy = [metaDict mutableCopy];
+
+		[metaDictCopy setObject:values forKey:tagName];
+
+		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
+	}
+}
+
+- (void)addValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nonnull)value {
+	NSMutableDictionary *dict = [kMetadataCache objectForKey:self.urlString];
+	if(dict) {
+		[dict removeObjectForKey:tagName];
+	}
+
+	id metaObj = self.metadataBlob;
+
+	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
+		NSDictionary *metaDict = (NSDictionary *)metaObj;
+		NSMutableDictionary *metaDictCopy = [metaDict mutableCopy];
+
+		NSArray *values = [metaDictCopy objectForKey:tagName];
+		NSMutableArray *valuesCopy;
+		if(values) {
+			valuesCopy = [values mutableCopy];
+		} else {
+			valuesCopy = [[NSMutableArray alloc] init];
+		}
+		[valuesCopy addObject:value];
+		values = [NSArray arrayWithArray:valuesCopy];
+		[metaDictCopy setObject:values forKey:tagName];
+
+		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
+	}
+}
+
+- (NSDictionary *)metadataBlob {
+	{
+		NSDictionary *blob = [kMetadataBlobCache objectForKey:self.urlString];
+		if(blob) {
+			return blob;
+		}
+	}
+	
+	if(self.metadataCompressed == nil || self.metadataDecompressedSize == 0) {
+		return @{};
+	}
+
+	if(!kDecompressionScratchBuffer) {
+		size_t scratchSize = compression_decode_scratch_buffer_size(COMPRESSION_ZLIB);
+		kDecompressionScratchBuffer = malloc(scratchSize);
+	}
+
+	void *decompressionBuffer = malloc(self.metadataDecompressedSize);
+
+	size_t decodedBytes = compression_decode_buffer(decompressionBuffer, self.metadataDecompressedSize, [self.metadataCompressed bytes], [self.metadataCompressed length], kDecompressionScratchBuffer, COMPRESSION_ZLIB);
+
+	NSData *decodedData = [NSData dataWithBytes:decompressionBuffer length:decodedBytes];
+
+	free(decompressionBuffer);
+
+	NSSet *allowed = [NSSet setWithArray:@[[NSDictionary class], [NSMutableDictionary class], [NSArray class], [NSMutableArray class], [NSString class]]];
+	NSError *error = nil;
+	NSDictionary *dict;
+	dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
+	                                           fromData:decodedData
+	                                              error:&error];
+	
+	if(!dict) {
+		dict = @{};
+	}
+
+	[kMetadataBlobCache setObject:dict forKey:self.urlString];
+	
+	return dict;
+}
+
+- (void)setMetadataBlob:(NSMutableDictionary *)metadataBlob {
+	[kMetadataCache removeObjectForKey:self.urlString];
+
+	if(metadataBlob == nil) {
+		self.metadataCompressed = nil;
+		self.metadataDecompressedSize = 0;
+		[kMetadataBlobCache removeObjectForKey:self.urlString];
+		return;
+	}
+	
+	[kMetadataBlobCache setObject:metadataBlob forKey:self.urlString];
+
+	NSError *error = nil;
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:metadataBlob
+	                                     requiringSecureCoding:YES
+	                                                     error:&error];
+
+	if(!kCompressionScratchBuffer) {
+		size_t scratchBufferSize = compression_encode_scratch_buffer_size(COMPRESSION_ZLIB);
+		kCompressionScratchBuffer = malloc(scratchBufferSize);
+	}
+
+	size_t fullSize = [data length];
+	size_t compressedSize = fullSize * 3 / 2 + 256;
+	void *compressedBuffer = malloc(compressedSize);
+
+	size_t compressedOutSize = compression_encode_buffer(compressedBuffer, compressedSize, [data bytes], fullSize, kCompressionScratchBuffer, COMPRESSION_ZLIB);
+
+	NSData *compressData = [NSData dataWithBytes:compressedBuffer length:compressedOutSize];
+
+	free(compressedBuffer);
+
+	self.metadataCompressed = compressData;
+	self.metadataDecompressedSize = fullSize;
 }
 
 @end

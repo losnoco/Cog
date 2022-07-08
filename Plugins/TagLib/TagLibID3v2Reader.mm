@@ -87,10 +87,10 @@
 			rgAlbumPeak = tag->rgAlbumPeak();
 			rgTrackGain = tag->rgTrackGain();
 			rgTrackPeak = tag->rgTrackPeak();
-			[dict setObject:@(rgAlbumGain) forKey:@"replayGainAlbumGain"];
-			[dict setObject:@(rgAlbumPeak) forKey:@"replayGainAlbumPeak"];
-			[dict setObject:@(rgTrackGain) forKey:@"replayGainTrackGain"];
-			[dict setObject:@(rgTrackPeak) forKey:@"replayGainTrackPeak"];
+			[dict setObject:@(rgAlbumGain) forKey:@"replaygain_album_gain"];
+			[dict setObject:@(rgAlbumPeak) forKey:@"replaygain_album_peak"];
+			[dict setObject:@(rgTrackGain) forKey:@"replaygain_track_gain"];
+			[dict setObject:@(rgTrackPeak) forKey:@"replaygain_track_peak"];
 
 			soundcheck = tag->soundcheck();
 			if(!soundcheck.isEmpty()) {
@@ -127,6 +127,9 @@
 
 			if(!cuesheet.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:cuesheet.toCString(true)] forKey:@"cuesheet"];
+
+			if(!comment.isEmpty())
+				[dict setObject:[NSString stringWithUTF8String:comment.toCString(true)] forKey:@"comment"];
 
 			// Try to load the image.
 			NSData *image = nil;

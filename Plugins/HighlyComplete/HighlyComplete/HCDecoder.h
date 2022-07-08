@@ -24,12 +24,6 @@
 	int tagLengthMs;
 	int tagFadeMs;
 
-	float replayGainAlbumGain;
-	float replayGainAlbumPeak;
-	float replayGainTrackGain;
-	float replayGainTrackPeak;
-	float volume;
-
 	int type;
 
 	int sampleRate;

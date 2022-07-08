@@ -36,18 +36,8 @@
 	BOOL streamOpened;
 	BOOL abortFlag;
 
-	NSString *artist;
-	NSString *albumartist;
-	NSString *album;
-	NSString *title;
-	NSString *genre;
-	NSNumber *year;
-	NSNumber *track;
-	NSNumber *disc;
-	float replayGainAlbumGain;
-	float replayGainAlbumPeak;
-	float replayGainTrackGain;
-	float replayGainTrackPeak;
+	NSDictionary *metaDict;
+	NSDictionary *icyMetaDict;
 
 	NSData *albumArt;
 

@@ -27,6 +27,15 @@
 	return 1.0f;
 }
 
+static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *value) {
+	NSMutableArray *array = [dict valueForKey:tag];
+	if(!array) {
+		array = [[NSMutableArray alloc] init];
+		[dict setObject:array forKey:tag];
+	}
+	[array addObject:value];
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url {
 	id audioSourceClass = NSClassFromString(@"AudioSource");
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
@@ -55,41 +64,25 @@
 		std::map<std::string, std::string> ctls;
 		openmpt::module *mod = new openmpt::module(data, std::clog, ctls);
 
-		NSString *title = nil;
-		NSString *artist = nil;
-		// NSString * comment = nil;
-		NSString *date = nil;
-		NSString *type = nil;
+		NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
 		std::vector<std::string> keys = mod->get_metadata_keys();
 
 		for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
-			if(*key == "title")
-				title = guess_encoding_of_string(mod->get_metadata(*key).c_str());
-			else if(*key == "artist")
-				artist = guess_encoding_of_string(mod->get_metadata(*key).c_str());
-			/*else if ( *key == "message" )
-			    comment = guess_encoding_of_string(mod->get_metadata( *key ).c_str());*/
-			else if(*key == "date")
-				date = guess_encoding_of_string(mod->get_metadata(*key).c_str());
-			else if(*key == "type_long")
-				type = guess_encoding_of_string(mod->get_metadata(*key).c_str());
+			NSString *tag = guess_encoding_of_string((*key).c_str());
+			NSString *value = guess_encoding_of_string(mod->get_metadata(*key).c_str());
+			if(*key == "type")
+				continue;
+			else if(*key == "type_long") {
+				setDictionary(dict, @"codec", value);
+			} else {
+				setDictionary(dict, tag, value);
+			}
 		}
 
 		delete mod;
 
-		if(title == nil)
-			title = @"";
-		if(artist == nil)
-			artist = @"";
-		/*if (comment == nil)
-		    comment = @"";*/
-		if(date == nil)
-			date = @"";
-		if(type == nil)
-			type = @"";
-
-		return @{ @"title": title, @"artist": artist, /*@"comment": comment,*/ @"year": @([date intValue]), @"codec": type };
+		return dict;
 	} catch(std::exception & /*e*/) {
 		return 0;
 	}

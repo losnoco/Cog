@@ -26,6 +26,15 @@
 	return 1.0f;
 }
 
+static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *value) {
+	NSMutableArray *array = [dict valueForKey:tag];
+	if(!array) {
+		array = [[NSMutableArray alloc] init];
+		[dict setObject:array forKey:tag];
+	}
+	[array addObject:value];
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url {
 	id audioSourceClass = NSClassFromString(@"AudioSource");
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
@@ -62,9 +71,7 @@
 	midi_meta_data_item item;
 	bool remap_display_name = !metadata.get_item("title", item);
 
-	NSArray *allowedKeys = @[@"title", @"artist", @"albumartist", @"album", @"genre"];
-
-	NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:10];
+	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
 	for(size_t i = 0; i < metadata.get_count(); ++i) {
 		const midi_meta_data_item &item = metadata[i];
@@ -72,11 +79,7 @@
 		if(![name isEqualToString:@"type"]) {
 			if(remap_display_name && [name isEqualToString:@"display_name"])
 				name = @"title";
-			if([allowedKeys containsObject:name]) {
-				[dict setObject:guess_encoding_of_string(item.m_value.c_str()) forKey:name];
-			} else if([name isEqualToString:@"year"]) {
-				[dict setObject:@([guess_encoding_of_string(item.m_value.c_str()) intValue]) forKey:name];
-			}
+			setDictionary(dict, name, guess_encoding_of_string(item.m_value.c_str()));
 		}
 	}
 

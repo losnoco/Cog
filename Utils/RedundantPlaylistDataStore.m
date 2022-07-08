@@ -51,6 +51,17 @@
 	}
 }
 
+- (NSArray *)coalesceArray:(NSArray *)input {
+	if(input == nil) return input;
+
+	NSMutableArray *array = [[NSMutableArray alloc] init];
+	for(NSString *string in input) {
+		[array addObject:[self coalesceString:string]];
+	}
+
+	return [NSArray arrayWithArray:array];
+}
+
 - (NSDictionary *)coalesceEntryInfo:(NSDictionary *)entryInfo {
 	if(entryInfo == nil) return entryInfo;
 
@@ -63,6 +74,9 @@
 		} else if([obj isKindOfClass:[NSData class]]) {
 			NSData *dataObj = (NSData *)obj;
 			[ret setObject:[self coalesceArt:dataObj] forKey:key];
+		} else if([obj isKindOfClass:[NSArray class]]) {
+			NSArray *arrayObj = (NSArray *)obj;
+			[ret setObject:[self coalesceArray:arrayObj] forKey:key];
 		} else {
 			[ret setObject:obj forKey:key];
 		}
