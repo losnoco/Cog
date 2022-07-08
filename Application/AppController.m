@@ -534,7 +534,7 @@ static AppController *kAppController = nil;
 	NSMutableDictionary *userDefaultsValuesDict = [NSMutableDictionary dictionary];
 
 	// Font defaults
-	float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeSmall];
+	float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeRegular];
 	NSNumber *fontSize = @(fFontSize);
 	[userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
 
