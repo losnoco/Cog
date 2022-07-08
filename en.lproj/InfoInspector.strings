@@ -14,9 +14,6 @@
 /* Class = "NSTextFieldCell"; title = "Length:"; ObjectID = "16"; */
 "16.title" = "Length:";
 
-/* Class = "NSTextFieldCell"; title = "Year:"; ObjectID = "18"; */
-"18.title" = "Year:";
-
 /* Class = "NSTextFieldCell"; title = "Genre:"; ObjectID = "20"; */
 "20.title" = "Genre:";
 
@@ -79,3 +76,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Codec:"; ObjectID = "QPg-Mb-Urn"; */
 "QPg-Mb-Urn.title" = "Codec:";
+
+/* Class = "NSTextFieldCell"; title = "Date:"; ObjectID = "17"; */
+"18.title" = "Date:";
+
+/* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "cd3-Qt-hCm"; */
+"Ule-N3-dKW.title" = "Comment:";

@@ -60,22 +60,12 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 	BOOL endOfAudio;
 
 	int metadataIndex;
-	NSString *artist;
-	NSString *albumartist;
-	NSString *album;
-	NSString *title;
-	NSString *genre;
-	NSNumber *year;
-	NSNumber *track;
-	NSNumber *disc;
-	float replayGainAlbumGain;
-	float replayGainAlbumPeak;
-	float replayGainTrackGain;
-	float replayGainTrackPeak;
-	float volumeScale;
 
 	int attachedPicIndex;
+
 	NSData *albumArt;
+
+	NSDictionary *metaDict;
 
 	NSDictionary *id3Metadata;
 }

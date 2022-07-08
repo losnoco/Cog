@@ -74,6 +74,25 @@
 
 @property(nonatomic, readonly) float rating;
 
+@property(nonatomic) NSString *_Nullable album;
+@property(nonatomic) NSString *_Nullable albumartist;
+@property(nonatomic) NSString *_Nullable artist;
+@property(nonatomic) NSString *_Nullable rawTitle;
+@property(nonatomic) NSString *_Nullable genre;
+@property(nonatomic) int32_t disc;
+@property(nonatomic) int32_t track;
+@property(nonatomic) int32_t year;
+
+@property(nonatomic) NSString *_Nullable date;
+
+@property(nonatomic) NSString *_Nullable comment;
+
+@property(nonatomic) NSDictionary *_Nullable metadataBlob;
+
+- (NSString *_Nullable)readAllValuesAsString:(NSString *_Nonnull)tagName;
+- (void)setValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nullable)value;
+- (void)addValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nonnull)value;
+
 - (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
 @end

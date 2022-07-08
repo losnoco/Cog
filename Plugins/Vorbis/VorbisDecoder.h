@@ -32,23 +32,8 @@
 	float frequency;
 	long totalFrames;
 
-	NSString *artist;
-	NSString *albumartist;
-	NSString *album;
-	NSString *title;
-	NSString *genre;
-	NSNumber *year;
-	NSNumber *track;
-	NSNumber *disc;
-	float replayGainAlbumGain;
-	float replayGainAlbumPeak;
-	float replayGainTrackGain;
-	float replayGainTrackPeak;
-
-	NSString *icygenre;
-	NSString *icyalbum;
-	NSString *icyartist;
-	NSString *icytitle;
+	NSDictionary *metaDict;
+	NSDictionary *icyMetaDict;
 
 	NSData *albumArt;
 }

@@ -12,6 +12,8 @@
 
 #import "HTTPSource.h"
 
+#import "NSDictionary+Merge.h"
+
 extern void grabbag__cuesheet_emit(NSString **out, const FLAC__StreamMetadata *cuesheet, const char *file_reference);
 
 @implementation FlacDecoder
@@ -178,6 +180,15 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
+static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *value) {
+	NSMutableArray *array = [dict valueForKey:tag];
+	if(!array) {
+		array = [[NSMutableArray alloc] init];
+		[dict setObject:array forKey:tag];
+	}
+	[array addObject:value];
+}
+
 // This callback is only called for STREAMINFO blocks
 void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMetadata *metadata, void *client_data) {
 	// Some flacs observed in the wild have multiple STREAMINFO metadata blocks,
@@ -223,18 +234,7 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 	}
 
 	if(metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
-		NSString *_artist = flacDecoder->artist;
-		NSString *_albumartist = flacDecoder->albumartist;
-		NSString *_album = flacDecoder->album;
-		NSString *_title = flacDecoder->title;
-		NSString *_genre = flacDecoder->genre;
-		NSNumber *_year = flacDecoder->year;
-		NSNumber *_track = flacDecoder->track;
-		NSNumber *_disc = flacDecoder->disc;
-		float _replayGainAlbumGain = flacDecoder->replayGainAlbumGain;
-		float _replayGainAlbumPeak = flacDecoder->replayGainAlbumPeak;
-		float _replayGainTrackGain = flacDecoder->replayGainTrackGain;
-		float _replayGainTrackPeak = flacDecoder->replayGainTrackPeak;
+		NSMutableDictionary *_metaDict = [[NSMutableDictionary alloc] init];
 		NSString *_cuesheet = flacDecoder->cuesheet;
 		const FLAC__StreamMetadata_VorbisComment *vorbis_comment = &metadata->data.vorbis_comment;
 		for(int i = 0; i < vorbis_comment->num_comments; ++i) {
@@ -246,74 +246,23 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 				free(_name);
 				free(_value);
 				name = [name lowercaseString];
-				if([name isEqualToString:@"artist"]) {
-					_artist = value;
-				} else if([name isEqualToString:@"albumartist"]) {
-					_albumartist = value;
-				} else if([name isEqualToString:@"album"]) {
-					_album = value;
-				} else if([name isEqualToString:@"title"]) {
-					_title = value;
-				} else if([name isEqualToString:@"genre"]) {
-					_genre = value;
-				} else if([name isEqualToString:@"cuesheet"]) {
+				if([name isEqualToString:@"cuesheet"]) {
 					_cuesheet = value;
 					flacDecoder->cuesheetFound = YES;
-				} else if([name isEqualToString:@"date"] ||
-				          [name isEqualToString:@"year"]) {
-					_year = @([value intValue]);
-				} else if([name isEqualToString:@"tracknumber"] ||
-				          [name isEqualToString:@"tracknum"] ||
-				          [name isEqualToString:@"track"]) {
-					_track = @([value intValue]);
-				} else if([name isEqualToString:@"discnumber"] ||
-				          [name isEqualToString:@"discnum"] ||
-				          [name isEqualToString:@"disc"]) {
-					_disc = @([value intValue]);
-				} else if([name isEqualToString:@"replaygain_album_gain"]) {
-					_replayGainAlbumGain = [value floatValue];
-				} else if([name isEqualToString:@"replaygain_album_peak"]) {
-					_replayGainAlbumPeak = [value floatValue];
-				} else if([name isEqualToString:@"replaygain_track_gain"]) {
-					_replayGainTrackGain = [value floatValue];
-				} else if([name isEqualToString:@"replaygain_track_peak"]) {
-					_replayGainTrackPeak = [value floatValue];
 				} else if([name isEqualToString:@"waveformatextensible_channel_mask"]) {
 					if([value hasPrefix:@"0x"]) {
 						char *end;
 						const char *_value = [value UTF8String] + 2;
 						flacDecoder->channelConfig = (uint32_t)strtoul(_value, &end, 16);
 					}
+				} else {
+					setDictionary(_metaDict, name, value);
 				}
 			}
 		}
 
-		if(![_artist isEqual:flacDecoder->artist] ||
-		   ![_albumartist isEqual:flacDecoder->albumartist] ||
-		   ![_album isEqual:flacDecoder->album] ||
-		   ![_title isEqual:flacDecoder->title] ||
-		   ![_genre isEqual:flacDecoder->genre] ||
-		   ![_cuesheet isEqual:flacDecoder->cuesheet] ||
-		   ![_year isEqual:flacDecoder->year] ||
-		   ![_track isEqual:flacDecoder->track] ||
-		   ![_disc isEqual:flacDecoder->disc] ||
-		   _replayGainAlbumGain != flacDecoder->replayGainAlbumGain ||
-		   _replayGainAlbumPeak != flacDecoder->replayGainAlbumPeak ||
-		   _replayGainTrackGain != flacDecoder->replayGainTrackGain ||
-		   _replayGainTrackPeak != flacDecoder->replayGainTrackPeak) {
-			flacDecoder->artist = _artist;
-			flacDecoder->albumartist = _albumartist;
-			flacDecoder->album = _album;
-			flacDecoder->title = _title;
-			flacDecoder->genre = _genre;
-			flacDecoder->cuesheet = _cuesheet;
-			flacDecoder->year = _year;
-			flacDecoder->track = _track;
-			flacDecoder->disc = _disc;
-			flacDecoder->replayGainAlbumGain = _replayGainAlbumGain;
-			flacDecoder->replayGainAlbumPeak = _replayGainAlbumPeak;
-			flacDecoder->replayGainTrackGain = _replayGainTrackGain;
-			flacDecoder->replayGainTrackPeak = _replayGainTrackPeak;
+		if(![_metaDict isEqualToDictionary:flacDecoder->metaDict]) {
+			flacDecoder->metaDict = _metaDict;
 
 			if(![flacDecoder->source seekable]) {
 				[flacDecoder willChangeValueForKey:@"metadata"];
@@ -348,18 +297,8 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		isOggFlac = YES;
 	}
 
-	artist = @"";
-	albumartist = @"";
-	album = @"";
-	title = @"";
-	genre = @"";
-	year = @(0);
-	track = @(0);
-	disc = @(0);
-	replayGainAlbumGain = 0.0;
-	replayGainAlbumPeak = 0.0;
-	replayGainTrackGain = 0.0;
-	replayGainTrackPeak = 0.0;
+	metaDict = [NSDictionary dictionary];
+	icyMetaDict = [NSDictionary dictionary];
 	albumArt = [NSData data];
 	cuesheetFound = NO;
 	cuesheet = @"";
@@ -461,20 +400,28 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		Class sourceClass = [source class];
 		if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
 			HTTPSource *httpSource = (HTTPSource *)source;
+			NSMutableDictionary *_icyMetaDict = [[NSMutableDictionary alloc] init];
 			if([httpSource hasMetadata]) {
 				NSDictionary *metadata = [httpSource metadata];
 				NSString *_genre = [metadata valueForKey:@"genre"];
 				NSString *_album = [metadata valueForKey:@"album"];
 				NSString *_artist = [metadata valueForKey:@"artist"];
 				NSString *_title = [metadata valueForKey:@"title"];
-				if(![_genre isEqualToString:genre] ||
-				   ![_album isEqualToString:album] ||
-				   ![_artist isEqualToString:artist] ||
-				   ![_title isEqualToString:title]) {
-					genre = _genre;
-					album = _album;
-					artist = _artist;
-					title = _title;
+
+				if(_genre && [_genre length]) {
+					setDictionary(_icyMetaDict, @"genre", _genre);
+				}
+				if(_album && [_album length]) {
+					setDictionary(_icyMetaDict, @"album", _album);
+				}
+				if(_artist && [_artist length]) {
+					setDictionary(_icyMetaDict, @"artist", _artist);
+				}
+				if(_title && [_title length]) {
+					setDictionary(_icyMetaDict, @"title", _title);
+				}
+				if(![_icyMetaDict isEqualToDictionary:icyMetaDict]) {
+					icyMetaDict = _icyMetaDict;
 					[self willChangeValueForKey:@"metadata"];
 					[self didChangeValueForKey:@"metadata"];
 				}
@@ -557,7 +504,10 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 }
 
 - (NSDictionary *)metadata {
-	return @{ @"artist": artist, @"albumartist": albumartist, @"album": album, @"title": title, @"genre": genre, @"year": year, @"track": track, @"disc": disc, @"replayGainAlbumGain": @(replayGainAlbumGain), @"replayGainAlbumPeak": @(replayGainAlbumPeak), @"replayGainTrackGain": @(replayGainTrackGain), @"replayGainTrackPeak": @(replayGainTrackPeak), @"cuesheet": cuesheet, @"albumArt": albumArt };
+	NSDictionary *dict1 = @{ @"albumArt": albumArt, @"cuesheet": cuesheet };
+	NSDictionary *dict2 = [dict1 dictionaryByMergingWith:metaDict];
+	NSDictionary *dict3 = [dict2 dictionaryByMergingWith:icyMetaDict];
+	return dict3;
 }
 
 + (NSArray *)fileTypes {

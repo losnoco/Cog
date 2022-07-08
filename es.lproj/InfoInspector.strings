@@ -16,9 +16,6 @@
 /* Class = "NSTextFieldCell"; title = "Length:"; ObjectID = "16"; */
 "16.title" = "Duración:";
 
-/* Class = "NSTextFieldCell"; title = "Year:"; ObjectID = "18"; */
-"18.title" = "Año:";
-
 /* Class = "NSTextFieldCell"; title = "Genre:"; ObjectID = "20"; */
 "20.title" = "Género:";
 
@@ -109,3 +106,8 @@
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "Yby-OU-cqP"; */
 "Yby-OU-cqP.title" = "n/d";
 
+/* Class = "NSTextFieldCell"; title = "Date:"; ObjectID = "17"; */
+"18.title" = "Date:";
+
+/* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "cd3-Qt-hCm"; */
+"Ule-N3-dKW.title" = "Comment:";

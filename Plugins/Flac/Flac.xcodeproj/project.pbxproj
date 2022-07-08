@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
+		8301C147287805F500651A6E /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8301C146287805F500651A6E /* NSDictionary+Merge.m */; };
 		836EF0DA27BB970B00BF35B2 /* libFLAC.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D927BB970B00BF35B2 /* libFLAC.8.dylib */; };
 		83AA660B27B7DAE40098D4B8 /* cuesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660A27B7DAE40098D4B8 /* cuesheet.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -33,6 +34,8 @@
 		17C93F030B8FF67A008627D6 /* FlacDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FlacDecoder.h; sourceTree = "<group>"; };
 		17C93F040B8FF67A008627D6 /* FlacDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = FlacDecoder.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* Flac_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flac_Prefix.pch; sourceTree = "<group>"; };
+		8301C145287805F500651A6E /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
+		8301C146287805F500651A6E /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		8356BD1927B3CCBB0074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		836EF0D927BB970B00BF35B2 /* libFLAC.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.8.dylib; path = ../../ThirdParty/flac/lib/libFLAC.8.dylib; sourceTree = "<group>"; };
 		83747C4A2862DCF40021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8301C145287805F500651A6E /* NSDictionary+Merge.h */,
+				8301C146287805F500651A6E /* NSDictionary+Merge.m */,
 				83AA660A27B7DAE40098D4B8 /* cuesheet.m */,
 				8356BD1927B3CCBB0074E50C /* HTTPSource.h */,
 				8384912D180816C900E7332D /* Logging.h */,
@@ -211,6 +216,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8301C147287805F500651A6E /* NSDictionary+Merge.m in Sources */,
 				17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */,
 				83AA660B27B7DAE40098D4B8 /* cuesheet.m in Sources */,
 			);

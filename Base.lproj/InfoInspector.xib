@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21179.7" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21179.7"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -15,16 +15,16 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Info Inspector" separatorStyle="none" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" visibleAtLaunch="NO" animationBehavior="utilityWindow" frameAutosaveName="InfoInspector" titlebarAppearsTransparent="YES" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES" nonactivatingPanel="YES" HUD="YES"/>
-            <rect key="contentRect" x="700" y="80" width="300" height="582"/>
+            <rect key="contentRect" x="700" y="80" width="300" height="604"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
-            <value key="minSize" type="size" width="240" height="550"/>
+            <value key="minSize" type="size" width="240" height="572"/>
             <value key="maxSize" type="size" width="400" height="600"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="300" height="582"/>
+                <rect key="frame" x="0.0" y="0.0" width="300" height="604"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9">
-                        <rect key="frame" x="-2" y="526" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="548" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Artist:" id="10">
                             <font key="font" metaFont="smallSystem"/>
@@ -33,7 +33,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="11">
-                        <rect key="frame" x="-2" y="504" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="526" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Album:" id="12">
                             <font key="font" metaFont="smallSystem"/>
@@ -42,7 +42,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="13">
-                        <rect key="frame" x="-2" y="460" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="482" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Track:" id="14">
                             <font key="font" metaFont="smallSystem"/>
@@ -51,7 +51,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="15">
-                        <rect key="frame" x="-2" y="438" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="460" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Length:" id="16">
                             <font key="font" metaFont="smallSystem"/>
@@ -60,16 +60,16 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="17">
-                        <rect key="frame" x="-2" y="416" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="438" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Year:" id="18">
+                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Date:" id="18">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="19">
-                        <rect key="frame" x="-2" y="394" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="416" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Genre:" id="20">
                             <font key="font" metaFont="smallSystem"/>
@@ -78,7 +78,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="21">
-                        <rect key="frame" x="-2" y="350" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="372" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Sample Rate:" id="22">
                             <font key="font" metaFont="smallSystem"/>
@@ -87,7 +87,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="27">
-                        <rect key="frame" x="-2" y="328" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="350" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Channels:" id="28">
                             <font key="font" metaFont="smallSystem"/>
@@ -96,7 +96,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="29">
-                        <rect key="frame" x="-2" y="306" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="328" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Bitrate:" id="32">
                             <font key="font" metaFont="smallSystem"/>
@@ -105,7 +105,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                        <rect key="frame" x="-2" y="284" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="306" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Bits Per Sample:" id="31">
                             <font key="font" metaFont="smallSystem"/>
@@ -114,7 +114,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23">
-                        <rect key="frame" x="-2" y="482" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="504" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Title:" id="24">
                             <font key="font" metaFont="smallSystem"/>
@@ -123,7 +123,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="33" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="526" width="170" height="14"/>
+                        <rect key="frame" x="113" y="548" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="34">
                             <font key="font" metaFont="smallSystem"/>
@@ -135,7 +135,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="35" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="504" width="170" height="14"/>
+                        <rect key="frame" x="113" y="526" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="36">
                             <font key="font" metaFont="smallSystem"/>
@@ -147,7 +147,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="37" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="482" width="170" height="14"/>
+                        <rect key="frame" x="113" y="504" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="38">
                             <font key="font" metaFont="smallSystem"/>
@@ -159,7 +159,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="39" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="460" width="170" height="14"/>
+                        <rect key="frame" x="113" y="482" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="40">
                             <font key="font" metaFont="smallSystem"/>
@@ -171,7 +171,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="41" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="438" width="170" height="14"/>
+                        <rect key="frame" x="113" y="460" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="42">
                             <font key="font" metaFont="smallSystem"/>
@@ -183,7 +183,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="43" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="416" width="170" height="14"/>
+                        <rect key="frame" x="113" y="438" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="44">
                             <font key="font" metaFont="smallSystem"/>
@@ -191,11 +191,11 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="valueToDisplay.yearText" id="miZ-gp-CqU"/>
+                            <binding destination="-2" name="value" keyPath="valueToDisplay.date" id="EUq-4E-Lz3"/>
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="45" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="394" width="170" height="14"/>
+                        <rect key="frame" x="113" y="416" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="46">
                             <font key="font" metaFont="smallSystem"/>
@@ -207,7 +207,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="49" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="350" width="170" height="14"/>
+                        <rect key="frame" x="113" y="372" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="50">
                             <font key="font" metaFont="smallSystem"/>
@@ -223,7 +223,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="51" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="328" width="170" height="14"/>
+                        <rect key="frame" x="113" y="350" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="52">
                             <font key="font" metaFont="smallSystem"/>
@@ -235,7 +235,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="53" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="306" width="170" height="14"/>
+                        <rect key="frame" x="113" y="328" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="54">
                             <font key="font" metaFont="smallSystem"/>
@@ -247,7 +247,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="55" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="284" width="170" height="14"/>
+                        <rect key="frame" x="113" y="306" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="56">
                             <font key="font" metaFont="smallSystem"/>
@@ -259,7 +259,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QPg-Mb-Urn">
-                        <rect key="frame" x="-2" y="262" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="284" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Codec:" id="cbq-TT-CZX">
                             <font key="font" metaFont="smallSystem"/>
@@ -268,7 +268,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ijS-y2-eCZ" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="262" width="170" height="14"/>
+                        <rect key="frame" x="113" y="284" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="Yby-OU-cqP">
                             <font key="font" metaFont="smallSystem"/>
@@ -280,7 +280,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bti-s6-SIU">
-                        <rect key="frame" x="-2" y="240" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="262" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Encoding:" id="8e7-lp-K5l">
                             <font key="font" metaFont="smallSystem"/>
@@ -289,7 +289,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L4f-rE-CN3" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="240" width="170" height="14"/>
+                        <rect key="frame" x="113" y="262" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="v14-AG-B9D">
                             <font key="font" metaFont="smallSystem"/>
@@ -301,7 +301,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gn9-9b-eV8">
-                        <rect key="frame" x="-2" y="218" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="240" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Cuesheet:" id="Cu5-ia-Z5b">
                             <font key="font" metaFont="smallSystem"/>
@@ -310,7 +310,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WOl-SC-4tu" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="218" width="170" height="14"/>
+                        <rect key="frame" x="113" y="240" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="UyE-Mc-e39">
                             <font key="font" metaFont="smallSystem"/>
@@ -322,7 +322,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="arA-Pj-ANg">
-                        <rect key="frame" x="-2" y="196" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="218" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="ReplayGain:" id="qBi-M8-kEx">
                             <font key="font" metaFont="smallSystem"/>
@@ -331,7 +331,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2xx-It-i6I" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="196" width="170" height="14"/>
+                        <rect key="frame" x="113" y="218" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="rAo-AP-lVa">
                             <font key="font" metaFont="smallSystem"/>
@@ -344,7 +344,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="84">
-                        <rect key="frame" x="-2" y="372" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="394" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Filename:" id="85">
                             <font key="font" metaFont="smallSystem"/>
@@ -353,7 +353,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="86" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="372" width="170" height="14"/>
+                        <rect key="frame" x="113" y="394" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="87">
                             <font key="font" metaFont="smallSystem"/>
@@ -365,7 +365,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vB6-9J-5qg">
-                        <rect key="frame" x="-2" y="548" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="570" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Album Artist:" id="LFJ-QQ-gGr">
                             <font key="font" metaFont="smallSystem"/>
@@ -374,7 +374,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cj0-Tw-xpq" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="548" width="170" height="14"/>
+                        <rect key="frame" x="113" y="570" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="B8w-o8-ZBw">
                             <font key="font" metaFont="smallSystem"/>
@@ -386,7 +386,7 @@
                         </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FWx-Sc-Ocv">
-                        <rect key="frame" x="-2" y="174" width="107" height="14"/>
+                        <rect key="frame" x="-2" y="196" width="107" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Play Count:" id="fiv-eh-w3c">
                             <font key="font" metaFont="smallSystem"/>
@@ -394,8 +394,17 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cd3-Qt-hCm">
+                        <rect key="frame" x="-2" y="174" width="107" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Comment:" id="Ule-N3-dKW">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WSs-wC-mWc" customClass="ToolTipTextField">
-                        <rect key="frame" x="113" y="174" width="170" height="14"/>
+                        <rect key="frame" x="113" y="196" width="170" height="14"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="Ial-XI-91y">
                             <font key="font" metaFont="smallSystem"/>
@@ -405,6 +414,19 @@
                         <connections>
                             <binding destination="-2" name="value" keyPath="valueToDisplay.playCount" id="Mpe-FA-gRG"/>
                             <binding destination="-2" name="toolTip" keyPath="valueToDisplay.playCountInfo" id="ydF-ec-fBX"/>
+                        </connections>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ef3-yG-qT1" customClass="ToolTipTextField">
+                        <rect key="frame" x="113" y="174" width="170" height="14"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" title="N/A" id="PPV-dt-9Bp">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="toolTip" keyPath="valueToDisplay.comment" id="XzQ-nd-jMU"/>
+                            <binding destination="-2" name="value" keyPath="valueToDisplay.comment" id="Esa-PB-mpv"/>
                         </connections>
                     </textField>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RWn-fb-0wT">

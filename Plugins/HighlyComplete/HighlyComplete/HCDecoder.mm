@@ -220,6 +220,20 @@ static int parse_time_crap(NSString *value) {
 	return totalSeconds;
 }
 
+static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *value) {
+	NSMutableArray *array = [dict valueForKey:tag];
+	if(!array) {
+		array = [[NSMutableArray alloc] init];
+		[dict setObject:array forKey:tag];
+	}
+	if([array count]) {
+		NSString *existing = array[0];
+		array[0] = [existing stringByAppendingFormat:@"\r\n%@", value];
+	} else {
+		[array addObject:value];
+	}
+}
+
 static int psf_info_meta(void *context, const char *name, const char *value) {
 	struct psf_info_meta_state *state = (struct psf_info_meta_state *)context;
 
@@ -232,46 +246,18 @@ static int psf_info_meta(void *context, const char *name, const char *value) {
 
 	if([taglc isEqualToString:@"game"]) {
 		taglc = @"album";
-	} else if([taglc isEqualToString:@"date"]) {
-		taglc = @"year";
-	} else if([taglc isEqualToString:@"album artist"]) {
-		taglc = @"albumartist";
-	} else if([taglc isEqualToString:@"tracknumber"]) {
-		taglc = @"track";
-	} else if([taglc isEqualToString:@"discnumber"]) {
-		taglc = @"disc";
 	}
 
-	if([taglc hasPrefix:@"replaygain_"]) {
-		if([taglc hasPrefix:@"replaygain_album_"]) {
-			if([taglc hasSuffix:@"gain"])
-				state->albumGain = [svalue floatValue];
-			else if([taglc hasSuffix:@"peak"])
-				state->albumPeak = [svalue floatValue];
-		} else if([taglc hasPrefix:@"replaygain_track_"]) {
-			if([taglc hasSuffix:@"gain"])
-				state->trackGain = [svalue floatValue];
-			else if([taglc hasSuffix:@"peak"])
-				state->trackPeak = [svalue floatValue];
-		}
-	} else if([taglc isEqualToString:@"volume"]) {
-		state->volume = [svalue floatValue];
-	} else if([taglc isEqualToString:@"length"]) {
+	if([taglc isEqualToString:@"length"]) {
 		state->tag_length_ms = parse_time_crap(svalue);
+		setDictionary(state->info, @"psf_length", svalue);
 	} else if([taglc isEqualToString:@"fade"]) {
 		state->tag_fade_ms = parse_time_crap(svalue);
+		setDictionary(state->info, @"psf_fade", svalue);
 	} else if([taglc isEqualToString:@"utf8"]) {
 		state->utf8 = true;
-	} else if([taglc isEqualToString:@"title"] ||
-	          [taglc isEqualToString:@"albumartist"] ||
-	          [taglc isEqualToString:@"artist"] ||
-	          [taglc isEqualToString:@"album"] ||
-	          [taglc isEqualToString:@"genre"]) {
-		[state->info setObject:svalue forKey:taglc];
-	} else if([taglc isEqualToString:@"year"] ||
-	          [taglc isEqualToString:@"track"] ||
-	          [taglc isEqualToString:@"disc"]) {
-		[state->info setObject:@([svalue intValue]) forKey:taglc];
+	} else {
+		setDictionary(state->info, taglc, svalue);
 	}
 
 	return 0;
@@ -1218,12 +1204,6 @@ static int usf_info(void *context, const char *name, const char *value) {
 		tagFadeMs = (int)ceil(defaultFade * 1000.0);
 	}
 
-	replayGainAlbumGain = info.albumGain;
-	replayGainAlbumPeak = info.albumPeak;
-	replayGainTrackGain = info.trackGain;
-	replayGainTrackPeak = info.trackPeak;
-	volume = info.volume;
-
 	metadataList = info.info;
 
 	framesLength = [self retrieveFrameCount:tagLengthMs];
@@ -1573,11 +1553,6 @@ static int usf_info(void *context, const char *name, const char *value) {
 		      @"totalFrames": @(totalFrames),
 		      @"bitrate": @(0),
 		      @"seekable": @(YES),
-		      @"replayGainAlbumGain": @(replayGainAlbumGain),
-		      @"replayGainAlbumPeak": @(replayGainAlbumPeak),
-		      @"replayGainTrackGain": @(replayGainTrackGain),
-		      @"replayGainTrackPeak": @(replayGainTrackPeak),
-		      @"volume": @(volume),
 		      @"codec": codec,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };
