@@ -19,15 +19,7 @@
 extern NSPersistentContainer *kPersistentContainer;
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
-static NSMutableDictionary *kMetadataCache = nil;
-
 @implementation PlaylistEntry (Extension)
-
-+ (void)initialize {
-	if(!kMetadataCache) {
-		kMetadataCache = [[NSMutableDictionary alloc] init];
-	}
-}
 
 // The following read-only keys depend on the values of other properties
 
@@ -789,14 +781,6 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 }
 
 - (NSString *_Nullable)readAllValuesAsString:(NSString *_Nonnull)tagName {
-	NSMutableDictionary *dict = [kMetadataCache objectForKey:self.urlString];
-	if(dict) {
-		NSString *value = [dict objectForKey:tagName];
-		if(value) {
-			return value;
-		}
-	}
-
 	id metaObj = self.metadataBlob;
 
 	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
@@ -805,13 +789,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		NSArray *values = [metaDict objectForKey:tagName];
 
 		if(values) {
-			NSString *value = [values componentsJoinedByString:@", "];
-			if(!dict) {
-				dict = [[NSMutableDictionary alloc] init];
-				[kMetadataCache setObject:dict forKey:self.urlString];
-			}
-			[dict setObject:value forKey:tagName];
-			return value;
+			return [values componentsJoinedByString:@", "];
 		}
 	}
 
@@ -820,7 +798,6 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 - (void)deleteAllValues {
 	self.metadataBlob = nil;
-	[kMetadataCache removeObjectForKey:self.urlString];
 }
 
 - (void)deleteValue:(NSString *_Nonnull)tagName {
@@ -857,11 +834,6 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 }
 
 - (void)addValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nonnull)value {
-	NSMutableDictionary *dict = [kMetadataCache objectForKey:self.urlString];
-	if(dict) {
-		[dict removeObjectForKey:tagName];
-	}
-
 	id metaObj = self.metadataBlob;
 
 	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
