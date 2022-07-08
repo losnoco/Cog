@@ -85,10 +85,10 @@
 	if([[track track] intValue]) [cuesheetMetadata setValue:@([[track track] intValue]) forKey:@"track"];
 	if([track genre]) [cuesheetMetadata setValue:[track genre] forKey:@"genre"];
 	if([[track year] intValue]) [cuesheetMetadata setValue:@([[track year] intValue]) forKey:@"year"];
-	if([track albumGain]) [cuesheetMetadata setValue:@([track albumGain]) forKey:@"replayGainAlbumGain"];
-	if([track albumPeak]) [cuesheetMetadata setValue:@([track albumPeak]) forKey:@"replayGainAlbumPeak"];
-	if([track trackGain]) [cuesheetMetadata setValue:@([track trackGain]) forKey:@"replayGainTrackGain"];
-	if([track trackPeak]) [cuesheetMetadata setValue:@([track trackPeak]) forKey:@"replayGainTrackPeak"];
+	if([track albumGain]) [cuesheetMetadata setValue:@([track albumGain]) forKey:@"replaygain_album_gain"];
+	if([track albumPeak]) [cuesheetMetadata setValue:@([track albumPeak]) forKey:@"replaygain_album_peak"];
+	if([track trackGain]) [cuesheetMetadata setValue:@([track trackGain]) forKey:@"replaygain_track_gain"];
+	if([track trackPeak]) [cuesheetMetadata setValue:@([track trackPeak]) forKey:@"replaygain_track_peak"];
 
 	return [NSDictionary dictionaryWithDictionary:cuesheetMetadata];
 }

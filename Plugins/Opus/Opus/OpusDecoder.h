@@ -23,23 +23,13 @@
 	int channels;
 	long totalFrames;
 
-	NSString *artist;
-	NSString *albumartist;
-	NSString *album;
-	NSString *title;
-	NSString *genre;
-	NSNumber *year;
-	NSNumber *track;
-	NSNumber *disc;
-	float replayGainAlbumGain;
-	float replayGainTrackGain;
-
-	NSString *icygenre;
-	NSString *icyalbum;
-	NSString *icyartist;
-	NSString *icytitle;
+	NSDictionary *metaDict;
+	NSDictionary *icyMetaDict;
 
 	NSData *albumArt;
+
+	float replayGainAlbumGain;
+	float replayGainTrackGain;
 }
 
 @end

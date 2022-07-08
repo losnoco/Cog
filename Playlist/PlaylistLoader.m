@@ -861,6 +861,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 }
 
 - (BOOL)addDataStore {
+	BOOL dataMigrated = [[NSUserDefaults standardUserDefaults] boolForKey:@"metadataMigrated"];
+
 	NSPersistentContainer *pc = playlistController.persistentContainer;
 	if(pc) {
 		NSManagedObjectContext *moc = pc.viewContext;
@@ -902,10 +904,17 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 			++index;
 		}
 		[resultsCopy removeObjectsAtIndexes:pruneSet];
-		if([pruneSet count]) {
+
+		if(!dataMigrated) {
+			for(PlaylistEntry *pe in resultsCopy) {
+				pe.metadataLoaded = NO;
+			}
+		}
+
+		if([pruneSet count] || !dataMigrated) {
 			[playlistController commitPersistentStore];
 		}
-		
+
 		results = [NSArray arrayWithArray:resultsCopy];
 
 		{
@@ -916,6 +925,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 		[playlistController readQueueFromDataStore];
 		[playlistController readShuffleListFromDataStore];
+
+		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"metadataMigrated"];
 
 		return YES;
 	}
