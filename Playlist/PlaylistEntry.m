@@ -16,23 +16,14 @@
 #import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
-#import <compression.h>
-
 extern NSPersistentContainer *kPersistentContainer;
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
-static NSMutableDictionary *kMetadataBlobCache = nil;
 static NSMutableDictionary *kMetadataCache = nil;
-
-static void *kCompressionScratchBuffer = NULL;
-static void *kDecompressionScratchBuffer = NULL;
 
 @implementation PlaylistEntry (Extension)
 
 + (void)initialize {
-	if(!kMetadataBlobCache) {
-		kMetadataBlobCache = [[NSMutableDictionary alloc] init];
-	}
 	if(!kMetadataCache) {
 		kMetadataCache = [[NSMutableDictionary alloc] init];
 	}
@@ -585,7 +576,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 				[metaDict setObject:values forKey:lowerKey];
 			}
 		}
-		self.metadataBlob = metaDict;
+		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDict];
 	}
 
 	[self setMetadataLoaded:YES];
@@ -890,83 +881,6 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
 	}
-}
-
-- (NSDictionary *)metadataBlob {
-	{
-		NSDictionary *blob = [kMetadataBlobCache objectForKey:self.urlString];
-		if(blob) {
-			return blob;
-		}
-	}
-	
-	if(self.metadataCompressed == nil || self.metadataDecompressedSize == 0) {
-		return @{};
-	}
-
-	if(!kDecompressionScratchBuffer) {
-		size_t scratchSize = compression_decode_scratch_buffer_size(COMPRESSION_ZLIB);
-		kDecompressionScratchBuffer = malloc(scratchSize);
-	}
-
-	void *decompressionBuffer = malloc(self.metadataDecompressedSize);
-
-	size_t decodedBytes = compression_decode_buffer(decompressionBuffer, self.metadataDecompressedSize, [self.metadataCompressed bytes], [self.metadataCompressed length], kDecompressionScratchBuffer, COMPRESSION_ZLIB);
-
-	NSData *decodedData = [NSData dataWithBytes:decompressionBuffer length:decodedBytes];
-
-	free(decompressionBuffer);
-
-	NSSet *allowed = [NSSet setWithArray:@[[NSDictionary class], [NSMutableDictionary class], [NSArray class], [NSMutableArray class], [NSString class]]];
-	NSError *error = nil;
-	NSDictionary *dict;
-	dict = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
-	                                           fromData:decodedData
-	                                              error:&error];
-	
-	if(!dict) {
-		dict = @{};
-	}
-
-	[kMetadataBlobCache setObject:dict forKey:self.urlString];
-	
-	return dict;
-}
-
-- (void)setMetadataBlob:(NSMutableDictionary *)metadataBlob {
-	[kMetadataCache removeObjectForKey:self.urlString];
-
-	if(metadataBlob == nil) {
-		self.metadataCompressed = nil;
-		self.metadataDecompressedSize = 0;
-		[kMetadataBlobCache removeObjectForKey:self.urlString];
-		return;
-	}
-	
-	[kMetadataBlobCache setObject:metadataBlob forKey:self.urlString];
-
-	NSError *error = nil;
-	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:metadataBlob
-	                                     requiringSecureCoding:YES
-	                                                     error:&error];
-
-	if(!kCompressionScratchBuffer) {
-		size_t scratchBufferSize = compression_encode_scratch_buffer_size(COMPRESSION_ZLIB);
-		kCompressionScratchBuffer = malloc(scratchBufferSize);
-	}
-
-	size_t fullSize = [data length];
-	size_t compressedSize = fullSize * 3 / 2 + 256;
-	void *compressedBuffer = malloc(compressedSize);
-
-	size_t compressedOutSize = compression_encode_buffer(compressedBuffer, compressedSize, [data bytes], fullSize, kCompressionScratchBuffer, COMPRESSION_ZLIB);
-
-	NSData *compressData = [NSData dataWithBytes:compressedBuffer length:compressedOutSize];
-
-	free(compressedBuffer);
-
-	self.metadataCompressed = compressData;
-	self.metadataDecompressedSize = fullSize;
 }
 
 @end

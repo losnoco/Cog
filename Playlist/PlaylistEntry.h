@@ -87,8 +87,6 @@
 
 @property(nonatomic) NSString *_Nullable comment;
 
-@property(nonatomic) NSDictionary *_Nullable metadataBlob;
-
 - (NSString *_Nullable)readAllValuesAsString:(NSString *_Nonnull)tagName;
 - (void)setValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nullable)value;
 - (void)addValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nonnull)value;
