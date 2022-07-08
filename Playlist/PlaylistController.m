@@ -494,6 +494,12 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}
 	}
 
+	NSString *cellTextTruncated = cellText;
+	if([cellTextTruncated length] > 1023) {
+		cellTextTruncated = [cellTextTruncated substringToIndex:1023];
+		cellTextTruncated = [cellTextTruncated stringByAppendingString:@"…"];
+	}
+
 	NSView *view = [tableView makeViewWithIdentifier:cellIdentifier owner:nil];
 	if(view && [view isKindOfClass:[NSTableCellView class]]) {
 		NSTableCellView *cellView = (NSTableCellView *)view;
@@ -508,11 +514,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 			NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
 
 			cellView.textField.font = font;
-			cellView.textField.stringValue = cellText;
+			cellView.textField.stringValue = cellTextTruncated;
 			cellView.textField.alignment = cellTextAlignment;
 
 			if(cellView.textField.intrinsicContentSize.width > cellView.textField.frame.size.width - 4)
-				cellView.textField.toolTip = cellText;
+				cellView.textField.toolTip = cellTextTruncated;
 			else
 				cellView.textField.toolTip = [pe statusMessage];
 
