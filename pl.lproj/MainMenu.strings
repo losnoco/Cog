@@ -3,19 +3,19 @@
 "5.title" = "Bring All to Front";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "19"; */
-"19.title" = "Window";
+"19.title" = "okno";
 
 /* Class = "NSWindow"; title = "Cog"; ObjectID = "21"; */
 "21.title" = "Cog";
 
 /* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "23"; */
-"23.title" = "Minimize";
+"23.title" = "zminimalizuj";
 
 /* Class = "NSMenu"; title = "Window"; ObjectID = "24"; */
-"24.title" = "Window";
+"24.title" = "okno";
 
 /* Class = "NSMenu"; title = "MainMenu"; ObjectID = "29"; */
-"29.title" = "MainMenu";
+"29.title" = "menu głuwne";
 
 /* Class = "NSMenuItem"; title = "Cog"; ObjectID = "56"; */
 "56.title" = "Cog";
@@ -24,79 +24,79 @@
 "57.title" = "Cog";
 
 /* Class = "NSMenuItem"; title = "About Cog"; ObjectID = "58"; */
-"58.title" = "About Cog";
+"58.title" = "o Cog";
 
 /* Class = "NSMenuItem"; title = "Add File..."; ObjectID = "72"; */
-"72.title" = "Add File...";
+"72.title" = "dodaj plik...";
 
 /* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "73"; */
-"73.title" = "Close Window";
+"73.title" = "zamknij okno";
 
 /* Class = "NSMenuItem"; title = "Save As..."; ObjectID = "75"; */
-"75.title" = "Save As...";
+"75.title" = "Zapisz jako...";
 
 /* Class = "NSMenu"; title = "File"; ObjectID = "81"; */
-"81.title" = "File";
+"81.title" = "plik";
 
 /* Class = "NSMenuItem"; title = "File"; ObjectID = "83"; */
-"83.title" = "File";
+"83.title" = "plik";
 
 /* Class = "NSMenuItem"; title = "Help"; ObjectID = "103"; */
-"103.title" = "Help";
+"103.title" = "pomoc";
 
 /* Class = "NSMenu"; title = "Help"; ObjectID = "106"; */
-"106.title" = "Help";
+"106.title" = "pomoc";
 
 /* Class = "NSMenuItem"; title = "Cog Help"; ObjectID = "111"; */
-"111.title" = "Cog Help";
+"111.title" = "Pomoc programó cog";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "129"; */
-"129.title" = "Preferences…";
+"129.title" = "Preferencje…";
 
 /* Class = "NSMenu"; title = "Services"; ObjectID = "130"; */
-"130.title" = "Services";
+"130.title" = "usługi";
 
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "131"; */
-"131.title" = "Services";
+"131.title" = "usługi";
 
 /* Class = "NSMenuItem"; title = "Hide Cog"; ObjectID = "134"; */
-"134.title" = "Hide Cog";
+"134.title" = "ukryj Cog";
 
 /* Class = "NSMenuItem"; title = "Quit Cog"; ObjectID = "136"; */
-"136.title" = "Quit Cog";
+"136.title" = "zamknij Cog";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
-"145.title" = "Hide Others";
+"145.title" = "ukryj inne aplikacje";
 
 /* Class = "NSMenuItem"; title = "Show All"; ObjectID = "150"; */
-"150.title" = "Show All";
+"150.title" = "pokaż wszystko";
 
 /* Class = "NSMenuItem"; title = "Copy"; ObjectID = "157"; */
-"157.title" = "Copy";
+"157.title" = "kopiuj";
 
 /* Class = "NSMenuItem"; title = "Undo"; ObjectID = "158"; */
-"158.title" = "Undo";
+"158.title" = "cofnij";
 
 /* Class = "NSMenuItem"; title = "Cut"; ObjectID = "160"; */
-"160.title" = "Cut";
+"160.title" = "wytnij";
 
 /* Class = "NSMenuItem"; title = "Edit"; ObjectID = "163"; */
-"163.title" = "Edit";
+"163.title" = "edycja";
 
 /* Class = "NSMenuItem"; title = "Delete"; ObjectID = "164"; */
-"164.title" = "Delete";
+"164.title" = "usuń";
 
 /* Class = "NSMenu"; title = "Edit"; ObjectID = "169"; */
-"169.title" = "Edit";
+"169.title" = "edycja";
 
 /* Class = "NSMenuItem"; title = "Paste"; ObjectID = "171"; */
-"171.title" = "Paste";
+"171.title" = "wklej";
 
 /* Class = "NSMenuItem"; title = "Select All"; ObjectID = "172"; */
-"172.title" = "Select All";
+"172.title" = "Zaznacz wszystko";
 
 /* Class = "NSMenuItem"; title = "Redo"; ObjectID = "173"; */
-"173.title" = "Redo";
+"173.title" = "anuluj cofnięcie";
 
 /* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "197"; */
 "197.title" = "Zoom";
@@ -107,14 +107,12 @@
 /* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "209"; */
 "209.headerCell.title" = "#";
 
-/* Class = "NSMenuItem"; title = "Check for Updates..."; ObjectID = "302"; */
-"302.title" = "Check for Updates...";
-
-/* Class = "NSMenuItem"; title = "Send Feedback..."; ObjectID = "303"; */
-"303.title" = "Send Feedback...";
+/* Class = "NSMenuItem"; title = "sprawdź, czy jest nowa wersja..."; ObjectID = "302"; */...";
+/* Class = "NSMenuItem"; title = "send feedback..."; ObjectID = "303"; */
+"303.title" = "wyślij opinię...";
 
 /* Class = "NSTableColumn"; headerCell.title = "Artist"; ObjectID = "391"; */
-"391.headerCell.title" = "Artist";
+"391.headerCell.title" = "wykonawca";
 
 /* Class = "NSMenuItem"; title = "Control"; ObjectID = "418"; */
 "418.title" = "Control";
@@ -123,13 +121,13 @@
 "419.title" = "Control";
 
 /* Class = "NSMenuItem"; title = "Play/Pause"; ObjectID = "420"; */
-"420.title" = "Play/Pause";
+"420.title" = "graj/pałza";
 
 /* Class = "NSMenuItem"; title = "Next Song"; ObjectID = "422"; */
-"422.title" = "Next Song";
+"422.title" = "następna piosenka";
 
 /* Class = "NSMenuItem"; title = "Previous Song"; ObjectID = "423"; */
-"423.title" = "Previous Song";
+"423.title" = "poprzednia piosenka";
 
 /* Class = "NSMenu"; title = "Menu"; ObjectID = "513"; */
 "513.title" = "Menu";
@@ -138,58 +136,58 @@
 "517.title" = "Stop";
 
 /* Class = "NSMenuItem"; title = "Next Track"; ObjectID = "518"; */
-"518.title" = "Next Track";
+"518.title" = "następny utwór";
 
 /* Class = "NSMenuItem"; title = "Previous Track"; ObjectID = "519"; */
-"519.title" = "Previous Track";
+"519.title" = "poprzedni utwór";
 
 /* Class = "NSMenuItem"; title = "Play/Pause"; ObjectID = "520"; */
-"520.title" = "Play/Pause";
+"520.title" = "graj/pauza";
 
 /* Class = "NSMenuItem"; title = "Cog"; ObjectID = "702"; */
 "702.title" = "Cog";
 
 /* Class = "NSMenuItem"; title = "Current Song"; ObjectID = "791"; */
-"791.title" = "Current Song";
+"791.title" = "grana piosenka";
 
 /* Class = "NSTableColumn"; headerCell.title = "Album"; ObjectID = "806"; */
 "806.headerCell.title" = "Album";
 
 /* Class = "NSTableColumn"; headerCell.title = "Length"; ObjectID = "807"; */
-"807.headerCell.title" = "Length";
+"807.headerCell.title" = "długość";
 
 /* Class = "NSTableColumn"; headerCell.title = "Year"; ObjectID = "848"; */
-"848.headerCell.title" = "Year";
+"848.headerCell.title" = "rok";
 
 /* Class = "NSTableColumn"; headerCell.title = "Genre"; ObjectID = "849"; */
-"849.headerCell.title" = "Genre";
+"849.headerCell.title" = "gatunek";
 
 /* Class = "NSTableColumn"; headerCell.title = "№"; ObjectID = "850"; */
 "850.headerCell.title" = "№";
 
 /* Class = "NSMenuItem"; title = "Playlist"; ObjectID = "881"; */
-"881.title" = "Playlist";
+"881.title" = "Playlista";
 
 /* Class = "NSMenu"; title = "Playlist"; ObjectID = "882"; */
-"882.title" = "Playlist";
+"882.title" = "Playlista";
 
 /* Class = "NSMenu"; title = "Menu"; ObjectID = "1063"; */
 "1063.title" = "Menu";
 
 /* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1064"; */
-"1064.title" = "Show in Finder";
+"1064.title" = "pokaż w finderze";
 
 /* Class = "NSMenuItem"; title = "Show All Songs"; ObjectID = "1132"; */
-"1132.title" = "Show All Songs";
+"1132.title" = "pokaż wszystkie piosenki";tunek
 
 /* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1135"; */
-"1135.title" = "Show in Finder";
+"1135.title" = "pokaż w finderze";
 
 /* Class = "NSMenuItem"; title = "Volume Up"; ObjectID = "1136"; */
-"1136.title" = "Volume Up";
+"1136.title" = "głośniej";
 
 /* Class = "NSMenuItem"; title = "Volume Down"; ObjectID = "1137"; */
-"1137.title" = "Volume Down";
+"1137.title" = "ciszej";
 
 /* Class = "NSMenu"; title = "Menu"; ObjectID = "1324"; */
 "1324.title" = "Menu";
@@ -198,46 +196,46 @@
 "1337.title" = "Index";
 
 /* Class = "NSMenuItem"; title = "Title"; ObjectID = "1338"; */
-"1338.title" = "Title";
+"1338.title" = "tytuł";
 
 /* Class = "NSMenuItem"; title = "Artist"; ObjectID = "1339"; */
-"1339.title" = "Artist";
+"1339.title" = "wykonawca";
 
 /* Class = "NSMenuItem"; title = "Album"; ObjectID = "1340"; */
 "1340.title" = "Album";
 
 /* Class = "NSMenuItem"; title = "Genre"; ObjectID = "1341"; */
-"1341.title" = "Genre";
+"1341.title" = "gatunek";
 
 /* Class = "NSMenuItem"; title = "Length"; ObjectID = "1342"; */
-"1342.title" = "Length";
+"1342.title" = "długość";
 
 /* Class = "NSMenuItem"; title = "Track"; ObjectID = "1343"; */
-"1343.title" = "Track";
+"1343.title" = "utwór";
 
 /* Class = "NSMenuItem"; title = "Year"; ObjectID = "1344"; */
-"1344.title" = "Year";
+"1344.title" = "rok";
 
 /* Class = "NSMenuItem"; title = "Remove"; ObjectID = "1360"; */
-"1360.title" = "Remove";
+"1360.title" = "usuń";
 
 /* Class = "NSMenuItem"; title = "Stop"; ObjectID = "1362"; */
 "1362.title" = "Stop";
 
 /* Class = "NSMenuItem"; title = "Remove All"; ObjectID = "1402"; */
-"1402.title" = "Remove All";
+"1402.title" = "usuń wszystko";
 
 /* Class = "NSMenuItem"; title = "Add URL..."; ObjectID = "1403"; */
-"1403.title" = "Add URL...";
+"1403.title" = "dodaj adres  URL...";
 
 /* Class = "NSMenuItem"; title = "Remove"; ObjectID = "1408"; */
-"1408.title" = "Remove";
+"1408.title" = "usuń";
 
 /* Class = "NSMenuItem"; title = "Current Artist"; ObjectID = "1454"; */
-"1454.title" = "Current Artist";
+"1454.title" = "Obecny wykonawca";
 
 /* Class = "NSTextFieldCell"; title = "Total Duration: 00 hours 00 minutes 00 seconds"; ObjectID = "1473"; */
-"1473.title" = "Total Duration: 00 hours 00 minutes 00 seconds";
+"1473.title" = "całkowita długość: 00 godzin 00 minut 00 sekund";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1506"; */
 "1506.title" = "Text Cell";
@@ -264,184 +262,184 @@
 "1513.title" = "Text Cell";
 
 /* Class = "NSSearchFieldCell"; placeholderString = "All"; ObjectID = "1532"; */
-"1532.placeholderString" = "All";
+"1532.placeholderString" = "wszystkie";
 
 /* Class = "NSToolbarItem"; label = "Search"; ObjectID = "1533"; */
-"1533.label" = "Search";
+"1533.label" = "szukaj";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Search"; ObjectID = "1533"; */
-"1533.paletteLabel" = "Search";
+"1533.paletteLabel" = "Szukaj";
 
 /* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[0] = "Previous"; ObjectID = "1538"; */
-"1538.ibShadowedToolTips[0]" = "Previous";
+"1538.ibShadowedToolTips[0]" = "Poprzedni";
 
 /* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[1] = "Play"; ObjectID = "1538"; */
-"1538.ibShadowedToolTips[1]" = "Play";
+"1538.ibShadowedToolTips[1]" = "odtwarzaj";
 
 /* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[2] = "Stop"; ObjectID = "1538"; */
-"1538.ibShadowedToolTips[2]" = "Stop";
+"1538.ibShadowedToolTips[2]" = "pauza";
 
 /* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[3] = "Next"; ObjectID = "1538"; */
-"1538.ibShadowedToolTips[3]" = "Next";
+"1538.ibShadowedToolTips[3]" = "następne";
 
-/* Class = "NSToolbarItem"; label = "Playback Control"; ObjectID = "1539"; */
-"1539.label" = "Playback Control";
+/* Class = "NSToolbarItem"; label = "Playback con""; ObjectID = "1539"; */
+"1539.label" = "kontrola odtwarzania;
 
 /* Class = "NSToolbarItem"; paletteLabel = "Playback Control"; ObjectID = "1539"; */
-"1539.paletteLabel" = "Playback Control";
+"1539.paletteLabel" = "kontrola odtwarzania";
 
 /* Class = "NSToolbarItem"; label = "Position"; ObjectID = "1551"; */
-"1551.label" = "Position";
+"1551.label" = "pozycja";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Position"; ObjectID = "1551"; */
-"1551.paletteLabel" = "Position";
+"1551.paletteLabel" = "Pozycja";
 
 /* Class = "NSTextFieldCell"; title = "0:00"; ObjectID = "1567"; */
 "1567.title" = "0:00";
 
 /* Class = "NSToolbarItem"; label = "Current Time"; ObjectID = "1568"; */
-"1568.label" = "Current Time";
+"1568.label" = "Przesłuchano:";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "1568"; */
-"1568.paletteLabel" = "Current Time";
+"1568.paletteLabel" =przesłuchano";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "All"; ObjectID = "1576"; */
 "1576.ibShadowedDisplayName" = "All";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Title"; ObjectID = "1578"; */
-"1578.ibShadowedDisplayName" = "Title";
+"1578.ibShadowedDisplayName" = "tytuł";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Artist"; ObjectID = "1580"; */
-"1580.ibShadowedDisplayName" = "Artist";
+"1580.ibShadowedDisplayName" = "artysta";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Album"; ObjectID = "1582"; */
 "1582.ibShadowedDisplayName" = "Album";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Genre"; ObjectID = "1583"; */
-"1583.ibShadowedDisplayName" = "Genre";
+"1583.ibShadowedDisplayName" = "gatunek";
 
 /* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "1610"; */
-"1610.label" = "Volume";
+"1610.label" = "głośność";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Volume"; ObjectID = "1610"; */
-"1610.paletteLabel" = "Volume";
+"1610.paletteLabel" = "głośność";
 
 /* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "1629"; */
-"1629.label" = "Info Inspector";
+"1629.label" = "inspektor informacji o pliku";
 
-/* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "1629"; */
-"1629.paletteLabel" = "Info Inspector";
+/* Class = "NSToolbarItem"; paletteLabel = "InfoInspector"; ObjectID = "1629"; */
+"1629.paletteLabel" = "inspektor informacji o pliku";
 
 /* Class = "NSToolbarItem"; label = "File Tree"; ObjectID = "1630"; */
-"1630.label" = "File Tree";
+"1630.label" = "drzewo plików";
 
 /* Class = "NSToolbarItem"; paletteLabel = "File Tree"; ObjectID = "1630"; */
-"1630.paletteLabel" = "File Tree";
+"1630.paletteLabel" = "drzewo plików";
 
 /* Class = "NSToolbarItem"; label = "Shuffle"; ObjectID = "1636"; */
-"1636.label" = "Shuffle";
+"1636.label" = "losowo";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Shuffle"; ObjectID = "1636"; */
-"1636.paletteLabel" = "Shuffle";
+"1636.paletteLabel" = "losowo";
 
 /* Class = "NSToolbarItem"; label = "Repeat"; ObjectID = "1639"; */
-"1639.label" = "Repeat";
+"1639.label" = "Powtórz";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Repeat"; ObjectID = "1639"; */
-"1639.paletteLabel" = "Repeat";
+"1639.paletteLabel" = "Powtórz";
 
 /* Class = "NSMenuItem"; title = "Seek Backward"; ObjectID = "1683"; */
-"1683.title" = "Seek Backward";
+"1683.title" = "przewiń do tyłu";
 
 /* Class = "NSMenuItem"; title = "Seek Forward"; ObjectID = "1685"; */
-"1685.title" = "Seek Forward";
+"1685.title" = "przewiń do przodu";
 
 /* Class = "NSMenuItem"; title = "Previous Album"; ObjectID = "1699"; */
-"1699.title" = "Previous Album";
+"1699.title" = "poprzedni Album";
 
 /* Class = "NSMenuItem"; title = "Next Album"; ObjectID = "1701"; */
-"1701.title" = "Next Album";
+"1701.title" = "następny Album";
 
 /* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "1712"; */
-"1712.headerCell.title" = "Path";
+"1712.headerCell.title" = "Ścieżka";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1713"; */
 "1713.title" = "Text Cell";
 
 /* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "1736"; */
-"1736.headerCell.title" = "Filename";
+"1736.headerCell.title" = "Nazwa pliku";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1737"; */
 "1737.title" = "Text Cell";
 
 /* Class = "NSMenuItem"; title = "Repeat"; ObjectID = "1740"; */
-"1740.title" = "Repeat";
+"1740.title" = "powtórz";
 
 /* Class = "NSMenu"; title = "Repeat"; ObjectID = "1741"; */
-"1741.title" = "Repeat";
+"1741.title" = "Powtórz";
 
 /* Class = "NSMenuItem"; title = "All"; ObjectID = "1742"; */
-"1742.title" = "All";
+"1742.title" = "wszystkie";
 
 /* Class = "NSMenuItem"; title = "One"; ObjectID = "1746"; */
-"1746.title" = "One";
+"1746.title" = "jedną";
 
 /* Class = "NSMenuItem"; title = "None"; ObjectID = "1749"; */
-"1749.title" = "None";
+"1749.title" = "nic";
 
 /* Class = "NSMenuItem"; title = "Remove All from Queue"; ObjectID = "1791"; */
-"1791.title" = "Remove All from Queue";
+"1791.title" = "usuń wszystko z kolejki";
 
 /* Class = "NSMenuItem"; title = "Select Currently Playing"; ObjectID = "1823"; */
-"1823.title" = "Select Currently Playing";
+"1823.title" = "zaznacz obecnie grane.";
 
 /* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "1824"; */
-"1824.title" = "Filter Playlist";
+"1824.title" = "filtruj Playlistę";
 
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "1848"; */
-"1848.title" = "View";
+"1848.title" = "widok";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "1849"; */
-"1849.title" = "View";
+"1849.title" = "widok";
 
 /* Class = "NSMenuItem"; title = "Show Spotlight Panel"; ObjectID = "1853"; */
-"1853.title" = "Show Spotlight Panel";
+"1853.title" = "pokaż panel Spotlight";
 
 /* Class = "NSMenuItem"; title = "Customize Toolbar..."; ObjectID = "1856"; */
-"1856.title" = "Customize Toolbar...";
+"1856.title" = "spersonalizuj pasek narzędzi...";
 
 /* Class = "NSMenuItem"; title = "Increase Font Size"; ObjectID = "1858"; */
-"1858.title" = "Increase Font Size";
+"1858.title" = "powiększ rozmiar czcionki";
 
 /* Class = "NSMenuItem"; title = "Decrease Font Size"; ObjectID = "1859"; */
-"1859.title" = "Decrease Font Size";
+"1859.title" = "pomniejsz rozmiar czcionki";
 
 /* Class = "NSMenuItem"; title = "Add to Queue"; ObjectID = "1864"; */
-"1864.title" = "Add to Queue";
+"1864.title" = "dodaj do kolejki";
 
 /* Class = "NSMenuItem"; title = "Remove from Queue"; ObjectID = "1865"; */
-"1865.title" = "Remove from Queue";
+"1865.title" = "usuń z kolejki";
 
 /* Class = "NSMenuItem"; title = "Search for Songs by Artist"; ObjectID = "1867"; */
-"1867.title" = "Search for Songs by Artist";
+"1867.title" = "szukaj piosenek od wykonawcy";
 
 /* Class = "NSMenuItem"; title = "Search for Songs from Album"; ObjectID = "1868"; */
-"1868.title" = "Search for Songs from Album";
+"1868.title" = "wyszukaj piosenkę z albumu";
 
 /* Class = "NSMenuItem"; title = "Fade In/Out"; ObjectID = "1885"; */
 "1885.title" = "Fade In/Out";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "Total Duration: %{value1}@"; ObjectID = "1891"; */
-"1891.ibShadowedDisplayPattern" = "Total Duration: %{value1}@";
+"1891.ibShadowedDisplayPattern" = "całkowity czas trwania: %{value1}@";
 
 /* Class = "NSMenuItem"; title = "Album"; ObjectID = "1892"; */
-"1892.title" = "Album";
+"1892.title" = "album";
 
 /* Class = "NSMenuItem"; title = "Add to Queue"; ObjectID = "1893"; */
-"1893.title" = "Add to Queue";
+"1893.title" = "dodaj do kolejki";
 
 /* Class = "NSMenuItem"; title = "Stop After Current"; ObjectID = "1895"; */
-"1895.title" = "Stop After Current";
+"1895.title" = "przestań grać po tym utworze.";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Cog"; ObjectID = "1903"; */
 "1903.ibShadowedIsNilPlaceholder" = "Cog";
@@ -459,82 +457,82 @@
 "2042.ibShadowedMultipleValuesPlaceholder" = "Toggle Queued";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedNoSelectionPlaceholder = "Toggle Queued"; ObjectID = "2042"; */
-"2042.ibShadowedNoSelectionPlaceholder" = "Toggle Queued";
+"2042.ibShadowedNoSelectionPlaceholder" = "oggle Queued";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Toggle Queued"; ObjectID = "2042"; */
 "2042.ibShadowedNotApplicablePlaceholder" = "Toggle Queued";
 
 /* Class = "NSMenuItem"; title = "Search for Artist"; ObjectID = "2045"; */
-"2045.title" = "Search for Artist";
+"2045.title" = "Szukaj wykonawcy";
 
 /* Class = "NSMenuItem"; title = "Search for Album"; ObjectID = "2046"; */
-"2046.title" = "Search for Album";
+"2046.title" = "Szukaj Albumu";
 
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Not Playing"; ObjectID = "2083"; */
-"2083.ibShadowedIsNilPlaceholder" = "Not Playing";
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = ""; ObjectID = "2083"; */
+"2083.ibShadowedIsNilPlaceholder" = "nine gra";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Not Playing"; ObjectID = "2085"; */
-"2085.ibShadowedIsNilPlaceholder" = "Not Playing";
+"2085.ibShadowedIsNilPlaceholder" = "nie gra";
 
 /* Class = "NSMenuItem"; title = "Toggle File Tree Orientation"; ObjectID = "2160"; */
-"2160.title" = "Toggle File Tree Orientation";
+"2160.title" = "Przełącz widok drzewa plików";
 
 /* Class = "NSMenuItem"; title = "Information"; ObjectID = "2212"; */
-"2212.title" = "Information";
+"2212.title" = "informacje";
 
 /* Class = "NSWindow"; title = "Cog"; ObjectID = "2234"; */
 "2234.title" = "Cog";
 
 /* Class = "NSToolbarItem"; label = "Playback Buttons"; ObjectID = "2272"; */
-"2272.label" = "Playback Buttons";
+"2272.label" = "Przyciski odtwarzania";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Playback Buttons"; ObjectID = "2272"; */
-"2272.paletteLabel" = "Playback Buttons";
+"2272.paletteLabel" = "Przyciski odtwarzania";
 
 /* Class = "NSToolbarItem"; label = "Position"; ObjectID = "2273"; */
-"2273.label" = "Position";
+"2273.label" = "pozycja";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Position"; ObjectID = "2273"; */
-"2273.paletteLabel" = "Position";
+"2273.paletteLabel" = "Pozycja";
 
 /* Class = "NSToolbarItem"; label = "Current Time"; ObjectID = "2274"; */
-"2274.label" = "Current Time";
+"2274.label" = "Obecny czas";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "2274"; */
-"2274.paletteLabel" = "Current Time";
+"2274.paletteLabel" = "obecny czas odtwarzania";
 
 /* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "2275"; */
-"2275.label" = "Volume";
+"2275.label" = "głośność";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Volume"; ObjectID = "2275"; */
-"2275.paletteLabel" = "Volume";
+"2275.paletteLabel" = "głośność";
 
 /* Class = "NSToolbarItem"; label = "Shuffle"; ObjectID = "2278"; */
-"2278.label" = "Shuffle";
+"2278.label" = "losowo";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Shuffle"; ObjectID = "2278"; */
-"2278.paletteLabel" = "Shuffle";
+"2278.paletteLabel" = "losowo";
 
 /* Class = "NSToolbarItem"; label = "Repeat"; ObjectID = "2279"; */
-"2279.label" = "Repeat";
+"2279.label" = "powtórz";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Repeat"; ObjectID = "2279"; */
-"2279.paletteLabel" = "Repeat";
+"2279.paletteLabel" = "powtórz";
 
 /* Class = "NSTextFieldCell"; title = "0:00"; ObjectID = "2292"; */
 "2292.title" = "0:00";
 
 /* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[0] = "Previous"; ObjectID = "2296"; */
-"2296.ibShadowedToolTips[0]" = "Previous";
+"2296.ibShadowedToolTips[0]" = "Poprzedni";
 
 /* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[1] = "Play"; ObjectID = "2296"; */
-"2296.ibShadowedToolTips[1]" = "Play";
+"2296.ibShadowedToolTips[1]" = "odtwarzaj";
 
 /* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[2] = "Stop"; ObjectID = "2296"; */
-"2296.ibShadowedToolTips[2]" = "Stop";
+"2296.ibShadowedToolTips[2]" = "pauza";
 
 /* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[3] = "Next"; ObjectID = "2296"; */
-"2296.ibShadowedToolTips[3]" = "Next";
+"2296.ibShadowedToolTips[3]" = "następny";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Cog"; ObjectID = "2374"; */
 "2374.ibShadowedIsNilPlaceholder" = "Cog";
@@ -546,85 +544,85 @@
 "2374.ibShadowedNotApplicablePlaceholder" = "Cog";
 
 /* Class = "NSMenuItem"; title = "Show File Tree"; ObjectID = "2417"; */
-"2417.title" = "Show File Tree";
+"2417.title" = "Pokaż drzewo plików";
 
 /* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "2429"; */
-"2429.label" = "Info Inspector";
+"2429.label" = "inspektor informacji o pliku";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "2429"; */
-"2429.paletteLabel" = "Info Inspector";
+"2429.paletteLabel" = inspektor informacji o plikó"";
 
 /* Class = "NSMenuItem"; title = "Shuffle"; ObjectID = "2438"; */
-"2438.title" = "Shuffle";
+"2438.title" = "losowo";
 
 /* Class = "NSMenu"; title = "Shuffle"; ObjectID = "2439"; */
-"2439.title" = "Shuffle";
+"2439.title" = "losowo";
 
 /* Class = "NSMenuItem"; title = "Off"; ObjectID = "2440"; */
-"2440.title" = "Off";
+"2440.title" = "wyłączony";
 
 /* Class = "NSMenuItem"; title = "Albums"; ObjectID = "2442"; */
-"2442.title" = "Albums";
+"2442.title" = "Albumy";
 
 /* Class = "NSMenuItem"; title = "All"; ObjectID = "2443"; */
-"2443.title" = "All";
+"2443.title" = "wszystkie";
 
 /* Class = "NSMenuItem"; title = "Show Info Inspector"; ObjectID = "2453"; */
-"2453.title" = "Show Info Inspector";
+"2453.title" = "pokaż inspektor informacji o pliku";
 
 /* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "2456"; */
-"2456.title" = "Enter Full Screen";
+"2456.title" = "pełny ekran";
 
 /* Class = "NSToolbarItem"; label = "Randomize"; ObjectID = "2466"; */
-"2466.label" = "Randomize";
+"2466.label" = "losuj";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Randomize"; ObjectID = "2466"; */
-"2466.paletteLabel" = "Randomize";
+"2466.paletteLabel" = "losuj";
 
 /* Class = "NSMenuItem"; title = "Toggle"; ObjectID = "2472"; */
-"2472.title" = "Toggle";
+"2472.title" = "przełącz";
 
 /* Class = "NSMenuItem"; title = "Toggle"; ObjectID = "2476"; */
-"2476.title" = "Toggle";
+"2476.title" = "przełącz";
 
 /* Class = "NSMenuItem"; title = "Stop After Current"; ObjectID = "2483"; */
-"2483.title" = "Stop After Current";
+"2483.title" = "przestań grać, gdy skończy się utwór";
 
 /* Class = "NSMenuItem"; title = "Next Album"; ObjectID = "2485"; */
-"2485.title" = "Next Album";
+"2485.title" = "następny album";
 
 /* Class = "NSMenuItem"; title = "Previous Album"; ObjectID = "2487"; */
-"2487.title" = "Previous Album";
+"2487.title" = "Poprzedni Album";
 
 /* Class = "NSMenuItem"; title = "Toggle Mini Mode"; ObjectID = "2493"; */
-"2493.title" = "Toggle Mini Mode";
+"2493.title" = "włącz tryb Mini";
 
 /* Class = "NSToolbarItem"; label = "Normal Mode"; ObjectID = "2526"; */
-"2526.label" = "Normal Mode";
+"2526.label" = "Tryb normalny";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Normal Mode"; ObjectID = "2526"; */
-"2526.paletteLabel" = "Normal Mode";
+"2526.paletteLabel" = "tryb normalny";
 
 /* Class = "NSToolbarItem"; label = "Mini Mode"; ObjectID = "2532"; */
-"2532.label" = "Mini Mode";
+"2532.label" = "Tryb mini";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Mini Mode"; ObjectID = "2532"; */
-"2532.paletteLabel" = "Mini Mode";
+"2532.paletteLabel" = "tryb mini";
 
 /* Class = "NSMenuItem"; title = "Randomize"; ObjectID = "2545"; */
-"2545.title" = "Randomize";
+"2545.title" = "losuj";
 
 /* Class = "NSMenuItem"; title = "Remove Duplicate Items"; ObjectID = "2qB-Bq-t2u"; */
-"2qB-Bq-t2u.title" = "Remove Duplicate Items";
+"2qB-Bq-t2u.title" = "Usuń duplikaty";
 
 /* Class = "NSMenuItem"; title = "Remove Dead Items"; ObjectID = "Ajn-k4-afd"; */
-"Ajn-k4-afd.title" = "Remove Dead Items";
+"Ajn-k4-afd.title" = "usuń uszkodzone rzeczy";
 
 /* Class = "NSMenuItem"; title = "Properties"; ObjectID = "Eds-my-DQr"; */
-"Eds-my-DQr.title" = "Properties";
+"Eds-my-DQr.title" = "właściwości";
 
 /* Class = "NSTableColumn"; title = "Album Artist"; ObjectID = "yGV-gP-Wl6"; */
-"yGV-gP-Wl6.title" = "Album Artist";
+"yGV-gP-Wl6.title" = "Album artysta";
 
 /* Class = "NSTableColumn"; title = "Codec"; ObjectID = "3A3-9o-Gh9"; */
-"3A3-9o-Gh9.title" = "Codec";
+"3A3-9o-Gh9.title" = "kodek";

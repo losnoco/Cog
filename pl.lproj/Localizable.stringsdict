@@ -5,7 +5,7 @@
     <key>%1d week(s)</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
-        <string>%#@weeks@</string>
+        <string>%#@tygodni@</string>
         <key>weeks</key>
         <dict>
             <key>NSStringFormatSpecTypeKey</key>
@@ -13,17 +13,17 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>d</string>
             <key>zero</key>
-            <string>0 weeks</string>
+            <string>0 tygodni</string>
             <key>one</key>
-            <string>1 week</string>
+            <string>1 tydźeń</string>
             <key>other</key>
-            <string>%d weeks</string>
+            <string>%d tygodni</string>
         </dict>
     </dict>
     <key>%1d day(s)</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
-        <string>%#@days@</string>
+        <string>%#@dni@</string>
         <key>days</key>
         <dict>
             <key>NSStringFormatSpecTypeKey</key>
@@ -31,17 +31,17 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>d</string>
             <key>zero</key>
-            <string>0 days</string>
+            <string>0 dni</string>
             <key>one</key>
-            <string>1 day</string>
+            <string>1 dzień</string>
             <key>other</key>
-            <string>%d days</string>
+            <string>%d dni</string>
         </dict>
     </dict>
     <key>%1d hour(s)</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
-        <string>%#@hours@</string>
+        <string>%#@godzin@</string>
         <key>hours</key>
         <dict>
             <key>NSStringFormatSpecTypeKey</key>
@@ -49,17 +49,17 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>d</string>
             <key>zero</key>
-            <string>0 hours</string>
+            <string>0 godzin</string>
             <key>one</key>
-            <string>1 hour</string>
+            <string>1 godzina</string>
             <key>other</key>
-            <string>%d hours</string>
+            <string>%d godzin</string>
         </dict>
     </dict>
     <key>%1d minute(s)</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
-        <string>%#@minutes@</string>
+        <string>%#@minut@</string>
         <key>minutes</key>
         <dict>
             <key>NSStringFormatSpecTypeKey</key>
@@ -67,17 +67,17 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>d</string>
             <key>zero</key>
-            <string>0 minutes</string>
+            <string>0 minut</string>
             <key>one</key>
-            <string>1 minute</string>
+            <string>1 minuta</string>
             <key>other</key>
-            <string>%d minutes</string>
+            <string>%d minut</string>
         </dict>
     </dict>
     <key>%1d second(s)</key>
     <dict>
         <key>NSStringLocalizedFormatKey</key>
-        <string>%#@seconds@</string>
+        <string>%#@sekund@</string>
         <key>seconds</key>
         <dict>
             <key>NSStringFormatSpecTypeKey</key>
@@ -85,11 +85,11 @@
             <key>NSStringFormatValueTypeKey</key>
             <string>d</string>
             <key>zero</key>
-            <string>0 seconds</string>
+            <string>0 secund</string>
             <key>one</key>
-            <string>1 second</string>
+            <string>1 secunda</string>
             <key>other</key>
-            <string>%d seconds</string>
+            <string>%d sekund</string>
         </dict>
     </dict>
 </dict>
