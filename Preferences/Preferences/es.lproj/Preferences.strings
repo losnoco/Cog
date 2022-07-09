@@ -246,3 +246,6 @@
 
 /* Class = "NSButtonCell"; title = "Enable HRTF filter (Not needed with AirPods or Beats)"; ObjectID = "NGx-0c-WVR"; */
 "NGx-0c-WVR.title" = "Activar filtro HRTF (no es necesario con AirPods o Beats)";
+
+/* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
+"207.title" = "Automatically check for updates on startup";
