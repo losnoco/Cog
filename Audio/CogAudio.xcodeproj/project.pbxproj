@@ -99,6 +99,14 @@
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
+		839E56E52879450300DFB5F4 /* HrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E12879450300DFB5F4 /* HrtfData.h */; };
+		839E56E62879450300DFB5F4 /* Endianness.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E22879450300DFB5F4 /* Endianness.h */; };
+		839E56E72879450300DFB5F4 /* HrtfData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839E56E32879450300DFB5F4 /* HrtfData.cpp */; };
+		839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E42879450300DFB5F4 /* IHrtfData.h */; };
+		839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E928794F6300DFB5F4 /* HrtfTypes.h */; };
+		839E56ED2879515D00DFB5F4 /* HeadphoneFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56EB2879515D00DFB5F4 /* HeadphoneFilter.h */; };
+		839E56EE2879515D00DFB5F4 /* HeadphoneFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 839E56EC2879515D00DFB5F4 /* HeadphoneFilter.mm */; };
+		839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56F6287974A100DFB5F4 /* SandboxBroker.h */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
@@ -227,6 +235,14 @@
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		839E56E12879450300DFB5F4 /* HrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfData.h; sourceTree = "<group>"; };
+		839E56E22879450300DFB5F4 /* Endianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Endianness.h; sourceTree = "<group>"; };
+		839E56E32879450300DFB5F4 /* HrtfData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HrtfData.cpp; sourceTree = "<group>"; };
+		839E56E42879450300DFB5F4 /* IHrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHrtfData.h; sourceTree = "<group>"; };
+		839E56E928794F6300DFB5F4 /* HrtfTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfTypes.h; sourceTree = "<group>"; };
+		839E56EB2879515D00DFB5F4 /* HeadphoneFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeadphoneFilter.h; sourceTree = "<group>"; };
+		839E56EC2879515D00DFB5F4 /* HeadphoneFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HeadphoneFilter.mm; sourceTree = "<group>"; };
+		839E56F6287974A100DFB5F4 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
@@ -321,6 +337,7 @@
 				17F94DD40B8D0F7000A34E87 /* PluginController.mm */,
 				17D21C750B8BE4BA00D1EBDE /* Chain */,
 				17D21C9B0B8BE4BA00D1EBDE /* Output */,
+				839E56F6287974A100DFB5F4 /* SandboxBroker.h */,
 				17D21C9E0B8BE4BA00D1EBDE /* Status.h */,
 				B0575F2C0D687A0800411D77 /* Helper.h */,
 				B0575F2F0D687A4000411D77 /* Helper.m */,
@@ -380,6 +397,8 @@
 		17D21C9B0B8BE4BA00D1EBDE /* Output */ = {
 			isa = PBXGroup;
 			children = (
+				839E56EB2879515D00DFB5F4 /* HeadphoneFilter.h */,
+				839E56EC2879515D00DFB5F4 /* HeadphoneFilter.mm */,
 				17D21C9C0B8BE4BA00D1EBDE /* OutputAVFoundation.h */,
 				17D21C9D0B8BE4BA00D1EBDE /* OutputAVFoundation.m */,
 			);
@@ -389,6 +408,7 @@
 		17D21CD80B8BE5B400D1EBDE /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				839E56E02879450300DFB5F4 /* hrtf */,
 				831A50152865A8800049CFE4 /* r8bstate.cpp */,
 				831A50172865A8B30049CFE4 /* r8bstate.h */,
 				831A50132865A7FD0049CFE4 /* r8bstate.hpp */,
@@ -523,6 +543,18 @@
 			path = Visualization;
 			sourceTree = "<group>";
 		};
+		839E56E02879450300DFB5F4 /* hrtf */ = {
+			isa = PBXGroup;
+			children = (
+				839E56E22879450300DFB5F4 /* Endianness.h */,
+				839E56E32879450300DFB5F4 /* HrtfData.cpp */,
+				839E56E12879450300DFB5F4 /* HrtfData.h */,
+				839E56E928794F6300DFB5F4 /* HrtfTypes.h */,
+				839E56E42879450300DFB5F4 /* IHrtfData.h */,
+			);
+			path = hrtf;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -530,6 +562,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */,
 				17D21CA10B8BE4BA00D1EBDE /* BufferChain.h in Headers */,
 				831A4FE02865A7DC0049CFE4 /* pf_double.h in Headers */,
 				831A50142865A7FD0049CFE4 /* r8bstate.hpp in Headers */,
@@ -546,10 +579,13 @@
 				17D21CC50B8BE4BA00D1EBDE /* OutputAVFoundation.h in Headers */,
 				83504165286447DA006B32CC /* Downmix.h in Headers */,
 				831A4FDE2865A7DC0049CFE4 /* pffft_double.h in Headers */,
+				839E56E52879450300DFB5F4 /* HrtfData.h in Headers */,
 				831A4FE12865A7DC0049CFE4 /* pf_neon_double.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* Semaphore.h in Headers */,
+				839E56E62879450300DFB5F4 /* Endianness.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
+				839E56ED2879515D00DFB5F4 /* HeadphoneFilter.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
 				831A50182865A8B30049CFE4 /* r8bstate.h in Headers */,
 				831A4FE52865A7DC0049CFE4 /* pffft_priv_impl.h in Headers */,
@@ -572,6 +608,7 @@
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
 				831A500F2865A7DC0049CFE4 /* CDSPFracInterpolator.h in Headers */,
 				831A4FE22865A7DC0049CFE4 /* pf_sse2_double.h in Headers */,
+				839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */,
 				839065F32853338700636FBB /* dsd2float.h in Headers */,
 				17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */,
 				831A4FDF2865A7DC0049CFE4 /* pf_neon_double_from_avx.h in Headers */,
@@ -587,6 +624,7 @@
 				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
 				B0575F2D0D687A0800411D77 /* Helper.h in Headers */,
 				07DB5F3E0ED353A900C2E3EF /* AudioMetadataWriter.h in Headers */,
+				839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,6 +701,7 @@
 			files = (
 				17D21CA20B8BE4BA00D1EBDE /* BufferChain.m in Sources */,
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
+				839E56EE2879515D00DFB5F4 /* HeadphoneFilter.mm in Sources */,
 				831A50112865A7DC0049CFE4 /* r8bbase.cpp in Sources */,
 				83504166286447DA006B32CC /* Downmix.m in Sources */,
 				8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */,
@@ -682,6 +721,7 @@
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */,
+				839E56E72879450300DFB5F4 /* HrtfData.cpp in Sources */,
 				831A4FE62865A7DC0049CFE4 /* pffft_double.c in Sources */,
 				17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */,
 				8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */,
@@ -702,6 +742,7 @@
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -741,6 +782,7 @@
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;

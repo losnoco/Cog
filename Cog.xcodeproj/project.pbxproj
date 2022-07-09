@@ -184,6 +184,7 @@
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
+		839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */ = {isa = PBXBuildFile; fileRef = 839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */; };
 		83AA7D04279EBCA900087AA4 /* libavcodec.59.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1026,6 +1027,7 @@
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		839E3B53286595D700880EA2 /* GeneralPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralPane.h; path = Preferences/Preferences/GeneralPane.h; sourceTree = "<group>"; };
+		839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SADIE_D02-96000.mhr"; sourceTree = "<group>"; };
 		83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ColorToValueTransformer.m; path = Preferences/Preferences/ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColorToValueTransformer.h; path = Preferences/Preferences/ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83AA7D00279EBC8200087AA4 /* libavcodec.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.59.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.59.dylib; sourceTree = "<group>"; };
@@ -1536,6 +1538,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
 				8316B3922839FFD5004CC392 /* Scenes.scnassets */,
 				832C1252180BD1E2005507C1 /* Cog.help */,
@@ -2486,6 +2489,7 @@
 				8384916D18083EAB00E7332D /* volume1Template.pdf in Resources */,
 				171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */,
 				171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */,
+				839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */,
 				8384916C18083EAB00E7332D /* stopTemplate.pdf in Resources */,
 				830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */,
 				171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */,

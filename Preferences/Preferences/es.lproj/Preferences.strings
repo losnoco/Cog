@@ -244,3 +244,5 @@
 /* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
 "NMg-TO-amV.title" = "Usar analizador en tres dimensiones";
 
+/* Class = "NSButtonCell"; title = "Enable HRTF filter (Not needed with AirPods or Beats)"; ObjectID = "NGx-0c-WVR"; */
+"NGx-0c-WVR.title" = "Enable HRTF filter (Not needed with AirPods or Beats)";
