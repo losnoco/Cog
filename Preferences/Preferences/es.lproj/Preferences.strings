@@ -104,7 +104,7 @@
 "FQF-vJ-hBx.title" = "Variedad de MIDI:";
 
 /* Class = "NSButtonCell"; title = "Resume playback on startup"; ObjectID = "fUg-Cg-gXa"; */
-"fUg-Cg-gXa.title" = "Resumir reproducción al iniciar";
+"fUg-Cg-gXa.title" = "Resumir reproducción al abrir";
 
 /* Class = "NSButtonCell"; title = "Colorful dock icons"; ObjectID = "GdX-5e-NeU"; */
 "GdX-5e-NeU.title" = "Colorear icono del dock";
@@ -248,4 +248,4 @@
 "NGx-0c-WVR.title" = "Activar filtro HRTF (no es necesario con AirPods o Beats)";
 
 /* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
-"207.title" = "Automatically check for updates on startup";
+"207.title" = "Buscar actualizaciones al abrir";
