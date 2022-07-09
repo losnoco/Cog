@@ -92,7 +92,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			dstRate = maxSampleRate;
 			formatClipped = YES;
 		}
-		if(!streamFormatStarted || config != streamChannelConfig || memcmp(&newFormat, &format, sizeof(format)) != 0) {
+		if(!streamFormatStarted || config != realStreamChannelConfig || memcmp(&newFormat, &format, sizeof(format)) != 0) {
 			[currentPtsLock lock];
 			if(formatClipped) {
 				ALog(@"Sample rate clipped to no more than %f Hz!", maxSampleRate);
@@ -117,8 +117,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 			downmixerForVis = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:visFormat outputConfig:AudioConfigMono];
 			if(!r8bold) {
-				streamFormat = format;
-				streamChannelConfig = config;
+				realStreamFormat = format;
+				realStreamChannelConfig = config;
 				[self updateStreamFormat];
 			}
 		}
@@ -301,8 +301,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	} else if([keyPath isEqualToString:@"values.eqPreamp"]) {
 		float preamp = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"eqPreamp"];
 		eqPreamp = pow(10.0, preamp / 20.0);
-	} else if([keyPath isEqualToString:@"values.dontRemix"]) {
-		dontRemix = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"dontRemix"];
+	} else if([keyPath isEqualToString:@"values.enableHrtf"]) {
+		enableHrtf = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHrtf"];
+		if(streamFormatStarted)
+			[self updateStreamFormat];
 	}
 }
 
@@ -598,6 +600,25 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)updateStreamFormat {
 	/* Set the channel layout for the audio queue */
+	if(enableHrtf) {
+		NSURL *presetUrl = [[NSBundle mainBundle] URLForResource:@"SADIE_D02-96000" withExtension:@"mhr"];
+
+		hrtf = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:realStreamFormat.mSampleRate withInputChannels:realStreamFormat.mChannelsPerFrame withConfig:realStreamChannelConfig];
+
+		streamFormat = realStreamFormat;
+		streamFormat.mChannelsPerFrame = 2;
+		streamFormat.mBytesPerFrame = sizeof(float) * 2;
+		streamFormat.mFramesPerPacket = 1;
+		streamFormat.mBytesPerPacket = streamFormat.mBytesPerFrame;
+
+		streamChannelConfig = AudioChannelSideLeft | AudioChannelSideRight;
+	} else {
+		hrtf = nil;
+
+		streamFormat = realStreamFormat;
+		streamChannelConfig = realStreamChannelConfig;
+	}
+
 	AudioChannelLayoutTag tag = 0;
 
 	AudioChannelLayout layout = { 0 };
@@ -741,13 +762,18 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			samplePtr = &inputBuffer[0];
 			if(r8bDone) {
 				r8bDone = NO;
-				streamFormat = newFormat;
-				streamChannelConfig = newChannelConfig;
+				realStreamFormat = newFormat;
+				realStreamChannelConfig = newChannelConfig;
 				[self updateStreamFormat];
 			}
 		}
 
 		if(samplesRendered) {
+			if(enableHrtf && hrtf) {
+				[hrtf process:samplePtr sampleCount:samplesRendered toBuffer:&hrtfBuffer[0]];
+				samplePtr = &hrtfBuffer[0];
+			}
+
 			if(eqEnabled && eqInitialized) {
 				const int channels = streamFormat.mChannelsPerFrame;
 				if(channels > 0) {
@@ -939,7 +965,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputAVFoundationContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kOutputAVFoundationContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputAVFoundationContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.dontRemix" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputAVFoundationContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHrtf" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputAVFoundationContext];
 		observersapplied = YES;
 
 		[renderSynchronizer addRenderer:audioRenderer];
@@ -1060,7 +1086,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputAVFoundationContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kOutputAVFoundationContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputAVFoundationContext];
-			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.dontRemix" context:kOutputAVFoundationContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHrtf" context:kOutputAVFoundationContext];
 			observersapplied = NO;
 		}
 		stopping = YES;

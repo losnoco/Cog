@@ -26,6 +26,8 @@ using std::atomic_long;
 
 #import "VisualizationController.h"
 
+#import "HeadphoneFilter.h"
+
 //#define OUTPUT_LOG
 #ifdef OUTPUT_LOG
 #import <stdio.h>
@@ -55,8 +57,6 @@ using std::atomic_long;
 	BOOL eqEnabled;
 	BOOL eqInitialized;
 
-	BOOL dontRemix;
-
 	BOOL streamFormatStarted;
 
 	double secondsHdcdSustained;
@@ -71,12 +71,16 @@ using std::atomic_long;
 	float eqPreamp;
 
 	AudioDeviceID outputDeviceID;
+	AudioStreamBasicDescription realStreamFormat; // stream format pre-hrtf
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
+	AudioStreamBasicDescription realNewFormat; // in case of resampler flush
 	AudioStreamBasicDescription newFormat; // in case of resampler flush
 
 	AudioStreamBasicDescription visFormat; // Mono format for vis
 
+	uint32_t realStreamChannelConfig;
 	uint32_t streamChannelConfig;
+	uint32_t realNewChannelConfig;
 	uint32_t newChannelConfig;
 
 	AVSampleBufferAudioRenderer *audioRenderer;
@@ -100,7 +104,11 @@ using std::atomic_long;
 
 	VisualizationController *visController;
 
+	BOOL enableHrtf;
+	HeadphoneFilter *hrtf;
+
 	float inputBuffer[2048 * 32]; // 2048 samples times maximum supported channel count
+	float hrtfBuffer[2048 * 2];
 	float eqBuffer[2048 * 32];
 
 #ifdef OUTPUT_LOG
