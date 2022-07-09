@@ -531,7 +531,7 @@ static AppController *kAppController = nil;
 }
 
 - (IBAction)privacyPolicy:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.iubenda.com/privacy-policy/59859310"]];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:NSLocalizedString(@"PrivacyPolicyURL", @"Privacy policy URL from Iubenda.")]];
 }
 
 - (IBAction)feedback:(id)sender {
