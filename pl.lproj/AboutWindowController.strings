@@ -1,0 +1,12 @@
+T
+/* Class = "NSWindow"; title = "About Cog"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "o Cog";
+
+/* Class = "NSTextFieldCell"; title = "Version..."; ObjectID = "Wjf-By-C1F"; */
+"Wjf-By-C1F.title" = "wersja...";
+
+/* Class = "NSTextFieldCell"; title = "Cog"; ObjectID = "hzl-Rl-e01"; */
+"hzl-Rl-e01.title" = "Cog";
+
+/* Class = "NSTextFieldCell"; title = "Copyright..."; ObjectID = "wLU-AJ-J0b"; */
+"wLU-AJ-J0b.title" = "informacje Copyright...";
