@@ -785,4 +785,4 @@
 "ZOn-sB-FR3.paletteLabel" = "Mostrar ecualizador";
 
 /* Class = "NSMenuItem"; title = "Check for Updates..."; ObjectID = "302"; */
-"302.title" = "Check for Updates...";
+"302.title" = "Buscar actualizaciones...";
