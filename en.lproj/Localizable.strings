@@ -86,3 +86,5 @@
 "dhms" = "%@, %@, %@ and %@";
 "hms" = "%@, %@ and %@";
 "ms" = "%@ and %@";
+
+"PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/59859310";
