@@ -108,6 +108,8 @@
 "209.headerCell.title" = "#";
 
 /* Class = "NSMenuItem"; title = "sprawdź, czy jest nowa wersja..."; ObjectID = "302"; */...";
+"302.title" = "sprawdź, czy jest nowa wersja...";
+
 /* Class = "NSMenuItem"; title = "send feedback..."; ObjectID = "303"; */
 "303.title" = "wyślij opinię...";
 
