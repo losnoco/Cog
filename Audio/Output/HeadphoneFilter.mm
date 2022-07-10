@@ -40,13 +40,13 @@ static const speakerPosition speakerPositions[18] = {
 	{ .elevation = DEGREES(0.0), .azimuth = DEGREES(-180.0), .distance = 1.0 },
 	{ .elevation = DEGREES(0.0), .azimuth = DEGREES(-90.0), .distance = 1.0 },
 	{ .elevation = DEGREES(0.0), .azimuth = DEGREES(+90.0), .distance = 1.0 },
-	{ .elevation = DEGREES(-90.0), .azimuth = DEGREES(0.0), .distance = 1.0 },
-	{ .elevation = DEGREES(-45.0), .azimuth = DEGREES(-30.0), .distance = 1.0 },
-	{ .elevation = DEGREES(-45.0), .azimuth = DEGREES(0.0), .distance = 1.0 },
-	{ .elevation = DEGREES(-45.0), .azimuth = DEGREES(+30.0), .distance = 1.0 },
-	{ .elevation = DEGREES(-45.0), .azimuth = DEGREES(-135.0), .distance = 1.0 },
-	{ .elevation = DEGREES(-45.0), .azimuth = DEGREES(0.0), .distance = 1.0 },
-	{ .elevation = DEGREES(-45.0), .azimuth = DEGREES(+135.0), .distance = 1.0 }
+	{ .elevation = DEGREES(+90.0), .azimuth = DEGREES(0.0), .distance = 1.0 },
+	{ .elevation = DEGREES(+45.0), .azimuth = DEGREES(-30.0), .distance = 1.0 },
+	{ .elevation = DEGREES(+45.0), .azimuth = DEGREES(0.0), .distance = 1.0 },
+	{ .elevation = DEGREES(+45.0), .azimuth = DEGREES(+30.0), .distance = 1.0 },
+	{ .elevation = DEGREES(+45.0), .azimuth = DEGREES(-135.0), .distance = 1.0 },
+	{ .elevation = DEGREES(+45.0), .azimuth = DEGREES(0.0), .distance = 1.0 },
+	{ .elevation = DEGREES(+45.0), .azimuth = DEGREES(+135.0), .distance = 1.0 }
 };
 
 @interface impulseCacheObject : NSObject {
