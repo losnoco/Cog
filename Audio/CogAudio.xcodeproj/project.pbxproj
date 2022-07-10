@@ -76,6 +76,12 @@
 		8328995A27CB51C900D7F028 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8328995927CB51C900D7F028 /* Security.framework */; };
 		8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */; };
 		8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */; };
+		834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A41A5287A90AB00EB9D9B /* freesurround_decoder.h */; };
+		834A41AA287A90AB00EB9D9B /* freesurround_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834A41A6287A90AB00EB9D9B /* freesurround_decoder.cpp */; };
+		834A41AB287A90AB00EB9D9B /* channelmaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834A41A7287A90AB00EB9D9B /* channelmaps.cpp */; };
+		834A41AC287A90AB00EB9D9B /* channelmaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A41A8287A90AB00EB9D9B /* channelmaps.h */; };
+		834A41AF287ABD6F00EB9D9B /* FSurroundFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A41AD287ABD6F00EB9D9B /* FSurroundFilter.h */; };
+		834A41B0287ABD6F00EB9D9B /* FSurroundFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 834A41AE287ABD6F00EB9D9B /* FSurroundFilter.mm */; };
 		834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EA27AF8F380063BC83 /* AudioChunk.h */; };
 		834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EC27AF91220063BC83 /* AudioChunk.m */; };
 		834FD4F027AF93680063BC83 /* ChunkList.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EE27AF93680063BC83 /* ChunkList.h */; };
@@ -212,6 +218,12 @@
 		8328995927CB51C900D7F028 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileHandle+CreateFile.h"; path = "../../Utils/NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+CreateFile.m"; path = "../../Utils/NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
+		834A41A5287A90AB00EB9D9B /* freesurround_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = freesurround_decoder.h; sourceTree = "<group>"; };
+		834A41A6287A90AB00EB9D9B /* freesurround_decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = freesurround_decoder.cpp; sourceTree = "<group>"; };
+		834A41A7287A90AB00EB9D9B /* channelmaps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = channelmaps.cpp; sourceTree = "<group>"; };
+		834A41A8287A90AB00EB9D9B /* channelmaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = channelmaps.h; sourceTree = "<group>"; };
+		834A41AD287ABD6F00EB9D9B /* FSurroundFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FSurroundFilter.h; sourceTree = "<group>"; };
+		834A41AE287ABD6F00EB9D9B /* FSurroundFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FSurroundFilter.mm; sourceTree = "<group>"; };
 		834FD4EA27AF8F380063BC83 /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioChunk.h; sourceTree = "<group>"; };
 		834FD4EC27AF91220063BC83 /* AudioChunk.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioChunk.m; sourceTree = "<group>"; };
 		834FD4EE27AF93680063BC83 /* ChunkList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChunkList.h; sourceTree = "<group>"; };
@@ -397,6 +409,8 @@
 		17D21C9B0B8BE4BA00D1EBDE /* Output */ = {
 			isa = PBXGroup;
 			children = (
+				834A41AD287ABD6F00EB9D9B /* FSurroundFilter.h */,
+				834A41AE287ABD6F00EB9D9B /* FSurroundFilter.mm */,
 				839E56EB2879515D00DFB5F4 /* HeadphoneFilter.h */,
 				839E56EC2879515D00DFB5F4 /* HeadphoneFilter.mm */,
 				17D21C9C0B8BE4BA00D1EBDE /* OutputAVFoundation.h */,
@@ -408,6 +422,7 @@
 		17D21CD80B8BE5B400D1EBDE /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				834A41A4287A90AB00EB9D9B /* fsurround */,
 				839E56E02879450300DFB5F4 /* hrtf */,
 				831A50152865A8800049CFE4 /* r8bstate.cpp */,
 				831A50172865A8B30049CFE4 /* r8bstate.h */,
@@ -507,6 +522,17 @@
 			path = simd;
 			sourceTree = "<group>";
 		};
+		834A41A4287A90AB00EB9D9B /* fsurround */ = {
+			isa = PBXGroup;
+			children = (
+				834A41A5287A90AB00EB9D9B /* freesurround_decoder.h */,
+				834A41A6287A90AB00EB9D9B /* freesurround_decoder.cpp */,
+				834A41A7287A90AB00EB9D9B /* channelmaps.cpp */,
+				834A41A8287A90AB00EB9D9B /* channelmaps.h */,
+			);
+			path = fsurround;
+			sourceTree = "<group>";
+		};
 		835C88AE279811A500E28EAE /* hdcd */ = {
 			isa = PBXGroup;
 			children = (
@@ -566,7 +592,9 @@
 				17D21CA10B8BE4BA00D1EBDE /* BufferChain.h in Headers */,
 				831A4FE02865A7DC0049CFE4 /* pf_double.h in Headers */,
 				831A50142865A7FD0049CFE4 /* r8bstate.hpp in Headers */,
+				834A41AC287A90AB00EB9D9B /* channelmaps.h in Headers */,
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
+				834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */,
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				831A4FF32865A7DC0049CFE4 /* r8butil.h in Headers */,
@@ -601,6 +629,7 @@
 				17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */,
 				8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */,
 				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
+				834A41AF287ABD6F00EB9D9B /* FSurroundFilter.h in Headers */,
 				17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */,
 				831A50092865A7DC0049CFE4 /* CDSPHBUpsampler.h in Headers */,
 				831A500E2865A7DC0049CFE4 /* r8bconf.h in Headers */,
@@ -705,6 +734,7 @@
 				831A50112865A7DC0049CFE4 /* r8bbase.cpp in Sources */,
 				83504166286447DA006B32CC /* Downmix.m in Sources */,
 				8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */,
+				834A41AB287A90AB00EB9D9B /* channelmaps.cpp in Sources */,
 				831A50162865A8800049CFE4 /* r8bstate.cpp in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
@@ -729,9 +759,11 @@
 				17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */,
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				834FD4F127AF93680063BC83 /* ChunkList.m in Sources */,
+				834A41B0287ABD6F00EB9D9B /* FSurroundFilter.mm in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
+				834A41AA287A90AB00EB9D9B /* freesurround_decoder.cpp in Sources */,
 				07DB5F3F0ED353A900C2E3EF /* AudioMetadataWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
