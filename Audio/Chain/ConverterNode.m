@@ -710,18 +710,22 @@ tryagain:
 
 	ioNumberPackets -= ioNumberPackets % dmFloatFormat.mBytesPerPacket;
 
-	AudioChunk *chunk = [[AudioChunk alloc] init];
-	[chunk setFormat:nodeFormat];
-	if(nodeChannelConfig) {
-		[chunk setChannelConfig:nodeChannelConfig];
-	}
-	[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / dmFloatFormat.mBytesPerPacket];
+	if(ioNumberPackets) {
+		AudioChunk *chunk = [[AudioChunk alloc] init];
+		[chunk setFormat:nodeFormat];
+		if(nodeChannelConfig) {
+			[chunk setChannelConfig:nodeChannelConfig];
+		}
+		[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / dmFloatFormat.mBytesPerPacket];
 
-	floatOffset += ioNumberPackets;
-	amountRead += ioNumberPackets;
+		floatOffset += ioNumberPackets;
+		amountRead += ioNumberPackets;
+		convertEntered = NO;
+		return chunk;
+	}
 
 	convertEntered = NO;
-	return chunk;
+	return nil;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
