@@ -33,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		8307D31A286070EA000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
+		834A42B0287AF4BF00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		8359009717FEF6490060F3ED /* ArchiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveSource.h; sourceTree = "<group>"; };
 		8359009817FEF6490060F3ED /* ArchiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveSource.m; sourceTree = "<group>"; };
 		8359009A17FEFDA80060F3ED /* ArchiveContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveContainer.h; sourceTree = "<group>"; };
@@ -105,6 +106,7 @@
 		8359FF2017FEF35C0060F3ED /* ArchiveSource */ = {
 			isa = PBXGroup;
 			children = (
+				834A42B0287AF4BF00EB9D9B /* AudioChunk.h */,
 				8307D31A286070EA000FF8EB /* SandboxBroker.h */,
 				8384913518081BA000E7332D /* Logging.h */,
 				835900A017FF079C0060F3ED /* Plugin.h */,

@@ -276,14 +276,14 @@ static OSType getOSType(const char *in_) {
 	return YES;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	BOOL repeatone = IsRepeatOneSet();
 	long localFramesLength = framesLength;
 	long localTotalFrames = totalFrames;
 
 	if(!player) {
 		if(![self initDecoder])
-			return -1;
+			return nil;
 	}
 
 	player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
@@ -302,7 +302,10 @@ static OSType getOSType(const char *in_) {
 		soundFontsAssigned = YES;
 	}
 
-	UInt32 frames_done = player->Play((float *)buf, frames);
+	int frames = 1024;
+	float buffer[frames * 2];
+
+	UInt32 frames_done = player->Play(buffer, frames);
 
 	if(!frames_done)
 		return 0;
@@ -315,7 +318,7 @@ static OSType getOSType(const char *in_) {
 			long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
 			long fadePos;
 
-			float *buff = (float *)buf;
+			float *buff = buffer;
 
 			float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
 			float fadeStep = 1.0 / (float)framesFade;
@@ -337,13 +340,17 @@ static OSType getOSType(const char *in_) {
 	}
 
 	framesRead += frames;
-	return frames;
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:frames];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {
 	if(!player) {
-		float temp[2];
-		if([self readAudio:temp frames:1] < 1)
+		if(![self readAudio])
 			return -1;
 	}
 

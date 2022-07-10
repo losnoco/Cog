@@ -15,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		834A42BB287AFB0700EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		8372C92327C785BD00E250C9 /* MAD.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MAD.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8372C93327C7861300E250C9 /* MADDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MADDecoder.h; sourceTree = "<group>"; };
 		8372C93427C7861300E250C9 /* MADDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MADDecoder.m; sourceTree = "<group>"; };
@@ -48,6 +49,7 @@
 			children = (
 				83747C262862DB9F0021245F /* Xcode-config */,
 				83F97B6628600F9300A70B97 /* ThirdParty */,
+				834A42BB287AFB0700EB9D9B /* AudioChunk.h */,
 				8372C93A27C786DD00E250C9 /* HTTPSource.h */,
 				8372C93927C7866B00E250C9 /* Logging.h */,
 				8372C93827C7865A00E250C9 /* Plugin.h */,

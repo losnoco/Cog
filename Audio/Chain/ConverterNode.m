@@ -432,34 +432,32 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 }
 
 - (void)process {
-	char writeBuf[CHUNK_SIZE];
-
 	// Removed endOfStream check from here, since we want to be able to flush the converter
 	// when the end of stream is reached. Convert function instead processes what it can,
 	// and returns 0 samples when it has nothing more to process at the end of stream.
 	while([self shouldContinue] == YES) {
-		int amountConverted;
+		AudioChunk *chunk = nil;
 		while(paused) {
 			usleep(500);
 		}
 		@autoreleasepool {
-			amountConverted = [self convert:writeBuf amount:CHUNK_SIZE];
+			chunk = [self convert];
 		}
-		if(!amountConverted) {
-			if(paused) {
-				continue;
-			} else if(streamFormatChanged) {
-				[self cleanUp];
-				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig isLossless:rememberedLossless];
-				continue;
-			} else
-				break;
+		if(!chunk) {
+			continue;
 		}
-		[self writeData:writeBuf amount:amountConverted];
+		@autoreleasepool {
+			[self writeChunk:chunk];
+			chunk = nil;
+		}
+		if(streamFormatChanged) {
+			[self cleanUp];
+			[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig isLossless:rememberedLossless];
+		}
 	}
 }
 
-- (int)convert:(void *)dest amount:(int)amount {
+- (AudioChunk *)convert {
 	UInt32 ioNumberPackets;
 	int amountReadFromFC;
 	int amountRead = 0;
@@ -472,7 +470,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 tryagain:
 	if(stopping || [self shouldContinue] == NO) {
 		convertEntered = NO;
-		return amountRead;
+		return nil;
 	}
 
 	amountReadFromFC = 0;
@@ -543,7 +541,7 @@ tryagain:
 
 			if(!bytesReadFromInput) {
 				convertEntered = NO;
-				return amountRead;
+				return nil;
 			}
 
 			if(bytesReadFromInput && isBigEndian) {
@@ -703,19 +701,22 @@ tryagain:
 	if(floatOffset == floatSize)
 		goto tryagain;
 
-	ioNumberPackets = (amount - amountRead);
-	if(ioNumberPackets > (floatSize - floatOffset))
-		ioNumberPackets = (UInt32)(floatSize - floatOffset);
+	ioNumberPackets = (UInt32)(floatSize - floatOffset);
 
 	ioNumberPackets -= ioNumberPackets % dmFloatFormat.mBytesPerPacket;
 
-	memcpy(((uint8_t *)dest) + amountRead, ((uint8_t *)floatBuffer) + floatOffset, ioNumberPackets);
+	AudioChunk *chunk = [[AudioChunk alloc] init];
+	[chunk setFormat:nodeFormat];
+	if(nodeChannelConfig) {
+		[chunk setChannelConfig:nodeChannelConfig];
+	}
+	[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / dmFloatFormat.mBytesPerPacket];
 
 	floatOffset += ioNumberPackets;
 	amountRead += ioNumberPackets;
 
 	convertEntered = NO;
-	return amountRead;
+	return chunk;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath

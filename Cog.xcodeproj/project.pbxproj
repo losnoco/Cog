@@ -927,6 +927,7 @@
 		83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmPlayer.xcodeproj; path = Plugins/libvgmPlayer/libvgmPlayer.xcodeproj; sourceTree = "<group>"; };
 		8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = duplicateItemsTemplate.pdf; path = Images/duplicateItemsTemplate.pdf; sourceTree = "<group>"; };
 		8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = deadItemsTemplate.pdf; path = Images/deadItemsTemplate.pdf; sourceTree = "<group>"; };
+		834A42C4287B01B600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = Audio/Chain/AudioChunk.h; sourceTree = SOURCE_ROOT; };
 		834B05E82859C006000B7DC0 /* TotalTimeTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TotalTimeTransformer.h; path = Transformers/TotalTimeTransformer.h; sourceTree = "<group>"; };
 		834B05E92859C006000B7DC0 /* TotalTimeTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TotalTimeTransformer.m; path = Transformers/TotalTimeTransformer.m; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
@@ -1227,6 +1228,7 @@
 		177EC0110B8BC2CF0000BC8C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				834A42C4287B01B600EB9D9B /* AudioChunk.h */,
 				8384912518080F2D00E7332D /* Logging.h */,
 				07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */,
 				07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */,

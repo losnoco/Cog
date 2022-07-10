@@ -7,6 +7,8 @@
 
 #import "AudioChunk.h"
 
+#import "CoreAudioUtils.h"
+
 @implementation AudioChunk
 
 - (id)init {
@@ -16,6 +18,18 @@
 		chunkData = [[NSMutableData alloc] init];
 		formatAssigned = NO;
 		lossless = NO;
+	}
+
+	return self;
+}
+
+- (id)initWithProperties:(NSDictionary *)properties {
+	self = [super init];
+
+	if(self) {
+		chunkData = [[NSMutableData alloc] init];
+		[self setFormat:propertiesToASBD(properties)];
+		lossless = [[properties objectForKey:@"encoding"] isEqualToString:@"lossless"];
 	}
 
 	return self;
@@ -154,6 +168,16 @@ static const uint32_t AudioChannelConfigTable[] = {
 		return [chunkData length] / bytesPerPacket;
 	}
 	return 0;
+}
+
+- (void)setFrameCount:(size_t)count {
+	if(formatAssigned) {
+		count *= format.mBytesPerPacket;
+		size_t currentLength = [chunkData length];
+		if(count < currentLength) {
+			[chunkData replaceBytesInRange:NSMakeRange(count, currentLength - count) withBytes:NULL length:0];
+		}
+	}
 }
 
 - (double)duration {

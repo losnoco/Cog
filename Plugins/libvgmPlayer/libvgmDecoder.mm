@@ -208,9 +208,18 @@ const int masterVol = 0x10000; // Fixed point 16.16
 	return @{};
 }
 
-- (int)readAudio:(void*)buf frames:(UInt32)frames {
+- (AudioChunk*)readAudio {
 	if([self trackEnded])
-		return 0;
+		return nil;
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk* chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
+	int frames = 1024;
+	const size_t bytesPerFrame = [chunk format].mBytesPerFrame;
+	uint8_t buffer[frames * bytesPerFrame];
+
+	void* buf = (void*)buffer;
 
 	BOOL repeatOne = IsRepeatOneSet();
 	uint32_t maxLoops = repeatOne ? 0 : (uint32_t)loopCount;
@@ -238,7 +247,9 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		framesDone += framesToDo;
 	}
 
-	return framesDone;
+	[chunk assignSamples:buffer frameCount:framesDone];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

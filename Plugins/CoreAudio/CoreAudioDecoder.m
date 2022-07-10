@@ -306,25 +306,33 @@ static SInt64 getSizeProc(void *clientData) {
 	return YES;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	OSStatus err;
 	AudioBufferList bufferList;
 	UInt32 frameCount;
 
+	int frames = 1024;
+	size_t bytesPerFrame = channels * (bitsPerSample / 8);
+	uint8_t buffer[frames * bytesPerFrame];
+
 	// Set up the AudioBufferList
 	bufferList.mNumberBuffers = 1;
 	bufferList.mBuffers[0].mNumberChannels = channels;
-	bufferList.mBuffers[0].mData = buf;
+	bufferList.mBuffers[0].mData = buffer;
 	bufferList.mBuffers[0].mDataByteSize = frames * channels * (bitsPerSample / 8);
 
 	// Read a chunk of PCM input (converted from whatever format)
 	frameCount = frames;
 	err = ExtAudioFileRead(_in, &frameCount, &bufferList);
 	if(err != noErr) {
-		return 0;
+		return nil;
 	}
 
-	return frameCount;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:frameCount];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

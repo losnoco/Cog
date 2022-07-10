@@ -12,6 +12,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		834A42C1287AFED700EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		83747BFA2862D95C0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83F9D7E71A884B44007ABEC2 /* SilenceDecoder.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SilenceDecoder.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F9D7EB1A884B44007ABEC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -64,6 +65,7 @@
 		83F9D7E91A884B44007ABEC2 /* SilenceDecoder */ = {
 			isa = PBXGroup;
 			children = (
+				834A42C1287AFED700EB9D9B /* AudioChunk.h */,
 				83F9D8091A884CB5007ABEC2 /* Logging.h */,
 				83F9D8081A884C93007ABEC2 /* Plugin.h */,
 				83F9D8041A884C23007ABEC2 /* PlaylistController.h */,

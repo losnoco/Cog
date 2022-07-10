@@ -99,6 +99,7 @@
 		831E2A9427B4B2FA006F1C86 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		831E2A9527B4B2FA006F1C86 /* json-builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "json-builder.h"; sourceTree = "<group>"; };
 		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		834A42BC287AFC7F00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		834BE9191DE407CB00A07DCD /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		834BE91A1DE407CB00A07DCD /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		8356BCC427B352620074E50C /* BMPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BMPlayer.cpp; sourceTree = "<group>"; };
@@ -306,6 +307,7 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				834A42BC287AFC7F00EB9D9B /* AudioChunk.h */,
 				8307D31E28607377000FF8EB /* SandboxBroker.h */,
 				831E2A9127B4B2FA006F1C86 /* json */,
 				831E2A7D27B4B2B2006F1C86 /* BASS */,

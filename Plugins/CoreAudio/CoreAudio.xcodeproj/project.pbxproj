@@ -23,6 +23,7 @@
 		17C93EAB0B8FF3CE008627D6 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17C93EB20B8FF3E1008627D6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		32DBCF630370AF2F00C91783 /* CoreAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudio_Prefix.pch; sourceTree = "<group>"; };
+		834A42B1287AF4D900EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		83747C5E2862DD880021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83849129180813E800E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* CoreAudio.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreAudio.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,6 +78,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				834A42B1287AF4D900EB9D9B /* AudioChunk.h */,
 				83849129180813E800E7332D /* Logging.h */,
 				177FCFCA0B90C9A10011C3B5 /* Plugin.h */,
 				17C93E720B8FF192008627D6 /* CoreAudioDecoder.h */,

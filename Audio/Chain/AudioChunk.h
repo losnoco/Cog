@@ -80,6 +80,7 @@ enum {
 + (uint32_t)findChannelIndex:(uint32_t)flag;
 
 - (id)init;
+- (id)initWithProperties:(NSDictionary *)properties;
 
 - (void)assignSamples:(const void *)data frameCount:(size_t)count;
 
@@ -88,6 +89,7 @@ enum {
 - (BOOL)isEmpty;
 
 - (size_t)frameCount;
+- (void)setFrameCount:(size_t)count; // For truncation only
 
 - (double)duration;
 

@@ -48,6 +48,7 @@
 
 /* Begin PBXFileReference section */
 		833A899B286FF3150022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		834A42BE287AFDC300EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -124,6 +125,7 @@
 		83E5FE6A1FFF003900659F0F /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				834A42BE287AFDC300EB9D9B /* AudioChunk.h */,
 				83E5FE6B1FFF004D00659F0F /* Logging.h */,
 				83E5FE761FFF076F00659F0F /* PlaylistController.h */,
 				83E5FE6C1FFF006400659F0F /* Plugin.h */,

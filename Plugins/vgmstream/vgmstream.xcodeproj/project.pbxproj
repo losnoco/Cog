@@ -52,6 +52,7 @@
 		833F68491CDBCAC000AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8340888B1F6F604A00DCD404 /* VGMMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMMetadataReader.m; sourceTree = "<group>"; };
 		8340888D1F6F604B00DCD404 /* VGMMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMMetadataReader.h; sourceTree = "<group>"; };
+		834A42A8287AEDFB00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		835D241E235AB318009A1251 /* VGMPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMPropertiesReader.m; sourceTree = "<group>"; };
 		835D241F235AB319009A1251 /* VGMPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMPropertiesReader.h; sourceTree = "<group>"; };
 		836F6B1018BDB80D0095E648 /* vgmstream.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = vgmstream.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,6 +142,7 @@
 				836F705A18BDC40E0095E648 /* VGMDecoder.h */,
 				836F705B18BDC40E0095E648 /* VGMDecoder.m */,
 				83AA5D2F1F6E301B0020821C /* Logging.h */,
+				834A42A8287AEDFB00EB9D9B /* AudioChunk.h */,
 				836F706018BDC84D0095E648 /* Plugin.h */,
 				836F6B1A18BDB80D0095E648 /* Supporting Files */,
 			);

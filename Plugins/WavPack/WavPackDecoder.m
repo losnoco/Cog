@@ -196,13 +196,22 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
     return n;
 }
 */
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
+	int32_t frames = 1024;
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
 	uint32_t sample;
 	int32_t audioSample;
 	uint32_t samplesRead;
 	int8_t *alias8;
 	int16_t *alias16;
 	int32_t *alias32;
+
+	const size_t bufferSize = frames * [chunk format].mBytesPerFrame;
+	uint8_t buffer[bufferSize];
+	void *buf = (void *)buffer;
 
 	size_t newSize = frames * sizeof(int32_t) * channels;
 	if(!inputBuffer || newSize > inputBufferSize) {
@@ -248,7 +257,9 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 			ALog(@"Unsupported sample size: %d", bitsPerSample);
 	}
 
-	return samplesRead;
+	[chunk assignSamples:buffer frameCount:samplesRead];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

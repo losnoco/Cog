@@ -112,8 +112,12 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 	return @{};
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	mod->set_repeat_count(IsRepeatOneSet() ? -1 : 0);
+
+	int frames = 1024;
+	float buffer[frames * 2];
+	void *buf = (void *)buffer;
 
 	int total = 0;
 	while(total < frames) {
@@ -131,7 +135,11 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 			break;
 	}
 
-	return total;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:total];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

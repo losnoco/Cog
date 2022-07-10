@@ -200,9 +200,10 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	}
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	int numread;
 	int total = 0;
+	int frames = 1024;
 
 	if(currentSection != lastSection) {
 		vorbis_info *vi;
@@ -217,6 +218,12 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 		[self updateMetadata];
 	}
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
+	float buffer[frames * channels];
+	void *buf = (void *)buffer;
 
 	do {
 		lastSection = currentSection;
@@ -247,7 +254,9 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	[self updateIcyMetadata];
 
-	return total;
+	[chunk assignSamples:buffer frameCount:total];
+
+	return chunk;
 }
 
 - (void)close {

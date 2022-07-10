@@ -79,9 +79,9 @@ static void *kCogDecoderMultiContext = &kCogDecoderMultiContext;
 	return @{};
 }
 
-- (int)readAudio:(void *)buffer frames:(UInt32)frames {
-	if(theDecoder != nil) return [theDecoder readAudio:buffer frames:frames];
-	return 0;
+- (AudioChunk *)readAudio {
+	if(theDecoder != nil) return [theDecoder readAudio];
+	return nil;
 }
 
 - (BOOL)open:(id<CogSource>)source {
