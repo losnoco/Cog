@@ -444,11 +444,16 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			chunk = [self convert];
 		}
 		if(!chunk) {
-			continue;
-		}
-		@autoreleasepool {
-			[self writeChunk:chunk];
-			chunk = nil;
+			if(paused) {
+				continue;
+			} else if(!streamFormatChanged) {
+				break;
+			}
+		} else {
+			@autoreleasepool {
+				[self writeChunk:chunk];
+				chunk = nil;
+			}
 		}
 		if(streamFormatChanged) {
 			[self cleanUp];
