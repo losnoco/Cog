@@ -1,0 +1,786 @@
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "5"; */
+"5.title" = "Вывести Все на передний экран";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "19"; */
+"19.title" = "Окно";
+
+/* Class = "NSWindow"; title = "Cog"; ObjectID = "21"; */
+"21.title" = "Cog";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "23"; */
+"23.title" = "Мнимизировать";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "24"; */
+"24.title" = "Окно";
+
+/* Class = "NSMenu"; title = "MainMenu"; ObjectID = "29"; */
+"29.title" = "Главное меню";
+
+/* Class = "NSMenuItem"; title = "Cog"; ObjectID = "56"; */
+"56.title" = "Cog";
+
+/* Class = "NSMenu"; title = "Cog"; ObjectID = "57"; */
+"57.title" = "Cog";
+
+/* Class = "NSMenuItem"; title = "About Cog"; ObjectID = "58"; */
+"58.title" = "О Cog";
+
+/* Class = "NSMenuItem"; title = "Add File..."; ObjectID = "72"; */
+"72.title" = "Добавить файл...";
+
+/* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "73"; */
+"73.title" = "Закрыть Окно";
+
+/* Class = "NSMenuItem"; title = "Save As..."; ObjectID = "75"; */
+"75.title" = "Сохранить Как...";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "81"; */
+"81.title" = "Файл";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "83"; */
+"83.title" = "Файл";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "103"; */
+"103.title" = "Помощь";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "106"; */
+"106.title" = "Помощь";
+
+/* Class = "NSMenuItem"; title = "Cog Help"; ObjectID = "111"; */
+"111.title" = "Cog Помощь";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "129"; */
+"129.title" = "Настройки…";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "130"; */
+"130.title" = "Services";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "131"; */
+"131.title" = "Сервисы";
+
+/* Class = "NSMenuItem"; title = "Hide Cog"; ObjectID = "134"; */
+"134.title" = "Спрятать Cog";
+
+/* Class = "NSMenuItem"; title = "Quit Cog"; ObjectID = "136"; */
+"136.title" = "Выйти из Cog";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
+"145.title" = "Скрыть Другие";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "150"; */
+"150.title" = "Показать Все";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "157"; */
+"157.title" = "Копировать";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "158"; */
+"158.title" = "Отменить";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "160"; */
+"160.title" = "Вырезать";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "163"; */
+"163.title" = "Редактировать";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "164"; */
+"164.title" = "Удалить";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "169"; */
+"169.title" = "Редактировать";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "171"; */
+"171.title" = "Вставить";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "172"; */
+"172.title" = "Выбрать Все";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "173"; */
+"173.title" = "Повторить";
+
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "197"; */
+"197.title" = "Увеличить";
+
+/* Class = "NSTableColumn"; headerCell.title = "Rating"; ObjectID = "208"; */
+"208.headerCell.title" = "Рейтинг";
+
+/* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "209"; */
+"209.headerCell.title" = "#";
+
+/* Class = "NSMenuItem"; title = "Send Feedback..."; ObjectID = "303"; */
+"303.title" = "Отправить обратную связь...";
+
+/* Class = "NSTableColumn"; headerCell.title = "Artist"; ObjectID = "391"; */
+"391.headerCell.title" = "Артист";
+
+/* Class = "NSMenuItem"; title = "Control"; ObjectID = "418"; */
+"418.title" = "Управление";
+
+/* Class = "NSMenu"; title = "Control"; ObjectID = "419"; */
+"419.title" = "Управление";
+
+/* Class = "NSMenuItem"; title = "Play/Pause"; ObjectID = "420"; */
+"420.title" = "Воспроизведение/Пауза";
+
+/* Class = "NSMenuItem"; title = "Next Song"; ObjectID = "422"; */
+"422.title" = "Следующая Песня";
+
+/* Class = "NSMenuItem"; title = "Previous Song"; ObjectID = "423"; */
+"423.title" = "Предыдущая Песня";
+
+/* Class = "NSMenu"; title = "Menu"; ObjectID = "513"; */
+"513.title" = "Меню";
+
+/* Class = "NSMenuItem"; title = "Stop"; ObjectID = "517"; */
+"517.title" = "Стоп";
+
+/* Class = "NSMenuItem"; title = "Next Track"; ObjectID = "518"; */
+"518.title" = "Следующий трек";
+
+/* Class = "NSMenuItem"; title = "Previous Track"; ObjectID = "519"; */
+"519.title" = "Предыдущий трек";
+
+/* Class = "NSMenuItem"; title = "Play/Pause"; ObjectID = "520"; */
+"520.title" = "Воспроизведение/Пауза";
+
+/* Class = "NSMenuItem"; title = "Cog"; ObjectID = "702"; */
+"702.title" = "Cog";
+
+/* Class = "NSMenuItem"; title = "Current Song"; ObjectID = "791"; */
+"791.title" = "Текущая Песня";
+
+/* Class = "NSTableColumn"; headerCell.title = "Album"; ObjectID = "806"; */
+"806.headerCell.title" = "Альбом";
+
+/* Class = "NSTableColumn"; headerCell.title = "Length"; ObjectID = "807"; */
+"807.headerCell.title" = "Длина";
+
+/* Class = "NSTableColumn"; headerCell.title = "Year"; ObjectID = "848"; */
+"848.headerCell.title" = "Год";
+
+/* Class = "NSTableColumn"; headerCell.title = "Genre"; ObjectID = "849"; */
+"849.headerCell.title" = "Жанр";
+
+/* Class = "NSTableColumn"; headerCell.title = "№"; ObjectID = "850"; */
+"850.headerCell.title" = "№";
+
+/* Class = "NSMenuItem"; title = "Playlist"; ObjectID = "881"; */
+"881.title" = "Плейлист";
+
+/* Class = "NSMenu"; title = "Playlist"; ObjectID = "882"; */
+"882.title" = "Плейлист";
+
+/* Class = "NSMenu"; title = "Menu"; ObjectID = "1063"; */
+"1063.title" = "Меню";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1064"; */
+"1064.title" = "Показать в Finder";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1135"; */
+"1135.title" = "Показать в Finder";
+
+/* Class = "NSMenuItem"; title = "Volume Up"; ObjectID = "1136"; */
+"1136.title" = "Увеличить громкость";
+
+/* Class = "NSMenuItem"; title = "Volume Down"; ObjectID = "1137"; */
+"1137.title" = "Уменьшить громкость";
+
+/* Class = "NSMenu"; title = "Menu"; ObjectID = "1324"; */
+"1324.title" = "Меню";
+
+/* Class = "NSMenuItem"; title = "Index"; ObjectID = "1337"; */
+"1337.title" = "Индекс";
+
+/* Class = "NSMenuItem"; title = "Title"; ObjectID = "1338"; */
+"1338.title" = "Название";
+
+/* Class = "NSMenuItem"; title = "Artist"; ObjectID = "1339"; */
+"1339.title" = "Артист";
+
+/* Class = "NSMenuItem"; title = "Album"; ObjectID = "1340"; */
+"1340.title" = "Альбом";
+
+/* Class = "NSMenuItem"; title = "Genre"; ObjectID = "1341"; */
+"1341.title" = "Жанр";
+
+/* Class = "NSMenuItem"; title = "Length"; ObjectID = "1342"; */
+"1342.title" = "Длина";
+
+/* Class = "NSMenuItem"; title = "Track"; ObjectID = "1343"; */
+"1343.title" = "Трек";
+
+/* Class = "NSMenuItem"; title = "Year"; ObjectID = "1344"; */
+"1344.title" = "Год";
+
+/* Class = "NSMenuItem"; title = "Remove"; ObjectID = "1360"; */
+"1360.title" = "Удалить";
+
+/* Class = "NSMenuItem"; title = "Stop"; ObjectID = "1362"; */
+"1362.title" = "Стоп";
+
+/* Class = "NSMenuItem"; title = "Remove All"; ObjectID = "1402"; */
+"1402.title" = "Удалить Все";
+
+/* Class = "NSMenuItem"; title = "Add URL..."; ObjectID = "1403"; */
+"1403.title" = "Добавить URL...";
+
+/* Class = "NSMenuItem"; title = "Remove"; ObjectID = "1408"; */
+"1408.title" = "Удалить";
+
+/* Class = "NSMenuItem"; title = "Current Artist"; ObjectID = "1454"; */
+"1454.title" = "Текущий Артист";
+
+/* Class = "NSTextFieldCell"; title = "Total Duration: 00 hours 00 minutes 00 seconds"; ObjectID = "1473"; */
+"1473.title" = "Общая продолжительность: 00 часов 00 минут 00 секунд";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1506"; */
+"1506.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1507"; */
+"1507.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1508"; */
+"1508.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1509"; */
+"1509.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1510"; */
+"1510.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1511"; */
+"1511.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1512"; */
+"1512.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1513"; */
+"1513.title" = "Text Cell";
+
+/* Class = "NSSearchFieldCell"; placeholderString = "All"; ObjectID = "1532"; */
+"1532.placeholderString" = "Все";
+
+/* Class = "NSToolbarItem"; label = "Search"; ObjectID = "1533"; */
+"1533.label" = "Поиск";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Search"; ObjectID = "1533"; */
+"1533.paletteLabel" = "Поиск";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[0] = "Previous"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[0]" = "Предыдущий";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[1] = "Play"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[1]" = "Воспроизвести";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[2] = "Stop"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[2]" = "Остановить";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[3] = "Next"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[3]" = "Следующий";
+
+/* Class = "NSToolbarItem"; label = "Playback Control"; ObjectID = "1539"; */
+"1539.label" = "Управление воспроизведением";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Playback Control"; ObjectID = "1539"; */
+"1539.paletteLabel" = "Управление воспроизведением";
+
+/* Class = "NSToolbarItem"; label = "Position"; ObjectID = "1551"; */
+"1551.label" = "Позиция";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Position"; ObjectID = "1551"; */
+"1551.paletteLabel" = "Позиция";
+
+/* Class = "NSTextFieldCell"; title = "0:00"; ObjectID = "1567"; */
+"1567.title" = "0:00";
+
+/* Class = "NSToolbarItem"; label = "Current Time"; ObjectID = "1568"; */
+"1568.label" = "Текущее время";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "1568"; */
+"1568.paletteLabel" = "Текущее время";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "All"; ObjectID = "1576"; */
+"1576.ibShadowedDisplayName" = "Все";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Title"; ObjectID = "1578"; */
+"1578.ibShadowedDisplayName" = "Заголовок";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Artist"; ObjectID = "1580"; */
+"1580.ibShadowedDisplayName" = "Артист";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Album"; ObjectID = "1582"; */
+"1582.ibShadowedDisplayName" = "Альбом";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Genre"; ObjectID = "1583"; */
+"1583.ibShadowedDisplayName" = "Жанр";
+
+/* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "1610"; */
+"1610.label" = "Громкость";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Volume"; ObjectID = "1610"; */
+"1610.paletteLabel" = "Громкость";
+
+/* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "1629"; */
+"1629.label" = "Инспектор Информации";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "1629"; */
+"1629.paletteLabel" = "Инспектор Информации";
+
+/* Class = "NSToolbarItem"; label = "File Tree"; ObjectID = "1630"; */
+"1630.label" = "Дерево файлов";
+
+/* Class = "NSToolbarItem"; paletteLabel = "File Tree"; ObjectID = "1630"; */
+"1630.paletteLabel" = "Дерево файлов";
+
+/* Class = "NSToolbarItem"; label = "Shuffle"; ObjectID = "1636"; */
+"1636.label" = "Перемешать";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Shuffle"; ObjectID = "1636"; */
+"1636.paletteLabel" = "Перемешать";
+
+/* Class = "NSToolbarItem"; label = "Repeat"; ObjectID = "1639"; */
+"1639.label" = "Повтор";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Repeat"; ObjectID = "1639"; */
+"1639.paletteLabel" = "Повтор";
+
+/* Class = "NSMenuItem"; title = "Seek Backward"; ObjectID = "1683"; */
+"1683.title" = "Перемотать Назад";
+
+/* Class = "NSMenuItem"; title = "Seek Forward"; ObjectID = "1685"; */
+"1685.title" = "Перемотать Вперед";
+
+/* Class = "NSMenuItem"; title = "Previous Album"; ObjectID = "1699"; */
+"1699.title" = "Предыдущий Альбом";
+
+/* Class = "NSMenuItem"; title = "Next Album"; ObjectID = "1701"; */
+"1701.title" = "Следующий Альбом";
+
+/* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "1712"; */
+"1712.headerCell.title" = "Путь";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1713"; */
+"1713.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "1736"; */
+"1736.headerCell.title" = "Имя файла";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1737"; */
+"1737.title" = "Text Cell";
+
+/* Class = "NSMenuItem"; title = "Repeat"; ObjectID = "1740"; */
+"1740.title" = "Повтор";
+
+/* Class = "NSMenu"; title = "Repeat"; ObjectID = "1741"; */
+"1741.title" = "Повтор";
+
+/* Class = "NSMenuItem"; title = "All"; ObjectID = "1742"; */
+"1742.title" = "Все";
+
+/* Class = "NSMenuItem"; title = "One"; ObjectID = "1746"; */
+"1746.title" = "Один";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "1749"; */
+"1749.title" = "Ничего";
+
+/* Class = "NSMenuItem"; title = "Remove All from Queue"; ObjectID = "1791"; */
+"1791.title" = "Удалить Все из Очереди";
+
+/* Class = "NSMenuItem"; title = "Select Currently Playing"; ObjectID = "1823"; */
+"1823.title" = "Выбрать текущее воспроиводимое";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "1848"; */
+"1848.title" = "Вид";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "1849"; */
+"1849.title" = "Вид";
+
+/* Class = "NSMenuItem"; title = "Show Spotlight Panel"; ObjectID = "1853"; */
+"1853.title" = "Показать Панель Spotlight";
+
+/* Class = "NSMenuItem"; title = "Customize Toolbar..."; ObjectID = "1856"; */
+"1856.title" = "Настроить Панель инструментов...";
+
+/* Class = "NSMenuItem"; title = "Increase Font Size"; ObjectID = "1858"; */
+"1858.title" = "Увеличить Размер Шрифта";
+
+/* Class = "NSMenuItem"; title = "Decrease Font Size"; ObjectID = "1859"; */
+"1859.title" = "Уменьшить Размер Шрифта";
+
+/* Class = "NSMenuItem"; title = "Add to Queue"; ObjectID = "1864"; */
+"1864.title" = "Добавить в Очередь";
+
+/* Class = "NSMenuItem"; title = "Remove from Queue"; ObjectID = "1865"; */
+"1865.title" = "Удалить из Очереди";
+
+/* Class = "NSMenuItem"; title = "Search for Songs by Artist"; ObjectID = "1867"; */
+"1867.title" = "Найти Песни по Артисту";
+
+/* Class = "NSMenuItem"; title = "Search for Songs from Album"; ObjectID = "1868"; */
+"1868.title" = "Найти Песни из Альбома";
+
+/* Class = "NSMenuItem"; title = "Fade In/Out"; ObjectID = "1885"; */
+"1885.title" = "Плавное начало/затухание";
+
+/* Class = "NSMenuItem"; title = "Album"; ObjectID = "1892"; */
+"1892.title" = "Альбом";
+
+/* Class = "NSMenuItem"; title = "Add to Queue"; ObjectID = "1893"; */
+"1893.title" = "Добавить в Очередь";
+
+/* Class = "NSMenuItem"; title = "Stop After Current"; ObjectID = "1895"; */
+"1895.title" = "Остановить После Текущего";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Cog"; ObjectID = "1903"; */
+"1903.ibShadowedIsNilPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNoSelectionPlaceholder = "Cog"; ObjectID = "1903"; */
+"1903.ibShadowedNoSelectionPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Cog"; ObjectID = "1903"; */
+"1903.ibShadowedNotApplicablePlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedIsNilPlaceholder" = "Переключить Очередь";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedMultipleValuesPlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedMultipleValuesPlaceholder" = "Переключить Очередь";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNoSelectionPlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedNoSelectionPlaceholder" = "Переключить Очередь";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedNotApplicablePlaceholder" = "Переключить Очередь";
+
+/* Class = "NSMenuItem"; title = "Search for Artist"; ObjectID = "2045"; */
+"2045.title" = "Найти Артиста";
+
+/* Class = "NSMenuItem"; title = "Search for Album"; ObjectID = "2046"; */
+"2046.title" = "Найти Альбом";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Not Playing"; ObjectID = "2083"; */
+"2083.ibShadowedIsNilPlaceholder" = "Остановлено";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Not Playing"; ObjectID = "2085"; */
+"2085.ibShadowedIsNilPlaceholder" = "Остановлено";
+
+/* Class = "NSMenuItem"; title = "Toggle File Tree Orientation"; ObjectID = "2160"; */
+"2160.title" = "Переключить Отображение Дерева Файлов";
+
+/* Class = "NSMenuItem"; title = "Information"; ObjectID = "2212"; */
+"2212.title" = "Инорфмация";
+
+/* Class = "NSWindow"; title = "Cog"; ObjectID = "2234"; */
+"2234.title" = "Cog";
+
+/* Class = "NSToolbarItem"; label = "Playback Buttons"; ObjectID = "2272"; */
+"2272.label" = "Кнопки Проигрывания";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Playback Buttons"; ObjectID = "2272"; */
+"2272.paletteLabel" = "Кнопки Проигрывания";
+
+/* Class = "NSToolbarItem"; label = "Position"; ObjectID = "2273"; */
+"2273.label" = "Позиция";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Position"; ObjectID = "2273"; */
+"2273.paletteLabel" = "Позиция";
+
+/* Class = "NSToolbarItem"; label = "Current Time"; ObjectID = "2274"; */
+"2274.label" = "Текущее Время";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "2274"; */
+"2274.paletteLabel" = "Текущее Время";
+
+/* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "2275"; */
+"2275.label" = "Громкость";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Volume"; ObjectID = "2275"; */
+"2275.paletteLabel" = "Громкость";
+
+/* Class = "NSToolbarItem"; label = "Shuffle"; ObjectID = "2278"; */
+"2278.label" = "Перемешать";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Shuffle"; ObjectID = "2278"; */
+"2278.paletteLabel" = "Перемешать";
+
+/* Class = "NSToolbarItem"; label = "Repeat"; ObjectID = "2279"; */
+"2279.label" = "Повтор";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Repeat"; ObjectID = "2279"; */
+"2279.paletteLabel" = "Повтор";
+
+/* Class = "NSTextFieldCell"; title = "0:00"; ObjectID = "2292"; */
+"2292.title" = "0:00";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[0] = "Previous"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[0]" = "Предыдущий";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[1] = "Play"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[1]" = "Воспроизвести";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[2] = "Stop"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[2]" = "Останоивть";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[3] = "Next"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[3]" = "Следующий";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Cog"; ObjectID = "2374"; */
+"2374.ibShadowedIsNilPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNoSelectionPlaceholder = "Cog"; ObjectID = "2374"; */
+"2374.ibShadowedNoSelectionPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Cog"; ObjectID = "2374"; */
+"2374.ibShadowedNotApplicablePlaceholder" = "Cog";
+
+/* Class = "NSMenuItem"; title = "Show File Tree"; ObjectID = "2417"; */
+"2417.title" = "Показать Дерево Файлов";
+
+/* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "2429"; */
+"2429.label" = "Инспектор Информации";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "2429"; */
+"2429.paletteLabel" = "Инспектор Информации";
+
+/* Class = "NSMenuItem"; title = "Shuffle"; ObjectID = "2438"; */
+"2438.title" = "Перемешать";
+
+/* Class = "NSMenu"; title = "Shuffle"; ObjectID = "2439"; */
+"2439.title" = "Перемешать";
+
+/* Class = "NSMenuItem"; title = "Off"; ObjectID = "2440"; */
+"2440.title" = "Выключен";
+
+/* Class = "NSMenuItem"; title = "Albums"; ObjectID = "2442"; */
+"2442.title" = "Альбомы";
+
+/* Class = "NSMenuItem"; title = "All"; ObjectID = "2443"; */
+"2443.title" = "Все";
+
+/* Class = "NSMenuItem"; title = "Show Info Inspector"; ObjectID = "2453"; */
+"2453.title" = "Показать Инспектор Информации";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "2456"; */
+"2456.title" = "Войти в Полный Экран";
+
+/* Class = "NSToolbarItem"; label = "Randomize"; ObjectID = "2466"; */
+"2466.label" = "Беспорядочно";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Randomize"; ObjectID = "2466"; */
+"2466.paletteLabel" = "Беспорядочно";
+
+/* Class = "NSMenuItem"; title = "Toggle"; ObjectID = "2472"; */
+"2472.title" = "Переключить";
+
+/* Class = "NSMenuItem"; title = "Toggle"; ObjectID = "2476"; */
+"2476.title" = "Переключить";
+
+/* Class = "NSMenuItem"; title = "Stop After Current"; ObjectID = "2483"; */
+"2483.title" = "Остановить После Текущего";
+
+/* Class = "NSMenuItem"; title = "Next Album"; ObjectID = "2485"; */
+"2485.title" = "Следующий Альбом";
+
+/* Class = "NSMenuItem"; title = "Previous Album"; ObjectID = "2487"; */
+"2487.title" = "Предыдущший Альбом";
+
+/* Class = "NSMenuItem"; title = "Toggle Mini Mode"; ObjectID = "2493"; */
+"2493.title" = "Перключить Мини Режим";
+
+/* Class = "NSToolbarItem"; label = "Normal Mode"; ObjectID = "2526"; */
+"2526.label" = "Нормальный Режим";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Normal Mode"; ObjectID = "2526"; */
+"2526.paletteLabel" = "Нормальный Режим";
+
+/* Class = "NSToolbarItem"; label = "Mini Mode"; ObjectID = "2532"; */
+"2532.label" = "Мини Режим";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Mini Mode"; ObjectID = "2532"; */
+"2532.paletteLabel" = "Мини Режим";
+
+/* Class = "NSMenuItem"; title = "Randomize"; ObjectID = "2545"; */
+"2545.title" = "Беспорядочно";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "20m-a6-e24"; */
+"20m-a6-e24.title" = "Text Cell";
+
+/* Class = "NSMenuItem"; title = "Remove Duplicate Items"; ObjectID = "2qB-Bq-t2u"; */
+"2qB-Bq-t2u.title" = "Удалить Дублирующиеся Позиции";
+
+/* Class = "NSTableColumn"; headerCell.title = "Codec"; ObjectID = "3A3-9o-Gh9"; */
+"3A3-9o-Gh9.headerCell.title" = "Кодек";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "3QN-Ok-QPu"; */
+"3QN-Ok-QPu.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSToolbarItem"; label = "Remove Duplicate Items"; ObjectID = "4pg-Lq-O8K"; */
+"4pg-Lq-O8K.label" = "Удалить Дублирующиеся Позиции";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Duplicate Items"; ObjectID = "4pg-Lq-O8K"; */
+"4pg-Lq-O8K.paletteLabel" = "Удалить Дублирующиеся Позиции";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@%{value2}@"; ObjectID = "5bQ-Qy-2KR"; */
+"5bQ-Qy-2KR.ibShadowedDisplayPattern" = "%{value1}@%{value2}@";
+
+/* Class = "NSMenuItem"; title = "Reset Play Count"; ObjectID = "5iV-dM-oX2"; */
+"5iV-dM-oX2.title" = "Сбросить Счетчик Проигрывания";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "71l-3L-S3g"; */
+"71l-3L-S3g.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSMenuItem"; title = "Remove Dead Items"; ObjectID = "Ajn-k4-afd"; */
+"Ajn-k4-afd.title" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "C2Q-qG-dwX"; */
+"C2Q-qG-dwX.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSMenuItem"; title = "Properties"; ObjectID = "Eds-my-DQr"; */
+"Eds-my-DQr.title" = "Свойства";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "FMU-QZ-NdQ"; */
+"FMU-QZ-NdQ.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSMenuItem"; title = "Reload Info"; ObjectID = "HK9-Am-31h"; */
+"HK9-Am-31h.title" = "Перезагрузить Информацию";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "Igo-5f-yim"; */
+"Igo-5f-yim.title" = "Табличный Вид Ячейки";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@%{value2}@"; ObjectID = "Kih-ky-A1h"; */
+"Kih-ky-A1h.ibShadowedDisplayPattern" = "%{value1}@%{value2}@";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "M6d-rj-lEz"; */
+"M6d-rj-lEz.title" = "Text Cell";
+
+/* Class = "NSToolbarItem"; label = "Spectrum"; ObjectID = "NtB-XF-g07"; */
+"NtB-XF-g07.label" = "Спекрт";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Spectrum"; ObjectID = "NtB-XF-g07"; */
+"NtB-XF-g07.paletteLabel" = "Спектр";
+
+/* Class = "NSMenuItem"; title = "Remove Rating"; ObjectID = "PyI-lF-iuz"; */
+"PyI-lF-iuz.title" = "Удалить Рейтинг";
+
+/* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "UAk-Gc-lT4"; */
+"UAk-Gc-lT4.title" = "Отфильтровать Плейлист";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "VVx-99-roJ"; */
+"VVx-99-roJ.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
+"WKt-lM-Bv1.label" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
+"WKt-lM-Bv1.paletteLabel" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "XBr-ec-D81"; */
+"XBr-ec-D81.headerCell.title" = "Название";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "YwT-z9-2d2"; */
+"YwT-z9-2d2.title" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
+"ZH9-ZU-skw.label" = "HDCD Индикатор";
+
+/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
+"ZH9-ZU-skw.paletteLabel" = "HDCD Индикатор";
+
+/* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
+"ZOn-sB-FR3.label" = "Показать Эквалайзер";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
+"ZOn-sB-FR3.paletteLabel" = "Показать Эквалайзер";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "gKK-cS-RP5"; */
+"gKK-cS-RP5.title" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "js2-sT-U4M"; */
+"js2-sT-U4M.title" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSToolbarItem"; label = "Randomize"; ObjectID = "kVl-aW-mtT"; */
+"kVl-aW-mtT.label" = "Беспорядочно";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Randomize"; ObjectID = "kVl-aW-mtT"; */
+"kVl-aW-mtT.paletteLabel" = "Беспорядочно";
+
+/* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "knJ-aI-sFa"; */
+"knJ-aI-sFa.label" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "knJ-aI-sFa"; */
+"knJ-aI-sFa.paletteLabel" = "Удалить Нерабочие Позиции";
+
+/* Class = "NSMenuItem"; title = "Reload Info"; ObjectID = "kq8-9v-zC0"; */
+"kq8-9v-zC0.title" = "Перезагрузить Информацию";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "lBy-Uc-vCA"; */
+"lBy-Uc-vCA.title" = "Text Cell";
+
+/* Class = "NSMenuItem"; title = "Show Mini Player On Top"; ObjectID = "lXN-EZ-xg0"; */
+"lXN-EZ-xg0.title" = "Показать Мини Плеер Наверху";
+
+/* Class = "NSMenuItem"; title = "Move to Trash"; ObjectID = "mhx-dQ-Kwx"; */
+"mhx-dQ-Kwx.title" = "Отправить в Корзину";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "moV-3G-GpB"; */
+"moV-3G-GpB.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSMenuItem"; title = "Show Equalizer"; ObjectID = "nBU-pH-J3I"; */
+"nBU-pH-J3I.title" = "Показать Эквалайзер";
+
+/* Class = "NSMenuItem"; title = "Privacy Policy..."; ObjectID = "nb7-FW-egH"; */
+"nb7-FW-egH.title" = "Политика конфиденциальности...";
+
+/* Class = "NSMenuItem"; title = "Stop after Selection"; ObjectID = "omb-wi-loX"; */
+"omb-wi-loX.title" = "Остановить после Выделения";
+
+/* Class = "NSMenuItem"; title = "Show All Songs"; ObjectID = "pU1-ci-9uB"; */
+"pU1-ci-9uB.title" = "Показать Все Песни";
+
+/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "qfu-F9-bOZ"; */
+"qfu-F9-bOZ.label" = "HDCD Индикатор";
+
+/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "qfu-F9-bOZ"; */
+"qfu-F9-bOZ.paletteLabel" = "HDCD Индикатор";
+
+/* Class = "NSMenuItem"; title = "Move to Trash"; ObjectID = "qlT-UX-x72"; */
+"qlT-UX-x72.title" = "Move to Trash";
+
+/* Class = "NSToolbarItem"; label = "Remove Duplicate Items"; ObjectID = "rEg-qk-MbN"; */
+"rEg-qk-MbN.label" = "Удалить Дублирующиеся Позиции";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Duplicate Items"; ObjectID = "rEg-qk-MbN"; */
+"rEg-qk-MbN.paletteLabel" = "Удалить Дублирующиеся Позиции";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "sdo-Sm-KPH"; */
+"sdo-Sm-KPH.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSToolbarItem"; label = "Spectrum"; ObjectID = "sf3-l1-fJw"; */
+"sf3-l1-fJw.label" = "Спектр";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Spectrum"; ObjectID = "sf3-l1-fJw"; */
+"sf3-l1-fJw.paletteLabel" = "Спектр";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "tus-lr-RhS"; */
+"tus-lr-RhS.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSMenuItem"; title = "Toggle Toolbar Style"; ObjectID = "vBH-Mr-XWi"; */
+"vBH-Mr-XWi.title" = "Переключить Вид Панели Инструментов";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "vaJ-Bc-ebE"; */
+"vaJ-Bc-ebE.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "vzT-Gb-aGW"; */
+"vzT-Gb-aGW.label" = "Показать Эквалайзер";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "vzT-Gb-aGW"; */
+"vzT-Gb-aGW.paletteLabel" = "Показать Экввалайзер";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "wky-z8-Cj5"; */
+"wky-z8-Cj5.title" = "Табличный Вид Ячейки";
+
+/* Class = "NSMenuItem"; title = "Show Spectrum Window"; ObjectID = "wl2-Vo-pul"; */
+"wl2-Vo-pul.title" = "Показать Окно Спектра";
+
+/* Class = "NSTableColumn"; headerCell.title = "Album Artist"; ObjectID = "yGV-gP-Wl6"; */
+"yGV-gP-Wl6.headerCell.title" = "Артист Альбома";

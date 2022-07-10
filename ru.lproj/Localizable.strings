@@ -1,0 +1,90 @@
+"FeedbackFailedMessageText" = "Не удалось";
+"FeedbackFailedInformativeText" = "Не удалось отправить сообщение обратной связи.";
+"FeedbackSuccessMessageText" = "Успешно";
+"FeedbackSuccessInformativeText" = "Сообщение обратной связи успешно отправлено!";
+
+"PlayButtonTooltip" = "Воспроизвести";
+"StopButtonTooltip" = "Остановить";
+"PrevButtonTooltip" = "Предыдущий";
+"NextButtonTooltip" = "Следующий";
+
+"TimeElapsed" = "%i:%02i";
+"TimeRemaining" = "-%i:%02i";
+
+"AddButtonTooltip" = "Добавить файлы";
+"RemoveButtonTooltip" = "Удалить выбраные файлы";
+"InfoButtonTooltip" = "Информация о выбранных файлах";
+"ShuffleButtonTooltip" = "Случайный режим";
+"RepeatButtonTooltip" = "Режим повтора";
+"RandomizeButtonTooltip" = "Перемешать плейлист";
+"FileButtonTooltip" = "Файлы";
+
+"replayGainAlbumGain" = "Уровень громкости воспроизведения будет определяться перечислением, \
+                         re";
+
+"InvalidURLShort" = "Некорректный URL";
+"InvalidURLLong" = "Этот URL некорректный.";
+
+"SwitchToMiniPlayer" = "Переключить в Мини Плеер";
+"SwitchFromMiniPlayer" = "Переключить из Мини Плеера";
+
+"PlayingTrackTooltip" = "Воспроизводится";
+"QueuedTrackTooltip" = "В очереди";
+"ErrorTrackTooltip" = "Ошибка";
+"StopAfterTrackTooltip" = "Остановить После трека";
+
+"PlaylistHeaderContextMenuTitle" = "Контекстное меню заголовка плейлиста";
+
+"PlaylistStatusColumn" = "Статус";
+"PlaylistIndexColumn" = "Индекс";
+
+"PlaylistRandomizationAction" = "Премещать Плейлист";
+
+"SkipAction" = "Пропустить";
+
+"CogTitle" = "Cog";
+
+"PreferencesTitle" = "Настройки";
+
+"ProgressActionLoader" = "загрузчик плейлистов вставляет файлы";
+"ProgressSubActionLoaderListingFiles" = "сбор файлов";
+"ProgressSubActionLoaderFilteringContainerFiles" = "обработка типов файлов-контейнеров";
+"ProgressSubActionLoaderFilteringFiles" = "устранение неподдерживаемых типов файлов";
+"ProgressSubActionLoaderFilteringContainedFiles" = "удаление неподдерживаемых типов файлов из контейнеров";
+"ProgressSubActionLoaderAddingEntries" = "создание и добавление записей в список воспроизведения";
+
+"ProgressActionLoadingMetadata" = "загрузка метаданных для треков";
+"ProgressSubActionLoadingMetadata" = "обработка файлов";
+"ProgressSubActionMetadataApply" = "применение информации в хранилище плейлистов";
+
+"ErrorMetadata" = "Не удалось получить метаданные.";
+"ErrorMessageBadFile" = "Невозможно проанализировать метаданные для плохого файла.";
+"ErrorInvalidTrackId" = "Недопустимый ID дорожки отправлен в запрос SQLite.";
+"ErrorSqliteProblem" = "Общая проблема с доступом к треку из базы данных SQLite.";
+"ErrorTrackMissing" = "Запись дорожки отсутствует в базе данных SQLite.";
+
+"TimeLastPlayed" = "Последнее проигрываемое";
+"TimeFirstSeen" = "Первое увиденное";
+
+"GainAlbumGain" = "Усиление в Альбоме";
+"GainAlbumGainPeak" = "Усилиение в Альбоме плюс Пик";
+"GainAlbumPeak" = "Пик в Альбоме";
+"GainTrackGain" = "Усиление Трека";
+"GainTrackGainPeak" = "Усиление Трека плюс Пик";
+"GainTrackPeak" = "Пик Трека";
+"GainVolumeScale" = "Шкала Громкости";
+"GainNone" = "Нет";
+
+"CrashlyticsConsentTitle" = "Коллекция сбоев Crashlytics";
+"CrashlyticsConsentText" = "Разрешить Crashlytics отправлять отчеты о сбоях? Вы можете снова отключить это в настройках. Мы не будем спрашивать вас снова.";
+"ConsentYes" = "Да";
+"ConsentNo" = "Нет";
+
+"Total duration: %@" = "Общая продолжительность: %@";
+
+"wdhms" = "%@, %@, %@, %@ и %@";
+"dhms" = "%@, %@, %@ и %@";
+"hms" = "%@, %@ и %@";
+"ms" = "%@ и %@";
+
+"PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/59859310";
