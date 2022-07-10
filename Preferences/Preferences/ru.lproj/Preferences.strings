@@ -24,7 +24,7 @@
 "211.title" = "Устройство воспроизведения: ";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "249"; */
-"249.title" = "Другие Виды";
+"249.title" = "Другие виды";
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "250"; */
 "250.title" = "Item 1";
@@ -54,7 +54,7 @@
 "262.title" = "При открытии файла с удержанием ⇧ или ⌃⌘:";
 
 /* Class = "NSButtonCell"; title = "Read CUE sheets when adding folders to playlist"; ObjectID = "311"; */
-"311.title" = "Читать листы CUE при добавлении папок в плейлист";
+"311.title" = "Читать CUE при добавлении папок в плейлист";
 
 /* Class = "NSTextFieldCell"; title = "Hz"; ObjectID = "0Am-5Y-EKq"; */
 "0Am-5Y-EKq.title" = "Hz";
@@ -84,7 +84,7 @@
 "AQZ-ku-F8u.title" = "Время воспроизведения по умолчанию:";
 
 /* Class = "NSTextFieldCell"; title = "Spectrum bars"; ObjectID = "Bll-IJ-lje"; */
-"Bll-IJ-lje.title" = "Панели спектра";
+"Bll-IJ-lje.title" = "Столбцы спектра";
 
 /* Class = "NSTextFieldCell"; title = "Spectrum peaks"; ObjectID = "CQI-YZ-B3V"; */
 "CQI-YZ-B3V.title" = "Пики спектра";
@@ -105,16 +105,16 @@
 "Fgm-Vs-tgU.title" = "Количество циклов по умолчанию:";
 
 /* Class = "NSButtonCell"; title = "Colorful dock icons"; ObjectID = "GdX-5e-NeU"; */
-"GdX-5e-NeU.title" = "Цветные иконки в dock";
+"GdX-5e-NeU.title" = "Цветные иконки в Dock";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "HKM-FW-dhH"; */
-"HKM-FW-dhH.title" = "Другие Виды";
+"HKM-FW-dhH.title" = "Другие виды";
 
 /* Class = "NSMenuItem"; title = "Delete Invalid Paths"; ObjectID = "JU5-o7-jid"; */
-"JU5-o7-jid.title" = "Удалить Неверные Пути";
+"JU5-o7-jid.title" = "Удалить неправильные пути";
 
 /* Class = "NSMenuItem"; title = "Add Path"; ObjectID = "JxP-0t-mTB"; */
-"JxP-0t-mTB.title" = "Добавить Путь";
+"JxP-0t-mTB.title" = "Добавить путь";
 
 /* Class = "NSTextFieldCell"; title = "Selected:"; ObjectID = "KJz-qS-IcO"; */
 "KJz-qS-IcO.title" = "Выбрано:";
@@ -144,7 +144,7 @@
 "UdW-qd-A0x.title" = "Время затухания по умолчанию:";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
-"V8o-Xy-HUW.title" = "Другие Виды";
+"V8o-Xy-HUW.title" = "Другие виды";
 
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "WWy-iW-3Ct"; */
 "WWy-iW-3Ct.title" = "Item 3";
@@ -171,7 +171,7 @@
 "eX0-PC-iVo.title" = "Качество ресемплинга:";
 
 /* Class = "NSButtonCell"; title = "Resume playback on startup"; ObjectID = "fUg-Cg-gXa"; */
-"fUg-Cg-gXa.title" = "Возобновление воспроизведения при запуск";
+"fUg-Cg-gXa.title" = "Возобновление воспроизведения при запуске";
 
 /* Class = "NSButtonCell"; title = "Use flat perspective in toolbar"; ObjectID = "gXL-j6-df0"; */
 "gXL-j6-df0.title" = "Использовать плоскую перспективу на панели инструментов";
@@ -189,10 +189,10 @@
 "lEg-E3-TBs.headerCell.title" = "Действительный";
 
 /* Class = "NSTextFieldCell"; title = "MIDI Plugin:"; ObjectID = "n5F-dq-NZh"; */
-"n5F-dq-NZh.title" = "MIDI Плагин:";
+"n5F-dq-NZh.title" = "MIDI плагин:";
 
 /* Class = "NSMenuItem"; title = "Delete Path"; ObjectID = "nva-pz-xSS"; */
-"nva-pz-xSS.title" = "Удалить Путь";
+"nva-pz-xSS.title" = "Удалить путь";
 
 /* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "nzS-3F-jPX"; */
 "nzS-3F-jPX.title" = "Item 2";
@@ -201,7 +201,7 @@
 "oWh-lD-mFH.title" = "Item 1";
 
 /* Class = "NSMenuItem"; title = "Suggest Paths"; ObjectID = "qjI-dK-nfG"; */
-"qjI-dK-nfG.title" = "Предложить Пути";
+"qjI-dK-nfG.title" = "Предложить пути";
 
 /* Class = "NSButtonCell"; title = "Allow insecure SSL connections"; ObjectID = "sva-DV-ina"; */
 "sva-DV-ina.title" = "Разрешить небезопасные соединения SSL";

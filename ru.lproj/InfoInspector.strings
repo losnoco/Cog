@@ -105,10 +105,10 @@
 "cbq-TT-CZX.title" = "Кодек:";
 
 /* Class = "NSTextFieldCell"; title = "Play Count:"; ObjectID = "fiv-eh-w3c"; */
-"fiv-eh-w3c.title" = "Счетчик Проигрываний:";
+"fiv-eh-w3c.title" = "Счетчик проигрываний:";
 
 /* Class = "NSTextFieldCell"; title = "ReplayGain:"; ObjectID = "qBi-M8-kEx"; */
-"qBi-M8-kEx.title" = "Усиление Воспроизведения:";
+"qBi-M8-kEx.title" = "Усиление воспроизведения:";
 
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "rAo-AP-lVa"; */
 "rAo-AP-lVa.title" = "N/A";

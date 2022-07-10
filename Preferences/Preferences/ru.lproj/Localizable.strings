@@ -2,24 +2,24 @@
 "Stable" = "Стабильная";
 "Unstable" = "Нестабильная";
 
-"File Drawer" = "Файл Менеджер";
-"Hot Keys" = "Горячие Клавиши";
+"File Drawer" = "Файл менеджер";
+"Hot Keys" = "Горячие клавиши";
 "Output" = "Устройства";
 
 "Updates" = "Обновления";
 "Last.fm" = "Last.fm";
-"Scrobble" = "Scrobble";
+"Scrobble" = "Скробблинг";
 "Playlist" = "Плейлист";
 "Notifications" = "Уведомления";
-"Appearance" = "Вид";
+"Appearance" = "Внешний вид";
 "Synthesis" = "Синтез";
 "General" = "Общее";
 
 "Press Key..." = "Нажмите ...";
 
 "Clear playlist and play" = "Очистить плейлист и воспроизвести";
-"Enqueue" = "Поставить в очередь";
-"Enqueue and play" = "Поставить в очередь и воспроизвести";
+"Enqueue" = "Добавить в очередь";
+"Enqueue and play" = "Добавить в очередь и воспроизвести";
 
 "ValidNo" = "Нет";
 "ValidYes" = "Да";
