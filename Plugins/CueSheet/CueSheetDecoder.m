@@ -83,6 +83,8 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 		decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
 
+		[self registerObservers];
+
 		if(![decoder open:source]) {
 			ALog(@"Could not open cuesheet decoder");
 			return NO;
@@ -166,22 +168,6 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	} else {
 		// Fix for embedded cuesheet handler parsing non-embedded files,
 		// or files that are already in the playlist without a fragment
-		source = [NSClassFromString(@"AudioSource") audioSourceForURL:url];
-
-		if(![source open:url]) {
-			ALog(@"Could not open cuesheet source");
-			return NO;
-		}
-
-		decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
-
-		[self registerObservers];
-
-		if(![decoder open:source]) {
-			ALog(@"Could not open cuesheet decoder");
-			return NO;
-		}
-
 		NSDictionary *properties = [decoder properties];
 		int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 		int channels = [[properties objectForKey:@"channels"] intValue];
