@@ -600,7 +600,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)updateStreamFormat {
 	/* Set the channel layout for the audio queue */
-	if(enableHrtf) {
+	/* Apple's audio processor really only supports common 1-8 channel formats */
+	if(enableHrtf || realStreamFormat.mChannelsPerFrame > 8 || ((realStreamChannelConfig & ~(AudioConfig6Point1|AudioConfig7Point1)) != 0)) {
 		NSURL *presetUrl = [[NSBundle mainBundle] URLForResource:@"SADIE_D02-96000" withExtension:@"mhr"];
 
 		hrtf = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:realStreamFormat.mSampleRate withInputChannels:realStreamFormat.mChannelsPerFrame withConfig:realStreamChannelConfig];
@@ -769,7 +770,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 
 		if(samplesRendered) {
-			if(enableHrtf && hrtf) {
+			if(hrtf) {
 				[hrtf process:samplePtr sampleCount:samplesRendered toBuffer:&hrtfBuffer[0]];
 				samplePtr = &hrtfBuffer[0];
 			}
