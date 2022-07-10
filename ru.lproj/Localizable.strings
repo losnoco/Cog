@@ -25,20 +25,20 @@
 "InvalidURLShort" = "Некорректный URL";
 "InvalidURLLong" = "Этот URL некорректный.";
 
-"SwitchToMiniPlayer" = "Переключить в Мини Плеер";
-"SwitchFromMiniPlayer" = "Переключить из Мини Плеера";
+"SwitchToMiniPlayer" = "Переключить в Мини плеер";
+"SwitchFromMiniPlayer" = "Переключить из Мини плеера";
 
 "PlayingTrackTooltip" = "Воспроизводится";
 "QueuedTrackTooltip" = "В очереди";
 "ErrorTrackTooltip" = "Ошибка";
-"StopAfterTrackTooltip" = "Остановить После трека";
+"StopAfterTrackTooltip" = "Остановить после трека";
 
 "PlaylistHeaderContextMenuTitle" = "Контекстное меню заголовка плейлиста";
 
 "PlaylistStatusColumn" = "Статус";
 "PlaylistIndexColumn" = "Индекс";
 
-"PlaylistRandomizationAction" = "Премещать Плейлист";
+"PlaylistRandomizationAction" = "Перемешать плейлист";
 
 "SkipAction" = "Пропустить";
 
@@ -66,13 +66,13 @@
 "TimeLastPlayed" = "Последнее проигрываемое";
 "TimeFirstSeen" = "Первое увиденное";
 
-"GainAlbumGain" = "Усиление в Альбоме";
-"GainAlbumGainPeak" = "Усилиение в Альбоме плюс Пик";
-"GainAlbumPeak" = "Пик в Альбоме";
-"GainTrackGain" = "Усиление Трека";
-"GainTrackGainPeak" = "Усиление Трека плюс Пик";
-"GainTrackPeak" = "Пик Трека";
-"GainVolumeScale" = "Шкала Громкости";
+"GainAlbumGain" = "Усиление альбома";
+"GainAlbumGainPeak" = "Усиление альбома плюс пик";
+"GainAlbumPeak" = "Пик альбома";
+"GainTrackGain" = "Усиление трека";
+"GainTrackGainPeak" = "Усиление трека плюс пик";
+"GainTrackPeak" = "Пик трека";
+"GainVolumeScale" = "Шкала громкости";
 "GainNone" = "Нет";
 
 "CrashlyticsConsentTitle" = "Коллекция сбоев Crashlytics";
