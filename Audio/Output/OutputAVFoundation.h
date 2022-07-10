@@ -35,6 +35,8 @@ using std::atomic_long;
 
 @class OutputNode;
 
+@class FSurroundFilter;
+
 @interface OutputAVFoundation : NSObject {
 	OutputNode *outputController;
 
@@ -58,6 +60,7 @@ using std::atomic_long;
 	BOOL eqInitialized;
 
 	BOOL streamFormatStarted;
+	BOOL streamFormatChanged;
 
 	double secondsHdcdSustained;
 
@@ -106,10 +109,15 @@ using std::atomic_long;
 
 	BOOL enableHrtf;
 	HeadphoneFilter *hrtf;
+	
+	BOOL enableFSurround;
+	FSurroundFilter *fsurround;
 
-	float inputBuffer[2048 * 32]; // 2048 samples times maximum supported channel count
-	float hrtfBuffer[2048 * 2];
-	float eqBuffer[2048 * 32];
+	float *samplePtr;
+	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
+	float fsurroundBuffer[4096 * 6];
+	float hrtfBuffer[4096 * 2];
+	float eqBuffer[4096 * 32];
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
