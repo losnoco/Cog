@@ -1,0 +1,25 @@
+"Nightly" = "Ночная";
+"Stable" = "Стабильная";
+"Unstable" = "Нестабильная";
+
+"File Drawer" = "Файл Менеджер";
+"Hot Keys" = "Горячие Клавиши";
+"Output" = "Устройства";
+
+"Updates" = "Обновления";
+"Last.fm" = "Last.fm";
+"Scrobble" = "Scrobble";
+"Playlist" = "Плейлист";
+"Notifications" = "Уведомления";
+"Appearance" = "Вид";
+"Synthesis" = "Синтез";
+"General" = "Общее";
+
+"Press Key..." = "Нажмите ...";
+
+"Clear playlist and play" = "Очистить плейлист и воспроизвести";
+"Enqueue" = "Поставить в очередь";
+"Enqueue and play" = "Поставить в очередь и воспроизвести";
+
+"ValidNo" = "Нет";
+"ValidYes" = "Да";

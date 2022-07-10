@@ -94,6 +94,10 @@
 		17E78A7D0D68BE3C005C5A59 /* file_tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file_tree.png; path = Icons/file_tree.png; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences_Prefix.pch; sourceTree = "<group>"; };
 		3DFAC48F235B6B8100A29416 /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		491C55B4287AA4B5007D96F5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PathSuggester.strings; sourceTree = "<group>"; };
+		491C55B5287AA4B6007D96F5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Preferences.strings; sourceTree = "<group>"; };
+		491C55C0287AA4B6007D96F5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		491C55C1287AA4B6007D96F5 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8307D30328604D8B000FF8EB /* SandboxPathBehaviorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxPathBehaviorController.h; sourceTree = "<group>"; };
 		8307D30428604D8B000FF8EB /* SandboxPathBehaviorController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SandboxPathBehaviorController.m; sourceTree = "<group>"; };
 		8307D30828604ECF000FF8EB /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
@@ -404,6 +408,7 @@
 				de,
 				sv,
 				he,
+				ru,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Preferences */;
 			projectDirPath = "";
@@ -514,6 +519,7 @@
 			children = (
 				833F681B1CDBCAA700AFB9F0 /* es */,
 				835C888922CC1880001B4B3F /* en */,
+				491C55C0287AA4B6007D96F5 /* ru */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -523,6 +529,7 @@
 			children = (
 				833F681C1CDBCAA700AFB9F0 /* es */,
 				835C888A22CC1880001B4B3F /* en */,
+				491C55C1287AA4B6007D96F5 /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -533,6 +540,7 @@
 				83BC5AB320E4C90F00631CD4 /* Base */,
 				8347435D20E6D58800063D45 /* en */,
 				8347435F20E6D5A000063D45 /* es */,
+				491C55B5287AA4B6007D96F5 /* ru */,
 			);
 			name = Preferences.xib;
 			sourceTree = "<group>";
@@ -543,6 +551,7 @@
 				83DAD9F1286EDBCD000FAA9A /* Base */,
 				83DAD9F3286EDBD2000FAA9A /* en */,
 				83DAD9F5286EDBD6000FAA9A /* es */,
+				491C55B4287AA4B5007D96F5 /* ru */,
 			);
 			name = PathSuggester.xib;
 			sourceTree = "<group>";
