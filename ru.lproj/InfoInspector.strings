@@ -1,0 +1,117 @@
+
+/* Class = "NSWindow"; title = "Info Inspector"; ObjectID = "1"; */
+"1.title" = "Инспектор информации";
+
+/* Class = "NSTextFieldCell"; title = "Artist:"; ObjectID = "10"; */
+"10.title" = "Артист:";
+
+/* Class = "NSTextFieldCell"; title = "Album:"; ObjectID = "12"; */
+"12.title" = "Альбом:";
+
+/* Class = "NSTextFieldCell"; title = "Track:"; ObjectID = "14"; */
+"14.title" = "Трек:";
+
+/* Class = "NSTextFieldCell"; title = "Length:"; ObjectID = "16"; */
+"16.title" = "Длина:";
+
+/* Class = "NSTextFieldCell"; title = "Date:"; ObjectID = "18"; */
+"18.title" = "Дата:";
+
+/* Class = "NSTextFieldCell"; title = "Genre:"; ObjectID = "20"; */
+"20.title" = "Жанр:";
+
+/* Class = "NSTextFieldCell"; title = "Sample Rate:"; ObjectID = "22"; */
+"22.title" = "Частота дискретизации:";
+
+/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "24"; */
+"24.title" = "Название:";
+
+/* Class = "NSTextFieldCell"; title = "Channels:"; ObjectID = "28"; */
+"28.title" = "Каналы:";
+
+/* Class = "NSTextFieldCell"; title = "Bits Per Sample:"; ObjectID = "31"; */
+"31.title" = "Бит на семпл:";
+
+/* Class = "NSTextFieldCell"; title = "Bitrate:"; ObjectID = "32"; */
+"32.title" = "Битрейт:";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "34"; */
+"34.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "36"; */
+"36.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "38"; */
+"38.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "40"; */
+"40.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "42"; */
+"42.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "44"; */
+"44.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "46"; */
+"46.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "50"; */
+"50.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "52"; */
+"52.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "54"; */
+"54.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "56"; */
+"56.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "Filename:"; ObjectID = "85"; */
+"85.title" = "Filename:";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "87"; */
+"87.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "Encoding:"; ObjectID = "8e7-lp-K5l"; */
+"8e7-lp-K5l.title" = "Кодирование:";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "B8w-o8-ZBw"; */
+"B8w-o8-ZBw.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "Cuesheet:"; ObjectID = "Cu5-ia-Z5b"; */
+"Cu5-ia-Z5b.title" = "Cuesheet:";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "Ial-XI-91y"; */
+"Ial-XI-91y.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "Album Artist:"; ObjectID = "LFJ-QQ-gGr"; */
+"LFJ-QQ-gGr.title" = "Артист Альбома:";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "PPV-dt-9Bp"; */
+"PPV-dt-9Bp.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "Ule-N3-dKW"; */
+"Ule-N3-dKW.title" = "Комментарий:";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "UyE-Mc-e39"; */
+"UyE-Mc-e39.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "Yby-OU-cqP"; */
+"Yby-OU-cqP.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "Codec:"; ObjectID = "cbq-TT-CZX"; */
+"cbq-TT-CZX.title" = "Кодек:";
+
+/* Class = "NSTextFieldCell"; title = "Play Count:"; ObjectID = "fiv-eh-w3c"; */
+"fiv-eh-w3c.title" = "Счетчик Проигрываний:";
+
+/* Class = "NSTextFieldCell"; title = "ReplayGain:"; ObjectID = "qBi-M8-kEx"; */
+"qBi-M8-kEx.title" = "Усиление Воспроизведения:";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "rAo-AP-lVa"; */
+"rAo-AP-lVa.title" = "N/A";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "v14-AG-B9D"; */
+"v14-AG-B9D.title" = "N/A";
