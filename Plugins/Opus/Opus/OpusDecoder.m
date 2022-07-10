@@ -222,7 +222,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	}
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	int numread;
 	int total = 0;
 
@@ -236,7 +236,10 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		[self updateMetadata];
 	}
 
+	int frames = 1024;
 	int size = frames * channels;
+	float buffer[size];
+	void *buf = (void *)buffer;
 
 	do {
 		float *out = ((float *)buf) + total;
@@ -265,7 +268,11 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	[self updateIcyMetadata];
 
-	return total / channels;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:total / channels];
+
+	return chunk;
 }
 
 - (void)close {

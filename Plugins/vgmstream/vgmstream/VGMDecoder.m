@@ -311,9 +311,16 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	return @{};
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
+	UInt32 frames = 1024;
 	UInt32 framesMax = frames;
 	UInt32 framesDone = 0;
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
+	int16_t buffer[1024 * channels];
+	void *buf = (void *)buffer;
 
 	if(canPlayForever) {
 		BOOL repeatone = IsRepeatOneSet();
@@ -354,7 +361,9 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		frames -= frames_to_do;
 	}
 
-	return framesDone;
+	[chunk assignSamples:buffer frameCount:framesDone];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

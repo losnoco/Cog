@@ -52,6 +52,7 @@
 
 /* Begin PBXFileReference section */
 		833A8999286FF2FD0022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		834A42AE287AF27A00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		83747C6D2862DDDB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83D3C5F3201C674D005564CB /* AdPlug.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdPlug.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C5F6201C674D005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -123,6 +124,7 @@
 		83D3C5F5201C674D005564CB /* AdPlug */ = {
 			isa = PBXGroup;
 			children = (
+				834A42AE287AF27A00EB9D9B /* AudioChunk.h */,
 				83D3C667201C7020005564CB /* adplug.db */,
 				83D3C657201C6E24005564CB /* AdPlugContainer.h */,
 				83D3C654201C6E24005564CB /* AdPlugContainer.mm */,

@@ -50,7 +50,11 @@ enum { channels = 2 };
 	return @{};
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
+	int frames = 1024;
+	float buffer[frames * channels];
+	void *buf = (void *)buffer;
+
 	int total = frames;
 
 	if(!IsRepeatOneSet()) {
@@ -62,7 +66,11 @@ enum { channels = 2 };
 
 	memset(buf, 0, sizeof(float) * total * channels);
 
-	return total;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:total];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

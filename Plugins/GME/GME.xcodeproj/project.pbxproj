@@ -63,6 +63,7 @@
 		8319C74E237629D300BFFAE0 /* GamePropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePropertiesReader.h; sourceTree = "<group>"; };
 		8319C74F237629D400BFFAE0 /* GamePropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePropertiesReader.m; sourceTree = "<group>"; };
 		833F68351CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		834A42B5287AF8FE00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		835C888F22CC1883001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747C452862DCD90021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384912E1808175400E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
@@ -119,6 +120,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				834A42B5287AF8FE00EB9D9B /* AudioChunk.h */,
 				17C8F33B0CBED3BE008D969D /* GameContainer.h */,
 				17C8F33C0CBED3BE008D969D /* GameContainer.m */,
 				17C8F33D0CBED3BE008D969D /* GameDecoder.h */,

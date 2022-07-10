@@ -1,5 +1,7 @@
 // Plugins! HOORAY!
 
+#import "AudioChunk.h"
+
 @protocol CogSource <NSObject>
 + (NSArray *)schemes; // http, file, etc
 
@@ -42,7 +44,7 @@
 - (NSDictionary *)properties;
 - (NSDictionary *)metadata; // Only to be implemented for dynamic metadata, send events on change
 
-- (int)readAudio:(void *)buffer frames:(UInt32)frames;
+- (AudioChunk *)readAudio;
 
 - (BOOL)open:(id<CogSource>)source;
 - (long)seek:(long)frame;

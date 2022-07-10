@@ -40,6 +40,7 @@
 		83489C602782F39D00BDCEA2 /* libvgm-player.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libvgm-player.a"; path = "../../ThirdParty/libvgm/lib/libvgm-player.a"; sourceTree = "<group>"; };
 		83489C652782F74800BDCEA2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		83489C672782F74E00BDCEA2 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		834A42AC287AF18E00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		835C888F22CC1883001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747C312862DBE80021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384912E1808175400E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
@@ -102,6 +103,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				834A42AC287AF18E00EB9D9B /* AudioChunk.h */,
 				17C8F33B0CBED3BE008D969D /* libvgmContainer.h */,
 				17C8F33C0CBED3BE008D969D /* libvgmContainer.mm */,
 				17C8F33D0CBED3BE008D969D /* libvgmDecoder.h */,

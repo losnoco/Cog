@@ -651,7 +651,7 @@
 	return 1;
 }
 
-- (BOOL)syncFormat:(BOOL)updateNow {
+- (BOOL)syncFormat {
 	float _sampleRate = _frame.header.samplerate;
 	int _channels = MAD_NCHANNELS(&_frame.header);
 	int _layer = 3;
@@ -674,7 +674,7 @@
 	                _channels != channels ||
 	                _layer != layer);
 
-	if(changed && updateNow) {
+	if(changed) {
 		sampleRate = _sampleRate;
 		channels = _channels;
 		layer = _layer;
@@ -686,29 +686,24 @@
 	return changed;
 }
 
-- (int)readAudio:(void *)buffer frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	int framesRead = 0;
 
 	if(!_firstFrame)
-		[self syncFormat:YES];
+		[self syncFormat];
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = nil;
 
 	for(;;) {
-		long framesRemaining = frames - framesRead;
-		long framesToCopy = (_outputFrames > framesRemaining ? framesRemaining : _outputFrames);
+		long framesToCopy = _outputFrames;
 
 		if(framesToCopy) {
-			memcpy(buffer + (framesRead * channels * sizeof(float)), _outputBuffer, framesToCopy * channels * sizeof(float));
-			framesRead += framesToCopy;
-
-			if(framesToCopy != _outputFrames) {
-				memmove(_outputBuffer, _outputBuffer + (framesToCopy * channels), (_outputFrames - framesToCopy) * channels * sizeof(float));
-			}
-
-			_outputFrames -= framesToCopy;
-		}
-
-		if(framesRead == frames)
+			chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+			[chunk assignSamples:_outputBuffer frameCount:framesToCopy];
+			_outputFrames = 0;
 			break;
+		}
 
 		int r = [self decodeMPEGFrame];
 		// DLog(@"Decoding frame: %i", r);
@@ -720,18 +715,13 @@
 		[self writeOutput];
 		// DLog(@"Wrote output");
 
-		if([self syncFormat:NO]) {
-			if(framesRead)
-				break;
-			else
-				[self syncFormat:YES];
-		}
+		[self syncFormat];
 	}
 
 	[self updateMetadata];
 
 	// DLog(@"Read: %i/%i", bytesRead, size);
-	return framesRead;
+	return chunk;
 }
 
 - (void)close {

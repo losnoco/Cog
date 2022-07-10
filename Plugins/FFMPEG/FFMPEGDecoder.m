@@ -471,13 +471,10 @@ static uint8_t reverse_bits[0x100];
 	metadataUpdated = NO;
 	[self updateMetadata];
 
-	prebufferedAudio = 0;
-	prebufferedAudioData = NULL;
+	prebufferedChunk = nil;
 
 	if(attachedPicIndex >= 0) {
-		int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
-		prebufferedAudioData = malloc(1024 * frameSize);
-		[self readAudio:prebufferedAudioData frames:1024];
+		prebufferedChunk = [self readAudio];
 	}
 
 	return YES;
@@ -681,30 +678,31 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	}
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	if(!seekedToStart) {
 		[self seek:0];
 	}
+
+	if(prebufferedChunk) {
+		// A bit of ignored read-ahead to support embedded artwork
+		size_t framesReadNow = prebufferedChunk.frameCount;
+		framesRead -= framesReadNow;
+		AudioChunk *chunk = prebufferedChunk;
+		prebufferedChunk = nil;
+		return chunk;
+	}
+
+	if(totalFrames && framesRead >= totalFrames)
+		return nil;
+
+	int frames = 1024;
 
 	int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
 	int bytesToRead = frames * frameSize;
 	int bytesRead = 0;
 
-	if(prebufferedAudio) {
-		// A bit of ignored read-ahead to support embedded artwork
-		int bytesBuffered = prebufferedAudio * frameSize;
-		int bytesToCopy = (bytesBuffered > bytesToRead) ? bytesToRead : bytesBuffered;
-		memcpy(buf, prebufferedAudioData, bytesToCopy);
-		memmove(prebufferedAudioData, prebufferedAudioData + bytesToCopy, bytesBuffered - bytesToCopy);
-		prebufferedAudio -= bytesToCopy / frameSize;
-		bytesRead = bytesToCopy;
-
-		int framesReadNow = bytesRead / frameSize;
-		framesRead -= framesReadNow;
-	}
-
-	if(totalFrames && framesRead >= totalFrames)
-		return 0;
+	uint8_t buffer[bytesToRead];
+	void *buf = (void *)buffer;
 
 	int dataSize = 0;
 
@@ -909,7 +907,11 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	framesRead += framesReadNow;
 
-	return framesReadNow;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:framesReadNow];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {
@@ -918,7 +920,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	seekedToStart = YES;
 
-	prebufferedAudio = 0;
+	prebufferedChunk = nil;
 
 	if(frame >= totalFrames) {
 		framesRead = totalFrames;

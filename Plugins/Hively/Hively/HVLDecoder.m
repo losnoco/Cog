@@ -107,7 +107,11 @@ static void oneTimeInit(void) {
 	return @{};
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
+	int frames = 1024;
+	float buffer[frames * 2];
+	void *buf = (void *)buffer;
+
 	BOOL repeatone = IsRepeatOneSet();
 
 	if(!repeatone && framesRead >= totalFrames)
@@ -157,7 +161,11 @@ static void oneTimeInit(void) {
 
 	framesRead += total;
 
-	return total;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:total];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

@@ -108,18 +108,24 @@
 	return framePosition;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
-	if(framePosition + frames > trackEnd)
-		frames = (UInt32)(trackEnd - framePosition);
+- (AudioChunk *)readAudio {
+	int maxFrames = INT_MAX;
 
-	if(!frames) {
+	if(framePosition + maxFrames > trackEnd)
+		maxFrames = (int)(trackEnd - framePosition);
+
+	if(!maxFrames) {
 		DLog(@"APL readAudio Returning 0");
-		return 0;
+		return nil;
 	}
 
-	int n = [decoder readAudio:buf frames:frames];
-	framePosition += n;
-	return n;
+	AudioChunk *chunk = [decoder readAudio];
+	if(chunk.frameCount > maxFrames) {
+		[chunk setFrameCount:maxFrames];
+	}
+
+	framePosition += chunk.frameCount;
+	return chunk;
 }
 
 - (BOOL)isSilence {

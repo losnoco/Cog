@@ -190,6 +190,7 @@
 		8343790C17F96E2600584396 /* HighlyQuixotic.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyQuixotic.xcodeproj; path = ../../Frameworks/HighlyQuixotic/HighlyQuixotic.xcodeproj; sourceTree = "<group>"; };
 		8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyAdvanced.xcodeproj; path = ../../Frameworks/HighlyAdvanced/HighlyAdvanced.xcodeproj; sourceTree = "<group>"; };
 		834379A717F9818400584396 /* HCDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HCDecoder.mm; sourceTree = "<group>"; };
+		834A42B6287AF99600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		8360EEE417F92AC8005208A4 /* HighlyComplete.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HighlyComplete.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8360EEE717F92AC8005208A4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8360EEEA17F92AC8005208A4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -311,6 +312,7 @@
 		8360EEED17F92AC8005208A4 /* HighlyComplete */ = {
 			isa = PBXGroup;
 			children = (
+				834A42B6287AF99600EB9D9B /* AudioChunk.h */,
 				83AA660827B7CCB00098D4B8 /* Logging.h */,
 				83FAF8A318ADD27F00057CAF /* PlaylistController.h */,
 				8324C584181513A10046F78F /* circular_buffer.h */,

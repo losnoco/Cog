@@ -41,16 +41,25 @@
 	return YES;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
+	long frames = 1024;
 	long bytesPerFrame = channels * (bitsPerSample / 8);
 	long amountRead;
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
+	uint8_t buffer[bytesPerFrame * 1024];
+	void *buf = (void *)buffer;
 
 	// For some reason a busy loop is causing pops when output is set to 48000. Probably CPU starvation, since the SHN decoder seems to use a multithreaded nonblocking approach.
 	do {
 		amountRead = decoder->read(buf, frames * bytesPerFrame);
 	} while(amountRead == -1);
 
-	return (int)(amountRead / bytesPerFrame);
+	[chunk assignSamples:buf frameCount:amountRead / bytesPerFrame];
+
+	return chunk;
 }
 
 - (long)seek:(long)sample {

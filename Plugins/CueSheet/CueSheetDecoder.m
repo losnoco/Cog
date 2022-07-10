@@ -309,10 +309,12 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	return framePosition - trackStart;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	if(!seekedToStart) {
 		[self seek:0];
 	}
+
+	int frames = INT_MAX;
 
 	if(!noFragment && framePosition + frames > trackEnd) {
 		frames = (UInt32)(trackEnd - framePosition);
@@ -320,14 +322,19 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 	if(!frames) {
 		DLog(@"Returning 0");
-		return 0;
+		return nil;
 	}
 
-	int n = [decoder readAudio:buf frames:frames];
+	AudioChunk *chunk = [decoder readAudio];
 
-	framePosition += n;
+	size_t n = chunk.frameCount;
+	if(n > frames) {
+		[chunk setFrameCount:frames];
+	}
 
-	return n;
+	framePosition += chunk.frameCount;
+
+	return chunk;
 }
 
 - (BOOL)isSilence {

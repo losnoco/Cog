@@ -109,11 +109,15 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 	return YES;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	MPC_SAMPLE_FORMAT sampleBuffer[MPC_DECODER_BUFFER_LENGTH];
 
+	int frames = 1024;
+	float buffer[frames * 2];
+	void *buf = (void *)buffer;
+
 	int framesRead = 0;
-	int bytesPerFrame = sizeof(float) * 2; // bitsPerSample == 16, channels == 2
+	int bytesPerFrame = sizeof(float) * 2; // bitsPerSample == 32, channels == 2
 	while(framesRead < frames) {
 		// Fill from buffer, going by bufferFrames
 		// if still needs more, decode and repeat
@@ -150,7 +154,11 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 		}
 	}
 
-	return framesRead;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:framesRead];
+
+	return chunk;
 }
 
 - (void)close {

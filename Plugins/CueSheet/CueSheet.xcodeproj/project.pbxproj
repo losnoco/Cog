@@ -24,6 +24,7 @@
 		17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CueSheetMetadataReader.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* CueSheet_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheet_Prefix.pch; sourceTree = "<group>"; };
 		833F68371CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		834A42B2287AF59900EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		835C888E22CC1883001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747C592862DD660021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384912A180814D900E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
@@ -89,6 +90,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				834A42B2287AF59900EB9D9B /* AudioChunk.h */,
 				839DA7D3274A2FD4001B18E5 /* NSDictionary+Merge.h */,
 				839DA7D0274A2EA9001B18E5 /* AudioMetadataReader.h */,
 				8384912A180814D900E7332D /* Logging.h */,
