@@ -9,13 +9,13 @@
 "112.title" = "Показать в Finder";
 
 /* Class = "NSMenuItem"; title = "Add to Playlist"; ObjectID = "119"; */
-"119.title" = "Добавить в Плейлист";
+"119.title" = "Добавить в плейлист";
 
 /* Class = "NSMenuItem"; title = "Set as Root"; ObjectID = "124"; */
-"124.title" = "Установить как Корень";
+"124.title" = "Установить как корень";
 
 /* Class = "NSMenuItem"; title = "Set as Playlist"; ObjectID = "129"; */
-"129.title" = "Установить как Плейлист";
+"129.title" = "Установить как плейлист";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "147"; */
 "147.title" = "Бокс";
