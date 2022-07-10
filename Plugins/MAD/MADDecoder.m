@@ -470,7 +470,7 @@
 	return ret;
 }
 
-- (void)writeOutput {
+- (BOOL)writeOutput {
 	unsigned long startingSample = 0;
 	unsigned long sampleCount = _synth.pcm.length;
 
@@ -485,7 +485,7 @@
 		// Past the end of the file.
 		if(totalFrames - _endPadding <= _framesDecoded) {
 			// DLog(@"End of file. Not writing.");
-			return;
+			return YES;
 		}
 
 		// Clip this for the following calculation, so this doesn't underflow
@@ -497,6 +497,11 @@
 			// DLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
 			sampleCount = totalFrames - _endPadding - _framesDecoded + startingSample;
 		}
+	} else {
+		// Past the end of the file.
+		if(totalFrames <= _framesDecoded) {
+			return YES;
+		}
 	}
 
 	// We haven't even gotten to the start yet
@@ -504,7 +509,7 @@
 		// DLog(@"Skipping entire sample");
 		_framesDecoded += sampleCount;
 		framesToSkip -= sampleCount;
-		return;
+		return NO;
 	}
 
 	framesToSkip = 0;
@@ -536,6 +541,8 @@
 	// FILE *f = fopen("data.raw", "a");
 	// fwrite(_outputBuffer, channels * 2, _outputFrames, f);
 	// fclose(f);
+
+	return NO;
 }
 
 - (int)decodeMPEGFrame {
@@ -687,8 +694,6 @@
 }
 
 - (AudioChunk *)readAudio {
-	int framesRead = 0;
-
 	if(!_firstFrame)
 		[self syncFormat];
 
@@ -712,7 +717,9 @@
 		else if(r == -1) // Unrecoverable error
 			break;
 
-		[self writeOutput];
+		if([self writeOutput]) {
+			return nil;
+		}
 		// DLog(@"Wrote output");
 
 		[self syncFormat];

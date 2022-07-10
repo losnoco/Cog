@@ -187,7 +187,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			chunk = [decoder readAudio];
 		}
 
-		if(chunk) {
+		if(chunk && [chunk frameCount]) {
 			@autoreleasepool {
 				[self writeChunk:chunk];
 				chunk = nil;
