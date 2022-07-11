@@ -1077,6 +1077,9 @@
 		83F0E6A9287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/SpectrumWindow.strings; sourceTree = "<group>"; };
 		83F0E6AA287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/SpotlightPanel.strings; sourceTree = "<group>"; };
 		83F0E6AB287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Feedback.strings; sourceTree = "<group>"; };
+		83F0E8AD287CD48800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83F0E8B1287CD50700D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		83F0E8B2287CD52500D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = pl; path = pl.lproj/Credits.html; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -2850,6 +2853,7 @@
 			children = (
 				833F681E1CDBCAA700AFB9F0 /* es */,
 				835C888C22CC1882001B4B3F /* en */,
+				83F0E8AD287CD48800D84594 /* pl */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2934,6 +2938,7 @@
 			children = (
 				833F68251CDBCAA800AFB9F0 /* es */,
 				835C888B22CC1881001B4B3F /* en */,
+				83F0E8B2287CD52500D84594 /* pl */,
 			);
 			name = Credits.html;
 			sourceTree = "<group>";
@@ -2976,6 +2981,7 @@
 			children = (
 				833F681F1CDBCAA800AFB9F0 /* es */,
 				835C888D22CC1882001B4B3F /* en */,
+				83F0E8B1287CD50700D84594 /* pl */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
