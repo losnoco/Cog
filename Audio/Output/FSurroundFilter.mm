@@ -82,7 +82,7 @@ struct freesurround_params {
 	freesurround_params *_params = new freesurround_params;
 	params = (void *)_params;
 
-	freesurround_decoder *_decoder = new freesurround_decoder(cs_5point1, 1024);
+	freesurround_decoder *_decoder = new freesurround_decoder(cs_5point1, 4096);
 	decoder = (void *)_decoder;
 
 	_decoder->circular_wrap(_params->circular_wrap);
@@ -125,11 +125,11 @@ struct freesurround_params {
 	freesurround_params *_params = (freesurround_params *)params;
 	freesurround_decoder *_decoder = (freesurround_decoder *)decoder;
 
-	float tempInput[1024 * 2];
+	float tempInput[4096 * 2];
 
-	if(count < 1024) {
+	if(count < 4096) {
 		cblas_scopy(count * 2, samplesIn, 1, &tempInput[0], 1);
-		vDSP_vclr(&tempInput[count * 2], 1, 2048 - count * 2);
+		vDSP_vclr(&tempInput[count * 2], 1, (4096 - count) * 2);
 		samplesIn = &tempInput[0];
 	}
 
