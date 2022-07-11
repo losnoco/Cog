@@ -745,7 +745,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	int bytesRendered = 0;
 	do {
 		int maxToRender = MIN(4096 - inputRendered, 512);
-		int rendered = [self renderInput:maxToRender toBuffer:(float *)(((uint8_t *)inputBuffer) + bytesRendered)];
+		int rendered = [self renderInput:maxToRender toBuffer:&tempBuffer[0]];
+		if(rendered > 0) {
+			memcpy((((uint8_t *)inputBuffer) + bytesRendered), &tempBuffer[0], rendered * newFormat.mBytesPerPacket);
+		}
 		inputRendered += rendered;
 		bytesRendered += rendered * newFormat.mBytesPerPacket;
 		if(streamFormatChanged) {
@@ -886,6 +889,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		commandStop = NO;
 
 		audioFormatDescription = NULL;
+		
+		enableFSurround = YES;
 
 		running = NO;
 		stopping = NO;
