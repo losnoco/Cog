@@ -83,6 +83,8 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 		decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
 
+		[self registerObservers];
+
 		if(![decoder open:source]) {
 			ALog(@"Could not open cuesheet decoder");
 			return NO;
@@ -166,22 +168,6 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	} else {
 		// Fix for embedded cuesheet handler parsing non-embedded files,
 		// or files that are already in the playlist without a fragment
-		source = [NSClassFromString(@"AudioSource") audioSourceForURL:url];
-
-		if(![source open:url]) {
-			ALog(@"Could not open cuesheet source");
-			return NO;
-		}
-
-		decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
-
-		[self registerObservers];
-
-		if(![decoder open:source]) {
-			ALog(@"Could not open cuesheet decoder");
-			return NO;
-		}
-
 		NSDictionary *properties = [decoder properties];
 		int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 		int channels = [[properties objectForKey:@"channels"] intValue];
@@ -323,10 +309,12 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	return framePosition - trackStart;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	if(!seekedToStart) {
 		[self seek:0];
 	}
+
+	int frames = INT_MAX;
 
 	if(!noFragment && framePosition + frames > trackEnd) {
 		frames = (UInt32)(trackEnd - framePosition);
@@ -334,14 +322,19 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 	if(!frames) {
 		DLog(@"Returning 0");
-		return 0;
+		return nil;
 	}
 
-	int n = [decoder readAudio:buf frames:frames];
+	AudioChunk *chunk = [decoder readAudio];
 
-	framePosition += n;
+	size_t n = chunk.frameCount;
+	if(n > frames) {
+		[chunk setFrameCount:frames];
+	}
 
-	return n;
+	framePosition += chunk.frameCount;
+
+	return chunk;
 }
 
 - (BOOL)isSilence {

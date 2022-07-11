@@ -361,39 +361,23 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	return YES;
 }
 
-- (int)readAudio:(void *)buffer frames:(UInt32)frames {
-	int framesRead = 0;
-	while(framesRead < frames) {
-		if(blockBufferFrames == 0) {
-			if(framesRead) {
-				break;
-			}
+- (AudioChunk *)readAudio {
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = nil;
 
-			if(FLAC__stream_decoder_get_state(decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
-				break;
-			}
+	if(FLAC__stream_decoder_get_state(decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
+		return nil;
+	}
 
-			if(!FLAC__stream_decoder_process_single(decoder)) {
-				break;
-			}
-		}
+	if(!FLAC__stream_decoder_process_single(decoder)) {
+		return nil;
+	}
 
-		int bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
+	if(blockBufferFrames > 0) {
+		chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+		[chunk assignSamples:blockBuffer frameCount:blockBufferFrames];
 
-		int framesToRead = blockBufferFrames;
-		if(blockBufferFrames > frames) {
-			framesToRead = frames;
-		}
-
-		memcpy(((uint8_t *)buffer) + (framesRead * bytesPerFrame), (uint8_t *)blockBuffer, framesToRead * bytesPerFrame);
-
-		frames -= framesToRead;
-		framesRead += framesToRead;
-		blockBufferFrames -= framesToRead;
-
-		if(blockBufferFrames > 0) {
-			memmove((uint8_t *)blockBuffer, ((uint8_t *)blockBuffer) + (framesToRead * bytesPerFrame), blockBufferFrames * bytesPerFrame);
-		}
+		blockBufferFrames = 0;
 	}
 
 	if(![source seekable]) {
@@ -429,7 +413,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		}
 	}
 
-	return framesRead;
+	return chunk;
 }
 
 - (void)close {

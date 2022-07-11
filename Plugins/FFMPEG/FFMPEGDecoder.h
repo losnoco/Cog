@@ -45,8 +45,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 
 	BOOL metadataUpdated;
 
-	int prebufferedAudio;
-	uint8_t *prebufferedAudioData;
+	AudioChunk *prebufferedChunk;
 
 	BOOL rawDSD;
 	BOOL rawDSDReverseBits;

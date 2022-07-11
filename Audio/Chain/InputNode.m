@@ -142,10 +142,6 @@ static void *kInputNodeContext = &kInputNodeContext;
 }
 
 - (void)process {
-	int amountInBuffer = 0;
-	int bytesInBuffer = 0;
-	void *inputBuffer = malloc(CHUNK_SIZE * 8 * 18); // Maximum 18 channels, dunno what we'll receive
-
 	BOOL shouldClose = YES;
 	BOOL seekError = NO;
 
@@ -165,7 +161,6 @@ static void *kInputNodeContext = &kInputNodeContext;
 			ConverterNode *converter = [bufferChain converter];
 			DLog(@"SEEKING! Resetting Buffer");
 
-			amountInBuffer = 0;
 			// This resets the converter's buffer
 			[self resetBuffer];
 			[converter resetBuffer];
@@ -174,7 +169,9 @@ static void *kInputNodeContext = &kInputNodeContext;
 			DLog(@"Reset buffer!");
 
 			DLog(@"SEEKING!");
-			seekError = [decoder seek:seekFrame] < 0;
+			@autoreleasepool {
+				seekError = [decoder seek:seekFrame] < 0;
+			}
 
 			shouldSeek = NO;
 			DLog(@"Seeked! Resetting Buffer");
@@ -185,52 +182,45 @@ static void *kInputNodeContext = &kInputNodeContext;
 			}
 		}
 
-		if(amountInBuffer < CHUNK_SIZE) {
-			int framesToRead = CHUNK_SIZE - amountInBuffer;
-			int framesRead;
+		AudioChunk *chunk;
+		@autoreleasepool {
+			chunk = [decoder readAudio];
+		}
+
+		if(chunk && [chunk frameCount]) {
 			@autoreleasepool {
-				framesRead = [decoder readAudio:((char *)inputBuffer) + bytesInBuffer frames:framesToRead];
+				[self writeChunk:chunk];
+				chunk = nil;
+			}
+		} else {
+			DLog(@"End of stream? %@", [self properties]);
+
+			endOfStream = YES;
+			shouldClose = [controller endOfInputReached]; // Lets us know if we should keep going or not (occassionally, for track changes within a file)
+			DLog(@"closing? is %i", shouldClose);
+
+			// Move this here, so that the above endOfInputReached has a chance to queue another track before starting output
+			// Technically, the output should still play out its buffer first before checking if it should stop
+			if(initialBufferFilled == NO) {
+				[controller initialBufferFilled:self];
 			}
 
-			if(framesRead > 0 && !seekError) {
-				amountInBuffer += framesRead;
-				bytesInBuffer += framesRead * bytesPerFrame;
-				[self writeData:inputBuffer amount:bytesInBuffer];
-				amountInBuffer = 0;
-				bytesInBuffer = 0;
+			// wait before exiting, as we might still get seeking request
+			DLog("InputNode: Before wait")
+			[exitAtTheEndOfTheStream waitIndefinitely];
+			DLog("InputNode: After wait, should seek = %d", shouldSeek);
+			if(shouldSeek) {
+				endOfStream = NO;
+				shouldClose = NO;
+				continue;
 			} else {
-				DLog(@"End of stream? %@", [self properties]);
-
-				endOfStream = YES;
-				shouldClose = [controller endOfInputReached]; // Lets us know if we should keep going or not (occassionally, for track changes within a file)
-				DLog(@"closing? is %i", shouldClose);
-
-				// Move this here, so that the above endOfInputReached has a chance to queue another track before starting output
-				// Technically, the output should still play out its buffer first before checking if it should stop
-				if(initialBufferFilled == NO) {
-					[controller initialBufferFilled:self];
-				}
-
-				// wait before exiting, as we might still get seeking request
-				DLog("InputNode: Before wait")
-				[exitAtTheEndOfTheStream waitIndefinitely];
-				DLog("InputNode: After wait, should seek = %d", shouldSeek);
-				if(shouldSeek) {
-					endOfStream = NO;
-					shouldClose = NO;
-					continue;
-				}
-				else {
-					break;
-				}
+				break;
 			}
 		}
 	}
 
 	if(shouldClose)
 		[decoder close];
-
-	free(inputBuffer);
 
 	[exitAtTheEndOfTheStream signal];
 

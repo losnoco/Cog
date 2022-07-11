@@ -103,7 +103,14 @@ static CAdPlugDatabase *g_database = NULL;
 	return @{};
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
+	int frames = 1024;
+	int16_t buffer[1024 * 2];
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	void *buf = (void *)buffer;
+
 	int total = 0;
 	bool dont_loop = !IsRepeatOneSet();
 	if(dont_loop && current_pos + frames > length)
@@ -128,7 +135,9 @@ static CAdPlugDatabase *g_database = NULL;
 		total += samples_now;
 	}
 
-	return total;
+	[chunk assignSamples:buffer frameCount:total];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

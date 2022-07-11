@@ -138,6 +138,10 @@
 		83DAD9F5286EDBD6000FAA9A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PathSuggester.strings; sourceTree = "<group>"; };
 		83EF495D17FBC96A00642E3C /* VolumeBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeBehaviorArrayController.h; sourceTree = "<group>"; };
 		83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeBehaviorArrayController.m; sourceTree = "<group>"; };
+		83F0E6AC287CAB3D00D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83F0E6AD287CAB3D00D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		83F0E6AF287CAB4100D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/PathSuggester.strings; sourceTree = "<group>"; };
+		83F0E6B0287CAB4100D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Preferences.strings; sourceTree = "<group>"; };
 		83F27E651810DD3A00CEF538 /* appearance@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "appearance@2x.png"; path = "Icons/appearance@2x.png"; sourceTree = "<group>"; };
 		83F27E681810DD3A00CEF538 /* midi@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "midi@2x.png"; path = "Icons/midi@2x.png"; sourceTree = "<group>"; };
 		83F27E691810DD3A00CEF538 /* playlist@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "playlist@2x.png"; path = "Icons/playlist@2x.png"; sourceTree = "<group>"; };
@@ -408,6 +412,7 @@
 				de,
 				sv,
 				he,
+				pl,
 				ru,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Preferences */;
@@ -519,6 +524,7 @@
 			children = (
 				833F681B1CDBCAA700AFB9F0 /* es */,
 				835C888922CC1880001B4B3F /* en */,
+				83F0E6AC287CAB3D00D84594 /* pl */,
 				491C55C0287AA4B6007D96F5 /* ru */,
 			);
 			name = InfoPlist.strings;
@@ -529,6 +535,7 @@
 			children = (
 				833F681C1CDBCAA700AFB9F0 /* es */,
 				835C888A22CC1880001B4B3F /* en */,
+				83F0E6AD287CAB3D00D84594 /* pl */,
 				491C55C1287AA4B6007D96F5 /* ru */,
 			);
 			name = Localizable.strings;
@@ -540,6 +547,7 @@
 				83BC5AB320E4C90F00631CD4 /* Base */,
 				8347435D20E6D58800063D45 /* en */,
 				8347435F20E6D5A000063D45 /* es */,
+				83F0E6B0287CAB4100D84594 /* pl */,
 				491C55B5287AA4B6007D96F5 /* ru */,
 			);
 			name = Preferences.xib;
@@ -551,6 +559,7 @@
 				83DAD9F1286EDBCD000FAA9A /* Base */,
 				83DAD9F3286EDBD2000FAA9A /* en */,
 				83DAD9F5286EDBD6000FAA9A /* es */,
+				83F0E6AF287CAB4100D84594 /* pl */,
 				491C55B4287AA4B5007D96F5 /* ru */,
 			);
 			name = PathSuggester.xib;
@@ -605,6 +614,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -653,6 +663,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;

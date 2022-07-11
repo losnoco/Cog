@@ -1,7 +1,7 @@
 "FeedbackFailedMessageText" = "Failed";
-"FeedbackFailedInformativeText" = "Feedback failed to send.";
-"FeedbackSuccessMessageText" = "Success";
-"FeedbackSuccessInformativeText" = "Feedback successfully sent!";
+"FeedbackFailedInformativeText" = "Nie udało się wysłać twojej opinii.";
+"FeedbackSuccessMessageText" = "success!";
+"FeedbackSuccessInformativeText" = "Opinia została wysłana pomyślnie.";
 
 "PlayButtonTooltip" = "Play";
 "StopButtonTooltip" = "Stop";

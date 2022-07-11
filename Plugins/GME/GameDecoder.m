@@ -174,11 +174,18 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	return @{};
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
+	int frames = 1024;
+	int16_t buffer[frames * 2];
+	void *buf = (void *)buffer;
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
 	int numSamples = frames * 2; // channels = 2
 
 	if(gme_track_ended(emu)) {
-		return 0;
+		return nil;
 	}
 
 	if(IsRepeatOneSet())
@@ -190,7 +197,11 @@ gme_err_t readCallback(void *data, void *out, int count) {
 
 	// Some formats support length, but we'll add that in the future.
 	//(From gme.txt) If track length, then use it. If loop length, play for intro + loop * 2. Otherwise, default to 2.5 minutes
-	return frames; // GME will always generate samples. There's no real EOS.
+	// GME will always generate samples. There's no real EOS.
+
+	[chunk assignSamples:buffer frameCount:numSamples];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

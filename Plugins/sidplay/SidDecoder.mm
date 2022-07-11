@@ -62,7 +62,7 @@ static const char *extListStr[] = { ".str", NULL };
 - (sid_file_container *)init {
 	if((self = [super init])) {
 		lock = [[NSLock alloc] init];
-		list = [[NSMutableDictionary alloc] initWithCapacity:0];
+		list = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -275,59 +275,54 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	return @{};
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	int total = 0;
-	int16_t *sampleBuffer = (int16_t *)buf;
-	while(total < frames) {
-		int framesToRender = 1024;
-		if(framesToRender > frames)
-			framesToRender = frames;
-		int rendered = engine->play(sampleBuffer + total * n_channels, framesToRender * n_channels) / n_channels;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
 
-		if(rendered <= 0)
-			break;
+	int16_t buffer[1024 * n_channels];
 
-		if(n_channels == 2) {
-			for(int i = 0, j = rendered * 2; i < j; i += 2) {
-				int16_t *sample = sampleBuffer + total * 2 + i;
-				int mid = (int)(sample[0] + sample[1]) / 2;
-				int side = (int)(sample[0] - sample[1]) / 4;
-				sample[0] = mid + side;
-				sample[1] = mid - side;
-			}
+	int framesToRender = 1024;
+	int rendered = engine->play(buffer, framesToRender * n_channels) / n_channels;
+
+	if(rendered <= 0)
+		return nil;
+
+	if(n_channels == 2) {
+		for(int i = 0, j = rendered * 2; i < j; i += 2) {
+			int16_t *sample = buffer + total * 2 + i;
+			int mid = (int)(sample[0] + sample[1]) / 2;
+			int side = (int)(sample[0] - sample[1]) / 4;
+			sample[0] = mid + side;
+			sample[1] = mid - side;
 		}
-
-		renderedTotal += rendered;
-
-		if(!IsRepeatOneSet() && renderedTotal >= length) {
-			int16_t *sampleBuf = (int16_t *)buf + total * n_channels;
-			long fadeEnd = fadeRemain - rendered;
-			if(fadeEnd < 0)
-				fadeEnd = 0;
-			float fadePosf = (float)fadeRemain / (float)fadeTotal;
-			const float fadeStep = 1.0f / (float)fadeTotal;
-			for(long fadePos = fadeRemain; fadePos > fadeEnd; --fadePos, fadePosf -= fadeStep) {
-				long offset = (fadeRemain - fadePos) * n_channels;
-				float sampleLeft = sampleBuf[offset + 0];
-				sampleLeft *= fadePosf;
-				sampleBuf[offset + 0] = (int16_t)sampleLeft;
-				if(n_channels == 2) {
-					float sampleRight = sampleBuf[offset + 1];
-					sampleRight *= fadePosf;
-					sampleBuf[offset + 1] = (int16_t)sampleRight;
-				}
-			}
-			rendered = (int)(fadeRemain - fadeEnd);
-			fadeRemain = fadeEnd;
-		}
-
-		total += rendered;
-
-		if(rendered < framesToRender)
-			break;
 	}
 
-	return total;
+	if(!IsRepeatOneSet() && renderedTotal >= length) {
+		int16_t *sampleBuf = buffer;
+		long fadeEnd = fadeRemain - rendered;
+		if(fadeEnd < 0)
+			fadeEnd = 0;
+		float fadePosf = (float)fadeRemain / (float)fadeTotal;
+		const float fadeStep = 1.0f / (float)fadeTotal;
+		for(long fadePos = fadeRemain; fadePos > fadeEnd; --fadePos, fadePosf -= fadeStep) {
+			long offset = (fadeRemain - fadePos) * n_channels;
+			float sampleLeft = sampleBuf[offset + 0];
+			sampleLeft *= fadePosf;
+			sampleBuf[offset + 0] = (int16_t)sampleLeft;
+			if(n_channels == 2) {
+				float sampleRight = sampleBuf[offset + 1];
+				sampleRight *= fadePosf;
+				sampleBuf[offset + 1] = (int16_t)sampleRight;
+			}
+		}
+		rendered = (int)(fadeRemain - fadeEnd);
+		fadeRemain = fadeEnd;
+	}
+
+	[chunk assignSamples:buffer frameCount:rendered];
+
+	return chunk;
 }
 
 - (long)seek:(long)frame {

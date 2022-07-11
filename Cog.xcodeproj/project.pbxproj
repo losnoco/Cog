@@ -940,6 +940,7 @@
 		83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmPlayer.xcodeproj; path = Plugins/libvgmPlayer/libvgmPlayer.xcodeproj; sourceTree = "<group>"; };
 		8349270127B4EFFC0009AB2B /* duplicateItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = duplicateItemsTemplate.pdf; path = Images/duplicateItemsTemplate.pdf; sourceTree = "<group>"; };
 		8349270B27B4EFFC0009AB2B /* deadItemsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = deadItemsTemplate.pdf; path = Images/deadItemsTemplate.pdf; sourceTree = "<group>"; };
+		834A42C4287B01B600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = Audio/Chain/AudioChunk.h; sourceTree = SOURCE_ROOT; };
 		834B05E82859C006000B7DC0 /* TotalTimeTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TotalTimeTransformer.h; path = Transformers/TotalTimeTransformer.h; sourceTree = "<group>"; };
 		834B05E92859C006000B7DC0 /* TotalTimeTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TotalTimeTransformer.m; path = Transformers/TotalTimeTransformer.m; sourceTree = "<group>"; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
@@ -1076,6 +1077,18 @@
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
 		83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = hdcdLogoTemplate.pdf; path = Images/hdcdLogoTemplate.pdf; sourceTree = "<group>"; };
+		83F0E6A3287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/AboutWindowController.strings; sourceTree = "<group>"; };
+		83F0E6A4287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Equalizer.strings; sourceTree = "<group>"; };
+		83F0E6A5287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoInspector.strings; sourceTree = "<group>"; };
+		83F0E6A6287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		83F0E6A7287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/OpenURLPanel.strings; sourceTree = "<group>"; };
+		83F0E6A8287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/FileTree.strings; sourceTree = "<group>"; };
+		83F0E6A9287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/SpectrumWindow.strings; sourceTree = "<group>"; };
+		83F0E6AA287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/SpotlightPanel.strings; sourceTree = "<group>"; };
+		83F0E6AB287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Feedback.strings; sourceTree = "<group>"; };
+		83F0E8AD287CD48800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83F0E8B1287CD50700D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		83F0E8B2287CD52500D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = pl; path = pl.lproj/Credits.html; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1240,6 +1253,7 @@
 		177EC0110B8BC2CF0000BC8C /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				834A42C4287B01B600EB9D9B /* AudioChunk.h */,
 				8384912518080F2D00E7332D /* Logging.h */,
 				07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */,
 				07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */,
@@ -2093,6 +2107,7 @@
 				fr,
 				he,
 				ja,
+				pl,
 				ru,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
@@ -2846,6 +2861,7 @@
 			children = (
 				833F681E1CDBCAA700AFB9F0 /* es */,
 				835C888C22CC1882001B4B3F /* en */,
+				83F0E8AD287CD48800D84594 /* pl */,
 				491C55C2287AA4B7007D96F5 /* ru */,
 			);
 			name = InfoPlist.strings;
@@ -2867,6 +2883,7 @@
 				83BC5AB720E4C91400631CD4 /* Base */,
 				83BC5AD220E4D0B400631CD4 /* es */,
 				83BC5AD420E4D0B600631CD4 /* en */,
+				83F0E6A8287CAB3800D84594 /* pl */,
 				491C55BB287AA4B6007D96F5 /* ru */,
 			);
 			name = FileTree.xib;
@@ -2878,6 +2895,7 @@
 				83BC5AB520E4C91200631CD4 /* Base */,
 				83BC5AC620E4D04600631CD4 /* en */,
 				83BC5AC820E4D05A00631CD4 /* es */,
+				83F0E6A6287CAB3800D84594 /* pl */,
 				491C55B9287AA4B6007D96F5 /* ru */,
 			);
 			name = MainMenu.xib;
@@ -2889,6 +2907,7 @@
 				83BC5AB620E4C91300631CD4 /* Base */,
 				83BC5ACE20E4D09700631CD4 /* es */,
 				83BC5AD020E4D09800631CD4 /* en */,
+				83F0E6A7287CAB3800D84594 /* pl */,
 				491C55BA287AA4B6007D96F5 /* ru */,
 			);
 			name = OpenURLPanel.xib;
@@ -2900,6 +2919,7 @@
 				83BC5AB820E4C91400631CD4 /* Base */,
 				83BC5AD620E4D0D800631CD4 /* es */,
 				83BC5AD820E4D0D900631CD4 /* en */,
+				83F0E6AA287CAB3800D84594 /* pl */,
 				491C55BD287AA4B6007D96F5 /* ru */,
 			);
 			name = SpotlightPanel.xib;
@@ -2911,6 +2931,7 @@
 				83BC5AB420E4C91100631CD4 /* Base */,
 				83BC5ACA20E4D07200631CD4 /* es */,
 				83BC5ACC20E4D07700631CD4 /* en */,
+				83F0E6A5287CAB3800D84594 /* pl */,
 				491C55B8287AA4B6007D96F5 /* ru */,
 			);
 			name = InfoInspector.xib;
@@ -2922,6 +2943,7 @@
 				83BC5AB920E4C91500631CD4 /* Base */,
 				83BC5ADA20E4D0E900631CD4 /* en */,
 				83BC5ADC20E4D0EC00631CD4 /* es */,
+				83F0E6AB287CAB3800D84594 /* pl */,
 				491C55BE287AA4B6007D96F5 /* ru */,
 			);
 			name = Feedback.xib;
@@ -2932,6 +2954,7 @@
 			children = (
 				833F68251CDBCAA800AFB9F0 /* es */,
 				835C888B22CC1881001B4B3F /* en */,
+				83F0E8B2287CD52500D84594 /* pl */,
 				491C55C4287AA4B7007D96F5 /* ru */,
 			);
 			name = Credits.html;
@@ -2943,6 +2966,7 @@
 				830C37A027B95E3000E02BB0 /* Base */,
 				839614A8286EDA0400D3EEDB /* en */,
 				839614AA286EDA0600D3EEDB /* es */,
+				83F0E6A4287CAB3800D84594 /* pl */,
 				491C55B7287AA4B6007D96F5 /* ru */,
 			);
 			name = Equalizer.xib;
@@ -2954,6 +2978,7 @@
 				839614A1286ED97200D3EEDB /* Base */,
 				839614A4286ED98600D3EEDB /* en */,
 				839614A6286ED98800D3EEDB /* es */,
+				83F0E6A3287CAB3800D84594 /* pl */,
 				491C55B6287AA4B6007D96F5 /* ru */,
 			);
 			name = AboutWindowController.xib;
@@ -2965,6 +2990,7 @@
 				839614AC286EDA5C00D3EEDB /* Base */,
 				839614AF286EDA6800D3EEDB /* en */,
 				839614B1286EDA6E00D3EEDB /* es */,
+				83F0E6A9287CAB3800D84594 /* pl */,
 				491C55BC287AA4B6007D96F5 /* ru */,
 			);
 			name = SpectrumWindow.xib;
@@ -2975,6 +3001,7 @@
 			children = (
 				833F681F1CDBCAA800AFB9F0 /* es */,
 				835C888D22CC1882001B4B3F /* en */,
+				83F0E8B1287CD50700D84594 /* pl */,
 				491C55C3287AA4B7007D96F5 /* ru */,
 			);
 			name = Localizable.strings;
@@ -2988,7 +3015,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -3044,7 +3070,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -3097,6 +3122,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -3140,6 +3166,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;

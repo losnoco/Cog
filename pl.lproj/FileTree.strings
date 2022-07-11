@@ -6,16 +6,16 @@
 "110.title" = "Menu";
 
 /* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "112"; */
-"112.title" = "Show in Finder";
+"112.title" = "pokaż w finderze";
 
 /* Class = "NSMenuItem"; title = "Add to Playlist"; ObjectID = "119"; */
-"119.title" = "Add to Playlist";
+"119.title" = "dodaj do playlisty.";
 
 /* Class = "NSMenuItem"; title = "Set as Root"; ObjectID = "124"; */
 "124.title" = "Set as Root";
 
 /* Class = "NSMenuItem"; title = "Set as Playlist"; ObjectID = "129"; */
-"129.title" = "Set as Playlist";
+"129.title" = "ustaw jako playlistę";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "147"; */
 "147.title" = "Box";

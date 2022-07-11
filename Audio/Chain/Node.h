@@ -19,7 +19,7 @@
 	ChunkList *buffer;
 	Semaphore *semaphore;
 
-	NSRecursiveLock *accessLock;
+	NSLock *accessLock;
 
 	id __weak previousNode;
 	id __weak controller;
@@ -37,6 +37,7 @@
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
 
 - (void)writeData:(const void *_Nonnull)ptr amount:(size_t)a;
+- (void)writeChunk:(AudioChunk *_Nonnull)chunk;
 - (AudioChunk *_Nonnull)readChunk:(size_t)maxFrames;
 
 - (BOOL)peekFormat:(AudioStreamBasicDescription *_Nonnull)format channelConfig:(uint32_t *_Nonnull)config;

@@ -72,7 +72,7 @@
 - (psf_file_container *)init {
 	if((self = [super init])) {
 		lock = [[NSLock alloc] init];
-		list = [[NSMutableDictionary alloc] initWithCapacity:0];
+		list = [[NSMutableDictionary alloc] init];
 	}
 	return self;
 }
@@ -1302,7 +1302,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 	return frames;
 }
 
-- (int)readAudio:(void *)buf frames:(UInt32)frames {
+- (AudioChunk *)readAudio {
 	if(!emulatorCore) {
 		if(![self initializeDecoder])
 			return 0;
@@ -1313,6 +1313,10 @@ static int usf_info(void *context, const char *name, const char *value) {
 		silence_test_buffer.remove_leading_silence();
 		usfRemoveSilence = NO;
 	}
+
+	int frames = 1024;
+	int16_t buffer[frames * 2];
+	void *buf = (void *)buffer;
 
 	unsigned long written = silence_test_buffer.data_available() / 2;
 	if(written > frames)
@@ -1342,7 +1346,11 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 	framesRead += written;
 
-	return (int)written;
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk assignSamples:buffer frameCount:written];
+
+	return chunk;
 }
 
 - (void)closeDecoder {

@@ -470,7 +470,7 @@
 	return ret;
 }
 
-- (void)writeOutput {
+- (BOOL)writeOutput {
 	unsigned long startingSample = 0;
 	unsigned long sampleCount = _synth.pcm.length;
 
@@ -485,7 +485,7 @@
 		// Past the end of the file.
 		if(totalFrames - _endPadding <= _framesDecoded) {
 			// DLog(@"End of file. Not writing.");
-			return;
+			return YES;
 		}
 
 		// Clip this for the following calculation, so this doesn't underflow
@@ -497,6 +497,11 @@
 			// DLog(@"End of file. %li",  totalFrames - _endPadding - _framesDecoded);
 			sampleCount = totalFrames - _endPadding - _framesDecoded + startingSample;
 		}
+	} else {
+		// Past the end of the file.
+		if(totalFrames <= _framesDecoded) {
+			return YES;
+		}
 	}
 
 	// We haven't even gotten to the start yet
@@ -504,7 +509,7 @@
 		// DLog(@"Skipping entire sample");
 		_framesDecoded += sampleCount;
 		framesToSkip -= sampleCount;
-		return;
+		return NO;
 	}
 
 	framesToSkip = 0;
@@ -536,6 +541,8 @@
 	// FILE *f = fopen("data.raw", "a");
 	// fwrite(_outputBuffer, channels * 2, _outputFrames, f);
 	// fclose(f);
+
+	return NO;
 }
 
 - (int)decodeMPEGFrame {
@@ -651,7 +658,7 @@
 	return 1;
 }
 
-- (BOOL)syncFormat:(BOOL)updateNow {
+- (BOOL)syncFormat {
 	float _sampleRate = _frame.header.samplerate;
 	int _channels = MAD_NCHANNELS(&_frame.header);
 	int _layer = 3;
@@ -674,7 +681,7 @@
 	                _channels != channels ||
 	                _layer != layer);
 
-	if(changed && updateNow) {
+	if(changed) {
 		sampleRate = _sampleRate;
 		channels = _channels;
 		layer = _layer;
@@ -686,29 +693,22 @@
 	return changed;
 }
 
-- (int)readAudio:(void *)buffer frames:(UInt32)frames {
-	int framesRead = 0;
-
+- (AudioChunk *)readAudio {
 	if(!_firstFrame)
-		[self syncFormat:YES];
+		[self syncFormat];
+
+	id audioChunkClass = NSClassFromString(@"AudioChunk");
+	AudioChunk *chunk = nil;
 
 	for(;;) {
-		long framesRemaining = frames - framesRead;
-		long framesToCopy = (_outputFrames > framesRemaining ? framesRemaining : _outputFrames);
+		long framesToCopy = _outputFrames;
 
 		if(framesToCopy) {
-			memcpy(buffer + (framesRead * channels * sizeof(float)), _outputBuffer, framesToCopy * channels * sizeof(float));
-			framesRead += framesToCopy;
-
-			if(framesToCopy != _outputFrames) {
-				memmove(_outputBuffer, _outputBuffer + (framesToCopy * channels), (_outputFrames - framesToCopy) * channels * sizeof(float));
-			}
-
-			_outputFrames -= framesToCopy;
-		}
-
-		if(framesRead == frames)
+			chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+			[chunk assignSamples:_outputBuffer frameCount:framesToCopy];
+			_outputFrames = 0;
 			break;
+		}
 
 		int r = [self decodeMPEGFrame];
 		// DLog(@"Decoding frame: %i", r);
@@ -717,21 +717,18 @@
 		else if(r == -1) // Unrecoverable error
 			break;
 
-		[self writeOutput];
+		if([self writeOutput]) {
+			return nil;
+		}
 		// DLog(@"Wrote output");
 
-		if([self syncFormat:NO]) {
-			if(framesRead)
-				break;
-			else
-				[self syncFormat:YES];
-		}
+		[self syncFormat];
 	}
 
 	[self updateMetadata];
 
 	// DLog(@"Read: %i/%i", bytesRead, size);
-	return framesRead;
+	return chunk;
 }
 
 - (void)close {
