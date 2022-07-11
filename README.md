@@ -3,7 +3,7 @@ Cog [![buildable](https://github.com/losnoco/Cog/actions/workflows/debug.yml/bad
 
 Cog uses [Lokalise](https://lokalise.com/) for translation. If you want to contribute translations to Cog, send an email to kevin@kddlb.cl.
 
-![Lokalise logo](https://github.com/losnoco/Cog/blob/main/.github/images/Lokalise_logo_colour_black_text.svg)
+![Lokalise logo](https://github.com/losnoco/Cog/blob/main/.github/images/Lokalise_logo_colour_black_text.svg | width=200)
 
 ---
 
