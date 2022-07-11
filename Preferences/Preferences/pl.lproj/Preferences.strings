@@ -20,6 +20,9 @@
 /* Class = "NSTextFieldCell"; title = "Next:"; ObjectID = "200"; */
 "200.title" = "Next:";
 
+/* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
+"207.title" = "Automatically check for updates on startup";
+
 /* Class = "NSTextFieldCell"; title = "Output Device: "; ObjectID = "211"; */
 "211.title" = "Output Device: ";
 

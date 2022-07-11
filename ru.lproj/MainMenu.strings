@@ -107,6 +107,9 @@
 /* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "209"; */
 "209.headerCell.title" = "#";
 
+/* Class = "NSMenuItem"; title = "Check for Updates..."; ObjectID = "302"; */
+"302.title" = "Check for Updates...";
+
 /* Class = "NSMenuItem"; title = "Send Feedback..."; ObjectID = "303"; */
 "303.title" = "Отправить обратную связь...";
 
