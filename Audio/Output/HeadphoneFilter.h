@@ -15,10 +15,10 @@
 	vDSP_DFT_Setup dftSetupF;
 	vDSP_DFT_Setup dftSetupB;
 
-	size_t fftSize;
-	size_t fftSizeOver2;
-	size_t bufferSize;
-	size_t paddedBufferSize;
+	int fftSize;
+	int fftSizeOver2;
+	int bufferSize;
+	int paddedBufferSize;
 	int channelCount;
 
 	DSPSplitComplex signal_fft;
@@ -38,7 +38,7 @@
 
 - (id)initWithImpulseFile:(NSURL *)url forSampleRate:(double)sampleRate withInputChannels:(int)channels withConfig:(uint32_t)config;
 
-- (void)process:(const float *)inBuffer sampleCount:(size_t)count toBuffer:(float *)outBuffer;
+- (void)process:(const float *)inBuffer sampleCount:(int)count toBuffer:(float *)outBuffer;
 
 - (void)reset;
 

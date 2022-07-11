@@ -302,7 +302,7 @@ static impulseCache *_sharedController = nil;
 
 		paddedBufferSize = fftSize;
 		fftSizeOver2 = (fftSize + 1) / 2;
-		const size_t fftSizeOver2Plus1 = fftSizeOver2 + 1; // DFT float overwrites plus one, double doesn't
+		const int fftSizeOver2Plus1 = fftSizeOver2 + 1; // DFT float overwrites plus one, double doesn't
 
 		dftSetupF = vDSP_DFT_zrop_CreateSetup(nil, fftSize, vDSP_DFT_FORWARD);
 		dftSetupB = vDSP_DFT_zrop_CreateSetup(nil, fftSize, vDSP_DFT_INVERSE);
