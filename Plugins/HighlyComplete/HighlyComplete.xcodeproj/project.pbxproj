@@ -205,6 +205,7 @@
 		83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mGBA.xcodeproj; path = ../../Frameworks/mGBA/mGBA.xcodeproj; sourceTree = "<group>"; };
 		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
 		83E2F4C923566B0C006F7A41 /* lazyusf2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyusf2.xcodeproj; path = ../../Frameworks/lazyusf2/lazyusf2.xcodeproj; sourceTree = "<group>"; };
+		83F0E6B8287CAB4200D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83FAF8A318ADD27F00057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyExperimental.xcodeproj; path = ../../Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -436,6 +437,7 @@
 				en,
 				es,
 				Base,
+				pl,
 			);
 			mainGroup = 8360EEDB17F92AC8005208A4;
 			productRefGroup = 8360EEE517F92AC8005208A4 /* Products */;
@@ -621,6 +623,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				8360EEF117F92AC8005208A4 /* en */,
+				83F0E6B8287CAB4200D84594 /* pl */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
