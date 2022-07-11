@@ -464,7 +464,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		AudioChunk *ret = [[AudioChunk alloc] init];
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
-		[ret assignSamples:[removedData bytes] frameCount:maxFrameCount];
+		[ret assignData:removedData];
 		listDuration -= [ret duration];
 		inRemover = NO;
 		return ret;

@@ -126,6 +126,12 @@ struct freesurround_params {
 	freesurround_decoder *_decoder = (freesurround_decoder *)decoder;
 
 	float tempInput[4096 * 2];
+	uint32_t zeroCount = 0;
+
+	if(count > 4096) {
+		zeroCount = count - 4096;
+		count = 4096;
+	}
 
 	if(count < 4096) {
 		cblas_scopy(count * 2, samplesIn, 1, &tempInput[0], 1);
@@ -138,6 +144,9 @@ struct freesurround_params {
 	for(unsigned c = 0, num = channelCount; c < num; c++) {
 		unsigned idx = [AudioChunk channelIndexFromConfig:channelConfig forFlag:_params->chanmap[c]];
 		cblas_scopy(count, src + c, num, samplesOut + idx, num);
+		if(zeroCount) {
+			vDSP_vclr(samplesOut + idx + count, num, zeroCount);
+		}
 	}
 }
 

@@ -63,19 +63,19 @@ class decoder_impl {
 	public:
 	// instantiate the decoder with a given channel setup and processing block size (in samples)
 	decoder_impl(channel_setup setup, unsigned N)
-	: N(N), log2N(log2n(N)), Nover2((N + 1) / 2),
+	: N(N), log2N(log2n(N)),
 	  wnd(N), inbuf(3 * N), setup(setup), C((unsigned)chn_alloc[setup].size()),
 	  buffer_empty(true), lt(N), rt(N), dst(N), dstf(N),
 	  dftsetupF(vDSP_DFT_zrop_CreateSetupD(0, N, vDSP_DFT_FORWARD)),
 	  dftsetupB(vDSP_DFT_zrop_CreateSetupD(0, N, vDSP_DFT_INVERSE)) {
-		_dsp_complexalloc(&lf, Nover2);
-		_dsp_complexalloc(&rf, Nover2);
+		_dsp_complexalloc(&lf, N/2 + 1);
+		_dsp_complexalloc(&rf, N/2 + 1);
 
 		// allocate per-channel buffers
 		outbuf.resize((N + N / 2) * C);
 		signal.resize(C);
 		for(unsigned k = 0; k < C; k++)
-			_dsp_complexalloc(&signal[k], N);
+			_dsp_complexalloc(&signal[k], N/2 + 1);
 
 		// init the window function
 		for(unsigned k = 0; k < N; k++)
@@ -209,8 +209,8 @@ class decoder_impl {
 		vDSP_vmulD(&rt[0], 1, &wnd[0], 1, &rt[0], 1, N);
 
 		// map into spectral domain
-		vDSP_ctozD((DSPDoubleComplex *)(&lt[0]), 2, &lf, 1, Nover2);
-		vDSP_ctozD((DSPDoubleComplex *)(&rt[0]), 2, &rf, 1, Nover2);
+		vDSP_ctozD((DSPDoubleComplex *)(&lt[0]), 2, &lf, 1, N / 2);
+		vDSP_ctozD((DSPDoubleComplex *)(&rt[0]), 2, &rf, 1, N / 2);
 
 		vDSP_DFT_ExecuteD(dftsetupF, lf.realp, lf.imagp, lf.realp, lf.imagp);
 		vDSP_DFT_ExecuteD(dftsetupF, rf.realp, rf.imagp, rf.realp, rf.imagp);
@@ -218,6 +218,8 @@ class decoder_impl {
 		for(unsigned c = 0; c < C; c++) {
 			signal[c].realp[0] = 0;
 			signal[c].imagp[0] = 0;
+			signal[c].realp[N/2] = 0;
+			signal[c].imagp[N/2] = 0;
 		}
 
 		// compute multichannel output signal in the spectral domain
@@ -253,7 +255,7 @@ class decoder_impl {
 			// map position to channel volumes
 			for(unsigned c = 0; c < C - 1; c++) {
 				// look up channel map at respective position (with bilinear interpolation) and build the signal
-				vector<float *> &a = chn_alloc[setup][c];
+				const vector<float *> &a = chn_alloc[setup][c];
 				polar(amp_total * ((1 - x) * (1 - y) * a[q][p] + x * (1 - y) * a[q][p + 1] + (1 - x) * y * a[q + 1][p] + x * y * a[q + 1][p + 1]),
 				      phase_of[1 + (int)sign(chn_xsf[setup][c])], signal[c], f);
 			}
@@ -275,14 +277,14 @@ class decoder_impl {
 		}
 
 		// shift the last 2/3 to the first 2/3 of the output buffer
-		memcpy(&outbuf[0], &outbuf[C * N / 2], N * C * 4);
+		memmove(&outbuf[0], &outbuf[C * N / 2], N * C * 4);
 		// and clear the rest
 		memset(&outbuf[C * N], 0, C * 4 * N / 2);
 		// backtransform each channel and overlap-add
 		for(unsigned c = 0; c < C; c++) {
 			// back-transform into time domain
 			vDSP_DFT_ExecuteD(dftsetupB, signal[c].realp, signal[c].imagp, signal[c].realp, signal[c].imagp);
-			vDSP_ztocD(&signal[c], 1, (DSPDoubleComplex *)(&dst[0]), 2, Nover2);
+			vDSP_ztocD(&signal[c], 1, (DSPDoubleComplex *)(&dst[0]), 2, N / 2);
 			// add the result to the last 2/3 of the output buffer, windowed (and remultiplex)
 			vDSP_vmulD(&dst[0], 1, &wnd[0], 1, &dst[0], 1, N);
 			vDSP_vdpsp(&dst[0], 1, &dstf[0], 1, N);
@@ -334,7 +336,7 @@ class decoder_impl {
 
 	// constants
 	unsigned N, C; // number of samples per input/output block, number of output channels
-	unsigned log2N, Nover2; // derivations of the block size
+	unsigned log2N; // derivations of the block size
 	channel_setup setup; // the channel setup
 
 	// parameters

@@ -84,6 +84,7 @@ enum {
 - (id)initWithProperties:(NSDictionary *)properties;
 
 - (void)assignSamples:(const void *)data frameCount:(size_t)count;
+- (void)assignData:(NSData *)data;
 
 - (NSData *)removeSamples:(size_t)frameCount;
 

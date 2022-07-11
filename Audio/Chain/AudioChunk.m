@@ -148,13 +148,19 @@ static const uint32_t AudioChannelConfigTable[] = {
 	}
 }
 
+- (void)assignData:(NSData *)data {
+	[chunkData appendData:data];
+}
+
 - (NSData *)removeSamples:(size_t)frameCount {
 	if(formatAssigned) {
-		const size_t bytesPerPacket = format.mBytesPerPacket;
-		const size_t byteCount = bytesPerPacket * frameCount;
-		NSData *ret = [chunkData subdataWithRange:NSMakeRange(0, byteCount)];
-		[chunkData replaceBytesInRange:NSMakeRange(0, byteCount) withBytes:NULL length:0];
-		return ret;
+		@autoreleasepool {
+			const size_t bytesPerPacket = format.mBytesPerPacket;
+			const size_t byteCount = bytesPerPacket * frameCount;
+			NSData *ret = [chunkData subdataWithRange:NSMakeRange(0, byteCount)];
+			[chunkData replaceBytesInRange:NSMakeRange(0, byteCount) withBytes:NULL length:0];
+			return ret;
+		}
 	}
 	return [NSData data];
 }
