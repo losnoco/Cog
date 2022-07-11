@@ -24,6 +24,7 @@
 		836FB58F182054B700B3AD2D /* blip_buf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blip_buf.c; sourceTree = "<group>"; };
 		836FB590182054B700B3AD2D /* blip_buf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blip_buf.h; sourceTree = "<group>"; };
 		83747BB12862D55A0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		83F0E6C1287CAB4200D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +157,7 @@
 				en,
 				es,
 				Base,
+				pl,
 			);
 			mainGroup = 836FB54C182053D700B3AD2D;
 			productRefGroup = 836FB557182053D700B3AD2D /* Products */;
@@ -196,6 +198,7 @@
 			children = (
 				836FB563182053D700B3AD2D /* en */,
 				833F68481CDBCABF00AFB9F0 /* es */,
+				83F0E6C1287CAB4200D84594 /* pl */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

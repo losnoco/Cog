@@ -1068,6 +1068,15 @@
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
 		83ED3AC7279A91C000904199 /* hdcdLogoTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = hdcdLogoTemplate.pdf; path = Images/hdcdLogoTemplate.pdf; sourceTree = "<group>"; };
+		83F0E6A3287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/AboutWindowController.strings; sourceTree = "<group>"; };
+		83F0E6A4287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Equalizer.strings; sourceTree = "<group>"; };
+		83F0E6A5287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoInspector.strings; sourceTree = "<group>"; };
+		83F0E6A6287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		83F0E6A7287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/OpenURLPanel.strings; sourceTree = "<group>"; };
+		83F0E6A8287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/FileTree.strings; sourceTree = "<group>"; };
+		83F0E6A9287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/SpectrumWindow.strings; sourceTree = "<group>"; };
+		83F0E6AA287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/SpotlightPanel.strings; sourceTree = "<group>"; };
+		83F0E6AB287CAB3800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Feedback.strings; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -2088,6 +2097,7 @@
 				fr,
 				he,
 				ja,
+				pl,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			packageReferences = (
@@ -2859,6 +2869,7 @@
 				83BC5AB720E4C91400631CD4 /* Base */,
 				83BC5AD220E4D0B400631CD4 /* es */,
 				83BC5AD420E4D0B600631CD4 /* en */,
+				83F0E6A8287CAB3800D84594 /* pl */,
 			);
 			name = FileTree.xib;
 			sourceTree = "<group>";
@@ -2869,6 +2880,7 @@
 				83BC5AB520E4C91200631CD4 /* Base */,
 				83BC5AC620E4D04600631CD4 /* en */,
 				83BC5AC820E4D05A00631CD4 /* es */,
+				83F0E6A6287CAB3800D84594 /* pl */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -2879,6 +2891,7 @@
 				83BC5AB620E4C91300631CD4 /* Base */,
 				83BC5ACE20E4D09700631CD4 /* es */,
 				83BC5AD020E4D09800631CD4 /* en */,
+				83F0E6A7287CAB3800D84594 /* pl */,
 			);
 			name = OpenURLPanel.xib;
 			sourceTree = "<group>";
@@ -2889,6 +2902,7 @@
 				83BC5AB820E4C91400631CD4 /* Base */,
 				83BC5AD620E4D0D800631CD4 /* es */,
 				83BC5AD820E4D0D900631CD4 /* en */,
+				83F0E6AA287CAB3800D84594 /* pl */,
 			);
 			name = SpotlightPanel.xib;
 			sourceTree = "<group>";
@@ -2899,6 +2913,7 @@
 				83BC5AB420E4C91100631CD4 /* Base */,
 				83BC5ACA20E4D07200631CD4 /* es */,
 				83BC5ACC20E4D07700631CD4 /* en */,
+				83F0E6A5287CAB3800D84594 /* pl */,
 			);
 			name = InfoInspector.xib;
 			sourceTree = "<group>";
@@ -2909,6 +2924,7 @@
 				83BC5AB920E4C91500631CD4 /* Base */,
 				83BC5ADA20E4D0E900631CD4 /* en */,
 				83BC5ADC20E4D0EC00631CD4 /* es */,
+				83F0E6AB287CAB3800D84594 /* pl */,
 			);
 			name = Feedback.xib;
 			sourceTree = "<group>";
@@ -2928,6 +2944,7 @@
 				830C37A027B95E3000E02BB0 /* Base */,
 				839614A8286EDA0400D3EEDB /* en */,
 				839614AA286EDA0600D3EEDB /* es */,
+				83F0E6A4287CAB3800D84594 /* pl */,
 			);
 			name = Equalizer.xib;
 			sourceTree = "<group>";
@@ -2938,6 +2955,7 @@
 				839614A1286ED97200D3EEDB /* Base */,
 				839614A4286ED98600D3EEDB /* en */,
 				839614A6286ED98800D3EEDB /* es */,
+				83F0E6A3287CAB3800D84594 /* pl */,
 			);
 			name = AboutWindowController.xib;
 			sourceTree = "<group>";
@@ -2948,6 +2966,7 @@
 				839614AC286EDA5C00D3EEDB /* Base */,
 				839614AF286EDA6800D3EEDB /* en */,
 				839614B1286EDA6E00D3EEDB /* es */,
+				83F0E6A9287CAB3800D84594 /* pl */,
 			);
 			name = SpectrumWindow.xib;
 			sourceTree = "<group>";
