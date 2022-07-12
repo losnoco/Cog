@@ -108,7 +108,7 @@
 "209.headerCell.title" = "#";
 
 /* Class = "NSMenuItem"; title = "Check for Updates..."; ObjectID = "302"; */
-"302.title" = "Check for Updates...";
+"302.title" = "Проверить обновления...";
 
 /* Class = "NSMenuItem"; title = "Send Feedback..."; ObjectID = "303"; */
 "303.title" = "Отправить обратную связь...";
