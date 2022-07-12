@@ -499,7 +499,7 @@
 		}
 	} else {
 		// Past the end of the file.
-		if(totalFrames <= _framesDecoded) {
+		if([_source seekable] && totalFrames <= _framesDecoded) {
 			return YES;
 		}
 	}
