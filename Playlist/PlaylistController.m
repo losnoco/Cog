@@ -1221,27 +1221,13 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (NSArray *)filterPlaylistOnAlbum:(NSString *)album {
-	NSPredicate *hasUrlPredicate = [NSPredicate predicateWithFormat:@"urlString != nil && urlString != %@", @""];
-	NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
-	
-	NSPredicate *searchPredicate;
+	NSPredicate *predicate;
 	if([album length] > 0)
-		searchPredicate = [NSPredicate predicateWithFormat:@"album == %@", album];
+		predicate = [NSPredicate predicateWithFormat:@"album == %@", album];
 	else
-		searchPredicate = [NSPredicate predicateWithFormat:@"album == nil || album == %@", @""];
+		predicate = [NSPredicate predicateWithFormat:@"album == nil || album == %@", @""];
 
-	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, hasUrlPredicate, searchPredicate]];
-
-	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"index" ascending:YES];
-
-	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
-	request.predicate = predicate;
-	request.sortDescriptors = @[sortDescriptor];
-
-	NSError *error = nil;
-	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
-
-	return results;
+	return [[self arrangedObjects] filteredArrayUsingPredicate:predicate];
 }
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe {
