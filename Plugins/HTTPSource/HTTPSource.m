@@ -528,12 +528,12 @@ static void http_stream_reset(HTTPSource *fp) {
 			curl_slist_free_all(headers);
 			curl_slist_free_all(ok_aliases);
 		}
-		self->curl = NULL;
 		curl_easy_cleanup(curl);
 
 		[mutex lock];
 		if(self->status == STATUS_ABORTED) {
 			DLog(@"curl: thread ended due to abort signal");
+			self->curl = NULL;
 		} else {
 			DLog(@"curl: thread ended normally");
 			self->status = STATUS_FINISHED;
@@ -731,7 +731,7 @@ static void http_stream_reset(HTTPSource *fp) {
 - (void)close {
 	need_abort = YES;
 	content_type = nil;
-	while(curl != NULL) {
+	while(curl != NULL && status != STATUS_FINISHED) {
 		usleep(3000);
 	}
 }
