@@ -201,7 +201,7 @@ class decoder_impl {
 	}
 
 	// decode a block of data and overlap-add it into outbuf
-	void buffered_decode(float *input) {
+	void buffered_decode(const float *input) {
 		// demultiplex and apply window function
 		vDSP_vspdp(input, 2, &lt[0], 1, N);
 		vDSP_vspdp(input + 1, 2, &rt[0], 1, N);
