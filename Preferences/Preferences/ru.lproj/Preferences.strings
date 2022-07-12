@@ -21,7 +21,7 @@
 "200.title" = "Следующий:";
 
 /* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
-"207.title" = "Automatically check for updates on startup";
+"207.title" = "Автоматически проверять обновления при запуске";
 
 /* Class = "NSTextFieldCell"; title = "Output Device: "; ObjectID = "211"; */
 "211.title" = "Устройство воспроизведения: ";
