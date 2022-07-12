@@ -410,6 +410,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 - (BOOL)areAllPathsSafe:(NSArray *)urls {
 	for(NSURL *url in urls) {
+		if(![url isFileURL]) continue;
 		if(![self recursivePathTest:url]) {
 			return NO;
 		}
