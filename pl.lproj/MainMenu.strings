@@ -107,7 +107,7 @@
 /* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "209"; */
 "209.headerCell.title" = "#";
 
-/* Class = "NSMenuItem"; title = "sprawdź, czy jest nowa wersja..."; ObjectID = "302"; */...";
+/* Class = "NSMenuItem"; title = "sprawdź, czy jest nowa wersja..."; ObjectID = "302"; */
 "302.title" = "sprawdź, czy jest nowa wersja...";
 
 /* Class = "NSMenuItem"; title = "send feedback..."; ObjectID = "303"; */
@@ -180,7 +180,7 @@
 "1064.title" = "pokaż w finderze";
 
 /* Class = "NSMenuItem"; title = "Show All Songs"; ObjectID = "1132"; */
-"1132.title" = "pokaż wszystkie piosenki";tunek
+"1132.title" = "pokaż wszystkie piosenki"; /*tunek*/
 
 /* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1135"; */
 "1135.title" = "pokaż w finderze";
@@ -284,8 +284,8 @@
 /* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[3] = "Next"; ObjectID = "1538"; */
 "1538.ibShadowedToolTips[3]" = "następne";
 
-/* Class = "NSToolbarItem"; label = "Playback con""; ObjectID = "1539"; */
-"1539.label" = "kontrola odtwarzania;
+/* Class = "NSToolbarItem"; label = "Playback con"; ObjectID = "1539"; */
+"1539.label" = "kontrola odtwarzania";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Playback Control"; ObjectID = "1539"; */
 "1539.paletteLabel" = "kontrola odtwarzania";
@@ -303,7 +303,7 @@
 "1568.label" = "Przesłuchano:";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "1568"; */
-"1568.paletteLabel" =przesłuchano";
+"1568.paletteLabel" = "przesłuchano";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "All"; ObjectID = "1576"; */
 "1576.ibShadowedDisplayName" = "All";
@@ -552,7 +552,7 @@
 "2429.label" = "inspektor informacji o pliku";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "2429"; */
-"2429.paletteLabel" = inspektor informacji o plikó"";
+"2429.paletteLabel" = "inspektor informacji o plikó";
 
 /* Class = "NSMenuItem"; title = "Shuffle"; ObjectID = "2438"; */
 "2438.title" = "losowo";
