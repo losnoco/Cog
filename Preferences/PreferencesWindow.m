@@ -28,7 +28,7 @@
 - (instancetype)initWithPreferencePanes:(NSArray<id<PreferencePane>> *)panes {
 	NSWindowStyleMask windowStyleMask =
 	(NSWindowStyleMaskClosable | NSWindowStyleMaskTitled);
-	self = [super initWithContentRect:NSMakeRect(0, 0, 530, 300)
+	self = [super initWithContentRect:NSMakeRect(0, 0, 640, 300)
 	                        styleMask:windowStyleMask
 	                          backing:NSBackingStoreBuffered
 	                            defer:NO];

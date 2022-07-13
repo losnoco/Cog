@@ -54,7 +54,7 @@
 "260.title" = "When opening files:";
 
 /* Class = "NSTextFieldCell"; title = "When opening file with ⇧ or ⌃⌘ held:"; ObjectID = "262"; */
-"262.title" = "When opening file with ⇧ or ⌃⌘ held:";
+"262.title" = "When opening file                with ⇧ or ⌃⌘ held:";
 
 /* Class = "NSButtonCell"; title = "Read CUE sheets when adding folders to playlist"; ObjectID = "311"; */
 "311.title" = "Read CUE sheets when adding folders to playlist";
