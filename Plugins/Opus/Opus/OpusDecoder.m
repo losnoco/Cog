@@ -152,25 +152,26 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 			char *name, *value;
 			if(FLAC__metadata_object_vorbiscomment_entry_to_name_value_pair(entry, &name, &value)) {
 				NSString *tagName = guess_encoding_of_string(name);
-				NSString *tagValue = guess_encoding_of_string(value);
 				free(name);
-				free(value);
 
 				tagName = [tagName lowercaseString];
 
 				if([tagName isEqualToString:@"metadata_block_picture"]) {
 					OpusPictureTag _pic = { 0 };
-					if(opus_picture_tag_parse(&_pic, [tagValue UTF8String]) >= 0) {
+					if(opus_picture_tag_parse(&_pic, value) >= 0) {
 						if(_pic.format == OP_PIC_FORMAT_PNG ||
 						   _pic.format == OP_PIC_FORMAT_JPEG ||
-						   _pic.format == OP_PIC_FORMAT_GIF) {
+						   _pic.format == OP_PIC_FORMAT_GIF ||
+						   _pic.format == OP_PIC_FORMAT_UNKNOWN) {
 							_albumArt = [NSData dataWithBytes:_pic.data length:_pic.data_length];
 						}
-						opus_picture_tag_clear(&_pic);
 					}
+					opus_picture_tag_clear(&_pic);
 				} else {
-					setDictionary(_metaDict, tagName, tagValue);
+					setDictionary(_metaDict, tagName, guess_encoding_of_string(value));
 				}
+
+				free(value);
 			}
 		}
 
