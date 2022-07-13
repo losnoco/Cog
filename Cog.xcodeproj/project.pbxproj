@@ -1072,6 +1072,7 @@
 		83BC5ADA20E4D0E900631CD4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Feedback.strings; sourceTree = "<group>"; };
 		83BC5ADC20E4D0EC00631CD4 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Feedback.strings; sourceTree = "<group>"; };
 		83D0380E24A40DF2004CF90F /* CogAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = CogAssets.xcassets; sourceTree = "<group>"; };
+		83D2E23D287ED5ED00DD441F /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pl; path = pl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AdPlug.xcodeproj; path = Plugins/AdPlug/AdPlug.xcodeproj; sourceTree = "<group>"; };
 		83E5E54A18087CA5001F3284 /* miniModeOffTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOffTemplate.pdf; path = Images/miniModeOffTemplate.pdf; sourceTree = "<group>"; };
 		83E5E54B18087CA5001F3284 /* miniModeOnTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = miniModeOnTemplate.pdf; path = Images/miniModeOnTemplate.pdf; sourceTree = "<group>"; };
@@ -2873,6 +2874,7 @@
 				0A1B412D286F6301008A6A44 /* es */,
 				0A1B412F286F6307008A6A44 /* en */,
 				491C55BF287AA4B6007D96F5 /* ru */,
+				83D2E23D287ED5ED00DD441F /* pl */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
