@@ -55,10 +55,10 @@ index 11eee51a98..9e199eb56f 100644
 -    memcpy(frame->extended_data[0], s->decoder_buffer + input_offset,
 -           avctx->ch_layout.nb_channels * frame->nb_samples *
 -           av_get_bytes_per_sample(avctx->sample_fmt));
-+    const int count = avctx->channels * avctx->frame_size;
++    const int count = avctx->ch_layout.nb_channels * frame->nb_samples;
 +    const float scale = 1.0f / (float)0x800000;
 +    s->fmt_conv.int32_to_float_fmul_scalar((float *) frame->extended_data[0],
-+                                           (INT_PCM *) s->decoder_buffer,
++                                           (INT_PCM *)s->decoder_buffer + input_offset,
 +                                           scale, count);
  
      *got_frame_ptr = 1;

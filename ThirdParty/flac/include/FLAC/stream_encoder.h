@@ -991,10 +991,6 @@ FLAC_API FLAC__bool FLAC__stream_encoder_set_max_lpc_order(FLAC__StreamEncoder *
  *  coefficients, or \c 0 to let the encoder select it based on the
  *  blocksize.
  *
- * \note
- * In the current implementation, qlp_coeff_precision + bits_per_sample must
- * be less than 32.
- *
  * \default \c 0
  * \param  encoder  An encoder instance to set.
  * \param  value    See above.
@@ -1201,6 +1197,24 @@ FLAC_API FLAC__bool FLAC__stream_encoder_set_total_samples_estimate(FLAC__Stream
  *    \a num_blocks > 65535 if encoding to Ogg FLAC, else \c true.
  */
 FLAC_API FLAC__bool FLAC__stream_encoder_set_metadata(FLAC__StreamEncoder *encoder, FLAC__StreamMetadata **metadata, uint32_t num_blocks);
+
+/** Set to \c true to make the encoder not output frames which contain
+ *  only constant subframes. This is beneficial for streaming
+ *  applications: very small frames can cause problems with buffering
+ *  as bitrates can drop as low 1kbit/s for CDDA audio encoded within
+ *  subset. The minimum bitrate for a FLAC file encoded with this
+ *  function used is raised to 1bit/sample (i.e. 48kbit/s for 48kHz
+ *  material).
+ *
+ * \default \c false
+ * \param  encoder  An encoder instance to set.
+ * \param  value    Flag value (see above).
+ * \assert
+ *    \code encoder != NULL \endcode
+ * \retval FLAC__bool
+ *    \c false if the encoder is already initialized, else \c true.
+ */
+FLAC_API FLAC__bool FLAC__stream_encoder_set_limit_min_bitrate(FLAC__StreamEncoder *encoder, FLAC__bool value);
 
 /** Get the current encoder state.
  *
@@ -1429,6 +1443,16 @@ FLAC_API uint32_t FLAC__stream_encoder_get_rice_parameter_search_dist(const FLAC
  */
 FLAC_API FLAC__uint64 FLAC__stream_encoder_get_total_samples_estimate(const FLAC__StreamEncoder *encoder);
 
+/** Get the "limit_min_bitrate" flag.
+ *
+ * \param  encoder  An encoder instance to query.
+ * \assert
+ *    \code encoder != NULL \endcode
+ * \retval FLAC__bool
+ *    See FLAC__stream_encoder_set_limit_min_bitrate().
+ */
+FLAC_API FLAC__bool FLAC__stream_encoder_get_limit_min_bitrate(const FLAC__StreamEncoder *encoder);
+
 /** Initialize the encoder instance to encode native FLAC streams.
  *
  *  This flavor of initialization sets up the encoder to encode to a
@@ -1633,10 +1657,13 @@ FLAC_API FLAC__StreamEncoderInitStatus FLAC__stream_encoder_init_ogg_FILE(FLAC__
 /** Initialize the encoder instance to encode native FLAC files.
  *
  *  This flavor of initialization sets up the encoder to encode to a plain
- *  FLAC file.  If POSIX fopen() semantics are not sufficient (for example,
- *  with Unicode filenames on Windows), you must use
+ *  FLAC file.  If POSIX fopen() semantics are not sufficient you must use
  *  FLAC__stream_encoder_init_FILE(), or FLAC__stream_encoder_init_stream()
  *  and provide callbacks for the I/O.
+ *
+ *  On Windows, filename must be a UTF-8 encoded filename, which libFLAC
+ *  internally translates to a appropriate representation to use with
+ *  _wfopen
  *
  *  This function should be called after FLAC__stream_encoder_new() and
  *  FLAC__stream_encoder_set_*() but before FLAC__stream_encoder_process()
@@ -1665,10 +1692,13 @@ FLAC_API FLAC__StreamEncoderInitStatus FLAC__stream_encoder_init_file(FLAC__Stre
 /** Initialize the encoder instance to encode Ogg FLAC files.
  *
  *  This flavor of initialization sets up the encoder to encode to a plain
- *  Ogg FLAC file.  If POSIX fopen() semantics are not sufficient (for example,
- *  with Unicode filenames on Windows), you must use
+ *  Ogg FLAC file.  If POSIX fopen() semantics are not sufficient, you must use
  *  FLAC__stream_encoder_init_ogg_FILE(), or FLAC__stream_encoder_init_ogg_stream()
  *  and provide callbacks for the I/O.
+ *
+ *  On Windows, filename must be a UTF-8 encoded filename, which libFLAC
+ *  internally translates to a appropriate representation to use with
+ *  _wfopen
  *
  *  This function should be called after FLAC__stream_encoder_new() and
  *  FLAC__stream_encoder_set_*() but before FLAC__stream_encoder_process()
