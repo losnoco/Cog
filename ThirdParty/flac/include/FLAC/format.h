@@ -113,19 +113,17 @@ extern "C" {
 
 /** The maximum sample resolution permitted by libFLAC.
  *
- * \warning
  * FLAC__MAX_BITS_PER_SAMPLE is the limit of the FLAC format.  However,
- * the reference encoder/decoder is currently limited to 24 bits because
- * of prevalent 32-bit math, so make sure and use this value when
- * appropriate.
+ * the reference encoder/decoder used to be limited to 24 bits. This
+ * value was used to signal that limit.
  */
-#define FLAC__REFERENCE_CODEC_MAX_BITS_PER_SAMPLE (24u)
+#define FLAC__REFERENCE_CODEC_MAX_BITS_PER_SAMPLE (32u)
 
 /** The maximum sample rate permitted by the format.  The value is
  *  ((2 ^ 16) - 1) * 10; see <A HREF="../format.html">FLAC format</A>
  *  as to why.
  */
-#define FLAC__MAX_SAMPLE_RATE (655350u)
+#define FLAC__MAX_SAMPLE_RATE (1048575u)
 
 /** The maximum LPC order permitted by the format. */
 #define FLAC__MAX_LPC_ORDER (32u)
@@ -282,14 +280,24 @@ extern FLAC_API const char * const FLAC__SubframeTypeString[];
 /** CONSTANT subframe.  (c.f. <A HREF="../format.html#subframe_constant">format specification</A>)
  */
 typedef struct {
-	FLAC__int32 value; /**< The constant signal value. */
+	FLAC__int64 value; /**< The constant signal value. */
 } FLAC__Subframe_Constant;
+
+/** An enumeration of the possible verbatim subframe data types. */
+typedef enum {
+	FLAC__VERBATIM_SUBFRAME_DATA_TYPE_INT32, /**< verbatim subframe has 32-bit int */
+	FLAC__VERBATIM_SUBFRAME_DATA_TYPE_INT64 /**< verbatim subframe has 64-bit int */
+} FLAC__VerbatimSubframeDataType;
 
 
 /** VERBATIM subframe.  (c.f. <A HREF="../format.html#subframe_verbatim">format specification</A>)
  */
 typedef struct {
-	const FLAC__int32 *data; /**< A pointer to verbatim signal. */
+	union {
+		const FLAC__int32 *int32; /**< A FLAC__int32 pointer to verbatim signal. */
+		const FLAC__int64 *int64; /**< A FLAC__int64 pointer to verbatim signal. */
+	} data;
+	FLAC__VerbatimSubframeDataType data_type;
 } FLAC__Subframe_Verbatim;
 
 
@@ -302,7 +310,7 @@ typedef struct {
 	uint32_t order;
 	/**< The polynomial order. */
 
-	FLAC__int32 warmup[FLAC__MAX_FIXED_ORDER];
+	FLAC__int64 warmup[FLAC__MAX_FIXED_ORDER];
 	/**< Warmup samples to prime the predictor, length == order. */
 
 	const FLAC__int32 *residual;
@@ -328,7 +336,7 @@ typedef struct {
 	FLAC__int32 qlp_coeff[FLAC__MAX_LPC_ORDER];
 	/**< FIR filter coefficients. */
 
-	FLAC__int32 warmup[FLAC__MAX_LPC_ORDER];
+	FLAC__int64 warmup[FLAC__MAX_LPC_ORDER];
 	/**< Warmup samples to prime the predictor, length == order. */
 
 	const FLAC__int32 *residual;

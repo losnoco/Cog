@@ -34,7 +34,7 @@ Xcode-config/DEVELOPMENT_TEAM.xcconfig
 /ThirdParty/ffmpeg/lib/libavformat.59.dylib
 /ThirdParty/ffmpeg/lib/libavutil.57.dylib
 /ThirdParty/ffmpeg/lib/libswresample.4.dylib
-/ThirdParty/flac/lib/libFLAC.8.dylib
+/ThirdParty/flac/lib/libFLAC.12.dylib
 /ThirdParty/libid3tag/lib/libid3tag.a
 /ThirdParty/libmad/lib/libmad.a
 /ThirdParty/libopenmpt/lib/libopenmpt.a
@@ -47,3 +47,5 @@ Xcode-config/DEVELOPMENT_TEAM.xcconfig
 /ThirdParty/opus/lib/libopus.0.dylib
 /ThirdParty/opusfile/lib/libopusfile.0.dylib
 /ThirdParty/speex/libspeex.a
+/ThirdParty/vorbis/lib/libvorbisfile.3.dylib
+/ThirdParty/vorbis/lib/libvorbis.0.dylib
