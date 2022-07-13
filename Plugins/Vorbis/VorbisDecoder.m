@@ -132,14 +132,12 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 			char *name, *value;
 			if(FLAC__metadata_object_vorbiscomment_entry_to_name_value_pair(entry, &name, &value)) {
 				NSString *tagName = guess_encoding_of_string(name);
-				NSString *tagValue = guess_encoding_of_string(value);
 				free(name);
-				free(value);
 
 				tagName = [tagName lowercaseString];
 
 				if([tagName isEqualToString:@"metadata_block_picture"]) {
-					flac_picture_t *picture = flac_picture_parse_from_base64([tagValue UTF8String]);
+					flac_picture_t *picture = flac_picture_parse_from_base64(value);
 					if(picture) {
 						if(picture->binary && picture->binary_length) {
 							_albumArt = [NSData dataWithBytes:picture->binary length:picture->binary_length];
@@ -147,8 +145,10 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 						flac_picture_free(picture);
 					}
 				} else {
-					setDictionary(_metaDict, tagName, tagValue);
+					setDictionary(_metaDict, tagName, guess_encoding_of_string(value));
 				}
+
+				free(value);
 			}
 		}
 
