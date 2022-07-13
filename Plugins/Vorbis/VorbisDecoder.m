@@ -157,8 +157,10 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 			metaDict = _metaDict;
 			albumArt = _albumArt;
 
-			[self willChangeValueForKey:@"metadata"];
-			[self didChangeValueForKey:@"metadata"];
+			if(![source seekable]) {
+				[self willChangeValueForKey:@"metadata"];
+				[self didChangeValueForKey:@"metadata"];
+			}
 		}
 	}
 }
