@@ -847,6 +847,23 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)insertObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
+	// Special case, somehow someone is undoing while a search filter is in place
+	__block NSUInteger index = NSNotFound;
+	[indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+		if(range.location < index) {
+			index = range.location;
+		}
+	}];
+	NSUInteger count = [[self content] count];
+	if(index > count) {
+		// Ah, oops, bodge fix
+		__block NSMutableIndexSet *replacementIndexes = [[NSMutableIndexSet alloc] init];
+		[indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+			[replacementIndexes addIndexesInRange:NSMakeRange(range.location - index + count, range.length)];
+		}];
+		indexes = replacementIndexes;
+	}
+
 	[[[self undoManager] prepareWithInvocationTarget:self]
 	removeObjectsAtIndexes:[self disarrangeIndexes:indexes]];
 	NSString *actionName =
