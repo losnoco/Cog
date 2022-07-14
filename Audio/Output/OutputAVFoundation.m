@@ -254,7 +254,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		currentPtsLock = [[NSLock alloc] init];
 
 #ifdef OUTPUT_LOG
-		_logFile = fopen("/tmp/CogAudioLog.raw", "wb");
+		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];
+		_logFile = fopen([logName UTF8String], "wb");
 #endif
 	}
 
@@ -836,6 +837,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 			CMBlockBufferRef blockBuffer = nil;
 			size_t dataByteSize = samplesRendered * sizeof(float) * streamFormat.mChannelsPerFrame;
+
+#ifdef OUTPUT_LOG
+			fwrite(samplePtr, 1, dataByteSize, _logFile);
+#endif
 
 			status = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, nil, dataByteSize, kCFAllocatorDefault, nil, 0, dataByteSize, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
 
