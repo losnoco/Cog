@@ -306,6 +306,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		enableHrtf = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHrtf"];
 		if(streamFormatStarted)
 			[self updateStreamFormat];
+	} else if([keyPath isEqualToString:@"values.enableFSurround"]) {
+		enableFSurround = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableFSurround"];
+		if(streamFormatStarted)
+			[self updateStreamFormat];
 	}
 }
 
@@ -613,7 +617,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	} else {
 		fsurround = nil;
 	}
-	
+
 	/* Apple's audio processor really only supports common 1-8 channel formats */
 	if(enableHrtf || channels > 8 || ((channelConfig & ~(AudioConfig6Point1|AudioConfig7Point1)) != 0)) {
 		NSURL *presetUrl = [[NSBundle mainBundle] URLForResource:@"SADIE_D02-96000" withExtension:@"mhr"];
@@ -625,7 +629,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	} else {
 		hrtf = nil;
 	}
-	
+
 	streamFormat = realStreamFormat;
 	streamFormat.mChannelsPerFrame = channels;
 	streamFormat.mBytesPerFrame = sizeof(float) * channels;
@@ -895,8 +899,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		audioFormatDescription = NULL;
 		
-		enableFSurround = YES;
-
 		running = NO;
 		stopping = NO;
 		stopped = NO;
@@ -997,6 +999,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kOutputAVFoundationContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputAVFoundationContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHrtf" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputAVFoundationContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableFSurround" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputAVFoundationContext];
 		observersapplied = YES;
 
 		[renderSynchronizer addRenderer:audioRenderer];
@@ -1118,6 +1121,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kOutputAVFoundationContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputAVFoundationContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHrtf" context:kOutputAVFoundationContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableFSurround" context:kOutputAVFoundationContext];
 			observersapplied = NO;
 		}
 		stopping = YES;

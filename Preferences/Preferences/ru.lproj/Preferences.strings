@@ -232,3 +232,6 @@
 
 /* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "zaI-0m-tQf"; */
 "zaI-0m-tQf.title" = "hh:mm:ss.ms";
+
+/* Class = "NSButtonCell"; title = "Enable FreeSurround stereo to surround upmixing"; ObjectID = "F0i-UK-6Nu"; */
+"F0i-UK-6Nu.title" = "Enable FreeSurround stereo to surround upmixing";

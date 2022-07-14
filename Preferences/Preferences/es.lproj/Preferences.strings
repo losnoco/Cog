@@ -249,3 +249,6 @@
 
 /* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
 "207.title" = "Buscar actualizaciones al abrir";
+
+/* Class = "NSButtonCell"; title = "Enable FreeSurround stereo to surround upmixing"; ObjectID = "F0i-UK-6Nu"; */
+"F0i-UK-6Nu.title" = "Enable FreeSurround stereo to surround upmixing";

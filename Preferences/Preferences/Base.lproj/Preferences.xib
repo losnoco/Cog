@@ -207,11 +207,11 @@
             </connections>
         </customObject>
         <customView id="58" userLabel="OutputView">
-            <rect key="frame" x="0.0" y="0.0" width="640" height="130"/>
+            <rect key="frame" x="0.0" y="0.0" width="640" height="169"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="60">
-                    <rect key="frame" x="144" y="42" width="480" height="26"/>
+                    <rect key="frame" x="144" y="47" width="480" height="26"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Item1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="62" id="210">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -232,7 +232,7 @@
                     </connections>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zkP-2E-1Kc">
-                    <rect key="frame" x="17" y="20" width="123" height="17"/>
+                    <rect key="frame" x="17" y="22" width="123" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Volume Level:" id="wK4-EF-8Wa">
                         <font key="font" metaFont="system"/>
@@ -241,7 +241,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2v7-Ef-ekr">
-                    <rect key="frame" x="144" y="14" width="480" height="26"/>
+                    <rect key="frame" x="144" y="16" width="480" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="vmS-eb-zen">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -262,7 +262,7 @@
                     </connections>
                 </popUpButton>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="65">
-                    <rect key="frame" x="6" y="48" width="134" height="17"/>
+                    <rect key="frame" x="6" y="53" width="134" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Output Device: " id="211">
                         <font key="font" metaFont="system"/>
@@ -271,7 +271,7 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DhK-tx-xFv">
-                    <rect key="frame" x="18" y="93" width="492" height="18"/>
+                    <rect key="frame" x="18" y="132" width="602" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Limit volume control to 100%" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ds2-aw-ebU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -282,7 +282,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rG5-80-FId">
-                    <rect key="frame" x="18" y="71" width="492" height="18"/>
+                    <rect key="frame" x="18" y="80" width="602" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Enable HRTF filter (Not needed with AirPods or Beats)" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="NGx-0c-WVR">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -292,8 +292,19 @@
                         <binding destination="52" name="value" keyPath="values.enableHrtf" id="BD0-cP-SfB"/>
                     </connections>
                 </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SIK-tH-5VQ">
+                    <rect key="frame" x="18" y="106" width="602" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Enable FreeSurround stereo to surround upmixing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="F0i-UK-6Nu">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.enableFSurround" id="KsO-yo-8lw"/>
+                    </connections>
+                </button>
             </subviews>
-            <point key="canvasLocation" x="-151" y="330"/>
+            <point key="canvasLocation" x="-151" y="349.5"/>
         </customView>
         <customObject id="i5B-ga-Atm" userLabel="MIDIPane" customClass="MIDIPane">
             <connections>
