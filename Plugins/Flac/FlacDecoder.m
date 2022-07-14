@@ -365,12 +365,14 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = nil;
 
-	if(FLAC__stream_decoder_get_state(decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
-		return nil;
-	}
+	while (blockBufferFrames <= 0) {
+		if(FLAC__stream_decoder_get_state(decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
+			return nil;
+		}
 
-	if(!FLAC__stream_decoder_process_single(decoder)) {
-		return nil;
+		if(!FLAC__stream_decoder_process_single(decoder)) {
+			return nil;
+		}
 	}
 
 	if(blockBufferFrames > 0) {
