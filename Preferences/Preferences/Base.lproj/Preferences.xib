@@ -201,11 +201,11 @@
             <point key="canvasLocation" x="-151" y="-34"/>
         </customView>
         <customView id="50" userLabel="UpdatesView">
-            <rect key="frame" x="0.0" y="0.0" width="530" height="56"/>
+            <rect key="frame" x="0.0" y="0.0" width="640" height="56"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="51">
-                    <rect key="frame" x="18" y="19" width="299" height="18"/>
+                    <rect key="frame" x="18" y="19" width="602" height="18"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <buttonCell key="cell" type="check" title="Automatically check for updates on startup" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="207">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
