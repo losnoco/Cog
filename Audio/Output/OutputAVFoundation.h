@@ -113,6 +113,8 @@ using std::atomic_long;
 	BOOL enableFSurround;
 	FSurroundFilter *fsurround;
 
+	BOOL resetStreamFormat;
+
 	float *samplePtr;
 	float tempBuffer[512 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
