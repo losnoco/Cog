@@ -304,12 +304,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		eqPreamp = pow(10.0, preamp / 20.0);
 	} else if([keyPath isEqualToString:@"values.enableHrtf"]) {
 		enableHrtf = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHrtf"];
-		if(streamFormatStarted)
-			[self updateStreamFormat];
+		resetStreamFormat = YES;
 	} else if([keyPath isEqualToString:@"values.enableFSurround"]) {
 		enableFSurround = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableFSurround"];
-		if(streamFormatStarted)
-			[self updateStreamFormat];
+		resetStreamFormat = YES;
 	}
 }
 
@@ -606,6 +604,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 - (void)updateStreamFormat {
 	/* Set the channel layout for the audio queue */
 	streamFormatChanged = YES;
+	resetStreamFormat = NO;
 
 	uint32_t channels = realStreamFormat.mChannelsPerFrame;
 	uint32_t channelConfig = realStreamChannelConfig;
@@ -745,6 +744,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	status = CMBlockBufferCreateEmpty(kCFAllocatorDefault, 0, 0, &blockListBuffer);
 	if(status != noErr || !blockListBuffer) return 0;
+
+	if(resetStreamFormat) {
+		[self updateStreamFormat];
+	}
 
 	int inputRendered = 0;
 	int bytesRendered = 0;
@@ -898,7 +901,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		commandStop = NO;
 
 		audioFormatDescription = NULL;
-		
+
+		resetStreamFormat = NO;
+
 		running = NO;
 		stopping = NO;
 		stopped = NO;
