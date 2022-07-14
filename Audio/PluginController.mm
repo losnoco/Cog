@@ -417,8 +417,6 @@ static NSString *xmlEscapeString(NSString * string) {
     NSString * plistFooter = @"\t</array>\n\
 \t<key>CFBundleExecutable</key>\n\
 \t<string>Cog</string>\n\
-\t<key>CFBundleHelpBookFolder</key>\n\
-\t<string>Cog.help</string>\n\
 \t<key>CFBundleHelpBookName</key>\n\
 \t<string>org.cogx.cog.help</string>\n\
 \t<key>CFBundleIdentifier</key>\n\
