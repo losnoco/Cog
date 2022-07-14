@@ -14,8 +14,6 @@
 
 #import "Node.h"
 
-#define DSD_DECIMATE 1
-
 @interface ConverterNode : Node {
 	NSDictionary *rgInfo;
 
@@ -29,31 +27,16 @@
 
 	float volumeScale;
 
-	void *floatBuffer;
-	size_t floatBufferSize;
-	size_t floatSize, floatOffset;
-
-#if DSD_DECIMATE
-	void **dsd2pcm;
-	size_t dsd2pcmCount;
-	int dsd2pcmLatency;
-#endif
-
 	BOOL rememberedLossless;
 
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription floatFormat;
-	AudioStreamBasicDescription dmFloatFormat; // downmixed/upmixed float format
 
 	uint32_t inputChannelConfig;
 
 	BOOL streamFormatChanged;
 	AudioStreamBasicDescription newInputFormat;
 	uint32_t newInputChannelConfig;
-
-	AudioChunk *lastChunkIn;
-
-	void *hdcd_decoder;
 }
 
 @property AudioStreamBasicDescription inputFormat;
@@ -64,7 +47,7 @@
 - (void)cleanUp;
 
 - (void)process;
-- (int)convert:(void *)dest amount:(int)amount;
+- (AudioChunk *)convert;
 
 - (void)setRGInfo:(NSDictionary *)rgi;
 

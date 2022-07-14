@@ -14,6 +14,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DSD_DECIMATE 1
+
 @interface ChunkList : NSObject {
 	NSMutableArray<AudioChunk *> *chunkList;
 	double listDuration;
@@ -23,6 +25,26 @@ NS_ASSUME_NONNULL_BEGIN
 	BOOL inRemover;
 	BOOL inPeeker;
 	BOOL stopping;
+	
+	// For format converter
+	void *inputBuffer;
+	size_t inputBufferSize;
+
+#if DSD_DECIMATE
+	void **dsd2pcm;
+	size_t dsd2pcmCount;
+	int dsd2pcmLatency;
+#endif
+	
+	void *hdcd_decoder;
+
+	BOOL formatRead;
+	
+	AudioStreamBasicDescription inputFormat;
+	AudioStreamBasicDescription floatFormat;
+
+	uint32_t inputChannelConfig;
+	BOOL inputLossless;
 }
 
 @property(readonly) double listDuration;
@@ -37,6 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addChunk:(AudioChunk *)chunk;
 - (AudioChunk *)removeSamples:(size_t)maxFrameCount;
+
+- (AudioChunk *)removeSamplesAsFloat32:(size_t)maxFrameCount;
 
 - (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config;
 

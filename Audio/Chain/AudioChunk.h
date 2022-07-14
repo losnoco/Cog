@@ -67,6 +67,7 @@ enum {
 	uint32_t channelConfig;
 	BOOL formatAssigned;
 	BOOL lossless;
+	BOOL hdcd;
 }
 
 @property AudioStreamBasicDescription format;
@@ -92,6 +93,9 @@ enum {
 - (void)setFrameCount:(size_t)count; // For truncation only
 
 - (double)duration;
+
+- (BOOL)isHDCD;
+- (void)setHDCD;
 
 @end
 
