@@ -39,6 +39,7 @@
 - (void)writeData:(const void *_Nonnull)ptr amount:(size_t)a;
 - (void)writeChunk:(AudioChunk *_Nonnull)chunk;
 - (AudioChunk *_Nonnull)readChunk:(size_t)maxFrames;
+- (AudioChunk *_Nonnull)readChunkAsFloat32:(size_t)maxFrames;
 
 - (BOOL)peekFormat:(AudioStreamBasicDescription *_Nonnull)format channelConfig:(uint32_t *_Nonnull)config;
 

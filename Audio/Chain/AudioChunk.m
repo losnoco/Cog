@@ -18,6 +18,7 @@
 		chunkData = [[NSMutableData alloc] init];
 		formatAssigned = NO;
 		lossless = NO;
+		hdcd = NO;
 	}
 
 	return self;
@@ -187,6 +188,14 @@ static const uint32_t AudioChannelConfigTable[] = {
 		return (double)([chunkData length] / bytesPerPacket) / sampleRate;
 	}
 	return 0.0;
+}
+
+- (BOOL)isHDCD {
+	return hdcd;
+}
+
+- (void)setHDCD {
+	hdcd = YES;
 }
 
 @end
