@@ -49,21 +49,12 @@ static void _dsp_complexfree(DSPDoubleSplitComplex *cpx) {
 	free(cpx->imagp);
 }
 
-static int log2n(int n) {
-	int pow = 1;
-	while(n > 2) {
-		pow++;
-		n /= 2;
-	}
-	return pow;
-}
-
 // FreeSurround implementation
 class decoder_impl {
 	public:
 	// instantiate the decoder with a given channel setup and processing block size (in samples)
 	decoder_impl(channel_setup setup, unsigned N)
-	: N(N), log2N(log2n(N)),
+	: N(N),
 	  wnd(N), inbuf(3 * N), setup(setup), C((unsigned)chn_alloc[setup].size()),
 	  buffer_empty(true), lt(N), rt(N), dst(N), dstf(N),
 	  dftsetupF(vDSP_DFT_zrop_CreateSetupD(0, N, vDSP_DFT_FORWARD)),
@@ -92,6 +83,8 @@ class decoder_impl {
 		set_low_cutoff(40.0 / 22050);
 		set_high_cutoff(90.0 / 22050);
 		set_bass_redirection(false);
+
+		flush();
 	}
 
 	~decoder_impl() {
@@ -222,6 +215,9 @@ class decoder_impl {
 			signal[c].imagp[N/2] = 0;
 		}
 
+		bzero(signal[C - 1].realp, sizeof(double) * (N / 2 + 1));
+		bzero(signal[C - 1].imagp, sizeof(double) * (N / 2 + 1));
+
 		// compute multichannel output signal in the spectral domain
 		for(unsigned f = 1; f < N / 2; f++) {
 			// get Lt/Rt amplitudes & phases
@@ -336,7 +332,6 @@ class decoder_impl {
 
 	// constants
 	unsigned N, C; // number of samples per input/output block, number of output channels
-	unsigned log2N; // derivations of the block size
 	channel_setup setup; // the channel setup
 
 	// parameters
