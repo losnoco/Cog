@@ -229,7 +229,9 @@ static AppController *kAppController = nil;
 		request.predicate = predicate;
 
 		NSError *error = nil;
+		[playlistController.persistentContainerLock lock];
 		NSArray *results = [playlistController.persistentContainer.viewContext executeFetchRequest:request error:&error];
+		[playlistController.persistentContainerLock unlock];
 
 		if(results && [results count] == 1) {
 			PlaylistEntry *pe = results[0];
@@ -435,7 +437,9 @@ static AppController *kAppController = nil;
 
 	for(PlaylistEntry *pe in playlistController.arrangedObjects) {
 		if(pe.deLeted) {
+			[playlistController.persistentContainerLock lock];
 			[moc deleteObject:pe];
+			[playlistController.persistentContainerLock unlock];
 			continue;
 		}
 		if([artLeftovers objectForKey:pe.artHash]) {
@@ -443,9 +447,11 @@ static AppController *kAppController = nil;
 		}
 	}
 
+	[playlistController.persistentContainerLock lock];
 	for(NSString *key in artLeftovers) {
 		[moc deleteObject:[artLeftovers objectForKey:key]];
 	}
+	[playlistController.persistentContainerLock unlock];
 
 	[playlistController commitPersistentStore];
 

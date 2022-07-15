@@ -92,6 +92,10 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	return kSharedSandboxBroker;
 }
 
++ (NSLock *)sharedPersistentContainerLock {
+	return [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
+}
+
 + (NSPersistentContainer *)sharedPersistentContainer {
 	return [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 }
@@ -149,6 +153,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 - (SandboxEntry *)recursivePathTest:(NSURL *)url {
 	SandboxEntry *ret = nil;
 
+	NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 	
 	NSPredicate *folderPredicate = [NSPredicate predicateWithFormat:@"folder == NO"];
@@ -159,7 +164,9 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	request.predicate = predicate;
 	
 	NSError *error = nil;
+	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	[lock unlock];
 	if(results && [results count] > 0) {
 		ret = [[SandboxEntry alloc] initWithToken:results[0]];
 	}
@@ -174,8 +181,9 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 		request.predicate = predicate;
 
 		error = nil;
+		[lock lock];
 		results = [pc.viewContext executeFetchRequest:request error:&error];
-		if(results) results = [results copy];
+		[lock unlock];
 
 		if(results && [results count] > 0) {
 			for(SandboxToken *token in results) {
@@ -240,9 +248,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			}
 
 			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-				NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+				NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
+				NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
+				[lock lock];
 				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+				[lock unlock];
 
 				if(token) {
 					token.path = [folderUrl path];
@@ -283,10 +294,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				return;
 			}
 
-			NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+			NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
+			NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
 			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+				[lock lock];
 				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+				[lock unlock];
 
 				if(token) {
 					token.path = [url path];
@@ -335,9 +349,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						return;
 					}
 
-					NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
+					NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
+					NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
+					[lock lock];
 					SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+					[lock unlock];
 
 					if(token) {
 						token.path = [folderUrl path];
