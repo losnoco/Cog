@@ -117,10 +117,14 @@ using std::atomic_long;
 
 	float *samplePtr;
 	float tempBuffer[512 * 32];
+	float r8bTempBuffer[4096 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
 	float fsurroundBuffer[4096 * 6];
 	float hrtfBuffer[4096 * 2];
 	float eqBuffer[4096 * 32];
+
+	float visAudio[4096];
+	float visTemp[8192];
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;

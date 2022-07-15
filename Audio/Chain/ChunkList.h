@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 	uint32_t inputChannelConfig;
 	BOOL inputLossless;
+
+	uint8_t *tempData;
+	size_t tempDataSize;
 }
 
 @property(readonly) double listDuration;

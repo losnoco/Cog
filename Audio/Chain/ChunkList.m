@@ -408,6 +408,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		dsd2pcm = NULL;
 	}
 #endif
+	if(tempData) {
+		free(tempData);
+	}
 }
 
 - (void)reset {
@@ -572,22 +575,24 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	NSData *inputData = [inChunk removeSamples:samplesRead];
 
 #if DSD_DECIMATE
-	const size_t sizeFactor = 2;
+	const size_t sizeFactor = 3;
 #else
-	const size_t sizeFactor = (bitsPerSample == 1) ? 9 : 2;
+	const size_t sizeFactor = (bitsPerSample == 1) ? 9 : 3;
 #endif
-	uint8_t tempData[samplesRead * floatFormat.mBytesPerPacket * sizeFactor + 32]; // Either two buffers plus padding, and/or double precision in case of endian flip
-	
+	size_t newSize = samplesRead * floatFormat.mBytesPerPacket * sizeFactor + 64;
+	if(!tempData || tempDataSize < newSize)
+		tempData = realloc(tempData, tempDataSize = newSize); // Either two buffers plus padding, and/or double precision in case of endian flip
+
 	// double buffer system, with alignment
 	const size_t buffer_adder_base = (samplesRead * floatFormat.mBytesPerPacket + 31) & ~31;
-	
+
 	NSUInteger bytesReadFromInput = samplesRead * inputFormat.mBytesPerPacket;
-	
+
 	uint8_t *inputBuffer = (uint8_t *)[inputData bytes];
 	BOOL inputChanged = NO;
-	
+
 	BOOL hdcdSustained = NO;
-	
+
 	if(bytesReadFromInput && isBigEndian) {
 		// Time for endian swap!
 		memcpy(&tempData[0], [inputData bytes], bytesReadFromInput);
@@ -598,10 +603,11 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 	if(bytesReadFromInput && isFloat && bitsPerSample == 64) {
 		// Time for precision loss from weird inputs
+		const size_t buffer_adder = (inputBuffer == &tempData[0]) ? buffer_adder_base * 2 : 0;
 		samplesRead = bytesReadFromInput / sizeof(double);
-		convert_f64_to_f32((float *)(&tempData[0]), (const double *)inputBuffer, samplesRead);
+		convert_f64_to_f32((float *)(&tempData[buffer_adder]), (const double *)inputBuffer, samplesRead);
 		bytesReadFromInput = samplesRead * sizeof(float);
-		inputBuffer = (uint8_t *)(&tempData[0]);
+		inputBuffer = &tempData[buffer_adder];
 		inputChanged = YES;
 		bitsPerSample = 32;
 	}
