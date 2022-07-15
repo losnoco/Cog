@@ -926,6 +926,10 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		[playlistController readQueueFromDataStore];
 		[playlistController readShuffleListFromDataStore];
 
+		if(!dataMigrated && [results count]) {
+			[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:results];
+		}
+
 		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"metadataMigrated"];
 
 		return YES;
