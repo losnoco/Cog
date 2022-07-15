@@ -26,6 +26,7 @@
 
 - (uint32_t)channelCount;
 - (uint32_t)channelConfig;
+- (double)srate;
 
 - (void)process:(const float *)samplesIn output:(float *)samplesOut count:(uint32_t)count;
 
