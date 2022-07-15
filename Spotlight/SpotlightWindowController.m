@@ -37,7 +37,7 @@ static NSPredicate *musicOnlyPredicate = nil;
 	[NSValueTransformer setValueTransformer:authorToArtistTransformer forName:@"AuthorToArtistTransformer"];
 
 	NSValueTransformer *pathToURLTransformer = [[PathToURLTransformer alloc] init];
-	[NSValueTransformer setValueTransformer:pathToURLTransformer forName:@"PathToURLTransformers"];
+	[NSValueTransformer setValueTransformer:pathToURLTransformer forName:@"PathToURLTransformer"];
 
 	NSValueTransformer *stringToSearchScopeTransformer = [[StringToSearchScopeTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:stringToSearchScopeTransformer forName:@"StringToSearchScopeTransformer"];
