@@ -1,21 +1,21 @@
 Built with the Arch Linux defaults, sort of:
 
 ```
-patch -Np1 -i 10_utf16.diff
-patch -Np1 -i 11_unknown_encoding.diff
-patch -Np0 -i CVE-2008-2109.patch
-patch -Np1 -i libid3tag-gperf.patch
-rm compat.c frametype.c
+patch -Np1 -i libid3tag-0.16.1.bugfix.patch
 
-touch NEWS
-touch AUTHORS
-touch ChangeLog
+cmake -B build.x86 -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" -DBUILD_SHARED_LIBS=OFF
+cmake -B build.arm -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0" -DBUILD_SHARED_LIBS=OFF
 
-autoreconf -fiv
-./configure
-make -j8 CFLAGS="-Os -arch x86_64 -arch arm64 -mmacosx-version-min=10.12" LDFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.12"
+cd build.x86
+make -j8
+cd ..
+
+cd build.arm
+make -j8
+cd ..
+
+mkdir out.release
+lipo -create -output out.release/libid3tag.a build.x86/libid3tag.a build.arm/libid3tag.a
 ```
 
-Version 0.15.1b was used, with Arch Linux patches. I also had to tweak
-the compat.c and frametype.c to change the function definitions to match
-the gperf patch used above.
+Version 0.16.1 was used, with a patch to fix a crash bug on invalid tags.
