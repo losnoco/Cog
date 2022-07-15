@@ -63,8 +63,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 - (int)renderInput:(int)amountToRead toBuffer:(float *)buffer {
 	int amountRead = 0;
 
-	float visAudio[amountToRead]; // Chunk size
-
 	if(stopping == YES || [outputController shouldContinue] == NO) {
 		// Chain is dead, fill out the serial number pointer forever with silence
 		stopping = YES;
@@ -151,7 +149,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		[visController postSampleRate:44100.0];
 
-		float visTemp[8192];
 		if(newFormat.mSampleRate != 44100.0) {
 			if(newFormat.mSampleRate != lastVisRate) {
 				if(r8bvis) {
@@ -768,8 +765,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		if([self processEndOfStream]) break;
 	} while(inputRendered < 4096);
 
-	float tempBuffer[4096 * 32];
-
 	int samplesRenderedTotal = 0;
 
 	for(size_t i = 0; i < 2;) {
@@ -781,7 +776,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				continue;
 			}
 			[currentPtsLock lock];
-			samplesRendered = r8bstate_flush(r8bold, &tempBuffer[0], 4096);
+			samplesRendered = r8bstate_flush(r8bold, &r8bTempBuffer[0], 4096);
 			[currentPtsLock unlock];
 			if(!samplesRendered) {
 				r8bstate_delete(r8bold);
@@ -790,7 +785,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				++i;
 				continue;
 			}
-			samplePtr = &tempBuffer[0];
+			samplePtr = &r8bTempBuffer[0];
 		} else {
 			samplesRendered = inputRendered;
 			samplePtr = &inputBuffer[0];

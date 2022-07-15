@@ -211,9 +211,7 @@
 }
 
 - (void)launchThread {
-	NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(threadEntry:) object:nil];
-	[thread setStackSize:1024 * 1024]; // Dammit, this new code makes the nodes overflow the stack size, so let's double the stack
-	[thread start];
+	[NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
 }
 
 - (void)setPreviousNode:(id)p {
