@@ -32,12 +32,15 @@
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES];
 	[self setSortDescriptors:@[sortDescriptor]];
 
+	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 
 	NSError *error = nil;
+	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	[lock unlock];
 
 	if(results && [results count] > 0) {
 		for(SandboxToken *token in results) {
@@ -57,14 +60,19 @@
 		return;
 	}
 
+	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
+	[lock lock];
 	SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+	[lock unlock];
 
 	if(token) {
 		token.path = [url path];
 		token.bookmark = bookmark;
+		[lock lock];
 		[pc.viewContext save:&err];
+		[lock unlock];
 		if(err) {
 			ALog(@"Error saving bookmark: %@", [err localizedDescription]);
 		} else {
@@ -74,6 +82,7 @@
 }
 
 - (void)removeToken:(id)token {
+	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	NSArray *objects = [[self arrangedObjects] copy];
@@ -83,7 +92,9 @@
 	for(NSDictionary *obj in objects) {
 		if([[obj objectForKey:@"token"] isEqualTo:token]) {
 			[self removeObject:obj];
+			[lock lock];
 			[pc.viewContext deleteObject:token];
+			[lock unlock];
 			updated = YES;
 			break;
 		}
@@ -91,7 +102,9 @@
 
 	if(updated) {
 		NSError *error;
+		[lock lock];
 		[pc.viewContext	save:&error];
+		[lock unlock];
 		if(error) {
 			ALog(@"Error deleting bookmark: %@", [error localizedDescription]);
 		}
@@ -100,17 +113,22 @@
 
 - (void)removeStaleEntries {
 	BOOL updated = NO;
+	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 	for(NSDictionary *entry in [[self arrangedObjects] copy]) {
 		if([[entry objectForKey:@"valid"] isEqualToString:NSLocalizedPrefString(@"ValidNo")]) {
 			[self removeObject:entry];
+			[lock lock];
 			[pc.viewContext deleteObject:[entry objectForKey:@"token"]];
+			[lock unlock];
 			updated = YES;
 		}
 	}
 	if(updated) {
 		NSError *error;
+		[lock lock];
 		[pc.viewContext save:&error];
+		[lock unlock];
 		if(error) {
 			ALog(@"Error saving after removing stale bookmarks: %@", [error localizedDescription]);
 		}

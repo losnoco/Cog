@@ -30,6 +30,8 @@
 
 extern BOOL kAppControllerShuttingDown;
 
+NSLock *kPersistentContainerLock = nil;
+
 NSPersistentContainer *kPersistentContainer = nil;
 
 @implementation PlaylistController
@@ -124,6 +126,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}];
 
 	kPersistentContainer = self.persistentContainer;
+	
+	_persistentContainerLock = [[NSLock alloc] init];
+	
+	kPersistentContainerLock = self.persistentContainerLock;
 
 	self.persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
 
@@ -135,6 +141,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 + (NSPersistentContainer *)sharedPersistentContainer {
 	return kPersistentContainer;
+}
+
++ (NSLock *)sharedPersistentContainerLock {
+	return kPersistentContainerLock;
 }
 
 - (void)awakeFromNib {
@@ -240,7 +250,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 - (void)commitPersistentStore {
 	NSError *error = nil;
+	[self.persistentContainerLock lock];
 	[self.persistentContainer.viewContext save:&error];
+	[self.persistentContainerLock unlock];
 	if(error) {
 		ALog(@"Error committing playlist storage: %@", [error localizedDescription]);
 	}
@@ -256,7 +268,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pc.count += 1;
 		pc.lastPlayed = [NSDate date];
 	} else {
+		[self.persistentContainerLock lock];
 		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+		[self.persistentContainerLock unlock];
 		pc.count = 1;
 		pc.firstSeen = pc.lastPlayed = [NSDate date];
 		pc.album = pe.album;
@@ -272,7 +286,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	PlayCount *pc = pe.playCountItem;
 
 	if(!pc) {
+		[self.persistentContainerLock lock];
 		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+		[self.persistentContainerLock unlock];
 		pc.count = 0;
 		pc.firstSeen = [NSDate date];
 		pc.album = pe.album;
@@ -287,7 +303,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 		PlayCount *pc = pe.playCountItem;
 
 		if(!pc) {
+			[self.persistentContainerLock lock];
 			pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+			[self.persistentContainerLock unlock];
 			pc.count = 0;
 			pc.firstSeen = [NSDate date];
 			pc.album = pe.album;
@@ -1341,7 +1359,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	request.sortDescriptors = @[sortDescriptor];
 
 	NSError *error = nil;
+	[self.persistentContainerLock lock];
 	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+	[self.persistentContainerLock unlock];
 
 	if(results && [results count] > 0) {
 		[queueList removeAllObjects];
@@ -1360,7 +1380,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	request.sortDescriptors = @[sortDescriptor];
 
 	NSError *error = nil;
+	[self.persistentContainerLock lock];
 	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+	[self.persistentContainerLock unlock];
 
 	if(results && [results count] > 0) {
 		[shuffleList removeAllObjects];
@@ -1887,7 +1909,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 
 	NSError *error = nil;
+	[self.persistentContainerLock lock];
 	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+	[self.persistentContainerLock unlock];
 
 	if(!results || [results count] < 1) return YES;
 	else return NO;

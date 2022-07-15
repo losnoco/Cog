@@ -16,6 +16,7 @@
 #import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
+extern NSLock *kPersistentContainerLock;
 extern NSPersistentContainer *kPersistentContainer;
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
@@ -363,7 +364,9 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	self.artHash = imageCacheTag;
 
 	if(![kArtworkDictionary objectForKey:imageCacheTag]) {
+		[kPersistentContainerLock lock];
 		AlbumArtwork *art = [NSEntityDescription insertNewObjectForEntityForName:@"AlbumArtwork" inManagedObjectContext:kPersistentContainer.viewContext];
+		[kPersistentContainerLock unlock];
 		art.artHash = imageCacheTag;
 		art.artData = albumArtInternal;
 
@@ -586,7 +589,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	request.predicate = predicate;
 
 	NSError *error = nil;
+	[kPersistentContainerLock lock];
 	NSArray *results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
+	[kPersistentContainerLock unlock];
 
 	if(!results || [results count] < 1) {
 		NSPredicate *filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filenameFragment];
@@ -594,7 +599,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
 		request.predicate = filenamePredicate;
 
+		[kPersistentContainerLock lock];
 		results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
+		[kPersistentContainerLock unlock];
 	}
 
 	if(!results || [results count] < 1) return nil;

@@ -13,6 +13,7 @@
 // with format (entryKey, transformerName)
 static NSDictionary *importKeys;
 
+extern NSLock *kPersistentContainerLock;
 extern NSPersistentContainer *kPersistentContainer;
 
 @implementation SpotlightPlaylistEntry
@@ -37,7 +38,9 @@ extern NSPersistentContainer *kPersistentContainer;
 }
 
 + (PlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem {
+	[kPersistentContainerLock lock];
 	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
+	[kPersistentContainerLock unlock];
 
 	entry.deLeted = YES;
 

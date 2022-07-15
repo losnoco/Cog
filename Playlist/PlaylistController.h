@@ -67,6 +67,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 @property(retain) NSString *_Nullable totalTime;
 @property(retain) NSString *_Nullable currentStatus;
 
+@property(strong, nonatomic, readonly) NSLock *_Nonnull persistentContainerLock;
 @property(strong, nonatomic, readonly) NSPersistentContainer *_Nonnull persistentContainer;
 @property(strong, nonatomic, readonly) NSMutableDictionary<NSString *, AlbumArtwork *> *_Nonnull persistentArtStorage;
 
@@ -141,6 +142,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 - (void)readShuffleListFromDataStore;
 
 + (NSPersistentContainer *_Nonnull)sharedPersistentContainer;
++ (NSLock *_Nonnull)sharedPersistentContainerLock;
 
 // reload metadata of selection
 - (IBAction)reloadTags:(id _Nullable)sender;

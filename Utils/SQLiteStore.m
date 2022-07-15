@@ -14,6 +14,7 @@
 
 #import "SHA256Digest.h"
 
+extern NSLock *kPersistentContainerLock;
 extern NSPersistentContainer *kPersistentContainer;
 
 NSString *getDatabasePath(void) {
@@ -1443,7 +1444,9 @@ static SQLiteStore *g_sharedStore = nil;
 #endif
 
 - (PlaylistEntry *_Nonnull)getTrack:(int64_t)trackId {
+	[kPersistentContainerLock lock];
 	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
+	[kPersistentContainerLock unlock];
 
 	if(trackId < 0) {
 		entry.error = YES;
@@ -1863,7 +1866,9 @@ static SQLiteStore *g_sharedStore = nil;
 			entry.index = index;
 			entry.entryId = entryId;
 		} else {
+			[kPersistentContainerLock lock];
 			[kPersistentContainer.viewContext deleteObject:entry];
+			[kPersistentContainerLock unlock];
 			entry = nil;
 		}
 	}
