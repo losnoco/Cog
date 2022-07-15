@@ -26,16 +26,12 @@ extern NSPersistentContainer *kPersistentContainer;
 	NSArray *artistTransform =
 	@[@"artist", @"AuthorToArtistTransformer"];
 
-	// Track numbers must sometimes be converted from NSNumber to NSString
-	NSArray *trackTransform =
-	@[@"spotlightTrack", @"NumberToStringTransformer"];
-
 	importKeys = @{ @"kMDItemTitle": @"title",
 		            @"kMDItemAlbum": @"album",
-		            @"kMDItemAudioTrackNumber": trackTransform,
+		            @"kMDItemAudioTrackNumber": @"track",
 		            @"kMDItemRecordingYear": @"year",
 		            @"kMDItemMusicalGenre": @"genre",
-		            @"kMDItemDurationSeconds": @"spotlightLength",
+		            @"kMDItemDurationSeconds": @"length",
 		            @"kMDItemPath": URLTransform,
 		            @"kMDItemAuthors": artistTransform };
 }
@@ -45,13 +41,23 @@ extern NSPersistentContainer *kPersistentContainer;
 
 	entry.deLeted = YES;
 
+	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+
 	// loop through the keys we want to extract
 	for(NSString *mdKey in importKeys) {
+		if(![metadataItem valueForAttribute:mdKey]) continue;
 		id importTarget = [importKeys objectForKey:mdKey];
 		// Just copy the object from metadata
 		if([importTarget isKindOfClass:[NSString class]]) {
-			[entry setValue:[metadataItem valueForAttribute:mdKey]
-			         forKey:importTarget];
+			if([importTarget isEqualToString:@"length"]) {
+				// fake it
+				NSNumber *number = [metadataItem valueForAttribute:mdKey];
+				[dict setValue:@(44100.0) forKey:@"samplerate"];
+				[dict setValue:@(44100.0 * [number doubleValue]) forKey:@"totalFrames"];
+			} else {
+				[dict setValue:[metadataItem valueForAttribute:mdKey]
+				        forKey:importTarget];
+			}
 		}
 		// Transform the value in metadata before copying it in
 		else if([importTarget isKindOfClass:[NSArray class]]) {
@@ -60,7 +66,7 @@ extern NSPersistentContainer *kPersistentContainer;
 			[NSValueTransformer valueTransformerForName:[importTarget objectAtIndex:1]];
 			id transformedValue = [transformer transformedValue:
 			                                   [metadataItem valueForAttribute:mdKey]];
-			[entry setValue:transformedValue forKey:importKey];
+			[dict setValue:transformedValue forKey:importKey];
 		}
 		// The importKeys dictionary contains something strange...
 		else {
@@ -69,6 +75,14 @@ extern NSPersistentContainer *kPersistentContainer;
 			NSAssert(NO, errString);
 		}
 	}
+
+	NSURL *url = [dict objectForKey:@"url"];
+	[dict removeObjectForKey:@"url"];
+
+	entry.url = url;
+
+	[entry setMetadata:dict];
+
 	return entry;
 }
 

@@ -12,6 +12,7 @@
 @interface SpotlightPlaylistController : PlaylistController {
 }
 
-- (BOOL)tableView:(NSTableView *)tv writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard;
+- (BOOL)tableView:(NSTableView *_Nonnull)tv writeRowsWithIndexes:(NSIndexSet *_Nonnull)rowIndexes toPasteboard:(NSPasteboard *_Nonnull)pboard;
+- (NSView *_Nullable)tableView:(NSTableView *_Nonnull)tableView viewForTableColumn:(NSTableColumn *_Nullable)tableColumn row:(NSInteger)row;
 
 @end
