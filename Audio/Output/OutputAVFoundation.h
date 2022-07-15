@@ -111,6 +111,8 @@ using std::atomic_long;
 	HeadphoneFilter *hrtf;
 	
 	BOOL enableFSurround;
+	BOOL FSurroundDelayRemoved;
+	int inputBufferLastTime;
 	FSurroundFilter *fsurround;
 
 	BOOL resetStreamFormat;
@@ -119,7 +121,7 @@ using std::atomic_long;
 	float tempBuffer[512 * 32];
 	float r8bTempBuffer[4096 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
-	float fsurroundBuffer[4096 * 6];
+	float fsurroundBuffer[8192 * 6];
 	float hrtfBuffer[4096 * 2];
 	float eqBuffer[4096 * 32];
 

@@ -103,6 +103,14 @@
 	}
 }
 
+- (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config {
+	@autoreleasepool {
+		[self setPreviousNode:[[controller bufferChain] finalNode]];
+
+		return [super peekFormat:format channelConfig:config];
+	}
+}
+
 - (double)amountPlayed {
 	return amountPlayed;
 }

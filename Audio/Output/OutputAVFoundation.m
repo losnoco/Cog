@@ -69,17 +69,13 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		return 0;
 	}
 
-	AudioChunk *chunk = [outputController readChunk:amountToRead];
-
-	int frameCount = (int)[chunk frameCount];
-	AudioStreamBasicDescription format = [chunk format];
-	uint32_t config = [chunk channelConfig];
-	double chunkDuration = 0;
-
-	if(frameCount) {
+	AudioStreamBasicDescription format;
+	uint32_t config;
+	if([outputController peekFormat:&format channelConfig:&config]) {
 		// XXX ERROR with AirPods - Can't go higher than CD*8 surround - 192k stereo
 		// Emits to console: [AUScotty] Initialize: invalid FFT size 16384
 		// DSD256 stereo emits: [AUScotty] Initialize: invalid FFT size 65536
+
 		BOOL formatClipped = NO;
 		BOOL isSurround = format.mChannelsPerFrame > 2;
 		const double maxSampleRate = isSurround ? 352800.0 : 192000.0;
@@ -117,10 +113,23 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			if(!r8bold) {
 				realStreamFormat = format;
 				realStreamChannelConfig = config;
-				[self updateStreamFormat];
+				streamFormatChanged = YES;
 			}
 		}
+	}
 
+	if(streamFormatChanged) {
+		return 0;
+	}
+
+	AudioChunk *chunk = [outputController readChunk:amountToRead];
+
+	int frameCount = (int)[chunk frameCount];
+	format = [chunk format];
+	config = [chunk channelConfig];
+	double chunkDuration = 0;
+
+	if(frameCount) {
 		chunkDuration = [chunk duration];
 
 		NSData *samples = [chunk removeSamples:frameCount];
@@ -301,10 +310,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		eqPreamp = pow(10.0, preamp / 20.0);
 	} else if([keyPath isEqualToString:@"values.enableHrtf"]) {
 		enableHrtf = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHrtf"];
-		resetStreamFormat = YES;
+		if(streamFormatStarted)
+			resetStreamFormat = YES;
 	} else if([keyPath isEqualToString:@"values.enableFSurround"]) {
 		enableFSurround = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableFSurround"];
-		resetStreamFormat = YES;
+		if(streamFormatStarted)
+			resetStreamFormat = YES;
 	}
 }
 
@@ -600,18 +611,22 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)updateStreamFormat {
 	/* Set the channel layout for the audio queue */
-	streamFormatChanged = YES;
 	resetStreamFormat = NO;
 
 	uint32_t channels = realStreamFormat.mChannelsPerFrame;
 	uint32_t channelConfig = realStreamChannelConfig;
 
 	if(enableFSurround && channels == 2 && channelConfig == AudioConfigStereo) {
+		[currentPtsLock lock];
 		fsurround = [[FSurroundFilter alloc] initWithSampleRate:realStreamFormat.mSampleRate];
+		[currentPtsLock unlock];
 		channels = [fsurround channelCount];
 		channelConfig = [fsurround channelConfig];
+		FSurroundDelayRemoved = NO;
 	} else {
+		[currentPtsLock lock];
 		fsurround = nil;
+		[currentPtsLock unlock];
 	}
 
 	/* Apple's audio processor really only supports common 1-8 channel formats */
@@ -742,13 +757,15 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	status = CMBlockBufferCreateEmpty(kCFAllocatorDefault, 0, 0, &blockListBuffer);
 	if(status != noErr || !blockListBuffer) return 0;
 
-	if(resetStreamFormat) {
+	if(resetStreamFormat || streamFormatChanged) {
+		streamFormatChanged = NO;
 		[self updateStreamFormat];
 	}
 
-	int inputRendered = 0;
-	int bytesRendered = 0;
-	do {
+	int inputRendered = inputBufferLastTime;
+	int bytesRendered = inputRendered * newFormat.mBytesPerPacket;
+
+	while(inputRendered < 4096) {
 		int maxToRender = MIN(4096 - inputRendered, 512);
 		int rendered = [self renderInput:maxToRender toBuffer:&tempBuffer[0]];
 		if(rendered > 0) {
@@ -758,12 +775,17 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		bytesRendered += rendered * newFormat.mBytesPerPacket;
 		if(streamFormatChanged) {
 			streamFormatChanged = NO;
-			if(rendered < maxToRender) {
+			if(inputRendered) {
+				resetStreamFormat = YES;
 				break;
+			} else {
+				[self updateStreamFormat];
 			}
 		}
 		if([self processEndOfStream]) break;
-	} while(inputRendered < 4096);
+	}
+
+	inputBufferLastTime = inputRendered;
 
 	int samplesRenderedTotal = 0;
 
@@ -793,16 +815,37 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				r8bDone = NO;
 				realStreamFormat = newFormat;
 				realStreamChannelConfig = newChannelConfig;
-				[self updateStreamFormat];
+				streamFormatChanged = YES;
 			}
 		}
 
-		if(samplesRendered) {
+		if(samplesRendered || fsurround) {
 			if(fsurround) {
-				[fsurround process:samplePtr output:&fsurroundBuffer[0] count:samplesRendered];
+				int countToProcess = samplesRendered;
+				if(countToProcess < 4096) {
+					bzero(samplePtr + countToProcess * 2, (4096 - countToProcess) * 2 * sizeof(float));
+					countToProcess = 4096;
+				}
+				[fsurround process:samplePtr output:&fsurroundBuffer[0] count:countToProcess];
 				samplePtr = &fsurroundBuffer[0];
+				if(resetStreamFormat || samplesRendered < 4096) {
+					bzero(&fsurroundBuffer[4096 * 6], 4096 * 2 * sizeof(float));
+					[fsurround process:&fsurroundBuffer[4096 * 6] output:&fsurroundBuffer[4096 * 6] count:4096];
+					samplesRendered += 2048;
+				}
+				if(!FSurroundDelayRemoved) {
+					FSurroundDelayRemoved = YES;
+					if(samplesRendered > 2048) {
+						samplePtr += 2048 * 6;
+						samplesRendered -= 2048;
+					}
+				}
 			}
-			
+
+			if(!samplesRendered) {
+				break;
+			}
+
 			if(hrtf) {
 				[hrtf process:samplePtr sampleCount:samplesRendered toBuffer:&hrtfBuffer[0]];
 				samplePtr = &hrtfBuffer[0];
@@ -871,11 +914,13 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 
 		if(i == 0) {
-			if(!samplesRendered) {
-				*blockBufferOut = blockListBuffer;
-				return samplesRenderedTotal + samplesRendered;
+			samplesRenderedTotal += samplesRendered;
+			if(samplesRendered) {
+				break;
 			}
+			++i;
 		} else {
+			inputBufferLastTime = 0;
 			samplesRenderedTotal += samplesRendered;
 			++i;
 		}
@@ -898,6 +943,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		audioFormatDescription = NULL;
 
 		resetStreamFormat = NO;
+		streamFormatChanged = NO;
+
+		inputBufferLastTime = 0;
 
 		running = NO;
 		stopping = NO;
@@ -1031,6 +1079,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	void **r8bstate = &self->r8bstate;
 	void **r8bold = &self->r8bold;
 	void **r8bvis = &self->r8bvis;
+	FSurroundFilter *const *fsurroundtest = &self->fsurround;
 	currentPtsObserver = [renderSynchronizer addPeriodicTimeObserverForInterval:interval
 	                                                                      queue:NULL
 	                                                                 usingBlock:^(CMTime time) {
@@ -1056,6 +1105,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		                                                                 }
 		                                                                 if(*r8bvis) {
 			                                                                 latencyVis = r8bstate_latency(*r8bvis);
+		                                                                 }
+		                                                                 if(*fsurroundtest) {
+			                                                                 latencyVis += 2048.0 / [(*fsurroundtest) srate];
 		                                                                 }
 		                                                                 [lock unlock];
 		                                                                 if(latencySeconds < 0)

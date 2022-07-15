@@ -121,6 +121,10 @@ struct freesurround_params {
 	return channelConfig;
 }
 
+- (double)srate {
+	return srate;
+}
+
 - (void)process:(const float *)samplesIn output:(float *)samplesOut count:(uint32_t)count {
 	freesurround_params *_params = (freesurround_params *)params;
 	freesurround_decoder *_decoder = (freesurround_decoder *)decoder;
