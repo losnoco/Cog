@@ -406,6 +406,11 @@
 		}
 	}
 
+	// Don't commit division by zero on bad files
+	if(stream.next_frame == stream.this_frame) {
+		return NO;
+	}
+
 	if(!_foundiTunSMPB && !_foundXingHeader && !_foundVBRIHeader) {
 		// Now do CBR estimation instead of full file scanning
 		size_t frameCount = (_fileSize - id3_length) / (stream.next_frame - stream.this_frame);
