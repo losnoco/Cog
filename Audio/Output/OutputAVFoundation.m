@@ -1126,7 +1126,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)removeSynchronizerBlock {
-	[renderSynchronizer removeTimeObserver:currentPtsObserver];
+	if(renderSynchronizer && currentPtsObserver) {
+		[renderSynchronizer removeTimeObserver:currentPtsObserver];
+		currentPtsObserver = nil;
+	}
 }
 
 - (void)setVolume:(double)v {
