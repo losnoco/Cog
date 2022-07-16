@@ -1244,7 +1244,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			if((i > [[self arrangedObjects] count] - 1) ||
 			   ([[next album] caseInsensitiveCompare:[pe album]]) || ([next album] == nil)) {
 				NSArray *filtered = [self filterPlaylistOnAlbum:[pe album]];
-				if([pe album] == nil)
+				if([pe album] == nil || !filtered || [filtered count] < 1)
 					i--;
 				else
 					i = [(PlaylistEntry *)filtered[0] index];
