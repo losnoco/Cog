@@ -1219,6 +1219,13 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				}
 				[self removeSynchronizerBlock];
 				[renderSynchronizer setRate:0];
+				if(audioRenderer) {
+					[renderSynchronizer removeRenderer:audioRenderer atTime:kCMTimeZero completionHandler:^(BOOL didRemoveRenderer) {
+						if(!didRemoveRenderer) {
+							DLog(@"Error removing renderer!");
+						}
+					}];
+				}
 			}
 			if(audioRenderer) {
 				[audioRenderer stopRequestingMediaData];
