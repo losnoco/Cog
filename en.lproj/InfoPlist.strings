@@ -1,4 +1,26 @@
-﻿/* Localized versions of Info.plist keys */
+/* Localized versions of Info.plist keys */
 
-CFBundleName = "Cog";
-NSHumanReadableCopyright = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2022";
+"CFBundleName" = "Cog";
+
+/* Privacy - Calendars Usage Description */
+"NSCalendarsUsageDescription" = "Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Cog is an audio player. It will never use your camera. Why is it asking for permission to use your camera?";
+
+/* Privacy - Contacts Usage Description */
+"NSContactsUsageDescription" = "Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?";
+
+"NSHumanReadableCopyright" = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2022";
+
+/* Privacy - Location Usage Description */
+"NSLocationUsageDescription" = "Cog has no use for your location information. Something is obviously wrong with the application.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Cog is an audio player. It does not, however, record audio. Why is it asking for permission to use your microphone?";
+
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "Cog is an audio player. Why are you trying to access your Photos Library with an audio player?";
+
+/* Privacy - Reminders Usage Description */
+"NSRemindersUsageDescription" = "Cog has no use for your reminders. Why are you trying to access them with an audio player?";

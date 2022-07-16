@@ -1,25 +1,51 @@
-"Nightly" = "Nightly";
 "Stable" = "Stable";
 "Unstable" = "Unstable";
 
 "File Drawer" = "File Drawer";
 "Hot Keys" = "Hot Keys";
-"Output" = "Output";
 
 "Updates" = "Updates";
+
+/* (No Comment) */
+"Appearance" = "wygląd";
+
+/* (No Comment) */
+"Clear playlist and play" = "wyczyść playlistę i odtwórz";
+
+/* (No Comment) */
+"Enqueue" = "dodaj do kolejki";
+
+/* (No Comment) */
+"Enqueue and play" = "dodaj do kolejki i odtwórz";
+
+/* (No Comment) */
+"General" = "ogólne";
+
+/* (No Comment) */
 "Last.fm" = "Last.fm";
-"Scrobble" = "Scrobble";
-"Playlist" = "Playlist";
-"Notifications" = "Notifications";
-"Appearance" = "Appearance";
-"Synthesis" = "Synthesis";
-"General" = "General";
 
-"Press Key..." = "Press Key...";
+/* (No Comment) */
+"Nightly" = "bez skalowania głośności";
 
-"Clear playlist and play" = "Clear playlist and play";
-"Enqueue" = "Enqueue";
-"Enqueue and play" = "Enqueue and play";
+"No volume scaling" = "bezkalowania s";
 
-"ValidNo" = "No";
-"ValidYes" = "Yes";
+/* (No Comment) */
+"Notifications" = "powiadomienia";
+
+/* (No Comment) */
+"Output" = "wyjście";
+
+/* (No Comment) */
+"Playlist" = "playlista";
+
+/* (No Comment) */
+"Press Key..." = "naciśnij przycisk...";
+
+"ReplayGain Album Gain" = "głośność powtórki / głośność albumó";
+
+"Volume scale tag only" = "tylko tag skalowania głośności";
+
+"Zero Order Hold" = "całkowita ilość dni";
+
+"ValidNo" = "nie";
+"ValidYes" = "tak";

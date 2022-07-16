@@ -1,6 +1,9 @@
 
 /* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "23r-ai-XoX"; */
-"23r-ai-XoX.headerCell.title" = "Path";
+"23r-ai-XoX.headerCell.title" = "Ścieżka";
+
+/* Class = "NSTableColumn"; headerCell.title = "Enabled"; ObjectID = "QWk-Qb-l0y"; */
+"QWk-Qb-l0y.headerCell.title" = "włączony";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "2vN-j2-JYP"; */
 "2vN-j2-JYP.title" = "Text Cell";
@@ -10,9 +13,6 @@
 
 /* Class = "NSButtonCell"; title = "Apply"; ObjectID = "Jne-2G-yP9"; */
 "Jne-2G-yP9.title" = "Apply";
-
-/* Class = "NSTableColumn"; headerCell.title = "Enabled"; ObjectID = "QWk-Qb-l0y"; */
-"QWk-Qb-l0y.headerCell.title" = "Enabled";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "RLN-Pa-Mhl"; */
 "RLN-Pa-Mhl.title" = "Table View Cell";

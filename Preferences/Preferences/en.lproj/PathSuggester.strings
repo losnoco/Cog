@@ -1,12 +1,8 @@
-
 /* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "23r-ai-XoX"; */
 "23r-ai-XoX.headerCell.title" = "Path";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "2vN-j2-JYP"; */
 "2vN-j2-JYP.title" = "Text Cell";
-
-/* Class = "NSWindow"; title = "Grant access to select folders"; ObjectID = "F0z-JX-Cv5"; */
-"F0z-JX-Cv5.title" = "Grant access to select folders";
 
 /* Class = "NSButtonCell"; title = "Apply"; ObjectID = "Jne-2G-yP9"; */
 "Jne-2G-yP9.title" = "Apply";
@@ -23,8 +19,3 @@
 /* Class = "NSToolbarItem"; paletteLabel = "Apply"; ObjectID = "cJV-DM-SOV"; */
 "cJV-DM-SOV.paletteLabel" = "Apply";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "w2T-DH-7x9"; */
-"w2T-DH-7x9.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "xFm-ed-yBb"; */
-"xFm-ed-yBb.title" = "Table View Cell";

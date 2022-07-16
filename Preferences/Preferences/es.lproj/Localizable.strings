@@ -1,16 +1,13 @@
 /* (No Comment) */
 "Appearance" = "Apariencia";
 
-/* No comment provided by engineer. */
 "Blam Synthesis" = "BLAM";
 
-/* No comment provided by engineer. */
 "Blep Synthesis" = "BLEP";
 
 /* (No Comment) */
 "Clear playlist and play" = "Limpiar lista y reproducir";
 
-/* No comment provided by engineer. */
 "Cubic Interpolation" = "Interpolación cúbica";
 
 /* (No Comment) */
@@ -31,13 +28,11 @@
 /* (No Comment) */
 "Last.fm" = "Last.fm";
 
-/* No comment provided by engineer. */
 "Linear Interpolation" = "Interpolación lineal";
 
 /* (No Comment) */
 "Nightly" = "Nocturna";
 
-/* No comment provided by engineer. */
 "No volume scaling" = "Sin escala de volumen";
 
 /* (No Comment) */
@@ -52,22 +47,17 @@
 /* (No Comment) */
 "Press Key..." = "Presiona una tecla...";
 
-/* No comment provided by engineer. */
 "ReplayGain Album Gain" = "Ganancia de álbum ReplayGain";
 
-/* No comment provided by engineer. */
 "ReplayGain Album Gain with peak" = "Ganancia de álbum ReplayGain con pico";
 
-/* No comment provided by engineer. */
 "ReplayGain Track Gain" = "Ganancia de pista ReplayGain";
 
-/* No comment provided by engineer. */
 "ReplayGain Track Gain with peak" = "Ganancia de pista ReplayGain con pico";
 
 /* (No Comment) */
 "Scrobble" = "Scrobble";
 
-/* No comment provided by engineer. */
 "Sinc Interpolation" = "Interpolación \"sinc\"";
 
 /* (No Comment) */
@@ -88,9 +78,6 @@
 /* (No Comment) */
 "ValidYes" = "Sí";
 
-/* No comment provided by engineer. */
 "Volume scale tag only" = "Solo etiqueta de escala de volumen";
 
-/* No comment provided by engineer. */
 "Zero Order Hold" = "Retención de orden cero";
-

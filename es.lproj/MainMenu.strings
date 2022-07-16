@@ -1,3 +1,4 @@
+
 /* Class = "NSMenuItem"; title = "Remove Duplicate Items"; ObjectID = "2qB-Bq-t2u"; */
 "2qB-Bq-t2u.title" = "Eliminar elementos duplicados";
 
@@ -77,7 +78,7 @@
 "111.title" = "Ayuda de Cog";
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "129"; */
-"129.title" = "Preferencias...";
+"129.title" = "Preferencias…";
 
 /* Class = "NSMenu"; title = "Services"; ObjectID = "130"; */
 "130.title" = "Servicios";
@@ -640,20 +641,68 @@
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "FMU-QZ-NdQ"; */
 "FMU-QZ-NdQ.title" = "Celda de vista de tabla";
 
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "gKK-cS-RP5"; */
-"gKK-cS-RP5.title" = "Celda de vista de tabla";
-
 /* Class = "NSMenuItem"; title = "Reload Info"; ObjectID = "HK9-Am-31h"; */
 "HK9-Am-31h.title" = "Recargar información";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "Igo-5f-yim"; */
 "Igo-5f-yim.title" = "Celda de vista de tabla";
 
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@%{value2}@"; ObjectID = "Kih-ky-A1h"; */
+"Kih-ky-A1h.ibShadowedDisplayPattern" = "%{value1}@%{value2}@";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "M6d-rj-lEz"; */
+"M6d-rj-lEz.title" = "Celda de texto";
+
+/* Class = "NSToolbarItem"; label = "Spectrum"; ObjectID = "NtB-XF-g07"; */
+"NtB-XF-g07.label" = "Analizador";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Spectrum"; ObjectID = "NtB-XF-g07"; */
+"NtB-XF-g07.paletteLabel" = "Analizador";
+
+/* Class = "NSMenuItem"; title = "Remove Rating"; ObjectID = "PyI-lF-iuz"; */
+"PyI-lF-iuz.title" = "Eliminar clasificación";
+
+/* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "UAk-Gc-lT4"; */
+"UAk-Gc-lT4.title" = "Filtrar lista";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "VVx-99-roJ"; */
+"VVx-99-roJ.title" = "Celda de vista de tabla";
+
+/* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
+"WKt-lM-Bv1.label" = "Eliminar elementos inexistentes";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
+"WKt-lM-Bv1.paletteLabel" = "Eliminar elementos inexistentes";
+
+/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "XBr-ec-D81"; */
+"XBr-ec-D81.headerCell.title" = "Título";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "YwT-z9-2d2"; */
+"YwT-z9-2d2.title" = "Celda de vista de tabla";
+
+/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
+"ZH9-ZU-skw.label" = "Indicador HDCD";
+
+/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
+"ZH9-ZU-skw.paletteLabel" = "Indicador HDCD";
+
+/* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
+"ZOn-sB-FR3.label" = "Mostrar ecualizador";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
+"ZOn-sB-FR3.paletteLabel" = "Mostrar ecualizador";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "gKK-cS-RP5"; */
+"gKK-cS-RP5.title" = "Celda de vista de tabla";
+
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "js2-sT-U4M"; */
 "js2-sT-U4M.title" = "Celda de vista de tabla";
 
-/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@%{value2}@"; ObjectID = "Kih-ky-A1h"; */
-"Kih-ky-A1h.ibShadowedDisplayPattern" = "%{value1}@%{value2}@";
+/* Class = "NSToolbarItem"; label = "Randomize"; ObjectID = "kVl-aW-mtT"; */
+"kVl-aW-mtT.label" = "Aleatorizar";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Randomize"; ObjectID = "kVl-aW-mtT"; */
+"kVl-aW-mtT.paletteLabel" = "Aleatorizar";
 
 /* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "knJ-aI-sFa"; */
 "knJ-aI-sFa.label" = "Eliminar elementos inexistentes";
@@ -664,20 +713,11 @@
 /* Class = "NSMenuItem"; title = "Reload Info"; ObjectID = "kq8-9v-zC0"; */
 "kq8-9v-zC0.title" = "Recargar información";
 
-/* Class = "NSToolbarItem"; label = "Randomize"; ObjectID = "kVl-aW-mtT"; */
-"kVl-aW-mtT.label" = "Aleatorizar";
-
-/* Class = "NSToolbarItem"; paletteLabel = "Randomize"; ObjectID = "kVl-aW-mtT"; */
-"kVl-aW-mtT.paletteLabel" = "Aleatorizar";
-
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "lBy-Uc-vCA"; */
 "lBy-Uc-vCA.title" = "Celda de texto";
 
 /* Class = "NSMenuItem"; title = "Show Mini Player On Top"; ObjectID = "lXN-EZ-xg0"; */
 "lXN-EZ-xg0.title" = "Mostrar minirreproductor encima de todo";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "M6d-rj-lEz"; */
-"M6d-rj-lEz.title" = "Celda de texto";
 
 /* Class = "NSMenuItem"; title = "Move to Trash"; ObjectID = "mhx-dQ-Kwx"; */
 "mhx-dQ-Kwx.title" = "Mover al Basurero";
@@ -685,26 +725,17 @@
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "moV-3G-GpB"; */
 "moV-3G-GpB.title" = "Celda de vista de tabla";
 
-/* Class = "NSMenuItem"; title = "Privacy Policy..."; ObjectID = "nb7-FW-egH"; */
-"nb7-FW-egH.title" = "Política de privacidad...";
-
 /* Class = "NSMenuItem"; title = "Show Equalizer"; ObjectID = "nBU-pH-J3I"; */
 "nBU-pH-J3I.title" = "Mostrar ecualizador";
 
-/* Class = "NSToolbarItem"; label = "Spectrum"; ObjectID = "NtB-XF-g07"; */
-"NtB-XF-g07.label" = "Analizador";
-
-/* Class = "NSToolbarItem"; paletteLabel = "Spectrum"; ObjectID = "NtB-XF-g07"; */
-"NtB-XF-g07.paletteLabel" = "Analizador";
+/* Class = "NSMenuItem"; title = "Privacy Policy..."; ObjectID = "nb7-FW-egH"; */
+"nb7-FW-egH.title" = "Política de privacidad...";
 
 /* Class = "NSMenuItem"; title = "Stop after Selection"; ObjectID = "omb-wi-loX"; */
 "omb-wi-loX.title" = "Detener después de la selección";
 
 /* Class = "NSMenuItem"; title = "Show All Songs"; ObjectID = "pU1-ci-9uB"; */
 "pU1-ci-9uB.title" = "Mostrar todas las canciones";
-
-/* Class = "NSMenuItem"; title = "Remove Rating"; ObjectID = "PyI-lF-iuz"; */
-"PyI-lF-iuz.title" = "Eliminar clasificación";
 
 /* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "qfu-F9-bOZ"; */
 "qfu-F9-bOZ.label" = "Indicador HDCD";
@@ -733,17 +764,11 @@
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "tus-lr-RhS"; */
 "tus-lr-RhS.title" = "Celda de vista de tabla";
 
-/* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "UAk-Gc-lT4"; */
-"UAk-Gc-lT4.title" = "Filtrar lista";
-
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "vaJ-Bc-ebE"; */
-"vaJ-Bc-ebE.title" = "Celda de vista de tabla";
-
 /* Class = "NSMenuItem"; title = "Toggle Toolbar Style"; ObjectID = "vBH-Mr-XWi"; */
 "vBH-Mr-XWi.title" = "Alternar estilo de barra de herramientas";
 
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "VVx-99-roJ"; */
-"VVx-99-roJ.title" = "Celda de vista de tabla";
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "vaJ-Bc-ebE"; */
+"vaJ-Bc-ebE.title" = "Celda de vista de tabla";
 
 /* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "vzT-Gb-aGW"; */
 "vzT-Gb-aGW.label" = "Mostrar ecualizador";
@@ -751,38 +776,29 @@
 /* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "vzT-Gb-aGW"; */
 "vzT-Gb-aGW.paletteLabel" = "Mostrar ecualizador";
 
-/* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
-"WKt-lM-Bv1.label" = "Eliminar elementos inexistentes";
-
-/* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
-"WKt-lM-Bv1.paletteLabel" = "Eliminar elementos inexistentes";
-
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "wky-z8-Cj5"; */
 "wky-z8-Cj5.title" = "Celda de vista de tabla";
 
 /* Class = "NSMenuItem"; title = "Show Spectrum Window"; ObjectID = "wl2-Vo-pul"; */
 "wl2-Vo-pul.title" = "Mostrar ventana del analizador";
 
-/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "XBr-ec-D81"; */
-"XBr-ec-D81.headerCell.title" = "Título";
-
 /* Class = "NSTableColumn"; headerCell.title = "Album Artist"; ObjectID = "yGV-gP-Wl6"; */
 "yGV-gP-Wl6.headerCell.title" = "Artista del álbum";
 
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "YwT-z9-2d2"; */
-"YwT-z9-2d2.title" = "Celda de vista de tabla";
-
-/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
-"ZH9-ZU-skw.label" = "Indicador HDCD";
-
-/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
-"ZH9-ZU-skw.paletteLabel" = "Indicador HDCD";
-
-/* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
-"ZOn-sB-FR3.label" = "Mostrar ecualizador";
-
-/* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
-"ZOn-sB-FR3.paletteLabel" = "Mostrar ecualizador";
-
 /* Class = "NSMenuItem"; title = "Check for Updates..."; ObjectID = "302"; */
 "302.title" = "Buscar actualizaciones...";
+
+/* Class = "NSMenuItem"; title = "Show All Songs"; ObjectID = "1132"; */
+"1132.title" = "Mostrar todas las canciones";
+
+/* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "1824"; */
+"1824.title" = "Filtrar lista de reproducción";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "Total Duration: %{value1}@"; ObjectID = "1891"; */
+"1891.ibShadowedDisplayPattern" = "Duración total: %{value1}@";
+
+/* Class = "NSTableColumn"; title = "Album Artist"; ObjectID = "yGV-gP-Wl6"; */
+"yGV-gP-Wl6.title" = "Artista del álbum";
+
+/* Class = "NSTableColumn"; title = "Codec"; ObjectID = "3A3-9o-Gh9"; */
+"3A3-9o-Gh9.title" = "Códec";

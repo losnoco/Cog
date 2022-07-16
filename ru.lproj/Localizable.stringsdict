@@ -1,96 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>%1d week(s)</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@weeks@</string>
-		<key>weeks</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>zero</key>
-			<string>0 недель</string>
-			<key>one</key>
-			<string>1 неделя</string>
-			<key>other</key>
-			<string>%d недель</string>
-		</dict>
-	</dict>
-	<key>%1d day(s)</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@days@</string>
-		<key>days</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>zero</key>
-			<string>0 дней</string>
-			<key>one</key>
-			<string>1 день</string>
-			<key>other</key>
-			<string>%d дней</string>
-		</dict>
-	</dict>
-	<key>%1d hour(s)</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@hours@</string>
-		<key>hours</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>zero</key>
-			<string>0 часов</string>
-			<key>one</key>
-			<string>1 час</string>
-			<key>other</key>
-			<string>%d часов</string>
-		</dict>
-	</dict>
-	<key>%1d minute(s)</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@minutes@</string>
-		<key>minutes</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>zero</key>
-			<string>0 минут</string>
-			<key>one</key>
-			<string>1 минута</string>
-			<key>other</key>
-			<string>%d минут</string>
-		</dict>
-	</dict>
-	<key>%1d second(s)</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@seconds@</string>
-		<key>seconds</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>zero</key>
-			<string>0 секунд</string>
-			<key>one</key>
-			<string>1 секунда</string>
-			<key>other</key>
-			<string>%d секунд</string>
-		</dict>
-	</dict>
-</dict>
+  <dict>
+    <key>%1d day(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@days@</string>
+      <key>days</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 день</string>
+        <key>few</key>
+        <string>%d дней</string>
+        <key>many</key>
+        <string>%d дней</string>
+        <key>other</key>
+        <string>%d дней</string>
+      </dict>
+    </dict>
+    <key>%1d hour(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@hours@</string>
+      <key>hours</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 час</string>
+        <key>few</key>
+        <string>%d часов</string>
+        <key>many</key>
+        <string>%d часов</string>
+        <key>other</key>
+        <string>%d часов</string>
+      </dict>
+    </dict>
+    <key>%1d minute(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@minutes@</string>
+      <key>minutes</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 минута</string>
+        <key>few</key>
+        <string>%d минут</string>
+        <key>many</key>
+        <string>%d минут</string>
+        <key>other</key>
+        <string>%d минут</string>
+      </dict>
+    </dict>
+    <key>%1d second(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@seconds@</string>
+      <key>seconds</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 секунда</string>
+        <key>few</key>
+        <string>%d секунд</string>
+        <key>many</key>
+        <string>%d секунд</string>
+        <key>other</key>
+        <string>%d секунд</string>
+      </dict>
+    </dict>
+    <key>%1d week(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@weeks@</string>
+      <key>weeks</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 неделя</string>
+        <key>few</key>
+        <string>%d недель</string>
+        <key>many</key>
+        <string>%d недель</string>
+        <key>other</key>
+        <string>%d недель</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

@@ -82,10 +82,21 @@
 
 "Total duration: %@" = "Total duration: %@";
 
-"wdhms" = "%@, %@, %@, %@ and %@";
-"dhms" = "%@, %@, %@ and %@";
-"hms" = "%@, %@ and %@";
-"ms" = "%@ and %@";
+/* second for total */
+"%1d seconds(s)" = "%1d sekund";
+
+"Version %@ (%@)" = "wersja %1$@ (%2$@)";
+
+/* minutes and seconds */
+"ms" = "%@ i %@";
+
+/* hours, minutes and seconds */
+"hms" = "%@, %@ i %@";
+
+/* days, hours, minutes and seconds */
+"dhms" = "%@, %@, %@ i %@";
+
+/* weeks, days, hours, minutes and seconds */
+"wdhms" = "%@, %@, %@, %@ i %@";
 
 "PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/59859310";
-

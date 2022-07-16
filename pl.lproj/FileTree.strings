@@ -1,7 +1,4 @@
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "71"; */
-"71.title" = "Text Cell";
-
 /* Class = "NSMenu"; title = "Menu"; ObjectID = "110"; */
 "110.title" = "Menu";
 
@@ -9,13 +6,10 @@
 "112.title" = "pokaż w finderze";
 
 /* Class = "NSMenuItem"; title = "Add to Playlist"; ObjectID = "119"; */
-"119.title" = "dodaj do playlisty.";
-
-/* Class = "NSMenuItem"; title = "Set as Root"; ObjectID = "124"; */
-"124.title" = "Set as Root";
+"119.title" = "dodaj do playlisty";
 
 /* Class = "NSMenuItem"; title = "Set as Playlist"; ObjectID = "129"; */
 "129.title" = "ustaw jako playlistę";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "147"; */
-"147.title" = "Box";
+/* Class = "NSButtonCell"; title = "Choose"; ObjectID = "vRe-3U-Nxj"; */
+"vRe-3U-Nxj.title" = "wybierz";

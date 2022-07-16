@@ -1,3 +1,4 @@
+
 /* Class = "NSWindow"; title = "Info Inspector"; ObjectID = "1"; */
 "1.title" = "Inspector de información";
 
@@ -15,6 +16,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Length:"; ObjectID = "16"; */
 "16.title" = "Duración:";
+
+/* Class = "NSTextFieldCell"; title = "Date:"; ObjectID = "17"; */
+"18.title" = "Fecha:";
 
 /* Class = "NSTextFieldCell"; title = "Genre:"; ObjectID = "20"; */
 "20.title" = "Género:";
@@ -76,14 +80,8 @@
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "B8w-o8-ZBw"; */
 "B8w-o8-ZBw.title" = "n/d";
 
-/* Class = "NSTextFieldCell"; title = "Codec:"; ObjectID = "cbq-TT-CZX"; */
-"cbq-TT-CZX.title" = "Códec:";
-
 /* Class = "NSTextFieldCell"; title = "Cuesheet:"; ObjectID = "Cu5-ia-Z5b"; */
 "Cu5-ia-Z5b.title" = "Cuesheet:";
-
-/* Class = "NSTextFieldCell"; title = "Play Count:"; ObjectID = "fiv-eh-w3c"; */
-"fiv-eh-w3c.title" = "Recuento de repr.:";
 
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "Ial-XI-91y"; */
 "Ial-XI-91y.title" = "n/d";
@@ -91,23 +89,32 @@
 /* Class = "NSTextFieldCell"; title = "Album Artist:"; ObjectID = "LFJ-QQ-gGr"; */
 "LFJ-QQ-gGr.title" = "Artista del álbum:";
 
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "UyE-Mc-e39"; */
+"UyE-Mc-e39.title" = "n/d";
+
+/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "Yby-OU-cqP"; */
+"Yby-OU-cqP.title" = "n/d";
+
+/* Class = "NSTextFieldCell"; title = "Codec:"; ObjectID = "cbq-TT-CZX"; */
+"cbq-TT-CZX.title" = "Códec:";
+
+/* Class = "NSTextFieldCell"; title = "Play Count:"; ObjectID = "fiv-eh-w3c"; */
+"fiv-eh-w3c.title" = "Recuento de repr.:";
+
 /* Class = "NSTextFieldCell"; title = "ReplayGain:"; ObjectID = "qBi-M8-kEx"; */
 "qBi-M8-kEx.title" = "ReplayGain:";
 
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "rAo-AP-lVa"; */
 "rAo-AP-lVa.title" = "n/d";
 
-/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "UyE-Mc-e39"; */
-"UyE-Mc-e39.title" = "n/d";
-
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "v14-AG-B9D"; */
 "v14-AG-B9D.title" = "n/d";
 
-/* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "Yby-OU-cqP"; */
-"Yby-OU-cqP.title" = "n/d";
+/* Class = "NSTextFieldCell"; title = "Album Artist:"; ObjectID = "vB6-9J-5qg"; */
+"vB6-9J-5qg.title" = "Artista del álbum:";
 
-/* Class = "NSTextFieldCell"; title = "Date:"; ObjectID = "17"; */
-"18.title" = "Fecha:";
+/* Class = "NSTextFieldCell"; title = "Codec:"; ObjectID = "QPg-Mb-Urn"; */
+"QPg-Mb-Urn.title" = "Códec:";
 
 /* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "cd3-Qt-hCm"; */
 "Ule-N3-dKW.title" = "Comentarios:";
