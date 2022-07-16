@@ -717,11 +717,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 		item = [[NSPasteboardItem alloc] init];
 	}
 
-	NSMutableArray *filenames = [NSMutableArray array];
 	PlaylistEntry *song = [[self arrangedObjects] objectAtIndex:row];
-	[filenames addObject:[[song path] stringByExpandingTildeInPath]];
 
-	[item setData:[song.url dataRepresentation] forType:NSPasteboardTypeFileURL];
+	if(song.url != nil) {
+		[item setData:[song.url dataRepresentation] forType:NSPasteboardTypeFileURL];
+	}
 
 	return item;
 }
