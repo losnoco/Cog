@@ -17,9 +17,6 @@
 /* Class = "NSTextFieldCell"; title = "8"; ObjectID = "8bT-Kt-cyl"; */
 "8bT-Kt-cyl.title" = "8";
 
-/* Class = "NSWindow"; title = "Equalizer"; ObjectID = "9Xl-RA-0SW"; */
-"9Xl-RA-0SW.title" = "Equalizer";
-
 /* Class = "NSTextFieldCell"; title = "1.2"; ObjectID = "A7Y-xq-LdW"; */
 "A7Y-xq-LdW.title" = "1.2";
 
@@ -30,7 +27,7 @@
 "ERP-9r-xp9.title" = "400";
 
 /* Class = "NSButtonCell"; title = "Enabled"; ObjectID = "Id9-5k-q9Q"; */
-"Id9-5k-q9Q.title" = "Włączony";
+"Id9-5k-q9Q.title" = "włączony";
 
 /* Class = "NSTextFieldCell"; title = "500"; ObjectID = "JVJ-LV-LDc"; */
 "JVJ-LV-LDc.title" = "500";
@@ -70,9 +67,6 @@
 
 /* Class = "NSButtonCell"; title = "Tracking genre tags"; ObjectID = "aeV-tB-rvh"; */
 "aeV-tB-rvh.title" = "śledzenie tagów gatunku";
-
-/* Class = "NSButtonCell"; title = "Flatten EQ"; ObjectID = "bOS-GE-rwi"; */
-"bOS-GE-rwi.title" = "Flatten EQ";
 
 /* Class = "NSTextFieldCell"; title = "630"; ObjectID = "bqX-Dk-bJ9"; */
 "bqX-Dk-bJ9.title" = "630";
@@ -114,7 +108,7 @@
 "ke7-4o-FJG.title" = "5";
 
 /* Class = "NSTextFieldCell"; title = "Note: You may use right-click to draw an equalizer shape"; ObjectID = "lwG-Tm-rr1"; */
-"lwG-Tm-rr1.title" = "uwaga: możesz użyć prawego klawisza myszy aby narysować kształt equalizera.";
+"lwG-Tm-rr1.title" = "uwaga: możesz użyć prawego klawisza myszy by narysować krztałt equalizera";
 
 /* Class = "NSTextFieldCell"; title = "6.3"; ObjectID = "neW-5g-R0i"; */
 "neW-5g-R0i.title" = "6.3";
@@ -131,11 +125,8 @@
 /* Class = "NSTextFieldCell"; title = "1.6"; ObjectID = "qj9-4A-tfF"; */
 "qj9-4A-tfF.title" = "1.6";
 
-/* Class = "NSButtonCell"; title = "Level Preamp"; ObjectID = "rck-mI-bed"; */
-"rck-mI-bed.title" = "Level Preamp";
-
 /* Class = "NSTextFieldCell"; title = "Preamp"; ObjectID = "wzI-tF-Y2S"; */
-"wzI-tF-Y2S.title" = "Preamp";
+"wzI-tF-Y2S.title" = "preambuła";
 
 /* Class = "NSTextFieldCell"; title = "1k"; ObjectID = "xM8-HB-8XL"; */
 "xM8-HB-8XL.title" = "1k";

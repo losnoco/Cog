@@ -9,7 +9,7 @@
 "F0z-JX-Cv5.title" = "Предоставление доступа к выбранным папкам";
 
 /* Class = "NSButtonCell"; title = "Apply"; ObjectID = "Jne-2G-yP9"; */
-"Jne-2G-yP9.title" = "Применить";
+"Jne-2G-yP9.title" = "Применть";
 
 /* Class = "NSTableColumn"; headerCell.title = "Enabled"; ObjectID = "QWk-Qb-l0y"; */
 "QWk-Qb-l0y.headerCell.title" = "Включено";

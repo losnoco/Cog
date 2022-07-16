@@ -1,197 +1,83 @@
-/* (No Comment) */
 "AddButtonTooltip" = "Añadir archivos";
-
-/* (No Comment) */
 "CogTitle" = "Cog";
-
-/* (No Comment) */
 "ConsentNo" = "No";
-
-/* (No Comment) */
 "ConsentYes" = "Sí";
-
-/* (No Comment) */
 "CrashlyticsConsentText" = "¿Te gustaría permitir que Crashlytics envíe informes de fallos? Puedes volver a desactivarlo en Preferencias. No te volveremos a preguntar.";
-
-/* (No Comment) */
 "CrashlyticsConsentTitle" = "Colección de fallos de Crashlytics";
-
-/* (No Comment) */
 "ErrorInvalidTrackId" = "ID de pista inválida enviada a la solicitud de SQLite.";
-
-/* (No Comment) */
 "ErrorMessageBadFile" = "No se han podido analizar los metadatos de un archivo defectuoso.";
-
-/* (No Comment) */
 "ErrorMetadata" = "No se pueden recuperar los metadatos.";
-
-/* (No Comment) */
 "ErrorSqliteProblem" = "Problema general de acceso a la pista desde la base de datos SQLite.";
-
-/* (No Comment) */
 "ErrorTrackMissing" = "Falta una entrada de pista en la base de datos SQLite.";
-
-/* (No Comment) */
 "ErrorTrackTooltip" = "Error";
-
-/* (No Comment) */
 "FeedbackFailedInformativeText" = "No se pudieron enviar los comentarios.";
-
-/* (No Comment) */
 "FeedbackFailedMessageText" = "Ha fallado";
-
-/* (No Comment) */
 "FeedbackSuccessInformativeText" = "¡Comentarios enviados con éxito!";
-
-/* (No Comment) */
 "FeedbackSuccessMessageText" = "Éxito";
-
-/* (No Comment) */
 "FileButtonTooltip" = "Bandeja de archivos";
-
-/* (No Comment) */
 "GainAlbumGain" = "Ganancia del álbum";
-
-/* (No Comment) */
 "GainAlbumGainPeak" = "Ganancia del álbum más pico";
-
-/* (No Comment) */
 "GainAlbumPeak" = "Pico del álbum";
-
-/* (No Comment) */
 "GainNone" = "Ninguna";
-
-/* (No Comment) */
 "GainTrackGain" = "Ganancia de pista";
-
-/* (No Comment) */
 "GainTrackGainPeak" = "Ganancia de pista más pico";
-
-/* (No Comment) */
 "GainTrackPeak" = "Pico de pista";
-
-/* (No Comment) */
 "GainVolumeScale" = "Escala de volumen";
-
-/* (No Comment) */
 "InfoButtonTooltip" = "Información sobre el archivo seleccionado";
-
-/* (No Comment) */
 "InvalidURLLong" = "La URL no es válida.";
-
-/* (No Comment) */
 "InvalidURLShort" = "URL no válida";
-
-/* (No Comment) */
 "NextButtonTooltip" = "Siguiente";
-
-/* No comment provided by engineer. */
 "PauseButtonTooltip" = "Pausar";
-
-/* (No Comment) */
 "PlayButtonTooltip" = "Reproducir";
-
-/* (No Comment) */
 "PlayingTrackTooltip" = "Reproduciendo";
-
-/* (No Comment) */
 "PlaylistHeaderContextMenuTitle" = "Menú contextual del encabezado de la lista de reproducción";
-
-/* (No Comment) */
 "PlaylistIndexColumn" = "Índice";
-
-/* (No Comment) */
 "PlaylistRandomizationAction" = "Aleatorización de la lista";
-
-/* (No Comment) */
 "PlaylistStatusColumn" = "Estado";
-
-/* (No Comment) */
 "PreferencesTitle" = "Preferencias";
-
-/* (No Comment) */
 "PrevButtonTooltip" = "Anterior";
-
-/* (No Comment) */
 "ProgressActionLoader" = "cargador de listas de reproducción insertando archivos";
-
-/* (No Comment) */
 "ProgressActionLoadingMetadata" = "cargando metadatos para pistas";
-
-/* (No Comment) */
 "ProgressSubActionLoaderAddingEntries" = "creando y agregando entradas en la lista";
-
-/* (No Comment) */
 "ProgressSubActionLoaderFilteringContainedFiles" = "eliminando los tipos de archivos no admitidos de los contenedores";
-
-/* (No Comment) */
 "ProgressSubActionLoaderFilteringContainerFiles" = "manejando tipos de archivos contenedores";
-
-/* (No Comment) */
 "ProgressSubActionLoaderFilteringFiles" = "eliminando tipos de archivos no compatibles";
-
-/* (No Comment) */
 "ProgressSubActionLoaderListingFiles" = "recopilando archivos";
-
-/* (No Comment) */
 "ProgressSubActionLoadingMetadata" = "procesando archivos";
-
-/* (No Comment) */
 "ProgressSubActionMetadataApply" = "aplicando la información al almacenamiento de la listas";
-
-/* (No Comment) */
 "QueuedTrackTooltip" = "En cola";
-
-/* (No Comment) */
 "RandomizeButtonTooltip" = "Aleatorizar la lista de reproducción";
-
-/* (No Comment) */
 "RemoveButtonTooltip" = "Eliminar archivos seleccionados";
-
-/* (No Comment) */
 "RepeatButtonTooltip" = "Modo de repetición";
-
-/* (No Comment) */
-"replayGainAlbumGain" = "El nivel de volumen de la salida de reproducción se detectará a través de la enumeración, \n                         re";
-
-/* (No Comment) */
 "ShuffleButtonTooltip" = "Modo aleatorio";
-
-/* (No Comment) */
 "SkipAction" = "Saltarse";
-
-/* (No Comment) */
 "StopAfterTrackTooltip" = "Detener después de esta pista";
-
-/* (No Comment) */
 "StopButtonTooltip" = "Detener";
-
-/* (No Comment) */
 "SwitchFromMiniPlayer" = "Volver a reproductor completo";
-
-/* (No Comment) */
 "SwitchToMiniPlayer" = "Cambiar a minirreproductor";
-
-/* (No Comment) */
 "TimeElapsed" = "%i:%02i";
-
-/* (No Comment) */
 "TimeFirstSeen" = "Visto por primera vez";
-
-/* (No Comment) */
 "TimeLastPlayed" = "Reproducido por última vez";
-
-/* (No Comment) */
 "TimeRemaining" = "-%i:%02i";
-
-/* Version string */
 "Version %@ (%@)" = "Versión %1$@ (%2$@)";
+"replayGainAlbumGain" = "El nivel de volumen de la salida de reproducción se detectará a través de la enumeración, \
+						 re";
+/* second for total */
+"%1d seconds(s)" = "%1d segundos(s)";
 
+/* Total duration for status */
 "Total duration: %@" = "Duración total: %@";
 
-"wdhms" = "%@, %@, %@, %@ y %@";
-"dhms" = "%@, %@, %@ y %@";
-"hms" = "%@, %@ y %@";
+/* minutes and seconds */
 "ms" = "%@ y %@";
+
+/* hours, minutes and seconds */
+"hms" = "%@, %@ y %@";
+
+/* days, hours, minutes and seconds */
+"dhms" = "%@, %@, %@ y %@";
+
+/* weeks, days, hours, minutes and seconds */
+"wdhms" = "%@, %@, %@, %@ y %@";
 
 "PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/57237510";

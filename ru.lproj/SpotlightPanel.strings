@@ -26,27 +26,6 @@
 /* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "36"; */
 "36.headerCell.title" = "Название";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "37"; */
-"37.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "39"; */
-"39.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "40"; */
-"40.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "41"; */
-"41.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "42"; */
-"42.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "43"; */
-"43.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "44"; */
-"44.title" = "Text Cell";
-
 /* Class = "NSTextFieldCell"; title = "Search Location:"; ObjectID = "80"; */
 "80.title" = "Найти расположение:";
 

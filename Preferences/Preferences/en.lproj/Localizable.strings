@@ -1,25 +1,32 @@
-"Nightly" = "Nightly";
-"Stable" = "Stable";
-"Unstable" = "Unstable";
-
-"File Drawer" = "File Drawer";
-"Hot Keys" = "Hot Keys";
-"Output" = "Output";
-
-"Updates" = "Updates";
-"Last.fm" = "Last.fm";
-"Scrobble" = "Scrobble";
-"Playlist" = "Playlist";
-"Notifications" = "Notifications";
 "Appearance" = "Appearance";
-"Synthesis" = "Synthesis";
-"General" = "General";
-
-"Press Key..." = "Press Key...";
-
+"Blam Synthesis" = "Blam Synthesis";
+"Blep Synthesis" = "Blep Synthesis";
 "Clear playlist and play" = "Clear playlist and play";
+"Cubic Interpolation" = "Cubic Interpolation";
 "Enqueue" = "Enqueue";
 "Enqueue and play" = "Enqueue and play";
-
+"File Drawer" = "File Drawer";
+"General" = "General";
+"Hot Keys" = "Hot Keys";
+"Last.fm" = "Last.fm";
+"Linear Interpolation" = "Linear Interpolation";
+"Nightly" = "Nightly";
+"No volume scaling" = "No volume scaling";
+"Notifications" = "Notifications";
+"Output" = "Output";
+"Playlist" = "Playlist";
+"Press Key..." = "Press Key...";
+"ReplayGain Album Gain" = "ReplayGain Album Gain";
+"ReplayGain Album Gain with peak" = "ReplayGain Album Gain with peak";
+"ReplayGain Track Gain" = "ReplayGain Track Gain";
+"ReplayGain Track Gain with peak" = "ReplayGain Track Gain with peak";
+"Scrobble" = "Scrobble";
+"Sinc Interpolation" = "Sinc Interpolation";
+"Stable" = "Stable";
+"Synthesis" = "Synthesis";
+"Unstable" = "Unstable";
+"Updates" = "Updates";
 "ValidNo" = "No";
 "ValidYes" = "Yes";
+"Volume scale tag only" = "Volume scale tag only";
+"Zero Order Hold" = "Zero Order Hold";

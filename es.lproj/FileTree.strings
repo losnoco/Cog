@@ -1,3 +1,4 @@
+
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "71"; */
 "71.title" = "Celda de texto";
 
@@ -21,4 +22,3 @@
 
 /* Class = "NSButtonCell"; title = "Choose"; ObjectID = "vRe-3U-Nxj"; */
 "vRe-3U-Nxj.title" = "Elegir";
-

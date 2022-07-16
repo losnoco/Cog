@@ -1,96 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-    <key>%1d week(s)</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@weeks@</string>
-        <key>weeks</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>zero</key>
-            <string>0 weeks</string>
-            <key>one</key>
-            <string>1 week</string>
-            <key>other</key>
-            <string>%d weeks</string>
-        </dict>
-    </dict>
+  <dict>
     <key>%1d day(s)</key>
     <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@days@</string>
-        <key>days</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>zero</key>
-            <string>0 days</string>
-            <key>one</key>
-            <string>1 day</string>
-            <key>other</key>
-            <string>%d days</string>
-        </dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@days@</string>
+      <key>days</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 day</string>
+        <key>other</key>
+        <string>%d days</string>
+      </dict>
     </dict>
     <key>%1d hour(s)</key>
     <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@hours@</string>
-        <key>hours</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>zero</key>
-            <string>0 hours</string>
-            <key>one</key>
-            <string>1 hour</string>
-            <key>other</key>
-            <string>%d hours</string>
-        </dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@hours@</string>
+      <key>hours</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 hour</string>
+        <key>other</key>
+        <string>%d hours</string>
+      </dict>
     </dict>
     <key>%1d minute(s)</key>
     <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@minutes@</string>
-        <key>minutes</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>zero</key>
-            <string>0 minutes</string>
-            <key>one</key>
-            <string>1 minute</string>
-            <key>other</key>
-            <string>%d minutes</string>
-        </dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@minutes@</string>
+      <key>minutes</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 minute</string>
+        <key>other</key>
+        <string>%d minutes</string>
+      </dict>
     </dict>
     <key>%1d second(s)</key>
     <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@seconds@</string>
-        <key>seconds</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>d</string>
-            <key>zero</key>
-            <string>0 seconds</string>
-            <key>one</key>
-            <string>1 second</string>
-            <key>other</key>
-            <string>%d seconds</string>
-        </dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@seconds@</string>
+      <key>seconds</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 second</string>
+        <key>other</key>
+        <string>%d seconds</string>
+      </dict>
     </dict>
-</dict>
+    <key>%1d week(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@weeks@</string>
+      <key>weeks</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>1 week</string>
+        <key>other</key>
+        <string>%d weeks</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>

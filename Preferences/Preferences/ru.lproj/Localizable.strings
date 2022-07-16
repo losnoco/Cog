@@ -1,25 +1,40 @@
-"Nightly" = "Ночная";
-"Stable" = "Стабильная";
-"Unstable" = "Нестабильная";
 
-"File Drawer" = "Файл менеджер";
-"Hot Keys" = "Горячие клавиши";
-"Output" = "Устройства";
-
-"Updates" = "Обновления";
-"Last.fm" = "Last.fm";
-"Scrobble" = "Скробблинг";
-"Playlist" = "Плейлист";
-"Notifications" = "Уведомления";
 "Appearance" = "Внешний вид";
-"Synthesis" = "Синтез";
-"General" = "Общее";
-
-"Press Key..." = "Нажмите ...";
 
 "Clear playlist and play" = "Очистить плейлист и воспроизвести";
+
 "Enqueue" = "Добавить в очередь";
+
 "Enqueue and play" = "Добавить в очередь и воспроизвести";
 
+"File Drawer" = "Файл менеджер";
+
+"General" = "Общее";
+
+"Hot Keys" = "Горячие клавиши";
+
+"Last.fm" = "Last.fm";
+
+"Nightly" = "Ночная";
+
+"Notifications" = "Уведомления";
+
+"Output" = "Устройства";
+
+"Playlist" = "Плейлист";
+
+"Press Key..." = "Нажмите...";
+
+"Scrobble" = "Скробблинг";
+
+"Stable" = "Стабильная";
+
+"Synthesis" = "Синтез";
+
+"Unstable" = "Нестабильная";
+
+"Updates" = "Обновления";
+
 "ValidNo" = "Нет";
+
 "ValidYes" = "Да";

@@ -1,15 +1,6 @@
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "61"; */
-"61.title" = "Другие виды";
-
-/* Class = "NSMenuItem"; title = "Item1"; ObjectID = "62"; */
-"62.title" = "Item1";
-
-/* Class = "NSMenuItem"; title = "Item2"; ObjectID = "63"; */
-"63.title" = "Item2";
-
-/* Class = "NSMenuItem"; title = "Item3"; ObjectID = "64"; */
-"64.title" = "Item3";
+/* Class = "NSButtonCell"; title = "Reset to defaults"; ObjectID = "1y7-iZ-BhE"; */
+"1y7-iZ-BhE.title" = "Сбросить по умолчанию";
 
 /* Class = "NSTextFieldCell"; title = "Play:"; ObjectID = "198"; */
 "198.title" = "Воспроизведение:";
@@ -23,8 +14,8 @@
 /* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
 "207.title" = "Автоматически проверять обновления при запуске";
 
-/* Class = "NSTextFieldCell"; title = "Output Device: "; ObjectID = "211"; */
-"211.title" = "Устройство воспроизведения: ";
+/* Class = "NSTextFieldCell"; title = "Output Device:"; ObjectID = "211"; */
+"211.title" = "Устройство воспроизведения:";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "249"; */
 "249.title" = "Другие виды";
@@ -59,59 +50,17 @@
 /* Class = "NSButtonCell"; title = "Read CUE sheets when adding folders to playlist"; ObjectID = "311"; */
 "311.title" = "Читать CUE при добавлении папок в плейлист";
 
-/* Class = "NSTextFieldCell"; title = "Hz"; ObjectID = "0Am-5Y-EKq"; */
-"0Am-5Y-EKq.title" = "Hz";
-
-/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1Cb-TU-E0q"; */
-"1Cb-TU-E0q.title" = "Item 3";
-
-/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1Yq-6f-Uho"; */
-"1Yq-6f-Uho.title" = "Item 2";
-
-/* Class = "NSButtonCell"; title = "Reset to defaults"; ObjectID = "1y7-iZ-BhE"; */
-"1y7-iZ-BhE.title" = "Сбросить по умолчанию";
-
-/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "3Gx-cs-3B0"; */
-"3Gx-cs-3B0.title" = "Item 1";
-
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "7un-em-D8r"; */
-"7un-em-D8r.title" = "Table View Cell";
-
-/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "99B-Tx-dPH"; */
-"99B-Tx-dPH.title" = "Item 2";
-
-/* Class = "NSTextFieldCell"; title = "Sample rate:"; ObjectID = "A9I-fr-vHp"; */
-"A9I-fr-vHp.title" = "Частота дискретизации:";
-
-/* Class = "NSTextFieldCell"; title = "Default play time:"; ObjectID = "AQZ-ku-F8u"; */
-"AQZ-ku-F8u.title" = "Время воспроизведения по умолчанию:";
-
 /* Class = "NSTextFieldCell"; title = "Spectrum bars"; ObjectID = "Bll-IJ-lje"; */
 "Bll-IJ-lje.title" = "Столбцы спектра";
 
 /* Class = "NSTextFieldCell"; title = "Spectrum peaks"; ObjectID = "CQI-YZ-B3V"; */
 "CQI-YZ-B3V.title" = "Пики спектра";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Dhd-k8-ZXq"; */
-"Dhd-k8-ZXq.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "ECB-P0-pve"; */
-"ECB-P0-pve.title" = "Метка";
-
-/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "EQX-aL-uT0"; */
-"EQX-aL-uT0.title" = "Item 3";
-
 /* Class = "NSTextFieldCell"; title = "MIDI Flavor:"; ObjectID = "FQF-vJ-hBx"; */
 "FQF-vJ-hBx.title" = "MIDI особенность:";
 
-/* Class = "NSTextFieldCell"; title = "Default loop count:"; ObjectID = "Fgm-Vs-tgU"; */
-"Fgm-Vs-tgU.title" = "Количество циклов по умолчанию:";
-
 /* Class = "NSButtonCell"; title = "Colorful dock icons"; ObjectID = "GdX-5e-NeU"; */
 "GdX-5e-NeU.title" = "Цветные иконки в Dock";
-
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "HKM-FW-dhH"; */
-"HKM-FW-dhH.title" = "Другие виды";
 
 /* Class = "NSMenuItem"; title = "Delete Invalid Paths"; ObjectID = "JU5-o7-jid"; */
 "JU5-o7-jid.title" = "Удалить неправильные пути";
@@ -122,18 +71,6 @@
 /* Class = "NSTextFieldCell"; title = "Selected:"; ObjectID = "KJz-qS-IcO"; */
 "KJz-qS-IcO.title" = "Выбрано:";
 
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "LwT-Qb-47r"; */
-"LwT-Qb-47r.title" = "Table View Cell";
-
-/* Class = "NSButtonCell"; title = "Enable HRTF filter (Not needed with AirPods or Beats)"; ObjectID = "NGx-0c-WVR"; */
-"NGx-0c-WVR.title" = "Включить фильтр HRTF (не требуется с AirPods или Beats)";
-
-/* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
-"NMg-TO-amV.title" = "Использовать 3D-рендеринг спектра";
-
-/* Class = "NSTextFieldCell"; title = "(will be preferred if possible)"; ObjectID = "POG-ai-6D2"; */
-"POG-ai-6D2.title" = "(будет предпочтительнее, если это возможно)";
-
 /* Class = "NSButtonCell"; title = "Show album art"; ObjectID = "RGf-4D-3NW"; */
 "RGf-4D-3NW.title" = "Показать обложку альбома";
 
@@ -143,11 +80,8 @@
 /* Class = "NSTextFieldCell"; title = "Spam:"; ObjectID = "SMd-GA-jrH"; */
 "SMd-GA-jrH.title" = "Спам:";
 
-/* Class = "NSTextFieldCell"; title = "Default fade time:"; ObjectID = "UdW-qd-A0x"; */
-"UdW-qd-A0x.title" = "Время затухания по умолчанию:";
-
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
-"V8o-Xy-HUW.title" = "Другие виды";
+"V8o-Xy-HUW.title" = "OtherViews";
 
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "WWy-iW-3Ct"; */
 "WWy-iW-3Ct.title" = "Item 3";
@@ -230,8 +164,35 @@
 /* Class = "NSButtonCell"; title = "Send crash reports and usage data"; ObjectID = "zQ2-6O-3Og"; */
 "zQ2-6O-3Og.title" = "Отправлять отчеты о сбоях и данные об использовании";
 
+/* Class = "NSTextFieldCell"; title = "Hz"; ObjectID = "0Am-5Y-EKq"; */
+"0Am-5Y-EKq.title" = "Hz";
+
+/* Class = "NSTextFieldCell"; title = "Sample rate:"; ObjectID = "A9I-fr-vHp"; */
+"A9I-fr-vHp.title" = "Частота дискретизации:";
+
+/* Class = "NSTextFieldCell"; title = "Default play time:"; ObjectID = "AQZ-ku-F8u"; */
+"AQZ-ku-F8u.title" = "Время воспроизведения по умолчанию:";
+
+/* Class = "NSTextFieldCell"; title = "Default loop count:"; ObjectID = "Fgm-Vs-tgU"; */
+"Fgm-Vs-tgU.title" = "Количество циклов по умолчанию:";
+
+/* Class = "NSTextFieldCell"; title = "(will be preferred if possible)"; ObjectID = "POG-ai-6D2"; */
+"POG-ai-6D2.title" = "(будет предпочтительнее, если это возможно)";
+
+/* Class = "NSTextFieldCell"; title = "Default fade time:"; ObjectID = "UdW-qd-A0x"; */
+"UdW-qd-A0x.title" = "Время затухания по умолчанию:";
+
+/* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "klv-Wh-0ur"; */
+"klv-Wh-0ur.title" = "hh:mm:ss.ms";
+
 /* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "zaI-0m-tQf"; */
 "zaI-0m-tQf.title" = "hh:mm:ss.ms";
+
+/* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
+"NMg-TO-amV.title" = "Использовать 3D-рендеринг спектра";
+
+/* Class = "NSButtonCell"; title = "Enable HRTF filter (Not needed with AirPods or Beats)"; ObjectID = "NGx-0c-WVR"; */
+"NGx-0c-WVR.title" = "Включить фильтр HRTF (не требуется с AirPods или Beats)";
 
 /* Class = "NSButtonCell"; title = "Enable FreeSurround stereo to surround upmixing"; ObjectID = "F0i-UK-6Nu"; */
 "F0i-UK-6Nu.title" = "Включить FreeSurround апмикс стерео в объемный звук";

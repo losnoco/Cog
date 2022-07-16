@@ -14,44 +14,14 @@
 /* Class = "NSTableColumn"; headerCell.title = "Year"; ObjectID = "31"; */
 "31.headerCell.title" = "rok";
 
-/* Class = "NSTableColumn"; headerCell.title = length""; ObjectID = "32"; */
+/* Class = "NSTableColumn"; headerCell.title = "Length"; ObjectID = "32"; */
 "32.headerCell.title" = "długość";
-
-/* Class = "NSTableColumn"; headerCell.title = "Album"; ObjectID = "33"; */
-"33.headerCell.title" = "Album";
 
 /* Class = "NSTableColumn"; headerCell.title = "Artist"; ObjectID = "34"; */
 "34.headerCell.title" = "wykonawca";
 
-/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "36"; */
-"36.headerCell.title" = "tytuł";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "37"; */
-"37.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "39"; */
-"39.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "40"; */
-"40.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "41"; */
-"41.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "42"; */
-"42.title" = "Text Cell";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "43"; */
-"43.title" = "Text Cell";tekstowe
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "44"; */
-"44.title" = "Text Cell";
-
 /* Class = "NSTextFieldCell"; title = "Search Location:"; ObjectID = "80"; */
 "80.title" = "lokalizacja wyszukiwania:";
-
-/* Class = "NSMenu"; title = "ContextualMenu"; ObjectID = "171"; */
-"171.title" = " menu kontekstowe";
 
 /* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "172"; */
 "172.title" = "pokaż w finderze";

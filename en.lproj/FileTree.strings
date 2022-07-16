@@ -19,3 +19,6 @@
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "147"; */
 "147.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Choose"; ObjectID = "vRe-3U-Nxj"; */
+"vRe-3U-Nxj.title" = "Choose";

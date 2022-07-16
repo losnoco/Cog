@@ -76,20 +76,11 @@
 /* Class = "NSTextFieldCell"; title = "Spectrum bars"; ObjectID = "Bll-IJ-lje"; */
 "Bll-IJ-lje.title" = "Barras del analizador";
 
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "bWQ-dT-X3w"; */
-"bWQ-dT-X3w.title" = "Celda de texto";
-
-/* Class = "NSButtonCell"; title = "Use iTunes style"; ObjectID = "cOb-hQ-7K8"; */
-"cOb-hQ-7K8.title" = "Usar estilo de iTunes";
-
 /* Class = "NSTextFieldCell"; title = "Spectrum peaks"; ObjectID = "CQI-YZ-B3V"; */
 "CQI-YZ-B3V.title" = "Picos del analizador";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Dhd-k8-ZXq"; */
 "Dhd-k8-ZXq.title" = "Celda de texto";
-
-/* Class = "NSButtonCell"; title = "Limit volume control to 100%"; ObjectID = "ds2-aw-ebU"; */
-"ds2-aw-ebU.title" = "Limitar el control de volumen al 100%";
 
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "ECB-P0-pve"; */
 "ECB-P0-pve.title" = "Label";
@@ -97,26 +88,14 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "EQX-aL-uT0"; */
 "EQX-aL-uT0.title" = "Item 3";
 
-/* Class = "NSTextFieldCell"; title = "Resampling Quality:"; ObjectID = "eX0-PC-iVo"; */
-"eX0-PC-iVo.title" = "Calidad del remuestreo:";
-
 /* Class = "NSTextFieldCell"; title = "MIDI Flavor:"; ObjectID = "FQF-vJ-hBx"; */
 "FQF-vJ-hBx.title" = "Variedad de MIDI:";
-
-/* Class = "NSButtonCell"; title = "Resume playback on startup"; ObjectID = "fUg-Cg-gXa"; */
-"fUg-Cg-gXa.title" = "Resumir reproducción al abrir";
 
 /* Class = "NSButtonCell"; title = "Colorful dock icons"; ObjectID = "GdX-5e-NeU"; */
 "GdX-5e-NeU.title" = "Colorear icono del dock";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "HKM-FW-dhH"; */
 "HKM-FW-dhH.title" = "Otras vistas";
-
-/* Class = "NSButtonCell"; title = "Enable notifications"; ObjectID = "hqT-nY-NoU"; */
-"hqT-nY-NoU.title" = "Habilitar notificaciones";
-
-/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "jLL-zc-kYf"; */
-"jLL-zc-kYf.title" = "Item 3";
 
 /* Class = "NSMenuItem"; title = "Delete Invalid Paths"; ObjectID = "JU5-o7-jid"; */
 "JU5-o7-jid.title" = "Eliminar rutas inválidas";
@@ -127,11 +106,59 @@
 /* Class = "NSTextFieldCell"; title = "Selected:"; ObjectID = "KJz-qS-IcO"; */
 "KJz-qS-IcO.title" = "Seleccionado:";
 
-/* Class = "NSTableColumn"; headerCell.title = "Valid"; ObjectID = "lEg-E3-TBs"; */
-"lEg-E3-TBs.headerCell.title" = "Válida";
-
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "LwT-Qb-47r"; */
 "LwT-Qb-47r.title" = "Celda de vista de tabla";
+
+/* Class = "NSButtonCell"; title = "Show album art"; ObjectID = "RGf-4D-3NW"; */
+"RGf-4D-3NW.title" = "Mostrar carátula del álbum";
+
+/* Class = "NSButtonCell"; title = "Quit when playback completes"; ObjectID = "SBA-J5-rEd"; */
+"SBA-J5-rEd.title" = "Salir al terminar reproducción";
+
+/* Class = "NSTextFieldCell"; title = "Spam:"; ObjectID = "SMd-GA-jrH"; */
+"SMd-GA-jrH.title" = "Spam:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
+"V8o-Xy-HUW.title" = "Otras vistas";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "WWy-iW-3Ct"; */
+"WWy-iW-3Ct.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "XzK-h2-vIT"; */
+"XzK-h2-vIT.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "YLi-QX-EgD"; */
+"YLi-QX-EgD.title" = "Item 2";
+
+/* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "Yz2-Ee-bZ0"; */
+"Yz2-Ee-bZ0.headerCell.title" = "Ruta";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "bWQ-dT-X3w"; */
+"bWQ-dT-X3w.title" = "Celda de texto";
+
+/* Class = "NSButtonCell"; title = "Use iTunes style"; ObjectID = "cOb-hQ-7K8"; */
+"cOb-hQ-7K8.title" = "Usar estilo de iTunes";
+
+/* Class = "NSButtonCell"; title = "Limit volume control to 100%"; ObjectID = "ds2-aw-ebU"; */
+"ds2-aw-ebU.title" = "Limitar el control de volumen al 100%";
+
+/* Class = "NSTextFieldCell"; title = "Resampling Quality:"; ObjectID = "eX0-PC-iVo"; */
+"eX0-PC-iVo.title" = "Calidad del remuestreo:";
+
+/* Class = "NSButtonCell"; title = "Resume playback on startup"; ObjectID = "fUg-Cg-gXa"; */
+"fUg-Cg-gXa.title" = "Resumir reproducción al abrir";
+
+/* Class = "NSButtonCell"; title = "Spectrum 2D view"; ObjectID = "gXL-j6-df0"; */
+"gXL-j6-df0.title" = "Usar perspectiva plana en el analizador de la barra de herramientas";
+
+/* Class = "NSButtonCell"; title = "Enable notifications"; ObjectID = "hqT-nY-NoU"; */
+"hqT-nY-NoU.title" = "Habilitar notificaciones";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "jLL-zc-kYf"; */
+"jLL-zc-kYf.title" = "Item 3";
+
+/* Class = "NSTableColumn"; headerCell.title = "Valid"; ObjectID = "lEg-E3-TBs"; */
+"lEg-E3-TBs.headerCell.title" = "Válida";
 
 /* Class = "NSTextFieldCell"; title = "MIDI Plugin:"; ObjectID = "n5F-dq-NZh"; */
 "n5F-dq-NZh.title" = "Componente MIDI:";
@@ -148,26 +175,14 @@
 /* Class = "NSMenuItem"; title = "Suggest Paths"; ObjectID = "qjI-dK-nfG"; */
 "qjI-dK-nfG.title" = "Sugerir rutas";
 
-/* Class = "NSButtonCell"; title = "Show album art"; ObjectID = "RGf-4D-3NW"; */
-"RGf-4D-3NW.title" = "Mostrar carátula del álbum";
-
-/* Class = "NSButtonCell"; title = "Quit when playback completes"; ObjectID = "SBA-J5-rEd"; */
-"SBA-J5-rEd.title" = "Salir al terminar reproducción";
-
-/* Class = "NSTextFieldCell"; title = "Spam:"; ObjectID = "SMd-GA-jrH"; */
-"SMd-GA-jrH.title" = "Spam:";
-
 /* Class = "NSButtonCell"; title = "Allow insecure SSL connections"; ObjectID = "sva-DV-ina"; */
 "sva-DV-ina.title" = "Permitir conexiones inseguras SSL";
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
-"V8o-Xy-HUW.title" = "Otras vistas";
+/* Class = "NSButtonCell"; title = "Show stop button"; ObjectID = "vMI-lj-Lrz"; */
+"vMI-lj-Lrz.title" = "Mostrar botón \"Detener\"";
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "vaQ-pZ-jXy"; */
 "vaQ-pZ-jXy.title" = "Item 1";
-
-/* Class = "NSButtonCell"; title = "Show stop button"; ObjectID = "vMI-lj-Lrz"; */
-"vMI-lj-Lrz.title" = "Mostrar botón \"Detener\"";
 
 /* Class = "NSTextFieldCell"; title = "Volume Level:"; ObjectID = "wK4-EF-8Wa"; */
 "wK4-EF-8Wa.title" = "Nivel de volumen:";
@@ -178,53 +193,23 @@
 /* Class = "NSTextFieldCell"; title = "Folder access paths:"; ObjectID = "wWm-AD-cD4"; */
 "wWm-AD-cD4.title" = "Rutas de acceso a carpetas:";
 
-/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "WWy-iW-3Ct"; */
-"WWy-iW-3Ct.title" = "Item 3";
-
-/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "XzK-h2-vIT"; */
-"XzK-h2-vIT.title" = "Item 1";
-
 /* Class = "NSButtonCell"; title = "Select a SoundFont"; ObjectID = "yeL-9c-lFq"; */
 "yeL-9c-lFq.title" = "Elige una SoundFont";
-
-/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "YLi-QX-EgD"; */
-"YLi-QX-EgD.title" = "Item 2";
-
-/* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "Yz2-Ee-bZ0"; */
-"Yz2-Ee-bZ0.headerCell.title" = "Ruta";
 
 /* Class = "NSButtonCell"; title = "Send crash reports and usage data"; ObjectID = "zQ2-6O-3Og"; */
 "zQ2-6O-3Og.title" = "Enviar informes de fallas y datos de uso";
 
-/* Class = "NSTextFieldCell"; title = "Default loop count:"; ObjectID = "Fgm-Vs-tgU"; */
-"Fgm-Vs-tgU.title" = "Bucles por defecto:";
-
 /* Class = "NSTextFieldCell"; title = "Hz"; ObjectID = "0Am-5Y-EKq"; */
 "0Am-5Y-EKq.title" = "Hz";
-
-/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1Cb-TU-E0q"; */
-"1Cb-TU-E0q.title" = "Item 3";
-
-/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1Yq-6f-Uho"; */
-"1Yq-6f-Uho.title" = "Item 2";
-
-/* Class = "NSButtonCell"; title = "Reset to defaults"; ObjectID = "1y7-iZ-BhE"; */
-"1y7-iZ-BhE.title" = "Volver a valores por defecto";
-
-/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "3Gx-cs-3B0"; */
-"3Gx-cs-3B0.title" = "Item 1";
-
-/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "7un-em-D8r"; */
-"7un-em-D8r.title" = "Celda de vista de tabla";
-
-/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "99B-Tx-dPH"; */
-"99B-Tx-dPH.title" = "Item 2";
 
 /* Class = "NSTextFieldCell"; title = "Sample rate:"; ObjectID = "A9I-fr-vHp"; */
 "A9I-fr-vHp.title" = "Tasa de muestreo:";
 
 /* Class = "NSTextFieldCell"; title = "Default play time:"; ObjectID = "AQZ-ku-F8u"; */
 "AQZ-ku-F8u.title" = "Tiempo de reproducción:";
+
+/* Class = "NSTextFieldCell"; title = "Default loop count:"; ObjectID = "Fgm-Vs-tgU"; */
+"Fgm-Vs-tgU.title" = "Bucles por defecto:";
 
 /* Class = "NSTextFieldCell"; title = "(will be preferred if possible)"; ObjectID = "POG-ai-6D2"; */
 "POG-ai-6D2.title" = "(se usará si es posible)";
@@ -238,9 +223,6 @@
 /* Class = "NSTextFieldCell"; title = "hh:mm:ss.ms"; ObjectID = "zaI-0m-tQf"; */
 "zaI-0m-tQf.title" = "hh:mm:ss.ms";
 
-/* Class = "NSButtonCell"; title = "Spectrum 2D view"; ObjectID = "gXL-j6-df0"; */
-"gXL-j6-df0.title" = "Usar perspectiva plana en el analizador de la barra de herramientas";
-
 /* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
 "NMg-TO-amV.title" = "Usar analizador en tres dimensiones";
 
@@ -251,4 +233,4 @@
 "207.title" = "Buscar actualizaciones al abrir";
 
 /* Class = "NSButtonCell"; title = "Enable FreeSurround stereo to surround upmixing"; ObjectID = "F0i-UK-6Nu"; */
-"F0i-UK-6Nu.title" = "Enable FreeSurround stereo to surround upmixing";
+"F0i-UK-6Nu.title" = "Activar conversión de sonido estéreo a envolvente";

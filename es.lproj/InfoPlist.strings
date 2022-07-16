@@ -10,7 +10,6 @@
 /* Privacy - Contacts Usage Description */
 "NSContactsUsageDescription" = "Cog no utiliza la información de tus contactos. ¿Por qué intentas abrir tus contactos con un reproductor de audio?";
 
-/* (No Comment) */
 "NSHumanReadableCopyright" = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2022";
 
 /* Privacy - Location Usage Description */
@@ -24,4 +23,3 @@
 
 /* Privacy - Reminders Usage Description */
 "NSRemindersUsageDescription" = "Cog no tiene ningún uso para tus recordatorios. ¿Por qué intentas acceder a ellos con un reproductor de audio?";
-
