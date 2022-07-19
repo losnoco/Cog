@@ -373,7 +373,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				if(bufferRef) {
 					CMTime chunkDuration = CMSampleBufferGetDuration(bufferRef);
 
+					[currentPtsLock lock];
 					outputPts = CMTimeAdd(outputPts, chunkDuration);
+					[currentPtsLock unlock];
 					trackPts = CMTimeAdd(trackPts, chunkDuration);
 
 					[audioRenderer enqueueSampleBuffer:bufferRef];
@@ -1092,8 +1094,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		                                                                 if(timeAdded > 0) {
 			                                                                 [outputController incrementAmountPlayed:timeAdded];
 		                                                                 }
-
+		                                                                 [lock lock];
 		                                                                 CMTime latencyTime = CMTimeSubtract(*outputPts, time);
+		                                                                 [lock unlock];
 		                                                                 double latencySeconds = CMTimeGetSeconds(latencyTime);
 		                                                                 double latencyVis = 0.0;
 		                                                                 [lock lock];
