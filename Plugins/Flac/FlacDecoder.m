@@ -261,8 +261,10 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 			}
 		}
 
-		if(![_metaDict isEqualToDictionary:flacDecoder->metaDict]) {
+		if(![_metaDict isEqualToDictionary:flacDecoder->metaDict] ||
+		   ![_cuesheet isEqualToString:flacDecoder->cuesheet]) {
 			flacDecoder->metaDict = _metaDict;
+			flacDecoder->cuesheet = _cuesheet;
 
 			if(![flacDecoder->source seekable]) {
 				[flacDecoder willChangeValueForKey:@"metadata"];
