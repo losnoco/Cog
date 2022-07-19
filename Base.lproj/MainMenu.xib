@@ -25,17 +25,17 @@
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
-                        <rect key="frame" x="0.0" y="356" width="1060" height="44"/>
+                        <rect key="frame" x="0.0" y="372" width="1105" height="28"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
-                                <rect key="frame" x="0.0" y="0.0" width="1060" height="44"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1105" height="28"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
-                                    <rect key="frame" x="0.0" y="0.0" width="1060" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1105" height="28"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
-                                            <rect key="frame" x="0.0" y="0.0" width="1060" height="27"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1105" height="24"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="6"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -672,7 +672,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <tableHeaderView key="headerView" wantsLayer="YES" id="1517">
-                                    <rect key="frame" x="0.0" y="0.0" width="1060" height="17"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1105" height="17"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
@@ -685,7 +685,7 @@
                         </connections>
                     </splitView>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="778">
-                        <rect key="frame" x="400" y="4" width="261" height="14"/>
+                        <rect key="frame" x="422" y="4" width="261" height="14"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
                             <font key="font" metaFont="controlContent" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -998,7 +998,10 @@
                 <defaultToolbarItems>
                     <toolbarItem reference="ZH9-ZU-skw"/>
                     <toolbarItem reference="1539"/>
+                    <toolbarItem reference="1610"/>
                     <toolbarItem reference="1552"/>
+                    <toolbarItem reference="1568"/>
+                    <toolbarItem reference="1551"/>
                     <toolbarItem reference="1636"/>
                     <toolbarItem reference="1639"/>
                     <toolbarItem reference="2466"/>
@@ -1007,9 +1010,6 @@
                     <toolbarItem reference="1629"/>
                     <toolbarItem reference="1529"/>
                     <toolbarItem reference="NtB-XF-g07"/>
-                    <toolbarItem reference="1568"/>
-                    <toolbarItem reference="1551"/>
-                    <toolbarItem reference="1610"/>
                     <toolbarItem reference="1552"/>
                     <toolbarItem reference="1533"/>
                 </defaultToolbarItems>
