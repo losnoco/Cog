@@ -513,7 +513,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	AudioStreamBasicDescription chunkFormat = [inChunk format];
 	uint32_t chunkConfig = [inChunk channelConfig];
 	BOOL chunkLossless = [inChunk lossless];
-	if(!formatRead || memcmp(&chunkConfig, &inputFormat, sizeof(chunkConfig)) != 0 ||
+	if(!formatRead || memcmp(&chunkFormat, &inputFormat, sizeof(chunkFormat)) != 0 ||
 	   chunkConfig != inputChannelConfig || chunkLossless != inputLossless) {
 		formatRead = YES;
 		inputFormat = chunkFormat;
