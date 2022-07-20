@@ -486,6 +486,12 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			return [[AudioChunk alloc] init];
 		}
 		AudioChunk *chunk = [chunkList objectAtIndex:0];
+#if !DSD_DECIMATE
+		AudioStreamBasicDescription asbd = [chunk format];
+		if(asbd.mBitsPerChannel == 1) {
+			maxFrameCount /= 8;
+		}
+#endif
 		if([chunk frameCount] <= maxFrameCount) {
 			[chunkList removeObjectAtIndex:0];
 			listDuration -= [chunk duration];
@@ -627,7 +633,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			samplesRead *= 8;
 #endif
 			bitsPerSample = 32;
-			bytesReadFromInput = samplesRead * inputFormat.mChannelsPerFrame * sizeof(float);
+			bytesReadFromInput = samplesRead * floatFormat.mBytesPerPacket;
 			isFloat = YES;
 			inputBuffer = &tempData[buffer_adder];
 			inputChanged = YES;
