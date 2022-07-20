@@ -139,16 +139,15 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		                      location:@"pre downmix"];
 #endif
 		// It should be fine to request up to double, we'll only get downsampled
-		float outputBuffer[amountToRead * newFormat.mChannelsPerFrame];
 		const float *outputPtr = (const float *)[samples bytes];
 		if(r8bstate) {
 			size_t inDone = 0;
 			[currentPtsLock lock];
-			size_t framesDone = r8bstate_resample(r8bstate, outputPtr, frameCount, &inDone, &outputBuffer[0], amountToRead);
+			size_t framesDone = r8bstate_resample(r8bstate, outputPtr, frameCount, &inDone, &r8bTempBuffer[0], amountToRead);
 			[currentPtsLock unlock];
 			if(!framesDone) return 0;
 			frameCount = (int)framesDone;
-			outputPtr = &outputBuffer[0];
+			outputPtr = &r8bTempBuffer[0];
 			chunkDuration = frameCount / newFormat.mSampleRate;
 		}
 
