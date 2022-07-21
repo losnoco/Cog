@@ -23,6 +23,9 @@
 	int channels;
 	long totalFrames;
 
+	int metadataUpdateInterval;
+	int metadataUpdateCount;
+
 	NSDictionary *metaDict;
 	NSDictionary *icyMetaDict;
 

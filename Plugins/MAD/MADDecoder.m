@@ -461,6 +461,11 @@
 			DLog(@"Decoding first frame: %i", r);
 		} while(r == 0);
 
+		if(r != -1) {
+			metadataUpdateInterval = sampleRate;
+			metadataUpdateCount = 0;
+		}
+
 		return (r == -1 ? NO : YES);
 	}
 
@@ -471,6 +476,9 @@
 	if(_foundLAMEHeader || _foundiTunSMPB) {
 		framesToSkip = _startPadding;
 	}
+
+	metadataUpdateInterval = sampleRate;
+	metadataUpdateCount = 0;
 
 	return ret;
 }
@@ -730,7 +738,11 @@
 		[self syncFormat];
 	}
 
-	[self updateMetadata];
+	metadataUpdateCount += chunk ? [chunk frameCount] : 0;
+	if(metadataUpdateCount >= metadataUpdateInterval) {
+		metadataUpdateCount -= metadataUpdateInterval;
+		[self updateMetadata];
+	}
 
 	// DLog(@"Read: %i/%i", bytesRead, size);
 	return chunk;

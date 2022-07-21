@@ -435,6 +435,9 @@ static uint8_t reverse_bits[0x100];
 	endOfStream = NO;
 	endOfAudio = NO;
 
+	metadataUpdateInterval = codecCtx->sample_rate;
+	metadataUpdateCount = 0;
+
 	if(rawDSD) {
 		totalFrames *= 8;
 	}
@@ -899,13 +902,17 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		}
 	}
 
-	[self updateMetadata];
-
 	int framesReadNow = bytesRead / frameSize;
 	if(totalFrames && (framesRead + framesReadNow > totalFrames))
 		framesReadNow = (int)(totalFrames - framesRead);
 
 	framesRead += framesReadNow;
+
+	metadataUpdateCount += framesReadNow;
+	if(metadataUpdateCount >= metadataUpdateInterval) {
+		metadataUpdateCount -= metadataUpdateInterval;
+		[self updateMetadata];
+	}
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
