@@ -688,8 +688,6 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	if(prebufferedChunk) {
 		// A bit of ignored read-ahead to support embedded artwork
-		size_t framesReadNow = prebufferedChunk.frameCount;
-		framesRead -= framesReadNow;
 		AudioChunk *chunk = prebufferedChunk;
 		prebufferedChunk = nil;
 		return chunk;
