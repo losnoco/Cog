@@ -43,6 +43,9 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 	AVFrame *lastDecodedFrame;
 	AVPacket *lastReadPacket;
 
+	int sampleBufferSize;
+	uint8_t *sampleBuffer;
+
 	int metadataUpdateInterval;
 	int metadataUpdateCount;
 

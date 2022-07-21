@@ -435,6 +435,14 @@ static uint8_t reverse_bits[0x100];
 	endOfStream = NO;
 	endOfAudio = NO;
 
+	sampleBufferSize = MAX(codecCtx->sample_rate / 200, 1024); // Minimum 1024 samples, or maximum 5 milliseconds
+	sampleBufferSize *= rawDSD ? channels : channels * (bitsPerSample / 8);
+	sampleBuffer = av_malloc(sampleBufferSize);
+	if(!sampleBuffer) {
+		ALog(@"Out of memory!");
+		return NO;
+	}
+
 	metadataUpdateInterval = codecCtx->sample_rate;
 	metadataUpdateCount = 0;
 
@@ -510,6 +518,11 @@ static uint8_t reverse_bits[0x100];
 		buffer = ioCtx->buffer;
 		av_free(ioCtx);
 		ioCtx = NULL;
+	}
+
+	if(sampleBuffer) {
+		av_free(sampleBuffer);
+		sampleBuffer = NULL;
 	}
 
 	if(buffer) {
@@ -696,14 +709,11 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	if(totalFrames && framesRead >= totalFrames)
 		return nil;
 
-	int frames = 1024;
-
 	int frameSize = rawDSD ? channels : channels * (bitsPerSample / 8);
-	int bytesToRead = frames * frameSize;
+	int bytesToRead = sampleBufferSize;
 	int bytesRead = 0;
 
-	uint8_t buffer[bytesToRead];
-	void *buf = (void *)buffer;
+	void *buf = (void *)sampleBuffer;
 
 	int dataSize = 0;
 
@@ -914,7 +924,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
-	[chunk assignSamples:buffer frameCount:framesReadNow];
+	[chunk assignSamples:sampleBuffer frameCount:framesReadNow];
 
 	return chunk;
 }
