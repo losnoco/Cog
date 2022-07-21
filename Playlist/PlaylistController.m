@@ -892,7 +892,14 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pe.deLeted = NO;
 	}
 
-	[super insertObjects:objects atArrangedObjectIndexes:indexes];
+	// further bodge fix
+	@try {
+		[super insertObjects:objects atArrangedObjectIndexes:indexes];
+	}
+	@catch(id anException) {
+		indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(count, [objects count])];
+		[super insertObjects:objects atArrangedObjectIndexes:indexes];
+	}
 
 	[self commitPersistentStore];
 
