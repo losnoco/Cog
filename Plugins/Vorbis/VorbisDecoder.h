@@ -32,6 +32,9 @@
 	float frequency;
 	long totalFrames;
 
+	int metadataUpdateInterval;
+	int metadataUpdateCount;
+
 	NSDictionary *metaDict;
 	NSDictionary *icyMetaDict;
 

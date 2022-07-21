@@ -109,6 +109,9 @@ long sourceTell(void *datasource) {
 
 	[self updateMetadata];
 
+	metadataUpdateInterval = frequency;
+	metadataUpdateCount = 0;
+
 	return YES;
 }
 
@@ -215,6 +218,9 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		channels = vi->channels;
 		frequency = vi->rate;
 
+		metadataUpdateInterval = frequency;
+		metadataUpdateCount = 0;
+
 		[self willChangeValueForKey:@"properties"];
 		[self didChangeValueForKey:@"properties"];
 
@@ -254,7 +260,11 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	} while(total != frames && numread != 0);
 
-	[self updateIcyMetadata];
+	metadataUpdateCount += total;
+	if(metadataUpdateCount >= metadataUpdateInterval) {
+		metadataUpdateCount -= metadataUpdateInterval;
+		[self updateIcyMetadata];
+	}
 
 	[chunk assignSamples:buffer frameCount:total];
 

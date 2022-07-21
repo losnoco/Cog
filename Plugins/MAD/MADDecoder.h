@@ -49,6 +49,9 @@
 	long framesToSkip;
 	int layer;
 
+	int metadataUpdateInterval;
+	int metadataUpdateCount;
+
 	NSString *genre;
 	NSString *album;
 	NSString *artist;

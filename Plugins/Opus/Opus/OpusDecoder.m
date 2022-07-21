@@ -129,6 +129,9 @@ opus_int64 sourceTell(void *_stream) {
 
 	[self updateMetadata];
 
+	metadataUpdateInterval = 48000;
+	metadataUpdateCount = 0;
+
 	return YES;
 }
 
@@ -269,7 +272,11 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	} while(total != size && numread != 0);
 
-	[self updateIcyMetadata];
+	metadataUpdateCount += total / channels;
+	if(metadataUpdateCount >= metadataUpdateInterval) {
+		metadataUpdateCount -= metadataUpdateInterval;
+		[self updateIcyMetadata];
+	}
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
