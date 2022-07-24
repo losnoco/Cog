@@ -411,7 +411,16 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				// Make sure the container isn't added twice.
 				[uniqueURLs addObject:url];
 
-				[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
+				BOOL localFound = NO;
+				for(NSURL *u in urls) {
+					if([u isFileURL]) {
+						localFound = YES;
+						break;
+					}
+				}
+				if(localFound) {
+					[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
+				}
 			} else {
 				/* Fall back on adding the raw file if all container parsers have failed. */
 				[fileURLs addObject:url];
