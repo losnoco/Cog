@@ -25,6 +25,7 @@ static const char* extension_list[] = {
     "2dx9",
     "2pfs",
     "3do",
+    "3ds", //txth/reserved [F1 2011 (3DS)] 
     "4", //for Game.com audio
     "8", //txth/reserved [Gungage (PS1)]
     "800",
@@ -532,6 +533,7 @@ static const char* extension_list[] = {
     "sxd",
     "sxd2",
     "sxd3",
+    "szd",
     "szd1",
     "szd3",
 
