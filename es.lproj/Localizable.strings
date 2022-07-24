@@ -82,7 +82,7 @@
 
 "PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/57237510";
 
-"GrantPathTitle" = "Open to grant access to container folder";
-"GrantPathMessage" = "Click OK on the following folder open dialog to grant access to the specified folder. Navigate the dialog further up the folder hierarchy to grant broader access to your files. Press 'Stop warning me' to hide any further warnings for the rest of the session.";
-"GrantPathOK" = "OK";
-"GrantPathStopWarning" = "Stop warning me";
+"GrantPathTitle" = "Abrir para conceder acceso a la carpeta contenedora";
+"GrantPathMessage" = "Haz clic en Aceptar en el siguiente diálogo para conceder acceso a la carpeta especificada. Sube en la jerarquía de carpetas para conceder un acceso más amplio a tus archivos. Activa \"Dejar de advertirme\" para ocultar cualquier otra advertencia durante el resto de la sesión.";
+"GrantPathOK" = "Aceptar";
+"GrantPathStopWarning" = "Dejar de advertirme";
