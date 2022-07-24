@@ -332,13 +332,27 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		if(!_entry) {
 			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+				static BOOL warnedYet = NO;
+
+				if(!warnedYet) {
+					NSAlert *alert = [[NSAlert alloc] init];
+					[alert setMessageText:NSLocalizedString(@"GrantPathTitle", @"Title of file dialog for granting folder access")];
+					[alert setInformativeText:NSLocalizedString(@"GrantPathMessage", @"Message to new users regarding file permissions")];
+					[alert addButtonWithTitle:NSLocalizedString(@"GrantPathOK", @"OK button text")];
+					[alert addButtonWithTitle:NSLocalizedString(@"GrantPathStopWarning", @"Button to stop warnings for session")];
+
+					if([alert runModal] == NSAlertSecondButtonReturn) {
+						warnedYet = YES;
+					}
+				}
+
 				NSOpenPanel *panel = [NSOpenPanel openPanel];
 				[panel setAllowsMultipleSelection:NO];
 				[panel setCanChooseDirectories:YES];
 				[panel setCanChooseFiles:NO];
 				[panel setFloatingPanel:YES];
 				[panel setDirectoryURL:folderUrl];
-				[panel setTitle:@"Open to grant access to container folder"];
+				[panel setTitle:NSLocalizedString(@"GrantPathTitle", @"Title of file dialog for granting folder access")];
 				NSInteger result = [panel runModal];
 				if(result == NSModalResponseOK) {
 					NSURL *folderUrl = [panel URL];
