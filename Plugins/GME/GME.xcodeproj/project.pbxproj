@@ -391,6 +391,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OBJROOT = ../../build;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};
@@ -434,6 +436,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OBJROOT = ../../build;
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};
