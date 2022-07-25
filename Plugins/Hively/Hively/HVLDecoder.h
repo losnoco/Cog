@@ -24,5 +24,7 @@
 	long framesFade;
 	long framesRead;
 	long framesInBuffer;
+	
+	float sampleBuffer[1024 * 2];
 }
 @end

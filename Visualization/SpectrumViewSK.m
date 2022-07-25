@@ -42,6 +42,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	SCNVector3 cameraEulerAngles2d;
 	SCNVector3 cameraPosition3d;
 	SCNVector3 cameraEulerAngles3d;
+
+	float visAudio[4096], visFFT[2048];
 }
 @end
 
@@ -273,8 +275,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		[self drawBaseBands];
 		return;
 	}
-
-	float visAudio[4096], visFFT[2048];
 
 	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:0];
 

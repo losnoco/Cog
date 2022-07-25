@@ -176,8 +176,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 
 - (AudioChunk *)readAudio {
 	int frames = 1024;
-	int16_t buffer[frames * 2];
-	void *buf = (void *)buffer;
+	void *buf = (void *)sampleBuffer;
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
@@ -199,7 +198,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	//(From gme.txt) If track length, then use it. If loop length, play for intro + loop * 2. Otherwise, default to 2.5 minutes
 	// GME will always generate samples. There's no real EOS.
 
-	[chunk assignSamples:buffer frameCount:numSamples];
+	[chunk assignSamples:sampleBuffer frameCount:numSamples];
 
 	return chunk;
 }

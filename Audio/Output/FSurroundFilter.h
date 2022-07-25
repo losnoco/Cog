@@ -20,6 +20,7 @@
 	double srate;
 	uint32_t channelCount;
 	uint32_t channelConfig;
+	float tempBuffer[4096 * 2];
 }
 
 - (id)initWithSampleRate:(double)srate;

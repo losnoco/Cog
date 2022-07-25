@@ -74,29 +74,36 @@
 }
 
 - (BOOL)scanFile {
-	struct mad_stream stream;
-	struct mad_frame frame;
+	struct mad_stream *stream;
+	struct mad_frame *frame;
+	
+	stream = (struct mad_stream *) calloc(sizeof(struct mad_stream), 1);
+	frame = (struct mad_frame *) calloc(sizeof(struct mad_frame), 1);
+	if(!stream || !frame) {
+		ALog(@"Out of memory!");
+		return NO;
+	}
 
 	long framesDecoded = 0;
 	int samplesPerMPEGFrame = 0;
 
 	int id3_length = 0;
 
-	mad_stream_init(&stream);
-	mad_frame_init(&frame);
+	mad_stream_init(stream);
+	mad_frame_init(frame);
 
 	[_source seek:0 whence:SEEK_END];
 	_fileSize = [_source tell];
 	[_source seek:0 whence:SEEK_SET];
 
 	for(;;) {
-		[self bufferRefill:&stream];
+		[self bufferRefill:stream];
 
-		if(mad_frame_decode(&frame, &stream) == -1) {
-			if(MAD_RECOVERABLE(stream.error)) {
+		if(mad_frame_decode(frame, stream) == -1) {
+			if(MAD_RECOVERABLE(stream->error)) {
 				// Prevent ID3 tags from reporting recoverable frame errors
-				const uint8_t *buffer = stream.this_frame;
-				unsigned long buflen = stream.bufend - stream.this_frame;
+				const uint8_t *buffer = stream->this_frame;
+				unsigned long buflen = stream->bufend - stream->this_frame;
 
 				if(10 <= buflen && 0x49 == buffer[0] && 0x44 == buffer[1] && 0x33 == buffer[2]) {
 					id3_length = (((buffer[6] & 0x7F) << (3 * 7)) | ((buffer[7] & 0x7F) << (2 * 7)) |
@@ -108,7 +115,7 @@
 					id3_length += 10;
 
 					void *tagBuffer = malloc(id3_length);
-					if(!tagBuffer) return NO;
+					if(!tagBuffer) goto error;
 
 					memcpy(tagBuffer, &buffer[0], MIN(buflen, id3_length));
 
@@ -116,18 +123,18 @@
 					long tagRead = MIN(buflen, id3_length);
 
 					while(bufleft > 0) {
-						stream.error = MAD_ERROR_BUFLEN;
-						stream.next_frame = NULL;
-						[self bufferRefill:&stream];
-						buffer = stream.this_frame;
-						buflen = stream.bufend - stream.this_frame;
+						stream->error = MAD_ERROR_BUFLEN;
+						stream->next_frame = NULL;
+						[self bufferRefill:stream];
+						buffer = stream->this_frame;
+						buflen = stream->bufend - stream->this_frame;
 						memcpy(tagBuffer + tagRead, buffer, MIN(buflen, bufleft));
 						tagRead += MIN(buflen, bufleft);
 						bufleft -= buflen;
 					}
 
 					if(bufleft < 0) {
-						mad_stream_skip(&stream, buflen + bufleft);
+						mad_stream_skip(stream, buflen + bufleft);
 					}
 
 					struct id3_tag *tag = id3_tag_parse(tagBuffer, id3_length);
@@ -180,14 +187,14 @@
 					}
 
 					free(tagBuffer);
-				} else if(stream.error == MAD_ERROR_BADDATAPTR) {
+				} else if(stream->error == MAD_ERROR_BADDATAPTR) {
 					goto framedecoded;
 				}
 
 				continue;
-			} else if(stream.error == MAD_ERROR_BUFLEN && inputEOF) {
+			} else if(stream->error == MAD_ERROR_BUFLEN && inputEOF) {
 				break;
-			} else if(stream.error == MAD_ERROR_BUFLEN) {
+			} else if(stream->error == MAD_ERROR_BUFLEN) {
 				continue;
 			} else {
 				// DLog(@"Unrecoverable error: %s", mad_stream_errorstr(&stream));
@@ -198,11 +205,11 @@
 		framesDecoded++;
 
 		if(framesDecoded == 1) {
-			sampleRate = frame.header.samplerate;
-			channels = MAD_NCHANNELS(&frame.header);
+			sampleRate = frame->header.samplerate;
+			channels = MAD_NCHANNELS(&frame->header);
 
-			if(MAD_FLAG_LSF_EXT & frame.header.flags || MAD_FLAG_MPEG_2_5_EXT & frame.header.flags) {
-				switch(frame.header.layer) {
+			if(MAD_FLAG_LSF_EXT & frame->header.flags || MAD_FLAG_MPEG_2_5_EXT & frame->header.flags) {
+				switch(frame->header.layer) {
 					case MAD_LAYER_I:
 						samplesPerMPEGFrame = 384;
 						layer = 1;
@@ -217,7 +224,7 @@
 						break;
 				}
 			} else {
-				switch(frame.header.layer) {
+				switch(frame->header.layer) {
 					case MAD_LAYER_I:
 						samplesPerMPEGFrame = 384;
 						layer = 1;
@@ -235,16 +242,16 @@
 			
 			if(layer != 3) continue;
 
-			const size_t ancillaryBitsRemaining = (stream.next_frame - stream.this_frame) * 8;
+			const size_t ancillaryBitsRemaining = (stream->next_frame - stream->this_frame) * 8;
 			
 			static const int64_t xing_offtbl[2][2] = {{32, 17}, {17,9}};
 			
-			const int64_t xing_offset = xing_offtbl[!!(MAD_FLAG_LSF_EXT & frame.header.flags || MAD_FLAG_MPEG_2_5_EXT & frame.header.flags)][channels == 1] + 4; // Plus MPEG header
+			const int64_t xing_offset = xing_offtbl[!!(MAD_FLAG_LSF_EXT & frame->header.flags || MAD_FLAG_MPEG_2_5_EXT & frame->header.flags)][channels == 1] + 4; // Plus MPEG header
 			
 			size_t ancBitsRemainingXing = ancillaryBitsRemaining - xing_offset * 8;
 
 			if(ancBitsRemainingXing >= 32) {
-				const uint8_t *ptr = stream.this_frame + xing_offset;
+				const uint8_t *ptr = stream->this_frame + xing_offset;
 				struct mad_bitptr bitptr;
 				
 				mad_bit_init(&bitptr, ptr);
@@ -374,7 +381,7 @@
 			size_t ancBitsRemainingVBRI = ancillaryBitsRemaining - vbri_offset * 8;
 			
 			if(ancBitsRemainingVBRI >= 32) {
-				const uint8_t *ptr = stream.this_frame + vbri_offset;
+				const uint8_t *ptr = stream->this_frame + vbri_offset;
 				struct mad_bitptr bitptr;
 				mad_bit_init(&bitptr, ptr);
 				
@@ -407,22 +414,25 @@
 	}
 
 	// Don't commit division by zero on bad files
-	if(stream.next_frame == stream.this_frame) {
-		return NO;
+	if(stream->next_frame == stream->this_frame) {
+		goto error;
 	}
 
 	if(!_foundiTunSMPB && !_foundXingHeader && !_foundVBRIHeader) {
 		// Now do CBR estimation instead of full file scanning
-		size_t frameCount = (_fileSize - id3_length) / (stream.next_frame - stream.this_frame);
-		mad_timer_t duration = frame.header.duration;
+		size_t frameCount = (_fileSize - id3_length) / (stream->next_frame - stream->this_frame);
+		mad_timer_t duration = frame->header.duration;
 		mad_timer_multiply(&duration, frameCount);
 		totalFrames = mad_timer_count(duration, sampleRate);
 	}
 
 	bitrate = ((double)((_fileSize - id3_length) * 8) / 1000.0) * (sampleRate / (double)totalFrames);
 
-	mad_frame_finish(&frame);
-	mad_stream_finish(&stream);
+	mad_frame_finish(frame);
+	mad_stream_finish(stream);
+	
+	free(frame);
+	free(stream);
 
 	[_source seek:0 whence:SEEK_SET];
 	inputEOF = NO;
@@ -430,6 +440,17 @@
 	DLog(@"Mad properties: %@", [self properties]);
 
 	return YES;
+	
+error:
+	if(frame) {
+		mad_frame_finish(frame);
+		free(frame);
+	}
+	if(stream) {
+		mad_stream_finish(stream);
+		free(stream);
+	}
+	return NO;
 }
 
 - (BOOL)open:(id<CogSource>)source {

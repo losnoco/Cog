@@ -28,6 +28,10 @@ static VisualizationController *_sharedController = nil;
 	if(self) {
 		visAudio = NULL;
 		latency = 0;
+		visAudioTemp = (float *) calloc(sizeof(float), 4096);
+		if(!visAudioTemp) {
+			return nil;
+		}
 	}
 	return self;
 }
@@ -89,8 +93,7 @@ static VisualizationController *_sharedController = nil;
 		return;
 	}
 
-	float tempPCM[4096];
-	if(!outPCM) outPCM = &tempPCM[0];
+	if(!outPCM) outPCM = &visAudioTemp[0];
 
 	@synchronized(self) {
 		if(!sampleRate) {

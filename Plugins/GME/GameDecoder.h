@@ -21,6 +21,8 @@ extern gme_err_t readCallback(void* data, void* out, int count);
 	long length;
 	long fade;
 	NSString* codec;
+	
+	int16_t sampleBuffer[1024 * 2];
 }
 
 - (void)setSource:(id<CogSource>)s;

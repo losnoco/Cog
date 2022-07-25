@@ -39,6 +39,8 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	NSColor *borderColor;
 	ddb_analyzer_t _analyzer;
 	ddb_analyzer_draw_data_t _draw_data;
+
+	float visAudio[4096], visFFT[2048];
 }
 @end
 
@@ -367,8 +369,6 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	if(isFullView) {
 		_analyzer.view_width = self.bounds.size.width;
 	}
-
-	float visAudio[4096], visFFT[2048];
 
 	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:0];
 

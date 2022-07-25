@@ -30,17 +30,19 @@ Unpack::Unpack(ComprDataIO *DataIO)
 
 void Unpack::init_tables()
 {
-    ComprDataIO IOTemp;
-    Unpack Temp(&IOTemp);
+	ComprDataIO *IOTemp = new ComprDataIO;
+    Unpack *Temp = new Unpack(IOTemp);
     // Perform initialization, which should be done only once for all files.
     // It prevents crash if first DoUnpack call is later made with wrong
     // (true) 'Solid' value.
-    Temp.UnpInitData(false);
+    Temp->UnpInitData(false);
 #ifndef SFX_MODULE
     // RAR 1.5 decompression initialization
-    Temp.UnpInitData15(false);
-    Temp.InitHuff();
+    Temp->UnpInitData15(false);
+    Temp->InitHuff();
 #endif
+	delete Temp;
+	delete IOTemp;
 }
 
 
