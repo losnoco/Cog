@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SandboxPathBehaviorController : NSArrayController
 
+- (void)refresh;
+
 - (void)addUrl:(NSURL *)url;
 - (void)removeToken:(id)token;
 - (void)removeStaleEntries;

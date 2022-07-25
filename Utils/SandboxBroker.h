@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSURL *)urlWithoutFragment:(NSURL *)url;
 + (BOOL)isPath:(NSURL *)path aSubdirectoryOf:(NSURL *)directory;
 
++ (void)cleanupFolderAccess;
+
 - (id)init;
 - (void)shutdown;
 

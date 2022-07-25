@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (IBAction)deleteSelectedPaths:(id)sender;
 - (IBAction)removeStaleEntries:(id)sender;
 - (IBAction)showPathSuggester:(id)sender;
+- (IBAction)refreshPathList:(id)sender;
 
 @end
 

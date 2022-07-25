@@ -27,6 +27,10 @@
 
 @implementation SandboxPathBehaviorController
 - (void)awakeFromNib {
+	[self refresh];
+}
+
+- (void)refresh {
 	[self removeObjects:[self arrangedObjects]];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES];
@@ -77,6 +81,8 @@
 			ALog(@"Error saving bookmark: %@", [err localizedDescription]);
 		} else {
 			[self addObject:@{ @"path": [url path], @"valid": NSLocalizedPrefString(@"ValidYes"), @"isFolder": @(token.folder), @"token": token }];
+			[NSClassFromString(@"SandboxBroker") cleanupFolderAccess];
+			[self refresh];
 		}
 	}
 }
