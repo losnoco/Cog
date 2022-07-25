@@ -105,4 +105,8 @@
 	[pathSuggester beginSuggestion:sender];
 }
 
+- (IBAction)refreshPathList:(id)sender {
+	[sandboxPathBehaviorController refresh];
+}
+
 @end

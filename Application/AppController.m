@@ -206,6 +206,7 @@ static AppController *kAppController = nil;
 	if(!sandboxBroker) {
 		ALog(@"Sandbox broker init failed.");
 	}
+	[SandboxBroker cleanupFolderAccess];
 
 	[[playlistController undoManager] enableUndoRegistration];
 

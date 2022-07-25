@@ -89,6 +89,9 @@
 	}
 
 	[self setContentView:paneView animate:display];
+	if([paneController respondsToSelector:@selector(refreshPathList:)]) {
+		[paneController refreshPathList:self];
+	}
 
 	// Update defaults
 	[[NSUserDefaults standardUserDefaults] setObject:name forKey:[self lastPaneDefaultsKey]];

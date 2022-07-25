@@ -258,6 +258,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				if(token) {
 					token.path = [folderUrl path];
 					token.bookmark = bookmark;
+					[SandboxBroker cleanupFolderAccess];
 				}
 			});
 		}
@@ -373,9 +374,56 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 					if(token) {
 						token.path = [folderUrl path];
 						token.bookmark = bookmark;
+						[SandboxBroker cleanupFolderAccess];
 					}
 				}
 			});
+		}
+	}
+}
+
++ (void)cleanupFolderAccess {
+	NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
+	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
+
+	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:YES];
+	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+	request.sortDescriptors = @[sortDescriptor];
+
+	NSError *error = nil;
+	[lock lock];
+	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	[lock unlock];
+
+	BOOL isUpdated = NO;
+
+	if(results && [results count]) {
+		NSMutableArray *resultsCopy = [results mutableCopy];
+		for(NSUInteger i = 0; i < [resultsCopy count] - 1; ++i) {
+			SandboxToken *token = resultsCopy[i];
+			NSURL *url = [NSURL fileURLWithPath:token.path];
+			for(NSUInteger j = i + 1; j < [resultsCopy count];) {
+				SandboxToken *compareToken = resultsCopy[j];
+				if([SandboxBroker isPath:[NSURL fileURLWithPath:compareToken.path] aSubdirectoryOf:url]) {
+					[lock lock];
+					[pc.viewContext deleteObject:compareToken];
+					[lock unlock];
+					isUpdated = YES;
+					[resultsCopy removeObjectAtIndex:j];
+				} else {
+					++j;
+				}
+			}
+		}
+	}
+
+	if(isUpdated) {
+		NSError *error;
+		[lock lock];
+		[pc.viewContext save:&error];
+		[lock unlock];
+		if(error) {
+			ALog(@"Error saving data: %@", [error localizedDescription]);
 		}
 	}
 }

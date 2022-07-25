@@ -18,6 +18,7 @@
 @property(readonly) NSImage *icon;
 
 @optional
+- (IBAction)refreshPathList:(id)sender;
 - (IBAction)showPathSuggester:(id)sender;
 
 @end
