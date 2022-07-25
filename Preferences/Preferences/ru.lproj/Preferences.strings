@@ -196,3 +196,6 @@
 
 /* Class = "NSButtonCell"; title = "Enable FreeSurround stereo to surround upmixing"; ObjectID = "F0i-UK-6Nu"; */
 "F0i-UK-6Nu.title" = "Включить FreeSurround апмикс стерео в объемный звук";
+
+/* Class = "NSButtonCell"; title = "Add other files in the same folder when adding a file"; ObjectID = "ws4-en-un8"; */
+"ws4-en-un8.title" = "Add other files in the same folder when adding a file";

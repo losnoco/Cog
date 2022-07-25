@@ -101,3 +101,5 @@
 /* Class = "NSMenuItem"; title = "Delete Path"; ObjectID = "nva-pz-xSS"; */
 "nva-pz-xSS.title" = "usunąć ścieżkę";
 
+/* Class = "NSButtonCell"; title = "Add other files in the same folder when adding a file"; ObjectID = "ws4-en-un8"; */
+"ws4-en-un8.title" = "Add other files in the same folder when adding a file";
