@@ -455,6 +455,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		[self setProgressStatus:60.0];
 	}
 
+	// Deduplication of contained URLs
+	[fileURLs removeObjectsInArray:containedURLs];
+
 	DLog(@"File urls: %@", fileURLs);
 
 	DLog(@"Contained urls: %@", containedURLs);
