@@ -525,7 +525,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 
 	NSString *cellTextTruncated = cellText;
-	if([cellTextTruncated length] > 1023) {
+	if([cellTextTruncated length] > 1024) {
 		cellTextTruncated = [cellTextTruncated substringToIndex:1023];
 		cellTextTruncated = [cellTextTruncated stringByAppendingString:@"…"];
 	}
