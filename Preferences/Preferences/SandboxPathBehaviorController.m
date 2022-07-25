@@ -76,7 +76,7 @@
 		if(err) {
 			ALog(@"Error saving bookmark: %@", [err localizedDescription]);
 		} else {
-			[self addObject:@{ @"path": [url path], @"valid": NSLocalizedPrefString(@"ValidYes") }];
+			[self addObject:@{ @"path": [url path], @"valid": NSLocalizedPrefString(@"ValidYes"), @"isFolder": @(token.folder), @"token": token }];
 		}
 	}
 }
