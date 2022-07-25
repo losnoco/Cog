@@ -3041,7 +3041,9 @@
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
+					"-Wframe-larger-than=4000",
 				);
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,
@@ -3093,7 +3095,9 @@
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
+					"-Wframe-larger-than=4000",
 				);
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CogAudio,

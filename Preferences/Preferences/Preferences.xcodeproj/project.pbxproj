@@ -652,6 +652,8 @@
 					"-undefined",
 					dynamic_lookup,
 				);
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};
@@ -698,6 +700,8 @@
 					"-undefined",
 					dynamic_lookup,
 				);
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
 				SYMROOT = ../../build;
 			};

@@ -3412,6 +3412,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -3488,6 +3490,8 @@
 					"../../ThirdParty/fdk-aac/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
