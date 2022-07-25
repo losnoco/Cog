@@ -47,6 +47,7 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 	IBOutlet AppController *appController;
 
 	NSValueTransformer *statusImageTransformer;
+	NSValueTransformer *numberHertzToStringTransformer;
 
 	NSMutableArray *shuffleList;
 	NSMutableArray *queueList;
