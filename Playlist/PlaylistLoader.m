@@ -62,7 +62,8 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 }
 
 - (void)initDefaults {
-	NSDictionary *defaultsDictionary = @{ @"readCueSheetsInFolders": @(YES) };
+	NSDictionary *defaultsDictionary = @{ @"readCueSheetsInFolders": @(YES),
+		                                  @"addOtherFilesInFolders": @(NO) };
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
@@ -338,7 +339,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSMutableArray *containedURLs = [NSMutableArray array];
 	NSMutableArray *fileURLs = [NSMutableArray array];
 	NSMutableArray *validURLs = [NSMutableArray array];
+	NSMutableArray *folderURLs = [NSMutableArray array];
 	NSDictionary *xmlData = nil;
+
+	BOOL addOtherFilesInFolder = [[NSUserDefaults standardUserDefaults] boolForKey:@"addOtherFilesInFolders"];
 
 	double progress;
 
@@ -367,6 +371,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 					// Get subpaths
 					[[SandboxBroker sharedSandboxBroker] addFolderIfMissing:url];
 					[expandedURLs addObjectsFromArray:[self fileURLsAtPath:[url path]]];
+				} else if(addOtherFilesInFolder) {
+					NSURL *folderUrl = [url URLByDeletingLastPathComponent];
+					if(![folderURLs containsObject:folderUrl]) {
+						[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
+						[expandedURLs addObjectsFromArray:[self fileURLsAtPath:[folderUrl path]]];
+						[folderURLs addObject:folderUrl];
+					}
 				} else {
 					[[SandboxBroker sharedSandboxBroker] addFileIfMissing:url];
 					[expandedURLs addObject:[NSURL fileURLWithPath:[url path]]];
