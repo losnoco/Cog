@@ -20,6 +20,9 @@
 
 	char buffer[MPC_FRAME_LENGTH * 4];
 	int bufferFrames;
+	
+	MPC_SAMPLE_FORMAT sampleBuffer[MPC_DECODER_BUFFER_LENGTH];
+	float floatBuffer[1024 * 2];
 
 	int bitrate;
 	float frequency;

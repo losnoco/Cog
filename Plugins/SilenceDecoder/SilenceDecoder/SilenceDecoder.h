@@ -15,6 +15,8 @@
 
 	long length;
 	long remain;
+	
+	float *buffer;
 }
 
 - (void)setSource:(id<CogSource>)s;

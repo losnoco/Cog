@@ -27,6 +27,12 @@ enum { channels = 2 };
 
 	length = seconds * sample_rate;
 	remain = length;
+	
+	buffer = (float *) calloc(sizeof(float), 1024 * channels);
+	if(!buffer) {
+		ALog(@"Out of memory!");
+		return NO;
+	}
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -52,23 +58,17 @@ enum { channels = 2 };
 
 - (AudioChunk *)readAudio {
 	int frames = 1024;
-	float buffer[frames * channels];
-	void *buf = (void *)buffer;
-
-	int total = frames;
 
 	if(!IsRepeatOneSet()) {
-		if(total > remain)
-			total = (int)remain;
+		if(frames > remain)
+			frames = (int)remain;
 
-		remain -= total;
+		remain -= frames;
 	}
-
-	memset(buf, 0, sizeof(float) * total * channels);
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
-	[chunk assignSamples:buffer frameCount:total];
+	[chunk assignSamples:buffer frameCount:frames];
 
 	return chunk;
 }

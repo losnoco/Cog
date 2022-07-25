@@ -129,7 +129,6 @@ struct freesurround_params {
 	freesurround_params *_params = (freesurround_params *)params;
 	freesurround_decoder *_decoder = (freesurround_decoder *)decoder;
 
-	float tempInput[4096 * 2];
 	uint32_t zeroCount = 0;
 
 	if(count > 4096) {
@@ -138,9 +137,9 @@ struct freesurround_params {
 	}
 
 	if(count < 4096) {
-		cblas_scopy(count * 2, samplesIn, 1, &tempInput[0], 1);
-		vDSP_vclr(&tempInput[count * 2], 1, (4096 - count) * 2);
-		samplesIn = &tempInput[0];
+		cblas_scopy(count * 2, samplesIn, 1, &tempBuffer[0], 1);
+		vDSP_vclr(&tempBuffer[count * 2], 1, (4096 - count) * 2);
+		samplesIn = &tempBuffer[0];
 	}
 
 	float *src = _decoder->decode(samplesIn);

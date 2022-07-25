@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 	double latency;
 	float *visAudio;
 	int visAudioCursor, visAudioSize;
+	float *visAudioTemp;
 }
 
 + (VisualizationController *)sharedController;

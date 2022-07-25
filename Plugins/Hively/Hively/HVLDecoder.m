@@ -10,6 +10,8 @@
 
 #import "PlaylistController.h"
 
+#import <Accelerate/Accelerate.h>
+
 static void oneTimeInit(void) {
 	static BOOL initialized = NO;
 	if(!initialized) {
@@ -109,8 +111,7 @@ static void oneTimeInit(void) {
 
 - (AudioChunk *)readAudio {
 	int frames = 1024;
-	float buffer[frames * 2];
-	void *buf = (void *)buffer;
+	void *buf = (void *)sampleBuffer;
 
 	BOOL repeatone = IsRepeatOneSet();
 
@@ -124,11 +125,9 @@ static void oneTimeInit(void) {
 			int framesToCopy = frames - total;
 			if(framesToCopy > framesInBuffer)
 				framesToCopy = (int)framesInBuffer;
-			for(int i = 0; i < framesToCopy; ++i) {
-				outbuffer[0] = buffer[i * 2 + 0] * (1.0f / 16777216.0f);
-				outbuffer[1] = buffer[i * 2 + 1] * (1.0f / 16777216.0f);
-				outbuffer += 2;
-			}
+			vDSP_vflt32(&buffer[0], 1, &outbuffer[0], 1, framesToCopy * 2);
+			float scale = 16777216.0f;
+			vDSP_vsdiv(&outbuffer[0], 1, &scale, &outbuffer[0], 1, framesToCopy * 2);
 			framesInBuffer -= framesToCopy;
 			total += framesToCopy;
 			if(framesInBuffer) {
@@ -163,7 +162,7 @@ static void oneTimeInit(void) {
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
-	[chunk assignSamples:buffer frameCount:total];
+	[chunk assignSamples:sampleBuffer frameCount:total];
 
 	return chunk;
 }
