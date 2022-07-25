@@ -49,7 +49,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 + (void)initialize {
 	cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
 		                @"album", @"length", @"year", @"genre", @"track", @"path",
-		                @"filename", @"codec", @"rating"];
+		                @"filename", @"codec", @"rating", @"samplerate",
+		                @"bitspersample"];
 
 	NSValueTransformer *repeatNoneTransformer =
 	[[RepeatModeTransformer alloc] initWithMode:RepeatModeNoRepeat];
@@ -151,6 +152,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	[super awakeFromNib];
 
 	statusImageTransformer = [NSValueTransformer valueTransformerForName:@"StatusImageTransformer"];
+	numberHertzToStringTransformer = [NSValueTransformer valueTransformerForName:@"NumberHertzToStringTransformer"];
 
 	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"index" ascending:YES];
 	[self.tableView setSortDescriptors:@[sortDescriptor]];
@@ -509,6 +511,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 				cellRating = YES;
 				break;
 			}
+
+			case 14:
+				cellText = [numberHertzToStringTransformer transformedValue:@(pe.sampleRate)];
+				cellTextAlignment = NSTextAlignmentRight;
+				break;
+
+			case 15:
+				cellText = [NSString stringWithFormat:@"%u", pe.bitsPerSample];
+				cellTextAlignment = NSTextAlignmentRight;
+				break;
 		}
 	}
 
