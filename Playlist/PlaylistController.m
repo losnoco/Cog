@@ -544,11 +544,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 			NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
 
 			cellView.textField.font = font;
-			cellView.textField.stringValue = cellTextTruncated;
+			cellView.textField.stringValue = cellTextTruncated ?: @"";
 			cellView.textField.alignment = cellTextAlignment;
 
 			if(cellView.textField.intrinsicContentSize.width > cellView.textField.frame.size.width - 4)
-				cellView.textField.toolTip = cellTextTruncated;
+				cellView.textField.toolTip = cellTextTruncated ?: @"";
 			else
 				cellView.textField.toolTip = [pe statusMessage];
 
