@@ -342,6 +342,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSMutableArray *fileURLs = [NSMutableArray array];
 	NSMutableArray *validURLs = [NSMutableArray array];
 	NSMutableArray *folderURLs = [NSMutableArray array];
+	NSMutableArray *dependencyURLs = [NSMutableArray array];
 	NSDictionary *xmlData = nil;
 
 	BOOL addOtherFilesInFolder = [[NSUserDefaults standardUserDefaults] boolForKey:@"addOtherFilesInFolders"];
@@ -423,12 +424,25 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 				// Make sure the container isn't added twice.
 				[uniqueURLs addObject:url];
+				
+				// Find the dependencies
+				NSArray *depURLs = [AudioContainer dependencyUrlsForContainerURL:url];
 
 				BOOL localFound = NO;
 				for(NSURL *u in urls) {
 					if([u isFileURL]) {
 						localFound = YES;
 						break;
+					}
+				}
+				if(depURLs) {
+					[dependencyURLs addObjectsFromArray:depURLs];
+
+					for(NSURL *u in depURLs) {
+						if([u isFileURL]) {
+							localFound = YES;
+							break;
+						}
 					}
 				}
 				if(localFound) {
@@ -459,6 +473,16 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	// Deduplication of contained URLs
 	[fileURLs removeObjectsInArray:containedURLs];
+	[fileURLs removeObjectsInArray:dependencyURLs];
+	for(NSURL *u in dependencyURLs) {
+		for(NSUInteger c = 0; c < [containedURLs count];) {
+			if([[u path] isEqualToString:[containedURLs[c] path]]) {
+				[containedURLs removeObjectAtIndex:c];
+			} else {
+				++c;
+			}
+		}
+	}
 
 	DLog(@"File urls: %@", fileURLs);
 
