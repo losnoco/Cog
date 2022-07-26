@@ -10,6 +10,8 @@
 
 #import "Logging.h"
 
+#import "SandboxBroker.h"
+
 @implementation XmlContainer
 
 + (NSURL *)urlForPath:(NSString *)path relativeTo:(NSString *)baseFilename {
@@ -58,9 +60,14 @@
 
 	NSString *filename = [url path];
 
+	const void *sbHandle = [[SandboxBroker sharedSandboxBroker] beginFolderAccess:url];
+
 	NSString *contents = [NSString stringWithContentsOfFile:filename
 	                                               encoding:NSUTF8StringEncoding
 	                                                  error:&error];
+
+	[[SandboxBroker sharedSandboxBroker] endFolderAccess:sbHandle];
+
 	if(!contents) {
 		ALog(@"Error: %@", error);
 		return nil;

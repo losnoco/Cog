@@ -245,7 +245,9 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 
 	NSMutableArray *urls = [NSMutableArray array];
 
+	const void *sbHandle = [[SandboxBroker sharedSandboxBroker] beginFolderAccess:[NSURL fileURLWithPath:path]];
 	NSArray *subpaths = [manager subpathsAtPath:path];
+	[[SandboxBroker sharedSandboxBroker] endFolderAccess:sbHandle];
 
 	for(NSString *subpath in subpaths) {
 		NSString *absoluteSubpath = [NSString pathWithComponents:@[path, subpath]];
