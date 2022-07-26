@@ -13,6 +13,8 @@
 
 #import "Logging.h"
 
+#import "SandboxBroker.h"
+
 @implementation CueSheet
 
 + (id)cueSheetWithFile:(NSString *)filename {
@@ -63,6 +65,8 @@
 - (void)parseFile:(NSString *)filename {
 	NSStringEncoding encoding;
 	NSError *error = nil;
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	const void *sbHandle = [[sandboxBrokerClass sharedSandboxBroker] beginFolderAccess:[NSURL fileURLWithPath:filename]];
 	NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
 	if(error) {
 		error = nil;
@@ -80,6 +84,7 @@
 		error = nil;
 		contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
 	}
+	[[sandboxBrokerClass sharedSandboxBroker] endFolderAccess:sbHandle];
 	if(error || !contents) {
 		ALog(@"Could not open file...%@ %@ %@", filename, contents, error);
 		return;
