@@ -93,7 +93,7 @@
 }
 
 - (void)dealloc {
-	CFRelease(_query);
+	if(_query) CFRelease(_query);
 }
 
 @end
