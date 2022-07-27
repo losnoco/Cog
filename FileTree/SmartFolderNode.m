@@ -13,6 +13,8 @@
 
 #import "Logging.h"
 
+#import "SandboxBroker.h"
+
 @implementation SmartFolderNode
 
 - (BOOL)isLeaf {
@@ -20,7 +22,9 @@
 }
 
 - (void)updatePath {
+	const void *sbHandle = [[SandboxBroker sharedSandboxBroker] beginFolderAccess:url];
 	NSDictionary *doc = [NSDictionary dictionaryWithContentsOfFile:[url path]];
+	[[SandboxBroker sharedSandboxBroker] endFolderAccess:sbHandle];
 	NSString *rawQuery = [doc objectForKey:@"RawQuery"];
 	NSArray *searchPaths = [[doc objectForKey:@"SearchCriteria"] objectForKey:@"CurrentFolderPath"];
 
