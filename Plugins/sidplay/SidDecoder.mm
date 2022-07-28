@@ -160,6 +160,22 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 @implementation SidDecoder
 
+// Need this static initializer to create the static global tables that sidplayfp doesn't really lock access to
++ (void)initialize {
+	ReSIDfpBuilder *builder = new ReSIDfpBuilder("ReSIDfp");
+
+	if(builder) {
+		builder->create(1);
+		if(builder->getStatus()) {
+			builder->filter(true);
+			builder->filter6581Curve(0.5);
+			builder->filter8580Curve(0.5);
+		}
+		
+		delete builder;
+	}
+}
+
 - (BOOL)open:(id<CogSource>)s {
 	if(![s seekable])
 		return NO;
