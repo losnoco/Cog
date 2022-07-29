@@ -1625,6 +1625,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	[queueList removeAllObjects];
 
+	[self commitPersistentStore];
+
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
 	[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
@@ -1661,6 +1663,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 		cur.queuePosition = i++;
 	}
 
+	[self commitPersistentStore];
+
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
 	[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
@@ -1687,6 +1691,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 		cur.queuePosition = i++;
 	}
 
+	[self commitPersistentStore];
+
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
 	[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
@@ -1710,6 +1716,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 	for(PlaylistEntry *cur in queueList) {
 		cur.queuePosition = i++;
 	}
+
+	[self commitPersistentStore];
 
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
