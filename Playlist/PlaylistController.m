@@ -1635,7 +1635,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	for(PlaylistEntry *queueItem in [self selectedObjects]) {
 		if(queueItem.queued) {
-			[queueList removeObjectAtIndex:queueItem.queuePosition];
+			[queueList removeObject:queueItem];
 
 			queueItem.queued = NO;
 			queueItem.queuePosition = -1;
