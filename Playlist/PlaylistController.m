@@ -1770,9 +1770,13 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 		if(action == @selector(addToQueue:)) return NO;
 
+		if(action == @selector(toggleQueued:)) return NO;
+
 		if(action == @selector(searchByArtist:)) return NO;
 
 		if(action == @selector(searchByAlbum:)) return NO;
+
+		if(action == @selector(stopAfterSelection:)) return NO;
 	}
 
 	return YES;
