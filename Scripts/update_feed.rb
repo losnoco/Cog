@@ -5,6 +5,7 @@ require 'open-uri'
 require 'shellwords'
 require 'nokogiri'
 require 'time'
+require 'uri'
 
 feed = ARGV[0] || 'mercury'
 
@@ -126,5 +127,6 @@ if 1 #appcast_revision < latest_revision
 
   #Send web hook to update site
   update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl]
-  %x[curl -X POST #{update_uri}]
+  update_parameter = URI.escape(latest_revision)
+  %x[curl -X POST "#{update_uri}?trigger_title=#{update_parameter}"]
 end
