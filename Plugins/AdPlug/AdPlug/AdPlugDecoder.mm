@@ -151,7 +151,7 @@ static CAdPlugDatabase *g_database = NULL;
 		current_pos += (long)ceil(sampleRate / m_player->getrefresh());
 	}
 
-	samples_todo = (UInt32)(frame - current_pos);
+	samples_todo = (UInt32)(current_pos - frame);
 
 	return frame;
 }
