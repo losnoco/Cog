@@ -3,7 +3,7 @@
 	url = https://github.com/kode54/mgba.git
 [submodule "Frameworks/AdPlug/AdPlug/adplug"]
 	path = Frameworks/AdPlug/AdPlug/adplug
-	url = https://github.com/adplug/adplug.git
+	url = https://github.com/kode54/adplug.git
 [submodule "Frameworks/libbinio/libbinio/libbinio"]
 	path = Frameworks/libbinio/libbinio/libbinio
 	url = https://github.com/adplug/libbinio.git
