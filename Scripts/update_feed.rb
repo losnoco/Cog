@@ -126,7 +126,7 @@ if 1 #appcast_revision < latest_revision
   %x[aws cloudfront create-invalidation --distribution-id E2O8QDAIFS424Q --paths "/#{feed}.xml"]
 
   #Send web hook to update site
-  update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl]
+  update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl].chop
   update_parameter = URI.escape(latest_revision)
-  %x[curl -X POST "#{update_uri}?trigger_title=#{update_parameter}"]
+  %x[curl -X POST '#{update_uri}?trigger_title=#{update_parameter}']
 end
