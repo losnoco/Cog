@@ -113,7 +113,7 @@ protected:
 #endif
 
 private:
-  static const Flags detect_system_flags();
+  static Flags detect_system_flags();
 };
 
 class binistream: virtual public binio
