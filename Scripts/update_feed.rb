@@ -119,11 +119,15 @@ if 1 #appcast_revision < latest_revision
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.app']
 
+  #Convert to JSON
+  %x[pushd '#{site_dir}/#{feed}_builds' && '#{__dir__}/sparkleToJSON' '#{site_dir}/#{feed}_builds/#{feed}.xml' && popd]
+
   #Upload to S3
   %x[s3cmd put -P -m application/xml '#{site_dir}/#{feed}_builds/#{feed}.xml' s3://cogcdn.cog.losno.co]
+  %x[s3cmd put -P -m application/json '#{site_dir}/#{feed}_builds/#{feed}.json' s3://cogcdn.cog.losno.co]
 
   # invalidate cache of feed manifest
-  %x[aws cloudfront create-invalidation --distribution-id E2O8QDAIFS424Q --paths "/#{feed}.xml"]
+  %x[aws cloudfront create-invalidation --distribution-id E2O8QDAIFS424Q --paths "/#{feed}.*"]
 
   #Send web hook to update site
   update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl].chop
