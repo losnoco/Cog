@@ -105,7 +105,16 @@
 				const uint8_t *buffer = stream->this_frame;
 				unsigned long buflen = stream->bufend - stream->this_frame;
 
-				if(10 <= buflen && 0x49 == buffer[0] && 0x44 == buffer[1] && 0x33 == buffer[2]) {
+				if(8 <= buflen && 0x52 == buffer[0] && 0x49 == buffer[1] && 0x46 == buffer[2] &&
+				   0x46 == buffer[3]) {
+					uint32_t riffLen = buffer[4] | (buffer[5] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+					if(riffLen + 8 == _fileSize ||
+					   riffLen + 8 + 1 == _fileSize) { // In case of padding
+						ALog(@"Renamed RIFF file found, dropping to next input handler.");
+						return NO;
+					}
+				}
+				else if(10 <= buflen && 0x49 == buffer[0] && 0x44 == buffer[1] && 0x33 == buffer[2]) {
 					id3_length = (((buffer[6] & 0x7F) << (3 * 7)) | ((buffer[7] & 0x7F) << (2 * 7)) |
 					              ((buffer[8] & 0x7F) << (1 * 7)) | ((buffer[9] & 0x7F) << (0 * 7)));
 
