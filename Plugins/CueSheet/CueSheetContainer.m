@@ -61,7 +61,7 @@
 		cuesheet = [CueSheet cueSheetWithFile:[url path]];
 
 	if(!cuesheet)
-		return embedded ? [NSMutableArray arrayWithObject:url] : tracks;
+		return tracks;
 
 	for(CueSheetTrack *track in [cuesheet tracks]) {
 		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%@", [track track]]]];
