@@ -780,7 +780,6 @@ error:
 
 - (void)close {
 	if(_source) {
-		[_source close];
 		_source = nil;
 	}
 
