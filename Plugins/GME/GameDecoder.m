@@ -198,7 +198,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	//(From gme.txt) If track length, then use it. If loop length, play for intro + loop * 2. Otherwise, default to 2.5 minutes
 	// GME will always generate samples. There's no real EOS.
 
-	[chunk assignSamples:sampleBuffer frameCount:numSamples];
+	[chunk assignSamples:sampleBuffer frameCount:frames];
 
 	return chunk;
 }
