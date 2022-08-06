@@ -1,5 +1,5 @@
 //
-//  Semaphore.h
+//  CogSemaphore.h
 //  Cog
 //
 //  Created by Vincent Spader on 8/2/05.

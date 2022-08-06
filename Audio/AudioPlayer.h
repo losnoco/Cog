@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <CogAudio/Semaphore.h>
+#import <CogAudio/CogSemaphore.h>
 
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>

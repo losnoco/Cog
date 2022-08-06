@@ -28,8 +28,8 @@
 		17D21CC50B8BE4BA00D1EBDE /* OutputAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C9C0B8BE4BA00D1EBDE /* OutputAVFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CC60B8BE4BA00D1EBDE /* OutputAVFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21C9D0B8BE4BA00D1EBDE /* OutputAVFoundation.m */; };
 		17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C9E0B8BE4BA00D1EBDE /* Status.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D21CF30B8BE5EF00D1EBDE /* Semaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21CF10B8BE5EF00D1EBDE /* Semaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21CF20B8BE5EF00D1EBDE /* Semaphore.m */; };
+		17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */; };
 		17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */; };
 		17D21DAE0B8BE76800D1EBDE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */; };
 		17D21DAF0B8BE76800D1EBDE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D21DAB0B8BE76800D1EBDE /* CoreAudio.framework */; };
@@ -168,8 +168,8 @@
 		17D21C9C0B8BE4BA00D1EBDE /* OutputAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputAVFoundation.h; sourceTree = "<group>"; };
 		17D21C9D0B8BE4BA00D1EBDE /* OutputAVFoundation.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputAVFoundation.m; sourceTree = "<group>"; };
 		17D21C9E0B8BE4BA00D1EBDE /* Status.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Status.h; sourceTree = "<group>"; };
-		17D21CF10B8BE5EF00D1EBDE /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
-		17D21CF20B8BE5EF00D1EBDE /* Semaphore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Semaphore.m; sourceTree = "<group>"; };
+		17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CogSemaphore.h; sourceTree = "<group>"; };
+		17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CogSemaphore.m; sourceTree = "<group>"; };
 		17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		17D21DAB0B8BE76800D1EBDE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
@@ -451,8 +451,8 @@
 				8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */,
 				8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */,
 				8384912618080FF100E7332D /* Logging.h */,
-				17D21CF10B8BE5EF00D1EBDE /* Semaphore.h */,
-				17D21CF20B8BE5EF00D1EBDE /* Semaphore.m */,
+				17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */,
+				17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -611,7 +611,7 @@
 				83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */,
 				831A4FE12865A7DC0049CFE4 /* pf_neon_double.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
-				17D21CF30B8BE5EF00D1EBDE /* Semaphore.h in Headers */,
+				17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */,
 				839E56E62879450300DFB5F4 /* Endianness.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
 				839E56ED2879515D00DFB5F4 /* HeadphoneFilter.h in Headers */,
@@ -743,7 +743,7 @@
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
 				835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */,
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
-				17D21CF40B8BE5EF00D1EBDE /* Semaphore.m in Sources */,
+				17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */,
 				839B83FA286D91ED00F529EE /* VisualizationController.swift in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
