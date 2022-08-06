@@ -1,12 +1,12 @@
 //
-//  Semaphore.m
+//  CogSemaphore.m
 //  Cog
 //
 //  Created by Vincent Spader on 8/2/05.
 //  Copyright 2005 Vincent Spader. All rights reserved.
 //
 
-#import "Semaphore.h"
+#import <CogAudio/CogSemaphore.h>
 
 @implementation Semaphore
 
