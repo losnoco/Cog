@@ -24,7 +24,7 @@ using std::atomic_long;
 
 #import "Downmix.h"
 
-#import "VisualizationController.h"
+#import <CogAudio/CogAudio-Swift.h>
 
 #import "HeadphoneFilter.h"
 
