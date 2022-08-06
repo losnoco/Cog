@@ -7,7 +7,7 @@
 //
 
 #import "ChunkList.h"
-#import "Semaphore.h"
+#import <CogAudio/Semaphore.h>
 #import <Cocoa/Cocoa.h>
 
 #import <os/workgroup.h>
