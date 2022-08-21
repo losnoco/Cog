@@ -38,7 +38,8 @@ private:
 
 protected:
 	FileDataUnseekable()
-		: cachesize(0), streamFullyCached(false) {
+		: cachesize(0)
+		, streamFullyCached(false) {
 		return;
 	}
 

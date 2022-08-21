@@ -28,22 +28,22 @@ struct semantic_version {
 	}
 };
 
-constexpr bool operator==(semantic_version const a, semantic_version const b) noexcept {
+constexpr bool operator==(const semantic_version a, const semantic_version b) noexcept {
 	return a.as_tuple() == b.as_tuple();
 }
-constexpr bool operator!=(semantic_version const a, semantic_version const b) noexcept {
+constexpr bool operator!=(const semantic_version a, const semantic_version b) noexcept {
 	return a.as_tuple() != b.as_tuple();
 }
-constexpr bool operator<(semantic_version const a, semantic_version const b) noexcept {
+constexpr bool operator<(const semantic_version a, const semantic_version b) noexcept {
 	return a.as_tuple() < b.as_tuple();
 }
-constexpr bool operator>(semantic_version const a, semantic_version const b) noexcept {
+constexpr bool operator>(const semantic_version a, const semantic_version b) noexcept {
 	return a.as_tuple() > b.as_tuple();
 }
-constexpr bool operator<=(semantic_version const a, semantic_version const b) noexcept {
+constexpr bool operator<=(const semantic_version a, const semantic_version b) noexcept {
 	return a.as_tuple() <= b.as_tuple();
 }
-constexpr bool operator>=(semantic_version const a, semantic_version const b) noexcept {
+constexpr bool operator>=(const semantic_version a, const semantic_version b) noexcept {
 	return a.as_tuple() >= b.as_tuple();
 }
 
@@ -54,7 +54,7 @@ struct version_info {
 		return std::make_tuple(semver.as_tuple(), build);
 	}
 	template <typename Tostream>
-	friend Tostream & operator<<(Tostream & os, version_info const vi) {
+	friend Tostream & operator<<(Tostream & os, const version_info vi) {
 		if (vi.build > 0) {
 			os << vi.semver.major << "." << vi.semver.minor << "." << vi.semver.patch << "+build." << vi.build;
 		} else {
@@ -64,22 +64,22 @@ struct version_info {
 	}
 };
 
-constexpr bool operator==(version_info const a, version_info const b) noexcept {
+constexpr bool operator==(const version_info a, const version_info b) noexcept {
 	return a.as_tuple() == b.as_tuple();
 }
-constexpr bool operator!=(version_info const a, version_info const b) noexcept {
+constexpr bool operator!=(const version_info a, const version_info b) noexcept {
 	return a.as_tuple() != b.as_tuple();
 }
-constexpr bool operator<(version_info const a, version_info const b) noexcept {
+constexpr bool operator<(const version_info a, const version_info b) noexcept {
 	return a.as_tuple() < b.as_tuple();
 }
-constexpr bool operator>(version_info const a, version_info const b) noexcept {
+constexpr bool operator>(const version_info a, const version_info b) noexcept {
 	return a.as_tuple() > b.as_tuple();
 }
-constexpr bool operator<=(version_info const a, version_info const b) noexcept {
+constexpr bool operator<=(const version_info a, const version_info b) noexcept {
 	return a.as_tuple() <= b.as_tuple();
 }
-constexpr bool operator>=(version_info const a, version_info const b) noexcept {
+constexpr bool operator>=(const version_info a, const version_info b) noexcept {
 	return a.as_tuple() >= b.as_tuple();
 }
 

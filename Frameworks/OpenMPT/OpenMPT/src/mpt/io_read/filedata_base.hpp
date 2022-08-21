@@ -63,7 +63,9 @@ private:
 
 public:
 	FileDataWindow(std::shared_ptr<const IFileData> src, pos_type off, pos_type len)
-		: data(src), dataOffset(off), dataLength(len) { }
+		: data(src)
+		, dataOffset(off)
+		, dataLength(len) { }
 
 	bool IsValid() const override {
 		return data->IsValid();

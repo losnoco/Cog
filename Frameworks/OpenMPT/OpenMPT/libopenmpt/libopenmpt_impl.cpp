@@ -77,10 +77,6 @@ MPT_WARNING("Warning: libopenmpt for WinRT is built with reduced functionality. 
 #else
 #pragma comment(lib, "rpcrt4.lib")
 #endif
-#ifndef NO_DMO
-#pragma comment(lib, "dmoguids.lib")
-#pragma comment(lib, "strmiids.lib")
-#endif // !NO_DMO
 #endif // MPT_BUILD_MSVC
 
 #if MPT_PLATFORM_MULTITHREADED && MPT_MUTEX_NONE

@@ -376,16 +376,18 @@ struct commandlineflags {
 		}
 #else // WIN32
 		if ( isatty( STDERR_FILENO ) ) {
-			if ( std::getenv( "COLUMNS" ) ) {
-				std::istringstream istr( std::getenv( "COLUMNS" ) );
+			const char * env_columns = std::getenv( "COLUMNS" );
+			if ( env_columns ) {
+				std::istringstream istr( env_columns );
 				int tmp = 0;
 				istr >> tmp;
 				if ( tmp > 0 ) {
 					terminal_width = tmp;
 				}
 			}
-			if ( std::getenv( "ROWS" ) ) {
-				std::istringstream istr( std::getenv( "ROWS" ) );
+			const char * env_rows = std::getenv( "ROWS" );
+			if ( env_rows ) {
+				std::istringstream istr( env_rows );
 				int tmp = 0;
 				istr >> tmp;
 				if ( tmp > 0 ) {

@@ -100,10 +100,12 @@ NamespaceMacros: [] #?
 #ObjCBreakBeforeNestedBlockParam
 #ObjCSpaceAfterProperty
 #ObjCSpaceBeforeProtocolList
+PackConstructorInitializers: Never
 #PenaltyBreakAssignment
 #PenaltyBreakBeforeFirstCallParameter
 #PenaltyBreakComment
 #PenaltyBreakFirstLessLess
+#PenaltyBreakOpenParenthesis
 #PenaltyBreakString
 #PenaltyBreakTemplateDeclaration
 #PenaltyExcessCharacter
@@ -111,9 +113,13 @@ NamespaceMacros: [] #?
 #PenaltyReturnTypeOnItsOwnLine
 PointerAlignment: Right
 PPIndentWidth: -1
+QualifierAlignment: Leave
+#QualifierOrder: ['static', 'inline', 'constexpr', 'volatile', 'const', 'restrict', 'type']
 #RawStringFormats
 ReferenceAlignment: Pointer
 ReflowComments: false
+RemoveBracesLLVM: false
+SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 1
 SortIncludes: false
 #SortJavaStaticImport
@@ -128,6 +134,16 @@ SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: Never
+SpaceBeforeParensOptions:
+  AfterControlStatements: false
+  AfterForeachMacros: false
+  AfterFunctionDeclarationName: false
+  AfterFunctionDefinitionName: false
+  AfterIfMacros: false
+  AfterOverloadedOperator: false
+  #AfterRequiresInClause: false
+  #AfterRequiresInExpression: false
+  BeforeNonEmptyParentheses: false
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: false
