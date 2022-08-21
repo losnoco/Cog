@@ -110,6 +110,7 @@ static const char* extension_list[] = {
     "bik2",
     //"bin", //common
     "bk2",
+    "bkr",  //txth/reserved [P.N.03 (GC), Viewtiful Joe (GC)]
     "blk",
     "bmdx",
     "bms",
@@ -128,7 +129,6 @@ static const char* extension_list[] = {
     "bwav",
 
     "caf",
-    "capdsp",
     "cbd2",
     "ccc",
     "cd",
@@ -166,7 +166,6 @@ static const char* extension_list[] = {
     "dspw",
     "dtk",
     "dvi",
-    "dxh",
     "dyx", //txth/reserved [Shrek 4 (iOS)]
 
     "e4x",
@@ -258,6 +257,7 @@ static const char* extension_list[] = {
     "kces",
     "kcey", //fake extension/header id for .pcm (renamed, to be removed)
     "km9",
+    "kmx",
     "kovs", //fake extension/header id for .kvs
     "kno",
     "kns",
@@ -442,6 +442,7 @@ static const char* extension_list[] = {
     "sab",
     "sad",
     "saf",
+    "sag",
     "sam", //txth/reserved [Lost Kingdoms 2 (GC)]
     "sap",
     "sb0",
@@ -456,6 +457,7 @@ static const char* extension_list[] = {
     "sbin",
     "sbr",
     "sbv",
+    "sig",
     "sm0",
     "sm1",
     "sm2",
@@ -468,6 +470,7 @@ static const char* extension_list[] = {
     "scd",
     "sch",
     "sd9",
+    "sdp", //txth/reserved [Metal Gear Arcade (AC)]
     "sdf",
     "sdt",
     "seb",
@@ -538,7 +541,6 @@ static const char* extension_list[] = {
     "szd3",
 
     "tad",
-    "tec",
     "tgq",
     "tgv",
     "thp",
@@ -560,12 +562,13 @@ static const char* extension_list[] = {
     "v0",
     //"v1", //dual channel with v0
     "va3",
+    "vab",
     "vag",
     "vai",
     "vam", //txth/reserved [Rocket Power: Beach Bandits (PS2)]
     "vas",
     "vawx",
-    "vb",
+    "vb", //txth/reserved [Tantei Jinguji Saburo: Mikan no Rupo (PS1)]
     "vbk",
     "vbx", //txth/reserved [THE Taxi 2 (PS2)]
     "vds",
@@ -574,6 +577,7 @@ static const char* extension_list[] = {
     "vgm", //txth/reserved [Maximo (PS2)]
     "vgs",
     "vgv",
+    "vh",
     "vid",
     "vig",
     "vis",
@@ -1045,7 +1049,7 @@ static const meta_info meta_info_list[] = {
         {meta_ACM,                  "InterPlay ACM Header"},
         {meta_MUS_ACM,              "InterPlay MUS ACM header"},
         {meta_PS2_KCES,             "Konami KCES Header"},
-        {meta_PS2_DXH,              "Tokobot Plus DXH Header"},
+        {meta_HXD,                  "Tecmo HXD Header"},
         {meta_VSV,                  "Square Enix .vsv Header"},
         {meta_RIFF_WAVE_labl,       "RIFF WAVE header with loop markers"},
         {meta_RIFF_WAVE_smpl,       "RIFF WAVE header with sample looping info"},
@@ -1057,7 +1061,6 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_PCM,              "Konami KCEJ East .PCM header"},
         {meta_PS2_RKV,              "Legacy of Kain - Blood Omen 2 RKV PS2 header"},
         {meta_PS2_VAS,              "Konami .VAS header"},
-        {meta_PS2_TEC,              "assumed TECMO badflagged stream by .tec extension"},
         {meta_PS2_ENTH,             ".enth Header"},
         {meta_SDT,                  "High Voltage .sdt header"},
         {meta_NGC_TYDSP,            ".tydsp Header"},
@@ -1149,7 +1152,6 @@ static const meta_info meta_info_list[] = {
         {meta_HIS,                  "Her Interactive HIS header"},
         {meta_AST_MV,               "MicroVision AST header"},
         {meta_AST_MMV,              "Marvelous AST header"},
-        {meta_CAPDSP,               "Capcom DSP header"},
         {meta_DMSG,                 "Microsoft RIFF DMSG header"},
         {meta_PONA_3DO,             "Policenauts BGM header"},
         {meta_PONA_PSX,             "Policenauts BGM header"},
@@ -1407,6 +1409,7 @@ static const meta_info meta_info_list[] = {
         {meta_ADM3,                 "Crankcase ADM3 header"},
         {meta_TT_AD,                "Traveller's Tales AUDIO_DATA header"},
         {meta_SNDZ,                 "Sony SNDZ header"},
+        {meta_VAB,                  "Sony VAB header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {

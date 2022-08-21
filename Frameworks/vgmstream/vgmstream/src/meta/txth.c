@@ -3,6 +3,7 @@
 #include "../layout/layout.h"
 #include "txth_streamfile.h"
 #include "../util/text_reader.h"
+#include "../util/endianness.h"
 
 #define TXT_LINE_MAX 2048 /* probably ~1000 would be ok */
 #define TXT_LINE_KEY_MAX 128
@@ -49,6 +50,7 @@ typedef enum {
     PCM_FLOAT_LE,
     IMA_HV,
     PCM8_SB,
+    HEVAG,
 
     UNKNOWN = 99,
 } txth_codec_t;
@@ -153,6 +155,8 @@ typedef struct {
     int sf_head_opened;
     int sf_body_opened;
 
+    int debug;
+
 } txth_header;
 
 static VGMSTREAM* init_subfile(txth_header* txth);
@@ -217,7 +221,8 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         uint32_t interleave  = 0;
         switch(txth.codec) {
             case PSX:
-            case PSX_bf:        interleave = 0x10; break;
+            case PSX_bf:        
+            case HEVAG:         interleave = 0x10; break;
             case NGC_DSP:       interleave = 0x08; break;
             case PCM16LE:
             case PCM16BE:       interleave = 0x02; break;
@@ -235,6 +240,8 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
     /* type to coding conversion */
     switch (txth.codec) {
         case PSX:           coding = coding_PSX; break;
+        case PSX_bf:        coding = coding_PSX_badflags; break;
+        case HEVAG:         coding = coding_HEVAG; break;
         case XBOX:          coding = coding_XBOX_IMA; break;
         case NGC_DTK:       coding = coding_NGC_DTK; break;
         case PCM16LE:       coding = coding_PCM16LE; break;
@@ -254,7 +261,6 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         case AICA:          coding = coding_AICA; break;
         case MSADPCM:       coding = coding_MSADPCM; break;
         case NGC_DSP:       coding = coding_NGC_DSP; break;
-        case PSX_bf:        coding = coding_PSX_badflags; break;
         case MS_IMA:        coding = coding_MS_IMA; break;
         case APPLE_IMA4:    coding = coding_APPLE_IMA4; break;
 #ifdef VGM_USE_FFMPEG
@@ -320,6 +326,7 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         case coding_SDX2:
         case coding_PSX:
         case coding_PSX_badflags:
+        case coding_HEVAG:
         case coding_DVI_IMA:
         case coding_IMA:
         case coding_HV_IMA:
@@ -351,6 +358,7 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
                 if (!txth.interleave && (
                         coding == coding_PSX ||
                         coding == coding_PSX_badflags ||
+                        coding == coding_HEVAG ||
                         coding == coding_IMA_int ||
                         coding == coding_DVI_IMA_int ||
                         coding == coding_SDX2_int ||
@@ -473,40 +481,37 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
 
             /* get coefs */
             {
-                int16_t (*read_16bit)(off_t, STREAMFILE*) = txth.coef_big_endian ? read_16bitBE : read_16bitLE;
-                int16_t (*get_16bit)(const uint8_t* p) = txth.coef_big_endian ? get_16bitBE : get_16bitLE;
+                read_s16_t read_s16 = txth.coef_big_endian ? read_s16be : read_s16le;
+                get_s16_t get_s16 =txth.coef_big_endian ? get_s16be : get_s16le;
 
                 for (i = 0; i < vgmstream->channels; i++) {
                     if (txth.coef_mode == 0) { /* normal coefs */
                         for (j = 0; j < 16; j++) {
                             int16_t coef;
                             if (txth.coef_table_set)
-                                coef =  get_16bit(txth.coef_table  + i*txth.coef_spacing  + j*2);
+                                coef =  get_s16(txth.coef_table  + i*txth.coef_spacing  + j*2);
                             else
-                                coef = read_16bit(txth.coef_offset + i*txth.coef_spacing  + j*2, txth.sf_head);
+                                coef = read_s16(txth.coef_offset + i*txth.coef_spacing  + j*2, txth.sf_head);
                             vgmstream->ch[i].adpcm_coef[j] = coef;
                         }
                     }
-                    else { /* split coefs */
-                        goto fail; //IDK what is this
-                        /*
+                    else { /* split coefs (first all 8 positive, then all 8 negative [P.N.03 (GC), Viewtiful Joe (GC)] */
                         for (j = 0; j < 8; j++) {
-                            vgmstream->ch[i].adpcm_coef[j*2] = read_16bit(genh.coef_offset + i*genh.coef_spacing + j*2, txth.sf_head);
-                            vgmstream->ch[i].adpcm_coef[j*2+1] = read_16bit(genh.coef_split_offset + i*genh.coef_split_spacing + j*2, txth.sf_head);
+                            vgmstream->ch[i].adpcm_coef[j*2+0] = read_s16(txth.coef_offset + i*txth.coef_spacing + j*2 + 0x00, txth.sf_head);
+                            vgmstream->ch[i].adpcm_coef[j*2+1] = read_s16(txth.coef_offset + i*txth.coef_spacing + j*2 + 0x10, txth.sf_head);
                         }
-                        */
                     }
                 }
             }
 
             /* get hist */
             if (txth.hist_set) {
-                int16_t (*read_16bit)(off_t , STREAMFILE*) = txth.hist_big_endian ? read_16bitBE : read_16bitLE;
+                read_s16_t read_s16 = txth.coef_big_endian ? read_s16be : read_s16le;
 
                 for (i = 0; i < vgmstream->channels; i++) {
                     off_t offset = txth.hist_offset + i*txth.hist_spacing;
-                    vgmstream->ch[i].adpcm_history1_16 = read_16bit(offset + 0x00, txth.sf_head);
-                    vgmstream->ch[i].adpcm_history2_16 = read_16bit(offset + 0x02, txth.sf_head);
+                    vgmstream->ch[i].adpcm_history1_16 = read_s16(offset + 0x00, txth.sf_head);
+                    vgmstream->ch[i].adpcm_history2_16 = read_s16(offset + 0x02, txth.sf_head);
                 }
             }
 
@@ -977,6 +982,7 @@ static txth_codec_t parse_codec(txth_header* txth, const char* val) {
     else if (is_string(val,"CP_YM"))        return CP_YM;
     else if (is_string(val,"PCM_FLOAT_LE")) return PCM_FLOAT_LE;
     else if (is_string(val,"IMA_HV"))       return IMA_HV;
+    else if (is_string(val,"HEVAG"))        return HEVAG;
     /* special handling */
     else if (is_string(val,"name_value"))   return txth->name_values[0];
     else if (is_string(val,"name_value1"))  return txth->name_values[0];
@@ -987,21 +993,37 @@ static txth_codec_t parse_codec(txth_header* txth, const char* val) {
     return UNKNOWN;
 }
 
-static int parse_be(txth_header* txth, const char* val, uint32_t* p_value) {
-    if (is_string(val, "BE"))
+static int parse_endianness(txth_header* txth, const char* val, uint32_t* p_value, uint32_t* mode) {
+    if (is_string(val, "BE")) {
         *p_value = 1;
-    else if (is_string(val, "LE"))
+        if (mode) *mode = 0;
+    }
+    else if (is_string(val, "LE")) {
         *p_value = 0;
-    else
+        if (mode) *mode = 0;
+    }
+    else if (is_string(val, "BE_split")) {
+        *p_value = 1;
+        if (mode) *mode = 1;
+    }
+    else if (is_string(val, "LE_split")) {
+        *p_value = 0;
+        if (mode) *mode = 1;
+    }
+    else {
         if (!parse_num(txth->sf_head,txth,val, p_value))
              goto fail;
+    }
     return 1;
 fail:
     return 0;
 }
 
 static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, char* val) {
-    //;VGM_LOG("TXTH: key=%s, val=%s\n", key, val);
+
+    if (txth->debug)
+        vgm_logi("TXTH: reading key=%s, val=%s\n", key, val);
+
 
     /* CODEC */
     if (is_string(key,"codec")) {
@@ -1202,6 +1224,8 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
             else if (txth->loop_behavior == POSITIVE) {
                 if (txth->loop_flag == 0xFF || txth->loop_flag == 0xFFFF || txth->loop_flag == 0xFFFFFFFF)
                     txth->loop_flag = 0;
+                else if (txth->loop_flag == 0)
+                    txth->loop_flag = 1;
             }
             else if (txth->loop_behavior == INVERTED) {
                 txth->loop_flag = (txth->loop_flag == 0);
@@ -1237,10 +1261,7 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
         if (!parse_num(txth->sf_head,txth,val, &txth->coef_spacing)) goto fail;
     }
     else if (is_string(key,"coef_endianness")) {
-        if (!parse_be(txth, val, &txth->coef_big_endian)) goto fail;
-    }
-    else if (is_string(key,"coef_mode")) {
-        if (!parse_num(txth->sf_head,txth,val, &txth->coef_mode)) goto fail;
+        if (!parse_endianness(txth, val, &txth->coef_big_endian, &txth->coef_mode)) goto fail;
     }
     else if (is_string(key,"coef_table")) {
         if (!parse_coef_table(txth->sf_head,txth,val, txth->coef_table, sizeof(txth->coef_table))) goto fail;
@@ -1260,7 +1281,7 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
         if (!parse_num(txth->sf_head,txth,val, &txth->hist_spacing)) goto fail;
     }
     else if (is_string(key,"hist_endianness")) {
-        if (!parse_be(txth, val, &txth->hist_big_endian)) goto fail;
+        if (!parse_endianness(txth, val, &txth->hist_big_endian, NULL)) goto fail;
     }
 
     /* SUBSONGS */
@@ -1416,7 +1437,7 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
         if (!parse_num(txth->sf_head,txth,val, &txth->chunk_size_offset)) goto fail;
     }
     else if (is_string(key,"chunk_endianness")) {
-        if (!parse_be(txth, val, &txth->chunk_be)) goto fail;
+        if (!parse_endianness(txth, val, &txth->chunk_be, NULL)) goto fail;
     }
 
 
@@ -1435,6 +1456,10 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
         if (!parse_multi_txth(txth,val)) goto fail;
     }
 
+    /* DEBUG */
+    else if (is_string(key,"debug")) {
+        txth->debug = 1;
+    }
 
     /* DEFAULT */
     else {
@@ -1917,7 +1942,9 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             if (subsong_spacing)
                 offset = offset + subsong_spacing * (txth->target_subsong - 1);
 
-            //;VGM_LOG("TXTH: read at offset %x + %x\n", offset - txth->base_offset, txth->base_offset);
+            if (txth->debug)
+                vgm_logi("TXTH: use value at 0x%x (%s %ib)\n", offset, big_endian ? "BE" : "LE", size * 8);
+
             switch(size) {
                 case 1: value = read_u8(offset,sf); break;
                 case 2: value = big_endian ? read_u16be(offset,sf) : read_u16le(offset,sf); break;
@@ -1933,6 +1960,9 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             if (sscanf(val, hex ? "%x%n" : "%u%n", &value, &n) != 1)
                 goto fail;
             value_read = 1;
+
+            if (txth->debug)
+                vgm_logi(hex ? "TXTH: use constant 0x%x\n" : "TXTH: use constant %i\n", value);
         }
         else { /* known field */
             if      ((n = is_string_field(val,"interleave")))           value = txth->interleave;
@@ -1987,6 +2017,9 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             else if ((n = is_string_field(val,"name_value16")))         value = txth->name_values[15];
             else goto fail;
             value_read = 1;
+
+            if (txth->debug)
+                vgm_logi("TXTH: use field value 0x%x\n", value);
         }
 
         /* apply simple left-to-right math though, for now "(" ")" are counted and validated
@@ -2028,10 +2061,13 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
 
     *out_value = result;
 
-    //;VGM_LOG("TXTH: final result %u (0x%x)\n", result, result);
+    if (txth->debug)
+        vgm_logi("TXTH: final value: %u (0x%x)\n", result, result);
+
     return 1;
 fail:
-    //VGM_LOG("TXTH: error parsing num '%s'\n", val);
+    if (txth->debug)
+        vgm_logi("TXTH: error parsing num '%s'\n", val);
     return 0;
 }
 
@@ -2045,6 +2081,7 @@ static int get_bytes_to_samples(txth_header* txth, uint32_t bytes) {
             return dsp_bytes_to_samples(bytes, txth->channels);
         case PSX:
         case PSX_bf:
+        case HEVAG:
             return ps_bytes_to_samples(bytes, txth->channels);
         case PCM16BE:
         case PCM16LE:
