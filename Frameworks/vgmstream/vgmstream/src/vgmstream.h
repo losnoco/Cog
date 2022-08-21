@@ -398,17 +398,15 @@ typedef enum {
     meta_BG00,              /* Ibara, Mushihimesama */
     meta_PS2_RSTM,          /* Midnight Club 3 */
     meta_PS2_KCES,          /* Dance Dance Revolution */
-    meta_PS2_DXH,           /* Tokobot Plus - Myteries of the Karakuri */
+    meta_HXD,
     meta_VSV,
     meta_SCD_PCM,           /* Lunar - Eternal Blue */
     meta_PS2_PCM,           /* Konami KCEJ East: Ephemeral Fantasia, Yu-Gi-Oh! The Duelists of the Roses, 7 Blades */
     meta_PS2_RKV,           /* Legacy of Kain - Blood Omen 2 (PS2) */
     meta_PS2_VAS,           /* Pro Baseball Spirits 5 */
-    meta_PS2_TEC,           /* TECMO badflagged stream */
     meta_PS2_ENTH,          /* Enthusia */
     meta_SDT,               /* Baldur's Gate - Dark Alliance */
     meta_NGC_TYDSP,         /* Ty - The Tasmanian Tiger */
-    meta_CAPDSP,            /* Capcom DSP Header [no header_id] */
     meta_DC_STR,            /* SEGA Stream Asset Builder */
     meta_DC_STR_V2,         /* variant of SEGA Stream Asset Builder */
     meta_NGC_BH2PCM,        /* Bio Hazard 2 */
@@ -772,6 +770,7 @@ typedef enum {
     meta_ADM3,
     meta_TT_AD,
     meta_SNDZ,
+    meta_VAB,
 
 } meta_t;
 
