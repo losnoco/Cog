@@ -36,7 +36,6 @@ include build/make/config-gcc.mk
 else ifeq ($(HOST_FLAVOUR),FREEBSD)
 
 include build/make/config-clang.mk
-NO_LTDL?=1
 NO_PORTAUDIOCPP?=1
 
 else ifeq ($(HOST_FLAVOUR),OPENBSD)

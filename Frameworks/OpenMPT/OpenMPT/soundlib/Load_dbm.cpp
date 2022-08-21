@@ -161,6 +161,10 @@ static void ConvertDBMEffect(uint8 &command, uint8 &param)
 			command = CMD_NONE;
 		break;
 
+	case CMD_PATTERNBREAK:
+		param = ((param >> 4) * 10) + (param & 0x0F);
+		break;
+
 #ifdef MODPLUG_TRACKER
 	case CMD_VIBRATO:
 		if(param & 0x0F)
@@ -425,7 +429,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 			ModSample &mptSmp = Samples[instrHeader.sample];
 			mptSmp.Initialize();
 			mptSmp.nVolume = std::min(static_cast<uint16>(instrHeader.volume), uint16(64)) * 4u;
-			mptSmp.nC5Speed = instrHeader.sampleRate;
+			mptSmp.nC5Speed = Util::muldivr(instrHeader.sampleRate, 8303, 8363);
 
 			if(instrHeader.loopLength && (instrHeader.flags & (DBMInstrument::smpLoop | DBMInstrument::smpPingPongLoop)))
 			{

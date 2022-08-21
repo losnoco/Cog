@@ -62,7 +62,10 @@ using float64be_fast = mpt::IEEE754binary64BE;
 
 
 #define MPT_BINARY_STRUCT(type, size) \
-	constexpr bool declare_binary_safe(const type &) { return true; } \
+	constexpr bool declare_binary_safe(const type &) \
+	{ \
+		return true; \
+	} \
 	static_assert(mpt::check_binary_size<type>(size)); \
 	/**/
 

@@ -1,4 +1,4 @@
-# clang-format 13
+# clang-format 14
 
 Language: Cpp
 Standard: c++20
@@ -101,10 +101,12 @@ NamespaceMacros: [] #?
 #ObjCBreakBeforeNestedBlockParam
 #ObjCSpaceAfterProperty
 #ObjCSpaceBeforeProtocolList
+PackConstructorInitializers: Never
 #PenaltyBreakAssignment
 #PenaltyBreakBeforeFirstCallParameter
 #PenaltyBreakComment
 #PenaltyBreakFirstLessLess
+#PenaltyBreakOpenParenthesis
 #PenaltyBreakString
 #PenaltyBreakTemplateDeclaration
 #PenaltyExcessCharacter
@@ -113,8 +115,12 @@ NamespaceMacros: [] #?
 PointerAlignment: Middle
 PPIndentWidth: -1
 #RawStringFormats
+QualifierAlignment: Leave
+#QualifierOrder: ['static', 'inline', 'constexpr', 'volatile', 'const', 'restrict', 'type']
 ReferenceAlignment: Pointer
 ReflowComments: false
+RemoveBracesLLVM: false
+SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 1
 SortIncludes: false
 #SortJavaStaticImport
@@ -129,6 +135,16 @@ SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterForeachMacros: true
+  AfterFunctionDeclarationName: false
+  AfterFunctionDefinitionName: false
+  AfterIfMacros: true
+  AfterOverloadedOperator: false
+  #AfterRequiresInClause: false
+  #AfterRequiresInExpression: false
+  BeforeNonEmptyParentheses: false
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: true

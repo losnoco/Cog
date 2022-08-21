@@ -73,7 +73,9 @@ struct DecodeInt8Delta
 	static constexpr std::size_t input_inc = 1;
 	uint8 delta;
 	DecodeInt8Delta()
-		: delta(0) {}
+		: delta(0)
+	{
+	}
 	MPT_FORCEINLINE output_t operator()(const input_t *inBuf)
 	{
 		delta += mpt::byte_cast<uint8>(*inBuf);
@@ -197,7 +199,9 @@ struct DecodeInt16Delta
 	static constexpr std::size_t input_inc = 2;
 	uint16 delta;
 	DecodeInt16Delta()
-		: delta(0) {}
+		: delta(0)
+	{
+	}
 	MPT_FORCEINLINE output_t operator()(const input_t *inBuf)
 	{
 		delta += mpt::byte_cast<uint8>(inBuf[loByteIndex]) | (mpt::byte_cast<uint8>(inBuf[hiByteIndex]) << 8);
@@ -212,7 +216,9 @@ struct DecodeInt16Delta8
 	static constexpr std::size_t input_inc = 2;
 	uint16 delta;
 	DecodeInt16Delta8()
-		: delta(0) {}
+		: delta(0)
+	{
+	}
 	MPT_FORCEINLINE output_t operator()(const input_t *inBuf)
 	{
 		delta += mpt::byte_cast<uint8>(inBuf[0]);

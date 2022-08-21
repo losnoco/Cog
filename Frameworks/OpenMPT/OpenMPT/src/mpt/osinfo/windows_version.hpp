@@ -133,10 +133,10 @@ public:
 //		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19043, 0);
 //#elif // NTDDI_WIN10_FE 20H2
 //		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19042, 0);
-#elif NTDDI_VERSION >= 0x0A000008 // NTDDI_WIN10_MN 2004/20H1
+#elif NTDDI_VERSION >= 0x0A000009 // NTDDI_WIN10_MN 2004/20H1
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19041, 0);
-//#elif // NTDDI_WIN10_VB 1909/19H2
-//		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 18363, 0);
+#elif NTDDI_VERSION >= 0x0A000008 // NTDDI_WIN10_VB 1909/19H2
+		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 18363, 0);
 #elif NTDDI_VERSION >= 0x0A000007 // NTDDI_WIN10_19H1 1903/19H1
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 18362, 0);
 #elif NTDDI_VERSION >= 0x0A000006 // NTDDI_WIN10_RS5 1809
@@ -390,7 +390,7 @@ public:
 
 public:
 	bool IsValid() const {
-		return true;
+		return valid;
 	}
 
 private:

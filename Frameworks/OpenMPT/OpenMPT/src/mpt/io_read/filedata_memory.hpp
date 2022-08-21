@@ -33,9 +33,11 @@ private:
 
 public:
 	FileDataMemory()
-		: streamData(nullptr), streamLength(0) { }
+		: streamData(nullptr)
+		, streamLength(0) { }
 	FileDataMemory(mpt::const_byte_span data)
-		: streamData(data.data()), streamLength(data.size()) { }
+		: streamData(data.data())
+		, streamLength(data.size()) { }
 
 public:
 	bool IsValid() const override {

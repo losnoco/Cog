@@ -37,15 +37,23 @@ private:
 
 public:
 	MPT_CONSTEXPRINLINE enum_value_type() noexcept
-		: bits(0) {}
+		: bits(0)
+	{
+	}
 	MPT_CONSTEXPRINLINE enum_value_type(const enum_value_type &x) noexcept
-		: bits(x.bits) {}
+		: bits(x.bits)
+	{
+	}
 	MPT_CONSTEXPRINLINE enum_value_type(enum_type x) noexcept
-		: bits(static_cast<store_type>(x)) {}
+		: bits(static_cast<store_type>(x))
+	{
+	}
 
 private:
 	explicit MPT_CONSTEXPRINLINE enum_value_type(store_type x) noexcept
-		: bits(x) {}                                                           // private in order to prevent accidental conversions. use from_bits.
+		: bits(x)
+	{
+	}                                                                          // private in order to prevent accidental conversions. use from_bits.
 	MPT_CONSTEXPRINLINE operator store_type() const noexcept { return bits; }  // private in order to prevent accidental conversions. use as_bits.
 public:
 	static MPT_CONSTEXPRINLINE enum_value_type from_bits(store_type bits) noexcept { return value_type(bits); }
@@ -128,7 +136,9 @@ private:
 
 public:
 	explicit MPT_CONSTEXPRINLINE Enum(enum_type val) noexcept
-		: value(val) {}
+		: value(val)
+	{
+	}
 	MPT_CONSTEXPRINLINE operator enum_type() const noexcept { return value; }
 	MPT_CONSTEXPRINLINE Enum &operator=(enum_type val) noexcept
 	{
@@ -425,10 +435,22 @@ public:
 
 // Declare typesafe logical operators for enum_t
 #define MPT_DECLARE_ENUM(enum_t) \
-	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator|(enum_t a, enum_t b) noexcept { return enum_value_type<enum_t>(a) | enum_value_type<enum_t>(b); } \
-	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator&(enum_t a, enum_t b) noexcept { return enum_value_type<enum_t>(a) & enum_value_type<enum_t>(b); } \
-	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator^(enum_t a, enum_t b) noexcept { return enum_value_type<enum_t>(a) ^ enum_value_type<enum_t>(b); } \
-	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator~(enum_t a) noexcept { return ~enum_value_type<enum_t>(a); } \
+	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator|(enum_t a, enum_t b) noexcept \
+	{ \
+		return enum_value_type<enum_t>(a) | enum_value_type<enum_t>(b); \
+	} \
+	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator&(enum_t a, enum_t b) noexcept \
+	{ \
+		return enum_value_type<enum_t>(a) & enum_value_type<enum_t>(b); \
+	} \
+	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator^(enum_t a, enum_t b) noexcept \
+	{ \
+		return enum_value_type<enum_t>(a) ^ enum_value_type<enum_t>(b); \
+	} \
+	MPT_CONSTEXPRINLINE enum_value_type<enum_t> operator~(enum_t a) noexcept \
+	{ \
+		return ~enum_value_type<enum_t>(a); \
+	} \
 /**/
 
 // backwards compatibility

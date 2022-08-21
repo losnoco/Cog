@@ -122,11 +122,11 @@ public:
 		return m_data[index];
 	}
 
-	bool operator==(span const & other) const noexcept {
+	bool operator==(const span & other) const noexcept {
 		return size() == other.size() && (m_data == other.m_data || std::equal(begin(), end(), other.begin()));
 	}
 
-	bool operator!=(span const & other) const noexcept {
+	bool operator!=(const span & other) const noexcept {
 		return !(*this == other);
 	}
 
