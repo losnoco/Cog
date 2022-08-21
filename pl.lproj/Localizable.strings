@@ -87,6 +87,8 @@
 
 "Version %@ (%@)" = "wersja %1$@ (%2$@)";
 
+"replayGainAlbumGain" = "głośność odtwarzania będzie wykrywana przez enumerację";
+
 /* minutes and seconds */
 "ms" = "%@ i %@";
 
