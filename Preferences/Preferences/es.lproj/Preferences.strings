@@ -101,7 +101,7 @@
 "JU5-o7-jid.title" = "Eliminar rutas inválidas";
 
 /* Class = "NSMenuItem"; title = "Add Path"; ObjectID = "JxP-0t-mTB"; */
-"JxP-0t-mTB.title" = "Agregar ruta";
+"JxP-0t-mTB.title" = "Añadir ruta";
 
 /* Class = "NSTextFieldCell"; title = "Selected:"; ObjectID = "KJz-qS-IcO"; */
 "KJz-qS-IcO.title" = "Seleccionado:";

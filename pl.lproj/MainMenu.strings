@@ -543,6 +543,27 @@
 /* Class = "NSMenuItem"; title = "Randomize"; ObjectID = "2545"; */
 "2545.title" = "losuj";
 
+/* Class = "NSMenuItem"; title = "Move to Trash"; ObjectID = "qlT-UX-x72"; */
+"qlT-UX-x72.title" = "przenieś do kosza";
+
+/* Class = "NSToolbarItem"; label = "Remove Duplicate Items"; ObjectID = "rEg-qk-MbN"; */
+"rEg-qk-MbN.label" = "usuń duplikaty";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Duplicate Items"; ObjectID = "rEg-qk-MbN"; */
+"rEg-qk-MbN.paletteLabel" = "usuń duplikaty";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "sdo-Sm-KPH"; */
+"sdo-Sm-KPH.title" = "komurka widoku tabeli";
+
+/* Class = "NSToolbarItem"; label = "Spectrum"; ObjectID = "sf3-l1-fJw"; */
+"sf3-l1-fJw.label" = "spektrum";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Spectrum"; ObjectID = "sf3-l1-fJw"; */
+"sf3-l1-fJw.paletteLabel" = "spektrum";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "tus-lr-RhS"; */
+"tus-lr-RhS.title" = "komurka z widokiem tabeli";
+
 /* Class = "NSMenuItem"; title = "Toggle Toolbar Style"; ObjectID = "vBH-Mr-XWi"; */
 "vBH-Mr-XWi.title" = "przełącz styl paska nażędzi";
 

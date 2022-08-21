@@ -38,7 +38,7 @@
 "PrevButtonTooltip" = "Anterior";
 "ProgressActionLoader" = "cargador de listas de reproducción insertando archivos";
 "ProgressActionLoadingMetadata" = "cargando metadatos para pistas";
-"ProgressSubActionLoaderAddingEntries" = "creando y agregando entradas en la lista";
+"ProgressSubActionLoaderAddingEntries" = "creando y añadiendo entradas en la lista";
 "ProgressSubActionLoaderFilteringContainedFiles" = "eliminando los tipos de archivos no admitidos de los contenedores";
 "ProgressSubActionLoaderFilteringContainerFiles" = "manejando tipos de archivos contenedores";
 "ProgressSubActionLoaderFilteringFiles" = "eliminando tipos de archivos no compatibles";
