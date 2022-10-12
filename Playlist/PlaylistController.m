@@ -381,46 +381,45 @@ static void *playlistControllerContext = &playlistControllerContext;
 		daysAndHours = ldiv(hoursAndMinutes.quot, 24);
 		if(daysAndHours.quot >= 7) {
 			weeksAndDays = ldiv(daysAndHours.quot, 7);
-            
-            NSString *weekCount = [NSString localizedStringWithFormat:week, weeksAndDays.quot];
-            NSString *dayCount = [NSString localizedStringWithFormat:day, weeksAndDays.rem];
-            NSString *hourCount = [NSString localizedStringWithFormat:hour, daysAndHours.rem];
-            NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
-            NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
-            
+
+			NSString *weekCount = [NSString localizedStringWithFormat:week, weeksAndDays.quot];
+			NSString *dayCount = [NSString localizedStringWithFormat:day, weeksAndDays.rem];
+			NSString *hourCount = [NSString localizedStringWithFormat:hour, daysAndHours.rem];
+			NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+			NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+
 			[self setTotalTime:[NSString stringWithFormat:
-                                NSLocalizedString(@"wdhms", "weeks, days, hours, minutes and seconds"),
+			                    NSLocalizedString(@"wdhms", "weeks, days, hours, minutes and seconds"),
 			                                              weekCount, dayCount, hourCount, minuteCount, secCount]];
 		} else {
-            
-            NSString *dayCount = [NSString localizedStringWithFormat:day, daysAndHours.quot];
-            NSString *hourCount = [NSString localizedStringWithFormat:hour, daysAndHours.rem];
-            NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
-            NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
-            
-            [self setTotalTime:[NSString stringWithFormat:
-                                NSLocalizedString(@"dhms", "days, hours, minutes and seconds"),
-                                                          dayCount, hourCount, minuteCount, secCount]];
+			NSString *dayCount = [NSString localizedStringWithFormat:day, daysAndHours.quot];
+			NSString *hourCount = [NSString localizedStringWithFormat:hour, daysAndHours.rem];
+			NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+			NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+
+			[self setTotalTime:[NSString stringWithFormat:
+			                    NSLocalizedString(@"dhms", "days, hours, minutes and seconds"),
+			                                              dayCount, hourCount, minuteCount, secCount]];
 		}
 	} else {
 		if(hoursAndMinutes.quot > 0) {
-            NSString *hourCount = [NSString localizedStringWithFormat:hour, hoursAndMinutes.quot];
-            NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
-            NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
-            
-            [self setTotalTime:[NSString stringWithFormat:
-                                NSLocalizedString(@"hms", "hours, minutes and seconds"),
-                                                          hourCount, minuteCount, secCount]];
+			NSString *hourCount = [NSString localizedStringWithFormat:hour, hoursAndMinutes.quot];
+			NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+			NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+
+			[self setTotalTime:[NSString stringWithFormat:
+			                    NSLocalizedString(@"hms", "hours, minutes and seconds"),
+			                                              hourCount, minuteCount, secCount]];
 		} else {
 			if(hoursAndMinutes.rem > 0) {
-                NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
-                NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
-                
-                [self setTotalTime:[NSString stringWithFormat:
-                                    NSLocalizedString(@"ms", "minutes and seconds"),
-                                                              minuteCount, secCount]];
+				NSString *minuteCount = [NSString localizedStringWithFormat:min, hoursAndMinutes.rem];
+				NSString *secCount = [NSString localizedStringWithFormat:second, sec % 60];
+
+				[self setTotalTime:[NSString stringWithFormat:
+				                    NSLocalizedString(@"ms", "minutes and seconds"),
+				                                              minuteCount, secCount]];
 			} else {
-                NSString *secCount = [NSString localizedStringWithFormat:second, sec];
+				NSString *secCount = [NSString localizedStringWithFormat:second, sec];
 
 				[self setTotalTime:secCount];
 			}
@@ -1595,12 +1594,12 @@ static void *playlistControllerContext = &playlistControllerContext;
 - (IBAction)showTagEditor:(id)sender
 {
 // call the editor & pass the url
-    if ([self selectionIndex] < 0)
-        return;
+	if ([self selectionIndex] < 0)
+		return;
 
-    NSURL *url = [[[self selectedObjects] objectAtIndex:0] URL];
-    if ([url isFileURL])
-        [TagEditorController openTagEditor:url sender:sender];
+	NSURL *url = [[[self selectedObjects] objectAtIndex:0] URL];
+	if ([url isFileURL])
+		[TagEditorController openTagEditor:url sender:sender];
 
 }
 */
