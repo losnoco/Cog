@@ -171,7 +171,7 @@ int msadpcm_check_coefs(STREAMFILE* sf, uint32_t offset);
 
 
 /* yamaha_decoder */
-void decode_aica(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo);
+void decode_aica(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo, int is_high_first);
 void decode_cp_ym(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo);
 void decode_aska(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, size_t frame_size);
 void decode_nxap(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
@@ -351,6 +351,16 @@ void decode_tac(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t samples_to_do);
 void reset_tac(tac_codec_data* data);
 void seek_tac(tac_codec_data* data, int32_t num_sample);
 void free_tac(tac_codec_data* data);
+
+
+/* ice_decoder */
+typedef struct ice_codec_data ice_codec_data;
+
+ice_codec_data* init_ice(STREAMFILE* sf, int subsong);
+void decode_ice(ice_codec_data* data, sample_t* outbuf, int32_t samples_to_do);
+void reset_ice(ice_codec_data* data);
+void seek_ice(ice_codec_data* data, int32_t num_sample);
+void free_ice(ice_codec_data* data);
 
 
 #ifdef VGM_USE_VORBIS

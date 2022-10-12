@@ -235,6 +235,7 @@ static int parse_musx_stream(STREAMFILE* sf, musx_header* musx) {
             break;
 
         case 0x58425F5F: /* "XB__" */
+        case 0x5842315F: /* "XB1_" */
             default_channels = 2;
             default_sample_rate = 44100;
             musx->codec = DAT;
@@ -254,7 +255,7 @@ static int parse_musx_stream(STREAMFILE* sf, musx_header* musx) {
 
         case 0x5749495F: /* "WII_" */
             default_channels = 2;
-            default_sample_rate = 44100;
+            default_sample_rate = 32000;
             musx->codec = DAT;
             break;
 
