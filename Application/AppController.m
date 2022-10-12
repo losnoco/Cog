@@ -225,6 +225,9 @@ static AppController *kAppController = nil;
 		NSError *error = nil;
 		[playlistController.persistentContainerLock lock];
 		NSArray *results = [playlistController.persistentContainer.viewContext executeFetchRequest:request error:&error];
+		if(results) {
+			results = [results copy];
+		}
 		[playlistController.persistentContainerLock unlock];
 
 		if(results && [results count] == 1) {

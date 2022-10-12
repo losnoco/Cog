@@ -44,6 +44,9 @@
 	NSError *error = nil;
 	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	if(results) {
+		results = [results copy];
+	}
 	[lock unlock];
 
 	if(results && [results count] > 0) {
@@ -69,12 +72,10 @@
 
 	[lock lock];
 	SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
-	[lock unlock];
 
 	if(token) {
 		token.path = [url path];
 		token.bookmark = bookmark;
-		[lock lock];
 		[pc.viewContext save:&err];
 		[lock unlock];
 		if(err) {
@@ -84,6 +85,8 @@
 			[NSClassFromString(@"SandboxBroker") cleanupFolderAccess];
 			[self refresh];
 		}
+	} else {
+		[lock unlock];
 	}
 }
 

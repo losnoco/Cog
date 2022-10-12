@@ -1446,12 +1446,12 @@ static SQLiteStore *g_sharedStore = nil;
 - (PlaylistEntry *_Nonnull)getTrack:(int64_t)trackId {
 	[kPersistentContainerLock lock];
 	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
-	[kPersistentContainerLock unlock];
 
 	if(trackId < 0) {
 		entry.error = YES;
 		entry.errorMessage = NSLocalizedString(@"ErrorInvalidTrackId", @"");
 		entry.deLeted = YES;
+		[kPersistentContainerLock unlock];
 		return entry;
 	}
 
@@ -1462,6 +1462,7 @@ static SQLiteStore *g_sharedStore = nil;
 		entry.error = YES;
 		entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
 		entry.deLeted = YES;
+		[kPersistentContainerLock unlock];
 		return entry;
 	}
 
@@ -1472,6 +1473,7 @@ static SQLiteStore *g_sharedStore = nil;
 		entry.error = YES;
 		entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
 		entry.deLeted = YES;
+		[kPersistentContainerLock unlock];
 		return entry;
 	}
 
@@ -1547,6 +1549,7 @@ static SQLiteStore *g_sharedStore = nil;
 		entry.errorMessage = NSLocalizedString(@"ErrorTrackMissing", @"");
 		entry.deLeted = YES;
 	}
+	[kPersistentContainerLock unlock];
 
 	sqlite3_reset(st);
 
@@ -1863,8 +1866,10 @@ static SQLiteStore *g_sharedStore = nil;
 		int64_t entryId = sqlite3_column_int64(st, select_playlist_out_entry_id);
 		entry = [self getTrack:trackId];
 		if(!entry.deLeted && !entry.error) {
+			[kPersistentContainerLock lock];
 			entry.index = index;
 			entry.entryId = entryId;
+			[kPersistentContainerLock unlock];
 		} else {
 			[kPersistentContainerLock lock];
 			[kPersistentContainer.viewContext deleteObject:entry];
