@@ -431,6 +431,7 @@
 				<string>bgm</string>
 				<string>bgw</string>
 				<string>bh2pcm</string>
+				<string>bigrp</string>
 				<string>bik</string>
 				<string>bika</string>
 				<string>bik2</string>
@@ -452,6 +453,7 @@
 				<string>btsnd</string>
 				<string>bvg</string>
 				<string>bwav</string>
+				<string>cads</string>
 				<string>caf</string>
 				<string>cbd2</string>
 				<string>ccc</string>
@@ -532,6 +534,7 @@
 				<string>his</string>
 				<string>hps</string>
 				<string>hsf</string>
+				<string>hvqm</string>
 				<string>hwx</string>
 				<string>hx2</string>
 				<string>hx3</string>
@@ -703,6 +706,7 @@
 				<string>pnb</string>
 				<string>pona</string>
 				<string>pos</string>
+				<string>ps3</string>
 				<string>ps2stm</string>
 				<string>psb</string>
 				<string>psf</string>
@@ -866,6 +870,8 @@
 				<string>vb</string>
 				<string>vbk</string>
 				<string>vbx</string>
+				<string>vca</string>
+				<string>vcb</string>
 				<string>vds</string>
 				<string>vdm</string>
 				<string>vgi</string>
