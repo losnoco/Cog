@@ -129,7 +129,6 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_idsp_ie,
     init_vgmstream_ngc_ymf,
     init_vgmstream_sadl,
-    init_vgmstream_ps2_ccc,
     init_vgmstream_fag,
     init_vgmstream_ps2_mihb,
     init_vgmstream_ngc_pdt_split,
@@ -526,10 +525,10 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_bw_riff_mp3,
     init_vgmstream_sndz,
     init_vgmstream_vab,
+    init_vgmstream_bigrp,
 
     /* lower priority metas (no clean header identity, somewhat ambiguous, or need extension/companion file to identify) */
     init_vgmstream_agsc,
-    init_vgmstream_dtk,
     init_vgmstream_rsf,
     init_vgmstream_ps2_wmus,
     init_vgmstream_mib_mih,
@@ -542,6 +541,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
 
     /* lowest priority metas (should go after all metas, and TXTH should go before raw formats) */
     init_vgmstream_txth,            /* proper parsers should supersede TXTH, once added */
+    init_vgmstream_dtk,
     init_vgmstream_mpeg,            /* semi-raw MP3 */
     init_vgmstream_encrypted,       /* encrypted stuff */
     init_vgmstream_btsnd,           /* semi-headerless */
@@ -555,6 +555,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_ngc_ulw,         /* .ulw raw u-Law */
     init_vgmstream_exakt_sc,        /* .sc raw PCM */
     init_vgmstream_zwdsp,           /* fake format */
+    init_vgmstream_ps2_ccc,         /* fake format, to be removed */
     init_vgmstream_ps2_adm,         /* weird non-constant PSX blocks */
     init_vgmstream_baf_badrip,      /* crap, to be removed */
     init_vgmstream_rxws_badrip,     /* crap, to be removed */
