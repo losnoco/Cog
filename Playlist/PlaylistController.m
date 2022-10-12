@@ -267,18 +267,20 @@ static void *playlistControllerContext = &playlistControllerContext;
 	PlayCount *pc = pe.playCountItem;
 
 	if(pc) {
+		[self.persistentContainerLock lock];
 		pc.count += 1;
 		pc.lastPlayed = [NSDate date];
+		[self.persistentContainerLock unlock];
 	} else {
 		[self.persistentContainerLock lock];
 		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
-		[self.persistentContainerLock unlock];
 		pc.count = 1;
 		pc.firstSeen = pc.lastPlayed = [NSDate date];
 		pc.album = pe.album;
 		pc.artist = pe.artist;
 		pc.title = pe.title;
 		pc.filename = pe.filenameFragment;
+		[self.persistentContainerLock unlock];
 	}
 
 	[self commitPersistentStore];
@@ -290,13 +292,13 @@ static void *playlistControllerContext = &playlistControllerContext;
 	if(!pc) {
 		[self.persistentContainerLock lock];
 		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
-		[self.persistentContainerLock unlock];
 		pc.count = 0;
 		pc.firstSeen = [NSDate date];
 		pc.album = pe.album;
 		pc.artist = pe.artist;
 		pc.title = pe.title;
 		pc.filename = pe.filenameFragment;
+		[self.persistentContainerLock unlock];
 	}
 }
 
@@ -307,16 +309,18 @@ static void *playlistControllerContext = &playlistControllerContext;
 		if(!pc) {
 			[self.persistentContainerLock lock];
 			pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
-			[self.persistentContainerLock unlock];
 			pc.count = 0;
 			pc.firstSeen = [NSDate date];
 			pc.album = pe.album;
 			pc.artist = pe.artist;
 			pc.title = pe.title;
 			pc.filename = pe.filenameFragment;
+			[self.persistentContainerLock unlock];
 		}
 
+		[self.persistentContainerLock lock];
 		pc.rating = rating;
+		[self.persistentContainerLock unlock];
 
 		[self commitPersistentStore];
 	}
@@ -1380,6 +1384,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSError *error = nil;
 	[self.persistentContainerLock lock];
 	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+    if(results) {
+		results = [results copy];
+    }
 	[self.persistentContainerLock unlock];
 
 	if(results && [results count] > 0) {
@@ -1401,6 +1408,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSError *error = nil;
 	[self.persistentContainerLock lock];
 	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+    if(results) {
+		results = [results copy];
+    }
 	[self.persistentContainerLock unlock];
 
 	if(results && [results count] > 0) {
@@ -1937,15 +1947,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (BOOL)pathSuggesterEmpty {
+	BOOL rval;
+
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 
 	NSError *error = nil;
 	[self.persistentContainerLock lock];
 	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+	if(!results || [results count] < 1) rval = YES;
+	else rval = NO;
 	[self.persistentContainerLock unlock];
 
-	if(!results || [results count] < 1) return YES;
-	else return NO;
+	return rval;
 }
 
 @end

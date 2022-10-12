@@ -166,6 +166,9 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	NSError *error = nil;
 	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	if(results) {
+		results = [results copy];
+	}
 	[lock unlock];
 	if(results && [results count] > 0) {
 		ret = [[SandboxEntry alloc] initWithToken:results[0]];
@@ -183,6 +186,9 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 		error = nil;
 		[lock lock];
 		results = [pc.viewContext executeFetchRequest:request error:&error];
+		if(results) {
+			results = [results copy];
+		}
 		[lock unlock];
 
 		if(results && [results count] > 0) {
@@ -253,12 +259,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 				[lock lock];
 				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
-				[lock unlock];
 
 				if(token) {
 					token.path = [folderUrl path];
 					token.bookmark = bookmark;
+					[lock unlock];
 					[SandboxBroker cleanupFolderAccess];
+				} else {
+					[lock unlock];
 				}
 			});
 		}
@@ -301,13 +309,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 				[lock lock];
 				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
-				[lock unlock];
 
 				if(token) {
 					token.path = [url path];
 					token.bookmark = bookmark;
 					token.folder = NO;
 				}
+				[lock unlock];
 			});
 		}
 	}
@@ -369,12 +377,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 					[lock lock];
 					SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
-					[lock unlock];
 
 					if(token) {
 						token.path = [folderUrl path];
 						token.bookmark = bookmark;
+						[lock unlock];
 						[SandboxBroker cleanupFolderAccess];
+					} else {
+						[lock unlock];
 					}
 				}
 			});
@@ -391,14 +401,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	request.sortDescriptors = @[sortDescriptor];
 
 	NSError *error = nil;
+	NSMutableArray *resultsCopy = nil;
 	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	if(results) {
+		resultsCopy = [results mutableCopy];
+	}
 	[lock unlock];
 
 	BOOL isUpdated = NO;
 
-	if(results && [results count]) {
-		NSMutableArray *resultsCopy = [results mutableCopy];
+	if(resultsCopy && [resultsCopy count]) {
 		for(NSUInteger i = 0; i < [resultsCopy count] - 1; ++i) {
 			SandboxToken *token = resultsCopy[i];
 			NSURL *url = [NSURL fileURLWithPath:token.path];

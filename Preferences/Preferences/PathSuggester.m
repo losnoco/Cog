@@ -69,6 +69,9 @@
 	NSError *error = nil;
 	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+	if(results) {
+		results = [results copy];
+	}
 	[lock unlock];
 
 	if(!results || [results count] < 1) return;

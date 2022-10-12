@@ -40,7 +40,6 @@ extern NSPersistentContainer *kPersistentContainer;
 + (PlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem {
 	[kPersistentContainerLock lock];
 	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
-	[kPersistentContainerLock unlock];
 
 	entry.deLeted = YES;
 
@@ -85,6 +84,7 @@ extern NSPersistentContainer *kPersistentContainer;
 	entry.url = url;
 
 	[entry setMetadata:dict];
+	[kPersistentContainerLock unlock];
 
 	return entry;
 }
