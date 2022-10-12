@@ -913,13 +913,13 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 			switch(region.loopMode)
 			{
 			case SFZRegion::LoopMode::kContinuous:
-			case SFZRegion::LoopMode::kOneShot:
 				sample.uFlags.set(CHN_LOOP);
 				break;
 			case SFZRegion::LoopMode::kSustain:
 				sample.uFlags.set(CHN_SUSTAINLOOP);
 				break;
 			case SFZRegion::LoopMode::kNoLoop:
+			case SFZRegion::LoopMode::kOneShot:
 				sample.uFlags.reset(CHN_LOOP | CHN_SUSTAINLOOP);
 			}
 		}

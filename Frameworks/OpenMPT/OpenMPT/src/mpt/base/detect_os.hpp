@@ -10,6 +10,9 @@
 #define MPT_OS_DJGPP 1
 #elif defined(__EMSCRIPTEN__)
 #define MPT_OS_EMSCRIPTEN 1
+#if !defined(__EMSCRIPTEN_major__) || !defined(__EMSCRIPTEN_minor__) || !defined(__EMSCRIPTEN_tiny__)
+#include <emscripten/version.h>
+#endif
 #if defined(__EMSCRIPTEN_major__) && defined(__EMSCRIPTEN_minor__)
 #if (__EMSCRIPTEN_major__ > 1)
 // ok

@@ -646,6 +646,7 @@ bool CDLSBank::FindAndExtract(CSoundFile &sndFile, const INSTRUMENTINDEX ins, co
 	const uint32 program = (pIns->nMidiProgram != 0) ? pIns->nMidiProgram - 1 : 0;
 	const uint32 key = isDrum ? (pIns->nMidiDrumKey & 0x7F) : 0xFF;
 	if(FindInstrument(isDrum, (pIns->wMidiBank - 1) & 0x3FFF, program, key, &dlsIns)
+		|| FindInstrument(isDrum, (pIns->wMidiBank - 1) & 0x3F80, program, key, &dlsIns)
 		|| FindInstrument(isDrum, 0xFFFF, isDrum ? 0xFF : program, key, &dlsIns))
 	{
 		if(key < 0x80) drumRgn = GetRegionFromKey(dlsIns, key);

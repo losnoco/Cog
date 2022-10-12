@@ -1,7 +1,8 @@
 /*
  * UpdateModule.cpp
  * ----------------
- * Purpose: CSoundFile functions for correcting modules made with previous versions of OpenMPT.
+ * Purpose: Compensate for playback bugs of previous OpenMPT versions during import
+ *          by rewriting patterns / samples / instruments or enabling / disabling specific compatibility flags
  * Notes  : (currently none)
  * Authors: OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
@@ -724,6 +725,24 @@ void CSoundFile::UpgradeModule()
 		{
 			if(plugin.Info.dwPluginId1 == kDmoMagic && plugin.Info.dwPluginId2 == int32(0xEFCA3D92) && plugin.pluginData.size() == 32)
 				plugin.Info.szLibraryName = "Flanger (Legacy)";
+		}
+	}
+
+	if(m_dwLastSavedWithVersion >= MPT_V("1.27") && m_dwLastSavedWithVersion < MPT_V("1.30.06.00") && (GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM)))
+	{
+		// Fix off-by-one delay length in older Echo DMO emulation
+		for(auto &plugin : m_MixPlugins)
+		{
+			if(plugin.Info.dwPluginId1 == kDmoMagic && plugin.Info.dwPluginId2 == int32(0xEF3E932C) && plugin.pluginData.size() == 24)
+			{
+				float32le leftDelay, rightDelay;
+				memcpy(&leftDelay, plugin.pluginData.data() + 12, 4);
+				memcpy(&rightDelay, plugin.pluginData.data() + 16, 4);
+				leftDelay = float32le{mpt::safe_clamp(((leftDelay * 2000.0f) - 1.0f) / 1999.0f, 0.0f, 1.0f)};
+				rightDelay = float32le{mpt::safe_clamp(((rightDelay * 2000.0f) - 1.0f) / 1999.0f, 0.0f, 1.0f)};
+				memcpy(plugin.pluginData.data() + 12, &leftDelay, 4);
+				memcpy(plugin.pluginData.data() + 16, &rightDelay, 4);
+			}
 		}
 	}
 }
