@@ -1,8 +1,6 @@
 Built with the Arch Linux defaults, sort of:
 
 ```
-patch -Np1 -i libid3tag-0.16.1.bugfix.patch
-
 cmake -B build.x86 -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" -DBUILD_SHARED_LIBS=OFF
 cmake -B build.arm -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0" -DBUILD_SHARED_LIBS=OFF
 
@@ -18,4 +16,4 @@ mkdir out.release
 lipo -create -output out.release/libid3tag.a build.x86/libid3tag.a build.arm/libid3tag.a
 ```
 
-Version 0.16.1 was used, with a patch to fix a crash bug on invalid tags.
+Version 0.16.2 was used.

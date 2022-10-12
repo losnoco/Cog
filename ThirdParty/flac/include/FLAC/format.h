@@ -1,6 +1,6 @@
 /* libFLAC - Free Lossless Audio Codec library
  * Copyright (C) 2000-2009  Josh Coalson
- * Copyright (C) 2011-2016  Xiph.Org Foundation
+ * Copyright (C) 2011-2022  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,8 +120,7 @@ extern "C" {
 #define FLAC__REFERENCE_CODEC_MAX_BITS_PER_SAMPLE (32u)
 
 /** The maximum sample rate permitted by the format.  The value is
- *  ((2 ^ 16) - 1) * 10; see <A HREF="../format.html">FLAC format</A>
- *  as to why.
+ *  ((2 ^ 20) - 1)
  */
 #define FLAC__MAX_SAMPLE_RATE (1048575u)
 
@@ -839,7 +838,7 @@ typedef struct {
 
 /** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
  */
-typedef struct {
+typedef struct FLAC__StreamMetadata {
 	FLAC__MetadataType type;
 	/**< The type of the metadata block; used determine which member of the
 	 * \a data union to dereference.  If type >= FLAC__METADATA_TYPE_UNDEFINED
