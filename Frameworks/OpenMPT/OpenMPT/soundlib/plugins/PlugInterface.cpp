@@ -884,7 +884,7 @@ void IMidiPlugin::MidiCommand(const ModInstrument &instr, uint16 note, uint16 vo
 	bool bankChanged = (channel.currentBank != midiBank) && (midiBank < 0x4000);
 	bool progChanged = (channel.currentProgram != midiProg) && (midiProg < 0x80);
 	//get vol in [0,128[
-	uint8 volume = static_cast<uint8>(std::min(vol / 2u, 127u));
+	uint8 volume = static_cast<uint8>(std::min((vol + 1u) / 2u, 127u));
 
 	// Bank change
 	if(bankChanged)

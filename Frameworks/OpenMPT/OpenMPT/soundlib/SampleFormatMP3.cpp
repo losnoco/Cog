@@ -25,6 +25,10 @@
 #include "MPEGFrame.h"
 #endif // MPT_ENABLE_MP3_SAMPLES
 #if defined(MPT_WITH_MINIMP3)
+#include "mpt/base/alloc.hpp"
+#endif // MPT_WITH_MINIMP3
+
+#if defined(MPT_WITH_MINIMP3)
 #include <minimp3/minimp3.h>
 #endif // MPT_WITH_MINIMP3
 
@@ -161,6 +165,28 @@ static mpt::ustring ReadMPG123String(const char (&str)[N])
 }
 
 #endif // MPT_WITH_MPG123
+
+
+#if defined(MPT_WITH_MINIMP3)
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than=16000"
+#endif // MPT_COMPILER_GCC
+#if MPT_CLANG_AT_LEAST(13,0,0)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wframe-larger-than"
+#endif // MPT_COMPILER_CLANG
+static MPT_NOINLINE int mp3dec_decode_frame_no_inline(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_sample_t *pcm, mp3dec_frame_info_t *info)
+{
+	return mp3dec_decode_frame(dec, mp3, mp3_bytes, pcm, info);
+}
+#if MPT_CLANG_AT_LEAST(13,0,0)
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif // MPT_COMPILER_GCC
+#endif // MPT_WITH_MINIMP3
 
 
 bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, bool mo3Decode)
@@ -603,19 +629,19 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 
 	std::vector<int16> raw_sample_data;
 
-	mp3dec_t mp3;
-	std::memset(&mp3, 0, sizeof(mp3dec_t));
-	mp3dec_init(&mp3);
+	mpt::heap_value<mp3dec_t> mp3;
+	std::memset(&*mp3, 0, sizeof(mp3dec_t));
+	mp3dec_init(&*mp3);
 	
 	int rate = 0;
 	int channels = 0;
 
 	mp3dec_frame_info_t info;
 	std::memset(&info, 0, sizeof(mp3dec_frame_info_t));
+	std::vector<int16> sample_buf(MINIMP3_MAX_SAMPLES_PER_FRAME);
 	do
 	{
-		int16 sample_buf[MINIMP3_MAX_SAMPLES_PER_FRAME];
-		int frame_samples = mp3dec_decode_frame(&mp3, stream_pos, mpt::saturate_cast<int>(bytes_left), sample_buf, &info);
+		int frame_samples = mp3dec_decode_frame_no_inline(&*mp3, stream_pos, mpt::saturate_cast<int>(bytes_left), sample_buf.data(), &info);
 		if(frame_samples < 0 || info.frame_bytes < 0) break; // internal error in minimp3
 		if(frame_samples > 0 && info.frame_bytes == 0) break; // internal error in minimp3
 		if(frame_samples == 0 && info.frame_bytes == 0) break; // end of stream, no progress
@@ -635,7 +661,7 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			{
 				try
 				{
-					mpt::append(raw_sample_data, sample_buf, sample_buf + frame_samples * channels);
+					mpt::append(raw_sample_data, sample_buf.data(), sample_buf.data() + frame_samples * channels);
 				} catch(mpt::out_of_memory e)
 				{
 					mpt::delete_out_of_memory(e);

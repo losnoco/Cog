@@ -696,7 +696,7 @@ bool CSoundFile::ProcessRow()
 			{
 				// ProTracker sets the tempo after the first tick. This block handles the case of one tick per row.
 				// Test case: TempoChange.mod
-				m_PlayState.m_nMusicTempo = TEMPO(pChn->rowCommand.param, 0);
+				m_PlayState.m_nMusicTempo = TEMPO(std::max(ModCommand::PARAM(1), pChn->rowCommand.param), 0);
 			}
 
 			pChn->rowCommand = *m;

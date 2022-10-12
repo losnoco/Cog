@@ -5,6 +5,22 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.6.6 (2022-09-25)
+
+ *  [**Sec**] Possible crash when playing manipulated IT / MPTM files with a T00
+    command. (r17789)
+
+ *  MTM: In MultiTracker, setting speed and tempo are mutually exclusive
+    commands. Still, some MultiTracker modules were made to be played with
+    external players such as DMP, so they actually rely on "standard" speed /
+    tempo behaviour. Decide which behaviour to use by checking of speed and
+    tempo commands are found on the same row.
+ *  MTM: Ignore sample loops if the loop end is <= 2.
+ *  Echo DMO: Migrate left and right delay values in modules made with OpenMPT
+    versions between 1.27.01.00 and 1.30.05.00 to the correct interpretation.
+
+ *  FLAC: Update to v1.4.1 (2022-09-22).
+
 ### libopenmpt 0.6.5 (2022-08-21)
 
  *  [**Bug**] `Makefile` now also uses `CC`, `CXX`, `LD`, and `AR` when set as

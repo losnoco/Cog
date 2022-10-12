@@ -80,6 +80,11 @@ CXXFLAGS +=
 CFLAGS   += 
 LDFLAGS  += -s WASM=2 -s LEGACY_VM_SUPPORT=1 -Wno-transpile
 
+# work-around <https://github.com/emscripten-core/emscripten/issues/17897>.
+CXXFLAGS += -fno-inline-functions
+CFLAGS   += -fno-inline-functions
+LDFLAGS  += -fno-inline-functions
+
 LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 
 else ifeq ($(EMSCRIPTEN_TARGET),audioworkletprocessor)
@@ -106,6 +111,11 @@ CPPFLAGS += -DMPT_BUILD_ASMJS
 CXXFLAGS += 
 CFLAGS   += 
 LDFLAGS  += -s WASM=0 -s LEGACY_VM_SUPPORT=1 -Wno-transpile
+
+# work-around <https://github.com/emscripten-core/emscripten/issues/17897>.
+CXXFLAGS += -fno-inline-functions
+CFLAGS   += -fno-inline-functions
+LDFLAGS  += -fno-inline-functions
 
 LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 

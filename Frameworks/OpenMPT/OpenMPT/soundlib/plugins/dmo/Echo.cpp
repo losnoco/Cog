@@ -37,8 +37,8 @@ Echo::Echo(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 {
 	m_param[kEchoWetDry] = 0.5f;
 	m_param[kEchoFeedback] = 0.5f;
-	m_param[kEchoLeftDelay] = 0.25f;
-	m_param[kEchoRightDelay] = 0.25f;
+	m_param[kEchoLeftDelay] = (500.0f - 1.0f) / 1999.0f;
+	m_param[kEchoRightDelay] = (500.0f - 1.0f) / 1999.0f;
 	m_param[kEchoPanDelay] = 0.0f;
 
 	m_mixBuffer.Initialize(2, 2);
