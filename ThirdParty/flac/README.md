@@ -10,9 +10,9 @@ And some minor tweaks with `install_name_tool -id` to make sure that the
 resulting libFLAC.12.dylib referred to itself with @rpath and not full
 paths of the build directory, and imported libogg.0.dylib with an @rpath.
 
-Version 1.3.3-235-g772efde6 was used from the following repository:
+Version 1.4.1 was used from the official source code download:
 
-https://github.com/xiph/flac.git
+https://downloads.xiph.org/releases/flac/flac-1.4.1.tar.xz
 
 x86_64 and arm64 were built separately, to allow for intrinsic functions
 to be used for x86_64.
