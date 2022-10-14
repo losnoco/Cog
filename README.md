@@ -1,4 +1,4 @@
-Cog [![buildable](https://github.com/losnoco/Cog/actions/workflows/debug.yml/badge.svg)](https://github.com/losnoco/Cog/actions/workflows/debug.yml)
+Cog [![buildable](https://github.com/losnoco/Cog/actions/workflows/debug.yml/badge.svg)](https://github.com/losnoco/Cog/actions/workflows/debug.yml) [![Join the chat at https://gitter.im/losnoco/cog](https://badges.gitter.im/losnoco/cog.svg)](https://gitter.im/losnoco/cog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ===
 
 Cog uses [Lokalise](https://lokalise.com/) for translation. If you want to contribute translations to Cog, send an email to kevin@kddlb.cl.
