@@ -29,6 +29,7 @@ extern NSString *CogPlaybackDidStopNotficiation;
 	BOOL isListening;
 	BOOL observersAdded;
 	BOOL isFullView;
+	BOOL isOccluded;
 
 	NSRect initFrame;
 
@@ -58,12 +59,29 @@ extern NSString *CogPlaybackDidStopNotficiation;
 }
 
 - (void)updateVisListening {
-	if(self.isListening && (![self visibleInWindow] || paused || stopped)) {
+	if(self.isListening && (![self visibleInWindow] || isOccluded || paused || stopped)) {
 		[self stopTimer];
 		self.isListening = NO;
-	} else if(!self.isListening && ([self visibleInWindow] && !stopped && !paused)) {
+	} else if(!self.isListening && ([self visibleInWindow] && !isOccluded && !stopped && !paused)) {
 		[self startTimer];
 		self.isListening = YES;
+	}
+}
+
+- (void)setOccluded:(BOOL)occluded {
+	isOccluded = occluded;
+	[self updateVisListening];
+}
+
+- (void)windowChangedOcclusionState:(NSNotification *)notification {
+	if([notification object] == self.window) {
+		BOOL curOccluded = !self.window;
+		if(!curOccluded) {
+			curOccluded = !(self.window.occlusionState & NSWindowOcclusionStateVisible);
+		}
+		if(curOccluded != isOccluded) {
+			[self setOccluded:curOccluded];
+		}
 	}
 }
 
@@ -118,31 +136,39 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)addObservers {
 	if(!observersAdded) {
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewCGContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewCGContext];
+		NSUserDefaultsController *sharedUserDefaultsController = [NSUserDefaultsController sharedUserDefaultsController];
+		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewCGContext];
+		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewCGContext];
 
 		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewCGContext];
 
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		                                         selector:@selector(colorsDidChange:)
-		                                             name:NSSystemColorsDidChangeNotification
-		                                           object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		                                         selector:@selector(playbackDidBegin:)
-		                                             name:CogPlaybackDidBeginNotficiation
-		                                           object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		                                         selector:@selector(playbackDidPause:)
-		                                             name:CogPlaybackDidPauseNotficiation
-		                                           object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		                                         selector:@selector(playbackDidResume:)
-		                                             name:CogPlaybackDidResumeNotficiation
-		                                           object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		                                         selector:@selector(playbackDidStop:)
-		                                             name:CogPlaybackDidStopNotficiation
-		                                           object:nil];
+		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+		[defaultCenter addObserver:self
+		                  selector:@selector(colorsDidChange:)
+		                      name:NSSystemColorsDidChangeNotification
+		                    object:nil];
+		[defaultCenter addObserver:self
+		                  selector:@selector(playbackDidBegin:)
+		                      name:CogPlaybackDidBeginNotficiation
+		                    object:nil];
+		[defaultCenter addObserver:self
+		                  selector:@selector(playbackDidPause:)
+		                      name:CogPlaybackDidPauseNotficiation
+		                    object:nil];
+		[defaultCenter addObserver:self
+		                  selector:@selector(playbackDidResume:)
+		                      name:CogPlaybackDidResumeNotficiation
+		                    object:nil];
+		[defaultCenter addObserver:self
+		                  selector:@selector(playbackDidStop:)
+		                      name:CogPlaybackDidStopNotficiation
+		                    object:nil];
+
+		[defaultCenter addObserver:self
+		                  selector:@selector(windowChangedOcclusionState:)
+		                      name:NSWindowDidChangeOcclusionStateNotification
+		                    object:nil];
+
 		observersAdded = YES;
 	}
 }
@@ -156,26 +182,33 @@ extern NSString *CogPlaybackDidStopNotficiation;
 
 - (void)removeObservers {
 	if(observersAdded) {
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewCGContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewCGContext];
+		NSUserDefaultsController *sharedUserDefaultsController = [NSUserDefaultsController sharedUserDefaultsController];
+		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewCGContext];
+		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewCGContext];
 
 		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewCGContext];
 
-		[[NSNotificationCenter defaultCenter] removeObserver:self
-		                                                name:NSSystemColorsDidChangeNotification
-		                                              object:nil];
-		[[NSNotificationCenter defaultCenter] removeObserver:self
-		                                                name:CogPlaybackDidBeginNotficiation
-		                                              object:nil];
-		[[NSNotificationCenter defaultCenter] removeObserver:self
-		                                                name:CogPlaybackDidPauseNotficiation
-		                                              object:nil];
-		[[NSNotificationCenter defaultCenter] removeObserver:self
-		                                                name:CogPlaybackDidResumeNotficiation
-		                                              object:nil];
-		[[NSNotificationCenter defaultCenter] removeObserver:self
-		                                                name:CogPlaybackDidStopNotficiation
-		                                              object:nil];
+		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+		[defaultCenter removeObserver:self
+		                         name:NSSystemColorsDidChangeNotification
+		                       object:nil];
+		[defaultCenter removeObserver:self
+		                         name:CogPlaybackDidBeginNotficiation
+		                       object:nil];
+		[defaultCenter removeObserver:self
+		                         name:CogPlaybackDidPauseNotficiation
+		                       object:nil];
+		[defaultCenter removeObserver:self
+		                         name:CogPlaybackDidResumeNotficiation
+		                       object:nil];
+		[defaultCenter removeObserver:self
+		                         name:CogPlaybackDidStopNotficiation
+		                       object:nil];
+
+		[defaultCenter removeObserver:self
+		                         name:NSWindowDidChangeOcclusionStateNotification
+		                       object:nil];
+
 		observersAdded = NO;
 	}
 }
