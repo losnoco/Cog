@@ -50,11 +50,34 @@
 
 		NSDictionary *alsoMetadata = [NSClassFromString(@"AudioPropertiesReader") propertiesForURL:url skipCue:YES];
 
-		NSString *sheet = [fileMetadata objectForKey:@"cuesheet"];
-		if(!sheet || ![sheet length]) sheet = [alsoMetadata objectForKey:@"cuesheet"];
+		id sheet = [fileMetadata objectForKey:@"cuesheet"];
+		NSString *sheetString = nil;
+		if(sheet) {
+			if([sheet isKindOfClass:[NSArray class]]) {
+				NSArray *sheetContainer = sheet;
+				if([sheetContainer count]) {
+					sheetString = sheetContainer[0];
+				}
+			} else if([sheet isKindOfClass:[NSString class]]) {
+				sheetString = sheet;
+			}
+		}
+		if(!sheetString || ![sheetString length]) {
+			sheet = [alsoMetadata objectForKey:@"cuesheet"];
+			if(sheet) {
+				if([sheet isKindOfClass:[NSArray class]]) {
+					NSArray *sheetContainer = sheet;
+					if([sheetContainer count]) {
+						sheetString = sheetContainer[0];
+					}
+				} else if([sheet isKindOfClass:[NSString class]]) {
+					sheetString = sheet;
+				}
+			}
+		}
 
-		if([sheet length]) {
-			cuesheet = [CueSheet cueSheetWithString:sheet withFilename:[url path]];
+		if(sheetString && [sheetString length]) {
+			cuesheet = [CueSheet cueSheetWithString:sheetString withFilename:[url path]];
 		}
 		embedded = YES;
 	} else
