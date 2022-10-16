@@ -68,6 +68,9 @@
 		propsize = sizeof(name);
 		theAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
 		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &name));
+		if(!name) {
+			continue;
+		}
 
 		propsize = 0;
 		theAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
