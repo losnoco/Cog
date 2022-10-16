@@ -714,7 +714,7 @@ static NSString *xmlEscapeString(NSString * string) {
 			// Gather list of candidate image files
 
 			NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
-			NSArray *types = @[@"jpg", @"jpeg", @"png", @"gif", @"webp", @"avif"];
+			NSArray *types = @[@"jpg", @"jpeg", @"png", @"gif", @"webp", @"avif", @"heic"];
 			NSArray *imageFileNames = [fileNames pathsMatchingExtensions:types];
 
 			for(NSString *fileName in imageFileNames) {
