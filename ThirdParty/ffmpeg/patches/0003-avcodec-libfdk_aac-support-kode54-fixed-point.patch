@@ -18,7 +18,7 @@ index 11eee51a98..9e199eb56f 100644
 @@ -25,6 +25,7 @@
  #include "avcodec.h"
  #include "codec_internal.h"
- #include "internal.h"
+ #include "decode.h"
 +#include "fmtconvert.h"
  
  #ifdef AACDECODER_LIB_VL0
@@ -43,7 +43,7 @@ index 11eee51a98..9e199eb56f 100644
      if (!s->decoder_buffer)
          return AVERROR(ENOMEM);
  
-+    ff_fmt_convert_init(&s->fmt_conv, avctx);
++    ff_fmt_convert_init(&s->fmt_conv);
 +
      return 0;
  }
