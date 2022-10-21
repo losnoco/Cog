@@ -38,11 +38,10 @@
 - (void)mouseDown:(NSEvent *)theEvent {
 	[popover close];
 
-	if(!viewController) {
-		viewController = [[NSViewController alloc] init];
-		viewController.view = _popView;
-		popover.contentViewController = viewController;
-	}
+	popover.contentViewController = nil;
+	viewController = [[NSViewController alloc] init];
+	viewController.view = _popView;
+	popover.contentViewController = viewController;
 
 	[popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMaxY];
 
