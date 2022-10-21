@@ -1074,7 +1074,7 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="64" height="26"/>
                         <size key="maxSize" width="64" height="26"/>
-                        <customView key="view" id="lVy-2P-05b" customClass="SpectrumView">
+                        <customView key="view" id="lVy-2P-05b" customClass="SpectrumViewCG">
                             <rect key="frame" x="0.0" y="14" width="64" height="26"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </customView>
@@ -1333,7 +1333,7 @@
                         <nil key="toolTip"/>
                         <size key="minSize" width="64" height="26"/>
                         <size key="maxSize" width="64" height="26"/>
-                        <customView key="view" id="gyu-hn-EUs" customClass="SpectrumView">
+                        <customView key="view" id="gyu-hn-EUs" customClass="SpectrumViewCG">
                             <rect key="frame" x="0.0" y="14" width="64" height="26"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </customView>
