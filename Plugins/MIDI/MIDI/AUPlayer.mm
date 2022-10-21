@@ -47,24 +47,18 @@ void AUPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
 }
 
 void AUPlayer::send_event_time(uint32_t b, unsigned int time) {
-#ifdef AUPLAYERVIEW
-	int _port = -1;
-#endif
 	unsigned char event[3];
 	event[0] = (unsigned char)b;
 	event[1] = (unsigned char)(b >> 8);
 	event[2] = (unsigned char)(b >> 16);
 	unsigned port = (b >> 24) & 0x7F;
 	if(port > 2) port = 2;
-#ifdef AUPLAYERVIEW
-	_port = (int)port;
-#endif
 	MusicDeviceMIDIEvent(samplerUnit[port], event[0], event[1], event[2], time);
 #ifdef AUPLAYERVIEW
-	if(_port >= 0 && !samplerUIinitialized[_port]) {
-		samplerUIinitialized[_port] = true;
+	if(port >= 0 && !samplerUIinitialized[port]) {
+		samplerUIinitialized[port] = true;
 		dispatch_async(dispatch_get_main_queue(), ^{
-			samplerUI[_port] = new AUPluginUI(samplerUnit[_port]);
+			samplerUI[port] = new AUPluginUI(samplerUnit[port]);
 		});
 	}
 #endif
@@ -72,19 +66,16 @@ void AUPlayer::send_event_time(uint32_t b, unsigned int time) {
 
 void AUPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, unsigned int time) {
 	if(port > 2) port = 0;
-#ifdef AUPLAYERVIEW
-	_port = (int)port;
-#endif
 	MusicDeviceSysEx(samplerUnit[port], data, (UInt32)size);
 	if(port == 0) {
 		MusicDeviceSysEx(samplerUnit[1], data, (UInt32)size);
 		MusicDeviceSysEx(samplerUnit[2], data, (UInt32)size);
 	}
 #ifdef AUPLAYERVIEW
-	if(_port >= 0 && !samplerUIinitialized[_port]) {
-		samplerUIinitialized[_port] = true;
+	if(port >= 0 && !samplerUIinitialized[port]) {
+		samplerUIinitialized[port] = true;
 		dispatch_async(dispatch_get_main_queue(), ^{
-			samplerUI[_port] = new AUPluginUI(samplerUnit[_port]);
+			samplerUI[port] = new AUPluginUI(samplerUnit[port]);
 		});
 	}
 #endif
@@ -256,19 +247,42 @@ bool AUPlayer::startup() {
 		if(error != noErr)
 			return false;
 
+		needsInput = NO;
+
 		{
 			AudioStreamBasicDescription stream = { 0 };
 			stream.mSampleRate = uSampleRate;
 			stream.mFormatID = kAudioFormatLinearPCM;
-			stream.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved | kAudioFormatFlagsNativeEndian;
-			stream.mFramesPerPacket = 1;
+			stream.mFormatFlags = kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked | kAudioFormatFlagIsNonInterleaved;
 			stream.mBytesPerPacket = 4;
+			stream.mFramesPerPacket = 1;
 			stream.mBytesPerFrame = 4;
-			stream.mBitsPerChannel = 32;
 			stream.mChannelsPerFrame = 2;
+			stream.mBitsPerChannel = 32;
 
-			AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_StreamFormat,
-			                     kAudioUnitScope_Input, 0, &stream, sizeof(stream));
+			AUChannelInfo channelInfo = { 0 };
+			Boolean *isWritable = 0;
+			size = 0;
+			error = AudioUnitGetPropertyInfo(samplerUnit[i], kAudioUnitProperty_SupportedNumChannels, kAudioUnitScope_Global, 0, &size, isWritable);
+			if(error == noErr) {
+				size = sizeof(channelInfo);
+				error = AudioUnitGetProperty(samplerUnit[i], kAudioUnitProperty_SupportedNumChannels, kAudioUnitScope_Global, 0, &channelInfo, &size);
+				if(error == noErr && channelInfo.inChannels == -1 || channelInfo.inChannels <= -2 || channelInfo.inChannels >= 2) {
+					needsInput = YES;
+				}
+			} else {
+				UInt32 channelCount = 0;
+				size = sizeof(channelCount);
+				error = AudioUnitGetProperty(samplerUnit[i], kAudioUnitProperty_ElementCount, kAudioUnitScope_Input, 0, &channelCount, &size);
+				if(error == noErr && channelCount >= 2) {
+					needsInput = YES;
+				}
+			}
+
+			if(needsInput) {
+				AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_StreamFormat,
+				                     kAudioUnitScope_Input, 0, &stream, sizeof(stream));
+			}
 
 			AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_StreamFormat,
 			                     kAudioUnitScope_Output, 0, &stream, sizeof(stream));
@@ -282,11 +296,13 @@ bool AUPlayer::startup() {
 		AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_RenderQuality,
 		                     kAudioUnitScope_Global, 0, &value, size);
 
-		AURenderCallbackStruct callbackStruct;
-		callbackStruct.inputProc = renderCallback;
-		callbackStruct.inputProcRefCon = 0;
-		AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_SetRenderCallback,
-		                     kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
+		if(needsInput) {
+			AURenderCallbackStruct callbackStruct;
+			callbackStruct.inputProc = renderCallback;
+			callbackStruct.inputProcRefCon = 0;
+			AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_SetRenderCallback,
+			                     kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
+		}
 
 		/*Float64 sampleRateIn = 0, sampleRateOut = 0;
 		UInt32 sampleRateSize = sizeof (sampleRateIn);
@@ -302,7 +318,9 @@ bool AUPlayer::startup() {
 		if (sampleRateOut != sr)
 		    AudioUnitSetProperty (samplerUnit[i], kAudioUnitProperty_SampleRate, kAudioUnitScope_Output, i, &sr, sizeof (sr));*/
 
-		AudioUnitReset(samplerUnit[i], kAudioUnitScope_Input, 0);
+		if(needsInput) {
+			AudioUnitReset(samplerUnit[i], kAudioUnitScope_Input, 0);
+		}
 		AudioUnitReset(samplerUnit[i], kAudioUnitScope_Output, 0);
 
 		AudioUnitReset(samplerUnit[i], kAudioUnitScope_Global, 0);

@@ -59,6 +59,8 @@ class AUPlayer : public MIDIPlayer {
 	float *audioBuffer;
 
 	OSType componentSubType, componentManufacturer;
+
+	BOOL needsInput;
 };
 
 #endif
