@@ -1382,7 +1382,7 @@
                             </menuItem>
                             <menuItem title="Check for Updates..." id="302">
                                 <connections>
-                                    <action selector="checkForUpdates:" target="1303" id="1304"/>
+                                    <action selector="checkForUpdates:" target="226" id="jEY-i9-qwZ"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="1100">
@@ -2201,7 +2201,6 @@ Gw
                 <outlet property="shuffleButton" destination="1637" id="Nzr-Mw-z9P"/>
                 <outlet property="spotlightWindowController" destination="1675" id="1677"/>
                 <outlet property="totalTimeField" destination="778" id="1659"/>
-                <outlet property="updater" destination="1303" id="gDn-jb-V0R"/>
             </connections>
         </customObject>
         <menu title="Menu" autoenablesItems="NO" id="513" userLabel="DockMenu">
@@ -2459,7 +2458,6 @@ Gw
             <point key="canvasLocation" x="-117" y="-407"/>
         </menu>
         <customObject id="1217" userLabel="PreferencesController" customClass="PreferencesController"/>
-        <customObject id="1303" userLabel="SUUpdater" customClass="SUUpdater"/>
         <customObject id="1319" userLabel="PlaylistLoader" customClass="PlaylistLoader">
             <connections>
                 <outlet property="playbackController" destination="705" id="EBV-A8-3bM"/>

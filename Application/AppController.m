@@ -40,6 +40,22 @@ BOOL kAppControllerShuttingDown = NO;
 
 static AppController *kAppController = nil;
 
+@interface SparkleBridge : NSObject
++ (SPUStandardUpdaterController *)sharedStandardUpdaterController;
+@end
+
+@implementation SparkleBridge
+
++ (SPUStandardUpdaterController *)sharedStandardUpdaterController {
+	static SPUStandardUpdaterController *sharedStandardUpdaterController_ = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		sharedStandardUpdaterController_ = [[SPUStandardUpdaterController alloc] initWithUpdaterDelegate: nil userDriverDelegate: nil];
+	});
+	return sharedStandardUpdaterController_;
+}
+@end
+
 @implementation AppController {
 	BOOL _isFullToolbarStyle;
 }
@@ -172,8 +188,9 @@ static AppController *kAppController = nil;
 
 #ifdef DEBUG
 	// Prevent updates automatically in debug builds
-	[updater setAutomaticallyChecksForUpdates:NO];
+	[[[SparkleBridge sharedStandardUpdaterController] updater] setAutomaticallyChecksForUpdates:NO];
 #endif
+	[[[SparkleBridge sharedStandardUpdaterController] updater] setUpdateCheckInterval:3600];
 
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 
@@ -783,6 +800,10 @@ static AppController *kAppController = nil;
 
 + (void)globalShowPathSuggester {
 	[kAppController showPathSuggester];
+}
+
+- (IBAction)checkForUpdates:(id)sender {
+	[[SparkleBridge sharedStandardUpdaterController] checkForUpdates:[[NSApplication sharedApplication] delegate]];
 }
 
 @end

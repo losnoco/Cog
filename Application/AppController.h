@@ -7,7 +7,6 @@
 @class PlaylistController;
 @class PlaylistView;
 @class PlaylistLoader;
-@class SUUpdater;
 @class PreferencesController;
 
 @interface AppController : NSObject {
@@ -46,8 +45,6 @@
 	IBOutlet NSMenuItem *currentArtistItem;
 
 	IBOutlet NSWindowController *spotlightWindowController;
-
-	IBOutlet SUUpdater *updater;
 
 	IBOutlet FileTreeViewController *fileTreeViewController;
 
@@ -109,6 +106,8 @@
 + (BOOL)globalPathSuggesterEmpty;
 - (void)showPathSuggester;
 + (void)globalShowPathSuggester;
+
+- (IBAction)checkForUpdates:(id)sender;
 
 @property NSWindow *mainWindow;
 @property NSWindow *miniWindow;
