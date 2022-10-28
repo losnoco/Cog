@@ -68,6 +68,8 @@ static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, c
 
 	[self addObject:@{@"name": @"BASSMIDI", @"preference": @"BASSMIDI"}];
 
+	[self addObject:@{ @"name": @"Secret Sauce", @"preference": @"sauce" }];
+
 	[self addObject:@{@"name": @"DMX Generic", @"preference": @"DOOM0000"}];
 	[self addObject:@{@"name": @"DMX Doom 1", @"preference": @"DOOM0001"}];
 	[self addObject:@{@"name": @"DMX Doom 2", @"preference": @"DOOM0002"}];
