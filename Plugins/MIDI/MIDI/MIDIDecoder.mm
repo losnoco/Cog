@@ -11,6 +11,7 @@
 #import "AUPlayer.h"
 #import "BMPlayer.h"
 #import "MSPlayer.h"
+#import "SCPlayer.h"
 
 #import "Logging.h"
 
@@ -220,6 +221,11 @@ static OSType getOSType(const char *in_) {
 			bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
 		player = bmplayer;
+	} else if([plugin isEqualToString:@"sauce"]) {
+		SCPlayer *scplayer = new SCPlayer;
+		player = scplayer;
+
+		scplayer->setSampleRate(sampleRate);
 	} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
 		MSPlayer *msplayer = new MSPlayer;
 		player = msplayer;
