@@ -16,7 +16,6 @@
 #import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
-extern NSLock *kPersistentContainerLock;
 extern NSPersistentContainer *kPersistentContainer;
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
@@ -364,11 +363,9 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	self.artHash = imageCacheTag;
 
 	if(![kArtworkDictionary objectForKey:imageCacheTag]) {
-		[kPersistentContainerLock lock];
 		AlbumArtwork *art = [NSEntityDescription insertNewObjectForEntityForName:@"AlbumArtwork" inManagedObjectContext:kPersistentContainer.viewContext];
 		art.artHash = imageCacheTag;
 		art.artData = albumArtInternal;
-		[kPersistentContainerLock unlock];
 
 		[kArtworkDictionary setObject:art forKey:imageCacheTag];
 	}
@@ -585,30 +582,30 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[albumPredicate, artistPredicate, titlePredicate]];
 
-	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
-	request.predicate = predicate;
+	__block PlayCount *item = nil;
 
-	NSError *error = nil;
-	[kPersistentContainerLock lock];
-	NSArray *results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
+	[kPersistentContainer.viewContext performBlockAndWait:^{
+		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
+		request.predicate = predicate;
 
-	if(!results || [results count] < 1) {
-		NSPredicate *filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filenameFragment];
+		NSError *error = nil;
+		NSArray *results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
 
-		request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
-		request.predicate = filenamePredicate;
+		if(!results || [results count] < 1) {
+			NSPredicate *filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filenameFragment];
 
-		results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
-	}
-	
-	if(results) {
-		results = [results copy];
-	}
-	[kPersistentContainerLock unlock];
+			request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
+			request.predicate = filenamePredicate;
 
-	if(!results || [results count] < 1) return nil;
+			results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
+		}
 
-	return results[0];
+		if(!results || [results count] < 1) return;
+
+		item = results[0];
+	}];
+
+	return item;
 }
 
 @dynamic playCount;

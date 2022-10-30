@@ -14,7 +14,6 @@
 
 #import "SHA256Digest.h"
 
-extern NSLock *kPersistentContainerLock;
 extern NSPersistentContainer *kPersistentContainer;
 
 NSString *getDatabasePath(void) {
@@ -1444,114 +1443,112 @@ static SQLiteStore *g_sharedStore = nil;
 #endif
 
 - (PlaylistEntry *_Nonnull)getTrack:(int64_t)trackId {
-	[kPersistentContainerLock lock];
-	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
+	__block PlaylistEntry *entry = nil;
+	[kPersistentContainer.viewContext performBlockAndWait:^{
+		entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
 
-	if(trackId < 0) {
-		entry.error = YES;
-		entry.errorMessage = NSLocalizedString(@"ErrorInvalidTrackId", @"");
-		entry.deLeted = YES;
-		[kPersistentContainerLock unlock];
-		return entry;
-	}
+		if(trackId < 0) {
+			entry.error = YES;
+			entry.errorMessage = NSLocalizedString(@"ErrorInvalidTrackId", @"");
+			entry.deLeted = YES;
+			return;
+		}
 
-	sqlite3_stmt *st = stmt[stmt_select_track_data];
+		sqlite3_stmt *st = stmt[stmt_select_track_data];
 
-	if(sqlite3_reset(st) ||
-	   sqlite3_bind_int64(st, select_track_data_in_id, trackId)) {
-		entry.error = YES;
-		entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
-		entry.deLeted = YES;
-		[kPersistentContainerLock unlock];
-		return entry;
-	}
+		if(sqlite3_reset(st) ||
+		   sqlite3_bind_int64(st, select_track_data_in_id, trackId)) {
+			entry.error = YES;
+			entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
+			entry.deLeted = YES;
+			return;
+		}
 
-	int rc = sqlite3_step(st);
+		int rc = sqlite3_step(st);
 
-	if(rc != SQLITE_ROW && rc != SQLITE_DONE) {
+		if(rc != SQLITE_ROW && rc != SQLITE_DONE) {
+			sqlite3_reset(st);
+			entry.error = YES;
+			entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
+			entry.deLeted = YES;
+			return;
+		}
+
+		if(rc == SQLITE_ROW) {
+			int64_t urlId = sqlite3_column_int64(st, select_track_data_out_url_id);
+			int64_t artId = sqlite3_column_int64(st, select_track_data_out_art_id);
+			int64_t albumId = sqlite3_column_int64(st, select_track_data_out_album_id);
+			int64_t albumartistId = sqlite3_column_int64(st, select_track_data_out_albumartist_id);
+			int64_t artistId = sqlite3_column_int64(st, select_track_data_out_artist_id);
+			int64_t titleId = sqlite3_column_int64(st, select_track_data_out_title_id);
+			int64_t genreId = sqlite3_column_int64(st, select_track_data_out_genre_id);
+			int64_t codecId = sqlite3_column_int64(st, select_track_data_out_codec_id);
+			int64_t cuesheetId = sqlite3_column_int64(st, select_track_data_out_cuesheet_id);
+			int64_t encodingId = sqlite3_column_int64(st, select_track_data_out_encoding_id);
+			int64_t trackNr = sqlite3_column_int64(st, select_track_data_out_track);
+			int64_t year = sqlite3_column_int64(st, select_track_data_out_year);
+			int64_t unsignedFmt = sqlite3_column_int64(st, select_track_data_out_unsigned);
+			int64_t bitrate = sqlite3_column_int64(st, select_track_data_out_bitrate);
+			double samplerate = sqlite3_column_double(st, select_track_data_out_samplerate);
+			int64_t bitspersample = sqlite3_column_int64(st, select_track_data_out_bitspersample);
+			int64_t channels = sqlite3_column_int64(st, select_track_data_out_channels);
+			int64_t channelConfig = sqlite3_column_int64(st, select_track_data_out_channelconfig);
+			int64_t endianId = sqlite3_column_int64(st, select_track_data_out_endian_id);
+			int64_t floatingpoint = sqlite3_column_int64(st, select_track_data_out_floatingpoint);
+			int64_t totalframes = sqlite3_column_int64(st, select_track_data_out_totalframes);
+			int64_t metadataloaded = sqlite3_column_int64(st, select_track_data_out_metadataloaded);
+			int64_t seekable = sqlite3_column_int64(st, select_track_data_out_seekable);
+			double volume = sqlite3_column_double(st, select_track_data_out_volume);
+			double replaygainalbumgain = sqlite3_column_double(st, select_track_data_out_replaygainalbumgain);
+			double replaygainalbumpeak = sqlite3_column_double(st, select_track_data_out_replaygainalbumpeak);
+			double replaygaintrackgain = sqlite3_column_double(st, select_track_data_out_replaygaintrackgain);
+			double replaygaintrackpeak = sqlite3_column_double(st, select_track_data_out_replaygaintrackpeak);
+
+			uint64_t discNr = ((uint64_t)trackNr) >> 32;
+			trackNr &= (1UL << 32) - 1;
+
+			entry.url = urlForPath([self getString:urlId]);
+
+			entry.album = [self getString:albumId];
+			entry.albumartist = [self getString:albumartistId];
+			entry.artist = [self getString:artistId];
+			entry.rawTitle = [self getString:titleId];
+			entry.genre = [self getString:genreId];
+			entry.codec = [self getString:codecId];
+			entry.cuesheet = [self getString:cuesheetId];
+			entry.encoding = [self getString:encodingId];
+			entry.track = (int32_t)trackNr;
+			entry.disc = (int32_t)discNr;
+			entry.year = (int32_t)year;
+			entry.unSigned = !!unsignedFmt;
+			entry.bitrate = (int32_t)bitrate;
+			entry.sampleRate = samplerate;
+			entry.bitsPerSample = (int32_t)bitspersample;
+			entry.channels = (int32_t)channels;
+			entry.channelConfig = (uint32_t)channelConfig;
+			entry.endian = [self getString:endianId];
+			entry.floatingPoint = !!floatingpoint;
+			entry.totalFrames = totalframes;
+			entry.seekable = !!seekable;
+			entry.volume = volume;
+			entry.replayGainAlbumGain = replaygainalbumgain;
+			entry.replayGainAlbumPeak = replaygainalbumpeak;
+			entry.replayGainTrackGain = replaygaintrackgain;
+			entry.replayGainTrackPeak = replaygaintrackpeak;
+
+			entry.albumArtInternal = [self getArt:artId];
+
+			entry.metadataLoaded = !!metadataloaded;
+
+			entry.dbIndex = trackId;
+		} else {
+			entry.error = YES;
+			entry.errorMessage = NSLocalizedString(@"ErrorTrackMissing", @"");
+			entry.deLeted = YES;
+		}
+
 		sqlite3_reset(st);
-		entry.error = YES;
-		entry.errorMessage = NSLocalizedString(@"ErrorSqliteProblem", @"");
-		entry.deLeted = YES;
-		[kPersistentContainerLock unlock];
-		return entry;
-	}
-
-	if(rc == SQLITE_ROW) {
-		int64_t urlId = sqlite3_column_int64(st, select_track_data_out_url_id);
-		int64_t artId = sqlite3_column_int64(st, select_track_data_out_art_id);
-		int64_t albumId = sqlite3_column_int64(st, select_track_data_out_album_id);
-		int64_t albumartistId = sqlite3_column_int64(st, select_track_data_out_albumartist_id);
-		int64_t artistId = sqlite3_column_int64(st, select_track_data_out_artist_id);
-		int64_t titleId = sqlite3_column_int64(st, select_track_data_out_title_id);
-		int64_t genreId = sqlite3_column_int64(st, select_track_data_out_genre_id);
-		int64_t codecId = sqlite3_column_int64(st, select_track_data_out_codec_id);
-		int64_t cuesheetId = sqlite3_column_int64(st, select_track_data_out_cuesheet_id);
-		int64_t encodingId = sqlite3_column_int64(st, select_track_data_out_encoding_id);
-		int64_t trackNr = sqlite3_column_int64(st, select_track_data_out_track);
-		int64_t year = sqlite3_column_int64(st, select_track_data_out_year);
-		int64_t unsignedFmt = sqlite3_column_int64(st, select_track_data_out_unsigned);
-		int64_t bitrate = sqlite3_column_int64(st, select_track_data_out_bitrate);
-		double samplerate = sqlite3_column_double(st, select_track_data_out_samplerate);
-		int64_t bitspersample = sqlite3_column_int64(st, select_track_data_out_bitspersample);
-		int64_t channels = sqlite3_column_int64(st, select_track_data_out_channels);
-		int64_t channelConfig = sqlite3_column_int64(st, select_track_data_out_channelconfig);
-		int64_t endianId = sqlite3_column_int64(st, select_track_data_out_endian_id);
-		int64_t floatingpoint = sqlite3_column_int64(st, select_track_data_out_floatingpoint);
-		int64_t totalframes = sqlite3_column_int64(st, select_track_data_out_totalframes);
-		int64_t metadataloaded = sqlite3_column_int64(st, select_track_data_out_metadataloaded);
-		int64_t seekable = sqlite3_column_int64(st, select_track_data_out_seekable);
-		double volume = sqlite3_column_double(st, select_track_data_out_volume);
-		double replaygainalbumgain = sqlite3_column_double(st, select_track_data_out_replaygainalbumgain);
-		double replaygainalbumpeak = sqlite3_column_double(st, select_track_data_out_replaygainalbumpeak);
-		double replaygaintrackgain = sqlite3_column_double(st, select_track_data_out_replaygaintrackgain);
-		double replaygaintrackpeak = sqlite3_column_double(st, select_track_data_out_replaygaintrackpeak);
-
-		uint64_t discNr = ((uint64_t)trackNr) >> 32;
-		trackNr &= (1UL << 32) - 1;
-
-		entry.url = urlForPath([self getString:urlId]);
-
-		entry.album = [self getString:albumId];
-		entry.albumartist = [self getString:albumartistId];
-		entry.artist = [self getString:artistId];
-		entry.rawTitle = [self getString:titleId];
-		entry.genre = [self getString:genreId];
-		entry.codec = [self getString:codecId];
-		entry.cuesheet = [self getString:cuesheetId];
-		entry.encoding = [self getString:encodingId];
-		entry.track = (int32_t)trackNr;
-		entry.disc = (int32_t)discNr;
-		entry.year = (int32_t)year;
-		entry.unSigned = !!unsignedFmt;
-		entry.bitrate = (int32_t)bitrate;
-		entry.sampleRate = samplerate;
-		entry.bitsPerSample = (int32_t)bitspersample;
-		entry.channels = (int32_t)channels;
-		entry.channelConfig = (uint32_t)channelConfig;
-		entry.endian = [self getString:endianId];
-		entry.floatingPoint = !!floatingpoint;
-		entry.totalFrames = totalframes;
-		entry.seekable = !!seekable;
-		entry.volume = volume;
-		entry.replayGainAlbumGain = replaygainalbumgain;
-		entry.replayGainAlbumPeak = replaygainalbumpeak;
-		entry.replayGainTrackGain = replaygaintrackgain;
-		entry.replayGainTrackPeak = replaygaintrackpeak;
-
-		entry.albumArtInternal = [self getArt:artId];
-
-		entry.metadataLoaded = !!metadataloaded;
-
-		entry.dbIndex = trackId;
-	} else {
-		entry.error = YES;
-		entry.errorMessage = NSLocalizedString(@"ErrorTrackMissing", @"");
-		entry.deLeted = YES;
-	}
-	[kPersistentContainerLock unlock];
-
-	sqlite3_reset(st);
+	}];
 
 	return entry;
 }
@@ -1846,7 +1843,7 @@ static SQLiteStore *g_sharedStore = nil;
 }
 
 - (PlaylistEntry *)playlistGetItem:(int64_t)index {
-	PlaylistEntry *entry = nil;
+	__block PlaylistEntry *entry = nil;
 
 	sqlite3_stmt *st = stmt[stmt_select_playlist];
 
@@ -1866,15 +1863,15 @@ static SQLiteStore *g_sharedStore = nil;
 		int64_t entryId = sqlite3_column_int64(st, select_playlist_out_entry_id);
 		entry = [self getTrack:trackId];
 		if(!entry.deLeted && !entry.error) {
-			[kPersistentContainerLock lock];
-			entry.index = index;
-			entry.entryId = entryId;
-			[kPersistentContainerLock unlock];
+			[kPersistentContainer.viewContext performBlockAndWait:^{
+				entry.index = index;
+				entry.entryId = entryId;
+			}];
 		} else {
-			[kPersistentContainerLock lock];
-			[kPersistentContainer.viewContext deleteObject:entry];
-			[kPersistentContainerLock unlock];
-			entry = nil;
+			[kPersistentContainer.viewContext performBlockAndWait:^{
+				[kPersistentContainer.viewContext deleteObject:entry];
+				entry = nil;
+			}];
 		}
 	}
 

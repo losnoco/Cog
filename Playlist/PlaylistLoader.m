@@ -565,15 +565,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
 	for(NSURL *url in validURLs) {
 		__block PlaylistEntry *pe;
-		
+
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-			[self->playlistController.persistentContainerLock lock];
 			pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:self->playlistController.persistentContainer.viewContext];
 			pe.url = url;
 			pe.index = index + i;
 			pe.rawTitle = [[url path] lastPathComponent];
 			pe.queuePosition = -1;
-			[self->playlistController.persistentContainerLock unlock];
 		});
 
 		[entries addObject:pe];
@@ -589,14 +587,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if(xmlData) {
 		for(NSDictionary *entry in [xmlData objectForKey:@"entries"]) {
 			__block PlaylistEntry *pe;
-			
+
 			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-				[self->playlistController.persistentContainerLock lock];
 				pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:self->playlistController.persistentContainer.viewContext];
 				[pe setValuesForKeysWithDictionary:entry];
 				pe.index = index + i;
 				pe.queuePosition = -1;
-				[self->playlistController.persistentContainerLock unlock];
 			});
 
 			[entries addObject:pe];
@@ -791,25 +787,22 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[deletedPredicate, hasUrlPredicate]];
 
-	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
-	request.predicate = predicate;
+	[moc performBlockAndWait:^{
+		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+		request.predicate = predicate;
 
-	NSError *error;
-	[playlistController.persistentContainerLock lock];
-	NSArray *results = [moc executeFetchRequest:request error:&error];
-	if(results) {
-		results = [results copy];
-	}
-	[playlistController.persistentContainerLock unlock];
+		NSError *error;
+		NSArray *results = [moc executeFetchRequest:request error:&error];
 
-	if(results && [results count] > 0) {
-		for(PlaylistEntry *pe in results) {
-			NSMutableArray *entrySet = [uniquePathsEntries objectForKey:pe.urlString];
-			if(entrySet) {
-				[entrySet addObject:pe];
+		if(results && [results count] > 0) {
+			for(PlaylistEntry *pe in results) {
+				NSMutableArray *entrySet = [uniquePathsEntries objectForKey:pe.urlString];
+				if(entrySet) {
+					[entrySet addObject:pe];
+				}
 			}
 		}
-	}
+	}];
 
 	for(size_t i = 0, j = [outArray count]; i < j; i += 2) {
 		__block NSString *entryKey = [outArray objectAtIndex:i];
@@ -927,10 +920,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"AlbumArtwork"];
 		NSError *error = nil;
-		[playlistController.persistentContainerLock lock];
 		NSArray *results = [moc executeFetchRequest:request error:&error];
 		if(!results) {
-			[playlistController.persistentContainerLock unlock];
 			ALog(@"Error fetching AlbumArtwork objects: %@\n%@", [error localizedDescription], [error userInfo]);
 			abort();
 		}
@@ -938,7 +929,6 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		for(AlbumArtwork *art in results) {
 			[kArtworkDictionary setObject:art forKey:art.artHash];
 		}
-		[playlistController.persistentContainerLock unlock];
 
 		request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
 
@@ -946,30 +936,24 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 		request.sortDescriptors = @[sortDescriptor];
 
-		[playlistController.persistentContainerLock lock];
 		results = [moc executeFetchRequest:request error:&error];
 		if(!results) {
-			[playlistController.persistentContainerLock unlock];
 			ALog(@"Error fetching PlaylistEntry objects: %@\n%@", [error localizedDescription], [error userInfo]);
 			abort();
 		}
 
 		if([results count] == 0) {
-			[playlistController.persistentContainerLock unlock];
 			return NO;
 		}
 
 		NSMutableArray *resultsCopy = [results mutableCopy];
-		[playlistController.persistentContainerLock unlock];
 
 		NSMutableIndexSet *pruneSet = [[NSMutableIndexSet alloc] init];
 		NSUInteger index = 0;
 		for(PlaylistEntry *pe in resultsCopy) {
 			if(pe.deLeted || !pe.urlString || [pe.urlString length] < 1) {
 				[pruneSet addIndex:index];
-				[playlistController.persistentContainerLock lock];
 				[moc deleteObject:pe];
-				[playlistController.persistentContainerLock unlock];
 			}
 			++index;
 		}

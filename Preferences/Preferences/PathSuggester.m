@@ -55,7 +55,6 @@
 
 	[pathsList removeObjects:[pathsList arrangedObjects]];
 
-	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	NSPredicate *hasUrlPredicate = [NSPredicate predicateWithFormat:@"urlString != nil && urlString != %@", @""];
@@ -67,12 +66,7 @@
 	request.predicate = predicate;
 
 	NSError *error = nil;
-	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
-	if(results) {
-		results = [results copy];
-	}
-	[lock unlock];
 
 	if(!results || [results count] < 1) return;
 
