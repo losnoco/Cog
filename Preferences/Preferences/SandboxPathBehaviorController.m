@@ -36,18 +36,12 @@
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path" ascending:YES];
 	[self setSortDescriptors:@[sortDescriptor]];
 
-	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 
 	NSError *error = nil;
-	[lock lock];
 	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
-	if(results) {
-		results = [results copy];
-	}
-	[lock unlock];
 
 	if(results && [results count] > 0) {
 		for(SandboxToken *token in results) {
@@ -67,31 +61,31 @@
 		return;
 	}
 
-	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
-	[lock lock];
-	SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
+	[pc.viewContext performBlockAndWait:^{
+		SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
 
-	if(token) {
-		token.path = [url path];
-		token.bookmark = bookmark;
-		[pc.viewContext save:&err];
-		[lock unlock];
-		if(err) {
-			ALog(@"Error saving bookmark: %@", [err localizedDescription]);
-		} else {
-			[self addObject:@{ @"path": [url path], @"valid": NSLocalizedPrefString(@"ValidYes"), @"isFolder": @(token.folder), @"token": token }];
-			[NSClassFromString(@"SandboxBroker") cleanupFolderAccess];
-			[self refresh];
+		if(token) {
+			NSError *err = nil;
+			token.path = [url path];
+			token.bookmark = bookmark;
+			[pc.viewContext save:&err];
+			if(err) {
+				ALog(@"Error saving bookmark: %@", [err localizedDescription]);
+			} else {
+				[self addObject:@{@"path": [url path],
+					              @"valid": NSLocalizedPrefString(@"ValidYes"),
+					              @"isFolder": @(token.folder),
+					              @"token": token}];
+				[NSClassFromString(@"SandboxBroker") cleanupFolderAccess];
+				[self refresh];
+			}
 		}
-	} else {
-		[lock unlock];
-	}
+	}];
 }
 
 - (void)removeToken:(id)token {
-	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
 	NSArray *objects = [[self arrangedObjects] copy];
@@ -101,46 +95,45 @@
 	for(NSDictionary *obj in objects) {
 		if([[obj objectForKey:@"token"] isEqualTo:token]) {
 			[self removeObject:obj];
-			[lock lock];
-			[pc.viewContext deleteObject:token];
-			[lock unlock];
+			[pc.viewContext performBlockAndWait:^{
+				[pc.viewContext deleteObject:token];
+			}];
 			updated = YES;
 			break;
 		}
 	}
 
 	if(updated) {
-		NSError *error;
-		[lock lock];
-		[pc.viewContext	save:&error];
-		[lock unlock];
-		if(error) {
-			ALog(@"Error deleting bookmark: %@", [error localizedDescription]);
-		}
+		[pc.viewContext performBlockAndWait:^{
+			NSError *error;
+			[pc.viewContext save:&error];
+			if(error) {
+				ALog(@"Error deleting bookmark: %@", [error localizedDescription]);
+			}
+		}];
 	}
 }
 
 - (void)removeStaleEntries {
 	BOOL updated = NO;
-	NSLock *lock = [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 	for(NSDictionary *entry in [[self arrangedObjects] copy]) {
 		if([[entry objectForKey:@"valid"] isEqualToString:NSLocalizedPrefString(@"ValidNo")]) {
 			[self removeObject:entry];
-			[lock lock];
-			[pc.viewContext deleteObject:[entry objectForKey:@"token"]];
-			[lock unlock];
+			[pc.viewContext performBlockAndWait:^{
+				[pc.viewContext deleteObject:[entry objectForKey:@"token"]];
+			}];
 			updated = YES;
 		}
 	}
 	if(updated) {
-		NSError *error;
-		[lock lock];
-		[pc.viewContext save:&error];
-		[lock unlock];
-		if(error) {
-			ALog(@"Error saving after removing stale bookmarks: %@", [error localizedDescription]);
-		}
+		[pc.viewContext performBlockAndWait:^{
+			NSError *error;
+			[pc.viewContext save:&error];
+			if(error) {
+				ALog(@"Error saving after removing stale bookmarks: %@", [error localizedDescription]);
+			}
+		}];
 	}
 }
 

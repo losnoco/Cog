@@ -13,7 +13,6 @@
 // with format (entryKey, transformerName)
 static NSDictionary *importKeys;
 
-extern NSLock *kPersistentContainerLock;
 extern NSPersistentContainer *kPersistentContainer;
 
 @implementation SpotlightPlaylistEntry
@@ -38,53 +37,54 @@ extern NSPersistentContainer *kPersistentContainer;
 }
 
 + (PlaylistEntry *)playlistEntryWithMetadataItem:(NSMetadataItem *)metadataItem {
-	[kPersistentContainerLock lock];
-	PlaylistEntry *entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
+	__block PlaylistEntry *entry = nil;
+	[kPersistentContainer.viewContext performBlockAndWait:^{
+		entry = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:kPersistentContainer.viewContext];
 
-	entry.deLeted = YES;
+		entry.deLeted = YES;
 
-	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
-	// loop through the keys we want to extract
-	for(NSString *mdKey in importKeys) {
-		if(![metadataItem valueForAttribute:mdKey]) continue;
-		id importTarget = [importKeys objectForKey:mdKey];
-		// Just copy the object from metadata
-		if([importTarget isKindOfClass:[NSString class]]) {
-			if([importTarget isEqualToString:@"length"]) {
-				// fake it
-				NSNumber *number = [metadataItem valueForAttribute:mdKey];
-				[dict setValue:@(44100.0) forKey:@"samplerate"];
-				[dict setValue:@(44100.0 * [number doubleValue]) forKey:@"totalFrames"];
-			} else {
-				[dict setValue:[metadataItem valueForAttribute:mdKey]
-				        forKey:importTarget];
+		// loop through the keys we want to extract
+		for(NSString *mdKey in importKeys) {
+			if(![metadataItem valueForAttribute:mdKey]) continue;
+			id importTarget = [importKeys objectForKey:mdKey];
+			// Just copy the object from metadata
+			if([importTarget isKindOfClass:[NSString class]]) {
+				if([importTarget isEqualToString:@"length"]) {
+					// fake it
+					NSNumber *number = [metadataItem valueForAttribute:mdKey];
+					[dict setValue:@(44100.0) forKey:@"samplerate"];
+					[dict setValue:@(44100.0 * [number doubleValue]) forKey:@"totalFrames"];
+				} else {
+					[dict setValue:[metadataItem valueForAttribute:mdKey]
+					        forKey:importTarget];
+				}
+			}
+			// Transform the value in metadata before copying it in
+			else if([importTarget isKindOfClass:[NSArray class]]) {
+				NSString *importKey = [importTarget objectAtIndex:0];
+				NSValueTransformer *transformer =
+				[NSValueTransformer valueTransformerForName:[importTarget objectAtIndex:1]];
+				id transformedValue = [transformer transformedValue:
+				                                   [metadataItem valueForAttribute:mdKey]];
+				[dict setValue:transformedValue forKey:importKey];
+			}
+			// The importKeys dictionary contains something strange...
+			else {
+				NSString *errString =
+				[NSString stringWithFormat:@"ERROR: Could not import key %@", mdKey];
+				NSAssert(NO, errString);
 			}
 		}
-		// Transform the value in metadata before copying it in
-		else if([importTarget isKindOfClass:[NSArray class]]) {
-			NSString *importKey = [importTarget objectAtIndex:0];
-			NSValueTransformer *transformer =
-			[NSValueTransformer valueTransformerForName:[importTarget objectAtIndex:1]];
-			id transformedValue = [transformer transformedValue:
-			                                   [metadataItem valueForAttribute:mdKey]];
-			[dict setValue:transformedValue forKey:importKey];
-		}
-		// The importKeys dictionary contains something strange...
-		else {
-			NSString *errString =
-			[NSString stringWithFormat:@"ERROR: Could not import key %@", mdKey];
-			NSAssert(NO, errString);
-		}
-	}
 
-	NSURL *url = [dict objectForKey:@"url"];
-	[dict removeObjectForKey:@"url"];
+		NSURL *url = [dict objectForKey:@"url"];
+		[dict removeObjectForKey:@"url"];
 
-	entry.url = url;
+		entry.url = url;
 
-	[entry setMetadata:dict];
-	[kPersistentContainerLock unlock];
+		[entry setMetadata:dict];
+	}];
 
 	return entry;
 }

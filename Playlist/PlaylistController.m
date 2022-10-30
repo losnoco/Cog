@@ -30,8 +30,6 @@
 
 extern BOOL kAppControllerShuttingDown;
 
-NSLock *kPersistentContainerLock = nil;
-
 NSPersistentContainer *kPersistentContainer = nil;
 
 @implementation PlaylistController
@@ -127,10 +125,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}];
 
 	kPersistentContainer = self.persistentContainer;
-	
-	_persistentContainerLock = [[NSLock alloc] init];
-	
-	kPersistentContainerLock = self.persistentContainerLock;
 
 	self.persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
 
@@ -142,10 +136,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 + (NSPersistentContainer *)sharedPersistentContainer {
 	return kPersistentContainer;
-}
-
-+ (NSLock *)sharedPersistentContainerLock {
-	return kPersistentContainerLock;
 }
 
 - (void)awakeFromNib {
@@ -251,63 +241,46 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)commitPersistentStore {
-	NSError *error = nil;
-	[self.persistentContainerLock lock];
-	[self.persistentContainer.viewContext save:&error];
-	[self.persistentContainerLock unlock];
-	if(error) {
-		ALog(@"Error committing playlist storage: %@", [error localizedDescription]);
-	}
+	[self.persistentContainer.viewContext performBlockAndWait:^{
+		NSError *error = nil;
+		[self.persistentContainer.viewContext save:&error];
+		if(error) {
+			ALog(@"Error committing playlist storage: %@", [error localizedDescription]);
+		}
+	}];
 }
 
 - (void)updatePlayCountForTrack:(PlaylistEntry *)pe {
 	if(pe.countAdded) return;
 	pe.countAdded = YES;
 
-	PlayCount *pc = pe.playCountItem;
+	__block PlayCount *pc = pe.playCountItem;
 
 	if(pc) {
-		[self.persistentContainerLock lock];
-		pc.count += 1;
-		pc.lastPlayed = [NSDate date];
-		[self.persistentContainerLock unlock];
+		[self.persistentContainer.viewContext performBlockAndWait:^{
+			pc.count += 1;
+			pc.lastPlayed = [NSDate date];
+		}];
 	} else {
-		[self.persistentContainerLock lock];
-		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
-		pc.count = 1;
-		pc.firstSeen = pc.lastPlayed = [NSDate date];
-		pc.album = pe.album;
-		pc.artist = pe.artist;
-		pc.title = pe.title;
-		pc.filename = pe.filenameFragment;
-		[self.persistentContainerLock unlock];
+		[self.persistentContainer.viewContext performBlockAndWait:^{
+			pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+			pc.count = 1;
+			pc.firstSeen = pc.lastPlayed = [NSDate date];
+			pc.album = pe.album;
+			pc.artist = pe.artist;
+			pc.title = pe.title;
+			pc.filename = pe.filenameFragment;
+		}];
 	}
 
 	[self commitPersistentStore];
 }
 
 - (void)firstSawTrack:(PlaylistEntry *)pe {
-	PlayCount *pc = pe.playCountItem;
+	__block PlayCount *pc = pe.playCountItem;
 
 	if(!pc) {
-		[self.persistentContainerLock lock];
-		pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
-		pc.count = 0;
-		pc.firstSeen = [NSDate date];
-		pc.album = pe.album;
-		pc.artist = pe.artist;
-		pc.title = pe.title;
-		pc.filename = pe.filenameFragment;
-		[self.persistentContainerLock unlock];
-	}
-}
-
-- (void)ratingUpdatedWithEntry:(PlaylistEntry *)pe rating:(CGFloat)rating {
-	if(pe && !pe.deLeted) {
-		PlayCount *pc = pe.playCountItem;
-
-		if(!pc) {
-			[self.persistentContainerLock lock];
+		[self.persistentContainer.viewContext performBlockAndWait:^{
 			pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
 			pc.count = 0;
 			pc.firstSeen = [NSDate date];
@@ -315,12 +288,29 @@ static void *playlistControllerContext = &playlistControllerContext;
 			pc.artist = pe.artist;
 			pc.title = pe.title;
 			pc.filename = pe.filenameFragment;
-			[self.persistentContainerLock unlock];
+		}];
+	}
+}
+
+- (void)ratingUpdatedWithEntry:(PlaylistEntry *)pe rating:(CGFloat)rating {
+	if(pe && !pe.deLeted) {
+		__block PlayCount *pc = pe.playCountItem;
+
+		if(!pc) {
+			[self.persistentContainer.viewContext performBlockAndWait:^{
+				pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:self.persistentContainer.viewContext];
+				pc.count = 0;
+				pc.firstSeen = [NSDate date];
+				pc.album = pe.album;
+				pc.artist = pe.artist;
+				pc.title = pe.title;
+				pc.filename = pe.filenameFragment;
+			}];
 		}
 
-		[self.persistentContainerLock lock];
-		pc.rating = rating;
-		[self.persistentContainerLock unlock];
+		[self.persistentContainer.viewContext performBlockAndWait:^{
+			pc.rating = rating;
+		}];
 
 		[self commitPersistentStore];
 	}
@@ -330,7 +320,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	PlayCount *pc = pe.playCountItem;
 	
 	if(pc) {
-		pc.count = 0;
+		[self.persistentContainer.viewContext performBlockAndWait:^{
+			pc.count = 0;
+		}];
 	}
 }
 
@@ -338,7 +330,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	PlayCount *pc = pe.playCountItem;
 
 	if(pc) {
-		pc.rating = 0;
+		[self.persistentContainer.viewContext performBlockAndWait:^{
+			pc.rating = 0;
+		}];
 	}
 }
 
@@ -1380,19 +1374,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 	request.predicate = predicate;
 	request.sortDescriptors = @[sortDescriptor];
 
-	NSError *error = nil;
-	[self.persistentContainerLock lock];
-	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
-    if(results) {
-		results = [results copy];
-    }
-	[self.persistentContainerLock unlock];
+	[self.persistentContainer.viewContext performBlockAndWait:^{
+		NSError *error = nil;
+		NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
 
-	if(results && [results count] > 0) {
-		[queueList removeAllObjects];
-		NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
-		[queueList insertObjects:results atIndexes:indexSet];
-	}
+		if(results && [results count] > 0) {
+			[queueList removeAllObjects];
+			NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
+			[queueList insertObjects:results atIndexes:indexSet];
+		}
+	}];
 }
 
 - (void)readShuffleListFromDataStore {
@@ -1404,19 +1395,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 	request.predicate = predicate;
 	request.sortDescriptors = @[sortDescriptor];
 
-	NSError *error = nil;
-	[self.persistentContainerLock lock];
-	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
-    if(results) {
-		results = [results copy];
-    }
-	[self.persistentContainerLock unlock];
+	[self.persistentContainer.viewContext performBlockAndWait:^{
+		NSError *error = nil;
+		NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
 
-	if(results && [results count] > 0) {
-		[shuffleList removeAllObjects];
-		NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
-		[shuffleList insertObjects:results atIndexes:indexSet];
-	}
+		if(results && [results count] > 0) {
+			[shuffleList removeAllObjects];
+			NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
+			[shuffleList insertObjects:results atIndexes:indexSet];
+		}
+	}];
 }
 
 - (void)addShuffledListToFront {
@@ -1946,16 +1934,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (BOOL)pathSuggesterEmpty {
-	BOOL rval;
+	__block BOOL rval;
 
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 
-	NSError *error = nil;
-	[self.persistentContainerLock lock];
-	NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
-	if(!results || [results count] < 1) rval = YES;
-	else rval = NO;
-	[self.persistentContainerLock unlock];
+	[self.persistentContainer.viewContext performBlockAndWait:^{
+		NSError *error = nil;
+		NSArray *results = [self.persistentContainer.viewContext executeFetchRequest:request error:&error];
+		if(!results || [results count] < 1)
+			rval = YES;
+		else
+			rval = NO;
+	}];
 
 	return rval;
 }

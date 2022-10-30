@@ -92,10 +92,6 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	return kSharedSandboxBroker;
 }
 
-+ (NSLock *)sharedPersistentContainerLock {
-	return [NSClassFromString(@"PlaylistController") sharedPersistentContainerLock];
-}
-
 + (NSPersistentContainer *)sharedPersistentContainer {
 	return [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 }
@@ -151,57 +147,49 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 }
 
 - (SandboxEntry *)recursivePathTest:(NSURL *)url {
-	SandboxEntry *ret = nil;
+	__block SandboxEntry *ret = nil;
 
-	NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 	
 	NSPredicate *folderPredicate = [NSPredicate predicateWithFormat:@"folder == NO"];
 	NSPredicate *filePredicate = [NSPredicate predicateWithFormat:@"path == %@", [url path]];
-	NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[folderPredicate, filePredicate]];
 
-	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
-	request.predicate = predicate;
-	
-	NSError *error = nil;
-	[lock lock];
-	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
-	if(results) {
-		results = [results copy];
-	}
-	[lock unlock];
-	if(results && [results count] > 0) {
-		ret = [[SandboxEntry alloc] initWithToken:results[0]];
-	}
+	[pc.viewContext performBlockAndWait:^{
+		NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[folderPredicate, filePredicate]];
 
-	if(!ret) {
-		predicate = [NSPredicate predicateWithFormat:@"folder == YES"];
-
-		NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
-
-		request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
-		request.sortDescriptors = @[sortDescriptor];
+		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 		request.predicate = predicate;
 
-		error = nil;
-		[lock lock];
-		results = [pc.viewContext executeFetchRequest:request error:&error];
-		if(results) {
-			results = [results copy];
-		}
-		[lock unlock];
-
+		NSError *error = nil;
+		NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
 		if(results && [results count] > 0) {
-			for(SandboxToken *token in results) {
-				if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
-					SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+			ret = [[SandboxEntry alloc] initWithToken:results[0]];
+		}
 
-					ret = entry;
-					break;
+		if(!ret) {
+			predicate = [NSPredicate predicateWithFormat:@"folder == YES"];
+
+			NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:NO];
+
+			request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
+			request.sortDescriptors = @[sortDescriptor];
+			request.predicate = predicate;
+
+			error = nil;
+			results = [pc.viewContext executeFetchRequest:request error:&error];
+
+			if(results && [results count] > 0) {
+				for(SandboxToken *token in results) {
+					if(token.path && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:token.path]]) {
+						SandboxEntry *entry = [[SandboxEntry alloc] initWithToken:token];
+
+						ret = entry;
+						break;
+					}
 				}
 			}
 		}
-	}
+	}];
 
 	if(ret) {
 		BOOL isStale;
@@ -212,7 +200,9 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 			return nil;
 		}
 
-		ret.secureUrl = secureUrl;
+		[pc.viewContext performBlockAndWait:^{
+			ret.secureUrl = secureUrl;
+		}];
 
 		return ret;
 	}
@@ -253,22 +243,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				return;
 			}
 
-			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-				NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
-				NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
+			NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
-				[lock lock];
+			[pc.viewContext performBlockAndWait:^{
 				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
 
 				if(token) {
 					token.path = [folderUrl path];
 					token.bookmark = bookmark;
-					[lock unlock];
 					[SandboxBroker cleanupFolderAccess];
-				} else {
-					[lock unlock];
 				}
-			});
+			}];
 		}
 	}
 }
@@ -303,11 +288,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				return;
 			}
 
-			NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
 			NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
-			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-				[lock lock];
+			[pc.viewContext performBlockAndWait:^{
 				SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
 
 				if(token) {
@@ -315,8 +298,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 					token.bookmark = bookmark;
 					token.folder = NO;
 				}
-				[lock unlock];
-			});
+			}];
 		}
 	}
 }
@@ -372,19 +354,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						return;
 					}
 
-					NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
 					NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
-					[lock lock];
 					SandboxToken *token = [NSEntityDescription insertNewObjectForEntityForName:@"SandboxToken" inManagedObjectContext:pc.viewContext];
 
 					if(token) {
 						token.path = [folderUrl path];
 						token.bookmark = bookmark;
-						[lock unlock];
 						[SandboxBroker cleanupFolderAccess];
-					} else {
-						[lock unlock];
 					}
 				}
 			});
@@ -393,52 +370,47 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 + (void)cleanupFolderAccess {
-	NSLock *lock = [SandboxBroker sharedPersistentContainerLock];
 	NSPersistentContainer *pc = [SandboxBroker sharedPersistentContainer];
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:YES];
 	NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"SandboxToken"];
 	request.sortDescriptors = @[sortDescriptor];
 
-	NSError *error = nil;
-	NSMutableArray *resultsCopy = nil;
-	[lock lock];
-	NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
-	if(results) {
-		resultsCopy = [results mutableCopy];
-	}
-	[lock unlock];
+	[pc.viewContext performBlockAndWait:^{
+		NSError *error = nil;
+		NSArray *results = [pc.viewContext executeFetchRequest:request error:&error];
+		NSMutableArray *resultsCopy = nil;
+		if(results) {
+			resultsCopy = [results mutableCopy];
+		}
 
-	BOOL isUpdated = NO;
+		BOOL isUpdated = NO;
 
-	if(resultsCopy && [resultsCopy count]) {
-		for(NSUInteger i = 0; i < [resultsCopy count] - 1; ++i) {
-			SandboxToken *token = resultsCopy[i];
-			NSURL *url = [NSURL fileURLWithPath:token.path];
-			for(NSUInteger j = i + 1; j < [resultsCopy count];) {
-				SandboxToken *compareToken = resultsCopy[j];
-				if([SandboxBroker isPath:[NSURL fileURLWithPath:compareToken.path] aSubdirectoryOf:url]) {
-					[lock lock];
-					[pc.viewContext deleteObject:compareToken];
-					[lock unlock];
-					isUpdated = YES;
-					[resultsCopy removeObjectAtIndex:j];
-				} else {
-					++j;
+		if(resultsCopy && [resultsCopy count]) {
+			for(NSUInteger i = 0; i < [resultsCopy count] - 1; ++i) {
+				SandboxToken *token = resultsCopy[i];
+				NSURL *url = [NSURL fileURLWithPath:token.path];
+				for(NSUInteger j = i + 1; j < [resultsCopy count];) {
+					SandboxToken *compareToken = resultsCopy[j];
+					if([SandboxBroker isPath:[NSURL fileURLWithPath:compareToken.path] aSubdirectoryOf:url]) {
+						[pc.viewContext deleteObject:compareToken];
+						isUpdated = YES;
+						[resultsCopy removeObjectAtIndex:j];
+					} else {
+						++j;
+					}
 				}
 			}
 		}
-	}
 
-	if(isUpdated) {
-		NSError *error;
-		[lock lock];
-		[pc.viewContext save:&error];
-		[lock unlock];
-		if(error) {
-			ALog(@"Error saving data: %@", [error localizedDescription]);
+		if(isUpdated) {
+			NSError *error;
+			[pc.viewContext save:&error];
+			if(error) {
+				ALog(@"Error saving data: %@", [error localizedDescription]);
+			}
 		}
-	}
+	}];
 }
 
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
