@@ -3040,6 +3040,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cog;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INSTALL_PATH = /Applications;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3094,6 +3096,8 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cog;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INSTALL_PATH = /Applications;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
