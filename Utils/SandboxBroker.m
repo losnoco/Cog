@@ -221,10 +221,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (void)addFolderIfMissing:(NSURL *)folderUrl {
 	if(![folderUrl isFileURL]) return;
 
-	@synchronized (self) {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		SandboxEntry *_entry = nil;
 
-		for(SandboxEntry *entry in storage) {
+		for(SandboxEntry *entry in self->storage) {
 			if(entry.path && entry.isFolder && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
 				_entry = entry;
 				break;
@@ -255,7 +255,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				}
 			}];
 		}
-	}
+	});
 }
 
 - (void)addFileIfMissing:(NSURL *)fileUrl {
@@ -263,10 +263,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSURL *url = [SandboxBroker urlWithoutFragment:fileUrl];
 
-	@synchronized (self) {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		SandboxEntry *_entry = nil;
 
-		for(SandboxEntry *entry in storage) {
+		for(SandboxEntry *entry in self->storage) {
 			if(entry.path) {
 				if((entry.isFolder && [SandboxBroker isPath:url aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) ||
 				   (!entry.isFolder && [url isEqualTo:[NSURL fileURLWithPath:entry.path]])) {
@@ -300,17 +300,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				}
 			}];
 		}
-	}
+	});
 }
 
 - (void)requestFolderForFile:(NSURL *)fileUrl {
 	if(![fileUrl isFileURL]) return;
 	NSURL *folderUrl = [fileUrl URLByDeletingLastPathComponent];
 
-	@synchronized(self) {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		SandboxEntry *_entry = nil;
 
-		for(SandboxEntry *entry in storage) {
+		for(SandboxEntry *entry in self->storage) {
 			if(entry.path && entry.isFolder && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) {
 				_entry = entry;
 				break;
@@ -366,7 +366,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				}
 			});
 		}
-	}
+	});
 }
 
 + (void)cleanupFolderAccess {
@@ -417,12 +417,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSURL *folderUrl = [SandboxBroker urlWithoutFragment:fileUrl];
 	if(![folderUrl isFileURL]) return NULL;
 
-	SandboxEntry *_entry = nil;
-	
+	__block SandboxEntry *_entry = nil;
+
 	NSString *sandboxPath = [folderUrl path];
 
-	@synchronized(self) {
-		for(SandboxEntry *entry in storage) {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		for(SandboxEntry *entry in self->storage) {
 			if(entry.path) {
 				if((entry.isFolder && [SandboxBroker isPath:folderUrl aSubdirectoryOf:[NSURL fileURLWithPath:entry.path]]) ||
 				   (!entry.isFolder && [entry.path isEqualToString:sandboxPath])) {
@@ -438,17 +438,20 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 
 		if(_entry) {
-			[storage addObject:_entry];
+			[self->storage addObject:_entry];
 
 			if(_entry.secureUrl) {
 				[_entry.secureUrl startAccessingSecurityScopedResource];
 			}
-
-			return CFBridgingRetain(_entry);
 		} else {
-			return NULL;
+			_entry = NULL;
 		}
-	}
+	});
+
+	if(_entry)
+		return CFBridgingRetain(_entry);
+	else
+		return NULL;
 }
 
 - (void)endFolderAccess:(const void *)handle {
