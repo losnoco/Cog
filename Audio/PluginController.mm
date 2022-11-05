@@ -423,6 +423,10 @@ static NSString *xmlEscapeString(NSString * string) {
 \t<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>\n\
 \t<key>CFBundleInfoDictionaryVersion</key>\n\
 \t<string>6.0</string>\n\
+\t<key>CFBundleName</key>\n\
+\t<string>$(PRODUCT_NAME)</string>\n\
+\t<key>CFBundleDisplayName</key>\n\
+\t<string>$(PRODUCT_NAME)</string>\n\
 \t<key>CFBundlePackageType</key>\n\
 \t<string>APPL</string>\n\
 \t<key>CFBundleShortVersionString</key>\n\
