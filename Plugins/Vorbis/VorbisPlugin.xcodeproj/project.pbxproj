@@ -195,7 +195,6 @@
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
-				83F4129B1E93305F002E37D0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -247,24 +246,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		83F4129B1E93305F002E37D0 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change @loader_path/Frameworks/Vorbis.framework/Versions/A/Vorbis @loader_path/../Frameworks/Vorbis.framework/Versions/A/Vorbis \"${CONFIGURATION_BUILD_DIR}/VorbisPlugin.bundle/Contents/MacOS/VorbisPlugin\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D5B49B1048680CD000E48DA /* Sources */ = {
