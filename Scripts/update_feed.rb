@@ -108,13 +108,17 @@ if 1 #appcast_revision < latest_revision
   %x[generate_appcast '#{site_dir}/#{feed}_builds']
 
   #List out the deltas
-  deltas = Dir.entries("#{site_dir}/#{feed}_builds").select { |f| f =~ /\A#{Regexp.escape(deltamask)}.+\.delta\z/ }.map { |f| File.join("#{site_dir}/#{feed}_builds", f) }
+  deltas = Dir.entries("#{site_dir}/#{feed}_builds").select { |f| f =~ /\A#{Regexp.escape(deltamask)}.+\.delta\z/ }
 
-  #Upload them to S3
-  %x[s3cmd put -P -m application/octet-stream #{deltas.shelljoin} '#{site_dir}/#{feed}_builds/#{filename}' s3://cogcdn.cog.losno.co]
+  #Upload them to Bunny
+  bunnykey = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s bunnyaccesskey].chop
+  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{filename}' 'https://storage.bunnycdn.com/cog-ecdn/#{filename}' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/octet-stream']
+  deltas.each do |f|
+    %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{f}' 'https://storage.bunnycdn.com/cog-ecdn/#{f}' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/octet-stream']
+  end
 
   #Upload the changelog that Sparkle will display
-  %x[s3cmd put -P -m text/html '#{site_dir}/#{feed}_builds/#{filenamedesc}' s3://cogcdn.cog.losno.co]
+  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{filenamedesc}' 'https://storage.bunnycdn.com/cog-ecdn/#{filenamedesc}' --header 'AccessKey: #{bunnykey}' --header 'content-type: text/html']
  
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.app']
@@ -122,12 +126,9 @@ if 1 #appcast_revision < latest_revision
   #Convert to JSON
   %x[pushd '#{site_dir}/#{feed}_builds' && '#{__dir__}/sparkleToJSON' '#{site_dir}/#{feed}_builds/#{feed}.xml' && popd]
 
-  #Upload to S3
-  %x[s3cmd put -P -m application/xml '#{site_dir}/#{feed}_builds/#{feed}.xml' s3://cogcdn.cog.losno.co]
-  %x[s3cmd put -P -m application/json '#{site_dir}/#{feed}_builds/#{feed}.json' s3://cogcdn.cog.losno.co]
-
-  # invalidate cache of feed manifest
-  %x[aws cloudfront create-invalidation --distribution-id E2O8QDAIFS424Q --paths "/#{feed}.*"]
+  #Upload to Bunny
+  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{feed}.xml' 'https://storage.bunnycdn.com/cog-ecdn/#{feed}.xml' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/xml']
+  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{feed}.json' 'https://storage.bunnycdn.com/cog-ecdn/#{feed}.json' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/json']
 
   #Send web hook to update site
   update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl].chop
