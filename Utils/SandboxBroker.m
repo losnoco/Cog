@@ -435,16 +435,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		if(!_entry) {
 			_entry = [self recursivePathTest:folderUrl];
+			if(_entry)
+				[self->storage addObject:_entry];
 		}
 
-		if(_entry) {
-			[self->storage addObject:_entry];
-
-			if(_entry.secureUrl) {
-				[_entry.secureUrl startAccessingSecurityScopedResource];
-			}
-		} else {
-			_entry = NULL;
+		if(_entry && _entry.secureUrl) {
+			[_entry.secureUrl startAccessingSecurityScopedResource];
 		}
 	});
 
