@@ -362,6 +362,7 @@
 				<string>8</string>
 				<string>800</string>
 				<string>9tav</string>
+				<string>a3c</string>
 				<string>aa3</string>
 				<string>aax</string>
 				<string>abc</string>
@@ -384,7 +385,6 @@
 				<string>ahx</string>
 				<string>ahv</string>
 				<string>ai</string>
-				<string>aif-loop</string>
 				<string>aifc</string>
 				<string>aix</string>
 				<string>akb</string>
@@ -940,6 +940,7 @@
 				<string>xen</string>
 				<string>xma</string>
 				<string>xma2</string>
+				<string>xms</string>
 				<string>xmu</string>
 				<string>xmv</string>
 				<string>xnb</string>

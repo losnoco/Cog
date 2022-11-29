@@ -117,7 +117,7 @@ typedef enum {
     coding_IMA_int,         /* IMA ADPCM (mono/interleave, low nibble first) */
     coding_DVI_IMA,         /* DVI IMA ADPCM (stereo or mono, high nibble first) */
     coding_DVI_IMA_int,     /* DVI IMA ADPCM (mono/interleave, high nibble first) */
-    coding_3DS_IMA,         /* 3DS IMA ADPCM */
+    coding_NW_IMA,
     coding_SNDS_IMA,        /* Heavy Iron Studios .snds IMA ADPCM */
     coding_QD_IMA,
     coding_WV6_IMA,         /* Gorilla Systems WV6 4-bit IMA ADPCM */
@@ -674,7 +674,7 @@ typedef enum {
     meta_WAVEBATCH,         /* Firebrand Games */
     meta_HD3_BD3,           /* Sony PS3 bank */
     meta_BNK_SONY,          /* Sony Scream Tool bank */
-    meta_SCD_SSCF,          /* Square Enix SCD old version */
+    meta_SSCF,
     meta_DSP_VAG,           /* Penny-Punching Princess (Switch) sfx */
     meta_DSP_ITL,           /* Charinko Hero (GC) */
     meta_A2M,               /* Scooby-Doo! Unmasked (PS2) */

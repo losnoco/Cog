@@ -97,7 +97,6 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_ps2_kces,
     init_vgmstream_hxd,
     init_vgmstream_vsv,
-    init_vgmstream_scd_pcm,
     init_vgmstream_ps2_pcm,
     init_vgmstream_ps2_rkv,
     init_vgmstream_ps2_vas,
@@ -385,7 +384,7 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_bnk_sony,
     init_vgmstream_nus3bank,
     init_vgmstream_nus3bank_encrypted,
-    init_vgmstream_scd_sscf,
+    init_vgmstream_sscf,
     init_vgmstream_dsp_sps_n1,
     init_vgmstream_dsp_itl_ch,
     init_vgmstream_a2m,
@@ -526,8 +525,10 @@ VGMSTREAM* (*init_vgmstream_functions[])(STREAMFILE* sf) = {
     init_vgmstream_sndz,
     init_vgmstream_vab,
     init_vgmstream_bigrp,
+    init_vgmstream_sscf_encrypted,
 
     /* lower priority metas (no clean header identity, somewhat ambiguous, or need extension/companion file to identify) */
+    init_vgmstream_scd_pcm,
     init_vgmstream_agsc,
     init_vgmstream_rsf,
     init_vgmstream_ps2_wmus,
