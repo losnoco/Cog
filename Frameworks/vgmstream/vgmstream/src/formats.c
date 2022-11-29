@@ -31,6 +31,7 @@ static const char* extension_list[] = {
     "800",
     "9tav",
 
+    "a3c", //txth/reserved [Puyo Puyo 20th Anniversary (PSP)]
     //"aac", //common
     "aa3", //FFmpeg/not parsed (ATRAC3/ATRAC3PLUS/MP3/LPCM/WMA)
     "aax",
@@ -56,7 +57,6 @@ static const char* extension_list[] = {
     "ahv",
     "ai",
     //"aif", //common
-    "aif-Loop",
     "aifc", //common?
     //"aiff", //common
     "aix",
@@ -649,6 +649,7 @@ static const char* extension_list[] = {
     "xen",
     "xma",
     "xma2",
+    "xms",
     "xmu",
     "xmv",
     "xnb",
@@ -790,7 +791,7 @@ static const coding_info coding_info_list[] = {
         {coding_IMA_int,            "IMA 4-bit ADPCM (mono/interleave)"},
         {coding_DVI_IMA,            "Intel DVI 4-bit IMA ADPCM"},
         {coding_DVI_IMA_int,        "Intel DVI 4-bit IMA ADPCM (mono/interleave)"},
-        {coding_3DS_IMA,            "3DS IMA 4-bit ADPCM"},
+        {coding_NW_IMA,             "NintendoWare IMA 4-bit ADPCM"},
         {coding_SNDS_IMA,           "Heavy Iron .snds 4-bit IMA ADPCM"},
         {coding_QD_IMA,             "Quantic Dream 4-bit IMA ADPCM"},
         {coding_WV6_IMA,            "Gorilla Systems WV6 4-bit IMA ADPCM"},
@@ -1318,7 +1319,7 @@ static const meta_info meta_info_list[] = {
         {meta_WAVEBATCH,            "Firebrand Games WBAT header"},
         {meta_HD3_BD3,              "Sony HD3+BD3 header"},
         {meta_BNK_SONY,             "Sony BNK header"},
-        {meta_SCD_SSCF,             "Square-Enix SCD (SSCF) header"},
+        {meta_SSCF,                 "Square-Enix SSCF header"},
         {meta_DSP_VAG,              ".VAG DSP header"},
         {meta_DSP_ITL,              ".ITL DSP header"},
         {meta_A2M,                  "Artificial Mind & Movement A2M header"},

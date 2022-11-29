@@ -261,7 +261,7 @@
 		834FE0FC215C79ED000A5D3D /* vai.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D3215C79E9000A5D3D /* vai.c */; };
 		834FE0FD215C79ED000A5D3D /* vpk.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D4215C79E9000A5D3D /* vpk.c */; };
 		834FE0FE215C79ED000A5D3D /* ps_headerless.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D5215C79E9000A5D3D /* ps_headerless.c */; };
-		834FE0FF215C79ED000A5D3D /* sqex_scd_sscf.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D6215C79E9000A5D3D /* sqex_scd_sscf.c */; };
+		834FE0FF215C79ED000A5D3D /* sscf.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D6215C79E9000A5D3D /* sscf.c */; };
 		834FE100215C79ED000A5D3D /* svg.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D7215C79EA000A5D3D /* svg.c */; };
 		834FE101215C79ED000A5D3D /* csmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D8215C79EA000A5D3D /* csmp.c */; };
 		834FE102215C79ED000A5D3D /* rfrm.c in Sources */ = {isa = PBXBuildFile; fileRef = 834FE0D9215C79EA000A5D3D /* rfrm.c */; };
@@ -346,7 +346,7 @@
 		836F6F7418BDC2190095E648 /* bgw.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E3818BDC2180095E648 /* bgw.c */; };
 		836F6F7518BDC2190095E648 /* bnsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E3918BDC2180095E648 /* bnsf.c */; };
 		836F6F7618BDC2190095E648 /* brstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E3A18BDC2180095E648 /* brstm.c */; };
-		836F6F7818BDC2190095E648 /* Cstr.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E3C18BDC2180095E648 /* Cstr.c */; };
+		836F6F7818BDC2190095E648 /* cstr.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E3C18BDC2180095E648 /* cstr.c */; };
 		836F6F7918BDC2190095E648 /* dc_asd.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E3D18BDC2180095E648 /* dc_asd.c */; };
 		836F6F7B18BDC2190095E648 /* dc_idvi.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E3F18BDC2180095E648 /* dc_idvi.c */; };
 		836F6F7C18BDC2190095E648 /* dc_kcey.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F6E4018BDC2180095E648 /* dc_kcey.c */; };
@@ -572,6 +572,8 @@
 		838BDB7B1D3B1FC20022CA6F /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */; };
 		838BDB7D1D3B1FCC0022CA6F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */; };
 		838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */; };
+		8396BE7A2935FC2F00CD0580 /* sscf_encrypted.c in Sources */ = {isa = PBXBuildFile; fileRef = 8396BE782935FC2F00CD0580 /* sscf_encrypted.c */; };
+		8396BE7B2935FC2F00CD0580 /* sscf_encrypted.h in Headers */ = {isa = PBXBuildFile; fileRef = 8396BE792935FC2F00CD0580 /* sscf_encrypted.h */; };
 		8399335B2591E896001855AF /* vorbis_custom_utils_awc.c in Sources */ = {isa = PBXBuildFile; fileRef = 839933572591E896001855AF /* vorbis_custom_utils_awc.c */; };
 		8399335F2591E8C1001855AF /* ifs.c in Sources */ = {isa = PBXBuildFile; fileRef = 8399335C2591E8C0001855AF /* ifs.c */; };
 		839933602591E8C1001855AF /* ubi_sb_garbage_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399335D2591E8C0001855AF /* ubi_sb_garbage_streamfile.h */; };
@@ -1088,7 +1090,7 @@
 		834FE0D3215C79E9000A5D3D /* vai.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vai.c; sourceTree = "<group>"; };
 		834FE0D4215C79E9000A5D3D /* vpk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vpk.c; sourceTree = "<group>"; };
 		834FE0D5215C79E9000A5D3D /* ps_headerless.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ps_headerless.c; sourceTree = "<group>"; };
-		834FE0D6215C79E9000A5D3D /* sqex_scd_sscf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqex_scd_sscf.c; sourceTree = "<group>"; };
+		834FE0D6215C79E9000A5D3D /* sscf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sscf.c; sourceTree = "<group>"; };
 		834FE0D7215C79EA000A5D3D /* svg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = svg.c; sourceTree = "<group>"; };
 		834FE0D8215C79EA000A5D3D /* csmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = csmp.c; sourceTree = "<group>"; };
 		834FE0D9215C79EA000A5D3D /* rfrm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rfrm.c; sourceTree = "<group>"; };
@@ -1174,7 +1176,7 @@
 		836F6E3818BDC2180095E648 /* bgw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bgw.c; sourceTree = "<group>"; };
 		836F6E3918BDC2180095E648 /* bnsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bnsf.c; sourceTree = "<group>"; };
 		836F6E3A18BDC2180095E648 /* brstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = brstm.c; sourceTree = "<group>"; };
-		836F6E3C18BDC2180095E648 /* Cstr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Cstr.c; sourceTree = "<group>"; };
+		836F6E3C18BDC2180095E648 /* cstr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cstr.c; sourceTree = "<group>"; };
 		836F6E3D18BDC2180095E648 /* dc_asd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dc_asd.c; sourceTree = "<group>"; };
 		836F6E3F18BDC2180095E648 /* dc_idvi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dc_idvi.c; sourceTree = "<group>"; };
 		836F6E4018BDC2180095E648 /* dc_kcey.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dc_kcey.c; sourceTree = "<group>"; };
@@ -1401,6 +1403,8 @@
 		838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		8396BE782935FC2F00CD0580 /* sscf_encrypted.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sscf_encrypted.c; sourceTree = "<group>"; };
+		8396BE792935FC2F00CD0580 /* sscf_encrypted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sscf_encrypted.h; sourceTree = "<group>"; };
 		839933572591E896001855AF /* vorbis_custom_utils_awc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_awc.c; sourceTree = "<group>"; };
 		8399335C2591E8C0001855AF /* ifs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ifs.c; sourceTree = "<group>"; };
 		8399335D2591E8C0001855AF /* ubi_sb_garbage_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ubi_sb_garbage_streamfile.h; sourceTree = "<group>"; };
@@ -2022,7 +2026,7 @@
 				83A8BAE425667AA7000F5F3F /* cpk.c */,
 				83FC176B23AC58D100E1025F /* csb.c */,
 				834FE0D8215C79EA000A5D3D /* csmp.c */,
-				836F6E3C18BDC2180095E648 /* Cstr.c */,
+				836F6E3C18BDC2180095E648 /* cstr.c */,
 				836F6E3D18BDC2180095E648 /* dc_asd.c */,
 				836F6E3F18BDC2180095E648 /* dc_idvi.c */,
 				836F6E4018BDC2180095E648 /* dc_kcey.c */,
@@ -2304,10 +2308,12 @@
 				836F6EBE18BDC2190095E648 /* spm.c */,
 				83A21F82201D8981000F04B9 /* sps_n1.c */,
 				836F6EF318BDC2190095E648 /* spt_spd.c */,
-				834FE0D6215C79E9000A5D3D /* sqex_scd_sscf.c */,
 				836F6EF418BDC2190095E648 /* sqex_scd.c */,
 				83A21F84201D8981000F04B9 /* sqex_sead.c */,
 				837CEAF023487F2C00E62A4A /* sqex_streamfile.h */,
+				8396BE782935FC2F00CD0580 /* sscf_encrypted.c */,
+				8396BE792935FC2F00CD0580 /* sscf_encrypted.h */,
+				834FE0D6215C79E9000A5D3D /* sscf.c */,
 				8339B322280FDF250076F74B /* sspf.c */,
 				8317C24826982CC1007DD0B8 /* sspr.c */,
 				836F6EBA18BDC2180095E648 /* ster.c */,
@@ -2577,6 +2583,7 @@
 				834FE103215C79ED000A5D3D /* ea_schl_streamfile.h in Headers */,
 				83256CC528666C620036D9C0 /* mpg123.h in Headers */,
 				83F0AA6021E2028C004BBC04 /* vsv_streamfile.h in Headers */,
+				8396BE7B2935FC2F00CD0580 /* sscf_encrypted.h in Headers */,
 				83FBD506235D31F800D35BCD /* riff_ogg_streamfile.h in Headers */,
 				8339B327280FDF4B0076F74B /* text_reader.h in Headers */,
 				836F6F9A18BDC2190095E648 /* meta.h in Headers */,
@@ -2853,6 +2860,7 @@
 				8306B0E220984590000302D4 /* smv.c in Sources */,
 				8349A91E1FE6258200E26435 /* bar.c in Sources */,
 				834FE110215C79ED000A5D3D /* msv.c in Sources */,
+				8396BE7A2935FC2F00CD0580 /* sscf_encrypted.c in Sources */,
 				832389521D224C0800482226 /* hca_decoder.c in Sources */,
 				836F6F9418BDC2190095E648 /* ivb.c in Sources */,
 				836F6F8D18BDC2190095E648 /* gsp_gsb.c in Sources */,
@@ -2902,7 +2910,7 @@
 				83AA7F842519C042004C5298 /* svag_snk.c in Sources */,
 				834FE107215C79ED000A5D3D /* mib_mih.c in Sources */,
 				836F703618BDC2190095E648 /* thp.c in Sources */,
-				836F6F7818BDC2190095E648 /* Cstr.c in Sources */,
+				836F6F7818BDC2190095E648 /* cstr.c in Sources */,
 				83FC417126D32FF5009A2022 /* hca_decoder_clhca.c in Sources */,
 				83F1EE30245D4FC10076E182 /* imuse.c in Sources */,
 				8346D98625BF83B300D1A8B0 /* compresswave_decoder.c in Sources */,
@@ -3204,7 +3212,7 @@
 				836F6F9118BDC2190095E648 /* ios_psnd.c in Sources */,
 				836F700618BDC2190095E648 /* vgs_ps.c in Sources */,
 				834FE10F215C79ED000A5D3D /* sdf.c in Sources */,
-				834FE0FF215C79ED000A5D3D /* sqex_scd_sscf.c in Sources */,
+				834FE0FF215C79ED000A5D3D /* sscf.c in Sources */,
 				8373341A23F60C7B00DE14DC /* relic_decoder_mixfft.c in Sources */,
 				836F6FAA18BDC2190095E648 /* ngc_bh2pcm.c in Sources */,
 				831BA6211EAC61A500CF89B0 /* x360_pasx.c in Sources */,
