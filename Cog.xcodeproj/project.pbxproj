@@ -105,6 +105,7 @@
 		83229C9F283B0095004626A8 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83229C9D283B0095004626A8 /* SpectrumWindowController.m */; };
 		83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; };
 		83256B69286661FC0036D9C0 /* libmpg123.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8327DBA9293CAD2400CD0580 /* Organya.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8327DB94293C923500CD0580 /* Organya.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
 		832CFC562851AA8B002AC26F /* SpectrumViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC552851AA8B002AC26F /* SpectrumViewCG.m */; };
@@ -404,6 +405,20 @@
 			remoteGlobalIDString = 8314D6311A354DFE00EEE8E6;
 			remoteInfo = sidplay;
 		};
+		8327DB93293C923500CD0580 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8327DB8F293C923500CD0580 /* Organya.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8327DB7D293C90E300CD0580;
+			remoteInfo = Organya;
+		};
+		8327DBA7293CAD0A00CD0580 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8327DB8F293C923500CD0580 /* Organya.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8327DB7C293C90E300CD0580;
+			remoteInfo = Organya;
+		};
 		834068BC20E4E40200A01561 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */;
@@ -689,6 +704,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				8327DBA9293CAD2400CD0580 /* Organya.bundle in CopyFiles */,
 				8372C93D27C7895300E250C9 /* MAD.bundle in CopyFiles */,
 				83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */,
 				834D794020E4EFEF00C4A5CC /* VorbisPlugin.bundle in CopyFiles */,
@@ -927,6 +943,7 @@
 		83229C9C283B0095004626A8 /* SpectrumWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumWindowController.h; sourceTree = "<group>"; };
 		83229C9D283B0095004626A8 /* SpectrumWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumWindowController.m; sourceTree = "<group>"; };
 		83256B672866617F0036D9C0 /* libmpg123.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpg123.0.dylib; path = ThirdParty/mpg123/lib/libmpg123.0.dylib; sourceTree = "<group>"; };
+		8327DB8F293C923500CD0580 /* Organya.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Organya.xcodeproj; path = Plugins/Organya/Organya.xcodeproj; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView+Visibility.m"; sourceTree = "<group>"; };
 		832CFC532851AA37002AC26F /* NSView+Visibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView+Visibility.h"; sourceTree = "<group>"; };
@@ -1363,6 +1380,7 @@
 				17C8089E0C3BD1AB005707C4 /* Musepack.xcodeproj */,
 				83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */,
 				8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */,
+				8327DB8F293C923500CD0580 /* Organya.xcodeproj */,
 				8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */,
 				17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */,
 				8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */,
@@ -1737,6 +1755,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8327DB90293C923500CD0580 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8327DB94293C923500CD0580 /* Organya.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		834068A720E4E40200A01561 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2040,6 +2066,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8327DBA8293CAD0A00CD0580 /* PBXTargetDependency */,
 				8372C93C27C7893100E250C9 /* PBXTargetDependency */,
 				83489C6A2782F76900BDCEA2 /* PBXTargetDependency */,
 				ED69CBC625BE32B40090B90D /* PBXTargetDependency */,
@@ -2209,6 +2236,10 @@
 					ProjectRef = 8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */;
 				},
 				{
+					ProductGroup = 8327DB90293C923500CD0580 /* Products */;
+					ProjectRef = 8327DB8F293C923500CD0580 /* Organya.xcodeproj */;
+				},
+				{
 					ProductGroup = 8E8D41C30CBB0DA000135C1B /* Products */;
 					ProjectRef = 8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */;
 				},
@@ -2363,6 +2394,13 @@
 			fileType = wrapper.cfbundle;
 			path = sidplay.bundle;
 			remoteRef = 8314D6401A354DFF00EEE8E6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8327DB94293C923500CD0580 /* Organya.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = Organya.bundle;
+			remoteRef = 8327DB93293C923500CD0580 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		834068BD20E4E40200A01561 /* WavPack.bundle */ = {
@@ -2752,6 +2790,11 @@
 			isa = PBXTargetDependency;
 			name = Preferences;
 			targetProxy = 17F5623A0C3BD9280019975C /* PBXContainerItemProxy */;
+		};
+		8327DBA8293CAD0A00CD0580 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Organya;
+			targetProxy = 8327DBA7293CAD0A00CD0580 /* PBXContainerItemProxy */;
 		};
 		83489C6A2782F76900BDCEA2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
