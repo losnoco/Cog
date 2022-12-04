@@ -1,0 +1,368 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8327DB96293C926F00CD0580 /* OrganyaDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8327DB95293C926F00CD0580 /* OrganyaDecoder.mm */; };
+		8327DBA0293CACCC00CD0580 /* fx98.pxt in Resources */ = {isa = PBXBuildFile; fileRef = 8327DB99293CACCC00CD0580 /* fx98.pxt */; };
+		8327DBA1293CACCC00CD0580 /* fx9a.pxt in Resources */ = {isa = PBXBuildFile; fileRef = 8327DB9A293CACCC00CD0580 /* fx9a.pxt */; };
+		8327DBA2293CACCC00CD0580 /* fx9b.pxt in Resources */ = {isa = PBXBuildFile; fileRef = 8327DB9B293CACCC00CD0580 /* fx9b.pxt */; };
+		8327DBA3293CACCC00CD0580 /* fx96.pxt in Resources */ = {isa = PBXBuildFile; fileRef = 8327DB9C293CACCC00CD0580 /* fx96.pxt */; };
+		8327DBA4293CACCC00CD0580 /* fx99.pxt in Resources */ = {isa = PBXBuildFile; fileRef = 8327DB9D293CACCC00CD0580 /* fx99.pxt */; };
+		8327DBA5293CACCC00CD0580 /* wavetable.dat in Resources */ = {isa = PBXBuildFile; fileRef = 8327DB9E293CACCC00CD0580 /* wavetable.dat */; };
+		8327DBA6293CACCC00CD0580 /* fx97.pxt in Resources */ = {isa = PBXBuildFile; fileRef = 8327DB9F293CACCC00CD0580 /* fx97.pxt */; };
+		8327DBAD293CAE3F00CD0580 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8327DBAC293CAE3F00CD0580 /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8327DB7D293C90E300CD0580 /* Organya.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Organya.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		8327DB8B293C913100CD0580 /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		8327DB8C293C915500CD0580 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = "<group>"; };
+		8327DB8D293C916400CD0580 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
+		8327DB95293C926F00CD0580 /* OrganyaDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OrganyaDecoder.mm; sourceTree = "<group>"; };
+		8327DB97293C92A300CD0580 /* OrganyaDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrganyaDecoder.h; sourceTree = "<group>"; };
+		8327DB99293CACCC00CD0580 /* fx98.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx98.pxt; sourceTree = "<group>"; };
+		8327DB9A293CACCC00CD0580 /* fx9a.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx9a.pxt; sourceTree = "<group>"; };
+		8327DB9B293CACCC00CD0580 /* fx9b.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx9b.pxt; sourceTree = "<group>"; };
+		8327DB9C293CACCC00CD0580 /* fx96.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx96.pxt; sourceTree = "<group>"; };
+		8327DB9D293CACCC00CD0580 /* fx99.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx99.pxt; sourceTree = "<group>"; };
+		8327DB9E293CACCC00CD0580 /* wavetable.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = wavetable.dat; sourceTree = "<group>"; };
+		8327DB9F293CACCC00CD0580 /* fx97.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx97.pxt; sourceTree = "<group>"; };
+		8327DBAA293CADCE00CD0580 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		8327DBAC293CAE3F00CD0580 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8327DB7A293C90E300CD0580 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8327DBAD293CAE3F00CD0580 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8327DB74293C90E300CD0580 = {
+			isa = PBXGroup;
+			children = (
+				8327DB98293CA88700CD0580 /* Resources */,
+				8327DBAB293CAE3100CD0580 /* Frameworks */,
+				8327DB8E293C917000CD0580 /* Source */,
+				8327DB8A293C90F700CD0580 /* Headers */,
+				8327DB7E293C90E300CD0580 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8327DB7E293C90E300CD0580 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8327DB7D293C90E300CD0580 /* Organya.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8327DB8A293C90F700CD0580 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				8327DB8B293C913100CD0580 /* AudioChunk.h */,
+				8327DB8D293C916400CD0580 /* Logging.h */,
+				8327DB97293C92A300CD0580 /* OrganyaDecoder.h */,
+				8327DBAA293CADCE00CD0580 /* PlaylistController.h */,
+				8327DB8C293C915500CD0580 /* Plugin.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		8327DB8E293C917000CD0580 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				8327DB95293C926F00CD0580 /* OrganyaDecoder.mm */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		8327DB98293CA88700CD0580 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8327DB9A293CACCC00CD0580 /* fx9a.pxt */,
+				8327DB9B293CACCC00CD0580 /* fx9b.pxt */,
+				8327DB9C293CACCC00CD0580 /* fx96.pxt */,
+				8327DB9F293CACCC00CD0580 /* fx97.pxt */,
+				8327DB99293CACCC00CD0580 /* fx98.pxt */,
+				8327DB9D293CACCC00CD0580 /* fx99.pxt */,
+				8327DB9E293CACCC00CD0580 /* wavetable.dat */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		8327DBAB293CAE3100CD0580 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8327DBAC293CAE3F00CD0580 /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8327DB7C293C90E300CD0580 /* Organya */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8327DB81293C90E300CD0580 /* Build configuration list for PBXNativeTarget "Organya" */;
+			buildPhases = (
+				8327DB79293C90E300CD0580 /* Sources */,
+				8327DB7A293C90E300CD0580 /* Frameworks */,
+				8327DB7B293C90E300CD0580 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Organya;
+			productName = Organya;
+			productReference = 8327DB7D293C90E300CD0580 /* Organya.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8327DB75293C90E300CD0580 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1410;
+				TargetAttributes = {
+					8327DB7C293C90E300CD0580 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+				};
+			};
+			buildConfigurationList = 8327DB78293C90E300CD0580 /* Build configuration list for PBXProject "Organya" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8327DB74293C90E300CD0580;
+			productRefGroup = 8327DB7E293C90E300CD0580 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8327DB7C293C90E300CD0580 /* Organya */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8327DB7B293C90E300CD0580 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8327DBA5293CACCC00CD0580 /* wavetable.dat in Resources */,
+				8327DBA3293CACCC00CD0580 /* fx96.pxt in Resources */,
+				8327DBA6293CACCC00CD0580 /* fx97.pxt in Resources */,
+				8327DBA0293CACCC00CD0580 /* fx98.pxt in Resources */,
+				8327DBA4293CACCC00CD0580 /* fx99.pxt in Resources */,
+				8327DBA1293CACCC00CD0580 /* fx9a.pxt in Resources */,
+				8327DBA2293CACCC00CD0580 /* fx9b.pxt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8327DB79293C90E300CD0580 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8327DB96293C926F00CD0580 /* OrganyaDecoder.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8327DB7F293C90E300CD0580 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		8327DB80293C90E300CD0580 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		8327DB82293C90E300CD0580 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.losno.Organya;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		8327DB83293C90E300CD0580 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.losno.Organya;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8327DB78293C90E300CD0580 /* Build configuration list for PBXProject "Organya" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8327DB7F293C90E300CD0580 /* Debug */,
+				8327DB80293C90E300CD0580 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8327DB81293C90E300CD0580 /* Build configuration list for PBXNativeTarget "Organya" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8327DB82293C90E300CD0580 /* Debug */,
+				8327DB83293C90E300CD0580 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8327DB75293C90E300CD0580 /* Project object */;
+}

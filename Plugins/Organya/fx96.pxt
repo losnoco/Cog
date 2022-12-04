@@ -1,0 +1,92 @@
+use  :1
+size :5000
+main_model   :0
+main_freq    :16.00
+main_top     :63
+main_offset  :0
+pitch_model  :3
+pitch_freq   :1.00
+pitch_top    :32
+pitch_offset :0
+volume_model :0
+volume_freq  :0.00
+volume_top   :32
+volume_offset:0
+initialY:63
+ax      :64
+ay      :63
+bx      :166
+by      :35
+cx      :255
+cy      :0
+
+use  :1
+size :1000
+main_model   :5
+main_freq    :1.00
+main_top     :16
+main_offset  :0
+pitch_model  :0
+pitch_freq   :1.00
+pitch_top    :32
+pitch_offset :0
+volume_model :0
+volume_freq  :0.00
+volume_top   :32
+volume_offset:0
+initialY:63
+ax      :64
+ay      :63
+bx      :91
+by      :28
+cx      :255
+cy      :0
+
+use  :0
+size :0
+main_model   :0
+main_freq    :0.00
+main_top     :0
+main_offset  :0
+pitch_model  :0
+pitch_freq   :0.00
+pitch_top    :0
+pitch_offset :0
+volume_model :0
+volume_freq  :0.00
+volume_top   :0
+volume_offset:0
+initialY:0
+ax      :0
+ay      :0
+bx      :0
+by      :0
+cx      :0
+cy      :0
+
+use  :0
+size :0
+main_model   :0
+main_freq    :0.00
+main_top     :0
+main_offset  :0
+pitch_model  :0
+pitch_freq   :0.00
+pitch_top    :0
+pitch_offset :0
+volume_model :0
+volume_freq  :0.00
+volume_top   :0
+volume_offset:0
+initialY:0
+ax      :0
+ay      :0
+bx      :0
+by      :0
+cx      :0
+cy      :0
+
+{1,5000,0,16.00,63,0,3,1.00,32,0,0,0.00,32,0,63,64,63,166,35,255,0},
+{1,1000,5,1.00,16,0,0,1.00,32,0,0,0.00,32,0,63,64,63,91,28,255,0},
+{0,0,0,0.00,0,0,0,0.00,0,0,0,0.00,0,0,0,0,0,0,0,0,0},
+{0,0,0,0.00,0,0,0,0.00,0,0,0,0.00,0,0,0,0,0,0,0,0,0},
