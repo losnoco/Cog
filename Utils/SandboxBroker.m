@@ -455,10 +455,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	SandboxEntry *entry = CFBridgingRelease(handle);
 	if(!entry) return;
 
-	@synchronized(self) {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		if(entry.refCount > 1) {
 			entry.refCount -= 1;
-			return;
 		} else {
 			if(entry.secureUrl) {
 				[entry.secureUrl stopAccessingSecurityScopedResource];
@@ -466,9 +465,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			}
 			entry.refCount = 0;
 
-			[storage removeObject:entry];
+			[self->storage removeObject:entry];
 		}
-	}
+	});
 }
 
 - (BOOL)areAllPathsSafe:(NSArray *)urls {
