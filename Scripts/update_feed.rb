@@ -130,6 +130,11 @@ if 1 #appcast_revision < latest_revision
   %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{feed}.xml' 'https://storage.bunnycdn.com/cog-ecdn/#{feed}.xml' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/xml']
   %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{feed}.json' 'https://storage.bunnycdn.com/cog-ecdn/#{feed}.json' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/json']
 
+  #Purge the cache
+  bunnykey2 = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s bunnyaccesskey2].chop
+  %x[curl --request GET --url 'https://api.bunny.net/purge?url=https%3A%2F%2Fcogcdn.cog.losno.co%2F#{feed}.xml&async=false' --header 'AccessKey: #{bunnykey2}' --header 'accept: application/json']
+  %x[curl --request GET --url 'https://api.bunny.net/purge?url=https%3A%2F%2Fcogcdn.cog.losno.co%2F%{feed}.json&async=false' --header 'AccessKey: #{bunnykey2}' --header 'accept: application/json']
+
   #Send web hook to update site
   update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl].chop
   update_parameter = URI.escape(latest_revision)
