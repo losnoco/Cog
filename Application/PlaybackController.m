@@ -677,14 +677,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			break;
 	}
 
-	if(status == CogStatusStopped) {
-		status = CogStatusStopping;
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-			if([self playbackStatus] == CogStatusStopping)
-				[self setPlaybackStatus:CogStatusStopped];
-		});
-	}
-
 	[self setPlaybackStatus:status];
 	// If we don't send it here, if we've stopped, then the NPIC will be stuck at the last file we played.
 	[self sendMetaData];
