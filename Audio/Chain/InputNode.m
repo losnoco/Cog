@@ -21,12 +21,14 @@
 
 static void *kInputNodeContext = &kInputNodeContext;
 
+@synthesize threadExited;
 @synthesize exitAtTheEndOfTheStream;
 
 - (id)initWithController:(id)c previous:(id)p {
 	self = [super initWithController:c previous:p];
 	if(self) {
 		exitAtTheEndOfTheStream = [[Semaphore alloc] init];
+		threadExited = NO;
 	}
 
 	return self;
@@ -223,6 +225,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 		[decoder close];
 
 	[exitAtTheEndOfTheStream signal];
+	threadExited = YES;
 
 	DLog("Input node thread stopping");
 }

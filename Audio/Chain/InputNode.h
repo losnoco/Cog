@@ -34,6 +34,7 @@
 	Semaphore *exitAtTheEndOfTheStream;
 }
 @property(readonly) Semaphore *exitAtTheEndOfTheStream;
+@property(readonly) BOOL threadExited;
 
 - (BOOL)openWithSource:(id<CogSource>)source;
 - (BOOL)openWithDecoder:(id<CogDecoder>)d;
