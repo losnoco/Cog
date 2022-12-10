@@ -709,10 +709,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[pe setMetadata:info];
 	[playlistView refreshTrack:pe];
 	// Delay the action until this function has returned to the audio thread
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+		self->playlistController.currentEntry = pe;
 		[self sendMetaData];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 	});
-	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player reportPlayCountForTrack:(id)userInfo {
