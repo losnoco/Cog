@@ -315,6 +315,8 @@
 		// if there's already one at the head of chainQueue... r-r-right?
 		for(BufferChain *chain in chainQueue) {
 			if([chain isRunning]) {
+				if(output)
+					[output setShouldPlayOutBuffer:YES];
 				atomic_fetch_sub(&refCount, 1);
 				return YES;
 			}
@@ -338,6 +340,8 @@
 	while(duration >= 30.0 && shouldContinue) {
 		[semaphore wait];
 		if(atomic_load_explicit(&resettingNow, memory_order_relaxed)) {
+			if(output)
+				[output setShouldPlayOutBuffer:YES];
 			atomic_fetch_sub(&refCount, 1);
 			return YES;
 		}
@@ -357,6 +361,8 @@
 	[self requestNextStream:nextStreamUserInfo];
 
 	if(!nextStream) {
+		if(output)
+			[output setShouldPlayOutBuffer:YES];
 		atomic_fetch_sub(&refCount, 1);
 		return YES;
 	}
@@ -407,6 +413,8 @@
 	while(shouldContinue && ![newChain open:url withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 		if(nextStream == nil) {
 			newChain = nil;
+			if(output)
+				[output setShouldPlayOutBuffer:YES];
 			atomic_fetch_sub(&refCount, 1);
 			return YES;
 		}
@@ -416,6 +424,8 @@
 
 		if([nextStream isEqualTo:url]) {
 			newChain = nil;
+			if(output)
+				[output setShouldPlayOutBuffer:YES];
 			atomic_fetch_sub(&refCount, 1);
 			return YES;
 		}
@@ -441,6 +451,9 @@
 	// - self.nextStream == next playlist entry's URL
 	// - self.nextStreamUserInfo == next playlist entry
 	// - head of chainQueue is the buffer chain for the next entry (which has launched its threads already)
+
+	if(output)
+		[output setShouldPlayOutBuffer:YES];
 
 	atomic_fetch_sub(&refCount, 1);
 	return YES;
