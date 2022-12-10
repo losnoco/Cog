@@ -342,6 +342,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 - (void)threadEntry:(id)arg {
 	running = YES;
 	started = NO;
+	shouldPlayOutBuffer = NO;
 	secondsLatency = 1.0;
 
 	while(!stopping) {
@@ -940,6 +941,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		stopInvoked = NO;
 		stopCompleted = NO;
 		commandStop = NO;
+		shouldPlayOutBuffer = NO;
 
 		audioFormatDescription = NULL;
 
@@ -1208,7 +1210,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 		if(renderSynchronizer || audioRenderer) {
 			if(renderSynchronizer) {
-				if(!commandStop) {
+				if(shouldPlayOutBuffer && !commandStop) {
 					int compareVal = 0;
 					double secondsLatency = self->secondsLatency >= 0 ? self->secondsLatency : 0;
 					int compareMax = (((1000000 / 5000) * secondsLatency) + (10000 / 5000)); // latency plus 10ms, divide by sleep intervals
@@ -1300,6 +1302,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)sustainHDCD {
 	secondsHdcdSustained = 10.0;
+}
+
+- (void)setShouldPlayOutBuffer:(BOOL)s {
+	shouldPlayOutBuffer = s;
 }
 
 @end

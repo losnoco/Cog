@@ -63,6 +63,8 @@
 
 - (void)setShouldContinue:(BOOL)s;
 
+- (void)setShouldPlayOutBuffer:(BOOL)s;
+
 - (void)pause;
 - (void)resume;
 

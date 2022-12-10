@@ -170,6 +170,10 @@
 	//		[output stop];
 }
 
+- (void)setShouldPlayOutBuffer:(BOOL)s {
+	[output setShouldPlayOutBuffer:s];
+}
+
 - (BOOL)isPaused {
 	return paused;
 }

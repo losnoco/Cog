@@ -116,6 +116,8 @@ using std::atomic_long;
 	FSurroundFilter *fsurround;
 
 	BOOL resetStreamFormat;
+	
+	BOOL shouldPlayOutBuffer;
 
 	float *samplePtr;
 	float tempBuffer[512 * 32];
@@ -148,6 +150,8 @@ using std::atomic_long;
 - (void)setVolume:(double)v;
 
 - (void)setEqualizerEnabled:(BOOL)enabled;
+
+- (void)setShouldPlayOutBuffer:(BOOL)enabled;
 
 - (void)sustainHDCD;
 
