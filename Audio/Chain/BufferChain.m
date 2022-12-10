@@ -156,7 +156,8 @@
 	[inputNode setShouldContinue:NO];
 	[[inputNode exitAtTheEndOfTheStream] signal];
 	[[inputNode semaphore] signal];
-	[[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
+	if(![inputNode threadExited])
+		[[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
 
 	DLog(@"Bufferchain dealloc");
 }
