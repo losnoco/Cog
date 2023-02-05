@@ -216,6 +216,17 @@ void decode_pcmfloat(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspac
     }
 }
 
+void decode_pcm24be(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
+    int i;
+    int32_t sample_count;
+
+    for (i=first_sample,sample_count=0; i<first_sample+samples_to_do; i++,sample_count += channelspacing) {
+        off_t offset = stream->offset + i * 0x03;
+        int v = read_u8(offset+0x02, stream->streamfile) | (read_s16be(offset + 0x00, stream->streamfile) << 8);
+        outbuf[sample_count] = (v >> 8);
+    }
+}
+
 void decode_pcm24le(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do) {
     int i;
     int32_t sample_count;
@@ -230,6 +241,10 @@ void decode_pcm24le(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspaci
 int32_t pcm_bytes_to_samples(size_t bytes, int channels, int bits_per_sample) {
     if (channels <= 0 || bits_per_sample <= 0) return 0;
     return ((int64_t)bytes * 8) / channels / bits_per_sample;
+}
+
+int32_t pcm24_bytes_to_samples(size_t bytes, int channels) {
+    return pcm_bytes_to_samples(bytes, channels, 24);
 }
 
 int32_t pcm16_bytes_to_samples(size_t bytes, int channels) {

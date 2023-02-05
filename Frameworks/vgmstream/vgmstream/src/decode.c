@@ -4,9 +4,6 @@
 #include "coding/coding.h"
 #include "mixing.h"
 #include "plugins.h"
-#ifdef VGM_USE_MAIATRAC3PLUS
-#include "at3plus_decoder.h"
-#endif
 
 /* custom codec handling, not exactly "decode" stuff but here to simplify adding new codecs */
 
@@ -91,12 +88,6 @@ void free_codec(VGMSTREAM* vgmstream) {
 #ifdef VGM_USE_G719
     if (vgmstream->coding_type == coding_G719) {
         free_g719(vgmstream->codec_data, vgmstream->channels);
-    }
-#endif
-
-#ifdef VGM_USE_MAIATRAC3PLUS
-    if (vgmstream->coding_type == coding_AT3plus) {
-        free_at3plus(vgmstream->codec_data);
     }
 #endif
 
@@ -185,12 +176,6 @@ void seek_codec(VGMSTREAM* vgmstream) {
 #if defined(VGM_USE_MP4V2) && defined(VGM_USE_FDKAAC)
     if (vgmstream->coding_type == coding_MP4_AAC) {
         seek_mp4_aac(vgmstream, vgmstream->loop_sample);
-    }
-#endif
-
-#ifdef VGM_USE_MAIATRAC3PLUS
-    if (vgmstream->coding_type == coding_AT3plus) {
-        seek_at3plus(vgmstream, vgmstream->loop_current_sample);
     }
 #endif
 
@@ -305,12 +290,6 @@ void reset_codec(VGMSTREAM* vgmstream) {
     }
 #endif
 
-#ifdef VGM_USE_MAIATRAC3PLUS
-    if (vgmstream->coding_type == coding_AT3plus) {
-        reset_at3plus(vgmstream);
-    }
-#endif
-
 #ifdef VGM_USE_ATRAC9
     if (vgmstream->coding_type == coding_ATRAC9) {
         reset_atrac9(vgmstream->codec_data);
@@ -387,6 +366,7 @@ int get_vgmstream_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_ALAW:
         case coding_PCMFLOAT:
         case coding_PCM24LE:
+        case coding_PCM24BE:
             return 1;
 #ifdef VGM_USE_VORBIS
         case coding_OGG_VORBIS:
@@ -557,10 +537,6 @@ int get_vgmstream_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_MP4_AAC:
             return ((mp4_aac_codec_data*)vgmstream->codec_data)->samples_per_frame;
 #endif
-#ifdef VGM_USE_MAIATRAC3PLUS
-        case coding_AT3plus:
-            return 2048 - ((maiatrac3plus_codec_data*)vgmstream->codec_data)->samples_discard;
-#endif
 #ifdef VGM_USE_ATRAC9
         case coding_ATRAC9:
             return 0; /* varies with config data, usually 256 or 1024 */
@@ -619,6 +595,7 @@ int get_vgmstream_frame_size(VGMSTREAM* vgmstream) {
         case coding_PCMFLOAT:
             return 0x04;
         case coding_PCM24LE:
+        case coding_PCM24BE:
             return 0x03;
 
         case coding_SDX2:
@@ -733,9 +710,6 @@ int get_vgmstream_frame_size(VGMSTREAM* vgmstream) {
 #endif
 #ifdef VGM_USE_G719
         case coding_G719:
-#endif
-#ifdef VGM_USE_MAIATRAC3PLUS
-        case coding_AT3plus:
 #endif
 #ifdef VGM_USE_FFMPEG
         case coding_FFmpeg:
@@ -922,6 +896,13 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_pcm24le(&vgmstream->ch[ch], buffer+ch,
                         vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
+            }
+            break;
+
+        case coding_PCM24BE:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_pcm24be(&vgmstream->ch[ch], buffer + ch,
+                    vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
 
@@ -1301,13 +1282,6 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
         case coding_G719:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_g719(vgmstream, buffer+ch, vgmstream->channels, samples_to_do, ch);
-            }
-            break;
-#endif
-#ifdef VGM_USE_MAIATRAC3PLUS
-        case coding_AT3plus:
-            for (ch = 0; ch < vgmstream->channels; ch++) {
-                decode_at3plus(vgmstream, buffer+ch, vgmstream->channels, samples_to_do, ch);
             }
             break;
 #endif

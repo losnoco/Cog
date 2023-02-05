@@ -44,6 +44,8 @@ typedef enum {
     ASF = 30,           /* Argonaut ASF 4-bit ADPCM */
     EAXA = 31,          /* Electronic Arts EA-XA 4-bit ADPCM v1 */
     OKI4S = 32,         /* OKI ADPCM with 16-bit output (unlike OKI/VOX/Dialogic ADPCM's 12-bit) */
+    PCM24LE = 33,       /* 24-bit Little Endian PCM */
+    PCM24BE = 34,       /* 24-bit Big Endian PCM */
     XA,
     XA_EA,
     CP_YM,
@@ -226,6 +228,8 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
             case PSX_bf:        
             case HEVAG:         interleave = 0x10; break;
             case NGC_DSP:       interleave = 0x08; break;
+            case PCM24LE:       interleave = 0x03; break;
+            case PCM24BE:       interleave = 0x03; break;
             case PCM16LE:
             case PCM16BE:       interleave = 0x02; break;
             case PCM8:
@@ -246,6 +250,8 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         case HEVAG:         coding = coding_HEVAG; break;
         case XBOX:          coding = coding_XBOX_IMA; break;
         case NGC_DTK:       coding = coding_NGC_DTK; break;
+        case PCM24LE:       coding = coding_PCM24LE; break;
+        case PCM24BE:       coding = coding_PCM24BE; break;
         case PCM16LE:       coding = coding_PCM16LE; break;
         case PCM16BE:       coding = coding_PCM16BE; break;
         case PCM8:          coding = coding_PCM8; break;
@@ -318,6 +324,8 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         case coding_PCM8_U_int:
             vgmstream->layout_type = layout_none;
             break;
+        case coding_PCM24LE:
+        case coding_PCM24BE:
         case coding_PCM16LE:
         case coding_PCM16BE:
         case coding_PCM8:
@@ -550,47 +558,35 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
                 ffmpeg_data = init_ffmpeg_aac(txth.sf_body, txth.start_offset, txth.data_size, 0);
                 if (!ffmpeg_data) goto fail;
             }
+            else if (txth.codec == ATRAC3) {
+                int block_align, encoder_delay;
+
+                block_align = txth.interleave;
+                encoder_delay = txth.skip_samples;
+
+                ffmpeg_data = init_ffmpeg_atrac3_raw(txth.sf_body, txth.start_offset,txth.data_size, vgmstream->num_samples,vgmstream->channels,vgmstream->sample_rate, block_align, encoder_delay);
+                if (!ffmpeg_data) goto fail;
+            }
+            else if (txth.codec == ATRAC3PLUS) {
+                int block_size = txth.interleave;
+
+                ffmpeg_data = init_ffmpeg_atrac3plus_raw(txth.sf_body, txth.start_offset, txth.data_size, vgmstream->num_samples, vgmstream->channels, vgmstream->sample_rate, block_size, txth.skip_samples);
+                if (!ffmpeg_data) goto fail;
+            }
+            else if (txth.codec == XMA1) {
+                int xma_stream_mode = txth.codec_mode == 1 ? 1 : 0;
+
+                ffmpeg_data = init_ffmpeg_xma1_raw(txth.sf_body, txth.start_offset, txth.data_size, vgmstream->channels, vgmstream->sample_rate, xma_stream_mode);
+                if (!ffmpeg_data) goto fail;
+            }
+            else if (txth.codec == XMA2) {
+                int block_size = txth.interleave;
+
+                ffmpeg_data = init_ffmpeg_xma2_raw(sf, txth.start_offset, txth.data_size, vgmstream->num_samples, vgmstream->channels, vgmstream->sample_rate, block_size, 0);
+                if (!ffmpeg_data) goto fail;
+            }
             else {
-                /* fake header FFmpeg */
-                uint8_t buf[0x100];
-                int32_t bytes;
-
-                if (txth.codec == ATRAC3) {
-                    int block_align, encoder_delay;
-
-                    block_align = txth.interleave;
-                    encoder_delay = txth.skip_samples;
-
-                    ffmpeg_data = init_ffmpeg_atrac3_raw(txth.sf_body, txth.start_offset,txth.data_size, vgmstream->num_samples,vgmstream->channels,vgmstream->sample_rate, block_align, encoder_delay);
-                    if (!ffmpeg_data) goto fail;
-                }
-                else if (txth.codec == ATRAC3PLUS) {
-                    int block_size = txth.interleave;
-
-                    bytes = ffmpeg_make_riff_atrac3plus(buf, sizeof(buf), vgmstream->num_samples, txth.data_size, vgmstream->channels, vgmstream->sample_rate, block_size, txth.skip_samples);
-                    ffmpeg_data = init_ffmpeg_header_offset(txth.sf_body, buf,bytes, txth.start_offset,txth.data_size);
-                    if ( !ffmpeg_data ) goto fail;
-                }
-                else if (txth.codec == XMA1) {
-                    int xma_stream_mode = txth.codec_mode == 1 ? 1 : 0;
-
-                    bytes = ffmpeg_make_riff_xma1(buf, sizeof(buf), vgmstream->num_samples, txth.data_size, vgmstream->channels, vgmstream->sample_rate, xma_stream_mode);
-                    ffmpeg_data = init_ffmpeg_header_offset(txth.sf_body, buf,bytes, txth.start_offset,txth.data_size);
-                    if ( !ffmpeg_data ) goto fail;
-                }
-                else if (txth.codec == XMA2) {
-                    int block_count, block_size;
-
-                    block_size = txth.interleave ? txth.interleave : 2048;
-                    block_count = txth.data_size / block_size;
-
-                    bytes = ffmpeg_make_riff_xma2(buf, sizeof(buf), vgmstream->num_samples, txth.data_size, vgmstream->channels, vgmstream->sample_rate, block_count, block_size);
-                    ffmpeg_data = init_ffmpeg_header_offset(txth.sf_body, buf,bytes, txth.start_offset,txth.data_size);
-                    if ( !ffmpeg_data ) goto fail;
-                }
-                else {
-                    goto fail;
-                }
+                goto fail;
             }
 
             vgmstream->codec_data = ffmpeg_data;
@@ -598,7 +594,7 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
 
             if (txth.codec == XMA1 || txth.codec == XMA2) {
                 xma_fix_raw_samples(vgmstream, txth.sf_body, txth.start_offset,txth.data_size, 0, 0,0);
-            } else if (txth.skip_samples_set && txth.codec != ATRAC3) { /* force encoder delay */
+            } else if (txth.skip_samples_set && txth.codec != ATRAC3 && txth.codec != ATRAC3PLUS) { /* force encoder delay */
                 ffmpeg_set_skip_samples(ffmpeg_data, txth.skip_samples);
             }
 
@@ -953,6 +949,8 @@ static txth_codec_t parse_codec(txth_header* txth, const char* val) {
     else if (is_string(val,"XBOX"))         return XBOX;
     else if (is_string(val,"NGC_DTK"))      return NGC_DTK;
     else if (is_string(val,"DTK"))          return NGC_DTK;
+    else if (is_string(val,"PCM24BE"))      return PCM24BE;
+    else if (is_string(val,"PCM24LE"))      return PCM24LE;
     else if (is_string(val,"PCM16BE"))      return PCM16BE;
     else if (is_string(val,"PCM16LE"))      return PCM16LE;
     else if (is_string(val,"PCM8"))         return PCM8;
@@ -2103,6 +2101,10 @@ static int get_bytes_to_samples(txth_header* txth, uint32_t bytes) {
         case PSX_bf:
         case HEVAG:
             return ps_bytes_to_samples(bytes, txth->channels);
+        case PCM24BE:
+            return pcm24_bytes_to_samples(bytes, txth->channels);
+        case PCM24LE:
+            return pcm24_bytes_to_samples(bytes, txth->channels);
         case PCM16BE:
         case PCM16LE:
             return pcm16_bytes_to_samples(bytes, txth->channels);

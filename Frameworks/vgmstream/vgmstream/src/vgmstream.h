@@ -35,7 +35,6 @@ enum {
 //#define VGM_USE_G719
 //#define VGM_USE_MP4V2
 //#define VGM_USE_FDKAAC
-//#define VGM_USE_MAIATRAC3PLUS
 //#define VGM_USE_FFMPEG
 //#define VGM_USE_ATRAC9
 //#define VGM_USE_CELT
@@ -80,7 +79,8 @@ typedef enum {
     coding_ALAW,            /* 8-bit a-Law (non-linear PCM) */
 
     coding_PCMFLOAT,        /* 32-bit float PCM */
-    coding_PCM24LE,         /* 24-bit PCM */
+    coding_PCM24LE,         /* little endian 24-bit PCM */
+    coding_PCM24BE,         /* big endian 24-bit PCM */
 
     /* ADPCM */
     coding_CRI_ADX,         /* CRI ADX */
@@ -222,10 +222,6 @@ typedef enum {
     coding_MP4_AAC,         /* AAC (MDCT-based) */
 #endif
 
-#ifdef VGM_USE_MAIATRAC3PLUS
-    coding_AT3plus,         /* Sony ATRAC3plus (MDCT-based) */
-#endif
-
 #ifdef VGM_USE_ATRAC9
     coding_ATRAC9,          /* Sony ATRAC9 (MDCT-based) */
 #endif
@@ -274,7 +270,6 @@ typedef enum {
     layout_blocked_bdsp,
     layout_blocked_mxch,
     layout_blocked_ivaud,   /* GTA IV .ivaud blocks */
-    layout_blocked_tra,     /* DefJam Rapstar .tra blocks */
     layout_blocked_ps2_iab,
     layout_blocked_vs_str,
     layout_blocked_rws,
@@ -334,9 +329,7 @@ typedef enum {
     meta_RWAV,              /* contents of RWAR */
     meta_CWAV,              /* contents of CWAR */
     meta_FWAV,              /* contents of FWAR */
-    meta_RSTM_SPM,          /* RSTM with 44->22khz hack */
     meta_THP,               /* THP movie files */
-    meta_RSTM_shrunken,     /* Atlus' mutant shortened RSTM */
     meta_SWAV,
     meta_NDS_RRDS,          /* Ridge Racer DS */
     meta_WII_BNS,           /* Wii BNS Banner Sound (similar to RSTM) */
@@ -434,12 +427,11 @@ typedef enum {
     meta_PS2_JOE,           /* Wall-E / Pixar games */
     meta_NGC_YMF,           /* WWE WrestleMania X8 */
     meta_SADL,
-    meta_PS2_CCC,           /* Tokyo Xtreme Racer DRIFT 2 */
     meta_FAG,               /* Jackie Chan - Stuntmaster */
     meta_PS2_MIHB,          /* Merged MIH+MIB */
     meta_NGC_PDT,           /* Mario Party 6 */
     meta_DC_ASD,            /* Miss Moonligh */
-    meta_NAOMI_SPSD,        /* Guilty Gear X */
+    meta_SPSD,
     meta_RSD,
     meta_PS2_ASS,           /* ASS */
     meta_SEG,               /* Eragon */
@@ -557,13 +549,12 @@ typedef enum {
     meta_NGC_NST_DSP,       /* Animaniacs [NGC] */
     meta_BAF,               /* Bizarre Creations (Blur, James Bond) */
     meta_XVAG,              /* Ratchet & Clank Future: Quest for Booty (PS3) */
-    meta_PS3_CPS,           /* Eternal Sonata (PS3) */
+    meta_CPS,
     meta_MSF,
     meta_PS3_PAST,          /* Bakugan Battle Brawlers (PS3) */
     meta_SGXD,              /* Sony: Folklore, Genji, Tokyo Jungle (PS3), Brave Story, Kurohyo (PSP) */
     meta_WII_RAS,           /* Donkey Kong Country Returns (Wii) */
     meta_SPM,
-    meta_X360_TRA,          /* Def Jam Rapstar */
     meta_VGS_PS,
     meta_PS2_IAB,           /* Ueki no Housoku - Taosu ze Robert Juudan!! (PS2) */
     meta_VS_STR,            /* The Bouncer */
@@ -601,25 +592,25 @@ typedef enum {
     meta_PS2_VDS_VDM,       /* Graffiti Kingdom */
     meta_FFMPEG,
     meta_FFMPEG_faulty,
-    meta_X360_CXS,          /* Eternal Sonata (Xbox 360) */
-    meta_AKB,               /* SQEX iOS */
-    meta_X360_PASX,         /* Namco PASX (Soul Calibur II HD X360) */
-    meta_XMA_RIFF,          /* Microsoft RIFF XMA */
-    meta_X360_AST,          /* Dead Rising (X360) */
+    meta_CXS,
+    meta_AKB,
+    meta_PASX,
+    meta_XMA_RIFF,
+    meta_ASTB,
     meta_WWISE_RIFF,        /* Audiokinetic Wwise RIFF/RIFX */
     meta_UBI_RAKI,          /* Ubisoft RAKI header (Rayman Legends, Just Dance 2017) */
     meta_SXD,               /* Sony SXD (Gravity Rush, Freedom Wars PSV) */
     meta_OGL,               /* Shin'en Wii/WiiU (Jett Rocket (Wii), FAST Racing NEO (WiiU)) */
     meta_MC3,               /* Paradigm games (T3 PS2, MX Rider PS2, MI: Operation Surma PS2) */
-    meta_GTD,               /* Knights Contract (X360/PS3), Valhalla Knights 3 (PSV) */
-    meta_TA_AAC,
+    meta_GHS,
+    meta_AAC_TRIACE,
     meta_MTA2,
     meta_NGC_ULW,           /* Burnout 1 (GC only) */
     meta_XA_XA30,
     meta_XA_04SW,
     meta_TXTH,              /* generic text header */
     meta_SK_AUD,            /* Silicon Knights .AUD (Eternal Darkness GC) */
-    meta_AHX,               /* CRI AHX header */
+    meta_AHX,
     meta_STM,               /* Angel Studios/Rockstar San Diego Games */
     meta_BINK,              /* RAD Game Tools BINK audio/video */
     meta_EA_SNU,            /* Electronic Arts SNU (Dead Space) */
@@ -725,7 +716,7 @@ typedef enum {
     meta_PSF,
     meta_DSP_ITL_i,
     meta_IMA,
-    meta_XMV_VALVE,
+    meta_XWV_VALVE,
     meta_UBI_HX,
     meta_BMP_KONAMI,
     meta_ISB,
