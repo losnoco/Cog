@@ -38,7 +38,7 @@ public:
 	{
 		if constexpr(targetbits == 0)
 		{
-			MPT_UNREFERENCED_PARAMETER(prng);
+			MPT_UNUSED(prng);
 			return sample;
 		} else
 		{
@@ -46,7 +46,7 @@ public:
 			constexpr int rshift = (32 - targetbits) - MixSampleIntTraits::mix_headroom_bits;
 			if constexpr(rshift <= 1)
 			{
-				MPT_UNREFERENCED_PARAMETER(prng);
+				MPT_UNUSED(prng);
 				// nothing to dither
 				return sample;
 			} else

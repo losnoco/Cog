@@ -544,6 +544,9 @@ enum PlayBehaviour
 	kApplyOffsetWithoutNote,        // Offset commands even work when there's no note next to them (e.g. DMF, MDL, PLM formats)
 	kITPitchPanSeparation,          // Pitch/Pan Separation can be overridden by panning commands (this also fixes a bug where any "special" notes affect PPS)
 	kImprecisePingPongLoops,        // Use old (less precise) ping-pong overshoot calculation
+	kPluginIgnoreTonePortamento,    // Use old tone portamento behaviour for plugins (XM: no plugin pitch slides with commands E1x/E2x/X1x/X2x)
+	kST3TonePortaWithAdlibNote,     // Adlib note next to tone portamento is delayed until next row
+	kITResetFilterOnPortaSmpChange, // Filter is reset on portamento if sample is swapped
 
 	// Add new play behaviours here.
 

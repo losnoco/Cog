@@ -35,6 +35,13 @@ MPT_TEST_GROUP_INLINE("mpt/parse")
 #pragma clang diagnostic pop
 #endif
 {
+	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<bool>("1"), true);
+	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<bool>("0"), false);
+	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<bool>("2"), true);
+	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<bool>("-0"), false);
+	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<bool>("-1"), true);
+
+	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<uint32>("586"), 586u);
 	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<uint32>("586"), 586u);
 	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<uint32>("2147483647"), (uint32)std::numeric_limits<int32>::max());
 	MPT_TEST_EXPECT_EQUAL(mpt::ConvertStringTo<uint32>("4294967295"), std::numeric_limits<uint32>::max());

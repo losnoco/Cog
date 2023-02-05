@@ -79,7 +79,7 @@ void ModCommand::ExtendedMODtoS3MEffect()
 	case 0x20: command = CMD_PORTAMENTODOWN; param |= 0xF0; break;
 	case 0x30: param = (param & 0x0F) | 0x10; break;
 	case 0x40: param = (param & 0x03) | 0x30; break;
-	case 0x50: param = (param & 0x0F) | 0x20; break;
+	case 0x50: param = (param ^ 0x58) | 0x20; break;
 	case 0x60: param = (param & 0x0F) | 0xB0; break;
 	case 0x70: param = (param & 0x03) | 0x40; break;
 	case 0x90: command = CMD_RETRIG; param = (param & 0x0F); break;
@@ -102,7 +102,7 @@ void ModCommand::ExtendedS3MtoMODEffect()
 	switch(param & 0xF0)
 	{
 	case 0x10: param = (param & 0x0F) | 0x30; break;
-	case 0x20: param = (param & 0x0F) | 0x50; break;
+	case 0x20: param = (param ^ 0x28) | 0x50; break;
 	case 0x30: param = (param & 0x0F) | 0x40; break;
 	case 0x40: param = (param & 0x0F) | 0x70; break;
 	case 0x50: command = CMD_XFINEPORTAUPDOWN; break;  // map to unused X5x

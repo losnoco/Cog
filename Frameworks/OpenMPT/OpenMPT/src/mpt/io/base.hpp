@@ -6,6 +6,7 @@
 
 
 #include "mpt/base/integer.hpp"
+#include "mpt/base/memory.hpp"
 #include "mpt/base/namespace.hpp"
 
 #include <cstddef>

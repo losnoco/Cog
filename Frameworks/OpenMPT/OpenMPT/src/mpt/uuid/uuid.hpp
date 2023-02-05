@@ -260,7 +260,7 @@ public:
 		}
 		return mpt::UUID::UUIDFromWin32(uuid);
 #else
-		return RFC4122Random(rng);
+		return mpt::UUID::RFC4122Random(rng);
 #endif
 	}
 	// Create a UUID that contains local, traceable information.

@@ -186,7 +186,7 @@ void Distortion::RecalculateDistortionParams()
 	// Distortion
 	float edge = 2.0f + m_param[kDistEdge] * 29.0f;
 	m_edge = static_cast<uint8>(edge);  // 2...31 shifted bits
-	m_shift = mpt::bit_width(m_edge);
+	m_shift = static_cast<uint8>(mpt::bit_width(m_edge));
 
 	static constexpr float LogNorm[32] =
 	{

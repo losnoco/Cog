@@ -6,8 +6,8 @@
 
 
 #include "mpt/base/detect_compiler.hpp"
+#include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
-
 #include "mpt/base/saturate_cast.hpp"
 
 #include <algorithm>

@@ -653,6 +653,12 @@ static MPT_NOINLINE void TestStringFormatting()
 		VERIFY_EQUAL(mpt::cfmt::center(4, CString(_T("a"))), CString(_T(" a  ")));
 	#endif // MPT_WITH_MFC
 
+	VERIFY_EQUAL(ConvertStrTo<bool>("1"), true);
+	VERIFY_EQUAL(ConvertStrTo<bool>("0"), false);
+	VERIFY_EQUAL(ConvertStrTo<bool>("2"), true);
+	VERIFY_EQUAL(ConvertStrTo<bool>("-0"), false);
+	VERIFY_EQUAL(ConvertStrTo<bool>("-1"), true);
+
 	VERIFY_EQUAL(ConvertStrTo<uint32>("586"), 586u);
 	VERIFY_EQUAL(ConvertStrTo<uint32>("2147483647"), (uint32)int32_max);
 	VERIFY_EQUAL(ConvertStrTo<uint32>("4294967295"), uint32_max);
@@ -3534,35 +3540,29 @@ static MPT_NOINLINE void TestStringIO()
 
 static MPT_NOINLINE void TestSampleConversion()
 {
-	std::vector<uint8> sourceBufContainer(65536 * 4);
-	std::vector<uint8> targetBufContainer(65536 * 6);
-
-	uint8 *sourceBuf = &(sourceBufContainer[0]);
-	void *targetBuf = &(targetBufContainer[0]);
-
 	// Signed 8-Bit Integer PCM
 	// Unsigned 8-Bit Integer PCM
 	// Delta 8-Bit Integer PCM
 	{
-		uint8 *source8 = sourceBuf;
-		for(size_t i = 0; i < 256; i++)
+		std::vector<std::byte> source8(256);
+		for(std::size_t i = 0; i < 256; i++)
 		{
-			source8[i] = static_cast<uint8>(i);
+			source8[i] = mpt::byte_cast<std::byte>(static_cast<uint8>(i));
 		}
 
-		int8 *signed8 = static_cast<int8 *>(targetBuf);
-		uint8 *unsigned8 = static_cast<uint8 *>(targetBuf) + 256;
-		int8 *delta8 = static_cast<int8 *>(targetBuf) + 512;
+		std::vector<int8> signed8(256);
+		std::vector<int8> unsigned8(256);
+		std::vector<int8> delta8(256);
 		int8 delta = 0;
-		CopySample<SC::DecodeInt8>(signed8, 256, 1, mpt::byte_cast<const std::byte *>(source8), 256, 1);
-		CopySample<SC::DecodeUint8>(reinterpret_cast<int8 *>(unsigned8), 256, 1, mpt::byte_cast<const std::byte *>(source8), 256, 1);
-		CopySample<SC::DecodeInt8Delta>(delta8, 256, 1, mpt::byte_cast<const std::byte *>(source8), 256, 1);
+		CopySample<SC::DecodeInt8>(signed8.data(), 256, 1, source8.data(), 256, 1);
+		CopySample<SC::DecodeUint8>(unsigned8.data(), 256, 1, source8.data(), 256, 1);
+		CopySample<SC::DecodeInt8Delta>(delta8.data(), 256, 1, source8.data(), 256, 1);
 
-		for(size_t i = 0; i < 256; i++)
+		for(std::size_t i = 0; i < 256; i++)
 		{
 			delta += static_cast<int8>(i);
 			VERIFY_EQUAL_QUIET_NONCONT(signed8[i], static_cast<int8>(i));
-			VERIFY_EQUAL_QUIET_NONCONT(unsigned8[i], static_cast<uint8>(i + 0x80u));
+			VERIFY_EQUAL_QUIET_NONCONT(unsigned8[i], static_cast<int8>(static_cast<int>(i) - 0x80));
 			VERIFY_EQUAL_QUIET_NONCONT(delta8[i], static_cast<int8>(delta));
 		}
 	}
@@ -3573,47 +3573,47 @@ static MPT_NOINLINE void TestSampleConversion()
 	{
 		// Little Endian
 
-		uint8 *source16 = sourceBuf;
-		for(size_t i = 0; i < 65536; i++)
+		std::vector<std::byte> source16(65536 * 2);
+		for(std::size_t i = 0; i < 65536; i++)
 		{
-			source16[i * 2 + 0] = static_cast<uint8>(i & 0xFF);
-			source16[i * 2 + 1] = static_cast<uint8>(i >> 8);
+			source16[i * 2 + 0] = mpt::byte_cast<std::byte>(static_cast<uint8>(i & 0xFF));
+			source16[i * 2 + 1] = mpt::byte_cast<std::byte>(static_cast<uint8>(i >> 8));
 		}
 
-		int16 *signed16 = static_cast<int16 *>(targetBuf);
-		uint16 *unsigned16 = static_cast<uint16 *>(targetBuf) + 65536;
-		int16 *delta16 = static_cast<int16 *>(targetBuf) + 65536 * 2;
+		std::vector<int16> signed16(65536);
+		std::vector<int16> unsigned16(65536);
+		std::vector<int16> delta16(65536);
 		int16 delta = 0;
-		CopySample<SC::DecodeInt16<0, littleEndian16> >(signed16, 65536, 1, mpt::byte_cast<const std::byte *>(source16), 65536 * 2, 1);
-		CopySample<SC::DecodeInt16<0x8000u, littleEndian16> >(reinterpret_cast<int16*>(unsigned16), 65536, 1, mpt::byte_cast<const std::byte *>(source16), 65536 * 2, 1);
-		CopySample<SC::DecodeInt16Delta<littleEndian16> >(delta16, 65536, 1, mpt::byte_cast<const std::byte *>(source16), 65536 * 2, 1);
+		CopySample<SC::DecodeInt16<0, littleEndian16> >(signed16.data(), 65536, 1, source16.data(), 65536 * 2, 1);
+		CopySample<SC::DecodeInt16<0x8000u, littleEndian16> >(unsigned16.data(), 65536, 1, source16.data(), 65536 * 2, 1);
+		CopySample<SC::DecodeInt16Delta<littleEndian16> >(delta16.data(), 65536, 1, source16.data(), 65536 * 2, 1);
 
-		for(size_t i = 0; i < 65536; i++)
+		for(std::size_t i = 0; i < 65536; i++)
 		{
 			delta += static_cast<int16>(i);
 			VERIFY_EQUAL_QUIET_NONCONT(signed16[i], static_cast<int16>(i));
-			VERIFY_EQUAL_QUIET_NONCONT(unsigned16[i], static_cast<uint16>(i + 0x8000u));
+			VERIFY_EQUAL_QUIET_NONCONT(unsigned16[i], static_cast<int16>(static_cast<int>(i) - 0x8000));
 			VERIFY_EQUAL_QUIET_NONCONT(delta16[i], static_cast<int16>(delta));
 		}
 
 		// Big Endian
 
-		for(size_t i = 0; i < 65536; i++)
+		for(std::size_t i = 0; i < 65536; i++)
 		{
-			source16[i * 2 + 0] = static_cast<uint8>(i >> 8);
-			source16[i * 2 + 1] = static_cast<uint8>(i & 0xFF);
+			source16[i * 2 + 0] = mpt::byte_cast<std::byte>(static_cast<uint8>(i >> 8));
+			source16[i * 2 + 1] = mpt::byte_cast<std::byte>(static_cast<uint8>(i & 0xFF));
 		}
 
-		CopySample<SC::DecodeInt16<0, bigEndian16> >(signed16, 65536, 1, mpt::byte_cast<const std::byte *>(source16), 65536 * 2, 1);
-		CopySample<SC::DecodeInt16<0x8000u, bigEndian16> >(reinterpret_cast<int16*>(unsigned16), 65536, 1, mpt::byte_cast<const std::byte *>(source16), 65536 * 2, 1);
-		CopySample<SC::DecodeInt16Delta<bigEndian16> >(delta16, 65536, 1, mpt::byte_cast<const std::byte *>(source16), 65536 * 2, 1);
+		CopySample<SC::DecodeInt16<0, bigEndian16> >(signed16.data(), 65536, 1, source16.data(), 65536 * 2, 1);
+		CopySample<SC::DecodeInt16<0x8000u, bigEndian16> >(unsigned16.data(), 65536, 1, source16.data(), 65536 * 2, 1);
+		CopySample<SC::DecodeInt16Delta<bigEndian16> >(delta16.data(), 65536, 1, source16.data(), 65536 * 2, 1);
 
 		delta = 0;
 		for(size_t i = 0; i < 65536; i++)
 		{
 			delta += static_cast<int16>(i);
 			VERIFY_EQUAL_QUIET_NONCONT(signed16[i], static_cast<int16>(i));
-			VERIFY_EQUAL_QUIET_NONCONT(unsigned16[i], static_cast<uint16>(i + 0x8000u));
+			VERIFY_EQUAL_QUIET_NONCONT(unsigned16[i], static_cast<int16>(static_cast<int>(i) - 0x8000));
 			VERIFY_EQUAL_QUIET_NONCONT(delta16[i], static_cast<int16>(delta));
 		}
 
@@ -3621,24 +3621,25 @@ static MPT_NOINLINE void TestSampleConversion()
 
 	// Signed 24-Bit Integer PCM
 	{
-		uint8 *source24 = sourceBuf;
-		for(size_t i = 0; i < 65536; i++)
+		std::vector<std::byte> source24(65536 * 3);
+		for(std::size_t i = 0; i < 65536; i++)
 		{
-			source24[i * 3 + 0] = 0;
-			source24[i * 3 + 1] = static_cast<uint8>(i & 0xFF);
-			source24[i * 3 + 2] = static_cast<uint8>(i >> 8);
+			source24[i * 3 + 0] = mpt::byte_cast<std::byte>(static_cast<uint8>(0));
+			source24[i * 3 + 1] = mpt::byte_cast<std::byte>(static_cast<uint8>(i & 0xFF));
+			source24[i * 3 + 2] = mpt::byte_cast<std::byte>(static_cast<uint8>(i >> 8));
 		}
 
-		int16 *truncated16 = static_cast<int16 *>(targetBuf);
+		std::vector<int16> truncated16(65536);
+		std::vector<int16> sampleBuf(65536);
 		ModSample sample;
 		sample.Initialize();
 		sample.nLength = 65536;
 		sample.uFlags.set(CHN_16BIT);
-		sample.pData.pSample = (static_cast<int16 *>(targetBuf) + 65536);
-		CopyAndNormalizeSample<SC::NormalizationChain<SC::Convert<int16, int32>, SC::DecodeInt24<0, littleEndian24> > >(sample, mpt::byte_cast<const std::byte *>(source24), 3*65536);
-		CopySample<SC::ConversionChain<SC::ConvertShift<int16, int32, 16>, SC::DecodeInt24<0, littleEndian24> > >(truncated16, 65536, 1, mpt::byte_cast<const std::byte *>(source24), 65536 * 3, 1);
+		sample.pData.pSample = sampleBuf.data();
+		CopyAndNormalizeSample<SC::NormalizationChain<SC::Convert<int16, int32>, SC::DecodeInt24<0, littleEndian24> > >(sample, source24.data(), 3*65536);
+		CopySample<SC::ConversionChain<SC::ConvertShift<int16, int32, 16>, SC::DecodeInt24<0, littleEndian24> > >(truncated16.data(), 65536, 1, source24.data(), 65536 * 3, 1);
 
-		for(size_t i = 0; i < 65536; i++)
+		for(std::size_t i = 0; i < 65536; i++)
 		{
 			VERIFY_EQUAL_QUIET_NONCONT(sample.sample16()[i], static_cast<int16>(i));
 			VERIFY_EQUAL_QUIET_NONCONT(truncated16[i], static_cast<int16>(i));
@@ -3647,26 +3648,27 @@ static MPT_NOINLINE void TestSampleConversion()
 
 	// Float 32-Bit
 	{
-		uint8 *source32 = sourceBuf;
-		for(size_t i = 0; i < 65536; i++)
+		std::vector<std::byte> source32(65536 * 4);
+		for(std::size_t i = 0; i < 65536; i++)
 		{
 			IEEE754binary32BE floatbits = IEEE754binary32BE((static_cast<float>(i) / 65536.0f) - 0.5f);
-			source32[i * 4 + 0] = mpt::byte_cast<uint8>(floatbits.GetByte(0));
-			source32[i * 4 + 1] = mpt::byte_cast<uint8>(floatbits.GetByte(1));
-			source32[i * 4 + 2] = mpt::byte_cast<uint8>(floatbits.GetByte(2));
-			source32[i * 4 + 3] = mpt::byte_cast<uint8>(floatbits.GetByte(3));
+			source32[i * 4 + 0] = mpt::byte_cast<std::byte>(floatbits.GetByte(0));
+			source32[i * 4 + 1] = mpt::byte_cast<std::byte>(floatbits.GetByte(1));
+			source32[i * 4 + 2] = mpt::byte_cast<std::byte>(floatbits.GetByte(2));
+			source32[i * 4 + 3] = mpt::byte_cast<std::byte>(floatbits.GetByte(3));
 		}
 
-		int16 *truncated16 = static_cast<int16 *>(targetBuf);
+		std::vector<int16> truncated16(65536);
+		std::vector<int16> sampleBuf(65536);
 		ModSample sample;
 		sample.Initialize();
 		sample.nLength = 65536;
 		sample.uFlags.set(CHN_16BIT);
-		sample.pData.pSample = static_cast<int16 *>(targetBuf) + 65536;
-		CopyAndNormalizeSample<SC::NormalizationChain<SC::Convert<int16, float32>, SC::DecodeFloat32<bigEndian32> > >(sample, mpt::byte_cast<const std::byte *>(source32), 4*65536);
-		CopySample<SC::ConversionChain<SC::Convert<int16, float32>, SC::DecodeFloat32<bigEndian32> > >(truncated16, 65536, 1, mpt::byte_cast<const std::byte *>(source32), 65536 * 4, 1);
+		sample.pData.pSample = sampleBuf.data();
+		CopyAndNormalizeSample<SC::NormalizationChain<SC::Convert<int16, float32>, SC::DecodeFloat32<bigEndian32> > >(sample, source32.data(), 4*65536);
+		CopySample<SC::ConversionChain<SC::Convert<int16, float32>, SC::DecodeFloat32<bigEndian32> > >(truncated16.data(), 65536, 1, source32.data(), 65536 * 4, 1);
 
-		for(size_t i = 0; i < 65536; i++)
+		for(std::size_t i = 0; i < 65536; i++)
 		{
 			VERIFY_EQUAL_QUIET_NONCONT(sample.sample16()[i], static_cast<int16>(i - 0x8000u));
 			VERIFY_EQUAL_QUIET_NONCONT(std::abs(truncated16[i] - static_cast<int16>((i - 0x8000u) / 2)) <= 1, true);
@@ -3740,10 +3742,11 @@ static MPT_NOINLINE void TestSampleConversion()
 
 	// Range checks
 	{
-		int8 oneSample = 1;
-		char *signed8 = reinterpret_cast<char *>(targetBuf);
-		memset(signed8, 0, 4);
-		CopySample<SC::DecodeInt8>(reinterpret_cast<int8*>(targetBuf), 4, 1, reinterpret_cast<const std::byte*>(&oneSample), sizeof(oneSample), 1);
+		std::byte oneSample = mpt::byte_cast<std::byte>(static_cast<int8>(1));
+		int8 targetBuf4[4];
+		int8 *signed8 = targetBuf4;
+		std::memset(signed8, 0, 4);
+		CopySample<SC::DecodeInt8>(targetBuf4, 4, 1, &oneSample, sizeof(oneSample), 1);
 		VERIFY_EQUAL_NONCONT(signed8[0], 1);
 		VERIFY_EQUAL_NONCONT(signed8[1], 0);
 		VERIFY_EQUAL_NONCONT(signed8[2], 0);

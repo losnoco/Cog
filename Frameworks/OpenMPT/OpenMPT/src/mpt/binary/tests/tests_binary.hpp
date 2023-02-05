@@ -5,6 +5,7 @@
 
 
 
+#include "mpt/base/alloc.hpp"
 #include "mpt/base/detect_compiler.hpp"
 #include "mpt/base/memory.hpp"
 #include "mpt/base/namespace.hpp"

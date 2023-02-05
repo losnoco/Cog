@@ -168,6 +168,12 @@ public:
 	T & operator*() {
 		return *m_value;
 	}
+	const T * operator->() const {
+		return m_value.get();
+	}
+	T * operator->() {
+		return m_value.get();
+	}
 };
 
 

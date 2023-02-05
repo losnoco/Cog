@@ -1317,15 +1317,15 @@ bool CSoundFile::ReadMO3(FileReader &file, ModLoadingFlags loadFlags)
 		musicChunk.ReadNullString(name);
 		m_szNames[smp] = name;
 		if(version >= 5)
-		{
 			musicChunk.ReadNullString(name);
-			sample.filename = name;
-		}
+		else
+			name.clear();
 
 		MO3Sample smpHeader;
 		if(!musicChunk.ReadStruct(smpHeader))
 			break;
 		smpHeader.ConvertToMPT(sample, m_nType, frequencyIsHertz);
+		sample.filename = name;
 
 		int16 sharedOggHeader = 0;
 		if(version >= 5 && (smpHeader.flags & MO3Sample::smpCompressionMask) == MO3Sample::smpSharedOgg)

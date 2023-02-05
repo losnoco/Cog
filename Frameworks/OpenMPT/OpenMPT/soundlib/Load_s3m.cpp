@@ -325,12 +325,16 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		nonCompatTracker = true;
 		break;
 	case S3MFileHeader::trkOpenMPT:
+		if(fileHeader.cwtv != S3MFileHeader::trkGraoumfTracker)
 		{
 			uint32 mptVersion = (fileHeader.cwtv & S3MFileHeader::versionMask) << 16;
 			if(mptVersion >= 0x01'29'00'00)
 				mptVersion |= fileHeader.reserved2;
 			m_dwLastSavedWithVersion = Version(mptVersion);
 			madeWithTracker = U_("OpenMPT ") + mpt::ufmt::val(m_dwLastSavedWithVersion);
+		} else
+		{
+			madeWithTracker = U_("Graoumf Tracker");
 		}
 		break; 
 	case S3MFileHeader::trkBeRoTracker:

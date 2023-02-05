@@ -288,7 +288,7 @@ struct MixLoopState
 #ifdef MPT_BUILD_DEBUG
 		{
 			SmpLength posDest = (nPos + nInc * (nSmpCount - 1)).GetUInt();
-			if (posDest < 0 || posDest > chn.nLength)
+			MPT_MAYBE_CONSTANT_IF(posDest < 0 || posDest > chn.nLength)
 			{
 				// We computed an invalid delta!
 				MPT_ASSERT_NOTREACHED();
@@ -487,6 +487,17 @@ void CSoundFile::CreateStereoMix(int count)
 			{
 				// ProTracker compatibility: Instrument changes without a note do not happen instantly, but rather when the sample loop has finished playing.
 				// Test case: PTInstrSwap.mod, PTSwapNoLoop.mod
+#ifdef MODPLUG_TRACKER
+				if(m_SamplePlayLengths != nullptr)
+				{
+					// Even if the sample was playing at zero volume, we need to retain its full length for correct sample swap timing
+					size_t smp = std::distance(static_cast<const ModSample *>(static_cast<std::decay<decltype(Samples)>::type>(Samples)), chn.pModSample);
+					if(smp < m_SamplePlayLengths->size())
+					{
+						(*m_SamplePlayLengths)[smp] = std::max((*m_SamplePlayLengths)[smp], std::min(chn.nLength, chn.position.GetUInt()));
+					}
+				}
+#endif
 				const ModSample &smp = Samples[chn.nNewIns];
 				chn.pModSample = &smp;
 				chn.pCurrentSample = smp.samplev();

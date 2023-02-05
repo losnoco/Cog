@@ -577,6 +577,7 @@ void CSoundFile::UpgradeModule()
 			{ kITPatternLoopWithJumps,        MPT_V("1.29.00.32") },
 			{ kITDCTBehaviour,                MPT_V("1.29.00.57") },
 			{ kITPitchPanSeparation,          MPT_V("1.30.00.53") },
+			{ kITResetFilterOnPortaSmpChange, MPT_V("1.30.08.02") },
 		};
 
 		for(const auto &b : behaviours)

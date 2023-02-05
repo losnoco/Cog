@@ -108,21 +108,21 @@ MPT_TEST_GROUP_INLINE("mpt/base/bit")
 	MPT_TEST_EXPECT_EQUAL(mpt::bit_floor(uint32(0xfffffffeu)), 0x80000000u);
 	MPT_TEST_EXPECT_EQUAL(mpt::bit_floor(uint32(0xffffffffu)), 0x80000000u);
 
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(0u), 0u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(1u), 1u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(2u), 2u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(3u), 2u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(4u), 3u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(5u), 3u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(6u), 3u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(7u), 3u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(8u), 4u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(9u), 4u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0x7fffffffu)), 31u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0x80000000u)), 32u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0x80000001u)), 32u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0xfffffffeu)), 32u);
-	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0xffffffffu)), 32u);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(0u), 0);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(1u), 1);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(2u), 2);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(3u), 2);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(4u), 3);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(5u), 3);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(6u), 3);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(7u), 3);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(8u), 4);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(9u), 4);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0x7fffffffu)), 31);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0x80000000u)), 32);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0x80000001u)), 32);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0xfffffffeu)), 32);
+	MPT_TEST_EXPECT_EQUAL(mpt::bit_width(uint32(0xffffffffu)), 32);
 
 	MPT_TEST_EXPECT_EQUAL(mpt::countl_one(uint8(0b00000000)), 0);
 	MPT_TEST_EXPECT_EQUAL(mpt::countl_one(uint8(0b00000001)), 0);

@@ -519,7 +519,7 @@ static void clear_current_timeinfo() {
 static void WINAPI openmpt_About( HWND win ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2022 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2023 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
@@ -563,8 +563,8 @@ private:
 	xmplay_streambuf & operator = ( const xmplay_streambuf & );
 private:
 	XMPFILE & file;
-	static const std::size_t put_back = 4096;
-	static const std::size_t buf_size = 65536;
+	static inline constexpr std::size_t put_back = 4096;
+	static inline constexpr std::size_t buf_size = 65536;
 	std::vector<char> buffer;
 }; // class xmplay_streambuf
 

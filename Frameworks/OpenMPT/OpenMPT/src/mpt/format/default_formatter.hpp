@@ -10,8 +10,6 @@
 #include "mpt/format/default_integer.hpp"
 #include "mpt/format/default_string.hpp"
 
-#include <type_traits>
-
 
 
 namespace mpt {

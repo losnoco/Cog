@@ -136,7 +136,7 @@ public:
 		return dst.subspan(0, cache_avail);
 	}
 
-	bool CanRead(pos_type pos, std::size_t length) const override {
+	bool CanRead(pos_type pos, pos_type length) const override {
 		CacheStreamUpTo(pos, length);
 		if ((pos == IFileData::pos_type(cachesize)) && (length == 0)) {
 			return true;
@@ -147,7 +147,7 @@ public:
 		return length <= IFileData::pos_type(cachesize) - pos;
 	}
 
-	std::size_t GetReadableLength(pos_type pos, std::size_t length) const override {
+	pos_type GetReadableLength(pos_type pos, pos_type length) const override {
 		CacheStreamUpTo(pos, length);
 		if (pos >= cachesize) {
 			return 0;

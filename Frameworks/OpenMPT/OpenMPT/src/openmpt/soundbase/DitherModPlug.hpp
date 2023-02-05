@@ -35,11 +35,11 @@ public:
 	{
 		if constexpr(targetbits == 0)
 		{
-			MPT_UNREFERENCED_PARAMETER(rng);
+			MPT_UNUSED(rng);
 			return sample;
 		} else if constexpr(targetbits + MixSampleIntTraits::mix_headroom_bits + 1 >= 32)
 		{
-			MPT_UNREFERENCED_PARAMETER(rng);
+			MPT_UNUSED(rng);
 			return sample;
 		} else
 		{

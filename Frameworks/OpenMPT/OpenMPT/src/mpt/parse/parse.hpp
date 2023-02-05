@@ -51,7 +51,13 @@ inline T ConvertStringTo(const Tstring & str) {
 	std::basic_istringstream<typename decltype(mpt::parse_as_internal_string_type(mpt::as_string(str)))::value_type> stream(mpt::parse_as_internal_string_type(mpt::as_string(str)));
 	stream.imbue(std::locale::classic());
 	T value;
-	if constexpr (std::is_same<T, signed char>::value) {
+	if constexpr (std::is_same<T, bool>::value) {
+		int tmp;
+		if (!(stream >> tmp)) {
+			return T{};
+		}
+		value = tmp ? true : false;
+	} else if constexpr (std::is_same<T, signed char>::value) {
 		signed int tmp;
 		if (!(stream >> tmp)) {
 			return T{};
