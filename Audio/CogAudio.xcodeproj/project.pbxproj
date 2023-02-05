@@ -41,34 +41,9 @@
 		17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DD30B8D0F7000A34E87 /* PluginController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.mm */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		831A4FDC2865A7DC0049CFE4 /* CDSPProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4F9D2865A7DC0049CFE4 /* CDSPProcessor.h */; };
-		831A4FDD2865A7DC0049CFE4 /* CDSPRealFFT.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4F9E2865A7DC0049CFE4 /* CDSPRealFFT.h */; };
-		831A4FDE2865A7DC0049CFE4 /* pffft_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA02865A7DC0049CFE4 /* pffft_double.h */; };
-		831A4FDF2865A7DC0049CFE4 /* pf_neon_double_from_avx.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA22865A7DC0049CFE4 /* pf_neon_double_from_avx.h */; };
-		831A4FE02865A7DC0049CFE4 /* pf_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA32865A7DC0049CFE4 /* pf_double.h */; };
-		831A4FE12865A7DC0049CFE4 /* pf_neon_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA42865A7DC0049CFE4 /* pf_neon_double.h */; };
-		831A4FE22865A7DC0049CFE4 /* pf_sse2_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA52865A7DC0049CFE4 /* pf_sse2_double.h */; };
-		831A4FE32865A7DC0049CFE4 /* pf_avx_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA62865A7DC0049CFE4 /* pf_avx_double.h */; };
-		831A4FE42865A7DC0049CFE4 /* pf_scalar_double.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA72865A7DC0049CFE4 /* pf_scalar_double.h */; };
-		831A4FE52865A7DC0049CFE4 /* pffft_priv_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FA82865A7DC0049CFE4 /* pffft_priv_impl.h */; };
-		831A4FE62865A7DC0049CFE4 /* pffft_double.c in Sources */ = {isa = PBXBuildFile; fileRef = 831A4FA92865A7DC0049CFE4 /* pffft_double.c */; };
-		831A4FF32865A7DC0049CFE4 /* r8butil.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FB82865A7DC0049CFE4 /* r8butil.h */; };
-		831A4FF52865A7DC0049CFE4 /* r8bbase.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FBA2865A7DC0049CFE4 /* r8bbase.h */; };
-		831A4FFE2865A7DC0049CFE4 /* CDSPSincFilterGen.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FC42865A7DC0049CFE4 /* CDSPSincFilterGen.h */; };
-		831A50072865A7DC0049CFE4 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 831A4FD02865A7DC0049CFE4 /* LICENSE */; };
-		831A50082865A7DC0049CFE4 /* CDSPResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD12865A7DC0049CFE4 /* CDSPResampler.h */; };
-		831A50092865A7DC0049CFE4 /* CDSPHBUpsampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD22865A7DC0049CFE4 /* CDSPHBUpsampler.h */; };
-		831A500B2865A7DC0049CFE4 /* CDSPBlockConvolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD42865A7DC0049CFE4 /* CDSPBlockConvolver.h */; };
-		831A500C2865A7DC0049CFE4 /* fft4g.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD52865A7DC0049CFE4 /* fft4g.h */; };
-		831A500D2865A7DC0049CFE4 /* CDSPHBDownsampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD62865A7DC0049CFE4 /* CDSPHBDownsampler.h */; };
-		831A500E2865A7DC0049CFE4 /* r8bconf.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD72865A7DC0049CFE4 /* r8bconf.h */; };
-		831A500F2865A7DC0049CFE4 /* CDSPFracInterpolator.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD82865A7DC0049CFE4 /* CDSPFracInterpolator.h */; };
-		831A50102865A7DC0049CFE4 /* CDSPFIRFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FD92865A7DC0049CFE4 /* CDSPFIRFilter.h */; };
-		831A50112865A7DC0049CFE4 /* r8bbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831A4FDA2865A7DC0049CFE4 /* r8bbase.cpp */; };
-		831A50122865A7DC0049CFE4 /* pffft.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A4FDB2865A7DC0049CFE4 /* pffft.h */; };
-		831A50142865A7FD0049CFE4 /* r8bstate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 831A50132865A7FD0049CFE4 /* r8bstate.hpp */; };
-		831A50162865A8800049CFE4 /* r8bstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831A50152865A8800049CFE4 /* r8bstate.cpp */; };
-		831A50182865A8B30049CFE4 /* r8bstate.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A50172865A8B30049CFE4 /* r8bstate.h */; };
+		831A50142865A7FD0049CFE4 /* rsstate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 831A50132865A7FD0049CFE4 /* rsstate.hpp */; };
+		831A50162865A8800049CFE4 /* rsstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831A50152865A8800049CFE4 /* rsstate.cpp */; };
+		831A50182865A8B30049CFE4 /* rsstate.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A50172865A8B30049CFE4 /* rsstate.h */; };
 		8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8328995127CB510F00D7F028 /* RedundantPlaylistDataStore.m */; };
 		8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8328995227CB511000D7F028 /* RedundantPlaylistDataStore.h */; };
 		8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8328995527CB51B700D7F028 /* SHA256Digest.h */; };
@@ -93,6 +68,7 @@
 		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
 		835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */; };
 		835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */; };
+		836DF618298F6F5F00CD0580 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836DF615298F6E8900CD0580 /* libsoxr.0.dylib */; };
 		83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7B27AA0D8A0003F694 /* Accelerate.framework */; };
 		83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7C27AA0D8E0003F694 /* AVFoundation.framework */; };
 		8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 8377C64B27B8C51500E8BC0F /* fft_accelerate.c */; };
@@ -123,15 +99,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		17D21D2B0B8BE6A200D1EBDE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		83725A8D27AA0DDB0003F694 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -182,35 +149,9 @@
 		17F94DD40B8D0F7000A34E87 /* PluginController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginController.mm; sourceTree = "<group>"; };
 		17F94DDC0B8D101100A34E87 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogAudio_Prefix.pch; sourceTree = "<group>"; };
-		831A4F9D2865A7DC0049CFE4 /* CDSPProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPProcessor.h; sourceTree = "<group>"; };
-		831A4F9E2865A7DC0049CFE4 /* CDSPRealFFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPRealFFT.h; sourceTree = "<group>"; };
-		831A4FA02865A7DC0049CFE4 /* pffft_double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pffft_double.h; sourceTree = "<group>"; };
-		831A4FA22865A7DC0049CFE4 /* pf_neon_double_from_avx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pf_neon_double_from_avx.h; sourceTree = "<group>"; };
-		831A4FA32865A7DC0049CFE4 /* pf_double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pf_double.h; sourceTree = "<group>"; };
-		831A4FA42865A7DC0049CFE4 /* pf_neon_double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pf_neon_double.h; sourceTree = "<group>"; };
-		831A4FA52865A7DC0049CFE4 /* pf_sse2_double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pf_sse2_double.h; sourceTree = "<group>"; };
-		831A4FA62865A7DC0049CFE4 /* pf_avx_double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pf_avx_double.h; sourceTree = "<group>"; };
-		831A4FA72865A7DC0049CFE4 /* pf_scalar_double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pf_scalar_double.h; sourceTree = "<group>"; };
-		831A4FA82865A7DC0049CFE4 /* pffft_priv_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pffft_priv_impl.h; sourceTree = "<group>"; };
-		831A4FA92865A7DC0049CFE4 /* pffft_double.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pffft_double.c; sourceTree = "<group>"; };
-		831A4FB72865A7DC0049CFE4 /* CDSPHBUpsampler.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = CDSPHBUpsampler.inc; sourceTree = "<group>"; };
-		831A4FB82865A7DC0049CFE4 /* r8butil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = r8butil.h; sourceTree = "<group>"; };
-		831A4FBA2865A7DC0049CFE4 /* r8bbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = r8bbase.h; sourceTree = "<group>"; };
-		831A4FC42865A7DC0049CFE4 /* CDSPSincFilterGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPSincFilterGen.h; sourceTree = "<group>"; };
-		831A4FD02865A7DC0049CFE4 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		831A4FD12865A7DC0049CFE4 /* CDSPResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPResampler.h; sourceTree = "<group>"; };
-		831A4FD22865A7DC0049CFE4 /* CDSPHBUpsampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPHBUpsampler.h; sourceTree = "<group>"; };
-		831A4FD42865A7DC0049CFE4 /* CDSPBlockConvolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPBlockConvolver.h; sourceTree = "<group>"; };
-		831A4FD52865A7DC0049CFE4 /* fft4g.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft4g.h; sourceTree = "<group>"; };
-		831A4FD62865A7DC0049CFE4 /* CDSPHBDownsampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPHBDownsampler.h; sourceTree = "<group>"; };
-		831A4FD72865A7DC0049CFE4 /* r8bconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = r8bconf.h; sourceTree = "<group>"; };
-		831A4FD82865A7DC0049CFE4 /* CDSPFracInterpolator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPFracInterpolator.h; sourceTree = "<group>"; };
-		831A4FD92865A7DC0049CFE4 /* CDSPFIRFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDSPFIRFilter.h; sourceTree = "<group>"; };
-		831A4FDA2865A7DC0049CFE4 /* r8bbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = r8bbase.cpp; sourceTree = "<group>"; };
-		831A4FDB2865A7DC0049CFE4 /* pffft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pffft.h; sourceTree = "<group>"; };
-		831A50132865A7FD0049CFE4 /* r8bstate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = r8bstate.hpp; sourceTree = "<group>"; };
-		831A50152865A8800049CFE4 /* r8bstate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = r8bstate.cpp; sourceTree = "<group>"; };
-		831A50172865A8B30049CFE4 /* r8bstate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = r8bstate.h; sourceTree = "<group>"; };
+		831A50132865A7FD0049CFE4 /* rsstate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rsstate.hpp; sourceTree = "<group>"; };
+		831A50152865A8800049CFE4 /* rsstate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rsstate.cpp; sourceTree = "<group>"; };
+		831A50172865A8B30049CFE4 /* rsstate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rsstate.h; sourceTree = "<group>"; };
 		8328995127CB510F00D7F028 /* RedundantPlaylistDataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RedundantPlaylistDataStore.m; path = ../../Utils/RedundantPlaylistDataStore.m; sourceTree = "<group>"; };
 		8328995227CB511000D7F028 /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RedundantPlaylistDataStore.h; path = ../../Utils/RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
 		8328995527CB51B700D7F028 /* SHA256Digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = ../../Utils/SHA256Digest.h; sourceTree = "<group>"; };
@@ -235,6 +176,7 @@
 		835C88B0279811A500E28EAE /* hdcd_decode2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdcd_decode2.c; sourceTree = "<group>"; };
 		835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BadSampleCleaner.h; path = Utils/BadSampleCleaner.h; sourceTree = SOURCE_ROOT; };
 		835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BadSampleCleaner.m; path = Utils/BadSampleCleaner.m; sourceTree = SOURCE_ROOT; };
+		836DF615298F6E8900CD0580 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsoxr.0.dylib; path = ../ThirdParty/soxr/lib/libsoxr.0.dylib; sourceTree = "<group>"; };
 		83725A7B27AA0D8A0003F694 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8377C64B27B8C51500E8BC0F /* fft_accelerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft_accelerate.c; sourceTree = "<group>"; };
@@ -277,6 +219,7 @@
 				8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */,
 				83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */,
 				17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */,
+				836DF618298F6F5F00CD0580 /* libsoxr.0.dylib in Frameworks */,
 				17D21DAE0B8BE76800D1EBDE /* AudioUnit.framework in Frameworks */,
 				17D21DAF0B8BE76800D1EBDE /* CoreAudio.framework in Frameworks */,
 				17D21DB00B8BE76800D1EBDE /* CoreAudioKit.framework in Frameworks */,
@@ -371,6 +314,7 @@
 		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				836DF615298F6E8900CD0580 /* libsoxr.0.dylib */,
 				83725A7B27AA0D8A0003F694 /* Accelerate.framework */,
 				17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */,
 				17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */,
@@ -425,10 +369,9 @@
 			children = (
 				834A41A4287A90AB00EB9D9B /* fsurround */,
 				839E56E02879450300DFB5F4 /* hrtf */,
-				831A50152865A8800049CFE4 /* r8bstate.cpp */,
-				831A50172865A8B30049CFE4 /* r8bstate.h */,
-				831A50132865A7FD0049CFE4 /* r8bstate.hpp */,
-				831A4F9C2865A7DC0049CFE4 /* r8brain-free-src */,
+				831A50152865A8800049CFE4 /* rsstate.cpp */,
+				831A50172865A8B30049CFE4 /* rsstate.h */,
+				831A50132865A7FD0049CFE4 /* rsstate.hpp */,
 				8377C64A27B8C51500E8BC0F /* deadbeef */,
 				835C88AE279811A500E28EAE /* hdcd */,
 				17D21DC40B8BE79700D1EBDE /* CoreAudioUtils */,
@@ -472,55 +415,6 @@
 				32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */,
 			);
 			name = "Other Sources";
-			sourceTree = "<group>";
-		};
-		831A4F9C2865A7DC0049CFE4 /* r8brain-free-src */ = {
-			isa = PBXGroup;
-			children = (
-				831A4F9D2865A7DC0049CFE4 /* CDSPProcessor.h */,
-				831A4F9E2865A7DC0049CFE4 /* CDSPRealFFT.h */,
-				831A4F9F2865A7DC0049CFE4 /* pffft_double */,
-				831A4FB72865A7DC0049CFE4 /* CDSPHBUpsampler.inc */,
-				831A4FB82865A7DC0049CFE4 /* r8butil.h */,
-				831A4FBA2865A7DC0049CFE4 /* r8bbase.h */,
-				831A4FC42865A7DC0049CFE4 /* CDSPSincFilterGen.h */,
-				831A4FD02865A7DC0049CFE4 /* LICENSE */,
-				831A4FD12865A7DC0049CFE4 /* CDSPResampler.h */,
-				831A4FD22865A7DC0049CFE4 /* CDSPHBUpsampler.h */,
-				831A4FD42865A7DC0049CFE4 /* CDSPBlockConvolver.h */,
-				831A4FD52865A7DC0049CFE4 /* fft4g.h */,
-				831A4FD62865A7DC0049CFE4 /* CDSPHBDownsampler.h */,
-				831A4FD72865A7DC0049CFE4 /* r8bconf.h */,
-				831A4FD82865A7DC0049CFE4 /* CDSPFracInterpolator.h */,
-				831A4FD92865A7DC0049CFE4 /* CDSPFIRFilter.h */,
-				831A4FDA2865A7DC0049CFE4 /* r8bbase.cpp */,
-				831A4FDB2865A7DC0049CFE4 /* pffft.h */,
-			);
-			path = "r8brain-free-src";
-			sourceTree = "<group>";
-		};
-		831A4F9F2865A7DC0049CFE4 /* pffft_double */ = {
-			isa = PBXGroup;
-			children = (
-				831A4FA02865A7DC0049CFE4 /* pffft_double.h */,
-				831A4FA12865A7DC0049CFE4 /* simd */,
-				831A4FA82865A7DC0049CFE4 /* pffft_priv_impl.h */,
-				831A4FA92865A7DC0049CFE4 /* pffft_double.c */,
-			);
-			path = pffft_double;
-			sourceTree = "<group>";
-		};
-		831A4FA12865A7DC0049CFE4 /* simd */ = {
-			isa = PBXGroup;
-			children = (
-				831A4FA22865A7DC0049CFE4 /* pf_neon_double_from_avx.h */,
-				831A4FA32865A7DC0049CFE4 /* pf_double.h */,
-				831A4FA42865A7DC0049CFE4 /* pf_neon_double.h */,
-				831A4FA52865A7DC0049CFE4 /* pf_sse2_double.h */,
-				831A4FA62865A7DC0049CFE4 /* pf_avx_double.h */,
-				831A4FA72865A7DC0049CFE4 /* pf_scalar_double.h */,
-			);
-			path = simd;
 			sourceTree = "<group>";
 		};
 		834A41A4287A90AB00EB9D9B /* fsurround */ = {
@@ -590,61 +484,39 @@
 			files = (
 				839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */,
 				17D21CA10B8BE4BA00D1EBDE /* BufferChain.h in Headers */,
-				831A4FE02865A7DC0049CFE4 /* pf_double.h in Headers */,
-				831A50142865A7FD0049CFE4 /* r8bstate.hpp in Headers */,
+				831A50142865A7FD0049CFE4 /* rsstate.hpp in Headers */,
 				834A41AC287A90AB00EB9D9B /* channelmaps.h in Headers */,
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
 				834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */,
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
-				831A4FF32865A7DC0049CFE4 /* r8butil.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
 				8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */,
-				831A50102865A7DC0049CFE4 /* CDSPFIRFilter.h in Headers */,
-				831A4FFE2865A7DC0049CFE4 /* CDSPSincFilterGen.h in Headers */,
-				831A4FF52865A7DC0049CFE4 /* r8bbase.h in Headers */,
-				831A50082865A7DC0049CFE4 /* CDSPResampler.h in Headers */,
 				17D21CC50B8BE4BA00D1EBDE /* OutputAVFoundation.h in Headers */,
 				83504165286447DA006B32CC /* Downmix.h in Headers */,
-				831A4FDE2865A7DC0049CFE4 /* pffft_double.h in Headers */,
 				839E56E52879450300DFB5F4 /* HrtfData.h in Headers */,
 				83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */,
-				831A4FE12865A7DC0049CFE4 /* pf_neon_double.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */,
 				839E56E62879450300DFB5F4 /* Endianness.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
 				839E56ED2879515D00DFB5F4 /* HeadphoneFilter.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
-				831A50182865A8B30049CFE4 /* r8bstate.h in Headers */,
-				831A4FE52865A7DC0049CFE4 /* pffft_priv_impl.h in Headers */,
-				831A4FE42865A7DC0049CFE4 /* pf_scalar_double.h in Headers */,
-				831A500D2865A7DC0049CFE4 /* CDSPHBDownsampler.h in Headers */,
-				831A500C2865A7DC0049CFE4 /* fft4g.h in Headers */,
+				831A50182865A8B30049CFE4 /* rsstate.h in Headers */,
 				834FD4F027AF93680063BC83 /* ChunkList.h in Headers */,
 				17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */,
-				831A50122865A7DC0049CFE4 /* pffft.h in Headers */,
-				831A4FDC2865A7DC0049CFE4 /* CDSPProcessor.h in Headers */,
-				831A4FDD2865A7DC0049CFE4 /* CDSPRealFFT.h in Headers */,
 				17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */,
 				8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */,
 				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
 				834A41AF287ABD6F00EB9D9B /* FSurroundFilter.h in Headers */,
 				17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */,
-				831A50092865A7DC0049CFE4 /* CDSPHBUpsampler.h in Headers */,
-				831A500E2865A7DC0049CFE4 /* r8bconf.h in Headers */,
 				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
-				831A500F2865A7DC0049CFE4 /* CDSPFracInterpolator.h in Headers */,
-				831A4FE22865A7DC0049CFE4 /* pf_sse2_double.h in Headers */,
 				839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */,
 				839065F32853338700636FBB /* dsd2float.h in Headers */,
 				17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */,
-				831A4FDF2865A7DC0049CFE4 /* pf_neon_double_from_avx.h in Headers */,
-				831A4FE32865A7DC0049CFE4 /* pf_avx_double.h in Headers */,
 				839366671815923C006DD712 /* CogPluginMulti.h in Headers */,
 				17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */,
-				831A500B2865A7DC0049CFE4 /* CDSPBlockConvolver.h in Headers */,
 				835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */,
 				8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */,
 				8384912718080FF100E7332D /* Logging.h in Headers */,
@@ -664,7 +536,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio Framework" */;
 			buildPhases = (
-				17D21D2B0B8BE6A200D1EBDE /* CopyFiles */,
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
@@ -718,7 +589,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				831A50072865A7DC0049CFE4 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -732,11 +602,10 @@
 				17D21CA20B8BE4BA00D1EBDE /* BufferChain.m in Sources */,
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
 				839E56EE2879515D00DFB5F4 /* HeadphoneFilter.mm in Sources */,
-				831A50112865A7DC0049CFE4 /* r8bbase.cpp in Sources */,
 				83504166286447DA006B32CC /* Downmix.m in Sources */,
 				8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */,
 				834A41AB287A90AB00EB9D9B /* channelmaps.cpp in Sources */,
-				831A50162865A8800049CFE4 /* r8bstate.cpp in Sources */,
+				831A50162865A8800049CFE4 /* rsstate.cpp in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
 				17D21CC60B8BE4BA00D1EBDE /* OutputAVFoundation.m in Sources */,
@@ -753,7 +622,6 @@
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */,
 				839E56E72879450300DFB5F4 /* HrtfData.cpp in Sources */,
-				831A4FE62865A7DC0049CFE4 /* pffft_double.c in Sources */,
 				17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */,
 				8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */,
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,
@@ -789,14 +657,12 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CogAudio_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"R8B_EXTFFT=1",
-					"R8B_PFFFT_DOUBLE=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				HEADER_SEARCH_PATHS = ../ThirdParty/soxr/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = ../ThirdParty/soxr/lib;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
@@ -823,13 +689,12 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CogAudio_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"R8B_EXTFFT=1",
-					"R8B_PFFFT_DOUBLE=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = ../ThirdParty/soxr/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = ../ThirdParty/soxr/lib;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;

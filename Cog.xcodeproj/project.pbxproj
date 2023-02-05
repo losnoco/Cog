@@ -132,6 +132,7 @@
 		835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 835FAC7D27BCDF5B00BA8562 /* libavif.a */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
+		836DF617298F6F1700CD0580 /* libsoxr.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836DF616298F6EC400CD0580 /* libsoxr.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C427BB919300BF35B2 /* libogg.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -741,6 +742,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				836DF617298F6F1700CD0580 /* libsoxr.0.dylib in CopyFiles */,
 				836EF0E127BB98AB00BF35B2 /* libopusfile.0.dylib in CopyFiles */,
 				836EF0E027BB98A800BF35B2 /* libopus.0.dylib in CopyFiles */,
 				836EF0CB27BB91EE00BF35B2 /* libFLAC.12.dylib in CopyFiles */,
@@ -989,6 +991,7 @@
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
+		836DF616298F6EC400CD0580 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsoxr.0.dylib; path = ThirdParty/soxr/lib/libsoxr.0.dylib; sourceTree = "<group>"; };
 		836EF0C427BB919300BF35B2 /* libogg.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libogg.0.dylib; path = ThirdParty/ogg/lib/libogg.0.dylib; sourceTree = "<group>"; };
 		836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbis.0.dylib; path = ThirdParty/vorbis/lib/libvorbis.0.dylib; sourceTree = "<group>"; };
 		836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
@@ -1205,6 +1208,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				836DF616298F6EC400CD0580 /* libsoxr.0.dylib */,
 				83256B672866617F0036D9C0 /* libmpg123.0.dylib */,
 				835FAC7C27BCDF5B00BA8562 /* libaom.a */,
 				835FAC7D27BCDF5B00BA8562 /* libavif.a */,
@@ -3089,6 +3093,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/ThirdParty/avif/lib",
 					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
+					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
@@ -3145,6 +3150,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/ThirdParty/avif/lib",
 					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
+					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
