@@ -14,7 +14,7 @@
 
 #import <fstream>
 
-#import "r8bstate.h"
+#import "rsstate.h"
 
 #import "HrtfData.h"
 
@@ -205,24 +205,24 @@ static impulseCache *_sharedController = nil;
 		double sampleRatio = sampleRate / sampleRateOfSource;
 		int resampledCount = (int)ceil((double)sampleCount * sampleRatio);
 
-		void *r8bstate = r8bstate_new(channelCount * 2, 1024, sampleRateOfSource, sampleRate);
+		void *rsstate = rsstate_new(channelCount * 2, sampleRateOfSource, sampleRate);
 
 		float *resampledImpulse = (float *)_memalign_malloc(resampledCount * sizeof(float) * channelCount * 2, 16);
 		if(!resampledImpulse) {
-			r8bstate_delete(r8bstate);
+			rsstate_delete(rsstate);
 			return nil;
 		}
 
 		size_t inputDone = 0;
 		size_t outputDone = 0;
 
-		outputDone = r8bstate_resample(r8bstate, impulseData, sampleCount, &inputDone, resampledImpulse, resampledCount);
+		outputDone = rsstate_resample(rsstate, impulseData, sampleCount, &inputDone, resampledImpulse, resampledCount);
 
 		while(outputDone < resampledCount) {
-			outputDone += r8bstate_flush(r8bstate, resampledImpulse + outputDone * channelCount * 2, resampledCount - outputDone);
+			outputDone += rsstate_flush(rsstate, resampledImpulse + outputDone * channelCount * 2, resampledCount - outputDone);
 		}
 
-		r8bstate_delete(r8bstate);
+		rsstate_delete(rsstate);
 
 		sampleCount = (int)outputDone;
 

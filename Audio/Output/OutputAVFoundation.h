@@ -40,10 +40,10 @@ using std::atomic_long;
 @interface OutputAVFoundation : NSObject {
 	OutputNode *outputController;
 
-	BOOL r8bDone;
-	void *r8bstate, *r8bold;
+	BOOL rsDone;
+	void *rsstate, *rsold;
 
-	void *r8bvis;
+	void *rsvis;
 	double lastVisRate;
 
 	BOOL stopInvoked;
@@ -121,7 +121,7 @@ using std::atomic_long;
 
 	float *samplePtr;
 	float tempBuffer[512 * 32];
-	float r8bTempBuffer[4096 * 32];
+	float rsTempBuffer[4096 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
 	float fsurroundBuffer[8192 * 6];
 	float hrtfBuffer[4096 * 2];

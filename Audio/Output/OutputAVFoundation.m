@@ -17,7 +17,7 @@
 
 #import <Accelerate/Accelerate.h>
 
-#import "r8bstate.h"
+#import "rsstate.h"
 
 #import "FSurroundFilter.h"
 
@@ -90,14 +90,14 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			[currentPtsLock lock];
 			if(formatClipped) {
 				ALog(@"Sample rate clipped to no more than %f Hz!", maxSampleRate);
-				if(r8bstate) {
-					r8bold = r8bstate;
-					r8bstate = NULL;
+				if(rsstate) {
+					rsold = rsstate;
+					rsstate = NULL;
 				}
-				r8bstate = r8bstate_new(format.mChannelsPerFrame, 1024, srcRate, dstRate);
-			} else if(r8bstate) {
-				r8bold = r8bstate;
-				r8bstate = NULL;
+				rsstate = rsstate_new(format.mChannelsPerFrame, srcRate, dstRate);
+			} else if(rsstate) {
+				rsold = rsstate;
+				rsstate = NULL;
 			}
 			[currentPtsLock unlock];
 			newFormat = format;
@@ -110,7 +110,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			visFormat.mBytesPerPacket = visFormat.mBytesPerFrame * visFormat.mFramesPerPacket;
 
 			downmixerForVis = [[DownmixProcessor alloc] initWithInputFormat:format inputConfig:config andOutputFormat:visFormat outputConfig:AudioConfigMono];
-			if(!r8bold) {
+			if(!rsold) {
 				realStreamFormat = format;
 				realStreamChannelConfig = config;
 				streamFormatChanged = YES;
@@ -140,14 +140,14 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 #endif
 		// It should be fine to request up to double, we'll only get downsampled
 		const float *outputPtr = (const float *)[samples bytes];
-		if(r8bstate) {
+		if(rsstate) {
 			size_t inDone = 0;
 			[currentPtsLock lock];
-			size_t framesDone = r8bstate_resample(r8bstate, outputPtr, frameCount, &inDone, &r8bTempBuffer[0], amountToRead);
+			size_t framesDone = rsstate_resample(rsstate, outputPtr, frameCount, &inDone, &rsTempBuffer[0], amountToRead);
 			[currentPtsLock unlock];
 			if(!framesDone) return 0;
 			frameCount = (int)framesDone;
-			outputPtr = &r8bTempBuffer[0];
+			outputPtr = &rsTempBuffer[0];
 			chunkDuration = frameCount / newFormat.mSampleRate;
 		}
 
@@ -159,11 +159,11 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		if(newFormat.mSampleRate != 44100.0) {
 			if(newFormat.mSampleRate != lastVisRate) {
-				if(r8bvis) {
+				if(rsvis) {
 					for(;;) {
 						int samplesFlushed;
 						[currentPtsLock lock];
-						samplesFlushed = (int)r8bstate_flush(r8bvis, &visTemp[0], 8192);
+						samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
 						[currentPtsLock unlock];
 						if(samplesFlushed) {
 							[visController postVisPCM:visTemp amount:samplesFlushed];
@@ -172,23 +172,23 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 						}
 					}
 					[currentPtsLock lock];
-					r8bstate_delete(r8bvis);
-					r8bvis = NULL;
+					rsstate_delete(rsvis);
+					rsvis = NULL;
 					[currentPtsLock unlock];
 				}
 				lastVisRate = newFormat.mSampleRate;
 				[currentPtsLock lock];
-				r8bvis = r8bstate_new(1, 1024, lastVisRate, 44100.0);
+				rsvis = rsstate_new(1, lastVisRate, 44100.0);
 				[currentPtsLock unlock];
 			}
-			if(r8bvis) {
+			if(rsvis) {
 				int samplesProcessed;
 				size_t totalDone = 0;
 				size_t inDone = 0;
 				size_t visFrameCount = frameCount;
 				{
 					[currentPtsLock lock];
-					samplesProcessed = (int)r8bstate_resample(r8bvis, &visAudio[totalDone], visFrameCount, &inDone, &visTemp[0], 8192);
+					samplesProcessed = (int)rsstate_resample(rsvis, &visAudio[totalDone], visFrameCount, &inDone, &visTemp[0], 8192);
 					[currentPtsLock unlock];
 					if(samplesProcessed) {
 						[visController postVisPCM:&visTemp[0] amount:samplesProcessed];
@@ -197,11 +197,11 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 					visFrameCount -= inDone;
 				} while(samplesProcessed && visFrameCount);
 			}
-		} else if(r8bvis) {
+		} else if(rsvis) {
 			for(;;) {
 				int samplesFlushed;
 				[currentPtsLock lock];
-				samplesFlushed = (int)r8bstate_flush(r8bvis, &visTemp[0], 8192);
+				samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
 				[currentPtsLock unlock];
 				if(samplesFlushed) {
 					[visController postVisPCM:visTemp amount:samplesFlushed];
@@ -210,8 +210,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 				}
 			}
 			[currentPtsLock lock];
-			r8bstate_delete(r8bvis);
-			r8bvis = NULL;
+			rsstate_delete(rsvis);
+			rsvis = NULL;
 			[currentPtsLock unlock];
 			[visController postVisPCM:&visAudio[0] amount:frameCount];
 		} else {
@@ -795,26 +795,26 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		int samplesRendered;
 
 		if(i == 0) {
-			if(!r8bold) {
+			if(!rsold) {
 				++i;
 				continue;
 			}
 			[currentPtsLock lock];
-			samplesRendered = r8bstate_flush(r8bold, &r8bTempBuffer[0], 4096);
+			samplesRendered = rsstate_flush(rsold, &rsTempBuffer[0], 4096);
 			[currentPtsLock unlock];
 			if(!samplesRendered) {
-				r8bstate_delete(r8bold);
-				r8bold = NULL;
-				r8bDone = YES;
+				rsstate_delete(rsold);
+				rsold = NULL;
+				rsDone = YES;
 				++i;
 				continue;
 			}
-			samplePtr = &r8bTempBuffer[0];
+			samplePtr = &rsTempBuffer[0];
 		} else {
 			samplesRendered = inputRendered;
 			samplePtr = &inputBuffer[0];
-			if(r8bDone) {
-				r8bDone = NO;
+			if(rsDone) {
+				rsDone = NO;
 				realStreamFormat = newFormat;
 				realStreamChannelConfig = newChannelConfig;
 				streamFormatChanged = YES;
@@ -959,11 +959,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		downmixerForVis = nil;
 
-		r8bDone = NO;
-		r8bstate = NULL;
-		r8bold = NULL;
+		rsDone = NO;
+		rsstate = NULL;
+		rsold = NULL;
 
-		r8bvis = NULL;
+		rsvis = NULL;
 		lastVisRate = 44100.0;
 
 		AudioComponentDescription desc;
@@ -1079,9 +1079,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	OutputNode *outputController = self->outputController;
 	double *latencySecondsOut = &self->secondsLatency;
 	VisualizationController *visController = self->visController;
-	void **r8bstate = &self->r8bstate;
-	void **r8bold = &self->r8bold;
-	void **r8bvis = &self->r8bvis;
+	void **rsstate = &self->rsstate;
+	void **rsold = &self->rsold;
+	void **rsvis = &self->rsvis;
 	FSurroundFilter *const *fsurroundtest = &self->fsurround;
 	currentPtsObserver = [renderSynchronizer addPeriodicTimeObserverForInterval:interval
 	                                                                      queue:NULL
@@ -1101,14 +1101,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		                                                                 double latencySeconds = CMTimeGetSeconds(latencyTime);
 		                                                                 double latencyVis = 0.0;
 		                                                                 [lock lock];
-		                                                                 if(*r8bstate) {
-			                                                                 latencySeconds += r8bstate_latency(*r8bstate);
+		                                                                 if(*rsstate) {
+			                                                                 latencySeconds += rsstate_latency(*rsstate);
 		                                                                 }
-		                                                                 if(*r8bold) {
-			                                                                 latencySeconds += r8bstate_latency(*r8bold);
+		                                                                 if(*rsold) {
+			                                                                 latencySeconds += rsstate_latency(*rsold);
 		                                                                 }
-		                                                                 if(*r8bvis) {
-			                                                                 latencyVis = r8bstate_latency(*r8bvis);
+		                                                                 if(*rsvis) {
+			                                                                 latencyVis = rsstate_latency(*rsvis);
 		                                                                 }
 		                                                                 if(*fsurroundtest) {
 			                                                                 latencyVis += 2048.0 / [(*fsurroundtest) srate];
@@ -1268,17 +1268,17 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 #endif
 		outputController = nil;
 		visController = nil;
-		if(r8bstate) {
-			r8bstate_delete(r8bstate);
-			r8bstate = NULL;
+		if(rsstate) {
+			rsstate_delete(rsstate);
+			rsstate = NULL;
 		}
-		if(r8bold) {
-			r8bstate_delete(r8bold);
-			r8bold = NULL;
+		if(rsold) {
+			rsstate_delete(rsold);
+			rsold = NULL;
 		}
-		if(r8bvis) {
-			r8bstate_delete(r8bvis);
-			r8bvis = NULL;
+		if(rsvis) {
+			rsstate_delete(rsvis);
+			rsvis = NULL;
 		}
 		stopCompleted = YES;
 	}
