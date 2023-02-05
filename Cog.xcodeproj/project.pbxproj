@@ -100,7 +100,6 @@
 		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
 		830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 830C37F227B9956C00E02BB0 /* analyzer.c */; };
 		8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */; };
-		8316B3932839FFD5004CC392 /* Scenes.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 8316B3922839FFD5004CC392 /* Scenes.scnassets */; };
 		831B99BF27C23E88005A969B /* Cog.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 831B99BE27C23E88005A969B /* Cog.sdef */; };
 		83229C9F283B0095004626A8 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83229C9D283B0095004626A8 /* SpectrumWindowController.m */; };
 		83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; };
@@ -133,6 +132,7 @@
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
 		836DF617298F6F1700CD0580 /* libsoxr.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836DF616298F6EC400CD0580 /* libsoxr.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836DF61E298F7F6E00CD0580 /* Scenes.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 836DF61D298F7F6E00CD0580 /* Scenes.scnassets */; };
 		836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C427BB919300BF35B2 /* libogg.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -940,7 +940,6 @@
 		830C37F227B9956C00E02BB0 /* analyzer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		8314A46527A28C28000EBE7E /* equalizerTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = equalizerTemplate.pdf; path = Images/equalizerTemplate.pdf; sourceTree = "<group>"; };
 		8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplay.xcodeproj; path = Plugins/sidplay/sidplay.xcodeproj; sourceTree = "<group>"; };
-		8316B3922839FFD5004CC392 /* Scenes.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Scenes.scnassets; sourceTree = "<group>"; };
 		831B99BE27C23E88005A969B /* Cog.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cog.sdef; sourceTree = "<group>"; };
 		83229C9C283B0095004626A8 /* SpectrumWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumWindowController.h; sourceTree = "<group>"; };
 		83229C9D283B0095004626A8 /* SpectrumWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumWindowController.m; sourceTree = "<group>"; };
@@ -992,6 +991,7 @@
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
 		836DF616298F6EC400CD0580 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsoxr.0.dylib; path = ThirdParty/soxr/lib/libsoxr.0.dylib; sourceTree = "<group>"; };
+		836DF61D298F7F6E00CD0580 /* Scenes.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Scenes.scnassets; sourceTree = "<group>"; };
 		836EF0C427BB919300BF35B2 /* libogg.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libogg.0.dylib; path = ThirdParty/ogg/lib/libogg.0.dylib; sourceTree = "<group>"; };
 		836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbis.0.dylib; path = ThirdParty/vorbis/lib/libvorbis.0.dylib; sourceTree = "<group>"; };
 		836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
@@ -1594,7 +1594,6 @@
 				83F7AAD8290B682400951B61 /* scpipe */,
 				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
-				8316B3922839FFD5004CC392 /* Scenes.scnassets */,
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
 				177EC02D0B8BC2E60000BC8C /* Images */,
@@ -1613,6 +1612,7 @@
 				178456C00F6320B5007E8021 /* SpotlightPanel.xib */,
 				17E41E060C130DFF00AC744D /* Credits.html */,
 				17D1B1DA0F6330D400694C57 /* Feedback.xib */,
+				836DF61D298F7F6E00CD0580 /* Scenes.scnassets */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2549,7 +2549,6 @@
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
 				836F462B28207FA4005B9B87 /* StopColorful.png in Resources */,
 				8314A46F27A28C29000EBE7E /* equalizerTemplate.pdf in Resources */,
-				8316B3932839FFD5004CC392 /* Scenes.scnassets in Resources */,
 				8384916618083EAB00E7332D /* repeatModeOneTemplate.pdf in Resources */,
 				8E7575DB09F31E930080F1EE /* Localizable.strings in Resources */,
 				83E5E54C18087CA5001F3284 /* miniModeOffTemplate.pdf in Resources */,
@@ -2604,6 +2603,7 @@
 				0A9CEA092861506A00E47168 /* AboutCog.jp2 in Resources */,
 				83978E29285C5C0A0076ED21 /* GoogleService-Info.plist in Resources */,
 				8384916118083EAB00E7332D /* previousTemplate.pdf in Resources */,
+				836DF61E298F7F6E00CD0580 /* Scenes.scnassets in Resources */,
 				1778D3B00F645A190037E7A0 /* missingArt.png in Resources */,
 				8384915918083EAB00E7332D /* infoTemplate.pdf in Resources */,
 			);
