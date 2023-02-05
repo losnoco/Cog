@@ -111,6 +111,12 @@ public:
 		return Version();
 	}
 
+	static constexpr Version AnyWindows() noexcept {
+		Version result = Version();
+		result.m_SystemIsWindows = true;
+		return result;
+	}
+
 	constexpr Version(mpt::osinfo::windows::Version::System system, mpt::osinfo::windows::Version::ServicePack servicePack, mpt::osinfo::windows::Version::Build build, mpt::osinfo::windows::Version::TypeId type) noexcept
 		: m_SystemIsWindows(true)
 		, m_System(system)
@@ -125,13 +131,17 @@ public:
 	static mpt::osinfo::windows::Version FromSDK() noexcept {
 		// Initialize to used SDK version
 #if defined(NTDDI_VERSION)
-#if NTDDI_VERSION >= 0x0A00000B // NTDDI_WIN10_CO Win11
+#if NTDDI_VERSION >= 0x0A00000C // NTDDI_WIN10_NI Win11 22H2
+		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 22621, 0);
+#elif NTDDI_VERSION >= 0x0A00000B // NTDDI_WIN10_CO Win11 21H2
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 22000, 0);
+//#elif // 22H2
+//		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19045, 0);
 #elif NTDDI_VERSION >= 0x0A00000A // NTDDI_WIN10_FE 21H2
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19044, 0);
-//#elif // NTDDI_WIN10_FE 21H1
+//#elif // 21H1
 //		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19043, 0);
-//#elif // NTDDI_WIN10_FE 20H2
+//#elif // 20H2
 //		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19042, 0);
 #elif NTDDI_VERSION >= 0x0A000009 // NTDDI_WIN10_MN 2004/20H1
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19041, 0);

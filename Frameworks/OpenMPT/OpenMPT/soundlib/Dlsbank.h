@@ -129,7 +129,7 @@ public:
 	uint32 GetNumInstruments() const { return static_cast<uint32>(m_Instruments.size()); }
 	uint32 GetNumSamples() const { return static_cast<uint32>(m_WaveForms.size()); }
 	const DLSINSTRUMENT *GetInstrument(uint32 iIns) const { return iIns < m_Instruments.size() ? &m_Instruments[iIns] : nullptr; }
-	const DLSINSTRUMENT *FindInstrument(bool isDrum, uint32 bank = 0xFF, uint32 program = 0xFF, uint32 key = 0xFF, uint32 *pInsNo = nullptr) const;
+	[[nodiscard]] const DLSINSTRUMENT *FindInstrument(bool isDrum, uint32 bank = 0xFF, uint32 program = 0xFF, uint32 key = 0xFF, uint32 *pInsNo = nullptr) const;
 	bool FindAndExtract(CSoundFile &sndFile, const INSTRUMENTINDEX ins, const bool isDrum) const;
 	uint32 GetRegionFromKey(uint32 nIns, uint32 nKey) const;
 	bool ExtractWaveForm(uint32 nIns, uint32 nRgn, std::vector<uint8> &waveData, uint32 &length) const;

@@ -187,6 +187,8 @@ void ITCompression::CompressBlock(const typename Properties::sample_t *data, Smp
 int8 ITCompression::GetWidthChangeSize(int8 w, bool is16)
 {
 	MPT_ASSERT(w > 0 && static_cast<unsigned int>(w) <= std::size(ITWidthChangeSize));
+	// cppcheck false-positive
+	// cppcheck-suppress negativeIndex
 	int8 wcs = ITWidthChangeSize[w - 1];
 	if(w <= 6 && is16)
 		wcs++;

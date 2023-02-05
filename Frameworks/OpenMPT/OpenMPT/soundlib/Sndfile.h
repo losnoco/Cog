@@ -77,7 +77,7 @@ bool ReadInstrumentHeaderField(ModInstrument * input, uint32 fcode, uint16 fsize
 
 
 // Sample decompression routines in format-specific source files
-void AMSUnpack(const int8 * const source, size_t sourceSize, void * const dest, const size_t destSize, char packCharacter);
+void AMSUnpack(mpt::const_byte_span source, mpt::byte_span dest, int8 packCharacter);
 uintptr_t DMFUnpack(FileReader &file, uint8 *psample, uint32 maxlen);
 
 
@@ -998,6 +998,7 @@ public:
 	bool IsRenderingToDisc() const { return m_bIsRendering; }
 
 	void PrecomputeSampleLoops(bool updateChannels = false);
+	void UpdateInstrumentFilter(const ModInstrument *ins, bool updateMode, bool updateCutoff, bool updateResonance);
 
 public:
 	// Mixer Config
@@ -1030,6 +1031,8 @@ public:
 	static TEMPO ConvertST2Tempo(uint8 tempo);
 
 	void ProcessRamping(ModChannel &chn) const;
+
+	void ProcessFinetune(PATTERNINDEX pattern, ROWINDEX row, CHANNELINDEX channel, bool isSmooth);
 
 protected:
 	// Global variable initializer for loader functions
@@ -1084,7 +1087,8 @@ protected:
 	void PortamentoMPT(ModChannel &chn, int);
 	void PortamentoFineMPT(ModChannel &chn, int);
 	void PortamentoExtraFineMPT(ModChannel &chn, int);
-	void SetFinetune(CHANNELINDEX channel, PlayState &playState, bool isSmooth) const;
+	void SetFinetune(PATTERNINDEX pattern, ROWINDEX row, CHANNELINDEX channel, PlayState &playState, bool isSmooth) const;
+	int16 CalculateFinetuneTarget(PATTERNINDEX pattern, ROWINDEX row, CHANNELINDEX channel) const;
 	void NoteSlide(ModChannel &chn, uint32 param, bool slideUp, bool retrig) const;
 	std::pair<uint16, bool> GetVolCmdTonePorta(const ModCommand &m, uint32 startTick) const;
 	void TonePortamento(ModChannel &chn, uint16 param) const;
@@ -1105,7 +1109,7 @@ protected:
 	void DigiBoosterSampleReverse(ModChannel &chn, ModCommand::PARAM param) const;
 	void HandleDigiSamplePlayDirection(PlayState &state, CHANNELINDEX chn) const;
 	void NoteCut(CHANNELINDEX nChn, uint32 nTick, bool cutSample);
-	void PatternLoop(PlayState &state, ModChannel &chn, ModCommand::PARAM param) const;
+	void PatternLoop(PlayState &state, CHANNELINDEX nChn, ModCommand::PARAM param) const;
 	bool HandleNextRow(PlayState &state, const ModSequence &order, bool honorPatternLoop) const;
 	void ExtendedMODCommands(CHANNELINDEX nChn, ModCommand::PARAM param);
 	void ExtendedS3MCommands(CHANNELINDEX nChn, ModCommand::PARAM param);

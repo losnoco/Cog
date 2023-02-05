@@ -1,4 +1,4 @@
 
-MPT_SVNVERSION=17954
-MPT_SVNURL=https://source.openmpt.org/svn/openmpt/tags/libopenmpt-0.6.6
-MPT_SVNDATE=2022-09-25T14:18:19.447172Z
+MPT_SVNVERSION=18680
+MPT_SVNURL=https://source.openmpt.org/svn/openmpt/tags/libopenmpt-0.6.8
+MPT_SVNDATE=2023-01-29T12:13:49.877060Z

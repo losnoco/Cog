@@ -69,7 +69,7 @@ public:
 		return dst.first(avail);
 	}
 
-	bool CanRead(pos_type pos, std::size_t length) const override {
+	bool CanRead(pos_type pos, pos_type length) const override {
 		if ((pos == streamLength) && (length == 0)) {
 			return true;
 		}
@@ -79,7 +79,7 @@ public:
 		return (length <= streamLength - pos);
 	}
 
-	std::size_t GetReadableLength(pos_type pos, std::size_t length) const override {
+	pos_type GetReadableLength(pos_type pos, pos_type length) const override {
 		if (pos >= streamLength) {
 			return 0;
 		}

@@ -59,6 +59,37 @@ uint32 CSoundFile::CutOffToFrequency(uint32 nCutOff, int envModifier) const
 }
 
 
+// Update channels with instrument filter settings updated through tracker UI
+void CSoundFile::UpdateInstrumentFilter(const ModInstrument *ins, bool updateMode, bool updateCutoff, bool updateResonance)
+{
+	for(auto &chn : m_PlayState.Chn)
+	{
+		if(chn.pModInstrument != ins)
+			continue;
+
+		bool change = false;
+		if(updateMode && ins->filterMode != FilterMode::Unchanged && chn.nFilterMode != ins->filterMode)
+		{
+			chn.nFilterMode = ins->filterMode;
+			change = true;
+		}
+		if(updateCutoff)
+		{
+			chn.nCutOff = ins->IsCutoffEnabled() ? ins->GetCutoff() : 0x7F;
+			change |= (chn.nCutOff < 0x7F || chn.dwFlags[CHN_FILTER]);
+		}
+		if(updateResonance)
+		{
+			chn.nResonance = ins->IsResonanceEnabled() ? ins->GetResonance() : 0;
+			change |= (chn.nResonance > 0 || chn.dwFlags[CHN_FILTER]);
+		}
+		// If filter envelope is active, the filter will be updated in the next player tick anyway.
+		if(change && (!ins->PitchEnv.dwFlags[ENV_FILTER] || !IsEnvelopeProcessed(chn, ENV_PITCH)))
+			SetupChannelFilter(chn, false);
+	}
+}
+
+
 // Simple 2-poles resonant filter. Returns computed cutoff in range [0, 254] or -1 if filter is not applied.
 int CSoundFile::SetupChannelFilter(ModChannel &chn, bool bReset, int envModifier) const
 {
@@ -82,10 +113,10 @@ int CSoundFile::SetupChannelFilter(ModChannel &chn, bool bReset, int envModifier
 	// Filtering is only ever done in IT if either cutoff is not full or if resonance is set.
 	if(m_playBehaviour[kITFilterBehaviour] && resonance == 0 && computedCutoff >= 254)
 	{
-		if(chn.rowCommand.IsNote() && !chn.rowCommand.IsPortamento() && !chn.nMasterChn && chn.triggerNote)
+		if(chn.triggerNote)
 		{
 			// Z7F next to a note disables the filter, however in other cases this should not happen.
-			// Test cases: filter-reset.it, filter-reset-carry.it, filter-reset-envelope.it, filter-nna.it, FilterResetPatDelay.it
+			// Test cases: filter-reset.it, filter-reset-carry.it, filter-reset-envelope.it, filter-nna.it, FilterResetPatDelay.it, FilterPortaSmpChange.it, FilterPortaSmpChange-InsMode.it
 			chn.dwFlags.reset(CHN_FILTER);
 		}
 		return -1;

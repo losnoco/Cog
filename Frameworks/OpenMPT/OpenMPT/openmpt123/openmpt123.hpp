@@ -120,7 +120,7 @@ private:
 				s << text;
 			#else
 				s << mpt::transcode<std::string>( mpt::logical_encoding::locale, mpt::common_encoding::utf8, text );
-		#endif
+			#endif
 			s.flush();
 		}	
 	}
@@ -167,12 +167,13 @@ private:
 		std::string text = pop();
 		if ( text.length() > 0 ) {
 			if ( console ) {
+				DWORD chars_written = 0;
 				#if defined(UNICODE)
 					std::wstring wtext = mpt::transcode<std::wstring>( mpt::common_encoding::utf8, text );
-					WriteConsole( handle, wtext.data(), static_cast<DWORD>( wtext.size() ), NULL, NULL );
+					WriteConsole( handle, wtext.data(), static_cast<DWORD>( wtext.size() ), &chars_written, NULL );
 				#else
 					std::string ltext = mpt::transcode<std::string>( mpt::logical_encoding::locale, mpt::common_encoding::utf8, text );
-					WriteConsole( handle, ltext.data(), static_cast<DWORD>( ltext.size() ), NULL, NULL );
+					WriteConsole( handle, ltext.data(), static_cast<DWORD>( ltext.size() ), &chars_written, NULL );
 				#endif
 			} else {
 				#if defined(UNICODE)

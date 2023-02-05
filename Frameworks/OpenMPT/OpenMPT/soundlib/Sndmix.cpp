@@ -2250,19 +2250,54 @@ bool CSoundFile::ReadNote()
 			chn.nRealPan = 128;
 		}
 
+		// Setup Initial Filter for this note
+		int cutoff = -1;
+		if(chn.triggerNote)
+		{
+			bool useFilter = !m_SongFlags[SONG_MPTFILTERMODE];
+			if(pIns)
+			{
+				if(pIns->IsResonanceEnabled())
+				{
+					chn.nResonance = pIns->GetResonance();
+					useFilter = true;
+				}
+				if(pIns->IsCutoffEnabled())
+				{
+					chn.nCutOff = pIns->GetCutoff();
+					useFilter = true;
+				}
+				if(useFilter && (pIns->filterMode != FilterMode::Unchanged))
+				{
+					chn.nFilterMode = pIns->filterMode;
+				}
+			} else
+			{
+				chn.nVolSwing = chn.nPanSwing = 0;
+				chn.nCutSwing = chn.nResSwing = 0;
+			}
+			if((chn.nCutOff < 0x7F || m_playBehaviour[kITFilterBehaviour]) && useFilter)
+			{
+				cutoff = SetupChannelFilter(chn, true);
+				if(cutoff >= 0)
+					cutoff = chn.nCutOff / 2u;
+			}
+		}
+
 		// Now that all relevant envelopes etc. have been processed, we can parse the MIDI macro data.
 		ProcessMacroOnChannel(nChn);
 
 		// After MIDI macros have been processed, we can also process the pitch / filter envelope and other pitch-related things.
 		if(samplePlaying)
 		{
-			int cutoff = ProcessPitchFilterEnvelope(chn, period);
-			if(cutoff >= 0 && chn.dwFlags[CHN_ADLIB] && m_opl)
-			{
-				// Cutoff doubles as modulator intensity for FM instruments
-				m_opl->Volume(nChn, static_cast<uint8>(cutoff / 4), true);
-			}
+			int envCutoff = ProcessPitchFilterEnvelope(chn, period);
+			if(envCutoff >= 0)
+				cutoff = envCutoff / 4;
 		}
+
+		// Cutoff doubles as modulator intensity for FM instruments
+		if(cutoff >= 0 && chn.dwFlags[CHN_ADLIB] && m_opl)
+			m_opl->Volume(nChn, static_cast<uint8>(cutoff), true);
 
 		if(chn.rowCommand.volcmd == VOLCMD_VIBRATODEPTH &&
 			(chn.rowCommand.command == CMD_VIBRATO || chn.rowCommand.command == CMD_VIBRATOVOL || chn.rowCommand.command == CMD_FINEVIBRATO))
@@ -2509,6 +2544,7 @@ bool CSoundFile::ReadNote()
 		}
 
 		chn.dwOldFlags = chn.dwFlags;
+		chn.triggerNote = false;  // For SONG_PAUSED mode
 	}
 
 	// If there are more channels being mixed than allowed, order them by volume and discard the most quiet ones

@@ -31,12 +31,12 @@ void ModSample::Convert(MODTYPE fromType, MODTYPE toType)
 		nFineTune = 0;
 		// TransposeToFrequency assumes NTSC middle-C frequency like FT2, but we play MODs with PAL middle-C!
 		if(fromType == MOD_TYPE_MOD)
-			nC5Speed = Util::muldivr_unsigned(nC5Speed, 8272, 8363);
+			nC5Speed = Util::muldivr_unsigned(nC5Speed, 8287, 8363);
 	} else if((toType & (MOD_TYPE_MOD | MOD_TYPE_XM)) && (!(fromType & (MOD_TYPE_MOD | MOD_TYPE_XM))))
 	{
 		// FrequencyToTranspose assumes NTSC middle-C frequency like FT2, but we play MODs with PAL middle-C!
 		if(toType == MOD_TYPE_MOD)
-			nC5Speed = Util::muldivr_unsigned(nC5Speed, 8363, 8272);
+			nC5Speed = Util::muldivr_unsigned(nC5Speed, 8363, 8287);
 		FrequencyToTranspose();
 	}
 
@@ -162,7 +162,7 @@ uint32 ModSample::GetSampleRate(const MODTYPE type) const
 		rate = nC5Speed;
 	// TransposeToFrequency assumes NTSC middle-C frequency like FT2, but we play MODs with PAL middle-C!
 	if(type == MOD_TYPE_MOD)
-		rate = Util::muldivr_unsigned(rate, 8272, 8363);
+		rate = Util::muldivr_unsigned(rate, 8287, 8363);
 	return (rate > 0) ? rate : 8363;
 }
 

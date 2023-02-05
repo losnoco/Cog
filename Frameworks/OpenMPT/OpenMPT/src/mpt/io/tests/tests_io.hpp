@@ -5,6 +5,7 @@
 
 
 
+#include "mpt/base/alloc.hpp"
 #include "mpt/base/integer.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/base/utility.hpp"
@@ -354,7 +355,7 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 		// Run-time in case some weird compiler gets confused by our templates
 		// and only writes the first array element.
 		std::ostringstream f;
-		uint16be data[2];
+		mpt::uint16be data[2];
 		mpt::reset(data);
 		data[0] = 0x1234;
 		data[1] = 0x5678;
@@ -363,7 +364,7 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 	}
 	{
 		std::ostringstream f;
-		std::vector<int16be> data;
+		std::vector<mpt::int16be> data;
 		data.resize(3);
 		data[0] = 0x1234;
 		data[1] = 0x5678;
@@ -373,7 +374,7 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 	}
 	{
 		std::ostringstream f;
-		int16be data[3];
+		mpt::int16be data[3];
 		mpt::reset(data);
 		data[0] = 0x1234;
 		data[1] = 0x5678;

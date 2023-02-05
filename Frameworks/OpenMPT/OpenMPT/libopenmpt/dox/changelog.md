@@ -5,6 +5,34 @@ Changelog {#changelog}
 For fully detailed change log, please see the source repository directly. This
 is just a high-level summary.
 
+### libopenmpt 0.6.8 (2023-01-29)
+
+ *  [**Bug**] DSYM: Loading DSYM files got broken in 0.6.7.
+
+ *  When seeking around in a module, the tempo was sometimes incorrectly limited
+    to 255 BPM.
+ *  Initial instrument cutoff was broken for OPL instruments in
+    libopenmnpt 0.6.7.
+
+ *  mpg123: Update to v1.31.2 (2023-01-14).
+
+### libopenmpt 0.6.7 (2023-01-08)
+
+ *  [**Bug**] openmpt123: openmpt123 crashed on Windows 9x when showing any
+    console output.
+
+ *  IT: In sample mode, portamento to a different sample turns off the filter if
+    cutoff / resonance was previously 127 / 0.
+ *  S3M Detect files saved with Graoumf Tracker instead of claiming they were
+    made with OpenMPT 4.47.
+ *  S3M: Pattern loop state was not propagated anymore since libopenmpt 0.6.0,
+    leading to wrong song length calculation and SB0 + SBx being located on
+    different channels not working properly anymore.
+
+ *  mpg123: Update to v1.31.1 (2022-11-01).
+ *  FLAC: Update to v1.4.2 (2022-10-22).
+ *  pugixml: Update to v1.13 (2022-11-02).
+
 ### libopenmpt 0.6.6 (2022-09-25)
 
  *  [**Sec**] Possible crash when playing manipulated IT / MPTM files with a T00

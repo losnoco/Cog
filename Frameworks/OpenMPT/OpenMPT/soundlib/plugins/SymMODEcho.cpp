@@ -38,7 +38,7 @@ void SymMODEcho::Process(float* pOutL, float* pOutR, uint32 numFrames)
 	float *outL = m_mixBuffer.GetOutputBuffer(0), *outR = m_mixBuffer.GetOutputBuffer(1);
 
 	const uint32 delayTime = m_SndFile.m_PlayState.m_nSamplesPerTick * m_chunk.param[kEchoDelay];
-	// SymMODs don't have a variable tempo so the tick duration should never change... but if someone loads a module into an MPTM file we have to account for this.
+	// SymMODs don't have a variable tempo so the tick duration should never change... but if someone loads an instance into an MPTM file we have to account for this.
 	if(m_delayLine.size() < delayTime * 2)
 		m_delayLine.resize(delayTime * 2);
 

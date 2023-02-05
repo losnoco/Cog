@@ -43,7 +43,7 @@ public:
 	virtual pos_type GetLength() const = 0;
 	virtual mpt::byte_span Read(pos_type pos, mpt::byte_span dst) const = 0;
 
-	virtual bool CanRead(pos_type pos, std::size_t length) const {
+	virtual bool CanRead(pos_type pos, pos_type length) const {
 		pos_type dataLength = GetLength();
 		if ((pos == dataLength) && (length == 0)) {
 			return true;
@@ -54,7 +54,7 @@ public:
 		return length <= dataLength - pos;
 	}
 
-	virtual std::size_t GetReadableLength(pos_type pos, std::size_t length) const {
+	virtual pos_type GetReadableLength(pos_type pos, pos_type length) const {
 		pos_type dataLength = GetLength();
 		if (pos >= dataLength) {
 			return 0;

@@ -8,6 +8,7 @@
 #include "mpt/base/detect.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/detect/mfc.hpp"
+#include "mpt/string/types.hpp"
 
 #include <string>
 #include <vector>

@@ -8,6 +8,7 @@
 #include "mpt/base/macros.hpp"
 #include "mpt/base/memory.hpp"
 #include "mpt/base/namespace.hpp"
+#include "mpt/base/saturate_cast.hpp"
 #include "mpt/base/utility.hpp"
 #include "mpt/io/base.hpp"
 

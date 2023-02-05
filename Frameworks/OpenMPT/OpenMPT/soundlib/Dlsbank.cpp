@@ -2010,9 +2010,9 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 				} else
 				{
 					SmpLength len = std::min(dwLen / 2u, sampleCopy.nLength);
-					const int16 *src = reinterpret_cast<int16 *>(pWaveForm.data());
+					const std::byte *src = mpt::byte_cast<const std::byte *>(pWaveForm.data());
 					int16 *dst = sampleCopy.sample16() + offsetNew;
-					CopySample<SC::ConversionChain<SC::Convert<int16, int16>, SC::DecodeIdentity<int16>>>(dst, len, 2, src, pWaveForm.size(), 1);
+					CopySample<SC::ConversionChain<SC::Convert<int16, int16>, SC::DecodeInt16<0, littleEndian16>>>(dst, len, 2, src, pWaveForm.size(), 1);
 				}
 				sample.FreeSample();
 				sample = sampleCopy;

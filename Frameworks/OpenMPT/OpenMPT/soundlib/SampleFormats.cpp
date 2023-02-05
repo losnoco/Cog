@@ -1140,6 +1140,18 @@ bool CSoundFile::ReadS3ISample(SAMPLEINDEX nSample, FileReader &file)
 		return false;
 	}
 
+	if(sampleHeader.sampleType >= S3MSampleHeader::typeAdMel)
+	{
+		if(SupportsOPL())
+		{
+			InitOPL();
+		} else
+		{
+			AddToLog(LogInformation, U_("OPL instruments are not supported by this format."));
+			return true;
+		}
+	}
+
 	DestroySampleThreadsafe(nSample);
 
 	ModSample &sample = Samples[nSample];
@@ -1148,10 +1160,6 @@ bool CSoundFile::ReadS3ISample(SAMPLEINDEX nSample, FileReader &file)
 
 	if(sampleHeader.sampleType < S3MSampleHeader::typeAdMel)
 		sampleHeader.GetSampleFormat(false).ReadSample(sample, file);
-	else if(SupportsOPL())
-		InitOPL();
-	else
-		AddToLog(LogInformation, U_("OPL instruments are not supported by this format."));
 
 	sample.Convert(MOD_TYPE_S3M, GetType());
 	sample.PrecomputeLoops(*this, false);

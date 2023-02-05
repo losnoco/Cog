@@ -21,6 +21,7 @@ CFLAGS_SILENT += -Wno-float-conversion
 CFLAGS_SILENT += -Wno-implicit-fallthrough
 CFLAGS_SILENT += -Wno-old-style-declaration
 CFLAGS_SILENT += -Wno-sign-compare
+CFLAGS_SILENT += -Wno-stringop-overflow
 CFLAGS_SILENT += -Wno-type-limits
 CFLAGS_SILENT += -Wno-unused-but-set-variable
 CFLAGS_SILENT += -Wno-unused-function
