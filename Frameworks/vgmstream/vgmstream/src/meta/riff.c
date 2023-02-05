@@ -95,7 +95,7 @@ typedef struct {
     int is_at9;
 } riff_fmt_chunk;
 
-static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk* fmt, int mwv) {
+static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk* fmt) {
     uint32_t (*read_u32)(off_t,STREAMFILE*) = big_endian ? read_u32be : read_u32le;
     uint16_t (*read_u16)(off_t,STREAMFILE*) = big_endian ? read_u16be : read_u16le;
 
@@ -227,7 +227,6 @@ static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk
             break;
 
         case 0x0555: /* Level-5 0x555 ADPCM (unofficial) */
-            if (!mwv) goto fail;
             fmt->coding_type = coding_L5_555;
             fmt->interleave = 0x12;
             break;
@@ -276,13 +275,6 @@ static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk
             if (guid1 == 0xE923AABF && guid2 == 0xCB584471 && guid3 == 0xA119FFFA && guid4 == 0x01E4CE62) {
 #ifdef VGM_USE_FFMPEG
                 fmt->coding_type = coding_FFmpeg;
-                fmt->is_at3p = 1;
-                break;
-#elif defined(VGM_USE_MAIATRAC3PLUS)
-                uint16_t bztmp = read_u16(offset+0x32,sf);
-                bztmp = (bztmp >> 8) | (bztmp << 8);
-                fmt->coding_type = coding_AT3plus;
-                fmt->block_size = (bztmp & 0x3FF) * 8 + 8; /* should match fmt->block_size */
                 fmt->is_at3p = 1;
                 break;
 #else
@@ -337,15 +329,21 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
 
     int FormatChunkFound = 0, DataChunkFound = 0, JunkFound = 0;
 
-    int mwv = 0;
-    off_t mwv_pflt_offset = -1;
-    off_t mwv_ctrl_offset = -1;
+    off_t mwv_pflt_offset = 0;
+    off_t mwv_ctrl_offset = 0;
     int ignore_riff_size = 0;
 
 
     /* checks*/
     if (!is_id32be(0x00,sf,"RIFF"))
         goto fail;
+
+    riff_size = read_u32le(0x04,sf);
+
+    if (!is_id32be(0x08,sf, "WAVE"))
+        goto fail;
+
+    file_size = get_streamfile_size(sf);
 
     /* .lwav: to avoid hijacking .wav
      * .xwav: fake for Xbox games (not needed anymore)
@@ -379,23 +377,11 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
      * .ogg/logg: Luftrausers (Vita)[ATRAC9]
      * .p1d: Farming Simulator 15 (Vita)[ATRAC9]
      * .xms: Ty the Tasmanian Tiger (Xbox)
+     * .mus: Burnout Legends/Dominator (PSP)
      */
-    if ( check_extensions(sf, "wav,lwav,xwav,da,dax,cd,med,snd,adx,adp,xss,xsew,adpcm,adw,wd,,sbv,wvx,str,at3,rws,aud,at9,ckd,saf,ima,nsa,pcm,xvag,ogg,logg,p1d,xms") ) {
-        ;
-    }
-    else if ( check_extensions(sf, "mwv") ) {
-        mwv = 1;
-    }
-    else {
+    if (!check_extensions(sf, "wav,lwav,xwav,mwv,da,dax,cd,med,snd,adx,adp,xss,xsew,adpcm,adw,wd,,sbv,wvx,str,at3,rws,aud,at9,ckd,saf,ima,nsa,pcm,xvag,ogg,logg,p1d,xms,mus")) {
         goto fail;
     }
-
-    riff_size = read_u32le(0x04,sf);
-
-    if (!is_id32be(0x08,sf, "WAVE"))
-        goto fail;
-
-    file_size = get_streamfile_size(sf);
 
     /* some games have wonky sizes, selectively fix to catch bad rips and new mutations */
     if (file_size != riff_size + 0x08) {
@@ -425,7 +411,7 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
         else if (codec == 0xFFFE && riff_size + 0x08 + 0x18 == file_size)
             riff_size += 0x18; /* [F1 2011 (Vita)] (adds a "pada" chunk but RIFF size wasn't updated) */
 
-        else if (mwv) {
+        else if (codec == 0x0555) {
             int channels = read_u16le(0x16, sf); /* [Dragon Quest VIII (PS2), Rogue Galaxy (PS2)] */
             size_t file_size_fixed = riff_size + 0x08 + 0x04 * (channels - 1);
 
@@ -486,7 +472,7 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
                     if (FormatChunkFound) goto fail; /* only one per file */
                     FormatChunkFound = 1;
 
-                    if (!read_fmt(0, sf, current_chunk, &fmt, mwv))
+                    if (!read_fmt(0, sf, current_chunk, &fmt))
                         goto fail;
 
                     /* some Dreamcast/Naomi games again [Headhunter (DC), Bomber hehhe (DC), Rayman 2 (DC)] */
@@ -574,12 +560,10 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
                     goto fail; /* parsed elsewhere */
 
                 case 0x70666c74:    /* "pflt" (.mwv extension) */
-                    if (!mwv) break;    /* ignore if not in an mwv */
                     mwv_pflt_offset = current_chunk; /* predictor filters */
                     break;
 
                 case 0x6374726c:    /* "ctrl" (.mwv extension) */
-                    if (!mwv) break;
                     loop_flag = read_32bitLE(current_chunk+0x08, sf);
                     mwv_ctrl_offset = current_chunk;
                     break;
@@ -688,9 +672,6 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
 #ifdef VGM_USE_FFMPEG
         case coding_FFmpeg:
 #endif
-#ifdef VGM_USE_MAIATRAC3PLUS
-        case coding_AT3plus:
-#endif
 #ifdef VGM_USE_ATRAC9
         case coding_ATRAC9:
 #endif
@@ -725,7 +706,6 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
             break;
 
         case coding_L5_555:
-            if (!mwv) goto fail;
             vgmstream->num_samples = data_size / 0x12 / fmt.channels * 32;
 
             /* coefs */
@@ -735,7 +715,7 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
                 int filter_count = read_32bitLE(mwv_pflt_offset+0x0c, sf);
                 if (filter_count > 0x20) goto fail;
 
-                if (mwv_pflt_offset == -1 ||
+                if (!mwv_pflt_offset ||
                         read_32bitLE(mwv_pflt_offset+0x08, sf) != filter_order ||
                         read_32bitLE(mwv_pflt_offset+0x04, sf) < 8 + filter_count * 4 * filter_order)
                     goto fail;
@@ -796,17 +776,6 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
                     vgmstream->num_samples = loop_end_smpl;
             }
 
-            break;
-        }
-#endif
-#ifdef VGM_USE_MAIATRAC3PLUS
-        case coding_AT3plus: {
-            vgmstream->codec_data = init_at3plus();
-
-            /* get rough total samples but favor fact_samples if available (skip isn't correctly handled for now) */
-            vgmstream->num_samples = atrac3plus_bytes_to_samples(data_size, fmt.block_size);
-            if (fact_sample_count > 0 && fact_sample_count + fact_sample_skip < vgmstream->num_samples)
-                vgmstream->num_samples = fact_sample_count + fact_sample_skip;
             break;
         }
 #endif
@@ -908,9 +877,10 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
             vgmstream->loop_end_sample = loop_end_wsmp;
             vgmstream->meta_type = meta_RIFF_WAVE_wsmp;
         }
-        else if (mwv && mwv_ctrl_offset != -1) {
-            vgmstream->loop_start_sample = read_32bitLE(mwv_ctrl_offset+12, sf);
+        else if (fmt.coding_type == coding_L5_555 && mwv_ctrl_offset) {
+            vgmstream->loop_start_sample = read_s32le(mwv_ctrl_offset + 0x0c, sf);
             vgmstream->loop_end_sample = vgmstream->num_samples;
+            vgmstream->meta_type = meta_RIFF_WAVE_MWV;
         }
         else if (loop_start_cue != -1) {
             vgmstream->loop_start_sample = loop_start_cue;
@@ -926,9 +896,6 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
                     break;
             }
         }
-    }
-    if (mwv) {
-        vgmstream->meta_type = meta_RIFF_WAVE_MWV;
     }
 
     if (!vgmstream_open_stream(vgmstream, sf, start_offset))
@@ -1105,7 +1072,7 @@ VGMSTREAM* init_vgmstream_rifx(STREAMFILE* sf) {
                     if (FormatChunkFound) goto fail;
                     FormatChunkFound = 1;
 
-                    if (!read_fmt(1, sf, current_chunk, &fmt, 0))
+                    if (!read_fmt(1, sf, current_chunk, &fmt))
                         goto fail;
 
                     break;
