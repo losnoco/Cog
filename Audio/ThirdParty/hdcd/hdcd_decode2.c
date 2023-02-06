@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2010-2022, Christopher Snowhill,
+   Copyright (C) 2010-2023, Christopher Snowhill,
    All rights reserved.
    Optimizations by Gumboot
    Additional work by Burt P.
