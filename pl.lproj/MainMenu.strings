@@ -602,3 +602,6 @@
 
 /* Class = "NSTableColumn"; title = "Codec"; ObjectID = "3A3-9o-Gh9"; */
 "3A3-9o-Gh9.title" = "kodek";
+
+/* Class = "NSMenuItem"; title = "Show Lyrics"; ObjectID = "Tkb-7M-OiA"; */
+"Tkb-7M-OiA.title" = "Show Lyrics";
