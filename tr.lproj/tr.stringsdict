@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>%1d day(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@gün@</string>
+      <key>days</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 gün</string>
+        <key>other</key>
+        <string>%li gün</string>
+      </dict>
+    </dict>
+    <key>%1d hour(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@saat@</string>
+      <key>hours</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 saat</string>
+        <key>other</key>
+        <string>%li saat</string>
+      </dict>
+    </dict>
+    <key>%1d minute(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@dakika@</string>
+      <key>minutes</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 dakika</string>
+        <key>other</key>
+        <string>%li dakika</string>
+      </dict>
+    </dict>
+    <key>%1d second(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@saniye@</string>
+      <key>seconds</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 saniye</string>
+        <key>other</key>
+        <string>%li saniye</string>
+      </dict>
+    </dict>
+    <key>%1d week(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@hafta@</string>
+      <key>weeks</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 hafta</string>
+        <key>other</key>
+        <string>%li hafta</string>
+      </dict>
+    </dict>
+  </dict>
+</plist>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>%1d day(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@days@</string>
+      <key>days</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 dzień</string>
+        <key>few</key>
+        <string>%li dni</string>
+        <key>many</key>
+        <string>%li dni</string>
+        <key>other</key>
+        <string>%li dni</string>
+      </dict>
+    </dict>
+    <key>%1d hour(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@hours@</string>
+      <key>hours</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 godzina</string>
+        <key>few</key>
+        <string>%li godzin</string>
+        <key>many</key>
+        <string>%li godzin</string>
+        <key>other</key>
+        <string>%li godzin</string>
+      </dict>
+    </dict>
+    <key>%1d minute(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@minutes@</string>
+      <key>minutes</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 minuta</string>
+        <key>few</key>
+        <string>%li minuty</string>
+        <key>many</key>
+        <string>%li minut</string>
+        <key>other</key>
+        <string>%li minut</string>
+      </dict>
+    </dict>
+    <key>%1d second(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@seconds@</string>
+      <key>seconds</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 sekunda</string>
+        <key>few</key>
+        <string>%li sekund</string>
+        <key>many</key>
+        <string>%li sekund</string>
+        <key>other</key>
+        <string>%li sekund</string>
+      </dict>
+    </dict>
+    <key>%1d week(s)</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@weeks@</string>
+      <key>weeks</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>li</string>
+        <key>one</key>
+        <string>1 tydźeń</string>
+        <key>few</key>
+        <string>%li tygodni</string>
+        <key>many</key>
+        <string>%li tygodni</string>
+        <key>other</key>
+        <string>%li tygodni</string>
+      </dict>
+    </dict>
+  </dict>
+</plist>
