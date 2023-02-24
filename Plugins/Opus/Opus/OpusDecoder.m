@@ -170,6 +170,9 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 						}
 					}
 					opus_picture_tag_clear(&_pic);
+				} else if([tagName isEqualToString:@"unsynced lyrics"] ||
+						  [tagName isEqualToString:@"lyrics"]) {
+					setDictionary(_metaDict, @"unsyncedlyrics", guess_encoding_of_string(value));
 				} else {
 					setDictionary(_metaDict, tagName, guess_encoding_of_string(value));
 				}
