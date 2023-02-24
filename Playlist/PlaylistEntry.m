@@ -777,6 +777,24 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	[self setValue:@"year" fromString:nil];
 }
 
+@dynamic unsyncedlyrics;
+- (NSString *)unsyncedlyrics {
+	NSString *value = [self readAllValuesAsString:@"unsyncedlyrics"];
+	if(!value) {
+		value = [self readAllValuesAsString:@"unsynced lyrics"];
+	}
+	if(!value) {
+		value = [self readAllValuesAsString:@"lyrics"];
+	}
+	return value;
+}
+
+- (void)setUnsyncedlyrics:(NSString *)unsyncedlyrics {
+	[self setValue:@"unsyncedlyrics" fromString:unsyncedlyrics];
+	[self setValue:@"unsynced lyrics" fromString:nil];
+	[self setValue:@"lyrics" fromString:nil];
+}
+
 @dynamic comment;
 - (NSString *)comment {
 	return [self readAllValuesAsString:@"comment"];

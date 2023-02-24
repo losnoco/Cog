@@ -85,6 +85,8 @@
 
 @property(nonatomic) NSString *_Nullable date;
 
+@property(nonatomic) NSString *_Nullable unsyncedlyrics;
+
 @property(nonatomic) NSString *_Nullable comment;
 
 - (NSString *_Nullable)readAllValuesAsString:(NSString *_Nonnull)tagName;
