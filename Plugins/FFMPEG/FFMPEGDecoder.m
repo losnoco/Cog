@@ -575,6 +575,9 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 				} else {
 					setDictionary(_metaDict, @"title", _title);
 				}
+			} else if(!strcasecmp(tag->key, "unsynced lyrics") ||
+					  !strcasecmp(tag->key, "lyrics")) {
+				setDictionary(_metaDict, @"unsyncedlyrics", guess_encoding_of_string(tag->value));
 			} else if(!strcasecmp(tag->key, "icy-url")) {
 				setDictionary(_metaDict, @"album", guess_encoding_of_string(tag->value));
 			} else if(!strcasecmp(tag->key, "icy-genre")) {
