@@ -60,7 +60,7 @@
 		const TagLib::Tag *tag = f.tag();
 
 		if(tag) {
-			TagLib::String artist, albumartist, title, album, genre, comment;
+			TagLib::String artist, albumartist, title, album, genre, comment, unsyncedlyrics;
 			int year, track, disc;
 			float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
 			TagLib::String cuesheet;
@@ -73,6 +73,7 @@
 			genre = tag->genre();
 			comment = tag->comment();
 			cuesheet = tag->cuesheet();
+			unsyncedlyrics = tag->unsyncedlyrics();
 
 			year = tag->year();
 			[dict setObject:@(year) forKey:@"year"];
@@ -130,6 +131,9 @@
 
 			if(!comment.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:comment.toCString(true)] forKey:@"comment"];
+			
+			if(!unsyncedlyrics.isEmpty())
+				[dict setObject:[NSString stringWithUTF8String:unsyncedlyrics.toCString(true)] forKey:@"unsyncedlyrics"];
 
 			// Try to load the image.
 			NSData *image = nil;
