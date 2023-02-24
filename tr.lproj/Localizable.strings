@@ -1,0 +1,85 @@
+"AddButtonTooltip" = "Dosya ekle";
+"CogTitle" = "Cog";
+"ConsentNo" = "Hayır";
+"ConsentYes" = "Evet";
+"CrashlyticsConsentText" = "Crashlytics'in çökme raporu göndermesine izin vermek ister misiniz? Bunu Tercihler'den tekrar kapatabilirsiniz. Size tekrar sormayacağız.";
+"CrashlyticsConsentTitle" = "Crashlytics crash collection";
+"ErrorInvalidTrackId" = "SQLite isteğine geçersiz parça kimliği gönderildi.";
+"ErrorMessageBadFile" = "Hatalı dosya için meta veriler ayrıştırılamıyor.";
+"ErrorMetadata" = "Meta veriler alınamıyor.";
+"ErrorSqliteProblem" = "SQLite veritabanından parçaya erişimde genel sorun.";
+"ErrorTrackMissing" = "SQLite veritabanında parça girişi eksik.";
+"ErrorTrackTooltip" = "Hata";
+"FeedbackFailedInformativeText" = "Geri bildirim gönderilemedi.";
+"FeedbackFailedMessageText" = "Başarısız";
+"FeedbackSuccessInformativeText" = "Geri bildirim başarıyla gönderildi!";
+"FeedbackSuccessMessageText" = "Success";
+"FileButtonTooltip" = "File drawer";
+"GainAlbumGain" = "Album Gain";
+"GainAlbumGainPeak" = "Album Gain plus Peak";
+"GainAlbumPeak" = "Album Peak";
+"GainNone" = "Hiçbiri";
+"GainTrackGain" = "Track Gain";
+"GainTrackGainPeak" = "Track Gain plus Peak";
+"GainTrackPeak" = "Track Peak";
+"GainVolumeScale" = "Volume Scale";
+"InfoButtonTooltip" = "Seçili dosya hakkında bilgi";
+"InvalidURLLong" = "URL geçerli değil.";
+"InvalidURLShort" = "Geçersiz URL";
+"NextButtonTooltip" = "Sonraki";
+"PauseButtonTooltip" = "Duraklat";
+"PlayButtonTooltip" = "Oynat";
+"PlayingTrackTooltip" = "Çalıyor";
+"PlaylistHeaderContextMenuTitle" = "Playlist Header Context Menu";
+"PlaylistIndexColumn" = "Index";
+"PlaylistRandomizationAction" = "Çalma listesi rastgeleleştirmesi";
+"PlaylistStatusColumn" = "Durum";
+"PreferencesTitle" = "Tercihler";
+"PrevButtonTooltip" = "Önceki";
+"PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/59859310";
+"ProgressActionLoader" = "playlist loader inserting files";
+"ProgressActionLoadingMetadata" = "parçalar için meta verileri yükleme";
+"ProgressSubActionLoaderAddingEntries" = "çalma listesi girişleri oluşturma ve ekleme";
+"ProgressSubActionLoaderFilteringContainedFiles" = "desteklenmeyen dosya türlerini kapsayıcılardan kaldırma";
+"ProgressSubActionLoaderFilteringContainerFiles" = "kapsayıcı dosya türlerini işleme";
+"ProgressSubActionLoaderFilteringFiles" = "desteklenmeyen dosya türlerini kaldırma";
+"ProgressSubActionLoaderListingFiles" = "dosyaları toplama";
+"ProgressSubActionLoadingMetadata" = "dosyaları işleme";
+"ProgressSubActionMetadataApply" = "applying info to playlist storage";
+"QueuedTrackTooltip" = "Sıraya alındı";
+"RandomizeButtonTooltip" = "Çalma listesini rastgele seç";
+"RemoveButtonTooltip" = "Seçili dosyaları kaldır";
+"RepeatButtonTooltip" = "Tekrar modu";
+"ShuffleButtonTooltip" = "Karıştırma modu";
+"SkipAction" = "Atla";
+"StopAfterTrackTooltip" = "Parçadan sonra dur";
+"StopButtonTooltip" = "Durdur";
+"SwitchFromMiniPlayer" = "Mini oynatıcıdan geç";
+"SwitchToMiniPlayer" = "Mini oynatıcıya geç";
+"TimeElapsed" = "%i:%02i";
+"TimeFirstSeen" = "İlk görülme";
+"TimeLastPlayed" = "Son çalınan";
+"TimeRemaining" = "-%i:%02i";
+"Version %@ (%@)" = "Sürüm %1$@ (%2$@)";
+"replayGainAlbumGain" = "The volume level of playback output will be detected through enumeration, \
+						 re";
+
+/* second for total */
+"%1d seconds(s)" = "%1d saniye";
+/* Total duration for status */
+"Total duration: %@" = "Toplam süre: %@";
+/* minutes and seconds */
+"ms" = "%@ ve %@";
+/* hours, minutes and seconds */
+"hms" = "%@, %@ ve %@";
+/* days, hours, minutes and seconds */
+"dhms" = "%@, %@, %@ ve %@";
+/* weeks, days, hours, minutes and seconds */
+"wdhms" = "%@, %@, %@, %@ ve %@";
+
+"PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/59859310";
+
+"GrantPathTitle" = "Konteyner klasörüne erişim izni vermek için aç";
+"GrantPathMessage" = "Belirtilen klasöre erişim izni vermek için aşağıdaki klasör açma iletişim kutusunda Tamam'a tıklayın. Dosyalarınıza daha geniş erişim izni vermek için iletişim kutusunda klasör hiyerarşisinde daha yukarı doğru gidin. Oturumun geri kalanında başka uyarıları gizlemek için \"Beni uyarmayı bırak\" seçeneğine basın.";
+"GrantPathOK" = "Tamam";
+"GrantPathStopWarning" = "Beni uyarmayı durdur";

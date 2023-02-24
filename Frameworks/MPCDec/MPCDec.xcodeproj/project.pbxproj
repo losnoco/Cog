@@ -39,6 +39,7 @@
 		833F683F1CDBCAB300AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C889222CC1885001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747BBB2862D5760021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		838EE8CC29A8600C00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83A16EED19F48A2E00842DBC /* huffman.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = huffman.c; path = Files/src/huffman.c; sourceTree = "<group>"; };
 		83A16EEE19F48A2E00842DBC /* mpc_bits_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_bits_reader.c; path = Files/src/mpc_bits_reader.c; sourceTree = "<group>"; };
 		83A16EEF19F48A2E00842DBC /* mpc_demux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mpc_demux.c; path = Files/src/mpc_demux.c; sourceTree = "<group>"; };
@@ -258,6 +259,7 @@
 				es,
 				Base,
 				pl,
+				tr,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* MPCDec */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -309,6 +311,7 @@
 				833F683F1CDBCAB300AFB9F0 /* es */,
 				835C889222CC1885001B4B3F /* en */,
 				83F0E6C6287CAB4300D84594 /* pl */,
+				838EE8CC29A8600C00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

@@ -1,0 +1,834 @@
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "5"; */
+"5.title" = "Hepsini Öne Getir";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "19"; */
+"19.title" = "Pencere";
+
+/* Class = "NSWindow"; title = "Cog"; ObjectID = "21"; */
+"21.title" = "Cog";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "23"; */
+"23.title" = "Küçült";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "24"; */
+"24.title" = "Pencere";
+
+/* Class = "NSMenu"; title = "MainMenu"; ObjectID = "29"; */
+"29.title" = "Ana Menü";
+
+/* Class = "NSMenuItem"; title = "Cog"; ObjectID = "56"; */
+"56.title" = "Cog";
+
+/* Class = "NSMenu"; title = "Cog"; ObjectID = "57"; */
+"57.title" = "Cog";
+
+/* Class = "NSMenuItem"; title = "About Cog"; ObjectID = "58"; */
+"58.title" = "Cog hakkında";
+
+/* Class = "NSMenuItem"; title = "Add File..."; ObjectID = "72"; */
+"72.title" = "Dosya ekle...";
+
+/* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "73"; */
+"73.title" = "Pencereyi kapat";
+
+/* Class = "NSMenuItem"; title = "Save As..."; ObjectID = "75"; */
+"75.title" = "Farklı kaydet...";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "81"; */
+"81.title" = "Dosya";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "83"; */
+"83.title" = "Dosya";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "103"; */
+"103.title" = "Yardım";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "106"; */
+"106.title" = "Yardım";
+
+/* Class = "NSMenuItem"; title = "Cog Help"; ObjectID = "111"; */
+"111.title" = "Cog Yardım";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "129"; */
+"129.title" = "Tercihler…";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "130"; */
+"130.title" = "Servisler";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "131"; */
+"131.title" = "Servisler";
+
+/* Class = "NSMenuItem"; title = "Hide Cog"; ObjectID = "134"; */
+"134.title" = "Cog'u gizle";
+
+/* Class = "NSMenuItem"; title = "Quit Cog"; ObjectID = "136"; */
+"136.title" = "Cog'dan çık";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
+"145.title" = "Diğerlerini gizle";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "150"; */
+"150.title" = "Tümünü göster";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "157"; */
+"157.title" = "Kopyala";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "158"; */
+"158.title" = "Geri al";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "160"; */
+"160.title" = "Kes";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "163"; */
+"163.title" = "Düzenle";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "164"; */
+"164.title" = "Sil";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "169"; */
+"169.title" = "Düzenle";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "171"; */
+"171.title" = "Yapıştır";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "172"; */
+"172.title" = "Tümünü seç";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "173"; */
+"173.title" = "Yinele";
+
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "197"; */
+"197.title" = "Yakınlaştır";
+
+/* Class = "NSTableColumn"; headerCell.title = "Rating"; ObjectID = "208"; */
+"208.headerCell.title" = "Derecelendirme";
+
+/* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "209"; */
+"209.headerCell.title" = "#";
+
+/* Class = "NSMenuItem"; title = "Check for Updates..."; ObjectID = "302"; */
+"302.title" = "Güncellemeleri kontrol et...";
+
+/* Class = "NSMenuItem"; title = "Send Feedback..."; ObjectID = "303"; */
+"303.title" = "Geri Bildirim yolla...";
+
+/* Class = "NSTableColumn"; headerCell.title = "Artist"; ObjectID = "391"; */
+"391.headerCell.title" = "Sanatçı";
+
+/* Class = "NSMenuItem"; title = "Control"; ObjectID = "418"; */
+"418.title" = "Kontrol";
+
+/* Class = "NSMenu"; title = "Control"; ObjectID = "419"; */
+"419.title" = "Kontrol";
+
+/* Class = "NSMenuItem"; title = "Play/Pause"; ObjectID = "420"; */
+"420.title" = "Oynat/Duraklat";
+
+/* Class = "NSMenuItem"; title = "Next Song"; ObjectID = "422"; */
+"422.title" = "Sıradaki şarkı";
+
+/* Class = "NSMenuItem"; title = "Previous Song"; ObjectID = "423"; */
+"423.title" = "Önceki şarkı";
+
+/* Class = "NSMenu"; title = "Menu"; ObjectID = "513"; */
+"513.title" = "Menü";
+
+/* Class = "NSMenuItem"; title = "Stop"; ObjectID = "517"; */
+"517.title" = "Durdur";
+
+/* Class = "NSMenuItem"; title = "Next Track"; ObjectID = "518"; */
+"518.title" = "Sonraki parça";
+
+/* Class = "NSMenuItem"; title = "Previous Track"; ObjectID = "519"; */
+"519.title" = "Önceki parça";
+
+/* Class = "NSMenuItem"; title = "Play/Pause"; ObjectID = "520"; */
+"520.title" = "Oynat/Duraklat";
+
+/* Class = "NSMenuItem"; title = "Cog"; ObjectID = "702"; */
+"702.title" = "Cog";
+
+/* Class = "NSMenuItem"; title = "Donate"; ObjectID = "751"; */
+"751.title" = "Bağışla";
+
+/* Class = "NSMenuItem"; title = "Current Song"; ObjectID = "791"; */
+"791.title" = "Mevcut Şarkı";
+
+/* Class = "NSTableColumn"; headerCell.title = "Album"; ObjectID = "806"; */
+"806.headerCell.title" = "Albüm";
+
+/* Class = "NSTableColumn"; headerCell.title = "Length"; ObjectID = "807"; */
+"807.headerCell.title" = "Uzunluk";
+
+/* Class = "NSTableColumn"; headerCell.title = "Year"; ObjectID = "848"; */
+"848.headerCell.title" = "Yıl";
+
+/* Class = "NSTableColumn"; headerCell.title = "Genre"; ObjectID = "849"; */
+"849.headerCell.title" = "Tür";
+
+/* Class = "NSTableColumn"; headerCell.title = "№"; ObjectID = "850"; */
+"850.headerCell.title" = "№";
+
+/* Class = "NSMenuItem"; title = "Playlist"; ObjectID = "881"; */
+"881.title" = "Çalma listesi";
+
+/* Class = "NSMenu"; title = "Playlist"; ObjectID = "882"; */
+"882.title" = "Çalma listesi";
+
+/* Class = "NSMenu"; title = "Menu"; ObjectID = "1063"; */
+"1063.title" = "Menü";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1064"; */
+"1064.title" = "Finder'da göster";
+
+/* Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "1135"; */
+"1135.title" = "Finder'da göster";
+
+/* Class = "NSMenuItem"; title = "Volume Up"; ObjectID = "1136"; */
+"1136.title" = "Sesi aç";
+
+/* Class = "NSMenuItem"; title = "Volume Down"; ObjectID = "1137"; */
+"1137.title" = "Sesi kıs";
+
+/* Class = "NSMenu"; title = "Menu"; ObjectID = "1324"; */
+"1324.title" = "Menü";
+
+/* Class = "NSMenuItem"; title = "Index"; ObjectID = "1337"; */
+"1337.title" = "Index";
+
+/* Class = "NSMenuItem"; title = "Title"; ObjectID = "1338"; */
+"1338.title" = "Başlık";
+
+/* Class = "NSMenuItem"; title = "Artist"; ObjectID = "1339"; */
+"1339.title" = "Sanatçı";
+
+/* Class = "NSMenuItem"; title = "Album"; ObjectID = "1340"; */
+"1340.title" = "Albüm";
+
+/* Class = "NSMenuItem"; title = "Genre"; ObjectID = "1341"; */
+"1341.title" = "Tür";
+
+/* Class = "NSMenuItem"; title = "Length"; ObjectID = "1342"; */
+"1342.title" = "Uzunluk";
+
+/* Class = "NSMenuItem"; title = "Track"; ObjectID = "1343"; */
+"1343.title" = "Parça";
+
+/* Class = "NSMenuItem"; title = "Year"; ObjectID = "1344"; */
+"1344.title" = "Yıl";
+
+/* Class = "NSMenuItem"; title = "Remove"; ObjectID = "1360"; */
+"1360.title" = "Kaldır";
+
+/* Class = "NSMenuItem"; title = "Stop"; ObjectID = "1362"; */
+"1362.title" = "Durdur";
+
+/* Class = "NSMenuItem"; title = "Remove All"; ObjectID = "1402"; */
+"1402.title" = "Tümünü kaldır";
+
+/* Class = "NSMenuItem"; title = "Add URL..."; ObjectID = "1403"; */
+"1403.title" = "URL ekle...";
+
+/* Class = "NSMenuItem"; title = "Remove"; ObjectID = "1408"; */
+"1408.title" = "Kaldır";
+
+/* Class = "NSMenuItem"; title = "Current Artist"; ObjectID = "1454"; */
+"1454.title" = "Şu anki sanatçı";
+
+/* Class = "NSTextFieldCell"; title = "Total Duration: 00 hours 00 minutes 00 seconds"; ObjectID = "1473"; */
+"1473.title" = "Toplam Süre: 00 saat 00 dakika 00 saniye";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1506"; */
+"1506.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1507"; */
+"1507.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1508"; */
+"1508.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1509"; */
+"1509.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1510"; */
+"1510.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1511"; */
+"1511.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1512"; */
+"1512.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1513"; */
+"1513.title" = "Metin Hücresi";
+
+/* Class = "NSSearchFieldCell"; placeholderString = "All"; ObjectID = "1532"; */
+"1532.placeholderString" = "Tümü";
+
+/* Class = "NSToolbarItem"; label = "Search"; ObjectID = "1533"; */
+"1533.label" = "Arama";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Search"; ObjectID = "1533"; */
+"1533.paletteLabel" = "Arama";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[0] = "Previous"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[0]" = "Önceki";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[1] = "Play"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[1]" = "Oynat";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[2] = "Stop"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[2]" = "Durdur";
+
+/* Class = "NSSegmentedCell"; 1538.ibShadowedToolTips[3] = "Next"; ObjectID = "1538"; */
+"1538.ibShadowedToolTips[3]" = "Sonraki";
+
+/* Class = "NSToolbarItem"; label = "Playback Control"; ObjectID = "1539"; */
+"1539.label" = "Oynatma Kontrolü";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Playback Control"; ObjectID = "1539"; */
+"1539.paletteLabel" = "Oynatma Kontrolü";
+
+/* Class = "NSToolbarItem"; label = "Position"; ObjectID = "1551"; */
+"1551.label" = "Konum";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Position"; ObjectID = "1551"; */
+"1551.paletteLabel" = "Konum";
+
+/* Class = "NSTextFieldCell"; title = "0:00"; ObjectID = "1567"; */
+"1567.title" = "0:00";
+
+/* Class = "NSToolbarItem"; label = "Current Time"; ObjectID = "1568"; */
+"1568.label" = "Güncel Saat";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "1568"; */
+"1568.paletteLabel" = "Güncel Saat";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "All"; ObjectID = "1576"; */
+"1576.ibShadowedDisplayName" = "Tümü";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Title"; ObjectID = "1578"; */
+"1578.ibShadowedDisplayName" = "Başlık";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Artist"; ObjectID = "1580"; */
+"1580.ibShadowedDisplayName" = "Sanatçı";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Album"; ObjectID = "1582"; */
+"1582.ibShadowedDisplayName" = "Albüm";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayName = "Genre"; ObjectID = "1583"; */
+"1583.ibShadowedDisplayName" = "Tür";
+
+/* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "1610"; */
+"1610.label" = "Ses";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Volume"; ObjectID = "1610"; */
+"1610.paletteLabel" = "Ses";
+
+/* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "1629"; */
+"1629.label" = "Info Inspector";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "1629"; */
+"1629.paletteLabel" = "Info Inspector";
+
+/* Class = "NSToolbarItem"; label = "File Tree"; ObjectID = "1630"; */
+"1630.label" = "Dosya Ağacı";
+
+/* Class = "NSToolbarItem"; paletteLabel = "File Tree"; ObjectID = "1630"; */
+"1630.paletteLabel" = "Dosya Ağacı";
+
+/* Class = "NSToolbarItem"; label = "Shuffle"; ObjectID = "1636"; */
+"1636.label" = "Karıştır";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Shuffle"; ObjectID = "1636"; */
+"1636.paletteLabel" = "Karıştır";
+
+/* Class = "NSToolbarItem"; label = "Repeat"; ObjectID = "1639"; */
+"1639.label" = "Tekrarla";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Repeat"; ObjectID = "1639"; */
+"1639.paletteLabel" = "Tekrarla";
+
+/* Class = "NSMenuItem"; title = "Seek Backward"; ObjectID = "1683"; */
+"1683.title" = "Seek Backward";
+
+/* Class = "NSMenuItem"; title = "Seek Forward"; ObjectID = "1685"; */
+"1685.title" = "Seek Forward";
+
+/* Class = "NSMenuItem"; title = "Previous Album"; ObjectID = "1699"; */
+"1699.title" = "Önceki Albüm";
+
+/* Class = "NSMenuItem"; title = "Next Album"; ObjectID = "1701"; */
+"1701.title" = "Sonraki Albüm";
+
+/* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "1712"; */
+"1712.headerCell.title" = "Path";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1713"; */
+"1713.title" = "Metin Hücresi";
+
+/* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "1736"; */
+"1736.headerCell.title" = "Dosya adı";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1737"; */
+"1737.title" = "Metin Hücresi";
+
+/* Class = "NSMenuItem"; title = "Repeat"; ObjectID = "1740"; */
+"1740.title" = "Tekrarla";
+
+/* Class = "NSMenu"; title = "Repeat"; ObjectID = "1741"; */
+"1741.title" = "Tekrarla";
+
+/* Class = "NSMenuItem"; title = "All"; ObjectID = "1742"; */
+"1742.title" = "Tümü";
+
+/* Class = "NSMenuItem"; title = "One"; ObjectID = "1746"; */
+"1746.title" = "Bir";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "1749"; */
+"1749.title" = "Hiçbiri";
+
+/* Class = "NSMenuItem"; title = "Remove All from Queue"; ObjectID = "1791"; */
+"1791.title" = "Tümünü sıradan kaldır";
+
+/* Class = "NSMenuItem"; title = "Select Currently Playing"; ObjectID = "1823"; */
+"1823.title" = "Şu anda oynatılanı seç";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "1848"; */
+"1848.title" = "View";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "1849"; */
+"1849.title" = "View";
+
+/* Class = "NSMenuItem"; title = "Show Spotlight Panel"; ObjectID = "1853"; */
+"1853.title" = "Show Spotlight Panel";
+
+/* Class = "NSMenuItem"; title = "Customize Toolbar..."; ObjectID = "1856"; */
+"1856.title" = "Araç çubuğunu özelleştir...";
+
+/* Class = "NSMenuItem"; title = "Increase Font Size"; ObjectID = "1858"; */
+"1858.title" = "Yazı tipi boyutunu artır";
+
+/* Class = "NSMenuItem"; title = "Decrease Font Size"; ObjectID = "1859"; */
+"1859.title" = "Yazı Tipi Boyutunu Küçült";
+
+/* Class = "NSMenuItem"; title = "Add to Queue"; ObjectID = "1864"; */
+"1864.title" = "Sıraya ekle";
+
+/* Class = "NSMenuItem"; title = "Remove from Queue"; ObjectID = "1865"; */
+"1865.title" = "Sıradan kaldır";
+
+/* Class = "NSMenuItem"; title = "Search for Songs by Artist"; ObjectID = "1867"; */
+"1867.title" = "Şarkıları Sanatçıya Göre Ara";
+
+/* Class = "NSMenuItem"; title = "Search for Songs from Album"; ObjectID = "1868"; */
+"1868.title" = "Albümden şarkı ara";
+
+/* Class = "NSMenuItem"; title = "Fade In/Out"; ObjectID = "1885"; */
+"1885.title" = "Fade In/Out";
+
+/* Class = "NSMenuItem"; title = "Album"; ObjectID = "1892"; */
+"1892.title" = "Albüm";
+
+/* Class = "NSMenuItem"; title = "Add to Queue"; ObjectID = "1893"; */
+"1893.title" = "Sıraya ekle";
+
+/* Class = "NSMenuItem"; title = "Stop After Current"; ObjectID = "1895"; */
+"1895.title" = "Mevcuttan Sonra Durdur";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Cog"; ObjectID = "1903"; */
+"1903.ibShadowedIsNilPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNoSelectionPlaceholder = "Cog"; ObjectID = "1903"; */
+"1903.ibShadowedNoSelectionPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Cog"; ObjectID = "1903"; */
+"1903.ibShadowedNotApplicablePlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedIsNilPlaceholder" = "Sıraya Al";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedMultipleValuesPlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedMultipleValuesPlaceholder" = "Sıraya Al";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNoSelectionPlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedNoSelectionPlaceholder" = "Sıraya Al";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Toggle Queued"; ObjectID = "2042"; */
+"2042.ibShadowedNotApplicablePlaceholder" = "Sıraya Al";
+
+/* Class = "NSMenuItem"; title = "Search for Artist"; ObjectID = "2045"; */
+"2045.title" = "Sanatçı ara";
+
+/* Class = "NSMenuItem"; title = "Search for Album"; ObjectID = "2046"; */
+"2046.title" = "Albüm ara";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Not Playing"; ObjectID = "2083"; */
+"2083.ibShadowedIsNilPlaceholder" = "Oynatılmıyor";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Not Playing"; ObjectID = "2085"; */
+"2085.ibShadowedIsNilPlaceholder" = "Oynatılmıyor";
+
+/* Class = "NSMenuItem"; title = "Toggle File Tree Orientation"; ObjectID = "2160"; */
+"2160.title" = "Toggle File Tree Orientation";
+
+/* Class = "NSMenuItem"; title = "Information"; ObjectID = "2212"; */
+"2212.title" = "Information";
+
+/* Class = "NSWindow"; title = "Cog"; ObjectID = "2234"; */
+"2234.title" = "Cog";
+
+/* Class = "NSToolbarItem"; label = "Playback Buttons"; ObjectID = "2272"; */
+"2272.label" = "Playback Buttons";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Playback Buttons"; ObjectID = "2272"; */
+"2272.paletteLabel" = "Playback Buttons";
+
+/* Class = "NSToolbarItem"; label = "Position"; ObjectID = "2273"; */
+"2273.label" = "Konum";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Position"; ObjectID = "2273"; */
+"2273.paletteLabel" = "Konum";
+
+/* Class = "NSToolbarItem"; label = "Current Time"; ObjectID = "2274"; */
+"2274.label" = "Güncel Saat";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "2274"; */
+"2274.paletteLabel" = "Güncel Saat";
+
+/* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "2275"; */
+"2275.label" = "Ses seviyesi";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Volume"; ObjectID = "2275"; */
+"2275.paletteLabel" = "Ses seviyesi";
+
+/* Class = "NSToolbarItem"; label = "Shuffle"; ObjectID = "2278"; */
+"2278.label" = "Karıştır";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Shuffle"; ObjectID = "2278"; */
+"2278.paletteLabel" = "Karıştır";
+
+/* Class = "NSToolbarItem"; label = "Repeat"; ObjectID = "2279"; */
+"2279.label" = "Tekrarla";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Repeat"; ObjectID = "2279"; */
+"2279.paletteLabel" = "Tekrarla";
+
+/* Class = "NSTextFieldCell"; title = "0:00"; ObjectID = "2292"; */
+"2292.title" = "0:00";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[0] = "Previous"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[0]" = "Önceki";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[1] = "Play"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[1]" = "Oynat";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[2] = "Stop"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[2]" = "Durdur";
+
+/* Class = "NSSegmentedCell"; 2296.ibShadowedToolTips[3] = "Next"; ObjectID = "2296"; */
+"2296.ibShadowedToolTips[3]" = "Sonraki";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Cog"; ObjectID = "2374"; */
+"2374.ibShadowedIsNilPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNoSelectionPlaceholder = "Cog"; ObjectID = "2374"; */
+"2374.ibShadowedNoSelectionPlaceholder" = "Cog";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedNotApplicablePlaceholder = "Cog"; ObjectID = "2374"; */
+"2374.ibShadowedNotApplicablePlaceholder" = "Cog";
+
+/* Class = "NSMenuItem"; title = "Show File Tree"; ObjectID = "2417"; */
+"2417.title" = "Dosya Ağacını Göster";
+
+/* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "2429"; */
+"2429.label" = "Info Inspector";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "2429"; */
+"2429.paletteLabel" = "Info Inspector";
+
+/* Class = "NSMenuItem"; title = "Shuffle"; ObjectID = "2438"; */
+"2438.title" = "Karıştır";
+
+/* Class = "NSMenu"; title = "Shuffle"; ObjectID = "2439"; */
+"2439.title" = "Karıştır";
+
+/* Class = "NSMenuItem"; title = "Off"; ObjectID = "2440"; */
+"2440.title" = "Off";
+
+/* Class = "NSMenuItem"; title = "Albums"; ObjectID = "2442"; */
+"2442.title" = "Albümler";
+
+/* Class = "NSMenuItem"; title = "All"; ObjectID = "2443"; */
+"2443.title" = "Tümü";
+
+/* Class = "NSMenuItem"; title = "Show Info Inspector"; ObjectID = "2453"; */
+"2453.title" = "Show Info Inspector";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "2456"; */
+"2456.title" = "Tam ekrana yap";
+
+/* Class = "NSToolbarItem"; label = "Randomize"; ObjectID = "2466"; */
+"2466.label" = "Rastgele";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Randomize"; ObjectID = "2466"; */
+"2466.paletteLabel" = "Rastgele";
+
+/* Class = "NSMenuItem"; title = "Toggle"; ObjectID = "2472"; */
+"2472.title" = "Geçiş";
+
+/* Class = "NSMenuItem"; title = "Toggle"; ObjectID = "2476"; */
+"2476.title" = "Geçiş";
+
+/* Class = "NSMenuItem"; title = "Stop After Current"; ObjectID = "2483"; */
+"2483.title" = "Mevcuttan Sonra Durdur";
+
+/* Class = "NSMenuItem"; title = "Next Album"; ObjectID = "2485"; */
+"2485.title" = "Sonraki Albüm";
+
+/* Class = "NSMenuItem"; title = "Previous Album"; ObjectID = "2487"; */
+"2487.title" = "Önceki Albüm";
+
+/* Class = "NSMenuItem"; title = "Toggle Mini Mode"; ObjectID = "2493"; */
+"2493.title" = "Mini Mod'a geçiş";
+
+/* Class = "NSToolbarItem"; label = "Normal Mode"; ObjectID = "2526"; */
+"2526.label" = "Normal Mod";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Normal Mode"; ObjectID = "2526"; */
+"2526.paletteLabel" = "Normal Mod";
+
+/* Class = "NSToolbarItem"; label = "Mini Mode"; ObjectID = "2532"; */
+"2532.label" = "Mini Mod";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Mini Mode"; ObjectID = "2532"; */
+"2532.paletteLabel" = "Mini Mod";
+
+/* Class = "NSMenuItem"; title = "Randomize"; ObjectID = "2545"; */
+"2545.title" = "Rastgele";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "20m-a6-e24"; */
+"20m-a6-e24.title" = "Metin Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "2ha-ys-sRi"; */
+"2ha-ys-sRi.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Remove Duplicate Items"; ObjectID = "2qB-Bq-t2u"; */
+"2qB-Bq-t2u.title" = "Yinelenen öğeleri kaldır";
+
+/* Class = "NSTableColumn"; headerCell.title = "Codec"; ObjectID = "3A3-9o-Gh9"; */
+"3A3-9o-Gh9.headerCell.title" = "Codec";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "3QN-Ok-QPu"; */
+"3QN-Ok-QPu.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSTableColumn"; headerCell.title = "Bits Per Sample"; ObjectID = "3no-xo-TpJ"; */
+"3no-xo-TpJ.headerCell.title" = "Bits Per Sample";
+
+/* Class = "NSToolbarItem"; label = "Remove Duplicate Items"; ObjectID = "4pg-Lq-O8K"; */
+"4pg-Lq-O8K.label" = "Yinelenen öğeleri kaldır";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Duplicate Items"; ObjectID = "4pg-Lq-O8K"; */
+"4pg-Lq-O8K.paletteLabel" = "Yinelenen öğeleri kaldır";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@%{value2}@"; ObjectID = "5bQ-Qy-2KR"; */
+"5bQ-Qy-2KR.ibShadowedDisplayPattern" = "%{value1}@%{value2}@";
+
+/* Class = "NSMenuItem"; title = "Reset Play Count"; ObjectID = "5iV-dM-oX2"; */
+"5iV-dM-oX2.title" = "Oynatma Sayısını Sıfırla";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "71l-3L-S3g"; */
+"71l-3L-S3g.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Remove Dead Items"; ObjectID = "Ajn-k4-afd"; */
+"Ajn-k4-afd.title" = "Remove Dead Items";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "C2Q-qG-dwX"; */
+"C2Q-qG-dwX.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Ko-fi"; ObjectID = "CVM-rp-UJe"; */
+"CVM-rp-UJe.title" = "Ko-fi";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "DdU-ro-7Yi"; */
+"DdU-ro-7Yi.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Properties"; ObjectID = "Eds-my-DQr"; */
+"Eds-my-DQr.title" = "Properties";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "FMU-QZ-NdQ"; */
+"FMU-QZ-NdQ.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Reload Info"; ObjectID = "HK9-Am-31h"; */
+"HK9-Am-31h.title" = "Bilgileri yeniden yükle";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "Igo-5f-yim"; */
+"Igo-5f-yim.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "%{value1}@%{value2}@"; ObjectID = "Kih-ky-A1h"; */
+"Kih-ky-A1h.ibShadowedDisplayPattern" = "%{value1}@%{value2}@";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "M6d-rj-lEz"; */
+"M6d-rj-lEz.title" = "Metin Hücresi";
+
+/* Class = "NSMenuItem"; title = "Patreon"; ObjectID = "NXj-oA-q3F"; */
+"NXj-oA-q3F.title" = "Patreon";
+
+/* Class = "NSToolbarItem"; label = "Spectrum"; ObjectID = "NtB-XF-g07"; */
+"NtB-XF-g07.label" = "Spektrum";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Spectrum"; ObjectID = "NtB-XF-g07"; */
+"NtB-XF-g07.paletteLabel" = "Spektrum";
+
+/* Class = "NSMenuItem"; title = "Remove Rating"; ObjectID = "PyI-lF-iuz"; */
+"PyI-lF-iuz.title" = "Derecelendirmeyi kaldır";
+
+/* Class = "NSMenuItem"; title = "Show Lyrics"; ObjectID = "Tkb-7M-OiA"; */
+"Tkb-7M-OiA.title" = "Show Lyrics";
+
+/* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "UAk-Gc-lT4"; */
+"UAk-Gc-lT4.title" = "Çalma Listesini Filtrele";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "VVx-99-roJ"; */
+"VVx-99-roJ.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
+"WKt-lM-Bv1.label" = "Remove Dead Items";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
+"WKt-lM-Bv1.paletteLabel" = "Remove Dead Items";
+
+/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "XBr-ec-D81"; */
+"XBr-ec-D81.headerCell.title" = "Başlık";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "YwT-z9-2d2"; */
+"YwT-z9-2d2.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
+"ZH9-ZU-skw.label" = "HDCD Göstergesi";
+
+/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
+"ZH9-ZU-skw.paletteLabel" = "HDCD Göstergesi";
+
+/* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
+"ZOn-sB-FR3.label" = "Ekolayzırı Göster";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
+"ZOn-sB-FR3.paletteLabel" = "Ekolayzırı Göster";
+
+/* Class = "NSTableColumn"; headerCell.title = "Sample Rate"; ObjectID = "et9-zH-awt"; */
+"et9-zH-awt.headerCell.title" = "Sample Rate";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "gKK-cS-RP5"; */
+"gKK-cS-RP5.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Recurring"; ObjectID = "iRb-7e-iMC"; */
+"iRb-7e-iMC.title" = "Recurring";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "js2-sT-U4M"; */
+"js2-sT-U4M.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSToolbarItem"; label = "Randomize"; ObjectID = "kVl-aW-mtT"; */
+"kVl-aW-mtT.label" = "Rastgele seç";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Randomize"; ObjectID = "kVl-aW-mtT"; */
+"kVl-aW-mtT.paletteLabel" = "Rastgele seç";
+
+/* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "knJ-aI-sFa"; */
+"knJ-aI-sFa.label" = "Remove Dead Items";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "knJ-aI-sFa"; */
+"knJ-aI-sFa.paletteLabel" = "Remove Dead Items";
+
+/* Class = "NSMenuItem"; title = "Reload Info"; ObjectID = "kq8-9v-zC0"; */
+"kq8-9v-zC0.title" = "Bilgileri yeniden yükle";
+
+/* Class = "NSMenu"; title = "Donate"; ObjectID = "kue-p2-G0Y"; */
+"kue-p2-G0Y.title" = "Donate";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "lBy-Uc-vCA"; */
+"lBy-Uc-vCA.title" = "Metin Hücresi";
+
+/* Class = "NSMenuItem"; title = "Show Mini Player On Top"; ObjectID = "lXN-EZ-xg0"; */
+"lXN-EZ-xg0.title" = "Mini oynatıcıyı üstte göster";
+
+/* Class = "NSMenuItem"; title = "Move to Trash"; ObjectID = "mhx-dQ-Kwx"; */
+"mhx-dQ-Kwx.title" = "Çöp kutusuna taşıyın";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "moV-3G-GpB"; */
+"moV-3G-GpB.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Show Equalizer"; ObjectID = "nBU-pH-J3I"; */
+"nBU-pH-J3I.title" = "Ekolayzırı Göster";
+
+/* Class = "NSMenuItem"; title = "Privacy Policy..."; ObjectID = "nb7-FW-egH"; */
+"nb7-FW-egH.title" = "Gizlilik Politikası...";
+
+/* Class = "NSMenuItem"; title = "LiberaPay"; ObjectID = "nyW-nI-abw"; */
+"nyW-nI-abw.title" = "LiberaPay";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "ols-kE-jvg"; */
+"ols-kE-jvg.title" = "Metin Hücresi";
+
+/* Class = "NSMenuItem"; title = "Stop after Selection"; ObjectID = "omb-wi-loX"; */
+"omb-wi-loX.title" = "Seçimden sonra durdur";
+
+/* Class = "NSMenuItem"; title = "Show All Songs"; ObjectID = "pU1-ci-9uB"; */
+"pU1-ci-9uB.title" = "Tüm Şarkıları Göster";
+
+/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "qfu-F9-bOZ"; */
+"qfu-F9-bOZ.label" = "HDCD Göstergesi";
+
+/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "qfu-F9-bOZ"; */
+"qfu-F9-bOZ.paletteLabel" = "HDCD Göstergesi";
+
+/* Class = "NSMenuItem"; title = "Move to Trash"; ObjectID = "qlT-UX-x72"; */
+"qlT-UX-x72.title" = "Çöp kutusuna taşıyın";
+
+/* Class = "NSToolbarItem"; label = "Remove Duplicate Items"; ObjectID = "rEg-qk-MbN"; */
+"rEg-qk-MbN.label" = "Yinelenen öğeleri kaldır";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Remove Duplicate Items"; ObjectID = "rEg-qk-MbN"; */
+"rEg-qk-MbN.paletteLabel" = "Yinelenen öğeleri kaldır";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "sdo-Sm-KPH"; */
+"sdo-Sm-KPH.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSToolbarItem"; label = "Spectrum"; ObjectID = "sf3-l1-fJw"; */
+"sf3-l1-fJw.label" = "Spektrum";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Spectrum"; ObjectID = "sf3-l1-fJw"; */
+"sf3-l1-fJw.paletteLabel" = "Spektrum";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "tus-lr-RhS"; */
+"tus-lr-RhS.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "vAq-NH-dpx"; */
+"vAq-NH-dpx.title" = "Metin Hücresi";
+
+/* Class = "NSMenuItem"; title = "Toggle Toolbar Style"; ObjectID = "vBH-Mr-XWi"; */
+"vBH-Mr-XWi.title" = "Toggle Toolbar Style";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "vaJ-Bc-ebE"; */
+"vaJ-Bc-ebE.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "vzT-Gb-aGW"; */
+"vzT-Gb-aGW.label" = "Ekolayzırı Göster";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "vzT-Gb-aGW"; */
+"vzT-Gb-aGW.paletteLabel" = "Ekolayzırı Göster";
+
+/* Class = "NSMenuItem"; title = "One time"; ObjectID = "wLp-NA-5u2"; */
+"wLp-NA-5u2.title" = "One time";
+
+/* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "wky-z8-Cj5"; */
+"wky-z8-Cj5.title" = "Tablo Görünümü Hücresi";
+
+/* Class = "NSMenuItem"; title = "Show Spectrum Window"; ObjectID = "wl2-Vo-pul"; */
+"wl2-Vo-pul.title" = "Show Spectrum Window";
+
+/* Class = "NSMenuItem"; title = "PayPal"; ObjectID = "xcs-tx-Viz"; */
+"xcs-tx-Viz.title" = "PayPal";
+
+/* Class = "NSTableColumn"; headerCell.title = "Album Artist"; ObjectID = "yGV-gP-Wl6"; */
+"yGV-gP-Wl6.headerCell.title" = "Albüm Sanatçısı";

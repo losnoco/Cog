@@ -1,0 +1,26 @@
+/* Localized versions of Info.plist keys */
+
+"CFBundleName" = "Cog";
+
+/* Privacy - Calendars Usage Description */
+"NSCalendarsUsageDescription" = "Cog takvim bilgilerinizi kullanmaz. Takviminizi neden bir müzik çalarla açmaya çalışıyorsunuz?";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Cog bir müzik çalardır. Kameranızı asla kullanmaz. Neden kameranızı kullanmak istiyor izin istiyor?";
+
+/* Privacy - Contacts Usage Description */
+"NSContactsUsageDescription" = "Cog, rehber bilgilerinizi kullanmaz. Rehberinizi neden bir müzik çalarla açmaya çalışıyorsunuz?";
+
+"NSHumanReadableCopyright" = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2023";
+
+/* Privacy - Location Usage Description */
+"NSLocationUsageDescription" = "Cog, konum bilgilerinizi kullanmaz. Uygulamada, belli ki bir sorun var.";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Cog bir müzik çalar. Ancak ses kaydı yapmaz. Neden mikrofonunuzu kullanmak için izin istiyor?";
+
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "Cog bir müzik çalar. Fotoğraf kitaplığınıza neden bir müzik çalar ile erişmeye çalışıyorsunuz?";
+
+/* Privacy - Reminders Usage Description */
+"NSRemindersUsageDescription" = "Cog, hatırlatıcılarınız kullanmaz. Neden bunlara bir müzik çalar ile erişmeye çalışıyorsunuz?";

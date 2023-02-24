@@ -116,6 +116,7 @@
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		83686AB01C5C783000671C7A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		83747C222862DB7F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		838EE8CA29A8600C00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i_oplmusic.cpp; sourceTree = "<group>"; };
 		83A09F571CFA83F2001E7D2D /* i_oplmusic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i_oplmusic.h; sourceTree = "<group>"; };
@@ -412,6 +413,7 @@
 				es,
 				Base,
 				pl,
+				tr,
 			);
 			mainGroup = 83B0667E180D5668008E3612;
 			productRefGroup = 83B06688180D5668008E3612 /* Products */;
@@ -493,6 +495,7 @@
 				83B06694180D5668008E3612 /* en */,
 				833F68431CDBCABE00AFB9F0 /* es */,
 				83F0E6C4287CAB4300D84594 /* pl */,
+				838EE8CA29A8600C00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
