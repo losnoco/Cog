@@ -186,6 +186,11 @@ String TagUnion::album() const
   stringUnion(album);
 }
 
+String TagUnion::unsyncedlyrics() const
+{
+  stringUnion(unsyncedlyrics);
+}
+
 String TagUnion::comment() const
 {
   stringUnion(comment);
@@ -259,6 +264,11 @@ void TagUnion::setArtist(const String &s)
 void TagUnion::setAlbum(const String &s)
 {
   setUnion(Album, s);
+}
+
+void TagUnion::setUnsyncedlyrics(const String &s)
+{
+  setUnion(Unsyncedlyrics, s);
 }
 
 void TagUnion::setComment(const String &s)

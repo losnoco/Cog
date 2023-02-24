@@ -71,6 +71,12 @@ namespace TagLib {
       virtual String album() const;
 
       /*!
+       * Returns the unsynchronized lyrics; if no unsynced lyrics are
+       * present in the tag String::null will be returned.
+       */
+      virtual String unsyncedlyrics() const;
+
+      /*!
        * Returns the track comment.
        */
       virtual String comment() const;
@@ -132,6 +138,12 @@ namespace TagLib {
        * cleared.
        */
       virtual void setAlbum(const String &s);
+		
+      /*!
+       * Sets the unsynced lyrics to \a s. if \a s is String::null then this
+       * value will be cleared.
+       */
+      virtual void setUnsyncedlyrics(const String &s);
 
       /*!
        * Sets the comment to \a s.

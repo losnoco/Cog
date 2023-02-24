@@ -72,6 +72,13 @@ String ASF::Tag::album() const
   return String();
 }
 
+String ASF::Tag::unsyncedlyrics() const
+{
+  if(d->attributeListMap.contains("WM/Lyrics"))
+    return d->attributeListMap["WM/Lyrics"][0].toString();
+  return String();
+}
+
 String ASF::Tag::copyright() const
 {
   return d->copyright;
@@ -191,6 +198,11 @@ void ASF::Tag::setRating(const String &value)
 void ASF::Tag::setAlbum(const String &value)
 {
   setAttribute("WM/AlbumTitle", value);
+}
+
+void ASF::Tag::setUnsyncedlyrics(const String &value)
+{
+  setAttribute("WM/Lyrics", value);
 }
 
 void ASF::Tag::setGenre(const String &value)
