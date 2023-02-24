@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -25,17 +25,17 @@
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2123">
-                        <rect key="frame" x="0.0" y="372" width="1135" height="28"/>
+                        <rect key="frame" x="0.0" y="339" width="1135" height="61"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="0.0" verticalLineScroll="24" verticalPageScroll="0.0" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="206" userLabel="Scroll View - Playlist View">
-                                <rect key="frame" x="0.0" y="0.0" width="1135" height="28"/>
+                                <rect key="frame" x="0.0" y="0.0" width="1135" height="61"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="KWC-Ti-8KY">
-                                    <rect key="frame" x="0.0" y="0.0" width="1135" height="28"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="1135" height="61"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" autosaveName="Playlist" rowHeight="18" headerView="1517" viewBased="YES" id="207" customClass="PlaylistView">
-                                            <rect key="frame" x="0.0" y="0.0" width="1135" height="11"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1135" height="44"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="6"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -680,12 +680,12 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="36z-Tr-B4G"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.sampleRate" id="5lo-d8-LCy">
                                                             <dictionary key="options">
                                                                 <bool key="NSConditionallySetsEditable" value="YES"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="36z-Tr-B4G"/>
                                                     </connections>
                                                 </tableColumn>
                                                 <tableColumn identifier="bitspersample" editable="NO" width="64" minWidth="32" maxWidth="1024" hidden="YES" id="3no-xo-TpJ" userLabel="Bits Per Sample">
@@ -724,12 +724,12 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                     <connections>
-                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="OsB-l4-dFb"/>
                                                         <binding destination="218" name="value" keyPath="arrangedObjects.bitsPerSample" id="qVg-Ph-8TQ">
                                                             <dictionary key="options">
                                                                 <bool key="NSConditionallySetsEditable" value="YES"/>
                                                             </dictionary>
                                                         </binding>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="OsB-l4-dFb"/>
                                                     </connections>
                                                 </tableColumn>
                                             </tableColumns>
@@ -1573,6 +1573,11 @@
                             <menuItem title="Show Info Inspector" keyEquivalent="i" id="2453">
                                 <connections>
                                     <action selector="toggleWindow:" target="2422" id="2454"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Lyrics" keyEquivalent="L" id="Tkb-7M-OiA">
+                                <connections>
+                                    <action selector="toggleWindow:" target="3y4-Q0-Kkl" id="0kv-17-aS6"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Show Spotlight Panel" keyEquivalent="F" id="1853">
@@ -2548,6 +2553,13 @@ Gw
             </connections>
         </customObject>
         <customObject id="Hd4-Wy-Rfl" customClass="AboutWindowController" customModule="Cog" customModuleProvider="target"/>
+        <customObject id="3y4-Q0-Kkl" customClass="LyricsWindowController">
+            <connections>
+                <outlet property="appController" destination="226" id="tbl-VH-JHF"/>
+                <outlet property="currentEntryController" destination="1897" id="5k1-yb-UNo"/>
+                <outlet property="playlistSelectionController" destination="2020" id="eLM-rx-mpe"/>
+            </connections>
+        </customObject>
     </objects>
     <resources>
         <image name="deadItemsTemplate" width="20" height="20"/>
