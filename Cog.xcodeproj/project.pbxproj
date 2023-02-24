@@ -1044,6 +1044,10 @@
 		8384915718083EAB00E7332D /* volume1Template.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = volume1Template.pdf; path = Images/volume1Template.pdf; sourceTree = "<group>"; };
 		8384915818083EAB00E7332D /* volume3Template.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = volume3Template.pdf; path = Images/volume3Template.pdf; sourceTree = "<group>"; };
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
+		838EE79E29A8556000CD0580 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
+		838EE7A029A8556500CD0580 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
+		838EE7A229A8557000CD0580 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
+		838EE7A429A8557200CD0580 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
 		83922FB6286B1AA900A0B039 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		839614A1286ED97200D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AboutWindowController.xib; sourceTree = "<group>"; };
@@ -3071,6 +3075,10 @@
 			isa = PBXVariantGroup;
 			children = (
 				83B61E2329A8296500CD0580 /* Base */,
+				838EE79E29A8556000CD0580 /* en */,
+				838EE7A029A8556500CD0580 /* es */,
+				838EE7A229A8557000CD0580 /* ru */,
+				838EE7A429A8557200CD0580 /* pl */,
 			);
 			name = LyricsWindow.xib;
 			sourceTree = "<group>";
