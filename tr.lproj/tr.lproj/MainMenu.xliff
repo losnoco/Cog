@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+	<file original="" datatype="plaintext" xml:space="preserve" source-language="en" target-language="tr">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="302.title">
+				<source>Check for Updates...</source>
+				<target>Güncellemeleri kontrol et...</target>
+			</trans-unit>
+			<trans-unit id="1132.title">
+				<source>Show All Songs</source>
+				<target>Tüm Şarkıları Göster</target>
+			</trans-unit>
+			<trans-unit id="1824.title">
+				<source>Filter Playlist</source>
+				<target>Çalma Listesini Filtrele</target>
+			</trans-unit>
+			<trans-unit id="1891.ibShadowedDisplayPattern">
+				<source>Total Duration: %{value1}@</source>
+				<target>Toplam Süre: %{value1}@</target>
+			</trans-unit>
+			<trans-unit id="yGV-gP-Wl6.title">
+				<source>Album Artist</source>
+				<target>Albüm Sanatçısı</target>
+			</trans-unit>
+			<trans-unit id="3A3-9o-Gh9.title">
+				<source>Codec</source>
+				<target>Codec</target>
+			</trans-unit>
+			<trans-unit id="Tkb-7M-OiA.title">
+				<source>Show Lyrics</source>
+				<target>Show Lyrics</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

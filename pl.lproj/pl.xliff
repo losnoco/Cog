@@ -1,0 +1,3509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+	<file original="Base.lproj/AboutWindowController.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="F0z-JX-Cv5.title">
+				<source>About Cog</source>
+				<target>o aplikacji cog</target>
+				<note>Class = "NSWindow"; title = "About Cog"; ObjectID = "F0z-JX-Cv5";</note>
+			</trans-unit>
+			<trans-unit id="Wjf-By-C1F.title">
+				<source>Version...</source>
+				<target>wersja...</target>
+			</trans-unit>
+			<trans-unit id="hzl-Rl-e01.title">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="wLU-AJ-J0b.title">
+				<source>Copyright...</source>
+				<target>prawa autorskie...</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/Equalizer.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="0aZ-qR-VQB.title">
+				<source>63</source>
+				<target>63</target>
+			</trans-unit>
+			<trans-unit id="0yY-ZG-55W.title">
+				<source>80</source>
+				<target>80</target>
+			</trans-unit>
+			<trans-unit id="1dn-Vq-wWg.title">
+				<source>31.5</source>
+				<target>31.5</target>
+			</trans-unit>
+			<trans-unit id="3uY-U8-fJj.title">
+				<source>10</source>
+				<target>10</target>
+			</trans-unit>
+			<trans-unit id="7O0-sA-hE3.title">
+				<source>-12 dB</source>
+				<target>-12 dB</target>
+			</trans-unit>
+			<trans-unit id="8bT-Kt-cyl.title">
+				<source>8</source>
+				<target>8</target>
+			</trans-unit>
+			<trans-unit id="9Xl-RA-0SW.title">
+				<source>Equalizer</source>
+				<target>Equalizer</target>
+			</trans-unit>
+			<trans-unit id="A7Y-xq-LdW.title">
+				<source>1.2</source>
+				<target>1.2</target>
+			</trans-unit>
+			<trans-unit id="B9P-B7-9bf.title">
+				<source>100</source>
+				<target>100</target>
+			</trans-unit>
+			<trans-unit id="ERP-9r-xp9.title">
+				<source>400</source>
+				<target>400</target>
+			</trans-unit>
+			<trans-unit id="Id9-5k-q9Q.title">
+				<source>Enabled</source>
+				<target>włączony</target>
+			</trans-unit>
+			<trans-unit id="JVJ-LV-LDc.title">
+				<source>500</source>
+				<target>500</target>
+			</trans-unit>
+			<trans-unit id="KP1-mo-Quy.title">
+				<source>20 dB</source>
+				<target>20 dB</target>
+			</trans-unit>
+			<trans-unit id="LoH-XP-I4Y.title">
+				<source>20kHz</source>
+				<target>20kHz</target>
+			</trans-unit>
+			<trans-unit id="Nc6-vb-nIc.title">
+				<source>2.5</source>
+				<target>2.5</target>
+			</trans-unit>
+			<trans-unit id="SBw-cK-76N.title">
+				<source>3 dB</source>
+				<target>3 dB</target>
+			</trans-unit>
+			<trans-unit id="TYp-Ae-UMg.title">
+				<source>2</source>
+				<target>2</target>
+			</trans-unit>
+			<trans-unit id="TnM-7Z-BUu.title">
+				<source>160</source>
+				<target>160</target>
+			</trans-unit>
+			<trans-unit id="UEO-zv-YmO.title">
+				<source>12</source>
+				<target>12</target>
+			</trans-unit>
+			<trans-unit id="UOZ-JN-QIr.title">
+				<source>50</source>
+				<target>50</target>
+			</trans-unit>
+			<trans-unit id="XmE-PI-PFN.title">
+				<source>20Hz</source>
+				<target>20Hz</target>
+			</trans-unit>
+			<trans-unit id="Ze7-D0-V5z.title">
+				<source>200</source>
+				<target>200</target>
+			</trans-unit>
+			<trans-unit id="Zlw-xU-QP7.title">
+				<source>-6 dB</source>
+				<target>-6 dB</target>
+			</trans-unit>
+			<trans-unit id="aeV-tB-rvh.title">
+				<source>Tracking genre tags</source>
+				<target>śledzenie tagów gatunku</target>
+			</trans-unit>
+			<trans-unit id="bOS-GE-rwi.title">
+				<source>Flatten EQ</source>
+				<target>Flatten EQ</target>
+			</trans-unit>
+			<trans-unit id="bqX-Dk-bJ9.title">
+				<source>630</source>
+				<target>630</target>
+			</trans-unit>
+			<trans-unit id="cO5-1C-qEl.title">
+				<source>25</source>
+				<target>25</target>
+			</trans-unit>
+			<trans-unit id="cq3-MT-eo1.title">
+				<source>0 dB</source>
+				<target>0 dB</target>
+			</trans-unit>
+			<trans-unit id="e6h-zW-Op6.title">
+				<source>4</source>
+				<target>4</target>
+			</trans-unit>
+			<trans-unit id="e71-GI-ntH.title">
+				<source>16</source>
+				<target>16</target>
+			</trans-unit>
+			<trans-unit id="eB6-XM-qUy.title">
+				<source>800</source>
+				<target>800</target>
+			</trans-unit>
+			<trans-unit id="efh-nh-mDD.title">
+				<source>250</source>
+				<target>250</target>
+			</trans-unit>
+			<trans-unit id="fJ3-i8-mw9.title">
+				<source>-20 dB</source>
+				<target>-20 dB</target>
+			</trans-unit>
+			<trans-unit id="fpg-RS-w2Y.title">
+				<source>6 dB</source>
+				<target>6 dB</target>
+			</trans-unit>
+			<trans-unit id="g10-wn-Agu.title">
+				<source>315</source>
+				<target>315</target>
+			</trans-unit>
+			<trans-unit id="ihA-eC-L0F.title">
+				<source>40</source>
+				<target>40</target>
+			</trans-unit>
+			<trans-unit id="kdf-iA-xrZ.title">
+				<source>3.1</source>
+				<target>3.1</target>
+			</trans-unit>
+			<trans-unit id="ke7-4o-FJG.title">
+				<source>5</source>
+				<target>5</target>
+			</trans-unit>
+			<trans-unit id="lwG-Tm-rr1.title">
+				<source>Note: You may use right-click to draw an equalizer shape</source>
+				<target>uwaga: możesz użyć prawego klawisza myszy by narysować krztałt equalizera</target>
+			</trans-unit>
+			<trans-unit id="neW-5g-R0i.title">
+				<source>6.3</source>
+				<target>6.3</target>
+			</trans-unit>
+			<trans-unit id="nqJ-h3-mQq.title">
+				<source>12 dB</source>
+				<target>12 dB</target>
+			</trans-unit>
+			<trans-unit id="opU-zn-biU.title">
+				<source>125</source>
+				<target>125</target>
+			</trans-unit>
+			<trans-unit id="pGw-Cf-6Nj.title">
+				<source>-3 dB</source>
+				<target>-3 dB</target>
+			</trans-unit>
+			<trans-unit id="qj9-4A-tfF.title">
+				<source>1.6</source>
+				<target>1.6</target>
+			</trans-unit>
+			<trans-unit id="rck-mI-bed.title">
+				<source>Level Preamp</source>
+				<target>Level Preamp</target>
+			</trans-unit>
+			<trans-unit id="wzI-tF-Y2S.title">
+				<source>Preamp</source>
+				<target>preambuła</target>
+			</trans-unit>
+			<trans-unit id="xM8-HB-8XL.title">
+				<source>1k</source>
+				<target>1k</target>
+			</trans-unit>
+			<trans-unit id="xsQ-DN-AcS.title">
+				<source>Preset:</source>
+				<target>ustawienia użytkownika:</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/Feedback.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="1.title">
+				<source>Send Feedback</source>
+				<target>Wyślij opinie</target>
+				<note>Class = "NSWindow"; title = "Send Feedback"; ObjectID = "1";</note>
+			</trans-unit>
+			<trans-unit id="17.title">
+				<source>Send</source>
+				<target>Wyślij</target>
+			</trans-unit>
+			<trans-unit id="18.title">
+				<source>Subject:</source>
+				<target>temat:</target>
+				<note>Class = "NSTextFieldCell"; title = "Subject:"; ObjectID = "18";</note>
+			</trans-unit>
+			<trans-unit id="19.title">
+				<source>Message:</source>
+				<target>wiadomość:</target>
+				<note>Class = "NSTextFieldCell"; title = "Message:"; ObjectID = "19";</note>
+			</trans-unit>
+			<trans-unit id="20.title">
+				<source>Cancel</source>
+				<target>anuluj</target>
+				<note>Class = "NSButtonCell"; title = "Cancel"; ObjectID = "20";</note>
+			</trans-unit>
+			<trans-unit id="22.title">
+				<source>Email:</source>
+				<target>Email:</target>
+				<note>Class = "NSTextFieldCell"; title = "Email:"; ObjectID = "22";</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/FileTree.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="71.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="110.title">
+				<source>Menu</source>
+				<target>Menu</target>
+			</trans-unit>
+			<trans-unit id="112.title">
+				<source>Show in Finder</source>
+				<target>pokaż w finderze</target>
+				<note>Class = "NSMenuItem"; title = "Show in Finder"; ObjectID = "112";</note>
+			</trans-unit>
+			<trans-unit id="119.title">
+				<source>Add to Playlist</source>
+				<target>dodaj do playlisty</target>
+			</trans-unit>
+			<trans-unit id="124.title">
+				<source>Set as Root</source>
+				<target>Set as Root</target>
+				<note>Class = "NSMenuItem"; title = "Set as Root"; ObjectID = "124";</note>
+			</trans-unit>
+			<trans-unit id="129.title">
+				<source>Set as Playlist</source>
+				<target>ustaw jako playlistę</target>
+				<note>Class = "NSMenuItem"; title = "Set as Playlist"; ObjectID = "129";</note>
+			</trans-unit>
+			<trans-unit id="147.title">
+				<source>Box</source>
+				<target>Box</target>
+			</trans-unit>
+			<trans-unit id="vRe-3U-Nxj.title">
+				<source>Choose</source>
+				<target>wybierz</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/InfoInspector.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="1.title">
+				<source>Info Inspector</source>
+				<target>Info Inspector</target>
+				<note>Class = "NSWindow"; title = "Info Inspector"; ObjectID = "1";</note>
+			</trans-unit>
+			<trans-unit id="8e7-lp-K5l.title">
+				<source>Encoding:</source>
+				<target>Encoding:</target>
+			</trans-unit>
+			<trans-unit id="10.title">
+				<source>Artist:</source>
+				<target>Artist:</target>
+			</trans-unit>
+			<trans-unit id="12.title">
+				<source>Album:</source>
+				<target>Album:</target>
+			</trans-unit>
+			<trans-unit id="14.title">
+				<source>Track:</source>
+				<target>Track:</target>
+			</trans-unit>
+			<trans-unit id="16.title">
+				<source>Length:</source>
+				<target>Length:</target>
+			</trans-unit>
+			<trans-unit id="18.title">
+				<source>Year:</source>
+				<target>Year:</target>
+			</trans-unit>
+			<trans-unit id="20.title">
+				<source>Genre:</source>
+				<target>Genre:</target>
+			</trans-unit>
+			<trans-unit id="22.title">
+				<source>Sample Rate:</source>
+				<target>Sample Rate:</target>
+			</trans-unit>
+			<trans-unit id="24.title">
+				<source>Title:</source>
+				<target>Title:</target>
+				<note>Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "24";</note>
+			</trans-unit>
+			<trans-unit id="28.title">
+				<source>Channels:</source>
+				<target>Channels:</target>
+			</trans-unit>
+			<trans-unit id="31.title">
+				<source>Bits Per Sample:</source>
+				<target>Bits Per Sample:</target>
+			</trans-unit>
+			<trans-unit id="32.title">
+				<source>Bitrate:</source>
+				<target>Bitrate:</target>
+			</trans-unit>
+			<trans-unit id="34.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="36.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="38.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="40.title">
+				<source>N/A</source>
+				<target>brak</target>
+				<note>Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "40";</note>
+			</trans-unit>
+			<trans-unit id="42.title">
+				<source>N/A</source>
+				<target>brak</target>
+				<note>Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "42";</note>
+			</trans-unit>
+			<trans-unit id="44.title">
+				<source>N/A</source>
+				<target>brak</target>
+				<note>Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "44";</note>
+			</trans-unit>
+			<trans-unit id="46.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="50.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="52.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="54.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="56.title">
+				<source>N/A</source>
+				<target>brak</target>
+				<note>Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "56";</note>
+			</trans-unit>
+			<trans-unit id="85.title">
+				<source>Filename:</source>
+				<target>Filename:</target>
+			</trans-unit>
+			<trans-unit id="87.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="B8w-o8-ZBw.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="Cu5-ia-Z5b.title">
+				<source>Cuesheet:</source>
+				<target>Cuesheet:</target>
+			</trans-unit>
+			<trans-unit id="Ial-XI-91y.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="LFJ-QQ-gGr.title">
+				<source>Album Artist:</source>
+				<target>Album Artist:</target>
+			</trans-unit>
+			<trans-unit id="UyE-Mc-e39.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="Yby-OU-cqP.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="cbq-TT-CZX.title">
+				<source>Codec:</source>
+				<target>Codec:</target>
+			</trans-unit>
+			<trans-unit id="fiv-eh-w3c.title">
+				<source>Play Count:</source>
+				<target>Play Count:</target>
+			</trans-unit>
+			<trans-unit id="qBi-M8-kEx.title">
+				<source>ReplayGain:</source>
+				<target>ReplayGain:</target>
+			</trans-unit>
+			<trans-unit id="rAo-AP-lVa.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="v14-AG-B9D.title">
+				<source>N/A</source>
+				<target>brak</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/MainMenu.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="2qB-Bq-t2u.title">
+				<source>Remove Duplicate Items</source>
+				<target>Usuń duplikaty</target>
+			</trans-unit>
+			<trans-unit id="3A3-9o-Gh9.headerCell.title">
+				<source>Codec</source>
+				<target>kodek</target>
+			</trans-unit>
+			<trans-unit id="3QN-Ok-QPu.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="4pg-Lq-O8K.label">
+				<source>Remove Duplicate Items</source>
+				<target>Usuń duplikaty</target>
+			</trans-unit>
+			<trans-unit id="4pg-Lq-O8K.paletteLabel">
+				<source>Remove Duplicate Items</source>
+				<target>Usuń duplikaty</target>
+			</trans-unit>
+			<trans-unit id="5.title">
+				<source>Bring All to Front</source>
+				<target>Bring All to Front</target>
+				<note>Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "5";</note>
+			</trans-unit>
+			<trans-unit id="5bQ-Qy-2KR.ibShadowedDisplayPattern">
+				<source>%{value1}@%{value2}@</source>
+				<target>%{value1}@%{value2}@</target>
+			</trans-unit>
+			<trans-unit id="5iV-dM-oX2.title">
+				<source>Reset Play Count</source>
+				<target>Reset Play Count</target>
+			</trans-unit>
+			<trans-unit id="19.title">
+				<source>Window</source>
+				<target>okno</target>
+				<note>Class = "NSMenuItem"; title = "Window"; ObjectID = "19";</note>
+			</trans-unit>
+			<trans-unit id="20m-a6-e24.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="21.title">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="23.title">
+				<source>Minimize</source>
+				<target>zminimalizuj</target>
+				<note>Class = "NSMenuItem"; title = "Minimize"; ObjectID = "23";</note>
+			</trans-unit>
+			<trans-unit id="24.title">
+				<source>Window</source>
+				<target>okno</target>
+				<note>Class = "NSMenu"; title = "Window"; ObjectID = "24";</note>
+			</trans-unit>
+			<trans-unit id="29.title">
+				<source>MainMenu</source>
+				<target>MainMenu</target>
+				<note>Class = "NSMenu"; title = "MainMenu"; ObjectID = "29";</note>
+			</trans-unit>
+			<trans-unit id="56.title">
+				<source>Cog</source>
+				<target>Cog</target>
+				<note>Class = "NSMenuItem"; title = "Cog"; ObjectID = "56";</note>
+			</trans-unit>
+			<trans-unit id="57.title">
+				<source>Cog</source>
+				<target>Cog</target>
+				<note>Class = "NSMenu"; title = "Cog"; ObjectID = "57";</note>
+			</trans-unit>
+			<trans-unit id="58.title">
+				<source>About Cog</source>
+				<target>o Cog</target>
+				<note>Class = "NSMenuItem"; title = "About Cog"; ObjectID = "58";</note>
+			</trans-unit>
+			<trans-unit id="71l-3L-S3g.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="72.title">
+				<source>Add File...</source>
+				<target>dodaj plik...</target>
+				<note>Class = "NSMenuItem"; title = "Add File..."; ObjectID = "72";</note>
+			</trans-unit>
+			<trans-unit id="73.title">
+				<source>Close Window</source>
+				<target>zamknij okno</target>
+				<note>Class = "NSMenuItem"; title = "Close Window"; ObjectID = "73";</note>
+			</trans-unit>
+			<trans-unit id="75.title">
+				<source>Save As...</source>
+				<target>Zapisz jako...</target>
+				<note>Class = "NSMenuItem"; title = "Save As..."; ObjectID = "75";</note>
+			</trans-unit>
+			<trans-unit id="81.title">
+				<source>File</source>
+				<target>plik</target>
+				<note>Class = "NSMenu"; title = "File"; ObjectID = "81";</note>
+			</trans-unit>
+			<trans-unit id="83.title">
+				<source>File</source>
+				<target>plik</target>
+				<note>Class = "NSMenuItem"; title = "File"; ObjectID = "83";</note>
+			</trans-unit>
+			<trans-unit id="103.title">
+				<source>Help</source>
+				<target>pomoc</target>
+			</trans-unit>
+			<trans-unit id="106.title">
+				<source>Help</source>
+				<target>pomoc</target>
+			</trans-unit>
+			<trans-unit id="111.title">
+				<source>Cog Help</source>
+				<target>Pomoc programó cog</target>
+			</trans-unit>
+			<trans-unit id="129.title">
+				<source>Preferences…</source>
+				<target>Preferencje…</target>
+				<note>Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "129";</note>
+			</trans-unit>
+			<trans-unit id="130.title">
+				<source>Services</source>
+				<target>usługi</target>
+				<note>Class = "NSMenu"; title = "Services"; ObjectID = "130";</note>
+			</trans-unit>
+			<trans-unit id="131.title">
+				<source>Services</source>
+				<target>usługi</target>
+				<note>Class = "NSMenuItem"; title = "Services"; ObjectID = "131";</note>
+			</trans-unit>
+			<trans-unit id="134.title">
+				<source>Hide Cog</source>
+				<target>ukryj Cog</target>
+				<note>Class = "NSMenuItem"; title = "Hide Cog"; ObjectID = "134";</note>
+			</trans-unit>
+			<trans-unit id="136.title">
+				<source>Quit Cog</source>
+				<target>zamknij Cog</target>
+				<note>Class = "NSMenuItem"; title = "Quit Cog"; ObjectID = "136";</note>
+			</trans-unit>
+			<trans-unit id="145.title">
+				<source>Hide Others</source>
+				<target>ukryj inne aplikacje</target>
+				<note>Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145";</note>
+			</trans-unit>
+			<trans-unit id="150.title">
+				<source>Show All</source>
+				<target>pokaż wszystko</target>
+				<note>Class = "NSMenuItem"; title = "Show All"; ObjectID = "150";</note>
+			</trans-unit>
+			<trans-unit id="157.title">
+				<source>Copy</source>
+				<target>kopiuj</target>
+			</trans-unit>
+			<trans-unit id="158.title">
+				<source>Undo</source>
+				<target>cofnij</target>
+			</trans-unit>
+			<trans-unit id="160.title">
+				<source>Cut</source>
+				<target>wytnij</target>
+			</trans-unit>
+			<trans-unit id="163.title">
+				<source>Edit</source>
+				<target>edycja</target>
+			</trans-unit>
+			<trans-unit id="164.title">
+				<source>Delete</source>
+				<target>usuń</target>
+			</trans-unit>
+			<trans-unit id="169.title">
+				<source>Edit</source>
+				<target>edycja</target>
+			</trans-unit>
+			<trans-unit id="171.title">
+				<source>Paste</source>
+				<target>wklej</target>
+				<note>Class = "NSMenuItem"; title = "Paste"; ObjectID = "171";</note>
+			</trans-unit>
+			<trans-unit id="172.title">
+				<source>Select All</source>
+				<target>Zaznacz wszystko</target>
+				<note>Class = "NSMenuItem"; title = "Select All"; ObjectID = "172";</note>
+			</trans-unit>
+			<trans-unit id="173.title">
+				<source>Redo</source>
+				<target>anuluj cofnięcie</target>
+			</trans-unit>
+			<trans-unit id="197.title">
+				<source>Zoom</source>
+				<target>Zoom</target>
+				<note>Class = "NSMenuItem"; title = "Zoom"; ObjectID = "197";</note>
+			</trans-unit>
+			<trans-unit id="208.headerCell.title">
+				<source>Rating</source>
+				<target>Rating</target>
+			</trans-unit>
+			<trans-unit id="209.headerCell.title">
+				<source>#</source>
+				<target>#</target>
+			</trans-unit>
+			<trans-unit id="303.title">
+				<source>Send Feedback...</source>
+				<target>wyślij opinię...</target>
+			</trans-unit>
+			<trans-unit id="391.headerCell.title">
+				<source>Artist</source>
+				<target>wykonawca</target>
+			</trans-unit>
+			<trans-unit id="418.title">
+				<source>Control</source>
+				<target>Control</target>
+				<note>Class = "NSMenuItem"; title = "Control"; ObjectID = "418";</note>
+			</trans-unit>
+			<trans-unit id="419.title">
+				<source>Control</source>
+				<target>Control</target>
+				<note>Class = "NSMenu"; title = "Control"; ObjectID = "419";</note>
+			</trans-unit>
+			<trans-unit id="420.title">
+				<source>Play/Pause</source>
+				<target>graj/pałza</target>
+			</trans-unit>
+			<trans-unit id="422.title">
+				<source>Next Song</source>
+				<target>następna piosenka</target>
+			</trans-unit>
+			<trans-unit id="423.title">
+				<source>Previous Song</source>
+				<target>poprzednia piosenka</target>
+			</trans-unit>
+			<trans-unit id="513.title">
+				<source>Menu</source>
+				<target>Menu</target>
+			</trans-unit>
+			<trans-unit id="517.title">
+				<source>Stop</source>
+				<target>Stop</target>
+				<note>Class = "NSMenuItem"; title = "Stop"; ObjectID = "517";</note>
+			</trans-unit>
+			<trans-unit id="518.title">
+				<source>Next Track</source>
+				<target>następny utwór</target>
+			</trans-unit>
+			<trans-unit id="519.title">
+				<source>Previous Track</source>
+				<target>poprzedni utwór</target>
+			</trans-unit>
+			<trans-unit id="520.title">
+				<source>Play/Pause</source>
+				<target>graj/pauza</target>
+			</trans-unit>
+			<trans-unit id="702.title">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="791.title">
+				<source>Current Song</source>
+				<target>grana piosenka</target>
+			</trans-unit>
+			<trans-unit id="806.headerCell.title">
+				<source>Album</source>
+				<target>Album</target>
+			</trans-unit>
+			<trans-unit id="807.headerCell.title">
+				<source>Length</source>
+				<target>długość</target>
+			</trans-unit>
+			<trans-unit id="848.headerCell.title">
+				<source>Year</source>
+				<target>rok</target>
+			</trans-unit>
+			<trans-unit id="849.headerCell.title">
+				<source>Genre</source>
+				<target>gatunek</target>
+			</trans-unit>
+			<trans-unit id="850.headerCell.title">
+				<source>№</source>
+				<target>№</target>
+			</trans-unit>
+			<trans-unit id="881.title">
+				<source>Playlist</source>
+				<target>Playlista</target>
+			</trans-unit>
+			<trans-unit id="882.title">
+				<source>Playlist</source>
+				<target>Playlista</target>
+			</trans-unit>
+			<trans-unit id="1063.title">
+				<source>Menu</source>
+				<target>Menu</target>
+			</trans-unit>
+			<trans-unit id="1064.title">
+				<source>Show in Finder</source>
+				<target>pokaż w finderze</target>
+			</trans-unit>
+			<trans-unit id="1135.title">
+				<source>Show in Finder</source>
+				<target>pokaż w finderze</target>
+			</trans-unit>
+			<trans-unit id="1136.title">
+				<source>Volume Up</source>
+				<target>głośniej</target>
+			</trans-unit>
+			<trans-unit id="1137.title">
+				<source>Volume Down</source>
+				<target>ciszej</target>
+			</trans-unit>
+			<trans-unit id="1324.title">
+				<source>Menu</source>
+				<target>Menu</target>
+			</trans-unit>
+			<trans-unit id="1337.title">
+				<source>Index</source>
+				<target>Index</target>
+			</trans-unit>
+			<trans-unit id="1338.title">
+				<source>Title</source>
+				<target>tytuł</target>
+			</trans-unit>
+			<trans-unit id="1339.title">
+				<source>Artist</source>
+				<target>wykonawca</target>
+			</trans-unit>
+			<trans-unit id="1340.title">
+				<source>Album</source>
+				<target>Album</target>
+			</trans-unit>
+			<trans-unit id="1341.title">
+				<source>Genre</source>
+				<target>gatunek</target>
+			</trans-unit>
+			<trans-unit id="1342.title">
+				<source>Length</source>
+				<target>długość</target>
+			</trans-unit>
+			<trans-unit id="1343.title">
+				<source>Track</source>
+				<target>utwór</target>
+			</trans-unit>
+			<trans-unit id="1344.title">
+				<source>Year</source>
+				<target>rok</target>
+			</trans-unit>
+			<trans-unit id="1360.title">
+				<source>Remove</source>
+				<target>usuń</target>
+			</trans-unit>
+			<trans-unit id="1362.title">
+				<source>Stop</source>
+				<target>stop</target>
+			</trans-unit>
+			<trans-unit id="1402.title">
+				<source>Remove All</source>
+				<target>usuń wszystko</target>
+			</trans-unit>
+			<trans-unit id="1403.title">
+				<source>Add URL...</source>
+				<target>dodaj adres URL...</target>
+			</trans-unit>
+			<trans-unit id="1408.title">
+				<source>Remove</source>
+				<target>usuń</target>
+			</trans-unit>
+			<trans-unit id="1454.title">
+				<source>Current Artist</source>
+				<target>Obecny wykonawca</target>
+			</trans-unit>
+			<trans-unit id="1473.title">
+				<source>Total Duration: 00 hours 00 minutes 00 seconds</source>
+				<target>całkowita długość: 00 godzin 00 minut 00 sekund</target>
+			</trans-unit>
+			<trans-unit id="1506.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1507.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1508.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1509.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1510.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1511.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1512.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1513.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1532.placeholderString">
+				<source>All</source>
+				<target>wszystkie</target>
+			</trans-unit>
+			<trans-unit id="1533.label">
+				<source>Search</source>
+				<target>Szukaj</target>
+			</trans-unit>
+			<trans-unit id="1533.paletteLabel">
+				<source>Search</source>
+				<target>Szukaj</target>
+			</trans-unit>
+			<trans-unit id="1538.ibShadowedToolTips[0]">
+				<source>Previous</source>
+				<target>Poprzedni</target>
+			</trans-unit>
+			<trans-unit id="1538.ibShadowedToolTips[1]">
+				<source>Play</source>
+				<target>odtwarzaj</target>
+			</trans-unit>
+			<trans-unit id="1538.ibShadowedToolTips[2]">
+				<source>Stop</source>
+				<target>pauza</target>
+			</trans-unit>
+			<trans-unit id="1538.ibShadowedToolTips[3]">
+				<source>Next</source>
+				<target>następne</target>
+			</trans-unit>
+			<trans-unit id="1539.label">
+				<source>Playback Control</source>
+				<target>kontrola odtwarzania</target>
+			</trans-unit>
+			<trans-unit id="1539.paletteLabel">
+				<source>Playback Control</source>
+				<target>kontrola odtwarzania</target>
+			</trans-unit>
+			<trans-unit id="1551.label">
+				<source>Position</source>
+				<target>Pozycja</target>
+			</trans-unit>
+			<trans-unit id="1551.paletteLabel">
+				<source>Position</source>
+				<target>Pozycja</target>
+			</trans-unit>
+			<trans-unit id="1567.title">
+				<source>0:00</source>
+				<target>0:00</target>
+			</trans-unit>
+			<trans-unit id="1568.label">
+				<source>Current Time</source>
+				<target>przesłuchano</target>
+			</trans-unit>
+			<trans-unit id="1568.paletteLabel">
+				<source>Current Time</source>
+				<target>przesłuchano</target>
+			</trans-unit>
+			<trans-unit id="1576.ibShadowedDisplayName">
+				<source>All</source>
+				<target>wszystkie</target>
+			</trans-unit>
+			<trans-unit id="1578.ibShadowedDisplayName">
+				<source>Title</source>
+				<target>tytuł</target>
+			</trans-unit>
+			<trans-unit id="1580.ibShadowedDisplayName">
+				<source>Artist</source>
+				<target>artysta</target>
+			</trans-unit>
+			<trans-unit id="1582.ibShadowedDisplayName">
+				<source>Album</source>
+				<target>Album</target>
+			</trans-unit>
+			<trans-unit id="1583.ibShadowedDisplayName">
+				<source>Genre</source>
+				<target>gatunek</target>
+			</trans-unit>
+			<trans-unit id="1610.label">
+				<source>Volume</source>
+				<target>głośność</target>
+			</trans-unit>
+			<trans-unit id="1610.paletteLabel">
+				<source>Volume</source>
+				<target>głośność</target>
+			</trans-unit>
+			<trans-unit id="1629.label">
+				<source>Info Inspector</source>
+				<target>inspektor informacji o pliku</target>
+			</trans-unit>
+			<trans-unit id="1629.paletteLabel">
+				<source>Info Inspector</source>
+				<target>inspektor informacji o pliku</target>
+			</trans-unit>
+			<trans-unit id="1630.label">
+				<source>File Tree</source>
+				<target>drzewo plików</target>
+			</trans-unit>
+			<trans-unit id="1630.paletteLabel">
+				<source>File Tree</source>
+				<target>drzewo plików</target>
+			</trans-unit>
+			<trans-unit id="1636.label">
+				<source>Shuffle</source>
+				<target>losowo</target>
+			</trans-unit>
+			<trans-unit id="1636.paletteLabel">
+				<source>Shuffle</source>
+				<target>losowo</target>
+			</trans-unit>
+			<trans-unit id="1639.label">
+				<source>Repeat</source>
+				<target>Powtórz</target>
+			</trans-unit>
+			<trans-unit id="1639.paletteLabel">
+				<source>Repeat</source>
+				<target>Powtórz</target>
+			</trans-unit>
+			<trans-unit id="1683.title">
+				<source>Seek Backward</source>
+				<target>przewiń do tyłu</target>
+			</trans-unit>
+			<trans-unit id="1685.title">
+				<source>Seek Forward</source>
+				<target>przewiń do przodu</target>
+			</trans-unit>
+			<trans-unit id="1699.title">
+				<source>Previous Album</source>
+				<target>poprzedni Album</target>
+			</trans-unit>
+			<trans-unit id="1701.title">
+				<source>Next Album</source>
+				<target>następny Album</target>
+			</trans-unit>
+			<trans-unit id="1712.headerCell.title">
+				<source>Path</source>
+				<target>Ścieżka</target>
+			</trans-unit>
+			<trans-unit id="1713.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1736.headerCell.title">
+				<source>Filename</source>
+				<target>Nazwa pliku</target>
+			</trans-unit>
+			<trans-unit id="1737.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="1740.title">
+				<source>Repeat</source>
+				<target>Powtórz</target>
+			</trans-unit>
+			<trans-unit id="1741.title">
+				<source>Repeat</source>
+				<target>Powtórz</target>
+			</trans-unit>
+			<trans-unit id="1742.title">
+				<source>All</source>
+				<target>wszystkie</target>
+			</trans-unit>
+			<trans-unit id="1746.title">
+				<source>One</source>
+				<target>jedną</target>
+			</trans-unit>
+			<trans-unit id="1749.title">
+				<source>None</source>
+				<target>nic</target>
+			</trans-unit>
+			<trans-unit id="1791.title">
+				<source>Remove All from Queue</source>
+				<target>usuń wszystko z kolejki</target>
+			</trans-unit>
+			<trans-unit id="1823.title">
+				<source>Select Currently Playing</source>
+				<target>zaznacz obecnie grane</target>
+			</trans-unit>
+			<trans-unit id="1848.title">
+				<source>View</source>
+				<target>widok</target>
+			</trans-unit>
+			<trans-unit id="1849.title">
+				<source>View</source>
+				<target>widok</target>
+			</trans-unit>
+			<trans-unit id="1853.title">
+				<source>Show Spotlight Panel</source>
+				<target>pokaż panel Spotlight</target>
+			</trans-unit>
+			<trans-unit id="1856.title">
+				<source>Customize Toolbar...</source>
+				<target>spersonalizuj pasek narzędzi...</target>
+			</trans-unit>
+			<trans-unit id="1858.title">
+				<source>Increase Font Size</source>
+				<target>powiększ rozmiar czcionki</target>
+			</trans-unit>
+			<trans-unit id="1859.title">
+				<source>Decrease Font Size</source>
+				<target>pomniejsz rozmiar czcionki</target>
+			</trans-unit>
+			<trans-unit id="1864.title">
+				<source>Add to Queue</source>
+				<target>dodaj do kolejki</target>
+			</trans-unit>
+			<trans-unit id="1865.title">
+				<source>Remove from Queue</source>
+				<target>usuń z kolejki</target>
+			</trans-unit>
+			<trans-unit id="1867.title">
+				<source>Search for Songs by Artist</source>
+				<target>szukaj piosenek od wykonawcy</target>
+			</trans-unit>
+			<trans-unit id="1868.title">
+				<source>Search for Songs from Album</source>
+				<target>wyszukaj piosenkę z albumu</target>
+			</trans-unit>
+			<trans-unit id="1885.title">
+				<source>Fade In/Out</source>
+				<target>Fade In/Out</target>
+			</trans-unit>
+			<trans-unit id="1892.title">
+				<source>Album</source>
+				<target>album</target>
+			</trans-unit>
+			<trans-unit id="1893.title">
+				<source>Add to Queue</source>
+				<target>dodaj do kolejki</target>
+			</trans-unit>
+			<trans-unit id="1895.title">
+				<source>Stop After Current</source>
+				<target>przestań grać po tym utworze</target>
+			</trans-unit>
+			<trans-unit id="1903.ibShadowedIsNilPlaceholder">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="1903.ibShadowedNoSelectionPlaceholder">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="1903.ibShadowedNotApplicablePlaceholder">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="2042.ibShadowedIsNilPlaceholder">
+				<source>Toggle Queued</source>
+				<target>Toggle Queued</target>
+			</trans-unit>
+			<trans-unit id="2042.ibShadowedMultipleValuesPlaceholder">
+				<source>Toggle Queued</source>
+				<target>Toggle Queued</target>
+			</trans-unit>
+			<trans-unit id="2042.ibShadowedNoSelectionPlaceholder">
+				<source>Toggle Queued</source>
+				<target>Toggle Queued</target>
+			</trans-unit>
+			<trans-unit id="2042.ibShadowedNotApplicablePlaceholder">
+				<source>Toggle Queued</source>
+				<target>Toggle Queued</target>
+			</trans-unit>
+			<trans-unit id="2045.title">
+				<source>Search for Artist</source>
+				<target>Szukaj wykonawcy</target>
+			</trans-unit>
+			<trans-unit id="2046.title">
+				<source>Search for Album</source>
+				<target>Szukaj Albumu</target>
+			</trans-unit>
+			<trans-unit id="2083.ibShadowedIsNilPlaceholder">
+				<source>Not Playing</source>
+				<target>nie gra</target>
+			</trans-unit>
+			<trans-unit id="2085.ibShadowedIsNilPlaceholder">
+				<source>Not Playing</source>
+				<target>nie gra</target>
+			</trans-unit>
+			<trans-unit id="2160.title">
+				<source>Toggle File Tree Orientation</source>
+				<target>Przełącz widok drzewa plików</target>
+			</trans-unit>
+			<trans-unit id="2212.title">
+				<source>Information</source>
+				<target>informacje</target>
+			</trans-unit>
+			<trans-unit id="2234.title">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="2272.label">
+				<source>Playback Buttons</source>
+				<target>Przyciski odtwarzania</target>
+			</trans-unit>
+			<trans-unit id="2272.paletteLabel">
+				<source>Playback Buttons</source>
+				<target>Przyciski odtwarzania</target>
+			</trans-unit>
+			<trans-unit id="2273.label">
+				<source>Position</source>
+				<target>Pozycja</target>
+			</trans-unit>
+			<trans-unit id="2273.paletteLabel">
+				<source>Position</source>
+				<target>Pozycja</target>
+			</trans-unit>
+			<trans-unit id="2274.label">
+				<source>Current Time</source>
+				<target>obecny czas odtwarzania</target>
+			</trans-unit>
+			<trans-unit id="2274.paletteLabel">
+				<source>Current Time</source>
+				<target>obecny czas odtwarzania</target>
+			</trans-unit>
+			<trans-unit id="2275.label">
+				<source>Volume</source>
+				<target>głośność</target>
+			</trans-unit>
+			<trans-unit id="2275.paletteLabel">
+				<source>Volume</source>
+				<target>głośność</target>
+			</trans-unit>
+			<trans-unit id="2278.label">
+				<source>Shuffle</source>
+				<target>losowo</target>
+			</trans-unit>
+			<trans-unit id="2278.paletteLabel">
+				<source>Shuffle</source>
+				<target>losowo</target>
+			</trans-unit>
+			<trans-unit id="2279.label">
+				<source>Repeat</source>
+				<target>powtórz</target>
+			</trans-unit>
+			<trans-unit id="2279.paletteLabel">
+				<source>Repeat</source>
+				<target>powtórz</target>
+			</trans-unit>
+			<trans-unit id="2292.title">
+				<source>0:00</source>
+				<target>0:00</target>
+			</trans-unit>
+			<trans-unit id="2296.ibShadowedToolTips[0]">
+				<source>Previous</source>
+				<target>Poprzedni</target>
+			</trans-unit>
+			<trans-unit id="2296.ibShadowedToolTips[1]">
+				<source>Play</source>
+				<target>odtwarzaj</target>
+			</trans-unit>
+			<trans-unit id="2296.ibShadowedToolTips[2]">
+				<source>Stop</source>
+				<target>pauza</target>
+			</trans-unit>
+			<trans-unit id="2296.ibShadowedToolTips[3]">
+				<source>Next</source>
+				<target>następny</target>
+			</trans-unit>
+			<trans-unit id="2374.ibShadowedIsNilPlaceholder">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="2374.ibShadowedNoSelectionPlaceholder">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="2374.ibShadowedNotApplicablePlaceholder">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="2417.title">
+				<source>Show File Tree</source>
+				<target>Pokaż drzewo plików</target>
+			</trans-unit>
+			<trans-unit id="2429.label">
+				<source>Info Inspector</source>
+				<target>inspektor informacji o plikó</target>
+			</trans-unit>
+			<trans-unit id="2429.paletteLabel">
+				<source>Info Inspector</source>
+				<target>inspektor informacji o plikó</target>
+			</trans-unit>
+			<trans-unit id="2438.title">
+				<source>Shuffle</source>
+				<target>losowo</target>
+			</trans-unit>
+			<trans-unit id="2439.title">
+				<source>Shuffle</source>
+				<target>losowo</target>
+			</trans-unit>
+			<trans-unit id="2440.title">
+				<source>Off</source>
+				<target>wyłączony</target>
+			</trans-unit>
+			<trans-unit id="2442.title">
+				<source>Albums</source>
+				<target>Albumy</target>
+			</trans-unit>
+			<trans-unit id="2443.title">
+				<source>All</source>
+				<target>wszystkie</target>
+			</trans-unit>
+			<trans-unit id="2453.title">
+				<source>Show Info Inspector</source>
+				<target>pokaż inspektor informacji o pliku</target>
+			</trans-unit>
+			<trans-unit id="2456.title">
+				<source>Enter Full Screen</source>
+				<target>pełny ekran</target>
+			</trans-unit>
+			<trans-unit id="2466.label">
+				<source>Randomize</source>
+				<target>losuj</target>
+			</trans-unit>
+			<trans-unit id="2466.paletteLabel">
+				<source>Randomize</source>
+				<target>losuj</target>
+			</trans-unit>
+			<trans-unit id="2472.title">
+				<source>Toggle</source>
+				<target>przełącz</target>
+			</trans-unit>
+			<trans-unit id="2476.title">
+				<source>Toggle</source>
+				<target>przełącz</target>
+			</trans-unit>
+			<trans-unit id="2483.title">
+				<source>Stop After Current</source>
+				<target>przestań grać, gdy skończy się utwór</target>
+			</trans-unit>
+			<trans-unit id="2485.title">
+				<source>Next Album</source>
+				<target>następny album</target>
+			</trans-unit>
+			<trans-unit id="2487.title">
+				<source>Previous Album</source>
+				<target>Poprzedni Album</target>
+			</trans-unit>
+			<trans-unit id="2493.title">
+				<source>Toggle Mini Mode</source>
+				<target>włącz tryb Mini</target>
+			</trans-unit>
+			<trans-unit id="2526.label">
+				<source>Normal Mode</source>
+				<target>tryb normalny</target>
+			</trans-unit>
+			<trans-unit id="2526.paletteLabel">
+				<source>Normal Mode</source>
+				<target>tryb normalny</target>
+			</trans-unit>
+			<trans-unit id="2532.label">
+				<source>Mini Mode</source>
+				<target>tryb mini</target>
+			</trans-unit>
+			<trans-unit id="2532.paletteLabel">
+				<source>Mini Mode</source>
+				<target>tryb mini</target>
+			</trans-unit>
+			<trans-unit id="2545.title">
+				<source>Randomize</source>
+				<target>losuj</target>
+			</trans-unit>
+			<trans-unit id="Ajn-k4-afd.title">
+				<source>Remove Dead Items</source>
+				<target>Remove Dead Items</target>
+			</trans-unit>
+			<trans-unit id="C2Q-qG-dwX.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="Eds-my-DQr.title">
+				<source>Properties</source>
+				<target>Properties</target>
+			</trans-unit>
+			<trans-unit id="FMU-QZ-NdQ.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="HK9-Am-31h.title">
+				<source>Reload Info</source>
+				<target>Reload Info</target>
+			</trans-unit>
+			<trans-unit id="Igo-5f-yim.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="Kih-ky-A1h.ibShadowedDisplayPattern">
+				<source>%{value1}@%{value2}@</source>
+				<target>%{value1}@%{value2}@</target>
+			</trans-unit>
+			<trans-unit id="M6d-rj-lEz.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="NtB-XF-g07.label">
+				<source>Spectrum</source>
+				<target>Spectrum</target>
+			</trans-unit>
+			<trans-unit id="NtB-XF-g07.paletteLabel">
+				<source>Spectrum</source>
+				<target>Spectrum</target>
+			</trans-unit>
+			<trans-unit id="PyI-lF-iuz.title">
+				<source>Remove Rating</source>
+				<target>Remove Rating</target>
+			</trans-unit>
+			<trans-unit id="UAk-Gc-lT4.title">
+				<source>Filter Playlist</source>
+				<target>Filter Playlist</target>
+			</trans-unit>
+			<trans-unit id="VVx-99-roJ.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="WKt-lM-Bv1.label">
+				<source>Remove Dead Items</source>
+				<target>Remove Dead Items</target>
+			</trans-unit>
+			<trans-unit id="WKt-lM-Bv1.paletteLabel">
+				<source>Remove Dead Items</source>
+				<target>Remove Dead Items</target>
+			</trans-unit>
+			<trans-unit id="XBr-ec-D81.headerCell.title">
+				<source>Title</source>
+				<target>tytuł</target>
+			</trans-unit>
+			<trans-unit id="YwT-z9-2d2.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="ZH9-ZU-skw.label">
+				<source>HDCD Indicator</source>
+				<target>HDCD Indicator</target>
+			</trans-unit>
+			<trans-unit id="ZH9-ZU-skw.paletteLabel">
+				<source>HDCD Indicator</source>
+				<target>HDCD Indicator</target>
+			</trans-unit>
+			<trans-unit id="ZOn-sB-FR3.label">
+				<source>Show Equalizer</source>
+				<target>Show Equalizer</target>
+			</trans-unit>
+			<trans-unit id="ZOn-sB-FR3.paletteLabel">
+				<source>Show Equalizer</source>
+				<target>Show Equalizer</target>
+			</trans-unit>
+			<trans-unit id="gKK-cS-RP5.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="js2-sT-U4M.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="kVl-aW-mtT.label">
+				<source>Randomize</source>
+				<target>losuj</target>
+			</trans-unit>
+			<trans-unit id="kVl-aW-mtT.paletteLabel">
+				<source>Randomize</source>
+				<target>losuj</target>
+			</trans-unit>
+			<trans-unit id="knJ-aI-sFa.label">
+				<source>Remove Dead Items</source>
+				<target>Remove Dead Items</target>
+			</trans-unit>
+			<trans-unit id="knJ-aI-sFa.paletteLabel">
+				<source>Remove Dead Items</source>
+				<target>Remove Dead Items</target>
+			</trans-unit>
+			<trans-unit id="kq8-9v-zC0.title">
+				<source>Reload Info</source>
+				<target>Reload Info</target>
+			</trans-unit>
+			<trans-unit id="lBy-Uc-vCA.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="lXN-EZ-xg0.title">
+				<source>Show Mini Player On Top</source>
+				<target>Show Mini Player On Top</target>
+			</trans-unit>
+			<trans-unit id="mhx-dQ-Kwx.title">
+				<source>Move to Trash</source>
+				<target>Move to Trash</target>
+			</trans-unit>
+			<trans-unit id="moV-3G-GpB.title">
+				<source>Table View Cell</source>
+				<target>Table View Cell</target>
+			</trans-unit>
+			<trans-unit id="nBU-pH-J3I.title">
+				<source>Show Equalizer</source>
+				<target>Show Equalizer</target>
+			</trans-unit>
+			<trans-unit id="nb7-FW-egH.title">
+				<source>Privacy Policy...</source>
+				<target>polityka prywatności</target>
+			</trans-unit>
+			<trans-unit id="omb-wi-loX.title">
+				<source>Stop after Selection</source>
+				<target>Stop after Selection</target>
+			</trans-unit>
+			<trans-unit id="pU1-ci-9uB.title">
+				<source>Show All Songs</source>
+				<target>Show All Songs</target>
+			</trans-unit>
+			<trans-unit id="qfu-F9-bOZ.label">
+				<source>HDCD Indicator</source>
+				<target>HDCD Indicator</target>
+			</trans-unit>
+			<trans-unit id="qfu-F9-bOZ.paletteLabel">
+				<source>HDCD Indicator</source>
+				<target>HDCD Indicator</target>
+			</trans-unit>
+			<trans-unit id="qlT-UX-x72.title">
+				<source>Move to Trash</source>
+				<target>przenieś do kosza</target>
+			</trans-unit>
+			<trans-unit id="rEg-qk-MbN.label">
+				<source>Remove Duplicate Items</source>
+				<target>usuń duplikaty</target>
+			</trans-unit>
+			<trans-unit id="rEg-qk-MbN.paletteLabel">
+				<source>Remove Duplicate Items</source>
+				<target>usuń duplikaty</target>
+			</trans-unit>
+			<trans-unit id="sdo-Sm-KPH.title">
+				<source>Table View Cell</source>
+				<target>komurka widoku tabeli</target>
+			</trans-unit>
+			<trans-unit id="sf3-l1-fJw.label">
+				<source>Spectrum</source>
+				<target>spektrum</target>
+			</trans-unit>
+			<trans-unit id="sf3-l1-fJw.paletteLabel">
+				<source>Spectrum</source>
+				<target>spektrum</target>
+			</trans-unit>
+			<trans-unit id="tus-lr-RhS.title">
+				<source>Table View Cell</source>
+				<target>komurka z widokiem tabeli</target>
+			</trans-unit>
+			<trans-unit id="vBH-Mr-XWi.title">
+				<source>Toggle Toolbar Style</source>
+				<target>przełącz styl paska nażędzi</target>
+			</trans-unit>
+			<trans-unit id="vaJ-Bc-ebE.title">
+				<source>Table View Cell</source>
+				<target>komurka z widokiem tabeli</target>
+			</trans-unit>
+			<trans-unit id="vzT-Gb-aGW.label">
+				<source>Show Equalizer</source>
+				<target>pokaż equalizer</target>
+			</trans-unit>
+			<trans-unit id="vzT-Gb-aGW.paletteLabel">
+				<source>Show Equalizer</source>
+				<target>pokaż equalizer</target>
+			</trans-unit>
+			<trans-unit id="wky-z8-Cj5.title">
+				<source>Table View Cell</source>
+				<target>komurka z widokiem tabeli
+</target>
+			</trans-unit>
+			<trans-unit id="wl2-Vo-pul.title">
+				<source>Show Spectrum Window</source>
+				<target>pokaż okno spektrum</target>
+			</trans-unit>
+			<trans-unit id="yGV-gP-Wl6.headerCell.title">
+				<source>Album Artist</source>
+				<target>wykonawca albumó</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/OpenURLPanel.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="5.title">
+				<source>Open URL</source>
+				<target>Open URL</target>
+				<note>Class = "NSWindow"; title = "Open URL"; ObjectID = "5";</note>
+			</trans-unit>
+			<trans-unit id="23.title">
+				<source>OK</source>
+				<target>OK</target>
+				<note>Class = "NSButtonCell"; title = "OK"; ObjectID = "23";</note>
+			</trans-unit>
+			<trans-unit id="24.title">
+				<source>Cancel</source>
+				<target>anuluj</target>
+				<note>Class = "NSButtonCell"; title = "Cancel"; ObjectID = "24";</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/SpectrumWindow.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="F0z-JX-Cv5.title">
+				<source>Spectrum</source>
+				<target>Spectrum</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Base.lproj/SpotlightPanel.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="1.title">
+				<source>Spotlight</source>
+				<target>Spotlight</target>
+			</trans-unit>
+			<trans-unit id="6.title">
+				<source>Add to Playlist</source>
+				<target>dodaj do Playlisty</target>
+			</trans-unit>
+			<trans-unit id="29.headerCell.title">
+				<source>Track</source>
+				<target>utwór</target>
+			</trans-unit>
+			<trans-unit id="30.headerCell.title">
+				<source>Genre</source>
+				<target>gatunek</target>
+			</trans-unit>
+			<trans-unit id="31.headerCell.title">
+				<source>Year</source>
+				<target>rok</target>
+			</trans-unit>
+			<trans-unit id="32.headerCell.title">
+				<source>Length</source>
+				<target>długość</target>
+			</trans-unit>
+			<trans-unit id="33.headerCell.title">
+				<source>Album</source>
+				<target>Album</target>
+			</trans-unit>
+			<trans-unit id="34.headerCell.title">
+				<source>Artist</source>
+				<target>wykonawca</target>
+			</trans-unit>
+			<trans-unit id="36.headerCell.title">
+				<source>Title</source>
+				<target>tytuł</target>
+			</trans-unit>
+			<trans-unit id="37.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="39.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="40.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="41.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="42.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="43.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="44.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="80.title">
+				<source>Search Location:</source>
+				<target>lokalizacja wyszukiwania:</target>
+			</trans-unit>
+			<trans-unit id="171.title">
+				<source>ContextualMenu</source>
+				<target>ContextualMenu</target>
+			</trans-unit>
+			<trans-unit id="172.title">
+				<source>Show in Finder</source>
+				<target>pokaż w finderze</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/GME/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2007</source>
+				<target>© __MyCompanyName__, 2007</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/MPCDec/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2006</source>
+				<target>© __MyCompanyName__, 2006</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/Shorten/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2006</source>
+				<target>© __MyCompanyName__, 2006</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/TagLib/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2006</source>
+				<target>© __MyCompanyName__, 2006</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/WavPack/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2006</source>
+				<target>© __MyCompanyName__, 2006</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/shpakovski/MASShortcut/Demo/Base.lproj/MainMenu.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="5.title">
+				<source>Bring All to Front</source>
+				<target>Bring All to Front</target>
+			</trans-unit>
+			<trans-unit id="7gv-jN-44g.title">
+				<source>Enable hard-coded shortcut (⌘F2)</source>
+				<target>Enable hard-coded shortcut (⌘F2)</target>
+				<note>Class = "NSButtonCell"; title = "Enable hard-coded shortcut (⌘F2)"; ObjectID = "7gv-jN-44g";</note>
+			</trans-unit>
+			<trans-unit id="19.title">
+				<source>Window</source>
+				<target>okno</target>
+			</trans-unit>
+			<trans-unit id="23.title">
+				<source>Minimize</source>
+				<target>zminimalizuj</target>
+			</trans-unit>
+			<trans-unit id="24.title">
+				<source>Window</source>
+				<target>okno</target>
+			</trans-unit>
+			<trans-unit id="29.title">
+				<source>AMainMenu</source>
+				<target>AMainMenu</target>
+			</trans-unit>
+			<trans-unit id="56.title">
+				<source>Demo</source>
+				<target>Demo</target>
+			</trans-unit>
+			<trans-unit id="57.title">
+				<source>Demo</source>
+				<target>Demo</target>
+			</trans-unit>
+			<trans-unit id="58.title">
+				<source>About Demo</source>
+				<target>About Demo</target>
+			</trans-unit>
+			<trans-unit id="72.title">
+				<source>Open…</source>
+				<target>Open…</target>
+			</trans-unit>
+			<trans-unit id="73.title">
+				<source>Close</source>
+				<target>Close</target>
+			</trans-unit>
+			<trans-unit id="75.title">
+				<source>Save…</source>
+				<target>Save…</target>
+			</trans-unit>
+			<trans-unit id="77.title">
+				<source>Page Setup...</source>
+				<target>Page Setup...</target>
+				<note>Class = "NSMenuItem"; title = "Page Setup..."; ObjectID = "77";</note>
+			</trans-unit>
+			<trans-unit id="78.title">
+				<source>Print…</source>
+				<target>Print…</target>
+				<note>Class = "NSMenuItem"; title = "Print…"; ObjectID = "78";</note>
+			</trans-unit>
+			<trans-unit id="81.title">
+				<source>File</source>
+				<target>plik</target>
+			</trans-unit>
+			<trans-unit id="82.title">
+				<source>New</source>
+				<target>New</target>
+				<note>Class = "NSMenuItem"; title = "New"; ObjectID = "82";</note>
+			</trans-unit>
+			<trans-unit id="83.title">
+				<source>File</source>
+				<target>plik</target>
+			</trans-unit>
+			<trans-unit id="85u-1A-n7H.title">
+				<source>Custom shortcut:</source>
+				<target>Custom shortcut:</target>
+				<note>Class = "NSTextFieldCell"; title = "Custom shortcut:"; ObjectID = "85u-1A-n7H";</note>
+			</trans-unit>
+			<trans-unit id="112.title">
+				<source>Revert to Saved</source>
+				<target>Revert to Saved</target>
+			</trans-unit>
+			<trans-unit id="124.title">
+				<source>Open Recent</source>
+				<target>Open Recent</target>
+			</trans-unit>
+			<trans-unit id="125.title">
+				<source>Open Recent</source>
+				<target>Open Recent</target>
+				<note>Class = "NSMenu"; title = "Open Recent"; ObjectID = "125";</note>
+			</trans-unit>
+			<trans-unit id="126.title">
+				<source>Clear Menu</source>
+				<target>Clear Menu</target>
+				<note>Class = "NSMenuItem"; title = "Clear Menu"; ObjectID = "126";</note>
+			</trans-unit>
+			<trans-unit id="129.title">
+				<source>Preferences…</source>
+				<target>Preferencje…</target>
+			</trans-unit>
+			<trans-unit id="130.title">
+				<source>Services</source>
+				<target>usługi</target>
+			</trans-unit>
+			<trans-unit id="131.title">
+				<source>Services</source>
+				<target>usługi</target>
+			</trans-unit>
+			<trans-unit id="134.title">
+				<source>Hide Demo</source>
+				<target>Hide Demo</target>
+			</trans-unit>
+			<trans-unit id="136.title">
+				<source>Quit Demo</source>
+				<target>Quit Demo</target>
+			</trans-unit>
+			<trans-unit id="145.title">
+				<source>Hide Others</source>
+				<target>ukryj inne aplikacje</target>
+			</trans-unit>
+			<trans-unit id="150.title">
+				<source>Show All</source>
+				<target>pokaż wszystko</target>
+			</trans-unit>
+			<trans-unit id="195.title">
+				<source>Stop Speaking</source>
+				<target>Stop Speaking</target>
+				<note>Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "195";</note>
+			</trans-unit>
+			<trans-unit id="196.title">
+				<source>Start Speaking</source>
+				<target>Start Speaking</target>
+				<note>Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "196";</note>
+			</trans-unit>
+			<trans-unit id="197.title">
+				<source>Copy</source>
+				<target>kopiuj</target>
+			</trans-unit>
+			<trans-unit id="198.title">
+				<source>Select All</source>
+				<target>Zaznacz wszystko</target>
+				<note>Class = "NSMenuItem"; title = "Select All"; ObjectID = "198";</note>
+			</trans-unit>
+			<trans-unit id="199.title">
+				<source>Cut</source>
+				<target>wytnij</target>
+				<note>Class = "NSMenuItem"; title = "Cut"; ObjectID = "199";</note>
+			</trans-unit>
+			<trans-unit id="200.title">
+				<source>Spelling and Grammar</source>
+				<target>Spelling and Grammar</target>
+				<note>Class = "NSMenu"; title = "Spelling and Grammar"; ObjectID = "200";</note>
+			</trans-unit>
+			<trans-unit id="201.title">
+				<source>Check Document Now</source>
+				<target>Check Document Now</target>
+				<note>Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "201";</note>
+			</trans-unit>
+			<trans-unit id="202.title">
+				<source>Delete</source>
+				<target>usuń</target>
+				<note>Class = "NSMenuItem"; title = "Delete"; ObjectID = "202";</note>
+			</trans-unit>
+			<trans-unit id="203.title">
+				<source>Paste</source>
+				<target>wklej</target>
+				<note>Class = "NSMenuItem"; title = "Paste"; ObjectID = "203";</note>
+			</trans-unit>
+			<trans-unit id="204.title">
+				<source>Show Spelling and Grammar</source>
+				<target>Show Spelling and Grammar</target>
+				<note>Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "204";</note>
+			</trans-unit>
+			<trans-unit id="205.title">
+				<source>Edit</source>
+				<target>edycja</target>
+				<note>Class = "NSMenu"; title = "Edit"; ObjectID = "205";</note>
+			</trans-unit>
+			<trans-unit id="207.title">
+				<source>Undo</source>
+				<target>cofnij</target>
+			</trans-unit>
+			<trans-unit id="208.title">
+				<source>Find Next</source>
+				<target>Find Next</target>
+				<note>Class = "NSMenuItem"; title = "Find Next"; ObjectID = "208";</note>
+			</trans-unit>
+			<trans-unit id="209.title">
+				<source>Find…</source>
+				<target>Find…</target>
+				<note>Class = "NSMenuItem"; title = "Find…"; ObjectID = "209";</note>
+			</trans-unit>
+			<trans-unit id="210.title">
+				<source>Jump to Selection</source>
+				<target>Jump to Selection</target>
+				<note>Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "210";</note>
+			</trans-unit>
+			<trans-unit id="211.title">
+				<source>Speech</source>
+				<target>Speech</target>
+				<note>Class = "NSMenuItem"; title = "Speech"; ObjectID = "211";</note>
+			</trans-unit>
+			<trans-unit id="212.title">
+				<source>Speech</source>
+				<target>Speech</target>
+				<note>Class = "NSMenu"; title = "Speech"; ObjectID = "212";</note>
+			</trans-unit>
+			<trans-unit id="213.title">
+				<source>Find Previous</source>
+				<target>Find Previous</target>
+				<note>Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "213";</note>
+			</trans-unit>
+			<trans-unit id="215.title">
+				<source>Redo</source>
+				<target>anuluj cofnięcie</target>
+				<note>Class = "NSMenuItem"; title = "Redo"; ObjectID = "215";</note>
+			</trans-unit>
+			<trans-unit id="216.title">
+				<source>Spelling and Grammar</source>
+				<target>Spelling and Grammar</target>
+				<note>Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "216";</note>
+			</trans-unit>
+			<trans-unit id="217.title">
+				<source>Edit</source>
+				<target>edycja</target>
+				<note>Class = "NSMenuItem"; title = "Edit"; ObjectID = "217";</note>
+			</trans-unit>
+			<trans-unit id="218.title">
+				<source>Find</source>
+				<target>Find</target>
+				<note>Class = "NSMenuItem"; title = "Find"; ObjectID = "218";</note>
+			</trans-unit>
+			<trans-unit id="219.title">
+				<source>Check Spelling While Typing</source>
+				<target>Check Spelling While Typing</target>
+				<note>Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "219";</note>
+			</trans-unit>
+			<trans-unit id="220.title">
+				<source>Find</source>
+				<target>Find</target>
+				<note>Class = "NSMenu"; title = "Find"; ObjectID = "220";</note>
+			</trans-unit>
+			<trans-unit id="221.title">
+				<source>Use Selection for Find</source>
+				<target>Use Selection for Find</target>
+				<note>Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "221";</note>
+			</trans-unit>
+			<trans-unit id="239.title">
+				<source>Zoom</source>
+				<target>Zoom</target>
+				<note>Class = "NSMenuItem"; title = "Zoom"; ObjectID = "239";</note>
+			</trans-unit>
+			<trans-unit id="295.title">
+				<source>View</source>
+				<target>widok</target>
+				<note>Class = "NSMenuItem"; title = "View"; ObjectID = "295";</note>
+			</trans-unit>
+			<trans-unit id="296.title">
+				<source>View</source>
+				<target>widok</target>
+				<note>Class = "NSMenu"; title = "View"; ObjectID = "296";</note>
+			</trans-unit>
+			<trans-unit id="297.title">
+				<source>Show Toolbar</source>
+				<target>Show Toolbar</target>
+				<note>Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "297";</note>
+			</trans-unit>
+			<trans-unit id="298.title">
+				<source>Customize Toolbar…</source>
+				<target>Customize Toolbar…</target>
+				<note>Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "298";</note>
+			</trans-unit>
+			<trans-unit id="346.title">
+				<source>Check Grammar With Spelling</source>
+				<target>Check Grammar With Spelling</target>
+				<note>Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "346";</note>
+			</trans-unit>
+			<trans-unit id="348.title">
+				<source>Substitutions</source>
+				<target>Substitutions</target>
+				<note>Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "348";</note>
+			</trans-unit>
+			<trans-unit id="349.title">
+				<source>Substitutions</source>
+				<target>Substitutions</target>
+				<note>Class = "NSMenu"; title = "Substitutions"; ObjectID = "349";</note>
+			</trans-unit>
+			<trans-unit id="350.title">
+				<source>Smart Copy/Paste</source>
+				<target>Smart Copy/Paste</target>
+				<note>Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "350";</note>
+			</trans-unit>
+			<trans-unit id="351.title">
+				<source>Smart Quotes</source>
+				<target>Smart Quotes</target>
+				<note>Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "351";</note>
+			</trans-unit>
+			<trans-unit id="354.title">
+				<source>Smart Links</source>
+				<target>Smart Links</target>
+				<note>Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "354";</note>
+			</trans-unit>
+			<trans-unit id="371.title">
+				<source>Demo</source>
+				<target>Demo</target>
+				<note>Class = "NSWindow"; title = "Demo"; ObjectID = "371";</note>
+			</trans-unit>
+			<trans-unit id="375.title">
+				<source>Format</source>
+				<target>Format</target>
+				<note>Class = "NSMenuItem"; title = "Format"; ObjectID = "375";</note>
+			</trans-unit>
+			<trans-unit id="376.title">
+				<source>Format</source>
+				<target>Format</target>
+				<note>Class = "NSMenu"; title = "Format"; ObjectID = "376";</note>
+			</trans-unit>
+			<trans-unit id="377.title">
+				<source>Font</source>
+				<target>Font</target>
+				<note>Class = "NSMenuItem"; title = "Font"; ObjectID = "377";</note>
+			</trans-unit>
+			<trans-unit id="388.title">
+				<source>Font</source>
+				<target>Font</target>
+				<note>Class = "NSMenu"; title = "Font"; ObjectID = "388";</note>
+			</trans-unit>
+			<trans-unit id="389.title">
+				<source>Show Fonts</source>
+				<target>Show Fonts</target>
+				<note>Class = "NSMenuItem"; title = "Show Fonts"; ObjectID = "389";</note>
+			</trans-unit>
+			<trans-unit id="390.title">
+				<source>Bold</source>
+				<target>Bold</target>
+				<note>Class = "NSMenuItem"; title = "Bold"; ObjectID = "390";</note>
+			</trans-unit>
+			<trans-unit id="391.title">
+				<source>Italic</source>
+				<target>Italic</target>
+				<note>Class = "NSMenuItem"; title = "Italic"; ObjectID = "391";</note>
+			</trans-unit>
+			<trans-unit id="392.title">
+				<source>Underline</source>
+				<target>Underline</target>
+				<note>Class = "NSMenuItem"; title = "Underline"; ObjectID = "392";</note>
+			</trans-unit>
+			<trans-unit id="394.title">
+				<source>Bigger</source>
+				<target>Bigger</target>
+				<note>Class = "NSMenuItem"; title = "Bigger"; ObjectID = "394";</note>
+			</trans-unit>
+			<trans-unit id="395.title">
+				<source>Smaller</source>
+				<target>Smaller</target>
+				<note>Class = "NSMenuItem"; title = "Smaller"; ObjectID = "395";</note>
+			</trans-unit>
+			<trans-unit id="397.title">
+				<source>Kern</source>
+				<target>Kern</target>
+				<note>Class = "NSMenuItem"; title = "Kern"; ObjectID = "397";</note>
+			</trans-unit>
+			<trans-unit id="398.title">
+				<source>Ligatures</source>
+				<target>Ligatures</target>
+				<note>Class = "NSMenuItem"; title = "Ligatures"; ObjectID = "398";</note>
+			</trans-unit>
+			<trans-unit id="399.title">
+				<source>Baseline</source>
+				<target>Baseline</target>
+				<note>Class = "NSMenuItem"; title = "Baseline"; ObjectID = "399";</note>
+			</trans-unit>
+			<trans-unit id="401.title">
+				<source>Show Colors</source>
+				<target>Show Colors</target>
+				<note>Class = "NSMenuItem"; title = "Show Colors"; ObjectID = "401";</note>
+			</trans-unit>
+			<trans-unit id="403.title">
+				<source>Copy Style</source>
+				<target>Copy Style</target>
+				<note>Class = "NSMenuItem"; title = "Copy Style"; ObjectID = "403";</note>
+			</trans-unit>
+			<trans-unit id="404.title">
+				<source>Paste Style</source>
+				<target>Paste Style</target>
+				<note>Class = "NSMenuItem"; title = "Paste Style"; ObjectID = "404";</note>
+			</trans-unit>
+			<trans-unit id="405.title">
+				<source>Baseline</source>
+				<target>Baseline</target>
+				<note>Class = "NSMenu"; title = "Baseline"; ObjectID = "405";</note>
+			</trans-unit>
+			<trans-unit id="406.title">
+				<source>Use Default</source>
+				<target>Use Default</target>
+				<note>Class = "NSMenuItem"; title = "Use Default"; ObjectID = "406";</note>
+			</trans-unit>
+			<trans-unit id="407.title">
+				<source>Superscript</source>
+				<target>Superscript</target>
+				<note>Class = "NSMenuItem"; title = "Superscript"; ObjectID = "407";</note>
+			</trans-unit>
+			<trans-unit id="408.title">
+				<source>Subscript</source>
+				<target>Subscript</target>
+				<note>Class = "NSMenuItem"; title = "Subscript"; ObjectID = "408";</note>
+			</trans-unit>
+			<trans-unit id="409.title">
+				<source>Raise</source>
+				<target>Raise</target>
+				<note>Class = "NSMenuItem"; title = "Raise"; ObjectID = "409";</note>
+			</trans-unit>
+			<trans-unit id="410.title">
+				<source>Lower</source>
+				<target>Lower</target>
+				<note>Class = "NSMenuItem"; title = "Lower"; ObjectID = "410";</note>
+			</trans-unit>
+			<trans-unit id="411.title">
+				<source>Ligatures</source>
+				<target>Ligatures</target>
+				<note>Class = "NSMenu"; title = "Ligatures"; ObjectID = "411";</note>
+			</trans-unit>
+			<trans-unit id="412.title">
+				<source>Use Default</source>
+				<target>Use Default</target>
+				<note>Class = "NSMenuItem"; title = "Use Default"; ObjectID = "412";</note>
+			</trans-unit>
+			<trans-unit id="413.title">
+				<source>Use None</source>
+				<target>Use None</target>
+				<note>Class = "NSMenuItem"; title = "Use None"; ObjectID = "413";</note>
+			</trans-unit>
+			<trans-unit id="414.title">
+				<source>Use All</source>
+				<target>Use All</target>
+				<note>Class = "NSMenuItem"; title = "Use All"; ObjectID = "414";</note>
+			</trans-unit>
+			<trans-unit id="415.title">
+				<source>Kern</source>
+				<target>Kern</target>
+				<note>Class = "NSMenu"; title = "Kern"; ObjectID = "415";</note>
+			</trans-unit>
+			<trans-unit id="416.title">
+				<source>Use Default</source>
+				<target>Use Default</target>
+				<note>Class = "NSMenuItem"; title = "Use Default"; ObjectID = "416";</note>
+			</trans-unit>
+			<trans-unit id="417.title">
+				<source>Use None</source>
+				<target>Use None</target>
+				<note>Class = "NSMenuItem"; title = "Use None"; ObjectID = "417";</note>
+			</trans-unit>
+			<trans-unit id="418.title">
+				<source>Tighten</source>
+				<target>Tighten</target>
+			</trans-unit>
+			<trans-unit id="419.title">
+				<source>Loosen</source>
+				<target>Loosen</target>
+			</trans-unit>
+			<trans-unit id="450.title">
+				<source>Transformations</source>
+				<target>Transformations</target>
+				<note>Class = "NSMenuItem"; title = "Transformations"; ObjectID = "450";</note>
+			</trans-unit>
+			<trans-unit id="451.title">
+				<source>Transformations</source>
+				<target>Transformations</target>
+				<note>Class = "NSMenu"; title = "Transformations"; ObjectID = "451";</note>
+			</trans-unit>
+			<trans-unit id="452.title">
+				<source>Make Upper Case</source>
+				<target>Make Upper Case</target>
+				<note>Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "452";</note>
+			</trans-unit>
+			<trans-unit id="454.title">
+				<source>Correct Spelling Automatically</source>
+				<target>Correct Spelling Automatically</target>
+				<note>Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "454";</note>
+			</trans-unit>
+			<trans-unit id="457.title">
+				<source>Show Substitutions</source>
+				<target>Show Substitutions</target>
+				<note>Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "457";</note>
+			</trans-unit>
+			<trans-unit id="460.title">
+				<source>Smart Dashes</source>
+				<target>Smart Dashes</target>
+				<note>Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "460";</note>
+			</trans-unit>
+			<trans-unit id="462.title">
+				<source>Text Replacement</source>
+				<target>Text Replacement</target>
+				<note>Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "462";</note>
+			</trans-unit>
+			<trans-unit id="465.title">
+				<source>Make Lower Case</source>
+				<target>Make Lower Case</target>
+				<note>Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "465";</note>
+			</trans-unit>
+			<trans-unit id="466.title">
+				<source>Capitalize</source>
+				<target>Capitalize</target>
+				<note>Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "466";</note>
+			</trans-unit>
+			<trans-unit id="485.title">
+				<source>Paste and Match Style</source>
+				<target>Paste and Match Style</target>
+				<note>Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "485";</note>
+			</trans-unit>
+			<trans-unit id="490.title">
+				<source>Help</source>
+				<target>pomoc</target>
+				<note>Class = "NSMenuItem"; title = "Help"; ObjectID = "490";</note>
+			</trans-unit>
+			<trans-unit id="491.title">
+				<source>Help</source>
+				<target>pomoc</target>
+				<note>Class = "NSMenu"; title = "Help"; ObjectID = "491";</note>
+			</trans-unit>
+			<trans-unit id="492.title">
+				<source>Demo Help</source>
+				<target>Demo Help</target>
+				<note>Class = "NSMenuItem"; title = "Demo Help"; ObjectID = "492";</note>
+			</trans-unit>
+			<trans-unit id="496.title">
+				<source>Text</source>
+				<target>Text</target>
+				<note>Class = "NSMenuItem"; title = "Text"; ObjectID = "496";</note>
+			</trans-unit>
+			<trans-unit id="497.title">
+				<source>Text</source>
+				<target>Text</target>
+				<note>Class = "NSMenu"; title = "Text"; ObjectID = "497";</note>
+			</trans-unit>
+			<trans-unit id="498.title">
+				<source>Align Left</source>
+				<target>Align Left</target>
+				<note>Class = "NSMenuItem"; title = "Align Left"; ObjectID = "498";</note>
+			</trans-unit>
+			<trans-unit id="499.title">
+				<source>Center</source>
+				<target>Center</target>
+				<note>Class = "NSMenuItem"; title = "Center"; ObjectID = "499";</note>
+			</trans-unit>
+			<trans-unit id="500.title">
+				<source>Justify</source>
+				<target>Justify</target>
+				<note>Class = "NSMenuItem"; title = "Justify"; ObjectID = "500";</note>
+			</trans-unit>
+			<trans-unit id="501.title">
+				<source>Align Right</source>
+				<target>Align Right</target>
+				<note>Class = "NSMenuItem"; title = "Align Right"; ObjectID = "501";</note>
+			</trans-unit>
+			<trans-unit id="503.title">
+				<source>Writing Direction</source>
+				<target>Writing Direction</target>
+				<note>Class = "NSMenuItem"; title = "Writing Direction"; ObjectID = "503";</note>
+			</trans-unit>
+			<trans-unit id="505.title">
+				<source>Show Ruler</source>
+				<target>Show Ruler</target>
+				<note>Class = "NSMenuItem"; title = "Show Ruler"; ObjectID = "505";</note>
+			</trans-unit>
+			<trans-unit id="506.title">
+				<source>Copy Ruler</source>
+				<target>Copy Ruler</target>
+				<note>Class = "NSMenuItem"; title = "Copy Ruler"; ObjectID = "506";</note>
+			</trans-unit>
+			<trans-unit id="507.title">
+				<source>Paste Ruler</source>
+				<target>Paste Ruler</target>
+				<note>Class = "NSMenuItem"; title = "Paste Ruler"; ObjectID = "507";</note>
+			</trans-unit>
+			<trans-unit id="508.title">
+				<source>Writing Direction</source>
+				<target>Writing Direction</target>
+				<note>Class = "NSMenu"; title = "Writing Direction"; ObjectID = "508";</note>
+			</trans-unit>
+			<trans-unit id="509.title">
+				<source>Paragraph</source>
+				<target>Paragraph</target>
+				<note>Class = "NSMenuItem"; title = "Paragraph"; ObjectID = "509";</note>
+			</trans-unit>
+			<trans-unit id="510.title">
+				<source>	Default</source>
+				<target>	Default</target>
+				<note>Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "510";</note>
+			</trans-unit>
+			<trans-unit id="511.title">
+				<source>	Left to Right</source>
+				<target>	Left to Right</target>
+				<note>Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "511";</note>
+			</trans-unit>
+			<trans-unit id="512.title">
+				<source>	Right to Left</source>
+				<target>	Right to Left</target>
+				<note>Class = "NSMenuItem"; title = "\tRight to Left"; ObjectID = "512";</note>
+			</trans-unit>
+			<trans-unit id="514.title">
+				<source>Selection</source>
+				<target>Selection</target>
+				<note>Class = "NSMenuItem"; title = "Selection"; ObjectID = "514";</note>
+			</trans-unit>
+			<trans-unit id="515.title">
+				<source>	Default</source>
+				<target>	Default</target>
+				<note>Class = "NSMenuItem"; title = "\tDefault"; ObjectID = "515";</note>
+			</trans-unit>
+			<trans-unit id="516.title">
+				<source>	Left to Right</source>
+				<target>	Left to Right</target>
+				<note>Class = "NSMenuItem"; title = "\tLeft to Right"; ObjectID = "516";</note>
+			</trans-unit>
+			<trans-unit id="517.title">
+				<source>	Right to Left</source>
+				<target>	Right to Left</target>
+			</trans-unit>
+			<trans-unit id="534.title">
+				<source>Find and Replace…</source>
+				<target>Find and Replace…</target>
+				<note>Class = "NSMenuItem"; title = "Find and Replace…"; ObjectID = "534";</note>
+			</trans-unit>
+			<trans-unit id="Ckx-v7-e6x.placeholderString">
+				<source>Press a shortcut to see feedback</source>
+				<target>Press a shortcut to see feedback</target>
+				<note>Class = "NSTextFieldCell"; placeholderString = "Press a shortcut to see feedback"; ObjectID = "Ckx-v7-e6x";</note>
+			</trans-unit>
+			<trans-unit id="D9i-kK-lKz.placeholderString">
+				<source>Nothing important</source>
+				<target>Nothing important</target>
+				<note>Class = "NSTextFieldCell"; placeholderString = "Nothing important"; ObjectID = "D9i-kK-lKz";</note>
+			</trans-unit>
+			<trans-unit id="GAF-sP-c3A.title">
+				<source>Aqua</source>
+				<target>Aqua</target>
+				<note>Class = "NSMenuItem"; title = "Aqua"; ObjectID = "GAF-sP-c3A";</note>
+			</trans-unit>
+			<trans-unit id="OAc-mb-u8i.title">
+				<source>Vibrant Light</source>
+				<target>Vibrant Light</target>
+				<note>Class = "NSMenuItem"; title = "Vibrant Light"; ObjectID = "OAc-mb-u8i";</note>
+			</trans-unit>
+			<trans-unit id="Whf-bT-vQa.title">
+				<source>Samples:</source>
+				<target>Samples:</target>
+				<note>Class = "NSTextFieldCell"; title = "Samples:"; ObjectID = "Whf-bT-vQa";</note>
+			</trans-unit>
+			<trans-unit id="Y47-p3-sDa.title">
+				<source>Enable custom shortcut</source>
+				<target>Enable custom shortcut</target>
+				<note>Class = "NSButtonCell"; title = "Enable custom shortcut"; ObjectID = "Y47-p3-sDa";</note>
+			</trans-unit>
+			<trans-unit id="Zbz-mV-NDc.title">
+				<source>Feedback:</source>
+				<target>Feedback:</target>
+				<note>Class = "NSTextFieldCell"; title = "Feedback:"; ObjectID = "Zbz-mV-NDc";</note>
+			</trans-unit>
+			<trans-unit id="c8q-5c-egp.title">
+				<source>Material:</source>
+				<target>Material:</target>
+				<note>Class = "NSTextFieldCell"; title = "Material:"; ObjectID = "c8q-5c-egp";</note>
+			</trans-unit>
+			<trans-unit id="cUE-gA-heG.title">
+				<source>Options:</source>
+				<target>Options:</target>
+				<note>Class = "NSTextFieldCell"; title = "Options:"; ObjectID = "cUE-gA-heG";</note>
+			</trans-unit>
+			<trans-unit id="fAm-DH-Xtk.title">
+				<source>Vibrant Dark</source>
+				<target>Vibrant Dark</target>
+				<note>Class = "NSMenuItem"; title = "Vibrant Dark"; ObjectID = "fAm-DH-Xtk";</note>
+			</trans-unit>
+			<trans-unit id="gV5-Ph-kYg.title">
+				<source>HUD Window</source>
+				<target>HUD Window</target>
+				<note>Class = "NSMenuItem"; title = "HUD Window"; ObjectID = "gV5-Ph-kYg";</note>
+			</trans-unit>
+			<trans-unit id="kWK-Vb-dcN.title">
+				<source>Popover</source>
+				<target>Popover</target>
+				<note>Class = "NSMenuItem"; title = "Popover"; ObjectID = "kWK-Vb-dcN";</note>
+			</trans-unit>
+			<trans-unit id="lOM-io-1Eg.title">
+				<source>Appearance:</source>
+				<target>Appearance:</target>
+				<note>Class = "NSTextFieldCell"; title = "Appearance:"; ObjectID = "lOM-io-1Eg";</note>
+			</trans-unit>
+			<trans-unit id="mk7-OA-JKv.title">
+				<source>Dark Aqua</source>
+				<target>Dark Aqua</target>
+				<note>Class = "NSMenuItem"; title = "Dark Aqua"; ObjectID = "mk7-OA-JKv";</note>
+			</trans-unit>
+			<trans-unit id="nVm-0A-rmR.title">
+				<source>Inherited</source>
+				<target>Inherited</target>
+				<note>Class = "NSMenuItem"; title = "Inherited"; ObjectID = "nVm-0A-rmR";</note>
+			</trans-unit>
+			<trans-unit id="tHv-f7-9rU.title">
+				<source>Window Background</source>
+				<target>Window Background</target>
+				<note>Class = "NSMenuItem"; title = "Window Background"; ObjectID = "tHv-f7-9rU";</note>
+			</trans-unit>
+			<trans-unit id="uFc-A5-T9Q.title">
+				<source>Sidebar</source>
+				<target>pasek boczny</target>
+				<note>Class = "NSMenuItem"; title = "Sidebar"; ObjectID = "uFc-A5-T9Q";</note>
+			</trans-unit>
+			<trans-unit id="yRv-5f-OR6.title">
+				<source>Foo</source>
+				<target>fu</target>
+				<note>Class = "NSButtonCell"; title = "Foo"; ObjectID = "yRv-5f-OR6";</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/shpakovski/MASShortcut/Demo/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="CFBundleName">
+				<source>Demo</source>
+				<target>Demo</target>
+			</trans-unit>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>Copyright © 2012–2015 Vadim Shpakovski. All rights reserved.</source>
+				<target>Copyright © 2012–2015 Vadim Shpakovski. All rights reserved.</target>
+				<note>Copyright (human-readable)</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/shpakovski/MASShortcut/Demo/en.lproj/Localizable.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="Shortcut pressed!">
+				<source>Shortcut pressed!</source>
+				<target>Shortcut pressed!</target>
+				<note>Feedback that’s displayed when user presses the sample shortcut.</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Frameworks/shpakovski/MASShortcut/Framework/Resources/en.lproj/Localizable.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="Cancel">
+				<source>Cancel</source>
+				<target>anuluj</target>
+				<note>Cancel action button in recording state</note>
+			</trans-unit>
+			<trans-unit id="Click to record new shortcut">
+				<source>Click to record new shortcut</source>
+				<target>Click to record new shortcut</target>
+				<note>Tooltip for non-empty shortcut button</note>
+			</trans-unit>
+			<trans-unit id="Delete shortcut">
+				<source>Delete shortcut</source>
+				<target>skrót do nagrywania</target>
+				<note>Tooltip for hint button near the non-empty shortcut</note>
+			</trans-unit>
+			<trans-unit id="OK">
+				<source>OK</source>
+				<target>OK</target>
+				<note>Alert button when shortcut is already used</note>
+			</trans-unit>
+			<trans-unit id="Record Shortcut">
+				<source>Record Shortcut</source>
+				<target>Record Shortcut</target>
+				<note>Empty shortcut button in normal state</note>
+			</trans-unit>
+			<trans-unit id="Shortcut cleared">
+				<source>Shortcut cleared</source>
+				<target>spacja</target>
+				<note>VoiceOver: Shortcut cleared</note>
+			</trans-unit>
+			<trans-unit id="Shortcut set">
+				<source>Shortcut set</source>
+				<target>Shortcut set</target>
+				<note>VoiceOver: Shortcut set</note>
+			</trans-unit>
+			<trans-unit id="Space">
+				<source>Space</source>
+				<target>Space</target>
+				<note>Shortcut glyph name for SPACE key</note>
+			</trans-unit>
+			<trans-unit id="The key combination %@ cannot be used">
+				<source>The key combination %@ cannot be used</source>
+				<target>The key combination %@ cannot be used</target>
+				<note>Title for alert when shortcut is already used</note>
+			</trans-unit>
+			<trans-unit id="This combination cannot be used because it is already used by a system-wide keyboard shortcut.&#10;If you really want to use this key combination, most shortcuts can be changed in the Keyboard &amp; Mouse panel in System Preferences.">
+				<source>This combination cannot be used because it is already used by a system-wide keyboard shortcut.
+If you really want to use this key combination, most shortcuts can be changed in the Keyboard &amp; Mouse panel in System Preferences.</source>
+				<target>This combination cannot be used because it is already used by a system-wide keyboard shortcut.
+If you really want to use this key combination, most shortcuts can be changed in the Keyboard &amp; Mouse panel in System Preferences.</target>
+				<note>Message for alert when shortcut is already used by the system</note>
+			</trans-unit>
+			<trans-unit id="This shortcut cannot be used because it is already used by the menu item ‘%@’.">
+				<source>This shortcut cannot be used because it is already used by the menu item ‘%@’.</source>
+				<target>This shortcut cannot be used because it is already used by the menu item ‘%@’.</target>
+				<note>Message for alert when shortcut is already used</note>
+			</trans-unit>
+			<trans-unit id="To record a new shortcut, click this button, and then type the new shortcut, or press delete to clear an existing shortcut.">
+				<source>To record a new shortcut, click this button, and then type the new shortcut, or press delete to clear an existing shortcut.</source>
+				<target>To record a new shortcut, click this button, and then type the new shortcut, or press delete to clear an existing shortcut.</target>
+				<note>VoiceOver shortcut help</note>
+			</trans-unit>
+			<trans-unit id="Type New Shortcut">
+				<source>Type New Shortcut</source>
+				<target>wciśnij nowy skrót klawiszowy</target>
+				<note>Non-empty shortcut button in recording state</note>
+			</trans-unit>
+			<trans-unit id="Type Shortcut">
+				<source>Type Shortcut</source>
+				<target>Type Shortcut</target>
+				<note>Empty shortcut button in recording state</note>
+			</trans-unit>
+			<trans-unit id="Use Old Shortcut">
+				<source>Use Old Shortcut</source>
+				<target>Use Old Shortcut</target>
+				<note>Cancel action button for non-empty shortcut in recording state</note>
+			</trans-unit>
+			<trans-unit id="keyboard shortcut">
+				<source>keyboard shortcut</source>
+				<target>skrót klawiaturowy</target>
+				<note>VoiceOver title</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Plugins/CueSheet/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2007</source>
+				<target>© __MyCompanyName__, 2007</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Plugins/GME/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2007</source>
+				<target>© __MyCompanyName__, 2007</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Plugins/M3u/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2007</source>
+				<target>© __MyCompanyName__, 2007</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Plugins/Pls/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2007</source>
+				<target>© __MyCompanyName__, 2007</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Plugins/libvgmPlayer/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© __MyCompanyName__, 2007</source>
+				<target>© __MyCompanyName__, 2007</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Preferences/Preferences/Base.lproj/Preferences.xib" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="1Cb-TU-E0q.title">
+				<source>Item 3</source>
+				<target>Item 3</target>
+			</trans-unit>
+			<trans-unit id="1Yq-6f-Uho.title">
+				<source>Item 2</source>
+				<target>Item 2</target>
+			</trans-unit>
+			<trans-unit id="1y7-iZ-BhE.title">
+				<source>Reset to defaults</source>
+				<target>zresetuj do domyślnych ustawień</target>
+			</trans-unit>
+			<trans-unit id="3Gx-cs-3B0.title">
+				<source>Item 1</source>
+				<target>rzecz 1</target>
+			</trans-unit>
+			<trans-unit id="7un-em-D8r.title">
+				<source>Table View Cell</source>
+				<target>rzecz 3</target>
+			</trans-unit>
+			<trans-unit id="61.title">
+				<source>OtherViews</source>
+				<target>OtherViews</target>
+			</trans-unit>
+			<trans-unit id="62.title">
+				<source>Item1</source>
+				<target>Item1</target>
+			</trans-unit>
+			<trans-unit id="63.title">
+				<source>Item2</source>
+				<target>Item2</target>
+			</trans-unit>
+			<trans-unit id="64.title">
+				<source>Item3</source>
+				<target>Item3</target>
+			</trans-unit>
+			<trans-unit id="99B-Tx-dPH.title">
+				<source>Item 2</source>
+				<target>Item 2</target>
+			</trans-unit>
+			<trans-unit id="198.title">
+				<source>Play:</source>
+				<target>Play:</target>
+			</trans-unit>
+			<trans-unit id="199.title">
+				<source>Previous:</source>
+				<target>Previous:</target>
+			</trans-unit>
+			<trans-unit id="200.title">
+				<source>Next:</source>
+				<target>Next:</target>
+			</trans-unit>
+			<trans-unit id="211.title">
+				<source>Output Device: </source>
+				<target>Output Device: </target>
+			</trans-unit>
+			<trans-unit id="249.title">
+				<source>OtherViews</source>
+				<target>OtherViews</target>
+			</trans-unit>
+			<trans-unit id="250.title">
+				<source>Item 1</source>
+				<target>rzecz 1</target>
+			</trans-unit>
+			<trans-unit id="251.title">
+				<source>Item 2</source>
+				<target>Item 2</target>
+			</trans-unit>
+			<trans-unit id="252.title">
+				<source>Item 3</source>
+				<target>Item 3</target>
+			</trans-unit>
+			<trans-unit id="255.title">
+				<source>OtherViews</source>
+				<target>rzecz 2</target>
+			</trans-unit>
+			<trans-unit id="256.title">
+				<source>Item 1</source>
+				<target>rzecz 1</target>
+			</trans-unit>
+			<trans-unit id="257.title">
+				<source>Item 2</source>
+				<target>Item 2</target>
+			</trans-unit>
+			<trans-unit id="258.title">
+				<source>Item 3</source>
+				<target>Item 3</target>
+			</trans-unit>
+			<trans-unit id="260.title">
+				<source>When opening files:</source>
+				<target>When opening files:</target>
+			</trans-unit>
+			<trans-unit id="262.title">
+				<source>When opening file                with ⇧ or ⌃⌘ held:</source>
+				<target>gdy otwierasz plik                z trzymanym ⇧ albo ⌃⌘:</target>
+			</trans-unit>
+			<trans-unit id="311.title">
+				<source>Read CUE sheets when adding folders to playlist</source>
+				<target>odczytywanie arkusze CUE podczas dodawania folderów do listy odtwarzania</target>
+			</trans-unit>
+			<trans-unit id="Bll-IJ-lje.title">
+				<source>Spectrum bars</source>
+				<target>Spectrum bars</target>
+			</trans-unit>
+			<trans-unit id="CQI-YZ-B3V.title">
+				<source>Spectrum peaks</source>
+				<target>szczyty spektrum</target>
+			</trans-unit>
+			<trans-unit id="Dhd-k8-ZXq.title">
+				<source>Text Cell</source>
+				<target>Text Cell</target>
+			</trans-unit>
+			<trans-unit id="ECB-P0-pve.title">
+				<source>Label</source>
+				<target>Label</target>
+			</trans-unit>
+			<trans-unit id="EQX-aL-uT0.title">
+				<source>Item 3</source>
+				<target>Item 3</target>
+			</trans-unit>
+			<trans-unit id="FQF-vJ-hBx.title">
+				<source>MIDI Flavor:</source>
+				<target>odmiana midi:</target>
+			</trans-unit>
+			<trans-unit id="GdX-5e-NeU.title">
+				<source>Colorful dock icons</source>
+				<target>kolorowe ikony Dock</target>
+			</trans-unit>
+			<trans-unit id="HKM-FW-dhH.title">
+				<source>OtherViews</source>
+				<target>OtherViews</target>
+			</trans-unit>
+			<trans-unit id="JU5-o7-jid.title">
+				<source>Delete Invalid Paths</source>
+				<target>usuń nieprawidłowe ścieżki</target>
+			</trans-unit>
+			<trans-unit id="JxP-0t-mTB.title">
+				<source>Add Path</source>
+				<target>dodać ścieżkę</target>
+			</trans-unit>
+			<trans-unit id="KJz-qS-IcO.title">
+				<source>Selected:</source>
+				<target>Selected:</target>
+			</trans-unit>
+			<trans-unit id="LwT-Qb-47r.title">
+				<source>Table View Cell</source>
+				<target>widok komurki tabeli</target>
+			</trans-unit>
+			<trans-unit id="RGf-4D-3NW.title">
+				<source>Show album art</source>
+				<target>pokaż okładkę albumu</target>
+			</trans-unit>
+			<trans-unit id="SBA-J5-rEd.title">
+				<source>Quit when playback completes</source>
+				<target>wyłącz aplikacje, gdy odtwarzanie się zakończy</target>
+			</trans-unit>
+			<trans-unit id="SMd-GA-jrH.title">
+				<source>Spam:</source>
+				<target>Spam:</target>
+			</trans-unit>
+			<trans-unit id="V8o-Xy-HUW.title">
+				<source>OtherViews</source>
+				<target>rzecz 1</target>
+			</trans-unit>
+			<trans-unit id="WWy-iW-3Ct.title">
+				<source>Item 3</source>
+				<target>rzecz 3</target>
+			</trans-unit>
+			<trans-unit id="XzK-h2-vIT.title">
+				<source>Item 1</source>
+				<target>rzecz 1</target>
+			</trans-unit>
+			<trans-unit id="YLi-QX-EgD.title">
+				<source>Item 2</source>
+				<target>Item 2</target>
+			</trans-unit>
+			<trans-unit id="Yz2-Ee-bZ0.headerCell.title">
+				<source>Path</source>
+				<target>ścieżka</target>
+			</trans-unit>
+			<trans-unit id="bWQ-dT-X3w.title">
+				<source>Text Cell</source>
+				<target>komurka z tekstem</target>
+			</trans-unit>
+			<trans-unit id="cOb-hQ-7K8.title">
+				<source>Use iTunes style</source>
+				<target>Use iTunes style</target>
+			</trans-unit>
+			<trans-unit id="ds2-aw-ebU.title">
+				<source>Limit volume control to 100%</source>
+				<target>Limit volume control to 100%</target>
+			</trans-unit>
+			<trans-unit id="eX0-PC-iVo.title">
+				<source>Resampling Quality:</source>
+				<target>Resampling Quality:</target>
+			</trans-unit>
+			<trans-unit id="fUg-Cg-gXa.title">
+				<source>Resume playback on startup</source>
+				<target>Resume playback on startup</target>
+			</trans-unit>
+			<trans-unit id="gXL-j6-df0.title">
+				<source>Spectrum 2D view</source>
+				<target>Spectrum 2D view</target>
+			</trans-unit>
+			<trans-unit id="hqT-nY-NoU.title">
+				<source>Enable notifications</source>
+				<target>Enable notifications</target>
+			</trans-unit>
+			<trans-unit id="jLL-zc-kYf.title">
+				<source>Item 3</source>
+				<target>Item 3</target>
+			</trans-unit>
+			<trans-unit id="lEg-E3-TBs.headerCell.title">
+				<source>Valid</source>
+				<target>działające</target>
+			</trans-unit>
+			<trans-unit id="n5F-dq-NZh.title">
+				<source>MIDI Plugin:</source>
+				<target>MIDI Plugin:</target>
+			</trans-unit>
+			<trans-unit id="nva-pz-xSS.title">
+				<source>Delete Path</source>
+				<target>usunąć ścieżkę</target>
+			</trans-unit>
+			<trans-unit id="nzS-3F-jPX.title">
+				<source>Item 2</source>
+				<target>Item 2</target>
+			</trans-unit>
+			<trans-unit id="oWh-lD-mFH.title">
+				<source>Item 1</source>
+				<target>Item 1</target>
+			</trans-unit>
+			<trans-unit id="qjI-dK-nfG.title">
+				<source>Suggest Paths</source>
+				<target>zasugeruj ścieżki</target>
+			</trans-unit>
+			<trans-unit id="sva-DV-ina.title">
+				<source>Allow insecure SSL connections</source>
+				<target>zezwalaj na niezabezpieczone połączenia SSL</target>
+			</trans-unit>
+			<trans-unit id="vMI-lj-Lrz.title">
+				<source>Show stop button</source>
+				<target>pokaż przycisk pałzy</target>
+			</trans-unit>
+			<trans-unit id="vaQ-pZ-jXy.title">
+				<source>Item 1</source>
+				<target>Item 1</target>
+			</trans-unit>
+			<trans-unit id="wK4-EF-8Wa.title">
+				<source>Volume Level:</source>
+				<target>poziom głośności:</target>
+			</trans-unit>
+			<trans-unit id="wNb-bg-cgq.ibShadowedIsNilPlaceholder">
+				<source>None</source>
+				<target>brak</target>
+			</trans-unit>
+			<trans-unit id="wWm-AD-cD4.title">
+				<source>Folder access paths:</source>
+				<target>ścieżki dostępu do folderó:</target>
+			</trans-unit>
+			<trans-unit id="yeL-9c-lFq.title">
+				<source>Select a SoundFont</source>
+				<target>wybierz ścieżkę dźwiękową midi</target>
+			</trans-unit>
+			<trans-unit id="zQ2-6O-3Og.title">
+				<source>Send crash reports and usage data</source>
+				<target>wysyłaj raporty awarji i dane użycia</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Preferences/Preferences/en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© Vincent Spader, 2005-2011
+© mamburu, 2012-2013
+© Christopher Snowhill, 2013-2022</source>
+				<target>© Vincent Spader, 2005-2011
+© mamburu, 2012-2013
+© Christopher Snowhill, 2013-2022</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="Preferences/Preferences/en.lproj/Localizable.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="Appearance">
+				<source>Appearance</source>
+				<target>wygląd</target>
+			</trans-unit>
+			<trans-unit id="Blam Synthesis">
+				<source>Blam Synthesis</source>
+				<target>Blam Synthesis</target>
+			</trans-unit>
+			<trans-unit id="Blep Synthesis">
+				<source>Blep Synthesis</source>
+				<target>Blep Synthesis</target>
+			</trans-unit>
+			<trans-unit id="Clear playlist and play">
+				<source>Clear playlist and play</source>
+				<target>wyczyść playlistę i odtwórz</target>
+			</trans-unit>
+			<trans-unit id="Cubic Interpolation">
+				<source>Cubic Interpolation</source>
+				<target>Cubic Interpolation</target>
+			</trans-unit>
+			<trans-unit id="Enqueue">
+				<source>Enqueue</source>
+				<target>dodaj do kolejki</target>
+			</trans-unit>
+			<trans-unit id="Enqueue and play">
+				<source>Enqueue and play</source>
+				<target>dodaj do kolejki i odtwórz</target>
+			</trans-unit>
+			<trans-unit id="File Drawer">
+				<source>File Drawer</source>
+				<target>File Drawer</target>
+			</trans-unit>
+			<trans-unit id="General">
+				<source>General</source>
+				<target>ogólne</target>
+			</trans-unit>
+			<trans-unit id="Hot Keys">
+				<source>Hot Keys</source>
+				<target>Hot Keys</target>
+			</trans-unit>
+			<trans-unit id="Last.fm">
+				<source>Last.fm</source>
+				<target>Last.fm</target>
+			</trans-unit>
+			<trans-unit id="Linear Interpolation">
+				<source>Linear Interpolation</source>
+				<target>Linear Interpolation</target>
+			</trans-unit>
+			<trans-unit id="Nightly">
+				<source>Nightly</source>
+				<target>bez skalowania głośności</target>
+			</trans-unit>
+			<trans-unit id="No volume scaling">
+				<source>No volume scaling</source>
+				<target>bezkalowania s</target>
+			</trans-unit>
+			<trans-unit id="Notifications">
+				<source>Notifications</source>
+				<target>powiadomienia</target>
+			</trans-unit>
+			<trans-unit id="Output">
+				<source>Output</source>
+				<target>wyjście</target>
+			</trans-unit>
+			<trans-unit id="Playlist">
+				<source>Playlist</source>
+				<target>playlista</target>
+			</trans-unit>
+			<trans-unit id="Press Key...">
+				<source>Press Key...</source>
+				<target>naciśnij przycisk...</target>
+			</trans-unit>
+			<trans-unit id="ReplayGain Album Gain">
+				<source>ReplayGain Album Gain</source>
+				<target>głośność powtórki / głośność albumó</target>
+			</trans-unit>
+			<trans-unit id="ReplayGain Album Gain with peak">
+				<source>ReplayGain Album Gain with peak</source>
+				<target>ReplayGain Album Gain with peak</target>
+			</trans-unit>
+			<trans-unit id="ReplayGain Track Gain">
+				<source>ReplayGain Track Gain</source>
+				<target>ReplayGain Track Gain</target>
+			</trans-unit>
+			<trans-unit id="ReplayGain Track Gain with peak">
+				<source>ReplayGain Track Gain with peak</source>
+				<target>ReplayGain Track Gain with peak</target>
+			</trans-unit>
+			<trans-unit id="Scrobble">
+				<source>Scrobble</source>
+				<target>Scrobble</target>
+			</trans-unit>
+			<trans-unit id="Sinc Interpolation">
+				<source>Sinc Interpolation</source>
+				<target>Sinc Interpolation</target>
+			</trans-unit>
+			<trans-unit id="Stable">
+				<source>Stable</source>
+				<target>Stable</target>
+			</trans-unit>
+			<trans-unit id="Synthesis">
+				<source>Synthesis</source>
+				<target>Synthesis</target>
+			</trans-unit>
+			<trans-unit id="Unstable">
+				<source>Unstable</source>
+				<target>Unstable</target>
+			</trans-unit>
+			<trans-unit id="Updates">
+				<source>Updates</source>
+				<target>Updates</target>
+			</trans-unit>
+			<trans-unit id="ValidNo">
+				<source>No</source>
+				<target>nie</target>
+			</trans-unit>
+			<trans-unit id="ValidYes">
+				<source>Yes</source>
+				<target>tak</target>
+			</trans-unit>
+			<trans-unit id="Volume scale tag only">
+				<source>Volume scale tag only</source>
+				<target>tylko tag skalowania głośności</target>
+			</trans-unit>
+			<trans-unit id="Zero Order Hold">
+				<source>Zero Order Hold</source>
+				<target>całkowita ilość dni</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="en.lproj/InfoPlist.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="CFBundleName">
+				<source>Cog</source>
+				<target>Cog</target>
+				<note>Localized versions of Info.plist keys</note>
+			</trans-unit>
+			<trans-unit id="NSCalendarsUsageDescription">
+				<source>Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?</source>
+				<target>Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?</target>
+			</trans-unit>
+			<trans-unit id="NSCameraUsageDescription">
+				<source>Cog is an audio player. It will never use your camera. Why is it asking for permission to use your camera?</source>
+				<target>Cog is an audio player. It will never use your camera. Why is it asking for permission to use your camera?</target>
+			</trans-unit>
+			<trans-unit id="NSContactsUsageDescription">
+				<source>Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?</source>
+				<target>Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?</target>
+			</trans-unit>
+			<trans-unit id="NSHumanReadableCopyright">
+				<source>© Vincent Spader, 2005-2011
+© mamburu, 2012-2013
+© Christopher Snowhill, 2013-2022</source>
+				<target>© Vincent Spader, 2005-2011
+© mamburu, 2012-2013
+© Christopher Snowhill, 2013-2022</target>
+			</trans-unit>
+			<trans-unit id="NSLocationUsageDescription">
+				<source>Cog has no use for your location information. Something is obviously wrong with the application.</source>
+				<target>Cog has no use for your location information. Something is obviously wrong with the application.</target>
+			</trans-unit>
+			<trans-unit id="NSMicrophoneUsageDescription">
+				<source>Cog is an audio player. It does not, however, record audio. Why is it asking for permission to use your microphone?</source>
+				<target>Cog is an audio player. It does not, however, record audio. Why is it asking for permission to use your microphone?</target>
+			</trans-unit>
+			<trans-unit id="NSPhotoLibraryUsageDescription">
+				<source>Cog is an audio player. Why are you trying to access your Photos Library with an audio player?</source>
+				<target>Cog is an audio player. Why are you trying to access your Photos Library with an audio player?</target>
+			</trans-unit>
+			<trans-unit id="NSRemindersUsageDescription">
+				<source>Cog has no use for your reminders. Why are you trying to access them with an audio player?</source>
+				<target>Cog has no use for your reminders. Why are you trying to access them with an audio player?</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="en.lproj/Localizable.strings" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="AddButtonTooltip">
+				<source>Add files</source>
+				<target>Add files</target>
+			</trans-unit>
+			<trans-unit id="CogTitle">
+				<source>Cog</source>
+				<target>Cog</target>
+			</trans-unit>
+			<trans-unit id="ConsentNo">
+				<source>No</source>
+				<target>No</target>
+			</trans-unit>
+			<trans-unit id="ConsentYes">
+				<source>Yes</source>
+				<target>Yes</target>
+			</trans-unit>
+			<trans-unit id="CrashlyticsConsentText">
+				<source>Would you like to allow Crashlytics to submit crash reports? You may turn this off again in Preferences. We won't ask you again.</source>
+				<target>Would you like to allow Crashlytics to submit crash reports? You may turn this off again in Preferences. We won't ask you again.</target>
+			</trans-unit>
+			<trans-unit id="CrashlyticsConsentTitle">
+				<source>Crashlytics crash collection</source>
+				<target>Crashlytics crash collection</target>
+			</trans-unit>
+			<trans-unit id="ErrorInvalidTrackId">
+				<source>Invalid track ID sent to SQLite request.</source>
+				<target>Invalid track ID sent to SQLite request.</target>
+			</trans-unit>
+			<trans-unit id="ErrorMessageBadFile">
+				<source>Unable to parse metadata for bad file.</source>
+				<target>Unable to parse metadata for bad file.</target>
+			</trans-unit>
+			<trans-unit id="ErrorMetadata">
+				<source>Unable to retrieve metadata.</source>
+				<target>Unable to retrieve metadata.</target>
+			</trans-unit>
+			<trans-unit id="ErrorSqliteProblem">
+				<source>General problem accessing track from SQLite database.</source>
+				<target>General problem accessing track from SQLite database.</target>
+			</trans-unit>
+			<trans-unit id="ErrorTrackMissing">
+				<source>Track entry is missing from SQLite database.</source>
+				<target>Track entry is missing from SQLite database.</target>
+			</trans-unit>
+			<trans-unit id="ErrorTrackTooltip">
+				<source>Error</source>
+				<target>Error</target>
+			</trans-unit>
+			<trans-unit id="FeedbackFailedInformativeText">
+				<source>Feedback failed to send.</source>
+				<target>Nie udało się wysłać twojej opinii.</target>
+			</trans-unit>
+			<trans-unit id="FeedbackFailedMessageText">
+				<source>Failed</source>
+				<target>Failed</target>
+			</trans-unit>
+			<trans-unit id="FeedbackSuccessInformativeText">
+				<source>Feedback successfully sent!</source>
+				<target>Opinia została wysłana pomyślnie.</target>
+			</trans-unit>
+			<trans-unit id="FeedbackSuccessMessageText">
+				<source>Success</source>
+				<target>Success</target>
+			</trans-unit>
+			<trans-unit id="FileButtonTooltip">
+				<source>File drawer</source>
+				<target>File drawer</target>
+			</trans-unit>
+			<trans-unit id="GainAlbumGain">
+				<source>Album Gain</source>
+				<target>Album Gain</target>
+			</trans-unit>
+			<trans-unit id="GainAlbumGainPeak">
+				<source>Album Gain plus Peak</source>
+				<target>Album Gain plus Peak</target>
+			</trans-unit>
+			<trans-unit id="GainAlbumPeak">
+				<source>Album Peak</source>
+				<target>Album Peak</target>
+			</trans-unit>
+			<trans-unit id="GainNone">
+				<source>None</source>
+				<target>nic</target>
+			</trans-unit>
+			<trans-unit id="GainTrackGain">
+				<source>Track Gain</source>
+				<target>Track Gain</target>
+			</trans-unit>
+			<trans-unit id="GainTrackGainPeak">
+				<source>Track Gain plus Peak</source>
+				<target>Track Gain plus Peak</target>
+			</trans-unit>
+			<trans-unit id="GainTrackPeak">
+				<source>Track Peak</source>
+				<target>Track Peak</target>
+			</trans-unit>
+			<trans-unit id="GainVolumeScale">
+				<source>Volume Scale</source>
+				<target>Volume Scale</target>
+			</trans-unit>
+			<trans-unit id="InfoButtonTooltip">
+				<source>Information on the selected file</source>
+				<target>Information on the selected file</target>
+			</trans-unit>
+			<trans-unit id="InvalidURLLong">
+				<source>The URL is not valid.</source>
+				<target>The URL is not valid.</target>
+			</trans-unit>
+			<trans-unit id="InvalidURLShort">
+				<source>Invalid URL</source>
+				<target>Invalid URL</target>
+			</trans-unit>
+			<trans-unit id="NextButtonTooltip">
+				<source>Next</source>
+				<target>następne</target>
+			</trans-unit>
+			<trans-unit id="PauseButtonTooltip">
+				<source>Pause</source>
+				<target>Pause</target>
+			</trans-unit>
+			<trans-unit id="PlayButtonTooltip">
+				<source>Play</source>
+				<target>odtwarzaj</target>
+			</trans-unit>
+			<trans-unit id="PlayingTrackTooltip">
+				<source>Playing</source>
+				<target>Playing</target>
+			</trans-unit>
+			<trans-unit id="PlaylistHeaderContextMenuTitle">
+				<source>Playlist Header Context Menu</source>
+				<target>Playlist Header Context Menu</target>
+			</trans-unit>
+			<trans-unit id="PlaylistIndexColumn">
+				<source>Index</source>
+				<target>Index</target>
+			</trans-unit>
+			<trans-unit id="PlaylistRandomizationAction">
+				<source>Playlist Randomization</source>
+				<target>Playlist Randomization</target>
+			</trans-unit>
+			<trans-unit id="PlaylistStatusColumn">
+				<source>Status</source>
+				<target>Status</target>
+			</trans-unit>
+			<trans-unit id="PreferencesTitle">
+				<source>Preferences</source>
+				<target>Preferences</target>
+			</trans-unit>
+			<trans-unit id="PrevButtonTooltip">
+				<source>Previous</source>
+				<target>Poprzedni</target>
+			</trans-unit>
+			<trans-unit id="ProgressActionLoader">
+				<source>playlist loader inserting files</source>
+				<target>playlist loader inserting files</target>
+			</trans-unit>
+			<trans-unit id="ProgressActionLoadingMetadata">
+				<source>loading metadata for tracks</source>
+				<target>loading metadata for tracks</target>
+			</trans-unit>
+			<trans-unit id="ProgressSubActionLoaderAddingEntries">
+				<source>creating and adding playlist entries</source>
+				<target>creating and adding playlist entries</target>
+			</trans-unit>
+			<trans-unit id="ProgressSubActionLoaderFilteringContainedFiles">
+				<source>eliminating unsupported file types from containers</source>
+				<target>eliminating unsupported file types from containers</target>
+			</trans-unit>
+			<trans-unit id="ProgressSubActionLoaderFilteringContainerFiles">
+				<source>handling container file types</source>
+				<target>handling container file types</target>
+			</trans-unit>
+			<trans-unit id="ProgressSubActionLoaderFilteringFiles">
+				<source>eliminating unsupported file types</source>
+				<target>eliminating unsupported file types</target>
+			</trans-unit>
+			<trans-unit id="ProgressSubActionLoaderListingFiles">
+				<source>collecting files</source>
+				<target>collecting files</target>
+			</trans-unit>
+			<trans-unit id="ProgressSubActionLoadingMetadata">
+				<source>processing files</source>
+				<target>processing files</target>
+			</trans-unit>
+			<trans-unit id="ProgressSubActionMetadataApply">
+				<source>applying info to playlist storage</source>
+				<target>applying info to playlist storage</target>
+			</trans-unit>
+			<trans-unit id="QueuedTrackTooltip">
+				<source>Queued</source>
+				<target>Queued</target>
+			</trans-unit>
+			<trans-unit id="RandomizeButtonTooltip">
+				<source>Randomize playlist</source>
+				<target>Randomize playlist</target>
+			</trans-unit>
+			<trans-unit id="RemoveButtonTooltip">
+				<source>Remove selected files</source>
+				<target>Remove selected files</target>
+			</trans-unit>
+			<trans-unit id="RepeatButtonTooltip">
+				<source>Repeat mode</source>
+				<target>Repeat mode</target>
+			</trans-unit>
+			<trans-unit id="ShuffleButtonTooltip">
+				<source>Shuffle mode</source>
+				<target>Shuffle mode</target>
+			</trans-unit>
+			<trans-unit id="SkipAction">
+				<source>Skip</source>
+				<target>Skip</target>
+			</trans-unit>
+			<trans-unit id="StopAfterTrackTooltip">
+				<source>Stop After Track</source>
+				<target>Stop After Track</target>
+			</trans-unit>
+			<trans-unit id="StopButtonTooltip">
+				<source>Stop</source>
+				<target>Stop</target>
+			</trans-unit>
+			<trans-unit id="SwitchFromMiniPlayer">
+				<source>Switch from Mini Player</source>
+				<target>Switch from Mini Player</target>
+			</trans-unit>
+			<trans-unit id="SwitchToMiniPlayer">
+				<source>Switch to Mini Player</source>
+				<target>Switch to Mini Player</target>
+			</trans-unit>
+			<trans-unit id="TimeElapsed">
+				<source>%li:%02li</source>
+				<target>%li:%02li</target>
+			</trans-unit>
+			<trans-unit id="TimeFirstSeen">
+				<source>First seen</source>
+				<target>First seen</target>
+			</trans-unit>
+			<trans-unit id="TimeLastPlayed">
+				<source>Last played</source>
+				<target>Last played</target>
+			</trans-unit>
+			<trans-unit id="TimeRemaining">
+				<source>-%li:%02li</source>
+				<target>-%li:%02li</target>
+			</trans-unit>
+			<trans-unit id="Version %@ (%@)">
+				<source>Version %1$@ (%2$@)</source>
+				<target>wersja %1$@ (%2$@)</target>
+			</trans-unit>
+			<trans-unit id="replayGainAlbumGain">
+				<source>The volume level of playback output will be detected through enumeration, 
+                         re</source>
+				<target>głośność odtwarzania będzie wykrywana przez enumerację</target>
+			</trans-unit>
+			<trans-unit id="%1d day(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@days@</source>
+				<target>%#@days@</target>
+				<note>day for total (Key in .stringsdict)</note>
+			</trans-unit>
+			<trans-unit id="%1d hour(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@hours@</source>
+				<target>%#@hours@</target>
+				<note>hour for total (Key in .stringsdict)</note>
+			</trans-unit>
+			<trans-unit id="%1d minute(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@minutes@</source>
+				<target>%#@minutes@</target>
+				<note>minute for total (Key in .stringsdict)</note>
+			</trans-unit>
+			<trans-unit id="%1d seconds(s)">
+				<source>%#@seconds@</source>
+				<target>%#@seconds@</target>
+			</trans-unit>
+			<trans-unit id="%1d week(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@weeks@</source>
+				<target>%#@weeks@</target>
+				<note>week for total (Key in .stringsdict)</note>
+			</trans-unit>
+			<trans-unit id="%1d second(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@seconds@</source>
+				<target>%#@seconds@</target>
+				<note>second for total (Key in .stringsdict)</note>
+			</trans-unit>
+			<trans-unit id="Total duration: %@">
+				<source>Total duration: %@</source>
+				<target>Total duration: %@</target>
+			</trans-unit>
+			<trans-unit id="dhms">
+				<source>%@, %@, %@ and %@</source>
+				<target>%@, %@, %@ i %@</target>
+			</trans-unit>
+			<trans-unit id="hms">
+				<source>%@, %@ and %@</source>
+				<target>%@, %@ i %@</target>
+			</trans-unit>
+			<trans-unit id="ms">
+				<source>%@ and %@</source>
+				<target>%@ i %@</target>
+			</trans-unit>
+			<trans-unit id="wdhms">
+				<source>%@, %@, %@, %@ and %@</source>
+				<target>%@, %@, %@, %@ i %@</target>
+			</trans-unit>
+		</body>
+	</file>
+	<file original="en.lproj/Localizable.stringsdict" datatype="plaintext" xml:space="preserve" source-language="en" target-language="pl">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="%1d day(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@days@</source>
+				<target>%#@days@</target>
+			</trans-unit>
+			<trans-unit id="/%1d day(s):dict/days:dict/one:dict/:string">
+				<source>1 day</source>
+				<target>1 dzień</target>
+			</trans-unit>
+			<trans-unit id="/%1d day(s):dict/days:dict/other:dict/:string">
+				<source>%li days</source>
+				<target>%li dni</target>
+			</trans-unit>
+			<trans-unit id="/%1d day(s):dict/days:dict/few:dict/:string">
+				<source>%li days</source>
+				<target>%li dni</target>
+			</trans-unit>
+			<trans-unit id="/%1d day(s):dict/days:dict/many:dict/:string">
+				<source>%li days</source>
+				<target>%li dni</target>
+			</trans-unit>
+			<trans-unit id="%1d hour(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@hours@</source>
+				<target>%#@hours@</target>
+			</trans-unit>
+			<trans-unit id="/%1d hour(s):dict/hours:dict/one:dict/:string">
+				<source>1 hour</source>
+				<target>1 godzina</target>
+			</trans-unit>
+			<trans-unit id="/%1d hour(s):dict/hours:dict/other:dict/:string">
+				<source>%li hours</source>
+				<target>%li godzin</target>
+			</trans-unit>
+			<trans-unit id="/%1d hour(s):dict/hours:dict/few:dict/:string">
+				<source>%li hours</source>
+				<target>%li godzin</target>
+			</trans-unit>
+			<trans-unit id="/%1d hour(s):dict/hours:dict/many:dict/:string">
+				<source>%li hours</source>
+				<target>%li godzin</target>
+			</trans-unit>
+			<trans-unit id="%1d minute(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@minutes@</source>
+				<target>%#@minutes@</target>
+			</trans-unit>
+			<trans-unit id="/%1d minute(s):dict/minutes:dict/one:dict/:string">
+				<source>1 minute</source>
+				<target>1 minuta</target>
+			</trans-unit>
+			<trans-unit id="/%1d minute(s):dict/minutes:dict/other:dict/:string">
+				<source>%li minutes</source>
+				<target>%li minut</target>
+			</trans-unit>
+			<trans-unit id="/%1d minute(s):dict/minutes:dict/few:dict/:string">
+				<source>%li minutes</source>
+				<target>%li minuty</target>
+			</trans-unit>
+			<trans-unit id="/%1d minute(s):dict/minutes:dict/many:dict/:string">
+				<source>%li minutes</source>
+				<target>%li minut</target>
+			</trans-unit>
+			<trans-unit id="%1d second(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@seconds@</source>
+				<target>%#@seconds@</target>
+			</trans-unit>
+			<trans-unit id="/%1d second(s):dict/seconds:dict/one:dict/:string">
+				<source>1 second</source>
+				<target>1 sekunda</target>
+			</trans-unit>
+			<trans-unit id="/%1d second(s):dict/seconds:dict/other:dict/:string">
+				<source>%li seconds</source>
+				<target>%li sekund</target>
+			</trans-unit>
+			<trans-unit id="/%1d second(s):dict/seconds:dict/few:dict/:string">
+				<source>%li seconds</source>
+				<target>%li sekund</target>
+			</trans-unit>
+			<trans-unit id="/%1d second(s):dict/seconds:dict/many:dict/:string">
+				<source>%li seconds</source>
+				<target>%li sekund</target>
+			</trans-unit>
+			<trans-unit id="%1d week(s):dict/NSStringLocalizedFormatKey:dict/:string">
+				<source>%#@weeks@</source>
+				<target>%#@weeks@</target>
+			</trans-unit>
+			<trans-unit id="/%1d week(s):dict/weeks:dict/one:dict/:string">
+				<source>1 week</source>
+				<target>1 tydźeń</target>
+			</trans-unit>
+			<trans-unit id="/%1d week(s):dict/weeks:dict/other:dict/:string">
+				<source>%li weeks</source>
+				<target>%li tygodni</target>
+			</trans-unit>
+			<trans-unit id="/%1d week(s):dict/weeks:dict/few:dict/:string">
+				<source>%li weeks</source>
+				<target>%li tygodni</target>
+			</trans-unit>
+			<trans-unit id="/%1d week(s):dict/weeks:dict/many:dict/:string">
+				<source>%li weeks</source>
+				<target>%li tygodni</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

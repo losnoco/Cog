@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+	<file original="" datatype="plaintext" xml:space="preserve" source-language="en" target-language="ru">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="0Am-5Y-EKq.title">
+				<source>Hz</source>
+				<target>Hz</target>
+			</trans-unit>
+			<trans-unit id="A9I-fr-vHp.title">
+				<source>Sample rate:</source>
+				<target>Частота дискретизации:</target>
+			</trans-unit>
+			<trans-unit id="AQZ-ku-F8u.title">
+				<source>Default play time:</source>
+				<target>Время воспроизведения по умолчанию:</target>
+			</trans-unit>
+			<trans-unit id="Fgm-Vs-tgU.title">
+				<source>Default loop count:</source>
+				<target>Количество циклов по умолчанию:</target>
+			</trans-unit>
+			<trans-unit id="POG-ai-6D2.title">
+				<source>(will be preferred if possible)</source>
+				<target>(будет предпочтительнее, если это возможно)</target>
+			</trans-unit>
+			<trans-unit id="UdW-qd-A0x.title">
+				<source>Default fade time:</source>
+				<target>Время затухания по умолчанию:</target>
+			</trans-unit>
+			<trans-unit id="klv-Wh-0ur.title">
+				<source>hh:mm:ss.ms</source>
+				<target>hh:mm:ss.ms</target>
+			</trans-unit>
+			<trans-unit id="zaI-0m-tQf.title">
+				<source>hh:mm:ss.ms</source>
+				<target>hh:mm:ss.ms</target>
+			</trans-unit>
+			<trans-unit id="NMg-TO-amV.title">
+				<source>Use 3D rendered spectrum</source>
+				<target>Использовать 3D-рендеринг спектра</target>
+			</trans-unit>
+			<trans-unit id="NGx-0c-WVR.title">
+				<source>Enable HRTF filter (Not needed with AirPods or Beats)</source>
+				<target>Включить фильтр HRTF (не требуется с AirPods или Beats)</target>
+			</trans-unit>
+			<trans-unit id="F0i-UK-6Nu.title">
+				<source>Enable FreeSurround stereo to surround upmixing</source>
+				<target>Включить FreeSurround апмикс стерео в объемный звук</target>
+			</trans-unit>
+			<trans-unit id="ws4-en-un8.title">
+				<source>Add other files in the same folder when adding a file</source>
+				<target>Add other files in the same folder when adding a file</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

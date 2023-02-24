@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+	<file original="" datatype="plaintext" xml:space="preserve" source-language="en" target-language="tr">
+		<header>
+			<tool tool-id="lokalise.com" tool-name="Lokalise"></tool>
+		</header>
+		<body>
+			<trans-unit id="23r-ai-XoX.headerCell.title">
+				<source>Path</source>
+				<target>Path</target>
+			</trans-unit>
+			<trans-unit id="2vN-j2-JYP.title">
+				<source>Text Cell</source>
+				<target>Metin Hücresi</target>
+			</trans-unit>
+			<trans-unit id="Jne-2G-yP9.title">
+				<source>Apply</source>
+				<target>Uygula</target>
+			</trans-unit>
+			<trans-unit id="QWk-Qb-l0y.headerCell.title">
+				<source>Enabled</source>
+				<target>Etkin</target>
+			</trans-unit>
+			<trans-unit id="RLN-Pa-Mhl.title">
+				<source>Table View Cell</source>
+				<target>Tablo Görünümü Hücresi</target>
+			</trans-unit>
+			<trans-unit id="cJV-DM-SOV.label">
+				<source>Apply</source>
+				<target>Uygula</target>
+			</trans-unit>
+			<trans-unit id="cJV-DM-SOV.paletteLabel">
+				<source>Apply</source>
+				<target>Uygula</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
