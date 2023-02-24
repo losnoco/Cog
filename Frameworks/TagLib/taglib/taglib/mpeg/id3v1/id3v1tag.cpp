@@ -147,6 +147,11 @@ String ID3v1::Tag::album() const
   return d->album;
 }
 
+String ID3v1::Tag::unsyncedlyrics() const
+{
+  return String();
+}
+
 String ID3v1::Tag::comment() const
 {
   return d->comment;
@@ -219,6 +224,10 @@ void ID3v1::Tag::setArtist(const String &s)
 void ID3v1::Tag::setAlbum(const String &s)
 {
   d->album = s;
+}
+
+void ID3v1::Tag::setUnsyncedlyrics(const String &s)
+{
 }
 
 void ID3v1::Tag::setComment(const String &s)

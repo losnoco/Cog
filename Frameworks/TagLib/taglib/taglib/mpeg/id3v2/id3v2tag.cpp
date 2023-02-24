@@ -170,6 +170,13 @@ String ID3v2::Tag::album() const
   return String();
 }
 
+String ID3v2::Tag::unsyncedlyrics() const
+{
+  if(!d->frameListMap["USLT"].isEmpty())
+    return d->frameListMap["USLT"].front()->toString();
+  return String();
+}
+
 String ID3v2::Tag::comment() const
 {
   const FrameList &comments = d->frameListMap["COMM"];
@@ -348,6 +355,31 @@ void ID3v2::Tag::setAlbumArtist(const String &s)
 void ID3v2::Tag::setAlbum(const String &s)
 {
   setTextFrame("TALB", s);
+}
+
+void ID3v2::Tag::setUnsyncedlyrics(const String &s)
+{
+  if(s.isEmpty()) {
+    removeFrames("USLT");
+    return;
+  }
+
+  const FrameList &unsyncedlyrics = d->frameListMap["USLT"];
+
+  if(!unsyncedlyrics.isEmpty()) {
+    for(FrameList::ConstIterator it = unsyncedlyrics.begin(); it != unsyncedlyrics.end(); ++it) {
+      UnsynchronizedLyricsFrame *frame = dynamic_cast<UnsynchronizedLyricsFrame *>(*it);
+      if(frame && (frame->description().isEmpty() || frame->description() == "LYRICS")) {
+        (*it)->setText(s);
+        return;
+      }
+    }
+  }
+
+  UnsynchronizedLyricsFrame *f = new UnsynchronizedLyricsFrame(d->factory->defaultTextEncoding());
+  addFrame(f);
+  f->setDescription("LYRICS");
+  f->setText(s);
 }
 
 void ID3v2::Tag::setComment(const String &s)

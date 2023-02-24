@@ -74,6 +74,11 @@ String Mod::Tag::album() const
   return String();
 }
 
+String Mod::Tag::unsyncedlyrics() const
+{
+  return String();
+}
+
 String Mod::Tag::comment() const
 {
   return d->comment;
@@ -148,6 +153,10 @@ void Mod::Tag::setArtist(const String &)
 }
 
 void Mod::Tag::setAlbum(const String &)
+{
+}
+
+void Mod::Tag::setUnsyncedlyrics(const String &)
 {
 }
 

@@ -61,6 +61,7 @@ namespace TagLib {
    *  - ORIGINALDATE
    *  - GENRE
    *  - COMMENT
+   *  - UNSYNCEDLYRICS
    *
    * Sort names:
    *

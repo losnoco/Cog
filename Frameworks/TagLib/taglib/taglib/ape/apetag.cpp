@@ -146,6 +146,17 @@ String APE::Tag::album() const
   return d->itemListMap["ALBUM"].values().toString();
 }
 
+String APE::Tag::unsyncedlyrics() const
+{
+  if(!d->itemListMap["UNSYNCEDLYRICS"].isEmpty())
+    return d->itemListMap["UNSYNCEDLYRICS"].values().toString();
+  if(!d->itemListMap["UNSYNCED LYRICS"].isEmpty())
+    return d->itemListMap["UNSYNCED LYRICS"].values().toString();
+  if(!d->itemListMap["LYRICS"].isEmpty())
+    return d->itemListMap["LYRICS"].values().toString();
+  return String();
+}
+
 String APE::Tag::comment() const
 {
   if(d->itemListMap["COMMENT"].isEmpty())
@@ -239,6 +250,11 @@ void APE::Tag::setArtist(const String &s)
 void APE::Tag::setAlbum(const String &s)
 {
   addValue("ALBUM", s, true);
+}
+
+void APE::Tag::setUnsyncedlyrics(const String &s)
+{
+  addValue("UNSYNCED LYRICS", s);
 }
 
 void APE::Tag::setComment(const String &s)

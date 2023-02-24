@@ -73,6 +73,11 @@ namespace TagLib {
       virtual String album() const;
 
       /*!
+       * Not supported by module files. Therefore always returns String::null.
+       */
+      virtual String unsyncedlyrics() const;
+		
+      /*!
        * Returns the track comment derived from the instrument/sample/pattern
        * names; if no comment is present in the tag String::null will be
        * returned.
@@ -162,6 +167,11 @@ namespace TagLib {
        * Not supported by module files and therefore ignored.
        */
       virtual void setAlbum(const String &album);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setUnsyncedlyrics(const String &unsyncedlyrics);
 
       /*!
        * Sets the comment to \a comment.  If \a comment is String::null then

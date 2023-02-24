@@ -50,6 +50,7 @@ bool Tag::isEmpty() const
           albumartist().isEmpty() &&
           artist().isEmpty() &&
           album().isEmpty() &&
+          unsyncedlyrics().isEmpty() &&
           comment().isEmpty() &&
           genre().isEmpty() &&
           year() == 0 &&
@@ -68,6 +69,8 @@ PropertyMap Tag::properties() const
     map["ARTIST"].append(artist());
   if(!(album().isEmpty()))
     map["ALBUM"].append(album());
+  if(!(unsyncedlyrics().isEmpty()))
+    map["UNSYNCEDLYRICS"].append(unsyncedlyrics());
   if(!(comment().isEmpty()))
     map["COMMENT"].append(comment());
   if(!(genre().isEmpty()))
@@ -118,6 +121,18 @@ PropertyMap Tag::setProperties(const PropertyMap &origProps)
     oneValueSet.append("ALBUM");
   } else
     setAlbum(String());
+
+  if(properties.contains("UNSYNCEDLYRICS") ||
+     properties.contains("UNSYNCED LYRICS") ||
+     properties.contains("LYRICS")) {
+    if(properties.contains("UNSYNCEDLYRICS"))
+      setUnsyncedlyrics(properties["UNSYNCEDLYRICS"].front());
+    else if(properties.contains("UNSYNCED LYRICS"))
+      setUnsyncedlyrics(properties["UNSYNCED LYRICS"].front());
+    else
+      setUnsyncedlyrics(properties["LYRICS"].front());
+    oneValueSet.append("UNSYNCEDLYRICS");
+  }
 
   if(properties.contains("COMMENT")) {
     setComment(properties["COMMENT"].front());
@@ -185,6 +200,7 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
     target->setAlbumArtist(source->albumartist());
     target->setArtist(source->artist());
     target->setAlbum(source->album());
+    target->setUnsyncedlyrics(source->unsyncedlyrics());
     target->setComment(source->comment());
     target->setGenre(source->genre());
     target->setYear(source->year());
@@ -200,6 +216,8 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
       target->setArtist(source->artist());
     if(target->album().isEmpty())
       target->setAlbum(source->album());
+    if(target->unsyncedlyrics().isEmpty())
+      target->setUnsyncedlyrics(source->unsyncedlyrics());
     if(target->comment().isEmpty())
       target->setComment(source->comment());
     if(target->genre().isEmpty())

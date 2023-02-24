@@ -108,6 +108,11 @@ String RIFF::Info::Tag::album() const
   return fieldText("IPRD");
 }
 
+String RIFF::Info::Tag::unsyncedlyrics() const
+{
+  return String();
+}
+
 String RIFF::Info::Tag::comment() const
 {
   return fieldText("ICMT");
@@ -180,6 +185,10 @@ void RIFF::Info::Tag::setArtist(const String &s)
 void RIFF::Info::Tag::setAlbum(const String &s)
 {
   setFieldText("IPRD", s);
+}
+
+void RIFF::Info::Tag::setUnsyncedlyrics(const String &)
+{
 }
 
 void RIFF::Info::Tag::setComment(const String &s)
