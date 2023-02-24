@@ -69,6 +69,7 @@
 		833F683A1CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C889B22CC188A001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747BDC2862D5C50021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		838EE8D329A8600D00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83DD1DCD17FA038A00249519 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = utils.h; path = Files/utils.h; sourceTree = "<group>"; };
 		83DD1DCE17FA038A00249519 /* wavpack_local.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_local.h; path = Files/wavpack_local.h; sourceTree = "<group>"; };
 		83DD1DCF17FA038A00249519 /* wavpack_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavpack_version.h; path = Files/wavpack_version.h; sourceTree = "<group>"; };
@@ -274,6 +275,7 @@
 				es,
 				Base,
 				pl,
+				tr,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* WavPack */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -340,6 +342,7 @@
 				833F683A1CDBCAB200AFB9F0 /* es */,
 				835C889B22CC188A001B4B3F /* en */,
 				83F0E6CD287CAB4400D84594 /* pl */,
+				838EE8D329A8600D00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

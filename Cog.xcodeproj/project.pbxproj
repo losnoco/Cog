@@ -1048,6 +1048,20 @@
 		838EE7A029A8556500CD0580 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
 		838EE7A229A8557000CD0580 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
 		838EE7A429A8557200CD0580 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
+		838EE8A729A8600600CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/AboutWindowController.strings; sourceTree = "<group>"; };
+		838EE8A829A8600700CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Equalizer.strings; sourceTree = "<group>"; };
+		838EE8A929A8600700CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoInspector.strings; sourceTree = "<group>"; };
+		838EE8AA29A8600700CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		838EE8AB29A8600700CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/OpenURLPanel.strings; sourceTree = "<group>"; };
+		838EE8AC29A8600700CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/FileTree.strings; sourceTree = "<group>"; };
+		838EE8AD29A8600700CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/SpectrumWindow.strings; sourceTree = "<group>"; };
+		838EE8AE29A8600800CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/SpotlightPanel.strings; sourceTree = "<group>"; };
+		838EE8AF29A8600800CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Feedback.strings; sourceTree = "<group>"; };
+		838EE8B029A8600800CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
+		838EE8B129A8600800CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = tr; path = tr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		838EE8B629A8600900CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		838EE8B729A8600900CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		838EE8B829A8600900CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = tr; path = tr.lproj/Credits.html; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
 		83922FB6286B1AA900A0B039 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		839614A1286ED97200D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AboutWindowController.xib; sourceTree = "<group>"; };
@@ -2164,6 +2178,7 @@
 				ja,
 				pl,
 				ru,
+				tr,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			packageReferences = (
@@ -2937,6 +2952,7 @@
 				835C888C22CC1882001B4B3F /* en */,
 				83F0E8AD287CD48800D84594 /* pl */,
 				491C55C2287AA4B7007D96F5 /* ru */,
+				838EE8B629A8600900CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2948,6 +2964,7 @@
 				0A1B412F286F6307008A6A44 /* en */,
 				491C55BF287AA4B6007D96F5 /* ru */,
 				83D2E23D287ED5ED00DD441F /* pl */,
+				838EE8B129A8600800CD0580 /* tr */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
@@ -2960,6 +2977,7 @@
 				83BC5AD420E4D0B600631CD4 /* en */,
 				83F0E6A8287CAB3800D84594 /* pl */,
 				491C55BB287AA4B6007D96F5 /* ru */,
+				838EE8AC29A8600700CD0580 /* tr */,
 			);
 			name = FileTree.xib;
 			sourceTree = "<group>";
@@ -2972,6 +2990,7 @@
 				83BC5AC820E4D05A00631CD4 /* es */,
 				83F0E6A6287CAB3800D84594 /* pl */,
 				491C55B9287AA4B6007D96F5 /* ru */,
+				838EE8AA29A8600700CD0580 /* tr */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -2984,6 +3003,7 @@
 				83BC5AD020E4D09800631CD4 /* en */,
 				83F0E6A7287CAB3800D84594 /* pl */,
 				491C55BA287AA4B6007D96F5 /* ru */,
+				838EE8AB29A8600700CD0580 /* tr */,
 			);
 			name = OpenURLPanel.xib;
 			sourceTree = "<group>";
@@ -2996,6 +3016,7 @@
 				83BC5AD820E4D0D900631CD4 /* en */,
 				83F0E6AA287CAB3800D84594 /* pl */,
 				491C55BD287AA4B6007D96F5 /* ru */,
+				838EE8AE29A8600800CD0580 /* tr */,
 			);
 			name = SpotlightPanel.xib;
 			sourceTree = "<group>";
@@ -3008,6 +3029,7 @@
 				83BC5ACC20E4D07700631CD4 /* en */,
 				83F0E6A5287CAB3800D84594 /* pl */,
 				491C55B8287AA4B6007D96F5 /* ru */,
+				838EE8A929A8600700CD0580 /* tr */,
 			);
 			name = InfoInspector.xib;
 			sourceTree = "<group>";
@@ -3020,6 +3042,7 @@
 				83BC5ADC20E4D0EC00631CD4 /* es */,
 				83F0E6AB287CAB3800D84594 /* pl */,
 				491C55BE287AA4B6007D96F5 /* ru */,
+				838EE8AF29A8600800CD0580 /* tr */,
 			);
 			name = Feedback.xib;
 			sourceTree = "<group>";
@@ -3031,6 +3054,7 @@
 				835C888B22CC1881001B4B3F /* en */,
 				83F0E8B2287CD52500D84594 /* pl */,
 				491C55C4287AA4B7007D96F5 /* ru */,
+				838EE8B829A8600900CD0580 /* tr */,
 			);
 			name = Credits.html;
 			sourceTree = "<group>";
@@ -3043,6 +3067,7 @@
 				839614AA286EDA0600D3EEDB /* es */,
 				83F0E6A4287CAB3800D84594 /* pl */,
 				491C55B7287AA4B6007D96F5 /* ru */,
+				838EE8A829A8600700CD0580 /* tr */,
 			);
 			name = Equalizer.xib;
 			sourceTree = "<group>";
@@ -3055,6 +3080,7 @@
 				839614A6286ED98800D3EEDB /* es */,
 				83F0E6A3287CAB3800D84594 /* pl */,
 				491C55B6287AA4B6007D96F5 /* ru */,
+				838EE8A729A8600600CD0580 /* tr */,
 			);
 			name = AboutWindowController.xib;
 			sourceTree = "<group>";
@@ -3067,6 +3093,7 @@
 				839614B1286EDA6E00D3EEDB /* es */,
 				83F0E6A9287CAB3800D84594 /* pl */,
 				491C55BC287AA4B6007D96F5 /* ru */,
+				838EE8AD29A8600700CD0580 /* tr */,
 			);
 			name = SpectrumWindow.xib;
 			sourceTree = "<group>";
@@ -3079,6 +3106,7 @@
 				838EE7A029A8556500CD0580 /* es */,
 				838EE7A229A8557000CD0580 /* ru */,
 				838EE7A429A8557200CD0580 /* pl */,
+				838EE8B029A8600800CD0580 /* tr */,
 			);
 			name = LyricsWindow.xib;
 			sourceTree = "<group>";
@@ -3090,6 +3118,7 @@
 				835C888D22CC1882001B4B3F /* en */,
 				83F0E8B1287CD50700D84594 /* pl */,
 				491C55C3287AA4B7007D96F5 /* ru */,
+				838EE8B729A8600900CD0580 /* tr */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

@@ -1400,6 +1400,7 @@
 		838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		838EE8D229A8600D00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8396BE782935FC2F00CD0580 /* sscf_encrypted.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sscf_encrypted.c; sourceTree = "<group>"; };
 		8396BE792935FC2F00CD0580 /* sscf_encrypted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sscf_encrypted.h; sourceTree = "<group>"; };
 		839933572591E896001855AF /* vorbis_custom_utils_awc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vorbis_custom_utils_awc.c; sourceTree = "<group>"; };
@@ -2674,6 +2675,7 @@
 				es,
 				Base,
 				pl,
+				tr,
 			);
 			mainGroup = 836F6B2F18BDB8880095E648;
 			productRefGroup = 836F6B3A18BDB8880095E648 /* Products */;
@@ -3343,6 +3345,7 @@
 			children = (
 				836F6B4618BDB8880095E648 /* en */,
 				83F0E6CC287CAB4400D84594 /* pl */,
+				838EE8D229A8600D00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

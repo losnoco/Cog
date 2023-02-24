@@ -274,6 +274,7 @@
 		833F683D1CDBCAB300AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		835C889822CC1889001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747BD22862D5B00021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		838EE8D029A8600D00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83B46FC92707EED200847FC9 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		83B46FCB2707EEDB00847FC9 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		83F0E6CA287CAB4300D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -998,6 +999,7 @@
 				es,
 				Base,
 				pl,
+				tr,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* TagLib */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1117,6 +1119,7 @@
 				833F683D1CDBCAB300AFB9F0 /* es */,
 				835C889822CC1889001B4B3F /* en */,
 				83F0E6CA287CAB4300D84594 /* pl */,
+				838EE8D029A8600D00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
