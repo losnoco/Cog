@@ -255,6 +255,9 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 						const char *_value = [value UTF8String] + 2;
 						flacDecoder->channelConfig = (uint32_t)strtoul(_value, &end, 16);
 					}
+				} else if([name isEqualToString:@"unsynced lyrics"] ||
+						  [name isEqualToString:@"lyrics"]) {
+					setDictionary(_metaDict, @"unsyncedlyrics", value);
 				} else {
 					setDictionary(_metaDict, name, value);
 				}
