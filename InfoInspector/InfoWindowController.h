@@ -6,8 +6,9 @@
 //  Copyright 2009 __MyCompanyName__. All rights reserved.
 //
 
-#import "AppController.h"
 #import <Cocoa/Cocoa.h>
+
+#import "AppController.h"
 
 @interface InfoWindowController : NSWindowController {
 	IBOutlet id playlistSelectionController;
