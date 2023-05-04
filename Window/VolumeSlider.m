@@ -63,16 +63,17 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	double value = [self doubleValue];
 	double volume;
 	volume = linearToLogarithmic(value, MAX_VOLUME);
+	NSString *text;
 
 	// If volume becomes less than 1%, display two decimal digits of precision (e.g. 0.34%).
 	if(volume < 1)
-		NSString *text = [NSString stringWithFormat:@"%0.2lf%%", volume];
+		text = [NSString stringWithFormat:@"%0.2lf%%", volume];
 	// Else if volume becomes less than 10%, display one decimal digit of precision (e.g. 3.4%).
 	else if(volume < 10)
-		NSString *text = [NSString stringWithFormat:@"%0.1lf%%", volume];
+		text = [NSString stringWithFormat:@"%0.1lf%%", volume];
 	// Else display no decimal digits.
 	else
-		NSString *text = [NSString stringWithFormat:@"%0.lf%%", volume];
+		text = [NSString stringWithFormat:@"%0.lf%%", volume];
 
 	[textView setString:text];
 }
