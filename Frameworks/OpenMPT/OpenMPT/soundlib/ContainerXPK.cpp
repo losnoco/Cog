@@ -103,7 +103,7 @@ static uint8 XPK_ReadTable(int32 index)
 	return xpk_table[index];
 }
 
-static bool XPK_DoUnpack(const uint8 *src_, uint32 srcLen, std::vector<char> &unpackedData, int32 len)
+static bool XPK_DoUnpack(const mpt::const_byte_span src_, std::vector<char> &unpackedData, int32 len)
 {
 	if(len <= 0) return false;
 	int32 d0,d1,d2,d3,d4,d5,d6,a2,a5;
@@ -112,11 +112,11 @@ static bool XPK_DoUnpack(const uint8 *src_, uint32 srcLen, std::vector<char> &un
 	std::size_t src;
 	std::size_t phist = 0;
 
-	unpackedData.reserve(std::min(static_cast<uint32>(len), std::min(srcLen, uint32_max / 20u) * 20u));
+	unpackedData.reserve(std::min(static_cast<uint32>(len), std::min(mpt::saturate_cast<uint32>(src_.size()), uint32_max / 20u) * 20u));
 
 	XPK_BufferBounds bufs;
-	bufs.pSrcBeg = src_;
-	bufs.SrcSize = srcLen;
+	bufs.pSrcBeg = mpt::byte_cast<const uint8*>(src_.data());
+	bufs.SrcSize = src_.size();
 
 	src = 0;
 	c = src;
@@ -407,7 +407,8 @@ bool UnpackXPK(std::vector<ContainerItem> &containerItems, FileReader &file, Con
 	bool result = false;
 	try
 	{
-		result = XPK_DoUnpack(file.GetRawData<uint8>().data(), header.SrcLen - (sizeof(XPKFILEHEADER) - 8), unpackedData, header.DstLen);
+		FileReader::PinnedView compressedData = file.GetPinnedView(header.SrcLen - (sizeof(XPKFILEHEADER) - 8));
+		result = XPK_DoUnpack(compressedData.span(), unpackedData, header.DstLen);
 	} catch(mpt::out_of_memory e)
 	{
 		mpt::delete_out_of_memory(e);

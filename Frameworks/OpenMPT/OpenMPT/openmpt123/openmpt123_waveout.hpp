@@ -13,12 +13,14 @@
 #include "openmpt123_config.hpp"
 #include "openmpt123.hpp"
 
-#if defined(WIN32)
+#include "mpt/base/detect.hpp"
+
+#if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
 
 namespace openmpt123 {
 
 struct waveout_exception : public exception {
-	waveout_exception() : exception( "waveout" ) { }
+	waveout_exception() : exception( MPT_USTRING("waveout") ) { }
 };
 
 class waveout_stream_raii : public write_buffers_interface {
@@ -59,10 +61,8 @@ public:
 		wfx.nBlockAlign = ( wfx.wBitsPerSample / 8 ) * wfx.nChannels;
 		wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
 		wfx.cbSize = 0;
-		std::istringstream device_string( flags.device );
-		int device = -1;
-		device_string >> device;
-		waveOutOpen( &waveout, device == -1 ? WAVE_MAPPER : device, &wfx, 0, 0, CALLBACK_NULL );
+		const int device = mpt::parse_or<int>( flags.device, -1 );
+		waveOutOpen( &waveout, ( device == -1 ) ? WAVE_MAPPER : device, &wfx, 0, 0, CALLBACK_NULL );
 		num_channels = flags.channels;
 		std::size_t frames_per_buffer = flags.samplerate * flags.buffer / 1000;
 		num_chunks = ( flags.buffer + flags.period - 1 ) / flags.period;
@@ -177,22 +177,26 @@ public:
 	}
 };
 
-static std::string show_waveout_devices( std::ostream & /*log*/ ) {
-	std::ostringstream devices;
-	devices << " waveout:" << std::endl;
+static mpt::ustring show_waveout_devices( concat_stream<mpt::ustring> & /*log*/ ) {
+	string_concat_stream<mpt::ustring> devices;
+	devices << MPT_USTRING(" waveout:") << lf;
 	for ( UINT i = 0; i < waveOutGetNumDevs(); ++i ) {
-		devices << "    " << i << ": ";
-		WAVEOUTCAPSW caps;
+		devices << MPT_USTRING("    ") << i << MPT_USTRING(": ");
+		WAVEOUTCAPS caps;
 		ZeroMemory( &caps, sizeof( caps ) );
-		waveOutGetDevCapsW( i, &caps, sizeof( caps ) );
-		devices << mpt::transcode<std::string>( mpt::common_encoding::utf8, caps.szPname );
-		devices << std::endl;
+		waveOutGetDevCaps( i, &caps, sizeof( caps ) );
+		#if defined(UNICODE)
+			devices << mpt::transcode<mpt::ustring>( caps.szPname );
+		#else
+			devices << mpt::transcode<mpt::ustring>( mpt::logical_encoding::locale, caps.szPname );
+		#endif
+		devices << lf;
 	}
 	return devices.str();
 }
 
 } // namespace openmpt123
 
-#endif // WIN32
+#endif // MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
 
 #endif // OPENMPT123_WAVEOUT_HPP

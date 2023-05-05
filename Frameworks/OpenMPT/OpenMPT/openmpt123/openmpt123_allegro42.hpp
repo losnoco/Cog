@@ -19,6 +19,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wfloat-conversion"
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
 #endif
 #include <allegro.h>
 #if defined(__GNUC__) && !defined(__clang__) && !defined(_MSC_VER)
@@ -27,12 +28,14 @@
 
 namespace openmpt123 {
 
+inline constexpr auto allegro42_encoding = mpt::logical_encoding::locale;
+
 struct allegro42_exception : public exception {
-	static std::string error_to_string() {
+	static mpt::ustring error_to_string() {
 		try {
-			return std::string( allegro_error );
+			return mpt::transcode<mpt::ustring>( allegro42_encoding, std::string( allegro_error ) );
 		} catch ( const std::bad_alloc & ) {
-			return std::string();
+			return mpt::ustring();
 		}
 	}
 	allegro42_exception()
@@ -61,7 +64,7 @@ public:
 		}
 		if ( digi_card == DIGI_NONE ) {
 			remove_sound();
-			throw exception( "no audio device found" );
+			throw exception( MPT_USTRING("no audio device found") );
 		}
 	}
 	~allegro42_sound_raii() {
@@ -87,7 +90,7 @@ private:
 		return result;
 	}
 public:
-	allegro42_stream_raii( commandlineflags & flags, std::ostream & log )
+	allegro42_stream_raii( commandlineflags & flags, concat_stream<mpt::ustring> & log )
 		: write_buffers_polling_wrapper_int(flags)
 		, stream(NULL)
 		, bits(16)
@@ -95,10 +98,10 @@ public:
 		, period_frames(1024)
 	{
 		if ( flags.use_float ) {
-			throw exception( "floating point is unsupported" );
+			throw exception( MPT_USTRING("floating point is unsupported") );
 		}
 		if ( ( flags.channels != 1 ) && ( flags.channels != 2 ) ) {
-			throw exception( "only mono or stereo supported" );
+			throw exception( MPT_USTRING("only mono or stereo supported") );
 		}
 		if ( flags.buffer == default_high ) {
 			flags.buffer = 1024 * 2 * 1000 / flags.samplerate;
@@ -114,12 +117,12 @@ public:
 		period_frames = round_up_power2( ( flags.buffer * flags.samplerate ) / ( 1000 * 2 ) );
 		set_queue_size_frames( period_frames );
 		if ( flags.verbose ) {
-			log << "Allegro-4.2:" << std::endl;
-			log << " allegro samplerate: " << get_mixer_frequency() << std::endl;
-			log << " latency: " << flags.buffer << std::endl;
-			log << " period: " << flags.period << std::endl;
-			log << " frames per buffer: " << period_frames << std::endl;
-			log << " ui redraw: " << flags.ui_redraw_interval << std::endl;
+			log << MPT_USTRING("Allegro-4.2:") << lf;
+			log << MPT_USTRING(" allegro samplerate: ") << get_mixer_frequency() << lf;
+			log << MPT_USTRING(" latency: ") << flags.buffer << lf;
+			log << MPT_USTRING(" period: ") << flags.period << lf;
+			log << MPT_USTRING(" frames per buffer: ") << period_frames << lf;
+			log << MPT_USTRING(" ui redraw: ") << flags.ui_redraw_interval << lf;
 		}
 		stream = play_audio_stream( period_frames, 16, ( flags.channels > 1 ) ? TRUE : FALSE, flags.samplerate, 255, 128 );
 		if ( !stream ) {
@@ -171,10 +174,10 @@ public:
 	}
 };
 
-static std::string show_allegro42_devices( std::ostream & /* log */ ) {
-	std::ostringstream devices;
-	devices << " allegro42:" << std::endl;
-	devices << "    " << "0" << ": Default Device" << std::endl;
+static mpt::ustring show_allegro42_devices( concat_stream<mpt::ustring> & /* log */ ) {
+	string_concat_stream<mpt::ustring> devices;
+	devices << MPT_USTRING(" allegro42:") << lf;
+	devices << MPT_USTRING("    ") << MPT_USTRING("0") << MPT_USTRING(": Default Device") << lf;
 	return devices.str();
 }
 

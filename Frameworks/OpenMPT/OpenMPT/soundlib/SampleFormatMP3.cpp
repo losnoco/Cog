@@ -66,17 +66,17 @@ OPENMPT_NAMESPACE_BEGIN
 
 #if defined(MPT_WITH_MPG123)
 
-typedef off_t mpg123_off_t;
+using mpg123_off_t = off_t;
 
-typedef size_t mpg123_size_t;
+using mpg123_size_t = size_t;
 
 // Check for exactly _MSC_VER as libmpg123 does, in order to also catch clang-cl.
 #ifdef _MSC_VER
 // ssize_t definition in libmpg123.h.in should never have existed at all.
 // It got removed from libmpg23.h.in after 1.28.0 and before 1.28.1.
-typedef ptrdiff_t mpg123_ssize_t;
+using mpg123_ssize_t = ptrdiff_t;
 #else
-typedef ssize_t mpg123_ssize_t;
+using mpg123_ssize_t = ssize_t;
 #endif
 
 class ComponentMPG123
@@ -598,7 +598,7 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	{
 		m_szNames[sample] = mpt::ToCharset(GetCharsetInternal(), sampleName);
 		Samples[sample].Initialize();
-		Samples[sample].nC5Speed = rate;
+		Samples[sample].nC5Speed = static_cast<uint32>(rate);
 	}
 	Samples[sample].nLength = mpt::saturate_cast<SmpLength>((data.size() / channels) - data_skip_frames);
 

@@ -26,6 +26,11 @@ static_assert(sizeof(int24) == 3);
 inline constexpr int32 int24_min = std::numeric_limits<int24>::min();
 inline constexpr int32 int24_max = std::numeric_limits<int24>::max();
 
+using int24le = mpt::packed<int24, mpt::endian::little>;
+using uint24le = mpt::packed<uint24, mpt::endian::little>;
+using int24be = mpt::packed<int24, mpt::endian::big>;
+using uint24be = mpt::packed<uint24, mpt::endian::big>;
+
 
 
 OPENMPT_NAMESPACE_END

@@ -6,12 +6,14 @@
 
 
 #include "mpt/base/detect_compiler.hpp"
+#include "mpt/base/detect_libcxx.hpp"
 #include "mpt/base/namespace.hpp"
 
 #if MPT_CXX_BEFORE(20)
 #include "mpt/base/saturate_cast.hpp"
 #endif
 
+#include <new>
 #include <type_traits>
 #include <utility>
 
@@ -23,7 +25,15 @@ namespace mpt {
 inline namespace MPT_INLINE_NS {
 
 
-#if MPT_CXX_AT_LEAST(20) && !MPT_CLANG_BEFORE(13, 0, 0)
+
+template <typename Tdst, typename Tsrc>
+MPT_CONSTEXPRINLINE Tdst c_cast(Tsrc && x) {
+	return (Tdst)std::forward<Tsrc>(x);
+}
+
+
+
+#if MPT_CXX_AT_LEAST(20) && !MPT_LIBCXX_LLVM_BEFORE(13000)
 
 using std::in_range;
 
@@ -64,8 +74,7 @@ struct value_initializer {
 template <typename T, std::size_t N>
 struct value_initializer<T[N]> {
 	inline void operator()(T (&a)[N]) {
-		for (auto & e : a)
-		{
+		for (auto & e : a) {
 			value_initializer<T>{}(e);
 		}
 	}
@@ -76,9 +85,22 @@ inline void reset(T & x) {
 	value_initializer<T>{}(x);
 }
 
+template <typename T, typename... Targs>
+void reset(T & x, Targs &&... args) {
+	x = T{std::forward<Targs>(args)...};
+}
 
 
-#if MPT_CXX_AT_LEAST(20) && !MPT_CLANG_BEFORE(13, 0, 0)
+
+template <typename T, typename... Targs>
+void reconstruct(T & x, Targs &&... args) {
+	x.~T();
+	new (&x) T{std::forward<Targs>(args)...};
+}
+
+
+
+#if MPT_CXX_AT_LEAST(20) && !MPT_LIBCXX_LLVM_BEFORE(13000)
 
 using std::cmp_equal;
 using std::cmp_greater;

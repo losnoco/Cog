@@ -12,6 +12,7 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/base/span.hpp"
 #include "mpt/endian/integer.hpp"
+#include "mpt/endian/type_traits.hpp"
 #include "mpt/io/base.hpp"
 
 #include <algorithm>

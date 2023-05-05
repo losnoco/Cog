@@ -31,21 +31,33 @@
 #if MPT_LIBC_GENERIC
 #define MPT_VERSION_ABI_LIBC _
 #elif MPT_LIBC_MS
-#ifdef _DLL
-#ifdef _DEBUG
+#if MPT_LIBC_MS_SHARED
+#ifdef MPT_LIBC_MS_DEBUG
 #define MPT_VERSION_ABI_LIBC MDd
 #else
 #define MPT_VERSION_ABI_LIBC MDr
 #endif
-#else
-#ifdef _DEBUG
+#elif MPT_LIBC_MS_STATIC
+#ifdef MPT_LIBC_MS_DEBUG
 #define MPT_VERSION_ABI_LIBC MTd
 #else
 #define MPT_VERSION_ABI_LIBC MTr
 #endif
+#else
+#ifdef MPT_LIBC_MS_DEBUG
+#define MPT_VERSION_ABI_LIBC Md
+#else
+#define MPT_VERSION_ABI_LIBC Mr
+#endif
 #endif
 #elif MPT_LIBC_GLIBC
 #define MPT_VERSION_ABI_LIBC G
+#elif MPT_LIBC_MINGW
+#define MPT_VERSION_ABI_LIBC MW
+#elif MPT_LIBC_BIONIC
+#define MPT_VERSION_ABI_LIBC B
+#elif MPT_LIBC_APPLE
+#define MPT_VERSION_ABI_LIBC A
 #else
 #define MPT_VERSION_ABI_LIBC _
 #endif

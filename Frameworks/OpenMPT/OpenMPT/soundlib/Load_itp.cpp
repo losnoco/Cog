@@ -22,6 +22,8 @@
 #include "../mptrack/Moddoc.h"
 #endif // MODPLUG_TRACKER
 #ifdef MPT_EXTERNAL_SAMPLES
+#include "mpt/io_file/inputfile.hpp"
+#include "mpt/io_file_read/inputfile_filecursor.hpp"
 #include "../common/mptFileIO.h"
 #endif // MPT_EXTERNAL_SAMPLES
 
@@ -250,7 +252,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 #ifdef MODPLUG_TRACKER
 		if(version <= 0x102)
 		{
-			instrPaths[ins] = mpt::PathString::FromLocaleSilent(path);
+			instrPaths[ins] = mpt::PathString::FromLocale(path);
 		} else
 #endif // MODPLUG_TRACKER
 		{
@@ -259,10 +261,10 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 #ifdef MODPLUG_TRACKER
 		if(const auto fileName = file.GetOptionalFileName(); fileName.has_value())
 		{
-			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(fileName->GetPath());
+			instrPaths[ins] = mpt::AbsolutePathToRelative(instrPaths[ins], fileName->GetDirectoryWithDrive());
 		} else if(GetpModDoc() != nullptr)
 		{
-			instrPaths[ins] = instrPaths[ins].RelativePathToAbsolute(GetpModDoc()->GetPathNameMpt().GetPath());
+			instrPaths[ins] = mpt::RelativePathToAbsolute(instrPaths[ins], GetpModDoc()->GetPathNameMpt().GetDirectoryWithDrive());
 		}
 #endif // MODPLUG_TRACKER
 	}
@@ -361,7 +363,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 
 #ifdef MPT_EXTERNAL_SAMPLES
-		InputFile f(instrPaths[ins], SettingCacheCompleteFileBeforeLoading());
+		mpt::IO::InputFile f(instrPaths[ins], SettingCacheCompleteFileBeforeLoading());
 		FileReader instrFile = GetFileReader(f);
 		if(!ReadInstrumentFromFile(ins + 1, instrFile, true))
 		{

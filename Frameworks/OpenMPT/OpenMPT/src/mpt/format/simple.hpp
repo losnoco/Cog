@@ -33,88 +33,88 @@ struct format : format_simple_base {
 	}
 
 	template <typename T>
-	static inline Tstring fmt(const T & x, const format_simple_spec & f) {
+	static inline Tstring fmt(const T & x, const format_simple_spec<Tstring> & f) {
 		return mpt::format_simple<Tstring>(x, f);
 	}
 
 	template <typename T>
 	static inline Tstring dec(const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseDec().FillOff());
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseDec().FillOff());
 	}
 	template <int width, typename T>
 	static inline Tstring dec0(const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseDec().FillNul().Width(width));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseDec().FillNul().Width(width));
 	}
 
 	template <typename T>
-	static inline Tstring dec(unsigned int g, char s, const T & x) {
+	static inline Tstring dec(unsigned int g, Tstring s, const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseDec().FillOff().Group(g).GroupSep(s));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseDec().FillOff().Group(g).GroupSep(s));
 	}
 	template <int width, typename T>
-	static inline Tstring dec0(unsigned int g, char s, const T & x) {
+	static inline Tstring dec0(unsigned int g, Tstring s, const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseDec().FillNul().Width(width).Group(g).GroupSep(s));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseDec().FillNul().Width(width).Group(g).GroupSep(s));
 	}
 
 	template <typename T>
 	static inline Tstring hex(const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseLow().FillOff());
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseLow().FillOff());
 	}
 	template <typename T>
 	static inline Tstring HEX(const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseUpp().FillOff());
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseUpp().FillOff());
 	}
 	template <int width, typename T>
 	static inline Tstring hex0(const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseLow().FillNul().Width(width));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseLow().FillNul().Width(width));
 	}
 	template <int width, typename T>
 	static inline Tstring HEX0(const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseUpp().FillNul().Width(width));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseUpp().FillNul().Width(width));
 	}
 
 	template <typename T>
-	static inline Tstring hex(unsigned int g, char s, const T & x) {
+	static inline Tstring hex(unsigned int g, Tstring s, const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseLow().FillOff().Group(g).GroupSep(s));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseLow().FillOff().Group(g).GroupSep(s));
 	}
 	template <typename T>
-	static inline Tstring HEX(unsigned int g, char s, const T & x) {
+	static inline Tstring HEX(unsigned int g, Tstring s, const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseUpp().FillOff().Group(g).GroupSep(s));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseUpp().FillOff().Group(g).GroupSep(s));
 	}
 	template <int width, typename T>
-	static inline Tstring hex0(unsigned int g, char s, const T & x) {
+	static inline Tstring hex0(unsigned int g, Tstring s, const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseLow().FillNul().Width(width).Group(g).GroupSep(s));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseLow().FillNul().Width(width).Group(g).GroupSep(s));
 	}
 	template <int width, typename T>
-	static inline Tstring HEX0(unsigned int g, char s, const T & x) {
+	static inline Tstring HEX0(unsigned int g, Tstring s, const T & x) {
 		static_assert(std::numeric_limits<T>::is_integer);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().BaseHex().CaseUpp().FillNul().Width(width).Group(g).GroupSep(s));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().BaseHex().CaseUpp().FillNul().Width(width).Group(g).GroupSep(s));
 	}
 
 	template <typename T>
 	static inline Tstring flt(const T & x, int precision = -1) {
 		static_assert(std::is_floating_point<T>::value);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().NotaNrm().FillOff().Precision(precision));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().NotaNrm().FillOff().Precision(precision));
 	}
 	template <typename T>
 	static inline Tstring fix(const T & x, int precision = -1) {
 		static_assert(std::is_floating_point<T>::value);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().NotaFix().FillOff().Precision(precision));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().NotaFix().FillOff().Precision(precision));
 	}
 	template <typename T>
 	static inline Tstring sci(const T & x, int precision = -1) {
 		static_assert(std::is_floating_point<T>::value);
-		return mpt::format_simple<Tstring>(x, format_simple_spec().NotaSci().FillOff().Precision(precision));
+		return mpt::format_simple<Tstring>(x, format_simple_spec<Tstring>().NotaSci().FillOff().Precision(precision));
 	}
 
 	template <typename T>

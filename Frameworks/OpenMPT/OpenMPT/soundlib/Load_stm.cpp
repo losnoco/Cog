@@ -121,7 +121,7 @@ static bool ValidateSTMOrderList(ModSequence &order)
 }
 
 
-static void ConvertSTMCommand(ModCommand &m, const ROWINDEX row, const uint8 fileVerMinor, uint8 &newTempo, ORDERINDEX &breakPos, ROWINDEX &breakRow)
+static void ConvertSTMCommand(ModCommand &m, const uint8 command, const ROWINDEX row, const uint8 fileVerMinor, uint8 &newTempo, ORDERINDEX &breakPos, ROWINDEX &breakRow)
 {
 	static constexpr EffectCommand stmEffects[] =
 	{
@@ -132,7 +132,7 @@ static void ConvertSTMCommand(ModCommand &m, const ROWINDEX row, const uint8 fil
 		// KLMNO can be entered in the editor but don't do anything
 	};
 
-	m.command = stmEffects[m.command & 0x0F];
+	m.command = stmEffects[command & 0x0F];
 
 	switch(m.command)
 	{
@@ -191,7 +191,7 @@ static void ConvertSTMCommand(ModCommand &m, const ROWINDEX row, const uint8 fil
 		newTempo = m.param;
 		m.param >>= 4;
 #else
-		MPT_UNUSED_VARIABLE(newTempo);
+		MPT_UNREFERENCED_PARAMETER(newTempo);
 #endif // MODPLUG_TRACKER
 		break;
 
@@ -346,9 +346,8 @@ bool CSoundFile::ReadSTM(FileReader &file, ModLoadingFlags loadFlags)
 					m->vol = vol;
 				}
 
-				m->command = volCmd & 0x0F;
 				m->param = cmdInf;
-				ConvertSTMCommand(*m, row, fileHeader.verMinor, newTempo, breakPos, breakRow);
+				ConvertSTMCommand(*m, volCmd & 0x0F, row, fileHeader.verMinor, newTempo, breakPos, breakRow);
 			}
 			if(newTempo != 0)
 			{
@@ -594,9 +593,8 @@ bool CSoundFile::ReadSTX(FileReader &file, ModLoadingFlags loadFlags)
 			if(info & s3mEffectPresent)
 			{
 				const auto [command, param] = file.ReadArray<uint8, 2>();
-				m.command = command;
 				m.param = param;
-				ConvertSTMCommand(m, row, 0xFF, newTempo, breakPos, breakRow);
+				ConvertSTMCommand(m, command, row, 0xFF, newTempo, breakPos, breakRow);
 			}
 		}
 

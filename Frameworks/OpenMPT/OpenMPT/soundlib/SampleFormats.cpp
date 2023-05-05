@@ -16,6 +16,7 @@
 #include "Dlsbank.h"
 #endif // MODPLUG_TRACKER
 #include "../soundlib/AudioCriticalSection.h"
+#include "mpt/format/join.hpp"
 #ifndef MODPLUG_NO_FILESAVE
 #include "mpt/io/base.hpp"
 #include "mpt/io/io.hpp"
@@ -33,6 +34,7 @@
 #include "Loaders.h"
 #include "../common/FileReader.h"
 #include "../soundlib/ModSampleCopy.h"
+#include "mpt/string/utility.hpp"
 #include <functional>
 #include <map>
 
@@ -231,9 +233,9 @@ bool CSoundFile::ReadInstrumentFromSong(INSTRUMENTINDEX targetInstr, const CSoun
 	Instruments[targetInstr] = pIns;
 	*pIns = *srcSong.Instruments[sourceInstr];
 
-	std::vector<SAMPLEINDEX> sourceSample;	// Sample index in source song
-	std::vector<SAMPLEINDEX> targetSample;	// Sample index in target song
-	SAMPLEINDEX targetIndex = 0;		// Next index for inserting sample
+	std::vector<SAMPLEINDEX> sourceSample;  // Sample index in source song
+	std::vector<SAMPLEINDEX> targetSample;  // Sample index in target song
+	SAMPLEINDEX targetIndex = 0;            // Next index for inserting sample
 
 	for(auto &sample : pIns->Keyboard)
 	{
@@ -269,7 +271,7 @@ bool CSoundFile::ReadInstrumentFromSong(INSTRUMENTINDEX targetInstr, const CSoun
 #ifdef MODPLUG_TRACKER
 	if(pIns->filename.empty() && srcSong.GetpModDoc() != nullptr && &srcSong != this)
 	{
-		pIns->filename = srcSong.GetpModDoc()->GetPathNameMpt().GetFullFileName().ToLocale();
+		pIns->filename = srcSong.GetpModDoc()->GetPathNameMpt().GetFilename().ToLocale();
 	}
 #endif
 	pIns->Convert(srcSong.GetType(), GetType());
@@ -546,18 +548,18 @@ bool CSoundFile::SaveWAVSample(SAMPLEINDEX nSample, std::ostream &f) const
 		return false;
 
 	mpt::IO::OFile<std::ostream> ff(f);
-	WAVWriter file(ff);
+	WAVSampleWriter file(ff);
 
 	file.WriteFormat(sample.GetSampleRate(GetType()), sample.GetElementarySampleSize() * 8, sample.GetNumChannels(), WAVFormatChunk::fmtPCM);
 
 	// Write sample data
 	file.StartChunk(RIFFChunk::iddata);
-	file.Skip(SampleIO(
+	SampleIO(
 		sample.uFlags[CHN_16BIT] ? SampleIO::_16bit : SampleIO::_8bit,
 		sample.uFlags[CHN_STEREO] ? SampleIO::stereoInterleaved : SampleIO::mono,
 		SampleIO::littleEndian,
 		sample.uFlags[CHN_16BIT] ? SampleIO::signedPCM : SampleIO::unsignedPCM)
-		.WriteSample(f, sample));
+		.WriteSample(f, sample);
 
 	file.WriteLoopInformation(sample);
 	file.WriteExtraInformation(sample, GetType());
@@ -567,7 +569,7 @@ bool CSoundFile::SaveWAVSample(SAMPLEINDEX nSample, std::ostream &f) const
 	}
 
 	FileTags tags;
-	tags.SetEncoder();
+	tags.encoder = Version::Current().GetOpenMPTVersionString();
 	tags.title = mpt::ToUnicode(GetCharsetInternal(), m_szNames[nSample]);
 	file.WriteMetatags(tags);
 	file.Finalize();
@@ -910,10 +912,10 @@ MPT_BINARY_STRUCT(GF1SampleHeader, 96)
 //  ---------------------------- | | | | | |
 //  <---> attack rate 0          0 1 2 3 4 5 amplitudes
 //       <----> attack rate 1
-//           <> attack rate 2
-//           <--> attack rate 3
-//               <> attack rate 4
-//               <-----> attack rate 5
+//             <> attack rate 2
+//               <--> attack rate 3
+//                   <> attack rate 4
+//                     <-----> attack rate 5
 //
 // -- GF1 Flags --
 //
@@ -929,10 +931,10 @@ MPT_BINARY_STRUCT(GF1SampleHeader, 96)
 
 struct GF1Layer
 {
-	uint8le  previous;		// If !=0 the wavesample to use is from the previous layer. The waveheader is still needed
-	uint8le  id;			// Layer id: 0-3
-	uint32le size;			// data size in bytes in the layer, without the header. to skip to next layer for example:
-	uint8le  samples;		// number of wavesamples
+	uint8le  previous;  // If !=0 the wavesample to use is from the previous layer. The waveheader is still needed
+	uint8le  id;        // Layer id: 0-3
+	uint32le size;      // data size in bytes in the layer, without the header. to skip to next layer for example:
+	uint8le  samples;   // number of wavesamples
 	char     reserved[40];
 };
 
@@ -941,7 +943,7 @@ MPT_BINARY_STRUCT(GF1Layer, 47)
 
 static double PatchFreqToNote(uint32 nFreq)
 {
-	return std::log(nFreq / 2044.0) * (12.0 * 1.44269504088896340736);	// 1.0/std::log(2.0)
+	return std::log(nFreq / 2044.0) * (12.0 * 1.44269504088896340736);  // 1.0/std::log(2.0)
 }
 
 
@@ -965,7 +967,7 @@ static void PatchToSample(CSoundFile *that, SAMPLEINDEX nSample, GF1SampleHeader
 	sample.nLoopStart = sampleHeader.loopstart;
 	sample.nLoopEnd = sampleHeader.loopend;
 	sample.nC5Speed = sampleHeader.freq;
-	sample.nPan = (sampleHeader.balance * 256 + 8) / 15;
+	sample.nPan = static_cast<uint16>((sampleHeader.balance * 256 + 8) / 15);
 	if(sample.nPan > 256) sample.nPan = 128;
 	else sample.uFlags.set(CHN_PANNING);
 	sample.nVibType = VIB_SINE;
@@ -1002,7 +1004,7 @@ bool CSoundFile::ReadPATSample(SAMPLEINDEX nSample, FileReader &file)
 {
 	file.Rewind();
 	GF1PatchFileHeader fileHeader;
-	GF1Instrument instrHeader;	// We only support one instrument
+	GF1Instrument instrHeader;  // We only support one instrument
 	GF1Layer layerHeader;
 	if(!file.ReadStruct(fileHeader)
 		|| memcmp(fileHeader.magic, "GF1PATCH", 8)
@@ -1010,7 +1012,7 @@ bool CSoundFile::ReadPATSample(SAMPLEINDEX nSample, FileReader &file)
 		|| memcmp(fileHeader.id, "ID#000002\0", 10)
 		|| !fileHeader.numInstr || !fileHeader.numSamples
 		|| !file.ReadStruct(instrHeader)
-		//|| !instrHeader.layers	// DOO.PAT has 0 layers
+		//|| !instrHeader.layers  // DOO.PAT has 0 layers
 		|| !file.ReadStruct(layerHeader)
 		|| !layerHeader.samples)
 	{
@@ -1034,7 +1036,7 @@ bool CSoundFile::ReadPATInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 {
 	file.Rewind();
 	GF1PatchFileHeader fileHeader;
-	GF1Instrument instrHeader;	// We only support one instrument
+	GF1Instrument instrHeader;  // We only support one instrument
 	GF1Layer layerHeader;
 	if(!file.ReadStruct(fileHeader)
 		|| memcmp(fileHeader.magic, "GF1PATCH", 8)
@@ -1042,7 +1044,7 @@ bool CSoundFile::ReadPATInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 		|| memcmp(fileHeader.id, "ID#000002\0", 10)
 		|| !fileHeader.numInstr || !fileHeader.numSamples
 		|| !file.ReadStruct(instrHeader)
-		//|| !instrHeader.layers	// DOO.PAT has 0 layers
+		//|| !instrHeader.layers  // DOO.PAT has 0 layers
 		|| !file.ReadStruct(layerHeader)
 		|| !layerHeader.samples)
 	{
@@ -1412,7 +1414,7 @@ bool CSoundFile::ReadXISample(SAMPLEINDEX nSample, FileReader &file)
 
 	uint16 numSamples = fileHeader.numSamples;
 	FileReader::off_t samplePos = sizeof(XIInstrumentHeader) + numSamples * sizeof(XMSample);
-	// Preferrably read the middle-C sample
+	// Preferably read the middle-C sample
 	auto sample = fileHeader.instrument.sampleMap[48];
 	if(sample >= fileHeader.numSamples)
 		sample = 0;
@@ -1489,11 +1491,11 @@ struct CAFChunk
 		int64 length = header.mChunkSize;
 		if(length == -1)
 		{
-			length = std::numeric_limits<int64>::max(); // spec
+			length = std::numeric_limits<int64>::max();  // spec
 		}
 		if(length < 0)
 		{
-			length = std::numeric_limits<int64>::max(); // heuristic
+			length = std::numeric_limits<int64>::max();  // heuristic
 		}
 		return mpt::saturate_cast<FileReader::off_t>(length);
 	}
@@ -1765,9 +1767,9 @@ bool CSoundFile::ReadCAFSample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 // AIFF header
 struct AIFFHeader
 {
-	char     magic[4];	// FORM
-	uint32be length;	// Size of the file, not including magic and length
-	char     type[4];	// AIFF or AIFC
+	char     magic[4];  // FORM
+	uint32be length;    // Size of the file, not including magic and length
+	char     type[4];   // AIFF or AIFC
 };
 
 MPT_BINARY_STRUCT(AIFFHeader, 12)
@@ -1786,8 +1788,8 @@ struct AIFFChunk
 		idNAME	= MagicBE("NAME"),
 	};
 
-	uint32be id;		// See ChunkIdentifiers
-	uint32be length;	// Chunk size without header
+	uint32be id;      // See ChunkIdentifiers
+	uint32be length;  // Chunk size without header
 
 	size_t GetLength() const
 	{
@@ -1809,7 +1811,7 @@ struct AIFFCommonChunk
 	uint16be numChannels;
 	uint32be numSampleFrames;
 	uint16be sampleSize;
-	uint8be  sampleRate[10];		// Sample rate in 80-Bit floating point
+	uint8be  sampleRate[10];  // Sample rate in 80-Bit floating point
 
 	// Convert sample rate to integer
 	uint32 GetSampleRate() const
@@ -1845,8 +1847,8 @@ MPT_BINARY_STRUCT(AIFFSoundChunk, 8)
 struct AIFFMarker
 {
 	uint16be id;
-	uint32be position;		// Position in sample
-	uint8be  nameLength;	// Not counting eventually existing padding byte in name string
+	uint32be position;    // Position in sample
+	uint8be  nameLength;  // Not counting eventually existing padding byte in name string
 };
 
 MPT_BINARY_STRUCT(AIFFMarker, 7)
@@ -1857,14 +1859,14 @@ struct AIFFInstrumentLoop
 {
 	enum PlayModes
 	{
-		noLoop		= 0,
-		loopNormal	= 1,
-		loopBidi	= 2,
+		noLoop     = 0,
+		loopNormal = 1,
+		loopBidi   = 2,
 	};
 
 	uint16be playMode;
-	uint16be beginLoop;	// Marker index
-	uint16be endLoop;	// Marker index
+	uint16be beginLoop;  // Marker index
+	uint16be endLoop;    // Marker index
 };
 
 MPT_BINARY_STRUCT(AIFFInstrumentLoop, 6)
@@ -2162,7 +2164,7 @@ bool CSoundFile::ReadAUSample(SAMPLEINDEX nSample, FileReader &file, bool mayNor
 	annotation = mpt::replace(annotation, std::string("\r\n"), std::string("\n"));
 	annotation = mpt::replace(annotation, std::string("\r"), std::string("\n"));
 	mpt::Charset charset = mpt::IsUTF8(annotation) ? mpt::Charset::UTF8 : mpt::Charset::ISO8859_1;
-	const auto lines = mpt::String::Split<std::string>(annotation, "\n");
+	const auto lines = mpt::split(annotation, std::string("\n"));
 	bool hasFields = false;
 	for(const auto &line : lines)
 	{
@@ -2184,12 +2186,12 @@ bool CSoundFile::ReadAUSample(SAMPLEINDEX nSample, FileReader &file, bool mayNor
 			}
 			linesPerField[lastField].push_back(AUTrimFieldFromAnnotationLine(line));
 		}
-		tags.title    = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["title"  ], std::string("\n")));
-		tags.artist   = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["artist" ], std::string("\n")));
-		tags.album    = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["album"  ], std::string("\n")));
-		tags.trackno  = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["track"  ], std::string("\n")));
-		tags.genre    = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["genre"  ], std::string("\n")));
-		tags.comments = mpt::ToUnicode(charset, mpt::String::Combine(linesPerField["comment"], std::string("\n")));
+		tags.title    = mpt::ToUnicode(charset, mpt::join_format(linesPerField["title"  ], std::string("\n")));
+		tags.artist   = mpt::ToUnicode(charset, mpt::join_format(linesPerField["artist" ], std::string("\n")));
+		tags.album    = mpt::ToUnicode(charset, mpt::join_format(linesPerField["album"  ], std::string("\n")));
+		tags.trackno  = mpt::ToUnicode(charset, mpt::join_format(linesPerField["track"  ], std::string("\n")));
+		tags.genre    = mpt::ToUnicode(charset, mpt::join_format(linesPerField["genre"  ], std::string("\n")));
+		tags.comments = mpt::ToUnicode(charset, mpt::join_format(linesPerField["comment"], std::string("\n")));
 	} else
 	{
 		// Most applications tend to write their own name here,
@@ -2273,7 +2275,7 @@ bool CSoundFile::ReadITSSample(SAMPLEINDEX nSample, FileReader &file, bool rewin
 		{
 			if(file.GetOptionalFileName())
 			{
-				filename = filename.RelativePathToAbsolute(file.GetOptionalFileName()->GetPath());
+				filename = mpt::RelativePathToAbsolute(filename, file.GetOptionalFileName()->GetDirectoryWithDrive());
 			}
 			if(!LoadExternalSample(nSample, filename))
 			{
@@ -2312,7 +2314,7 @@ bool CSoundFile::ReadITISample(SAMPLEINDEX nSample, FileReader &file)
 	if(!nsamples)
 		return false;
 
-	// Preferrably read the middle-C sample
+	// Preferably read the middle-C sample
 	auto sample = dummy.Keyboard[NOTE_MIDDLEC - NOTE_MIN];
 	if(sample > 0)
 		sample--;
@@ -2453,7 +2455,7 @@ bool CSoundFile::SaveITIInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 		} else
 		{
 #ifdef MPT_EXTERNAL_SAMPLES
-			const std::string filenameU8 = GetSamplePath(smp).AbsolutePathToRelative(filename.GetPath()).ToUTF8();
+			const std::string filenameU8 = mpt::AbsolutePathToRelative(GetSamplePath(smp), filename.GetDirectoryWithDrive()).ToUTF8();
 			const size_t strSize = filenameU8.size();
 			size_t intBytes = 0;
 			if(mpt::IO::WriteVarInt(f, strSize, &intBytes))
@@ -2507,6 +2509,7 @@ struct IFFChunk
 		idMDAT = MagicBE("MDAT"),
 
 		idNAME = MagicBE("NAME"),
+		idANNO = MagicBE("ANNO"),
 	};
 
 	uint32be id;      // See ChunkIdentifiers
@@ -2542,7 +2545,7 @@ struct IFFSampleHeader
 MPT_BINARY_STRUCT(IFFSampleHeader, 20)
 
 
-bool CSoundFile::ReadIFFSample(SAMPLEINDEX nSample, FileReader &file)
+bool CSoundFile::ReadIFFSample(SAMPLEINDEX nSample, FileReader &file, bool allowLittleEndian)
 {
 	file.Rewind();
 
@@ -2612,14 +2615,24 @@ bool CSoundFile::ReadIFFSample(SAMPLEINDEX nSample, FileReader &file)
 		const uint8 numChannels    = chanChunk.ReadUint32BE() == 6 ? 2 : 1;
 		const uint8 bytesPerFrame  = bytesPerSample * numChannels;
 
-		// While this is an Amiga format, the 16SV version appears to be only used on PC, and only with little-endian sample data.
 		if(bytesPerSample == 2)
-			sampleIO = SampleIO(SampleIO::_16bit, SampleIO::mono, SampleIO::littleEndian, SampleIO::signedPCM);
+			sampleIO |= SampleIO::_16bit;
 		if(numChannels == 2)
 			sampleIO |= SampleIO::stereoSplit;
 
 		loopStart  = sampleHeader.oneShotHiSamples / bytesPerFrame;
-		loopLength = sampleHeader.repeatHiSamples / bytesPerFrame;
+		// Loops are a complicated mess in IFF samples.
+		// Some samples (e.g. those from the Ensoniq Mirage for Amiga collection available at https://archive.org/details/mirage4amiga)
+		// have a repeatHiSamples portion that includes garbage. However, these samples also have an appropriate samplesPerHiCycle value set
+		// which indicates the length of one cycle of the repeating waveform. If we just take that one cycle into account, the samples loop cleanly.
+		// However, some other, non-musical 8SVX samples use bogus samplesPerHiCycle values. The following conditions help us spot this sort of samples:
+		// - If samplesPerHiCycle is 32 or lower, we simply ignore it.
+		// - According to the documentation, repeatHiSamples is intended to be a multiple of samplesPerHiCycle if the latter is set (otherwise we wouldn't get a clean loop).
+		//   So if this is not the case, we ignore samplesPerHiCycle and only use repeatHiSamples.
+		if(sampleHeader.samplesPerHiCycle > 32 && sampleHeader.samplesPerHiCycle < sampleHeader.repeatHiSamples && (sampleHeader.repeatHiSamples % sampleHeader.samplesPerHiCycle) == 0)
+			loopLength = sampleHeader.samplesPerHiCycle / bytesPerFrame;
+		else
+			loopLength = sampleHeader.repeatHiSamples / bytesPerFrame;
 		sampleRate = sampleHeader.samplesPerSec;
 		volume     = sampleHeader.volume;
 		numSamples = mpt::saturate_cast<SmpLength>(sampleData.GetLength() / bytesPerFrame);
@@ -2635,10 +2648,10 @@ bool CSoundFile::ReadIFFSample(SAMPLEINDEX nSample, FileReader &file)
 		sample.uFlags.set(CHN_LOOP);
 
 	sample.nC5Speed = sampleRate;
-	if(!sample.nC5Speed)
+	if(sample.nC5Speed <= 1)
 		sample.nC5Speed = 22050;
 
-	sample.nVolume = static_cast<uint16>(volume / 256);
+	sample.nVolume = static_cast<uint16>((volume + 128) / 256);
 	if(!sample.nVolume || sample.nVolume > 256)
 		sample.nVolume = 256;
 
@@ -2651,10 +2664,165 @@ bool CSoundFile::ReadIFFSample(SAMPLEINDEX nSample, FileReader &file)
 		m_szNames[nSample] = "";
 
 	sampleIO.ReadSample(sample, sampleData);
+
+	if(allowLittleEndian && !memcmp(fileHeader.magic, "16SV", 4))
+	{
+		// Fasttracker 2 (and also Awave Studio up to version 11.7) writes little-endian 16-bit data. Great...
+		// It is relatively safe to assume (see raw sample import dialog) that "proper" sample data usually has some smoothness to it,
+		// i.e. its first derivative mostly consists of small-ish values.
+		// When interpreting the sample data with incorrect endianness, however, the first derivative is usually a lot more jumpy.
+		// So we compare the two derivatives when interpreting the data as little-endian and big-endian,
+		// and choose the waveform that has less jumps in it.
+		// Sample data is normalized for those comparisons, otherwise 8-bit data converted to 16-bit will almost always be more optimal
+		// when byte-swapped (as the upper byte is always 0).
+		const uint8 numChannels = sample.GetNumChannels();
+		auto sample16 = mpt::as_span(sample.sample16(), sample.nLength * numChannels);
+		int32 minNative = int16_max, maxNative = int16_min, minSwapped = int16_max, maxSwapped = int16_min;
+		for(const auto vNative : sample16)
+		{
+			const int16 vSwapped = mpt::byteswap(vNative);
+			if(vNative < minNative)
+				minNative = vNative;
+			if(vNative > maxNative)
+				maxNative = vNative;
+			if(vSwapped < minSwapped)
+				minSwapped = vSwapped;
+			if(vSwapped > maxSwapped)
+				maxSwapped = vSwapped;
+		}
+
+		const int32 minMaxNative = std::max({int32(1), -minNative, maxNative});
+		const int32 minMaxSwapped = std::max({int32(1), -minSwapped, maxSwapped});
+		const double factorNative = 1.0 / minMaxNative, factorSwapped = 1.0 / minMaxSwapped;
+		double errorNative = 0.0, errorSwapped = 0.0;
+		for(uint8 chn = 0; chn < numChannels; chn++)
+		{
+			const int16 *vNative = sample.sample16() + chn;
+			int32 prev = 0;
+			for(SmpLength i = sample.nLength; i != 0; i--, vNative += numChannels)
+			{
+				const double diffNative = (*vNative - prev) * factorNative;
+				errorNative += diffNative * diffNative;
+				const double diffSwapped = (mpt::byteswap(*vNative) - mpt::byteswap(static_cast<int16>(prev))) * factorSwapped;
+				errorSwapped += diffSwapped * diffSwapped;
+				prev = *vNative;
+			}
+		}
+		if(errorNative > errorSwapped)
+		{
+			for(auto &v : sample16)
+			{
+				v = mpt::byteswap(v);
+			}
+		}
+	}
+
 	sample.PrecomputeLoops(*this, false);
 
 	return true;
 }
+
+
+#ifndef MODPLUG_NO_FILESAVE
+
+static uint32 WriteIFFStringChunk(std::ostream &f, IFFChunk::ChunkIdentifiers id, const std::string &str)
+{
+	IFFChunk chunk{};
+	chunk.id = id;
+	chunk.length = static_cast<uint32>(str.size());
+	mpt::IO::Write(f, chunk);
+	mpt::IO::WriteText(f, str);
+	uint32 totalSize = sizeof(IFFChunk) + chunk.length;
+	if(totalSize % 2u)
+	{
+		mpt::IO::WriteIntBE<uint8>(f, 0);
+		totalSize++;
+	}
+	return totalSize;
+}
+
+
+bool CSoundFile::SaveIFFSample(SAMPLEINDEX smp, std::ostream &f) const
+{
+	const ModSample &sample = Samples[smp];
+	if(sample.uFlags[CHN_ADLIB])
+		return false;
+
+	mpt::IO::OFile<std::ostream> ff(f);
+	IFFHeader fileHeader{};
+	memcpy(fileHeader.form, "FORM", 4);
+	if(sample.uFlags[CHN_16BIT])
+		memcpy(fileHeader.magic, "16SV", 4);
+	else
+		memcpy(fileHeader.magic, "8SVX", 4);
+	mpt::IO::Write(f, fileHeader);
+
+	uint32 totalSize = 4 + sizeof(IFFChunk) + sizeof(IFFSampleHeader);
+
+	IFFChunk chunk{};
+	chunk.id = IFFChunk::idVHDR;
+	chunk.length = sizeof(IFFSampleHeader);
+	mpt::IO::Write(f, chunk);
+
+	IFFSampleHeader sampleHeader{};
+	uint32 loopStart = sample.nLength, loopEnd = sample.nLength;
+	if(sample.uFlags[CHN_LOOP])
+	{
+		loopStart = sample.nLoopStart;
+		loopEnd = sample.nLoopEnd;
+	} else if(sample.uFlags[CHN_SUSTAINLOOP])
+	{
+		loopStart = sample.nSustainStart;
+		loopEnd = sample.nSustainEnd;
+	}
+	const uint8 bps = sample.GetBytesPerSample();
+	sampleHeader.oneShotHiSamples = loopStart * bps;
+	sampleHeader.repeatHiSamples = (loopEnd - loopStart) * bps;
+
+	sampleHeader.samplesPerHiCycle = 0;
+	sampleHeader.samplesPerSec = mpt::saturate_cast<uint16>(sample.GetSampleRate(m_nType));
+	sampleHeader.octave = 1;
+	sampleHeader.compression = 0;
+	sampleHeader.volume = mpt::saturate_cast<uint16>(sample.nVolume * 256u);
+	mpt::IO::Write(f, sampleHeader);
+
+	if(sample.uFlags[CHN_STEREO])
+	{
+		chunk.id = IFFChunk::idCHAN;
+		chunk.length = 4;
+		mpt::IO::Write(f, chunk);
+		mpt::IO::WriteIntBE<uint32>(f, 6);
+		totalSize += sizeof(chunk) + chunk.length;
+	}
+
+	totalSize += WriteIFFStringChunk(f, IFFChunk::idNAME, mpt::ToCharset(mpt::Charset::Amiga, GetCharsetInternal(), m_szNames[smp]));
+	totalSize += WriteIFFStringChunk(f, IFFChunk::idANNO, mpt::ToCharset(mpt::Charset::Amiga, Version::Current().GetOpenMPTVersionString()));
+
+	SampleIO sampleIO(
+		sample.uFlags[CHN_16BIT] ? SampleIO::_16bit : SampleIO::_8bit,
+		sample.uFlags[CHN_STEREO] ? SampleIO::stereoSplit : SampleIO::mono,
+		SampleIO::bigEndian,
+		SampleIO::signedPCM);
+
+	chunk.id = IFFChunk::idBODY;
+	chunk.length = mpt::saturate_cast<uint32>(sampleIO.CalculateEncodedSize(sample.nLength));
+	mpt::IO::Write(f, chunk);
+	sampleIO.WriteSample(f, sample);
+	totalSize += sizeof(chunk) + chunk.length;
+	if(totalSize % 2u)
+	{
+		mpt::IO::WriteIntBE<uint8>(f, 0);
+		totalSize++;
+	}
+
+	fileHeader.size = totalSize;
+	mpt::IO::SeekAbsolute(f, 0);
+	mpt::IO::Write(f, fileHeader);
+
+	return true;
+}
+
+#endif  // MODPLUG_NO_FILESAVE
 
 
 OPENMPT_NAMESPACE_END

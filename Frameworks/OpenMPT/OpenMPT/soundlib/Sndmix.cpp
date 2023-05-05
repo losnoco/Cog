@@ -692,6 +692,17 @@ bool CSoundFile::ProcessRow()
 				// Test case: NoteDelay-NextRow.mod
 				pChn->nPeriod = GetPeriodFromNote(pChn->rowCommand.note, pChn->nFineTune, 0);
 			}
+			if(m_playBehaviour[kST3TonePortaWithAdlibNote]
+				&& !m->IsNote()
+				&& pChn->dwFlags[CHN_ADLIB]
+				&& pChn->nPortamentoDest
+				&& pChn->rowCommand.IsNote()
+				&& pChn->rowCommand.IsPortamento())
+			{
+				// ST3: Adlib Note + Tone Portamento does not execute the slide, but changes to the target note instantly on the next row (unless there is another note with tone portamento)
+				// Test case: TonePortamentoWithAdlibNote.s3m
+				pChn->nPeriod = pChn->nPortamentoDest;
+			}
 			if(m_playBehaviour[kMODTempoOnSecondTick] && !m_playBehaviour[kMODVBlankTiming] && m_PlayState.m_nMusicSpeed == 1 && pChn->rowCommand.command == CMD_TEMPO)
 			{
 				// ProTracker sets the tempo after the first tick. This block handles the case of one tick per row.
@@ -1047,7 +1058,7 @@ void CSoundFile::ProcessTremor(CHANNELINDEX nChn, int &vol)
 		{
 			const bool isPlaying = pPlugin->IsNotePlaying(chn.nLastNote, nChn);
 			if(vol == 0 && isPlaying)
-				pPlugin->MidiCommand(*pIns, chn.nLastNote + NOTE_MAX_SPECIAL, 0, nChn);
+				pPlugin->MidiCommand(*pIns, chn.nLastNote | IMixPlugin::MIDI_NOTE_OFF, 0, nChn);
 			else if(vol != 0 && !isPlaying)
 				pPlugin->MidiCommand(*pIns, chn.nLastNote, static_cast<uint16>(chn.nVolume), nChn);
 		}
@@ -1172,7 +1183,7 @@ int CSoundFile::ProcessPitchFilterEnvelope(ModChannel &chn, int32 &period) const
 #else
 		// TODO: AMS2 envelopes behave differently when linear slides are off - emulate with 15 * (-128...127) >> 6
 		// Copy over vibrato behaviour for that?
-		const int32 range = GetType() == MOD_TYPE_AMS ? uint8_max : ENVELOPE_MAX;
+		const int32 range = GetType() == MOD_TYPE_AMS ? uint8_max : uint8(ENVELOPE_MAX);
 		int32 amp;
 		switch(GetType())
 		{
@@ -1444,17 +1455,17 @@ void CSoundFile::ProcessArpeggio(CHANNELINDEX nChn, int32 &period, Tuning::NOTEI
 		IMixPlugin *pPlugin =  m_MixPlugins[pIns->nMixPlug - 1].pMixPlugin;
 		if(pPlugin)
 		{
-			uint8 step = 0;
 			const bool arpOnRow = (chn.rowCommand.command == CMD_ARPEGGIO);
-			const ModCommand::NOTE lastNote = ModCommand::IsNote(chn.nLastNote) ? static_cast<ModCommand::NOTE>(pIns->NoteMap[chn.nLastNote - NOTE_MIN]) : static_cast<ModCommand::NOTE>(NOTE_NONE);
+			const ModCommand::NOTE lastNote = chn.lastMidiNoteWithoutArp;
+			ModCommand::NOTE arpNote = chn.lastMidiNoteWithoutArp;
 			if(arpOnRow)
 			{
-				switch(m_PlayState.m_nTickCount % 3)
+				const uint32 tick = m_PlayState.m_nTickCount % (m_PlayState.m_nMusicSpeed + m_PlayState.m_nFrameDelay);
+				switch(tick % 3)
 				{
-				case 1: step = chn.nArpeggio >> 4; break;
-				case 2: step = chn.nArpeggio & 0x0F; break;
+				case 1: arpNote += chn.nArpeggio >> 4; break;
+				case 2: arpNote += chn.nArpeggio & 0x0F; break;
 				}
-				chn.nArpeggioBaseNote = lastNote;
 			}
 
 			// Trigger new note:
@@ -1464,19 +1475,23 @@ void CSoundFile::ProcessArpeggio(CHANNELINDEX nChn, int32 &period, Tuning::NOTEI
 			// - If there's no arpeggio
 			//   - but an arpeggio note is still active and
 			//   - there's no note stop or new note that would stop it anyway
-			if((arpOnRow && chn.nArpeggioLastNote != chn.nArpeggioBaseNote + step && (!m_SongFlags[SONG_FIRSTTICK] || !chn.rowCommand.IsNote()))
-				|| (!arpOnRow && chn.rowCommand.note == NOTE_NONE && chn.nArpeggioLastNote != NOTE_NONE))
-				SendMIDINote(nChn, chn.nArpeggioBaseNote + step, static_cast<uint16>(chn.nVolume));
+			if((arpOnRow && chn.nArpeggioLastNote != arpNote && (!chn.isFirstTick || !chn.rowCommand.IsNote() || chn.rowCommand.IsPortamento()))
+				|| (!arpOnRow && (chn.rowCommand.note == NOTE_NONE || chn.rowCommand.IsPortamento()) && chn.nArpeggioLastNote != NOTE_NONE))
+				SendMIDINote(nChn, arpNote | IMixPlugin::MIDI_NOTE_ARPEGGIO, static_cast<uint16>(chn.nVolume));
 			// Stop note:
 			// - If some arpeggio note is still registered or
 			// - When starting an arpeggio on a row with no other note on it, stop some possibly still playing note.
 			if(chn.nArpeggioLastNote != NOTE_NONE)
-				SendMIDINote(nChn, chn.nArpeggioLastNote + NOTE_MAX_SPECIAL, 0);
-			else if(arpOnRow && m_SongFlags[SONG_FIRSTTICK] && !chn.rowCommand.IsNote() && ModCommand::IsNote(lastNote))
-				SendMIDINote(nChn, lastNote + NOTE_MAX_SPECIAL, 0);
+			{
+				if(!arpOnRow || chn.nArpeggioLastNote != arpNote)
+					SendMIDINote(nChn, chn.nArpeggioLastNote | IMixPlugin::MIDI_NOTE_OFF, 0);
+			} else if(arpOnRow && chn.isFirstTick && !chn.rowCommand.IsNote() && ModCommand::IsNote(lastNote))
+			{
+				SendMIDINote(nChn, lastNote | IMixPlugin::MIDI_NOTE_OFF, 0);
+			}
 
 			if(chn.rowCommand.command == CMD_ARPEGGIO)
-				chn.nArpeggioLastNote = chn.nArpeggioBaseNote + step;
+				chn.nArpeggioLastNote = arpNote;
 			else
 				chn.nArpeggioLastNote = NOTE_NONE;
 		}
@@ -1507,7 +1522,8 @@ void CSoundFile::ProcessArpeggio(CHANNELINDEX nChn, int32 &period, Tuning::NOTEI
 			{
 				//IT playback compatibility 01 & 02
 
-				// Pattern delay restarts tick counting. Not quite correct yet!
+				// Pattern delay restarts tick counting.
+				// Test case: JxxTicks.it
 				const uint32 tick = m_PlayState.m_nTickCount % (m_PlayState.m_nMusicSpeed + m_PlayState.m_nFrameDelay);
 				if(chn.nArpeggio != 0)
 				{
@@ -1985,6 +2001,44 @@ void CSoundFile::ProcessRamping(ModChannel &chn) const
 }
 
 
+int CSoundFile::HandleNoteChangeFilter(ModChannel &chn) const
+{
+	int cutoff = -1;
+	if(!chn.triggerNote)
+		return cutoff;
+
+	bool useFilter = !m_SongFlags[SONG_MPTFILTERMODE];
+	if(const ModInstrument *pIns = chn.pModInstrument; pIns != nullptr)
+	{
+		if(pIns->IsResonanceEnabled())
+		{
+			chn.nResonance = pIns->GetResonance();
+			useFilter = true;
+		}
+		if(pIns->IsCutoffEnabled())
+		{
+			chn.nCutOff = pIns->GetCutoff();
+			useFilter = true;
+		}
+		if(useFilter && (pIns->filterMode != FilterMode::Unchanged))
+		{
+			chn.nFilterMode = pIns->filterMode;
+		}
+	} else
+	{
+		chn.nVolSwing = chn.nPanSwing = 0;
+		chn.nCutSwing = chn.nResSwing = 0;
+	}
+	if((chn.nCutOff < 0x7F || m_playBehaviour[kITFilterBehaviour]) && useFilter)
+	{
+		cutoff = SetupChannelFilter(chn, true);
+		if(cutoff >= 0)
+			cutoff = chn.nCutOff / 2u;
+	}
+	return cutoff;
+}
+
+
 // Returns channel increment and frequency with FREQ_FRACBITS fractional bits
 std::pair<SamplePosition, uint32> CSoundFile::GetChannelIncrement(const ModChannel &chn, uint32 period, int periodFrac) const
 {
@@ -2251,38 +2305,8 @@ bool CSoundFile::ReadNote()
 		}
 
 		// Setup Initial Filter for this note
-		int cutoff = -1;
-		if(chn.triggerNote)
-		{
-			bool useFilter = !m_SongFlags[SONG_MPTFILTERMODE];
-			if(pIns)
-			{
-				if(pIns->IsResonanceEnabled())
-				{
-					chn.nResonance = pIns->GetResonance();
-					useFilter = true;
-				}
-				if(pIns->IsCutoffEnabled())
-				{
-					chn.nCutOff = pIns->GetCutoff();
-					useFilter = true;
-				}
-				if(useFilter && (pIns->filterMode != FilterMode::Unchanged))
-				{
-					chn.nFilterMode = pIns->filterMode;
-				}
-			} else
-			{
-				chn.nVolSwing = chn.nPanSwing = 0;
-				chn.nCutSwing = chn.nResSwing = 0;
-			}
-			if((chn.nCutOff < 0x7F || m_playBehaviour[kITFilterBehaviour]) && useFilter)
-			{
-				cutoff = SetupChannelFilter(chn, true);
-				if(cutoff >= 0)
-					cutoff = chn.nCutOff / 2u;
-			}
-		}
+		if(int cutoff = HandleNoteChangeFilter(chn); cutoff >= 0 && chn.dwFlags[CHN_ADLIB] && m_opl)
+			m_opl->Volume(nChn, static_cast<uint8>(cutoff), true);
 
 		// Now that all relevant envelopes etc. have been processed, we can parse the MIDI macro data.
 		ProcessMacroOnChannel(nChn);
@@ -2291,13 +2315,10 @@ bool CSoundFile::ReadNote()
 		if(samplePlaying)
 		{
 			int envCutoff = ProcessPitchFilterEnvelope(chn, period);
-			if(envCutoff >= 0)
-				cutoff = envCutoff / 4;
+			// Cutoff doubles as modulator intensity for FM instruments
+			if(envCutoff >= 0 && chn.dwFlags[CHN_ADLIB] && m_opl)
+				m_opl->Volume(nChn, static_cast<uint8>(envCutoff / 4), true);
 		}
-
-		// Cutoff doubles as modulator intensity for FM instruments
-		if(cutoff >= 0 && chn.dwFlags[CHN_ADLIB] && m_opl)
-			m_opl->Volume(nChn, static_cast<uint8>(cutoff), true);
 
 		if(chn.rowCommand.volcmd == VOLCMD_VIBRATODEPTH &&
 			(chn.rowCommand.command == CMD_VIBRATO || chn.rowCommand.command == CMD_VIBRATOVOL || chn.rowCommand.command == CMD_FINEVIBRATO))
@@ -2611,12 +2632,12 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 	// Check for volume commands
 	uint8 vol = 0xFF;
 	if(chn.rowCommand.volcmd == VOLCMD_VOLUME)
-	{
 		vol = std::min(chn.rowCommand.vol, uint8(64));
-	} else if(chn.rowCommand.command == CMD_VOLUME)
-	{
+	else if(chn.rowCommand.command == CMD_VOLUME)
 		vol = std::min(chn.rowCommand.param, uint8(64));
-	}
+	else if(chn.rowCommand.command == CMD_VOLUME8)
+		vol = static_cast<uint8>((chn.rowCommand.param + 3u) / 4u);
+
 	const bool hasVolCommand = (vol != 0xFF);
 
 	if(m_playBehaviour[kMIDICCBugEmulation])
@@ -2659,7 +2680,8 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 			realNote = pIns->NoteMap[note - NOTE_MIN];
 		// Experimental VST panning
 		//ProcessMIDIMacro(nChn, false, m_MidiCfg.Global[MIDIOUT_PAN], 0, nPlugin);
-		SendMIDINote(nChn, realNote, static_cast<uint16>(velocity));
+		if(m_playBehaviour[kPluginIgnoreTonePortamento] || !chn.rowCommand.IsPortamento())
+			SendMIDINote(nChn, realNote, static_cast<uint16>(velocity));
 	}
 
 	const bool processVolumeAlsoOnNote = (pIns->pluginVelocityHandling == PLUGIN_VELOCITYHANDLING_VOLUME);
@@ -2687,11 +2709,11 @@ void CSoundFile::ProcessMidiOut(CHANNELINDEX nChn)
 
 
 template<int channels>
-MPT_FORCEINLINE void ApplyGlobalVolumeWithRamping(int32 *SoundBuffer, int32 *RearBuffer, int32 lCount, int32 m_nGlobalVolume, int32 step, int32 &m_nSamplesToGlobalVolRampDest, int32 &m_lHighResRampingGlobalVolume)
+MPT_FORCEINLINE void ApplyGlobalVolumeWithRamping(int32 *SoundBuffer, int32 *RearBuffer, uint32 lCount, int32 m_nGlobalVolume, int32 step, int32 &m_nSamplesToGlobalVolRampDest, int32 &m_lHighResRampingGlobalVolume)
 {
 	const bool isStereo = (channels >= 2);
 	const bool hasRear = (channels >= 4);
-	for(int pos = 0; pos < lCount; ++pos)
+	for(uint32 pos = 0; pos < lCount; ++pos)
 	{
 		if(m_nSamplesToGlobalVolRampDest > 0)
 		{
@@ -2716,7 +2738,7 @@ MPT_FORCEINLINE void ApplyGlobalVolumeWithRamping(int32 *SoundBuffer, int32 *Rea
 }
 
 
-void CSoundFile::ProcessGlobalVolume(long lCount)
+void CSoundFile::ProcessGlobalVolume(samplecount_t lCount)
 {
 
 	// should we ramp?
@@ -2779,7 +2801,7 @@ void CSoundFile::ProcessGlobalVolume(long lCount)
 }
 
 
-void CSoundFile::ProcessStereoSeparation(long countChunk)
+void CSoundFile::ProcessStereoSeparation(samplecount_t countChunk)
 {
 	ApplyStereoSeparation(MixSoundBuffer, MixRearBuffer, m_MixerSettings.gnChannels, countChunk, m_MixerSettings.m_nStereoSeparation);
 }

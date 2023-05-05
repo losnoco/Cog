@@ -11,6 +11,21 @@
  * Usage: libopenmpt_example_c SOMEMODULE
  */
 
+#if defined( unix ) || defined( __unix__ ) || defined( __unix )
+#include <unistd.h>
+#if defined( _POSIX_VERSION )
+#if ( _POSIX_VERSION > 0 )
+#ifndef POSIX
+#define POSIX
+#endif
+#endif
+#endif
+#endif
+
+#if defined( __MINGW32__ ) && !defined( __MINGW64__ )
+#include <sys/types.h>
+#endif
+
 #include <memory.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -18,9 +33,36 @@
 #include <string.h>
 
 #include <libopenmpt/libopenmpt.h>
+#if OPENMPT_API_VERSION_AT_LEAST( 0, 7, 0 )
+#if defined( LIBOPENMPT_STREAM_CALLBACKS_FILE_MINGW ) && defined( __MINGW32__ )
+#include <libopenmpt/libopenmpt_stream_callbacks_file_mingw.h>
+#elif defined( LIBOPENMPT_STREAM_CALLBACKS_FILE_MSVCRT ) && ( defined( _MSC_VER ) || ( defined( __clang__ ) && defined( _WIN32 ) ) )
+#include <libopenmpt/libopenmpt_stream_callbacks_file_msvcrt.h>
+#elif defined( LIBOPENMPT_STREAM_CALLBACKS_FILE_POSIX ) && defined( POSIX ) && defined( _POSIX_C_SOURCE )
+#if ( _POSIX_C_SOURCE > 200112L )
+#include <libopenmpt/libopenmpt_stream_callbacks_file_posix.h>
+#else
 #include <libopenmpt/libopenmpt_stream_callbacks_file.h>
+#endif
+#else
+#include <libopenmpt/libopenmpt_stream_callbacks_file.h>
+#endif
+#else
+#include <libopenmpt/libopenmpt_stream_callbacks_file.h>
+#endif
 
+#if defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <portaudio.h>
+#if defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#pragma GCC diagnostic pop
+#endif
+
+#if defined( __DJGPP__ )
+#include <crt0.h>
+#endif /* __DJGPP__ */
 
 #define BUFFERSIZE 480
 #define SAMPLERATE 48000
@@ -72,6 +114,15 @@ static void libopenmpt_example_print_error( const char * func_name, int mod_err,
 	}
 }
 
+#if defined( __DJGPP__ )
+/* clang-format off */
+int _crt0_startup_flags = 0
+	| _CRT0_FLAG_NONMOVE_SBRK          /* force interrupt compatible allocation */
+	| _CRT0_DISABLE_SBRK_ADDRESS_WRAP  /* force NT compatible allocation */
+	| _CRT0_FLAG_LOCK_MEMORY           /* lock all code and data at program startup */
+	| 0;
+/* clang-format on */
+#endif /* __DJGPP__ */
 #if ( defined( _WIN32 ) || defined( WIN32 ) ) && ( defined( _UNICODE ) || defined( UNICODE ) )
 #if defined( __clang__ ) && !defined( _MSC_VER )
 int wmain( int argc, wchar_t * argv[] );
@@ -80,6 +131,11 @@ int wmain( int argc, wchar_t * argv[] ) {
 #else
 int main( int argc, char * argv[] ) {
 #endif
+#if defined( __DJGPP__ )
+	/* clang-format off */
+	_crt0_startup_flags &= ~_CRT0_FLAG_LOCK_MEMORY;  /* disable automatic locking for all further memory allocations */
+	/* clang-format on */
+#endif /* __DJGPP__ */
 
 	int result = 0;
 	FILE * file = 0;
@@ -114,7 +170,24 @@ int main( int argc, char * argv[] ) {
 		goto fail;
 	}
 
+#if OPENMPT_API_VERSION_AT_LEAST( 0, 7, 0 )
+#if defined( LIBOPENMPT_STREAM_CALLBACKS_FILE_MINGW ) && defined( __MINGW32__ )
+	mod = openmpt_module_create2( openmpt_stream_get_file_mingw_callbacks(), file, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
+#elif defined( LIBOPENMPT_STREAM_CALLBACKS_FILE_MSVCRT ) && ( defined( _MSC_VER ) || ( defined( __clang__ ) && defined( _WIN32 ) ) )
+	mod = openmpt_module_create2( openmpt_stream_get_file_msvcrt_callbacks(), file, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
+#elif defined( LIBOPENMPT_STREAM_CALLBACKS_FILE_POSIX ) && defined( POSIX ) && defined( _POSIX_C_SOURCE )
+#if ( _POSIX_C_SOURCE > 200112L )
+	mod = openmpt_module_create2( openmpt_stream_get_file_posix_callbacks(), file, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
+#else
+	mod = openmpt_module_create2( openmpt_stream_get_file_callbacks2(), file, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
+#endif
+#else
+	mod = openmpt_module_create2( openmpt_stream_get_file_callbacks2(), file, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
+#endif
+#else
 	mod = openmpt_module_create2( openmpt_stream_get_file_callbacks(), file, &libopenmpt_example_logfunc, NULL, &libopenmpt_example_errfunc, NULL, &mod_err, &mod_err_str, NULL );
+#endif
+
 	if ( !mod ) {
 		libopenmpt_example_print_error( "openmpt_module_create2()", mod_err, mod_err_str );
 		openmpt_free_string( mod_err_str );

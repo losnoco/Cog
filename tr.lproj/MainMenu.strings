@@ -1,6 +1,6 @@
 
 /* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "5"; */
-"5.title" = "Hepsini Öne Getir";
+"5.title" = "Tümünü Öne Getir";
 
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "19"; */
 "19.title" = "Pencere";
@@ -90,7 +90,7 @@
 "169.title" = "Düzenle";
 
 /* Class = "NSMenuItem"; title = "Paste"; ObjectID = "171"; */
-"171.title" = "Yapıştır";
+"171.title" = "BağlamsalMenü";
 
 /* Class = "NSMenuItem"; title = "Select All"; ObjectID = "172"; */
 "172.title" = "Tümünü seç";
@@ -195,7 +195,7 @@
 "1324.title" = "Menü";
 
 /* Class = "NSMenuItem"; title = "Index"; ObjectID = "1337"; */
-"1337.title" = "Index";
+"1337.title" = "İndeks";
 
 /* Class = "NSMenuItem"; title = "Title"; ObjectID = "1338"; */
 "1338.title" = "Başlık";
@@ -327,10 +327,10 @@
 "1610.paletteLabel" = "Ses";
 
 /* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "1629"; */
-"1629.label" = "Info Inspector";
+"1629.label" = "Bilgi Denetleyicisi";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "1629"; */
-"1629.paletteLabel" = "Info Inspector";
+"1629.paletteLabel" = "Bilgi Denetleyicisi";
 
 /* Class = "NSToolbarItem"; label = "File Tree"; ObjectID = "1630"; */
 "1630.label" = "Dosya Ağacı";
@@ -351,10 +351,10 @@
 "1639.paletteLabel" = "Tekrarla";
 
 /* Class = "NSMenuItem"; title = "Seek Backward"; ObjectID = "1683"; */
-"1683.title" = "Seek Backward";
+"1683.title" = "Geri Al";
 
 /* Class = "NSMenuItem"; title = "Seek Forward"; ObjectID = "1685"; */
-"1685.title" = "Seek Forward";
+"1685.title" = "İleri Atla";
 
 /* Class = "NSMenuItem"; title = "Previous Album"; ObjectID = "1699"; */
 "1699.title" = "Önceki Albüm";
@@ -363,7 +363,7 @@
 "1701.title" = "Sonraki Albüm";
 
 /* Class = "NSTableColumn"; headerCell.title = "Path"; ObjectID = "1712"; */
-"1712.headerCell.title" = "Path";
+"1712.headerCell.title" = "Yol";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1713"; */
 "1713.title" = "Metin Hücresi";
@@ -396,13 +396,13 @@
 "1823.title" = "Şu anda oynatılanı seç";
 
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "1848"; */
-"1848.title" = "View";
+"1848.title" = "Görünüm";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "1849"; */
-"1849.title" = "View";
+"1849.title" = "Görünüm";
 
 /* Class = "NSMenuItem"; title = "Show Spotlight Panel"; ObjectID = "1853"; */
-"1853.title" = "Show Spotlight Panel";
+"1853.title" = "Spotlight Panelini Göster";
 
 /* Class = "NSMenuItem"; title = "Customize Toolbar..."; ObjectID = "1856"; */
 "1856.title" = "Araç çubuğunu özelleştir...";
@@ -426,7 +426,7 @@
 "1868.title" = "Albümden şarkı ara";
 
 /* Class = "NSMenuItem"; title = "Fade In/Out"; ObjectID = "1885"; */
-"1885.title" = "Fade In/Out";
+"1885.title" = "Soluk Giriş/Çıkış";
 
 /* Class = "NSMenuItem"; title = "Album"; ObjectID = "1892"; */
 "1892.title" = "Albüm";
@@ -471,31 +471,31 @@
 "2085.ibShadowedIsNilPlaceholder" = "Oynatılmıyor";
 
 /* Class = "NSMenuItem"; title = "Toggle File Tree Orientation"; ObjectID = "2160"; */
-"2160.title" = "Toggle File Tree Orientation";
+"2160.title" = "Dosya Ağacı Yönünü Değiştir";
 
 /* Class = "NSMenuItem"; title = "Information"; ObjectID = "2212"; */
-"2212.title" = "Information";
+"2212.title" = "Bilgi";
 
 /* Class = "NSWindow"; title = "Cog"; ObjectID = "2234"; */
 "2234.title" = "Cog";
 
 /* Class = "NSToolbarItem"; label = "Playback Buttons"; ObjectID = "2272"; */
-"2272.label" = "Playback Buttons";
+"2272.label" = "Oynatma Düğmeleri";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Playback Buttons"; ObjectID = "2272"; */
-"2272.paletteLabel" = "Playback Buttons";
+"2272.paletteLabel" = "Oynatma Düğmeleri";
 
 /* Class = "NSToolbarItem"; label = "Position"; ObjectID = "2273"; */
-"2273.label" = "Konum";
+"2273.label" = "Pozisyon";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Position"; ObjectID = "2273"; */
-"2273.paletteLabel" = "Konum";
+"2273.paletteLabel" = "Pozisyon";
 
 /* Class = "NSToolbarItem"; label = "Current Time"; ObjectID = "2274"; */
-"2274.label" = "Güncel Saat";
+"2274.label" = "Güncel Zaman";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Current Time"; ObjectID = "2274"; */
-"2274.paletteLabel" = "Güncel Saat";
+"2274.paletteLabel" = "Güncel Zaman";
 
 /* Class = "NSToolbarItem"; label = "Volume"; ObjectID = "2275"; */
 "2275.label" = "Ses seviyesi";
@@ -543,10 +543,10 @@
 "2417.title" = "Dosya Ağacını Göster";
 
 /* Class = "NSToolbarItem"; label = "Info Inspector"; ObjectID = "2429"; */
-"2429.label" = "Info Inspector";
+"2429.label" = "Bilgi Denetleyicisi";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Info Inspector"; ObjectID = "2429"; */
-"2429.paletteLabel" = "Info Inspector";
+"2429.paletteLabel" = "Bilgi Denetleyicisi";
 
 /* Class = "NSMenuItem"; title = "Shuffle"; ObjectID = "2438"; */
 "2438.title" = "Karıştır";
@@ -555,7 +555,7 @@
 "2439.title" = "Karıştır";
 
 /* Class = "NSMenuItem"; title = "Off"; ObjectID = "2440"; */
-"2440.title" = "Off";
+"2440.title" = "Kapalı";
 
 /* Class = "NSMenuItem"; title = "Albums"; ObjectID = "2442"; */
 "2442.title" = "Albümler";
@@ -564,7 +564,7 @@
 "2443.title" = "Tümü";
 
 /* Class = "NSMenuItem"; title = "Show Info Inspector"; ObjectID = "2453"; */
-"2453.title" = "Show Info Inspector";
+"2453.title" = "Bilgi Denetleyicisini Göster";
 
 /* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "2456"; */
 "2456.title" = "Tam ekrana yap";
@@ -606,7 +606,7 @@
 "2532.paletteLabel" = "Mini Mod";
 
 /* Class = "NSMenuItem"; title = "Randomize"; ObjectID = "2545"; */
-"2545.title" = "Rastgele";
+"2545.title" = "Rastgele Seç";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "20m-a6-e24"; */
 "20m-a6-e24.title" = "Metin Hücresi";
@@ -642,7 +642,7 @@
 "71l-3L-S3g.title" = "Tablo Görünümü Hücresi";
 
 /* Class = "NSMenuItem"; title = "Remove Dead Items"; ObjectID = "Ajn-k4-afd"; */
-"Ajn-k4-afd.title" = "Remove Dead Items";
+"Ajn-k4-afd.title" = "Bozuk Öğeleri Kaldır";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "C2Q-qG-dwX"; */
 "C2Q-qG-dwX.title" = "Tablo Görünümü Hücresi";
@@ -654,7 +654,7 @@
 "DdU-ro-7Yi.title" = "Tablo Görünümü Hücresi";
 
 /* Class = "NSMenuItem"; title = "Properties"; ObjectID = "Eds-my-DQr"; */
-"Eds-my-DQr.title" = "Properties";
+"Eds-my-DQr.title" = "Özellikler";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "FMU-QZ-NdQ"; */
 "FMU-QZ-NdQ.title" = "Tablo Görünümü Hücresi";
@@ -684,7 +684,7 @@
 "PyI-lF-iuz.title" = "Derecelendirmeyi kaldır";
 
 /* Class = "NSMenuItem"; title = "Show Lyrics"; ObjectID = "Tkb-7M-OiA"; */
-"Tkb-7M-OiA.title" = "Show Lyrics";
+"Tkb-7M-OiA.title" = "Şarkı sözlerini göster";
 
 /* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "UAk-Gc-lT4"; */
 "UAk-Gc-lT4.title" = "Çalma Listesini Filtrele";
@@ -693,10 +693,10 @@
 "VVx-99-roJ.title" = "Tablo Görünümü Hücresi";
 
 /* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
-"WKt-lM-Bv1.label" = "Remove Dead Items";
+"WKt-lM-Bv1.label" = "Bozuk Öğeleri Kaldır";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "WKt-lM-Bv1"; */
-"WKt-lM-Bv1.paletteLabel" = "Remove Dead Items";
+"WKt-lM-Bv1.paletteLabel" = "Bozuk Öğeleri Kaldır";
 
 /* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "XBr-ec-D81"; */
 "XBr-ec-D81.headerCell.title" = "Başlık";
@@ -735,13 +735,13 @@
 "kVl-aW-mtT.paletteLabel" = "Rastgele seç";
 
 /* Class = "NSToolbarItem"; label = "Remove Dead Items"; ObjectID = "knJ-aI-sFa"; */
-"knJ-aI-sFa.label" = "Remove Dead Items";
+"knJ-aI-sFa.label" = "Bozuk Öğeleri Kaldır";
 
 /* Class = "NSToolbarItem"; paletteLabel = "Remove Dead Items"; ObjectID = "knJ-aI-sFa"; */
-"knJ-aI-sFa.paletteLabel" = "Remove Dead Items";
+"knJ-aI-sFa.paletteLabel" = "Bozuk Öğeleri Kaldır";
 
 /* Class = "NSMenuItem"; title = "Reload Info"; ObjectID = "kq8-9v-zC0"; */
-"kq8-9v-zC0.title" = "Bilgileri yeniden yükle";
+"kq8-9v-zC0.title" = "Bilgileri Yeniden Yükle";
 
 /* Class = "NSMenu"; title = "Donate"; ObjectID = "kue-p2-G0Y"; */
 "kue-p2-G0Y.title" = "Donate";
@@ -807,7 +807,7 @@
 "vAq-NH-dpx.title" = "Metin Hücresi";
 
 /* Class = "NSMenuItem"; title = "Toggle Toolbar Style"; ObjectID = "vBH-Mr-XWi"; */
-"vBH-Mr-XWi.title" = "Toggle Toolbar Style";
+"vBH-Mr-XWi.title" = "Araç Çubuğu Stilini Değiştir";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "vaJ-Bc-ebE"; */
 "vaJ-Bc-ebE.title" = "Tablo Görünümü Hücresi";
@@ -825,7 +825,7 @@
 "wky-z8-Cj5.title" = "Tablo Görünümü Hücresi";
 
 /* Class = "NSMenuItem"; title = "Show Spectrum Window"; ObjectID = "wl2-Vo-pul"; */
-"wl2-Vo-pul.title" = "Show Spectrum Window";
+"wl2-Vo-pul.title" = "Spektrum Penceresini Göster";
 
 /* Class = "NSMenuItem"; title = "PayPal"; ObjectID = "xcs-tx-Viz"; */
 "xcs-tx-Viz.title" = "PayPal";

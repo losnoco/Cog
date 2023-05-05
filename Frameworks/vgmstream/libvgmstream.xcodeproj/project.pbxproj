@@ -3416,14 +3416,20 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/vgmstream/ext_libs",
+					../../ThirdParty/vorbis/include,
+					../../ThirdParty/ogg/include,
+					../../ThirdParty/speex/include,
+					../../ThirdParty/mpg123/include,
 					../../ThirdParty/ffmpeg/include,
+					vgmstream/ext_includes,
 				);
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
 					"../../ThirdParty/fdk-aac/lib",
+					../../ThirdParty/vorbis/lib,
+					../../ThirdParty/mpg123/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3495,14 +3501,20 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/vgmstream/ext_libs",
+					../../ThirdParty/vorbis/include,
+					../../ThirdParty/ogg/include,
+					../../ThirdParty/speex/include,
+					../../ThirdParty/mpg123/include,
 					../../ThirdParty/ffmpeg/include,
+					vgmstream/ext_includes,
 				);
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
 					"../../ThirdParty/fdk-aac/lib",
+					../../ThirdParty/vorbis/lib,
+					../../ThirdParty/mpg123/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
@@ -3524,22 +3536,7 @@
 					../mpg123,
 				);
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../ThirdParty/vorbis/include,
-					../../ThirdParty/ogg/include,
-					../../ThirdParty/speex/include,
-					../../ThirdParty/mpg123/include,
-				);
 				INFOPLIST_FILE = "vgmstream/libvgmstream-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					../../ThirdParty/ffmpeg/lib,
-					../../ThirdParty/speex,
-					"../../ThirdParty/fdk-aac/lib",
-					../../ThirdParty/vorbis/lib,
-					../../ThirdParty/mpg123/lib,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3559,22 +3556,7 @@
 					../mpg123,
 				);
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../ThirdParty/vorbis/include,
-					../../ThirdParty/ogg/include,
-					../../ThirdParty/speex/include,
-					../../ThirdParty/mpg123/include,
-				);
 				INFOPLIST_FILE = "vgmstream/libvgmstream-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					../../ThirdParty/ffmpeg/lib,
-					../../ThirdParty/speex,
-					"../../ThirdParty/fdk-aac/lib",
-					../../ThirdParty/vorbis/lib,
-					../../ThirdParty/mpg123/lib,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

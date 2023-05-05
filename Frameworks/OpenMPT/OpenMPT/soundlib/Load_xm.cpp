@@ -68,13 +68,13 @@ OPENMPT_NAMESPACE_BEGIN
 
 static size_t VorbisfileFilereaderRead(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
-	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
+	FileReader &file = *mpt::void_ptr<FileReader>(datasource);
 	return file.ReadRaw(mpt::span(mpt::void_cast<std::byte*>(ptr), size * nmemb)).size() / size;
 }
 
 static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int whence)
 {
-	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
+	FileReader &file = *mpt::void_ptr<FileReader>(datasource);
 	switch(whence)
 	{
 	case SEEK_SET:
@@ -129,7 +129,7 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 
 static long VorbisfileFilereaderTell(void *datasource)
 {
-	FileReader &file = *reinterpret_cast<FileReader*>(datasource);
+	FileReader &file = *mpt::void_ptr<FileReader>(datasource);
 	FileReader::off_t result = file.GetPosition();
 	if(!mpt::in_range<long>(result))
 	{
@@ -289,7 +289,7 @@ static void ReadXMPatterns(FileReader &file, const XMFileHeader &fileHeader, CSo
 		{
 			uint8 info = patternChunk.ReadUint8();
 
-			uint8 vol = 0;
+			uint8 vol = 0, command = 0;
 			if(info & isPackByte)
 			{
 				// Interpret byte as flag set.
@@ -303,7 +303,7 @@ static void ReadXMPatterns(FileReader &file, const XMFileHeader &fileHeader, CSo
 
 			if(info & instrPresent) m.instr = patternChunk.ReadUint8();
 			if(info & volPresent) vol = patternChunk.ReadUint8();
-			if(info & commandPresent) m.command = patternChunk.ReadUint8();
+			if(info & commandPresent) command = patternChunk.ReadUint8();
 			if(info & paramPresent) m.param = patternChunk.ReadUint8();
 
 			if(m.note == 97)
@@ -317,9 +317,9 @@ static void ReadXMPatterns(FileReader &file, const XMFileHeader &fileHeader, CSo
 				m.note = NOTE_NONE;
 			}
 
-			if(m.command | m.param)
+			if(command | m.param)
 			{
-				CSoundFile::ConvertModCommand(m);
+				CSoundFile::ConvertModCommand(m, command, m.param);
 			} else
 			{
 				m.command = CMD_NONE;
@@ -453,7 +453,7 @@ static bool ReadSampleData(ModSample &sample, SampleIO sampleFlags, FileReader &
 		};
 		OggVorbis_File vf;
 		MemsetZero(vf);
-		if(ov_open_callbacks(&sampleData, &vf, nullptr, 0, callbacks) == 0)
+		if(ov_open_callbacks(mpt::void_ptr<FileReader>(&sampleData), &vf, nullptr, 0, callbacks) == 0)
 		{
 			if(ov_streams(&vf) == 1)
 			{ // we do not support chained vorbis samples
@@ -698,6 +698,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	uint8 sampleReserved = 0;
 	int instrType = -1;
 	bool unsupportedSamples = false;
+	bool anyADPCM = false;
 
 	// Reading instruments
 	for(INSTRUMENTINDEX instr = 1; instr <= m_nInstruments; instr++)
@@ -824,6 +825,8 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 						madeWith.set(verModPlug1_09);
 					}
 				}
+				if(sampleFlags.back().GetEncoding() == SampleIO::ADPCM)
+					anyADPCM = true;
 			}
 
 			// Read samples
@@ -1038,6 +1041,9 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 		m_modFormat.type = U_("xm");
 	}
 
+	if(anyADPCM)
+		m_modFormat.madeWithTracker += U_(" (ADPCM packed)");
+
 	return true;
 }
 
@@ -1160,9 +1166,8 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 			// Don't write more than 32 channels
 			if(compatibilityExport && m_nChannels - ((j - 1) % m_nChannels) > 32) continue;
 
-			uint8 note = p->note;
-			uint8 command = p->command, param = p->param;
-			ModSaveCommand(command, param, true, compatibilityExport);
+			uint8 note = p->note, command = 0, param = 0;
+			ModSaveCommand(*p, command, param, true, compatibilityExport);
 
 			if (note >= NOTE_MIN_SPECIAL) note = 97; else
 			if ((note <= 12) || (note > 96+12)) note = 0; else
@@ -1183,6 +1188,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 				case VOLCMD_PANSLIDELEFT:	vol = 0xD0 + (p->vol & 0x0F); break;
 				case VOLCMD_PANSLIDERIGHT:	vol = 0xE0 + (p->vol & 0x0F); break;
 				case VOLCMD_TONEPORTAMENTO:	vol = 0xF0 + (p->vol & 0x0F); break;
+				default: break;
 				}
 				// Those values are ignored in FT2. Don't save them, also to avoid possible problems with other trackers (or MPT itself)
 				if(compatibilityExport && p->vol == 0)

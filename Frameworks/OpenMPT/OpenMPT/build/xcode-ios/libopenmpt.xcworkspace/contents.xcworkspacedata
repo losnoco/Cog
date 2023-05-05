@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+	version = "1.0">
+	<FileRef
+		location = "group:libopenmpt.xcodeproj">
+	</FileRef>
+	<FileRef
+		location = "group:ext/mpg123.xcodeproj">
+	</FileRef>
+	<FileRef
+		location = "group:ext/ogg.xcodeproj">
+	</FileRef>
+	<FileRef
+		location = "group:ext/vorbis.xcodeproj">
+	</FileRef>
+</Workspace>

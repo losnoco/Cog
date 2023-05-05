@@ -33,11 +33,11 @@ public:
 	}
 };
 
-template <typename Tformatter, typename Tformat>
+template <typename Tformatter, typename Tstring>
 class message_formatter {
 
-public:
-	using Tstring = typename mpt::make_string_type<Tformat>::type;
+private:
+	using Tstringview = typename mpt::make_string_view_type<Tstring>::type;
 
 private:
 	Tstring format;
@@ -76,13 +76,13 @@ private:
 						state = state::close_seen;
 					} else {
 						state = state::text;
-						traits::append(result, 1, c); // output c here
+						traits::append(result, c); // output c here
 					}
 					break;
 				case state::open_seen:
 					if (c == char_type('{')) {
 						state = state::text;
-						traits::append(result, 1, char_type('{')); // output { here
+						traits::append(result, char_type('{')); // output { here
 					} else if (c == char_type('}')) {
 						state = state::text;
 						unnumbered_args = true;
@@ -135,7 +135,7 @@ private:
 						state = state::error;
 					} else if (c == char_type('}')) {
 						state = state::text;
-						traits::append(result, 1, char_type('}')); // output } here
+						traits::append(result, char_type('}')); // output } here
 					} else {
 						state = state::error;
 					}
@@ -172,11 +172,14 @@ public:
 		return do_format(mpt::as_span(vals));
 	}
 
-}; // struct message_formatter<Tformat>
+}; // class message_formatter
 
 
 template <typename Tformatter, std::ptrdiff_t N, typename Tchar, typename Tstring>
 class message_formatter_counted {
+
+private:
+	using Tstringview = typename mpt::make_string_view_type<Tstring>::type;
 
 private:
 	message_formatter<Tformatter, Tstring> formatter;
@@ -195,7 +198,7 @@ public:
 		return formatter(std::forward<Ts>(xs)...);
 	}
 
-}; // struct message_formatter_counted<Tformat>
+}; // struct message_formatter_counted
 
 
 template <typename Tchar>

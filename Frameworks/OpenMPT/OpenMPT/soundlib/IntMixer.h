@@ -22,9 +22,9 @@ OPENMPT_NAMESPACE_BEGIN
 template<int channelsOut, int channelsIn, typename out, typename in, size_t mixPrecision>
 struct IntToIntTraits : public MixerTraits<channelsOut, channelsIn, out, in>
 {
-	typedef MixerTraits<channelsOut, channelsIn, out, in> base_t;
-	typedef typename base_t::input_t input_t;
-	typedef typename base_t::output_t output_t;
+	using base_t = MixerTraits<channelsOut, channelsIn, out, in>;
+	using input_t = typename base_t::input_t;
+	using output_t = typename base_t::output_t;
 
 	static MPT_CONSTEXPRINLINE output_t Convert(const input_t x)
 	{
@@ -36,10 +36,10 @@ struct IntToIntTraits : public MixerTraits<channelsOut, channelsIn, out, in>
 	}
 };
 
-typedef IntToIntTraits<2, 1, mixsample_t, int8,  16> Int8MToIntS;
-typedef IntToIntTraits<2, 1, mixsample_t, int16, 16> Int16MToIntS;
-typedef IntToIntTraits<2, 2, mixsample_t, int8,  16> Int8SToIntS;
-typedef IntToIntTraits<2, 2, mixsample_t, int16, 16> Int16SToIntS;
+using Int8MToIntS = IntToIntTraits<2, 1, mixsample_t, int8,  16>;
+using Int16MToIntS = IntToIntTraits<2, 1, mixsample_t, int16, 16>;
+using Int8SToIntS = IntToIntTraits<2, 2, mixsample_t, int8,  16>;
+using Int16SToIntS = IntToIntTraits<2, 2, mixsample_t, int16, 16>;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -266,7 +266,7 @@ struct Ramp
 template<class Traits>
 struct MixMonoFastNoRamp : public NoRamp<Traits>
 {
-	typedef NoRamp<Traits> base_t;
+	using base_t = NoRamp<Traits>;
 	MPT_FORCEINLINE void operator() (const typename Traits::outbuf_t &outSample, const ModChannel &, typename Traits::output_t * const MPT_RESTRICT outBuffer)
 	{
 		typename Traits::output_t vol = outSample[0] * base_t::lVol;
@@ -281,7 +281,7 @@ struct MixMonoFastNoRamp : public NoRamp<Traits>
 template<class Traits>
 struct MixMonoNoRamp : public NoRamp<Traits>
 {
-	typedef NoRamp<Traits> base_t;
+	using base_t = NoRamp<Traits>;
 	MPT_FORCEINLINE void operator() (const typename Traits::outbuf_t &outSample, const ModChannel &, typename Traits::output_t * const MPT_RESTRICT outBuffer)
 	{
 		outBuffer[0] += outSample[0] * base_t::lVol;
@@ -306,7 +306,7 @@ struct MixMonoRamp : public Ramp
 template<class Traits>
 struct MixStereoNoRamp : public NoRamp<Traits>
 {
-	typedef NoRamp<Traits> base_t;
+	using base_t = NoRamp<Traits>;
 	MPT_FORCEINLINE void operator() (const typename Traits::outbuf_t &outSample, const ModChannel &, typename Traits::output_t * const MPT_RESTRICT outBuffer)
 	{
 		outBuffer[0] += outSample[0] * base_t::lVol;

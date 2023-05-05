@@ -19,12 +19,18 @@ EMSCRIPTEN_PORTS?=0
 
 ifneq ($(STDCXX),)
 CXXFLAGS_STDCXX = -std=$(STDCXX)
+else ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++20 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++20' ; fi ), c++20)
+CXXFLAGS_STDCXX = -std=c++20
 else
-ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++17 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++17' ; fi ), c++17)
 CXXFLAGS_STDCXX = -std=c++17
 endif
+ifneq ($(STDC),)
+CFLAGS_STDC = -std=$(STDC)
+else ifeq ($(shell printf '\n' > bin/empty.c ; if $(CC) -std=c17 -c bin/empty.c -o bin/empty.out > /dev/null 2>&1 ; then echo 'c17' ; fi ), c17)
+CFLAGS_STDC = -std=c17
+else
+CFLAGS_STDC = -std=c11
 endif
-CFLAGS_STDC = -std=c99
 CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)
 
@@ -149,8 +155,7 @@ NO_SHARED_LINKER_FLAG=1
 # Disable the generic compiler optimization flags as emscripten is sufficiently different.
 # Optimization flags are hard-coded for emscripten in this file.
 DEBUG=0
-OPTIMIZE=0
-OPTIMIZE_SIZE=0
+OPTIMIZE=none
 
 IS_CROSS=1
 

@@ -26,6 +26,109 @@ inline namespace MPT_INLINE_NS {
 
 
 
+template <typename Tchar>
+struct char_constants { };
+
+template <>
+struct char_constants<char> {
+	static inline constexpr char null = '\0';
+	static inline constexpr char tab = '\t';
+	static inline constexpr char lf = '\n';
+	static inline constexpr char cr = '\r';
+	static inline constexpr char space = ' ';
+	static inline constexpr char plus = '+';
+	static inline constexpr char comma = ',';
+	static inline constexpr char minus = '-';
+	static inline constexpr char number0 = '0';
+	static inline constexpr char number1 = '1';
+	static inline constexpr char number9 = '9';
+	static inline constexpr char A = 'A';
+	static inline constexpr char Z = 'Z';
+	static inline constexpr char a = 'a';
+	static inline constexpr char z = 'z';
+};
+
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
+template <>
+struct char_constants<wchar_t> {
+	static inline constexpr wchar_t null = L'\0';
+	static inline constexpr wchar_t tab = L'\t';
+	static inline constexpr wchar_t lf = L'\n';
+	static inline constexpr wchar_t cr = L'\r';
+	static inline constexpr wchar_t space = L' ';
+	static inline constexpr wchar_t plus = L'+';
+	static inline constexpr wchar_t comma = L',';
+	static inline constexpr wchar_t minus = L'-';
+	static inline constexpr wchar_t number0 = L'0';
+	static inline constexpr wchar_t number1 = L'1';
+	static inline constexpr wchar_t number9 = L'9';
+	static inline constexpr wchar_t A = L'A';
+	static inline constexpr wchar_t Z = L'Z';
+	static inline constexpr wchar_t a = L'a';
+	static inline constexpr wchar_t z = L'z';
+};
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
+
+#if MPT_CXX_AT_LEAST(20)
+template <>
+struct char_constants<char8_t> {
+	static inline constexpr char8_t null = u8'\0';
+	static inline constexpr char8_t tab = u8'\t';
+	static inline constexpr char8_t lf = u8'\n';
+	static inline constexpr char8_t cr = u8'\r';
+	static inline constexpr char8_t space = u8' ';
+	static inline constexpr char8_t plus = u8'+';
+	static inline constexpr char8_t comma = u8',';
+	static inline constexpr char8_t minus = u8'-';
+	static inline constexpr char8_t number0 = u8'0';
+	static inline constexpr char8_t number1 = u8'1';
+	static inline constexpr char8_t number9 = u8'9';
+	static inline constexpr char8_t A = u8'A';
+	static inline constexpr char8_t Z = u8'Z';
+	static inline constexpr char8_t a = u8'a';
+	static inline constexpr char8_t z = u8'z';
+};
+#endif
+
+template <>
+struct char_constants<char16_t> {
+	static inline constexpr char16_t null = u'\0';
+	static inline constexpr char16_t tab = u'\t';
+	static inline constexpr char16_t lf = u'\n';
+	static inline constexpr char16_t cr = u'\r';
+	static inline constexpr char16_t space = u' ';
+	static inline constexpr char16_t plus = u'+';
+	static inline constexpr char16_t comma = u',';
+	static inline constexpr char16_t minus = u'-';
+	static inline constexpr char16_t number0 = u'0';
+	static inline constexpr char16_t number1 = u'1';
+	static inline constexpr char16_t number9 = u'9';
+	static inline constexpr char16_t A = u'A';
+	static inline constexpr char16_t Z = u'Z';
+	static inline constexpr char16_t a = u'a';
+	static inline constexpr char16_t z = u'z';
+};
+
+template <>
+struct char_constants<char32_t> {
+	static inline constexpr char32_t null = U'\0';
+	static inline constexpr char32_t tab = U'\t';
+	static inline constexpr char32_t lf = U'\n';
+	static inline constexpr char32_t cr = U'\r';
+	static inline constexpr char32_t space = U' ';
+	static inline constexpr char32_t plus = U'+';
+	static inline constexpr char32_t comma = U',';
+	static inline constexpr char32_t minus = U'-';
+	static inline constexpr char32_t number0 = U'0';
+	static inline constexpr char32_t number1 = U'1';
+	static inline constexpr char32_t number9 = U'9';
+	static inline constexpr char32_t A = U'A';
+	static inline constexpr char32_t Z = U'Z';
+	static inline constexpr char32_t a = U'a';
+	static inline constexpr char32_t z = U'z';
+};
+
+
 // string_traits abstract the API of underlying string classes, in particular they allow adopting to CString without having to specialize for CString explicitly
 
 template <typename Tstring>
@@ -34,6 +137,7 @@ struct string_traits {
 	using string_type = Tstring;
 	using size_type = typename string_type::size_type;
 	using char_type = typename string_type::value_type;
+	using unsigned_char_type = typename std::make_unsigned<char_type>::type;
 
 	static inline std::size_t length(const string_type & str) {
 		return str.length();
@@ -43,19 +147,26 @@ struct string_traits {
 		str.reserve(size);
 	}
 
-	static inline string_type & append(string_type & str, const string_type & a) {
-		return str.append(a);
+	static inline void set_at(string_type & str, size_type pos, char_type c) {
+		str.data()[pos] = c;
 	}
-	static inline string_type & append(string_type & str, string_type && a) {
-		return str.append(std::move(a));
+
+	static inline void append(string_type & str, const string_type & a) {
+		str.append(a);
 	}
-	static inline string_type & append(string_type & str, std::size_t count, char_type c) {
-		return str.append(count, c);
+	static inline void append(string_type & str, string_type && a) {
+		str.append(std::move(a));
+	}
+	static inline void append(string_type & str, std::size_t count, char_type c) {
+		str.append(count, c);
+	}
+	static inline void append(string_type & str, char_type c) {
+		str.append(1, c);
 	}
 
 	static inline string_type pad(string_type str, std::size_t left, std::size_t right) {
-		str.insert(str.begin(), left, char_type(' '));
-		str.insert(str.end(), right, char_type(' '));
+		str.insert(str.begin(), left, char_constants<char_type>::space);
+		str.insert(str.end(), right, char_constants<char_type>::space);
 		return str;
 	}
 };
@@ -68,6 +179,7 @@ struct string_traits<CStringA> {
 	using string_type = CStringA;
 	using size_type = int;
 	using char_type = typename CStringA::XCHAR;
+	using unsigned_char_type = typename std::make_unsigned<char_type>::type;
 
 	static inline size_type length(const string_type & str) {
 		return str.GetLength();
@@ -77,25 +189,30 @@ struct string_traits<CStringA> {
 		str.Preallocate(size);
 	}
 
-	static inline string_type & append(string_type & str, const string_type & a) {
-		str += a;
-		return str;
+	static inline void set_at(string_type & str, size_type pos, char_type c) {
+		str.SetAt(pos, c);
 	}
-	static inline string_type & append(string_type & str, size_type count, char_type c) {
+
+	static inline void append(string_type & str, const string_type & a) {
+		str.Append(a);
+	}
+	static inline void append(string_type & str, size_type count, char_type c) {
 		while (count--) {
 			str.AppendChar(c);
 		}
-		return str;
+	}
+	static inline void append(string_type & str, char_type c) {
+		str.AppendChar(c);
 	}
 
 	static inline string_type pad(const string_type & str, size_type left, size_type right) {
 		string_type tmp;
 		while (left--) {
-			tmp.AppendChar(char_type(' '));
+			tmp.AppendChar(char_constants<char_type>::space);
 		}
 		tmp += str;
 		while (right--) {
-			tmp.AppendChar(char_type(' '));
+			tmp.AppendChar(char_constants<char_type>::space);
 		}
 		return tmp;
 	}
@@ -107,6 +224,7 @@ struct string_traits<CStringW> {
 	using string_type = CStringW;
 	using size_type = int;
 	using char_type = typename CStringW::XCHAR;
+	using unsigned_char_type = typename std::make_unsigned<char_type>::type;
 
 	static inline size_type length(const string_type & str) {
 		return str.GetLength();
@@ -116,114 +234,36 @@ struct string_traits<CStringW> {
 		str.Preallocate(size);
 	}
 
-	static inline string_type & append(string_type & str, const string_type & a) {
-		str += a;
-		return str;
+	static inline void set_at(string_type & str, size_type pos, char_type c) {
+		str.SetAt(pos, c);
 	}
-	static inline string_type & append(string_type & str, size_type count, char_type c) {
+
+	static inline void append(string_type & str, const string_type & a) {
+		str.Append(a);
+	}
+	static inline void append(string_type & str, size_type count, char_type c) {
 		while (count--) {
 			str.AppendChar(c);
 		}
-		return str;
+	}
+	static inline void append(string_type & str, char_type c) {
+		str.AppendChar(c);
 	}
 
 	static inline string_type pad(const string_type & str, size_type left, size_type right) {
 		string_type tmp;
 		while (left--) {
-			tmp.AppendChar(char_type(' '));
+			tmp.AppendChar(char_constants<char_type>::space);
 		}
 		tmp += str;
 		while (right--) {
-			tmp.AppendChar(char_type(' '));
+			tmp.AppendChar(char_constants<char_type>::space);
 		}
 		return tmp;
 	}
 };
 
 #endif // MPT_DETECTED_MFC
-
-
-template <typename Tchar>
-struct char_constants {
-	static inline constexpr Tchar space = ' ';
-	static inline constexpr Tchar a = 'a';
-	static inline constexpr Tchar z = 'z';
-	static inline constexpr Tchar A = 'A';
-	static inline constexpr Tchar Z = 'Z';
-	static inline constexpr Tchar lf = '\n';
-	static inline constexpr Tchar cr = '\r';
-	static inline constexpr Tchar tab = '\t';
-	static inline constexpr Tchar comma = ',';
-};
-
-template <>
-struct char_constants<char> {
-	static inline constexpr char space = ' ';
-	static inline constexpr char a = 'a';
-	static inline constexpr char z = 'z';
-	static inline constexpr char A = 'A';
-	static inline constexpr char Z = 'Z';
-	static inline constexpr char lf = '\n';
-	static inline constexpr char cr = '\r';
-	static inline constexpr char tab = '\t';
-	static inline constexpr char comma = ',';
-};
-
-#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
-template <>
-struct char_constants<wchar_t> {
-	static inline constexpr wchar_t space = L' ';
-	static inline constexpr wchar_t a = L'a';
-	static inline constexpr wchar_t z = L'z';
-	static inline constexpr wchar_t A = L'A';
-	static inline constexpr wchar_t Z = L'Z';
-	static inline constexpr wchar_t lf = L'\n';
-	static inline constexpr wchar_t cr = L'\r';
-	static inline constexpr wchar_t tab = L'\t';
-	static inline constexpr wchar_t comma = L',';
-};
-#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
-
-#if MPT_CXX_AT_LEAST(20)
-template <>
-struct char_constants<char8_t> {
-	static inline constexpr char8_t space = u8' ';
-	static inline constexpr char8_t a = u8'a';
-	static inline constexpr char8_t z = u8'z';
-	static inline constexpr char8_t A = u8'A';
-	static inline constexpr char8_t Z = u8'Z';
-	static inline constexpr char8_t lf = u8'\n';
-	static inline constexpr char8_t cr = u8'\r';
-	static inline constexpr char8_t tab = u8'\t';
-	static inline constexpr char8_t comma = u8',';
-};
-#endif
-
-template <>
-struct char_constants<char16_t> {
-	static inline constexpr char16_t space = u' ';
-	static inline constexpr char16_t a = u'a';
-	static inline constexpr char16_t z = u'z';
-	static inline constexpr char16_t A = u'A';
-	static inline constexpr char16_t Z = u'Z';
-	static inline constexpr char16_t lf = u'\n';
-	static inline constexpr char16_t cr = u'\r';
-	static inline constexpr char16_t tab = u'\t';
-	static inline constexpr char16_t comma = u',';
-};
-
-template <>
-struct char_constants<char32_t> {
-	static inline constexpr char32_t space = U' ';
-	static inline constexpr char32_t a = U'a';
-	static inline constexpr char32_t z = U'z';
-	static inline constexpr char32_t A = U'A';
-	static inline constexpr char32_t Z = U'Z';
-	static inline constexpr char32_t lf = U'\n';
-	static inline constexpr char32_t cr = U'\r';
-	static inline constexpr char32_t tab = U'\t';
-	static inline constexpr char32_t comma = U',';
-};
 
 
 template <typename Tchar>

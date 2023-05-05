@@ -47,7 +47,7 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 
 	{
 		std::ostringstream ss;
-		MPT_TEST_EXPECT_EQUAL(ss.tellp(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(ss.tellp()), std::streamoff(0));
 	}
 	{
 		std::ostringstream ss;
@@ -66,11 +66,11 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 	}
 	{
 		std::istringstream ss;
-		MPT_TEST_EXPECT_EQUAL(ss.tellg(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(ss.tellg()), std::streamoff(0));
 	}
 	{
 		std::istringstream ss;
-		ss.seekg(0);
+		ss.seekg(0, std::ios::beg);
 		MPT_TEST_EXPECT_EQUAL(mpt::IO::SeekAbsolute(ss, 0), true);
 	}
 	{
@@ -88,23 +88,23 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 		std::ostringstream s;
 		char b = 23;
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellp(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellp()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekp(0, std::ios_base::beg);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellp(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellp()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.write(&b, 1);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellp(), std::streampos(1));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellp()), std::streamoff(1));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekp(0, std::ios_base::beg);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellp(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellp()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekp(0, std::ios_base::end);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellp(), std::streampos(1));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellp()), std::streamoff(1));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		MPT_TEST_EXPECT_EQUAL(s.str(), std::string(1, b));
 	}
@@ -112,15 +112,15 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 	{
 		std::istringstream s;
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekg(0, std::ios_base::beg);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekg(0, std::ios_base::end);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 	}
 
@@ -128,24 +128,24 @@ MPT_TEST_GROUP_INLINE("mpt/io")
 		std::istringstream s("a");
 		char a = 0;
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekg(0, std::ios_base::beg);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.read(&a, 1);
 		MPT_TEST_EXPECT_EQUAL(a, 'a');
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(1));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(1));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekg(0, std::ios_base::beg);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(0));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(0));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		s.seekg(0, std::ios_base::end);
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
-		MPT_TEST_EXPECT_EQUAL(s.tellg(), std::streampos(1));
+		MPT_TEST_EXPECT_EQUAL(static_cast<std::streamoff>(s.tellg()), std::streamoff(1));
 		MPT_TEST_EXPECT_EQUAL(!s.fail(), true);
 		MPT_TEST_EXPECT_EQUAL(std::string(1, a), std::string(1, 'a'));
 	}

@@ -27,11 +27,13 @@
 
 #include "mpt/audio/span.hpp"
 #include "mpt/base/algorithm.hpp"
+#include "mpt/base/detect.hpp"
 #include "mpt/base/saturate_cast.hpp"
 #include "mpt/base/saturate_round.hpp"
 #include "mpt/format/default_integer.hpp"
 #include "mpt/format/default_floatingpoint.hpp"
 #include "mpt/format/default_string.hpp"
+#include "mpt/format/join.hpp"
 #include "mpt/io_read/callbackstream.hpp"
 #include "mpt/io_read/filecursor_callbackstream.hpp"
 #include "mpt/io_read/filecursor_memory.hpp"
@@ -59,36 +61,16 @@ OPENMPT_NAMESPACE_BEGIN
 
 #if !defined(MPT_BUILD_SILENCE_LIBOPENMPT_CONFIGURATION_WARNINGS)
 
-#if MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
-#if defined(NTDDI_VERSION)
-#if (NTDDI_VERSION < 0x06020000)
+#if MPT_WINRT_BEFORE(MPT_WIN_8)
 MPT_WARNING("Warning: libopenmpt for WinRT is built with reduced functionality. Please #define NTDDI_VERSION 0x0602000.")
-#endif
-#elif defined(_WIN32_WINNT)
-#if (_WIN32_WINNT < 0x0602)
-MPT_WARNING("Warning: libopenmpt for WinRT is built with reduced functionality. Please #define _WIN32_WINNT 0x0602.")
-#endif // _WIN32_WINNT
-#endif // _WIN32_WINNT
-#endif // MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
-
-#if defined(MPT_BUILD_MSVC) || defined(MPT_BUILD_VCPKG)
-#if MPT_OS_WINDOWS_WINRT
-#pragma comment(lib, "ole32.lib")
-#else
-#pragma comment(lib, "rpcrt4.lib")
-#endif
-#endif // MPT_BUILD_MSVC
+#endif // MPT_WINRT_BEFORE(MPT_WIN_8)
 
 #if MPT_PLATFORM_MULTITHREADED && MPT_MUTEX_NONE
 MPT_WARNING("Warning: libopenmpt built in non thread-safe mode because mutexes are not supported by the C++ standard library available.")
 #endif // MPT_MUTEX_NONE
 
-#if (defined(__MINGW32__) || defined(__MINGW64__)) && !defined(_GLIBCXX_HAS_GTHREADS) 
-#if defined(MPT_WITH_MINGWSTDTHREADS)
-MPT_WARNING("Warning: Building with mingw-std-threads is deprecated because this is not supported with GCC 11 or later.")
-#else // !MINGWSTDTHREADS
+#if MPT_OS_WINDOWS && (defined(__MINGW32__) || defined(__MINGW64__)) && MPT_LIBCXX_GNU && !defined(_GLIBCXX_HAS_GTHREADS)
 MPT_WARNING("Warning: Platform (Windows) supports multi-threading, however the toolchain (MinGW/GCC) does not. The resulting libopenmpt may not be thread-safe. This is a MinGW/GCC issue. You can avoid this warning by using a MinGW toolchain built with posix threading model as opposed to win32 threading model.")
-#endif // MINGWSTDTHREADS
 #endif // MINGW
 
 #if MPT_CLANG_AT_LEAST(5,0,0) && MPT_CLANG_BEFORE(11,0,0) && defined(__powerpc__) && !defined(__powerpc64__)
@@ -102,11 +84,11 @@ MPT_WARNING("Warning: libopenmpt is known to trigger bad code generation with Cl
 MPT_NOINLINE void AssertHandler(const mpt::source_location &loc, const char *expr, const char *msg) {
 	if(msg) {
 		mpt::log::GlobalLogger().SendLogMessage(loc, LogError, "ASSERT",
-			MPT_USTRING("ASSERTION FAILED: ") + mpt::ToUnicode(mpt::CharsetSource, msg) + MPT_USTRING(" (") + mpt::ToUnicode(mpt::CharsetSource, expr) + MPT_USTRING(")")
+			MPT_USTRING("ASSERTION FAILED: ") + mpt::transcode<mpt::ustring>(mpt::source_encoding, msg) + MPT_USTRING(" (") + mpt::transcode<mpt::ustring>(mpt::source_encoding, expr) + MPT_USTRING(")")
 			);
 	} else {
 		mpt::log::GlobalLogger().SendLogMessage(loc, LogError, "ASSERT",
-			MPT_USTRING("ASSERTION FAILED: ") + mpt::ToUnicode(mpt::CharsetSource, expr)
+			MPT_USTRING("ASSERTION FAILED: ") + mpt::transcode<mpt::ustring>(mpt::source_encoding, expr)
 			);
 	}
 	#if defined(MPT_BUILD_FATAL_ASSERTS)
@@ -157,62 +139,62 @@ static std::string get_library_version_string() {
 	}
 	if ( !fields.empty() ) {
 		str += "+";
-		str += OpenMPT::mpt::String::Combine( fields, std::string(".") );
+		str += OpenMPT::mpt::join_format( fields, std::string(".") );
 	}
 	return str;
 }
 
 static std::string get_library_features_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, mpt::trim(OpenMPT::Build::GetBuildFeaturesString()));
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, mpt::trim( OpenMPT::Build::GetBuildFeaturesString() ) );
 }
 
 static std::string get_core_version_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetVersionStringExtended());
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetVersionStringExtended() );
 }
 
 static std::string get_source_url_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::SourceInfo::Current().GetUrlWithRevision());
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::SourceInfo::Current().GetUrlWithRevision() );
 }
 
 static std::string get_source_date_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::SourceInfo::Current().Date());
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::SourceInfo::Current().Date() );
 }
 
 static std::string get_source_revision_string() {
 	const OpenMPT::SourceInfo sourceInfo = OpenMPT::SourceInfo::Current();
-	return sourceInfo.Revision() ? mpt::format_value_default<std::string>(sourceInfo.Revision()) : std::string();
+	return sourceInfo.Revision() ? mpt::format_value_default<std::string>( sourceInfo.Revision() ) : std::string();
 }
 
 static std::string get_build_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetBuildDateString());
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetBuildDateString() );
 }
 
 static std::string get_build_compiler_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetBuildCompilerString());
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetBuildCompilerString() );
 }
 
 static std::string get_credits_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetFullCreditsString());
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetFullCreditsString() );
 }
 
 static std::string get_contact_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, MPT_USTRING("Forum: ") + OpenMPT::Build::GetURL(OpenMPT::Build::Url::Forum));
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, MPT_USTRING("Forum: ") + OpenMPT::Build::GetURL( OpenMPT::Build::Url::Forum ) );
 }
 
 static std::string get_license_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetLicenseString());
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetLicenseString() );
 }
 
 static std::string get_url_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetURL(OpenMPT::Build::Url::Website));
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetURL( OpenMPT::Build::Url::Website ) );
 }
 
 static std::string get_support_forum_url_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetURL(OpenMPT::Build::Url::Forum));
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetURL( OpenMPT::Build::Url::Forum ) );
 }
 
 static std::string get_bugtracker_url_string() {
-	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetURL(OpenMPT::Build::Url::Bugtracker));
+	return mpt::transcode<std::string>( mpt::common_encoding::utf8, OpenMPT::Build::GetURL( OpenMPT::Build::Url::Bugtracker ) );
 }
 
 std::string get_string( const std::string & key ) {
@@ -480,7 +462,7 @@ void module_impl::ctor( const std::map< std::string, std::string > & ctls ) {
 	m_ctl_load_skip_patterns = false;
 	m_ctl_load_skip_plugins = false;
 	m_ctl_load_skip_subsongs_init = false;
-	m_ctl_seek_sync_samples = false;
+	m_ctl_seek_sync_samples = true;
 	// init member variables that correspond to ctls
 	for ( const auto & ctl : ctls ) {
 		ctl_set( ctl.first, ctl.second, false );
@@ -960,7 +942,7 @@ std::int32_t module_impl::get_render_param( int param ) const {
 void module_impl::set_render_param( int param, std::int32_t value ) {
 	switch ( param ) {
 		case module::RENDER_MASTERGAIN_MILLIBEL: {
-			m_Gain = static_cast<float>( std::pow( 10.0f, value * 0.001f * 0.5f ) );
+			m_Gain = std::pow( 10.0f, static_cast<float>( value ) * 0.001f * 0.5f );
 		} break;
 		case module::RENDER_STEREOSEPARATION_PERCENT: {
 			std::int32_t newvalue = value * OpenMPT::MixerSettings::StereoSeparationScale / 100;
@@ -1081,7 +1063,7 @@ std::size_t module_impl::read_interleaved_quad( std::int32_t samplerate, std::si
 
 
 double module_impl::get_duration_seconds() const {
-	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ?  std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
+	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
 	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
 	if ( m_current_subsong == all_subsongs ) {
 		// Play all subsongs consecutively.
@@ -1094,7 +1076,7 @@ double module_impl::get_duration_seconds() const {
 	return subsongs[m_current_subsong].duration;
 }
 void module_impl::select_subsong( std::int32_t subsong ) {
-	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ?  std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
+	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
 	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
 	if ( subsong != all_subsongs && ( subsong < 0 || subsong >= static_cast<std::int32_t>( subsongs.size() ) ) ) {
 		throw openmpt::exception("invalid subsong");
@@ -1121,7 +1103,7 @@ double module_impl::get_position_seconds() const {
 	return m_currentPositionSeconds;
 }
 double module_impl::set_position_seconds( double seconds ) {
-	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ?  std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
+	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
 	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
 	const subsong_data * subsong = 0;
 	double base_seconds = 0.0;
@@ -1241,7 +1223,7 @@ std::string module_impl::get_metadata( const std::string & key ) const {
 		if ( m_sndFile->GetFileHistory().empty() || !m_sndFile->GetFileHistory().back().HasValidDate() ) {
 			return std::string();
 		}
-		return mpt::transcode<std::string>( mpt::common_encoding::utf8, m_sndFile->GetFileHistory().back().AsISO8601() );
+		return mpt::transcode<std::string>( mpt::common_encoding::utf8, m_sndFile->GetFileHistory().back().AsISO8601( m_sndFile->GetTimezoneInternal() ) );
 	} else if ( key == std::string("message") ) {
 		std::string retval = m_sndFile->m_songMessage.GetFormatted( OpenMPT::SongMessage::leLF );
 		if ( retval.empty() ) {
@@ -1323,6 +1305,9 @@ std::int32_t module_impl::get_current_speed() const {
 std::int32_t module_impl::get_current_tempo() const {
 	return static_cast<std::int32_t>( m_sndFile->m_PlayState.m_nMusicTempo.GetInt() );
 }
+double module_impl::get_current_tempo2() const {
+	return m_sndFile->m_PlayState.m_nMusicTempo.ToDouble();
+}
 std::int32_t module_impl::get_current_order() const {
 	return m_sndFile->GetCurrentOrder();
 }
@@ -1378,7 +1363,7 @@ float module_impl::get_current_channel_vu_rear_right( std::int32_t channel ) con
 }
 
 std::int32_t module_impl::get_num_subsongs() const {
-	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ?  std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
+	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
 	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
 	return static_cast<std::int32_t>( subsongs.size() );
 }
@@ -1400,7 +1385,7 @@ std::int32_t module_impl::get_num_samples() const {
 
 std::vector<std::string> module_impl::get_subsong_names() const {
 	std::vector<std::string> retval;
-	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ?  std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
+	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
 	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
 	retval.reserve( subsongs.size() );
 	for ( const auto & subsong : subsongs ) {
@@ -1932,13 +1917,13 @@ void module_impl::ctl_set( std::string ctl, const std::string & value, bool thro
 	}
 	switch ( found_ctl->type ) {
 		case ctl_type::boolean:
-			ctl_set_boolean( ctl, mpt::ConvertStringTo<bool>( value ), throw_if_unknown );
+			ctl_set_boolean( ctl, mpt::parse<bool>( value ), throw_if_unknown );
 			break;
 		case ctl_type::integer:
-			ctl_set_integer( ctl, mpt::ConvertStringTo<std::int64_t>( value ), throw_if_unknown );
+			ctl_set_integer( ctl, mpt::parse<std::int64_t>( value ), throw_if_unknown );
 			break;
 		case ctl_type::floatingpoint:
-			ctl_set_floatingpoint( ctl, mpt::ConvertStringTo<double>( value ), throw_if_unknown );
+			ctl_set_floatingpoint( ctl, mpt::parse<double>( value ), throw_if_unknown );
 			break;
 		case ctl_type::text:
 			ctl_set_text( ctl, value, throw_if_unknown );

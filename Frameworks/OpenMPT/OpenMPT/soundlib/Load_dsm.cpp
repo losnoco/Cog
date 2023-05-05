@@ -1,21 +1,17 @@
 /*
  * Load_dsm.cpp
  * ------------
- * Purpose: Digisound Interface Kit (DSIK) Internal Format (DSM v2 / RIFF) module loader
+ * Purpose: - Digisound Interface Kit (DSIK) Internal Format (DSM v2 / RIFF) module loader
+ *          - Dynamic Studio (DSM) module loader
  * Notes  : 1. There is also another fundamentally different DSIK DSM v1 module format, not handled here.
  *          MilkyTracker can load it, but the only files of this format seen in the wild are also
  *          available in their original format, so I did not bother implementing it so far.
  *
- *          2. Using both PLAY.EXE v1.02 and v2.00, commands not supported in MOD do not seem to do
- *          anything at all.
- *          In particular commands 0x11-0x13 handled below are ignored, and no files have been spotted
- *          in the wild using any commands > 0x0F at all.
- *          S3M-style retrigger does not seem to exist - it is translated to volume slides by CONV.EXE,
+ *          2. S3M-style retrigger does not seem to exist - it is translated to volume slides by CONV.EXE,
  *          and J00 in S3M files is not converted either. S3M pattern loops (SBx) are not converted
  *          properly by CONV.EXE and completely ignored by PLAY.EXE.
  *          Command 8 (set panning) uses 00-80 for regular panning and A4 for surround, probably
- *          making DSIK one of the first applications to use this particular encoding scheme still
- *          used in "extended" S3Ms today.
+ *          making DSIK one of the first applications to use this convention established by DSMI's AMF format.
  * Authors: OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
@@ -25,6 +21,10 @@
 #include "Loaders.h"
 
 OPENMPT_NAMESPACE_BEGIN
+
+
+/////////////////////////////////////////////////////////////////////
+// DMS (DSIK) loader
 
 struct DSMChunk
 {
@@ -65,7 +65,7 @@ struct DSMSampleHeader
 	uint32le length;
 	uint32le loopStart;
 	uint32le loopEnd;
-	uint32le dataPtr;	// Interal sample pointer during playback in DSIK
+	uint32le dataPtr;  // Interal sample pointer during playback in DSIK
 	uint32le sampleRate;
 	char     sampleName[28];
 
@@ -219,12 +219,9 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 	m_nDefaultGlobalVolume = std::min(songHeader.globalVol.get(), uint8(64)) * 4u;
 	if(!m_nDefaultGlobalVolume) m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
 	if(songHeader.mastervol == 0x80)
-	{
 		m_nSamplePreAmp = std::min(256u / m_nChannels, 128u);
-	} else
-	{
+	else
 		m_nSamplePreAmp = songHeader.mastervol & 0x7F;
-	}
 
 	// Read channel panning
 	for(CHANNELINDEX chn = 0; chn < 16; chn++)
@@ -255,7 +252,7 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 			}
 			chunk.Skip(2);
 
-			ModCommand dummy = ModCommand::Empty();
+			ModCommand dummy{};
 			ROWINDEX row = 0;
 			while(chunk.CanRead(1) && row < 64)
 			{
@@ -290,26 +287,7 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 				if(flag & 0x10)
 				{
 					auto [command, param] = chunk.ReadArray<uint8, 2>();
-					switch(command)
-					{
-						// Portamentos
-					case 0x11:
-					case 0x12:
-						command &= 0x0F;
-						break;
-						// 3D Sound (?)
-					case 0x13:
-						command = 'X' - 55;
-						param = 0x91;
-						break;
-					default:
-						// Volume + Offset (?)
-						if(command > 0x10)
-							command = ((command & 0xF0) == 0x20) ? 0x09 : 0xFF;
-					}
-					m.command = command;
-					m.param = param;
-					ConvertModCommand(m);
+					ConvertModCommand(m, command, param);
 				}
 			}
 			patNum++;
@@ -335,5 +313,218 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 	return true;
 }
 
+
+/////////////////////////////////////////////////////////////////////
+// DSM (Dynamic Studio) loader
+
+
+struct DSmSampleHeader
+{
+	char     name[22];
+	uint8    type;
+	uint16le length;
+	uint8    finetune;
+	uint8    volume;
+	uint16le loopStart;
+	uint16le loopLength;
+	uint8    padding;
+
+	void ConvertToMPT(ModSample &mptSmp) const
+	{
+		mptSmp.nVolume = std::min(volume, uint8(64)) * 4u;
+		mptSmp.nFineTune = MOD2XMFineTune(finetune);
+		mptSmp.nLength = length;
+		mptSmp.nLoopStart = loopStart;
+		mptSmp.nLoopEnd = loopStart + loopLength;
+		mptSmp.uFlags.set(CHN_LOOP, loopLength > 2);
+		mptSmp.uFlags.set(CHN_16BIT, type == 16);
+	}
+};
+
+MPT_BINARY_STRUCT(DSmSampleHeader, 32)
+
+
+struct DSmFileHeader
+{
+	char  magic[4];  // "DSm\x1A"
+	uint8 version;
+	char  title[20];
+	char  artist[20];
+	uint8 numChannels;
+	uint8 numSamples;
+	uint8 numOrders;
+	uint8 packInformation;
+	uint8 globalVol;  // 0...100
+	char  padding[14];
+
+	bool IsValid() const noexcept
+	{
+		return !memcmp(magic, "DSm\x1A", 4)
+			&& version == 0x20
+			&& numChannels >= 1 && numChannels <= 32
+			&& numSamples > 0
+			&& numOrders > 0
+			&& globalVol <= 100;
+	}
+
+	uint32 GetHeaderMinimumAdditionalSize() const noexcept
+	{
+		return numChannels + numOrders + numSamples * sizeof(DSmSampleHeader);
+	}
+};
+
+MPT_BINARY_STRUCT(DSmFileHeader, 64)
+
+
+CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderDSm(MemoryFileReader file, const uint64 *pfilesize)
+{
+	DSmFileHeader fileHeader;
+	if(!file.ReadStruct(fileHeader))
+		return ProbeWantMoreData;
+	if(!fileHeader.IsValid())
+		return ProbeFailure;
+	
+	return ProbeAdditionalSize(file, pfilesize, fileHeader.GetHeaderMinimumAdditionalSize());
+}
+
+
+bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
+{
+	file.Rewind();
+
+	DSmFileHeader fileHeader;
+	if(!file.ReadStruct(fileHeader) || !fileHeader.IsValid())
+		return false;
+	if(!file.CanRead(fileHeader.GetHeaderMinimumAdditionalSize()))
+		return false;
+	if(loadFlags == onlyVerifyHeader)
+		return true;
+
+	InitializeGlobals(MOD_TYPE_MOD);
+	m_SongFlags.set(SONG_IMPORTED);
+	m_nChannels = fileHeader.numChannels;
+	static_assert(MAX_BASECHANNELS >= 32 && MAX_SAMPLES > 255);
+	m_nSamples = fileHeader.numSamples;
+	m_nDefaultGlobalVolume = Util::muldivr_unsigned(fileHeader.globalVol, MAX_GLOBAL_VOLUME, 100);
+
+	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.title);
+	m_songArtist = mpt::ToUnicode(mpt::Charset::CP437, mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.artist));
+
+	for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
+	{
+		ChnSettings[chn].Reset();
+		ChnSettings[chn].nPan = (file.ReadUint8() & 0x0F) * 0x11;
+	}
+	
+	ReadOrderFromFile<uint8>(Order(), file, fileHeader.numOrders);
+	PATTERNINDEX numPatterns = 0;
+	for(PATTERNINDEX pat : Order())
+	{
+		numPatterns = std::max(pat, numPatterns);
+	}
+	numPatterns++;
+
+	if(!file.CanRead((numPatterns * m_nChannels * 8) + (m_nSamples * sizeof(DSmSampleHeader)) + (numPatterns * m_nChannels * 64 * 4)))
+		return false;
+
+	// Track names for each pattern - we only read the track names of the first pattern
+	for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
+	{
+		ChnSettings[chn].szName = mpt::String::ReadBuf(mpt::String::spacePadded, file.ReadArray<char, 8>());
+	}
+	file.Skip((numPatterns - 1) * m_nChannels * 8);
+
+	for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
+	{
+		DSmSampleHeader sampleHeader;
+		file.ReadStruct(sampleHeader);
+		sampleHeader.ConvertToMPT(Samples[smp]);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
+	}
+
+	Patterns.ResizeArray(numPatterns);
+	for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
+	{
+		if(!(loadFlags & loadPatternData) || !Patterns.Insert(pat, 64))
+		{
+			file.Skip(m_nChannels * 64 * 4);
+			continue;
+		}
+		for(ModCommand &m : Patterns[pat])
+		{
+			const auto data = file.ReadArray<uint8, 4>();
+			if(data[1] > 0 && data[1] <= 84 * 2)
+				m.note = (data[1] >> 1) + NOTE_MIN + 35;
+			m.instr = data[0];
+			m.param = data[3];
+			if(data[2] == 0x08)
+			{
+				switch(m.param & 0xF0)
+				{
+				case 0x00:  // 4-bit panning
+					m.command = CMD_MODCMDEX;
+					m.param |= 0x80;
+					break;
+				case 0x10:  // Default volume slide Up (should stop at sample's default volume)
+					m.command = CMD_VOLUMESLIDE;
+					m.param <<= 4;
+					break;
+				case 0x20:  // Default fine volume slide Up (should stop at sample's default volume)
+					m.command = CMD_MODCMDEX;
+					m.param |= 0xA0;
+					break;
+				case 0x30:  // Fine porta up (support all 5 octaves)
+				case 0x40:  // Fine porta down (support all 5 octaves)
+					m.command = CMD_MODCMDEX;
+					m.param -= 0x20;
+					break;
+				default:
+					break;
+				}
+			} else if(data[2] == 0x13)
+			{
+				// 3D Simulate
+				m.command = CMD_PANNING8;
+				uint32 param = (m.param & 0x7F) * 2u;
+				if(m.param <= 0x40)  // 00 Front -> 40 Right
+					param += 0x80;
+				else if(m.param < 0x80)  // 40 Right -> 80 Back
+					param = 0x180 - param;
+				else if(m.param < 0xC0)  // 80 Back -> C0 Left
+					param = 0x80 - param;
+				else  // C0 Left -> FF Front
+					param -= 0x80;
+				m.param = mpt::saturate_cast<ModCommand::PARAM>(param);
+			} else if((data[2] & 0xF0) == 0x20)
+			{
+				// Offset + volume
+				m.command = CMD_OFFSET;
+				m.volcmd = VOLCMD_VOLUME;
+				m.vol = (data[2] & 0x0F) * 4 + 4;
+			} else if(data[2] <= 0x0F || data[2] == 0x11 || data[2] == 0x12)
+			{
+				// 0x11 and 0x12 support the full 5-octave range, 0x01 and 0x02 presumably only the ProTracker 3-octave range
+				ConvertModCommand(m, data[2] & 0x0F, data[3]);
+			}
+		}
+	}
+
+	if(loadFlags & loadSampleData)
+	{
+		for(SAMPLEINDEX smp = 1; smp <= m_nSamplePreAmp; smp++)
+		{
+			SampleIO(Samples[smp].uFlags[CHN_16BIT] ? SampleIO::_16bit : SampleIO::_8bit,
+				SampleIO::mono,
+				SampleIO::littleEndian,
+				SampleIO::signedPCM).ReadSample(Samples[smp], file);
+		}
+	}
+
+	m_modFormat.formatName = U_("Dynamic Studio");
+	m_modFormat.type = U_("dsm");
+	m_modFormat.charset = mpt::Charset::CP437;
+
+	return true;
+}
 
 OPENMPT_NAMESPACE_END

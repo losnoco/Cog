@@ -397,6 +397,7 @@
 				<string>ap</string>
 				<string>apc</string>
 				<string>as4</string>
+				<string>asbin</string>
 				<string>asd</string>
 				<string>asf</string>
 				<string>asr</string>
@@ -423,6 +424,7 @@
 				<string>bar</string>
 				<string>bcstm</string>
 				<string>bcwav</string>
+				<string>bcv</string>
 				<string>bd3</string>
 				<string>bdsp</string>
 				<string>bfstm</string>
@@ -435,6 +437,7 @@
 				<string>bik</string>
 				<string>bika</string>
 				<string>bik2</string>
+				<string>binka</string>
 				<string>bk2</string>
 				<string>bkr</string>
 				<string>blk</string>
@@ -456,7 +459,6 @@
 				<string>cads</string>
 				<string>caf</string>
 				<string>cbd2</string>
-				<string>ccc</string>
 				<string>cd</string>
 				<string>cfn</string>
 				<string>chd</string>
@@ -468,6 +470,7 @@
 				<string>cpk</string>
 				<string>cps</string>
 				<string>csa</string>
+				<string>csb</string>
 				<string>csmp</string>
 				<string>cvs</string>
 				<string>cwav</string>
@@ -504,6 +507,7 @@
 				<string>exa</string>
 				<string>ezw</string>
 				<string>fag</string>
+				<string>fcb</string>
 				<string>fda</string>
 				<string>ffw</string>
 				<string>filp</string>
@@ -575,6 +579,7 @@
 				<string>kces</string>
 				<string>kcey</string>
 				<string>km9</string>
+				<string>kma</string>
 				<string>kmx</string>
 				<string>kovs</string>
 				<string>kno</string>
@@ -596,6 +601,7 @@
 				<string>lac3</string>
 				<string>lasf</string>
 				<string>lbin</string>
+				<string>ldat</string>
 				<string>leg</string>
 				<string>lep</string>
 				<string>lflac</string>
@@ -737,7 +743,6 @@
 				<string>rws</string>
 				<string>rwsd</string>
 				<string>rwx</string>
-				<string>rxw</string>
 				<string>rxx</string>
 				<string>s14</string>
 				<string>s3s</string>
@@ -796,6 +801,7 @@
 				<string>smp</string>
 				<string>smpl</string>
 				<string>smv</string>
+				<string>snb</string>
 				<string>snd</string>
 				<string>snds</string>
 				<string>sng</string>
@@ -1498,6 +1504,7 @@
 				<string>s3m</string>
 				<string>xm</string>
 				<string>it</string>
+				<string>667</string>
 				<string>669</string>
 				<string>amf</string>
 				<string>ams</string>
@@ -1534,8 +1541,11 @@
 				<string>stx</string>
 				<string>stp</string>
 				<string>symmod</string>
+				<string>gtk</string>
+				<string>gt2</string>
 				<string>ult</string>
 				<string>wow</string>
+				<string>xmf</string>
 				<string>gdm</string>
 				<string>mo3</string>
 				<string>oxm</string>

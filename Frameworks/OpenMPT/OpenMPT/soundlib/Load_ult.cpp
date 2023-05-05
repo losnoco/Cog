@@ -95,10 +95,10 @@ much anywhere for that matter. I don't even think Ultra Tracker tries to
 convert them. */
 
 
-static void TranslateULTCommands(uint8 &effect, uint8 &param, uint8 version)
+static std::pair<EffectCommand, uint8> TranslateULTCommands(const uint8 e, uint8 param, uint8 version)
 {
 
-	static constexpr uint8 ultEffTrans[] =
+	static constexpr EffectCommand ultEffTrans[] =
 	{
 		CMD_ARPEGGIO,
 		CMD_PORTAMENTOUP,
@@ -112,17 +112,15 @@ static void TranslateULTCommands(uint8 &effect, uint8 &param, uint8 version)
 		CMD_OFFSET,
 		CMD_VOLUMESLIDE,
 		CMD_PANNING8,
-		CMD_VOLUME,
+		CMD_VOLUME8,
 		CMD_PATTERNBREAK,
-		CMD_NONE, // extended effects, processed separately
+		CMD_NONE,  // extended effects, processed separately
 		CMD_SPEED,
 	};
 
+	EffectCommand effect = ultEffTrans[e & 0x0F];
 
-	uint8 e = effect & 0x0F;
-	effect = ultEffTrans[e];
-
-	switch(e)
+	switch(e & 0x0F)
 	{
 	case 0x00:
 		if(!param || version < '3')
@@ -151,9 +149,6 @@ static void TranslateULTCommands(uint8 &effect, uint8 &param, uint8 version)
 		break;
 	case 0x0B:
 		param = (param & 0x0F) * 0x11;
-		break;
-	case 0x0C: // volume
-		param /= 4u;
 		break;
 	case 0x0D: // pattern break
 		param = 10 * (param >> 4) + (param & 0x0F);
@@ -198,6 +193,7 @@ static void TranslateULTCommands(uint8 &effect, uint8 &param, uint8 version)
 			effect = CMD_TEMPO;
 		break;
 	}
+	return {effect, param};
 }
 
 
@@ -216,47 +212,35 @@ static int ReadULTEvent(ModCommand &m, FileReader &file, uint8 version)
 	const auto [instr, cmd, para1, para2] = file.ReadArray<uint8, 4>();
 	
 	m.instr = instr;
-	uint8 cmd1 = cmd & 0x0F;
-	uint8 cmd2 = cmd >> 4;
-	uint8 param1 = para1;
-	uint8 param2 = para2;
-	TranslateULTCommands(cmd1, param1, version);
-	TranslateULTCommands(cmd2, param2, version);
+	auto [cmd1, param1] = TranslateULTCommands(cmd & 0x0F, para1, version);
+	auto [cmd2, param2]= TranslateULTCommands(cmd >> 4, para2, version);
 
 	// sample offset -- this is even more special than digitrakker's
 	if(cmd1 == CMD_OFFSET && cmd2 == CMD_OFFSET)
 	{
 		uint32 offset = ((param2 << 8) | param1) >> 6;
-		m.command = CMD_OFFSET;
-		m.param = static_cast<ModCommand::PARAM>(offset);
+		m.SetEffectCommand(CMD_OFFSET, static_cast<ModCommand::PARAM>(offset));
 		if(offset > 0xFF)
-		{
-			m.volcmd = VOLCMD_OFFSET;
-			m.vol = static_cast<ModCommand::VOL>(offset >> 8);
-		}
+			m.SetVolumeCommand(VOLCMD_OFFSET, static_cast<ModCommand::VOL>(offset >> 8));
 		return repeat;
 	} else if(cmd1 == CMD_OFFSET)
 	{
 		uint32 offset = param1 * 4;
 		param1 = mpt::saturate_cast<uint8>(offset);
-		if(offset > 0xFF && ModCommand::GetEffectWeight(cmd2) < ModCommand::GetEffectType(CMD_OFFSET))
+		if(offset > 0xFF && ModCommand::GetEffectWeight(cmd2) < ModCommand::GetEffectWeight(CMD_OFFSET))
 		{
-			m.command = CMD_OFFSET;
-			m.param = static_cast<ModCommand::PARAM>(offset);
-			m.volcmd = VOLCMD_OFFSET;
-			m.vol = static_cast<ModCommand::VOL>(offset >> 8);
+			m.SetEffectCommand(CMD_OFFSET, static_cast<ModCommand::PARAM>(offset));
+			m.SetVolumeCommand(VOLCMD_OFFSET, static_cast<ModCommand::VOL>(offset >> 8));
 			return repeat;
 		}
 	} else if(cmd2 == CMD_OFFSET)
 	{
 		uint32 offset = param2 * 4;
 		param2 = mpt::saturate_cast<uint8>(offset);
-		if(offset > 0xFF && ModCommand::GetEffectWeight(cmd1) < ModCommand::GetEffectType(CMD_OFFSET))
+		if(offset > 0xFF && ModCommand::GetEffectWeight(cmd1) < ModCommand::GetEffectWeight(CMD_OFFSET))
 		{
-			m.command = CMD_OFFSET;
-			m.param = static_cast<ModCommand::PARAM>(offset);
-			m.volcmd = VOLCMD_OFFSET;
-			m.vol = static_cast<ModCommand::VOL>(offset >> 8);
+			m.SetEffectCommand(CMD_OFFSET, static_cast<ModCommand::PARAM>(offset));
+			m.SetVolumeCommand(VOLCMD_OFFSET, static_cast<ModCommand::VOL>(offset >> 8));
 			return repeat;
 		}
 	} else if(cmd1 == cmd2)
@@ -273,12 +257,7 @@ static int ReadULTEvent(ModCommand &m, FileReader &file, uint8 version)
 
 	// Combine slide commands, if possible
 	ModCommand::CombineEffects(cmd2, param2, cmd1, param1);
-	ModCommand::TwoRegularCommandsToMPT(cmd1, param1, cmd2, param2);
-
-	m.volcmd = cmd1;
-	m.vol = param1;
-	m.command = cmd2;
-	m.param = param2;
+	m.FillInTwoCommands(cmd1, param1, cmd2, param2);
 
 	return repeat;
 }
@@ -287,12 +266,9 @@ static int ReadULTEvent(ModCommand &m, FileReader &file, uint8 version)
 // Functor for postfixing ULT patterns (this is easier than just remembering everything WHILE we're reading the pattern events)
 struct PostFixUltCommands
 {
-	PostFixUltCommands(CHANNELINDEX numChannels)
+	PostFixUltCommands(CHANNELINDEX channels) : numChannels{channels}
 	{
-		this->numChannels = numChannels;
-		curChannel = 0;
-		writeT125 = false;
-		isPortaActive.resize(numChannels, false);
+		isPortaActive.resize(channels, false);
 	}
 
 	void operator()(ModCommand &m)
@@ -344,21 +320,22 @@ struct PostFixUltCommands
 		{
 			writeT125 = false;
 		}
-		curChannel = (curChannel + 1) % numChannels;
+		curChannel++;
+		if(curChannel >= numChannels)
+			curChannel = 0;
 	}
 
 	std::vector<bool> isPortaActive;
-	CHANNELINDEX numChannels, curChannel;
-	bool writeT125;
+	const CHANNELINDEX numChannels;
+	CHANNELINDEX curChannel = 0;
+	bool writeT125 = false;
 };
 
 
 static bool ValidateHeader(const UltFileHeader &fileHeader)
 {
-	if(fileHeader.version < '1'
-		|| fileHeader.version > '4'
-		|| std::memcmp(fileHeader.signature, "MAS_UTrack_V00", sizeof(fileHeader.signature))
-		)
+	if(fileHeader.version < '1' || fileHeader.version > '4'
+	   || std::memcmp(fileHeader.signature, "MAS_UTrack_V00", sizeof(fileHeader.signature)))
 	{
 		return false;
 	}
@@ -482,7 +459,8 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 				int repeat = ReadULTEvent(evnote, file, fileHeader.version);
 				if(repeat + row > 64)
 					repeat = 64 - row;
-				if(repeat == 0) break;
+				if(repeat == 0)
+					break;
 				while(repeat--)
 				{
 					*note = evnote;

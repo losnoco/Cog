@@ -23,13 +23,13 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-IMixPlugin* Chorus::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* Chorus::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) Chorus(factory, sndFile, mixStruct);
 }
 
 
-Chorus::Chorus(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct, bool isFlanger)
+Chorus::Chorus(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct, bool isFlanger)
 	: IMixPlugin(factory, sndFile, mixStruct)
 	, m_isFlanger(isFlanger)
 {
@@ -42,7 +42,6 @@ Chorus::Chorus(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStru
 	m_param[kChorusDelay] = 0.8f;
 
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -113,13 +112,13 @@ void Chorus::Process(float *pOutL, float *pOutR, uint32 numFrames)
 
 		float left1 = m_bufferL[GetBufferIntOffset(m_bufPos + m_delayL)];
 		float left2 = m_bufferL[GetBufferIntOffset(m_bufPos + m_delayL + 4096)];
-		float fracPos = (m_delayL & 0xFFF) * (1.0f / 4096.0f);
+		float fracPos = static_cast<float>(m_delayL & 0xFFF) * (1.0f / 4096.0f);
 		float leftOut = (left2 - left1) * fracPos + left1;
 		*(out[0])++ = leftDelayIn + (leftOut - leftDelayIn) * wetDryMix;
 
 		float right1 = bufferR[GetBufferIntOffset(m_bufPos + m_delayR)];
 		float right2 = bufferR[GetBufferIntOffset(m_bufPos + m_delayR + 4096)];
-		fracPos = (m_delayR & 0xFFF) * (1.0f / 4096.0f);
+		fracPos = static_cast<float>(m_delayR & 0xFFF) * (1.0f / 4096.0f);
 		float rightOut = (right2 - right1) * fracPos + right1;
 		*(out[1])++ = rightDelayIn + (rightOut - rightDelayIn) * wetDryMix;
 

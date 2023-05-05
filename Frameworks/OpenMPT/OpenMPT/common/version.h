@@ -79,7 +79,7 @@ public:
 		return m_Version;
 	}
 
-	MPT_FORCEINLINE Version Masked(uint32 mask) const noexcept
+	MPT_CONSTEXPRINLINE Version Masked(uint32 mask) const noexcept
 	{
 		return Version(m_Version & mask);
 	}
@@ -205,7 +205,7 @@ MPT_CONSTEXPRINLINE bool operator > (const Version &a, const Version &b) noexcep
 }
 
 
-MPT_CONSTEXPRINLINE Version operator "" _LiteralVersionImpl (const char * str, std::size_t len)
+MPT_CONSTEVAL Version operator "" _LiteralVersionImpl (const char * str, std::size_t len)
 {
 	return Version::LiteralParser::Parse(str, len);
 }
@@ -213,7 +213,7 @@ MPT_CONSTEXPRINLINE Version operator "" _LiteralVersionImpl (const char * str, s
 // Create Version object from version string and check syntax, all at compile time.
 // cppcheck false-positive
 // cppcheck-suppress preprocessorErrorDirective
-#define MPT_V(strver) MPT_FORCE_CONSTEXPR(Version{( strver ## _LiteralVersionImpl ).GetRawVersion()})
+#define MPT_V(strver) MPT_FORCE_CONSTEVAL_VALUE(Version{( strver ## _LiteralVersionImpl ).GetRawVersion()})
 
 
 

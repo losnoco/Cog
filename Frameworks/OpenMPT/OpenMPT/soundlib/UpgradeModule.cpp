@@ -258,9 +258,11 @@ void CSoundFile::UpgradeModule()
 
 	if(m_dwLastSavedWithVersion < MPT_V("1.20.00.00"))
 	{
-		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++) if(Instruments[i] != nullptr)
+		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++)
 		{
 			ModInstrument *ins = Instruments[i];
+			if(!ins)
+				continue;
 			// Previously, volume swing values ranged from 0 to 64. They should reach from 0 to 100 instead.
 			ins->nVolSwing = static_cast<uint8>(std::min(static_cast<uint32>(ins->nVolSwing * 100 / 64), uint32(100)));
 
@@ -268,7 +270,7 @@ void CSoundFile::UpgradeModule()
 			{
 				// Previously, Pitch/Pan Separation was only half depth (plot twist: it was actually only quarter depth).
 				// This was corrected in compatible mode in OpenMPT 1.18, and in OpenMPT 1.20 it is corrected in normal mode as well.
-				ins->nPPS = (ins->nPPS + (ins->nPPS >= 0 ? 1 : -1)) / 2;
+				ins->nPPS = static_cast<int8>((ins->nPPS + (ins->nPPS >= 0 ? 1 : -1)) / 2);
 			}
 
 			if(!compatModeIT || m_dwLastSavedWithVersion < MPT_V("1.17.03.02"))
@@ -405,26 +407,28 @@ void CSoundFile::UpgradeModule()
 
 	if(m_dwLastSavedWithVersion < MPT_V("1.26.00.00"))
 	{
-		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++) if(Instruments[i] != nullptr)
+		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++)
 		{
 			ModInstrument *ins = Instruments[i];
+			if(!ins)
+				continue;
 			// Even after fixing it in OpenMPT 1.18, instrument PPS was only half the depth.
-			ins->nPPS = (ins->nPPS + (ins->nPPS >= 0 ? 1 : -1)) / 2;
+			ins->nPPS = static_cast<int8>((ins->nPPS + (ins->nPPS >= 0 ? 1 : -1)) / 2);
 
 			// OpenMPT 1.18 fixed the depth of random pan in compatible mode.
 			// OpenMPT 1.26 fixes it in normal mode too.
 			if(!compatModeIT || m_dwLastSavedWithVersion < MPT_V("1.18.00.00"))
 			{
-				ins->nPanSwing = (ins->nPanSwing + 3) / 4u;
+				ins->nPanSwing = static_cast<uint8>((ins->nPanSwing + 3) / 4u);
 			}
 		}
 	}
 
 	if(m_dwLastSavedWithVersion < MPT_V("1.28.00.12"))
 	{
-		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++) if(Instruments[i] != nullptr)
+		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++)
 		{
-			if(Instruments[i]->VolEnv.nReleaseNode != ENV_RELEASE_NODE_UNSET)
+			if(Instruments[i] != nullptr && Instruments[i]->VolEnv.nReleaseNode != ENV_RELEASE_NODE_UNSET)
 			{
 				m_playBehaviour.set(kLegacyReleaseNode);
 				break;
@@ -434,9 +438,9 @@ void CSoundFile::UpgradeModule()
 
 	if(m_dwLastSavedWithVersion < MPT_V("1.28.03.04"))
 	{
-		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++) if (Instruments[i] != nullptr)
+		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++)
 		{
-			if(Instruments[i]->pluginVolumeHandling == PLUGIN_VOLUMEHANDLING_MIDI || Instruments[i]->pluginVolumeHandling == PLUGIN_VOLUMEHANDLING_DRYWET)
+			if(Instruments[i] != nullptr && (Instruments[i]->pluginVolumeHandling == PLUGIN_VOLUMEHANDLING_MIDI || Instruments[i]->pluginVolumeHandling == PLUGIN_VOLUMEHANDLING_DRYWET))
 			{
 				m_playBehaviour.set(kMIDIVolumeOnNoteOffBug);
 				break;
@@ -578,6 +582,7 @@ void CSoundFile::UpgradeModule()
 			{ kITDCTBehaviour,                MPT_V("1.29.00.57") },
 			{ kITPitchPanSeparation,          MPT_V("1.30.00.53") },
 			{ kITResetFilterOnPortaSmpChange, MPT_V("1.30.08.02") },
+			{ kITInitialNoteMemory,           MPT_V("1.31.00.25") },
 		};
 
 		for(const auto &b : behaviours)
@@ -624,6 +629,7 @@ void CSoundFile::UpgradeModule()
 			{ kST3RetrigAfterNoteCut,      MPT_V("1.29.00.00") },
 			{ kFT2ST3OffsetOutOfRange,     MPT_V("1.29.00.00") },
 			{ kApplyUpperPeriodLimit,      MPT_V("1.30.00.45") },
+			{ kST3TonePortaWithAdlibNote,  MPT_V("1.31.00.13") },
 		};
 
 		for(const auto &b : behaviours)
@@ -686,9 +692,10 @@ void CSoundFile::UpgradeModule()
 		&& m_dwLastSavedWithVersion >= MPT_V("1.23.01.02") && m_dwLastSavedWithVersion < MPT_V("1.28.00.43"))
 	{
 		// Bug that effectively clamped the release node to the sustain end
-		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++) if(Instruments[i] != nullptr)
+		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++)
 		{
-			if(Instruments[i]->VolEnv.nReleaseNode != ENV_RELEASE_NODE_UNSET
+			if(Instruments[i] != nullptr
+				&& Instruments[i]->VolEnv.nReleaseNode != ENV_RELEASE_NODE_UNSET
 				&& Instruments[i]->VolEnv.dwFlags[ENV_SUSTAIN]
 				&& Instruments[i]->VolEnv.nReleaseNode > Instruments[i]->VolEnv.nSustainEnd)
 			{
@@ -726,6 +733,19 @@ void CSoundFile::UpgradeModule()
 		{
 			if(plugin.Info.dwPluginId1 == kDmoMagic && plugin.Info.dwPluginId2 == int32(0xEFCA3D92) && plugin.pluginData.size() == 32)
 				plugin.Info.szLibraryName = "Flanger (Legacy)";
+		}
+	}
+
+	if(m_dwLastSavedWithVersion < MPT_V("1.31.00.09") && (GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM)))
+	{
+		// Old-style plugin tone portamento
+		for(auto &plugin : m_MixPlugins)
+		{
+			if(plugin.IsValidPlugin())
+			{
+				m_playBehaviour.set(kPluginIgnoreTonePortamento);
+				break;
+			}
 		}
 	}
 

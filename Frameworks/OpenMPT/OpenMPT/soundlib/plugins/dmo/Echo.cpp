@@ -22,13 +22,13 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-IMixPlugin* Echo::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* Echo::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) Echo(factory, sndFile, mixStruct);
 }
 
 
-Echo::Echo(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+Echo::Echo(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 	, m_bufferSize(0)
 	, m_writePos(0)
@@ -42,7 +42,6 @@ Echo::Echo(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
 	m_param[kEchoPanDelay] = 0.0f;
 
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -192,8 +191,8 @@ CString Echo::GetParamDisplay(PlugParamIndex param)
 void Echo::RecalculateEchoParams()
 {
 	m_initialFeedback = std::sqrt(1.0f - (m_param[kEchoFeedback] * m_param[kEchoFeedback]));
-	m_delayTime[0] = static_cast<uint32>((1.0f + m_param[kEchoLeftDelay] * 1999.0f) / 1000.0f * m_sampleRate);
-	m_delayTime[1] = static_cast<uint32>((1.0f + m_param[kEchoRightDelay] * 1999.0f) / 1000.0f * m_sampleRate);
+	m_delayTime[0] = static_cast<uint32>((1.0f + m_param[kEchoLeftDelay] * 1999.0f) / 1000.0f * static_cast<float>(m_sampleRate));
+	m_delayTime[1] = static_cast<uint32>((1.0f + m_param[kEchoRightDelay] * 1999.0f) / 1000.0f * static_cast<float>(m_sampleRate));
 	m_crossEcho = (m_param[kEchoPanDelay]) > 0.5f;
 }
 

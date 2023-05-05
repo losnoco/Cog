@@ -3,7 +3,7 @@
 "ConsentNo" = "Hayır";
 "ConsentYes" = "Evet";
 "CrashlyticsConsentText" = "Crashlytics'in çökme raporu göndermesine izin vermek ister misiniz? Bunu Tercihler'den tekrar kapatabilirsiniz. Size tekrar sormayacağız.";
-"CrashlyticsConsentTitle" = "Crashlytics crash collection";
+"CrashlyticsConsentTitle" = "Crashlytics çökme koleksiyonu";
 "ErrorInvalidTrackId" = "SQLite isteğine geçersiz parça kimliği gönderildi.";
 "ErrorMessageBadFile" = "Hatalı dosya için meta veriler ayrıştırılamıyor.";
 "ErrorMetadata" = "Meta veriler alınamıyor.";
@@ -13,16 +13,16 @@
 "FeedbackFailedInformativeText" = "Geri bildirim gönderilemedi.";
 "FeedbackFailedMessageText" = "Başarısız";
 "FeedbackSuccessInformativeText" = "Geri bildirim başarıyla gönderildi!";
-"FeedbackSuccessMessageText" = "Success";
-"FileButtonTooltip" = "File drawer";
-"GainAlbumGain" = "Album Gain";
-"GainAlbumGainPeak" = "Album Gain plus Peak";
-"GainAlbumPeak" = "Album Peak";
+"FeedbackSuccessMessageText" = "Başarı";
+"FileButtonTooltip" = "Dosya çekmecesi";
+"GainAlbumGain" = "Albüm Kazancı";
+"GainAlbumGainPeak" = "Albüm Kazancı artı Pik";
+"GainAlbumPeak" = "Albüm Piki";
 "GainNone" = "Hiçbiri";
-"GainTrackGain" = "Track Gain";
-"GainTrackGainPeak" = "Track Gain plus Peak";
-"GainTrackPeak" = "Track Peak";
-"GainVolumeScale" = "Volume Scale";
+"GainTrackGain" = "Parça Kazancı";
+"GainTrackGainPeak" = "Parça Kazancı artı Pik";
+"GainTrackPeak" = "Parça Piki";
+"GainVolumeScale" = "Ses Düzeyi";
 "InfoButtonTooltip" = "Seçili dosya hakkında bilgi";
 "InvalidURLLong" = "URL geçerli değil.";
 "InvalidURLShort" = "Geçersiz URL";
@@ -30,14 +30,14 @@
 "PauseButtonTooltip" = "Duraklat";
 "PlayButtonTooltip" = "Oynat";
 "PlayingTrackTooltip" = "Çalıyor";
-"PlaylistHeaderContextMenuTitle" = "Playlist Header Context Menu";
-"PlaylistIndexColumn" = "Index";
+"PlaylistHeaderContextMenuTitle" = "Çalma Listesi Başlığı İçerik Menüsü";
+"PlaylistIndexColumn" = "Indeks";
 "PlaylistRandomizationAction" = "Çalma listesi rastgeleleştirmesi";
 "PlaylistStatusColumn" = "Durum";
 "PreferencesTitle" = "Tercihler";
 "PrevButtonTooltip" = "Önceki";
 "PrivacyPolicyURL" = "https://www.iubenda.com/privacy-policy/59859310";
-"ProgressActionLoader" = "playlist loader inserting files";
+"ProgressActionLoader" = "çalma listesi yükleyicisi dosya ekleme";
 "ProgressActionLoadingMetadata" = "parçalar için meta verileri yükleme";
 "ProgressSubActionLoaderAddingEntries" = "çalma listesi girişleri oluşturma ve ekleme";
 "ProgressSubActionLoaderFilteringContainedFiles" = "desteklenmeyen dosya türlerini kapsayıcılardan kaldırma";
@@ -45,7 +45,7 @@
 "ProgressSubActionLoaderFilteringFiles" = "desteklenmeyen dosya türlerini kaldırma";
 "ProgressSubActionLoaderListingFiles" = "dosyaları toplama";
 "ProgressSubActionLoadingMetadata" = "dosyaları işleme";
-"ProgressSubActionMetadataApply" = "applying info to playlist storage";
+"ProgressSubActionMetadataApply" = "çalma listesi deposuna bilgi uygulama";
 "QueuedTrackTooltip" = "Sıraya alındı";
 "RandomizeButtonTooltip" = "Çalma listesini rastgele seç";
 "RemoveButtonTooltip" = "Seçili dosyaları kaldır";
@@ -61,7 +61,7 @@
 "TimeLastPlayed" = "Son çalınan";
 "TimeRemaining" = "-%i:%02i";
 "Version %@ (%@)" = "Sürüm %1$@ (%2$@)";
-"replayGainAlbumGain" = "The volume level of playback output will be detected through enumeration, \
+"replayGainAlbumGain" = "Oynatma çıkışının ses seviyesi numaralandırma yoluyla algılanacaktır, \
 						 re";
 
 /* second for total */

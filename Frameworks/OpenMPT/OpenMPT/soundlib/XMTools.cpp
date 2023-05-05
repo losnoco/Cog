@@ -65,6 +65,14 @@ uint16 XMInstrument::ConvertToXM(const ModInstrument &mptIns, bool compatibility
 	ConvertEnvelopeToXM(mptIns.VolEnv, volPoints, volFlags, volSustain, volLoopStart, volLoopEnd, EnvTypeVol);
 	ConvertEnvelopeToXM(mptIns.PanEnv, panPoints, panFlags, panSustain, panLoopStart, panLoopEnd, EnvTypePan);
 
+	if(mptIns.nMidiChannel != MidiNoChannel)
+	{
+		midiEnabled = 1;
+		midiChannel = (mptIns.nMidiChannel != MidiMappedChannel ? (mptIns.nMidiChannel - MidiFirstChannel) : 0);
+	}
+	midiProgram = (mptIns.nMidiProgram != 0 ? mptIns.nMidiProgram - 1 : 0);
+	pitchWheelRange = std::min(mptIns.midiPWD, int8(36));
+
 	// Create sample assignment table
 	auto sampleList = GetSampleList(mptIns, compatibilityExport);
 	for(std::size_t i = 0; i < std::size(sampleMap); i++)
@@ -79,14 +87,6 @@ uint16 XMInstrument::ConvertToXM(const ModInstrument &mptIns, bool compatibility
 			}
 		}
 	}
-
-	if(mptIns.nMidiChannel != MidiNoChannel)
-	{
-		midiEnabled = 1;
-		midiChannel = (mptIns.nMidiChannel != MidiMappedChannel ? (mptIns.nMidiChannel - MidiFirstChannel) : 0);
-	}
-	midiProgram = (mptIns.nMidiProgram != 0 ? mptIns.nMidiProgram - 1 : 0);
-	pitchWheelRange = std::min(mptIns.midiPWD, int8(36));
 
 	return static_cast<uint16>(sampleList.size());
 }
@@ -118,6 +118,9 @@ std::vector<SAMPLEINDEX> XMInstrument::GetSampleList(const ModInstrument &mptIns
 			}
 		}
 	}
+	// FT2 completely ignores MIDI settings (and also the less important stuff) if not at least one (empty) sample is assigned to this instrument!
+	if(sampleList.empty() && compatibilityExport && midiEnabled)
+		sampleList.assign(1, 0);
 	return sampleList;
 }
 
@@ -236,8 +239,8 @@ void XMInstrumentHeader::Finalise()
 		sampleHeaderSize = sizeof(XMSample);
 	} else
 	{
-		// TODO: FT2 completely ignores MIDI settings (and also the less important stuff) if not at least one (empty) sample is assigned to this instrument!
-		size -= sizeof(XMInstrument);
+		if(!instrument.midiEnabled)
+			size -= sizeof(XMInstrument);
 		sampleHeaderSize = 0;
 	}
 }

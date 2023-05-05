@@ -19,9 +19,9 @@
 #include "mpt/string/utility.hpp"
 
 #if MPT_OS_WINDOWS
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+#if MPT_WINNT_AT_LEAST(MPT_WIN_VISTA)
 #include <guiddef.h>
-#endif // _WIN32_WINNT
+#endif // MPT_WIN_VISTA
 #include <objbase.h>
 #include <rpc.h>
 #endif // MPT_OS_WINDOWS
@@ -113,6 +113,10 @@ private:
 	MPT_CONSTEXPRINLINE uint8 Nn() const noexcept {
 		return static_cast<uint8>((Data4 >> 56) & 0xffu);
 	}
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif // MPT_COMPILER_GCC
 	void MakeRFC4122(uint8 version) noexcept {
 		// variant
 		uint8 Nn = static_cast<uint8>((Data4 >> 56) & 0xffu);
@@ -128,6 +132,9 @@ private:
 		Mm |= (version << 4u);
 		Data3 |= static_cast<uint16>(Mm) << 8;
 	}
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif // MPT_COMPILER_GCC
 #if MPT_OS_WINDOWS
 private:
 	static mpt::UUID UUIDFromWin32(::UUID uuid) {
@@ -234,18 +241,16 @@ public:
 	// Create a UUID
 	template <typename Trng>
 	static UUID Generate(Trng & rng) {
-#if MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
-#if (_WIN32_WINNT >= 0x0602)
+#if MPT_WINRT_AT_LEAST(MPT_WIN_8)
 		::GUID guid = ::GUID();
 		HRESULT result = CoCreateGuid(&guid);
 		if (result != S_OK) {
 			return mpt::UUID::RFC4122Random(rng);
 		}
 		return mpt::UUID::UUIDFromWin32(guid);
-#else
+#elif MPT_WINRT_BEFORE(MPT_WIN_8)
 		return mpt::UUID::RFC4122Random(rng);
-#endif
-#elif MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
+#elif MPT_OS_WINDOWS
 		::UUID uuid = ::UUID();
 		RPC_STATUS status = ::UuidCreate(&uuid);
 		if (status != RPC_S_OK && status != RPC_S_UUID_LOCAL_ONLY) {
@@ -267,19 +272,16 @@ public:
 	// Safe for local use. May be faster.
 	template <typename Trng>
 	static UUID GenerateLocalUseOnly(Trng & rng) {
-#if MPT_OS_WINDOWS && MPT_OS_WINDOWS_WINRT
-#if (_WIN32_WINNT >= 0x0602)
+#if MPT_WINRT_AT_LEAST(MPT_WIN_8)
 		::GUID guid = ::GUID();
 		HRESULT result = CoCreateGuid(&guid);
 		if (result != S_OK) {
 			return mpt::UUID::RFC4122Random(rng);
 		}
 		return mpt::UUID::UUIDFromWin32(guid);
-#else
+#elif MPT_WINRT_BEFORE(MPT_WIN_8)
 		return mpt::UUID::RFC4122Random(rng);
-#endif
-#elif MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
-#if _WIN32_WINNT >= 0x0501
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_XP)
 		// Available since Win2000, but we check for WinXP in order to not use this
 		// function in Win32old builds. It is not available on some non-fully
 		// patched Win98SE installs in the wild.
@@ -296,11 +298,10 @@ public:
 			return mpt::UUID::RFC4122Random(rng);
 		}
 		return mpt::UUID::UUIDFromWin32(uuid);
-#else
+#elif MPT_OS_WINDOWS
 		// Fallback to ::UuidCreate is safe as ::UuidCreateSequential is only a
 		// tiny performance optimization.
 		return Generate(rng);
-#endif
 #else
 		return RFC4122Random(rng);
 #endif
@@ -343,24 +344,11 @@ public:
 			return UUID();
 		}
 		UUID result;
-		result.Data1 = mpt::ConvertHexStringTo<uint32>(segments[0]);
-		result.Data2 = mpt::ConvertHexStringTo<uint16>(segments[1]);
-		result.Data3 = mpt::ConvertHexStringTo<uint16>(segments[2]);
-		result.Data4 = mpt::ConvertHexStringTo<uint64>(segments[3] + segments[4]);
+		result.Data1 = mpt::parse_hex<uint32>(segments[0]);
+		result.Data2 = mpt::parse_hex<uint16>(segments[1]);
+		result.Data3 = mpt::parse_hex<uint16>(segments[2]);
+		result.Data4 = mpt::parse_hex<uint64>(segments[3] + segments[4]);
 		return result;
-	}
-	std::string ToAString() const {
-		return std::string()
-			 + mpt::format<std::string>::hex0<8>(GetData1())
-			 + std::string("-")
-			 + mpt::format<std::string>::hex0<4>(GetData2())
-			 + std::string("-")
-			 + mpt::format<std::string>::hex0<4>(GetData3())
-			 + std::string("-")
-			 + mpt::format<std::string>::hex0<4>(static_cast<uint16>(GetData4() >> 48))
-			 + std::string("-")
-			 + mpt::format<std::string>::hex0<4>(static_cast<uint16>(GetData4() >> 32))
-			 + mpt::format<std::string>::hex0<8>(static_cast<uint32>(GetData4() >> 0));
 	}
 	mpt::ustring ToUString() const {
 		return mpt::ustring()
@@ -388,27 +376,13 @@ MPT_CONSTEXPRINLINE bool operator!=(const mpt::UUID & a, const mpt::UUID & b) no
 
 namespace uuid_literals {
 
-MPT_CONSTEXPRINLINE mpt::UUID operator"" _uuid(const char * str, std::size_t len) {
+MPT_CONSTEVAL mpt::UUID operator"" _uuid(const char * str, std::size_t len) {
 	return mpt::UUID::ParseLiteral(str, len);
 }
 
 } // namespace uuid_literals
 
 
-template <typename Tstring>
-inline Tstring uuid_to_string(mpt::UUID uuid) {
-	return mpt::transcode<Tstring>(uuid.ToUString());
-}
-
-template <>
-inline std::string uuid_to_string<std::string>(mpt::UUID uuid) {
-	return uuid.ToAString();
-}
-
-template <typename Tstring, typename T, std::enable_if_t<std::is_same<T, mpt::UUID>::value, bool> = true>
-inline Tstring format_value_default(const T & x) {
-	return mpt::transcode<Tstring>(mpt::uuid_to_string<typename mpt::select_format_string_type<Tstring>::type>(x));
-}
 
 
 } // namespace MPT_INLINE_NS

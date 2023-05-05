@@ -15,12 +15,6 @@
 OPENMPT_NAMESPACE_BEGIN
 
 
-void FileTags::SetEncoder()
-{
-	encoder = Version::Current().GetOpenMPTVersionString();
-}
-
-
 mpt::ustring GetSampleNameFromTags(const FileTags &tags)
 {
 	mpt::ustring result;

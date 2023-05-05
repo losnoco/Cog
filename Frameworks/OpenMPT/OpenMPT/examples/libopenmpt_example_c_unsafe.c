@@ -12,6 +12,10 @@
  * CAUTION: This simple example does no error cheking at all.
  */
 
+#if defined( __MINGW32__ ) && !defined( __MINGW64__ )
+#include <sys/types.h>
+#endif
+
 #include <memory.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -21,7 +25,18 @@
 #include <libopenmpt/libopenmpt.h>
 #include <libopenmpt/libopenmpt_stream_callbacks_file.h>
 
+#if defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-prototypes"
+#endif
 #include <portaudio.h>
+#if defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#pragma GCC diagnostic pop
+#endif
+
+#if defined( __DJGPP__ )
+#include <crt0.h>
+#endif /* __DJGPP__ */
 
 #define BUFFERSIZE 480
 #define SAMPLERATE 48000
@@ -30,6 +45,15 @@ static int16_t left[BUFFERSIZE];
 static int16_t right[BUFFERSIZE];
 static int16_t * const buffers[2] = { left, right };
 
+#if defined( __DJGPP__ )
+/* clang-format off */
+int _crt0_startup_flags = 0
+	| _CRT0_FLAG_NONMOVE_SBRK          /* force interrupt compatible allocation */
+	| _CRT0_DISABLE_SBRK_ADDRESS_WRAP  /* force NT compatible allocation */
+	| _CRT0_FLAG_LOCK_MEMORY           /* lock all code and data at program startup */
+	| 0;
+/* clang-format on */
+#endif /* __DJGPP__ */
 #if ( defined( _WIN32 ) || defined( WIN32 ) ) && ( defined( _UNICODE ) || defined( UNICODE ) )
 #if defined( __clang__ ) && !defined( _MSC_VER )
 int wmain( int argc, wchar_t * argv[] );
@@ -38,6 +62,11 @@ int wmain( int argc, wchar_t * argv[] ) {
 #else
 int main( int argc, char * argv[] ) {
 #endif
+#if defined( __DJGPP__ )
+	/* clang-format off */
+	_crt0_startup_flags &= ~_CRT0_FLAG_LOCK_MEMORY;  /* disable automatic locking for all further memory allocations */
+	/* clang-format on */
+#endif /* __DJGPP__ */
 	FILE * file = 0;
 	openmpt_module * mod = 0;
 	size_t count = 0;
@@ -48,7 +77,7 @@ int main( int argc, char * argv[] ) {
 #else
 	file = fopen( argv[1], "rb" );
 #endif
-	mod = openmpt_module_create2( openmpt_stream_get_file_callbacks(), file, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+	mod = openmpt_module_create2( openmpt_stream_get_file_callbacks2(), file, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	fclose( file );
 	Pa_Initialize();
 	Pa_OpenDefaultStream( &stream, 0, 2, paInt16 | paNonInterleaved, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );

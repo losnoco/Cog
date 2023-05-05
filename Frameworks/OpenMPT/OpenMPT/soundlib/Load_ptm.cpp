@@ -249,17 +249,16 @@ bool CSoundFile::ReadPTM(FileReader &file, ModLoadingFlags loadFlags)
 			if(b & 0x40)
 			{
 				const auto [command, param] = file.ReadArray<uint8, 2>();
-				m.command = command;
 				m.param = param;
 
 				static constexpr EffectCommand effTrans[] = { CMD_GLOBALVOLUME, CMD_RETRIG, CMD_FINEVIBRATO, CMD_NOTESLIDEUP, CMD_NOTESLIDEDOWN, CMD_NOTESLIDEUPRETRIG, CMD_NOTESLIDEDOWNRETRIG, CMD_REVERSEOFFSET };
-				if(m.command < 0x10)
+				if(command < 0x10)
 				{
 					// Beware: Effect letters are as in MOD, but portamento and volume slides behave like in S3M (i.e. fine slides share the same effect letters)
-					ConvertModCommand(m);
-				} else if(m.command < 0x10 + std::size(effTrans))
+					ConvertModCommand(m, command, param);
+				} else if(command < 0x10 + std::size(effTrans))
 				{
-					m.command = effTrans[m.command - 0x10];
+					m.command = effTrans[command - 0x10];
 				} else
 				{
 					m.command = CMD_NONE;
@@ -273,6 +272,8 @@ bool CSoundFile::ReadPTM(FileReader &file, ModLoadingFlags loadFlags)
 					break;
 				case CMD_GLOBALVOLUME:
 					m.param = std::min(m.param, uint8(0x40)) * 2u;
+					break;
+				default:
 					break;
 				}
 			}

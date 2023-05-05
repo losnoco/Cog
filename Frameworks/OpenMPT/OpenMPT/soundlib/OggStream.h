@@ -55,13 +55,13 @@ struct PageInfo
 
 
 // returns false on EOF
-bool AdvanceToPageMagic(FileReader &file);
+bool AdvanceToPageMagic(FileCursor &file);
 
-bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> *pageData = nullptr);
-bool ReadPage(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData);
-bool ReadPage(FileReader &file);
+bool ReadPage(FileCursor &file, PageInfo &pageInfo, std::vector<uint8> *pageData = nullptr);
+bool ReadPage(FileCursor &file, PageInfo &pageInfo, std::vector<uint8> &pageData);
+bool ReadPage(FileCursor &file);
 
-bool ReadPageAndSkipJunk(FileReader &file, PageInfo &pageInfo, std::vector<uint8> &pageData);
+bool ReadPageAndSkipJunk(FileCursor &file, PageInfo &pageInfo, std::vector<uint8> &pageData);
 
 
 bool UpdatePageCRC(PageInfo &pageInfo, const std::vector<uint8> &pageData);

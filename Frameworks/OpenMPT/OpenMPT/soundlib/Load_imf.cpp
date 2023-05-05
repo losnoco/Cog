@@ -255,48 +255,48 @@ static constexpr EffectCommand imfEffects[] =
 	CMD_NONE,            // 0x23 Zxx Reverb - XXX
 };
 
-static void ImportIMFEffect(ModCommand &m)
+static std::pair<EffectCommand, uint8> TranslateIMFEffect(uint8 command, uint8 param)
 {
 	uint8 n;
 	// fix some of them
-	switch(m.command)
+	switch(command)
 	{
 	case 0xE: // fine volslide
 		// hackaround to get almost-right behavior for fine slides (i think!)
-		if(m.param == 0)
+		if(param == 0)
 			/* nothing */;
-		else if(m.param == 0xF0)
-			m.param = 0xEF;
-		else if(m.param == 0x0F)
-			m.param = 0xFE;
-		else if(m.param & 0xF0)
-			m.param |= 0x0F;
+		else if(param == 0xF0)
+			param = 0xEF;
+		else if(param == 0x0F)
+			param = 0xFE;
+		else if(param & 0xF0)
+			param |= 0x0F;
 		else
-			m.param |= 0xF0;
+			param |= 0xF0;
 		break;
 	case 0xF: // set finetune
-		m.param ^= 0x80;
+		param ^= 0x80;
 		break;
 	case 0x14: // fine slide up
 	case 0x15: // fine slide down
 		// this is about as close as we can do...
-		if(m.param >> 4)
-			m.param = 0xF0 | (m.param >> 4);
+		if(param >> 4)
+			param = 0xF0 | (param >> 4);
 		else
-			m.param |= 0xE0;
+			param |= 0xE0;
 		break;
 	case 0x16: // cutoff
-		m.param = (0xFF - m.param) / 2u;
+		param = (0xFF - param) / 2u;
 		break;
 	case 0x17: // cutoff slide + resonance (TODO: cutoff slide is currently not handled)
-		m.param = 0x80 | (m.param & 0x0F);
+		param = 0x80 | (param & 0x0F);
 		break;
 	case 0x1F: // set global volume
-		m.param = mpt::saturate_cast<uint8>(m.param * 2);
+		param = mpt::saturate_cast<uint8>(param * 2);
 		break;
 	case 0x21:
 		n = 0;
-		switch (m.param >> 4)
+		switch(param >> 4)
 		{
 		case 0:
 			/* undefined, but since S0x does nothing in IT anyway, we won't care.
@@ -306,7 +306,7 @@ static void ImportIMFEffect(ModCommand &m)
 		default: // undefined
 		case 0x1: // set filter
 		case 0xF: // invert loop
-			m.command = CMD_NONE;
+			command = 0;
 			break;
 		case 0x3: // glissando
 			n = 0x20;
@@ -326,41 +326,34 @@ static void ImportIMFEffect(ModCommand &m)
 		case 0xC: // note cut
 		case 0xD: // note delay
 			// Apparently, Imago Orpheus doesn't cut samples on tick 0.
-			if(!m.param)
-				m.command = CMD_NONE;
+			if(!param)
+				command = 0;
 			break;
 		case 0xE: // ignore envelope
-			switch(m.param & 0x0F)
+			switch(param & 0x0F)
 			{
 			// All envelopes
 			// Predicament: we can only disable one envelope at a time. Volume is probably most noticeable, so let's go with that.
-			case 0: m.param = 0x77; break;
+			case 0: param = 0x77; break;
 			// Volume
-			case 1: m.param = 0x77; break;
+			case 1: param = 0x77; break;
 			// Panning
-			case 2: m.param = 0x79; break;
+			case 2: param = 0x79; break;
 			// Filter
-			case 3: m.param = 0x7B; break;
+			case 3: param = 0x7B; break;
 			}
 			break;
 		case 0x18: // sample offset
 			// O00 doesn't pick up the previous value
-			if(!m.param)
-				m.command = CMD_NONE;
+			if(!param)
+				command = 0;
 			break;
 		}
 		if(n)
-			m.param = n | (m.param & 0x0F);
+			param = n | (param & 0x0F);
 		break;
 	}
-	m.command = (m.command < std::size(imfEffects)) ? imfEffects[m.command] : CMD_NONE;
-	if(m.command == CMD_VOLUME && m.volcmd == VOLCMD_NONE)
-	{
-		m.volcmd = VOLCMD_VOLUME;
-		m.vol = m.param;
-		m.command = CMD_NONE;
-		m.param = 0;
-	}
+	return {(command < std::size(imfEffects)) ? imfEffects[command] : CMD_NONE, param};
 }
 
 
@@ -561,48 +554,19 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				// Read both effects and figure out what to do with them
 				const auto [e1c, e1d, e2c, e2d] = patternChunk.ReadArray<uint8, 4>();  // Command 1, Data 1, Command 2, Data 2
-
-				if(e1c == 0x0C)
-				{
-					m.vol = std::min(e1d, uint8(0x40));
-					m.volcmd = VOLCMD_VOLUME;
-					m.command = e2c;
-					m.param = e2d;
-				} else if(e2c == 0x0C)
-				{
-					m.vol = std::min(e2d, uint8(0x40));
-					m.volcmd = VOLCMD_VOLUME;
-					m.command = e1c;
-					m.param = e1d;
-				} else if(e1c == 0x0A)
-				{
-					m.vol = e1d * 64 / 255;
-					m.volcmd = VOLCMD_PANNING;
-					m.command = e2c;
-					m.param = e2d;
-				} else if(e2c == 0x0A)
-				{
-					m.vol = e2d * 64 / 255;
-					m.volcmd = VOLCMD_PANNING;
-					m.command = e1c;
-					m.param = e1d;
-				} else
-				{
-					/* check if one of the effects is a 'global' effect
-					-- if so, put it in some unused channel instead.
-					otherwise pick the most important effect. */
-					m.command = e2c;
-					m.param = e2d;
-				}
+				const auto [command1, param1] = TranslateIMFEffect(e1c, e1d);
+				const auto [command2, param2] = TranslateIMFEffect(e2c, e2d);
+				m.FillInTwoCommands(command1, param1, command2, param2);
 			} else if(mask & 0xC0)
 			{
-				// There's one effect, just stick it in the effect column
-				const auto [command, param] = patternChunk.ReadArray<uint8, 2>();
-				m.command = command;
-				m.param = param;
+				// There's one effect, just stick it in the effect column (unless it's a volume command)
+				const auto [e1c, e1d] = patternChunk.ReadArray<uint8, 2>();  // Command 1, Data 1, Command 2, Data 2
+				const auto [command, param] = TranslateIMFEffect(e1c, e1d);
+				if(command == CMD_VOLUME)
+					m.SetVolumeCommand(VOLCMD_VOLUME, param);
+				else
+					m.SetEffectCommand(command, param);
 			}
-			if(m.command)
-				ImportIMFEffect(m);
 			if(ignoreChannels[channel] && m.IsGlobalCommand())
 				m.command = CMD_NONE;
 		}

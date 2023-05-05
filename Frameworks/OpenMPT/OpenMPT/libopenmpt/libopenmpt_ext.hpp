@@ -34,24 +34,24 @@ namespace openmpt {
 
 class module_ext_impl;
 
-class LIBOPENMPT_CXX_API module_ext : public module {
+class LIBOPENMPT_CXX_API_CLASS module_ext : public module {
 	
 private:
 	module_ext_impl * ext_impl;
 private:
 	// non-copyable
-	module_ext( const module_ext & );
-	void operator = ( const module_ext & );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const module_ext & );
+	LIBOPENMPT_CXX_API_MEMBER void operator = ( const module_ext & );
 public:
-	module_ext( std::istream & stream, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	module_ext( const std::vector<std::byte> & data, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	module_ext( const std::vector<std::uint8_t> & data, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	module_ext( const std::vector<char> & data, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	module_ext( const std::byte * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	module_ext( const std::uint8_t * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	module_ext( const char * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	module_ext( const void * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
-	virtual ~module_ext();
+	LIBOPENMPT_CXX_API_MEMBER module_ext( std::istream & stream, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const std::vector<std::byte> & data, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const std::vector<std::uint8_t> & data, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const std::vector<char> & data, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const std::byte * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const std::uint8_t * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const char * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER module_ext( const void * data, std::size_t size, std::ostream & log = std::clog, const std::map< std::string, std::string > & ctls = detail::initial_ctls_map() );
+	LIBOPENMPT_CXX_API_MEMBER virtual ~module_ext();
 
 public:
 
@@ -73,7 +73,7 @@ public:
 	  \param interface_id The name of the extension interface to retrieve.
 	  \return The interface object. This may be a nullptr if the extension was not found.
 	*/
-	void * get_interface( const std::string & interface_id );
+	LIBOPENMPT_CXX_API_MEMBER void * get_interface( const std::string & interface_id );
 
 }; // class module_ext
 
@@ -170,8 +170,9 @@ class interactive {
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the tempo is outside the specified range.
 	  \remarks The tempo may be reset by pattern commands at any time. Use openmpt::ext:interactive::set_tempo_factor to apply a tempo factor that is independent of pattern commands.
 	  \sa openmpt::module::get_current_tempo
+	  \deprecated Please use openmpt::ext::interactive3::set_current_tempo2().
 	*/
-	virtual void set_current_tempo( std::int32_t tempo ) = 0;
+	LIBOPENMPT_ATTR_DEPRECATED virtual void set_current_tempo( std::int32_t tempo ) = 0;
 
 	//! Set the current module tempo factor without affecting playback pitch
 	/*!
@@ -383,7 +384,31 @@ class interactive2 {
 	*/
 	virtual double get_note_finetune( int32_t channel ) = 0;
 
-}; // class interactive
+}; // class interactive2
+
+
+#ifndef LIBOPENMPT_EXT_INTERFACE_INTERACTIVE3
+#define LIBOPENMPT_EXT_INTERFACE_INTERACTIVE3
+#endif
+
+LIBOPENMPT_DECLARE_EXT_CXX_INTERFACE(interactive3)
+
+class interactive3 {
+
+	LIBOPENMPT_EXT_CXX_INTERFACE(interactive3)
+
+	//! Set the current module tempo
+	/*!
+	  \param tempo The new tempo in range [32, 512]. The exact meaning of the value depends on the tempo mode used by the module.
+	  \throws openmpt::exception Throws an exception derived from openmpt::exception if the tempo is outside the specified range.
+	  \remarks The tempo may be reset by pattern commands at any time. Use openmpt::ext:interactive::set_tempo_factor to apply a tempo factor that is independent of pattern commands.
+	  \sa openmpt::module::get_current_tempo2
+		\since 0.7.0
+	*/
+	virtual void set_current_tempo2( double tempo ) = 0;
+
+}; // class interactive3
+
 
 
 /* add stuff here */

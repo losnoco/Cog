@@ -187,7 +187,7 @@ bool UnpackMMCMP(std::vector<ContainerItem> &containerItems, FileReader &file, C
 
 		if(blkPos + sizeof(MMCMPBlock) + blk.sub_blk * sizeof(MMCMPSubBlock) >= file.GetLength())
 			return false;
-		uint32 memPos = blkPos + sizeof(MMCMPBlock) + blk.sub_blk * sizeof(MMCMPSubBlock);
+		uint32 memPos = blkPos + static_cast<uint32>(sizeof(MMCMPBlock)) + blk.sub_blk * static_cast<uint32>(sizeof(MMCMPSubBlock));
 
 #ifdef MMCMP_LOG
 		MPT_LOG_GLOBAL(LogDebug, "MMCMP", MPT_UFORMAT("block {}: flags={} sub_blocks={}")(nBlock, mpt::ufmt::HEX0<4>(static_cast<uint16>(blk.flags)), static_cast<uint16>(blk.sub_blk)));

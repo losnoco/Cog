@@ -74,7 +74,15 @@ CTuning::CTuning()
 {
 	m_RatioTable.clear();
 	m_NoteMin = s_NoteMinDefault;
+#if MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(13, 1, 0)
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109455
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
 	m_RatioTable.resize(s_RatioTableSizeDefault, 1);
+#if MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(13, 1, 0)
+#pragma GCC diagnostic pop
+#endif
 	m_GroupSize = 0;
 	m_GroupRatio = 0;
 	m_RatioTableFine.clear();
@@ -304,7 +312,7 @@ RATIOTYPE CTuning::GetRatio(const NOTEINDEXTYPE baseNote, const STEPINDEXTYPE ba
 	} else
 	{
 		// Geometric finestepping
-		fineRatio = std::pow(GetRatio(note + 1) / GetRatio(note), static_cast<RATIOTYPE>(fineStep) / (fineStepCount + 1));
+		fineRatio = std::pow(GetRatio(note + 1) / GetRatio(note), static_cast<RATIOTYPE>(fineStep) / static_cast<RATIOTYPE>(fineStepCount + 1));
 	}
 	return m_RatioTable[note - m_NoteMin] * fineRatio;
 }
@@ -368,7 +376,7 @@ void CTuning::UpdateFineStepTable()
 		}
 		m_RatioTableFine.resize(m_FineStepCount);
 		const RATIOTYPE q = GetRatio(GetNoteRange().first + 1) / GetRatio(GetNoteRange().first);
-		const RATIOTYPE rFineStep = std::pow(q, static_cast<RATIOTYPE>(1)/(m_FineStepCount+1));
+		const RATIOTYPE rFineStep = std::pow(q, static_cast<RATIOTYPE>(1) / static_cast<RATIOTYPE>(m_FineStepCount + 1));
 		for(USTEPINDEXTYPE i = 1; i<=m_FineStepCount; i++)
 			m_RatioTableFine[i-1] = std::pow(rFineStep, static_cast<RATIOTYPE>(i));
 		return;
@@ -390,8 +398,8 @@ void CTuning::UpdateFineStepTable()
 			const NOTEINDEXTYPE startnote = GetRefNote(GetNoteRange().first);
 			for(UNOTEINDEXTYPE i = 0; i<p; i++)
 			{
-				const NOTEINDEXTYPE refnote = GetRefNote(startnote+i);
-				const RATIOTYPE rFineStep = std::pow(GetRatio(refnote+1) / GetRatio(refnote), static_cast<RATIOTYPE>(1)/(m_FineStepCount+1));
+				const NOTEINDEXTYPE refnote = GetRefNote(static_cast<NOTEINDEXTYPE>(startnote + i));
+				const RATIOTYPE rFineStep = std::pow(GetRatio(refnote+1) / GetRatio(refnote), static_cast<RATIOTYPE>(1) / static_cast<RATIOTYPE>(m_FineStepCount + 1));
 				for(UNOTEINDEXTYPE j = 1; j<=m_FineStepCount; j++)
 				{
 					m_RatioTableFine[m_FineStepCount * refnote + (j-1)] = std::pow(rFineStep, static_cast<RATIOTYPE>(j));
@@ -501,7 +509,7 @@ SerializationResult CTuning::InitDeserialize(std::istream &iStrm, mpt::Charset d
 	}
 
 	// If reader status is ok and m_NoteMin is somewhat reasonable, process data.
-	if(!((ssb.GetStatus() & srlztn::SNT_FAILURE) == 0 && m_NoteMin >= -300 && m_NoteMin <= 300))
+	if(ssb.HasFailed() || (m_NoteMin < -300) || (m_NoteMin > 300))
 	{
 		return SerializationResult::Failure;
 	}
@@ -576,7 +584,7 @@ SerializationResult CTuning::InitDeserializeOLD(std::istream &inStrm, mpt::Chars
 	if(!inStrm.good())
 		return SerializationResult::Failure;
 
-	const std::streamoff startPos = inStrm.tellg();
+	const std::streamoff startPos = static_cast<std::streamoff>(inStrm.tellg());
 
 	//First checking is there expected begin sequence.
 	char begin[8];
@@ -585,7 +593,7 @@ SerializationResult CTuning::InitDeserializeOLD(std::istream &inStrm, mpt::Chars
 	if(std::memcmp(begin, "CTRTI_B.", 8))
 	{
 		//Returning stream position if beginmarker was not found.
-		inStrm.seekg(startPos);
+		inStrm.seekg(startPos, std::ios::beg);
 		return SerializationResult::Failure;
 	}
 
@@ -757,10 +765,9 @@ SerializationResult CTuning::InitDeserializeOLD(std::istream &inStrm, mpt::Chars
 		return SerializationResult::Failure;
 	}
 
-	char end[8];
-	MemsetZero(end);
-	inStrm.read(reinterpret_cast<char*>(&end), sizeof(end));
-	if(std::memcmp(end, "CTRTI_E.", 8))
+	std::array<char, 8> end = {};
+	mpt::IO::Read(inStrm, end);
+	if(std::memcmp(end.data(), "CTRTI_E.", 8))
 	{
 		return SerializationResult::Failure;
 	}
@@ -848,7 +855,7 @@ Tuning::SerializationResult CTuning::Serialize(std::ostream& outStrm) const
 
 	ssb.FinishWrite();
 
-	return ((ssb.GetStatus() & srlztn::SNT_FAILURE) != 0) ? Tuning::SerializationResult::Failure : Tuning::SerializationResult::Success;
+	return ssb.HasFailed() ? Tuning::SerializationResult::Failure : Tuning::SerializationResult::Success;
 }
 
 
@@ -856,7 +863,7 @@ Tuning::SerializationResult CTuning::Serialize(std::ostream& outStrm) const
 
 bool CTuning::WriteSCL(std::ostream &f, const mpt::PathString &filename) const
 {
-	mpt::IO::WriteTextCRLF(f, MPT_AFORMAT("! {}")(mpt::ToCharset(mpt::Charset::ISO8859_1, (filename.GetFileName() + filename.GetFileExt()).ToUnicode())));
+	mpt::IO::WriteTextCRLF(f, MPT_AFORMAT("! {}")(mpt::ToCharset(mpt::Charset::ISO8859_1, (filename.GetFilenameBase() + filename.GetFilenameExtension()).ToUnicode())));
 	mpt::IO::WriteTextCRLF(f, "!");
 	std::string name = mpt::ToCharset(mpt::Charset::ISO8859_1, GetName());
 	for(auto & c : name) { if(static_cast<uint8>(c) < 32) c = ' '; } // remove control characters

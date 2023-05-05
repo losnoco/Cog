@@ -13,7 +13,7 @@ AR  = ar
 endif
 
 CXXFLAGS_STDCXX = -std=c++17
-CFLAGS_STDC = -std=c99
+CFLAGS_STDC = -std=c17
 CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)
 

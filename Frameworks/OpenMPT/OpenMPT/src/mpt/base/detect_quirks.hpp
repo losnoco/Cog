@@ -6,13 +6,39 @@
 
 
 #include "mpt/base/detect_compiler.hpp"
+#include "mpt/base/detect_libc.hpp"
 #include "mpt/base/detect_libcxx.hpp"
 #include "mpt/base/detect_os.hpp"
+
+#if MPT_CXX_AT_LEAST(20)
+#include <version>
+#else // !C++20
+#include <array>
+#endif // C++20
 
 
 
 #if MPT_COMPILER_MSVC
+#if !defined(_MSVC_TRADITIONAL)
+#define MPT_COMPILER_QUIRK_MSVC_OLD_PREPROCESSOR
+#else
+#if _MSVC_TRADITIONAL
+#define MPT_COMPILER_QUIRK_MSVC_OLD_PREPROCESSOR
+#endif
+#endif
+#endif
+
+
+
+#if MPT_GCC_BEFORE(9, 1, 0)
+#define MPT_COMPILER_QUIRK_NO_CONSTEXPR_THROW
+#endif
+
+
+
+#if MPT_CXX_BEFORE(20) && MPT_COMPILER_MSVC
 // Compiler has multiplication/division semantics when shifting signed integers.
+// In C++20, this behaviour is required by the standard.
 #define MPT_COMPILER_SHIFT_SIGNED 1
 #endif
 
@@ -22,8 +48,8 @@
 
 
 
-// This should really be based on __STDCPP_THREADS__, but that is not defined by
-// GCC or clang. Stupid.
+// This should really be based on __STDCPP_THREADS__,
+// but that is not defined consistently by GCC or clang. Stupid.
 // Just assume multithreaded and disable for platforms we know are
 // singlethreaded later on.
 #define MPT_PLATFORM_MULTITHREADED 1
@@ -40,8 +66,24 @@
 
 
 
+#if MPT_MSVC_BEFORE(2019, 0) || MPT_GCC_BEFORE(8, 1, 0)
+#define MPT_COMPILER_QUIRK_NO_AUTO_TEMPLATE_ARGUMENT
+#endif
+
+
+
+#if MPT_GCC_BEFORE(11, 1, 0)
+#define MPT_COMPILER_QUIRK_NO_STDCPP_THREADS
+#elif MPT_CLANG_BEFORE(12, 0, 0)
+#define MPT_COMPILER_QUIRK_NO_STDCPP_THREADS
+#elif (defined(__MINGW32__) || defined(__MINGW64__)) && MPT_LIBCXX_GNU && defined(_GLIBCXX_HAS_GTHREADS) && !defined(__STDCPP_THREADS__)
+#define MPT_COMPILER_QUIRK_NO_STDCPP_THREADS
+#endif
+
+
+
 #if MPT_OS_WINDOWS && MPT_COMPILER_MSVC
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600) // _WIN32_WINNT_VISTA
+#if MPT_WINNT_AT_LEAST(MPT_WIN_VISTA)
 #define MPT_COMPILER_QUIRK_COMPLEX_STD_MUTEX
 #endif
 #endif
@@ -60,8 +102,29 @@
 
 
 
-#if MPT_OS_DJGPP
+#if MPT_LIBCXX_GNU
+#if !defined(_GLIBCXX_USE_WCHAR_T)
+#ifndef MPT_COMPILER_QUIRK_NO_WCHAR
 #define MPT_COMPILER_QUIRK_NO_WCHAR
+#endif
+#endif
+#endif
+#if defined(__MINGW32__) && !defined(__MINGW64__) && (MPT_OS_WINDOWS_WIN9X || MPT_OS_WINDOWS_WIN32)
+#ifndef MPT_COMPILER_QUIRK_NO_WCHAR
+#define MPT_COMPILER_QUIRK_NO_WCHAR
+#endif
+#endif
+
+
+
+#if MPT_LIBCXX_LLVM_BEFORE(14000)
+#define MPT_COMPILER_QUIRK_NO_STRING_VIEW_ITERATOR_CTOR
+#endif
+
+
+
+#if MPT_LIBCXX_GNU_BEFORE(9)
+#define MPT_COMPILER_QUIRK_NO_FILESYSTEM
 #endif
 
 
@@ -72,6 +135,42 @@
 #endif
 
 
+
+#if MPT_COMPILER_GCC || MPT_COMPILER_CLANG
+
+#if defined(__FAST_MATH__)
+#define MPT_COMPILER_QUIRK_FASTMATH 1
+#endif
+#if defined(__FINITE_MATH_ONLY__)
+#if (__FINITE_MATH_ONLY__ >= 1)
+#define MPT_COMPILER_QUIRK_FINITEMATH 1
+#endif
+#endif
+
+#elif MPT_COMPILER_MSVC
+
+#if defined(_M_FP_FAST)
+#define MPT_COMPILER_QUIRK_FASTMATH   1
+#define MPT_COMPILER_QUIRK_FINITEMATH 1
+#endif
+
+#endif
+
+#ifndef MPT_COMPILER_QUIRK_FASTMATH
+#define MPT_COMPILER_QUIRK_FASTMATH 0
+#endif
+
+#ifndef MPT_COMPILER_QUIRK_FINITEMATH
+#define MPT_COMPILER_QUIRK_FINITEMATH 0
+#endif
+
+
+
+#if MPT_COMPILER_GCC && !defined(__arm__)
+#if defined(_SOFT_FLOAT)
+#define MPT_COMPILER_QUIRK_FLOAT_EMULATED 1
+#endif
+#endif
 
 #if defined(__arm__)
 
@@ -126,7 +225,48 @@
 
 
 
-#if MPT_OS_MACOSX_OR_IOS
+#if MPT_LIBC_DJGPP
+#define MPT_LIBC_QUIRK_NO_FENV
+#endif
+
+
+
+#if MPT_CXX_AT_LEAST(20)
+#if MPT_LIBCXX_MS && MPT_OS_WINDOWS
+#if MPT_WIN_BEFORE(MPT_WIN_10_1903)
+// std::chrono timezones require Windows 10 1903 with VS2022 as of 2022-01-22.
+// See <https://github.com/microsoft/STL/issues/1911> and
+// <https://github.com/microsoft/STL/issues/2163>.
+#define MPT_LIBCXX_QUIRK_NO_CHRONO_DATE
+#endif
+#endif
+#if MPT_LIBCXX_GNU_BEFORE(11)
+#define MPT_LIBCXX_QUIRK_NO_CHRONO_DATE
+#elif MPT_LIBCXX_LLVM_BEFORE(7000)
+#define MPT_LIBCXX_QUIRK_NO_CHRONO_DATE
+#endif
+#if MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2022, 2) || !MPT_COMPILER_MSVC)
+#elif MPT_LIBCXX_GNU
+#define MPT_LIBCXX_QUIRK_NO_CHRONO_DATE_PARSE
+#endif
+#if MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2022, 6) || !MPT_COMPILER_MSVC)
+// Causes massive memory leaks.
+// See
+// <https://developercommunity.visualstudio.com/t/stdchronoget-tzdb-list-memory-leak/1644641>
+// / <https://github.com/microsoft/STL/issues/2504>.
+#define MPT_LIBCXX_QUIRK_CHRONO_TZ_MEMLEAK
+#endif
+#endif
+
+
+
+#if MPT_LIBCXX_GNU_BEFORE(8)
+#define MPT_LIBCXX_QUIRK_NO_TO_CHARS_INT
+#elif MPT_LIBCXX_LLVM_BEFORE(7000)
+#define MPT_LIBCXX_QUIRK_NO_TO_CHARS_INT
+#elif MPT_OS_ANDROID && MPT_LIBCXX_LLVM_BEFORE(8000)
+#define MPT_LIBCXX_QUIRK_NO_TO_CHARS_INT
+#elif MPT_OS_MACOSX_OR_IOS
 #if defined(TARGET_OS_OSX)
 #if TARGET_OS_OSX
 #if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15)
@@ -138,8 +278,14 @@
 
 
 
-#if (MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2019, 4) || !MPT_COMPILER_MSVC)) || (MPT_LIBCXX_GNU && (MPT_GCC_BEFORE(11, 0, 0) || !MPT_COMPILER_GCC)) || MPT_LIBCXX_LLVM || MPT_LIBCXX_GENERIC
+#if (MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2019, 4) || !MPT_COMPILER_MSVC)) || MPT_LIBCXX_GNU_BEFORE(11) || MPT_LIBCXX_LLVM || MPT_LIBCXX_GENERIC
 #define MPT_LIBCXX_QUIRK_NO_TO_CHARS_FLOAT
+#endif
+
+
+
+#if MPT_OS_ANDROID && MPT_LIBCXX_LLVM_BEFORE(7000)
+#define MPT_LIBCXX_QUIRK_NO_HAS_UNIQUE_OBJECT_REPRESENTATIONS
 #endif
 
 

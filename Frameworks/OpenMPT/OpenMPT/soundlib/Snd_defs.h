@@ -105,15 +105,16 @@ enum MODTYPE
 DECLARE_FLAGSET(MODTYPE)
 
 
-enum MODCONTAINERTYPE
+enum class ModContainerType
 {
-	MOD_CONTAINERTYPE_NONE = 0x0,
-	MOD_CONTAINERTYPE_UMX  = 0x3,
-	MOD_CONTAINERTYPE_XPK  = 0x4,
-	MOD_CONTAINERTYPE_PP20 = 0x5,
-	MOD_CONTAINERTYPE_MMCMP= 0x6,
-	MOD_CONTAINERTYPE_WAV  = 0x7, // WAV as module
-	MOD_CONTAINERTYPE_UAX  = 0x8, // Unreal sample set as module
+	None,
+	UMX,
+	XPK,
+	PP20,
+	MMCMP,
+	WAV,      // WAV as module
+	UAX,      // Unreal sample set as module
+	Generic,  // Generic CUnarchiver container
 };
 
 
@@ -180,9 +181,12 @@ DECLARE_FLAGSET(EnvelopeFlags)
 
 
 // Envelope value boundaries
-#define ENVELOPE_MIN   0   // Vertical min value of a point
-#define ENVELOPE_MID   32  // Vertical middle line
-#define ENVELOPE_MAX   64  // Vertical max value of a point
+enum : uint8
+{
+	ENVELOPE_MIN = 0,   // Vertical min value of a point
+	ENVELOPE_MID = 32,  // Vertical middle line
+	ENVELOPE_MAX = 64,  // Vertical max value of a point
+};
 #define MAX_ENVPOINTS  240 // Maximum length of each instrument envelope
 
 
@@ -547,6 +551,7 @@ enum PlayBehaviour
 	kPluginIgnoreTonePortamento,    // Use old tone portamento behaviour for plugins (XM: no plugin pitch slides with commands E1x/E2x/X1x/X2x)
 	kST3TonePortaWithAdlibNote,     // Adlib note next to tone portamento is delayed until next row
 	kITResetFilterOnPortaSmpChange, // Filter is reset on portamento if sample is swapped
+	kITInitialNoteMemory,           // Initial "last note memory" for each channel is C-0 and not "no note"
 
 	// Add new play behaviours here.
 
@@ -585,7 +590,7 @@ public:
 	MPT_CONSTEXPRINLINE SamplePosition(int32 intPart, uint32 fractPart) : v((static_cast<value_t>(intPart) * (1ll << 32)) | fractPart) { }
 	static SamplePosition Ratio(uint32 dividend, uint32 divisor) { return SamplePosition((static_cast<int64>(dividend) << 32) / divisor); }
 	static SamplePosition FromDouble(double pos) { return SamplePosition(static_cast<value_t>(pos * 4294967296.0)); }
-	double ToDouble() const { return v / 4294967296.0; }
+	double ToDouble() const { return static_cast<double>(v) / 4294967296.0; }
 
 	// Set integer and fractional part
 	MPT_CONSTEXPRINLINE SamplePosition &Set(int32 intPart, uint32 fractPart = 0) { v = (static_cast<int64>(intPart) << 32) | fractPart; return *this; }
@@ -647,7 +652,7 @@ public:
 // This is mostly for the clarity of stored values and to be able to represent any value .0000 to .9999 properly.
 // For easier debugging, use the Debugger Visualizers available in build/vs/debug/
 // to easily display the stored values.
-template<size_t FFact, typename T>
+template <std::size_t FFact, typename T>
 struct FPInt
 {
 protected:
@@ -655,7 +660,7 @@ protected:
 	MPT_CONSTEXPRINLINE FPInt(T rawValue) : v(rawValue) { }
 
 public:
-	enum : size_t { fractFact = FFact };
+	enum : T { fractFact = static_cast<T>(FFact) };
 	using store_t = T;
 
 	MPT_CONSTEXPRINLINE FPInt() : v(0) { }

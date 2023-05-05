@@ -345,7 +345,7 @@ template<typename TIns, typename PropType>
 static bool IsPropertyNeeded(const TIns &Instruments, PropType ModInstrument::*Prop)
 {
 	const ModInstrument defaultIns;
-	for(const auto &ins : Instruments)
+	for(const auto ins : Instruments)
 	{
 		if(ins != nullptr && defaultIns.*Prop != ins->*Prop)
 			return true;
@@ -389,11 +389,28 @@ void CSoundFile::SaveExtendedInstrumentProperties(INSTRUMENTINDEX numInstruments
 	if(!(GetType() & MOD_TYPE_XM))
 	{
 		// XM instrument headers already stores full-precision fade-out
-		WritePropertyIfNeeded(*this, &ModInstrument::nFadeOut, MagicBE("FO.."), sizeof(ModInstrument::nFadeOut), f, numInstruments);
+		bool writeFadeOut = false, writePan = false, writePWD = false;
+		int32 prevPWD = int32_min;
+		for(const auto ins : Instruments)
+		{
+			if(ins == nullptr)
+				continue;
+			if((ins->nFadeOut % 32u) || ins->nFadeOut > 8192)
+				writeFadeOut = true;
+			if(ins->dwFlags[INS_SETPANNING] && (ins->nPan % 4u))
+				writePan = true;
+			if((prevPWD != int32_min && ins->midiPWD != prevPWD) || (ins->midiPWD < 0))
+				writePWD = true;
+			prevPWD = ins->midiPWD;
+		}
+		if(writeFadeOut)
+			WriteInstrumentPropertyForAllInstruments(MagicBE("FO.."), sizeof(ModInstrument::nFadeOut), f, numInstruments);
 		// XM instrument headers already have support for this
-		WritePropertyIfNeeded(*this, &ModInstrument::midiPWD, MagicBE("MPWD"), sizeof(ModInstrument::midiPWD), f, numInstruments);
+		if(writePWD)
+			WriteInstrumentPropertyForAllInstruments(MagicBE("MPWD"), sizeof(ModInstrument::midiPWD), f, numInstruments);
 		// We never supported these as hacks in XM (luckily!)
-		WritePropertyIfNeeded(*this, &ModInstrument::nPan, MagicBE("P..."), sizeof(ModInstrument::nPan), f, numInstruments);
+		if(writePan)
+			WriteInstrumentPropertyForAllInstruments(MagicBE("P..."), sizeof(ModInstrument::nPan), f, numInstruments);
 		WritePropertyIfNeeded(*this, &ModInstrument::nCutSwing, MagicBE("CS.."), sizeof(ModInstrument::nCutSwing), f, numInstruments);
 		WritePropertyIfNeeded(*this, &ModInstrument::nResSwing, MagicBE("RS.."), sizeof(ModInstrument::nResSwing), f, numInstruments);
 		WritePropertyIfNeeded(*this, &ModInstrument::filterMode, MagicBE("FM.."), sizeof(ModInstrument::filterMode), f, numInstruments);

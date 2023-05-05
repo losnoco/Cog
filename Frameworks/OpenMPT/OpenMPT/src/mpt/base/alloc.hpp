@@ -123,7 +123,7 @@ struct buffer_cast_impl {
 
 // casts between vector<->string of byte-castable types
 template <typename Tdst, typename Tsrc>
-inline Tdst buffer_cast(Tsrc src) {
+inline Tdst buffer_cast(const Tsrc & src) {
 	return buffer_cast_impl<Tdst, Tsrc>()(src);
 }
 

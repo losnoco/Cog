@@ -482,25 +482,10 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				m_dwLastSavedWithVersion = Version(mptVersion);
 			} else if(fileHeader.cmwt == 0x888 || fileHeader.cwtv == 0x888)
 			{
-				// OpenMPT 1.17.02.26 (r122) to 1.18 (raped IT format)
+				// OpenMPT 1.17.02.26 (r122) to 1.18
 				// Exact version number will be determined later.
 				interpretModPlugMade = true;
 				m_dwLastSavedWithVersion = MPT_V("1.17.00.00");
-			} else if(fileHeader.cwtv == 0x0217 && fileHeader.cmwt == 0x0200 && fileHeader.reserved == 0)
-			{
-				if(memchr(fileHeader.chnpan, 0xFF, sizeof(fileHeader.chnpan)) != nullptr)
-				{
-					// ModPlug Tracker 1.16 (semi-raped IT format) or BeRoTracker (will be determined later)
-					m_dwLastSavedWithVersion = MPT_V("1.16.00.00");
-					madeWithTracker = U_("ModPlug Tracker 1.09 - 1.16");
-				} else
-				{
-					// OpenMPT 1.17 disguised as this in compatible mode,
-					// but never writes 0xFF in the pan map for unused channels (which is an invalid value).
-					m_dwLastSavedWithVersion = MPT_V("1.17.00.00");
-					madeWithTracker = U_("OpenMPT 1.17 (compatibility export)");
-				}
-				interpretModPlugMade = true;
 			} else if(fileHeader.cwtv == 0x0214 && fileHeader.cmwt == 0x0202 && fileHeader.reserved == 0)
 			{
 				// ModPlug Tracker b3.3 - 1.09, instruments 557 bytes apart
@@ -708,11 +693,14 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 		m_MidiCfg.ClearZxxMacros();
 	}
 
+	bool hasModPlugExtensions = false;
+
 	// Read pattern names: "PNAM"
 	FileReader patNames;
 	if(file.ReadMagic("PNAM"))
 	{
 		patNames = file.ReadChunk(file.ReadUint32LE());
+		hasModPlugExtensions = true;
 	}
 
 	m_nChannels = 1;
@@ -722,6 +710,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 		FileReader chnNames = file.ReadChunk(file.ReadUint32LE());
 		const CHANNELINDEX readChns = std::min(MAX_BASECHANNELS, static_cast<CHANNELINDEX>(chnNames.GetLength() / MAX_CHANNELNAME));
 		m_nChannels = readChns;
+		hasModPlugExtensions = true;
 
 		for(CHANNELINDEX i = 0; i < readChns; i++)
 		{
@@ -731,7 +720,29 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Read mix plugins information
 	FileReader pluginChunk = file.ReadChunk((minPtr >= file.GetPosition()) ? minPtr - file.GetPosition() : file.BytesLeft());
-	const bool isBeRoTracker = LoadMixPlugins(pluginChunk);
+	const auto [hasPluginChunks, isBeRoTracker] = LoadMixPlugins(pluginChunk);
+	if(hasPluginChunks)
+		hasModPlugExtensions = true;
+
+	if(fileHeader.cwtv == 0x0217 && fileHeader.cmwt == 0x0200 && fileHeader.reserved == 0 && !isBeRoTracker)
+	{
+		if(hasModPlugExtensions
+			|| (!Order().empty() && Order().back() == Order.GetInvalidPatIndex())
+			|| memchr(fileHeader.chnpan, 0xFF, sizeof(fileHeader.chnpan)) != nullptr)
+		{
+			m_dwLastSavedWithVersion = MPT_V("1.16");
+			madeWithTracker = U_("ModPlug Tracker 1.09 - 1.16");
+		} else
+		{
+			// OpenMPT 1.17 disguised as this in compatible mode,
+			// but never writes 0xFF in the pan map for unused channels (which is an invalid value).
+			// It also doesn't write a final "---" pattern in the order list.
+			// Could also be original ModPlug Tracker though if all 64 channels and no ModPlug extensions are used.
+			m_dwLastSavedWithVersion = MPT_V("1.17");
+			madeWithTracker = U_("OpenMPT 1.17 (compatibility export)");
+		}
+		interpretModPlugMade = true;
+	}
 
 	// Read Song Message
 	if((fileHeader.special & ITFileHeader::embedSongMessage) && fileHeader.msglength > 0 && file.Seek(fileHeader.msgoffset))
@@ -775,7 +786,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Reading Samples
 	m_nSamples = std::min(static_cast<SAMPLEINDEX>(fileHeader.smpnum), static_cast<SAMPLEINDEX>(MAX_SAMPLES - 1));
-	bool lastSampleCompressed = false;
+	bool lastSampleCompressed = false, anyADPCM = false;
 	for(SAMPLEINDEX i = 0; i < GetNumSamples(); i++)
 	{
 		ITSample sampleHeader;
@@ -817,6 +828,9 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 					// There is some XM to IT converter (don't know which one) and it identifies as IT 2.04.
 					// The only safe way to distinguish it from an IT-saved file are the unsigned samples.
 					possibleXMconversion = true;
+				} else if(sampleIO.GetEncoding() == SampleIO::ADPCM)
+				{
+					anyADPCM = true;
 				}
 			} else
 			{
@@ -975,14 +989,15 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	// Load instrument and song extensions.
-	interpretModPlugMade |= LoadExtendedInstrumentProperties(file);
+	const bool hasExtendedInstrumentProperties = LoadExtendedInstrumentProperties(file);
+	interpretModPlugMade |= hasExtendedInstrumentProperties;
 	if(interpretModPlugMade && !isBeRoTracker)
 	{
 		m_playBehaviour.reset();
 		m_nMixLevels = MixLevels::Original;
 	}
 	// Need to do this before reading the patterns because m_nChannels might be modified by LoadExtendedSongProperties. *sigh*
-	LoadExtendedSongProperties(file, false, &interpretModPlugMade);
+	const bool hasExtendedSongProperties = LoadExtendedSongProperties(file, false, &interpretModPlugMade);
 
 	// Reading Patterns
 	Patterns.ResizeArray(numPats);
@@ -1014,7 +1029,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 		CopyPatternName(Patterns[pat], patNames);
 
 		std::vector<uint8> chnMask(GetNumChannels());
-		std::vector<ModCommand> lastValue(GetNumChannels(), ModCommand::Empty());
+		std::vector<ModCommand> lastValue(GetNumChannels(), ModCommand{});
 
 		auto patData = Patterns[pat].begin();
 		ROWINDEX row = 0;
@@ -1038,7 +1053,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			if(ch >= chnMask.size())
 			{
 				chnMask.resize(ch + 1, 0);
-				lastValue.resize(ch + 1, ModCommand::Empty());
+				lastValue.resize(ch + 1, ModCommand{});
 				MPT_ASSERT(chnMask.size() <= GetNumChannels());
 			}
 
@@ -1048,7 +1063,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			// Now we grab the data for this particular row/channel.
-			ModCommand dummy = ModCommand::Empty();
+			ModCommand dummy{};
 			ModCommand &m = ch < m_nChannels ? patData[ch] : dummy;
 
 			if(chnMask[ch] & 0x10)
@@ -1128,9 +1143,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			if(chnMask[ch] & 8)
 			{
 				const auto [command, param] = patternData.ReadArray<uint8, 2>();
-				m.command = command;
-				m.param = param;
-				S3MConvert(m, true);
+				S3MConvert(m, command, param, true);
 				// In some IT-compatible trackers, it is possible to input a parameter without a command.
 				// In this case, we still need to update the last value memory. OpenMPT didn't do this until v1.25.01.07.
 				// Example: ckbounce.it
@@ -1150,7 +1163,12 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 	if(m_dwLastSavedWithVersion && madeWithTracker.empty())
 	{
 		madeWithTracker = U_("OpenMPT ") + mpt::ufmt::val(m_dwLastSavedWithVersion);
-		if(memcmp(&fileHeader.reserved, "OMPT", 4) && (fileHeader.cwtv & 0xF000) == 0x5000)
+		
+		bool isCompatExport = memcmp(&fileHeader.reserved, "OMPT", 4) && (fileHeader.cwtv & 0xF000) == 0x5000;
+		if(m_dwLastSavedWithVersion == MPT_V("1.17.00.00"))
+			isCompatExport = !hasExtendedInstrumentProperties && !hasExtendedSongProperties && !hasModPlugExtensions;
+
+		if(isCompatExport)
 		{
 			madeWithTracker += U_(" (compatibility export)");
 		} else if(m_dwLastSavedWithVersion.IsTestVersion())
@@ -1241,6 +1259,16 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			// Pitch/Pan Separation can be overridden by panning commands: Added 2021-11-01, https://github.com/schismtracker/schismtracker/commit/6e9f1207015cae0fe1b829fff7bb867e02ec6dea
 			if(schismDateVersion < SchismVersionFromDate<2021, 11, 01>::date)
 				m_playBehaviour.reset(kITPitchPanSeparation);
+			// Various fixes to multisampled instruments: Added 2022-04-30, https://github.com/schismtracker/schismtracker/commit/1b2f7d5522fcb971f134a6664182ca569f7c8008
+			if(schismDateVersion < SchismVersionFromDate<2022, 04, 30>::date)
+			{
+				m_playBehaviour.reset(kITEmptyNoteMapSlot);
+				m_playBehaviour.reset(kITPortamentoSwapResetsPos);
+				m_playBehaviour.reset(kITMultiSampleInstrumentNumber);
+			}
+			// Initial note memory for channel is C-0: Added 2023-03-09, https://github.com/schismtracker/schismtracker/commit/73e9d60676c2b48c8e94e582373e29517105b2b1
+			if(schismDateVersion < SchismVersionFromDate<2023, 03, 9>::date)
+				m_playBehaviour.reset(kITInitialNoteMemory);
 			break;
 		case 4:
 			madeWithTracker = MPT_UFORMAT("pyIT {}.{}")((fileHeader.cwtv & 0x0F00) >> 8, mpt::ufmt::hex0<2>(fileHeader.cwtv & 0xFF));
@@ -1260,6 +1288,9 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
+	if(anyADPCM)
+		madeWithTracker += U_(" (ADPCM packed)");
+
 	if(GetType() == MOD_TYPE_MPT)
 	{
 		// START - mpt specific:
@@ -1273,6 +1304,19 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.type = (GetType() == MOD_TYPE_MPT) ? U_("mptm") : U_("it");
 	m_modFormat.madeWithTracker = std::move(madeWithTracker);
 	m_modFormat.charset = m_dwLastSavedWithVersion ? mpt::Charset::Windows1252 : mpt::Charset::CP437;
+#if MPT_TIME_UTC_ON_DISK
+#ifdef MODPLUG_TRACKER
+	m_modFormat.timezone = (m_dwLastSavedWithVersion && (m_dwLastSavedWithVersion >= MPT_TIME_UTC_ON_DISK_VERSION)) ? mpt::Date::LogicalTimezone::UTC : mpt::Date::LogicalTimezone::Local;
+#else
+	m_modFormat.timezone = (m_dwLastSavedWithVersion && (m_dwLastSavedWithVersion >= MPT_TIME_UTC_ON_DISK_VERSION)) ? mpt::Date::LogicalTimezone::UTC : mpt::Date::LogicalTimezone::Unspecified;
+#endif
+#else
+#ifdef MODPLUG_TRACKER
+	m_modFormat.timezone = mpt::Date::LogicalTimezone::Local;
+#else
+	m_modFormat.timezone = mpt::Date::LogicalTimezone::Unspecified;
+#endif
+#endif
 
 	return true;
 }
@@ -1296,7 +1340,7 @@ void CSoundFile::LoadMPTMProperties(FileReader &file, uint16 cwtv)
 		mpt::Charset sequenceDefaultCharset = GetCharsetInternal();
 		ssb.ReadItem(Order, FileIdSequences, [sequenceDefaultCharset](std::istream &iStrm, ModSequenceSet &seq, std::size_t nSize){ return ReadModSequences(iStrm, seq, nSize, sequenceDefaultCharset); });
 
-		if(ssb.GetStatus() & srlztn::SNT_FAILURE)
+		if(ssb.HasFailed())
 		{
 			AddToLog(LogError, U_("Unknown error occurred while deserializing file."));
 		}
@@ -1354,17 +1398,19 @@ static uint32 SaveITEditHistory(const CSoundFile &sndFile, std::ostream *file)
 		} else if(pModDoc != nullptr)
 		{
 			// Current ("new") timestamp
-			const time_t creationTime = pModDoc->GetCreationTime();
-
-			MemsetZero(mptHistory.loadDate);
-			//localtime_s(&loadDate, &creationTime);
-			const tm* const p = localtime(&creationTime);
-			if (p != nullptr)
-				mptHistory.loadDate = *p;
-			else
-				sndFile.AddToLog(LogError, U_("Unable to retrieve current time."));
-
-			mptHistory.openTime = (uint32)(difftime(time(nullptr), creationTime) * HISTORY_TIMER_PRECISION);
+			const mpt::Date::Unix creationTime = pModDoc->GetCreationTime();
+			if(sndFile.GetTimezoneInternal() == mpt::Date::LogicalTimezone::UTC)
+			{
+				mptHistory.loadDate = mpt::Date::forget_timezone(mpt::Date::UnixAsUTC(creationTime));
+			} else if(sndFile.GetTimezoneInternal() == mpt::Date::LogicalTimezone::Local)
+			{
+				mptHistory.loadDate = mpt::Date::forget_timezone(mpt::Date::UnixAsLocal(creationTime));
+			} else
+			{
+				// assume UTC
+				mptHistory.loadDate = mpt::Date::forget_timezone(mpt::Date::UnixAsUTC(creationTime));
+			}
+			mptHistory.openTime = static_cast<uint32>(mpt::round((mpt::Date::UnixAsSeconds(mpt::Date::UnixNow()) - mpt::Date::UnixAsSeconds(creationTime)) * HISTORY_TIMER_PRECISION));
 #endif // MODPLUG_TRACKER
 		}
 
@@ -1650,7 +1696,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 		mpt::IO::Write(f, patinfo);
 		dwPos += 8;
 
-		struct ChnState { ModCommand lastCmd; uint8 mask = 0xFF; };
+		struct ChnState { uint8 note = 0, instr = 0, vol = 0, command = 0, param = 0, valid = 0, mask = 0xFF; };
 		const CHANNELINDEX maxChannels = std::min(specs.channelsMax, GetNumChannels());
 		std::vector<ChnState> chnStates(maxChannels);
 		// Maximum 7 bytes per cell, plus end of row marker, so this buffer is always large enough to cover one row.
@@ -1672,8 +1718,6 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 
 				auto &chnState = chnStates[ch];
 				uint8 b = 0;
-				uint8 command = m->command;
-				uint8 param = m->param;
 				uint8 vol = 0xFF;
 				uint8 note = m->note;
 				if (note != NOTE_NONE) b |= 1;
@@ -1695,18 +1739,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 					case VOLCMD_TONEPORTAMENTO: vol += 193; break;
 					case VOLCMD_PORTADOWN:      vol += 105; break;
 					case VOLCMD_PORTAUP:        vol += 115; break;
-					case VOLCMD_VIBRATOSPEED:
-						if(command == CMD_NONE)
-						{
-							// Move unsupported command if possible
-							command = CMD_VIBRATO;
-							param = std::min(m->vol, uint8(15)) << 4;
-							vol = 0xFF;
-						} else
-						{
-							vol = 203;
-						}
-						break;
+					case VOLCMD_VIBRATOSPEED:   vol = 203; break;
 					case VOLCMD_OFFSET:
 						if(!compatibilityExport)
 							vol += 223;
@@ -1717,9 +1750,14 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 					}
 				}
 				if (vol != 0xFF) b |= 4;
-				if (command != CMD_NONE)
+				uint8 command = 0, param = 0;
+				if(m->command == CMD_VOLUME && vol == 0xFF)
 				{
-					S3MSaveConvert(command, param, true, compatibilityExport);
+					vol = std::min(m->param, ModCommand::PARAM(64));
+					b |= 4;
+				} else if(m->command != CMD_NONE)
+				{
+					S3MSaveConvert(*m, command, param, true, compatibilityExport);
 					if (command) b |= 8;
 				}
 				// Packing information
@@ -1728,54 +1766,54 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 					// Same note ?
 					if (b & 1)
 					{
-						if ((note == chnState.lastCmd.note) && (chnState.lastCmd.volcmd & 1))
+						if ((note == chnState.note) && (chnState.valid & 1))
 						{
 							b &= ~1;
 							b |= 0x10;
 						} else
 						{
-							chnState.lastCmd.note = note;
-							chnState.lastCmd.volcmd |= 1;
+							chnState.note = note;
+							chnState.valid |= 1;
 						}
 					}
 					// Same instrument ?
 					if (b & 2)
 					{
-						if ((m->instr == chnState.lastCmd.instr) && (chnState.lastCmd.volcmd & 2))
+						if ((m->instr == chnState.instr) && (chnState.valid & 2))
 						{
 							b &= ~2;
 							b |= 0x20;
 						} else
 						{
-							chnState.lastCmd.instr = m->instr;
-							chnState.lastCmd.volcmd |= 2;
+							chnState.instr = m->instr;
+							chnState.valid |= 2;
 						}
 					}
 					// Same volume column byte ?
 					if (b & 4)
 					{
-						if ((vol == chnState.lastCmd.vol) && (chnState.lastCmd.volcmd & 4))
+						if ((vol == chnState.vol) && (chnState.valid & 4))
 						{
 							b &= ~4;
 							b |= 0x40;
 						} else
 						{
-							chnState.lastCmd.vol = vol;
-							chnState.lastCmd.volcmd |= 4;
+							chnState.vol = vol;
+							chnState.valid |= 4;
 						}
 					}
 					// Same command / param ?
 					if (b & 8)
 					{
-						if ((command == chnState.lastCmd.command) && (param == chnState.lastCmd.param) && (chnState.lastCmd.volcmd & 8))
+						if ((command == chnState.command) && (param == chnState.param) && (chnState.valid & 8))
 						{
 							b &= ~8;
 							b |= 0x80;
 						} else
 						{
-							chnState.lastCmd.command = command;
-							chnState.lastCmd.param = param;
-							chnState.lastCmd.volcmd |= 8;
+							chnState.command = command;
+							chnState.param = param;
+							chnState.valid |= 8;
 						}
 					}
 					if (b != chnState.mask)
@@ -1861,7 +1899,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 		} else
 		{
 #ifdef MPT_EXTERNAL_SAMPLES
-			const std::string filenameU8 = GetSamplePath(smp).AbsolutePathToRelative(filename.GetPath()).ToUTF8();
+			const std::string filenameU8 = mpt::AbsolutePathToRelative(GetSamplePath(smp), filename.GetDirectoryWithDrive()).ToUTF8();
 			const size_t strSize = filenameU8.size();
 			size_t intBytes = 0;
 			if(mpt::IO::WriteVarInt(f, strSize, &intBytes))
@@ -1922,7 +1960,7 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 
 	ssb.FinishWrite();
 
-	if(ssb.GetStatus() & srlztn::SNT_FAILURE)
+	if(ssb.HasFailed())
 	{
 		AddToLog(LogError, U_("Error occurred in writing MPTM extensions."));
 	}
@@ -2046,9 +2084,9 @@ uint32 CSoundFile::SaveMixPlugins(std::ostream *file, bool updatePlugData)
 #endif // MODPLUG_NO_FILESAVE
 
 
-bool CSoundFile::LoadMixPlugins(FileReader &file)
+std::pair<bool, bool> CSoundFile::LoadMixPlugins(FileReader &file)
 {
-	bool isBeRoTracker = false;
+	bool hasPluginChunks = false, isBeRoTracker = false;
 	while(file.CanRead(9))
 	{
 		char code[4];
@@ -2061,7 +2099,7 @@ bool CSoundFile::LoadMixPlugins(FileReader &file)
 		   || !file.CanRead(chunkSize))
 		{
 			file.SkipBack(8);
-			return isBeRoTracker;
+			return std::make_pair(hasPluginChunks, isBeRoTracker);
 		}
 		FileReader chunk = file.ReadChunk(chunkSize);
 
@@ -2072,6 +2110,7 @@ bool CSoundFile::LoadMixPlugins(FileReader &file)
 			{
 				chn.nMixPlugin = static_cast<PLUGINDEX>(chunk.ReadUint32LE());
 			}
+			hasPluginChunks = true;
 #ifndef NO_PLUGINS
 		}
 		// Plugin Data FX00, ... FX99, F100, ... F255
@@ -2086,6 +2125,7 @@ bool CSoundFile::LoadMixPlugins(FileReader &file)
 			{
 				ReadMixPluginChunk(chunk, m_MixPlugins[plug]);
 			}
+			hasPluginChunks = true;
 #endif // NO_PLUGINS
 		} else if(!memcmp(code, "MODU", 4))
 		{
@@ -2093,7 +2133,7 @@ bool CSoundFile::LoadMixPlugins(FileReader &file)
 			m_dwLastSavedWithVersion = Version();	// Reset MPT detection for old files that have a similar fingerprint
 		}
 	}
-	return isBeRoTracker;
+	return std::make_pair(hasPluginChunks, isBeRoTracker);
 }
 
 
@@ -2131,9 +2171,7 @@ void CSoundFile::ReadMixPluginChunk(FileReader &file, SNDMIXPLUGIN &plugin)
 
 			if(!memcmp(code, "DWRT", 4))
 			{
-				plugin.fDryRatio = std::clamp(dataChunk.ReadFloatLE(), 0.0f, 1.0f);
-				if(!std::isnormal(plugin.fDryRatio))
-					plugin.fDryRatio = 0.0f;
+				plugin.fDryRatio = mpt::safe_clamp(dataChunk.ReadFloatLE(), 0.0f, 1.0f);
 			} else if(!memcmp(code, "PROG", 4))
 			{
 				plugin.defaultProgram = dataChunk.ReadUint32LE();
@@ -2339,7 +2377,6 @@ void CSoundFile::SaveExtendedSongProperties(std::ostream &f) const
 
 #undef WRITEMODULAR
 #undef WRITEMODULARHEADER
-	return;
 }
 
 #endif // MODPLUG_NO_FILESAVE
@@ -2360,11 +2397,11 @@ void ReadFieldCast(FileReader &chunk, std::size_t size, T &field)
 }
 
 
-void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannelCount, bool *pInterpretMptMade)
+bool CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannelCount, bool *pInterpretMptMade)
 {
 	if(!file.ReadMagic("STPM"))	// 'MPTS'
 	{
-		return;
+		return false;
 	}
 
 	// Found MPTS, interpret the file MPT made.
@@ -2525,6 +2562,8 @@ void CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannel
 	//m_ModFlags
 	LimitMax(m_nDefaultRowsPerBeat, MAX_ROWS_PER_BEAT);
 	LimitMax(m_nDefaultRowsPerMeasure, MAX_ROWS_PER_BEAT);
+
+	return true;
 }
 
 

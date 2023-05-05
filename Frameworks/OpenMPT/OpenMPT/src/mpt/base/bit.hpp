@@ -10,18 +10,24 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/base/macros.hpp"
 
+#if MPT_CXX_BEFORE(20)
+#include <array>
+#endif // !C++20
 #if MPT_CXX_AT_LEAST(20)
 #include <bit>
-#else // !C++20
-#include <array>
-#include <limits>
 #endif // C++20
+#if MPT_CXX_BEFORE(23) || MPT_COMPILER_MSVC || MPT_LIBCXX_GNU_BEFORE(10) || MPT_LIBCXX_LLVM_BEFORE(12000)
+#include <limits>
+#endif // !C++23
 #include <type_traits>
 
-#include <cstddef>
-#if MPT_CXX_BEFORE(20)
+#if MPT_CXX_BEFORE(20) || MPT_LIBCXX_GNU_BEFORE(11) || MPT_LIBCXX_LLVM_BEFORE(14000)
 #include <cstring>
 #endif // !C++20
+
+#if MPT_CXX_BEFORE(23) && MPT_COMPILER_MSVC
+#include <intrin.h>
+#endif // !C++23
 
 
 
@@ -30,7 +36,7 @@ inline namespace MPT_INLINE_NS {
 
 
 
-#if MPT_CXX_AT_LEAST(20) && !MPT_CLANG_BEFORE(14, 0, 0)
+#if MPT_CXX_AT_LEAST(20) && !MPT_LIBCXX_GNU_BEFORE(11) && !MPT_LIBCXX_LLVM_BEFORE(14000)
 using std::bit_cast;
 #else  // !C++20
 // C++2a compatible bit_cast.
@@ -69,63 +75,30 @@ constexpr bool endian_is_weird() noexcept {
 
 #else // !C++20
 
-#if !MPT_COMPILER_GENERIC
-
 #if MPT_COMPILER_MSVC
-#define MPT_PLATFORM_LITTLE_ENDIAN
-#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
-#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define MPT_PLATFORM_BIG_ENDIAN
-#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define MPT_PLATFORM_LITTLE_ENDIAN
-#endif
-#elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && defined(__ORDER_LITTLE_ENDIAN__)
-#if __ORDER_BIG_ENDIAN__ != __ORDER_LITTLE_ENDIAN__
-#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define MPT_PLATFORM_BIG_ENDIAN
-#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define MPT_PLATFORM_LITTLE_ENDIAN
-#endif
-#endif
-#endif
-
-// fallback:
-#if !defined(MPT_PLATFORM_BIG_ENDIAN) && !defined(MPT_PLATFORM_LITTLE_ENDIAN)
-#if (defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN)) \
-	|| (defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)) \
-	|| (defined(_STLP_BIG_ENDIAN) && !defined(_STLP_LITTLE_ENDIAN))
-#define MPT_PLATFORM_BIG_ENDIAN
-#elif (defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN)) \
-	|| (defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) \
-	|| (defined(_STLP_LITTLE_ENDIAN) && !defined(_STLP_BIG_ENDIAN))
-#define MPT_PLATFORM_LITTLE_ENDIAN
-#elif defined(__hpux) || defined(__hppa) \
-	|| defined(_MIPSEB) \
-	|| defined(__s390__)
-#define MPT_PLATFORM_BIG_ENDIAN
-#elif defined(__i386__) || defined(_M_IX86) \
-	|| defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) \
-	|| defined(__bfin__)
-#define MPT_PLATFORM_LITTLE_ENDIAN
-#endif
-#endif
-
-#endif // !MPT_COMPILER_GENERIC
-
+// same definition as VS2022 C++20 in order to be compatible with debugvis
+enum class endian {
+	little = 0,
+	big = 1,
+	weird = -1,
+	native = little,
+};
+#else // !MPT_COMPILER_MSVC
 enum class endian {
 	little = 0x78563412u,
 	big = 0x12345678u,
 	weird = 1u,
 #if MPT_COMPILER_GENERIC
 	native = 0u,
-#elif defined(MPT_PLATFORM_LITTLE_ENDIAN)
+#elif defined(MPT_ARCH_LITTLE_ENDIAN)
 	native = little,
-#elif defined(MPT_PLATFORM_BIG_ENDIAN)
+#elif defined(MPT_ARCH_BIG_ENDIAN)
 	native = big,
 #else
 	native = 0u,
 #endif
 };
+#endif // MPT_COMPILER_MSVC
 
 static_assert(mpt::endian::big != mpt::endian::little, "platform with all scalar types having size 1 is not supported");
 
@@ -184,7 +157,7 @@ MPT_FORCEINLINE bool endian_is_weird() noexcept {
 
 
 
-#if MPT_CXX_AT_LEAST(20) && MPT_MSVC_AT_LEAST(2022, 1) && !MPT_CLANG_BEFORE(12, 0, 0)
+#if MPT_CXX_AT_LEAST(20) && MPT_MSVC_AT_LEAST(2022, 1) && !MPT_LIBCXX_GNU_BEFORE(10) && !MPT_LIBCXX_LLVM_BEFORE(12000)
 
 // Disabled for VS2022.0 because of
 // <https://developercommunity.visualstudio.com/t/vs2022-cl-193030705-generates-non-universally-avai/1578571>
@@ -365,6 +338,147 @@ constexpr T rotr(T x, int s) noexcept {
 }
 
 #endif // C++20
+
+
+
+#if MPT_CXX_AT_LEAST(23) && !MPT_COMPILER_MSVC
+
+using std::byteswap;
+
+#else // !C++23
+
+constexpr inline uint16 byteswap_impl_constexpr16(uint16 x) noexcept {
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif // MPT_COMPILER_GCC
+	return uint16(0)
+		 | ((x >> 8) & 0x00FFu)
+		 | ((x << 8) & 0xFF00u);
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif // MPT_COMPILER_GCC
+}
+
+constexpr inline uint32 byteswap_impl_constexpr32(uint32 x) noexcept {
+	return uint32(0)
+		 | ((x & 0x000000FFu) << 24)
+		 | ((x & 0x0000FF00u) << 8)
+		 | ((x & 0x00FF0000u) >> 8)
+		 | ((x & 0xFF000000u) >> 24);
+}
+
+constexpr inline uint64 byteswap_impl_constexpr64(uint64 x) noexcept {
+	return uint64(0)
+		 | (((x >> 0) & 0xffull) << 56)
+		 | (((x >> 8) & 0xffull) << 48)
+		 | (((x >> 16) & 0xffull) << 40)
+		 | (((x >> 24) & 0xffull) << 32)
+		 | (((x >> 32) & 0xffull) << 24)
+		 | (((x >> 40) & 0xffull) << 16)
+		 | (((x >> 48) & 0xffull) << 8)
+		 | (((x >> 56) & 0xffull) << 0);
+}
+
+#if MPT_COMPILER_GCC
+// Clang also supports these,
+// however <https://github.com/llvm/llvm-project/issues/58470>.
+#define MPT_byteswap_impl16 __builtin_bswap16
+#define MPT_byteswap_impl32 __builtin_bswap32
+#define MPT_byteswap_impl64 __builtin_bswap64
+#elif MPT_COMPILER_MSVC
+#define MPT_byteswap_impl16 _byteswap_ushort
+#define MPT_byteswap_impl32 _byteswap_ulong
+#define MPT_byteswap_impl64 _byteswap_uint64
+#endif
+
+// No intrinsics available
+#ifndef MPT_byteswap_impl16
+#define MPT_byteswap_impl16(x) byteswap_impl_constexpr16(x)
+#endif
+#ifndef MPT_byteswap_impl32
+#define MPT_byteswap_impl32(x) byteswap_impl_constexpr32(x)
+#endif
+#ifndef MPT_byteswap_impl64
+#define MPT_byteswap_impl64(x) byteswap_impl_constexpr64(x)
+#endif
+
+MPT_CONSTEXPR20_FUN uint64 byteswap_impl(uint64 value) noexcept {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
+		return byteswap_impl_constexpr64(value);
+	} else {
+		return MPT_byteswap_impl64(value);
+	}
+}
+
+MPT_CONSTEXPR20_FUN uint32 byteswap_impl(uint32 value) noexcept {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
+		return byteswap_impl_constexpr32(value);
+	} else {
+		return MPT_byteswap_impl32(value);
+	}
+}
+
+MPT_CONSTEXPR20_FUN uint16 byteswap_impl(uint16 value) noexcept {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
+		return byteswap_impl_constexpr16(value);
+	} else {
+		return MPT_byteswap_impl16(value);
+	}
+}
+
+MPT_CONSTEXPR20_FUN int64 byteswap_impl(int64 value) noexcept {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
+		return byteswap_impl_constexpr64(value);
+	} else {
+		return MPT_byteswap_impl64(value);
+	}
+}
+
+MPT_CONSTEXPR20_FUN int32 byteswap_impl(int32 value) noexcept {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
+		return byteswap_impl_constexpr32(value);
+	} else {
+		return MPT_byteswap_impl32(value);
+	}
+}
+
+MPT_CONSTEXPR20_FUN int16 byteswap_impl(int16 value) noexcept {
+	MPT_MAYBE_CONSTANT_IF (MPT_IS_CONSTANT_EVALUATED20()) {
+		return byteswap_impl_constexpr16(value);
+	} else {
+		return MPT_byteswap_impl16(value);
+	}
+}
+
+// Do NOT remove these overloads, even if they seem useless.
+// We do not want risking to extend 8bit integers to int and then
+// endian-converting and casting back to int.
+// Thus these overloads.
+
+constexpr inline uint8 byteswap_impl(uint8 value) noexcept {
+	return value;
+}
+
+constexpr inline int8 byteswap_impl(int8 value) noexcept {
+	return value;
+}
+
+constexpr inline char byteswap_impl(char value) noexcept {
+	return value;
+}
+
+#undef MPT_byteswap_impl16
+#undef MPT_byteswap_impl32
+#undef MPT_byteswap_impl64
+
+template <typename T>
+constexpr T byteswap(T x) noexcept {
+	static_assert(std::numeric_limits<T>::is_integer);
+	return byteswap_impl(x);
+}
+
+#endif // C++23
 
 
 

@@ -13,7 +13,6 @@
 
 #include "stdafx.h"
 #include "Sndfile.h"
-#include "Tables.h"
 #include "../common/misc_util.h"
 #include "mpt/base/numbers.hpp"
 
@@ -38,53 +37,52 @@ uint8 CSoundFile::FrequencyToCutOff(double frequency) const
 }
 
 
-uint32 CSoundFile::CutOffToFrequency(uint32 nCutOff, int envModifier) const
+float CSoundFile::CutOffToFrequency(uint32 nCutOff, int envModifier) const
 {
 	MPT_ASSERT(nCutOff < 128);
 	float computedCutoff = static_cast<float>(nCutOff * (envModifier + 256));	// 0...127*512
-	float Fc;
+	float frequency;
 	if(GetType() != MOD_TYPE_IMF)
 	{
-		Fc = 110.0f * std::pow(2.0f, 0.25f + computedCutoff / (m_SongFlags[SONG_EXFILTERRANGE] ? 20.0f * 512.0f : 24.0f * 512.0f));
+		frequency = 110.0f * std::pow(2.0f, 0.25f + computedCutoff / (m_SongFlags[SONG_EXFILTERRANGE] ? 20.0f * 512.0f : 24.0f * 512.0f));
 	} else
 	{
 		// EMU8000: Documentation says the cutoff is in quarter semitones, with 0x00 being 125 Hz and 0xFF being 8 kHz
 		// The first half of the sentence contradicts the second, though.
-		Fc = 125.0f * std::pow(2.0f, computedCutoff * 6.0f / (127.0f * 512.0f));
+		frequency = 125.0f * std::pow(2.0f, computedCutoff * 6.0f / (127.0f * 512.0f));
 	}
-	int freq = mpt::saturate_round<int>(Fc);
-	Limit(freq, 120, 20000);
-	if(freq * 2 > (int)m_MixerSettings.gdwMixingFreq) freq = m_MixerSettings.gdwMixingFreq / 2;
-	return static_cast<uint32>(freq);
+	Limit(frequency, 120.0f, 20000.0f);
+	LimitMax(frequency, static_cast<float>(m_MixerSettings.gdwMixingFreq) * 0.5f);
+	return frequency;
 }
 
 
 // Update channels with instrument filter settings updated through tracker UI
-void CSoundFile::UpdateInstrumentFilter(const ModInstrument *ins, bool updateMode, bool updateCutoff, bool updateResonance)
+void CSoundFile::UpdateInstrumentFilter(const ModInstrument &ins, bool updateMode, bool updateCutoff, bool updateResonance)
 {
 	for(auto &chn : m_PlayState.Chn)
 	{
-		if(chn.pModInstrument != ins)
+		if(chn.pModInstrument != &ins)
 			continue;
 
 		bool change = false;
-		if(updateMode && ins->filterMode != FilterMode::Unchanged && chn.nFilterMode != ins->filterMode)
+		if(updateMode && ins.filterMode != FilterMode::Unchanged && chn.nFilterMode != ins.filterMode)
 		{
-			chn.nFilterMode = ins->filterMode;
+			chn.nFilterMode = ins.filterMode;
 			change = true;
 		}
 		if(updateCutoff)
 		{
-			chn.nCutOff = ins->IsCutoffEnabled() ? ins->GetCutoff() : 0x7F;
+			chn.nCutOff = ins.IsCutoffEnabled() ? ins.GetCutoff() : 0x7F;
 			change |= (chn.nCutOff < 0x7F || chn.dwFlags[CHN_FILTER]);
 		}
 		if(updateResonance)
 		{
-			chn.nResonance = ins->IsResonanceEnabled() ? ins->GetResonance() : 0;
+			chn.nResonance = ins.IsResonanceEnabled() ? ins.GetResonance() : 0;
 			change |= (chn.nResonance > 0 || chn.dwFlags[CHN_FILTER]);
 		}
 		// If filter envelope is active, the filter will be updated in the next player tick anyway.
-		if(change && (!ins->PitchEnv.dwFlags[ENV_FILTER] || !IsEnvelopeProcessed(chn, ENV_PITCH)))
+		if(change && (!ins.PitchEnv.dwFlags[ENV_FILTER] || !IsEnvelopeProcessed(chn, ENV_PITCH)))
 			SetupChannelFilter(chn, false);
 	}
 }
@@ -125,18 +123,18 @@ int CSoundFile::SetupChannelFilter(ModChannel &chn, bool bReset, int envModifier
 	chn.dwFlags.set(CHN_FILTER);
 
 	// 2 * damping factor
-	const float dmpfac = std::pow(10.0f, -resonance * ((24.0f / 128.0f) / 20.0f));
+	const float dmpfac = std::pow(10.0f, static_cast<float>(-resonance) * ((24.0f / 128.0f) / 20.0f));
 	const float fc = CutOffToFrequency(cutoff, envModifier) * (2.0f * mpt::numbers::pi_v<float>);
 	float d, e;
 	if(m_playBehaviour[kITFilterBehaviour] && !m_SongFlags[SONG_EXFILTERRANGE])
 	{
-		const float r = m_MixerSettings.gdwMixingFreq / fc;
+		const float r = static_cast<float>(m_MixerSettings.gdwMixingFreq) / fc;
 
 		d = dmpfac * r + dmpfac - 1.0f;
 		e = r * r;
 	} else
 	{
-		const float r = fc / m_MixerSettings.gdwMixingFreq;
+		const float r = fc / static_cast<float>(m_MixerSettings.gdwMixingFreq);
 
 		d = (1.0f - 2.0f * dmpfac) * r;
 		LimitMax(d, 2.0f);

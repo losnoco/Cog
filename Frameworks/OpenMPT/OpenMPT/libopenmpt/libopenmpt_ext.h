@@ -162,8 +162,9 @@ typedef struct openmpt_module_ext_interface_interactive {
 	 * \return 1 on success, 0 on failure.
 	 * \remarks The tempo may be reset by pattern commands at any time. Use openmpt_module_ext_interface_interactive::set_tempo_factor to apply a tempo factor that is independent of pattern commands.
 	 * \sa openmpt_module_get_current_tempo
+	 * \deprecated Please use openmpt_module_ext_interface_interactive3::set_current_tempo2().
 	 */
-	int ( * set_current_tempo ) ( openmpt_module_ext * mod_ext, int32_t tempo );
+	LIBOPENMPT_DEPRECATED int ( * set_current_tempo ) ( openmpt_module_ext * mod_ext, int32_t tempo );
 
 	/*! Set the current module tempo factor without affecting playback pitch
 	 *
@@ -386,6 +387,26 @@ typedef struct openmpt_module_ext_interface_interactive2 {
 	double (*get_note_finetune) ( openmpt_module_ext * mod_ext, int32_t channel );
 
 } openmpt_module_ext_interface_interactive2;
+
+
+
+#ifndef LIBOPENMPT_EXT_C_INTERFACE_INTERACTIVE3
+#define LIBOPENMPT_EXT_C_INTERFACE_INTERACTIVE3 "interactive3"
+#endif
+
+typedef struct openmpt_module_ext_interface_interactive3 {
+
+	/*! Set the current module tempo
+	 *
+	 * \param mod_ext The module handle to work on.
+	 * \param tempo The new tempo in range [32, 512]. The exact meaning of the value depends on the tempo mode used by the module.
+	 * \return 1 on success, 0 on failure.
+	 * \remarks The tempo may be reset by pattern commands at any time. Use openmpt_module_ext_interface_interactive::set_tempo_factor to apply a tempo factor that is independent of pattern commands.
+	 * \sa openmpt_module_get_current_tempo2
+	 */
+	int ( * set_current_tempo2 ) ( openmpt_module_ext * mod_ext, double tempo );
+
+} openmpt_module_ext_interface_interactive3;
 
 
 

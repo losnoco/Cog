@@ -7,8 +7,6 @@
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
-#ifndef NO_LIBMODPLUG
-
 /*
 
 ***********************************************************************
@@ -23,19 +21,6 @@ Metadata and other state is not provided or updated.
 
 */
 
-#ifdef UNICODE
-#undef UNICODE
-#endif
-#ifdef _UNICODE
-#undef _UNICODE
-#endif
-
-#ifdef _MSC_VER
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#endif /* _MSC_VER */
-
 #include <libopenmpt/libopenmpt.hpp>
 
 #include <string>
@@ -47,15 +32,13 @@ Metadata and other state is not provided or updated.
 #include <cstring>
 
 #define MODPLUG_BUILD
-#ifdef _MSC_VER
-/* libmodplug C++ header is broken for MSVC DLL builds */
+
+#if defined(_WIN32) || defined(__CYGWIN__)
 #define MODPLUG_STATIC
-#endif /* _MSC_VER */
-#ifdef _MSC_VER
-#define LIBOPENMPT_MODPLUG_API
-#else /* !_MSC_VER */
-#define LIBOPENMPT_MODPLUG_API LIBOPENMPT_API_HELPER_EXPORT
-#endif /* _MSC_VER */
+#endif /* _WIN32 || __CYGWIN__ */
+
+#define LIBOPENMPT_MODPLUG_API LIBOPENMPT_API_HELPER_PUBLIC
+
 class LIBOPENMPT_MODPLUG_API CSoundFile;
 #include "libmodplug/stdafx.h"
 #include "libmodplug/sndfile.h"
@@ -882,6 +865,3 @@ UINT CSoundFile::Normalize24BitBuffer(LPBYTE pbuffer, UINT cbsizebytes, DWORD lm
 #elif defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-
-
-#endif // NO_LIBMODPLUG

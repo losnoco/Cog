@@ -96,7 +96,7 @@ struct STPLoopInfo
 	SAMPLEINDEX nonLooped;
 };
 
-typedef std::vector<STPLoopInfo> STPLoopList;
+using STPLoopList = std::vector<STPLoopInfo>;
 
 
 static TEMPO ConvertTempo(uint16 ciaSpeed)
