@@ -160,7 +160,7 @@ VGMSTREAM * init_vgmstream_mp4_aac(STREAMFILE * streamFile);
 VGMSTREAM * init_vgmstream_mp4_aac_offset(STREAMFILE *streamFile, uint64_t start, uint64_t size);
 #endif
 
-VGMSTREAM * init_vgmstream_sli_ogg(STREAMFILE * streamFile);
+VGMSTREAM* init_vgmstream_sli_loops(STREAMFILE* sf);
 
 VGMSTREAM * init_vgmstream_sfl_ogg(STREAMFILE * streamFile);
 
@@ -358,8 +358,6 @@ VGMSTREAM * init_vgmstream_ps2_gbts(STREAMFILE *streamFile);
 VGMSTREAM * init_vgmstream_wii_sng(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_aax(STREAMFILE *streamFile);
-
-VGMSTREAM * init_vgmstream_utf_dsp(STREAMFILE *streamFile);
 
 VGMSTREAM * init_vgmstream_ngc_ffcc_str(STREAMFILE *streamFile);
 
@@ -880,7 +878,9 @@ VGMSTREAM* init_vgmstream_xssb(STREAMFILE *sf);
 
 VGMSTREAM* init_vgmstream_xma_ue3(STREAMFILE *sf);
 
-VGMSTREAM* init_vgmstream_csb(STREAMFILE *sf);
+VGMSTREAM* init_vgmstream_csb(STREAMFILE* sf);
+VGMSTREAM* init_vgmstream_utf_dsp(STREAMFILE* sf);
+VGMSTREAM* init_vgmstream_utf_ahx(STREAMFILE* sf);
 
 VGMSTREAM *init_vgmstream_fwse(STREAMFILE *streamFile);
 
