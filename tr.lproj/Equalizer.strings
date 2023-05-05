@@ -69,10 +69,10 @@
 "Zlw-xU-QP7.title" = "-6 dB";
 
 /* Class = "NSButtonCell"; title = "Tracking genre tags"; ObjectID = "aeV-tB-rvh"; */
-"aeV-tB-rvh.title" = "Tracking genre tags";
+"aeV-tB-rvh.title" = "Tür etiketleri izleme";
 
 /* Class = "NSButtonCell"; title = "Flatten EQ"; ObjectID = "bOS-GE-rwi"; */
-"bOS-GE-rwi.title" = "Flatten EQ";
+"bOS-GE-rwi.title" = "EQ'yu Düzleştir";
 
 /* Class = "NSTextFieldCell"; title = "630"; ObjectID = "bqX-Dk-bJ9"; */
 "bqX-Dk-bJ9.title" = "630";

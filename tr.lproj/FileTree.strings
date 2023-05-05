@@ -12,13 +12,13 @@
 "119.title" = "Çalma listesine ekle";
 
 /* Class = "NSMenuItem"; title = "Set as Root"; ObjectID = "124"; */
-"124.title" = "Set as Root";
+"124.title" = "Kök olarak ayarla";
 
 /* Class = "NSMenuItem"; title = "Set as Playlist"; ObjectID = "129"; */
 "129.title" = "Çalma Listesi Olarak Ayarla";
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "147"; */
-"147.title" = "Box";
+"147.title" = "Kutu";
 
 /* Class = "NSButtonCell"; title = "Choose"; ObjectID = "vRe-3U-Nxj"; */
 "vRe-3U-Nxj.title" = "Seç";

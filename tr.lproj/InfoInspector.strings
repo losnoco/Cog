@@ -1,6 +1,6 @@
 
 /* Class = "NSWindow"; title = "Info Inspector"; ObjectID = "1"; */
-"1.title" = "Info Inspector";
+"1.title" = "Bilgi Denetleyicisi";
 
 /* Class = "NSTextFieldCell"; title = "Artist:"; ObjectID = "10"; */
 "10.title" = "Sanatçı:";
@@ -21,7 +21,7 @@
 "20.title" = "Tür:";
 
 /* Class = "NSTextFieldCell"; title = "Sample Rate:"; ObjectID = "22"; */
-"22.title" = "Sample Rate:";
+"22.title" = "Örnekleme Hızı:";
 
 /* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "24"; */
 "24.title" = "Başlık:";
@@ -75,7 +75,7 @@
 "87.title" = "N/A";
 
 /* Class = "NSTextFieldCell"; title = "Encoding:"; ObjectID = "8e7-lp-K5l"; */
-"8e7-lp-K5l.title" = "Encoding:";
+"8e7-lp-K5l.title" = "Kodlama:";
 
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "B8w-o8-ZBw"; */
 "B8w-o8-ZBw.title" = "N/A";
