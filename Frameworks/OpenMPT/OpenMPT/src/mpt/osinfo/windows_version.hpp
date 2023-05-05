@@ -130,60 +130,56 @@ public:
 
 	static mpt::osinfo::windows::Version FromSDK() noexcept {
 		// Initialize to used SDK version
-#if defined(NTDDI_VERSION)
-#if NTDDI_VERSION >= 0x0A00000C // NTDDI_WIN10_NI Win11 22H2
+#if MPT_WINNT_AT_LEAST(MPT_WIN_11_22H2)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 22621, 0);
-#elif NTDDI_VERSION >= 0x0A00000B // NTDDI_WIN10_CO Win11 21H2
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_11) // 21H2
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 22000, 0);
 //#elif // 22H2
 //		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19045, 0);
-#elif NTDDI_VERSION >= 0x0A00000A // NTDDI_WIN10_FE 21H2
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_21H2)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19044, 0);
 //#elif // 21H1
 //		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19043, 0);
 //#elif // 20H2
 //		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19042, 0);
-#elif NTDDI_VERSION >= 0x0A000009 // NTDDI_WIN10_MN 2004/20H1
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_2004)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 19041, 0);
-#elif NTDDI_VERSION >= 0x0A000008 // NTDDI_WIN10_VB 1909/19H2
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1909)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 18363, 0);
-#elif NTDDI_VERSION >= 0x0A000007 // NTDDI_WIN10_19H1 1903/19H1
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1903)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 18362, 0);
-#elif NTDDI_VERSION >= 0x0A000006 // NTDDI_WIN10_RS5 1809
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1809)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 17763, 0);
-#elif NTDDI_VERSION >= 0x0A000005 // NTDDI_WIN10_RS4 1803
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1803)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 17134, 0);
-#elif NTDDI_VERSION >= 0x0A000004 // NTDDI_WIN10_RS3 1709
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1709)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 16299, 0);
-#elif NTDDI_VERSION >= 0x0A000003 // NTDDI_WIN10_RS2 1703
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1703)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 15063, 0);
-#elif NTDDI_VERSION >= 0x0A000002 // NTDDI_WIN10_RS1 1607
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1607)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 14393, 0);
-#elif NTDDI_VERSION >= 0x0A000001 // NTDDI_WIN10_TH2 1511
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_1511)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 10586, 0);
-#elif NTDDI_VERSION >= 0x0A000000 // NTDDI_WIN10 1507
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10) // 1507
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 10240, 0);
-#elif NTDDI_VERSION >= 0x06030000 // NTDDI_WINBLUE
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_81)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win81, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#elif NTDDI_VERSION >= 0x06020000 // NTDDI_WIN8
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_8)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win8, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#elif NTDDI_VERSION >= 0x06010000 // NTDDI_WIN7
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_7)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win7, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#elif NTDDI_VERSION >= 0x06000000 // NTDDI_VISTA
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_VISTA)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::WinVista, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#elif NTDDI_VERSION >= 0x05020000 // NTDDI_WS03
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_XP64)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::WinXP64, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#elif NTDDI_VERSION >= NTDDI_WINXP
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_XP)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::WinXP, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#elif NTDDI_VERSION >= NTDDI_WIN2K
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_2000)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win2000, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#else
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_NT4)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::WinNT4, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
-#endif
-#elif defined(_WIN32_WINNT)
-		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::System((static_cast<uint64>(_WIN32_WINNT) & 0xff00u) >> 8, (static_cast<uint64>(_WIN32_WINNT) & 0x00ffu) >> 0), mpt::osinfo::windows::Version::ServicePack(0, 0), 0, 0);
 #else
-		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::System(0, 0), mpt::osinfo::windows::Version::ServicePack(0, 0), 0, 0);
+		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::System((static_cast<uint64>(MPT_WIN_VERSION) & 0xff000000u) >> 24, (static_cast<uint64>(MPT_WIN_VERSION) & 0x00ff0000u) >> 16), mpt::osinfo::windows::Version::ServicePack((static_cast<uint64>(MPT_WIN_VERSION) & 0x0000ff00u) >> 8, (static_cast<uint64>(MPT_WIN_VERSION) & 0x000000ffu) >> 0), 0, 0);
 #endif
 	}
 
@@ -210,12 +206,12 @@ public:
 #endif // MPT_COMPILER_MSVC
 #if MPT_COMPILER_CLANG
 #pragma clang diagnostic pop
-#endif                       // MPT_COMPILER_CLANG
+#endif // MPT_COMPILER_CLANG
 		if (versioninfoex.dwPlatformId != VER_PLATFORM_WIN32_NT) {
 			return mpt::osinfo::windows::Version::FromSDK();
 		}
 		DWORD dwProductType = 0;
-#if (_WIN32_WINNT >= 0x0600) // _WIN32_WINNT_VISTA
+#if MPT_WINNT_AT_LEAST(MPT_WIN_VISTA)
 		dwProductType = PRODUCT_UNDEFINED;
 		if (GetProductInfo(versioninfoex.dwMajorVersion, versioninfoex.dwMinorVersion, versioninfoex.wServicePackMajor, versioninfoex.wServicePackMinor, &dwProductType) == FALSE) {
 			dwProductType = PRODUCT_UNDEFINED;
@@ -232,9 +228,10 @@ public:
 #endif // MPT_OS_WINDOWS
 
 public:
-	static mpt::osinfo::windows::Version Current() noexcept {
+	static inline mpt::osinfo::windows::Version Current() noexcept {
 #if MPT_OS_WINDOWS
-		return GatherWindowsVersion();
+		static mpt::osinfo::windows::Version s_cachedVersion = GatherWindowsVersion();
+		return s_cachedVersion;
 #else  // !MPT_OS_WINDOWS
 		return mpt::osinfo::windows::Version::NoWindows();
 #endif // MPT_OS_WINDOWS
@@ -374,77 +371,6 @@ public:
 	}
 
 }; // class Version
-
-
-
-namespace wine {
-
-class version {
-protected:
-	bool valid = false;
-	uint8 vmajor = 0;
-	uint8 vminor = 0;
-	uint8 vupdate = 0;
-
-public:
-	version() {
-		return;
-	}
-	version(uint8 vmajor_, uint8 vminor_, uint8 vupdate_)
-		: valid(true)
-		, vmajor(vmajor_)
-		, vminor(vminor_)
-		, vupdate(vupdate_) {
-		return;
-	}
-
-public:
-	bool IsValid() const {
-		return valid;
-	}
-
-private:
-	static mpt::osinfo::windows::wine::version FromInteger(uint32 version) {
-		mpt::osinfo::windows::wine::version result;
-		result.valid = (version <= 0xffffff);
-		result.vmajor = static_cast<uint8>(version >> 16);
-		result.vminor = static_cast<uint8>(version >> 8);
-		result.vupdate = static_cast<uint8>(version >> 0);
-		return result;
-	}
-	uint32 AsInteger() const {
-		uint32 version = 0;
-		version |= static_cast<uint32>(vmajor) << 16;
-		version |= static_cast<uint32>(vminor) << 8;
-		version |= static_cast<uint32>(vupdate) << 0;
-		return version;
-	}
-
-public:
-	bool IsBefore(mpt::osinfo::windows::wine::version other) const {
-		if (!IsValid()) {
-			return false;
-		}
-		return (AsInteger() < other.AsInteger());
-	}
-	bool IsAtLeast(mpt::osinfo::windows::wine::version other) const {
-		if (!IsValid()) {
-			return false;
-		}
-		return (AsInteger() >= other.AsInteger());
-	}
-	uint8 GetMajor() const {
-		return vmajor;
-	}
-	uint8 GetMinor() const {
-		return vminor;
-	}
-	uint8 GetUpdate() const {
-		return vupdate;
-	}
-};
-
-} // namespace wine
 
 
 

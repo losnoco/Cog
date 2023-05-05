@@ -37,11 +37,10 @@ protected:
 	};
 
 public:
-	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
-	static IMixPlugin* CreateLegacy(VSTPluginLib& factory, CSoundFile& sndFile, SNDMIXPLUGIN* mixStruct);
-	Flanger(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct, const bool legacy);
+	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
+	static IMixPlugin* CreateLegacy(VSTPluginLib& factory, CSoundFile& sndFile, SNDMIXPLUGIN &mixStruct);
+	Flanger(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct, const bool legacy);
 
-	void Release() override { delete this; }
 	int32 GetUID() const override { return 0xEFCA3D92; }
 
 	PlugParamIndex GetNumParameters() const override { return kFlangerNumParameters; }

@@ -341,7 +341,11 @@ void MIDIMacroConfig::Sanitize()
 // Fix old-format (not conforming to IT's MIDI macro definitions) MIDI config strings.
 void MIDIMacroConfig::UpgradeMacros()
 {
-	for(auto &macro : *this)
+	for(auto &macro : SFx)
+	{
+		macro.UpgradeLegacyMacro();
+	}
+	for(auto &macro : Zxx)
 	{
 		macro.UpgradeLegacyMacro();
 	}

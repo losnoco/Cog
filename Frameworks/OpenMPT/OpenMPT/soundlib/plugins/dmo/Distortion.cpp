@@ -26,13 +26,13 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-IMixPlugin* Distortion::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* Distortion::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) Distortion(factory, sndFile, mixStruct);
 }
 
 
-Distortion::Distortion(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+Distortion::Distortion(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 {
 	m_param[kDistGain] = 0.7f;
@@ -42,7 +42,6 @@ Distortion::Distortion(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN 
 	m_param[kDistPostEQBandwidth] = 0.291f;
 
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -180,7 +179,7 @@ CString Distortion::GetParamDisplay(PlugParamIndex param)
 void Distortion::RecalculateDistortionParams()
 {
 	// Pre-EQ
-	m_preEQb1 = std::sqrt((2.0f * std::cos(2.0f * mpt::numbers::pi_v<float> * std::min(FreqInHertz(m_param[kDistPreLowpassCutoff]) / m_SndFile.GetSampleRate(), 0.5f)) + 3.0f) / 5.0f);
+	m_preEQb1 = std::sqrt((2.0f * std::cos(2.0f * mpt::numbers::pi_v<float> * std::min(FreqInHertz(m_param[kDistPreLowpassCutoff]) / static_cast<float>(m_SndFile.GetSampleRate()), 0.5f)) + 3.0f) / 5.0f);
 	m_preEQa0 = std::sqrt(1.0f - m_preEQb1 * m_preEQb1);
 
 	// Distortion
@@ -198,8 +197,8 @@ void Distortion::RecalculateDistortionParams()
 
 	// Post-EQ
 	const float gain = std::pow(10.0f, GainInDecibel() / 20.0f);
-	const float postFreq = 2.0f * mpt::numbers::pi_v<float> * std::min(FreqInHertz(m_param[kDistPostEQCenterFrequency]) / m_SndFile.GetSampleRate(), 0.5f);
-	const float postBw = 2.0f * mpt::numbers::pi_v<float> * std::min(FreqInHertz(m_param[kDistPostEQBandwidth]) / m_SndFile.GetSampleRate(), 0.5f);
+	const float postFreq = 2.0f * mpt::numbers::pi_v<float> * std::min(FreqInHertz(m_param[kDistPostEQCenterFrequency]) / static_cast<float>(m_SndFile.GetSampleRate()), 0.5f);
+	const float postBw = 2.0f * mpt::numbers::pi_v<float> * std::min(FreqInHertz(m_param[kDistPostEQBandwidth]) / static_cast<float>(m_SndFile.GetSampleRate()), 0.5f);
 	const float t = std::tan(5.0e-1f * postBw);
 	m_postEQb1 = ((1.0f - t) / (1.0f + t));
 	m_postEQb0 = -std::cos(postFreq);

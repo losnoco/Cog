@@ -12,7 +12,9 @@
 #include "mpt/detect/mfc.hpp"
 
 #include <string>
+#include <string_view>
 #include <type_traits>
+#include <utility>
 
 #include <cstddef>
 
@@ -32,11 +34,26 @@ enum class common_encoding {
 	ascii, // strictly 7-bit ASCII
 	iso8859_1,
 	iso8859_15,
-	cp850,
 	cp437,
+	cp737,
+	cp775,
+	cp850,
+	cp852,
+	cp855,
+	cp857,
+	cp860,
+	cp861,
+	cp862,
+	cp863,
+	cp864,
+	cp865,
+	cp866,
+	cp869,
+	cp874,
 	windows1252,
 	amiga,
 	riscos,
+	atarist,
 	iso8859_1_no_c1,
 	iso8859_15_no_c1,
 	amiga_no_c1,
@@ -61,7 +78,7 @@ inline constexpr auto stdio_encoding = logical_encoding::locale;
 inline constexpr auto environment_encoding = logical_encoding::locale;
 
 // std::exception::what()
-inline constexpr auto exception_encoding = logical_encoding::active_locale;
+inline constexpr auto exception_encoding = logical_encoding::locale;
 
 
 
@@ -166,12 +183,14 @@ constexpr Tdstchar unsafe_char_convert(Tsrcchar src) noexcept {
 
 #if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 using widestring = std::wstring;
+using widestring_view = std::wstring_view;
 using widechar = wchar_t;
 #define MPT_WIDECHAR(x)    L##x
 #define MPT_WIDELITERAL(x) L##x
 #define MPT_WIDESTRING(x)  std::wstring(L##x)
 #else // MPT_COMPILER_QUIRK_NO_WCHAR
 using widestring = std::u32string;
+using widestring_view = std::u32string_view;
 using widechar = char32_t;
 #define MPT_WIDECHAR(x)    U##x
 #define MPT_WIDELITERAL(x) U##x
@@ -180,39 +199,80 @@ using widechar = char32_t;
 
 
 
-template <common_encoding common_encoding_tag>
-struct common_encoding_char_traits : std::char_traits<char> {
+#if defined(MPT_COMPILER_QUIRK_NO_AUTO_TEMPLATE_ARGUMENT)
+// Work-around for VS2017 auto template argument ICE.
+// Use as encoding_char_traits<std::remove_const<decltype(foo)>::type, foo> instead of encoding_char_traits<foo>
+template <typename encoding_type, encoding_type encoding_tag>
+struct encoding_char_traits : std::char_traits<char> {
 	static constexpr auto encoding() noexcept {
-		return common_encoding_tag;
+		return encoding_tag;
 	}
 };
-
-template <logical_encoding logical_encoding_tag>
-struct logical_encoding_char_traits : std::char_traits<char> {
+#else
+template <auto encoding_tag, typename encoding_type = decltype(encoding_tag)>
+struct encoding_char_traits : std::char_traits<char> {
 	static constexpr auto encoding() noexcept {
-		return logical_encoding_tag;
+		return encoding_tag;
 	}
 };
+#endif
 
 
 
-using lstring = std::basic_string<char, mpt::logical_encoding_char_traits<logical_encoding::locale>>;
+#if defined(MPT_COMPILER_QUIRK_NO_AUTO_TEMPLATE_ARGUMENT)
+using lstring = std::basic_string<char, mpt::encoding_char_traits<logical_encoding, logical_encoding::locale>>;
+using lstring_view = std::basic_string_view<char, mpt::encoding_char_traits<logical_encoding, logical_encoding::locale>>;
+#else
+using lstring = std::basic_string<char, mpt::encoding_char_traits<logical_encoding::locale>>;
+using lstring_view = std::basic_string_view<char, mpt::encoding_char_traits<logical_encoding::locale>>;
+#endif
 
-using source_string = std::basic_string<char, mpt::common_encoding_char_traits<source_encoding>>;
-using exception_string = std::basic_string<char, mpt::logical_encoding_char_traits<exception_encoding>>;
+#if defined(MPT_COMPILER_QUIRK_NO_AUTO_TEMPLATE_ARGUMENT)
+using utf8string = std::basic_string<char, mpt::encoding_char_traits<common_encoding, common_encoding::utf8>>;
+using utf8string_view = std::basic_string_view<char, mpt::encoding_char_traits<common_encoding, common_encoding::utf8>>;
+#else
+using utf8string = std::basic_string<char, mpt::encoding_char_traits<common_encoding::utf8>>;
+using utf8string_view = std::basic_string_view<char, mpt::encoding_char_traits<common_encoding::utf8>>;
+#endif
+
+#if defined(MPT_COMPILER_QUIRK_NO_AUTO_TEMPLATE_ARGUMENT)
+using source_string = std::basic_string<char, mpt::encoding_char_traits<typename std::remove_const<decltype(source_encoding)>::type, source_encoding>>;
+using source_string_view = std::basic_string_view<char, mpt::encoding_char_traits<typename std::remove_const<decltype(source_encoding)>::type, source_encoding>>;
+#else
+using source_string = std::basic_string<char, mpt::encoding_char_traits<source_encoding>>;
+using source_string_view = std::basic_string_view<char, mpt::encoding_char_traits<source_encoding>>;
+#endif
+
+#if defined(MPT_COMPILER_QUIRK_NO_AUTO_TEMPLATE_ARGUMENT)
+using exception_string = std::basic_string<char, mpt::encoding_char_traits<typename std::remove_const<decltype(exception_encoding)>::type, exception_encoding>>;
+using exception_string_view = std::basic_string_view<char, mpt::encoding_char_traits<typename std::remove_const<decltype(exception_encoding)>::type, exception_encoding>>;
+#else
+using exception_string = std::basic_string<char, mpt::encoding_char_traits<exception_encoding>>;
+using exception_string_view = std::basic_string_view<char, mpt::encoding_char_traits<exception_encoding>>;
+#endif
 
 #if MPT_OS_WINDOWS
 
 template <typename Tchar>
 struct windows_char_traits { };
 template <>
-struct windows_char_traits<CHAR> { using string_type = mpt::lstring; };
+struct windows_char_traits<CHAR> {
+	using string_type = mpt::lstring;
+	using string_view_type = mpt::lstring_view;
+};
+#if !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 template <>
-struct windows_char_traits<WCHAR> { using string_type = std::wstring; };
+struct windows_char_traits<WCHAR> {
+	using string_type = std::wstring;
+	using string_view_type = std::wstring_view;
+};
+#endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 
 using tstring = windows_char_traits<TCHAR>::string_type;
+using tstring_view = windows_char_traits<TCHAR>::string_view_type;
 
 using winstring = mpt::tstring;
+using winstring_view = mpt::tstring_view;
 
 #endif // MPT_OS_WINDOWS
 
@@ -221,18 +281,27 @@ using winstring = mpt::tstring;
 #if MPT_CXX_AT_LEAST(20)
 
 using u8string = std::u8string;
+using u8string_view = std::u8string_view;
 using u8char = char8_t;
-#define MPT_U8CHAR(x)    u8##x
-#define MPT_U8LITERAL(x) u8##x
-#define MPT_U8STRING(x)  std::u8string(u8##x)
+#define MPT_U8CHAR(x)      u8##x
+#define MPT_U8LITERAL(x)   u8##x
+#define MPT_U8STRING(x)    std::u8string(u8##x)
+#define MPT_U8STRINVIEW(x) std::u8string_view(u8##x)
 
 #else // !C++20
 
-using u8string = std::basic_string<char, mpt::common_encoding_char_traits<common_encoding::utf8>>;
+#if defined(MPT_COMPILER_QUIRK_NO_AUTO_TEMPLATE_ARGUMENT)
+using u8string = std::basic_string<char, mpt::encoding_char_traits<common_encoding, common_encoding::utf8>>;
+using u8string_view = std::basic_string_view<char, mpt::encoding_char_traits<common_encoding, common_encoding::utf8>>;
+#else
+using u8string = std::basic_string<char, mpt::encoding_char_traits<common_encoding::utf8>>;
+using u8string_view = std::basic_string_view<char, mpt::encoding_char_traits<common_encoding::utf8>>;
+#endif
 using u8char = char;
-#define MPT_U8CHAR(x)    x
-#define MPT_U8LITERAL(x) x
-#define MPT_U8STRING(x)  mpt::u8string(x)
+#define MPT_U8CHAR(x)       x
+#define MPT_U8LITERAL(x)    x
+#define MPT_U8STRING(x)     mpt::u8string(x)
+#define MPT_U8STRINGVIEW(x) mpt::u8string_view(x)
 
 // mpt::u8string is a moderately type-safe string that is meant to contain
 // UTF-8 encoded char bytes.
@@ -252,7 +321,7 @@ using u8char = char;
 
 
 
-#if !defined(MPT_USTRING_MODE_UTF8_FORCE) && (MPT_COMPILER_MSVC || (MPT_DETECTED_MFC && defined(UNICODE)))
+#if !defined(MPT_USTRING_MODE_UTF8_FORCE) && !defined(MPT_COMPILER_QUIRK_NO_WCHAR) && (MPT_COMPILER_MSVC || (MPT_DETECTED_MFC && defined(UNICODE)))
 // Use wide strings for MSVC because this is the native encoding on
 // microsoft platforms.
 #define MPT_USTRING_MODE_WIDE 1
@@ -283,29 +352,31 @@ using u8char = char;
 //  these are used on mpt::ustring objects. However, compiling in the
 //  respectively other mpt::ustring mode will catch most of these anyway.
 
-#if MPT_USTRING_MODE_WIDE
-#if MPT_USTRING_MODE_UTF8
+#if MPT_USTRING_MODE_WIDE && MPT_USTRING_MODE_UTF8
 #error "MPT_USTRING_MODE_WIDE and MPT_USTRING_MODE_UTF8 are mutually exclusive."
 #endif
 
+#if MPT_USTRING_MODE_WIDE
+
 using ustring = std::wstring;
+using ustring_view = std::wstring_view;
 using uchar = wchar_t;
-#define MPT_UCHAR(x)    L##x
-#define MPT_ULITERAL(x) L##x
-#define MPT_USTRING(x)  std::wstring(L##x)
+#define MPT_UCHAR(x)       L##x
+#define MPT_ULITERAL(x)    L##x
+#define MPT_USTRING(x)     std::wstring(L##x)
+#define MPT_USTRINGVIEW(x) std::wstring_view(L##x)
 
 #endif // MPT_USTRING_MODE_WIDE
 
 #if MPT_USTRING_MODE_UTF8
-#if MPT_USTRING_MODE_WIDE
-#error "MPT_USTRING_MODE_WIDE and MPT_USTRING_MODE_UTF8 are mutually exclusive."
-#endif
 
 using ustring = mpt::u8string;
+using ustring_view = mpt::u8string_view;
 using uchar = mpt::u8char;
-#define MPT_UCHAR(x)    MPT_U8CHAR(x)
-#define MPT_ULITERAL(x) MPT_U8LITERAL(x)
-#define MPT_USTRING(x)  MPT_U8STRING(x)
+#define MPT_UCHAR(x)       MPT_U8CHAR(x)
+#define MPT_ULITERAL(x)    MPT_U8LITERAL(x)
+#define MPT_USTRING(x)     MPT_U8STRING(x)
+#define MPT_USTRINGVIEW(x) MPT_U8STRINGVIEW(x)
 
 #endif // MPT_USTRING_MODE_UTF8
 
@@ -316,6 +387,11 @@ struct make_string_type { };
 
 template <typename T, typename Ttraits>
 struct make_string_type<std::basic_string<T, Ttraits>> {
+	using type = std::basic_string<T, Ttraits>;
+};
+
+template <typename T, typename Ttraits>
+struct make_string_type<std::basic_string_view<T, Ttraits>> {
 	using type = std::basic_string<T, Ttraits>;
 };
 
@@ -351,6 +427,50 @@ struct make_string_type<CStringA> {
 
 
 template <typename T>
+struct make_string_view_type { };
+
+template <typename T, typename Ttraits>
+struct make_string_view_type<std::basic_string<T, Ttraits>> {
+	using type = std::basic_string_view<T, Ttraits>;
+};
+
+template <typename T, typename Ttraits>
+struct make_string_view_type<std::basic_string_view<T, Ttraits>> {
+	using type = std::basic_string_view<T, Ttraits>;
+};
+
+template <typename T>
+struct make_string_view_type<const T *> {
+	using type = std::basic_string_view<T>;
+};
+
+template <typename T>
+struct make_string_view_type<T *> {
+	using type = std::basic_string_view<T>;
+};
+
+template <typename T, std::size_t N>
+struct make_string_view_type<T[N]> {
+	using type = typename make_string_view_type<T *>::type;
+};
+
+#if MPT_DETECTED_MFC
+
+template <>
+struct make_string_view_type<CStringW> {
+	using type = CStringW;
+};
+
+template <>
+struct make_string_view_type<CStringA> {
+	using type = CStringA;
+};
+
+#endif // MPT_DETECTED_MFC
+
+
+
+template <typename T>
 struct is_string_type : public std::false_type { };
 template <>
 struct is_string_type<std::string> : public std::true_type { };
@@ -378,11 +498,37 @@ struct is_string_type<std::basic_string<T, Ttraits>> : public std::true_type { }
 
 
 template <typename T>
-inline typename mpt::make_string_type<T>::type as_string(const T & str) {
-	if constexpr (std::is_pointer<typename std::remove_cv<T>::type>::value) {
-		return str ? typename mpt::make_string_type<T>::type{str} : typename mpt::make_string_type<T>::type{};
+struct is_string_view_type : public std::false_type { };
+template <typename Tchar, typename Ttraits>
+struct is_string_view_type<std::basic_string_view<Tchar, Ttraits>> : public std::true_type { };
+
+
+
+template <typename T>
+inline typename mpt::make_string_type<typename std::decay<T>::type>::type as_string(T && str) {
+	if constexpr (std::is_pointer<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value) {
+		return str ? typename mpt::make_string_type<typename std::decay<T>::type>::type{std::forward<T>(str)} : typename mpt::make_string_type<typename std::decay<T>::type>::type{};
+	} else if constexpr (std::is_pointer<typename std::decay<T>::type>::value) {
+		return typename mpt::make_string_type<typename std::decay<T>::type>::type{std::forward<T>(str)};
+	} else if constexpr (mpt::is_string_view_type<typename std::decay<T>::type>::value) {
+		return typename mpt::make_string_type<typename std::decay<T>::type>::type{std::forward<T>(str)};
 	} else {
-		return str;
+		return std::forward<T>(str);
+	}
+}
+
+
+
+template <typename T>
+inline typename mpt::make_string_view_type<typename std::decay<T>::type>::type as_string_view(T && str) {
+	if constexpr (std::is_pointer<typename std::remove_cv<typename std::remove_reference<T>::type>::type>::value) {
+		return str ? typename mpt::make_string_view_type<typename std::decay<T>::type>::type{std::forward<T>(str)} : typename mpt::make_string_view_type<typename std::decay<T>::type>::type{};
+	} else if constexpr (std::is_pointer<typename std::decay<T>::type>::value) {
+		return typename mpt::make_string_view_type<typename std::decay<T>::type>::type{std::forward<T>(str)};
+	} else if constexpr (mpt::is_string_view_type<typename std::decay<T>::type>::value) {
+		return typename mpt::make_string_view_type<typename std::decay<T>::type>::type{std::forward<T>(str)};
+	} else {
+		return std::forward<T>(str);
 	}
 }
 

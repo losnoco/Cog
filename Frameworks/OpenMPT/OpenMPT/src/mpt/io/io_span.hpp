@@ -79,8 +79,7 @@ public:
 	}
 
 	inline bool SeekRelative(IO::Offset off) {
-		if (f.second < 0)
-		{
+		if (f.second < 0) {
 			return false;
 		}
 		f.second += off;
@@ -88,12 +87,10 @@ public:
 	}
 
 	inline mpt::byte_span ReadRawImpl(mpt::byte_span data) {
-		if (f.second < 0)
-		{
+		if (f.second < 0) {
 			return data.first(0);
 		}
-		if (f.second >= static_cast<IO::Offset>(f.first.size()))
-		{
+		if (f.second >= static_cast<IO::Offset>(f.first.size())) {
 			return data.first(0);
 		}
 		std::size_t num = mpt::saturate_cast<std::size_t>(std::min(static_cast<IO::Offset>(f.first.size()) - f.second, static_cast<IO::Offset>(data.size())));
@@ -103,17 +100,14 @@ public:
 	}
 
 	inline bool WriteRawImpl(mpt::const_byte_span data) {
-		if (f.second < 0)
-		{
+		if (f.second < 0) {
 			return false;
 		}
-		if (f.second > static_cast<IO::Offset>(f.first.size()))
-		{
+		if (f.second > static_cast<IO::Offset>(f.first.size())) {
 			return false;
 		}
 		std::size_t num = mpt::saturate_cast<std::size_t>(std::min(static_cast<IO::Offset>(f.first.size()) - f.second, static_cast<IO::Offset>(data.size())));
-		if (num != data.size())
-		{
+		if (num != data.size()) {
 			return false;
 		}
 		std::copy(data.data(), data.data() + num, mpt::byte_cast<std::byte *>(f.first.data() + f.second));

@@ -74,7 +74,7 @@ class CTuning;
 } // namespace Tuning
 
 
-typedef Tuning::CTuning CTuning;
+using CTuning = Tuning::CTuning;
 
 
 OPENMPT_NAMESPACE_END

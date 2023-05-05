@@ -123,7 +123,7 @@ struct ConvertFixedPoint<float32, int32, fractionalBits>
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
 		static_assert(fractionalBits >= 0 && fractionalBits <= sizeof(input_t) * 8 - 1);
-		return val * factor;
+		return static_cast<float32>(val) * factor;
 	}
 };
 
@@ -141,7 +141,7 @@ struct ConvertFixedPoint<float64, int32, fractionalBits>
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
 		static_assert(fractionalBits >= 0 && fractionalBits <= sizeof(input_t) * 8 - 1);
-		return val * factor;
+		return static_cast<float64>(val) * factor;
 	}
 };
 

@@ -176,7 +176,11 @@ end:
 #define VMUL_S(x, s)  vmulq_f32(x, vmovq_n_f32(s))
 #define VREV(x) vcombine_f32(vget_high_f32(vrev64q_f32(x)), vget_low_f32(vrev64q_f32(x)))
 typedef float32x4_t f4;
+#if 1 /* OpenMPT */
+static int have_simd(void)
+#else /* OpenMPT */
 static int have_simd()
+#endif /* OpenMPT */
 {   /* TODO: detect neon for !MINIMP3_ONLY_SIMD */
     return 1;
 }

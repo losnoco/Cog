@@ -14,7 +14,7 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
-
+#include "Snd_defs.h"
 #include "../common/FileReaderFwd.h"
 
 

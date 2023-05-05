@@ -16,7 +16,10 @@
 #include "../mptrack/TrackerSettings.h"
 #include "../mptrack/Moddoc.h"
 #include "../mptrack/Mptrack.h"
+#include "mpt/io_file/inputfile.hpp"
+#include "mpt/io_file_read/inputfile_filecursor.hpp"
 #include "../common/mptFileIO.h"
+#include "mpt/fs/fs.hpp"
 #endif // MODPLUG_TRACKER
 
 OPENMPT_NAMESPACE_BEGIN
@@ -445,7 +448,7 @@ struct MidiChannelState
 };
 
 
-static CHANNELINDEX FindUnusedChannel(uint8 midiCh, ModCommand::NOTE note, const std::vector<ModChannelState> &channels, bool monoMode, PatternRow patRow)
+static CHANNELINDEX FindUnusedChannel(uint8 midiCh, ModCommand::NOTE note, const std::vector<ModChannelState> &channels, bool monoMode, mpt::span<ModCommand> patRow)
 {
 	for(size_t i = 0; i < channels.size(); i++)
 	{
@@ -503,7 +506,7 @@ static CHANNELINDEX FindUnusedChannel(uint8 midiCh, ModCommand::NOTE note, const
 }
 
 
-static void MIDINoteOff(MidiChannelState &midiChn, std::vector<ModChannelState> &modChnStatus, uint8 note, uint8 delay, PatternRow patRow, std::bitset<16> drumChns)
+static void MIDINoteOff(MidiChannelState &midiChn, std::vector<ModChannelState> &modChnStatus, uint8 note, uint8 delay, mpt::span<ModCommand> patRow, std::bitset<16> drumChns)
 {
 	CHANNELINDEX chn = midiChn.noteOn[note];
 	if(chn == CHANNELINDEX_INVALID)
@@ -766,7 +769,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		}
 
 		PATTERNINDEX pat = Order()[ord];
-		PatternRow patRow = Patterns[pat].GetRow(row);
+		auto patRow = Patterns[pat].GetRow(row);
 
 		uint8 data1 = track.ReadUint8();
 		if(data1 == 0xFF)
@@ -1193,7 +1196,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 				}
 			}
 
-			m.command = static_cast<ModCommand::COMMAND>(diff < 0 ? CMD_PORTAMENTODOWN : CMD_PORTAMENTOUP);
+			m.command = (diff < 0) ? CMD_PORTAMENTODOWN : CMD_PORTAMENTOUP;
 			int32 absDiff = std::abs(diff);
 			int32 realDiff = 0;
 			if(absDiff < 16)
@@ -1312,8 +1315,8 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		// Soundfont with same name as MIDI file
 		for(const auto &ext : { P_(".sf2"), P_(".sf3"), P_(".sf4"), P_(".sbk"), P_(".dls") })
 		{
-			mpt::PathString filename = file.GetOptionalFileName().value_or(P_("")).ReplaceExt(ext);
-			if(filename.IsFile())
+			mpt::PathString filename = file.GetOptionalFileName().value_or(P_("")).ReplaceExtension(ext);
+			if(mpt::native_fs{}.is_file(filename))
 			{
 				embeddedBank = std::make_unique<CDLSBank>();
 				if(embeddedBank->Open(filename))
@@ -1346,7 +1349,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			if(CDLSBank::IsDLSBank(midiMapName))
 			{
 				CDLSBank *dlsBank = nullptr;
-				if(cachedBank != nullptr && !mpt::PathString::CompareNoCase(cachedBankName, midiMapName))
+				if(cachedBank != nullptr && !mpt::PathCompareNoCase(cachedBankName, midiMapName))
 				{
 					dlsBank = cachedBank.get();
 				} else
@@ -1362,13 +1365,13 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			} else
 			{
 				// Load from Instrument or Sample file
-				InputFile f(midiMapName, SettingCacheCompleteFileBeforeLoading());
+				mpt::IO::InputFile f(midiMapName, SettingCacheCompleteFileBeforeLoading());
 				if(f.IsValid())
 				{
 					FileReader insFile = GetFileReader(f);
 					if(ReadInstrumentFromFile(ins, insFile, false))
 					{
-						mpt::PathString filename = midiMapName.GetFullFileName();
+						mpt::PathString filename = midiMapName.GetFilename();
 						pIns = Instruments[ins];
 						if(!pIns->filename[0]) pIns->filename = filename.ToLocale();
 						if(!pIns->name[0])

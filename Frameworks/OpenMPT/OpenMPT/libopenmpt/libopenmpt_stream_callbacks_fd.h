@@ -12,6 +12,9 @@
 
 #include "libopenmpt.h"
 
+#ifndef _MSC_VER
+#include <errno.h>
+#endif
 #ifdef _MSC_VER
 #include <io.h>
 #endif
@@ -63,7 +66,9 @@ static size_t openmpt_stream_fd_read_func( void * stream, void * dst, size_t byt
 			retval += ret_read;
 		}
 	#else
-		retval = read( fd, dst, bytes );
+		do {
+			retval = read( fd, dst, bytes );
+		} while ( ( retval == -1 ) && ( errno == EINTR ) );
 	#endif
 	if ( retval <= 0 ) {
 		return 0;
@@ -98,4 +103,3 @@ static openmpt_stream_callbacks openmpt_stream_get_fd_callbacks(void) {
  */
 
 #endif /* LIBOPENMPT_STREAM_CALLBACKS_FD_H */
-

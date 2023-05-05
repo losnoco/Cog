@@ -27,9 +27,9 @@ struct Normalize;
 template <>
 struct Normalize<int32>
 {
-	typedef int32 input_t;
-	typedef int32 output_t;
-	typedef uint32 peak_t;
+	using input_t = int32;
+	using output_t = int32;
+	using peak_t = uint32;
 	uint32 maxVal;
 	MPT_FORCEINLINE Normalize()
 		: maxVal(0) {}
@@ -66,9 +66,9 @@ struct Normalize<int32>
 template <>
 struct Normalize<float32>
 {
-	typedef float32 input_t;
-	typedef float32 output_t;
-	typedef float32 peak_t;
+	using input_t = float32;
+	using output_t = float32;
+	using peak_t = float32;
 	float maxVal;
 	float maxValInv;
 	MPT_FORCEINLINE Normalize()
@@ -106,9 +106,9 @@ struct Normalize<float32>
 template <>
 struct Normalize<float64>
 {
-	typedef float64 input_t;
-	typedef float64 output_t;
-	typedef float64 peak_t;
+	using input_t = float64;
+	using output_t = float64;
+	using peak_t = float64;
 	double maxVal;
 	double maxValInv;
 	MPT_FORCEINLINE Normalize()
@@ -151,10 +151,10 @@ struct Normalize<float64>
 template <typename Func2, typename Func1>
 struct NormalizationChain
 {
-	typedef typename Func1::input_t input_t;
-	typedef typename Func1::output_t normalize_t;
-	typedef typename Normalize<normalize_t>::peak_t peak_t;
-	typedef typename Func2::output_t output_t;
+	using input_t = typename Func1::input_t;
+	using normalize_t = typename Func1::output_t;
+	using peak_t = typename Normalize<normalize_t>::peak_t;
+	using output_t = typename Func2::output_t;
 	static constexpr std::size_t input_inc = Func1::input_inc;
 	Func1 func1;
 	Normalize<normalize_t> normalize;

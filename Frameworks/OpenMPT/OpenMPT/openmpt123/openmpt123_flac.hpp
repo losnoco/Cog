@@ -15,6 +15,9 @@
 
 #if defined(MPT_WITH_FLAC)
 
+#include "mpt/base/detect.hpp"
+#include "mpt/base/saturate_round.hpp"
+
 #if defined(_MSC_VER) && defined(__clang__) && defined(__c2__)
 #include <sys/types.h>
 #if __STDC__
@@ -33,11 +36,13 @@ typedef _off_t off_t;
 #endif
 
 namespace openmpt123 {
-	
+
+inline constexpr auto flac_encoding = mpt::common_encoding::utf8;
+
 class flac_stream_raii : public file_audio_stream_base {
 private:
 	commandlineflags flags;
-	std::string filename;
+	mpt::native_path filename;
 	bool called_init;
 	std::vector< std::pair< std::string, std::string > > tags;
 	FLAC__StreamMetadata * flac_metadata[1];
@@ -51,11 +56,11 @@ private:
 		}
 	}
 public:
-	flac_stream_raii( const std::string & filename_, const commandlineflags & flags_, std::ostream & /*log*/ ) : flags(flags_), filename(filename_), called_init(false), encoder(0) {
+	flac_stream_raii( const mpt::native_path & filename_, const commandlineflags & flags_, concat_stream<mpt::ustring> & /*log*/ ) : flags(flags_), filename(filename_), called_init(false), encoder(0) {
 		flac_metadata[0] = 0;
 		encoder = FLAC__stream_encoder_new();
 		if ( !encoder ) {
-			throw exception( "error creating flac encoder" );
+			throw exception( MPT_USTRING("error creating flac encoder") );
 		}
 		FLAC__stream_encoder_set_channels( encoder, flags.channels );
 		FLAC__stream_encoder_set_bits_per_sample( encoder, flags.use_float ? 24 : 16 );
@@ -73,25 +78,25 @@ public:
 			flac_metadata[0] = 0;
 		}
 	}
-	void write_metadata( std::map<std::string,std::string> metadata ) override {
+	void write_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) override {
 		if ( called_init ) {
 			return;
 		}
 		tags.clear();
-		tags.push_back( std::make_pair( "TITLE", metadata[ "title" ] ) );
-		tags.push_back( std::make_pair( "ARTIST", metadata[ "artist" ] ) );
-		tags.push_back( std::make_pair( "DATE", metadata[ "date" ] ) );
-		tags.push_back( std::make_pair( "COMMENT", metadata[ "message" ] ) );
-		if ( !metadata[ "type" ].empty() && !metadata[ "tracker" ].empty() ) {
-			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "'" + metadata[ "type" ] + "' tracked music file, made with '" + metadata[ "tracker" ] + "', rendered with '" + get_encoder_tag() + "'" ) );
-		} else if ( !metadata[ "type_long" ].empty() ) {
-			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "'" + metadata[ "type" ] + "' tracked music file, rendered with '" + get_encoder_tag() + "'" ) );
-		} else if ( !metadata[ "tracker" ].empty() ) {
-			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "tracked music file, made with '" + metadata[ "tracker" ] + "', rendered with '" + get_encoder_tag() + "'" ) );
+		tags.push_back( std::make_pair( "TITLE", mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("title") ] ) ) );
+		tags.push_back( std::make_pair( "ARTIST", mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("artist") ] ) ) );
+		tags.push_back( std::make_pair( "DATE", mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("date") ] ) ) );
+		tags.push_back( std::make_pair( "COMMENT", mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("message") ] ) ) );
+		if ( !metadata[ MPT_USTRING("type") ].empty() && !metadata[ MPT_USTRING("tracker") ].empty() ) {
+			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "'" + mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("type") ] ) + "' tracked music file, made with '" + mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("tracker") ] ) + "', rendered with '" + mpt::transcode<std::string>( flac_encoding, get_encoder_tag() ) + "'" ) );
+		} else if ( !metadata[ MPT_USTRING("type_long") ].empty() ) {
+			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "'" + mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("type") ] ) + "' tracked music file, rendered with '" + mpt::transcode<std::string>( flac_encoding, get_encoder_tag() ) + "'" ) );
+		} else if ( !metadata[ MPT_USTRING("tracker") ].empty() ) {
+			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "tracked music file, made with '" + mpt::transcode<std::string>( flac_encoding, metadata[ MPT_USTRING("tracker") ] ) + "', rendered with '" + mpt::transcode<std::string>( flac_encoding, get_encoder_tag() ) + "'" ) );
 		} else {
-			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "tracked music file, rendered with '" + get_encoder_tag() + "'" ) );
+			tags.push_back( std::make_pair( "SOURCEMEDIA", std::string() + "tracked music file, rendered with '" + mpt::transcode<std::string>( flac_encoding, get_encoder_tag() ) + "'" ) );
 		}
-		tags.push_back( std::make_pair( "ENCODER", get_encoder_tag() ) );
+		tags.push_back( std::make_pair( "ENCODER", mpt::transcode<std::string>( flac_encoding, get_encoder_tag() ) ) );
 		flac_metadata[0] = FLAC__metadata_object_new( FLAC__METADATA_TYPE_VORBIS_COMMENT );
 		for ( std::vector< std::pair< std::string, std::string > >::iterator tag = tags.begin(); tag != tags.end(); ++tag ) {
 			add_vorbiscomment_field( flac_metadata[0], tag->first, tag->second );
@@ -100,7 +105,11 @@ public:
 	}
 	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		if ( !called_init ) {
-			FLAC__stream_encoder_init_file( encoder, filename.c_str(), NULL, 0 );
+#if MPT_OS_WINDOWS
+			FLAC__stream_encoder_init_file( encoder, mpt::transcode<std::string>( flac_encoding, filename ).c_str(), NULL, 0 );
+#else
+			FLAC__stream_encoder_init_file( encoder, filename.AsNative().c_str(), NULL, 0 );
+#endif
 			called_init = true;
 		}
 		interleaved_buffer.clear();
@@ -112,7 +121,7 @@ public:
 				} else if ( in >= 1.0f ) {
 					in = 1.0f;
 				}
-				FLAC__int32 out = mpt_lround( in * (1<<23) );
+				FLAC__int32 out = mpt::saturate_round<FLAC__int32>( in * (1<<23) );
 				out = std::max( 0 - (1<<23), out );
 				out = std::min( out, 0 + (1<<23) - 1 );
 				interleaved_buffer.push_back( out );
@@ -122,7 +131,11 @@ public:
 	}
 	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		if ( !called_init ) {
-			FLAC__stream_encoder_init_file( encoder, filename.c_str(), NULL, 0 );
+#if MPT_OS_WINDOWS
+			FLAC__stream_encoder_init_file( encoder, mpt::transcode<std::string>( flac_encoding, filename ).c_str(), NULL, 0 );
+#else
+			FLAC__stream_encoder_init_file( encoder, filename.AsNative().c_str(), NULL, 0 );
+#endif
 			called_init = true;
 		}
 		interleaved_buffer.clear();

@@ -18,6 +18,9 @@
 #include "../mptrack/Mainfrm.h"
 #endif // MODPLUG_TRACKER
 #ifdef MPT_EXTERNAL_SAMPLES
+#include "mpt/io_file/inputfile.hpp"
+#include "mpt/io_file_read/inputfile_filecursor.hpp"
+#include "../common/mptFileIO.h"
 #include "../common/mptFileIO.h"
 #endif // MPT_EXTERNAL_SAMPLES
 #include "../common/version.h"
@@ -54,19 +57,47 @@ bool SettingCacheCompleteFileBeforeLoading()
 }
 
 
-mpt::ustring FileHistory::AsISO8601() const
+mpt::ustring FileHistory::AsISO8601(mpt::Date::LogicalTimezone internalTimezone) const
 {
-	tm date = loadDate;
 	if(openTime > 0)
 	{
 		// Calculate the date when editing finished.
 		double openSeconds = static_cast<double>(openTime) / HISTORY_TIMER_PRECISION;
-		tm tmpLoadDate = loadDate;
-		int64 loadDateSinceEpoch = mpt::Date::Unix::FromUTC(tmpLoadDate);
-		int64 saveDateSinceEpoch = loadDateSinceEpoch + mpt::saturate_round<int64>(openSeconds);
-		date = mpt::Date::Unix(saveDateSinceEpoch).AsUTC();
+		mpt::Date::AnyGregorian tmpLoadDate = loadDate;
+		if (internalTimezone == mpt::Date::LogicalTimezone::UTC)
+		{
+			int64 loadDateSinceEpoch = mpt::Date::UnixAsSeconds(mpt::Date::UnixFromUTC(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::UTC>(tmpLoadDate)));
+			int64 saveDateSinceEpoch = loadDateSinceEpoch + mpt::saturate_round<int64>(openSeconds);
+			return mpt::Date::ToShortenedISO8601(mpt::Date::UnixAsUTC(mpt::Date::UnixFromSeconds(saveDateSinceEpoch)));
+#ifdef MODPLUG_TRACKER
+		} else if(internalTimezone == mpt::Date::LogicalTimezone::Local)
+		{
+			int64 loadDateSinceEpoch = mpt::Date::UnixAsSeconds(mpt::Date::UnixFromLocal(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::Local>(tmpLoadDate)));
+			int64 saveDateSinceEpoch = loadDateSinceEpoch + mpt::saturate_round<int64>(openSeconds);
+			return mpt::Date::ToShortenedISO8601(mpt::Date::UnixAsLocal(mpt::Date::UnixFromSeconds(saveDateSinceEpoch)));
+#endif // MODPLUG_TRACKER
+		} else
+		{
+			// assume UTC for unspecified timezone when calculating
+			int64 loadDateSinceEpoch = mpt::Date::UnixAsSeconds(mpt::Date::UnixFromUTC(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::UTC>(tmpLoadDate)));
+			int64 saveDateSinceEpoch = loadDateSinceEpoch + mpt::saturate_round<int64>(openSeconds);
+			return mpt::Date::ToShortenedISO8601(mpt::Date::forget_timezone(mpt::Date::UnixAsUTC(mpt::Date::UnixFromSeconds(saveDateSinceEpoch))));
+		}
+	} else
+	{
+		if(internalTimezone == mpt::Date::LogicalTimezone::UTC)
+		{
+			return mpt::Date::ToShortenedISO8601(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::UTC>(loadDate));
+#ifdef MODPLUG_TRACKER
+		} else if(internalTimezone == mpt::Date::LogicalTimezone::Local)
+		{
+			return mpt::Date::ToShortenedISO8601(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::Local>(loadDate));
+#endif // MODPLUG_TRACKER
+		} else
+		{
+			return mpt::Date::ToShortenedISO8601(loadDate);
+		}
 	}
-	return mpt::Date::ToShortenedISO8601(date);
 }
 
 
@@ -91,12 +122,12 @@ CSoundFile::CSoundFile() :
 	m_pModSpecs(&ModSpecs::itEx),
 	m_nType(MOD_TYPE_NONE),
 	Patterns(*this),
-#ifdef MODPLUG_TRACKER
-	m_MIDIMapper(*this),
-#endif
 	Order(*this),
 	m_PRNG(mpt::make_prng<mpt::fast_prng>(mpt::global_prng())),
 	m_visitedRows(*this)
+#ifdef MODPLUG_TRACKER
+	, m_MIDIMapper(*this)
+#endif
 {
 	MemsetZero(MixSoundBuffer);
 	MemsetZero(MixRearBuffer);
@@ -151,6 +182,11 @@ void CSoundFile::InitializeGlobals(MODTYPE type)
 
 	MODTYPE bestType = GetBestSaveFormat();
 	m_playBehaviour = GetDefaultPlaybackBehaviour(bestType);
+	if(bestType == MOD_TYPE_IT && type != bestType)
+	{
+		// This is such an odd behaviour that it's unlikely that any of the other formats will need it by default. Re-enable as needed.
+		m_playBehaviour.reset(kITInitialNoteMemory);
+	}
 	SetModSpecsPointer(m_pModSpecs, bestType);
 
 	// Delete instruments in case some previously called loader already created them.
@@ -160,7 +196,7 @@ void CSoundFile::InitializeGlobals(MODTYPE type)
 		Instruments[i] = nullptr;
 	}
 
-	m_ContainerType = MOD_CONTAINERTYPE_NONE;
+	m_ContainerType = ModContainerType::None;
 	m_nChannels = 0;
 	m_nInstruments = 0;
 	m_nSamples = 0;
@@ -263,6 +299,8 @@ static constexpr FileFormatLoader ModuleFormatLoaders[] =
 	MPT_DECLARE_FORMAT(PLM),
 	MPT_DECLARE_FORMAT(AM),
 	MPT_DECLARE_FORMAT(J2B),
+	MPT_DECLARE_FORMAT(GT2),
+	MPT_DECLARE_FORMAT(GTK),
 	MPT_DECLARE_FORMAT(PT36),
 	MPT_DECLARE_FORMAT(SymMOD),
 	MPT_DECLARE_FORMAT(MUS_KM),
@@ -274,9 +312,12 @@ static constexpr FileFormatLoader ModuleFormatLoaders[] =
 	MPT_DECLARE_FORMAT(MOD),
 	MPT_DECLARE_FORMAT(ICE),
 	MPT_DECLARE_FORMAT(669),
+	MPT_DECLARE_FORMAT(667),
 	MPT_DECLARE_FORMAT(C67),
 	MPT_DECLARE_FORMAT(MO3),
+	MPT_DECLARE_FORMAT(DSm),
 	MPT_DECLARE_FORMAT(M15),
+	MPT_DECLARE_FORMAT(XMF),
 };
 
 #undef MPT_DECLARE_FORMAT
@@ -365,7 +406,7 @@ CSoundFile::ProbeResult CSoundFile::Probe(ProbeFlags flags, mpt::span<const std:
 	{
 		if((result == ProbeWantMoreData) && (data.size() >= ProbeRecommendedSize))
 		{
-			// If the prober wants more daat but we already provided the recommended required maximum,
+			// If the prober wants more data but we already provided the recommended required maximum,
 			// just return success as this is the best we can do for the suggestesd probing size.
 			result = ProbeSuccess;
 		}
@@ -398,13 +439,25 @@ bool CSoundFile::Create(FileReader file, ModLoadingFlags loadFlags, CModDoc *pMo
 		CUnarchiver unarchiver(file);
 		if(unarchiver.ExtractBestFile(GetSupportedExtensions(true)))
 		{
-			if(CreateInternal(unarchiver.GetOutputFile(), loadFlags))
+			FileReader outputFile = unarchiver.GetOutputFile();
+#if defined(MPT_WITH_ANCIENT)
+			// Special case for MMCMP/PP20/XPK/etc. inside ZIP/RAR/LHA
+			std::unique_ptr<CAncientArchive> ancientArchive;
+			if(!unarchiver.IsKind<CAncientArchive>())
+			{
+				ancientArchive = std::make_unique<CAncientArchive>(outputFile);
+				if(ancientArchive->IsArchive() && ancientArchive->ExtractFile(0))
+					outputFile = ancientArchive->GetOutputFile();
+			}
+#endif
+			if(CreateInternal(outputFile, loadFlags))
 			{
 				// Read archive comment if there is no song comment
 				if(m_songMessage.empty())
 				{
 					m_songMessage.assign(mpt::ToCharset(mpt::Charset::Locale, unarchiver.GetComment()));
 				}
+				m_ContainerType = ModContainerType::Generic;
 				return true;
 			}
 		}
@@ -420,17 +473,17 @@ bool CSoundFile::CreateInternal(FileReader file, ModLoadingFlags loadFlags)
 	if(file.IsValid())
 	{
 		std::vector<ContainerItem> containerItems;
-		MODCONTAINERTYPE packedContainerType = MOD_CONTAINERTYPE_NONE;
+		ModContainerType packedContainerType = ModContainerType::None;
 		if(!(loadFlags & skipContainer))
 		{
 			ContainerLoadingFlags containerLoadFlags = (loadFlags == onlyVerifyHeader) ? ContainerOnlyVerifyHeader : ContainerUnwrapData;
 #if !defined(MPT_WITH_ANCIENT)
-			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackXPK(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_XPK;
-			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackPP20(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_PP20;
-			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackMMCMP(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_MMCMP;
+			if(packedContainerType == ModContainerType::None && UnpackXPK(containerItems, file, containerLoadFlags)) packedContainerType = ModContainerType::XPK;
+			if(packedContainerType == ModContainerType::None && UnpackPP20(containerItems, file, containerLoadFlags)) packedContainerType = ModContainerType::PP20;
+			if(packedContainerType == ModContainerType::None && UnpackMMCMP(containerItems, file, containerLoadFlags)) packedContainerType = ModContainerType::MMCMP;
 #endif // !MPT_WITH_ANCIENT
-			if(packedContainerType == MOD_CONTAINERTYPE_NONE && UnpackUMX(containerItems, file, containerLoadFlags)) packedContainerType = MOD_CONTAINERTYPE_UMX;
-			if(packedContainerType != MOD_CONTAINERTYPE_NONE)
+			if(packedContainerType == ModContainerType::None && UnpackUMX(containerItems, file, containerLoadFlags)) packedContainerType = ModContainerType::UMX;
+			if(packedContainerType != ModContainerType::None)
 			{
 				if(loadFlags == onlyVerifyHeader)
 				{
@@ -462,14 +515,14 @@ bool CSoundFile::CreateInternal(FileReader file, ModLoadingFlags loadFlags)
 		if(!loaderSuccess)
 		{
 			m_nType = MOD_TYPE_NONE;
-			m_ContainerType = MOD_CONTAINERTYPE_NONE;
+			m_ContainerType = ModContainerType::None;
 		}
 		if(loadFlags == onlyVerifyHeader)
 		{
 			return loaderSuccess;
 		}
 
-		if(packedContainerType != MOD_CONTAINERTYPE_NONE && m_ContainerType == MOD_CONTAINERTYPE_NONE)
+		if(packedContainerType != ModContainerType::None && m_ContainerType == ModContainerType::None)
 		{
 			m_ContainerType = packedContainerType;
 		}
@@ -481,7 +534,49 @@ bool CSoundFile::CreateInternal(FileReader file, ModLoadingFlags loadFlags)
 		InitializeGlobals();
 		m_visitedRows.Initialize(true);
 		m_dwCreatedWithVersion = Version::Current();
+#if MPT_TIME_UTC_ON_DISK
+#ifdef MODPLUG_TRACKER
+		if(GetType() & MOD_TYPE_IT)
+		{
+			m_modFormat.timezone = mpt::Date::LogicalTimezone::UTC;
+		} else
+		{
+			m_modFormat.timezone = mpt::Date::LogicalTimezone::Local;
+		}
+#else // !MODPLUG_TRACKER
+		if (GetType() & MOD_TYPE_IT)
+		{
+			m_modFormat.timezone = mpt::Date::LogicalTimezone::UTC;
+		} else
+		{
+			m_modFormat.timezone = mpt::Date::LogicalTimezone::Unspecified;
+		}
+#endif // MODPLUG_TRACKER
+#else
+#ifdef MODPLUG_TRACKER
+		m_modFormat.timezone = mpt::Date::LogicalTimezone::Local;
+#else // !MODPLUG_TRACKER
+		m_modFormat.timezone = mpt::Date::LogicalTimezone::Unspecified;
+#endif // MODPLUG_TRACKER
+#endif
 	}
+
+#if MPT_TIME_UTC_ON_DISK
+#ifdef MODPLUG_TRACKER
+	// convert timestamps to UTC
+	if(m_modFormat.timezone == mpt::Date::LogicalTimezone::Local)
+	{
+		for(auto & fileHistoryEntry : m_FileHistory)
+		{
+			if(fileHistoryEntry.HasValidDate())
+			{
+				fileHistoryEntry.loadDate = mpt::Date::forget_timezone(mpt::Date::UnixAsUTC(mpt::Date::UnixFromLocal(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::Local>(fileHistoryEntry.loadDate))));
+			}
+		}
+		m_modFormat.timezone = mpt::Date::LogicalTimezone::UTC;
+	}
+#endif // MODPLUG_TRACKER
+#endif
 
 	// Adjust channels
 	const auto muteFlag = GetChannelMuteFlag();
@@ -506,10 +601,10 @@ bool CSoundFile::CreateInternal(FileReader file, ModLoadingFlags loadFlags)
 			mpt::PathString filename = GetSamplePath(nSmp);
 			if(file.GetOptionalFileName())
 			{
-				filename = filename.RelativePathToAbsolute(file.GetOptionalFileName()->GetPath());
+				filename = mpt::RelativePathToAbsolute(filename, file.GetOptionalFileName()->GetDirectoryWithDrive());
 			} else if(GetpModDoc() != nullptr)
 			{
-				filename = filename.RelativePathToAbsolute(GetpModDoc()->GetPathNameMpt().GetPath());
+				filename = mpt::RelativePathToAbsolute(filename, GetpModDoc()->GetPathNameMpt().GetDirectoryWithDrive());
 			}
 			filename = filename.Simplify();
 			if(!LoadExternalSample(nSmp, filename))
@@ -560,6 +655,8 @@ bool CSoundFile::CreateInternal(FileReader file, ModLoadingFlags loadFlags)
 	if(!m_nDefaultSpeed)
 		m_nDefaultSpeed = 6;
 
+	if(!m_nDefaultRowsPerBeat && m_nTempoMode == TempoMode::Modern)
+		m_nDefaultRowsPerBeat = 1;
 	if(m_nDefaultRowsPerMeasure < m_nDefaultRowsPerBeat)
 		m_nDefaultRowsPerMeasure = m_nDefaultRowsPerBeat;
 	LimitMax(m_nDefaultRowsPerBeat, MAX_ROWS_PER_BEAT);
@@ -737,7 +834,7 @@ bool CSoundFile::Destroy()
 #endif // NO_PLUGINS
 
 	m_nType = MOD_TYPE_NONE;
-	m_ContainerType = MOD_CONTAINERTYPE_NONE;
+	m_ContainerType = ModContainerType::None;
 	m_nChannels = m_nSamples = m_nInstruments = 0;
 	return true;
 }
@@ -1075,6 +1172,7 @@ PlayBehaviourSet CSoundFile::GetSupportedPlaybackBehaviour(MODTYPE type)
 		playBehaviour.set(kITDCTBehaviour);
 		playBehaviour.set(kITPitchPanSeparation);
 		playBehaviour.set(kITResetFilterOnPortaSmpChange);
+		playBehaviour.set(kITInitialNoteMemory);
 		if(type == MOD_TYPE_MPT)
 		{
 			playBehaviour.set(kOPLFlexibleNoteOff);
@@ -1143,6 +1241,7 @@ PlayBehaviourSet CSoundFile::GetSupportedPlaybackBehaviour(MODTYPE type)
 		playBehaviour.set(kST3SampleSwap);
 		playBehaviour.set(kOPLNoteOffOnNoteChange);
 		playBehaviour.set(kApplyUpperPeriodLimit);
+		playBehaviour.set(kST3TonePortaWithAdlibNote);
 		break;
 
 	case MOD_TYPE_MOD:
@@ -1508,7 +1607,7 @@ std::unique_ptr<CTuning> CSoundFile::CreateTuning12TET(const mpt::ustring &name)
 }
 
 
-mpt::ustring CSoundFile::GetNoteName(const ModCommand::NOTE note, const INSTRUMENTINDEX inst) const
+mpt::ustring CSoundFile::GetNoteName(const ModCommand::NOTE note, const INSTRUMENTINDEX inst, const NoteName *noteNames) const
 {
 	// For MPTM instruments with custom tuning, find the appropriate note name. Else, use default note names.
 	if(ModCommand::IsNote(note) && GetType() == MOD_TYPE_MPT && inst >= 1 && inst <= GetNumInstruments() && Instruments[inst] && Instruments[inst]->pTuning)
@@ -1516,7 +1615,7 @@ mpt::ustring CSoundFile::GetNoteName(const ModCommand::NOTE note, const INSTRUME
 		return Instruments[inst]->pTuning->GetNoteName(note - NOTE_MIDDLEC);
 	} else
 	{
-		return GetNoteName(note);
+		return GetNoteName(note, noteNames ? noteNames : m_NoteNames);
 	}
 }
 
@@ -1540,7 +1639,7 @@ mpt::ustring CSoundFile::GetNoteName(const ModCommand::NOTE note, const NoteName
 	{
 		return mpt::ustring()
 			.append(noteNames[(note - NOTE_MIN) % 12])
-			.append(1, UC_('0') + (note - NOTE_MIN) / 12)
+			.append(1, static_cast<mpt::uchar>(UC_('0') + ((note - NOTE_MIN) / 12)))
 			;	// e.g. "C#" + "5"
 	} else if(note == NOTE_NONE)
 	{
@@ -1632,7 +1731,7 @@ void CSoundFile::ChangeModTypeTo(const MODTYPE newType, bool adjust)
 	Order.OnModTypeChanged(oldType);
 	Patterns.OnModTypeChanged(oldType);
 
-	m_modFormat.type = mpt::ToUnicode(mpt::Charset::UTF8, GetModSpecifications().fileExtension);
+	m_modFormat.type = GetModSpecifications().GetFileExtension();
 }
 
 #endif // MODPLUG_TRACKER
@@ -1749,7 +1848,7 @@ uint32 CSoundFile::GetTickDuration(PlayState &playState) const
 
 	case TempoMode::Modern:
 		{
-			double accurateBufferCount = static_cast<double>(m_MixerSettings.gdwMixingFreq) * (60.0 / (playState.m_nMusicTempo.ToDouble() * Util::mul32to64_unsigned(playState.m_nMusicSpeed, playState.m_nCurrentRowsPerBeat)));
+			double accurateBufferCount = static_cast<double>(m_MixerSettings.gdwMixingFreq) * (60.0 / (playState.m_nMusicTempo.ToDouble() * static_cast<double>(Util::mul32to64_unsigned(playState.m_nMusicSpeed, playState.m_nCurrentRowsPerBeat))));
 			const TempoSwing &swing = (Patterns.IsValidPat(playState.m_nPattern) && Patterns[playState.m_nPattern].HasTempoSwing())
 				? Patterns[playState.m_nPattern].GetTempoSwing()
 				: m_tempoSwing;
@@ -1963,7 +2062,7 @@ void CSoundFile::PrecomputeSampleLoops(bool updateChannels)
 bool CSoundFile::LoadExternalSample(SAMPLEINDEX smp, const mpt::PathString &filename)
 {
 	bool ok = false;
-	InputFile f(filename, SettingCacheCompleteFileBeforeLoading());
+	mpt::IO::InputFile f(filename, SettingCacheCompleteFileBeforeLoading());
 
 	if(f.IsValid())
 	{

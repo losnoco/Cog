@@ -13,7 +13,7 @@
 #include "openmpt/all/BuildSettings.hpp"
 
 #include "mpt/base/span.hpp"
-#include "mpt/exception_text/exception_text.hpp"
+#include "mpt/exception/exception_text.hpp"
 
 #include "mptAssert.h"
 #include "mptBaseMacros.h"
@@ -24,7 +24,6 @@
 // old
 #include "mptBaseUtils.h"
 #include "mptStringFormat.h"
-#include "mptStringParse.h"
 #include "mptTime.h"
 
 #include <stdexcept>

@@ -56,13 +56,13 @@ uint32 PPBITBUFFER::GetBits(uint32 n)
 }
 
 
-static bool PP20_DoUnpack(const uint8 *pSrc, uint32 srcLen, uint8 *pDst, uint32 dstLen)
+static bool PP20_DoUnpack(mpt::span<const uint8> src, uint8 *pDst, uint32 dstLen)
 {
-	const std::array<uint8, 4> modeTable{pSrc[0], pSrc[1], pSrc[2], pSrc[3]};
+	const std::array<uint8, 4> modeTable{src[0], src[1], src[2], src[3]};
 	PPBITBUFFER BitBuffer;
-	BitBuffer.pStart = pSrc;
-	BitBuffer.pSrc = pSrc + srcLen - 4;
-	BitBuffer.GetBits(pSrc[srcLen - 1]);
+	BitBuffer.pStart = src.data();
+	BitBuffer.pSrc = src.data() + src.size() - 4;
+	BitBuffer.GetBits(src.data()[src.size() - 1]);
 	uint32 bytesLeft = dstLen;
 	while(bytesLeft > 0)
 	{
@@ -200,7 +200,8 @@ bool UnpackPP20(std::vector<ContainerItem> &containerItems, FileReader &file, Co
 		return false;
 	}
 	file.Seek(4);
-	bool result = PP20_DoUnpack(file.GetRawData<uint8>().data(), static_cast<uint32>(length - 4), mpt::byte_cast<uint8 *>(unpackedData.data()), dstLen);
+	FileReader::PinnedView compressedData = file.GetPinnedView(mpt::saturate_cast<uint32>(length - 4));
+	bool result = PP20_DoUnpack(mpt::byte_cast<mpt::span<const uint8>>(compressedData.span()), mpt::byte_cast<uint8 *>(unpackedData.data()), dstLen);
 
 	if(result)
 	{

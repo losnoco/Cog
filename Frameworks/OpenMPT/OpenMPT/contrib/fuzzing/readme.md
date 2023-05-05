@@ -13,7 +13,7 @@ Contents:
 * `fuzz-secondary[1|2].sh`: Scripts to launch the secondary fuzzing process. It
   is recommended to run at least two fuzzer instances, as the deterministic and
   random fuzz mode have been found to complement each other really well. The two
-  scripts are set up to use different exploration strategies
+  scripts are set up to use different exploration strategies.
 * `fuzz-settings.sh`: Set up your preferences and afl settings here before the
   first run.
 * `fuzz.c`: A tiny C program that is used by the fuzzer to test libopenmpt.
@@ -45,7 +45,7 @@ How to use
 * Run `fuzz-main.sh` for the first (deterministic) instance of afl-fuzz.
 * For a "secondary" instance to run on another core, run `fuzz-secondary1.sh`
   and/or `fuzz-secondary2.sh`.
-* If you want to make use of even more cores, create more copies
+* If you want to make use of even more cores, create more copies of
   `fuzz-secondary2.sh` and adjust "infile03" / "fuzzer03" to
-  "infile04" / "fuzzer04" and so o (they need to be unique). Try variying the
+  "infile04" / "fuzzer04" and so on (they need to be unique). Try varying the
   fuzzing strategey (the -p parameter) to get results more quickly.

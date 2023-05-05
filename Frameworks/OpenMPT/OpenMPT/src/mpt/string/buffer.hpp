@@ -10,6 +10,7 @@
 #include "mpt/base/saturate_cast.hpp"
 #include "mpt/detect/mfc.hpp"
 #include "mpt/string/types.hpp"
+#include "mpt/string/utility.hpp"
 
 #include <algorithm>
 #include <array>
@@ -53,19 +54,19 @@ public:
 	StringBufRefImpl & operator=(const StringBufRefImpl &) = delete;
 	StringBufRefImpl & operator=(StringBufRefImpl &&) = delete;
 	operator Tstring() const {
-		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
+		std::size_t len = std::find(buf, buf + size, char_constants<Tchar>::null) - buf; // terminate at \0
 		return Tstring(buf, buf + len);
 	}
 	explicit operator std::basic_string_view<Tchar>() const {
-		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
+		std::size_t len = std::find(buf, buf + size, char_constants<Tchar>::null) - buf; // terminate at \0
 		return std::basic_string_view<Tchar>(buf, buf + len);
 	}
 	bool empty() const {
-		return buf[0] == Tchar('\0');
+		return buf[0] == char_constants<Tchar>::null;
 	}
 	StringBufRefImpl & operator=(const Tstring & str) {
 		std::copy(str.data(), str.data() + std::min(str.length(), size - 1), buf);
-		std::fill(buf + std::min(str.length(), size - 1), buf + size, Tchar('\0'));
+		std::fill(buf + std::min(str.length(), size - 1), buf + size, char_constants<Tchar>::null);
 		return *this;
 	}
 };
@@ -90,16 +91,26 @@ public:
 	StringBufRefImpl & operator=(const StringBufRefImpl &) = delete;
 	StringBufRefImpl & operator=(StringBufRefImpl &&) = delete;
 	operator Tstring() const {
-		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
+		std::size_t len = std::find(buf, buf + size, char_constants<Tchar>::null) - buf; // terminate at \0
 		return Tstring(buf, buf + len);
 	}
 	explicit operator std::basic_string_view<Tchar>() const {
-		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
+		std::size_t len = std::find(buf, buf + size, char_constants<Tchar>::null) - buf; // terminate at \0
 		return std::basic_string_view<Tchar>(buf, len);
 	}
 	bool empty() const {
-		return buf[0] == Tchar('\0');
+		return buf[0] == char_constants<Tchar>::null;
 	}
+};
+
+template <typename Tstring, typename Tchar>
+struct make_string_type<StringBufRefImpl<Tstring, Tchar>> {
+	using type = Tstring;
+};
+
+template <typename Tstring, typename Tchar>
+struct make_string_view_type<StringBufRefImpl<Tstring, Tchar>> {
+	using type = typename mpt::make_string_view_type<Tstring>::type;
 };
 
 
@@ -210,12 +221,12 @@ public:
 	CStringBufRefImpl & operator=(const CStringBufRefImpl &) = delete;
 	CStringBufRefImpl & operator=(CStringBufRefImpl &&) = delete;
 	operator CString() const {
-		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
+		std::size_t len = std::find(buf, buf + size, char_constants<Tchar>::null) - buf; // terminate at \0
 		return CString(buf, mpt::saturate_cast<int>(len));
 	}
 	CStringBufRefImpl & operator=(const CString & str) {
 		std::copy(str.GetString(), str.GetString() + std::min(static_cast<std::size_t>(str.GetLength()), size - 1), buf);
-		std::fill(buf + std::min(static_cast<std::size_t>(str.GetLength()), size - 1), buf + size, Tchar('\0'));
+		std::fill(buf + std::min(static_cast<std::size_t>(str.GetLength()), size - 1), buf + size, char_constants<Tchar>::null);
 		return *this;
 	}
 };
@@ -239,9 +250,19 @@ public:
 	CStringBufRefImpl & operator=(const CStringBufRefImpl &) = delete;
 	CStringBufRefImpl & operator=(CStringBufRefImpl &&) = delete;
 	operator CString() const {
-		std::size_t len = std::find(buf, buf + size, Tchar('\0')) - buf; // terminate at \0
+		std::size_t len = std::find(buf, buf + size, char_constants<Tchar>::null) - buf; // terminate at \0
 		return CString(buf, mpt::saturate_cast<int>(len));
 	}
+};
+
+template <typename Tchar>
+struct make_string_type<CStringBufRefImpl<Tchar>> {
+	using type = CString;
+};
+
+template <typename Tchar>
+struct make_string_view_type<CStringBufRefImpl<Tchar>> {
+	using type = CString;
 };
 
 template <typename Tchar, std::size_t size>
@@ -289,7 +310,7 @@ public:
 
 public:
 	charbuf() {
-		std::fill(std::begin(buf), std::end(buf), Tchar('\0'));
+		std::fill(std::begin(buf), std::end(buf), char_constants<Tchar>::null);
 	}
 	charbuf(const charbuf &) = default;
 	charbuf(charbuf &&) = default;
@@ -334,6 +355,16 @@ public:
 	friend bool operator==(const charbuf & a, const std::string & b) {
 		return static_cast<string_view_type>(a) == b;
 	}
+};
+
+template <std::size_t len>
+struct make_string_type<charbuf<len>> {
+	using type = std::string;
+};
+
+template <std::size_t len>
+struct make_string_view_type<charbuf<len>> {
+	using type = std::string_view;
 };
 
 

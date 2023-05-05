@@ -22,13 +22,13 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
-IMixPlugin* WavesReverb::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* WavesReverb::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) WavesReverb(factory, sndFile, mixStruct);
 }
 
 
-WavesReverb::WavesReverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+WavesReverb::WavesReverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 {
 	m_param[kRvbInGain] = 1.0f;
@@ -37,7 +37,6 @@ WavesReverb::WavesReverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGI
 	m_param[kRvbHighFreqRTRatio] = 0.0f;
 
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -145,12 +144,12 @@ void WavesReverb::Resume()
 {
 	m_isResumed = true;
 	// Recalculate delays
-	uint32 delay0 = mpt::saturate_round<uint32>(m_SndFile.GetSampleRate() * 0.045f);
-	uint32 delay1 = mpt::saturate_round<uint32>(delay0 * 1.18920707f);	// 2^0.25
-	uint32 delay2 = mpt::saturate_round<uint32>(delay1 * 1.18920707f);
-	uint32 delay3 = mpt::saturate_round<uint32>(delay2 * 1.18920707f);
-	uint32 delay4 = mpt::saturate_round<uint32>((delay0 + delay2) * 0.11546667f);
-	uint32 delay5 = mpt::saturate_round<uint32>((delay1 + delay3) * 0.11546667f);
+	uint32 delay0 = mpt::saturate_round<uint32>(static_cast<float>(m_SndFile.GetSampleRate()) * 0.045f);
+	uint32 delay1 = mpt::saturate_round<uint32>(static_cast<float>(delay0) * 1.18920707f);  // 2^0.25
+	uint32 delay2 = mpt::saturate_round<uint32>(static_cast<float>(delay1) * 1.18920707f);
+	uint32 delay3 = mpt::saturate_round<uint32>(static_cast<float>(delay2) * 1.18920707f);
+	uint32 delay4 = mpt::saturate_round<uint32>(static_cast<float>(delay0 + delay2) * 0.11546667f);
+	uint32 delay5 = mpt::saturate_round<uint32>(static_cast<float>(delay1 + delay3) * 0.11546667f);
 	// Comb delays
 	m_delay[0] = delay0 - delay4;
 	m_delay[1] = delay2 - delay4;
@@ -227,8 +226,8 @@ CString WavesReverb::GetParamDisplay(PlugParamIndex param)
 void WavesReverb::RecalculateWavesReverbParams()
 {
 	// Recalculate filters
-	const double ReverbTimeSmp = -3000.0 / (m_SndFile.GetSampleRate() * ReverbTime());
-	const double ReverbTimeSmpHF = ReverbTimeSmp * (1.0 / HighFreqRTRatio() - 1.0);
+	const double ReverbTimeSmp = -3000.0 / (static_cast<double>(m_SndFile.GetSampleRate()) * static_cast<double>(ReverbTime()));
+	const double ReverbTimeSmpHF = ReverbTimeSmp * (1.0 / static_cast<double>(HighFreqRTRatio()) - 1.0);
 
 	m_coeffs[0] = static_cast<float>(std::pow(10.0, m_delay[4] * ReverbTimeSmp));
 	m_coeffs[1] = static_cast<float>(std::pow(10.0, m_delay[5] * ReverbTimeSmp));
@@ -238,15 +237,15 @@ void WavesReverb::RecalculateWavesReverbParams()
 	{
 		double gain1 = std::pow(10.0, m_delay[pair] * ReverbTimeSmp);
 		double gain2 = (1.0 - std::pow(10.0, (m_delay[pair] + m_delay[4 + pair / 2]) * ReverbTimeSmpHF)) * 0.5;
-		double gain3 = gain1 * m_coeffs[pair / 2];
+		double gain3 = gain1 * static_cast<double>(m_coeffs[pair / 2]);
 		double gain4 = gain3 * (((gain3 + 1.0) * gain3 + 1.0) * gain3 + 1.0) + 1.0;
 		m_coeffs[2 + pair * 2] = static_cast<float>(gain1 * (1.0 - gain2));
 		m_coeffs[3 + pair * 2] = static_cast<float>(gain1 * gain2);
 		sum += gain4 * gain4;
 	}
 
-	double inGain = std::pow(10.0, GainInDecibel(m_param[kRvbInGain]) * 0.05);
-	double reverbMix = std::pow(10.0, GainInDecibel(m_param[kRvbReverbMix]) * 0.1);
+	double inGain = std::pow(10.0, static_cast<double>(GainInDecibel(m_param[kRvbInGain])) * 0.05);
+	double reverbMix = std::pow(10.0, static_cast<double>(GainInDecibel(m_param[kRvbReverbMix])) * 0.1);
 	m_dryFactor = static_cast<float>(std::sqrt(1.0 - reverbMix) * inGain);
 	m_wetFactor = static_cast<float>(std::sqrt(reverbMix) * (4.0 / std::sqrt(sum) * inGain));
 }

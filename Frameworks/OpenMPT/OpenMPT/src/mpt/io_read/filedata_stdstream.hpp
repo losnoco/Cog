@@ -42,7 +42,7 @@ public:
 		stream.clear();
 		std::streampos oldpos = stream.tellg();
 		stream.seekg(0, std::ios::end);
-		std::streampos length = stream.tellg();
+		std::streamoff length = static_cast<std::streamoff>(stream.tellg());
 		stream.seekg(oldpos);
 		return mpt::saturate_cast<IFileData::pos_type>(static_cast<int64>(length));
 	}
@@ -66,9 +66,9 @@ private:
 	mpt::byte_span InternalReadBuffered(pos_type pos, mpt::byte_span dst) const override {
 		stream.clear(); // tellg needs eof and fail bits unset
 		std::streampos currentpos = stream.tellg();
-		if (currentpos == std::streampos(-1) || static_cast<int64>(pos) != currentpos) {
+		if ((currentpos == std::streampos(std::streamoff(-1))) || (static_cast<std::streamoff>(pos) != static_cast<std::streamoff>(currentpos))) {
 			// inefficient istream implementations might invalidate their buffer when seeking, even when seeking to the current position
-			stream.seekg(pos);
+			stream.seekg(static_cast<std::streamoff>(pos), std::ios::beg);
 		}
 		stream.read(mpt::byte_cast<char *>(dst.data()), dst.size());
 		return dst.first(static_cast<std::size_t>(stream.gcount()));

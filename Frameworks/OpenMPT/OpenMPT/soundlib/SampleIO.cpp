@@ -916,12 +916,12 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 		// Stereo signed interleaved
 		MPT_ASSERT(len == numSamples * 2);
 		const int8 *const pSample8 = sample.sample8();
-		mpt::IO::WriteRaw(f, reinterpret_cast<const std::byte*>(pSample8), len);
+		mpt::IO::Write(f, mpt::as_span(pSample8, len));
 	}
 
 	else if(GetBitDepth() == 16 && GetChannelFormat() == stereoInterleaved && GetEncoding() == signedPCM && GetEndianness() == littleEndian)
 	{
-		// Stereo signed interleaved
+		// Stereo signed interleaved, little-endian
 		MPT_ASSERT(len == numSamples * 4);
 		const int16 *const pSample16 = sample.sample16();
 		const int16 *p = pSample16;
@@ -935,7 +935,7 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 
 	else if(GetBitDepth() == 16 && GetChannelFormat() == stereoInterleaved && GetEncoding() == signedPCM && GetEndianness() == bigEndian)
 	{
-		// Stereo signed interleaved
+		// Stereo signed interleaved, big-endian
 		MPT_ASSERT(len == numSamples * 4);
 		const int16 *const pSample16 = sample.sample16();
 		const int16 *p = pSample16;
@@ -944,6 +944,21 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 			mpt::IO::Write(fb, mpt::as_be(p[0]));
 			mpt::IO::Write(fb, mpt::as_be(p[1]));
 			p += 2;
+		}
+	}
+
+	else if(GetBitDepth() == 16 && GetChannelFormat() == stereoSplit && GetEncoding() == signedPCM && GetEndianness() == bigEndian)
+	{
+		// Stereo signed split, big-endian
+		MPT_ASSERT(len == numSamples * 4);
+		for(uint8 chn = 0; chn < 2; chn++)
+		{
+			const int16 *p = sample.sample16() + chn;
+			for(SmpLength j = 0; j < numSamples; j++)
+			{
+				mpt::IO::Write(fb, mpt::as_be(*p));
+				p += 2;
+			}
 		}
 	}
 

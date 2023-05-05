@@ -85,9 +85,10 @@ MPT_NOINLINE void FIR_MinPhase(std::vector<double> &table, const TinyFFT &fft)
 
 class BiquadFilter
 {
-	double b0, b1, b2, a1, a2, x1 = 0.0, x2 = 0.0, y1 = 0.0, y2 = 0.0;
+	const double b0, b1, b2, a1, a2;
+	double x1 = 0.0, x2 = 0.0, y1 = 0.0, y2 = 0.0;
 
-	double Filter(double x0)
+	double Filter(double x0) noexcept
 	{
 		double y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
 		x2 = x1;
@@ -267,7 +268,6 @@ State::State(uint32 sampleRate)
 	double amigaClocksPerSample = static_cast<double>(PAULA_HZ) / sampleRate;
 	numSteps = static_cast<int>(amigaClocksPerSample / MINIMUM_INTERVAL);
 	stepRemainder = SamplePosition::FromDouble(amigaClocksPerSample - numSteps * MINIMUM_INTERVAL);
-	remainder = SamplePosition(0);
 }
 
 
@@ -305,7 +305,9 @@ int State::OutputSample(const BlepArray &WinSincIntegral)
 		const auto &blep = blepState[i % MAX_BLEPS];
 		output -= WinSincIntegral[blep.age] * blep.level;
 	}
+#ifdef MPT_INTMIXER
 	output /= (1 << (Paula::BLEP_SCALE - 2));	// - 2 to compensate for the fact that we reduced the input sample bit depth
+#endif
 
 	return output;
 }

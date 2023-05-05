@@ -568,13 +568,13 @@ LIBOPENMPT_API size_t openmpt_probe_file_header_get_recommended_size(void);
 /*! Probe for no formats in openmpt_probe_file_header() or openmpt_probe_file_header_without_filesize(). \since 0.3.0 */
 #define OPENMPT_PROBE_FILE_HEADER_FLAGS_NONE       0x0ull
 
-/*! Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0 */
+/*! Possible return values for openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(): The file will most likely be supported by libopenmpt. \since 0.3.0 */
 #define OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS      1
-/*! Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0 */
+/*! Possible return values for openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(): The file is not supported by libopenmpt. \since 0.3.0 */
 #define OPENMPT_PROBE_FILE_HEADER_RESULT_FAILURE      0
-/*! Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0 */
+/*! Possible return values for openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(): An answer could not be determined with the amount of data provided. \since 0.3.0 */
 #define OPENMPT_PROBE_FILE_HEADER_RESULT_WANTMOREDATA (-1)
-/*! Possible return values fo openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(). \since 0.3.0 */
+/*! Possible return values for openmpt_probe_file_header() and openmpt_probe_file_header_without_filesize(): An internal error occurred. \since 0.3.0 */
 #define OPENMPT_PROBE_FILE_HEADER_RESULT_ERROR        (-255)
 
 /*! \brief Probe the provided bytes from the beginning of a file for supported file format headers to find out whether libopenmpt might be able to open it
@@ -1159,8 +1159,16 @@ LIBOPENMPT_API int32_t openmpt_module_get_current_speed( openmpt_module * mod );
  *
  * \param mod The module handle to work on.
  * \return The current tempo in tracker units. The exact meaning of this value depends on the tempo mode being used.
+ * \deprecated Please use openmpt_module_get_current_tempo2().
  */
-LIBOPENMPT_API int32_t openmpt_module_get_current_tempo( openmpt_module * mod );
+LIBOPENMPT_API LIBOPENMPT_DEPRECATED int32_t openmpt_module_get_current_tempo( openmpt_module * mod );
+/*! \brief Get the current tempo
+ *
+ * \param mod The module handle to work on.
+ * \return The current tempo in tracker units. The exact meaning of this value depends on the tempo mode being used.
+ * \since 0.7.0
+ */
+LIBOPENMPT_API double openmpt_module_get_current_tempo2( openmpt_module * mod );
 /*! \brief Get the current order
  *
  * \param mod The module handle to work on.
@@ -1409,11 +1417,11 @@ LIBOPENMPT_API const char * openmpt_module_highlight_pattern_row_channel( openmp
  *          - load.skip_patterns (boolean): Set to "1" to avoid loading patterns into memory
  *          - load.skip_plugins (boolean): Set to "1" to avoid loading plugins
  *          - load.skip_subsongs_init (boolean): Set to "1" to avoid pre-initializing sub-songs. Skipping results in faster module loading but slower seeking.
- *          - seek.sync_samples (boolean): Set to "1" to sync sample playback when using openmpt_module_set_position_seconds or openmpt_module_set_position_order_row.
+ *          - seek.sync_samples (boolean): Set to "0" to not sync sample playback when using openmpt_module_set_position_seconds or openmpt_module_set_position_order_row.
  *          - subsong (integer): The current subsong. Setting it has identical semantics as openmpt_module_select_subsong(), getting it returns the currently selected subsong.
- *          - play.at_end (text): Chooses the behaviour when the end of song is reached:
+ *          - play.at_end (text): Chooses the behaviour when the end of song is reached. The song end is considered to be reached after the number of reptitions set by openmpt_module_set_repeat_count was played, so if the song is set to repeat infinitely, its end is never considered to be reached.
  *                         - "fadeout": Fades the module out for a short while. Subsequent reads after the fadeout will return 0 rendered frames.
- *                         - "continue": Returns 0 rendered frames when the song end is reached. Subsequent reads will continue playing from the song start or loop start.
+ *                         - "continue": Returns 0 rendered frames when the song end is reached. Subsequent reads will continue playing from the loop start (if the song is not programmed to loop, playback resumsed from the song start).
  *                         - "stop": Returns 0 rendered frames when the song end is reached. Subsequent reads will return 0 rendered frames.
  *          - play.tempo_factor (floatingpoint): Set a floating point tempo factor. "1.0" is the default tempo.
  *          - play.pitch_factor (floatingpoint): Set a floating point pitch factor. "1.0" is the default pitch.

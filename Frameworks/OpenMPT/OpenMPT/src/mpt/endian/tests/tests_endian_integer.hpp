@@ -72,16 +72,6 @@ MPT_TEST_GROUP_INLINE("mpt/endian/integer")
 	MPT_CONSTEXPR20_VAR int32le foo = test_endian_constexpr::test(23);
 	static_cast<void>(foo);
 
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(uint8(0x12)), 0x12);
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(uint16(0x1234)), 0x3412);
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(uint32(0x12345678u)), 0x78563412u);
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(uint64(0x123456789abcdef0ull)), 0xf0debc9a78563412ull);
-
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(int8(std::numeric_limits<int8>::min())), std::numeric_limits<int8>::min());
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(int16(std::numeric_limits<int16>::min())), int16(0x80));
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(int32(std::numeric_limits<int32>::min())), int32(0x80));
-	MPT_TEST_EXPECT_EQUAL(mpt::SwapBytesImpl(int64(std::numeric_limits<int64>::min())), int64(0x80));
-
 	// Packed integers with defined endianness
 	{
 		int8le le8;

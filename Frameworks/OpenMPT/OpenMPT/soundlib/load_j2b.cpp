@@ -592,6 +592,8 @@ static bool ConvertAMPattern(FileReader chunk, PATTERNINDEX pat, bool isAM, CSou
 					}
 					m.param = (m.param & 0x0F) | 0xE0;
 					break;
+				default:
+					break;
 				}
 			}
 

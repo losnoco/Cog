@@ -590,7 +590,7 @@ struct Convert<float32, uint8>
 	using output_t = float32;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return (static_cast<int>(val) - 0x80) * (1.0f / static_cast<float32>(static_cast<unsigned int>(1) << 7));
+		return static_cast<float32>(static_cast<int>(val) - 0x80) * (1.0f / static_cast<float32>(static_cast<unsigned int>(1) << 7));
 	}
 };
 
@@ -601,7 +601,7 @@ struct Convert<float32, int8>
 	using output_t = float32;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 7));
+		return static_cast<float32>(val) * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 7));
 	}
 };
 
@@ -612,7 +612,7 @@ struct Convert<float32, int16>
 	using output_t = float32;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 15));
+		return static_cast<float32>(val) * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 15));
 	}
 };
 
@@ -623,7 +623,7 @@ struct Convert<float32, int24>
 	using output_t = float32;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 23));
+		return static_cast<float32>(val) * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 23));
 	}
 };
 
@@ -634,7 +634,7 @@ struct Convert<float32, int32>
 	using output_t = float32;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 31));
+		return static_cast<float32>(val) * (1.0f / static_cast<float>(static_cast<unsigned int>(1) << 31));
 	}
 };
 
@@ -645,7 +645,7 @@ struct Convert<float32, int64>
 	using output_t = float32;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0f / static_cast<float>(static_cast<uint64>(1) << 63));
+		return static_cast<float32>(val) * (1.0f / static_cast<float>(static_cast<uint64>(1) << 63));
 	}
 };
 
@@ -656,7 +656,7 @@ struct Convert<double, uint8>
 	using output_t = double;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return (static_cast<int>(val) - 0x80) * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 7));
+		return static_cast<double>(static_cast<int>(val) - 0x80) * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 7));
 	}
 };
 
@@ -667,7 +667,7 @@ struct Convert<double, int8>
 	using output_t = double;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 7));
+		return static_cast<double>(val) * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 7));
 	}
 };
 
@@ -678,7 +678,7 @@ struct Convert<double, int16>
 	using output_t = double;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 15));
+		return static_cast<double>(val) * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 15));
 	}
 };
 
@@ -689,7 +689,7 @@ struct Convert<double, int24>
 	using output_t = double;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 23));
+		return static_cast<double>(val) * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 23));
 	}
 };
 
@@ -700,7 +700,7 @@ struct Convert<double, int32>
 	using output_t = double;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 31));
+		return static_cast<double>(val) * (1.0 / static_cast<double>(static_cast<unsigned int>(1) << 31));
 	}
 };
 
@@ -711,7 +711,7 @@ struct Convert<double, int64>
 	using output_t = double;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		return val * (1.0 / static_cast<double>(static_cast<uint64>(1) << 63));
+		return static_cast<double>(val) * (1.0 / static_cast<double>(static_cast<uint64>(1) << 63));
 	}
 };
 

@@ -35,7 +35,7 @@ bool FileHeader::IsValid() const
 
 uint32 FileHeader::GetMinimumAdditionalFileSize() const
 {
-	return std::max({nameOffset + nameCount * 5u, exportOffset + exportCount * 8u, importOffset + importCount * 4u}) - sizeof(FileHeader);
+	return std::max({nameOffset + nameCount * 5u, exportOffset + exportCount * 8u, importOffset + importCount * 4u}) - static_cast<uint32>(sizeof(FileHeader));
 }
 
 

@@ -8,8 +8,8 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/io_read/callbackstream.hpp"
 #include "mpt/io_read/filecursor.hpp"
-#include "mpt/io_read/filecursor_traits_filedata.hpp"
 #include "mpt/io_read/filecursor_filename_traits.hpp"
+#include "mpt/io_read/filecursor_traits_filedata.hpp"
 #include "mpt/io_read/filedata_callbackstream.hpp"
 
 #include <memory>

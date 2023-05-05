@@ -97,7 +97,7 @@ struct ModChannel
 	uint8 nNote;
 	NewNoteAction nNNA;
 	uint8 nLastNote;  // Last note, ignoring note offs and cuts - for MIDI macros
-	uint8 nArpeggioLastNote, nArpeggioBaseNote;  // For plugin arpeggio
+	uint8 nArpeggioLastNote, lastMidiNoteWithoutArp;  // For plugin arpeggio and NNA handling
 	uint8 nNewNote, nNewIns, nOldIns, nCommand, nArpeggio;
 	uint8 nRetrigParam, nRetrigCount;
 	uint8 nOldVolumeSlide, nOldFineVolUpDown;
@@ -187,7 +187,7 @@ struct ModChannel
 
 	uint32 GetVSTVolume() const noexcept { return (pModInstrument) ? pModInstrument->nGlobalVol * 4 : nVolume; }
 
-	ModCommand::NOTE GetPluginNote(bool realNoteMapping) const;
+	ModCommand::NOTE GetPluginNote(bool realNoteMapping, bool ignoreArpeggio = false) const;
 
 	// Check if the channel has a valid MIDI output. A return value of true implies that pModInstrument != nullptr.
 	bool HasMIDIOutput() const noexcept { return pModInstrument != nullptr && pModInstrument->HasValidMIDIChannel(); }

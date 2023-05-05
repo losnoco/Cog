@@ -11,8 +11,13 @@
 
 #include <limits>
 
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
+
+#if MPT_LIBC_DJGPP
+#include <crt0.h>
+#endif // MPT_LIBC_DJGPP
 
 
 namespace mpt {
@@ -28,6 +33,60 @@ static_assert(sizeof(std::byte) == 1);
 static_assert(alignof(std::byte) == 1);
 
 static_assert(mpt::arch_bits == static_cast<int>(mpt::pointer_size) * 8);
+
+
+#if MPT_LIBC_DJGPP
+
+namespace platform {
+
+namespace detail {
+
+struct libc_checker {
+private:
+	bool m_libc_check_failure = false;
+	bool m_libc_has_implicit_code_locking = false;
+public:
+	[[nodiscard]] inline libc_checker() {
+		assert(((_crt0_startup_flags & _CRT0_FLAG_NONMOVE_SBRK) == _CRT0_FLAG_NONMOVE_SBRK) && ((_crt0_startup_flags & _CRT0_FLAG_UNIX_SBRK) == 0));
+		if (((_crt0_startup_flags & _CRT0_FLAG_NONMOVE_SBRK) == _CRT0_FLAG_NONMOVE_SBRK) && ((_crt0_startup_flags & _CRT0_FLAG_UNIX_SBRK) != 0)) {
+			m_libc_check_failure = true;
+		}
+		assert((_crt0_startup_flags & _CRT0_DISABLE_SBRK_ADDRESS_WRAP) == _CRT0_DISABLE_SBRK_ADDRESS_WRAP);
+		if ((_crt0_startup_flags & _CRT0_DISABLE_SBRK_ADDRESS_WRAP) != _CRT0_DISABLE_SBRK_ADDRESS_WRAP) {
+			m_libc_check_failure = true;
+		}
+		if ((_crt0_startup_flags & _CRT0_FLAG_LOCK_MEMORY) == _CRT0_FLAG_LOCK_MEMORY) {
+			m_libc_has_implicit_code_locking = true;
+		}
+	}
+	libc_checker(const libc_checker &) = delete;
+	libc_checker & operator=(const libc_checker &) = delete;
+	[[nodiscard]] inline bool is_ok() const noexcept {
+		return !m_libc_check_failure;
+	}
+	[[nodiscard]] inline bool has_implicit_code_locking() const noexcept {
+		return m_libc_has_implicit_code_locking;
+	}
+};
+
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wglobal-constructors"
+#endif // MPT_COMPILER_CLANG
+inline const libc_checker g_libc_checker;
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG
+
+} // namespace detail
+
+[[nodiscard]] inline const mpt::platform::detail::libc_checker & libc() noexcept {
+	return mpt::platform::detail::g_libc_checker;
+}
+
+} // namespace platform
+
+#endif // MPT_LIBC_DJGPP
 
 
 } // namespace MPT_INLINE_NS

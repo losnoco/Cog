@@ -17,6 +17,11 @@
 #include "openmpt/all/BuildSettings.hpp"
 
 
+#if defined(__MINGW32__) && !defined(__MINGW64__)
+#include <sys/types.h>
+#endif
+
+
 #if defined(MODPLUG_TRACKER)
 
 #if defined(MPT_WITH_MFC)
@@ -33,10 +38,10 @@
 #include <afxcview.h>
 // cppcheck-suppress missingInclude
 #include <afxdlgs.h>
-#ifdef MPT_MFC_FULL
+#ifndef _AFX_NO_MFC_CONTROLS_IN_DIALOGS
 // cppcheck-suppress missingInclude
 #include <afxlistctrl.h>
-#endif // MPT_MFC_FULL
+#endif // !_AFX_NO_MFC_CONTROLS_IN_DIALOGS
 // cppcheck-suppress missingInclude
 #include <afxole.h>
 
@@ -60,6 +65,7 @@
 
 
 #include "mpt/base/span.hpp"
+#include "mpt/check/compiler.hpp"
 #include "mpt/check/libc.hpp"
 #if defined(MPT_WITH_MFC)
 #include "mpt/check/mfc.hpp"
@@ -67,8 +73,10 @@
 #if MPT_OS_WINDOWS
 #include "mpt/check/windows.hpp"
 #endif
-#include "mpt/exception_text/exception_text.hpp"
+#include "mpt/exception/exception.hpp"
+#include "mpt/exception/exception_text.hpp"
 #include "mpt/out_of_memory/out_of_memory.hpp"
+#include "mpt/string/types.hpp"
 #include "mpt/system_error/system_error.hpp"
 
 #include "openmpt/base/Types.hpp"

@@ -25,6 +25,11 @@
 // forward declarations
 namespace mpt {
 inline namespace mpt_libopenmpt {
+template <typename Traits, bool allow_transcode_locale>
+class BasicPathString;
+struct NativePathTraits;
+struct Utf8PathTraits;
+using native_path = BasicPathString<NativePathTraits, true>;
 namespace IO {
 class FileCursorTraitsFileData;
 template <typename Tpath>
@@ -40,7 +45,11 @@ template <typename Ttraits, typename Tfilenametraits>
 using FileCursor = mpt::IO::FileCursor<Ttraits, Tfilenametraits>;
 } // namespace detail
 namespace mpt {
-class PathString;
+#if defined(MPT_ENABLE_CHARSET_LOCALE)
+using PathString = mpt::native_path;
+#else
+using PathString = mpt::BasicPathString<mpt::Utf8PathTraits, false>;
+#endif
 } // namespace mpt
 using FileCursor = detail::FileCursor<mpt::IO::FileCursorTraitsFileData, mpt::IO::FileCursorFilenameTraits<mpt::PathString>>;
 class CSoundFile;
@@ -212,6 +221,7 @@ public:
 	double get_current_estimated_bpm() const;
 	std::int32_t get_current_speed() const;
 	std::int32_t get_current_tempo() const;
+	double get_current_tempo2() const;
 	std::int32_t get_current_order() const;
 	std::int32_t get_current_pattern() const;
 	std::int32_t get_current_row() const;

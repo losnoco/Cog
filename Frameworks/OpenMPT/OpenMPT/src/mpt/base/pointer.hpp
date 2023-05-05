@@ -5,6 +5,7 @@
 
 
 
+#include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
 
 #include <cstddef>
@@ -44,6 +45,27 @@ template <typename Tdst, typename Tsrc>
 constexpr Tdst pointer_cast(const Tsrc & src) noexcept {
 	return pointer_cast_helper<Tdst, Tsrc>::cast(src);
 }
+
+
+template <typename T>
+class void_ptr {
+private:
+	T * m_ptr = nullptr;
+public:
+	MPT_FORCEINLINE explicit void_ptr(void * ptr)
+		: m_ptr(reinterpret_cast<T *>(ptr)) {
+		return;
+	}
+	MPT_FORCEINLINE T & operator*() {
+		return *m_ptr;
+	}
+	MPT_FORCEINLINE T * operator->() {
+		return m_ptr;
+	}
+	MPT_FORCEINLINE operator void *() {
+		return m_ptr;
+	}
+};
 
 
 } // namespace MPT_INLINE_NS

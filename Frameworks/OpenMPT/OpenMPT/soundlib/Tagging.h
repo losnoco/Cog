@@ -35,8 +35,6 @@ struct FileTags
 
 	mpt::ustring genre;
 
-	void SetEncoder();
-
 };
 
 

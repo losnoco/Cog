@@ -37,8 +37,8 @@ MPT_BINARY_STRUCT(DIGIFileHeader, 610)
 
 static void ReadDIGIPatternEntry(FileReader &file, ModCommand &m)
 {
-	CSoundFile::ReadMODPatternEntry(file, m);
-	CSoundFile::ConvertModCommand(m);
+	const auto [command, param] = CSoundFile::ReadMODPatternEntry(file, m);
+	CSoundFile::ConvertModCommand(m, command, param);
 	if(m.command == CMD_MODCMDEX)
 	{
 		switch(m.param & 0xF0)
@@ -185,15 +185,13 @@ bool CSoundFile::ReadDIGI(FileReader &file, ModLoadingFlags loadFlags)
 			// Compressed patterns are stored in row-major order...
 			for(ROWINDEX row = 0; row < 64; row++)
 			{
-				PatternRow patRow = Patterns[pat].GetRow(row);
+				
 				uint8 bit = 0x80;
-				for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++, bit >>= 1)
+				for(ModCommand &m : Patterns[pat].GetRow(row))
 				{
 					if(eventMask[row] & bit)
-					{
-						ModCommand &m = patRow[chn];
 						ReadDIGIPatternEntry(patternChunk, m);
-					}
+					bit >>= 1;
 				}
 			}
 		} else

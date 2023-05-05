@@ -463,9 +463,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 					}
 					if(command || param)
 					{
-						m->command = command;
-						m->param = param;
-						ConvertModCommand(*m);
+						ConvertModCommand(*m, command, param);
 #ifdef MODPLUG_TRACKER
 						m->Convert(MOD_TYPE_MOD, MOD_TYPE_IT, *this);
 #endif
@@ -481,62 +479,54 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 			}
 		} else
 		{
-			ModCommand *m = Patterns[patNum].GetpModCommand(0, 0);
-			for(ROWINDEX row = 0; row < numRows; row++)
+			for(ModCommand &m : Patterns[patNum])
 			{
-				for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++, m++)
+				const auto data = chunk.ReadArray<uint8, 4>();
+				uint8 command = 0;
+				if(patternFormat == DTM_204_PATTERN_FORMAT)
 				{
-					const auto data = chunk.ReadArray<uint8, 4>();
-					if(patternFormat == DTM_204_PATTERN_FORMAT)
+					const auto [note, instrVol, instrCmd, param] = data;
+					if(note > 0 && note < 0x80)
 					{
-						const auto [note, instrVol, instrCmd, param] = data;
-						if(note > 0 && note < 0x80)
-						{
-							m->note = (note >> 4) * 12 + (note & 0x0F) + NOTE_MIN + 11;
-						}
-						uint8 vol = instrVol >> 2;
-						if(vol)
-						{
-							m->volcmd = VOLCMD_VOLUME;
-							m->vol = vol - 1u;
-						}
-						m->instr = ((instrVol & 0x03) << 4) | (instrCmd >> 4);
-						m->command = instrCmd & 0x0F;
-						m->param = param;
-					} else
-					{
-						ReadMODPatternEntry(data, *m);
-						m->instr |= data[0] & 0x30;	// Allow more than 31 instruments
+						m.note = (note >> 4) * 12 + (note & 0x0F) + NOTE_MIN + 11;
 					}
-					ConvertModCommand(*m);
-					// Fix commands without memory and slide nibble precedence
-					switch(m->command)
+					uint8 vol = instrVol >> 2;
+					if(vol)
 					{
-					case CMD_PORTAMENTOUP:
-					case CMD_PORTAMENTODOWN:
-						if(!m->param)
-						{
-							m->command = CMD_NONE;
-						}
-						break;
-					case CMD_VOLUMESLIDE:
-					case CMD_TONEPORTAVOL:
-					case CMD_VIBRATOVOL:
-						if(m->param & 0xF0)
-						{
-							m->param &= 0xF0;
-						} else if(!m->param)
-						{
-							m->command = CMD_NONE;
-						}
-						break;
-					default:
-						break;
+						m.volcmd = VOLCMD_VOLUME;
+						m.vol = vol - 1u;
 					}
-#ifdef MODPLUG_TRACKER
-					m->Convert(MOD_TYPE_MOD, MOD_TYPE_IT, *this);
-#endif
+					m.instr = ((instrVol & 0x03) << 4) | (instrCmd >> 4);
+					command = instrCmd & 0x0F;
+					m.param = param;
+				} else
+				{
+					std::tie(command, m.param) = ReadMODPatternEntry(data, m);
+					m.instr |= data[0] & 0x30;	// Allow more than 31 instruments
 				}
+				ConvertModCommand(m, command, m.param);
+				// Fix commands without memory and slide nibble precedence
+				switch(m.command)
+				{
+				case CMD_PORTAMENTOUP:
+				case CMD_PORTAMENTODOWN:
+					if(!m.param)
+						m.command = CMD_NONE;
+					break;
+				case CMD_VOLUMESLIDE:
+				case CMD_TONEPORTAVOL:
+				case CMD_VIBRATOVOL:
+					if(m.param & 0xF0)
+						m.param &= 0xF0;
+					else if(!m.param)
+						m.command = CMD_NONE;
+					break;
+				default:
+					break;
+				}
+#ifdef MODPLUG_TRACKER
+				m.Convert(MOD_TYPE_MOD, MOD_TYPE_IT, *this);
+#endif
 			}
 		}
 	}

@@ -19,6 +19,10 @@
 
 #define LIBOPENMPT_EXAMPLE_PROBE_RESULT LIBOPENMPT_EXAMPLE_PROBE_RESULT_BINARY
 
+#if defined( __MINGW32__ ) && !defined( __MINGW64__ )
+#include <sys/types.h>
+#endif
+
 #include <memory.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -27,6 +31,10 @@
 
 #include <libopenmpt/libopenmpt.h>
 #include <libopenmpt/libopenmpt_stream_callbacks_file.h>
+
+#if defined( __DJGPP__ )
+#include <crt0.h>
+#endif /* __DJGPP__ */
 
 static void libopenmpt_example_logfunc( const char * message, void * userdata ) {
 	(void)userdata;
@@ -78,7 +86,7 @@ static int probe_file( const char * filename ) {
 	}
 
 #if ( LIBOPENMPT_EXAMPLE_PROBE_RESULT == LIBOPENMPT_EXAMPLE_PROBE_RESULT_BINARY )
-	probe_file_header_result = openmpt_probe_file_header_from_stream( OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT, openmpt_stream_get_file_callbacks(), file, &libopenmpt_example_logfunc, NULL, &openmpt_error_func_default, NULL, &mod_err, NULL );
+	probe_file_header_result = openmpt_probe_file_header_from_stream( OPENMPT_PROBE_FILE_HEADER_FLAGS_DEFAULT, openmpt_stream_get_file_callbacks2(), file, &libopenmpt_example_logfunc, NULL, &openmpt_error_func_default, NULL, &mod_err, NULL );
 	probe_file_header_result_str = NULL;
 	switch ( probe_file_header_result ) {
 		case OPENMPT_PROBE_FILE_HEADER_RESULT_SUCCESS:
@@ -117,7 +125,7 @@ static int probe_file( const char * filename ) {
 		result = 1;
 	}
 #elif ( LIBOPENMPT_EXAMPLE_PROBE_RESULT == LIBOPENMPT_EXAMPLE_PROBE_RESULT_FLOAT )
-	probability = openmpt_could_open_probability2( openmpt_stream_get_file_callbacks(), file, 0.25, &libopenmpt_example_logfunc, NULL, &openmpt_error_func_default, NULL, &mod_err, NULL );
+	probability = openmpt_could_open_probability2( openmpt_stream_get_file_callbacks2(), file, 0.25, &libopenmpt_example_logfunc, NULL, &openmpt_error_func_default, NULL, &mod_err, NULL );
 #if ( defined( _WIN32 ) || defined( WIN32 ) ) && ( defined( _UNICODE ) || defined( UNICODE ) )
 	fprintf( stdout, "%s: %f - %ls\n", "Result", probability, filename );
 #else
@@ -148,6 +156,15 @@ cleanup:
 	return result;
 }
 
+#if defined( __DJGPP__ )
+/* clang-format off */
+int _crt0_startup_flags = 0
+	| _CRT0_FLAG_NONMOVE_SBRK          /* force interrupt compatible allocation */
+	| _CRT0_DISABLE_SBRK_ADDRESS_WRAP  /* force NT compatible allocation */
+	| _CRT0_FLAG_LOCK_MEMORY           /* lock all code and data at program startup */
+	| 0;
+/* clang-format on */
+#endif /* __DJGPP__ */
 #if ( defined( _WIN32 ) || defined( WIN32 ) ) && ( defined( _UNICODE ) || defined( UNICODE ) )
 #if defined( __clang__ ) && !defined( _MSC_VER )
 int wmain( int argc, wchar_t * argv[] );
@@ -156,6 +173,11 @@ int wmain( int argc, wchar_t * argv[] ) {
 #else
 int main( int argc, char * argv[] ) {
 #endif
+#if defined( __DJGPP__ )
+	/* clang-format off */
+	_crt0_startup_flags &= ~_CRT0_FLAG_LOCK_MEMORY;  /* disable automatic locking for all further memory allocations */
+	/* clang-format on */
+#endif /* __DJGPP__ */
 
 	int global_result = 0;
 

@@ -7,17 +7,9 @@
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
-#ifndef NO_LIBMODPLUG
-
 #ifdef LIBOPENMPT_BUILD_DLL
 #undef LIBOPENMPT_BUILD_DLL
 #endif
-
-#ifdef _MSC_VER
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#endif /* _MSC_VER */
 
 #include <libopenmpt/libopenmpt.h>
 
@@ -29,19 +21,13 @@
 #include <string.h>
 
 #define MODPLUG_BUILD
-#ifdef _MSC_VER
-#ifdef MPT_BUILD_MSVC_SHARED
-#define DLL_EXPORT
-#endif /* MPT_BUILD_MSVC_SHARED */
-#ifdef MPT_BUILD_MSVC_STATIC
+
+#if defined(_WIN32) || defined(__CYGWIN__)
 #define MODPLUG_STATIC
-#endif /* MPT_BUILD_MSVC_STATIC */
-#endif /* _MSC_VER */
-#ifdef _MSC_VER
-#define LIBOPENMPT_MODPLUG_API
-#else /* !_MSC_VER */
-#define LIBOPENMPT_MODPLUG_API LIBOPENMPT_API_HELPER_EXPORT
-#endif /* _MSC_VER */
+#endif /* _WIN32 || __CYGWIN__ */
+
+#define LIBOPENMPT_MODPLUG_API LIBOPENMPT_API_HELPER_PUBLIC
+
 #include "libmodplug/modplug.h"
 
 /* from libmodplug/sndfile.h */
@@ -600,5 +586,3 @@ LIBOPENMPT_MODPLUG_API char ModPlug_ExportIT(ModPlugFile* file, const char* file
 	fprintf(stderr,"libopenmpt-modplug: error: ModPlug_ExportIT(%s) not implemented.\n",filepath);
 	return 0;
 }
-
-#endif /* NO_LIBMODPLUG */

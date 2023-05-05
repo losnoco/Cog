@@ -77,11 +77,11 @@ class AudioTargetBufferWithGain
 private:
 	using Tbase = AudioTargetBuffer<Taudio_span>;
 private:
-	const float gainFactor;
+	const MixSampleFloat gainFactor;
 public:
 	AudioTargetBufferWithGain(Taudio_span buf, TDithers &dithers, float gainFactor_)
 		: Tbase(buf, dithers)
-		, gainFactor(gainFactor_)
+		, gainFactor(static_cast<MixSampleFloat>(gainFactor_))
 	{
 		return;
 	}
@@ -108,14 +108,14 @@ public:
 		Tbase::Process(buffer);
 		if constexpr(std::is_floating_point<typename Taudio_span::sample_type>::value)
 		{
-			if(gainFactor != 1.0f)
+			if(gainFactor != MixSampleFloat(1.0))
 			{
 				// only apply gain when != +/- 0dB
 				for(std::size_t frame = 0; frame < buffer.size_frames(); ++frame)
 				{
 					for(std::size_t channel = 0; channel < buffer.size_channels(); ++channel)
 					{
-						Tbase::outputBuffer(channel, countRendered_ + frame) *= gainFactor;
+						Tbase::outputBuffer(channel, countRendered_ + frame) *= static_cast<typename Taudio_span::sample_type>(gainFactor);
 					}
 				}
 			}
@@ -123,7 +123,7 @@ public:
 	}
 	void Process(mpt::audio_span_interleaved<MixSampleFloat> buffer) override
 	{
-		if(gainFactor != 1.0f)
+		if(gainFactor != MixSampleFloat(1.0))
 		{
 			// only apply gain when != +/- 0dB
 			for(std::size_t frame = 0; frame < buffer.size_frames(); ++frame)

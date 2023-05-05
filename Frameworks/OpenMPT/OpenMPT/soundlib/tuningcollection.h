@@ -106,7 +106,7 @@ bool UnpackTuningCollection(const CTuningCollection &tc, const mpt::PathString &
 } // namespace Tuning
 
 
-typedef Tuning::CTuningCollection CTuningCollection;
+using CTuningCollection = Tuning::CTuningCollection;
 
 
 OPENMPT_NAMESPACE_END

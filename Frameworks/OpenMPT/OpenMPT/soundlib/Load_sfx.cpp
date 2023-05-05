@@ -17,18 +17,44 @@ OPENMPT_NAMESPACE_BEGIN
 // File Header
 struct SFXFileHeader
 {
-	uint8be numOrders;
-	uint8be restartPos;
-	uint8be orderList[128];
+	char     magic[4];
+	uint16be speed;
+	char     unknown[14];  // Just NUL bytes most of the time, sometimes appears to contain leftovers from other data structures
+
+	bool IsValid(const uint8 expectedNumSamples) const noexcept
+	{
+		if(expectedNumSamples == 15 && memcmp(magic, "SONG", 4))
+			return false;
+		if(expectedNumSamples == 31 && memcmp(magic, "SO31", 4))
+			return false;
+		return speed >= 178;
+	}
 };
 
-MPT_BINARY_STRUCT(SFXFileHeader, 130)
+MPT_BINARY_STRUCT(SFXFileHeader, 20)
+
+
+// Order List
+struct SFXOrderHeader
+{
+	uint8 numOrders;
+	uint8 restartPos;
+	uint8 orderList[128];
+
+	bool IsValid() const noexcept
+	{
+		return numOrders <= 128;
+	}
+};
+
+MPT_BINARY_STRUCT(SFXOrderHeader, 130)
+
 
 // Sample Header
 struct SFXSampleHeader
 {
 	char     name[22];
-	char     dummy[2];	// Supposedly sample length, but almost always incorrect
+	char     dummy[2];  // Supposedly sample length, but almost always incorrect
 	uint8be  finetune;
 	uint8be  volume;
 	uint16be loopStart;
@@ -96,79 +122,42 @@ static uint8 ClampSlideParam(uint8 value, uint8 lowNote, uint8 highNote)
 }
 
 
-static bool ValidateHeader(const SFXFileHeader &fileHeader)
-{
-	if(fileHeader.numOrders > 128)
-	{
-		return false;
-	}
-	return true;
-}
-
-
 CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderSFX(MemoryFileReader file, const uint64 *pfilesize)
 {
 	SAMPLEINDEX numSamples = 0;
-	if(numSamples == 0)
+	SFXFileHeader fileHeader;
+
+	if(!file.LengthIsAtLeast(0x3C + sizeof(SFXFileHeader)))
+		return ProbeWantMoreData;
+	if(file.Seek(0x3C) && file.ReadStruct(fileHeader) && fileHeader.IsValid(15))
 	{
-		file.Rewind();
-		if(!file.CanRead(0x40))
-		{
-			return ProbeWantMoreData;
-		}
-		if(file.Seek(0x3c) && file.ReadMagic("SONG"))
-		{
-			numSamples = 15;
-		}
-	}
-	if(numSamples == 0)
+		numSamples = 15;
+	} else
 	{
-		file.Rewind();
-		if(!file.CanRead(0x80))
-		{
+		if(!file.LengthIsAtLeast(0x7C + sizeof(SFXFileHeader)))
 			return ProbeWantMoreData;
-		}
-		if(file.Seek(0x7C) && file.ReadMagic("SO31"))
-		{
+		if(file.Seek(0x7C) && file.ReadStruct(fileHeader) && fileHeader.IsValid(31))
 			numSamples = 31;
-		}
+		else
+			return ProbeFailure;
 	}
-	if(numSamples == 0)
-	{
-		return ProbeFailure;
-	}
+	
 	file.Rewind();
 	for(SAMPLEINDEX smp = 0; smp < numSamples; smp++)
 	{
 		if(file.ReadUint32BE() > 131072)
-		{
 			return ProbeFailure;
-		}
 	}
-	file.Skip(4);
-	if(!file.CanRead(2))
-	{
+
+	if(!file.Skip(sizeof(SFXFileHeader) + sizeof(SFXSampleHeader) * numSamples))
 		return ProbeWantMoreData;
-	}
-	uint16 speed = file.ReadUint16BE();
-	if(speed < 178)
-	{
+
+	SFXOrderHeader orderHeader;
+	if(!file.ReadStruct(orderHeader))
+		return ProbeWantMoreData;
+	if(!orderHeader.IsValid())
 		return ProbeFailure;
-	}
-	if(!file.CanRead(sizeof(SFXSampleHeader) * numSamples))
-	{
-		return ProbeWantMoreData;
-	}
-	file.Skip(sizeof(SFXSampleHeader) * numSamples);
-	SFXFileHeader fileHeader;
-	if(!file.ReadStruct(fileHeader))
-	{
-		return ProbeWantMoreData;
-	}
-	if(!ValidateHeader(fileHeader))
-	{
-		return ProbeFailure;
-	}
+
 	MPT_UNREFERENCED_PARAMETER(pfilesize);
 	return ProbeSuccess;
 }
@@ -176,11 +165,12 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderSFX(MemoryFileReader file, co
 
 bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 {
-	if(file.Seek(0x3C), file.ReadMagic("SONG"))
+	SFXFileHeader fileHeader;
+	if(file.Seek(0x3C) && file.ReadStruct(fileHeader) && fileHeader.IsValid(15))
 	{
 		InitializeGlobals(MOD_TYPE_SFX);
 		m_nSamples = 15;
-	} else if(file.Seek(0x7C), file.ReadMagic("SO31"))
+	} else if(file.Seek(0x7C) && file.ReadStruct(fileHeader) && fileHeader.IsValid(31))
 	{
 		InitializeGlobals(MOD_TYPE_SFX);
 		m_nSamples = 31;
@@ -198,9 +188,11 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 		if(sampleLen[smp] > 131072)
 			return false;
 	}
+	file.Skip(sizeof(SFXFileHeader));
 
 	m_nChannels = 4;
 	m_nInstruments = 0;
+	m_nDefaultTempo = TEMPO((14565.0 * 122.0) / fileHeader.speed);
 	m_nDefaultSpeed = 6;
 	m_nMinPeriod = 14 * 4;
 	m_nMaxPeriod = 3424 * 4;
@@ -208,14 +200,6 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Setup channel pan positions and volume
 	SetupMODPanning(true);
-
-	file.Skip(4);
-	uint16 speed = file.ReadUint16BE();
-	if(speed < 178)
-		return false;
-	m_nDefaultTempo = TEMPO((14565.0 * 122.0) / speed);
-
-	file.Skip(14);
 
 	uint32 invalidChars = 0;
 	for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
@@ -244,32 +228,24 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 	// but it should not do that for FFFE (STP) notes - as a consequence, they turn into pattern breaks (FFFC).
 	const bool fixPatternBreaks = (m_szNames[1] == "BASSE2.AMI") || (m_szNames[1] == "PRA1.AMI");
 
-	SFXFileHeader fileHeader;
-	if(!file.ReadStruct(fileHeader))
-	{
+	SFXOrderHeader orderHeader;
+	if(!file.ReadStruct(orderHeader) || !orderHeader.IsValid())
 		return false;
-	}
-	if(!ValidateHeader(fileHeader))
-	{
-		return false;
-	}
-	if(loadFlags == onlyVerifyHeader)
-	{
+	else if(loadFlags == onlyVerifyHeader)
 		return true;
-	}
 
 	PATTERNINDEX numPatterns = 0;
-	for(ORDERINDEX ord = 0; ord < fileHeader.numOrders; ord++)
+	for(ORDERINDEX ord = 0; ord < orderHeader.numOrders; ord++)
 	{
-		numPatterns = std::max(numPatterns, static_cast<PATTERNINDEX>(fileHeader.orderList[ord] + 1));
+		numPatterns = std::max(numPatterns, static_cast<PATTERNINDEX>(orderHeader.orderList[ord] + 1));
 	}
 
-	if(fileHeader.restartPos < fileHeader.numOrders)
-		Order().SetRestartPos(fileHeader.restartPos);
+	if(orderHeader.restartPos < orderHeader.numOrders)
+		Order().SetRestartPos(orderHeader.restartPos);
 	else
 		Order().SetRestartPos(0);
 
-	ReadOrderFromArray(Order(), fileHeader.orderList, fileHeader.numOrders);
+	ReadOrderFromArray(Order(), orderHeader.orderList, orderHeader.numOrders);
 
 	// SFX v2 / MMS modules have 4 extra bytes here for some reason
 	if(m_nSamples == 31)
@@ -293,7 +269,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 
 		for(ROWINDEX row = 0; row < 64; row++)
 		{
-			PatternRow rowBase = Patterns[pat].GetpModCommand(row, 0);
+			auto rowBase = Patterns[pat].GetRow(row);
 			for(CHANNELINDEX chn = 0; chn < 4; chn++)
 			{
 				ModCommand &m = rowBase[chn];
@@ -320,7 +296,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 					}
 				}
 
-				ReadMODPatternEntry(data, m);
+				const auto [command, param] = ReadMODPatternEntry(data, m);
 				if(m.note != NOTE_NONE)
 				{
 					lastNote[chn] = m.note;
@@ -331,9 +307,10 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 					}
 				}
 
-				if(m.command || m.param)
+				if(command || param)
 				{
-					switch(m.command)
+					m.param = param;
+					switch(command)
 					{
 					case 0x1: // Arpeggio
 						m.command = CMD_ARPEGGIO;
@@ -350,7 +327,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 							m.param &= 0x0F;
 						} else
 						{
-							m.command = m.param = 0;
+							m.command = CMD_NONE;
 						}
 						break;
 
@@ -358,41 +335,37 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 						// Give precedence to 7xy/8xy slides
 						if(slideRate[chn])
 						{
-							m.command = m.param = 0;
+							m.command = CMD_NONE;
 							break;
 						}
-						m.command = CMD_MODCMDEX;
-						m.param = 0;
+						m.SetEffectCommand(CMD_MODCMDEX, 0x00);
 						break;
 
 					case 0x4: // Disable LED filter
 						// Give precedence to 7xy/8xy slides
 						if(slideRate[chn])
 						{
-							m.command = m.param = 0;
+							m.command = CMD_NONE;
 							break;
 						}
-						m.command = CMD_MODCMDEX;
-						m.param = 1;
+						m.SetEffectCommand(CMD_MODCMDEX, 0x01);
 						break;
 
 					case 0x5: // Increase volume
 						if(m.instr)
 						{
-							m.command = CMD_VOLUME;
-							m.param = std::min(ModCommand::PARAM(0x3F), static_cast<ModCommand::PARAM>((Samples[m.instr].nVolume / 4u) + m.param));
+							m.SetEffectCommand(CMD_VOLUME, std::min(ModCommand::PARAM(0x3F), static_cast<ModCommand::PARAM>((Samples[m.instr].nVolume / 4u) + m.param)));
 
 							// Give precedence to 7xy/8xy slides (and move this to the volume column)
 							if(slideRate[chn])
 							{
-								m.volcmd = VOLCMD_VOLUME;
-								m.vol = m.param;
-								m.command = m.param = 0;
+								m.SetVolumeCommand(VOLCMD_VOLUME, m.param);
+								m.command = CMD_NONE;
 								break;
 							}
 						} else
 						{
-							m.command = m.param = 0;
+							m.command = CMD_NONE;
 						}
 						break;
 
@@ -408,31 +381,28 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 							// Give precedence to 7xy/8xy slides (and move this to the volume column)
 							if(slideRate[chn])
 							{
-								m.volcmd = VOLCMD_VOLUME;
-								m.vol = m.param;
-								m.command = m.param = 0;
+								m.SetVolumeCommand(VOLCMD_VOLUME, m.param);
+								m.command = CMD_NONE;
 								break;
 							}
 						} else
 						{
-							m.command = m.param = 0;
+							m.command = CMD_NONE;
 						}
 						break;
 
 					case 0x7: // 7xy: Slide down x semitones at speed y
 						slideTo[chn] = lastNote[chn] - (m.param >> 4);
 
-						m.command = CMD_PORTAMENTODOWN;
 						slideRate[chn] = m.param & 0xF;
-						m.param = ClampSlideParam(slideRate[chn], slideTo[chn], lastNote[chn]);
+						m.SetEffectCommand(CMD_PORTAMENTODOWN, ClampSlideParam(slideRate[chn], slideTo[chn], lastNote[chn]));
 						break;
 
 					case 0x8: // 8xy: Slide up x semitones at speed y
 						slideTo[chn] = lastNote[chn] + (m.param >> 4);
 
-						m.command = CMD_PORTAMENTOUP;
 						slideRate[chn] = m.param & 0xF;
-						m.param = ClampSlideParam(slideRate[chn], lastNote[chn], slideTo[chn]);
+						m.SetEffectCommand(CMD_PORTAMENTOUP, ClampSlideParam(slideRate[chn], lastNote[chn], slideTo[chn]));
 						break;
 
 					case 0x9: // 9xy: Auto slide

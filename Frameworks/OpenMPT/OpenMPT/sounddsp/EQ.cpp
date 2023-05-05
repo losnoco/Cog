@@ -20,7 +20,9 @@
 #include "openmpt/soundbase/MixSampleConvert.hpp"
 
 #ifndef NO_EQ
-#include "../misc/mptCPU.h"
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE)
+#include "../common/mptCPU.h"
+#endif
 #endif
 
 #include <algorithm>
@@ -97,7 +99,7 @@ void CEQ::ProcessTemplate(TMixSample *frontBuffer, TMixSample *rearBuffer, std::
 {
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE)
 	unsigned int old_csr = 0;
-	if(CPU::HasFeatureSet(CPU::feature::sse))
+	if(CPU::HasFeatureSet(CPU::feature::sse) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		old_csr = _mm_getcsr();
 		_mm_setcsr((old_csr & ~(_MM_DENORMALS_ZERO_MASK | _MM_FLUSH_ZERO_MASK)) | _MM_DENORMALS_ZERO_ON | _MM_FLUSH_ZERO_ON);
@@ -118,7 +120,7 @@ void CEQ::ProcessTemplate(TMixSample *frontBuffer, TMixSample *rearBuffer, std::
 		EQFilter<4>(buf, m_Bands, m_ChannelState);
 	}
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE)
-	if(CPU::HasFeatureSet(CPU::feature::sse))
+	if(CPU::HasFeatureSet(CPU::feature::sse) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		_mm_setcsr(old_csr);
 	}

@@ -27,13 +27,13 @@ namespace DMO
 {
 
 
-IMixPlugin* Compressor::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* Compressor::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) Compressor(factory, sndFile, mixStruct);
 }
 
 
-Compressor::Compressor(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+Compressor::Compressor(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 {
 	m_param[kCompGain] = 0.5f;
@@ -44,7 +44,6 @@ Compressor::Compressor(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN 
 	m_param[kCompPredelay] = 1.0f;
 
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -93,7 +92,7 @@ void Compressor::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		readOffset /= 4096;
 		readOffset %= m_bufSize;
 		
-		float outGain = (compGainPow * (1.0f / 2147483648.0f)) * m_gain;
+		float outGain = (static_cast<float>(compGainPow) * (1.0f / 2147483648.0f)) * m_gain;
 		*(out[0])++ = m_buffer[readOffset * 2] * outGain;
 		*(out[1])++ = m_buffer[readOffset * 2 + 1] * outGain;
 		
@@ -217,7 +216,7 @@ CString Compressor::GetParamDisplay(PlugParamIndex param)
 
 void Compressor::RecalculateCompressorParams()
 {
-	const float sampleRate = m_SndFile.GetSampleRate() / 1000.0f;
+	const float sampleRate = static_cast<float>(m_SndFile.GetSampleRate()) / 1000.0f;
 	m_gain = std::pow(10.0f, GainInDecibel() / 20.0f);
 	m_attack = std::pow(10.0f, -1.0f / (AttackTime() * sampleRate));
 	m_release = std::pow(10.0f, -1.0f / (ReleaseTime() * sampleRate));

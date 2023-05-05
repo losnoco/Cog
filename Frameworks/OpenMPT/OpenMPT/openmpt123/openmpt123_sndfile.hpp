@@ -15,14 +15,18 @@
 
 #if defined(MPT_WITH_SNDFILE)
 
+#include "mpt/base/detect.hpp"
+
 #include <sndfile.h>
 
 namespace openmpt123 {
+
+inline constexpr auto sndfile_encoding = mpt::common_encoding::utf8;
 	
 class sndfile_stream_raii : public file_audio_stream_base {
 private:
 	commandlineflags flags;
-	std::ostream & log;
+	concat_stream<mpt::ustring> & log;
 	SNDFILE * sndfile;
 	std::vector<float> interleaved_float_buffer;
 	std::vector<std::int16_t> interleaved_int_buffer;
@@ -34,27 +38,27 @@ private:
 		match_better,
 		match_any
 	};
-	std::string match_mode_to_string( match_mode_enum match_mode ) {
+	mpt::ustring match_mode_to_string( match_mode_enum match_mode ) {
 		switch ( match_mode ) {
-			case match_print  : return "print"  ; break;
-			case match_recurse: return "recurse"; break;
-			case match_exact  : return "exact"  ; break;
-			case match_better : return "better" ; break;
-			case match_any    : return "any"    ; break;
+			case match_print  : return MPT_USTRING("print")  ; break;
+			case match_recurse: return MPT_USTRING("recurse"); break;
+			case match_exact  : return MPT_USTRING("exact")  ; break;
+			case match_better : return MPT_USTRING("better") ; break;
+			case match_any    : return MPT_USTRING("any")    ; break;
 		}
-		return "";
+		return MPT_USTRING("");
 	}
-	int matched_result( const SF_FORMAT_INFO & format_info, const SF_FORMAT_INFO & subformat_info, match_mode_enum match_mode ) {
+	int matched_result( int format, const SF_FORMAT_INFO & format_info, const SF_FORMAT_INFO & subformat_info, match_mode_enum match_mode ) {
 		if ( flags.verbose ) {
-			log << "sndfile: using format '"
-			    << format_info.name << " (" << format_info.extension << ")" << " / " << subformat_info.name
-			    << "', "
-			    << "match: " << match_mode_to_string( match_mode )
-			    << std::endl;
+			log << MPT_USTRING("sndfile: using format '")
+			    << mpt::transcode<mpt::ustring>( sndfile_encoding, format_info.name ) << MPT_USTRING(" (") << mpt::transcode<mpt::ustring>( sndfile_encoding, format_info.extension ) << MPT_USTRING(")") << MPT_USTRING(" / ") << mpt::transcode<mpt::ustring>( sndfile_encoding, subformat_info.name )
+			    << MPT_USTRING("', ")
+			    << MPT_USTRING("match: ") << match_mode_to_string( match_mode )
+			    << lf;
 		}
-		return ( format_info.format & SF_FORMAT_TYPEMASK ) | subformat_info.format;
+		return format;
 	}
-	int find_format( const std::string & extension, match_mode_enum match_mode ) {
+	int find_format( const mpt::native_path & extension, match_mode_enum match_mode ) {
 
 		if ( match_mode == match_recurse ) {
 			int result = 0;
@@ -76,7 +80,6 @@ private:
 			return 0;
 		}
 
-		int format = 0;
 		int major_count;
 		sf_command( 0, SFC_GET_FORMAT_MAJOR_COUNT, &major_count, sizeof( int ) );
 		for ( int m = 0; m < major_count; m++ ) {
@@ -84,7 +87,6 @@ private:
 			SF_FORMAT_INFO format_info;
 			format_info.format = m;
 			sf_command( 0, SFC_GET_FORMAT_MAJOR, &format_info, sizeof( SF_FORMAT_INFO ) );
-			format = format_info.format;
 
 			int subtype_count;
 			sf_command( 0, SFC_GET_FORMAT_SUBTYPE_COUNT, &subtype_count, sizeof( int ) );
@@ -93,7 +95,7 @@ private:
 				SF_FORMAT_INFO subformat_info;
 				subformat_info.format = s;
 				sf_command( 0, SFC_GET_FORMAT_SUBTYPE, &subformat_info, sizeof( SF_FORMAT_INFO ) );
-				format = ( format & SF_FORMAT_TYPEMASK ) | subformat_info.format;
+				int format = ( format_info.format & SF_FORMAT_TYPEMASK ) | ( subformat_info.format & SF_FORMAT_SUBMASK );
 
 				SF_INFO sfinfo;
 				std::memset( &sfinfo, 0, sizeof( SF_INFO ) );
@@ -103,40 +105,38 @@ private:
 
 					switch ( match_mode ) {
 					case match_print:
-						log << "sndfile: "
-						    << ( format_info.name ? format_info.name : "" ) << " (" << ( format_info.extension ? format_info.extension : "" ) << ")"
-						    << " / "
-						    << ( subformat_info.name ? subformat_info.name : "" )
-						    << " ["
-						    << std::setbase(16) << std::setw(8) << std::setfill('0') << format_info.format
-						    << "|"
-						    << std::setbase(16) << std::setw(8) << std::setfill('0') << subformat_info.format
-						    << "]"
-						    << std::endl;
+						log << MPT_USTRING("sndfile: ")
+						    << mpt::transcode<mpt::ustring>( sndfile_encoding, ( format_info.name ? format_info.name : "" ) ) << MPT_USTRING(" (.") << mpt::transcode<mpt::ustring>( sndfile_encoding, ( format_info.extension ? format_info.extension : "" ) ) << MPT_USTRING(")")
+						    << MPT_USTRING(" / ")
+						    << mpt::transcode<mpt::ustring>( sndfile_encoding, ( subformat_info.name ? subformat_info.name : "" ) )
+						    << MPT_USTRING(" [")
+						    << mpt::format<mpt::ustring>::hex0<8>( format )
+						    << MPT_USTRING("]")
+						    << lf;
 						break;
 					case match_recurse:
 						break;
 					case match_exact:
-						if ( extension == format_info.extension ) {
+						if ( mpt::transcode<std::string>( mpt::common_encoding::utf8, extension ) == format_info.extension ) {
 							if ( flags.use_float && ( subformat_info.format == SF_FORMAT_FLOAT ) ) {
-								return matched_result( format_info, subformat_info, match_mode );
+								return matched_result( format, format_info, subformat_info, match_mode );
 							} else if ( !flags.use_float && ( subformat_info.format == SF_FORMAT_PCM_16 ) ) {
-								return matched_result( format_info, subformat_info, match_mode );
+								return matched_result( format, format_info, subformat_info, match_mode );
 							}
 						}
 						break;
 					case match_better:
-						if ( extension == format_info.extension ) {
+						if ( mpt::transcode<std::string>( mpt::common_encoding::utf8, extension ) == format_info.extension ) {
 							if ( flags.use_float && ( subformat_info.format == SF_FORMAT_FLOAT || subformat_info.format == SF_FORMAT_DOUBLE ) ) {
-								return matched_result( format_info, subformat_info, match_mode );
+								return matched_result( format, format_info, subformat_info, match_mode );
 							} else if ( !flags.use_float && ( subformat_info.format & ( subformat_info.format == SF_FORMAT_PCM_16 || subformat_info.format == SF_FORMAT_PCM_24 || subformat_info.format == SF_FORMAT_PCM_32 ) ) ) {
-								return matched_result( format_info, subformat_info, match_mode );
+								return matched_result( format, format_info, subformat_info, match_mode );
 							}
 						}
 						break;
 					case match_any:
-						if ( extension == format_info.extension ) {
-							return matched_result( format_info, subformat_info, match_mode );
+						if ( mpt::transcode<std::string>( mpt::common_encoding::utf8, extension ) == format_info.extension ) {
+							return matched_result( format, format_info, subformat_info, match_mode );
 						}
 						break;
 					}
@@ -154,32 +154,36 @@ private:
 		}
 	}
 public:
-	sndfile_stream_raii( const std::string & filename, const commandlineflags & flags_, std::ostream & log_ ) : flags(flags_), log(log_), sndfile(0) {
+	sndfile_stream_raii( const mpt::native_path & filename, const commandlineflags & flags_, concat_stream<mpt::ustring> & log_ ) : flags(flags_), log(log_), sndfile(0) {
 		if ( flags.verbose ) {
-			find_format( "", match_print );
-			log << std::endl;
+			find_format( MPT_NATIVE_PATH(""), match_print );
+			log << lf;
 		}
 		int format = find_format( flags.output_extension, match_recurse );
 		if ( !format ) {
-			throw exception( "unknown file type" );
+			throw exception( MPT_USTRING("unknown file type") );
 		}
 		SF_INFO info;
 		std::memset( &info, 0, sizeof( SF_INFO ) );
 		info.samplerate = flags.samplerate;
 		info.channels = flags.channels;
 		info.format = format;
-		sndfile = sf_open( filename.c_str(), SFM_WRITE, &info );
+#if MPT_OS_WINDOWS && defined(UNICODE)
+		sndfile = sf_wchar_open( filename.AsNative().c_str(), SFM_WRITE, &info );
+#else
+		sndfile = sf_open( filename.AsNative().c_str(), SFM_WRITE, &info );
+#endif
 	}
 	~sndfile_stream_raii() {
 		sf_close( sndfile );
 		sndfile = 0;
 	}
-	void write_metadata( std::map<std::string,std::string> metadata ) override {
-		write_metadata_field( SF_STR_TITLE, metadata[ "title" ] );
-		write_metadata_field( SF_STR_ARTIST, metadata[ "artist" ] );
-		write_metadata_field( SF_STR_DATE, metadata[ "date" ] );
-		write_metadata_field( SF_STR_COMMENT, metadata[ "message" ] );
-		write_metadata_field( SF_STR_SOFTWARE, append_software_tag( metadata[ "tracker" ] ) );
+	void write_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) override {
+		write_metadata_field( SF_STR_TITLE, mpt::transcode<std::string>( sndfile_encoding, metadata[ MPT_USTRING("title") ] ) );
+		write_metadata_field( SF_STR_ARTIST, mpt::transcode<std::string>( sndfile_encoding, metadata[ MPT_USTRING("artist") ] ) );
+		write_metadata_field( SF_STR_DATE, mpt::transcode<std::string>( sndfile_encoding, metadata[ MPT_USTRING("date") ] ) );
+		write_metadata_field( SF_STR_COMMENT, mpt::transcode<std::string>( sndfile_encoding, metadata[ MPT_USTRING("message") ] ) );
+		write_metadata_field( SF_STR_SOFTWARE, mpt::transcode<std::string>( sndfile_encoding, append_software_tag( metadata[ MPT_USTRING("tracker") ] ) ) );
 	}
 	void write( const std::vector<float*> buffers, std::size_t frames ) override {
 		interleaved_float_buffer.clear();

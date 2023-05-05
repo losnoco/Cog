@@ -65,10 +65,9 @@ public:
 	PluginChunk m_chunk;
 
 public:
-	static IMixPlugin* Create(VSTPluginLib& factory, CSoundFile& sndFile, SNDMIXPLUGIN* mixStruct);
-	SymMODEcho(VSTPluginLib& factory, CSoundFile& sndFile, SNDMIXPLUGIN* mixStruct);
+	static IMixPlugin* Create(VSTPluginLib& factory, CSoundFile& sndFile, SNDMIXPLUGIN &mixStruct);
+	SymMODEcho(VSTPluginLib& factory, CSoundFile& sndFile, SNDMIXPLUGIN &mixStruct);
 
-	void Release() override { delete this; }
 	void SaveAllParameters() override;
 	void RestoreAllParameters(int32 program) override;
 	int32 GetUID() const override { int32le id; memcpy(&id, "Echo", 4); return id; }

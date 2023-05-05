@@ -71,7 +71,7 @@ public:
 		return data->IsValid();
 	}
 	bool HasFastGetLength() const override {
-		return data->HasFastGetLength();
+		return true;
 	}
 	bool HasPinnedView() const override {
 		return data->HasPinnedView();

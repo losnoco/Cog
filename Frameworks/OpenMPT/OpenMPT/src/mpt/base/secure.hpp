@@ -22,6 +22,20 @@ inline namespace MPT_INLINE_NS {
 
 
 
+// C23 memset_explicit
+inline MPT_NOINLINE void * memset_explicit(void * const dst, int const value, std::size_t const len) noexcept {
+	std::atomic_thread_fence(std::memory_order_seq_cst);
+	volatile unsigned char * volatile p = static_cast<volatile unsigned char *>(dst);
+	std::atomic_thread_fence(std::memory_order_seq_cst);
+	for (volatile std::size_t i = 0; i < len; ++i) {
+		p[i] = static_cast<unsigned char>(value);
+	}
+	std::atomic_thread_fence(std::memory_order_seq_cst);
+	return dst;
+}
+
+
+
 namespace secure {
 
 
