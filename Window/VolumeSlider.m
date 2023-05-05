@@ -60,9 +60,9 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 }
 
 - (void)updateToolTip {
-	double value = [self doubleValue];
-	double volume;
-	volume = linearToLogarithmic(value, MAX_VOLUME);
+	const double value = [self doubleValue];
+	// Sets volume to be the slider value if limit is set to 100% or the actual volume otherwise.
+	const double volume = (MAX_VOLUME == 100) ? value : linearToLogarithmic(value, MAX_VOLUME);
 	NSString *text;
 
 	// If volume becomes less than 1%, display two decimal digits of precision (e.g. 0.34%).
