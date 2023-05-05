@@ -70,6 +70,7 @@ static const char* extension_list[] = {
     "ap",
     "apc",
     "as4",
+    "asbin",
     "asd",
     "asf",
     "asr",
@@ -145,6 +146,7 @@ static const char* extension_list[] = {
     "cpk",
     "cps",
     "csa", //txth/reserved [LEGO Racers 2 (PS2)]
+    "csb",
     "csmp",
     "cvs", //txth/reserved [Aladdin in Nasira's Revenge (PS1)]
     "cwav",
@@ -263,6 +265,7 @@ static const char* extension_list[] = {
     "kces",
     "kcey", //fake extension/header id for .pcm (renamed, to be removed)
     "km9",
+    "kma",  //txth/reserved [Dynasty Warriors 7: Empires (PS3)]
     "kmx",
     "kovs", //fake extension/header id for .kvs
     "kno",
@@ -285,6 +288,7 @@ static const char* extension_list[] = {
     "lac3", //fake extension for .ac3, FFmpeg/not parsed
     "lasf", //fake extension for .asf (various)
     "lbin", //fake extension for .bin (various)
+    "ldat", //fake extension for .dat
     "leg",
     "lep",
     "lflac", //fake extension for .flac, FFmpeg/not parsed
@@ -1276,8 +1280,6 @@ static const meta_info meta_info_list[] = {
         {meta_PC_FLX,               "Ultima IX .FLX header"},
         {meta_MOGG,                 "Harmonix Music Systems MOGG Vorbis"},
         {meta_OGG_VORBIS,           "Ogg Vorbis header"},
-        {meta_OGG_SLI,              "Ogg Vorbis header (.sli looping)"},
-        {meta_OPUS_SLI,             "Ogg Opus header (.sli looping)"},
         {meta_OGG_SFL,              "Ogg Vorbis header (SFPL looping)"},
         {meta_OGG_KOVS,             "Ogg Vorbis header (KOVS)"},
         {meta_OGG_encrypted,        "Ogg Vorbis header (encrypted)"},
