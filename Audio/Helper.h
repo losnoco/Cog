@@ -7,5 +7,5 @@
  *
  */
 
-double logarithmicToLinear(double logarithmic, double MAX_VOLUME);
-double linearToLogarithmic(double linear, double MAX_VOLUME);
+double logarithmicToLinear(const double logarithmic, double MAX_VOLUME);
+double linearToLogarithmic(const double linear, double MAX_VOLUME);
