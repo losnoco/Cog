@@ -1,0 +1,341 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		022CF042734F913429163E82 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = BAACDA4AE2E792FCCA83208A /* layer3.c */; };
+		022FC83459953B260BA35674 /* synth_real.c in Sources */ = {isa = PBXBuildFile; fileRef = C3CD341CF5C67ECE6FA5BA5C /* synth_real.c */; };
+		0DDEA7A4A06C7196094515E4 /* optimize.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B61528CDECD143E1D70B8CC /* optimize.c */; };
+		142B46E0854DE7D23B149520 /* layer2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9796B208BFD16ABAA76CF848 /* layer2.c */; };
+		21B328E68EDB3758906E2726 /* equalizer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F54AFAE5CB7A5E0D2D6A5EE /* equalizer.c */; };
+		242DF798687C9D0AAAA3D5D8 /* tabinit.c in Sources */ = {isa = PBXBuildFile; fileRef = 6B2790408CF33D72C9A86680 /* tabinit.c */; };
+		26299D7E974C3E704D12EBBE /* layer1.c in Sources */ = {isa = PBXBuildFile; fileRef = 748089C69CBB42788456D006 /* layer1.c */; };
+		2CE230149E04D10653CB7E54 /* format.c in Sources */ = {isa = PBXBuildFile; fileRef = AD3049FCD56B02AEBD06903C /* format.c */; };
+		2F06D05D7C69C68FF288C69D /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = A7ABBCE59297E2D7DA7DAB25 /* compat.c */; };
+		5BC0EB1CC8E8F98ECA7BE95C /* synth_s32.c in Sources */ = {isa = PBXBuildFile; fileRef = 739C6384C0FF59B6371E59C4 /* synth_s32.c */; };
+		64A7B16E5E696DE098686FAE /* synth.c in Sources */ = {isa = PBXBuildFile; fileRef = 907B4FB6D8EC33E81D8B05F6 /* synth.c */; };
+		6C03B21AB052578CF279905A /* feature.c in Sources */ = {isa = PBXBuildFile; fileRef = A60D55A2C7D902D4048E2BE2 /* feature.c */; };
+		82DB3C387C9CF8AAB69BFA78 /* parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 440E80E08C7F6512D11E3720 /* parse.c */; };
+		8ADD039E1D6ACD90864371DE /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = C3752BE686E0ED98C5849226 /* icy2utf8.c */; };
+		9CA288B296644524D06346F2 /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 754AC0BABDBBA4EC025A76FA /* index.c */; };
+		BCB343AA29DB521C2B6E41EA /* stringbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 0BDCDC32593FD264CF5ED272 /* stringbuf.c */; };
+		C2065F0E06550480487C3D4E /* readers.c in Sources */ = {isa = PBXBuildFile; fileRef = 489101566A5CAE88A711D796 /* readers.c */; };
+		C39C716430C47FD632576FA4 /* libmpg123.c in Sources */ = {isa = PBXBuildFile; fileRef = 54E0A14CA243977E1862978C /* libmpg123.c */; };
+		C3D66B021F17BE74F2720942 /* id3.c in Sources */ = {isa = PBXBuildFile; fileRef = F56A100A0C7CAB3CFC98A64A /* id3.c */; };
+		D1E3070CCBA4C37E05A3C54C /* dct64.c in Sources */ = {isa = PBXBuildFile; fileRef = F4F6A4743D6788A682065AB4 /* dct64.c */; };
+		D618207A2D7D936CDF8BAEBA /* synth_8bit.c in Sources */ = {isa = PBXBuildFile; fileRef = A1E03F02D3D989B44DB8C542 /* synth_8bit.c */; };
+		E236244C3D7777BE10D1C28C /* icy.c in Sources */ = {isa = PBXBuildFile; fileRef = E598BBB4FCAB56E6ECC751F4 /* icy.c */; };
+		EAB0691E1B9461102EAC975E /* ntom.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B10DD6681370D18E83E03A6 /* ntom.c */; };
+		EE6448D8E826054A22250718 /* frame.c in Sources */ = {isa = PBXBuildFile; fileRef = 78DBF380C14CD7B205EBA9C0 /* frame.c */; };
+		F155B58DD59CBDBF5989EBCD /* compat_str.c in Sources */ = {isa = PBXBuildFile; fileRef = CDD5DB15FEB9D30711D20955 /* compat_str.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0BDCDC32593FD264CF5ED272 /* stringbuf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = stringbuf.c; path = ../../../include/mpg123/src/libmpg123/stringbuf.c; sourceTree = "<group>"; };
+		0F54AFAE5CB7A5E0D2D6A5EE /* equalizer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = equalizer.c; path = ../../../include/mpg123/src/libmpg123/equalizer.c; sourceTree = "<group>"; };
+		1B61528CDECD143E1D70B8CC /* optimize.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = optimize.c; path = ../../../include/mpg123/src/libmpg123/optimize.c; sourceTree = "<group>"; };
+		440E80E08C7F6512D11E3720 /* parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = parse.c; path = ../../../include/mpg123/src/libmpg123/parse.c; sourceTree = "<group>"; };
+		489101566A5CAE88A711D796 /* readers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = readers.c; path = ../../../include/mpg123/src/libmpg123/readers.c; sourceTree = "<group>"; };
+		54E0A14CA243977E1862978C /* libmpg123.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = libmpg123.c; path = ../../../include/mpg123/src/libmpg123/libmpg123.c; sourceTree = "<group>"; };
+		5B10DD6681370D18E83E03A6 /* ntom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = ntom.c; path = ../../../include/mpg123/src/libmpg123/ntom.c; sourceTree = "<group>"; };
+		6B2790408CF33D72C9A86680 /* tabinit.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = tabinit.c; path = ../../../include/mpg123/src/libmpg123/tabinit.c; sourceTree = "<group>"; };
+		739C6384C0FF59B6371E59C4 /* synth_s32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = synth_s32.c; path = ../../../include/mpg123/src/libmpg123/synth_s32.c; sourceTree = "<group>"; };
+		748089C69CBB42788456D006 /* layer1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = layer1.c; path = ../../../include/mpg123/src/libmpg123/layer1.c; sourceTree = "<group>"; };
+		754AC0BABDBBA4EC025A76FA /* index.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = index.c; path = ../../../include/mpg123/src/libmpg123/index.c; sourceTree = "<group>"; };
+		78DBF380C14CD7B205EBA9C0 /* frame.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = frame.c; path = ../../../include/mpg123/src/libmpg123/frame.c; sourceTree = "<group>"; };
+		907B4FB6D8EC33E81D8B05F6 /* synth.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = synth.c; path = ../../../include/mpg123/src/libmpg123/synth.c; sourceTree = "<group>"; };
+		9796B208BFD16ABAA76CF848 /* layer2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = layer2.c; path = ../../../include/mpg123/src/libmpg123/layer2.c; sourceTree = "<group>"; };
+		A1E03F02D3D989B44DB8C542 /* synth_8bit.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = synth_8bit.c; path = ../../../include/mpg123/src/libmpg123/synth_8bit.c; sourceTree = "<group>"; };
+		A60D55A2C7D902D4048E2BE2 /* feature.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = feature.c; path = ../../../include/mpg123/src/libmpg123/feature.c; sourceTree = "<group>"; };
+		A7ABBCE59297E2D7DA7DAB25 /* compat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = compat.c; path = ../../../include/mpg123/src/compat/compat.c; sourceTree = "<group>"; };
+		AD3049FCD56B02AEBD06903C /* format.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = format.c; path = ../../../include/mpg123/src/libmpg123/format.c; sourceTree = "<group>"; };
+		BAACDA4AE2E792FCCA83208A /* layer3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = ../../../include/mpg123/src/libmpg123/layer3.c; sourceTree = "<group>"; };
+		C3752BE686E0ED98C5849226 /* icy2utf8.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = icy2utf8.c; path = ../../../include/mpg123/src/libmpg123/icy2utf8.c; sourceTree = "<group>"; };
+		C3CD341CF5C67ECE6FA5BA5C /* synth_real.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = synth_real.c; path = ../../../include/mpg123/src/libmpg123/synth_real.c; sourceTree = "<group>"; };
+		C6BCBF7D1D4A29EFF5C33DBD /* openmpt-mpg123.dll */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = "openmpt-mpg123.dll"; path = "openmpt-mpg123.dll"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDD5DB15FEB9D30711D20955 /* compat_str.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = compat_str.c; path = ../../../include/mpg123/src/compat/compat_str.c; sourceTree = "<group>"; };
+		E598BBB4FCAB56E6ECC751F4 /* icy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = icy.c; path = ../../../include/mpg123/src/libmpg123/icy.c; sourceTree = "<group>"; };
+		F4F6A4743D6788A682065AB4 /* dct64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dct64.c; path = ../../../include/mpg123/src/libmpg123/dct64.c; sourceTree = "<group>"; };
+		F56A100A0C7CAB3CFC98A64A /* id3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = id3.c; path = ../../../include/mpg123/src/libmpg123/id3.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A9087E6DA26E7FDF9609DCAD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E2ED1E19CDD9440B15BF0C59 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXGroup section */
+		0F03317AECAE342CC052B7BA /* mpg123 */ = {
+			isa = PBXGroup;
+			children = (
+				3E657050E1B0F982FC81C690 /* compat */,
+				2C61E28ACF50093C5E75E8CA /* libmpg123 */,
+				A6C936B49B3FADE6EA134CF4 /* Products */,
+			);
+			name = mpg123;
+			sourceTree = "<group>";
+		};
+		2C61E28ACF50093C5E75E8CA /* libmpg123 */ = {
+			isa = PBXGroup;
+			children = (
+				F4F6A4743D6788A682065AB4 /* dct64.c */,
+				0F54AFAE5CB7A5E0D2D6A5EE /* equalizer.c */,
+				A60D55A2C7D902D4048E2BE2 /* feature.c */,
+				AD3049FCD56B02AEBD06903C /* format.c */,
+				78DBF380C14CD7B205EBA9C0 /* frame.c */,
+				E598BBB4FCAB56E6ECC751F4 /* icy.c */,
+				C3752BE686E0ED98C5849226 /* icy2utf8.c */,
+				F56A100A0C7CAB3CFC98A64A /* id3.c */,
+				754AC0BABDBBA4EC025A76FA /* index.c */,
+				748089C69CBB42788456D006 /* layer1.c */,
+				9796B208BFD16ABAA76CF848 /* layer2.c */,
+				BAACDA4AE2E792FCCA83208A /* layer3.c */,
+				54E0A14CA243977E1862978C /* libmpg123.c */,
+				5B10DD6681370D18E83E03A6 /* ntom.c */,
+				1B61528CDECD143E1D70B8CC /* optimize.c */,
+				440E80E08C7F6512D11E3720 /* parse.c */,
+				489101566A5CAE88A711D796 /* readers.c */,
+				0BDCDC32593FD264CF5ED272 /* stringbuf.c */,
+				907B4FB6D8EC33E81D8B05F6 /* synth.c */,
+				A1E03F02D3D989B44DB8C542 /* synth_8bit.c */,
+				C3CD341CF5C67ECE6FA5BA5C /* synth_real.c */,
+				739C6384C0FF59B6371E59C4 /* synth_s32.c */,
+				6B2790408CF33D72C9A86680 /* tabinit.c */,
+			);
+			name = libmpg123;
+			sourceTree = "<group>";
+		};
+		3E657050E1B0F982FC81C690 /* compat */ = {
+			isa = PBXGroup;
+			children = (
+				A7ABBCE59297E2D7DA7DAB25 /* compat.c */,
+				CDD5DB15FEB9D30711D20955 /* compat_str.c */,
+			);
+			name = compat;
+			sourceTree = "<group>";
+		};
+		A6C936B49B3FADE6EA134CF4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C6BCBF7D1D4A29EFF5C33DBD /* openmpt-mpg123.dll */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6CFC1BC3B56CFFF5FA0BD203 /* mpg123 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9743C6CC90A9C83E8445250C /* Build configuration list for PBXNativeTarget "mpg123" */;
+			buildPhases = (
+				18EFFF0D1256007F05F15D4D /* Resources */,
+				829D18647C0319D66F9E76A4 /* Sources */,
+				A9087E6DA26E7FDF9609DCAD /* Frameworks */,
+				E2ED1E19CDD9440B15BF0C59 /* Embed Libraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mpg123;
+			productName = mpg123;
+			productReference = C6BCBF7D1D4A29EFF5C33DBD /* openmpt-mpg123.dll */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "mpg123" */;
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 1;
+			mainGroup = 0F03317AECAE342CC052B7BA /* mpg123 */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6CFC1BC3B56CFFF5FA0BD203 /* openmpt-mpg123.dll */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		18EFFF0D1256007F05F15D4D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		829D18647C0319D66F9E76A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2F06D05D7C69C68FF288C69D /* compat.c in Sources */,
+				F155B58DD59CBDBF5989EBCD /* compat_str.c in Sources */,
+				D1E3070CCBA4C37E05A3C54C /* dct64.c in Sources */,
+				21B328E68EDB3758906E2726 /* equalizer.c in Sources */,
+				6C03B21AB052578CF279905A /* feature.c in Sources */,
+				2CE230149E04D10653CB7E54 /* format.c in Sources */,
+				EE6448D8E826054A22250718 /* frame.c in Sources */,
+				E236244C3D7777BE10D1C28C /* icy.c in Sources */,
+				8ADD039E1D6ACD90864371DE /* icy2utf8.c in Sources */,
+				C3D66B021F17BE74F2720942 /* id3.c in Sources */,
+				9CA288B296644524D06346F2 /* index.c in Sources */,
+				26299D7E974C3E704D12EBBE /* layer1.c in Sources */,
+				142B46E0854DE7D23B149520 /* layer2.c in Sources */,
+				022CF042734F913429163E82 /* layer3.c in Sources */,
+				C39C716430C47FD632576FA4 /* libmpg123.c in Sources */,
+				EAB0691E1B9461102EAC975E /* ntom.c in Sources */,
+				0DDEA7A4A06C7196094515E4 /* optimize.c in Sources */,
+				82DB3C387C9CF8AAB69BFA78 /* parse.c in Sources */,
+				C2065F0E06550480487C3D4E /* readers.c in Sources */,
+				BCB343AA29DB521C2B6E41EA /* stringbuf.c in Sources */,
+				64A7B16E5E696DE098686FAE /* synth.c in Sources */,
+				D618207A2D7D936CDF8BAEBA /* synth_8bit.c in Sources */,
+				022FC83459953B260BA35674 /* synth_real.c in Sources */,
+				5BC0EB1CC8E8F98ECA7BE95C /* synth_s32.c in Sources */,
+				242DF798687C9D0AAAA3D5D8 /* tabinit.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4C50EB499ED7163B711B7989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++1z";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					MPT_BUILD_DEBUG,
+					OPT_GENERIC,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/Debug/mpg123;
+				ONLY_ACTIVE_ARCH = YES;
+				SYMROOT = "../../../bin/debug/xcode4-ios/all";
+				USER_HEADER_SEARCH_PATHS = (
+					../../../include/mpg123/ports/Xcode,
+					../../../include/mpg123/src/libmpg123,
+					../../../include/mpg123/src/compat,
+					../../../include/mpg123/src,
+				);
+			};
+			name = Debug;
+		};
+		7C31350CED53D5FEA31A834C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = "../../../bin/release/xcode4-ios/all";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_EXTENSION = dll;
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = "openmpt-mpg123";
+			};
+			name = Release;
+		};
+		98A0BBC3A55D6B351A47DA03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++1z";
+				CONFIGURATION_BUILD_DIR = "$(SYMROOT)";
+				CONFIGURATION_TEMP_DIR = "$(OBJROOT)";
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					NDEBUG,
+					OPT_GENERIC,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				OBJROOT = obj/Release/mpg123;
+				ONLY_ACTIVE_ARCH = NO;
+				SYMROOT = "../../../bin/release/xcode4-ios/all";
+				USER_HEADER_SEARCH_PATHS = (
+					../../../include/mpg123/ports/Xcode,
+					../../../include/mpg123/src/libmpg123,
+					../../../include/mpg123/src/compat,
+					../../../include/mpg123/src,
+				);
+			};
+			name = Release;
+		};
+		9C9C6D92965E2A04D05D2BD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = "../../../bin/debug/xcode4-ios/all";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_EXTENSION = dll;
+				GCC_DYNAMIC_NO_PIC = NO;
+				INSTALL_PATH = /usr/local/lib;
+				PRODUCT_NAME = "openmpt-mpg123";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "mpg123" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C50EB499ED7163B711B7989 /* Debug */,
+				98A0BBC3A55D6B351A47DA03 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9743C6CC90A9C83E8445250C /* Build configuration list for PBXNativeTarget "openmpt-mpg123.dll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9C9C6D92965E2A04D05D2BD2 /* Debug */,
+				7C31350CED53D5FEA31A834C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+};
+rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

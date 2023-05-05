@@ -41,8 +41,11 @@ public:
 	using filename_type = Tpath;
 	using shared_filename_type = std::shared_ptr<Tpath>;
 
-	static std::optional<filename_type> get_optional_filename(shared_filename_type filename) {
+	static std::optional<filename_type> get_optional_filename(const shared_filename_type & filename) {
 		if (!filename) {
+			return std::nullopt;
+		}
+		if ((*filename) == Tpath{}) {
 			return std::nullopt;
 		}
 		return *filename;

@@ -25,11 +25,11 @@ std::vector<T> split_parse(const Tstring & str, const Tstring & sep = Tstring(1,
 	std::vector<T> vals;
 	std::size_t pos = 0;
 	while (str.find(sep, pos) != std::string::npos) {
-		vals.push_back(mpt::ConvertStringTo<T>(str.substr(pos, str.find(sep, pos) - pos)));
+		vals.push_back(mpt::parse<T>(str.substr(pos, str.find(sep, pos) - pos)));
 		pos = str.find(sep, pos) + sep.length();
 	}
 	if (!vals.empty() || (str.substr(pos).length() > 0)) {
-		vals.push_back(mpt::ConvertStringTo<T>(str.substr(pos)));
+		vals.push_back(mpt::parse<T>(str.substr(pos)));
 	}
 	return vals;
 }

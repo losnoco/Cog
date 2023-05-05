@@ -29,10 +29,10 @@ struct IntToFloatTraits : public MixerTraits<channelsOut, channelsIn, out, in>
 	}
 };
 
-typedef IntToFloatTraits<2, 1, mixsample_t, int8,  -int8_min>  Int8MToFloatS;
-typedef IntToFloatTraits<2, 1, mixsample_t, int16, -int16_min> Int16MToFloatS;
-typedef IntToFloatTraits<2, 2, mixsample_t, int8,  -int8_min>  Int8SToFloatS;
-typedef IntToFloatTraits<2, 2, mixsample_t, int16, -int16_min> Int16SToFloatS;
+using Int8MToFloatS = IntToFloatTraits<2, 1, mixsample_t, int8,  -int8_min>;
+using Int16MToFloatS = IntToFloatTraits<2, 1, mixsample_t, int16, -int16_min>;
+using Int8SToFloatS = IntToFloatTraits<2, 2, mixsample_t, int8,  -int8_min>;
+using Int16SToFloatS  = IntToFloatTraits<2, 2, mixsample_t, int16, -int16_min>;
 
 
 //////////////////////////////////////////////////////////////////////////

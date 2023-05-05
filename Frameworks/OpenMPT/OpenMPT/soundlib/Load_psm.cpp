@@ -2,7 +2,7 @@
  * Load_psm.cpp
  * ------------
  * Purpose: PSM16 and new PSM (ProTracker Studio / Epic MegaGames MASI) module loader
- * Notes  : This is partly based on http://www.shikadi.net/moddingwiki/ProTracker_Studio_Module
+ * Notes  : This is partly based on https://moddingwiki.shikadi.net/wiki/ProTracker_Studio_Module
  *          and partly reverse-engineered. Also thanks to the author of foo_dumb, the source code gave me a few clues. :)
  * Authors: Johannes Schultz
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
@@ -11,6 +11,8 @@
 
 #include "stdafx.h"
 #include "Loaders.h"
+
+#include "mpt/parse/parse.hpp"
 
 #ifdef LIBOPENMPT_BUILD
 #define MPT_PSM_USE_REAL_SUBSONGS
@@ -173,6 +175,34 @@ struct PSMSubSong // For internal use (pattern conversion)
 	    , channelVolume(MAX_BASECHANNELS, 64)
 	    , channelSurround(MAX_BASECHANNELS, false)
 	{ }
+
+	void SetPanning(CHANNELINDEX chn, uint8 type, int16 pan, bool &subsongPanningDiffers, std::vector<PSMSubSong> &subsongs)
+	{
+		if(chn >= channelPanning.size())
+			return;
+		switch(type)
+		{
+			case 0:  // use panning
+				if(pan >= 0)
+					channelPanning[chn] = static_cast<uint8>(pan ^ 128);
+				channelSurround[chn] = false;
+				break;
+			case 2:  // surround
+				channelPanning[chn] = 128;
+				channelSurround[chn] = true;
+				break;
+			case 4:  // center
+				channelPanning[chn] = 128;
+				channelSurround[chn] = false;
+				break;
+		}
+		if(!subsongPanningDiffers && !subsongs.empty())
+		{
+			if(subsongs.back().channelPanning[chn] != channelPanning[chn]
+				|| subsongs.back().channelSurround[chn] != channelSurround[chn])
+				subsongPanningDiffers = true;
+		}
+	}
 };
 
 
@@ -200,7 +230,7 @@ static PATTERNINDEX ReadPSMPatternIndex(FileReader &file, bool &sinariaFormat)
 		sinariaFormat = true;
 		offset = 0;
 	}
-	return ConvertStrTo<uint16>(&patternID[offset]);
+	return mpt::parse<uint16>(&patternID[offset]);
 }
 
 
@@ -355,7 +385,7 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 				{
 					char cversion[7];
 					subChunk.ReadString<mpt::String::maybeNullTerminated>(cversion, 6);
-					uint32 version = ConvertStrTo<uint32>(cversion);
+					uint32 version = mpt::parse<uint32>(cversion);
 					// Sinaria song dates (just to go sure...)
 					if(version == 800211 || version == 940902 || version == 940903 ||
 						version == 940906 || version == 940914 || version == 941213)
@@ -388,7 +418,6 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 						// In theory, a tempo item inbetween two order items should modify the
 						// tempo when switching patterns. No module uses this feature in practice
 						// though, so we can keep our loader simple.
-						// Unimplemented opcodes do nothing or freeze MASI.
 						switch(opcode)
 						{
 						case 0x01: // Play order list item
@@ -408,20 +437,32 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 							}
 							break;
 
-						// 0x02: Play Range
-						// 0x03: Jump Loop
+						case 0x02: // Play Range (xx from line yy to line zz). Three 16-bit parameters but it seems like the next opcode is parsed at the same position as the third parameter.
+							subChunk.Skip(4);
+							break;
 
-						case 0x04: // Jump Line (Restart position)
+						case 0x03:  // Jump Loop (like Jump Line, but with a third, unknown byte following - nope, it does not appear to be a loop count)
+						case 0x04:  // Jump Line (Restart position)
 							{
 								uint16 restartChunk = subChunk.ReadUint16LE();
 								if(restartChunk >= firstOrderChunk)
-									subsong.restartPos = static_cast<ORDERINDEX>(restartChunk - firstOrderChunk);	// Close enough - we assume that order list is continuous (like in any real-world PSM)
+									subsong.restartPos = static_cast<ORDERINDEX>(restartChunk - firstOrderChunk);  // Close enough - we assume that order list is continuous (like in any real-world PSM)
 								Order().SetRestartPos(subsong.restartPos);
+								if(opcode == 0x03)
+									subChunk.Skip(1);
 							}
 							break;
 
-						// 0x05: Channel Flip
-						// 0x06: Transpose
+						case 0x05: // Channel Flip (changes channel type without changing pan position)
+							{
+								const auto [chn, type] = subChunk.ReadArray<uint8, 2>();
+								subsong.SetPanning(chn, type, -1, subsongPanningDiffers, subsongs);
+							}
+							break;
+
+						case 0x06: // Transpose (appears to be a no-op in MASI)
+							subChunk.Skip(1);
+							break;
 
 						case 0x07: // Default Speed
 							subsong.defaultSpeed = subChunk.ReadUint8();
@@ -452,33 +493,7 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 						case 0x0D: // Channel panning table - can be set using CONVERT.EXE /E
 							{
 								const auto [chn, pan, type] = subChunk.ReadArray<uint8, 3>();
-								if(chn < subsong.channelPanning.size())
-								{
-									switch(type)
-									{
-									case 0: // use panning
-										subsong.channelPanning[chn] = pan ^ 128;
-										subsong.channelSurround[chn] = false;
-										break;
-
-									case 2: // surround
-										subsong.channelPanning[chn] = 128;
-										subsong.channelSurround[chn] = true;
-										break;
-
-									case 4: // center
-										subsong.channelPanning[chn] = 128;
-										subsong.channelSurround[chn] = false;
-										break;
-
-									}
-									if(subsongPanningDiffers == false && subsongs.size() > 0)
-									{
-										if(subsongs.back().channelPanning[chn] != subsong.channelPanning[chn]
-										|| subsongs.back().channelSurround[chn] != subsong.channelSurround[chn])
-											subsongPanningDiffers = true;
-									}
-								}
+								subsong.SetPanning(chn, type, pan, subsongPanningDiffers, subsongs);
 							}
 							break;
 
@@ -493,7 +508,7 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 							break;
 
 						default:
-							// Should never happen in "real" PSM files. But in this case, we have to quit as we don't know how big the chunk really is.
+							// Non-existent opcode, MASI would just freeze in this case.
 							return false;
 
 						}
@@ -511,26 +526,7 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 						break;
 
 					const auto [type, pan] = subChunk.ReadArray<uint8, 2>();
-					switch(type)
-					{
-					case 0: // use panning
-						subsong.channelPanning[chn] = pan ^ 128;
-						subsong.channelSurround[chn] = false;
-						break;
-
-					case 2: // surround
-						subsong.channelPanning[chn] = 128;
-						subsong.channelSurround[chn] = true;
-						break;
-
-					case 4: // center
-						subsong.channelPanning[chn] = 128;
-						subsong.channelSurround[chn] = false;
-						break;
-
-					default:
-						break;
-					}
+					subsong.SetPanning(chn, type, pan, subsongPanningDiffers, subsongs);
 				}
 				break;
 
@@ -663,7 +659,7 @@ bool CSoundFile::ReadPSM(FileReader &file, ModLoadingFlags loadFlags)
 		// Read pattern.
 		for(ROWINDEX row = 0; row < numRows; row++)
 		{
-			PatternRow rowBase = Patterns[pat].GetRow(row);
+			auto rowBase = Patterns[pat].GetRow(row);
 			uint16 rowSize = chunk.ReadUint16LE();
 			if(rowSize <= 2)
 			{

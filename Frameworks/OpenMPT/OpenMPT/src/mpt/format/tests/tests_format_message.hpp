@@ -9,6 +9,7 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/format/message.hpp"
 #include "mpt/format/message_macros.hpp"
+#include "mpt/string/types.hpp"
 #include "mpt/test/test.hpp"
 #include "mpt/test/test_macros.hpp"
 
@@ -62,6 +63,10 @@ MPT_TEST_GROUP_INLINE("mpt/format/message")
 	MPT_TEST_EXPECT_EQUAL(MPT_AFORMAT_MESSAGE("%b")(), "%b");
 	MPT_TEST_EXPECT_EQUAL(MPT_AFORMAT_MESSAGE("{{}}")(), "{}");
 	MPT_TEST_EXPECT_EQUAL(MPT_AFORMAT_MESSAGE("{{{}}}")("a"), "{a}");
+
+	// formatting string_view
+	MPT_TEST_EXPECT_EQUAL(MPT_UFORMAT_MESSAGE("{}")(mpt::ustring(MPT_ULITERAL("foo"))), MPT_USTRING("foo"));
+	MPT_TEST_EXPECT_EQUAL(MPT_UFORMAT_MESSAGE("{}")(mpt::ustring_view(MPT_ULITERAL("foo"))), MPT_USTRING("foo"));
 }
 
 } // namespace message

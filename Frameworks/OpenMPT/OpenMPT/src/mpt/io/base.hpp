@@ -38,7 +38,6 @@ struct FileOperations {
 
 template <typename Tfile>
 inline FileOperations<Tfile> FileOps(Tfile & f) {
-	;
 	return FileOperations<Tfile>{f};
 }
 

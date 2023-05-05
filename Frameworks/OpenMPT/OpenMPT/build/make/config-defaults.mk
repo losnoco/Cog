@@ -8,6 +8,8 @@ include build/make/config-clang.mk
 # Mac OS X overrides
 DYNLINK=0
 SHARED_SONAME=0
+MPT_COMPILER_NOSECTIONS=1
+MPT_COMPILER_NOGCSECTIONS=1
 
 else ifeq ($(HOST_FLAVOUR),MSYS2)
 
@@ -33,6 +35,11 @@ else ifeq ($(HOST_FLAVOUR),LINUX)
 
 include build/make/config-gcc.mk
 
+else ifeq ($(HOST_FLAVOUR),NETBSD)
+
+include build/make/config-gcc.mk
+NO_PORTAUDIOCPP?=1
+
 else ifeq ($(HOST_FLAVOUR),FREEBSD)
 
 include build/make/config-clang.mk
@@ -56,13 +63,13 @@ include build/make/config-gcc.mk
 
 else
 
-include build/make/config-generic.mk
+include build/make/config-unknown.mk
 
 endif
 
 else
 
-include build/make/config-generic.mk
+include build/make/config-unknown.mk
 
 endif
 

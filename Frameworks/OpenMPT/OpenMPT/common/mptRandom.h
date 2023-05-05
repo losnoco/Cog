@@ -57,7 +57,7 @@ class thread_safe_prng
 private:
 	mpt::mutex m;
 public:
-	typedef typename Trng::result_type result_type;
+	using result_type = typename Trng::result_type;
 public:
 	template <typename Trd>
 	explicit thread_safe_prng(Trd & rd)

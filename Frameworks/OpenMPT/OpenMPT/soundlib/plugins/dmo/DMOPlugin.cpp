@@ -36,7 +36,7 @@ OPENMPT_NAMESPACE_BEGIN
 #endif
 
 
-IMixPlugin* DMOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* DMOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	CLSID clsid;
 	if(mpt::VerifyStringToCLSID(factory.dllPath.AsNative(), clsid))
@@ -70,7 +70,7 @@ IMixPlugin* DMOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIX
 }
 
 
-DMOPlugin::DMOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct, IMediaObject *pMO, IMediaObjectInPlace *pMOIP, uint32 uid)
+DMOPlugin::DMOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct, IMediaObject *pMO, IMediaObjectInPlace *pMOIP, uint32 uid)
 	: IMixPlugin(factory, sndFile, mixStruct)
 	, m_pMediaObject(pMO)
 	, m_pMediaProcess(pMOIP)
@@ -85,7 +85,6 @@ DMOPlugin::DMOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *m
 		m_pMediaParams = nullptr;
 	m_alignedBuffer.f32 = mpt::align_bytes<16, MIXBUFFERSIZE * 2>(m_interleavedBuffer.f32);
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 

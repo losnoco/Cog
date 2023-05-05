@@ -29,7 +29,7 @@ public:
 		Int32 = 32,          // do not change value (for compatibility with old configuration settings)
 		Float32 = 32 + 128,  // do not change value (for compatibility with old configuration settings)
 		Float64 = 64 + 128,  // do not change value (for compatibility with old configuration settings)
-		Invalid = 0
+		Default = Float32
 	};
 	static constexpr SampleFormat::Enum Unsigned8 = SampleFormat::Enum::Unsigned8;
 	static constexpr SampleFormat::Enum Int8 = SampleFormat::Enum::Int8;
@@ -38,7 +38,7 @@ public:
 	static constexpr SampleFormat::Enum Int32 = SampleFormat::Enum::Int32;
 	static constexpr SampleFormat::Enum Float32 = SampleFormat::Enum::Float32;
 	static constexpr SampleFormat::Enum Float64 = SampleFormat::Enum::Float64;
-	static constexpr SampleFormat::Enum Invalid = SampleFormat::Enum::Invalid;
+	static constexpr SampleFormat::Enum Default = SampleFormat::Enum::Default;
 
 private:
 	SampleFormat::Enum value;
@@ -50,7 +50,7 @@ private:
 		uT val = static_cast<uT>(x);
 		if(!val)
 		{
-			return SampleFormat::Enum::Invalid;
+			return SampleFormat::Enum::Default;
 		}
 		if(val == static_cast<uT>(-8))
 		{
@@ -120,7 +120,7 @@ private:
 		{
 			if(is_unsigned(val) && is_float(val))
 			{
-				val = mpt::to_underlying(Enum::Invalid);
+				val = mpt::to_underlying(Enum::Default);
 			} else if(is_unsigned(val))
 			{
 				val = mpt::to_underlying(Enum::Unsigned8);
@@ -129,7 +129,7 @@ private:
 				val = mpt::to_underlying(Enum::Float32);
 			} else
 			{
-				val = mpt::to_underlying(Enum::Invalid);
+				val = mpt::to_underlying(Enum::Default);
 			}
 		} else if(!unique_size(val))
 		{
@@ -182,7 +182,7 @@ private:
 
 public:
 	MPT_CONSTEXPRINLINE SampleFormat() noexcept
-		: value(SampleFormat::Invalid)
+		: value(SampleFormat::Default)
 	{
 	}
 
@@ -216,18 +216,6 @@ public:
 		return a.value != b;
 	}
 
-	MPT_CONSTEXPRINLINE bool IsValid() const noexcept
-	{
-		return false
-			|| (value == SampleFormat::Unsigned8)
-			|| (value == SampleFormat::Int8)
-			|| (value == SampleFormat::Int16)
-			|| (value == SampleFormat::Int24)
-			|| (value == SampleFormat::Int32)
-			|| (value == SampleFormat::Float32)
-			|| (value == SampleFormat::Float64);
-	}
-
 	MPT_CONSTEXPRINLINE bool IsUnsigned() const noexcept
 	{
 		return false
@@ -250,7 +238,7 @@ public:
 	}
 	MPT_CONSTEXPRINLINE uint8 GetSampleSize() const noexcept
 	{
-		return !IsValid()                         ? 0
+		return false                              ? 0
 			 : (value == SampleFormat::Unsigned8) ? 1
 			 : (value == SampleFormat::Int8)      ? 1
 			 : (value == SampleFormat::Int16)     ? 2
@@ -262,7 +250,7 @@ public:
 	}
 	MPT_CONSTEXPRINLINE uint8 GetBitsPerSample() const noexcept
 	{
-		return !IsValid()                         ? 0
+		return false                              ? 0
 			 : (value == SampleFormat::Unsigned8) ? 8
 			 : (value == SampleFormat::Int8)      ? 8
 			 : (value == SampleFormat::Int16)     ? 16
@@ -277,10 +265,6 @@ public:
 	{
 		return value;
 	}
-	explicit MPT_CONSTEXPRINLINE operator std::underlying_type<SampleFormat::Enum>::type() const noexcept
-	{
-		return mpt::to_underlying(value);
-	}
 
 	// backward compatibility, conversion to/from integers
 	static MPT_CONSTEXPRINLINE SampleFormat FromInt(int x) noexcept
@@ -290,10 +274,6 @@ public:
 	static MPT_CONSTEXPRINLINE int ToInt(SampleFormat x) noexcept
 	{
 		return mpt::to_underlying(x.value);
-	}
-	MPT_CONSTEXPRINLINE int AsInt() const noexcept
-	{
-		return mpt::to_underlying(value);
 	}
 };
 

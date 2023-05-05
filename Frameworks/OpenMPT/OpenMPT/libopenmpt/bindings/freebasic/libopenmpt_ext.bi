@@ -134,6 +134,7 @@ Type openmpt_module_ext_interface_interactive
 	  \return 1 on success, 0 on failure.
 	  \remarks The tempo may be reset by pattern commands at any time. Use set_tempo_factor to apply a tempo factor that is independent of pattern commands.
 	  \sa openmpt_module_get_current_tempo
+	  \deprecated Please use openmpt_module_ext_interface_interactive3.set_current_tempo2().
 	'/
 	set_current_tempo As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal tempo As Long) As Long
 
@@ -346,6 +347,23 @@ Type openmpt_module_ext_interface_interactive2
 	  \sa openmpt_module_ext_interface_interactive2.set_note_finetune
 	 '/
 	get_note_finetune As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal channel As Long) As Double
+End Type
+
+#define LIBOPENMPT_EXT_C_INTERFACE_INTERACTIVE3 "interactive3"
+
+Type openmpt_module_ext_interface_interactive3
+
+	/'* Set the current module tempo
+
+	  \param mod_ext The module handle to work on.
+	  \param tempo The new tempo in range [32, 512]. The exact meaning of the value depends on the tempo mode used by the module.
+	  \return 1 on success, 0 on failure.
+	  \remarks The tempo may be reset by pattern commands at any time. Use set_tempo_factor to apply a tempo factor that is independent of pattern commands.
+	  \sa openmpt_module_get_current_tempo2
+	  \since 0.7.0
+	'/
+	set_current_tempo As Function(ByVal mod_ext As openmpt_module_ext Ptr, ByVal tempo As Double) As Long
+
 End Type
 
 End Extern

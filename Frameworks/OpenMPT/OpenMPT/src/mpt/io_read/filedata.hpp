@@ -25,7 +25,7 @@ namespace IO {
 
 class IFileData {
 public:
-	typedef std::size_t pos_type;
+	using pos_type = std::size_t;
 
 protected:
 	IFileData() = default;

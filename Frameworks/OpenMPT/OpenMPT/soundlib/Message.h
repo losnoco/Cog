@@ -66,6 +66,8 @@ public:
 
 	// Sets the song message. Expects the provided string to already use the internal line ending character.
 	void SetRaw(std::string message) noexcept { assign(std::move(message)); }
+
+	std::string GetString() const { return *this; }
 };
 
 OPENMPT_NAMESPACE_END

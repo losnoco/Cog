@@ -12,6 +12,8 @@
 #include "mpt/test/test.hpp"
 #include "mpt/test/test_macros.hpp"
 
+#include <limits>
+
 
 
 namespace mpt {
@@ -211,6 +213,16 @@ MPT_TEST_GROUP_INLINE("mpt/base/bit")
 	MPT_TEST_EXPECT_EQUAL(mpt::lower_bound_entropy_bits(0x00000002u), 1);
 	MPT_TEST_EXPECT_EQUAL(mpt::lower_bound_entropy_bits(0x00000001u), 1);
 	MPT_TEST_EXPECT_EQUAL(mpt::lower_bound_entropy_bits(0x00000000u), 0);
+
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(uint8(0x12)), 0x12);
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(uint16(0x1234)), 0x3412);
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(uint32(0x12345678u)), 0x78563412u);
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(uint64(0x123456789abcdef0ull)), 0xf0debc9a78563412ull);
+
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(int8(std::numeric_limits<int8>::min())), std::numeric_limits<int8>::min());
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(int16(std::numeric_limits<int16>::min())), int16(0x80));
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(int32(std::numeric_limits<int32>::min())), int32(0x80));
+	MPT_TEST_EXPECT_EQUAL(mpt::byteswap(int64(std::numeric_limits<int64>::min())), int64(0x80));
 }
 
 } // namespace bit

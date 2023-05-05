@@ -135,7 +135,7 @@ class ComponentLibrary
 
 private:
 	
-	typedef std::map<std::string, mpt::Library> TLibraryMap;
+	using TLibraryMap = std::map<std::string, mpt::Library>;
 	TLibraryMap m_Libraries;
 	
 	bool m_BindFailed;
@@ -237,7 +237,7 @@ public:
 
 class ComponentManager;
 
-typedef std::shared_ptr<IComponent> (*ComponentFactoryMethod)(ComponentManager &componentManager);
+using ComponentFactoryMethod = std::shared_ptr<IComponent> (*)(ComponentManager &componentManager);
 
 
 class IComponentFactory
@@ -361,7 +361,7 @@ private:
 		std::shared_ptr<IComponent> instance;
 		std::weak_ptr<IComponent> weakInstance;
 	};
-	typedef std::map<std::string, RegisteredComponent> TComponentMap;
+	using TComponentMap = std::map<std::string, RegisteredComponent>;
 	const IComponentManagerSettings &m_Settings;
 	TComponentMap m_Components;
 private:

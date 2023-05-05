@@ -72,7 +72,7 @@ bool CSoundFile::ReadUAX(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		InitializeChannels();
 		SetType(MOD_TYPE_MPT);
-		m_ContainerType = MOD_CONTAINERTYPE_UAX;
+		m_ContainerType = ModContainerType::UAX;
 		m_nChannels = 4;
 		Patterns.Insert(0, 64);
 		Order().assign(1, 0);

@@ -254,11 +254,8 @@ bool CSoundFile::ReadFAR(FileReader &file, ModLoadingFlags loadFlags)
 		// Read pattern data
 		for(ROWINDEX row = 0; row < numRows; row++)
 		{
-			PatternRow rowBase = Patterns[pat].GetRow(row);
-			for(CHANNELINDEX chn = 0; chn < 16; chn++)
+			for(ModCommand &m : Patterns[pat].GetRow(row))
 			{
-				ModCommand &m = rowBase[chn];
-
 				const auto [note, instr, volume, effect] = patternChunk.ReadArray<uint8, 4>();
 
 				if(note > 0 && note <= 72)

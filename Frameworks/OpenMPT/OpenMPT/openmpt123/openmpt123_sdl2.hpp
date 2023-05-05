@@ -36,15 +36,17 @@ MPT_WARNING("Support for SDL2 < 2.0.4 has been deprecated and will be removed in
 
 namespace openmpt123 {
 
+inline constexpr auto sdl2_encoding = mpt::common_encoding::utf8;
+
 struct sdl2_exception : public exception {
 private:
-	static std::string text_from_code( int code ) {
-		std::ostringstream s;
+	static mpt::ustring text_from_code( int code ) {
+		string_concat_stream<mpt::ustring> s;
 		s << code;
 		return s.str();
 	}
 public:
-	sdl2_exception( int code, const char * error ) : exception( text_from_code( code ) + " (" + ( error ? std::string(error) : std::string("NULL") ) + ")" ) { }
+	sdl2_exception( int code, const char * error ) : exception( text_from_code( code ) + MPT_USTRING(" (") + mpt::transcode<mpt::ustring>( sdl2_encoding, error ? std::string(error) : std::string("NULL") ) + MPT_USTRING(")") ) { }
 };
 
 static void check_sdl2_error( int e ) {
@@ -65,7 +67,7 @@ public:
 
 class sdl2_stream_raii : public write_buffers_interface {
 private:
-	std::ostream & log;
+	concat_stream<mpt::ustring> & log;
 	sdl2_raii sdl2;
 	int dev;
 	std::size_t channels;
@@ -83,7 +85,7 @@ protected:
 		return result;
 	}
 public:
-	sdl2_stream_raii( commandlineflags & flags, std::ostream & log_ )
+	sdl2_stream_raii( commandlineflags & flags, concat_stream<mpt::ustring> & log_ )
 		: log(log_)
 		, sdl2( SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER | SDL_INIT_AUDIO )
 		, dev(-1)
@@ -106,16 +108,16 @@ public:
 		std::memset( &audiospec, 0, sizeof( SDL_AudioSpec ) );
 		audiospec.freq = flags.samplerate;
 		audiospec.format = ( flags.use_float ? AUDIO_F32SYS : AUDIO_S16SYS );
-		audiospec.channels = flags.channels;
+		audiospec.channels = static_cast<Uint8>( flags.channels );
 		audiospec.silence = 0;
-		audiospec.samples = round_up_power2( ( flags.buffer * flags.samplerate ) / ( 1000 * 2 ) );
-		audiospec.size = audiospec.samples * audiospec.channels * ( flags.use_float ? sizeof( float ) : sizeof( std::int16_t ) );
+		audiospec.samples = static_cast<Uint16>( round_up_power2( ( flags.buffer * flags.samplerate ) / ( 1000 * 2 ) ) );
+		audiospec.size = static_cast<Uint32>( audiospec.samples * audiospec.channels * ( flags.use_float ? sizeof( float ) : sizeof( std::int16_t ) ) );
 		audiospec.callback = NULL;
 		audiospec.userdata = NULL;
 		if ( flags.verbose ) {
-			log << "SDL2:" << std::endl;
-			log << " latency: " << ( audiospec.samples * 2.0 / flags.samplerate ) << " (2 * " << audiospec.samples << ")" << std::endl;
-			log << std::endl;
+			log << MPT_USTRING("SDL2:") << lf;
+			log << MPT_USTRING(" latency: ") << ( audiospec.samples * 2.0 / flags.samplerate ) << MPT_USTRING(" (2 * ") << audiospec.samples << MPT_USTRING(")") << lf;
+			log << lf;
 		}
 		sampleQueueMaxFrames = round_up_power2( ( flags.buffer * flags.samplerate ) / ( 1000 * 2 ) );
 		SDL_AudioSpec audiospec_obtained;
@@ -146,7 +148,7 @@ private:
 		while ( frames > 0 ) {
 			std::size_t chunk_frames = std::min( frames, get_num_writeable_frames() );
 			if ( chunk_frames > 0 ) {
-				check_sdl2_error( SDL_QueueAudio( dev, buffer, chunk_frames * channels * ( use_float ? sizeof( float ) : sizeof( std::int16_t ) ) ) );
+				check_sdl2_error( SDL_QueueAudio( dev, buffer, static_cast<Uint32>( chunk_frames * channels * ( use_float ? sizeof( float ) : sizeof( std::int16_t ) ) ) ) );
 				frames -= chunk_frames;
 				buffer += chunk_frames * channels;
 			} else {
@@ -187,10 +189,10 @@ public:
 	}
 };
 
-static std::string show_sdl2_devices( std::ostream & /* log */ ) {
-	std::ostringstream devices;
+static mpt::ustring show_sdl2_devices( concat_stream<mpt::ustring> & /* log */ ) {
+	string_concat_stream<mpt::ustring> devices;
 	std::size_t device_index = 0;
-	devices << " SDL2:" << std::endl;
+	devices << MPT_USTRING(" SDL2:") << lf;
 	sdl2_raii sdl2( SDL_INIT_NOPARACHUTE | SDL_INIT_AUDIO );
 	for ( int driver = 0; driver < SDL_GetNumAudioDrivers(); ++driver ) {
 		const char * driver_name = SDL_GetAudioDriver( driver );
@@ -211,7 +213,7 @@ static std::string show_sdl2_devices( std::ostream & /* log */ ) {
 			if ( std::string( device_name ).empty() ) {
 				continue;
 			}
-			devices << "    " << device_index << ": " << driver_name << " - " << device_name << std::endl;
+			devices << MPT_USTRING("    ") << device_index << MPT_USTRING(": ") << mpt::transcode<mpt::ustring>( sdl2_encoding, driver_name ) << MPT_USTRING(" - ") << mpt::transcode<mpt::ustring>( sdl2_encoding, device_name ) << lf;
 			device_index++;
 		}
 		SDL_AudioQuit();

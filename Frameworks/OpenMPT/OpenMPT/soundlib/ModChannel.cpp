@@ -19,7 +19,10 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 {
 	if(resetMask & resetSetPosBasic)
 	{
-		nNote = nNewNote = NOTE_NONE;
+		// IT compatibility: Initial "last note memory" of channel is C-0 (so a lonely instrument number without note will play that note).
+		// Test case: InitialNoteMemory.it
+		nNote = nNewNote = (sndFile.m_playBehaviour[kITInitialNoteMemory] ? NOTE_MIN : NOTE_NONE);
+		nArpeggioLastNote = lastMidiNoteWithoutArp = NOTE_NONE;
 		nNewIns = nOldIns = 0;
 		pModSample = nullptr;
 		pModInstrument = nullptr;
@@ -124,9 +127,9 @@ void ModChannel::UpdateInstrumentVolume(const ModSample *smp, const ModInstrumen
 }
 
 
-ModCommand::NOTE ModChannel::GetPluginNote(bool realNoteMapping) const
+ModCommand::NOTE ModChannel::GetPluginNote(bool realNoteMapping, bool ignoreArpeggio) const
 {
-	if(nArpeggioLastNote != NOTE_NONE)
+	if(nArpeggioLastNote != NOTE_NONE && !ignoreArpeggio)
 	{
 		// If an arpeggio is playing, this definitely the last playing note, which may be different from the arpeggio base note stored in nNote.
 		return nArpeggioLastNote;
@@ -187,7 +190,7 @@ void ModChannel::RecalcTuningFreq(Tuning::RATIOTYPE vibratoFactor, Tuning::NOTEI
 	if(sndFile.m_playBehaviour[kITRealNoteMapping] && note >= NOTE_MIN && note <= NOTE_MAX)
 		note = pModInstrument->NoteMap[note - NOTE_MIN];
 
-	nPeriod = mpt::saturate_round<uint32>(nC5Speed * vibratoFactor * pModInstrument->pTuning->GetRatio(note - NOTE_MIDDLEC + arpeggioSteps, nFineTune + m_PortamentoFineSteps) * (1 << FREQ_FRACBITS));
+	nPeriod = mpt::saturate_round<uint32>(static_cast<float>(nC5Speed) * vibratoFactor * pModInstrument->pTuning->GetRatio(static_cast<Tuning::NOTEINDEXTYPE>(note - NOTE_MIDDLEC + arpeggioSteps), nFineTune + m_PortamentoFineSteps) * (1 << FREQ_FRACBITS));
 }
 
 

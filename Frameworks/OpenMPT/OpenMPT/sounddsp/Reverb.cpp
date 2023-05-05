@@ -13,6 +13,9 @@
 
 #ifndef NO_REVERB
 #include "Reverb.h"
+#if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
+#include "../common/mptCPU.h"
+#endif
 #include "../soundlib/MixerLoops.h"
 #include "mpt/base/numbers.hpp"
 
@@ -48,9 +51,9 @@ CReverb::CReverb()
 }
 
 
-static int32 OnePoleLowPassCoef(int32 scale, float g, float F_c, float F_s)
+static int32 OnePoleLowPassCoef(int32 scale, double g, double F_c, double F_s)
 {
-	if(g > 0.999999f) return 0;
+	if(g > 0.999999) return 0;
 
 	g *= g;
 	double scale_over_1mg = scale / (1.0 - g);
@@ -58,13 +61,13 @@ static int32 OnePoleLowPassCoef(int32 scale, float g, float F_c, float F_s)
 	return mpt::saturate_round<int32>((1.0 - (std::sqrt((g + g) * (1.0 - cosw) - g * g * (1.0 - cosw * cosw)) + g * cosw)) * scale_over_1mg);
 }
 
-static float mBToLinear(int32 value_mB)
+static double mBToLinear(int32 value_mB)
 {
 	if(!value_mB) return 1;
 	if(value_mB <= -100000) return 0;
 
 	const double val = value_mB * 3.321928094887362304 / (100.0 * 20.0);	// log2(10)/(100*20)
-	return static_cast<float>(std::pow(2.0, val - static_cast<int32>(0.5 + val)));
+	return std::pow(2.0, val - static_cast<int32>(0.5 + val));
 }
 
 static int32 mBToLinear(int32 scale, int32 value_mB)
@@ -296,7 +299,7 @@ void CReverb::Initialize(bool bReset, MixSampleInt &gnRvbROfsVol, MixSampleInt &
 
 		// Room attenuation at high frequencies
 		int32 nRoomLP;
-		nRoomLP = OnePoleLowPassCoef(32768, mBToLinear(rvb.RoomHF), 5000, flOutputFrequency);
+		nRoomLP = OnePoleLowPassCoef(32768, mBToLinear(rvb.RoomHF), 5000, static_cast<double>(flOutputFrequency));
 		g_RefDelay.nCoeffs.c.l = (int16)nRoomLP;
 		g_RefDelay.nCoeffs.c.r = (int16)nRoomLP;
 
@@ -357,7 +360,7 @@ void CReverb::Initialize(bool bReset, MixSampleInt &gnRvbROfsVol, MixSampleInt &
 		float fReverbDamping = rvb.flReverbDamping * rvb.flReverbDamping;
 		int32 nDampingLowPass;
 
-		nDampingLowPass = OnePoleLowPassCoef(32768, fReverbDamping, 5000, flOutputFrequency);
+		nDampingLowPass = OnePoleLowPassCoef(32768, static_cast<double>(fReverbDamping), 5000, static_cast<double>(flOutputFrequency));
 		Limit(nDampingLowPass, 0x100, 0x7f00);
 		
 		g_LateReverb.nDecayLP[0].c.l = (int16)nDampingLowPass;
@@ -589,7 +592,7 @@ void CReverb::ReverbProcessPostFiltering2x(const int32 * MPT_RESTRICT pRvb, int3
 void CReverb::ReverbProcessPostFiltering1x(const int32 * MPT_RESTRICT pRvb, int32 * MPT_RESTRICT pDry, uint32 nSamples)
 {
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
-	if(CPU::HasFeatureSet(CPU::feature::sse2))
+	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
@@ -651,7 +654,7 @@ void CReverb::ReverbProcessPostFiltering1x(const int32 * MPT_RESTRICT pRvb, int3
 void CReverb::ReverbDCRemoval(int32 * MPT_RESTRICT pBuffer, uint32 nSamples)
 {
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
-	if(CPU::HasFeatureSet(CPU::feature::sse2))
+	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
@@ -716,7 +719,7 @@ void CReverb::ProcessPreDelay(SWRvbRefDelay * MPT_RESTRICT pPreDelay, const int3
 	uint32 preDifPos = pPreDelay->nPreDifPos;
 	uint32 delayPos = pPreDelay->nDelayPos - 1;
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
-	if(CPU::HasFeatureSet(CPU::feature::sse2))
+	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		__m128i coeffs = _mm_cvtsi32_si128(pPreDelay->nCoeffs.lr);
 		__m128i history = _mm_cvtsi32_si128(pPreDelay->History.lr);
@@ -788,7 +791,7 @@ void CReverb::ProcessPreDelay(SWRvbRefDelay * MPT_RESTRICT pPreDelay, const int3
 void CReverb::ProcessReflections(SWRvbRefDelay * MPT_RESTRICT pPreDelay, LR16 * MPT_RESTRICT pRefOut, int32 * MPT_RESTRICT pOut, uint32 nSamples)
 {
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
-	if(CPU::HasFeatureSet(CPU::feature::sse2))
+	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		union
 		{
@@ -883,7 +886,7 @@ void CReverb::ProcessLateReverb(SWLateReverb * MPT_RESTRICT pReverb, LR16 * MPT_
 	#define DELAY_OFFSET(x) ((delayPos - (x)) & RVBDLY_MASK)
 
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE2)
-	if(CPU::HasFeatureSet(CPU::feature::sse2))
+	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		int delayPos = pReverb->nDelayPos & RVBDLY_MASK;
 		__m128i rvbOutGains = Load64SSE(pReverb->RvbOutGains);

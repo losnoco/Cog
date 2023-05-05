@@ -83,13 +83,18 @@ struct is_binary_safe : public std::conditional<declare_binary_safe(T{}), std::t
 
 // Generic Specialization for arrays.
 template <typename T, std::size_t N>
-struct is_binary_safe<T[N]> : public is_binary_safe<T> { };
+struct is_binary_safe<T[N]> : public is_binary_safe<typename std::remove_const<T>::type> { };
 template <typename T, std::size_t N>
-struct is_binary_safe<const T[N]> : public is_binary_safe<T> { };
+struct is_binary_safe<const T[N]> : public is_binary_safe<typename std::remove_const<T>::type> { };
 template <typename T, std::size_t N>
-struct is_binary_safe<std::array<T, N>> : public is_binary_safe<T> { };
+struct is_binary_safe<std::array<T, N>> : public is_binary_safe<typename std::remove_const<T>::type> { };
 template <typename T, std::size_t N>
-struct is_binary_safe<const std::array<T, N>> : public is_binary_safe<T> { };
+struct is_binary_safe<const std::array<T, N>> : public is_binary_safe<typename std::remove_const<T>::type> { };
+
+template <typename T>
+struct is_binary_safe<mpt::span<T>> : public is_binary_safe<typename std::remove_const<T>::type> { };
+template <typename T>
+struct is_binary_safe<const mpt::span<T>> : public is_binary_safe<typename std::remove_const<T>::type> { };
 
 
 template <typename T>
@@ -98,7 +103,9 @@ constexpr bool check_binary_size(std::size_t size) noexcept {
 		&& (sizeof(T) == size)
 		&& (alignof(T) == 1)
 		&& std::is_standard_layout<T>::value
+#if !defined(MPT_LIBCXX_QUIRK_NO_HAS_UNIQUE_OBJECT_REPRESENTATIONS)
 		&& std::has_unique_object_representations<T>::value
+#endif
 		&& mpt::is_binary_safe<T>::value;
 }
 
@@ -236,6 +243,26 @@ struct as_raw_memory_impl<const T[N]> {
 	inline mpt::const_byte_span operator()(const T (&v)[N]) const {
 		static_assert(mpt::is_binary_safe<typename std::remove_const<T>::type>::value);
 		return mpt::as_span(reinterpret_cast<const std::byte *>(v), N * sizeof(T));
+	}
+};
+
+template <typename T>
+struct as_raw_memory_impl<mpt::span<T>> {
+	inline mpt::const_byte_span operator()(const mpt::span<const T> & v) const {
+		static_assert(mpt::is_binary_safe<typename std::remove_const<T>::type>::value);
+		return mpt::as_span(reinterpret_cast<const std::byte *>(v.data()), v.size() * sizeof(T));
+	}
+	inline mpt::byte_span operator()(const mpt::span<T> & v) const {
+		static_assert(mpt::is_binary_safe<typename std::remove_const<T>::type>::value);
+		return mpt::as_span(reinterpret_cast<std::byte *>(v.data()), v.size() * sizeof(T));
+	}
+};
+
+template <typename T>
+struct as_raw_memory_impl<mpt::span<const T>> {
+	inline mpt::const_byte_span operator()(const mpt::span<const T> & v) const {
+		static_assert(mpt::is_binary_safe<typename std::remove_const<T>::type>::value);
+		return mpt::as_span(reinterpret_cast<const std::byte *>(v.data()), v.size() * sizeof(T));
 	}
 };
 

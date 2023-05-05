@@ -10,6 +10,7 @@
 #include "mpt/base/macros.hpp"
 #include "mpt/base/memory.hpp"
 #include "mpt/base/namespace.hpp"
+#include "mpt/endian/type_traits.hpp"
 
 #include <limits>
 
@@ -143,6 +144,10 @@ public:
 	MPT_FORCEINLINE explicit IEEE754binary32Emulated(float32 f) {
 		SetInt32(EncodeIEEE754binary32(f));
 	}
+	MPT_FORCEINLINE IEEE754binary32Emulated & operator=(float32 f) {
+		SetInt32(EncodeIEEE754binary32(f));
+		return *this;
+	}
 	// b0...b3 are in memory order, i.e. depend on the endianness of this type
 	// little endian: (0x00,0x00,0x80,0x3f)
 	// big endian:    (0x3f,0x80,0x00,0x00)
@@ -193,6 +198,10 @@ public:
 	IEEE754binary64Emulated() = default;
 	MPT_FORCEINLINE explicit IEEE754binary64Emulated(float64 f) {
 		SetInt64(EncodeIEEE754binary64(f));
+	}
+	MPT_FORCEINLINE IEEE754binary64Emulated & operator=(float64 f) {
+		SetInt64(EncodeIEEE754binary64(f));
+		return *this;
 	}
 	MPT_FORCEINLINE explicit IEEE754binary64Emulated(std::byte b0, std::byte b1, std::byte b2, std::byte b3, std::byte b4, std::byte b5, std::byte b6, std::byte b7) {
 		bytes[0] = b0;
@@ -287,6 +296,10 @@ public:
 	MPT_FORCEINLINE explicit IEEE754binary32Native(float32 f) {
 		value = f;
 	}
+	MPT_FORCEINLINE IEEE754binary32Native & operator=(float32 f) {
+		value = f;
+		return *this;
+	}
 	// b0...b3 are in memory order, i.e. depend on the endianness of this type
 	// little endian: (0x00,0x00,0x80,0x3f)
 	// big endian:    (0x3f,0x80,0x00,0x00)
@@ -335,6 +348,10 @@ public:
 	IEEE754binary64Native() = default;
 	MPT_FORCEINLINE explicit IEEE754binary64Native(float64 f) {
 		value = f;
+	}
+	MPT_FORCEINLINE IEEE754binary64Native & operator=(float64 f) {
+		value = f;
+		return *this;
 	}
 	MPT_FORCEINLINE explicit IEEE754binary64Native(std::byte b0, std::byte b1, std::byte b2, std::byte b3, std::byte b4, std::byte b5, std::byte b6, std::byte b7) {
 		static_assert(endian == mpt::endian::little || endian == mpt::endian::big);
@@ -433,46 +450,24 @@ static_assert(sizeof(float64be_fast) == 8);
 
 
 
-template <typename Tfloat>
-struct make_float_be {
+template <>
+struct make_endian<mpt::endian::little, float> {
+	using type = IEEE754binary32LE;
 };
 
 template <>
-struct make_float_be<double> {
-	using type = IEEE754binary64BE;
-};
-
-template <>
-struct make_float_be<float> {
+struct make_endian<mpt::endian::big, float> {
 	using type = IEEE754binary32BE;
 };
 
-template <typename Tfloat>
-struct make_float_le {
-};
-
 template <>
-struct make_float_le<double> {
+struct make_endian<mpt::endian::little, double> {
 	using type = IEEE754binary64LE;
 };
 
 template <>
-struct make_float_le<float> {
-	using type = IEEE754binary32LE;
-};
-
-template <mpt::endian endian, typename T>
-struct make_float_endian {
-};
-
-template <typename T>
-struct make_float_endian<mpt::endian::little, T> {
-	using type = typename make_float_le<typename std::remove_const<T>::type>::type;
-};
-
-template <typename T>
-struct make_float_endian<mpt::endian::big, T> {
-	using type = typename make_float_be<typename std::remove_const<T>::type>::type;
+struct make_endian<mpt::endian::big, double> {
+	using type = IEEE754binary64BE;
 };
 
 

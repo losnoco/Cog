@@ -21,13 +21,13 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-IMixPlugin* LFOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* LFOPlugin::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) LFOPlugin(factory, sndFile, mixStruct);
 }
 
 
-LFOPlugin::LFOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+LFOPlugin::LFOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 	, m_PRNG(mpt::make_prng<mpt::fast_prng>(mpt::global_prng()))
 {
@@ -35,7 +35,6 @@ LFOPlugin::LFOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *m
 	RecalculateIncrement();
 
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -97,7 +96,7 @@ void LFOPlugin::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		if(m_polarity)
 			value = -value;
 		// Transform value from -1...+1 to 0...1 range and apply offset/amplitude
-		value = value * m_amplitude + m_offset;
+		value = value * static_cast<double>(m_amplitude) + static_cast<double>(m_offset);
 		Limit(value, 0.0, 1.0);
 
 		IMixPlugin *plugin = GetOutputPlugin();
@@ -105,7 +104,7 @@ void LFOPlugin::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		{
 			if(m_outputToCC)
 			{
-				plugin->MidiSend(MIDIEvents::CC(static_cast<MIDIEvents::MidiCC>(m_outputParam & 0x7F), static_cast<uint8>((m_outputParam >> 8) & 0x0F), mpt::saturate_round<uint8>(value * 127.0f)));
+				plugin->MidiSend(MIDIEvents::CC(static_cast<MIDIEvents::MidiCC>(m_outputParam & 0x7F), static_cast<uint8>((m_outputParam >> 8) & 0x0F), mpt::saturate_round<uint8>(value * 127.0)));
 			} else
 			{
 				plugin->SetParameter(m_outputParam, static_cast<PlugParamValue>(value));
@@ -164,7 +163,7 @@ void LFOPlugin::SetParameter(PlugParamIndex index, PlugParamValue value)
 			// Enforce next random value for random LFOs
 			NextRandom();
 		}
-		m_phase = value;
+		m_phase = static_cast<double>(value);
 		return;
 
 	default: return;
@@ -228,6 +227,15 @@ void LFOPlugin::MidiPitchBend(int32 increment, int8 pwd, CHANNELINDEX trackChann
 	if(IMixPlugin *plugin = GetOutputPlugin())
 	{
 		plugin->MidiPitchBend(increment, pwd, trackChannel);
+	}
+}
+
+
+void LFOPlugin::MidiTonePortamento(int32 increment, uint8 newNote, int8 pwd, CHANNELINDEX trackChannel)
+{
+	if(IMixPlugin *plugin = GetOutputPlugin())
+	{
+		plugin->MidiTonePortamento(increment, newNote, pwd, trackChannel);
 	}
 }
 
@@ -458,13 +466,13 @@ CAbstractVstEditor *LFOPlugin::OpenEditor()
 void LFOPlugin::NextRandom()
 {
 	m_random = m_nextRandom;
-	m_nextRandom = mpt::random<int32>(m_PRNG) / static_cast<float>(int32_min);
+	m_nextRandom = mpt::random<int32>(m_PRNG) / static_cast<double>(int32_min);
 }
 
 
 void LFOPlugin::RecalculateFrequency()
 {
-	m_computedFrequency = 0.25 * std::pow(2.0, m_frequency * 8.0) - 0.25;
+	m_computedFrequency = 0.25 * std::pow(2.0, static_cast<double>(m_frequency) * 8.0) - 0.25;
 	if(m_tempoSync)
 	{
 		if(m_computedFrequency > 0.00045)

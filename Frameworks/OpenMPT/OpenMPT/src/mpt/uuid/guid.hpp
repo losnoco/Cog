@@ -16,9 +16,9 @@
 #include <vector>
 
 #if MPT_OS_WINDOWS
-#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0600)
+#if MPT_WINNT_AT_LEAST(MPT_WIN_VISTA)
 #include <guiddef.h>
-#endif // _WIN32_WINNT
+#endif // MPT_WIN_VISTA
 #include <objbase.h>
 #include <rpc.h>
 #endif // MPT_OS_WINDOWS
@@ -30,7 +30,7 @@ inline namespace MPT_INLINE_NS {
 
 
 
-#if MPT_OS_WINDOWS
+#if MPT_OS_WINDOWS && !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 
 
 
@@ -274,7 +274,7 @@ inline bool IsValid(::UUID uuid) {
 
 
 
-#endif // MPT_OS_WINDOWS
+#endif // MPT_OS_WINDOWS && !MPT_COMPILER_QUIRK_NO_WCHAR
 
 
 

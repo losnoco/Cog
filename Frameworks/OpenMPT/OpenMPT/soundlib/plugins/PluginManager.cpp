@@ -16,7 +16,9 @@
 #include "PluginManager.h"
 #include "PlugInterface.h"
 
+#if defined(MPT_WITH_DMO)
 #include "mpt/uuid/guid.hpp"
+#endif // MPT_WITH_DMO
 #include "mpt/uuid/uuid.hpp"
 
 // Built-in plugins
@@ -44,6 +46,9 @@
 #ifdef MPT_WITH_VST
 #include "../../mptrack/Vstplug.h"
 #include "../../pluginBridge/BridgeWrapper.h"
+#ifdef MODPLUG_TRACKER
+#include "mpt/fs/fs.hpp"
+#endif // MODPLUG_TRACKER
 #endif // MPT_WITH_VST
 
 #if defined(MPT_WITH_DMO)
@@ -248,6 +253,36 @@ void VSTPluginLib::WriteToCache() const
 #endif // MODPLUG_TRACKER
 
 
+void VSTPluginLib::InsertPluginInstanceIntoList(IMixPlugin &pluginInstance)
+{
+	pluginInstance.m_pNext = pPluginsList;
+	if(pPluginsList)
+	{
+		pPluginsList->m_pPrev = &pluginInstance;
+	}
+	pPluginsList = &pluginInstance;
+}
+
+
+void VSTPluginLib::RemovePluginInstanceFromList(IMixPlugin &pluginInstance)
+{
+	if(pPluginsList == &pluginInstance)
+	{
+		pPluginsList = pluginInstance.m_pNext;
+	}
+	if(pluginInstance.m_pNext)
+	{
+		pluginInstance.m_pNext->m_pPrev = pluginInstance.m_pPrev;
+	}
+	if(pluginInstance.m_pPrev)
+	{
+		pluginInstance.m_pPrev->m_pNext = pluginInstance.m_pNext;
+	}
+	pluginInstance.m_pPrev = nullptr;
+	pluginInstance.m_pNext = nullptr;
+}
+
+
 bool CreateMixPluginProc(SNDMIXPLUGIN &mixPlugin, CSoundFile &sndFile)
 {
 #ifdef MODPLUG_TRACKER
@@ -341,7 +376,9 @@ CVstPluginManager::~CVstPluginManager()
 	{
 		while(plug->pPluginsList != nullptr)
 		{
-			plug->pPluginsList->Release();
+			IMixPlugin *pluginInstance = plug->pPluginsList;
+			plug->RemovePluginInstanceFromList(*pluginInstance);
+			pluginInstance->Release();
 		}
 		delete plug;
 	}
@@ -497,17 +534,17 @@ static bool TryLoadPlugin(bool maskCrashes, VSTPluginLib *plug, HINSTANCE hLib, 
 // Add a plugin to the list of known plugins.
 VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, bool maskCrashes, const mpt::ustring &tags, bool fromCache, bool *fileFound)
 {
-	const mpt::PathString fileName = dllPath.GetFileName();
+	const mpt::PathString fileName = dllPath.GetFilenameBase();
 
 	// Check if this is already a known plugin.
 	for(const auto &dupePlug : pluginList)
 	{
-		if(!dllPath.CompareNoCase(dllPath, dupePlug->dllPath)) return dupePlug;
+		if(!mpt::PathCompareNoCase(dllPath, dupePlug->dllPath)) return dupePlug;
 	}
 
 	if(fileFound != nullptr)
 	{
-		*fileFound = dllPath.IsFile();
+		*fileFound = mpt::native_fs{}.is_file(dllPath);
 	}
 
 	// Look if the plugin info is stored in the PluginCache
@@ -627,7 +664,9 @@ bool CVstPluginManager::RemovePlugin(VSTPluginLib *pFactory)
 
 			while(plug->pPluginsList != nullptr)
 			{
-				plug->pPluginsList->Release();
+				IMixPlugin *pluginInstance = plug->pPluginsList;
+				plug->RemovePluginInstanceFromList(*pluginInstance);
+				pluginInstance->Release();
 			}
 			pluginList.erase(p);
 			delete plug;
@@ -664,7 +703,7 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 		const bool matchID = (plug->pluginId1 == mixPlugin.Info.dwPluginId1)
 			&& (plug->pluginId2 == mixPlugin.Info.dwPluginId2);
 #if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
-		const bool matchName = !mpt::PathString::CompareNoCase(plug->libraryName, libraryName);
+		const bool matchName = !mpt::PathCompareNoCase(plug->libraryName, libraryName);
 #else
 		const bool matchName = !mpt::CompareNoCaseAscii(plug->libraryName.ToUTF8(), libraryName);
 #endif
@@ -693,7 +732,15 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 
 	if(pFound != nullptr && pFound->Create != nullptr)
 	{
-		IMixPlugin *plugin = pFound->Create(*pFound, sndFile, &mixPlugin);
+		IMixPlugin *plugin = pFound->Create(*pFound, sndFile, mixPlugin);
+		if(plugin)
+		{
+			pFound->InsertPluginInstanceIntoList(*plugin);
+		}
+#ifdef MODPLUG_TRACKER
+		CriticalSection cs;
+#endif
+		mixPlugin.pMixPlugin = plugin;
 		return plugin != nullptr;
 	}
 
@@ -722,7 +769,7 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 				if(!fullPath.empty())
 				{
 					fullPath = theApp.PathInstallRelativeToAbsolute(fullPath);
-					if(fullPath.IsFile())
+					if(mpt::native_fs{}.is_file(fullPath))
 					{
 						pFound = AddPlugin(fullPath, maskCrashes);
 					}
@@ -742,18 +789,19 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 
 		if(pEffect != nullptr && pEffect->dispatcher != nullptr && pEffect->magic == Vst::kEffectMagic)
 		{
-			validPlugin = true;
-
 			GetPluginInformation(maskCrashes, pEffect, *pFound);
 
 			// Update cached information
 			pFound->WriteToCache();
 
 			CVstPlugin *pVstPlug = new (std::nothrow) CVstPlugin(maskCrashes, hLibrary, *pFound, mixPlugin, *pEffect, sndFile);
-			if(pVstPlug == nullptr)
+			if(pVstPlug)
 			{
-				validPlugin = false;
+				pFound->InsertPluginInstanceIntoList(*pVstPlug);
 			}
+			validPlugin = (pVstPlug != nullptr);
+			CriticalSection cs;
+			mixPlugin.pMixPlugin = pVstPlug;
 		}
 
 		if(!validPlugin)

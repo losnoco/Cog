@@ -26,13 +26,16 @@ MPT_BINARY_STRUCT(C67SampleHeader, 16)
 
 struct C67FileHeader
 {
-	uint8 speed;
-	uint8 restartPos;
-	char  sampleNames[32][13];
+	using InstrName = std::array<char, 13>;
+	using OPLInstr = std::array<uint8, 11>;
+
+	uint8           speed;
+	uint8           restartPos;
+	InstrName       sampleNames[32];
 	C67SampleHeader samples[32];
-	char  fmInstrNames[32][13];
-	uint8 fmInstr[32][11];
-	uint8 orders[256];
+	InstrName       fmInstrNames[32];
+	OPLInstr        fmInstr[32];
+	uint8           orders[256];
 };
 
 MPT_BINARY_STRUCT(C67FileHeader, 1954)
@@ -69,7 +72,7 @@ static bool ValidateHeader(const C67FileHeader &fileHeader)
 				return false;
 			}
 		}
-		if(!anyNonSilent && (fileHeader.samples[smp].length != 0 || memcmp(fileHeader.fmInstr[smp], "\0\0\0\0\0\0\0\0\0\0\0", 11)))
+		if(!anyNonSilent && (fileHeader.samples[smp].length != 0 || fileHeader.fmInstr[smp] != C67FileHeader::OPLInstr{{}}))
 		{
 			anyNonSilent = true;
 		}

@@ -215,7 +215,7 @@ protected:
 		if (readableLength == 0) {
 			return FileCursor();
 		}
-		return FileCursor(CreateChunkImpl(SharedDataContainer(), position, std::min(length, DataContainer().GetLength() - position)));
+		return FileCursor(CreateChunkImpl(SharedDataContainer(), position, readableLength));
 	}
 
 public:
@@ -345,40 +345,16 @@ public:
 		return PinnedView(*this, size, true);
 	}
 
-	// Returns raw stream data at cursor position.
-	// Should only be used if absolutely necessary, for example for sample reading, or when used with a small chunk of the file retrieved by ReadChunk().
-	// Use GetPinnedView(size) whenever possible.
-	MPT_FILECURSOR_DEPRECATED mpt::const_byte_span GetRawData() const {
-		// deprecated because in case of an unseekable std::istream, this triggers caching of the whole file
-		return mpt::span(DataContainer().GetRawData() + streamPos, DataContainer().GetLength() - streamPos);
-	}
-	template <typename T>
-	MPT_FILECURSOR_DEPRECATED mpt::span<const T> GetRawData() const {
-		// deprecated because in case of an unseekable std::istream, this triggers caching of the whole file
-		return mpt::span(mpt::byte_cast<const T *>(DataContainer().GetRawData() + streamPos), DataContainer().GetLength() - streamPos);
-	}
-
-	mpt::byte_span GetRawWithOffset(std::size_t offset, mpt::byte_span dst) const {
-		return DataContainer().Read(streamPos + offset, dst);
-	}
 	template <typename Tspan>
 	Tspan GetRawWithOffset(std::size_t offset, Tspan dst) const {
 		return mpt::byte_cast<Tspan>(DataContainer().Read(streamPos + offset, mpt::byte_cast<mpt::byte_span>(dst)));
 	}
 
-	mpt::byte_span GetRaw(mpt::byte_span dst) const {
-		return DataContainer().Read(streamPos, dst);
-	}
 	template <typename Tspan>
 	Tspan GetRaw(Tspan dst) const {
 		return mpt::byte_cast<Tspan>(DataContainer().Read(streamPos, mpt::byte_cast<mpt::byte_span>(dst)));
 	}
 
-	mpt::byte_span ReadRaw(mpt::byte_span dst) {
-		mpt::byte_span result = DataContainer().Read(streamPos, dst);
-		streamPos += result.size();
-		return result;
-	}
 	template <typename Tspan>
 	Tspan ReadRaw(Tspan dst) {
 		Tspan result = mpt::byte_cast<Tspan>(DataContainer().Read(streamPos, mpt::byte_cast<mpt::byte_span>(dst)));

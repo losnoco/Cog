@@ -72,13 +72,13 @@ MPT_FORCEINLINE float I3DL2Reverb::DelayLine::Get() const
 }
 
 
-IMixPlugin* I3DL2Reverb::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* I3DL2Reverb::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) I3DL2Reverb(factory, sndFile, mixStruct);
 }
 
 
-I3DL2Reverb::I3DL2Reverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+I3DL2Reverb::I3DL2Reverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 {
 	m_param[kI3DL2ReverbRoom] = 0.9f;
@@ -98,7 +98,6 @@ I3DL2Reverb::I3DL2Reverb(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGI
 	SetCurrentProgram(m_program);
 
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -613,7 +612,7 @@ float I3DL2Reverb::CalcDecayCoeffs(int32 index)
 	if(decayHFRatio > 1.0f)
 		hfRef = mpt::numbers::pi_v<float>;
 
-	float c1 = std::pow(10.0f, ((m_delayTaps[index] / m_effectiveSampleRate) * -60.0f / DecayTime()) / 20.0f);
+	float c1 = std::pow(10.0f, ((static_cast<float>(m_delayTaps[index]) / m_effectiveSampleRate) * -60.0f / DecayTime()) / 20.0f);
 	float c2 = 0.0f;
 
 	float c21 = (std::pow(c1, 2.0f - 2.0f / decayHFRatio) - 1.0f) / (1.0f - std::cos(hfRef));

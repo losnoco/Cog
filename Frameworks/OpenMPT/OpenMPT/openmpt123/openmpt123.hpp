@@ -13,48 +13,138 @@
 #include "openmpt123_config.hpp"
 
 #include "mpt/base/compiletime_warning.hpp"
+#include "mpt/base/detect.hpp"
 #include "mpt/base/floatingpoint.hpp"
+#include "mpt/base/math.hpp"
+#include "mpt/base/namespace.hpp"
 #include "mpt/base/preprocessor.hpp"
+#include "mpt/base/saturate_round.hpp"
+#include "mpt/exception/exception_text.hpp"
+#include "mpt/format/concat.hpp"
+#include "mpt/format/message.hpp"
+#include "mpt/format/message_macros.hpp"
+#include "mpt/format/simple.hpp"
+#include "mpt/io_file/fstream.hpp"
+#include "mpt/parse/parse.hpp"
+#include "mpt/path/native_path.hpp"
+#include "mpt/string/types.hpp"
+#include "mpt/string/utility.hpp"
 #include "mpt/string_transcode/transcode.hpp"
 
 #include <string>
 
+namespace mpt {
+inline namespace MPT_INLINE_NS {
+
+template <>
+struct make_string_type<mpt::native_path> {
+	using type = mpt::native_path;
+};
+
+
+template <>
+struct is_string_type<mpt::native_path> : public std::true_type { };
+
+template <>
+struct string_transcoder<mpt::native_path> {
+	using string_type = mpt::native_path;
+	static inline mpt::widestring decode( const string_type & src ) {
+		return mpt::transcode<mpt::widestring>( src.AsNative() );
+	}
+	static inline string_type encode( const mpt::widestring & src ) {
+		return mpt::native_path::FromNative( mpt::transcode<mpt::native_path::raw_path_type>( src ) );
+	}
+};
+
+} // namespace MPT_INLINE_NS
+} // namespace mpt
+
 namespace openmpt123 {
 
 struct exception : public openmpt::exception {
-	exception( const std::string & text ) : openmpt::exception(text) { }
+	exception( const mpt::ustring & text ) : openmpt::exception(mpt::transcode<std::string>( mpt::common_encoding::utf8, text )) { }
 };
 
 struct show_help_exception {
-	std::string message;
+	mpt::ustring message;
 	bool longhelp;
-	show_help_exception( const std::string & msg = "", bool longhelp_ = true ) : message(msg), longhelp(longhelp_) { }
+	show_help_exception( const mpt::ustring & msg = MPT_USTRING(""), bool longhelp_ = true ) : message(msg), longhelp(longhelp_) { }
+};
+
+struct args_nofiles_exception {
+	args_nofiles_exception() = default;
 };
 
 struct args_error_exception {
-	args_error_exception() { }
+	args_error_exception() = default;
 };
 
 struct show_help_keyboard_exception { };
 
-#if defined(WIN32)
+
+template <typename Tstring, typename Tchar, typename T>
+inline Tstring align_right( const Tchar pad, std::size_t width, const T val ) {
+	assert( Tstring( 1, pad ).length() == 1 );
+	Tstring str = mpt::default_formatter::template format<Tstring>( val );
+	if ( width > str.length() ) {
+		str.insert( str.begin(), width - str.length(), pad );
+	}
+	return str;
+}
+
+template <typename Tstring>
+struct concat_stream {
+	virtual concat_stream & append( Tstring str ) = 0;
+	virtual ~concat_stream() = default;
+	inline concat_stream<Tstring> & operator<<( concat_stream<Tstring> & (*func)( concat_stream<Tstring> & s ) ) {
+		return func( *this );
+	}
+};
+
+template <typename Tstring>
+inline concat_stream<Tstring> & lf( concat_stream<Tstring> & s ) {
+	return s.append( Tstring(1, mpt::char_constants<typename Tstring::value_type>::lf) );
+}
+
+template <typename T, typename Tstring>
+inline concat_stream<Tstring> & operator<<( concat_stream<Tstring> & s, const T & val ) {
+	return s.append( mpt::default_formatter::template format<Tstring>( val ) );
+}
+
+template <typename Tstring>
+struct string_concat_stream
+	: public concat_stream<Tstring>
+{
+private:
+	Tstring m_str;
+public:
+	inline void str( Tstring s ) {
+		m_str = std::move( s );
+	}
+	inline concat_stream<Tstring> & append( Tstring s ) override {
+		m_str += std::move( s );
+		return *this;
+	}
+	inline Tstring str() const {
+		return m_str;
+	}
+	~string_concat_stream() override = default;
+};
+
+
+struct field {
+	mpt::ustring key;
+	mpt::ustring val;
+};
+
+
+#if MPT_OS_WINDOWS
 bool IsConsole( DWORD stdHandle );
 #endif
 bool IsTerminal( int fd );
 
 
-
-struct field {
-	std::string key;
-	std::string val;
-	field( const std::string & key )
-		: key(key)
-	{
-		return;
-	}
-};
-
-class textout : public std::ostringstream {
+class textout : public string_concat_stream<mpt::ustring> {
 public:
 	textout() {
 		return;
@@ -63,9 +153,9 @@ public:
 		return;
 	}
 protected:
-	std::string pop() {
-		std::string text = str();
-		str(std::string());
+	mpt::ustring pop() {
+		mpt::ustring text = str();
+		str( mpt::ustring() );
 		return text;
 	}
 public:
@@ -92,17 +182,17 @@ public:
 class textout_ostream : public textout {
 private:
 	std::ostream & s;
-#if defined(__DJGPP__)
+#if MPT_OS_DJGPP
 	mpt::common_encoding codepage;
 #endif
 public:
 	textout_ostream( std::ostream & s_ )
 		: s(s_)
-#if defined(__DJGPP__)
+#if MPT_OS_DJGPP
 		, codepage(mpt::common_encoding::cp437)
 #endif
 	{
-		#if defined(__DJGPP__)
+		#if MPT_OS_DJGPP
 			codepage = mpt::djgpp_get_locale_encoding();
 		#endif
 		return;
@@ -112,14 +202,14 @@ public:
 	}
 private:
 	void writeout_impl() {
-		std::string text = pop();
+		mpt::ustring text = pop();
 		if ( text.length() > 0 ) {
-			#if defined(__DJGPP__)
-				s << mpt::transcode<std::string>( codepage, mpt::common_encoding::utf8, text );
-			#elif defined(__EMSCRIPTEN__)
-				s << text;
+			#if MPT_OS_DJGPP
+				s << mpt::transcode<std::string>( codepage, text );
+			#elif MPT_OS_EMSCRIPTEN
+				s << mpt::transcode<std::string>( mpt::common_encoding::utf8, text ) ;
 			#else
-				s << mpt::transcode<std::string>( mpt::logical_encoding::locale, mpt::common_encoding::utf8, text );
+				s << mpt::transcode<std::string>( mpt::logical_encoding::locale, text );
 			#endif
 			s.flush();
 		}	
@@ -131,12 +221,48 @@ public:
 	void cursor_up( std::size_t lines ) override {
 		s.flush();
 		for ( std::size_t line = 0; line < lines; ++line ) {
-			*this << "\x1b[1A";
+			*this << MPT_USTRING("\x1b[1A");
 		}
 	}
 };
 
-#if defined(WIN32)
+#if MPT_OS_WINDOWS && defined(UNICODE)
+
+class textout_wostream : public textout {
+private:
+	std::wostream & s;
+public:
+	textout_wostream( std::wostream & s_ )
+		: s(s_)
+	{
+		return;
+	}
+	virtual ~textout_wostream() {
+		writeout_impl();
+	}
+private:
+	void writeout_impl() {
+		mpt::ustring text = pop();
+		if ( text.length() > 0 ) {
+			s << mpt::transcode<std::wstring>( text );
+			s.flush();
+		}	
+	}
+public:
+	void writeout() override {
+		writeout_impl();
+	}
+	void cursor_up( std::size_t lines ) override {
+		s.flush();
+		for ( std::size_t line = 0; line < lines; ++line ) {
+			*this << MPT_USTRING("\x1b[1A");
+		}
+	}
+};
+
+#endif // MPT_OS_WINDOWS && UNICODE
+
+#if MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
 
 class textout_ostream_console : public textout {
 private:
@@ -164,22 +290,22 @@ public:
 	}
 private:
 	void writeout_impl() {
-		std::string text = pop();
+		mpt::ustring text = pop();
 		if ( text.length() > 0 ) {
 			if ( console ) {
 				DWORD chars_written = 0;
 				#if defined(UNICODE)
-					std::wstring wtext = mpt::transcode<std::wstring>( mpt::common_encoding::utf8, text );
+					std::wstring wtext = mpt::transcode<std::wstring>( text );
 					WriteConsole( handle, wtext.data(), static_cast<DWORD>( wtext.size() ), &chars_written, NULL );
 				#else
-					std::string ltext = mpt::transcode<std::string>( mpt::logical_encoding::locale, mpt::common_encoding::utf8, text );
+					std::string ltext = mpt::transcode<std::string>( mpt::logical_encoding::locale, text );
 					WriteConsole( handle, ltext.data(), static_cast<DWORD>( ltext.size() ), &chars_written, NULL );
 				#endif
 			} else {
 				#if defined(UNICODE)
-					s << mpt::transcode<std::wstring>( mpt::common_encoding::utf8, text );
+					s << mpt::transcode<std::wstring>( text );
 				#else
-					s << mpt::transcode<std::string>( mpt::logical_encoding::locale, mpt::common_encoding::utf8, text );
+					s << mpt::transcode<std::string>( mpt::logical_encoding::locale, text );
 				#endif
 				s.flush();
 			}
@@ -205,39 +331,43 @@ public:
 	}
 };
 
-#endif // WIN32
+#endif // MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
 
-static inline float mpt_round( float val ) {
-	if ( val >= 0.0f ) {
-		return std::floor( val + 0.5f );
-	} else {
-		return std::ceil( val - 0.5f );
-	}
-}
-
-static inline long mpt_lround( float val ) {
-	return static_cast< long >( mpt_round( val ) );
-}
-
-static inline std::string append_software_tag( std::string software ) {
-	std::string openmpt123 = std::string() + "openmpt123 " + OPENMPT123_VERSION_STRING + " (libopenmpt " + openmpt::string::get( "library_version" ) + ", OpenMPT " + openmpt::string::get( "core_version" ) + ")";
+inline mpt::ustring append_software_tag( mpt::ustring software ) {
+	mpt::ustring openmpt123 = mpt::ustring()
+		+ MPT_USTRING("openmpt123 ")
+		+ mpt::transcode<mpt::ustring>( mpt::source_encoding, OPENMPT123_VERSION_STRING )
+		+ MPT_USTRING(" (libopenmpt ")
+		+ mpt::transcode<mpt::ustring>( mpt::common_encoding::utf8, openmpt::string::get( "library_version" ) )
+		+ MPT_USTRING(", OpenMPT ")
+		+ mpt::transcode<mpt::ustring>( mpt::common_encoding::utf8, openmpt::string::get( "core_version" ) )
+		+ MPT_USTRING(")")
+		;
 	if ( software.empty() ) {
 		software = openmpt123;
 	} else {
-		software += " (via " + openmpt123 + ")";
+		software += MPT_USTRING(" (via ") + openmpt123 + MPT_USTRING(")");
 	}
 	return software;
 }
 
-static inline std::string get_encoder_tag() {
-	return std::string() + "openmpt123 " + OPENMPT123_VERSION_STRING + " (libopenmpt " + openmpt::string::get( "library_version" ) + ", OpenMPT " + openmpt::string::get( "core_version" ) + ")";
+inline mpt::ustring get_encoder_tag() {
+	return mpt::ustring()
+		+ MPT_USTRING("openmpt123 ")
+		+ mpt::transcode<mpt::ustring>( mpt::source_encoding, OPENMPT123_VERSION_STRING )
+		+ MPT_USTRING(" (libopenmpt ")
+		+ mpt::transcode<mpt::ustring>( mpt::common_encoding::utf8, openmpt::string::get( "library_version" ) )
+		+ MPT_USTRING(", OpenMPT ")
+		+ mpt::transcode<mpt::ustring>( mpt::common_encoding::utf8, openmpt::string::get( "core_version" ) )
+		+ MPT_USTRING(")");
 }
 
-static inline std::string get_extension( std::string filename ) {
-	if ( filename.find_last_of( "." ) != std::string::npos ) {
-		return filename.substr( filename.find_last_of( "." ) + 1 );
+inline mpt::native_path get_extension( mpt::native_path filename ) {
+	mpt::native_path tmp = filename.GetFilenameExtension();
+	if ( !tmp.empty() ) {
+		tmp = mpt::native_path::FromNative( tmp.AsNative().substr( 1 ) );
 	}
-	return "";
+	return tmp;
 }
 
 enum class Mode {
@@ -249,28 +379,33 @@ enum class Mode {
 	Render
 };
 
-static inline std::string mode_to_string( Mode mode ) {
+inline mpt::ustring mode_to_string( Mode mode ) {
 	switch ( mode ) {
-		case Mode::None:   return "none"; break;
-		case Mode::Probe:  return "probe"; break;
-		case Mode::Info:   return "info"; break;
-		case Mode::UI:     return "ui"; break;
-		case Mode::Batch:  return "batch"; break;
-		case Mode::Render: return "render"; break;
+		case Mode::None:   return MPT_USTRING("none"); break;
+		case Mode::Probe:  return MPT_USTRING("probe"); break;
+		case Mode::Info:   return MPT_USTRING("info"); break;
+		case Mode::UI:     return MPT_USTRING("ui"); break;
+		case Mode::Batch:  return MPT_USTRING("batch"); break;
+		case Mode::Render: return MPT_USTRING("render"); break;
 	}
-	return "";
+	return MPT_USTRING("");
 }
 
-static const std::int32_t default_low = -2;
-static const std::int32_t default_high = -1;
+inline const std::int32_t default_low = -2;
+inline const std::int32_t default_high = -1;
+
+enum verbosity : std::int8_t {
+	verbosity_shortversion = -1,
+	verbosity_hidden = 0,
+	verbosity_normal = 1,
+	verbosity_verbose = 2,
+};
 
 struct commandlineflags {
 	Mode mode;
-	bool canUI;
 	std::int32_t ui_redraw_interval;
-	bool canProgress;
-	std::string driver;
-	std::string device;
+	mpt::ustring driver;
+	mpt::ustring device;
 	std::int32_t buffer;
 	std::int32_t period;
 	std::int32_t samplerate;
@@ -288,7 +423,9 @@ struct commandlineflags {
 	double seek_target;
 	double end_time;
 	bool quiet;
+	verbosity banner;
 	bool verbose;
+	bool assume_terminal;
 	int terminal_width;
 	int terminal_height;
 	bool show_details;
@@ -304,12 +441,12 @@ struct commandlineflags {
 	bool shuffle;
 	bool restart;
 	std::size_t playlist_index;
-	std::vector<std::string> filenames;
-	std::string output_filename;
-	std::string output_extension;
+	std::vector<mpt::native_path> filenames;
+	mpt::native_path output_filename;
+	mpt::native_path output_extension;
 	bool force_overwrite;
 	bool paused;
-	std::string warnings;
+	mpt::ustring warnings;
 	void apply_default_buffer_sizes() {
 		if ( ui_redraw_interval == default_high ) {
 			ui_redraw_interval = 50;
@@ -330,11 +467,11 @@ struct commandlineflags {
 	commandlineflags() {
 		mode = Mode::UI;
 		ui_redraw_interval = default_high;
-		driver = "";
-		device = "";
+		driver = MPT_USTRING("");
+		device = MPT_USTRING("");
 		buffer = default_high;
 		period = default_high;
-#if defined(__DJGPP__)
+#if MPT_OS_DJGPP
 		samplerate = 44100;
 		channels = 2;
 		use_float = false;
@@ -355,15 +492,17 @@ struct commandlineflags {
 		seek_target = 0.0;
 		end_time = 0.0;
 		quiet = false;
+		banner = verbosity_normal;
 		verbose = false;
-#if defined(__DJGPP__)
+		assume_terminal = false;
+#if MPT_OS_DJGPP
 		terminal_width = 80;
 		terminal_height = 25;
 #else
 		terminal_width = 72;
 		terminal_height = 23;
 #endif
-#if defined(WIN32)
+#if MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
 		terminal_width = 72;
 		terminal_height = 23;
 		HANDLE hStdOutput = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -375,22 +514,18 @@ struct commandlineflags {
 				terminal_height = std::min( static_cast<int>( 1 + csbi.srWindow.Bottom - csbi.srWindow.Top ), static_cast<int>( csbi.dwSize.Y ) );
 			}
 		}
-#else // WIN32
+#else // !(MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10))
 		if ( isatty( STDERR_FILENO ) ) {
 			const char * env_columns = std::getenv( "COLUMNS" );
 			if ( env_columns ) {
-				std::istringstream istr( env_columns );
-				int tmp = 0;
-				istr >> tmp;
+				int tmp = mpt::parse_or<int>( env_columns, 0 );
 				if ( tmp > 0 ) {
 					terminal_width = tmp;
 				}
 			}
 			const char * env_rows = std::getenv( "ROWS" );
 			if ( env_rows ) {
-				std::istringstream istr( env_rows );
-				int tmp = 0;
-				istr >> tmp;
+				int tmp = mpt::parse_or<int>( env_rows, 0 );
 				if ( tmp > 0 ) {
 					terminal_height = tmp;
 				}
@@ -409,19 +544,12 @@ struct commandlineflags {
 				}
 			#endif
 		}
-#endif
+#endif // MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
 		show_details = true;
 		show_message = false;
-#if defined(WIN32)
-		canUI = IsTerminal( 0 ) ? true : false;
-		canProgress = IsTerminal( 2 ) ? true : false;
-#else // !WIN32
-		canUI = isatty( STDIN_FILENO ) ? true : false;
-		canProgress = isatty( STDERR_FILENO ) ? true : false;
-#endif // WIN32
-		show_ui = canUI;
-		show_progress = canProgress;
-		show_meters = canUI && canProgress;
+		show_ui = true;
+		show_progress = true;
+		show_meters = true;
 		show_channel_meters = false;
 		show_pattern = false;
 		use_stdout = false;
@@ -429,13 +557,24 @@ struct commandlineflags {
 		shuffle = false;
 		restart = false;
 		playlist_index = 0;
-		output_extension = "auto";
+		output_extension = MPT_NATIVE_PATH("auto");
 		force_overwrite = false;
 		paused = false;
 	}
 	void check_and_sanitize() {
+		bool canUI = true;
+		bool canProgress = true;
+		if ( !assume_terminal ) {
+#if MPT_OS_WINDOWS
+			canUI = IsTerminal( 0 ) ? true : false;
+			canProgress = IsTerminal( 2 ) ? true : false;
+#else // !MPT_OS_WINDOWS
+			canUI = isatty( STDIN_FILENO ) ? true : false;
+			canProgress = isatty( STDERR_FILENO ) ? true : false;
+#endif // MPT_OS_WINDOWS
+		}
 		if ( filenames.size() == 0 ) {
-			throw args_error_exception();
+			throw args_nofiles_exception();
 		}
 		if ( use_stdout && ( device != commandlineflags().device || !output_filename.empty() ) ) {
 			throw args_error_exception();
@@ -444,11 +583,17 @@ struct commandlineflags {
 			throw args_error_exception();
 		}
 		for ( const auto & filename : filenames ) {
-			if ( filename == "-" ) {
+			if ( filename == MPT_NATIVE_PATH("-") ) {
 				canUI = false;
 			}
 		}
 		show_ui = canUI;
+		if ( !canProgress ) {
+			show_progress = false;
+		}
+		if ( !canUI || !canProgress ) {
+			show_meters = false;
+		}
 		if ( mode == Mode::None ) {
 			if ( canUI ) {
 				mode = Mode::UI;
@@ -510,8 +655,8 @@ struct commandlineflags {
 		if ( samplerate < 0 ) {
 			samplerate = commandlineflags().samplerate;
 		}
-		if ( output_extension == "auto" ) {
-			output_extension = "";
+		if ( output_extension == MPT_NATIVE_PATH("auto") ) {
+			output_extension = MPT_NATIVE_PATH("");
 		}
 		if ( mode != Mode::Render && !output_extension.empty() ) {
 			throw args_error_exception();
@@ -523,7 +668,7 @@ struct commandlineflags {
 			output_extension = get_extension( output_filename );
 		}
 		if ( output_extension.empty() ) {
-			output_extension = "wav";
+			output_extension = MPT_NATIVE_PATH("wav");
 		}
 	}
 };
@@ -545,11 +690,11 @@ protected:
 		return;
 	}
 public:
-	virtual void write_metadata( std::map<std::string,std::string> metadata ) {
+	virtual void write_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) {
 		(void)metadata;
 		return;
 	}
-	virtual void write_updated_metadata( std::map<std::string,std::string> metadata ) {
+	virtual void write_updated_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) {
 		(void)metadata;
 		return;
 	}
@@ -707,11 +852,11 @@ protected:
 		return;
 	}
 public:
-	void write_metadata( std::map<std::string,std::string> metadata ) override {
+	void write_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) override {
 		(void)metadata;
 		return;
 	}
-	void write_updated_metadata( std::map<std::string,std::string> metadata ) override {
+	void write_updated_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) override {
 		(void)metadata;
 		return;
 	}

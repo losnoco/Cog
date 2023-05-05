@@ -53,9 +53,12 @@ public:
 	};
 
 public:
-	using CreateProc = IMixPlugin *(*)(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
+	using CreateProc = IMixPlugin *(*)(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
 
 	IMixPlugin *pPluginsList = nullptr; // Pointer to first plugin instance (this instance carries pointers to other instances)
+	void InsertPluginInstanceIntoList(IMixPlugin &pluginInstance);
+	void RemovePluginInstanceFromList(IMixPlugin &pluginInstance);
+
 	CreateProc Create;                  // Factory to call for this plugin
 	mpt::PathString libraryName;        // Display name
 	mpt::PathString dllPath;            // Full path name

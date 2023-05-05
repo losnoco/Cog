@@ -525,7 +525,8 @@ bool ModSample::HasCustomCuePoints() const
 		return false;
 	for(SmpLength i = 0; i < std::size(cues); i++)
 	{
-		if(cues[i] != (i + 1) << 11)
+		const SmpLength defaultValue = (i + 1) << 11;
+		if(cues[i] != defaultValue && (cues[i] < nLength || defaultValue < nLength))
 			return true;
 	}
 	return false;

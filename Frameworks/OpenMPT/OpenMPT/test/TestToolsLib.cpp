@@ -16,6 +16,8 @@
 #ifndef MODPLUG_TRACKER
 
 
+#include "mpt/string/utility.hpp"
+
 #include <exception>
 #include <iostream>
 
@@ -31,56 +33,28 @@ namespace Test {
 
 void mpt_test_reporter::case_run(const mpt::source_location& loc)
 {
-	#if !MPT_OS_DJGPP
-		std::cout << "TEST..: " << MPT_AFORMAT("{}({}):")(loc.file_name() ? loc.file_name() : "", loc.line()) << ": " << std::endl;
-	#else
-		MPT_UNUSED(loc);
-	#endif
+	std::cout << "TEST..: " << MPT_AFORMAT("{}({}):")(loc.file_name() ? loc.file_name() : "", loc.line()) << ": " << std::endl;
 }
 
 void mpt_test_reporter::case_run(const mpt::source_location& loc, const char* text_e)
 {
-	#if !MPT_OS_DJGPP
-		std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e) << ": " << std::endl;
-	#else
-		MPT_UNUSED(loc);
-		MPT_UNUSED(text_e);
-	#endif
+	std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e) << ": " << std::endl;
 }
 
 void mpt_test_reporter::case_run(const mpt::source_location& loc, const char* text_ex, const char* text_e)
 {
 	if(text_ex)
 	{
-		#if !MPT_OS_DJGPP
-			std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} throws {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e, text_ex) << ": " << std::endl;
-		#else
-			MPT_UNUSED(loc);
-			MPT_UNUSED(text_ex);
-			MPT_UNUSED(text_e);
-		#endif
+		std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} throws {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e, text_ex) << ": " << std::endl;
 	} else
 	{
-		#if !MPT_OS_DJGPP
-			std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} throws")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e) << ": " << std::endl;
-		#else
-			MPT_UNUSED(loc);
-			MPT_UNUSED(text_ex);
-			MPT_UNUSED(text_e);
-		#endif
+		std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} throws")(loc.file_name() ? loc.file_name() : "", loc.line(), text_e) << ": " << std::endl;
 	}
 }
 
 void mpt_test_reporter::case_run(const mpt::source_location& loc, const char* text_a, const char* text_cmp, const char* text_b)
 {
-	#if !MPT_OS_DJGPP
-		std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} {} {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_a, text_cmp, text_b) << ": " << std::endl;
-	#else
-		MPT_UNUSED(loc);
-		MPT_UNUSED(text_a);
-		MPT_UNUSED(text_cmp);
-		MPT_UNUSED(text_b);
-	#endif
+	std::cout << "TEST..: " << MPT_AFORMAT("{}({}): {} {} {}")(loc.file_name() ? loc.file_name() : "", loc.line(), text_a, text_cmp, text_b) << ": " << std::endl;
 }
 
 void mpt_test_reporter::case_result(const mpt::source_location& loc, const mpt::test::result& result)
@@ -88,9 +62,7 @@ void mpt_test_reporter::case_result(const mpt::source_location& loc, const mpt::
 	MPT_UNUSED(loc);
 	if(std::holds_alternative<mpt::test::result_success>(result.info))
 	{
-		#if !MPT_OS_DJGPP
-			std::cout << "RESULT: PASS" << std::endl;
-		#endif
+		std::cout << "RESULT: PASS" << std::endl;
 	} else if(std::holds_alternative<mpt::test::result_failure>(result.info))
 	{
 		fail_count++;
@@ -149,14 +121,10 @@ void Testcase::ShowStart() const
 		case VerbosityQuiet:
 			break;
 		case VerbosityNormal:
-#if !MPT_OS_DJGPP
 			std::cout << "TEST..: " << AsString() << ": " << std::endl;
-#endif
 			break;
 		case VerbosityVerbose:
-#if !MPT_OS_DJGPP
 			std::cout << "TEST..: " << AsString() << ": " << std::endl;
-#endif
 			break;
 	}
 }
@@ -171,11 +139,7 @@ void Testcase::ShowProgress(const char * text) const
 		case VerbosityNormal:
 			break;
 		case VerbosityVerbose:
-#if !MPT_OS_DJGPP
 			std::cout << "TEST..: " << AsString() << ": " << text << std::endl;
-#else
-			MPT_UNUSED_VARIABLE(text);
-#endif
 			break;
 	}
 }
@@ -188,14 +152,10 @@ void Testcase::ShowPass() const
 		case VerbosityQuiet:
 			break;
 		case VerbosityNormal:
-#if !MPT_OS_DJGPP
 			std::cout << "RESULT: PASS" << std::endl;
-#endif
 			break;
 		case VerbosityVerbose:
-#if !MPT_OS_DJGPP
 			std::cout << "PASS..: " << AsString() << std::endl;
-#endif
 			break;
 	}
 }

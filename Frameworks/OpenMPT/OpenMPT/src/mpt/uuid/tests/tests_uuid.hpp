@@ -40,7 +40,7 @@ MPT_TEST_GROUP_INLINE("mpt/uuid")
 	using namespace mpt::uuid_literals;
 
 	MPT_TEST_EXPECT_EQUAL(mpt::UUID(0x2ed6593au, 0xdfe6, 0x4cf8, 0xb2e575ad7f600c32ull).ToUString(), MPT_USTRING("2ed6593a-dfe6-4cf8-b2e5-75ad7f600c32"));
-#if MPT_OS_WINDOWS
+#if MPT_OS_WINDOWS && !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 	constexpr mpt::UUID uuid_tmp = "2ed6593a-dfe6-4cf8-b2e5-75ad7f600c32"_uuid;
 	MPT_TEST_EXPECT_EQUAL(mpt::UUID(0x2ed6593au, 0xdfe6, 0x4cf8, 0xb2e575ad7f600c32ull), uuid_tmp);
 	MPT_TEST_EXPECT_EQUAL(mpt::UUID(0x2ed6593au, 0xdfe6, 0x4cf8, 0xb2e575ad7f600c32ull), mpt::UUID(mpt::StringToGUID(TEXT("{2ed6593a-dfe6-4cf8-b2e5-75ad7f600c32}"))));
@@ -49,12 +49,12 @@ MPT_TEST_GROUP_INLINE("mpt/uuid")
 	MPT_TEST_EXPECT_EQUAL(mpt::UUID(0x00112233u, 0x4455, 0x6677, 0xC899AABBCCDDEEFFull), mpt::UUID(mpt::StringToGUID(TEXT("{00112233-4455-6677-C899-AABBCCDDEEFF}"))));
 	MPT_TEST_EXPECT_EQUAL(mpt::GUIDToString(mpt::UUID(0x00112233u, 0x4455, 0x6677, 0x8899AABBCCDDEEFFull)), TEXT("{00112233-4455-6677-8899-AABBCCDDEEFF}"));
 	MPT_TEST_EXPECT_EQUAL(mpt::GUIDToString(mpt::UUID(0x00112233u, 0x4455, 0x6677, 0xC899AABBCCDDEEFFull)), TEXT("{00112233-4455-6677-C899-AABBCCDDEEFF}"));
-#endif // MPT_OS_WINDOWS
+#endif // MPT_OS_WINDOWS && !MPT_COMPILER_QUIRK_NO_WCHAR
 
 	mpt::sane_random_device rd;
 	mpt::good_engine prng = mpt::make_prng<mpt::good_engine>(rd);
 
-#if MPT_OS_WINDOWS
+#if MPT_OS_WINDOWS && !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 	MPT_TEST_EXPECT_EQUAL(mpt::IsValid(mpt::CreateGUID()), true);
 	{
 		mpt::UUID uuid = mpt::UUID::Generate(prng);
@@ -70,7 +70,7 @@ MPT_TEST_GROUP_INLINE("mpt/uuid")
 		MPT_TEST_EXPECT_EQUAL(IsEqualGUID(guid, mpt::StringToIID(mpt::IIDToString(guid))), TRUE);
 		MPT_TEST_EXPECT_EQUAL(IsEqualGUID(guid, mpt::StringToCLSID(mpt::CLSIDToString(guid))), TRUE);
 	}
-#endif // MPT_OS_WINDOWS
+#endif // MPT_OS_WINDOWS && !MPT_COMPILER_QUIRK_NO_WCHAR
 	MPT_TEST_EXPECT_EQUAL(mpt::UUID::Generate(prng).IsValid(), true);
 	MPT_TEST_EXPECT_EQUAL(mpt::UUID::GenerateLocalUseOnly(prng).IsValid(), true);
 	MPT_TEST_EXPECT_EQUAL(mpt::UUID::Generate(prng) != mpt::UUID::Generate(prng), true);

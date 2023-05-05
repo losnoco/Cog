@@ -42,7 +42,7 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 	};
 
 	// Effect translation table for extended (non-Protracker) effects
-	static constexpr ModCommand::COMMAND effTrans[] =
+	static constexpr EffectCommand effTrans[] =
 	{
 		CMD_S3MCMDEX,		// Forward / Backward
 		CMD_PORTAMENTOUP,	// Extra fine slide up
@@ -78,7 +78,7 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 	ModCommand dummy;
 	for(ROWINDEX row = 0; row < pattern.GetNumRows(); row++)
 	{
-		PatternRow baseRow = pattern.GetRow(row);
+		auto baseRow = pattern.GetRow(row);
 		while(patternChunk.CanRead(1))
 		{
 			const uint8 flags = patternChunk.ReadUint8();
@@ -128,8 +128,7 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 					if(effect < 0x10)
 					{
 						// PT commands
-						m.command = effect;
-						CSoundFile::ConvertModCommand(m);
+						CSoundFile::ConvertModCommand(m, effect, m.param);
 
 						// Post-fix some commands
 						switch(m.command)
@@ -155,6 +154,9 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 							{
 								m.ExtendedMODtoS3MEffect();
 							}
+							break;
+
+						default:
 							break;
 						}
 					} else if(effect < 0x10 + mpt::array_size<decltype(effTrans)>::size)
@@ -230,11 +232,10 @@ static void ReadAMSPattern(CPattern &pattern, bool newVersion, FileReader &patte
 
 					if(ModCommand::GetEffectWeight(origCmd.command) > ModCommand::GetEffectWeight(m.command))
 					{
-						if(m.volcmd == VOLCMD_NONE && ModCommand::ConvertVolEffect(m.command, m.param, true))
+						if(m.volcmd == VOLCMD_NONE)
 						{
 							// Volume column to the rescue!
-							m.volcmd = m.command;
-							m.vol = m.param;
+							m.SetVolumeCommand(ModCommand::ConvertToVolCommand(m.command, m.param, true));
 						}
 
 						m.command = origCmd.command;

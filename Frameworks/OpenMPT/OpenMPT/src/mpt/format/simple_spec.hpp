@@ -7,6 +7,9 @@
 
 #include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
+#include "mpt/string_transcode/transcode.hpp"
+
+#include <utility>
 
 #include <cstddef>
 
@@ -37,20 +40,21 @@ using format_simple_flags = unsigned int;
 static_assert(sizeof(format_simple_flags) >= sizeof(format_simple_base::FormatFlagsEnum));
 
 
+template <typename Tstring>
 class format_simple_spec {
 private:
 	format_simple_flags flags;
 	std::size_t width;  // int+float
 	int precision;      // float
 	unsigned int group; // int
-	char group_sep;     // int
+	Tstring group_sep;  // int
 public:
 	MPT_CONSTEXPRINLINE format_simple_spec() noexcept
 		: flags(0)
 		, width(0)
 		, precision(-1)
 		, group(0)
-		, group_sep(',') { }
+		, group_sep() { }
 	MPT_CONSTEXPRINLINE format_simple_flags GetFlags() const noexcept {
 		return flags;
 	}
@@ -63,7 +67,7 @@ public:
 	MPT_CONSTEXPRINLINE unsigned int GetGroup() const noexcept {
 		return group;
 	}
-	MPT_CONSTEXPRINLINE char GetGroupSep() const noexcept {
+	MPT_CONSTEXPRINLINE Tstring GetGroupSep() const {
 		return group_sep;
 	}
 	MPT_CONSTEXPRINLINE format_simple_spec & SetFlags(format_simple_flags f) noexcept {
@@ -82,8 +86,8 @@ public:
 		group = g;
 		return *this;
 	}
-	MPT_CONSTEXPRINLINE format_simple_spec & SetGroupSep(char s) noexcept {
-		group_sep = s;
+	MPT_CONSTEXPRINLINE format_simple_spec & SetGroupSep(Tstring s) {
+		group_sep = std::move(s);
 		return *this;
 	}
 
@@ -145,8 +149,8 @@ public:
 		group = g;
 		return *this;
 	}
-	MPT_CONSTEXPRINLINE format_simple_spec & GroupSep(char s) noexcept {
-		group_sep = s;
+	MPT_CONSTEXPRINLINE format_simple_spec & GroupSep(Tstring s) {
+		group_sep = std::move(s);
 		return *this;
 	}
 
@@ -211,6 +215,53 @@ public:
 		return Prec(p);
 	}
 };
+
+
+template <typename Tdststring, typename Tsrcstring>
+inline format_simple_spec<Tdststring> transcode_format_simple_spec(const format_simple_spec<Tsrcstring> & src) {
+	format_simple_spec<Tdststring> dst;
+	dst.SetFlags(src.GetFlags());
+	dst.SetWidth(src.GetWidth());
+	dst.SetPrecision(src.GetPrecision());
+	dst.SetGroup(src.GetGroup());
+	dst.SetGroupSep(mpt::transcode<Tdststring>(src.GetGroupSep()));
+	return dst;
+}
+
+template <typename Tdststring, typename Tsrcstring, typename Tencoding, std::enable_if_t<std::is_same<Tdststring, std::string>::value, bool> = true>
+inline format_simple_spec<Tdststring> transcode_format_simple_spec(Tencoding to, const format_simple_spec<Tsrcstring> & src) {
+	format_simple_spec<Tdststring> dst;
+	dst.SetFlags(src.GetFlags());
+	dst.SetWidth(src.GetWidth());
+	dst.SetPrecision(src.GetPrecision());
+	dst.SetGroup(src.GetGroup());
+	dst.SetGroupSep(mpt::transcode<Tdststring>(to, src.GetGroupSep()));
+	return dst;
+}
+
+template <typename Tdststring, typename Tsrcstring, typename Tencoding, std::enable_if_t<std::is_same<typename mpt::make_string_type<Tsrcstring>::type, std::string>::value, bool> = true>
+inline format_simple_spec<Tdststring> transcode_format_simple_spec(Tencoding from, const format_simple_spec<Tsrcstring> & src) {
+	format_simple_spec<Tdststring> dst;
+	dst.SetFlags(src.GetFlags());
+	dst.SetWidth(src.GetWidth());
+	dst.SetPrecision(src.GetPrecision());
+	dst.SetGroup(src.GetGroup());
+	dst.SetGroupSep(mpt::transcode<Tdststring>(from, src.GetGroupSep()));
+	return dst;
+}
+
+template <typename Tdststring, typename Tsrcstring, typename Tto, typename Tfrom>
+inline format_simple_spec<Tdststring> transcode_format_simple_spec(Tto to, Tfrom from, const format_simple_spec<Tsrcstring> & src) {
+	format_simple_spec<Tdststring> dst;
+	dst.SetFlags(src.GetFlags());
+	dst.SetWidth(src.GetWidth());
+	dst.SetPrecision(src.GetPrecision());
+	dst.SetGroup(src.GetGroup());
+	dst.SetGroupSep(mpt::transcode<Tdststring>(to, from, src.GetGroupSep()));
+	return dst;
+}
+
+
 
 
 } // namespace MPT_INLINE_NS

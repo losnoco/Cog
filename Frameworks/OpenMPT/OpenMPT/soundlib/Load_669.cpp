@@ -1,7 +1,7 @@
 /*
  * Load_669.cpp
  * ------------
- * Purpose: 669 Composer / UNIS 669 module loader
+ * Purpose: Composer 669 / UNIS 669 module loader
  * Notes  : <opinion humble="false">This is better than Schism's 669 loader</opinion> :)
  *          (some of this code is "heavily inspired" by Storlek's code from Schism Tracker, and improvements have been made where necessary.)
  * Authors: Olivier Lapicque
@@ -17,10 +17,10 @@ OPENMPT_NAMESPACE_BEGIN
 
 struct _669FileHeader
 {
-	char  magic[2];			// 'if' (0x6669, ha ha) or 'JN'
-	char  songMessage[108];	// Song Message
-	uint8 samples;			// number of samples (1-64)
-	uint8 patterns;			// number of patterns (1-128)
+	char  magic[2];          // 'if' (0x6669, ha ha) or 'JN'
+	char  songMessage[108];  // Song Message
+	uint8 samples;           // number of samples (1-64)
+	uint8 patterns;          // number of patterns (1-128)
 	uint8 restartPos;
 	uint8 orders[128];
 	uint8 tempoList[128];
@@ -50,8 +50,7 @@ struct _669Sample
 		if(mptSmp.nLoopEnd > mptSmp.nLength && mptSmp.nLoopStart == 0)
 		{
 			mptSmp.nLoopEnd = 0;
-		}
-		if(mptSmp.nLoopEnd != 0)
+		} else if(mptSmp.nLoopEnd != 0)
 		{
 			mptSmp.uFlags = CHN_LOOP;
 			mptSmp.SanitizeLoops();
@@ -70,6 +69,12 @@ static bool ValidateHeader(const _669FileHeader &fileHeader)
 		|| fileHeader.patterns > 128)
 	{
 		return false;
+	}
+	uint8 invalidCharCount = 0;
+	for(const char c : fileHeader.songMessage)
+	{
+		if(c > 0 && c <= 31 && ++invalidCharCount > 40)
+			return false;
 	}
 	for(std::size_t i = 0; i < std::size(fileHeader.breaks); i++)
 	{
@@ -189,20 +194,20 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 
 		static constexpr ModCommand::COMMAND effTrans[] =
 		{
-			CMD_PORTAMENTOUP,	// Slide up (param * 80) Hz on every tick
-			CMD_PORTAMENTODOWN,	// Slide down (param * 80) Hz on every tick
-			CMD_TONEPORTAMENTO,	// Slide to note by (param * 40) Hz on every tick
-			CMD_S3MCMDEX,		// Add (param * 80) Hz to sample frequency
-			CMD_VIBRATO,		// Add (param * 669) Hz on every other tick
-			CMD_SPEED,			// Set ticks per row
-			CMD_PANNINGSLIDE,	// Extended UNIS 669 effect
-			CMD_RETRIG,			// Extended UNIS 669 effect
+			CMD_PORTAMENTOUP,    // Slide up (param * 80) Hz on every tick
+			CMD_PORTAMENTODOWN,  // Slide down (param * 80) Hz on every tick
+			CMD_TONEPORTAMENTO,  // Slide to note by (param * 40) Hz on every tick
+			CMD_S3MCMDEX,        // Add (param * 80) Hz to sample frequency
+			CMD_VIBRATO,         // Add (param * 669) Hz on every other tick
+			CMD_SPEED,           // Set ticks per row
+			CMD_PANNINGSLIDE,    // Extended UNIS 669 effect
+			CMD_RETRIG,          // Extended UNIS 669 effect
 		};
 
 		uint8 effect[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 		for(ROWINDEX row = 0; row < 64; row++)
 		{
-			PatternRow m = Patterns[pat].GetRow(row);
+			ModCommand *m = Patterns[pat].GetpModCommand(row, 0);
 
 			for(CHANNELINDEX chn = 0; chn < 8; chn++, m++)
 			{

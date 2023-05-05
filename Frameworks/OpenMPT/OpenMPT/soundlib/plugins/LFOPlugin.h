@@ -72,10 +72,9 @@ protected:
 #endif
 
 public:
-	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
-	LFOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
+	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
+	LFOPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
 
-	void Release() override { delete this; }
 	int32 GetUID() const override { int32 id; memcpy(&id, "LFO ", 4); return id; }
 	int32 GetVersion() const override { return 0; }
 	void Idle() override { }
@@ -90,6 +89,7 @@ public:
 	bool MidiSysexSend(mpt::const_byte_span sysex) override;
 	void MidiCC(MIDIEvents::MidiCC nController, uint8 nParam, CHANNELINDEX trackChannel) override;
 	void MidiPitchBend(int32 increment, int8 pwd, CHANNELINDEX trackChannel) override;
+	void MidiTonePortamento(int32 increment, uint8 newNote, int8 pwd, CHANNELINDEX trackChannel) override;
 	void MidiVibrato(int32 depth, int8 pwd, CHANNELINDEX trackChannel) override;
 	void MidiCommand(const ModInstrument &instr, uint16 note, uint16 vol, CHANNELINDEX trackChannel) override;
 	void HardAllNotesOff() override;
@@ -148,7 +148,7 @@ protected:
 
 public:
 	static LFOWaveform ParamToWaveform(float param) { return static_cast<LFOWaveform>(std::clamp(mpt::saturate_round<int>(param * 32.0f), 0, kNumWaveforms - 1)); }
-	static float WaveformToParam(LFOWaveform waveform) { return static_cast<int>(waveform) / 32.0f; }
+	static float WaveformToParam(LFOWaveform waveform) { return static_cast<float>(static_cast<int>(waveform)) / 32.0f; }
 };
 
 OPENMPT_NAMESPACE_END

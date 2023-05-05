@@ -69,9 +69,9 @@ struct MixLoopState
 			lookaheadStart = chn.nLoopStart;
 		else
 			lookaheadStart = std::max(chn.nLoopStart, chn.nLoopEnd - InterpolationLookaheadBufferSize);
-		// We only need to apply the loop wrap-around logic if the sample is actually looping and if interpolation is applied.
-		// If there is no interpolation happening, there is no lookahead happening the sample read-out is exact.
-		if(chn.dwFlags[CHN_LOOP] && chn.resamplingMode != SRCMODE_NEAREST)
+		// We only need to apply the loop wrap-around logic if the sample is actually looping.
+		// As we round rather than truncate with No Interpolation, we also need the wrap-around logic for samples that are not interpolated.
+		if(chn.dwFlags[CHN_LOOP])
 		{
 			const bool inSustainLoop = chn.InSustainLoop() && chn.nLoopStart == chn.pModSample->nSustainStart && chn.nLoopEnd == chn.pModSample->nSustainEnd;
 

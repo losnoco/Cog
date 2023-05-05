@@ -22,33 +22,6 @@
 
 
 
-// set windows version early so that we can deduce dependencies from SDK version
-
-#if MPT_OS_WINDOWS
-
-#if !defined(WINVER) && !defined(_WIN32_WINDOWS) && !defined(_WIN32_WINNT)
-#if MPT_COMPILER_CLANG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreserved-id-macro"
-#endif // MPT_COMPILER_CLANG
-#define _WIN32_WINNT 0x0601 // _WIN32_WINNT_WIN7
-#if MPT_COMPILER_CLANG
-#pragma clang diagnostic pop
-#endif // MPT_COMPILER_CLANG
-#endif
-
-#ifndef WINVER
-#if defined(_WIN32_WINNT)
-#define WINVER _WIN32_WINNT
-#elif defined(_WIN32_WINDOWS)
-#define WINVER _WIN32_WINDOWS
-#endif
-#endif
-
-#endif // MPT_OS_WINDOWS
-
-
-
 #if defined(MODPLUG_TRACKER) && defined(LIBOPENMPT_BUILD)
 #error "either MODPLUG_TRACKER or LIBOPENMPT_BUILD has to be defined"
 #elif defined(MODPLUG_TRACKER)
@@ -63,159 +36,43 @@
 
 
 
-#if defined(LIBOPENMPT_BUILD)
-
-// Fixup dependencies which are currently not used in libopenmpt itself,
-// however might be set by some build systems like autotools anyway for simplicity.
-#ifdef MPT_WITH_FLAC
-#undef MPT_WITH_FLAC
-#endif
-
-#endif // LIBOPENMPT_BUILD
-
-
-
-// Dependencies from the MSVC build system
-#if defined(MPT_BUILD_MSVC)
-
-// This section defines which dependencies are available when building with
-// MSVC. Other build systems provide MPT_WITH_* macros via command-line or other
-// means.
-// OpenMPT and libopenmpt should compile and run successfully (albeit with
-// reduced functionality) with any or all dependencies missing/disabled.
-// The defaults match the bundled third-party libraries with the addition of
-// ASIO and VST SDKs.
-
 #if defined(MODPLUG_TRACKER)
 
-#if MPT_OS_WINDOWS
-#if !defined(MPT_BUILD_WINESUPPORT) && !defined(MPT_BUILD_UPDATESIGNTOOL)
-#define MPT_WITH_MFC
-#endif // !MPT_BUILD_WINESUPPORT && !MPT_BUILD_UPDATESIGNTOOL
-#endif // MPT_OS_WINDOWS
-
-// OpenMPT-only dependencies
-#define MPT_WITH_ANCIENT
-#if !defined(MPT_BUILD_RETRO) && !MPT_COMPILER_CLANG && !MPT_MSVC_BEFORE(2019,0)
-// disabled for VS2017 because of multiple initialization of inline variables
-// https://developercommunity.visualstudio.com/t/static-inline-variable-gets-destroyed-multiple-tim/297876
-#define MPT_WITH_ASIO
-#endif
 #if defined(MPT_BUILD_RETRO)
-#define MPT_WITH_DIRECTSOUND
+#define OPENMPT_BUILD_VARIANT "Retro"
+#define OPENMPT_BUILD_VARIANT_MONIKER " RETRO"
+#else
+#if MPT_OS_WINDOWS
+#if MPT_WINNT_AT_LEAST(MPT_WIN_10)
+#define OPENMPT_BUILD_VARIANT "Standard"
+#define OPENMPT_BUILD_VARIANT_MONIKER ""
+#else
+#define OPENMPT_BUILD_VARIANT "Legacy"
+#define OPENMPT_BUILD_VARIANT_MONIKER ""
 #endif
+#else
+#define OPENMPT_BUILD_VARIANT "Unknown"
+#define OPENMPT_BUILD_VARIANT_MONIKER ""
+#endif
+#endif
+
 #define MPT_WITH_DMO
-#define MPT_WITH_LAME
-#define MPT_WITH_LHASA
-#define MPT_WITH_MINIZIP
-#define MPT_WITH_NLOHMANNJSON
-#define MPT_WITH_OPUS
-#define MPT_WITH_OPUSENC
-#define MPT_WITH_OPUSFILE
-#define MPT_WITH_PORTAUDIO
-//#define MPT_WITH_PULSEAUDIO
-//#define MPT_WITH_PULSEAUDIOSIMPLE
-#define MPT_WITH_RTAUDIO
-#define MPT_WITH_SMBPITCHSHIFT
-#define MPT_WITH_UNRAR
-#define MPT_WITH_VORBISENC
+
 #define MPT_WITH_VST
 
-// OpenMPT and libopenmpt dependencies (not for openmp123, player plugins or examples)
-//#define MPT_WITH_DL
-#define MPT_WITH_FLAC
-//#define MPT_WITH_LTDL
 #if MPT_OS_WINDOWS
-#if (_WIN32_WINNT >= 0x0601)
+#if MPT_WINNT_AT_LEAST(MPT_WIN_7)
 #define MPT_WITH_MEDIAFOUNDATION
 #endif
 #endif
-//#define MPT_WITH_MINIMP3
-//#define MPT_WITH_MINIZ
-#define MPT_WITH_MPG123
-#define MPT_WITH_OGG
-//#define MPT_WITH_STBVORBIS
-#define MPT_WITH_VORBIS
-#define MPT_WITH_VORBISFILE
+
 #if MPT_OS_WINDOWS
-#if (_WIN32_WINNT >= 0x0A00)
+#if MPT_WINNT_AT_LEAST(MPT_WIN_10)
 #define MPT_WITH_WINDOWS10
 #endif
 #endif
-#define MPT_WITH_ZLIB
 
 #endif // MODPLUG_TRACKER
-
-#if defined(LIBOPENMPT_BUILD)
-
-// OpenMPT and libopenmpt dependencies (not for openmp123, player plugins or examples)
-#if defined(LIBOPENMPT_BUILD_FULL) && defined(LIBOPENMPT_BUILD_SMALL)
-#error "only one of LIBOPENMPT_BUILD_FULL or LIBOPENMPT_BUILD_SMALL can be defined"
-#endif // LIBOPENMPT_BUILD_FULL && LIBOPENMPT_BUILD_SMALL
-
-#if defined(LIBOPENMPT_BUILD_SMALL)
-
-//#define MPT_WITH_DL
-//#define MPT_WITH_FLAC
-//#define MPT_WITH_LTDL
-//#define MPT_WITH_MEDIAFOUNDATION
-#define MPT_WITH_MINIMP3
-#define MPT_WITH_MINIZ
-//#define MPT_WITH_MPG123
-//#define MPT_WITH_OGG
-#define MPT_WITH_STBVORBIS
-//#define MPT_WITH_VORBIS
-//#define MPT_WITH_VORBISFILE
-//#define MPT_WITH_ZLIB
-
-#else // !LIBOPENMPT_BUILD_SMALL
-
-//#define MPT_WITH_DL
-//#define MPT_WITH_FLAC
-//#define MPT_WITH_LTDL
-//#define MPT_WITH_MEDIAFOUNDATION
-//#define MPT_WITH_MINIMP3
-//#define MPT_WITH_MINIZ
-#define MPT_WITH_MPG123
-#define MPT_WITH_OGG
-//#define MPT_WITH_STBVORBIS
-#define MPT_WITH_VORBIS
-#define MPT_WITH_VORBISFILE
-#define MPT_WITH_ZLIB
-
-#endif // LIBOPENMPT_BUILD_SMALL
-
-#endif // LIBOPENMPT_BUILD
-
-#endif // MPT_BUILD_MSVC
-
-
-#if defined(MPT_BUILD_XCODE)
-
-#if defined(MODPLUG_TRACKER)
-
-// n/a
-
-#endif // MODPLUG_TRACKER
-
-#if defined(LIBOPENMPT_BUILD)
-
-//#define MPT_WITH_DL
-//#define MPT_WITH_FLAC
-//#define MPT_WITH_LTDL
-//#define MPT_WITH_MEDIAFOUNDATION
-//#define MPT_WITH_MINIMP3
-//#define MPT_WITH_MINIZ
-#define MPT_WITH_MPG123
-#define MPT_WITH_OGG
-//#define MPT_WITH_STBVORBIS
-#define MPT_WITH_VORBIS
-#define MPT_WITH_VORBISFILE
-#define MPT_WITH_ZLIB
-
-#endif // LIBOPENMPT_BUILD
-
-#endif // MPT_BUILD_XCODE
 
 
 
@@ -283,6 +140,14 @@
 
 #if defined(LIBOPENMPT_BUILD)
 
+#ifdef MPT_WITH_FLAC
+#error "Building libopenmpt with FLAC is useless and not a supported configuration. Please fix your build system to not list libflac as a dependency for libopenmpt itself. It is only a dependency of openmpt123."
+#endif
+
+#ifndef LIBOPENMPT_NO_DEPRECATE
+#define LIBOPENMPT_NO_DEPRECATE
+#endif
+
 #if (defined(_DEBUG) || defined(DEBUG)) && !defined(MPT_BUILD_DEBUG)
 #define MPT_BUILD_DEBUG
 #endif
@@ -342,35 +207,8 @@
 
 
 
-#if (MPT_COMPILER_MSVC && !defined(MPT_USTRING_MODE_UTF8_FORCE)) || defined(MODPLUG_TRACKER)
-
-	// Use wide strings for MSVC because this is the native encoding on 
-	// microsoft platforms.
-
-	// mpt::ToWString, mpt::wfmt, ConvertStrTo<std::wstring>
-	// Required by the tracker to ease interfacing with WinAPI.
-	// Required by MPT_USTRING_MODE_WIDE to ease type tunneling in mpt::format.
-	#define MPT_WSTRING_FORMAT 1
-
-#else
-
-	#define MPT_WSTRING_FORMAT 0
-
-#endif
-
-#if (MPT_COMPILER_MSVC && !defined(MPT_USTRING_MODE_UTF8_FORCE)) || MPT_OS_WINDOWS || MPT_WSTRING_FORMAT
-
-	// mpt::ToWide
-	// Required on Windows by mpt::PathString.
-	// Required by MPT_USTRING_MODE_WIDE as they share the conversion functions.
-	// Required by MPT_WSTRING_FORMAT because of std::string<->std::wstring conversion in mpt::ToAString and mpt::ToWString.
-	#define MPT_WSTRING_CONVERT 1
-
-#else
-
-	#define MPT_WSTRING_CONVERT 0
-
-#endif
+#define MPT_TIME_UTC_ON_DISK 0
+#define MPT_TIME_UTC_ON_DISK_VERSION MPT_V("1.31.00.13")
 
 
 
@@ -490,21 +328,6 @@
 
 // platform configuration
 
-#ifdef MPT_WITH_MFC
-//#define MPT_MFC_FULL  // use full MFC, including MFC controls
-#define _CSTRING_DISABLE_NARROW_WIDE_CONVERSION
-#endif // MPT_WITH_MFC
-
-#if defined(MODPLUG_TRACKER)
-#if MPT_OS_WINDOWS
-#if !defined(MPT_BUILD_WINESUPPORT)
-#ifndef MPT_MFC_FULL
-#define _AFX_NO_MFC_CONTROLS_IN_DIALOGS	// Do not include support for MFC controls in dialogs (reduces binary bloat; remove this #define if you want to use MFC controls)
-#endif // !MPT_MFC_FULL
-#endif // !MPT_BUILD_WINESUPPORT
-#endif // MPT_OS_WINDOWS
-#endif // MODPLUG_TRACKER
-
 #if MPT_OS_WINDOWS
 
 #define WIN32_LEAN_AND_MEAN
@@ -545,34 +368,9 @@
 
 
 
-// stdlib configuration
-
-#if MPT_COMPILER_CLANG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wreserved-id-macro"
-#endif
-
-#define __STDC_CONSTANT_MACROS
-#define __STDC_FORMAT_MACROS
-#define __STDC_LIMIT_MACROS
-
-#define _USE_MATH_DEFINES
-
-#ifndef _FILE_OFFSET_BITS
-#define _FILE_OFFSET_BITS 64
-#endif
-
-#if MPT_COMPILER_CLANG
-#pragma clang diagnostic pop
-#endif
-
-
-
 // compiler configuration
 
 #if MPT_COMPILER_MSVC
-
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
 #pragma warning(default:4800) // Implicit conversion from 'int' to bool. Possible information loss
 
@@ -610,59 +408,17 @@
 
 
 
-
-
-// standard library quirks
-
-
-
-
-
 // third-party library configuration
 
-#if MPT_OS_WINDOWS
-#ifndef UNICODE
-#define MPT_CHECK_WINDOWS_IGNORE_WARNING_NO_UNICODE
-#endif // !UNICODE
-#endif // MPT_OS_WINDOWS
-
-#ifdef MPT_WITH_ANCIENT
-#ifdef MPT_BUILD_MSVC_SHARED
-#define ANCIENT_API_DECLSPEC_DLLIMPORT
-#endif
-#endif
-
-#ifdef MPT_WITH_FLAC
-#ifdef MPT_BUILD_MSVC_STATIC
-#define FLAC__NO_DLL
-#endif
-#endif
-
-#ifdef MPT_WITH_SMBPITCHSHIFT
-#ifdef MPT_BUILD_MSVC_SHARED
-#define SMBPITCHSHIFT_USE_DLL
-#endif
-#endif
-
 #ifdef MPT_WITH_STBVORBIS
+#ifndef STB_VORBIS_HEADER_ONLY
 #define STB_VORBIS_HEADER_ONLY
-#ifndef STB_VORBIS_NO_PULLDATA_API
-#define STB_VORBIS_NO_PULLDATA_API
-#endif
-#ifndef STB_VORBIS_NO_STDIO
-#define STB_VORBIS_NO_STDIO
 #endif
 #endif
 
 #ifdef MPT_WITH_VORBISFILE
 #ifndef OV_EXCLUDE_STATIC_CALLBACKS
 #define OV_EXCLUDE_STATIC_CALLBACKS
-#endif
-#endif
-
-#ifdef MPT_WITH_ZLIB
-#ifdef MPT_BUILD_MSVC_SHARED
-#define ZLIB_DLL
 #endif
 #endif
 

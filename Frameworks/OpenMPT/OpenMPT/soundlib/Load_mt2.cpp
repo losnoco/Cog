@@ -240,9 +240,7 @@ static bool ConvertMT2Command(CSoundFile *that, ModCommand &m, MT2Command &p)
 		switch(p.fxcmd)
 		{
 		case 0x00:	// FastTracker effect
-			m.command = p.fxparam2;
-			m.param = p.fxparam1;
-			CSoundFile::ConvertModCommand(m);
+			CSoundFile::ConvertModCommand(m, p.fxparam2, p.fxparam1);
 #ifdef MODPLUG_TRACKER
 			m.Convert(MOD_TYPE_XM, MOD_TYPE_IT, *that);
 #else
@@ -303,9 +301,7 @@ static bool ConvertMT2Command(CSoundFile *that, ModCommand &m, MT2Command &p)
 			break;
 
 		case 0x10:	// Impulse Tracker effect
-			m.command = p.fxparam2;
-			m.param = p.fxparam1;
-			CSoundFile::S3MConvert(m, true);
+			CSoundFile::S3MConvert(m, p.fxparam2, p.fxparam1, true);
 			if(m.command == CMD_TEMPO || m.command == CMD_SPEED)
 				hasLegacyTempo = true;
 			break;
@@ -851,7 +847,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 				ModCommand *m = Patterns[writePat].GetpModCommand(row, m_nChannels - 8);
 				for(CHANNELINDEX chn = 0; chn < 8; chn++, m++)
 				{
-					*m = ModCommand::Empty();
+					*m = ModCommand{};
 					if(row >= numRows)
 						continue;
 
@@ -1153,14 +1149,7 @@ bool CSoundFile::ReadMT2(FileReader &file, ModLoadingFlags loadFlags)
 			mptSmp.filename = filename;
 
 #if defined(MPT_EXTERNAL_SAMPLES)
-			if(filename.length() >= 2
-				&& filename[0] != '\\'	// Relative path on same drive
-				&& filename[1] != ':')	// Absolute path
-			{
-				// Relative path in same folder or sub folder
-				filename = ".\\" + filename;
-			}
-			SetSamplePath(i + 1, mpt::PathString::FromLocaleSilent(filename));
+			SetSamplePath(i + 1, mpt::PathString::FromLocale(filename));
 #elif !defined(LIBOPENMPT_BUILD_TEST)
 			AddToLog(LogWarning, MPT_UFORMAT("Loading external sample {} ('{}') failed: External samples are not supported.")(i + 1, mpt::ToUnicode(GetCharsetFile(), filename)));
 #endif // MPT_EXTERNAL_SAMPLES

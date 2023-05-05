@@ -846,7 +846,7 @@ static std::vector<std::byte> DecodeSymChunk(FileReader &file)
 		// When using a fuzzer, we should not care if the decompressed buffer has the correct size.
 		// This makes finding new interesting test cases much easier.
 		if(remain)
-			std::vector<std::byte>{}.swap(data);
+			mpt::reconstruct(data);
 #endif
 	} else
 	{
@@ -1135,7 +1135,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 					chunk = FileReader(mpt::as_span(unpackedSample));
 				}
 
-				if(!ReadIFFSample(sample, chunk)
+				if(!ReadIFFSample(sample, chunk, false)
 				   && !ReadWAVSample(sample, chunk)
 				   && !ReadAIFFSample(sample, chunk)
 				   && !ReadRawSymSample(Samples[sample], chunk))
@@ -1233,7 +1233,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 			
 			auto filename = mpt::PathString::FromUnicode(mpt::ToUnicode(mpt::Charset::Amiga_no_C1, symInst.GetName()));
 			if(file.GetOptionalFileName())
-				filename = file.GetOptionalFileName()->GetPath() + filename.GetFullFileName();
+				filename = file.GetOptionalFileName()->GetDirectoryWithDrive() + filename.GetFilename();
 			
 			if(!LoadExternalSample(sample, filename))
 				AddToLog(LogError, MPT_UFORMAT("Unable to load sample {}: {}")(sample, filename));
@@ -1576,7 +1576,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 							break;
 
 						case SymEvent::AddVolume:
-							m.command = m.param = 0;
+							m.command = CMD_NONE;
 							break;
 						case SymEvent::Tremolo:
 						{
@@ -1616,7 +1616,7 @@ bool CSoundFile::ReadSymMOD(FileReader &file, ModLoadingFlags loadFlags)
 							break;
 						case SymEvent::AddPitch:
 							// "The range (-128...127) is about 4 half notes."
-							m.command = m.param = 0;
+							m.command = CMD_NONE;
 							break;
 						case SymEvent::Vibrato:
 						{

@@ -16,19 +16,18 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-IMixPlugin* DigiBoosterEcho::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin* DigiBoosterEcho::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) DigiBoosterEcho(factory, sndFile, mixStruct);
 }
 
 
-DigiBoosterEcho::DigiBoosterEcho(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+DigiBoosterEcho::DigiBoosterEcho(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 	, m_sampleRate(sndFile.GetSampleRate())
 	, m_chunk(PluginChunk::Default())
 {
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 }
 
 
@@ -222,12 +221,12 @@ void DigiBoosterEcho::RecalculateEchoParams()
 	// The fallback value when the delay is 0 was determined experimentally from DBPro 2.21 output.
 	// The C implementation of libdigibooster3 has no specific handling of this value and thus produces a delay with maximum length.
 	m_delayTime = ((m_chunk.param[kEchoDelay] ? m_chunk.param[kEchoDelay] : 167u) * m_sampleRate + 250u) / 500u;
-	m_PMix = (m_chunk.param[kEchoMix]) * (1.0f / 256.0f);
-	m_NMix = (256 - m_chunk.param[kEchoMix]) * (1.0f / 256.0f);
-	m_PCrossPBack = (m_chunk.param[kEchoCross] * m_chunk.param[kEchoFeedback]) * (1.0f / 65536.0f);
-	m_PCrossNBack = (m_chunk.param[kEchoCross] * (256 - m_chunk.param[kEchoFeedback])) * (1.0f / 65536.0f);
-	m_NCrossPBack = ((m_chunk.param[kEchoCross] - 256) * m_chunk.param[kEchoFeedback]) * (1.0f / 65536.0f);
-	m_NCrossNBack = ((m_chunk.param[kEchoCross] - 256) * (m_chunk.param[kEchoFeedback] - 256)) * (1.0f / 65536.0f);
+	m_PMix = static_cast<float>(m_chunk.param[kEchoMix]) * (1.0f / 256.0f);
+	m_NMix = static_cast<float>(256 - m_chunk.param[kEchoMix]) * (1.0f / 256.0f);
+	m_PCrossPBack = static_cast<float>(m_chunk.param[kEchoCross] * m_chunk.param[kEchoFeedback]) * (1.0f / 65536.0f);
+	m_PCrossNBack = static_cast<float>(m_chunk.param[kEchoCross] * (256 - m_chunk.param[kEchoFeedback])) * (1.0f / 65536.0f);
+	m_NCrossPBack = static_cast<float>((m_chunk.param[kEchoCross] - 256) * m_chunk.param[kEchoFeedback]) * (1.0f / 65536.0f);
+	m_NCrossNBack = static_cast<float>((m_chunk.param[kEchoCross] - 256) * (m_chunk.param[kEchoFeedback] - 256)) * (1.0f / 65536.0f);
 }
 
 OPENMPT_NAMESPACE_END

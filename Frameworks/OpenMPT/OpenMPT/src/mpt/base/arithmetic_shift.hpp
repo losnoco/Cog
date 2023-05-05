@@ -21,7 +21,7 @@ inline namespace MPT_INLINE_NS {
 // Does the same thing as MSVC would do. This is verified by the test suite.
 
 template <typename T>
-constexpr auto rshift_signed_standard(T x, int y) noexcept -> decltype(x >> y) {
+constexpr auto rshift_signed_portable(T x, int y) noexcept -> decltype(x >> y) {
 	static_assert(std::numeric_limits<T>::is_integer);
 	static_assert(std::numeric_limits<T>::is_signed);
 	using result_type = decltype(x >> y);
@@ -36,7 +36,7 @@ constexpr auto rshift_signed_standard(T x, int y) noexcept -> decltype(x >> y) {
 }
 
 template <typename T>
-constexpr auto lshift_signed_standard(T x, int y) noexcept -> decltype(x << y) {
+constexpr auto lshift_signed_portable(T x, int y) noexcept -> decltype(x << y) {
 	static_assert(std::numeric_limits<T>::is_integer);
 	static_assert(std::numeric_limits<T>::is_signed);
 	using result_type = decltype(x << y);
@@ -50,42 +50,58 @@ constexpr auto lshift_signed_standard(T x, int y) noexcept -> decltype(x << y) {
 	return static_cast<result_type>(urx);
 }
 
-#if MPT_COMPILER_SHIFT_SIGNED
+#if MPT_CXX_AT_LEAST(20) || MPT_COMPILER_SHIFT_SIGNED
 
 template <typename T>
-constexpr auto rshift_signed_undefined(T x, int y) noexcept -> decltype(x >> y) {
+constexpr auto rshift_signed_cxx20(T x, int y) noexcept -> decltype(x >> y) {
 	static_assert(std::numeric_limits<T>::is_integer);
 	static_assert(std::numeric_limits<T>::is_signed);
+#if MPT_COMPILER_GCC
+// <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103826>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshift-negative-value"
+#endif // MPT_COMPILER_GCC
 	return x >> y;
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif // MPT_COMPILER_GCC
 }
 
 template <typename T>
-constexpr auto lshift_signed_undefined(T x, int y) noexcept -> decltype(x << y) {
+constexpr auto lshift_signed_cxx20(T x, int y) noexcept -> decltype(x << y) {
 	static_assert(std::numeric_limits<T>::is_integer);
 	static_assert(std::numeric_limits<T>::is_signed);
+#if MPT_COMPILER_GCC
+// <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103826>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshift-negative-value"
+#endif // MPT_COMPILER_GCC
 	return x << y;
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif // MPT_COMPILER_GCC
 }
 
 template <typename T>
 constexpr auto rshift_signed(T x, int y) noexcept -> decltype(x >> y) {
-	return mpt::rshift_signed_undefined(x, y);
+	return mpt::rshift_signed_cxx20(x, y);
 }
 
 template <typename T>
 constexpr auto lshift_signed(T x, int y) noexcept -> decltype(x << y) {
-	return mpt::lshift_signed_undefined(x, y);
+	return mpt::lshift_signed_cxx20(x, y);
 }
 
 #else
 
 template <typename T>
 constexpr auto rshift_signed(T x, int y) noexcept -> decltype(x >> y) {
-	return mpt::rshift_signed_standard(x, y);
+	return mpt::rshift_signed_portable(x, y);
 }
 
 template <typename T>
 constexpr auto lshift_signed(T x, int y) noexcept -> decltype(x << y) {
-	return mpt::lshift_signed_standard(x, y);
+	return mpt::lshift_signed_portable(x, y);
 }
 
 #endif

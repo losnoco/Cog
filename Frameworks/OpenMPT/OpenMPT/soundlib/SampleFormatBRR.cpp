@@ -55,9 +55,9 @@ static void ProcessBRRSample(int32 sample, int16 *output, uint8 range, uint8 fil
 
 bool CSoundFile::ReadBRRSample(SAMPLEINDEX sample, FileReader &file)
 {
-	const auto fileSize = file.GetLength();
-	if(fileSize < 9 || fileSize > uint16_max)
+	if(!file.LengthIsAtLeast(9) || file.LengthIsAtLeast(65536))
 		return false;
+	const auto fileSize = file.GetLength();
 	const bool hasLoopInfo = (fileSize % 9) == 2;
 	if((fileSize % 9) != 0 && !hasLoopInfo)
 		return false;

@@ -42,10 +42,9 @@ protected:
 	bool m_crossEcho;
 
 public:
-	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
-	Echo(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct);
+	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
+	Echo(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
 
-	void Release() override { delete this; }
 	int32 GetUID() const override { return 0xEF3E932C; }
 	int32 GetVersion() const override { return 0; }
 	void Idle() override { }

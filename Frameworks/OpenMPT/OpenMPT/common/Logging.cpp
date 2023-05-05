@@ -12,6 +12,7 @@
 
 #include "Logging.h"
 
+#include "mpt/base/macros.hpp"
 #include "mpt/io/base.hpp"
 #include "mpt/io/io.hpp"
 #include "mpt/io/io_stdstream.hpp"
@@ -42,9 +43,9 @@ namespace log
 
 #if !defined(MPT_LOG_GLOBAL_LEVEL_STATIC)
 #if defined(MPT_LOG_GLOBAL_LEVEL)
-int GlobalLogLevel = static_cast<int>(MPT_LOG_GLOBAL_LEVEL);
+MPT_CONSTINIT int GlobalLogLevel = static_cast<int>(MPT_LOG_GLOBAL_LEVEL);
 #else
-int GlobalLogLevel = static_cast<int>(LogDebug);
+MPT_CONSTINIT int GlobalLogLevel = static_cast<int>(LogDebug);
 #endif
 #endif
 
@@ -52,12 +53,12 @@ int GlobalLogLevel = static_cast<int>(LogDebug);
 
 #if defined(MODPLUG_TRACKER) && !defined(MPT_LOG_IS_DISABLED)
 
-bool FileEnabled = false;
-bool DebuggerEnabled = true;
-bool ConsoleEnabled = false;
+MPT_CONSTINIT bool FileEnabled = false;
+MPT_CONSTINIT bool DebuggerEnabled = true;
+MPT_CONSTINIT bool ConsoleEnabled = false;
 
-static char g_FacilitySolo[1024] = {0};
-static char g_FacilityBlocked[1024] = {0};
+static MPT_CONSTINIT char g_FacilitySolo[1024] = {0};
+static MPT_CONSTINIT char g_FacilityBlocked[1024] = {0};
 
 void SetFacilities(const std::string &solo, const std::string &blocked)
 {
@@ -112,8 +113,8 @@ void GlobalLogger::SendLogMessage(const mpt::source_location &loc, LogLevel leve
 	#endif // MODPLUG_TRACKER
 	// remove eol if already present and add log level prefix
 	const mpt::ustring message = LogLevelToString(level) + U_(": ") + mpt::trim_right(text, U_("\r\n"));
-	const mpt::ustring file = mpt::ToUnicode(mpt::CharsetSource, loc.file_name() ? loc.file_name() : "");
-	const mpt::ustring function = mpt::ToUnicode(mpt::CharsetSource, loc.function_name() ? loc.function_name() : "");
+	const mpt::ustring file = mpt::transcode<mpt::ustring>(mpt::source_encoding, loc.file_name() ? loc.file_name() : "");
+	const mpt::ustring function = mpt::transcode<mpt::ustring>(mpt::source_encoding, loc.function_name() ? loc.function_name() : "");
 	const mpt::ustring line = mpt::ufmt::dec(loc.line());
 	#if defined(MODPLUG_TRACKER) && !defined(MPT_BUILD_WINESUPPORT)
 #if MPT_OS_WINDOWS
@@ -134,7 +135,7 @@ void GlobalLogger::SendLogMessage(const mpt::source_location &loc, LogLevel leve
 			}
 			if(s_logfile)
 			{
-				mpt::IO::WriteText(*s_logfile, mpt::ToCharset(mpt::CharsetLogfile, MPT_UFORMAT("{}+{} {}({}): {} [{}]\n")
+				mpt::IO::WriteText(*s_logfile, mpt::transcode<std::string>(mpt::logfile_encoding, MPT_UFORMAT("{}+{} {}({}): {} [{}]\n")
 					( mpt::Date::ANSI::ToUString(cur)
 					, mpt::ufmt::right(6, mpt::ufmt::dec(diff))
 					, file
@@ -170,16 +171,16 @@ void GlobalLogger::SendLogMessage(const mpt::source_location &loc, LogLevel leve
 	#elif defined(MODPLUG_TRACKER) && defined(MPT_BUILD_WINESUPPORT)
 		std::clog
 			<< "NativeSupport: "
-			<< mpt::ToCharset(mpt::CharsetStdIO, file) << "(" << mpt::ToCharset(mpt::CharsetStdIO, line) << ")" << ": "
-			<< mpt::ToCharset(mpt::CharsetStdIO, message)
-			<< " [" << mpt::ToCharset(mpt::CharsetStdIO, function) << "]"
+			<< mpt::transcode<std::string>(mpt::stdio_encoding, file) << "(" << mpt::transcode<std::string>(mpt::stdio_encoding, line) << ")" << ": "
+			<< mpt::transcode<std::string>(mpt::stdio_encoding, message)
+			<< " [" << mpt::transcode<std::string>(mpt::stdio_encoding, function) << "]"
 			<< std::endl;
 	#else // !MODPLUG_TRACKER
 		std::clog
 			<< "libopenmpt: "
-			<< mpt::ToCharset(mpt::CharsetStdIO, file) << "(" << mpt::ToCharset(mpt::CharsetStdIO, line) << ")" << ": "
-			<< mpt::ToCharset(mpt::CharsetStdIO, message)
-			<< " [" << mpt::ToCharset(mpt::CharsetStdIO, function) << "]"
+			<< mpt::transcode<std::string>(mpt::stdio_encoding, file) << "(" << mpt::transcode<std::string>(mpt::stdio_encoding, line) << ")" << ": "
+			<< mpt::transcode<std::string>(mpt::stdio_encoding, message)
+			<< " [" << mpt::transcode<std::string>(mpt::stdio_encoding, function) << "]"
 			<< std::endl;
 	#endif // MODPLUG_TRACKER
 #endif // MPT_LOG_IS_DISABLED
@@ -195,9 +196,9 @@ namespace Trace {
 
 // Debugging functionality will use simple globals.
 
-std::atomic<bool> g_Enabled{false};
+MPT_CONSTINIT std::atomic<bool> g_Enabled{false};
 
-static bool g_Sealed = false;
+static MPT_CONSTINIT bool g_Sealed = false;
 
 struct Entry {
 	uint32       Index;
@@ -225,14 +226,19 @@ static MPT_FORCEINLINE bool operator < (const Entry &a, const Entry &b) noexcept
 		;
 }
 
-static std::vector<mpt::log::Trace::Entry> Entries;
+#if MPT_COMPILER_MSVC
+// VS2022 still does nto have constexpr vector default ctor
+static /*MPT_CONSTINIT*/ std::vector<mpt::log::Trace::Entry> Entries;
+#else
+static MPT_CONSTINIT std::vector<mpt::log::Trace::Entry> Entries;
+#endif
 
-static std::atomic<uint32> NextIndex(0);
+static MPT_CONSTINIT std::atomic<uint32> NextIndex(0);
 
-static uint32 ThreadIdGUI = 0;
-static uint32 ThreadIdAudio = 0;
-static uint32 ThreadIdNotify = 0;
-static uint32 ThreadIdWatchdir = 0;
+static MPT_CONSTINIT uint32 ThreadIdGUI = 0;
+static MPT_CONSTINIT uint32 ThreadIdAudio = 0;
+static MPT_CONSTINIT uint32 ThreadIdNotify = 0;
+static MPT_CONSTINIT uint32 ThreadIdWatchdir = 0;
 
 void Enable(std::size_t numEntries)
 {
@@ -314,7 +320,7 @@ bool Dump(const mpt::PathString &filename)
 
 	mpt::ofstream f(filename);
 
-	f << "Build: OpenMPT " << mpt::ToCharset(mpt::CharsetLogfile, Build::GetVersionStringExtended()) << std::endl;
+	f << "Build: OpenMPT " << mpt::transcode<std::string>(mpt::logfile_encoding, Build::GetVersionStringExtended()) << std::endl;
 
 	bool qpcValid = false;
 
@@ -326,7 +332,7 @@ bool Dump(const mpt::PathString &filename)
 		qpcValid = true;
 	}
 
-	f << "Dump: " << mpt::ToCharset(mpt::CharsetLogfile, mpt::Date::ANSI::ToUString(ftNow)) << std::endl;
+	f << "Dump: " << mpt::transcode<std::string>(mpt::logfile_encoding, mpt::Date::ANSI::ToUString(ftNow)) << std::endl;
 	f << "Captured events: " << Entries.size() << std::endl;
 	if(qpcValid && (Entries.size() > 0))
 	{
@@ -343,7 +349,7 @@ bool Dump(const mpt::PathString &filename)
 		std::string time;
 		if(qpcValid)
 		{
-			time = mpt::ToCharset(mpt::CharsetLogfile, mpt::Date::ANSI::ToUString( ftNow - static_cast<int64>( static_cast<double>(qpcNow.QuadPart - entry.Timestamp) * (10000000.0 / static_cast<double>(qpcFreq.QuadPart) ) ) ) );
+			time = mpt::transcode<std::string>(mpt::logfile_encoding, mpt::Date::ANSI::ToUString( ftNow - static_cast<int64>( static_cast<double>(qpcNow.QuadPart - entry.Timestamp) * (10000000.0 / static_cast<double>(qpcFreq.QuadPart) ) ) ) );
 		} else
 		{
 			time = MPT_AFORMAT("0x{}")(mpt::afmt::hex0<16>(entry.Timestamp));

@@ -34,18 +34,18 @@ struct EncodeuLaw
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
 		uint16 x = static_cast<uint16>(val);
-		uint8 out = (x >> 8) & 0x80;
-		uint32 abs = x & 0x7fff;
-		if(x & 0x8000)
+		uint8 out = static_cast<uint8>((x >> 8) & 0x80u);
+		uint32 abs = x & 0x7fffu;
+		if(x & 0x8000u)
 		{
-			abs ^= 0x7fff;
-			abs += 1;
+			abs ^= 0x7fffu;
+			abs += 1u;
 		}
 		x = static_cast<uint16>(std::clamp(static_cast<uint32>(abs + (33 << 2)), static_cast<uint32>(0), static_cast<uint32>(0x7fff)));
 		int index = mpt::countl_zero(x);
 		out |= exp_table[index];
-		out |= (x >> mant_table[index]) & 0x0f;
-		out ^= 0xff;
+		out |= (x >> mant_table[index]) & 0x0fu;
+		out ^= 0xffu;
 		return mpt::byte_cast<std::byte>(out);
 	}
 };
@@ -61,12 +61,12 @@ struct EncodeALaw
 	{
 		int16 sx = std::clamp(val, static_cast<int16>(-32767), static_cast<int16>(32767));
 		uint16 x = static_cast<uint16>(sx);
-		uint8 out = ((x & 0x8000) ^ 0x8000) >> 8;
+		uint8 out = static_cast<uint8>(((x & 0x8000u) ^ 0x8000u) >> 8);
 		x = static_cast<uint16>(std::abs(sx));
 		int index = mpt::countl_zero(x);
 		out |= exp_table[index];
-		out |= (x >> mant_table[index]) & 0x0f;
-		out ^= 0x55;
+		out |= (x >> mant_table[index]) & 0x0fu;
+		out ^= 0x55u;
 		return mpt::byte_cast<std::byte>(out);
 	}
 };

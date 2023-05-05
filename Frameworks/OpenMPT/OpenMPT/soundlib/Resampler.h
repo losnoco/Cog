@@ -44,10 +44,10 @@ OPENMPT_NAMESPACE_BEGIN
 #define SINC_PHASES      (1<<SINC_PHASES_BITS)
 
 #ifdef MPT_INTMIXER
-typedef int16 SINC_TYPE;
+using SINC_TYPE = int16;
 #define SINC_QUANTSHIFT 15
 #else
-typedef mixsample_t SINC_TYPE;
+using SINC_TYPE = mixsample_t;
 #endif // MPT_INTMIXER
 
 #define SINC_MASK (SINC_PHASES-1)

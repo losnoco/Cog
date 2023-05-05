@@ -1,8 +1,11 @@
+667="gf"
+
 669="if"
 669="JN"
 
 amf="ASYLUM Music Format V1.0\x00"
 amf="AMF\x0A"
+amf="DMF\x0E"
 
 ams="Extreme"
 ams="AMShdr\x1A\x02\x02"
@@ -34,6 +37,8 @@ dmf="SMPD"
 dsm="RIFF"
 dsm="DSMF"
 
+dsm="DSm\x1A "
+
 dsym="\x02\x01\x13\x13\x14\x12\x01\x0B\x01"
 
 dtm="D.T."
@@ -50,6 +55,26 @@ fmt="FMTracker\x01\x01"
 
 gdm="GDM\xFE"
 gdm="GMFS"
+
+gtk="GTK\x04"
+
+gt2="GT2\x05"
+gt2="XCOM"
+gt2="TCN1"
+gt2="TCN2"
+gt2="TVOL"
+gt2="MIXP"
+#gt2="SONG"
+gt2="PATS"
+gt2="PATD"
+gt2="TNAM"
+#gt2="INST"
+#gt2="VENV"
+gt2="TENV"
+#gt2="PENV"
+#gt2="SAMP"
+gt2="SAM2"
+gt2="ENDC"
 
 imf="IM10"
 imf="IS10"

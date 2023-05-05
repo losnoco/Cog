@@ -5,7 +5,6 @@
 
 
 
-#include "mpt/base/detect.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/base/source_location.hpp"
 
@@ -43,7 +42,7 @@ template <typename T>
 inline auto format(const T & x) -> typename std::enable_if<mpt::test::is_to_stream_writable<std::ostringstream, T>::value, std::string>::type {
 	std::ostringstream s;
 	s << x;
-	return s.str();
+	return std::move(s).str();
 }
 
 template <typename T>

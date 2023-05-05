@@ -12,6 +12,7 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
+#include "mpt/base/alloc.hpp"
 #include "mpt/io/io.hpp"
 #include "mpt/io/io_stdstream.hpp"
 #include "openmpt/base/Endian.hpp"
@@ -29,72 +30,108 @@
 #include <istream>
 #include <ostream>
 
+#include <cstddef>
 #include <cstring>
 
 OPENMPT_NAMESPACE_BEGIN
 
+
+#ifdef MPT_ALL_LOGGING
+#define SSB_LOGGING
+#endif
+
+
+#ifdef SSB_LOGGING
+#define SSB_LOG(x) MPT_LOG_GLOBAL(LogDebug, "serialization", x)
+#else
+#define SSB_LOG(x) do { } while(0)
+#endif
+
+
 namespace srlztn //SeRiaLiZaTioN
 {
 
-typedef std::ios::off_type Offtype;
-typedef Offtype Postype;
 
-typedef uintptr_t	DataSize;	// Data size type.
-typedef uintptr_t	RposType;	// Relative position type.
-typedef uintptr_t	NumType;	// Entry count type.
+constexpr inline std::size_t invalidDatasize = static_cast<std::size_t>(0) - 1;
 
-const DataSize invalidDatasize = DataSize(-1);
 
-enum 
+enum class StatusLevel : uint8
 {
-	SNT_PROGRESS =		0x08000000, // = 1 << 27
-	SNT_FAILURE =		0x40000000, // = 1 << 30
-	SNT_NOTE =			0x20000000, // = 1 << 29
-	SNT_WARNING =		0x10000000, // = 1 << 28
-	SNT_NONE = 0,
-
-	SNRW_BADGIVEN_STREAM =								1	| SNT_FAILURE,
-
-	// Read failures.
-	SNR_BADSTREAM_AFTER_MAPHEADERSEEK =					2	| SNT_FAILURE,
-	SNR_STARTBYTE_MISMATCH =							3	| SNT_FAILURE,
-	SNR_BADSTREAM_AT_MAP_READ =							4	| SNT_FAILURE,
-	SNR_INSUFFICIENT_STREAM_OFFTYPE =					5	| SNT_FAILURE,
-	SNR_OBJECTCLASS_IDMISMATCH =						6	| SNT_FAILURE,
-	SNR_TOO_MANY_ENTRIES_TO_READ =						7	| SNT_FAILURE,
-	SNR_INSUFFICIENT_RPOSTYPE =							8	| SNT_FAILURE,
-
-	// Read notes and warnings.
-	SNR_ZEROENTRYCOUNT =								0x80	| SNT_NOTE, // 0x80 == 1 << 7
-	SNR_NO_ENTRYIDS_WITH_CUSTOMID_DEFINED =				0x100	| SNT_NOTE,
-	SNR_LOADING_OBJECT_WITH_LARGER_VERSION =			0x200	| SNT_NOTE,
-	
-	// Write failures.
-	SNW_INSUFFICIENT_FIXEDSIZE =						(0x10)	| SNT_FAILURE,
-	SNW_CHANGING_IDSIZE_WITH_FIXED_IDSIZESETTING =		(0x11)	| SNT_FAILURE,
-	SNW_DATASIZETYPE_OVERFLOW =							(0x13)	| SNT_FAILURE,
-	SNW_MAX_WRITE_COUNT_REACHED =						(0x14)	| SNT_FAILURE,
-	SNW_INSUFFICIENT_DATASIZETYPE =						(0x16)	| SNT_FAILURE
+	Failure = 0x2,
+	Note    = 0x1,
+	None    = 0x0,
+	Max = 0xff,
 };
 
+enum class StatusMessages : uint32
+{
+	None = 0,
 
-enum
+	// Read notes and warnings.
+	SNR_ZEROENTRYCOUNT                           = 0x00'00'00'01,
+	SNR_NO_ENTRYIDS_WITH_CUSTOMID_DEFINED        = 0x00'00'00'02,
+	SNR_LOADING_OBJECT_WITH_LARGER_VERSION       = 0x00'00'00'04,
+
+	// Read failures.
+	SNR_BADSTREAM_AFTER_MAPHEADERSEEK            = 0x00'00'01'00,
+	SNR_STARTBYTE_MISMATCH                       = 0x00'00'02'00,
+	SNR_BADSTREAM_AT_MAP_READ                    = 0x00'00'04'00,
+	SNR_INSUFFICIENT_STREAM_OFFTYPE              = 0x00'00'08'00,
+	SNR_OBJECTCLASS_IDMISMATCH                   = 0x00'00'10'00,
+	SNR_TOO_MANY_ENTRIES_TO_READ                 = 0x00'00'20'00,
+	SNR_INSUFFICIENT_RPOSTYPE                    = 0x00'00'40'00,
+
+	// Write failures.
+	SNW_INSUFFICIENT_FIXEDSIZE                   = 0x00'01'00'00,
+	SNW_CHANGING_IDSIZE_WITH_FIXED_IDSIZESETTING = 0x00'02'00'00,
+	SNW_DATASIZETYPE_OVERFLOW                    = 0x00'04'00'00,
+	SNW_MAX_WRITE_COUNT_REACHED                  = 0x00'08'00'00,
+	SNW_INSUFFICIENT_DATASIZETYPE                = 0x00'10'00'00,
+
+	SNRW_BADGIVEN_STREAM                         = 0x01'00'00'00,
+
+	Max = 0xffffffff,
+};
+
+struct Status
+{
+	StatusLevel level = StatusLevel::None;
+	StatusMessages messages = StatusMessages::None;
+};
+
+constexpr inline Status SNR_ZEROENTRYCOUNT = {StatusLevel::Note, StatusMessages::SNR_ZEROENTRYCOUNT};
+constexpr inline Status SNR_NO_ENTRYIDS_WITH_CUSTOMID_DEFINED = {StatusLevel::Note, StatusMessages::SNR_NO_ENTRYIDS_WITH_CUSTOMID_DEFINED};
+constexpr inline Status SNR_LOADING_OBJECT_WITH_LARGER_VERSION = {StatusLevel::Note, StatusMessages::SNR_LOADING_OBJECT_WITH_LARGER_VERSION};
+
+constexpr inline Status SNR_BADSTREAM_AFTER_MAPHEADERSEEK = {StatusLevel::Failure, StatusMessages::SNR_BADSTREAM_AFTER_MAPHEADERSEEK};
+constexpr inline Status SNR_STARTBYTE_MISMATCH = {StatusLevel::Failure, StatusMessages::SNR_STARTBYTE_MISMATCH};
+constexpr inline Status SNR_BADSTREAM_AT_MAP_READ = {StatusLevel::Failure, StatusMessages::SNR_BADSTREAM_AT_MAP_READ};
+constexpr inline Status SNR_INSUFFICIENT_STREAM_OFFTYPE = {StatusLevel::Failure, StatusMessages::SNR_INSUFFICIENT_STREAM_OFFTYPE};
+constexpr inline Status SNR_OBJECTCLASS_IDMISMATCH = {StatusLevel::Failure, StatusMessages::SNR_OBJECTCLASS_IDMISMATCH};
+constexpr inline Status SNR_TOO_MANY_ENTRIES_TO_READ = {StatusLevel::Failure, StatusMessages::SNR_TOO_MANY_ENTRIES_TO_READ};
+constexpr inline Status SNR_INSUFFICIENT_RPOSTYPE = {StatusLevel::Failure, StatusMessages::SNR_INSUFFICIENT_RPOSTYPE};
+
+constexpr inline Status SNW_INSUFFICIENT_FIXEDSIZE = {StatusLevel::Failure, StatusMessages::SNW_INSUFFICIENT_FIXEDSIZE};
+constexpr inline Status SNW_CHANGING_IDSIZE_WITH_FIXED_IDSIZESETTING = {StatusLevel::Failure, StatusMessages::SNW_CHANGING_IDSIZE_WITH_FIXED_IDSIZESETTING};
+constexpr inline Status SNW_DATASIZETYPE_OVERFLOW = {StatusLevel::Failure, StatusMessages::SNW_DATASIZETYPE_OVERFLOW};
+constexpr inline Status SNW_MAX_WRITE_COUNT_REACHED = {StatusLevel::Failure, StatusMessages::SNW_MAX_WRITE_COUNT_REACHED};
+constexpr inline Status SNW_INSUFFICIENT_DATASIZETYPE = {StatusLevel::Failure, StatusMessages::SNW_INSUFFICIENT_DATASIZETYPE};
+
+constexpr inline Status SNRW_BADGIVEN_STREAM = {StatusLevel::Failure, StatusMessages::SNRW_BADGIVEN_STREAM};
+
+
+enum : uint16
 {
 	IdSizeVariable = std::numeric_limits<uint16>::max(),
 	IdSizeMaxFixedSize = (std::numeric_limits<uint8>::max() >> 1)
 };
 
-typedef int32 SsbStatus;
-
-
 struct ReadEntry
 {
-	ReadEntry() : nIdpos(0), rposStart(0), nSize(invalidDatasize), nIdLength(0) {}
-
-	uintptr_t nIdpos;	// Index of id start in ID array.
-	RposType rposStart;	// Entry start position.
-	DataSize nSize;		// Entry size.
-	uint16 nIdLength;	// Length of id.
+	std::size_t nIdpos = 0;               // Index of id start in ID array.
+	std::streamoff rposStart = 0;         // Entry start position.
+	std::size_t nSize = invalidDatasize;  // Entry size.
+	uint16 nIdLength = 0;                 // Length of id.
 };
 
 
@@ -173,38 +210,34 @@ inline void Binaryread(std::istream& iStrm, double& data)
 
 //Read only given number of bytes to the beginning of data; data bytes are memset to 0 before reading.
 template <class T>
-inline void Binaryread(std::istream& iStrm, T& data, const Offtype bytecount)
+inline void Binaryread(std::istream& iStrm, T& data, const std::size_t bytecount)
 {
-	mpt::IO::ReadBinaryTruncatedLE(iStrm, data, static_cast<std::size_t>(bytecount));
+	mpt::IO::ReadBinaryTruncatedLE(iStrm, data, bytecount);
 }
 
 template <>
-inline void Binaryread<float>(std::istream& iStrm, float& data, const Offtype bytecount)
+inline void Binaryread<float>(std::istream& iStrm, float& data, const std::size_t bytecount)
 {
-	typedef IEEE754binary32LE T;
-	std::byte bytes[sizeof(T)];
-	std::memset(bytes, 0, sizeof(T));
-	mpt::IO::ReadRaw(iStrm, bytes, std::min(static_cast<std::size_t>(bytecount), sizeof(T)));
+	using T = IEEE754binary32LE;
+	mpt::IO::SeekRelative(iStrm, std::min(bytecount, sizeof(T)));
 	// There is not much we can sanely do for truncated floats,
-	// thus we ignore what we just read and return 0.
+	// thus we ignore what we could read and return 0.
 	data = 0.0f;
 }
 
 template <>
-inline void Binaryread<double>(std::istream& iStrm, double& data, const Offtype bytecount)
+inline void Binaryread<double>(std::istream& iStrm, double& data, const std::size_t bytecount)
 {
-	typedef IEEE754binary64LE T;
-	std::byte bytes[sizeof(T)];
-	std::memset(bytes, 0, sizeof(T));
-	mpt::IO::ReadRaw(iStrm, bytes, std::min(static_cast<std::size_t>(bytecount), sizeof(T)));
+	using T = IEEE754binary64LE;
+	mpt::IO::SeekRelative(iStrm, std::min(bytecount, sizeof(T)));
 	// There is not much we can sanely do for truncated floats,
-	// thus we ignore what we just read and return 0.
+	// thus we ignore what we could read and return 0.
 	data = 0.0;
 }
 
 
 template <class T>
-inline void ReadItem(std::istream& iStrm, T& data, const DataSize nSize)
+inline void ReadItem(std::istream& iStrm, T& data, const std::size_t nSize)
 {
 	static_assert(std::is_trivial<T>::value == true, "");
 	if (nSize == sizeof(T) || nSize == invalidDatasize)
@@ -213,10 +246,10 @@ inline void ReadItem(std::istream& iStrm, T& data, const DataSize nSize)
 		Binaryread(iStrm, data, nSize);
 }
 
-void ReadItemString(std::istream& iStrm, std::string& str, const DataSize);
+void ReadItemString(std::istream& iStrm, std::string& str, const std::size_t);
 
 template <>
-inline void ReadItem<std::string>(std::istream& iStrm, std::string& str, const DataSize nSize)
+inline void ReadItem<std::string>(std::istream& iStrm, std::string& str, const std::size_t nSize)
 {
 	ReadItemString(iStrm, str, nSize);
 }
@@ -228,23 +261,30 @@ class ID
 private:
 	std::string m_ID; // NOTE: can contain null characters ('\0')
 public:
-	ID() { }
+	ID() = default;
 	ID(const std::string &id) : m_ID(id) { }
-	ID(const char *beg, const char *end) : m_ID(beg, end) { }
-	ID(const char *id) : m_ID(id?id:"") { }
-	ID(const char * str, std::size_t len) : m_ID(str, str + len) { }
+	ID(const char *id) : m_ID(id ? id : "") { }
+	ID(const char * str, std::size_t len) : m_ID(str, len) { }
 	template <typename T>
 	static ID FromInt(const T &val)
 	{
 		static_assert(std::numeric_limits<T>::is_integer);
 		typename mpt::make_le<T>::type valle;
 		valle = val;
-		return ID(std::string(mpt::byte_cast<const char*>(mpt::as_raw_memory(valle).data()), mpt::byte_cast<const char*>(mpt::as_raw_memory(valle).data() + sizeof(valle))));
+		return ID(mpt::byte_cast<const char*>(mpt::as_raw_memory(valle).data()), mpt::as_raw_memory(valle).size());
 	}
+#ifdef SSB_LOGGING
 	bool IsPrintable() const;
 	mpt::ustring AsString() const;
-	const char *GetBytes() const { return m_ID.c_str(); }
-	std::size_t GetSize() const { return m_ID.length(); }
+#endif
+	std::size_t GetSize() const
+	{
+		return m_ID.size();
+	}
+	mpt::span<const char> AsSpan() const
+	{
+		return mpt::as_span(m_ID);
+	}
 	bool operator == (const ID &other) const { return m_ID == other.m_ID; }
 	bool operator != (const ID &other) const { return m_ID != other.m_ID; }
 };
@@ -260,30 +300,21 @@ protected:
 
 public:
 
-	SsbStatus GetStatus() const
+	bool HasFailed() const
 	{
-		return m_Status;
+		return (m_Status.level >= StatusLevel::Failure);
 	}
 
 protected:
 
-	// When writing, returns the number of entries written.
-	// When reading, returns the number of entries read not including unrecognized entries.
-	NumType GetCounter() const {return m_nCounter;}
-
-	void SetFlag(Rwf flag, bool val) {m_Flags.set(flag, val);}
-	bool GetFlag(Rwf flag) const {return m_Flags[flag];}
-
-protected:
-
-	SsbStatus m_Status;
+	Status m_Status;
 
 	uint32 m_nFixedEntrySize;			// Read/write: If > 0, data entries have given fixed size.
 
-	Postype m_posStart;					// Read/write: Stream position at the beginning of object.
+	std::streamoff m_posStart;					// Read/write: Stream position at the beginning of object.
 
 	uint16 m_nIdbytes;					// Read/Write: Tells map ID entry size in bytes. If size is variable, value is IdSizeVariable.
-	NumType m_nCounter;					// Read/write: Keeps count of entries written/read.
+	std::size_t m_nCounter;					// Read/write: Keeps count of entries written/read.
 
 	std::bitset<RwfNumFlags> m_Flags;	// Read/write: Various flags.
 
@@ -302,16 +333,7 @@ class SsbRead
 
 public:
 
-	enum ReadRv // Read return value.
-	{
-		EntryRead,
-		EntryNotFound
-	};
-	enum IdMatchStatus
-	{
-		IdMatch, IdMismatch
-	};
-	typedef std::vector<ReadEntry>::const_iterator ReadIterator;
+	using ReadIterator = std::vector<ReadEntry>::const_iterator;
 
 	SsbRead(std::istream& iStrm);
 
@@ -319,7 +341,7 @@ public:
 	void BeginRead(const ID &id, const uint64& nVersion);
 
 	// After calling BeginRead(), this returns number of entries in the file.
-	NumType GetNumEntries() const {return m_nReadEntrycount;}
+	std::size_t GetNumEntries() const {return m_nReadEntrycount;}
 
 	// Returns read iterator to the beginning of entries.
 	// The behaviour of read iterators is undefined if map doesn't
@@ -330,23 +352,23 @@ public:
 	ReadIterator GetReadEnd();
 
 	// Compares given id with read entry id 
-	IdMatchStatus CompareId(const ReadIterator& iter, const ID &id);
+	bool MatchesId(const ReadIterator& iter, const ID &id);
 
 	uint64 GetReadVersion() {return m_nReadVersion;}
 
 	// Read item using default read implementation.
 	template <class T>
-	ReadRv ReadItem(T& obj, const ID &id) {return ReadItem(obj, id, srlztn::ReadItem<T>);}
+	bool ReadItem(T& obj, const ID &id) {return ReadItem(obj, id, srlztn::ReadItem<T>);}
 
 	// Read item using given function.
 	template <class T, class FuncObj>
-	ReadRv ReadItem(T& obj, const ID &id, FuncObj);
+	bool ReadItem(T& obj, const ID &id, FuncObj);
 
 	// Read item using read iterator.
 	template <class T>
-	ReadRv ReadIterItem(const ReadIterator& iter, T& obj) {return ReadIterItem(iter, obj, srlztn::ReadItem<T>);}
+	bool ReadIterItem(const ReadIterator& iter, T& obj) {return ReadIterItem(iter, obj, srlztn::ReadItem<T>);}
 	template <class T, class FuncObj>
-	ReadRv ReadIterItem(const ReadIterator& iter, T& obj, FuncObj func);
+	bool ReadIterItem(const ReadIterator& iter, T& obj, FuncObj func);
 
 private:
 
@@ -358,12 +380,14 @@ private:
 	const ReadEntry* Find(const ID &id);
 
 	// Called after reading an object.
-	ReadRv OnReadEntry(const ReadEntry* pE, const ID &id, const Postype& posReadBegin);
+	void OnReadEntry(const ReadEntry* pE, const ID &id, const std::streamoff& posReadBegin);
 
-	void AddReadNote(const SsbStatus s);
+	void AddReadNote(const Status s);
 
+#ifdef SSB_LOGGING
 	// Called after reading entry. pRe is a pointer to associated map entry if exists.
-	void AddReadNote(const ReadEntry* const pRe, const NumType nNum);
+	void LogReadEntry(const ReadEntry &pRe, const std::size_t nNum);
+#endif
 
 	void ResetReadstatus();
 
@@ -383,13 +407,13 @@ private:
 
 	std::vector<ReadEntry> mapData;		// Read: Contains map information.
 	uint64 m_nReadVersion;				// Read: Version is placed here when reading.
-	RposType m_rposMapBegin;			// Read: If map exists, rpos of map begin, else m_rposEndofHdrData.
-	Postype m_posMapEnd;				// Read: If map exists, map end position, else pos of end of hdrData.
-	Postype m_posDataBegin;				// Read: Data begin position.
-	RposType m_rposEndofHdrData;		// Read: rpos of end of header data.
-	NumType m_nReadEntrycount;			// Read: Number of entries.
+	std::streamoff m_rposMapBegin;			// Read: If map exists, rpos of map begin, else m_rposEndofHdrData.
+	std::streamoff m_posMapEnd;				// Read: If map exists, map end position, else pos of end of hdrData.
+	std::streamoff m_posDataBegin;				// Read: Data begin position.
+	std::streamoff m_rposEndofHdrData;		// Read: rpos of end of header data.
+	std::size_t m_nReadEntrycount;			// Read: Number of entries.
 
-	NumType m_nNextReadHint;			// Read: Hint where to start looking for the next read entry.
+	std::size_t m_nNextReadHint;			// Read: Hint where to start looking for the next read entry.
 
 };
 
@@ -420,30 +444,34 @@ public:
 private:
 
 	// Called after writing an item.
-	void OnWroteItem(const ID &id, const Postype& posBeforeWrite);
+	void OnWroteItem(const ID &id, const std::streamoff& posBeforeWrite);
 
-	void AddWriteNote(const SsbStatus s);
-	void AddWriteNote(const ID &id,
-		const NumType nEntryNum,
-		const DataSize nBytecount,
-		const RposType rposStart);
+	void AddWriteNote(const Status s);
+
+#ifdef SSB_LOGGING
+	void LogWriteEntry(const ID &id,
+		const std::size_t nEntryNum,
+		const std::size_t nBytecount,
+		const std::streamoff rposStart);
+#endif
 
 	// Writes mapping item to mapstream.
 	void WriteMapItem(const ID &id,
-		const RposType& rposDataStart,
-		const DataSize& nDatasize,
-		const char* pszDesc);
+		const std::streamoff& rposDataStart,
+		const std::size_t& nDatasize,
+		const std::string &pszDesc);
 
-	void ResetWritestatus() {m_Status = SNT_NONE;}
-
-	void IncrementWriteCounter();
+	void ResetWritestatus()
+	{
+		m_Status = Status{};
+	}
 
 private:
 
 	std::ostream& oStrm;
 
-	Postype m_posEntrycount;			// Write: Pos of entrycount field. 
-	Postype m_posMapPosField;			// Write: Pos of map position field.
+	std::streamoff m_posEntrycount;			// Write: Pos of entrycount field. 
+	std::streamoff m_posMapPosField;			// Write: Pos of map position field.
 	std::string m_MapStreamString;				// Write: Map stream string.
 
 };
@@ -452,45 +480,53 @@ private:
 template <class T, class FuncObj>
 void SsbWrite::WriteItem(const T& obj, const ID &id, FuncObj Func)
 {
-	const Postype pos = oStrm.tellp();
+	const std::streamoff pos = static_cast<std::streamoff>(oStrm.tellp());
 	Func(oStrm, obj);
 	OnWroteItem(id, pos);
 }
 
 template <class T, class FuncObj>
-SsbRead::ReadRv SsbRead::ReadItem(T& obj, const ID &id, FuncObj Func)
+bool SsbRead::ReadItem(T& obj, const ID &id, FuncObj Func)
 {
 	const ReadEntry* pE = Find(id);
-	const Postype pos = iStrm.tellg();
-	if (pE != nullptr || GetFlag(RwfRMapHasId) == false)
+	const std::streamoff pos = static_cast<std::streamoff>(iStrm.tellg());
+	const bool entryFound = (pE || !m_Flags[RwfRMapHasId]);
+	if(entryFound)
+	{
 		Func(iStrm, obj, (pE) ? (pE->nSize) : invalidDatasize);
-	return OnReadEntry(pE, id, pos);
+	}
+	OnReadEntry(pE, id, pos);
+	return entryFound;
 }
 
 
 template <class T, class FuncObj>
-SsbRead::ReadRv SsbRead::ReadIterItem(const ReadIterator& iter, T& obj, FuncObj func)
+bool SsbRead::ReadIterItem(const ReadIterator& iter, T& obj, FuncObj func)
 {
 	iStrm.clear();
 	if (iter->rposStart != 0)
-		iStrm.seekg(m_posStart + Postype(iter->rposStart));
-	const Postype pos = iStrm.tellg();
+		iStrm.seekg(m_posStart + iter->rposStart);
+	const std::streamoff pos = static_cast<std::streamoff>(iStrm.tellg());
 	func(iStrm, obj, iter->nSize);
-	return OnReadEntry(&(*iter), ID(&m_Idarray[iter->nIdpos], iter->nIdLength), pos);
+	OnReadEntry(&(*iter), ID(&m_Idarray[iter->nIdpos], iter->nIdLength), pos);
+	return true;
 }
 
 
-inline SsbRead::IdMatchStatus SsbRead::CompareId(const ReadIterator& iter, const ID &id)
+inline bool SsbRead::MatchesId(const ReadIterator& iter, const ID &id)
 {
-	if(iter->nIdpos >= m_Idarray.size()) return IdMismatch;
-	return (id == ID(&m_Idarray[iter->nIdpos], iter->nIdLength)) ? IdMatch : IdMismatch;
+	if(iter->nIdpos >= m_Idarray.size())
+	{
+		return false;
+	}
+	return (id == ID(&m_Idarray[iter->nIdpos], iter->nIdLength));
 }
 
 
 inline SsbRead::ReadIterator SsbRead::GetReadBegin()
 {
-	MPT_ASSERT(GetFlag(RwfRMapHasId) && (GetFlag(RwfRMapHasStartpos) || GetFlag(RwfRMapHasSize) || m_nFixedEntrySize > 0));
-	if (GetFlag(RwfRMapCached) == false)
+	MPT_ASSERT(m_Flags[RwfRMapHasId] && (m_Flags[RwfRMapHasStartpos] || m_Flags[RwfRMapHasSize] || m_nFixedEntrySize > 0));
+	if(!m_Flags[RwfRMapCached])
 		CacheMap();
 	return mapData.begin();
 }
@@ -498,7 +534,7 @@ inline SsbRead::ReadIterator SsbRead::GetReadBegin()
 
 inline SsbRead::ReadIterator SsbRead::GetReadEnd()
 {
-	if (GetFlag(RwfRMapCached) == false)
+	if(!m_Flags[RwfRMapCached])
 		CacheMap();
 	return mapData.end();
 }

@@ -48,7 +48,7 @@ void InstrumentEnvelope::Convert(MODTYPE fromType, MODTYPE toType)
 			if(at(nLoopEnd).tick - 1 > at(nLoopEnd - 1).tick)
 			{
 				// Insert an interpolated point just before the loop point.
-				EnvelopeNode::tick_t tick = at(nLoopEnd).tick - 1u;
+				EnvelopeNode::tick_t tick = static_cast<EnvelopeNode::tick_t>(at(nLoopEnd).tick - 1u);
 				auto interpolatedValue = static_cast<EnvelopeNode::value_t>(GetValueFromPosition(tick, 64));
 				insert(begin() + nLoopEnd, EnvelopeNode(tick, interpolatedValue));
 			} else
@@ -70,6 +70,9 @@ void InstrumentEnvelope::Convert(MODTYPE fromType, MODTYPE toType)
 // returns value in range [0, rangeOut].
 int32 InstrumentEnvelope::GetValueFromPosition(int position, int32 rangeOut, int32 rangeIn) const
 {
+	if(empty())
+		return 0;
+
 	uint32 pt = size() - 1u;
 	const int32 ENV_PRECISION = 1 << 16;
 
@@ -126,13 +129,20 @@ void InstrumentEnvelope::Sanitize(uint8 maxValue)
 			it->tick = std::max(it->tick, (it - 1)->tick);
 			LimitMax(it->value, maxValue);
 		}
+		LimitMax(nLoopEnd, static_cast<decltype(nLoopEnd)>(size() - 1));
+		LimitMax(nLoopStart, nLoopEnd);
+		LimitMax(nSustainEnd, static_cast<decltype(nSustainEnd)>(size() - 1));
+		LimitMax(nSustainStart, nSustainEnd);
+		if(nReleaseNode != ENV_RELEASE_NODE_UNSET)
+			LimitMax(nReleaseNode, static_cast<decltype(nReleaseNode)>(size() - 1));
+	} else
+	{
+		nLoopStart = 0;
+		nLoopEnd = 0;
+		nSustainStart = 0;
+		nSustainEnd = 0;
+		nReleaseNode = ENV_RELEASE_NODE_UNSET;
 	}
-	LimitMax(nLoopEnd, static_cast<decltype(nLoopEnd)>(size() - 1));
-	LimitMax(nLoopStart, nLoopEnd);
-	LimitMax(nSustainEnd, static_cast<decltype(nSustainEnd)>(size() - 1));
-	LimitMax(nSustainStart, nSustainEnd);
-	if(nReleaseNode != ENV_RELEASE_NODE_UNSET)
-		LimitMax(nReleaseNode, static_cast<decltype(nReleaseNode)>(size() - 1));
 }
 
 
@@ -285,7 +295,7 @@ void ModInstrument::Sanitize(MODTYPE modType)
 	MPT_UNREFERENCED_PARAMETER(modType);
 	const uint8 range = ENVELOPE_MAX;
 #else
-	const uint8 range = modType == MOD_TYPE_AMS ? uint8_max : ENVELOPE_MAX;
+	const uint8 range = modType == MOD_TYPE_AMS ? uint8_max : uint8(ENVELOPE_MAX);
 #endif
 	VolEnv.Sanitize();
 	PanEnv.Sanitize();
@@ -312,13 +322,23 @@ std::map<SAMPLEINDEX, int8> ModInstrument::CanConvertToDefaultNoteMap() const
 	{
 		if(Keyboard[i] == 0)
 			continue;
-		if(!NoteMap[i] || NoteMap[i] == (i + 1))
+		if(NoteMap[i] == NOTE_NONE)
 			continue;
 
 		const int8 relativeNote = static_cast<int8>(NoteMap[i] - (i + NOTE_MIN));
 		if(transposeMap.count(Keyboard[i]) && transposeMap[Keyboard[i]] != relativeNote)
 			return {};
 		transposeMap[Keyboard[i]] = relativeNote;
+	}
+	// Remove all samples that wouldn't be transposed.
+	// They were previously inserted into the map to catch the case where a specific sample's
+	// map would start with a transpose value of 0 but end with a different value.
+	for(auto it = transposeMap.begin(); it != transposeMap.end();)
+	{
+		if(it->second == 0)
+			it = transposeMap.erase(it);
+		else
+			it++;
 	}
 	return transposeMap;
 }

@@ -9,6 +9,10 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
+#if defined(__MINGW32__) && !defined(__MINGW64__)
+#include <sys/types.h>
+#endif
+
 #include "libopenmpt_internal.h"
 #include "libopenmpt.hpp"
 #include "libopenmpt_ext.hpp"
@@ -311,6 +315,9 @@ std::int32_t module::get_current_speed() const {
 }
 std::int32_t module::get_current_tempo() const {
 	return impl->get_current_tempo();
+}
+double module::get_current_tempo2() const {
+	return impl->get_current_tempo2();
 }
 std::int32_t module::get_current_order() const {
 	return impl->get_current_order();

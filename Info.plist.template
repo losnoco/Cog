@@ -1498,6 +1498,7 @@
 				<string>s3m</string>
 				<string>xm</string>
 				<string>it</string>
+				<string>667</string>
 				<string>669</string>
 				<string>amf</string>
 				<string>ams</string>
@@ -1534,8 +1535,11 @@
 				<string>stx</string>
 				<string>stp</string>
 				<string>symmod</string>
+				<string>gtk</string>
+				<string>gt2</string>
 				<string>ult</string>
 				<string>wow</string>
+				<string>xmf</string>
 				<string>gdm</string>
 				<string>mo3</string>
 				<string>oxm</string>

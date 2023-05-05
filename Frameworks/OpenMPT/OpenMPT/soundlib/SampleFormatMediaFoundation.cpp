@@ -23,6 +23,9 @@
 #include "../soundlib/ModSampleCopy.h"
 #include "../common/ComponentManager.h"
 #if defined(MPT_WITH_MEDIAFOUNDATION)
+#include "mpt/io_file_adapter/fileadapter.hpp"
+#include "../common/FileReader.h"
+#include "../common/mptFileTemporary.h"
 #include <windows.h>
 #include <atlbase.h>
 #include <mfapi.h>
@@ -31,6 +34,7 @@
 #include <mferror.h>
 #include <Propvarutil.h>
 #endif // MPT_WITH_MEDIAFOUNDATION
+#include "mpt/string/utility.hpp"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -304,7 +308,7 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 	// When using MF to decode MP3 samples in MO3 files, we need the mp3 file extension
 	// for some of them or otherwise MF refuses to recognize them.
 	mpt::PathString tmpfileExtension = (mo3Decode ? P_("mp3") : P_("tmp"));
-	OnDiskFileWrapper diskfile(file, tmpfileExtension);
+	mpt::IO::FileAdapter<FileCursor> diskfile(file, mpt::TemporaryPathname{tmpfileExtension}.GetPathname());
 	if(!diskfile.IsValid())
 	{
 		return false;
@@ -322,7 +326,7 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 	MPT_MF_CHECKED(MFCreateSourceResolver(&sourceResolver));
 	MF_OBJECT_TYPE objectType = MF_OBJECT_INVALID;
 	CComPtr<IUnknown> unknownMediaSource;
-	MPT_MF_CHECKED(sourceResolver->CreateObjectFromURL(diskfile.GetFilename().ToWide().c_str(), MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_CONTENT_DOES_NOT_HAVE_TO_MATCH_EXTENSION_OR_MIME_TYPE | MF_RESOLUTION_READ, NULL, &objectType, &unknownMediaSource));
+	MPT_MF_CHECKED(sourceResolver->CreateObjectFromURL(mpt::ToWide(diskfile.GetFilename()).c_str(), MF_RESOLUTION_MEDIASOURCE | MF_RESOLUTION_CONTENT_DOES_NOT_HAVE_TO_MATCH_EXTENSION_OR_MIME_TYPE | MF_RESOLUTION_READ, NULL, &objectType, &unknownMediaSource));
 	if(objectType != MF_OBJECT_MEDIASOURCE)
 	{
 		return false;

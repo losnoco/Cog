@@ -16,18 +16,17 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
-IMixPlugin *SymMODEcho::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+IMixPlugin *SymMODEcho::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) SymMODEcho(factory, sndFile, mixStruct);
 }
 
 
-SymMODEcho::SymMODEcho(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN *mixStruct)
+SymMODEcho::SymMODEcho(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 	: IMixPlugin(factory, sndFile, mixStruct)
 	, m_chunk(PluginChunk::Default())
 {
 	m_mixBuffer.Initialize(2, 2);
-	InsertIntoFactoryList();
 	RecalculateEchoParams();
 }
 
