@@ -1001,7 +1001,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 }
 
 + (NSArray *)mimeTypes {
-	return @[@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"application/ogg", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", @"application/vnd.apple.mpegurl"];
+	return @[@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"application/ogg", @"audio/aac", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", @"application/vnd.apple.mpegurl"];
 }
 
 + (NSArray *)fileTypeAssociations {
