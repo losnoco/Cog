@@ -8,7 +8,7 @@
 
 #import <libvgmstream/vgmstream.h>
 
-#import <libvgmstream/plugins.h>
+#import <libvgmstream/api.h>
 
 /* a STREAMFILE that operates via standard IO using a buffer */
 typedef struct _COGSTREAMFILE {
