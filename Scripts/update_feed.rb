@@ -110,15 +110,14 @@ if 1 #appcast_revision < latest_revision
   #List out the deltas
   deltas = Dir.entries("#{site_dir}/#{feed}_builds").select { |f| f =~ /\A#{Regexp.escape(deltamask)}.+\.delta\z/ }
 
-  #Upload them to Bunny
-  bunnykey = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s bunnyaccesskey].chop
-  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{filename}' 'https://storage.bunnycdn.com/cog-ecdn/#{filename}' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/octet-stream']
+  #Upload them to R2
+  %x[rclone copy '#{site_dir}/#{feed}_builds/#{filename}' r2:cog/ --progress]
   deltas.each do |f|
-    %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{f}' 'https://storage.bunnycdn.com/cog-ecdn/#{f}' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/octet-stream']
+    %x[rclone copy '#{site_dir}/#{feed}_builds/#{f}' r2:cog/ --progress]
   end
 
   #Upload the changelog that Sparkle will display
-  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{filenamedesc}' 'https://storage.bunnycdn.com/cog-ecdn/#{filenamedesc}' --header 'AccessKey: #{bunnykey}' --header 'content-type: text/html']
+  %x[rclone copy '#{site_dir}/#{feed}_builds/#{filenamedesc}' r2:cog/ --progress]
  
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.app']
@@ -126,14 +125,9 @@ if 1 #appcast_revision < latest_revision
   #Convert to JSON
   %x[pushd '#{site_dir}/#{feed}_builds' && '#{__dir__}/sparkleToJSON' '#{site_dir}/#{feed}_builds/#{feed}.xml' && popd]
 
-  #Upload to Bunny
-  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{feed}.xml' 'https://storage.bunnycdn.com/cog-ecdn/#{feed}.xml' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/xml']
-  %x[curl --upload-file '#{site_dir}/#{feed}_builds/#{feed}.json' 'https://storage.bunnycdn.com/cog-ecdn/#{feed}.json' --header 'AccessKey: #{bunnykey}' --header 'content-type: application/json']
-
-  #Purge the cache
-  bunnykey2 = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s bunnyaccesskey2].chop
-  %x[curl --request GET --url 'https://api.bunny.net/purge?url=https%3A%2F%2Fcogcdn.cog.losno.co%2F#{feed}.xml&async=false' --header 'AccessKey: #{bunnykey2}' --header 'accept: application/json']
-  %x[curl --request GET --url 'https://api.bunny.net/purge?url=https%3A%2F%2Fcogcdn.cog.losno.co%2F%{feed}.json&async=false' --header 'AccessKey: #{bunnykey2}' --header 'accept: application/json']
+  #Upload to R2
+  %x[rclone copy '#{site_dir}/#{feed}_builds/#{feed}.xml' r2:cog/ --progress]
+  %x[rclone copy '#{site_dir}/#{feed}_builds/#{feed}.json' r2:cog/ --progress]
 
   #Send web hook to update site
   update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl].chop
