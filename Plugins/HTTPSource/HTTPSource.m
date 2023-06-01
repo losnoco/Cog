@@ -64,7 +64,7 @@ static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t si
 	DLog(@"%s", meta);
 	const char *e = meta + size;
 	const char strtitle[] = "StreamTitle='";
-	char title[256] = "";
+	char title[4096] = "";
 	while(meta < e) {
 		if(!memcmp(meta, strtitle, sizeof(strtitle) - 1)) {
 			meta += sizeof(strtitle) - 1;
