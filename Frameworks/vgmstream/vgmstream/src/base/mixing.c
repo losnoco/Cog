@@ -1,4 +1,5 @@
-#include "vgmstream.h"
+#include "../vgmstream.h"
+#include "../util/channel_mappings.h"
 #include "mixing.h"
 #include "plugins.h"
 #include <math.h>
@@ -1187,7 +1188,7 @@ typedef enum {
 void mixing_macro_downmix(VGMSTREAM* vgmstream, int max /*, mapping_t output_mapping*/) {
     mixing_data *data = vgmstream->mixing_data;
     int ch, output_channels, mp_in, mp_out, ch_in, ch_out;
-    mapping_t input_mapping, output_mapping;
+    channel_mapping_t input_mapping, output_mapping;
     const double vol_max = 1.0;
     const double vol_sqrt = 1 / sqrt(2);
     const double vol_half = 1 / 2;

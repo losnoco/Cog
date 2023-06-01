@@ -2,6 +2,8 @@
 #include "hca_keys.h"
 #include "../coding/coding.h"
 #include "../coding/hca_decoder_clhca.h"
+#include "../util/channel_mappings.h"
+#include "../util/companion_files.h"
 
 #ifdef VGM_DEBUG_OUTPUT
   //#define HCA_BRUTEFORCE
