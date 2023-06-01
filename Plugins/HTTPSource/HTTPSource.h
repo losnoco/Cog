@@ -15,7 +15,7 @@
 #define BUFFER_SIZE 0x10000
 #define BUFFER_MASK 0xffff
 
-#define MAX_METADATA 1024
+#define MAX_METADATA 4096
 
 #define TIMEOUT 10 // in seconds
 
