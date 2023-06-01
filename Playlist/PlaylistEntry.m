@@ -503,7 +503,13 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		self.error = YES;
 		self.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMetadata", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else {
-		NSMutableDictionary *metaDict = [self.metadataBlob mutableCopy];
+		NSDictionary *originalDict = (NSDictionary * _Nullable) self.metadataBlob;
+		NSMutableDictionary *metaDict;
+		if(originalDict) {
+			metaDict = [originalDict mutableCopy];
+		} else {
+			metaDict = [[NSMutableDictionary alloc] init];
+		}
 		self.volume = 1;
 		for(NSString *key in metadata) {
 			NSString *lowerKey = [key lowercaseString];
