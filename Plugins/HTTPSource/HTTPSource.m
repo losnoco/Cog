@@ -85,6 +85,15 @@ static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t si
 				if(tit) {
 					*tit = 0;
 					tit += 3;
+					
+					if(!strncmp(tit, "text=\"", 6)) { // Hack for a certain stream
+						char *titfirst = tit + 6;
+						char *titlast = strchr(titfirst, '"');
+						if(titlast) {
+							*titlast = 0;
+						}
+						tit = titfirst;
+					}
 
 					const char *orig_title = [fp->title UTF8String];
 					const char *orig_artist = [fp->artist UTF8String];
