@@ -594,11 +594,15 @@ static void http_stream_reset(HTTPSource *fp) {
 
 	[NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
 
+	// Wait for transfer to at least start
 	while(status == STATUS_UNSTARTED) {
 		usleep(3000);
 	}
 
-	while(status != STATUS_READING && curl) {
+	// Now wait for it to either begin streaming, or complete if file is small enough to fit in the buffer
+	while(status != STATUS_READING &&
+	      status != STATUS_FINISHED &&
+	      curl) {
 		usleep(3000);
 	}
 
