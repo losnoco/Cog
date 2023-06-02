@@ -520,7 +520,37 @@ static AppController *kAppController = nil;
 	NSMutableArray *urls = [NSMutableArray array];
 
 	for(NSString *filename in filenames) {
-		[urls addObject:[NSURL fileURLWithPath:filename]];
+		NSURL *url = nil;
+		if([[NSFileManager defaultManager] fileExistsAtPath:filename]) {
+			url = [NSURL fileURLWithPath:filename];
+		} else {
+			if([filename hasPrefix:@"/http/::"] ||
+			   [filename hasPrefix:@"/https/::"]) {
+				// Stupid Carbon bodge for AppleScript
+				NSString *method = nil;
+				NSString *server = nil;
+				NSString *path = nil;
+
+				NSScanner *objScanner = [NSScanner scannerWithString:filename];
+
+				if(![objScanner scanString:@"/" intoString:nil] ||
+				   ![objScanner scanUpToString:@"/" intoString:&method] ||
+				   ![objScanner scanString:@"/::" intoString:nil] ||
+				   ![objScanner scanUpToString:@":" intoString:&server] ||
+				   ![objScanner scanString:@":" intoString:nil]) {
+					continue;
+				}
+				[objScanner scanUpToCharactersFromSet:[NSCharacterSet illegalCharacterSet] intoString:&path];
+				// Colons in server were converted to shashes, convert back
+				NSString *convertedServer = [server stringByReplacingOccurrencesOfString:@"/" withString:@":"];
+				// Slashes in path were converted to colons, convert back
+				NSString *convertedPath = [path stringByReplacingOccurrencesOfString:@":" withString:@"/"];
+				url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%@", method, convertedServer, convertedPath]];
+			}
+		}
+		if(url) {
+			[urls addObject:url];
+		}
 	}
 
 	NSDictionary *loadEntriesData = @{ @"entries": urls,
