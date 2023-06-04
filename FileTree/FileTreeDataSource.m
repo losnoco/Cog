@@ -145,6 +145,13 @@ static NSURL *defaultMusicDirectory(void) {
 }
 
 - (void)pathDidChange:(NSString *)path flags:(FSEventStreamEventFlags)flags {
+	if(!(flags & (kFSEventStreamEventFlagItemCreated |
+	              kFSEventStreamEventFlagItemRemoved |
+	              kFSEventStreamEventFlagItemRenamed))) {
+		// We only care about changes that would affect whether a file exists, or has a new name
+		// Apparently, Xattr changes are causing crashes in this notification tracker, oops.
+		return;
+	}
 	DLog(@"PATH DID CHANGE: %@", path);
 	// Need to find the corresponding node...and call [node reloadPath], then [self reloadPathNode:node]
 	PathNode *node;
