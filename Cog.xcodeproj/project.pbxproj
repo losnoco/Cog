@@ -11,7 +11,6 @@
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
 		0A1B412C286F6301008A6A44 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 0A1B412E286F6301008A6A44 /* Localizable.stringsdict */; };
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
-		0A9CEA092861506A00E47168 /* AboutCog.jp2 in Resources */ = {isa = PBXBuildFile; fileRef = 0A9CEA082861506A00E47168 /* AboutCog.jp2 */; };
 		0A9CEA0B286152DF00E47168 /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA0A286152DF00E47168 /* DraggableView.swift */; };
 		170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */; };
 		171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57D90C091F2B00F6AFAF /* flac.icns */; };
@@ -741,7 +740,6 @@
 		0A1B412D286F6301008A6A44 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		0A1B412F286F6307008A6A44 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
-		0A9CEA082861506A00E47168 /* AboutCog.jp2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = AboutCog.jp2; sourceTree = "<group>"; };
 		0A9CEA0A286152DF00E47168 /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DraggableView.swift; path = Window/DraggableView.swift; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusImageTransformer.h; sourceTree = "<group>"; };
@@ -1273,14 +1271,6 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		177EC02D0B8BC2E60000BC8C /* Images */ = {
-			isa = PBXGroup;
-			children = (
-				0A9CEA082861506A00E47168 /* AboutCog.jp2 */,
-			);
-			name = Images;
-			sourceTree = "<group>";
-		};
 		179790DD0C087AB7001D6996 /* OpenURLPanel */ = {
 			isa = PBXGroup;
 			children = (
@@ -1524,7 +1514,6 @@
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
-				177EC02D0B8BC2E60000BC8C /* Images */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				8E7575D909F31E930080F1EE /* Localizable.strings */,
@@ -2511,7 +2500,6 @@
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
-				0A9CEA092861506A00E47168 /* AboutCog.jp2 in Resources */,
 				83978E29285C5C0A0076ED21 /* GoogleService-Info.plist in Resources */,
 				836DF61E298F7F6E00CD0580 /* Scenes.scnassets in Resources */,
 			);
