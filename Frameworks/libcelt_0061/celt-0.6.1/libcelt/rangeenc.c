@@ -150,7 +150,7 @@ long ec_enc_tell(ec_enc *_this,int _b){
   nbits+=EC_CODE_BITS;
   nbits<<=_b;
   l=EC_ILOG(_this->rng);
-  r=_this->rng>>l-16;
+  r=_this->rng>>(l-16);
   while(_b-->0){
     int b;
     r=r*r>>15;
@@ -174,7 +174,7 @@ void ec_enc_done(ec_enc *_this){
       msk=EC_CODE_TOP-1;
       do{
         msk>>=1;
-        end=_this->low+msk&~msk|msk+1;
+        end=(((_this->low+msk)&~msk)|msk+1);
       }
       while(end-_this->low>=_this->rng);
     }

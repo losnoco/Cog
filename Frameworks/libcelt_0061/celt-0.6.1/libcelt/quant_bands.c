@@ -102,7 +102,7 @@ unsigned quant_coarse_energy(const CELTMode *m, celt_word16_t *eBands, celt_word
    /* The .8 is a heuristic */
    beta = MULT16_16_Q15(QCONST16(.8f,15),coef);
    
-   bits = ec_enc_tell(enc, 0);
+   bits = (int)ec_enc_tell(enc, 0);
    /* Encode at a fixed coarse resolution */
    for (i=0;i<m->nbEBands;i++)
    {
@@ -125,7 +125,7 @@ unsigned quant_coarse_energy(const CELTMode *m, celt_word16_t *eBands, celt_word
 #endif
          /* If we don't have enough bits to encode all the energy, just assume something safe.
             We allow slightly busting the budget here */
-         bits_used=ec_enc_tell(enc, 0) - bits;
+         bits_used=(int)ec_enc_tell(enc, 0) - bits;
          if (bits_used > budget)
          {
             qi = -1;
@@ -235,7 +235,7 @@ void unquant_coarse_energy(const CELTMode *m, celt_ener_t *eBands, celt_word16_t
    /* The .8 is a heuristic */
    beta = MULT16_16_Q15(QCONST16(.8f,15),coef);
    
-   bits = ec_dec_tell(dec, 0);
+   bits = (int)ec_dec_tell(dec, 0);
    /* Decode at a fixed coarse resolution */
    for (i=0;i<m->nbEBands;i++)
    {

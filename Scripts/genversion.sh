@@ -16,7 +16,7 @@ GIT_RELEASE_VERSION=$("$git" -C "$REPO_ROOT_PATH" describe --tags --always | "$s
 
 GIT_RELEASE_NUMBER=${GIT_RELEASE_VERSION%-*}
 
-MACOS_PLIST_PATH="$REPO_ROOT_PATH/Info.plist"
+MACOS_PLIST_PATH=$2
 
 BUILD_TIME=$(date)
 
@@ -28,7 +28,7 @@ echo "RELEASE_VERSION: $GIT_RELEASE_VERSION"
 
 for plist in "$MACOS_PLIST_PATH"; do
 
-	plist_template=${plist}.template
+	plist_template=$1
 
 	if [ -f "$plist_template" ]; then
 

@@ -66,9 +66,7 @@ celt_word16_t renormalise_vector(celt_norm_t *X, celt_word16_t value, int N, int
 /** Intra-frame predictor that matches a section of the current frame (at lower
  * frequencies) to encode the current band.
  * @param x Residual signal to quantise/encode (returns quantised version)
- * @param W Perceptual weight
  * @param N Number of samples to encode
- * @param K Number of pulses to use
  * @param Y Lower frequency spectrum to use, normalised to the same standard deviation
  * @param P Pitch vector (it is assumed that p+x is a unit vector)
  * @param B Stride (number of channels multiplied by the number of MDCTs per frame)

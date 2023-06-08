@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -2051,7 +2051,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1400;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
 						DevelopmentTeam = "";
@@ -2522,6 +2523,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Scripts/genversion.sh",
 				"$(SRCROOT)/Info.plist.template",
 			);
 			name = "Run version generator script";
@@ -2530,10 +2532,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PROJECT_DIR}/Scripts/genversion.sh\"\n";
+			shellScript = "$SCRIPT_INPUT_FILE_0 $SCRIPT_INPUT_FILE_1 $SCRIPT_OUTPUT_FILE_0\n";
 		};
 		83978E27285C5A4C0076ED21 /* Run Crashlytics symbol upload */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 12;
 			files = (
 			);
@@ -3024,7 +3027,6 @@
 					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
 					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
@@ -3081,7 +3083,6 @@
 					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
 					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-DHAVE_CONFIG_H",
@@ -3113,6 +3114,7 @@
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3157,6 +3159,7 @@
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;

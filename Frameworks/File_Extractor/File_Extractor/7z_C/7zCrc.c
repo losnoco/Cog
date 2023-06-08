@@ -46,7 +46,7 @@ UInt32 MY_FAST_CALL CrcCalc(const void *data, size_t size)
   return g_CrcUpdate(CRC_INIT_VAL, data, size, g_CrcTable) ^ CRC_INIT_VAL;
 }
 
-void MY_FAST_CALL CrcGenerateTable()
+void MY_FAST_CALL CrcGenerateTable(void)
 {
   UInt32 i;
   for (i = 0; i < 256; i++)

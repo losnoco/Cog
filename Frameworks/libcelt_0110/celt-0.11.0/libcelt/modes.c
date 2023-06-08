@@ -247,7 +247,7 @@ static void compute_allocation_table(CELTMode *mode)
 CELTMode *celt_mode_create(celt_int32 Fs, int frame_size, int *error)
 {
    int i;
-   CELTMode *mode=NULL;
+   //CELTMode *mode=NULL;
 #ifdef CUSTOM_MODES
    int res;
    celt_word16 *window;

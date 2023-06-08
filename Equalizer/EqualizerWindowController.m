@@ -19,11 +19,11 @@ static json_value *equalizer_presets = NULL;
 
 static NSString *_cog_equalizer_type = @"Cog EQ library file v1.0";
 
-static NSArray *_cog_equalizer_items() {
+static NSArray *_cog_equalizer_items(void) {
 	return @[@"name", @"hz32", @"hz64", @"hz128", @"hz256", @"hz512", @"hz1000", @"hz2000", @"hz4000", @"hz8000", @"hz16000", @"preamp"];
 }
 
-static NSArray *_cog_equalizer_band_settings() {
+static NSArray *_cog_equalizer_band_settings(void) {
 	return @[@"eqPreamp", @"eq20Hz", @"eq25Hz", @"eq31p5Hz", @"eq40Hz", @"eq50Hz", @"eq63Hz", @"eq80Hz", @"eq100Hz", @"eq125Hz", @"eq160Hz", @"eq200Hz", @"eq250Hz", @"eq315Hz", @"eq400Hz", @"eq500Hz", @"eq630Hz", @"eq800Hz", @"eq1kHz", @"eq1p2kHz", @"eq1p6kHz", @"eq2kHz", @"eq2p5kHz", @"eq3p1kHz", @"eq4kHz", @"eq5kHz", @"eq6p3kHz", @"eq8kHz", @"eq10kHz", @"eq12kHz", @"eq16kHz", @"eq20kHz"];
 }
 
@@ -128,7 +128,7 @@ static float getPreamp(const NSDictionary *preset) {
 	return [[preset objectForKey:[cog_equalizer_items objectAtIndex:11]] floatValue];
 }
 
-static void loadPresets() {
+static void loadPresets(void) {
 	if([equalizer_presets_processed count]) return;
 
 	NSURL *url = [[NSBundle mainBundle] URLForResource:@"Cog.q1" withExtension:@"json"];

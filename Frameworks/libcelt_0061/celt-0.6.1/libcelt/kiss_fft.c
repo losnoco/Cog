@@ -529,7 +529,7 @@ void kf_work(
     const int m=*factors++; /* stage's fft length/p */
     /*printf ("fft %d %d %d %d %d %d %d\n", p*m, m, p, s2, fstride*in_stride, N, m2);*/
     if (m!=1) 
-        kf_work( Fout , f, fstride*p, in_stride, factors,st, N*p, fstride*in_stride, m);
+        kf_work( Fout , f, fstride*p, in_stride, factors,st, N*p, (int)fstride*in_stride, m);
 
     switch (p) {
         case 2: kf_bfly2(Fout,fstride,st,m, N, m2); break;
@@ -565,7 +565,7 @@ void ki_work(
    const int m=*factors++; /* stage's fft length/p */
    /*printf ("fft %d %d %d %d %d %d %d\n", p*m, m, p, s2, fstride*in_stride, N, m2);*/
    if (m!=1) 
-      ki_work( Fout , f, fstride*p, in_stride, factors,st, N*p, fstride*in_stride, m);
+      ki_work( Fout , f, fstride*p, in_stride, factors,st, N*p, (int)fstride*in_stride, m);
 
    switch (p) {
       case 2: ki_bfly2(Fout,fstride,st,m, N, m2); break;
@@ -619,7 +619,7 @@ kiss_fft_cfg kiss_fft_alloc(int nfft,void * mem,size_t * lenmem )
           + sizeof(kiss_twiddle_cpx)*(nfft-1) + sizeof(int)*nfft; /* twiddle factors*/
 
     if ( lenmem==NULL ) {
-        st = ( kiss_fft_cfg)KISS_FFT_MALLOC( memneeded );
+        st = ( kiss_fft_cfg)KISS_FFT_MALLOC( (int)memneeded );
     }else{
         if (mem != NULL && *lenmem >= memneeded)
             st = (kiss_fft_cfg)mem;

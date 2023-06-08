@@ -119,8 +119,8 @@ static inline void ec_dec_normalize(ec_dec *_this){
     /*Read the next value from the input.*/
     _this->rem=ec_dec_in(_this);
     /*Take the rest of the bits we need from this new symbol.*/
-    sym|=_this->rem>>EC_SYM_BITS-EC_CODE_EXTRA;
-    _this->dif=(_this->dif<<EC_SYM_BITS)-sym&EC_CODE_MASK;
+    sym|=_this->rem>>(EC_SYM_BITS-EC_CODE_EXTRA);
+    _this->dif=(_this->dif<<EC_SYM_BITS)-sym&(EC_CODE_MASK);
     /*dif can never be larger than EC_CODE_TOP.
       This is equivalent to the slightly more readable:
       if(_this->dif>EC_CODE_TOP)_this->dif-=EC_CODE_TOP;*/
@@ -132,7 +132,7 @@ void ec_dec_init(ec_dec *_this,ec_byte_buffer *_buf){
   _this->buf=_buf;
   _this->rem=ec_dec_in(_this);
   _this->rng=1U<<EC_CODE_EXTRA;
-  _this->dif=_this->rng-(_this->rem>>EC_SYM_BITS-EC_CODE_EXTRA);
+  _this->dif=_this->rng-(_this->rem>>(EC_SYM_BITS-EC_CODE_EXTRA));
   /*Normalize the interval.*/
   ec_dec_normalize(_this);
 }
@@ -177,7 +177,7 @@ long ec_dec_tell(ec_dec *_this,int _b){
   nbits+=EC_CODE_BITS;
   nbits<<=_b;
   l=EC_ILOG(_this->rng);
-  r=_this->rng>>l-16;
+  r=_this->rng>>(l-16);
   while(_b-->0){
     int b;
     r=r*r>>15;
