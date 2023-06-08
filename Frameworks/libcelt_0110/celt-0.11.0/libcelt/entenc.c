@@ -235,7 +235,7 @@ void ec_enc_done(ec_enc *_this){
   /*We output the minimum number of bits that ensures that the symbols encoded
      thus far will be decoded correctly regardless of the bits that follow.*/
   l=EC_CODE_BITS-EC_ILOG(_this->rng);
-  msk=EC_CODE_TOP-1>>l;
+  msk=(EC_CODE_TOP-1)>>l;
   end=_this->val+msk&~msk;
   if((end|msk)>=_this->val+_this->rng){
     l++;

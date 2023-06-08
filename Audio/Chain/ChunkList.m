@@ -72,7 +72,7 @@ struct dsd2pcm_state {
 static void dsd2pcm_free(void *);
 static void dsd2pcm_reset(void *);
 
-static void *dsd2pcm_alloc() {
+static void *dsd2pcm_alloc(void) {
 	struct dsd2pcm_state *state = (struct dsd2pcm_state *)calloc(1, sizeof(struct dsd2pcm_state));
 
 	float *FILT_LOOKUP_TABLE;

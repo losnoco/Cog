@@ -53,24 +53,24 @@ int log2_frac(ec_uint32 val, int frac)
   if(val&val-1){
     /*This is (val>>l-16), but guaranteed to round up, even if adding a bias
        before the shift would cause overflow (e.g., for 0xFFFFxxxx).*/
-    if(l>16)val=(val>>l-16)+((val&(1<<l-16)-1)+(1<<l-16)-1>>l-16);
+    if(l>16)val=(val>>(l-16))+(((val&(1<<(l-16))-1)+(1<<(l-16))-1)>>(l-16));
     else val<<=16-l;
-    l=l-1<<frac;
+    l=(l-1)<<frac;
     /*Note that we always need one iteration, since the rounding up above means
        that we might need to adjust the integer part of the logarithm.*/
     do{
       int b;
       b=(int)(val>>16);
       l+=b<<frac;
-      val=val+b>>b;
-      val=val*val+0x7FFF>>15;
+      val=(val+b)>>b;
+      val=(val*val+0x7FFF)>>15;
     }
     while(frac-->0);
     /*If val is not exactly 0x8000, then we have to round up the remainder.*/
     return l+(val>0x8000);
   }
   /*Exact powers of two require no rounding.*/
-  else return l-1<<frac;
+  else return (l-1)<<frac;
 }
 
 #ifndef SMALL_FOOTPRINT
@@ -140,12 +140,12 @@ static inline celt_uint32 imusdiv32even(celt_uint32 _a,celt_uint32 _b,
   celt_assert(_d>0);
   shift=EC_ILOG(_d^_d-1);
   celt_assert(_d<=256);
-  inv=INV_TABLE[_d-1>>shift];
+  inv=INV_TABLE[(_d-1)>>shift];
   shift--;
   one=1<<shift;
   mask=one-1;
   return (_a*(_b>>shift)-(_c>>shift)+
-   (_a*(_b&mask)+one-(_c&mask)>>shift)-1)*inv&MASK32;
+   ((_a*(_b&mask)+one-(_c&mask))>>shift)-1)*inv&MASK32;
 }
 
 #endif /* SMALL_FOOTPRINT */
@@ -391,7 +391,7 @@ static celt_uint32 ncwrs_urow(unsigned _n,unsigned _k,celt_uint32 *_u){
       /*U(N,K) = ((2*N-1)*U(N,K-1)-U(N,K-2))/(K-1) + U(N,K-2)*/
       _u[k]=um2=imusdiv32even(n2m1,um1,um2,k-1)+um2;
       if(++k>=len)break;
-      _u[k]=um1=imusdiv32odd(n2m1,um2,um1,k-1>>1)+um1;
+      _u[k]=um1=imusdiv32odd(n2m1,um2,um1,(k-1)>>1)+um1;
     }
   }
 #endif /* SMALL_FOOTPRINT */
@@ -420,7 +420,7 @@ static inline void cwrsi2(int _k,celt_uint32 _i,int *_y){
   s=-(_i>=p);
   _i-=p&s;
   yj=_k;
-  _k=_i+1>>1;
+  _k=(_i+1)>>1;
   p=ucwrs2(_k);
   _i-=p;
   yj-=_k;
@@ -441,7 +441,7 @@ static void cwrsi3(int _k,celt_uint32 _i,int *_y){
   yj=_k;
   /*Finds the maximum _k such that ucwrs3(_k)<=_i (tested for all
      _i<2147418113=U(3,32768)).*/
-  _k=_i>0?isqrt32(2*_i-1)+1>>1:0;
+  _k=_i>0?(isqrt32(2*_i-1)+1)>>1:0;
   p=ucwrs3(_k);
   _i-=p;
   yj-=_k;
@@ -468,7 +468,7 @@ static void cwrsi4(int _k,celt_uint32 _i,int *_y){
   kl=0;
   kr=_k;
   for(;;){
-    _k=kl+kr>>1;
+    _k=(kl+kr)>>1;
     p=ucwrs4(_k);
     if(p<_i){
       if(_k>=kr)break;
@@ -499,7 +499,7 @@ static void cwrsi5(int _k,celt_uint32 _i,int *_y){
     int kl=0;
     int kr=_k;
     for(;;){
-      _k=kl+kr>>1;
+      _k=(kl+kr)>>1;
       p=ucwrs5(_k);
       if(p<_i){
         if(_k>=kr)break;

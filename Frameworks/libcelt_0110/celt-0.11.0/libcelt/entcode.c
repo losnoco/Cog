@@ -82,7 +82,7 @@ ec_uint32 ec_tell_frac(ec_ctx *_this){
      encoder or decoder claims to have used 1 bit.*/
   nbits=_this->nbits_total<<BITRES;
   l=EC_ILOG(_this->rng);
-  r=_this->rng>>l-16;
+  r=_this->rng>>(l-16);
   for(i=BITRES;i-->0;){
     int b;
     r=r*r>>15;

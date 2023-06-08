@@ -496,7 +496,7 @@ int celt_encode_float(CELTEncoder * restrict st, const celt_sig_t * pcm, celt_si
 #endif
    int i, c, N, N4;
    int has_pitch;
-   int pitch_index;
+   int pitch_index=0;
    int bits;
    int has_fold=1;
    unsigned coarse_needed;
@@ -828,7 +828,7 @@ int celt_encode_float(CELTEncoder * restrict st, const celt_sig_t * pcm, celt_si
 
      /* The average energy is removed from the target and the actual 
         energy added*/
-     target=target-588+ec_enc_tell(&enc, 4);
+     target=target-588+(int)ec_enc_tell(&enc, 4);
 
      /* In VBR mode the frame size must not be reduced so much that it would result in the coarse energy busting its budget */
      target=IMAX(coarse_needed,(target+64)/128);
@@ -840,7 +840,7 @@ int celt_encode_float(CELTEncoder * restrict st, const celt_sig_t * pcm, celt_si
 
    for (i=0;i<st->mode->nbEBands;i++)
       offsets[i] = 0;
-   bits = nbCompressedBytes*8 - ec_enc_tell(&enc, 0) - 1;
+   bits = nbCompressedBytes*8 - (int)ec_enc_tell(&enc, 0) - 1;
    if (has_pitch)
       bits -= st->mode->nbPBands;
 #ifndef STDIN_TUNING
@@ -857,7 +857,7 @@ int celt_encode_float(CELTEncoder * restrict st, const celt_sig_t * pcm, celt_si
       quant_bands_stereo(st->mode, X, P, NULL, has_pitch, gains, bandE, pulses, shortBlocks, has_fold, nbCompressedBytes*8, &enc);
 #endif
 
-   quant_energy_finalise(st->mode, bandE, st->oldBandE, error, fine_quant, fine_priority, nbCompressedBytes*8-ec_enc_tell(&enc, 0), &enc);
+   quant_energy_finalise(st->mode, bandE, st->oldBandE, error, fine_quant, fine_priority, nbCompressedBytes*8-(int)ec_enc_tell(&enc, 0), &enc);
 
    /* Re-synthesis of the coded audio if required */
    if (st->pitch_available>0 || optional_synthesis!=NULL)
@@ -1365,7 +1365,7 @@ int celt_decode_float(CELTDecoder * restrict st, const unsigned char *data, int 
    for (i=0;i<st->mode->nbEBands;i++)
       offsets[i] = 0;
 
-   bits = len*8 - ec_dec_tell(&dec, 0) - 1;
+   bits = len*8 - (int)ec_dec_tell(&dec, 0) - 1;
    if (has_pitch)
       bits -= st->mode->nbPBands;
    compute_allocation(st->mode, offsets, bits, pulses, fine_quant, fine_priority);
@@ -1397,7 +1397,7 @@ int celt_decode_float(CELTDecoder * restrict st, const unsigned char *data, int 
    else
       unquant_bands_stereo(st->mode, X, P, has_pitch, gains, bandE, pulses, shortBlocks, has_fold, len*8, &dec);
 #endif
-   unquant_energy_finalise(st->mode, bandE, st->oldBandE, fine_quant, fine_priority, len*8-ec_dec_tell(&dec, 0), &dec);
+   unquant_energy_finalise(st->mode, bandE, st->oldBandE, fine_quant, fine_priority, len*8-(int)ec_dec_tell(&dec, 0), &dec);
    
    /* Synthesis */
    denormalise_bands(st->mode, X, freq, bandE);

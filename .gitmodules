@@ -15,7 +15,7 @@
 	url = https://github.com/Thealexbarney/LibAtrac9.git
 [submodule "Frameworks/shpakovski/MASShortcut"]
 	path = Frameworks/shpakovski/MASShortcut
-	url = https://github.com/shpakovski/MASShortcut.git
+	url = https://github.com/kode54/MASShortcut.git
 [submodule "Frameworks/libsidplayfp/sidplayfp"]
 	path = Frameworks/libsidplayfp/sidplayfp
 	url = https://github.com/kode54/libsidplayfp.git

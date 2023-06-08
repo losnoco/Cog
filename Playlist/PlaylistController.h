@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger, RepeatMode) {
 	RepeatModeRepeatAll
 };
 
-static inline BOOL IsRepeatOneSet() {
+static inline BOOL IsRepeatOneSet(void) {
 	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatModeRepeatOne;
 }
 

@@ -83,7 +83,6 @@ void haar1(celt_norm *X, int N0, int stride);
  * @param m Mode data 
  * @param X Residual (normalised)
  * @param total_bits Total number of bits that can be used for the frame (including the ones already spent)
- * @param enc Entropy encoder
  */
 void quant_all_bands(int encode, const CELTMode *m, int start, int end,
       celt_norm * X, celt_norm * Y, unsigned char *collapse_masks, const celt_ener *bandE, int *pulses,

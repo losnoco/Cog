@@ -110,7 +110,7 @@ static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
 		[dockTile setContentView:imageView];
 
 		progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0.0, 0.0, dockTile.size.width, 10.0)];
-		[progressIndicator setStyle:NSProgressIndicatorBarStyle];
+		[progressIndicator setStyle:NSProgressIndicatorStyleBar];
 		[progressIndicator setIndeterminate:NO];
 		[progressIndicator setBezeled:YES];
 		[progressIndicator setMinValue:0];

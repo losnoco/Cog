@@ -63,7 +63,7 @@ static const unsigned char trim_icdf[11] = {126, 124, 119, 109, 87, 41, 19, 9, 4
 /* Probs: NONE: 21.875%, LIGHT: 6.25%, NORMAL: 65.625%, AGGRESSIVE: 6.25% */
 static const unsigned char spread_icdf[4] = {25, 23, 2, 0};
 
-static const unsigned char tapset_icdf[3]={2,1,0};
+//static const unsigned char tapset_icdf[3]={2,1,0};
 
 #define COMBFILTER_MAXPERIOD 1024
 #define COMBFILTER_MINPERIOD 15
@@ -907,7 +907,7 @@ int celt_encode_with_ec_float(CELTEncoder * restrict st, const celt_sig * pcm, i
    int intensity=0;
    int dual_stereo=0;
    int effectiveBytes;
-   celt_word16 pf_threshold;
+   //celt_word16 pf_threshold;
    int dynalloc_logp;
    celt_int32 vbr_rate;
    celt_int32 total_bits;
@@ -988,7 +988,7 @@ int celt_encode_with_ec_float(CELTEncoder * restrict st, const celt_sig * pcm, i
              was entirely empty, but to allow 0 in hybrid mode. */
          vbr_bound = vbr_rate;
          max_allowed = IMIN(IMAX(tell==1?2:0,
-               vbr_rate+vbr_bound-st->vbr_reservoir>>(BITRES+3)),
+               (vbr_rate+vbr_bound-st->vbr_reservoir)>>(BITRES+3)),
                nbAvailableBytes);
          if(max_allowed < nbAvailableBytes)
          {
@@ -1356,9 +1356,9 @@ int celt_encode_with_ec_float(CELTEncoder * restrict st, const celt_sig * pcm, i
          result in the encoder running out of bits.
         The margin of 2 bytes ensures that none of the bust-prevention logic
          in the decoder will have triggered so far. */
-     min_allowed = (tell+total_boost+(1<<BITRES+3)-1>>(BITRES+3)) + 2 - nbFilledBytes;
+     min_allowed = ((((((tell+total_boost)+(1<<(BITRES+3))))-1)>>(BITRES+3)) + 2) - nbFilledBytes;
 
-     nbAvailableBytes = target+(1<<(BITRES+2))>>(BITRES+3);
+     nbAvailableBytes = (target+(1<<(BITRES+2)))>>(BITRES+3);
      nbAvailableBytes = IMAX(min_allowed,nbAvailableBytes);
      nbAvailableBytes = IMIN(nbCompressedBytes,nbAvailableBytes+nbFilledBytes) - nbFilledBytes;
 
@@ -1439,7 +1439,7 @@ int celt_encode_with_ec_float(CELTEncoder * restrict st, const celt_sig * pcm, i
 
    /* bits =   packet size        -       where we are         - safety*/
    bits = (nbCompressedBytes*8<<BITRES) - ec_tell_frac(enc) - 1;
-   anti_collapse_rsv = isTransient&&LM>=2&&bits>=(LM+2<<BITRES) ? (1<<BITRES) : 0;
+   anti_collapse_rsv = isTransient&&LM>=2&&bits>=((LM+2)<<BITRES) ? (1<<BITRES) : 0;
    bits -= anti_collapse_rsv;
    codedBands = compute_allocation(st->mode, st->start, st->end, offsets, cap,
          alloc_trim, &intensity, &dual_stereo, bits, &balance, pulses,
@@ -1916,7 +1916,7 @@ void celt_decoder_destroy(CELTDecoder *st)
 static void celt_decode_lost(CELTDecoder * restrict st, celt_word16 * restrict pcm, int N, int LM)
 {
    int c;
-   int pitch_index;
+   int pitch_index = 0;
    int overlap = st->mode->overlap;
    celt_word16 fade = Q15ONE;
    int i, len;
@@ -2366,7 +2366,7 @@ int celt_decode_with_ec_float(CELTDecoder * restrict st, const unsigned char *da
          ec_dec_icdf(dec, trim_icdf, 7) : 5;
 
    bits = (len*8<<BITRES) - ec_tell_frac(dec) - 1;
-   anti_collapse_rsv = isTransient&&LM>=2&&bits>=(LM+2<<BITRES) ? (1<<BITRES) : 0;
+   anti_collapse_rsv = isTransient&&LM>=2&&bits>=((LM+2)<<BITRES) ? (1<<BITRES) : 0;
    bits -= anti_collapse_rsv;
    codedBands = compute_allocation(st->mode, st->start, st->end, offsets, cap,
          alloc_trim, &intensity, &dual_stereo, bits, &balance, pulses,

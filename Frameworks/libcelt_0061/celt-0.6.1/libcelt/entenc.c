@@ -61,7 +61,7 @@ void ec_byte_write1(ec_byte_buffer *_b,unsigned _value){
   endbyte=_b->ptr-_b->buf;
   if(endbyte>=_b->storage){
     if (_b->resizable){
-      _b->buf=celt_realloc(_b->buf,(_b->storage+EC_BUFFER_INCREMENT)*sizeof(char));
+      _b->buf=celt_realloc(_b->buf,(int)(_b->storage+EC_BUFFER_INCREMENT)*sizeof(char));
       _b->storage+=EC_BUFFER_INCREMENT;
       _b->ptr=_b->buf+endbyte;
     } else {
@@ -76,7 +76,7 @@ void ec_byte_write4(ec_byte_buffer *_b,ec_uint32 _value){
   endbyte=_b->ptr-_b->buf;
   if(endbyte+4>_b->storage){
     if (_b->resizable){
-      _b->buf=celt_realloc(_b->buf,(_b->storage+EC_BUFFER_INCREMENT)*sizeof(char));
+      _b->buf=celt_realloc(_b->buf,(int)(_b->storage+EC_BUFFER_INCREMENT)*sizeof(char));
       _b->storage+=EC_BUFFER_INCREMENT;
       _b->ptr=_b->buf+endbyte;
     } else {
@@ -98,7 +98,7 @@ void ec_byte_writecopy(ec_byte_buffer *_b,void *_source,long _bytes){
   if(endbyte+_bytes>_b->storage){
     if (_b->resizable){
       _b->storage=endbyte+_bytes+EC_BUFFER_INCREMENT;
-      _b->buf=celt_realloc(_b->buf,_b->storage*sizeof(char));
+      _b->buf=celt_realloc(_b->buf,(int)_b->storage*sizeof(char));
       _b->ptr=_b->buf+endbyte;
     } else {
       celt_fatal("range encoder overflow\n");

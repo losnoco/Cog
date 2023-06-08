@@ -417,7 +417,7 @@ void quant_bands(const CELTMode *m, celt_norm_t * restrict X, celt_norm_t *P, ce
       N = eBands[i+1]-eBands[i];
       BPbits = m->bits;
 
-      tell = ec_enc_tell(enc, 4);
+      tell = (int)ec_enc_tell(enc, 4);
       if (i != 0)
          balance -= tell;
       remaining_bits = (total_bits<<BITRES)-tell-1;
@@ -517,7 +517,7 @@ void quant_bands_stereo(const CELTMode *m, celt_norm_t * restrict X, celt_norm_t
       BPbits = m->bits;
 
       N = eBands[i+1]-eBands[i];
-      tell = ec_enc_tell(enc, 4);
+      tell = (int)ec_enc_tell(enc, 4);
       if (i != 0)
          balance -= tell;
       remaining_bits = (total_bits<<BITRES)-tell-1;
@@ -702,7 +702,7 @@ void unquant_bands(const CELTMode *m, celt_norm_t * restrict X, celt_norm_t *P, 
       N = eBands[i+1]-eBands[i];
       BPbits = m->bits;
 
-      tell = ec_dec_tell(dec, 4);
+      tell = (int)ec_dec_tell(dec, 4);
       if (i != 0)
          balance -= tell;
       remaining_bits = (total_bits<<BITRES)-tell-1;
@@ -801,7 +801,7 @@ void unquant_bands_stereo(const CELTMode *m, celt_norm_t * restrict X, celt_norm
       BPbits = m->bits;
 
       N = eBands[i+1]-eBands[i];
-      tell = ec_dec_tell(dec, 4);
+      tell = (int)ec_dec_tell(dec, 4);
       if (i != 0)
          balance -= tell;
       remaining_bits = (total_bits<<BITRES)-tell-1;

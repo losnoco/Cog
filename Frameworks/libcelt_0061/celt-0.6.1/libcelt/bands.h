@@ -69,7 +69,6 @@ void denormalise_bands(const CELTMode *m, const celt_norm_t * restrict X, celt_s
  * @param X Spectrum to predict
  * @param P Pitch vector (normalised)
  * @param gains Gain computed for each pitch band (returned)
- * @param bank Square root of the energy for each band
  */
 int compute_pitch_gain(const CELTMode *m, const celt_norm_t *X, const celt_norm_t *P, celt_pgain_t *gains);
 

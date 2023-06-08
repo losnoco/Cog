@@ -2,6 +2,7 @@
 #include "HrtfData.h"
 #include "Endianness.h"
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 
 typedef struct {

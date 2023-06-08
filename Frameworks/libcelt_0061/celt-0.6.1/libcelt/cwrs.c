@@ -51,24 +51,24 @@ int log2_frac(ec_uint32 val, int frac)
   if(val&val-1){
     /*This is (val>>l-16), but guaranteed to round up, even if adding a bias
        before the shift would cause overflow (e.g., for 0xFFFFxxxx).*/
-    if(l>16)val=(val>>l-16)+((val&(1<<l-16)-1)+(1<<l-16)-1>>l-16);
+    if(l>16)val=(val>>(l-16))+(((val&(1<<(l-16))-1)+(1<<(l-16))-1)>>(l-16));
     else val<<=16-l;
-    l=l-1<<frac;
+    l=(l-1)<<frac;
     /*Note that we always need one iteration, since the rounding up above means
        that we might need to adjust the integer part of the logarithm.*/
     do{
       int b;
       b=(int)(val>>16);
       l+=b<<frac;
-      val=val+b>>b;
-      val=val*val+0x7FFF>>15;
+      val=(val+b)>>b;
+      val=(val*val+0x7FFF)>>15;
     }
     while(frac-->0);
     /*If val is not exactly 0x8000, then we have to round up the remainder.*/
     return l+(val>0x8000);
   }
   /*Exact powers of two require no rounding.*/
-  else return l-1<<frac;
+  else return (l-1)<<frac;
 }
 
 #define MASK32 (0xFFFFFFFF)
@@ -134,12 +134,12 @@ static inline celt_uint32_t imusdiv32even(celt_uint32_t _a,celt_uint32_t _b,
   celt_assert(_d>0);
   shift=EC_ILOG(_d^_d-1);
   celt_assert(_d<=256);
-  inv=INV_TABLE[_d-1>>shift];
+  inv=INV_TABLE[(_d-1)>>shift];
   shift--;
   one=1<<shift;
   mask=one-1;
   return (_a*(_b>>shift)-(_c>>shift)+
-   (_a*(_b&mask)+one-(_c&mask)>>shift)-1)*inv&MASK32;
+   ((_a*(_b&mask)+one-(_c&mask))>>shift)-1)*inv&MASK32;
 }
 
 /*Compute floor(sqrt(_val)) with exact arithmetic.
@@ -153,11 +153,11 @@ static unsigned isqrt32(celt_uint32_t _val){
     The main idea is to search for the largest binary digit b such that
      (g+b)*(g+b) <= _val, and add it to the solution g.*/
   g=0;
-  bshift=EC_ILOG(_val)-1>>1;
+  bshift=(EC_ILOG(_val)-1)>>1;
   b=1U<<bshift;
   do{
     celt_uint32_t t;
-    t=((celt_uint32_t)g<<1)+b<<bshift;
+    t=(((celt_uint32_t)g<<1)+b)<<bshift;
     if(t<=_val){
       g+=b;
       _val-=t;
@@ -342,6 +342,7 @@ int fits_in32(int _n, int _k)
    }
 }
 
+#if 0
 /*Compute U(1,_k).*/
 static inline unsigned ucwrs1(int _k){
   return _k?1:0;
@@ -351,6 +352,7 @@ static inline unsigned ucwrs1(int _k){
 static inline unsigned ncwrs1(int _k){
   return _k?2:1;
 }
+#endif
 
 /*Compute U(2,_k).
   Note that this may be called with _k=32768 (maxK[2]+1).*/
@@ -456,7 +458,7 @@ static celt_uint32_t ncwrs_urow(unsigned _n,unsigned _k,celt_uint32_t *_u){
       /*U(N,K) = ((2*N-1)*U(N,K-1)-U(N,K-2))/(K-1) + U(N,K-2)*/
       _u[k]=um2=imusdiv32even(n2m1,um1,um2,k-1)+um2;
       if(++k>=len)break;
-      _u[k]=um1=imusdiv32odd(n2m1,um2,um1,k-1>>1)+um1;
+      _u[k]=um1=imusdiv32odd(n2m1,um2,um1,(k-1)>>1)+um1;
     }
   }
   return _u[_k]+_u[_k+1];
@@ -483,7 +485,7 @@ static inline void cwrsi2(int _k,celt_uint32_t _i,int *_y){
   s=-(_i>=p);
   _i-=p&s;
   yj=_k;
-  _k=_i+1>>1;
+  _k=(_i+1)>>1;
   p=ucwrs2(_k);
   _i-=p;
   yj-=_k;
@@ -504,7 +506,7 @@ static void cwrsi3(int _k,celt_uint32_t _i,int *_y){
   yj=_k;
   /*Finds the maximum _k such that ucwrs3(_k)<=_i (tested for all
      _i<2147418113=U(3,32768)).*/
-  _k=_i>0?isqrt32(2*_i-1)+1>>1:0;
+  _k=_i>0?(isqrt32(2*_i-1)+1)>>1:0;
   p=ucwrs3(_k);
   _i-=p;
   yj-=_k;
@@ -531,7 +533,7 @@ static void cwrsi4(int _k,celt_uint32_t _i,int *_y){
   kl=0;
   kr=_k;
   for(;;){
-    _k=kl+kr>>1;
+    _k=(kl+kr)>>1;
     p=ucwrs4(_k);
     if(p<_i){
       if(_k>=kr)break;
@@ -569,7 +571,7 @@ static void cwrsi5(int _k,celt_uint32_t _i,int *_y){
     int kl=0;
     int kr=_k;
     for(;;){
-      _k=kl+kr>>1;
+      _k=(kl+kr)>>1;
       p=ucwrs5(_k);
       if(p<_i){
         if(_k>=kr)break;
@@ -757,7 +759,7 @@ static celt_int16_t *get_required_bits_pair(celt_int16_t *_bits1,
     if(fits_in32(_n1,_maxk-1))get_required_bits(_bits1,_n1,_maxk,_frac);
     else{
       _tmp=get_required_bits_pair(_bits2,_tmp,_bits1,
-       _n1>>1,_n1+1>>1,_maxk,_frac);
+       _n1>>1,(_n1+1)>>1,_maxk,_frac);
       get_required_split_bits(_bits1,_bits2,_tmp,_n1,_maxk,_frac);
     }
     return _bits1;
@@ -780,7 +782,7 @@ static celt_int16_t *get_required_bits_pair(celt_int16_t *_bits1,
     }
     else{
       _tmp=get_required_bits_pair(_bits2,_tmp,_bits1,
-       _n1>>1,_n1+1>>1,_maxk,_frac);
+       _n1>>1,(_n1+1)>>1,_maxk,_frac);
       get_required_split_bits(_bits1,_bits2,_tmp,_n1,_maxk,_frac);
       get_required_split_bits(_bits2,_tmp,_tmp,_n2,_maxk,_frac);
     }
@@ -789,7 +791,7 @@ static celt_int16_t *get_required_bits_pair(celt_int16_t *_bits1,
     /*There's no need to special case _n1 fitting by itself, since _n2 requires
        us to recurse for both values anyway.*/
     tmp2=get_required_bits_pair(_tmp,_bits1,_bits2,
-     _n2>>1,_n2+1>>1,_maxk,_frac);
+     _n2>>1,(_n2+1)>>1,_maxk,_frac);
     get_required_split_bits(_bits2,_tmp,tmp2,_n2,_maxk,_frac);
     get_required_split_bits(_bits1,_tmp,_tmp,_n1,_maxk,_frac);
   }
@@ -819,7 +821,7 @@ void get_required_bits(celt_int16_t *_bits,int _n,int _maxk,int _frac){
     ALLOC(n1bits,_maxk,celt_int16_t);
     ALLOC(n2bits_buf,_maxk,celt_int16_t);
     n2bits=get_required_bits_pair(n1bits,n2bits_buf,_bits,
-     _n>>1,_n+1>>1,_maxk,_frac);
+     _n>>1,(_n+1)>>1,_maxk,_frac);
     get_required_split_bits(_bits,n1bits,n2bits,_n,_maxk,_frac);
     RESTORE_STACK;
   }
