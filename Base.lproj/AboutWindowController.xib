@@ -49,7 +49,7 @@
                                     </wkWebView>
                                 </subviews>
                             </visualEffectView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lya-f1-R7S">
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lya-f1-R7S">
                                 <rect key="frame" x="385" y="351" width="266" height="31"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" title="Cog" usesSingleLineMode="YES" id="hzl-Rl-e01">
                                     <font key="font" textStyle="largeTitle" name=".SFNS-Regular"/>
@@ -57,7 +57,7 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7dE-CE-MBv">
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7dE-CE-MBv">
                                 <rect key="frame" x="385" y="322" width="266" height="21"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" title="Version..." usesSingleLineMode="YES" id="Wjf-By-C1F">
                                     <font key="font" textStyle="title2" name=".SFNS-Regular"/>
@@ -65,7 +65,7 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ht5-N1-YXd">
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ht5-N1-YXd">
                                 <rect key="frame" x="387" y="20" width="264" height="56"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" selectable="YES" title="Copyright..." id="wLU-AJ-J0b">
