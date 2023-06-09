@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 
 	PlaylistEntry *entry;
 
-	Boolean didGainUN API_AVAILABLE(macosx(10.14));
+	Boolean didGainUN;
 }
 
 - (void)initDefaults {
@@ -51,32 +51,30 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 
 		didGainUN = NO;
 
-		if(@available(macOS 10.14, *)) {
-			UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-			[center
-			requestAuthorizationWithOptions:UNAuthorizationOptionAlert
-			              completionHandler:^(BOOL granted, NSError *_Nullable error) {
-				              self->didGainUN = granted;
+		UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+		[center
+		requestAuthorizationWithOptions:UNAuthorizationOptionAlert
+		              completionHandler:^(BOOL granted, NSError *_Nullable error) {
+			              self->didGainUN = granted;
 
-				              if(granted) {
-					              UNNotificationAction *skipAction = [UNNotificationAction
-					              actionWithIdentifier:@"skip"
-					                             title:@"Skip"
-					                           options:UNNotificationActionOptionNone];
+			              if(granted) {
+				              UNNotificationAction *skipAction = [UNNotificationAction
+				              actionWithIdentifier:@"skip"
+				                             title:@"Skip"
+				                           options:UNNotificationActionOptionNone];
 
-					              UNNotificationCategory *playCategory = [UNNotificationCategory
-					              categoryWithIdentifier:@"play"
-					                             actions:@[skipAction]
-					                   intentIdentifiers:@[]
-					                             options:UNNotificationCategoryOptionNone];
+				              UNNotificationCategory *playCategory = [UNNotificationCategory
+				              categoryWithIdentifier:@"play"
+				                             actions:@[skipAction]
+				                   intentIdentifiers:@[]
+				                             options:UNNotificationCategoryOptionNone];
 
-					              [center setNotificationCategories:
-					                      [NSSet setWithObject:playCategory]];
-				              }
-			              }];
+				              [center setNotificationCategories:
+				                      [NSSet setWithObject:playCategory]];
+			              }
+		              }];
 
-			[center setDelegate:self];
-		}
+		[center setDelegate:self];
 
 		queue = [[NSOperationQueue alloc] init];
 		[queue setMaxConcurrentOperationCount:1];
@@ -105,6 +103,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 	if([[response actionIdentifier] isEqualToString:@"skip"]) {
 		[playbackController next:self];
 	}
+	completionHandler();
 }
 
 #if 0
@@ -160,91 +159,14 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
 		if([defaults boolForKey:@"notifications.enable"]) {
-			if(@available(macOS 10.14, *)) {
-				if(didGainUN) {
-					UNUserNotificationCenter *center =
-					[UNUserNotificationCenter currentNotificationCenter];
+			if(didGainUN) {
+				UNUserNotificationCenter *center =
+				[UNUserNotificationCenter currentNotificationCenter];
 
-					UNMutableNotificationContent *content =
-					[[UNMutableNotificationContent alloc] init];
+				UNMutableNotificationContent *content =
+				[[UNMutableNotificationContent alloc] init];
 
-					content.title = @"Now Playing";
-
-					NSString *subtitle;
-					NSString *artist = (pe.artist && [pe.artist length]) ? pe.artist : nil;
-					NSString *album = (pe.album && [pe.album length]) ? pe.album : nil;
-					if(artist && album) {
-						subtitle = [NSString stringWithFormat:@"%@ - %@", artist, album];
-					} else if(artist) {
-						subtitle = artist;
-					} else if(album) {
-						subtitle = album;
-					} else {
-						subtitle = @"";
-					}
-
-					NSString *body = [NSString stringWithFormat:@"%@\n%@", [pe title], subtitle];
-					content.body = body;
-					content.sound = nil;
-					content.categoryIdentifier = @"play";
-
-					if([defaults boolForKey:@"notifications.show-album-art"] &&
-					   [pe albumArt]) {
-						NSError *error = nil;
-						NSFileManager *fileManager = [NSFileManager defaultManager];
-						NSURL *tmpSubFolderURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()]
-						URLByAppendingPathComponent:@"cog-artworks-cache"
-						                isDirectory:true];
-						if([fileManager createDirectoryAtPath:[tmpSubFolderURL path]
-						          withIntermediateDirectories:true
-						                           attributes:nil
-						                                error:&error]) {
-							NSString *tmpFileName =
-							[[NSProcessInfo.processInfo globallyUniqueString]
-							stringByAppendingString:@".jpg"];
-							NSURL *fileURL =
-							[tmpSubFolderURL URLByAppendingPathComponent:tmpFileName];
-							NSImage *image = [pe albumArt];
-							CGImageRef cgRef = [image CGImageForProposedRect:NULL
-							                                         context:nil
-							                                           hints:nil];
-
-							if(cgRef) {
-								NSBitmapImageRep *newRep =
-								[[NSBitmapImageRep alloc] initWithCGImage:cgRef];
-								NSData *jpgData = [newRep
-								representationUsingType:NSBitmapImageFileTypeJPEG
-								             properties:@{ NSImageCompressionFactor: @0.5f }];
-								[jpgData writeToURL:fileURL atomically:YES];
-
-								UNNotificationAttachment *icon =
-								[UNNotificationAttachment attachmentWithIdentifier:@"art"
-								                                               URL:fileURL
-								                                           options:nil
-								                                             error:&error];
-								if(error) {
-									// We have size limit of 10MB per image attachment.
-									NSLog(@"%@", error.localizedDescription);
-								} else {
-									content.attachments = @[icon];
-								}
-							}
-						}
-					}
-
-					UNNotificationRequest *request =
-					[UNNotificationRequest requestWithIdentifier:@"PlayTrack"
-					                                     content:content
-					                                     trigger:nil];
-
-					[center addNotificationRequest:request
-					         withCompletionHandler:^(NSError *_Nullable error) {
-						         NSLog(@"%@", error.localizedDescription);
-					         }];
-				}
-			} else {
-				NSUserNotification *notif = [[NSUserNotification alloc] init];
-				notif.title = [pe title];
+				content.title = @"Now Playing";
 
 				NSString *subtitle;
 				NSString *artist = (pe.artist && [pe.artist length]) ? pe.artist : nil;
@@ -259,30 +181,64 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 					subtitle = @"";
 				}
 
-				if([defaults boolForKey:@"notifications.itunes-style"]) {
-					notif.subtitle = subtitle;
-					[notif setValue:@YES forKey:@"_showsButtons"];
-				} else {
-					notif.informativeText = subtitle;
-				}
+				NSString *body = [NSString stringWithFormat:@"%@\n%@", [pe title], subtitle];
+				content.body = body;
+				content.sound = nil;
+				content.categoryIdentifier = @"play";
 
-				if([notif respondsToSelector:@selector(setContentImage:)]) {
-					if([defaults boolForKey:@"notifications.show-album-art"] &&
-					   [pe albumArtInternal]) {
+				if([defaults boolForKey:@"notifications.show-album-art"] &&
+				   [pe albumArt]) {
+					NSError *error = nil;
+					NSFileManager *fileManager = [NSFileManager defaultManager];
+					NSURL *tmpSubFolderURL = [[NSURL fileURLWithPath:NSTemporaryDirectory()]
+					URLByAppendingPathComponent:@"cog-artworks-cache"
+					                isDirectory:true];
+					if([fileManager createDirectoryAtPath:[tmpSubFolderURL path]
+					          withIntermediateDirectories:true
+					                           attributes:nil
+					                                error:&error]) {
+						NSString *tmpFileName =
+						[[NSProcessInfo.processInfo globallyUniqueString]
+						stringByAppendingString:@".jpg"];
+						NSURL *fileURL =
+						[tmpSubFolderURL URLByAppendingPathComponent:tmpFileName];
 						NSImage *image = [pe albumArt];
+						CGImageRef cgRef = [image CGImageForProposedRect:NULL
+						                                         context:nil
+						                                           hints:nil];
 
-						if([defaults boolForKey:@"notifications.itunes-style"]) {
-							[notif setValue:image forKey:@"_identityImage"];
-						} else {
-							notif.contentImage = image;
+						if(cgRef) {
+							NSBitmapImageRep *newRep =
+							[[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+							NSData *jpgData = [newRep
+							representationUsingType:NSBitmapImageFileTypeJPEG
+							             properties:@{ NSImageCompressionFactor: @0.5f }];
+							[jpgData writeToURL:fileURL atomically:YES];
+
+							UNNotificationAttachment *icon =
+							[UNNotificationAttachment attachmentWithIdentifier:@"art"
+							                                               URL:fileURL
+							                                           options:nil
+							                                             error:&error];
+							if(error) {
+								// We have size limit of 10MB per image attachment.
+								NSLog(@"%@", error.localizedDescription);
+							} else {
+								content.attachments = @[icon];
+							}
 						}
 					}
 				}
 
-				notif.actionButtonTitle = NSLocalizedString(@"SkipAction", @"");
+				UNNotificationRequest *request =
+				[UNNotificationRequest requestWithIdentifier:@"PlayTrack"
+				                                     content:content
+				                                     trigger:nil];
 
-				[[NSUserNotificationCenter defaultUserNotificationCenter]
-				scheduleNotification:notif];
+				[center addNotificationRequest:request
+				         withCompletionHandler:^(NSError *_Nullable error) {
+					         NSLog(@"%@", error.localizedDescription);
+				         }];
 			}
 		}
 	}

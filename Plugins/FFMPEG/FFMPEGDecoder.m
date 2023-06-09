@@ -244,21 +244,6 @@ static uint8_t reverse_bits[0x100];
 	if(!codec && !rawDSD)
 		codec = avcodec_find_decoder(codec_id);
 
-	if(@available(macOS 10.15, *)) {
-	} else {
-		if(codec && codec->name) {
-			const char *name = codec->name;
-			size_t name_len = strlen(name);
-			if(name_len > 3) {
-				name += name_len - 3;
-				if(!strcmp(name, "_at")) {
-					ALog(@"AudioToolbox decoder picked on old macOS, disabling: %s", codec->name);
-					codec = NULL; // Disable AudioToolbox codecs on Mojave and older
-				}
-			}
-		}
-	}
-
 	if(!codec && !rawDSD) {
 		ALog(@"codec not found");
 		av_dict_free(&dict);

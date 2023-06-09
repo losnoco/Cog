@@ -399,7 +399,7 @@
 				ORGANIZATIONNAME = "Christopher Snowhill";
 				TargetAttributes = {
 					83B06686180D5668008E3612 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = N6E749HJ2X;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -554,7 +554,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
@@ -607,7 +607,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;

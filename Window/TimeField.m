@@ -22,10 +22,7 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 }
 
 - (void)awakeFromNib {
-	CGFloat fontSize = 11.0;
-	if(@available(macOS 10.14, *)) {
-		fontSize = 13.0;
-	}
+	CGFloat fontSize = 13.0;
 
 	showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
 

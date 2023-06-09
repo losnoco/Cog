@@ -243,7 +243,7 @@
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = N6E749HJ2X;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -371,7 +371,7 @@
 					../../ThirdParty/ffmpeg/lib,
 					"../../ThirdParty/fdk-aac/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
@@ -420,7 +420,7 @@
 					../../ThirdParty/ffmpeg/lib,
 					"../../ThirdParty/fdk-aac/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
