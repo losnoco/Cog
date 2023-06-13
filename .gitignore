@@ -19,6 +19,7 @@ Xcode-config/DEVELOPMENT_TEAM.xcconfig
 
 # The project will unpack these before building, if necessary
 /ThirdParty/BASS/libbass.dylib
+/ThirdParty/BASS/libbass_mpc.dylib
 /ThirdParty/BASS/libbassflac.dylib
 /ThirdParty/BASS/libbassmidi.dylib
 /ThirdParty/BASS/libbassopus.dylib
