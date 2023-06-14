@@ -177,8 +177,6 @@
 		83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B1DA0F6330D400694C57 /* Feedback.xib */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D0380E24A40DF2004CF90F /* CogAssets.xcassets */; };
-		83F7AADA290B682400951B61 /* scpipe in Resources */ = {isa = PBXBuildFile; fileRef = 83F7AAD8290B682400951B61 /* scpipe */; };
-		83F7AADE290B8DDF00951B61 /* IIAM.bin in Resources */ = {isa = PBXBuildFile; fileRef = 83F7AAD7290B682400951B61 /* IIAM.bin */; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -1071,8 +1069,6 @@
 		83F0E8AD287CD48800D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83F0E8B1287CD50700D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		83F0E8B2287CD52500D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = pl; path = pl.lproj/Credits.html; sourceTree = "<group>"; };
-		83F7AAD7290B682400951B61 /* IIAM.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = IIAM.bin; sourceTree = "<group>"; };
-		83F7AAD8290B682400951B61 /* scpipe */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = scpipe; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1514,8 +1510,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				83F7AAD7290B682400951B61 /* IIAM.bin */,
-				83F7AAD8290B682400951B61 /* scpipe */,
 				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
 				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
@@ -2501,8 +2495,6 @@
 				17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */,
 				17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */,
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
-				83F7AADA290B682400951B61 /* scpipe in Resources */,
-				83F7AADE290B8DDF00951B61 /* IIAM.bin in Resources */,
 				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,

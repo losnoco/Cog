@@ -40,7 +40,6 @@
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
 		83E973471C4378880007F413 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E973451C4378880007F413 /* AUPlayer.mm */; };
-		83F7AADD290B691900951B61 /* SCPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83F7AADB290B691900951B61 /* SCPlayer.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,8 +157,6 @@
 		83E973451C4378880007F413 /* AUPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayer.mm; sourceTree = "<group>"; };
 		83E973461C4378880007F413 /* AUPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayer.h; sourceTree = "<group>"; };
 		83F0E6C4287CAB4300D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		83F7AADB290B691900951B61 /* SCPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SCPlayer.mm; sourceTree = "<group>"; };
-		83F7AADC290B691900951B61 /* SCPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCPlayer.h; sourceTree = "<group>"; };
 		83FAF8A618ADD60100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -312,8 +309,6 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
-				83F7AADC290B691900951B61 /* SCPlayer.h */,
-				83F7AADB290B691900951B61 /* SCPlayer.mm */,
 				834A42BC287AFC7F00EB9D9B /* AudioChunk.h */,
 				8307D31E28607377000FF8EB /* SandboxBroker.h */,
 				831E2A9127B4B2FA006F1C86 /* json */,
@@ -473,7 +468,6 @@
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 				834BE91B1DE407CB00A07DCD /* resampler.c in Sources */,
-				83F7AADD290B691900951B61 /* SCPlayer.mm in Sources */,
 				83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
