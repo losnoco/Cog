@@ -11,7 +11,6 @@
 #import "AUPlayer.h"
 #import "BMPlayer.h"
 #import "MSPlayer.h"
-#import "SCPlayer.h"
 
 #import "Logging.h"
 
@@ -199,8 +198,9 @@ static OSType getOSType(const char *in_) {
 	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 
 	// Then detect if we should force the DLSMusicSynth, which has its own bank
-	if(!plugin || [plugin isEqualToString:@"BASSMIDI"]) {
-		if(!globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
+	BOOL sauce = plugin && [plugin isEqualToString:@"sauce"];
+	if(sauce || !plugin || [plugin isEqualToString:@"BASSMIDI"]) {
+		if(sauce || !globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
 			plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
 			[[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
 		}
@@ -221,11 +221,6 @@ static OSType getOSType(const char *in_) {
 			bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
 		player = bmplayer;
-	} else if([plugin isEqualToString:@"sauce"]) {
-		SCPlayer *scplayer = new SCPlayer;
-		player = scplayer;
-
-		scplayer->setSampleRate(sampleRate);
 	} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
 		MSPlayer *msplayer = new MSPlayer;
 		player = msplayer;
