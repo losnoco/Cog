@@ -134,6 +134,7 @@
         </customView>
         <customObject id="6" userLabel="HotKeyPane" customClass="HotKeyPane">
             <connections>
+                <outlet property="fadeShortcutView" destination="vEd-Af-7tR" id="DMK-Z9-Sm5"/>
                 <outlet property="nextShortcutView" destination="Dse-4d-oBd" id="mYF-gy-OEU"/>
                 <outlet property="playShortcutView" destination="OBW-Zy-nz0" id="OkD-1k-vay"/>
                 <outlet property="prevShortcutView" destination="Ujw-ux-fCg" id="oOW-gF-QBo"/>
@@ -142,7 +143,7 @@
             </connections>
         </customObject>
         <customView id="11" userLabel="HotKeyView">
-            <rect key="frame" x="0.0" y="0.0" width="640" height="132"/>
+            <rect key="frame" x="0.0" y="0.0" width="640" height="163"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YtT-gE-hX3">
@@ -157,7 +158,7 @@
                     </connections>
                 </button>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="24">
-                    <rect key="frame" x="18" y="103" width="145" height="17"/>
+                    <rect key="frame" x="34" y="134" width="145" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Play:" id="198">
                         <font key="font" metaFont="system"/>
@@ -166,7 +167,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="25">
-                    <rect key="frame" x="18" y="72" width="145" height="17"/>
+                    <rect key="frame" x="34" y="103" width="145" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Previous:" id="199">
                         <font key="font" metaFont="system"/>
@@ -175,7 +176,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="26">
-                    <rect key="frame" x="18" y="42" width="145" height="17"/>
+                    <rect key="frame" x="4" y="73" width="175" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Next:" id="200">
                         <font key="font" metaFont="system"/>
@@ -184,7 +185,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eid-M4-6Cs">
-                    <rect key="frame" x="18" y="11" width="145" height="17"/>
+                    <rect key="frame" x="4" y="14" width="175" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Copy now playing:" id="SMd-GA-jrH">
                         <font key="font" metaFont="system"/>
@@ -193,23 +194,36 @@
                     </textFieldCell>
                 </textField>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OBW-Zy-nz0" userLabel="Play Shortcut" customClass="MASShortcutView">
-                    <rect key="frame" x="169" y="102" width="163" height="19"/>
+                    <rect key="frame" x="185" y="133" width="163" height="19"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ujw-ux-fCg" userLabel="Previous Shortcut" customClass="MASShortcutView">
-                    <rect key="frame" x="169" y="71" width="163" height="19"/>
+                    <rect key="frame" x="185" y="102" width="163" height="19"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dse-4d-oBd" userLabel="Next Shortcut" customClass="MASShortcutView">
-                    <rect key="frame" x="169" y="41" width="163" height="19"/>
+                    <rect key="frame" x="185" y="72" width="163" height="19"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="80X-iX-vxp" userLabel="Spam Shortcut" customClass="MASShortcutView">
-                    <rect key="frame" x="169" y="10" width="163" height="19"/>
+                    <rect key="frame" x="185" y="13" width="163" height="19"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                </customView>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gp4-rA-1UF">
+                    <rect key="frame" x="4" y="44" width="175" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Fade in/out:" id="D5K-pO-8Sj">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vEd-Af-7tR" userLabel="Fade Shortcut" customClass="MASShortcutView">
+                    <rect key="frame" x="185" y="43" width="163" height="19"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
             </subviews>
-            <point key="canvasLocation" x="-151" y="-34"/>
+            <point key="canvasLocation" x="-151" y="-18.5"/>
         </customView>
         <customView id="50" userLabel="UpdatesView">
             <rect key="frame" x="0.0" y="0.0" width="640" height="56"/>
@@ -437,7 +451,7 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="EEt-uJ-j6o">
-                                                <rect key="frame" x="8" y="0.0" width="443" height="24"/>
+                                                <rect key="frame" x="18" y="0.0" width="443" height="24"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7l9-R2-FVF">
@@ -472,7 +486,7 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="EDi-gi-Vg9">
-                                                <rect key="frame" x="468" y="0.0" width="100" height="24"/>
+                                                <rect key="frame" x="478" y="0.0" width="100" height="24"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0TJ-dK-Rfk">
