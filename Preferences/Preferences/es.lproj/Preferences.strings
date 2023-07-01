@@ -115,8 +115,8 @@
 /* Class = "NSButtonCell"; title = "Quit when playback completes"; ObjectID = "SBA-J5-rEd"; */
 "SBA-J5-rEd.title" = "Salir al terminar reproducción";
 
-/* Class = "NSTextFieldCell"; title = "Spam:"; ObjectID = "SMd-GA-jrH"; */
-"SMd-GA-jrH.title" = "Spam:";
+/* Class = "NSTextFieldCell"; title = "Copy now playing:"; ObjectID = "SMd-GA-jrH"; */
+"SMd-GA-jrH.title" = "Copiar info de pista actual:";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
 "V8o-Xy-HUW.title" = "Otras vistas";

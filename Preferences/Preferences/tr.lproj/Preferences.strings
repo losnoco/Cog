@@ -143,8 +143,8 @@
 /* Class = "NSButtonCell"; title = "Quit when playback completes"; ObjectID = "SBA-J5-rEd"; */
 "SBA-J5-rEd.title" = "Oynatma tamamlandığında çık";
 
-/* Class = "NSTextFieldCell"; title = "Spam:"; ObjectID = "SMd-GA-jrH"; */
-"SMd-GA-jrH.title" = "Spam:";
+/* Class = "NSTextFieldCell"; title = "Copy now playing:"; ObjectID = "SMd-GA-jrH"; */
+"SMd-GA-jrH.title" = "Copy now playing:";
 
 /* Class = "NSTextFieldCell"; title = "Default fade time:"; ObjectID = "UdW-qd-A0x"; */
 "UdW-qd-A0x.title" = "Varsayılan solma süresi:";
