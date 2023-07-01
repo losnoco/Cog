@@ -391,7 +391,6 @@
 				<string>al</string>
 				<string>al2</string>
 				<string>ams</string>
-				<string>amts</string>
 				<string>an2</string>
 				<string>ao</string>
 				<string>ap</string>
@@ -417,6 +416,7 @@
 				<string>awa</string>
 				<string>awb</string>
 				<string>awc</string>
+				<string>awd</string>
 				<string>b1s</string>
 				<string>baf</string>
 				<string>baka</string>
@@ -425,14 +425,11 @@
 				<string>bcstm</string>
 				<string>bcwav</string>
 				<string>bcv</string>
-				<string>bd3</string>
-				<string>bdsp</string>
 				<string>bfstm</string>
 				<string>bfwav</string>
 				<string>bg00</string>
 				<string>bgm</string>
 				<string>bgw</string>
-				<string>bh2pcm</string>
 				<string>bigrp</string>
 				<string>bik</string>
 				<string>bika</string>
@@ -485,6 +482,7 @@
 				<string>ddsp</string>
 				<string>de2</string>
 				<string>dec</string>
+				<string>dic</string>
 				<string>diva</string>
 				<string>dmsg</string>
 				<string>ds2</string>
@@ -533,7 +531,9 @@
 				<string>h4m</string>
 				<string>hab</string>
 				<string>hca</string>
+				<string>hd3</string>
 				<string>hdr</string>
+				<string>hdt</string>
 				<string>hgc1</string>
 				<string>his</string>
 				<string>hps</string>
@@ -547,6 +547,8 @@
 				<string>hxg</string>
 				<string>hxx</string>
 				<string>hwas</string>
+				<string>hwb</string>
+				<string>hwd</string>
 				<string>iab</string>
 				<string>iadp</string>
 				<string>idmsf</string>
@@ -562,6 +564,7 @@
 				<string>ilv</string>
 				<string>ima</string>
 				<string>imc</string>
+				<string>imf</string>
 				<string>imx</string>
 				<string>int</string>
 				<string>is14</string>
@@ -602,6 +605,7 @@
 				<string>lasf</string>
 				<string>lbin</string>
 				<string>ldat</string>
+				<string>ldt</string>
 				<string>leg</string>
 				<string>lep</string>
 				<string>lflac</string>
@@ -624,11 +628,12 @@
 				<string>lpcm</string>
 				<string>lpk</string>
 				<string>lps</string>
-				<string>lrmb</string>
+				<string>lrmh</string>
 				<string>lse</string>
 				<string>lsf</string>
 				<string>lstm</string>
 				<string>lwav</string>
+				<string>lwd</string>
 				<string>lwma</string>
 				<string>mab</string>
 				<string>mad</string>
@@ -695,6 +700,7 @@
 				<string>ogv</string>
 				<string>oma</string>
 				<string>omu</string>
+				<string>opu</string>
 				<string>opusx</string>
 				<string>otm</string>
 				<string>oto</string>
@@ -709,15 +715,14 @@
 				<string>pcm</string>
 				<string>pdt</string>
 				<string>pk</string>
-				<string>pnb</string>
 				<string>pona</string>
 				<string>pos</string>
 				<string>ps3</string>
-				<string>ps2stm</string>
 				<string>psb</string>
 				<string>psf</string>
 				<string>psh</string>
 				<string>psnd</string>
+				<string>pwb</string>
 				<string>r</string>
 				<string>rac</string>
 				<string>rad</string>
@@ -799,7 +804,6 @@
 				<string>smc</string>
 				<string>smk</string>
 				<string>smp</string>
-				<string>smpl</string>
 				<string>smv</string>
 				<string>snb</string>
 				<string>snd</string>
@@ -826,7 +830,6 @@
 				<string>ster</string>
 				<string>sth</string>
 				<string>stm</string>
-				<string>stma</string>
 				<string>str</string>
 				<string>stream</string>
 				<string>strm</string>
@@ -852,9 +855,9 @@
 				<string>tgq</string>
 				<string>tgv</string>
 				<string>thp</string>
-				<string>tk5</string>
 				<string>tmx</string>
 				<string>tra</string>
+				<string>trk</string>
 				<string>tun</string>
 				<string>txth</string>
 				<string>txtp</string>
@@ -930,6 +933,7 @@
 				<string>wua</string>
 				<string>wv2</string>
 				<string>wv6</string>
+				<string>wvd</string>
 				<string>wve</string>
 				<string>wvs</string>
 				<string>wvx</string>
