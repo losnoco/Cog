@@ -9,10 +9,9 @@ typedef enum { PSX, PCM16, ATRAC9, HEVAG } bnk_codec;
 VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
     uint32_t start_offset, stream_offset, name_offset = 0;
-    uint32_t sblk_offset, data_offset;
-    uint32_t stream_size, data_size, interleave = 0;
-    int channels = 0, loop_flag, sample_rate, parts, sblk_version, big_endian;
-    int loop_start = 0, loop_end = 0;
+    uint32_t stream_size, interleave = 0;
+    int channels = 0, loop_flag, sample_rate, big_endian;
+    int32_t loop_start = 0, loop_end = 0;
     uint32_t center_note, center_fine, flags;
     uint32_t atrac9_info = 0;
 
@@ -37,25 +36,35 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
         big_endian = 0;
     }
     else {
-        goto fail;
+        return NULL;
     }
 
     /* checks */
     if (!check_extensions(sf, "bnk"))
-        goto fail;
+        return NULL;
 
+    uint32_t sblk_offset, data_offset, data_size;
+    int parts, sblk_version;
 
     parts = read_u32(0x04,sf);
-    if (parts < 2 || parts > 3) goto fail;
+    if (parts < 2 || parts > 3)
+        return NULL;
     /* in theory a bank can contain multiple blocks */
 
+    /* section sizes don't include padding (sometimes aligned to 0x10/0x800) */
     sblk_offset = read_u32(0x08,sf);
-    /* 0x0c: sblk size */
+    //sblk_size = read_u32(0x0c,sf);
     data_offset = read_u32(0x10,sf);
-    data_size = read_u32(0x14,sf);
-    /* when sblk_offset >= 0x20: */
-    /* 0x18: ZLSD small footer, rare in earlier versions [Yakuza 6's Puyo Puyo (PS4)] */
-    /* 0x1c: ZLSD size */
+    data_size   = read_u32(0x14,sf);
+
+    /* ZLSD small footer, rare in earlier versions and more common later [Yakuza 6's Puyo Puyo (PS4)] */
+    //if (sblk_offset >= 0x20) {
+    //  zlsd_offset = read_u32(0x18,sf);
+    //  zlsd_size   = read_u32(0x1c,sf);
+    //}
+
+    if (sblk_offset > 0x20)
+        return NULL;
 
     /* SE banks, also used for music. Most table fields seems reserved/defaults and
      * don't change much between subsongs or files, so they aren't described in detail.
@@ -64,7 +73,7 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
 
     /* SBlk part: parse header */
     if (read_u32(sblk_offset+0x00,sf) != get_id32be("klBS")) /* SBlk = SFX block */
-        goto fail;
+        return NULL;
     sblk_version = read_u32(sblk_offset+0x04,sf);
     /* 0x08: flags? (sblk_version>=0x0d?, 0x03=Vita, 0x06=PS4, 0x05=PS5)
      * - 04: non-fixed bank?
@@ -146,6 +155,7 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
                 break;
 
             case 0x1a: /* Demon's Souls (PS5) */
+            case 0x23: /* The Last of Us (PC) */
 
             default:
                 vgm_logi("BNK: unknown version %x (report)\n", sblk_version);
@@ -223,7 +233,7 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
         }
 
 
-        //;VGM_LOG("BNK: subsongs %i, table2_entry=%lx, table3_entry=%lx\n", total_subsongs,table2_entry_offset,table3_entry_offset);
+        //;VGM_LOG("BNK: subsongs %i, table2_entry=%x, table3_entry=%x\n", total_subsongs,table2_entry_offset,table3_entry_offset);
 
         if (target_subsong < 0 || target_subsong > total_subsongs || total_subsongs < 1) goto fail;
         /* this means some subsongs repeat streams, that can happen in some sfx banks, whatevs */
@@ -314,6 +324,7 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
                 break;
 
             default:
+                VGM_LOG("BNK: missing version\n");
                 goto fail;
         }
 
@@ -461,8 +472,10 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
 
                     case 0x02: /* ATRAC9 mono */
                     case 0x05: /* ATRAC9 stereo */
-                        if (read_u32(start_offset+0x08,sf) + 0x08 != extradata_size) /* repeat? */
+                        if (read_u32(start_offset+0x08,sf) + 0x08 != extradata_size) { /* repeat? */
+                            VGM_LOG("BNK: unknown subtype\n");
                             goto fail;
+                        }
                         channels = (type == 0x02) ? 1 : 2;
 
                         atrac9_info = read_u32be(start_offset+0x0c,sf);
@@ -485,8 +498,10 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
             case 0x0f:
             case 0x10:
                 type = read_u16(start_offset+0x00,sf);
-                if (read_u32(start_offset+0x04,sf) != 0x01) /* type? */
+                if (read_u32(start_offset+0x04,sf) != 0x01) { /* type? */
+                    VGM_LOG("BNK: unknown subtype\n");
                     goto fail;
+                }
                 extradata_size = 0x10 + read_u32(start_offset+0x08,sf); /* 0x80 for AT9, 0x10 for PCM/PS-ADPCM */
                 /* 0x0c: null? */
 
