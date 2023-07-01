@@ -572,7 +572,7 @@ static AppController *kAppController = nil;
 	NSString *feedURLdefault = @"https://cogcdn.cog.losno.co/mercury.xml";
 	[userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
 
-	[userDefaultsValuesDict setObject:@"clearAndPlay" forKey:@"openingFilesBehavior"];
+	[userDefaultsValuesDict setObject:@"enqueueAndPlay" forKey:@"openingFilesBehavior"];
 	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
 
 	[userDefaultsValuesDict setObject:@"albumGainWithPeak" forKey:@"volumeScaling"];
