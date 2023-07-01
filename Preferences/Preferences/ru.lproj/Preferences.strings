@@ -77,7 +77,7 @@
 /* Class = "NSButtonCell"; title = "Quit when playback completes"; ObjectID = "SBA-J5-rEd"; */
 "SBA-J5-rEd.title" = "Выйти после завершения воспроизведения";
 
-/* Class = "NSTextFieldCell"; title = "Spam:"; ObjectID = "SMd-GA-jrH"; */
+/* Class = "NSTextFieldCell"; title = "Copy now playing:"; ObjectID = "SMd-GA-jrH"; */
 "SMd-GA-jrH.title" = "Спам:";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
