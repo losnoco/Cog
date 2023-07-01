@@ -237,3 +237,6 @@
 
 /* Class = "NSButtonCell"; title = "Add other files in the same folder when adding a file"; ObjectID = "ws4-en-un8"; */
 "ws4-en-un8.title" = "Añadir otros archivos en la misma carpeta al añadir un archivo";
+
+/* Class = "NSTextFieldCell"; title = "Fade in/out:"; ObjectID = "Gp4-rA-1UF"; */
+"Gp4-rA-1UF.title" = "Fundido:";

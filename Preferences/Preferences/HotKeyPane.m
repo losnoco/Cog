@@ -48,18 +48,24 @@ MASShortcut *shortcutWithMigration(NSString *oldKeyCodePrefName,
 	                                                  @"hotKeySpamModifiers",
 	                                                  CogSpamShortcutKey,
 	                                                  kVK_ANSI_C);
+	MASShortcut *fadeShortcut = shortcutWithMigration(@"hotKeyFadeKeyCode",
+													  @"hotKeyFadeModifiers",
+													  CogFadeShortcutKey,
+													  kVK_ANSI_O);
 
 	NSData *playShortcutData = [NSKeyedArchiver archivedDataWithRootObject:playShortcut];
 	NSData *nextShortcutData = [NSKeyedArchiver archivedDataWithRootObject:nextShortcut];
 	NSData *prevShortcutData = [NSKeyedArchiver archivedDataWithRootObject:prevShortcut];
 	NSData *spamShortcutData = [NSKeyedArchiver archivedDataWithRootObject:spamShortcut];
+	NSData *fadeShortcutData = [NSKeyedArchiver archivedDataWithRootObject:fadeShortcut];
 
 	// Register default values to be used for the first app start
 	NSDictionary<NSString *, NSData *> *defaultShortcuts = @{
 		CogPlayShortcutKey: playShortcutData,
 		CogNextShortcutKey: nextShortcutData,
 		CogPrevShortcutKey: prevShortcutData,
-		CogSpamShortcutKey: spamShortcutData
+		CogSpamShortcutKey: spamShortcutData,
+		CogFadeShortcutKey: fadeShortcutData
 	};
 
 	defaultsController =
@@ -70,6 +76,7 @@ MASShortcut *shortcutWithMigration(NSString *oldKeyCodePrefName,
 	_nextShortcutView.associatedUserDefaultsKey = CogNextShortcutKey;
 	_prevShortcutView.associatedUserDefaultsKey = CogPrevShortcutKey;
 	_spamShortcutView.associatedUserDefaultsKey = CogSpamShortcutKey;
+	_fadeShortcutView.associatedUserDefaultsKey = CogFadeShortcutKey;
 }
 
 - (NSString *)title {

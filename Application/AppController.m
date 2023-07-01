@@ -658,6 +658,11 @@ static AppController *kAppController = nil;
 	                           toAction:^{
 		                           [self clickSpam];
 	                           }];
+
+	[binder bindShortcutWithDefaultsKey:CogFadeShortcutKey
+	                           toAction:^{
+	                               [self clickFade];
+	                           }];
 }
 
 - (void)clickPlay {
@@ -682,6 +687,10 @@ static AppController *kAppController = nil;
 
 - (void)clickSpam {
 	[playbackController spam:nil];
+}
+
+- (void)clickFade {
+	[playbackController fade:nil];
 }
 
 - (void)clickSeek:(NSTimeInterval)position {
