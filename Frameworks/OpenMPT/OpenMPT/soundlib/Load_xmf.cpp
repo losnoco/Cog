@@ -1,7 +1,7 @@
 /*
  * Load_xmf.cpp
  * ------------
- * Purpose: Module loader for music files from the DOS game "Imperium Galactica"
+ * Purpose: Module loader for music files from the DOS game "Imperium Galactica" and various Astroidea demos
  * Notes  : This format has nothing to do with the XMF format by the MIDI foundation.
  * Authors: OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
@@ -33,7 +33,7 @@ struct XMFSampleHeader
 	uint8    flags;
 	uint16le sampleRate;
 
-	bool IsValid() const noexcept
+	bool IsValid(uint8 type) const noexcept
 	{
 		if(flags & ~(smp16Bit | smpEnableLoop | smpBidiLoop))
 			return false;
@@ -42,13 +42,15 @@ struct XMFSampleHeader
 		if(dataStart.get() > dataEnd.get())
 			return false;
 		const uint32 length = dataEnd.get() - dataStart.get();
-		if(length > 0 && sampleRate < 100)
+		if(type != 2 && length > 0 && sampleRate < 100)
+			return false;
+		if(type == 2 && length > 0 && sampleRate >= 0x8000)  // Any values != 0 are not really usable but when they turn negative, playback really goes haywire
 			return false;
 		if((flags & smp16Bit) && (length % 2u))
 			return false;
 		if((flags & smpEnableLoop) && !loopEnd.get())
 			return false;
-		if(loopEnd.get() != 0 && (loopEnd.get() > length || loopStart.get() >= loopEnd.get()))
+		if(loopEnd.get() != 0 && (loopEnd.get() >= length || loopStart.get() >= loopEnd.get()))
 			return false;
 		return true;
 	}
@@ -58,12 +60,12 @@ struct XMFSampleHeader
 		return dataEnd.get() > dataStart.get();
 	}
 
-	void ConvertToMPT(ModSample &mptSmp) const
+	void ConvertToMPT(ModSample &mptSmp, uint8 type) const
 	{
 		mptSmp.Initialize(MOD_TYPE_MOD);
 		mptSmp.nLength = dataEnd.get() - dataStart.get();
-		mptSmp.nLoopStart = loopStart.get();
-		mptSmp.nLoopEnd = loopEnd.get();
+		mptSmp.nLoopStart = loopStart.get() + 1u;
+		mptSmp.nLoopEnd = loopEnd.get() + 1u;
 		mptSmp.uFlags.set(CHN_LOOP, flags & smpEnableLoop);
 		mptSmp.uFlags.set(CHN_PINGPONGLOOP, flags & smpBidiLoop);
 		if(flags & smp16Bit)
@@ -72,7 +74,8 @@ struct XMFSampleHeader
 			mptSmp.nLength /= 2;
 		}
 		mptSmp.nVolume = defaultVolume;
-		mptSmp.nC5Speed = sampleRate;
+		if(type != 2)
+			mptSmp.nC5Speed = sampleRate;
 		mptSmp.FrequencyToTranspose();
 	}
 };
@@ -80,22 +83,30 @@ struct XMFSampleHeader
 MPT_BINARY_STRUCT(XMFSampleHeader, 16)
 
 
-static bool TranslateXMFEffect(ModCommand &m, uint8 command, uint8 param)
+static bool TranslateXMFEffect(ModCommand &m, uint8 command, uint8 param, uint8 type)
 {
 	if(command == 0x0B && param < 0xFF)
 	{
 		param++;
-	} else if(command == 0x10)
+	} else if(command == 0x10 || command == 0x11)
 	{
+		param = 0x80 | (command << 4) | (param & 0x0F);
 		command = 0x0E;
-		param = 0x80 | (param & 0x0F);
-	} else if(command > 0x10)
+	} else if(command == 0x12)
+	{
+		// The ULT to XMF converter uses this to translate ULT command 5 but the player does not handle this command. Thus we will simply ignore it.
+		command = param = 0;
+	} else if(command > 0x12)
 	{
 		return false;
 	}
 	CSoundFile::ConvertModCommand(m, command, param);
-	if(m.command == CMD_VOLUME)
+	if(type == 4 && m.command == CMD_VOLUME && (!(m.param & 0x03) || m.param == 0xFF))
+		m.param = static_cast<ModCommand::PARAM>((m.param + 3u) / 4u);
+	else if(m.command == CMD_VOLUME)
 		m.command = CMD_VOLUME8;
+	if(type != 4 && m.command == CMD_TEMPO && m.param == 0x20)
+		m.command = CMD_SPEED;
 	return true;
 }
 
@@ -104,7 +115,8 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderXMF(MemoryFileReader file, co
 {
 	if(!file.CanRead(1))
 		return ProbeWantMoreData;
-	if(file.ReadUint8() != 0x03)
+	uint8 type = file.ReadUint8();
+	if(type < 2 || type > 4)
 		return ProbeFailure;
 	
 	constexpr size_t probeHeaders = std::min(size_t(256), (ProbeRecommendedSize - 1) / sizeof(XMFSampleHeader));
@@ -113,7 +125,7 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderXMF(MemoryFileReader file, co
 		XMFSampleHeader sampleHeader;
 		if(!file.ReadStruct(sampleHeader))
 			return ProbeWantMoreData;
-		if(!sampleHeader.IsValid())
+		if(!sampleHeader.IsValid(type))
 			return ProbeFailure;
 	}
 
@@ -125,7 +137,11 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderXMF(MemoryFileReader file, co
 bool CSoundFile::ReadXMF(FileReader &file, ModLoadingFlags loadFlags)
 {
 	file.Rewind();
-	if(file.ReadUint8() != 0x03)
+	uint8 type = file.ReadUint8();
+	// Type 2: Old UltraTracker finetune behaviour, automatic tone portamento
+	// Type 3: Normal finetune behaviour, automatic tone portamento (like in ULT)
+	// Type 4: Normal finetune behaviour, manual tone portamento (like in MOD)
+	if(type < 2 || type > 4)
 		return false;
 	if(!file.CanRead(256 * sizeof(XMFSampleHeader) + 256 + 3))
 		return false;
@@ -135,7 +151,7 @@ bool CSoundFile::ReadXMF(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		XMFSampleHeader sampleHeader;
 		file.ReadStruct(sampleHeader);
-		if(!sampleHeader.IsValid())
+		if(!sampleHeader.IsValid(type))
 			return false;
 		if(sampleHeader.HasSampleData())
 			numSamples = smp;
@@ -147,15 +163,16 @@ bool CSoundFile::ReadXMF(FileReader &file, ModLoadingFlags loadFlags)
 
 	InitializeGlobals(MOD_TYPE_MOD);
 	m_SongFlags.set(SONG_IMPORTED);
+	m_SongFlags.reset(SONG_ISAMIGA);
 	m_nSamples = numSamples;
-	m_nSamplePreAmp = 192;
+	m_nSamplePreAmp = (type == 3) ? 192 : 48;  // Imperium Galactica files are really quiet, no other XMFs appear to use type 3
 
 	file.Seek(1);
 	for(SAMPLEINDEX smp = 1; smp <= numSamples; smp++)
 	{
 		XMFSampleHeader sampleHeader;
 		file.ReadStruct(sampleHeader);
-		sampleHeader.ConvertToMPT(Samples[smp]);
+		sampleHeader.ConvertToMPT(Samples[smp], type);
 		m_szNames[smp] = "";
 	}
 
@@ -186,18 +203,16 @@ bool CSoundFile::ReadXMF(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 		ModCommand dummy;
-		for(ROWINDEX row = 0; row < 64; row++)
+		for(ModCommand &m : Patterns[pat])
 		{
-			for(ModCommand &m : Patterns[pat].GetRow(row))
-			{
-				const auto data = file.ReadArray<uint8, 6>();
-				if(data[0] > 0 && data[0] <= 77)
-					m.note = NOTE_MIN + 35 + data[0];
-				m.instr = data[1];
-				if(!TranslateXMFEffect(m, data[2], data[5]) || !TranslateXMFEffect(dummy, data[3], data[4]))
-					return false;
+			const auto data = file.ReadArray<uint8, 6>();
+			if(data[0] > 0 && data[0] <= 77)
+				m.note = NOTE_MIN + 35 + data[0];
+			m.instr = data[1];
+			if(!TranslateXMFEffect(m, data[2], data[5], type) || !TranslateXMFEffect(dummy, data[3], data[4], type))
+				return false;
+			if(dummy.command != CMD_NONE)
 				m.FillInTwoCommands(m.command, m.param, dummy.command, dummy.param);
-			}
 		}
 	}
 
@@ -212,7 +227,7 @@ bool CSoundFile::ReadXMF(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
-	m_modFormat.formatName = UL_("Imperium Galactica XMF");
+	m_modFormat.formatName = UL_("Astroidea XMF");
 	m_modFormat.type = UL_("xmf");
 	m_modFormat.madeWithTracker.clear();
 	m_modFormat.charset = mpt::Charset::CP437;  // No strings in this format...

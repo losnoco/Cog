@@ -70,8 +70,19 @@ private:
 			// inefficient istream implementations might invalidate their buffer when seeking, even when seeking to the current position
 			stream.seekg(static_cast<std::streamoff>(pos), std::ios::beg);
 		}
-		stream.read(mpt::byte_cast<char *>(dst.data()), dst.size());
-		return dst.first(static_cast<std::size_t>(stream.gcount()));
+		std::size_t bytesToRead = dst.size();
+		std::size_t bytesRead = 0;
+		while (bytesToRead > 0) {
+			std::streamsize bytesChunkToRead = mpt::saturate_cast<std::streamsize>(bytesToRead);
+			stream.read(mpt::byte_cast<char *>(dst.data()) + bytesRead, bytesChunkToRead);
+			std::streamsize bytesChunkRead = stream.gcount();
+			bytesRead += static_cast<std::size_t>(bytesChunkRead);
+			bytesToRead -= static_cast<std::size_t>(bytesChunkRead);
+			if (bytesChunkRead != bytesChunkToRead) {
+				break;
+			}
+		}
+		return dst.first(bytesRead);
 	}
 };
 
@@ -98,8 +109,19 @@ private:
 	}
 
 	mpt::byte_span InternalReadUnseekable(mpt::byte_span dst) const override {
-		stream.read(mpt::byte_cast<char *>(dst.data()), dst.size());
-		return dst.first(static_cast<std::size_t>(stream.gcount()));
+		std::size_t bytesToRead = dst.size();
+		std::size_t bytesRead = 0;
+		while (bytesToRead > 0) {
+			std::streamsize bytesChunkToRead = mpt::saturate_cast<std::streamsize>(bytesToRead);
+			stream.read(mpt::byte_cast<char *>(dst.data()) + bytesRead, bytesChunkToRead);
+			std::streamsize bytesChunkRead = stream.gcount();
+			bytesRead += static_cast<std::size_t>(bytesChunkRead);
+			bytesToRead -= static_cast<std::size_t>(bytesChunkRead);
+			if (bytesChunkRead != bytesChunkToRead) {
+				break;
+			}
+		}
+		return dst.first(bytesRead);
 	}
 };
 

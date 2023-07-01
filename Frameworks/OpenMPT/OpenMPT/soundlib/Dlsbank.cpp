@@ -1269,6 +1269,8 @@ bool CDLSBank::ConvertSF2ToDLS(SF2LoaderInfo &sf2info)
 					m_Envelopes.push_back(dlsEnv);
 					rgn.uPercEnv = static_cast<uint32>(m_Envelopes.size());
 					pDlsEnv = &m_Envelopes[rgn.uPercEnv - 1];
+					if(globalZone.uPercEnv)
+						*pDlsEnv = m_Envelopes[globalZone.uPercEnv - 1];
 				}
 
 				// Region Default Values
@@ -2271,10 +2273,10 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 	if(isDrum)
 	{
 		// Create a default envelope for drums
-		pIns->VolEnv.dwFlags.reset(ENV_SUSTAIN);
 		if(!pIns->VolEnv.dwFlags[ENV_ENABLED])
 		{
 			pIns->VolEnv.dwFlags.set(ENV_ENABLED);
+			pIns->VolEnv.dwFlags.reset(ENV_SUSTAIN);
 			pIns->VolEnv.resize(4);
 			pIns->VolEnv[0] = EnvelopeNode(0, ENVELOPE_MAX);
 			pIns->VolEnv[1] = EnvelopeNode(ScaleEnvelope(5, tempoScale), ENVELOPE_MAX);

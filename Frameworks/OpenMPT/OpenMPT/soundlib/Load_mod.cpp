@@ -786,6 +786,12 @@ static bool CheckMODMagic(const char magic[4], MODMagicResult &result)
 		// Hacked .DMF files from the game "Apocalypse Abyss"
 		result.numChannels = 4;
 		result.swapBytes = true;
+	} else if(IsMagic(magic, "WARD"))
+	{
+		// MUSIC*.DTA files from the DOS game Aleshar - The World Of Ice
+		result.madeWithTracker = UL_("Generic MOD-compatible Tracker");
+		result.isGenericMultiChannel = true;
+		result.numChannels = 8;
 	} else
 	{
 		return false;

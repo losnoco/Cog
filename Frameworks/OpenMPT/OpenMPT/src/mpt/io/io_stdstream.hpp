@@ -17,6 +17,8 @@
 #include <ostream>
 #include <type_traits>
 
+#include <cstddef>
+
 
 
 namespace mpt {
@@ -123,8 +125,19 @@ public:
 	}
 
 	inline mpt::byte_span ReadRawImpl(mpt::byte_span data) {
-		f.read(mpt::byte_cast<char *>(data.data()), data.size());
-		return data.first(mpt::saturate_cast<std::size_t>(f.gcount()));
+		std::size_t bytesToRead = data.size();
+		std::size_t bytesRead = 0;
+		while (bytesToRead > 0) {
+			std::streamsize bytesChunkToRead = mpt::saturate_cast<std::streamsize>(bytesToRead);
+			f.read(mpt::byte_cast<char *>(data.data()) + bytesRead, bytesChunkToRead);
+			std::streamsize bytesChunkRead = f.gcount();
+			bytesRead += static_cast<std::size_t>(bytesChunkRead);
+			bytesToRead -= static_cast<std::size_t>(bytesChunkRead);
+			if (bytesChunkRead != bytesChunkToRead) {
+				break;
+			}
+		}
+		return data.first(bytesRead);
 	}
 
 	inline bool IsEof() {
@@ -210,7 +223,17 @@ public:
 	}
 
 	inline bool WriteRawImpl(mpt::const_byte_span data) {
-		f.write(mpt::byte_cast<const char *>(data.data()), data.size());
+		std::size_t bytesToWrite = data.size();
+		std::size_t bytesWritten = 0;
+		while (bytesToWrite > 0) {
+			std::streamsize bytesChunk = mpt::saturate_cast<std::streamsize>(bytesToWrite);
+			f.write(mpt::byte_cast<const char *>(data.data()) + bytesWritten, bytesChunk);
+			if (f.fail()) {
+				break;
+			}
+			bytesWritten += static_cast<std::size_t>(bytesChunk);
+			bytesToWrite -= static_cast<std::size_t>(bytesChunk);
+		}
 		return !f.fail();
 	}
 

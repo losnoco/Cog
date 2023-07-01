@@ -361,7 +361,7 @@ struct DSmFileHeader
 	{
 		return !memcmp(magic, "DSm\x1A", 4)
 			&& version == 0x20
-			&& numChannels >= 1 && numChannels <= 32
+			&& numChannels >= 1 && numChannels <= 16
 			&& numSamples > 0
 			&& numOrders > 0
 			&& globalVol <= 100;

@@ -106,15 +106,13 @@
 // Support for externally linked samples e.g. in MPTM files
 #define MPT_EXTERNAL_SAMPLES
 
-// Support mpt::ChartsetLocale
+// Support mpt::CharsetLocale
 #define MPT_ENABLE_CHARSET_LOCALE
 
 // Use architecture-specific intrinsics
 #define MPT_ENABLE_ARCH_INTRINSICS
 
-#if !defined(MPT_BUILD_RETRO)
 #define MPT_ENABLE_UPDATE
-#endif // !MPT_BUILD_RETRO
 
 // Disable unarchiving support
 //#define NO_ARCHIVE_SUPPORT

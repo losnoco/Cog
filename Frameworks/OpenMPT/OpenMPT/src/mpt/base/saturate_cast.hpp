@@ -7,6 +7,7 @@
 
 #include "mpt/base/namespace.hpp"
 
+#include <algorithm>
 #include <limits>
 
 

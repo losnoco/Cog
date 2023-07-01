@@ -13,9 +13,9 @@
 
 #include "Snd_defs.h"
 
-class Opal;
-
 OPENMPT_NAMESPACE_BEGIN
+
+class Opal;
 
 class OPL
 {
