@@ -295,12 +295,14 @@ bool CSoundFile::ReadSampleFromSong(SAMPLEINDEX targetSample, const CSoundFile &
 		return false;
 	}
 
+	if(GetNumSamples() < targetSample)
+		m_nSamples = targetSample;
+
 	DestroySampleThreadsafe(targetSample);
 
 	const ModSample &sourceSmp = srcSong.GetSample(sourceSample);
 	ModSample &targetSmp = GetSample(targetSample);
 
-	if(GetNumSamples() < targetSample) m_nSamples = targetSample;
 	targetSmp = sourceSmp;
 	m_szNames[targetSample] = srcSong.m_szNames[sourceSample];
 

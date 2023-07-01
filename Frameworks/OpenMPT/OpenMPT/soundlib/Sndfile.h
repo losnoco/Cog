@@ -254,6 +254,19 @@ struct FileHistory
 	{
 		return loadDate != mpt::Date::AnyGregorian{};
 	}
+
+	bool operator==(const FileHistory &other) const noexcept
+	{
+		return std::tie(loadDate, openTime) == std::tie(other.loadDate, other.openTime);
+	}
+	bool operator!=(const FileHistory &other) const noexcept
+	{
+		return std::tie(loadDate, openTime) != std::tie(other.loadDate, other.openTime);
+	}
+	bool operator<(const FileHistory &other) const noexcept
+	{
+		return std::tie(loadDate, openTime) < std::tie(other.loadDate, other.openTime);
+	}
 };
 
 

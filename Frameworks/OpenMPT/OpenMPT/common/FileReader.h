@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+#include <cstddef>
 #include <cstring>
 
 #include "FileReaderFwd.h"

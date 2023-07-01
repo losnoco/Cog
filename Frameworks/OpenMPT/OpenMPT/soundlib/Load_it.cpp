@@ -488,9 +488,9 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				m_dwLastSavedWithVersion = MPT_V("1.17.00.00");
 			} else if(fileHeader.cwtv == 0x0214 && fileHeader.cmwt == 0x0202 && fileHeader.reserved == 0)
 			{
-				// ModPlug Tracker b3.3 - 1.09, instruments 557 bytes apart
+				// ModPlug Tracker b3.2 - 1.09, instruments 557 bytes apart
 				m_dwLastSavedWithVersion = MPT_V("1.09.00.00");
-				madeWithTracker = U_("ModPlug Tracker b3.3 - 1.09");
+				madeWithTracker = U_("ModPlug Tracker b3.2 - 1.09");
 				interpretModPlugMade = true;
 			} else if(fileHeader.cwtv == 0x0300 && fileHeader.cmwt == 0x0300 && fileHeader.reserved == 0 && fileHeader.ordnum == 256 && fileHeader.sep == 128 && fileHeader.pwd == 0)
 			{
@@ -1192,11 +1192,33 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				&& fileHeader.msglength == 0 && fileHeader.msgoffset == 0 && fileHeader.reserved == 0)
 			{
 				madeWithTracker = U_("OpenSPC conversion");
+			} else if(fileHeader.cwtv == 0x0202 && fileHeader.cmwt == 0x0200 && fileHeader.highlight_major == 0 && fileHeader.highlight_minor == 0 && fileHeader.reserved == 0 && !patPos.empty() && !smpPos.empty() && patPos[0] != 0 && patPos[0] < smpPos[0])
+			{
+				// ModPlug Tracker 1.0 pre-alpha up to alpha 4, patterns located before instruments / samples
+				m_dwLastSavedWithVersion = MPT_V("1.00.00.A0");
+				madeWithTracker = U_("ModPlug Tracker 1.0 pre-alpha / alpha");
+				interpretModPlugMade = true;
 			} else if(fileHeader.cwtv == 0x0214 && fileHeader.cmwt == 0x0200 && fileHeader.highlight_major == 0 && fileHeader.highlight_minor == 0 && fileHeader.reserved == 0)
 			{
-				// ModPlug Tracker 1.00a5, instruments 560 bytes apart
-				m_dwLastSavedWithVersion = MPT_V("1.00.00.A5");
-				madeWithTracker = U_("ModPlug Tracker 1.00a5");
+				if(fileHeader.special & (ITFileHeader::embedPatternHighlights | ITFileHeader::embedEditHistory))
+				{
+					// ModPlug Tracker 1.0a6/b1/b2
+					// Instruments are 557 bytes apart in beta 2.3, in beta 1 still 560 bytes like in earlier versions
+					if(insPos.size() >= 2 && insPos[1] - insPos[0] == 557)
+					{
+						m_dwLastSavedWithVersion = MPT_V("1.00.00.B2");
+						madeWithTracker = U_("ModPlug Tracker 1.0b2");
+					} else
+					{
+						m_dwLastSavedWithVersion = MPT_V("1.00.00.B1");
+						madeWithTracker = U_("ModPlug Tracker 1.0 alpha / beta");
+					}
+				} else
+				{
+					// ModPlug Tracker 1.0a5, instruments 560 bytes apart
+					m_dwLastSavedWithVersion = MPT_V("1.00.00.A5");
+					madeWithTracker = U_("ModPlug Tracker 1.0a5");
+				}
 				interpretModPlugMade = true;
 			} else if(fileHeader.cwtv == 0x0214 && fileHeader.cmwt == 0x0214 && !memcmp(&fileHeader.reserved, "CHBI", 4))
 			{
@@ -2118,11 +2140,11 @@ std::pair<bool, bool> CSoundFile::LoadMixPlugins(FileReader &file)
 		else if(code[0] == 'F' && (code[1] == 'X' || MPT_ISDIGIT(1)) && MPT_ISDIGIT(2) && MPT_ISDIGIT(3))
 #undef MPT_ISDIGIT
 		{
-			PLUGINDEX plug = (code[2] - '0') * 10 + (code[3] - '0');	//calculate plug-in number.
-			if(code[1] != 'X') plug += (code[1] - '0') * 100;
-
-			if(plug < MAX_MIXPLUGINS)
+			uint16 fxplug = (code[2] - '0') * 10 + (code[3] - '0');  //calculate plug-in number.
+			if(code[1] != 'X') fxplug += (code[1] - '0') * 100;
+			if(fxplug < MAX_MIXPLUGINS)
 			{
+				PLUGINDEX plug = static_cast<PLUGINDEX>(fxplug);
 				ReadMixPluginChunk(chunk, m_MixPlugins[plug]);
 			}
 			hasPluginChunks = true;

@@ -5,6 +5,7 @@
 
 
 
+#include "mpt/base/detect_arch.hpp"
 #include "mpt/base/detect_compiler.hpp"
 #include "mpt/base/detect_libc.hpp"
 #include "mpt/base/detect_libcxx.hpp"
@@ -32,6 +33,15 @@
 
 #if MPT_GCC_BEFORE(9, 1, 0)
 #define MPT_COMPILER_QUIRK_NO_CONSTEXPR_THROW
+#endif
+
+
+
+#if MPT_COMPILER_MSVC && MPT_MSVC_AT_LEAST(2022, 6) && MPT_ARCH_AARCH64
+// VS2022 17.6.0 ARM64 gets confused about alignment in std::bit_cast (or equivalent code),
+// causing an ICE.
+// See <https://developercommunity.visualstudio.com/t/ICE-when-compiling-for-ARM64-due-to-alig/10367205>.
+#define MPT_COMPILER_QUIRK_BROKEN_BITCAST
 #endif
 
 
@@ -249,13 +259,18 @@
 #elif MPT_LIBCXX_GNU
 #define MPT_LIBCXX_QUIRK_NO_CHRONO_DATE_PARSE
 #endif
-#if MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2022, 6) || !MPT_COMPILER_MSVC)
+#if MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2022, 7) || !MPT_COMPILER_MSVC)
 // Causes massive memory leaks.
 // See
 // <https://developercommunity.visualstudio.com/t/stdchronoget-tzdb-list-memory-leak/1644641>
 // / <https://github.com/microsoft/STL/issues/2504>.
 #define MPT_LIBCXX_QUIRK_CHRONO_TZ_MEMLEAK
 #endif
+#endif
+
+#if MPT_MSVC_AT_LEAST(2022, 6) && MPT_MSVC_BEFORE(2022, 7)
+// std::chrono triggers ICE in VS2022 17.6.0, see <https://developercommunity.visualstudio.com/t/INTERNAL-COMPILER-ERROR-when-compiling-s/10366948>.
+#define MPT_LIBCXX_QUIRK_CHRONO_DATE_BROKEN_ZONED_TIME
 #endif
 
 

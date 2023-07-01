@@ -103,7 +103,7 @@ static constexpr ModFormatInfo modFormatInfo[] =
 	{ UL_("Graoumf Tracker 1 / 2"),              "gt2"},
 	{ UL_("UltraTracker"),                       "ult" },
 	{ UL_("Mod's Grave"),                        "wow" },
-	{ UL_("Imperium Galactica"),                 "xmf" },
+	{ UL_("Astroidea XMF"),                      "xmf" },
 	// converted formats (no MODTYPE)
 	{ UL_("General Digital Music"),              "gdm" },
 	{ UL_("Un4seen MO3"),                        "mo3" },

@@ -1415,7 +1415,7 @@ bool CSoundFile::ReadMO3(FileReader &file, ModLoadingFlags loadFlags)
 			if(!sampleChunk.chunk.IsValid())
 				continue;
 
-			SAMPLEINDEX sharedOggHeader = smp + sampleChunk.sharedHeader;
+			SAMPLEINDEX sharedOggHeader = (smp + sampleChunk.sharedHeader > 0) ? static_cast<SAMPLEINDEX>(smp + sampleChunk.sharedHeader) : smp;
 			// Which chunk are we going to read the header from?
 			// Note: Every Ogg stream has a unique serial number.
 			// stb_vorbis (currently) ignores this serial number so we can just stitch

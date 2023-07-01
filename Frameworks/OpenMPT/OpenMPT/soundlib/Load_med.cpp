@@ -1302,6 +1302,7 @@ bool CSoundFile::ReadMED(FileReader &file, ModLoadingFlags loadFlags)
 		}
 
 		PATTERNINDEX numPatterns = songHeader.numBlocks;
+		LimitMax(numPatterns, static_cast<PATTERNINDEX>(PATTERNINDEX_INVALID - basePattern));
 		Patterns.ResizeArray(basePattern + numPatterns);
 		for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
 		{

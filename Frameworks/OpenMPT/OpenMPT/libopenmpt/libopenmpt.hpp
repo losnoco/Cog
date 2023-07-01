@@ -468,7 +468,7 @@ public:
 	/*!
 	  \param stream Input stream from which the module is loaded. After the constructor has finished successfully, the input position of stream is set to the byte after the last byte that has been read. If the constructor fails, the state of the input position of stream is undefined.
 	  \param log Log where any warnings or errors are printed to. The lifetime of the reference has to be as long as the lifetime of the module instance.
-	  \param ctls A map of initial ctl values, see openmpt::module::get_ctls.
+	  \param ctls A map of initial ctl values, see \ref openmpt::module::get_ctls and openmpt::module::ctl_set.
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception in case the provided file cannot be opened.
 	  \remarks The input data can be discarded after an openmpt::module has been constructed successfully.
 	  \sa \ref libopenmpt_cpp_fileio
@@ -477,7 +477,7 @@ public:
 	/*!
 	  \param data Data to load the module from.
 	  \param log Log where any warnings or errors are printed to. The lifetime of the reference has to be as long as the lifetime of the module instance.
-	  \param ctls A map of initial ctl values, see openmpt::module::get_ctls.
+	  \param ctls A map of initial ctl values, see \ref openmpt::module::get_ctls and openmpt::module::ctl_set.
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception in case the provided file cannot be opened.
 	  \remarks The input data can be discarded after an openmpt::module has been constructed successfully.
 	  \sa \ref libopenmpt_cpp_fileio
@@ -488,7 +488,7 @@ public:
 	  \param beg Begin of data to load the module from.
 	  \param end End of data to load the module from.
 	  \param log Log where any warnings or errors are printed to. The lifetime of the reference has to be as long as the lifetime of the module instance.
-	  \param ctls A map of initial ctl values, see openmpt::module::get_ctls.
+	  \param ctls A map of initial ctl values, see \ref openmpt::module::get_ctls and openmpt::module::ctl_set.
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception in case the provided file cannot be opened.
 	  \remarks The input data can be discarded after an openmpt::module has been constructed successfully.
 	  \sa \ref libopenmpt_cpp_fileio
@@ -509,7 +509,7 @@ public:
 	/*!
 	  \param data Data to load the module from.
 	  \param log Log where any warnings or errors are printed to. The lifetime of the reference has to be as long as the lifetime of the module instance.
-	  \param ctls A map of initial ctl values, see openmpt::module::get_ctls.
+	  \param ctls A map of initial ctl values, see \ref openmpt::module::get_ctls and openmpt::module::ctl_set.
 	  \throws openmpt::exception Throws an exception derived from openmpt::exception in case the provided file cannot be opened.
 	  \remarks The input data can be discarded after an openmpt::module has been constructed successfully.
 	  \sa \ref libopenmpt_cpp_fileio
@@ -848,7 +848,7 @@ public:
 	  \return The current tempo in tracker units. The exact meaning of this value depends on the tempo mode being used.
 	  \deprecated Please use openmpt::module::get_current_tempo2().
 	*/
-	LIBOPENMPT_CXX_API_MEMBER LIBOPENMPT_ATTR_DEPRECATED std::int32_t get_current_tempo() const;
+	LIBOPENMPT_ATTR_DEPRECATED LIBOPENMPT_CXX_API_MEMBER std::int32_t get_current_tempo() const;
 	//! Get the current tempo
 	/*!
 	  \return The current tempo in tracker units. The exact meaning of this value depends on the tempo mode being used.
@@ -1102,7 +1102,7 @@ public:
 	  \sa openmpt::module::get_ctls
 	  \deprecated Please use openmpt::module::ctl_get_boolean(), openmpt::module::ctl_get_integer(), openmpt::module::ctl_get_floatingpoint(), or openmpt::module::ctl_get_text().
 	*/
-	LIBOPENMPT_CXX_API_MEMBER LIBOPENMPT_ATTR_DEPRECATED std::string ctl_get( const std::string & ctl ) const;
+	LIBOPENMPT_ATTR_DEPRECATED LIBOPENMPT_CXX_API_MEMBER std::string ctl_get( const std::string & ctl ) const;
 	//! Get current ctl boolean value
 	/*!
 	  \param ctl The ctl key whose value should be retrieved.
@@ -1144,7 +1144,7 @@ public:
 	  \sa openmpt::module::get_ctls
 	  \deprecated Please use openmpt::module::ctl_set_boolean(), openmpt::module::ctl_set_integer(), openmpt::module::ctl_set_floatingpoint(), or openmpt::module::ctl_set_text().
 	*/
-	LIBOPENMPT_CXX_API_MEMBER LIBOPENMPT_ATTR_DEPRECATED void ctl_set( const std::string & ctl, const std::string & value );
+	LIBOPENMPT_ATTR_DEPRECATED LIBOPENMPT_CXX_API_MEMBER void ctl_set( const std::string & ctl, const std::string & value );
 	//! Set ctl boolean value
 	/*!
 	  \param ctl The ctl key whose value should be set.

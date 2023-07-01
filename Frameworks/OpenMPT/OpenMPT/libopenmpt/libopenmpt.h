@@ -670,7 +670,7 @@ typedef struct openmpt_module_initial_ctl {
  * \param stream Input stream to load the module from.
  * \param logfunc Logging function where warning and errors are written. The logging function may be called throughout the lifetime of openmpt_module. May be NULL.
  * \param loguser User-defined data associated with this module. This value will be passed to the logging callback function (logfunc)
- * \param ctls A map of initial ctl values. See openmpt_module_get_ctls()
+ * \param ctls An array of initial ctl and value pairs stored in \ref openmpt_module_initial_ctl, terminated by a pair of NULL and NULL. See \ref openmpt_module_get_ctls and \ref openmpt_module_ctl_set.
  * \return A pointer to the constructed openmpt_module, or NULL on failure.
  * \remarks The input data can be discarded after an openmpt_module has been constructed successfully.
  * \sa openmpt_stream_callbacks
@@ -689,7 +689,7 @@ LIBOPENMPT_API LIBOPENMPT_DEPRECATED openmpt_module * openmpt_module_create( ope
  * \param erruser Error function user context. Used to pass any user-defined data associated with this module to the logging function.
  * \param error Pointer to an integer where an error may get stored. May be NULL.
  * \param error_message Pointer to a string pointer where an error message may get stored. May be NULL.
- * \param ctls A map of initial ctl values. See openmpt_module_get_ctls()
+ * \param ctls An array of initial ctl and value pairs stored in \ref openmpt_module_initial_ctl, terminated by a pair of NULL and NULL. See \ref openmpt_module_get_ctls and \ref openmpt_module_ctl_set.
  * \return A pointer to the constructed openmpt_module, or NULL on failure.
  * \remarks The input data can be discarded after an openmpt_module has been constructed successfully.
  * \sa openmpt_stream_callbacks
@@ -704,7 +704,7 @@ LIBOPENMPT_API openmpt_module * openmpt_module_create2( openmpt_stream_callbacks
  * \param filesize Amount of data available.
  * \param logfunc Logging function where warning and errors are written. The logging function may be called throughout the lifetime of openmpt_module.
  * \param loguser User-defined data associated with this module. This value will be passed to the logging callback function (logfunc)
- * \param ctls A map of initial ctl values. See openmpt_module_get_ctls()
+ * \param ctls An array of initial ctl and value pairs stored in \ref openmpt_module_initial_ctl, terminated by a pair of NULL and NULL. See \ref openmpt_module_get_ctls and \ref openmpt_module_ctl_set.
  * \return A pointer to the constructed openmpt_module, or NULL on failure.
  * \remarks The input data can be discarded after an openmpt_module has been constructed successfully.
  * \sa \ref libopenmpt_c_fileio
@@ -722,7 +722,7 @@ LIBOPENMPT_API LIBOPENMPT_DEPRECATED openmpt_module * openmpt_module_create_from
  * \param erruser Error function user context. Used to pass any user-defined data associated with this module to the logging function.
  * \param error Pointer to an integer where an error may get stored. May be NULL.
  * \param error_message Pointer to a string pointer where an error message may get stored. May be NULL.
- * \param ctls A map of initial ctl values. See openmpt_module_get_ctls()
+ * \param ctls An array of initial ctl and value pairs stored in \ref openmpt_module_initial_ctl, terminated by a pair of NULL and NULL. See \ref openmpt_module_get_ctls and \ref openmpt_module_ctl_set.
  * \return A pointer to the constructed openmpt_module, or NULL on failure.
  * \remarks The input data can be discarded after an openmpt_module has been constructed successfully.
  * \sa \ref libopenmpt_c_fileio

@@ -396,21 +396,20 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 
 	std::string sampleName = mpt::ToCharset(GetCharsetInternal(), GetSampleNameFromTags(tags));
 
-	if(rawData.size() / numChannels / (bitsPerSample / 8) > MAX_SAMPLE_LENGTH)
+	const size_t length = rawData.size() / numChannels / (bitsPerSample / 8);
+	if(length < 1 || length > MAX_SAMPLE_LENGTH)
 	{
 		return false;
 	}
 
-	SmpLength length = mpt::saturate_cast<SmpLength>(rawData.size() / numChannels / (bitsPerSample/8));
-
 	DestroySampleThreadsafe(sample);
 	if(!mo3Decode)
 	{
-		m_szNames[sample] = sampleName;
 		Samples[sample].Initialize();
 		Samples[sample].nC5Speed = samplesPerSecond;
+		m_szNames[sample] = sampleName;
 	}
-	Samples[sample].nLength = length;
+	Samples[sample].nLength = static_cast<SmpLength>(length);
 	Samples[sample].uFlags.set(CHN_16BIT, bitsPerSample >= 16);
 	Samples[sample].uFlags.set(CHN_STEREO, numChannels == 2);
 	Samples[sample].AllocateSample();
@@ -423,24 +422,24 @@ bool CSoundFile::ReadMediaFoundationSample(SAMPLEINDEX sample, FileReader &file,
 	{
 		if(numChannels == 2)
 		{
-			CopyStereoInterleavedSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt24<0, littleEndian24> > >(Samples[sample], rawData.data(), rawData.size());
+			CopyStereoInterleavedSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt24<0, littleEndian24>>>(Samples[sample], rawData.data(), rawData.size());
 		} else
 		{
-			CopyMonoSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt24<0, littleEndian24> > >(Samples[sample], rawData.data(), rawData.size());
+			CopyMonoSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt24<0, littleEndian24>>>(Samples[sample], rawData.data(), rawData.size());
 		}
 	} else if(bitsPerSample == 32)
 	{
 		if(numChannels == 2)
 		{
-			CopyStereoInterleavedSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt32<0, littleEndian32> > >(Samples[sample], rawData.data(), rawData.size());
+			CopyStereoInterleavedSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt32<0, littleEndian32>>>(Samples[sample], rawData.data(), rawData.size());
 		} else
 		{
-			CopyMonoSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt32<0, littleEndian32> > >(Samples[sample], rawData.data(), rawData.size());
+			CopyMonoSample<SC::ConversionChain<SC::Convert<int16, int32>, SC::DecodeInt32<0, littleEndian32>>>(Samples[sample], rawData.data(), rawData.size());
 		}
 	} else
 	{
 		// just copy
-		std::copy(rawData.data(), rawData.data() + rawData.size(), mpt::byte_cast<char*>(Samples[sample].sampleb()));
+		std::copy(rawData.begin(), rawData.end(), mpt::byte_cast<char *>(Samples[sample].sampleb()));
 	}
 
 	#undef MPT_MF_CHECKED
