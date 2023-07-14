@@ -169,7 +169,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 						[currentPtsLock lock];
 						samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
 						[currentPtsLock unlock];
-						if(samplesFlushed) {
+						if(samplesFlushed > 1) {
 							[visController postVisPCM:visTemp amount:samplesFlushed];
 						} else {
 							break;
@@ -207,7 +207,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 				[currentPtsLock lock];
 				samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
 				[currentPtsLock unlock];
-				if(samplesFlushed) {
+				if(samplesFlushed > 1) {
 					[visController postVisPCM:visTemp amount:samplesFlushed];
 				} else {
 					break;
@@ -806,7 +806,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[currentPtsLock lock];
 			samplesRendered = rsstate_flush(rsold, &rsTempBuffer[0], 4096);
 			[currentPtsLock unlock];
-			if(!samplesRendered) {
+			if(samplesRendered < 4096) {
 				rsstate_delete(rsold);
 				rsold = NULL;
 				rsDone = YES;
