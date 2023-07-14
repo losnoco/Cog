@@ -217,7 +217,7 @@ static void dsd2pcm_reset(void *_state) {
 static int dsd2pcm_latency(void *_state) {
 	struct dsd2pcm_state *state = (struct dsd2pcm_state *)_state;
 	if(state)
-		return state->FIFO_LENGTH;
+		return state->FILT_LOOKUP_PARTS * 8;
 	else
 		return 0;
 }
