@@ -28,6 +28,14 @@
  * @author Sebastian Gesemann
  */
 
+/**
+ * This is the 2nd half of an even order symmetric FIR
+ * lowpass filter (to be used on a signal sampled at 44100*64 Hz)
+ * Passband is 0-24 kHz (ripples +/- 0.025 dB)
+ * Stopband starts at 176.4 kHz (rejection: 170 dB)
+ * The overall gain is 2.0
+ */
+
 #define dsd2pcm_FILTER_COEFFS_COUNT 64
 static const float dsd2pcm_FILTER_COEFFS[64] = {
 	0.09712411121659f, 0.09613438994044f, 0.09417884216316f, 0.09130441727307f,
