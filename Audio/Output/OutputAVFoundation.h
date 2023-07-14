@@ -42,6 +42,8 @@ using std::atomic_long;
 
 	BOOL rsDone;
 	void *rsstate, *rsold;
+	
+	double lastClippedSampleRate;
 
 	void *rsvis;
 	double lastVisRate;

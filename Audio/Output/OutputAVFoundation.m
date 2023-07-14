@@ -85,6 +85,10 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			format.mSampleRate = maxSampleRate;
 			dstRate = maxSampleRate;
 			formatClipped = YES;
+			if(srcRate != lastClippedSampleRate) {
+				lastClippedSampleRate = srcRate;
+				streamFormatStarted = NO;
+			}
 		}
 		if(!streamFormatStarted || config != realStreamChannelConfig || memcmp(&newFormat, &format, sizeof(format)) != 0) {
 			[currentPtsLock lock];
@@ -817,7 +821,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				rsDone = NO;
 				realStreamFormat = newFormat;
 				realStreamChannelConfig = newChannelConfig;
-				streamFormatChanged = YES;
+				[self updateStreamFormat];
 			}
 		}
 
@@ -962,6 +966,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		rsDone = NO;
 		rsstate = NULL;
 		rsold = NULL;
+		
+		lastClippedSampleRate = 0.0;
 
 		rsvis = NULL;
 		lastVisRate = 44100.0;
