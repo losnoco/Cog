@@ -19,6 +19,8 @@
 #import "BadSampleCleaner.h"
 #endif
 
+static void *kChunkListContext = &kChunkListContext;
+
 #if DSD_DECIMATE
 /**
  * DSD 2 PCM: Stage 1:
@@ -392,6 +394,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		dsd2pcmCount = 0;
 		dsd2pcmLatency = 0;
 #endif
+		
+		halveDSDVolume = NO;
+		
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
 	}
 
 	return self;
@@ -418,6 +424,19 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 #endif
 	if(tempData) {
 		free(tempData);
+	}
+	
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.halveDSDVolume" context:kChunkListContext];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+	if(context != kChunkListContext) {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
+	
+	if([keyPath isEqualToString:@"values.halveDSDVolume"]) {
+		halveDSDVolume = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"halveDSDVolume"];
 	}
 }
 
@@ -648,8 +667,15 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			inputBuffer = &tempData[buffer_adder];
 			inputChanged = YES;
 #if DSD_DECIMATE
-			float scaleFactor = 2.0f;
-			vDSP_vsdiv((float *)inputBuffer, 1, &scaleFactor, (float *)inputBuffer, 1, bytesReadFromInput / sizeof(float));
+			if(halveDSDVolume) {
+				float scaleFactor = 2.0f;
+				vDSP_vsdiv((float *)inputBuffer, 1, &scaleFactor, (float *)inputBuffer, 1, bytesReadFromInput / sizeof(float));
+			}
+#else
+			if(!halveDSDVolume) {
+				float scaleFactor = 2.0f;
+				vDSP_vsmul((float *)inputBuffer, 1, &scaleFactor, (float *)inputBuffer, 1, bytesReadFromInput / sizeof(float));
+			}
 #endif
 		} else if(bitsPerSample <= 8) {
 			samplesRead = bytesReadFromInput;
