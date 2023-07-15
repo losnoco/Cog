@@ -241,3 +241,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Fade in/out:"; ObjectID = "Gp4-rA-1UF"; */
 "Gp4-rA-1UF.title" = "Fade in/out:";
+
+/* Class = "NSButtonCell"; title = "Reduce DSD volume level by 6 dB"; ObjectID = "Phw-hj-6tI"; */
+"Phw-hj-6tI.title" = "Reduce DSD volume level by 6 dB";
