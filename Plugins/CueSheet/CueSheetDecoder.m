@@ -165,7 +165,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 				int channels = [[properties objectForKey:@"channels"] intValue];
 				float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 
-				bytesPerFrame = (bitsPerSample / 8) * channels;
+				bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 				double _trackStart = [track time];
 				if(![track timeInSamples]) _trackStart *= sampleRate;
@@ -195,7 +195,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 		int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 		int channels = [[properties objectForKey:@"channels"] intValue];
 
-		bytesPerFrame = (bitsPerSample / 8) * channels;
+		bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 		trackStart = 0;
 
