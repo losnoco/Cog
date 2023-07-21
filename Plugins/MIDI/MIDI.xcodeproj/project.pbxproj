@@ -15,9 +15,6 @@
 		8356BCC627B352620074E50C /* BMPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCC427B352620074E50C /* BMPlayer.cpp */; };
 		8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BCC727B353CB0074E50C /* libbass.dylib */; };
 		8356BCCA27B353CB0074E50C /* libbassmidi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BCC827B353CB0074E50C /* libbassmidi.dylib */; };
-		8356BCCE27B353E30074E50C /* libbassflac.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BCCB27B353E30074E50C /* libbassflac.dylib */; };
-		8356BCCF27B353E30074E50C /* libbassopus.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BCCC27B353E30074E50C /* libbassopus.dylib */; };
-		8356BCD027B353E30074E50C /* libbasswv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BCCD27B353E30074E50C /* libbasswv.dylib */; };
 		8356BCD127B353F60074E50C /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCC727B353CB0074E50C /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8356BCD227B353F90074E50C /* libbassmidi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCC827B353CB0074E50C /* libbassmidi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8356BCD327B353FB0074E50C /* libbassflac.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCB27B353E30074E50C /* libbassflac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -167,13 +164,10 @@
 			files = (
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */,
-				8356BCCF27B353E30074E50C /* libbassopus.dylib in Frameworks */,
 				83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */,
-				8356BCCE27B353E30074E50C /* libbassflac.dylib in Frameworks */,
-				8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */,
 				8356BCCA27B353CB0074E50C /* libbassmidi.dylib in Frameworks */,
+				8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */,
 				83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */,
-				8356BCD027B353E30074E50C /* libbasswv.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
