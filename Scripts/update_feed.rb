@@ -12,6 +12,7 @@ feed = ARGV[0] || 'mercury'
 site_dir = "#{Dir.home}/Source/Repos/kode54-net/cog"
 
 appcast = open("#{site_dir}/#{feed}_builds/#{feed}.xml")
+puts "Reading feed..."
 
 appcastdoc = Nokogiri::XML(appcast)
 
@@ -82,6 +83,7 @@ if 1 #appcast_revision < latest_revision
   filenamedesc = "Cog-#{revision_code}.html"
   deltamask = "Cog#{revision_number}-"
   temp_path = "/tmp";
+  puts "Generating zip file for Cog..."
   %x[rm -rf '#{temp_path}/Cog.app' '#{temp_path}/Cog.zip']
   
   #Copy the replacement build
@@ -105,31 +107,39 @@ if 1 #appcast_revision < latest_revision
   %x[rm '#{descriptiondoc.path}']
 
   #Update appcast
+  puts "Generating appcast..."
   %x[generate_appcast '#{site_dir}/#{feed}_builds']
 
   #List out the deltas
   deltas = Dir.entries("#{site_dir}/#{feed}_builds").select { |f| f =~ /\A#{Regexp.escape(deltamask)}.+\.delta\z/ }
 
   #Upload them to R2
+  puts "Uploading full build to R2..."
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{filename}' r2:cog/ --progress]
   deltas.each do |f|
+    puts "Uploading delta #{f} to R2..."
     %x[rclone copy '#{site_dir}/#{feed}_builds/#{f}' r2:cog/ --progress]
   end
 
   #Upload the changelog that Sparkle will display
+  puts "Uploading changelog to R2..."
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{filenamedesc}' r2:cog/ --progress]
  
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.app']
 
   #Convert to JSON
+  puts "Converting to JSON..."
   %x[pushd '#{site_dir}/#{feed}_builds' && '#{__dir__}/sparkleToJSON' '#{site_dir}/#{feed}_builds/#{feed}.xml' && popd]
 
   #Upload to R2
+  puts "Uploading XML feed to R2..."
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{feed}.xml' r2:cog/ --progress]
+  puts "Uploading JSON feed to R2..."
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{feed}.json' r2:cog/ --progress]
 
   #Send web hook to update site
+  puts "Sending web hook to update site..."
   update_uri = %x[security find-generic-password -w -a #{ENV['LOGNAME']} -s cogupdateurl].chop
   update_parameter = URI.escape(latest_revision)
   %x[curl -X POST '#{update_uri}?trigger_title=#{update_parameter}']
