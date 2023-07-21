@@ -165,6 +165,8 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 				int channels = [[properties objectForKey:@"channels"] intValue];
 				float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 
+				isDSD = bitsPerSample == 1;
+
 				bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 				double _trackStart = [track time];
@@ -194,6 +196,8 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 		NSDictionary *properties = [decoder properties];
 		int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 		int channels = [[properties objectForKey:@"channels"] intValue];
+
+		isDSD = bitsPerSample == 1;
 
 		bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
@@ -348,14 +352,16 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 		return nil;
 	}
 
+	size_t frameScale = isDSD ? 8 : 1;
+
 	AudioChunk *chunk = [decoder readAudio];
 
-	size_t n = chunk.frameCount;
+	size_t n = chunk.frameCount * frameScale;
 	if(n > frames) {
-		[chunk setFrameCount:frames];
+		[chunk setFrameCount:frames / frameScale];
 	}
 
-	framePosition += chunk.frameCount;
+	framePosition += chunk.frameCount * frameScale;
 
 	return chunk;
 }
