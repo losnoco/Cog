@@ -113,7 +113,7 @@
 - (AudioChunk *)readAudio {
 	int maxFrames = INT_MAX;
 
-	if(framePosition + maxFrames > trackEnd)
+	if(framePosition + maxFrames >= trackEnd)
 		maxFrames = (int)(trackEnd - framePosition);
 
 	if(!maxFrames) {
