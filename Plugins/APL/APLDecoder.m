@@ -63,6 +63,8 @@
 	int channels = [[properties objectForKey:@"channels"] intValue];
 	//	float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 
+	isDSD = bitsPerSample == 1;
+
 	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 	if([apl endBlock] > [apl startBlock])
@@ -119,12 +121,14 @@
 		return nil;
 	}
 
+	size_t frameScale = isDSD ? 8 : 1;
+
 	AudioChunk *chunk = [decoder readAudio];
-	if(chunk.frameCount > maxFrames) {
-		[chunk setFrameCount:maxFrames];
+	if(chunk.frameCount * frameScale > maxFrames) {
+		[chunk setFrameCount:maxFrames / frameScale];
 	}
 
-	framePosition += chunk.frameCount;
+	framePosition += chunk.frameCount * frameScale;
 	return chunk;
 }
 

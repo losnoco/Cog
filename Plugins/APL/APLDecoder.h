@@ -18,6 +18,8 @@
 	long trackEnd; // frames until end of track.
 	long trackLength; // track len in frames
 
+	BOOL isDSD;
+
 	APLFile *apl;
 }
 
