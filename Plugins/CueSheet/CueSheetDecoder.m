@@ -339,7 +339,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 	int frames = INT_MAX;
 
-	if(!noFragment && framePosition + frames > trackEnd) {
+	if(!noFragment && framePosition + frames >= trackEnd) {
 		frames = (UInt32)(trackEnd - framePosition);
 	}
 
