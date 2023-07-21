@@ -20,6 +20,7 @@
 	NSURL *sourceURL;
 
 	BOOL seekedToStart;
+	BOOL isDSD;
 
 	int bytesPerFrame; // Number of bytes per frame, ie channels * (bitsPerSample/8)
 
