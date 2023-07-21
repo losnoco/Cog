@@ -63,7 +63,7 @@
 	int channels = [[properties objectForKey:@"channels"] intValue];
 	//	float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 
-	bytesPerFrame = (bitsPerSample / 8) * channels;
+	bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
 	if([apl endBlock] > [apl startBlock])
 		trackEnd = [apl endBlock]; //([apl endBlock] / sampleRate) * 1000.0;
