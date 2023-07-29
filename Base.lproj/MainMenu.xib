@@ -1875,17 +1875,11 @@ CA
                             <menuItem title="Repeat" id="1740">
                                 <menu key="submenu" title="Repeat" id="1741">
                                     <items>
-                                        <menuItem title="All" keyEquivalent="r" id="1742">
+                                        <menuItem title="All" state="on" keyEquivalent="r" id="1742">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1760">
                                                     <dictionary key="options">
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
-                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
-                                                        <integer key="NSConditionallySetsHidden" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                                        <integer key="NSValidatesImmediately" value="0"/>
                                                         <string key="NSValueTransformerName">RepeatAllTransformer</string>
                                                     </dictionary>
                                                 </binding>
@@ -1895,8 +1889,6 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="2412">
                                                     <dictionary key="options">
-                                                        <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
-                                                        <bool key="NSConditionallySetsEnabled" value="NO"/>
                                                         <string key="NSValueTransformerName">RepeatAlbumTransformer</string>
                                                     </dictionary>
                                                 </binding>
@@ -1906,12 +1898,6 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1763">
                                                     <dictionary key="options">
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
-                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
-                                                        <integer key="NSConditionallySetsHidden" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                                        <integer key="NSValidatesImmediately" value="0"/>
                                                         <string key="NSValueTransformerName">RepeatOneTransformer</string>
                                                     </dictionary>
                                                 </binding>
@@ -1921,12 +1907,6 @@ CA
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1767">
                                                     <dictionary key="options">
-                                                        <integer key="NSAllowsEditingMultipleValuesSelection" value="0"/>
-                                                        <integer key="NSAlwaysPresentsApplicationModalAlerts" value="0"/>
-                                                        <integer key="NSConditionallySetsEnabled" value="0"/>
-                                                        <integer key="NSConditionallySetsHidden" value="0"/>
-                                                        <integer key="NSRaisesForNotApplicableKeys" value="1"/>
-                                                        <integer key="NSValidatesImmediately" value="0"/>
                                                         <string key="NSValueTransformerName">RepeatNoneTransformer</string>
                                                     </dictionary>
                                                 </binding>
