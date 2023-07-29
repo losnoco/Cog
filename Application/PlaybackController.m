@@ -101,6 +101,10 @@ NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
 }
 
 - (IBAction)pause:(id)sender {
+	if(!([playlistController currentEntry].seekable)) {
+		return [self stop:sender];
+	}
+
 	[[NSUserDefaults standardUserDefaults] setInteger:CogStatusPaused forKey:@"lastPlaybackStatus"];
 
 	[audioPlayer pause];
