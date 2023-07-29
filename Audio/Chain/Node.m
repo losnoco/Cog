@@ -22,7 +22,7 @@
 - (id)initWithController:(id)c previous:(id)p {
 	self = [super init];
 	if(self) {
-		buffer = [[ChunkList alloc] initWithMaximumDuration:3.0];
+		buffer = [[ChunkList alloc] initWithMaximumDuration:1.0];
 		semaphore = [[Semaphore alloc] init];
 
 		accessLock = [[NSLock alloc] init];
