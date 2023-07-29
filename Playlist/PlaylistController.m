@@ -98,7 +98,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)initDefaults {
-	NSDictionary *defaultsDictionary = @{ @"repeat": @(RepeatModeNoRepeat), @"shuffle": @(ShuffleOff) };
+	NSDictionary *defaultsDictionary = @{ @"repeat": @(RepeatModeRepeatAll), @"shuffle": @(ShuffleOff) };
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
