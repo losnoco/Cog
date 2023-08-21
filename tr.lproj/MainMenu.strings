@@ -832,3 +832,9 @@
 
 /* Class = "NSTableColumn"; headerCell.title = "Album Artist"; ObjectID = "yGV-gP-Wl6"; */
 "yGV-gP-Wl6.headerCell.title" = "Albüm Sanatçısı";
+
+/* Class = "NSTableColumn"; title = "Sample Rate"; ObjectID = "et9-zH-awt"; */
+"et9-zH-awt.title" = "Örnekleme Hızı";
+
+/* Class = "NSTableColumn"; title = "Bits Per Sample"; ObjectID = "3no-xo-TpJ"; */
+"3no-xo-TpJ.title" = "Örnek başına bit sayısı";

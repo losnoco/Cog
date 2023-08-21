@@ -805,3 +805,9 @@
 
 /* Class = "NSMenuItem"; title = "Show Lyrics"; ObjectID = "Tkb-7M-OiA"; */
 "Tkb-7M-OiA.title" = "Mostrar letras";
+
+/* Class = "NSTableColumn"; title = "Sample Rate"; ObjectID = "et9-zH-awt"; */
+"et9-zH-awt.title" = "Tasa de muestreo";
+
+/* Class = "NSTableColumn"; title = "Bits Per Sample"; ObjectID = "3no-xo-TpJ"; */
+"3no-xo-TpJ.title" = "Bits por muestra";
