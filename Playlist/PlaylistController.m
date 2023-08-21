@@ -657,6 +657,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 10:
 		case 11:
 		case 12:
+		case 13:
+		case 14:
+		case 15:
 			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(caseInsensitiveCompare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
