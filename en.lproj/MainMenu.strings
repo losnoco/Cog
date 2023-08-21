@@ -811,3 +811,6 @@
 
 /* Class = "NSTableColumn"; title = "Bits Per Sample"; ObjectID = "3no-xo-TpJ"; */
 "3no-xo-TpJ.title" = "Bits Per Sample";
+
+/* Class = "NSTableColumn"; title = "Bitrate"; ObjectID = "PoD-EU-L4X"; */
+"PoD-EU-L4X.title" = "Bitrate";

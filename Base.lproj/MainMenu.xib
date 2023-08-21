@@ -732,6 +732,50 @@
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="OsB-l4-dFb"/>
                                                     </connections>
                                                 </tableColumn>
+                                                <tableColumn identifier="bitrate" editable="NO" width="64" minWidth="32" maxWidth="1024" hidden="YES" id="PoD-EU-L4X" userLabel="Bitrate">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Bitrate">
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="9df-mL-Zgx">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <prototypeCellViews>
+                                                        <tableCellView id="Wqm-GT-K5a">
+                                                            <rect key="frame" x="1" y="3" width="0.0" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="L7E-1S-m3b">
+                                                                    <rect key="frame" x="0.0" y="1" width="4" height="16"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="cAf-1y-D7M">
+                                                                        <font key="font" usesAppearanceFont="YES"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstAttribute="trailing" secondItem="L7E-1S-m3b" secondAttribute="trailing" constant="-2" id="Fn8-gt-4io"/>
+                                                                <constraint firstItem="L7E-1S-m3b" firstAttribute="leading" secondItem="Wqm-GT-K5a" secondAttribute="leading" constant="2" id="GDJ-WW-3Vb"/>
+                                                                <constraint firstItem="L7E-1S-m3b" firstAttribute="centerY" secondItem="Wqm-GT-K5a" secondAttribute="centerY" id="O5A-dw-6sx"/>
+                                                            </constraints>
+                                                            <connections>
+                                                                <outlet property="textField" destination="L7E-1S-m3b" id="biP-XR-a2T"/>
+                                                            </connections>
+                                                        </tableCellView>
+                                                    </prototypeCellViews>
+                                                    <connections>
+                                                        <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="eFT-ZC-67y"/>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.bitrate" id="EwM-t3-oO8">
+                                                            <dictionary key="options">
+                                                                <bool key="NSConditionallySetsEditable" value="YES"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                    </connections>
+                                                </tableColumn>
                                             </tableColumns>
                                             <connections>
                                                 <binding destination="1689" name="rowHeight" keyPath="values.fontSize" id="1927">
