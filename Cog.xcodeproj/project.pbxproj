@@ -2997,6 +2997,8 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
+				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
+				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cog;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -3052,6 +3054,8 @@
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
+				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
+				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Cog;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
