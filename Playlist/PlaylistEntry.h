@@ -79,6 +79,7 @@
 @property(nonatomic) NSString *_Nullable artist;
 @property(nonatomic) NSString *_Nullable rawTitle;
 @property(nonatomic) NSString *_Nullable genre;
+@property(nonatomic) NSString *_Nullable composer;
 @property(nonatomic) int32_t disc;
 @property(nonatomic) int32_t track;
 @property(nonatomic) int32_t year;

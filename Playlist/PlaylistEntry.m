@@ -686,6 +686,15 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	[self setValue:@"artist" fromString:artist];
 }
 
+@dynamic composer;
+- (NSString *)composer {
+	return [self readAllValuesAsString:@"composer"];
+}
+
+- (void)setComposer:(NSString *)composer {
+	[self setValue:@"composer" fromString:composer];
+}
+
 @dynamic rawTitle;
 - (NSString *)rawTitle {
 	return [self readAllValuesAsString:@"title"];

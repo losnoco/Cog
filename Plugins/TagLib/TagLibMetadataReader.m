@@ -73,7 +73,7 @@
 		const TagLib::Tag *tag = f.tag();
 
 		if(tag) {
-			TagLib::String artist, albumartist, title, album, genre, comment, unsyncedlyrics;
+			TagLib::String artist, albumartist, composer, title, album, genre, comment, unsyncedlyrics;
 			int year, track, disc;
 			float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
 			TagLib::String cuesheet;
@@ -81,6 +81,7 @@
 
 			artist = tag->artist();
 			albumartist = tag->albumartist();
+			composer = tag->composer();
 			title = tag->title();
 			;
 			album = tag->album();
@@ -131,6 +132,9 @@
 
 			if(!albumartist.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:albumartist.toCString(true)] forKey:@"albumartist"];
+
+			if(!composer.isEmpty())
+				[dict setObject:[NSString stringWithUTF8String:composer.toCString(true)] forKey:@"composer"];
 
 			if(!album.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
