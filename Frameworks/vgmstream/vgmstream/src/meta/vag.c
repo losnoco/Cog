@@ -81,25 +81,24 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
             loop_flag = 0;
             break;
 
-        case 0x70474156: /* pGAV (little endian / stereo) [Jak 3 (PS2), Jak X (PS2)] */
+        case 0x70474156: /* pGAV (little endian / stereo) [Jak II, Jak 3, Jak X (PS2)] */
             meta_type = meta_VAG_custom;
             start_offset = 0x30;
 
-            if (is_id32be(0x20,sf, "Ster")) {
-                channels = 2;
+            if (is_id32be(0x2000,sf, "pGAV"))
+                interleave = 0x2000; /* Jak II & Jak 3 interleave, includes header */
+            else if (is_id32be(0x1000,sf, "pGAV"))
+                interleave = 0x1000; /* Jak X interleave, includes header */
+            else
+                interleave = 0;
 
-                if (is_id32be(0x2000,sf, "pGAV"))
-                    interleave = 0x2000; /* Jak 3 interleave, includes header */
-                else if (is_id32be(0x1000,sf, "pGAV"))
-                    interleave = 0x1000; /* Jak X interleave, includes header */
-                else
-                    goto fail;
+            if (interleave) {
+                channels = 2;
                 interleave_first = interleave - start_offset; /* interleave includes header */
                 interleave_first_skip = start_offset;
             }
             else {
                 channels = 1;
-                interleave = 0;
             }
 
             channel_size = read_u32le(0x0C,sf) / channels;
@@ -289,7 +288,8 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
     }
 
     /* ignore bigfiles and bad extractions (approximate) */
-    if (channel_size * channels + interleave * channels + start_offset * channels + 0x8000 < get_streamfile_size(sf) || 
+    /* padding is set to 2 MiB to avoid breaking Jak series' VAGs */
+    if (channel_size * channels + interleave * channels + start_offset * channels + 0x200000 < get_streamfile_size(sf) ||
         channel_size * channels > get_streamfile_size(sf)) {
         vgm_logi("VAG: wrong expected (incorrect extraction? %x * %i + %x + %x + ~ vs %x)\n", 
             channel_size, channels, interleave * channels, start_offset * channels, (uint32_t)get_streamfile_size(sf));

@@ -146,6 +146,9 @@ static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk
 
         case 0x0001: /* PCM */
             switch (fmt->bps) {
+                case 32:
+                    fmt->coding_type = coding_PCM32LE;
+                    break;
                 case 24: /* Omori (PC) */
                     fmt->coding_type = coding_PCM24LE;
                     break;
@@ -176,6 +179,14 @@ static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk
             else {
                 goto fail;
             }
+            break;
+        case 0x003: /* floating point PCM */
+            if (fmt->bps == 32) {
+              fmt->coding_type = coding_PCMFLOAT;
+            } else {
+              goto fail;
+            }
+            fmt->interleave = fmt->block_size / fmt->channels;
             break;
 
         case 0x0011:  /* MS-IMA ADPCM [Layton Brothers: Mystery Room (iOS/Android)] */
@@ -701,9 +712,11 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
 
     /* samples, codec init (after setting coding to ensure proper close on failure) */
     switch (fmt.coding_type) {
+        case coding_PCM32LE:
         case coding_PCM24LE:
         case coding_PCM16LE:
         case coding_PCM8_U:
+        case coding_PCMFLOAT:
             vgmstream->num_samples = pcm_bytes_to_samples(data_size, fmt.channels, fmt.bps);
             break;
 

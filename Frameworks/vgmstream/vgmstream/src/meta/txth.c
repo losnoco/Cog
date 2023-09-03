@@ -142,6 +142,8 @@ typedef struct {
     int chunk_start_set;
     int chunk_size_set;
     int chunk_count_set;
+    int chunk_bsize_set;
+    int chunk_dsize_set;
 
     uint32_t base_offset;
     uint32_t is_offset_absolute;
@@ -309,6 +311,10 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
     if (txth.loop_flag_auto && coding == coding_PSX) {
         txth.loop_flag = ps_find_loop_offsets(txth.sf_body, txth.start_offset, txth.data_size, txth.channels, txth.interleave,
                 (int32_t*)&txth.loop_start_sample, (int32_t*)&txth.loop_end_sample);
+    }
+
+    if (txth.debug) {
+        vgm_logi("TXTH: offset=%x, size=%x, coefs=%x + %x\n", txth.start_offset, txth.data_size, txth.coef_offset, txth.coef_spacing);
     }
 
 
@@ -827,7 +833,8 @@ static void set_body_chunk(txth_header* txth) {
     //todo maybe should only be done once, or have some count to retrigger to simplify?
     if (!txth->chunk_start_set || !txth->chunk_size_set || !txth->chunk_count_set)
         return;
-    if (txth->chunk_size == 0 && !(txth->chunk_bsize_offset || txth->chunk_dsize_offset))
+
+    if (txth->chunk_size == 0 && !(txth->chunk_bsize_set || txth->chunk_dsize_set))
         return;
     if (txth->chunk_start > txth->data_size || txth->chunk_count == 0)
         return;
@@ -853,6 +860,8 @@ static void set_body_chunk(txth_header* txth) {
         cfg.chunk_bsize_offset = txth->chunk_bsize_offset;
         cfg.chunk_dsize_offset = txth->chunk_dsize_offset;
         cfg.chunk_be = txth->chunk_big_endian;
+        cfg.chunk_bsize_set = txth->chunk_bsize_set;
+        cfg.chunk_dsize_set = txth->chunk_dsize_set;
 
         cfg.chunk_start = txth->chunk_start;
         cfg.chunk_size = txth->chunk_size;
@@ -1473,10 +1482,12 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
     else if (is_string(key,"chunk_size_offset")) {
         if (!parse_num(txth->sf_head,txth,val, &txth->chunk_bsize_offset)) goto fail;
         txth->chunk_size_set = 1;
+        txth->chunk_bsize_set = 1;
     }
     else if (is_string(key,"chunk_data_size_offset")) {
         if (!parse_num(txth->sf_head,txth,val, &txth->chunk_dsize_offset)) goto fail;
         txth->chunk_size_set = 1;
+        txth->chunk_dsize_set = 1;
     }
     else if (is_string(key,"chunk_endianness")) {
         if (!parse_endianness(txth, val, &txth->chunk_big_endian, NULL)) goto fail;
@@ -1976,7 +1987,7 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             offset += txth->base_offset;
 
             if (/*offset < 0 ||*/ offset > get_streamfile_size(sf)) {
-                vgm_logi("TXTH: wrong offset over file size (%x + %x)\n", offset - txth->base_offset, txth->base_offset);
+                vgm_logi("TXTH:  wrong offset over file size (%x + %x)\n", offset - txth->base_offset, txth->base_offset);
                 goto fail;
             }
 
@@ -1989,7 +2000,7 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
                 offset = offset + subsong_spacing * (txth->target_subsong - 1);
 
             if (txth->debug)
-                vgm_logi("TXTH: use value at 0x%x (%s %ib)\n", offset, big_endian ? "BE" : "LE", size * 8);
+                vgm_logi("TXTH:  use value at 0x%x (%s %ib)\n", offset, big_endian ? "BE" : "LE", size * 8);
 
             switch(size) {
                 case 1: value = read_u8(offset,sf); break;
@@ -2008,7 +2019,7 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             value_read = 1;
 
             if (txth->debug)
-                vgm_logi(hex ? "TXTH: use constant 0x%x\n" : "TXTH: use constant %i\n", value);
+                vgm_logi(hex ? "TXTH:  use constant 0x%x\n" : "TXTH:  use constant %i\n", value);
         }
         else { /* known field */
             if      ((n = is_string_field(val,"interleave")))           value = txth->interleave;
@@ -2067,7 +2078,7 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             value_read = 1;
 
             if (txth->debug)
-                vgm_logi("TXTH: use field value 0x%x\n", value);
+                vgm_logi("TXTH:  use field value 0x%x\n", value);
         }
 
         /* apply simple left-to-right math though, for now "(" ")" are counted and validated
@@ -2110,7 +2121,7 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
     *out_value = result;
 
     if (txth->debug)
-        vgm_logi("TXTH: final value: %u (0x%x)\n", result, result);
+        vgm_logi("TXTH:  final value: %u (0x%x)\n", result, result);
 
     return 1;
 fail:
