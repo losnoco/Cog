@@ -23,6 +23,35 @@
 
 extern BOOL kAppControllerShuttingDown;
 
+@implementation NSObject (NxAdditions)
+
+-(void)performSelectorInBackground:(SEL)selector withObjects:(id)object, ...
+{
+	NSMethodSignature *signature = [self methodSignatureForSelector:selector];
+
+	// Setup the invocation
+	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+	invocation.target = self;
+	invocation.selector = selector;
+
+	// Associate the arguments
+	va_list objects;
+	va_start(objects, object);
+	unsigned int objectCounter = 2;
+	for (id obj = object; obj != nil; obj = va_arg(objects, id))
+	{
+		[invocation setArgument:&obj atIndex:objectCounter++];
+	}
+	va_end(objects);
+
+	// Make sure to invoke on a background queue
+	NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithInvocation:invocation];
+	NSOperationQueue *backgroundQueue = [[NSOperationQueue alloc] init];
+	[backgroundQueue addOperation:operation];
+}
+
+@end
+
 @implementation PlaybackController
 
 #define DEFAULT_SEEK 5
@@ -241,7 +270,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	double seekTime = pe.seekable ? [offset doubleValue] : 0.0;
 
-	[audioPlayer play:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:seekTime];
+	[audioPlayer performSelectorInBackground:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(seekTime), nil];
 }
 
 - (IBAction)next:(id)sender {
@@ -272,7 +301,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (IBAction)seek:(id)sender {
 	double time = [sender doubleValue];
 
-	[audioPlayer seekToTime:time];
+	[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(time)];
 
 	lastPosition = -10;
 
@@ -289,7 +318,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	lastPosition = -10;
 
-	[audioPlayer seekToTime:time];
+	[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(time)];
 
 	[self setPosition:time];
 
@@ -321,7 +350,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[self next:self];
 	} else {
 		lastPosition = -10;
-		[audioPlayer seekToTime:seekTo];
+		[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(seekTo)];
 		[self setPosition:seekTo];
 	}
 }
@@ -338,7 +367,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	lastPosition = -10;
 
-	[audioPlayer seekToTime:seekTo];
+	[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(seekTo)];
 	[self setPosition:seekTo];
 }
 
@@ -704,7 +733,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
 	[[FIRCrashlytics crashlytics] logWithFormat:@"Restarting playback of track: %@", pe.url];
-	[player play:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe) startPaused:paused andSeekTo:pe.seekable ? pe.currentPosition : 0.0];
+	[player performSelectorInBackground:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(pe.seekable ? pe.currentPosition : 0.0), nil];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
