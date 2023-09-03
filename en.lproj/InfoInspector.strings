@@ -118,3 +118,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Album Artist:"; ObjectID = "vB6-9J-5qg"; */
 "vB6-9J-5qg.title" = "Album Artist:";
+
+/* Class = "NSTextFieldCell; title = "Composer:"; ObjectID = "fDr-Nh-3YI"; */
+"fDr-Nh-3YI.title" = "Composer:";

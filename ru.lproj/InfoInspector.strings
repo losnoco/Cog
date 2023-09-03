@@ -112,3 +112,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "cd3-Qt-hCm"; */
 "Ule-N3-dKW.title" = "Комментарий:";
+
+/* Class = "NSTextFieldCell; title = "Composer:"; ObjectID = "fDr-Nh-3YI"; */
+"fDr-Nh-3YI.title" = "Композитор:";

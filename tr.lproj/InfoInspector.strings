@@ -115,3 +115,6 @@
 
 /* Class = "NSTextFieldCell"; title = "N/A"; ObjectID = "v14-AG-B9D"; */
 "v14-AG-B9D.title" = "N/A";
+
+/* Class = "NSTextFieldCell; title = "Composer:"; ObjectID = "fDr-Nh-3YI"; */
+"fDr-Nh-3YI.title" = "Besteci:";

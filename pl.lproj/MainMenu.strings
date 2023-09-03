@@ -605,3 +605,27 @@
 
 /* Class = "NSMenuItem"; title = "Show Lyrics"; ObjectID = "Tkb-7M-OiA"; */
 "Tkb-7M-OiA.title" = "Show Lyrics";
+
+/* Class = "NSTableColumn"; headerCell.title = "Sample Rate"; ObjectID = "et9-zH-awt"; */
+"et9-zH-awt.headerCell.title" = "Szybkość próbkowania";
+
+/* Class = "NSTableColumn"; title = "Sample Rate"; ObjectID = "et9-zH-awt"; */
+"et9-zH-awt.title" = "Szybkość próbkowania";
+
+/* Class = "NSTableColumn"; headerCell.title = "Bits Per Sample"; ObjectID = "3no-xo-TpJ"; */
+"3no-xo-TpJ.headerCell.title" = "Bits Per Sample";
+
+/* Class = "NSTableColumn"; title = "Bits Per Sample"; ObjectID = "3no-xo-TpJ"; */
+"3no-xo-TpJ.title" = "Bity na próbkę";
+
+/* Class = "NSTableColumn"; headerCell.title = "Bitrate"; ObjectID = "PoD-EU-L4X"; */
+"PoD-EU-L4X.headerCell.title" = "Bitrate";
+
+/* Class = "NSTableColumn"; title = "Bitrate"; ObjectID = "PoD-EU-L4X"; */
+"PoD-EU-L4X.title" = "Bitrate";
+
+/* Class = "NSTableColumn"; headerCell.title = "Composer"; ObjectID = "B9Z-OR-rQP"; */
+"B9Z-OR-rQP.headerCell.title" = "Kompozytor";
+
+/* Class = "NSTableColumn"; title = "Composer"; ObjectID = "B9Z-OR-rQP"; */
+"B9Z-OR-rQP.title" = "Kompozytor";

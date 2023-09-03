@@ -727,3 +727,9 @@
 
 /* Class = "NSTableColumn"; title = "Bitrate"; ObjectID = "PoD-EU-L4X"; */
 "PoD-EU-L4X.title" = "Битрейт";
+
+/* Class = "NSTableColumn"; headerCell.title = "Composer"; ObjectID = "B9Z-OR-rQP"; */
+"B9Z-OR-rQP.headerCell.title" = "Композитор";
+
+/* Class = "NSTableColumn"; title = "Composer"; ObjectID = "B9Z-OR-rQP"; */
+"B9Z-OR-rQP.title" = "Композитор";
