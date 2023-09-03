@@ -8,7 +8,7 @@
 #include "hca_decoder_clhca.h"
 
 /* adx_decoder */
-void decode_adx(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes, coding_t coding_type);
+void decode_adx(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int32_t frame_bytes, coding_t coding_type, uint32_t codec_config);
 void adx_next_key(VGMSTREAMCHANNEL* stream);
 
 
@@ -96,6 +96,7 @@ void decode_alaw(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing,
 void decode_pcmfloat(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int big_endian);
 void decode_pcm24le(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_pcm24be(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+void decode_pcm32le(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 int32_t pcm_bytes_to_samples(size_t bytes, int channels, int bits_per_sample);
 int32_t pcm24_bytes_to_samples(size_t bytes, int channels);
 int32_t pcm16_bytes_to_samples(size_t bytes, int channels);
@@ -588,6 +589,7 @@ void free_celt_fsb(celt_codec_data* data);
 typedef struct speex_codec_data speex_codec_data;
 
 speex_codec_data* init_speex_ea(int channels);
+speex_codec_data* init_speex_torus(int channels);
 void decode_speex(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t samples_to_do);
 void reset_speex(speex_codec_data* data);
 void seek_speex(VGMSTREAM* vgmstream, int32_t num_sample);

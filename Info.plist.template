@@ -509,6 +509,7 @@
 				<string>fda</string>
 				<string>ffw</string>
 				<string>filp</string>
+				<string>fish</string>
 				<string>flx</string>
 				<string>fsb</string>
 				<string>fsv</string>
@@ -522,10 +523,11 @@
 				<string>gcw</string>
 				<string>genh</string>
 				<string>gin</string>
+				<string>gmd</string>
 				<string>gms</string>
 				<string>grn</string>
-				<string>gsb</string>
 				<string>gsf</string>
+				<string>gsp</string>
 				<string>gtd</string>
 				<string>gwm</string>
 				<string>h4m</string>
@@ -534,7 +536,6 @@
 				<string>hd3</string>
 				<string>hdr</string>
 				<string>hdt</string>
-				<string>hgc1</string>
 				<string>his</string>
 				<string>hps</string>
 				<string>hsf</string>
@@ -638,7 +639,6 @@
 				<string>mab</string>
 				<string>mad</string>
 				<string>map</string>
-				<string>matx</string>
 				<string>mc3</string>
 				<string>mca</string>
 				<string>mcadpcm</string>
@@ -797,8 +797,6 @@
 				<string>sgb</string>
 				<string>sgd</string>
 				<string>sgt</string>
-				<string>sgx</string>
-				<string>sl3</string>
 				<string>slb</string>
 				<string>sli</string>
 				<string>smc</string>
@@ -858,10 +856,10 @@
 				<string>tmx</string>
 				<string>tra</string>
 				<string>trk</string>
+				<string>trs</string>
 				<string>tun</string>
 				<string>txth</string>
 				<string>txtp</string>
-				<string>tydsp</string>
 				<string>u0</string>
 				<string>ue4opus</string>
 				<string>ulw</string>
@@ -943,6 +941,7 @@
 				<string>xa</string>
 				<string>xa2</string>
 				<string>xa30</string>
+				<string>xai</string>
 				<string>xag</string>
 				<string>xau</string>
 				<string>xav</string>

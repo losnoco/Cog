@@ -302,6 +302,34 @@ static int _init_vgmstream_ogg_vorbis_tests(STREAMFILE* sf, ogg_vorbis_io_config
         return 1;
     }
 
+    /* .fish: Wonder Boy: The Dragon's Trap (PC) */
+    if (read_u32be(0x00,sf) == 0x4E7C0F0E) { 
+
+        /* init big-ish table on startup, based on original unrolled code (sub_7FF7670FD990) */
+        cfg->key_len = 0x400;
+        if (sizeof(cfg->key) < cfg->key_len)
+            goto fail;
+
+        for (int i = 0; i < 0x400 / 4; i++) {
+            uint32_t key = i;
+            for (int round = 0; round < 8; round++) {
+                uint32_t tmp1 = (key >> 1);
+                uint32_t tmp2 = -(key & 1) & 0xEDB88324;
+                key = tmp1 ^ tmp2;
+            }
+            if (key == 0)
+                key = 0xEDB88324;
+
+            put_u32le(cfg->key + (i ^ 0x2A) * 4, key);
+        }
+        cfg->is_encrypted = 1;
+
+        if (!check_extensions(sf,"fish"))
+            goto fail;
+
+        return 1;
+    }
+
 
     /***************************************/
     /* harder to check (could be improved) */
@@ -614,6 +642,7 @@ static VGMSTREAM* _init_vgmstream_ogg_vorbis_config(STREAMFILE* sf, off_t start,
         const char* comment = NULL;
 
         while (ogg_vorbis_get_comment(data, &comment)) {
+            ;VGM_LOG("OGG: user_comment=%s\n", comment);
 
             if (strstr(comment,"loop_start=") == comment || /* Phantasy Star Online: Blue Burst (PC) (no loop_end pair) */
                 strstr(comment,"LOOP_START=") == comment || /* Phantasy Star Online: Blue Burst (PC), common */
@@ -702,18 +731,26 @@ static VGMSTREAM* _init_vgmstream_ogg_vorbis_config(STREAMFILE* sf, off_t start,
                 force_seek = 1;
             }
 
+            else if (strstr(comment,"COMMENT=*loopsample,") == comment) { /* Tsuki ni Yorisou Otome no Sahou (PC) */
+                int unk0; // always 0 (delay?)
+                int unk1; // always -1 (loop flag? but non-looped files have no comment)
+                int m = sscanf(comment,"COMMENT=*loopsample,%d,%d,%d,%d", &unk0, &loop_start, &loop_end, &unk1);
+                if (m == 4) {
+                    loop_flag = 1;
+                    loop_end_found = 1;
+                }
+            }
+
             /* Hatsune Miku Project DIVA games, though only 'Arcade Future Tone' has >4ch files
              * ENCODER tag is common but ogg_vorbis_encode looks unique enough
              * (arcade ends with "2010-11-26" while consoles have "2011-02-07" */
-            if (strstr(comment, "ENCODER=ogg_vorbis_encode/") == comment) {
+            else if (strstr(comment, "ENCODER=ogg_vorbis_encode/") == comment) {
                 disable_reordering = 1;
             }
 
-            if (strstr(comment, "TITLE=") == comment) {
+            else if (strstr(comment, "TITLE=") == comment) {
                 strncpy(name, comment + 6, sizeof(name) - 1);
             }
-
-            ;VGM_LOG("OGG: user_comment=%s\n", comment);
         }
     }
 

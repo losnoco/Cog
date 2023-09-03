@@ -367,6 +367,7 @@ int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_PCMFLOAT:
         case coding_PCM24LE:
         case coding_PCM24BE:
+        case coding_PCM32LE:
             return 1;
 #ifdef VGM_USE_VORBIS
         case coding_OGG_VORBIS:
@@ -422,10 +423,11 @@ int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_APPLE_IMA4:
             return 64;
         case coding_MS_IMA:
-        case coding_REF_IMA:
-            return ((vgmstream->interleave_block_size - 0x04*vgmstream->channels) * 2 / vgmstream->channels) + 1;/* +1 from header sample */
+            return ((vgmstream->frame_size - 0x04*vgmstream->channels) * 2 / vgmstream->channels) + 1; /* +1 from header sample */
         case coding_MS_IMA_mono:
             return ((vgmstream->frame_size - 0x04) * 2) + 1; /* +1 from header sample */
+        case coding_REF_IMA:
+            return ((vgmstream->interleave_block_size - 0x04 * vgmstream->channels) * 2 / vgmstream->channels) + 1; /* +1 from header sample */
         case coding_RAD_IMA:
             return (vgmstream->interleave_block_size - 0x04*vgmstream->channels) * 2 / vgmstream->channels;
         case coding_NDS_IMA:
@@ -593,6 +595,7 @@ int decode_get_frame_size(VGMSTREAM* vgmstream) {
         case coding_ALAW:
             return 0x01;
         case coding_PCMFLOAT:
+        case coding_PCM32LE:
             return 0x04;
         case coding_PCM24LE:
         case coding_PCM24BE:
@@ -787,7 +790,7 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_adx(&vgmstream->ch[ch], buffer+ch,
                         vgmstream->channels, vgmstream->samples_into_block, samples_to_do,
-                        vgmstream->interleave_block_size, vgmstream->coding_type);
+                        vgmstream->interleave_block_size, vgmstream->coding_type, vgmstream->codec_config);
             }
             break;
         case coding_NGC_DSP:
@@ -903,6 +906,13 @@ void decode_vgmstream(VGMSTREAM* vgmstream, int samples_written, int samples_to_
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_pcm24be(&vgmstream->ch[ch], buffer + ch,
                     vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
+            }
+            break;
+
+        case coding_PCM32LE:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_pcm32le(&vgmstream->ch[ch], buffer+ch,
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
 
