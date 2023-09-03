@@ -61,12 +61,14 @@
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused;
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time;
+- (void)playBG:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(NSNumber *)paused andSeekTo:(NSNumber *)time;
 
 - (void)stop;
 - (void)pause;
 - (void)resume;
 
 - (void)seekToTime:(double)time;
+- (void)seekToTimeBG:(NSNumber *)time;
 - (void)setVolume:(double)v;
 - (double)volume;
 - (double)volumeUp:(double)amount;

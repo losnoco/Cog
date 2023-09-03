@@ -56,6 +56,10 @@
 	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:paused andSeekTo:0.0];
 }
 
+- (void)playBG:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(NSNumber *)paused andSeekTo:(NSNumber *)time {
+	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:[paused boolValue] andSeekTo:[time doubleValue]];
+}
+
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time {
 	ALog(@"Opening file for playback: %@ at seek offset %f%@", url, time, (paused) ? @", starting paused" : @"");
 
@@ -163,6 +167,10 @@
 	[output resume];
 
 	[self setPlaybackStatus:CogStatusPlaying waitUntilDone:YES];
+}
+
+- (void)seekToTimeBG:(NSNumber *)time {
+	[self seekToTime:[time doubleValue]];
 }
 
 - (void)seekToTime:(double)time {
