@@ -159,6 +159,7 @@ namespace TagLib {
       virtual String title() const;
       virtual String albumartist() const;
       virtual String artist() const;
+      virtual String composer() const;
       virtual String album() const;
       virtual String comment() const;
       virtual String unsyncedlyrics() const;
@@ -179,6 +180,7 @@ namespace TagLib {
       virtual void setTitle(const String &s);
       virtual void setAlbumArtist(const String &s);
       virtual void setArtist(const String &s);
+      virtual void setComposer(const String &s);
       virtual void setAlbum(const String &s);
       virtual void setComment(const String &s);
       virtual void setUnsyncedlyrics(const String &s);

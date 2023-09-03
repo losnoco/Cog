@@ -97,6 +97,12 @@ namespace TagLib {
     virtual String artist() const = 0;
 
     /*!
+     * Returns the composer name; if no composer name is present in the tag
+     * String::null will be returned.
+     */
+    virtual String composer() const = 0;
+
+    /*!
      * Returns the album name; if no album name is present in the tag
      * String::null will be returned.
      */
@@ -190,6 +196,12 @@ namespace TagLib {
      * cleared.
      */
     virtual void setArtist(const String &s) = 0;
+
+    /*!
+     * Sets the composer to \a s. If \a s is String::null then this value will be
+     * cleared.
+     */
+    virtual void setComposer(const String &s) = 0;
 
     /*!
      * Sets the album to \a s.  If \a s is String::null then this value will be
