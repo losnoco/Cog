@@ -57,6 +57,8 @@ String ASF::Tag::title() const
 
 String ASF::Tag::albumartist() const
 {
+  if(d->attributeListMap.contains("WM/AlbumArtist"))
+    return d->attributeListMap["WM/AlbumArtist"][0].toString();
   return String();
 }
 
@@ -171,8 +173,9 @@ void ASF::Tag::setTitle(const String &value)
   d->title = value;
 }
 
-void ASF::Tag::setAlbumArtist(const String &)
+void ASF::Tag::setAlbumArtist(const String &value)
 {
+  setAttribute("WM/AlbumArtist", value);
 }
 
 void ASF::Tag::setArtist(const String &value)
