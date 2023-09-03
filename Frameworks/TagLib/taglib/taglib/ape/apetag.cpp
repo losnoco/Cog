@@ -139,6 +139,13 @@ String APE::Tag::artist() const
   return d->itemListMap["ARTIST"].values().toString();
 }
 
+String APE::Tag::composer() const
+{
+  if(!d->itemListMap["COMPOSER"].isEmpty())
+    return d->itemListMap["COMPOSER"].values().toString();
+  return String();
+}
+
 String APE::Tag::album() const
 {
   if(d->itemListMap["ALBUM"].isEmpty())
@@ -245,6 +252,11 @@ void APE::Tag::setAlbumArtist(const String &s)
 void APE::Tag::setArtist(const String &s)
 {
   addValue("ARTIST", s, true);
+}
+
+void APE::Tag::setComposer(const String &s)
+{
+  addValue("COMPOSER", s, true);
 }
 
 void APE::Tag::setAlbum(const String &s)

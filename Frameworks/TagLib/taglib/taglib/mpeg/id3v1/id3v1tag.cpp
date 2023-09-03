@@ -142,6 +142,11 @@ String ID3v1::Tag::artist() const
   return d->artist;
 }
 
+String ID3v1::Tag::composer() const
+{
+  return String();
+}
+
 String ID3v1::Tag::album() const
 {
   return d->album;
@@ -219,6 +224,10 @@ void ID3v1::Tag::setAlbumArtist(const String &)
 void ID3v1::Tag::setArtist(const String &s)
 {
   d->artist = s;
+}
+
+void ID3v1::Tag::setComposer(const String &s)
+{
 }
 
 void ID3v1::Tag::setAlbum(const String &s)

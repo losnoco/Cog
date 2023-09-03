@@ -49,6 +49,7 @@ bool Tag::isEmpty() const
   return (title().isEmpty() &&
           albumartist().isEmpty() &&
           artist().isEmpty() &&
+          composer().isEmpty() &&
           album().isEmpty() &&
           unsyncedlyrics().isEmpty() &&
           comment().isEmpty() &&
@@ -67,6 +68,8 @@ PropertyMap Tag::properties() const
     map["ALBUMARTIST"].append(albumartist());
   if(!(artist().isEmpty()))
     map["ARTIST"].append(artist());
+  if(!(composer().isEmpty()))
+    map["COMPOSER"].append(composer());
   if(!(album().isEmpty()))
     map["ALBUM"].append(album());
   if(!(unsyncedlyrics().isEmpty()))
@@ -115,6 +118,12 @@ PropertyMap Tag::setProperties(const PropertyMap &origProps)
     oneValueSet.append("ARTIST");
   } else
     setArtist(String());
+
+  if(properties.contains("COMPOSER")) {
+    setComposer(properties["COMPOSER"].front());
+    oneValueSet.append("COMPOSER");
+  } else
+    setComposer(String());
 
   if(properties.contains("ALBUM")) {
     setAlbum(properties["ALBUM"].front());
@@ -199,6 +208,7 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
     target->setTitle(source->title());
     target->setAlbumArtist(source->albumartist());
     target->setArtist(source->artist());
+    target->setComposer(source->composer());
     target->setAlbum(source->album());
     target->setUnsyncedlyrics(source->unsyncedlyrics());
     target->setComment(source->comment());
@@ -214,6 +224,8 @@ void Tag::duplicate(const Tag *source, Tag *target, bool overwrite) // static
       target->setAlbumArtist(source->albumartist());
     if(target->artist().isEmpty())
       target->setArtist(source->artist());
+    if(target->composer().isEmpty())
+      target->setComposer(source->composer());
     if(target->album().isEmpty())
       target->setAlbum(source->album());
     if(target->unsyncedlyrics().isEmpty())

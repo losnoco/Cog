@@ -103,6 +103,11 @@ String RIFF::Info::Tag::artist() const
   return fieldText("IART");
 }
 
+String RIFF::Info::Tag::composer() const
+{
+  return fieldText("IMUS");
+}
+
 String RIFF::Info::Tag::album() const
 {
   return fieldText("IPRD");
@@ -180,6 +185,11 @@ void RIFF::Info::Tag::setAlbumArtist(const String &)
 void RIFF::Info::Tag::setArtist(const String &s)
 {
   setFieldText("IART", s);
+}
+
+void RIFF::Info::Tag::setComposer(const String &s)
+{
+  setFieldText("IMUS", s);
 }
 
 void RIFF::Info::Tag::setAlbum(const String &s)

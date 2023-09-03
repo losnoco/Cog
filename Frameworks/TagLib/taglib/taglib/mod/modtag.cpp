@@ -69,6 +69,11 @@ String Mod::Tag::artist() const
   return String();
 }
 
+String Mod::Tag::composer() const
+{
+  return String();
+}
+
 String Mod::Tag::album() const
 {
   return String();
@@ -149,6 +154,10 @@ void Mod::Tag::setAlbumArtist(const String &)
 }
 
 void Mod::Tag::setArtist(const String &)
+{
+}
+
+void Mod::Tag::setComposer(const String &)
 {
 }
 

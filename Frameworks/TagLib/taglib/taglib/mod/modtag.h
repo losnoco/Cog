@@ -70,6 +70,11 @@ namespace TagLib {
       /*!
        * Not supported by module files.  Therefore always returns String::null.
        */
+      virtual String composer() const;
+
+      /*!
+       * Not supported by module files.  Therefore always returns String::null.
+       */
       virtual String album() const;
 
       /*!
@@ -162,6 +167,11 @@ namespace TagLib {
        * Not supported by module files and therefore ignored.
        */
       virtual void setArtist(const String &artist);
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      virtual void setComposer(const String &composer);
 
       /*!
        * Not supported by module files and therefore ignored.
