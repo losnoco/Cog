@@ -61,7 +61,6 @@ namespace TagLib {
        */
       virtual String albumartist() const;
 
-        
       /*!
        * Not supported by module files.  Therefore always returns String::null.
        */
