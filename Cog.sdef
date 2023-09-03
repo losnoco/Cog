@@ -147,6 +147,9 @@
 			<property name="artist" code="pArt" description="The artist of the entry" type="text">
 				<cocoa key="artist" insert-at-beginning="yes"/>
 			</property>
+			<property name="composer" code="pCom" description="The composer of the entry" type="text">
+				<cocoa key="composer" insert-at-beginning="yes"/>
+			</property>
 			<property name="title" code="pTit" description="The title of the entry." type="text" access="r">
 				<cocoa key="title" insert-at-beginning="yes"/>
 			</property>
