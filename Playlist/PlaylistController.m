@@ -48,7 +48,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
 		                @"album", @"length", @"year", @"genre", @"track", @"path",
 		                @"filename", @"codec", @"rating", @"samplerate",
-		                @"bitspersample", @"bitrate"];
+		                @"bitspersample", @"bitrate", @"composer"];
 
 	NSValueTransformer *repeatNoneTransformer =
 	[[RepeatModeTransformer alloc] initWithMode:RepeatModeNoRepeat];
@@ -523,6 +523,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 				cellText = [NSString stringWithFormat:@"%u kbps", pe.bitrate];
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
+
+			case 17:
+				if([pe composer]) cellText = pe.composer;
+				break;
 		}
 	}
 
@@ -664,6 +668,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 12:
 		case 14:
 		case 15:
+		case 17:
 			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(caseInsensitiveCompare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
