@@ -25,10 +25,10 @@
 "NSRemindersUsageDescription" = "Cog no tiene ningún uso para tus recordatorios. ¿Por qué intentas acceder a ellos con un reproductor de audio?";
 
 /* Privacy - Downloads Folder Usage Description */
-"NSDownloadsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDownloadsFolderUsageDescription" = "Es posible que solicitemos archivos de audio relacionados de esta carpeta para reproducirlos. Solo reproduciremos los archivos que añadas específicamente, a menos que actives la opción de añadir una carpeta entera. Conceder permiso para archivos individuales o para carpetas principales garantiza que su contenido podrá reproducirse en futuras sesiones.";
 
 /* Privacy - Documents Folder Usage Description */
-"NSDocumentsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDocumentsFolderUsageDescription" = "Es posible que solicitemos archivos de audio relacionados de esta carpeta para reproducirlos. Solo reproduciremos los archivos que añadas específicamente, a menos que actives la opción de añadir una carpeta entera. Conceder permiso para archivos individuales o para carpetas principales garantiza que su contenido podrá reproducirse en futuras sesiones.";
 
 /* Privacy - Desktop Folder Usage Description */
-"NSDesktopFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDesktopFolderUsageDescription" = "Es posible que solicitemos archivos de audio relacionados de esta carpeta para reproducirlos. Solo reproduciremos los archivos que añadas específicamente, a menos que actives la opción de añadir una carpeta entera. Conceder permiso para archivos individuales o para carpetas principales garantiza que su contenido podrá reproducirse en futuras sesiones.";
