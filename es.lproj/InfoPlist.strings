@@ -23,3 +23,12 @@
 
 /* Privacy - Reminders Usage Description */
 "NSRemindersUsageDescription" = "Cog no tiene ningún uso para tus recordatorios. ¿Por qué intentas acceder a ellos con un reproductor de audio?";
+
+/* Privacy - Downloads Folder Usage Description */
+"NSDownloadsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+
+/* Privacy - Documents Folder Usage Description */
+"NSDocumentsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+
+/* Privacy - Desktop Folder Usage Description */
+"NSDesktopFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
