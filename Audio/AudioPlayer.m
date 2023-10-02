@@ -57,7 +57,9 @@
 }
 
 - (void)playBG:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(NSNumber *)paused andSeekTo:(NSNumber *)time {
-	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:[paused boolValue] andSeekTo:[time doubleValue]];
+	@synchronized (self) {
+		[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:[paused boolValue] andSeekTo:[time doubleValue]];
+	}
 }
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time {
