@@ -230,8 +230,8 @@
 /* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
 "NMg-TO-amV.title" = "Use 3D rendered spectrum";
 
-/* Class = "NSButtonCell"; title = "Enable HRTF filter (Not needed with AirPods or Beats)"; ObjectID = "NGx-0c-WVR"; */
-"NGx-0c-WVR.title" = "Enable HRTF filter (Not needed with AirPods or Beats)";
+/* Class = "NSButtonCell"; title = "Enable HRTF filter"; ObjectID = "NGx-0c-WVR"; */
+"NGx-0c-WVR.title" = "Enable HRTF filter";
 
 /* Class = "NSButtonCell"; title = "Enable FreeSurround stereo to surround upmixing"; ObjectID = "F0i-UK-6Nu"; */
 "F0i-UK-6Nu.title" = "Enable FreeSurround stereo to surround upmixing";
