@@ -55,6 +55,7 @@ class VisualizationController : NSObject {
 				j += 1; if j >= k { j = 0 }
 			}
 			self.visAudioCursor = j
+			self.latency += Double(amount) / self.sampleRate
 		}
 	}
 
