@@ -9,7 +9,7 @@
 #import "OutputNode.h"
 #import "AudioPlayer.h"
 #import "BufferChain.h"
-#import "OutputAVFoundation.h"
+#import "OutputCoreAudio.h"
 
 #import "Logging.h"
 
@@ -23,7 +23,7 @@
 	started = NO;
 	intervalReported = NO;
 
-	output = [[OutputAVFoundation alloc] initWithController:self];
+	output = [[OutputCoreAudio alloc] initWithController:self];
 
 	[output setup];
 }
@@ -149,6 +149,7 @@
 			format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
 			channelConfig = config;
 
+			[converter setOutputFormat:format];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
 		}
 	}

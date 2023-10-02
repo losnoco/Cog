@@ -12,10 +12,14 @@
 #import <AudioUnit/AudioUnit.h>
 #import <CoreAudio/AudioHardware.h>
 
+#import <soxr.h>
+
 #import "Node.h"
 
 @interface ConverterNode : Node {
 	NSDictionary *rgInfo;
+
+	soxr_t soxr;
 
 	void *inputBuffer;
 	size_t inputBufferSize;
@@ -25,12 +29,33 @@
 	BOOL convertEntered;
 	BOOL paused;
 
+	BOOL skipResampler;
+
+	unsigned int PRIME_LEN_;
+	unsigned int N_samples_to_add_;
+	unsigned int N_samples_to_drop_;
+
+	BOOL is_preextrapolated_;
+	int is_postextrapolated_;
+
+	int latencyEaten;
+	int latencyEatenPost;
+
+	double sampleRatio;
+
 	float volumeScale;
+
+	void *floatBuffer;
+	size_t floatBufferSize;
+
+	void *extrapolateBuffer;
+	size_t extrapolateBufferSize;
 
 	BOOL rememberedLossless;
 
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription floatFormat;
+	AudioStreamBasicDescription outputFormat;
 
 	uint32_t inputChannelConfig;
 
@@ -43,13 +68,15 @@
 
 - (id)initWithController:(id)c previous:(id)p;
 
-- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat withInputConfig:(uint32_t)inputConfig isLossless:(BOOL)lossless;
+- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat withInputConfig:(uint32_t)inputConfig outputFormat:(AudioStreamBasicDescription)outputFormat isLossless:(BOOL)lossless;
 - (void)cleanUp;
 
 - (void)process;
 - (AudioChunk *)convert;
 
 - (void)setRGInfo:(NSDictionary *)rgi;
+
+- (void)setOutputFormat:(AudioStreamBasicDescription)outputFormat;
 
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig;
 

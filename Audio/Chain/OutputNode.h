@@ -13,7 +13,7 @@
 #import <CoreAudio/AudioHardware.h>
 
 #import "Node.h"
-#import "OutputAVFoundation.h"
+#import "OutputCoreAudio.h"
 
 @interface OutputNode : Node {
 	AudioStreamBasicDescription format;
@@ -21,7 +21,7 @@
 
 	double amountPlayed;
 	double amountPlayedInterval;
-	OutputAVFoundation *output;
+	OutputCoreAudio *output;
 
 	BOOL paused;
 	BOOL started;

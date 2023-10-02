@@ -47,8 +47,6 @@ using std::atomic_long;
 
 	NSLock *outputLock;
 
-	BOOL rsDone;
-	void *rsstate, *rsold;
 	double secondsLatency;
 	double visPushed;
 
@@ -126,7 +124,7 @@ using std::atomic_long;
 	
 	AudioChunk *chunkRemain;
 	
-	int resamplerRemain, visResamplerRemain;
+	int visResamplerRemain;
 
 	BOOL resetStreamFormat;
 	

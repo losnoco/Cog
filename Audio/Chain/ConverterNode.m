@@ -16,6 +16,9 @@
 
 #import "Logging.h"
 
+#import "lpc.h"
+#import "util.h"
+
 #ifdef _DEBUG
 #import "BadSampleCleaner.h"
 #endif
@@ -48,12 +51,20 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 	if(self) {
 		rgInfo = nil;
 
+		soxr = 0;
 		inputBuffer = NULL;
 		inputBufferSize = 0;
+		floatBuffer = NULL;
+		floatBufferSize = 0;
 
 		stopping = NO;
 		convertEntered = NO;
 		paused = NO;
+
+		skipResampler = YES;
+
+		extrapolateBuffer = NULL;
+		extrapolateBufferSize = 0;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling" options:0 context:kConverterNodeContext];
 	}
@@ -102,8 +113,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			}
 		}
 		if(streamFormatChanged) {
-			[self cleanUp];
-			[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig isLossless:rememberedLossless];
+			@autoreleasepool {
+				[self cleanUp];
+				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig outputFormat:self->outputFormat isLossless:rememberedLossless];
+			}
 		}
 	}
 }
@@ -173,6 +186,57 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			return nil;
 		}
 
+		if(stopping || paused || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
+			if(!skipResampler) {
+				if(!is_postextrapolated_) {
+					is_postextrapolated_ = 1;
+				}
+			} else {
+				is_postextrapolated_ = 3;
+			}
+		}
+
+		// Extrapolate start
+		if(!skipResampler && !is_preextrapolated_) {
+			size_t inputSamples = bytesReadFromInput / floatFormat.mBytesPerPacket;
+			size_t prime = MIN(inputSamples, PRIME_LEN_);
+			size_t _N_samples_to_add_ = N_samples_to_add_;
+			size_t newSize = _N_samples_to_add_ * floatFormat.mBytesPerPacket;
+			newSize += bytesReadFromInput;
+
+			if(newSize > inputBufferSize) {
+				inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
+			}
+
+			memmove(inputBuffer + _N_samples_to_add_ * floatFormat.mBytesPerPacket, inputBuffer, bytesReadFromInput);
+
+			lpc_extrapolate_bkwd(inputBuffer + _N_samples_to_add_ * floatFormat.mBytesPerPacket, inputSamples, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, _N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+
+			bytesReadFromInput += _N_samples_to_add_ * floatFormat.mBytesPerPacket;
+			latencyEaten = N_samples_to_drop_;
+			is_preextrapolated_ = YES;
+		}
+
+		if(is_postextrapolated_ == 1) {
+			size_t inputSamples = bytesReadFromInput / floatFormat.mBytesPerPacket;
+			size_t prime = MIN(inputSamples, PRIME_LEN_);
+			size_t _N_samples_to_add_ = N_samples_to_add_;
+
+			size_t newSize = bytesReadFromInput;
+			newSize += _N_samples_to_add_ * floatFormat.mBytesPerPacket;
+			if(newSize > inputBufferSize) {
+				inputBuffer = realloc(inputBuffer, inputBufferSize = newSize * 3);
+			}
+
+			lpc_extrapolate_fwd(inputBuffer, inputSamples, prime, floatFormat.mChannelsPerFrame, LPC_ORDER, _N_samples_to_add_, &extrapolateBuffer, &extrapolateBufferSize);
+
+			bytesReadFromInput += _N_samples_to_add_ * floatFormat.mBytesPerPacket;
+			latencyEatenPost = N_samples_to_drop_;
+			is_postextrapolated_ = 2;
+		} else if(is_postextrapolated_ == 3) {
+			latencyEatenPost = 0;
+		}
+
 		// Input now contains bytesReadFromInput worth of floats, in the input sample rate
 		inpSize = bytesReadFromInput;
 		inpOffset = 0;
@@ -183,15 +247,76 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 	ioNumberPackets -= ioNumberPackets % floatFormat.mBytesPerPacket;
 
 	if(ioNumberPackets) {
+		size_t inputSamples = ioNumberPackets / floatFormat.mBytesPerPacket;
+		ioNumberPackets = (UInt32)inputSamples;
+		ioNumberPackets = (UInt32)ceil((float)ioNumberPackets * sampleRatio);
+		ioNumberPackets = (ioNumberPackets + 255) & ~255;
+
+		size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
+		if(!floatBuffer || floatBufferSize < newSize) {
+			floatBuffer = realloc(floatBuffer, floatBufferSize = newSize * 3);
+		}
+
+		if(stopping) {
+			convertEntered = NO;
+			return nil;
+		}
+
+		size_t inputDone = 0;
+		size_t outputDone = 0;
+
+		if(!skipResampler) {
+			ioNumberPackets += soxr_delay(soxr);
+			soxr_process(soxr, (float *)(((uint8_t *)inputBuffer) + inpOffset), inputSamples, &inputDone, floatBuffer, ioNumberPackets, &outputDone);
+
+			if(latencyEatenPost) {
+				// Post file or format change flush
+				size_t idone = 0, odone = 0;
+
+				do {
+					soxr_process(soxr, NULL, 0, &idone, floatBuffer + outputDone * floatFormat.mBytesPerPacket, ioNumberPackets - outputDone, &odone);
+					outputDone += odone;
+				} while(odone > 0);
+			}
+		} else {
+			memcpy(floatBuffer, (((uint8_t *)inputBuffer) + inpOffset), inputSamples * floatFormat.mBytesPerPacket);
+			inputDone = inputSamples;
+			outputDone = inputSamples;
+		}
+
+		inpOffset += inputDone * floatFormat.mBytesPerPacket;
+
+		if(latencyEaten) {
+			if(outputDone > latencyEaten) {
+				outputDone -= latencyEaten;
+				memmove(floatBuffer, floatBuffer + latencyEaten * floatFormat.mBytesPerPacket, outputDone * floatFormat.mBytesPerPacket);
+				latencyEaten = 0;
+			} else {
+				latencyEaten -= outputDone;
+				outputDone = 0;
+			}
+		}
+
+		if(latencyEatenPost) {
+			if(outputDone > latencyEatenPost) {
+				outputDone -= latencyEatenPost;
+			} else {
+				outputDone = 0;
+			}
+			latencyEatenPost = 0;
+		}
+
+		ioNumberPackets = (UInt32)outputDone * floatFormat.mBytesPerPacket;
+	}
+
+	if(ioNumberPackets) {
 		AudioChunk *chunk = [[AudioChunk alloc] init];
 		[chunk setFormat:nodeFormat];
 		if(nodeChannelConfig) {
 			[chunk setChannelConfig:nodeChannelConfig];
 		}
-		scale_by_volume((float *)(((uint8_t *)inputBuffer) + inpOffset), ioNumberPackets / sizeof(float), volumeScale);
-		[chunk assignSamples:(((uint8_t *)inputBuffer) + inpOffset) frameCount:ioNumberPackets / floatFormat.mBytesPerPacket];
-
-		inpOffset += ioNumberPackets;
+		scale_by_volume(floatBuffer, ioNumberPackets / sizeof(float), volumeScale);
+		[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / floatFormat.mBytesPerPacket];
 		convertEntered = NO;
 		return chunk;
 	}
@@ -260,9 +385,10 @@ static float db_to_scale(float db) {
 	volumeScale = scale;
 }
 
-- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf withInputConfig:(uint32_t)inputConfig isLossless:(BOOL)lossless {
+- (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf withInputConfig:(uint32_t)inputConfig outputFormat:(AudioStreamBasicDescription)outf isLossless:(BOOL)lossless {
 	// Make the converter
 	inputFormat = inf;
+	outputFormat = outf;
 
 	inputChannelConfig = inputConfig;
 
@@ -289,10 +415,39 @@ static float db_to_scale(float db) {
 	inpOffset = 0;
 	inpSize = 0;
 
-	// This is a post resampler, post-down/upmix format
+	// This is a post resampler format
 
 	nodeFormat = floatFormat;
+	nodeFormat.mSampleRate = outputFormat.mSampleRate;
 	nodeChannelConfig = inputChannelConfig;
+
+	sampleRatio = (double)outputFormat.mSampleRate / (double)floatFormat.mSampleRate;
+	skipResampler = fabs(sampleRatio - 1.0) < 1e-7;
+	if(!skipResampler) {
+		soxr_quality_spec_t q_spec = soxr_quality_spec(SOXR_HQ, 0);
+		soxr_io_spec_t io_spec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
+		soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(0);
+		soxr_error_t error;
+
+		soxr = soxr_create(floatFormat.mSampleRate, outputFormat.mSampleRate, floatFormat.mChannelsPerFrame, &error, &io_spec, &q_spec, &runtime_spec);
+		if(error)
+			return NO;
+
+		PRIME_LEN_ = MAX(floatFormat.mSampleRate / 20, 1024u);
+		PRIME_LEN_ = MIN(PRIME_LEN_, 16384u);
+		PRIME_LEN_ = MAX(PRIME_LEN_, (unsigned int)(2 * LPC_ORDER + 1));
+
+		N_samples_to_add_ = floatFormat.mSampleRate;
+		N_samples_to_drop_ = outputFormat.mSampleRate;
+
+		samples_len(&N_samples_to_add_, &N_samples_to_drop_, 20, 8192u);
+
+		is_preextrapolated_ = NO;
+		is_postextrapolated_ = 0;
+	}
+
+	latencyEaten = 0;
+	latencyEatenPost = 0;
 
 	PrintStreamDesc(&inf);
 	PrintStreamDesc(&nodeFormat);
@@ -324,7 +479,7 @@ static float db_to_scale(float db) {
 		usleep(500);
 	}
 	[self cleanUp];
-	[self setupWithInputFormat:format withInputConfig:inputConfig isLossless:rememberedLossless];
+	[self setupWithInputFormat:format withInputConfig:inputConfig outputFormat:self->outputFormat isLossless:rememberedLossless];
 }
 
 - (void)setRGInfo:(NSDictionary *)rgi {
@@ -337,6 +492,20 @@ static float db_to_scale(float db) {
 	stopping = YES;
 	while(convertEntered) {
 		usleep(500);
+	}
+	if(soxr) {
+		soxr_delete(soxr);
+		soxr = NULL;
+	}
+	if(extrapolateBuffer) {
+		free(extrapolateBuffer);
+		extrapolateBuffer = NULL;
+		extrapolateBufferSize = 0;
+	}
+	if(floatBuffer) {
+		free(floatBuffer);
+		floatBuffer = NULL;
+		floatBufferSize = 0;
 	}
 	if(inputBuffer) {
 		free(inputBuffer);
