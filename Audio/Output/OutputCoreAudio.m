@@ -74,23 +74,43 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	if([outputController peekFormat:&format channelConfig:&config]) {
 		AudioStreamBasicDescription origFormat;
 		uint32_t origConfig = config;
-		memcpy(&origFormat, &format, sizeof(origFormat));
+		origFormat = format;
 
 		UInt32 srcChannels = format.mChannelsPerFrame;
+		uint32_t dmConfig = config;
+		uint32_t dmChannels = srcChannels;
+		AudioStreamBasicDescription dmFormat;
+		dmFormat = format;
+		[outputLock lock];
+		if(fsurround) {
+			dmChannels = [fsurround channelCount];
+			dmConfig = [fsurround channelConfig];
+		}
+		if(hrtf) {
+			dmChannels = 2;
+			dmConfig = AudioChannelFrontLeft | AudioChannelFrontRight;
+		}
+		[outputLock unlock];
+		if(dmChannels != srcChannels) {
+			dmFormat.mChannelsPerFrame = dmChannels;
+			dmFormat.mBytesPerFrame = ((dmFormat.mBitsPerChannel + 7) / 8) * dmChannels;
+			dmFormat.mBytesPerPacket = dmFormat.mBytesPerFrame * dmFormat.mFramesPerPacket;
+		}
 		UInt32 dstChannels = deviceFormat.mChannelsPerFrame;
 		if(srcChannels != dstChannels) {
 			format.mChannelsPerFrame = dstChannels;
 			format.mBytesPerFrame = ((format.mBitsPerChannel + 7) / 8) * dstChannels;
 			format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
-			config = deviceChannelConfig;
-			downmixer = [[DownmixProcessor alloc] initWithInputFormat:origFormat inputConfig:origConfig andOutputFormat:format outputConfig:config];
+			downmixer = [[DownmixProcessor alloc] initWithInputFormat:dmFormat inputConfig:dmConfig andOutputFormat:format outputConfig:deviceChannelConfig];
+			format = origFormat;
 		} else {
 			downmixer = nil;
 		}
-		if(!streamFormatStarted || config != realStreamChannelConfig || memcmp(&newFormat, &format, sizeof(format)) != 0) {
-			newFormat = format;
-			newChannelConfig = config;
+		if(!streamFormatStarted || config != realStreamChannelConfig || memcmp(&realStreamFormat, &format, sizeof(format)) != 0) {
+			realStreamFormat = format;
+			realStreamChannelConfig = config;
 			streamFormatStarted = YES;
+			streamFormatChanged = YES;
 
 			visFormat = format;
 			visFormat.mChannelsPerFrame = 1;
@@ -136,8 +156,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		[visController postSampleRate:44100.0];
 
 		[outputLock lock];
-		if(fabs(newFormat.mSampleRate - 44100.0) > 1e-5) {
-			if(fabs(newFormat.mSampleRate - lastVisRate) > 1e-5) {
+		if(fabs(realStreamFormat.mSampleRate - 44100.0) > 1e-5) {
+			if(fabs(realStreamFormat.mSampleRate - lastVisRate) > 1e-5) {
 				if(rsvis) {
 					for(;;) {
 						int samplesFlushed;
@@ -152,7 +172,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 					rsstate_delete(rsvis);
 					rsvis = NULL;
 				}
-				lastVisRate = newFormat.mSampleRate;
+				lastVisRate = realStreamFormat.mSampleRate;
 				rsvis = rsstate_new(1, lastVisRate, 44100.0);
 			}
 			if(rsvis) {
@@ -201,7 +221,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		}
 		[outputLock unlock];
 
-		cblas_scopy((int)(frameCount * newFormat.mChannelsPerFrame), outputPtr, 1, &buffer[0], 1);
+		cblas_scopy((int)(frameCount * realStreamFormat.mChannelsPerFrame), outputPtr, 1, &buffer[0], 1);
 		amountRead = frameCount;
 	} else {
 		return 0;
@@ -225,7 +245,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		volumeScale *= eqPreamp;
 	}
 
-	scale_by_volume(&buffer[0], amountRead * newFormat.mChannelsPerFrame, volumeScale * volume);
+	scale_by_volume(&buffer[0], amountRead * realStreamFormat.mChannelsPerFrame, volumeScale * volume);
 
 	return amountRead;
 }
@@ -797,16 +817,20 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 - (int)renderAndConvert {
 	OSStatus status;
 	int inputRendered = inputBufferLastTime;
-	int bytesRendered = inputRendered * newFormat.mBytesPerPacket;
+	int bytesRendered = inputRendered * realStreamFormat.mBytesPerPacket;
+	
+	if(resetStreamFormat) {
+		[self updateStreamFormat];
+	}
 
 	while(inputRendered < 4096) {
 		int maxToRender = MIN(4096 - inputRendered, 512);
 		int rendered = [self renderInput:maxToRender toBuffer:&tempBuffer[0]];
 		if(rendered > 0) {
-			memcpy(((uint8_t*)&inputBuffer[0]) + bytesRendered, &tempBuffer[0], rendered * newFormat.mBytesPerPacket);
+			memcpy(((uint8_t*)&inputBuffer[0]) + bytesRendered, &tempBuffer[0], rendered * realStreamFormat.mBytesPerPacket);
 		}
 		inputRendered += rendered;
-		bytesRendered += rendered * newFormat.mBytesPerPacket;
+		bytesRendered += rendered * realStreamFormat.mBytesPerPacket;
 		if(streamFormatChanged) {
 			streamFormatChanged = NO;
 			if(inputRendered) {
@@ -920,12 +944,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	_au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags *_Nonnull actionFlags, const AudioTimeStamp *_Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList *_Nonnull inputData) {
 		if(!frameCount) return 0;
 
-		int i;
 		const int channels = format->mChannelsPerFrame;
 		if(!channels) return 0;
 
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
-		float *samplePtr = nil;
 		int renderedSamples = 0;
 		
 		while(renderedSamples < frameCount) {
@@ -973,6 +995,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		resetStreamFormat = NO;
 		streamFormatChanged = NO;
+		streamFormatStarted = NO;
 
 		inputBufferLastTime = 0;
 

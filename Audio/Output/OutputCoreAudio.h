@@ -88,16 +88,12 @@ using std::atomic_long;
 	AudioStreamBasicDescription deviceFormat;
 	AudioStreamBasicDescription realStreamFormat; // stream format pre-hrtf
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
-	AudioStreamBasicDescription realNewFormat; // in case of resampler flush
-	AudioStreamBasicDescription newFormat; // in case of resampler flush
 
 	AudioStreamBasicDescription visFormat; // Mono format for vis
 
 	uint32_t deviceChannelConfig;
 	uint32_t realStreamChannelConfig;
 	uint32_t streamChannelConfig;
-	uint32_t realNewChannelConfig;
-	uint32_t newChannelConfig;
 
 	AUAudioUnit *_au;
 
