@@ -128,8 +128,8 @@
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "LwT-Qb-47r"; */
 "LwT-Qb-47r.title" = "Tablo Görünümü Hücresi";
 
-/* Class = "NSButtonCell"; title = "Enable HRTF filter (Not needed with AirPods or Beats)"; ObjectID = "NGx-0c-WVR"; */
-"NGx-0c-WVR.title" = "HRTF filtresini etkinleştir (Airpods veya Beats ile gerekli değildir)";
+/* Class = "NSButtonCell"; title = "Enable HRTF filter"; ObjectID = "NGx-0c-WVR"; */
+"NGx-0c-WVR.title" = "HRTF filtresini etkinleştir";
 
 /* Class = "NSButtonCell"; title = "Use 3D rendered spectrum"; ObjectID = "NMg-TO-amV"; */
 "NMg-TO-amV.title" = "3D işlenmiş spektrum kullanın";

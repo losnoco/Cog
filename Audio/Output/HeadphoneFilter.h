@@ -12,26 +12,15 @@
 #import <Cocoa/Cocoa.h>
 
 @interface HeadphoneFilter : NSObject {
-	vDSP_DFT_Setup dftSetupF;
-	vDSP_DFT_Setup dftSetupB;
-
-	int fftSize;
-	int fftSizeOver2;
 	int bufferSize;
 	int paddedBufferSize;
 	int channelCount;
 
-	DSPSplitComplex signal_fft;
-	DSPSplitComplex input_filtered_signal_per_channel[2];
-	DSPSplitComplex input_filtered_signal_totals[2];
-	DSPSplitComplex *impulse_responses;
-
+	float **mirroredImpulseResponses;
+	
 	float **prevInputs;
 
-	float *left_result;
-	float *right_result;
-
-	float *paddedSignal;
+	float *paddedSignal[2];
 }
 
 + (BOOL)validateImpulseFile:(NSURL *)url;
