@@ -11,7 +11,7 @@
 #import "BufferChain.h"
 #import "Logging.h"
 
-#import "OutputAVFoundation.h"
+#import "OutputCoreAudio.h"
 
 #import <pthread.h>
 

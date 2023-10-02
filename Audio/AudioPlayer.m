@@ -91,7 +91,7 @@
 	bufferChain = [[BufferChain alloc] initWithController:self];
 	[self notifyStreamChanged:userInfo];
 
-	while(![bufferChain open:url withUserInfo:userInfo withRGInfo:rgi]) {
+	while(![bufferChain open:url withOutputFormat:[output format] withUserInfo:userInfo withRGInfo:rgi]) {
 		bufferChain = nil;
 
 		[self requestNextStream:userInfo];
@@ -401,7 +401,7 @@
 	}
 
 	if(pathsEqual || ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]] && (([nextStream host] == nil && [[lastChain streamURL] host] == nil) || [[nextStream host] isEqualToString:[[lastChain streamURL] host]]) && [[nextStream path] isEqualToString:[[lastChain streamURL] path]])) {
-		if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+		if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 			[newChain setStreamURL:nextStream];
 
 			@synchronized(chainQueue) {
@@ -420,7 +420,7 @@
 
 	NSURL *url = nextStream;
 
-	while(shouldContinue && ![newChain open:url withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+	while(shouldContinue && ![newChain open:url withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 		if(nextStream == nil) {
 			newChain = nil;
 			if(output)

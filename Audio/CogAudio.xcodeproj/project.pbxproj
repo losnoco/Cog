@@ -25,8 +25,6 @@
 		17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21C7D0B8BE4BA00D1EBDE /* Node.m */; };
 		17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C7E0B8BE4BA00D1EBDE /* OutputNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21C7F0B8BE4BA00D1EBDE /* OutputNode.m */; };
-		17D21CC50B8BE4BA00D1EBDE /* OutputAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C9C0B8BE4BA00D1EBDE /* OutputAVFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D21CC60B8BE4BA00D1EBDE /* OutputAVFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21C9D0B8BE4BA00D1EBDE /* OutputAVFoundation.m */; };
 		17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C9E0B8BE4BA00D1EBDE /* Status.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */; };
@@ -66,6 +64,13 @@
 		8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8350416C28646149006B32CC /* CoreMedia.framework */; };
 		835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88AF279811A500E28EAE /* hdcd_decode2.h */; };
 		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
+		835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */; };
+		835DD2682ACAF1D90057E319 /* OutputCoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 835DD2662ACAF1D90057E319 /* OutputCoreAudio.h */; };
+		835DD2702ACAF5AD0057E319 /* LICENSE.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 835DD26B2ACAF5AD0057E319 /* LICENSE.LGPL */; };
+		835DD2712ACAF5AD0057E319 /* License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 835DD26C2ACAF5AD0057E319 /* License.txt */; };
+		835DD2722ACAF5AD0057E319 /* lpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 835DD26D2ACAF5AD0057E319 /* lpc.h */; };
+		835DD2732ACAF5AD0057E319 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 835DD26E2ACAF5AD0057E319 /* util.h */; };
+		835DD2742ACAF5AD0057E319 /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 835DD26F2ACAF5AD0057E319 /* lpc.c */; };
 		835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */; };
 		835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */; };
 		836DF618298F6F5F00CD0580 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836DF615298F6E8900CD0580 /* libsoxr.0.dylib */; };
@@ -132,8 +137,6 @@
 		17D21C7D0B8BE4BA00D1EBDE /* Node.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = Node.m; sourceTree = "<group>"; };
 		17D21C7E0B8BE4BA00D1EBDE /* OutputNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputNode.h; sourceTree = "<group>"; };
 		17D21C7F0B8BE4BA00D1EBDE /* OutputNode.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputNode.m; sourceTree = "<group>"; };
-		17D21C9C0B8BE4BA00D1EBDE /* OutputAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = OutputAVFoundation.h; sourceTree = "<group>"; };
-		17D21C9D0B8BE4BA00D1EBDE /* OutputAVFoundation.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = OutputAVFoundation.m; sourceTree = "<group>"; };
 		17D21C9E0B8BE4BA00D1EBDE /* Status.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Status.h; sourceTree = "<group>"; };
 		17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CogSemaphore.h; sourceTree = "<group>"; };
 		17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CogSemaphore.m; sourceTree = "<group>"; };
@@ -174,6 +177,13 @@
 		8350416C28646149006B32CC /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		835C88AF279811A500E28EAE /* hdcd_decode2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdcd_decode2.h; sourceTree = "<group>"; };
 		835C88B0279811A500E28EAE /* hdcd_decode2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdcd_decode2.c; sourceTree = "<group>"; };
+		835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OutputCoreAudio.m; sourceTree = "<group>"; };
+		835DD2662ACAF1D90057E319 /* OutputCoreAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputCoreAudio.h; sourceTree = "<group>"; };
+		835DD26B2ACAF5AD0057E319 /* LICENSE.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.LGPL; sourceTree = "<group>"; };
+		835DD26C2ACAF5AD0057E319 /* License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
+		835DD26D2ACAF5AD0057E319 /* lpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lpc.h; sourceTree = "<group>"; };
+		835DD26E2ACAF5AD0057E319 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		835DD26F2ACAF5AD0057E319 /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lpc.c; sourceTree = "<group>"; };
 		835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BadSampleCleaner.h; path = Utils/BadSampleCleaner.h; sourceTree = SOURCE_ROOT; };
 		835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BadSampleCleaner.m; path = Utils/BadSampleCleaner.m; sourceTree = SOURCE_ROOT; };
 		836DF615298F6E8900CD0580 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsoxr.0.dylib; path = ../ThirdParty/soxr/lib/libsoxr.0.dylib; sourceTree = "<group>"; };
@@ -354,12 +364,12 @@
 		17D21C9B0B8BE4BA00D1EBDE /* Output */ = {
 			isa = PBXGroup;
 			children = (
+				835DD2662ACAF1D90057E319 /* OutputCoreAudio.h */,
+				835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */,
 				834A41AD287ABD6F00EB9D9B /* FSurroundFilter.h */,
 				834A41AE287ABD6F00EB9D9B /* FSurroundFilter.mm */,
 				839E56EB2879515D00DFB5F4 /* HeadphoneFilter.h */,
 				839E56EC2879515D00DFB5F4 /* HeadphoneFilter.mm */,
-				17D21C9C0B8BE4BA00D1EBDE /* OutputAVFoundation.h */,
-				17D21C9D0B8BE4BA00D1EBDE /* OutputAVFoundation.m */,
 			);
 			path = Output;
 			sourceTree = "<group>";
@@ -367,6 +377,7 @@
 		17D21CD80B8BE5B400D1EBDE /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				835DD2692ACAF5AD0057E319 /* lvqcl */,
 				834A41A4287A90AB00EB9D9B /* fsurround */,
 				839E56E02879450300DFB5F4 /* hrtf */,
 				831A50152865A8800049CFE4 /* rsstate.cpp */,
@@ -437,6 +448,26 @@
 			path = hdcd;
 			sourceTree = "<group>";
 		};
+		835DD2692ACAF5AD0057E319 /* lvqcl */ = {
+			isa = PBXGroup;
+			children = (
+				835DD26A2ACAF5AD0057E319 /* License */,
+				835DD26D2ACAF5AD0057E319 /* lpc.h */,
+				835DD26E2ACAF5AD0057E319 /* util.h */,
+				835DD26F2ACAF5AD0057E319 /* lpc.c */,
+			);
+			path = lvqcl;
+			sourceTree = "<group>";
+		};
+		835DD26A2ACAF5AD0057E319 /* License */ = {
+			isa = PBXGroup;
+			children = (
+				835DD26B2ACAF5AD0057E319 /* LICENSE.LGPL */,
+				835DD26C2ACAF5AD0057E319 /* License.txt */,
+			);
+			path = License;
+			sourceTree = "<group>";
+		};
 		83725A8F27AA16C90003F694 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -488,18 +519,20 @@
 				834A41AC287A90AB00EB9D9B /* channelmaps.h in Headers */,
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
 				834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */,
+				835DD2732ACAF5AD0057E319 /* util.h in Headers */,
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
 				8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */,
-				17D21CC50B8BE4BA00D1EBDE /* OutputAVFoundation.h in Headers */,
 				83504165286447DA006B32CC /* Downmix.h in Headers */,
 				839E56E52879450300DFB5F4 /* HrtfData.h in Headers */,
 				83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */,
+				835DD2682ACAF1D90057E319 /* OutputCoreAudio.h in Headers */,
 				839E56E62879450300DFB5F4 /* Endianness.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
+				835DD2722ACAF5AD0057E319 /* lpc.h in Headers */,
 				839E56ED2879515D00DFB5F4 /* HeadphoneFilter.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
 				831A50182865A8B30049CFE4 /* rsstate.h in Headers */,
@@ -589,6 +622,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				835DD2712ACAF5AD0057E319 /* License.txt in Resources */,
+				835DD2702ACAF5AD0057E319 /* LICENSE.LGPL in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,7 +643,6 @@
 				831A50162865A8800049CFE4 /* rsstate.cpp in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
-				17D21CC60B8BE4BA00D1EBDE /* OutputAVFoundation.m in Sources */,
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
 				835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */,
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
@@ -630,8 +664,10 @@
 				834FD4F127AF93680063BC83 /* ChunkList.m in Sources */,
 				834A41B0287ABD6F00EB9D9B /* FSurroundFilter.mm in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
+				835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
+				835DD2742ACAF5AD0057E319 /* lpc.c in Sources */,
 				834A41AA287A90AB00EB9D9B /* freesurround_decoder.cpp in Sources */,
 				07DB5F3F0ED353A900C2E3EF /* AudioMetadataWriter.m in Sources */,
 			);
