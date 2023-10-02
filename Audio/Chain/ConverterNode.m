@@ -101,10 +101,11 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			chunk = [self convert];
 		}
 		if(!chunk) {
-			if(paused) {
-				continue;
-			} else if(!streamFormatChanged) {
+			if([self endOfStream] == YES) {
 				break;
+			}
+			if(paused || !streamFormatChanged) {
+				continue;
 			}
 		} else {
 			@autoreleasepool {
