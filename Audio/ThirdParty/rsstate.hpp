@@ -74,6 +74,7 @@ struct rsstate {
 				return 0;
 			}
 		}
+		return (int)outTotal;
 	}
 };
 
