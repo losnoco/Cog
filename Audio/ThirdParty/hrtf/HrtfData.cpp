@@ -9,7 +9,7 @@ typedef struct {
 	uint8_t bytes[3];
 } sample_int24_t;
 
-const double pi = 3.1415926535897932385;
+const double pi = M_PI;
 
 template <typename T>
 void read_stream(std::istream& stream, T& value) {
