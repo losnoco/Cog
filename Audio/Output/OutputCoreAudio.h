@@ -26,6 +26,8 @@ using std::atomic_long;
 
 #import <CogAudio/CogAudio-Swift.h>
 
+#import <simd/simd.h>
+
 #import "HeadphoneFilter.h"
 
 //#define OUTPUT_LOG
@@ -140,6 +142,11 @@ using std::atomic_long;
 	float visResamplerInput[8192];
 	float visTemp[8192];
 
+	BOOL referenceMatrixSet;
+	BOOL rotationMatrixUpdated;
+	simd_float4x4 rotationMatrix;
+	simd_float4x4 referenceMatrix;
+
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
 #endif
@@ -164,5 +171,7 @@ using std::atomic_long;
 - (void)setShouldPlayOutBuffer:(BOOL)enabled;
 
 - (void)sustainHDCD;
+
+- (void)reportMotion:(simd_float4x4)matrix;
 
 @end
