@@ -180,7 +180,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 				size_t totalDone = 0;
 				size_t inDone = 0;
 				size_t visFrameCount = frameCount;
-				{
+				do {
 					int visTodo = (int)MIN(visFrameCount, visResamplerRemain + visFrameCount - 8192);
 					if(visTodo) {
 						cblas_scopy(visTodo, &visAudio[0], 1, &visResamplerInput[visResamplerRemain], 1);
