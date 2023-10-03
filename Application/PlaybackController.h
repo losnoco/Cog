@@ -19,10 +19,10 @@
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
 
-extern NSString *CogPlaybackDidBeginNotficiation;
-extern NSString *CogPlaybackDidPauseNotficiation;
-extern NSString *CogPlaybackDidResumeNotficiation;
-extern NSString *CogPlaybackDidStopNotficiation;
+extern NSString *CogPlaybackDidBeginNotificiation;
+extern NSString *CogPlaybackDidPauseNotificiation;
+extern NSString *CogPlaybackDidResumeNotificiation;
+extern NSString *CogPlaybackDidStopNotificiation;
 
 extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 
