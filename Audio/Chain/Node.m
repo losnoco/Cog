@@ -22,7 +22,7 @@
 - (id)initWithController:(id)c previous:(id)p {
 	self = [super init];
 	if(self) {
-		buffer = [[ChunkList alloc] initWithMaximumDuration:1.0];
+		buffer = [[ChunkList alloc] initWithMaximumDuration:20.0];
 		semaphore = [[Semaphore alloc] init];
 
 		accessLock = [[NSLock alloc] init];
@@ -35,6 +35,8 @@
 
 		nodeChannelConfig = 0;
 		nodeLossless = NO;
+
+		durationPrebuffer = 2.0;
 
 		[self setPreviousNode:p];
 	}
@@ -66,17 +68,18 @@
 	[chunk assignSamples:ptr frameCount:amount / nodeFormat.mBytesPerPacket];
 
 	const double chunkDuration = [chunk duration];
-	double durationLeft = [buffer maxDuration] - [buffer listDuration];
+	double durationList = [buffer listDuration];
+	double durationLeft = [buffer maxDuration] - durationList;
+
+	if(shouldContinue == YES && durationList > durationPrebuffer) {
+		if(initialBufferFilled == NO) {
+			initialBufferFilled = YES;
+			if([controller respondsToSelector:@selector(initialBufferFilled:)])
+				[controller performSelector:@selector(initialBufferFilled:) withObject:self];
+		}
+	}
 
 	while(shouldContinue == YES && chunkDuration > durationLeft) {
-		if(durationLeft < chunkDuration) {
-			if(initialBufferFilled == NO) {
-				initialBufferFilled = YES;
-				if([controller respondsToSelector:@selector(initialBufferFilled:)])
-					[controller performSelector:@selector(initialBufferFilled:) withObject:self];
-			}
-		}
-
 		if(durationLeft < chunkDuration || shouldReset) {
 			[accessLock unlock];
 			[semaphore wait];
@@ -95,17 +98,18 @@
 	[accessLock lock];
 
 	const double chunkDuration = [chunk duration];
-	double durationLeft = [buffer maxDuration] - [buffer listDuration];
+	double durationList = [buffer listDuration];
+	double durationLeft = [buffer maxDuration] - durationList;
+
+	if(shouldContinue == YES && durationList > durationPrebuffer) {
+		if(initialBufferFilled == NO) {
+			initialBufferFilled = YES;
+			if([controller respondsToSelector:@selector(initialBufferFilled:)])
+				[controller performSelector:@selector(initialBufferFilled:) withObject:self];
+		}
+	}
 
 	while(shouldContinue == YES && chunkDuration > durationLeft) {
-		if(durationLeft < chunkDuration) {
-			if(initialBufferFilled == NO) {
-				initialBufferFilled = YES;
-				if([controller respondsToSelector:@selector(initialBufferFilled:)])
-					[controller performSelector:@selector(initialBufferFilled:) withObject:self];
-			}
-		}
-
 		if(durationLeft < chunkDuration || shouldReset) {
 			[accessLock unlock];
 			[semaphore wait];

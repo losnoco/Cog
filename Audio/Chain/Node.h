@@ -33,6 +33,8 @@
 	AudioStreamBasicDescription nodeFormat;
 	uint32_t nodeChannelConfig;
 	BOOL nodeLossless;
+
+	double durationPrebuffer;
 }
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
 
