@@ -74,19 +74,23 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
 	for(size_t i = 0; i < metadata.get_count(); ++i) {
-		const midi_meta_data_item &item = metadata[i];
-		NSString *name = [guess_encoding_of_string(item.m_name.c_str()) lowercaseString];
-		if(![name isEqualToString:@"type"]) {
-			if(remap_display_name && [name isEqualToString:@"display_name"])
-				name = @"title";
-			setDictionary(dict, name, guess_encoding_of_string(item.m_value.c_str()));
+		@autoreleasepool {
+			const midi_meta_data_item &item = metadata[i];
+			NSString *name = [guess_encoding_of_string(item.m_name.c_str()) lowercaseString];
+			if(![name isEqualToString:@"type"]) {
+				if(remap_display_name && [name isEqualToString:@"display_name"])
+					name = @"title";
+				setDictionary(dict, name, guess_encoding_of_string(item.m_value.c_str()));
+			}
 		}
 	}
 
 	std::vector<uint8_t> albumArt;
 
 	if(metadata.get_bitmap(albumArt)) {
-		[dict setObject:[NSData dataWithBytes:&albumArt[0] length:albumArt.size()] forKey:@"albumArt"];
+		@autoreleasepool {
+			[dict setObject:[NSData dataWithBytes:&albumArt[0] length:albumArt.size()] forKey:@"albumArt"];
+		}
 	}
 
 	return dict;

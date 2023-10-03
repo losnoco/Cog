@@ -746,25 +746,29 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 			NSURL *url = urlForPath(key);
 
 			[op addExecutionBlock:^{
-				DLog(@"Loading metadata for %@", url);
-				[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", url];
+				@autoreleasepool {
+					DLog(@"Loading metadata for %@", url);
+					[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", url];
 
-				NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:url];
-				if(entryProperties == nil)
-					return;
+					NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:url];
+					if(entryProperties == nil)
+						return;
 
-				NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:url];
+					NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:url];
 
-				NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:entryMetadata];
+					NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:entryMetadata];
 
-				[weakLock lock];
-				entryInfo = [weakDataStore coalesceEntryInfo:entryInfo];
-				[weakArray addObject:key];
-				[weakArray addObject:entryInfo];
-				[uniquePathsEntries setObject:[[NSMutableArray alloc] init] forKey:key];
-				progress += progressstep;
-				[self setProgressJobStatus:progress];
-				[weakLock unlock];
+					[weakLock lock];
+					@autoreleasepool {
+						entryInfo = [weakDataStore coalesceEntryInfo:entryInfo];
+					}
+					[weakArray addObject:key];
+					[weakArray addObject:entryInfo];
+					[uniquePathsEntries setObject:[[NSMutableArray alloc] init] forKey:key];
+					progress += progressstep;
+					[self setProgressJobStatus:progress];
+					[weakLock unlock];
+				}
 			}];
 
 			[queue addOperation:op];

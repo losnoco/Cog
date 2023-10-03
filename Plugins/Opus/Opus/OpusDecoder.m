@@ -154,37 +154,41 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 			FLAC__StreamMetadata_VorbisComment_Entry entry = { .entry = (FLAC__byte *)tags->user_comments[i], .length = tags->comment_lengths[i] };
 			char *name, *value;
 			if(FLAC__metadata_object_vorbiscomment_entry_to_name_value_pair(entry, &name, &value)) {
-				NSString *tagName = guess_encoding_of_string(name);
-				free(name);
+				@autoreleasepool {
+					NSString *tagName = guess_encoding_of_string(name);
+					free(name);
 
-				tagName = [tagName lowercaseString];
+					tagName = [tagName lowercaseString];
 
-				if([tagName isEqualToString:@"metadata_block_picture"]) {
-					OpusPictureTag _pic = { 0 };
-					if(opus_picture_tag_parse(&_pic, value) >= 0) {
-						if(_pic.format == OP_PIC_FORMAT_PNG ||
-						   _pic.format == OP_PIC_FORMAT_JPEG ||
-						   _pic.format == OP_PIC_FORMAT_GIF ||
-						   _pic.format == OP_PIC_FORMAT_UNKNOWN) {
-							_albumArt = [NSData dataWithBytes:_pic.data length:_pic.data_length];
+					if([tagName isEqualToString:@"metadata_block_picture"]) {
+						OpusPictureTag _pic = { 0 };
+						if(opus_picture_tag_parse(&_pic, value) >= 0) {
+							if(_pic.format == OP_PIC_FORMAT_PNG ||
+							   _pic.format == OP_PIC_FORMAT_JPEG ||
+							   _pic.format == OP_PIC_FORMAT_GIF ||
+							   _pic.format == OP_PIC_FORMAT_UNKNOWN) {
+								_albumArt = [NSData dataWithBytes:_pic.data length:_pic.data_length];
+							}
 						}
+						opus_picture_tag_clear(&_pic);
+					} else if([tagName isEqualToString:@"unsynced lyrics"] ||
+							  [tagName isEqualToString:@"lyrics"]) {
+						setDictionary(_metaDict, @"unsyncedlyrics", guess_encoding_of_string(value));
+					} else {
+						setDictionary(_metaDict, tagName, guess_encoding_of_string(value));
 					}
-					opus_picture_tag_clear(&_pic);
-				} else if([tagName isEqualToString:@"unsynced lyrics"] ||
-						  [tagName isEqualToString:@"lyrics"]) {
-					setDictionary(_metaDict, @"unsyncedlyrics", guess_encoding_of_string(value));
-				} else {
-					setDictionary(_metaDict, tagName, guess_encoding_of_string(value));
-				}
 
-				free(value);
+					free(value);
+				}
 			}
 		}
 
 		if(![_albumArt isEqualToData:albumArt] ||
 		   ![_metaDict isEqualToDictionary:metaDict]) {
-			metaDict = _metaDict;
-			albumArt = _albumArt;
+			@autoreleasepool {
+				metaDict = _metaDict;
+				albumArt = _albumArt;
+			}
 
 			if(![source seekable]) {
 				[self willChangeValueForKey:@"metadata"];
@@ -203,29 +207,33 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
 		HTTPSource *httpSource = (HTTPSource *)source;
 		if([httpSource hasMetadata]) {
-			NSDictionary *metadata = [httpSource metadata];
-			NSString *_genre = [metadata valueForKey:@"genre"];
-			NSString *_album = [metadata valueForKey:@"album"];
-			NSString *_artist = [metadata valueForKey:@"artist"];
-			NSString *_title = [metadata valueForKey:@"title"];
+			@autoreleasepool {
+				NSDictionary *metadata = [httpSource metadata];
+				NSString *_genre = [metadata valueForKey:@"genre"];
+				NSString *_album = [metadata valueForKey:@"album"];
+				NSString *_artist = [metadata valueForKey:@"artist"];
+				NSString *_title = [metadata valueForKey:@"title"];
 
-			if(_genre && [_genre length]) {
-				setDictionary(_icyMetaDict, @"genre", _genre);
-			}
-			if(_album && [_album length]) {
-				setDictionary(_icyMetaDict, @"album", _album);
-			}
-			if(_artist && [_artist length]) {
-				setDictionary(_icyMetaDict, @"artist", _artist);
-			}
-			if(_title && [_title length]) {
-				setDictionary(_icyMetaDict, @"title", _title);
+				if(_genre && [_genre length]) {
+					setDictionary(_icyMetaDict, @"genre", _genre);
+				}
+				if(_album && [_album length]) {
+					setDictionary(_icyMetaDict, @"album", _album);
+				}
+				if(_artist && [_artist length]) {
+					setDictionary(_icyMetaDict, @"artist", _artist);
+				}
+				if(_title && [_title length]) {
+					setDictionary(_icyMetaDict, @"title", _title);
+				}
 			}
 		}
 	}
 
 	if(![_icyMetaDict isEqualToDictionary:icyMetaDict]) {
-		icyMetaDict = _icyMetaDict;
+		@autoreleasepool {
+			icyMetaDict = _icyMetaDict;
+		}
 		[self willChangeValueForKey:@"metadata"];
 		[self didChangeValueForKey:@"metadata"];
 	}

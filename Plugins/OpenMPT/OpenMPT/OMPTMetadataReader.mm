@@ -69,14 +69,16 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		std::vector<std::string> keys = mod->get_metadata_keys();
 
 		for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
-			NSString *tag = guess_encoding_of_string((*key).c_str());
-			NSString *value = guess_encoding_of_string(mod->get_metadata(*key).c_str());
-			if(*key == "type")
-				continue;
-			else if(*key == "type_long") {
-				setDictionary(dict, @"codec", value);
-			} else {
-				setDictionary(dict, tag, value);
+			@autoreleasepool {
+				NSString *tag = guess_encoding_of_string((*key).c_str());
+				NSString *value = guess_encoding_of_string(mod->get_metadata(*key).c_str());
+				if(*key == "type")
+					continue;
+				else if(*key == "type_long") {
+					setDictionary(dict, @"codec", value);
+				} else {
+					setDictionary(dict, tag, value);
+				}
 			}
 		}
 

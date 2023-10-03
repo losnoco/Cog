@@ -562,75 +562,77 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		}
 		tag = NULL;
 		while((tag = av_dict_get(metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-			if(!strcasecmp(tag->key, "streamtitle")) {
-				NSString *artistTitle = guess_encoding_of_string(tag->value);
-				NSArray *splitValues = [artistTitle componentsSeparatedByString:@" - "];
-				NSString *_artist = @"";
-				NSString *_title = [splitValues objectAtIndex:0];
-				if([splitValues count] > 1) {
-					_artist = _title;
-					_title = [splitValues objectAtIndex:1];
-					setDictionary(_metaDict, @"artist", _artist);
-					setDictionary(_metaDict, @"title", _title);
-				} else {
-					setDictionary(_metaDict, @"title", _title);
-				}
-			} else if(!strcasecmp(tag->key, "unsynced lyrics") ||
-					  !strcasecmp(tag->key, "lyrics")) {
-				setDictionary(_metaDict, @"unsyncedlyrics", guess_encoding_of_string(tag->value));
-			} else if(!strcasecmp(tag->key, "icy-url")) {
-				setDictionary(_metaDict, @"album", guess_encoding_of_string(tag->value));
-			} else if(!strcasecmp(tag->key, "icy-genre")) {
-				setDictionary(_metaDict, @"genre", guess_encoding_of_string(tag->value));
-			} else if(!strcasecmp(tag->key, "title")) {
-				NSString *_tag = guess_encoding_of_string(tag->value);
-				if(i == 0 && formatCtx->nb_chapters > 1) {
-					setDictionary(_metaDict, @"album", _tag);
-				} else {
-					setDictionary(_metaDict, @"title", _tag);
-				}
-			} else if(!strcasecmp(tag->key, "date_recorded")) {
-				setDictionary(_metaDict, @"date", guess_encoding_of_string(tag->value));
-			} else if(!strcasecmp(tag->key, "replaygain_gain")) {
-				// global or chapter gain
-				NSString *tagName;
-				if(i == 0)
-					tagName = @"replaygain_album_gain";
-				else
-					tagName = @"replaygain_track_gain";
-				setDictionary(_metaDict, tagName, guess_encoding_of_string(tag->value));
-			} else if(!strcasecmp(tag->key, "replaygain_peak")) {
-				// global or chapter peak
-				NSString *tagName;
-				if(i == 0)
-					tagName = @"replaygain_album_peak";
-				else
-					tagName = @"replaygain_track_peak";
-				setDictionary(_metaDict, tagName, guess_encoding_of_string(tag->value));
-			} else if(!strcasecmp(tag->key, "iTunNORM")) {
-				NSString *tagString = guess_encoding_of_string(tag->value);
-				NSArray *tag = [tagString componentsSeparatedByString:@" "];
-				NSMutableArray *wantedTag = [[NSMutableArray alloc] init];
-				for(size_t i = 0; i < [tag count]; ++i) {
-					NSString *tagValue = tag[i];
-					if([tagValue length] == 8) {
-						[wantedTag addObject:tagValue];
+			@autoreleasepool {
+				if(!strcasecmp(tag->key, "streamtitle")) {
+					NSString *artistTitle = guess_encoding_of_string(tag->value);
+					NSArray *splitValues = [artistTitle componentsSeparatedByString:@" - "];
+					NSString *_artist = @"";
+					NSString *_title = [splitValues objectAtIndex:0];
+					if([splitValues count] > 1) {
+						_artist = _title;
+						_title = [splitValues objectAtIndex:1];
+						setDictionary(_metaDict, @"artist", _artist);
+						setDictionary(_metaDict, @"title", _title);
+					} else {
+						setDictionary(_metaDict, @"title", _title);
 					}
+				} else if(!strcasecmp(tag->key, "unsynced lyrics") ||
+						  !strcasecmp(tag->key, "lyrics")) {
+					setDictionary(_metaDict, @"unsyncedlyrics", guess_encoding_of_string(tag->value));
+				} else if(!strcasecmp(tag->key, "icy-url")) {
+					setDictionary(_metaDict, @"album", guess_encoding_of_string(tag->value));
+				} else if(!strcasecmp(tag->key, "icy-genre")) {
+					setDictionary(_metaDict, @"genre", guess_encoding_of_string(tag->value));
+				} else if(!strcasecmp(tag->key, "title")) {
+					NSString *_tag = guess_encoding_of_string(tag->value);
+					if(i == 0 && formatCtx->nb_chapters > 1) {
+						setDictionary(_metaDict, @"album", _tag);
+					} else {
+						setDictionary(_metaDict, @"title", _tag);
+					}
+				} else if(!strcasecmp(tag->key, "date_recorded")) {
+					setDictionary(_metaDict, @"date", guess_encoding_of_string(tag->value));
+				} else if(!strcasecmp(tag->key, "replaygain_gain")) {
+					// global or chapter gain
+					NSString *tagName;
+					if(i == 0)
+						tagName = @"replaygain_album_gain";
+					else
+						tagName = @"replaygain_track_gain";
+					setDictionary(_metaDict, tagName, guess_encoding_of_string(tag->value));
+				} else if(!strcasecmp(tag->key, "replaygain_peak")) {
+					// global or chapter peak
+					NSString *tagName;
+					if(i == 0)
+						tagName = @"replaygain_album_peak";
+					else
+						tagName = @"replaygain_track_peak";
+					setDictionary(_metaDict, tagName, guess_encoding_of_string(tag->value));
+				} else if(!strcasecmp(tag->key, "iTunNORM")) {
+					NSString *tagString = guess_encoding_of_string(tag->value);
+					NSArray *tag = [tagString componentsSeparatedByString:@" "];
+					NSMutableArray *wantedTag = [[NSMutableArray alloc] init];
+					for(size_t i = 0; i < [tag count]; ++i) {
+						NSString *tagValue = tag[i];
+						if([tagValue length] == 8) {
+							[wantedTag addObject:tagValue];
+						}
+					}
+					if([wantedTag count] >= 10) {
+						NSScanner *scanner1 = [NSScanner scannerWithString:wantedTag[0]];
+						NSScanner *scanner2 = [NSScanner scannerWithString:wantedTag[1]];
+						unsigned int hexvalue1 = 0, hexvalue2 = 0;
+						[scanner1 scanHexInt:&hexvalue1];
+						[scanner2 scanHexInt:&hexvalue2];
+						float volume1 = -log10((double)(hexvalue1) / 1000) * 10;
+						float volume2 = -log10((double)(hexvalue2) / 1000) * 10;
+						float volumeToUse = MIN(volume1, volume2);
+						NSNumber *_volumeScale = @(pow(10, volumeToUse / 20));
+						setDictionary(_metaDict, @"volume", [_volumeScale stringValue]);
+					}
+				} else {
+					setDictionary(_metaDict, guess_encoding_of_string(tag->key), guess_encoding_of_string(tag->value));
 				}
-				if([wantedTag count] >= 10) {
-					NSScanner *scanner1 = [NSScanner scannerWithString:wantedTag[0]];
-					NSScanner *scanner2 = [NSScanner scannerWithString:wantedTag[1]];
-					unsigned int hexvalue1 = 0, hexvalue2 = 0;
-					[scanner1 scanHexInt:&hexvalue1];
-					[scanner2 scanHexInt:&hexvalue2];
-					float volume1 = -log10((double)(hexvalue1) / 1000) * 10;
-					float volume2 = -log10((double)(hexvalue2) / 1000) * 10;
-					float volumeToUse = MIN(volume1, volume2);
-					NSNumber *_volumeScale = @(pow(10, volumeToUse / 20));
-					setDictionary(_metaDict, @"volume", [_volumeScale stringValue]);
-				}
-			} else {
-				setDictionary(_metaDict, guess_encoding_of_string(tag->key), guess_encoding_of_string(tag->value));
 			}
 		}
 	}
@@ -639,29 +641,33 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
 		HTTPSource *httpSource = (HTTPSource *)source;
 		if([httpSource hasMetadata]) {
-			NSDictionary *metadata = [httpSource metadata];
-			NSString *_genre = [metadata valueForKey:@"genre"];
-			NSString *_album = [metadata valueForKey:@"album"];
-			NSString *_artist = [metadata valueForKey:@"artist"];
-			NSString *_title = [metadata valueForKey:@"title"];
-
-			if(_genre && [_genre length]) {
-				[_metaDict setObject:@[_genre] forKey:@"genre"];
-			}
-			if(_album && [_album length]) {
-				[_metaDict setObject:@[_album] forKey:@"album"];
-			}
-			if(_artist && [_artist length]) {
-				[_metaDict setObject:@[_artist] forKey:@"artist"];
-			}
-			if(_title && [_title length]) {
-				[_metaDict setObject:@[_title] forKey:@"title"];
+			@autoreleasepool {
+				NSDictionary *metadata = [httpSource metadata];
+				NSString *_genre = [metadata valueForKey:@"genre"];
+				NSString *_album = [metadata valueForKey:@"album"];
+				NSString *_artist = [metadata valueForKey:@"artist"];
+				NSString *_title = [metadata valueForKey:@"title"];
+				
+				if(_genre && [_genre length]) {
+					[_metaDict setObject:@[_genre] forKey:@"genre"];
+				}
+				if(_album && [_album length]) {
+					[_metaDict setObject:@[_album] forKey:@"album"];
+				}
+				if(_artist && [_artist length]) {
+					[_metaDict setObject:@[_artist] forKey:@"artist"];
+				}
+				if(_title && [_title length]) {
+					[_metaDict setObject:@[_title] forKey:@"title"];
+				}
 			}
 		}
 	}
 
 	if(![_metaDict isEqualToDictionary:metaDict]) {
-		metaDict = _metaDict;
+		@autoreleasepool {
+			metaDict = _metaDict;
+		}
 		if(![source seekable]) {
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
