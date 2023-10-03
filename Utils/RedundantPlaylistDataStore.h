@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)coalesceEntryInfo:(NSDictionary *)pe;
 - (void)reset;
 
+- (NSString *)coalesceString:(NSString *)in;
+
 @end
 
 NS_ASSUME_NONNULL_END

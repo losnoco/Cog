@@ -61,70 +61,72 @@ static size_t http_curl_write_wrapper(HTTPSource *fp, void *ptr, size_t size) {
 
 static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t size) {
 	//    DLog (@"reading %d bytes of metadata\n", size);
-	DLog(@"%s", meta);
-	const char *e = meta + size;
-	const char strtitle[] = "StreamTitle='";
-	char title[4096] = "";
-	while(meta < e) {
-		if(!memcmp(meta, strtitle, sizeof(strtitle) - 1)) {
-			meta += sizeof(strtitle) - 1;
-			const char *substr_end = meta;
-			while(substr_end < e - 1 && (*substr_end != '\'' || *(substr_end + 1) != ';')) {
-				substr_end++;
-			}
-			if(substr_end >= e) {
-				return -1; // end of string not found
-			}
-			size_t s = substr_end - meta;
-			s = MIN(sizeof(title) - 1, s);
-			memcpy(title, meta, s);
-			title[s] = 0;
-			DLog(@"got stream title: %s\n", title);
-			{
-				char *tit = strstr(title, " - ");
-				if(tit) {
-					*tit = 0;
-					tit += 3;
-					
-					if(!strncmp(tit, "text=\"", 6)) { // Hack for a certain stream
-						char *titfirst = tit + 6;
-						char *titlast = strchr(titfirst, '"');
-						if(titlast) {
-							*titlast = 0;
+	@autoreleasepool {
+		DLog(@"%s", meta);
+		const char *e = meta + size;
+		const char strtitle[] = "StreamTitle='";
+		char title[4096] = "";
+		while(meta < e) {
+			if(!memcmp(meta, strtitle, sizeof(strtitle) - 1)) {
+				meta += sizeof(strtitle) - 1;
+				const char *substr_end = meta;
+				while(substr_end < e - 1 && (*substr_end != '\'' || *(substr_end + 1) != ';')) {
+					substr_end++;
+				}
+				if(substr_end >= e) {
+					return -1; // end of string not found
+				}
+				size_t s = substr_end - meta;
+				s = MIN(sizeof(title) - 1, s);
+				memcpy(title, meta, s);
+				title[s] = 0;
+				DLog(@"got stream title: %s\n", title);
+				{
+					char *tit = strstr(title, " - ");
+					if(tit) {
+						*tit = 0;
+						tit += 3;
+
+						if(!strncmp(tit, "text=\"", 6)) { // Hack for a certain stream
+							char *titfirst = tit + 6;
+							char *titlast = strchr(titfirst, '"');
+							if(titlast) {
+								*titlast = 0;
+							}
+							tit = titfirst;
 						}
-						tit = titfirst;
-					}
 
-					const char *orig_title = [fp->title UTF8String];
-					const char *orig_artist = [fp->artist UTF8String];
+						const char *orig_title = [fp->title UTF8String];
+						const char *orig_artist = [fp->artist UTF8String];
 
-					if(!orig_title || strcasecmp(orig_title, tit)) {
-						fp->title = guess_encoding_of_string(tit);
-						fp->gotmetadata = 1;
-					}
-					if(!orig_artist || strcasecmp(orig_artist, title)) {
-						fp->artist = guess_encoding_of_string(title);
-						fp->gotmetadata = 1;
-					}
-				} else {
-					const char *orig_title = [fp->title UTF8String];
-					if(!orig_title || strcasecmp(orig_title, title)) {
-						fp->artist = @"";
-						fp->title = guess_encoding_of_string(title);
-						fp->gotmetadata = 1;
+						if(!orig_title || strcasecmp(orig_title, tit)) {
+							fp->title = guess_encoding_of_string(tit);
+							fp->gotmetadata = 1;
+						}
+						if(!orig_artist || strcasecmp(orig_artist, title)) {
+							fp->artist = guess_encoding_of_string(title);
+							fp->gotmetadata = 1;
+						}
+					} else {
+						const char *orig_title = [fp->title UTF8String];
+						if(!orig_title || strcasecmp(orig_title, title)) {
+							fp->artist = @"";
+							fp->title = guess_encoding_of_string(title);
+							fp->gotmetadata = 1;
+						}
 					}
 				}
+				return 0;
 			}
-			return 0;
+			while(meta < e && *meta != ';') {
+				meta++;
+			}
+			if(meta < e) {
+				meta++;
+			}
 		}
-		while(meta < e && *meta != ';') {
-			meta++;
-		}
-		if(meta < e) {
-			meta++;
-		}
+		return -1;
 	}
-	return -1;
 }
 
 static const uint8_t *parse_header(const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uint8_t *value, int valuesize) {
@@ -205,27 +207,29 @@ static size_t http_content_header_handler_int(void *ptr, size_t size, void *stre
 		while(p < end && (*p == 0x0d || *p == 0x0a)) {
 			p++;
 		}
-		p = parse_header(p, end, key, sizeof(key), value, sizeof(value));
-		DLog(@"%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
-		if(!strcasecmp((char *)key, "Content-Type")) {
-			fp->content_type = guess_encoding_of_string((const char *)value);
-		} else if(!strcasecmp((char *)key, "Content-Length")) {
-			char *end;
-			fp->length = strtol((const char *)value, &end, 10);
-		} else if(!strcasecmp((char *)key, "icy-name")) {
-			fp->title = guess_encoding_of_string((const char *)value);
-			fp->gotmetadata = 1;
-		} else if(!strcasecmp((char *)key, "icy-genre")) {
-			fp->genre = guess_encoding_of_string((const char *)value);
-			fp->gotmetadata = 1;
-		} else if(!strcasecmp((char *)key, "icy-metaint")) {
-			// printf ("icy-metaint: %d\n", atoi (value));
-			char *end;
-			fp->icy_metaint = (int)strtoul((const char *)value, &end, 10);
-			fp->wait_meta = fp->icy_metaint;
-		} else if(!strcasecmp((char *)key, "icy-url")) {
-			fp->album = guess_encoding_of_string((const char *)value);
-			fp->gotmetadata = 1;
+		@autoreleasepool {
+			p = parse_header(p, end, key, sizeof(key), value, sizeof(value));
+			DLog(@"%skey=%s value=%s\n", fp->icyheader ? "[icy] " : "", key, value);
+			if(!strcasecmp((char *)key, "Content-Type")) {
+				fp->content_type = guess_encoding_of_string((const char *)value);
+			} else if(!strcasecmp((char *)key, "Content-Length")) {
+				char *end;
+				fp->length = strtol((const char *)value, &end, 10);
+			} else if(!strcasecmp((char *)key, "icy-name")) {
+				fp->title = guess_encoding_of_string((const char *)value);
+				fp->gotmetadata = 1;
+			} else if(!strcasecmp((char *)key, "icy-genre")) {
+				fp->genre = guess_encoding_of_string((const char *)value);
+				fp->gotmetadata = 1;
+			} else if(!strcasecmp((char *)key, "icy-metaint")) {
+				// printf ("icy-metaint: %d\n", atoi (value));
+				char *end;
+				fp->icy_metaint = (int)strtoul((const char *)value, &end, 10);
+				fp->wait_meta = fp->icy_metaint;
+			} else if(!strcasecmp((char *)key, "icy-url")) {
+				fp->album = guess_encoding_of_string((const char *)value);
+				fp->gotmetadata = 1;
+			}
 		}
 
 		// for icy streams, reset length

@@ -14,6 +14,8 @@
 
 #import "Plugin.h"
 
+#import "RedundantPlaylistDataStore.h"
+
 @interface FlacDecoder : NSObject <CogDecoder> {
 	FLAC__StreamDecoder *decoder;
 	void *blockBuffer;
@@ -42,6 +44,8 @@
 
 	BOOL cuesheetFound;
 	NSString *cuesheet;
+
+	RedundantPlaylistDataStore *dataStore;
 }
 
 - (void)setSource:(id<CogSource>)s;

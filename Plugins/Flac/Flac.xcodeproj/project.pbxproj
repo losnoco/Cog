@@ -42,6 +42,7 @@
 		83747C4A2862DCF40021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384912D180816C900E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		83AA660A27B7DAE40098D4B8 /* cuesheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cuesheet.m; sourceTree = "<group>"; };
+		83C70A392ACC32FB004B60E4 /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RedundantPlaylistDataStore.h; path = ../../Utils/RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Flac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Flac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -93,6 +94,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				83C70A392ACC32FB004B60E4 /* RedundantPlaylistDataStore.h */,
 				834A42B4287AF7AA00EB9D9B /* AudioChunk.h */,
 				8301C145287805F500651A6E /* NSDictionary+Merge.h */,
 				8301C146287805F500651A6E /* NSDictionary+Merge.m */,

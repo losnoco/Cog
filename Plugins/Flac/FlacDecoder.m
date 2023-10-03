@@ -210,14 +210,16 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 	if(metadata->type == FLAC__METADATA_TYPE_CUESHEET && !flacDecoder->cuesheetFound) {
 		flacDecoder->cuesheetFound = YES;
 
-		NSString *_cuesheet;
-		grabbag__cuesheet_emit(&_cuesheet, metadata, [[NSString stringWithFormat:@"\"%@\"", [[[flacDecoder->source url] path] lastPathComponent]] UTF8String]);
+		@autoreleasepool {
+			NSString *_cuesheet;
+			grabbag__cuesheet_emit(&_cuesheet, metadata, [[NSString stringWithFormat:@"\"%@\"", [[[flacDecoder->source url] path] lastPathComponent]] UTF8String]);
 
-		if(![_cuesheet isEqual:flacDecoder->cuesheet]) {
-			flacDecoder->cuesheet = _cuesheet;
-			if(![flacDecoder->source seekable]) {
-				[flacDecoder willChangeValueForKey:@"metadata"];
-				[flacDecoder didChangeValueForKey:@"metadata"];
+			if(![_cuesheet isEqual:flacDecoder->cuesheet]) {
+				flacDecoder->cuesheet = _cuesheet;
+				if(![flacDecoder->source seekable]) {
+					[flacDecoder willChangeValueForKey:@"metadata"];
+					[flacDecoder didChangeValueForKey:@"metadata"];
+				}
 			}
 		}
 	}
@@ -241,25 +243,29 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 			char *_name;
 			char *_value;
 			if(FLAC__metadata_object_vorbiscomment_entry_to_name_value_pair(vorbis_comment->comments[i], &_name, &_value)) {
-				NSString *name = guess_encoding_of_string(_name);
-				NSString *value = guess_encoding_of_string(_value);
-				free(_name);
-				free(_value);
-				name = [name lowercaseString];
-				if([name isEqualToString:@"cuesheet"]) {
-					_cuesheet = value;
-					flacDecoder->cuesheetFound = YES;
-				} else if([name isEqualToString:@"waveformatextensible_channel_mask"]) {
-					if([value hasPrefix:@"0x"]) {
-						char *end;
-						const char *_value = [value UTF8String] + 2;
-						flacDecoder->channelConfig = (uint32_t)strtoul(_value, &end, 16);
+				@autoreleasepool {
+					NSString *name = guess_encoding_of_string(_name);
+					NSString *value = guess_encoding_of_string(_value);
+					free(_name);
+					free(_value);
+					name = [name lowercaseString];
+					name = [flacDecoder->dataStore coalesceString:name];
+					value = [flacDecoder->dataStore coalesceString:value];
+					if([name isEqualToString:@"cuesheet"]) {
+						_cuesheet = value;
+						flacDecoder->cuesheetFound = YES;
+					} else if([name isEqualToString:@"waveformatextensible_channel_mask"]) {
+						if([value hasPrefix:@"0x"]) {
+							char *end;
+							const char *_value = [value UTF8String] + 2;
+							flacDecoder->channelConfig = (uint32_t)strtoul(_value, &end, 16);
+						}
+					} else if([name isEqualToString:@"unsynced lyrics"] ||
+							  [name isEqualToString:@"lyrics"]) {
+						setDictionary(_metaDict, @"unsyncedlyrics", value);
+					} else {
+						setDictionary(_metaDict, name, value);
 					}
-				} else if([name isEqualToString:@"unsynced lyrics"] ||
-						  [name isEqualToString:@"lyrics"]) {
-					setDictionary(_metaDict, @"unsyncedlyrics", value);
-				} else {
-					setDictionary(_metaDict, name, value);
 				}
 			}
 		}
@@ -307,6 +313,9 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	albumArt = [NSData data];
 	cuesheetFound = NO;
 	cuesheet = @"";
+
+	id dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore");
+	dataStore = [[dataStoreClass alloc] init];
 
 	decoder = FLAC__stream_decoder_new();
 	if(decoder == NULL)
