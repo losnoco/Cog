@@ -160,6 +160,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			if(fabs(realStreamFormat.mSampleRate - lastVisRate) > 1e-5) {
 				if(rsvis) {
 					for(;;) {
+						if(stopping) {
+							break;
+						}
 						int samplesFlushed;
 						samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
 						if(samplesFlushed > 1) {
@@ -181,6 +184,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 				size_t inDone = 0;
 				size_t visFrameCount = frameCount;
 				do {
+					if(stopping) {
+						break;
+					}
 					int visTodo = (int)MIN(visFrameCount, visResamplerRemain + visFrameCount - 8192);
 					if(visTodo) {
 						cblas_scopy(visTodo, &visAudio[0], 1, &visResamplerInput[visResamplerRemain], 1);
@@ -202,6 +208,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			}
 		} else if(rsvis) {
 			for(;;) {
+				if(stopping) {
+					break;
+				}
 				int samplesFlushed;
 				samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
 				if(samplesFlushed > 1) {
@@ -215,7 +224,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			rsvis = NULL;
 			[visController postVisPCM:&visAudio[0] amount:frameCount];
 			visPushed += (double)frameCount / 44100.0;
-		} else {
+		} else if(!stopping) {
 			[visController postVisPCM:&visAudio[0] amount:frameCount];
 			visPushed += (double)frameCount / 44100.0;
 		}
