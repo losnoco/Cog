@@ -259,8 +259,8 @@ static AppController *kAppController = nil;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeExpanded:) name:NSOutlineViewItemDidExpandNotification object:outlineView];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeCollapsed:) name:NSOutlineViewItemDidCollapseNotification object:outlineView];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidBeginNotficiation object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidStopNotficiation object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidBeginNotificiation object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDockMenu:) name:CogPlaybackDidStopNotificiation object:nil];
 
 	[self updateDockMenu:nil];
 
@@ -766,7 +766,7 @@ static AppController *kAppController = nil;
 
 	BOOL hideItem = NO;
 
-	if([[notification name] isEqualToString:CogPlaybackDidStopNotficiation] || !pe || ![pe artist] || [[pe artist] isEqualToString:@""])
+	if([[notification name] isEqualToString:CogPlaybackDidStopNotificiation] || !pe || ![pe artist] || [[pe artist] isEqualToString:@""])
 		hideItem = YES;
 
 	if(hideItem && [dockMenu indexOfItem:currentArtistItem] == 0) {

@@ -56,10 +56,10 @@ extern BOOL kAppControllerShuttingDown;
 
 #define DEFAULT_SEEK 5
 
-NSString *CogPlaybackDidBeginNotficiation = @"CogPlaybackDidBeginNotficiation";
-NSString *CogPlaybackDidPauseNotficiation = @"CogPlaybackDidPauseNotficiation";
-NSString *CogPlaybackDidResumeNotficiation = @"CogPlaybackDidResumeNotficiation";
-NSString *CogPlaybackDidStopNotficiation = @"CogPlaybackDidStopNotficiation";
+NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
+NSString *CogPlaybackDidPauseNotificiation = @"CogPlaybackDidPauseNotificiation";
+NSString *CogPlaybackDidResumeNotificiation = @"CogPlaybackDidResumeNotificiation";
+NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
 @synthesize playbackStatus;
 
@@ -655,7 +655,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	});
 
 	if(pe) {
-		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotificiation object:pe];
 	}
 }
 
@@ -674,11 +674,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
 
-			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotficiation object:nil];
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotificiation object:nil];
 		} else // paused
 		{
 			[[FIRCrashlytics crashlytics] log:@"Paused."];
-			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotficiation object:nil];
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotificiation object:nil];
 		}
 	} else if(status == CogStatusPlaying) {
 		[[FIRCrashlytics crashlytics] log:@"Started playing."];
@@ -688,7 +688,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			[[NSRunLoop currentRunLoop] addTimer:positionTimer forMode:NSRunLoopCommonModes];
 		}
 
-		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidResumeNotficiation object:nil];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidResumeNotificiation object:nil];
 	}
 
 	if(status == CogStatusStopped) {
@@ -745,7 +745,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
 		self->playlistController.currentEntry = pe;
 		[self sendMetaData];
-		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotficiation object:pe];
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotificiation object:pe];
 	});
 }
 

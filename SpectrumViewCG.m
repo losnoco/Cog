@@ -15,10 +15,10 @@
 
 static void *kSpectrumViewCGContext = &kSpectrumViewCGContext;
 
-extern NSString *CogPlaybackDidBeginNotficiation;
-extern NSString *CogPlaybackDidPauseNotficiation;
-extern NSString *CogPlaybackDidResumeNotficiation;
-extern NSString *CogPlaybackDidStopNotficiation;
+extern NSString *CogPlaybackDidBeginNotificiation;
+extern NSString *CogPlaybackDidPauseNotificiation;
+extern NSString *CogPlaybackDidResumeNotificiation;
+extern NSString *CogPlaybackDidStopNotificiation;
 
 @interface SpectrumViewCG () {
 	VisualizationController *visController;
@@ -149,19 +149,19 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		                    object:nil];
 		[defaultCenter addObserver:self
 		                  selector:@selector(playbackDidBegin:)
-		                      name:CogPlaybackDidBeginNotficiation
+		                      name:CogPlaybackDidBeginNotificiation
 		                    object:nil];
 		[defaultCenter addObserver:self
 		                  selector:@selector(playbackDidPause:)
-		                      name:CogPlaybackDidPauseNotficiation
+		                      name:CogPlaybackDidPauseNotificiation
 		                    object:nil];
 		[defaultCenter addObserver:self
 		                  selector:@selector(playbackDidResume:)
-		                      name:CogPlaybackDidResumeNotficiation
+		                      name:CogPlaybackDidResumeNotificiation
 		                    object:nil];
 		[defaultCenter addObserver:self
 		                  selector:@selector(playbackDidStop:)
-		                      name:CogPlaybackDidStopNotficiation
+		                      name:CogPlaybackDidStopNotificiation
 		                    object:nil];
 
 		[defaultCenter addObserver:self
@@ -193,16 +193,16 @@ extern NSString *CogPlaybackDidStopNotficiation;
 		                         name:NSSystemColorsDidChangeNotification
 		                       object:nil];
 		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidBeginNotficiation
+		                         name:CogPlaybackDidBeginNotificiation
 		                       object:nil];
 		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidPauseNotficiation
+		                         name:CogPlaybackDidPauseNotificiation
 		                       object:nil];
 		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidResumeNotficiation
+		                         name:CogPlaybackDidResumeNotificiation
 		                       object:nil];
 		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidStopNotficiation
+		                         name:CogPlaybackDidStopNotificiation
 		                       object:nil];
 
 		[defaultCenter removeObserver:self

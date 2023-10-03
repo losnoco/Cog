@@ -322,19 +322,19 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 - (void)awakeFromNib {
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(playbackDidBegin:)
-	                                             name:CogPlaybackDidBeginNotficiation
+	                                             name:CogPlaybackDidBeginNotificiation
 	                                           object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(playbackDidPause:)
-	                                             name:CogPlaybackDidPauseNotficiation
+	                                             name:CogPlaybackDidPauseNotificiation
 	                                           object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(playbackDidResume:)
-	                                             name:CogPlaybackDidResumeNotficiation
+	                                             name:CogPlaybackDidResumeNotificiation
 	                                           object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self
 	                                         selector:@selector(playbackDidStop:)
-	                                             name:CogPlaybackDidStopNotficiation
+	                                             name:CogPlaybackDidStopNotificiation
 	                                           object:nil];
 }
 
