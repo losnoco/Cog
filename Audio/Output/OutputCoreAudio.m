@@ -835,6 +835,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			streamFormatChanged = NO;
 			if(inputRendered) {
 				resetStreamFormat = YES;
+				// This may not get called otherwise
+				[self processEndOfStream];
 				break;
 			} else {
 				[self updateStreamFormat];
