@@ -31,6 +31,7 @@ static std::map<std::string, Cached_Metadata> Cache_List;
 static RedundantPlaylistDataStore *Cache_Data_Store = nil;
 
 static bool Cache_Running = false;
+static bool Cache_Stopped = false;
 
 static std::thread *Cache_Thread = NULL;
 
@@ -44,6 +45,8 @@ static void cache_init() {
 static void cache_deinit() {
 	Cache_Running = false;
 	Cache_Thread->join();
+	while(!Cache_Stopped)
+		usleep(500);
 	delete Cache_Thread;
 	Cache_Data_Store = nil;
 }
@@ -135,6 +138,8 @@ static void cache_run() {
 
 		std::this_thread::sleep_for(dura);
 	}
+	
+	Cache_Stopped = true;
 }
 
 @implementation PluginController
