@@ -32,3 +32,6 @@
 
 /* Privacy - Desktop Folder Usage Description */
 "NSDesktopFolderUsageDescription" = "Es posible que solicitemos archivos de audio relacionados de esta carpeta para reproducirlos. Solo reproduciremos los archivos que añadas específicamente, a menos que actives la opción de añadir una carpeta entera. Conceder permiso para archivos individuales o para carpetas principales garantiza que su contenido podrá reproducirse en futuras sesiones.";
+
+/* Privacy - Motion Usage Description */
+"NSMotionUsageDescription" = "Cog soporta opcionalmente audífonos con seguimiento de movimiento para el audio posicional con seguimiento de cabeza, utilizando su propio modelo de posicionamiento de baja latencia.";

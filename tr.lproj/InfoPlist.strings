@@ -26,10 +26,13 @@
 "NSRemindersUsageDescription" = "Cog, hatırlatıcılarınız kullanmaz. Neden bunlara bir müzik çalar ile erişmeye çalışıyorsunuz?";
 
 /* Privacy - Downloads Folder Usage Description */
-"NSDownloadsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDownloadsFolderUsageDescription" = "Bu klasörden ilişkili ses dosyalarını çalma amaçları için talep edebiliriz. Yalnızca belirli olarak eklediğiniz dosyaları çalarız, tüm bir klasörü eklemek için seçeneği etkinleştirmezseniz. İzin, bireysel dosyalar veya ana klasörler için verildiğinde, içeriklerinin gelecekteki oturumlarda çalınabilir kalmasını sağlar.";
 
 /* Privacy - Documents Folder Usage Description */
-"NSDocumentsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDocumentsFolderUsageDescription" = "Bu klasörden ilişkili ses dosyalarını çalma amaçları için talep edebiliriz. Yalnızca belirli olarak eklediğiniz dosyaları çalarız, tüm bir klasörü eklemek için seçeneği etkinleştirmezseniz. İzin, bireysel dosyalar veya ana klasörler için verildiğinde, içeriklerinin gelecekteki oturumlarda çalınabilir kalmasını sağlar.";
 
 /* Privacy - Desktop Folder Usage Description */
-"NSDesktopFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDesktopFolderUsageDescription" = "Bu klasörden ilişkili ses dosyalarını çalma amaçları için talep edebiliriz. Yalnızca belirli olarak eklediğiniz dosyaları çalarız, tüm bir klasörü eklemek için seçeneği etkinleştirmezseniz. İzin, bireysel dosyalar veya ana klasörler için verildiğinde, içeriklerinin gelecekteki oturumlarda çalınabilir kalmasını sağlar.";
+
+/* Privacy - Motion Usage Description */
+"NSMotionUsageDescription" = "İsteğe bağlı olarak Cog, kendi düşük gecikme pozisyonlandırma modelini kullanarak, baş takibi konumlandırılmış ses için hareket izleme kulaklıklarını destekler.";
