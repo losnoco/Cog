@@ -473,6 +473,11 @@ static float db_to_scale(float db) {
 	[self cleanUp];
 }
 
+- (void)setOutputFormat:(AudioStreamBasicDescription)format {
+	DLog(@"SETTING OUTPUT FORMAT!");
+	outputFormat = format;
+}
+
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig {
 	DLog(@"FORMAT CHANGED");
 	paused = YES;
