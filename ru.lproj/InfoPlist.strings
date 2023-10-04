@@ -27,10 +27,13 @@
 "NSRemindersUsageDescription" = "Cog has no use for your reminders. Why are you trying to access them with an audio player?";
 
 /* Privacy - Downloads Folder Usage Description */
-"NSDownloadsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDownloadsFolderUsageDescription" = "Мы можем запросить соответствующие аудиофайлы из этой папки для целей воспроизведения. Мы воспроизводим только те файлы, которые вы конкретно добавите, если не включите опцию добавления целой папки. Предоставление разрешения либо на отдельные файлы, либо на родительские папки гарантирует возможность их воспроизведения в будущих сессиях.";
 
 /* Privacy - Documents Folder Usage Description */
-"NSDocumentsFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDocumentsFolderUsageDescription" = "Мы можем запросить соответствующие аудиофайлы из этой папки для целей воспроизведения. Мы воспроизводим только те файлы, которые вы конкретно добавите, если не включите опцию добавления целой папки. Предоставление разрешения либо на отдельные файлы, либо на родительские папки гарантирует возможность их воспроизведения в будущих сессиях.";
 
 /* Privacy - Desktop Folder Usage Description */
-"NSDesktopFolderUsageDescription" = "We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.";
+"NSDesktopFolderUsageDescription" = "Мы можем запросить соответствующие аудиофайлы из этой папки для целей воспроизведения. Мы воспроизводим только те файлы, которые вы конкретно добавите, если не включите опцию добавления целой папки. Предоставление разрешения либо на отдельные файлы, либо на родительские папки гарантирует возможность их воспроизведения в будущих сессиях.";
+
+/* Privacy - Motion Usage Description */
+"NSMotionUsageDescription" = "По желанию Cog поддерживает наушники для отслеживания движений головы для позиционного звука с отслеживанием головы, используя собственную модель позиционирования с низкой задержкой.";
