@@ -445,28 +445,13 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		if(stopping)
 			break;
-		
+
 		if(!started && !paused) {
 			[self resume];
 		}
-		
+
 		if([outputController shouldContinue] == NO) {
 			break;
-		} else if([outputController endOfStream] == YES) {
-			double secondsBuffered = [[outputController buffer] listDuration];
-			secondsBuffered += secondsLatency;
-			if([outputController chainQueueHasTracks]) {
-				if(secondsBuffered <= 0.005)
-					secondsBuffered = 0.0;
-				else
-					secondsBuffered -= 0.005;
-			} else {
-				break;
-			}
-			[self signalEndOfStream:secondsBuffered];
-			if(!started && !paused) {
-				[self resume];
-			}
 		}
 
 		usleep(5000);
