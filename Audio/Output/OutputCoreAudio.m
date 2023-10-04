@@ -1347,7 +1347,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 #endif
 		outputController = nil;
-		visController = nil;
+		if(visController) {
+			[visController reset];
+			visController = nil;
+		}
 		if(rsvis) {
 			rsstate_delete(rsvis);
 			rsvis = NULL;

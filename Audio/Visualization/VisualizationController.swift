@@ -25,6 +25,17 @@ class VisualizationController : NSObject {
 	class func sharedController() -> VisualizationController {
 		return sharedVisualizationController
 	}
+	
+	@objc
+	func reset() {
+		serialQueue.sync {
+			self.latency = 0;
+			let amount = self.visAudioSize
+			for i in 0..<amount {
+				self.visAudio[i] = 0
+			}
+		}
+	}
 
 	@objc
 	func postLatency(_ latency: Double) {
