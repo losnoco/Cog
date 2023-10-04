@@ -1,6 +1,6 @@
 /* libFLAC - Free Lossless Audio Codec library
  * Copyright (C) 2001-2009  Josh Coalson
- * Copyright (C) 2011-2022  Xiph.Org Foundation
+ * Copyright (C) 2011-2023  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -510,7 +510,7 @@ FLAC_API FLAC__MetadataType FLAC__metadata_simple_iterator_get_block_type(const 
  * \retval uint32_t
  *    The length of the metadata block at the current iterator position.
  *    The is same length as that in the
- *    <a href="http://xiph.org/flac/format.html#metadata_block_header">metadata block header</a>,
+ *    <a href="http://xiph.org/flhttps://xiph.org/flac/format.html#metadata_block_header">metadata block header</a>,
  *    i.e. the length of the metadata body that follows the header.
  */
 FLAC_API uint32_t FLAC__metadata_simple_iterator_get_block_length(const FLAC__Metadata_SimpleIterator *iterator);
@@ -2197,6 +2197,34 @@ FLAC_API FLAC__bool FLAC__metadata_object_picture_set_data(FLAC__StreamMetadata 
  */
 FLAC_API FLAC__bool FLAC__metadata_object_picture_is_legal(const FLAC__StreamMetadata *object, const char **violation);
 
+
+/** Get the raw (binary) representation of a FLAC__StreamMetadata objeect.
+ *  After use, free() the returned buffer. The length of the buffer is
+ *  the length of the input metadata object plus 4 bytes for the header.
+ *
+ * \param object     A pointer to metadata block to be converted.
+ * \assert
+ *    \code object != NULL \endcode
+ * \retval FLAC__byte*
+ *    \c  NULL if there was an error, else a pointer to a buffer holding
+ *        the requested data.
+ */
+FLAC_API FLAC__byte * FLAC__metadata_object_get_raw(const FLAC__StreamMetadata *object);
+
+
+/** Turn a raw (binary) representation into a FLAC__StreamMetadata objeect.
+ *  The returned object must be deleted with FLAC__metadata_object_delete()
+ *  after use.
+ *
+ * \param buffer     A pointer to a buffer containing a binary representation
+ *                   to be converted to a FLAC__StreamMetadata object
+ * \param length     The length of the supplied buffer
+ * \retval FLAC__StreamMetadata*
+ *    \c  NULL if there was an error, else a pointer to a FLAC__StreamMetadata
+ *        holding the requested data.
+ */
+
+FLAC_API FLAC__StreamMetadata * FLAC__metadata_object_set_raw(FLAC__byte *buffer, FLAC__uint32 length);
 /* \} */
 
 #ifdef __cplusplus
