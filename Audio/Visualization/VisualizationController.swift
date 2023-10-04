@@ -98,14 +98,25 @@ class VisualizationController : NSObject {
 		var outPCMCopy = Array<Float>(repeating: 0.0, count: 4096)
 
 		serialQueue.sync {
-			let latencySamples = (Int)(self.latency * self.sampleRate)
+			// Offset latency so the target sample is in the center of the window
+			let latencySamples = (Int)((self.latency + latencyOffset) * self.sampleRate) + 2048
+			var samplesToDo = 4096;
+			if(latencySamples < 4096) {
+				// Latency can sometimes dip below this threshold
+				samplesToDo = latencySamples;
+			}
 			var j = self.visAudioCursor - latencySamples
 			let k = self.visAudioSize
 			if j < 0 { j += k }
-			for i in 0...4095 {
+			for i in 0..<samplesToDo {
 				let x = self.visAudio[j]
 				outPCMCopy[i] = x
 				j += 1; if j >= k { j = 0 }
+			}
+			if(samplesToDo < 4096) {
+				for i in samplesToDo...4095 {
+					outPCMCopy[i] = 0
+				}
 			}
 		}
 
