@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Build Universal Cog.app
-    runs-on: macos-latest
+    runs-on: macos-13
     env:
       XCODE_DERIVEDDATA_PATH: build
     steps:
