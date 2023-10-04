@@ -15,10 +15,10 @@ jobs:
     env:
       XCODE_DERIVEDDATA_PATH: build
     steps:
-      - name: Switch to latest stable Xcode
+      - name: Switch to Xcode 15
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: 15
       - name: Check out repository
         uses: actions/checkout@v2
         with:
