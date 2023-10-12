@@ -422,36 +422,38 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	secondsLatency = 1.0;
 
 	while(!stopping) {
-		if(outputdevicechanged) {
-			[self updateDeviceFormat];
-			outputdevicechanged = NO;
-		}
-
-		if([outputController shouldReset]) {
-			[outputController setShouldReset:NO];
-			[outputLock lock];
-			secondsLatency = 0.0;
-			visPushed = 0.0;
-			started = NO;
-			restarted = NO;
-			if(rsvis) {
-				rsstate_delete(rsvis);
-				rsvis = NULL;
+		@autoreleasepool {
+			if(outputdevicechanged) {
+				[self updateDeviceFormat];
+				outputdevicechanged = NO;
 			}
-			lastClippedSampleRate = 0.0;
-			lastVisRate = 0.0;
-			[outputLock unlock];
-		}
 
-		if(stopping)
-			break;
+			if([outputController shouldReset]) {
+				[outputController setShouldReset:NO];
+				[outputLock lock];
+				secondsLatency = 0.0;
+				visPushed = 0.0;
+				started = NO;
+				restarted = NO;
+				if(rsvis) {
+					rsstate_delete(rsvis);
+					rsvis = NULL;
+				}
+				lastClippedSampleRate = 0.0;
+				lastVisRate = 0.0;
+				[outputLock unlock];
+			}
 
-		if(!started && !paused) {
-			[self resume];
-		}
+			if(stopping)
+				break;
 
-		if([outputController shouldContinue] == NO) {
-			break;
+			if(!started && !paused) {
+				[self resume];
+			}
+
+			if([outputController shouldContinue] == NO) {
+				break;
+			}
 		}
 
 		usleep(5000);
@@ -1037,29 +1039,31 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
 		int renderedSamples = 0;
-		
-		while(renderedSamples < frameCount) {
-			int inputRemain = _self->inputRemain;
-			while(!inputRemain) {
-				inputRemain = [_self renderAndConvert];
-				if(_self->stopping)
-					return 0;
-			}
-			if(inputRemain) {
-				int inputTodo = MIN(inputRemain, frameCount - renderedSamples);
-				cblas_scopy(inputTodo * channels, _self->samplePtr, 1, ((float *)inputData->mBuffers[0].mData) + renderedSamples * channels, 1);
-				_self->samplePtr += inputTodo * channels;
-				inputRemain -= inputTodo;
-				renderedSamples += inputTodo;
-			}
-			_self->inputRemain = inputRemain;
-		}
 
-		inputData->mBuffers[0].mDataByteSize = renderedSamples * format->mBytesPerPacket;
-		inputData->mBuffers[0].mNumberChannels = channels;
-		
-		double secondsRendered = (double)renderedSamples / format->mSampleRate;
-		[_self updateLatency:secondsRendered];
+		@autoreleasepool {
+			while(renderedSamples < frameCount) {
+				int inputRemain = _self->inputRemain;
+				while(!inputRemain) {
+					inputRemain = [_self renderAndConvert];
+					if(_self->stopping)
+						return 0;
+				}
+				if(inputRemain) {
+					int inputTodo = MIN(inputRemain, frameCount - renderedSamples);
+					cblas_scopy(inputTodo * channels, _self->samplePtr, 1, ((float *)inputData->mBuffers[0].mData) + renderedSamples * channels, 1);
+					_self->samplePtr += inputTodo * channels;
+					inputRemain -= inputTodo;
+					renderedSamples += inputTodo;
+				}
+				_self->inputRemain = inputRemain;
+			}
+
+			inputData->mBuffers[0].mDataByteSize = renderedSamples * format->mBytesPerPacket;
+			inputData->mBuffers[0].mNumberChannels = channels;
+
+			double secondsRendered = (double)renderedSamples / format->mSampleRate;
+			[_self updateLatency:secondsRendered];
+		}
 
 #ifdef _DEBUG
 		[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData

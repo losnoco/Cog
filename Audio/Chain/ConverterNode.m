@@ -93,28 +93,24 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 	// when the end of stream is reached. Convert function instead processes what it can,
 	// and returns 0 samples when it has nothing more to process at the end of stream.
 	while([self shouldContinue] == YES) {
-		AudioChunk *chunk = nil;
 		while(paused) {
 			usleep(500);
 		}
 		@autoreleasepool {
+			AudioChunk *chunk = nil;
 			chunk = [self convert];
-		}
-		if(!chunk) {
-			if([self endOfStream] == YES) {
-				break;
-			}
-			if(paused || !streamFormatChanged) {
-				continue;
-			}
-		} else {
-			@autoreleasepool {
+			if(!chunk) {
+				if([self endOfStream] == YES) {
+					break;
+				}
+				if(paused || !streamFormatChanged) {
+					continue;
+				}
+			} else {
 				[self writeChunk:chunk];
 				chunk = nil;
 			}
-		}
-		if(streamFormatChanged) {
-			@autoreleasepool {
+			if(streamFormatChanged) {
 				[self cleanUp];
 				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig outputFormat:self->outputFormat isLossless:rememberedLossless];
 			}
