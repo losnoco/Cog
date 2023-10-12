@@ -76,15 +76,17 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 	if(volume != 1.0) {
 		size_t unaligned = (uintptr_t)buffer & 15;
 		if(unaligned) {
-			size_t count3 = unaligned >> 2;
-			while(count3 > 0) {
+			size_t count_unaligned = (16 - unaligned) / sizeof(float);
+			while(count > 0 && count_unaligned > 0) {
 				*buffer++ *= volume;
-				count3--;
+				count_unaligned--;
 				count--;
 			}
 		}
 
-		vDSP_vsmul(buffer, 1, &volume, buffer, 1, count);
+		if(count) {
+			vDSP_vsmul(buffer, 1, &volume, buffer, 1, count);
+		}
 	}
 }
 
