@@ -83,7 +83,12 @@ tar xvf libraries.tar.xz
 ## Main window and Info Inspector
 
 ![Main window](https://github.com/losnoco/Cog/blob/main/.github/images/MainWindow.png)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flosnoco%2FCog.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Flosnoco%2FCog?ref=badge_shield)
 
 ## Mini window
 
 ![Mini window](https://github.com/losnoco/Cog/blob/main/.github/images/MiniWindow.png)
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Flosnoco%2FCog.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Flosnoco%2FCog?ref=badge_large)
