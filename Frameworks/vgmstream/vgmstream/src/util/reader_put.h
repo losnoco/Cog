@@ -1,7 +1,7 @@
 #ifndef _READER_PUT_H
 #define _READER_PUT_H
 
-#include "../streamtypes.h"
+#include "streamtypes.h"
 
 
 void put_8bit(uint8_t* buf, int8_t i);
