@@ -1,11 +1,7 @@
 #ifndef _READER_PUT_H
 #define _READER_PUT_H
 
-#ifdef BUILD_VGMSTREAM
 #include "../streamtypes.h"
-#else
-#include <libvgmstream/streamtypes.h>
-#endif
 
 
 void put_8bit(uint8_t* buf, int8_t i);

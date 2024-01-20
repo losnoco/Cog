@@ -169,6 +169,10 @@ static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk
 
         case 0x0002: /* MSADPCM */
             if (fmt->bps == 4) {
+                /* ADPCMWAVEFORMAT extra data:
+                 * - samples per frame (16b)
+                 * - num coefs (16b), always 7
+                 * - N x2 coefs (configurable but in practice fixed) */
                 fmt->coding_type = coding_MSADPCM;
                 if (!msadpcm_check_coefs(sf, fmt->offset + 0x08 + 0x14))
                     goto fail;
@@ -180,7 +184,7 @@ static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk
                 goto fail;
             }
             break;
-        case 0x003: /* floating point PCM */
+        case 0x0003: /* floating point PCM */
             if (fmt->bps == 32) {
               fmt->coding_type = coding_PCMFLOAT;
             } else {
@@ -190,6 +194,8 @@ static int read_fmt(int big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chunk
             break;
 
         case 0x0011:  /* MS-IMA ADPCM [Layton Brothers: Mystery Room (iOS/Android)] */
+            /* IMAADPCMWAVEFORMAT extra data:
+             * - samples per frame (16b) */
             if (fmt->bps != 4) goto fail;
             fmt->coding_type = coding_MS_IMA;
             break;
@@ -391,8 +397,9 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
      * .xms: Ty the Tasmanian Tiger (Xbox)
      * .mus: Burnout Legends/Dominator (PSP)
      * .dat/ldat: RollerCoaster Tycoon 1/2 (PC)
+     * .wma/lwma: SRS: Street Racing Syndicate (Xbox), Fast and the Furious (Xbox)
      */
-    if (!check_extensions(sf, "wav,lwav,xwav,mwv,da,dax,cd,med,snd,adx,adp,xss,xsew,adpcm,adw,wd,,sbv,wvx,str,at3,rws,aud,at9,ckd,saf,ima,nsa,pcm,xvag,ogg,logg,p1d,xms,mus,dat,ldat")) {
+    if (!check_extensions(sf, "wav,lwav,xwav,mwv,da,dax,cd,med,snd,adx,adp,xss,xsew,adpcm,adw,wd,,sbv,wvx,str,at3,rws,aud,at9,ckd,saf,ima,nsa,pcm,xvag,ogg,logg,p1d,xms,mus,dat,ldat,wma,lwma")) {
         goto fail;
     }
 
@@ -408,6 +415,9 @@ VGMSTREAM* init_vgmstream_riff(STREAMFILE* sf) {
 
         else if (codec == 0x0069 && riff_size + 0x04 == file_size)
             riff_size -= 0x04; /* [Halo 2 (PC)] (possibly bad extractor? 'Gravemind Tool') */
+
+        else if (codec == 0x0069 && riff_size + 0x10 == file_size)
+            riff_size += 0x08; /* [Fast and the Furious (Xbox)] ("HASH" chunk + 4 byte hash) */
 
         else if (codec == 0x0000 && riff_size + 0x04 == file_size)
             riff_size -= 0x04; /* [Headhunter (DC), Bomber hehhe (DC)] */

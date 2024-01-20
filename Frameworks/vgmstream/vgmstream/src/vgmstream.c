@@ -308,7 +308,6 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_opus_shinen,
     init_vgmstream_opus_nus3,
     init_vgmstream_opus_sps_n1,
-    init_vgmstream_opus_nxa,
     init_vgmstream_pc_ast,
     init_vgmstream_naac,
     init_vgmstream_ubi_sb,
@@ -386,6 +385,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_xau_konami,
     init_vgmstream_derf,
     init_vgmstream_utk,
+    init_vgmstream_nxa1,
     init_vgmstream_adpcm_capcom,
     init_vgmstream_ue4opus,
     init_vgmstream_xwma,
@@ -458,6 +458,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_diva,
     init_vgmstream_imuse,
     init_vgmstream_ktsr,
+    init_vgmstream_asrs,
     init_vgmstream_mups,
     init_vgmstream_kat,
     init_vgmstream_pcm_success,
@@ -521,6 +522,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_squeaksample,
     init_vgmstream_snds,
     init_vgmstream_adm2,
+    init_vgmstream_nxof,
 
     /* lower priority metas (no clean header identity, somewhat ambiguous, or need extension/companion file to identify) */
     init_vgmstream_scd_pcm,
@@ -614,13 +616,7 @@ static VGMSTREAM* init_vgmstream_internal(STREAMFILE* sf) {
             try_dual_file_stereo(vgmstream, sf, init_vgmstream_function);
         }
 
-        /* clean as loops are readable metadata but loop fields may contain garbage
-         * (done *after* dual stereo as it needs loop fields to match) */
-        if (!vgmstream->loop_flag) {
-            vgmstream->loop_start_sample = 0;
-            vgmstream->loop_end_sample = 0;
-        }
-
+        
 #ifdef VGM_USE_FFMPEG
         /* check FFmpeg streams here, for lack of a better place */
         if (vgmstream->coding_type == coding_FFmpeg) {
@@ -675,6 +671,28 @@ static VGMSTREAM* init_vgmstream_internal(STREAMFILE* sf) {
 }
 
 void setup_vgmstream(VGMSTREAM* vgmstream) {
+
+    //TODO improve cleanup (done here to handle manually added layers)
+
+    /* sanify loops and remove bad metadata (some layouts will behave incorrectly) */
+    if (vgmstream->loop_flag) {
+        if (vgmstream->loop_end_sample <= vgmstream->loop_start_sample
+                || vgmstream->loop_end_sample > vgmstream->num_samples
+                || vgmstream->loop_start_sample < 0) {
+            VGM_LOG("VGMSTREAM: wrong loops ignored (lss=%i, lse=%i, ns=%i)\n",
+                    vgmstream->loop_start_sample, vgmstream->loop_end_sample, vgmstream->num_samples);
+            vgmstream->loop_flag = 0;
+            vgmstream->loop_start_sample = 0;
+            vgmstream->loop_end_sample = 0;
+        }
+    }
+    
+    /* clean as loops are readable metadata but loop fields may contain garbage
+        * (done *after* dual stereo as it needs loop fields to match) */
+    if (!vgmstream->loop_flag) {
+        vgmstream->loop_start_sample = 0;
+        vgmstream->loop_end_sample = 0;
+    }
 
     /* save start things so we can restart when seeking */
     memcpy(vgmstream->start_ch, vgmstream->ch, sizeof(VGMSTREAMCHANNEL)*vgmstream->channels);
