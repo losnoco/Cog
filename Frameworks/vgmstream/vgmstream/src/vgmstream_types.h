@@ -90,6 +90,7 @@ typedef enum {
     coding_H4M_IMA,         /* H4M IMA ADPCM (stereo or mono, high nibble first) */
     coding_MTF_IMA,         /* Capcom MT Framework IMA ADPCM */
     coding_CD_IMA,          /* Crystal Dynamics IMA ADPCM */
+coding_CRANKCASE_IMA,   /* CrankcaseAudio REV IMA ADPCM */
 
     coding_MSADPCM,         /* Microsoft ADPCM (stereo/mono) */
     coding_MSADPCM_int,     /* Microsoft ADPCM (mono) */
@@ -611,7 +612,7 @@ typedef enum {
     meta_DERF,              /* Stupid Invaders (PC) */
     meta_SADF,
     meta_UTK,
-    meta_NXA,
+    meta_NXA1,
     meta_ADPCM_CAPCOM,
     meta_UE4OPUS,
     meta_XWMA,
@@ -701,6 +702,7 @@ typedef enum {
     meta_SQUEAKSTREAM,
     meta_SQUEAKSAMPLE,
     meta_SNDS,
+meta_NXOF,
 
 } meta_t;
 

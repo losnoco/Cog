@@ -392,6 +392,7 @@ static const char* extension_list[] = {
     "nwa",
     "nwav",
     "nxa",
+"nxopus",
 
     //"ogg", //common
     "ogg_",
@@ -474,6 +475,7 @@ static const char* extension_list[] = {
     "sbr",
     "sbv",
     "sig",
+"slb", //txth/reserved [Vingt-et-un Systems PS2 games (Last Escort, etc]
     "sm0",
     "sm1",
     "sm2",
@@ -522,6 +524,7 @@ static const char* extension_list[] = {
     "sps",
     "spsd",
     "spw",
+"srsa",
     "ss2",
     "ssd", //txth/reserved [Zack & Wiki (Wii)]
     "ssm",
@@ -535,6 +538,7 @@ static const char* extension_list[] = {
     "stream",
     "strm",
     "sts",
+"stv", //txth/reserved [Socio Art Logic PS2 games (Zero no Tsukaima games, Cambrian QTS, Shirogane no Soleil, etc)]
     "sts_cp3",
     "stx",
     "svag",
@@ -628,6 +632,7 @@ static const char* extension_list[] = {
     "wd",
     "wem",
     "wii",
+"wiive", //txth/semi [Rubik World (Wii)]
     "wic", //txth/reserved [Road Rash (SAT)-videos]
     "wip", //txth/reserved [Colin McRae DiRT (PC)]
     "wlv", //txth/reserved [ToeJam & Earl III: Mission to Earth (DC)]
@@ -831,6 +836,7 @@ static const coding_info coding_info_list[] = {
         {coding_UBI_SCE_IMA,        "Ubisoft 4-bit SCE IMA ADPCM"},
         {coding_H4M_IMA,            "Hudson HVQM4 4-bit IMA ADPCM"},
         {coding_CD_IMA,             "Crystal Dynamics 4-bit IMA ADPCM"},
+{coding_CRANKCASE_IMA,      "CrankcaseAudio REV 4-bit IMA ADPCM"},
 
         {coding_MSADPCM,            "Microsoft 4-bit ADPCM"},
         {coding_MSADPCM_int,        "Microsoft 4-bit ADPCM (mono/interleave)"},
@@ -1325,7 +1331,7 @@ static const meta_info meta_info_list[] = {
         {meta_XAU_KONAMI,           "Konami XAU header"},
         {meta_DERF,                 "Xilam DERF header"},
         {meta_UTK,                  "Maxis UTK header"},
-        {meta_NXA,                  "Entergram NXA header"},
+        {meta_NXA1,                 "Entergram NXA1 header"},
         {meta_ADPCM_CAPCOM,         "Capcom .ADPCM header"},
         {meta_UE4OPUS,              "Epic Games UE4OPUS header"},
         {meta_XWMA,                 "Microsoft XWMA RIFF header"},
@@ -1415,6 +1421,7 @@ static const meta_info meta_info_list[] = {
         {meta_SQUEAKSTREAM,         "Torus SqueakStream header"},
         {meta_SQUEAKSAMPLE,         "Torus SqueakSample header"},
         {meta_SNDS,                 "Sony SNDS header"},
+{meta_NXOF,                 "Nihon Falcom FDK Opus Header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
