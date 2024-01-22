@@ -93,7 +93,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_rstm_rockstar,
     init_vgmstream_acm,
     init_vgmstream_mus_acm,
-    init_vgmstream_ps2_kces,
+    init_vgmstream_vig_kces,
     init_vgmstream_hxd,
     init_vgmstream_vsv,
     init_vgmstream_ps2_pcm,
@@ -127,7 +127,6 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_ngc_pdt_split,
     init_vgmstream_ngc_pdt,
     init_vgmstream_mus_krome,
-    init_vgmstream_dc_asd,
     init_vgmstream_spsd,
     init_vgmstream_rsd,
     init_vgmstream_bgw,
@@ -150,8 +149,8 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_mul,
     init_vgmstream_thp,
     init_vgmstream_sts,
-    init_vgmstream_ps2_p2bt,
-    init_vgmstream_ps2_gbts,
+    init_vgmstream_p2bt_move_visa,
+    init_vgmstream_gbts,
     init_vgmstream_wii_sng,
     init_vgmstream_ngc_dsp_iadp,
     init_vgmstream_aax,
@@ -234,7 +233,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_xwav_new,
     init_vgmstream_xwav_old,
     init_vgmstream_hyperscan_kvag,
-    init_vgmstream_ios_psnd,
+    init_vgmstream_psnd,
     init_vgmstream_adp_wildfire,
     init_vgmstream_adp_qd,
     init_vgmstream_eb_sfx,
@@ -246,7 +245,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_mss,
     init_vgmstream_ps2_hsf,
     init_vgmstream_ivag,
-    init_vgmstream_ps2_2pfs,
+    init_vgmstream_2pfs,
     init_vgmstream_xnb,
     init_vgmstream_ubi_ckd,
     init_vgmstream_ps2_vbk,
@@ -308,7 +307,6 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_opus_shinen,
     init_vgmstream_opus_nus3,
     init_vgmstream_opus_sps_n1,
-    init_vgmstream_opus_nxa,
     init_vgmstream_pc_ast,
     init_vgmstream_naac,
     init_vgmstream_ubi_sb,
@@ -377,7 +375,6 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_msv,
     init_vgmstream_sdf,
     init_vgmstream_svg,
-    init_vgmstream_vis,
     init_vgmstream_vai,
     init_vgmstream_aif_asobo,
     init_vgmstream_ao,
@@ -386,6 +383,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_xau_konami,
     init_vgmstream_derf,
     init_vgmstream_utk,
+    init_vgmstream_nxa1,
     init_vgmstream_adpcm_capcom,
     init_vgmstream_ue4opus,
     init_vgmstream_xwma,
@@ -458,6 +456,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_diva,
     init_vgmstream_imuse,
     init_vgmstream_ktsr,
+    init_vgmstream_asrs,
     init_vgmstream_mups,
     init_vgmstream_kat,
     init_vgmstream_pcm_success,
@@ -521,6 +520,10 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_squeaksample,
     init_vgmstream_snds,
     init_vgmstream_adm2,
+    init_vgmstream_nxof,
+    init_vgmstream_gwb_gwd,
+    init_vgmstream_s_pack,
+    init_vgmstream_cbx,
 
     /* lower priority metas (no clean header identity, somewhat ambiguous, or need extension/companion file to identify) */
     init_vgmstream_scd_pcm,
@@ -532,6 +535,7 @@ init_vgmstream_t init_vgmstream_functions[] = {
     init_vgmstream_seb,
     init_vgmstream_tgc,
     init_vgmstream_ivaud,
+    init_vgmstream_asd_naxat,
     /* need companion files */
     init_vgmstream_pos,
     init_vgmstream_sli_loops,
@@ -614,12 +618,6 @@ static VGMSTREAM* init_vgmstream_internal(STREAMFILE* sf) {
             try_dual_file_stereo(vgmstream, sf, init_vgmstream_function);
         }
 
-        /* clean as loops are readable metadata but loop fields may contain garbage
-         * (done *after* dual stereo as it needs loop fields to match) */
-        if (!vgmstream->loop_flag) {
-            vgmstream->loop_start_sample = 0;
-            vgmstream->loop_end_sample = 0;
-        }
 
 #ifdef VGM_USE_FFMPEG
         /* check FFmpeg streams here, for lack of a better place */
@@ -675,6 +673,28 @@ static VGMSTREAM* init_vgmstream_internal(STREAMFILE* sf) {
 }
 
 void setup_vgmstream(VGMSTREAM* vgmstream) {
+
+    //TODO improve cleanup (done here to handle manually added layers)
+
+    /* sanify loops and remove bad metadata (some layouts will behave incorrectly) */
+    if (vgmstream->loop_flag) {
+        if (vgmstream->loop_end_sample <= vgmstream->loop_start_sample
+                || vgmstream->loop_end_sample > vgmstream->num_samples
+                || vgmstream->loop_start_sample < 0) {
+            VGM_LOG("VGMSTREAM: wrong loops ignored (lss=%i, lse=%i, ns=%i)\n",
+                    vgmstream->loop_start_sample, vgmstream->loop_end_sample, vgmstream->num_samples);
+            vgmstream->loop_flag = 0;
+            vgmstream->loop_start_sample = 0;
+            vgmstream->loop_end_sample = 0;
+        }
+    }
+    
+    /* clean as loops are readable metadata but loop fields may contain garbage
+        * (done *after* dual stereo as it needs loop fields to match) */
+    if (!vgmstream->loop_flag) {
+        vgmstream->loop_start_sample = 0;
+        vgmstream->loop_end_sample = 0;
+    }
 
     /* save start things so we can restart when seeking */
     memcpy(vgmstream->start_ch, vgmstream->ch, sizeof(VGMSTREAMCHANNEL)*vgmstream->channels);

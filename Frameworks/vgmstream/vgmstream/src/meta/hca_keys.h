@@ -1254,6 +1254,30 @@ static const hcakey_info hcakey_list[] = {
         // BlazBlue Entropy Effect (Early Access) (PC)
         {29814655674508831},    // 0069EC457894661F
 
+        // Star Ocean: The Second Story R (PC, Switch)
+        {533948357975462459},   // 0768F733DD87D23B
+
+        // Girls' Frontline 2: Exilium (Android)
+        {8930254087621254},     // 001FBA04CEA58A86
+
+        // Sonic Superstars (Switch)
+        {1991062320230623},     // 000712DC5252B0DF
+		
+        // Persona 5 Tactica (Switch)
+        {48319776512953016},    // 00ABAA94AAAE4AB8
+
+        // THE IDOLM@STER Shiny Colors Song For Prism (PC)
+        {156967709847897761},   // 022DA94CEAB0C6A1
+
+        // Dokapon Kingdom Connect (PC, Switch)
+        {104863924750642073},   // 01748d2f1883eb99
+
+        // Girls' Frontline 2: Exilium (PC)
+        {7152097263845921},     // 001968CB68CF8221
+
+        // Girls' Frontline 2: Exilium (PC)
+        {4079616028775461768},  // 389DB529D726B388
+
 };
 
 #endif/*_HCA_KEYS_H_*/

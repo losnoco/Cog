@@ -391,7 +391,7 @@ static int ealayer3_parse_frame_v2(ealayer3_buffer_t* ib, ealayer3_frame_t* eaf)
     }
 
     VGM_ASSERT(eaf->v2_extended_flag && eaf->v2_common_size == 0, "EA EAL3: v2 empty frame\n"); /* seen in V2S */
-    VGM_ASSERT(eaf->v2_extended_flag && eaf->v2_offset_samples > 0, "EA EAL3: v2_offset_mode=%x with value=0x%x\n", eaf->v2_offset_mode, eaf->v2_offset_samples);
+    VGM_ASSERT(eaf->v2_extended_flag && eaf->v2_offset_samples > 0, "EA EAL3: v2_offset_mode=%x with value=0x%x\n", eaf->v2_offset_mode, eaf->v2_offset_samples); /* Dead Space 2 (PC) */
     //VGM_ASSERT(eaf->v2_pcm_samples > 0, "EA EAL3: v2_pcm_samples 0x%x\n", eaf->v2_pcm_samples);
 
     eaf->pcm_size = (eaf->v2_pcm_samples * sizeof(int16_t) * eaf->channels);
@@ -668,7 +668,7 @@ static void ealayer3_copy_pcm_block(uint8_t* outbuf, off_t pcm_offset, int pcm_n
         int pos = 0;
         for (i = 0; i < pcm_number * channels_per_frame; i++) {
             int16_t pcm_sample = get_s16be(pcm_block + pos);
-            put_16bitLE(outbuf + pos, pcm_sample);
+            put_s16le(outbuf + pos, pcm_sample);
 
             pos += sizeof(sample);
         }
@@ -680,7 +680,7 @@ static void ealayer3_copy_pcm_block(uint8_t* outbuf, off_t pcm_offset, int pcm_n
             int put_pos = sizeof(sample) * ch;
             for (i = 0; i < pcm_number; i++) {
                 int16_t pcm_sample = get_s16be(pcm_block + get_pos);
-                put_16bitLE(outbuf + put_pos, pcm_sample);
+                put_s16le(outbuf + put_pos, pcm_sample);
 
                 get_pos += sizeof(sample);
                 put_pos += sizeof(sample) * channels_per_frame;

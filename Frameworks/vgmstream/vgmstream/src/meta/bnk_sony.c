@@ -3,7 +3,7 @@
 #include "../coding/coding.h"
 #include "../util/endianness.h"
 
-typedef enum { NONE, DUMMY, PSX, PCM16, ATRAC9, HEVAG, RIFF_ATRAC9 } bnk_codec;
+typedef enum { NONE, DUMMY, PSX, PCM16, MPEG, ATRAC9, HEVAG, RIFF_ATRAC9 } bnk_codec;
 
 typedef struct {
     bnk_codec codec;
@@ -41,6 +41,7 @@ typedef struct {
     int32_t num_samples;
     int32_t loop_start;
     int32_t loop_end;
+    int32_t encoder_delay;
 
     uint32_t start_offset;
     uint32_t stream_offset;
@@ -81,7 +82,7 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
 
     vgmstream->meta_type = meta_BNK_SONY;
 
-    if (!h.stream_name_size)
+    if (h.stream_name_size >= STREAM_NAME_SIZE || h.stream_name_size <= 0)
         h.stream_name_size = STREAM_NAME_SIZE;
 
     if (!h.bank_name_offset && h.stream_name_offset) {
@@ -90,7 +91,7 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
     else if (h.bank_name_offset && h.stream_name_offset) {
         read_string(bank_name, h.stream_name_size, h.bank_name_offset, sf);
         read_string(stream_name, h.stream_name_size, h.stream_name_offset, sf);
-        snprintf(vgmstream->stream_name, h.stream_name_size, "%s/%s", bank_name, stream_name);
+        snprintf(vgmstream->stream_name, h.stream_name_size, "%s%s%s", bank_name, bank_name[0] == '\0' ? "" : "/", stream_name);
     }
 
 
@@ -147,6 +148,20 @@ VGMSTREAM* init_vgmstream_bnk_sony(STREAMFILE* sf) {
             return temp_vs;
         }
 #endif
+#ifdef VGM_USE_MPEG
+        case MPEG: {
+            mpeg_custom_config cfg = {0};
+            cfg.skip_samples = h.encoder_delay;
+
+            vgmstream->layout_type = layout_none;
+            vgmstream->codec_data = init_mpeg_custom(sf, h.start_offset, &vgmstream->coding_type, h.channels, MPEG_STANDARD, &cfg);
+            if (!vgmstream->codec_data) goto fail;
+
+            vgmstream->num_samples = h.num_samples;
+            break;
+        }
+#endif
+
         case PCM16:
             vgmstream->coding_type = h.big_endian ? coding_PCM16BE : coding_PCM16LE;
             vgmstream->layout_type = layout_interleave;
@@ -417,12 +432,12 @@ static bool process_headers(STREAMFILE* sf, bnk_header_t* h) {
     switch(h->sblk_version) {
         case 0x01:
             /* table2/3 has size 0x28 entries, seemingly:
-                * 0x00: subtype(01=sound)
-                * 0x08: same as other versions (pitch, flags, offset...)
-                * rest: padding
-                * 0x18: stream offset
-                * there is no stream size like in v0x03
-                */
+             * 0x00: subtype(01=sound)
+             * 0x08: same as other versions (pitch, flags, offset...)
+             * rest: padding
+             * 0x18: stream offset
+             * there is no stream size like in v0x03
+             */
 
             for (i = 0; i < h->grains_entries; i++) {
                 uint32_t table2_type = read_u32(h->table2_offset + (i*0x28) + 0x00, sf);
@@ -527,22 +542,22 @@ static bool process_headers(STREAMFILE* sf, bnk_header_t* h) {
             h->sample_rate = (pitch * 48000) / 0x1000;
 
             /* waves can set base sample rate (48/44/22/11/8khz) + pitch in semitones, then converted to center+fine
-                * 48000 + pitch   0.00 > center=0xc4, fine=0x00
-                * 48000 + pitch   0.10 > center=0xc4, fine=0x0c
-                * 48000 + pitch   0.50 > center=0xc4, fine=0x3f
-                * 48000 + pitch   0.99 > center=0xc4, fine=0x7d
-                * 48000 + pitch   1.00 > center=0xc5, fine=0x00
-                * 48000 + pitch  12.00 > center=0xd0, fine=0x00
-                * 48000 + pitch  24.00 > center=0xdc, fine=0x00
-                * 48000 + pitch  56.00 > center=0xfc, fine=0x00
-                * 48000 + pitch  68.00 > center=0x08, fine=0x00 > ?
-                * 48000 + pitch -12.00 > center=0xb8, fine=0x00
-                * 48000 + pitch  -0.10 > center=0xc3, fine=0x72
-                * 48000 + pitch -0.001 > not allowed
-                * 8000  + pitch   1.00 > center=0xa4, fine=0x7c
-                * 8000  + pitch -12.00 > center=0x98, fine=0x7c
-                * 8000  + pitch -48.00 > center=0x74, fine=0x7c
-                */
+             * 48000 + pitch   0.00 > center=0xc4, fine=0x00
+             * 48000 + pitch   0.10 > center=0xc4, fine=0x0c
+             * 48000 + pitch   0.50 > center=0xc4, fine=0x3f
+             * 48000 + pitch   0.99 > center=0xc4, fine=0x7d
+             * 48000 + pitch   1.00 > center=0xc5, fine=0x00
+             * 48000 + pitch  12.00 > center=0xd0, fine=0x00
+             * 48000 + pitch  24.00 > center=0xdc, fine=0x00
+             * 48000 + pitch  56.00 > center=0xfc, fine=0x00
+             * 48000 + pitch  68.00 > center=0x08, fine=0x00 > ?
+             * 48000 + pitch -12.00 > center=0xb8, fine=0x00
+             * 48000 + pitch  -0.10 > center=0xc3, fine=0x72
+             * 48000 + pitch -0.001 > not allowed
+             * 8000  + pitch   1.00 > center=0xa4, fine=0x7c
+             * 8000  + pitch -12.00 > center=0x98, fine=0x7c
+             * 8000  + pitch -48.00 > center=0x74, fine=0x7c
+             */
             break;
         }
 
@@ -567,7 +582,7 @@ static bool process_headers(STREAMFILE* sf, bnk_header_t* h) {
             goto fail;
     }
 
-    //;VGM_LOG("BNK: stream at %lx + %x\n", h->stream_offset, h->stream_size);
+    ;VGM_LOG("BNK: header %x, stream at %x + %x\n", sndh_offset, h->data_offset + h->stream_offset, h->stream_size);
 
     return true;
 fail:
@@ -602,17 +617,17 @@ static bool process_names(STREAMFILE* sf, bnk_header_t* h) {
             }
 
             /* table4:
-                * 0x00: bank name (optional)
-                * 0x08: name section offset
-                * 0x0C-0x14: 3 null pointers (reserved?)
-                * 0x18-0x58: 32 name chunk offset indices
-                */
+             * 0x00: bank name (optional)
+             * 0x08: name section offset
+             * 0x0C-0x18: 3 null pointers (reserved?)
+             * 0x18-0x58: 32 name chunk offset indices
+             */
 
             /* Name chunks are organised as
-                *  (name[0] + name[4] + name[8] + name[12]) & 0x1F;
-                * and using that as the index for the chunk offsets
-                *  name_sect_offset + (chunk_idx[result] * 0x14);
-                */
+             *  (name[0] + name[4] + name[8] + name[12]) % 32;
+             * and using that as the index for the chunk offsets
+             *  name_sect_offset + (chunk_idx[result] * 0x14);
+             */
             if (read_u8(h->table4_offset, sf))
                 h->bank_name_offset = h->table4_offset;
 
@@ -626,7 +641,7 @@ static bool process_names(STREAMFILE* sf, bnk_header_t* h) {
                 while (read_u8(h->stream_name_offset, sf)) {
                     /* in case it goes somewhere out of bounds unexpectedly */
                     if (((read_u8(h->stream_name_offset + 0x00, sf) + read_u8(h->stream_name_offset + 0x04, sf) +
-                            read_u8(h->stream_name_offset + 0x08, sf) + read_u8(h->stream_name_offset + 0x0C, sf)) & 0x1F) != i)
+                          read_u8(h->stream_name_offset + 0x08, sf) + read_u8(h->stream_name_offset + 0x0C, sf)) & 0x1F) != i)
                         goto fail;
                     if (read_u16(h->stream_name_offset + 0x10, sf) == table4_entry_id)
                         goto loop_break; /* to break out of the for+while loop simultaneously */
@@ -653,16 +668,16 @@ static bool process_names(STREAMFILE* sf, bnk_header_t* h) {
             }
 
             /* table4:
-                * 0x00: bank name (optional)
-                * 0x08: name entries offset
-                * 0x0C: name section offset
-                *
-                * name entries offset:
-                * 0x00: name offset in name section
-                * 0x04: name hash(?)
-                * 0x08: ? (2x int16)
-                * 0x0C: section index (int16)
-                */
+             * 0x00: bank name (optional)
+             * 0x08: name entries offset
+             * 0x0C: name section offset
+             *
+             * name entries offset:
+             * 0x00: name offset in name section
+             * 0x04: name hash(?)
+             * 0x08: ? (2x int16)
+             * 0x0C: section index (int16)
+             */
             if (read_u8(h->table4_offset, sf))
                 h->bank_name_offset = h->table4_offset;
 
@@ -722,7 +737,7 @@ static bool process_names(STREAMFILE* sf, bnk_header_t* h) {
             break;
     }
 
-    //;VGM_LOG("BNK: stream_offset=%lx, stream_size=%x, stream_name_offset=%lx\n", h->stream_offset, h->stream_size, h->stream_name_offset);
+    //;VGM_LOG("BNK: stream_offset=%x, stream_size=%x, stream_name_offset=%x\n", h->stream_offset, h->stream_size, h->stream_name_offset);
 
     return true;
 fail:
@@ -785,19 +800,19 @@ static bool process_data(STREAMFILE* sf, bnk_header_t* h) {
             h->interleave = h->stream_size / h->channels;
 
             /* PS Home Arcade has other flags? supposedly:
-                *  01 = reverb
-                *  02 = vol scale 20
-                *  04 = vol scale 50
-                *  06 = vol scale 100
-                *  08 = noise
-                *  10 = no dry
-                *  20 = no steal
-                *  40 = loop VAG
-                *  80 = PCM
-                *  100 = has advanced packets
-                *  200 = send LFE
-                *  400 = send center
-                */
+             *  01 = reverb
+             *  02 = vol scale 20
+             *  04 = vol scale 50
+             *  06 = vol scale 100
+             *  08 = noise
+             *  10 = no dry
+             *  20 = no steal
+             *  40 = loop VAG
+             *  80 = PCM
+             *  100 = has advanced packets
+             *  200 = send LFE
+             *  400 = send center
+             */
             if ((h->stream_flags & 0x80) && h->sblk_version <= 3) {
                 h->codec = PCM16; /* rare [Wipeout HD (PS3)]-v3 */
             }
@@ -813,8 +828,8 @@ static bool process_data(STREAMFILE* sf, bnk_header_t* h) {
 
         case 0x08:
         case 0x09:
-            subtype = read_u16(h->start_offset+0x00,sf);
-            extradata_size = 0x08 + read_u32(h->start_offset+0x04,sf); /* 0x14 for AT9 */
+            subtype = read_u32(h->start_offset+0x00,sf);
+            extradata_size = 0x08 + read_u32(h->start_offset+0x04,sf); /* 0x14 for AT9, 0x10 for PCM, 0x90 for MPEG */
 
             switch(subtype) {
                 case 0x00:
@@ -829,22 +844,49 @@ static bool process_data(STREAMFILE* sf, bnk_header_t* h) {
                     h->interleave = 0x01;
                     break;
 
-
-                case 0x02: /* ATRAC9 mono */
-                case 0x05: /* ATRAC9 stereo */
-                    if (read_u32(h->start_offset+0x08,sf) + 0x08 != extradata_size) { /* repeat? */
-                        VGM_LOG("BNK: unknown subtype\n");
-                        goto fail;
-                    }
+                case 0x02: /* ATRAC9 / MPEG mono */
+                case 0x05: /* ATRAC9 / MPEG stereo */
                     h->channels = (subtype == 0x02) ? 1 : 2;
 
-                    h->atrac9_info = read_u32be(h->start_offset+0x0c,sf);
-                    /* 0x10: null? */
-                    loop_length    = read_u32(h->start_offset+0x14,sf);
-                    h->loop_start  = read_u32(h->start_offset+0x18,sf);
-                    h->loop_end = h->loop_start + loop_length; /* loop_start is -1 if not set */
+                    if (h->big_endian) {
+                        /* The Last of Us demo (PS3) */
 
-                    h->codec = ATRAC9;
+                        /* 0x08: mpeg version? (1) */
+                        /* 0x0C: mpeg layer? (3) */
+                        /* 0x10: ? (related to frame size, 0xC0 > 0x40, 0x120 > 0x60) */
+                        /* 0x14: sample rate */
+                        /* 0x18: mpeg layer? (3) */
+                        /* 0x1c: mpeg version? (1) */
+                        /* 0x20: channels? */
+                        /* 0x24: frame size */
+                        /* 0x28: encoder delay */
+                        /* 0x2c: num samples */
+                        /* 0x30: ? */
+                        /* 0x34: ? */
+                        /* 0x38: 0? */
+                        /* 0x3c: data size */
+                        /* padding up to 0x90 */
+
+                        h->encoder_delay    = read_s32(h->start_offset+0x28,sf);
+                        h->num_samples      = read_s32(h->start_offset+0x2c,sf);
+
+                        h->codec = MPEG;
+                    }
+                    else {
+                        /* Puyo Puyo Tetris (PS4) */
+                        if (read_u32(h->start_offset+0x08,sf) + 0x08 != extradata_size) { /* repeat? */
+                            VGM_LOG("BNK: unknown subtype\n");
+                            goto fail;
+                        }
+
+                        h->atrac9_info = read_u32be(h->start_offset+0x0c,sf);
+                        /* 0x10: null? */
+                        loop_length    = read_u32(h->start_offset+0x14,sf);
+                        h->loop_start  = read_u32(h->start_offset+0x18,sf);
+                        h->loop_end = h->loop_start + loop_length; /* loop_start is -1 if not set */
+
+                        h->codec = ATRAC9;
+                    }
                     break;
 
                 default:
