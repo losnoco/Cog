@@ -609,9 +609,6 @@ static AppController *kAppController = nil;
 	NSNumber *fontSize = @(fFontSize);
 	[userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
 
-	NSString *feedURLdefault = @"https://cogcdn.cog.losno.co/mercury.xml";
-	[userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
-
 	[userDefaultsValuesDict setObject:@"enqueueAndPlay" forKey:@"openingFilesBehavior"];
 	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
 
@@ -649,18 +646,6 @@ static AppController *kAppController = nil;
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
-
-	// And if the existing feed URL is broken due to my ineptitude with the above defaults, fix it
-	NSSet<NSString *> *brokenFeedURLs = [NSSet setWithObjects:
-	                                           @"https://kode54.net/cog/stable.xml",
-	                                           @"https://kode54.net/cog/mercury.xml"
-	                                           @"https://www.kode54.net/cog/mercury.xml",
-	                                           @"https://f.losno.co/cog/mercury.xml",
-	                                           nil];
-	NSString *feedURL = [[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"];
-	if([brokenFeedURLs containsObject:feedURL]) {
-		[[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
-	}
 
 	NSString *oldMidiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
 	if(oldMidiPlugin) {
