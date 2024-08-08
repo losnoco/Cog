@@ -27,7 +27,7 @@ int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size) {
 	return (int)sizeRead;
 }
 
-int ffmpeg_write(void *opaque, uint8_t *buf, int buf_size) {
+int ffmpeg_write(void *opaque, const uint8_t *buf, int buf_size) {
 	return -1;
 }
 

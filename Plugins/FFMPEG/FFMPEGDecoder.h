@@ -14,7 +14,7 @@
 #include <libavformat/avformat.h>
 
 extern int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size);
-extern int ffmpeg_write(void *opaque, uint8_t *buf, int buf_size);
+extern int ffmpeg_write(void *opaque, const uint8_t *buf, int buf_size);
 int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 
 @interface FFMPEGDecoder : NSObject <CogDecoder> {

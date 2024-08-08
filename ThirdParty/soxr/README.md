@@ -12,11 +12,6 @@ cmake .. -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0" 
 
 (Release|Debug) means one or the other for the separate release/debug builds
 
-And some minor tweaks with `install_name_tool -id` to make sure that the
-resulting libsoxr.0.dylib imported libavutil properly, as it seems to want
-to use that for CPU detection on ARM, even though the only feature being
-detected is NEON, which is mandatory on the supported Apple Silicon platforms.
-
 Version 0.1.3 was retrieved from:
 
 https://downloads.sourceforge.net/project/soxr/soxr-0.1.3-Source.tar.xz
