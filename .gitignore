@@ -31,10 +31,10 @@ Xcode-config/DEVELOPMENT_TEAM.xcconfig
 /ThirdParty/fdk-aac/lib/libfdk-aac.dylib
 /ThirdParty/fdk-aac/lib/libfdk-aac.la
 /ThirdParty/fdk-aac/lib/pkgconfig/fdk-aac.pc
-/ThirdParty/ffmpeg/lib/libavcodec.59.dylib
-/ThirdParty/ffmpeg/lib/libavformat.59.dylib
-/ThirdParty/ffmpeg/lib/libavutil.57.dylib
-/ThirdParty/ffmpeg/lib/libswresample.4.dylib
+/ThirdParty/ffmpeg/lib/libavcodec.61.dylib
+/ThirdParty/ffmpeg/lib/libavformat.61.dylib
+/ThirdParty/ffmpeg/lib/libavutil.59.dylib
+/ThirdParty/ffmpeg/lib/libswresample.5.dylib
 /ThirdParty/flac/lib/libFLAC.12.dylib
 /ThirdParty/libid3tag/lib/libid3tag.a
 /ThirdParty/libmad/lib/libmad.a
