@@ -41,43 +41,61 @@ public:
 	}
 
 public:
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsValid() {
 		return (f.second >= 0);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsReadSeekable() {
 		MPT_UNUSED(f);
 		return true;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsWriteSeekable() {
 		MPT_UNUSED(f);
 		return true;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline IO::Offset TellRead() {
 		return f.second;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline IO::Offset TellWrite() {
 		return f.second;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekBegin() {
 		f.second = 0;
 		return true;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekEnd() {
 		f.second = f.first.size();
 		return true;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekAbsolute(IO::Offset pos) {
 		f.second = pos;
 		return true;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekRelative(IO::Offset off) {
 		if (f.second < 0) {
 			return false;
@@ -86,6 +104,8 @@ public:
 		return true;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline mpt::byte_span ReadRawImpl(mpt::byte_span data) {
 		if (f.second < 0) {
 			return data.first(0);
@@ -99,6 +119,8 @@ public:
 		return data.first(num);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool WriteRawImpl(mpt::const_byte_span data) {
 		if (f.second < 0) {
 			return false;
@@ -115,10 +137,14 @@ public:
 		return true;
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsEof() {
 		return (f.second >= static_cast<IO::Offset>(f.first.size()));
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool Flush() {
 		MPT_UNUSED(f);
 		return true;

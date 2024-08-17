@@ -23,6 +23,8 @@ OPENMPT_NAMESPACE_BEGIN
 // Translate sample properties between two given formats.
 void ModSample::Convert(MODTYPE fromType, MODTYPE toType)
 {
+	uFlags.reset(CHN_REVERSE);  // Not supported by any native formats yet
+
 	// Convert between frequency and transpose values if necessary.
 	if((!(toType & (MOD_TYPE_MOD | MOD_TYPE_XM))) && (fromType & (MOD_TYPE_MOD | MOD_TYPE_XM)))
 	{
@@ -134,7 +136,7 @@ void ModSample::Initialize(MODTYPE type)
 	nPan = 128;
 	nVolume = 256;
 	nGlobalVol = 64;
-	uFlags.reset(CHN_PANNING | CHN_SUSTAINLOOP | CHN_LOOP | CHN_PINGPONGLOOP | CHN_PINGPONGSUSTAIN | CHN_ADLIB | SMP_MODIFIED | SMP_KEEPONDISK);
+	uFlags.reset(CHN_PANNING | CHN_SUSTAINLOOP | CHN_LOOP | CHN_PINGPONGLOOP | CHN_PINGPONGSUSTAIN | CHN_REVERSE | CHN_ADLIB | SMP_MODIFIED | SMP_KEEPONDISK);
 	if(type == MOD_TYPE_XM)
 	{
 		uFlags.set(CHN_PANNING);

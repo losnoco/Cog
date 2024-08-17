@@ -97,7 +97,12 @@ struct DTMSample
 		// In revolution to come.dtm, the file header says samples rate is 24512 Hz, but samples say it's 50000 Hz
 		// Digital Home Studio ignores the header setting in 2.04-/2.06-style modules
 		mptSmp.nC5Speed = (formatVersion == DTM_PT_PATTERN_FORMAT && forcedSampleRate > 0) ? forcedSampleRate : sampleRate;
-		int32 transposeAmount = MOD2XMFineTune(finetune);
+		int32 transposeAmount = 0;
+#ifdef MODPLUG_TRACKER
+		transposeAmount = MOD2XMFineTune(finetune);
+#else
+		mptSmp.nFineTune = MOD2XMFineTune(finetune);
+#endif
 		if(formatVersion == DTM_206_PATTERN_FORMAT && transpose > 0 && transpose != 48)
 		{
 			// Digital Home Studio applies this unconditionally, but some old songs sound wrong then (delirium.dtm).
@@ -231,6 +236,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 	InitializeGlobals(MOD_TYPE_DTM);
 	InitializeChannels();
 	m_SongFlags.set(SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS);
+	m_playBehaviour.reset(kPeriodsAreHertz);
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	// Various files have a default speed or tempo of 0
 	if(fileHeader.tempo)
@@ -436,26 +442,18 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 					{
 						m->note = note + NOTE_MIN + 12;
 						if(position.rem)
-						{
-							m->command = CMD_MODCMDEX;
-							m->param = 0xD0 | static_cast<ModCommand::PARAM>(std::min(position.rem, 15));
-						}
+							m->SetEffectCommand(CMD_MODCMDEX, static_cast<ModCommand::PARAM>(0xD0 | std::min(position.rem, 15)));
 					} else if(note & 0x80)
 					{
 						// Lower 7 bits contain note, probably intended for MIDI-like note-on/note-off events
 						if(position.rem)
-						{
-							m->command = CMD_MODCMDEX;
-							m->param = 0xC0 | static_cast<ModCommand::PARAM>(std::min(position.rem, 15));
-						} else
-						{
+							m->SetEffectCommand(CMD_MODCMDEX, static_cast<ModCommand::PARAM>(0xC0 |std::min(position.rem, 15)));
+						else
 							m->note = NOTE_NOTECUT;
-						}
 					}
 					if(volume)
 					{
-						m->volcmd = VOLCMD_VOLUME;
-						m->vol = std::min(volume, uint8(64));  // Volume can go up to 255, but we do not support over-amplification at the moment.
+						m->SetVolumeCommand(VOLCMD_VOLUME, std::min(volume, uint8(64)));  // Volume can go up to 255, but we do not support over-amplification at the moment.
 					}
 					if(instr)
 					{
@@ -578,6 +576,9 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 	if(patternFormat == DTM_206_PATTERN_FORMAT)
 	{
 		tracker = U_("Digital Home Studio");
+	} else if(patternFormat == DTM_PT_PATTERN_FORMAT)
+	{
+		tracker = U_("Digital Tracker 2.3");
 	} else if(FileReader chunk = chunks.GetChunk(DTMChunk::idVERS))
 	{
 		uint32 version = chunk.ReadUint32BE();

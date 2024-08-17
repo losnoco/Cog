@@ -441,6 +441,7 @@
 		83E5FE611FFEFEA600659F0F /* svn_version.template.subwcrev.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FE5E1FFEFEA600659F0F /* svn_version.template.subwcrev.h */; };
 		83E5FE631FFEFEA600659F0F /* svn_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FE601FFEFEA600659F0F /* svn_version.h */; };
 		83E5FE661FFEFFA500659F0F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E5FE651FFEFFA500659F0F /* libz.tbd */; };
+		83EC0B682C70B32C00DB51E5 /* BuildSettingsCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EC0B672C70B32C00DB51E5 /* BuildSettingsCompiler.h */; };
 		83F30AB2286EBBEA0005EF06 /* l12tabs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F30A8A286EBBEA0005EF06 /* l12tabs.h */; };
 		83F30AB3286EBBEA0005EF06 /* synth_8bit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F30A8B286EBBEA0005EF06 /* synth_8bit.h */; };
 		83F30AB4286EBBEA0005EF06 /* index.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F30A8C286EBBEA0005EF06 /* index.h */; };
@@ -931,6 +932,7 @@
 		83E5FE5F1FFEFEA600659F0F /* update_svn_version_vs_premake.cmd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = update_svn_version_vs_premake.cmd; sourceTree = "<group>"; };
 		83E5FE601FFEFEA600659F0F /* svn_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = svn_version.h; sourceTree = "<group>"; };
 		83E5FE651FFEFFA500659F0F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		83EC0B672C70B32C00DB51E5 /* BuildSettingsCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuildSettingsCompiler.h; sourceTree = "<group>"; };
 		83F30A8A286EBBEA0005EF06 /* l12tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l12tabs.h; sourceTree = "<group>"; };
 		83F30A8B286EBBEA0005EF06 /* synth_8bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_8bit.h; sourceTree = "<group>"; };
 		83F30A8C286EBBEA0005EF06 /* index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index.h; sourceTree = "<group>"; };
@@ -1624,6 +1626,7 @@
 			isa = PBXGroup;
 			children = (
 				83E5FC3B1FFEFA0D00659F0F /* BuildSettings.h */,
+				83EC0B672C70B32C00DB51E5 /* BuildSettingsCompiler.h */,
 				83E5FC411FFEFA0D00659F0F /* ComponentManager.cpp */,
 				83E5FC301FFEFA0D00659F0F /* ComponentManager.h */,
 				830995B127787BB800857684 /* Dither.h */,
@@ -2037,6 +2040,7 @@
 				83E5FDDC1FFEFA8500659F0F /* PluginMixBuffer.h in Headers */,
 				83649BCA2A03424E00CD0580 /* outputfile.hpp in Headers */,
 				83E5FDF71FFEFA8500659F0F /* Chorus.h in Headers */,
+				83EC0B682C70B32C00DB51E5 /* BuildSettingsCompiler.h in Headers */,
 				83E5FE0A1FFEFA8500659F0F /* UMXTools.h in Headers */,
 				83E5FDF31FFEFA8500659F0F /* Gargle.h in Headers */,
 				8309971627787E9A00857684 /* Dither.hpp in Headers */,

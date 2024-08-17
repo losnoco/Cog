@@ -401,7 +401,7 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 
 	InitializeGlobals(MOD_TYPE_MOD);
-	m_SongFlags.set(SONG_IMPORTED);
+	m_SongFlags = SONG_IMPORTED;
 	m_nChannels = fileHeader.numChannels;
 	static_assert(MAX_BASECHANNELS >= 32 && MAX_SAMPLES > 255);
 	m_nSamples = fileHeader.numSamples;
@@ -511,7 +511,7 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 
 	if(loadFlags & loadSampleData)
 	{
-		for(SAMPLEINDEX smp = 1; smp <= m_nSamplePreAmp; smp++)
+		for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
 		{
 			SampleIO(Samples[smp].uFlags[CHN_16BIT] ? SampleIO::_16bit : SampleIO::_8bit,
 				SampleIO::mono,

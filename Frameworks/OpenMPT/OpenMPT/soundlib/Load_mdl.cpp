@@ -168,7 +168,7 @@ static constexpr EffectCommand MDLEffTrans[] =
 	/* Either column */
 	/* 7 */ CMD_TEMPO,
 	/* 8 */ CMD_PANNING8,
-	/* 9 */ CMD_SETENVPOSITION,
+	/* 9 */ CMD_S3MCMDEX,
 	/* A */ CMD_NONE,
 	/* B */ CMD_POSITIONJUMP,
 	/* C */ CMD_GLOBALVOLUME,
@@ -202,6 +202,16 @@ static std::pair<EffectCommand, uint8> ConvertMDLCommand(const uint8 command, ui
 #endif // MODPLUG_TRACKER
 	case 0x08: // Panning
 		param = (param & 0x7F) * 2u;
+		break;
+	case 0x09: // Set Envelope (we can only have one envelope per type...)
+		if(param < 0x40)
+			param = 0x78;  // Enable the one volume envelope we have
+		else if (param < 0x80)
+			param = 0x7A;  // Enable the one panning envelope we have
+		else if(param < 0xC0)
+			param = 0x7C;  // Enable the one pitch envelope we have
+		else
+			cmd = CMD_NONE;
 		break;
 	case 0x0C:	// Global volume
 		param = (param + 1) / 2u;
@@ -468,6 +478,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 	m_SongFlags = SONG_ITCOMPATGXX;
 	m_playBehaviour.set(kPerChannelGlobalVolSlide);
 	m_playBehaviour.set(kApplyOffsetWithoutNote);
+	m_playBehaviour.reset(kPeriodsAreHertz);
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	m_playBehaviour.reset(kITSCxStopsSample);	// Gate effect in underbeat.mdl
 

@@ -346,7 +346,7 @@ static PATTERNINDEX ConvertDMFPattern(FileReader &file, const uint8 fileVersion,
 	// Counters for channel packing (including global track)
 	std::vector<uint8> channelCounter(numChannels + 1, 0);
 
-	for(ROWINDEX row = 0; row < numRows; row++)
+	for(ROWINDEX row = 0; row < numRows && file.CanRead(1); row++)
 	{
 		// Global track info counter reached 0 => read global track data
 		if(channelCounter[0] == 0)
@@ -934,7 +934,7 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 		// I don't know when exactly this stopped, but I have no version 5-7 files to check (and no X-Tracker version that writes those versions).
 		// Since this is practically always the last chunk in the file, the following code is safe for those versions, though.
 		else if(fileHeader.version < 8 && chunkHeader.GetID() == DMFChunk::idSMPD)
-			chunkLength = uint32_max;
+			chunkLength = mpt::saturate_cast<uint32>(file.BytesLeft());
 		chunks.chunks.push_back(ChunkReader::Item<DMFChunk>{chunkHeader, file.ReadChunk(chunkLength)});
 		file.Skip(chunkSkip);
 	}
@@ -970,6 +970,8 @@ bool CSoundFile::ReadDMF(FileReader &file, ModLoadingFlags loadFlags)
 			const uint8 headerSize = fileHeader.version < 3 ? 9 : 8;
 			chunk.Skip(headerSize - sizeof(uint32le));
 			const uint32 patLength = chunk.ReadUint32LE();
+			if(!chunk.CanRead(patLength))
+				return false;
 			chunk.SkipBack(headerSize);
 			patternChunk = chunk.ReadChunk(headerSize + patLength);
 		}

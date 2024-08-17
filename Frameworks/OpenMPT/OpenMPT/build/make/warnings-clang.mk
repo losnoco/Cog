@@ -13,7 +13,7 @@ CFLAGS_WARNINGS   +=                           -Wframe-larger-than=4000
 ifeq ($(MODERN),1)
 CXXFLAGS_WARNINGS += 
 CFLAGS_WARNINGS   += 
-LDFLAGS_WARNINGS  += -Wl,-no-undefined -Wl,--detect-odr-violations
+LDFLAGS_WARNINGS  += -Wl,-no-undefined
 endif
 
 CFLAGS_SILENT += -Wno-\#warnings
@@ -24,6 +24,7 @@ CFLAGS_SILENT += -Wno-float-conversion
 CFLAGS_SILENT += -Wno-frame-larger-than
 CFLAGS_SILENT += -Wno-missing-prototypes
 CFLAGS_SILENT += -Wno-sign-compare
+CFLAGS_SILENT += -Wno-unused-but-set-variable
 CFLAGS_SILENT += -Wno-unused-function
 CFLAGS_SILENT += -Wno-unused-parameter
 CFLAGS_SILENT += -Wno-unused-variable

@@ -1115,7 +1115,7 @@ double module_impl::set_position_seconds( double seconds ) {
 				subsong = &subsongs[i];
 				break;
 			}
-			base_seconds += subsong->duration;
+			base_seconds += subsongs[i].duration;
 		}
 		seconds -= base_seconds;
 	} else {

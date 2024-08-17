@@ -220,7 +220,7 @@ public:
 
 			if(chn.position >= sampleEnd || (chn.position < loopStart && inc.IsNegative()))
 			{
-				if(!chn.dwFlags[CHN_LOOP])
+				if(!chn.dwFlags[CHN_LOOP] || !loopLength)
 				{
 					// Past sample end.
 					stopNote = true;
@@ -326,7 +326,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				for(CHANNELINDEX i = 0; i < GetNumChannels(); i++, m++)
 				{
 					if(m->note == NOTE_NOTECUT || m->note == NOTE_KEYOFF || (m->note == NOTE_FADE && GetNumInstruments())
-						|| (m->IsNote() && !m->IsPortamento()))
+						|| (m->IsNote() && m->instr && !m->IsPortamento()))
 					{
 						memory.chnSettings[i].ticksToRender = GetLengthMemory::IGNORE_CHANNEL;
 					}
@@ -979,7 +979,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				break;
 			}
 		
-			if(m_playBehaviour[kST3EffectMemory] && param != 0)
+			if(m_playBehaviour[kST3EffectMemory] && command != CMD_NONE && param != 0)
 			{
 				UpdateS3MEffectMemory(chn, param);
 			}
@@ -1064,7 +1064,8 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 				{
 					if(m.command == CMD_OFFSET)
 					{
-						ProcessSampleOffset(chn, nChn, playState);
+						if(!porta || !(GetType() & (MOD_TYPE_XM | MOD_TYPE_DBM)))
+							ProcessSampleOffset(chn, nChn, playState);
 					} else if(m.command == CMD_OFFSETPERCENTAGE)
 					{
 						SampleOffset(chn, Util::muldiv_unsigned(chn.nLength, m.param, 256));
@@ -1365,7 +1366,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bool bUpdVol, bool bResetEnv) const
 {
 	const ModInstrument *pIns = instr <= GetNumInstruments() ? Instruments[instr] : nullptr;
-	const ModSample *pSmp = &Samples[instr];
+	const ModSample *pSmp = &Samples[instr <= GetNumSamples() ? instr : 0];
 	const auto oldInsVol = chn.nInsVol;
 	ModCommand::NOTE note = chn.nNewNote;
 
@@ -2707,8 +2708,8 @@ bool CSoundFile::ProcessEffects()
 			if(m_playBehaviour[kMODSampleSwap])
 			{
 				// ProTracker Compatibility: If a sample was stopped before, lone instrument numbers can retrigger it
-				// Test case: PTSwapEmpty.mod, PTInstrVolume.mod, SampleSwap.s3m
-				if(!chn.IsSamplePlaying() && (chn.pModSample == nullptr || !chn.pModSample->HasSampleData()))
+				// Test cases: PTSwapEmpty.mod, PTInstrVolume.mod, PTStoppedSwap.mod
+				if(!chn.IsSamplePlaying() && instr <= GetNumSamples() && Samples[instr].uFlags[CHN_LOOP])
 					keepInstr = true;
 			}
 
@@ -2951,7 +2952,8 @@ bool CSoundFile::ProcessEffects()
 				}
 
 				NoteChange(chn, note, bPorta, !(GetType() & (MOD_TYPE_XM | MOD_TYPE_MT2)), false, nChn);
-				HandleDigiSamplePlayDirection(m_PlayState, nChn);
+				if(ModCommand::IsNote(note))
+					HandleDigiSamplePlayDirection(m_PlayState, nChn);
 				if ((bPorta) && (GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)) && (instr))
 				{
 					chn.dwFlags.set(CHN_FASTVOLRAMP);
@@ -3229,7 +3231,7 @@ bool CSoundFile::ProcessEffects()
 			{
 				// FT2 compatibility: Portamento + Offset = Ignore offset
 				// Test case: porta-offset.xm
-				if(bPorta && GetType() == MOD_TYPE_XM)
+				if(bPorta && (GetType() & (MOD_TYPE_XM | MOD_TYPE_DBM)))
 					break;
 
 				ProcessSampleOffset(chn, nChn, m_PlayState);
@@ -3553,7 +3555,7 @@ bool CSoundFile::ProcessEffects()
 			break;
 		}
 
-		if(m_playBehaviour[kST3EffectMemory] && param != 0)
+		if(m_playBehaviour[kST3EffectMemory] && cmd != CMD_NONE && param != 0)
 		{
 			UpdateS3MEffectMemory(chn, static_cast<ModCommand::PARAM>(param));
 		}
@@ -4156,7 +4158,7 @@ void CSoundFile::TonePortamento(CHANNELINDEX nChn, uint16 param)
 		IMixPlugin *plugin = GetChannelInstrumentPlugin(chn);
 		if(plugin != nullptr)
 		{
-			plugin->MidiTonePortamento(delta, chn.GetPluginNote(m_playBehaviour[kITRealNoteMapping], true), chn.pModInstrument->midiPWD, nChn);
+			plugin->MidiTonePortamento(delta, chn.GetPluginNote(true), chn.pModInstrument->midiPWD, nChn);
 		}
 	}
 #endif  // NO_PLUGINS
@@ -5163,12 +5165,17 @@ void CSoundFile::ParseMIDIMacro(PlayState &playState, CHANNELINDEX nChn, bool is
 		{
 			// SysEx Checksum (not an original Impulse Tracker macro variable, but added for convenience)
 			auto startPos = outPos;
-			while(startPos > 0 && out[--startPos] != 0xF0);
-			if(outPos - startPos < 5 || out[startPos] != 0xF0)
-			{
+			while(startPos > 0 && out[--startPos] != 0xF0)
+				;
+
+			if(outPos - startPos < 3 || out[startPos] != 0xF0)
 				continue;
-			}
-			for(auto p = startPos + 5u; p != outPos; p++)
+
+			uint8 checksumStart = out[startPos + 3] ? 5 : 6;
+			if(outPos - startPos < checksumStart)
+				continue;
+
+			for(auto p = startPos + checksumStart; p != outPos; p++)
 			{
 				data += out[p];
 			}
@@ -6147,10 +6154,16 @@ uint32 CSoundFile::GetPeriodFromNote(uint32 note, int32 nFineTune, uint32 nC5Spe
 	note -= NOTE_MIN;
 	if(!UseFinetuneAndTranspose())
 	{
-		if(GetType() & (MOD_TYPE_MDL | MOD_TYPE_DTM))
+		if(GetType() == MOD_TYPE_MDL)
 		{
 			// MDL uses non-linear slides, but their effectiveness does not depend on the middle-C frequency.
+			MPT_ASSERT(!PeriodsAreFrequencies());
 			return (FreqS3MTable[note % 12u] << 4) >> (note / 12);
+		} else if(GetType() == MOD_TYPE_DTM)
+		{
+			// Similar to MDL, but finetune is factored in and we don't transpose everything by an octave
+			MPT_ASSERT(!PeriodsAreFrequencies());
+			return (ProTrackerTunedPeriods[XM2MODFineTune(nFineTune) * 12u + note % 12u] << 5) >> (note / 12u);
 		}
 		if(!nC5Speed)
 			nC5Speed = 8363;
@@ -6266,8 +6279,9 @@ uint32 CSoundFile::GetFreqFromPeriod(uint32 period, uint32 c5speed, int32 nPerio
 	{
 		// We only really use c5speed for the finetune pattern command. All samples in 669 files have the same middle-C speed (imported as 8363 Hz).
 		return (period + c5speed - 8363) << FREQ_FRACBITS;
-	} else if(GetType() & (MOD_TYPE_MDL | MOD_TYPE_DTM))
+	} else if(GetType() == MOD_TYPE_MDL)
 	{
+		MPT_ASSERT(!PeriodsAreFrequencies());
 		LimitMax(period, Util::MaxValueOfType(period) >> 8);
 		if (!c5speed) c5speed = 8363;
 		return Util::muldiv_unsigned(c5speed, (1712L << 7) << FREQ_FRACBITS, (period << 8) + nPeriodFrac);
@@ -6279,7 +6293,7 @@ uint32 CSoundFile::GetFreqFromPeriod(uint32 period, uint32 c5speed, int32 nPerio
 			// Input is already a frequency in Hertz, not a period.
 			static_assert(FREQ_FRACBITS <= 8, "Check this shift operator");
 			return uint32(((uint64(period) << 8) + nPeriodFrac) >> (8 - FREQ_FRACBITS));
-		} else if(m_SongFlags[SONG_LINEARSLIDES])
+		} else if(m_SongFlags[SONG_LINEARSLIDES] || GetType() == MOD_TYPE_DTM)
 		{
 			if(!c5speed)
 				c5speed = 8363;

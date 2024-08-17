@@ -88,10 +88,10 @@ void Compressor::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		}
 		compGainPow >>= (31 - compGainInt);
 		
-		int32 readOffset = m_predelay + m_bufPos * 4096 + m_bufSize - 1;
+		int32 readOffset = m_predelay + m_bufSize - 1;
 		readOffset /= 4096;
-		readOffset %= m_bufSize;
-		
+		readOffset = (readOffset + m_bufPos) % m_bufSize;
+
 		float outGain = (static_cast<float>(compGainPow) * (1.0f / 2147483648.0f)) * m_gain;
 		*(out[0])++ = m_buffer[readOffset * 2] * outGain;
 		*(out[1])++ = m_buffer[readOffset * 2 + 1] * outGain;

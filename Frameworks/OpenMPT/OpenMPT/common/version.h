@@ -205,7 +205,7 @@ MPT_CONSTEXPRINLINE bool operator > (const Version &a, const Version &b) noexcep
 }
 
 
-MPT_CONSTEVAL Version operator "" _LiteralVersionImpl (const char * str, std::size_t len)
+MPT_CONSTEVAL Version operator ""_LiteralVersionImpl (const char * str, std::size_t len)
 {
 	return Version::LiteralParser::Parse(str, len);
 }

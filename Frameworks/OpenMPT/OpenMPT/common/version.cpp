@@ -600,12 +600,12 @@ mpt::ustring GetFullCreditsString()
 		"libopenmpt (based on OpenMPT / Open ModPlug Tracker)\n"
 #endif
 		"\n"
-		"Copyright \xC2\xA9 2004-2023 OpenMPT Project Developers and Contributors\n"
+		"Copyright \xC2\xA9 2004-2024 OpenMPT Project Developers and Contributors\n"
 		"Copyright \xC2\xA9 1997-2003 Olivier Lapicque\n"
 		"\n"
 		"Developers:\n"
-		"Johannes Schultz (2008-2023)\n"
-		"J\xC3\xB6rn Heusipp (2012-2023)\n"
+		"Johannes Schultz (2008-2024)\n"
+		"J\xC3\xB6rn Heusipp (2012-2024)\n"
 		"Ahti Lepp\xC3\xA4nen (2005-2011)\n"
 		"Robin Fernandes (2004-2007)\n"
 		"Sergiy Pylypenko (2007)\n"
@@ -776,7 +776,7 @@ mpt::ustring GetFullCreditsString()
 		"\n"
 #endif
 		"Daniel Collin (emoon/TBL) for providing test infrastructure\n"
-		"https://twitter.com/daniel_collin\n"
+		"https://mastodon.gamedev.place/@daniel_collin\n"
 		"\n"
 		"The people in the ModPlug community for crucial contribution\n"
 		"in the form of ideas, testing and support;\n"
@@ -800,7 +800,7 @@ mpt::ustring GetFullCreditsString()
 mpt::ustring GetLicenseString()
 {
 	return MPT_UTF8(
-		"Copyright (c) 2004-2023, OpenMPT Project Developers and Contributors" "\n"
+		"Copyright (c) 2004-2024, OpenMPT Project Developers and Contributors" "\n"
 		"Copyright (c) 1997-2003, Olivier Lapicque" "\n"
 		"All rights reserved." "\n"
 		"" "\n"

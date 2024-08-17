@@ -50,7 +50,15 @@
 #elif defined(_MSC_VER)
 
 #define MPT_COMPILER_MSVC 1
-#if (_MSC_VER >= 1936)
+#if (_MSC_VER >= 1940)
+#define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 10)
+#elif (_MSC_VER >= 1939)
+#define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 9)
+#elif (_MSC_VER >= 1938)
+#define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 8)
+#elif (_MSC_VER >= 1937)
+#define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 7)
+#elif (_MSC_VER >= 1936)
 #define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 6)
 #elif (_MSC_VER >= 1935)
 #define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 5)
@@ -193,6 +201,32 @@
 
 #define MPT_CXX_AT_LEAST(version) (MPT_CXX >= (version))
 #define MPT_CXX_BEFORE(version)   (MPT_CXX < (version))
+
+
+
+// detect compiler setting quirks
+
+#if MPT_COMPILER_GCC
+#if (MPT_GCC_AT_LEAST(14, 0, 0) && MPT_GCC_BEFORE(14, 2, 0)) || (MPT_GCC_AT_LEAST(13, 0, 0) && MPT_GCC_BEFORE(13, 4, 0)) || (MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(12, 5, 0)) || MPT_GCC_BEFORE(12, 0, 0)
+// GCC 14 causes severe miscompilation of inline functions on MinGW.
+// See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115049>.
+// Current investigation suggests a general problem with -fipa-ra on non-ELF
+// platforms.
+// As far as we understand the issue, it could possibly also manifest with
+// other inter-procedure-optimizations and with older GCC versions.
+// Fixed in GCC 15
+// (<https://gcc.gnu.org/git/?p=gcc.git;h=5080840d8fbf25a321dd27543a1462d393d338bc>),
+// GCC 14.2
+// (<https://gcc.gnu.org/git/?p=gcc.git;h=747c4b58573ea00419f64293a61537eb69f43307>).
+// GCC 13.4
+// (<https://gcc.gnu.org/git/?p=gcc.git;h=953bf37690d22de956d75c6aef7a9690ad55b9a7>).
+// and GCC 12.5
+// (<https://gcc.gnu.org/git/?p=gcc.git;h=2c5f48a43f26223cb8603b826d7c0d52cdbcfb46>).
+#if !defined(__ELF__)
+#define MPT_COMPILER_SETTING_QUIRK_GCC_BROKEN_IPA
+#endif
+#endif
+#endif
 
 
 

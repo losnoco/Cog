@@ -38,6 +38,7 @@ public:
 		Win7 = 0x0000000600000001ull,
 		Win8 = 0x0000000600000002ull,
 		Win81 = 0x0000000600000003ull,
+		Win10Pre = 0x0000000600000004ull,
 		Win10 = 0x0000000a00000000ull,
 		WinNewer = Win10 + 1ull
 	};
@@ -162,6 +163,8 @@ public:
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 10586, 0);
 #elif MPT_WINNT_AT_LEAST(MPT_WIN_10) // 1507
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 10240, 0);
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_10_PRE)
+		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10Pre, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
 #elif MPT_WINNT_AT_LEAST(MPT_WIN_81)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win81, mpt::osinfo::windows::Version::ServicePack(((NTDDI_VERSION & 0xffffu) >> 8) & 0xffu, ((NTDDI_VERSION & 0xffffu) >> 0) & 0xffu), 0, 0);
 #elif MPT_WINNT_AT_LEAST(MPT_WIN_8)

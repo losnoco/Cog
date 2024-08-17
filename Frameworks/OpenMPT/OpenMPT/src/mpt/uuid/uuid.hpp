@@ -376,7 +376,7 @@ MPT_CONSTEXPRINLINE bool operator!=(const mpt::UUID & a, const mpt::UUID & b) no
 
 namespace uuid_literals {
 
-MPT_CONSTEVAL mpt::UUID operator"" _uuid(const char * str, std::size_t len) {
+MPT_CONSTEVAL mpt::UUID operator""_uuid(const char * str, std::size_t len) {
 	return mpt::UUID::ParseLiteral(str, len);
 }
 

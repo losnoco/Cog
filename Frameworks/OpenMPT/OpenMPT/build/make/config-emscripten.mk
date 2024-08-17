@@ -70,6 +70,12 @@ CXXFLAGS += -flto
 CFLAGS   += -flto
 LDFLAGS  += -flto
 
+# Work-around <https://github.com/emscripten-core/emscripten/issues/20810>.
+# The warning with emscripten 3.1.50 sounds very dangerous,
+# and since it is apparently caused by removing whitespace,
+# additional whitespace is a small price to pay for correctness.
+LDFLAGS  += -g1
+
 ifeq ($(EMSCRIPTEN_TARGET),default)
 # emits whatever is emscripten's default, currently (1.38.8) this is the same as "wasm" below.
 CPPFLAGS += -DMPT_BUILD_WASM
@@ -130,6 +136,7 @@ endif
 CXXFLAGS += -s DISABLE_EXCEPTION_CATCHING=0
 CFLAGS   += -s DISABLE_EXCEPTION_CATCHING=0 -fno-strict-aliasing
 LDFLAGS  += -s DISABLE_EXCEPTION_CATCHING=0 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s ERROR_ON_MISSING_LIBRARIES=1 -s EXPORT_NAME="'libopenmpt'"
+SO_LDFLAGS += -s EXPORTED_FUNCTIONS="['_malloc','_free']"
 
 include build/make/warnings-clang.mk
 

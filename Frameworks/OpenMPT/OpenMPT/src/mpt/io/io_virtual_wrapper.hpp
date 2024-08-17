@@ -234,38 +234,56 @@ public:
 	}
 
 public:
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsValid() {
 		return f.IsValid();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsReadSeekable() {
 		return f.IsReadSeekable();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline IO::Offset TellRead() {
 		return f.TellRead();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekBegin() {
 		return f.SeekBegin();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekEnd() {
 		return f.SeekEnd();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekAbsolute(IO::Offset pos) {
 		return f.SeekAbsolute(pos);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekRelative(IO::Offset off) {
 		return f.SeekRelative(off);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline mpt::byte_span ReadRawImpl(mpt::byte_span data) {
 		return f.ReadRawImpl(data);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsEof() {
 		return f.IsEof();
 	}
@@ -286,38 +304,56 @@ public:
 	}
 
 public:
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsValid() {
 		return f.IsValid();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsWriteSeekable() {
 		return f.IsWriteSeekable();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline IO::Offset TellWrite() {
 		return f.TellWrite();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekBegin() {
 		return f.SeekBegin();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekEnd() {
 		return f.SeekEnd();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekAbsolute(IO::Offset pos) {
 		return f.SeekAbsolute(pos);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekRelative(IO::Offset off) {
 		return f.SeekRelative(off);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool WriteRawImpl(mpt::const_byte_span data) {
 		return f.WriteRawImpl(data);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool Flush() {
 		return f.Flush();
 	}
@@ -338,54 +374,80 @@ public:
 	}
 
 public:
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsValid() {
 		return f.IsValid();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsReadSeekable() {
 		return f.IsReadSeekable();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsWriteSeekable() {
 		return f.IsWriteSeekable();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline IO::Offset TellRead() {
 		return f.TellRead();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline IO::Offset TellWrite() {
 		return f.TellWrite();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekBegin() {
 		return f.SeekBegin();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekEnd() {
 		return f.SeekEnd();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekAbsolute(IO::Offset pos) {
 		return f.SeekAbsolute(pos);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool SeekRelative(IO::Offset off) {
 		return f.SeekRelative(off);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline mpt::byte_span ReadRawImpl(mpt::byte_span data) {
 		return f.ReadRawImpl(data);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool WriteRawImpl(mpt::const_byte_span data) {
 		return f.WriteRawImpl(data);
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool IsEof() {
 		return f.IsEof();
 	}
 
+	// cppcheck false-positive
+	// cppcheck-suppress duplInheritedMember
 	inline bool Flush() {
 		return f.Flush();
 	}

@@ -73,6 +73,9 @@ CFLAGS   += -march=i586 -m80387 -mtune=pentium
 
 PC_LIBS_PRIVATE += -lole32 -lrpcrt4
 
+# See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115049>.
+MPT_COMPILER_NOIPARA=1
+
 include build/make/warnings-gcc.mk
 
 EXESUFFIX=.exe

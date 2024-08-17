@@ -55,6 +55,16 @@ mpt::thread_safe_prng<mpt::default_prng> & global_prng()
 	return g_global_prng;
 }
 
+#ifdef MPT_BUILD_FUZZER
+void reinit_global_random()
+{
+	global_prng().~thread_safe_prng<mpt::default_prng>();
+	global_random_device().~random_device();
+	new(&global_random_device()) mpt::random_device{};
+	new(&global_prng()) thread_safe_prng<mpt::default_prng>{global_random_device()};
+}
+#endif  // MPT_BUILD_FUZZER
+
 #endif // MODPLUG_TRACKER && !MPT_BUILD_WINESUPPORT
 
 } // namespace mpt

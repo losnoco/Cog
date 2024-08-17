@@ -83,6 +83,26 @@ const CTuning* CTuningCollection::GetTuning(const mpt::ustring &name) const
 }
 
 
+const CTuning* CTuningCollection::FindIdenticalTuning(const CTuning &tuning) const
+{
+	auto result = std::find_if(m_Tunings.begin(), m_Tunings.end(), [&tuning](const std::unique_ptr<CTuning> &other)
+	{
+		return other && tuning == *other;
+	});
+	return (result != m_Tunings.end()) ? result->get() : nullptr;
+}
+
+
+CTuning* CTuningCollection::FindIdenticalTuning(const CTuning &tuning)
+{
+	auto result = std::find_if(m_Tunings.begin(), m_Tunings.end(), [&tuning](const std::unique_ptr<CTuning> &other)
+	{
+		return other && tuning == *other;
+	});
+	return (result != m_Tunings.end()) ? result->get() : nullptr;
+}
+
+
 Tuning::SerializationResult CTuningCollection::Serialize(std::ostream& oStrm, const mpt::ustring &name) const
 {
 	srlztn::SsbWrite ssb(oStrm);

@@ -11,12 +11,16 @@
 #pragma once
 
 #include "openmpt/all/BuildSettings.hpp"
-
-#include "../soundlib/ModInstrument.h"
-#include "../soundlib/ModSample.h"
-#include "../soundlib/SampleIO.h"
+#include "openmpt/base/Endian.hpp"
+#include "Snd_defs.h"
 
 OPENMPT_NAMESPACE_BEGIN
+
+struct InstrumentEnvelope;
+struct ModInstrument;
+struct ModSample;
+class CSoundFile;
+class SampleIO;
 
 struct ITFileHeader
 {

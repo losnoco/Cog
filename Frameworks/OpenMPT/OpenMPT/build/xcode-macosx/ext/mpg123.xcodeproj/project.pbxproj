@@ -21,6 +21,7 @@
 		6C03B21AB052578CF279905A /* feature.c in Sources */ = {isa = PBXBuildFile; fileRef = A60D55A2C7D902D4048E2BE2 /* feature.c */; };
 		82DB3C387C9CF8AAB69BFA78 /* parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 440E80E08C7F6512D11E3720 /* parse.c */; };
 		8ADD039E1D6ACD90864371DE /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = C3752BE686E0ED98C5849226 /* icy2utf8.c */; };
+		8EEA26DE2177F0D08A50951E /* lfs_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = E769BB26AAD57CD8E9792166 /* lfs_wrap.c */; };
 		9CA288B296644524D06346F2 /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 754AC0BABDBBA4EC025A76FA /* index.c */; };
 		BCB343AA29DB521C2B6E41EA /* stringbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 0BDCDC32593FD264CF5ED272 /* stringbuf.c */; };
 		C2065F0E06550480487C3D4E /* readers.c in Sources */ = {isa = PBXBuildFile; fileRef = 489101566A5CAE88A711D796 /* readers.c */; };
@@ -59,6 +60,7 @@
 		C6BCBF7D1D4A29EFF5C33DBD /* openmpt-mpg123.dll */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = "openmpt-mpg123.dll"; path = "openmpt-mpg123.dll"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDD5DB15FEB9D30711D20955 /* compat_str.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = compat_str.c; path = ../../../include/mpg123/src/compat/compat_str.c; sourceTree = "<group>"; };
 		E598BBB4FCAB56E6ECC751F4 /* icy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = icy.c; path = ../../../include/mpg123/src/libmpg123/icy.c; sourceTree = "<group>"; };
+		E769BB26AAD57CD8E9792166 /* lfs_wrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lfs_wrap.c; path = ../../../include/mpg123/src/libmpg123/lfs_wrap.c; sourceTree = "<group>"; };
 		F4F6A4743D6788A682065AB4 /* dct64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dct64.c; path = ../../../include/mpg123/src/libmpg123/dct64.c; sourceTree = "<group>"; };
 		F56A100A0C7CAB3CFC98A64A /* id3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = id3.c; path = ../../../include/mpg123/src/libmpg123/id3.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -112,6 +114,7 @@
 				748089C69CBB42788456D006 /* layer1.c */,
 				9796B208BFD16ABAA76CF848 /* layer2.c */,
 				BAACDA4AE2E792FCCA83208A /* layer3.c */,
+				E769BB26AAD57CD8E9792166 /* lfs_wrap.c */,
 				54E0A14CA243977E1862978C /* libmpg123.c */,
 				5B10DD6681370D18E83E03A6 /* ntom.c */,
 				1B61528CDECD143E1D70B8CC /* optimize.c */,
@@ -211,6 +214,7 @@
 				26299D7E974C3E704D12EBBE /* layer1.c in Sources */,
 				142B46E0854DE7D23B149520 /* layer2.c in Sources */,
 				022CF042734F913429163E82 /* layer3.c in Sources */,
+				8EEA26DE2177F0D08A50951E /* lfs_wrap.c in Sources */,
 				C39C716430C47FD632576FA4 /* libmpg123.c in Sources */,
 				EAB0691E1B9461102EAC975E /* ntom.c in Sources */,
 				0DDEA7A4A06C7196094515E4 /* optimize.c in Sources */,
@@ -254,9 +258,7 @@
 				SYMROOT = "../../../bin/debug/xcode4-macosx/all";
 				USER_HEADER_SEARCH_PATHS = (
 					../../../include/mpg123/ports/Xcode,
-					../../../include/mpg123/src/libmpg123,
-					../../../include/mpg123/src/compat,
-					../../../include/mpg123/src,
+					../../../include/mpg123/src/include,
 				);
 			};
 			name = Debug;
@@ -294,9 +296,7 @@
 				SYMROOT = "../../../bin/release/xcode4-macosx/all";
 				USER_HEADER_SEARCH_PATHS = (
 					../../../include/mpg123/ports/Xcode,
-					../../../include/mpg123/src/libmpg123,
-					../../../include/mpg123/src/compat,
-					../../../include/mpg123/src,
+					../../../include/mpg123/src/include,
 				);
 			};
 			name = Release;

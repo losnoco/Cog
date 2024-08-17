@@ -76,7 +76,7 @@ struct MixLoopState
 			const bool inSustainLoop = chn.InSustainLoop() && chn.nLoopStart == chn.pModSample->nSustainStart && chn.nLoopEnd == chn.pModSample->nSustainEnd;
 
 			// Do not enable wraparound magic if we're previewing a custom loop!
-			if(inSustainLoop || chn.nLoopEnd == chn.pModSample->nLoopEnd)
+			if(inSustainLoop || (chn.nLoopStart == chn.pModSample->nLoopStart && chn.nLoopEnd == chn.pModSample->nLoopEnd))
 			{
 				SmpLength lookaheadOffset = 3 * InterpolationLookaheadBufferSize + chn.pModSample->nLength - chn.nLoopEnd;
 				if(inSustainLoop)

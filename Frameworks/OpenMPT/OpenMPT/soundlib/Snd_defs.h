@@ -552,6 +552,7 @@ enum PlayBehaviour
 	kST3TonePortaWithAdlibNote,     // Adlib note next to tone portamento is delayed until next row
 	kITResetFilterOnPortaSmpChange, // Filter is reset on portamento if sample is swapped
 	kITInitialNoteMemory,           // Initial "last note memory" for each channel is C-0 and not "no note"
+	kPluginDefaultProgramAndBank1,  // Default program and bank is set to 1 for plugins, so if an instrument is set to either of those, the program / bank change event is not sent to the plugin
 
 	// Add new play behaviours here.
 

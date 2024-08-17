@@ -31,7 +31,7 @@ enum class osclass {
 	Windows,
 	Linux,
 	Darwin,
-	BSD,
+	BSD_,
 	Haiku,
 	DOS,
 };
@@ -47,7 +47,7 @@ inline mpt::osinfo::osclass get_class_from_sysname(const std::string & sysname) 
 	} else if (sysname == "Darwin") {
 		result = mpt::osinfo::osclass::Darwin;
 	} else if (sysname == "FreeBSD" || sysname == "DragonFly" || sysname == "NetBSD" || sysname == "OpenBSD" || sysname == "MidnightBSD") {
-		result = mpt::osinfo::osclass::BSD;
+		result = mpt::osinfo::osclass::BSD_;
 	} else if (sysname == "Haiku") {
 		result = mpt::osinfo::osclass::Haiku;
 	} else if (sysname == "IBMPcDos" || sysname == "CompqDOS" || sysname == "MsoftDOS" || sysname == "AT&T DOS" || sysname == "ZenitDOS" || sysname == "HP DOS" || sysname == "GrBulDOS" || sysname == "PBellDOS" || sysname == "DEC DOS" || sysname == "OlivtDOS" || sysname == "TI DOS" || sysname == "Toshiba" || sysname == "NWin3Dev" || sysname == "MSWinDev" || sysname == "RxDOS" || sysname == "PTS-DOS" || sysname == "GenSoft" || sysname == "DR-DOS" || sysname == "NovelDOS" || sysname == "FreeDOS" || sysname == "MS-DOS") {
@@ -91,7 +91,7 @@ inline std::string get_class_name(mpt::osinfo::osclass c) {
 		case mpt::osinfo::osclass::Darwin:
 			result = "Darwin";
 			break;
-		case mpt::osinfo::osclass::BSD:
+		case mpt::osinfo::osclass::BSD_:
 			result = "BSD";
 			break;
 		case mpt::osinfo::osclass::Haiku:

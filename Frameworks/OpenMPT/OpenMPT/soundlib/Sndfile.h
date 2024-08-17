@@ -699,13 +699,13 @@ public:
 
 	enum ModLoadingFlags
 	{
-		onlyVerifyHeader   = 0x00,
 		loadPatternData    = 0x01, // If unset, advise loaders to not process any pattern data (if possible)
 		loadSampleData     = 0x02, // If unset, advise loaders to not process any sample data (if possible)
-		loadPluginData     = 0x04, // If unset, plugin data is not loaded (and as a consequence, plugins are not instanciated).
-		loadPluginInstance = 0x08, // If unset, plugins are not instanciated.
+		loadPluginData     = 0x04, // If unset, plugin data is not loaded (and as a consequence, plugins are not instantiated).
+		loadPluginInstance = 0x08, // If unset, plugins are not instantiated.
 		skipContainer      = 0x10,
 		skipModules        = 0x20,
+		onlyVerifyHeader   = 0x40, // Do not combine with other flags!
 
 		// Shortcuts
 		loadCompleteModule = loadSampleData | loadPatternData | loadPluginData | loadPluginInstance,
@@ -1285,7 +1285,7 @@ public:
 	// Resolve note/instrument combination to real sample index. Return value is guaranteed to be in [0, GetNumSamples()].
 	SAMPLEINDEX GetSampleIndex(ModCommand::NOTE note, uint32 instr) const noexcept;
 
-	uint32 MapMidiInstrument(uint8 program, uint16 bank, uint8 midiChannel, uint8 note, bool isXG, std::bitset<16> drumChns);
+	uint32 MapMidiInstrument(uint8 program, uint16 bank, uint8 midiChannel, uint8 note, bool isXG, std::bitset<32> drumChns);
 	size_t ITInstrToMPT(FileReader &file, ModInstrument &ins, uint16 trkvers);
 	std::pair<bool, bool> LoadMixPlugins(FileReader &file);
 #ifndef NO_PLUGINS

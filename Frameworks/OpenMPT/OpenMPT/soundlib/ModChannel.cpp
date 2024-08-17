@@ -127,16 +127,15 @@ void ModChannel::UpdateInstrumentVolume(const ModSample *smp, const ModInstrumen
 }
 
 
-ModCommand::NOTE ModChannel::GetPluginNote(bool realNoteMapping, bool ignoreArpeggio) const
+ModCommand::NOTE ModChannel::GetPluginNote(bool ignoreArpeggio) const
 {
 	if(nArpeggioLastNote != NOTE_NONE && !ignoreArpeggio)
 	{
-		// If an arpeggio is playing, this definitely the last playing note, which may be different from the arpeggio base note stored in nNote.
+		// If an arpeggio is playing, this definitely the last playing note, which may be different from the arpeggio base note stored in nLastNote.
 		return nArpeggioLastNote;
 	}
-	ModCommand::NOTE plugNote = mpt::saturate_cast<ModCommand::NOTE>(nNote - nTranspose);
-	// Caution: When in compatible mode, ModChannel::nNote stores the "real" note, not the mapped note!
-	if(realNoteMapping && pModInstrument != nullptr && plugNote >= NOTE_MIN && plugNote < (std::size(pModInstrument->NoteMap) + NOTE_MIN))
+	ModCommand::NOTE plugNote = nLastNote;
+	if(pModInstrument != nullptr && plugNote >= NOTE_MIN && plugNote < (std::size(pModInstrument->NoteMap) + NOTE_MIN))
 	{
 		plugNote = pModInstrument->NoteMap[plugNote - NOTE_MIN];
 	}

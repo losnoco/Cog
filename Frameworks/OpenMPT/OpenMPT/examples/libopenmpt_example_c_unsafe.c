@@ -25,12 +25,17 @@
 #include <libopenmpt/libopenmpt.h>
 #include <libopenmpt/libopenmpt_stream_callbacks_file.h>
 
-#if defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#if defined( __clang__ )
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#elif defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-prototypes"
 #endif
 #include <portaudio.h>
-#if defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#if defined( __clang__ )
+#pragma clang diagnostic pop
+#elif defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
 #pragma GCC diagnostic pop
 #endif
 

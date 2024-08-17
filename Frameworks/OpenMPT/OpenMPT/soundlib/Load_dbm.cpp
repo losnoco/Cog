@@ -38,17 +38,17 @@ struct DBMChunk
 	// 32-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idNAME	= MagicBE("NAME"),
-		idINFO	= MagicBE("INFO"),
-		idSONG	= MagicBE("SONG"),
-		idINST	= MagicBE("INST"),
-		idVENV	= MagicBE("VENV"),
-		idPENV	= MagicBE("PENV"),
-		idPATT	= MagicBE("PATT"),
-		idPNAM	= MagicBE("PNAM"),
-		idSMPL	= MagicBE("SMPL"),
-		idDSPE	= MagicBE("DSPE"),
-		idMPEG	= MagicBE("MPEG"),
+		idNAME = MagicBE("NAME"),
+		idINFO = MagicBE("INFO"),
+		idSONG = MagicBE("SONG"),
+		idINST = MagicBE("INST"),
+		idVENV = MagicBE("VENV"),
+		idPENV = MagicBE("PENV"),
+		idPATT = MagicBE("PATT"),
+		idPNAM = MagicBE("PNAM"),
+		idSMPL = MagicBE("SMPL"),
+		idDSPE = MagicBE("DSPE"),
+		idMPEG = MagicBE("MPEG"),
 	};
 
 	uint32be id;
@@ -85,18 +85,43 @@ struct DBMInstrument
 {
 	enum DBMInstrFlags
 	{
-		smpLoop			= 0x01,
-		smpPingPongLoop	= 0x02,
+		smpLoop         = 0x01,
+		smpPingPongLoop = 0x02,
 	};
 
 	char     name[30];
-	uint16be sample;		// Sample reference
-	uint16be volume;		// 0...64
+	uint16be sample;  // Sample reference
+	uint16be volume;  // 0...64
 	uint32be sampleRate;
 	uint32be loopStart;
 	uint32be loopLength;
-	int16be  panning;		// -128...128
-	uint16be flags;			// See DBMInstrFlags
+	int16be  panning;  // -128...128
+	uint16be flags;    // See DBMInstrFlags
+
+	void ConvertToMPT(ModInstrument &mptIns) const
+	{
+		mptIns.name = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, name);
+		mptIns.nFadeOut = 0;
+		mptIns.nPan = static_cast<uint16>(panning + 128);
+		LimitMax(mptIns.nPan, uint32(256));
+		mptIns.dwFlags.set(INS_SETPANNING);
+	}
+
+	void ConvertToMPT(ModSample &mptSmp) const
+	{
+		mptSmp.Initialize();
+		mptSmp.nVolume = std::min(static_cast<uint16>(volume), uint16(64)) * 4u;
+		mptSmp.nC5Speed = Util::muldivr(sampleRate, 8303, 8363);
+		
+		if(loopLength && (flags & (smpLoop | smpPingPongLoop)))
+		{
+			mptSmp.nLoopStart = loopStart;
+			mptSmp.nLoopEnd = mptSmp.nLoopStart + loopLength;
+			mptSmp.uFlags.set(CHN_LOOP);
+			if(flags & smpPingPongLoop)
+				mptSmp.uFlags.set(CHN_PINGPONGLOOP);
+		}
+	}
 };
 
 MPT_BINARY_STRUCT(DBMInstrument, 50)
@@ -107,19 +132,55 @@ struct DBMEnvelope
 {
 	enum DBMEnvelopeFlags
 	{
-		envEnabled	= 0x01,
-		envSustain	= 0x02,
-		envLoop		= 0x04,
+		envEnabled  = 0x01,
+		envSustain1 = 0x02,
+		envLoop     = 0x04,
+		envSustain2 = 0x08,
 	};
 
 	uint16be instrument;
-	uint8be  flags;			// See DBMEnvelopeFlags
-	uint8be  numSegments;	// Number of envelope points - 1
+	uint8be  flags;        // See DBMEnvelopeFlags
+	uint8be  numSegments;  // Number of envelope points - 1
 	uint8be  sustain1;
 	uint8be  loopBegin;
 	uint8be  loopEnd;
-	uint8be  sustain2;		// Second sustain point
+	uint8be  sustain2;  // Second sustain point
 	uint16be data[2 * 32];
+
+	void ConvertToMPT(InstrumentEnvelope &mptEnv, bool scaleEnv) const
+	{
+		if(numSegments)
+		{
+			if(flags & envEnabled) mptEnv.dwFlags.set(ENV_ENABLED);
+			if(flags & (envSustain1 | envSustain2)) mptEnv.dwFlags.set(ENV_SUSTAIN);
+			if(flags & envLoop) mptEnv.dwFlags.set(ENV_LOOP);
+		}
+
+		uint8 numPoints = std::min(numSegments.get(), uint8(31)) + 1;
+		mptEnv.resize(numPoints);
+
+		mptEnv.nLoopStart = loopBegin;
+		mptEnv.nLoopEnd = loopEnd;
+		if((flags & (envSustain1 | envSustain2)) == envSustain1)
+			mptEnv.nSustainStart = mptEnv.nSustainEnd = sustain1;
+		else if((flags & (envSustain1 | envSustain2)) == envSustain2)
+			mptEnv.nSustainStart = mptEnv.nSustainEnd = sustain2;
+		else
+			mptEnv.nSustainStart = mptEnv.nSustainEnd = std::min(sustain1, sustain2);
+
+		for(uint8 i = 0; i < numPoints; i++)
+		{
+			mptEnv[i].tick = data[i * 2];
+			uint16 val = data[i * 2 + 1];
+			if(scaleEnv)
+			{
+				// Panning envelopes are -128...128 in DigiBooster Pro 3.x
+				val = static_cast<uint16>((val + 128) / 4);
+			}
+			LimitMax(val, uint16(64));
+			mptEnv[i].value = static_cast<uint8>(val);
+		}
+	}
 };
 
 MPT_BINARY_STRUCT(DBMEnvelope, 136)
@@ -137,11 +198,11 @@ static constexpr EffectCommand dbmEffects[] =
 	CMD_NONE, CMD_PANNINGSLIDE, CMD_NONE, CMD_NONE,
 	CMD_NONE, CMD_NONE, CMD_NONE,
 #ifndef NO_PLUGINS
-	CMD_DBMECHO,	// Toggle DSP
-	CMD_MIDI,		// Wxx Echo Delay
-	CMD_MIDI,		// Xxx Echo Feedback
-	CMD_MIDI,		// Yxx Echo Mix
-	CMD_MIDI,		// Zxx Echo Cross
+	CMD_DBMECHO,  // Toggle DSP
+	CMD_MIDI,     // Wxx Echo Delay
+	CMD_MIDI,     // Xxx Echo Feedback
+	CMD_MIDI,     // Yxx Echo Mix
+	CMD_MIDI,     // Zxx Echo Cross
 #endif // NO_PLUGINS
 };
 
@@ -197,15 +258,15 @@ static std::pair<EffectCommand, uint8> ConvertDBMEffect(const uint8 cmd, uint8 p
 	case CMD_MODCMDEX:
 		switch(param & 0xF0)
 		{
-		case 0x30:	// Play backwards
+		case 0x30:  // Play backwards
 			command = CMD_S3MCMDEX;
 			param = 0x9F;
 			break;
-		case 0x40:	// Turn off sound in channel (volume / portamento commands after this can't pick up the note anymore)
+		case 0x40:  // Turn off sound in channel (volume / portamento commands after this can't pick up the note anymore)
 			command = CMD_S3MCMDEX;
 			param = 0xC0;
 			break;
-		case 0x50:	// Turn on/off channel
+		case 0x50:  // Turn on/off channel
 			// TODO: Apparently this should also kill the playing note.
 			if((param & 0x0F) <= 0x01)
 			{
@@ -213,7 +274,7 @@ static std::pair<EffectCommand, uint8> ConvertDBMEffect(const uint8 cmd, uint8 p
 				param = (param == 0x50) ? 0x00 : 0x40;
 			}
 			break;
-		case 0x70:	// Coarse offset
+		case 0x70:  // Coarse offset
 			command = CMD_S3MCMDEX;
 			param = 0xA0 | (param & 0x0F);
 			break;
@@ -258,35 +319,7 @@ static void ReadDBMEnvelopeChunk(FileReader chunk, EnvelopeType envType, CSoundF
 		uint16 dbmIns = dbmEnv.instrument;
 		if(dbmIns > 0 && dbmIns <= sndFile.GetNumInstruments() && (sndFile.Instruments[dbmIns] != nullptr))
 		{
-			ModInstrument *mptIns = sndFile.Instruments[dbmIns];
-			InstrumentEnvelope &mptEnv = mptIns->GetEnvelope(envType);
-
-			if(dbmEnv.numSegments)
-			{
-				if(dbmEnv.flags & DBMEnvelope::envEnabled) mptEnv.dwFlags.set(ENV_ENABLED);
-				if(dbmEnv.flags & DBMEnvelope::envSustain) mptEnv.dwFlags.set(ENV_SUSTAIN);
-				if(dbmEnv.flags & DBMEnvelope::envLoop) mptEnv.dwFlags.set(ENV_LOOP);
-			}
-
-			uint8 numPoints = std::min(dbmEnv.numSegments.get(), uint8(31)) + 1;
-			mptEnv.resize(numPoints);
-
-			mptEnv.nLoopStart = dbmEnv.loopBegin;
-			mptEnv.nLoopEnd = dbmEnv.loopEnd;
-			mptEnv.nSustainStart = mptEnv.nSustainEnd = dbmEnv.sustain1;
-
-			for(uint8 i = 0; i < numPoints; i++)
-			{
-				mptEnv[i].tick = dbmEnv.data[i * 2];
-				uint16 val = dbmEnv.data[i * 2 + 1];
-				if(scaleEnv)
-				{
-					// Panning envelopes are -128...128 in DigiBooster Pro 3.x
-					val = (val + 128) / 4;
-				}
-				LimitMax(val, uint16(64));
-				mptEnv[i].value = static_cast<uint8>(val);
-			}
+			dbmEnv.ConvertToMPT(sndFile.Instruments[dbmIns]->GetEnvelope(envType), scaleEnv);
 		}
 	}
 }
@@ -356,6 +389,8 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 	m_playBehaviour.set(kSlidesAtSpeed1);
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	m_playBehaviour.reset(kITArpeggio);
+	m_playBehaviour.reset(kITInstrWithNoteOff);
+	m_playBehaviour.reset(kITInstrWithNoteOffOldEffects);
 
 	m_modFormat.formatName = U_("DigiBooster Pro");
 	m_modFormat.type = U_("dbm");
@@ -407,41 +442,41 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 #endif // MPT_DBM_USE_REAL_SUBSONGS
 
 	// Read instruments
+	std::map<SAMPLEINDEX, SAMPLEINDEX> copySample;
 	if(FileReader instChunk = chunks.GetChunk(DBMChunk::idINST))
 	{
+		std::set<SAMPLEINDEX> sampleUsed;
 		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++)
 		{
 			DBMInstrument instrHeader;
 			instChunk.ReadStruct(instrHeader);
 
-			ModInstrument *mptIns = AllocateInstrument(i, instrHeader.sample);
-			if(mptIns == nullptr || instrHeader.sample >= MAX_SAMPLES)
+			SAMPLEINDEX mappedSample = instrHeader.sample;
+			if(sampleUsed.count(mappedSample) && CanAddMoreSamples())
 			{
+				ModSample mptSmp;
+				instrHeader.ConvertToMPT(mptSmp);
+				const ModSample &origSmp = Samples[mappedSample];
+				if(mptSmp.nVolume != origSmp.nVolume
+					|| mptSmp.uFlags != origSmp.uFlags
+					|| mptSmp.nLoopStart != origSmp.nLoopStart
+					|| mptSmp.nLoopEnd != origSmp.nLoopEnd
+					|| mptSmp.nC5Speed != origSmp.nC5Speed)
+				{
+					// Need to duplicate
+					mappedSample = ++m_nSamples;
+					copySample.emplace(mappedSample, instrHeader.sample);
+				}
+			}
+			ModInstrument *mptIns = AllocateInstrument(i, mappedSample);
+			if(mptIns == nullptr || mappedSample >= MAX_SAMPLES)
 				continue;
-			}
 
-			mptIns->name = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, instrHeader.name);
-			m_szNames[instrHeader.sample] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, instrHeader.name);
-
-			mptIns->nFadeOut = 0;
-			mptIns->nPan = static_cast<uint16>(instrHeader.panning + 128);
-			LimitMax(mptIns->nPan, uint32(256));
-			mptIns->dwFlags.set(INS_SETPANNING);
-
+			instrHeader.ConvertToMPT(*mptIns);
 			// Sample Info
-			ModSample &mptSmp = Samples[instrHeader.sample];
-			mptSmp.Initialize();
-			mptSmp.nVolume = std::min(static_cast<uint16>(instrHeader.volume), uint16(64)) * 4u;
-			mptSmp.nC5Speed = Util::muldivr(instrHeader.sampleRate, 8303, 8363);
-
-			if(instrHeader.loopLength && (instrHeader.flags & (DBMInstrument::smpLoop | DBMInstrument::smpPingPongLoop)))
-			{
-				mptSmp.nLoopStart = instrHeader.loopStart;
-				mptSmp.nLoopEnd = mptSmp.nLoopStart + instrHeader.loopLength;
-				mptSmp.uFlags.set(CHN_LOOP);
-				if(instrHeader.flags & DBMInstrument::smpPingPongLoop)
-					mptSmp.uFlags.set(CHN_PINGPONGLOOP);
-			}
+			instrHeader.ConvertToMPT(Samples[mappedSample]);
+			m_szNames[mappedSample] = mptIns->name;
+			sampleUsed.insert(mappedSample);
 		}
 
 		// Read envelopes
@@ -466,7 +501,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 	if(patternChunk.IsValid() && (loadFlags & loadPatternData))
 	{
 		FileReader patternNameChunk = chunks.GetChunk(DBMChunk::idPNAM);
-		patternNameChunk.Skip(1);	// Encoding, should be UTF-8 or ASCII
+		patternNameChunk.Skip(1);  // Encoding (0 = unspecified ASCII-compatible 8-bit encoding, 106 = UTF-8)
 
 		Patterns.ResizeArray(infoData.patterns);
 		std::vector<std::pair<EffectCommand, ModCommand::PARAM>> lostGlobalCommands;
@@ -538,6 +573,14 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 					{
 						std::swap(cmd1, cmd2);
 						std::swap(param1, param2);
+					} else if(cmd1 == CMD_TONEPORTAMENTO && cmd2 == CMD_OFFSET && param2 == 0)
+					{
+						// Offset + Portmaneto: Ignore portamento. If the offset command has a non-zero parameter, keep it for effect memory.
+						cmd2 = CMD_NONE;
+					} else if(cmd2 == CMD_TONEPORTAMENTO && cmd1 == CMD_OFFSET && param1 == 0)
+					{
+						// Ditto
+						cmd1 = CMD_NONE;
 					}
 
 					const auto lostCommand = m.FillInTwoCommands(cmd1, param1, cmd2, param2);
@@ -641,6 +684,13 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		for(SAMPLEINDEX smp = 1; smp <= GetNumSamples(); smp++)
 		{
+			if(auto copyFrom = copySample.find(smp); copyFrom != copySample.end())
+			{
+				Samples[smp].nLength = Samples[copyFrom->second].nLength;
+				Samples[smp].CopyWaveform(Samples[copyFrom->second]);
+				continue;
+			}
+
 			uint32 sampleFlags = sampleChunk.ReadUint32BE();
 			uint32 sampleLength = sampleChunk.ReadUint32BE();
 

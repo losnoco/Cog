@@ -15,7 +15,7 @@ problems can happen at:
     reports or bug fixes and feature development discussion
  *  [Forum](https://forum.openmpt.org/), preferred for long-term discussion of
     new features or specific questions about development
- *  [IRC channel (`EsperNET/#modplug`)](irc://irc.esper.net:5555/#modplug),
+ *  [IRC channel (`Libera.Chat/#openmpt`)](ircs://irc.libera.chat:6697/#openmpt),
     preferred for shorter questions
  *  [GitHub pull requests](https://github.com/OpenMPT/openmpt/pulls), please
     only use for rather tiny fixes, see below

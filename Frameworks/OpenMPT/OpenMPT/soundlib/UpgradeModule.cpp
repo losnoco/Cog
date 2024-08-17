@@ -352,8 +352,21 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
+	bool hasAnyPlugins = false;
+	if(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM))
+	{
+		for(auto &plugin : m_MixPlugins)
+		{
+			if(plugin.IsValidPlugin())
+			{
+				hasAnyPlugins = true;
+				break;
+			}
+		}
+	}
+
 #ifndef NO_PLUGINS
-	if(m_dwLastSavedWithVersion < MPT_V("1.22.07.01"))
+	if(m_dwLastSavedWithVersion < MPT_V("1.22.07.01") && hasAnyPlugins)
 	{
 		// Convert ANSI plugin path names to UTF-8 (irrelevant in probably 99% of all cases anyway, I think I've never seen a VST plugin with a non-ASCII file name)
 		for(auto &plugin : m_MixPlugins)
@@ -724,7 +737,7 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
-	if(m_dwLastSavedWithVersion >= MPT_V("1.27.00.42") && m_dwLastSavedWithVersion < MPT_V("1.30.00.46") && (GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM)))
+	if(m_dwLastSavedWithVersion >= MPT_V("1.27.00.42") && m_dwLastSavedWithVersion < MPT_V("1.30.00.46") && hasAnyPlugins)
 	{
 		// The Flanger DMO plugin is almost identical to the Chorus... but only almost.
 		// The effect implementation was the same in OpenMPT 1.27-1.29, now it isn't anymore.
@@ -736,20 +749,26 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
-	if(m_dwLastSavedWithVersion < MPT_V("1.31.00.09") && (GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM)))
+	if(m_dwLastSavedWithVersion < MPT_V("1.30.00.54") && hasAnyPlugins)
 	{
-		// Old-style plugin tone portamento
-		for(auto &plugin : m_MixPlugins)
+		// Currently active program and bank is assumed to be 1 when starting playback
+		for(INSTRUMENTINDEX i = 1; i <= GetNumInstruments(); i++)
 		{
-			if(plugin.IsValidPlugin())
+			if(Instruments[i] && (Instruments[i]->nMidiProgram == 1 || Instruments[i]->wMidiBank == 1))
 			{
-				m_playBehaviour.set(kPluginIgnoreTonePortamento);
+				m_playBehaviour.set(kPluginDefaultProgramAndBank1);
 				break;
 			}
 		}
 	}
 
-	if(m_dwLastSavedWithVersion >= MPT_V("1.27") && m_dwLastSavedWithVersion < MPT_V("1.30.06.00") && (GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM)))
+	if(m_dwLastSavedWithVersion < MPT_V("1.31.00.09") && hasAnyPlugins)
+	{
+		// Old-style plugin tone portamento
+		m_playBehaviour.set(kPluginIgnoreTonePortamento);
+	}
+
+	if(m_dwLastSavedWithVersion >= MPT_V("1.27") && m_dwLastSavedWithVersion < MPT_V("1.30.06.00") && hasAnyPlugins)
 	{
 		// Fix off-by-one delay length in older Echo DMO emulation
 		for(auto &plugin : m_MixPlugins)

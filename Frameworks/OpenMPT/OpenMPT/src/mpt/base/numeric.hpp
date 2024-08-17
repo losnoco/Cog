@@ -80,6 +80,15 @@ constexpr T align_down(T x, T target) {
 	return (x / target) * target;
 }
 
+// rounds x up to multiples of target or saturation of T
+template <typename T>
+constexpr T saturate_align_up(T x, T target) {
+	if (x > (std::numeric_limits<T>::max() - (target - 1))) {
+		return std::numeric_limits<T>::max();
+	}
+	return ((x + (target - 1)) / target) * target;
+}
+
 // Returns sign of a number (-1 for negative numbers, 1 for positive numbers, 0 for 0)
 template <class T>
 constexpr int signum(T value) {

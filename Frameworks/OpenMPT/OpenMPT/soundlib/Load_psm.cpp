@@ -263,19 +263,6 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderPSM(MemoryFileReader file, co
 	{
 		return ProbeFailure;
 	}
-	PSMChunk chunkHeader;
-	if(!file.ReadStruct(chunkHeader))
-	{
-		return ProbeWantMoreData;
-	}
-	if(chunkHeader.length == 0)
-	{
-		return ProbeFailure;
-	}
-	if((chunkHeader.id & 0x7F7F7F7Fu) != chunkHeader.id) // ASCII?
-	{
-		return ProbeFailure;
-	}
 	MPT_UNREFERENCED_PARAMETER(pfilesize);
 	return ProbeSuccess;
 }

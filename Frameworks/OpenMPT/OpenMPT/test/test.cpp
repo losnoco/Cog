@@ -201,7 +201,7 @@ void DoTests()
 					}
 					return result;
 				};
-				std::cout << "Rounding mode: " << format_rounding(std::fegetround());
+				std::cout << "Rounding mode: " << format_rounding(std::fegetround()) << std::endl;
 			}
 		#endif // !MPT_LIBC_QUIRK_NO_FENV
 		#if MPT_ARCH_X86 || MPT_ARCH_AMD64
@@ -902,7 +902,10 @@ static MPT_NOINLINE void TestStringFormatting()
 #endif
 
 	VERIFY_EQUAL(mpt::parse<float>(mpt::afmt::val(-87.0)), -87.0f);
-#if !MPT_OS_DJGPP
+	// VS2022 17.7.2 parses "-5e-07" as -5.0000000000000004e-06 instead of -4.9999999999999998e-07 which is closer
+	// <https://developercommunity.visualstudio.com/t/Parsing-double-from-stringstream-returns/10450694>
+	// <https://developercommunity.visualstudio.com/t/v143-1437-istringstream-incorrectly-con/10450662>
+#if !MPT_OS_DJGPP && !(MPT_MSVC_AT_LEAST(2022, 7) && MPT_MSVC_BEFORE(2022, 9))
 	VERIFY_EQUAL(mpt::parse<double>(mpt::afmt::val(-0.5e-6)), -0.5e-6);
 #endif
 
@@ -2575,6 +2578,7 @@ static MPT_NOINLINE void TestSettings()
 		conf.Write(U_("Test"), U_("bar"), 42);
 		conf.Read(U_("Test"), U_("baz"), 4711);
 		foobar = conf.Read(U_("Test"), U_("bar"), 28);
+		VERIFY_EQUAL(foobar, 42);
 	}
 
 	{
@@ -2926,7 +2930,7 @@ static void TestLoadMPTMFile(const CSoundFile &sndFile)
 		VERIFY_EQUAL_NONCONT(mpt::Date::forget_timezone(mpt::Date::UnixAsLocal(mpt::Date::UnixFromUTC(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::UTC>(fh.loadDate)))).year, 2011);
 		VERIFY_EQUAL_NONCONT(mpt::Date::forget_timezone(mpt::Date::UnixAsLocal(mpt::Date::UnixFromUTC(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::UTC>(fh.loadDate)))).month, 6);
 		VERIFY_EQUAL_NONCONT(mpt::Date::forget_timezone(mpt::Date::UnixAsLocal(mpt::Date::UnixFromUTC(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::UTC>(fh.loadDate)))).day, 14);
-#if MPT_CXX_AT_LEAST(20) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO_DATE)
+#if MPT_CXX_AT_LEAST(20) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO_DATE)
 		VERIFY_EQUAL_NONCONT(mpt::Date::forget_timezone(mpt::Date::UnixAsLocal(mpt::Date::UnixFromUTC(mpt::Date::interpret_as_timezone<mpt::Date::LogicalTimezone::UTC>(fh.loadDate)))).hours, 21);
 #else
 #if defined(MPT_FALLBACK_TIMEZONE_WINDOWS_HISTORIC)

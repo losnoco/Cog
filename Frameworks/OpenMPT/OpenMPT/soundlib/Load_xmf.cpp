@@ -50,6 +50,8 @@ struct XMFSampleHeader
 			return false;
 		if((flags & smpEnableLoop) && !loopEnd.get())
 			return false;
+		if(loopStart.get() > loopEnd.get() || loopStart.get() > length)
+			return false;
 		if(loopEnd.get() != 0 && (loopEnd.get() >= length || loopStart.get() >= loopEnd.get()))
 			return false;
 		return true;

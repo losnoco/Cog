@@ -23,7 +23,7 @@ OPENMPT_NAMESPACE_BEGIN
 
 RowVisitor::LoopState::LoopState(const ChannelStates &chnState, const bool ignoreRow)
 {
-	// Rather than storing the exact loop count vector, we compute a FNV-1a 64-bit hash of it.
+	// Rather than storing the exact loop count vector, we compute an FNV-1a 64-bit hash of it.
 	// This means we can store the loop state in a small and fixed amount of memory.
 	// In theory there is the possibility of hash collisions for different loop states, but in practice,
 	// the relevant inputs for the hashing algorithm are extremely unlikely to produce collisions.
@@ -84,10 +84,15 @@ void RowVisitor::Initialize(bool reset)
 {
 	auto &order = Order();
 	const ORDERINDEX endOrder = order.GetLengthTailTrimmed();
+	bool reserveLoopStates = true;
 	m_visitedRows.resize(endOrder);
 	if(reset)
 	{
-		m_visitedLoopStates.clear();
+		reserveLoopStates = m_visitedLoopStates.empty();
+		for(auto &loopState : m_visitedLoopStates)
+		{
+			loopState.second.clear();
+		}
 		m_rowsSpentInLoops = 0;
 	}
 
@@ -104,7 +109,7 @@ void RowVisitor::Initialize(bool reset)
 		else
 			visitedRows.resize(numRows, false);
 
-		if(!order.IsValidPat(ord))
+		if(!reserveLoopStates || !order.IsValidPat(ord))
 			continue;
 
 		const ROWINDEX startRow = std::min(static_cast<ROWINDEX>(reset ? 0 : visitedRows.size()), numRows);

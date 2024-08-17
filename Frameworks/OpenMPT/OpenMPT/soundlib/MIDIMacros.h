@@ -91,6 +91,8 @@ struct MIDIMacroConfigData
 	struct Macro
 	{
 	public:
+		Macro() = default;
+		Macro(const Macro &other) = default;
 		Macro &operator=(const Macro &other) = default;
 		Macro &operator=(const std::string_view other) noexcept
 		{

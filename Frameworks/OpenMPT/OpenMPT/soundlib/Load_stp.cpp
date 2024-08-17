@@ -441,18 +441,16 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 				const auto [instr, note, command, param] = file.ReadArray<uint8, 4>();
 
 				m.instr   = instr;
-				m.note    = note;
 				m.param   = param;
-
-				if(m.note)
+				if(note)
 				{
-					m.note += 24 + NOTE_MIN;
+					m.note = NOTE_MIDDLEC - 36 + note;
 					chnMem = ChannelMemory();
 				}
 
-				// this is a nibble-swapped param value used for auto fine volside
-				// and auto global fine volside
-				uint8 swapped = (m.param >> 4) | (m.param << 4);
+				// Volume slides not only have their nibbles swapped, but the up and down parameters also add up
+				const int totalSlide = -static_cast<int>(m.param >> 4) + (m.param & 0x0F);
+				const uint8 slideParam = static_cast<uint8>((totalSlide > 0) ? totalSlide << 4 : -totalSlide);
 
 				if((command & 0xF0) == 0xF0)
 				{
@@ -462,138 +460,93 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					{
 						m.param = mpt::saturate_round<ModCommand::PARAM>(ConvertTempo(ciaTempo).ToDouble());
 						m.command = CMD_TEMPO;
-					} else
-					{
-						m.command = CMD_NONE;
 					}
 				} else switch(command)
 				{
 				case 0x00: // arpeggio
 					if(m.param)
 						m.command = CMD_ARPEGGIO;
-					else
-						m.command = CMD_NONE;
 					break;
-
 				case 0x01: // portamento up
 					m.command = CMD_PORTAMENTOUP;
 					break;
-
 				case 0x02: // portamento down
 					m.command = CMD_PORTAMENTODOWN;
 					break;
-
 				case 0x03: // auto fine portamento up
 					chnMem.autoFinePorta = 0x10 | std::min(m.param, ModCommand::PARAM(15));
 					chnMem.autoPortaUp = 0;
 					chnMem.autoPortaDown = 0;
 					chnMem.autoTonePorta = 0;
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x04: // auto fine portamento down
 					chnMem.autoFinePorta = 0x20 | std::min(m.param, ModCommand::PARAM(15));
 					chnMem.autoPortaUp = 0;
 					chnMem.autoPortaDown = 0;
 					chnMem.autoTonePorta = 0;
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x05: // auto portamento up
 					chnMem.autoFinePorta = 0;
 					chnMem.autoPortaUp = m.param;
 					chnMem.autoPortaDown = 0;
 					chnMem.autoTonePorta = 0;
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x06: // auto portamento down
 					chnMem.autoFinePorta = 0;
 					chnMem.autoPortaUp = 0;
 					chnMem.autoPortaDown = m.param;
 					chnMem.autoTonePorta = 0;
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x07: // set global volume
 					m.command = CMD_GLOBALVOLUME;
 					globalVolSlide = 0;
 					break;
-
 				case 0x08: // auto global fine volume slide
-					globalVolSlide = swapped;
-					m.command = CMD_NONE;
+					globalVolSlide = slideParam;
 					break;
-
 				case 0x09: // fine portamento up
 					m.command = CMD_MODCMDEX;
 					m.param = 0x10 | std::min(m.param, ModCommand::PARAM(15));
 					break;
-
 				case 0x0A: // fine portamento down
 					m.command = CMD_MODCMDEX;
 					m.param = 0x20 | std::min(m.param, ModCommand::PARAM(15));
 					break;
-
 				case 0x0B: // auto fine volume slide
-					chnMem.autoVolSlide = swapped;
-					m.command = CMD_NONE;
+					chnMem.autoVolSlide = slideParam;
 					break;
-
 				case 0x0C: // set volume
 					m.volcmd = VOLCMD_VOLUME;
 					m.vol = m.param;
 					chnMem.autoVolSlide = 0;
-					m.command = CMD_NONE;
 					break;
-
 				case 0x0D: // volume slide (param is swapped compared to .mod)
-					if(m.param & 0xF0)
-					{
-						m.volcmd = VOLCMD_VOLSLIDEDOWN;
-						m.vol = m.param >> 4;
-					} else if(m.param & 0x0F)
-					{
-						m.volcmd = VOLCMD_VOLSLIDEUP;
-						m.vol = m.param & 0xF;
-					}
+					if(totalSlide < 0)
+						m.SetVolumeCommand(VOLCMD_VOLSLIDEDOWN, slideParam & 0x0F);
+					else if(totalSlide > 0)
+						m.SetVolumeCommand(VOLCMD_VOLSLIDEUP, slideParam >> 4);
 					chnMem.autoVolSlide = 0;
-					m.command = CMD_NONE;
 					break;
-
 				case 0x0E: // set filter (also uses opposite value compared to .mod)
-					m.command = CMD_MODCMDEX;
-					m.param = 1 ^ (m.param ? 1 : 0);
+					m.SetEffectCommand(CMD_MODCMDEX, 1 ^ (m.param ? 1 : 0));
 					break;
-
 				case 0x0F: // set speed
-					m.command = CMD_SPEED;
 					speedFrac = m.param & 0x0F;
-					m.param >>= 4;
+					m.SetEffectCommand(CMD_SPEED, m.param >> 4);
 					break;
-
 				case 0x10: // auto vibrato
 					chnMem.autoVibrato = m.param;
 					chnMem.vibratoMem = 0;
-					m.command = CMD_NONE;
 					break;
-
 				case 0x11: // auto tremolo
 					if(m.param & 0xF)
 						chnMem.autoTremolo = m.param;
 					else
 						chnMem.autoTremolo = 0;
-					m.command = CMD_NONE;
 					break;
-
 				case 0x12: // pattern break
 					m.command = CMD_PATTERNBREAK;
 					break;
-
 				case 0x13: // auto tone portamento
 					chnMem.autoFinePorta = 0;
 					chnMem.autoPortaUp = 0;
@@ -601,13 +554,10 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					chnMem.autoTonePorta = m.param;
 
 					chnMem.tonePortaMem = 0;
-					m.command = CMD_NONE;
 					break;
-
 				case 0x14: // position jump
 					m.command = CMD_POSITIONJUMP;
 					break;
-
 				case 0x16: // start loop sequence
 					if(m.instr && m.instr <= loopInfo.size())
 					{
@@ -620,10 +570,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 							m.vol = m.param;
 						}
 					}
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x17: // play only loop nn
 					if(m.instr && m.instr <= loopInfo.size())
 					{
@@ -637,10 +584,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 							m.instr = static_cast<ModCommand::INSTR>(loopList[m.param].looped);
 						}
 					}
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x18: // play sequence without loop
 					if(m.instr && m.instr <= loopInfo.size())
 					{
@@ -657,10 +601,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 							nonLooped[m.instr - 1] = ++m_nSamples;
 						m.instr = static_cast<ModCommand::INSTR>(nonLooped[m.instr - 1]);
 					}
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x19: // play only loop nn without loop
 					if(m.instr && m.instr <= loopInfo.size())
 					{
@@ -674,54 +615,37 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 							m.instr = static_cast<ModCommand::INSTR>(loopList[m.param].nonLooped);
 						}
 					}
-
-					m.command = CMD_NONE;
 					break;
-
 				case 0x1D: // fine volume slide (nibble order also swapped)
-					m.command = CMD_VOLUMESLIDE;
-					m.param = swapped;
-					if(m.param & 0xF0) // slide down
-						m.param |= 0x0F;
-					else if(m.param & 0x0F)
-						m.param |= 0xF0;
+					if(totalSlide < 0)  // slide down
+						m.SetEffectCommand(CMD_MODCMDEX, 0xB0 | (slideParam & 0x0F));
+					else if(totalSlide > 0)
+						m.SetEffectCommand(CMD_MODCMDEX, 0xA0 | (slideParam >> 4));
 					break;
-
 				case 0x20: // "delayed fade"
 					// just behave like either a normal fade or a notecut
 					// depending on the speed
 					if(m.param & 0xF0)
 					{
 						chnMem.autoVolSlide = m.param >> 4;
-						m.command = CMD_NONE;
 					} else
 					{
-						m.command = CMD_MODCMDEX;
-						m.param = 0xC0 | (m.param & 0xF);
+						m.SetEffectCommand(CMD_MODCMDEX, 0xC0 | (m.param & 0xF));
 					}
 					break;
-
 				case 0x21: // note delay
-					m.command = CMD_MODCMDEX;
-					m.param = 0xD0 | std::min(m.param, ModCommand::PARAM(15));
+					m.SetEffectCommand(CMD_MODCMDEX, 0xD0 | std::min(m.param, ModCommand::PARAM(15)));
 					break;
-
 				case 0x22: // retrigger note
-					m.command = CMD_MODCMDEX;
-					m.param = 0x90 | std::min(m.param, ModCommand::PARAM(15));
+					m.SetEffectCommand(CMD_MODCMDEX, 0x90 | std::min(m.param, ModCommand::PARAM(15)));
 					break;
-
 				case 0x49: // set sample offset
 					m.command = CMD_OFFSET;
 					break;
-
 				case 0x4E: // other protracker commands (pattern loop / delay)
 					if((m.param & 0xF0) == 0x60 || (m.param & 0xF0) == 0xE0)
 						m.command = CMD_MODCMDEX;
-					else
-						m.command = CMD_NONE;
 					break;
-
 				case 0x4F: // set speed/tempo
 					if(m.param < 0x20)
 					{
@@ -732,9 +656,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 						m.command = CMD_TEMPO;
 					}
 					break;
-
 				default:
-					m.command = CMD_NONE;
 					break;
 				}
 

@@ -665,7 +665,7 @@ struct SymInstrument
 			loopLen = (loopLen << 16) + loopLenFine;
 
 			const double loopScale = static_cast<double>(mptSmp.nLength) / (100 << 16);
-			loopStart = mpt::saturate_cast<SmpLength>(loopStart * loopScale);
+			loopStart = std::min(mptSmp.nLength, mpt::saturate_cast<SmpLength>(loopStart * loopScale));
 			loopLen = std::min(mptSmp.nLength - loopStart, mpt::saturate_cast<SmpLength>(loopLen * loopScale));
 		} else if(mptSmp.HasSampleData())
 		{

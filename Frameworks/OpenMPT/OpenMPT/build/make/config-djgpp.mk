@@ -222,8 +222,8 @@ ibm/486bl         := $(___) -march=i486        $(FPU_NONE)   -mtune=i386        
 
 
 
-cyrix/cx486slc    := $(___) -march=i386        $(FPU_NONE)   -mtune=i486        $(OPT_DEF)  --param l1-cache-size=1  --param l2-cache-size=$(CACHE_386)
-cyrix/cx486dlc    := $(___) -march=i386        $(FPU_NONE)   -mtune=i486        $(OPT_DEF)  --param l1-cache-size=1  --param l2-cache-size=$(CACHE_386)
+cyrix/cx486slc    := $(___) -march=i486        $(FPU_NONE)   -mtune=i486        $(OPT_DEF)  --param l1-cache-size=1  --param l2-cache-size=$(CACHE_386)
+cyrix/cx486dlc    := $(___) -march=i486        $(FPU_NONE)   -mtune=i486        $(OPT_DEF)  --param l1-cache-size=1  --param l2-cache-size=$(CACHE_386)
 cyrix/cx4x86s     := $(___) -march=i486        $(FPU_NONE)   -mtune=i486        $(OPT_DEF)  --param l1-cache-size=2  --param l2-cache-size=$(CACHE_486)
 
 cyrix/cx4x86dx    := $(___) -march=i486        $(FPU_387)    -mtune=i486        $(OPT_DEF)  --param l1-cache-size=6  --param l2-cache-size=$(CACHE_486)
@@ -376,6 +376,9 @@ ARFLAGS  := rcs
 
 OPTIMIZE_FASTMATH=1
 
+# See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115049>.
+MPT_COMPILER_NOIPARA=1
+
 include build/make/warnings-gcc.mk
 
 DYNLINK=0
@@ -392,6 +395,8 @@ MPT_COMPILER_NOVISIBILITY=1
 
 # causes crashes on process shutdown with liballegro
 MPT_COMPILER_NOGCSECTIONS=1
+
+MPT_COMPILER_NOALLOCAH=1
 
 ifeq ($(OPTIMIZE_LTO),1)
 CXXFLAGS += -flto=auto -Wno-attributes

@@ -33,7 +33,9 @@ OPENMPT_NAMESPACE_BEGIN
 // Caching gets triggered via a global object that primes the cache during
 //  construction.
 // This is only really useful with MPT_RESAMPLER_TABLES_CACHED.
-//#define MPT_RESAMPLER_TABLES_CACHED_ONSTARTUP
+#ifdef MPT_BUILD_FUZZER
+#define MPT_RESAMPLER_TABLES_CACHED_ONSTARTUP
+#endif
 
 #endif // LIBOPENMPT_BUILD
 

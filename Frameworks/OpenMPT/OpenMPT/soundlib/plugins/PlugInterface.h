@@ -269,7 +269,7 @@ protected:
 		uint8 lastNote = 0 /* NOTE_NONE */;
 		uint8  noteOnMap[128][MAX_CHANNELS];
 
-		void ResetProgram() { currentProgram = uint16_max; currentBank = uint16_max; }
+		void ResetProgram(bool oldBehaviour) { currentProgram = oldBehaviour ? 0 : uint16_max; currentBank = oldBehaviour ? 0 : uint16_max; }
 	};
 
 	std::array<PlugInstrChannel, 16> m_MidiCh;  // MIDI channel state

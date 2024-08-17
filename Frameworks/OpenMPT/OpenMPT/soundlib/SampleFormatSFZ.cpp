@@ -168,7 +168,7 @@ struct SFZFlexEG
 				break;
 		}
 
-		if(sustain < env.size())
+		if(sustain < env.size() && !(envType == ENV_VOLUME && sustain == env.size() - 1u && env.back().value == 0))
 		{
 			env.nSustainStart = env.nSustainEnd = sustain;
 			env.dwFlags.set(ENV_SUSTAIN);
@@ -307,7 +307,7 @@ struct SFZRegion
 	};
 
 	size_t filenameOffset = 0;
-	std::string filename, name;
+	std::string filename, globalName, regionName;
 	SFZEnvelope ampEnv, pitchEnv, filterEnv;
 	std::vector<SFZFlexEG> flexEGs;
 	SmpLength loopStart = 0, loopEnd = 0;
@@ -398,8 +398,10 @@ struct SFZRegion
 			filename = control.defaultPath + value;
 			filenameOffset = control.defaultPath.size();
 		}
+		else if(key == "global_label")
+			globalName = value;
 		else if(key == "region_label")
-			name = value;
+			regionName = value;
 		else if(key == "lokey")
 			keyLo = ReadKey(value, control);
 		else if(key == "hikey")
@@ -761,6 +763,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 	DestroyInstrument(nInstr, deleteAssociatedSamples);
 	if(nInstr > m_nInstruments) m_nInstruments = nInstr;
 	Instruments[nInstr] = pIns;
+	pIns->name = mpt::ToCharset(GetCharsetInternal(), mpt::Charset::UTF8, globals.globalName);
 
 	SAMPLEINDEX prevSmp = 0;
 	for(auto &region : regions)
@@ -841,8 +844,8 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 			sample.uFlags.set(SMP_KEEPONDISK, sample.HasSampleData());
 		}
 
-		if(!region.name.empty())
-			m_szNames[smp] = mpt::ToCharset(GetCharsetInternal(), mpt::Charset::UTF8, region.name);
+		if(!region.regionName.empty())
+			m_szNames[smp] = mpt::ToCharset(GetCharsetInternal(), mpt::Charset::UTF8, region.regionName);
 		if(!m_szNames[smp][0])
 			m_szNames[smp] = mpt::ToCharset(GetCharsetInternal(), mpt::PathString::FromUTF8(region.filename).GetFilenameBase().ToUnicode());
 
@@ -1070,6 +1073,19 @@ static void WriteSFZEnvelope(std::ostream &f, double tickDuration, int index, co
 		f << "\n// Release Node: " << static_cast<uint32>(env.nReleaseNode);
 }
 
+static std::string SanitizeSFZString(std::string s, mpt::Charset sourceCharset)
+{
+	using namespace std::literals;
+	// Remove characters could trip up the parser
+	std::string::size_type pos = 0;
+	while((pos = s.find_first_of("<=\r\n\t\0"sv, pos)) != std::string::npos)
+	{
+		s[pos++] = ' ';
+	}
+	return mpt::ToCharset(mpt::Charset::UTF8, sourceCharset, s);
+}
+
+
 bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, const mpt::PathString &filename, bool useFLACsamples) const
 {
 #ifdef MODPLUG_TRACKER
@@ -1092,10 +1108,6 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 	const double tickDuration = m_PlayState.m_nSamplesPerTick / static_cast<double>(m_MixerSettings.gdwMixingFreq);
 
 	f << std::setprecision(10);
-	if(!ins->name.empty())
-	{
-		f << "// Name: " << mpt::ToCharset(mpt::Charset::UTF8, GetCharsetInternal(), ins->name) << "\n";
-	}
 	f << "// Created with " << mpt::ToCharset(mpt::Charset::UTF8, Version::Current().GetOpenMPTVersionString()) << "\n";
 	f << "// Envelope tempo base: tempo " << m_PlayState.m_nMusicTempo.ToDouble();
 	switch(m_nTempoMode)
@@ -1114,8 +1126,12 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 		break;
 	}
 
-	f << "\n\n<control>\ndefault_path=" << sampleDirName.ToUTF8() << "\n\n";
-	f << "<group>";
+	f << "\n\n<control>\ndefault_path=" << sampleDirName.ToUTF8();
+	if(const auto globalName = SanitizeSFZString(ins->name, GetCharsetInternal()); !globalName.empty())
+	{
+		f << "\n\n<global>\nglobal_label=" << globalName;
+	}
+	f << "\n\n<group>";
 	f << "\nbend_up=" << ins->midiPWD * 100;
 	f << "\nbend_down=" << -ins->midiPWD * 100;
 	const uint32 cutoff = ins->IsCutoffEnabled() ? ins->GetCutoff() : 127;
@@ -1215,9 +1231,9 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 
 
 		f << "\n\n<region>";
-		if(!m_szNames[ins->Keyboard[i]].empty())
+		if(const auto regionName = SanitizeSFZString(m_szNames[ins->Keyboard[i]], GetCharsetInternal()); !regionName.empty())
 		{
-			f << "\nregion_label=" << mpt::ToCharset(mpt::Charset::UTF8, GetCharsetInternal(), m_szNames[ins->Keyboard[i]]);
+			f << "\nregion_label=" << regionName;
 		}
 		f << "\nsample=" << sampleName.GetFilename().ToUTF8();
 		f << "\nlokey=" << i;

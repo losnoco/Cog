@@ -270,9 +270,12 @@ const char *szMidiPercussionNames[61] =
 };
 
 
+static constexpr uint8 NUM_MIDI_CHANNELS = 32;
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Maps a midi instrument - returns the instrument number in the file
-uint32 CSoundFile::MapMidiInstrument(uint8 program, uint16 bank, uint8 midiChannel, uint8 note, bool isXG, std::bitset<16> drumChns)
+uint32 CSoundFile::MapMidiInstrument(uint8 program, uint16 bank, uint8 midiChannel, uint8 note, bool isXG, std::bitset<NUM_MIDI_CHANNELS> drumChns)
 {
 	ModInstrument *pIns;
 	program &= 0x7F;
@@ -361,6 +364,7 @@ struct TrackState
 	FileReader track;
 	tick_t nextEvent = 0;
 	uint8 command = 0;
+	uint8 midiBaseChannel = 0;
 	bool finished = false;
 };
 
@@ -506,7 +510,7 @@ static CHANNELINDEX FindUnusedChannel(uint8 midiCh, ModCommand::NOTE note, const
 }
 
 
-static void MIDINoteOff(MidiChannelState &midiChn, std::vector<ModChannelState> &modChnStatus, uint8 note, uint8 delay, mpt::span<ModCommand> patRow, std::bitset<16> drumChns)
+static void MIDINoteOff(MidiChannelState &midiChn, std::vector<ModChannelState> &modChnStatus, uint8 note, uint8 delay, mpt::span<ModCommand> patRow, std::bitset<NUM_MIDI_CHANNELS> drumChns)
 {
 	CHANNELINDEX chn = midiChn.noteOn[note];
 	if(chn == CHANNELINDEX_INVALID)
@@ -666,13 +670,14 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		ppqn = 96;
 	Order().clear();
 
-	MidiChannelState midiChnStatus[16];
+	std::array<MidiChannelState, NUM_MIDI_CHANNELS> midiChnStatus;
 	const CHANNELINDEX tempoChannel = m_nChannels - 2, globalVolChannel = m_nChannels - 1;
 	const uint16 numTracks = fileHeader.numTracks;
 	std::vector<TrackState> tracks(numTracks);
 	std::vector<ModChannelState> modChnStatus(m_nChannels);
-	std::bitset<16> drumChns;
+	std::bitset<NUM_MIDI_CHANNELS> drumChns;
 	drumChns.set(MIDI_DRUMCHANNEL - 1);
+	drumChns.set(MIDI_DRUMCHANNEL + 15);
 
 	tick_t timeShift = 0;
 	for(auto &track : tracks)
@@ -820,6 +825,9 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			case 8: // Patch name
 			case 9: // Port name
 				break;
+			case 0x21: // MIDI port
+				tracks[t].midiBaseChannel = chunk.ReadUint8() * 16u;
+				break;
 			case 0x2F: // End Of Track
 				tracks[t].finished = true;
 				break;
@@ -840,6 +848,14 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 					tempo = newTempo;
 				}
 				break;
+			case 0x7F: // Sequencer specific
+				{
+					// Yamaha MIDI port selection
+					uint32 data = chunk.ReadUint32BE();
+					if(chunk.LengthIs(4) && (data & 0xFFFFFF00) == 0x43000100)
+						tracks[t].midiBaseChannel = static_cast<uint8>((data & 0xFF) * 16u);
+				}
+				break;
 
 			default:
 				break;
@@ -857,7 +873,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 					data1 = track.ReadUint8();
 				}
 			}
-			uint8 midiCh = command & 0x0F;
+			const uint8 midiCh = ((command & 0x0F) + tracks[t].midiBaseChannel) % NUM_MIDI_CHANNELS;
 
 			switch(command & 0xF0)
 			{
@@ -1079,7 +1095,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 				midiChnStatus[midiCh].SetPitchbend(data1 | (track.ReadUint8() << 7));
 				break;
 			case 0xF0: // General / Immediate
-				switch(midiCh)
+				switch(command & 0x0F)
 				{
 				case MIDIEvents::sysExStart: // SysEx
 				case MIDIEvents::sysExEnd: // SysEx (continued)
