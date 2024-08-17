@@ -3,7 +3,7 @@
 //  GME
 //
 //  Created by Christopher Snowhill on 11/08/19.
-//  Copyright 2019-2023 __LoSnoCo__. All rights reserved.
+//  Copyright 2019-2024 __LoSnoCo__. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
