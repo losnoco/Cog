@@ -1,7 +1,7 @@
 /* Localized versions of Info.plist keys */
 
 CFBundleName = "Cog";
-NSHumanReadableCopyright = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2023";
+NSHumanReadableCopyright = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2024";
 
 /* Privacy - Calendars Usage Description */
 "NSCalendarsUsageDescription" = "Cog has no use for your calendar information. Why are you trying to open your Calendar with an audio player?";
@@ -12,7 +12,7 @@ NSHumanReadableCopyright = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\
 /* Privacy - Contacts Usage Description */
 "NSContactsUsageDescription" = "Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?";
 
-"NSHumanReadableCopyright" = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2023";
+"NSHumanReadableCopyright" = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2024";
 
 /* Privacy - Location Usage Description */
 "NSLocationUsageDescription" = "Cog has no use for your location information. Something is obviously wrong with the application.";

@@ -3,7 +3,7 @@
 //  Cog
 //
 //  Created by Christopher Snowhill on 7/25/23.
-//  Copyright 2023 Christopher Snowhill. All rights reserved.
+//  Copyright 2023-2024 Christopher Snowhill. All rights reserved.
 //
 
 #import <AssertMacros.h>
