@@ -469,6 +469,14 @@ static NSString *xmlEscapeString(NSString * string) {
 \t<string>MediaKeysApplication</string>\n\
 \t<key>NSRemindersUsageDescription</key>\n\
 \t<string>Cog has no use for your reminders. Why are you trying to access them with an audio player?</string>\n\
+\t<key>NSDownloadsFolderUsageDescription</key>\n\
+\t<string>We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.</string>\n\
+\t<key>NSDocumentsFolderUsageDescription</key>\n\
+\t<string>We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.</string>\n\
+\t<key>NSDesktopFolderUsageDescription</key>\n\
+\t<string>We may request related audio files from this folder for playback purposes. We will only play back files you specifically add, unless you enable the option to add an entire folder. Granting permission either for individual files or for parent folders ensures their contents will remain playable in future sessions.</string>\n\
+\t<key>NSMotionUsageDescription</key>\n\
+\t<string>Cog optionally supports motion tracking headphones for head tracked positional audio, using its own low latency positioning model.</string>\n\
 \t<key>OSAScriptingDefinition</key>\n\
 \t<string>Cog.sdef</string>\n\
 \t<key>SUFeedURL</key>\n\
