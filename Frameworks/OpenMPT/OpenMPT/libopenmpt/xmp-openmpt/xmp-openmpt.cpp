@@ -20,6 +20,7 @@
 
 #include <cctype>
 #include <cstring>
+#include <numeric>
 
 #include <tchar.h>
 
@@ -244,6 +245,9 @@ static std::string StringUpperCase( std::string str ) {
 }
 
 static std::string seconds_to_string( double time ) {
+	if ( !std::isnormal( time ) ) {
+		return "?";
+	}
 	std::int64_t time_ms = static_cast<std::int64_t>( time * 1000 );
 	std::int64_t seconds = ( time_ms / 1000 ) % 60;
 	std::int64_t minutes = ( time_ms / ( 1000 * 60 ) ) % 60;
@@ -485,7 +489,7 @@ static void clear_current_timeinfo() {
 static void WINAPI openmpt_About( HWND win ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2023 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2024 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
@@ -551,10 +555,10 @@ std::streambuf::int_type xmplay_streambuf::underflow() {
 		start += put_back_count;
 	}
 	std::size_t n = xmpffile->Read( file, start, buffer.size() - ( start - base ) );
+	setg( base, start, start + n );
 	if ( n == 0 ) {
 		return traits_type::eof();
 	}
-	setg( base, start, start + n );
 	return traits_type::to_int_type( *gptr() );
 }
 
@@ -707,14 +711,11 @@ static char * build_xmplay_tags( const openmpt::module & mod, int32_t subsong = 
 	if ( subsong >= 0 && static_cast<size_t>( subsong ) < subsong_names.size() ) {
 		first_subsong += subsong;
 		last_subsong = first_subsong + 1;
-	} else
-	{
-		last_subsong = first_subsong + 1;
 	}
 
 	for ( auto subsong_name = first_subsong; subsong_name != last_subsong; subsong_name++ ) {
 		append_xmplay_tag( tags, "filetype", convert_to_native( StringUpperCase( mod.get_metadata( "type" ) ) ) );
-		append_xmplay_tag( tags, "title", convert_to_native( ( subsong_name->empty() || subsong == -1 ) ? title : *subsong_name ) );
+		append_xmplay_tag( tags, "title", convert_to_native( ( subsong_name->empty() || subsong == -1 || subsong_names.size() == 1 ) ? title : *subsong_name ) );
 		append_xmplay_tag( tags, "artist", convert_to_native( mod.get_metadata( "artist" ) ) );
 		append_xmplay_tag( tags, "album", convert_to_native( mod.get_metadata( "xmplay-album" ) ) );  // todo, libopenmpt does not support that
 		append_xmplay_tag( tags, "date", convert_to_native( extract_date( mod ) ) );
@@ -731,15 +732,36 @@ static char * build_xmplay_tags( const openmpt::module & mod, int32_t subsong = 
 	return result;
 }
 
-static float * build_xmplay_length( const openmpt::module & /* mod */ ) {
-	float * result = static_cast<float*>( xmpfmisc->Alloc( sizeof( float ) * self->subsong_lengths.size() ) );
+static std::vector<double> build_subsong_lengths( openmpt::module & mod ) {
+	std::int32_t num_subsongs = mod.get_num_subsongs();
+	std::vector<double> subsong_lengths( num_subsongs );
+	for ( std::int32_t i = 0; i < num_subsongs; ++i ) {
+		mod.select_subsong( i );
+		subsong_lengths[i] = mod.get_duration_seconds();
+	}
+	return subsong_lengths;
+}
+
+static float * build_xmplay_length( openmpt::module & mod ) {
+	const auto subsong_lengths = build_subsong_lengths( mod );
+	float * result = static_cast<float*>( xmpfmisc->Alloc( sizeof( float ) * subsong_lengths.size() ) );
 	if ( !result ) {
 		return nullptr;
 	}
-	for ( std::size_t i = 0; i < self->subsong_lengths.size(); ++i ) {
-		result[i] = static_cast<float>( self->subsong_lengths[i] );
+	for ( std::size_t i = 0; i < subsong_lengths.size(); ++i ) {
+		result[i] = static_cast<float>( subsong_lengths[i] );
 	}
 	return result;
+}
+
+static DWORD build_xmplay_file_info( openmpt::module & mod, float ** length, char ** tags ) {
+	if ( length ) {
+		*length = build_xmplay_length( mod );
+	}
+	if ( tags ) {
+		*tags = build_xmplay_tags( mod );
+	}
+	return static_cast<DWORD>( mod.get_num_subsongs() );
 }
 
 static void clear_xmplay_string( char * str ) {
@@ -851,6 +873,7 @@ static BOOL WINAPI openmpt_CheckFile( const char * filename, XMPFILE file ) {
 
 static DWORD WINAPI openmpt_GetFileInfo( const char * filename, XMPFILE file, float * * length, char * * tags ) {
 	static_cast<void>( filename );
+	DWORD subsongs = 0;
 	try {
 		std::map< std::string, std::string > ctls
 		{
@@ -863,12 +886,7 @@ static DWORD WINAPI openmpt_GetFileInfo( const char * filename, XMPFILE file, fl
 					case XMPFILE_TYPE_MEMORY:
 						{
 							openmpt::module mod( xmpffile->GetMemory( file ), xmpffile->GetSize( file ), std::clog, ctls );
-							if ( length ) {
-								*length = build_xmplay_length( mod );
-							}
-							if ( tags ) {
-								*tags = build_xmplay_tags( mod );
-							}
+							subsongs = build_xmplay_file_info( mod, length, tags );
 						}
 						break;
 					case XMPFILE_TYPE_FILE:
@@ -878,50 +896,30 @@ static DWORD WINAPI openmpt_GetFileInfo( const char * filename, XMPFILE file, fl
 						{
 							xmplay_istream s( file );
 							openmpt::module mod( s, std::clog, ctls );
-							if ( length ) {
-								*length = build_xmplay_length( mod );
-							}
-							if ( tags ) {
-								*tags = build_xmplay_tags( mod );
-							}
+							subsongs = build_xmplay_file_info( mod, length, tags );
 						}
 						break;
 				}
 			#else
 				if ( xmpffile->GetType( file ) == XMPFILE_TYPE_MEMORY ) {
 					openmpt::module mod( xmpffile->GetMemory( file ), xmpffile->GetSize( file ), std::clog, ctls );
-					if ( length ) {
-						*length = build_xmplay_length( mod );
-					}
-					if ( tags ) {
-						*tags = build_xmplay_tags( mod );
-					}
+					subsongs = build_xmplay_file_info( mod, length, tags );
 				} else {
 					openmpt::module mod( read_XMPFILE_vector( file ), std::clog, ctls );
-					if ( length ) {
-						*length = build_xmplay_length( mod );
-					}
-					if ( tags ) {
-						*tags = build_xmplay_tags( mod );
-					}
+					subsongs = build_xmplay_file_info( mod, length, tags );
 				}
 			#endif
 		#else
 			std::ifstream s( filename, std::ios_base::binary );
 			openmpt::module mod( s, std::clog, ctls );
-			if ( length ) {
-				*length = build_xmplay_length( mod );
-			}
-			if ( tags ) {
-				*tags = build_xmplay_tags( mod );
-			}
-		#endif
+			subsongs = build_xmplay_file_info( mod, length, tags );
+#endif
 	} catch ( ... ) {
 		if ( length ) *length = nullptr;
 		if ( tags ) *tags = nullptr;
 		return 0;
 	}
-	return self->subsong_lengths.size() + XMPIN_INFO_NOSUBTAGS;
+	return subsongs;
 }
 
 // open a file for playback
@@ -967,12 +965,7 @@ static DWORD WINAPI openmpt_Open( const char * filename, XMPFILE file ) {
 		reset_timeinfos();
 		apply_options();
 
-		std::int32_t num_subsongs = self->mod->get_num_subsongs();
-		self->subsong_lengths.resize( num_subsongs );
-		for ( std::int32_t i = 0; i < num_subsongs; ++i ) {
-			self->mod->select_subsong( i );
-			self->subsong_lengths[i] = self->mod->get_duration_seconds();
-		}
+		self->subsong_lengths = build_subsong_lengths( *self->mod );
 		self->subsong_names = self->mod->get_subsong_names();
 		self->mod->select_subsong( 0 );
 		self->tempo_factor = 0;
@@ -1240,7 +1233,7 @@ static void add_names( std::ostream & str, const std::string & title, const std:
 		}
 		str << title << " Names:" << "\r";
 		for ( std::size_t i = 0; i < names.size(); i++ ) {
-			str << std::setfill('0') << std::setw(2) << (display_offset + i) << std::setw(0) << "\t" << convert_to_native( names[i] ) << "\r";
+			str << std::setfill( '0' ) << std::setw( 2 ) << ( display_offset + i ) << std::setw( 0 ) << "\t" << convert_to_native( sanitize_xmplay_info_string( names[i] ) ) << "\r";
 		}
 		str << "\r";
 	}
@@ -1261,11 +1254,7 @@ static void WINAPI openmpt_GetSamples( char * buf ) {
 }
 
 static DWORD WINAPI openmpt_GetSubSongs( float * length ) {
-	double tmp = 0.0;
-	for ( auto sub_length : self->subsong_lengths ) {
-		tmp += sub_length;
-	}
-	*length = static_cast<float>( tmp );
+	*length = static_cast<float>( std::accumulate( self->subsong_lengths.cbegin(), self->subsong_lengths.cend(), 0.0 ) );
 	return static_cast<DWORD>( self->subsong_lengths.size() );
 }
 

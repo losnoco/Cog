@@ -37,6 +37,7 @@ protected:
 	};
 
 public:
+	// cppcheck-suppress duplInheritedMember
 	static IMixPlugin* Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
 	static IMixPlugin* CreateLegacy(VSTPluginLib& factory, CSoundFile& sndFile, SNDMIXPLUGIN &mixStruct);
 	Flanger(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct, const bool legacy);
@@ -56,7 +57,7 @@ public:
 
 protected:
 	float WetDryMix() const override { return m_param[kFlangerWetDryMix]; }
-	bool IsTriangle() const override { return m_param[kFlangerWaveShape] < 1; }
+	bool IsSquare() const override { return m_param[kFlangerWaveShape] < 1; }
 	float Depth() const override { return m_param[kFlangerDepth]; }
 	float Feedback() const override { return -99.0f + m_param[kFlangerFeedback] * 198.0f; }
 	float Delay() const override { return m_param[kFlangerDelay] * 4.0f; }

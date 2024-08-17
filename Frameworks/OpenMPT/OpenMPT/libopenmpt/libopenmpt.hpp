@@ -1074,7 +1074,7 @@ public:
 	           - subsong (integer): The current subsong. Setting it has identical semantics as openmpt::module::select_subsong(), getting it returns the currently selected subsong.
 	           - play.at_end (text): Chooses the behaviour when the end of song is reached. The song end is considered to be reached after the number of reptitions set by openmpt::module::set_repeat_count was played, so if the song is set to repeat infinitely, its end is never considered to be reached.
 	                          - "fadeout": Fades the module out for a short while. Subsequent reads after the fadeout will return 0 rendered frames.
-	                          - "continue": Returns 0 rendered frames when the song end is reached. Subsequent reads will continue playing from the loop start (if the song is not programmed to loop, playback resumsed from the song start).
+	                          - "continue": Returns 0 rendered frames when the song end is reached. Subsequent reads will continue playing from the loop start (if the song is not programmed to loop, playback resumed from the song start).
 	                          - "stop": Returns 0 rendered frames when the song end is reached. Subsequent reads will return 0 rendered frames.
 	           - play.tempo_factor (floatingpoint): Set a floating point tempo factor. "1.0" is the default tempo.
 	           - play.pitch_factor (floatingpoint): Set a floating point pitch factor. "1.0" is the default pitch.

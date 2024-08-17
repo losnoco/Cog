@@ -779,7 +779,11 @@ bool CVstPluginManager::CreateMixPlugin(SNDMIXPLUGIN &mixPlugin, CSoundFile &snd
 	}
 
 #ifdef MPT_WITH_VST
-	if(pFound && mixPlugin.Info.dwPluginId1 == Vst::kEffectMagic)
+	// Note: we don't check if dwPluginId1 matches Vst::kEffectMagic here, even if it should.
+	// I have an old file I made with OpenMPT 1.17 where the primary plugin ID has an unexpected value.
+	// No idea how that could happen, apart from some plugin.cache corruption (back then, the IDs were not re-checked
+	// after instantiating a plugin and the cached plugin ID was blindly written to the module file)
+	if(pFound)
 	{
 		Vst::AEffect *pEffect = nullptr;
 		HINSTANCE hLibrary = nullptr;

@@ -70,7 +70,7 @@ void SymMODEcho::Process(float* pOutL, float* pOutR, uint32 numFrames)
 			{
 				case DSPType::Off:
 					break;
-				case DSPType::Normal:  // Normal
+				case DSPType::Normal:
 					lOut = (lDelay + lDry) * m_feedback;
 					rOut = (rDelay + rDry) * m_feedback;
 					break;

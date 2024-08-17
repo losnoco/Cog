@@ -11,9 +11,9 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "Flanger.h"
-#endif // !NO_PLUGINS
+#include "../../Sndfile.h"
+#endif  // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -22,6 +22,7 @@ OPENMPT_NAMESPACE_BEGIN
 namespace DMO
 {
 
+// cppcheck-suppress duplInheritedMember
 IMixPlugin* Flanger::Create(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct)
 {
 	return new (std::nothrow) Flanger(factory, sndFile, mixStruct, false);

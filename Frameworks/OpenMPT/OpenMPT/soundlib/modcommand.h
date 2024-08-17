@@ -11,9 +11,8 @@
 #pragma once
 
 #include "openmpt/all/BuildSettings.hpp"
-
 #include "Snd_defs.h"
-#include "../common/misc_util.h"
+#include "mpt/base/algorithm.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
 

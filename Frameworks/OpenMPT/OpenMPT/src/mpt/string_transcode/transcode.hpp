@@ -678,6 +678,7 @@ inline mpt::widestring decode_utf8(const Tsrcstring & str, mpt::widechar replace
 						out.push_back(replacement);
 						ucs4 = 0;
 						charsleft = 0;
+						continue;
 					}
 					if (ucs4 <= 0xffff) {
 						out.push_back(static_cast<mpt::widechar>(ucs4));
@@ -817,7 +818,7 @@ inline Tdststring utf16_from_utf32(const Tsrcstring & in, mpt::widechar replacem
 		char32_t ucs4 = static_cast<char32_t>(static_cast<uint32>(in[i]));
 		if (ucs4 > 0x1fffff) {
 			out.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint16>(replacement)));
-			ucs4 = 0;
+			continue;
 		}
 		if (ucs4 <= 0xffff) {
 			out.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint16>(ucs4)));

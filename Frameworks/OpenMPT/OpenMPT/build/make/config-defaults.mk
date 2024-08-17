@@ -3,13 +3,7 @@ ifeq ($(HOST),unix)
 
 ifeq ($(HOST_FLAVOUR),MACOSX)
 
-NO_PULSEAUDIO?=1
-include build/make/config-clang.mk
-# Mac OS X overrides
-DYNLINK=0
-SHARED_SONAME=0
-MPT_COMPILER_NOSECTIONS=1
-MPT_COMPILER_NOGCSECTIONS=1
+include build/make/config-macos.mk
 
 else ifeq ($(HOST_FLAVOUR),MSYS2)
 
@@ -38,11 +32,13 @@ include build/make/config-gcc.mk
 else ifeq ($(HOST_FLAVOUR),NETBSD)
 
 include build/make/config-gcc.mk
+MPT_COMPILER_NOALLOCAH=1
 NO_PORTAUDIOCPP?=1
 
 else ifeq ($(HOST_FLAVOUR),FREEBSD)
 
 include build/make/config-clang.mk
+MPT_COMPILER_NOALLOCAH=1
 NO_PORTAUDIOCPP?=1
 
 else ifeq ($(HOST_FLAVOUR),OPENBSD)
@@ -50,6 +46,7 @@ else ifeq ($(HOST_FLAVOUR),OPENBSD)
 NO_PORTAUDIOCPP?=1
 NO_PULSEAUDIO?=1
 include build/make/config-clang.mk
+MPT_COMPILER_NOALLOCAH=1
 
 else ifeq ($(HOST_FLAVOUR),HAIKU)
 

@@ -94,6 +94,9 @@ public:
 	ORDERINDEX GetPreviousOrderIgnoringSkips(const ORDERINDEX start) const noexcept;
 	ORDERINDEX GetNextOrderIgnoringSkips(const ORDERINDEX start) const noexcept;
 
+	// Returns the first item that contains a pattern that actually exists, ORDERINDEX_INVALID if no such item exists.
+	ORDERINDEX GetFirstValidIndex() const noexcept;
+
 	// Find an order item that contains a given pattern number.
 	ORDERINDEX FindOrder(PATTERNINDEX pat, ORDERINDEX startSearchAt = 0, bool searchForward = true) const noexcept;
 

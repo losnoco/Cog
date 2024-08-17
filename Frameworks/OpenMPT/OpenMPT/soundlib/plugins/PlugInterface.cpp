@@ -739,7 +739,7 @@ IMidiPlugin::IMidiPlugin(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGI
 	for(auto &chn : m_MidiCh)
 	{
 		chn.midiPitchBendPos = EncodePitchBendParam(MIDIEvents::pitchBendCentre); // centre pitch bend on all channels
-		chn.ResetProgram();
+		chn.ResetProgram(sndFile.m_playBehaviour[kPluginDefaultProgramAndBank1]);
 	}
 }
 

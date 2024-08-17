@@ -79,7 +79,7 @@ struct NoInterpolation
 // FilterFunc: Functor for applying the resonant filter
 // MixFunc: Functor for mixing the computed sample data into the output buffer
 template<class Traits, class InterpolationFunc, class FilterFunc, class MixFunc>
-static void SampleLoop(ModChannel &chn, const CResampler &resampler, typename Traits::output_t * MPT_RESTRICT outBuffer, unsigned int numSamples)
+inline void SampleLoop(ModChannel &chn, const CResampler &resampler, typename Traits::output_t * MPT_RESTRICT outBuffer, unsigned int numSamples)
 {
 	ModChannel &c = chn;
 	const typename Traits::input_t * MPT_RESTRICT inSample = static_cast<const typename Traits::input_t *>(c.pCurrentSample);

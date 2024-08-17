@@ -504,7 +504,9 @@ struct PathTraits {
 // Work-around <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105329> /
 // <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105651>.
 #pragma GCC push_options
+#if defined(__OPTIMIZE__)
 #pragma GCC optimize("O1")
+#endif
 // Work-around brain-damaged GCC warning 'void operator delete(void*, std::size_t)' called on a pointer to an unallocated object '"\\\000\\\000\000"'.
 // Probably a duplicate of one of the many incarnations of <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99098>.
 #pragma GCC diagnostic push
@@ -689,7 +691,9 @@ struct PathTraits {
 // Work-around <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105329> /
 // <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105651>.
 #pragma GCC push_options
+#if defined(__OPTIMIZE__)
 #pragma GCC optimize("O1")
+#endif
 #endif
 	// Convert a path to its simplified form, i.e. remove ".\" and "..\" entries
 	// Note: We use our own implementation as PathCanonicalize is limited to MAX_PATH
@@ -816,7 +820,9 @@ struct PathTraits {
 // Work-around <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105329> /
 // <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105651>.
 #pragma GCC push_options
+#if defined(__OPTIMIZE__)
 #pragma GCC optimize("O1")
+#endif
 #endif
 	static bool IsAbsolute(const raw_path_type & path) {
 		using namespace path_literals;

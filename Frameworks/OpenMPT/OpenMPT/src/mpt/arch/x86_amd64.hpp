@@ -748,7 +748,8 @@ private:
 		result.d = CPUInfo[3];
 		return result;
 
-#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
+#elif MPT_COMPILER_GCC || (MPT_COMPILER_CLANG && !MPT_ARCH_AMD64) || MPT_CLANG_AT_LEAST(13, 0, 0)
+		// <https://reviews.llvm.org/D101338>
 
 		cpuid_result result;
 		unsigned int regeax{};
@@ -760,6 +761,28 @@ private:
 		result.b = regebx;
 		result.c = regecx;
 		result.d = regedx;
+		return result;
+
+#elif MPT_COMPILER_CLANG && MPT_ARCH_AMD64
+		// <https://reviews.llvm.org/D101338>
+
+		cpuid_result result;
+		unsigned int a{};
+		unsigned int b{};
+		unsigned int c{};
+		unsigned int d{};
+		// clang-format off
+		__asm__ __volatile__ (
+			"xchgq %%rbx,%q1 \n\t"
+			"cpuid \n\t"
+			"xchgq %%rbx,%q1 \n\t"
+			: "=a" (a), "=r" (b), "=c" (c), "=d" (d)
+			: "0" (function));
+		// clang-format on
+		result.a = a;
+		result.b = b;
+		result.c = c;
+		result.d = d;
 		return result;
 
 #elif 0
@@ -801,7 +824,8 @@ private:
 		result.d = CPUInfo[3];
 		return result;
 
-#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
+#elif MPT_COMPILER_GCC || (MPT_COMPILER_CLANG && !MPT_ARCH_AMD64) || MPT_CLANG_AT_LEAST(13, 0, 0)
+		// <https://reviews.llvm.org/D101338>
 
 		cpuid_result result;
 		unsigned int regeax{};
@@ -813,6 +837,28 @@ private:
 		result.b = regebx;
 		result.c = regecx;
 		result.d = regedx;
+		return result;
+
+#elif MPT_COMPILER_CLANG && MPT_ARCH_AMD64
+		// <https://reviews.llvm.org/D101338>
+
+		cpuid_result result;
+		unsigned int a{};
+		unsigned int b{};
+		unsigned int c{};
+		unsigned int d{};
+		// clang-format off
+		__asm__ __volatile__ (
+			"xchgq %%rbx,%q1 \n\t"
+			"cpuid \n\t"
+			"xchgq %%rbx,%q1 \n\t"
+			: "=a" (a), "=r" (b), "=c" (c), "=d" (d)
+			: "0" (function_a), "2" (function_c));
+		// clang-format on
+		result.a = a;
+		result.b = b;
+		result.c = c;
+		result.d = d;
 		return result;
 
 #elif 0

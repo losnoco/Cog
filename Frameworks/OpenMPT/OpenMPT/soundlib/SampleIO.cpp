@@ -56,7 +56,7 @@ size_t SampleIO::ReadSample(ModSample &sample, FileReader &file) const
 		restrictedSampleDataView = file.GetPinnedView(CalculateEncodedSize(sample.nLength));
 		sourceBuf = restrictedSampleDataView.data();
 		fileSize = restrictedSampleDataView.size();
-		if(sourceBuf == nullptr)
+		if(fileSize < 1)
 			return 0;
 	} else
 	{
@@ -947,17 +947,20 @@ size_t SampleIO::WriteSample(std::ostream &f, const ModSample &sample, SmpLength
 		}
 	}
 
-	else if(GetBitDepth() == 16 && GetChannelFormat() == stereoSplit && GetEncoding() == signedPCM && GetEndianness() == bigEndian)
+	else if(GetBitDepth() == 16 && (GetChannelFormat() == stereoSplit || GetChannelFormat() == mono)
+		&& (GetEncoding() == signedPCM || GetEncoding() == unsignedPCM) && GetEndianness() == bigEndian)
 	{
-		// Stereo signed split, big-endian
-		MPT_ASSERT(len == numSamples * 4);
-		for(uint8 chn = 0; chn < 2; chn++)
+		// Stereo split / mono signed 16-bit, big-endian
+		const uint8 numChannels = GetNumChannels();
+		const uint16 offset = (GetEncoding() == unsignedPCM) ? 0x8000 : 0;
+		MPT_ASSERT(len == numSamples * numChannels * 2);
+		for(uint8 chn = 0; chn < numChannels; chn++)
 		{
 			const int16 *p = sample.sample16() + chn;
 			for(SmpLength j = 0; j < numSamples; j++)
 			{
-				mpt::IO::Write(fb, mpt::as_be(*p));
-				p += 2;
+				mpt::IO::Write(fb, mpt::as_be(static_cast<int16>(static_cast<uint16>(*p) + offset)));
+				p += numChannels;
 			}
 		}
 	}

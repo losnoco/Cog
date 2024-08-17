@@ -207,6 +207,8 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 		SFXSampleHeader sampleHeader;
 
 		file.ReadStruct(sampleHeader);
+		// cppcheck false-positive
+		// cppcheck-suppress uninitvar
 		sampleHeader.ConvertToMPT(Samples[smp], sampleLen[smp - 1]);
 
 		// Get rid of weird characters in sample names.

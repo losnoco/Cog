@@ -6,6 +6,12 @@
 
 
 
+#if defined(MODPLUG_TRACKER) || defined(LIBOPENMPT_BUILD)
+#include "BuildSettingsCompiler.h"
+#endif
+
+
+
 #include "mpt/base/detect_compiler.hpp"
 #include "mpt/base/detect_os.hpp"
 #include "mpt/base/detect_quirks.hpp"

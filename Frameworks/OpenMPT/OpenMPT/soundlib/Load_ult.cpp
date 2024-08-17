@@ -18,7 +18,7 @@ struct UltFileHeader
 {
 	char  signature[14];		// "MAS_UTrack_V00"
 	uint8 version;				// '1'...'4'
-	char  songName[32];			// Song Name, not guaranteed to be null-terminated
+	char  songName[32];			// Song Name, space-padded
 	uint8 messageLength;		// Number of Lines
 };
 
@@ -51,7 +51,7 @@ struct UltSample
 		mptSmp.Initialize();
 		mptSmp.Set16BitCuePoints();
 
-		mptSmp.filename = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, filename);
+		mptSmp.filename = mpt::String::ReadBuf(mpt::String::spacePadded, filename);
 
 		if(sizeEnd <= sizeStart)
 		{
@@ -63,7 +63,7 @@ struct UltSample
 		mptSmp.nSustainEnd = std::min(static_cast<SmpLength>(loopEnd), mptSmp.nLength);
 		mptSmp.nVolume = volume;
 
-		mptSmp.nC5Speed = speed;
+		mptSmp.nC5Speed = speed * 2;  // Doubled to fit the note range
 		if(finetune)
 		{
 			mptSmp.Transpose(finetune / (12.0 * 32768.0));
@@ -207,7 +207,7 @@ static int ReadULTEvent(ModCommand &m, FileReader &file, uint8 version)
 		b = file.ReadUint8();
 	}
 
-	m.note = (b > 0 && b < 61) ? (b + 35 + NOTE_MIN) : NOTE_NONE;
+	m.note = (b > 0 && b < 97) ? (b + 23 + NOTE_MIN) : NOTE_NONE;
 
 	const auto [instr, cmd, para1, para2] = file.ReadArray<uint8, 4>();
 	
@@ -385,7 +385,7 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	InitializeGlobals(MOD_TYPE_ULT);
-	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songName);
+	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songName);
 
 	const mpt::uchar *versions[] = {UL_("<1.4"), UL_("1.4"), UL_("1.5"), UL_("1.6")};
 	m_modFormat.formatName = U_("UltraTracker");
@@ -419,7 +419,7 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 		}
 
 		sampleHeader.ConvertToMPT(Samples[smp]);
-		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, sampleHeader.name);
+		m_szNames[smp] = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
 	}
 
 	ReadOrderFromFile<uint8>(Order(), file, 256, 0xFF, 0xFE);

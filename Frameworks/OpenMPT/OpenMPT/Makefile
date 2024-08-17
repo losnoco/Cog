@@ -585,32 +585,10 @@ endif
 
 endif
 
-ifeq ($(OPTIMIZE_FASTMATH),2)
-CPPFLAGS += -DMPT_CHECK_CXX_IGNORE_WARNING_FASTMATH -DMPT_CHECK_CXX_IGNORE_WARNING_FINITEMATH
-CXXFLAGS += -ffast-math
-CFLAGS   += -ffast-math
-else ifeq ($(OPTIMIZE_FASTMATH),1)
-CPPFLAGS += -DMPT_CHECK_CXX_IGNORE_WARNING_FINITEMATH
-CXXFLAGS += -fassociative-math
-CXXFLAGS += -fcx-limited-range
-CXXFLAGS += -fexcess-precision=fast
-CXXFLAGS += -ffinite-math-only
-CXXFLAGS += -freciprocal-math
-CXXFLAGS += -fno-math-errno
-CXXFLAGS += -fno-rounding-math
-CXXFLAGS += -fno-signaling-nans
-CXXFLAGS += -fno-signed-zeros
-CXXFLAGS += -fno-trapping-math
-CFLAGS += -fassociative-math
-CFLAGS += -fcx-limited-range
-CFLAGS += -fexcess-precision=fast
-CFLAGS += -ffinite-math-only
-CFLAGS += -freciprocal-math
-CFLAGS += -fno-math-errno
-CFLAGS += -fno-rounding-math
-CFLAGS += -fno-signaling-nans
-CFLAGS += -fno-signed-zeros
-CFLAGS += -fno-trapping-math
+ifeq ($(MPT_COMPILER_NOIPARA),1)
+# See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115049>.
+CXXFLAGS += -fno-ipa-ra
+CFLAGS   += -fno-ipa-ra
 endif
 
 ifeq ($(CHECKED),1)
@@ -707,10 +685,10 @@ endif
 endif
 
 ifeq ($(LOCAL_MPG123),1)
-CPPFLAGS_MPG123 := -DMPT_WITH_MPG123
+CPPFLAGS_MPG123 := -DMPT_WITH_MPG123 -DMPG123_NO_LARGENAME
 LDFLAGS_MPG123  := 
 LDLIBS_MPG123   := 
-CPPFLAGS_MPG123 += -Iinclude/mpg123/src/libmpg123/ -Iinclude/mpg123/src/compat/ -Iinclude/mpg123/src/ -Iinclude/mpg123/ports/makefile/
+CPPFLAGS_MPG123 += -Iinclude/mpg123/src/include/ -Iinclude/mpg123/ports/makefile/
 LOCAL_MPG123_SOURCES := 
 LOCAL_MPG123_SOURCES += include/mpg123/src/compat/compat.c
 LOCAL_MPG123_SOURCES += include/mpg123/src/compat/compat_str.c
@@ -726,6 +704,7 @@ LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/index.c
 LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/layer1.c
 LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/layer2.c
 LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/layer3.c
+LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/lfs_wrap.c
 LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/libmpg123.c
 LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/ntom.c
 LOCAL_MPG123_SOURCES += include/mpg123/src/libmpg123/optimize.c
@@ -741,6 +720,10 @@ include/mpg123/src/compat/%$(FLAVOUR_O).o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENER
 include/mpg123/src/compat/%.test$(FLAVOUR_O).o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENERIC
 include/mpg123/src/libmpg123/%$(FLAVOUR_O).o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENERIC
 include/mpg123/src/libmpg123/%.test$(FLAVOUR_O).o : CFLAGS+=$(CFLAGS_SILENT) -DOPT_GENERIC
+include/mpg123/src/compat/%$(FLAVOUR_O).o : CPPFLAGS:= -Iinclude/mpg123/src/include/ -Iinclude/mpg123/ports/makefile/ $(CPPFLAGS)
+include/mpg123/src/compat/%.test$(FLAVOUR_O).o : CPPFLAGS:= -Iinclude/mpg123/src/include/ -Iinclude/mpg123/ports/makefile/ $(CPPFLAGS)
+include/mpg123/src/libmpg123/%$(FLAVOUR_O).o : CPPFLAGS:= -Iinclude/mpg123/src/include/ -Iinclude/mpg123/ports/makefile/ $(CPPFLAGS)
+include/mpg123/src/libmpg123/%.test$(FLAVOUR_O).o : CPPFLAGS:= -Iinclude/mpg123/src/include/ -Iinclude/mpg123/ports/makefile/ $(CPPFLAGS)
 else
 ifeq ($(NO_MPG123),1)
 else
@@ -795,7 +778,10 @@ ifeq ($(LOCAL_VORBIS),1)
 CPPFLAGS_VORBIS := -DMPT_WITH_VORBIS
 LDFLAGS_VORBIS  := 
 LDLIBS_VORBIS   := 
-CPPFLAGS_VORBIS += -Iinclude/vorbis/include/ -Iinclude/vorbis/lib/ -DHAVE_ALLOCA_H
+CPPFLAGS_VORBIS += -Iinclude/vorbis/include/ -Iinclude/vorbis/lib/
+ifneq ($(MPT_COMPILER_NOALLOCAH),1)
+CPPFLAGS_VORBIS += -DHAVE_ALLOCA_H
+endif
 LOCAL_VORBIS_SOURCES := 
 LOCAL_VORBIS_SOURCES += include/vorbis/lib/analysis.c
 LOCAL_VORBIS_SOURCES += include/vorbis/lib/bitrate.c
@@ -991,6 +977,7 @@ CPPCHECK_FLAGS += -j $(NUMTHREADS)
 CPPCHECK_FLAGS += --std=c11 --std=c++17
 CPPCHECK_FLAGS += --quiet
 CPPCHECK_FLAGS += --enable=warning --inline-suppr --template='{file}:{line}: warning: {severity}: {message} [{id}]'
+CPPCHECK_FLAGS += --check-level=exhaustive
 CPPCHECK_FLAGS += --suppress=missingIncludeSystem
 CPPCHECK_FLAGS += --suppress=uninitMemberVar
 
@@ -1849,7 +1836,6 @@ bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar:
 	mkdir -p                                     bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin
 	mkdir -p                                     bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)all
 	cp bin/$(FLAVOUR_DIR)stage/all/libopenmpt.js               bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)all/libopenmpt.js
-	cp bin/$(FLAVOUR_DIR)stage/all/libopenmpt.js.mem           bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)all/libopenmpt.js.mem
 	cp bin/$(FLAVOUR_DIR)stage/all/libopenmpt.wasm             bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)all/libopenmpt.wasm
 	cp bin/$(FLAVOUR_DIR)stage/all/libopenmpt.wasm.js          bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)all/libopenmpt.wasm.js
 	mkdir -p                                     bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)wasm
@@ -1857,7 +1843,6 @@ bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar:
 	cp bin/$(FLAVOUR_DIR)stage/wasm/libopenmpt.wasm            bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)wasm/libopenmpt.wasm
 	mkdir -p                                     bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)js
 	cp bin/$(FLAVOUR_DIR)stage/js/libopenmpt.js                bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)js/libopenmpt.js
-	cp bin/$(FLAVOUR_DIR)stage/js/libopenmpt.js.mem            bin/$(FLAVOUR_DIR)dist-js/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin/$(FLAVOUR_DIR)js/libopenmpt.js.mem
 	cd bin/$(FLAVOUR_DIR)dist-js/ && tar cv --numeric-owner --owner=0 --group=0 libopenmpt-$(DIST_LIBOPENMPT_VERSION) > libopenmpt-$(DIST_LIBOPENMPT_VERSION).dev.js.tar
 
 .PHONY: bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION).bin.dos.zip
@@ -2005,10 +1990,10 @@ ifeq ($(SHARED_LIB),1)
 endif
 endif
 
-contrib/fuzzing/fuzz$(FLAVOUR_O).o: contrib/fuzzing/fuzz.c
-	$(INFO) [CC] $<
-	$(VERYSILENT)$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -M -MT$@ $< > $*$(FLAVOUR_O).d
-	$(SILENT)$(COMPILE.c) $(OUTPUT_OPTION) $<
+contrib/fuzzing/fuzz$(FLAVOUR_O).o: contrib/fuzzing/fuzz.cpp
+	$(INFO) [CXX] $<
+	$(VERYSILENT)$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -M -MT$@ $< > $*$(FLAVOUR_O).d
+	$(SILENT)$(COMPILE.cc) $(OUTPUT_OPTION) $<
 bin/$(FLAVOUR_DIR)fuzz$(EXESUFFIX): contrib/fuzzing/fuzz$(FLAVOUR_O).o $(OBJECTS_LIBOPENMPT) $(OUTPUT_LIBOPENMPT)
 	$(INFO) [LD] $@
 	$(SILENT)$(LINK.cc) $(LDFLAGS_LIBOPENMPT) contrib/fuzzing/fuzz$(FLAVOUR_O).o $(OBJECTS_LIBOPENMPT) $(LOADLIBES) $(LDLIBS) $(LDLIBS_LIBOPENMPT) -o $@

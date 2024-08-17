@@ -11,8 +11,8 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "Chorus.h"
+#include "../../Sndfile.h"
 #include "mpt/base/numbers.hpp"
 #endif // !NO_PLUGINS
 
@@ -51,7 +51,7 @@ int32 Chorus::GetBufferIntOffset(int32 fpOffset) const
 	if(fpOffset < 0)
 		fpOffset += m_bufSize * 4096;
 	MPT_ASSERT(fpOffset >= 0);
-	return (fpOffset / 4096) % m_bufSize;
+	return (m_bufPos + (fpOffset / 4096)) % m_bufSize;
 }
 
 
@@ -63,7 +63,7 @@ void Chorus::Process(float *pOutL, float *pOutR, uint32 numFrames)
 	const float *in[2] = { m_mixBuffer.GetInputBuffer(0), m_mixBuffer.GetInputBuffer(1) };
 	float *out[2] = { m_mixBuffer.GetOutputBuffer(0), m_mixBuffer.GetOutputBuffer(1) };
 
-	const bool isTriangle = IsTriangle();
+	const bool isSquare = IsSquare();
 	const float feedback = Feedback() / 100.0f;
 	const float wetDryMix = WetDryMix();
 	const uint32 phase = Phase();
@@ -74,8 +74,8 @@ void Chorus::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		const float leftIn = *(in[0])++;
 		const float rightIn = *(in[1])++;
 
-		const int32 readOffset = GetBufferIntOffset(m_bufPos + m_delayOffset);
-		const int32 writeOffset = GetBufferIntOffset(m_bufPos);
+		const int32 readOffset = GetBufferIntOffset(m_delayOffset);
+		const int32 writeOffset = m_bufPos;
 		if(m_isFlanger)
 		{
 			m_DryBufferL[m_dryWritePos] = leftIn;
@@ -89,7 +89,7 @@ void Chorus::Process(float *pOutL, float *pOutR, uint32 numFrames)
 
 		float waveMin;
 		float waveMax;
-		if(isTriangle)
+		if(isSquare)
 		{
 			m_waveShapeMin += m_waveShapeVal;
 			m_waveShapeMax += m_waveShapeVal;
@@ -110,14 +110,14 @@ void Chorus::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		const float leftDelayIn = m_isFlanger ? m_DryBufferL[(m_dryWritePos + 2) % 3] : leftIn;
 		const float rightDelayIn = m_isFlanger ? m_DryBufferR[(m_dryWritePos + 2) % 3] : rightIn;
 
-		float left1 = m_bufferL[GetBufferIntOffset(m_bufPos + m_delayL)];
-		float left2 = m_bufferL[GetBufferIntOffset(m_bufPos + m_delayL + 4096)];
+		float left1 = m_bufferL[GetBufferIntOffset(m_delayL)];
+		float left2 = m_bufferL[GetBufferIntOffset(m_delayL + 4096)];
 		float fracPos = static_cast<float>(m_delayL & 0xFFF) * (1.0f / 4096.0f);
 		float leftOut = (left2 - left1) * fracPos + left1;
 		*(out[0])++ = leftDelayIn + (leftOut - leftDelayIn) * wetDryMix;
 
-		float right1 = bufferR[GetBufferIntOffset(m_bufPos + m_delayR)];
-		float right2 = bufferR[GetBufferIntOffset(m_bufPos + m_delayR + 4096)];
+		float right1 = bufferR[GetBufferIntOffset(m_delayR)];
+		float right2 = bufferR[GetBufferIntOffset(m_delayR + 4096)];
 		fracPos = static_cast<float>(m_delayR & 0xFFF) * (1.0f / 4096.0f);
 		float rightOut = (right2 - right1) * fracPos + right1;
 		*(out[1])++ = rightDelayIn + (rightOut - rightDelayIn) * wetDryMix;
@@ -131,8 +131,8 @@ void Chorus::Process(float *pOutL, float *pOutR, uint32 numFrames)
 		m_delayR = m_delayOffset + (phase < 2 ? -1 : 1) * static_cast<int32>(((phase % 2u) ? waveMax : waveMin) * m_depthDelay);
 
 		if(m_bufPos <= 0)
-			m_bufPos += m_bufSize * 4096;
-		m_bufPos -= 4096;
+			m_bufPos += m_bufSize;
+		m_bufPos--;
 	}
 
 	ProcessMixOps(pOutL, pOutR, m_mixBuffer.GetOutputBuffer(0), m_mixBuffer.GetOutputBuffer(1), numFrames);
@@ -179,9 +179,8 @@ void Chorus::Resume()
 
 	m_isResumed = true;
 	m_waveShapeMin = 0.0f;
-	m_waveShapeMax = IsTriangle() ? 0.5f : 1.0f;
+	m_waveShapeMax = IsSquare() ? 0.5f : 1.0f;
 	m_delayL = m_delayR = m_delayOffset;
-	m_bufPos = 0;
 	m_dryWritePos = 0;
 }
 
@@ -189,6 +188,7 @@ void Chorus::Resume()
 void Chorus::PositionChanged()
 {
 	m_bufSize = Util::muldiv(m_SndFile.GetSampleRate(), 3840, 1000);
+	m_bufPos = 0;
 	try
 	{
 		m_bufferL.assign(m_bufSize, 0.0f);
@@ -255,7 +255,7 @@ CString Chorus::GetParamDisplay(PlugParamIndex param)
 		value = FrequencyInHertz();
 		break;
 	case kChorusWaveShape:
-		return (value < 1) ? _T("Triangle") : _T("Sine");
+		return (value < 1) ? _T("Square") : _T("Sine");
 		break;
 	case kChorusPhase:
 		switch(Phase())
@@ -289,7 +289,7 @@ void Chorus::RecalculateChorusParams()
 	m_delayOffset = mpt::saturate_round<int32>(4096.0f * (delaySamples + 2.0f));
 	m_frequency = FrequencyInHertz();
 	const float frequencySamples = m_frequency / sampleRate;
-	if(IsTriangle())
+	if(IsSquare())
 		m_waveShapeVal = frequencySamples * 2.0f;
 	else
 		m_waveShapeVal = std::sin(frequencySamples * mpt::numbers::pi_v<float>) * 2.0f;

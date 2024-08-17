@@ -64,7 +64,6 @@
 #endif
 
 
-#include "mpt/base/span.hpp"
 #include "mpt/check/compiler.hpp"
 #include "mpt/check/libc.hpp"
 #if defined(MPT_WITH_MFC)
@@ -73,6 +72,8 @@
 #if MPT_OS_WINDOWS
 #include "mpt/check/windows.hpp"
 #endif
+
+#include "mpt/base/span.hpp"
 #include "mpt/exception/exception.hpp"
 #include "mpt/exception/exception_text.hpp"
 #include "mpt/out_of_memory/out_of_memory.hpp"

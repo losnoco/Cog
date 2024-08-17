@@ -19,7 +19,9 @@
 #include "mpt/random/engine_lcg.hpp"
 #include "mpt/random/random.hpp"
 
+#if !defined(MPT_LIBCXX_QUIRK_NO_CHRONO)
 #include <chrono>
+#endif // !MPT_LIBCXX_QUIRK_NO_CHRONO
 #include <limits>
 #include <memory>
 #include <random>
@@ -27,6 +29,9 @@
 
 #include <cmath>
 #include <cstring>
+#if defined(MPT_LIBCXX_QUIRK_NO_CHRONO)
+#include <ctime>
+#endif // MPT_LIBCXX_QUIRK_NO_CHRONO
 
 
 
@@ -75,6 +80,7 @@ public:
 		// really need here is whitening of the bits.
 		typename mpt::default_radom_seed_hash<T>::type hash;
 
+#if !defined(MPT_LIBCXX_QUIRK_NO_CHRONO)
 		{
 			uint64be time;
 			time = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock().now().time_since_epoch()).count();
@@ -92,6 +98,15 @@ public:
 			hash(std::begin(bytes), std::end(bytes));
 		}
 #endif // !MPT_COMPILER_QUIRK_CHRONO_NO_HIGH_RESOLUTION_CLOCK
+#else  // MPT_LIBCXX_QUIRK_NO_CHRONO
+		{
+			uint64be time;
+			time = static_cast<uint64>(std::time(nullptr));
+			std::byte bytes[sizeof(time)];
+			std::memcpy(bytes, &time, sizeof(time));
+			hash(std::begin(bytes), std::end(bytes));
+		}
+#endif // !MPT_LIBCXX_QUIRK_NO_CHRONO
 
 		return static_cast<T>(hash.result());
 	}

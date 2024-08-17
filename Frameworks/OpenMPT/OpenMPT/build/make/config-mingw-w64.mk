@@ -13,17 +13,27 @@ else
 $(error unknown WINDOWS_ARCH)
 endif
 
+ifeq ($(WINDOWS_CRT),)
+MINGW_CRT = mingw32
+else ifeq ($(WINDOWS_CRT),crtdll)
+MINGW_CRT = mingw32crt
+else ifeq ($(WINDOWS_CRT),msvcrt)
+MINGW_CRT = mingw32
+else ifeq ($(WINDOWS_CRT),ucrt)
+MINGW_CRT = mingw32ucrt
+endif
+
 ifeq ($(origin CC),default)
-CC  = $(MINGW_ARCH)-w64-mingw32-gcc$(MINGW_FLAVOUR)
+CC  = $(MINGW_ARCH)-w64-$(MINGW_CRT)-gcc$(MINGW_FLAVOUR)
 endif
 ifeq ($(origin CXX),default)
-CXX = $(MINGW_ARCH)-w64-mingw32-g++$(MINGW_FLAVOUR)
+CXX = $(MINGW_ARCH)-w64-$(MINGW_CRT)-g++$(MINGW_FLAVOUR)
 endif
 ifeq ($(origin LD),default)
 LD  = $(CXX)
 endif
 ifeq ($(origin AR),default)
-AR  = $(MINGW_ARCH)-w64-mingw32-ar$(MINGW_FLAVOUR)
+AR  = $(MINGW_ARCH)-w64-$(MINGW_CRT)-ar$(MINGW_FLAVOUR)
 endif
 
 ifneq ($(STDCXX),)
@@ -105,6 +115,11 @@ else ifeq ($(WINDOWS_VERSION),win11)
 CPPFLAGS += -DNTDDI_VERSION=0x0A00000B -D_WIN32_WINNT=0x0A00
 else
 $(error unknown WINDOWS_VERSION)
+endif
+
+ifneq ($(MINGW_COMPILER),clang)
+# See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=115049>.
+MPT_COMPILER_NOIPARA=1
 endif
 
 ifeq ($(MINGW_COMPILER),clang)

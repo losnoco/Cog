@@ -26,7 +26,12 @@ namespace DMO
 // Computes (log2(x) + 1) * 2 ^ (shiftL - shiftR) (x = -2^31...2^31)
 float logGain(float x, int32 shiftL, int32 shiftR)
 {
-	uint32 intSample = static_cast<uint32>(static_cast<int64>(x));
+	uint32 intSample;
+	if(x <= static_cast<float>(int32_min) || x > static_cast<float>(int32_max))
+		intSample = static_cast<uint32>(int32_min);
+	else
+		intSample = static_cast<uint32>(static_cast<int32>(x));
+
 	const uint32 sign = intSample & 0x80000000;
 	if(sign)
 		intSample = (~intSample) + 1;

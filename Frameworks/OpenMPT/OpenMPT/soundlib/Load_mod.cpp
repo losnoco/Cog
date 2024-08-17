@@ -322,6 +322,11 @@ struct MODSampleHeader
 		       + ((loopStart > length * 2) ? 1 : 0);
 	}
 
+	bool HasDiskName() const
+	{
+		return (!memcmp(name, "st-", 3) || !memcmp(name, "ST-", 3)) && name[5] == ':';
+	}
+
 	// Suggested threshold for rejecting invalid files based on cumulated score returned by GetInvalidByteScore
 	static constexpr uint32 INVALID_BYTE_THRESHOLD = 40;
 
@@ -543,9 +548,9 @@ static uint32 ReadSample(const MODSampleHeader &sampleHeader, ModSample &sample,
 
 
 // Count malformed bytes in MOD pattern data
-static uint32 CountMalformedMODPatternData(const MODPatternData &patternData, const bool allow31Samples)
+static uint32 CountMalformedMODPatternData(const MODPatternData &patternData, const bool extendedFormat)
 {
-	const uint8 mask = allow31Samples ? 0xE0 : 0xF0;
+	const uint8 mask = extendedFormat ? 0xE0 : 0xF0;
 	uint32 malformedBytes = 0;
 	for(const auto &row : patternData)
 	{
@@ -553,6 +558,18 @@ static uint32 CountMalformedMODPatternData(const MODPatternData &patternData, co
 		{
 			if(data[0] & mask)
 				malformedBytes++;
+			if(!extendedFormat)
+			{
+				const uint16 period = (((static_cast<uint16>(data[0]) & 0x0F) << 8) | data[1]);
+				if(period && period != 0xFFF)
+				{
+					// Allow periods to deviate by +/-1 as found in some files
+					const auto CompareFunc = [](uint16 l, uint16 r) { return l > (r + 1); };
+					const auto PeriodTable = mpt::as_span(ProTrackerPeriodTable).subspan(24, 36);
+					if(!std::binary_search(PeriodTable.begin(), PeriodTable.end(), period, CompareFunc))
+						malformedBytes += 2;
+				}
+			}
 		}
 	}
 	return malformedBytes;
@@ -561,12 +578,12 @@ static uint32 CountMalformedMODPatternData(const MODPatternData &patternData, co
 
 // Check if number of malformed bytes in MOD pattern data exceeds some threshold
 template <typename TFileReader>
-static bool ValidateMODPatternData(TFileReader &file, const uint32 threshold, const bool allow31Samples)
+static bool ValidateMODPatternData(TFileReader &file, const uint32 threshold, const bool extendedFormat)
 {
 	MODPatternData patternData;
 	if(!file.Read(patternData))
 		return false;
-	return CountMalformedMODPatternData(patternData, allow31Samples) <= threshold;
+	return CountMalformedMODPatternData(patternData, extendedFormat) <= threshold;
 }
 
 
@@ -885,6 +902,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	SmpLength totalSampleLen = 0, wowSampleLen = 0;
 	m_nSamples = 31;
 	uint32 invalidBytes = 0;
+	bool hasLongSamples = false;
 	for(SAMPLEINDEX smp = 1; smp <= 31; smp++)
 	{
 		MODSampleHeader sampleHeader = ReadAndSwap<MODSampleHeader>(file, modMagicResult.swapBytes);
@@ -894,7 +912,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 		if(isHMNT)
 			Samples[smp].nFineTune = -static_cast<int8>(sampleHeader.finetune << 3);
 		else if(Samples[smp].nLength > 65535)
-			isNoiseTracker = false;
+			hasLongSamples = true;
 		
 		if(sampleHeader.length && !sampleHeader.loopLength)
 			hasRepLen0 = true;
@@ -994,7 +1012,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Before loading patterns, apply some heuristics:
 	// - Scan patterns to check if file could be a NoiseTracker file in disguise.
-	//   In this case, the parameter of Dxx commands needs to be ignored.
+	//   In this case, the parameter of Dxx commands needs to be ignored (see 1.11song2.mod, 2-3song6.mod).
 	// - Use the same code to find notes that would be out-of-range on Amiga.
 	// - Detect 7-bit panning and whether 8xx / E8x commands should be interpreted as panning at all.
 	bool onlyAmigaNotes = true;
@@ -1003,13 +1021,13 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	const uint8 ENABLE_MOD_PANNING_THRESHOLD = 0x30;
 	if(!isNoiseTracker)
 	{
+		const uint32 patternLength = m_nChannels * 64;
 		bool leftPanning = false, extendedPanning = false;  // For detecting 800-880 panning
-		isNoiseTracker = isMdKd;
+		isNoiseTracker = isMdKd && !hasEmptySampleWithVolume && !hasLongSamples;
 		for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
 		{
 			uint16 patternBreaks = 0;
-
-			for(uint32 i = 0; i < 256; i++)
+			for(uint32 i = 0; i < patternLength; i++)
 			{
 				ModCommand m;
 				const auto data = ReadAndSwap<std::array<uint8, 4>>(file, modMagicResult.swapBytes && pat == 0);
@@ -1044,9 +1062,10 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	}
 	file.Seek(modMagicResult.patternDataOffset);
 
-	const CHANNELINDEX readChannels = (isFLT8 ? 4 : m_nChannels); // 4 channels per pattern in FLT8 format.
-	if(isFLT8) numPatterns++; // as one logical pattern consists of two real patterns in FLT8 format, the highest pattern number has to be increased by one.
-	bool hasTempoCommands = false, definitelyCIA = false;	// for detecting VBlank MODs
+	const CHANNELINDEX readChannels = (isFLT8 ? 4 : m_nChannels);  // 4 channels per pattern in FLT8 format.
+	if(isFLT8)
+		numPatterns++;                                              // as one logical pattern consists of two real patterns in FLT8 format, the highest pattern number has to be increased by one.
+	bool hasTempoCommands = false, definitelyCIA = hasLongSamples;  // for detecting VBlank MODs
 	// Heuristic for rejecting E0x commands that are most likely not intended to actually toggle the Amiga LED filter, like in naen_leijasi_ptk.mod by ilmarque
 	bool filterState = false;
 	int filterTransitions = 0;
@@ -1245,6 +1264,8 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 				file.Seek(nextSample);
 			}
 		}
+		if(isMdKd && file.ReadArray<char, 9>() == std::array<char, 9>{0x00, 0x11, 0x55, 0x33, 0x22, 0x11, 0x04, 0x01, 0x01})
+			modMagicResult.madeWithTracker = UL_("Tetramed");
 	}
 
 #if defined(MPT_EXTERNAL_SAMPLES) || defined(MPT_BUILD_FUZZER)
@@ -1361,8 +1382,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 
 
 // Check if a name string is valid (i.e. doesn't contain binary garbage data)
-template <size_t N>
-static uint32 CountInvalidChars(const char (&name)[N])
+static uint32 CountInvalidChars(const mpt::span<const char> name) noexcept
 {
 	uint32 invalidChars = 0;
 	for(int8 c : name)  // char can be signed or unsigned
@@ -1372,6 +1392,34 @@ static uint32 CountInvalidChars(const char (&name)[N])
 			invalidChars++;
 	}
 	return invalidChars;
+}
+
+
+enum class NameClassification
+{
+	Empty,
+	ValidASCII,
+	Invalid,
+};
+
+// Check if a name is a valid null-terminated ASCII string with no garbage after the null terminator, or if it's empty
+static NameClassification ClassifyName(const mpt::span<const char> name) noexcept
+{
+	bool foundNull = false, foundNormal = false;
+	for(auto c : name)
+	{
+		if(c > 0 && c < ' ')
+			return NameClassification::Invalid;
+		if(c == 0)
+			foundNull = true;
+		else if(foundNull)
+			return NameClassification::Invalid;
+		else
+			foundNormal = true;
+	}
+	if(!foundNull)
+		return NameClassification::Invalid;
+	return foundNormal ? NameClassification::ValidASCII : NameClassification::Empty;
 }
 
 
@@ -1407,15 +1455,14 @@ static bool ValidateHeader(const M15FileHeaders &fileHeaders)
 	// However, there are quite a few SoundTracker modules in the wild with random
 	// characters. To still be able to distguish them from other formats, we just reject
 	// files with *too* many bogus characters. Arbitrary threshold: 48 bogus characters in total
-	// or more than 5 invalid characters just in the title alone.
-	uint32 invalidChars = CountInvalidChars(fileHeaders.songname);
-	if(invalidChars > 5)
-	{
-		return false;
-	}
+	// or more than 5 invalid characters just in the title alone
+	uint32 invalidCharsInTitle = CountInvalidChars(fileHeaders.songname);
+	uint32 invalidChars = invalidCharsInTitle;
 
 	SmpLength totalSampleLen = 0;
 	uint8 allVolumes = 0;
+	uint8 validNameCount = 0;
+	bool invalidNames = false;
 
 	for(SAMPLEINDEX smp = 0; smp < 15; smp++)
 	{
@@ -1423,17 +1470,31 @@ static bool ValidateHeader(const M15FileHeaders &fileHeaders)
 
 		invalidChars += CountInvalidChars(sampleHeader.name);
 
+		// schmokk.mod has a non-zero value here but it should not be treated as finetune
+		if(sampleHeader.finetune != 0)
+			invalidChars += 16;
+		if(const auto nameType = ClassifyName(sampleHeader.name); nameType == NameClassification::ValidASCII)
+			validNameCount++;
+		else if(nameType == NameClassification::Invalid)
+			invalidNames = true;
+
 		// Sanity checks - invalid character count adjusted for ata.mod (MD5 937b79b54026fa73a1a4d3597c26eace, SHA1 3322ca62258adb9e0ae8e9afe6e0c29d39add874)
+		// Sample length adjusted for romantic.stk which has a (valid) sample of length 72222
 		if(invalidChars > 48
 		   || sampleHeader.volume > 64
-		   || sampleHeader.finetune != 0
-		   || sampleHeader.length > 32768)
+		   || sampleHeader.length > 37000)
 		{
 			return false;
 		}
 
 		totalSampleLen += sampleHeader.length;
 		allVolumes |= sampleHeader.volume;
+	}
+
+	// scramble_2.mod has a lot of garbage in the song title, but it has lots of properly-formatted sample names, so we consider those to be more important than the garbage bytes.
+	if(invalidCharsInTitle > 5 && (validNameCount < 4 || invalidNames))
+	{
+		return false;
 	}
 
 	// Reject any files with no (or only silent) samples at all, as this might just be a random binary file (e.g. ID3 tags with tons of padding)
@@ -1534,13 +1595,15 @@ bool CSoundFile::ReadM15(FileReader &file, ModLoadingFlags loadFlags)
 	file.Seek(20);
 	for(SAMPLEINDEX smp = 1; smp <= 15; smp++)
 	{
+		ModSample &mptSmp = Samples[smp];
 		MODSampleHeader sampleHeader;
 		file.ReadStruct(sampleHeader);
 		ReadSample(sampleHeader, Samples[smp], m_szNames[smp], true);
+		mptSmp.nFineTune = 0;
 
-		totalSampleLen += Samples[smp].nLength;
+		totalSampleLen += mptSmp.nLength;
 
-		if(m_szNames[smp][0] && ((memcmp(m_szNames[smp].buf, "st-", 3) && memcmp(m_szNames[smp].buf, "ST-", 3)) || m_szNames[smp][5] != ':'))
+		if(m_szNames[smp][0] && sampleHeader.HasDiskName())
 		{
 			// Ultimate Soundtracker 1.8 and D.O.C. SoundTracker IX always have sample names containing disk names.
 			hasDiskNames = false;
@@ -1549,9 +1612,9 @@ bool CSoundFile::ReadM15(FileReader &file, ModLoadingFlags loadFlags)
 		// Loop start is always in bytes, not words, so don't trust the auto-fix magic in the sample header conversion (fixes loop of "st-01:asia" in mod.drag 10)
 		if(sampleHeader.loopLength > 1)
 		{
-			Samples[smp].nLoopStart = sampleHeader.loopStart;
-			Samples[smp].nLoopEnd = sampleHeader.loopStart + sampleHeader.loopLength * 2;
-			Samples[smp].SanitizeLoops();
+			mptSmp.nLoopStart = sampleHeader.loopStart;
+			mptSmp.nLoopEnd = sampleHeader.loopStart + sampleHeader.loopLength * 2;
+			mptSmp.SanitizeLoops();
 		}
 
 		// UST only handles samples up to 9999 bytes. Master Soundtracker 1.0 and SoundTracker 2.0 introduce 32KB samples.
@@ -1636,7 +1699,7 @@ bool CSoundFile::ReadM15(FileReader &file, ModLoadingFlags loadFlags)
 			// "operation wolf" soundtrack have 15 patterns for several songs, but the last few patterns are just garbage.
 			// Apart from those hidden patterns, the files play fine.
 			// Example: operation wolf - wolf1.mod (MD5 739acdbdacd247fbefcac7bc2d8abe6b, SHA1 e6b4813daacbf95f41ce9ec3b22520a2ae07eed8)
-			if(illegalBytes > 512)
+			if(illegalBytes > std::max(512u, numPatterns * 128u))
 				return false;
 		}
 		for(ROWINDEX row = 0; row < 64; row++)
@@ -1829,7 +1892,7 @@ bool CSoundFile::ReadM15(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
-	const mpt::uchar *madeWithTracker = UL_("");
+	[[maybe_unused]] /* silence clang-tidy deadcode.DeadStores */ const mpt::uchar *madeWithTracker = UL_("");
 	switch(minVersion)
 	{
 	case UST1_00:

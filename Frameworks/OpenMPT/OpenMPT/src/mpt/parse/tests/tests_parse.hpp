@@ -65,7 +65,10 @@ MPT_TEST_GROUP_INLINE("mpt/parse")
 #endif
 
 	MPT_TEST_EXPECT_EQUAL(mpt::parse<float>(mpt::format<std::string>::val(-87.0)), -87.0f);
-#if !MPT_OS_DJGPP
+	// VS2022 17.7.2 parses "-5e-07" as -5.0000000000000004e-06 instead of -4.9999999999999998e-07 which is closer
+	// <https://developercommunity.visualstudio.com/t/Parsing-double-from-stringstream-returns/10450694>
+	// <https://developercommunity.visualstudio.com/t/v143-1437-istringstream-incorrectly-con/10450662>
+#if !MPT_OS_DJGPP && !(MPT_MSVC_AT_LEAST(2022, 7) && MPT_MSVC_BEFORE(2022, 9))
 	MPT_TEST_EXPECT_EQUAL(mpt::parse<double>(mpt::format<std::string>::val(-0.5e-6)), -0.5e-6);
 #endif
 

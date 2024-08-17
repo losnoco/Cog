@@ -56,8 +56,9 @@ How to compile
 
      -  Visual Studio 2017 XP targeting toolset
 
- -  OpenMPT requires the compile host system to be Windows 8.1 (or later) amd64,
-    or Windows 11 (or later) ARM64.
+ -  OpenMPT requires the compile host system to be Windows 8.1 (or later) on
+    amd64 for VS2019 and VS2017, Windows 10 (or later) on amd64 for VS2022, or
+    Windows 11 (or later) ARM64.
 
  -  In order to build OpenMPT for Windows XP, the Visual Studio 2017 XP 
     targeting toolset as well as the Windows 8.1 SDK need to be installed. The

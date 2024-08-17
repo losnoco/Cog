@@ -187,7 +187,7 @@ struct ModChannel
 
 	uint32 GetVSTVolume() const noexcept { return (pModInstrument) ? pModInstrument->nGlobalVol * 4 : nVolume; }
 
-	ModCommand::NOTE GetPluginNote(bool realNoteMapping, bool ignoreArpeggio = false) const;
+	ModCommand::NOTE GetPluginNote(bool ignoreArpeggio = false) const;
 
 	// Check if the channel has a valid MIDI output. A return value of true implies that pModInstrument != nullptr.
 	bool HasMIDIOutput() const noexcept { return pModInstrument != nullptr && pModInstrument->HasValidMIDIChannel(); }
@@ -208,6 +208,10 @@ struct ModChannel
 	void InstrumentControl(uint8 param, const CSoundFile &sndFile);
 
 	int32 GetMIDIPitchBend() const noexcept { return (static_cast<int32>(microTuning) + 0x8000) / 4; }
+	void SetMIDIPitchBend(const uint8 high, const uint8 low) noexcept
+	{
+		microTuning = static_cast<int16>(((high << 9) | (low << 2)) - 0x8000);
+	}
 };
 
 

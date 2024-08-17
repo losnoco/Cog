@@ -36,6 +36,14 @@ public:
 	static constexpr USTEPINDEXTYPE s_RatioTableFineSizeMaxDefault = 1000;
 
 public:
+	CTuning(CTuning &) = default;
+	CTuning(CTuning &&) noexcept = default;
+
+	bool operator==(const CTuning &other) const noexcept;
+	bool operator!=(const CTuning &other) const noexcept
+	{
+		return !(*this == other);
+	}
 
 	// To return ratio of certain note.
 	RATIOTYPE GetRatio(const NOTEINDEXTYPE note) const;
@@ -221,7 +229,7 @@ private:
 
 private:
 
-	Tuning::Type m_TuningType;
+	Tuning::Type m_TuningType = Type::GENERAL;
 
 	//Noteratios
 	std::vector<RATIOTYPE> m_RatioTable;
@@ -230,14 +238,14 @@ private:
 	std::vector<RATIOTYPE> m_RatioTableFine;
 
 	// The lowest index of note in the table
-	NOTEINDEXTYPE m_NoteMin;
+	NOTEINDEXTYPE m_NoteMin = s_NoteMinDefault;
 
 	//For groupgeometric tunings, tells the 'group size' and 'group ratio'
 	//m_GroupSize should always be >= 0.
-	NOTEINDEXTYPE m_GroupSize;
-	RATIOTYPE m_GroupRatio;
+	NOTEINDEXTYPE m_GroupSize = 0;
+	RATIOTYPE m_GroupRatio = 0;
 
-	USTEPINDEXTYPE m_FineStepCount; // invariant: 0 <= m_FineStepCount <= FINESTEPCOUNT_MAX
+	USTEPINDEXTYPE m_FineStepCount = 0; // invariant: 0 <= m_FineStepCount <= FINESTEPCOUNT_MAX
 
 	mpt::ustring m_TuningName;
 

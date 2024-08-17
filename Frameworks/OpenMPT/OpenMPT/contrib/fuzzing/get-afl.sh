@@ -12,7 +12,7 @@ wget $AFL_URL || exit
 tar -xzvf $AFL_FILENAME
 rm $AFL_FILENAME
 cd AFLplusplus-*
-make source-only || exit
+make PERFORMANCE=1 source-only || exit
 cd ..
 rm -rf afl
 mv AFLplusplus-* afl
