@@ -5,7 +5,7 @@
 /* VAGp - Sony SDK format, created by various official tools */
 VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
-    uint32_t start_offset, file_size, channel_size, interleave, interleave_first = 0, interleave_first_skip = 0;
+    uint32_t start_offset, file_size, channel_size, stream_name_size, interleave, interleave_first = 0, interleave_first_skip = 0;
     meta_t meta_type;
     int channels = 0, loop_flag, sample_rate;
     uint32_t vag_id, version, reserved;
@@ -25,8 +25,11 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
      * .l/r: Crash Nitro Kart (PS2), Gradius V (PS2)
      * .vas: Kingdom Hearts II (PS2)
      * .xa2: Shikigami no Shiro (PS2)
-     * .snd: Alien Breed (Vita) */
-    if (!check_extensions(sf,"vag,swag,str,vig,l,r,vas,xa2,snd"))
+     * .snd: Alien Breed (Vita)
+     * .svg: ModernGroove: Ministry of Sound Edition (PS2)
+     * (extensionless): The Urbz (PS2), The Sims series (PS2)
+     * .wav: Sniper Elite (PS2), The Simpsons Game (PS2/PSP) */
+    if (!check_extensions(sf,"vag,swag,str,vig,l,r,vas,xa2,snd,svg,,wav,lwav"))
         return NULL;
 
     file_size = get_streamfile_size(sf);
@@ -49,6 +52,11 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
     /* 0x14-20 reserved */
     /* 0x20-30: name (optional) */
     /* 0x30: data start (first 0x10 usually 0s to init SPU) */
+
+    /* a few Edge of Reality titles use the blank adpcm frame to
+     * store a longer stream name, so the length is defined here
+     * to allow for it to be overridden for such rare exceptions */
+    stream_name_size = 0x10;
 
     /* check variation */
     switch(vag_id) {
@@ -148,15 +156,39 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
 
                 loop_flag = ps_find_loop_offsets(sf, start_offset, channel_size*channels, channels, interleave, &loop_start_sample, &loop_end_sample);
             }
-            else if (version == 0x40000000) {
-                /* Killzone (PS2) */
+            else if (version == 0x00000020 && is_id32be(0x800,sf, "VAGp")) {
+                /* ModernGroove: Ministry of Sound Edition (PS2) */
                 start_offset = 0x30;
+                channels = 2;
+                interleave = 0x800;
+                interleave_first = interleave - start_offset; /* includes header */
+                interleave_first_skip = start_offset;
+
+                loop_flag = 0;
+            }
+            else if (version == 0x02000000 || version == 0x40000000) {
+                /* Edge of Reality engine (PS2) (0x02), Killzone (PS2) (0x40) */
+                /* Stream starts at 0x40 for both variants. EoR/Maxis uses the
+                 * blank SPU init frame to store the loop flag in its 1st byte.
+                 * Later EoR games (Over the Hedge) have 32 char stream names,
+                 * and moved the loop flag stored in the reserved field at 0x1E */
+                start_offset = 0x40;
                 channels = 1;
                 interleave = 0;
 
-                channel_size = read_u32le(0x0C,sf) / channels;
+                channel_size = read_u32le(0x0C,sf);
                 sample_rate = read_s32le(0x10,sf);
-                loop_flag = 0;
+                loop_flag = 0; /* adpcm flags always 0x02 in Killzone */
+
+                /* EoR/Maxis title specific
+                 * always blank in Killzone */
+                if (version == 0x02000000) {
+                    //uint8_t c = read_u8(0x30, sf);
+                    /* maybe better to do (c >= 0x30 && c <= 0x7A)? */
+                    if (read_u8(0x30, sf) >= 0x20 && read_u8(0x30, sf) <= 0x7E)
+                        stream_name_size = 0x20;
+                    loop_flag = ps_find_loop_offsets(sf, start_offset, channel_size, channels, interleave, &loop_start_sample, &loop_end_sample);
+                }
             }
             else if (version == 0x00020001 || version == 0x00030000) {
                 /* standard Vita/PS4 .vag [Chronovolt (Vita), Grand Kingdom (PS4)] */
@@ -246,8 +278,8 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
             else if (version == 0x00000020 && reserved == 0x01010101) {
                 /* Eko Software */
                 start_offset = 0x800;
-                channels = 2; /* mono VAGs in this game are standard, without reserved value */ 
-                
+                channels = 2; /* mono VAGs in this game are standard, without reserved value */
+
                 /* detect interleave with ch2's null frame */
                 if (read_u32be(0x800 + 0x400,sf) == 0x00000000) /* Woody Woodpecker: Escape from Buzz Buzzard Park (PS2) */
                     interleave = 0x400;
@@ -255,7 +287,7 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
                     interleave = 0x4000;
                 else if (read_u32be(0x800 + 0x2000,sf) == 0x00000000)  /* Gift (PS2) */
                     interleave = 0x2000;
-                else 
+                else
                     goto fail;
 
                 channel_size = channel_size / channels;
@@ -265,6 +297,15 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
                 loop_flag = 1;
                 loop_start_sample = 0;
                 loop_end_sample = ps_bytes_to_samples(channel_size,1);
+            }
+            else if (version == 0x00000020 && channel_size == file_size + 0x10) {
+                /* THQ Australia [Jimmy Neutron: Attack of the Twonkies, SpongeBob: Lights, Camera, Pants!] */
+                start_offset = 0x30;
+                interleave = 0;
+                channels = 1;
+
+                channel_size -= 0x40;
+                loop_flag = ps_find_loop_offsets(sf, start_offset, channel_size, channels, interleave, &loop_start_sample, &loop_end_sample);
             }
             else {
                 /* standard PS1/PS2/PS3 .vag [Ecco the Dolphin (PS2), Legasista (PS3)] */
@@ -289,10 +330,10 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
 
     /* ignore bigfiles and bad extractions (approximate) */
     /* padding is set to 2 MiB to avoid breaking Jak series' VAGs */
-    if (channel_size * channels + interleave * channels + start_offset * channels + 0x200000 < get_streamfile_size(sf) ||
-        channel_size * channels > get_streamfile_size(sf)) {
-        vgm_logi("VAG: wrong expected (incorrect extraction? %x * %i + %x + %x + ~ vs %x)\n", 
-            channel_size, channels, interleave * channels, start_offset * channels, (uint32_t)get_streamfile_size(sf));
+    if (channel_size * channels + interleave * channels + start_offset * channels + 0x200000 < file_size ||
+        channel_size * channels > file_size) {
+        vgm_logi("VAG: wrong expected (incorrect extraction? %x * %i + %x + %x + ~ vs %x)\n",
+            channel_size, channels, interleave * channels, start_offset * channels, file_size);
         goto fail;
     }
 
@@ -318,7 +359,7 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
     if (has_interleave_last && channels > 1 && interleave)
         vgmstream->interleave_last_block_size = channel_size % interleave;
 
-    read_string(vgmstream->stream_name,0x10+1, 0x20,sf); /* always, can be null */
+    read_string(vgmstream->stream_name, stream_name_size + 1, 0x20, sf); /* always, can be null */
 
     if (!vgmstream_open_stream(vgmstream, sf, start_offset))
         goto fail;
@@ -328,6 +369,7 @@ fail:
     close_vgmstream(vgmstream);
     return NULL;
 }
+
 
 /* AAAp - Acclaim Austin Audio VAG header [The Red Star (PS2)] */
 VGMSTREAM* init_vgmstream_vag_aaap(STREAMFILE* sf) {
@@ -342,7 +384,7 @@ VGMSTREAM* init_vgmstream_vag_aaap(STREAMFILE* sf) {
     if (!is_id32be(0x00, sf, "AAAp"))
         return NULL;
 
-    /* .vag - assumed, we don't know the original filenames */
+    /* .vag: original names before hashing */
     if (!check_extensions(sf, "vag"))
         return NULL;
 
@@ -352,10 +394,10 @@ VGMSTREAM* init_vgmstream_vag_aaap(STREAMFILE* sf) {
 
     /* file has VAGp header for each channel */
     for (i = 0; i < channels; i++) {
-        if (read_u32be(vag_offset + i * 0x30, sf) != 0x56414770) /* "VAGp" */
+        if (!is_id32be(vag_offset + i * 0x30, sf, "VAGp"))
             goto fail;
     }
-    
+
     /* check version */
     if (read_u32be(vag_offset + 0x04, sf) != 0x00000020)
         goto fail;
@@ -375,6 +417,158 @@ VGMSTREAM* init_vgmstream_vag_aaap(STREAMFILE* sf) {
     vgmstream->coding_type = coding_PSX;
     vgmstream->layout_type = layout_interleave;
     vgmstream->interleave_block_size = interleave;
+
+    if (!vgmstream_open_stream(vgmstream, sf, start_offset))
+        goto fail;
+    return vgmstream;
+
+fail:
+    close_vgmstream(vgmstream);
+    return NULL;
+}
+
+
+/* VAGp footer - sound data first, header at the end [The Sims 2: Pets (PS2), The Sims 2: Castaway (PS2)] */
+VGMSTREAM* init_vgmstream_vag_footer(STREAMFILE* sf) {
+    VGMSTREAM* vgmstream = NULL;
+    size_t file_size, stream_size;
+    off_t header_offset, start_offset;
+    int channels, interleave, sample_rate, loop_flag;
+    int32_t loop_start_sample = 0, loop_end_sample = 0;
+    uint32_t version;
+
+
+    /* checks */
+    /* check if this begins with valid PS-ADPCM */
+    if (!ps_check_format(sf, 0x00, 0x40))
+        return NULL;
+
+    /* (extensionless): Sims 2 console spinoffs
+     * .vag: assumed, may be added by tools */
+    if (!check_extensions(sf, ",vag"))
+        return NULL;
+
+    file_size = get_streamfile_size(sf);
+    header_offset = file_size - 0x40;
+
+    if (!is_id32be(header_offset, sf, "VAGp"))
+        return NULL;
+
+
+    /* all the data is in little endian */
+    version = read_u32le(header_offset + 0x04, sf);
+    stream_size = read_u32le(header_offset + 0x0C, sf);
+    sample_rate = read_u32le(header_offset + 0x10, sf);
+
+    /* what's meant to be the SPU init frame instead has garbage data, apart from the very 1st byte */
+    /* see the comment under (case 0x56414770:) where (version == 0x02000000) in init_vgmstream_vag */
+    //loop_flag = read_u8(header_offset + 0x30, sf); /* ? */
+
+    /* in the very unlikely chance anyone else was
+     * unhinged enough to do something like this */
+    if (version != 0x00000002) goto fail;
+    /* stream "header" (footer) is aligned to 0x40 */
+    if (align_size_to_block(stream_size + 0x40, 0x40) != file_size)
+        goto fail;
+
+    channels = 1;
+    interleave = 0;
+    start_offset = 0;
+
+    loop_flag = ps_find_loop_offsets(sf, start_offset, stream_size, channels, interleave, &loop_start_sample, &loop_end_sample);
+
+
+    /* build the VGMSTREAM */
+    vgmstream = allocate_vgmstream(channels, loop_flag);
+    if (!vgmstream) goto fail;
+
+    vgmstream->meta_type = meta_VAG_footer;
+    vgmstream->coding_type = coding_PSX;
+    vgmstream->layout_type = layout_none;
+    vgmstream->sample_rate = sample_rate;
+    vgmstream->interleave_block_size = interleave;
+    vgmstream->loop_start_sample = loop_start_sample;
+    vgmstream->loop_end_sample = loop_end_sample;
+    vgmstream->num_samples = ps_bytes_to_samples(stream_size, channels);
+
+    read_string(vgmstream->stream_name, 0x10 + 1, header_offset + 0x20, sf);
+
+    if (!vgmstream_open_stream(vgmstream, sf, start_offset))
+        goto fail;
+    return vgmstream;
+
+fail:
+    close_vgmstream(vgmstream);
+    return NULL;
+}
+
+
+/* .VAG - Evolution Games [Nickelodeon Rocket Power: Beach Bandits (PS2)] */
+VGMSTREAM* init_vgmstream_vag_evolution_games(STREAMFILE* sf) {
+    VGMSTREAM* vgmstream = NULL;
+    size_t stream_size;
+    off_t start_offset;
+    int channels, interleave, sample_rate, loop_flag;
+
+
+    /* checks */
+    if (!check_extensions(sf, "vag"))
+        return NULL;
+
+    /* VAGp replaced with 3 spaces + NUL */
+    if (!is_id32be(0x00, sf, "   \0"))
+        return NULL;
+
+
+    /* all the data is in little endian */
+    if (read_u32le(0x04, sf) != 0) goto fail; /* version */
+    if (!is_id32be(0x08, sf, "   \0")) goto fail; /* reserved */
+    stream_size = read_u32le(0x0C, sf);
+    sample_rate = read_u32le(0x10, sf);
+    /* reserved 0x14 == "    "
+     * reserved 0x18 == "    "
+     * reserved 0x1C == "   \0"
+     */
+    /* starting to think the padding was made with null-terminated strings */
+
+    /* data is often aligned to 0x80, but not always */
+    if (stream_size + 0x30 != get_streamfile_size(sf) &&
+        align_size_to_block(stream_size + 0x30, 0x80) != get_streamfile_size(sf))
+        goto fail;
+
+    /*  HACK 1  */
+    stream_size -= 0x20;
+    /* technically the stream size is correct, however the final ADPCM frame
+     * has the end flag 0x7 stored in the coef/shift byte for whatever reason
+     * and the 2nd to last frame in most files has what seems like garbage(?)
+     * so there's an audible click at the end from those.
+     */
+
+    /*  HACK 2  */
+    if (is_id32be(0x10, sf, "tpad"))
+        sample_rate = 44100; /* from the GC port */
+    /* sample rate is valid for all files except Boostpad.vag, where this field
+     * is uninitialized and instead has the string "tpad" (likely from the name)
+     */
+
+    channels = 1;
+    loop_flag = 0;
+    interleave = 0;
+    start_offset = 0x30;
+
+
+    /* build the VGMSTREAM */
+    vgmstream = allocate_vgmstream(channels, loop_flag);
+    if (!vgmstream) goto fail;
+
+    vgmstream->meta_type = meta_VAG_custom;
+    vgmstream->coding_type = coding_PSX;
+    vgmstream->layout_type = layout_none;
+    vgmstream->sample_rate = sample_rate;
+    vgmstream->interleave_block_size = interleave;
+    vgmstream->num_samples = ps_bytes_to_samples(stream_size, channels);
+
+    read_string(vgmstream->stream_name, 0x10 + 1, 0x20, sf); /* always "Evolution Games"? */
 
     if (!vgmstream_open_stream(vgmstream, sf, start_offset))
         goto fail;

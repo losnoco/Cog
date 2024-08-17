@@ -7,23 +7,18 @@
 #include <libvgmstream/streamtypes.h>
 #endif
 
+void put_u8(uint8_t* buf, uint8_t v);
+void put_u16le(uint8_t* buf, uint16_t v);
+void put_u32le(uint8_t* buf, uint32_t v);
+void put_u16be(uint8_t* buf, uint16_t v);
+void put_u32be(uint8_t* buf, uint32_t v);
 
-void put_8bit(uint8_t* buf, int8_t i);
-void put_16bitLE(uint8_t* buf, int16_t i);
-void put_32bitLE(uint8_t* buf, int32_t i);
-void put_16bitBE(uint8_t* buf, int16_t i);
-void put_32bitBE(uint8_t* buf, int32_t i);
+void put_s8(uint8_t* buf, int8_t v);
+void put_s16le(uint8_t* buf, int16_t v);
+void put_s32le(uint8_t* buf, int32_t v);
+void put_s16be(uint8_t* buf, int16_t v);
+void put_s32be(uint8_t* buf, int32_t v);
 
-/* alias of the above */ //TODO: improve
-#define put_u8 put_8bit
-#define put_u16le put_16bitLE
-#define put_u32le put_32bitLE
-#define put_u16be put_16bitBE
-#define put_u32be put_32bitBE
-#define put_s8 put_8bit
-#define put_s16le put_16bitLE
-#define put_s32le put_32bitLE
-#define put_s16be put_16bitBE
-#define put_s32be put_32bitBE
+void put_data(uint8_t* buf, void* v, int v_size);
 
 #endif

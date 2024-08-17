@@ -202,11 +202,14 @@ static const adxkey_info adxkey8_list[] = {
         /* Mirai Nikki: 13-ninme no Nikki Shoyuusha Re-Write (PSP) */
         {0x58a3,0x66f5,0x599f, "FDRW17th",0},
     
-        /* Shoujo Yoshitsune-den Ni - Toki wo Koeru Chigiri (PS2) */
+        /* Shoujo Yoshitsune-den Ni: Toki wo Koeru Chigiri (PS2) */
         {0x62d7,0x483d,0x4fb7, "YOSHI2",0},
     
-        /* Junjou Romantica - Koi no Doki Doki Daisakusen (PS2) (Marvelous) */
+        /* Junjou Romantica: Koi no Doki Doki Daisakusen (PS2) */
         {0x5827,0x612d,0x5585, "Endress-SETSUNAI!",0},
+
+        /* Corpse Party: Book of Shadows (PSP) */
+        {0x60ad,0x5689,0x5281, "\x83\x76\x83\x89\x83\x60\x83\x69Lovers_Day",0}, // "プラチナLovers_Day" in SHIFT-JIS
 
 };
 
@@ -272,6 +275,9 @@ static const adxkey_info adxkey9_list[] = {
 
         /* Persona 5 Royal (PC) */
         {0x0000,0x0000,0x0000, NULL,9923540143823782},      // 002341683D2FDBA6
+
+        /* ARGONAVIS -Kimi ga Mita Stage e- (Android) */
+        {0x069c,0x06e9,0x0323, NULL,0},                     // guessed with VGAudio (possible key: 34E06E8192 / 227103637906)
 
 };
 

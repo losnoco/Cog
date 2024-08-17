@@ -132,7 +132,7 @@ fail:
 
 /* writes data to the buffer and moves offsets, transforming EALayer3 frames */
 int mpeg_custom_parse_frame_ealayer3(VGMSTREAMCHANNEL* stream, mpeg_codec_data* data, int num_stream) {
-    mpeg_custom_stream *ms = data->streams[num_stream];
+    mpeg_custom_stream* ms = &data->streams[num_stream];
     int ok, granule_found;
     ealayer3_buffer_t ib_0 = {0}, ib_1 = {0};
     ealayer3_frame_t eaf_0, eaf_1;
@@ -280,7 +280,7 @@ static int ealayer3_parse_frame(mpeg_codec_data* data, int num_stream, ealayer3_
      * (unknown in the first EA-frame but that's ok) */
     int channels_per_frame = 0;
     if (num_stream >= 0) {
-        channels_per_frame = data->streams[num_stream]->channels_per_frame;
+        channels_per_frame = data->streams[num_stream].channels_per_frame;
     }
 
     /* make sure as there is re-parsing in loops */
@@ -391,7 +391,7 @@ static int ealayer3_parse_frame_v2(ealayer3_buffer_t* ib, ealayer3_frame_t* eaf)
     }
 
     VGM_ASSERT(eaf->v2_extended_flag && eaf->v2_common_size == 0, "EA EAL3: v2 empty frame\n"); /* seen in V2S */
-    VGM_ASSERT(eaf->v2_extended_flag && eaf->v2_offset_samples > 0, "EA EAL3: v2_offset_mode=%x with value=0x%x\n", eaf->v2_offset_mode, eaf->v2_offset_samples);
+    VGM_ASSERT(eaf->v2_extended_flag && eaf->v2_offset_samples > 0, "EA EAL3: v2_offset_mode=%x with value=0x%x\n", eaf->v2_offset_mode, eaf->v2_offset_samples); /* Dead Space 2 (PC) */
     //VGM_ASSERT(eaf->v2_pcm_samples > 0, "EA EAL3: v2_pcm_samples 0x%x\n", eaf->v2_pcm_samples);
 
     eaf->pcm_size = (eaf->v2_pcm_samples * sizeof(int16_t) * eaf->channels);
@@ -668,22 +668,22 @@ static void ealayer3_copy_pcm_block(uint8_t* outbuf, off_t pcm_offset, int pcm_n
         int pos = 0;
         for (i = 0; i < pcm_number * channels_per_frame; i++) {
             int16_t pcm_sample = get_s16be(pcm_block + pos);
-            put_16bitLE(outbuf + pos, pcm_sample);
+            put_s16le(outbuf + pos, pcm_sample);
 
-            pos += sizeof(sample);
+            pos += sizeof(sample_t);
         }
     }
     else {
         /* all of ch0 first, then all of ch1 (EAL3 v1b only) */
         int get_pos = 0;
         for (ch = 0; ch < channels_per_frame; ch++) {
-            int put_pos = sizeof(sample) * ch;
+            int put_pos = sizeof(sample_t) * ch;
             for (i = 0; i < pcm_number; i++) {
                 int16_t pcm_sample = get_s16be(pcm_block + get_pos);
-                put_16bitLE(outbuf + put_pos, pcm_sample);
+                put_s16le(outbuf + put_pos, pcm_sample);
 
-                get_pos += sizeof(sample);
-                put_pos += sizeof(sample) * channels_per_frame;
+                get_pos += sizeof(sample_t);
+                put_pos += sizeof(sample_t) * channels_per_frame;
             }
         }
     }
@@ -692,12 +692,12 @@ static void ealayer3_copy_pcm_block(uint8_t* outbuf, off_t pcm_offset, int pcm_n
 /* write PCM block directly to sample buffer and setup decode discard (EALayer3 seems to use this as a prefetch of sorts).
  * Seems to alter decoded sample buffer to handle encoder delay/padding in a twisted way. */
 static int ealayer3_write_pcm_block(VGMSTREAMCHANNEL* stream, mpeg_codec_data* data, int num_stream, ealayer3_frame_t* eaf) {
-    mpeg_custom_stream *ms = data->streams[num_stream];
+    mpeg_custom_stream* ms = &data->streams[num_stream];
     int channels_per_frame = ms->channels_per_frame;
     size_t bytes_filled;
 
 
-    bytes_filled = sizeof(sample) * ms->samples_filled * channels_per_frame;
+    bytes_filled = sizeof(sample_t) * ms->samples_filled * channels_per_frame;
     if (bytes_filled + eaf->pcm_size > ms->output_buffer_size) {
         VGM_LOG("EAL3: can't fill the sample buffer with 0x%x\n", eaf->pcm_size);
         goto fail;

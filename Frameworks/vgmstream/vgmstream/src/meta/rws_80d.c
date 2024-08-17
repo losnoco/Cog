@@ -40,6 +40,7 @@ typedef struct {
     size_t block_layers_size;
 
     off_t coefs_offset;
+    off_t hist_offset;
 
     char readable_name[STREAM_NAME_SIZE];
 } rws_header;
@@ -200,7 +201,7 @@ VGMSTREAM* init_vgmstream_rws(STREAMFILE* sf) {
     for (i = 0; i < rws.total_layers; i++) {
         uint32_t layer_codec = 0;
         if (i+1 == rws.target_layer) {
-            rws.sample_rate     = read_u32(offset + 0x00, sf);
+            rws.sample_rate = read_u32(offset + 0x00, sf);
             /* 0x04: config? */
           //rws.layer_size  = read_u32(offset + 0x08, sf); /* same or close to usable size */
             /* 0x0c: bits per sample */
@@ -210,7 +211,7 @@ VGMSTREAM* init_vgmstream_rws(STREAMFILE* sf) {
             /* 0x18: null or some size? */
             rws.codec       = read_u32(offset + 0x1c, sf); /* 128b uuid (32b-16b-16b-8b*8) but first 32b is enough */
         }
-        layer_codec   = read_u32(offset + 0x1c, sf);
+        layer_codec = read_u32(offset + 0x1c, sf);
         offset += 0x2c;
 
         /* DSP has an extra field per layer */
@@ -219,6 +220,7 @@ VGMSTREAM* init_vgmstream_rws(STREAMFILE* sf) {
             /* 0x04: approx size/loop related? (can be 0) */
             if (i+1 == rws.target_layer) {
                 rws.coefs_offset = offset + 0x1c;
+                rws.hist_offset  = offset + 0x40;
             }
             offset += 0x60;
         }
@@ -297,8 +299,23 @@ VGMSTREAM* init_vgmstream_rws(STREAMFILE* sf) {
     vgmstream->current_block_size = rws.block_size / vgmstream->channels;
     vgmstream->full_block_size = rws.block_layers_size;
 
+    /* these should be all the codec uuids, even if many aren't ever used
+     * based on the research at https://burnout.wiki/wiki/Wave_Dictionary
+     *  {D9EA9798-BBBC-447B-96B2-654759102E16}: PS ADPCM
+     *  {D01BD217-3587-4EED-B9D9-B8E86EA9B995}: PCM
+     *  {DA1E4382-2C99-4C61-AD99-7F364B211537}: Float
+     *  {F86215B0-31D5-4C29-BD37-CDBF9BD10C53}: DSP ADPCM
+     *  {632FA22B-11DD-458F-AA27-A5C346E9790E}: Xbox IMA ADPCM
+     *  {3F1D8147-B7C4-41E6-A69B-3CC0025B33C7}: WMA
+     *  {BACFB36E-529D-4692-BF53-324256B0734F}: MP3
+     *  {34D09A54-57D3-409E-A6AD-2BC845AEC339}: MP2
+     *  {04C15BA7-F907-40AB-A49F-EEFEF8C4D296}: MP1
+     *  {A30DB390-58A9-43C4-B9D2-55D84D3AE754}: AC3
+     *  {EF386593-B611-432D-957F-A71ADE44227A}: IMA ADPCM
+     */
+
     switch(rws.codec) {
-        case 0xD01BD217: /* {D01BD217,3587,4EED,B9,D9,B8,E8,6E,A9,B9,95} PCM PC/X360/PS2 */
+        case 0xD01BD217: /* {D01BD217-3587-4EED-B9D9-B8E86EA9B995} PCM PC/X360/PS2 */
             /* D.i.R.T.: Origin of the Species (PC), The Legend of Spyro (X360), kill.switch (PS2) */
             if (rws.interleave == 0x02) { /* PC, X360 */
                 vgmstream->coding_type = coding_PCM16_int;
@@ -313,7 +330,7 @@ VGMSTREAM* init_vgmstream_rws(STREAMFILE* sf) {
             vgmstream->num_samples = pcm16_bytes_to_samples(stream_size, rws.channels);
             break;
 
-        case 0xD9EA9798: /* {D9EA9798,BBBC,447B,96,B2,65,47,59,10,2E,16} PS-ADPCM PS2 */
+        case 0xD9EA9798: /* {D9EA9798-BBBC-447B-96B2-654759102E16} PS-ADPCM PS2 */
             /* Silent Hill Origins (PS2), Ghost Rider (PS2), Max Payne 2 (PS2), Nana (PS2) */
             vgmstream->coding_type = coding_PSX;
             vgmstream->interleave_block_size = rws.block_size / 2;
@@ -321,19 +338,21 @@ VGMSTREAM* init_vgmstream_rws(STREAMFILE* sf) {
             vgmstream->num_samples = ps_bytes_to_samples(stream_size, rws.channels);
             break;
 
-        case 0xF86215B0: /* {F86215B0,31D5,4C29,BD,37,CD,BF,9B,D1,0C,53} DSP GC/Wii */
-            /* Burnout 2 (GC), Alice in Wonderland (Wii) */
+        case 0xF86215B0: /* {F86215B0-31D5-4C29-BD37-CDBF9BD10C53} DSP GC/Wii */
+            /* Burnout 2 (GC), Alice in Wonderland (Wii), Call of Duty: Finest Hour (GC) */
             vgmstream->coding_type = coding_NGC_DSP;
             vgmstream->interleave_block_size = rws.block_size / 2;
 
             /* get coefs (all channels share them; also seem fixed for all RWS) */
             dsp_read_coefs_be(vgmstream, sf, rws.coefs_offset, 0);
+            /* get initial sample history data (rarely used / often empty) */
+            dsp_read_hist_be(vgmstream, sf, rws.hist_offset, 0);
 
             vgmstream->num_samples = dsp_bytes_to_samples(stream_size, rws.channels);
             break;
 
-        case 0xEF386593: /* {EF386593,B611,432D,95,7F,A7,1A,DE,44,22,7A} XBOX-IMA PC */
-        case 0x632FA22B: /* {632FA22B,11DD,458F,AA,27,A5,C3,46,E9,79,0E} XBOX-IMA Xbox */
+        case 0xEF386593: /* {EF386593-B611-432D-957F-A71ADE44227A} XBOX-IMA PC */
+        case 0x632FA22B: /* {632FA22B-11DD-458F-AA27-A5C346E9790E} XBOX-IMA Xbox */
             /* Broken Sword 3 (PC), Jacked (PC/Xbox), Burnout 2 (Xbox) */
             vgmstream->coding_type = coding_XBOX_IMA; /* same data though different uuid */
             vgmstream->interleave_block_size = 0;

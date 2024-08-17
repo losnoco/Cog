@@ -990,7 +990,7 @@ static int parse_type_silence(ubi_bao_header* bao, off_t offset, STREAMFILE* sf)
 
     bao->duration = read_f32(h_offset + bao->cfg.silence_duration_float, sf);
     if (bao->duration <= 0.0f) {
-        VGM_LOG("UBI BAO: bad duration %f at %x\n", bao->duration, (uint32_t)offset);
+        VGM_LOG("UBI BAO: bad duration %f at %x\n", (double)bao->duration, (uint32_t)offset);
         goto fail;
     }
 
@@ -1012,7 +1012,7 @@ static int parse_values(ubi_bao_header* bao) {
     }
 
     /* set codec */
-    if (bao->stream_type > 0x10) {
+    if (bao->stream_type >= 0x10) {
         VGM_LOG("UBI BAO: unknown stream_type at %x\n", (uint32_t)bao->header_offset); goto fail;
         goto fail;
     }

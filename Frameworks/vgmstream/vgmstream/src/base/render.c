@@ -223,6 +223,8 @@ void setup_state_vgmstream(VGMSTREAM* vgmstream) {
 /*****************************************************************************/
 
 void render_free(VGMSTREAM* vgmstream) {
+    if (!vgmstream->layout_data)
+        return;
 
     if (vgmstream->layout_type == layout_segmented) {
         free_layout_segmented(vgmstream->layout_data);
@@ -281,7 +283,7 @@ int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
         case layout_blocked_xvas:
         case layout_blocked_thp:
         case layout_blocked_filp:
-        case layout_blocked_ivaud:
+        case layout_blocked_rage_aud:
         case layout_blocked_ea_swvr:
         case layout_blocked_adm:
         case layout_blocked_ps2_iab:
@@ -302,6 +304,7 @@ int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
         case layout_blocked_vid1:
         case layout_blocked_ubi_sce:
         case layout_blocked_tt_ad:
+        case layout_blocked_vas:
             render_vgmstream_blocked(buf, sample_count, vgmstream);
             break;
         case layout_segmented:

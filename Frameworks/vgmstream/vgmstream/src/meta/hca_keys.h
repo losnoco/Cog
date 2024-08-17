@@ -13,7 +13,7 @@ typedef struct {
 
 
 /**
- * List of known keys, extracted from the game files (most from data analisys, some from 2ch.net/forums).
+ * List of known keys, extracted from the game files (most from data analysis, some from 2ch.net/forums).
  * CRI's tools expect an unsigned 64 bit numberic string, but keys are commonly found online in hex form.
  * Keys only use 56 bits though, so the upper 8 bits can be ignored.
  *
@@ -1253,6 +1253,78 @@ static const hcakey_info hcakey_list[] = {
 
         // BlazBlue Entropy Effect (Early Access) (PC)
         {29814655674508831},    // 0069EC457894661F
+
+        // Star Ocean: The Second Story R (PC, Switch)
+        {533948357975462459},   // 0768F733DD87D23B
+
+        // Girls' Frontline 2: Exilium (Android)
+        {8930254087621254},     // 001FBA04CEA58A86
+
+        // Sonic Superstars (Switch)
+        {1991062320230623},     // 000712DC5252B0DF
+		
+        // Persona 5 Tactica (Switch)
+        {48319776512953016},    // 00ABAA94AAAE4AB8
+
+        // THE IDOLM@STER Shiny Colors Song For Prism (PC)
+        {156967709847897761},   // 022DA94CEAB0C6A1
+
+        // Dokapon Kingdom Connect (PC, Switch)
+        {104863924750642073},   // 01748d2f1883eb99
+
+        // Girls' Frontline 2: Exilium (PC)
+        {7152097263845921},     // 001968CB68CF8221
+
+        // Girls' Frontline 2: Exilium (PC)
+        {4079616028775461768},  // 389DB529D726B388
+
+        // Persona 3 Reload (PC)
+        {11918920},             // 0000000000B5DE48
+
+        // IDOL FANTASY (Android)
+        {4308390175392019587},  // 3BCA7A09A6063483
+
+        // re:colloquial (Android)
+        {9863154698521},        // 000008F871D50919
+
+        // Ojisama to Nego Super Miracle Puzzle (Android)
+        {5783843453453438113},  // 504456FA0F8F8CA1
+
+        // ARGONAVIS from BanG Dream! AAside (Android)
+        {1403972877097251940},  // 137BE9E4A5AA3464
+
+        // ARGONAVIS -Kimi ga Mita Stage e- (Android)
+        {301179795002661},      // 000111EBE2B1D525
+
+        // YuYuYui (Switch)
+        {3733383634313939},     // 000D437E1D5562D3
+
+        // Pachislot Valvrave (iOS)
+        {2753732797542815},     // 0009C8816134319F
+
+        // Jujutsu Kaisen: Cursed Clash (multi)
+        {984703514306706654},   // 0DAA5EA10B547CDE
+
+        // Puyo Puyo Puzzle Pop (iOS)
+        {9999},                 // 000000000000270F
+
+        // Penny Blood: Hellbound (PC)
+        {845873498572},         // 000000C4F1FD49CC
+
+        // Sonic Rumble (Android)
+        {6834182874188563},     // 001847A7328BCB13
+
+        // P A Certain Magical Index 1/2 (Android)
+        {5963},                 // 000000000000174B
+
+        // Reynatis (Switch)
+        {5963496778882477625},  // 52C298B97479EE39
+
+        // Buddysma!! ~Smartphone Start! Buddyfight (Android)
+        {8132462270},           // 00000001E4BB86BE
+
+        // Code Geass: Lost Stories (Android)
+        {9182735170},           // 0000000223556B42
 
 };
 

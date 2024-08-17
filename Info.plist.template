@@ -355,7 +355,6 @@
 			<array>
 				<string>208</string>
 				<string>2dx9</string>
-				<string>2pfs</string>
 				<string>3do</string>
 				<string>3ds</string>
 				<string>4</string>
@@ -390,7 +389,9 @@
 				<string>akb</string>
 				<string>al</string>
 				<string>al2</string>
+				<string>amb</string>
 				<string>ams</string>
+				<string>amx</string>
 				<string>an2</string>
 				<string>ao</string>
 				<string>ap</string>
@@ -455,7 +456,9 @@
 				<string>bwav</string>
 				<string>cads</string>
 				<string>caf</string>
+				<string>cat</string>
 				<string>cbd2</string>
+				<string>cbx</string>
 				<string>cd</string>
 				<string>cfn</string>
 				<string>chd</string>
@@ -507,7 +510,6 @@
 				<string>fag</string>
 				<string>fcb</string>
 				<string>fda</string>
-				<string>ffw</string>
 				<string>filp</string>
 				<string>fish</string>
 				<string>flx</string>
@@ -521,6 +523,7 @@
 				<string>gcm</string>
 				<string>gcub</string>
 				<string>gcw</string>
+				<string>ged</string>
 				<string>genh</string>
 				<string>gin</string>
 				<string>gmd</string>
@@ -529,6 +532,7 @@
 				<string>gsf</string>
 				<string>gsp</string>
 				<string>gtd</string>
+				<string>gwb</string>
 				<string>gwm</string>
 				<string>h4m</string>
 				<string>hab</string>
@@ -607,7 +611,6 @@
 				<string>lbin</string>
 				<string>ldat</string>
 				<string>ldt</string>
-				<string>leg</string>
 				<string>lep</string>
 				<string>lflac</string>
 				<string>lin</string>
@@ -650,9 +653,9 @@
 				<string>mi4</string>
 				<string>mib</string>
 				<string>mic</string>
-				<string>mihb</string>
 				<string>mnstr</string>
 				<string>mogg</string>
+				<string>move</string>
 				<string>mpdsp</string>
 				<string>mpds</string>
 				<string>mpf</string>
@@ -666,8 +669,10 @@
 				<string>mss</string>
 				<string>msv</string>
 				<string>msvp</string>
+				<string>msx</string>
 				<string>mta2</string>
 				<string>mtaf</string>
+				<string>mtt</string>
 				<string>mul</string>
 				<string>mups</string>
 				<string>mus</string>
@@ -683,6 +688,7 @@
 				<string>nds</string>
 				<string>ndp</string>
 				<string>nlsd</string>
+				<string>no</string>
 				<string>nop</string>
 				<string>nps</string>
 				<string>npsf</string>
@@ -695,6 +701,7 @@
 				<string>nwa</string>
 				<string>nwav</string>
 				<string>nxa</string>
+				<string>nxopus</string>
 				<string>ogg_</string>
 				<string>ogl</string>
 				<string>ogv</string>
@@ -706,6 +713,7 @@
 				<string>oto</string>
 				<string>ovb</string>
 				<string>p04</string>
+				<string>p08</string>
 				<string>p16</string>
 				<string>p1d</string>
 				<string>p2a</string>
@@ -721,7 +729,7 @@
 				<string>psb</string>
 				<string>psf</string>
 				<string>psh</string>
-				<string>psnd</string>
+				<string>psn</string>
 				<string>pwb</string>
 				<string>r</string>
 				<string>rac</string>
@@ -771,6 +779,7 @@
 				<string>sbr</string>
 				<string>sbv</string>
 				<string>sig</string>
+				<string>slb</string>
 				<string>sm0</string>
 				<string>sm1</string>
 				<string>sm2</string>
@@ -786,6 +795,7 @@
 				<string>sdp</string>
 				<string>sdf</string>
 				<string>sdt</string>
+				<string>se</string>
 				<string>seb</string>
 				<string>sed</string>
 				<string>seg</string>
@@ -819,6 +829,7 @@
 				<string>sps</string>
 				<string>spsd</string>
 				<string>spw</string>
+				<string>srsa</string>
 				<string>ss2</string>
 				<string>ssd</string>
 				<string>ssm</string>
@@ -832,6 +843,7 @@
 				<string>stream</string>
 				<string>strm</string>
 				<string>sts</string>
+				<string>stv</string>
 				<string>sts_cp3</string>
 				<string>stx</string>
 				<string>svag</string>
@@ -911,6 +923,7 @@
 				<string>wavebatch</string>
 				<string>wavm</string>
 				<string>wavx</string>
+				<string>wax</string>
 				<string>way</string>
 				<string>wb</string>
 				<string>wb2</string>
@@ -918,7 +931,7 @@
 				<string>wbk</string>
 				<string>wd</string>
 				<string>wem</string>
-				<string>wii</string>
+				<string>wiive</string>
 				<string>wic</string>
 				<string>wip</string>
 				<string>wlv</string>

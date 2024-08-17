@@ -1,26 +1,37 @@
 #include "meta.h"
 #include "../coding/coding.h"
 #include "../layout/layout.h"
-#include "awc_xma_streamfile.h"
+#include "../util/endianness.h"
+#include "awc_streamfile.h"
+#include "awc_decryption_streamfile.h"
 
 typedef struct {
-    int big_endian;
-    int is_encrypted;
-    int is_music;
+    bool big_endian;
+    bool is_encrypted;
+    bool is_streamed; /* implicit: streams=music, sfx=memory */
+    bool is_alt;
 
     int total_subsongs;
 
     int channels;
     int sample_rate;
-    int codec;
     int num_samples;
+    uint8_t codec;
 
+    int block_count;
     int block_chunk;
 
-    off_t stream_offset;
-    size_t stream_size;
-    off_t vorbis_offset[VGMSTREAM_MAX_CHANNELS];
+    uint32_t tags_offset;
+    uint32_t stream_offset;
+    uint32_t stream_size;
+    uint32_t vorbis_offset[AWC_MAX_MUSIC_CHANNELS];
 
+    /* stream+music only */
+    uint32_t channel_hash[AWC_MAX_MUSIC_CHANNELS];
+    struct {
+        uint32_t hash_id;
+        int tag_count;
+    } stream_info[AWC_MAX_MUSIC_CHANNELS];
 } awc_header;
 
 static int parse_awc_header(STREAMFILE* sf, awc_header* awc);
@@ -28,17 +39,30 @@ static int parse_awc_header(STREAMFILE* sf, awc_header* awc);
 static layered_layout_data* build_layered_awc(STREAMFILE* sf, awc_header* awc);
 
 
-/* AWC - from RAGE (Rockstar Advanced Game Engine) audio [Red Dead Redemption, Max Payne 3, GTA5 (multi)] */
+/* AWC - Audio Wave Container from RAGE (Rockstar Advanced Game Engine) [GTA5 (multi), Red Dead Redemption (multi), Max Payne 3 (multi)] */
 VGMSTREAM* init_vgmstream_awc(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
+    STREAMFILE* sf_body = NULL;
     awc_header awc = {0};
 
 
     /* checks */
-    if (!check_extensions(sf,"awc"))
-        goto fail;
     if (!parse_awc_header(sf, &awc))
-        goto fail;
+        return NULL;
+    if (!check_extensions(sf,"awc"))
+        return NULL;
+
+    if (awc.is_encrypted) {
+        /* seen in GTA5 PC, music or sfx (not all files) */
+        sf_body = setup_awcd_streamfile(sf, awc.stream_offset, awc.stream_size, awc.block_chunk);
+        if (!sf_body) {
+            vgm_logi("AWC: encrypted data found, needs .awckey\n");
+            goto fail;
+        }
+    }
+    else {
+        sf_body = sf;
+    }
 
 
     /* build the VGMSTREAM */
@@ -55,7 +79,7 @@ VGMSTREAM* init_vgmstream_awc(STREAMFILE* sf) {
     switch(awc.codec) {
         case 0x00:      /* PCM (PC) sfx, very rare, lower sample rates? [Max Payne 3 (PC)] */
         case 0x01:      /* PCM (PC/PS3) sfx, rarely */
-            if (awc.is_music) goto fail; /* blocked_awc needs to be prepared */
+            if (awc.is_streamed) goto fail; /* blocked_awc needs to be prepared */
             vgmstream->coding_type = awc.big_endian ? coding_PCM16BE : coding_PCM16LE;
             vgmstream->layout_type = layout_interleave;
             vgmstream->interleave_block_size = 0x02;
@@ -63,93 +87,54 @@ VGMSTREAM* init_vgmstream_awc(STREAMFILE* sf) {
 
         case 0x04:      /* IMA (PC) */
             vgmstream->coding_type = coding_AWC_IMA;
-            vgmstream->layout_type = awc.is_music ? layout_blocked_awc : layout_none;
+            vgmstream->layout_type = awc.is_streamed ? layout_blocked_awc : layout_none;
             vgmstream->full_block_size = awc.block_chunk;
             vgmstream->codec_endian = awc.big_endian;
             break;
 
 #ifdef VGM_USE_FFMPEG
         case 0x05: {    /* XMA2 (X360) */
-            uint32_t substream_size, substream_offset;
-
-            if (awc.is_music) {
-                /* 1ch XMAs in blocks, we'll use layered layout + custom IO to get multi-FFmpegs working */
-                int i;
-                layered_layout_data * data = NULL;
-
-                /* init layout */
-                data = init_layout_layered(awc.channels);
-                if (!data) goto fail;
-                vgmstream->layout_data = data;
+            if (awc.is_streamed) {
+                vgmstream->layout_data = build_layered_awc(sf_body, &awc);
+                if (!vgmstream->layout_data) goto fail;
                 vgmstream->layout_type = layout_layered;
                 vgmstream->coding_type = coding_FFmpeg;
-
-                /* open each layer subfile */
-                for (i = 0; i < awc.channels; i++) {
-                    STREAMFILE* temp_sf = NULL;
-                    int layer_channels = 1;
-
-                    /* build the layer VGMSTREAM */
-                    data->layers[i] = allocate_vgmstream(layer_channels, 0);
-                    if (!data->layers[i]) goto fail;
-
-                    data->layers[i]->meta_type = meta_AWC;
-                    data->layers[i]->coding_type = coding_FFmpeg;
-                    data->layers[i]->layout_type = layout_none;
-                    data->layers[i]->sample_rate = awc.sample_rate;
-                    data->layers[i]->num_samples = awc.num_samples;
-
-                    /* setup custom IO streamfile, pass to FFmpeg and hope it's fooled */
-                    temp_sf = setup_awc_xma_streamfile(sf, awc.stream_offset, awc.stream_size, awc.block_chunk, awc.channels, i);
-                    if (!temp_sf) goto fail;
-
-                    substream_offset = 0x00; /* where FFmpeg thinks data starts, which our custom sf will clamp */
-                    substream_size = get_streamfile_size(temp_sf); /* data of one XMA substream without blocks */
-
-                    data->layers[i]->codec_data = init_ffmpeg_xma2_raw(temp_sf, substream_offset, substream_size, awc.num_samples, layer_channels, awc.sample_rate, 0, 0);
-                    if (data->layers[i])
-                        xma_fix_raw_samples(data->layers[i], temp_sf, substream_offset, substream_size, 0, 0,0); /* samples are ok? */
-                    close_streamfile(temp_sf);
-                    if (!data->layers[i]->codec_data) goto fail;
-                }
-
-                /* setup layered VGMSTREAMs */
-                if (!setup_layout_layered(data))
-                    goto fail;
             }
             else {
                 /* regular XMA for sfx */
-                vgmstream->codec_data = init_ffmpeg_xma2_raw(sf, awc.stream_offset, awc.stream_size, awc.num_samples, awc.channels, awc.sample_rate, 0, 0);
+                vgmstream->codec_data = init_ffmpeg_xma2_raw(sf_body, awc.stream_offset, awc.stream_size, awc.num_samples, awc.channels, awc.sample_rate, 0, 0);
                 if (!vgmstream->codec_data) goto fail;
                 vgmstream->coding_type = coding_FFmpeg;
                 vgmstream->layout_type = layout_none;
 
-                xma_fix_raw_samples(vgmstream, sf, awc.stream_offset,awc.stream_size, 0, 0,0); /* samples are ok? */
+                xma_fix_raw_samples(vgmstream, sf_body, awc.stream_offset,awc.stream_size, 0, 0,0); /* samples are ok? */
             }
 
             break;
         }
-
-
 #endif
+
 #ifdef VGM_USE_MPEG
         case 0x07: {    /* MPEG (PS3) */
-            mpeg_custom_config cfg = {0};
-
-            cfg.chunk_size = awc.block_chunk;
-            cfg.big_endian = awc.big_endian;
-
-            vgmstream->codec_data = init_mpeg_custom(sf, awc.stream_offset, &vgmstream->coding_type, vgmstream->channels, MPEG_AWC, &cfg);
-            if (!vgmstream->codec_data) goto fail;
-            vgmstream->layout_type = layout_none;
-
+            if (awc.is_streamed) {
+                vgmstream->layout_data = build_layered_awc(sf_body, &awc);
+                if (!vgmstream->layout_data) goto fail;
+                vgmstream->layout_type = layout_layered;
+                vgmstream->coding_type = coding_MPEG_custom;
+            }
+            else {
+                vgmstream->codec_data = init_mpeg_custom(sf_body, awc.stream_offset, &vgmstream->coding_type, vgmstream->channels, MPEG_STANDARD, NULL);
+                if (!vgmstream->codec_data) goto fail;
+                vgmstream->layout_type = layout_none;
+            }
             break;
         }
 #endif
+
 #ifdef VGM_USE_VORBIS
-        case 0x08: {   /* Vorbis (PC) [Red Dead Redemption 2 (PC)] */
-            if (awc.is_music) {
-                vgmstream->layout_data = build_layered_awc(sf, &awc);
+        case 0x08: {    /* Vorbis (PC) [Red Dead Redemption 2 (PC)] */
+            if (awc.is_streamed) {
+                vgmstream->layout_data = build_layered_awc(sf_body, &awc);
                 if (!vgmstream->layout_data) goto fail;
                 vgmstream->layout_type = layout_layered;
                 vgmstream->coding_type = coding_VORBIS_custom;
@@ -161,7 +146,7 @@ VGMSTREAM* init_vgmstream_awc(STREAMFILE* sf) {
                 cfg.sample_rate = awc.sample_rate;
                 cfg.header_offset = awc.vorbis_offset[0];
 
-                vgmstream->codec_data = init_vorbis_custom(sf, awc.stream_offset, VORBIS_AWC, &cfg);
+                vgmstream->codec_data = init_vorbis_custom(sf_body, awc.stream_offset, VORBIS_AWC, &cfg);
                 if (!vgmstream->codec_data) goto fail;
                 vgmstream->layout_type = layout_none;
                 vgmstream->coding_type = coding_VORBIS_custom;
@@ -169,40 +154,116 @@ VGMSTREAM* init_vgmstream_awc(STREAMFILE* sf) {
             break;
         }
 #endif
+
+#ifdef VGM_USE_ATRAC9
+        case 0x0F: {    /* ATRAC9 (PC) [Red Dead Redemption (PS4)] */
+            if (awc.is_streamed) {
+                vgmstream->layout_data = build_layered_awc(sf_body, &awc);
+                if (!vgmstream->layout_data) goto fail;
+                vgmstream->layout_type = layout_layered;
+                vgmstream->coding_type = coding_ATRAC9;
+            }
+            else {
+                VGMSTREAM* temp_vs = NULL;
+                STREAMFILE* temp_sf = NULL;
+
+                temp_sf = setup_subfile_streamfile(sf_body, awc.stream_offset, awc.stream_size, "at9");
+                if (!temp_sf) goto fail;
+
+                temp_vs = init_vgmstream_riff(temp_sf);
+                close_streamfile(temp_sf);
+                if (!temp_vs) goto fail;
+
+                temp_vs->num_streams = vgmstream->num_streams;
+                temp_vs->stream_size = vgmstream->stream_size;
+                temp_vs->meta_type = vgmstream->meta_type;
+                strcpy(temp_vs->stream_name, vgmstream->stream_name);
+
+                close_vgmstream(vgmstream);
+                //vgmstream = temp_vs;
+                return temp_vs;
+            }
+            break;
+        }
+#endif
+
+        case 0x0C:      /* DSP-sfx (Switch) */
+        case 0x10:      /* DSP-music (Switch) */
+            vgmstream->coding_type = coding_NGC_DSP;
+            vgmstream->layout_type = awc.is_streamed ? layout_blocked_awc : layout_none;
+            vgmstream->full_block_size = awc.block_chunk;
+
+            if (!awc.is_streamed) {
+                /* dsp header */
+                dsp_read_coefs_le(vgmstream, sf_body, awc.stream_offset + 0x1c + 0x00, 0x00);
+                dsp_read_hist_le (vgmstream, sf_body, awc.stream_offset + 0x1c + 0x20, 0x00);
+                awc.stream_offset += 0x60;
+
+                /* shouldn't be possible since it's only used for sfx anyway */
+                if (awc.channels > 1)
+                    goto fail;
+            } 
+            break;
+
+        case 0xFF:
+            vgmstream->coding_type = coding_SILENCE;
+            snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "[%s]", "midi");
+            break;
+
         default:
             VGM_LOG("AWC: unknown codec 0x%02x\n", awc.codec);
             goto fail;
     }
 
 
-    if (!vgmstream_open_stream(vgmstream, sf, awc.stream_offset))
+    if (!vgmstream_open_stream(vgmstream, sf_body, awc.stream_offset))
         goto fail;
+    if (sf_body != sf) close_streamfile(sf_body);
     return vgmstream;
 
 fail:
+    if (sf_body != sf) close_streamfile(sf_body);
     close_vgmstream(vgmstream);
     return NULL;
 }
 
 
-/* Parse Rockstar's AWC header (much info from LibertyV: https://github.com/koolkdev/libertyv).
- * Made of entries for N streams, each with a number of tags pointing to chunks (header, data, events, etc). */
+/* Parse Rockstar's AWC header (much info from LibertyV: https://github.com/koolkdev/libertyv). 
+ *
+ * AWC defines logical streams/tracks, each with N tags (type+offset+size) that point to headers/tables with info.
+ * First stream may be a "music" type, then other streams are used as channels and not always define tags.
+ * When the "stream" flag is set data is divided into "blocks" (used for music), described later.
+ * Streams are ordered by hash/id and its tags go in order, but data may be unordered (1st stream audio
+ * or headers could go after others). Defined streams also may be unused/dummy.
+ * Hashes are actually reversable and more or less stream names (see other tools).
+ *
+ * Rough file format:
+ * - base header
+ * - stream tag starts [optional]
+ * - stream hash ids and tag counts (stream N has M tags)
+ * - tags per stream
+ * - data from tags (headers, tables, audio data, etc)
+ */
 static int parse_awc_header(STREAMFILE* sf, awc_header* awc) {
-    uint64_t (*read_u64)(off_t,STREAMFILE*) = NULL;
-    uint32_t (*read_u32)(off_t,STREAMFILE*) = NULL;
-    uint16_t (*read_u16)(off_t,STREAMFILE*) = NULL;
-    int i, ch, entries;
-    uint32_t flags, info_header, tag_count = 0, tags_skip = 0;
-    off_t offset;
+    read_u64_t read_u64 = NULL;
+    read_u32_t read_u32 = NULL;
+    read_u16_t read_u16 = NULL;
+    int entries;
+    uint32_t flags, tag_count = 0, tags_skip = 0;
+    uint32_t offset;
     int target_subsong = sf->stream_index;
 
+    /** base header **/
+    if (is_id32be(0x00,sf,"ADAT")) {
+        awc->big_endian = false;
+    }
+    else if (is_id32be(0x00,sf,"TADA")) {
+        awc->big_endian = true;
+    }
+    else {
+        return false;
+    }
 
-    /* check header */
-    if (read_u32be(0x00,sf) != 0x41444154 &&  /* "ADAT" (LE) */
-        read_u32be(0x00,sf) != 0x54414441)    /* "TADA" (BE) */
-        goto fail;
-
-    awc->big_endian = read_u32be(0x00,sf) == 0x54414441;
     if (awc->big_endian) {
         read_u64 = read_u64be;
         read_u32 = read_u32be;
@@ -213,74 +274,111 @@ static int parse_awc_header(STREAMFILE* sf, awc_header* awc) {
         read_u16 = read_u16le;
     }
 
-
     flags = read_u32(0x04,sf);
     entries = read_u32(0x08,sf);
-    //header_size = read_u32(0x0c,sf); /* after to stream id/tags, not including chunks */
+    //header_size = read_u32(0x0c,sf); /* after stream id+tags */
 
     offset = 0x10;
 
+    /* flags = 8b (always FF) + 8b (actual flags) + 16b (version, 00=rarely, 01=common) */
     if ((flags & 0xFF00FFFF) != 0xFF000001 || (flags & 0x00F00000)) {
         VGM_LOG("AWC: unknown flags 0x%08x\n", flags);
-        goto fail;
+        return false;
     }
 
-    if (flags & 0x00010000) /* some kind of mini offset table */
+    /* stream tag starts (ex. stream#0 = 0, stream#1 = 4, stream#2 = 7: to read tags from stream#2 skip to 7th tag) */
+    if (flags & 0x00010000)
         offset += 0x2 * entries;
-    //if (flags % 0x00020000) /* seems to indicate chunks are not ordered (ie. header may go after data) */
-    //  ...
-    //if (flags % 0x00040000) /* music/multichannel flag? (GTA5, not seen in RDR) */
-    //  awc->is_music = 1;
-    if (flags & 0x00080000) /* encrypted data chunk (most of GTA5 PC) */
-        awc->is_encrypted = 1;
 
-    if (awc->is_encrypted) {
-        VGM_LOG("AWC: encrypted data found\n");
-        goto fail;
-    }
+    /* seems to indicate chunks are not ordered (ie. header structures from tags may go after data), usually for non-streams */
+    //if (flags & 0x00020000)
+    //  awc->is_unordered = true;
 
-    /* Music when the first id is 0 (base/fake entry with info for all channels), sfx pack otherwise.
-     * sfx = N single streams, music = N-1 interleaved mono channels (even for MP3/XMA).
-     * Music seems layered (N-1/2 stereo pairs), maybe set with events? */
-    awc->is_music = (read_u32(offset + 0x00,sf) & 0x1FFFFFFF) == 0x00000000;
-    if (awc->is_music) { /* all streams except id 0 is a channel */
+    /* stream/multichannel flag? (GTA5, some RDR2), can be used to detect some odd behavior in GTA5 vs RDR1 */
+    if (flags & 0x00040000)
+        awc->is_alt = true;
+
+    /* encrypted data chunk (most of GTA5 PC for licensed audio) */
+    if (flags & 0x00080000)
+        awc->is_encrypted = true;
+
+    /* When first stream hash/id is 0 AWC it has fake entry with info for all channels = music, sfx pack otherwise.
+     * sfx = N single streams, music = N interleaved mono channels (even for MP3/XMA/Vorbis/etc).
+     * Channels set a stream hash/id that typically is one of the defined ones and its tags do apply to that
+     * channel, but rarely may not exist. Ex.:
+     * 
+     * - bgm01.awc
+     * Stream ID 00000000 (implicit: music stream, all others aren't used)
+     *   Tag: music header
+     *      Channel 0: ID 9d66fe4c
+     *      Channel 1: ID 7a3837ef
+     *      Channel 2: ID 032c57e9 (not actually defined)
+     *   Tag: data chunk
+     *  #Tag: sfx header (only in buggy files)
+     * Stream ID 7a3837ef (no tags)
+     * Stream ID 9d66fe4c (notice this is channel 0 but streams are ordered by hash)
+     *   Tag: Event config
+     *
+     * - sfx01.awc
+     * Stream ID 9d66fe4c
+     *   Tag: sfx header
+     *   Tag: data chunk
+     * Stream ID 7a3837ef
+     *   Tag: sfx header
+     *   Tag: data chunk
+     *
+     * Music 'stream' defines it's own (streamed/blocked) data chunk, so other stream's data or headers aren't used,
+     * but in rare cases they actually define a useless sfx header or even a separate cloned data chunk. That seems
+     * to be a bug and are ignored (ex. RDR's ftr_harmonica_01, or RDR SW's countdown_song_01).
+     */
+
+    awc->is_streamed = (read_u32(offset + 0x00,sf) & 0x1FFFFFFF) == 0x00000000; /* first stream's hash/id is 0 */
+    if (awc->is_streamed) { /* music with N channels, other streams aren't used ignored */
         awc->total_subsongs = 1;
-        target_subsong = 1; /* we only need id 0, though channels may have its own tags/chunks */
+        target_subsong = 1;
+        /* array access below */
+        if (entries > AWC_MAX_MUSIC_CHANNELS)
+            goto fail;
     }
-    else { /* each stream is a single sound */
+    else { /* sfx pack, each stream is a sound */
         awc->total_subsongs = entries;
         if (target_subsong == 0) target_subsong = 1;
         if (target_subsong < 0 || target_subsong > awc->total_subsongs || awc->total_subsongs < 1) goto fail;
     }
 
 
-    /* get stream base info */
-    for (i = 0; i < entries; i++) {
-        info_header = read_u32(offset + 0x04*i, sf);
-        tag_count   = (info_header >> 29) & 0x7; /* 3b */
-        //id        = (info_header >>  0) & 0x1FFFFFFF; /* 29b */
-        if (target_subsong-1 == i)
-            break;
-        tags_skip += tag_count; /* tags to skip to reach target's tags, in the next header */
+    /** stream ids and tag counts **/
+    for (int i = 0; i < entries; i++) {
+        uint32_t info_header = read_u32(offset + 0x00, sf);
+        int entry_count  = (info_header >> 29) & 0x7; /* 3b */
+        uint32_t hash_id = (info_header >>  0) & 0x1FFFFFFF; /* 29b */
+        
+        if (i + 1 < target_subsong)
+            tags_skip += entry_count; /* tags to skip to reach target's tags, in the next header */
+        if (target_subsong == i + 1)
+            tag_count = entry_count;
+
+        if (awc->is_streamed) {
+            awc->stream_info[i].hash_id = hash_id;
+            awc->stream_info[i].tag_count = entry_count;
+        }
+
+        offset += 0x04;
     }
-    offset += 0x04*entries;
-    offset += 0x08*tags_skip;
+    awc->tags_offset = offset; /* where tags for stream start */
 
-    /* get stream tags */
-    for (i = 0; i < tag_count; i++) {
-        uint64_t tag_header;
-        uint8_t tag_type;
-        size_t tag_size;
-        off_t tag_offset;
+    offset += 0x08 * tags_skip; /* ignore tags for other streams */
 
-        tag_header = read_u64(offset + 0x08*i,sf);
-        tag_type   = (uint8_t)((tag_header >> 56) & 0xFF); /* 8b */
-        tag_size   =  (size_t)((tag_header >> 28) & 0x0FFFFFFF); /* 28b */
-        tag_offset =   (off_t)((tag_header >>  0) & 0x0FFFFFFF); /* 28b */
-        ;VGM_LOG("AWC: tag%i/%i at %lx: t=%x, o=%lx, s=%x\n", i, tag_count, offset + 0x08*i, tag_type, tag_offset, tag_size);
 
-        /* Tags are apparently part of a hash derived from a word ("data", "format", etc).
-         * If music + 1ch, the header and data chunks can repeat for no reason (sometimes not even pointed). */
+
+    /** tags per stream **/
+    for (int i = 0; i < tag_count; i++) {
+        uint64_t tag_header = read_u64(offset + 0x08*i,sf);
+        uint8_t  tag_type   = ((tag_header >> 56) & 0xFF); /* 8b */
+        uint32_t tag_size   = ((tag_header >> 28) & 0x0FFFFFFF); /* 28b */
+        uint32_t tag_offset = ((tag_header >>  0) & 0x0FFFFFFF); /* 28b */
+
+        /* types are apparently part of a hash derived from a word ("data", "format", etc). */
         switch(tag_type) {
             case 0x55: /* data */
                 awc->stream_offset = tag_offset;
@@ -288,30 +386,31 @@ static int parse_awc_header(STREAMFILE* sf, awc_header* awc) {
                 break;
 
             case 0x48: /* music header */
-
-                if (!awc->is_music) {
-                    VGM_LOG("AWC: music header found in sfx\n");
+                if (!awc->is_streamed) {
+                    VGM_LOG("AWC: music header found but not streamed\n");
                     goto fail;
                 }
 
-                /* 0x00(32): unknown (some count?) */
+                awc->block_count = read_u32(tag_offset + 0x00,sf);
                 awc->block_chunk = read_u32(tag_offset + 0x04,sf);
-                awc->channels = read_u32(tag_offset + 0x08,sf);
+                awc->channels    = read_u32(tag_offset + 0x08,sf);
 
                 if (awc->channels != entries - 1) { /* not counting id-0 */
                     VGM_LOG("AWC: number of music channels doesn't match entries\n");
-                    goto fail;
+                    /* extremely rare but doesn't seem to matter, some streams are dummies (RDR2 STREAMS/ABIGAIL_HUMMING_*) */ 
+                    //goto fail;
                 }
 
-                for (ch = 0; ch < awc->channels; ch++) {
+                for (int ch = 0; ch < awc->channels; ch++) {
                     int num_samples, sample_rate, codec;
-                    /* 0x00): stream id (not always in the header entries order) */
+
+                    awc->channel_hash[ch] = read_u32(tag_offset + 0x0c + 0x10*ch + 0x00,sf);  /* reference, for vorbis */
                     num_samples = read_u32(tag_offset + 0x0c + 0x10*ch + 0x04,sf);
                     /* 0x08: headroom */
                     sample_rate = read_u16(tag_offset + 0x0c + 0x10*ch + 0x0a,sf);
                     codec = read_u8(tag_offset + 0x0c + 0x10*ch + 0x0c,sf);
                     /* 0x0d(8): round size? */
-                    /* 0x0e: unknown (zero/-1) */
+                    /* 0x0e: unknown (zero/-1, loop flag? BOB_FINALE_1_A.awc, but also set in stingers) */
 
                     /* validate channels differences */
                     if ((awc->num_samples && !(awc->num_samples >= num_samples - 10 && awc->num_samples <= num_samples + 10)) ||
@@ -336,45 +435,111 @@ static int parse_awc_header(STREAMFILE* sf, awc_header* awc) {
                 break;
 
             case 0xFA: /* sfx header */
-                if (awc->is_music) {
-                    VGM_LOG("AWC: sfx header found in music\n");
-                    goto fail;
+                if (awc->is_streamed) {
+                    VGM_LOG("AWC: sfx header found but streamed\n");
+                    break; //goto fail; /* rare (RDR PC/Switch) */
                 }
 
                 awc->num_samples = read_u32(tag_offset + 0x00,sf);
-                /* 0x04: -1? */
+                /* 0x04: -1? (loop related?) */
                 awc->sample_rate = read_u16(tag_offset + 0x08,sf);
-                /* 0x0a: unknown x4 */
+                /* 0x0a: headroom */
+                /* 0x0c: unknown (loop related?) */
+                /* 0x0e: unknown (loop related?) */
+                /* 0x10: unknown (loop related?) */
                 /* 0x12: null? */
                 awc->codec = read_u8(tag_offset + 0x13, sf);
+                /* 0x14: ? (PS3 only, for any codec) */
+
                 awc->channels = 1;
                 break;
 
             case 0x76: /* sfx header for vorbis */
-                if (awc->is_music) {
-                    VGM_LOG("AWC: sfx header found in music\n");
+                if (awc->is_streamed) {
+                    VGM_LOG("AWC: sfx header found but streamed\n");
                     goto fail;
                 }
 
                 awc->num_samples = read_u32(tag_offset + 0x00,sf);
                 /* 0x04: -1? */
                 awc->sample_rate = read_u16(tag_offset + 0x08,sf);
-                /* 0x0a: granule start? (negative) */
-                /* 0x0c: granule max? */
+                /* 0x0a: headroom */
+                /* 0x0c: unknown */
+                /* 0x0e: unknown */
                 /* 0x10: unknown */
                 awc->codec = read_u8(tag_offset + 0x1c, sf); /* 16b? */
-                /* 0x1e: vorbis header size */
-                awc->channels = 1;
+                /* 0x1e: vorbis setup size */
+                if (read_u16(tag_offset + 0x1e,sf))/* rarely not set and uses a tag below */
+                    awc->vorbis_offset[0] = tag_offset + 0x20; /* data up to vorbis setup size */
 
-                awc->vorbis_offset[0] = tag_offset + 0x20;
+                awc->channels = 1;
                 break;
 
-            case 0xA3: /* block-to-sample table (32b x number of blocks w/ num_samples at the start of each block) */
+            case 0x7F: /* vorbis setup */
+                if (awc->is_streamed) {
+                    /* music stream doesn't have this (instead every channel-strem have one, parsed later) */
+                    VGM_LOG("AWC: vorbis setup found but streamed\n");
+                    goto fail;
+                }
+
+                /* very rarely used for sfx: SS_AM/GESTURE01.awc */
+                awc->vorbis_offset[0] = tag_offset;
+                break;
+
+            case 0x68: /* midi data [Red Dead Redemption 2 (PC)] */
+                /* set fake info so awc doesn't break */
+                awc->stream_offset = tag_offset;
+                awc->stream_size = tag_size;
+
+                awc->num_samples = 48000;
+                awc->sample_rate = 48000;
+                awc->codec = 0xFF;
+                awc->channels = 1;
+                break;
+
+            case 0xA3: /* block-to-sample table (32b x number of blocks w/ num_samples at the start of each block)
+                        * or frame-size table (16b x number of frames) in some cases (ex. sfx+mpeg but not sfx+vorbis) */
             case 0xBD: /* events (32bx4): type_hash, params_hash, timestamp_ms, flags */
-            case 0x5C: /* animation/RSC config? */
-            default:   /* 0x68=midi?, 0x36=hash thing?, 0x2B=sizes, 0x5A/0xD9=? */
+            case 0x5C: /* animation/RSC info? */
+            case 0x81: /* animation/CSR info? */
+            case 0x36: /* list of hash-things? */
+            case 0x2B: /* events/sizes? */
+            default:   /* 0x68=midi?, 0x5A/0xD9=? */
                 //VGM_LOG("AWC: ignoring unknown tag 0x%02x\n", tag);
                 break;
+        }
+    }
+
+    /* in music mode there tags for other streams we don't use, except for vorbis. streams have vorbis setup info for channels, but
+     * channel<>stream order doesn't match, so we need to assign setup to channels. All setups seem to be the same though. */
+    if (awc->is_streamed && awc->codec == 0x08) {
+        offset = awc->tags_offset;
+        offset += 0x08 * awc->stream_info[0].tag_count; /* ignore 1st/music stream */
+
+        for (int stream = 1; stream < entries; stream++) {
+            for (int tag = 0; tag < awc->stream_info[stream].tag_count; tag++) {
+                uint64_t tag_header = read_u64(offset,sf);
+                uint8_t  tag_type   = ((tag_header >> 56) & 0xFF); /* 8b */
+              //uint32_t tag_size   = ((tag_header >> 28) & 0x0FFFFFFF); /* 28b */
+                uint32_t tag_offset = ((tag_header >>  0) & 0x0FFFFFFF); /* 28b */
+
+                switch(tag_type) {
+                    case 0x7f: /* vorbis setup */
+                        /* find which channel uses this stream's data */
+                        for (int ch = 0; ch < awc->channels; ch++) {
+                            if (awc->channel_hash[ch] == awc->stream_info[stream].hash_id) {
+                                awc->vorbis_offset[ch] = tag_offset;
+                                //awc->vorbis_size[ch] = tag_size; /* not needed (implicit)*/
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                offset += 0x08;
+            }
         }
     }
 
@@ -383,30 +548,6 @@ static int parse_awc_header(STREAMFILE* sf, awc_header* awc) {
         goto fail;
     }
 
-    /* vorbis offset table, somehow offsets are unordered and can go before tags */
-    if (awc->is_music && awc->codec == 0x08) {
-        offset += 0x08 * tag_count;
-
-        for (ch = 0; ch < awc->channels; ch++) {
-            awc->vorbis_offset[ch] = read_u16(offset + 0x08*ch + 0x00, sf);
-            /* 0x02: always 0xB000? */
-            /* 0x04: always 0x00CD? */
-            /* 0x06: always 0x7F00? */
-        }
-    }
-
-
-    /* In music mode, data is divided into blocks of block_chunk size with padding.
-     * Each block has a header/seek table and interleaved data for all channels */
-    {
-        int32_t seek_start = read_u32(awc->stream_offset, sf); /* -1 in later (RDR2) versions */
-        if (awc->is_music && !(seek_start == 0 || seek_start == -1)) {
-            VGM_LOG("AWC: music found, but block doesn't start with seek table at %x\n", (uint32_t)awc->stream_offset);
-            goto fail;
-        }
-    }
-
-
     return 1;
 fail:
     return 0;
@@ -414,140 +555,121 @@ fail:
 
 /* ************************************************************************* */
 
-//TODO: this method won't work properly, needs internal handling of blocks.
-//
-// This setups a decoder per block, but seems Vorbis' uses first frame as setup so it
-// returns samples (576 vs 1024), making num_samples count in each block being off + causing
-// gaps. So they must be using a single encoder + setting decode_to_discard per block
-// to ge the thing working.
-//
-// However since blocks are probably also used for seeking, maybe they aren't resetting
-// the decoder when seeking? or they force first frame to be 1024?
-//
-// In case of Vorvis, when setting skip samples seems repeated data from last block is
-// exactly last 0x800 bytes of that channel.
-
-static VGMSTREAM* build_block_vgmstream(STREAMFILE* sf, awc_header* awc, int channel, int32_t num_samples, int32_t skip_samples, off_t block_start, size_t block_size) {
-    STREAMFILE* temp_sf = NULL;
+static VGMSTREAM* build_blocks_vgmstream(STREAMFILE* sf, awc_header* awc, int channel) {
     VGMSTREAM* vgmstream = NULL;
+    STREAMFILE* temp_sf = NULL;
     int block_channels = 1;
+    uint32_t substream_size, substream_offset;
 
+
+    /* setup custom IO streamfile that removes AWC's odd blocks (not perfect but serviceable) */
+    temp_sf = setup_awc_streamfile(sf, awc->stream_offset, awc->stream_size, awc->block_chunk, awc->channels, channel, awc->codec, awc->big_endian, awc->is_alt);
+    if (!temp_sf) goto fail;
+
+    substream_offset = 0x00;
+    substream_size = get_streamfile_size(temp_sf);
 
     /* build the VGMSTREAM */
     vgmstream = allocate_vgmstream(block_channels, 0);
     if (!vgmstream) goto fail;
 
-    vgmstream->sample_rate = awc->sample_rate;
-    vgmstream->num_samples = num_samples - skip_samples;
-    vgmstream->stream_size = block_size;
     vgmstream->meta_type = meta_AWC;
+    vgmstream->sample_rate = awc->sample_rate;
+    vgmstream->num_samples = awc->num_samples;
+    vgmstream->stream_size = awc->stream_size;
+
+    vgmstream->stream_size = substream_size;
+
 
     switch(awc->codec) {
+#ifdef VGM_USE_FFMPEG
+        case 0x05: {    /* XMA2 (X360) */
+            vgmstream->codec_data = init_ffmpeg_xma2_raw(temp_sf, substream_offset, substream_size, awc->num_samples, block_channels, awc->sample_rate, 0, 0);
+            if (!vgmstream->codec_data) goto fail;
+            vgmstream->coding_type = coding_FFmpeg;
+            vgmstream->layout_type = layout_none;
+
+            xma_fix_raw_samples(vgmstream, temp_sf, substream_offset, substream_size, 0, 0,0); /* samples are ok? */
+            break;
+        }
+#endif
+#ifdef VGM_USE_MPEG
+        case 0x07: { /* MPEG (PS3) */
+            vgmstream->codec_data = init_mpeg_custom(temp_sf, substream_offset, &vgmstream->coding_type, vgmstream->channels, MPEG_STANDARD, NULL);
+            if (!vgmstream->codec_data) goto fail;
+            vgmstream->layout_type = layout_none;
+            break;
+        }
+#endif
 #ifdef VGM_USE_VORBIS
-        case 0x08: {   /* Vorbis (PC) [Red Dead Redemption 2 (PC)] */
+        case 0x08: {
             vorbis_custom_config cfg = {0};
 
             cfg.channels = 1;
             cfg.sample_rate = awc->sample_rate;
-            cfg.header_offset = awc->vorbis_offset[channel];
-            //cfg.skip_samples = skip_samples; //todo
+            cfg.header_offset = awc->vorbis_offset[channel]; /* setup page goes separate */
 
-            vgmstream->codec_data = init_vorbis_custom(sf, block_start, VORBIS_AWC, &cfg);
+            /* note that it needs sf on init to read the header + start offset for later, and temp_sf on decode to read data */
+            vgmstream->codec_data = init_vorbis_custom(sf, substream_offset, VORBIS_AWC, &cfg);
             if (!vgmstream->codec_data) goto fail;
             vgmstream->layout_type = layout_none;
             vgmstream->coding_type = coding_VORBIS_custom;
+            break;
         }
-        break;
+#endif
+#ifdef VGM_USE_ATRAC9
+        case 0x0F: {
+            atrac9_config cfg = {0};
+
+            /* read from first block (all blocks have it but same thing), see awc_streamfile.h */
+            uint32_t extradata_offset = awc->stream_offset + 0x10 * awc->channels + 0x70 * channel + 0x0c;
+
+            cfg.channels = block_channels;
+            cfg.encoder_delay = 0; //?
+            cfg.config_data = read_u32be(extradata_offset, sf);
+
+            vgmstream->codec_data = init_atrac9(&cfg);
+            if (!vgmstream->codec_data) goto fail;
+            vgmstream->coding_type = coding_ATRAC9;
+            vgmstream->layout_type = layout_none;
+
+            break;
+        }
 #endif
         default:
             goto fail;
     }
 
-    if (!vgmstream_open_stream(vgmstream, sf, block_start))
+    if (!vgmstream_open_stream(vgmstream, temp_sf, substream_offset))
         goto fail;
     close_streamfile(temp_sf);
     return vgmstream;
 fail:
+    ;VGM_LOG("AWB: can't open decoder\n");
+    close_vgmstream(vgmstream);
     close_streamfile(temp_sf);
-    close_vgmstream(vgmstream);
-    return NULL;
-}
-
-static VGMSTREAM* build_blocks_vgmstream(STREAMFILE* sf, awc_header* awc, int channel) {
-    VGMSTREAM* vgmstream = NULL;
-    segmented_layout_data* data = NULL;
-    int i, ch;
-    int blocks = awc->stream_size / awc->block_chunk + (awc->stream_size % awc->block_chunk ? 1 : 0) ;
-
-
-    /* init layout */
-    data = init_layout_segmented(blocks);
-    if (!data) goto fail;
-
-    /* one segment per block of this channel */
-    for (i = 0; i < blocks; i++) {
-        off_t block_offset = awc->stream_offset + i * awc->block_chunk;
-        int32_t num_samples = 0, skip_samples = 0;
-        uint32_t header_skip = 0, block_skip = 0, block_start = 0, block_data = 0;
-
-        /* read stupid block crap to get proper offsets and whatnot, format:
-         * - per channel: number of channel entries + skip samples + num samples
-         * - per channel: seek table with N entries */
-        for (ch = 0; ch < awc->channels; ch++) {
-            /* 0x00: -1 */
-            int entries             = read_u32le(block_offset + 0x18 * ch + 0x04, sf);
-            int32_t entry_skip      = read_u32le(block_offset + 0x18 * ch + 0x08, sf);
-            int32_t entry_samples   = read_u32le(block_offset + 0x18 * ch + 0x0c, sf);
-
-            if (ch == channel) {
-                num_samples = entry_samples;
-                skip_samples = entry_skip;
-
-                block_start = block_offset + block_skip;
-                block_data = entries * 0x800;
-            }
-
-            header_skip += 0x18 + entries * 0x04;
-            block_skip += entries * 0x800;
-        }
-
-        if (!block_start)
-            goto fail;
-
-        header_skip = align_size_to_block(header_skip, 0x800);
-        block_start += header_skip;
-        //;VGM_LOG("AWC: build ch%i, block=%i at %lx, o=%x, s=%x, ns=%i, ss=%i\n", channel, i, block_offset, block_start, block_data, num_samples, skip_samples);
-
-        data->segments[i] = build_block_vgmstream(sf, awc, channel, num_samples, skip_samples, block_start, block_data);
-        if (!data->segments[i]) goto fail;
-    }
-
-    /* setup VGMSTREAMs */
-    if (!setup_layout_segmented(data))
-        goto fail;
-
-    /* build the layout VGMSTREAM */
-    vgmstream = allocate_segmented_vgmstream(data, 0, 0, 0);
-    if (!vgmstream) goto fail;
-
-    return vgmstream;
-fail:
-    close_vgmstream(vgmstream);
-    if (!vgmstream)
-        free_layout_segmented(data);
     return NULL;
 }
 
 /* ************************************************************************* */
 
-/* Make layers per channel for AWC's abhorrent blocks.
+/* Make layers per channel for AWC's abhorrent blocks (see read_awb_block).
  *
- * File has N channels = N streams, that use their own mono decoder.
- * Each block then has header + seek table for all channels. But in each block there is
- * a "skip samples" value per channel, and blocks repeat some data from last block
- * for this, so PCM must be discarded. Also, channels in a block don't need to have
- * the same number of samples.
+ * A "music" .awc has N channels = N streams (each using their own mono decoder) chunked in "blocks".
+ * Each block then has header + seek table + etc for all channels. But when blocks change, each channel
+ * may have a "skip samples" value and blocks repeat some data from last block, so output PCM must be
+ * discarded to avoid channels desyncing. Channels in a block don't need to have the same number of samples.
+ * (mainly seen in MPEG).
  */
+//TODO: this method won't fully work, needs feed decoder + block handler that interacts with decoder(s?)
+// (doesn't use multiple decoders since default encoder delay in Vorbis would discard too much per block)
+//
+// When blocks change presumably block handler needs to tell decoder to finish decoding all from prev block
+// then skip samples from next decodes. Also since samples may vary per channel, each would handle blocks
+// independently.
+//
+// This can be simulated by making one decoder per block (segmented, but opens too many SFs and can't skip
+// samples correctly), or with a custom STREAMFILE that skips repeated block (works ok-ish but not all codecs).
 static layered_layout_data* build_layered_awc(STREAMFILE* sf, awc_header* awc) {
     int i;
     layered_layout_data* data = NULL;
@@ -571,4 +693,3 @@ fail:
     free_layout_layered(data);
     return NULL;
 }
-
