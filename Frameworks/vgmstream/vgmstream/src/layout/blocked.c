@@ -144,8 +144,8 @@ void block_update(off_t block_offset, VGMSTREAM* vgmstream) {
         case layout_blocked_filp:
             block_update_filp(block_offset,vgmstream);
             break;
-        case layout_blocked_ivaud:
-            block_update_ivaud(block_offset,vgmstream);
+        case layout_blocked_rage_aud:
+            block_update_rage_aud(block_offset,vgmstream);
             break;
         case layout_blocked_ea_swvr:
             block_update_ea_swvr(block_offset,vgmstream);
@@ -207,12 +207,18 @@ void block_update(off_t block_offset, VGMSTREAM* vgmstream) {
         case layout_blocked_tt_ad:
             block_update_tt_ad(block_offset,vgmstream);
             break;
+        case layout_blocked_vas:
+            block_update_vas(block_offset,vgmstream);
+            break;
         default: /* not a blocked layout */
             break;
     }
 }
 
 void blocked_count_samples(VGMSTREAM* vgmstream, STREAMFILE* sf, off_t offset) {
+    if (vgmstream == NULL)
+        return;
+
     int block_samples;
     off_t max_offset = get_streamfile_size(sf);
 
@@ -228,9 +234,11 @@ void blocked_count_samples(VGMSTREAM* vgmstream, STREAMFILE* sf, off_t offset) {
         }
         else {
             switch(vgmstream->coding_type) {
+                case coding_PCM16LE:
                 case coding_PCM16_int:  block_samples = pcm16_bytes_to_samples(vgmstream->current_block_size, 1); break;
                 case coding_PCM8_int:
                 case coding_PCM8_U_int: block_samples = pcm8_bytes_to_samples(vgmstream->current_block_size, 1); break;
+                case coding_XBOX_IMA_mono:
                 case coding_XBOX_IMA:   block_samples = xbox_ima_bytes_to_samples(vgmstream->current_block_size, 1); break;
                 case coding_NGC_DSP:    block_samples = dsp_bytes_to_samples(vgmstream->current_block_size, 1); break;
                 case coding_PSX:        block_samples = ps_bytes_to_samples(vgmstream->current_block_size,1); break;

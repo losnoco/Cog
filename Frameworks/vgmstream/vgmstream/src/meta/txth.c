@@ -25,7 +25,6 @@ typedef enum {
     AICA = 10,          /* YAMAHA AICA ADPCM (Dreamcast games) */
     MSADPCM = 11,       /* MS ADPCM (Windows games) */
     NGC_DSP = 12,       /* NGC DSP (Nintendo games) */
-    PCM8_U_int = 13,    /* 8-bit unsigned PCM (interleaved) */
     PSX_bf = 14,        /* PS-ADPCM with bad flags */
     MS_IMA = 15,        /* Microsoft IMA ADPCM */
     PCM8_U = 16,        /* 8-bit unsigned PCM */
@@ -57,6 +56,7 @@ typedef enum {
     YMZ,
     ULAW,
     ALAW,
+    DPCM_KCEJ,
 
     UNKNOWN = 255,
 } txth_codec_t;
@@ -79,6 +79,7 @@ typedef struct {
     uint32_t interleave_last;
     uint32_t interleave_first;
     uint32_t interleave_first_skip;
+    uint32_t frame_size;
     uint32_t channels;
     uint32_t sample_rate;
 
@@ -234,16 +235,16 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
             case PSX_bf:        
             case HEVAG:         interleave = 0x10; break;
             case NGC_DSP:       interleave = 0x08; break;
+            case PCM_FLOAT_LE:  interleave = 0x04; break;
             case PCM24LE:       interleave = 0x03; break;
             case PCM24BE:       interleave = 0x03; break;
             case PCM16LE:
             case PCM16BE:       interleave = 0x02; break;
             case PCM8:
             case PCM8_U:
-            case PCM8_SB:       interleave = 0x01; break;
-            case PCM_FLOAT_LE:  interleave = 0x04; break;
+            case PCM8_SB:
             case ULAW:
-            case ALAW:          interleave = 0x01; break;
+            case ALAW:          
             default:
                  break;
         }
@@ -264,10 +265,10 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         case PCM16BE:       coding = coding_PCM16BE; break;
         case PCM8:          coding = coding_PCM8; break;
         case PCM8_U:        coding = coding_PCM8_U; break;
-        case PCM8_U_int:    coding = coding_PCM8_U_int; break;
         case PCM8_SB:       coding = coding_PCM8_SB; break;
         case ULAW:          coding = coding_ULAW; break;
         case ALAW:          coding = coding_ALAW; break;
+        case DPCM_KCEJ:     coding = coding_DPCM_KCEJ; break;
         case PCM_FLOAT_LE:  coding = coding_PCMFLOAT; break;
         case SDX2:          coding = coding_SDX2; break;
         case DVI_IMA:       coding = coding_DVI_IMA; break;
@@ -335,9 +336,6 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
 
     /* codec specific (taken from GENH with minimal changes) */
     switch (coding) {
-        case coding_PCM8_U_int:
-            vgmstream->layout_type = layout_none;
-            break;
         case coding_PCM24LE:
         case coding_PCM24BE:
         case coding_PCM16LE:
@@ -421,6 +419,12 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
             vgmstream->allow_dual_stereo = 1; /* known to be used in: PSX, AICA, YMZ */
             break;
 
+        case coding_DPCM_KCEJ:
+            if (vgmstream->channels == 1) goto fail; /* untested/unknown */
+            vgmstream->interleave_block_size = 0x01;
+            vgmstream->layout_type = layout_interleave;
+            break;
+
         case coding_PCFX:
             vgmstream->interleave_block_size = txth.interleave;
             vgmstream->interleave_last_block_size = txth.interleave_last;
@@ -457,25 +461,39 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
             break;
 
         case coding_MS_IMA:
-            if (!txth.interleave) goto fail; /* creates garbage */
+            if (txth.interleave && txth.frame_size) {
+                coding = coding_MS_IMA_mono;
+                vgmstream->frame_size = txth.frame_size;
+                vgmstream->interleave_block_size = txth.interleave;
+                vgmstream->layout_type = layout_interleave;
+            }
+            else {
+                vgmstream->frame_size = txth.frame_size ? txth.frame_size : txth.interleave;
+                vgmstream->layout_type = layout_none;
+            }
 
-            vgmstream->interleave_block_size = txth.interleave;
-            vgmstream->layout_type = layout_none;
-
-            vgmstream->allow_dual_stereo = 1; //???
+            //TO-DO: needs to force MS_IMA_mono first if ch = 1, since dual_stereo + MS_IMA = assumes MS_IMA_stereo
+            // (or better do it after init / during setup stream)
+            //vgmstream->allow_dual_stereo = 1;
             break;
 
         case coding_MSADPCM:
-            if (vgmstream->channels > 2) goto fail;
-            if (!txth.interleave) goto fail;
-
-            vgmstream->frame_size = txth.interleave;
-            vgmstream->layout_type = layout_none;
+            if (vgmstream->channels > 2) goto fail; //can't handle (to-do: only non-mono?)
+            if (txth.interleave && txth.frame_size) {
+                coding = coding_MSADPCM_mono;
+                vgmstream->frame_size = txth.frame_size;
+                vgmstream->interleave_block_size = txth.interleave;
+                vgmstream->layout_type = layout_interleave;
+            }
+            else {
+                vgmstream->frame_size = txth.frame_size ? txth.frame_size : txth.interleave;
+                vgmstream->layout_type = layout_none;
+            }
             break;
 
         case coding_XBOX_IMA:
             if (txth.codec_mode == 1) { /* mono interleave */
-                coding = coding_XBOX_IMA_int;
+                coding = coding_XBOX_IMA_mono;
                 vgmstream->layout_type = layout_interleave;
                 vgmstream->interleave_block_size = txth.interleave;
                 vgmstream->interleave_last_block_size = txth.interleave_last;
@@ -841,7 +859,7 @@ static void set_body_chunk(txth_header* txth) {
     if (!txth->sf_body)
         return;
 
-    /* treat chunks as subsongs */
+    /* treat chunks as subsongs (less subsongs than chunks could be allowed to ignore some chunks but it's kinda odd) */
     if (txth->subsong_count > 1 && txth->subsong_count == txth->chunk_count)
         txth->chunk_number = txth->target_subsong;
     if (txth->chunk_number == 0)
@@ -974,7 +992,6 @@ static txth_codec_t parse_codec(txth_header* txth, const char* val) {
     else if (is_string(val,"PCM16LE"))      return PCM16LE;
     else if (is_string(val,"PCM8"))         return PCM8;
     else if (is_string(val,"PCM8_U"))       return PCM8_U;
-    else if (is_string(val,"PCM8_U_int"))   return PCM8_U_int;
     else if (is_string(val,"PCM8_SB"))      return PCM8_SB;
     else if (is_string(val,"SDX2"))         return SDX2;
     else if (is_string(val,"DVI_IMA"))      return DVI_IMA;
@@ -1012,6 +1029,7 @@ static txth_codec_t parse_codec(txth_header* txth, const char* val) {
     else if (is_string(val,"HEVAG"))        return HEVAG;
     else if (is_string(val,"ULAW"))         return ULAW;
     else if (is_string(val,"ALAW"))         return ALAW;
+    else if (is_string(val,"DPCM_KCEJ"))    return DPCM_KCEJ;
     /* special handling */
     else if (is_string(val,"name_value"))   return txth->name_values[0];
     else if (is_string(val,"name_value1"))  return txth->name_values[0];
@@ -1046,6 +1064,21 @@ static int parse_endianness(txth_header* txth, const char* val, uint32_t* p_valu
     return 1;
 fail:
     return 0;
+}
+
+static int is_absolute(const char* fn) {
+    return fn[0] == '/' || fn[0] == '\\'  || fn[1] == ':';
+}
+
+static STREAMFILE* open_path_streamfile(STREAMFILE* sf, char* path) {
+    fix_dir_separators(path); /* clean paths */
+
+    /* absolute paths are detected for convenience, but since it's hard to unify all OSs
+    * and plugins, they aren't "officially" supported nor documented, thus may or may not work */
+    if (is_absolute(path))
+        return open_streamfile(sf, path); /* from path as is */
+    else
+        return open_streamfile_by_filename(sf, path); /* from current path */
 }
 
 static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, char* val) {
@@ -1119,6 +1152,9 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
             if (txth->data_size && txth->data_size > skip)
                 txth->data_size -= skip;
         }
+    }
+    else if (is_string(key,"frame_size")) {
+        if (!parse_num(txth->sf_head,txth,val, &txth->frame_size)) goto fail;
     }
 
     /* BASE CONFIG */
@@ -1394,9 +1430,7 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
             txth->sf_head_opened = 1;
         }
         else { /* open file */
-            fix_dir_separators(val); /* clean paths */
-
-            txth->sf_head = open_streamfile_by_filename(txth->sf, val);
+            txth->sf_head = open_path_streamfile(txth->sf, val);
             if (!txth->sf_head) goto fail;
             txth->sf_head_opened = 1;
         }
@@ -1424,9 +1458,7 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
             txth->sf_body_opened = 1;
         }
         else { /* open file */
-            fix_dir_separators(val); /* clean paths */
-
-            txth->sf_body = open_streamfile_by_filename(txth->sf, val);
+            txth->sf_body = open_path_streamfile(txth->sf, val);
             if (!txth->sf_body) goto fail;
             txth->sf_body_opened = 1;
         }
@@ -2026,6 +2058,7 @@ static int parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32_
             else if ((n = is_string_field(val,"interleave_last")))      value = txth->interleave_last;
             else if ((n = is_string_field(val,"interleave_first")))     value = txth->interleave_first;
             else if ((n = is_string_field(val,"interleave_first_skip")))value = txth->interleave_first_skip;
+            else if ((n = is_string_field(val,"frame_size")))           value = txth->frame_size;
             else if ((n = is_string_field(val,"channels")))             value = txth->channels;
             else if ((n = is_string_field(val,"sample_rate")))          value = txth->sample_rate;
             else if ((n = is_string_field(val,"start_offset")))         value = txth->start_offset;
@@ -2133,7 +2166,9 @@ fail:
 static int get_bytes_to_samples(txth_header* txth, uint32_t bytes) {
     switch(txth->codec) {
         case MS_IMA:
-            return ms_ima_bytes_to_samples(bytes, txth->interleave, txth->channels);
+            if (txth->interleave && txth->frame_size) /* mono mode */ //TODO maybe some helper instead
+                return ms_ima_bytes_to_samples(bytes / txth->channels, txth->frame_size, 1);
+            return ms_ima_bytes_to_samples(bytes, txth->frame_size ? txth->frame_size : txth->interleave, txth->channels);
         case XBOX:
             return xbox_ima_bytes_to_samples(bytes, txth->channels);
         case NGC_DSP:
@@ -2150,11 +2185,11 @@ static int get_bytes_to_samples(txth_header* txth, uint32_t bytes) {
         case PCM16LE:
             return pcm16_bytes_to_samples(bytes, txth->channels);
         case PCM8:
-        case PCM8_U_int:
         case PCM8_U:
         case PCM8_SB:
         case ULAW:
         case ALAW:
+        case DPCM_KCEJ:
             return pcm8_bytes_to_samples(bytes, txth->channels);
         case PCM_FLOAT_LE:
             return pcm_bytes_to_samples(bytes, txth->channels, 32);
@@ -2163,11 +2198,13 @@ static int get_bytes_to_samples(txth_header* txth, uint32_t bytes) {
         case TGC:
             return pcm_bytes_to_samples(bytes, txth->channels, 4);
         case MSADPCM:
-            return msadpcm_bytes_to_samples(bytes, txth->interleave, txth->channels);
+            if (txth->interleave && txth->frame_size) /* mono mode */ //TODO some helper instead
+                return msadpcm_bytes_to_samples(bytes / txth->channels, txth->frame_size, 1);
+            return msadpcm_bytes_to_samples(bytes, txth->frame_size ? txth->frame_size : txth->interleave, txth->channels);
         case ATRAC3:
-            return atrac3_bytes_to_samples(bytes, txth->interleave);
+            return atrac3_bytes_to_samples(bytes, txth->frame_size ? txth->frame_size : txth->interleave);
         case ATRAC3PLUS:
-            return atrac3plus_bytes_to_samples(bytes, txth->interleave);
+            return atrac3plus_bytes_to_samples(bytes, txth->frame_size ? txth->frame_size : txth->interleave);
         case AAC:
             return aac_get_samples(txth->sf_body, txth->start_offset, bytes);
 #ifdef VGM_USE_MPEG
@@ -2175,7 +2212,7 @@ static int get_bytes_to_samples(txth_header* txth, uint32_t bytes) {
             return mpeg_get_samples(txth->sf_body, txth->start_offset, bytes);
 #endif
         case AC3:
-            return ac3_bytes_to_samples(bytes, txth->interleave, txth->channels);
+            return ac3_bytes_to_samples(bytes, txth->frame_size ? txth->frame_size : txth->interleave, txth->channels);
         case ASF:
             return asf_bytes_to_samples(bytes, txth->channels);
         case EAXA:

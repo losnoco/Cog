@@ -38,6 +38,8 @@ ogg_vorbis_codec_data* init_ogg_vorbis(STREAMFILE* sf, off_t start, off_t size, 
     ov_callbacks callbacks = {0};
 
     //todo clean up
+    if (!sf)
+        return NULL;
 
     callbacks.read_func = ov_read_func;
     callbacks.seek_func = ov_seek_func;
@@ -217,7 +219,7 @@ void decode_ogg_vorbis(ogg_vorbis_codec_data* data, sample_t* outbuf, int32_t sa
                 (char *)(outbuf),                   /* buffer */
                 (samples_to_do - samples_done) * sizeof(sample_t) * channels, /* length in bytes */
                 0,                                  /* pcm endianness */
-                sizeof(sample),                     /* pcm size */
+                sizeof(sample_t),                   /* pcm size */
                 1,                                  /* pcm signedness */
                 &data->bitstream);                  /* bitstream */
         if (rc <= 0) goto fail; /* rc is bytes done (for all channels) */
@@ -232,7 +234,7 @@ void decode_ogg_vorbis(ogg_vorbis_codec_data* data, sample_t* outbuf, int32_t sa
     return;
 fail:
     VGM_LOG("OGG: error %lx during decode\n", rc);
-    memset(outbuf, 0, (samples_to_do - samples_done) * channels * sizeof(sample));
+    memset(outbuf, 0, (samples_to_do - samples_done) * channels * sizeof(sample_t));
 }
 
 /* vorbis encodes channels in non-standard order, so we remap during conversion to fix this oddity.

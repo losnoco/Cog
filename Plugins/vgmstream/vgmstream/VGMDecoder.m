@@ -337,7 +337,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		frames = 0; // integer overflow?
 
 	while(frames) {
-		sample sample_buffer[MAX_BUFFER_SAMPLES * VGMSTREAM_MAX_CHANNELS];
+		sample_t sample_buffer[MAX_BUFFER_SAMPLES * VGMSTREAM_MAX_CHANNELS];
 
 		UInt32 frames_to_do = frames;
 		if(frames_to_do > MAX_BUFFER_SAMPLES)
@@ -350,7 +350,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		framesRead += frames_to_do;
 		framesDone += frames_to_do;
 
-		sample *sbuf = (sample *)buf;
+		sample_t *sbuf = (sample_t *)buf;
 
 		memcpy(sbuf, sample_buffer, frames_to_do * channels * sizeof(sbuf[0]));
 

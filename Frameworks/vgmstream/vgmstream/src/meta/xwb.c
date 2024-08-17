@@ -9,13 +9,13 @@
 #define WAVEBANKENTRY_FLAGS_IGNORELOOP      0x00000008  // Used internally when the loop region can't be used (no idea...)
 
 /* the x.x version is just to make it clearer, MS only classifies XACT as 1/2/3 */
-#define XACT1_0_MAX     1           /* Project Gotham Racing 2 (v1), Silent Hill 4 (v1), Shin Megami Tensei NINE (v1) */
-#define XACT1_1_MAX     3           /* Unreal Championship (v2), The King of Fighters 2003 (v3) */
-#define XACT2_0_MAX     34          /* Dead or Alive 4 (v17), Kameo (v23), Table Tennis (v34) */ // v35/36/37 too?
-#define XACT2_1_MAX     38          /* Prey (v38) */ // v39 too?
-#define XACT2_2_MAX     41          /* Blue Dragon (v40) */
-#define XACT3_0_MAX     46          /* Ninja Blade (t43 v42), Persona 4 Ultimax NESSICA (t45 v43) */
-#define XACT_TECHLAND   0x10000     /* Sniper Ghost Warrior, Nail'd (PS3/X360), equivalent to XACT3_0 */
+#define XACT1_0_MAX     1           /* Project Gotham Racing 2 (Xbox)-v01, Silent Hill 4 (Xbox)-v01, Shin Megami Tensei NINE (Xbox)-v01 */
+#define XACT1_1_MAX     3           /* Unreal Championship (Xbox)-v02, The King of Fighters 2003 (Xbox)-v03 */
+#define XACT2_0_MAX     34          /* Project Gotham Racing 3 (X360)-v22, Dead or Alive 4 (X360)-v23, Table Tennis (X360)-v34 */ // v35/36/37 too?
+#define XACT2_1_MAX     38          /* Prey (X360)-v38 */
+#define XACT2_2_MAX     41          /* Just Cause (X360)-v39, Blue Dragon (X360)-v40 */
+#define XACT3_0_MAX     46          /* Ninja Blade (X360)-t43-v42, Saints Row 2 (PC)-t44-v42, Persona 4 Ultimax NESSICA (PC)-t45-v43, BlazBlue (X360)-t46-v44 */
+#define XACT_TECHLAND   0x10000     /* Sniper Ghost Warrior (PS3/X360), Nail'd (PS3/X360), equivalent to XACT3_0 */
 #define XACT_CRACKDOWN  0x87        /* Crackdown 1, equivalent to XACT2_2 */
 
 static const int wma_avg_bps_index[7] = {
@@ -75,7 +75,7 @@ typedef struct {
     int fix_xma_loop_samples;
 } xwb_header;
 
-static void get_name(char* buf, size_t maxsize, int target_subsong, xwb_header* xwb, STREAMFILE* sf);
+static void get_name(char* buf, size_t buf_size, int target_subsong, xwb_header* xwb, STREAMFILE* sf);
 
 
 /* XWB - XACT Wave Bank (Microsoft SDK format for XBOX/XBOX360/Windows) */
@@ -86,12 +86,13 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
     int target_subsong = sf->stream_index;
     uint32_t (*read_u32)(off_t,STREAMFILE*) = NULL;
     int32_t (*read_s32)(off_t,STREAMFILE*) = NULL;
+    char stream_name[STREAM_NAME_SIZE], file_name[STREAM_NAME_SIZE];
 
 
     /* checks */
     if (!is_id32be(0x00,sf, "WBND") &&
         !is_id32le(0x00,sf, "WBND")) /* X360 */
-        goto fail;
+        return NULL;
 
     /* .xwb: standard
      * .xna: Touhou Makukasai ~ Fantasy Danmaku Festival (PC)
@@ -99,7 +100,7 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
      * .hwb: Burnout Revenge (X360)
      * .bd: Fatal Frame 2 (Xbox) */
     if (!check_extensions(sf,"xwb,xna,hwb,bd,"))
-        goto fail;
+        return NULL;
 
     xwb.little_endian = is_id32be(0x00,sf, "WBND"); /* Xbox/PC */
     if (xwb.little_endian) {
@@ -409,7 +410,7 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
     }
     else if ((xwb.version <= XACT2_1_MAX && (xwb.codec == XMA1 || xwb.codec == XMA2) && xwb.loop_flag)
                 || (xwb.version == XACT_TECHLAND && xwb.codec == XMA2)) {
-        /* v38: byte offset, v40+: sample offset, v39: ? */
+        /* v38: byte offset, v39/v40+: sample offset */
         /* need to manually find sample offsets, thanks to Microsoft's dumb headers */
         ms_sample_data msd = {0};
 
@@ -432,7 +433,7 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
         xwb.fix_xma_loop_samples = 1;
         xwb.fix_xma_num_samples = 0;
 
-        /* Techland's XMA in tool_version 0x2a (not 0x2c?) seems to use (entry_info >> 1) num_samples 
+        /* Techland's XMA in tool_version 0x2a (not 0x2c?) seems to use (entry_info >> 1) num_samples
          * for music banks, but not sfx [Nail'd (X360)-0x2a, Dead Island (X360)-0x2c] */
         if (xwb.version == XACT_TECHLAND) {
             xwb.num_samples = 0;
@@ -467,7 +468,16 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
     vgmstream->num_streams = xwb.total_subsongs;
     vgmstream->stream_size = xwb.stream_size;
     vgmstream->meta_type = meta_XWB;
-    get_name(vgmstream->stream_name,STREAM_NAME_SIZE, target_subsong, &xwb, sf);
+
+    get_name(stream_name, STREAM_NAME_SIZE, target_subsong, &xwb, sf);
+
+    if (stream_name[0]) {
+        get_streamfile_basename(sf, file_name, STREAM_NAME_SIZE);
+        if (xwb.wavebank_name[0] && strcmp(file_name, xwb.wavebank_name) != 0)
+            snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%s/%s", xwb.wavebank_name, stream_name);
+        else
+            snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%s", stream_name);
+    }
 
     switch(xwb.codec) {
         case PCM: /* Unreal Championship (Xbox)[PCM8], KOF2003 (Xbox)[PCM16LE], Otomedius (X360)[PCM16BE] */
@@ -587,7 +597,6 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
             break;
         }
 
-#ifdef VGM_USE_ATRAC9
         case ATRAC9_RIFF: { /* Stardew Valley (Vita) extension */
             VGMSTREAM *temp_vgmstream = NULL;
             STREAMFILE* temp_sf = NULL;
@@ -610,7 +619,6 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
             close_vgmstream(vgmstream);
             return temp_vgmstream;
         }
-#endif
 
         default:
             goto fail;
@@ -619,7 +627,7 @@ VGMSTREAM* init_vgmstream_xwb(STREAMFILE* sf) {
 
     start_offset = xwb.stream_offset;
 
-    if ( !vgmstream_open_stream(vgmstream,sf,start_offset) )
+    if (!vgmstream_open_stream(vgmstream,sf,start_offset))
         goto fail;
     return vgmstream;
 
@@ -630,10 +638,10 @@ fail:
 
 /* ****************************************************************************** */
 
-static int get_xwb_name(char* buf, size_t maxsize, int target_subsong, xwb_header* xwb, STREAMFILE* sf) {
+static int get_xwb_name(char* buf, size_t buf_size, int target_subsong, xwb_header* xwb, STREAMFILE* sf) {
     size_t read;
 
-    if (!xwb->names_offset || !xwb->names_size || xwb->names_entry_size > maxsize)
+    if (!xwb->names_offset || !xwb->names_size || xwb->names_entry_size > buf_size)
         goto fail;
 
     read = read_string(buf,xwb->names_entry_size, xwb->names_offset + xwb->names_entry_size*(target_subsong-1),sf);
@@ -645,7 +653,7 @@ fail:
     return 0;
 }
 
-static int get_xsb_name(char* buf, size_t maxsize, int target_subsong, xwb_header* xwb, STREAMFILE* sf) {
+static int get_xsb_name(char* buf, size_t buf_size, int target_subsong, xwb_header* xwb, STREAMFILE* sf) {
     xsb_header xsb = {0};
 
     xsb.selected_stream = target_subsong - 1;
@@ -662,8 +670,7 @@ static int get_xsb_name(char* buf, size_t maxsize, int target_subsong, xwb_heade
     if (!xsb.name_len || xsb.name[0] == '\0')
         goto fail;
 
-    strncpy(buf,xsb.name,maxsize);
-    buf[maxsize-1] = '\0';
+    snprintf(buf, buf_size, "%s", xsb.name);
     return 1;
 fail:
     return 0;
@@ -707,12 +714,12 @@ fail:
     return 0;
 }
 
-static void get_name(char* buf, size_t maxsize, int target_subsong, xwb_header* xwb, STREAMFILE* sf_xwb) {
+static void get_name(char* buf, size_t buf_size, int target_subsong, xwb_header* xwb, STREAMFILE* sf_xwb) {
     STREAMFILE* sf_name = NULL;
     int name_found;
 
     /* try to get the stream name in the .xwb, though they are very rarely included */
-    name_found = get_xwb_name(buf, maxsize, target_subsong, xwb, sf_xwb);
+    name_found = get_xwb_name(buf, buf_size, target_subsong, xwb, sf_xwb);
     if (name_found) return;
 
     /* try again in a companion files */
@@ -720,22 +727,23 @@ static void get_name(char* buf, size_t maxsize, int target_subsong, xwb_header* 
     if (xwb->version == 1) {
         /* .wbh, a simple name container */
         sf_name = open_streamfile_by_ext(sf_xwb, "wbh");
-        if (!sf_name) return; /* rarely found [Pac-Man World 2 (Xbox)] */
+        if (!sf_name) goto fail; /* rarely found [Pac-Man World 2 (Xbox)] */
 
-        name_found = get_wbh_name(buf, maxsize, target_subsong, xwb, sf_name);
+        name_found = get_wbh_name(buf, buf_size, target_subsong, xwb, sf_name);
         close_streamfile(sf_name);
     }
     else {
         /* .xsb, a comically complex cue format */
         sf_name = open_xsb_filename_pair(sf_xwb);
-        if (!sf_name) return; /* not all xwb have xsb though */
+        if (!sf_name) goto fail; /* not all xwb have xsb though */
 
-        name_found = get_xsb_name(buf, maxsize, target_subsong, xwb, sf_name);
+        name_found = get_xsb_name(buf, buf_size, target_subsong, xwb, sf_name);
         close_streamfile(sf_name);
     }
 
+    if (!name_found) goto fail;
+    return;
 
-    if (!name_found) {
-        buf[0] = '\0';
-    }
+fail:
+    buf[0] = '\0';
 }

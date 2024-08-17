@@ -13,7 +13,11 @@ typedef uint16_t (*read_u16_t)(off_t, STREAMFILE*);
 typedef  int16_t (*read_s16_t)(off_t, STREAMFILE*);
 typedef float (*read_f32_t)(off_t, STREAMFILE*);
 
-typedef  int16_t (*get_s16_t)(const uint8_t*);
+typedef  uint16_t (*get_u16_t)(const uint8_t*);
+typedef   int16_t (*get_s16_t)(const uint8_t*);
+typedef  uint32_t (*get_u32_t)(const uint8_t*);
+typedef   int32_t (*get_s32_t)(const uint8_t*);
+
 
 /* guess byte endianness from a given value, return true if big endian and false if little endian */
 static inline int guess_endian16(off_t offset, STREAMFILE* sf) {
@@ -29,7 +33,7 @@ static inline int guess_endian32(off_t offset, STREAMFILE* sf) {
 }
 
 static inline read_u32_t guess_read_u32(off_t offset, STREAMFILE* sf) {
-    return guess_endian32(0x08,sf) ? read_u32be : read_u32le;
+    return guess_endian32(offset,sf) ? read_u32be : read_u32le;
 }
 
 #endif

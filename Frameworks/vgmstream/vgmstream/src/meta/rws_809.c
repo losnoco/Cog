@@ -7,7 +7,7 @@
 VGMSTREAM* init_vgmstream_rws_809(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
     bool big_endian;
-    char header_name[STREAM_NAME_SIZE], stream_name[STREAM_NAME_SIZE];
+    char file_name[STREAM_NAME_SIZE], header_name[STREAM_NAME_SIZE], stream_name[STREAM_NAME_SIZE];
     int channels = 0, idx, interleave, loop_flag, sample_rate = 0, total_subsongs, target_subsong = sf->stream_index;
     read_u32_t read_u32;
     off_t chunk_offset, header_offset, misc_data_offset = 0, stream_name_offset, stream_offset = 0;
@@ -112,7 +112,8 @@ VGMSTREAM* init_vgmstream_rws_809(STREAMFILE* sf) {
     vgmstream->num_streams = total_subsongs;
     vgmstream->interleave_block_size = interleave;
 
-    /* Seems to be the same as in rws_80d.c, maybe merge the two switches into one function? */
+    /* should be the same as in rws_80d, maybe merge the two switches into one function? */
+    /* the full list of all the valid codec UUIDs can also be found listed in rws_80d */
     switch (codec_uuid) {
         case 0xD01BD217: /* {D01BD217-3587-4EED-B9D9-B8E86EA9B995}: PCM Signed 16-bit */
             vgmstream->num_samples = pcm16_bytes_to_samples(stream_size, channels);
@@ -136,7 +137,11 @@ VGMSTREAM* init_vgmstream_rws_809(STREAMFILE* sf) {
             goto fail;
     }
 
-    snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%s/%s", header_name, stream_name);
+    get_streamfile_basename(sf, file_name, STREAM_NAME_SIZE);
+    if (strcmp(file_name, header_name) == 0)
+        snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%s", stream_name);
+    else
+        snprintf(vgmstream->stream_name, STREAM_NAME_SIZE, "%s/%s", header_name, stream_name);
 
     if (!vgmstream_open_stream(vgmstream, sf, stream_offset + 0x0C))
         goto fail;

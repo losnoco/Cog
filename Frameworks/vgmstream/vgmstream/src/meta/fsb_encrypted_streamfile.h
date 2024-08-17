@@ -1,7 +1,7 @@
 #ifndef _FSB_ENCRYPTED_STREAMFILE_H_
 #define _FSB_ENCRYPTED_STREAMFILE_H_
 
-#define FSB_KEY_MAX 0x10000 //0x168
+#define FSB_KEY_MAX 0x80 /* known max ~0x33 */
 
 
 typedef struct {
@@ -57,7 +57,7 @@ static STREAMFILE* setup_fsb_streamfile(STREAMFILE* sf, const uint8_t* key, size
     size_t io_data_size = sizeof(fsb_decryption_data);
 
     /* setup decryption with key (external) */
-    if (!key_size || key_size > FSB_KEY_MAX)
+    if (!key_size || key_size >= FSB_KEY_MAX)
         return NULL;
 
     memcpy(io_data.key, key, key_size);
@@ -69,6 +69,25 @@ static STREAMFILE* setup_fsb_streamfile(STREAMFILE* sf, const uint8_t* key, size
     new_sf = open_io_streamfile_f(new_sf, &io_data,io_data_size, fsb_decryption_read,NULL);
     new_sf = open_fakename_streamfile(new_sf, NULL,"fsb");
     return new_sf;
+}
+
+/* same as above but doesn't open streamfile, so it's a tiny bit faster */
+static bool test_fsb_streamfile(STREAMFILE* sf, const uint8_t* key, size_t key_size, int is_alt) {
+    fsb_decryption_data io_data = {0};
+
+    if (!key_size || key_size >= FSB_KEY_MAX)
+        return false;
+
+    memcpy(io_data.key, key, key_size);
+    io_data.key_size = key_size;
+    io_data.is_alt = is_alt;
+
+    /* setup subfile */
+    uint8_t tmp[0x04];
+    int bytes = fsb_decryption_read(sf, tmp, 0x00, 0x04, &io_data);
+    if (bytes != 0x04)
+        return false;
+    return (get_u32be(tmp) & 0xFFFFFF00) == get_id32be("FSB\0");
 }
 
 #endif /* _FSB_ENCRYPTED_STREAMFILE_H_ */

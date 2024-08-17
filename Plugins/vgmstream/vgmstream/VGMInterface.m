@@ -12,6 +12,8 @@
 
 #import "Logging.h"
 
+#import <libvgmstream/log.h>
+
 static void log_callback(int level, const char* str) {
 	ALog(@"%@", str);
 }
