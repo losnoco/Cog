@@ -243,7 +243,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		loopCount = 10;
 	}
 
-	fadeTime = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeTime"] doubleValue];
+	fadeTime = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 	if(fadeTime < 0.0) {
 		fadeTime = 0.0;
 	}
