@@ -244,6 +244,48 @@ VGMSTREAM* init_vgmstream_sqex_sead(STREAMFILE* sf) {
         }
 #endif
 
+#ifdef VGM_USE_FFMPEG
+        case 0x05: { /* XMA2 [Kingdom Hearts 3 (X1)] */
+            start_offset = sead.extradata_offset + sead.extradata_size;
+
+            /* extradata */
+            // 00: null?
+            // 03: XMA sub-version? (4)
+            // 04: extradata base size (without seek)
+            // 06: seek entries
+            // 08: XMA sample rate (ex. may be 47999)
+            // 0c: bitrate?
+            // 10: block size?
+            // 14: null?
+            // 18: total samples (with encoder delay)
+            // 1c: frame size?
+            // 20: null?
+            // 24: total samples (without encoder delay)
+            // 28: loop start
+            // 2c: loop length?
+            // 30+ seek table
+
+            int block_size = read_u32(sead.extradata_offset+0x10,sf);
+            if (!block_size)
+                goto fail;
+            int block_count = sead.stream_size + 1;
+            int num_samples = read_u32(sead.extradata_offset+0x24,sf);
+
+            vgmstream->codec_data = init_ffmpeg_xma2_raw(sf, start_offset, sead.stream_size, num_samples, sead.channels, sead.sample_rate, block_size, block_count);
+            if (!vgmstream->codec_data) goto fail;
+            vgmstream->coding_type = coding_FFmpeg;
+            vgmstream->layout_type = layout_none;
+
+            vgmstream->num_samples = num_samples;
+            vgmstream->loop_start_sample = sead.loop_start;
+            vgmstream->loop_end_sample = sead.loop_end;
+
+            //xma_fix_raw_samples(vgmstream, sf, start_offset, sead.stream_size, 0, 0,1);
+
+            break;
+        }
+#endif
+
 #ifdef VGM_USE_MPEG
         case 0x06: { /* MSMP3 (MSF subfile) [Dragon Quest Builders (PS3)] */
             mpeg_custom_config cfg = {0};
@@ -310,7 +352,6 @@ VGMSTREAM* init_vgmstream_sqex_sead(STREAMFILE* sf) {
             }
         }
 
-        case 0x05: /* XMA2 (extradata may be a XMA2 fmt extra chunk) */
         case 0x08: /* SWITCHOPUS (no extradata?) */
         default:
             vgm_logi("SQEX SEAD: unknown codec %x\n", sead.codec);
@@ -339,58 +380,45 @@ static void sead_cat(char* dst, int dst_max, const char* src) {
 }
 
 static void build_readable_sab_name(sead_header_t* sead, STREAMFILE* sf, uint32_t sndname_offset, uint32_t sndname_size) {
-    char * buf = sead->readable_name;
+    char* buf = sead->readable_name;
     int buf_size = sizeof(sead->readable_name);
-    char descriptor[255], name[255];
-
-    if (sead->filename_size > 255 || sndname_size > 255)
-        goto fail;
+    char descriptor[256], name[256];
 
     if (buf[0] == '\0') { /* init */
-        read_string(descriptor,sead->filename_size+1, sead->filename_offset, sf);
-        read_string(name, sndname_size+1, sndname_offset, sf);
+        read_string_sz(descriptor, sizeof(descriptor), sead->filename_size, sead->filename_offset, sf);
+        read_string_sz(name, sizeof(name), sndname_size, sndname_offset, sf);
 
         snprintf(buf,buf_size, "%s/%s", descriptor, name);
     }
     else { /* add */
-        read_string(name, sndname_size+1, sndname_offset, sf);
+        read_string_sz(name, sizeof(name), sndname_size, sndname_offset, sf);
 
         sead_cat(buf, buf_size, "; ");
         sead_cat(buf, buf_size, name);
     }
-    return;
-fail:
-    VGM_LOG("SEAD: bad sab name found\n");
 }
 
 static void build_readable_mab_name(sead_header_t* sead, STREAMFILE* sf) {
-    char * buf = sead->readable_name;
+    char* buf = sead->readable_name;
     int buf_size = sizeof(sead->readable_name);
-    char descriptor[255], name[255], mode[255];
+    char descriptor[256], name[256], mode[256];
 
-    if (sead->filename_size > 255 || sead->muscname_size > 255 || sead->sectname_size > 255 || sead->modename_size > 255)
-        goto fail;
-
-    read_string(descriptor,sead->filename_size+1,sead->filename_offset, sf);
-    //read_string(filename,sead->muscname_size+1,sead->muscname_offset, sf); /* same as filename, not too interesting */
+    read_string_sz(descriptor, sizeof(descriptor), sead->filename_size, sead->filename_offset, sf);
+    //read_string_sz(filename, sizeof(filename), sead->muscname_size, sead->muscname_offset, sf); /* same as filename, not too interesting */
     if (sead->sectname_offset)
-        read_string(name,sead->sectname_size+1,sead->sectname_offset, sf);
+        read_string_sz(name, sizeof(name), sead->sectname_size,sead->sectname_offset, sf);
     else if (sead->instname_offset)
-        read_string(name,sead->instname_size+1,sead->instname_offset, sf);
+        read_string_sz(name, sizeof(name), sead->instname_size, sead->instname_offset, sf);
     else
         strcpy(name, "?");
     if (sead->modename_offset > 0)
-        read_string(mode,sead->modename_size+1,sead->modename_offset, sf);
+        read_string_sz(mode, sizeof(mode), sead->modename_size,sead->modename_offset, sf);
 
     /* default mode in most files */
     if (sead->modename_offset == 0 || strcmp(mode, "Mode") == 0 || strcmp(mode, "Mode0") == 0)
         snprintf(buf,buf_size, "%s/%s", descriptor, name);
     else
         snprintf(buf,buf_size, "%s/%s/%s", descriptor, name, mode);
-
-    return;
-fail:
-    VGM_LOG("SEAD: bad mab name found\n");
 }
 
 static void parse_sead_mab_name(sead_header_t* sead, STREAMFILE* sf) {
