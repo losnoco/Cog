@@ -3,7 +3,6 @@
 #include "render.h"
 #include "decode.h"
 #include "mixing.h"
-#include "sbuf.h"
 
 
 /* VGMSTREAM RENDERING
@@ -73,7 +72,10 @@ void render_reset(VGMSTREAM* vgmstream) {
     }
 }
 
-int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
+int render_layout(sbuf_t* sbuf, VGMSTREAM* vgmstream) {
+    void* buf = sbuf->buf;
+    int sample_count = sbuf->samples;
+
     if (sample_count == 0)
         return 0;
 
@@ -82,9 +84,7 @@ int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
 
     // nothing to decode: return blank buf (not ">=" to allow layouts to loop in some cases when == happens)
     if (vgmstream->current_sample > vgmstream->num_samples) {
-        int channels = vgmstream->channels;
-
-        memset(buf, 0, sample_count * sizeof(sample_t) * channels);
+        sbuf_silence_rest(sbuf);
         return sample_count;
     }
 
@@ -137,10 +137,10 @@ int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
             render_vgmstream_blocked(buf, sample_count, vgmstream);
             break;
         case layout_segmented:
-            render_vgmstream_segmented(buf, sample_count,vgmstream);
+            render_vgmstream_segmented(sbuf, vgmstream);
             break;
         case layout_layered:
-            render_vgmstream_layered(buf, sample_count, vgmstream);
+            render_vgmstream_layered(sbuf, vgmstream);
             break;
         default:
             break;
@@ -148,7 +148,6 @@ int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
 
     // decode past stream samples: blank rest of buf
     if (vgmstream->current_sample > vgmstream->num_samples) {
-        int channels = vgmstream->channels;
         int32_t excess, decoded;
 
         excess = (vgmstream->current_sample - vgmstream->num_samples);
@@ -156,7 +155,8 @@ int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
             excess = sample_count;
         decoded = sample_count - excess;
 
-        memset(buf + decoded * channels, 0, excess * sizeof(sample_t) * channels);
+        sbuf_silence_part(sbuf, decoded, sample_count - decoded);
+
         return sample_count;
     }
 
@@ -165,79 +165,63 @@ int render_layout(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
 
 /*****************************************************************************/
 
-typedef struct {
-    //sbuf_t sbuf;
-    int16_t* tmpbuf;
-    int samples_to_do;
-    int samples_done;
-} render_helper_t;
-
-
 // consumes samples from decoder
-static void play_op_trim(VGMSTREAM* vgmstream, render_helper_t* renderer) {
+static void play_op_trim(VGMSTREAM* vgmstream, sbuf_t* sbuf) {
     play_state_t* ps = &vgmstream->pstate;
     if (!ps->trim_begin_left)
         return;
-    if (!renderer->samples_to_do)
+    if (sbuf->samples <= 0)
         return;
 
-    // simpler using external buf?
-    //sample_t* tmpbuf = vgmstream->tmpbuf;
-    //size_t tmpbuf_size = vgmstream->tmpbuf_size;
-    //int32_t buf_samples = tmpbuf_size / vgmstream->channels; /* base channels, no need to apply mixing */
-    sample_t* tmpbuf = renderer->tmpbuf;
-    int buf_samples = renderer->samples_to_do;
+    sbuf_t sbuf_tmp = *sbuf;
+    int buf_samples = sbuf->samples;
 
     while (ps->trim_begin_left) {
         int to_do = ps->trim_begin_left;
         if (to_do > buf_samples)
             to_do = buf_samples;
 
-        render_layout(tmpbuf, to_do, vgmstream);
+        sbuf_tmp.samples = to_do;
+        int done = render_layout(&sbuf_tmp, vgmstream);
         /* no mixing */
-        ps->trim_begin_left -= to_do;
+
+        ps->trim_begin_left -= done;
     }
 }
 
 // adds empty samples to buf
-static void play_op_pad_begin(VGMSTREAM* vgmstream, render_helper_t* renderer) {
+static void play_op_pad_begin(VGMSTREAM* vgmstream, sbuf_t* sbuf) {
     play_state_t* ps = &vgmstream->pstate;
     if (!ps->pad_begin_left)
         return;
     //if (ps->play_position > ps->play_begin_duration) //implicit
     //    return;
 
-    int channels = ps->output_channels;
-    int buf_samples = renderer->samples_to_do;
-
     int to_do = ps->pad_begin_left;
-    if (to_do > buf_samples)
-        to_do = buf_samples;
+    if (to_do > sbuf->samples)
+        to_do = sbuf->samples;
 
-    memset(renderer->tmpbuf, 0, to_do * sizeof(sample_t) * channels);
+    sbuf_silence_part(sbuf, 0, to_do);
+
     ps->pad_begin_left -= to_do;
-
-    renderer->samples_done += to_do;
-    renderer->samples_to_do -= to_do;
-    renderer->tmpbuf += to_do * channels; /* as if mixed */
+    sbuf->filled += to_do;
 }
 
 // fades (modifies volumes) part of buf
-static void play_op_fade(VGMSTREAM* vgmstream, sample_t* buf, int samples_done) {
+static void play_op_fade(VGMSTREAM* vgmstream, sbuf_t* sbuf) {
     play_config_t* pc = &vgmstream->config;
     play_state_t* ps = &vgmstream->pstate;
 
     if (pc->play_forever || !ps->fade_left)
         return;
-    if (ps->play_position + samples_done < ps->fade_start)
+    if (ps->play_position + sbuf->filled < ps->fade_start)
         return;
 
     int start, fade_pos;
-    int channels = ps->output_channels;
     int32_t to_do = ps->fade_left;
 
     if (ps->play_position < ps->fade_start) {
-        start = samples_done - (ps->play_position + samples_done - ps->fade_start);
+        start = sbuf->filled - (ps->play_position + sbuf->filled - ps->fade_start);
         fade_pos = 0;
     }
     else {
@@ -245,73 +229,65 @@ static void play_op_fade(VGMSTREAM* vgmstream, sample_t* buf, int samples_done) 
         fade_pos = ps->play_position - ps->fade_start;
     }
 
-    if (to_do > samples_done - start)
-        to_do = samples_done - start;
+    if (to_do > sbuf->filled - start)
+        to_do = sbuf->filled - start;
 
-    //TODO: use delta fadedness to improve performance?
-    for (int s = start; s < start + to_do; s++, fade_pos++) {
-        double fadedness = (double)(ps->fade_duration - fade_pos) / ps->fade_duration;
-        for (int ch = 0; ch < channels; ch++) {
-            buf[s * channels + ch] = (sample_t)(buf[s*channels + ch] * fadedness);
-        }
-    }
+    sbuf_fadeout(sbuf, start, to_do, fade_pos, ps->fade_duration);
 
     ps->fade_left -= to_do;
-
-    /* next samples after fade end would be pad end/silence, so we can just memset */
-    memset(buf + (start + to_do) * channels, 0, (samples_done - to_do - start) * sizeof(sample_t) * channels);
 }
 
 // adds null samples after decode
 // pad-end works like fades, where part of buf is samples and part is padding (blank)
 // (beyond pad end normally is silence, except with segmented layout)
-static int play_op_pad_end(VGMSTREAM* vgmstream, sample_t* buf, int samples_done) {
+static void play_op_pad_end(VGMSTREAM* vgmstream, sbuf_t* sbuf) {
     play_config_t* pc = &vgmstream->config;
     play_state_t* ps = &vgmstream->pstate;
 
     if (pc->play_forever)
-        return 0;
-    if (samples_done == 0)
-        return 0;
-    if (ps->play_position + samples_done < ps->pad_end_start)
-        return 0;
+        return;
+    if (ps->play_position + sbuf->filled < ps->pad_end_start)
+        return;
 
-    int channels = vgmstream->pstate.output_channels;
-    int skip = 0;
-    int32_t to_do;
-
+    int start;
+    int to_do;
     if (ps->play_position < ps->pad_end_start) {
-        skip = ps->pad_end_start - ps->play_position;
+        start = ps->pad_end_start - ps->play_position;
         to_do = ps->pad_end_duration;
     }
     else {
-        skip = 0;
+        start = 0;
         to_do = (ps->pad_end_start + ps->pad_end_duration) - ps->play_position;
     }
 
-    if (to_do > samples_done - skip)
-        to_do = samples_done - skip;
+    if (to_do > sbuf->filled - start)
+        to_do = sbuf->filled - start;
 
-    memset(buf + (skip * channels), 0, to_do * sizeof(sample_t) * channels);
-    return skip + to_do;
+    sbuf_silence_part(sbuf, start, to_do);
+
+    //TO-DO: this never adds samples and just silences them, since decoder always returns something
+    //sbuf->filled += ?
 }
 
-// clamp final play_position + done samples. Probably doesn't matter, but just in case.
-static void play_adjust_totals(VGMSTREAM* vgmstream, render_helper_t* renderer, int sample_count) {
+// clamp final play_position + done samples. Probably doesn't matter (maybe for plugins checking length), but just in case.
+static void play_adjust_totals(VGMSTREAM* vgmstream, sbuf_t* sbuf) {
     play_state_t* ps = &vgmstream->pstate;
 
-    ps->play_position += renderer->samples_done;
+    ps->play_position += sbuf->filled;
+
+    if (vgmstream->config.play_forever)
+        return;
+    if (ps->play_position <= ps->play_duration)
+        return;
 
     /* usually only happens when mixing layers of different lengths (where decoder keeps calling render) */
-    if (!vgmstream->config.play_forever && ps->play_position > ps->play_duration) {
-        int excess = ps->play_position - ps->play_duration;
-        if (excess > sample_count)
-            excess = sample_count;
+    int excess = ps->play_position - ps->play_duration;
+    if (excess > sbuf->samples)
+        excess = sbuf->samples;
+    sbuf->filled = (sbuf->samples - excess);
 
-        renderer->samples_done = (sample_count - excess);
-
-        ps->play_position = ps->play_duration;
-    }
+    /* clamp */
+    ps->play_position = ps->play_duration;
 }
 
 /*****************************************************************************/
@@ -324,51 +300,54 @@ static void play_adjust_totals(VGMSTREAM* vgmstream, render_helper_t* renderer, 
  *                                              \ end-fade |
  * 
  * Which part we are in depends on play_position. Because vgmstream render's 
- * buf may fall anywhere in the middle of all that. Since some ops add "fake" (non-decoded)
- * samples to buf, we need to 
+ * buf may fall anywhere in the middle of all that. Some ops add "fake" (non-decoded)
+ * samples to buf.
  */
 
-int render_vgmstream(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
-    render_helper_t renderer = {0};
-    renderer.tmpbuf = buf;
-    renderer.samples_done = 0;
-    renderer.samples_to_do = sample_count;
+int render_main(sbuf_t* sbuf, VGMSTREAM* vgmstream) {
 
-    //sbuf_init16(&renderer.sbuf, buf, sample_count, vgmstream->channels);
-
-
-    /* simple mode with no settings (just skip everything below) */
+    /* simple mode with no play settings (just skip everything below) */
     if (!vgmstream->config_enabled) {
-        render_layout(buf, renderer.samples_to_do, vgmstream);
-        mix_vgmstream(buf, renderer.samples_to_do, vgmstream);
-        return renderer.samples_to_do;
+        render_layout(sbuf, vgmstream);
+        sbuf->filled = sbuf->samples;
+
+        mix_vgmstream(sbuf, vgmstream);
+
+        return sbuf->filled;
     }
 
 
+    /* trim decoder output (may go anywhere before main render since it doesn't use render output, but easier first) */
+    play_op_trim(vgmstream, sbuf);
+
     /* adds empty samples to buf and moves it */
-    play_op_pad_begin(vgmstream, &renderer);
-
-    /* trim decoder output (may go anywhere before main render since it doesn't use render output) */
-    play_op_trim(vgmstream, &renderer);
+    play_op_pad_begin(vgmstream, sbuf);
 
 
-    /* main decode */
-    int done = render_layout(renderer.tmpbuf, renderer.samples_to_do, vgmstream);
-    mix_vgmstream(renderer.tmpbuf, done, vgmstream);
+    /* main decode (use temp buf to "consume") */
+    sbuf_t sbuf_tmp = *sbuf;
+    sbuf_consume(&sbuf_tmp, sbuf_tmp.filled);
+    int done = render_layout(&sbuf_tmp, vgmstream);
+    sbuf->filled += done;
 
+    mix_vgmstream(sbuf, vgmstream);
 
     /* simple fadeout over decoded data (after mixing since usually results in less samples) */
-    play_op_fade(vgmstream, renderer.tmpbuf, done);
+    play_op_fade(vgmstream, sbuf);
+
 
     /* silence leftover buf samples (after fade as rarely may mix decoded buf + trim samples when no fade is set) 
      * (could be done before render to "consume" buf but doesn't matter much) */
-    play_op_pad_end(vgmstream, renderer.tmpbuf, done);
-
-    renderer.samples_done += done;
-    //renderer.samples_to_do -= done; //not useful at this point
-    //renderer.tmpbuf += done * vgmstream->pstate.output_channels;
+    play_op_pad_end(vgmstream, sbuf);
 
 
-    play_adjust_totals(vgmstream, &renderer, sample_count);
-    return renderer.samples_done;
+    play_adjust_totals(vgmstream, sbuf);
+    return sbuf->filled;
+}
+
+int render_vgmstream(sample_t* buf, int32_t sample_count, VGMSTREAM* vgmstream) {
+    sbuf_t sbuf = {0};
+    sbuf_init_s16(&sbuf, buf, sample_count, vgmstream->channels);
+
+    return render_main(&sbuf, vgmstream);
 }

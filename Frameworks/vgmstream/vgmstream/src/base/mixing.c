@@ -1,36 +1,14 @@
+#include <math.h>
+#include <limits.h>
 #include "../vgmstream.h"
 #include "../util/channel_mappings.h"
+#include "../layout/layout.h"
 #include "mixing.h"
 #include "mixer.h"
 #include "mixer_priv.h"
 #include "sbuf.h"
-#include "../layout/layout.h"
-#include <math.h>
-#include <limits.h>
 
-//TODO simplify
-/**
- * Mixer modifies decoded sample buffer before final output. This is implemented
- * mostly with simplicity in mind rather than performance. Process:
- * - detect if mixing applies at current moment or exit (mini performance optimization)
- * - copy/upgrade buf to float mixbuf if needed
- * - do mixing ops
- * - copy/downgrade mixbuf to original buf if needed
- * 
- * Mixing may add or remove channels. input_channels is the buf's original channels,
- * and output_channels the resulting buf's channels. buf and mixbuf must be
- * as big as max channels (mixing_channels).
- * 
- * Mixing ops are added by a meta (ex. TXTP) or plugin through the API. Non-sensical
- * mixes are ignored (to avoid rechecking every time).
- * 
- * Currently, mixing must be manually enabled before starting to decode, because plugins
- * need to setup bigger bufs when upmixing. (to be changed)
- *
- * segmented/layered layouts handle mixing on their own.
- */
-
-/* ******************************************************************* */
+/* Wrapper/helpers for vgmstream's "mixer", which does main sample buffer transformations */
 
 static int32_t get_current_pos(VGMSTREAM* vgmstream, int32_t sample_count) {
     int32_t current_pos;
@@ -53,14 +31,14 @@ static int32_t get_current_pos(VGMSTREAM* vgmstream, int32_t sample_count) {
     return current_pos;
 }
 
-void mix_vgmstream(sample_t *outbuf, int32_t sample_count, VGMSTREAM* vgmstream) {
+void mix_vgmstream(sbuf_t* sbuf, VGMSTREAM* vgmstream) {
     /* no support or not need to apply */
     if (!mixer_is_active(vgmstream->mixer))
         return;
 
-    int32_t current_pos = get_current_pos(vgmstream, sample_count);
+    int32_t current_pos = get_current_pos(vgmstream, sbuf->filled);
 
-    mixer_process(vgmstream->mixer, outbuf, sample_count, current_pos);
+    mixer_process(vgmstream->mixer, sbuf, current_pos);
 }
 
 /* ******************************************************************* */
@@ -148,8 +126,11 @@ void mixing_info(VGMSTREAM* vgmstream, int* p_input_channels, int* p_output_chan
     mixer_t* mixer = vgmstream->mixer;
     int input_channels, output_channels;
 
-    if (!mixer)
-        goto fail;
+    if (!mixer) {
+        if (p_input_channels)  *p_input_channels = vgmstream->channels;
+        if (p_output_channels) *p_output_channels = vgmstream->channels;
+        return;
+    }
 
     output_channels = mixer->output_channels;
     if (mixer->output_channels > vgmstream->channels)
@@ -159,11 +140,23 @@ void mixing_info(VGMSTREAM* vgmstream, int* p_input_channels, int* p_output_chan
 
     if (p_input_channels)  *p_input_channels = input_channels;
     if (p_output_channels) *p_output_channels = output_channels;
+}
 
-    //;VGM_LOG("MIX: channels %i, in=%i, out=%i, mix=%i\n", vgmstream->channels, input_channels, output_channels, data->mixing_channels);
-    return;
-fail:
-    if (p_input_channels)  *p_input_channels = vgmstream->channels;
-    if (p_output_channels) *p_output_channels = vgmstream->channels;
-    return;
+sfmt_t mixing_get_input_sample_type(VGMSTREAM* vgmstream) {
+    // TODO: check vgmstream
+    // TODO: on layered/segments, detect biggest value and use that (ex. if one of the layers uses flt > flt)
+    return SFMT_S16;
+}
+
+sfmt_t mixing_get_output_sample_type(VGMSTREAM* vgmstream) {
+    sfmt_t input_fmt = mixing_get_input_sample_type(vgmstream);
+
+    mixer_t* mixer = vgmstream->mixer;
+    if (!mixer)
+        return input_fmt;
+
+    if (mixer->force_type)
+        return mixer->force_type;
+
+    return input_fmt;
 }

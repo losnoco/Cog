@@ -392,7 +392,7 @@ static const char* extension_list[] = {
     "npsf", //fake extension/header id for .nps (in bigfiles)
     "nsa",
     "nsopus",
-    "ntx",
+    "nfx",
     "nub",
     "nub2",
     "nus3audio",
@@ -454,6 +454,7 @@ static const char* extension_list[] = {
     "rsnd", //txth/reserved [Birushana: Ichijuu no Kaze (Switch)]
     "rsp",
     "rstm", //fake extension/header id for .rstm (in bigfiles)
+    "rvw", //txth/reserved [Half-Minute Hero (PC)]
     "rvws",
     "rwar",
     "rwav",
@@ -497,6 +498,7 @@ static const char* extension_list[] = {
     "scd",
     "sch",
     "sd9",
+    "sdl",
     "sdp", //txth/reserved [Metal Gear Arcade (AC)]
     "sdf",
     "sdt",
@@ -586,6 +588,7 @@ static const char* extension_list[] = {
     "utk",
     "uv",
 
+    "v",
     "v0",
     //"v1", //dual channel with v0
     "va3",
