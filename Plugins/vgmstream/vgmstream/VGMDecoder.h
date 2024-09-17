@@ -37,5 +37,8 @@
 	int bitrate;
 	long totalFrames;
 	long framesRead;
+
+	void *sample_buf;
+	void *sample_buf_temp;
 }
 @end

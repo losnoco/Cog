@@ -9,6 +9,8 @@
 #import "VGMDecoder.h"
 #import "VGMInterface.h"
 
+#import <libvgmstream/render.h>
+
 #import "PlaylistController.h"
 
 #include <stdlib.h>
@@ -319,8 +321,11 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
 
-	int16_t buffer[1024 * channels];
-	void *buf = (void *)buffer;
+	if (!sample_buf) {
+		sample_buf = malloc(1024 * channels * sizeof(int16_t));
+		if (!sample_buf) return nil;
+	}
+	void *buf = (void *)sample_buf;
 
 	if(canPlayForever) {
 		BOOL repeatone = IsRepeatOneSet();
@@ -337,31 +342,39 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		frames = 0; // integer overflow?
 
 	while(frames) {
-		sample_t sample_buffer[MAX_BUFFER_SAMPLES * VGMSTREAM_MAX_CHANNELS];
+		if (!sample_buf_temp) {
+			sample_buf_temp = malloc(MAX_BUFFER_SAMPLES * VGMSTREAM_MAX_CHANNELS * sizeof(int16_t));
+			if (!sample_buf_temp) return nil;
+		}
 
 		UInt32 frames_to_do = frames;
 		if(frames_to_do > MAX_BUFFER_SAMPLES)
 			frames_to_do = MAX_BUFFER_SAMPLES;
 
-		memset(sample_buffer, 0, frames_to_do * channels * sizeof(sample_buffer[0]));
+		memset(sample_buf_temp, 0, frames_to_do * channels * sizeof(float));
 
-		render_vgmstream(sample_buffer, frames_to_do, stream);
+		sbuf_t sbuf = {0};
+		sbuf_init(&sbuf, SFMT_S16, sample_buf_temp, frames_to_do, stream->channels);
 
-		framesRead += frames_to_do;
-		framesDone += frames_to_do;
+		int frames_done = render_main(&sbuf, stream);
 
-		sample_t *sbuf = (sample_t *)buf;
+		if (!frames_done) return nil;
 
-		memcpy(sbuf, sample_buffer, frames_to_do * channels * sizeof(sbuf[0]));
+		framesRead += frames_done;
+		framesDone += frames_done;
 
-		sbuf += frames_to_do * channels;
+		int16_t *obuf = (int16_t *)buf;
 
-		buf = (void *)sbuf;
+		memcpy(obuf, sample_buf_temp, frames_done * channels * sizeof(obuf[0]));
 
-		frames -= frames_to_do;
+		obuf += frames_done * channels;
+
+		buf = (void *)obuf;
+
+		frames -= frames_done;
 	}
 
-	[chunk assignSamples:buffer frameCount:framesDone];
+	[chunk assignSamples:sample_buf frameCount:framesDone];
 
 	return chunk;
 }
@@ -389,6 +402,14 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 - (void)close {
 	close_vgmstream(stream);
 	stream = NULL;
+	if (sample_buf_temp) {
+		free(sample_buf_temp);
+		sample_buf_temp = NULL;
+	}
+	if (sample_buf) {
+		free(sample_buf);
+		sample_buf = NULL;
+	}
 }
 
 - (void)dealloc {
