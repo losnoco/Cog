@@ -1402,6 +1402,8 @@
 		17E0D5D20F520E75005B6FED /* Window */ = {
 			isa = PBXGroup;
 			children = (
+				0A9CEA012861501700E47168 /* AboutWindowController.swift */,
+				0A9CEA0A286152DF00E47168 /* DraggableView.swift */,
 				83BC5AB120E4C87100631CD4 /* DualWindow.h */,
 				83BC5AB020E4C87100631CD4 /* DualWindow.m */,
 				17E0D5E10F520F02005B6FED /* MainWindow.h */,
@@ -1429,8 +1431,6 @@
 				17E0D6190F520F9F005B6FED /* VolumeButton.m */,
 				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
 				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
-				0A9CEA012861501700E47168 /* AboutWindowController.swift */,
-				0A9CEA0A286152DF00E47168 /* DraggableView.swift */,
 			);
 			name = Window;
 			sourceTree = "<group>";
