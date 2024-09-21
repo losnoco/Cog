@@ -15,6 +15,7 @@ class VisualizationController : NSObject {
 	var visAudio: [Float] = Array(repeating: 0.0, count: 44100 * 45)
 	var visAudioCursor = 0
 	var visAudioSize = 0
+	var visSamplesPosted: UInt64 = 0
 
 	private static var sharedVisualizationController: VisualizationController = {
 		let visualizationController = VisualizationController()
@@ -34,12 +35,18 @@ class VisualizationController : NSObject {
 			for i in 0..<amount {
 				self.visAudio[i] = 0
 			}
+			self.visSamplesPosted = 0;
 		}
 	}
 
 	@objc
 	func postLatency(_ latency: Double) {
 		self.latency = latency
+	}
+	
+	@objc
+	func samplesPosted() -> UInt64 {
+		return self.visSamplesPosted
 	}
 
 	@objc
@@ -67,6 +74,7 @@ class VisualizationController : NSObject {
 			}
 			self.visAudioCursor = j
 			self.latency += Double(amount) / self.sampleRate
+			self.visSamplesPosted += UInt64(amount);
 		}
 	}
 
@@ -101,6 +109,9 @@ class VisualizationController : NSObject {
 			// Offset latency so the target sample is in the center of the window
 			let latencySamples = (Int)((self.latency + latencyOffset) * self.sampleRate) + 2048
 			var samplesToDo = 4096;
+			if(latencySamples < 0) {
+				return;
+			}
 			if(latencySamples < 4096) {
 				// Latency can sometimes dip below this threshold
 				samplesToDo = latencySamples;

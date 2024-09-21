@@ -45,6 +45,9 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	SCNVector3 cameraEulerAngles3d;
 
 	float visAudio[4096], visFFT[2048];
+
+	UInt64 visSamplesLastPosted;
+	double visLatencyOffset;
 }
 @end
 
@@ -307,7 +310,13 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		return;
 	}
 
-	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:0];
+	UInt64 samplesPosted = [self->visController samplesPosted];
+	if (samplesPosted != visSamplesLastPosted) {
+		visSamplesLastPosted = samplesPosted;
+		visLatencyOffset = 0.0;
+	}
+
+	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:visLatencyOffset];
 
 	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
 	ddb_analyzer_tick(&_analyzer);
@@ -333,6 +342,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 - (void)timerRun:(NSTimer *)timer {
 	[self repaint];
+	visLatencyOffset -= 1.0 / 60.0;
 }
 
 - (void)startPlayback {
