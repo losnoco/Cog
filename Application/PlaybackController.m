@@ -91,6 +91,7 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
 - (void)initDefaults {
 	NSDictionary *defaultsDictionary = @{ @"volume": @(75.0),
+										  @"speed": @(1.0),
 		                                  @"GraphicEQenable": @(NO),
 		                                  @"GraphicEQpreset": @(-1),
 		                                  @"GraphicEQtrackgenre": @(NO),
@@ -108,6 +109,9 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
 	[volumeSlider setDoubleValue:logarithmicToLinear(volume, MAX_VOLUME)];
 	[audioPlayer setVolume:volume];
+
+	double speed = [[NSUserDefaults standardUserDefaults] doubleForKey:@"speed"];
+	[audioPlayer setSpeed:speed];
 
 	[self setSeekable:NO];
 }
@@ -478,6 +482,14 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 }
 
+- (IBAction)changeSpeed:(id)sender {
+	DLog(@"SPEED: %lf", [sender doubleValue]);
+
+	[audioPlayer setSpeed:[sender doubleValue]];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer speed] forKey:@"speed"];
+}
+
 - (IBAction)skipToNextAlbum:(id)sender {
 	BOOL found = NO;
 
@@ -577,6 +589,20 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
+}
+
+- (IBAction)speedDown:(id)sender {
+	double newSpeed = [audioPlayer speedDown:DEFAULT_SPEED_DOWN];
+	[speedSlider setDoubleValue:[audioPlayer speed]];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer speed] forKey:@"speed"];
+}
+
+- (IBAction)speedUp:(id)sender {
+	double newSpeed = [audioPlayer speedUp:DEFAULT_SPEED_UP];
+	[speedSlider setDoubleValue:[audioPlayer speed]];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer speed] forKey:@"speed"];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq {

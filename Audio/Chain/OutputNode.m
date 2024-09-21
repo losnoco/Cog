@@ -164,6 +164,10 @@
 	[output setVolume:v];
 }
 
+- (void)setSpeed:(double)s {
+	[output setSpeed:s];
+}
+
 - (void)setShouldContinue:(BOOL)s {
 	[super setShouldContinue:s];
 

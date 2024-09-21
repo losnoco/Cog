@@ -75,6 +75,7 @@
 	}
 	[output setup];
 	[output setVolume:volume];
+	[output setSpeed:speed];
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -208,6 +209,16 @@
 
 - (double)volume {
 	return volume;
+}
+
+- (void)setSpeed:(double)s {
+	speed = s;
+
+	[output setSpeed:s];
+}
+
+- (double)speed {
+	return speed;
 }
 
 // This is called by the delegate DURING a requestNextStream request.
@@ -646,6 +657,32 @@
 
 	[self setVolume:newVolume];
 	return newVolume;
+}
+
+- (double)speedUp:(double)amount {
+	const double MAX_SPEED = 5.0;
+
+	double newSpeed;
+	if((speed + amount) > MAX_SPEED)
+		newSpeed = MAX_SPEED;
+	else
+		newSpeed = speed + amount;
+
+	[self setSpeed:newSpeed];
+	return newSpeed;
+}
+
+- (double)speedDown:(double)amount {
+	const double MIN_SPEED = 0.2;
+
+	double newSpeed;
+	if((speed - amount) < MIN_SPEED)
+		newSpeed = MIN_SPEED;
+	else
+		newSpeed = speed - amount;
+
+	[self setSpeed:newSpeed];
+	return newSpeed;
 }
 
 - (void)waitUntilCallbacksExit {

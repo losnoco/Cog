@@ -156,6 +156,8 @@
 		83988F0E27BE0A5900A0E89A /* RedundantPlaylistDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */; };
+		839D48AA2C9E73AA00D03298 /* SpeedButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D48A72C9E73AA00D03298 /* SpeedButton.m */; };
+		839D48AB2C9E73AA00D03298 /* SpeedSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 839D48A92C9E73AA00D03298 /* SpeedSlider.m */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
 		839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */ = {isa = PBXBuildFile; fileRef = 839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1017,6 +1019,10 @@
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NumberHertzToStringTransformer.swift; path = Transformers/NumberHertzToStringTransformer.swift; sourceTree = "<group>"; };
+		839D48A62C9E73AA00D03298 /* SpeedButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeedButton.h; sourceTree = "<group>"; };
+		839D48A72C9E73AA00D03298 /* SpeedButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpeedButton.m; sourceTree = "<group>"; };
+		839D48A82C9E73AA00D03298 /* SpeedSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeedSlider.h; sourceTree = "<group>"; };
+		839D48A92C9E73AA00D03298 /* SpeedSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeedSlider.m; sourceTree = "<group>"; };
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		839E3B53286595D700880EA2 /* GeneralPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralPane.h; path = Preferences/Preferences/GeneralPane.h; sourceTree = "<group>"; };
@@ -1419,6 +1425,10 @@
 				172A12320F5911D20078EF0C /* RepeatTransformers.m */,
 				172A123A0F5912AE0078EF0C /* ShuffleTransformers.h */,
 				172A123B0F5912AE0078EF0C /* ShuffleTransformers.m */,
+				839D48A62C9E73AA00D03298 /* SpeedButton.h */,
+				839D48A72C9E73AA00D03298 /* SpeedButton.m */,
+				839D48A82C9E73AA00D03298 /* SpeedSlider.h */,
+				839D48A92C9E73AA00D03298 /* SpeedSlider.m */,
 				17E0D5E70F520F02005B6FED /* TimeField.h */,
 				17E0D5E80F520F02005B6FED /* TimeField.m */,
 				17E0D6180F520F9F005B6FED /* VolumeButton.h */,
@@ -2557,6 +2567,8 @@
 				83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */,
+				839D48AA2C9E73AA00D03298 /* SpeedButton.m in Sources */,
+				839D48AB2C9E73AA00D03298 /* SpeedSlider.m in Sources */,
 				8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */,
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
