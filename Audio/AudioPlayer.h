@@ -26,6 +26,7 @@
 	OutputNode *output;
 
 	double volume;
+	double speed;
 
 	NSMutableArray *chainQueue;
 
@@ -73,6 +74,11 @@
 - (double)volume;
 - (double)volumeUp:(double)amount;
 - (double)volumeDown:(double)amount;
+
+- (void)setSpeed:(double)s;
+- (double)speed;
+- (double)speedUp:(double)amount;
+- (double)speedDown:(double)amount;
 
 - (double)amountPlayed;
 - (double)amountPlayedInterval;

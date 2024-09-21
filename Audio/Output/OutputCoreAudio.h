@@ -35,6 +35,8 @@ using std::atomic_long;
 #import <stdio.h>
 #endif
 
+#import <soxr.h>
+
 @class OutputNode;
 
 @class FSurroundFilter;
@@ -53,6 +55,10 @@ using std::atomic_long;
 	double visPushed;
 
 	double lastClippedSampleRate;
+
+	soxr_t rssimplespeed;
+	double ssRenderedIn, ssLastRenderedIn;
+	double ssRenderedOut;
 
 	void *rsvis;
 	double lastVisRate;
@@ -83,6 +89,9 @@ using std::atomic_long;
 
 	float volume;
 	float eqPreamp;
+
+	double speed;
+	double lastSpeed;
 
 	AVAudioFormat *_deviceFormat;
 
@@ -173,5 +182,7 @@ using std::atomic_long;
 - (void)sustainHDCD;
 
 - (void)reportMotion:(simd_float4x4)matrix;
+
+- (void)setSpeed:(double)s;
 
 @end

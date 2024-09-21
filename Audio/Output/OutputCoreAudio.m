@@ -23,6 +23,8 @@
 
 #import "FSurroundFilter.h"
 
+#define OCTAVES 5
+
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
@@ -335,6 +337,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		secondsHdcdSustained = 0;
 
 		outputLock = [[NSLock alloc] init];
+
+		speed = 1.0;
+		lastSpeed = 1.0;
 
 #ifdef OUTPUT_LOG
 		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];
@@ -807,6 +812,19 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[outputLock unlock];
 	}
 
+	if(rssimplespeed) {
+		soxr_delete(rssimplespeed);
+	}
+
+	soxr_error_t error;
+	soxr_quality_spec_t q_spec = soxr_quality_spec(SOXR_HQ, SOXR_VR);
+	rssimplespeed = soxr_create(1 << OCTAVES, 1, channels, &error, NULL, &q_spec, NULL);
+	soxr_set_io_ratio(rssimplespeed, speed, 0);
+
+	ssRenderedIn = 0.0;
+	ssLastRenderedIn = 0.0;
+	ssRenderedOut = 0.0;
+
 	streamFormat = realStreamFormat;
 	streamFormat.mChannelsPerFrame = channels;
 	streamFormat.mBytesPerFrame = sizeof(float) * channels;
@@ -929,6 +947,42 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	samplePtr = &inputBuffer[0];
 
 	if(samplesRendered || fsurround) {
+		{
+			int simpleSpeedInput = samplesRendered;
+			int simpleSpeedRendered = 0;
+			int channels = realStreamFormat.mChannelsPerFrame;
+			int max_block_len = 8192;
+
+			if (fabs(speed - lastSpeed) > 1e-5) {
+				lastSpeed = speed;
+				soxr_set_io_ratio(rssimplespeed, speed, max_block_len);
+			}
+
+			const double inputRatio = 1.0 / realStreamFormat.mSampleRate;
+			const double outputRatio = inputRatio * speed;
+
+			while (simpleSpeedInput > 0) {
+				int block_len = max_block_len - simpleSpeedRendered;
+
+				if (!block_len)
+					break;
+
+				float *ibuf = samplePtr;
+				int len = simpleSpeedInput;
+				float *obuf = &rsInBuffer[simpleSpeedRendered * channels];
+				size_t idone = 0;
+				size_t odone = 0;
+				int error = soxr_process(rssimplespeed, ibuf, len, &idone, obuf, block_len, &odone);
+				simpleSpeedInput -= idone;
+				ibuf += channels * idone;
+				simpleSpeedRendered += odone;
+				ssRenderedIn += idone * inputRatio;
+				ssRenderedOut += odone * outputRatio;
+				samplePtr = ibuf;
+			}
+			samplePtr = &rsInBuffer[0];
+			samplesRendered = simpleSpeedRendered;
+		}
 		[outputLock lock];
 		if(fsurround) {
 			int countToProcess = samplesRendered;
@@ -1214,9 +1268,13 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)updateLatency:(double)secondsPlayed {
 	if(secondsPlayed > 0) {
-		[outputController incrementAmountPlayed:secondsPlayed];
+		double rendered = ssRenderedIn - ssLastRenderedIn;
+		secondsPlayed = rendered;
+		ssLastRenderedIn = ssRenderedIn;
+		[outputController incrementAmountPlayed:rendered];
 	}
-	double visLatency = visPushed;
+	double simpleSpeedLatency = ssRenderedIn - ssRenderedOut;
+	double visLatency = visPushed + simpleSpeedLatency;
 	visPushed -= secondsPlayed;
 	if(visLatency < secondsPlayed || visLatency > 30.0) {
 		visLatency = secondsPlayed;
@@ -1228,6 +1286,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)setVolume:(double)v {
 	volume = v * 0.01f;
+}
+
+- (void)setSpeed:(double)s {
+	speed = s;
 }
 
 - (void)setEqualizerEnabled:(BOOL)enabled {
@@ -1343,6 +1405,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		if(rsvis) {
 			rsstate_delete(rsvis);
 			rsvis = NULL;
+		}
+		if(rssimplespeed) {
+			soxr_delete(rssimplespeed);
+			rssimplespeed = NULL;
 		}
 		stopCompleted = YES;
 	}

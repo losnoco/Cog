@@ -61,6 +61,8 @@
 
 - (void)setVolume:(double)v;
 
+- (void)setSpeed:(double)s;
+
 - (void)setShouldContinue:(BOOL)s;
 
 - (void)setShouldPlayOutBuffer:(BOOL)s;

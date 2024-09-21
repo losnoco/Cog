@@ -19,6 +19,9 @@
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
 
+#define DEFAULT_SPEED_DOWN 0.2
+#define DEFAULT_SPEED_UP DEFAULT_SPEED_DOWN
+
 extern NSString *CogPlaybackDidBeginNotificiation;
 extern NSString *CogPlaybackDidPauseNotificiation;
 extern NSString *CogPlaybackDidResumeNotificiation;
@@ -40,6 +43,7 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	IBOutlet EqualizerWindowController *equalizerWindowController;
 
 	IBOutlet NSSlider *volumeSlider;
+	IBOutlet NSSlider *speedSlider;
 
 	IBOutlet NSArrayController *outputDevices;
 
@@ -68,6 +72,10 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;
 - (IBAction)volumeUp:(id)sender;
+
+- (IBAction)changeSpeed:(id)sender;
+- (IBAction)speedDown:(id)sender;
+- (IBAction)speedUp:(id)sender;
 
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;
