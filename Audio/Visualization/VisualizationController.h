@@ -15,11 +15,14 @@ NS_ASSUME_NONNULL_BEGIN
 	float *visAudio;
 	int visAudioCursor, visAudioSize;
 	float *visAudioTemp;
+	uint64_t visSamplesPosted;
 }
 
 + (VisualizationController *)sharedController;
 
 - (void)postLatency:(double)latency;
+
+- (UInt64)samplesPosted;
 
 - (void)postSampleRate:(double)sampleRate;
 - (void)postVisPCM:(const float *)inPCM amount:(int)amount;
