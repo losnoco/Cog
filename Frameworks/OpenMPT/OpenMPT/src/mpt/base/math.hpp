@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSL-1.0 OR BSD-3-Clause */
 
-#ifndef MPT_BASE_EMPTY_HPP
-#define MPT_BASE_EMPTY_HPP
+#ifndef MPT_BASE_MATH_HPP
+#define MPT_BASE_MATH_HPP
 
 
 
@@ -85,4 +85,4 @@ inline T safe_clamp(T v, T lo, T hi) {
 
 
 
-#endif // MPT_BASE_EMPTY_HPP
+#endif // MPT_BASE_MATH_HPP

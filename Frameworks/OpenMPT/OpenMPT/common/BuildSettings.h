@@ -20,6 +20,7 @@
 
 
 
+#include "mpt/base/detect_arch.hpp"
 #include "mpt/base/detect_compiler.hpp"
 #include "mpt/base/detect_os.hpp"
 #include "mpt/base/detect_quirks.hpp"
@@ -229,14 +230,14 @@
 #endif
 
 #if defined(MPT_ENABLE_ARCH_INTRINSICS)
-#if MPT_COMPILER_MSVC && defined(_M_IX86)
+#if MPT_COMPILER_MSVC && MPT_ARCH_X86
 
 #define MPT_ENABLE_ARCH_X86
 
 #define MPT_ENABLE_ARCH_INTRINSICS_SSE
 #define MPT_ENABLE_ARCH_INTRINSICS_SSE2
 
-#elif MPT_COMPILER_MSVC && defined(_M_X64)
+#elif MPT_COMPILER_MSVC && MPT_ARCH_AMD64
 
 #define MPT_ENABLE_ARCH_AMD64
 

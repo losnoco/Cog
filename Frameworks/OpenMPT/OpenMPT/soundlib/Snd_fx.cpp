@@ -44,6 +44,12 @@ static uint32 GetLinearSlideUpTable      (const CSoundFile *sndFile, uint32 i) {
 static uint32 GetFineLinearSlideDownTable(const CSoundFile *sndFile, uint32 i) { MPT_ASSERT(i < std::size(FineLinearSlideDownTable)); return sndFile->m_playBehaviour[kPeriodsAreHertz] ? FineLinearSlideDownTable[i] : FineLinearSlideUpTable[i]; }
 static uint32 GetFineLinearSlideUpTable  (const CSoundFile *sndFile, uint32 i) { MPT_ASSERT(i < std::size(FineLinearSlideDownTable)); return sndFile->m_playBehaviour[kPeriodsAreHertz] ? FineLinearSlideUpTable[i]   : FineLinearSlideDownTable[i]; }
 
+// Minimum parameter of tempo command that is considered to be a BPM rather than a tempo slide
+static constexpr TEMPO GetMinimumTempoParam(MODTYPE modType)
+{
+	return (modType & (MOD_TYPE_MDL | MOD_TYPE_MED | MOD_TYPE_XM | MOD_TYPE_MOD)) ? TEMPO(1, 0) : TEMPO(32, 0);
+}
+
 
 ////////////////////////////////////////////////////////////
 // Length
@@ -678,7 +684,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 					}
 
 					const auto &specs = GetModSpecifications();
-					if(tempo.GetInt() >= 0x20)
+					if(tempo >= GetMinimumTempoParam(GetType()))
 					{
 #if MPT_MSVC_BEFORE(2019, 0)
 						// Work-around for VS2017 /std:c++17 /permissive-
@@ -5445,9 +5451,9 @@ void CSoundFile::SampleOffset(ModChannel &chn, SmpLength param) const
 		param = (param - chn.nLoopStart) % (chn.nLoopEnd - chn.nLoopStart) + chn.nLoopStart;
 	}
 
-	if(GetType() == MOD_TYPE_MDL && chn.dwFlags[CHN_16BIT])
+	if((GetType() & (MOD_TYPE_MDL | MOD_TYPE_PTM)) && chn.dwFlags[CHN_16BIT])
 	{
-		// Digitrakker really uses byte offsets, not sample offsets. WTF!
+		// Digitrakker and Polytracker use byte offsets, not sample offsets.
 		param /= 2u;
 	}
 
@@ -5520,7 +5526,10 @@ void CSoundFile::ReverseSampleOffset(ModChannel &chn, ModCommand::PARAM param) c
 		chn.dwFlags.set(CHN_PINGPONGFLAG);
 		chn.dwFlags.reset(CHN_LOOP);
 		chn.nLength = chn.pModSample->nLength;  // If there was a loop, extend sample to whole length.
-		chn.position.Set((chn.nLength - 1) - std::min(SmpLength(param) << 8, chn.nLength - SmpLength(1)), 0);
+		SmpLength offset = param << 8;
+		if(GetType() == MOD_TYPE_PTM && chn.dwFlags[CHN_16BIT])
+			offset /= 2;
+		chn.position.Set((chn.nLength - 1) - std::min(offset, chn.nLength - SmpLength(1)), 0);
 	}
 }
 
@@ -5971,7 +5980,7 @@ void CSoundFile::SetTempo(TEMPO param, bool setFromUI)
 	const CModSpecifications &specs = GetModSpecifications();
 
 	// Anything lower than the minimum tempo is considered to be a tempo slide
-	const TEMPO minTempo = (GetType() & (MOD_TYPE_MDL | MOD_TYPE_MED | MOD_TYPE_MOD)) ? TEMPO(1, 0) : TEMPO(32, 0);
+	const TEMPO minTempo = GetMinimumTempoParam(GetType());
 
 	if(setFromUI)
 	{

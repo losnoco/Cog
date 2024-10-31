@@ -126,6 +126,8 @@ static std::vector<std::byte> DecompressDSymLZW(FileReader &file, uint32 size)
 
 	// Align length to 4 bytes
 	file.Seek(startPos + ((bitFile.GetPosition() - startPos + 3u) & ~FileReader::off_t(3)));
+	// cppcheck false-positive
+	// cppcheck-suppress returnDanglingLifetime
 	return output;
 }
 

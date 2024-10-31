@@ -18,6 +18,8 @@
 #include "mpt/base/array.hpp"
 #include "mpt/base/bit.hpp"
 #include "mpt/base/constexpr_throw.hpp"
+#include "mpt/base/detect_arch.hpp"
+#include "mpt/base/detect_compiler.hpp"
 #include "mpt/base/math.hpp"
 #include "mpt/base/memory.hpp"
 #include "mpt/base/numeric.hpp"
@@ -115,7 +117,7 @@ namespace Util {
 	// MSVC generates unnecessarily complicated code for the unoptimized variant using _allmul.
 	MPT_CONSTEXPR20_FUN int64 mul32to64(int32 a, int32 b)
 	{
-		#if MPT_COMPILER_MSVC && (defined(_M_IX86) || defined(_M_X64))
+		#if MPT_COMPILER_MSVC && (MPT_ARCH_X86 || MPT_ARCH_AMD64)
 			MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20())
 			{
 				return static_cast<int64>(a) * b;
@@ -130,7 +132,7 @@ namespace Util {
 
 	MPT_CONSTEXPR20_FUN uint64 mul32to64_unsigned(uint32 a, uint32 b)
 	{
-		#if MPT_COMPILER_MSVC && (defined(_M_IX86) || defined(_M_X64))
+		#if MPT_COMPILER_MSVC && (MPT_ARCH_X86 || MPT_ARCH_AMD64)
 			MPT_MAYBE_CONSTANT_IF(MPT_IS_CONSTANT_EVALUATED20())
 			{
 				return static_cast<uint64>(a) * b;

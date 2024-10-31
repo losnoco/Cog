@@ -66,6 +66,7 @@
 #  ONLY_TEST=0         Only build the test suite.
 #  STRICT=0            Treat warnings as errors.
 #  MODERN=0            Pass more modern compiler options.
+#  ANCIENT=0           Pass compiler options compatible with older versions.
 #  NATIVE=0            Optimize for system CPU.
 #  STDCXX=c++17        C++ standard version (default depends on compiler)
 #  STDC=c17            C standard version (default depends on compiler)
@@ -975,6 +976,7 @@ endif
 
 CPPCHECK_FLAGS += -j $(NUMTHREADS)
 CPPCHECK_FLAGS += --std=c11 --std=c++17
+CPPCHECK_FLAGS += --library=build/cppcheck/glibc-workarounds.cfg
 CPPCHECK_FLAGS += --quiet
 CPPCHECK_FLAGS += --enable=warning --inline-suppr --template='{file}:{line}: warning: {severity}: {message} [{id}]'
 CPPCHECK_FLAGS += --check-level=exhaustive
@@ -1083,11 +1085,15 @@ CPPFLAGS += -DLIBOPENMPT_BUILD
 
 
 COMMON_CXX_SOURCES += \
+ $(sort $(wildcard src/openmpt/all/*.cpp)) \
+ $(sort $(wildcard src/openmpt/base/*.cpp)) \
+ $(sort $(wildcard src/openmpt/logging/*.cpp)) \
+ $(sort $(wildcard src/openmpt/random/*.cpp)) \
  $(sort $(wildcard common/*.cpp)) \
- $(sort $(wildcard src/mpt/src/*.cpp)) \
  
 SOUNDLIB_CXX_SOURCES += \
  $(COMMON_CXX_SOURCES) \
+ $(sort $(wildcard src/openmpt/soundbase/*.cpp)) \
  $(sort $(wildcard soundlib/*.cpp)) \
  $(sort $(wildcard soundlib/plugins/*.cpp)) \
  $(sort $(wildcard soundlib/plugins/dmo/*.cpp)) \
@@ -1731,6 +1737,7 @@ bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION).msvc.zip: bin/$
 	svn export ./build/scriptlib              bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/scriptlib              --native-eol CRLF
 	svn export ./build/svn_version            bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/svn_version            --native-eol CRLF
 	svn export ./build/vs                     bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs                     --native-eol CRLF
+	svn export ./build/vs2017winxpansi        bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017winxpansi        --native-eol CRLF
 	svn export ./build/vs2017winxp            bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2017winxp            --native-eol CRLF
 	svn export ./build/vs2019win7             bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2019win7             --native-eol CRLF
 	svn export ./build/vs2019win81            bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2019win81            --native-eol CRLF
@@ -1866,6 +1873,11 @@ else
 	svn export ./include/miniz/miniz.c           bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/MINIZ.TXT   --native-eol CRLF
 	svn export ./include/stb_vorbis/stb_vorbis.c bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/STBVORB.TXT --native-eol CRLF
 endif
+	mkdir -p                                     bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/DJGPP
+	cp $(shell dirname $(shell which i386-pc-msdosdjgpp-gcc))/../license/copying     bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/DJGPP/COPYING
+	cp $(shell dirname $(shell which i386-pc-msdosdjgpp-gcc))/../license/copying.dj  bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/DJGPP/COPYING.DJ
+	cp $(shell dirname $(shell which i386-pc-msdosdjgpp-gcc))/../license/copying.lib bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/DJGPP/COPYING.LIB
+	cp $(shell dirname $(shell which i386-pc-msdosdjgpp-gcc))/../license/source.txt  bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/LICENSES/DJGPP/SOURCE.TXT
 	mkdir -p                                     bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/SRC
 	cp build/externals/csdpmi7s.zip              bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/SRC/CSDPMI7S.ZIP
 	mkdir -p                                     bin/$(FLAVOUR_DIR)dist-dos/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/BIN

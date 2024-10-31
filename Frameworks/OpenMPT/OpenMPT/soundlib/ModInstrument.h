@@ -61,6 +61,8 @@ struct InstrumentEnvelope : public std::vector<EnvelopeNode>
 
 	uint32 size() const { return static_cast<uint32>(std::vector<EnvelopeNode>::size()); }
 
+	uint8 LastPoint() const { return static_cast<uint8>(std::max(size(), uint32(1)) - 1); }
+
 	using std::vector<EnvelopeNode>::push_back;
 	void push_back(EnvelopeNode::tick_t tick, EnvelopeNode::value_t value) { emplace_back(tick, value); }
 };

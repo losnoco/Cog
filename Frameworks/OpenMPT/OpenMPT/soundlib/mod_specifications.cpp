@@ -327,7 +327,7 @@ constexpr CModSpecifications it_ =
 	255,										// Max tempo
 	1,											// Min Speed
 	255,										// Max Speed
-	1,											// Min pattern rows
+	32,											// Min pattern rows
 	200,										// Max pattern rows
 	25,											// Max mod name length
 	25,											// Max sample name length

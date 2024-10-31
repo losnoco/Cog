@@ -8,6 +8,10 @@
 */
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #define MINIMP3_MAX_SAMPLES_PER_FRAME (1152*2)
 
 typedef struct
@@ -21,10 +25,6 @@ typedef struct
     int reserv, free_format_bytes;
     unsigned char header[4], reserv_buf[511];
 } mp3dec_t;
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
 void mp3dec_init(mp3dec_t *dec);
 #ifndef MINIMP3_FLOAT_OUTPUT
@@ -176,11 +176,7 @@ end:
 #define VMUL_S(x, s)  vmulq_f32(x, vmovq_n_f32(s))
 #define VREV(x) vcombine_f32(vget_high_f32(vrev64q_f32(x)), vget_low_f32(vrev64q_f32(x)))
 typedef float32x4_t f4;
-#if 1 /* OpenMPT */
 static int have_simd(void)
-#else /* OpenMPT */
-static int have_simd()
-#endif /* OpenMPT */
 {   /* TODO: detect neon for !MINIMP3_ONLY_SIMD */
     return 1;
 }
@@ -195,7 +191,7 @@ static int have_simd()
 #define HAVE_SIMD 0
 #endif /* !defined(MINIMP3_NO_SIMD) */
 
-#if defined(__ARM_ARCH) && (__ARM_ARCH >= 6) && !defined(__aarch64__) && !defined(_M_ARM64)
+#if defined(__ARM_ARCH) && (__ARM_ARCH >= 6) && !defined(__aarch64__) && !defined(_M_ARM64) && !defined(__ARM_ARCH_6M__)
 #define HAVE_ARMV6 1
 static __inline__ __attribute__((always_inline)) int32_t minimp3_clip_int16_arm(int32_t a)
 {
@@ -945,7 +941,8 @@ static void L3_stereo_top_band(const float *right, const uint8_t *sfb, int nband
 static void L3_stereo_process(float *left, const uint8_t *ist_pos, const uint8_t *sfb, const uint8_t *hdr, int max_band[3], int mpeg2_sh)
 {
     static const float g_pan[7*2] = { 0,1,0.21132487f,0.78867513f,0.36602540f,0.63397460f,0.5f,0.5f,0.63397460f,0.36602540f,0.78867513f,0.21132487f,1,0 };
-    unsigned i, max_pos = HDR_TEST_MPEG1(hdr) ? 7 : 64;
+    const uint8_t mpeg1 = HDR_TEST_MPEG1(hdr);
+    unsigned i, max_pos = mpeg1 ? 7 : 64;
 
     for (i = 0; sfb[i]; i++)
     {
@@ -953,7 +950,7 @@ static void L3_stereo_process(float *left, const uint8_t *ist_pos, const uint8_t
         if ((int)i > max_band[i % 3] && ipos < max_pos)
         {
             float kl, kr, s = HDR_TEST_MS_STEREO(hdr) ? 1.41421356f : 1;
-            if (HDR_TEST_MPEG1(hdr))
+            if (mpeg1)
             {
                 kl = g_pan[2*ipos];
                 kr = g_pan[2*ipos + 1];
@@ -1658,6 +1655,21 @@ static void mp3d_synth_granule(float *qmf_state, float *grbuf, int nbands, int n
     }
 }
 
+static int hdr_is_tag(const uint8_t* hdr)
+{
+    return hdr[0] == 'T' && hdr[1] == 'A' && hdr[2] == 'G' && hdr[3] == '\0';
+}
+
+static int hdr_is_null(const uint8_t* hdr)
+{
+    return hdr[0] == '\0' && hdr[1] == '\0' && hdr[2] == '\0' && hdr[3] == '\0';
+}
+
+static int hdr_is_null_or_tag(const uint8_t* hdr)
+{
+    return hdr_is_tag(hdr) > 0 || hdr_is_null(hdr) > 0;
+}
+
 static int mp3d_match_frame(const uint8_t *hdr, int mp3_bytes, int frame_bytes)
 {
     int i, nmatch;
@@ -1665,6 +1677,8 @@ static int mp3d_match_frame(const uint8_t *hdr, int mp3_bytes, int frame_bytes)
     {
         i += hdr_frame_bytes(hdr + i, frame_bytes) + hdr_padding(hdr + i);
         if (i + HDR_SIZE > mp3_bytes)
+            return nmatch > 0;
+        if (hdr_is_null_or_tag(hdr + i))
             return nmatch > 0;
         if (!hdr_compare(hdr, hdr + i))
             return 0;
@@ -1773,7 +1787,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
         {
             for (igr = 0; igr < (HDR_TEST_MPEG1(hdr) ? 2 : 1); igr++, pcm += 576*info->channels)
             {
-                memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
+                memset(scratch.grbuf, 0, sizeof(scratch.grbuf));
                 L3_decode(dec, &scratch, scratch.gr_info + igr*info->channels, info->channels);
                 mp3d_synth_granule(dec->qmf_state, scratch.grbuf[0], 18, info->channels, pcm, scratch.syn[0]);
             }
@@ -1787,7 +1801,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
         L12_scale_info sci[1];
         L12_read_scale_info(hdr, bs_frame, sci);
 
-        memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
+        memset(scratch.grbuf, 0, sizeof(scratch.grbuf));
         for (i = 0, igr = 0; igr < 3; igr++)
         {
             if (12 == (i += L12_dequantize_granule(scratch.grbuf[0] + i, bs_frame, sci, info->layer | 1)))
@@ -1795,7 +1809,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
                 i = 0;
                 L12_apply_scf_384(sci, sci->scf + igr, scratch.grbuf[0]);
                 mp3d_synth_granule(dec->qmf_state, scratch.grbuf[0], 12, info->channels, pcm, scratch.syn[0]);
-                memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
+                memset(scratch.grbuf, 0, sizeof(scratch.grbuf));
                 pcm += 384*info->channels;
             }
             if (bs_frame->pos > bs_frame->limit)

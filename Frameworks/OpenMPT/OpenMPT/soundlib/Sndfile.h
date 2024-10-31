@@ -978,6 +978,7 @@ public:
 	bool LoadExtendedSongProperties(FileReader &file, bool ignoreChannelCount, bool* pInterpretMptMade = nullptr);
 	void LoadMPTMProperties(FileReader &file, uint16 cwtv);
 
+	static mpt::ustring GetImpulseTrackerVersion(uint16 cwtv, uint16 cmwt);
 	static mpt::ustring GetSchismTrackerVersion(uint16 cwtv, uint32 reserved);
 
 	// Reads extended instrument properties(XM/IT/MPTM).

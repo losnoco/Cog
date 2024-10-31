@@ -37,18 +37,29 @@ CHANNELINDEX CPattern::GetNumChannels() const noexcept
 bool CPattern::IsEmptyRow(ROWINDEX row) const noexcept
 {
 	if(m_ModCommands.empty() || !IsValidRow(row))
-	{
 		return true;
-	}
 
 	for(const auto &m : GetRow(row))
 	{
 		if(!m.IsEmpty())
-		{
 			return false;
-		}
 	}
 	return true;
+}
+
+
+// Check if the row contains any position jumps or pattern breaks.
+bool CPattern::RowHasJump(ROWINDEX row) const noexcept
+{
+	if(m_ModCommands.empty() || !IsValidRow(row))
+		return false;
+
+	for(const auto &m : GetRow(row))
+	{
+		if(m.command == CMD_PATTERNBREAK || m.command == CMD_POSITIONJUMP)
+			return true;
+	}
+	return false;
 }
 
 

@@ -60,6 +60,8 @@ public:
 
 	// Check if there is any note data on a given row.
 	bool IsEmptyRow(ROWINDEX row) const noexcept;
+	// Check if the row contains any position jumps or pattern breaks.
+	bool RowHasJump(ROWINDEX row) const noexcept;
 
 	// Allocate new pattern memory and replace old pattern data.
 	bool AllocatePattern(ROWINDEX rows);

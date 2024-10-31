@@ -33,6 +33,8 @@
 
 #include <string>
 
+#include <libopenmpt/libopenmpt.hpp>
+
 namespace mpt {
 inline namespace MPT_INLINE_NS {
 

@@ -2203,8 +2203,8 @@ static int wmain( int wargc, wchar_t * wargv [] ) {
 static int main( int argc, char * argv [] ) {
 #endif
 	#if MPT_OS_DJGPP
-		_crt0_startup_flags &= ~_CRT0_FLAG_LOCK_MEMORY;  /* disable automatic locking for all further memory allocations */
 		assert(mpt::platform::libc().is_ok());
+		_crt0_startup_flags &= ~_CRT0_FLAG_LOCK_MEMORY;  /* disable automatic locking for all further memory allocations */
 	#endif /* MPT_OS_DJGPP */
 	std::vector<mpt::ustring> args;
 	#if MPT_OS_WINDOWS && defined(UNICODE)
@@ -2301,6 +2301,10 @@ static int main( int argc, char * argv [] ) {
 		return 0;
 	} catch ( silent_exit_exception & ) {
 		return 0;
+	} catch ( exception & e ) {
+		std_err << MPT_USTRING("error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
+		std_err.writeout();
+		return 1;
 	} catch ( std::exception & e ) {
 		std_err << MPT_USTRING("error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
 		std_err.writeout();
@@ -2468,6 +2472,10 @@ static int main( int argc, char * argv [] ) {
 #endif
 	} catch ( silent_exit_exception & ) {
 		return 0;
+	} catch ( exception & e ) {
+		std_err << MPT_USTRING("error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
+		std_err.writeout();
+		return 1;
 	} catch ( std::exception & e ) {
 		std_err << MPT_USTRING("error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
 		std_err.writeout();

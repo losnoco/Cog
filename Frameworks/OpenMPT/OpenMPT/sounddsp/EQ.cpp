@@ -31,6 +31,9 @@
 #include <cstddef>
 
 #if defined(MPT_ENABLE_ARCH_INTRINSICS_SSE)
+#if MPT_COMPILER_MSVC
+#include <intrin.h>
+#endif
 #include <xmmintrin.h>
 #endif
 

@@ -50,7 +50,9 @@
 #elif defined(_MSC_VER)
 
 #define MPT_COMPILER_MSVC 1
-#if (_MSC_VER >= 1940)
+#if (_MSC_VER >= 1941)
+#define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 11)
+#elif (_MSC_VER >= 1940)
 #define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 10)
 #elif (_MSC_VER >= 1939)
 #define MPT_COMPILER_MSVC_VERSION MPT_COMPILER_MAKE_VERSION2(2022, 9)
@@ -201,6 +203,16 @@
 
 #define MPT_CXX_AT_LEAST(version) (MPT_CXX >= (version))
 #define MPT_CXX_BEFORE(version)   (MPT_CXX < (version))
+
+
+
+// detect compiler quirks
+
+#if MPT_COMPILER_CLANG
+#if defined(__APPLE__)
+#define MPT_COMPILER_QUIRK_APPLE_CLANG
+#endif
+#endif
 
 
 

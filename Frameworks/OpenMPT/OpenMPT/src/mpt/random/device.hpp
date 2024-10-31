@@ -22,6 +22,7 @@
 #if !defined(MPT_LIBCXX_QUIRK_NO_CHRONO)
 #include <chrono>
 #endif // !MPT_LIBCXX_QUIRK_NO_CHRONO
+#include <iterator>
 #include <limits>
 #include <memory>
 #include <random>

@@ -7,6 +7,7 @@
 
 #include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
+#include "mpt/base/numeric.hpp"
 #include "mpt/random/seed.hpp"
 
 #include <memory>
@@ -47,7 +48,7 @@ struct engine_traits<std::mt19937> {
 	}
 	template <typename Trd>
 	static inline rng_type make(Trd & rd) {
-		std::unique_ptr<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>> values = std::make_unique<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>>(rd);
+		std::unique_ptr<mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)>> values = std::make_unique<mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)>>(rd);
 		std::seed_seq seed(values->begin(), values->end());
 		return rng_type(seed);
 	}
@@ -65,7 +66,7 @@ struct engine_traits<std::mt19937_64> {
 	}
 	template <typename Trd>
 	static inline rng_type make(Trd & rd) {
-		std::unique_ptr<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>> values = std::make_unique<mpt::seed_seq_values<seed_bits / sizeof(unsigned int)>>(rd);
+		std::unique_ptr<mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)>> values = std::make_unique<mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)>>(rd);
 		std::seed_seq seed(values->begin(), values->end());
 		return rng_type(seed);
 	}
@@ -83,7 +84,7 @@ struct engine_traits<std::ranlux24_base> {
 	}
 	template <typename Trd>
 	static inline rng_type make(Trd & rd) {
-		mpt::seed_seq_values<seed_bits / sizeof(unsigned int)> values(rd);
+		mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)> values(rd);
 		std::seed_seq seed(values.begin(), values.end());
 		return rng_type(seed);
 	}
@@ -101,7 +102,7 @@ struct engine_traits<std::ranlux48_base> {
 	}
 	template <typename Trd>
 	static inline rng_type make(Trd & rd) {
-		mpt::seed_seq_values<seed_bits / sizeof(unsigned int)> values(rd);
+		mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)> values(rd);
 		std::seed_seq seed(values.begin(), values.end());
 		return rng_type(seed);
 	}
@@ -119,7 +120,7 @@ struct engine_traits<std::ranlux24> {
 	}
 	template <typename Trd>
 	static inline rng_type make(Trd & rd) {
-		mpt::seed_seq_values<seed_bits / sizeof(unsigned int)> values(rd);
+		mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)> values(rd);
 		std::seed_seq seed(values.begin(), values.end());
 		return rng_type(seed);
 	}
@@ -137,7 +138,7 @@ struct engine_traits<std::ranlux48> {
 	}
 	template <typename Trd>
 	static inline rng_type make(Trd & rd) {
-		mpt::seed_seq_values<seed_bits / sizeof(unsigned int)> values(rd);
+		mpt::seed_seq_values<mpt::align_up<std::size_t>(seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8)> values(rd);
 		std::seed_seq seed(values.begin(), values.end());
 		return rng_type(seed);
 	}
