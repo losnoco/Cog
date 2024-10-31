@@ -25,7 +25,7 @@
 
 
 
-#if defined(_M_ARM64)
+#if defined(_M_ARM64) || defined(_M_ARM64EC)
 #define MPT_ARCH_AARCH64 1
 
 #elif defined(_M_ARM)

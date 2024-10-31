@@ -341,6 +341,26 @@ static void CopyPatternName(CPattern &pattern, FileReader &file)
 }
 
 
+// Get version of Impulse Tracker that was used to create an IT/S3M file.
+mpt::ustring CSoundFile::GetImpulseTrackerVersion(uint16 cwtv, uint16 cmwt)
+{
+	mpt::ustring version;
+	cwtv &= 0xFFF;
+	if(cmwt > 0x0214)
+	{
+		version = UL_("Impulse Tracker 2.15");
+	} else if(cwtv >= 0x0215 && cwtv <= 0x0217)
+	{
+		const mpt::uchar *versions[] = {UL_("1-2"), UL_("3"), UL_("4-5")};
+		version = MPT_UFORMAT("Impulse Tracker 2.14p{}")(mpt::ustring_view(versions[cwtv - 0x0215]));
+	} else
+	{
+		version = MPT_UFORMAT("Impulse Tracker {}.{}")((cwtv & 0x0F00) >> 8, mpt::ufmt::hex0<2>((cwtv & 0xFF)));
+	}
+	return version;
+}
+
+
 // Get version of Schism Tracker that was used to create an IT/S3M file.
 mpt::ustring CSoundFile::GetSchismTrackerVersion(uint16 cwtv, uint32 reserved)
 {
@@ -1027,6 +1047,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 
 		auto patData = Patterns[pat].begin();
 		ROWINDEX row = 0;
+		ModCommand dummy{};
 		while(row < numRows && patternData.CanRead(1))
 		{
 			uint8 b = patternData.ReadUint8();
@@ -1057,7 +1078,6 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			// Now we grab the data for this particular row/channel.
-			ModCommand dummy{};
 			ModCommand &m = ch < m_nChannels ? patData[ch] : dummy;
 
 			if(chnMask[ch] & 0x10)
@@ -1138,8 +1158,18 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				const auto [command, param] = patternData.ReadArray<uint8, 2>();
 				S3MConvert(m, command, param, true);
+
+				// IT 1.xx does not support high offset command
+				if(m.command == CMD_S3MCMDEX && (m.param & 0xF0) == 0xA0 && fileHeader.cwtv < 0x0200)
+					m.command = CMD_DUMMY;
+				// Fix handling of commands V81-VFF in ITs made with old Schism Tracker versions
+				// (fixed in https://github.com/schismtracker/schismtracker/commit/ab5517d4730d4c717f7ebffb401445679bd30888 - one of the last versions to identify as v0.50)
+				else if(m.command == CMD_GLOBALVOLUME && m.param > 0x80 && fileHeader.cwtv >= 0x1000 && fileHeader.cwtv <= 0x1050)
+					m.param = 0x80;
+
 				// In some IT-compatible trackers, it is possible to input a parameter without a command.
-				// In this case, we still need to update the last value memory. OpenMPT didn't do this until v1.25.01.07.
+				// In this case, we still need to update the last value memory (so that we don't reuse a previous non-empty effect).
+				// OpenMPT didn't do this until v1.25.01.07.
 				// Example: ckbounce.it
 				lastValue[ch].command = m.command;
 				lastValue[ch].param = m.param;
@@ -1229,19 +1259,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				madeWithTracker = U_("Unknown");
 			} else if(fileHeader.cmwt < 0x0300 && madeWithTracker.empty())
 			{
-				if(fileHeader.cmwt > 0x0214)
-				{
-					madeWithTracker = U_("Impulse Tracker 2.15");
-				} else if(fileHeader.cwtv > 0x0214)
-				{
-					// Patched update of IT 2.14 (0x0215 - 0x0217 == p1 - p3)
-					// p4 (as found on modland) adds the ITVSOUND driver, but doesn't seem to change
-					// anything as far as file saving is concerned.
-					madeWithTracker = MPT_UFORMAT("Impulse Tracker 2.14p{}")(fileHeader.cwtv - 0x0214);
-				} else
-				{
-					madeWithTracker = MPT_UFORMAT("Impulse Tracker {}.{}")((fileHeader.cwtv & 0x0F00) >> 8, mpt::ufmt::hex0<2>((fileHeader.cwtv & 0xFF)));
-				}
+				madeWithTracker = GetImpulseTrackerVersion(fileHeader.cwtv, fileHeader.cmwt);
 				if(m_FileHistory.empty() && fileHeader.reserved != 0)
 				{
 					// Starting from  version 2.07, IT stores the total edit time of a module in the "reserved" field
@@ -1739,6 +1757,10 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 
 		// Write pattern header
 		ROWINDEX writeRows = mpt::saturate_cast<uint16>(Patterns[pat].GetNumRows());
+		if(compatibilityExport)
+			writeRows = std::clamp(writeRows, ROWINDEX(32), ROWINDEX(200));
+		if(writeRows != Patterns[pat].GetNumRows())
+			AddToLog(LogWarning, MPT_UFORMAT("Warning: Pattern {} was resized from {} to {} rows.")(pat, Patterns[pat].GetNumRows(), writeRows));
 		uint16 writeSize = 0;
 		uint16le patinfo[4];
 		patinfo[0] = 0;
@@ -1755,11 +1777,12 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 		// Maximum 7 bytes per cell, plus end of row marker, so this buffer is always large enough to cover one row.
 		std::vector<uint8> buf(7 * maxChannels + 1);
 
-		for(ROWINDEX row = 0; row < writeRows; row++)
+		const ROWINDEX readRows = std::min(writeRows, Patterns[pat].GetNumRows());
+		for(ROWINDEX row = 0; row < readRows; row++)
 		{
 			uint32 len = 0;
 			const ModCommand *m = Patterns[pat].GetpModCommand(row, 0);
-
+			bool writePatternBreak = (readRows < writeRows && row + 1 == readRows && !Patterns[pat].RowHasJump(row));
 			for(CHANNELINDEX ch = 0; ch < maxChannels; ch++, m++)
 			{
 				// Skip mptm-specific notes.
@@ -1812,6 +1835,12 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 				{
 					S3MSaveConvert(*m, command, param, true, compatibilityExport);
 					if (command) b |= 8;
+				}
+				if(writePatternBreak && !(b & 8))
+				{
+					b |= 8;
+					command = 'C' ^ 0x40;
+					writePatternBreak = false;
 				}
 				// Packing information
 				if (b)
@@ -1895,11 +1924,25 @@ bool CSoundFile::SaveIT(std::ostream &f, const mpt::PathString &filename, bool c
 				break;
 			} else
 			{
-				dwPos += len;
-				writeSize += (uint16)len;
+				writeSize += static_cast<uint16>(len);
 				mpt::IO::WriteRaw(f, buf.data(), len);
 			}
+			if(writePatternBreak)
+			{
+				// Didn't manage to put a pattern break, so put it on the next row instead.
+				const uint8 patternBreak[] = {1 | IT_bitmask_patternChanEnabled_c, 8, 'C' ^ 0x40, 0};
+				mpt::IO::Write(f, patternBreak);
+				writeSize += sizeof(patternBreak);
+			}
 		}
+		if(readRows < writeRows)
+		{
+			// Invent empty rows at end (if we end up here, the pattern is very short and we don't have to care about writeSize overflowing the 16-bit limit)
+			writeSize += static_cast<uint16>(writeRows - readRows);
+			buf.assign(writeRows - readRows, 0);
+			mpt::IO::Write(f, buf);
+		}
+		dwPos += writeSize;
 
 		mpt::IO::SeekAbsolute(f, dwPatPos);
 		patinfo[0] = writeSize;

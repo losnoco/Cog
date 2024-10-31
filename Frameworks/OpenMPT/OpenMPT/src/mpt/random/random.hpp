@@ -8,7 +8,10 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/random/engine.hpp"
 
+#include <limits>
 #include <type_traits>
+
+#include <cstddef>
 
 
 namespace mpt {

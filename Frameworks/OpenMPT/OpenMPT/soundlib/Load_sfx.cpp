@@ -54,7 +54,7 @@ MPT_BINARY_STRUCT(SFXOrderHeader, 130)
 struct SFXSampleHeader
 {
 	char     name[22];
-	char     dummy[2];  // Supposedly sample length, but almost always incorrect
+	uint16be oneshotLength;  // For unlooped samples, this is quite frequently 2 bytes shorter than the sample data length (and the last two samples would cause a click to be heard)
 	uint8be  finetune;
 	uint8be  volume;
 	uint16be loopStart;
@@ -64,7 +64,7 @@ struct SFXSampleHeader
 	void ConvertToMPT(ModSample &mptSmp, uint32 length) const
 	{
 		mptSmp.Initialize(MOD_TYPE_MOD);
-		mptSmp.nLength = length;
+		mptSmp.nLength = (loopLength > 1) ? length : (oneshotLength * 2u);
 		mptSmp.nFineTune = MOD2XMFineTune(finetune);
 		mptSmp.nVolume = 4u * std::min(volume.get(), uint8(64));
 
@@ -434,14 +434,18 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 	// Reading samples
 	if(loadFlags & loadSampleData)
 	{
-		for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++) if(Samples[smp].nLength)
+		for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
 		{
+			if(!sampleLen[smp - 1])
+				continue;
+
+			FileReader chunk = file.ReadChunk(sampleLen[smp - 1]);
 			SampleIO(
 				SampleIO::_8bit,
 				SampleIO::mono,
 				SampleIO::littleEndian,
 				SampleIO::signedPCM)
-				.ReadSample(Samples[smp], file);
+				.ReadSample(Samples[smp], chunk);
 		}
 	}
 

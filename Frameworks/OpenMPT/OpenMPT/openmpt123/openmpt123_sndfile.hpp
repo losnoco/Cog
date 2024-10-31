@@ -117,7 +117,7 @@ private:
 					case match_recurse:
 						break;
 					case match_exact:
-						if ( mpt::transcode<std::string>( mpt::common_encoding::utf8, extension ) == format_info.extension ) {
+						if ( mpt::transcode<std::string>( sndfile_encoding, extension ) == format_info.extension ) {
 							if ( flags.use_float && ( subformat_info.format == SF_FORMAT_FLOAT ) ) {
 								return matched_result( format, format_info, subformat_info, match_mode );
 							} else if ( !flags.use_float && ( subformat_info.format == SF_FORMAT_PCM_16 ) ) {
@@ -126,7 +126,7 @@ private:
 						}
 						break;
 					case match_better:
-						if ( mpt::transcode<std::string>( mpt::common_encoding::utf8, extension ) == format_info.extension ) {
+						if ( mpt::transcode<std::string>( sndfile_encoding, extension ) == format_info.extension ) {
 							if ( flags.use_float && ( subformat_info.format == SF_FORMAT_FLOAT || subformat_info.format == SF_FORMAT_DOUBLE ) ) {
 								return matched_result( format, format_info, subformat_info, match_mode );
 							} else if ( !flags.use_float && ( subformat_info.format & ( subformat_info.format == SF_FORMAT_PCM_16 || subformat_info.format == SF_FORMAT_PCM_24 || subformat_info.format == SF_FORMAT_PCM_32 ) ) ) {
@@ -135,7 +135,7 @@ private:
 						}
 						break;
 					case match_any:
-						if ( mpt::transcode<std::string>( mpt::common_encoding::utf8, extension ) == format_info.extension ) {
+						if ( mpt::transcode<std::string>( sndfile_encoding, extension ) == format_info.extension ) {
 							return matched_result( format, format_info, subformat_info, match_mode );
 						}
 						break;

@@ -2451,6 +2451,7 @@ bool CSoundFile::SaveMod(std::ostream &f) const
 				continue;
 			}
 			const auto rowBase = Patterns[pat].GetRow(row);
+			bool writePatternBreak = (Patterns[pat].GetNumRows() < 64 && row + 1 == Patterns[pat].GetNumRows() && !Patterns[pat].RowHasJump(row));
 
 			events.resize(writeChannels * 4);
 			size_t eventByte = 0;
@@ -2465,6 +2466,11 @@ bool CSoundFile::SaveMod(std::ostream &f) const
 					// Maybe we can save some volume commands...
 					command = 0x0C;
 					param = std::min(m.vol, uint8(64));
+				}
+				if(writePatternBreak && !command && !param)
+				{
+					command = 0x0D;
+					writePatternBreak = false;
 				}
 
 				uint16 period = 0;

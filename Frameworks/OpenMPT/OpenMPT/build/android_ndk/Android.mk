@@ -6,8 +6,45 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := openmpt
 
+ifeq ($(NDK_MAJOR),)
 LOCAL_CFLAGS   += -std=c17
-LOCAL_CPPFLAGS += -std=c++17 -fexceptions -frtti
+LOCAL_CPPFLAGS += -std=c++17
+else
+ifeq ($(NDK_MAJOR),21)
+# clang 9
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++17
+else ifeq ($(NDK_MAJOR),22)
+# clang 11
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++20
+else ifeq ($(NDK_MAJOR),23)
+# clang 12
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++20
+else ifeq ($(NDK_MAJOR),24)
+# clang 14
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++20
+else ifeq ($(NDK_MAJOR),25)
+# clang 14
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++20
+else ifeq ($(NDK_MAJOR),26)
+# clang 17
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++20
+else ifeq ($(NDK_MAJOR),27)
+# clang 18
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++20
+else
+LOCAL_CFLAGS   += -std=c17
+LOCAL_CPPFLAGS += -std=c++20
+endif
+endif
+
+LOCAL_CPPFLAGS += -fexceptions -frtti
 
 LOCAL_CPP_FEATURES += exceptions rtti
 

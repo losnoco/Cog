@@ -30,7 +30,7 @@ struct OktIffChunk
 	};
 
 	uint32be signature;  // IFF chunk name
-	uint32be chunksize;  // chunk size without header
+	uint32be chunkSize;  // Chunk size without header
 };
 
 MPT_BINARY_STRUCT(OktIffChunk, 8)
@@ -38,11 +38,11 @@ MPT_BINARY_STRUCT(OktIffChunk, 8)
 struct OktSample
 {
 	char     name[20];
-	uint32be length;      // length in bytes
+	uint32be length;      // Length in bytes
 	uint16be loopStart;   // *2 for real value
 	uint16be loopLength;  // ditto
-	uint16be volume;      // default volume
-	uint16be type;        // 7-/8-bit sample
+	uint16be volume;      // Default volume
+	uint16be type;        // 7-/8-bit sample (0: 7-bit, only usable on paired channels ["8" in GUI], 1: 8-bit, only usable on unpaired channels ["4" in GUI], 2: 7-bit, usable on all channels ["B" in GUI])
 };
 
 MPT_BINARY_STRUCT(OktSample, 32)
@@ -51,7 +51,8 @@ MPT_BINARY_STRUCT(OktSample, 32)
 // Parse the sample header block
 static void ReadOKTSamples(FileReader &chunk, CSoundFile &sndFile)
 {
-	sndFile.m_nSamples = std::min(static_cast<SAMPLEINDEX>(chunk.BytesLeft() / sizeof(OktSample)), static_cast<SAMPLEINDEX>(MAX_SAMPLES - 1));
+	static_assert(MAX_SAMPLES >= 72);  // For copies of type "B" samples
+	sndFile.m_nSamples = std::min(static_cast<SAMPLEINDEX>(chunk.BytesLeft() / sizeof(OktSample)), SAMPLEINDEX(36));
 
 	for(SAMPLEINDEX smp = 1; smp <= sndFile.GetNumSamples(); smp++)
 	{
@@ -66,6 +67,7 @@ static void ReadOKTSamples(FileReader &chunk, CSoundFile &sndFile)
 		mptSmp.nVolume = std::min(oktSmp.volume.get(), uint16(64)) * 4u;
 		mptSmp.nLength = oktSmp.length & ~1;
 		mptSmp.cues[0] = oktSmp.type;  // Temporary storage for pattern reader, will be reset later
+		mptSmp.cues[1] = 0;
 		// Parse loops
 		const SmpLength loopStart = oktSmp.loopStart * 2;
 		const SmpLength loopLength = oktSmp.loopLength * 2;
@@ -124,20 +126,26 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 			if(note > 0 && note <= 36)
 			{
 				m.note = note + (NOTE_MIDDLEC - 13);
+				if(pairedChn[chn] && m.note >= NOTE_MIDDLEC + 22)
+					m.note = NOTE_MIDDLEC + 21;
+
 				m.instr = instr + 1;
 				if(m.instr > 0 && m.instr <= sndFile.GetNumSamples())
 				{
-					const auto &sample = sndFile.GetSample(m.instr);
+					auto &sample = sndFile.GetSample(m.instr);
 					// Default volume only works on raw Paula channels
 					if(pairedChn[chn] && sample.nVolume < 256)
-					{
-						m.volcmd = VOLCMD_VOLUME;
-						m.vol = 64;
-					}
+						m.SetVolumeCommand(VOLCMD_VOLUME, 64);
+					
 					// If channel and sample type don't match, stop this channel (add 100 to the instrument number to make it understandable what happened during import)
 					if((sample.cues[0] == 1 && pairedChn[chn] != 0) || (sample.cues[0] == 0 && pairedChn[chn] == 0))
 					{
 						m.instr += 100;
+					} else if(sample.cues[0] == 2 && pairedChn[chn] && sample.uFlags[CHN_SUSTAINLOOP])
+					{
+						// Type "B" sample: Loops only work on raw Paula channels
+						sample.cues[1] = 1;
+						m.instr += 36;
 					}
 				}
 			}
@@ -150,105 +158,72 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 			case 1:  // 1 Portamento Down (Period)
 				if(param)
 				{
-					m.command = CMD_PORTAMENTOUP;
-					m.param = param;
+					m.SetEffectCommand(CMD_PORTAMENTOUP, param);
 				}
 				break;
 			case 2:  // 2 Portamento Up (Period)
 				if(param)
-				{
-					m.command = CMD_PORTAMENTODOWN;
-					m.param = param;
-				}
+					m.SetEffectCommand(CMD_PORTAMENTODOWN, param);
 				break;
 
 			case 10:  // A Arpeggio 1 (down, orig, up)
 				if(param)
-				{
-					m.command = CMD_ARPEGGIO;
-					m.param = (param & 0x0F) | (InvertArpeggioParam(param >> 4) << 4);
-				}
+					m.SetEffectCommand(CMD_ARPEGGIO, (param & 0x0F) | (InvertArpeggioParam(param >> 4) << 4));
 				break;
 
 			case 11:  // B Arpeggio 2 (orig, up, orig, down)
 				if(param)
-				{
-					m.command = CMD_ARPEGGIO;
-					m.param = (param & 0xF0) | InvertArpeggioParam(param & 0x0F);
-				}
+					m.SetEffectCommand(CMD_ARPEGGIO, (param & 0xF0) | InvertArpeggioParam(param & 0x0F));
 				break;
 		
 			// This one is close enough to "standard" arpeggio -- I think!
 			case 12:  // C Arpeggio 3 (up, up, orig)
 				if(param)
-				{
-					m.command = CMD_ARPEGGIO;
-					m.param = param;
-				}
+					m.SetEffectCommand(CMD_ARPEGGIO, param);
 				break;
 
 			case 13:  // D Slide Down (Notes)
 				if(param)
-				{
-					m.command = CMD_NOTESLIDEDOWN;
-					m.param = 0x10 | std::min(uint8(0x0F), param);
-				}
+					m.SetEffectCommand(CMD_NOTESLIDEDOWN, 0x10 | std::min(uint8(0x0F), param));
 				break;
 			case 30:  // U Slide Up (Notes)
 				if(param)
-				{
-					m.command = CMD_NOTESLIDEUP;
-					m.param = 0x10 | std::min(uint8(0x0F), param);
-				}
+					m.SetEffectCommand(CMD_NOTESLIDEUP, 0x10 | std::min(uint8(0x0F), param));
 				break;
 			// Fine Slides are only implemented for libopenmpt. For OpenMPT,
 			// sliding every 5 (non-note) ticks kind of works (at least at
 			// speed 6), but implementing separate (format-agnostic) fine slide commands would of course be better.
 			case 21:  // L Slide Down Once (Notes)
 				if(param)
-				{
-					m.command = CMD_NOTESLIDEDOWN;
-					m.param = 0x50 | std::min(uint8(0x0F), param);
-				}
+					m.SetEffectCommand(CMD_NOTESLIDEDOWN, 0x50 | std::min(uint8(0x0F), param));
 				break;
 			case 17:  // H Slide Up Once (Notes)
 				if(param)
-				{
-					m.command = CMD_NOTESLIDEUP;
-					m.param = 0x50 | std::min(uint8(0x0F), param);
-				}
+					m.SetEffectCommand(CMD_NOTESLIDEUP, 0x50 | std::min(uint8(0x0F), param));
 				break;
 
 			case 15:  // F Set Filter <>00:ON
-				m.command = CMD_MODCMDEX;
-				m.param = !!param;
+				m.SetEffectCommand(CMD_MODCMDEX, !!param);
 				break;
 
 			case 25:  // P Pos Jump
-				m.command = CMD_POSITIONJUMP;
-				m.param = param;
+				m.SetEffectCommand(CMD_POSITIONJUMP, param);
 				break;
 
 			case 27:  // R Release sample (apparently not listed in the help!)
-				m.Clear();
 				m.note = NOTE_KEYOFF;
+				m.instr = 0;
 				break;
 
 			case 28:  // S Speed
 				if(param < 0x20)
-				{
-					m.command = CMD_SPEED;
-					m.param = param;
-				}
+					m.SetEffectCommand(CMD_SPEED, param);
 				break;
 
 			case 31:  // V Volume
 				// Volume on mixed channels is permanent, on hardware channels it behaves like in regular MODs
 				if(param & 0x0F)
-				{
-					m.command = pairedChn[chn] ? CMD_CHANNELVOLSLIDE : CMD_VOLUMESLIDE;
-					m.param = param & 0x0F;
-				}
+					m.SetEffectCommand(pairedChn[chn] ? CMD_CHANNELVOLSLIDE : CMD_VOLUMESLIDE, param & 0x0F);
 
 				switch(param >> 4)
 				{
@@ -260,13 +235,11 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 				case 0: case 1: case 2: case 3:
 					if(pairedChn[chn])
 					{
-						m.command = CMD_CHANNELVOLUME;
-						m.param = param;
+						m.SetEffectCommand(CMD_CHANNELVOLUME, param);
 					} else
 					{
-						m.volcmd = VOLCMD_VOLUME;
-						m.vol = param;
-						m.command = CMD_NONE;
+						m.SetVolumeCommand(VOLCMD_VOLUME, param);
+						m.SetEffectCommand(oldCmd, oldParam);
 					}
 					break;
 				case 5:  // Normal slide up
@@ -280,7 +253,7 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 					break;
 				default:
 					// Junk.
-					m.command = CMD_NONE;
+					m.SetEffectCommand(oldCmd, oldParam);
 					break;
 				}
 
@@ -293,7 +266,14 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 					{
 						other.SetVolumeCommand(volCmd);
 					}
-					other.SetEffectCommand(m);
+					if(ModCommand::GetEffectWeight(other.command) < ModCommand::GetEffectWeight(m.command))
+					{
+						other.SetEffectCommand(m);
+					} else if(row < rows - 1)
+					{
+						// Retry on next row
+						sndFile.Patterns[pat].GetpModCommand(row + 1, static_cast<CHANNELINDEX>(chn + pairedChn[chn]))->SetEffectCommand(m);
+					}
 				}
 				break;
 
@@ -359,7 +339,7 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 		if(!file.ReadStruct(iffHead))
 			break;
 
-		FileReader chunk = file.ReadChunk(iffHead.chunksize);
+		FileReader chunk = file.ReadChunk(iffHead.chunkSize);
 		if(!chunk.IsValid())
 			continue;
 
@@ -467,12 +447,14 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Read samples
 	size_t fileSmp = 0;
-	for(SAMPLEINDEX smp = 1; smp < m_nSamples; smp++)
+	const SAMPLEINDEX origSamples = m_nSamples;
+	for(SAMPLEINDEX smp = 1; smp <= origSamples; smp++)
 	{
 		if(fileSmp >= sampleChunks.size() || !(loadFlags & loadSampleData))
 			break;
 
 		ModSample &mptSample = Samples[smp];
+		const bool needCopy = mptSample.cues[1] != 0;
 		mptSample.SetDefaultCuePoints();
 		if(mptSample.nLength == 0)
 			continue;
@@ -486,6 +468,20 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 			SampleIO::bigEndian,
 			SampleIO::signedPCM)
 			.ReadSample(mptSample, sampleChunks[fileSmp]);
+
+		if(needCopy)
+		{
+			// Type "B" samples (can play on both paired and unpaired channels) can have loop information,
+			// which can only be used on unpaired channels. So we need a looped and unlooped copy of the sample.
+			m_nSamples = std::max(m_nSamples, static_cast<SAMPLEINDEX>(smp + 36));
+			ModSample &copySample = Samples[smp + 36];
+			copySample.Initialize();
+			copySample.nC5Speed = mptSample.nC5Speed;
+			copySample.nVolume = mptSample.nVolume;
+			copySample.nLength = mptSample.nLength;
+			copySample.CopyWaveform(mptSample);
+			m_szNames[smp + 36] = m_szNames[smp];
+		}
 
 		fileSmp++;
 	}

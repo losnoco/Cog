@@ -24,7 +24,7 @@ struct DMFFileHeader
 {
 	char   signature[4];  // "DDMF"
 	uint8  version;       // 1 - 7 are beta versions, 8 is the official thing, 10 is xtracker32
-	char   tracker[8];    // "XTRACKER"
+	char   tracker[8];    // "XTRACKER", or "SCREAM 3" when converting from S3M, etc.
 	char   songname[30];
 	char   composer[20];
 	uint8  creationDay;

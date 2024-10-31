@@ -52,13 +52,14 @@
 #define MPT_WIN_10_1903  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x07) // NTDDI_WIN10_19H1 1903/19H1
 #define MPT_WIN_10_1909  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x08) // NTDDI_WIN10_VB   1909/19H2
 #define MPT_WIN_10_2004  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x09) // NTDDI_WIN10_MN   2004/20H1
-                                                                      //                  20H2
-                                                                      //                  21H1
-#define MPT_WIN_10_21H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0a) // NTDDI_WIN10_FE   21H2
-                                                                      //                  22H2
+#define MPT_WIN_10_20H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0a) // NTDDI_WIN10_FE   20H2
+#define MPT_WIN_10_21H1  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0b) // NTDDI_WIN10_CO   21H1
+#define MPT_WIN_10_21H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) // NTDDI_WIN10_NI   21H2
+#define MPT_WIN_10_22H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0d) // NTDDI_WIN10_CU   22H2
 
-#define MPT_WIN_11       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0b) // NTDDI_WIN10_CO   21H2
-#define MPT_WIN_11_22H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) // NTDDI_WIN10_NI   22H2
+#define MPT_WIN_11       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0e) // NTDDI_WIN11_ZN   21H2
+#define MPT_WIN_11_22H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0f) // NTDDI_WIN11_GA   22H2
+#define MPT_WIN_11_23H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) // NTDDI_WIN11_GE   23H2
 
 // MPT_WIN_API_DESKTOP     : Windows 8/10 Desktop Application (Win32)
 // MPT_WIN_API_UNIVERSAL   : Windows 10 Store App / Universal App
@@ -227,13 +228,25 @@ static_assert(NTDDI_WIN10_VB == MPT_WIN_10_1909);
 static_assert(NTDDI_WIN10_MN == MPT_WIN_10_2004);
 #endif
 #ifdef NTDDI_WIN10_FE
-static_assert(NTDDI_WIN10_FE == MPT_WIN_10_21H2);
+static_assert(NTDDI_WIN10_FE == MPT_WIN_10_20H2);
 #endif
 #ifdef NTDDI_WIN10_CO
-static_assert(NTDDI_WIN10_CO == MPT_WIN_11);
+static_assert(NTDDI_WIN10_CO == MPT_WIN_10_21H1);
 #endif
 #ifdef NTDDI_WIN10_NI
-static_assert(NTDDI_WIN10_NI == MPT_WIN_11_22H2);
+static_assert(NTDDI_WIN10_NI == MPT_WIN_10_21H2);
+#endif
+#ifdef NTDDI_WIN10_CU
+static_assert(NTDDI_WIN10_CU == MPT_WIN_10_22H2);
+#endif
+#ifdef NTDDI_WIN11_ZN
+static_assert(NTDDI_WIN11_ZN == MPT_WIN_11);
+#endif
+#ifdef NTDDI_WIN11_GA
+static_assert(NTDDI_WIN11_GA == MPT_WIN_11_22H2);
+#endif
+#ifdef NTDDI_WIN11_GE
+static_assert(NTDDI_WIN11_GE == MPT_WIN_11_23H2);
 #endif
 #endif
 #if defined(WINAPI_FAMILY)

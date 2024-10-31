@@ -238,7 +238,7 @@ void VSTPluginLib::WriteToCache() const
 
 	const std::string crcName = dllPath.ToUTF8();
 	const mpt::crc32 crc(crcName);
-	const mpt::ustring IDs = mpt::ufmt::HEX0<8>(pluginId1) + mpt::ufmt::HEX0<8>(pluginId2) + mpt::ufmt::HEX0<8>(crc.result());
+	const mpt::ustring IDs = mpt::ufmt::HEX0<8>(static_cast<uint32>(pluginId1)) + mpt::ufmt::HEX0<8>(static_cast<uint32>(pluginId2)) + mpt::ufmt::HEX0<8>(crc.result());
 
 	mpt::PathString writePath = dllPath;
 	if(theApp.IsPortableMode())
@@ -570,19 +570,20 @@ VSTPluginLib *CVstPluginManager::AddPlugin(const mpt::PathString &dllPath, bool 
 			pluginList.push_back(plug);
 
 			// Extract plugin IDs
-			for (int i = 0; i < 16; i++)
+			uint32 id1 = 0, id2 = 0;
+			for(int i = 0; i < 16; i++)
 			{
-				int32 n = IDs[i] - '0';
-				if (n > 9) n = IDs[i] + 10 - 'A';
-				n &= 0x0f;
+				uint32 n = IDs[i] - '0';
+				if(n > 9)
+					n = IDs[i] + 10 - 'A';
+				n &= 0x0F;
 				if (i < 8)
-				{
-					plug->pluginId1 = (plug->pluginId1 << 4) | n;
-				} else
-				{
-					plug->pluginId2 = (plug->pluginId2 << 4) | n;
-				}
+					id1 = (id1 << 4) | n;
+				else
+					id2 = (id2 << 4) | n;
 			}
+			plug->pluginId1 = id1;
+			plug->pluginId2 = id2;
 
 			const mpt::ustring flagKey = IDs + U_(".Flags");
 			plug->DecodeCacheFlags(cacheFile.Read<int32>(cacheSection, flagKey, 0));

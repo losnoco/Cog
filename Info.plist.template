@@ -1537,6 +1537,7 @@
 				<string>dtm</string>
 				<string>far</string>
 				<string>fmt</string>
+				<string>fst</string>
 				<string>imf</string>
 				<string>ice</string>
 				<string>j2b</string>

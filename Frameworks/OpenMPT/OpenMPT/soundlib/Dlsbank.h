@@ -129,6 +129,7 @@ public:
 	bool operator==(const CDLSBank &other) const noexcept { return !mpt::PathCompareNoCase(m_szFileName, other.m_szFileName); }
 
 	static bool IsDLSBank(const mpt::PathString &filename);
+	static bool IsDLSBank(FileReader file);
 	static uint32 MakeMelodicCode(uint32 bank, uint32 instr) { return ((bank << 16) | (instr));}
 	static uint32 MakeDrumCode(uint32 rgn, uint32 instr) { return (0x80000000 | (rgn << 16) | (instr));}
 
@@ -144,16 +145,16 @@ public:
 	uint32 GetNumSamples() const { return static_cast<uint32>(m_WaveForms.size()); }
 	const DLSINSTRUMENT *GetInstrument(uint32 iIns) const { return iIns < m_Instruments.size() ? &m_Instruments[iIns] : nullptr; }
 	[[nodiscard]] const DLSINSTRUMENT *FindInstrument(bool isDrum, uint32 bank = 0xFF, uint32 program = 0xFF, uint32 key = 0xFF, uint32 *pInsNo = nullptr) const;
-	bool FindAndExtract(CSoundFile &sndFile, const INSTRUMENTINDEX ins, const bool isDrum) const;
+	bool FindAndExtract(CSoundFile &sndFile, const INSTRUMENTINDEX ins, const bool isDrum, FileReader *file = nullptr) const;
 	uint32 GetRegionFromKey(uint32 nIns, uint32 nKey) const;
-	bool ExtractWaveForm(uint32 nIns, uint32 nRgn, std::vector<uint8> &waveData, uint32 &length) const;
-	bool ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nIns, uint32 nRgn, int transpose = 0) const;
-	bool ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, uint32 nIns, uint32 nDrumRgn) const;
+	bool ExtractSample(CSoundFile &sndFile, SAMPLEINDEX nSample, uint32 nIns, uint32 nRgn, int transpose = 0, FileReader *file = nullptr) const;
+	bool ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, uint32 nIns, uint32 nDrumRgn, FileReader *file = nullptr) const;
 	const char *GetRegionName(uint32 nIns, uint32 nRgn) const;
 	uint16 GetPanning(uint32 ins, uint32 region) const;
 
 // Internal Loader Functions
 protected:
+	std::vector<uint8> ExtractWaveForm(uint32 nIns, uint32 nRgn, FileReader *file) const;
 	bool UpdateInstrumentDefinition(DLSINSTRUMENT *pDlsIns, FileReader chunk);
 	bool UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &header, FileReader &chunk);
 	bool ConvertSF2ToDLS(SF2LoaderInfo &sf2info);

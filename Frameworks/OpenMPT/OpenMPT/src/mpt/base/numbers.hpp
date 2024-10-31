@@ -6,9 +6,10 @@
 
 
 #include "mpt/base/detect_compiler.hpp"
+#include "mpt/base/detect_quirks.hpp"
 #include "mpt/base/namespace.hpp"
 
-#if MPT_CXX_AT_LEAST(20)
+#if MPT_CXX_AT_LEAST(20) && !defined(MPT_LIBCXX_QUIRK_NO_NUMBERS)
 #include <numbers>
 #else
 #include <type_traits>
@@ -25,7 +26,7 @@ inline namespace MPT_INLINE_NS {
 
 namespace numbers {
 
-#if MPT_CXX_AT_LEAST(20)
+#if MPT_CXX_AT_LEAST(20) && !defined(MPT_LIBCXX_QUIRK_NO_NUMBERS)
 
 template <typename T>
 inline constexpr T e_v = std::numbers::e_v<T>;

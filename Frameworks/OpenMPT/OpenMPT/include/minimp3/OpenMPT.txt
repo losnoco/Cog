@@ -1,6 +1,12 @@
 minimp3 library from https://github.com/lieff/minimp3
-commit 50d2aaf360a53653b718fead8e258d654c3a7e41 (2021-11-27)
+Fork https://github.com/manxorist/minimp3/releases/tag/openmpt-2024-08-15-v4
+commit 2116754771b79347ad2f39127abace2a093c383e (2024-08-15)
 The following changes have been made:
  *  minimp3.c has been added
- *  some warnings have been fixed
+ *  The following pull rquests have been merged:
+     *  https://github.com/lieff/minimp3/pull/126
+     *  https://github.com/lieff/minimp3/pull/96
+     *  https://github.com/lieff/minimp3/pull/97
+     *  https://github.com/lieff/minimp3/pull/125
+     *  https://github.com/lieff/minimp3/pull/127
  *  all modifications are marked by /* OpenMPT */

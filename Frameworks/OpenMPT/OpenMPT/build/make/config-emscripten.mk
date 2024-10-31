@@ -1,9 +1,9 @@
 
 ifeq ($(origin CC),default)
-CC  = emcc -c
+CC  = emcc
 endif
 ifeq ($(origin CXX),default)
-CXX = em++ -c
+CXX = em++
 endif
 ifeq ($(origin LD),default)
 LD  = em++
