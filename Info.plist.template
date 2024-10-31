@@ -396,6 +396,7 @@
 				<string>ao</string>
 				<string>ap</string>
 				<string>apc</string>
+				<string>apm</string>
 				<string>as4</string>
 				<string>asbin</string>
 				<string>asd</string>
@@ -694,7 +695,7 @@
 				<string>npsf</string>
 				<string>nsa</string>
 				<string>nsopus</string>
-				<string>ntx</string>
+				<string>nfx</string>
 				<string>nub</string>
 				<string>nub2</string>
 				<string>nus3audio</string>
@@ -751,6 +752,7 @@
 				<string>rsnd</string>
 				<string>rsp</string>
 				<string>rstm</string>
+				<string>rvw</string>
 				<string>rvws</string>
 				<string>rwar</string>
 				<string>rwav</string>
@@ -793,6 +795,7 @@
 				<string>scd</string>
 				<string>sch</string>
 				<string>sd9</string>
+				<string>sdl</string>
 				<string>sdp</string>
 				<string>sdf</string>
 				<string>sdt</string>
@@ -879,6 +882,7 @@
 				<string>um3</string>
 				<string>utk</string>
 				<string>uv</string>
+				<string>v</string>
 				<string>v0</string>
 				<string>va3</string>
 				<string>vab</string>
@@ -973,7 +977,6 @@
 				<string>xsew</string>
 				<string>xss</string>
 				<string>xvag</string>
-				<string>xvas</string>
 				<string>xwav</string>
 				<string>xwb</string>
 				<string>xmd</string>
