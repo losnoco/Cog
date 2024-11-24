@@ -458,6 +458,7 @@
 		835C883722CC17BE001B4B3F /* ogg_vorbis_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C883522CC17BE001B4B3F /* ogg_vorbis_streamfile.h */; };
 		835DF7032C79ABB50008814A /* sbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 835DF7022C79ABB50008814A /* sbuf.c */; };
 		835DF7052C79AED70008814A /* play_state.c in Sources */ = {isa = PBXBuildFile; fileRef = 835DF7042C79AED70008814A /* play_state.c */; };
+		836581A62CF3E53600E26C58 /* sdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 836581A52CF3E53600E26C58 /* sdd.c */; };
 		836C052B23F62F1A00FA07C7 /* libatrac9.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 835FC6C623F62AEF006960FA /* libatrac9.framework */; };
 		836C052C23F62F3100FA07C7 /* libatrac9.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835FC6C623F62AEF006960FA /* libatrac9.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836DF622298F83F400CD0580 /* cri_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 836DF61F298F83F400CD0580 /* cri_keys.h */; };
@@ -1370,6 +1371,7 @@
 		835DF7022C79ABB50008814A /* sbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sbuf.c; sourceTree = "<group>"; };
 		835DF7042C79AED70008814A /* play_state.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = play_state.c; sourceTree = "<group>"; };
 		835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libatrac9.xcodeproj; path = ../libatrac9/libatrac9.xcodeproj; sourceTree = "<group>"; };
+		836581A52CF3E53600E26C58 /* sdd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = sdd.c; sourceTree = "<group>"; };
 		836DF61F298F83F400CD0580 /* cri_keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cri_keys.h; sourceTree = "<group>"; };
 		836DF620298F83F400CD0580 /* bitstream_msb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitstream_msb.h; sourceTree = "<group>"; };
 		836DF621298F83F400CD0580 /* cri_keys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cri_keys.c; sourceTree = "<group>"; };
@@ -2520,6 +2522,7 @@
 				8399335E2591E8C0001855AF /* sbk.c */,
 				8349A8F51FE6257D00E26435 /* scd_pcm.c */,
 				836F6EEE18BDC2190095E648 /* sd9.c */,
+				836581A52CF3E53600E26C58 /* sdd.c */,
 				834FE0E6215C79EC000A5D3D /* sdf.c */,
 				83A8BAE225667AA7000F5F3F /* sdrh.c */,
 				836F6EEF18BDC2190095E648 /* sdt.c */,
@@ -3209,6 +3212,7 @@
 				83FBB17D2A4FF87200CD0580 /* sf_utils.c in Sources */,
 				8349A91F1FE6258200E26435 /* naac.c in Sources */,
 				834F7DD22C7093EA003AC386 /* ice_decoder.c in Sources */,
+				836581A62CF3E53600E26C58 /* sdd.c in Sources */,
 				83AFABBE23795202002F3947 /* isb.c in Sources */,
 				836F6FD218BDC2190095E648 /* ps2_bmdx.c in Sources */,
 				836F703C18BDC2190095E648 /* bns.c in Sources */,
