@@ -818,7 +818,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	soxr_error_t error;
 	soxr_quality_spec_t q_spec = soxr_quality_spec(SOXR_HQ, SOXR_VR);
-	rssimplespeed = soxr_create(1 << OCTAVES, 1, channels, &error, NULL, &q_spec, NULL);
+	rssimplespeed = soxr_create(1 << OCTAVES, 1, realStreamFormat.mChannelsPerFrame, &error, NULL, &q_spec, NULL);
 	soxr_set_io_ratio(rssimplespeed, speed, 0);
 
 	ssRenderedIn = 0.0;
