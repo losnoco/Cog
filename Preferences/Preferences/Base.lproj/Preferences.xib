@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="GeneralPreferencesPlugin">
             <connections>
-                <outlet property="appearanceView" destination="CgN-sy-RmM" id="wvB-aW-Gfx"/>
+                <outlet property="appearancePane" destination="gKy-O9-bcf" id="Kdj-LI-JmX"/>
                 <outlet property="generalPane" destination="tm7-TU-wbV" id="jTO-w4-xwD"/>
                 <outlet property="hotKeyPane" destination="6" id="14"/>
                 <outlet property="iTunesStyleCheck" destination="AIz-WH-Wqk" id="2n1-pY-cZR"/>
@@ -58,7 +58,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" selectedItem="250" id="248">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="249">
                             <items>
                                 <menuItem title="Item 1" state="on" id="250"/>
@@ -101,7 +101,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" id="254">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="255">
                             <items>
                                 <menuItem title="Item 1" id="256"/>
@@ -131,6 +131,11 @@
             </subviews>
             <point key="canvasLocation" x="-151" y="-283.5"/>
         </customView>
+        <customObject id="gKy-O9-bcf" userLabel="AppearancePane" customClass="AppearancePane">
+            <connections>
+                <outlet property="view" destination="CgN-sy-RmM" id="eEi-cI-GKg"/>
+            </connections>
+        </customObject>
         <customObject id="6" userLabel="HotKeyPane" customClass="HotKeyPane">
             <connections>
                 <outlet property="fadeShortcutView" destination="vEd-Af-7tR" id="DMK-Z9-Sm5"/>
@@ -293,7 +298,7 @@
                     <autoresizingMask key="autoresizingMask"/>
                     <popUpButtonCell key="cell" type="push" title="Item1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="62" id="210">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="61">
                             <items>
                                 <menuItem title="Item1" state="on" id="62"/>
@@ -323,7 +328,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="vmS-eb-zen">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="V8o-Xy-HUW">
                             <items>
                                 <menuItem title="Item 1" id="oWh-lD-mFH"/>
@@ -568,11 +573,11 @@
             <point key="canvasLocation" x="450" y="-52.5"/>
         </customView>
         <customView id="CgN-sy-RmM" userLabel="AppearanceView">
-            <rect key="frame" x="0.0" y="0.0" width="640" height="193"/>
+            <rect key="frame" x="0.0" y="0.0" width="640" height="245"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="haX-dq-OIe">
-                    <rect key="frame" x="18" y="156" width="602" height="18"/>
+                    <rect key="frame" x="18" y="208" width="602" height="18"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Colorful dock icons" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="GdX-5e-NeU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -580,6 +585,28 @@
                     </buttonCell>
                     <connections>
                         <binding destination="52" name="value" keyPath="values.colorfulDockIcons" id="NZt-v6-8iW"/>
+                    </connections>
+                </button>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zv5-2j-Aoj" userLabel="Use custom dock icon set:">
+                    <rect key="frame" x="18" y="182" width="477" height="18"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Use custom dock icon set:" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="RwB-Tk-ufd">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.customDockIcons" id="Eps-hb-AfK"/>
+                    </connections>
+                </button>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AjL-Ho-0mM">
+                    <rect key="frame" x="40" y="158" width="580" height="18"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Render over background plaque" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="KZd-iR-dXL">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.customDockIconsPlaque" id="PQe-kt-nXW"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AA7-fr-NOk">
@@ -658,6 +685,39 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5fh-1K-0GQ" userLabel="Stopped">
+                    <rect key="frame" x="496" y="174" width="45" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="⏹️" alternateTitle="Stopped" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QYJ-kq-zao">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="setDockIconStop:" target="gKy-O9-bcf" id="C7I-ab-aYn"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="paU-SV-utl" userLabel="Playing">
+                    <rect key="frame" x="539" y="174" width="45" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="▶️" alternateTitle="Playing" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Z7K-Px-LDn">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="setDockIconPlay:" target="gKy-O9-bcf" id="EgK-ze-Ymi"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NpP-Uh-srl" userLabel="Paused">
+                    <rect key="frame" x="582" y="174" width="45" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="⏸️" alternateTitle="Paused" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yJA-mn-Xjt">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="setDockIconPause:" target="gKy-O9-bcf" id="Pol-yc-d36"/>
+                    </connections>
+                </button>
             </subviews>
             <point key="canvasLocation" x="450" y="198.5"/>
         </customView>
@@ -716,7 +776,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="vaQ-pZ-jXy" id="xcv-1b-kTI">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="pRc-b6-sMR">
                             <items>
                                 <menuItem title="Item 1" state="on" id="vaQ-pZ-jXy"/>
@@ -746,7 +806,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="3Gx-cs-3B0" id="5q7-83-7V6">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" title="OtherViews" id="HKM-FW-dhH">
                             <items>
                                 <menuItem title="Item 1" state="on" id="3Gx-cs-3B0"/>
@@ -776,7 +836,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" altersStateOfSelectedItem="NO" selectedItem="XzK-h2-vIT" id="qzt-Ox-taI">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" autoenablesItems="NO" id="q1g-E5-NwQ">
                             <items>
                                 <menuItem title="Item 1" id="XzK-h2-vIT"/>
