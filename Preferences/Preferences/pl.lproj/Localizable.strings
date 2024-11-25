@@ -41,11 +41,11 @@
 /* (No Comment) */
 "Press Key..." = "naciśnij przycisk...";
 
-"ReplayGain Album Gain" = "głośność powtórki / głośność albumó";
+"ReplayGain Album Gain" = "głośność powtórki / głośność albumu";
 
 "Volume scale tag only" = "tylko tag skalowania głośności";
 
-"Zero Order Hold" = "całkowita ilość dni";
+"Zero Order Hold" = "Zero Order Hold";
 
 "ValidNo" = "nie";
 "ValidYes" = "tak";
