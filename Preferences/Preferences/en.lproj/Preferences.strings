@@ -244,3 +244,9 @@
 
 /* Class = "NSButtonCell"; title = "Reduce DSD volume level by 6 dB"; ObjectID = "Phw-hj-6tI"; */
 "Phw-hj-6tI.title" = "Reduce DSD volume level by 6 dB";
+
+/* Class = "NSButtonCell"; title = "Use custom dock icon set:"; ObjectID = "RwB-Tk-ufd"; */
+"RwB-Tk-ufd.title" = "Use custom dock icon set:";
+
+/* Class = "NSButtonCell"; title = "Render over background plaque"; ObjectID = "KZd-iR-dXL"; */
+"KZd-iR-dXL.title" = "Render over background plaque";

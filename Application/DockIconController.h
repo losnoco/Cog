@@ -13,6 +13,13 @@
 @interface DockIconController : NSObject {
 	NSImage *dockImage;
 
+	NSInteger lastDockCustom;
+	NSInteger lastDockCustomPlaque;
+	NSInteger dockCustomLoaded;
+	NSImage *dockCustomStop;
+	NSImage *dockCustomPlay;
+	NSImage *dockCustomPause;
+
 	IBOutlet PlaybackController *playbackController;
 
 	NSInteger lastPlaybackStatus;

@@ -14,17 +14,18 @@
 #import "HotKeyPane.h"
 #import "MIDIPane.h"
 #import "OutputPane.h"
+#import "AppearancePane.h"
 
 @interface GeneralPreferencesPlugin : NSObject <PreferencePanePlugin> {
 	IBOutlet HotKeyPane *hotKeyPane;
 	IBOutlet OutputPane *outputPane;
 	IBOutlet MIDIPane *midiPane;
 	IBOutlet GeneralPane *generalPane;
+	IBOutlet AppearancePane *appearancePane;
 
 	IBOutlet NSView *playlistView;
 	IBOutlet NSView *updatesView;
 	IBOutlet NSView *notificationsView;
-	IBOutlet NSView *appearanceView;
 
 	__weak IBOutlet NSButton *iTunesStyleCheck;
 }

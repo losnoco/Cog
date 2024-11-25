@@ -90,10 +90,7 @@
 }
 
 - (GeneralPreferencePane *)appearancePane {
-	return [GeneralPreferencePane preferencePaneWithView:appearanceView
-	                                               title:NSLocalizedPrefString(@"Appearance")
-	                                      systemIconName:@"paintpalette.fill"
-	                                      orOldIconNamed:@"appearance"];
+	return appearancePane;
 }
 
 @end
