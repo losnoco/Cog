@@ -46,18 +46,17 @@ public:
 	inline WriteBuffer(Tfile & f_, mpt::byte_span buffer_)
 		: buffer(buffer_)
 		, f(f_) {
+		return;
 	}
 	inline ~WriteBuffer() noexcept(false) {
-		if (!writeError)
-		{
+		if (!writeError) {
 			FlushLocal();
 		}
 	}
 
 public:
 	inline Tfile & file() const {
-		if (IsDirty())
-		{
+		if (IsDirty()) {
 			FlushLocal();
 		}
 		return f;
@@ -84,30 +83,24 @@ public:
 	}
 	inline bool Write(mpt::const_byte_span data) {
 		bool result = true;
-		for (std::size_t i = 0; i < data.size(); ++i)
-		{
+		for (std::size_t i = 0; i < data.size(); ++i) {
 			buffer[size] = data[i];
 			size++;
-			if (IsFull())
-			{
+			if (IsFull()) {
 				FlushLocal();
 			}
 		}
 		return result;
 	}
 	inline void FlushLocal() {
-		if (IsClean())
-		{
+		if (IsClean()) {
 			return;
 		}
-		try
-		{
-			if (!mpt::IO::WriteRaw(f, mpt::as_span(buffer.data(), size)))
-			{
+		try {
+			if (!mpt::IO::WriteRaw(f, mpt::as_span(buffer.data(), size))) {
 				writeError = true;
 			}
-		} catch (const std::exception &)
-		{
+		} catch (const std::exception &) {
 			writeError = true;
 			throw;
 		}

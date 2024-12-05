@@ -53,7 +53,8 @@ ifneq ($(SSE),0)
 	FPU_SSSE3  := -m80387 -mmmx -mfxsr -msse -msse2 -msse3 -mssse3 -mfpmath=sse
 	FPU_SSE4_1 := -m80387 -mmmx -mfxsr -msse -msse2 -msse3 -mssse3 -msse4.1 -mfpmath=sse
 	FPU_SSE4_2 := -m80387 -mmmx -mfxsr -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mfpmath=sse
-	FPU_SSE4A  := -m80387 -mmmx -mfxsr -msse -msse2 -msse3 -mssse3 -msse4a -mfpmath=sse
+	FPU_SSE4A  := -m80387 -mmmx -mfxsr -msse -msse2 -msse3 -msse4a -mfpmath=sse
+	FPU_SSSE4A := -m80387 -mmmx -mfxsr -msse -msse2 -msse3 -mssse3 -msse4a -mfpmath=sse
 else
 	FPU_NONE   := -mno-80387
 	FPU_287    := -m80387 -mfpmath=387 -mno-fancy-math-387
@@ -68,7 +69,8 @@ else
 	FPU_SSSE3  := -mno-ssse3 -mno-sse3 -mno-sse2 -mno-sse -mno-fxsr -m80387 -mmmx -mfpmath=387
 	FPU_SSE4_1 := -mno-sse4.1 -mno-ssse3 -mno-sse3 -mno-sse2 -mno-sse -mno-fxsr -m80387 -mmmx -mfpmath=387
 	FPU_SSE4_2 := -mno-sse4.2 -mno-sse4.1 -mno-ssse3 -mno-sse3 -mno-sse2 -mno-sse -mno-fxsr -m80387 -mmmx -mfpmath=387
-	FPU_SSE4A  := -mno-sse4a -mno-ssse3 -mno-sse3 -mno-sse2 -mno-sse -mno-fxsr -m80387 -mmmx -mfpmath=387
+	FPU_SSE4A  := -mno-sse4a -mno-sse3 -mno-sse2 -mno-sse -mno-fxsr -m80387 -mmmx -mfpmath=387
+	FPU_SSSE4A := -mno-sse4a -mno-ssse3 -mno-sse3 -mno-sse2 -mno-sse -mno-fxsr -m80387 -mmmx -mfpmath=387
 endif
 
 OPT_DEF  := -Os
@@ -202,11 +204,11 @@ amd/sempron64     := $(___) -march=k8          $(FPU_SSE2)   -mtune=k8          
 amd/geode-gx      := $(___) -march=geode       $(FPU_3DNOW)  -mtune=geode       $(OPT_SIMD) --param l1-cache-size=16 --param l2-cache-size=0
 amd/geode-lx      := $(___) -march=geode       $(FPU_3DNOW)  -mtune=geode       $(OPT_SIMD) --param l1-cache-size=64 --param l2-cache-size=128
 amd/geode-nx      := $(___) -march=athlon-xp   $(FPU_3DASSE) -mtune=athlon-xp   $(OPT_SIMD) --param l1-cache-size=64 --param l2-cache-size=256
-amd/bobcat        := $(___) -march=btver1      $(FPU_SSE4A)  -mtune=btver1      $(OPT_SIMD) --param l1-cache-size=32 --param l2-cache-size=512
-amd/jaguar        := $(___) -march=btver2      $(FPU_SSE4A)  -mtune=btver2      $(OPT_SIMD) --param l1-cache-size=32 --param l2-cache-size=1024
+amd/bobcat        := $(___) -march=btver1      $(FPU_SSSE4A) -mtune=btver1      $(OPT_SIMD) --param l1-cache-size=32 --param l2-cache-size=512
+amd/jaguar        := $(___) -march=btver2      $(FPU_SSSE4A) -mtune=btver2      $(OPT_SIMD) --param l1-cache-size=32 --param l2-cache-size=1024
 
 amd/late-3dnow    := $(XX_) -march=athlon-xp   $(FPU_3DASSE) -mtune=athlon-xp   $(OPT_SIMD) --param l1-cache-size=64 --param l2-cache-size=512
-amd/late          := $(XX_) -march=i686        $(FPU_SSE4A)  -mtune=generic     $(OPT_SIMD) 
+amd/late          := $(XX_) -march=i686        $(FPU_SSSE4A) -mtune=generic     $(OPT_SIMD) 
 
 
 

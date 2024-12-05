@@ -2405,6 +2405,8 @@ static MPT_NOINLINE void TestCharsets()
 	VERIFY_EQUAL(mpt::RelativePathToAbsolute(P_("\\foo"), exePath), P_("C:\\foo"));
 	VERIFY_EQUAL(mpt::AbsolutePathToRelative(P_("\\\\server\\path\\file"), exePath), P_("\\\\server\\path\\file"));
 	VERIFY_EQUAL(mpt::RelativePathToAbsolute(P_("\\\\server\\path\\file"), exePath), P_("\\\\server\\path\\file"));
+	VERIFY_EQUAL(mpt::AbsolutePathToRelative(P_("C:\\OpenMPT"), mpt::PathString{}), P_("C:\\OpenMPT"));
+	VERIFY_EQUAL(mpt::RelativePathToAbsolute(P_("C:\\OpenMPT"), mpt::PathString{}), P_("C:\\OpenMPT"));
 #endif
 
 #ifdef MODPLUG_TRACKER

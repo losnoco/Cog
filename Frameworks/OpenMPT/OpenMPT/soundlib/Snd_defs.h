@@ -299,7 +299,8 @@ DECLARE_FLAGSET(SongFlags)
 #define SNDMIX_MUTECHNMODE    0x100000 // Notes are not played on muted channels
 
 
-#define MAX_GLOBAL_VOLUME 256u
+inline constexpr uint32 MAX_GLOBAL_VOLUME = 256;
+inline constexpr uint32 MAX_PREAMP = 2000;
 
 // Resampling modes
 enum ResamplingMode : uint8

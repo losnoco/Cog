@@ -68,7 +68,7 @@ TempFileGuard::~TempFileGuard()
 {
 	if(!filename.empty())
 	{
-		DeleteFile(filename.AsNative().c_str());
+		DeleteFile(mpt::support_long_path(filename.AsNative()).c_str());
 	}
 }
 
@@ -80,7 +80,7 @@ TempDirGuard::TempDirGuard(const mpt::TemporaryPathname &pathname)
 	{
 		return;
 	}
-	if(::CreateDirectory(dirname.AsNative().c_str(), NULL) == 0)
+	if(::CreateDirectory(mpt::support_long_path(dirname.AsNative()).c_str(), NULL) == 0)
 	{ // fail
 		dirname = mpt::PathString();
 	}

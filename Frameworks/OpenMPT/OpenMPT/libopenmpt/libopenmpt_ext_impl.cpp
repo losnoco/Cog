@@ -169,11 +169,11 @@ namespace openmpt {
 		if ( volume < 0.0 || volume > 1.0 ) {
 			throw openmpt::exception("invalid global volume");
 		}
-		m_sndFile->m_PlayState.m_nGlobalVolume = mpt::saturate_round<uint32_t>( volume * MAX_GLOBAL_VOLUME );
+		m_sndFile->m_PlayState.m_nGlobalVolume = mpt::saturate_round<uint32_t>( volume * OpenMPT::MAX_GLOBAL_VOLUME );
 	}
 
 	double module_ext_impl::get_global_volume( ) const {
-		return m_sndFile->m_PlayState.m_nGlobalVolume / static_cast<double>( MAX_GLOBAL_VOLUME );
+		return m_sndFile->m_PlayState.m_nGlobalVolume / static_cast<double>( OpenMPT::MAX_GLOBAL_VOLUME );
 	}
 	
 	void module_ext_impl::set_channel_volume( std::int32_t channel, double volume ) {

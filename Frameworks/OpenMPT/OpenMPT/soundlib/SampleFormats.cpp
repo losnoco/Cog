@@ -559,7 +559,7 @@ bool CSoundFile::ReadWAVSample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 bool CSoundFile::SaveWAVSample(SAMPLEINDEX nSample, std::ostream &f) const
 {
 	const ModSample &sample = Samples[nSample];
-	if(sample.uFlags[CHN_ADLIB])
+	if(sample.uFlags[CHN_ADLIB] || !sample.HasSampleData())
 		return false;
 
 	mpt::IO::OFile<std::ostream> ff(f);
@@ -843,6 +843,8 @@ bool CSoundFile::ReadW64Sample(SAMPLEINDEX nSample, FileReader &file, bool mayNo
 bool CSoundFile::SaveRAWSample(SAMPLEINDEX nSample, std::ostream &f) const
 {
 	const ModSample &sample = Samples[nSample];
+	if(!sample.HasSampleData())
+		return false;
 	SampleIO(
 		sample.uFlags[CHN_16BIT] ? SampleIO::_16bit : SampleIO::_8bit,
 		sample.uFlags[CHN_STEREO] ? SampleIO::stereoInterleaved : SampleIO::mono,
@@ -1188,6 +1190,8 @@ bool CSoundFile::ReadS3ISample(SAMPLEINDEX nSample, FileReader &file)
 bool CSoundFile::SaveS3ISample(SAMPLEINDEX smp, std::ostream &f) const
 {
 	const ModSample &sample = Samples[smp];
+	if(!sample.uFlags[CHN_ADLIB] && !sample.HasSampleData())
+		return false;
 	S3MSampleHeader sampleHeader{};
 	SmpLength length = sampleHeader.ConvertToS3M(sample);
 	mpt::String::WriteBuf(mpt::String::nullTerminated, sampleHeader.name) = m_szNames[smp];
@@ -2762,7 +2766,7 @@ static uint32 WriteIFFStringChunk(std::ostream &f, IFFChunk::ChunkIdentifiers id
 bool CSoundFile::SaveIFFSample(SAMPLEINDEX smp, std::ostream &f) const
 {
 	const ModSample &sample = Samples[smp];
-	if(sample.uFlags[CHN_ADLIB])
+	if(sample.uFlags[CHN_ADLIB] || !sample.HasSampleData())
 		return false;
 
 	mpt::IO::OFile<std::ostream> ff(f);

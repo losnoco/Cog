@@ -231,6 +231,7 @@ bool UnpackMMCMP(std::vector<ContainerItem> &containerItems, FileReader &file, C
 #ifdef MMCMP_LOG
 			MPT_LOG_GLOBAL(LogDebug, "MMCMP", MPT_UFORMAT("  16-bit block: pos={} size={} {} {}")(psubblk->position, psubblk->size, (blk.flags & MMCMP_DELTA) ? U_("DELTA ") : U_(""), (blk.flags & MMCMP_ABS16) ? U_("ABS16 ") : U_("")));
 #endif
+			if(numbits > 15) return false;
 			if(!file.Seek(memPos + blk.tt_entries)) return false;
 			if(!file.CanRead(blk.pk_size - blk.tt_entries)) return false;
 			BitReader bitFile{ file.GetChunk(blk.pk_size - blk.tt_entries) };
@@ -316,6 +317,7 @@ bool UnpackMMCMP(std::vector<ContainerItem> &containerItems, FileReader &file, C
 			uint32 numbits = blk.num_bits;
 			uint32 oldval = 0;
 			if(blk.tt_entries > sizeof(ptable)
+				|| numbits > 7
 				|| !file.Seek(memPos)
 				|| file.ReadRaw(mpt::span(ptable, blk.tt_entries)).size() < blk.tt_entries)
 				return false;
