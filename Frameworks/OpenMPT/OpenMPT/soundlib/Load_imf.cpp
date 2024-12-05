@@ -177,7 +177,7 @@ struct IMFSample
 	// Convert an IMFSample to OpenMPT's internal sample representation.
 	void ConvertToMPT(ModSample &mptSmp) const
 	{
-		mptSmp.Initialize();
+		mptSmp.Initialize(MOD_TYPE_IMF);
 		mptSmp.filename = mpt::String::ReadBuf(mpt::String::nullTerminated, filename);
 
 		mptSmp.nLength = length;
@@ -556,7 +556,7 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 				const auto [e1c, e1d, e2c, e2d] = patternChunk.ReadArray<uint8, 4>();  // Command 1, Data 1, Command 2, Data 2
 				const auto [command1, param1] = TranslateIMFEffect(e1c, e1d);
 				const auto [command2, param2] = TranslateIMFEffect(e2c, e2d);
-				m.FillInTwoCommands(command1, param1, command2, param2);
+				m.FillInTwoCommands(command1, param1, command2, param2, true);
 			} else if(mask & 0xC0)
 			{
 				// There's one effect, just stick it in the effect column (unless it's a volume command)

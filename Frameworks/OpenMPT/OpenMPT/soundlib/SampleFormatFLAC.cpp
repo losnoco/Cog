@@ -558,7 +558,7 @@ bool CSoundFile::SaveFLACSample(SAMPLEINDEX nSample, std::ostream &f) const
 {
 #ifdef MPT_WITH_FLAC
 	const ModSample &sample = Samples[nSample];
-	if(sample.uFlags[CHN_ADLIB])
+	if(sample.uFlags[CHN_ADLIB] || !sample.HasSampleData())
 		return false;
 
 	FLAC__StreamEncoder_RAII encoder(f);

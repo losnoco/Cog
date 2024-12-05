@@ -55,7 +55,7 @@ mpt::PathString AbsolutePathToRelative(const mpt::PathString &path, const mpt::P
 	using namespace path_literals;
 	using char_type = RawPathString::value_type;
 	mpt::PathString result = path;
-	if(path.empty())
+	if(path.empty() || relativeTo.empty())
 	{
 		return result;
 	}
@@ -79,7 +79,7 @@ mpt::PathString RelativePathToAbsolute(const mpt::PathString &path, const mpt::P
 	using namespace path_literals;
 	using char_type = RawPathString::value_type;
 	mpt::PathString result = path;
-	if(path.empty())
+	if(path.empty() || relativeTo.empty())
 	{
 		return result;
 	}

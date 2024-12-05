@@ -224,7 +224,8 @@ private:
 
 	static bool IsValidRatio(RATIOTYPE ratio)
 	{
-		return (ratio > static_cast<RATIOTYPE>(0.0));
+		// Arbitrary epsilon > 0 to avoid NaNs and infinite values in ratio calculation
+		return (ratio > static_cast<RATIOTYPE>(0.02f));
 	}
 
 private:

@@ -617,8 +617,12 @@ static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERIN
 	const size_t patternStartOffset = file.GetPosition();
 	const size_t sizeWithoutPatterns = totalSampleLen + patternStartOffset;
 	const size_t sizeWithOfficialPatterns = sizeWithoutPatterns + officialPatterns * numChannels * 256;
+	// There are some WOW files with an extra byte at the end, and also a MOD file (idntmind.mod, MD5 a3af5c3e1af269e32dfb6677c41c8453, SHA1 4884717c298575f9884b2211c762bb1725f73743)
+	// where only the "official" patterns should be counted but the file also has an extra byte at the end.
+	// Since MOD files can technically not have an odd file size, we just always round the actual file size down.
+	const auto fileSize = mpt::align_down(file.GetLength(), FileReader::pos_type{2});
 
-	if(wowSampleLen && (wowSampleLen + patternStartOffset) + numPatterns * 8 * 256 == (file.GetLength() & ~1))
+	if(wowSampleLen && (wowSampleLen + patternStartOffset) + numPatterns * 8 * 256 == fileSize)
 	{
 		// Check if this is a Mod's Grave WOW file... WOW files use the M.K. magic but are actually 8CHN files.
 		// We do a simple pattern validation as well for regular MOD files that have non-module data attached at the end
@@ -627,7 +631,7 @@ static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERIN
 		if(ValidateMODPatternData(file, 16, true))
 			numChannels = 8;
 		file.Seek(patternStartOffset);
-	} else if(numPatterns != officialPatterns && (validateHiddenPatterns || sizeWithOfficialPatterns == file.GetLength()))
+	} else if(numPatterns != officialPatterns && (validateHiddenPatterns || sizeWithOfficialPatterns == fileSize))
 	{
 		// 15-sample SoundTracker specifics:
 		// Fix SoundTracker modules where "hidden" patterns should be ignored.
@@ -657,7 +661,7 @@ static PATTERNINDEX GetNumPatterns(FileReader &file, ModSequence &Order, ORDERIN
 		file.Seek(patternStartOffset);
 	}
 
-	if(numPatternsIllegal > numPatterns && sizeWithoutPatterns + numPatternsIllegal * numChannels * 256 == file.GetLength())
+	if(numPatternsIllegal > numPatterns && sizeWithoutPatterns + numPatternsIllegal * numChannels * 256 == fileSize)
 	{
 		// Even those illegal pattern indexes (> 128) appear to be valid... What a weird file!
 		// e.g. NIETNU.MOD, where the end of the order list is filled with FF rather than 00, and the file actually contains 256 patterns.
@@ -1072,6 +1076,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Reading patterns
 	Patterns.ResizeArray(numPatterns);
+	std::bitset<32> referencedSamples;
 	for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
 	{
 		ModCommand *rowBase = nullptr;
@@ -1179,6 +1184,8 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 				if(m.instr != 0)
 				{
 					lastInstrument[chn] = m.instr;
+					if(isStartrekker)
+						referencedSamples.set(m.instr & 0x1F);
 				}
 			}
 			if(hasSpeedOnRow && hasTempoOnRow)
@@ -1215,7 +1222,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		m_SongFlags.set(SONG_ISAMIGA);
 	}
-	if(isGenericMultiChannel || isMdKd)
+	if(isGenericMultiChannel || isMdKd || IsMagic(magic, "M!K!"))
 	{
 		m_playBehaviour.set(kFT2MODTremoloRampWaveform);
 	}
@@ -1316,7 +1323,7 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 		m_nInstruments = 31;
 #endif
 
-		for(SAMPLEINDEX smp = 1; smp <= m_nInstruments; smp++)
+		for(SAMPLEINDEX smp = 1; smp <= GetNumInstruments(); smp++)
 		{
 			// For Startrekker AM synthesis, we need instrument envelopes.
 			ModInstrument *ins = AllocateInstrument(smp, smp);
@@ -1338,6 +1345,32 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 #endif  // MPT_EXTERNAL_SAMPLES || MPT_BUILD_FUZZER
+
+	if((loadFlags & loadSampleData) && isStartrekker && !m_nInstruments)
+	{
+		uint8 emptySampleReferences = 0;
+		for(SAMPLEINDEX smp = 1; smp <= 31; smp++)
+		{
+			if(referencedSamples[smp] && !Samples[smp].nLength)
+			{
+				if(++emptySampleReferences > 1)
+				{
+#ifdef MPT_EXTERNAL_SAMPLES
+					mpt::ustring filenameHint;
+					if(file.GetOptionalFileName())
+					{
+						const auto filename = file.GetOptionalFileName()->GetFilename().ToUnicode();
+						filenameHint = MPT_UFORMAT(" ({}.nt or {}.as)")(filename, filename);
+					}
+					AddToLog(LogWarning, MPT_UFORMAT("This Startrekker AM file is most likely missing its companion file{}. Synthesized instruments will not play.")(filenameHint));
+#else
+					AddToLog(LogWarning, U_("This appears to be a Startrekker AM file with external synthesizes instruments. External instruments are currently not supported."));
+#endif  // MPT_EXTERNAL_SAMPLES
+					break;
+				}
+			}
+		}
+	}
 
 	// Fix VBlank MODs. Arbitrary threshold: 8 minutes (enough for "frame of mind" by Dascon...).
 	// Basically, this just converts all tempo commands into speed commands

@@ -232,6 +232,15 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	m_nMinPeriod = 64;
 	m_nMaxPeriod = 32767;
 
+	ReadOrderFromFile<uint8>(Order(), file, fileHeader.ordNum, 0xFF, 0xFE);
+
+	// Read sample header offsets
+	std::vector<uint16le> sampleOffsets;
+	file.ReadVector(sampleOffsets, fileHeader.smpNum);
+	// Read pattern offsets
+	std::vector<uint16le> patternOffsets;
+	file.ReadVector(patternOffsets, fileHeader.patNum);
+
 	// ST3 ignored Zxx commands, so if we find that a file was made with ST3, we should erase all MIDI macros.
 	bool keepMidiMacros = false;
 
@@ -241,6 +250,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	bool isST3 = false;
 	bool isSchism = false;
 	const bool usePanningTable = fileHeader.usePanningTable == S3MFileHeader::idPanning;
+	const bool offsetsAreCanonical = !patternOffsets.empty() && !sampleOffsets.empty() && patternOffsets[0] > sampleOffsets[0];
 	const int32 schismDateVersion = SchismTrackerEpoch + ((fileHeader.cwtv == 0x4FFF) ? fileHeader.reserved2 : (fileHeader.cwtv - 0x4050));
 	switch(fileHeader.cwtv & S3MFileHeader::trackerMask)
 	{
@@ -252,18 +262,25 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		if(!memcmp(&fileHeader.reserved2, "SCLUB2.0", 8))
 		{
 			madeWithTracker = UL_("Sound Club 2");
-		} else if(fileHeader.cwtv == S3MFileHeader::trkST3_20 && fileHeader.special == 0 && (fileHeader.ordNum & 0x0F) == 0 && fileHeader.ultraClicks == 0 && (fileHeader.flags & ~0x50) == 0 && usePanningTable)
+		} else if(fileHeader.cwtv == S3MFileHeader::trkST3_20 && fileHeader.special == 0 && (fileHeader.ordNum & 0x01) == 0 && fileHeader.ultraClicks == 0 && (fileHeader.flags & ~0x50) == 0 && usePanningTable && offsetsAreCanonical)
 		{
-			// MPT and OpenMPT before 1.17.03.02 - Simply keep default (filter) MIDI macros
-			if((fileHeader.masterVolume & 0x80) != 0)
+			// Canonical offset check avoids mis-detection of an automatic conversion of Vic's "Paper" demo track
+			if((fileHeader.ordNum & 0x0F) == 0)
 			{
-				m_dwLastSavedWithVersion = MPT_V("1.16");
-				madeWithTracker = UL_("ModPlug Tracker / OpenMPT 1.17");
-			} else
+				// MPT and OpenMPT before 1.17.03.02 - Simply keep default (filter) MIDI macros
+				if((fileHeader.masterVolume & 0x80) != 0)
+				{
+					m_dwLastSavedWithVersion = MPT_V("1.16");
+					madeWithTracker = UL_("ModPlug Tracker / OpenMPT 1.17");
+				} else
+				{
+					// MPT 1.0 alpha5 doesn't set the stereo flag, but MPT 1.0 alpha6 does.
+					m_dwLastSavedWithVersion = MPT_V("1.00.00.A0");
+					madeWithTracker = UL_("ModPlug Tracker 1.0 alpha");
+				}
+			} else if((fileHeader.masterVolume & 0x80) != 0)
 			{
-				// MPT 1.0 alpha5 doesn't set the stereo flag, but MPT 1.0 alpha6 does.
-				m_dwLastSavedWithVersion = MPT_V("1.00.00.A0");
-				madeWithTracker = UL_("ModPlug Tracker 1.0 alpha");
+				madeWithTracker = UL_("Schism Tracker");
 			}
 			keepMidiMacros = true;
 			nonCompatTracker = true;
@@ -511,15 +528,6 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		m_nChannels = 1;
 	}
 
-	ReadOrderFromFile<uint8>(Order(), file, fileHeader.ordNum, 0xFF, 0xFE);
-
-	// Read sample header offsets
-	std::vector<uint16le> sampleOffsets;
-	file.ReadVector(sampleOffsets, fileHeader.smpNum);
-	// Read pattern offsets
-	std::vector<uint16le> patternOffsets;
-	file.ReadVector(patternOffsets, fileHeader.patNum);
-
 	// Read extended channel panning
 	if(usePanningTable)
 	{
@@ -538,6 +546,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		if(m_nChannels < 32 && m_dwLastSavedWithVersion == MPT_V("1.16"))
 		{
 			// MPT 1.0 alpha 6 up to 1.16.203 set ths panning bit for all channels, regardless of whether they are used or not.
+			// Note: Schism Tracker fixed the same bug in git commit f21fe8bcae8b6dde2df27ede4ac9fe563f91baff
 			if(hasChannelsWithoutPanning)
 				m_modFormat.madeWithTracker = UL_("ModPlug Tracker 1.16 / OpenMPT 1.17");
 			else

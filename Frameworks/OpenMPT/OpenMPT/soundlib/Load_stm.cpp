@@ -49,7 +49,7 @@ struct STMSampleHeader
 			&& mptSmp.nLoopEnd != 0xFFFF)
 		{
 			mptSmp.uFlags = CHN_LOOP;
-			mptSmp.nLoopEnd = std::min(mptSmp.nLoopEnd, mptSmp.nLength);
+			mptSmp.nLength = std::max(mptSmp.nLoopEnd, mptSmp.nLength);
 		}
 	}
 };

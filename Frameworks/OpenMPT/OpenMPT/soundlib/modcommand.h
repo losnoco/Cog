@@ -230,7 +230,7 @@ public:
 	// Try to convert a an effect into a volume column effect. Returns converted effect on success.
 	[[nodiscard]] static std::pair<VolumeCommand, VOL> ConvertToVolCommand(const EffectCommand effect, PARAM param, bool force);
 	// Takes two "normal" effect commands and converts them to volume column + effect column commands. Returns the dropped command + param (CMD_NONE if nothing had to be dropped).
-	std::pair<EffectCommand, PARAM> FillInTwoCommands(EffectCommand effect1, uint8 param1, EffectCommand effect2, uint8 param2);
+	std::pair<EffectCommand, PARAM> FillInTwoCommands(EffectCommand effect1, uint8 param1, EffectCommand effect2, uint8 param2, bool allowLowResOffset = false);
 	// Try to combine two commands into one. Returns true on success and the combined command is placed in eff1 / param1.
 	static bool CombineEffects(EffectCommand &eff1, uint8 &param1, EffectCommand &eff2, uint8 &param2);
 

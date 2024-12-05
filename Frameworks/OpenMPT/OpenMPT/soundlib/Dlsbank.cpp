@@ -2127,9 +2127,9 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 		}
 	}
 	pIns->nFadeOut = 1024;
-	pIns->nMidiProgram = (uint8)(dlsIns.ulInstrument & 0x7F) + 1;
-	pIns->nMidiChannel = (uint8)(isDrum ? 10 : 0);
-	pIns->wMidiBank = (uint16)(((dlsIns.ulBank & 0x7F00) >> 1) | (dlsIns.ulBank & 0x7F));
+	pIns->nMidiProgram = static_cast<uint8>(1 + (dlsIns.ulInstrument & 0x7F));
+	pIns->nMidiChannel = static_cast<uint8>(isDrum ? 10 : 0);
+	pIns->wMidiBank = static_cast<uint16>(1 + (((dlsIns.ulBank & 0x7F00) >> 1) | (dlsIns.ulBank & 0x7F)));
 	pIns->nNNA = NewNoteAction::NoteOff;
 	pIns->nDCT = DuplicateCheckType::Note;
 	pIns->nDNA = DuplicateNoteAction::NoteFade;
@@ -2146,7 +2146,7 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 		const DLSREGION &rgn = dlsIns.Regions[nRgn];
 		if(rgn.IsDummy())
 			continue;
-		// Elimitate Duplicate Regions
+		// Eliminate Duplicate Regions
 		uint32 dupRegion;
 		for(dupRegion = minRegion; dupRegion < nRgn; dupRegion++)
 		{

@@ -1346,7 +1346,7 @@ bool ModCommand::CombineEffects(EffectCommand &eff1, uint8 &param1, EffectComman
 }
 
 
-std::pair<EffectCommand, ModCommand::PARAM> ModCommand::FillInTwoCommands(EffectCommand effect1, uint8 param1, EffectCommand effect2, uint8 param2)
+std::pair<EffectCommand, ModCommand::PARAM> ModCommand::FillInTwoCommands(EffectCommand effect1, uint8 param1, EffectCommand effect2, uint8 param2, bool allowLowResOffset)
 {
 	if(effect1 == effect2)
 	{
@@ -1400,6 +1400,12 @@ std::pair<EffectCommand, ModCommand::PARAM> ModCommand::FillInTwoCommands(Effect
 	{
 		std::swap(effect1, effect2);
 		std::swap(param1, param2);
+	}
+	if(effect2 == CMD_OFFSET && (allowLowResOffset || param2 == 0))
+	{
+		SetVolumeCommand(VOLCMD_OFFSET, static_cast<ModCommand::VOL>(param2 ? std::max(param2 * 9 / 255, 1) : 0));
+		SetEffectCommand(effect1, param1);
+		return {CMD_NONE, ModCommand::PARAM(0)};
 	}
 	SetVolumeCommand(VOLCMD_NONE, 0);
 	SetEffectCommand(effect2, param2);

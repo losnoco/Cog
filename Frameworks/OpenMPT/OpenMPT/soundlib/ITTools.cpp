@@ -530,10 +530,9 @@ void ITSample::ConvertToIT(const ModSample &mptSmp, MODTYPE fromType, bool compr
 // Convert an ITSample to OpenMPT's internal sample representation.
 uint32 ITSample::ConvertToMPT(ModSample &mptSmp) const
 {
-	if(memcmp(id, "IMPS", 4))
-	{
-		return 0;
-	}
+	// IT does not check for the IMPS magic, and some bad XM->IT converter out there doesn't write the magic bytes for empty sample slots.
+	//if(memcmp(id, "IMPS", 4))
+	//	return 0;
 
 	mptSmp.Initialize(MOD_TYPE_IT);
 	mptSmp.SetDefaultCuePoints();  // For old IT/MPTM files

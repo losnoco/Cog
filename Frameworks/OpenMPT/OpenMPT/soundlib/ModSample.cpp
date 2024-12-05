@@ -41,6 +41,13 @@ void ModSample::Convert(MODTYPE fromType, MODTYPE toType)
 			nC5Speed = Util::muldivr_unsigned(nC5Speed, 8363, 8287);
 		FrequencyToTranspose();
 	}
+	if(toType == MOD_TYPE_MOD)
+	{
+		if(RelativeTone == -1 && nFineTune == 0)
+			nFineTune = -128;
+		RelativeTone = 0;
+		nFineTune &= ~0x0F;
+	}
 
 	// No ping-pong loop, panning and auto-vibrato for MOD / S3M samples
 	if(toType & (MOD_TYPE_MOD | MOD_TYPE_S3M))
@@ -51,8 +58,6 @@ void ModSample::Convert(MODTYPE fromType, MODTYPE toType)
 		nVibRate = 0;
 		nVibSweep = 0;
 		nVibType = VIB_SINE;
-
-		RelativeTone = 0;
 	}
 
 	// No global volume / sustain loops for MOD/S3M/XM
@@ -84,7 +89,6 @@ void ModSample::Convert(MODTYPE fromType, MODTYPE toType)
 		LimitMax(nVibDepth, uint8(15));
 		LimitMax(nVibRate, uint8(63));
 	}
-
 
 	// Autovibrato sweep setting is inverse in XM (0 = "no sweep") and IT (0 = "no vibrato")
 	if(((fromType & MOD_TYPE_XM) && (toType & (MOD_TYPE_IT | MOD_TYPE_MPT))) || ((toType & MOD_TYPE_XM) && (fromType & (MOD_TYPE_IT | MOD_TYPE_MPT))))
@@ -150,7 +154,16 @@ void ModSample::Initialize(MODTYPE type)
 	rootNote = 0;
 	filename = "";
 
-	RemoveAllCuePoints();
+	if(type & (MOD_TYPE_DBM | MOD_TYPE_IMF | MOD_TYPE_MED))
+	{
+		for(SmpLength i = 1; i < 10; i++)
+		{
+			cues[i - 1] = Util::muldiv_unsigned(i, 255 * 256, 9);
+		}
+	} else
+	{
+		RemoveAllCuePoints();
+	}
 }
 
 

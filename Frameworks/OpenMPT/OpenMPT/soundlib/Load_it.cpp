@@ -798,6 +798,19 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 
 	bool possibleXMconversion = false;
 
+	// There's a bug in IT somewhere that resets the "sample data present" flag in sample headers, but keeps the sample length
+	// of a previously deleted sample (presumably).
+	// As old ModPlug versions didn't set this flag under some circumstances (if a sample wasn't referenced by any instruments in instrument mode),
+	// and because there appear to be some external tools that forget to set this flag at all, we only respect the flag if the file
+	// vaguely looks like it was saved with IT. Some files that play garbage data if we don't do this:
+	// astral projection.it by Lord Jon Ray
+	// classic illusions.it by Blackstar
+	// deep in dance.it by Simply DJ
+	// There are many more such files but they don't reference the broken samples in their pattern data, or the sample data pointer
+	// points right to the end of the file, so in both cases no audible problem can be observed.
+	const bool muteBuggySamples = !interpretModPlugMade && fileHeader.cwtv >= 0x0100 && fileHeader.cwtv <= 0x0217
+		&& (fileHeader.cwtv < 0x0207 || fileHeader.reserved != 0);
+
 	// Reading Samples
 	m_nSamples = std::min(static_cast<SAMPLEINDEX>(fileHeader.smpnum), static_cast<SAMPLEINDEX>(MAX_SAMPLES - 1));
 	bool lastSampleCompressed = false, anyADPCM = false;
@@ -806,9 +819,10 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 		ITSample sampleHeader;
 		if(smpPos[i] > 0 && file.Seek(smpPos[i]) && file.ReadStruct(sampleHeader))
 		{
-			// IT does not check for the IMPS magic, and some bad XM->IT converter out there doesn't write the magic bytes for empty sample slots.
 			ModSample &sample = Samples[i + 1];
 			size_t sampleOffset = sampleHeader.ConvertToMPT(sample);
+			if(muteBuggySamples && !(sampleHeader.flags & ITSample::sampleDataPresent))
+				sample.nLength = 0;
 
 			m_szNames[i + 1] = mpt::String::ReadBuf(mpt::String::spacePadded, sampleHeader.name);
 
@@ -1257,6 +1271,10 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 			} else if(fileHeader.cwtv == 0 && madeWithTracker.empty())
 			{
 				madeWithTracker = U_("Unknown");
+			} else if(fileHeader.cwtv >= 0x0208 && fileHeader.cwtv <= 0x0214 && !fileHeader.reserved && m_FileHistory.empty() && madeWithTracker.empty())
+			{
+				// Any file made with IT starting from v2.07 onwards should have an edit history
+				madeWithTracker = UL_("Unknown");
 			} else if(fileHeader.cmwt < 0x0300 && madeWithTracker.empty())
 			{
 				madeWithTracker = GetImpulseTrackerVersion(fileHeader.cwtv, fileHeader.cmwt);
@@ -2650,14 +2668,6 @@ bool CSoundFile::LoadExtendedSongProperties(FileReader &file, bool ignoreChannel
 		m_nMixLevels = MixLevels::Original;
 	//m_dwCreatedWithVersion
 	//m_dwLastSavedWithVersion
-	//m_nSamplePreAmp
-	//m_nVSTiVolume
-	//m_nDefaultGlobalVolume
-	LimitMax(m_nDefaultGlobalVolume, MAX_GLOBAL_VOLUME);
-	//m_nRestartPos
-	//m_ModFlags
-	LimitMax(m_nDefaultRowsPerBeat, MAX_ROWS_PER_BEAT);
-	LimitMax(m_nDefaultRowsPerMeasure, MAX_ROWS_PER_BEAT);
 
 	return true;
 }
