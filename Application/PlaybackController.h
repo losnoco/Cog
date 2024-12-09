@@ -19,8 +19,11 @@
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
 
-#define DEFAULT_SPEED_DOWN 0.2
-#define DEFAULT_SPEED_UP DEFAULT_SPEED_DOWN
+#define DEFAULT_PITCH_DOWN 0.2
+#define DEFAULT_PITCH_UP DEFAULT_PITCH_DOWN
+
+#define DEFAULT_TEMPO_DOWN 0.2
+#define DEFAULT_TEMPO_UP DEFAULT_TEMPO_DOWN
 
 extern NSString *CogPlaybackDidBeginNotificiation;
 extern NSString *CogPlaybackDidPauseNotificiation;
@@ -43,7 +46,9 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	IBOutlet EqualizerWindowController *equalizerWindowController;
 
 	IBOutlet NSSlider *volumeSlider;
-	IBOutlet NSSlider *speedSlider;
+	IBOutlet NSSlider *pitchSlider;
+	IBOutlet NSSlider *tempoSlider;
+	IBOutlet NSButton *lockButton;
 
 	IBOutlet NSArrayController *outputDevices;
 
@@ -73,9 +78,13 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (IBAction)volumeDown:(id)sender;
 - (IBAction)volumeUp:(id)sender;
 
-- (IBAction)changeSpeed:(id)sender;
-- (IBAction)speedDown:(id)sender;
-- (IBAction)speedUp:(id)sender;
+- (IBAction)changePitch:(id)sender;
+- (IBAction)pitchDown:(id)sender;
+- (IBAction)pitchUp:(id)sender;
+
+- (IBAction)changeTempo:(id)sender;
+- (IBAction)tempoDown:(id)sender;
+- (IBAction)tempoUp:(id)sender;
 
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;

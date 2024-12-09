@@ -91,7 +91,9 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
 - (void)initDefaults {
 	NSDictionary *defaultsDictionary = @{ @"volume": @(75.0),
-										  @"speed": @(1.0),
+										  @"pitch": @(1.0),
+										  @"tempo": @(1.0),
+										  @"speedLock": @(YES),
 		                                  @"GraphicEQenable": @(NO),
 		                                  @"GraphicEQpreset": @(-1),
 		                                  @"GraphicEQtrackgenre": @(NO),
@@ -99,6 +101,16 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 		                                  @"headphoneVirtualization": @(NO) };
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
+}
+
+static double speedScale(double input, double min, double max) {
+	input = (input - min) * 100.0 / (max - min);
+	return ((input * input) * (5.0 - 0.2) / 10000.0) + 0.2;
+}
+
+static double reverseSpeedScale(double input, double min, double max) {
+	input = sqrtf((input - 0.2) * 10000.0 / (5.0 - 0.2));
+	return (input * (max - min) / 100.0) + min;
 }
 
 - (void)awakeFromNib {
@@ -110,8 +122,15 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 	[volumeSlider setDoubleValue:logarithmicToLinear(volume, MAX_VOLUME)];
 	[audioPlayer setVolume:volume];
 
-	double speed = [[NSUserDefaults standardUserDefaults] doubleForKey:@"speed"];
-	[audioPlayer setSpeed:speed];
+	double pitch = [[NSUserDefaults standardUserDefaults] doubleForKey:@"pitch"];
+	[audioPlayer setPitch:pitch];
+	[pitchSlider setDoubleValue:reverseSpeedScale(pitch, [pitchSlider minValue], [pitchSlider maxValue])];
+	double tempo = [[NSUserDefaults standardUserDefaults] doubleForKey:@"tempo"];
+	[audioPlayer setTempo:tempo];
+	[tempoSlider setDoubleValue:reverseSpeedScale(tempo, [tempoSlider minValue], [tempoSlider maxValue])];
+
+	BOOL speedLock = [[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"];
+	[lockButton setTitle:speedLock ? @"🔒" : @"🔓"];
 
 	[self setSeekable:NO];
 }
@@ -253,7 +272,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 #if 0
 	// Race here, but the worst that could happen is we re-read the data
-    if ([pe metadataLoaded] != YES) {
+    if([pe metadataLoaded] != YES) {
 		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
 	}
 #elif 0
@@ -381,7 +400,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
     NSImage *img = [NSImage imageNamed:name];
 //	[img retain];
 
-    if (img == nil)
+    if(img == nil)
     {
         DLog(@"Error loading image!");
     }
@@ -482,12 +501,34 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 }
 
-- (IBAction)changeSpeed:(id)sender {
-	DLog(@"SPEED: %lf", [sender doubleValue]);
+- (IBAction)changePitch:(id)sender {
+	const double pitch = speedScale([sender doubleValue], [pitchSlider minValue], [pitchSlider maxValue]);
+	DLog(@"PITCH: %lf", pitch);
 
-	[audioPlayer setSpeed:[sender doubleValue]];
+	[audioPlayer setPitch:pitch];
 
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer speed] forKey:@"speed"];
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
+		[audioPlayer setTempo:pitch];
+
+		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+	}
+}
+
+- (IBAction)changeTempo:(id)sender {
+	const double tempo = speedScale([sender doubleValue], [tempoSlider minValue], [tempoSlider maxValue]);
+	DLog(@"TEMPO: %lf", tempo);
+
+	[audioPlayer setTempo:tempo];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
+		[audioPlayer setPitch:tempo];
+
+		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+	}
 }
 
 - (IBAction)skipToNextAlbum:(id)sender {
@@ -591,18 +632,64 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
-- (IBAction)speedDown:(id)sender {
-	double newSpeed = [audioPlayer speedDown:DEFAULT_SPEED_DOWN];
-	[speedSlider setDoubleValue:[audioPlayer speed]];
+- (IBAction)pitchDown:(id)sender {
+	/*double newPitch = */[audioPlayer pitchDown:DEFAULT_PITCH_DOWN];
+	[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
 
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer speed] forKey:@"speed"];
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
+		[audioPlayer setTempo:[audioPlayer pitch]];
+
+		[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
+
+		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+	}
 }
 
-- (IBAction)speedUp:(id)sender {
-	double newSpeed = [audioPlayer speedUp:DEFAULT_SPEED_UP];
-	[speedSlider setDoubleValue:[audioPlayer speed]];
+- (IBAction)pitchUp:(id)sender {
+	/*double newPitch = */[audioPlayer tempoUp:DEFAULT_PITCH_UP];
+	[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
 
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer speed] forKey:@"speed"];
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
+		[audioPlayer setTempo:[audioPlayer pitch]];
+
+		[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
+
+		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+	}
+}
+
+- (IBAction)tempoDown:(id)sender {
+	/*double newTempo = */[audioPlayer tempoDown:DEFAULT_TEMPO_DOWN];
+	[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
+		[audioPlayer setPitch:[audioPlayer tempo]];
+
+		[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
+
+		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+	}
+}
+
+- (IBAction)tempoUp:(id)sender {
+	/*double newTempo = */[audioPlayer tempoUp:DEFAULT_PITCH_UP];
+	[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
+		[audioPlayer setPitch:[audioPlayer tempo]];
+
+		[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
+
+		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+	}
 }
 
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq {
@@ -764,7 +851,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
-	if (!pe) pe = [playlistController currentEntry];
+	if(!pe) pe = [playlistController currentEntry];
 	[pe setMetadata:info];
 	[playlistView refreshTrack:pe];
 	// Delay the action until this function has returned to the audio thread

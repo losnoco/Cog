@@ -35,8 +35,6 @@ using std::atomic_long;
 #import <stdio.h>
 #endif
 
-#import <soxr.h>
-
 @class OutputNode;
 
 @class FSurroundFilter;
@@ -56,7 +54,8 @@ using std::atomic_long;
 
 	double lastClippedSampleRate;
 
-	soxr_t rssimplespeed;
+	void *ts;
+	size_t blockSize, toDrop, samplesBuffered;
 	double ssRenderedIn, ssLastRenderedIn;
 	double ssRenderedOut;
 
@@ -90,8 +89,8 @@ using std::atomic_long;
 	float volume;
 	float eqPreamp;
 
-	double speed;
-	double lastSpeed;
+	double pitch, tempo;
+	double lastPitch, lastTempo;
 
 	AVAudioFormat *_deviceFormat;
 
@@ -139,7 +138,9 @@ using std::atomic_long;
 
 	float *samplePtr;
 	float tempBuffer[512 * 32];
-	float rsInBuffer[8192 * 32];
+	float *rsPtrs[32];
+	float rsInBuffer[1024 * 32];
+	float rsOutBuffer[65536 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
 	float fsurroundBuffer[8192 * 6];
 	float hrtfBuffer[4096 * 2];
@@ -182,6 +183,7 @@ using std::atomic_long;
 
 - (void)reportMotion:(simd_float4x4)matrix;
 
-- (void)setSpeed:(double)s;
+- (void)setPitch:(double)p;
+- (void)setTempo:(double)t;
 
 @end

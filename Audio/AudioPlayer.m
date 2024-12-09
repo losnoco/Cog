@@ -24,6 +24,10 @@
 		bufferChain = nil;
 		outputLaunched = NO;
 		endOfInputReached = NO;
+		
+		// Safety
+		pitch = 1.0;
+		tempo = 1.0;
 
 		chainQueue = [[NSMutableArray alloc] init];
 
@@ -75,7 +79,8 @@
 	}
 	[output setup];
 	[output setVolume:volume];
-	[output setSpeed:speed];
+	[output setPitch:pitch];
+	[output setTempo:tempo];
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -211,14 +216,24 @@
 	return volume;
 }
 
-- (void)setSpeed:(double)s {
-	speed = s;
+- (void)setPitch:(double)p {
+	pitch = p;
 
-	[output setSpeed:s];
+	[output setPitch:p];
 }
 
-- (double)speed {
-	return speed;
+- (double)pitch {
+	return pitch;
+}
+
+- (void)setTempo:(double)t {
+	tempo = t;
+
+	[output setTempo:t];
+}
+
+- (double)tempo {
+	return tempo;
 }
 
 // This is called by the delegate DURING a requestNextStream request.
@@ -659,30 +674,56 @@
 	return newVolume;
 }
 
-- (double)speedUp:(double)amount {
-	const double MAX_SPEED = 5.0;
+- (double)pitchUp:(double)amount {
+	const double MAX_PITCH = 5.0;
 
-	double newSpeed;
-	if((speed + amount) > MAX_SPEED)
-		newSpeed = MAX_SPEED;
+	double newPitch;
+	if((pitch + amount) > MAX_PITCH)
+		newPitch = MAX_PITCH;
 	else
-		newSpeed = speed + amount;
+		newPitch = pitch + amount;
 
-	[self setSpeed:newSpeed];
-	return newSpeed;
+	[self setPitch:newPitch];
+	return newPitch;
 }
 
-- (double)speedDown:(double)amount {
-	const double MIN_SPEED = 0.2;
+- (double)pitchDown:(double)amount {
+	const double MIN_PITCH = 0.2;
 
-	double newSpeed;
-	if((speed - amount) < MIN_SPEED)
-		newSpeed = MIN_SPEED;
+	double newPitch;
+	if((pitch - amount) < MIN_PITCH)
+		newPitch = MIN_PITCH;
 	else
-		newSpeed = speed - amount;
+		newPitch = pitch - amount;
 
-	[self setSpeed:newSpeed];
-	return newSpeed;
+	[self setPitch:newPitch];
+	return newPitch;
+}
+
+- (double)tempoUp:(double)amount {
+	const double MAX_TEMPO = 5.0;
+
+	double newTempo;
+	if((tempo + amount) > MAX_TEMPO)
+		newTempo = MAX_TEMPO;
+	else
+		newTempo = tempo + amount;
+
+	[self setTempo:newTempo];
+	return newTempo;
+}
+
+- (double)tempoDown:(double)amount {
+	const double MIN_TEMPO = 0.2;
+
+	double newTempo;
+	if((tempo - amount) < MIN_TEMPO)
+		newTempo = MIN_TEMPO;
+	else
+		newTempo = tempo - amount;
+
+	[self setTempo:newTempo];
+	return newTempo;
 }
 
 - (void)waitUntilCallbacksExit {
