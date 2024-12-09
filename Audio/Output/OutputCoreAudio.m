@@ -23,11 +23,15 @@
 
 #import "FSurroundFilter.h"
 
+#import <rubberband/rubberband-c.h>
+
 #define OCTAVES 5
 
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
+
+#define tts ((RubberBandState)ts)
 
 simd_float4x4 convertMatrix(CMRotationMatrix r) {
 	simd_float4x4 matrix = {
@@ -110,7 +114,7 @@ static void fillBuffers(AudioBufferList *ioData, const float *inbuffer, size_t c
 
 static void clearBuffers(AudioBufferList *ioData, size_t count, size_t offset) {
 	for(int i = 0; i < ioData->mNumberBuffers; ++i) {
-		memset(ioData->mBuffers[i].mData + offset * sizeof(float), 0, count * sizeof(float));
+		memset((uint8_t *)ioData->mBuffers[i].mData + offset * sizeof(float), 0, count * sizeof(float));
 		ioData->mBuffers[i].mNumberChannels = 1;
 	}
 }
@@ -338,8 +342,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		outputLock = [[NSLock alloc] init];
 
-		speed = 1.0;
-		lastSpeed = 1.0;
+		pitch = 1.0; tempo = 1.0;
+		lastPitch = 1.0; lastTempo = 1.0;
 
 #ifdef OUTPUT_LOG
 		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];
@@ -352,21 +356,21 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 static OSStatus
 default_device_changed(AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress *inAddresses, void *inUserData) {
-	OutputCoreAudio *this = (__bridge OutputCoreAudio *)inUserData;
-	return [this setOutputDeviceByID:-1];
+	OutputCoreAudio *_self = (__bridge OutputCoreAudio *)inUserData;
+	return [_self setOutputDeviceByID:-1];
 }
 
 static OSStatus
 current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioObjectPropertyAddress *inAddresses, void *inUserData) {
-	OutputCoreAudio *this = (__bridge OutputCoreAudio *)inUserData;
+	OutputCoreAudio *_self = (__bridge OutputCoreAudio *)inUserData;
 	for(UInt32 i = 0; i < inNumberAddresses; ++i) {
 		switch(inAddresses[i].mSelector) {
 			case kAudioDevicePropertyDeviceIsAlive:
-				return [this setOutputDeviceByID:-1];
+				return [_self setOutputDeviceByID:-1];
 
 			case kAudioDevicePropertyNominalSampleRate:
 			case kAudioDevicePropertyStreamFormat:
-				this->outputdevicechanged = YES;
+				_self->outputdevicechanged = YES;
 				return noErr;
 		}
 	}
@@ -611,7 +615,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	__Verify_noErr(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize));
 	UInt32 nDevices = propsize / (UInt32)sizeof(AudioDeviceID);
-	AudioDeviceID *devids = malloc(propsize);
+	AudioDeviceID *devids = (AudioDeviceID *)malloc(propsize);
 	__Verify_noErr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, devids));
 
 	theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
@@ -812,14 +816,35 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[outputLock unlock];
 	}
 
-	if(rssimplespeed) {
-		soxr_delete(rssimplespeed);
+	if(ts) {
+		rubberband_delete(tts);
+		ts = NULL;
 	}
 
-	soxr_error_t error;
-	soxr_quality_spec_t q_spec = soxr_quality_spec(SOXR_HQ, SOXR_VR);
-	rssimplespeed = soxr_create(1 << OCTAVES, 1, realStreamFormat.mChannelsPerFrame, &error, NULL, &q_spec, NULL);
-	soxr_set_io_ratio(rssimplespeed, speed, 0);
+	RubberBandOptions options = RubberBandOptionProcessRealTime;
+	ts = rubberband_new(realStreamFormat.mSampleRate, realStreamFormat.mChannelsPerFrame, options, 1.0 / tempo, pitch);
+
+	blockSize = 1024;
+	toDrop = rubberband_get_start_delay(tts);
+	samplesBuffered = 0;
+	rubberband_set_max_process_size(tts, (int)blockSize);
+
+	for(size_t i = 0; i < 32; ++i) {
+		rsPtrs[i] = &rsInBuffer[1024 * i];
+	}
+
+	size_t toPad = rubberband_get_preferred_start_pad(tts);
+	if(toPad > 0) {
+		for(size_t i = 0; i < realStreamFormat.mChannelsPerFrame; ++i) {
+			memset(rsPtrs[i], 0, 1024 * sizeof(float));
+		}
+		while(toPad > 0) {
+			size_t p = toPad;
+			if(p > blockSize) p = blockSize;
+			rubberband_process(tts, (const float * const *)rsPtrs, (int)p, false);
+			toPad -= p;
+		}
+	}
 
 	ssRenderedIn = 0.0;
 	ssLastRenderedIn = 0.0;
@@ -951,37 +976,65 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			int simpleSpeedInput = samplesRendered;
 			int simpleSpeedRendered = 0;
 			int channels = realStreamFormat.mChannelsPerFrame;
-			int max_block_len = 8192;
+			size_t max_block_len = blockSize;
 
-			if (fabs(speed - lastSpeed) > 1e-5) {
-				lastSpeed = speed;
-				soxr_set_io_ratio(rssimplespeed, speed, max_block_len);
+			if (fabs(pitch - lastPitch) > 1e-5 ||
+				fabs(tempo - lastTempo) > 1e-5) {
+				lastPitch = pitch;
+				lastTempo = tempo;
+				rubberband_set_pitch_scale(tts, pitch);
+				rubberband_set_time_ratio(tts, 1.0 / tempo);
 			}
 
 			const double inputRatio = 1.0 / realStreamFormat.mSampleRate;
-			const double outputRatio = inputRatio * speed;
+			const double outputRatio = inputRatio * tempo;
 
 			while (simpleSpeedInput > 0) {
-				int block_len = max_block_len - simpleSpeedRendered;
-
-				if (!block_len)
-					break;
-
 				float *ibuf = samplePtr;
-				int len = simpleSpeedInput;
-				float *obuf = &rsInBuffer[simpleSpeedRendered * channels];
-				size_t idone = 0;
-				size_t odone = 0;
-				int error = soxr_process(rssimplespeed, ibuf, len, &idone, obuf, block_len, &odone);
-				simpleSpeedInput -= idone;
-				ibuf += channels * idone;
-				simpleSpeedRendered += odone;
-				ssRenderedIn += idone * inputRatio;
-				ssRenderedOut += odone * outputRatio;
+				size_t len = simpleSpeedInput;
+				if(len > blockSize) len = blockSize;
+
+				for(size_t i = 0; i < channels; ++i) {
+					cblas_scopy((int)len, ibuf + i, channels, rsPtrs[i], 1);
+				}
+
+				rubberband_process(tts, (const float * const *)rsPtrs, (int)len, false);
+
+				simpleSpeedInput -= len;
+				ibuf += len * channels;
+				ssRenderedIn += len * inputRatio;
+
+				size_t samplesAvailable;
+				while ((samplesAvailable = rubberband_available(tts)) > 0) {
+					if(toDrop > 0) {
+						size_t blockDrop = toDrop;
+						if(blockDrop > blockSize) blockDrop = blockSize;
+						rubberband_retrieve(tts, (float * const *)rsPtrs, (int)blockDrop);
+						toDrop -= blockDrop;
+						continue;
+					}
+					size_t maxAvailable = 65536 - samplesBuffered;
+					if(samplesAvailable > maxAvailable) {
+						samplesAvailable = maxAvailable;
+						if(!samplesAvailable) {
+							break;
+						}
+					}
+					size_t samplesOut = samplesAvailable;
+					if(samplesOut > blockSize) samplesOut = blockSize;
+					rubberband_retrieve(tts, (float * const *)rsPtrs, (int)samplesOut);
+					for(size_t i = 0; i < channels; ++i) {
+						cblas_scopy((int)samplesOut, rsPtrs[i], 1, &rsOutBuffer[samplesBuffered * channels + i], channels);
+					}
+					samplesBuffered += samplesOut;
+					ssRenderedOut += samplesOut * outputRatio;
+					simpleSpeedRendered += samplesOut;
+				}
 				samplePtr = ibuf;
 			}
-			samplePtr = &rsInBuffer[0];
+			samplePtr = &rsOutBuffer[0];
 			samplesRendered = simpleSpeedRendered;
+			samplesBuffered = 0;
 		}
 		[outputLock lock];
 		if(fsurround) {
@@ -1288,8 +1341,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	volume = v * 0.01f;
 }
 
-- (void)setSpeed:(double)s {
-	speed = s;
+- (void)setPitch:(double)p {
+	pitch = p;
+}
+
+- (void)setTempo:(double)t {
+	tempo = t;
 }
 
 - (void)setEqualizerEnabled:(BOOL)enabled {
@@ -1406,9 +1463,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			rsstate_delete(rsvis);
 			rsvis = NULL;
 		}
-		if(rssimplespeed) {
-			soxr_delete(rssimplespeed);
-			rssimplespeed = NULL;
+		if(ts) {
+			rubberband_delete(tts);
+			ts = NULL;
 		}
 		stopCompleted = YES;
 	}

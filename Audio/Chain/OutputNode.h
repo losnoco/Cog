@@ -61,7 +61,8 @@
 
 - (void)setVolume:(double)v;
 
-- (void)setSpeed:(double)s;
+- (void)setPitch:(double)p;
+- (void)setTempo:(double)t;
 
 - (void)setShouldContinue:(BOOL)s;
 
