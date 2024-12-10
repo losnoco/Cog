@@ -82,6 +82,8 @@ static uint8_t reverse_bits[0x100];
 }
 
 - (BOOL)open:(id<CogSource>)s {
+	char errDescr[4096];
+
 	int errcode, i;
 	AVStream *stream;
 
@@ -119,7 +121,6 @@ static uint8_t reverse_bits[0x100];
 
 		NSString *urlString = [url absoluteString];
 		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
-			char errDescr[4096];
 			av_strerror(errcode, errDescr, 4096);
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			return NO;
@@ -146,7 +147,6 @@ static uint8_t reverse_bits[0x100];
 		formatCtx->pb = ioCtx;
 
 		if((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0) {
-			char errDescr[4096];
 			av_strerror(errcode, errDescr, 4096);
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			return NO;
@@ -154,7 +154,6 @@ static uint8_t reverse_bits[0x100];
 	}
 
 	if((errcode = avformat_find_stream_info(formatCtx, NULL)) < 0) {
-		char errDescr[4096];
 		av_strerror(errcode, errDescr, 4096);
 		ALog(@"Can't find stream info, errcode = %d, error = %s", errcode, errDescr);
 		return NO;
@@ -195,7 +194,6 @@ static uint8_t reverse_bits[0x100];
 	}
 
 	if((errcode = avcodec_parameters_to_context(codecCtx, codecPar)) < 0) {
-		char errDescr[4096];
 		av_strerror(errcode, errDescr, 4096);
 		ALog(@"Can't copy codec parameters to context, errcode = %d, error = %s", errcode, errDescr);
 		return NO;
@@ -266,7 +264,6 @@ static uint8_t reverse_bits[0x100];
 	}
 
 	if(!rawDSD && (errcode = avcodec_open2(codecCtx, codec, &dict)) < 0) {
-		char errDescr[4096];
 		av_dict_free(&dict);
 		av_strerror(errcode, errDescr, 4096);
 		ALog(@"could not open codec, errcode = %d, error = %s", errcode, errDescr);
@@ -704,6 +701,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 }
 
 - (AudioChunk *)readAudio {
+	char errDescr[4096];
+
 	if(!seekedToStart) {
 		[self seek:0];
 	}
@@ -801,7 +800,6 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 						readNextPacket = YES;
 						continue;
 					} else {
-						char errDescr[4096];
 						av_strerror(errcode, errDescr, 4096);
 						ALog(@"Error receiving frame, errcode = %d, error = %s", errcode, errDescr);
 						return 0;
