@@ -75,6 +75,9 @@ using std::atomic_long;
 	BOOL eqEnabled;
 	BOOL eqInitialized;
 
+	BOOL enableHeadTracking;
+	BOOL lastEnableHeadTracking;
+
 	BOOL streamFormatStarted;
 	BOOL streamFormatChanged;
 
@@ -84,6 +87,7 @@ using std::atomic_long;
 	BOOL currentdevicelistenerapplied;
 	BOOL devicealivelistenerapplied;
 	BOOL observersapplied;
+	BOOL htlistenerapplied;
 	BOOL outputdevicechanged;
 
 	float volume;
@@ -182,6 +186,7 @@ using std::atomic_long;
 - (void)sustainHDCD;
 
 - (void)reportMotion:(simd_float4x4)matrix;
+- (void)resetReferencePosition;
 
 - (void)setPitch:(double)p;
 - (void)setTempo:(double)t;
