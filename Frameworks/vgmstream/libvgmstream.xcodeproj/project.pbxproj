@@ -184,6 +184,7 @@
 		8346D97B25BF838C00D1A8B0 /* ktac.c in Sources */ = {isa = PBXBuildFile; fileRef = 8346D97625BF838C00D1A8B0 /* ktac.c */; };
 		8346D97C25BF838C00D1A8B0 /* mjb_mjh.c in Sources */ = {isa = PBXBuildFile; fileRef = 8346D97725BF838C00D1A8B0 /* mjb_mjh.c */; };
 		8346D97D25BF838C00D1A8B0 /* compresswave.c in Sources */ = {isa = PBXBuildFile; fileRef = 8346D97825BF838C00D1A8B0 /* compresswave.c */; };
+		834845782D27F2E9000E4928 /* decode_state.h in Headers */ = {isa = PBXBuildFile; fileRef = 834845772D27F2E9000E4928 /* decode_state.h */; };
 		8349A8E81FE6253900E26435 /* blocked_dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8349A8E21FE6253800E26435 /* blocked_dec.c */; };
 		8349A8E91FE6253900E26435 /* blocked_ea_1snh.c in Sources */ = {isa = PBXBuildFile; fileRef = 8349A8E31FE6253800E26435 /* blocked_ea_1snh.c */; };
 		8349A8EA1FE6253900E26435 /* blocked_ea_schl.c in Sources */ = {isa = PBXBuildFile; fileRef = 8349A8E41FE6253800E26435 /* blocked_ea_schl.c */; };
@@ -1097,6 +1098,7 @@
 		8346D97625BF838C00D1A8B0 /* ktac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ktac.c; sourceTree = "<group>"; };
 		8346D97725BF838C00D1A8B0 /* mjb_mjh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mjb_mjh.c; sourceTree = "<group>"; };
 		8346D97825BF838C00D1A8B0 /* compresswave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compresswave.c; sourceTree = "<group>"; };
+		834845772D27F2E9000E4928 /* decode_state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = decode_state.h; sourceTree = "<group>"; };
 		8349A8E21FE6253800E26435 /* blocked_dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_dec.c; sourceTree = "<group>"; };
 		8349A8E31FE6253800E26435 /* blocked_ea_1snh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_ea_1snh.c; sourceTree = "<group>"; };
 		8349A8E41FE6253800E26435 /* blocked_ea_schl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_ea_schl.c; sourceTree = "<group>"; };
@@ -1979,26 +1981,27 @@
 				834F7EA12C70A786003AC386 /* api_internal.h */,
 				834F7EA22C70A786003AC386 /* api_libsf.c */,
 				834F7EA32C70A786003AC386 /* api_tags.c */,
-				834F7EA52C70A786003AC386 /* decode.c */,
 				834F7EA62C70A786003AC386 /* decode.h */,
+				834F7EA52C70A786003AC386 /* decode.c */,
+				834845772D27F2E9000E4928 /* decode_state.h */,
 				834F7EA72C70A786003AC386 /* info.c */,
+				834F7EAC2C70A786003AC386 /* mixer.h */,
+				834F7EAB2C70A786003AC386 /* mixer.c */,
 				834F7EA82C70A786003AC386 /* mixer_ops_common.c */,
 				834F7EA92C70A786003AC386 /* mixer_ops_fade.c */,
 				834F7EAA2C70A786003AC386 /* mixer_priv.h */,
-				834F7EAB2C70A786003AC386 /* mixer.c */,
-				834F7EAC2C70A786003AC386 /* mixer.h */,
+				834F7EB02C70A786003AC386 /* mixing.h */,
+				834F7EAF2C70A786003AC386 /* mixing.c */,
 				834F7EAD2C70A786003AC386 /* mixing_commands.c */,
 				834F7EAE2C70A786003AC386 /* mixing_macros.c */,
-				834F7EAF2C70A786003AC386 /* mixing.c */,
-				834F7EB02C70A786003AC386 /* mixing.h */,
 				834F7EA42C70A786003AC386 /* play_config.c */,
 				835DF7042C79AED70008814A /* play_state.c */,
-				834F7EB12C70A786003AC386 /* plugins.c */,
 				834F7EB22C70A786003AC386 /* plugins.h */,
-				834F7EB32C70A786003AC386 /* render.c */,
+				834F7EB12C70A786003AC386 /* plugins.c */,
 				834F7EB42C70A786003AC386 /* render.h */,
-				835DF7022C79ABB50008814A /* sbuf.c */,
+				834F7EB32C70A786003AC386 /* render.c */,
 				834F7EB52C70A786003AC386 /* sbuf.h */,
+				835DF7022C79ABB50008814A /* sbuf.c */,
 				834F7EB62C70A786003AC386 /* seek.c */,
 				834F7EB72C70A786003AC386 /* streamfile_api.c */,
 				834F7EB82C70A786003AC386 /* streamfile_buffer.c */,
@@ -2923,6 +2926,7 @@
 				834FE0EF215C79ED000A5D3D /* xvag_streamfile.h in Headers */,
 				83256CC428666C620036D9C0 /* debug.h in Headers */,
 				834F7E032C7093EA003AC386 /* vorbis_custom_decoder.h in Headers */,
+				834845782D27F2E9000E4928 /* decode_state.h in Headers */,
 				83256CCB28666C620036D9C0 /* mangle.h in Headers */,
 				83256CD728666C620036D9C0 /* synth_mono.h in Headers */,
 				834F7DCE2C7093EA003AC386 /* clhca.h in Headers */,
