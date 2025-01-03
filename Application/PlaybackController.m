@@ -98,7 +98,9 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 		                                  @"GraphicEQpreset": @(-1),
 		                                  @"GraphicEQtrackgenre": @(NO),
 		                                  @"volumeLimit": @(YES),
-		                                  @"headphoneVirtualization": @(NO) };
+		                                  @"enableHrtf": @(NO),
+		                                  @"enableHeadTracking": @(NO)
+	};
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }

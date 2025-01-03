@@ -232,6 +232,8 @@
         <userDefaultsController representsSharedInstance="YES" id="52" userLabel="Shared Defaults"/>
         <customObject id="57" userLabel="OutputPane" customClass="OutputPane">
             <connections>
+                <outlet property="headRecenter" destination="BBu-91-qdU" id="zg0-q7-dpf"/>
+                <outlet property="headTracking" destination="mz3-1e-AVD" id="vH2-Wq-sdT"/>
                 <outlet property="outputDevices" destination="59" id="76"/>
                 <outlet property="view" destination="58" id="73"/>
             </connections>
@@ -274,7 +276,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rG5-80-FId">
-                    <rect key="frame" x="18" y="80" width="602" height="18"/>
+                    <rect key="frame" x="18" y="80" width="200" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Enable HRTF filter" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="NGx-0c-WVR">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -283,6 +285,28 @@
                     <connections>
                         <binding destination="52" name="value" keyPath="values.enableHrtf" id="BD0-cP-SfB"/>
                     </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mz3-1e-AVD" userLabel="Head Tracking">
+                    <rect key="frame" x="224" y="80" width="184" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Head Tracking" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Lpr-85-geO" userLabel="Head Tracking">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="52" name="value" keyPath="values.enableHeadTracking" id="XCn-hn-2n4"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BBu-91-qdU" userLabel="Recenter button">
+                    <rect key="frame" x="450" y="72" width="89" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="Recenter" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aQP-kn-fMB">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <connections>
+                            <action selector="resetHeadTracking:" target="57" id="0KV-Tf-z7V"/>
+                        </connections>
+                    </buttonCell>
                 </button>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="65">
                     <rect key="frame" x="6" y="53" width="134" height="17"/>

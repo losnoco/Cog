@@ -229,6 +229,12 @@
 /* Class = "NSButtonCell"; title = "Enable HRTF filter"; ObjectID = "NGx-0c-WVR"; */
 "NGx-0c-WVR.title" = "Activar filtro HRTF";
 
+/* Class = "NSButtonCell"; title = "Head Tracking"; ObjectID = "Lpr-85-geO"; */
+"Lpr-85-geO.title" = "Seguimiento de cabeza";
+
+/* Class = "NSButtonCell"; title = "Recenter"; ObjectID = "aQP-kn-fMB"; */
+"aQP-kn-fMB.title" = "Recalibrar";
+
 /* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
 "207.title" = "Buscar actualizaciones al abrir";
 
