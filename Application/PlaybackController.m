@@ -948,8 +948,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		if(entry.year) {
 			// If PlaylistEntry can represent a full date like some tag formats can do, change it
 			NSCalendar *calendar = [NSCalendar currentCalendar];
-			NSDate *releaseYear = [calendar dateWithEra:1 year:entry.year month:0 day:0 hour:0 minute:0 second:0 nanosecond:0];
-			[songInfo setObject:releaseYear forKey:MPMediaItemPropertyReleaseDate];
+			NSDate *releaseYear = [calendar dateWithEra:1 year:entry.year month:1 day:1 hour:0 minute:0 second:0 nanosecond:0];
+			if(releaseYear) {
+				[songInfo setObject:releaseYear forKey:MPMediaItemPropertyReleaseDate];
+			}
 		}
 		[songInfo setObject:@(entry.currentPosition) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
 		[songInfo setObject:entry.length forKey:MPMediaItemPropertyPlaybackDuration];
