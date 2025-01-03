@@ -139,7 +139,10 @@ static void vorbis_lpc_predict(float *coeff, float *prime, int m, float *data, l
 }
 
 void lpc_extrapolate2(float *const data, const size_t data_len, const int nch, const int lpc_order, const size_t extra_bkwd, const size_t extra_fwd, void **extrapolate_buffer, size_t *extrapolate_buffer_size) {
-	const size_t tdata_size = sizeof(float) * (extra_bkwd + data_len + extra_fwd);
+	const size_t max_to_prime = (data_len < lpc_order) ? data_len : lpc_order;
+	const size_t min_data_len = (data_len < lpc_order) ? lpc_order : data_len;
+
+	const size_t tdata_size = sizeof(float) * (extra_bkwd + min_data_len + extra_fwd);
 	const size_t aut_size = sizeof(double) * (lpc_order + 1);
 	const size_t lpc_size = sizeof(double) * lpc_order;
 	const size_t lpci_size = sizeof(float) * lpc_order;
@@ -162,32 +165,54 @@ void lpc_extrapolate2(float *const data, const size_t data_len, const int nch, c
 	for(int c = 0; c < nch; c++) {
 		if(extra_bkwd) {
 			for(int i = 0; i < (int)data_len; i++)
-				tdata[data_len - 1 - i] = data[i * nch + c];
+				tdata[min_data_len - 1 - i] = data[i * nch + c];
+			if(data_len < min_data_len)
+				for(int i = (int)data_len; i < (int)min_data_len; i++)
+					tdata[min_data_len - 1 - i] = 0.0f;
 		} else {
-			for(int i = 0; i < (int)data_len; i++)
-				tdata[i] = data[i * nch + c];
+			const ssize_t len_diff = min_data_len - data_len;
+			if(len_diff <= 0) {
+				for(int i = 0; i < (int)data_len; i++)
+					tdata[i] = data[i * nch + c];
+			} else {
+				for(int i = 0; i < (int)len_diff; i++)
+					tdata[i] = 0.0f;
+				for(int i = 0; i < (int)data_len; i++)
+					tdata[len_diff + i] = data[i * nch + c];
+			}
 		}
 
-		apply_window(tdata, data_len);
-		vorbis_lpc_from_data(tdata, lpci, (int)data_len, lpc_order, aut, lpc);
+		apply_window(tdata, min_data_len);
+		vorbis_lpc_from_data(tdata, lpci, (int)min_data_len, lpc_order, aut, lpc);
 
 		// restore after apply_window
 		if(extra_bkwd) {
 			for(int i = 0; i < (int)data_len; i++)
-				tdata[data_len - 1 - i] = data[i * nch + c];
+				tdata[min_data_len - 1 - i] = data[i * nch + c];
+			if(data_len < min_data_len)
+				for(int i = (int)data_len; i < (int)min_data_len; i++)
+					tdata[min_data_len - 1 - i] = 0.0f;
 		} else {
-			for(int i = 0; i < (int)data_len; i++)
-				tdata[i] = data[i * nch + c];
+			const ssize_t len_diff = min_data_len - data_len;
+			if(len_diff <= 0) {
+				for(int i = 0; i < (int)data_len; i++)
+					tdata[i] = data[i * nch + c];
+			} else {
+				for(int i = 0; i < (int)len_diff; i++)
+					tdata[i] = 0.0f;
+				for(int i = 0; i < (int)data_len; i++)
+					tdata[len_diff + i] = data[i * nch + c];
+			}
 		}
 
-		vorbis_lpc_predict(lpci, tdata + data_len - lpc_order, lpc_order, tdata + data_len, extra_fwd + extra_bkwd, work);
+		vorbis_lpc_predict(lpci, tdata + min_data_len - lpc_order, lpc_order, tdata + min_data_len, extra_fwd + extra_bkwd, work);
 
 		if(extra_bkwd) {
 			for(int i = 0; i < extra_bkwd; i++)
-				data[(-i - 1) * nch + c] = tdata[data_len + i];
+				data[(-i - 1) * nch + c] = tdata[min_data_len + i];
 		} else {
 			for(int i = 0; i < extra_fwd; i++)
-				data[(i + data_len) * nch + c] = tdata[data_len + i];
+				data[(i + data_len) * nch + c] = tdata[min_data_len + i];
 		}
 	}
 }
