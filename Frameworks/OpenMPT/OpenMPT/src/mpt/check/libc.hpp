@@ -4,6 +4,7 @@
 #define MPT_CHECK_LIBC_HPP
 
 #include "mpt/base/detect_libc.hpp"
+#include "mpt/base/detect_os.hpp"
 #include "mpt/base/detect_quirks.hpp"
 #include "mpt/base/compiletime_warning.hpp"
 
@@ -28,6 +29,16 @@ MPT_WARNING("C stdlib is not multi-threaded.")
 //#endif
 #endif
 #endif
+#endif
+
+#ifndef MPT_CHECK_LIBC_IGNORE_WARNING_UNICODE_MISMATCH
+#if MPT_OS_WINDOWS
+#ifdef UNICODE
+#ifndef _UNICODE
+MPT_WARNING("UNICODE is defined but _UNICODE is not defined. Please #define _UNICODE.")
+#endif
+#endif
+#endif // MPT_OS_WINDOWS
 #endif
 
 #endif // MPT_CHECK_LIBC_HPP

@@ -10,7 +10,7 @@
 #include "mpt/base/math.hpp"
 #include "mpt/base/saturate_cast.hpp"
 
-#include <type_traits>
+#include <limits>
 
 
 

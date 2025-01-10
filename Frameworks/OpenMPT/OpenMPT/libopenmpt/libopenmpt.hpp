@@ -49,25 +49,25 @@
  *
  * libopenmpt can use 3 different strategies for file I/O.
  *
- * - openmpt::module::module() with any kind of memory buffer as parameter will
- * load the module from the provided memory buffer, which will require loading
- * all data upfront by the library
- * caller.
  * - openmpt::module::module() with a seekable std::istream as parameter will
- * load the module via the stream interface. libopenmpt will not implement an
- * additional buffering layer in this case whih means the callbacks are assumed
- * to be performant even with small i/o sizes.
+ * load the module via the stream interface. This is the recommended strategy.
  * - openmpt::module::module() with an unseekable std::istream as parameter
  * will load the module via the stream interface. libopempt will make an
  * internal copy as it goes along, and sometimes have to pre-cache the whole
  * file in case it needs to know the complete file size. This strategy is
  * intended to be used if the file is located on a high latency network.
+ * - openmpt::module::module() with any kind of memory buffer as parameter will
+ * load the module from the provided memory buffer, which will require loading
+ * all data upfront by the library caller. This strategy has the disadvantage of
+ * requiring all data to be loaded even when the module loading happens to fail
+ * after that. It should only be used when the data has already been loaded into
+ * memory for other reasons.
  *
- * | constructor       | speed  | memory consumption |
- * | ----------------: | :----: | :----------------: |
- * | memory buffer     | <p style="background-color:green" >fast  </p> | <p style="background-color:yellow">medium</p> | 
- * | seekable stream   | <p style="background-color:red"   >slow  </p> | <p style="background-color:green" >low   </p> |
+ * | constructor       | speed | memory consumption |
+ * | ----------------: | :---: | :----------------: |
+ * | seekable stream   | <p style="background-color:yellow">medium</p> | <p style="background-color:green" >low   </p> |
  * | unseekable stream | <p style="background-color:yellow">medium</p> | <p style="background-color:red"   >high  </p> |
+ * | memory buffer     | <p style="background-color:green" >fast  </p> | <p style="background-color:yellow">medium</p> |
  *
  * In all cases, the data or stream passed to the constructor is no longer
  * needed after the openmpt::module has been constructed and can be destroyed

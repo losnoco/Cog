@@ -1286,7 +1286,11 @@ bool CSoundFile::ReadMOD(FileReader &file, ModLoadingFlags loadFlags)
 		FileReader amData;
 		if(file.GetOptionalFileName())
 		{
+#if defined(MPT_LIBCXX_QUIRK_NO_OPTIONAL_VALUE)
+			mpt::PathString filename = *(file.GetOptionalFileName());
+#else
 			mpt::PathString filename = file.GetOptionalFileName().value();
+#endif
 			// Find instrument definition file
 			const mpt::PathString exts[] = {P_(".nt"), P_(".NT"), P_(".as"), P_(".AS")};
 			for(const auto &ext : exts)

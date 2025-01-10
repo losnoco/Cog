@@ -135,7 +135,11 @@ public:
 				m_Filename = tempName;
 				m_IsTempFile = true;
 			} else {
+#if defined(MPT_LIBCXX_QUIRK_NO_OPTIONAL_VALUE)
+				m_Filename = *(file.GetOptionalFileName());
+#else
 				m_Filename = file.GetOptionalFileName().value();
+#endif
 			}
 		} catch (const std::runtime_error &) {
 			m_Filename = mpt::os_path{};

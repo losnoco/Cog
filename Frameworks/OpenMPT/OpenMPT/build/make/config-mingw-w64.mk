@@ -55,10 +55,12 @@ CFLAGS += $(CFLAGS_STDC)
 
 CPPFLAGS += -DNOMINMAX
 ifeq ($(MINGW_COMPILER),clang)
+CPPFLAGS += -D_UNICODE
 CXXFLAGS += -municode
 CFLAGS   += -municode
 LDFLAGS  += -mconsole -mthreads
 else
+CPPFLAGS += -D_UNICODE
 CXXFLAGS += -municode -mthreads
 CFLAGS   += -municode -mthreads
 LDFLAGS  += -mconsole

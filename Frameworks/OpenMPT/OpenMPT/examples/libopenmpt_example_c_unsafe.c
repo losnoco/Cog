@@ -83,6 +83,9 @@ int main( int argc, char * argv[] ) {
 	file = fopen( argv[1], "rb" );
 #endif
 	mod = openmpt_module_create2( openmpt_stream_get_file_callbacks2(), file, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+#if defined( __clang__ ) && defined( __clang_analyzer__ )
+	[[clang::suppress]]
+#endif
 	fclose( file );
 	Pa_Initialize();
 	Pa_OpenDefaultStream( &stream, 0, 2, paInt16 | paNonInterleaved, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );

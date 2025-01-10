@@ -1391,7 +1391,10 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 
 		if(pIns->NoteMap[note - NOTE_MIN] > NOTE_MAX) return;
 		uint32 n = pIns->Keyboard[note - NOTE_MIN];
-		pSmp = (n <= GetNumSamples()) ? &Samples[n] : &Samples[0];
+		if(n)
+			pSmp = (n <= GetNumSamples()) ? &Samples[n] : &Samples[0];
+		else
+			pSmp = nullptr;
 	} else if(GetNumInstruments())
 	{
 		// No valid instrument, or not a valid note.
@@ -2129,19 +2132,22 @@ CHANNELINDEX CSoundFile::GetNNAChannel(CHANNELINDEX nChn) const
 	for(CHANNELINDEX i = m_nChannels; i < MAX_CHANNELS; i++)
 	{
 		const ModChannel &c = m_PlayState.Chn[i];
-		// No sample and no plugin playing
-		if(!c.nLength && !c.HasMIDIOutput())
+		// Sample playing?
+		if(c.nLength)
+			continue;
+		// Can a plugin potentially be playing?
+		if(!c.HasMIDIOutput())
 			return i;
-		// Plugin channel with already released note
-		if(!c.nLength && c.dwFlags[CHN_KEYOFF | CHN_NOTEFADE])
+		// Has the plugin note already been released? (note: lastMidiNoteWithoutArp is set from within IMixPlugin, so this implies that there is a valid plugin assignment)
+		if(c.dwFlags[CHN_KEYOFF | CHN_NOTEFADE] || c.lastMidiNoteWithoutArp == NOTE_NONE)
 			return i;
 		// Stopped OPL channel
 		if(c.dwFlags[CHN_ADLIB] && (!m_opl || !m_opl->IsActive(i)))
 			return i;
 	}
 
-	uint32 vol = 0x800000;
-	if(nChn < MAX_CHANNELS)
+	int32 vol = 0x800100;
+	if(nChn < m_PlayState.Chn.size())
 	{
 		const ModChannel &srcChn = m_PlayState.Chn[nChn];
 		if(!srcChn.nFadeOutVol && srcChn.nLength)
@@ -2160,7 +2166,8 @@ CHANNELINDEX CSoundFile::GetNNAChannel(CHANNELINDEX nChn) const
 		// Use a combination of real volume [14 bit] (which includes volume envelopes, but also potentially global volume) and note volume [9 bit].
 		// Rationale: We need volume envelopes in case e.g. all NNA channels are playing at full volume but are looping on a 0-volume envelope node.
 		// But if global volume is not applied to master and the global volume temporarily drops to 0, we would kill arbitrary channels. Hence, add the note volume as well.
-		uint32 v = (c.nRealVolume << 9) | c.nVolume;
+		int32 v = (c.nRealVolume << 9) | c.nVolume;
+		// Less priority to looped samples
 		if(c.dwFlags[CHN_LOOP])
 			v /= 2;
 		if((v < vol) || ((v == vol) && (c.VolEnv.nEnvPosition > envpos)))
@@ -5165,6 +5172,12 @@ void CSoundFile::ParseMIDIMacro(PlayState &playState, CHANNELINDEX nChn, bool is
 		} else if(macro[pos] == 's')
 		{
 			// SysEx Checksum (not an original Impulse Tracker macro variable, but added for convenience)
+			if(!firstNibble)  // From MIDI.TXT: '9n' is exactly the same as '09 n' or '9 n' -- so finish current byte first
+			{
+				outPos++;
+				firstNibble = true;
+			}
+
 			auto startPos = outPos;
 			while(startPos > 0 && out[--startPos] != 0xF0)
 				;
@@ -6063,7 +6076,7 @@ void CSoundFile::PatternLoop(PlayState &state, CHANNELINDEX nChn, ModCommand::PA
 		// IT compatibility 10. Pattern loops (+ same fix for XM / MOD / S3M files)
 		if(!m_playBehaviour[kITFT2PatternLoop] && !(GetType() & (MOD_TYPE_MOD | MOD_TYPE_S3M)))
 		{
-			auto p = std::cbegin(state.Chn);
+			auto p = state.Chn.data();
 			for(CHANNELINDEX i = 0; i < GetNumChannels(); i++, p++)
 			{
 				// Loop on other channel
@@ -6289,6 +6302,8 @@ uint32 CSoundFile::GetFreqFromPeriod(uint32 period, uint32 c5speed, int32 nPerio
 				octave = ((14 - div) & 0x1F);
 			} else
 			{
+				if(period > 29 * 768)
+					return 0;
 				octave = (period / 768) + 2;
 			}
 			return (XMLinearTable[period % 768] << (FREQ_FRACBITS + 2)) >> octave;

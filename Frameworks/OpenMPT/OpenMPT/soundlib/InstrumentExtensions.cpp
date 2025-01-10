@@ -483,6 +483,42 @@ void CSoundFile::WriteInstrumentPropertyForAllInstruments(uint32 code, uint16 si
 #endif // !MODPLUG_NO_FILESAVE
 
 
+// Convert instrument flags which were read from 'dF..' extension to proper internal representation.
+static void ConvertInstrumentFlags(ModInstrument &ins, uint32 flags)
+{
+	ins.VolEnv.dwFlags.set(ENV_ENABLED, (flags & 0x0001) != 0);
+	ins.VolEnv.dwFlags.set(ENV_SUSTAIN, (flags & 0x0002) != 0);
+	ins.VolEnv.dwFlags.set(ENV_LOOP, (flags & 0x0004) != 0);
+	ins.VolEnv.dwFlags.set(ENV_CARRY, (flags & 0x0800) != 0);
+
+	ins.PanEnv.dwFlags.set(ENV_ENABLED, (flags & 0x0008) != 0);
+	ins.PanEnv.dwFlags.set(ENV_SUSTAIN, (flags & 0x0010) != 0);
+	ins.PanEnv.dwFlags.set(ENV_LOOP, (flags & 0x0020) != 0);
+	ins.PanEnv.dwFlags.set(ENV_CARRY, (flags & 0x1000) != 0);
+
+	ins.PitchEnv.dwFlags.set(ENV_ENABLED, (flags & 0x0040) != 0);
+	ins.PitchEnv.dwFlags.set(ENV_SUSTAIN, (flags & 0x0080) != 0);
+	ins.PitchEnv.dwFlags.set(ENV_LOOP, (flags & 0x0100) != 0);
+	ins.PitchEnv.dwFlags.set(ENV_CARRY, (flags & 0x2000) != 0);
+	ins.PitchEnv.dwFlags.set(ENV_FILTER, (flags & 0x0400) != 0);
+
+	ins.dwFlags.set(INS_SETPANNING, (flags & 0x0200) != 0);
+	ins.dwFlags.set(INS_MUTE, (flags & 0x4000) != 0);
+}
+
+
+// Convert VFLG / PFLG / AFLG
+static void ConvertEnvelopeFlags(ModInstrument &instr, uint32 flags, EnvelopeType envType)
+{
+	InstrumentEnvelope &env = instr.GetEnvelope(envType);
+	env.dwFlags.set(ENV_ENABLED, (flags & 0x01) != 0);
+	env.dwFlags.set(ENV_LOOP, (flags & 0x02) != 0);
+	env.dwFlags.set(ENV_SUSTAIN, (flags & 0x04) != 0);
+	env.dwFlags.set(ENV_CARRY, (flags & 0x08) != 0);
+	env.dwFlags.set(ENV_FILTER, (envType == ENV_PITCH) && (flags & 0x10) != 0);
+}
+
+
 // --------------------------------------------------------------------------------------------
 // Convenient macro to help GET_HEADER declaration for single type members ONLY (non-array)
 // --------------------------------------------------------------------------------------------
@@ -569,7 +605,6 @@ bool ReadInstrumentHeaderField(ModInstrument *input, uint32 fcode, uint16 fsize,
 	{
 	// clang-format off
 	GET_MPTHEADER_sized_member(	nFadeOut				, uint32		, MagicBE("FO..")	)
-	GET_MPTHEADER_sized_member(	dwFlags					, uint8			, MagicBE("dF..")	)
 	GET_MPTHEADER_sized_member(	nGlobalVol				, uint32		, MagicBE("GV..")	)
 	GET_MPTHEADER_sized_member(	nPan					, uint32		, MagicBE("P...")	)
 	GET_MPTHEADER_sized_member(	VolEnv.nLoopStart		, uint8			, MagicBE("VLS.")	)
@@ -616,11 +651,20 @@ bool ReadInstrumentHeaderField(ModInstrument *input, uint32 fcode, uint16 fsize,
 	GET_MPTHEADER_sized_member(	PitchEnv.nReleaseNode	, uint8			, MagicBE("PERN")	)
 	GET_MPTHEADER_sized_member(	PanEnv.nReleaseNode		, uint8			, MagicBE("AERN")	)
 	GET_MPTHEADER_sized_member(	VolEnv.nReleaseNode		, uint8			, MagicBE("VERN")	)
-	GET_MPTHEADER_sized_member(	PitchEnv.dwFlags		, uint8			, MagicBE("PFLG")	)
-	GET_MPTHEADER_sized_member(	PanEnv.dwFlags			, uint8			, MagicBE("AFLG")	)
-	GET_MPTHEADER_sized_member(	VolEnv.dwFlags			, uint8			, MagicBE("VFLG")	)
 	GET_MPTHEADER_sized_member(	midiPWD					, int8			, MagicBE("MPWD")	)
 	// clang-format on
+	case MagicBE("dF.."):
+		ConvertInstrumentFlags(*input, file.ReadSizedIntLE<uint32>(fsize));
+		return true;
+	case MagicBE("VFLG"):
+		ConvertEnvelopeFlags(*input, file.ReadSizedIntLE<uint32>(fsize), ENV_VOLUME);
+		return true;
+	case MagicBE("AFLG"):
+		ConvertEnvelopeFlags(*input, file.ReadSizedIntLE<uint32>(fsize), ENV_PANNING);
+		return true;
+	case MagicBE("PFLG"):
+		ConvertEnvelopeFlags(*input, file.ReadSizedIntLE<uint32>(fsize), ENV_PITCH);
+		return true;
 	case MagicBE("R..."):
 	{
 		// Resampling has been written as various sizes including uint16 and uint32 in the past
@@ -660,54 +704,6 @@ bool ReadInstrumentHeaderField(ModInstrument *input, uint32 fcode, uint16 fsize,
 	return result;
 }
 
-
-// Convert instrument flags which were read from 'dF..' extension to proper internal representation.
-static void ConvertReadExtendedFlags(ModInstrument *pIns)
-{
-	// Flags of 'dF..' datafield in extended instrument properties.
-	enum
-	{
-		dFdd_VOLUME 		= 0x0001,
-		dFdd_VOLSUSTAIN 	= 0x0002,
-		dFdd_VOLLOOP 		= 0x0004,
-		dFdd_PANNING 		= 0x0008,
-		dFdd_PANSUSTAIN 	= 0x0010,
-		dFdd_PANLOOP 		= 0x0020,
-		dFdd_PITCH 			= 0x0040,
-		dFdd_PITCHSUSTAIN 	= 0x0080,
-		dFdd_PITCHLOOP 		= 0x0100,
-		dFdd_SETPANNING 	= 0x0200,
-		dFdd_FILTER 		= 0x0400,
-		dFdd_VOLCARRY 		= 0x0800,
-		dFdd_PANCARRY 		= 0x1000,
-		dFdd_PITCHCARRY 	= 0x2000,
-		dFdd_MUTE 			= 0x4000,
-	};
-
-	const uint32 dwOldFlags = pIns->dwFlags.GetRaw();
-
-	pIns->VolEnv.dwFlags.set(ENV_ENABLED, (dwOldFlags & dFdd_VOLUME) != 0);
-	pIns->VolEnv.dwFlags.set(ENV_SUSTAIN, (dwOldFlags & dFdd_VOLSUSTAIN) != 0);
-	pIns->VolEnv.dwFlags.set(ENV_LOOP, (dwOldFlags & dFdd_VOLLOOP) != 0);
-	pIns->VolEnv.dwFlags.set(ENV_CARRY, (dwOldFlags & dFdd_VOLCARRY) != 0);
-
-	pIns->PanEnv.dwFlags.set(ENV_ENABLED, (dwOldFlags & dFdd_PANNING) != 0);
-	pIns->PanEnv.dwFlags.set(ENV_SUSTAIN, (dwOldFlags & dFdd_PANSUSTAIN) != 0);
-	pIns->PanEnv.dwFlags.set(ENV_LOOP, (dwOldFlags & dFdd_PANLOOP) != 0);
-	pIns->PanEnv.dwFlags.set(ENV_CARRY, (dwOldFlags & dFdd_PANCARRY) != 0);
-
-	pIns->PitchEnv.dwFlags.set(ENV_ENABLED, (dwOldFlags & dFdd_PITCH) != 0);
-	pIns->PitchEnv.dwFlags.set(ENV_SUSTAIN, (dwOldFlags & dFdd_PITCHSUSTAIN) != 0);
-	pIns->PitchEnv.dwFlags.set(ENV_LOOP, (dwOldFlags & dFdd_PITCHLOOP) != 0);
-	pIns->PitchEnv.dwFlags.set(ENV_CARRY, (dwOldFlags & dFdd_PITCHCARRY) != 0);
-	pIns->PitchEnv.dwFlags.set(ENV_FILTER, (dwOldFlags & dFdd_FILTER) != 0);
-
-	pIns->dwFlags.reset();
-	pIns->dwFlags.set(INS_SETPANNING, (dwOldFlags & dFdd_SETPANNING) != 0);
-	pIns->dwFlags.set(INS_MUTE, (dwOldFlags & dFdd_MUTE) != 0);
-}
-
-
 void ReadInstrumentExtensionField(ModInstrument* pIns, const uint32 code, const uint16 size, FileReader &file)
 {
 	if(code == MagicBE("K[.."))
@@ -724,9 +720,6 @@ void ReadInstrumentExtensionField(ModInstrument* pIns, const uint32 code, const 
 		file.Skip(size);
 		return;
 	}
-
-	if(code == MagicBE("dF..")) // 'dF..' field requires additional processing.
-		ConvertReadExtendedFlags(pIns);
 }
 
 

@@ -670,7 +670,7 @@ bool CSoundFile::ProcessRow()
 
 		// Reset channel values
 		ModCommand *m = Patterns[m_PlayState.m_nPattern].GetpModCommand(m_PlayState.m_nRow, 0);
-		for (ModChannel *pChn = m_PlayState.Chn, *pEnd = pChn + m_nChannels; pChn != pEnd; pChn++, m++)
+		for (ModChannel *pChn = m_PlayState.Chn.data(), *pEnd = pChn + m_nChannels; pChn != pEnd; pChn++, m++)
 		{
 			// First, handle some quirks that happen after the last tick of the previous row...
 			if(m_playBehaviour[KST3PortaAfterArpeggio]

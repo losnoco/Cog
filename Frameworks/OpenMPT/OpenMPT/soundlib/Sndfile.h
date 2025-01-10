@@ -509,7 +509,7 @@ public:
 	ResamplingMode m_nResampling; // Resampling mode (if overriding the globally set resampling)
 	int32 m_nRepeatCount = 0;     // -1 means repeat infinitely.
 	ORDERINDEX m_nMaxOrderPosition;
-	ModChannelSettings ChnSettings[MAX_BASECHANNELS];  // Initial channels settings
+	std::array<ModChannelSettings, MAX_BASECHANNELS> ChnSettings;  // Initial channels settings
 	CPatternContainer Patterns;
 	ModSequenceSet Order;  // Pattern sequences (order lists)
 protected:
@@ -589,8 +589,8 @@ public:
 		bool m_bPositionChanged = true; // Report to plugins that we jumped around in the module
 
 	public:
-		CHANNELINDEX ChnMix[MAX_CHANNELS]; // Index of channels in Chn to be actually mixed
-		ModChannel Chn[MAX_CHANNELS];      // Mixing channels... First m_nChannels channels are master channels (i.e. they are never NNA channels)!
+		std::array<CHANNELINDEX, MAX_CHANNELS> ChnMix;  // Index of channels in Chn to be actually mixed
+		std::array<ModChannel, MAX_CHANNELS> Chn;       // Mixing channels... First m_nChannels channels are master channels (i.e. they are never NNA channels)!
 
 		struct MIDIMacroEvaluationResults
 		{

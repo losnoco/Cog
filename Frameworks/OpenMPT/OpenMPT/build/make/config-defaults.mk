@@ -25,6 +25,10 @@ WINDOWS_ARCH=x86
 include build/make/config-mingw-w64.mk
 endif
 
+else ifeq ($(HOST_FLAVOUR),CYGWIN)
+
+include build/make/config-cygwin.mk
+
 else ifeq ($(HOST_FLAVOUR),LINUX)
 
 include build/make/config-gcc.mk

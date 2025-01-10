@@ -429,7 +429,11 @@ inline mpt::ustring ToUnicode(uint16 codepage, Tencoding &&fallback, Tsrc &&str)
 		std::optional<mpt::common_encoding> charset = mpt::optional_encoding_from_codepage(codepage);
 		if(charset.has_value())
 		{
+#if defined(MPT_LIBCXX_QUIRK_NO_OPTIONAL_VALUE)
+			result = mpt::transcode<mpt::ustring>(*charset, std::forward<Tsrc>(str));
+#else
 			result = mpt::transcode<mpt::ustring>(charset.value(), std::forward<Tsrc>(str));
+#endif
 		} else if(mpt::has_codepage(static_cast<UINT>(codepage)))
 		{
 			result = mpt::transcode<mpt::ustring>(static_cast<UINT>(codepage), std::forward<Tsrc>(str));
@@ -440,7 +444,11 @@ inline mpt::ustring ToUnicode(uint16 codepage, Tencoding &&fallback, Tsrc &&str)
 		return result;
 	#else // !MPT_OS_WINDOWS
 		std::optional<mpt::common_encoding> charset = mpt::optional_encoding_from_codepage(codepage);
+#if defined(MPT_LIBCXX_QUIRK_NO_OPTIONAL_VALUE)
 		return charset.has_value() ? mpt::transcode<mpt::ustring>(charset.value(), std::forward<Tsrc>(str)) : mpt::transcode<mpt::ustring>(std::forward<Tencoding>(fallback), std::forward<Tsrc>(str));
+#else
+		return charset.has_value() ? mpt::transcode<mpt::ustring>(*charset, std::forward<Tsrc>(str)) : mpt::transcode<mpt::ustring>(std::forward<Tencoding>(fallback), std::forward<Tsrc>(str));
+#endif
 	#endif // MPT_OS_WINDOWS
 }
 

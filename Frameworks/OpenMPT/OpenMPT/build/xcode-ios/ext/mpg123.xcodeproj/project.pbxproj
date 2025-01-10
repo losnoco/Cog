@@ -257,7 +257,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SYMROOT = "../../../bin/debug/xcode4-ios/all";
 				USER_HEADER_SEARCH_PATHS = (
-					../../../include/mpg123/ports/Xcode,
+					../../../include/mpg123/ports/generic,
 					../../../include/mpg123/src/include,
 				);
 			};
@@ -295,7 +295,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				SYMROOT = "../../../bin/release/xcode4-ios/all";
 				USER_HEADER_SEARCH_PATHS = (
-					../../../include/mpg123/ports/Xcode,
+					../../../include/mpg123/ports/generic,
 					../../../include/mpg123/src/include,
 				);
 			};

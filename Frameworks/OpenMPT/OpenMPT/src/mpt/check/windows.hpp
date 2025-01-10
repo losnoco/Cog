@@ -20,6 +20,14 @@ MPT_WARNING("Targeting Win9x but windows.h uses UNICODE TCHAR. Please do not #de
 #endif
 #endif
 
+#ifndef MPT_CHECK_WINDOWS_IGNORE_WARNING_UNICODE_MISMATCH
+#ifdef _UNICODE
+#ifndef UNICODE
+MPT_WARNING("_UNICODE is defined but UNICODE is not defined. Please enable UNICODE support in your compiler, or do not #define _UNICODE.")
+#endif
+#endif
+#endif
+
 #ifndef NOMINMAX
 #ifndef MPT_CHECK_WINDOWS_IGNORE_WARNING_NO_NOMINMAX
 MPT_WARNING("windows.h defines min and max which conflicts with C++. Please #define NOMINMAX.")
