@@ -261,7 +261,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 #ifdef MODPLUG_TRACKER
 		if(const auto fileName = file.GetOptionalFileName(); fileName.has_value())
 		{
-			instrPaths[ins] = mpt::AbsolutePathToRelative(instrPaths[ins], fileName->GetDirectoryWithDrive());
+			instrPaths[ins] = mpt::RelativePathToAbsolute(instrPaths[ins], fileName->GetDirectoryWithDrive());
 		} else if(GetpModDoc() != nullptr)
 		{
 			instrPaths[ins] = mpt::RelativePathToAbsolute(instrPaths[ins], GetpModDoc()->GetPathNameMpt().GetDirectoryWithDrive());
@@ -309,15 +309,13 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 
 		// Pattern data
 		size_t numCommands = GetNumChannels() * numRows;
-
 		if(patternChunk.CanRead(sizeof(ITPModCommand) * numCommands))
 		{
-			ModCommand *target = Patterns[pat].GetpModCommand(0, 0);
-			while(numCommands-- != 0)
+			for(ModCommand &m : Patterns[pat])
 			{
 				ITPModCommand data;
 				patternChunk.ReadStruct(data);
-				*(target++) = data;
+				m = data;
 			}
 		}
 	}
@@ -330,7 +328,7 @@ bool CSoundFile::ReadITP(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Read number of embedded samples - at most as many as there are real samples in a valid file
 	uint32 embeddedSamples = file.ReadUint32LE();
-	if(embeddedSamples > m_nSamples)
+	if(embeddedSamples > GetNumSamples())
 	{
 		return false;
 	}

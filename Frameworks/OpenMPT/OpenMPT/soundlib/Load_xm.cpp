@@ -679,9 +679,10 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			m_playBehaviour.reset(kFT2ST3OffsetOutOfRange);
 			// Fix arpeggios in KAPTENFL.XM
 			m_playBehaviour.reset(kFT2Arpeggio);
-		} else if(!memcmp(fileHeader.trackerName, "*Converted ", 11))
+		} else if(!memcmp(fileHeader.trackerName, "*Converted ", 11) && !memcmp(fileHeader.trackerName + 14, "-File*", 6))
 		{
-			madeWith = verDigiTrakker;
+			madeWith = verDigiTrakker | verConfirmed;
+			madeWithTracker = UL_("Digitrakker");
 		}
 	}
 
@@ -1389,9 +1390,11 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 			if(Instruments[ins] != nullptr)
 			{
 				// Convert instrument
-				insHeader.ConvertToXM(*Instruments[ins], compatibilityExport);
+				auto sampleList = insHeader.ConvertToXM(*Instruments[ins], compatibilityExport);
+				samples = std::move(sampleList.samples);
+				if(sampleList.tooManySamples)
+					AddToLog(LogInformation, MPT_UFORMAT("Instrument {} references too many samples, only the first {} will be exported.")(ins, samples.size()));
 
-				samples = insHeader.instrument.GetSampleList(*Instruments[ins], compatibilityExport);
 				if(samples.size() > 0 && samples[0] <= GetNumSamples())
 				{
 					// Copy over auto-vibrato settings of first sample

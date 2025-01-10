@@ -144,6 +144,10 @@ struct ModSample
 	void SetLoop(SmpLength start, SmpLength end, bool enable, bool pingpong, CSoundFile &sndFile);
 	// Set sustain loop points and update loop wrap-around buffer
 	void SetSustainLoop(SmpLength start, SmpLength end, bool enable, bool pingpong, CSoundFile &sndFile);
+	// Retrieve the normal loop points
+	std::pair<SmpLength, SmpLength> GetLoop() const noexcept { return std::make_pair(nLoopStart, nLoopEnd); }
+	// Retrieve the sustain loop points
+	std::pair<SmpLength, SmpLength> GetSustainLoop() const noexcept { return std::make_pair(nSustainStart, nSustainEnd); }
 	// Update loop wrap-around buffer
 	void PrecomputeLoops(CSoundFile &sndFile, bool updateChannels = true);
 

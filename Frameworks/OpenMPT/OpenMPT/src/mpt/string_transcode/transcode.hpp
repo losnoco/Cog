@@ -11,6 +11,7 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/base/saturate_cast.hpp"
 #include "mpt/detect/mfc.hpp"
+#include "mpt/out_of_memory/out_of_memory.hpp"
 #include "mpt/string/types.hpp"
 #include "mpt/string/utility.hpp"
 
@@ -1664,10 +1665,60 @@ inline Tdststring encode(logical_encoding encoding, const mpt::widestring & src)
 #elif !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 	switch (encoding) {
 		case logical_encoding::locale:
+#if defined(MPT_LIBCXX_QUIRK_BROKEN_USER_LOCALE)
+			try {
+				return encode_locale<Tdststring>(std::locale(""), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return encode_locale<Tdststring>(std::locale(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return encode_locale<Tdststring>(std::locale::classic(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			return encode_ascii<Tdststring>(src);
+#else
 			return encode_locale<Tdststring>(std::locale(""), src);
+#endif
 			break;
 		case logical_encoding::active_locale:
+#if defined(MPT_LIBCXX_QUIRK_BROKEN_ACTIVE_LOCALE)
+			try {
+				return encode_locale<Tdststring>(std::locale(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return encode_locale<Tdststring>(std::locale(""), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return encode_locale<Tdststring>(std::locale::classic(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			return encode_ascii<Tdststring>(src);
+#else
 			return encode_locale<Tdststring>(std::locale(), src);
+#endif
 			break;
 	}
 	throw std::domain_error("unsupported encoding");
@@ -1835,10 +1886,60 @@ inline mpt::widestring decode(logical_encoding encoding, const Tsrcstring & src)
 #elif !defined(MPT_COMPILER_QUIRK_NO_WCHAR)
 	switch (encoding) {
 		case logical_encoding::locale:
+#if defined(MPT_LIBCXX_QUIRK_BROKEN_USER_LOCALE)
+			try {
+				return decode_locale(std::locale(""), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return decode_locale(std::locale(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return decode_locale(std::locale::classic(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			return decode_ascii(src);
+#else
 			return decode_locale(std::locale(""), src);
+#endif
 			break;
 		case logical_encoding::active_locale:
+#if defined(MPT_LIBCXX_QUIRK_BROKEN_USER_LOCALE)
+			try {
+				return decode_locale(std::locale(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return decode_locale(std::locale(""), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			try {
+				return decode_locale(std::locale::classic(), src);
+			} catch (mpt::out_of_memory e) {
+				mpt::rethrow_out_of_memory(e);
+			} catch (...) {
+				// nothing
+			}
+			return decode_ascii(src);
+#else
 			return decode_locale(std::locale(), src);
+#endif
 			break;
 	}
 	throw std::domain_error("unsupported encoding");

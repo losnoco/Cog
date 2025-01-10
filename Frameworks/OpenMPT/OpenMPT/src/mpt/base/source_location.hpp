@@ -41,7 +41,11 @@ using std::source_location;
 #define MPT_SOURCE_LOCATION_LINE     __builtin_LINE()
 #define MPT_SOURCE_LOCATION_COLUMN   0
 
-#elif MPT_COMPILER_CLANG && MPT_CLANG_AT_LEAST(9, 0, 0)
+#elif MPT_COMPILER_CLANG && ((!MPT_OS_MACOSX_OR_IOS && MPT_CLANG_AT_LEAST(9, 0, 0)) || (MPT_OS_MACOSX_OR_IOS && MPT_CLANG_AT_LEAST(12, 0, 0)))
+
+// We do not know which Apple Clang version introduced __builtin_FILE().
+// It fails with 10.x (see <https://github.com/fink/fink-distributions/issues/1202>),
+// and IRC dicussion decided on 12.x as a somewhat safe choice.
 
 #define MPT_SOURCE_LOCATION_FILE     __builtin_FILE()
 #define MPT_SOURCE_LOCATION_FUNCTION __builtin_FUNCTION()

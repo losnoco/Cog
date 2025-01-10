@@ -8,8 +8,6 @@
 #include "mpt/base/detect.hpp"
 #include "mpt/base/namespace.hpp"
 
-#include "mpt/base/saturate_cast.hpp"
-
 
 namespace mpt {
 inline namespace MPT_INLINE_NS {

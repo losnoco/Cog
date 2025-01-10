@@ -46,7 +46,14 @@ static const char * xmp_openmpt_string = "OpenMPT (" OPENMPT_API_VERSION_STRING 
 
 #define USE_XMPLAY_ISTREAM
 
+// XMPLAY expects a WINAPI (which is __stdcall) function using an undecorated symbol name which conflicts with the provided declaration.
+#if defined(__GNUC__)
+#define XMPIN_GetInterface XMPIN_GetInterface_Dummy
+#endif
 #include "xmplay/xmpin.h"
+#if defined(__GNUC__)
+#undef XMPIN_GetInterface
+#endif
 
 // Shortcut block assigned to the OpenMPT plugin by un4seen.
 enum {
@@ -107,7 +114,9 @@ static void apply_and_save_options();
 
 static std::string convert_to_native( const std::string & str );
 
+#if !defined(UNICODE)
 static std::string StringEncode( const std::wstring &src, UINT codepage );
+#endif
 
 static std::wstring StringDecode( const std::string & src, UINT codepage );
 
@@ -187,6 +196,7 @@ static std::string convert_to_native( const std::string & str ) {
 	return result;
 }
 
+#if !defined(UNICODE)
 static std::string StringEncode( const std::wstring &src, UINT codepage )
 {
 	int required_size = WideCharToMultiByte( codepage, 0, src.c_str(), -1, nullptr, 0, nullptr, nullptr);
@@ -198,6 +208,7 @@ static std::string StringEncode( const std::wstring &src, UINT codepage )
 	WideCharToMultiByte( codepage, 0, src.c_str(), -1, encoded_string.data(), encoded_string.size(), nullptr, nullptr);
 	return encoded_string.data();
 }
+#endif
 
 static std::wstring StringDecode( const std::string & src, UINT codepage )
 {
@@ -489,7 +500,7 @@ static void clear_current_timeinfo() {
 static void WINAPI openmpt_About( HWND win ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2024 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2025 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
@@ -998,6 +1009,7 @@ static void WINAPI openmpt_SetFormat( XMPFORMAT * form ) {
 		form->rate = 0;
 		form->chan = 0;
 		form->res = 0;
+		form->chanmask = 0;
 		return;
 	}
 	if ( self->settings.samplerate != 0 ) {
@@ -1026,6 +1038,7 @@ static void WINAPI openmpt_SetFormat( XMPFORMAT * form ) {
 		}
 	}
 	form->res = 4; // float
+	form->chanmask = 0;
 }
 
 // get the tags
@@ -1704,7 +1717,9 @@ static XMPIN xmpin = {
 
 	nullptr, // reserved2
 	openmpt_GetConfig,
-	openmpt_SetConfig
+	openmpt_SetConfig,
+
+	nullptr
 };
 
 static const char * xmp_openmpt_default_exts = "OpenMPT\0mptm/mptmz";

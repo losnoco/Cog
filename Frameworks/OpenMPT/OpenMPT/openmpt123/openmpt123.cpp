@@ -8,7 +8,7 @@
  */
 
 static const char * const license =
-"Copyright (c) 2004-2024, OpenMPT Project Developers and Contributors" "\n"
+"Copyright (c) 2004-2025, OpenMPT Project Developers and Contributors" "\n"
 "Copyright (c) 1997-2003, Olivier Lapicque" "\n"
 "All rights reserved." "\n"
 "" "\n"
@@ -385,7 +385,7 @@ static void show_banner( concat_stream<mpt::ustring> & log, verbosity banner ) {
 		return;
 	}
 	log << MPT_USTRING("openmpt123") << MPT_USTRING(" v") << mpt::transcode<mpt::ustring>( mpt::source_encoding, OPENMPT123_VERSION_STRING ) << MPT_USTRING(", libopenmpt ") << mpt::transcode<mpt::ustring>( libopenmpt_encoding, openmpt::string::get( "library_version" ) ) << MPT_USTRING(" (") << MPT_USTRING("OpenMPT ") << mpt::transcode<mpt::ustring>( libopenmpt_encoding, openmpt::string::get( "core_version" ) ) << MPT_USTRING(")") << lf;
-	log << MPT_USTRING("Copyright (c) 2013-2024 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>") << lf;
+	log << MPT_USTRING("Copyright (c) 2013-2025 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>") << lf;
 	if ( banner == verbosity_normal ) {
 		log << lf;
 		return;
@@ -462,7 +462,7 @@ static void show_banner( concat_stream<mpt::ustring> & log, verbosity banner ) {
 static void show_man_version( textout & log ) {
 	log << MPT_USTRING("openmpt123") << MPT_USTRING(" v") << mpt::transcode<mpt::ustring>( mpt::source_encoding, OPENMPT123_VERSION_STRING ) << lf;
 	log << lf;
-	log << MPT_USTRING("Copyright (c) 2013-2024 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>") << lf;
+	log << MPT_USTRING("Copyright (c) 2013-2025 OpenMPT Project Developers and Contributors <https://lib.openmpt.org/>") << lf;
 }
 
 static void show_short_version( textout & log ) {

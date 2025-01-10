@@ -241,6 +241,16 @@
 
 
 
+#if MPT_OS_CYGWIN
+#define MPT_LIBCXX_QUIRK_BROKEN_USER_LOCALE
+#endif
+
+
+
+// #define MPT_LIBCXX_QUIRK_BROKEN_ACTIVE_LOCALE
+
+
+
 #if MPT_CXX_AT_LEAST(20)
 // Clang 14 is incompatible with libstdc++ 13 in C++20 mode
 #if MPT_CLANG_BEFORE(15, 0, 0) && MPT_LIBCXX_GNU_AT_LEAST(13)
@@ -291,8 +301,12 @@
 #elif MPT_OS_MACOSX_OR_IOS
 #if defined(TARGET_OS_OSX)
 #if TARGET_OS_OSX
+#if !defined(MAC_OS_X_VERSION_10_15)
+#define MPT_LIBCXX_QUIRK_NO_TO_CHARS_INT
+#else
 #if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_15)
 #define MPT_LIBCXX_QUIRK_NO_TO_CHARS_INT
+#endif
 #endif
 #endif
 #endif
@@ -314,6 +328,22 @@
 
 #if MPT_OS_ANDROID && MPT_LIBCXX_LLVM_BEFORE(17000)
 #define MPT_LIBCXX_QUIRK_NO_NUMBERS
+#endif
+
+
+
+#if MPT_OS_MACOSX_OR_IOS
+#if defined(TARGET_OS_OSX)
+#if TARGET_OS_OSX
+#if !defined(MAC_OS_X_VERSION_10_14)
+#define MPT_LIBCXX_QUIRK_NO_OPTIONAL_VALUE
+#else
+#if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_14)
+#define MPT_LIBCXX_QUIRK_NO_OPTIONAL_VALUE
+#endif
+#endif
+#endif
+#endif
 #endif
 
 

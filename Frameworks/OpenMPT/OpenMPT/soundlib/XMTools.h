@@ -28,7 +28,7 @@ struct XMFileHeader
 	};
 
 	char     signature[17];    // "Extended Module: "
-	char     songName[20];     // Song Name, not null-terminated (any nulls are treated as spaces)
+	char     songName[20];     // Song Name, space-padded
 	uint8le  eof;              // DOS EOF Character (0x1A)
 	char     trackerName[20];  // Software that was used to create the XM file
 	uint16le version;          // File version (1.02 - 1.04 are supported)
@@ -92,8 +92,14 @@ struct XMInstrument
 	// Convert XM envelope data to an OpenMPT's internal envelope representation.
 	void ConvertEnvelopeToMPT(InstrumentEnvelope &mptEnv, uint8 numPoints, uint8 flags, uint8 sustain, uint8 loopStart, uint8 loopEnd, EnvType env) const;
 
+	struct SampleList
+	{
+		std::vector<SAMPLEINDEX> samples;  // The list of samples to write to the file
+		bool tooManySamples = false;       // Does the source instrument contain more samples than what we can write?
+	};
+
 	// Convert OpenMPT's internal sample representation to an XMInstrument.
-	uint16 ConvertToXM(const ModInstrument &mptIns, bool compatibilityExport);
+	SampleList ConvertToXM(const ModInstrument &mptIns, bool compatibilityExport);
 	// Convert an XMInstrument to OpenMPT's internal instrument representation.
 	void ConvertToMPT(ModInstrument &mptIns) const;
 	// Apply auto-vibrato settings from sample to file.
@@ -102,7 +108,7 @@ struct XMInstrument
 	void ApplyAutoVibratoToMPT(ModSample &mptSmp) const;
 
 	// Get a list of samples that should be written to the file.
-	std::vector<SAMPLEINDEX> GetSampleList(const ModInstrument &mptIns, bool compatibilityExport) const;
+	SampleList GetSampleList(const ModInstrument &mptIns, bool compatibilityExport) const;
 };
 
 MPT_BINARY_STRUCT(XMInstrument, 230)
@@ -112,8 +118,8 @@ MPT_BINARY_STRUCT(XMInstrument, 230)
 struct XMInstrumentHeader
 {
 	uint32le size;              // Size of XMInstrumentHeader + XMInstrument
-	char     name[22];          // Instrument Name, not null-terminated (any nulls are treated as spaces)
-	uint8le  type;              // Instrument Type (Apparently FT2 writes some crap here, but it's the same crap for all instruments of the same module!)
+	char     name[22];          // Instrument Name, space-padded
+	uint8le  type;              // Instrument Type (FT2 does not initialize this field properly, so it contains a random value, but it's the same random value for all instruments of the same module!)
 	uint16le numSamples;        // Number of Samples associated with instrument
 	uint32le sampleHeaderSize;  // Size of XMSample
 	XMInstrument instrument;
@@ -122,7 +128,7 @@ struct XMInstrumentHeader
 	void Finalise();
 
 	// Convert OpenMPT's internal sample representation to an XMInstrument.
-	void ConvertToXM(const ModInstrument &mptIns, bool compatibilityExport);
+	XMInstrument::SampleList ConvertToXM(const ModInstrument &mptIns, bool compatibilityExport);
 	// Convert an XMInstrument to OpenMPT's internal instrument representation.
 	void ConvertToMPT(ModInstrument &mptIns) const;
 };
@@ -139,7 +145,7 @@ struct XIInstrumentHeader
 	};
 
 	char     signature[21];    // "Extended Instrument: "
-	char     name[22];         // Instrument Name, not null-terminated (any nulls are treated as spaces)
+	char     name[22];         // Instrument Name, space-padded
 	uint8le  eof;              // DOS EOF Character (0x1A)
 	char     trackerName[20];  // Software that was used to create the XI file
 	uint16le version;          // File Version (1.02)
@@ -147,7 +153,7 @@ struct XIInstrumentHeader
 	uint16le numSamples;       // Number of embedded sample headers + samples
 
 	// Convert OpenMPT's internal sample representation to an XIInstrumentHeader.
-	void ConvertToXM(const ModInstrument &mptIns, bool compatibilityExport);
+	XMInstrument::SampleList ConvertToXM(const ModInstrument &mptIns, bool compatibilityExport);
 	// Convert an XIInstrumentHeader to OpenMPT's internal instrument representation.
 	void ConvertToMPT(ModInstrument &mptIns) const;
 };
@@ -176,7 +182,7 @@ struct XMSample
 	uint8le  pan;         // Sample Panning
 	int8le   relnote;     // Sample Transpose
 	uint8le  reserved;    // Reserved (abused for ModPlug's ADPCM compression)
-	char     name[22];    // Sample Name, not null-terminated (any nulls are treated as spaces)
+	char     name[22];    // Sample Name, space-padded
 
 	// Convert OpenMPT's internal sample representation to an XMSample.
 	void ConvertToXM(const ModSample &mptSmp, MODTYPE fromType, bool compatibilityExport);

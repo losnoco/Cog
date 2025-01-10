@@ -177,8 +177,7 @@ static void XFadeSampleImpl(const T *srcIn, const T *srcOut, T *output, const Sm
 bool XFadeSample(ModSample &smp, SmpLength fadeLength, int fadeLaw, bool afterloopFade, bool useSustainLoop, CSoundFile &sndFile)
 {
 	if(!smp.HasSampleData()) return false;
-	const SmpLength loopStart = useSustainLoop ? smp.nSustainStart : smp.nLoopStart;
-	const SmpLength loopEnd = useSustainLoop ? smp.nSustainEnd : smp.nLoopEnd;
+	const auto [loopStart, loopEnd] = useSustainLoop ? smp.GetSustainLoop() : smp.GetLoop();
 	
 	if(loopEnd <= loopStart || loopEnd > smp.nLength) return false;
 	if(loopStart < fadeLength) return false;

@@ -1415,7 +1415,13 @@ bool CDLSBank::Open(FileReader file)
 	uint32 nInsDef;
 
 	if(file.GetOptionalFileName())
+	{
+#if defined(MPT_LIBCXX_QUIRK_NO_OPTIONAL_VALUE)
+		m_szFileName = *(file.GetOptionalFileName());
+#else
 		m_szFileName = file.GetOptionalFileName().value();
+#endif
+	}
 
 	file.Rewind();
 	if(!file.CanRead(256))
