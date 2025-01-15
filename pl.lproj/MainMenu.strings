@@ -155,6 +155,9 @@
 /* Class = "NSTableColumn"; headerCell.title = "Genre"; ObjectID = "849"; */
 "849.headerCell.title" = "gatunek";
 
+/* Class = "NSTableColumn"; headerCell.title = "Play Count"; ObjectID = "1g1-Th-emL"; */
+"1g1-Th-emL.headerCell.title" = "ilość odtworzeń";
+
 /* Class = "NSTableColumn"; headerCell.title = "№"; ObjectID = "850"; */
 "850.headerCell.title" = "№";
 

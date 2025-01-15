@@ -37,6 +37,7 @@
 	IBOutlet NSMenuItem *showArtistColumn;
 	IBOutlet NSMenuItem *showAlbumColumn;
 	IBOutlet NSMenuItem *showGenreColumn;
+	IBOutlet NSMenuItem *showPlayCountColumn;
 	IBOutlet NSMenuItem *showLengthColumn;
 	IBOutlet NSMenuItem *showTrackColumn;
 	IBOutlet NSMenuItem *showYearColumn;
