@@ -48,7 +48,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
 		                @"album", @"length", @"year", @"genre", @"track", @"path",
 		                @"filename", @"codec", @"rating", @"samplerate",
-		                @"bitspersample", @"bitrate", @"composer"];
+		                @"bitspersample", @"bitrate", @"composer", @"playcount"];
 
 	NSValueTransformer *repeatNoneTransformer =
 	[[RepeatModeTransformer alloc] initWithMode:RepeatModeNoRepeat];
@@ -253,9 +253,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 - (void)updatePlayCountForTrack:(PlaylistEntry *)pe {
 	if(pe.countAdded) return;
 	pe.countAdded = YES;
-
+	
 	__block PlayCount *pc = pe.playCountItem;
-
+	
 	if(pc) {
 		[self.persistentContainer.viewContext performBlockAndWait:^{
 			pc.count += 1;
@@ -272,8 +272,13 @@ static void *playlistControllerContext = &playlistControllerContext;
 			pc.filename = pe.filenameFragment;
 		}];
 	}
-
+	
 	[self commitPersistentStore];
+	
+	NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:pe.index];
+	NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
+
+	[self.tableView reloadDataForRowIndexes:refreshRow columnIndexes:refreshColumns];
 }
 
 - (void)firstSawTrack:(PlaylistEntry *)pe {
@@ -290,6 +295,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 			pc.filename = pe.filenameFragment;
 		}];
 	}
+
+	NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:pe.index];
+	NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
+
+	[self.tableView reloadDataForRowIndexes:refreshRow columnIndexes:refreshColumns];
 }
 
 - (void)ratingUpdatedWithEntry:(PlaylistEntry *)pe rating:(CGFloat)rating {
@@ -313,6 +323,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}];
 
 		[self commitPersistentStore];
+
+		NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:pe.index];
+		NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
+
+		[self.tableView reloadDataForRowIndexes:refreshRow columnIndexes:refreshColumns];
 	}
 }
 
@@ -526,6 +541,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 			case 17:
 				if([pe composer]) cellText = pe.composer;
+				break;
+
+			case 18:
+				cellText = pe.playCount;
+				cellTextAlignment = NSTextAlignmentRight;
 				break;
 		}
 	}
@@ -1922,10 +1942,19 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (IBAction)resetPlaycounts:(id)sender {
 	NSArray *selectedobjects = [self selectedObjects];
 	if([selectedobjects count]) {
+		NSMutableIndexSet *refreshRows = [[NSMutableIndexSet alloc] init];
+
 		for(PlaylistEntry *pe in selectedobjects) {
 			[self resetPlayCountForTrack:pe];
+			if(pe.index >= 0 && pe.index < NSNotFound) {
+				[refreshRows addIndex:pe.index];
+			}
 		}
 		[self commitPersistentStore];
+
+		NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
+
+		[self.tableView reloadDataForRowIndexes:refreshRows columnIndexes:refreshColumns];
 	}
 }
 
@@ -1937,17 +1966,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 		[self commitPersistentStore];
 
-		NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+		NSMutableIndexSet *refreshRows = [[NSMutableIndexSet alloc] init];
 
 		for(PlaylistEntry *pe in selectedobjects) {
 			if(pe.index >= 0 && pe.index < NSNotFound) {
-				[refreshSet addIndex:pe.index];
+				[refreshRows addIndex:pe.index];
 			}
 		}
 
 		// Refresh entire row to refresh tooltips
-		unsigned long columns = [[self.tableView tableColumns] count];
-		[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
+		NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
+
+		[self.tableView reloadDataForRowIndexes:refreshRows columnIndexes:refreshColumns];
 	}
 }
 
