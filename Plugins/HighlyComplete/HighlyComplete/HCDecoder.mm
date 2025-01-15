@@ -103,6 +103,7 @@ void *source_fopen(const char *path) {
 	id<CogSource> source;
 	if(![[psf_file_container instance] try_hint:[NSString stringWithUTF8String:path] source:&source]) {
 		NSString *urlString = [NSString stringWithUTF8String:path];
+		urlString = [urlString stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLFragmentAllowedCharacterSet];
 		NSURL *url = [NSURL URLWithDataRepresentation:[urlString dataUsingEncoding:NSUTF8StringEncoding] relativeToURL:nil];
 
 		id audioSourceClass = NSClassFromString(@"AudioSource");
