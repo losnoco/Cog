@@ -26,6 +26,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	float saLowerBound;
 	BOOL paused;
 	BOOL stopped;
+	BOOL isSetup;
 	BOOL isListening;
 	BOOL observersAdded;
 	BOOL isFullView;
@@ -114,6 +115,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
 	[self addObservers];
+
+	isSetup = YES;
 }
 
 - (void)enableFullView {
@@ -384,6 +387,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 - (void)drawRect:(NSRect)dirtyRect {
 	[super drawRect:dirtyRect];
+
+	if(!isSetup) return;
 
 	[self updateVisListening];
 
