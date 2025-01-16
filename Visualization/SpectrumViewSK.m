@@ -29,6 +29,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	NSTimer *timer;
 	BOOL paused;
 	BOOL stopped;
+	BOOL isSetup;
 	BOOL isListening;
 	BOOL bandsReset;
 	BOOL cameraControlEnabled;
@@ -226,6 +227,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
 	[self addObservers];
+
+	isSetup = YES;
 }
 
 - (void)addObservers {
@@ -303,6 +306,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 }
 
 - (void)repaint {
+	if(!isSetup) return;
+
 	[self updateVisListening];
 
 	if(stopped) {

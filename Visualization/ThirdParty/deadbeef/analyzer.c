@@ -241,6 +241,8 @@ _get_bar_height(ddb_analyzer_t *analyzer, float normalized_height, int view_heig
 
 static void
 _generate_frequency_labels(ddb_analyzer_t *analyzer) {
+	if(!analyzer->view_width) return;
+
 	float min_freq_log = log10(analyzer->min_freq);
 	float max_freq_log = log10(analyzer->max_freq);
 	float view_width = analyzer->view_width;
@@ -273,6 +275,8 @@ _generate_frequency_labels(ddb_analyzer_t *analyzer) {
 
 static void
 _generate_frequency_bars(ddb_analyzer_t *analyzer) {
+	if(!analyzer->view_width) return;
+
 	float min_freq = analyzer->min_freq;
 	float min_freq_log;
 	float view_width = analyzer->view_width;
