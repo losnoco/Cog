@@ -3,7 +3,7 @@ name: Feedback
 about: Report bugs or suggest new features
 title: ''
 labels: 
-assignees: kode54, nevack
+assignees: kode54
 
 ---
 
