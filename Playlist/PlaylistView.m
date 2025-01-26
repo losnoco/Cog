@@ -16,9 +16,13 @@
 
 #import "Logging.h"
 
+static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
+
 @implementation PlaylistView
 
 - (void)awakeFromNib {
+	[self setAutosaveTableColumns:NO];
+
 	[[self menu] setAutoenablesItems:NO];
 
 	// Configure bindings to scale font size and row height
@@ -26,18 +30,83 @@
 	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
 	// NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
 
-	NSArray<NSTableColumn *> *columns = [[NSSet setWithArray:[self tableColumns]] allObjects];
+	NSArray *defaultColumns = @[@{@"id": @"index", @"width": @(64), @"hidden": @NO},
+								@{@"id": @"status", @"width": @(20), @"hidden": @NO},
+								@{@"id": @"rating", @"width": @(116), @"hidden": @NO},
+								@{@"id": @"title", @"width": @(179), @"hidden": @NO},
+								@{@"id": @"albumartist", @"width": @(150), @"hidden": @YES},
+								@{@"id": @"artist", @"width": @(202), @"hidden": @NO},
+								@{@"id": @"composer", @"width": @(151), @"hidden": @YES},
+								@{@"id": @"album", @"width": @(202), @"hidden": @NO},
+								@{@"id": @"length", @"width": @(95), @"hidden": @NO},
+								@{@"id": @"year", @"width": @(95), @"hidden": @NO},
+								@{@"id": @"genre", @"width": @(114), @"hidden": @NO},
+								@{@"id": @"track", @"width": @(71), @"hidden": @NO},
+								@{@"id": @"playcount", @"width": @(71), @"hidden": @NO},
+								@{@"id": @"path", @"width": @(64), @"hidden": @YES},
+								@{@"id": @"filename", @"width": @(64), @"hidden": @YES},
+								@{@"id": @"codec", @"width": @(64), @"hidden": @YES},
+								@{@"id": @"samplerate", @"width": @(64), @"hidden": @YES},
+								@{@"id": @"bitspersample", @"width": @(64), @"hidden": @YES},
+								@{@"id": @"bitrate", @"width": @(64), @"hidden": @YES}
+	];
+	
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{playlistSavedColumnsID: defaultColumns}];
+	[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"NSTableView Columns v3 Playlist"];
+	[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"NSTableView Sort Ordering v2 Playlist"];
+	[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"NSTableView Supports v2 Playlist"];
+	
+	NSArray *savedColumns = [[NSUserDefaults standardUserDefaults] arrayForKey:playlistSavedColumnsID];
 
-	if([columns count] < [[self tableColumns] count]) {
-		// borkage in saved state
-		NSArray<NSTableColumn *> *borkCols = [[self tableColumns] copy];
-		for(NSTableColumn *col in borkCols) {
-			[self removeTableColumn:col];
-		}
-		for(NSTableColumn *col in columns) {
-			[self addTableColumn:col];
+	NSMutableArray *defaultColumnList = [[NSMutableArray alloc] init];
+	NSMutableArray *savedColumnList = [[NSMutableArray alloc] init];
+	
+	for(id column in defaultColumns) {
+		NSString *columnID = [column objectForKey:@"id"];
+		[defaultColumnList addObject:columnID];
+	}
+	for(id column in savedColumns) {
+		NSString *columnID = [column objectForKey:@"id"];
+		[savedColumnList addObject:columnID];
+	}
+
+	NSMutableArray *updatedColumns = [[NSMutableArray alloc] init];
+
+	for(id column in savedColumns) {
+		if([defaultColumnList containsObject:[column objectForKey:@"id"]]) {
+			[updatedColumns addObject:column];
 		}
 	}
+
+	for(id column in defaultColumns) {
+		if(![savedColumnList containsObject:[column objectForKey:@"id"]]) {
+			[updatedColumns addObject:column];
+		}
+	}
+	
+	[[NSUserDefaults standardUserDefaults] setObject:updatedColumns forKey:playlistSavedColumnsID];
+
+	NSArray<NSTableColumn *> *columns = [[self tableColumns] copy];
+	NSMutableArray *columnsList = [[NSMutableArray alloc] init];
+
+	for(NSTableColumn *column in columns) {
+		[columnsList addObject:[column identifier]];
+	}
+	
+	NSArray<NSTableColumn *> *oldColumns = [[self tableColumns] copy];
+	for(NSTableColumn *column in oldColumns) {
+		[self removeTableColumn:column];
+	}
+
+	for(id column in updatedColumns) {
+		NSString *columnID = [column objectForKey:@"id"];
+		NSTableColumn *tableColumn = [columns objectAtIndex:[columnsList indexOfObject:columnID]];
+		[tableColumn setHidden:[[column objectForKey:@"hidden"] boolValue]];
+		[tableColumn setWidth:[[column objectForKey:@"width"] unsignedIntegerValue]];
+		[self addTableColumn:tableColumn];
+	}
+	
+	columns = [self tableColumns];
 
 	for(NSTableColumn *col in columns) {
 		[[col dataCell] setControlSize:s];
@@ -81,11 +150,60 @@
 
 	if(visibleTableColumns == 0) {
 		for(NSTableColumn *col in columns) {
-			[col setHidden:NO];
+			NSString *columnID = [col identifier];
+			id column = [defaultColumns objectAtIndex:[defaultColumnList indexOfObject:columnID]];
+			[col setWidth:[[column objectForKey:@"width"] unsignedIntegerValue]];
+			[col setHidden:[[column objectForKey:@"hidden"] boolValue]];
 		}
 	}
 
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tableColumnsResized) name:NSTableViewColumnDidResizeNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tableColumnsMoved) name:NSTableViewColumnDidMoveNotification object:nil];
+
 	[[self headerView] setMenu:headerContextMenu];
+}
+
+- (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSTableViewColumnDidResizeNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSTableViewColumnDidMoveNotification object:nil];
+
+	if(syncTimer) {
+		[syncTimer invalidate];
+		syncTimer = nil;
+	}
+	
+	[self syncColumnState];
+}
+
+- (void)syncColumnState {
+	NSArray<NSTableColumn *> *columns = [self tableColumns];
+	NSMutableArray *savedColumns = [[NSMutableArray alloc] init];
+
+	for(NSTableColumn *col in columns) {
+		[savedColumns addObject:@{@"id": [col identifier], @"width": @([col width]), @"hidden": @([col isHidden])}];
+	}
+
+	[[NSUserDefaults standardUserDefaults] setObject:savedColumns forKey:playlistSavedColumnsID];
+}
+
+- (void)tableShouldSyncTimer:(NSTimer *)timer {
+	[syncTimer invalidate];
+	syncTimer = nil;
+	
+	[self syncColumnState];
+}
+
+- (void)tableShouldSync {
+	[syncTimer invalidate];
+	syncTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(tableShouldSyncTimer:) userInfo:nil repeats:NO];
+}
+
+- (void)tableColumnsResized {
+	[self tableShouldSync];
+}
+
+- (void)tableColumnsMoved {
+	[self tableShouldSync];
 }
 
 - (IBAction)toggleColumn:(id)sender {
@@ -100,6 +218,8 @@
 
 		[tc setHidden:YES];
 	}
+
+	[self tableShouldSync];
 }
 
 - (BOOL)acceptsFirstResponder {

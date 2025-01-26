@@ -18,6 +18,8 @@
 	IBOutlet PlaylistLoader *playlistLoader;
 
 	NSMenu *headerContextMenu;
+
+	NSTimer *syncTimer;
 }
 
 - (IBAction)toggleColumn:(id)sender;
