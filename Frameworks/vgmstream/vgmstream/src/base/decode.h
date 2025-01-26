@@ -3,16 +3,14 @@
 
 #include "../vgmstream.h"
 
-#if VGM_TEST_DECODER
 void* decode_init();
-#endif
 void decode_free(VGMSTREAM* vgmstream);
 void decode_seek(VGMSTREAM* vgmstream);
 void decode_reset(VGMSTREAM* vgmstream);
 
 /* Decode samples into the buffer. Assume that we have written samples_filled into the
  * buffer already, and we have samples_to_do consecutive samples ahead of us. */
-void decode_vgmstream(VGMSTREAM* vgmstream, int samples_filled, int samples_to_do, sample_t* buffer);
+void decode_vgmstream(sbuf_t* sdst, VGMSTREAM* vgmstream, int samples_to_do);
 
 /* Detect loop start and save values, or detect loop end and restore (loop back). Returns true if loop was done. */
 bool decode_do_loop(VGMSTREAM* vgmstream);

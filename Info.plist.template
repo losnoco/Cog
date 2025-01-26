@@ -537,7 +537,10 @@
 				<string>gwm</string>
 				<string>h4m</string>
 				<string>hab</string>
+				<string>hbd</string>
 				<string>hca</string>
+				<string>hd</string>
+				<string>hd2</string>
 				<string>hd3</string>
 				<string>hdr</string>
 				<string>hdt</string>
@@ -584,6 +587,8 @@
 				<string>ivs</string>
 				<string>joe</string>
 				<string>jstm</string>
+				<string>k2sb</string>
+				<string>ka1a</string>
 				<string>kat</string>
 				<string>kces</string>
 				<string>kcey</string>
@@ -724,6 +729,7 @@
 				<string>past</string>
 				<string>pcm</string>
 				<string>pdt</string>
+				<string>phd</string>
 				<string>pk</string>
 				<string>pona</string>
 				<string>pos</string>
@@ -812,6 +818,7 @@
 				<string>sgb</string>
 				<string>sgd</string>
 				<string>sgt</string>
+				<string>skx</string>
 				<string>slb</string>
 				<string>sli</string>
 				<string>smc</string>
