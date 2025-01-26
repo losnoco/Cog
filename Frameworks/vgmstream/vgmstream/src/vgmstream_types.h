@@ -63,7 +63,7 @@ typedef enum {
     coding_IMA_int,         /* IMA ADPCM (mono/interleave, low nibble first) */
     coding_DVI_IMA,         /* DVI IMA ADPCM (stereo or mono, high nibble first) */
     coding_DVI_IMA_int,     /* DVI IMA ADPCM (mono/interleave, high nibble first) */
-    coding_NW_IMA,
+    coding_CAMELOT_IMA,
     coding_SNDS_IMA,        /* Heavy Iron Studios .snds IMA ADPCM */
     coding_QD_IMA,
     coding_WV6_IMA,         /* Gorilla Systems WV6 4-bit IMA ADPCM */
@@ -145,6 +145,7 @@ typedef enum {
     coding_TAC,             /* tri-Ace Codec (MDCT-based) */
     coding_ICE_RANGE,       /* Inti Creates "range" codec */
     coding_ICE_DCT,         /* Inti Creates "DCT" codec */
+    coding_KA1A,            /* Koei Tecmo codec (transform-based) */
 
 #ifdef VGM_USE_VORBIS
     coding_OGG_VORBIS,      /* Xiph Vorbis with Ogg layer (MDCT-based) */
@@ -710,6 +711,11 @@ typedef enum {
     meta_DSP_ASURA,
     meta_ONGAKUKAN_RIFF_ADP,
     meta_SDD,
+    meta_KA1A,
+    meta_HD_BD,
+    meta_PPHD,
+    meta_XABP,
+    meta_I3DS,
 
 } meta_t;
 
