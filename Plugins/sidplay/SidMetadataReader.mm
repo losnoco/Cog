@@ -30,33 +30,48 @@
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
 	if(![source open:url])
-		return 0;
+		return @{};
 
 	if(![source seekable])
-		return 0;
+		return @{};
 
 	[source seek:0 whence:SEEK_END];
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
+	if(!size)
+		return @{};
+	
 	void *data = malloc(size);
+	if(!data)
+		return @{};
+
 	[source read:data amount:size];
 
-	SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+	NSString *title = @"";
+	NSString *titletag = @"title";
+	NSString *artist = @"";
 
-	if(!tune->getStatus()) {
+	try {
+		SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+
+		if(!tune->getStatus()) {
+			delete tune;
+			return 0;
+		}
+
+		const SidTuneInfo *info = tune->getInfo();
+
+		unsigned int count = info->numberOfInfoStrings();
+		title = count >= 1 ? [guess_encoding_of_string(info->infoString(0)) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+		titletag = info->songs() > 1 ? @"album" : @"title";
+		artist = count >= 2 ? [guess_encoding_of_string(info->infoString(1)) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
+
 		delete tune;
-		return 0;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while reading SID tags: %s", e.what());
+		return @{};
 	}
-
-	const SidTuneInfo *info = tune->getInfo();
-
-	unsigned int count = info->numberOfInfoStrings();
-	NSString *title = count >= 1 ? [guess_encoding_of_string(info->infoString(0)) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
-	NSString *titletag = info->songs() > 1 ? @"album" : @"title";
-	NSString *artist = count >= 2 ? [guess_encoding_of_string(info->infoString(1)) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
-
-	delete tune;
 
 	return @{titletag: title, @"artist": artist};
 }

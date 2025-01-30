@@ -35,30 +35,43 @@
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
 	if(![source open:url])
-		return 0;
+		return @[];
 
 	if(![source seekable])
-		return 0;
+		return @[];
 
 	[source seek:0 whence:SEEK_END];
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
+	if(!size)
+		return @[];
+
 	void *data = malloc(size);
+	if(!data)
+		return @[];
+	
 	[source read:data amount:size];
 
-	SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+	unsigned int subsongs = 0;
 
-	if(!tune->getStatus()) {
+	try {
+		SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+
+		if(!tune->getStatus()) {
+			delete tune;
+			return 0;
+		}
+
+		const SidTuneInfo *info = tune->getInfo();
+
+		subsongs = info->songs();
+
 		delete tune;
-		return 0;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught processing SID file for song count: %s", e.what());
+		return @[];
 	}
-
-	const SidTuneInfo *info = tune->getInfo();
-
-	unsigned int subsongs = info->songs();
-
-	delete tune;
 
 	NSMutableArray *tracks = [NSMutableArray array];
 
