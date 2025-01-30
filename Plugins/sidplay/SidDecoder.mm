@@ -85,6 +85,8 @@ static const char *extListStr[] = { ".str", NULL };
 
 	[source seek:0 whence:SEEK_END];
 	size_t fileSize = [source tell];
+	if(!fileSize)
+		return;
 
 	void *dataBytes = malloc(fileSize);
 	if(!dataBytes)
@@ -162,17 +164,21 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 // Need this static initializer to create the static global tables that sidplayfp doesn't really lock access to
 + (void)initialize {
-	ReSIDfpBuilder *builder = new ReSIDfpBuilder("ReSIDfp");
+	try {
+		ReSIDfpBuilder *builder = new ReSIDfpBuilder("ReSIDfp");
 
-	if(builder) {
-		builder->create(1);
-		if(builder->getStatus()) {
-			builder->filter(true);
-			builder->filter6581Curve(0.5);
-			builder->filter8580Curve(0.5);
+		if(builder) {
+			builder->create(1);
+			if(builder->getStatus()) {
+				builder->filter(true);
+				builder->filter6581Curve(0.5);
+				builder->filter8580Curve(0.5);
+			}
+			
+			delete builder;
 		}
-		
-		delete builder;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while doing one-time initialization of SID player: %s", e.what());
 	}
 }
 
@@ -204,61 +210,66 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	const char **extList = [extension isEqualToString:@"mus"] ? extListStr : extListEmpty;
 
-	tune = new SidTune(sidTuneLoader, [currentUrl UTF8String], extList, true);
+	try {
+		tune = new SidTune(sidTuneLoader, [currentUrl UTF8String], extList, true);
 
-	if(!tune->getStatus())
-		return NO;
-
-	NSURL *url = [s url];
-	int track_num;
-	if([[url fragment] length] == 0)
-		track_num = 1;
-	else
-		track_num = [[url fragment] intValue];
-
-	n_channels = 1;
-
-	double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
-
-	length = (int)ceil(sampleRate * defaultLength);
-
-	tune->selectSong(track_num);
-
-	engine = new sidplayfp;
-
-	engine->setRoms(kernel, basic, chargen);
-
-	if(!engine->load(tune))
-		return NO;
-
-	ReSIDfpBuilder *_builder = new ReSIDfpBuilder("ReSIDfp");
-	builder = _builder;
-
-	if(_builder) {
-		_builder->create((engine->info()).maxsids());
-		if(_builder->getStatus()) {
-			_builder->filter(true);
-			_builder->filter6581Curve(0.5);
-			_builder->filter8580Curve(0.5);
-		}
-		if(!_builder->getStatus())
+		if(!tune->getStatus())
 			return NO;
-	} else
+
+		NSURL *url = [s url];
+		int track_num;
+		if([[url fragment] length] == 0)
+			track_num = 1;
+		else
+			track_num = [[url fragment] intValue];
+
+		n_channels = 1;
+
+		double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+
+		length = (int)ceil(sampleRate * defaultLength);
+
+		tune->selectSong(track_num);
+
+		engine = new sidplayfp;
+
+		engine->setRoms(kernel, basic, chargen);
+
+		if(!engine->load(tune))
+			return NO;
+
+		ReSIDfpBuilder *_builder = new ReSIDfpBuilder("ReSIDfp");
+		builder = _builder;
+
+		if(_builder) {
+			_builder->create((engine->info()).maxsids());
+			if(_builder->getStatus()) {
+				_builder->filter(true);
+				_builder->filter6581Curve(0.5);
+				_builder->filter8580Curve(0.5);
+			}
+			if(!_builder->getStatus())
+				return NO;
+		} else
+			return NO;
+
+		const SidTuneInfo *tuneInfo = tune->getInfo();
+
+		SidConfig conf = engine->config();
+		conf.frequency = (int)ceil(sampleRate);
+		conf.sidEmulation = builder;
+		conf.playback = SidConfig::MONO;
+		if(tuneInfo && (tuneInfo->sidChips() > 1))
+			conf.playback = SidConfig::STEREO;
+		if(!engine->config(conf))
+			return NO;
+
+		if(conf.playback == SidConfig::STEREO) {
+			n_channels = 2;
+		}
+	} catch (std::exception &e) {
+		ALog(@"Exception caught loading SID file: %s", e.what());
 		return NO;
-
-	const SidTuneInfo *tuneInfo = tune->getInfo();
-
-	SidConfig conf = engine->config();
-	conf.frequency = (int)ceil(sampleRate);
-	conf.sidEmulation = builder;
-	conf.playback = SidConfig::MONO;
-	if(tuneInfo && (tuneInfo->sidChips() > 1))
-		conf.playback = SidConfig::STEREO;
-	if(!engine->config(conf))
-		return NO;
-
-	if(conf.playback == SidConfig::STEREO) {
-		n_channels = 2;
 	}
 
 	double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
@@ -299,7 +310,13 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	int16_t buffer[1024 * n_channels];
 
 	int framesToRender = 1024;
-	int rendered = engine->play(buffer, framesToRender * n_channels) / n_channels;
+	int rendered = 0;
+	try {
+		rendered = engine->play(buffer, framesToRender * n_channels) / n_channels;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while playing SID file: %s", e.what());
+		return nil;
+	}
 
 	if(rendered <= 0)
 		return nil;
@@ -343,8 +360,13 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 - (long)seek:(long)frame {
 	if(frame < renderedTotal) {
-		engine->load(tune);
 		renderedTotal = 0;
+		try {
+			engine->load(tune);
+		} catch (std::exception &e) {
+			ALog(@"Exception caught reloading SID tune for seeking: %s", e.what());
+			return -1;
+		}
 	}
 
 	int16_t sampleBuffer[1024 * 2];
@@ -352,48 +374,58 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	long remain = (frame - renderedTotal) % 32;
 	frame /= 32;
 	renderedTotal /= 32;
-	engine->fastForward(100 * 32);
 
-	while(renderedTotal < frame) {
-		long todo = frame - renderedTotal;
-		if(todo > 1024)
-			todo = 1024;
-		int done = engine->play(sampleBuffer, (uint_least32_t)(todo * n_channels)) / n_channels;
+	try {
+		engine->fastForward(100 * 32);
 
-		if(done < todo) {
-			if(engine->error())
-				return -1;
+		while(renderedTotal < frame) {
+			long todo = frame - renderedTotal;
+			if(todo > 1024)
+				todo = 1024;
+			int done = engine->play(sampleBuffer, (uint_least32_t)(todo * n_channels)) / n_channels;
 
-			renderedTotal = length;
-			break;
+			if(done < todo) {
+				if(engine->error())
+					return -1;
+
+				renderedTotal = length;
+				break;
+			}
+
+			renderedTotal += todo;
 		}
 
-		renderedTotal += todo;
+		renderedTotal *= 32;
+		engine->fastForward(100);
+
+		if(remain)
+			renderedTotal += engine->play(sampleBuffer, (uint_least32_t)(remain * n_channels)) / n_channels;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while brute force seeking SID file: %s", e.what());
+		return -1;
 	}
-
-	renderedTotal *= 32;
-	engine->fastForward(100);
-
-	if(remain)
-		renderedTotal += engine->play(sampleBuffer, (uint_least32_t)(remain * n_channels)) / n_channels;
 
 	return renderedTotal;
 }
 
 - (void)cleanUp {
-	if(builder) {
-		delete builder;
-		builder = NULL;
-	}
+	try {
+		if(builder) {
+			delete builder;
+			builder = NULL;
+		}
 
-	if(engine) {
-		delete engine;
-		engine = NULL;
-	}
+		if(engine) {
+			delete engine;
+			engine = NULL;
+		}
 
-	if(tune) {
-		delete tune;
-		tune = NULL;
+		if(tune) {
+			delete tune;
+			tune = NULL;
+		}
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while deleting SID player instances: %s", e.what());
 	}
 
 	source = nil;
