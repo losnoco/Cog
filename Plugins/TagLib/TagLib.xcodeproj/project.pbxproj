@@ -43,7 +43,7 @@
 		17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = TagLibMetadataReader.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* TagLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagLib_Prefix.pch; sourceTree = "<group>"; };
 		8307D31C286072BF000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
-		83344E172D4B536200C120FA /* tag.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = tag.framework; path = /Users/chris/Source/Repos/cog/ThirdParty/Frameworks/tag.framework; sourceTree = "<absolute>"; };
+		83344E172D4B536200C120FA /* tag.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = tag.framework; path = ../../ThirdParty/Frameworks/tag.framework; sourceTree = "<group>"; };
 		834A42C2287AFF5E00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagLibID3v2Reader.h; sourceTree = "<group>"; };
 		8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TagLibID3v2Reader.mm; sourceTree = "<group>"; };
@@ -266,7 +266,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../Frameworks/TagLib/taglib,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
@@ -293,7 +292,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					../../Frameworks/TagLib/taglib,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
