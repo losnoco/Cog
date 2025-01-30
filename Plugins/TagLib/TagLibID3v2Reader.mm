@@ -14,6 +14,8 @@
 #import <tag/tfilestream.h>
 #import <tag/tbytevectorstream.h>
 
+#import "Logging.h"
+
 @implementation TagLibID3v2Reader
 
 + (NSDictionary *)metadataForTag:(NSData *)tagBlock {
@@ -53,110 +55,115 @@
 	//
 	//	}
 
-	TagLib::ByteVector vector((const char *)[tagBlock bytes], (unsigned int)[tagBlock length]);
-	TagLib::ByteVectorStream vectorStream(vector);
+	try {
+		TagLib::ByteVector vector((const char *)[tagBlock bytes], (unsigned int)[tagBlock length]);
+		TagLib::ByteVectorStream vectorStream(vector);
 
-	TagLib::FileRef f((TagLib::IOStream *)&vectorStream, false);
-	if(!f.isNull()) {
-		const TagLib::Tag *tag = f.tag();
+		TagLib::FileRef f((TagLib::IOStream *)&vectorStream, false);
+		if(!f.isNull()) {
+			const TagLib::Tag *tag = f.tag();
 
-		if(tag) {
-			TagLib::String artist, albumartist, composer, title, album, genre, comment, unsyncedlyrics;
-			int year, track, disc;
-			float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
-			TagLib::String cuesheet;
-			TagLib::String soundcheck;
+			if(tag) {
+				TagLib::String artist, albumartist, composer, title, album, genre, comment, unsyncedlyrics;
+				int year, track, disc;
+				float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
+				TagLib::String cuesheet;
+				TagLib::String soundcheck;
 
-			artist = tag->artist();
-			//albumartist = tag->albumartist();
-			//composer = tag->composer();
-			title = tag->title();
-			album = tag->album();
-			genre = tag->genre();
-			comment = tag->comment();
-			//cuesheet = tag->cuesheet();
-			//unsyncedlyrics = tag->unsyncedlyrics();
+				artist = tag->artist();
+				//albumartist = tag->albumartist();
+				//composer = tag->composer();
+				title = tag->title();
+				album = tag->album();
+				genre = tag->genre();
+				comment = tag->comment();
+				//cuesheet = tag->cuesheet();
+				//unsyncedlyrics = tag->unsyncedlyrics();
 
-			year = tag->year();
-			[dict setObject:@(year) forKey:@"year"];
+				year = tag->year();
+				[dict setObject:@(year) forKey:@"year"];
 
-			track = tag->track();
-			[dict setObject:@(track) forKey:@"track"];
+				track = tag->track();
+				[dict setObject:@(track) forKey:@"track"];
 
-			/*disc = tag->disc();
-			[dict setObject:@(disc) forKey:@"disc"];*/
+				/*disc = tag->disc();
+				[dict setObject:@(disc) forKey:@"disc"];*/
 
-			/*rgAlbumGain = tag->rgAlbumGain();
-			rgAlbumPeak = tag->rgAlbumPeak();
-			rgTrackGain = tag->rgTrackGain();
-			rgTrackPeak = tag->rgTrackPeak();
-			[dict setObject:@(rgAlbumGain) forKey:@"replaygain_album_gain"];
-			[dict setObject:@(rgAlbumPeak) forKey:@"replaygain_album_peak"];
-			[dict setObject:@(rgTrackGain) forKey:@"replaygain_track_gain"];
-			[dict setObject:@(rgTrackPeak) forKey:@"replaygain_track_peak"];
+				/*rgAlbumGain = tag->rgAlbumGain();
+				rgAlbumPeak = tag->rgAlbumPeak();
+				rgTrackGain = tag->rgTrackGain();
+				rgTrackPeak = tag->rgTrackPeak();
+				[dict setObject:@(rgAlbumGain) forKey:@"replaygain_album_gain"];
+				[dict setObject:@(rgAlbumPeak) forKey:@"replaygain_album_peak"];
+				[dict setObject:@(rgTrackGain) forKey:@"replaygain_track_gain"];
+				[dict setObject:@(rgTrackPeak) forKey:@"replaygain_track_peak"];
 
-			soundcheck = tag->soundcheck();
-			if(!soundcheck.isEmpty()) {
-				TagLib::StringList tag = soundcheck.split(" ");
-				TagLib::StringList wantedTag;
-				for(int i = 0, count = tag.size(); i < count; i++) {
-					if(tag[i].length() == 8)
-						wantedTag.append(tag[i]);
+				soundcheck = tag->soundcheck();
+				if(!soundcheck.isEmpty()) {
+					TagLib::StringList tag = soundcheck.split(" ");
+					TagLib::StringList wantedTag;
+					for(int i = 0, count = tag.size(); i < count; i++) {
+						if(tag[i].length() == 8)
+							wantedTag.append(tag[i]);
+					}
+
+					if(wantedTag.size() >= 10) {
+						float volume1 = -log10((double)((uint32_t)wantedTag[0].toInt(16)) / 1000) * 10;
+						float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(16)) / 1000) * 10;
+						float volumeToUse = MIN(volume1, volume2);
+						float volumeScale = pow(10, volumeToUse / 20);
+						[dict setObject:@(volumeScale) forKey:@"volume"];
+					}
+				}*/
+
+				if(!artist.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
+
+				if(!albumartist.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:albumartist.toCString(true)] forKey:@"albumartist"];
+
+				if(!composer.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:composer.toCString(true)] forKey:@"composer"];
+
+				if(!album.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
+
+				if(!title.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
+
+				if(!genre.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
+
+				if(!cuesheet.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:cuesheet.toCString(true)] forKey:@"cuesheet"];
+
+				if(!comment.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:comment.toCString(true)] forKey:@"comment"];
+				
+				if(!unsyncedlyrics.isEmpty())
+					[dict setObject:[NSString stringWithUTF8String:unsyncedlyrics.toCString(true)] forKey:@"unsyncedlyrics"];
+
+				// Try to load the image.
+				NSData *image = nil;
+
+				TagLib::MPEG::File *mf = dynamic_cast<TagLib::MPEG::File *>(f.file());
+				if(mf) {
+					TagLib::ID3v2::FrameList pictures = mf->ID3v2Tag()->frameListMap()["APIC"];
+					if(!pictures.isEmpty()) {
+						TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(pictures.front());
+
+						image = [NSData dataWithBytes:pic->picture().data() length:pic->picture().size()];
+					}
 				}
 
-				if(wantedTag.size() >= 10) {
-					float volume1 = -log10((double)((uint32_t)wantedTag[0].toInt(16)) / 1000) * 10;
-					float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(16)) / 1000) * 10;
-					float volumeToUse = MIN(volume1, volume2);
-					float volumeScale = pow(10, volumeToUse / 20);
-					[dict setObject:@(volumeScale) forKey:@"volume"];
+				if(nil != image) {
+					[dict setObject:image forKey:@"albumArt"];
 				}
-			}*/
-
-			if(!artist.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
-
-			if(!albumartist.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:albumartist.toCString(true)] forKey:@"albumartist"];
-
-			if(!composer.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:composer.toCString(true)] forKey:@"composer"];
-
-			if(!album.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
-
-			if(!title.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
-
-			if(!genre.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
-
-			if(!cuesheet.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:cuesheet.toCString(true)] forKey:@"cuesheet"];
-
-			if(!comment.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:comment.toCString(true)] forKey:@"comment"];
-			
-			if(!unsyncedlyrics.isEmpty())
-				[dict setObject:[NSString stringWithUTF8String:unsyncedlyrics.toCString(true)] forKey:@"unsyncedlyrics"];
-
-			// Try to load the image.
-			NSData *image = nil;
-
-			TagLib::MPEG::File *mf = dynamic_cast<TagLib::MPEG::File *>(f.file());
-			if(mf) {
-				TagLib::ID3v2::FrameList pictures = mf->ID3v2Tag()->frameListMap()["APIC"];
-				if(!pictures.isEmpty()) {
-					TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(pictures.front());
-
-					image = [NSData dataWithBytes:pic->picture().data() length:pic->picture().size()];
-				}
-			}
-
-			if(nil != image) {
-				[dict setObject:image forKey:@"albumArt"];
 			}
 		}
+	} catch (std::exception &e) {
+		ALog(@"Exception caught processing ID3v2 tag with TagLib: %s", e.what());
+		return [NSDictionary dictionary];
 	}
 
 	return [NSDictionary dictionaryWithDictionary:dict];
