@@ -12,6 +12,8 @@
 
 #import <midi_processing/midi_processor.h>
 
+#import "Logging.h"
+
 @implementation MIDIMetadataReader
 
 + (NSArray *)fileTypes {
@@ -49,51 +51,56 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
-	std::vector<uint8_t> data;
-	data.resize(size);
-	[source read:&data[0] amount:size];
+	try {
+		std::vector<uint8_t> data;
+		data.resize(size);
+		[source read:&data[0] amount:size];
 
-	midi_container midi_file;
+		midi_container midi_file;
 
-	if(!midi_processor::process_file(data, [[url pathExtension] UTF8String], midi_file))
-		return 0;
+		if(!midi_processor::process_file(data, [[url pathExtension] UTF8String], midi_file))
+			return 0;
 
-	int track_num;
-	if([[url fragment] length] == 0)
-		track_num = 0;
-	else
-		track_num = [[url fragment] intValue];
+		int track_num;
+		if([[url fragment] length] == 0)
+			track_num = 0;
+		else
+			track_num = [[url fragment] intValue];
 
-	midi_meta_data metadata;
+		midi_meta_data metadata;
 
-	midi_file.get_meta_data(track_num, metadata);
+		midi_file.get_meta_data(track_num, metadata);
 
-	midi_meta_data_item item;
-	bool remap_display_name = !metadata.get_item("title", item);
+		midi_meta_data_item item;
+		bool remap_display_name = !metadata.get_item("title", item);
 
-	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
-	for(size_t i = 0; i < metadata.get_count(); ++i) {
-		@autoreleasepool {
-			const midi_meta_data_item &item = metadata[i];
-			NSString *name = [guess_encoding_of_string(item.m_name.c_str()) lowercaseString];
-			if(![name isEqualToString:@"type"]) {
-				if(remap_display_name && [name isEqualToString:@"display_name"])
-					name = @"title";
-				setDictionary(dict, name, guess_encoding_of_string(item.m_value.c_str()));
+		for(size_t i = 0; i < metadata.get_count(); ++i) {
+			@autoreleasepool {
+				const midi_meta_data_item &item = metadata[i];
+				NSString *name = [guess_encoding_of_string(item.m_name.c_str()) lowercaseString];
+				if(![name isEqualToString:@"type"]) {
+					if(remap_display_name && [name isEqualToString:@"display_name"])
+						name = @"title";
+					setDictionary(dict, name, guess_encoding_of_string(item.m_value.c_str()));
+				}
 			}
 		}
-	}
 
-	std::vector<uint8_t> albumArt;
+		std::vector<uint8_t> albumArt;
 
-	if(metadata.get_bitmap(albumArt)) {
-		@autoreleasepool {
-			[dict setObject:[NSData dataWithBytes:&albumArt[0] length:albumArt.size()] forKey:@"albumArt"];
+		if(metadata.get_bitmap(albumArt)) {
+			@autoreleasepool {
+				[dict setObject:[NSData dataWithBytes:&albumArt[0] length:albumArt.size()] forKey:@"albumArt"];
+			}
 		}
-	}
 
-	return dict;
+		return dict;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while reading MIDI metadata: %s", e.what());
+		return [NSDictionary dictionary];
+	}
 }
 
 @end

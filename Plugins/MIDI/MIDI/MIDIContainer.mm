@@ -11,6 +11,8 @@
 
 #import <midi_processing/midi_processor.h>
 
+#import "Logging.h"
+
 @implementation MIDIContainer
 
 + (NSArray *)fileTypes {
@@ -45,14 +47,19 @@
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
-	std::vector<uint8_t> data;
-	data.resize(size);
-	[source read:&data[0] amount:size];
-
 	size_t track_count = 0;
 
-	if(!midi_processor::process_track_count(data, [[url pathExtension] UTF8String], track_count))
+	try {
+		std::vector<uint8_t> data;
+		data.resize(size);
+		[source read:&data[0] amount:size];
+
+		if(!midi_processor::process_track_count(data, [[url pathExtension] UTF8String], track_count))
+			return @[];
+	} catch (std::exception &e) {
+		ALog(@"Exception caught processing MIDI track count: %s", e.what());
 		return @[];
+	}
 
 	NSMutableArray *tracks = [NSMutableArray array];
 
