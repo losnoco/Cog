@@ -9,32 +9,15 @@
 /* Begin PBXBuildFile section */
 		07CACE8B0ED1AD1000C0F1E8 /* TagLibMetadataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 07CACE8A0ED1AD1000C0F1E8 /* TagLibMetadataWriter.m */; };
 		17C93FC30B90056C008627D6 /* TagLibMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */; };
-		17F563B40C3BDBB30019975C /* TagLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563A60C3BDB8F0019975C /* TagLib.framework */; };
-		17F563B60C3BDBB50019975C /* TagLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563A60C3BDB8F0019975C /* TagLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8307D31D286072BF000FF8EB /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8307D31C286072BF000FF8EB /* SandboxBroker.h */; };
+		83344E182D4B536200C120FA /* tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83344E172D4B536200C120FA /* tag.framework */; };
+		83344E192D4B627A00C120FA /* tag.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83344E172D4B536200C120FA /* tag.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834A42C3287AFF5E00EB9D9B /* AudioChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A42C2287AFF5E00EB9D9B /* AudioChunk.h */; };
 		8356BCE527B377C20074E50C /* TagLibID3v2Reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */; };
 		8356BCE627B377C20074E50C /* TagLibID3v2Reader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */; };
 		8384913A18081FFC00E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384913918081FFC00E7332D /* Logging.h */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		17F563A50C3BDB8F0019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F563A00C3BDB8F0019975C /* TagLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = TagLib;
-		};
-		17F563C00C3BDBC60019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F563A00C3BDB8F0019975C /* TagLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = TagLib;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		17C93FF20B900734008627D6 /* CopyFiles */ = {
@@ -43,7 +26,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17F563B60C3BDBB50019975C /* TagLib.framework in CopyFiles */,
+				83344E192D4B627A00C120FA /* tag.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,9 +41,9 @@
 		177FCFA40B90C9600011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		17C93FC10B90056C008627D6 /* TagLibMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagLibMetadataReader.h; sourceTree = "<group>"; };
 		17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = TagLibMetadataReader.m; sourceTree = "<group>"; };
-		17F563A00C3BDB8F0019975C /* TagLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TagLib.xcodeproj; path = ../../Frameworks/TagLib/TagLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* TagLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagLib_Prefix.pch; sourceTree = "<group>"; };
 		8307D31C286072BF000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
+		83344E172D4B536200C120FA /* tag.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = tag.framework; path = /Users/chris/Source/Repos/cog/ThirdParty/Frameworks/tag.framework; sourceTree = "<absolute>"; };
 		834A42C2287AFF5E00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagLibID3v2Reader.h; sourceTree = "<group>"; };
 		8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TagLibID3v2Reader.mm; sourceTree = "<group>"; };
@@ -76,8 +59,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F563B40C3BDBB30019975C /* TagLib.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
+				83344E182D4B536200C120FA /* tag.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +117,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				17F563A00C3BDB8F0019975C /* TagLib.xcodeproj */,
+				83344E172D4B536200C120FA /* tag.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -148,14 +131,6 @@
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		17F563A10C3BDB8F0019975C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17F563A60C3BDB8F0019975C /* TagLib.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -213,7 +188,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				17F563C10C3BDBC60019975C /* PBXTargetDependency */,
 			);
 			name = "TagLib Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
@@ -230,7 +204,7 @@
 				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					8D5B49AC048680CD000E48DA = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = N6E749HJ2X;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -245,28 +219,12 @@
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* TagLib */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 17F563A10C3BDB8F0019975C /* Products */;
-					ProjectRef = 17F563A00C3BDB8F0019975C /* TagLib.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* TagLib Plugin */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		17F563A60C3BDB8F0019975C /* TagLib.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = TagLib.framework;
-			remoteRef = 17F563A50C3BDB8F0019975C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D5B49AF048680CD000E48DA /* Resources */ = {
@@ -291,22 +249,15 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		17F563C10C3BDBC60019975C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = TagLib;
-			targetProxy = 17F563C00C3BDBC60019975C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		1DEB913B08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = ../../ThirdParty/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -319,6 +270,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.taglib;
 				PRODUCT_NAME = TagLib;
 				SDKROOT = macosx;
@@ -331,9 +283,10 @@
 		1DEB913C08733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = ../../ThirdParty/Frameworks;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = TagLib_Prefix.pch;
@@ -344,6 +297,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.taglib;
 				PRODUCT_NAME = TagLib;
 				SDKROOT = macosx;

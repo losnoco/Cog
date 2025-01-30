@@ -7,16 +7,16 @@
 //
 
 #import "TagLibMetadataReader.h"
-#import <taglib/audioproperties.h>
-#import <taglib/fileref.h>
-#import <taglib/flac/flacfile.h>
-#import <taglib/mpc/mpcproperties.h>
-#import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
-#import <taglib/mpeg/id3v2/id3v2tag.h>
-#import <taglib/mpeg/mpegfile.h>
-#import <taglib/tag.h>
-#import <taglib/ogg/vorbis/vorbisfile.h>
-#import <taglib/ogg/xiphcomment.h>
+#import <tag/audioproperties.h>
+#import <tag/fileref.h>
+#import <tag/flacfile.h>
+#import <tag/mpcproperties.h>
+#import <tag/attachedpictureframe.h>
+#import <tag/id3v2tag.h>
+#import <tag/mpegfile.h>
+#import <tag/tag.h>
+#import <tag/vorbisfile.h>
+#import <tag/xiphcomment.h>
 
 #import "SandboxBroker.h"
 
@@ -80,16 +80,16 @@
 			TagLib::String soundcheck;
 
 			artist = tag->artist();
-			albumartist = tag->albumartist();
-			composer = tag->composer();
+			//albumartist = tag->albumartist();
+			//composer = tag->composer();
 			title = tag->title();
 			;
 			album = tag->album();
 			genre = tag->genre();
 			comment = tag->comment();
-			cuesheet = tag->cuesheet();
+			//cuesheet = tag->cuesheet();
 			
-			unsyncedlyrics = tag->unsyncedlyrics();
+			//unsyncedlyrics = tag->unsyncedlyrics();
 
 			year = tag->year();
 			[dict setObject:@(year) forKey:@"year"];
@@ -97,19 +97,19 @@
 			track = tag->track();
 			[dict setObject:@(track) forKey:@"track"];
 
-			disc = tag->disc();
-			[dict setObject:@(disc) forKey:@"disc"];
+			/*disc = tag->disc();
+			[dict setObject:@(disc) forKey:@"disc"];*/
 
-			rgAlbumGain = tag->rgAlbumGain();
+			/*rgAlbumGain = tag->rgAlbumGain();
 			rgAlbumPeak = tag->rgAlbumPeak();
 			rgTrackGain = tag->rgTrackGain();
 			rgTrackPeak = tag->rgTrackPeak();
 			[dict setObject:@(rgAlbumGain) forKey:@"replaygain_album_gain"];
 			[dict setObject:@(rgAlbumPeak) forKey:@"replaygain_album_peak"];
 			[dict setObject:@(rgTrackGain) forKey:@"replaygain_track_gain"];
-			[dict setObject:@(rgTrackPeak) forKey:@"replaygain_track_peak"];
+			[dict setObject:@(rgTrackPeak) forKey:@"replaygain_track_peak"];*/
 
-			soundcheck = tag->soundcheck();
+			/*soundcheck = tag->soundcheck();
 			if(!soundcheck.isEmpty()) {
 				TagLib::StringList tag = soundcheck.split(" ");
 				TagLib::StringList wantedTag;
@@ -125,7 +125,7 @@
 					float volumeScale = pow(10, volumeToUse / 20);
 					[dict setObject:@(volumeScale) forKey:@"volume"];
 				}
-			}
+			}*/
 
 			if(!artist.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
