@@ -37,20 +37,20 @@
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
 	if(![source open:url])
-		return 0;
+		return @[];
 
 	if(![source seekable])
-		return 0;
+		return @[];
 
 	[source seek:0 whence:SEEK_END];
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
-	std::vector<char> data(static_cast<std::size_t>(size));
-
-	[source read:data.data() amount:size];
-
 	try {
+		std::vector<char> data(static_cast<std::size_t>(size));
+
+		[source read:data.data() amount:size];
+
 		std::map<std::string, std::string> ctls;
 		openmpt::module *mod = new openmpt::module(data, std::clog, ctls);
 
@@ -66,8 +66,9 @@
 		}
 
 		return tracks;
-	} catch(std::exception & /*e*/) {
-		return 0;
+	} catch(std::exception &e) {
+		ALog(@"Exception caught while processing with OpenMPT: %s", e.what());
+		return @[];
 	}
 }
 

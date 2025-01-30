@@ -13,12 +13,16 @@
 #import "PlaylistController.h"
 
 static void g_push_archive_extensions(std::vector<std::string> &list) {
-	static std::string archive_extensions[] = {
-		"mdz", "mdr", "s3z", "xmz", "itz", "mptmz"
-	};
-	for(unsigned i = 0, j = 6; i < j; ++i) {
-		if(list.empty() || std::find(list.begin(), list.end(), archive_extensions[i]) == list.end())
-			list.push_back(archive_extensions[i]);
+	try {
+		static std::string archive_extensions[] = {
+			"mdz", "mdr", "s3z", "xmz", "itz", "mptmz"
+		};
+		for(unsigned i = 0, j = 6; i < j; ++i) {
+			if(list.empty() || std::find(list.begin(), list.end(), archive_extensions[i]) == list.end())
+				list.push_back(archive_extensions[i]);
+		}
+	} catch (std::exception &e) {
+		ALog(@"Exception caught pushing archive extensions for OpenMPT: %s", e.what());
 	}
 }
 
@@ -46,32 +50,31 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 		sampleRate = 192000.0;
 	}
 
-	std::vector<char> data(static_cast<std::size_t>(size));
-
-	[source read:data.data() amount:size];
-
-	int track_num;
-	if([[source.url fragment] length] == 0)
-		track_num = 0;
-	else
-		track_num = [[source.url fragment] intValue];
-
-	int interp = 8;
-	NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
-	if([resampling isEqualToString:@"zoh"])
-		interp = 1;
-	else if([resampling isEqualToString:@"blep"])
-		interp = 1;
-	else if([resampling isEqualToString:@"linear"])
-		interp = 2;
-	else if([resampling isEqualToString:@"blam"])
-		interp = 2;
-	else if([resampling isEqualToString:@"cubic"])
-		interp = 4;
-	else if([resampling isEqualToString:@"sinc"])
-		interp = 8;
-
 	try {
+		std::vector<char> data(static_cast<std::size_t>(size));
+
+		[source read:data.data() amount:size];
+
+		int track_num;
+		if([[source.url fragment] length] == 0)
+			track_num = 0;
+		else
+			track_num = [[source.url fragment] intValue];
+
+		int interp = 8;
+		NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+		if([resampling isEqualToString:@"zoh"])
+			interp = 1;
+		else if([resampling isEqualToString:@"blep"])
+			interp = 1;
+		else if([resampling isEqualToString:@"linear"])
+			interp = 2;
+		else if([resampling isEqualToString:@"blam"])
+			interp = 2;
+		else if([resampling isEqualToString:@"cubic"])
+			interp = 4;
+		else if([resampling isEqualToString:@"sinc"])
+			interp = 8;
 		std::map<std::string, std::string> ctls;
 		ctls["seek.sync_samples"] = "1";
 		mod = new openmpt::module(data, std::clog, ctls);
@@ -86,7 +89,8 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 		mod->set_render_param(openmpt::module::RENDER_INTERPOLATIONFILTER_LENGTH, interp);
 		mod->set_render_param(openmpt::module::RENDER_VOLUMERAMPING_STRENGTH, -1);
 		mod->ctl_set_boolean("render.resampler.emulate_amiga", true);
-	} catch(std::exception & /*e*/) {
+	} catch(std::exception &e) {
+		ALog(@"Exception caught opening module with OpenMPT: %s", e.what());
 		return NO;
 	}
 
@@ -113,43 +117,57 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 }
 
 - (AudioChunk *)readAudio {
-	mod->set_repeat_count(IsRepeatOneSet() ? -1 : 0);
+	try {
+		mod->set_repeat_count(IsRepeatOneSet() ? -1 : 0);
 
-	int frames = 1024;
-	float buffer[frames * 2];
-	void *buf = (void *)buffer;
+		int frames = 1024;
+		float buffer[frames * 2];
+		void *buf = (void *)buffer;
 
-	int total = 0;
-	while(total < frames) {
-		int framesToRender = 1024;
-		if(framesToRender > frames)
-			framesToRender = frames;
+		int total = 0;
+		while(total < frames) {
+			int framesToRender = 1024;
+			if(framesToRender > frames)
+				framesToRender = frames;
 
-		std::size_t count = mod->read_interleaved_stereo(sampleRate, framesToRender, ((float *)buf) + total * 2);
-		if(count == 0)
-			break;
+			std::size_t count = mod->read_interleaved_stereo(sampleRate, framesToRender, ((float *)buf) + total * 2);
+			if(count == 0)
+				break;
 
-		total += count;
+			total += count;
 
-		if(count < framesToRender)
-			break;
+			if(count < framesToRender)
+				break;
+		}
+
+		id audioChunkClass = NSClassFromString(@"AudioChunk");
+		AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+		[chunk assignSamples:buffer frameCount:total];
+
+		return chunk;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while playing with OpenMPT: %s", e.what());
+		return nil;
 	}
-
-	id audioChunkClass = NSClassFromString(@"AudioChunk");
-	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
-	[chunk assignSamples:buffer frameCount:total];
-
-	return chunk;
 }
 
 - (long)seek:(long)frame {
-	mod->set_position_seconds(frame / sampleRate);
+	try {
+		mod->set_position_seconds(frame / sampleRate);
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while seeking with OpenMPT: %s", e.what());
+		return -1;
+	}
 
 	return frame;
 }
 
 - (void)cleanUp {
-	delete mod;
+	try {
+		delete mod;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while deleting instance of OpenMPT: %s", e.what());
+	}
 	mod = NULL;
 }
 
@@ -170,15 +188,20 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 }
 
 + (NSArray *)fileTypes {
-	std::vector<std::string> extensions = openmpt::get_supported_extensions();
-	g_push_archive_extensions(extensions);
-	NSMutableArray *array = [NSMutableArray array];
+	try {
+		std::vector<std::string> extensions = openmpt::get_supported_extensions();
+		g_push_archive_extensions(extensions);
+		NSMutableArray *array = [NSMutableArray array];
 
-	for(std::vector<std::string>::iterator ext = extensions.begin(); ext != extensions.end(); ++ext) {
-		[array addObject:[NSString stringWithUTF8String:ext->c_str()]];
+		for(std::vector<std::string>::iterator ext = extensions.begin(); ext != extensions.end(); ++ext) {
+			[array addObject:[NSString stringWithUTF8String:ext->c_str()]];
+		}
+
+		return [NSArray arrayWithArray:array];
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while enumerating OpenMPT file extensions: %s", e.what());
+		return @[];
 	}
-
-	return [NSArray arrayWithArray:array];
 }
 
 + (NSArray *)mimeTypes {
