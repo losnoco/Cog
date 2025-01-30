@@ -7,11 +7,12 @@
 
 #import "TagLibID3v2Reader.h"
 
-#import <taglib/fileref.h>
-#import <taglib/mpeg/id3v2/frames/attachedpictureframe.h>
-#import <taglib/mpeg/id3v2/id3v2tag.h>
-#import <taglib/mpeg/mpegfile.h>
-#import <taglib/toolkit/tbytevectorstream.h>
+#import <tag/fileref.h>
+#import <tag/attachedpictureframe.h>
+#import <tag/id3v2tag.h>
+#import <tag/mpegfile.h>
+#import <tag/tfilestream.h>
+#import <tag/tbytevectorstream.h>
 
 @implementation TagLibID3v2Reader
 
@@ -55,7 +56,7 @@
 	TagLib::ByteVector vector((const char *)[tagBlock bytes], (unsigned int)[tagBlock length]);
 	TagLib::ByteVectorStream vectorStream(vector);
 
-	TagLib::FileRef f(&vectorStream, false);
+	TagLib::FileRef f((TagLib::IOStream *)&vectorStream, false);
 	if(!f.isNull()) {
 		const TagLib::Tag *tag = f.tag();
 
@@ -67,14 +68,14 @@
 			TagLib::String soundcheck;
 
 			artist = tag->artist();
-			albumartist = tag->albumartist();
-			composer = tag->composer();
+			//albumartist = tag->albumartist();
+			//composer = tag->composer();
 			title = tag->title();
 			album = tag->album();
 			genre = tag->genre();
 			comment = tag->comment();
-			cuesheet = tag->cuesheet();
-			unsyncedlyrics = tag->unsyncedlyrics();
+			//cuesheet = tag->cuesheet();
+			//unsyncedlyrics = tag->unsyncedlyrics();
 
 			year = tag->year();
 			[dict setObject:@(year) forKey:@"year"];
@@ -82,10 +83,10 @@
 			track = tag->track();
 			[dict setObject:@(track) forKey:@"track"];
 
-			disc = tag->disc();
-			[dict setObject:@(disc) forKey:@"disc"];
+			/*disc = tag->disc();
+			[dict setObject:@(disc) forKey:@"disc"];*/
 
-			rgAlbumGain = tag->rgAlbumGain();
+			/*rgAlbumGain = tag->rgAlbumGain();
 			rgAlbumPeak = tag->rgAlbumPeak();
 			rgTrackGain = tag->rgTrackGain();
 			rgTrackPeak = tag->rgTrackPeak();
@@ -110,7 +111,7 @@
 					float volumeScale = pow(10, volumeToUse / 20);
 					[dict setObject:@(volumeScale) forKey:@"volume"];
 				}
-			}
+			}*/
 
 			if(!artist.isEmpty())
 				[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
