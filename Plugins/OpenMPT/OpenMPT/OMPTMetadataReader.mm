@@ -41,26 +41,26 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
 	if(![source open:url])
-		return 0;
+		return @{};
 
 	if(![source seekable])
-		return 0;
+		return @{};
 
 	[source seek:0 whence:SEEK_END];
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
-	std::vector<char> data(static_cast<std::size_t>(size));
-
-	[source read:data.data() amount:size];
-
-	int track_num;
-	if([[url fragment] length] == 0)
-		track_num = 0;
-	else
-		track_num = [[url fragment] intValue];
-
 	try {
+		std::vector<char> data(static_cast<std::size_t>(size));
+
+		[source read:data.data() amount:size];
+
+		int track_num;
+		if([[url fragment] length] == 0)
+			track_num = 0;
+		else
+			track_num = [[url fragment] intValue];
+
 		std::map<std::string, std::string> ctls;
 		openmpt::module *mod = new openmpt::module(data, std::clog, ctls);
 
@@ -85,8 +85,9 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		delete mod;
 
 		return dict;
-	} catch(std::exception & /*e*/) {
-		return 0;
+	} catch(std::exception &e) {
+		ALog(@"Exception caught while reading metadata with OpenMPT: %s", e.what());
+		return @{};
 	}
 }
 
