@@ -55,28 +55,36 @@ static OSType getOSType(const char *in_) {
 
 	source = s;
 
-	std::vector<uint8_t> file_data;
+	unsigned long loopStart = ~0;
+	unsigned long loopEnd = ~0;
 
-	[s seek:0 whence:SEEK_END];
-	size_t size = [s tell];
-	[s seek:0 whence:SEEK_SET];
-	file_data.resize(size);
-	[s read:&file_data[0] amount:size];
+	try {
+		std::vector<uint8_t> file_data;
 
-	if(!midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file))
+		[s seek:0 whence:SEEK_END];
+		size_t size = [s tell];
+		[s seek:0 whence:SEEK_SET];
+		file_data.resize(size);
+		[s read:&file_data[0] amount:size];
+
+		if(!midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file))
+			return NO;
+
+		if(!midi_file.get_timestamp_end(track_num))
+			return NO;
+
+		track_num = [[[s url] fragment] intValue]; // What if theres no fragment? Assuming we get 0.
+
+		midi_file.scan_for_loops(true, true, true, true);
+
+		framesLength = midi_file.get_timestamp_end(track_num, true);
+
+		loopStart = midi_file.get_timestamp_loop_start(track_num, true);
+		loopEnd = midi_file.get_timestamp_loop_end(track_num, true);
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while reading MIDI file: %s", e.what());
 		return NO;
-
-	if(!midi_file.get_timestamp_end(track_num))
-		return NO;
-
-	track_num = [[[s url] fragment] intValue]; // What if theres no fragment? Assuming we get 0.
-
-	midi_file.scan_for_loops(true, true, true, true);
-
-	framesLength = midi_file.get_timestamp_end(track_num, true);
-
-	unsigned long loopStart = midi_file.get_timestamp_loop_start(track_num, true);
-	unsigned long loopEnd = midi_file.get_timestamp_loop_end(track_num, true);
+	}
 
 	if(loopStart == ~0UL) loopStart = 0;
 	if(loopEnd == ~0UL) loopEnd = framesLength;
@@ -206,73 +214,78 @@ static OSType getOSType(const char *in_) {
 		}
 	}
 
-	if(!plugin || [plugin isEqualToString:@"BASSMIDI"]) {
-		bmplayer = new BMPlayer;
+	try {
+		if(!plugin || [plugin isEqualToString:@"BASSMIDI"]) {
+			bmplayer = new BMPlayer;
 
-		bool resamplingSinc = false;
-		NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
-		if([resampling isEqualToString:@"sinc"])
-			resamplingSinc = true;
+			bool resamplingSinc = false;
+			NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+			if([resampling isEqualToString:@"sinc"])
+				resamplingSinc = true;
 
-		bmplayer->setSincInterpolation(resamplingSinc);
-		bmplayer->setSampleRate(sampleRate);
+			bmplayer->setSincInterpolation(resamplingSinc);
+			bmplayer->setSampleRate(sampleRate);
 
-		if([soundFontPath length])
-			bmplayer->setFileSoundFont([soundFontPath UTF8String]);
+			if([soundFontPath length])
+				bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
-		player = bmplayer;
-	} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
-		MSPlayer *msplayer = new MSPlayer;
-		player = msplayer;
+			player = bmplayer;
+		} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
+			MSPlayer *msplayer = new MSPlayer;
+			player = msplayer;
 
-		msplayer->set_synth(0);
+			msplayer->set_synth(0);
 
-		msplayer->set_bank([[plugin substringFromIndex:4] intValue]);
+			msplayer->set_bank([[plugin substringFromIndex:4] intValue]);
 
-		msplayer->set_extp(1);
+			msplayer->set_extp(1);
 
-		msplayer->setSampleRate(sampleRate);
-	} else if([[plugin substringToIndex:5] isEqualToString:@"OPL3W"]) {
-		MSPlayer *msplayer = new MSPlayer;
-		player = msplayer;
+			msplayer->setSampleRate(sampleRate);
+		} else if([[plugin substringToIndex:5] isEqualToString:@"OPL3W"]) {
+			MSPlayer *msplayer = new MSPlayer;
+			player = msplayer;
 
-		msplayer->set_synth(1);
+			msplayer->set_synth(1);
 
-		msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
+			msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
 
-		msplayer->set_extp(1);
+			msplayer->set_extp(1);
 
-		msplayer->setSampleRate(sampleRate);
-	} else {
-		const char *cplugin = [plugin UTF8String];
-		OSType componentSubType;
-		OSType componentManufacturer;
+			msplayer->setSampleRate(sampleRate);
+		} else {
+			const char *cplugin = [plugin UTF8String];
+			OSType componentSubType;
+			OSType componentManufacturer;
 
-		componentSubType = getOSType(cplugin);
-		componentManufacturer = getOSType(cplugin + 4);
+			componentSubType = getOSType(cplugin);
+			componentManufacturer = getOSType(cplugin + 4);
 
-		{
-			auplayer = new AUPlayer;
+			{
+				auplayer = new AUPlayer;
 
-			auplayer->setComponent(componentSubType, componentManufacturer);
-			auplayer->setSampleRate(sampleRate);
+				auplayer->setComponent(componentSubType, componentManufacturer);
+				auplayer->setSampleRate(sampleRate);
 
-			if([soundFontPath length]) {
-				auplayer->setSoundFont([soundFontPath UTF8String]);
-				soundFontsAssigned = YES;
+				if([soundFontPath length]) {
+					auplayer->setSoundFont([soundFontPath UTF8String]);
+					soundFontsAssigned = YES;
+				}
+
+				player = auplayer;
 			}
-
-			player = auplayer;
 		}
-	}
 
-	player->setFilterMode(mode, false);
+		player->setFilterMode(mode, false);
 
-	unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
-	unsigned int clean_flags = midi_container::clean_flag_emidi;
+		unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
+		unsigned int clean_flags = midi_container::clean_flag_emidi;
 
-	if(!player->Load(midi_file, track_num, loop_mode, clean_flags))
+		if(!player->Load(midi_file, track_num, loop_mode, clean_flags))
+			return NO;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while loading MIDI file into player: %s", e.what());
 		return NO;
+	}
 
 	return YES;
 }
@@ -287,66 +300,71 @@ static OSType getOSType(const char *in_) {
 			return nil;
 	}
 
-	player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
+	try {
+		player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
 
-	if(!repeatone && framesRead >= localTotalFrames)
-		return 0;
+		if(!repeatone && framesRead >= localTotalFrames)
+			return 0;
 
-	if((bmplayer || auplayer) && !soundFontsAssigned) {
-		if(globalSoundFontPath != nil) {
-			if(bmplayer)
-				bmplayer->setSoundFont([globalSoundFontPath UTF8String]);
-			else if(auplayer)
-				auplayer->setSoundFont([globalSoundFontPath UTF8String]);
-		}
-
-		soundFontsAssigned = YES;
-	}
-
-	int frames = 1024;
-	float buffer[frames * 2];
-
-	UInt32 frames_done = player->Play(buffer, frames);
-
-	if(!frames_done)
-		return 0;
-
-	frames = frames_done;
-
-	if(!repeatone && framesRead + frames > localFramesLength) {
-		if(framesFade) {
-			long fadeStart = (localFramesLength > framesRead) ? localFramesLength : framesRead;
-			long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
-			long fadePos;
-
-			float *buff = buffer;
-
-			float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
-			float fadeStep = 1.0 / (float)framesFade;
-			for(fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
-				buff[0] *= fadeScale;
-				buff[1] *= fadeScale;
-				buff += 2;
-				fadeScale -= fadeStep;
-				if(fadeScale < 0) {
-					fadeScale = 0;
-					fadeStep = 0;
-				}
+		if((bmplayer || auplayer) && !soundFontsAssigned) {
+			if(globalSoundFontPath != nil) {
+				if(bmplayer)
+					bmplayer->setSoundFont([globalSoundFontPath UTF8String]);
+				else if(auplayer)
+					auplayer->setSoundFont([globalSoundFontPath UTF8String]);
 			}
 
-			frames = (int)(fadeEnd - framesRead);
-		} else {
-			frames = (int)(localTotalFrames - framesRead);
+			soundFontsAssigned = YES;
 		}
+
+		int frames = 1024;
+		float buffer[frames * 2];
+
+		UInt32 frames_done = player->Play(buffer, frames);
+
+		if(!frames_done)
+			return 0;
+
+		frames = frames_done;
+
+		if(!repeatone && framesRead + frames > localFramesLength) {
+			if(framesFade) {
+				long fadeStart = (localFramesLength > framesRead) ? localFramesLength : framesRead;
+				long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
+				long fadePos;
+
+				float *buff = buffer;
+
+				float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
+				float fadeStep = 1.0 / (float)framesFade;
+				for(fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
+					buff[0] *= fadeScale;
+					buff[1] *= fadeScale;
+					buff += 2;
+					fadeScale -= fadeStep;
+					if(fadeScale < 0) {
+						fadeScale = 0;
+						fadeStep = 0;
+					}
+				}
+
+				frames = (int)(fadeEnd - framesRead);
+			} else {
+				frames = (int)(localTotalFrames - framesRead);
+			}
+		}
+
+		framesRead += frames;
+
+		id audioChunkClass = NSClassFromString(@"AudioChunk");
+		AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+		[chunk assignSamples:buffer frameCount:frames];
+
+		return chunk;
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while playing MIDI file: %s", e.what());
+		return nil;
 	}
-
-	framesRead += frames;
-
-	id audioChunkClass = NSClassFromString(@"AudioChunk");
-	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
-	[chunk assignSamples:buffer frameCount:frames];
-
-	return chunk;
 }
 
 - (long)seek:(long)frame {
@@ -355,7 +373,13 @@ static OSType getOSType(const char *in_) {
 			return -1;
 	}
 
-	player->Seek(frame);
+	try {
+		player->Seek(frame);
+	} catch (std::exception &e) {
+		ALog(@"Exception caught while seeking in MIDI file: %s", e.what());
+		framesRead = 0;
+		return -1;
+	}
 
 	framesRead = frame;
 
