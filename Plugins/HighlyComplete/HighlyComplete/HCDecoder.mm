@@ -1062,32 +1062,44 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		if(state.state) free(state.state);
 	} else if(type == 0x25) {
-		struct ncsf_loader_state *state = new struct ncsf_loader_state;
+		struct ncsf_loader_state *state = NULL;
+		Player *player = NULL;
 
-		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x25, ncsf_loader, state, 0, 0, 0) <= 0) {
+		try {
+			state = new struct ncsf_loader_state;
+
+			if(psf_load([currentUrl UTF8String], &source_callbacks, 0x25, ncsf_loader, state, 0, 0, 0) <= 0) {
+				delete state;
+				return NO;
+			}
+
+			player = new Player;
+
+			player->interpolation = INTERPOLATION_SINC;
+
+			PseudoFile file;
+			file.data = &state->sdatData;
+
+			state->sdat.reset(new SDAT(file, state->sseq));
+
+			auto *sseqToPlay = state->sdat->sseq.get();
+
+			player->sampleRate = 44100;
+			player->Setup(sseqToPlay);
+			player->Timer();
+
+			state->outputBuffer.resize(1024 * sizeof(int16_t) * 2);
+
+			emulatorCore = (uint8_t *)player;
+			emulatorExtra = state;
+		} catch (std::exception &e) {
+			ALog(@"Exception caught creating NCSF player: %s", e.what());
+			emulatorCore = NULL;
+			emulatorExtra = NULL;
+			delete player;
 			delete state;
 			return NO;
 		}
-
-		Player *player = new Player;
-
-		player->interpolation = INTERPOLATION_SINC;
-
-		PseudoFile file;
-		file.data = &state->sdatData;
-
-		state->sdat.reset(new SDAT(file, state->sseq));
-
-		auto *sseqToPlay = state->sdat->sseq.get();
-
-		player->sampleRate = 44100;
-		player->Setup(sseqToPlay);
-		player->Timer();
-
-		state->outputBuffer.resize(1024 * sizeof(int16_t) * 2);
-
-		emulatorCore = (uint8_t *)player;
-		emulatorExtra = state;
 	} else if(type == 0x41) {
 		struct qsf_loader_state *state = (struct qsf_loader_state *)calloc(1, sizeof(*state));
 
@@ -1281,18 +1293,23 @@ static int usf_info(void *context, const char *name, const char *value) {
 		NDS_state *state = (NDS_state *)emulatorCore;
 		state_render(state, (s16 *)buf, frames);
 	} else if(type == 0x25) {
-		Player *player = (Player *)emulatorCore;
-		ncsf_loader_state *state = (ncsf_loader_state *)emulatorExtra;
-		std::vector<uint8_t> &buffer = state->outputBuffer;
-		unsigned long frames_to_do = frames;
-		while(frames_to_do) {
-			unsigned frames_this_run = 1024;
-			if(frames_this_run > frames_to_do)
-				frames_this_run = (unsigned int)frames_to_do;
-			player->GenerateSamples(buffer, 0, frames_this_run);
-			memcpy(buf, &buffer[0], frames_this_run * sizeof(int16_t) * 2);
-			buf = ((uint8_t *)buf) + frames_this_run * sizeof(int16_t) * 2;
-			frames_to_do -= frames_this_run;
+		try {
+			Player *player = (Player *)emulatorCore;
+			ncsf_loader_state *state = (ncsf_loader_state *)emulatorExtra;
+			std::vector<uint8_t> &buffer = state->outputBuffer;
+			unsigned long frames_to_do = frames;
+			while(frames_to_do) {
+				unsigned frames_this_run = 1024;
+				if(frames_this_run > frames_to_do)
+					frames_this_run = (unsigned int)frames_to_do;
+				player->GenerateSamples(buffer, 0, frames_this_run);
+				memcpy(buf, &buffer[0], frames_this_run * sizeof(int16_t) * 2);
+				buf = ((uint8_t *)buf) + frames_this_run * sizeof(int16_t) * 2;
+				frames_to_do -= frames_this_run;
+			}
+		} catch (std::exception &e) {
+			ALog(@"Exception caught while playing NCSF: %s", e.what());
+			return 0;
 		}
 	} else if(type == 0x41) {
 		uint32_t howmany = frames;
@@ -1367,8 +1384,12 @@ static int usf_info(void *context, const char *name, const char *value) {
 			state_deinit(state);
 			free(state);
 		} else if(type == 0x25) {
-			Player *player = (Player *)emulatorCore;
-			delete player;
+			try {
+				Player *player = (Player *)emulatorCore;
+				delete player;
+			} catch (std::exception &e) {
+				ALog(@"Exception caught deleting NCSF player: %s", e.what());
+			}
 		} else {
 			free(emulatorCore);
 		}
@@ -1387,8 +1408,12 @@ static int usf_info(void *context, const char *name, const char *value) {
 		free(emulatorExtra);
 		emulatorExtra = nil;
 	} else if(type == 0x25 && emulatorExtra) {
-		struct ncsf_loader_state *state = (struct ncsf_loader_state *)emulatorExtra;
-		delete state;
+		try {
+			struct ncsf_loader_state *state = (struct ncsf_loader_state *)emulatorExtra;
+			delete state;
+		} catch (std::exception &e) {
+			ALog(@"Exception caught deleting NCSF state: %s", e.what());
+		}
 		emulatorExtra = nil;
 	} else if(type == 0x41 && emulatorExtra) {
 		struct qsf_loader_state *state = (struct qsf_loader_state *)emulatorExtra;
@@ -1497,22 +1522,28 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		framesRead = frame;
 	} else if(type == 0x25) {
-		Player *player = (Player *)emulatorCore;
-		ncsf_loader_state *state = (ncsf_loader_state *)emulatorExtra;
-		std::vector<uint8_t> &buffer = state->outputBuffer;
+		try {
+			Player *player = (Player *)emulatorCore;
+			ncsf_loader_state *state = (ncsf_loader_state *)emulatorExtra;
+			std::vector<uint8_t> &buffer = state->outputBuffer;
 
-		long frames_to_run = frame - framesRead;
+			long frames_to_run = frame - framesRead;
 
-		while(frames_to_run) {
-			int frames_to_render = 1024;
-			if(frames_to_render > frames_to_run) frames_to_render = (int)frames_to_run;
+			while(frames_to_run) {
+				int frames_to_render = 1024;
+				if(frames_to_render > frames_to_run) frames_to_render = (int)frames_to_run;
 
-			player->GenerateSamples(buffer, 0, frames_to_render);
+				player->GenerateSamples(buffer, 0, frames_to_render);
 
-			frames_to_run -= frames_to_render;
+				frames_to_run -= frames_to_render;
+			}
+
+			framesRead = frame;
+		} catch (std::exception &e) {
+			ALog(@"Exception caught while seeking in NCSF: %s", e.what());
+			framesRead = 0;
+			return -1;
 		}
-
-		framesRead = frame;
 	} else if(type == 0x41) {
 		do {
 			uint32_t howmany = (uint32_t)(frame - framesRead);
