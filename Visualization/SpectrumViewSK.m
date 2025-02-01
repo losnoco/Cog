@@ -39,6 +39,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	NSColor *backgroundColor;
 	ddb_analyzer_t _analyzer;
 	ddb_analyzer_draw_data_t _draw_data;
+	BOOL invalidateSpectrum;
 
 	SCNVector3 cameraPosition2d;
 	SCNVector3 cameraEulerAngles2d;
@@ -84,7 +85,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	NSDictionary *sceneOptions = @{
 		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
 		SCNPreferredDeviceKey: device,
-		SCNPreferLowPowerDeviceKey: @(NO)
+		SCNPreferLowPowerDeviceKey: @(YES)
 	};
 
 	self = [super initWithFrame:frame options:sceneOptions];
@@ -190,6 +191,10 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	paused = NO;
 	isListening = NO;
 	cameraControlEnabled = NO;
+
+	invalidateSpectrum = YES;
+
+	visSamplesLastPosted = [self->visController samplesPosted];
 
 	[self setBackgroundColor:[NSColor clearColor]];
 
@@ -311,21 +316,38 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	[self updateVisListening];
 
 	if(stopped) {
-		[self drawBaseBands];
+		if(invalidateSpectrum) {
+			[self drawBaseBands];
+			invalidateSpectrum = NO;
+		}
 		return;
 	}
 
 	UInt64 samplesPosted = [self->visController samplesPosted];
-	if (samplesPosted != visSamplesLastPosted) {
-		visSamplesLastPosted = samplesPosted;
-		visLatencyOffset = 0.0;
+	if(!samplesPosted) {
+		if(invalidateSpectrum) {
+			[self drawBaseBands];
+			invalidateSpectrum = NO;
+		}
+		return;
 	}
 
-	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:visLatencyOffset];
+	if(samplesPosted != visSamplesLastPosted) {
+		float latencyOffset = (float)(((double)((SInt64)samplesPosted - (SInt64)visSamplesLastPosted)) / [self->visController readSampleRate]);
+		if (latencyOffset < 0)
+			latencyOffset = -visLatencyOffset;
+		visSamplesLastPosted = samplesPosted;
+		visLatencyOffset += latencyOffset;
+	}
 
-	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
-	ddb_analyzer_tick(&_analyzer);
-	ddb_analyzer_get_draw_data(&_analyzer, 11.0, 1.0, &_draw_data);
+	if(invalidateSpectrum) {
+		[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:visLatencyOffset];
+
+		ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
+		ddb_analyzer_tick(&_analyzer);
+		ddb_analyzer_get_draw_data(&_analyzer, 11.0, 1.0, &_draw_data);
+		invalidateSpectrum = NO;
+	}
 
 	[self drawAnalyzer];
 }
@@ -346,8 +368,10 @@ extern NSString *CogPlaybackDidStopNotificiation;
 }
 
 - (void)timerRun:(NSTimer *)timer {
+	invalidateSpectrum = YES;
 	[self repaint];
-	visLatencyOffset -= 1.0 / 60.0;
+	if(visSamplesLastPosted)
+		visLatencyOffset -= 1.0f / 60.0f;
 }
 
 - (void)startPlayback {
@@ -376,6 +400,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	stopped = YES;
 	paused = NO;
 	bandsReset = NO;
+	invalidateSpectrum = YES;
 	[self updateVisListening];
 	[self repaint];
 }
@@ -420,11 +445,13 @@ extern NSString *CogPlaybackDidStopNotificiation;
 			const int barBase = i * barStep;
 			const int barIndex = barBase + j;
 			if(barIndex < _draw_data.bar_count) {
-				if(bar[barIndex].bar_height > maxValue) {
-					maxValue = bar[barIndex].bar_height;
+				const float bar_height = bar[barIndex].bar_height;
+				const float peak_ypos = bar[barIndex].peak_ypos;
+				if(bar_height > maxValue) {
+					maxValue = bar_height;
 				}
-				if(bar[barIndex].peak_ypos > maxMax) {
-					maxMax = bar[barIndex].peak_ypos;
+				if(peak_ypos > maxMax) {
+					maxMax = peak_ypos;
 				}
 			}
 		}
@@ -455,6 +482,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 	_analyzer.mode_did_change = 1;
+	invalidateSpectrum = YES;
 
 	[self repaint];
 }
