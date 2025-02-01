@@ -3,8 +3,6 @@
 
 #define MY_PATRONS            \
 	"Thanks to my patrons:\n" \
-	"Alexander Pecheny, Electric Keet, Antti Aro,\n"
-"Fj\xc3\xb6lnir \xc3\x81sgeirsson, Giampaolo Bellavite\n"
-"Louis Martinez V, deef.xyz"
+"deef.xyz, Calvin, G Douglas Davidson"
 
 #endif
