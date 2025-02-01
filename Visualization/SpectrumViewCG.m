@@ -41,6 +41,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	NSColor *borderColor;
 	ddb_analyzer_t _analyzer;
 	ddb_analyzer_draw_data_t _draw_data;
+	BOOL invalidateSpectrum;
+	float analyzerLastWidth;
 
 	float visAudio[4096], visFFT[2048];
 
@@ -96,6 +98,12 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	paused = NO;
 	isListening = NO;
 
+	visSamplesLastPosted = [self->visController samplesPosted];
+
+	invalidateSpectrum = YES;
+
+	analyzerLastWidth = -1.0f;
+
 	saLowerBound = LOWER_BOUND;
 
 	[self colorsDidChange:nil];
@@ -122,6 +130,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 - (void)enableFullView {
 	isFullView = YES;
 	_analyzer.freq_is_log = 1;
+	invalidateSpectrum = YES;
 	[self repaint];
 }
 
@@ -239,8 +248,10 @@ extern NSString *CogPlaybackDidStopNotificiation;
 }
 
 - (void)timerRun:(NSTimer *)timer {
+	invalidateSpectrum = YES;
 	[self repaint];
-	visLatencyOffset -= 1.0 / 60.0;
+	if(visSamplesLastPosted)
+		visLatencyOffset -= 1.0f / 60.0f;
 }
 
 - (void)colorsDidChange:(NSNotification *)notification {
@@ -413,16 +424,28 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	}
 
 	UInt64 samplesPosted = [self->visController samplesPosted];
-	if (samplesPosted != visSamplesLastPosted) {
+	if(!samplesPosted) return;
+
+	if(samplesPosted != visSamplesLastPosted) {
+		float latencyOffset = (float)(((double)((SInt64)samplesPosted - (SInt64)visSamplesLastPosted)) / [self->visController readSampleRate]);
+		if (latencyOffset < 0)
+			latencyOffset = -visLatencyOffset;
 		visSamplesLastPosted = samplesPosted;
-		visLatencyOffset = 0.0;
+		visLatencyOffset += latencyOffset;
 	}
 
-	[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:visLatencyOffset];
+	BOOL invalidateWidth = isFullView && (fabs(analyzerLastWidth - self.bounds.size.width) > 1e-5);
+	if(invalidateWidth)
+		analyzerLastWidth = self.bounds.size.width;
 
-	ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
-	ddb_analyzer_tick(&_analyzer);
-	ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
+	if(invalidateWidth || invalidateSpectrum) {
+		[self->visController copyVisPCM:&visAudio[0] visFFT:&visFFT[0] latencyOffset:visLatencyOffset];
+
+		ddb_analyzer_process(&_analyzer, [self->visController readSampleRate] / 2.0, 1, visFFT, 2048);
+		ddb_analyzer_tick(&_analyzer);
+		ddb_analyzer_get_draw_data(&_analyzer, self.bounds.size.width, self.bounds.size.height, &_draw_data);
+		invalidateSpectrum = NO;
+	}
 
 	if(isFullView) {
 		[self drawSaGrid];
@@ -438,6 +461,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 	_analyzer.mode_did_change = 1;
+	invalidateSpectrum = YES;
 
 	[self repaint];
 }
