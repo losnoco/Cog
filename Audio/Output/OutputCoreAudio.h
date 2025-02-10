@@ -186,7 +186,7 @@ using std::atomic_long;
 - (void)sustainHDCD;
 
 - (void)reportMotion:(simd_float4x4)matrix;
-- (void)resetReferencePosition;
+- (void)resetReferencePosition:(NSNotification *)notification;
 
 - (void)setPitch:(double)p;
 - (void)setTempo:(double)t;
