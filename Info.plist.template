@@ -354,6 +354,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>208</string>
+				<string>2dx</string>
 				<string>2dx9</string>
 				<string>3do</string>
 				<string>3ds</string>
@@ -585,6 +586,7 @@
 				<string>ivag</string>
 				<string>ivb</string>
 				<string>ivs</string>
+				<string>ixa</string>
 				<string>joe</string>
 				<string>jstm</string>
 				<string>k2sb</string>
@@ -709,14 +711,15 @@
 				<string>nwav</string>
 				<string>nxa</string>
 				<string>nxopus</string>
+				<string>oga</string>
 				<string>ogg_</string>
 				<string>ogl</string>
+				<string>ogs</string>
 				<string>ogv</string>
 				<string>oma</string>
 				<string>omu</string>
 				<string>opu</string>
 				<string>opusx</string>
-				<string>otm</string>
 				<string>oto</string>
 				<string>ovb</string>
 				<string>p04</string>
@@ -726,7 +729,9 @@
 				<string>p2a</string>
 				<string>p2bt</string>
 				<string>p3d</string>
+				<string>paf</string>
 				<string>past</string>
+				<string>patch3audio</string>
 				<string>pcm</string>
 				<string>pdt</string>
 				<string>phd</string>
@@ -739,6 +744,7 @@
 				<string>psh</string>
 				<string>psn</string>
 				<string>pwb</string>
+				<string>qwv</string>
 				<string>r</string>
 				<string>rac</string>
 				<string>rad</string>
@@ -818,6 +824,8 @@
 				<string>sgb</string>
 				<string>sgd</string>
 				<string>sgt</string>
+				<string>shaa</string>
+				<string>shsa</string>
 				<string>skx</string>
 				<string>slb</string>
 				<string>sli</string>
@@ -972,6 +980,7 @@
 				<string>xau</string>
 				<string>xav</string>
 				<string>xb</string>
+				<string>xhd</string>
 				<string>xen</string>
 				<string>xma</string>
 				<string>xma2</string>
