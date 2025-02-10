@@ -39,7 +39,8 @@
 		     [plugin generalPane],
 		     [plugin notificationsPane],
 		     [plugin appearancePane],
-		     [plugin midiPane]];
+		     [plugin midiPane],
+		     [plugin rubberbandPane]];
 }
 
 - (HotKeyPane *)hotKeyPane {
@@ -83,6 +84,10 @@
 
 - (GeneralPreferencePane *)appearancePane {
 	return appearancePane;
+}
+
+- (RubberbandPane *)rubberbandPane {
+	return rubberbandPane;
 }
 
 @end

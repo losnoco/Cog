@@ -256,3 +256,30 @@
 
 /* Class = "NSButtonCell"; title = "Render over background plaque"; ObjectID = "KZd-iR-dXL"; */
 "KZd-iR-dXL.title" = "Render over background plaque";
+
+/* Class = "NSTextFieldCell"; title = "Engine:"; ObjectID = "ULd-G9-gDZ"; */
+"ULd-G9-gDZ.title" = "Engine:";
+
+/* Class = "NSTextFieldCell"; title = "Transients:"; ObjectID = "eI3-LU-JTj"; */
+"eI3-LU-JTj.title" = "Transients:";
+
+/* Class = "NSTextFieldCell"; title = "Detector:"; ObjectID = "ZUS-Cr-zSa"; */
+"ZUS-Cr-zSa.title" = "Detector:";
+
+/* Class = "NSTextFieldCell"; title = "Phase:"; ObjectID = "xwT-8b-IsJ"; */
+"xwT-8b-IsJ.title" = "Phase:";
+
+/* Class = "NSTextFieldCell"; title = "Window Size:"; ObjectID = "qc8-jP-K6o"; */
+"qc8-jP-K6o.title" = "Window Size:";
+
+/* Class = "NSTextFieldCell"; title = "Smoothing:"; ObjectID = "FLf-R7-Kew"; */
+"FLf-R7-Kew.title" = "Smoothing:";
+
+/* Class = "NSTextFieldCell"; title = "Formant:"; ObjectID = "4zC-Y9-iRt"; */
+"4zC-Y9-iRt.title" = "Formant:";
+
+/* Class = "NSTextFieldCell"; title = "Pitch:"; ObjectID = "FBC-tN-fwm"; */
+"FBC-tN-fwm.title" = "Pitch:";
+
+/* Class = "NSTextFieldCell"; title = "Channels:"; ObjectID = "LpA-ak-Aj5"; */
+"LpA-ak-Aj5.title" = "Channels:";

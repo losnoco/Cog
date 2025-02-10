@@ -55,9 +55,11 @@ using std::atomic_long;
 	double lastClippedSampleRate;
 
 	void *ts;
+	int tslastoptions, tsnewoptions;
 	size_t blockSize, toDrop, samplesBuffered;
 	double ssRenderedIn, ssLastRenderedIn;
 	double ssRenderedOut;
+	BOOL tsapplynewoptions;
 
 	void *rsvis;
 	double lastVisRate;
