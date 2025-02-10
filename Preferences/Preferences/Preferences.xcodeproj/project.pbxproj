@@ -33,6 +33,8 @@
 		83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AC57382861A54D009D6F50 /* PathSuggester.m */; };
 		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
 		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
+		83B8FE242D59CDA7005854C1 /* rubberband.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83B8FE232D59CDA7005854C1 /* rubberband.pdf */; };
+		83B8FE292D59D059005854C1 /* RubberbandPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B8FE282D59D059005854C1 /* RubberbandPane.m */; };
 		83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */; };
 		83F27E6B1810DD3A00CEF538 /* appearance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E651810DD3A00CEF538 /* appearance@2x.png */; };
 		83F27E6E1810DD3A00CEF538 /* midi@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E681810DD3A00CEF538 /* midi@2x.png */; };
@@ -133,6 +135,9 @@
 		83B06727180D85B8008E3612 /* MIDIPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPane.h; sourceTree = "<group>"; };
 		83B06728180D85B8008E3612 /* MIDIPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIPane.m; sourceTree = "<group>"; };
 		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
+		83B8FE232D59CDA7005854C1 /* rubberband.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = rubberband.pdf; path = Icons/rubberband.pdf; sourceTree = "<group>"; };
+		83B8FE272D59D03F005854C1 /* RubberbandPane.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RubberbandPane.h; sourceTree = "<group>"; };
+		83B8FE282D59D059005854C1 /* RubberbandPane.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RubberbandPane.m; sourceTree = "<group>"; };
 		83BC5AB320E4C90F00631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Preferences.xib; sourceTree = "<group>"; };
 		83DAD9F1286EDBCD000FAA9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PathSuggester.xib; sourceTree = "<group>"; };
 		83DAD9F3286EDBD2000FAA9A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PathSuggester.strings; sourceTree = "<group>"; };
@@ -264,6 +269,8 @@
 				83B06728180D85B8008E3612 /* MIDIPane.m */,
 				8307D309286057B5000FF8EB /* GeneralPane.h */,
 				8307D30A286057B5000FF8EB /* GeneralPane.m */,
+				83B8FE272D59D03F005854C1 /* RubberbandPane.h */,
+				83B8FE282D59D059005854C1 /* RubberbandPane.m */,
 			);
 			name = Panes;
 			sourceTree = "<group>";
@@ -346,6 +353,7 @@
 				17C643680B8A788000C53518 /* output.png */,
 				17C7E5AF0DCCC30A003CBCF7 /* playlist.png */,
 				83F27E691810DD3A00CEF538 /* playlist@2x.png */,
+				83B8FE232D59CDA7005854C1 /* rubberband.pdf */,
 				8E15A86B0B894768006DC802 /* updates.png */,
 				83F27E6A1810DD3A00CEF538 /* updates@2x.png */,
 			);
@@ -473,6 +481,7 @@
 				83F27E6F1810DD3A00CEF538 /* playlist@2x.png in Resources */,
 				17E41DB80C130AA500AC744D /* Localizable.strings in Resources */,
 				8307D31828606EAF000FF8EB /* general.png in Resources */,
+				83B8FE242D59CDA7005854C1 /* rubberband.pdf in Resources */,
 				17E78A7E0D68BE3C005C5A59 /* file_tree.png in Resources */,
 				83F27E701810DD3A00CEF538 /* updates@2x.png in Resources */,
 				17E78B6A0D68C1E3005C5A59 /* Preferences.xib in Resources */,
@@ -490,6 +499,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */,
+				83B8FE292D59D059005854C1 /* RubberbandPane.m in Sources */,
 				83726F022CF41B3200F15FBF /* AppearancePane.m in Sources */,
 				83651DA527322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m in Sources */,
 				83B06729180D85B8008E3612 /* MIDIPane.m in Sources */,

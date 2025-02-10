@@ -34,6 +34,7 @@ static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotific
 static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDigResetHeadTracking";
 
 #define tts ((RubberBandState)ts)
+#define ttslastoptions ((RubberBandOptions)tslastoptions)
 
 simd_float4x4 convertMatrix(CMRotationMatrix r) {
 	simd_float4x4 matrix = {
@@ -52,6 +53,19 @@ OutputCoreAudio *registeredMotionListener = nil;
 @implementation OutputCoreAudio
 + (void)initialize {
 	motionManagerLock = [[NSLock alloc] init];
+
+	{
+		NSDictionary *defaults = @{@"rubberbandEngine": @"faster",
+								   @"rubberbandTransients": @"crisp",
+								   @"rubberbandDetector": @"compound",
+								   @"rubberbandPhase": @"laminar",
+								   @"rubberbandWindow": @"standard",
+								   @"rubberbandSmoothing": @"off",
+								   @"rubberbandFormant": @"shifted",
+								   @"rubberbandPitch": @"highspeed",
+								   @"rubberbandChannels": @"apart"};
+		[[[NSUserDefaultsController sharedUserDefaultsController] defaults] registerDefaults:defaults];
+	}
 
 	if(@available(macOS 14, *)) {
 		CMAuthorizationStatus status = [CMHeadphoneMotionManager authorizationStatus];
@@ -406,6 +420,20 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		enableFSurround = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableFSurround"];
 		if(streamFormatStarted)
 			resetStreamFormat = YES;
+	} else if([[keyPath substringToIndex:17] isEqualToString:@"values.rubberband"]) {
+		RubberBandOptions options = [self getRubberbandOptions];
+		RubberBandOptions changed = options ^ ttslastoptions;
+		if(changed) {
+			BOOL engineR3 = !!(options & RubberBandOptionEngineFiner);
+			// Options which require a restart of the engine
+			const RubberBandOptions mustRestart = RubberBandOptionEngineFaster | RubberBandOptionEngineFiner | RubberBandOptionWindowStandard | RubberBandOptionWindowShort | RubberBandOptionWindowLong | RubberBandOptionSmoothingOff | RubberBandOptionSmoothingOn | (engineR3 ? RubberBandOptionPitchHighSpeed | RubberBandOptionPitchHighQuality | RubberBandOptionPitchHighConsistency : 0) | RubberBandOptionChannelsApart | RubberBandOptionChannelsTogether;
+			if(changed & mustRestart) {
+				resetStreamFormat = YES;
+			} else {
+				tsnewoptions = options;
+				tsapplynewoptions = YES;
+			}
+		}
 	}
 }
 
@@ -771,6 +799,94 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	return YES;
 }
 
+- (RubberBandOptions)getRubberbandOptions {
+	RubberBandOptions options = RubberBandOptionProcessRealTime;
+
+	NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
+	NSString *value = [defaults stringForKey:@"rubberbandEngine"];
+	BOOL engineR3 = NO;
+	if([value isEqualToString:@"faster"]) {
+		options |= RubberBandOptionEngineFaster;
+	} else if([value isEqualToString:@"finer"]) {
+		options |= RubberBandOptionEngineFiner;
+		engineR3 = YES;
+	}
+
+	if(!engineR3) {
+		value = [defaults stringForKey:@"rubberbandTransients"];
+		if([value isEqualToString:@"crisp"]) {
+			options |= RubberBandOptionTransientsCrisp;
+		} else if([value isEqualToString:@"mixed"]) {
+			options |= RubberBandOptionTransientsMixed;
+		} else if([value isEqualToString:@"smooth"]) {
+			options |= RubberBandOptionTransientsSmooth;
+		}
+
+		value = [defaults stringForKey:@"rubberbandDetector"];
+		if([value isEqualToString:@"compound"]) {
+			options |= RubberBandOptionDetectorCompound;
+		} else if([value isEqualToString:@"percussive"]) {
+			options |= RubberBandOptionDetectorPercussive;
+		} else if([value isEqualToString:@"soft"]) {
+			options |= RubberBandOptionDetectorSoft;
+		}
+
+		value = [defaults stringForKey:@"rubberbandPhase"];
+		if([value isEqualToString:@"laminar"]) {
+			options |= RubberBandOptionPhaseLaminar;
+		} else if([value isEqualToString:@"independent"]) {
+			options |= RubberBandOptionPhaseIndependent;
+		}
+	}
+	
+	value = [defaults stringForKey:@"rubberbandWindow"];
+	if([value isEqualToString:@"standard"]) {
+		options |= RubberBandOptionWindowStandard;
+	} else if([value isEqualToString:@"short"]) {
+		options |= RubberBandOptionWindowShort;
+	} else if([value isEqualToString:@"long"]) {
+		if(engineR3) {
+			options |= RubberBandOptionWindowStandard;
+		} else {
+			options |= RubberBandOptionWindowLong;
+		}
+	}
+	
+	if(!engineR3) {
+		value = [defaults stringForKey:@"rubberbandSmoothing"];
+		if([value isEqualToString:@"off"]) {
+			options |= RubberBandOptionSmoothingOff;
+		} else if([value isEqualToString:@"on"]) {
+			options |= RubberBandOptionSmoothingOn;
+		}
+	}
+
+	value = [defaults stringForKey:@"rubberbandFormant"];
+	if([value isEqualToString:@"shifted"]) {
+		options |= RubberBandOptionFormantShifted;
+	} else if([value isEqualToString:@"preserved"]) {
+		options |= RubberBandOptionFormantPreserved;
+	}
+
+	value = [defaults stringForKey:@"rubberbandPitch"];
+	if([value isEqualToString:@"highspeed"]) {
+		options |= RubberBandOptionPitchHighSpeed;
+	} else if([value isEqualToString:@"highquality"]) {
+		options |= RubberBandOptionPitchHighQuality;
+	} else if([value isEqualToString:@"highconsistency"]) {
+		options |= RubberBandOptionPitchHighConsistency;
+	}
+
+	value = [defaults stringForKey:@"rubberbandChannels"];
+	if([value isEqualToString:@"apart"]) {
+		options |= RubberBandOptionChannelsApart;
+	} else if([value isEqualToString:@"together"]) {
+		options |= RubberBandOptionChannelsTogether;
+	}
+
+	return options;
+}
+
 - (void)updateStreamFormat {
 	/* Set the channel layout for the audio queue */
 	resetStreamFormat = NO;
@@ -843,7 +959,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		ts = NULL;
 	}
 
-	RubberBandOptions options = RubberBandOptionProcessRealTime;
+	RubberBandOptions options = [self getRubberbandOptions];
+	tslastoptions = (int)(options);
 	ts = rubberband_new(realStreamFormat.mSampleRate, realStreamFormat.mChannelsPerFrame, options, 1.0 / tempo, pitch);
 
 	blockSize = 1024;
@@ -1000,7 +1117,33 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			int channels = realStreamFormat.mChannelsPerFrame;
 			//size_t max_block_len = blockSize;
 
-			if (fabs(pitch - lastPitch) > 1e-5 ||
+			if(tsapplynewoptions) {
+				tsapplynewoptions = NO;
+
+				RubberBandOptions changed = tslastoptions ^ tsnewoptions;
+				tslastoptions = tsnewoptions;
+
+				BOOL engineR3 = !!(tsnewoptions & RubberBandOptionEngineFiner);
+				const RubberBandOptions transientsmask = RubberBandOptionTransientsCrisp | RubberBandOptionTransientsMixed | RubberBandOptionTransientsSmooth;
+				const RubberBandOptions detectormask = RubberBandOptionDetectorCompound | RubberBandOptionDetectorPercussive | RubberBandOptionDetectorSoft;
+				const RubberBandOptions phasemask = RubberBandOptionPhaseLaminar | RubberBandOptionPhaseIndependent;
+				const RubberBandOptions formantmask = RubberBandOptionFormantShifted | RubberBandOptionFormantPreserved;
+				const RubberBandOptions pitchmask = RubberBandOptionPitchHighSpeed | RubberBandOptionPitchHighQuality | RubberBandOptionPitchHighConsistency;
+				if(changed & transientsmask)
+					rubberband_set_transients_option(tts, tsnewoptions & transientsmask);
+				if(!engineR3) {
+					if(changed & detectormask)
+						rubberband_set_detector_option(tts, tsnewoptions & detectormask);
+					if(changed & phasemask)
+						rubberband_set_phase_option(tts, tsnewoptions & phasemask);
+				}
+				if(changed & formantmask)
+					rubberband_set_formant_option(tts, tsnewoptions & formantmask);
+				if(!engineR3 && (changed & pitchmask))
+					rubberband_set_pitch_option(tts, tsnewoptions & pitchmask);
+			}
+
+			if(fabs(pitch - lastPitch) > 1e-5 ||
 				fabs(tempo - lastTempo) > 1e-5) {
 				lastPitch = pitch;
 				lastTempo = tempo;
@@ -1011,7 +1154,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			const double inputRatio = 1.0 / realStreamFormat.mSampleRate;
 			const double outputRatio = inputRatio * tempo;
 
-			while (simpleSpeedInput > 0) {
+			while(simpleSpeedInput > 0) {
 				float *ibuf = samplePtr;
 				size_t len = simpleSpeedInput;
 				if(len > blockSize) len = blockSize;
@@ -1027,7 +1170,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				ssRenderedIn += len * inputRatio;
 
 				size_t samplesAvailable;
-				while ((samplesAvailable = rubberband_available(tts)) > 0) {
+				while((samplesAvailable = rubberband_available(tts)) > 0) {
 					if(toDrop > 0) {
 						size_t blockDrop = toDrop;
 						if(blockDrop > blockSize) blockDrop = blockSize;
@@ -1333,6 +1476,16 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHrtf" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHeadTracking" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableFSurround" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandEngine" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandTransients" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandDetector" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandPhase" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandWindow" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandSmoothing" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandFormant" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandPitch" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.rubberbandChannels" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
+
 		observersapplied = YES;
 
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetReferencePosition:) name:CogPlaybackDidResetHeadTracking object:nil];
@@ -1422,6 +1575,15 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHrtf" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHeadTracking" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableFSurround" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandEngine" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandTransients" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandDetector" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandPhase" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandWindow" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandSmoothing" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandFormant" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandPitch" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.rubberbandChannels" context:kOutputCoreAudioContext];
 			observersapplied = NO;
 		}
 		stopping = YES;

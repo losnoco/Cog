@@ -15,6 +15,7 @@
 #import "MIDIPane.h"
 #import "OutputPane.h"
 #import "AppearancePane.h"
+#import "RubberbandPane.h"
 
 @interface GeneralPreferencesPlugin : NSObject <PreferencePanePlugin> {
 	IBOutlet HotKeyPane *hotKeyPane;
@@ -22,6 +23,7 @@
 	IBOutlet MIDIPane *midiPane;
 	IBOutlet GeneralPane *generalPane;
 	IBOutlet AppearancePane *appearancePane;
+	IBOutlet RubberbandPane *rubberbandPane;
 
 	IBOutlet NSView *playlistView;
 	IBOutlet NSView *updatesView;
@@ -39,5 +41,6 @@
 - (GeneralPreferencePane *)playlistPane;
 - (GeneralPreferencePane *)notificationsPane;
 - (GeneralPreferencePane *)appearancePane;
+- (GeneralPreferencePane *)rubberbandPane;
 
 @end
