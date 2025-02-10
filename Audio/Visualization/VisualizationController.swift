@@ -12,7 +12,7 @@ class VisualizationController : NSObject {
 	var serialQueue = DispatchQueue(label: "Visualization Queue")
 	var sampleRate = 0.0
 	var latency = 0.0
-	var visAudio: [Float] = Array<Float>(repeating: 0.0, count: 44100 * 45)
+	var visAudio: [Float] = Array(repeating: 0.0, count: 44100 * 45)
 	var visAudioCursor = 0
 	var visAudioSize = 0
 	var visSamplesPosted: UInt64 = 0
@@ -30,10 +30,12 @@ class VisualizationController : NSObject {
 	@objc
 	func reset() {
 		serialQueue.sync {
-			self.latency = 0
-			self.visAudioSize = 44100 * 45
-			self.visAudio = Array<Float>(repeating: 0.0, count: visAudioSize)
-			self.visSamplesPosted = 0
+			self.latency = 0;
+			let amount = self.visAudioSize
+			for i in 0..<amount {
+				self.visAudio[i] = 0
+			}
+			self.visSamplesPosted = 0;
 		}
 	}
 
@@ -52,9 +54,9 @@ class VisualizationController : NSObject {
 		serialQueue.sync {
 			if(self.sampleRate != sampleRate) {
 				self.sampleRate = sampleRate
-				self.visAudioSize = (Int)(sampleRate * 45.0)
-				self.visAudio = Array<Float>(repeating: 0.0, count: visAudioSize)
-				self.visAudioCursor = 0
+				visAudioSize = (Int)(sampleRate * 45.0)
+				visAudio = Array(repeating: 0.0, count: visAudioSize)
+				visAudioCursor = 0
 			}
 		}
 	}
@@ -62,23 +64,17 @@ class VisualizationController : NSObject {
 	@objc
 	func postVisPCM(_ inPCM: UnsafePointer<Float>?, amount: Int) {
 		serialQueue.sync {
-			if(self.visAudioSize == 0) {
-				return
+			let bufferPointer = UnsafeBufferPointer<Float>(start: inPCM, count: amount)
+			var j = self.visAudioCursor
+			let k = self.visAudioSize
+			for i in 0..<amount {
+				let x = bufferPointer[i]
+				self.visAudio[j] = x
+				j += 1; if j >= k { j = 0 }
 			}
-			let bufferPointer = UnsafeRawPointer(inPCM)
-			if let bptr = bufferPointer {
-				let dataArray = bptr.assumingMemoryBound(to: Float.self)
-				var j = self.visAudioCursor
-				let k = self.visAudioSize
-				for i in 0..<amount {
-					let x = dataArray[i]
-					self.visAudio[j] = x
-					j += 1; if j >= k { j = 0 }
-				}
-				self.visAudioCursor = j
-				self.latency += Double(amount) / self.sampleRate
-				self.visSamplesPosted += UInt64(amount)
-			}
+			self.visAudioCursor = j
+			self.latency += Double(amount) / self.sampleRate
+			self.visSamplesPosted += UInt64(amount);
 		}
 	}
 
@@ -91,10 +87,19 @@ class VisualizationController : NSObject {
 
 	@objc
 	func copyVisPCM(_ outPCM: UnsafeMutablePointer<Float>?, visFFT: UnsafeMutablePointer<Float>?, latencyOffset: Double) {
-		outPCM?.update(repeating: 0.0, count: 4096)
-		visFFT?.update(repeating: 0.0, count: 2048)
-
 		if(self.visAudioSize == 0) {
+			if(outPCM != nil) {
+				let pcmPointer = UnsafeMutableBufferPointer<Float>(start: outPCM, count: 4096)
+				for i in 0...4095 {
+					pcmPointer[i] = 0.0
+				}
+			}
+			if(visFFT != nil) {
+				let fftPointer = UnsafeMutableBufferPointer<Float>(start: visFFT, count: 2048)
+				for i in 0...2047 {
+					fftPointer[i] = 0.0
+				}
+			}
 			return
 		}
 
@@ -103,16 +108,13 @@ class VisualizationController : NSObject {
 		serialQueue.sync {
 			// Offset latency so the target sample is in the center of the window
 			let latencySamples = (Int)((self.latency + latencyOffset) * self.sampleRate) + 2048
-			var samplesToDo = 4096
+			var samplesToDo = 4096;
 			if(latencySamples < 0) {
-				return
-			}
-			if(latencySamples + 4096 > visAudioSize) {
-				return
+				return;
 			}
 			if(latencySamples < 4096) {
 				// Latency can sometimes dip below this threshold
-				samplesToDo = latencySamples
+				samplesToDo = latencySamples;
 			}
 			var j = self.visAudioCursor - latencySamples
 			let k = self.visAudioSize
@@ -129,7 +131,13 @@ class VisualizationController : NSObject {
 			}
 		}
 
-		outPCM?.update(from: outPCMCopy, count: 4096)
+		if(outPCM != nil) {
+			let pcmPointer = UnsafeMutableBufferPointer<Float>(start: outPCM, count: 4096)
+			for i in 0...4095 {
+				let x = outPCMCopy[i]
+				pcmPointer[i] = x
+			}
+		}
 
 		if(visFFT != nil) {
 			serialQueue.sync {
