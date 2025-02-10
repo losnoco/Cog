@@ -257,28 +257,28 @@
 "KZd-iR-dXL.title" = "Mostrar fondo del icono";
 
 /* Class = "NSTextFieldCell"; title = "Engine:"; ObjectID = "ULd-G9-gDZ"; */
-"ULd-G9-gDZ.title" = "Engine:";
+"ULd-G9-gDZ.title" = "Motor:";
 
 /* Class = "NSTextFieldCell"; title = "Transients:"; ObjectID = "eI3-LU-JTj"; */
-"eI3-LU-JTj.title" = "Transients:";
+"eI3-LU-JTj.title" = "Transitorios:";
 
 /* Class = "NSTextFieldCell"; title = "Detector:"; ObjectID = "ZUS-Cr-zSa"; */
 "ZUS-Cr-zSa.title" = "Detector:";
 
 /* Class = "NSTextFieldCell"; title = "Phase:"; ObjectID = "xwT-8b-IsJ"; */
-"xwT-8b-IsJ.title" = "Phase:";
+"xwT-8b-IsJ.title" = "Fase:";
 
 /* Class = "NSTextFieldCell"; title = "Window Size:"; ObjectID = "qc8-jP-K6o"; */
-"qc8-jP-K6o.title" = "Window Size:";
+"qc8-jP-K6o.title" = "Tamaño de ventana:";
 
 /* Class = "NSTextFieldCell"; title = "Smoothing:"; ObjectID = "FLf-R7-Kew"; */
-"FLf-R7-Kew.title" = "Smoothing:";
+"FLf-R7-Kew.title" = "Suavizado:";
 
 /* Class = "NSTextFieldCell"; title = "Formant:"; ObjectID = "4zC-Y9-iRt"; */
-"4zC-Y9-iRt.title" = "Formant:";
+"4zC-Y9-iRt.title" = "Formantes:";
 
 /* Class = "NSTextFieldCell"; title = "Pitch:"; ObjectID = "FBC-tN-fwm"; */
-"FBC-tN-fwm.title" = "Pitch:";
+"FBC-tN-fwm.title" = "Tono:";
 
 /* Class = "NSTextFieldCell"; title = "Channels:"; ObjectID = "LpA-ak-Aj5"; */
-"LpA-ak-Aj5.title" = "Channels:";
+"LpA-ak-Aj5.title" = "Canales:";

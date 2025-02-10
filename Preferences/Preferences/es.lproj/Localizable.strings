@@ -81,3 +81,27 @@
 "Volume scale tag only" = "Solo etiqueta de escala de volumen";
 
 "Zero Order Hold" = "Retención de orden cero";
+
+"Rubber Band" = "Rubber Band";
+"EngineFaster" = "Más rápido";
+"EngineFiner" = "Mejor calidad";
+"TransientsCrisp" = "Definidos";
+"TransientsMixed" = "Mixtos";
+"TransientsSmooth" = "Suaves";
+"DetectorCompound" = "Compuesto";
+"DetectorPercussive" = "Percusivo";
+"DetectorSoft" = "Suave";
+"PhaseLaminar" = "Laminar";
+"PhaseIndependent" = "Independiente";
+"WindowStandard" = "Estándar";
+"WindowShort" = "Corto";
+"WindowLong" = "Largo";
+"SmoothingOff" = "No";
+"SmoothingOn" = "Sí";
+"FormantShifted" = "Cambiados";
+"FormantPreserved" = "Preservados";
+"PitchHighSpeed" = "Alta velocidad";
+"PitchHighQuality" = "Alta calidad";
+"PitchHighConsistency" = "Consistencia alta";
+"ChannelsApart" = "Separados";
+"ChannelsTogether" = "Juntos";
