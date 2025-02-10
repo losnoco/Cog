@@ -465,6 +465,7 @@ static const hcakey_info hcakey_list[] = {
     {0x9eb82f449eb4f3f6},       // music_0110036
     {0x417822c4c107541c},       // music_0110037
     {0x9e55fe333fe182dd},       // music_0110038
+    {0x86c5e597cdcf2c4e},       // music_0110039
     {0xfb647d074e53fab6},       // music_0120001
     {0xc24049b9f7ed3105},       // music_0120002
     {0x0dc128f2fd48bf4b},       // music_0120003
@@ -741,6 +742,7 @@ static const hcakey_info hcakey_list[] = {
     {0x1f3c1d0817b3d4be},       // music_0810008
     {0x2e5c9e00274e0f2a},       // music_0810009
     {0xfd59b4043bf88390},       // music_0810010
+    {0xad90dc83d09aeaf1},       // music_0810011
     {0x1e99d14d97ab82c5},       // music_0820001
     {0x5bf7cefecda8bcb2},       // music_0820002
     {0x9cf7ab0ccafa374e},       // music_0820003
@@ -1254,6 +1256,11 @@ static const hcakey_info hcakey_list[] = {
     {0x775610e63d2b622b},       // music_5050294
     {0xcc73017924bfaaae},       // music_5050295
     {0xd2197c8cf0ea08f9},       // music_5050296
+    {0xad6592b9a7f59dd4},       // music_5050298
+    {0x26577d8c85702e9},        // music_5050299
+    {0x8886b6ab9e5642a6},       // music_5050300
+    {0xf02f820d32f0abe7},       // music_5050301
+    {0x67d0a863e87d513a},       // music_5050302
     {0x481c17fb41e25dbb},       // music_5050303
     {0xe259362b1d601f93},       // music_5050304
     {0x7698628d25ad406b},       // music_5050305
@@ -1504,7 +1511,7 @@ static const hcakey_info hcakey_list[] = {
     // DRAGON BALL: Sparking! ZERO (multi)
     {13238534807163085345u},    // B7B8B9442F99A221
 
-    // TOUHOU GENSOU MAHJONG (PC) [demo and release]
+    // TOUHOU GENSOU MAHJONG (PC)
     {7757726886},               // 00000001CE6584A6
 
     // NARUTO X BORUTO NINJA VOLTAGE (Android)
@@ -1518,6 +1525,10 @@ static const hcakey_info hcakey_list[] = {
 
     // Tales of Graces f Remastered (PC)
     {51485416730473395},        // 00B6E9B6B75533B3
+
+    // Freedom Wars Remastered (Switch)
+    {3258660547165106863},      // 2D391680A55B32AF
+
 };
 
 #endif
