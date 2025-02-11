@@ -18,15 +18,7 @@
 @end
 
 @interface RubberbandPane : GeneralPreferencePane {
-	IBOutlet NSTextField *transientsLabel;
-	IBOutlet NSPopUpButton *transientsButton;
-	IBOutlet NSTextField *detectorLabel;
-	IBOutlet NSPopUpButton *detectorButton;
-	IBOutlet NSTextField *phaseLabel;
-	IBOutlet NSPopUpButton *phaseButton;
 	IBOutlet RubberbandWindowArrayController *windowBehavior;
-	IBOutlet NSTextField *smoothingLabel;
-	IBOutlet NSPopUpButton *smoothingButton;
 }
 
 - (IBAction)changeState:(id)sender;

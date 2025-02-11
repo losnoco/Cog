@@ -29,13 +29,6 @@
 	NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
 	BOOL engineR3 = [[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"finer"];
 
-	[transientsLabel setEnabled:!engineR3];
-	[transientsButton setEnabled:!engineR3];
-	[phaseLabel setEnabled:!engineR3];
-	[phaseButton setEnabled:!engineR3];
-	[smoothingLabel setEnabled:!engineR3];
-	[smoothingButton setEnabled:!engineR3];
-
 	[windowBehavior reinitWithEngine:engineR3];
 
 	if(engineR3) {

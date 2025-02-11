@@ -10,6 +10,7 @@
 #import "ColorToValueTransformer.h"
 #import "PathToFileTransformer.h"
 #import "TimeIntervalToStringTransformer.h"
+#import "RubberbandEngineTransformer.h"
 
 @implementation GeneralPreferencesPlugin
 
@@ -25,6 +26,10 @@
 	NSValueTransformer *timeIntervalToStringTransformer = [[TimeIntervalToStringTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:timeIntervalToStringTransformer
 	                                forName:@"TimeIntervalToStringTransformer"];
+
+	NSValueTransformer *rubberbandEngineTransformer = [[RubberbandEngineTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:rubberbandEngineTransformer
+									forName:@"RubberbandEngineTransformer"];
 }
 
 + (NSArray *)preferencePanes {
