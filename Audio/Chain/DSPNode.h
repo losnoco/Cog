@@ -15,6 +15,8 @@
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency;
 
+- (void)threadEntry:(id _Nullable)arg;
+
 @end
 
 #endif /* DSPNode_h */
