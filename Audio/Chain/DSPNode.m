@@ -37,4 +37,14 @@
 	return self;
 }
 
+// DSP threads buffer for low latency, and therefore should have high priority
+- (void)threadEntry:(id _Nullable)arg {
+	@autoreleasepool {
+		NSThread *currentThread = [NSThread currentThread];
+		[currentThread setThreadPriority:0.75];
+		[currentThread setQualityOfService:NSQualityOfServiceUserInitiated];
+		[self process];
+	}
+}
+
 @end
