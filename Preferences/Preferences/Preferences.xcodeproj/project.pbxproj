@@ -22,6 +22,7 @@
 		8307D31728606EAF000FF8EB /* growl@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8307D31328606EAF000FF8EB /* growl@2x.png */; };
 		8307D31828606EAF000FF8EB /* general.png in Resources */ = {isa = PBXBuildFile; fileRef = 8307D31428606EAF000FF8EB /* general.png */; };
 		8307D31928606EAF000FF8EB /* growl.png in Resources */ = {isa = PBXBuildFile; fileRef = 8307D31528606EAF000FF8EB /* growl.png */; };
+		832650FC2D5B4A2100CC7D8F /* RubberbandEngineTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 832650FB2D5B4A2100CC7D8F /* RubberbandEngineTransformer.m */; };
 		833A899F286FF3850022E036 /* TimeIntervalToStringTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 833A899E286FF3850022E036 /* TimeIntervalToStringTransformer.m */; };
 		83651DA527322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83651DA327322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m */; };
 		8372053718E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372053618E3DEAF007EFAD4 /* ResamplerBehaviorArrayController.m */; };
@@ -107,6 +108,8 @@
 		8307D31328606EAF000FF8EB /* growl@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "growl@2x.png"; path = "Icons/growl@2x.png"; sourceTree = "<group>"; };
 		8307D31428606EAF000FF8EB /* general.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = general.png; path = Icons/general.png; sourceTree = "<group>"; };
 		8307D31528606EAF000FF8EB /* growl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = growl.png; path = Icons/growl.png; sourceTree = "<group>"; };
+		832650FB2D5B4A2100CC7D8F /* RubberbandEngineTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RubberbandEngineTransformer.m; sourceTree = "<group>"; };
+		832650FF2D5B4A2D00CC7D8F /* RubberbandEngineTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RubberbandEngineTransformer.h; sourceTree = "<group>"; };
 		833A899D286FF3850022E036 /* TimeIntervalToStringTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeIntervalToStringTransformer.h; sourceTree = "<group>"; };
 		833A899E286FF3850022E036 /* TimeIntervalToStringTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TimeIntervalToStringTransformer.m; sourceTree = "<group>"; };
 		833F681B1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -333,6 +336,8 @@
 				83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */,
 				833A899D286FF3850022E036 /* TimeIntervalToStringTransformer.h */,
 				833A899E286FF3850022E036 /* TimeIntervalToStringTransformer.m */,
+				832650FF2D5B4A2D00CC7D8F /* RubberbandEngineTransformer.h */,
+				832650FB2D5B4A2100CC7D8F /* RubberbandEngineTransformer.m */,
 			);
 			name = Transformers;
 			sourceTree = "<group>";
@@ -509,6 +514,7 @@
 				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,
 				83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */,
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
+				832650FC2D5B4A2100CC7D8F /* RubberbandEngineTransformer.m in Sources */,
 				8307D30528604D8B000FF8EB /* SandboxPathBehaviorController.m in Sources */,
 				8307D30B286057B5000FF8EB /* GeneralPane.m in Sources */,
 				83A3B72C283AE04800CC6593 /* ColorToValueTransformer.m in Sources */,

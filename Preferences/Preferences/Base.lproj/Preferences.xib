@@ -18,6 +18,7 @@
                 <outlet property="playlistView" destination="231" id="244"/>
                 <outlet property="updatesView" destination="50" id="99"/>
                 <outlet property="rubberbandPane" destination="l4Y-NE-ezS" id="XTA-io-tov"/>
+                <outlet property="updatesView" destination="50" id="99"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -383,8 +384,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="SuD-jI-ifw" name="content" keyPath="arrangedObjects" id="sCS-i7-Vgf"/>
-                        <binding destination="SuD-jI-ifw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="sCS-i7-Vgf" id="Gmm-bC-A04"/>
                         <binding destination="SuD-jI-ifw" name="contentValues" keyPath="arrangedObjects.name" previousBinding="Gmm-bC-A04" id="8qt-aA-iuT"/>
+                        <binding destination="SuD-jI-ifw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="sCS-i7-Vgf" id="Gmm-bC-A04"/>
                         <binding destination="52" name="selectedObject" keyPath="values.volumeScaling" previousBinding="8qt-aA-iuT" id="9QJ-Xb-iOP"/>
                     </connections>
                 </popUpButton>
@@ -411,14 +412,6 @@
         </customObject>
         <customObject id="l4Y-NE-ezS" customClass="RubberbandPane">
             <connections>
-                <outlet property="detectorButton" destination="0YE-uu-Wcf" id="6Zi-9v-8xG"/>
-                <outlet property="detectorLabel" destination="a8m-fk-rd6" id="0Ba-14-DH0"/>
-                <outlet property="phaseButton" destination="AGi-va-Euk" id="ePJ-19-Eta"/>
-                <outlet property="phaseLabel" destination="ORM-SO-bUh" id="VZb-mx-Ov3"/>
-                <outlet property="smoothingButton" destination="Nd4-eR-Fuc" id="egf-oG-HA9"/>
-                <outlet property="smoothingLabel" destination="Cgd-Gz-9BJ" id="FuP-9E-5TH"/>
-                <outlet property="transientsButton" destination="DXC-dj-SqU" id="qBv-lU-s4I"/>
-                <outlet property="transientsLabel" destination="I7l-Pq-shw" id="FRi-lP-zVy"/>
                 <outlet property="view" destination="aAk-E4-RKg" id="sNN-AB-eF6"/>
                 <outlet property="windowBehavior" destination="qKv-dH-ulp" id="573-jZ-bx1"/>
             </connections>
@@ -1194,7 +1187,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="1lM-3b-70I" id="GC1-VY-f1a">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="dms-r8-XjB">
                             <items>
                                 <menuItem title="Item 1" state="on" id="1lM-3b-70I"/>
@@ -1206,8 +1199,8 @@
                     <connections>
                         <action selector="changeState:" target="l4Y-NE-ezS" id="76u-y7-qMk"/>
                         <binding destination="Ewm-6m-QFa" name="content" keyPath="arrangedObjects" id="Isc-4V-5Jn"/>
-                        <binding destination="Ewm-6m-QFa" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Isc-4V-5Jn" id="ThL-sW-Drv"/>
                         <binding destination="Ewm-6m-QFa" name="contentValues" keyPath="arrangedObjects.name" previousBinding="ThL-sW-Drv" id="MZq-Y3-D6P"/>
+                        <binding destination="Ewm-6m-QFa" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Isc-4V-5Jn" id="ThL-sW-Drv"/>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandEngine" previousBinding="MZq-Y3-D6P" id="D4h-nt-d3Q"/>
                     </connections>
                 </popUpButton>
@@ -1219,13 +1212,20 @@
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="Kbb-Jr-kQr">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DXC-dj-SqU" userLabel="Rubberband Transients">
                     <rect key="frame" x="186" y="184" width="164" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="VST-yJ-RYa" id="kQi-sh-T5t">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="gh1-qA-abN">
                             <items>
                                 <menuItem title="Item 1" state="on" id="VST-yJ-RYa"/>
@@ -1236,8 +1236,13 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="rD7-3H-4FM" name="content" keyPath="arrangedObjects" id="vf7-6E-9v5"/>
-                        <binding destination="rD7-3H-4FM" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="vf7-6E-9v5" id="M9I-iY-Wej"/>
                         <binding destination="rD7-3H-4FM" name="contentValues" keyPath="arrangedObjects.name" previousBinding="M9I-iY-Wej" id="O0z-2y-UPl"/>
+                        <binding destination="rD7-3H-4FM" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="vf7-6E-9v5" id="M9I-iY-Wej"/>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="pYS-w5-uyT">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandTransients" previousBinding="O0z-2y-UPl" id="KLB-xJ-rb9"/>
                     </connections>
                 </popUpButton>
@@ -1249,13 +1254,20 @@
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="Yam-2c-Ktt">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0YE-uu-Wcf" userLabel="Rubberband Detector">
                     <rect key="frame" x="186" y="160" width="164" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Gi6-qx-PH1" id="WDV-DN-iwU">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="m0Q-cK-by1">
                             <items>
                                 <menuItem title="Item 1" state="on" id="Gi6-qx-PH1"/>
@@ -1266,8 +1278,13 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="0rf-6O-MPh" name="content" keyPath="arrangedObjects" id="1Lg-gE-DdG"/>
-                        <binding destination="0rf-6O-MPh" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="1Lg-gE-DdG" id="37N-3K-rq6"/>
                         <binding destination="0rf-6O-MPh" name="contentValues" keyPath="arrangedObjects.name" previousBinding="37N-3K-rq6" id="kLx-xv-a24"/>
+                        <binding destination="0rf-6O-MPh" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="1Lg-gE-DdG" id="37N-3K-rq6"/>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="0Qr-w7-JMe">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandDetector" previousBinding="kLx-xv-a24" id="MQw-g6-ogU"/>
                     </connections>
                 </popUpButton>
@@ -1279,13 +1296,20 @@
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="hqe-Xx-oDX">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AGi-va-Euk" userLabel="Rubberband Phase">
                     <rect key="frame" x="186" y="136" width="164" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="iEL-9R-pTH" id="Vcd-rh-VAc">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="FTa-ln-M8f">
                             <items>
                                 <menuItem title="Item 1" state="on" id="iEL-9R-pTH"/>
@@ -1296,8 +1320,13 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="XkG-oY-ZCw" name="content" keyPath="arrangedObjects" id="15P-mE-WZ7"/>
-                        <binding destination="XkG-oY-ZCw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="15P-mE-WZ7" id="iRN-4y-psG"/>
                         <binding destination="XkG-oY-ZCw" name="contentValues" keyPath="arrangedObjects.name" previousBinding="iRN-4y-psG" id="VjJ-5K-hbu"/>
+                        <binding destination="XkG-oY-ZCw" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="15P-mE-WZ7" id="iRN-4y-psG"/>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="olc-Zu-jtV">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandPhase" previousBinding="VjJ-5K-hbu" id="e13-ei-jMs"/>
                     </connections>
                 </popUpButton>
@@ -1315,7 +1344,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tqQ-AN-ZlT" id="avs-IS-hfH">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="SA2-M5-pvX">
                             <items>
                                 <menuItem title="Item 1" state="on" id="tqQ-AN-ZlT"/>
@@ -1326,8 +1355,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="qKv-dH-ulp" name="content" keyPath="arrangedObjects" id="Wph-cL-g56"/>
-                        <binding destination="qKv-dH-ulp" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Wph-cL-g56" id="RHw-Gv-iI0"/>
                         <binding destination="qKv-dH-ulp" name="contentValues" keyPath="arrangedObjects.name" previousBinding="RHw-Gv-iI0" id="NOc-zw-E5B"/>
+                        <binding destination="qKv-dH-ulp" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Wph-cL-g56" id="RHw-Gv-iI0"/>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandWindow" previousBinding="NOc-zw-E5B" id="jO4-fL-0ka"/>
                     </connections>
                 </popUpButton>
@@ -1339,13 +1368,20 @@
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
+                    <connections>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="Shn-JN-4nI">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nd4-eR-Fuc" userLabel="Rubberband Smoothing">
                     <rect key="frame" x="186" y="88" width="164" height="25"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="PiI-1l-qbj" id="VKp-9U-hvc">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="uMg-iX-U2g">
                             <items>
                                 <menuItem title="Item 1" state="on" id="PiI-1l-qbj"/>
@@ -1356,8 +1392,13 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="7qK-HD-YRC" name="content" keyPath="arrangedObjects" id="glT-yT-Xy1"/>
-                        <binding destination="7qK-HD-YRC" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="glT-yT-Xy1" id="R8g-75-OWT"/>
                         <binding destination="7qK-HD-YRC" name="contentValues" keyPath="arrangedObjects.name" previousBinding="R8g-75-OWT" id="OtE-O8-meo"/>
+                        <binding destination="7qK-HD-YRC" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="glT-yT-Xy1" id="R8g-75-OWT"/>
+                        <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="q0n-WG-Xis">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">RubberbandEngineTransformer</string>
+                            </dictionary>
+                        </binding>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandSmoothing" previousBinding="OtE-O8-meo" id="jqW-KQ-IiR"/>
                     </connections>
                 </popUpButton>
@@ -1375,7 +1416,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="aza-qe-fwC" id="5wR-Iv-QLl">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="4WS-kE-k5Y">
                             <items>
                                 <menuItem title="Item 1" state="on" id="aza-qe-fwC"/>
@@ -1386,8 +1427,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="5Cw-Q7-Y6w" name="content" keyPath="arrangedObjects" id="8PO-vs-kd4"/>
-                        <binding destination="5Cw-Q7-Y6w" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="8PO-vs-kd4" id="Tuw-7B-rA3"/>
                         <binding destination="5Cw-Q7-Y6w" name="contentValues" keyPath="arrangedObjects.name" previousBinding="Tuw-7B-rA3" id="d3u-gj-AVL"/>
+                        <binding destination="5Cw-Q7-Y6w" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="8PO-vs-kd4" id="Tuw-7B-rA3"/>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandFormant" previousBinding="d3u-gj-AVL" id="jQQ-qt-LAC"/>
                     </connections>
                 </popUpButton>
@@ -1405,7 +1446,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Dlb-p9-5sC" id="xjb-bC-UbD">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="UIS-a0-dyq">
                             <items>
                                 <menuItem title="Item 1" state="on" id="Dlb-p9-5sC"/>
@@ -1416,8 +1457,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="mFW-7h-5rd" name="content" keyPath="arrangedObjects" id="yqp-aH-3Vn"/>
-                        <binding destination="mFW-7h-5rd" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="yqp-aH-3Vn" id="X49-3Z-EWj"/>
                         <binding destination="mFW-7h-5rd" name="contentValues" keyPath="arrangedObjects.name" previousBinding="X49-3Z-EWj" id="ISf-ZT-bQj"/>
+                        <binding destination="mFW-7h-5rd" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="yqp-aH-3Vn" id="X49-3Z-EWj"/>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandPitch" previousBinding="ISf-ZT-bQj" id="O1U-TC-XPY"/>
                     </connections>
                 </popUpButton>
@@ -1435,7 +1476,7 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="5jm-EX-ibI" id="OwG-Xq-Gsy">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
+                        <font key="font" metaFont="message"/>
                         <menu key="menu" id="Gd8-Cx-gIi">
                             <items>
                                 <menuItem title="Item 1" state="on" id="5jm-EX-ibI"/>
@@ -1446,8 +1487,8 @@
                     </popUpButtonCell>
                     <connections>
                         <binding destination="Dfm-y4-7ki" name="content" keyPath="arrangedObjects" id="bas-JW-4u4"/>
-                        <binding destination="Dfm-y4-7ki" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="bas-JW-4u4" id="K1C-oq-2vZ"/>
                         <binding destination="Dfm-y4-7ki" name="contentValues" keyPath="arrangedObjects.name" previousBinding="K1C-oq-2vZ" id="8Ja-Tu-lo2"/>
+                        <binding destination="Dfm-y4-7ki" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="bas-JW-4u4" id="K1C-oq-2vZ"/>
                         <binding destination="52" name="selectedObject" keyPath="values.rubberbandChannels" previousBinding="8Ja-Tu-lo2" id="Xyj-me-7r1"/>
                     </connections>
                 </popUpButton>
