@@ -79,8 +79,6 @@
 	}
 	[output setup];
 	[output setVolume:volume];
-	[output setPitch:pitch];
-	[output setTempo:tempo];
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -214,26 +212,6 @@
 
 - (double)volume {
 	return volume;
-}
-
-- (void)setPitch:(double)p {
-	pitch = p;
-
-	[output setPitch:p];
-}
-
-- (double)pitch {
-	return pitch;
-}
-
-- (void)setTempo:(double)t {
-	tempo = t;
-
-	[output setTempo:t];
-}
-
-- (double)tempo {
-	return tempo;
 }
 
 // This is called by the delegate DURING a requestNextStream request.
@@ -511,6 +489,7 @@
 				break;
 			}
 
+			[bufferChain setShouldContinue:NO];
 			bufferChain = nil;
 			bufferChain = [chainQueue objectAtIndex:0];
 
@@ -672,58 +651,6 @@
 
 	[self setVolume:newVolume];
 	return newVolume;
-}
-
-- (double)pitchUp:(double)amount {
-	const double MAX_PITCH = 5.0;
-
-	double newPitch;
-	if((pitch + amount) > MAX_PITCH)
-		newPitch = MAX_PITCH;
-	else
-		newPitch = pitch + amount;
-
-	[self setPitch:newPitch];
-	return newPitch;
-}
-
-- (double)pitchDown:(double)amount {
-	const double MIN_PITCH = 0.2;
-
-	double newPitch;
-	if((pitch - amount) < MIN_PITCH)
-		newPitch = MIN_PITCH;
-	else
-		newPitch = pitch - amount;
-
-	[self setPitch:newPitch];
-	return newPitch;
-}
-
-- (double)tempoUp:(double)amount {
-	const double MAX_TEMPO = 5.0;
-
-	double newTempo;
-	if((tempo + amount) > MAX_TEMPO)
-		newTempo = MAX_TEMPO;
-	else
-		newTempo = tempo + amount;
-
-	[self setTempo:newTempo];
-	return newTempo;
-}
-
-- (double)tempoDown:(double)amount {
-	const double MIN_TEMPO = 0.2;
-
-	double newTempo;
-	if((tempo - amount) < MIN_TEMPO)
-		newTempo = MIN_TEMPO;
-	else
-		newTempo = tempo - amount;
-
-	[self setTempo:newTempo];
-	return newTempo;
 }
 
 - (void)waitUntilCallbacksExit {

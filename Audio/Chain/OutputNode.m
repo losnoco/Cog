@@ -164,14 +164,6 @@
 	[output setVolume:v];
 }
 
-- (void)setPitch:(double)p {
-	[output setPitch:p];
-}
-
-- (void)setTempo:(double)t {
-	[output setTempo:t];
-}
-
 - (void)setShouldContinue:(BOOL)s {
 	[super setShouldContinue:s];
 

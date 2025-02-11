@@ -52,14 +52,9 @@ using std::atomic_long;
 	double secondsLatency;
 	double visPushed;
 
-	double lastClippedSampleRate;
+	double tempo;
 
-	void *ts;
-	int tslastoptions, tsnewoptions;
-	size_t blockSize, toDrop, samplesBuffered;
-	double ssRenderedIn, ssLastRenderedIn;
-	double ssRenderedOut;
-	BOOL tsapplynewoptions;
+	double lastClippedSampleRate;
 
 	void *rsvis;
 	double lastVisRate;
@@ -94,9 +89,6 @@ using std::atomic_long;
 
 	float volume;
 	float eqPreamp;
-
-	double pitch, tempo;
-	double lastPitch, lastTempo;
 
 	AVAudioFormat *_deviceFormat;
 
@@ -144,13 +136,11 @@ using std::atomic_long;
 
 	float *samplePtr;
 	float tempBuffer[512 * 32];
-	float *rsPtrs[32];
-	float rsInBuffer[1024 * 32];
-	float rsOutBuffer[65536 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
 	float fsurroundBuffer[8192 * 6];
 	float hrtfBuffer[4096 * 2];
 	float eqBuffer[4096 * 32];
+	float eqOutBuffer[4096 * 32];
 	float downmixBuffer[4096 * 8];
 
 	float visAudio[4096];
@@ -190,7 +180,6 @@ using std::atomic_long;
 - (void)reportMotion:(simd_float4x4)matrix;
 - (void)resetReferencePosition:(NSNotification *)notification;
 
-- (void)setPitch:(double)p;
 - (void)setTempo:(double)t;
 
 @end
