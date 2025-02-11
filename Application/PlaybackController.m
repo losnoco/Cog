@@ -99,7 +99,16 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 		                                  @"GraphicEQtrackgenre": @(NO),
 		                                  @"volumeLimit": @(YES),
 		                                  @"enableHrtf": @(NO),
-		                                  @"enableHeadTracking": @(NO)
+		                                  @"enableHeadTracking": @(NO),
+		                                  @"rubberbandEngine": @"faster",
+		                                  @"rubberbandTransients": @"crisp",
+		                                  @"rubberbandDetector": @"compound",
+		                                  @"rubberbandPhase": @"laminar",
+		                                  @"rubberbandWindow": @"standard",
+		                                  @"rubberbandSmoothing": @"off",
+		                                  @"rubberbandFormant": @"shifted",
+		                                  @"rubberbandPitch": @"highspeed",
+		                                  @"rubberbandChannels": @"apart"
 	};
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
