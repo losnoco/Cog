@@ -321,9 +321,6 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 }
 
 - (void)process {
-	// Removed endOfStream check from here, since we want to be able to flush the converter
-	// when the end of stream is reached. Convert function instead processes what it can,
-	// and returns 0 samples when it has nothing more to process at the end of stream.
 	while([self shouldContinue] == YES) {
 		if(paused) {
 			usleep(500);
