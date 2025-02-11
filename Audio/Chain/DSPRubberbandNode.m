@@ -39,19 +39,6 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	float rsOutBuffer[65536 * 32];
 }
 
-+ (void)initialize {
-	NSDictionary *defaults = @{@"rubberbandEngine": @"faster",
-							   @"rubberbandTransients": @"crisp",
-							   @"rubberbandDetector": @"compound",
-							   @"rubberbandPhase": @"laminar",
-							   @"rubberbandWindow": @"standard",
-							   @"rubberbandSmoothing": @"off",
-							   @"rubberbandFormant": @"shifted",
-							   @"rubberbandPitch": @"highspeed",
-							   @"rubberbandChannels": @"apart"};
-	[[[NSUserDefaultsController sharedUserDefaultsController] defaults] registerDefaults:defaults];
-}
-
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
 	self = [super initWithController:c previous:p latency:latency];
 	if(self) {
