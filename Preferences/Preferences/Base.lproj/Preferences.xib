@@ -17,7 +17,6 @@
                 <outlet property="outputPane" destination="57" id="75"/>
                 <outlet property="playlistView" destination="231" id="244"/>
                 <outlet property="rubberbandPane" destination="l4Y-NE-ezS" id="XTA-io-tov"/>
-                <outlet property="updatesView" destination="50" id="99"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
