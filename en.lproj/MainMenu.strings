@@ -60,7 +60,7 @@
 "73.title" = "Close Window";
 
 /* Class = "NSMenuItem"; title = "Save As..."; ObjectID = "75"; */
-"75.title" = "Save As...";
+"75.title" = "Save Playlist As...";
 
 /* Class = "NSMenu"; title = "File"; ObjectID = "81"; */
 "81.title" = "File";
