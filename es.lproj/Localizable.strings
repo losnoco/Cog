@@ -30,7 +30,7 @@
 "PauseButtonTooltip" = "Pausar";
 "PlayButtonTooltip" = "Reproducir";
 "PlayingTrackTooltip" = "Reproduciendo";
-"PlaylistHeaderContextMenuTitle" = "Menú contextual del encabezado de la lista de reproducción";
+"PlaylistHeaderContextMenuTitle" = "Menú contextual del encabezado de la playlist";
 "PlaylistIndexColumn" = "Índice";
 "PlaylistRandomizationAction" = "Aleatorización de la lista";
 "PlaylistStatusColumn" = "Estado";
@@ -46,7 +46,7 @@
 "ProgressSubActionLoadingMetadata" = "procesando archivos";
 "ProgressSubActionMetadataApply" = "aplicando la información al almacenamiento de la listas";
 "QueuedTrackTooltip" = "En cola";
-"RandomizeButtonTooltip" = "Aleatorizar la lista de reproducción";
+"RandomizeButtonTooltip" = "Aleatorizar la playlist";
 "RemoveButtonTooltip" = "Eliminar archivos seleccionados";
 "RepeatButtonTooltip" = "Modo de repetición";
 "ShuffleButtonTooltip" = "Modo aleatorio";

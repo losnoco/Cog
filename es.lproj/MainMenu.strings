@@ -60,7 +60,7 @@
 "73.title" = "Cerrar ventana";
 
 /* Class = "NSMenuItem"; title = "Save As..."; ObjectID = "75"; */
-"75.title" = "Guardar como...";
+"75.title" = "Guardar playlist como...";
 
 /* Class = "NSMenu"; title = "File"; ObjectID = "81"; */
 "81.title" = "Archivo";
@@ -795,7 +795,7 @@
 "1132.title" = "Mostrar todas las canciones";
 
 /* Class = "NSMenuItem"; title = "Filter Playlist"; ObjectID = "1824"; */
-"1824.title" = "Filtrar lista de reproducción";
+"1824.title" = "Filtrar playlist";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedDisplayPattern = "Total Duration: %{value1}@"; ObjectID = "1891"; */
 "1891.ibShadowedDisplayPattern" = "Duración total: %{value1}@";
