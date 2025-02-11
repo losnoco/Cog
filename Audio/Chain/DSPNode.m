@@ -1,0 +1,40 @@
+//
+//  DSPNode.m
+//  CogAudio Framework
+//
+//  Created by Christopher Snowhill on 2/10/25.
+//
+
+#import <Foundation/Foundation.h>
+
+#import "DSPNode.h"
+
+@implementation DSPNode
+
+- (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
+	self = [super init];
+	if(self) {
+		buffer = [[ChunkList alloc] initWithMaximumDuration:latency];
+
+		semaphore = [[Semaphore alloc] init];
+
+		accessLock = [[NSLock alloc] init];
+
+		initialBufferFilled = NO;
+
+		controller = c;
+		endOfStream = NO;
+		shouldContinue = YES;
+
+		nodeChannelConfig = 0;
+		nodeLossless = NO;
+
+		durationPrebuffer = latency * 0.25;
+
+		[self setPreviousNode:p];
+	}
+
+	return self;
+}
+
+@end

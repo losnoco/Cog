@@ -10,11 +10,13 @@
 
 #import "AudioPlayer.h"
 #import "ConverterNode.h"
+#import "DSPRubberbandNode.h"
 #import "InputNode.h"
 
 @interface BufferChain : NSObject {
 	InputNode *inputNode;
 	ConverterNode *converterNode;
+	DSPRubberbandNode *rubberbandNode;
 
 	NSURL *streamURL;
 	id userInfo;
@@ -70,6 +72,8 @@
 - (ConverterNode *)converter;
 - (AudioStreamBasicDescription)inputFormat;
 - (uint32_t)inputConfig;
+
+- (DSPRubberbandNode *)rubberband;
 
 - (double)secondsBuffered;
 

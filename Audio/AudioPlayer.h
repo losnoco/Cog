@@ -76,16 +76,6 @@
 - (double)volumeUp:(double)amount;
 - (double)volumeDown:(double)amount;
 
-- (void)setPitch:(double)s;
-- (double)pitch;
-- (double)pitchUp:(double)amount;
-- (double)pitchDown:(double)amount;
-
-- (void)setTempo:(double)s;
-- (double)tempo;
-- (double)tempoUp:(double)amount;
-- (double)tempoDown:(double)amount;
-
 - (double)amountPlayed;
 - (double)amountPlayedInterval;
 

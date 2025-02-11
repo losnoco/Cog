@@ -95,6 +95,10 @@
 		839E56EE2879515D00DFB5F4 /* HeadphoneFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 839E56EC2879515D00DFB5F4 /* HeadphoneFilter.mm */; };
 		839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56F6287974A100DFB5F4 /* SandboxBroker.h */; };
 		83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */; };
+		83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FFED502D5B08BC0044CCAF /* DSPNode.h */; };
+		83FFED532D5B09320044CCAF /* DSPNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83FFED522D5B09320044CCAF /* DSPNode.m */; };
+		83FFED552D5B0A1C0044CCAF /* DSPRubberbandNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FFED542D5B0A1C0044CCAF /* DSPRubberbandNode.h */; };
+		83FFED572D5B0A6B0044CCAF /* DSPRubberbandNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83FFED562D5B0A6B0044CCAF /* DSPRubberbandNode.m */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
@@ -209,6 +213,10 @@
 		839E56EC2879515D00DFB5F4 /* HeadphoneFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HeadphoneFilter.mm; sourceTree = "<group>"; };
 		839E56F6287974A100DFB5F4 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CogAudio-Bridging-Header.h"; sourceTree = "<group>"; };
+		83FFED502D5B08BC0044CCAF /* DSPNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPNode.h; sourceTree = "<group>"; };
+		83FFED522D5B09320044CCAF /* DSPNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPNode.m; sourceTree = "<group>"; };
+		83FFED542D5B0A1C0044CCAF /* DSPRubberbandNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPRubberbandNode.h; sourceTree = "<group>"; };
+		83FFED562D5B0A6B0044CCAF /* DSPRubberbandNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPRubberbandNode.m; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
@@ -361,6 +369,10 @@
 				17D21C7D0B8BE4BA00D1EBDE /* Node.m */,
 				17D21C7E0B8BE4BA00D1EBDE /* OutputNode.h */,
 				17D21C7F0B8BE4BA00D1EBDE /* OutputNode.m */,
+				83FFED502D5B08BC0044CCAF /* DSPNode.h */,
+				83FFED522D5B09320044CCAF /* DSPNode.m */,
+				83FFED542D5B0A1C0044CCAF /* DSPRubberbandNode.h */,
+				83FFED562D5B0A6B0044CCAF /* DSPRubberbandNode.m */,
 			);
 			path = Chain;
 			sourceTree = "<group>";
@@ -546,8 +558,10 @@
 				8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */,
 				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
 				834A41AF287ABD6F00EB9D9B /* FSurroundFilter.h in Headers */,
+				83FFED552D5B0A1C0044CCAF /* DSPRubberbandNode.h in Headers */,
 				17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */,
 				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
+				83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */,
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
 				839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */,
 				839065F32853338700636FBB /* dsd2float.h in Headers */,
@@ -640,6 +654,7 @@
 			files = (
 				17D21CA20B8BE4BA00D1EBDE /* BufferChain.m in Sources */,
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
+				83FFED572D5B0A6B0044CCAF /* DSPRubberbandNode.m in Sources */,
 				839E56EE2879515D00DFB5F4 /* HeadphoneFilter.mm in Sources */,
 				83504166286447DA006B32CC /* Downmix.m in Sources */,
 				8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */,
@@ -667,6 +682,7 @@
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				834FD4F127AF93680063BC83 /* ChunkList.m in Sources */,
 				834A41B0287ABD6F00EB9D9B /* FSurroundFilter.mm in Sources */,
+				83FFED532D5B09320044CCAF /* DSPNode.m in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
 				835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,

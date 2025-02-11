@@ -161,12 +161,14 @@ static void *kInputNodeContext = &kInputNodeContext;
 		if(shouldSeek == YES) {
 			BufferChain *bufferChain = [[controller controller] bufferChain];
 			ConverterNode *converter = [bufferChain converter];
+			DSPRubberbandNode *rubberband = [bufferChain rubberband];
 			DLog(@"SEEKING! Resetting Buffer");
 
 			// This resets the converter's buffer
 			[self resetBuffer];
 			[converter resetBuffer];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
+			[rubberband resetBuffer];
 
 			DLog(@"Reset buffer!");
 

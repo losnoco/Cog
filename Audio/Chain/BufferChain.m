@@ -25,6 +25,8 @@
 
 		inputNode = nil;
 		converterNode = nil;
+
+		rubberbandNode = nil;
 	}
 
 	return self;
@@ -36,8 +38,9 @@
 
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
+	rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:converterNode latency:0.03];
 
-	finalNode = converterNode;
+	finalNode = rubberbandNode;
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
@@ -146,6 +149,7 @@
 
 	[inputNode launchThread];
 	[converterNode launchThread];
+	[rubberbandNode launchThread];
 }
 
 - (void)setUserInfo:(id)i {
@@ -213,6 +217,7 @@
 - (void)setShouldContinue:(BOOL)s {
 	[inputNode setShouldContinue:s];
 	[converterNode setShouldContinue:s];
+	[rubberbandNode setShouldContinue:s];
 }
 
 - (BOOL)isRunning {
@@ -229,6 +234,10 @@
 
 - (ConverterNode *)converter {
 	return converterNode;
+}
+
+- (DSPRubberbandNode *)rubberband {
+	return rubberbandNode;
 }
 
 - (AudioStreamBasicDescription)inputFormat {

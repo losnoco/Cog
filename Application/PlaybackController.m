@@ -125,10 +125,8 @@ static double reverseSpeedScale(double input, double min, double max) {
 	[audioPlayer setVolume:volume];
 
 	double pitch = [[NSUserDefaults standardUserDefaults] doubleForKey:@"pitch"];
-	[audioPlayer setPitch:pitch];
 	[pitchSlider setDoubleValue:reverseSpeedScale(pitch, [pitchSlider minValue], [pitchSlider maxValue])];
 	double tempo = [[NSUserDefaults standardUserDefaults] doubleForKey:@"tempo"];
-	[audioPlayer setTempo:tempo];
 	[tempoSlider setDoubleValue:reverseSpeedScale(tempo, [tempoSlider minValue], [tempoSlider maxValue])];
 
 	BOOL speedLock = [[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"];
@@ -507,14 +505,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	const double pitch = speedScale([sender doubleValue], [pitchSlider minValue], [pitchSlider maxValue]);
 	DLog(@"PITCH: %lf", pitch);
 
-	[audioPlayer setPitch:pitch];
-
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+	[[NSUserDefaults standardUserDefaults] setDouble:pitch forKey:@"pitch"];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
-		[audioPlayer setTempo:pitch];
-
-		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+		[[NSUserDefaults standardUserDefaults] setDouble:pitch forKey:@"tempo"];
 	}
 }
 
@@ -522,14 +516,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	const double tempo = speedScale([sender doubleValue], [tempoSlider minValue], [tempoSlider maxValue]);
 	DLog(@"TEMPO: %lf", tempo);
 
-	[audioPlayer setTempo:tempo];
-
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+	[[NSUserDefaults standardUserDefaults] setDouble:tempo forKey:@"tempo"];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
-		[audioPlayer setPitch:tempo];
-
-		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+		[[NSUserDefaults standardUserDefaults] setDouble:tempo forKey:@"pitch"];
 	}
 }
 
@@ -635,62 +625,70 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (IBAction)pitchDown:(id)sender {
-	/*double newPitch = */[audioPlayer pitchDown:DEFAULT_PITCH_DOWN];
-	[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
+	double pitch = speedScale([pitchSlider doubleValue], [pitchSlider minValue], [pitchSlider maxValue]);
+	double newPitch = pitch - DEFAULT_PITCH_DOWN;
+	if(newPitch < 0.2) {
+		newPitch = 0.2;
+	}
+	[pitchSlider setDoubleValue:reverseSpeedScale(newPitch, [pitchSlider minValue], [pitchSlider maxValue])];
 
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+	[[NSUserDefaults standardUserDefaults] setDouble:newPitch forKey:@"pitch"];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
-		[audioPlayer setTempo:[audioPlayer pitch]];
+		[tempoSlider setDoubleValue:reverseSpeedScale(newPitch, [tempoSlider minValue], [tempoSlider maxValue])];
 
-		[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
-
-		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+		[[NSUserDefaults standardUserDefaults] setDouble:newPitch forKey:@"tempo"];
 	}
 }
 
 - (IBAction)pitchUp:(id)sender {
-	/*double newPitch = */[audioPlayer tempoUp:DEFAULT_PITCH_UP];
-	[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
+	double pitch = speedScale([pitchSlider doubleValue], [pitchSlider minValue], [pitchSlider maxValue]);
+	double newPitch = pitch + DEFAULT_PITCH_UP;
+	if(newPitch > 5.0) {
+		newPitch = 5.0;
+	}
+	[pitchSlider setDoubleValue:reverseSpeedScale(newPitch, [pitchSlider minValue], [pitchSlider maxValue])];
 
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+	[[NSUserDefaults standardUserDefaults] setDouble:newPitch forKey:@"pitch"];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
-		[audioPlayer setTempo:[audioPlayer pitch]];
+		[tempoSlider setDoubleValue:reverseSpeedScale(newPitch, [tempoSlider minValue], [tempoSlider maxValue])];
 
-		[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
-
-		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+		[[NSUserDefaults standardUserDefaults] setDouble:newPitch forKey:@"tempo"];
 	}
 }
 
 - (IBAction)tempoDown:(id)sender {
-	/*double newTempo = */[audioPlayer tempoDown:DEFAULT_TEMPO_DOWN];
-	[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
+	double tempo = speedScale([tempoSlider doubleValue], [tempoSlider minValue], [tempoSlider maxValue]);
+	double newTempo = tempo - DEFAULT_TEMPO_DOWN;
+	if(newTempo < 0.2) {
+		newTempo = 0.2;
+	}
+	[tempoSlider setDoubleValue:reverseSpeedScale(newTempo, [tempoSlider minValue], [tempoSlider maxValue])];
 
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+	[[NSUserDefaults standardUserDefaults] setDouble:newTempo forKey:@"tempo"];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
-		[audioPlayer setPitch:[audioPlayer tempo]];
+		[pitchSlider setDoubleValue:reverseSpeedScale(newTempo, [pitchSlider minValue], [pitchSlider maxValue])];
 
-		[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
-
-		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+		[[NSUserDefaults standardUserDefaults] setDouble:newTempo forKey:@"pitch"];
 	}
 }
 
 - (IBAction)tempoUp:(id)sender {
-	/*double newTempo = */[audioPlayer tempoUp:DEFAULT_PITCH_UP];
-	[tempoSlider setDoubleValue:reverseSpeedScale([audioPlayer tempo], [tempoSlider minValue], [tempoSlider maxValue])];
+	double tempo = speedScale([tempoSlider doubleValue], [tempoSlider minValue], [tempoSlider maxValue]);
+	double newTempo = tempo + DEFAULT_TEMPO_UP;
+	if(newTempo > 5.0) {
+		newTempo = 5.0;
+	}
+	[tempoSlider setDoubleValue:reverseSpeedScale(newTempo, [tempoSlider minValue], [tempoSlider maxValue])];
 
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer tempo] forKey:@"tempo"];
+	[[NSUserDefaults standardUserDefaults] setDouble:newTempo forKey:@"tempo"];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
-		[audioPlayer setPitch:[audioPlayer tempo]];
+		[pitchSlider setDoubleValue:reverseSpeedScale(newTempo, [pitchSlider minValue], [pitchSlider maxValue])];
 
-		[pitchSlider setDoubleValue:reverseSpeedScale([audioPlayer pitch], [pitchSlider minValue], [pitchSlider maxValue])];
-
-		[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer pitch] forKey:@"pitch"];
+		[[NSUserDefaults standardUserDefaults] setDouble:newTempo forKey:@"pitch"];
 	}
 }
 

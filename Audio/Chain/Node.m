@@ -110,9 +110,13 @@
 	}
 
 	while(shouldContinue == YES && chunkDuration > durationLeft) {
+		if(previousNode && [previousNode shouldContinue] == NO) {
+			shouldContinue = NO;
+			break;
+		}
 		if(durationLeft < chunkDuration || shouldReset) {
 			[accessLock unlock];
-			[semaphore wait];
+			[semaphore timedWait:500];
 			[accessLock lock];
 		}
 
@@ -136,6 +140,12 @@
 
 - (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config {
 	[accessLock lock];
+
+	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
+		endOfStream = YES;
+		[accessLock unlock];
+		return NO;
+	}
 
 	BOOL ret = [[previousNode buffer] peekFormat:format channelConfig:config];
 
