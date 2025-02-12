@@ -67,11 +67,10 @@
 	[chunk setLossless:nodeLossless];
 	[chunk assignSamples:ptr frameCount:amount / nodeFormat.mBytesPerPacket];
 
-	const double chunkDuration = [chunk duration];
 	double durationList = [buffer listDuration];
 	double durationLeft = [buffer maxDuration] - durationList;
 
-	if(shouldContinue == YES && durationList > durationPrebuffer) {
+	if(shouldContinue == YES && durationList >= durationPrebuffer) {
 		if(initialBufferFilled == NO) {
 			initialBufferFilled = YES;
 			if([controller respondsToSelector:@selector(initialBufferFilled:)])
@@ -79,10 +78,10 @@
 		}
 	}
 
-	while(shouldContinue == YES && chunkDuration > durationLeft) {
-		if(durationLeft < chunkDuration || shouldReset) {
+	while(shouldContinue == YES && durationLeft <= 0.0) {
+		if(durationLeft <= 0.0 || shouldReset) {
 			[accessLock unlock];
-			[semaphore wait];
+			[semaphore timedWait:500];
 			[accessLock lock];
 		}
 
@@ -97,11 +96,10 @@
 - (void)writeChunk:(AudioChunk *)chunk {
 	[accessLock lock];
 
-	const double chunkDuration = [chunk duration];
 	double durationList = [buffer listDuration];
 	double durationLeft = [buffer maxDuration] - durationList;
 
-	if(shouldContinue == YES && durationList > durationPrebuffer) {
+	if(shouldContinue == YES && durationList >= durationPrebuffer) {
 		if(initialBufferFilled == NO) {
 			initialBufferFilled = YES;
 			if([controller respondsToSelector:@selector(initialBufferFilled:)])
@@ -109,13 +107,13 @@
 		}
 	}
 
-	while(shouldContinue == YES && chunkDuration > durationLeft) {
+	while(shouldContinue == YES && durationLeft <= 0.0) {
 		if(previousNode && [previousNode shouldContinue] == NO) {
 			shouldContinue = NO;
 			break;
 		}
 
-		if(durationLeft < chunkDuration || shouldReset) {
+		if(durationLeft <= 0.0 || shouldReset) {
 			[accessLock unlock];
 			[semaphore timedWait:500];
 			[accessLock lock];
