@@ -12,6 +12,7 @@
 #import "ConverterNode.h"
 #import "DSPRubberbandNode.h"
 #import "DSPFSurroundNode.h"
+#import "DSPHRTFNode.h"
 #import "InputNode.h"
 
 @interface BufferChain : NSObject {
@@ -19,6 +20,7 @@
 	ConverterNode *converterNode;
 	DSPRubberbandNode *rubberbandNode;
 	DSPFSurroundNode *fsurroundNode;
+	DSPHRTFNode *hrtfNode;
 
 	NSURL *streamURL;
 	id userInfo;
@@ -78,6 +80,8 @@
 - (DSPRubberbandNode *)rubberband;
 
 - (DSPFSurroundNode *)fsurround;
+
+- (DSPHRTFNode *)hrtf;
 
 - (double)secondsBuffered;
 
