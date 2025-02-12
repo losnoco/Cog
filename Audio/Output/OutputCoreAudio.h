@@ -99,19 +99,13 @@ using std::atomic_long;
 
 	AUAudioUnit *_au;
 
-	AudioTimeStamp timeStamp;
-
 	size_t _bufferSize;
-
-	AudioUnit _eq;
 
 	DownmixProcessor *downmixer;
 	DownmixProcessor *downmixerForVis;
 
 	VisualizationController *visController;
 
-	int inputBufferLastTime;
-	
 	int inputRemain;
 	
 	AudioChunk *chunkRemain;
@@ -125,14 +119,11 @@ using std::atomic_long;
 	float *samplePtr;
 	float tempBuffer[512 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
-	float eqBuffer[4096 * 32];
-	float eqOutBuffer[4096 * 32];
 	float downmixBuffer[4096 * 8];
 
 	float visAudio[4096];
 	float visResamplerInput[8192];
 	float visTemp[8192];
-
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
@@ -152,8 +143,6 @@ using std::atomic_long;
 - (double)latency;
 
 - (void)setVolume:(double)v;
-
-- (void)setEqualizerEnabled:(BOOL)enabled;
 
 - (void)setShouldPlayOutBuffer:(BOOL)enabled;
 

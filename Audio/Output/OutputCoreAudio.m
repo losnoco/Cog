@@ -27,37 +27,6 @@ static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotific
 
 static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
-static void fillBuffers(AudioBufferList *ioData, const float *inbuffer, size_t count, size_t offset) {
-	const size_t channels = ioData->mNumberBuffers;
-	for(int i = 0; i < channels; ++i) {
-		const size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
-		float *output = ((float *)ioData->mBuffers[i].mData) + offset;
-		const float *input = inbuffer + i;
-		cblas_scopy((int)((count > maxCount) ? maxCount : count), input, (int)channels, output, 1);
-		ioData->mBuffers[i].mNumberChannels = 1;
-	}
-}
-
-static void clearBuffers(AudioBufferList *ioData, size_t count, size_t offset) {
-	for(int i = 0; i < ioData->mNumberBuffers; ++i) {
-		memset((uint8_t *)ioData->mBuffers[i].mData + offset * sizeof(float), 0, count * sizeof(float));
-		ioData->mBuffers[i].mNumberChannels = 1;
-	}
-}
-
-static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
-	if(inNumberFrames > 4096 || !inRefCon) {
-		clearBuffers(ioData, inNumberFrames, 0);
-		return 0;
-	}
-
-	OutputCoreAudio *_self = (__bridge OutputCoreAudio *)inRefCon;
-
-	fillBuffers(ioData, _self->samplePtr, inNumberFrames, 0);
-
-	return 0;
-}
-
 - (int)renderInput:(int)amountToRead toBuffer:(float *)buffer {
 	int amountRead = 0;
 
@@ -228,10 +197,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		}
 	}
 
-	if(eqEnabled) {
-		volumeScale *= eqPreamp;
-	}
-
 	scale_by_volume(&buffer[0], amountRead * realStreamFormat.mChannelsPerFrame, volumeScale * volume);
 
 	return amountRead;
@@ -292,10 +257,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 
 		[self setOutputDeviceWithDeviceDict:device];
-	} else if([keyPath isEqualToString:@"values.GraphicEQenable"]) {
-		BOOL enabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
-
-		[self setEqualizerEnabled:enabled];
 	} else if([keyPath isEqualToString:@"values.eqPreamp"]) {
 		float preamp = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"eqPreamp"];
 		eqPreamp = pow(10.0, preamp / 20.0);
@@ -645,22 +606,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			return NO;
 
 		[outputController setFormat:&deviceFormat channelConfig:deviceChannelConfig];
-
-		AudioStreamBasicDescription asbd = deviceFormat;
-
-		asbd.mFormatFlags &= ~kAudioFormatFlagIsPacked;
-
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
-							 kAudioUnitScope_Input, 0, &asbd, sizeof(asbd));
-
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
-							 kAudioUnitScope_Output, 0, &asbd, sizeof(asbd));
-		AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
-		AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
-
-		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
-
-		eqEnabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
 	}
 
 	return YES;
@@ -720,45 +665,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		layout.mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelBitmap;
 		layout.mChannelBitmap = streamChannelConfig;
 	}
-
-	if(eqInitialized) {
-		AudioUnitUninitialize(_eq);
-		eqInitialized = NO;
-	}
-
-	AudioStreamBasicDescription asbd = streamFormat;
-
-	// Of course, non-interleaved has only one sample per frame/packet, per buffer
-	asbd.mFormatFlags |= kAudioFormatFlagIsNonInterleaved;
-	asbd.mBytesPerFrame = sizeof(float);
-	asbd.mBytesPerPacket = sizeof(float);
-	asbd.mFramesPerPacket = 1;
-
-	UInt32 maximumFrames = 4096;
-	AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFrames, sizeof(maximumFrames));
-
-	AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
-						 kAudioUnitScope_Input, 0, &asbd, sizeof(asbd));
-
-	AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
-						 kAudioUnitScope_Output, 0, &asbd, sizeof(asbd));
-	AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
-	AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
-
-	AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
-
-	if(AudioUnitInitialize(_eq) != noErr) {
-		eqEnabled = NO;
-		return;
-	}
-	eqInitialized = YES;
-
-	eqEnabled = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue];
 }
 
 - (int)renderAndConvert {
 	OSStatus status;
-	int inputRendered = inputBufferLastTime;
+	int inputRendered = 0;
 	int bytesRendered = inputRendered * realStreamFormat.mBytesPerPacket;
 
 	if(resetStreamFormat) {
@@ -788,42 +699,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		if([self processEndOfStream]) break;
 	}
 
-	inputBufferLastTime = inputRendered;
-
 	int samplesRendered = inputRendered;
 
 	samplePtr = &inputBuffer[0];
 
 	if(samplesRendered) {
-		if(eqEnabled && eqInitialized) {
-			const int channels = streamFormat.mChannelsPerFrame;
-			if(channels > 0) {
-				const size_t channelsminusone = channels - 1;
-				uint8_t tempBuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
-				AudioBufferList *ioData = (AudioBufferList *)&tempBuffer[0];
-
-				ioData->mNumberBuffers = channels;
-				for(size_t i = 0; i < channels; ++i) {
-					ioData->mBuffers[i].mData = &eqBuffer[4096 * i];
-					ioData->mBuffers[i].mDataByteSize = samplesRendered * sizeof(float);
-					ioData->mBuffers[i].mNumberChannels = 1;
-				}
-
-				status = AudioUnitRender(_eq, NULL, &timeStamp, 0, samplesRendered, ioData);
-
-				if(status != noErr) {
-					return 0;
-				}
-
-				timeStamp.mSampleTime += ((double)samplesRendered) / streamFormat.mSampleRate;
-
-				for(int i = 0; i < channels; ++i) {
-					cblas_scopy(samplesRendered, &eqBuffer[4096 * i], 1, &eqOutBuffer[i], channels);
-				}
-				samplePtr = &eqOutBuffer[0];
-			}
-		}
-			
 		if(downmixer) {
 			[downmixer process:samplePtr frameCount:samplesRendered output:&downmixBuffer[0]];
 			samplePtr = &downmixBuffer[0];
@@ -835,8 +715,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		fwrite(samplePtr, 1, dataByteSize, _logFile);
 #endif
 	}
-
-	inputBufferLastTime = 0;
 
 	return samplesRendered;
 }
@@ -907,8 +785,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		streamFormatChanged = NO;
 		streamFormatStarted = NO;
 
-		inputBufferLastTime = 0;
-
 		running = NO;
 		stopping = NO;
 		stopped = NO;
@@ -960,50 +836,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[self setOutputDeviceWithDeviceDict:nil];
 		}
 
-		AudioComponent comp = NULL;
-
-		desc.componentType = kAudioUnitType_Effect;
-		desc.componentSubType = kAudioUnitSubType_GraphicEQ;
-
-		comp = AudioComponentFindNext(comp, &desc);
-		if(!comp)
-			return NO;
-
-		OSStatus _err = AudioComponentInstanceNew(comp, &_eq);
-		if(err)
-			return NO;
-
-		UInt32 value;
-		UInt32 size = sizeof(value);
-
-		value = CHUNK_SIZE;
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice,
-							 kAudioUnitScope_Global, 0, &value, size);
-
-		value = 127;
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_RenderQuality,
-							 kAudioUnitScope_Global, 0, &value, size);
-
-		AURenderCallbackStruct callbackStruct;
-		callbackStruct.inputProcRefCon = (__bridge void *)self;
-		callbackStruct.inputProc = eqRenderCallback;
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_SetRenderCallback,
-							 kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
-
-		AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
-		AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
-
-		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
-
-		_err = AudioUnitInitialize(_eq);
-		if(_err)
-			return NO;
-
-		eqInitialized = YES;
-
-		[self setEqualizerEnabled:[[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"GraphicEQenable"] boolValue]];
-
-		[outputController beginEqualizer:_eq];
 		
 		[self audioOutputBlock];
 
@@ -1014,14 +846,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		visController = [VisualizationController sharedController];
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.tempo" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 
 		observersapplied = YES;
-
-		bzero(&timeStamp, sizeof(timeStamp));
-		timeStamp.mFlags = kAudioTimeStampSampleTimeValid;
 
 		return (err == nil);
 	}
@@ -1043,18 +871,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)setVolume:(double)v {
 	volume = v * 0.01f;
-}
-
-- (void)setEqualizerEnabled:(BOOL)enabled {
-	if(enabled && !eqEnabled) {
-		if(_eq) {
-			AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
-			AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
-			AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
-		}
-	}
-
-	eqEnabled = enabled;
 }
 
 - (double)latency {
@@ -1079,8 +895,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		stopInvoked = YES;
 		if(observersapplied) {
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
-			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kOutputCoreAudioContext];
-			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.tempo" context:kOutputCoreAudioContext];
 			observersapplied = NO;
 		}
@@ -1127,15 +941,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				stopping = YES;
 				usleep(5000);
 			}
-		}
-		if(_eq) {
-			[outputController endEqualizer:_eq];
-			if(eqInitialized) {
-				AudioUnitUninitialize(_eq);
-				eqInitialized = NO;
-			}
-			AudioComponentInstanceDispose(_eq);
-			_eq = NULL;
 		}
 		if(downmixerForVis) {
 			downmixerForVis = nil;

@@ -1,0 +1,447 @@
+//
+//  DSPEqualizerNode.m
+//  CogAudio Framework
+//
+//  Created by Christopher Snowhill on 2/11/25.
+//
+
+#import <Foundation/Foundation.h>
+
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioUnit/AudioUnit.h>
+
+#import <Accelerate/Accelerate.h>
+
+#import "DSPEqualizerNode.h"
+
+#import "BufferChain.h"
+
+#import "AudioPlayer.h"
+
+extern void scale_by_volume(float *buffer, size_t count, float volume);
+
+static void * kDSPEqualizerNodeContext = &kDSPEqualizerNodeContext;
+
+@interface EQHookContainer : NSObject {
+	NSMutableArray *equalizers;
+}
+
++ (EQHookContainer *)sharedContainer;
+
+- (id)init;
+
+- (void)pushEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer;
+- (void)popEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer;
+
+@end
+
+@implementation EQHookContainer
+
+static EQHookContainer *theContainer = nil;
+
++ (EQHookContainer *)sharedContainer {
+	@synchronized(theContainer) {
+		if(!theContainer) {
+			theContainer = [[EQHookContainer alloc] init];
+		}
+		return theContainer;
+	}
+}
+
+- (id)init {
+	self = [super init];
+	if(self) {
+		equalizers = [[NSMutableArray alloc] init];
+	}
+	return self;
+}
+
+- (void)pushEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer {
+	@synchronized (equalizers) {
+		[equalizers addObject:@((uintptr_t)eq)];
+		if([equalizers count] == 1) {
+			[audioPlayer beginEqualizer:eq];
+		}
+	}
+}
+
+- (void)popEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer {
+	@synchronized (equalizers) {
+		uintptr_t _eq = [[equalizers objectAtIndex:0] unsignedIntegerValue];
+		if(eq == (AudioUnit)_eq) {
+			[equalizers removeObject:@(_eq)];
+			if([equalizers count]) {
+				_eq = [[equalizers objectAtIndex:0] unsignedIntegerValue];
+				[audioPlayer beginEqualizer:(AudioUnit)_eq];
+			}
+		}
+	}
+}
+
+@end
+
+@implementation DSPEqualizerNode {
+	BOOL enableEqualizer;
+	BOOL equalizerInitialized;
+
+	double equalizerPreamp;
+
+	AudioUnit _eq;
+
+	AudioTimeStamp timeStamp;
+
+	BOOL stopping, paused;
+	BOOL processEntered;
+	
+	BOOL observersapplied;
+	
+	AudioStreamBasicDescription lastInputFormat;
+	AudioStreamBasicDescription inputFormat;
+	
+	uint32_t lastInputChannelConfig, inputChannelConfig;
+	uint32_t outputChannelConfig;
+
+	float inBuffer[4096 * 32];
+	float eqBuffer[4096 * 32];
+	float outBuffer[4096 * 32];
+}
+
+static void fillBuffers(AudioBufferList *ioData, const float *inbuffer, size_t count, size_t offset) {
+	const size_t channels = ioData->mNumberBuffers;
+	for(int i = 0; i < channels; ++i) {
+		const size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
+		float *output = ((float *)ioData->mBuffers[i].mData) + offset;
+		const float *input = inbuffer + i;
+		cblas_scopy((int)((count > maxCount) ? maxCount : count), input, (int)channels, output, 1);
+		ioData->mBuffers[i].mNumberChannels = 1;
+	}
+}
+
+static void clearBuffers(AudioBufferList *ioData, size_t count, size_t offset) {
+	for(int i = 0; i < ioData->mNumberBuffers; ++i) {
+		memset((uint8_t *)ioData->mBuffers[i].mData + offset * sizeof(float), 0, count * sizeof(float));
+		ioData->mBuffers[i].mNumberChannels = 1;
+	}
+}
+
+static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
+	if(inNumberFrames > 4096 || !inRefCon) {
+		clearBuffers(ioData, inNumberFrames, 0);
+		return 0;
+	}
+
+	DSPEqualizerNode *_self = (__bridge DSPEqualizerNode *)inRefCon;
+
+	fillBuffers(ioData, _self->samplePtr, inNumberFrames, 0);
+
+	return 0;
+}
+
+- (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
+	self = [super initWithController:c previous:p latency:latency];
+	if(self) {
+		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
+		enableEqualizer = [defaults boolForKey:@"GraphicEQenable"];
+
+		float preamp = [defaults floatForKey:@"eqPreamp"];
+		equalizerPreamp = pow(10.0, preamp / 20.0);
+
+		[self addObservers];
+	}
+	return self;
+}
+
+- (void)dealloc {
+	[self cleanUp];
+	[self removeObservers];
+}
+
+- (void)addObservers {
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kDSPEqualizerNodeContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:0 context:kDSPEqualizerNodeContext];
+	
+	observersapplied = YES;
+}
+
+- (void)removeObservers {
+	if(observersapplied) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kDSPEqualizerNodeContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kDSPEqualizerNodeContext];
+		observersapplied = NO;
+	}
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+	if(context != kDSPEqualizerNodeContext) {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
+
+	if([keyPath isEqualToString:@"values.GraphicEQenable"]) {
+		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
+		enableEqualizer = [defaults boolForKey:@"GraphicEQenable"];
+	} else if([keyPath isEqualToString:@"values.eqPreamp"]) {
+		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
+		float preamp = [defaults floatForKey:@"eqPreamp"];
+		equalizerPreamp = pow(10.0, preamp / 20.0);
+	}
+}
+
+- (AudioPlayer *)audioPlayer {
+	BufferChain *bufferChain = controller;
+	return [bufferChain controller];
+}
+
+- (BOOL)fullInit {
+	if(enableEqualizer) {
+		AudioComponentDescription desc;
+		NSError *err;
+
+		desc.componentType = kAudioUnitType_Effect;
+		desc.componentSubType = kAudioUnitSubType_GraphicEQ;
+		desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+		desc.componentFlags = 0;
+		desc.componentFlagsMask = 0;
+
+		AudioComponent comp = NULL;
+
+		comp = AudioComponentFindNext(comp, &desc);
+		if(!comp) {
+			return NO;
+		}
+
+		OSStatus _err = AudioComponentInstanceNew(comp, &_eq);
+		if(err) {
+			return NO;
+		}
+
+		UInt32 value;
+		UInt32 size = sizeof(value);
+
+		value = 4096;
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice,
+							 kAudioUnitScope_Global, 0, &value, size);
+
+		value = 127;
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_RenderQuality,
+							 kAudioUnitScope_Global, 0, &value, size);
+
+		AURenderCallbackStruct callbackStruct;
+		callbackStruct.inputProcRefCon = (__bridge void *)self;
+		callbackStruct.inputProc = eqRenderCallback;
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_SetRenderCallback,
+							 kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
+
+		AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
+		AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
+
+		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
+
+		AudioStreamBasicDescription asbd = inputFormat;
+
+		// Of course, non-interleaved has only one sample per frame/packet, per buffer
+		asbd.mFormatFlags |= kAudioFormatFlagIsNonInterleaved;
+		asbd.mBytesPerFrame = sizeof(float);
+		asbd.mBytesPerPacket = sizeof(float);
+		asbd.mFramesPerPacket = 1;
+
+		UInt32 maximumFrames = 4096;
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFrames, sizeof(maximumFrames));
+
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
+							 kAudioUnitScope_Input, 0, &asbd, sizeof(asbd));
+
+		AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
+							 kAudioUnitScope_Output, 0, &asbd, sizeof(asbd));
+		AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
+		AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
+
+		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
+
+		_err = AudioUnitInitialize(_eq);
+		if(_err != noErr) {
+			return NO;
+		}
+
+		bzero(&timeStamp, sizeof(timeStamp));
+		timeStamp.mFlags = kAudioTimeStampSampleTimeValid;
+
+		equalizerInitialized = YES;
+
+		[[EQHookContainer sharedContainer] pushEqualizer:_eq forPlayer:[self audioPlayer]];
+	}
+
+	return YES;
+}
+
+- (void)fullShutdown {
+	if(_eq) {
+		if(equalizerInitialized) {
+			[[EQHookContainer sharedContainer] popEqualizer:_eq forPlayer:[self audioPlayer]];
+			AudioUnitUninitialize(_eq);
+			equalizerInitialized = NO;
+		}
+		AudioComponentInstanceDispose(_eq);
+		_eq = NULL;
+	}
+}
+
+- (BOOL)setup {
+	if(stopping)
+		return NO;
+	[self fullShutdown];
+	return [self fullInit];
+}
+
+- (void)cleanUp {
+	stopping = YES;
+	while(processEntered) {
+		usleep(1000);
+	}
+	[self fullShutdown];
+}
+
+- (void)resetBuffer {
+	paused = YES;
+	while(processEntered) {
+		usleep(500);
+	}
+	[super resetBuffer];
+	[self fullShutdown];
+	paused = NO;
+}
+
+- (void)process {
+	while([self shouldContinue] == YES) {
+		if(paused) {
+			usleep(500);
+			continue;
+		}
+		@autoreleasepool {
+			AudioChunk *chunk = nil;
+			chunk = [self convert];
+			if(!chunk) {
+				if([self endOfStream] == YES) {
+					break;
+				}
+				if(paused) {
+					continue;
+				}
+			} else {
+				[self writeChunk:chunk];
+				chunk = nil;
+			}
+			if(!enableEqualizer && equalizerInitialized) {
+				[self fullShutdown];
+			}
+		}
+	}
+}
+
+- (AudioChunk *)convert {
+	if(stopping)
+		return nil;
+
+	processEntered = YES;
+
+	if(stopping || [self endOfStream] == YES || [self shouldContinue] == NO) {
+		processEntered = NO;
+		return nil;
+	}
+
+	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
+		processEntered = NO;
+		return nil;
+	}
+
+	if((enableEqualizer && !equalizerInitialized) ||
+	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
+	   inputChannelConfig != lastInputChannelConfig) {
+		lastInputFormat = inputFormat;
+		lastInputChannelConfig = inputChannelConfig;
+		[self fullShutdown];
+		if(![self setup]) {
+			processEntered = NO;
+			return nil;
+		}
+	}
+
+	if(!equalizerInitialized) {
+		processEntered = NO;
+		return [self readChunk:4096];
+	}
+
+	size_t totalFrameCount = 0;
+	AudioChunk *chunk;
+
+	samplePtr = &inBuffer[0];
+	size_t channels = inputFormat.mChannelsPerFrame;
+	
+	while(!stopping && totalFrameCount < 4096) {
+		AudioStreamBasicDescription newInputFormat;
+		uint32_t newChannelConfig;
+		if(![self peekFormat:&newInputFormat channelConfig:&newChannelConfig] ||
+		   memcmp(&newInputFormat, &inputFormat, sizeof(newInputFormat)) != 0 ||
+		   newChannelConfig != inputChannelConfig) {
+			break;
+		}
+
+		chunk = [self readChunkAsFloat32:4096 - totalFrameCount];
+		if(!chunk) {
+			break;
+		}
+
+		size_t frameCount = [chunk frameCount];
+		NSData *sampleData = [chunk removeSamples:frameCount];
+
+		cblas_scopy((int)(frameCount * channels), [sampleData bytes], 1, &inBuffer[totalFrameCount * channels], 1);
+
+		totalFrameCount += frameCount;
+	}
+
+	if(!totalFrameCount) {
+		processEntered = NO;
+		return nil;
+	}
+
+	const size_t channelsminusone = channels - 1;
+	uint8_t tempBuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
+	AudioBufferList *ioData = (AudioBufferList *)&tempBuffer[0];
+
+	ioData->mNumberBuffers = (UInt32)channels;
+	for(size_t i = 0; i < channels; ++i) {
+		ioData->mBuffers[i].mData = &eqBuffer[4096 * i];
+		ioData->mBuffers[i].mDataByteSize = (UInt32)(totalFrameCount * sizeof(float));
+		ioData->mBuffers[i].mNumberChannels = 1;
+	}
+
+	OSStatus status = AudioUnitRender(_eq, NULL, &timeStamp, 0, (UInt32)totalFrameCount, ioData);
+
+	if(status != noErr) {
+		processEntered = NO;
+		return nil;
+	}
+
+	timeStamp.mSampleTime += ((double)totalFrameCount) / inputFormat.mSampleRate;
+
+	for(int i = 0; i < channels; ++i) {
+		cblas_scopy((int)totalFrameCount, &eqBuffer[4096 * i], 1, &outBuffer[i], (int)channels);
+	}
+
+	AudioChunk *outputChunk = nil;
+	if(totalFrameCount) {
+		scale_by_volume(&outBuffer[0], totalFrameCount * channels, equalizerPreamp);
+
+		outputChunk = [[AudioChunk alloc] init];
+		[outputChunk setFormat:inputFormat];
+		if(outputChannelConfig) {
+			[outputChunk setChannelConfig:inputChannelConfig];
+		}
+		[outputChunk assignSamples:&outBuffer[0] frameCount:totalFrameCount];
+	}
+
+	processEntered = NO;
+	return outputChunk;
+}
+
+@end

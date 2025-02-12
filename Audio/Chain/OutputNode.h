@@ -28,10 +28,6 @@
 	BOOL intervalReported;
 }
 
-- (void)beginEqualizer:(AudioUnit)eq;
-- (void)refreshEqualizer:(AudioUnit)eq;
-- (void)endEqualizer:(AudioUnit)eq;
-
 - (double)amountPlayed;
 - (double)amountPlayedInterval;
 

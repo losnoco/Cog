@@ -28,6 +28,7 @@
 
 		rubberbandNode = nil;
 		fsurroundNode = nil;
+		equalizerNode = nil;
 		hrtfNode = nil;
 	}
 
@@ -42,7 +43,8 @@
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
 	rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:converterNode latency:0.03];
 	fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
-	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
+	equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
+	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
 
 	finalNode = hrtfNode;
 }
@@ -155,6 +157,7 @@
 	[converterNode launchThread];
 	[rubberbandNode launchThread];
 	[fsurroundNode launchThread];
+	[equalizerNode launchThread];
 	[hrtfNode launchThread];
 }
 
@@ -225,6 +228,7 @@
 	[converterNode setShouldContinue:s];
 	[rubberbandNode setShouldContinue:s];
 	[fsurroundNode setShouldContinue:s];
+	[equalizerNode setShouldContinue:s];
 	[hrtfNode setShouldContinue:s];
 }
 
@@ -254,6 +258,10 @@
 
 - (DSPHRTFNode *)hrtf {
 	return hrtfNode;
+}
+
+- (DSPEqualizerNode *)equalizer {
+	return equalizerNode;
 }
 
 - (AudioStreamBasicDescription)inputFormat {
