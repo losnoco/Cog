@@ -17,81 +17,13 @@
 
 #import <Accelerate/Accelerate.h>
 
-#import <CoreMotion/CoreMotion.h>
-
 #import "rsstate.h"
 
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
 
-static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDigResetHeadTracking";
-
-simd_float4x4 convertMatrix(CMRotationMatrix r) {
-	simd_float4x4 matrix = {
-		simd_make_float4(r.m33, -r.m31, r.m32, 0.0f),
-		simd_make_float4(r.m13, -r.m11, r.m12, 0.0f),
-		simd_make_float4(r.m23, -r.m21, r.m22, 0.0f),
-		simd_make_float4(0.0f, 0.0f, 0.0f, 1.0f)
-	};
-	return matrix;
-}
-
-NSLock *motionManagerLock = nil;
-API_AVAILABLE(macos(14.0)) CMHeadphoneMotionManager *motionManager = nil;
-OutputCoreAudio *registeredMotionListener = nil;
-
 @implementation OutputCoreAudio
-+ (void)initialize {
-	motionManagerLock = [[NSLock alloc] init];
-
-	if(@available(macOS 14, *)) {
-		CMAuthorizationStatus status = [CMHeadphoneMotionManager authorizationStatus];
-		if(status == CMAuthorizationStatusDenied) {
-			ALog(@"Headphone motion not authorized");
-			return;
-		} else if(status == CMAuthorizationStatusAuthorized) {
-			ALog(@"Headphone motion authorized");
-		} else if(status == CMAuthorizationStatusRestricted) {
-			ALog(@"Headphone motion restricted");
-		} else if(status == CMAuthorizationStatusNotDetermined) {
-			ALog(@"Headphone motion status not determined; will prompt for access");
-		}
-
-		motionManager = [[CMHeadphoneMotionManager alloc] init];
-	}
-}
-
-void registerMotionListener(OutputCoreAudio *listener) {
-	if(@available(macOS 14, *)) {
-		[motionManagerLock lock];
-		if([motionManager isDeviceMotionActive]) {
-			[motionManager stopDeviceMotionUpdates];
-		}
-		if([motionManager isDeviceMotionAvailable]) {
-			registeredMotionListener = listener;
-			[motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion * _Nullable motion, NSError * _Nullable error) {
-				if(motion) {
-					[motionManagerLock lock];
-					[registeredMotionListener reportMotion:convertMatrix(motion.attitude.rotationMatrix)];
-					[motionManagerLock unlock];
-				}
-			}];
-		}
-		[motionManagerLock unlock];
-	}
-}
-
-void unregisterMotionListener(void) {
-	if(@available(macOS 14, *)) {
-		[motionManagerLock lock];
-		if([motionManager isDeviceMotionActive]) {
-			[motionManager stopDeviceMotionUpdates];
-		}
-		registeredMotionListener = nil;
-		[motionManagerLock unlock];
-	}
-}
 
 static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
@@ -143,28 +75,12 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		origFormat = format;
 
 		UInt32 srcChannels = format.mChannelsPerFrame;
-		uint32_t dmConfig = config;
-		uint32_t dmChannels = srcChannels;
-		AudioStreamBasicDescription dmFormat;
-		dmFormat = format;
-		[outputLock lock];
-		if(hrtf) {
-			dmChannels = 2;
-			dmConfig = AudioChannelFrontLeft | AudioChannelFrontRight;
-		}
-		[outputLock unlock];
-		if(dmChannels != srcChannels) {
-			dmFormat.mChannelsPerFrame = dmChannels;
-			dmFormat.mBytesPerFrame = ((dmFormat.mBitsPerChannel + 7) / 8) * dmChannels;
-			dmFormat.mBytesPerPacket = dmFormat.mBytesPerFrame * dmFormat.mFramesPerPacket;
-		}
 		UInt32 dstChannels = deviceFormat.mChannelsPerFrame;
-		if(dmChannels != dstChannels) {
+		if(srcChannels != dstChannels) {
 			format.mChannelsPerFrame = dstChannels;
 			format.mBytesPerFrame = ((format.mBitsPerChannel + 7) / 8) * dstChannels;
 			format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
-			downmixer = [[DownmixProcessor alloc] initWithInputFormat:dmFormat inputConfig:dmConfig andOutputFormat:format outputConfig:deviceChannelConfig];
-			format = origFormat;
+			downmixer = [[DownmixProcessor alloc] initWithInputFormat:origFormat inputConfig:origConfig andOutputFormat:format outputConfig:deviceChannelConfig];
 		} else {
 			downmixer = nil;
 		}
@@ -383,12 +299,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	} else if([keyPath isEqualToString:@"values.eqPreamp"]) {
 		float preamp = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"eqPreamp"];
 		eqPreamp = pow(10.0, preamp / 20.0);
-	} else if([keyPath isEqualToString:@"values.enableHrtf"] ||
-			  [keyPath isEqualToString:@"values.enableHeadTracking"]) {
-		enableHrtf = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHrtf"];
-		enableHeadTracking = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHeadTracking"];
-		if(streamFormatStarted)
-			resetStreamFormat = YES;
 	} else if([keyPath isEqualToString:@"values.tempo"]) {
 		tempo = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] doubleForKey:@"tempo"];
 	}
@@ -763,53 +673,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	uint32_t channels = realStreamFormat.mChannelsPerFrame;
 	uint32_t channelConfig = realStreamChannelConfig;
 
-	if(enableHrtf) {
-		NSURL *presetUrl = [[NSBundle mainBundle] URLForResource:@"SADIE_D02-96000" withExtension:@"mhr"];
-
-		rotationMatrixUpdated = NO;
-
-		simd_float4x4 matrix;
-		if(!referenceMatrixSet || !enableHeadTracking) {
-			referenceMatrixSet = NO;
-			matrix = matrix_identity_float4x4;
-			self->referenceMatrix = matrix;
-			if(enableHeadTracking) {
-				lastEnableHeadTracking = YES;
-				registerMotionListener(self);
-			} else if(lastEnableHeadTracking) {
-				lastEnableHeadTracking = NO;
-				unregisterMotionListener();
-			}
-		} else {
-			simd_float4x4 mirrorTransform = {
-				simd_make_float4(-1.0, 0.0, 0.0, 0.0),
-				simd_make_float4(0.0, 1.0, 0.0, 0.0),
-				simd_make_float4(0.0, 0.0, 1.0, 0.0),
-				simd_make_float4(0.0, 0.0, 0.0, 1.0)
-			};
-
-			matrix = simd_mul(mirrorTransform, rotationMatrix);
-			matrix = simd_mul(matrix, referenceMatrix);
-		}
-
-		[outputLock lock];
-		hrtf = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:realStreamFormat.mSampleRate withInputChannels:channels withConfig:channelConfig withMatrix:matrix];
-		[outputLock unlock];
-
-		channels = 2;
-		channelConfig = AudioChannelSideLeft | AudioChannelSideRight;
-	} else {
-		if(lastEnableHeadTracking) {
-			lastEnableHeadTracking = NO;
-			unregisterMotionListener();
-		}
-		referenceMatrixSet = NO;
-
-		[outputLock lock];
-		hrtf = nil;
-		[outputLock unlock];
-	}
-
 	streamFormat = realStreamFormat;
 	streamFormat.mChannelsPerFrame = channels;
 	streamFormat.mBytesPerFrame = sizeof(float) * channels;
@@ -932,27 +795,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	samplePtr = &inputBuffer[0];
 
 	if(samplesRendered) {
-		[outputLock lock];
-		if(hrtf) {
-			if(rotationMatrixUpdated) {
-				rotationMatrixUpdated = NO;
-				simd_float4x4 mirrorTransform = {
-					simd_make_float4(-1.0, 0.0, 0.0, 0.0),
-					simd_make_float4(0.0, 1.0, 0.0, 0.0),
-					simd_make_float4(0.0, 0.0, 1.0, 0.0),
-					simd_make_float4(0.0, 0.0, 0.0, 1.0)
-				};
-
-				simd_float4x4 matrix = simd_mul(mirrorTransform, rotationMatrix);
-				matrix = simd_mul(matrix, referenceMatrix);
-
-				[hrtf reloadWithMatrix:matrix];
-			}
-			[hrtf process:samplePtr sampleCount:samplesRendered toBuffer:&hrtfBuffer[0]];
-			samplePtr = &hrtfBuffer[0];
-		}
-		[outputLock unlock];
-
 		if(eqEnabled && eqInitialized) {
 			const int channels = streamFormat.mChannelsPerFrame;
 			if(channels > 0) {
@@ -1091,9 +933,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		secondsLatency = 0;
 		visPushed = 0;
 
-		referenceMatrixSet = NO;
-		rotationMatrix = matrix_identity_float4x4;
-
 		AudioComponentDescription desc;
 		NSError *err;
 
@@ -1177,14 +1016,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.GraphicEQenable" options:0 context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHrtf" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHeadTracking" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.tempo" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 
 		observersapplied = YES;
-
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetReferencePosition:) name:CogPlaybackDidResetHeadTracking object:nil];
-		htlistenerapplied = YES;
 
 		bzero(&timeStamp, sizeof(timeStamp));
 		timeStamp.mFlags = kAudioTimeStampSampleTimeValid;
@@ -1243,20 +1077,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 	@synchronized(self) {
 		stopInvoked = YES;
-		if(hrtf && lastEnableHeadTracking) {
-			lastEnableHeadTracking = NO;
-			unregisterMotionListener();
-		}
-		if(htlistenerapplied) {
-			[[NSNotificationCenter defaultCenter] removeObserver:self name:CogPlaybackDidResetHeadTracking object:nil];
-			htlistenerapplied = NO;
-		}
 		if(observersapplied) {
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.GraphicEQenable" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputCoreAudioContext];
-			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHrtf" context:kOutputCoreAudioContext];
-			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHeadTracking" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.tempo" context:kOutputCoreAudioContext];
 			observersapplied = NO;
 		}
@@ -1358,19 +1182,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)setShouldPlayOutBuffer:(BOOL)s {
 	shouldPlayOutBuffer = s;
-}
-
-- (void)reportMotion:(simd_float4x4)matrix {
-	rotationMatrix = matrix;
-	if(!referenceMatrixSet) {
-		referenceMatrix = simd_inverse(matrix);
-		referenceMatrixSet = YES;
-	}
-	rotationMatrixUpdated = YES;
-}
-
-- (void)resetReferencePosition:(NSNotification *)notification {
-	referenceMatrixSet = NO;
 }
 
 @end

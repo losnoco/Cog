@@ -28,6 +28,7 @@
 
 		rubberbandNode = nil;
 		fsurroundNode = nil;
+		hrtfNode = nil;
 	}
 
 	return self;
@@ -41,8 +42,9 @@
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
 	rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:converterNode latency:0.03];
 	fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
+	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
 
-	finalNode = fsurroundNode;
+	finalNode = hrtfNode;
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
@@ -153,6 +155,7 @@
 	[converterNode launchThread];
 	[rubberbandNode launchThread];
 	[fsurroundNode launchThread];
+	[hrtfNode launchThread];
 }
 
 - (void)setUserInfo:(id)i {
@@ -222,6 +225,7 @@
 	[converterNode setShouldContinue:s];
 	[rubberbandNode setShouldContinue:s];
 	[fsurroundNode setShouldContinue:s];
+	[hrtfNode setShouldContinue:s];
 }
 
 - (BOOL)isRunning {
@@ -246,6 +250,10 @@
 
 - (DSPFSurroundNode *)fsurround {
 	return fsurroundNode;
+}
+
+- (DSPHRTFNode *)hrtf {
+	return hrtfNode;
 }
 
 - (AudioStreamBasicDescription)inputFormat {

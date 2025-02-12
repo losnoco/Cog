@@ -70,9 +70,6 @@ using std::atomic_long;
 	BOOL eqEnabled;
 	BOOL eqInitialized;
 
-	BOOL enableHeadTracking;
-	BOOL lastEnableHeadTracking;
-
 	BOOL streamFormatStarted;
 	BOOL streamFormatChanged;
 
@@ -82,7 +79,6 @@ using std::atomic_long;
 	BOOL currentdevicelistenerapplied;
 	BOOL devicealivelistenerapplied;
 	BOOL observersapplied;
-	BOOL htlistenerapplied;
 	BOOL outputdevicechanged;
 
 	float volume;
@@ -114,9 +110,6 @@ using std::atomic_long;
 
 	VisualizationController *visController;
 
-	BOOL enableHrtf;
-	HeadphoneFilter *hrtf;
-	
 	int inputBufferLastTime;
 	
 	int inputRemain;
@@ -132,7 +125,6 @@ using std::atomic_long;
 	float *samplePtr;
 	float tempBuffer[512 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
-	float hrtfBuffer[4096 * 2];
 	float eqBuffer[4096 * 32];
 	float eqOutBuffer[4096 * 32];
 	float downmixBuffer[4096 * 8];
@@ -141,10 +133,6 @@ using std::atomic_long;
 	float visResamplerInput[8192];
 	float visTemp[8192];
 
-	BOOL referenceMatrixSet;
-	BOOL rotationMatrixUpdated;
-	simd_float4x4 rotationMatrix;
-	simd_float4x4 referenceMatrix;
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
@@ -170,10 +158,5 @@ using std::atomic_long;
 - (void)setShouldPlayOutBuffer:(BOOL)enabled;
 
 - (void)sustainHDCD;
-
-- (void)reportMotion:(simd_float4x4)matrix;
-- (void)resetReferencePosition:(NSNotification *)notification;
-
-- (void)setTempo:(double)t;
 
 @end
