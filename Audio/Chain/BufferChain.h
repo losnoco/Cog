@@ -11,12 +11,14 @@
 #import "AudioPlayer.h"
 #import "ConverterNode.h"
 #import "DSPRubberbandNode.h"
+#import "DSPFSurroundNode.h"
 #import "InputNode.h"
 
 @interface BufferChain : NSObject {
 	InputNode *inputNode;
 	ConverterNode *converterNode;
 	DSPRubberbandNode *rubberbandNode;
+	DSPFSurroundNode *fsurroundNode;
 
 	NSURL *streamURL;
 	id userInfo;
@@ -74,6 +76,8 @@
 - (uint32_t)inputConfig;
 
 - (DSPRubberbandNode *)rubberband;
+
+- (DSPFSurroundNode *)fsurround;
 
 - (double)secondsBuffered;
 
