@@ -37,8 +37,6 @@ using std::atomic_long;
 
 @class OutputNode;
 
-@class FSurroundFilter;
-
 @class AudioChunk;
 
 @interface OutputCoreAudio : NSObject {
@@ -119,10 +117,7 @@ using std::atomic_long;
 	BOOL enableHrtf;
 	HeadphoneFilter *hrtf;
 	
-	BOOL enableFSurround;
-	BOOL FSurroundDelayRemoved;
 	int inputBufferLastTime;
-	FSurroundFilter *fsurround;
 	
 	int inputRemain;
 	
@@ -137,7 +132,6 @@ using std::atomic_long;
 	float *samplePtr;
 	float tempBuffer[512 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
-	float fsurroundBuffer[8192 * 6];
 	float hrtfBuffer[4096 * 2];
 	float eqBuffer[4096 * 32];
 	float eqOutBuffer[4096 * 32];

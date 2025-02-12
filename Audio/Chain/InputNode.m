@@ -162,6 +162,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			BufferChain *bufferChain = [[controller controller] bufferChain];
 			ConverterNode *converter = [bufferChain converter];
 			DSPRubberbandNode *rubberband = [bufferChain rubberband];
+			DSPFSurroundNode *fsurround = [bufferChain fsurround];
 			DLog(@"SEEKING! Resetting Buffer");
 
 			// This resets the converter's buffer
@@ -169,6 +170,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			[converter resetBuffer];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
 			[rubberband resetBuffer];
+			[fsurround resetBuffer];
 
 			DLog(@"Reset buffer!");
 

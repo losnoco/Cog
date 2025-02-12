@@ -21,10 +21,6 @@
 
 #import "rsstate.h"
 
-#import "FSurroundFilter.h"
-
-#define OCTAVES 5
-
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
@@ -152,10 +148,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		AudioStreamBasicDescription dmFormat;
 		dmFormat = format;
 		[outputLock lock];
-		if(fsurround) {
-			dmChannels = [fsurround channelCount];
-			dmConfig = [fsurround channelConfig];
-		}
 		if(hrtf) {
 			dmChannels = 2;
 			dmConfig = AudioChannelFrontLeft | AudioChannelFrontRight;
@@ -395,10 +387,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			  [keyPath isEqualToString:@"values.enableHeadTracking"]) {
 		enableHrtf = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHrtf"];
 		enableHeadTracking = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHeadTracking"];
-		if(streamFormatStarted)
-			resetStreamFormat = YES;
-	} else if([keyPath isEqualToString:@"values.enableFSurround"]) {
-		enableFSurround = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableFSurround"];
 		if(streamFormatStarted)
 			resetStreamFormat = YES;
 	} else if([keyPath isEqualToString:@"values.tempo"]) {
@@ -775,19 +763,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	uint32_t channels = realStreamFormat.mChannelsPerFrame;
 	uint32_t channelConfig = realStreamChannelConfig;
 
-	if(enableFSurround && channels == 2 && channelConfig == AudioConfigStereo) {
-		[outputLock lock];
-		fsurround = [[FSurroundFilter alloc] initWithSampleRate:realStreamFormat.mSampleRate];
-		[outputLock unlock];
-		channels = [fsurround channelCount];
-		channelConfig = [fsurround channelConfig];
-		FSurroundDelayRemoved = NO;
-	} else {
-		[outputLock lock];
-		fsurround = nil;
-		[outputLock unlock];
-	}
-
 	if(enableHrtf) {
 		NSURL *presetUrl = [[NSBundle mainBundle] URLForResource:@"SADIE_D02-96000" withExtension:@"mhr"];
 
@@ -956,31 +931,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	samplePtr = &inputBuffer[0];
 
-	if(samplesRendered || fsurround) {
-		[outputLock lock];
-		if(fsurround) {
-			int countToProcess = samplesRendered;
-			if(countToProcess < 4096) {
-				bzero(samplePtr + countToProcess * 2, (4096 - countToProcess) * 2 * sizeof(float));
-				countToProcess = 4096;
-			}
-			[fsurround process:samplePtr output:&fsurroundBuffer[0] count:countToProcess];
-			samplePtr = &fsurroundBuffer[0];
-			if(resetStreamFormat || samplesRendered < 4096) {
-				bzero(&fsurroundBuffer[4096 * 6], 4096 * 2 * sizeof(float));
-				[fsurround process:&fsurroundBuffer[4096 * 6] output:&fsurroundBuffer[4096 * 6] count:4096];
-				samplesRendered += 2048;
-			}
-			if(!FSurroundDelayRemoved) {
-				FSurroundDelayRemoved = YES;
-				if(samplesRendered > 2048) {
-					samplePtr += 2048 * 6;
-					samplesRendered -= 2048;
-				}
-			}
-		}
-		[outputLock unlock];
-
+	if(samplesRendered) {
 		[outputLock lock];
 		if(hrtf) {
 			if(rotationMatrixUpdated) {
@@ -1228,7 +1179,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHrtf" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHeadTracking" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableFSurround" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.tempo" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 
 		observersapplied = YES;
@@ -1307,7 +1257,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.eqPreamp" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHrtf" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHeadTracking" context:kOutputCoreAudioContext];
-			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableFSurround" context:kOutputCoreAudioContext];
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.tempo" context:kOutputCoreAudioContext];
 			observersapplied = NO;
 		}
