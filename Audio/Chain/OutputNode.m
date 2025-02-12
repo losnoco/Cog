@@ -179,18 +179,6 @@
 	return paused;
 }
 
-- (void)beginEqualizer:(AudioUnit)eq {
-	[controller beginEqualizer:eq];
-}
-
-- (void)refreshEqualizer:(AudioUnit)eq {
-	[controller refreshEqualizer:eq];
-}
-
-- (void)endEqualizer:(AudioUnit)eq {
-	[controller endEqualizer:eq];
-}
-
 - (void)sustainHDCD {
 	[output sustainHDCD];
 }

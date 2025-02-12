@@ -163,6 +163,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			ConverterNode *converter = [bufferChain converter];
 			DSPRubberbandNode *rubberband = [bufferChain rubberband];
 			DSPFSurroundNode *fsurround = [bufferChain fsurround];
+			DSPEqualizerNode *equalizer = [bufferChain equalizer];
 			DSPHRTFNode *hrtf = [bufferChain hrtf];
 			DLog(@"SEEKING! Resetting Buffer");
 
@@ -172,6 +173,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
 			[rubberband resetBuffer];
 			[fsurround resetBuffer];
+			[equalizer resetBuffer];
 			[hrtf resetBuffer];
 
 			DLog(@"Reset buffer!");

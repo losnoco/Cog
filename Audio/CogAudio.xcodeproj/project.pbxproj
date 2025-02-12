@@ -101,6 +101,8 @@
 		83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */; };
 		83F843202D5C6272008C123B /* HeadphoneFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F8431E2D5C6272008C123B /* HeadphoneFilter.h */; };
 		83F843212D5C6272008C123B /* HeadphoneFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83F8431F2D5C6272008C123B /* HeadphoneFilter.mm */; };
+		83F843232D5C66DA008C123B /* DSPEqualizerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F843222D5C66DA008C123B /* DSPEqualizerNode.h */; };
+		83F843252D5C66E9008C123B /* DSPEqualizerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F843242D5C66E9008C123B /* DSPEqualizerNode.m */; };
 		83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FFED502D5B08BC0044CCAF /* DSPNode.h */; };
 		83FFED532D5B09320044CCAF /* DSPNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83FFED522D5B09320044CCAF /* DSPNode.m */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
@@ -223,6 +225,8 @@
 		83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CogAudio-Bridging-Header.h"; sourceTree = "<group>"; };
 		83F8431E2D5C6272008C123B /* HeadphoneFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeadphoneFilter.h; sourceTree = "<group>"; };
 		83F8431F2D5C6272008C123B /* HeadphoneFilter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HeadphoneFilter.mm; sourceTree = "<group>"; };
+		83F843222D5C66DA008C123B /* DSPEqualizerNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPEqualizerNode.h; sourceTree = "<group>"; };
+		83F843242D5C66E9008C123B /* DSPEqualizerNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPEqualizerNode.m; sourceTree = "<group>"; };
 		83FFED502D5B08BC0044CCAF /* DSPNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPNode.h; sourceTree = "<group>"; };
 		83FFED522D5B09320044CCAF /* DSPNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPNode.m; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -538,6 +542,8 @@
 				83A3496E2D5C405E0096D530 /* DSPFSurroundNode.m */,
 				83A349742D5C50A10096D530 /* DSPHRTFNode.h */,
 				83A349762D5C50B20096D530 /* DSPHRTFNode.m */,
+				83F843222D5C66DA008C123B /* DSPEqualizerNode.h */,
+				83F843242D5C66E9008C123B /* DSPEqualizerNode.m */,
 			);
 			path = DSP;
 			sourceTree = "<group>";
@@ -558,6 +564,7 @@
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
 				834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */,
 				835DD2732ACAF5AD0057E319 /* util.h in Headers */,
+				83F843232D5C66DA008C123B /* DSPEqualizerNode.h in Headers */,
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
@@ -680,6 +687,7 @@
 				83A3496A2D5C3F430096D530 /* DSPRubberbandNode.m in Sources */,
 				83504166286447DA006B32CC /* Downmix.m in Sources */,
 				8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */,
+				83F843252D5C66E9008C123B /* DSPEqualizerNode.m in Sources */,
 				834A41AB287A90AB00EB9D9B /* channelmaps.cpp in Sources */,
 				831A50162865A8800049CFE4 /* rsstate.cpp in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,

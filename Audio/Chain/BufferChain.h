@@ -13,6 +13,7 @@
 #import "DSPRubberbandNode.h"
 #import "DSPFSurroundNode.h"
 #import "DSPHRTFNode.h"
+#import "DSPEqualizerNode.h"
 #import "InputNode.h"
 
 @interface BufferChain : NSObject {
@@ -21,6 +22,7 @@
 	DSPRubberbandNode *rubberbandNode;
 	DSPFSurroundNode *fsurroundNode;
 	DSPHRTFNode *hrtfNode;
+	DSPEqualizerNode *equalizerNode;
 
 	NSURL *streamURL;
 	id userInfo;
@@ -82,6 +84,8 @@
 - (DSPFSurroundNode *)fsurround;
 
 - (DSPHRTFNode *)hrtf;
+
+- (DSPEqualizerNode *)equalizer;
 
 - (double)secondsBuffered;
 
