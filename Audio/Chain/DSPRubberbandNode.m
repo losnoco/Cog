@@ -351,7 +351,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 - (AudioChunk *)convert {
 	if(stopping)
-		return 0;
+		return nil;
 
 	processEntered = YES;
 
