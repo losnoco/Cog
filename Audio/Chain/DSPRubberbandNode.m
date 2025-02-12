@@ -28,12 +28,12 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	BOOL processEntered;
 
 	BOOL observersapplied;
-	
+
 	AudioStreamBasicDescription lastInputFormat;
 	AudioStreamBasicDescription inputFormat;
-	
+
 	uint32_t lastInputChannelConfig, inputChannelConfig;
-	
+
 	float *rsPtrs[32];
 	float rsInBuffer[4096 * 32];
 	float rsOutBuffer[65536 * 32];
@@ -162,7 +162,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			options |= RubberBandOptionPhaseIndependent;
 		}
 	}
-	
+
 	value = [defaults stringForKey:@"rubberbandWindow"];
 	if([value isEqualToString:@"standard"]) {
 		options |= RubberBandOptionWindowStandard;
@@ -175,7 +175,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			options |= RubberBandOptionWindowLong;
 		}
 	}
-	
+
 	if(!engineR3) {
 		value = [defaults stringForKey:@"rubberbandSmoothing"];
 		if([value isEqualToString:@"off"]) {
@@ -253,10 +253,10 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	if(stopping || paused || !ts) return;
 
 	RubberBandOptions changed = tslastoptions ^ tsnewoptions;
-	
+
 	if(changed) {
 		tslastoptions = tsnewoptions;
-		
+
 		BOOL engineR3 = !!(tsnewoptions & RubberBandOptionEngineFiner);
 		const RubberBandOptions transientsmask = RubberBandOptionTransientsCrisp | RubberBandOptionTransientsMixed | RubberBandOptionTransientsSmooth;
 		const RubberBandOptions detectormask = RubberBandOptionDetectorCompound | RubberBandOptionDetectorPercussive | RubberBandOptionDetectorSoft;
@@ -352,7 +352,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 - (AudioChunk *)convert {
 	if(stopping)
 		return 0;
-	
+
 	processEntered = YES;
 
 	if(stopping || [self endOfStream] == YES || [self shouldContinue] == NO) {
@@ -398,7 +398,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	for(size_t i = 0; i < channels; ++i) {
 		cblas_scopy(len, ibuf + i, channels, rsPtrs[i], 1);
 	}
-	
+
 	rubberband_process(ts, (const float * const *)rsPtrs, len, endOfStream);
 
 	size_t samplesAvailable;
@@ -445,4 +445,5 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	processEntered = NO;
 	return outputChunk;
 }
+
 @end

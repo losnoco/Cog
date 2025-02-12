@@ -114,6 +114,7 @@
 			shouldContinue = NO;
 			break;
 		}
+
 		if(durationLeft < chunkDuration || shouldReset) {
 			[accessLock unlock];
 			[semaphore timedWait:500];
