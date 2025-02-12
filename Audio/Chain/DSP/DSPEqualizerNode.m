@@ -354,6 +354,13 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		return nil;
 	}
 
+	double streamTimestamp;
+	double streamTimeRatio;
+	if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+		processEntered = NO;
+		return nil;
+	}
+
 	if((enableEqualizer && !equalizerInitialized) ||
 	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
@@ -376,7 +383,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 	samplePtr = &inBuffer[0];
 	size_t channels = inputFormat.mChannelsPerFrame;
-	
+
+	BOOL isHDCD = NO;
+
 	while(!stopping && totalFrameCount < 4096) {
 		AudioStreamBasicDescription newInputFormat;
 		uint32_t newChannelConfig;
@@ -389,6 +398,10 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		chunk = [self readChunkAsFloat32:4096 - totalFrameCount];
 		if(!chunk) {
 			break;
+		}
+
+		if([chunk isHDCD]) {
+			isHDCD = YES;
 		}
 
 		size_t frameCount = [chunk frameCount];
@@ -437,6 +450,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		if(outputChannelConfig) {
 			[outputChunk setChannelConfig:inputChannelConfig];
 		}
+		if(isHDCD) [outputChunk setHDCD];
+		[outputChunk setStreamTimestamp:streamTimestamp];
+		[outputChunk setStreamTimeRatio:streamTimeRatio];
 		[outputChunk assignSamples:&outBuffer[0] frameCount:totalFrameCount];
 	}
 

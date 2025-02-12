@@ -30,6 +30,8 @@
 	uint32_t channelConfig;
 	float frequency;
 	long totalFrames;
+	long frame;
+	double seconds;
 
 	long fileSize;
 

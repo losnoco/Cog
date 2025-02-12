@@ -307,6 +307,8 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
 
+	double streamTimestamp = (double)(renderedTotal) / sampleRate;
+
 	int16_t buffer[1024 * n_channels];
 
 	int framesToRender = 1024;
@@ -352,6 +354,8 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		rendered = (int)(fadeRemain - fadeEnd);
 		fadeRemain = fadeEnd;
 	}
+
+	[chunk setStreamTimestamp:streamTimestamp];
 
 	[chunk assignSamples:buffer frameCount:rendered];
 

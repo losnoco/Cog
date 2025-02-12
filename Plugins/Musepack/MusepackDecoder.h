@@ -27,6 +27,7 @@
 	int bitrate;
 	float frequency;
 	long totalFrames;
+	long frame;
 }
 - (BOOL)writeToBuffer:(float *)sample_buffer fromBuffer:(const MPC_SAMPLE_FORMAT *)p_buffer frames:(unsigned)frames;
 

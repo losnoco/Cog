@@ -22,6 +22,7 @@
 	int bitrate;
 	int channels;
 	long totalFrames;
+	long frame;
 
 	int metadataUpdateInterval;
 	int metadataUpdateCount;

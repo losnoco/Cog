@@ -79,6 +79,8 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 
 	totalFrames = mpc_streaminfo_get_length_samples(&info);
 
+	frame = 0;
+
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
@@ -151,8 +153,12 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 		}
 	}
 
+	double streamTimestamp = (double)(frame) / frequency;
+	frame += framesRead;
+
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:floatBuffer frameCount:framesRead];
 
 	return chunk;
@@ -171,6 +177,8 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 
 - (long)seek:(long)sample {
 	mpc_demux_seek_sample(demux, sample);
+
+	frame = sample;
 
 	return sample;
 }

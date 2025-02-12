@@ -25,6 +25,8 @@
 	size_t inputBufferSize;
 	size_t inpSize, inpOffset;
 
+	double streamTimestamp, streamTimeRatio;
+
 	BOOL stopping;
 	BOOL convertEntered;
 	BOOL paused;

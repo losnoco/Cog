@@ -33,6 +33,8 @@
 
 	totalFrames = (decoder->shn_get_song_length() * frequency) / 1000.0;
 
+	seconds = 0.0;
+
 	decoder->go();
 
 	[self willChangeValueForKey:@"properties"];
@@ -57,7 +59,11 @@
 		amountRead = decoder->read(buf, frames * bytesPerFrame);
 	} while(amountRead == -1);
 
+	[chunk setStreamTimestamp:seconds];
+
 	[chunk assignSamples:buf frameCount:amountRead / bytesPerFrame];
+
+	seconds += [chunk duration];
 
 	return chunk;
 }
@@ -66,6 +72,7 @@
 	unsigned int sec = sample / frequency;
 
 	decoder->seek(sec);
+	seconds = sec;
 
 	return sample;
 }

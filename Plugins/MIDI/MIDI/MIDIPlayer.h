@@ -35,6 +35,7 @@ class MIDIPlayer {
 	bool Load(const midi_container& midi_file, unsigned subsong, unsigned loop_mode, unsigned clean_flags);
 	unsigned long Play(float* out, unsigned long count);
 	void Seek(unsigned long sample);
+	unsigned long Tell() const;
 
 	bool GetLastError(std::string& p_out);
 

@@ -25,6 +25,8 @@
 	long _currentOutputFrames;
 	long _fileSize;
 
+	double seconds;
+	
 	id<CogSource> _source;
 
 	BOOL _firstFrame;

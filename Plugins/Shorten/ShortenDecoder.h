@@ -22,6 +22,8 @@
 	float frequency;
 	long totalFrames;
 	BOOL seekable;
+
+	double seconds;
 }
 
 @end

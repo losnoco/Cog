@@ -44,6 +44,7 @@
 - (AudioChunk *_Nonnull)readChunkAsFloat32:(size_t)maxFrames;
 
 - (BOOL)peekFormat:(AudioStreamBasicDescription *_Nonnull)format channelConfig:(uint32_t *_Nonnull)config;
+- (BOOL)peekTimestamp:(double *_Nonnull)timestamp timeRatio:(double *_Nonnull)timeRatio;
 
 - (void)process; // Should be overwriten by subclass
 - (void)threadEntry:(id _Nullable)arg;

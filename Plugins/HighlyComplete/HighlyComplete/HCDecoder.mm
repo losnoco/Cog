@@ -1362,10 +1362,13 @@ static int usf_info(void *context, const char *name, const char *value) {
 		}
 	}
 
+	double streamTimestamp = (double)(framesRead) / (double)(sampleRate);
+
 	framesRead += written;
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:buffer frameCount:written];
 
 	return chunk;

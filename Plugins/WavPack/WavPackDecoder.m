@@ -150,6 +150,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 	frequency = WavpackGetSampleRate(wpc);
 
 	totalFrames = WavpackGetNumSamples(wpc);
+	frame = 0;
 
 	isDSD = NO;
 
@@ -257,6 +258,10 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 			ALog(@"Unsupported sample size: %d", bitsPerSample);
 	}
 
+	double streamTimestamp = (double)(frame) / frequency;
+	frame += samplesRead;
+
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:buffer frameCount:samplesRead];
 
 	return chunk;
@@ -269,6 +274,8 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 		frame = trueFrame * 8;
 	}
 	WavpackSeekSample(wpc, trueFrame);
+
+	self->frame = frame;
 
 	return frame;
 }

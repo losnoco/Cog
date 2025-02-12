@@ -173,6 +173,13 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		return nil;
 	}
 
+	double streamTimestamp;
+	double streamTimeRatio;
+	if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+		processEntered = NO;
+		return nil;
+	}
+
 	if((enableFSurround && !fsurround) ||
 	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
@@ -197,6 +204,8 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 
 	float *samplePtr = resetStreamFormat ? &inBuffer[2048 * 2] : &inBuffer[0];
 
+	BOOL isHDCD = NO;
+
 	while(!stopping && totalFrameCount < totalRequestedSamples) {
 		AudioStreamBasicDescription newInputFormat;
 		uint32_t newChannelConfig;
@@ -209,6 +218,10 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		chunk = [self readChunkAsFloat32:totalRequestedSamples - totalFrameCount];
 		if(!chunk) {
 			break;
+		}
+
+		if([chunk isHDCD]) {
+			isHDCD = YES;
 		}
 
 		size_t frameCount = [chunk frameCount];
@@ -262,6 +275,9 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		if(outputChannelConfig) {
 			[outputChunk setChannelConfig:outputChannelConfig];
 		}
+		if(isHDCD) [outputChunk setHDCD];
+		[outputChunk setStreamTimestamp:streamTimestamp];
+		[outputChunk setStreamTimeRatio:streamTimeRatio];
 		[outputChunk assignSamples:samplePtr frameCount:samplesRendered];
 	}
 

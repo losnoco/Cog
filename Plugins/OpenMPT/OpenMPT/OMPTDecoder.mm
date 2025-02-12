@@ -120,6 +120,8 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 	try {
 		mod->set_repeat_count(IsRepeatOneSet() ? -1 : 0);
 
+		double streamTimestamp = mod->get_position_seconds();
+
 		int frames = 1024;
 		float buffer[frames * 2];
 		void *buf = (void *)buffer;
@@ -142,6 +144,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 
 		id audioChunkClass = NSClassFromString(@"AudioChunk");
 		AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+		[chunk setStreamTimestamp:streamTimestamp];
 		[chunk assignSamples:buffer frameCount:total];
 
 		return chunk;

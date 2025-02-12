@@ -133,6 +133,12 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		return nil;
 	}
 
+	if(inpOffset == inpSize) {
+		streamTimestamp = 0.0;
+		streamTimeRatio = 1.0;
+		[self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio];
+	}
+
 	while(inpOffset == inpSize) {
 		// Approximately the most we want on input
 		ioNumberPackets = 4096;
@@ -315,7 +321,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			[chunk setChannelConfig:nodeChannelConfig];
 		}
 		scale_by_volume(floatBuffer, ioNumberPackets / sizeof(float), volumeScale);
+		[chunk setStreamTimestamp:streamTimestamp];
+		[chunk setStreamTimeRatio:streamTimeRatio];
 		[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / floatFormat.mBytesPerPacket];
+		streamTimestamp += [chunk durationRatioed];
 		convertEntered = NO;
 		return chunk;
 	}

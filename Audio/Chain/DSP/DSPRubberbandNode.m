@@ -400,6 +400,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	size_t frameCount = [chunk frameCount];
 
+	double streamTimestamp = [chunk streamTimestamp];
+
 	int len = (int)frameCount;
 	int channels = (int)(inputFormat.mChannelsPerFrame);
 	NSData *samples = [chunk removeSamples:frameCount];
@@ -459,6 +461,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		if(inputChannelConfig) {
 			[outputChunk setChannelConfig:inputChannelConfig];
 		}
+		if([chunk isHDCD]) [outputChunk setHDCD];
+		[outputChunk setStreamTimestamp:streamTimestamp];
+		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio] * tempo];
 		[outputChunk assignSamples:rsOutBuffer frameCount:samplesBuffered];
 		samplesBuffered = 0;
 		stretchOut += [outputChunk duration];

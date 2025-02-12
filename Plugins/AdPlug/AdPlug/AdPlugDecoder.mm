@@ -135,6 +135,9 @@ static CAdPlugDatabase *g_database = NULL;
 		total += samples_now;
 	}
 
+	double streamTimestamp = (double)(current_pos) / sampleRate;
+	[chunk setStreamTimestamp:streamTimestamp];
+
 	[chunk assignSamples:buffer frameCount:total];
 
 	return chunk;

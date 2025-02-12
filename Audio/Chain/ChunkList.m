@@ -369,6 +369,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 @implementation ChunkList
 
 @synthesize listDuration;
+@synthesize listDurationRatioed;
 @synthesize maxDuration;
 
 - (id)initWithMaximumDuration:(double)duration {
@@ -377,6 +378,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	if(self) {
 		chunkList = [[NSMutableArray alloc] init];
 		listDuration = 0.0;
+		listDurationRatioed = 0.0;
 		maxDuration = duration;
 
 		inAdder = NO;
@@ -394,9 +396,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		dsd2pcmCount = 0;
 		dsd2pcmLatency = 0;
 #endif
-		
+
 		halveDSDVolume = NO;
-		
+
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
 	}
 
@@ -463,10 +465,12 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	inAdder = YES;
 
 	const double chunkDuration = [chunk duration];
+	const double chunkDurationRatioed = [chunk durationRatioed];
 
 	@synchronized(chunkList) {
 		[chunkList addObject:chunk];
 		listDuration += chunkDuration;
+		listDurationRatioed += chunkDurationRatioed;
 	}
 
 	inAdder = NO;
@@ -487,6 +491,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		if([chunk frameCount] <= maxFrameCount) {
 			[chunkList removeObjectAtIndex:0];
 			listDuration -= [chunk duration];
+			listDurationRatioed -= [chunk durationRatioed];
 			inRemover = NO;
 			return chunk;
 		}
@@ -495,8 +500,11 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
+		[ret setStreamTimestamp:[chunk streamTimestamp]];
+		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
 		listDuration -= [ret duration];
+		listDurationRatioed -= [ret durationRatioed];
 		inRemover = NO;
 		return ret;
 	}
@@ -523,6 +531,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		if([chunk frameCount] <= maxFrameCount) {
 			[chunkList removeObjectAtIndex:0];
 			listDuration -= [chunk duration];
+			listDurationRatioed -= [chunk durationRatioed];
 			inRemover = NO;
 			return [self convertChunk:chunk];
 		}
@@ -531,8 +540,11 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
+		[ret setStreamTimestamp:[chunk streamTimestamp]];
+		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
 		listDuration -= [ret duration];
+		listDurationRatioed -= [ret durationRatioed];
 		inRemover = NO;
 		return [self convertChunk:ret];
 	}
@@ -606,6 +618,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	BOOL isUnsigned = !isFloat && !(inputFormat.mFormatFlags & kAudioFormatFlagIsSignedInteger);
 	size_t bitsPerSample = inputFormat.mBitsPerChannel;
 	BOOL isBigEndian = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsBigEndian);
+
+	double streamTimestamp = [inChunk streamTimestamp];
 
 	NSData *inputData = [inChunk removeSamples:samplesRead];
 
@@ -772,6 +786,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	[outChunk setFormat:floatFormat];
 	[outChunk setChannelConfig:inputChannelConfig];
 	[outChunk setLossless:inputLossless];
+	[outChunk setStreamTimestamp:streamTimestamp];
+	[outChunk setStreamTimeRatio:[inChunk streamTimeRatio]];
 	if(hdcdSustained) [outChunk setHDCD];
 	
 	[outChunk assignSamples:inputBuffer frameCount:bytesReadFromInput / floatFormat.mBytesPerPacket];
@@ -789,6 +805,21 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			return YES;
 		}
 	}
+	return NO;
+}
+
+- (BOOL)peekTimestamp:(double *)timestamp timeRatio:(double *)timeRatio {
+	if(stopping) return NO;
+	@synchronized (chunkList) {
+		if([chunkList count]) {
+			AudioChunk *chunk = [chunkList objectAtIndex:0];
+			*timestamp = [chunk streamTimestamp];
+			*timeRatio = [chunk streamTimeRatio];
+			return YES;
+		}
+	}
+	*timestamp = 0.0;
+	*timeRatio = 1.0;
 	return NO;
 }
 

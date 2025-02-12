@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ChunkList : NSObject {
 	NSMutableArray<AudioChunk *> *chunkList;
 	double listDuration;
+	double listDurationRatioed;
 	double maxDuration;
 
 	BOOL inAdder;
@@ -53,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @property(readonly) double listDuration;
+@property(readonly) double listDurationRatioed;
 @property(readonly) double maxDuration;
 
 - (id)initWithMaximumDuration:(double)duration;
@@ -68,6 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (AudioChunk *)removeSamplesAsFloat32:(size_t)maxFrameCount;
 
 - (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config;
+
+- (BOOL)peekTimestamp:(nonnull double *)timestamp timeRatio:(nonnull double *)timeRatio;
 
 @end
 

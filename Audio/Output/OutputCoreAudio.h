@@ -50,7 +50,7 @@ using std::atomic_long;
 	double secondsLatency;
 	double visPushed;
 
-	double tempo;
+	double streamTimestamp;
 
 	double lastClippedSampleRate;
 

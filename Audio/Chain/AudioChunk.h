@@ -65,6 +65,8 @@ enum {
 	AudioStreamBasicDescription format;
 	NSMutableData *chunkData;
 	uint32_t channelConfig;
+	double streamTimestamp;
+	double streamTimeRatio;
 	BOOL formatAssigned;
 	BOOL lossless;
 	BOOL hdcd;
@@ -72,6 +74,8 @@ enum {
 
 @property AudioStreamBasicDescription format;
 @property uint32_t channelConfig;
+@property double streamTimestamp;
+@property double streamTimeRatio;
 @property BOOL lossless;
 
 + (uint32_t)guessChannelConfig:(uint32_t)channelCount;
@@ -94,6 +98,7 @@ enum {
 - (void)setFrameCount:(size_t)count; // For truncation only
 
 - (double)duration;
+- (double)durationRatioed;
 
 - (BOOL)isHDCD;
 - (void)setHDCD;

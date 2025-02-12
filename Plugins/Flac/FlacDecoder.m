@@ -372,6 +372,9 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 	blockBuffer = malloc(SAMPLE_blockBuffer_SIZE);
 
+	frame = 0;
+	seconds = 0.0;
+
 	return YES;
 }
 
@@ -391,7 +394,13 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 
 	if(blockBufferFrames > 0) {
 		chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
+		frame += blockBufferFrames;
+		[chunk setStreamTimestamp:seconds];
+
 		[chunk assignSamples:blockBuffer frameCount:blockBufferFrames];
+
+		seconds += [chunk duration];
 
 		blockBufferFrames = 0;
 	}
@@ -452,6 +461,9 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 - (long)seek:(long)sample {
 	if(!FLAC__stream_decoder_seek_absolute(decoder, sample))
 		return -1;
+
+	frame = sample;
+	seconds = (double)(sample) / frequency;
 
 	return sample;
 }

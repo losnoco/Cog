@@ -44,6 +44,7 @@
 	int bitrate;
 	float frequency;
 	long totalFrames;
+	long frame;
 }
 
 @end

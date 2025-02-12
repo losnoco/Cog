@@ -59,6 +59,15 @@
 	}
 }
 
+- (void)setAmountPlayed:(double)seconds {
+	double delta = seconds - amountPlayed;
+	if(delta > 0.0 && delta < 5.0) {
+		[self incrementAmountPlayed:delta];
+	} else {
+		amountPlayed = seconds;
+	}
+}
+
 - (void)resetAmountPlayed {
 	amountPlayed = 0;
 }

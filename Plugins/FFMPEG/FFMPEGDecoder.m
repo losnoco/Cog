@@ -921,6 +921,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	if(totalFrames && (framesRead + framesReadNow > totalFrames))
 		framesReadNow = (int)(totalFrames - framesRead);
 
+	double streamTimestamp = (double)(framesRead) / frequency;
+
 	framesRead += framesReadNow;
 
 	metadataUpdateCount += framesReadNow;
@@ -931,6 +933,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk setStreamTimestamp:framesRead];
 	[chunk assignSamples:sampleBuffer frameCount:framesReadNow];
 
 	return chunk;

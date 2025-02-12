@@ -361,6 +361,9 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 		[chunk setFrameCount:frames / frameScale];
 	}
 
+	double streamTimestamp = (double)(framePosition - trackStart) / [chunk format].mSampleRate;
+	[chunk setStreamTimestamp:streamTimestamp];
+
 	framePosition += chunk.frameCount * frameScale;
 
 	return chunk;
