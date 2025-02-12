@@ -23,6 +23,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	BOOL tsrestartengine;
 	double tempo, pitch;
 	double lastTempo, lastPitch;
+	double stretchIn, stretchOut;
 
 	BOOL stopping, paused;
 	BOOL processEntered;
@@ -246,6 +247,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	tsapplynewoptions = NO;
 	tsrestartengine = NO;
 
+	stretchIn = 0.0;
+	stretchOut = 0.0;
+
 	return YES;
 }
 
@@ -390,6 +394,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		return nil;
 	}
 
+	stretchIn += [chunk duration] / tempo;
+
 	bool endOfStream = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
 
 	size_t frameCount = [chunk frameCount];
@@ -406,32 +412,43 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	rubberband_process(ts, (const float * const *)rsPtrs, len, endOfStream);
 
 	size_t samplesAvailable;
-	while(!stopping && (samplesAvailable = rubberband_available(ts)) > 0) {
-		if(toDrop > 0) {
-			size_t blockDrop = toDrop;
-			if(blockDrop > samplesAvailable) blockDrop = samplesAvailable;
-			if(blockDrop > blockSize) blockDrop = blockSize;
-			rubberband_retrieve(ts, (float * const *)rsPtrs, (int)blockDrop);
-			toDrop -= blockDrop;
-			continue;
-		}
-		size_t maxAvailable = 65536 - samplesBuffered;
-		if(samplesAvailable > maxAvailable) {
-			samplesAvailable = maxAvailable;
-			if(!samplesAvailable) {
-				break;
+	if(!stopping && (samplesAvailable = rubberband_available(ts)) > 0) {
+		while(!stopping && samplesAvailable > 0) {
+			if(toDrop > 0) {
+				size_t blockDrop = toDrop;
+				if(blockDrop > samplesAvailable) blockDrop = samplesAvailable;
+				if(blockDrop > blockSize) blockDrop = blockSize;
+				rubberband_retrieve(ts, (float * const *)rsPtrs, (int)blockDrop);
+				toDrop -= blockDrop;
+				samplesAvailable -= blockDrop;
+				continue;
 			}
+			size_t maxAvailable = 65536 - samplesBuffered;
+			size_t samplesOut = samplesAvailable;
+			if(samplesOut > maxAvailable) {
+				samplesOut = maxAvailable;
+				if(!samplesOut) {
+					break;
+				}
+			}
+			if(samplesOut > blockSize) samplesOut = blockSize;
+			rubberband_retrieve(ts, (float * const *)rsPtrs, (int)samplesOut);
+			for(size_t i = 0; i < channels; ++i) {
+				cblas_scopy((int)samplesOut, rsPtrs[i], 1, &rsOutBuffer[samplesBuffered * channels + i], channels);
+			}
+			samplesBuffered += samplesOut;
+			samplesAvailable -= samplesOut;
 		}
-		size_t samplesOut = samplesAvailable;
-		if(samplesOut > blockSize) samplesOut = blockSize;
-		rubberband_retrieve(ts, (float * const *)rsPtrs, (int)samplesOut);
-		for(size_t i = 0; i < channels; ++i) {
-			cblas_scopy((int)samplesOut, rsPtrs[i], 1, &rsOutBuffer[samplesBuffered * channels + i], channels);
-		}
-		samplesBuffered += samplesOut;
-		if(endOfStream && samplesOut < 4096) {
-			self->endOfStream = YES;
-			break;
+	}
+
+	if(endOfStream) {
+		self->endOfStream = YES;
+		if(samplesBuffered) {
+			double outputDuration = (double)(samplesBuffered) / inputFormat.mSampleRate;
+			if(outputDuration + stretchOut > stretchIn) {
+				// Seems that Rubber Band over-flushes when it hits end of stream
+				samplesBuffered = (size_t)((stretchIn - stretchOut) * inputFormat.mSampleRate);
+			}
 		}
 	}
 
@@ -444,6 +461,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		}
 		[outputChunk assignSamples:rsOutBuffer frameCount:samplesBuffered];
 		samplesBuffered = 0;
+		stretchOut += [outputChunk duration];
 	}
 
 	processEntered = NO;
