@@ -198,6 +198,14 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	float *samplePtr = resetStreamFormat ? &inBuffer[2048 * 2] : &inBuffer[0];
 
 	while(!stopping && totalFrameCount < totalRequestedSamples) {
+		AudioStreamBasicDescription newInputFormat;
+		uint32_t newChannelConfig;
+		if(![self peekFormat:&newInputFormat channelConfig:&newChannelConfig] ||
+		   memcmp(&newInputFormat, &inputFormat, sizeof(newInputFormat)) != 0 ||
+		   newChannelConfig != inputChannelConfig) {
+			break;
+		}
+
 		chunk = [self readChunkAsFloat32:totalRequestedSamples - totalFrameCount];
 		if(!chunk) {
 			break;
