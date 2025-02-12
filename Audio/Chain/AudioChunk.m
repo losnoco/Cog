@@ -19,6 +19,8 @@
 		formatAssigned = NO;
 		lossless = NO;
 		hdcd = NO;
+		streamTimestamp = 0.0;
+		streamTimeRatio = 1.0;
 	}
 
 	return self;
@@ -31,6 +33,9 @@
 		chunkData = [[NSMutableData alloc] init];
 		[self setFormat:propertiesToASBD(properties)];
 		lossless = [[properties objectForKey:@"encoding"] isEqualToString:@"lossless"];
+		hdcd = NO;
+		streamTimestamp = 0.0;
+		streamTimeRatio = 1.0;
 	}
 
 	return self;
@@ -117,6 +122,8 @@ static const uint32_t AudioChannelConfigTable[] = {
 }
 
 @synthesize lossless;
+@synthesize streamTimestamp;
+@synthesize streamTimeRatio;
 
 - (AudioStreamBasicDescription)format {
 	return format;
@@ -155,10 +162,12 @@ static const uint32_t AudioChannelConfigTable[] = {
 - (NSData *)removeSamples:(size_t)frameCount {
 	if(formatAssigned) {
 		@autoreleasepool {
+			const double framesDuration = (double)(frameCount) / format.mSampleRate;
 			const size_t bytesPerPacket = format.mBytesPerPacket;
 			const size_t byteCount = bytesPerPacket * frameCount;
 			NSData *ret = [chunkData subdataWithRange:NSMakeRange(0, byteCount)];
 			[chunkData replaceBytesInRange:NSMakeRange(0, byteCount) withBytes:NULL length:0];
+			streamTimestamp += framesDuration * streamTimeRatio;
 			return ret;
 		}
 	}
@@ -194,6 +203,10 @@ static const uint32_t AudioChannelConfigTable[] = {
 		return (double)([chunkData length] / bytesPerPacket) / sampleRate;
 	}
 	return 0.0;
+}
+
+- (double)durationRatioed {
+	return [self duration] * streamTimeRatio;
 }
 
 - (BOOL)isHDCD {

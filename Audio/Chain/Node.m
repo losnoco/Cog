@@ -153,6 +153,22 @@
 	return ret;
 }
 
+- (BOOL)peekTimestamp:(double *_Nonnull)timestamp timeRatio:(double *_Nonnull)timeRatio {
+	[accessLock lock];
+
+	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
+		endOfStream = YES;
+		[accessLock unlock];
+		return NO;
+	}
+
+	BOOL ret = [[previousNode buffer] peekTimestamp:timestamp timeRatio:timeRatio];
+
+	[accessLock unlock];
+
+	return ret;
+}
+
 - (AudioChunk *)readChunk:(size_t)maxFrames {
 	[accessLock lock];
 

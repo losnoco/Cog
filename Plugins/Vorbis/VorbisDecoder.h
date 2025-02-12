@@ -31,6 +31,7 @@
 	int channels;
 	float frequency;
 	long totalFrames;
+	long frame;
 
 	int metadataUpdateInterval;
 	int metadataUpdateCount;

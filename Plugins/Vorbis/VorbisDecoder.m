@@ -99,6 +99,7 @@ long sourceTell(void *datasource) {
 	seekable = ov_seekable(&vorbisRef);
 
 	totalFrames = ov_pcm_total(&vorbisRef, -1);
+	frame = 0;
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -221,6 +222,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	int total = 0;
 	int frames = 1024;
 
+	double streamTimestamp = (double)(frame) / frequency;
+
 	if(currentSection != lastSection) {
 		vorbis_info *vi;
 		vi = ov_info(&vorbisRef, -1);
@@ -277,6 +280,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		[self updateIcyMetadata];
 	}
 
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:buffer frameCount:total];
 
 	return chunk;
@@ -292,6 +296,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 - (long)seek:(long)frame {
 	ov_pcm_seek(&vorbisRef, frame);
+
+	self->frame = frame;
 
 	return frame;
 }

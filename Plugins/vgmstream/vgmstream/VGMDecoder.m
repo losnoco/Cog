@@ -318,6 +318,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	UInt32 framesMax = frames;
 	UInt32 framesDone = 0;
 
+	double streamTimestamp = (double)(stream->pstate.play_position) / sampleRate;
+
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
 
@@ -374,6 +376,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		frames -= frames_done;
 	}
 
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:sample_buf frameCount:framesDone];
 
 	return chunk;

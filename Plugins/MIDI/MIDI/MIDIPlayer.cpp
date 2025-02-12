@@ -589,3 +589,7 @@ void MIDIPlayer::send_sysex_time_filtered(const uint8_t *data, size_t size, size
 bool MIDIPlayer::GetLastError(std::string &p_out) {
 	return get_last_error(p_out);
 }
+
+unsigned long MIDIPlayer::Tell() const {
+	return uTimeCurrent;
+}

@@ -158,10 +158,13 @@ static void oneTimeInit(void) {
 		total = (int)(fadePos - fadeStart);
 	}
 
+	double streamTimestamp = (double)(framesRead) / sampleRate;
+
 	framesRead += total;
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:sampleBuffer frameCount:total];
 
 	return chunk;

@@ -192,12 +192,16 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	else
 		gme_set_fade(emu, (int)(length - fade), (int)fade);
 
+	double streamTimestamp = (double)(gme_tell(emu)) * 0.001;
+
 	gme_play(emu, numSamples, (short int *)buf);
 
 	// Some formats support length, but we'll add that in the future.
 	//(From gme.txt) If track length, then use it. If loop length, play for intro + loop * 2. Otherwise, default to 2.5 minutes
 	// GME will always generate samples. There's no real EOS.
 	// Addendum: The above gme_track_ended() call has been in place for years now
+
+	[chunk setStreamTimestamp:streamTimestamp];
 
 	[chunk assignSamples:sampleBuffer frameCount:frames];
 

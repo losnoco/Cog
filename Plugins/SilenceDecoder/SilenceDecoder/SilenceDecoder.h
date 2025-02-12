@@ -15,7 +15,9 @@
 
 	long length;
 	long remain;
-	
+
+	double seconds;
+
 	float *buffer;
 }
 

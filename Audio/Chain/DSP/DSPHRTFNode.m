@@ -336,6 +336,8 @@ static void unregisterMotionListener(void) {
 		[hrtf reloadWithMatrix:matrix];
 	}
 
+	double streamTimestamp = [chunk streamTimestamp];
+
 	size_t frameCount = [chunk frameCount];
 	NSData *sampleData = [chunk removeSamples:frameCount];
 
@@ -346,6 +348,9 @@ static void unregisterMotionListener(void) {
 	if(outputChannelConfig) {
 		[outputChunk setChannelConfig:outputChannelConfig];
 	}
+	if([chunk isHDCD]) [outputChunk setHDCD];
+	[outputChunk setStreamTimestamp:streamTimestamp];
+	[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
 	[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];
 
 	processEntered = NO;

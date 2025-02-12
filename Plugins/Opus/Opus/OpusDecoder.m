@@ -107,7 +107,8 @@ opus_int64 sourceTell(void *_stream) {
 	seekable = op_seekable(opusRef);
 
 	totalFrames = op_pcm_total(opusRef, -1);
-
+	frame = 0;
+	
 	const OpusHead *head = op_head(opusRef, -1);
 	const OpusTags *tags = op_tags(opusRef, -1);
 
@@ -289,8 +290,12 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		[self updateIcyMetadata];
 	}
 
+	double streamTimestamp = (double)(frame) / 48000.0;
+	frame += total / channels;
+
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:buffer frameCount:total / channels];
 
 	return chunk;
@@ -307,6 +312,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 - (long)seek:(long)frame {
 	op_pcm_seek(opusRef, frame);
+
+	self->frame = frame;
 
 	return frame;
 }

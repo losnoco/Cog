@@ -32,6 +32,7 @@
 - (double)amountPlayedInterval;
 
 - (void)incrementAmountPlayed:(double)seconds;
+- (void)setAmountPlayed:(double)seconds;
 - (void)resetAmountPlayed;
 - (void)resetAmountPlayedInterval;
 

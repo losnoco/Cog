@@ -476,6 +476,8 @@ error:
 	_endPadding = 0;
 	// DLog(@"OPEN: %i", _firstFrame);
 
+	seconds = 0.0;
+
 	inputEOF = NO;
 
 	genre = @"";
@@ -748,7 +750,9 @@ error:
 
 		if(framesToCopy) {
 			chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+			[chunk setStreamTimestamp:seconds];
 			[chunk assignSamples:_outputBuffer frameCount:framesToCopy];
+			seconds += [chunk duration];
 			_outputFrames = 0;
 			break;
 		}
@@ -812,6 +816,7 @@ error:
 
 	if(frame < _framesDecoded) {
 		_framesDecoded = 0;
+		seconds = 0.0;
 		_firstFrame = YES;
 		if(_foundLAMEHeader || _foundiTunSMPB)
 			framesToSkip = _startPadding;
@@ -821,6 +826,7 @@ error:
 	}
 
 	framesToSkip += frame - _framesDecoded;
+	seconds += (double)(frame - _framesDecoded) / sampleRate;
 
 	return frame;
 }

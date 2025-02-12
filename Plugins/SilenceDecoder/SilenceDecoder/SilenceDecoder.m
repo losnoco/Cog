@@ -27,6 +27,7 @@ enum { channels = 2 };
 
 	length = seconds * sample_rate;
 	remain = length;
+	seconds = 0.0;
 	
 	buffer = (float *) calloc(sizeof(float), 1024 * channels);
 	if(!buffer) {
@@ -68,7 +69,10 @@ enum { channels = 2 };
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	[chunk setStreamTimestamp:seconds];
 	[chunk assignSamples:buffer frameCount:frames];
+
+	seconds += [chunk duration];
 
 	return chunk;
 }
@@ -78,6 +82,8 @@ enum { channels = 2 };
 		frame = length;
 
 	remain = length - frame;
+
+	seconds = (double)(frame) / sample_rate;
 
 	return frame;
 }

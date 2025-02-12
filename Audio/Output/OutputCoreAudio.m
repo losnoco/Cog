@@ -86,6 +86,8 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 	config = [chunk channelConfig];
 	double chunkDuration = 0;
 
+	streamTimestamp = [chunk streamTimestamp] + [chunk durationRatioed];
+
 	if(frameCount) {
 		chunkDuration = [chunk duration];
 
@@ -211,8 +213,6 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
 		secondsHdcdSustained = 0;
 
-		tempo = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] doubleForKey:@"tempo"];
-
 		outputLock = [[NSLock alloc] init];
 
 #ifdef OUTPUT_LOG
@@ -257,11 +257,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 
 		[self setOutputDeviceWithDeviceDict:device];
-	} else if([keyPath isEqualToString:@"values.eqPreamp"]) {
-		float preamp = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"eqPreamp"];
-		eqPreamp = pow(10.0, preamp / 20.0);
-	} else if([keyPath isEqualToString:@"values.tempo"]) {
-		tempo = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] doubleForKey:@"tempo"];
 	}
 }
 
@@ -846,8 +841,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		visController = [VisualizationController sharedController];
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.eqPreamp" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.tempo" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kOutputCoreAudioContext];
 
 		observersapplied = YES;
 
@@ -857,7 +850,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)updateLatency:(double)secondsPlayed {
 	if(secondsPlayed > 0) {
-		[outputController incrementAmountPlayed:secondsPlayed * tempo];
+		[outputController setAmountPlayed:streamTimestamp];
 	}
 	double visLatency = visPushed;
 	visPushed -= secondsPlayed;
@@ -895,7 +888,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		stopInvoked = YES;
 		if(observersapplied) {
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
-			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.tempo" context:kOutputCoreAudioContext];
 			observersapplied = NO;
 		}
 		stopping = YES;

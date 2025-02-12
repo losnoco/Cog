@@ -150,6 +150,8 @@ static SInt64 getSizeProc(void *clientData) {
 
 	_in_opened = YES;
 
+	frame = 0;
+	
 	return [self readInfoFromExtAudioFileRef];
 }
 
@@ -330,6 +332,10 @@ static SInt64 getSizeProc(void *clientData) {
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+
+	double streamTimestamp = (double)(frame) / frequency;
+	[chunk setStreamTimestamp:streamTimestamp];
+
 	[chunk assignSamples:buffer frameCount:frameCount];
 
 	return chunk;
@@ -342,6 +348,8 @@ static SInt64 getSizeProc(void *clientData) {
 	if(noErr != err) {
 		return -1;
 	}
+
+	self->frame = frame;
 
 	return frame;
 }

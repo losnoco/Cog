@@ -299,6 +299,8 @@ static OSType getOSType(const char *in_) {
 		if(![self initDecoder])
 			return nil;
 	}
+	
+	double streamTimestamp = 0.0;
 
 	try {
 		player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
@@ -316,6 +318,8 @@ static OSType getOSType(const char *in_) {
 
 			soundFontsAssigned = YES;
 		}
+
+		streamTimestamp = (double)(player->Tell()) / sampleRate;
 
 		int frames = 1024;
 		float buffer[frames * 2];
@@ -358,6 +362,7 @@ static OSType getOSType(const char *in_) {
 
 		id audioChunkClass = NSClassFromString(@"AudioChunk");
 		AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+		[chunk setStreamTimestamp:streamTimestamp];
 		[chunk assignSamples:buffer frameCount:frames];
 
 		return chunk;

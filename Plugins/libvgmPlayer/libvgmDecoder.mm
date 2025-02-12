@@ -231,6 +231,8 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		mainPlr->SetLoopCount(vgmplay->GetModifiedLoopCount(maxLoops));
 	}
 
+	double streamTimestamp = mainPlr->GetCurTime(0);
+
 	UInt32 framesDone = 0;
 
 	while(framesDone < frames) {
@@ -247,6 +249,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		framesDone += framesToDo;
 	}
 
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:buffer frameCount:framesDone];
 
 	return chunk;

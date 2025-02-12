@@ -397,8 +397,8 @@ namespace Organya {
 }
 
 - (AudioChunk *)readAudio {
-	int total = 0;
-	
+	double streamTimestamp = (double)(m_song->cur_beat) * (double)(m_song->ms_per_beat) * 0.001;
+
 	std::vector<float> samples = m_song->Synth(sampleRate);
 
 	int rendered = (int)(samples.size() / 2);
@@ -423,7 +423,9 @@ namespace Organya {
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
-	
+
+	[chunk setStreamTimestamp:streamTimestamp];
+
 	if(samplesDiscard) {
 		[chunk assignSamples:&samples[samplesDiscard * 2] frameCount:rendered - samplesDiscard];
 		samplesDiscard = 0;
