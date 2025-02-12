@@ -252,6 +252,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 - (void)partialInit {
 	if(stopping || paused || !ts) return;
 
+	processEntered = YES;
+
 	RubberBandOptions changed = tslastoptions ^ tsnewoptions;
 
 	if(changed) {
@@ -286,6 +288,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	}
 
 	tsapplynewoptions = NO;
+
+	processEntered = NO;
 }
 
 - (void)fullShutdown {
