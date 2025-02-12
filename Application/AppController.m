@@ -249,7 +249,7 @@ static AppController *kAppController = nil;
 		NSError *error = nil;
 		NSArray *results = [playlistController.persistentContainer.viewContext executeFetchRequest:request error:&error];
 
-		if(results && [results count] == 1) {
+		if(results && [results count] > 0) {
 			PlaylistEntry *pe = results[0];
 			if([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"]) {
 				[playbackController playEntryAtIndex:pe.index startPaused:(lastStatus == CogStatusPaused) andSeekTo:@(pe.currentPosition)];
@@ -259,6 +259,13 @@ static AppController *kAppController = nil;
 				pe.currentPosition = 0.0;
 				pe.countAdded = NO;
 				[playlistController commitPersistentStore];
+			}
+			// Bug fix
+			if([results count] > 1) {
+				for(size_t i = 1; i < [results count]; ++i) {
+					PlaylistEntry *pe = results[i];
+					[pe setCurrent:NO];
+				}
 			}
 		}
 	}
