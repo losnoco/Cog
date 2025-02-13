@@ -163,6 +163,8 @@ static AppController *kAppController = nil;
 #else
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(YES) }];
 #endif
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"crashlyticsConsented": @(NO),
+															   @"crashlyticsAskedConsent": @(NO) }];
 
 	[FIRApp configure];
 	
