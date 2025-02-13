@@ -63,7 +63,7 @@
 	double delta = seconds - amountPlayed;
 	if(delta > 0.0 && delta < 5.0) {
 		[self incrementAmountPlayed:delta];
-	} else {
+	} else if(delta) {
 		amountPlayed = seconds;
 	}
 }

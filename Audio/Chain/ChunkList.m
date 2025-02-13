@@ -495,12 +495,13 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			inRemover = NO;
 			return chunk;
 		}
+		double streamTimestamp = [chunk streamTimestamp];
 		NSData *removedData = [chunk removeSamples:maxFrameCount];
 		AudioChunk *ret = [[AudioChunk alloc] init];
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
-		[ret setStreamTimestamp:[chunk streamTimestamp]];
+		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
 		listDuration -= [ret duration];
@@ -535,12 +536,13 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			inRemover = NO;
 			return [self convertChunk:chunk];
 		}
+		double streamTimestamp = [chunk streamTimestamp];
 		NSData *removedData = [chunk removeSamples:maxFrameCount];
 		AudioChunk *ret = [[AudioChunk alloc] init];
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
-		[ret setStreamTimestamp:[chunk streamTimestamp]];
+		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
 		listDuration -= [ret duration];

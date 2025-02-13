@@ -67,6 +67,7 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 	
 	if(!chunkRemain) {
 		chunk = [outputController readChunk:amountToRead];
+		streamTimestamp = [chunk streamTimestamp];
 	} else {
 		chunk = chunkRemain;
 		chunkRemain = nil;
@@ -76,8 +77,6 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 	format = [chunk format];
 	config = [chunk channelConfig];
 	double chunkDuration = 0;
-
-	streamTimestamp = [chunk streamTimestamp] + [chunk durationRatioed];
 
 	if(frameCount) {
 		chunkDuration = [chunk duration];
