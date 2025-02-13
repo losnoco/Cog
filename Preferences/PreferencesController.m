@@ -38,4 +38,10 @@
 	[window showPathSuggester];
 }
 
+- (IBAction)showRubberbandSettings:(id)sender {
+	[self initWindow];
+
+	[window showRubberbandSettings];
+}
+
 @end

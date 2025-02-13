@@ -103,6 +103,9 @@
 - (void)showPathSuggester;
 + (void)globalShowPathSuggester;
 
+- (IBAction)showRubberbandSettings:(id)sender;
+- (void)globalShowRubberbandSettings;
+
 @property NSWindow *mainWindow;
 @property NSWindow *miniWindow;
 

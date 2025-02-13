@@ -83,6 +83,7 @@
 "Zero Order Hold" = "Retención de orden cero";
 
 "Rubber Band" = "Rubber Band";
+"EngineDisabled" = "Desactivado";
 "EngineFaster" = "Más rápido";
 "EngineFiner" = "Mejor calidad";
 "TransientsCrisp" = "Definidos";

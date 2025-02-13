@@ -11,6 +11,7 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 #import "PlaylistView.h"
+#import "RubberbandEngineTransformer.h"
 #import "SQLiteStore.h"
 #import "SandboxBroker.h"
 #import "SpotlightWindowController.h"
@@ -71,6 +72,14 @@ static AppController *kAppController = nil;
 	NSValueTransformer *numberHertzToStringTransformer = [[NumberHertzToStringTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:numberHertzToStringTransformer
 									forName:@"NumberHertzToStringTransformer"];
+
+	NSValueTransformer *rubberbandEngineEnabledTransformer = [[RubberbandEngineEnabledTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:rubberbandEngineEnabledTransformer
+									forName:@"RubberbandEngineEnabledTransformer"];
+
+	NSValueTransformer *rubberbandEngineHiddenTransformer = [[RubberbandEngineHiddenTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:rubberbandEngineHiddenTransformer
+									forName:@"RubberbandEngineHiddenTransformer"];
 }
 - (id)init {
 	self = [super init];
@@ -799,6 +808,14 @@ static AppController *kAppController = nil;
 
 + (void)globalShowPathSuggester {
 	[kAppController showPathSuggester];
+}
+
+- (void)showRubberbandSettings:(id)sender {
+	[preferencesController showRubberbandSettings:sender];
+}
+
++ (void)globalShowRubberbandSettings {
+	[kAppController showRubberbandSettings:kAppController];
 }
 
 @end

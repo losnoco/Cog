@@ -15,5 +15,6 @@
 
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)showPathSuggester:(id)sender;
+- (IBAction)showRubberbandSettings:(id)sender;
 
 @end

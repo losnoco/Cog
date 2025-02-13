@@ -161,6 +161,7 @@
 		839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
 		839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */ = {isa = PBXBuildFile; fileRef = 839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */; };
+		839E876E2D5DA0AC00A13526 /* RubberbandEngineTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 839E876D2D5DA0AC00A13526 /* RubberbandEngineTransformer.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */; };
 		83AA7D04279EBCA900087AA4 /* libavcodec.61.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D00279EBC8200087AA4 /* libavcodec.61.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1001,6 +1002,8 @@
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		839E3B53286595D700880EA2 /* GeneralPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralPane.h; path = Preferences/Preferences/GeneralPane.h; sourceTree = "<group>"; };
 		839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SADIE_D02-96000.mhr"; sourceTree = "<group>"; };
+		839E876C2D5DA0AC00A13526 /* RubberbandEngineTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RubberbandEngineTransformer.h; path = Preferences/Preferences/RubberbandEngineTransformer.h; sourceTree = "<group>"; };
+		839E876D2D5DA0AC00A13526 /* RubberbandEngineTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RubberbandEngineTransformer.m; path = Preferences/Preferences/RubberbandEngineTransformer.m; sourceTree = "<group>"; };
 		83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ColorToValueTransformer.m; path = Preferences/Preferences/ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColorToValueTransformer.h; path = Preferences/Preferences/ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83AA7D00279EBC8200087AA4 /* libavcodec.61.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.61.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.61.dylib; sourceTree = "<group>"; };
@@ -1407,6 +1410,8 @@
 		17E0D5F60F520F42005B6FED /* Transformers */ = {
 			isa = PBXGroup;
 			children = (
+				839E876C2D5DA0AC00A13526 /* RubberbandEngineTransformer.h */,
+				839E876D2D5DA0AC00A13526 /* RubberbandEngineTransformer.m */,
 				83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */,
 				83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */,
 				17E0D6120F520F87005B6FED /* FontSizetoLineHeightTransformer.h */,
@@ -2559,6 +2564,7 @@
 				838A337D2D06C14200D0D770 /* TempoSlider.m in Sources */,
 				838A337E2D06C14200D0D770 /* PitchSlider.m in Sources */,
 				838A33832D06CF4100D0D770 /* SpectrumViewCG.m in Sources */,
+				839E876E2D5DA0AC00A13526 /* RubberbandEngineTransformer.m in Sources */,
 				838A33842D06CF4100D0D770 /* SpectrumWindowController.m in Sources */,
 				83B61E2829A82A0200CD0580 /* LyricsWindowController.m in Sources */,
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,

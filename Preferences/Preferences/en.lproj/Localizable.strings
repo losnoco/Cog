@@ -31,6 +31,7 @@
 "Volume scale tag only" = "Volume scale tag only";
 "Zero Order Hold" = "Zero Order Hold";
 "Rubber Band" = "Rubber Band";
+"EngineDisabled" = "Disabled";
 "EngineFaster" = "Faster";
 "EngineFiner" = "Finer";
 "TransientsCrisp" = "Crisp";

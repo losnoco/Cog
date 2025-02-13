@@ -10,7 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RubberbandEngineTransformer : NSValueTransformer
+@interface RubberbandEngineEnabledTransformer : NSValueTransformer
+
+@end
+
+@interface RubberbandEngineHiddenTransformer : NSValueTransformer
+
+@end
+
+@interface RubberbandEngineR3Transformer : NSValueTransformer
 
 @end
 

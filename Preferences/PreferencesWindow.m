@@ -167,6 +167,14 @@
 	}
 }
 
+- (void)showRubberbandSettings {
+	NSString *name = NSLocalizedPrefString(@"Rubber Band");
+
+	[self loadPaneNamed:name display:NO];
+
+	[self makeKeyAndOrderFront:self];
+}
+
 // Close on Esc pressed.
 - (void)cancelOperation:(id)sender {
 	[self close];
