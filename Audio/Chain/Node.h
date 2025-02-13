@@ -43,6 +43,9 @@
 - (AudioChunk *_Nonnull)readChunk:(size_t)maxFrames;
 - (AudioChunk *_Nonnull)readChunkAsFloat32:(size_t)maxFrames;
 
+- (AudioChunk *_Nonnull)readAndMergeChunks:(size_t)maxFrames;
+- (AudioChunk *_Nonnull)readAndMergeChunksAsFloat32:(size_t)maxFrames;
+
 - (BOOL)peekFormat:(AudioStreamBasicDescription *_Nonnull)format channelConfig:(uint32_t *_Nonnull)config;
 - (BOOL)peekTimestamp:(double *_Nonnull)timestamp timeRatio:(double *_Nonnull)timeRatio;
 

@@ -197,7 +197,7 @@ static const uint32_t AudioChannelConfigTable[] = {
 }
 
 - (double)duration {
-	if(formatAssigned) {
+	if(formatAssigned && [chunkData length]) {
 		const size_t bytesPerPacket = format.mBytesPerPacket;
 		const double sampleRate = format.mSampleRate;
 		return (double)([chunkData length] / bytesPerPacket) / sampleRate;

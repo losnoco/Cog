@@ -373,13 +373,6 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		return nil;
 	}
 
-	double streamTimestamp;
-	double streamTimeRatio;
-	if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
-		processEntered = NO;
-		return nil;
-	}
-
 	if(!ts || memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
 		lastInputFormat = inputFormat;
@@ -395,50 +388,25 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	if(samplesToProcess > blockSize)
 		samplesToProcess = blockSize;
 
-	size_t totalFrameCount = 0;
-	AudioChunk *chunk;
-	int channels = (int)(inputFormat.mChannelsPerFrame);
-
-	BOOL isHDCD = NO;
-
-	while(!stopping && totalFrameCount < samplesToProcess) {
-		AudioStreamBasicDescription newInputFormat;
-		uint32_t newChannelConfig;
-		if(![self peekFormat:&newInputFormat channelConfig:&newChannelConfig] ||
-		   memcmp(&newInputFormat, &inputFormat, sizeof(newInputFormat)) != 0 ||
-		   newChannelConfig != inputChannelConfig) {
-			break;
-		}
-
-		chunk = [self readChunkAsFloat32:samplesToProcess - totalFrameCount];
-		if(!chunk) {
-			break;
-		}
-
-		if([chunk isHDCD]) {
-			isHDCD = YES;
-		}
-
-		size_t frameCount = [chunk frameCount];
-		NSData *sampleData = [chunk removeSamples:frameCount];
-
-		for (size_t i = 0; i < channels; ++i) {
-			cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsPtrs[i] + totalFrameCount, 1);
-		}
-
-		totalFrameCount += frameCount;
-	}
-
-	if(!totalFrameCount) {
+	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
+	if(![chunk duration]) {
 		processEntered = NO;
 		return nil;
+	}
+
+	double streamTimestamp = [chunk streamTimestamp];
+
+	int channels = (int)(inputFormat.mChannelsPerFrame);
+	size_t frameCount = [chunk frameCount];
+	NSData *sampleData = [chunk removeSamples:frameCount];
+
+	for (size_t i = 0; i < channels; ++i) {
+		cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsPtrs[i], 1);
 	}
 
 	stretchIn += [chunk duration] / tempo;
 
 	bool endOfStream = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
-
-	size_t frameCount = totalFrameCount;
 
 	int len = (int)frameCount;
 
@@ -492,9 +460,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		if(inputChannelConfig) {
 			[outputChunk setChannelConfig:inputChannelConfig];
 		}
-		if(isHDCD) [outputChunk setHDCD];
+		if([chunk isHDCD]) [outputChunk setHDCD];
 		[outputChunk setStreamTimestamp:streamTimestamp];
-		[outputChunk setStreamTimeRatio:streamTimeRatio * tempo];
+		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio] * tempo];
 		[outputChunk assignSamples:rsOutBuffer frameCount:samplesBuffered];
 		samplesBuffered = 0;
 		stretchOut += [outputChunk duration];

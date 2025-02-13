@@ -173,13 +173,6 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		return nil;
 	}
 
-	double streamTimestamp;
-	double streamTimeRatio;
-	if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
-		processEntered = NO;
-		return nil;
-	}
-
 	if((enableFSurround && !fsurround) ||
 	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
@@ -200,42 +193,22 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	size_t totalRequestedSamples = resetStreamFormat ? 2048 : 4096;
 
 	size_t totalFrameCount = 0;
-	AudioChunk *chunk;
-
-	float *samplePtr = resetStreamFormat ? &inBuffer[2048 * 2] : &inBuffer[0];
-
-	BOOL isHDCD = NO;
-
-	while(!stopping && totalFrameCount < totalRequestedSamples) {
-		AudioStreamBasicDescription newInputFormat;
-		uint32_t newChannelConfig;
-		if(![self peekFormat:&newInputFormat channelConfig:&newChannelConfig] ||
-		   memcmp(&newInputFormat, &inputFormat, sizeof(newInputFormat)) != 0 ||
-		   newChannelConfig != inputChannelConfig) {
-			break;
-		}
-
-		chunk = [self readChunkAsFloat32:totalRequestedSamples - totalFrameCount];
-		if(!chunk) {
-			break;
-		}
-
-		if([chunk isHDCD]) {
-			isHDCD = YES;
-		}
-
-		size_t frameCount = [chunk frameCount];
-		NSData *sampleData = [chunk removeSamples:frameCount];
-
-		cblas_scopy((int)frameCount * 2, [sampleData bytes], 1, &samplePtr[totalFrameCount * 2], 1);
-
-		totalFrameCount += frameCount;
-	}
-
-	if(!totalFrameCount) {
+	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:totalRequestedSamples];
+	if(![chunk duration]) {
 		processEntered = NO;
 		return nil;
 	}
+
+	double streamTimestamp = [chunk streamTimestamp];
+
+	float *samplePtr = resetStreamFormat ? &inBuffer[2048 * 2] : &inBuffer[0];
+
+	size_t frameCount = [chunk frameCount];
+	NSData *sampleData = [chunk removeSamples:frameCount];
+
+	cblas_scopy((int)frameCount * 2, [sampleData bytes], 1, &samplePtr[0], 1);
+
+	totalFrameCount = frameCount;
 
 	if(resetStreamFormat) {
 		bzero(&inBuffer[0], 2048 * 2 * sizeof(float));
@@ -275,9 +248,9 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		if(outputChannelConfig) {
 			[outputChunk setChannelConfig:outputChannelConfig];
 		}
-		if(isHDCD) [outputChunk setHDCD];
+		if([chunk isHDCD]) [outputChunk setHDCD];
 		[outputChunk setStreamTimestamp:streamTimestamp];
-		[outputChunk setStreamTimeRatio:streamTimeRatio];
+		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
 		[outputChunk assignSamples:samplePtr frameCount:samplesRendered];
 	}
 

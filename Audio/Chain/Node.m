@@ -239,6 +239,76 @@
 	return ret;
 }
 
+- (AudioChunk *)readAndMergeChunks:(size_t)maxFrames {
+	[accessLock lock];
+
+	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
+		endOfStream = YES;
+		[accessLock unlock];
+		return [[AudioChunk alloc] init];
+	}
+
+	if([previousNode shouldReset] == YES) {
+		@autoreleasepool {
+			[buffer reset];
+		}
+
+		shouldReset = YES;
+		[previousNode setShouldReset:NO];
+
+		[[previousNode semaphore] signal];
+	}
+
+	AudioChunk *ret;
+
+	@autoreleasepool {
+		ret = [[previousNode buffer] removeAndMergeSamples:maxFrames];
+	}
+
+	[accessLock unlock];
+
+	if([ret frameCount]) {
+		[[previousNode semaphore] signal];
+	}
+
+	return ret;
+}
+
+- (AudioChunk *)readAndMergeChunksAsFloat32:(size_t)maxFrames {
+	[accessLock lock];
+
+	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
+		endOfStream = YES;
+		[accessLock unlock];
+		return [[AudioChunk alloc] init];
+	}
+
+	if([previousNode shouldReset] == YES) {
+		@autoreleasepool {
+			[buffer reset];
+		}
+
+		shouldReset = YES;
+		[previousNode setShouldReset:NO];
+
+		[[previousNode semaphore] signal];
+	}
+
+	AudioChunk *ret;
+
+	@autoreleasepool {
+		ret = [[previousNode buffer] removeAndMergeSamplesAsFloat32:maxFrames];
+	}
+
+	[accessLock unlock];
+
+	if([ret frameCount]) {
+		[[previousNode semaphore] signal];
+	}
+
+	return ret;
+}
+
 - (void)launchThread {
 	[NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
 }
