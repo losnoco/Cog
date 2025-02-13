@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 	BOOL inAdder;
 	BOOL inRemover;
 	BOOL inPeeker;
+	BOOL inMerger;
+	BOOL inConverter;
 	BOOL stopping;
 	
 	// For format converter

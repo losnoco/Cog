@@ -241,7 +241,7 @@ static void unregisterMotionListener(void) {
 - (void)cleanUp {
 	stopping = YES;
 	while(processEntered) {
-		usleep(1000);
+		usleep(500);
 	}
 	[self fullShutdown];
 }
@@ -265,7 +265,7 @@ static void unregisterMotionListener(void) {
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk || ![chunk duration]) {
+			if(!chunk || ![chunk frameCount]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
@@ -328,7 +328,7 @@ static void unregisterMotionListener(void) {
 	}
 
 	AudioChunk *chunk = [self readChunkAsFloat32:4096];
-	if(!chunk || ![chunk duration]) {
+	if(!chunk || ![chunk frameCount]) {
 		processEntered = NO;
 		return nil;
 	}

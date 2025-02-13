@@ -259,13 +259,13 @@
 		[[previousNode semaphore] signal];
 	}
 
+	[accessLock unlock];
+
 	AudioChunk *ret;
 
 	@autoreleasepool {
 		ret = [[previousNode buffer] removeAndMergeSamples:maxFrames];
 	}
-
-	[accessLock unlock];
 
 	if([ret frameCount]) {
 		[[previousNode semaphore] signal];
@@ -294,13 +294,13 @@
 		[[previousNode semaphore] signal];
 	}
 
+	[accessLock unlock];
+
 	AudioChunk *ret;
 
 	@autoreleasepool {
 		ret = [[previousNode buffer] removeAndMergeSamplesAsFloat32:maxFrames];
 	}
-
-	[accessLock unlock];
 
 	if([ret frameCount]) {
 		[[previousNode semaphore] signal];

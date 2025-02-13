@@ -101,7 +101,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk || ![chunk duration]) {
+			if(!chunk || ![chunk frameCount]) {
 				if([self endOfStream] == YES) {
 					break;
 				}

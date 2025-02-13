@@ -159,7 +159,7 @@ static const uint32_t AudioChannelConfigTable[] = {
 	channelConfig = config;
 }
 
-- (void)assignSamples:(const void *)data frameCount:(size_t)count {
+- (void)assignSamples:(const void *_Nonnull)data frameCount:(size_t)count {
 	if(formatAssigned) {
 		const size_t bytesPerPacket = format.mBytesPerPacket;
 		[chunkData appendBytes:data length:bytesPerPacket * count];

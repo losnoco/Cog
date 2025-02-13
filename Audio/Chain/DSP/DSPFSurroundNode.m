@@ -22,18 +22,17 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 @implementation DSPFSurroundNode {
 	BOOL enableFSurround;
 	BOOL FSurroundDelayRemoved;
-	BOOL resetStreamFormat;
 	FSurroundFilter *fsurround;
-	
+
 	BOOL stopping, paused;
 	BOOL processEntered;
-	
+
 	BOOL observersapplied;
-	
+
 	AudioStreamBasicDescription lastInputFormat;
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription outputFormat;
-	
+
 	uint32_t lastInputChannelConfig, inputChannelConfig;
 	uint32_t outputChannelConfig;
 
@@ -96,7 +95,6 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		outputChannelConfig = [fsurround channelConfig];
 
 		FSurroundDelayRemoved = NO;
-		resetStreamFormat = YES;
 	} else {
 		fsurround = nil;
 	}
@@ -118,7 +116,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 - (void)cleanUp {
 	stopping = YES;
 	while(processEntered) {
-		usleep(1000);
+		usleep(500);
 	}
 	[self fullShutdown];
 }
@@ -142,7 +140,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk || ![chunk duration]) {
+			if(!chunk || ![chunk frameCount]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
@@ -204,18 +202,18 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		return [self readChunk:4096];
 	}
 
-	size_t totalRequestedSamples = resetStreamFormat ? 2048 : 4096;
+	size_t totalRequestedSamples = 4096;
 
 	size_t totalFrameCount = 0;
 	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:totalRequestedSamples];
-	if(![chunk duration]) {
+	if(!chunk || ![chunk frameCount]) {
 		processEntered = NO;
 		return nil;
 	}
 
 	double streamTimestamp = [chunk streamTimestamp];
 
-	float *samplePtr = resetStreamFormat ? &inBuffer[2048 * 2] : &inBuffer[0];
+	float *samplePtr = &inBuffer[0];
 
 	size_t frameCount = [chunk frameCount];
 	NSData *sampleData = [chunk removeSamples:frameCount];
@@ -224,12 +222,6 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 
 	totalFrameCount = frameCount;
 
-	if(resetStreamFormat) {
-		bzero(&inBuffer[0], 2048 * 2 * sizeof(float));
-		totalFrameCount += 2048;
-		resetStreamFormat = NO;
-	}
-	
 	size_t countToProcess = totalFrameCount;
 	size_t samplesRendered;
 	if(countToProcess < 4096) {
@@ -237,8 +229,8 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		countToProcess = 4096;
 	}
 
-	[fsurround process:&inBuffer[0] output:&outBuffer[4096 * 6] count:(int)countToProcess];
-	samplePtr = &outBuffer[4096 * 6];
+	[fsurround process:&inBuffer[0] output:&outBuffer[0] count:(int)countToProcess];
+	samplePtr = &outBuffer[0];
 	samplesRendered = totalFrameCount;
 
 	if(totalFrameCount < 4096) {
