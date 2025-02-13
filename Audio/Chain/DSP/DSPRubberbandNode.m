@@ -11,6 +11,8 @@
 
 #import "DSPRubberbandNode.h"
 
+#import "Logging.h"
+
 #import <rubberband/rubberband-c.h>
 
 static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
@@ -60,6 +62,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 }
 
 - (void)dealloc {
+	DLog(@"Rubber Band dealloc");
 	[self cleanUp];
 	[self removeObservers];
 }
@@ -343,13 +346,14 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk) {
+			if(!chunk || ![chunk duration]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
 				if(paused) {
 					continue;
 				}
+				usleep(500);
 			} else {
 				[self writeChunk:chunk];
 				chunk = nil;
@@ -381,13 +385,23 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		return nil;
 	}
 
+	if(!inputFormat.mSampleRate ||
+	   !inputFormat.mBitsPerChannel ||
+	   !inputFormat.mChannelsPerFrame ||
+	   !inputFormat.mBytesPerFrame ||
+	   !inputFormat.mFramesPerPacket ||
+	   !inputFormat.mBytesPerPacket) {
+		processEntered = NO;
+		return nil;
+	}
+
 	if((enableRubberband && !ts) ||
 	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
 		lastInputFormat = inputFormat;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
-		if(![self setup]) {
+		if(enableRubberband && ![self setup]) {
 			processEntered = NO;
 			return nil;
 		}
