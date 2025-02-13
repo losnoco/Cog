@@ -545,9 +545,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		_deviceFormat = format;
 		deviceFormat = *(format.streamDescription);
 
-		// Force format for HRTF
-		deviceFormat.mSampleRate = 96000.0;
-
 		/// Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
 		deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
 		//    deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
