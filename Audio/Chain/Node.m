@@ -264,7 +264,9 @@
 	AudioChunk *ret;
 
 	@autoreleasepool {
-		ret = [[previousNode buffer] removeAndMergeSamples:maxFrames];
+		ret = [[previousNode buffer] removeAndMergeSamples:maxFrames callBlock:^BOOL{
+			return [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
+		}];
 	}
 
 	if([ret frameCount]) {
@@ -299,7 +301,9 @@
 	AudioChunk *ret;
 
 	@autoreleasepool {
-		ret = [[previousNode buffer] removeAndMergeSamplesAsFloat32:maxFrames];
+		ret = [[previousNode buffer] removeAndMergeSamplesAsFloat32:maxFrames callBlock:^BOOL{
+			return [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
+		}];
 	}
 
 	if([ret frameCount]) {
