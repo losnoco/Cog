@@ -18,6 +18,7 @@
 
 	int bufferSize;
 	int paddedBufferSize;
+	double sampleRate;
 	int channelCount;
 	uint32_t config;
 
