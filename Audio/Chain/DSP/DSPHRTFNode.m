@@ -127,6 +127,7 @@ static void unregisterMotionListener(void) {
 }
 
 - (void)dealloc {
+	DLog(@"HRTF dealloc");
 	[self cleanUp];
 	[self removeObservers];
 }
@@ -264,13 +265,14 @@ static void unregisterMotionListener(void) {
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk) {
+			if(!chunk || ![chunk duration]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
 				if(paused) {
 					continue;
 				}
+				usleep(500);
 			} else {
 				[self writeChunk:chunk];
 				chunk = nil;
@@ -298,13 +300,23 @@ static void unregisterMotionListener(void) {
 		return nil;
 	}
 
+	if(!inputFormat.mSampleRate ||
+	   !inputFormat.mBitsPerChannel ||
+	   !inputFormat.mChannelsPerFrame ||
+	   !inputFormat.mBytesPerFrame ||
+	   !inputFormat.mFramesPerPacket ||
+	   !inputFormat.mBytesPerPacket) {
+		processEntered = NO;
+		return nil;
+	}
+
 	if((enableHrtf && !hrtf) ||
 	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
 		lastInputFormat = inputFormat;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
-		if(![self setup]) {
+		if(enableHrtf && ![self setup]) {
 			processEntered = NO;
 			return nil;
 		}
@@ -316,7 +328,7 @@ static void unregisterMotionListener(void) {
 	}
 
 	AudioChunk *chunk = [self readChunkAsFloat32:4096];
-	if(!chunk) {
+	if(!chunk || ![chunk duration]) {
 		processEntered = NO;
 		return nil;
 	}

@@ -16,6 +16,8 @@
 
 #import "BufferChain.h"
 
+#import "Logging.h"
+
 #import "AudioPlayer.h"
 
 extern void scale_by_volume(float *buffer, size_t count, float volume);
@@ -152,6 +154,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 }
 
 - (void)dealloc {
+	DLog(@"Equalizer dealloc");
 	[self cleanUp];
 	[self removeObservers];
 }
@@ -320,13 +323,14 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk) {
+			if(!chunk || ![chunk duration]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
 				if(paused) {
 					continue;
 				}
+				usleep(500);
 			} else {
 				[self writeChunk:chunk];
 				chunk = nil;
@@ -354,13 +358,23 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		return nil;
 	}
 
+	if(!inputFormat.mSampleRate ||
+	   !inputFormat.mBitsPerChannel ||
+	   !inputFormat.mChannelsPerFrame ||
+	   !inputFormat.mBytesPerFrame ||
+	   !inputFormat.mFramesPerPacket ||
+	   !inputFormat.mBytesPerPacket) {
+		processEntered = NO;
+		return nil;
+	}
+
 	if((enableEqualizer && !equalizerInitialized) ||
 	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
 		lastInputFormat = inputFormat;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
-		if(![self setup]) {
+		if(enableEqualizer && ![self setup]) {
 			processEntered = NO;
 			return nil;
 		}

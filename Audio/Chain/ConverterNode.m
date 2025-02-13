@@ -101,13 +101,14 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk) {
+			if(!chunk || ![chunk duration]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
 				if(paused || !streamFormatChanged) {
 					continue;
 				}
+				usleep(500);
 			} else {
 				[self writeChunk:chunk];
 				chunk = nil;
@@ -472,7 +473,7 @@ static float db_to_scale(float db) {
 }
 
 - (void)dealloc {
-	DLog(@"Decoder dealloc");
+	DLog(@"Converter dealloc");
 
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling" context:kConverterNodeContext];
 

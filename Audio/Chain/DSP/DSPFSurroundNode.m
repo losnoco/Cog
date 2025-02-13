@@ -11,6 +11,8 @@
 
 #import "DSPFSurroundNode.h"
 
+#import "Logging.h"
+
 #import "FSurroundFilter.h"
 
 #define OCTAVES 5
@@ -51,6 +53,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 }
 
 - (void)dealloc {
+	DLog(@"FreeSurround dealloc");
 	[self cleanUp];
 	[self removeObservers];
 }
@@ -139,13 +142,14 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk) {
+			if(!chunk || ![chunk duration]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
 				if(paused) {
 					continue;
 				}
+				usleep(500);
 			} else {
 				[self writeChunk:chunk];
 				chunk = nil;
@@ -173,13 +177,23 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		return nil;
 	}
 
+	if(!inputFormat.mSampleRate ||
+	   !inputFormat.mBitsPerChannel ||
+	   !inputFormat.mChannelsPerFrame ||
+	   !inputFormat.mBytesPerFrame ||
+	   !inputFormat.mFramesPerPacket ||
+	   !inputFormat.mBytesPerPacket) {
+		processEntered = NO;
+		return nil;
+	}
+
 	if((enableFSurround && !fsurround) ||
 	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
 		lastInputFormat = inputFormat;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
-		if(![self setup]) {
+		if(enableFSurround && ![self setup]) {
 			processEntered = NO;
 			return nil;
 		}
