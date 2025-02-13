@@ -385,8 +385,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		return [self readChunk:4096];
 	}
 
-	size_t totalFrameCount = 0;
-	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:4096];
+	AudioChunk *chunk = [self readChunkAsFloat32:4096];
 	if(!chunk || ![chunk frameCount]) {
 		processEntered = NO;
 		return nil;
@@ -409,7 +408,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	ioData->mNumberBuffers = (UInt32)channels;
 	for(size_t i = 0; i < channels; ++i) {
 		ioData->mBuffers[i].mData = &eqBuffer[4096 * i];
-		ioData->mBuffers[i].mDataByteSize = (UInt32)(totalFrameCount * sizeof(float));
+		ioData->mBuffers[i].mDataByteSize = (UInt32)(frameCount * sizeof(float));
 		ioData->mBuffers[i].mNumberChannels = 1;
 	}
 
@@ -428,7 +427,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 	AudioChunk *outputChunk = nil;
 	if(frameCount) {
-		scale_by_volume(&outBuffer[0], totalFrameCount * channels, equalizerPreamp);
+		scale_by_volume(&outBuffer[0], frameCount * channels, equalizerPreamp);
 
 		outputChunk = [[AudioChunk alloc] init];
 		[outputChunk setFormat:inputFormat];
@@ -438,7 +437,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		if([chunk isHDCD]) [outputChunk setHDCD];
 		[outputChunk setStreamTimestamp:streamTimestamp];
 		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
-		[outputChunk assignSamples:&outBuffer[0] frameCount:totalFrameCount];
+		[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];
 	}
 
 	processEntered = NO;
