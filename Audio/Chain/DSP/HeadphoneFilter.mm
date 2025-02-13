@@ -14,7 +14,7 @@
 
 #import <fstream>
 
-#import "rsstate.h"
+#import <soxr.h>
 
 #import "HrtfData.h"
 
@@ -125,7 +125,7 @@ static void transformPosition(float &elevation, float &azimuth, const simd_float
 	HrtfData *data;
 }
 + (impulseSetCache *)sharedController;
-- (void)getImpulse:(NSURL *)url outImpulse:(float **)outImpulse outSampleCount:(int *)outSampleCount channelCount:(int)channelCount channelConfig:(uint32_t)channelConfig withMatrix:(simd_float4x4)matrix;
+- (void)getImpulse:(NSURL *)url outImpulse:(float **)outImpulse outSampleCount:(int *)outSampleCount sampleRate:(double)sampleRate channelCount:(int)channelCount channelConfig:(uint32_t)channelConfig withMatrix:(simd_float4x4)matrix;
 @end
 
 @implementation impulseSetCache
@@ -152,7 +152,7 @@ static impulseSetCache *_sharedController = nil;
 	delete data;
 }
 
-- (void)getImpulse:(NSURL *)url outImpulse:(float **)outImpulse outSampleCount:(int *)outSampleCount channelCount:(int)channelCount channelConfig:(uint32_t)channelConfig withMatrix:(simd_float4x4)matrix {
+- (void)getImpulse:(NSURL *)url outImpulse:(float **)outImpulse outSampleCount:(int *)outSampleCount sampleRate:(double)sampleRate channelCount:(int)channelCount channelConfig:(uint32_t)channelConfig withMatrix:(simd_float4x4)matrix {
 	double sampleRateOfSource = 0;
 	int sampleCount = 0;
 
@@ -174,13 +174,27 @@ static impulseSetCache *_sharedController = nil;
 	}
 
 	try {
-		sampleRateOfSource = data->get_sample_rate();
+		soxr_quality_spec_t q_spec = soxr_quality_spec(SOXR_HQ, 0);
+		soxr_io_spec_t io_spec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
+		soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(0);
 
+		bool resampling;
+
+		sampleRateOfSource = data->get_sample_rate();
+		resampling = !!(fabs(sampleRateOfSource - sampleRate) > 1e-6);
+
+		uint32_t sampleCountResampled;
 		uint32_t sampleCountExact = data->get_response_length();
 		sampleCount = sampleCountExact + ((data->get_longest_delay() + 2) >> 2);
-		sampleCount = (sampleCount + 15) & ~15;
 
-		*outImpulse = (float *)calloc(sizeof(float), sampleCount * channelCount * 2);
+		uint32_t actualSampleCount = sampleCount;
+		if(resampling) {
+			sampleCountResampled = (uint32_t)(((double)sampleCountExact) * sampleRate / sampleRateOfSource);
+			actualSampleCount = (uint32_t)(((double)actualSampleCount) * sampleRate / sampleRateOfSource);
+		}
+		actualSampleCount = (actualSampleCount + 15) & ~15;
+
+		*outImpulse = (float *)calloc(sizeof(float), actualSampleCount * channelCount * 2);
 		if(!*outImpulse) {
 			throw std::bad_alloc();
 		}
@@ -202,12 +216,17 @@ static impulseSetCache *_sharedController = nil;
 
 				data->get_direction_data(elevation, azimuth, speaker.distance, hrtfLeft, hrtfRight);
 
-				cblas_scopy(sampleCountExact, &hrtfLeft.impulse_response[0], 1, &hrtfData[((hrtfLeft.delay + 2) >> 2) + sampleCount * i * 2], 1);
-				cblas_scopy(sampleCountExact, &hrtfRight.impulse_response[0], 1, &hrtfData[((hrtfLeft.delay + 2) >> 2) + sampleCount * (i * 2 + 1)], 1);
+				if(resampling) {
+					soxr_oneshot(sampleRateOfSource, sampleRate, 1, &hrtfLeft.impulse_response[0], sampleCountExact, NULL, &hrtfData[((hrtfLeft.delay + 2) >> 2) + actualSampleCount * i * 2], sampleCountResampled, NULL, &io_spec, &q_spec, &runtime_spec);
+					soxr_oneshot(sampleRateOfSource, sampleRate, 1, &hrtfRight.impulse_response[0], sampleCountExact, NULL, &hrtfData[((hrtfRight.delay + 2) >> 2) + actualSampleCount * (i * 2 + 1)], sampleCountResampled, NULL, &io_spec, &q_spec, &runtime_spec);
+				} else {
+					cblas_scopy(sampleCountExact, &hrtfLeft.impulse_response[0], 1, &hrtfData[((hrtfLeft.delay + 2) >> 2) + actualSampleCount * i * 2], 1);
+					cblas_scopy(sampleCountExact, &hrtfRight.impulse_response[0], 1, &hrtfData[((hrtfRight.delay + 2) >> 2) + actualSampleCount * (i * 2 + 1)], 1);
+				}
 			}
 		}
 
-		*outSampleCount = sampleCount;
+		*outSampleCount = actualSampleCount;
 	} catch(std::exception &e) {
 		ALog(@"Exception caught: %s", e.what());
 	}
@@ -242,12 +261,13 @@ static impulseSetCache *_sharedController = nil;
 
 	if(self) {
 		URL = url;
+		self->sampleRate = sampleRate;
 		channelCount = channels;
 		self->config = config;
 
 		float *impulseBuffer = NULL;
 		int sampleCount = 0;
-		[[impulseSetCache sharedController] getImpulse:url outImpulse:&impulseBuffer outSampleCount:&sampleCount channelCount:channels channelConfig:config withMatrix:matrix];
+		[[impulseSetCache sharedController] getImpulse:url outImpulse:&impulseBuffer outSampleCount:&sampleCount sampleRate:sampleRate channelCount:channels channelConfig:config withMatrix:matrix];
 		if(!impulseBuffer) {
 			return nil;
 		}
@@ -315,7 +335,7 @@ static impulseSetCache *_sharedController = nil;
 
 		float *impulseBuffer = NULL;
 		int sampleCount = 0;
-		[[impulseSetCache sharedController] getImpulse:URL outImpulse:&impulseBuffer outSampleCount:&sampleCount channelCount:channelCount channelConfig:config withMatrix:matrix];
+		[[impulseSetCache sharedController] getImpulse:URL outImpulse:&impulseBuffer outSampleCount:&sampleCount sampleRate:sampleRate channelCount:channelCount channelConfig:config withMatrix:matrix];
 
 		for(int i = 0; i < channelCount * 2; ++i) {
 			mirroredImpulseResponses[i] = &impulseBuffer[sampleCount * i];
