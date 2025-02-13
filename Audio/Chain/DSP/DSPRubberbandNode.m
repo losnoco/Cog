@@ -16,6 +16,8 @@
 static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 @implementation DSPRubberbandNode {
+	BOOL enableRubberband;
+
 	RubberBandState ts;
 	RubberBandOptions tslastoptions, tsnewoptions;
 	size_t blockSize, toDrop, samplesBuffered, tschannels;
@@ -44,6 +46,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	self = [super initWithController:c previous:p latency:latency];
 	if(self) {
 		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
+		enableRubberband = ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"disabled"];
+
 		pitch = [defaults doubleForKey:@"pitch"];
 		tempo = [defaults doubleForKey:@"tempo"];
 
@@ -106,7 +110,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		tempo = [defaults doubleForKey:@"tempo"];
 		tsapplynewoptions = YES;
 	} else if([[keyPath substringToIndex:17] isEqualToString:@"values.rubberband"]) {
-		if(ts) {
+		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
+		enableRubberband = ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"disabled"];
+		if(enableRubberband && ts) {
 			RubberBandOptions options = [self getRubberbandOptions];
 			RubberBandOptions changed = options ^ tslastoptions;
 			if(changed) {
@@ -348,7 +354,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 				[self writeChunk:chunk];
 				chunk = nil;
 			}
-			if(tsrestartengine) {
+			if(!enableRubberband && ts) {
+				[self fullShutdown];
+			} else if(tsrestartengine) {
 				[self fullShutdown];
 			} else if(tsapplynewoptions) {
 				[self partialInit];
@@ -373,7 +381,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		return nil;
 	}
 
-	if(!ts || memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
+	if((enableRubberband && !ts) ||
+	   memcmp(&inputFormat, &lastInputFormat, sizeof(inputFormat)) != 0 ||
 	   inputChannelConfig != lastInputChannelConfig) {
 		lastInputFormat = inputFormat;
 		lastInputChannelConfig = inputChannelConfig;
@@ -382,6 +391,11 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			processEntered = NO;
 			return nil;
 		}
+	}
+
+	if(!ts) {
+		processEntered = NO;
+		return [self readChunk:4096];
 	}
 
 	size_t samplesToProcess = rubberband_get_samples_required(ts);

@@ -45,6 +45,8 @@
 - (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
 
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"EngineDisabled", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"disabled"}];
+
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"EngineFaster", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"faster"}];
 
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"EngineFiner", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"finer"}];

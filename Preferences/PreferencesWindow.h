@@ -23,5 +23,6 @@
 
 - (void)show;
 - (void)showPathSuggester;
+- (void)showRubberbandSettings;
 
 @end

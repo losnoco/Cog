@@ -27,9 +27,13 @@
 	[NSValueTransformer setValueTransformer:timeIntervalToStringTransformer
 	                                forName:@"TimeIntervalToStringTransformer"];
 
-	NSValueTransformer *rubberbandEngineTransformer = [[RubberbandEngineTransformer alloc] init];
-	[NSValueTransformer setValueTransformer:rubberbandEngineTransformer
-									forName:@"RubberbandEngineTransformer"];
+	NSValueTransformer *rubberbandEngineR3Transformer = [[RubberbandEngineR3Transformer alloc] init];
+	[NSValueTransformer setValueTransformer:rubberbandEngineR3Transformer
+									forName:@"RubberbandEngineR3Transformer"];
+
+	NSValueTransformer *rubberbandEngineEnabledTransformer = [[RubberbandEngineEnabledTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:rubberbandEngineEnabledTransformer
+									forName:@"RubberbandEngineEnabledTransformer"];
 }
 
 + (NSArray *)preferencePanes {
