@@ -103,6 +103,8 @@ enum {
 - (BOOL)isHDCD;
 - (void)setHDCD;
 
+- (AudioChunk *)copy;
+
 @end
 
 NS_ASSUME_NONNULL_END
