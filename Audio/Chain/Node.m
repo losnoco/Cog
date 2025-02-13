@@ -81,7 +81,7 @@
 	while(shouldContinue == YES && durationLeft <= 0.0) {
 		if(durationLeft <= 0.0 || shouldReset) {
 			[accessLock unlock];
-			[semaphore timedWait:500];
+			[semaphore wait];
 			[accessLock lock];
 		}
 
@@ -115,7 +115,7 @@
 
 		if(durationLeft <= 0.0 || shouldReset) {
 			[accessLock unlock];
-			[semaphore timedWait:500];
+			[semaphore wait];
 			[accessLock lock];
 		}
 
