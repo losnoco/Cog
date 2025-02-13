@@ -43,7 +43,7 @@
 
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
-	rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:converterNode latency:0.03];
+	rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:converterNode latency:0.1];
 	fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
 	equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
 	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
