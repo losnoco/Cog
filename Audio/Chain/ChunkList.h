@@ -76,8 +76,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)peekTimestamp:(nonnull double *)timestamp timeRatio:(nonnull double *)timeRatio;
 
 // Helpers
-- (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount;
-- (AudioChunk *)removeAndMergeSamplesAsFloat32:(size_t)maxFrameCount;
+- (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block;
+- (AudioChunk *)removeAndMergeSamplesAsFloat32:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block;
 
 @end
 

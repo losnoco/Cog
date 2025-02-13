@@ -556,7 +556,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	}
 }
 
-- (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount {
+- (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block {
 	if(stopping) {
 		return [[AudioChunk alloc] init];
 	}
@@ -585,6 +585,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		AudioStreamBasicDescription newFormat;
 		uint32_t newChannelConfig;
 		if(![self peekFormat:&newFormat channelConfig:&newChannelConfig]) {
+			if(block()) {
+				break;
+			}
 			usleep(500);
 			continue;
 		}
@@ -602,6 +605,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 		chunk = [self removeSamples:maxFrameCount - totalFrameCount];
 		if(!chunk || ![chunk frameCount]) {
+			if(block()) {
+				break;
+			}
 			usleep(500);
 			continue;
 		}
@@ -627,8 +633,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	return outputChunk;
 }
 
-- (AudioChunk *)removeAndMergeSamplesAsFloat32:(size_t)maxFrameCount {
-	AudioChunk *ret = [self removeAndMergeSamples:maxFrameCount];
+- (AudioChunk *)removeAndMergeSamplesAsFloat32:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block {
+	AudioChunk *ret = [self removeAndMergeSamples:maxFrameCount callBlock:block];
 	return [self convertChunk:ret];
 }
 
