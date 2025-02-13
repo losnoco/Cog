@@ -41,16 +41,6 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 		uint32_t origConfig = config;
 		origFormat = format;
 
-		UInt32 srcChannels = format.mChannelsPerFrame;
-		UInt32 dstChannels = deviceFormat.mChannelsPerFrame;
-		if(srcChannels != dstChannels) {
-			format.mChannelsPerFrame = dstChannels;
-			format.mBytesPerFrame = ((format.mBitsPerChannel + 7) / 8) * dstChannels;
-			format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
-			downmixer = [[DownmixProcessor alloc] initWithInputFormat:origFormat inputConfig:origConfig andOutputFormat:format outputConfig:deviceChannelConfig];
-		} else {
-			downmixer = nil;
-		}
 		if(!streamFormatStarted || config != realStreamChannelConfig || memcmp(&realStreamFormat, &format, sizeof(format)) != 0) {
 			realStreamFormat = format;
 			realStreamChannelConfig = config;
@@ -598,18 +588,13 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	samplePtr = &inputBuffer[0];
 
-	if(samplesRendered) {
-		if(downmixer) {
-			[downmixer process:samplePtr frameCount:samplesRendered output:&downmixBuffer[0]];
-			samplePtr = &downmixBuffer[0];
-		}
-
 #ifdef OUTPUT_LOG
+	if(samplesRendered) {
 		size_t dataByteSize = samplesRendered * sizeof(float) * deviceFormat.mChannelsPerFrame;
 
 		fwrite(samplePtr, 1, dataByteSize, _logFile);
-#endif
 	}
+#endif
 
 	return samplesRendered;
 }
@@ -686,8 +671,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		paused = NO;
 		outputDeviceID = -1;
 		restarted = NO;
-
-		downmixer = nil;
 
 		lastClippedSampleRate = 0.0;
 
@@ -854,6 +837,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)setShouldPlayOutBuffer:(BOOL)s {
 	shouldPlayOutBuffer = s;
+}
+
+- (AudioStreamBasicDescription)deviceFormat {
+	return deviceFormat;
+}
+
+- (uint32_t)deviceChannelConfig {
+	return deviceChannelConfig;
 }
 
 @end

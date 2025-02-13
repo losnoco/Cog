@@ -136,6 +136,14 @@
 	return config;
 }
 
+- (AudioStreamBasicDescription)deviceFormat {
+	return [output deviceFormat];
+}
+
+- (uint32_t)deviceChannelConfig {
+	return [output deviceChannelConfig];
+}
+
 - (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig {
 	format = *f;
 	config = channelConfig;
@@ -160,6 +168,10 @@
 
 			[converter setOutputFormat:format];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
+		}
+		DSPDownmixNode *downmix = [bufferChain downmix];
+		if(downmix && output) {
+			[downmix setOutputFormat:[output deviceFormat] withChannelConfig:[output deviceChannelConfig]];
 		}
 	}
 }

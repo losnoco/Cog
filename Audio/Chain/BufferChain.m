@@ -11,6 +11,8 @@
 #import "CoreAudioUtils.h"
 #import "OutputNode.h"
 
+#import "AudioPlayer.h"
+
 #import "Logging.h"
 
 @implementation BufferChain
@@ -30,6 +32,7 @@
 		fsurroundNode = nil;
 		equalizerNode = nil;
 		hrtfNode = nil;
+		downmixNode = nil;
 
 		visualizationNode = nil;
 	}
@@ -47,9 +50,10 @@
 	fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
 	equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
 	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
+	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
 
 	// Approximately five frames
-	visualizationNode = [[VisualizationNode alloc] initWithController:self previous:hrtfNode latency:5.0 / 60.0];
+	visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:5.0 / 60.0];
 
 	finalNode = visualizationNode;
 }
@@ -86,6 +90,7 @@
 
 	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
+	[self initDownmixer];
 
 	[self setRGInfo:rgi];
 
@@ -116,6 +121,7 @@
 	DLog(@"Input Properties: %@", properties);
 	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
+	[self initDownmixer];
 
 	[self setRGInfo:rgi];
 
@@ -149,10 +155,17 @@
 
 	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
+	[self initDownmixer];
 
 	[self setRGInfo:rgi];
 
 	return YES;
+}
+
+- (void)initDownmixer {
+	AudioPlayer * audioPlayer = controller;
+	OutputNode *outputNode = [audioPlayer output];
+	[downmixNode setOutputFormat:[outputNode deviceFormat] withChannelConfig:[outputNode deviceChannelConfig]];
 }
 
 - (void)launchThreads {
@@ -164,6 +177,7 @@
 	[fsurroundNode launchThread];
 	[equalizerNode launchThread];
 	[hrtfNode launchThread];
+	[downmixNode launchThread];
 	[visualizationNode launchThread];
 }
 
@@ -239,6 +253,7 @@
 	[fsurroundNode setShouldContinue:s];
 	[equalizerNode setShouldContinue:s];
 	[hrtfNode setShouldContinue:s];
+	[downmixNode setShouldContinue:s];
 	[visualizationNode setShouldContinue:s];
 }
 
@@ -272,6 +287,10 @@
 
 - (DSPEqualizerNode *)equalizer {
 	return equalizerNode;
+}
+
+- (DSPDownmixNode *)downmix {
+	return downmixNode;
 }
 
 - (VisualizationNode *)visualization {
