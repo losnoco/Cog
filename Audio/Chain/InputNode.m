@@ -166,6 +166,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			DSPFSurroundNode *fsurround = [bufferChain fsurround];
 			DSPEqualizerNode *equalizer = [bufferChain equalizer];
 			DSPHRTFNode *hrtf = [bufferChain hrtf];
+			DSPDownmixNode *downmix = [bufferChain downmix];
 			DLog(@"SEEKING! Resetting Buffer");
 
 			// This resets the converter's buffer
@@ -177,6 +178,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			[fsurround resetBuffer];
 			[equalizer resetBuffer];
 			[hrtf resetBuffer];
+			[downmix resetBuffer];
 
 			DLog(@"Reset buffer!");
 

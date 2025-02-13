@@ -47,6 +47,10 @@
 		8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8328995527CB51B700D7F028 /* SHA256Digest.h */; };
 		8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8328995627CB51B700D7F028 /* SHA256Digest.m */; };
 		8328995A27CB51C900D7F028 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8328995927CB51C900D7F028 /* Security.framework */; };
+		833738EA2D5EA52500278628 /* DSPDownmixNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 833738E92D5EA52500278628 /* DSPDownmixNode.h */; };
+		833738EC2D5EA53500278628 /* DSPDownmixNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 833738EB2D5EA53500278628 /* DSPDownmixNode.m */; };
+		833738EF2D5EA5B700278628 /* Downmix.m in Sources */ = {isa = PBXBuildFile; fileRef = 833738EE2D5EA5B700278628 /* Downmix.m */; };
+		833738F02D5EA5B700278628 /* Downmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 833738ED2D5EA5B700278628 /* Downmix.h */; };
 		8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */; };
 		8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */; };
 		834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A41A5287A90AB00EB9D9B /* freesurround_decoder.h */; };
@@ -57,8 +61,6 @@
 		834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EC27AF91220063BC83 /* AudioChunk.m */; };
 		834FD4F027AF93680063BC83 /* ChunkList.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EE27AF93680063BC83 /* ChunkList.h */; };
 		834FD4F127AF93680063BC83 /* ChunkList.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EF27AF93680063BC83 /* ChunkList.m */; };
-		83504165286447DA006B32CC /* Downmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 83504163286447DA006B32CC /* Downmix.h */; };
-		83504166286447DA006B32CC /* Downmix.m in Sources */ = {isa = PBXBuildFile; fileRef = 83504164286447DA006B32CC /* Downmix.m */; };
 		8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8350416C28646149006B32CC /* CoreMedia.framework */; };
 		835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88AF279811A500E28EAE /* hdcd_decode2.h */; };
 		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
@@ -173,6 +175,10 @@
 		8328995527CB51B700D7F028 /* SHA256Digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = ../../Utils/SHA256Digest.h; sourceTree = "<group>"; };
 		8328995627CB51B700D7F028 /* SHA256Digest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA256Digest.m; path = ../../Utils/SHA256Digest.m; sourceTree = "<group>"; };
 		8328995927CB51C900D7F028 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		833738E92D5EA52500278628 /* DSPDownmixNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPDownmixNode.h; sourceTree = "<group>"; };
+		833738EB2D5EA53500278628 /* DSPDownmixNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPDownmixNode.m; sourceTree = "<group>"; };
+		833738ED2D5EA5B700278628 /* Downmix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Downmix.h; sourceTree = "<group>"; };
+		833738EE2D5EA5B700278628 /* Downmix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Downmix.m; sourceTree = "<group>"; };
 		8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileHandle+CreateFile.h"; path = "../../Utils/NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileHandle+CreateFile.m"; path = "../../Utils/NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		834A41A5287A90AB00EB9D9B /* freesurround_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = freesurround_decoder.h; sourceTree = "<group>"; };
@@ -183,8 +189,6 @@
 		834FD4EC27AF91220063BC83 /* AudioChunk.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioChunk.m; sourceTree = "<group>"; };
 		834FD4EE27AF93680063BC83 /* ChunkList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChunkList.h; sourceTree = "<group>"; };
 		834FD4EF27AF93680063BC83 /* ChunkList.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChunkList.m; sourceTree = "<group>"; };
-		83504163286447DA006B32CC /* Downmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Downmix.h; sourceTree = "<group>"; };
-		83504164286447DA006B32CC /* Downmix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Downmix.m; sourceTree = "<group>"; };
 		8350416C28646149006B32CC /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		835C88AF279811A500E28EAE /* hdcd_decode2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdcd_decode2.h; sourceTree = "<group>"; };
 		835C88B0279811A500E28EAE /* hdcd_decode2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdcd_decode2.c; sourceTree = "<group>"; };
@@ -378,8 +382,6 @@
 				834FD4EF27AF93680063BC83 /* ChunkList.m */,
 				8EC1225D0B993BD500C5B3AD /* ConverterNode.h */,
 				8EC1225E0B993BD500C5B3AD /* ConverterNode.m */,
-				83504163286447DA006B32CC /* Downmix.h */,
-				83504164286447DA006B32CC /* Downmix.m */,
 				17D21C7A0B8BE4BA00D1EBDE /* InputNode.h */,
 				17D21C7B0B8BE4BA00D1EBDE /* InputNode.m */,
 				17D21C7C0B8BE4BA00D1EBDE /* Node.h */,
@@ -538,6 +540,8 @@
 		83A349692D5C3F430096D530 /* DSP */ = {
 			isa = PBXGroup;
 			children = (
+				833738ED2D5EA5B700278628 /* Downmix.h */,
+				833738EE2D5EA5B700278628 /* Downmix.m */,
 				83F8431E2D5C6272008C123B /* HeadphoneFilter.h */,
 				83F8431F2D5C6272008C123B /* HeadphoneFilter.mm */,
 				83A349702D5C41810096D530 /* FSurroundFilter.h */,
@@ -550,6 +554,8 @@
 				83A349762D5C50B20096D530 /* DSPHRTFNode.m */,
 				83F843222D5C66DA008C123B /* DSPEqualizerNode.h */,
 				83F843242D5C66E9008C123B /* DSPEqualizerNode.m */,
+				833738E92D5EA52500278628 /* DSPDownmixNode.h */,
+				833738EB2D5EA53500278628 /* DSPDownmixNode.m */,
 			);
 			path = DSP;
 			sourceTree = "<group>";
@@ -575,9 +581,9 @@
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
 				8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */,
-				83504165286447DA006B32CC /* Downmix.h in Headers */,
 				839E56E52879450300DFB5F4 /* HrtfData.h in Headers */,
 				83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */,
+				833738F02D5EA5B700278628 /* Downmix.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */,
 				835DD2682ACAF1D90057E319 /* OutputCoreAudio.h in Headers */,
@@ -611,6 +617,7 @@
 				835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */,
 				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
 				B0575F2D0D687A0800411D77 /* Helper.h in Headers */,
+				833738EA2D5EA52500278628 /* DSPDownmixNode.h in Headers */,
 				07DB5F3E0ED353A900C2E3EF /* AudioMetadataWriter.h in Headers */,
 				839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */,
 			);
@@ -692,16 +699,17 @@
 				83A349772D5C50B20096D530 /* DSPHRTFNode.m in Sources */,
 				17D21CA60B8BE4BA00D1EBDE /* InputNode.m in Sources */,
 				83A3496A2D5C3F430096D530 /* DSPRubberbandNode.m in Sources */,
-				83504166286447DA006B32CC /* Downmix.m in Sources */,
 				8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */,
 				83F843252D5C66E9008C123B /* DSPEqualizerNode.m in Sources */,
 				834A41AB287A90AB00EB9D9B /* channelmaps.cpp in Sources */,
+				833738EC2D5EA53500278628 /* DSPDownmixNode.m in Sources */,
 				831A50162865A8800049CFE4 /* rsstate.cpp in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
 				835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */,
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
+				833738EF2D5EA5B700278628 /* Downmix.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */,
 				839B83FA286D91ED00F529EE /* VisualizationController.swift in Sources */,
 				839E89A02D5DBA1700A13526 /* VisualizationNode.m in Sources */,

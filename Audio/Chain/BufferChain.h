@@ -15,6 +15,7 @@
 #import "DSPHRTFNode.h"
 #import "DSPEqualizerNode.h"
 #import "VisualizationNode.h"
+#import "DSPDownmixNode.h"
 #import "InputNode.h"
 
 @interface BufferChain : NSObject {
@@ -24,6 +25,7 @@
 	DSPFSurroundNode *fsurroundNode;
 	DSPHRTFNode *hrtfNode;
 	DSPEqualizerNode *equalizerNode;
+	DSPDownmixNode *downmixNode;
 	VisualizationNode *visualizationNode;
 
 	NSURL *streamURL;
@@ -88,6 +90,8 @@
 - (DSPHRTFNode *)hrtf;
 
 - (DSPEqualizerNode *)equalizer;
+
+- (DSPDownmixNode *)downmix;
 
 - (VisualizationNode *)visualization;
 

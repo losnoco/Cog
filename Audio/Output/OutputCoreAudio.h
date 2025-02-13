@@ -22,8 +22,6 @@ using std::atomic_long;
 #import <stdatomic.h>
 #endif
 
-#import "Downmix.h"
-
 #import <CogAudio/CogAudio-Swift.h>
 
 #import <simd/simd.h>
@@ -93,8 +91,6 @@ using std::atomic_long;
 
 	size_t _bufferSize;
 
-	DownmixProcessor *downmixer;
-
 	VisualizationController *visController;
 
 	int inputRemain;
@@ -108,7 +104,6 @@ using std::atomic_long;
 	float *samplePtr;
 	float tempBuffer[512 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
-	float downmixBuffer[4096 * 8];
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
@@ -132,5 +127,8 @@ using std::atomic_long;
 - (void)setShouldPlayOutBuffer:(BOOL)enabled;
 
 - (void)sustainHDCD;
+
+- (AudioStreamBasicDescription)deviceFormat;
+- (uint32_t)deviceChannelConfig;
 
 @end

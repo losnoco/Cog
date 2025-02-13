@@ -283,7 +283,11 @@ static void *kDownmixProcessorContext = &kDownmixProcessorContext;
 }
 
 - (void)process:(const void *)inBuffer frameCount:(size_t)frames output:(void *)outBuffer {
-	if(inputFormat.mChannelsPerFrame > 2 && outConfig == AudioConfigStereo) {
+	if(inputFormat.mChannelsPerFrame == 2 && outConfig == AudioConfigStereo &&
+	   inConfig == (AudioChannelSideLeft | AudioChannelSideRight)) {
+		// Workaround for HRTF output
+		memcpy(outBuffer, inBuffer, frames * outputFormat.mBytesPerPacket);
+	} else if(inputFormat.mChannelsPerFrame > 2 && outConfig == AudioConfigStereo) {
 		downmix_to_stereo((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, frames);
 	} else if(inputFormat.mChannelsPerFrame > 1 && outConfig == AudioConfigMono) {
 		downmix_to_mono((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, frames);
