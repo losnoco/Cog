@@ -71,4 +71,7 @@
 
 - (void)restartPlaybackAtCurrentPosition;
 
+- (double)getTotalLatency;
+- (double)getPostVisLatency;
+
 @end

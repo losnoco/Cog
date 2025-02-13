@@ -47,15 +47,9 @@ using std::atomic_long;
 
 	NSLock *outputLock;
 
-	double secondsLatency;
-	double visPushed;
-
 	double streamTimestamp;
 
 	double lastClippedSampleRate;
-
-	void *rsvis;
-	double lastVisRate;
 
 	BOOL stopInvoked;
 	BOOL stopCompleted;
@@ -91,8 +85,6 @@ using std::atomic_long;
 	AudioStreamBasicDescription realStreamFormat; // stream format pre-hrtf
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
 
-	AudioStreamBasicDescription visFormat; // Mono format for vis
-
 	uint32_t deviceChannelConfig;
 	uint32_t realStreamChannelConfig;
 	uint32_t streamChannelConfig;
@@ -102,7 +94,6 @@ using std::atomic_long;
 	size_t _bufferSize;
 
 	DownmixProcessor *downmixer;
-	DownmixProcessor *downmixerForVis;
 
 	VisualizationController *visController;
 
@@ -110,8 +101,6 @@ using std::atomic_long;
 	
 	AudioChunk *chunkRemain;
 	
-	int visResamplerRemain;
-
 	BOOL resetStreamFormat;
 	
 	BOOL shouldPlayOutBuffer;
@@ -120,10 +109,6 @@ using std::atomic_long;
 	float tempBuffer[512 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
 	float downmixBuffer[4096 * 8];
-
-	float visAudio[4096];
-	float visResamplerInput[8192];
-	float visTemp[8192];
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
