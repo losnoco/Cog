@@ -41,6 +41,17 @@
 	return self;
 }
 
+- (AudioChunk *)copy {
+	AudioChunk *outputChunk = [[AudioChunk alloc] init];
+	[outputChunk setFormat:format];
+	[outputChunk setChannelConfig:channelConfig];
+	if(hdcd) [outputChunk setHDCD];
+	[outputChunk setStreamTimestamp:streamTimestamp];
+	[outputChunk setStreamTimeRatio:streamTimeRatio];
+	[outputChunk assignData:chunkData];
+	return outputChunk;
+}
+
 static const uint32_t AudioChannelConfigTable[] = {
 	0,
 	AudioConfigMono,
