@@ -550,8 +550,79 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	}
 }
 
+- (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount {
+	BOOL formatSet = NO;
+	AudioStreamBasicDescription currentFormat;
+	uint32_t currentChannelConfig = 0;
+
+	double streamTimestamp = 0.0;
+	double streamTimeRatio = 1.0;
+	if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+		return [[AudioChunk alloc] init];
+	}
+
+	AudioChunk *chunk;
+	size_t totalFrameCount = 0;
+	AudioChunk *outputChunk = [[AudioChunk alloc] init];
+
+	[outputChunk setStreamTimestamp:streamTimestamp];
+	[outputChunk setStreamTimeRatio:streamTimeRatio];
+
+	while(totalFrameCount < maxFrameCount) {
+		AudioStreamBasicDescription newFormat;
+		uint32_t newChannelConfig;
+		if(![self peekFormat:&newFormat channelConfig:&newChannelConfig]) {
+			break;
+		}
+		if(formatSet &&
+		   (memcmp(&newFormat, &currentFormat, sizeof(newFormat)) != 0 ||
+			newChannelConfig != currentChannelConfig)) {
+			break;
+		} else if(!formatSet) {
+			[outputChunk setFormat:newFormat];
+			[outputChunk setChannelConfig:newChannelConfig];
+			currentFormat = newFormat;
+			currentChannelConfig = newChannelConfig;
+			formatSet = YES;
+		}
+
+		chunk = [self removeSamples:maxFrameCount - totalFrameCount];
+		if(![chunk duration]) {
+			break;
+		}
+
+		if([chunk isHDCD]) {
+			[outputChunk setHDCD];
+		}
+
+		size_t frameCount = [chunk frameCount];
+		NSData *sampleData = [chunk removeSamples:frameCount];
+
+		[outputChunk assignData:sampleData];
+
+		totalFrameCount += frameCount;
+	}
+
+	if(!totalFrameCount) {
+		return [[AudioChunk alloc] init];
+	}
+
+	return outputChunk;
+}
+
+- (AudioChunk *)removeAndMergeSamplesAsFloat32:(size_t)maxFrameCount {
+	AudioChunk *ret = [self removeAndMergeSamples:maxFrameCount];
+	return [self convertChunk:ret];
+}
+
 - (AudioChunk *)convertChunk:(AudioChunk *)inChunk {
 	AudioStreamBasicDescription chunkFormat = [inChunk format];
+	if(![inChunk duration] ||
+	   (chunkFormat.mFormatFlags == kAudioFormatFlagsNativeFloatPacked &&
+		chunkFormat.mBitsPerChannel == 32)) {
+		return inChunk;
+	}
+
 	uint32_t chunkConfig = [inChunk channelConfig];
 	BOOL chunkLossless = [inChunk lossless];
 	if(!formatRead || memcmp(&chunkFormat, &inputFormat, sizeof(chunkFormat)) != 0 ||
