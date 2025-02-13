@@ -87,18 +87,8 @@ class VisualizationController : NSObject {
 	@objc
 	func copyVisPCM(_ outPCM: UnsafeMutablePointer<Float>?, visFFT: UnsafeMutablePointer<Float>?, latencyOffset: Double) {
 		if(self.visAudioSize == 0) {
-			if(outPCM != nil) {
-				let pcmPointer = UnsafeMutableBufferPointer<Float>(start: outPCM, count: 4096)
-				for i in 0...4095 {
-					pcmPointer[i] = 0.0
-				}
-			}
-			if(visFFT != nil) {
-				let fftPointer = UnsafeMutableBufferPointer<Float>(start: visFFT, count: 2048)
-				for i in 0...2047 {
-					fftPointer[i] = 0.0
-				}
-			}
+			outPCM?.update(repeating: 0.0, count: 4096)
+			visFFT?.update(repeating: 0.0, count: 2048)
 			return
 		}
 
@@ -123,20 +113,9 @@ class VisualizationController : NSObject {
 				outPCMCopy[i] = x
 				j += 1; if j >= k { j = 0 }
 			}
-			if(samplesToDo < 4096) {
-				for i in samplesToDo...4095 {
-					outPCMCopy[i] = 0
-				}
-			}
 		}
 
-		if(outPCM != nil) {
-			let pcmPointer = UnsafeMutableBufferPointer<Float>(start: outPCM, count: 4096)
-			for i in 0...4095 {
-				let x = outPCMCopy[i]
-				pcmPointer[i] = x
-			}
-		}
+		outPCM?.update(from: outPCMCopy, count: 4096)
 
 		if(visFFT != nil) {
 			serialQueue.sync {
