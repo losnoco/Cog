@@ -933,7 +933,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
-	[chunk setStreamTimestamp:framesRead];
+	[chunk setStreamTimestamp:streamTimestamp];
 	[chunk assignSamples:sampleBuffer frameCount:framesReadNow];
 
 	return chunk;
