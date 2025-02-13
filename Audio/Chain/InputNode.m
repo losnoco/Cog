@@ -161,6 +161,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 		if(shouldSeek == YES) {
 			BufferChain *bufferChain = [[controller controller] bufferChain];
 			ConverterNode *converter = [bufferChain converter];
+			VisualizationNode *visualization = [bufferChain visualization];
 			DSPRubberbandNode *rubberband = [bufferChain rubberband];
 			DSPFSurroundNode *fsurround = [bufferChain fsurround];
 			DSPEqualizerNode *equalizer = [bufferChain equalizer];
@@ -171,6 +172,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 			[self resetBuffer];
 			[converter resetBuffer];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
+			[visualization resetBuffer];
 			[rubberband resetBuffer];
 			[fsurround resetBuffer];
 			[equalizer resetBuffer];

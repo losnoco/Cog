@@ -200,4 +200,12 @@
 	return [output latency];
 }
 
+- (double)getTotalLatency {
+	return [[controller bufferChain] secondsBuffered] + [output latency];
+}
+
+- (double)getPostVisLatency {
+	return [[controller bufferChain] getPostVisLatency] + [output latency];
+}
+
 @end

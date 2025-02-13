@@ -30,6 +30,8 @@
 		fsurroundNode = nil;
 		equalizerNode = nil;
 		hrtfNode = nil;
+
+		visualizationNode = nil;
 	}
 
 	return self;
@@ -46,7 +48,10 @@
 	equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
 	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
 
-	finalNode = hrtfNode;
+	// Approximately five frames
+	visualizationNode = [[VisualizationNode alloc] initWithController:self previous:hrtfNode latency:5.0 / 60.0];
+
+	finalNode = visualizationNode;
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
@@ -159,6 +164,7 @@
 	[fsurroundNode launchThread];
 	[equalizerNode launchThread];
 	[hrtfNode launchThread];
+	[visualizationNode launchThread];
 }
 
 - (void)setUserInfo:(id)i {
@@ -184,6 +190,9 @@
 	[[inputNode semaphore] signal];
 	if(![inputNode threadExited])
 		[[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
+
+	// Must do this here, or else the VisualizationContainer will carry a reference forever
+	[visualizationNode pop];
 
 	DLog(@"Bufferchain dealloc");
 }
@@ -230,6 +239,7 @@
 	[fsurroundNode setShouldContinue:s];
 	[equalizerNode setShouldContinue:s];
 	[hrtfNode setShouldContinue:s];
+	[visualizationNode setShouldContinue:s];
 }
 
 - (BOOL)isRunning {
@@ -262,6 +272,10 @@
 
 - (DSPEqualizerNode *)equalizer {
 	return equalizerNode;
+}
+
+- (VisualizationNode *)visualization {
+	return visualizationNode;
 }
 
 - (AudioStreamBasicDescription)inputFormat {
@@ -298,6 +312,19 @@
 
 - (void)setError:(BOOL)status {
 	[controller setError:status];
+}
+
+- (double)getPostVisLatency {
+	double latency = 0.0;
+	Node *node = finalNode;
+	while(node) {
+		latency += [node secondsBuffered];
+		if(node == visualizationNode) {
+			break;
+		}
+		node = [node previousNode];
+	}
+	return latency;
 }
 
 @end

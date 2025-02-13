@@ -90,6 +90,8 @@
 		839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E42879450300DFB5F4 /* IHrtfData.h */; };
 		839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E928794F6300DFB5F4 /* HrtfTypes.h */; };
 		839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56F6287974A100DFB5F4 /* SandboxBroker.h */; };
+		839E899E2D5DB9D500A13526 /* VisualizationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E899D2D5DB9D500A13526 /* VisualizationNode.h */; };
+		839E89A02D5DBA1700A13526 /* VisualizationNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 839E899F2D5DBA1700A13526 /* VisualizationNode.m */; };
 		83A3496A2D5C3F430096D530 /* DSPRubberbandNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A349682D5C3F430096D530 /* DSPRubberbandNode.m */; };
 		83A3496B2D5C3F430096D530 /* DSPRubberbandNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349672D5C3F430096D530 /* DSPRubberbandNode.h */; };
 		83A3496D2D5C40490096D530 /* DSPFSurroundNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3496C2D5C40490096D530 /* DSPFSurroundNode.h */; };
@@ -214,6 +216,8 @@
 		839E56E42879450300DFB5F4 /* IHrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHrtfData.h; sourceTree = "<group>"; };
 		839E56E928794F6300DFB5F4 /* HrtfTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfTypes.h; sourceTree = "<group>"; };
 		839E56F6287974A100DFB5F4 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../Utils/SandboxBroker.h; sourceTree = "<group>"; };
+		839E899D2D5DB9D500A13526 /* VisualizationNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationNode.h; sourceTree = "<group>"; };
+		839E899F2D5DBA1700A13526 /* VisualizationNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationNode.m; sourceTree = "<group>"; };
 		83A349672D5C3F430096D530 /* DSPRubberbandNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPRubberbandNode.h; sourceTree = "<group>"; };
 		83A349682D5C3F430096D530 /* DSPRubberbandNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPRubberbandNode.m; sourceTree = "<group>"; };
 		83A3496C2D5C40490096D530 /* DSPFSurroundNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPFSurroundNode.h; sourceTree = "<group>"; };
@@ -384,6 +388,8 @@
 				17D21C7F0B8BE4BA00D1EBDE /* OutputNode.m */,
 				83FFED502D5B08BC0044CCAF /* DSPNode.h */,
 				83FFED522D5B09320044CCAF /* DSPNode.m */,
+				839E899D2D5DB9D500A13526 /* VisualizationNode.h */,
+				839E899F2D5DBA1700A13526 /* VisualizationNode.m */,
 			);
 			path = Chain;
 			sourceTree = "<group>";
@@ -588,6 +594,7 @@
 				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
 				83A3496B2D5C3F430096D530 /* DSPRubberbandNode.h in Headers */,
 				17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */,
+				839E899E2D5DB9D500A13526 /* VisualizationNode.h in Headers */,
 				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
 				83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */,
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
@@ -697,6 +704,7 @@
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */,
 				839B83FA286D91ED00F529EE /* VisualizationController.swift in Sources */,
+				839E89A02D5DBA1700A13526 /* VisualizationNode.m in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				83A3496F2D5C405E0096D530 /* DSPFSurroundNode.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,

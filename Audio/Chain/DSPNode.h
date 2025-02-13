@@ -17,6 +17,8 @@
 
 - (void)threadEntry:(id _Nullable)arg;
 
+- (double)secondsBuffered;
+
 @end
 
 #endif /* DSPNode_h */

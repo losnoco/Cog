@@ -17,8 +17,6 @@
 
 #import <Accelerate/Accelerate.h>
 
-#import "rsstate.h"
-
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
@@ -58,13 +56,6 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 			realStreamChannelConfig = config;
 			streamFormatStarted = YES;
 			streamFormatChanged = YES;
-
-			visFormat = format;
-			visFormat.mChannelsPerFrame = 1;
-			visFormat.mBytesPerFrame = visFormat.mChannelsPerFrame * (visFormat.mBitsPerChannel / 8);
-			visFormat.mBytesPerPacket = visFormat.mBytesPerFrame * visFormat.mFramesPerPacket;
-
-			downmixerForVis = [[DownmixProcessor alloc] initWithInputFormat:origFormat inputConfig:origConfig andOutputFormat:visFormat outputConfig:AudioConfigMono];
 		}
 	}
 
@@ -98,86 +89,6 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 							  location:@"pre downmix"];
 #endif
 		const float *outputPtr = (const float *)[samples bytes];
-		[downmixerForVis process:outputPtr
-					  frameCount:frameCount
-						  output:&visAudio[0]];
-
-		[visController postSampleRate:44100.0];
-
-		[outputLock lock];
-		if(fabs(realStreamFormat.mSampleRate - 44100.0) > 1e-5) {
-			if(fabs(realStreamFormat.mSampleRate - lastVisRate) > 1e-5) {
-				if(rsvis) {
-					for(;;) {
-						if(stopping) {
-							break;
-						}
-						int samplesFlushed;
-						samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
-						if(samplesFlushed > 1) {
-							[visController postVisPCM:visTemp amount:samplesFlushed];
-							visPushed += (double)samplesFlushed / 44100.0;
-						} else {
-							break;
-						}
-					}
-					rsstate_delete(rsvis);
-					rsvis = NULL;
-				}
-				lastVisRate = realStreamFormat.mSampleRate;
-				rsvis = rsstate_new(1, lastVisRate, 44100.0);
-			}
-			if(rsvis) {
-				int samplesProcessed;
-				size_t totalDone = 0;
-				size_t inDone = 0;
-				size_t visFrameCount = frameCount;
-				do {
-					if(stopping) {
-						break;
-					}
-					int visTodo = (int)MIN(visFrameCount, visResamplerRemain + visFrameCount - 8192);
-					if(visTodo) {
-						cblas_scopy(visTodo, &visAudio[0], 1, &visResamplerInput[visResamplerRemain], 1);
-					}
-					visTodo += visResamplerRemain;
-					visResamplerRemain = 0;
-					samplesProcessed = (int)rsstate_resample(rsvis, &visResamplerInput[0], visTodo, &inDone, &visTemp[0], 8192);
-					visResamplerRemain = (int)(visTodo - inDone);
-					if(visResamplerRemain && inDone) {
-						memmove(&visResamplerInput[0], &visResamplerInput[inDone], visResamplerRemain * sizeof(float));
-					}
-					if(samplesProcessed) {
-						[visController postVisPCM:&visTemp[0] amount:samplesProcessed];
-						visPushed += (double)samplesProcessed / 44100.0;
-					}
-					totalDone += inDone;
-					visFrameCount -= inDone;
-				} while(samplesProcessed && visFrameCount);
-			}
-		} else if(rsvis) {
-			for(;;) {
-				if(stopping) {
-					break;
-				}
-				int samplesFlushed;
-				samplesFlushed = (int)rsstate_flush(rsvis, &visTemp[0], 8192);
-				if(samplesFlushed > 1) {
-					[visController postVisPCM:visTemp amount:samplesFlushed];
-					visPushed += (double)samplesFlushed / 44100.0;
-				} else {
-					break;
-				}
-			}
-			rsstate_delete(rsvis);
-			rsvis = NULL;
-			[visController postVisPCM:&visAudio[0] amount:frameCount];
-			visPushed += (double)frameCount / 44100.0;
-		} else if(!stopping) {
-			[visController postVisPCM:&visAudio[0] amount:frameCount];
-			visPushed += (double)frameCount / 44100.0;
-		}
-		[outputLock unlock];
 
 		cblas_scopy((int)(frameCount * realStreamFormat.mChannelsPerFrame), outputPtr, 1, &buffer[0], 1);
 		amountRead = frameCount;
@@ -272,7 +183,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (BOOL)processEndOfStream {
-	if(stopping || ([outputController endOfStream] == YES && [self signalEndOfStream:secondsLatency])) {
+	if(stopping || ([outputController endOfStream] == YES && [self signalEndOfStream:[outputController getTotalLatency]])) {
 		stopping = YES;
 		return YES;
 	}
@@ -289,7 +200,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	running = YES;
 	started = NO;
 	shouldPlayOutBuffer = NO;
-	secondsLatency = 1.0;
 
 	while(!stopping) {
 		@autoreleasepool {
@@ -301,16 +211,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			if([outputController shouldReset]) {
 				[outputController setShouldReset:NO];
 				[outputLock lock];
-				secondsLatency = 0.0;
-				visPushed = 0.0;
 				started = NO;
 				restarted = NO;
-				if(rsvis) {
-					rsstate_delete(rsvis);
-					rsvis = NULL;
-				}
 				lastClippedSampleRate = 0.0;
-				lastVisRate = 0.0;
 				[outputLock unlock];
 			}
 
@@ -556,11 +459,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		deviceFormat.mBytesPerFrame = deviceFormat.mChannelsPerFrame * (deviceFormat.mBitsPerChannel / 8);
 		deviceFormat.mBytesPerPacket = deviceFormat.mBytesPerFrame * deviceFormat.mFramesPerPacket;
 
-		visFormat = deviceFormat;
-		visFormat.mChannelsPerFrame = 1;
-		visFormat.mBytesPerFrame = visFormat.mChannelsPerFrame * (visFormat.mBitsPerChannel / 8);
-		visFormat.mBytesPerPacket = visFormat.mBytesPerFrame * visFormat.mFramesPerPacket;
-
 		/* Set the channel layout for the audio queue */
 		AudioChannelLayoutTag tag = 0;
 		switch(deviceFormat.mChannelsPerFrame) {
@@ -791,21 +689,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		restarted = NO;
 
 		downmixer = nil;
-		downmixerForVis = nil;
 
 		lastClippedSampleRate = 0.0;
 
-		rsvis = NULL;
-		lastVisRate = 44100.0;
-		
 		inputRemain = 0;
 
 		chunkRemain = nil;
-
-		visResamplerRemain = 0;
-		
-		secondsLatency = 0;
-		visPushed = 0;
 
 		AudioComponentDescription desc;
 		NSError *err;
@@ -854,14 +743,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	if(secondsPlayed > 0) {
 		[outputController setAmountPlayed:streamTimestamp];
 	}
-	double visLatency = visPushed;
-	visPushed -= secondsPlayed;
-	if(visLatency < secondsPlayed || visLatency > 30.0) {
-		visLatency = secondsPlayed;
-		visPushed = secondsPlayed;
-	}
-	secondsLatency = visLatency;
-	[visController postLatency:visLatency];
+	[visController postLatency:[outputController getPostVisLatency]];
 }
 
 - (void)setVolume:(double)v {
@@ -869,8 +751,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (double)latency {
-	if(secondsLatency > 0) return secondsLatency;
-	else return 0;
+	return 0.0;
 }
 
 - (void)start {
@@ -920,10 +801,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		if(_au) {
 			if(shouldPlayOutBuffer && !commandStop) {
 				int compareVal = 0;
-				double secondsLatency = self->secondsLatency >= 1e-5 ? self->secondsLatency : 0;
+				double secondsLatency = [outputController getTotalLatency];
 				int compareMax = (((1000000 / 5000) * secondsLatency) + (10000 / 5000)); // latency plus 10ms, divide by sleep intervals
 				do {
-					compareVal = self->secondsLatency >= 1e-5 ? self->secondsLatency : 0;
+					compareVal = [outputController getTotalLatency];
 					usleep(5000);
 				} while(!commandStop && compareVal > 0 && compareMax-- > 0);
 			}
@@ -936,9 +817,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				usleep(5000);
 			}
 		}
-		if(downmixerForVis) {
-			downmixerForVis = nil;
-		}
 #ifdef OUTPUT_LOG
 		if(_logFile) {
 			fclose(_logFile);
@@ -949,10 +827,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		if(visController) {
 			[visController reset];
 			visController = nil;
-		}
-		if(rsvis) {
-			rsstate_delete(rsvis);
-			rsvis = NULL;
 		}
 		stopCompleted = YES;
 	}

@@ -47,4 +47,8 @@
 	}
 }
 
+- (double)secondsBuffered {
+	return [buffer listDuration];
+}
+
 @end

@@ -14,6 +14,7 @@
 #import "DSPFSurroundNode.h"
 #import "DSPHRTFNode.h"
 #import "DSPEqualizerNode.h"
+#import "VisualizationNode.h"
 #import "InputNode.h"
 
 @interface BufferChain : NSObject {
@@ -23,6 +24,7 @@
 	DSPFSurroundNode *fsurroundNode;
 	DSPHRTFNode *hrtfNode;
 	DSPEqualizerNode *equalizerNode;
+	VisualizationNode *visualizationNode;
 
 	NSURL *streamURL;
 	id userInfo;
@@ -87,6 +89,8 @@
 
 - (DSPEqualizerNode *)equalizer;
 
+- (VisualizationNode *)visualization;
+
 - (double)secondsBuffered;
 
 - (void)sustainHDCD;
@@ -96,5 +100,7 @@
 - (void)pushInfo:(NSDictionary *)info;
 
 - (void)setError:(BOOL)status;
+
+- (double)getPostVisLatency;
 
 @end
