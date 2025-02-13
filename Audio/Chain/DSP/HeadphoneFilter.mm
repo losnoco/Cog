@@ -191,6 +191,7 @@ static impulseSetCache *_sharedController = nil;
 		if(resampling) {
 			sampleCountResampled = (uint32_t)(((double)sampleCountExact) * sampleRate / sampleRateOfSource);
 			actualSampleCount = (uint32_t)(((double)actualSampleCount) * sampleRate / sampleRateOfSource);
+			io_spec.scale = sampleRateOfSource / sampleRate;
 		}
 		actualSampleCount = (actualSampleCount + 15) & ~15;
 
