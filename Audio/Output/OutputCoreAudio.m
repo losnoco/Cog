@@ -837,7 +837,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[self setOutputDeviceWithDeviceDict:nil];
 		}
 
-		
 		[self audioOutputBlock];
 
 		[_au allocateRenderResourcesAndReturnError:&err];
