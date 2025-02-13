@@ -233,7 +233,7 @@ static VisualizationCollection *theCollection = nil;
 			}
 			AudioChunk *chunk = nil;
 			chunk = [self readAndMergeChunksAsFloat32:512];
-			if(!chunk || ![chunk duration]) {
+			if(!chunk || ![chunk frameCount]) {
 				if([self endOfStream] == YES) {
 					break;
 				}

@@ -384,6 +384,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		inAdder = NO;
 		inRemover = NO;
 		inPeeker = NO;
+		inMerger = NO;
+		inConverter = NO;
 		stopping = NO;
 		
 		formatRead = NO;
@@ -407,7 +409,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 - (void)dealloc {
 	stopping = YES;
-	while(inAdder || inRemover || inPeeker) {
+	while(inAdder || inRemover || inPeeker || inMerger || inConverter) {
 		usleep(500);
 	}
 	if(hdcd_decoder) {
@@ -456,7 +458,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 }
 
 - (BOOL)isFull {
-	return (maxDuration - listDuration) < 0.05;
+	@synchronized (chunkList) {
+		return (maxDuration - listDuration) < 0.05;
+	}
 }
 
 - (void)addChunk:(AudioChunk *)chunk {
@@ -515,7 +519,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	if(stopping) {
 		return [[AudioChunk alloc] init];
 	}
-	
+
 	@synchronized (chunkList) {
 		inRemover = YES;
 		if(![chunkList count]) {
@@ -553,13 +557,20 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 }
 
 - (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount {
+	if(stopping) {
+		return [[AudioChunk alloc] init];
+	}
+
+	inMerger = YES;
+
 	BOOL formatSet = NO;
 	AudioStreamBasicDescription currentFormat;
 	uint32_t currentChannelConfig = 0;
 
 	double streamTimestamp = 0.0;
 	double streamTimeRatio = 1.0;
-	if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+	if (![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+		inMerger = NO;
 		return [[AudioChunk alloc] init];
 	}
 
@@ -570,11 +581,12 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	[outputChunk setStreamTimestamp:streamTimestamp];
 	[outputChunk setStreamTimeRatio:streamTimeRatio];
 
-	while(totalFrameCount < maxFrameCount) {
+	while(!stopping && totalFrameCount < maxFrameCount) {
 		AudioStreamBasicDescription newFormat;
 		uint32_t newChannelConfig;
 		if(![self peekFormat:&newFormat channelConfig:&newChannelConfig]) {
-			break;
+			usleep(500);
+			continue;
 		}
 		if(formatSet &&
 		   (memcmp(&newFormat, &currentFormat, sizeof(newFormat)) != 0 ||
@@ -589,8 +601,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		}
 
 		chunk = [self removeSamples:maxFrameCount - totalFrameCount];
-		if(![chunk duration]) {
-			break;
+		if(!chunk || ![chunk frameCount]) {
+			usleep(500);
+			continue;
 		}
 
 		if([chunk isHDCD]) {
@@ -606,9 +619,11 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	}
 
 	if(!totalFrameCount) {
+		inMerger = NO;
 		return [[AudioChunk alloc] init];
 	}
 
+	inMerger = NO;
 	return outputChunk;
 }
 
@@ -618,10 +633,15 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 }
 
 - (AudioChunk *)convertChunk:(AudioChunk *)inChunk {
+	if(stopping) return [[AudioChunk alloc] init];
+
+	inConverter = YES;
+
 	AudioStreamBasicDescription chunkFormat = [inChunk format];
 	if(![inChunk duration] ||
 	   (chunkFormat.mFormatFlags == kAudioFormatFlagsNativeFloatPacked &&
 		chunkFormat.mBitsPerChannel == 32)) {
+		inConverter = NO;
 		return inChunk;
 	}
 
@@ -635,8 +655,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		inputLossless = chunkLossless;
 
 		BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
-		if((!isFloat && !(inputFormat.mBitsPerChannel >= 1 && inputFormat.mBitsPerChannel <= 32)) || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64)))
+		if((!isFloat && !(inputFormat.mBitsPerChannel >= 1 && inputFormat.mBitsPerChannel <= 32)) || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64))) {
+			inConverter = NO;
 			return [[AudioChunk alloc] init];
+		}
 
 		// These are really placeholders, as we're doing everything internally now
 		if(inputLossless &&
@@ -684,6 +706,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	NSUInteger samplesRead = [inChunk frameCount];
 	
 	if(!samplesRead) {
+		inConverter = NO;
 		return [[AudioChunk alloc] init];
 	}
 	
@@ -864,35 +887,42 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	if(hdcdSustained) [outChunk setHDCD];
 	
 	[outChunk assignSamples:inputBuffer frameCount:bytesReadFromInput / floatFormat.mBytesPerPacket];
-	
+
+	inConverter = NO;
 	return outChunk;
 }
 
 - (BOOL)peekFormat:(AudioStreamBasicDescription *)format channelConfig:(uint32_t *)config {
 	if(stopping) return NO;
+	inPeeker = YES;
 	@synchronized(chunkList) {
 		if([chunkList count]) {
 			AudioChunk *chunk = [chunkList objectAtIndex:0];
 			*format = [chunk format];
 			*config = [chunk channelConfig];
+			inPeeker = NO;
 			return YES;
 		}
 	}
+	inPeeker = NO;
 	return NO;
 }
 
 - (BOOL)peekTimestamp:(double *)timestamp timeRatio:(double *)timeRatio {
 	if(stopping) return NO;
+	inPeeker = YES;
 	@synchronized (chunkList) {
 		if([chunkList count]) {
 			AudioChunk *chunk = [chunkList objectAtIndex:0];
 			*timestamp = [chunk streamTimestamp];
 			*timeRatio = [chunk streamTimeRatio];
+			inPeeker = NO;
 			return YES;
 		}
 	}
 	*timestamp = 0.0;
 	*timeRatio = 1.0;
+	inPeeker = NO;
 	return NO;
 }
 

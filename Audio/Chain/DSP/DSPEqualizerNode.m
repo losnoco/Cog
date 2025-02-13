@@ -299,7 +299,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 - (void)cleanUp {
 	stopping = YES;
 	while(processEntered) {
-		usleep(1000);
+		usleep(500);
 	}
 	[self fullShutdown];
 }
@@ -323,7 +323,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk || ![chunk duration]) {
+			if(!chunk || ![chunk frameCount]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
@@ -387,7 +387,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 	size_t totalFrameCount = 0;
 	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:4096];
-	if(![chunk duration]) {
+	if(!chunk || ![chunk frameCount]) {
 		processEntered = NO;
 		return nil;
 	}

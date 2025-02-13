@@ -322,7 +322,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 - (void)cleanUp {
 	stopping = YES;
 	while(processEntered) {
-		usleep(1000);
+		usleep(500);
 	}
 	[self fullShutdown];
 }
@@ -346,7 +346,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		@autoreleasepool {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
-			if(!chunk || ![chunk duration]) {
+			if(!chunk || ![chunk frameCount]) {
 				if([self endOfStream] == YES) {
 					break;
 				}
@@ -417,7 +417,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		samplesToProcess = blockSize;
 
 	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
-	if(![chunk duration]) {
+	if(!chunk || ![chunk frameCount]) {
 		processEntered = NO;
 		return nil;
 	}
