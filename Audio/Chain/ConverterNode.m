@@ -137,7 +137,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 	if(inpOffset == inpSize) {
 		streamTimestamp = 0.0;
 		streamTimeRatio = 1.0;
-		[self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio];
+		if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+			convertEntered = NO;
+			return nil;
+		}
 	}
 
 	while(inpOffset == inpSize) {
