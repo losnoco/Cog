@@ -38,6 +38,7 @@
 - (void)dealloc {
 	DLog(@"Downmix dealloc");
 	[self cleanUp];
+	[super cleanUp];
 }
 
 - (BOOL)fullInit {

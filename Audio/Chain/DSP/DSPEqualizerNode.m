@@ -157,6 +157,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	DLog(@"Equalizer dealloc");
 	[self cleanUp];
 	[self removeObservers];
+	[super cleanUp];
 }
 
 - (void)addObservers {

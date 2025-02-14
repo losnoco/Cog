@@ -246,7 +246,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 	seekFrame = frame;
 	shouldSeek = YES;
 	DLog(@"Should seek!");
-	[semaphore signal];
+	[writeSemaphore signal];
 
 	if(endOfStream) {
 		[exitAtTheEndOfTheStream signal];
@@ -280,6 +280,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 - (void)dealloc {
 	DLog(@"Input Node dealloc");
 	[self removeObservers];
+	[super cleanUp];
 }
 
 - (NSDictionary *)properties {

@@ -459,7 +459,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 - (BOOL)isFull {
 	@synchronized (chunkList) {
-		return (maxDuration - listDuration) < 0.05;
+		return (maxDuration - listDuration) < 0.001;
 	}
 }
 
@@ -588,7 +588,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			if(block()) {
 				break;
 			}
-			usleep(500);
 			continue;
 		}
 		if(formatSet &&
@@ -608,7 +607,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			if(block()) {
 				break;
 			}
-			usleep(500);
 			continue;
 		}
 

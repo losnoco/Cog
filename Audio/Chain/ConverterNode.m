@@ -482,6 +482,7 @@ static float db_to_scale(float db) {
 
 	paused = NO;
 	[self cleanUp];
+	[super cleanUp];
 }
 
 - (void)setOutputFormat:(AudioStreamBasicDescription)format {

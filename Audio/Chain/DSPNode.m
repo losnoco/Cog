@@ -16,7 +16,8 @@
 	if(self) {
 		buffer = [[ChunkList alloc] initWithMaximumDuration:latency];
 
-		semaphore = [[Semaphore alloc] init];
+		writeSemaphore = [[Semaphore alloc] init];
+		readSemaphore = [[Semaphore alloc] init];
 
 		accessLock = [[NSLock alloc] init];
 
@@ -30,6 +31,11 @@
 		nodeLossless = NO;
 
 		durationPrebuffer = latency * 0.25;
+
+		inWrite = NO;
+		inPeek = NO;
+		inRead = NO;
+		inMerge = NO;
 
 		[self setPreviousNode:p];
 	}

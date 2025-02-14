@@ -55,6 +55,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	DLog(@"FreeSurround dealloc");
 	[self cleanUp];
 	[self removeObservers];
+	[super cleanUp];
 }
 
 - (void)addObservers {
