@@ -67,10 +67,17 @@ class VisualizationController : NSObject {
 			let bufferPointer = UnsafeBufferPointer<Float>(start: inPCM, count: amount)
 			var j = self.visAudioCursor
 			let k = self.visAudioSize
-			for i in 0..<amount {
-				let x = bufferPointer[i]
-				self.visAudio[j] = x
-				j += 1; if j >= k { j = 0 }
+			if(j + amount <= k) {
+				let endIndex = j + amount;
+				self.visAudio.replaceSubrange(j..<endIndex, with: bufferPointer)
+				j += amount
+				if(j >= k) { j = 0 }
+			} else {
+				let inEndIndex = k - j
+				let remainder = amount - inEndIndex
+				self.visAudio.replaceSubrange(j..<k, with: bufferPointer.prefix(inEndIndex))
+				self.visAudio.replaceSubrange(0..<remainder, with: bufferPointer.suffix(remainder))
+				j = remainder
 			}
 			self.visAudioCursor = j
 			self.visSamplesPosted += UInt64(amount);
@@ -108,10 +115,13 @@ class VisualizationController : NSObject {
 			var j = self.visAudioCursor - latencySamples
 			let k = self.visAudioSize
 			if j < 0 { j += k }
-			for i in 0..<samplesToDo {
-				let x = self.visAudio[j]
-				outPCMCopy[i] = x
-				j += 1; if j >= k { j = 0 }
+			if(j + samplesToDo <= k) {
+				outPCMCopy.replaceSubrange(0..<samplesToDo, with: self.visAudio.suffix(from: j).prefix(samplesToDo))
+			} else {
+				let outEndIndex = k - j
+				let remainder = samplesToDo - outEndIndex
+				outPCMCopy.replaceSubrange(0..<outEndIndex, with: self.visAudio.suffix(from: j))
+				outPCMCopy.replaceSubrange(outEndIndex..<samplesToDo, with: self.visAudio.prefix(remainder))
 			}
 		}
 
