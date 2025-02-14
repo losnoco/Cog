@@ -90,6 +90,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 	}
 }
 
+- (BOOL)paused {
+	return paused;
+}
+
 - (void)process {
 	// Removed endOfStream check from here, since we want to be able to flush the converter
 	// when the end of stream is reached. Convert function instead processes what it can,

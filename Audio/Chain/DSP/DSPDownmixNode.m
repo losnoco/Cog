@@ -77,7 +77,6 @@
 		usleep(500);
 	}
 	[super resetBuffer];
-	[self fullShutdown];
 	paused = NO;
 }
 
@@ -85,6 +84,10 @@
 	outputFormat = format;
 	outputChannelConfig = config;
 	formatSet = YES;
+}
+
+- (BOOL)paused {
+	return paused;
 }
 
 - (void)process {

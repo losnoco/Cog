@@ -132,6 +132,10 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	paused = NO;
 }
 
+- (BOOL)paused {
+	return paused;
+}
+
 - (void)process {
 	while([self shouldContinue] == YES) {
 		if(paused) {

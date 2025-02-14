@@ -79,7 +79,7 @@
 
 - (void)writeData:(const void *)ptr amount:(size_t)amount {
 	inWrite = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inWrite = NO;
 		return;
 	}
@@ -105,7 +105,7 @@
 		}
 	}
 
-	while(shouldContinue == YES && durationLeft < 0.0) {
+	while(shouldContinue == YES && ![self paused] && durationLeft < 0.0) {
 		if(durationLeft < 0.0 || shouldReset) {
 			[accessLock unlock];
 			[writeSemaphore timedWait:2000];
@@ -132,7 +132,7 @@
 
 - (void)writeChunk:(AudioChunk *)chunk {
 	inWrite = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inWrite = NO;
 		return;
 	}
@@ -150,7 +150,7 @@
 		}
 	}
 
-	while(shouldContinue == YES && durationLeft < 0.0) {
+	while(shouldContinue == YES && ![self paused] && durationLeft < 0.0) {
 		if(previousNode && [previousNode shouldContinue] == NO) {
 			shouldContinue = NO;
 			break;
@@ -192,20 +192,22 @@
 
 - (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config {
 	inPeek = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inPeek = NO;
 		return NO;
 	}
 
 	[accessLock lock];
 
-	while(shouldContinue && [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
+	while(shouldContinue && ![self paused] &&
+		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
+		[writeSemaphore signal];
 		[[previousNode readSemaphore] timedWait:2000];
 		[accessLock lock];
 	}
 
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		[accessLock unlock];
 		inPeek = NO;
 		return NO;
@@ -229,20 +231,22 @@
 
 - (BOOL)peekTimestamp:(double *_Nonnull)timestamp timeRatio:(double *_Nonnull)timeRatio {
 	inPeek = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inPeek = NO;
 		return NO;
 	}
 
 	[accessLock lock];
 
-	while(shouldContinue && [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
+	while(shouldContinue && ![self paused] &&
+		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
+		[writeSemaphore signal];
 		[[previousNode readSemaphore] timedWait:2000];
 		[accessLock lock];
 	}
 
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		[accessLock unlock];
 		inPeek = NO;
 		return NO;
@@ -266,15 +270,17 @@
 
 - (AudioChunk *)readChunk:(size_t)maxFrames {
 	inRead = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inRead = NO;
 		return [[AudioChunk alloc] init];
 	}
 
 	[accessLock lock];
 
-	while(shouldContinue && [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
+	while(shouldContinue && ![self paused] &&
+		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
+		[writeSemaphore signal];
 		[[previousNode readSemaphore] timedWait:2000];
 		[accessLock lock];
 		if([previousNode shouldReset] == YES) {
@@ -282,7 +288,7 @@
 		}
 	}
 
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		[accessLock unlock];
 		inRead = NO;
 		return [[AudioChunk alloc] init];
@@ -325,15 +331,17 @@
 
 - (AudioChunk *)readChunkAsFloat32:(size_t)maxFrames {
 	inRead = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inRead = NO;
 		return [[AudioChunk alloc] init];
 	}
 
 	[accessLock lock];
 
-	while(shouldContinue && [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
+	while(shouldContinue && ![self paused] &&
+		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
+		[writeSemaphore signal];
 		[[previousNode readSemaphore] timedWait:2000];
 		[accessLock lock];
 		if([previousNode shouldReset] == YES) {
@@ -341,7 +349,7 @@
 		}
 	}
 
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		[accessLock unlock];
 		inRead = NO;
 		return [[AudioChunk alloc] init];
@@ -384,7 +392,7 @@
 
 - (AudioChunk *)readAndMergeChunks:(size_t)maxFrames {
 	inMerge = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inMerge = NO;
 		return [[AudioChunk alloc] init];
 	}
@@ -416,7 +424,7 @@
 			[[previousNode readSemaphore] timedWait:2000];
 			[accessLock lock];
 
-			return !shouldContinue || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES);
+			return !shouldContinue || [self paused] || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES);
 		}];
 	}
 
@@ -433,7 +441,7 @@
 
 - (AudioChunk *)readAndMergeChunksAsFloat32:(size_t)maxFrames {
 	inMerge = YES;
-	if(!shouldContinue) {
+	if(!shouldContinue || [self paused]) {
 		inMerge = NO;
 		return [[AudioChunk alloc] init];
 	}
@@ -465,7 +473,7 @@
 			[[previousNode readSemaphore] timedWait:2000];
 			[accessLock lock];
 
-			return !shouldContinue || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES);
+			return !shouldContinue || [self paused] || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES);
 		}];
 	}
 
@@ -513,6 +521,11 @@
 			[accessLock unlock];
 		}
 	}
+}
+
+// Implementations should override
+- (BOOL)paused {
+	return NO;
 }
 
 - (Semaphore *)writeSemaphore {
