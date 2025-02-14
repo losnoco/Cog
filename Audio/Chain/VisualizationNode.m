@@ -222,6 +222,10 @@ static VisualizationCollection *theCollection = nil;
 	downmixer = nil;
 }
 
+- (BOOL)paused {
+	return paused;
+}
+
 - (void)process {
 	while([self shouldContinue] == YES) {
 		if(paused) {

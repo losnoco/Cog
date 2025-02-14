@@ -46,6 +46,8 @@
 
 - (void)cleanUp;
 
+- (BOOL)paused;
+
 - (void)writeData:(const void *_Nonnull)ptr amount:(size_t)a;
 - (void)writeChunk:(AudioChunk *_Nonnull)chunk;
 - (AudioChunk *_Nonnull)readChunk:(size_t)maxFrames;

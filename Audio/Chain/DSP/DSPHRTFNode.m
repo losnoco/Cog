@@ -257,6 +257,10 @@ static void unregisterMotionListener(void) {
 	paused = NO;
 }
 
+- (BOOL)paused {
+	return paused;
+}
+
 - (void)process {
 	while([self shouldContinue] == YES) {
 		if(paused) {

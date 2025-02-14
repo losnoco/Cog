@@ -20,6 +20,8 @@
 - (BOOL)setup;
 - (void)cleanUp;
 
+- (BOOL)paused;
+
 - (void)resetBuffer;
 
 - (void)pop;

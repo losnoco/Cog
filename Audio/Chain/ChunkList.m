@@ -569,7 +569,14 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 	double streamTimestamp = 0.0;
 	double streamTimeRatio = 1.0;
-	if (![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+	BOOL blocked = NO;
+	while(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
+		if((blocked = block())) {
+			break;
+		}
+	}
+
+	if(blocked) {
 		inMerger = NO;
 		return [[AudioChunk alloc] init];
 	}

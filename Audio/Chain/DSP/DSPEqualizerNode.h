@@ -21,6 +21,8 @@
 
 - (void)resetBuffer;
 
+- (BOOL)paused;
+
 - (void)process;
 - (AudioChunk * _Nullable)convert;
 

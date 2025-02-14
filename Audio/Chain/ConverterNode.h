@@ -73,6 +73,8 @@
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inputFormat withInputConfig:(uint32_t)inputConfig outputFormat:(AudioStreamBasicDescription)outputFormat isLossless:(BOOL)lossless;
 - (void)cleanUp;
 
+- (BOOL)paused;
+
 - (void)process;
 - (AudioChunk *)convert;
 
