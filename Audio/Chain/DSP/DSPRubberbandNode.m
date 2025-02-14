@@ -441,7 +441,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	rubberband_process(ts, (const float * const *)rsPtrs, len, endOfStream);
 
-	size_t samplesAvailable;
+	ssize_t samplesAvailable;
 	if(!stopping && (samplesAvailable = rubberband_available(ts)) > 0) {
 		while(!stopping && samplesAvailable > 0) {
 			if(toDrop > 0) {
@@ -492,7 +492,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		if([chunk isHDCD]) [outputChunk setHDCD];
 		[outputChunk setStreamTimestamp:streamTimestamp];
 		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio] * tempo];
-		[outputChunk assignSamples:rsOutBuffer frameCount:samplesBuffered];
+		[outputChunk assignSamples:&rsOutBuffer[0] frameCount:samplesBuffered];
 		samplesBuffered = 0;
 		stretchOut += [outputChunk duration];
 	}
