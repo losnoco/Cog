@@ -130,6 +130,7 @@ static void unregisterMotionListener(void) {
 	DLog(@"HRTF dealloc");
 	[self cleanUp];
 	[self removeObservers];
+	[super cleanUp];
 }
 
 - (void)addObservers {

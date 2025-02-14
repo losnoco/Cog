@@ -65,6 +65,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	DLog(@"Rubber Band dealloc");
 	[self cleanUp];
 	[self removeObservers];
+	[super cleanUp];
 }
 
 - (void)addObservers {

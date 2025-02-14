@@ -201,7 +201,7 @@
 - (void)dealloc {
 	[inputNode setShouldContinue:NO];
 	[[inputNode exitAtTheEndOfTheStream] signal];
-	[[inputNode semaphore] signal];
+	[[inputNode writeSemaphore] signal];
 	if(![inputNode threadExited])
 		[[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
 

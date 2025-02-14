@@ -17,7 +17,8 @@
 
 @interface Node : NSObject {
 	ChunkList *buffer;
-	Semaphore *semaphore;
+	Semaphore *writeSemaphore;
+	Semaphore *readSemaphore;
 
 	NSLock *accessLock;
 
@@ -25,6 +26,11 @@
 	id __weak controller;
 
 	BOOL shouldReset;
+
+	BOOL inWrite;
+	BOOL inPeek;
+	BOOL inRead;
+	BOOL inMerge;
 
 	BOOL shouldContinue;
 	BOOL endOfStream; // All data is now in buffer
@@ -37,6 +43,8 @@
 	double durationPrebuffer;
 }
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
+
+- (void)cleanUp;
 
 - (void)writeData:(const void *_Nonnull)ptr amount:(size_t)a;
 - (void)writeChunk:(AudioChunk *_Nonnull)chunk;
@@ -70,7 +78,8 @@
 - (uint32_t)nodeChannelConfig;
 - (BOOL)nodeLossless;
 
-- (Semaphore *_Nonnull)semaphore;
+- (Semaphore *_Nonnull)writeSemaphore;
+- (Semaphore *_Nonnull)readSemaphore;
 
 //-(void)resetBuffer;
 

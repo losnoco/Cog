@@ -111,7 +111,8 @@ static VisualizationCollection *theCollection = nil;
 	if(self) {
 		buffer = [[ChunkList alloc] initWithMaximumDuration:latency];
 
-		semaphore = [[Semaphore alloc] init];
+		writeSemaphore = [[Semaphore alloc] init];
+		readSemaphore = [[Semaphore alloc] init];
 
 		accessLock = [[NSLock alloc] init];
 
@@ -133,6 +134,11 @@ static VisualizationCollection *theCollection = nil;
 		replay = NO;
 		prerollBuffer = [[NSMutableData alloc] init];
 
+		inWrite = NO;
+		inPeek = NO;
+		inRead = NO;
+		inMerge = NO;
+
 		[self setPreviousNode:p];
 	}
 
@@ -143,6 +149,7 @@ static VisualizationCollection *theCollection = nil;
 	DLog(@"Visualization node dealloc");
 	[self cleanUp];
 	[self pop];
+	[super cleanUp];
 }
 
 - (void)pop {
