@@ -218,8 +218,10 @@ static impulseSetCache *_sharedController = nil;
 				data->get_direction_data(elevation, azimuth, speaker.distance, hrtfLeft, hrtfRight);
 
 				if(resampling) {
-					soxr_oneshot(sampleRateOfSource, sampleRate, 1, &hrtfLeft.impulse_response[0], sampleCountExact, NULL, &hrtfData[((hrtfLeft.delay + 2) >> 2) + actualSampleCount * i * 2], sampleCountResampled, NULL, &io_spec, &q_spec, &runtime_spec);
-					soxr_oneshot(sampleRateOfSource, sampleRate, 1, &hrtfRight.impulse_response[0], sampleCountExact, NULL, &hrtfData[((hrtfRight.delay + 2) >> 2) + actualSampleCount * (i * 2 + 1)], sampleCountResampled, NULL, &io_spec, &q_spec, &runtime_spec);
+					ssize_t leftDelay = (ssize_t)((double)(hrtfLeft.delay) * 0.25 * sampleRate / sampleRateOfSource);
+					ssize_t rightDelay = (ssize_t)((double)(hrtfRight.delay) * 0.25 * sampleRate / sampleRateOfSource);
+					soxr_oneshot(sampleRateOfSource, sampleRate, 1, &hrtfLeft.impulse_response[0], sampleCountExact, NULL, &hrtfData[leftDelay + actualSampleCount * i * 2], sampleCountResampled, NULL, &io_spec, &q_spec, &runtime_spec);
+					soxr_oneshot(sampleRateOfSource, sampleRate, 1, &hrtfRight.impulse_response[0], sampleCountExact, NULL, &hrtfData[rightDelay + actualSampleCount * (i * 2 + 1)], sampleCountResampled, NULL, &io_spec, &q_spec, &runtime_spec);
 				} else {
 					cblas_scopy(sampleCountExact, &hrtfLeft.impulse_response[0], 1, &hrtfData[((hrtfLeft.delay + 2) >> 2) + actualSampleCount * i * 2], 1);
 					cblas_scopy(sampleCountExact, &hrtfRight.impulse_response[0], 1, &hrtfData[((hrtfRight.delay + 2) >> 2) + actualSampleCount * (i * 2 + 1)], 1);
