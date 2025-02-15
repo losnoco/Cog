@@ -100,12 +100,15 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 	for(id column in updatedColumns) {
 		NSString *columnID = [column objectForKey:@"id"];
-		NSTableColumn *tableColumn = [columns objectAtIndex:[columnsList indexOfObject:columnID]];
-		[tableColumn setHidden:[[column objectForKey:@"hidden"] boolValue]];
-		[tableColumn setWidth:[[column objectForKey:@"width"] unsignedIntegerValue]];
-		[self addTableColumn:tableColumn];
+		NSUInteger index = [columnsList indexOfObject:columnID];
+		if(index != NSNotFound) {
+			NSTableColumn *tableColumn = [columns objectAtIndex:index];
+			[tableColumn setHidden:[[column objectForKey:@"hidden"] boolValue]];
+			[tableColumn setWidth:[[column objectForKey:@"width"] unsignedIntegerValue]];
+			[self addTableColumn:tableColumn];
+		}
 	}
-	
+
 	columns = [self tableColumns];
 
 	for(NSTableColumn *col in columns) {
@@ -151,9 +154,12 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	if(visibleTableColumns == 0) {
 		for(NSTableColumn *col in columns) {
 			NSString *columnID = [col identifier];
-			id column = [defaultColumns objectAtIndex:[defaultColumnList indexOfObject:columnID]];
-			[col setWidth:[[column objectForKey:@"width"] unsignedIntegerValue]];
-			[col setHidden:[[column objectForKey:@"hidden"] boolValue]];
+			NSUInteger index = [defaultColumnList indexOfObject:columnID];
+			if(index != NSNotFound) {
+				id column = [defaultColumns objectAtIndex:index];
+				[col setWidth:[[column objectForKey:@"width"] unsignedIntegerValue]];
+				[col setHidden:[[column objectForKey:@"hidden"] boolValue]];
+			}
 		}
 	}
 
