@@ -145,6 +145,8 @@
 }
 
 - (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig {
+	if(!shouldContinue) return;
+
 	format = *f;
 	config = channelConfig;
 	// Calculate a ratio and add to double(seconds) instead, as format may change
