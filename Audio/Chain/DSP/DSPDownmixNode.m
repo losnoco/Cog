@@ -81,6 +81,16 @@
 }
 
 - (void)setOutputFormat:(AudioStreamBasicDescription)format withChannelConfig:(uint32_t)config {
+	if(memcmp(&outputFormat, &format, sizeof(outputFormat)) != 0 ||
+	   outputChannelConfig != config) {
+		paused = YES;
+		while(processEntered) {
+			usleep(500);
+		}
+		[super resetBuffer];
+		[self fullShutdown];
+		paused = NO;
+	}
 	outputFormat = format;
 	outputChannelConfig = config;
 	formatSet = YES;
