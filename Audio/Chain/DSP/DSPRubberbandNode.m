@@ -22,12 +22,17 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	RubberBandState ts;
 	RubberBandOptions tslastoptions, tsnewoptions;
-	size_t blockSize, toDrop, samplesBuffered, tschannels;
+	size_t tschannels;
+	ssize_t blockSize, toDrop, samplesBuffered;
 	BOOL tsapplynewoptions;
 	BOOL tsrestartengine;
 	double tempo, pitch;
 	double lastTempo, lastPitch;
 	double stretchIn, stretchOut;
+
+	double streamTimestamp;
+	double streamTimeRatio;
+	BOOL isHDCD;
 
 	BOOL stopping, paused;
 	BOOL processEntered;
@@ -226,7 +231,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	RubberBandOptions options = [self getRubberbandOptions];
 	tslastoptions = options;
 	tschannels = inputFormat.mChannelsPerFrame;
-	ts = rubberband_new(inputFormat.mSampleRate, inputFormat.mChannelsPerFrame, options, 1.0 / tempo, pitch);
+	ts = rubberband_new(inputFormat.mSampleRate, (int)tschannels, options, 1.0 / tempo, pitch);
 	if(!ts)
 		return NO;
 
@@ -241,13 +246,13 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		rsPtrs[i] = &rsInBuffer[4096 * i];
 	}
 
-	size_t toPad = rubberband_get_preferred_start_pad(ts);
+	ssize_t toPad = rubberband_get_preferred_start_pad(ts);
 	if(toPad > 0) {
-		for(size_t i = 0; i < inputFormat.mChannelsPerFrame; ++i) {
+		for(size_t i = 0; i < tschannels; ++i) {
 			memset(rsPtrs[i], 0, 4096 * sizeof(float));
 		}
 		while(toPad > 0) {
-			size_t p = toPad;
+			ssize_t p = toPad;
 			if(p > blockSize) p = blockSize;
 			rubberband_process(ts, (const float * const *)rsPtrs, (int)p, false);
 			toPad -= p;
@@ -417,88 +422,91 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		return [self readChunk:4096];
 	}
 
-	size_t samplesToProcess = rubberband_get_samples_required(ts);
+	ssize_t samplesToProcess = rubberband_get_samples_required(ts);
 	if(samplesToProcess > blockSize)
 		samplesToProcess = blockSize;
 
-	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
-	if(!chunk || ![chunk frameCount]) {
-		processEntered = NO;
-		return nil;
-	}
-
-	double streamTimestamp = [chunk streamTimestamp];
-
 	int channels = (int)(inputFormat.mChannelsPerFrame);
-	size_t frameCount = [chunk frameCount];
-	NSData *sampleData = [chunk removeSamples:frameCount];
 
-	for (size_t i = 0; i < channels; ++i) {
-		cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsPtrs[i], 1);
+	if(samplesToProcess > 0) {
+		AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
+		if(!chunk || ![chunk frameCount]) {
+			processEntered = NO;
+			return nil;
+		}
+
+		streamTimestamp = [chunk streamTimestamp];
+		streamTimeRatio = [chunk streamTimeRatio];
+		isHDCD = [chunk isHDCD];
+
+		size_t frameCount = [chunk frameCount];
+		NSData *sampleData = [chunk removeSamples:frameCount];
+
+		for (size_t i = 0; i < channels; ++i) {
+			cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsPtrs[i], 1);
+		}
+
+		stretchIn += [chunk duration] / tempo;
+
+		endOfStream = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
+
+		int len = (int)frameCount;
+
+		rubberband_process(ts, (const float * const *)rsPtrs, len, endOfStream);
 	}
-
-	stretchIn += [chunk duration] / tempo;
-
-	bool endOfStream = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
-
-	int len = (int)frameCount;
-
-	rubberband_process(ts, (const float * const *)rsPtrs, len, endOfStream);
 
 	ssize_t samplesAvailable;
-	if(!stopping && (samplesAvailable = rubberband_available(ts)) > 0) {
-		while(!stopping && samplesAvailable > 0) {
-			if(toDrop > 0) {
-				size_t blockDrop = toDrop;
-				if(blockDrop > samplesAvailable) blockDrop = samplesAvailable;
-				if(blockDrop > blockSize) blockDrop = blockSize;
-				rubberband_retrieve(ts, (float * const *)rsPtrs, (int)blockDrop);
-				toDrop -= blockDrop;
-				samplesAvailable -= blockDrop;
-				continue;
-			}
-			size_t maxAvailable = 65536 - samplesBuffered;
-			size_t samplesOut = samplesAvailable;
-			if(samplesOut > maxAvailable) {
-				samplesOut = maxAvailable;
-				if(!samplesOut) {
-					break;
-				}
-			}
-			if(samplesOut > blockSize) samplesOut = blockSize;
-			rubberband_retrieve(ts, (float * const *)rsPtrs, (int)samplesOut);
-			for(size_t i = 0; i < channels; ++i) {
-				cblas_scopy((int)samplesOut, rsPtrs[i], 1, &rsOutBuffer[samplesBuffered * channels + i], channels);
-			}
-			samplesBuffered += samplesOut;
-			samplesAvailable -= samplesOut;
+	while(!stopping && (samplesAvailable = rubberband_available(ts)) > 0) {
+		if(toDrop > 0) {
+			ssize_t blockDrop = toDrop;
+			if(blockDrop > samplesAvailable) blockDrop = samplesAvailable;
+			if(blockDrop > blockSize) blockDrop = blockSize;
+			rubberband_retrieve(ts, (float * const *)rsPtrs, (int)blockDrop);
+			toDrop -= blockDrop;
+			continue;
 		}
+		ssize_t maxAvailable = 65536 - samplesBuffered;
+		ssize_t samplesOut = samplesAvailable;
+		if(samplesOut > maxAvailable) {
+			samplesOut = maxAvailable;
+			if(samplesOut <= 0) {
+				break;
+			}
+		}
+		if(samplesOut > blockSize) samplesOut = blockSize;
+		rubberband_retrieve(ts, (float * const *)rsPtrs, (int)samplesOut);
+		for(size_t i = 0; i < channels; ++i) {
+			cblas_scopy((int)samplesOut, rsPtrs[i], 1, &rsOutBuffer[samplesBuffered * channels + i], channels);
+		}
+		samplesBuffered += samplesOut;
 	}
 
 	if(endOfStream) {
-		self->endOfStream = YES;
-		if(samplesBuffered) {
-			double outputDuration = (double)(samplesBuffered) / inputFormat.mSampleRate;
-			if(outputDuration + stretchOut > stretchIn) {
+		if(samplesBuffered > 0) {
+			ssize_t delta = (stretchIn - stretchOut) * inputFormat.mSampleRate;
+			if(delta > 0 && samplesBuffered > delta) {
 				// Seems that Rubber Band over-flushes when it hits end of stream
-				samplesBuffered = (size_t)((stretchIn - stretchOut) * inputFormat.mSampleRate);
+				// Also somehow, this was being miscalculated before and ending up negative
+				samplesBuffered = delta;
 			}
 		}
 	}
 
 	AudioChunk *outputChunk = nil;
-	if(samplesBuffered) {
+	if(samplesBuffered > 0) {
 		outputChunk = [[AudioChunk alloc] init];
 		[outputChunk setFormat:inputFormat];
 		if(inputChannelConfig) {
 			[outputChunk setChannelConfig:inputChannelConfig];
 		}
-		if([chunk isHDCD]) [outputChunk setHDCD];
+		if(isHDCD) [outputChunk setHDCD];
 		[outputChunk setStreamTimestamp:streamTimestamp];
-		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio] * tempo];
+		[outputChunk setStreamTimeRatio:streamTimeRatio * tempo];
 		[outputChunk assignSamples:&rsOutBuffer[0] frameCount:samplesBuffered];
 		samplesBuffered = 0;
-		stretchOut += [outputChunk duration];
+		double chunkDuration = [outputChunk duration];
+		stretchOut += chunkDuration;
+		streamTimestamp += chunkDuration * [outputChunk streamTimeRatio];
 	}
 
 	processEntered = NO;
