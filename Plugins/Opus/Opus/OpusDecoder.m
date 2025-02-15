@@ -348,8 +348,9 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	return @[@"audio/x-opus+ogg", @"application/ogg"];
 }
 
+// We want this to take priority over both Core Audio and FFmpeg
 + (float)priority {
-	return 1.0;
+	return 2.0;
 }
 
 + (NSArray *)fileTypeAssociations {
