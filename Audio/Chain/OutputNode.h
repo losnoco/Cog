@@ -59,6 +59,7 @@
 - (AudioStreamBasicDescription)deviceFormat;
 - (uint32_t)deviceChannelConfig;
 
+- (double)volume;
 - (void)setVolume:(double)v;
 
 - (void)setShouldContinue:(BOOL)s;

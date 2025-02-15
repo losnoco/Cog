@@ -122,6 +122,7 @@ using std::atomic_long;
 
 - (double)latency;
 
+- (double)volume;
 - (void)setVolume:(double)v;
 
 - (void)setShouldPlayOutBuffer:(BOOL)enabled;

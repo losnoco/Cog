@@ -621,8 +621,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				int inputRemain = _self->inputRemain;
 				while(!inputRemain) {
 					inputRemain = [_self renderAndConvert];
-					if(_self->stopping)
+					if(_self->stopping) {
+						inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
+						inputData->mBuffers[0].mNumberChannels = channels;
+						bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
 						return 0;
+					}
 				}
 				if(inputRemain) {
 					int inputTodo = MIN(inputRemain, frameCount - renderedSamples);
@@ -726,6 +730,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[outputController setAmountPlayed:streamTimestamp];
 	}
 	[visController postLatency:[outputController getPostVisLatency]];
+}
+
+- (double)volume {
+	return volume * 100.0f;
 }
 
 - (void)setVolume:(double)v {
