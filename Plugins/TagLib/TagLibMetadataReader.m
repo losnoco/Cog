@@ -193,11 +193,11 @@
 
 + (NSArray *)fileTypes {
 	// May be a way to get a list of supported formats
-	return @[@"asf", @"wma", @"mpc", @"mp3", @"apl", @"wav", @"aif", @"aiff", @"wv", @"wvp"];
+	return @[@"asf", @"wma", @"mpc", @"mp3", @"mp4", @"m4a", @"apl", @"wav", @"aif", @"aiff", @"wv", @"wvp", @"ogg", @"oga", @"opus"];
 }
 
 + (NSArray *)mimeTypes {
-	return @[@"audio/x-ms-wma", @"audio/x-musepack", @"audio/mpeg", @"audio/x-mp3", @"audio/x-apl", @"audio/wav", @"audio/aiff", @"audio/x-wavpack"];
+	return @[@"audio/x-ms-wma", @"audio/x-musepack", @"audio/mpeg", @"audio/x-mp3", @"audio/mp4", @"audio/x-apl", @"audio/wav", @"audio/aiff", @"audio/x-wavpack", @"audio/ogg"];
 }
 
 + (float)priority {
