@@ -152,26 +152,42 @@
 	BufferChain *bufferChain = [controller bufferChain];
 	if(bufferChain) {
 		ConverterNode *converter = [bufferChain converter];
-		if(converter) {
-			// This clears the resampler buffer, but not the input buffer
-			// We also have to jump the play position ahead accounting for
-			// the data we are flushing
-			amountPlayed += [[converter buffer] listDuration];
-
-			AudioStreamBasicDescription inf = [bufferChain inputFormat];
-			uint32_t config = [bufferChain inputConfig];
-
-			format.mChannelsPerFrame = inf.mChannelsPerFrame;
-			format.mBytesPerFrame = ((inf.mBitsPerChannel + 7) / 8) * format.mChannelsPerFrame;
-			format.mBytesPerPacket = format.mBytesPerFrame * format.mFramesPerPacket;
-			channelConfig = config;
-
-			[converter setOutputFormat:format];
-			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
-		}
 		DSPDownmixNode *downmix = [bufferChain downmix];
-		if(downmix && output) {
-			[downmix setOutputFormat:[output deviceFormat] withChannelConfig:[output deviceChannelConfig]];
+		AudioStreamBasicDescription outputFormat;
+		uint32_t outputChannelConfig;
+		BOOL formatChanged = NO;
+		if(converter) {
+			AudioStreamBasicDescription converterFormat = [converter nodeFormat];
+			if(memcmp(&converterFormat, &format, sizeof(converterFormat)) != 0) {
+				formatChanged = YES;
+			}
+		}
+		if(downmix && output && !formatChanged) {
+			outputFormat = [output deviceFormat];
+			outputChannelConfig = [output deviceChannelConfig];
+			AudioStreamBasicDescription currentOutputFormat = [downmix nodeFormat];
+			uint32_t currentOutputChannelConfig = [downmix nodeChannelConfig];
+			if(memcmp(&currentOutputFormat, &outputFormat, sizeof(currentOutputFormat)) != 0 ||
+			   currentOutputChannelConfig != outputChannelConfig) {
+				formatChanged = YES;
+			}
+		}
+		if(formatChanged) {
+			InputNode *inputNode = [bufferChain inputNode];
+			if(inputNode) {
+				[inputNode setLastVolume:[output volume]];
+				[output setVolume:0.0];
+			}
+			if(converter) {
+				[converter setOutputFormat:format];
+			}
+			if(downmix && output) {
+				[downmix setOutputFormat:[output deviceFormat] withChannelConfig:[output deviceChannelConfig]];
+			}
+			if(inputNode) {
+				AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
+				[inputNode seek:(long)(amountPlayed * inputFormat.mSampleRate)];
+			}
 		}
 	}
 }
@@ -179,6 +195,10 @@
 - (void)close {
 	[output stop];
 	output = nil;
+}
+
+- (double)volume {
+	return [output volume];
 }
 
 - (void)setVolume:(double)v {

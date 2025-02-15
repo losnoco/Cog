@@ -214,6 +214,10 @@
 - (void)seek:(double)time {
 	long frame = (long)round(time * [[[inputNode properties] objectForKey:@"sampleRate"] floatValue]);
 
+	AudioPlayer * audioPlayer = controller;
+	OutputNode *outputNode = [audioPlayer output];
+
+	[inputNode setLastVolume:[outputNode volume]];
 	[inputNode seek:frame];
 }
 
@@ -344,6 +348,12 @@
 		node = [node previousNode];
 	}
 	return latency;
+}
+
+- (void)setVolume:(double)v {
+	AudioPlayer * audioPlayer = controller;
+	OutputNode *outputNode = [audioPlayer output];
+	[outputNode setVolume:v];
 }
 
 @end
