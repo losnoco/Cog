@@ -251,7 +251,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)updatePlayCountForTrack:(PlaylistEntry *)pe {
-	if(pe.countAdded) return;
+	if(!pe || pe.deLeted || pe.countAdded) return;
 	pe.countAdded = YES;
 	
 	__block PlayCount *pc = pe.playCountItem;
