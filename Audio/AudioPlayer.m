@@ -131,8 +131,12 @@
 
 	[bufferChain launchThreads];
 
-	if(paused)
+	if(paused) {
 		[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
+		if(time > 0.0) {
+			[self updatePosition:userInfo];
+		}
+	}
 }
 
 - (void)stop {
@@ -245,6 +249,10 @@
 
 - (void)restartPlaybackAtCurrentPosition {
 	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:previousUserInfo waitUntilDone:NO];
+}
+
+- (void)updatePosition:(id)userInfo {
+	[self sendDelegateMethod:@selector(audioPlayer:updatePosition:) withObject:userInfo waitUntilDone:NO];
 }
 
 - (void)pushInfo:(NSDictionary *)info toTrack:(id)userInfo {

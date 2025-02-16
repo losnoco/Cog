@@ -138,5 +138,6 @@
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player reportPlayCountForTrack:(id)userInfo;
+- (void)audioPlayer:(AudioPlayer *)player updatePosition:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player setError:(NSNumber *)status toTrack:(id)userInfo;
 @end

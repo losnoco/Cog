@@ -164,24 +164,24 @@ static void *kInputNodeContext = &kInputNodeContext;
 			[bufferChain setVolume:0.0];
 
 			ConverterNode *converter = [bufferChain converter];
-			VisualizationNode *visualization = [bufferChain visualization];
 			DSPRubberbandNode *rubberband = [bufferChain rubberband];
 			DSPFSurroundNode *fsurround = [bufferChain fsurround];
 			DSPEqualizerNode *equalizer = [bufferChain equalizer];
 			DSPHRTFNode *hrtf = [bufferChain hrtf];
 			DSPDownmixNode *downmix = [bufferChain downmix];
+			VisualizationNode *visualization = [bufferChain visualization];
 			DLog(@"SEEKING! Resetting Buffer");
 
 			// This resets the converter's buffer
 			[self resetBuffer];
 			[converter resetBuffer];
 			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
-			[visualization resetBuffer];
 			[rubberband resetBuffer];
 			[fsurround resetBuffer];
 			[equalizer resetBuffer];
 			[hrtf resetBuffer];
 			[downmix resetBuffer];
+			[visualization resetBuffer];
 
 			DLog(@"Reset buffer!");
 

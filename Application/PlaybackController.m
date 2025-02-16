@@ -878,6 +878,15 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 }
 
+- (void)audioPlayer:(AudioPlayer *)player updatePosition:(id)userInfo {
+	if(userInfo) {
+		PlaylistEntry *pe = (PlaylistEntry *)userInfo;
+		if([pe current]) {
+			[self updatePosition:userInfo];
+		}
+	}
+}
+
 - (void)audioPlayer:(AudioPlayer *)player setError:(NSNumber *)status toTrack:(id)userInfo {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	[pe setError:[status boolValue]];
