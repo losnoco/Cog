@@ -69,8 +69,8 @@
 	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
 	if(!downmixNode) return NO;
 
-	// Approximately five frames
-	visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:5.0 / 60.0];
+	// Approximately double the chunk size for Vis at 44100Hz
+	visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:8192.0 / 44100.0];
 	if(!visualizationNode) return NO;
 
 	finalNode = visualizationNode;
