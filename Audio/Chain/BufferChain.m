@@ -100,18 +100,7 @@
 	if(![inputNode openWithSource:source])
 		return NO;
 
-	NSDictionary *properties = [inputNode properties];
-
-	AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
-	uint32_t inputChannelConfig = 0;
-	if([properties valueForKey:@"channelConfig"])
-		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
-
-	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![self initConverter:outputFormat])
 		return NO;
 	[self initDownmixer];
 
@@ -133,19 +122,7 @@
 	if(![inputNode openWithDecoder:[i decoder]])
 		return NO;
 
-	NSDictionary *properties = [inputNode properties];
-
-	AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
-	uint32_t inputChannelConfig = 0;
-	if([properties valueForKey:@"channelConfig"])
-		inputChannelConfig = [[properties valueForKey:@"channelConfig"] unsignedIntValue];
-
-	outputFormat.mChannelsPerFrame = inputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
-	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
-
-	DLog(@"Input Properties: %@", properties);
-	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![self initConverter:outputFormat])
 		return NO;
 	[self initDownmixer];
 
@@ -169,6 +146,16 @@
 	if(![inputNode openWithDecoder:decoder])
 		return NO;
 
+	if(![self initConverter:outputFormat])
+		return NO;
+	[self initDownmixer];
+
+	[self setRGInfo:rgi];
+
+	return YES;
+}
+
+- (BOOL)initConverter:(AudioStreamBasicDescription)outputFormat {
 	NSDictionary *properties = [inputNode properties];
 
 	DLog(@"Input Properties: %@", properties);
@@ -182,11 +169,8 @@
 	outputFormat.mBytesPerFrame = ((outputFormat.mBitsPerChannel + 7) / 8) * outputFormat.mChannelsPerFrame;
 	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
 
-	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat isLossless:[[properties objectForKey:@"encoding"] isEqualToString:@"lossless"]])
+	if(![converterNode setupWithInputFormat:inputFormat withInputConfig:inputChannelConfig outputFormat:outputFormat isLossless:[[properties valueForKey:@"encoding"] isEqualToString:@"lossless"]])
 		return NO;
-	[self initDownmixer];
-
-	[self setRGInfo:rgi];
 
 	return YES;
 }
