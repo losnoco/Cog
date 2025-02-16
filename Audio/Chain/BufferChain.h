@@ -38,7 +38,7 @@
 }
 
 - (id)initWithController:(id)c;
-- (void)buildChain;
+- (BOOL)buildChain;
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
 
