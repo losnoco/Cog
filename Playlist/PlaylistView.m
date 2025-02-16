@@ -111,6 +111,26 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		}
 	}
 
+	int visibleTableColumns = 0;
+	columns = [self tableColumns];
+	for (NSTableColumn *col in columns) {
+		visibleTableColumns += ![col isHidden];
+	}
+
+	if(visibleTableColumns == 0) {
+		// Reset to defaults
+		NSString *message = @"Reset playlist columns to default";
+		DLog(@"%@", message);
+		[[FIRCrashlytics crashlytics] logWithFormat:@"%@", message];
+		for(NSTableColumn *col in columns) {
+			[self removeTableColumn:col];
+		}
+		columns = oldColumns;
+		for(NSTableColumn *col in columns) {
+			[self addTableColumn:col];
+		}
+	}
+
 	columns = [self tableColumns];
 
 	for(NSTableColumn *col in columns) {
@@ -127,7 +147,6 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	                                                               ascending:YES];
 	NSArray *sortDescriptors = @[sortDescriptor];
 
-	int visibleTableColumns = 0;
 	int menuIndex = 0;
 	for(NSTableColumn *col in [columns sortedArrayUsingDescriptors:sortDescriptors]) {
 		NSString *title;
@@ -149,22 +168,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		[contextMenuItem setRepresentedObject:col];
 		[contextMenuItem setState:([col isHidden] ? NSControlStateValueOff : NSControlStateValueOn)];
 
-		visibleTableColumns += ![col isHidden];
 		menuIndex++;
-	}
-
-	if(visibleTableColumns == 0) {
-		// Reset to defaults
-		NSString *message = @"Reset playlist columns to default";
-		DLog(@"%@", message);
-		[[FIRCrashlytics crashlytics] logWithFormat:@"%@", message];
-		for(NSTableColumn *col in columns) {
-			[self removeTableColumn:col];
-		}
-		columns = oldColumns;
-		for(NSTableColumn *col in columns) {
-			[self addTableColumn:col];
-		}
 	}
 
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tableColumnsResized) name:NSTableViewColumnDidResizeNotification object:nil];
