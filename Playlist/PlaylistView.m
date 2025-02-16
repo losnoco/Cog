@@ -16,6 +16,8 @@
 
 #import "Logging.h"
 
+@import Firebase;
+
 static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 @implementation PlaylistView
@@ -152,14 +154,16 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	}
 
 	if(visibleTableColumns == 0) {
+		// Reset to defaults
+		NSString *message = @"Reset playlist columns to default";
+		DLog(@"%@", message);
+		[[FIRCrashlytics crashlytics] logWithFormat:@"%@", message];
 		for(NSTableColumn *col in columns) {
-			NSString *columnID = [col identifier];
-			NSUInteger index = [defaultColumnList indexOfObject:columnID];
-			if(index != NSNotFound) {
-				id column = [defaultColumns objectAtIndex:index];
-				[col setWidth:[[column objectForKey:@"width"] unsignedIntegerValue]];
-				[col setHidden:[[column objectForKey:@"hidden"] boolValue]];
-			}
+			[self removeTableColumn:col];
+		}
+		columns = oldColumns;
+		for(NSTableColumn *col in columns) {
+			[self addTableColumn:col];
 		}
 	}
 
