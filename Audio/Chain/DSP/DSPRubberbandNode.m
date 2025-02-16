@@ -439,14 +439,14 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		streamTimeRatio = [chunk streamTimeRatio];
 		isHDCD = [chunk isHDCD];
 
+		stretchIn += [chunk duration] / tempo;
+
 		size_t frameCount = [chunk frameCount];
 		NSData *sampleData = [chunk removeSamples:frameCount];
 
 		for (size_t i = 0; i < channels; ++i) {
 			cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsPtrs[i], 1);
 		}
-
-		stretchIn += [chunk duration] / tempo;
 
 		endOfStream = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
 
