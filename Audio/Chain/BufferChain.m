@@ -40,29 +40,52 @@
 	return self;
 }
 
-- (void)buildChain {
-	inputNode = nil;
+- (BOOL)buildChain {
+	// Cut off output source
+	finalNode = nil;
+
+	// Tear them down in reverse
+	visualizationNode = nil;
+	downmixNode = nil;
+	hrtfNode = nil;
+	equalizerNode = nil;
+	fsurroundNode = nil;
+	rubberbandNode = nil;
 	converterNode = nil;
+	inputNode = nil;
 
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
+	if(!inputNode) return NO;
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
+	if(!converterNode) return NO;
 	rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:converterNode latency:0.1];
+	if(!rubberbandNode) return NO;
 	fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
+	if(!fsurroundNode) return NO;
 	equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
+	if(!equalizerNode) return NO;
 	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
+	if(!hrtfNode) return NO;
 	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
+	if(!downmixNode) return NO;
 
 	// Approximately five frames
 	visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:5.0 / 60.0];
+	if(!visualizationNode) return NO;
 
 	finalNode = visualizationNode;
+
+	return YES;
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
 	[self setStreamURL:url];
 	[self setUserInfo:userInfo];
 
-	[self buildChain];
+	if (![self buildChain]) {
+		DLog(@"Couldn't build processing chain...");
+		return NO;
+	}
 
 	id<CogSource> source = [AudioSource audioSourceForURL:url];
 	DLog(@"Opening: %@", url);
@@ -102,7 +125,10 @@
 - (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
 	DLog(@"New buffer chain!");
 	[self setUserInfo:userInfo];
-	[self buildChain];
+	if(![self buildChain]) {
+		DLog(@"Couldn't build processing chain...");
+		return NO;
+	}
 
 	if(![inputNode openWithDecoder:[i decoder]])
 		return NO;
@@ -135,7 +161,10 @@
 {
 	DLog(@"New buffer chain!");
 	[self setUserInfo:userInfo];
-	[self buildChain];
+	if(![self buildChain]) {
+		DLog(@"Couldn't build processing chain...");
+		return NO;
+	}
 
 	if(![inputNode openWithDecoder:decoder])
 		return NO;

@@ -100,15 +100,20 @@
 
 - (AudioChunk *)readChunk:(size_t)amount {
 	@autoreleasepool {
-		[self setPreviousNode:[[controller bufferChain] finalNode]];
+		Node *finalNode = [[controller bufferChain] finalNode];
+		[self setPreviousNode:finalNode];
 
-		AudioChunk *ret = [super readChunk:amount];
+		if(finalNode) {
+			AudioChunk *ret = [super readChunk:amount];
 
-		/*	if (n == 0) {
-		        DLog(@"Output Buffer dry!");
-		    }
-		*/
-		return ret;
+			/*	if (n == 0) {
+			 DLog(@"Output Buffer dry!");
+			 }
+			 */
+			return ret;
+		} else {
+			return [[AudioChunk alloc] init];
+		}
 	}
 }
 
