@@ -25,6 +25,8 @@
 - (void)process;
 - (AudioChunk * _Nullable)convert;
 
+- (double)secondsBuffered;
+
 @end
 
 #endif /* DSPRubberbandNode_h */

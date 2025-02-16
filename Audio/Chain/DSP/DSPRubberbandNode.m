@@ -513,4 +513,20 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	return outputChunk;
 }
 
+- (double)secondsBuffered {
+	double rbBuffered = 0.0;
+	if(ts) {
+		// We don't use Rubber Band's latency function, because at least in Cog's case,
+		// by the time we call this function, and also, because it doesn't account for
+		// how much audio will be lopped off at the end of the process.
+		//
+		// Tested once, this tends to be close to zero when actually called.
+		rbBuffered = stretchIn - stretchOut;
+		if(rbBuffered < 0.0) {
+			rbBuffered = 0.0;
+		}
+	}
+	return [buffer listDuration] + rbBuffered;
+}
+
 @end
